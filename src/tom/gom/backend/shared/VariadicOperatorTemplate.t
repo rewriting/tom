@@ -215,8 +215,6 @@ writer.write(%[
         hasHook = true;
       }
     }
-    if (hasHook)
-      return;
 
     %match(cons) {
       OperatorClass[

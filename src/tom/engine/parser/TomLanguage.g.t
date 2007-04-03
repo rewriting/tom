@@ -689,10 +689,10 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
         | // f(...) or f[...] or !f(...) or !f[...]
           name = headSymbol[optionList] 
-          (qt:QMARK)?
+	  (qm:QMARK)?
           { 
-            if(qt!=null) { optionList.add(`MatchingTheory(concElementaryTheory(Associative(),Unitary()))); } 
-            nameList = `concTomName(nameList*,name);
+	    if(qm!=null) { name = `Name(name.getString() + "__qm__"); }
+	    nameList = `concTomName(nameList*,name);
           }
           implicit = args[list,secondOptionList]
           {
@@ -1375,7 +1375,7 @@ headSymbol [LinkedList optionList] returns [TomName result]
     result = null; 
 }
 : 
-  (i:ALL_ID 
+  (i:ALL_ID
   {
 		String name = i.getText();
 		int line = i.getLine();
@@ -1545,12 +1545,14 @@ operatorList returns [Declaration result] throws TomException
     TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
+    String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID
+        type:ALL_ID name:ALL_ID (qm:QMARK)?
         {
-            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            options.add(ot);
+	  opName = name.getText() + ((qm!=null)?"__qm__":"");
+	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
+	  options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
         {
@@ -1558,29 +1560,29 @@ operatorList returns [Declaration result] throws TomException
         }
         LBRACE
         (
-            attribute = keywordMakeEmptyList[name.getText()]
+            attribute = keywordMakeEmptyList[opName]
             { options.add(attribute); }
 
-        |   attribute = keywordMakeAddList[name.getText(),type.getText(),typeArg.getText()]
+        |   attribute = keywordMakeAddList[opName,type.getText(),typeArg.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordIsFsym[`Name(name.getText()), type.getText()]
+        |   attribute = keywordIsFsym[`Name(opName), type.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordGetHead[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetHead[`Name(opName), type.getText()]
             { options.add(attribute); }
-        |   attribute = keywordGetTail[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetTail[`Name(opName), type.getText()]
             { options.add(attribute); }
-        |   attribute = keywordIsEmpty[`Name(name.getText()), type.getText()]
+        |   attribute = keywordIsEmpty[`Name(opName), type.getText()]
             { options.add(attribute); }
 
         )*
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
-            putSymbol(name.getText(),astSymbol);
-            result = `ListSymbolDecl(Name(name.getText()));
+            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
+            putSymbol(opName,astSymbol);
+            result = `ListSymbolDecl(Name(opName));
             updatePosition(t.getLine(),t.getColumn());
             selector().pop(); 
         }
@@ -1592,12 +1594,14 @@ operatorArray returns [Declaration result] throws TomException
     TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
+    String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID
+        type:ALL_ID name:ALL_ID (qm:QMARK)?
         {
-            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            options.add(ot);
+	  opName = name.getText() + ((qm!=null)?"__qm__":"");
+	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
+	  options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
         {
@@ -1605,27 +1609,27 @@ operatorArray returns [Declaration result] throws TomException
         }
         LBRACE
         (
-            attribute = keywordMakeEmptyArray[name.getText(),type.getText()]
+            attribute = keywordMakeEmptyArray[opName,type.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordMakeAddArray[name.getText(),type.getText(),typeArg.getText()]
+        |   attribute = keywordMakeAddArray[opName,type.getText(),typeArg.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordIsFsym[`Name(name.getText()),type.getText()]
+        |   attribute = keywordIsFsym[`Name(opName),type.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordGetElement[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetElement[`Name(opName), type.getText()]
             { options.add(attribute); }
-        |   attribute = keywordGetSize[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetSize[`Name(opName), type.getText()]
             { options.add(attribute); }
         )*
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
-            putSymbol(name.getText(),astSymbol);
+            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
+            putSymbol(opName,astSymbol);
 
-            result = `ArraySymbolDecl(Name(name.getText()));
+            result = `ArraySymbolDecl(Name(opName));
 
             updatePosition(t.getLine(),t.getColumn());
 
@@ -2316,16 +2320,15 @@ NUM_INT
     :   (MINUS)?
     (
     DOT
-            ( ('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
-                {
+    ( ('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
+      {
         if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
-                  _ttype = NUM_FLOAT;
+          _ttype = NUM_FLOAT;
+        } else {
+          _ttype = NUM_DOUBLE; // assume double
         }
-        else {
-                  _ttype = NUM_DOUBLE; // assume double
-        }
-        }
-            )?
+      }
+    )?
 
   | ( '0' {isDecimal = true;} // special case for just '0'
       ( ('x'|'X')

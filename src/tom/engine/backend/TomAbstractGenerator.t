@@ -247,7 +247,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(theory,type, exp, RecordAppl[NameList=(nameAST@Name(opName))]) -> {
+      EqualFunctionSymbol(type, exp, RecordAppl[NameList=(nameAST@Name(opName))]) -> {
         if(getSymbolTable(moduleName).isBuiltinType(getTomType(`type))) {
           TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
           if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol) || hasIsFsymDecl(tomSymbol)) {
@@ -258,16 +258,7 @@ public abstract class TomAbstractGenerator extends TomBase {
             return;
           }
         } else {
-          %match(theory) {
-            concElementaryTheory(Syntactic()) -> { 
-              generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
-              return;
-            }
-            concElementaryTheory(Associative(),Unitary()) -> {
-              generateExpression(deep,`IsSort(type,exp), moduleName);
-              return;
-            }
-          }
+	  generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
         }
         return;
       }

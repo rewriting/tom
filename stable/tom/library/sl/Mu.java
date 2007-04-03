@@ -57,10 +57,10 @@ public class Mu extends AbstractStrategy {
  * current node.
  */
 class MuStrategyTopDown {
-  private static boolean tom_terms_equal_MuStrategy(Object t1, Object t2) {  return 
+  private static boolean tom_equal_term_MuStrategy(Object t1, Object t2) {  return 
 
 
-t1.equals(t2) ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strategy  t) {  return 
+t1.equals(t2) ;}private static boolean tom_is_sort_MuStrategy(Object t) {  return  t instanceof tom.library.sl.Strategy  ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strategy  t) {  return 
 
 
 
@@ -68,7 +68,7 @@ t1.equals(t2) ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strateg
  (t instanceof tom.library.sl.Mu)  ;}private static  tom.library.sl.Strategy  tom_get_slot_Mu_s1( tom.library.sl.Strategy  t) {  return 
 
  (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.VAR)  ;}private static  tom.library.sl.Strategy  tom_get_slot_Mu_s2( tom.library.sl.Strategy  t) {  return 
- (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.V)  ;}private static boolean tom_terms_equal_MuStrategyString(Object t1, Object t2) {  return 
+ (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.V)  ;}private static boolean tom_equal_term_MuStrategyString(Object t1, Object t2) {  return 
 
 
 
@@ -92,7 +92,7 @@ t1.equals(t2) ;}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Stra
   }
 
   public void visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-     if(any instanceof  tom.library.sl.Strategy ) { { tom.library.sl.Strategy  tomMatch1Position1=(( tom.library.sl.Strategy )any); if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) { { tom.library.sl.Strategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1); if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) { { tom.library.sl.Strategy  tom_var=tomMatch1Position1NameNumbers1; { tom.library.sl.Strategy  tom_v=tom_get_slot_Mu_s2(tomMatch1Position1); { tom.library.sl.Strategy  tom_m=tomMatch1Position1; if ( true ) {
+     if (tom_is_sort_MuStrategy(any)) { { tom.library.sl.Strategy  tomMatch1Position1=(( tom.library.sl.Strategy )any); if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) { { tom.library.sl.Strategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1); if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) { { tom.library.sl.Strategy  tom_var=tomMatch1Position1NameNumbers1; { tom.library.sl.Strategy  tom_v=tom_get_slot_Mu_s2(tomMatch1Position1); { tom.library.sl.Strategy  tom_m=tomMatch1Position1; if ( true ) {
 
         stack.addFirst(tom_m);
         visit(tom_v);

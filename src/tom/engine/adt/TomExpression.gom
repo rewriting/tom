@@ -1,5 +1,5 @@
 module TomExpression
-imports TomSignature String Theory
+imports TomSignature String
 abstract syntax
 Expression =
   | TomTermToExpression(AstTerm:TomTerm)
@@ -12,11 +12,12 @@ Expression =
   | And(Arg1:Expression,Arg2:Expression)
   | Or(Arg1:Expression,Arg2:Expression)
   | GreaterThan(Arg1:Expression,Arg2:Expression)
+//  | Conditional(Cond:Expression,Then:Expression,Else:Expression)
   | TrueTL()
   | FalseTL()
   // Exp1 - the subject
   // Exp2 - the pattern
-  | EqualFunctionSymbol(Theory:Theory,AstType:TomType,Exp1:TomTerm,Exp2:TomTerm)
+  | EqualFunctionSymbol(AstType:TomType,Exp1:TomTerm,Exp2:TomTerm)
   | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
   | Cast(AstType:TomType,Source:Expression)
   // AstName - the name of the function symbol from whom to extract the slot

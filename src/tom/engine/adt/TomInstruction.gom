@@ -1,48 +1,49 @@
 module TomInstruction
 imports TomSignature 
 abstract syntax
-Instruction = TomTermToInstruction(Tom:TomTerm)
-            | TargetLanguageToInstruction(Tl:TargetLanguage)
-            | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
-            | DoWhile(DoInst:Instruction,Condition:Expression)
-            | WhileDo(Condition:Expression,DoInst:Instruction)
-            | Assign(Variable:TomTerm,Source:Expression)
+Instruction = 
+  | TomTermToInstruction(Tom:TomTerm)
+  | TargetLanguageToInstruction(Tl:TargetLanguage)
+  | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
+  | DoWhile(DoInst:Instruction,Condition:Expression)
+  | WhileDo(Condition:Expression,DoInst:Instruction)
+  | Assign(Variable:TomTerm,Source:Expression)
             
-		   /**
-			* <code>Let</code> declares and instanciates a variable surrounded by curlys - functional way
-		   	* <code>LetRef</code> as above, but not functional
-		   	* <code>LetAssign</code> instanciates a variable
-		   	*
-		   	* @param Variable a variable
-		   	* @param Source the value to give to the variable
-		   	* @param AstInstruction next instruction
-		   	*/
-   			| Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-            | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-            | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-            /**/
-            | AssignMatchSubject(Kid1:TomTerm,Source:Expression)
-            | Return(Kid1:TomTerm)
-            | Nop()
-            | AbstractBlock(InstList:InstructionList)
-            | UnamedBlock(InstList:InstructionList)
-            | NamedBlock(BlockName:String,InstList:InstructionList)
-            | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
-            | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
-            | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
-            | MatchingCondition(Lhs:TomTerm,Rhs:TomTerm)
-            | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
-            | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
-/*
- * a RawAction is an action that comes from the original program 
- */
+  /**
+   * <code>Let</code> declares and instanciates a variable surrounded by curlys - functional way
+   * <code>LetRef</code> as above, but not functional
+   * <code>LetAssign</code> instanciates a variable
+   *
+   * @param Variable a variable
+   * @param Source the value to give to the variable
+   * @param AstInstruction next instruction
+   */
+  | Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+  | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+  | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+  /**/
+  | AssignMatchSubject(Kid1:TomTerm,Source:Expression)
+  | Return(Kid1:TomTerm)
+  | Nop()
+  | AbstractBlock(InstList:InstructionList)
+  | UnamedBlock(InstList:InstructionList)
+  | NamedBlock(BlockName:String,InstList:InstructionList)
+  | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
+  | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
+  | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
+  | MatchingCondition(Lhs:TomTerm,Rhs:TomTerm)
+  | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
+  | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
+  /*
+   * a RawAction is an action that comes from the original program 
+   */
   | RawAction(AstInstruction:Instruction)
 
-/*
- * a TypeAction knows the pattern to which it is attached (positivePattern),
- * and also the list a previously tried patterns, which are called negativePattern
- * This information is used to perform extra verification/certification
- */
+  /*
+   * a TypeAction knows the pattern to which it is attached (positivePattern),
+   * and also the list a previously tried patterns, which are called negativePattern
+   * This information is used to perform extra verification/certification
+   */
   | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
 
 InstructionList = concInstruction(Instruction*)

@@ -1089,7 +1089,7 @@
   </target>
 
   <target name="bootinstall"
-		description="Install src tree into stable tree"
+    description="Install src tree into stable tree"
 		depends="bootstrap"
 		if="bootstrap.ok">
     <copy todir="${stable.src}" overwrite="true">

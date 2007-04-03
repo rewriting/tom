@@ -1472,6 +1472,115 @@
   make(s) { new tom.engine.adt.tomsignature.strategy.tomsymboltable.When_Table(s) }
 }
 
+%op Strategy Is_Syntactic() {
+  make() { `When_Syntactic(Identity()) }
+}
+
+%op Strategy _Syntactic() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Syntactic)}
+
+  make() { new tom.engine.adt.theory.strategy.elementarytheory._Syntactic() }
+}
+
+%op Strategy Make_Syntactic() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Syntactic)}
+
+  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Syntactic() }
+}
+
+%op Strategy When_Syntactic(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory.When_Syntactic)}
+  make(s) { new tom.engine.adt.theory.strategy.elementarytheory.When_Syntactic(s) }
+}
+
+%op Strategy Is_Associative() {
+  make() { `When_Associative(Identity()) }
+}
+
+%op Strategy _Associative() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Associative)}
+
+  make() { new tom.engine.adt.theory.strategy.elementarytheory._Associative() }
+}
+
+%op Strategy Make_Associative() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Associative)}
+
+  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Associative() }
+}
+
+%op Strategy When_Associative(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory.When_Associative)}
+  make(s) { new tom.engine.adt.theory.strategy.elementarytheory.When_Associative(s) }
+}
+
+%op Strategy Is_Unitary() {
+  make() { `When_Unitary(Identity()) }
+}
+
+%op Strategy _Unitary() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Unitary)}
+
+  make() { new tom.engine.adt.theory.strategy.elementarytheory._Unitary() }
+}
+
+%op Strategy Make_Unitary() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory.Make_Unitary)}
+
+  make() { new tom.engine.adt.theory.strategy.elementarytheory.Make_Unitary() }
+}
+
+%op Strategy When_Unitary(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.elementarytheory.When_Unitary)}
+  make(s) { new tom.engine.adt.theory.strategy.elementarytheory.When_Unitary(s) }
+}
+
+%op Strategy Is_EmptyconcElementaryTheory() {
+  make() { `When_EmptyconcElementaryTheory(Identity()) }
+}
+
+%op Strategy _EmptyconcElementaryTheory() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory)}
+
+  make() { new tom.engine.adt.theory.strategy.theory._EmptyconcElementaryTheory() }
+}
+
+%op Strategy Make_EmptyconcElementaryTheory() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory)}
+
+  make() { new tom.engine.adt.theory.strategy.theory.Make_EmptyconcElementaryTheory() }
+}
+
+%op Strategy When_EmptyconcElementaryTheory(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.theory.When_EmptyconcElementaryTheory)}
+  make(s) { new tom.engine.adt.theory.strategy.theory.When_EmptyconcElementaryTheory(s) }
+}
+
+%op Strategy Is_ConsconcElementaryTheory() {
+  make() { `When_ConsconcElementaryTheory(Identity()) }
+}
+
+%op Strategy _ConsconcElementaryTheory(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.theory.strategy.theory._ConsconcElementaryTheory(arg0, arg1) }
+}
+
+%op Strategy Make_ConsconcElementaryTheory(_HeadconcElementaryTheory:Strategy, _TailconcElementaryTheory:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory)}
+
+  get_slot(_HeadconcElementaryTheory, t) { _HeadconcElementaryTheory }
+  get_slot(_TailconcElementaryTheory, t) { _TailconcElementaryTheory }
+  make( new_HeadconcElementaryTheory,  new_TailconcElementaryTheory) { new tom.engine.adt.theory.strategy.theory.Make_ConsconcElementaryTheory( new_HeadconcElementaryTheory,  new_TailconcElementaryTheory) }
+}
+
+%op Strategy When_ConsconcElementaryTheory(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.theory.strategy.theory.When_ConsconcElementaryTheory)}
+  make(s) { new tom.engine.adt.theory.strategy.theory.When_ConsconcElementaryTheory(s) }
+}
+
 %op Strategy Is_MatchNumber() {
   make() { `When_MatchNumber(Identity()) }
 }
@@ -3977,6 +4086,29 @@
   make(s) { new tom.engine.adt.tomoption.strategy.option.When_Constant(s) }
 }
 
+%op Strategy Is_MatchingTheory() {
+  make() { `When_MatchingTheory(Identity()) }
+}
+
+%op Strategy _MatchingTheory(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomoption.strategy.option._MatchingTheory)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomoption.strategy.option._MatchingTheory(arg0) }
+}
+
+%op Strategy Make_MatchingTheory(_Theory:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomoption.strategy.option.Make_MatchingTheory)}
+
+  get_slot(_Theory, t) { _Theory }
+  make( new_Theory) { new tom.engine.adt.tomoption.strategy.option.Make_MatchingTheory( new_Theory) }
+}
+
+%op Strategy When_MatchingTheory(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomoption.strategy.option.When_MatchingTheory)}
+  make(s) { new tom.engine.adt.tomoption.strategy.option.When_MatchingTheory(s) }
+}
+
 %op Strategy Is_Label() {
   make() { `When_Label(Identity()) }
 }
@@ -4328,35 +4460,6 @@
 %op Strategy When_TermAppl(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_TermAppl)}
   make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_TermAppl(s) }
-}
-
-%op Strategy Is_ListAppl() {
-  make() { `When_ListAppl(Identity()) }
-}
-
-%op Strategy _ListAppl(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._ListAppl)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  get_slot(arg3, t) { t.getArgument(3) }
-  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomterm.strategy.tomterm._ListAppl(arg0, arg1, arg2, arg3) }
-}
-
-%op Strategy Make_ListAppl(_Option:Strategy, _NameList:Strategy, _Args:Strategy, _Constraints:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_ListAppl)}
-
-  get_slot(_Option, t) { _Option }
-  get_slot(_NameList, t) { _NameList }
-  get_slot(_Args, t) { _Args }
-  get_slot(_Constraints, t) { _Constraints }
-  make( new_Option,  new_NameList,  new_Args,  new_Constraints) { new tom.engine.adt.tomterm.strategy.tomterm.Make_ListAppl( new_Option,  new_NameList,  new_Args,  new_Constraints) }
-}
-
-%op Strategy When_ListAppl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_ListAppl)}
-  make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_ListAppl(s) }
 }
 
 %op Strategy Is_RecordAppl() {
@@ -5456,6 +5559,11 @@
             %op Strategy _concTomVisit(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomVisit(sub,MuVar("x")),_EmptyconcTomVisit())) }
+            }
+            
+            %op Strategy _concElementaryTheory(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcElementaryTheory(sub,MuVar("x")),_EmptyconcElementaryTheory())) }
             }
             
             %op Strategy _concTomNumber(sub:Strategy) {

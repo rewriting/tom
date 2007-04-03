@@ -88,7 +88,7 @@ public class TestAC extends TestCase {
     L l = `bb();
     int cnt = 0;
     %match(l) {
-      list(x*,y*) -> {
+      list?(x*,y*) -> {
         if(`x == `bb() && `y == `aa()) {
           cnt += 2;
         }
@@ -98,7 +98,7 @@ public class TestAC extends TestCase {
       }
     }
     if (0 == cnt) {
-      fail("bb() should match list(x,y)");
+      fail("list(x,y) should match bb()");
     }
     assertEquals("Incomplete matching",cnt,5);
   }
@@ -107,7 +107,7 @@ public class TestAC extends TestCase {
     T t = `b();
     int cnt = 0;
     %match(t) {
-      conc(x*,y*) -> {
+      conc?(x*,y*) -> {
         if (`x == `b() && `y == `conc()) {
           cnt += 2;
         }
@@ -117,7 +117,7 @@ public class TestAC extends TestCase {
       }
     }
     if (0 == cnt) {
-      fail("b() should match conc(x,y)");
+      fail(" conc(x,y) should match b()");
     }
     assertEquals("Incomplete matching",cnt,5);
   }

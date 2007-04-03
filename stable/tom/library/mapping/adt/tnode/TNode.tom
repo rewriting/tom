@@ -11,7 +11,7 @@
 
 %typeterm TNodeList {
   implement { tom.library.adt.tnode.types.TNodeList }
- is_sort(t) { t instanceof tom.library.adt.tnode.types.TNodeList}
+  is_sort(t) { t instanceof tom.library.adt.tnode.types.TNodeList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.tnode.TNodeBasicStrategy }
 }
@@ -19,7 +19,7 @@
 
 %typeterm TNode {
   implement { tom.library.adt.tnode.types.TNode }
- is_sort(t) { t instanceof tom.library.adt.tnode.types.TNode}
+  is_sort(t) { t instanceof tom.library.adt.tnode.types.TNode }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.tnode.TNodeBasicStrategy }
 }

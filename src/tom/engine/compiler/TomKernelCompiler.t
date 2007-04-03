@@ -45,7 +45,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.theory.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -388,11 +387,7 @@ public class TomKernelCompiler extends TomBase {
 	  }
 	}
 	// generate is_fsym(t,f) || is_fsym(t,g)
-        Theory theory = `concElementaryTheory(Syntactic());
-        %match(optionList) {
-          concOption(_*,MatchingTheory(th),_*) -> { theory = `th; }
-        }
-	Expression cond = `expandDisjunction(EqualFunctionSymbol(theory,codomain,subjectVariableAST,currentTerm),moduleName);
+	Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm),moduleName);
 	return `If(cond,automataInstruction,elseAction);
       }
     } // end match
@@ -477,8 +472,7 @@ public class TomKernelCompiler extends TomBase {
 
           Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST));
           Instruction let = buildLet(`var, source, p.path, subAction, p.elseAction, moduleName);
-          Theory theory = getTheory(p.optionList);
-          Instruction tailExp = `Assign(variableEndAST,genGetTail(theory,p.symbol,Ref(variableEndAST)));
+          Instruction tailExp = `Assign(variableEndAST,genGetTail(p.symbol,Ref(variableEndAST)));
           Instruction loop;
           if(containOnlyVariableStar(`termTail)) {
               /*
@@ -567,7 +561,7 @@ public class TomKernelCompiler extends TomBase {
        * ---------
        * Let save_i = subjectList
        * if(!IS_EMPTY_TomList(subjectList)) {
-       *   Let _var = GET_SLICE_LENGTH(save_i,subjectList);
+       *   Let _var_index = _var_index + 1
        *   Let TomTerm var = (TomTerm) GET_HEAD_TomList(subjectList);
        *   subjectList = (TomList) GET_TAIL_TomList(subjectList);
        *   ...
@@ -575,11 +569,10 @@ public class TomKernelCompiler extends TomBase {
        * subjectList = save_i;
        */
 
-    Theory theory = getTheory(p.optionList);
-    Instruction body = `LetAssign(p.subjectListName,genGetTail(theory,p.symbol,Ref(p.subjectListName)),subAction);
+    Instruction body = `LetAssign(p.subjectListName,genGetTail(p.symbol,Ref(p.subjectListName)),subAction);
     // compute the index position 
     body = `LetAssign(p.subjectListIndex,AddOne(Ref(p.subjectListIndex)),body);
-    Expression source = genGetHead(theory,p.symbol,termType,`Ref(p.subjectListName));
+    Expression source = genGetHead(p.symbol,termType,`Ref(p.subjectListName));
     Instruction let = buildLet(var, source, p.path, body, `Nop(), moduleName);
     if(notEmptyList) {
       let = `genCheckEmptyList(p.symbol, p.subjectListName,Nop(),let);
@@ -596,18 +589,16 @@ public class TomKernelCompiler extends TomBase {
  
   /*
    * return the head of the list
-   * or return the element itself if it is not an associative operator
    */ 
-  private Expression genGetHead(Theory theory,TomSymbol tomSymbol, TomType type, TomTerm var) {
+  private Expression genGetHead(TomSymbol tomSymbol, TomType type, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
     return `GetHead(opNameAST, type, var);
   }
 
   /*
    * return the tail of the list
-   * or generate a neutral element if it is not an associative operator
    */ 
-  private Expression genGetTail(Theory theory,TomSymbol tomSymbol, TomTerm var) {
+  private Expression genGetTail(TomSymbol tomSymbol, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
     return `GetTail(opNameAST, var);
   }
@@ -850,8 +841,7 @@ public class TomKernelCompiler extends TomBase {
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         Instruction elseBody = `collectSubtermIf(tail,booleanVariable,currentTerm,termArgList,subjectVariableAST,path,moduleName);
         Instruction assign = `collectSubtermLetAssign(termArgList,tomSymbol,subjectVariableAST,path,Nop(),moduleName);
-        Theory theory = `concElementaryTheory(Syntactic());
-        Expression cond = `EqualFunctionSymbol(theory,codomain,subjectVariableAST,currentTerm.setNameList(concTomName(name)));
+        Expression cond = `EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm.setNameList(concTomName(name)));
         return  `If(cond,LetAssign(booleanVariable,TrueTL(),assign),elseBody);
       }
     }
@@ -946,14 +936,14 @@ public class TomKernelCompiler extends TomBase {
   public Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = `FalseTL();
     %match(exp) {
-      EqualFunctionSymbol(theory,termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
+      EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
         while(!`nameList.isEmptyconcTomName()) {
           TomName name = `nameList.getHeadconcTomName();
           boolean isAnti = (name instanceof AntiName);
           if(isAnti) {
 	    name = name.getName();
           }
-          Expression check = `EqualFunctionSymbol(theory,termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
+          Expression check = `EqualFunctionSymbol(termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
           
           if(isAnti) {
 	    check = `Negation(check);

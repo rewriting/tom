@@ -5,7 +5,7 @@
 
 %typeterm TomNumber {
   implement { tom.engine.adt.tomname.types.TomNumber }
- is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumber}
+  is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumber }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
@@ -13,7 +13,7 @@
 
 %typeterm TomNumberList {
   implement { tom.engine.adt.tomname.types.TomNumberList }
- is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumberList}
+  is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumberList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
@@ -21,7 +21,7 @@
 
 %typeterm TomNameList {
   implement { tom.engine.adt.tomname.types.TomNameList }
- is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNameList}
+  is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNameList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
@@ -29,7 +29,7 @@
 
 %typeterm TomName {
   implement { tom.engine.adt.tomname.types.TomName }
- is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomName}
+  is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomName }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
