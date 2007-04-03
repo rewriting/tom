@@ -664,7 +664,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
         | // for a single constant. 
           // ambiguous with the next rule so:
-          {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
           name = headSymbol[optionList] 
           {
             result = `Variable(ASTFactory.makeOptionList(optionList),name,
@@ -674,7 +674,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
         | // for a single constant. 
           // ambiguous with the next rule so:
-       	  {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+       	  {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
             nameList = headConstantList[optionList] 
           {
 	    //nameList = `concTomName(nameList*,name);
