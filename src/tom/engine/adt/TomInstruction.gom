@@ -33,14 +33,6 @@ Instruction = TomTermToInstruction(Tom:TomTerm)
             | MatchingCondition(Lhs:TomTerm,Rhs:TomTerm)
             | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
             | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
-            | CheckStamp(Variable:TomTerm)
-
-/*
- * In Java Only: check that source is an instance of astType, and then execute inst
- * Otherwise: perform inst 
- */
-  | CheckInstance(AstType:TomType,Source:Expression,Instruction:Instruction)
-
 /*
  * a RawAction is an action that comes from the original program 
  */

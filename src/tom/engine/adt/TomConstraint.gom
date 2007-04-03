@@ -9,6 +9,7 @@ Constraint =
 		   * @param Variable the variable to constrain
 		   */
            | AssignTo(Variable:TomTerm)
+		   | AssignPositionTo(Variable:TomTerm)
  		   | TrueConstraint()
 		   | FalseConstraint()		   
 		   | Negate(c:Constraint)
@@ -45,5 +46,3 @@ AndConstraint:make(constList){
 		}		
 	}
 }
-
-

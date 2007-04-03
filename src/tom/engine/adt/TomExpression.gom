@@ -41,3 +41,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   */
            | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
            | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)
+           /*
+		   * check that source is of sort astType, and then execute inst
+		   */
+           | IsSort(AstType:TomType,Variable:TomTerm)
