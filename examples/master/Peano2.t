@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,16 +38,24 @@ public class Peano2 {
     Nat = zero()
         | suc(pred:Nat)
         | plus(x1:Nat, x2:Nat)
+        | mult(x1:Nat, x2:Nat)
    }
 
 	public Nat evaluate(Nat n) {
 		%match(Nat n) {
-      plus(x, zero())    -> { return `x; }
+      //       plus(zero(), x)    -> { return `x; }
       plus(x, suc(y))    -> { return `suc(plus(x,y));}
+      plus(x, zero())    -> { return `x; }
+
+      //       mult(zero(), x)    -> { return `zero(); }
+      mult(x, zero())    -> {return `zero();}
+      mult(x, suc(y))    -> {return `plus(x,mult(x,y));}
 
       plus(x,y) -> { return `plus(x,evaluate(y));}
+      mult(x,y) -> { return `mult(x,evaluate(y));}
       suc(x) -> { return `suc(evaluate(x));}
       zero() -> { return `zero();}
+
 		}
 		return null;
 	}
@@ -66,8 +74,10 @@ public class Peano2 {
 
 //     Nat init = `plus(two,two);
 //     Nat init = `plus(two,two);
-    Nat init = `plus(one,plus(one,plus(one,one)));
+//     Nat init = `plus(one,plus(one,plus(one,one)));
 //     Nat init = `plus(plus(one,one),plus(one,one));
+//     Nat init  = `plus(zero(),plus(one,one));
+    Nat init  =  `mult(zero(),suc(suc(zero())));
     boolean done=false;
     System.out.println("Start = " + init);
     while(!done){

@@ -1,0 +1,15 @@
+module term
+imports String
+abstract syntax
+
+RuleList = concRule(Rule*)
+
+Rule = rule(lhs:Nodes,rhs:Nodes)
+
+Nodes = NList(Node*)
+
+Node = TNode (id:NodeName, plist:Nodes)
+     | VarNode(name:String)
+
+NodeName = Name(name:String)
+         | VarNodeName(name:String)

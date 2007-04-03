@@ -2,6 +2,18 @@
 <project name="Build the analysis example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="analysis" value="analysis"/>
+  <macrodef name="gompointercompile">
+    <attribute name="example"/>
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="@{example}" 
+        pointer = "true"
+        destdir="${examples.gen}">
+        <include name="@{example}/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
+
   <target name="clean" description="Cleans examples directory">
     <delete dir="${examples.gen}/${analysis}"/>
     <delete dir="${examples.build}/${analysis}"/>
@@ -12,7 +24,7 @@
       <fileset dir="${examples.dir}/${analysis}">
       </fileset>
     </copy>
-    <gomcompile example="${analysis}"/>
+    <gompointercompile example="${analysis}"/>
     <tomcompile example="${analysis}"/>
     <javacompile example="${analysis}"/>
   </target>

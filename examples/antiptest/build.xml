@@ -14,7 +14,9 @@
     -->
     <tom.preset srcdir="${examples.dir}"
 	        options="--noStatic --intermediate"
-                destdir="${examples.gen}">          
+                destdir="${examples.gen}"
+    	optimize="no"
+		optimize2="no">          
        <include name="${antiptest}/**/*.t"/>
        <exclude name="${antiptest}/**/*.g.t"/>
     </tom.preset>

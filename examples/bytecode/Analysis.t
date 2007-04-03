@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 package bytecode;
 
 import java.util.HashMap;
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.strategy.mutraveler.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
@@ -134,9 +134,9 @@ public class Analysis {
           `AUMap(
               Not(Sequence(IsLoad(), HasIndex(indexMap, "index"))),
               Sequence(IsStore(indexMap, "useless"), HasIndex(indexMap, "index")),
-              labelMap);
+              labelMap,ins);
 
-        MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
+        MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap, ins));
 
         `BottomUp(Try(ChoiceId(storeNotUsed,PrintInst()))).apply(ins);
 

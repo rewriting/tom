@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -188,13 +188,13 @@ public class PatternAnalyser{
 
   %op Strategy CurrentNode(s:Strategy) {
     make(s) {
-      `_ConsWfgNode(RelativeRef(s),Identity())
+      `_ConsWfgNode(DeRef(s),Identity())
     }
   }
 
   %op Strategy AllWfg(s:Strategy) {
     make(s) {
-      `_ConsWfgNode(Identity(),Choice(_EmptyWfgNode(),_WfgNode(RelativeRef(s))))
+      `_ConsWfgNode(Identity(),Choice(_EmptyWfgNode(),_WfgNode(DeRef(s))))
     }
   }
 
@@ -365,7 +365,7 @@ public class PatternAnalyser{
         wfg = bpelToWfg(`elt, conds);
         // graph expansion
         System.out.println("\nWfg with labels:\n" + wfg);
-        wfg = `expWfg(wfg);
+        wfg = (Wfg) WfgAbstractType.expand(wfg);
         System.out.println("\nWfg after expansion:\n" + wfg);
         // substituting link names by node names in the explicit conditions
         conds.substitute();

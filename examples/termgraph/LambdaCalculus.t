@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import java.util.*;
 import termgraph.lambdaterm.*;
 import termgraph.lambdaterm.types.*;
 import termgraph.lambdaterm.strategy.lambdaterm.*;
-import termgraph.lambdaterm.types.lambdaterm.posLambdaTerm;
+import termgraph.lambdaterm.types.lambdaterm.*;
 
 public class LambdaCalculus {
 
@@ -52,7 +52,7 @@ public class LambdaCalculus {
     
     // beta with refs (designed for call by need)
     Strategy betaRef = `Sequence(
-        _app(Identity(),RelativeRef(collectTerm(info))), 
+        _app(Identity(),DeRef(collectTerm(info))), 
         _app(Sequence(
             collectPosition(info),
             _abs2(Mu(MuVar("x"),Choice(substitute(info),All(MuVar("x")))))),Identity()),
@@ -187,24 +187,17 @@ public class LambdaCalculus {
   //[subject/X]t
   %strategy substitute(info:LambdaInfo) extends `Fail(){
     visit LambdaTerm {
-      p@posLambdaTerm(_*) -> {
-        Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+      p@pathLambdaTerm(_*) -> {
         Position source = getEnvironment().getPosition();
-        Position absolute = source.getAbsolutePosition(relative);
-        if(absolute.equals(info.omega)){
+        Position dest = ((Reference)`p).getDestPosition(source);
+        if(dest.equals(info.omega)){
           if(info.firstOccur==null || !info.lazy){
             info.firstOccur = getEnvironment().getPosition();
             return info.term;
           }
           else{
             Position target = info.firstOccur;
-            Position relativeInv = source.getRelativePosition(target);
-            int[] omega = relativeInv.toArray(); 
-            LambdaTerm t = `posLambdaTerm();
-            for (int i =0; i<omega.length;i++){
-              t = `posLambdaTerm(t*,omega[i]);
-            }
-            return `t;
+            return ConspathLambdaTerm.make(target.sub(source));
           }
         }
         else{
@@ -244,23 +237,19 @@ public class LambdaCalculus {
         String v = "x" + (ppcounter++);
         return `abs3(var(v),term);
       }
-      p@posLambdaTerm(_*)-> {
+      p@pathLambdaTerm(_*)-> {
         //test if it is a cycle to a lambda
         //it can be a ref corresponding to a sharing due to lazy evaluation
-        if(`((Reference)p).toArray().length==1){
-          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
-          Position source = getEnvironment().getPosition();
-          Position target = source.getAbsolutePosition(relative);
-          Position relativeInv = target.getRelativePosition(source);
-          getEnvironment().goTo(relative);
+        Path pp = (Path)`p;
+        if(pp.length()==1){
+          getEnvironment().goTo(pp);
           LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-          getEnvironment().goTo(relativeInv);
+          getEnvironment().goTo(pp.inv());
           return var;
         }
         else{
-          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
           Position source = getEnvironment().getPosition();
-          Position target = source.getAbsolutePosition(relative);
+          Position target = ((Reference)`p).getDestPosition(source);
           return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
         }
       }

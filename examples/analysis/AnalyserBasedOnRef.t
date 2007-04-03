@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -35,23 +35,17 @@ import analysis.cfg.types.*;
 import analysis.ast.*;
 import analysis.ast.types.*;
 
+import tom.library.sl.*;
 
-
-import tom.library.strategy.mutraveler.*;
-
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
 import java.util.*;
 
 
 public class AnalyserBasedOnRef{
   
-  %include {mustrategy.tom }
-  %include {strategy/graph.tom }
+  %include {sl.tom }
   %include {util/HashMap.tom}
   %include {util/ArrayList.tom}
   %include {cfg/Cfg.tom}
-
   
   /**
     Definition des predicats 	 	 
@@ -64,7 +58,7 @@ public class AnalyserBasedOnRef{
   %strategy IsNotUsed(ref:VariableRef) extends `Identity(){
     visit Term {
       t@Var(var) -> {
-        if(`var.equals(ref.getvariable())) return (Term) MuTraveler.init(`Fail()).visit(`t);
+        if(`var.equals(ref.getvariable())) return (Term) `Fail().fire(`t);
       }
     }
 
@@ -136,40 +130,11 @@ public class AnalyserBasedOnRef{
     }
   }
 
-  %strategy CollectPositions(table:HashMap) extends `Identity() {
-    visit Cfg{
-      LabCfg(label,cfg) -> {
-        table.put(`label,getPosition());
-        return `cfg; //remove the label
-      }
-    }
-  }
-
-
-  %strategy ReplaceLabels(table:HashMap) extends `Identity() {
-    visit Reference{
-      Label(label) -> {
-        Position pos = (Position) table.get(`label);
-        Reference ref = `Pos();
-        int[] array = pos.toArray();
-        for(int i=0;i<pos.depth();i++){
-          ref = `Pos(ref*,array[i]);
-        }
-        return ref; 
-      }
-    }
-  }
-
-  public Cfg removeLabels(Cfg cfg){
-    HashMap table = new HashMap();
-    return (Cfg) `Sequence(TopDown(CollectPositions(table)),TopDown(ReplaceLabels(table))).apply(cfg);
-  }
-
 
   public ArrayList collectNotUsedAffectations(Cfg cfg){
     ArrayList list = new ArrayList();
     VariableRef var = new VariableRef();
-    `TopDown(StrictRef(cfg,Try(Sequence(Sequence(FindAffect(var),AX(StrictRef(cfg,AU(StrictRef(cfg,IsNotUsed(var)),StrictRef(cfg,OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).apply(cfg.getChildAt(0));
+    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),AX(StrictDeRef(AU(StrictDeRef(IsNotUsed(var)),StrictDeRef(OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).fire(cfg);
     return list;
   }
 
@@ -178,24 +143,24 @@ public class AnalyserBasedOnRef{
     VariableRef var = new VariableRef();
 
     //s1 = not(modified(var))
-    MuStrategy s1 = `Not(IsAffect(var));
+    Strategy s1 = `Not(IsAffect(var));
 
     //s2 = (used(var) and AX(notUsedCond(var)
-    MuStrategy s2 =  
+    Strategy s2 =  
       `AndCtl(
           Not(IsNotUsed(var)),
-          All(StrictRef(cfg,mu(MuVar("x"),
+          All(StrictDeRef(mu(MuVar("x"),
               Choice(
                 OrCtl(IsAffect(var),IsFree(var)),
-                Sequence(IsNotUsed(var),All(StrictRef(cfg,MuVar("x"))))
+                Sequence(IsNotUsed(var),All(StrictDeRef(MuVar("x"))))
                 )
               )
             )
           ));
     //onceUsedCond AX(A(s1 U s2))  
-    MuStrategy onceUsed = `AX(StrictRef(cfg,AU(StrictRef(cfg,s1),StrictRef(cfg,s2))));
+    Strategy onceUsed = `AX(StrictDeRef(AU(StrictDeRef(s1),StrictDeRef(s2))));
 
-    `TopDown(StrictRef(cfg,Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).apply(cfg.getChildAt(0));
+    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).fire(cfg);
     return list;
   } 
 
@@ -218,23 +183,21 @@ public class AnalyserBasedOnRef{
     Ast subject = `concAst(cond,letz);
 
 
-    Cfg cfg = `ConcCfg(
-        BeginIf(cond,Label("success"),Label("failure")), 
-        LabCfg("success",Nil(Label("letz"))),
-        LabCfg("failure",Affect(letrefx,Label("letassignx"))),
-        LabCfg("letassignx",Affect(letassignx,Label("lety"))),
-        LabCfg("lety",Affect(lety,Label("freey"))),
-        LabCfg("freey",Free(var_y,Label("freex"))),
-        LabCfg("freex",Free(var_x,Label("letz"))),
-        LabCfg("letz",Affect(letz,Label("freez"))),
-        LabCfg("freez",Free(var_z,Label("end"))),
-        LabCfg("end",End())
-        );
+    Cfg cfg = (Cfg) analysis.cfg.CfgAbstractType.expand(`ConcCfg(
+        BeginIf(cond,refCfg("success"),refCfg("failure")), 
+        labCfg("success",Nil(refCfg("letz"))),
+        labCfg("failure",Affect(letrefx,refCfg("letassignx"))),
+        labCfg("letassignx",Affect(letassignx,refCfg("lety"))),
+        labCfg("lety",Affect(lety,refCfg("freey"))),
+        labCfg("freey",Free(var_y,refCfg("freex"))),
+        labCfg("freex",Free(var_x,refCfg("letz"))),
+        labCfg("letz",Affect(letz,refCfg("freez"))),
+        labCfg("freez",Free(var_z,refCfg("end"))),
+        labCfg("end",End())
+        ));
 
     AnalyserBasedOnRef analyser = new AnalyserBasedOnRef();
     try{
-      System.out.println("Cfg with labels:\n" + cfg);
-      cfg = analyser.removeLabels(cfg);
       VariableRef var= new VariableRef();
       System.out.println("\nCfg with positions:\n" + cfg);
       List l1 = analyser.collectNotUsedAffectations(cfg);

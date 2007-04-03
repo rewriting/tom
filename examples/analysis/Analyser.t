@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ import analysis.ast.types.*;
 
 
 
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
@@ -46,8 +46,7 @@ import org._3pq.jgrapht.edge.*;
 
 public class Analyser{
 
-  %include {mustrategy.tom }
-  %include {strategy/graph.tom }
+  %include {sl.tom }
   %include {node/Node.tom}
 
   //Definition des types
@@ -243,10 +242,10 @@ public class Analyser{
           affect(var,term) -> {
             //test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
             //s1 = notUsed(var)
-            MuStrategy s1 = `NotUsed(var);
+            Strategy s1 = `NotUsed(var);
             //s2 = free(var)
-            MuStrategy s2 = `OrCtl(Free(var),Affect(var));
-            MuStrategy notUsedCond = `AX(AU(s1,s2));
+            Strategy s2 = `OrCtl(Free(var),Affect(var));
+            Strategy notUsedCond = `AX(AU(s1,s2));
             if(cfg.verify(notUsedCond,n)) {
               System.out.println("Variable "+`var+" with the value "+`term+" is not used");
               l.add(n);
@@ -275,10 +274,10 @@ public class Analyser{
 
 
             //s1 = not(modified(var)
-            MuStrategy s1 = `Not(Affect(var));
+            Strategy s1 = `Not(Affect(var));
 
             //s2 = (used(var) and AX(notUsedCond(var)
-            MuStrategy s2 =  
+            Strategy s2 =  
               `Sequence(
                   Not(NotUsed(var)),
                   All(mu(MuVar("x"),
@@ -290,7 +289,7 @@ public class Analyser{
                     )
                   );
             //onceUsedCond AX(A(s1 U s2))  
-            MuStrategy onceUsedCond = `AX(AU(s1,s2));
+            Strategy onceUsedCond = `AX(AU(s1,s2));
 
             //  `All(mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity))))));
 

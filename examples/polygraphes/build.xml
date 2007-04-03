@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the polygraphes example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="polygraphes" value="polygraphes"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${polygraphes}"/>
+    <delete dir="${examples.build}/${polygraphes}"/>
+  </target>
+  <target name="build" depends="init">
+    <!-- build adt -->    
+    <gombuild example="${polygraphes}"/>
+    <!-- build tom -->
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
+      <!-- stamp not yet ready for apigen list -->
+      <include name="${polygraphes}/**/*.t"/>
+      <exclude name="${polygraphes}/**/PolygraphesParser.g.t"/>
+      <!--      <exclude name="${polygraphes}/**/StructureCDT.t"/> -->
+    </tom.preset>
+    <!--
+    <tom.preset outputfile="${examples.gen}/${polygraphes}/PolygraphesParser.g"
+                options="-I ${examples.gen}/${polygraphes}"
+                srcdir="${examples.dir}"> 
+      <include name="${polygraphes}/**/PolygraphesParser.g.t"/>
+    </tom.preset>
+    -->
+    <!-- build parser -->
+    <!--
+    <mkdir dir="${examples.gen}/${polygraphes}"/>
+    <tomantlr target="${examples.gen}/${polygraphes}/PolygraphesParser.g"
+              outputdirectory="${examples.gen}/${polygraphes}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    -->
+    <!-- build java source -->
+    <javacompile example="${polygraphes}"/>
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${polygraphes}">
+      <fileset dir="${examples.dir}/${polygraphes}">
+        <include name="examples"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${polygraphes}/*.t"/>
+        <include name="${polygraphes}/*.gom"/>
+        <include name="${polygraphes}/*.tom"/>
+        <include name="${polygraphes}/*.java"/>
+        <include name="${polygraphes}/examples*"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

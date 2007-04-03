@@ -9,7 +9,7 @@ LambdaTerm =
      | var(name:String)
 
 
-abs : block{
+abs:block() {
 %include { mustrategy.tom }
  
 %typeterm Position{
@@ -20,7 +20,7 @@ abs : block{
   visit LambdaTerm{
     v@var[] -> {
       if(`v.equals(var)){
-        return `posLambdaTerm(getPosition().depth()+1);
+        return `pathLambdaTerm(getPosition().depth()+1);
       }
     }
   }
@@ -28,7 +28,7 @@ abs : block{
 
 }
 
-abs:make(var,arg){
+abs:make(var,arg) {
   termgraph.lambdaterm.types.LambdaTerm newarg =(termgraph.lambdaterm.types.LambdaTerm)`TopDown(ToDeBruinj(var)).apply(arg);
   if(true){
   return `abs2(newarg); 

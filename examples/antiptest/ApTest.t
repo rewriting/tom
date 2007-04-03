@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,22 +38,26 @@ public class ApTest {
       Nat = zero()
       | suc(pred:Nat)
       | plus(x1:Nat, x2:Nat)
+      
+      NatList = conc(Nat*)
   }  
 
   public Nat evaluate(Nat n) {
-    %match(Nat n) {
-      plus(!x,!y)               -> { System.out.println("Matched with: plus(!x,!y)");}
+    %match(Nat n) {      
       zero()                    -> { System.out.println("Matched with: zero()");}
-      plus(x,!suc(y))           -> { System.out.println("Matched with: plus(x,!suc(y)), with x=" + `x);}
-      plus(x,!suc(x))           -> { System.out.println("Matched with: plus(x,!suc(x)), with x=" + `x);}
       plus(x,y)                 -> { System.out.println("Matched with: plus(x,y), with x=" + `x + " y=" + `y);}
-      plus(x,x)                 -> { System.out.println("Matched with: plus(x,x), with x=" + `x);}
-      plus(x,!x)                -> { System.out.println("Matched with: plus(x,!x), with x=" + `x);}
-      !plus(x,!suc(y))          -> { System.out.println("Matched with: !plus(x,!suc(y))");}
-      !plus(x,!suc(suc(y)))     -> { System.out.println("Matched with: !plus(x,!suc(suc(y)))");}
-      plus(x,suc(suc(plus(y,!x))))    -> { System.out.println("Matched with: plus(x,suc(suc(plus(y,!x)))), with x=" + `x + " y=" + `y);}
+      plus(x,_)                 -> { System.out.println("Matched with: plus(x,_), with x=" + `x );}
+      plus(x,a@x)                 -> { System.out.println("Matched with: plus(x,x), with x=" + `x + "a=" + `a);}
+      plus(x,a@suc(_))                 -> { System.out.println("Matched with: plus(x,suc(x)), with x=" + `x + "a=" +`a);}
+      d@plus(c@x,b@suc(a@suc(plus(y,x))))    -> { System.out.println("Matched with: plus(x,suc(suc(plus(y,x)))), with x=" + `x + " y=" + `y + " a=" + `a + " b=" + `b + " c=" + `c + " d=" + `d);}
     }
     return null;
+  }
+  
+  public void evaluateList(NatList n) {
+    %match(n) {      
+      conc(X*,_*,X*) -> { System.out.println("Matched with conc(X*,Y*): x*=" + `X + " y*=" + `Y);}
+    }   
   }
 
   //-------------------------------------------------------
@@ -62,7 +66,7 @@ public class ApTest {
     // System.out.println("running..."); 
     Nat one = `suc(zero());
     Nat two = `suc(one);
-    Nat init = `plus(zero(),two);//`plus(one,two);
+    Nat init = `plus(zero(),suc(suc(plus(one,zero()))));//`plus(one,two);
 
 
     System.out.println("Subject : " + init);
