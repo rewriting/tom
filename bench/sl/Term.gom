@@ -1,0 +1,11 @@
+module term
+abstract syntax
+
+Nat = Zero()
+    | Suc(n:Nat)
+    | C(n1:Nat,n2:Nat)
+    | F(n1:Nat,n2:Nat,n3:Nat,n4:Nat,n5:Nat)
+    | M()
+    | N()
+    | P()
+
