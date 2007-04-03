@@ -52,9 +52,6 @@ public class ControlFlowGraphBasicStrategy extends analysis.node.NodeBasicStrate
     Node result = (Node) visit(root);
     arg.getRoot().setNode(result);
     return arg;
-    /**
-    return (ControlFlowGraph) any.visit(arg);
-  */
   }
 
 }

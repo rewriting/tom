@@ -38,7 +38,7 @@ public class GomNsh {
 
 // ------------------------------------------------------------  
   %include { gomterm/gomterm.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 // ------------------------------------------------------------  
  
   public void run(int nbAgent) {

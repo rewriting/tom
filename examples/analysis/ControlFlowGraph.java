@@ -36,14 +36,10 @@ import analysis.node.*;
 import analysis.node.types.*;
 
 import java.util.*;
+import tom.library.sl.*;
 
-import tom.library.strategy.mutraveler.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-
-public class ControlFlowGraph extends DefaultDirectedGraph implements Visitable{
+public class ControlFlowGraph extends DefaultDirectedGraph implements tom.library.sl.Visitable{
 
 	private Vertex root;
 	private List subterms;
@@ -140,22 +136,34 @@ public class ControlFlowGraph extends DefaultDirectedGraph implements Visitable{
 		return subterms.size();
 	}
 
-	public Visitable getChildAt(int i) {
+	public jjtraveler.Visitable getChildAt(int i) {
 		return (ControlFlowGraph) subterms.get(i);
 	}
 
-	public Visitable setChildAt(int i, Visitable child) {
+	public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
 		subterms.set(i,child);  
 		return this;  
 	}
 
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children){
+    subterms.clear();
+    for(int i=0; i<children.length;i++) {
+      setChildAt(i,children[i]);
+    }
+    return this;
+  }
 
-	public boolean verify(VisitableVisitor temporalCond,Vertex n){
-		try{
-			MuTraveler.init(temporalCond).visit(subGraph(n));
-			return true;
-		}catch(VisitFailure e){return false;}
-	}
+  public jjtraveler.Visitable[] getChildren(){
+    return (jjtraveler.Visitable[]) subterms.toArray();
+  }
+
+
+  public boolean verify(Strategy temporalCond,Vertex n){
+    try{
+      temporalCond.fire(subGraph(n));
+      return true;
+    }catch(FireException e){return false;}
+  }
 
 }
 
