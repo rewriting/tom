@@ -1,3 +1,33 @@
+2007-04-02  pem
+  * removed check_stamp
+	* add is_sort(t) in the mapping
+
+2007-03-19  tonio <reilles@loria.fr>
+  * bootinstall
+
+2007-03-18  tonio <reilles@loria.fr>
+  * tom: %gom now takes an optional list of arguments to pass to the gom
+    compiler. We can now write %gom(--termgraph) {...} to get a termgraph
+    enabled data-structure
+  * added "--strategies-mapping" option: with it, the generated tom mapping
+    includes the strategy stuff. "sl.tom" or "mustrategy.tom" must be included
+    when using this option.
+
+2007-03-17  tonio <reilles@loria.fr>
+  * added "mapping" hook: allow to redefine the generated tom mapping for
+    operators or sorts
+  * added "AC" hook: generate AC normalisation function, using the builtin
+    "compareTo" for ordering
+
+2007-03-15  tonio <reilles@loria.fr>
+  * added "make_empty" hook: allow to select how to build an empty list
+  * added "AU" hook: specify associative with neutral operators. the body of
+  the hook optionally contains a redefinition of the neutral element.
+
+2007-03-14  pem <pem@loria.fr>
+  * accept disjunction of builtin constants: f(1|2) for example
+  * fixed PR-2250
+
 2007-01-30  pem <pem@loria.fr>
   * added default make when a %op does not have one
   * list operators are flattened in a backquote expression

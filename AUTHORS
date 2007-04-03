@@ -6,17 +6,18 @@ Current developers:
     Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
 
 Main contributors:
+    Eric Deplagne             ANTLR plugin
     Julien Guyon              Eclipse plugin
     Bertrand Tavernier        CRIL Technology
-    Yoann Toussaint           Strategy construct and ANTLRMapper
 
 Other contributors:
     Gregory Andrien           Plugin-Platform
     Mark van den Brand        Discussions
     Guillaume Darmont         XML extension
-    Stephane Hrvatin          Antlr based parser
+    Stephane Hrvatin          ANTLR based parser
     Anne-Claire Lonchamp      Constraint extension
     Christophe Ringeissen     Initial design of Tom
+    Yoann Toussaint           Strategy construct and ANTLRMapper
     Jurgen Vinju              Many discussions and ApiGen integration
     Patrick Viry              Discussions and backquote notation
     Eelco Visser              Discussions and %match construct
