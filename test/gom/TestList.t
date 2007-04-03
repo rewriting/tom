@@ -14,6 +14,7 @@ public class TestList extends TestCase {
             | b()
     List = conc(Element*)
   }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestList.class));
   }
