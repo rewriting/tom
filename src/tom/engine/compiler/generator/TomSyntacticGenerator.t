@@ -18,35 +18,35 @@ import tom.engine.compiler.*;
  * Syntactic Generator
  */
 public class TomSyntacticGenerator implements TomIBaseGenerator{
-	
-	%include { adt/tomsignature/TomSignature.tom }
-	%include { sl.tom }	
-	
-	public Expression generate(Expression expression){		
-		return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);
-	}
 
-	// If we find ConstraintToExpression it means that this constraint was not processed	
-	%strategy SyntacticGenerator() extends Identity(){
-		visit Expression{
-			// generate is_fsym(t,f) || is_fsym(t,g) || ...
-			ConstraintToExpression(MatchConstraint(SymbolOf(subject),RecordAppl[Option=option,NameList=nameList@(headName,_*),Slots=l])) ->{
-				Expression cond = null;
-				TomType termType = TomConstraintCompiler.getTermTypeFromName(`headName);
-				// add condition for each name
-				%match(nameList){
-					concTomName(_*,name,_*) ->{
-						Expression check = `EqualFunctionSymbol(termType,subject,RecordAppl(option,concTomName(name),l,concConstraint()));
-//[pem] can we consider Or as AU with False() as neutral element: this would remove the test
-				        cond = (cond == null ? check : `Or(check,cond));	
-					}
-				}
-		        return cond;
-			}
-			// generate equality
-			ConstraintToExpression(MatchConstraint(t@Subterm[],u@(Subterm|Variable)[])) ->{				
-				return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);		        		      
-			}			
-		} // end visit
-	} // end strategy	
+  %include { adt/tomsignature/TomSignature.tom }
+  %include { sl.tom }	
+
+  public Expression generate(Expression expression){    
+    return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);
+  }
+
+  // If we find ConstraintToExpression it means that this constraint was not processed	
+  %strategy SyntacticGenerator() extends Identity(){
+    visit Expression{      
+      // generate is_fsym(t,f) || is_fsym(t,g) || ...
+      ConstraintToExpression(MatchConstraint(RecordAppl[Option=option,NameList=nameList@(headName,_*),Slots=l],SymbolOf(subject))) ->{        
+        Expression cond = null;
+        TomType termType = TomConstraintCompiler.getTermTypeFromName(`headName);
+        // add condition for each name
+        %match(nameList){
+          concTomName(_*,name,_*) ->{
+            Expression check = `EqualFunctionSymbol(termType,subject,RecordAppl(option,concTomName(name),l,concConstraint()));
+//          [pem] can we consider Or as AU with False() as neutral element: this would remove the test
+            cond = (cond == null ? check : `Or(check,cond));	
+          }
+        }
+        return cond;
+      }
+      // generate equality
+      ConstraintToExpression(MatchConstraint(t@Subterm[],u@(Subterm|Variable)[])) ->{        
+        return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);		        		      
+      }			
+    } // end visit
+  } // end strategy	
 }
