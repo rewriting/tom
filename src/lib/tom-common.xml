@@ -9,7 +9,6 @@
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
   <property name="tomfork"     value="off"/>
-  <property name="stamp"       value="off"/>
 
   <property environment="env"/>
   <property name="tom.home"    value="${env.TOM_HOME}"/>

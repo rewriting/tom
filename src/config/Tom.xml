@@ -96,9 +96,6 @@
       <boolean name="protected" altName=""
                description="Generate protected functions"
                value="false"/>
-      <boolean name="stamp" altName=""
-               description="Use stamp to simulate concrete ADT"
-               value="false"/>
       <boolean name="eclipse" altName=""
                description="Sets Eclipse mode"
                value="false"/>
