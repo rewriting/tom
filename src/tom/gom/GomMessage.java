@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -118,6 +118,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Module {0} not found. Breaking expansion phase");
   public static final GomMessage expansionIssue =
     new GomMessage("Problems encountered expanding module {0}");
+  public static final GomMessage hookExpansionIssue =
+    new GomMessage("Problems encountered expanding hooks for module {0}");
 
   // GomTypeExpander
   public static final GomMessage orphanedHook =
@@ -128,8 +130,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Hook for operator {0} discarded");
   public static final GomMessage unsupportedHookAlgebraic =
     new GomMessage("Hook type {0} not supported for non algebraic operator");
-  public static final GomMessage badMakeInsertArguments =
-    new GomMessage("Bad arguments for make_insert: expecting 2, but got {0}");
+  public static final GomMessage badHookArguments =
+    new GomMessage("Bad arguments for {0}: expecting 2, but got {1}");
   public static final GomMessage unsupportedHookVariadic =
     new GomMessage("Hook type {0} not supported for non variadic operator");
   public static final GomMessage undeclaredSorts =

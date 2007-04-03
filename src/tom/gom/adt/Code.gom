@@ -1,0 +1,11 @@
+module Code
+imports String Gom Objects
+abstract syntax
+Code = Code(prog:String)
+     | IsEmpty(Var:String,Operator:OperatorDecl)
+     | IsCons(Var:String,Operator:OperatorDecl)
+     | Empty(Operator:OperatorDecl)
+     | Cons(Operator:OperatorDecl)
+     | FullSortClass(Sort:SortDecl)
+     | Compare(LCode:Code,RCode:Code)
+     | CodeList(Code*)

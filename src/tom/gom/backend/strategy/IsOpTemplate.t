@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,16 +40,17 @@ public class IsOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated isOp strategy
    */
-  public IsOpTemplate(ClassName className) {
-    super(className);
-    %match(ClassName className) {
+  public IsOpTemplate(GomClass gomClass) {
+    super(gomClass);
+    ClassName clsName = this.className;
+    %match(clsName) {
       ClassName(pkg,name) -> {
         String newpkg = `pkg.replaceFirst(".types.",".strategy.");
         String newname = "Is_"+`name;
         this.className = `ClassName(newpkg,newname);
       }
     }
-    this.operator = className;
+    this.operator = gomClass.getClassName();
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

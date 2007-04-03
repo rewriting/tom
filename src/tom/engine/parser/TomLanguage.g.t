@@ -3,7 +3,7 @@ header{
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -197,9 +197,9 @@ matchArgument [LinkedList list] throws TomException
 
     //(type:ALL_ID { tomType = `TomTypeAlone(type.getText()); })?
     //(BACKQUOTE)?
-    subject1 = plainTerm[null,0] 
+    subject1 = plainTerm[null,null,0] 
     (BACKQUOTE)?
-    (subject2 = plainTerm[null,0])?
+    (subject2 = plainTerm[null,null,0])?
     {
       if(subject2==null) {
 	//System.out.println("matchArgument = " + subject1);
@@ -217,12 +217,6 @@ matchArgument [LinkedList list] throws TomException
 	  throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
 	}
       }
-
-/*
-    subject = plainTerm[null,0] {
-      System.out.println("subject = " + subject);
-      list.add(subject); 
-*/
     }
         ;
 
@@ -557,7 +551,7 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
                 { listOfLhs = `concTomTerm(listOfLhs*,lhs); }
             )*
  
-            ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,0]
+            ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,null,0]
             (
                 WHERE pattern = annotedTerm AFFECT subject = annotedTerm 
                 { conditionList = `concInstruction(conditionList*,MatchingCondition(pattern,subject)); }
@@ -605,10 +599,20 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
 annotedTerm returns [TomTerm result] throws TomException
 {
     result = null;
+    TomName labeledName = null;
     TomName annotedName = null;
     int line = 0;
 }
     :   (
+            ( 
+                (ALL_ID COLON) => lname:ALL_ID COLON 
+                {
+                    text.append(lname.getText());
+                    text.append(':');
+                    labeledName = `Name(lname.getText());
+                    line = lname.getLine();
+                }
+            )? 
             ( 
                 (ALL_ID AT) => name:ALL_ID AT 
                 {
@@ -619,11 +623,11 @@ annotedTerm returns [TomTerm result] throws TomException
                 }
             )? 
             
-            result = plainTerm[annotedName,line] 
+            result = plainTerm[labeledName,annotedName,line] 
         )
     ;
 
-plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
+plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
     result = null;
     LinkedList constraintList = new LinkedList();
@@ -635,6 +639,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     boolean implicit = false;
     boolean anti = false;
 
+    if(astLabeledName != null) {
+      constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
+    }
     if(astAnnotedName != null) {
       constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
     }
@@ -672,9 +679,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
         |   // for a single constant. 
             // ambiguous with the next rule so :
        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
-            name = headConstant[optionList] 
+            nameList = headConstantList[optionList] 
             {
-	      nameList = `concTomName(nameList*,name);
+	      //nameList = `concTomName(nameList*,name);
 	      optionList.add(`Constant());
 	      result = `TermAppl(
 		  ASTFactory.makeOptionList(optionList),
@@ -1388,9 +1395,21 @@ headSymbol [LinkedList optionList] returns [TomName result]
 	)
 ;
 
+headConstantList [LinkedList optionList] returns [TomNameList result]
+{
+    result = `concTomName();
+    TomName name = null;
+} :
+  name=headConstant[optionList] { result = `concTomName(result*,name); }
+  (
+    ALTERNATIVE { text.append('|'); }
+    name=headConstant[optionList] { result = `concTomName(result*,name); }
+  )*
+;
+
 headConstant [LinkedList optionList] returns [TomName result]
 { 
-    result = null; 
+    result = null;
     Token t;
 } : 
         t=constant // add to symbol table
@@ -1630,7 +1649,7 @@ typeTerm returns [Declaration result] throws TomException
     TargetLanguage implement = null;
     TomForwardType tomFwdType = `EmptyForward();
     DeclarationList declarationList = `concDeclaration();
-		String s;
+    String s;
 }
     :   (
             type:ALL_ID
@@ -1640,13 +1659,11 @@ typeTerm returns [Declaration result] throws TomException
             LBRACE
 
             implement = keywordImplement
-            (    s = keywordVisitorFwd
-								{ tomFwdType = `TLForward(s); }
+            (   s = keywordVisitorFwd
+                { tomFwdType = `TLForward(s); }
             |   attribute = keywordEquals[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordCheckStamp[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordSetStamp[type.getText()]
+            |   attribute = keywordIsSort[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
             |   attribute = keywordGetImplementation[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
@@ -1712,13 +1729,39 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
                 
-                result = `TermsEqualDecl(
+                result = `EqualTermDecl(
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),concConstraint()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
     ;
+
+keywordIsSort[String type] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        (
+            t:IS_SORT 
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            LPAREN name:ALL_ID RPAREN
+            {
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                OptionList option = `concOption(info);
+                
+                selector().push("targetlexer");
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                selector().pop();  
+                
+                result = `IsSortDecl(
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
+                    Return(TargetLanguageToTomTerm(tlCode)), ot);
+            }
+        )
+    ;
+
 keywordGetHead[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
@@ -1870,50 +1913,6 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
 
             result = `IsFsymDecl(astName,
                 Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
-                Return(TargetLanguageToTomTerm(tlCode)),ot);
-        }
-    ;
-
-keywordCheckStamp [String typeString] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        t:CHECK_STAMP
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-        LPAREN name:ALL_ID RPAREN
-        {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            OptionList option = `concOption(info);
-
-            selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-            selector().pop();
-
-            result = `CheckStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
-                TargetLanguageToInstruction(tlCode),ot);
-        }
-    ;
-
-keywordSetStamp [String typeString] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        t:SET_STAMP
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-        LPAREN name:ALL_ID RPAREN
-        {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            OptionList option = `concOption(info);
-
-            selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-            selector().pop();
-
-            result = `SetStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
                 Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
@@ -2151,16 +2150,14 @@ tokens {
     MAKE = "make";
     GET_SLOT = "get_slot";
     IS_FSYM = "is_fsym";
-    CHECK_STAMP = "check_stamp";
-    SET_STAMP = "set_stamp";
     GET_IMPLEMENTATION = "get_implementation";
     EQUALS = "equals";
+    IS_SORT = "is_sort";
     GET_HEAD = "get_head";
     GET_TAIL = "get_tail";
     IS_EMPTY = "is_empty";
     IMPLEMENT = "implement";
     VISITOR_FWD = "visitor_fwd";
-    STAMP = "stamp";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
     WHEN = "when";

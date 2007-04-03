@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,10 +31,12 @@ import tom.gom.tools.error.GomRuntimeException;
 import java.io.*;
 
 public abstract class TemplateClass {
+  protected GomClass gomClass;
   protected ClassName className;
 
-  public TemplateClass(ClassName className) {
-    this.className = className;
+  public TemplateClass(GomClass gomClass) {
+    this.gomClass = gomClass;
+    this.className = gomClass.getClassName();
   }
 
   %include { ../adt/objects/Objects.tom}
@@ -59,7 +61,7 @@ public abstract class TemplateClass {
     return fullClassName(this.className);
   }
 
-  public String fullClassName(ClassName clsName) {
+  public static String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
@@ -148,7 +150,7 @@ public abstract class TemplateClass {
       }
     }
     throw new GomRuntimeException(
-        "TemplateClass:className got a strange ClassName "+clsName);
+        "TemplateClass:classFieldName got a strange ClassName "+clsName);
   }
 
   public void toStringSlotField(StringBuffer res, SlotField slot,
@@ -303,4 +305,42 @@ public abstract class TemplateClass {
   public String isOperatorMethod(ClassName opName) {
     return "is"+className(opName);
   }
+
+  protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
+                        throws java.io.IOException {
+    int index = 0;
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
+      if (index>0) { writer.write(", "); }
+      %match(SlotField slot) {
+        SlotField[Name=slotName,Domain=ClassName[Name=domainName]] -> {
+          writer.write(`slotName);
+          writer.write(":");
+          writer.write(`domainName);
+          index++;
+        }
+      }
+    }
+  }
+
+  protected void slotArgs(java.io.Writer writer, SlotFieldList slotList)
+                        throws java.io.IOException {
+    int index = 0;
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
+      if (index>0) { writer.write(", "); }
+      /* Warning: do not write the 'index' alone, this is not a valid variable
+         name */
+      writer.write("t"+index);
+      index++;
+    }
+  }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    return;
+  }
+
 }

@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,6 @@ import java.util.*;
 
 public class GomEnvironment {
 
-  %include { ../adt/gom/Gom.tom}
   %include { ../adt/objects/Objects.tom}
   /**
    * GomEnvironment uses the Singleton pattern.
@@ -92,7 +91,7 @@ public class GomEnvironment {
   private Map usedBuiltinSorts = new HashMap();
 
   /**
-   * Check is the argument is a builtin module name
+   * Check if the argument is a builtin module name
    * Those are not parsed, since they only declare
    * operators for the tom signature, with no support
    */

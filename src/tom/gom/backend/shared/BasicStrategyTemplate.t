@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,13 +27,24 @@ package tom.gom.backend.shared;
 import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class BasicStrategyTemplate extends TemplateClass {
   ClassName fwd;
 
-  public BasicStrategyTemplate(ClassName className, ClassName fwd) {
-    super(className);
-    this.fwd = fwd;
+  %include { ../../adt/objects/Objects.tom }
+
+  public BasicStrategyTemplate(GomClass basic) {
+    super(basic);
+    %match(basic) {
+      VisitableFwdClass[ClassName=className,
+                        Fwd=FwdClass[ClassName=fwdClass]] -> {
+        this.fwd = `fwdClass;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Wrong argument for BasicStrategyTemplate: " + basic);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -99,6 +110,18 @@ import tom.library.strategy.mutraveler.Position;
       return any;
     }
   }
+
+  public void execute(tom.library.sl.Strategy s) {
+    tom.library.sl.AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
+  public void execute(tom.library.sl.Strategy s, tom.library.sl.Visitable v) {
+    getEnvironment().setSubject(v);
+    tom.library.sl.AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
 
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());

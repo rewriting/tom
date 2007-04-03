@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,41 +26,54 @@ package tom.gom.backend.strategy;
 
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
-public class StratMappingTemplate extends TemplateClass {
+public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../adt/objects/Objects.tom }
 
-  public StratMappingTemplate(ClassName className, GomClassList operatorClasses) {
-    super(className);
-    this.operatorClasses = operatorClasses;
+  public StratMappingTemplate(GomClass gomClass) {
+    super(gomClass);
+    %match(gomClass) {
+      TomMapping[OperatorClasses=ops] -> {
+        this.operatorClasses = `ops;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Wrong argument for MappingTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    generateTomMapping(writer, null);
+  }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+
     writer.write(%[
    /*
    %include { mustrategy.tom }
    */
 ]%);
-    /* XXX: i could introduce an interface providing generateMapping() */
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          OperatorClass[ClassName=opName,
+          op@OperatorClass[ClassName=opName,
                         Slots=slotList],
           _*) -> {
       writer.write(
-        (new tom.gom.backend.strategy.IsOpTemplate(`opName)).generateMapping());
+        (new tom.gom.backend.strategy.IsOpTemplate(`op)).generateMapping());
 
       writer.write(
-        (new tom.gom.backend.strategy.SOpTemplate(`opName,`slotList)).generateMapping());
+        (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
       writer.write(
-          (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping());
+          (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
       writer.write(
-          (new tom.gom.backend.strategy.WhenOpTemplate(`opName)).generateMapping());
+          (new tom.gom.backend.strategy.WhenOpTemplate(`op)).generateMapping());
       }
       concGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,

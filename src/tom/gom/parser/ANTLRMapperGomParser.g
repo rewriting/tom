@@ -27,7 +27,6 @@ header {
 {
   import antlr.LexerSharedInputState;
 }
-//{{{class ANTLRMapperGomParser extends Parser;
 class ANTLRMapperGomParser extends Parser;
 options {
   buildAST = true;  // uses CommonAST by default
@@ -58,7 +57,7 @@ sortdef: SORTS^ (type)* ;
 
 type: i:ID ;
 
-syntax: ABSTRACT! SYNTAX^ (production | hookOperator | hookSortModule |  typedecl)* ;
+syntax: ABSTRACT! SYNTAX^ (production | hookConstruct |  typedecl)* ;
 
 production: id:ID fieldlist ARROW^ type ;
 
@@ -68,43 +67,30 @@ alternatives : (ALT)? id:ID fieldlist (ALT altid:ID fieldlist)* (SEMI)? ;
 
 fieldlist: LEFT_BRACE! (field (COMMA field)* )? RIGHT_BRACE! ;
 
-arglist: LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE! ;
+arglist: (LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE!)? ;
 
-hookOperator
+hookConstruct
 {
   String code = "";
 }
-:! (hookScope:OPERATOR)? pointCut:ID COLON^ hook:hook // '!' turns off auto transform
+:! (hookScope:hookScope)? pointCut:ID COLON^ hook:hook
+ /* '!' turns off auto transform */
 {
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 
-#hookOperator = #(COLON,pointCut,hook);
-#hookOperator.setText(code);
+  if (#hookScope == null) {
+    #hookConstruct = #(COLON,#[OPERATOR],pointCut,hook);
+  } else {
+    #hookConstruct = #(COLON,hookScope,pointCut,hook);
+  }
+  #hookConstruct.setText(code);
 }
 ;
 
-hook: makeHook | otherHook;
+hook: hookType:ID arglist;
 
-makeHook : (MAKE^  | MAKEINSERT^) arglist;
-
-otherHook : BLOCK | INTERFACE | IMPORT;
-
-hookScope : SORT | MODULE;
-
-hookSortModule
-{
-  String code = "";
-}
-:! hookScope:hookScope pointCut:ID COLON^ hook:otherHook
-{
-  BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
-  code = blockparser.block();
-
-#hookSortModule = #(COLON,hookScope,pointCut,hook);
-#hookSortModule.setText(code);
-}
-;
+hookScope : SORT | MODULE | OPERATOR;
 
 field: type STAR^ | id:ID COLON^ type ;
 
@@ -123,32 +109,23 @@ tokens
   SYNTAX   = "syntax";
   SORT     = "sort";
   OPERATOR = "operator";
-  MAKE     = "make";
-  MAKEINSERT   = "make_insert";
-  BLOCK    = "block";
-  INTERFACE = "interface";
   IMPORT  = "import";
 }
 
-ARROW       : "->";
-COLON       : ':';
-COMMA       : ',';
-DOT         : '.';
-LEFT_BRACE  : '(';
+ARROW : "->";
+COLON : ':';
+COMMA : ',';
+DOT : '.';
+LEFT_BRACE : '(';
 RIGHT_BRACE : ')';
-STAR        : '*';
-EQUALS      : '=';
-ALT         : '|';
-SEMI        : ";;";
+STAR : '*';
+EQUALS : '=';
+ALT : '|';
+SEMI : ";;";
 
+LBRACE: '{';
 
-LBRACE
-: '{'
-;
-
-RBRACE
-: '}'
-;
+RBRACE: '}';
 
 WS : ( ' '
        | '\t'
@@ -159,7 +136,7 @@ WS : ( ' '
        ){$setType(Token.SKIP);}
 ;
 SLCOMMENT
-  :       "//"
+  : "//"
     (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
 {
   $setType(Token.SKIP);
@@ -168,7 +145,7 @@ SLCOMMENT
 ;
 
 ML_COMMENT
-  :       "/*"
+  : "/*"
     (
      options {
        generateAmbigWarnings=false;

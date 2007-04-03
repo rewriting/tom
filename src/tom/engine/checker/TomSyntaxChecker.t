@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,7 +222,7 @@ public class TomSyntaxChecker extends TomChecker {
         matchblock:{
           %match(Declaration decl) {
             // Common Macro functions
-            TermsEqualDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
+            EqualTermDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.EQUALS,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
@@ -543,43 +543,50 @@ public class TomSyntaxChecker extends TomChecker {
     for(int i=0 ; i<typeMatchArgs.size() ; i++) {
       //System.out.println("i = " + i);
 block: {
-         if(typeMatchArgs.get(i) == null) {
-           %match(PatternInstructionList patternInstructionList) {
-             concPatternInstruction(_*, PatternInstruction[
-                 Pattern=Pattern[TomList=concTomTerm(X*,subject@(TermAppl|RecordAppl|ListAppl|XMLAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
-               //System.out.println("X.length = " + `X*.length());
-               if(`X*.length() == i) {
-                 TomSymbol symbol = null;
-		 if(`subject.isXMLAppl()) {
-		   symbol = getSymbolFromName(Constants.ELEMENT_NODE);
-		 } else {
-		   symbol = getSymbolFromName(`name);
-		 }
-		 //System.out.println("name = " + `name);
-                 if(symbol!=null) {
-                   TomType type = getSymbolCodomain(symbol);
-                   //System.out.println("type = " + type);
-                   typeMatchArgs.set(i,type);
-		   String typeName = getTomType(`type);
-		   if(!testTypeExistence(typeName)) {
-		     messageError(currentTomStructureOrgTrack.getFileName(),
-			 currentTomStructureOrgTrack.getLine(),
-			 TomMessage.unknownMatchArgumentTypeInSignature,
-			 new Object[]{`name, typeName});
-		   }
+	 if(typeMatchArgs.get(i) == null) {
+	   %match(PatternInstructionList patternInstructionList) {
+	     concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
+	       TomTerm subject = `tmpSubject;
+	       %match(subject) {
+		 AntiTerm(p) -> { subject = `p; }
+	       }
+	       %match(subject) {
+		 (TermAppl|RecordAppl|ListAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {
+		   //System.out.println("X.length = " + `X*.length());
+		   if(`X*.length() == i) {
+		     TomSymbol symbol = null;
+		     if(`subject.isXMLAppl()) {
+		       symbol = getSymbolFromName(Constants.ELEMENT_NODE);
+		     } else {
+		       symbol = getSymbolFromName(`name);
+		     }
+		     //System.out.println("name = " + `name);
+		     if(symbol!=null) {
+		       TomType type = getSymbolCodomain(symbol);
+		       //System.out.println("type = " + type);
+		       typeMatchArgs.set(i,type);
+		       String typeName = getTomType(`type);
+		       if(!testTypeExistence(typeName)) {
+			 messageError(currentTomStructureOrgTrack.getFileName(),
+			     currentTomStructureOrgTrack.getLine(),
+			     TomMessage.unknownMatchArgumentTypeInSignature,
+			     new Object[]{`name, typeName});
+		       }
 
-                   break block;
-                 }
-               }
-             }
-           }
-         }
+		       break block;
+		     }
+		   }
+		 }
+	       }
+	     }
+	   }
+	 }
        }
        if(typeMatchArgs.get(i) == null) {
-            messageError(currentTomStructureOrgTrack.getFileName(),
-                currentTomStructureOrgTrack.getLine(),
-                TomMessage.cannotGuessMatchType,
-                new Object[]{subjectMatchArgs.get(i)});
+	 messageError(currentTomStructureOrgTrack.getFileName(),
+	     currentTomStructureOrgTrack.getLine(),
+	     TomMessage.cannotGuessMatchType,
+	     new Object[]{subjectMatchArgs.get(i)});
        }
     }
 

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,41 +29,43 @@ import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.backend.TemplateClass;
+import tom.gom.backend.CodeGen;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class OperatorTemplate extends TemplateHookedClass {
-  File tomHomePath;
-  List importList;
   ClassName abstractType;
   ClassName extendsType;
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
-  TemplateClass mapping;
 
   %include { ../../adt/objects/Objects.tom}
 
   public OperatorTemplate(File tomHomePath,
-		  				  List importList, 	
-                          ClassName className,
-                          ClassName abstractType,
-                          ClassName extendsType,
-                          ClassName sortName,
-                          ClassName visitor,
-                          SlotFieldList slots,
-                          HookList hooks,
+                          List importList, 	
+                          GomClass gomClass,
                           TemplateClass mapping) {
-    super(className,hooks);
-    this.tomHomePath = tomHomePath;
-    this.importList = importList;
-    this.abstractType = abstractType;
-    this.extendsType = extendsType;;
-    this.sortName = sortName;
-    this.visitor = visitor;
-    this.slotList = slots;
-    this.mapping = mapping;
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      OperatorClass[AbstractType=abstractType,
+                    ExtendsType=extendsType,
+                    Mapping=mapping,
+                    SortName=sortName,
+                    Visitor=visitorName,
+                    Slots=slots,
+                    Hooks=hooks] -> {
+        this.abstractType = `abstractType;
+        this.extendsType = `extendsType;;
+        this.sortName = `sortName;
+        this.visitor = `visitorName;
+        this.slotList = `slots;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for OperatorTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -487,6 +489,10 @@ writer.write(%[
   }
   private int nonBuiltinChildCount() {
     int count = 0;
+    //in case of reference, paths are considered as constants
+    //to avoid traversal inside a path
+    //TODO: in the future Gom replace this code by a hook
+    if(className().equals("Conspath"+sortName.getName())) return count;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
@@ -723,121 +729,124 @@ writer.write(%[
     }
   }
 
-public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
-  if (hooks.isEmptyconcHook()) {
-    writer.write(%[
-        public static @className()@ make(@childListWithType(slotList)@) {
-        proto.initHashCode(@childList(slotList)@);
-        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-        }
+  public void generateConstructor(java.io.Writer writer)
+    throws java.io.IOException {
 
-        ]%);
-  } else { // we have to generate an hidden "real" make
-    writer.write(%[
-        private static @className()@ realMake(@childListWithType(slotList)@) {
-        proto.initHashCode(@childList(slotList)@);
-        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-        }
-
-        ]%);
-    if(hooks.length() > 1) {
-      throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
-    }
-    // then a make function calling it
-    %match(HookList hooks) {
-      concHook(MakeHook(args,code)) -> {
-        // replace the inner make call
+    %match(hooks) {
+      /* If there is no MakeHook */
+      !concHook(_*,MakeHook[],_*) -> {
         writer.write(%[
-            public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
-            @`code@
-            return realMake(@unprotectedChildList(`args)@);
-            }
-
-            ]%);
+        public static @className()@ make(@childListWithType(slotList)@) {
+          proto.initHashCode(@childList(slotList)@);
+          return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+        }
+  ]%);
       }
-    }
-    mapping.generate(writer); 
-  }
-}
-
-/*
- * The function for generating the file is extended, to be able to call Tom if
- * necessary (i.e. if there are user defined hooks)
- */
-public int generateFile() {
-  if (hooks.isEmptyconcHook()) {
-    try {
-      File output = fileToGenerate();
-      // make sure the directory exists
-      output.getParentFile().mkdirs();
-      Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-      generate(writer);
-      writer.flush();
-      writer.close();
-    } catch(Exception e) {
-      e.printStackTrace();
-      return 1;
-    }
-  } else { /* We need to call tom to generate the file */
-    File xmlFile = new File(tomHomePath,"Tom.xml");
-    if(!xmlFile.exists()) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
-    }
-    String file_path = null;
-    try {
-      File output = fileToGenerate();
-      file_path = output.getCanonicalPath();
-    } catch (IOException e) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
-    }
-
-    ArrayList tomParams = new ArrayList();      
-
-    try{
-      Iterator it = importList.iterator();
-      while(it.hasNext()){
-        String importPath = ((File)it.next()).getCanonicalPath();
-        tomParams.add("--import");
-        tomParams.add(importPath);
+   
+      /* If there is at least one MakeHook */
+      lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
+        writer.write(%[
+      private static @className()@ realMake(@childListWithType(slotList)@) {
+        proto.initHashCode(@childList(slotList)@);
+        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
       }
-    }catch(IOException e){
-      getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
-    }
-
-    tomParams.add("-X");
-    tomParams.add(xmlFile.getPath());
-    tomParams.add("--optimize");
-    tomParams.add("--optimize2");
-    tomParams.add("--output");
-    tomParams.add(file_path);
-    tomParams.add("-");     
-
-    //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
-    //String[] params = {"-X",config_xml,"--output",file_path,"-"};
-
-    //System.out.println("params: " + tomParams);
-
-    try {
-      StringWriter gen = new StringWriter();
-      generate(gen);
-      InputStream backupIn = System.in;
-      System.setIn(new DataInputStream(new StringBufferInputStream(gen.toString())));
-      int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
-      //      int res = tom.engine.Tom.exec(params);
-      System.setIn(backupIn);
-      if (res != 0 ) {
-        getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
-        return res;
+      public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+  ]%);
+        SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
+        writer.write(%[
+        return realMake(@unprotectedChildList(bargs)@);
       }
-    } catch(IOException e) {
-      getLogger().log(Level.SEVERE,"Failed generate Tom code: " + e.getMessage());
+  ]%);
+        mapping.generate(writer); 
+        break lbl;
+      }
     }
   }
-  return 0;
-}
 
-/** the class logger instance*/
-private Logger getLogger() {
-  return Logger.getLogger(getClass().getName());
-}
+  public SlotFieldList generateMakeHooks(
+      HookList other,
+      SlotFieldList oArgs, /* will be null if it is the first hook */
+      java.io.Writer writer)
+    throws java.io.IOException {
+    %match(other) {
+      concHook(!MakeHook[],tail*) -> {
+        /* skip non Make hooks */
+        return generateMakeHooks(`tail, oArgs, writer);
+      }
+      concHook(MakeHook(args, code),tail*) -> {
+        /* Rename the previous arguments according to new, if needed */
+        if(oArgs != null && oArgs != `args) {
+          recVarNameRemap(oArgs,`args, writer);
+        }
+        /* Make sure we defeat java dead code detection */
+        writer.write("if (true) {");
+        CodeGen.generateCode(`code,writer);
+        writer.write("}");
+        return generateMakeHooks(`tail, `args, writer);
+      }
+    }
+    return oArgs;
+  }
+
+  private void recVarNameRemap(
+      SlotFieldList oargs,
+      SlotFieldList nargs,
+      java.io.Writer writer)
+  throws java.io.IOException {
+    %match(oargs, nargs) {
+      concSlotField(),concSlotField() -> {
+        return ;
+      }
+      concSlotField(SlotField[Name=oargName,Domain=odomain],to*),
+      concSlotField(SlotField[Name=nargName,Domain=ndomain],tn*) -> {
+        if (!(`odomain==`ndomain)) {
+          throw new GomRuntimeException(
+              "OperatorTemplate: incompatible args "+
+              "should be rejected by typechecker");
+        } else if (!`oargName.equals(`nargName)) {
+          /* XXX: the declaration should be omitted if nargName was previously
+           * used */
+          writer.write(%[
+    @fullClassName(`ndomain)@ @`nargName@ = @`oargName@;
+]%);
+        } /* else nothing to rename */
+        recVarNameRemap(`to,`tn, writer);
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "OperatorTemplate:recVarNameRemap failed " + oargs + " " + nargs);
+  }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    %match(hooks) {
+      !concHook(_*,MappingHook[],_*) -> {
+        writer.write("%op "+className(sortName)+" "+className()+"(");
+        slotDecl(writer,slotList);
+        writer.write(") {\n");
+        writer.write("  is_fsym(t) { t instanceof "+fullClassName()+" }\n");
+        %match(slotList) {
+          concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
+            writer.write("  get_slot("+`slotName+", t) ");
+            writer.write("{ t."+getMethod(`slot)+"() }\n");
+          }
+        }
+        writer.write("  make(");
+        slotArgs(writer,slotList);
+        writer.write(") { ");
+        writer.write(fullClassName());
+        writer.write(".make(");
+        slotArgs(writer,slotList);
+        writer.write(")}\n");
+        writer.write("}\n");
+        writer.write("\n");
+        return;
+      }
+      concHook(_*,MappingHook[Code=code],_*) -> {
+        CodeGen.generateCode(`code,writer);
+      }
+    }
+    return;
+  }
 }

@@ -2,7 +2,7 @@ header{/*
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -414,21 +414,21 @@ xmlAttribute [TomList context] returns [TomTerm result]
                         ),
                         value
                     );
-										if(context != null) {
-										  args = `concTomTerm(context*,args*);
-										}
-										result = `BackQuoteAppl(
-											concOption(ModuleName(TNODE_MODULE_NAME)),
-											Name(Constants.ATTRIBUTE_NODE),
-											args);
+		    if(context != null) {
+		    args = `concTomTerm(context*,args*);
+		    }
+		    result = `BackQuoteAppl(
+		      concOption(ModuleName(TNODE_MODULE_NAME)),
+		      Name(Constants.ATTRIBUTE_NODE),
+		      args);
                 }
             | BQ_STAR
               {
-								result = `VariableStar(
-										concOption(),
-										Name(id.getText()),
-										TomTypeAlone("unknown type"),
-										concConstraint());
+		result = `VariableStar(
+		    concOption(),
+		    Name(id.getText()),
+		    TomTypeAlone("unknown type"),
+		    concConstraint());
               }
             )
         )

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,18 +41,25 @@ public class SOpTemplate extends TemplateClass {
    * The argument is an operator class, and this template generates the
    * assotiated _Op strategy
    */
-  public SOpTemplate(ClassName className,
-                     SlotFieldList slots) {
-    super(className);
-    %match(ClassName className) {
+  public SOpTemplate(GomClass gomClass) {
+    super(gomClass);
+    ClassName clsName = this.className;
+    %match(clsName) {
       ClassName(pkg,name) -> {
         String newpkg = `pkg.replaceFirst(".types.",".strategy.");
         String newname = "_"+`name;
         this.className = `ClassName(newpkg,newname);
       }
     }
-    this.operator = className;
-    this.slotList = slots;
+    %match(gomClass) {
+      OperatorClass[ClassName=opclass,Slots=slots] -> {
+        this.operator = `opclass;
+        this.slotList = `slots;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Wrong argument for SOpTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,13 @@
 
 package tom.gom.backend.shared;
 
+import java.io.*;
+import java.util.*;
+
+import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
@@ -33,22 +38,31 @@ public class SortTemplate extends TemplateHookedClass {
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
   SlotFieldList slotList;
-
+ 
   %include { ../../adt/objects/Objects.tom}
 
-  public SortTemplate(ClassName className,
-                      ClassName abstractType,
-                      ClassName visitor,
-                      ClassNameList operatorList,
-                      ClassNameList variadicOperatorList,
-                      SlotFieldList slots,
-                      HookList hooks) {
-    super(className,hooks);
-    this.abstractType = abstractType;
-    this.visitor = visitor;
-    this.operatorList = operatorList;
-    this.variadicOperatorList = variadicOperatorList;
-    this.slotList = slots;
+  public SortTemplate(File tomHomePath,
+                      List importList, 	
+                      GomClass gomClass,
+                      TemplateClass mapping) {
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      SortClass[AbstractType=abstractType,
+                Visitor=visitor,
+                Operators=ops,
+                Mapping=mapping,
+                VariadicOperators=variops,
+                Slots=slots] -> {
+        this.abstractType = `abstractType;
+        this.visitor = `visitor;
+        this.operatorList = `ops;
+        this.variadicOperatorList = `variops;
+        this.slotList = `slots;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for SortTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -141,13 +155,16 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 ]%);
+    if (! hooks.isEmptyconcHook()) {
+      mapping.generate(writer); 
+    }
   }
-  
-  protected String generateInterface() {
-    String interfaces = super.generateInterface();
-    if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
-    else return interfaces;
-  }
+
+protected String generateInterface() {
+  String interfaces = super.generateInterface();
+  if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
+  else return interfaces;
+}
 
   private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
     ClassNameList consum = `concClassName(operatorList*,variadicOperatorList*);
@@ -163,4 +180,17 @@ writer.write(%[
     }
   }
 
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    writer.write(%[
+%typeterm @className()@ {
+  implement { @fullClassName()@ }
+  is_sort(t) { t instanceof @fullClassName()@ }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { @fullClassName(basicStrategy)@ }
+}
+
+]%);
+    return;
+  }
 }

@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,15 +81,16 @@ public class Expander {
         GomModuleName moduleNameName = (GomModuleName)it.next();
         String moduleName = moduleNameName.getName();
 
-        if(!environment().isBuiltin(moduleName)
-            && !alreadyParsedModule.contains(moduleNameName)) {
-          GomModule importedModule = parse(moduleName);
-          if(importedModule == null) {
-            return null;
-          }
-          result = `concGomModule(result*, importedModule);
-          alreadyParsedModule.add(moduleNameName);
-          newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
+        if(!environment().isBuiltin(moduleName)) {
+          if(!alreadyParsedModule.contains(moduleNameName)) {
+            GomModule importedModule = parse(moduleName);
+            if(importedModule == null) {
+              return null;
+            }
+            result = `concGomModule(result*, importedModule);
+            alreadyParsedModule.add(moduleNameName);
+            newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
+	  }
         } else {
           environment().markUsedBuiltin(moduleName); 
         }

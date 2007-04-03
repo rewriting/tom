@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (C) 2006 INRIA
+ * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,30 +24,53 @@
 
 package tom.gom.backend.shared;
 
+import java.io.*;
+import java.util.*;
+
+import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
   ClassNameList sortList;
 
-  public AbstractTypeTemplate(ClassName className,
-                              ClassName visitor,
-                              ClassNameList sortList,
-                              HookList hooks) {
-    super(className,hooks);
-    this.visitor = visitor;
-    this.sortList = sortList;
+  %include { ../../adt/objects/Objects.tom }
+
+  public AbstractTypeTemplate(File tomHomePath,
+                              List importList,
+                              GomClass gomClass,
+                              TemplateClass mapping) {
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      AbstractTypeClass[Visitor=visitorName,
+                        Mapping=mapping,
+                        SortList=sortList] -> {
+        this.visitor = `visitorName;
+        this.sortList = `sortList;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for AbstractTypeTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    
     writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
 
 public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, tom.library.sl.Visitable, Comparable @generateInterface()@ {
+]%);
 
+    if (! hooks.isEmptyconcHook()) {
+      mapping.generate(writer); 
+    }
+    writer.write(
+%[
 @generateBlock()@
 
   private int uniqueID;
@@ -79,6 +102,6 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
   abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
 }
 ]%);
-  }
+ }
 
 }

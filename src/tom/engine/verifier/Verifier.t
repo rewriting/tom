@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,9 +167,7 @@ public class Verifier extends TomBase {
     while (!instrlist.isEmptyconcInstruction()) {
       Instruction i = (Instruction) instrlist.getHeadconcInstruction();
       instrlist = instrlist.getTailconcInstruction();
-      if (!i.isCheckStamp()) {
-        list = `semicolon(list*,instrFromInstruction(i));
-      }
+      list = `semicolon(list*,instrFromInstruction(i));
     }
     return `sequence(list);
   }
@@ -203,7 +201,7 @@ public class Verifier extends TomBase {
       CompiledPattern[AutomataInst=instr] -> {
         return instrFromInstruction(`instr);
       }
-      AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
+      AbstractBlock(concInstruction(instr)) -> {
         return instrFromInstruction(`instr);
       }
       AbstractBlock(concInstruction(instrlist*)) -> {
@@ -823,65 +821,6 @@ public class Verifier extends TomBase {
       }
     }
     return subject;
-  }
-
-  String tomNumberListToString(TomNumberList numberList) {
-    String result = "";
-    while(!numberList.isEmptyconcTomNumber()) {
-      TomNumber number = numberList.getHeadconcTomNumber();
-      numberList = numberList.getTailconcTomNumber();
-      %match(TomNumber number) {
-        Number(n) -> {
-          result = result + "Number" + Integer.toString(`n);
-        }
-        MatchNumber(Number(n)) -> {
-          result = result + "Match" + Integer.toString(`n);
-        }
-        PatternNumber(Number(n)) -> {
-          result = result + "Pattern" + Integer.toString(`n);
-        }
-        IndexNumber(Number(n)) -> {
-          result = result + "Index" + Integer.toString(`n);
-        }
-        Begin(Number(n)) -> {
-          result = result + "Begin" + Integer.toString(`n);
-        }
-        End(Number(n)) -> {
-          result = result + "End" + Integer.toString(`n);
-        }
-        AbsVar(Number(n)) -> {
-          result = result + "AbsVar" + Integer.toString(`n);
-        }
-        RenamedVar(tomName) -> {
-          String identifier = "Empty";
-          %match(TomName tomName) {
-            Name(name) -> {
-              identifier = `name;
-            }
-            PositionName(localNumberList) -> {
-              identifier = tomNumberListToString(`localNumberList);
-            }
-          }
-          result = result + "RenamedVar" + identifier;
-        }
-        NameNumber(tomName) -> {
-          String identifier = "Empty";
-          %match(TomName tomName) {
-            Name(name) -> {
-              identifier = `name;
-            }
-            PositionName(localNumberList) -> {
-              identifier = tomNumberListToString(`localNumberList);
-            }
-          }
-          result = result + "NameNumber" + identifier;
-        }
-        RuleVar() -> {
-          result = "RuleVar" + result;
-        }
-      }
-    }
-    return result;
   }
 
   private Map buildVariableMap(SubstitutionList sublist, Map map) {

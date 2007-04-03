@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,7 @@ public class BackendPlugin extends GomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator' value='shared' attrName='type' />" +
+    "<boolean name='strategies-mapping' altName='sm' description='Enable strategy mapping support' value='false'/>" +
     "</options>";
 
   /**
@@ -101,9 +102,11 @@ public class BackendPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
-
-    Backend backend = new Backend(TemplateFactory.getFactory(backendType), 
-    		tomHomePath, streamManager.getImportList());
+    boolean strategiesMapping = getOptionBooleanValue("strategies-mapping");
+    Backend backend =
+      new Backend(TemplateFactory.getFactory(backendType),
+                  tomHomePath, strategiesMapping,
+                  streamManager.getImportList());
     backend.generate(classList);
     if(classList == null) {
       getLogger().log(Level.SEVERE,
@@ -112,7 +115,7 @@ public class BackendPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.INFO, "Code generation succeeds");
     }
-  }  
+  }
 
   /**
    * inherited from plugin interface
