@@ -24,25 +24,5 @@ Constraint =
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
 
 ConstraintList = concConstraint(Constraint*)
-
-/** normalization hooks
- *
- * AndConstraint(concConstraint()) -> True
- * AndConstraint(concConstraint(constr)) -> constr
- * AndConstraint(concConstraint(X*,AndConstraint(concConstraint(Y*)),Z*)) -> AndConstraint(concConstraint(X*,Y*,Z*))
- *
- */
- 
-AndConstraint:make(constList){
-	%match(constList){
-		concConstraint() ->{
-			return `TrueConstraint();
-		}
-		concConstraint(element) ->{
-			return `element;
-		}
-		concConstraint(X*,AndConstraint(concConstraint(Y*)),Z*) ->{
-			return `AndConstraint(concConstraint(X*,Y*,Z*));
-		}		
-	}
-}
+AndConstraint:AU() { `True() }
+OrConstraint:AU() { `False() }
