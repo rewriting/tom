@@ -65,7 +65,7 @@ public class TomConstraintCompiler extends TomBase {
             try{
               actionNumber++;              
               Constraint propagationResult = TomPropagationManager.performPropagations(constraint);              
-              Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations(propagationResult, `action);
+              Instruction matchingAutomata = TomGenerationManager.performGenerations(propagationResult, `action);
               
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
