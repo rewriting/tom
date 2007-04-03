@@ -1,23 +1,12 @@
-all:
-	make clean
-	gom AntlrGrammar.gom
-	rm -rf antlrcommons
-	rm -rf antlrrules
-	rm -rf antlrelement
-	./subst antlrgrammar antlrcommons
-	./subst antlrgrammar antlrrules
-	./subst antlrgrammar antlrelement
-	gom -p antlrgrammar AntlrCommons.gom
-	gom -p antlrgrammar AntlrRules.gom
-	gom -p antlrgrammar AntlrElement.gom
-	./modif AntlrGrammar AntlrCommons
-	./modif AntlrGrammar AntlrRules
-	./modif AntlrGrammar AntlrElement
-	tom Gomantlr.t
-	tom gomantlr/*.t
-	tom aterm2antlrgrammar/*.t
-	tom aterm2antlrgrammar/exceptions/*.t
-	tom utils/*.t
+.SUFFIXES: .t .java
+
+.t.java:
+	tom $<
+
+all: antlrgrammar/AntlrGrammar.tom antlrgrammar/antlrcommons/AntlrCommons.tom antlrgrammar/antlrrules/AntlrRules.tom antlrgrammar/antlrelement/AntlrElement.tom Gomantlr.java
+	cd gomantlr;make
+	cd aterm2antlrgrammar;make
+	cd utils;make
 	javac *.java
 	rm -f Gomantlr_Java.gom
 	java Gomantlr Java
@@ -31,3 +20,24 @@ clean:
 	rm -f *~
 	rm -rf `echo $(foreach v,$(wildcard *.gom),$(shell echo $(basename $(v)))) | tr A-Z a-z`
 	rm -rf antlrgrammar
+
+antlrgrammar/AntlrGrammar.tom: AntlrGrammar.gom
+	gom AntlrGrammar.gom
+	rm -rf antlrcommons
+	rm -rf antlrrules
+	rm -rf antlrelement
+	./subst antlrgrammar antlrcommons
+	./subst antlrgrammar antlrrules
+	./subst antlrgrammar antlrelement
+
+antlrgrammar/antlrcommons/AntlrCommons.tom: AntlrCommons.gom
+	gom -p antlrgrammar AntlrCommons.gom
+	./modif AntlrGrammar AntlrCommons
+
+antlrgrammar/antlrrules/AntlrRules.tom: AntlrRules.gom
+	gom -p antlrgrammar AntlrRules.gom
+	./modif AntlrGrammar AntlrRules
+
+antlrgrammar/antlrelement/AntlrElement.tom: AntlrElement.gom
+	gom -p antlrgrammar AntlrElement.gom
+	./modif AntlrGrammar AntlrElement
