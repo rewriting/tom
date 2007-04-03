@@ -1,7 +1,7 @@
 /*
  * ANTLR Mapper
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,13 +48,13 @@ public class ANTLRMapper {
 
     for (int i=0; i<args.length; i++) {
       if (args[i].equals("--srcfile")) {
-	srcfile = args[++i];
+        srcfile = args[++i];
       }
       if (args[i].equals("--destdir")) {
-	destdir = args[++i];
+        destdir = args[++i];
       }
       if (args[i].equals("--package")) {
-	pack = args[++i];
+        pack = args[++i];
       }
     }
     ANTLRMapper antlrMapper = new ANTLRMapper(srcfile,destdir,pack);
@@ -75,7 +75,7 @@ public class ANTLRMapper {
       BufferedReader reader = new BufferedReader(new FileReader(fileName));
       String line = "";
       while(line != null) {
-	line = reader.readLine();
+        line = reader.readLine();
 matchBlock: {
 	      %match(line) {
 		concString('//',_*) -> { /* comment */
@@ -108,7 +108,7 @@ matchBlock: {
     StringBuffer out = new StringBuffer();
     if(packagePrefix.length()>0) {
       out.append(%[package @packagePrefix@;
-	  ]%);
+	]%);
     }
     out.append(%[
 	public class TokenTable {
@@ -131,8 +131,8 @@ matchBlock: {
 	]%);
     try {
       Writer writer = new BufferedWriter(
-	  new FileWriter(destDir + File.separator +
-	    packagePath + File.separator + "TokenTable.java"));
+          new FileWriter(destDir + File.separator +
+            packagePath + File.separator + "TokenTable.java"));
       writer.write(out.toString());
       writer.close();
     } catch (IOException e) {
