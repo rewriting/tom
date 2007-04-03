@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,9 @@ public class Gom {
       );
       return 1;
     }
-    PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Gom.LOGRADICAL);
+    PluginPlatform platform = PluginPlatformFactory.getInstance().create(
+        commandLine,
+        Gom.LOGRADICAL);
     if(platform == null) {
       return 1;
     }

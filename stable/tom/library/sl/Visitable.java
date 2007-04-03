@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

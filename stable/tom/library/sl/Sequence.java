@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,9 +51,14 @@ public class Sequence extends AbstractStrategy {
   }
 
   public void visit() {
+    Visitable subject = getEnvironment().getSubject();
     visitors[FIRST].visit();
     if (getStatus() == Environment.SUCCESS) {
       visitors[THEN].visit();
+    } else {
+      /* restore the subject */
+      /* we are juste intersted in the status */
+      getEnvironment().setSubject(subject);
     }
   }
 }

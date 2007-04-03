@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -69,8 +69,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
 
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
-     if(opNameAST instanceof  tom.engine.adt.tomname.types.TomName ) { { tom.engine.adt.tomname.types.TomName  tom_match1_1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tom_match1_1) ||  false  ) ) { if ( true ) {
- output.write("tom_get_head_" + getTomType(domain) + "(");  } } if ( ( tom_is_fun_sym_Name(tom_match1_1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tom_match1_1); if ( true ) {
+     if(opNameAST instanceof  tom.engine.adt.tomname.types.TomName ) { { tom.engine.adt.tomname.types.TomName  tomMatch1Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch1Position1) ||  false  ) ) { if ( true ) {
+ output.write("tom_get_head_" + getTomType(domain) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch1Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch1Position1); if ( true ) {
  output.write("tom_get_head_" + tom_opName+ "_" + getTomType(domain) + "(");  } } } } }
 
     generate(deep,var,moduleName);
@@ -78,8 +78,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
   
   protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
-     if(opNameAST instanceof  tom.engine.adt.tomname.types.TomName ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tom_match2_1) ||  false  ) ) { if ( true ) {
- output.write("tom_get_element_" + getTomType(domain) + "(");  } } if ( ( tom_is_fun_sym_Name(tom_match2_1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tom_match2_1); if ( true ) {
+     if(opNameAST instanceof  tom.engine.adt.tomname.types.TomName ) { { tom.engine.adt.tomname.types.TomName  tomMatch2Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch2Position1) ||  false  ) ) { if ( true ) {
+ output.write("tom_get_element_" + getTomType(domain) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch2Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch2Position1); if ( true ) {
  output.write("tom_get_element_" + tom_opName+ "_" + getTomType(domain) + "(");  } } } } }
 
 
@@ -90,11 +90,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
  
   protected void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException {
-     if(list instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tom_match3_1=(( tom.engine.adt.tomterm.types.TomTerm )list); if ( ( tom_is_fun_sym_BuildEmptyList(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match3_1_AstName=tom_get_slot_BuildEmptyList_AstName(tom_match3_1); if ( ( tom_is_fun_sym_Name(tom_match3_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match3_1_AstName); if ( true ) {
+     if(list instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tomMatch3Position1=(( tom.engine.adt.tomterm.types.TomTerm )list); if ( ( tom_is_fun_sym_BuildEmptyList(tomMatch3Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1NameNumberAstName=tom_get_slot_BuildEmptyList_AstName(tomMatch3Position1); if ( ( tom_is_fun_sym_Name(tomMatch3Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch3Position1NameNumberAstName); if ( true ) {
 
         output.write("tom_empty_list_" + tom_name+ "()");
         return;
-       } } } } } if ( ( tom_is_fun_sym_BuildConsList(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match3_1_AstName=tom_get_slot_BuildConsList_AstName(tom_match3_1); if ( ( tom_is_fun_sym_Name(tom_match3_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match3_1_AstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildConsList_HeadTerm(tom_match3_1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildConsList_TailTerm(tom_match3_1); if ( true ) {
+       } } } } } if ( ( tom_is_fun_sym_BuildConsList(tomMatch3Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1NameNumberAstName=tom_get_slot_BuildConsList_AstName(tomMatch3Position1); if ( ( tom_is_fun_sym_Name(tomMatch3Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch3Position1NameNumberAstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildConsList_HeadTerm(tomMatch3Position1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildConsList_TailTerm(tomMatch3Position1); if ( true ) {
 
 
         output.write("tom_cons_list_" + tom_name+ "(");
@@ -103,7 +103,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
         generate(deep,tom_tailTerm,moduleName);
         output.write(")");
         return;
-       } } } } } } } if ( ( tom_is_fun_sym_BuildAppendList(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match3_1_AstName=tom_get_slot_BuildAppendList_AstName(tom_match3_1); if ( ( tom_is_fun_sym_Name(tom_match3_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match3_1_AstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildAppendList_HeadTerm(tom_match3_1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildAppendList_TailTerm(tom_match3_1); if ( true ) {
+       } } } } } } } if ( ( tom_is_fun_sym_BuildAppendList(tomMatch3Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1NameNumberAstName=tom_get_slot_BuildAppendList_AstName(tomMatch3Position1); if ( ( tom_is_fun_sym_Name(tomMatch3Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch3Position1NameNumberAstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildAppendList_HeadTerm(tomMatch3Position1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildAppendList_TailTerm(tomMatch3Position1); if ( true ) {
 
 
         output.write("tom_append_list_" + tom_name+ "(");
@@ -112,12 +112,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
         generate(deep,tom_tailTerm,moduleName);
         output.write(")");
         return;
-       } } } } } } } if ( ( tom_is_fun_sym_BuildEmptyArray(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match3_1_AstName=tom_get_slot_BuildEmptyArray_AstName(tom_match3_1); if ( ( tom_is_fun_sym_Name(tom_match3_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match3_1_AstName); { int  tom_size=tom_get_slot_BuildEmptyArray_Size(tom_match3_1); if ( true ) {
+       } } } } } } } if ( ( tom_is_fun_sym_BuildEmptyArray(tomMatch3Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1NameNumberAstName=tom_get_slot_BuildEmptyArray_AstName(tomMatch3Position1); if ( ( tom_is_fun_sym_Name(tomMatch3Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch3Position1NameNumberAstName); { int  tom_size=tom_get_slot_BuildEmptyArray_Size(tomMatch3Position1); if ( true ) {
 
 
         output.write("tom_empty_array_" + tom_name+ "(" + tom_size+ ")");
         return;
-       } } } } } } if ( ( tom_is_fun_sym_BuildConsArray(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match3_1_AstName=tom_get_slot_BuildConsArray_AstName(tom_match3_1); if ( ( tom_is_fun_sym_Name(tom_match3_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match3_1_AstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildConsArray_HeadTerm(tom_match3_1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildConsArray_TailTerm(tom_match3_1); if ( true ) {
+       } } } } } } if ( ( tom_is_fun_sym_BuildConsArray(tomMatch3Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1NameNumberAstName=tom_get_slot_BuildConsArray_AstName(tomMatch3Position1); if ( ( tom_is_fun_sym_Name(tomMatch3Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch3Position1NameNumberAstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildConsArray_HeadTerm(tomMatch3Position1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildConsArray_TailTerm(tomMatch3Position1); if ( true ) {
 
 
         output.write("tom_cons_array_" + tom_name+ "(");
@@ -126,7 +126,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
         generate(deep,tom_tailTerm,moduleName);
         output.write(")");
         return;
-       } } } } } } } if ( ( tom_is_fun_sym_BuildAppendArray(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match3_1_AstName=tom_get_slot_BuildAppendArray_AstName(tom_match3_1); if ( ( tom_is_fun_sym_Name(tom_match3_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match3_1_AstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildAppendArray_HeadTerm(tom_match3_1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildAppendArray_TailTerm(tom_match3_1); if ( true ) {
+       } } } } } } } if ( ( tom_is_fun_sym_BuildAppendArray(tomMatch3Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1NameNumberAstName=tom_get_slot_BuildAppendArray_AstName(tomMatch3Position1); if ( ( tom_is_fun_sym_Name(tomMatch3Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch3Position1NameNumberAstName); { tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tom_get_slot_BuildAppendArray_HeadTerm(tomMatch3Position1); { tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tom_get_slot_BuildAppendArray_TailTerm(tomMatch3Position1); if ( true ) {
 
 
         output.write("tom_append_array_" + tom_name+ "(");

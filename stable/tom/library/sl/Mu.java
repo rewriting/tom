@@ -59,6 +59,7 @@ public class Mu extends AbstractStrategy {
 class MuStrategyTopDown {
   private static boolean tom_terms_equal_MuStrategy(Object t1, Object t2) {  return 
 
+
 t1.equals(t2) ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strategy  t) {  return 
 
 
@@ -91,14 +92,14 @@ t1.equals(t2) ;}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Stra
   }
 
   public void visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-     if(any instanceof  tom.library.sl.Strategy ) { { tom.library.sl.Strategy  tom_match1_1=(( tom.library.sl.Strategy )any); if ( ( tom_is_fun_sym_Mu(tom_match1_1) ||  false  ) ) { { tom.library.sl.Strategy  tom_match1_1_s1=tom_get_slot_Mu_s1(tom_match1_1); if ( ( tom_is_fun_sym_MuVar(tom_match1_1_s1) ||  false  ) ) { { tom.library.sl.Strategy  tom_var=tom_match1_1_s1; { tom.library.sl.Strategy  tom_v=tom_get_slot_Mu_s2(tom_match1_1); { tom.library.sl.Strategy  tom_m=tom_match1_1; if ( true ) {
+     if(any instanceof  tom.library.sl.Strategy ) { { tom.library.sl.Strategy  tomMatch1Position1=(( tom.library.sl.Strategy )any); if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) { { tom.library.sl.Strategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1); if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) { { tom.library.sl.Strategy  tom_var=tomMatch1Position1NameNumbers1; { tom.library.sl.Strategy  tom_v=tom_get_slot_Mu_s2(tomMatch1Position1); { tom.library.sl.Strategy  tom_m=tomMatch1Position1; if ( true ) {
 
         stack.addFirst(tom_m);
         visit(tom_v);
         visit(tom_var);
         stack.removeFirst();
         return;
-       } } } } } } } if ( ( tom_is_fun_sym_MuVar(tom_match1_1) ||  false  ) ) { { String  tom_n=tom_get_slot_MuVar_var(tom_match1_1); { tom.library.sl.Strategy  tom_var=tom_match1_1; if ( true ) {
+       } } } } } } } if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1) ||  false  ) ) { { String  tom_n=tom_get_slot_MuVar_var(tomMatch1Position1); { tom.library.sl.Strategy  tom_var=tomMatch1Position1; if ( true ) {
 
 
         MuVar muvar = (MuVar)tom_var;

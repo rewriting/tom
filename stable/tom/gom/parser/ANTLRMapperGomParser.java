@@ -305,12 +305,8 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 				production();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
-			else if ((LA(1)==ID||LA(1)==OPERATOR) && (LA(2)==ID||LA(2)==COLON)) {
-				hookOperator();
-				astFactory.addASTChild(currentAST, returnAST);
-			}
-			else if ((LA(1)==MODULE||LA(1)==SORT)) {
-				hookSortModule();
+			else if ((_tokenSet_0.member(LA(1))) && (LA(2)==ID||LA(2)==COLON)) {
+				hookConstruct();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
 			else if ((LA(1)==ID) && (LA(2)==EQUALS)) {
@@ -367,15 +363,14 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		returnAST = production_AST;
 	}
 	
-	public final void hookOperator() throws RecognitionException, TokenStreamException {
+	public final void hookConstruct() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
-		AST hookOperator_AST = null;
-		Token  typeId = null;
-		AST typeId_AST = null;
-		Token  id = null;
-		AST id_AST = null;
+		AST hookConstruct_AST = null;
+		AST hookScope_AST = null;
+		Token  pointCut = null;
+		AST pointCut_AST = null;
 		AST hook_AST = null;
 		
 		String code = "";
@@ -383,11 +378,12 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		
 		{
 		switch ( LA(1)) {
+		case MODULE:
+		case SORT:
 		case OPERATOR:
 		{
-			typeId = LT(1);
-			typeId_AST = astFactory.create(typeId);
-			match(OPERATOR);
+			hookScope();
+			hookScope_AST = (AST)returnAST;
 			break;
 		}
 		case ID:
@@ -400,65 +396,31 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		}
 		}
 		}
-		id = LT(1);
-		id_AST = astFactory.create(id);
+		pointCut = LT(1);
+		pointCut_AST = astFactory.create(pointCut);
 		match(ID);
 		AST tmp9_AST = null;
 		tmp9_AST = astFactory.create(LT(1));
 		match(COLON);
 		hook();
 		hook_AST = (AST)returnAST;
-		hookOperator_AST = (AST)currentAST.root;
+		hookConstruct_AST = (AST)currentAST.root;
 		
 		BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
 		code = blockparser.block();
 		
-		hookOperator_AST = (AST)astFactory.make( (new ASTArray(3)).add(tmp9_AST).add(id_AST).add(hook_AST));
-		hookOperator_AST.setText(code);
+		if (hookScope_AST == null) {
+		hookConstruct_AST = (AST)astFactory.make( (new ASTArray(4)).add(tmp9_AST).add(astFactory.create(OPERATOR)).add(pointCut_AST).add(hook_AST));
+		} else {
+		hookConstruct_AST = (AST)astFactory.make( (new ASTArray(4)).add(tmp9_AST).add(hookScope_AST).add(pointCut_AST).add(hook_AST));
+		}
+		hookConstruct_AST.setText(code);
 		
-		currentAST.root = hookOperator_AST;
-		currentAST.child = hookOperator_AST!=null &&hookOperator_AST.getFirstChild()!=null ?
-			hookOperator_AST.getFirstChild() : hookOperator_AST;
+		currentAST.root = hookConstruct_AST;
+		currentAST.child = hookConstruct_AST!=null &&hookConstruct_AST.getFirstChild()!=null ?
+			hookConstruct_AST.getFirstChild() : hookConstruct_AST;
 		currentAST.advanceChildToEnd();
-		returnAST = hookOperator_AST;
-	}
-	
-	public final void hookSortModule() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST hookSortModule_AST = null;
-		AST typeId_AST = null;
-		Token  id = null;
-		AST id_AST = null;
-		AST hook_AST = null;
-		
-		String code = "";
-		
-		
-		typeId();
-		typeId_AST = (AST)returnAST;
-		id = LT(1);
-		id_AST = astFactory.create(id);
-		match(ID);
-		AST tmp10_AST = null;
-		tmp10_AST = astFactory.create(LT(1));
-		match(COLON);
-		otherHook();
-		hook_AST = (AST)returnAST;
-		hookSortModule_AST = (AST)currentAST.root;
-		
-		BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
-		code = blockparser.block();
-		
-		hookSortModule_AST = (AST)astFactory.make( (new ASTArray(4)).add(tmp10_AST).add(typeId_AST).add(id_AST).add(hook_AST));
-		hookSortModule_AST.setText(code);
-		
-		currentAST.root = hookSortModule_AST;
-		currentAST.child = hookSortModule_AST!=null &&hookSortModule_AST.getFirstChild()!=null ?
-			hookSortModule_AST.getFirstChild() : hookSortModule_AST;
-		currentAST.advanceChildToEnd();
-		returnAST = hookSortModule_AST;
+		returnAST = hookConstruct_AST;
 	}
 	
 	public final void typedecl() throws RecognitionException, TokenStreamException {
@@ -473,9 +435,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		id_AST = astFactory.create(id);
 		astFactory.addASTChild(currentAST, id_AST);
 		match(ID);
-		AST tmp11_AST = null;
-		tmp11_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp11_AST);
+		AST tmp10_AST = null;
+		tmp10_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp10_AST);
 		match(EQUALS);
 		alternatives();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -500,9 +462,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 			_loop31:
 			do {
 				if ((LA(1)==COMMA)) {
-					AST tmp13_AST = null;
-					tmp13_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp13_AST);
+					AST tmp12_AST = null;
+					tmp12_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp12_AST);
 					match(COMMA);
 					field();
 					astFactory.addASTChild(currentAST, returnAST);
@@ -544,9 +506,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case ALT:
 		{
-			AST tmp15_AST = null;
-			tmp15_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp15_AST);
+			AST tmp14_AST = null;
+			tmp14_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp14_AST);
 			match(ALT);
 			break;
 		}
@@ -570,9 +532,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		_loop26:
 		do {
 			if ((LA(1)==ALT)) {
-				AST tmp16_AST = null;
-				tmp16_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp16_AST);
+				AST tmp15_AST = null;
+				tmp15_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp15_AST);
 				match(ALT);
 				altid = LT(1);
 				altid_AST = astFactory.create(altid);
@@ -591,9 +553,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case SEMI:
 		{
-			AST tmp17_AST = null;
-			tmp17_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp17_AST);
+			AST tmp16_AST = null;
+			tmp16_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp16_AST);
 			match(SEMI);
 			break;
 		}
@@ -602,8 +564,8 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		case ID:
 		case SORTS:
 		case ABSTRACT:
-		case OPERATOR:
 		case SORT:
+		case OPERATOR:
 		{
 			break;
 		}
@@ -628,9 +590,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		if ((LA(1)==ID) && (LA(2)==STAR)) {
 			type();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp18_AST = null;
-			tmp18_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp18_AST);
+			AST tmp17_AST = null;
+			tmp17_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp17_AST);
 			match(STAR);
 			field_AST = (AST)currentAST.root;
 		}
@@ -639,9 +601,9 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 			id_AST = astFactory.create(id);
 			astFactory.addASTChild(currentAST, id_AST);
 			match(ID);
-			AST tmp19_AST = null;
-			tmp19_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp19_AST);
+			AST tmp18_AST = null;
+			tmp18_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp18_AST);
 			match(COLON);
 			type();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -664,37 +626,60 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		Token  supplarg = null;
 		AST supplarg_AST = null;
 		
-		match(LEFT_BRACE);
 		{
 		switch ( LA(1)) {
-		case ID:
+		case LEFT_BRACE:
 		{
-			arg = LT(1);
-			arg_AST = astFactory.create(arg);
-			astFactory.addASTChild(currentAST, arg_AST);
-			match(ID);
+			match(LEFT_BRACE);
 			{
-			_loop35:
-			do {
-				if ((LA(1)==COMMA)) {
-					AST tmp21_AST = null;
-					tmp21_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp21_AST);
-					match(COMMA);
-					supplarg = LT(1);
-					supplarg_AST = astFactory.create(supplarg);
-					astFactory.addASTChild(currentAST, supplarg_AST);
-					match(ID);
+			switch ( LA(1)) {
+			case ID:
+			{
+				arg = LT(1);
+				arg_AST = astFactory.create(arg);
+				astFactory.addASTChild(currentAST, arg_AST);
+				match(ID);
+				{
+				_loop36:
+				do {
+					if ((LA(1)==COMMA)) {
+						AST tmp20_AST = null;
+						tmp20_AST = astFactory.create(LT(1));
+						astFactory.addASTChild(currentAST, tmp20_AST);
+						match(COMMA);
+						supplarg = LT(1);
+						supplarg_AST = astFactory.create(supplarg);
+						astFactory.addASTChild(currentAST, supplarg_AST);
+						match(ID);
+					}
+					else {
+						break _loop36;
+					}
+					
+				} while (true);
 				}
-				else {
-					break _loop35;
-				}
-				
-			} while (true);
+				break;
 			}
+			case RIGHT_BRACE:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			match(RIGHT_BRACE);
 			break;
 		}
-		case RIGHT_BRACE:
+		case EOF:
+		case MODULE:
+		case ID:
+		case SORTS:
+		case ABSTRACT:
+		case SORT:
+		case OPERATOR:
 		{
 			break;
 		}
@@ -704,9 +689,50 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		}
 		}
 		}
-		match(RIGHT_BRACE);
 		arglist_AST = (AST)currentAST.root;
 		returnAST = arglist_AST;
+	}
+	
+	public final void hookScope() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST hookScope_AST = null;
+		
+		switch ( LA(1)) {
+		case SORT:
+		{
+			AST tmp22_AST = null;
+			tmp22_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp22_AST);
+			match(SORT);
+			hookScope_AST = (AST)currentAST.root;
+			break;
+		}
+		case MODULE:
+		{
+			AST tmp23_AST = null;
+			tmp23_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp23_AST);
+			match(MODULE);
+			hookScope_AST = (AST)currentAST.root;
+			break;
+		}
+		case OPERATOR:
+		{
+			AST tmp24_AST = null;
+			tmp24_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp24_AST);
+			match(OPERATOR);
+			hookScope_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = hookScope_AST;
 	}
 	
 	public final void hook() throws RecognitionException, TokenStreamException {
@@ -714,142 +740,17 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
 		AST hook_AST = null;
+		Token  hookType = null;
+		AST hookType_AST = null;
 		
-		switch ( LA(1)) {
-		case MAKE:
-		case MAKEINSERT:
-		{
-			makeHook();
-			astFactory.addASTChild(currentAST, returnAST);
-			hook_AST = (AST)currentAST.root;
-			break;
-		}
-		case BLOCK:
-		case INTERFACE:
-		case IMPORT:
-		{
-			otherHook();
-			astFactory.addASTChild(currentAST, returnAST);
-			hook_AST = (AST)currentAST.root;
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		returnAST = hook_AST;
-	}
-	
-	public final void makeHook() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST makeHook_AST = null;
-		
-		{
-		switch ( LA(1)) {
-		case MAKE:
-		{
-			AST tmp23_AST = null;
-			tmp23_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp23_AST);
-			match(MAKE);
-			break;
-		}
-		case MAKEINSERT:
-		{
-			AST tmp24_AST = null;
-			tmp24_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp24_AST);
-			match(MAKEINSERT);
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		}
+		hookType = LT(1);
+		hookType_AST = astFactory.create(hookType);
+		astFactory.addASTChild(currentAST, hookType_AST);
+		match(ID);
 		arglist();
 		astFactory.addASTChild(currentAST, returnAST);
-		makeHook_AST = (AST)currentAST.root;
-		returnAST = makeHook_AST;
-	}
-	
-	public final void otherHook() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST otherHook_AST = null;
-		
-		switch ( LA(1)) {
-		case BLOCK:
-		{
-			AST tmp25_AST = null;
-			tmp25_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp25_AST);
-			match(BLOCK);
-			otherHook_AST = (AST)currentAST.root;
-			break;
-		}
-		case INTERFACE:
-		{
-			AST tmp26_AST = null;
-			tmp26_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp26_AST);
-			match(INTERFACE);
-			otherHook_AST = (AST)currentAST.root;
-			break;
-		}
-		case IMPORT:
-		{
-			AST tmp27_AST = null;
-			tmp27_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp27_AST);
-			match(IMPORT);
-			otherHook_AST = (AST)currentAST.root;
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		returnAST = otherHook_AST;
-	}
-	
-	public final void typeId() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST typeId_AST = null;
-		
-		switch ( LA(1)) {
-		case SORT:
-		{
-			AST tmp28_AST = null;
-			tmp28_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp28_AST);
-			match(SORT);
-			typeId_AST = (AST)currentAST.root;
-			break;
-		}
-		case MODULE:
-		{
-			AST tmp29_AST = null;
-			tmp29_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp29_AST);
-			match(MODULE);
-			typeId_AST = (AST)currentAST.root;
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		returnAST = typeId_AST;
+		hook_AST = (AST)currentAST.root;
+		returnAST = hook_AST;
 	}
 	
 	
@@ -873,16 +774,12 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		"LEFT_BRACE",
 		"COMMA",
 		"RIGHT_BRACE",
-		"\"operator\"",
 		"COLON",
-		"\"make\"",
-		"\"make_insert\"",
-		"\"block\"",
-		"\"interface\"",
-		"\"import\"",
 		"\"sort\"",
+		"\"operator\"",
 		"STAR",
 		"\"private\"",
+		"\"import\"",
 		"LBRACE",
 		"RBRACE",
 		"WS",
@@ -894,5 +791,10 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		tokenTypeToASTClassMap=null;
 	};
 	
+	private static final long[] mk_tokenSet_0() {
+		long[] data = { 3145776L, 0L};
+		return data;
+	}
+	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	
 	}

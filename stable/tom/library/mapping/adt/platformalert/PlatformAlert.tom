@@ -5,6 +5,7 @@
 
 %typeterm AlertList {
   implement { tom.platform.adt.platformalert.types.AlertList }
+ is_sort(t) { t instanceof tom.platform.adt.platformalert.types.AlertList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.platform.adt.platformalert.PlatformAlertBasicStrategy }
 }
@@ -12,6 +13,7 @@
 
 %typeterm Alert {
   implement { tom.platform.adt.platformalert.types.Alert }
+ is_sort(t) { t instanceof tom.platform.adt.platformalert.types.Alert}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.platform.adt.platformalert.PlatformAlertBasicStrategy }
 }

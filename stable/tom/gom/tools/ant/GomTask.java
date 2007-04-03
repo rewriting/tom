@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,8 @@ import org.apache.tools.ant.taskdefs.Java;
  * <li>options</li>
  * <li>failonerror</li>
  * <li>fork</li>
- * <li>reference</li>
+ * <li>termgraph</li>
+ * <li>pointer</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -72,7 +73,9 @@ public class GomTask extends MatchingTask {
   private boolean verbose = false;
   private boolean failOnError = true;
   private boolean fork = false;
-  private boolean reference = false;
+  private boolean pointer = false;
+  private boolean termgraph = false;
+
   private String protectedFileSeparator = "\\"+File.separatorChar;
 
   private Java javaRunner;
@@ -130,19 +133,35 @@ public class GomTask extends MatchingTask {
   }
 
   /**
-   * If true, asks the compiler for Gom signature with references.
-   * @param reference if true, asks the compiler for Gom signature with references
+   * If true, asks the compiler for Gom signature with pointers.
+   * @param pointer if true, asks the compiler for Gom signature with pointers
    */
-  public void setReference(boolean reference) {
-    this.reference = reference;
+  public void setPointer(boolean pointer) {
+    this.pointer = pointer;
   }
 
   /**
-   * Gets the reference flag.
-   * @return the reference flag
+   * Gets the pointer flag.
+   * @return the pointer flag
    */
-  public boolean getReference() {
-    return reference;
+  public boolean getPointer() {
+    return pointer;
+  }
+
+  /**
+   * If true, asks the compiler for Gom signature with pointers.
+   * @param termgraph if true, asks the compiler for Gom signature with pointers
+   */
+  public void setTermgraph(boolean termgraph) {
+    this.termgraph = termgraph;
+  }
+
+  /**
+   * Gets the termgraph flag.
+   * @return the termgraph flag
+   */
+  public boolean getTermgraph() {
+    return termgraph;
   }
 
   /**
@@ -283,8 +302,11 @@ public class GomTask extends MatchingTask {
       if(getVerbose() == true) {
         javaRunner.createArg().setValue("--verbose");
       }
-      if(getReference() == true) {
-        javaRunner.createArg().setValue("--reference");
+      if(getTermgraph() == true) {
+        javaRunner.createArg().setValue("--termgraph");
+      }
+      if(getPointer() == true) {
+        javaRunner.createArg().setValue("--pointer");
       }
 
 

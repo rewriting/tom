@@ -4,7 +4,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -70,36 +70,34 @@ public interface TomParserTokenTypes {
 	int IMPLEMENT = 40;
 	int VISITOR_FWD = 41;
 	int EQUALS = 42;
-	int GET_HEAD = 43;
-	int GET_TAIL = 44;
-	int IS_EMPTY = 45;
-	int GET_ELEMENT = 46;
-	int GET_SIZE = 47;
-	int IS_FSYM = 48;
-	int CHECK_STAMP = 49;
-	int SET_STAMP = 50;
-	int GET_IMPLEMENTATION = 51;
-	int GET_SLOT = 52;
-	int MAKE = 53;
-	int MAKE_EMPTY = 54;
-	int MAKE_INSERT = 55;
-	int MAKE_APPEND = 56;
-	int STAMP = 57;
-	int DOULEARROW = 58;
-	int DOUBLE_QUOTE = 59;
-	int WS = 60;
-	int SLCOMMENT = 61;
-	int ML_COMMENT = 62;
-	int ESC = 63;
-	int HEX_DIGIT = 64;
-	int LETTER = 65;
-	int DIGIT = 66;
-	int ID = 67;
-	int ID_MINUS = 68;
-	int MINUS = 69;
-	int PLUS = 70;
-	int QUOTE = 71;
-	int EXPONENT = 72;
-	int DOT = 73;
-	int FLOAT_SUFFIX = 74;
+	int IS_SORT = 43;
+	int GET_HEAD = 44;
+	int GET_TAIL = 45;
+	int IS_EMPTY = 46;
+	int GET_ELEMENT = 47;
+	int GET_SIZE = 48;
+	int IS_FSYM = 49;
+	int GET_IMPLEMENTATION = 50;
+	int GET_SLOT = 51;
+	int MAKE = 52;
+	int MAKE_EMPTY = 53;
+	int MAKE_INSERT = 54;
+	int MAKE_APPEND = 55;
+	int DOULEARROW = 56;
+	int DOUBLE_QUOTE = 57;
+	int WS = 58;
+	int SLCOMMENT = 59;
+	int ML_COMMENT = 60;
+	int ESC = 61;
+	int HEX_DIGIT = 62;
+	int LETTER = 63;
+	int DIGIT = 64;
+	int ID = 65;
+	int ID_MINUS = 66;
+	int MINUS = 67;
+	int PLUS = 68;
+	int QUOTE = 69;
+	int EXPONENT = 70;
+	int DOT = 71;
+	int FLOAT_SUFFIX = 72;
 }

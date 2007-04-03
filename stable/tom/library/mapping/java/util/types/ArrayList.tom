@@ -31,7 +31,6 @@
 
 %typeterm ArrayList {
   implement      { java.util.ArrayList }
+  is_sort(t)      { t instanceof java.util.ArrayList }
   equals(l1,l2)  { l1.equals(l2) }
-  check_stamp(l) {}
-  set_stamp(l)   { l }  
 }

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,6 +83,17 @@ public abstract class AbstractStrategy implements Strategy {
 
   public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
     return v.visit_Strategy(this);
+  }
+
+  public void execute(Strategy s) {
+    AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
+  public void execute(Strategy s, Visitable v) {
+    setSubject(v);
+    AbstractStrategy.init(s,getEnvironment());
+    s.visit();
   }
 
   public Visitable fire(Visitable any) {

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -174,13 +174,16 @@ public class Environment implements Cloneable {
    * set the current term
    */
   public void setSubject(Visitable root) {
+    //System.out.println("setsubject "+root);
+    //System.out.println("in the env "+this);
     this.subterm[size-1] = root;
   }
+
   /**
    * get the current sub-position
    * @return the current sub-position
    */
-  protected int getSubOmega() {
+  public int getSubOmega() {
     return omega[size-1];
   }
 
@@ -191,7 +194,7 @@ public class Environment implements Cloneable {
   public Position getPosition() {
     int[] reducedOmega = new int[depth()];
     System.arraycopy(omega,1,reducedOmega,0,depth());
-    return Position.makeAbsolutePosition(reducedOmega);
+    return new Position(reducedOmega);
   }
 
 
@@ -237,18 +240,21 @@ public class Environment implements Cloneable {
   }
 
 
-  public void goTo(Position posRelative) {
-    if(posRelative.isRelative()){
-      int[] pos = posRelative.toArray();
-      int pos_back = pos[0];
-      int pos_length = pos.length;
-      for(int i=0;i<pos_back;i++){
-        up();
-      }
-      if(pos_length>1){
-        for(int i=1;i<pos_length;i++){
-          down(pos[i]);
+  public void goTo(Path path) {
+    Path normalizedPath = path.normalize();
+    int length = normalizedPath.length();
+    for(int i=0;i<length;i++) {
+      int head = normalizedPath.getHead();
+      normalizedPath = normalizedPath.getTail();
+      if(head>0){
+        down(head);
+        if (getSubject() instanceof Path && !(normalizedPath.length()==0)) {
+          // we do not want to follow the last reference
+          goTo((Path)getSubject());
         }
+      } else {
+        //verify that getsubomega() = -head
+        up();
       }
     }
   }

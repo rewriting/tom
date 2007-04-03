@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2006 INRIA
+ * Copyright (c) 2000-2007 INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,6 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>pretty</li>
  * <li>verbose</li>
  * <li>failonerror</li>
- * <li>stamp</li>
  * <li>nowarn</li>
  * <li>fork</li>
  * </ul>
@@ -80,7 +79,6 @@ public class TomTask extends MatchingTask {
   private String logPropertiesFile;
   private File outputFile;
   private boolean verbose = false;
-  private boolean stamp = false;
   private boolean nowarn = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
@@ -255,19 +253,6 @@ public class TomTask extends MatchingTask {
    */
   public void setVerbose(boolean verbose) {
     this.verbose = verbose;
-  }
-
-  /**
-   * If true, asks the compiler to generate matching code for abstract
-   * data-type.
-   * @param stamp if true, asks the compiler to generate code with stamps
-   */
-  public void setStamp(boolean stamp) {
-    this.stamp = stamp;
-  }
-
-  public boolean getStamp() {
-    return stamp;
   }
 
   /**
@@ -523,9 +508,6 @@ public class TomTask extends MatchingTask {
       }
       if(pretty == true) {
         javaRunner.createArg().setValue("--pretty");
-      }
-      if(stamp == true) {
-        javaRunner.createArg().setValue("--stamp");
       }
       if(nowarn == false) {
         javaRunner.createArg().setValue("--wall");

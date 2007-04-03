@@ -3,6 +3,52 @@
    %include { mustrategy.tom }
    */
 
+%op Strategy Is_EmptyconcTNode() {
+  make() { `When_EmptyconcTNode(Identity()) }
+}
+
+%op Strategy _EmptyconcTNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode)}
+
+  make() { new tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode() }
+}
+
+%op Strategy Make_EmptyconcTNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode)}
+
+  make() { new tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode() }
+}
+
+%op Strategy When_EmptyconcTNode(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.When_EmptyconcTNode)}
+  make(s) { new tom.library.adt.tnode.strategy.tnodelist.When_EmptyconcTNode(s) }
+}
+
+%op Strategy Is_ConsconcTNode() {
+  make() { `When_ConsconcTNode(Identity()) }
+}
+
+%op Strategy _ConsconcTNode(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode(arg0, arg1) }
+}
+
+%op Strategy Make_ConsconcTNode(_HeadconcTNode:Strategy, _TailconcTNode:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode)}
+
+  get_slot(_HeadconcTNode, t) { _HeadconcTNode }
+  get_slot(_TailconcTNode, t) { _TailconcTNode }
+  make( new_HeadconcTNode,  new_TailconcTNode) { new tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode( new_HeadconcTNode,  new_TailconcTNode) }
+}
+
+%op Strategy When_ConsconcTNode(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.When_ConsconcTNode)}
+  make(s) { new tom.library.adt.tnode.strategy.tnodelist.When_ConsconcTNode(s) }
+}
+
 %op Strategy Is_EmptyNode() {
   make() { `When_EmptyNode(Identity()) }
 }
@@ -305,52 +351,6 @@
 %op Strategy When_NotationNode(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_NotationNode)}
   make(s) { new tom.library.adt.tnode.strategy.tnode.When_NotationNode(s) }
-}
-
-%op Strategy Is_EmptyconcTNode() {
-  make() { `When_EmptyconcTNode(Identity()) }
-}
-
-%op Strategy _EmptyconcTNode() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode)}
-
-  make() { new tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode() }
-}
-
-%op Strategy Make_EmptyconcTNode() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode)}
-
-  make() { new tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode() }
-}
-
-%op Strategy When_EmptyconcTNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.When_EmptyconcTNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnodelist.When_EmptyconcTNode(s) }
-}
-
-%op Strategy Is_ConsconcTNode() {
-  make() { `When_ConsconcTNode(Identity()) }
-}
-
-%op Strategy _ConsconcTNode(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode(arg0, arg1) }
-}
-
-%op Strategy Make_ConsconcTNode(_HeadconcTNode:Strategy, _TailconcTNode:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode)}
-
-  get_slot(_HeadconcTNode, t) { _HeadconcTNode }
-  get_slot(_TailconcTNode, t) { _TailconcTNode }
-  make( new_HeadconcTNode,  new_TailconcTNode) { new tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode( new_HeadconcTNode,  new_TailconcTNode) }
-}
-
-%op Strategy When_ConsconcTNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.When_ConsconcTNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnodelist.When_ConsconcTNode(s) }
 }
 
             %op Strategy _concTNode(sub:Strategy) {

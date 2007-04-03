@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -137,27 +137,21 @@ public class Position implements Cloneable {
   public int compare(Object o) {
     if (o instanceof Position) {
       Position p = (Position)o;
-      /* we need to check only the meaningful part of the data array */
-      if (size==p.size) {
-        for(int i=0; i<size; i++) {
-          if (data[i]<p.data[i]) {
+      for(int i=0; i<depth(); i++) {
+        if(i == p.depth() || data[i]>p.data[i]) {
+          return 1;
+        }
+        else{
+          if ( data[i]<p.data[i]) {
             return -1;
           }
-          else{
-            if(data[i]>p.data[i]) {
-              return 1;
-            }
-          }
         }
-        return 0;
-      } else {
-        return size<p.size?-1:1;
       }
+      return depth()==p.depth()?0:-1;
     } else {
       return -2;
     }
   }
-
 
   public int hashCode() {
     /* Hash only the interesting part of the array */
@@ -230,7 +224,7 @@ public class Position implements Cloneable {
   public VisitableVisitor getOmega(VisitableVisitor v) {
     VisitableVisitor res = v;
     for(int i = size-1 ; i>=0 ; i--) {
-     res = new Omega(data[i],res);
+      res = new Omega(data[i],res);
     }
     return res;
   }
@@ -251,7 +245,7 @@ public class Position implements Cloneable {
     if(i >= size-1) {
       return v;
     } else {
-     return new Sequence(new Omega(data[i],getOmegaPathAux(v,i+1)),v);
+      return new Sequence(new Omega(data[i],getOmegaPathAux(v,i+1)),v);
     }
   }
 
@@ -263,7 +257,7 @@ public class Position implements Cloneable {
    * @return the omega strategy the performs the replacement
    */
   public VisitableVisitor getReplace(final Visitable t) {
-   return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return t; }});
+    return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return t; }});
   }
 
   /**
@@ -273,22 +267,22 @@ public class Position implements Cloneable {
    * @return the omega strategy that retrieves the corresponding subterm
    */
   public MuStrategy getSubterm() {
-   return new AbstractMuStrategy() {
-     { initSubterm(); }
-     public Visitable visit(Visitable subject) throws VisitFailure {
-       final Visitable[] ref = new Visitable[1];
-       getOmega(new Identity() { public Visitable visit(Visitable x) { ref[0]=x; return x; }}).visit(subject);
-       return ref[0];
-     }
-   };
+    return new AbstractMuStrategy() {
+      { initSubterm(); }
+      public Visitable visit(Visitable subject) throws VisitFailure {
+        final Visitable[] ref = new Visitable[1];
+        getOmega(new Identity() { public Visitable visit(Visitable x) { ref[0]=x; return x; }}).visit(subject);
+        return ref[0];
+      }
+    };
   }
 
   /**
-    * Returns a <code>String</code> object representing the position.
-    * The string representation consists of a list of elementary positions
-    *
-    * @return a string representation of this position
-    */
+   * Returns a <code>String</code> object representing the position.
+   * The string representation consists of a list of elementary positions
+   *
+   * @return a string representation of this position
+   */
   public String toString() {
     StringBuffer r = new StringBuffer("[");
     for(int i=0 ; i<size ; i++) {

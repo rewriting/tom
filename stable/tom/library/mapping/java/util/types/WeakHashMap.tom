@@ -31,7 +31,6 @@
 
 %typeterm WeakHashMap {
   implement      { java.util.WeakHashMap }
+  is_sort(t)      { t instanceof java.util.WeakHashMap }
   equals(l1,l2)  { l1.equals(l2) }
-  check_stamp(l) {}
-  set_stamp(l)   { l }
 }

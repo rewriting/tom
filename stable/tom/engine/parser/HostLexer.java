@@ -3,7 +3,7 @@
  *
  * TOM - To One Matching Compiler
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -361,6 +361,46 @@ tryAgain:
 		int _saveIndex;
 		
 		match("%gom");
+		{
+		if ((LA(1)=='(')) {
+			{
+			match('(');
+			{
+			_loop33:
+			do {
+				// nongreedy exit test
+				if ((LA(1)==')') && (true)) break _loop33;
+				if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true)) {
+					match('\r');
+					match('\n');
+					newline();
+				}
+				else if ((LA(1)=='\r') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && (true) && (true) && (true) && (true)) {
+					match('\r');
+					newline();
+				}
+				else if ((_tokenSet_0.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff'))) {
+					{
+					match(_tokenSet_0);
+					}
+				}
+				else if ((LA(1)=='\n')) {
+					match('\n');
+					newline();
+				}
+				else {
+					break _loop33;
+				}
+				
+			} while (true);
+			}
+			match(')');
+			}
+		}
+		else {
+		}
+		
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -407,18 +447,18 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop34:
+		_loop39:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
 			}
-			else if ((_tokenSet_0.member(LA(1)))) {
+			else if ((_tokenSet_1.member(LA(1)))) {
 				{
-				match(_tokenSet_0);
+				match(_tokenSet_1);
 				}
 			}
 			else {
-				break _loop34;
+				break _loop39;
 			}
 			
 		} while (true);
@@ -485,17 +525,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt38=0;
-			_loop38:
+			int _cnt43=0;
+			_loop43:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt38>=1 ) { break _loop38; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt43>=1 ) { break _loop43; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt38++;
+				_cnt43++;
 			} while (true);
 			}
 			mHEX_DIGIT(false);
@@ -508,13 +548,13 @@ tryAgain:
 		{
 			matchRange('0','3');
 			{
-			if (((LA(1) >= '0' && LA(1) <= '7')) && (_tokenSet_1.member(LA(2))) && (true) && (true) && (true) && (true)) {
+			if (((LA(1) >= '0' && LA(1) <= '7')) && (_tokenSet_0.member(LA(2))) && (true) && (true) && (true) && (true)) {
 				matchRange('0','7');
 				{
-				if (((LA(1) >= '0' && LA(1) <= '7')) && (_tokenSet_1.member(LA(2))) && (true) && (true) && (true) && (true)) {
+				if (((LA(1) >= '0' && LA(1) <= '7')) && (_tokenSet_0.member(LA(2))) && (true) && (true) && (true) && (true)) {
 					matchRange('0','7');
 				}
-				else if ((_tokenSet_1.member(LA(1))) && (true) && (true) && (true) && (true) && (true)) {
+				else if ((_tokenSet_0.member(LA(1))) && (true) && (true) && (true) && (true) && (true)) {
 				}
 				else {
 					throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
@@ -522,7 +562,7 @@ tryAgain:
 				
 				}
 			}
-			else if ((_tokenSet_1.member(LA(1))) && (true) && (true) && (true) && (true) && (true)) {
+			else if ((_tokenSet_0.member(LA(1))) && (true) && (true) && (true) && (true) && (true)) {
 			}
 			else {
 				throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
@@ -535,10 +575,10 @@ tryAgain:
 		{
 			matchRange('4','7');
 			{
-			if (((LA(1) >= '0' && LA(1) <= '7')) && (_tokenSet_1.member(LA(2))) && (true) && (true) && (true) && (true)) {
+			if (((LA(1) >= '0' && LA(1) <= '7')) && (_tokenSet_0.member(LA(2))) && (true) && (true) && (true) && (true)) {
 				matchRange('0','7');
 			}
-			else if ((_tokenSet_1.member(LA(1))) && (true) && (true) && (true) && (true) && (true)) {
+			else if ((_tokenSet_0.member(LA(1))) && (true) && (true) && (true) && (true) && (true)) {
 			}
 			else {
 				throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
@@ -690,15 +730,15 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop52:
+		_loop57:
 		do {
-			if ((_tokenSet_1.member(LA(1)))) {
+			if ((_tokenSet_0.member(LA(1)))) {
 				{
-				match(_tokenSet_1);
+				match(_tokenSet_0);
 				}
 			}
 			else {
-				break _loop52;
+				break _loop57;
 			}
 			
 		} while (true);
@@ -750,10 +790,10 @@ tryAgain:
 		
 		}
 		{
-		_loop58:
+		_loop63:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop58;
+			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop63;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -763,9 +803,9 @@ tryAgain:
 				match('\r');
 				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
-			else if ((_tokenSet_1.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
+			else if ((_tokenSet_0.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
 				{
-				match(_tokenSet_1);
+				match(_tokenSet_0);
 				}
 				if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
@@ -774,7 +814,7 @@ tryAgain:
 				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else {
-				break _loop58;
+				break _loop63;
 			}
 			
 		} while (true);
@@ -811,10 +851,10 @@ tryAgain:
 		
 		}
 		{
-		_loop63:
+		_loop68:
 		do {
 			// nongreedy exit test
-			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop63;
+			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop68;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -824,9 +864,9 @@ tryAgain:
 				match('\r');
 				newline();
 			}
-			else if ((_tokenSet_1.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
+			else if ((_tokenSet_0.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
 				{
-				match(_tokenSet_1);
+				match(_tokenSet_0);
 				}
 			}
 			else if ((LA(1)=='\n')) {
@@ -834,7 +874,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop63;
+				break _loop68;
 			}
 			
 		} while (true);
@@ -867,16 +907,16 @@ tryAgain:
 	
 	private static final long[] mk_tokenSet_0() {
 		long[] data = new long[2048];
-		data[0]=-17179878401L;
-		data[1]=-268435457L;
-		for (int i = 2; i<=1023; i++) { data[i]=-1L; }
+		data[0]=-9217L;
+		for (int i = 1; i<=1023; i++) { data[i]=-1L; }
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
 		long[] data = new long[2048];
-		data[0]=-9217L;
-		for (int i = 1; i<=1023; i++) { data[i]=-1L; }
+		data[0]=-17179878401L;
+		data[1]=-268435457L;
+		for (int i = 2; i<=1023; i++) { data[i]=-1L; }
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());

@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -35,19 +35,21 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
 /**
- * The responsability of the GomTypeExpander plugin is to 
+ * The responsability of the TypeExpander plugin is to 
  * produce an abstract view of the Gom input with type information
  */
-public class GomTypeExpanderPlugin extends GomGenericPlugin {
+public class TypeExpanderPlugin extends GomGenericPlugin {
 
   public static final String TYPED_SUFFIX = ".tfix.gom.typed";
+  public static final String TYPEDHOOK_SUFFIX = ".tfix.hooks.typed";
 
   /** the list of included modules */
   private GomModuleList moduleList;
-  private SortList typedModuleList;
+  private ModuleList typedModuleList;
+  private HookDeclList typedHookList;
   /** The constructor*/
-  public GomTypeExpanderPlugin() {
-    super("GomTypeExpander");
+  public TypeExpanderPlugin() {
+    super("TypeExpander");
   }
 
   /**
@@ -61,7 +63,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomTypeExpander", "[GomModuleList,GomStreamManager]",
+          new Object[]{"TypeExpander", "[GomModuleList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
@@ -75,7 +77,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
 
     getLogger().log(Level.INFO, "Start typing");
     String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
-    GomTypeExpander typer = new GomTypeExpander(packagePrefix);
+    TypeExpander typer = new TypeExpander(packagePrefix);
     typedModuleList = typer.expand(moduleList);
     if(typedModuleList == null) {
       getLogger().log(Level.SEVERE, 
@@ -89,6 +91,20 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
             + TYPED_SUFFIX, (aterm.ATerm)typedModuleList.toATerm());
       }
     }
+    HookTypeExpander hooktyper = new HookTypeExpander(typedModuleList);
+    typedHookList = hooktyper.expand(moduleList);
+    if(typedHookList == null) {
+      getLogger().log(Level.SEVERE, 
+          GomMessage.hookExpansionIssue.getMessage(),
+          streamManager.getInputFileName());
+    } else {
+      getLogger().log(Level.FINE, "Typed Hooks: {0}",typedHookList);
+      getLogger().log(Level.INFO, "Hook expansion succeeds");
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
+            + TYPEDHOOK_SUFFIX, (aterm.ATerm)typedHookList.toATerm());
+      }
+    }
   }
 
   /**
@@ -97,6 +113,8 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{typedModuleList, getStreamManager()};
+    return new Object[]{
+      typedModuleList, typedHookList, getStreamManager()
+    };
   }
 }

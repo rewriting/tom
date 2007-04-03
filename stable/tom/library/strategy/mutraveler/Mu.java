@@ -67,14 +67,14 @@ class MuTopDown {
   }
 
   public void visit(Visitable any) throws VisitFailure {
-     if(any instanceof  tom.library.strategy.mutraveler.MuStrategy ) { { tom.library.strategy.mutraveler.MuStrategy  tom_match1_1=(( tom.library.strategy.mutraveler.MuStrategy )any); if ( ( tom_is_fun_sym_Mu(tom_match1_1) ||  false  ) ) { { tom.library.strategy.mutraveler.MuStrategy  tom_match1_1_s1=tom_get_slot_Mu_s1(tom_match1_1); if ( ( tom_is_fun_sym_MuVar(tom_match1_1_s1) ||  false  ) ) { { tom.library.strategy.mutraveler.MuStrategy  tom_var=tom_match1_1_s1; { tom.library.strategy.mutraveler.MuStrategy  tom_v=tom_get_slot_Mu_s2(tom_match1_1); { tom.library.strategy.mutraveler.MuStrategy  tom_m=tom_match1_1; if ( true ) {
+     if(any instanceof  tom.library.strategy.mutraveler.MuStrategy ) { { tom.library.strategy.mutraveler.MuStrategy  tomMatch1Position1=(( tom.library.strategy.mutraveler.MuStrategy )any); if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) { { tom.library.strategy.mutraveler.MuStrategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1); if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) { { tom.library.strategy.mutraveler.MuStrategy  tom_var=tomMatch1Position1NameNumbers1; { tom.library.strategy.mutraveler.MuStrategy  tom_v=tom_get_slot_Mu_s2(tomMatch1Position1); { tom.library.strategy.mutraveler.MuStrategy  tom_m=tomMatch1Position1; if ( true ) {
 
 	stack.addFirst(tom_m);
 	visit(tom_v);
 	visit(tom_var);
 	stack.removeFirst();
 	return;
-       } } } } } } } if ( ( tom_is_fun_sym_MuVar(tom_match1_1) ||  false  ) ) { { String  tom_n=tom_get_slot_MuVar_var(tom_match1_1); { tom.library.strategy.mutraveler.MuStrategy  tom_var=tom_match1_1; if ( true ) {
+       } } } } } } } if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1) ||  false  ) ) { { String  tom_n=tom_get_slot_MuVar_var(tomMatch1Position1); { tom.library.strategy.mutraveler.MuStrategy  tom_var=tomMatch1Position1; if ( true ) {
 
 
 	MuVar muvar = (MuVar)tom_var;

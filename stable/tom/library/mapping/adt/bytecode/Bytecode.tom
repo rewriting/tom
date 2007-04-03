@@ -9,106 +9,9 @@
 
 %include { float.tom }
 
-%typeterm TInstructionList {
-  implement { tom.library.adt.bytecode.types.TInstructionList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TReturnDescriptor {
-  implement { tom.library.adt.bytecode.types.TReturnDescriptor }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TFieldList {
-  implement { tom.library.adt.bytecode.types.TFieldList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TInnerClassInfoList {
-  implement { tom.library.adt.bytecode.types.TInnerClassInfoList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TOuterClassInfo {
-  implement { tom.library.adt.bytecode.types.TOuterClassInfo }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TTryCatchBlock {
-  implement { tom.library.adt.bytecode.types.TTryCatchBlock }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TFieldDescriptor {
-  implement { tom.library.adt.bytecode.types.TFieldDescriptor }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TMethodDescriptor {
-  implement { tom.library.adt.bytecode.types.TMethodDescriptor }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
 %typeterm TLocalVariable {
   implement { tom.library.adt.bytecode.types.TLocalVariable }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TFieldDescriptorList {
-  implement { tom.library.adt.bytecode.types.TFieldDescriptorList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TLocalVariableList {
-  implement { tom.library.adt.bytecode.types.TLocalVariableList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TAccess {
-  implement { tom.library.adt.bytecode.types.TAccess }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TInnerClassInfo {
-  implement { tom.library.adt.bytecode.types.TInnerClassInfo }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TAccessList {
-  implement { tom.library.adt.bytecode.types.TAccessList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TStringList {
-  implement { tom.library.adt.bytecode.types.TStringList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TLocalVariable}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -116,20 +19,7 @@
 
 %typeterm TMethodCode {
   implement { tom.library.adt.bytecode.types.TMethodCode }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TTryCatchBlockList {
-  implement { tom.library.adt.bytecode.types.TTryCatchBlockList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TintList {
-  implement { tom.library.adt.bytecode.types.TintList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TMethodCode}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -137,83 +27,7 @@
 
 %typeterm TMethodList {
   implement { tom.library.adt.bytecode.types.TMethodList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TField {
-  implement { tom.library.adt.bytecode.types.TField }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TLabelList {
-  implement { tom.library.adt.bytecode.types.TLabelList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TClass {
-  implement { tom.library.adt.bytecode.types.TClass }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TClassInfo {
-  implement { tom.library.adt.bytecode.types.TClassInfo }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TMethodInfo {
-  implement { tom.library.adt.bytecode.types.TMethodInfo }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TType {
-  implement { tom.library.adt.bytecode.types.TType }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TValue {
-  implement { tom.library.adt.bytecode.types.TValue }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TInstruction {
-  implement { tom.library.adt.bytecode.types.TInstruction }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm THandler {
-  implement { tom.library.adt.bytecode.types.THandler }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TMethod {
-  implement { tom.library.adt.bytecode.types.TMethod }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-
-%typeterm TLabel {
-  implement { tom.library.adt.bytecode.types.TLabel }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TMethodList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -221,135 +35,225 @@
 
 %typeterm TSignature {
   implement { tom.library.adt.bytecode.types.TSignature }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TSignature}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TInstructionList EmptyInstructionList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList }
-  make() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make()}
+
+%typeterm TInnerClassInfo {
+  implement { tom.library.adt.bytecode.types.TInnerClassInfo }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TInnerClassInfo}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TInstructionList ConsInstructionList(HeadInstructionList:TInstruction, TailInstructionList:TInstructionList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList }
-  get_slot(HeadInstructionList, t) { t.getHeadInstructionList() }
-  get_slot(TailInstructionList, t) { t.getTailInstructionList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make(t0, t1)}
+
+%typeterm TAccess {
+  implement { tom.library.adt.bytecode.types.TAccess }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TAccess}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TReturnDescriptor ReturnDescriptor(type:TFieldDescriptor) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor }
-  get_slot(type, t) { t.gettype() }
-  make(t0) { tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor.make(t0)}
+
+%typeterm TReturnDescriptor {
+  implement { tom.library.adt.bytecode.types.TReturnDescriptor }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TReturnDescriptor}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TReturnDescriptor Void() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.treturndescriptor.Void }
-  make() { tom.library.adt.bytecode.types.treturndescriptor.Void.make()}
+
+%typeterm TStringList {
+  implement { tom.library.adt.bytecode.types.TStringList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TStringList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldList EmptyFieldList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList }
-  make() { tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make()}
+
+%typeterm TMethod {
+  implement { tom.library.adt.bytecode.types.TMethod }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TMethod}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldList ConsFieldList(HeadFieldList:TField, TailFieldList:TFieldList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList }
-  get_slot(HeadFieldList, t) { t.getHeadFieldList() }
-  get_slot(TailFieldList, t) { t.getTailFieldList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make(t0, t1)}
+
+%typeterm TLabelList {
+  implement { tom.library.adt.bytecode.types.TLabelList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TLabelList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TInnerClassInfoList EmptyInnerClassInfoList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList }
-  make() { tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList.make()}
+
+%typeterm TInstruction {
+  implement { tom.library.adt.bytecode.types.TInstruction }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TInstruction}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TInnerClassInfoList ConsInnerClassInfoList(HeadInnerClassInfoList:TInnerClassInfo, TailInnerClassInfoList:TInnerClassInfoList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList }
-  get_slot(HeadInnerClassInfoList, t) { t.getHeadInnerClassInfoList() }
-  get_slot(TailInnerClassInfoList, t) { t.getTailInnerClassInfoList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make(t0, t1)}
+
+%typeterm TClass {
+  implement { tom.library.adt.bytecode.types.TClass }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TClass}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TOuterClassInfo OuterClassInfo(owner:String, name:String, desc:TMethodDescriptor) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo }
-  get_slot(owner, t) { t.getowner() }
-  get_slot(name, t) { t.getname() }
-  get_slot(desc, t) { t.getdesc() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo.make(t0, t1, t2)}
+
+%typeterm TInnerClassInfoList {
+  implement { tom.library.adt.bytecode.types.TInnerClassInfoList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TInnerClassInfoList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TOuterClassInfo EmptyOuterClassInfo() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo }
-  make() { tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo.make()}
+
+%typeterm TValue {
+  implement { tom.library.adt.bytecode.types.TValue }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TValue}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TTryCatchBlock TryCatchBlock(start:TLabel, end:TLabel, handler:THandler) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock }
-  get_slot(start, t) { t.getstart() }
-  get_slot(end, t) { t.getend() }
-  get_slot(handler, t) { t.gethandler() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock.make(t0, t1, t2)}
+
+%typeterm TField {
+  implement { tom.library.adt.bytecode.types.TField }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TField}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor ObjectType(className:String) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ObjectType }
-  get_slot(className, t) { t.getclassName() }
-  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ObjectType.make(t0)}
+
+%typeterm TTryCatchBlockList {
+  implement { tom.library.adt.bytecode.types.TTryCatchBlockList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TTryCatchBlockList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor ArrayType(arrayType:TFieldDescriptor) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ArrayType }
-  get_slot(arrayType, t) { t.getarrayType() }
-  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ArrayType.make(t0)}
+
+%typeterm TType {
+  implement { tom.library.adt.bytecode.types.TType }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TType}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor B() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.B }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.B.make()}
+
+%typeterm TClassInfo {
+  implement { tom.library.adt.bytecode.types.TClassInfo }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TClassInfo}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor C() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.C }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.C.make()}
+
+%typeterm TAccessList {
+  implement { tom.library.adt.bytecode.types.TAccessList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TAccessList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor D() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.D }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.D.make()}
+
+%typeterm TMethodDescriptor {
+  implement { tom.library.adt.bytecode.types.TMethodDescriptor }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TMethodDescriptor}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor F() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.F }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.F.make()}
+
+%typeterm TFieldList {
+  implement { tom.library.adt.bytecode.types.TFieldList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TFieldList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor I() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.I }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.I.make()}
+
+%typeterm TOuterClassInfo {
+  implement { tom.library.adt.bytecode.types.TOuterClassInfo }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TOuterClassInfo}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor J() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.J }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.J.make()}
+
+%typeterm TFieldDescriptor {
+  implement { tom.library.adt.bytecode.types.TFieldDescriptor }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TFieldDescriptor}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor S() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.S }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.S.make()}
+
+%typeterm TTryCatchBlock {
+  implement { tom.library.adt.bytecode.types.TTryCatchBlock }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TTryCatchBlock}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TFieldDescriptor Z() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.Z }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.Z.make()}
+
+%typeterm TintList {
+  implement { tom.library.adt.bytecode.types.TintList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TintList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TMethodDescriptor MethodDescriptor(parameters:TFieldDescriptorList, return:TReturnDescriptor) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor }
-  get_slot(parameters, t) { t.getparameters() }
-  get_slot(return, t) { t.getreturn() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor.make(t0, t1)}
+
+%typeterm TMethodInfo {
+  implement { tom.library.adt.bytecode.types.TMethodInfo }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TMethodInfo}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+
+%typeterm THandler {
+  implement { tom.library.adt.bytecode.types.THandler }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.THandler}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+
+%typeterm TInstructionList {
+  implement { tom.library.adt.bytecode.types.TInstructionList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TInstructionList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+
+%typeterm TFieldDescriptorList {
+  implement { tom.library.adt.bytecode.types.TFieldDescriptorList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TFieldDescriptorList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+
+%typeterm TLabel {
+  implement { tom.library.adt.bytecode.types.TLabel }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TLabel}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+
+%typeterm TLocalVariableList {
+  implement { tom.library.adt.bytecode.types.TLocalVariableList }
+ is_sort(t) { t instanceof tom.library.adt.bytecode.types.TLocalVariableList}
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
 %op TLocalVariable LocalVariable(name:String, typeDesc:String, signature:TSignature, start:TLabel, end:TLabel, index:int) {
@@ -363,28 +267,49 @@
   make(t0, t1, t2, t3, t4, t5) { tom.library.adt.bytecode.types.tlocalvariable.LocalVariable.make(t0, t1, t2, t3, t4, t5)}
 }
 
-%op TFieldDescriptorList EmptyFieldDescriptorList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList }
-  make() { tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make()}
+%op TMethodCode MethodCode(instructions:TInstructionList, localVariables:TLocalVariableList, tryCatchBlocks:TTryCatchBlockList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodcode.MethodCode }
+  get_slot(instructions, t) { t.getinstructions() }
+  get_slot(localVariables, t) { t.getlocalVariables() }
+  get_slot(tryCatchBlocks, t) { t.gettryCatchBlocks() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.tmethodcode.MethodCode.make(t0, t1, t2)}
 }
 
-%op TFieldDescriptorList ConsFieldDescriptorList(HeadFieldDescriptorList:TFieldDescriptor, TailFieldDescriptorList:TFieldDescriptorList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList }
-  get_slot(HeadFieldDescriptorList, t) { t.getHeadFieldDescriptorList() }
-  get_slot(TailFieldDescriptorList, t) { t.getTailFieldDescriptorList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make(t0, t1)}
+%op TMethodCode EmptyCode() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodcode.EmptyCode }
+  make() { tom.library.adt.bytecode.types.tmethodcode.EmptyCode.make()}
 }
 
-%op TLocalVariableList EmptyLocalVariableList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList }
-  make() { tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make()}
+%op TMethodList EmptyMethodList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList }
+  make() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make()}
 }
 
-%op TLocalVariableList ConsLocalVariableList(HeadLocalVariableList:TLocalVariable, TailLocalVariableList:TLocalVariableList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList }
-  get_slot(HeadLocalVariableList, t) { t.getHeadLocalVariableList() }
-  get_slot(TailLocalVariableList, t) { t.getTailLocalVariableList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make(t0, t1)}
+%op TMethodList ConsMethodList(HeadMethodList:TMethod, TailMethodList:TMethodList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList }
+  get_slot(HeadMethodList, t) { t.getHeadMethodList() }
+  get_slot(TailMethodList, t) { t.getTailMethodList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make(t0, t1)}
+}
+
+%op TSignature Signature(sig:String) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tsignature.Signature }
+  get_slot(sig, t) { t.getsig() }
+  make(t0) { tom.library.adt.bytecode.types.tsignature.Signature.make(t0)}
+}
+
+%op TSignature EmptySignature() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tsignature.EmptySignature }
+  make() { tom.library.adt.bytecode.types.tsignature.EmptySignature.make()}
+}
+
+%op TInnerClassInfo InnerClassInfo(name:String, outerName:String, innerName:String, access:TAccessList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo }
+  get_slot(name, t) { t.getname() }
+  get_slot(outerName, t) { t.getouterName() }
+  get_slot(innerName, t) { t.getinnerName() }
+  get_slot(access, t) { t.getaccess() }
+  make(t0, t1, t2, t3) { tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo.make(t0, t1, t2, t3)}
 }
 
 %op TAccess ABSTRACT() {
@@ -482,25 +407,15 @@
   make() { tom.library.adt.bytecode.types.taccess.VOLATILE.make()}
 }
 
-%op TInnerClassInfo InnerClassInfo(name:String, outerName:String, innerName:String, access:TAccessList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo }
-  get_slot(name, t) { t.getname() }
-  get_slot(outerName, t) { t.getouterName() }
-  get_slot(innerName, t) { t.getinnerName() }
-  get_slot(access, t) { t.getaccess() }
-  make(t0, t1, t2, t3) { tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo.make(t0, t1, t2, t3)}
+%op TReturnDescriptor ReturnDescriptor(type:TFieldDescriptor) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor }
+  get_slot(type, t) { t.gettype() }
+  make(t0) { tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor.make(t0)}
 }
 
-%op TAccessList EmptyAccessList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList }
-  make() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make()}
-}
-
-%op TAccessList ConsAccessList(HeadAccessList:TAccess, TailAccessList:TAccessList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList }
-  get_slot(HeadAccessList, t) { t.getHeadAccessList() }
-  get_slot(TailAccessList, t) { t.getTailAccessList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make(t0, t1)}
+%op TReturnDescriptor Void() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.treturndescriptor.Void }
+  make() { tom.library.adt.bytecode.types.treturndescriptor.Void.make()}
 }
 
 %op TStringList EmptyStringList() {
@@ -515,63 +430,11 @@
   make(t0, t1) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make(t0, t1)}
 }
 
-%op TMethodCode MethodCode(instructions:TInstructionList, localVariables:TLocalVariableList, tryCatchBlocks:TTryCatchBlockList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodcode.MethodCode }
-  get_slot(instructions, t) { t.getinstructions() }
-  get_slot(localVariables, t) { t.getlocalVariables() }
-  get_slot(tryCatchBlocks, t) { t.gettryCatchBlocks() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.tmethodcode.MethodCode.make(t0, t1, t2)}
-}
-
-%op TMethodCode EmptyCode() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodcode.EmptyCode }
-  make() { tom.library.adt.bytecode.types.tmethodcode.EmptyCode.make()}
-}
-
-%op TTryCatchBlockList EmptyTryCatchBlockList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList }
-  make() { tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList.make()}
-}
-
-%op TTryCatchBlockList ConsTryCatchBlockList(HeadTryCatchBlockList:TTryCatchBlock, TailTryCatchBlockList:TTryCatchBlockList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList }
-  get_slot(HeadTryCatchBlockList, t) { t.getHeadTryCatchBlockList() }
-  get_slot(TailTryCatchBlockList, t) { t.getTailTryCatchBlockList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make(t0, t1)}
-}
-
-%op TintList EmptyintList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tintlist.EmptyintList }
-  make() { tom.library.adt.bytecode.types.tintlist.EmptyintList.make()}
-}
-
-%op TintList ConsintList(HeadintList:int, TailintList:TintList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tintlist.ConsintList }
-  get_slot(HeadintList, t) { t.getHeadintList() }
-  get_slot(TailintList, t) { t.getTailintList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tintlist.ConsintList.make(t0, t1)}
-}
-
-%op TMethodList EmptyMethodList() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList }
-  make() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make()}
-}
-
-%op TMethodList ConsMethodList(HeadMethodList:TMethod, TailMethodList:TMethodList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList }
-  get_slot(HeadMethodList, t) { t.getHeadMethodList() }
-  get_slot(TailMethodList, t) { t.getTailMethodList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make(t0, t1)}
-}
-
-%op TField Field(access:TAccessList, name:String, desc:TFieldDescriptor, signature:TSignature, value:TValue) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfield.Field }
-  get_slot(access, t) { t.getaccess() }
-  get_slot(name, t) { t.getname() }
-  get_slot(desc, t) { t.getdesc() }
-  get_slot(signature, t) { t.getsignature() }
-  get_slot(value, t) { t.getvalue() }
-  make(t0, t1, t2, t3, t4) { tom.library.adt.bytecode.types.tfield.Field.make(t0, t1, t2, t3, t4)}
+%op TMethod Method(info:TMethodInfo, code:TMethodCode) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethod.Method }
+  get_slot(info, t) { t.getinfo() }
+  get_slot(code, t) { t.getcode() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tmethod.Method.make(t0, t1)}
 }
 
 %op TLabelList EmptyLabelList() {
@@ -584,127 +447,6 @@
   get_slot(HeadLabelList, t) { t.getHeadLabelList() }
   get_slot(TailLabelList, t) { t.getTailLabelList() }
   make(t0, t1) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make(t0, t1)}
-}
-
-%op TClass Class(info:TClassInfo, fields:TFieldList, methods:TMethodList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tclass.Class }
-  get_slot(info, t) { t.getinfo() }
-  get_slot(fields, t) { t.getfields() }
-  get_slot(methods, t) { t.getmethods() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.tclass.Class.make(t0, t1, t2)}
-}
-
-%op TClassInfo ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClasses:TInnerClassInfoList, outerClass:TOuterClassInfo) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tclassinfo.ClassInfo }
-  get_slot(name, t) { t.getname() }
-  get_slot(signature, t) { t.getsignature() }
-  get_slot(access, t) { t.getaccess() }
-  get_slot(superName, t) { t.getsuperName() }
-  get_slot(interfaces, t) { t.getinterfaces() }
-  get_slot(innerClasses, t) { t.getinnerClasses() }
-  get_slot(outerClass, t) { t.getouterClass() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.library.adt.bytecode.types.tclassinfo.ClassInfo.make(t0, t1, t2, t3, t4, t5, t6)}
-}
-
-%op TMethodInfo MethodInfo(owner:String, access:TAccessList, name:String, desc:TMethodDescriptor, signature:TSignature, exceptions:TStringList) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodinfo.MethodInfo }
-  get_slot(owner, t) { t.getowner() }
-  get_slot(access, t) { t.getaccess() }
-  get_slot(name, t) { t.getname() }
-  get_slot(desc, t) { t.getdesc() }
-  get_slot(signature, t) { t.getsignature() }
-  get_slot(exceptions, t) { t.getexceptions() }
-  make(t0, t1, t2, t3, t4, t5) { tom.library.adt.bytecode.types.tmethodinfo.MethodInfo.make(t0, t1, t2, t3, t4, t5)}
-}
-
-%op TType ARRAY() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.ARRAY }
-  make() { tom.library.adt.bytecode.types.ttype.ARRAY.make()}
-}
-
-%op TType BOOLEAN() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.BOOLEAN }
-  make() { tom.library.adt.bytecode.types.ttype.BOOLEAN.make()}
-}
-
-%op TType BYTE() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.BYTE }
-  make() { tom.library.adt.bytecode.types.ttype.BYTE.make()}
-}
-
-%op TType CHAR() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.CHAR }
-  make() { tom.library.adt.bytecode.types.ttype.CHAR.make()}
-}
-
-%op TType DOUBLE() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.DOUBLE }
-  make() { tom.library.adt.bytecode.types.ttype.DOUBLE.make()}
-}
-
-%op TType FLOAT() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.FLOAT }
-  make() { tom.library.adt.bytecode.types.ttype.FLOAT.make()}
-}
-
-%op TType INT() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.INT }
-  make() { tom.library.adt.bytecode.types.ttype.INT.make()}
-}
-
-%op TType LONG() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.LONG }
-  make() { tom.library.adt.bytecode.types.ttype.LONG.make()}
-}
-
-%op TType OBJECT() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.OBJECT }
-  make() { tom.library.adt.bytecode.types.ttype.OBJECT.make()}
-}
-
-%op TType SHORT() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.SHORT }
-  make() { tom.library.adt.bytecode.types.ttype.SHORT.make()}
-}
-
-%op TType VOID() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.VOID }
-  make() { tom.library.adt.bytecode.types.ttype.VOID.make()}
-}
-
-%op TValue StringValue(s:String) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.StringValue }
-  get_slot(s, t) { t.gets() }
-  make(t0) { tom.library.adt.bytecode.types.tvalue.StringValue.make(t0)}
-}
-
-%op TValue IntValue(i:int) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.IntValue }
-  get_slot(i, t) { t.geti() }
-  make(t0) { tom.library.adt.bytecode.types.tvalue.IntValue.make(t0)}
-}
-
-%op TValue LongValue(l:long) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.LongValue }
-  get_slot(l, t) { t.getl() }
-  make(t0) { tom.library.adt.bytecode.types.tvalue.LongValue.make(t0)}
-}
-
-%op TValue FloatValue(f:float) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.FloatValue }
-  get_slot(f, t) { t.getf() }
-  make(t0) { tom.library.adt.bytecode.types.tvalue.FloatValue.make(t0)}
-}
-
-%op TValue DoubleValue(d:double) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.DoubleValue }
-  get_slot(d, t) { t.getd() }
-  make(t0) { tom.library.adt.bytecode.types.tvalue.DoubleValue.make(t0)}
-}
-
-%op TValue EmptyValue() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.EmptyValue }
-  make() { tom.library.adt.bytecode.types.tvalue.EmptyValue.make()}
 }
 
 %op TInstruction Anchor(label:TLabel) {
@@ -1565,6 +1307,277 @@
   make(t0) { tom.library.adt.bytecode.types.tinstruction.Ifnonnull.make(t0)}
 }
 
+%op TClass Class(info:TClassInfo, fields:TFieldList, methods:TMethodList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tclass.Class }
+  get_slot(info, t) { t.getinfo() }
+  get_slot(fields, t) { t.getfields() }
+  get_slot(methods, t) { t.getmethods() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.tclass.Class.make(t0, t1, t2)}
+}
+
+%op TInnerClassInfoList EmptyInnerClassInfoList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList }
+  make() { tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList.make()}
+}
+
+%op TInnerClassInfoList ConsInnerClassInfoList(HeadInnerClassInfoList:TInnerClassInfo, TailInnerClassInfoList:TInnerClassInfoList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList }
+  get_slot(HeadInnerClassInfoList, t) { t.getHeadInnerClassInfoList() }
+  get_slot(TailInnerClassInfoList, t) { t.getTailInnerClassInfoList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make(t0, t1)}
+}
+
+%op TValue StringValue(s:String) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.StringValue }
+  get_slot(s, t) { t.gets() }
+  make(t0) { tom.library.adt.bytecode.types.tvalue.StringValue.make(t0)}
+}
+
+%op TValue IntValue(i:int) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.IntValue }
+  get_slot(i, t) { t.geti() }
+  make(t0) { tom.library.adt.bytecode.types.tvalue.IntValue.make(t0)}
+}
+
+%op TValue LongValue(l:long) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.LongValue }
+  get_slot(l, t) { t.getl() }
+  make(t0) { tom.library.adt.bytecode.types.tvalue.LongValue.make(t0)}
+}
+
+%op TValue FloatValue(f:float) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.FloatValue }
+  get_slot(f, t) { t.getf() }
+  make(t0) { tom.library.adt.bytecode.types.tvalue.FloatValue.make(t0)}
+}
+
+%op TValue DoubleValue(d:double) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.DoubleValue }
+  get_slot(d, t) { t.getd() }
+  make(t0) { tom.library.adt.bytecode.types.tvalue.DoubleValue.make(t0)}
+}
+
+%op TValue EmptyValue() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tvalue.EmptyValue }
+  make() { tom.library.adt.bytecode.types.tvalue.EmptyValue.make()}
+}
+
+%op TField Field(access:TAccessList, name:String, desc:TFieldDescriptor, signature:TSignature, value:TValue) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfield.Field }
+  get_slot(access, t) { t.getaccess() }
+  get_slot(name, t) { t.getname() }
+  get_slot(desc, t) { t.getdesc() }
+  get_slot(signature, t) { t.getsignature() }
+  get_slot(value, t) { t.getvalue() }
+  make(t0, t1, t2, t3, t4) { tom.library.adt.bytecode.types.tfield.Field.make(t0, t1, t2, t3, t4)}
+}
+
+%op TTryCatchBlockList EmptyTryCatchBlockList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList }
+  make() { tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList.make()}
+}
+
+%op TTryCatchBlockList ConsTryCatchBlockList(HeadTryCatchBlockList:TTryCatchBlock, TailTryCatchBlockList:TTryCatchBlockList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList }
+  get_slot(HeadTryCatchBlockList, t) { t.getHeadTryCatchBlockList() }
+  get_slot(TailTryCatchBlockList, t) { t.getTailTryCatchBlockList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make(t0, t1)}
+}
+
+%op TType ARRAY() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.ARRAY }
+  make() { tom.library.adt.bytecode.types.ttype.ARRAY.make()}
+}
+
+%op TType BOOLEAN() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.BOOLEAN }
+  make() { tom.library.adt.bytecode.types.ttype.BOOLEAN.make()}
+}
+
+%op TType BYTE() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.BYTE }
+  make() { tom.library.adt.bytecode.types.ttype.BYTE.make()}
+}
+
+%op TType CHAR() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.CHAR }
+  make() { tom.library.adt.bytecode.types.ttype.CHAR.make()}
+}
+
+%op TType DOUBLE() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.DOUBLE }
+  make() { tom.library.adt.bytecode.types.ttype.DOUBLE.make()}
+}
+
+%op TType FLOAT() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.FLOAT }
+  make() { tom.library.adt.bytecode.types.ttype.FLOAT.make()}
+}
+
+%op TType INT() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.INT }
+  make() { tom.library.adt.bytecode.types.ttype.INT.make()}
+}
+
+%op TType LONG() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.LONG }
+  make() { tom.library.adt.bytecode.types.ttype.LONG.make()}
+}
+
+%op TType OBJECT() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.OBJECT }
+  make() { tom.library.adt.bytecode.types.ttype.OBJECT.make()}
+}
+
+%op TType SHORT() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.SHORT }
+  make() { tom.library.adt.bytecode.types.ttype.SHORT.make()}
+}
+
+%op TType VOID() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttype.VOID }
+  make() { tom.library.adt.bytecode.types.ttype.VOID.make()}
+}
+
+%op TClassInfo ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClasses:TInnerClassInfoList, outerClass:TOuterClassInfo) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tclassinfo.ClassInfo }
+  get_slot(name, t) { t.getname() }
+  get_slot(signature, t) { t.getsignature() }
+  get_slot(access, t) { t.getaccess() }
+  get_slot(superName, t) { t.getsuperName() }
+  get_slot(interfaces, t) { t.getinterfaces() }
+  get_slot(innerClasses, t) { t.getinnerClasses() }
+  get_slot(outerClass, t) { t.getouterClass() }
+  make(t0, t1, t2, t3, t4, t5, t6) { tom.library.adt.bytecode.types.tclassinfo.ClassInfo.make(t0, t1, t2, t3, t4, t5, t6)}
+}
+
+%op TAccessList EmptyAccessList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList }
+  make() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make()}
+}
+
+%op TAccessList ConsAccessList(HeadAccessList:TAccess, TailAccessList:TAccessList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList }
+  get_slot(HeadAccessList, t) { t.getHeadAccessList() }
+  get_slot(TailAccessList, t) { t.getTailAccessList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make(t0, t1)}
+}
+
+%op TMethodDescriptor MethodDescriptor(parameters:TFieldDescriptorList, return:TReturnDescriptor) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor }
+  get_slot(parameters, t) { t.getparameters() }
+  get_slot(return, t) { t.getreturn() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor.make(t0, t1)}
+}
+
+%op TFieldList EmptyFieldList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList }
+  make() { tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make()}
+}
+
+%op TFieldList ConsFieldList(HeadFieldList:TField, TailFieldList:TFieldList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList }
+  get_slot(HeadFieldList, t) { t.getHeadFieldList() }
+  get_slot(TailFieldList, t) { t.getTailFieldList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make(t0, t1)}
+}
+
+%op TOuterClassInfo OuterClassInfo(owner:String, name:String, desc:TMethodDescriptor) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo }
+  get_slot(owner, t) { t.getowner() }
+  get_slot(name, t) { t.getname() }
+  get_slot(desc, t) { t.getdesc() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo.make(t0, t1, t2)}
+}
+
+%op TOuterClassInfo EmptyOuterClassInfo() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo }
+  make() { tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo.make()}
+}
+
+%op TFieldDescriptor ObjectType(className:String) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ObjectType }
+  get_slot(className, t) { t.getclassName() }
+  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ObjectType.make(t0)}
+}
+
+%op TFieldDescriptor ArrayType(arrayType:TFieldDescriptor) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ArrayType }
+  get_slot(arrayType, t) { t.getarrayType() }
+  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ArrayType.make(t0)}
+}
+
+%op TFieldDescriptor B() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.B }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.B.make()}
+}
+
+%op TFieldDescriptor C() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.C }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.C.make()}
+}
+
+%op TFieldDescriptor D() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.D }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.D.make()}
+}
+
+%op TFieldDescriptor F() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.F }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.F.make()}
+}
+
+%op TFieldDescriptor I() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.I }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.I.make()}
+}
+
+%op TFieldDescriptor J() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.J }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.J.make()}
+}
+
+%op TFieldDescriptor S() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.S }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.S.make()}
+}
+
+%op TFieldDescriptor Z() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptor.Z }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.Z.make()}
+}
+
+%op TTryCatchBlock TryCatchBlock(start:TLabel, end:TLabel, handler:THandler) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock }
+  get_slot(start, t) { t.getstart() }
+  get_slot(end, t) { t.getend() }
+  get_slot(handler, t) { t.gethandler() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock.make(t0, t1, t2)}
+}
+
+%op TintList EmptyintList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tintlist.EmptyintList }
+  make() { tom.library.adt.bytecode.types.tintlist.EmptyintList.make()}
+}
+
+%op TintList ConsintList(HeadintList:int, TailintList:TintList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tintlist.ConsintList }
+  get_slot(HeadintList, t) { t.getHeadintList() }
+  get_slot(TailintList, t) { t.getTailintList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tintlist.ConsintList.make(t0, t1)}
+}
+
+%op TMethodInfo MethodInfo(owner:String, access:TAccessList, name:String, desc:TMethodDescriptor, signature:TSignature, exceptions:TStringList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodinfo.MethodInfo }
+  get_slot(owner, t) { t.getowner() }
+  get_slot(access, t) { t.getaccess() }
+  get_slot(name, t) { t.getname() }
+  get_slot(desc, t) { t.getdesc() }
+  get_slot(signature, t) { t.getsignature() }
+  get_slot(exceptions, t) { t.getexceptions() }
+  make(t0, t1, t2, t3, t4, t5) { tom.library.adt.bytecode.types.tmethodinfo.MethodInfo.make(t0, t1, t2, t3, t4, t5)}
+}
+
 %op THandler CatchHandler(handler:TLabel, type:String) {
   is_fsym(t) { t instanceof tom.library.adt.bytecode.types.thandler.CatchHandler }
   get_slot(handler, t) { t.gethandler() }
@@ -1578,11 +1591,28 @@
   make(t0) { tom.library.adt.bytecode.types.thandler.FinallyHandler.make(t0)}
 }
 
-%op TMethod Method(info:TMethodInfo, code:TMethodCode) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethod.Method }
-  get_slot(info, t) { t.getinfo() }
-  get_slot(code, t) { t.getcode() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tmethod.Method.make(t0, t1)}
+%op TInstructionList EmptyInstructionList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList }
+  make() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make()}
+}
+
+%op TInstructionList ConsInstructionList(HeadInstructionList:TInstruction, TailInstructionList:TInstructionList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList }
+  get_slot(HeadInstructionList, t) { t.getHeadInstructionList() }
+  get_slot(TailInstructionList, t) { t.getTailInstructionList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make(t0, t1)}
+}
+
+%op TFieldDescriptorList EmptyFieldDescriptorList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList }
+  make() { tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make()}
+}
+
+%op TFieldDescriptorList ConsFieldDescriptorList(HeadFieldDescriptorList:TFieldDescriptor, TailFieldDescriptorList:TFieldDescriptorList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList }
+  get_slot(HeadFieldDescriptorList, t) { t.getHeadFieldDescriptorList() }
+  get_slot(TailFieldDescriptorList, t) { t.getTailFieldDescriptorList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make(t0, t1)}
 }
 
 %op TLabel Label(id:int) {
@@ -1591,25 +1621,71 @@
   make(t0) { tom.library.adt.bytecode.types.tlabel.Label.make(t0)}
 }
 
-%op TSignature Signature(sig:String) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tsignature.Signature }
-  get_slot(sig, t) { t.getsig() }
-  make(t0) { tom.library.adt.bytecode.types.tsignature.Signature.make(t0)}
+%op TLocalVariableList EmptyLocalVariableList() {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList }
+  make() { tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make()}
 }
 
-%op TSignature EmptySignature() {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tsignature.EmptySignature }
-  make() { tom.library.adt.bytecode.types.tsignature.EmptySignature.make()}
+%op TLocalVariableList ConsLocalVariableList(HeadLocalVariableList:TLocalVariable, TailLocalVariableList:TLocalVariableList) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList }
+  get_slot(HeadLocalVariableList, t) { t.getHeadLocalVariableList() }
+  get_slot(TailLocalVariableList, t) { t.getTailLocalVariableList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make(t0, t1)}
 }
 
 
-%oplist TInstructionList InstructionList(TInstruction*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList || t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList }
-  make_empty() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make(e,l) }
-  get_head(l) { l.getHeadInstructionList() }
-  get_tail(l) { l.getTailInstructionList() }
-  is_empty(l) { l.isEmptyInstructionList() }
+%oplist TMethodList MethodList(TMethod*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList || t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList }
+  make_empty() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make(e,l) }
+  get_head(l) { l.getHeadMethodList() }
+  get_tail(l) { l.getTailMethodList() }
+  is_empty(l) { l.isEmptyMethodList() }
+}
+
+%oplist TStringList StringList(String*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tstringlist.ConsStringList || t instanceof tom.library.adt.bytecode.types.tstringlist.EmptyStringList }
+  make_empty() { tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make(e,l) }
+  get_head(l) { l.getHeadStringList() }
+  get_tail(l) { l.getTailStringList() }
+  is_empty(l) { l.isEmptyStringList() }
+}
+
+%oplist TLabelList LabelList(TLabel*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tlabellist.ConsLabelList || t instanceof tom.library.adt.bytecode.types.tlabellist.EmptyLabelList }
+  make_empty() { tom.library.adt.bytecode.types.tlabellist.EmptyLabelList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make(e,l) }
+  get_head(l) { l.getHeadLabelList() }
+  get_tail(l) { l.getTailLabelList() }
+  is_empty(l) { l.isEmptyLabelList() }
+}
+
+%oplist TInnerClassInfoList InnerClassInfoList(TInnerClassInfo*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList || t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList }
+  make_empty() { tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make(e,l) }
+  get_head(l) { l.getHeadInnerClassInfoList() }
+  get_tail(l) { l.getTailInnerClassInfoList() }
+  is_empty(l) { l.isEmptyInnerClassInfoList() }
+}
+
+%oplist TTryCatchBlockList TryCatchBlockList(TTryCatchBlock*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList || t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList }
+  make_empty() { tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make(e,l) }
+  get_head(l) { l.getHeadTryCatchBlockList() }
+  get_tail(l) { l.getTailTryCatchBlockList() }
+  is_empty(l) { l.isEmptyTryCatchBlockList() }
+}
+
+%oplist TAccessList AccessList(TAccess*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList || t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList }
+  make_empty() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make(e,l) }
+  get_head(l) { l.getHeadAccessList() }
+  get_tail(l) { l.getTailAccessList() }
+  is_empty(l) { l.isEmptyAccessList() }
 }
 
 %oplist TFieldList FieldList(TField*) {
@@ -1621,13 +1697,22 @@
   is_empty(l) { l.isEmptyFieldList() }
 }
 
-%oplist TInnerClassInfoList InnerClassInfoList(TInnerClassInfo*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList || t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList }
-  make_empty() { tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make(e,l) }
-  get_head(l) { l.getHeadInnerClassInfoList() }
-  get_tail(l) { l.getTailInnerClassInfoList() }
-  is_empty(l) { l.isEmptyInnerClassInfoList() }
+%oplist TintList intList(int*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tintlist.ConsintList || t instanceof tom.library.adt.bytecode.types.tintlist.EmptyintList }
+  make_empty() { tom.library.adt.bytecode.types.tintlist.EmptyintList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tintlist.ConsintList.make(e,l) }
+  get_head(l) { l.getHeadintList() }
+  get_tail(l) { l.getTailintList() }
+  is_empty(l) { l.isEmptyintList() }
+}
+
+%oplist TInstructionList InstructionList(TInstruction*) {
+  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList || t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList }
+  make_empty() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make(e,l) }
+  get_head(l) { l.getHeadInstructionList() }
+  get_tail(l) { l.getTailInstructionList() }
+  is_empty(l) { l.isEmptyInstructionList() }
 }
 
 %oplist TFieldDescriptorList FieldDescriptorList(TFieldDescriptor*) {
@@ -1646,58 +1731,4 @@
   get_head(l) { l.getHeadLocalVariableList() }
   get_tail(l) { l.getTailLocalVariableList() }
   is_empty(l) { l.isEmptyLocalVariableList() }
-}
-
-%oplist TAccessList AccessList(TAccess*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList || t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList }
-  make_empty() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make(e,l) }
-  get_head(l) { l.getHeadAccessList() }
-  get_tail(l) { l.getTailAccessList() }
-  is_empty(l) { l.isEmptyAccessList() }
-}
-
-%oplist TStringList StringList(String*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tstringlist.ConsStringList || t instanceof tom.library.adt.bytecode.types.tstringlist.EmptyStringList }
-  make_empty() { tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make(e,l) }
-  get_head(l) { l.getHeadStringList() }
-  get_tail(l) { l.getTailStringList() }
-  is_empty(l) { l.isEmptyStringList() }
-}
-
-%oplist TTryCatchBlockList TryCatchBlockList(TTryCatchBlock*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList || t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList }
-  make_empty() { tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make(e,l) }
-  get_head(l) { l.getHeadTryCatchBlockList() }
-  get_tail(l) { l.getTailTryCatchBlockList() }
-  is_empty(l) { l.isEmptyTryCatchBlockList() }
-}
-
-%oplist TintList intList(int*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tintlist.ConsintList || t instanceof tom.library.adt.bytecode.types.tintlist.EmptyintList }
-  make_empty() { tom.library.adt.bytecode.types.tintlist.EmptyintList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tintlist.ConsintList.make(e,l) }
-  get_head(l) { l.getHeadintList() }
-  get_tail(l) { l.getTailintList() }
-  is_empty(l) { l.isEmptyintList() }
-}
-
-%oplist TMethodList MethodList(TMethod*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList || t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList }
-  make_empty() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make(e,l) }
-  get_head(l) { l.getHeadMethodList() }
-  get_tail(l) { l.getTailMethodList() }
-  is_empty(l) { l.isEmptyMethodList() }
-}
-
-%oplist TLabelList LabelList(TLabel*) {
-  is_fsym(t) { t instanceof tom.library.adt.bytecode.types.tlabellist.ConsLabelList || t instanceof tom.library.adt.bytecode.types.tlabellist.EmptyLabelList }
-  make_empty() { tom.library.adt.bytecode.types.tlabellist.EmptyLabelList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make(e,l) }
-  get_head(l) { l.getHeadLabelList() }
-  get_tail(l) { l.getTailLabelList() }
-  is_empty(l) { l.isEmptyLabelList() }
 }

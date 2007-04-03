@@ -1,7 +1,7 @@
 /*
  * Gom
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -44,12 +44,15 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
 
   /** the declared options string*/
   private static final String DECLARED_OPTIONS = "<options>" + 
-    "<boolean name='reference' altName='r' description='Add references to the signature' value='false'/>" +
+    "<boolean name='pointer' altName='tp' description='Extend the signature for pointers' value='false'/>" +
+    "<boolean name='termgraph' altName='tg' description='Extend the signature for term-graphs' value='false'/>" +
     "</options>";
 
   /** the list of included modules */
-  private SortList typedModuleList;
-  private SortList referencedModuleList;
+  private ModuleList typedModuleList;
+  private HookDeclList hookList;
+  private ModuleList referencedModuleList;
+  private HookDeclList referencedHookList;
   /** The constructor*/
   public GomReferenceExpanderPlugin() {
     super("GomReferenceExpander");
@@ -60,44 +63,48 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof SortList) {
-      typedModuleList = (SortList)arg[0];
-      setStreamManager((GomStreamManager)arg[1]);
+    if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
+      typedModuleList = (ModuleList) arg[0];
+      hookList = (HookDeclList) arg[1];
+      setStreamManager((GomStreamManager)arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomReferenceExpander", "[SortList,GomStreamManager]",
+          new Object[]{"GomReferenceExpander", "[ModuleList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
 
   /**
    * inherited from plugin interface
-   * Create the initial SortList 
+   * Create the initial ModuleList 
    */
   public void run() {
-    if(getOptionBooleanValue("reference")) {
+    if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("pointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-
-      getLogger().log(Level.INFO, "Start adding references");
-      String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
-      GomReferenceExpander referencer = new GomReferenceExpander(packagePrefix);
-      referencedModuleList = referencer.expand(typedModuleList);
+      getLogger().log(Level.INFO, "Extend the signature");
+      String packagePrefix =
+        streamManager.getPackagePath().replace(File.separatorChar,'.');
+      GomReferenceExpander referencer = new GomReferenceExpander(packagePrefix,getOptionBooleanValue("termgraph"));
+      Pair mpair = referencer.expand(typedModuleList,hookList);
+      referencedModuleList = mpair.getModules();
+      referencedHookList = mpair.getHooks();
       if(referencedModuleList == null) {
         getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),
           streamManager.getInputFileName());
       } else {
         getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
-        getLogger().log(Level.INFO, "Reference expansion succeeds");
+        getLogger().log(Level.INFO, "Signature extension succeeds");
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
               + TYPED_SUFFIX, (aterm.ATerm)referencedModuleList.toATerm());
         }
       }
     }
-    else{
+    else {
       referencedModuleList = typedModuleList;
+      referencedHookList = hookList;
     }
   }
 
@@ -107,6 +114,6 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{referencedModuleList, getStreamManager()};
+    return new Object[]{referencedModuleList, referencedHookList, getStreamManager()};
   }
 }

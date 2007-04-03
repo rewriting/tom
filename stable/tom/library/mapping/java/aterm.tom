@@ -31,5 +31,6 @@
 
 %typeterm ATerm {
   implement { aterm.ATerm }
+  is_sort(t) { t instanceof aterm.ATerm }
   equals(t1, t2)      { t1 == t2}
 }

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ public class SequenceId extends AbstractMuStrategy {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     Visitable v = visitors[FIRST].visit(any);
-    if (!(v == any)) {
+    if(v != any) {
       return visitors[THEN].visit(v);
     } else {
       return v;

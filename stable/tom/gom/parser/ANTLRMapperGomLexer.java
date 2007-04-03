@@ -69,16 +69,12 @@ public ANTLRMapperGomLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("module", this), new Integer(4));
 	literals.put(new ANTLRHashString("abstract", this), new Integer(10));
 	literals.put(new ANTLRHashString("syntax", this), new Integer(11));
-	literals.put(new ANTLRHashString("make_insert", this), new Integer(22));
-	literals.put(new ANTLRHashString("sort", this), new Integer(26));
-	literals.put(new ANTLRHashString("private", this), new Integer(28));
+	literals.put(new ANTLRHashString("sort", this), new Integer(20));
+	literals.put(new ANTLRHashString("private", this), new Integer(23));
 	literals.put(new ANTLRHashString("sorts", this), new Integer(9));
-	literals.put(new ANTLRHashString("import", this), new Integer(25));
-	literals.put(new ANTLRHashString("interface", this), new Integer(24));
-	literals.put(new ANTLRHashString("make", this), new Integer(21));
-	literals.put(new ANTLRHashString("operator", this), new Integer(19));
+	literals.put(new ANTLRHashString("import", this), new Integer(24));
+	literals.put(new ANTLRHashString("operator", this), new Integer(21));
 	literals.put(new ANTLRHashString("imports", this), new Integer(7));
-	literals.put(new ANTLRHashString("block", this), new Integer(23));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -436,7 +432,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop63:
+		_loop60:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -444,7 +440,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop63;
+				break _loop60;
 			}
 			
 		} while (true);
@@ -492,7 +488,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop69:
+		_loop66:
 		do {
 			switch ( LA(1)) {
 			case '\n':
@@ -553,7 +549,7 @@ tryAgain:
 					newline();
 				}
 			else {
-				break _loop69;
+				break _loop66;
 			}
 			}
 		} while (true);
@@ -603,7 +599,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop73:
+		_loop70:
 		do {
 			switch ( LA(1)) {
 			case 'a':  case 'b':  case 'c':  case 'd':
@@ -647,7 +643,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop73;
+				break _loop70;
 			}
 			}
 		} while (true);
