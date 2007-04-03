@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -102,6 +102,8 @@ public class TomKernelExpander extends TomBase {
    * - EqualityCondition
    * - Match
    *
+   * The types of subjects are inferred from the patterns
+   *
    * Variable and TermAppl are expanded in the TomTerm case
    */
 
@@ -167,6 +169,7 @@ public class TomKernelExpander extends TomBase {
 	return `VisitTerm(newType, newPatternInstructionList,options);
       }
     }
+
     visit Instruction {
       MatchingCondition[Lhs=lhs@Variable[AstName=Name(_), AstType=lhsType],
 	Rhs=rhs@Variable[AstName=Name(_), AstType=rhsType]] -> {
@@ -268,6 +271,11 @@ public class TomKernelExpander extends TomBase {
 	  return `TypedEqualityCondition(type,newLhs,newRhs);
 	}
 
+      /*
+       * Expansion of a Match construct
+       * to add types in subjects
+       * to add types in variables of patterns and rhs
+       */
       Match(SubjectList(tomSubjectList),patternInstructionList, option) -> {
 	/*
 	 * Try to guess types for tomSubjectList
@@ -439,18 +447,25 @@ matchBlock: {
  */
 private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionList, int index) {
   %match(patternInstructionList) {
-    concPatternInstruction(_*, PatternInstruction[
-	Pattern=Pattern[TomList=concTomTerm(X*,(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
-      //System.out.println("X.length = " + `X*.length());
-      if(`X*.length() == index) {
-	TomSymbol symbol = getSymbolFromName(`name);
-	//System.out.println("name = " + `name);
-	if(symbol!=null) {
-	  TomType newType = getSymbolCodomain(symbol);
-	  //System.out.println("newType = " + `newType);
-	  return `newType;
-	} else {
-	  return null;
+    concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
+      TomTerm subject = `tmpSubject;
+      %match(subject) {
+	AntiTerm(p) -> { subject = `p; }
+      }
+      %match(subject) {
+	(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)] -> {
+	  //System.out.println("X.length = " + `X*.length());
+	  if(`X*.length() == index) {
+	    TomSymbol symbol = getSymbolFromName(`name);
+	    //System.out.println("name = " + `name);
+	    if(symbol!=null) {
+	      TomType newType = getSymbolCodomain(symbol);
+	      //System.out.println("newType = " + `newType);
+	      return `newType;
+	    } else {
+	      return null;
+	    }
+	  }
 	}
       }
     }

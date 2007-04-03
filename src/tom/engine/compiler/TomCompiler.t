@@ -2,7 +2,7 @@
  * 
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -323,10 +323,8 @@ matchBlock: {
     }
     throw new TomRuntimeException("buildCondition strange term: " + condList);
   }
-  
-  private TomTerm abstractPattern(TomTerm subject,
-      ArrayList abstractedPattern,
-      ArrayList introducedVariable)  {
+
+  private TomTerm abstractPattern(TomTerm subject, ArrayList abstractedPattern, ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(subject) {
       RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
@@ -354,7 +352,7 @@ matchBlock: {
                   TomNumberList path = `concTomNumber();
                   //path = append(`AbsVar(Number(introducedVariable.size())),path);
                   absVarNumber++;
-                  path = `concTomNumber(path*,AbsVar(Number(absVarNumber)));
+                  path = `concTomNumber(path*,AbsVar(absVarNumber));
 
                   TomTerm newVariable = `Variable(concOption(),PositionName(path),type2,concConstraint());
 
