@@ -353,10 +353,30 @@ public class HookTypeExpander {
   }
 
   private HookDeclList makeACHookList(String opName, Decl mdecl, String scode) {
+    /* Can only be applied to a variadic operator, those domain and codomain
+     * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
     if (null == domain)
       return `concHookDecl();
+
+    /* start with AU normalization */
     HookDeclList acHooks = makeAUHookList(opName, mdecl, scode);
+    /*
+     * add the following hooks:
+     * if(tail.isConc) {
+     *   if(head < tail.head) {
+     *     tmp = head
+     *     head = tail.head
+     *     tail = cons(tmp,tail.tail)
+     *   }
+     * } else if(head < tail) {
+     *   tmp = head
+     *   head = tail
+     *   tail = tmp
+     * }
+     * // in all cases:
+     * return makeReal(head,tail)
+     */
     acHooks = `concHookDecl(
         MakeHookDecl(
           mdecl,
