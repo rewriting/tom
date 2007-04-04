@@ -145,7 +145,7 @@ public class TomBase {
     }
   }   
 
-  protected static TomTypeList getSymbolDomain(TomSymbol symbol) {
+  public static TomTypeList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
       return symbol.getTypesToType().getDomain();
     } else {

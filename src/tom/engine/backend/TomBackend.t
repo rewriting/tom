@@ -98,58 +98,58 @@ public class TomBackend extends TomGenericPlugin {
   public void run() {
     try {
       if(isActivated() == true) {
-	TomAbstractGenerator generator = null;
-	Writer writer;
-	long startChrono = System.currentTimeMillis();
-	try {
-	  String encoding = getOptionStringValue("encoding");
-	  writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile()),encoding));
-	  OutputCode output = new OutputCode(writer, getOptionManager());
-	  if(getOptionBooleanValue("noOutput")) {
-	    throw new TomRuntimeException("Backend activated, but noOutput is set");
-	  } else if(getOptionBooleanValue("cCode")) {
-	    generator = new TomCGenerator(output, getOptionManager(), symbolTable());
-	  } else if(getOptionBooleanValue("camlCode")) {
-	    generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
-	  } else if(getOptionBooleanValue("pCode")) {
-	    generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
-	  } else if(getOptionBooleanValue("jCode")) {
-	    generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
-	  } else {
-	    throw new TomRuntimeException("no selected language for the Backend");
-	  }
+        TomAbstractGenerator generator = null;
+        Writer writer;
+        long startChrono = System.currentTimeMillis();
+        try {
+          String encoding = getOptionStringValue("encoding");
+          writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile()),encoding));
+          OutputCode output = new OutputCode(writer, getOptionManager());
+          if(getOptionBooleanValue("noOutput")) {
+            throw new TomRuntimeException("Backend activated, but noOutput is set");
+          } else if(getOptionBooleanValue("cCode")) {
+            generator = new TomCGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("camlCode")) {
+            generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("pCode")) {
+            generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("jCode")) {
+            generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
+          } else {
+            throw new TomRuntimeException("no selected language for the Backend");
+          }
 
-	  TomTerm pilCode = (TomTerm) getWorkingTerm();
+          TomTerm pilCode = (TomTerm) getWorkingTerm();
 
-	  markUsedConstructorDestructor(pilCode);
+          markUsedConstructorDestructor(pilCode);
 
-	  generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
-	  // verbose
-	  getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
-	      new Integer((int)(System.currentTimeMillis()-startChrono)));
-	  writer.close();
-	} catch (IOException e) {
-	  getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
-	      new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
-	  return;
-	} catch (Exception e) {
-	  String fileName = getStreamManager().getInputFileName();
-	  int line = -1;
-	  TomMessage.error(getLogger(),fileName,line,TomMessage.exceptionMessage, new Object[]{fileName});
-	  e.printStackTrace();
-	  return;
-	}
-	// set the generated File Name
-	try {
-	  generatedFileName = getStreamManager().getOutputFile().getCanonicalPath();
-	} catch (IOException e) {
-	  System.out.println("IO Exception when computing generatedFileName");
-	  e.printStackTrace();
-	}
+          generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
+          // verbose
+          getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
+              new Integer((int)(System.currentTimeMillis()-startChrono)));
+          writer.close();
+        } catch (IOException e) {
+          getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
+              new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
+          return;
+        } catch (Exception e) {
+          String fileName = getStreamManager().getInputFileName();
+          int line = -1;
+          TomMessage.error(getLogger(),fileName,line,TomMessage.exceptionMessage, new Object[]{fileName});
+          e.printStackTrace();
+          return;
+        }
+        // set the generated File Name
+        try {
+          generatedFileName = getStreamManager().getOutputFile().getCanonicalPath();
+        } catch (IOException e) {
+          System.out.println("IO Exception when computing generatedFileName");
+          e.printStackTrace();
+        }
 
       } else {
-	// backend is desactivated
-	getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
+        // backend is desactivated
+        getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
       }
     } catch(PlatformException e) {
       getLogger().log( Level.SEVERE, PluginPlatformMessage.platformStopped.getMessage());
@@ -249,68 +249,68 @@ public class TomBackend extends TomGenericPlugin {
   %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
       CompiledMatch[AutomataInst=inst, Option=optionList] -> {
-	String moduleName = getModuleName(`optionList);
-	/*
-	 * push the modulename
-	 * or the wrapping modulename if the current one
-	 * (nested match for example) does not have one
-	 */
-	if(moduleName==null) {
-	  try {
-	    moduleName = (String) stack.peek();
-	    stack.push(moduleName);
-	    //System.out.println("push2: " + moduleName);
-	  } catch (EmptyStackException e) {
-	    System.out.println("No moduleName in stack");
-	  }
-	} else {
-	  stack.push(moduleName);
-	  //System.out.println("push1: " + moduleName);
-	}
-	//System.out.println("match -> moduleName = " + moduleName);
-	markStrategy.visit(`inst);
-	//String pop = (String) stack.pop();
-	//System.out.println("pop: " + pop);
-	`Fail().visit(null);
+        String moduleName = getModuleName(`optionList);
+        /*
+         * push the modulename
+         * or the wrapping modulename if the current one
+         * (nested match for example) does not have one
+         */
+        if(moduleName==null) {
+          try {
+            moduleName = (String) stack.peek();
+            stack.push(moduleName);
+            //System.out.println("push2: " + moduleName);
+          } catch (EmptyStackException e) {
+            System.out.println("No moduleName in stack");
+          }
+        } else {
+          stack.push(moduleName);
+          //System.out.println("push1: " + moduleName);
+        }
+        //System.out.println("match -> moduleName = " + moduleName);
+        markStrategy.visit(`inst);
+        //String pop = (String) stack.pop();
+        //System.out.println("pop: " + pop);
+        `Fail().visit(null);
       }
 
       TypedAction[AstInstruction=inst] -> {
-	markStrategy.visit(`inst);
-	`Fail().visit(null);
+        markStrategy.visit(`inst);
+        `Fail().visit(null);
       }
     }
 
     visit Expression {
       (IsEmptyList|IsEmptyArray|GetHead|GetTail)[Opname=Name(name)] -> {
-	try {
-	  // System.out.println("list check: " + `name);
-	  String moduleName = (String) stack.peek();
-	  //System.out.println("moduleName: " + moduleName);
-	  TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-	  tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
-	} catch (EmptyStackException e) {
-	  System.out.println("No moduleName in stack");
-	}
+        try {
+          // System.out.println("list check: " + `name);
+          String moduleName = (String) stack.peek();
+          //System.out.println("moduleName: " + moduleName);
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
 
       }
     }
 
     visit TomType {
       Type(ASTTomType(type),_) -> {
-	try {
-	  String moduleName = (String) stack.peek();
-	  tb.setUsedTypeDefinition(moduleName,`type,markStrategy);
-	} catch (EmptyStackException e) {
-	  System.out.println("No moduleName in stack");
-	}
+        try {
+          String moduleName = (String) stack.peek();
+          tb.setUsedTypeDefinition(moduleName,`type,markStrategy);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
       }
     }
 
     visit Declaration {
       TypeTermDecl[] -> {
-	// should not search under a declaration
-	//System.out.println("skip: " + `x);
-	`Fail().visit(null);
+        // should not search under a declaration
+        //System.out.println("skip: " + `x);
+        `Fail().visit(null);
       }
     }
 
@@ -329,14 +329,14 @@ visit TomTerm {
     // System.out.println("dest " + `l);
     while(!l.isEmptyconcTomName()) {
       try {
-	//System.out.println("op: " + l.getHead());
-	String moduleName = (String) stack.peek();
-	//System.out.println("moduleName: " + moduleName);
-	TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
-	//System.out.println("mark: " + tomSymbol);
-	tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
+        //System.out.println("op: " + l.getHead());
+        String moduleName = (String) stack.peek();
+        //System.out.println("moduleName: " + moduleName);
+        TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
+        //System.out.println("mark: " + tomSymbol);
+        tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
       } catch (EmptyStackException e) {
-	System.out.println("No moduleName in stack");
+        System.out.println("No moduleName in stack");
       }
       l = l.getTailconcTomName();
     }

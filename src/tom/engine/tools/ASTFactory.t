@@ -456,6 +456,13 @@ public class ASTFactory {
 
   public static TomTerm buildList(TomName name,TomList args, SymbolTable symbolTable) {
     //if(!args.isEmptyconcTomTerm()) System.out.println("buildList: " + args.getHeadconcTomTerm());
+    TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
+    String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
+    String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
+
+    //System.out.println("topDomain = " + topDomain);
+    //System.out.println("topCodomain = " + topCodomain);
+
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
@@ -463,55 +470,48 @@ public class ASTFactory {
 
       concTomTerm(head@VariableStar[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
-        return `BuildAppendList(name,head,subList);
+        if(topDomain != topCodomain) {
+          return `BuildAppendList(name,head,subList);
+        }
+        return `BuildConsList(name,head,subList);
       }
-      
+
       concTomTerm(Composite(concTomTerm(head@VariableStar[],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
-	//System.out.println("buildAppendList: " + `head);
-        return `BuildAppendList(name,head,subList);
+        if(topDomain != topCodomain) {
+          return `BuildAppendList(name,head,subList);
+        }
+        return `BuildConsList(name,head,subList);
       }
 
       concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName],_*)),tail*) -> {
-	/*
-	 * Flatten nested lists
-	 * unless domain and codomain are equals
-	 */
-	if(name==`opName) {
-	  TomSymbol listSymbol = symbolTable.getSymbolFromName(name.getString());
-	  %match(listSymbol) {
-	    Symbol[TypesToType=TypesToType[Domain=concTomType(TomTypeAlone(!typeName)), Codomain=TomTypeAlone(typeName)]] -> {
-	      TomTerm subList = buildList(name,`tail,symbolTable);
-	      return `BuildAppendList(name,head,subList);
-	    }
-	  }
-	}
+        /* Flatten nested lists, unless domain and codomain are equals */
+        TomTerm subList = buildList(name,`tail,symbolTable);
+        if(topDomain != topCodomain) {
+          if(name==`opName) {
+            return `BuildAppendList(name,head,subList);
+          }
+        }
+        return `BuildConsList(name,head,subList);
       }
 
       concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName),ModuleName=module],_*)),tail*) -> {
-	/*
-	 * compare the codomain of tomName with the domain of name
-	 * if the codomain of the inserted element is equal to the codomain
-	 * of the list operator, a BuildAppendList is performed 
-	 * unless the domain and the codomain of the list operator is the same
-	 */
-	TomSymbol symbol = symbolTable.getSymbolFromName(`tomName);
-	TomSymbol listSymbol = symbolTable.getSymbolFromName(name.getString());
-
-	//System.out.println("list   = " + listSymbol);
-	//System.out.println("symbol = " + symbol);
-
         TomTerm subList = buildList(name,`tail,symbolTable);
-	//TomType codomain = getSymbolCodomain(symbol);
-	%match(listSymbol,symbol) {
-	  Symbol[TypesToType=TypesToType[Domain=concTomType(TomTypeAlone(!typeName)), Codomain=TomTypeAlone(typeName)]],
-	  Symbol[TypesToType=TypesToType[Codomain=TomTypeAlone(typeName)]] -> {
-	    //System.out.println("append");
-	    return `BuildAppendList(name,head,subList);
-	  }
-	}
+        if(topDomain != topCodomain) {
+        /*
+         * compare the codomain of tomName with topDomain
+         * if the codomain of the inserted element is equal to the codomain
+         * of the list operator, a BuildAppendList is performed 
+         */
+          TomSymbol symbol = symbolTable.getSymbolFromName(`tomName);
+          String codomain = TomBase.getTomType(TomBase.getSymbolCodomain(symbol));
+          if(codomain == topCodomain) {
+            return `BuildAppendList(name,head,subList);
+          } 
+        }
         return `BuildConsList(name,head,subList);
       }
+
       concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
@@ -525,7 +525,6 @@ public class ASTFactory {
     }
 
     throw new TomRuntimeException("buildList strange term: " + args);
-     
   }
 
   public static TomTerm buildArray(TomName name,TomList args) {

@@ -415,8 +415,8 @@ public class HookTypeExpander {
 
     HookDeclList auHooks = `concHookDecl();
     String userNeutral = trimBracket(scode);
-    /* The hook body is the name of the neutral element */
     if(userNeutral.length() > 0) {
+      /* The hook body is the name of the neutral element */
       auHooks = `concHookDecl(
           MakeHookDecl(mdecl,concSlot(),Code("return "+userNeutral+";")),
           auHooks*);
@@ -440,7 +440,7 @@ public class HookTypeExpander {
      * Remove neutral and flatten:
      * if(<head>.isEmpty<conc>()) { return <tail>; }
      * if(<tail>.isEmpty<conc>()) { return <head>; }
-     * if(<head>.isCons<conc>()) { return `<conc>(<head>*,<tail>); }
+     * if(<head>.isCons<conc>()) { return make(head.head,make(head.tail,tail)); }
      */
     auHooks = `concHookDecl(
         MakeHookDecl(
@@ -455,7 +455,6 @@ public class HookTypeExpander {
             Code(") { return head; }\n"),
             Code("if ("),
             IsCons("head",mdecl.getODecl()),
-            //Code(") { return `"+opName+"(head*,tail); }\n")
             Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n")
           )),
         auHooks*);
