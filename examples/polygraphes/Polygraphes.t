@@ -77,15 +77,15 @@ public class Polygraphes {
     TwoPath add = `g("add",2,1);
 
     TwoPath res = `c1(
-                        c0(c1(dup,
-                              c0(suc,id(1))), id(1)),
-                        c0(id(1),c1(c0(suc,suc),add)));
+        c0(c1(dup,
+            c0(suc,id(1))), id(1)),
+        c0(id(1),c1(c0(suc,suc),add)));
 
     System.out.println("res0 = " + res);
-    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
-    System.out.println("res1 = " + res);
-    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
-    System.out.println("res2 = " + res);
+    //res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
+    //System.out.println("res1 = " + res);
+    //res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    //System.out.println("res2 = " + res);
 
   }
 
@@ -101,8 +101,8 @@ public class Polygraphes {
        * Lifting rule
        */
       c0(X*,f@!id[],Y*,g@!id[],Z*) -> {
-	return `c1(c0(X*,f,Y*,id(s(g)),Z*),
-   	           c0(id(t(X*)),id(t(f)),id(t(Y*)),g,id(t(Z*))));
+        return `c1(c0(X*,f,Y*,id(s(g)),Z*),
+                   c0(id(t(X*)),id(t(f)),id(t(Y*)),g,id(t(Z*))));
       }
     }
   }
@@ -113,21 +113,25 @@ public class Polygraphes {
        * Vertical Splitting rule
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
+      c0(id(m), c1(f*,g*), id(n)) -> { return `c1(c0(id(m),f*,id(n)), c0(id(m),g*,id(n))); }
+
+/*
       c0(head*, c1(f*,g*), tail*) -> {
-	// head and tail should not be both empty
-	if(!`head*.isEmptyc0() || !`tail*.isEmptyc0()) {
-	  // f*,g* should be a non empty c1 list or a single element
-	  if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
-	    // head, tail are either empty or id(m)
-	    // idea: use id(m) with m possibily 0
-	    // i.e. id(0) is neutral wrt. c0
-	    if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
-	      return `c1(c0(head*,f*,tail*),
-		         c0(head*,g*,tail*));
-	    }
-	  }
-	}
+        // head and tail should not be both empty
+        if(!`head*.isEmptyc0() || !`tail*.isEmptyc0()) {
+          // f*,g* should be a non empty c1 list or a single element
+          if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
+            // head, tail are either empty or id(m)
+            // idea: use id(m) with m possibily 0
+            // i.e. id(0) is neutral wrt. c0
+            if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
+              return `c1(c0(head*,f*,tail*),
+                         c0(head*,g*,tail*));
+            }
+          }
+        }
       }
+      */
     }
   }
 
@@ -137,17 +141,17 @@ public class Polygraphes {
        * Gravity rule
        */
       c1(c0(M*,f,N*),
-	 c0(P*,id(m),Q*),
-	 tail*) -> {
-	if(!`f.isid()) {
-	  int sp = s(`P*);
-	  int tm = t(`M*);
-	  if((sp <= tm) && (sp+`m >= tm+t(`f))) {
-	      return `c1(c0(M*,id(s(f)),N*),
-                         c0(P*,id(tm-sp),f*,id(t(N*)-s(Q*)),Q*),
-                         tail*);
-	  }
-	}
+         c0(P*,id(m),Q*),
+         tail*) -> {
+        if(!`f.isid()) {
+          int sp = s(`P*);
+          int tm = t(`M*);
+          if((sp <= tm) && (sp+`m >= tm+t(`f))) {
+            return `c1(c0(M*,id(s(f)),N*),
+                c0(P*,id(tm-sp),f*,id(t(N*)-s(Q*)),Q*),
+                tail*);
+          }
+        }
       }
     }
   }

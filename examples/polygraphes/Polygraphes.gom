@@ -11,19 +11,13 @@ TwoPath =
  * C0(0,G) = G
  * C0(G,0) = G
  */
+c0:AU() { `id(0) }
 c0:make_insert(x,y) {
-     // normal form AU
-     if(x.isEmptyc0()) { return y; }
-     if(y.isEmptyc0()) { return x; }
-     if(x.isConsc0()) { return `c0(x*,y); }
-
   %match(x,y) {
-    id(0),g -> { return `g; }
-    g,id(0) -> { return `g; }
     c1(),g -> { return `g; }
     g,c1() -> { return `g; }
-    /* id(m),id(n) is handled by AU :-) */
-    id(m),c0(id(n),tail*) -> { return `c0(id(n+m),tail*); }
+    // id(m),id(n) is handled by AU :-)
+    id(m),c0?(id(n),tail*) -> { return `c0(id(n+m),tail*); }
   }
 }
 
@@ -31,17 +25,14 @@ c0:make_insert(x,y) {
  * C1(m,G) = G if m=G.source
  * C1(G,n) = G if n=G.target
  */
+c1:AU() {}
 c1:make_insert(x,y) {
-     // normal form AU
-     if(x.isEmptyc1()) { return y; }
-     if(y.isEmptyc1()) { return x; }
-     if(x.isConsc1()) { return `c1(x*,y); }
-
-     if(polygraphes.Polygraphes.t(x)!=polygraphes.Polygraphes.s(y)) {
-        throw new RuntimeException("bad number of lines: " + x + " " + y);
-      }
+  if(polygraphes.Polygraphes.t(x)!=polygraphes.Polygraphes.s(y)) {
+    throw new RuntimeException("bad number of lines: " + x + " " + y);
+  }
   %match(x,y) {
     id(m), g -> { return `g; }
     g, id(n) -> { return `g; }
   }
 }
+
