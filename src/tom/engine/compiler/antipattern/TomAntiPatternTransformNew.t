@@ -80,72 +80,57 @@ public class TomAntiPatternTransformNew {
 	 * @return a term in which all the anti terms are abstracted with variables
 	 * 			and with one match constraint for each anti-term that was abstracted 
 	 */
-	public static TomTerm getConstrainedTerm(TomTerm tomTerm,
-			SymbolTable symbolTable){
-		
-		TomTerm termAntiReplaced = null;		
-		ArrayList replacedTerms = new ArrayList();
-		Constraint andAntiCons = `AndAntiConstraint();		
-				
+	public static TomTerm getConstrainedTerm(TomTerm tomTerm, SymbolTable symbolTable) {
 		TomAntiPatternTransformNew.symbolTable = symbolTable;
-		
-		// existing constraints
-		ConstraintList constraints = null;
-		if(tomTerm instanceof AntiTerm){
-			constraints = tomTerm.getTomTerm().getConstraints();
-		}else{
-			constraints = tomTerm.getConstraints();
-		}
-		
 		int termLine = 0;
 		String fileName = null;		
 		// get the file name and line number
-		TomTerm tmpTomTerm = tomTerm;		
-		if (tmpTomTerm instanceof AntiTerm){
-			tmpTomTerm = ((AntiTerm)tmpTomTerm).getTomTerm();
-		}		
-		%match(tmpTomTerm){
-			(Variable|RecordAppl|XMLAppl)[Option = concOption(_*,OriginTracking[Line=termLine,FileName=fileName],_*)] ->{
+		TomTerm tmpTomTerm = (tomTerm instanceof AntiTerm)?((AntiTerm)tomTerm).getTomTerm():tomTerm;
+		%match(tmpTomTerm) {
+			(Variable|RecordAppl|XMLAppl)[Option = concOption(_*,OriginTracking[Line=termLine,FileName=fileName],_*)] -> {
 				termLine = `termLine;
 				fileName = `fileName;
-			}			
+			}
 		}
 		
 		//System.out.println("Entered with: " + tomTerm);
-		
-		while(true){		
+		Constraint andAntiCons = `AndAntiConstraint();		
+		ArrayList replacedTerms = new ArrayList();
+    TomTerm termAntiReplaced = tomTerm;
+		while(true) {		
 			// get the term with a variable instead of anti
 			String varName = FRESH_VAR_NAME + (varCounter++);
 			TomTerm abstractVariable = `Variable(concOption(OriginTracking(Name(varName),
 					termLine,fileName)),Name(varName),EmptyType(),concConstraint());		
-			termAntiReplaced = (TomTerm) `OnceTopDownId(AbstractTerm(abstractVariable,replacedTerms)).apply(tomTerm);
+			TomTerm tmp = (TomTerm) `OnceTopDownId(AbstractTerm(abstractVariable,replacedTerms)).apply(termAntiReplaced);
 			// if nothing was done
-			if (termAntiReplaced == tomTerm){
-				break;
-			}			
+			if(tmp != termAntiReplaced) {
+        termAntiReplaced = tmp;
+      } else {
+        break;
+      }
 			TomTerm replacedTerm = (TomTerm)replacedTerms.get(0);			
 			// give the variable the correct type
 			TomType type = TomBase.getTermType(replacedTerm,symbolTable);
 			abstractVariable = abstractVariable.setAstType(type);
 			// add the new anti constraint
-			andAntiCons = `AndAntiConstraint(andAntiCons*,
-					AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf));
+			andAntiCons = `AndAntiConstraint(AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf),andAntiCons*);
+      //System.out.println("andAntiCons = " + andAntiCons);
 			
 			// reinitialize
 			replacedTerms.clear();
-			tomTerm = termAntiReplaced;
-		}		
+		}
 				
+		// existing constraints
+		ConstraintList constraints = (tomTerm instanceof AntiTerm)?tomTerm.getTomTerm().getConstraints():tomTerm.getConstraints();
 		// add the newly created constraints
-		if (!andAntiCons.isEmptyAndAntiConstraint()){
-			andAntiCons = andAntiCons.reverse();
+		if(!andAntiCons.isEmptyAndAntiConstraint()) {
 			constraints = `concConstraint(constraints*,andAntiCons);
 		}
 		termAntiReplaced = termAntiReplaced.setConstraints(constraints);
 		
 		// change the level
-		actionOnIf = actionOnIf == 0 ? 1:0;
-		
+		actionOnIf = (actionOnIf==0)?1:0;
 		return termAntiReplaced; 		
 	}
 	
@@ -265,7 +250,7 @@ public class TomAntiPatternTransformNew {
 						otherConstraints = `concConstraint(otherConstraints*,head);
 					}
 					cList = cList.getTailconcConstraint(); 
-				}				
+				}
 				bag.add(`t.setConstraints(otherConstraints));				
 				// return the variable with the correct type
 				return variable.setAstType(TomBase.getTermType(`t,symbolTable)).setConstraints(assignConstraints);				
