@@ -128,4 +128,33 @@ public class TestAU extends TestCase {
     assertEquals("m() does not match p(x*,y*)",cnt,0);
   }
 
+  /*
+     * I am not sure we want this to be correct
+
+  public void testMatch1() {
+    L l = `list(bb(),bb());
+    int cnt = 0;
+    %match(l) {
+      list(aa(),y*) -> { cnt++; }
+      list(x*,aa()) -> { cnt++; }
+    }
+    if (0 == cnt) {
+      fail("list(aa,y) should match list(bb(),bb())");
+    }
+    assertEquals("Incomplete matching",cnt,2);
+  }
+
+  public void testMatch2() {
+    L l = `bb();
+    int cnt = 0;
+    %match(l) {
+      list?(aa(),y*) -> { cnt++; }
+      list?(x*,aa()) -> { cnt++; }
+    }
+    if (0 == cnt) {
+      fail("list?(aa,y) should match list(bb())");
+    }
+    assertEquals("Incomplete matching",cnt,2);
+  }
+  */
 }

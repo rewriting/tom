@@ -207,6 +207,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      Conditional(cond,exp1,exp2) -> {
+        buildExpConditional(deep, `cond, `exp1, `exp2, moduleName);
+        return;
+      }
+
       And(exp1,exp2) -> {
         buildExpAnd(deep, `exp1, `exp2, moduleName);
         return;
@@ -630,7 +635,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       MakeEmptyList(Name(opname), instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+        || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr, moduleName);
         }
         return;
@@ -806,6 +811,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException;
 
+  protected abstract void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException;
   protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException;

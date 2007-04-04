@@ -46,12 +46,12 @@ public class Polygraphes {
     %match(t) {
       id(n) -> { return `n; }
       g[Source=x] -> { return `x; }
-      c0() -> { return 0; }
+      //no longer necessary: c0() -> { return 0; }
       // We want A here
-      c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return s(`head) + s(`tail*); } }
+      c0(head,tail*) -> { return s(`head) + s(`tail*); } 
       c1() -> { return 0; }
       // We want A here
-      c1(head,tail*) -> { if(!`tail*.isEmptyc1()) { return s(`head); } }
+      c1(head,tail*) -> { return s(`head); }
     }
     throw new RuntimeException("strange term: " + t);
   }
@@ -60,12 +60,12 @@ public class Polygraphes {
     %match(t) {
       id(n) -> { return `n; }
       g[Target=x] -> { return `x; }
-      c0() -> { return 0; }
+      //no longer necessary: c0() -> { return 0; }
       // We want A here
-      c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return t(`head) + t(`tail*); } }
+      c0(head,tail*) -> { return t(`head) + t(`tail*); }
       c1() -> { return 0; }
       // We want A here
-      c1(head*,last) -> { if(!`head*.isEmptyc1()) { return t(`head); } }
+      c1(head*,last) -> { return t(`last); }
     }
     throw new RuntimeException("strange term: " + t);
   }
@@ -81,11 +81,16 @@ public class Polygraphes {
             c0(suc,id(1))), id(1)),
         c0(id(1),c1(c0(suc,suc),add)));
 
-    System.out.println("res0 = " + res);
-    //res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
-    //System.out.println("res1 = " + res);
-    //res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
-    //System.out.println("res2 = " + res);
+    //System.out.println("res0 = " + res);
+    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
+    //res = (TwoPath) `Repeat(OnceTopDown(Sequence(Print(),Splitting()))).fire(res);
+
+    //res = `c0(c1(dup, c0(suc,id(1))), id(1));
+    //res = (TwoPath) `Splitting().fire(res);
+    System.out.println("res1 = " + res);
+
+    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    System.out.println("res2 = " + res);
 
   }
 
@@ -113,8 +118,16 @@ public class Polygraphes {
        * Vertical Splitting rule
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
-      c0(id(m), c1(f*,g*), id(n)) -> { return `c1(c0(id(m),f*,id(n)), c0(id(m),g*,id(n))); }
-
+      c0(head@id(m), c1(f*,g*), tail*) -> {
+        if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
+          return `c1(c0(head,f*,tail*), c0(head,g*,tail*)); 
+        }
+      }
+      c0(head*, c1(f*,g*), tail@id(n)) -> {
+        if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
+          return `c1(c0(head*,f*,tail), c0(head*,g*,tail)); 
+        }
+       }
 /*
       c0(head*, c1(f*,g*), tail*) -> {
         // head and tail should not be both empty

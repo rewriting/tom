@@ -592,6 +592,11 @@ public class TomKernelCompiler extends TomBase {
    */ 
   private Expression genGetHead(TomSymbol tomSymbol, TomType type, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Conditional(IsFsym(opNameAST,var),GetHead(opNameAST, type, var),TomTermToExpression(var));
+    }
     return `GetHead(opNameAST, type, var);
   }
 
@@ -600,11 +605,25 @@ public class TomKernelCompiler extends TomBase {
    */ 
   private Expression genGetTail(TomSymbol tomSymbol, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Conditional(IsFsym(opNameAST,var),GetTail(opNameAST, var), TomTermToExpression(BuildEmptyList(opNameAST)));
+    }
     return `GetTail(opNameAST, var);
   }
 
   private Expression genIsEmptyList(TomSymbol tomSymbol, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Or(IsEmptyList(opNameAST, var), EqualTerm(codomain,var,BuildEmptyList(opNameAST)));
+    }
+    /* used to be: return `IsEmptyList(opNameAST, var); */
+    /* this complex test is needed to handle AU symbols */
+    /* the last element may be different from empty */
+    // return `Or(IsEmptyList(opNameAST, var),Negation(IsFsym(opNameAST,var)));
     return `IsEmptyList(opNameAST, var);
   }
 

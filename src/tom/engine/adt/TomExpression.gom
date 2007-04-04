@@ -12,7 +12,7 @@ Expression =
   | And(Arg1:Expression,Arg2:Expression)
   | Or(Arg1:Expression,Arg2:Expression)
   | GreaterThan(Arg1:Expression,Arg2:Expression)
-//  | Conditional(Cond:Expression,Then:Expression,Else:Expression)
+  | Conditional(Cond:Expression,Then:Expression,Else:Expression)
   | TrueTL()
   | FalseTL()
   // Exp1 - the subject
