@@ -129,7 +129,7 @@ public class TestAU extends TestCase {
   }
 
   public void testMatch1() {
-    L l = `list(aa(),bb(),aa(),bb(),aa());
+    L l = `list(list(aa(),bb()),list(aa()),list(bb(),aa()));
     int cnt = 0;
     %match(l) {
       list(bb(),y*) -> { cnt++; }
@@ -137,9 +137,11 @@ public class TestAU extends TestCase {
       list(bb(),y) -> { cnt++; }
       list(x,bb()) -> { cnt++; }
       list(x,y) -> { cnt++; }
+      list(bb(),x*,bb()) -> { if(`x==`aa()) cnt++; }
     }
-    assertEquals("Incomplete matching",cnt,5);
+    assertEquals("Incomplete matching",cnt,6);
   }
+
   /*
      * I am not sure we want this to be correct
 
