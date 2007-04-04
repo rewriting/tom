@@ -5,9 +5,9 @@ import testbackquote.thing.types.*;
 
 public class TestBackQuote extends TestCase {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(Test.class));
+    junit.textui.TestRunner.run(new TestSuite(TestBackQuote.class));
   }
-  
+
   %gom {
     module thing
       imports String
@@ -23,18 +23,18 @@ public class TestBackQuote extends TestCase {
     // the problem was that space after the 'z*'
     %match(L l) {
       conc(
-	  x*, 
-	  b(), 
-	  y*, 
-	  a(), 
-	  z*
-	  ) -> {
-	l2 = `conc(x*,
-	    b(),
-	    y*,
-	    a(),
-	    z*
-	    );
+          x*,
+          b(),
+          y*,
+          a(),
+          z*
+      ) -> {
+        l2 = `conc(x*,
+                   b(),
+                   y*,
+                   a(),
+                   z*
+             );
       }
     }
     return;
@@ -49,10 +49,6 @@ public class TestBackQuote extends TestCase {
     assertTrue(
         "function of sort list",
         `conc(a(),b(),c()) == `conc(abc()));
-    if(true) {
-      return ;
-    }
-    fail("should not be there");
   }
 
 }
