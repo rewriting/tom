@@ -3,7 +3,7 @@
 .t.java:
 	tom $<
 
-all: antlrgrammar/AntlrGrammar.tom antlrgrammar/antlrcommons/AntlrCommons.tom antlrgrammar/antlrrules/AntlrRules.tom antlrgrammar/antlrelement/AntlrElement.tom Gomantlr.java
+all: antlrgrammar/AntlrGrammar.tom Gomantlr.java
 	cd gomantlr;make
 	cd aterm2antlrgrammar;make
 	cd utils;make
@@ -21,7 +21,7 @@ clean:
 	rm -rf `echo $(foreach v,$(wildcard *.gom),$(shell echo $(basename $(v)))) | tr A-Z a-z`
 	rm -rf antlrgrammar
 
-antlrgrammar/AntlrGrammar.tom: AntlrGrammar.gom
+antlrgrammar/AntlrGrammar.tom: AntlrGrammar.gom AntlrCommons.gom AntlrRules.gom AntlrElement.gom
 	gom AntlrGrammar.gom
 	rm -rf antlrcommons
 	rm -rf antlrrules
@@ -29,15 +29,7 @@ antlrgrammar/AntlrGrammar.tom: AntlrGrammar.gom
 	./subst antlrgrammar antlrcommons
 	./subst antlrgrammar antlrrules
 	./subst antlrgrammar antlrelement
-
-antlrgrammar/antlrcommons/AntlrCommons.tom: AntlrCommons.gom
-	gom -p antlrgrammar AntlrCommons.gom
-	./modif AntlrGrammar AntlrCommons
-
-antlrgrammar/antlrrules/AntlrRules.tom: AntlrRules.gom
 	gom -p antlrgrammar AntlrRules.gom
 	./modif AntlrGrammar AntlrRules
-
-antlrgrammar/antlrelement/AntlrElement.tom: AntlrElement.gom
-	gom -p antlrgrammar AntlrElement.gom
+	./modif AntlrGrammar AntlrCommons
 	./modif AntlrGrammar AntlrElement
