@@ -80,8 +80,8 @@
   <property name="javacDebugInfo" value="on"/>
   <property name="javacVerbose"   value="false"/>
   <property name="nowarnings"     value="false" />
-  <property name="memoryInitSize" value="128m" />
-  <property name="memoryMaxSize"  value="512m" />
+  <property name="memoryInitSize" value="512m" />
+  <property name="memoryMaxSize"  value="1024m" />
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">

@@ -76,7 +76,7 @@
                 options="--optimize">
     	<include name="TestOptimizer.t"/>	    	         
     </tom.preset>
-    <javac.preset destdir="${test.build}">
+    <javac.preset destdir="${test.build}" fork="true">
       <src path="${test.src}"/>
       <src path="${test.gen}"/>
       <exclude name="**/error/**"/>

@@ -9,6 +9,8 @@
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
   <property name="tomfork"     value="off"/>
+  <property name="memoryInitSize" value="512m" />
+  <property name="memoryMaxSize"  value="1024m" />
 
   <property environment="env"/>
   <property name="tom.home"    value="${env.TOM_HOME}"/>
@@ -77,7 +79,9 @@
     <presetdef name="javac.preset">
       <javac target="${javacTarget}"
              source="${javacSource}"
-             nowarn="${nowarnings}">
+             nowarn="${nowarnings}"
+             memoryInitialSize="${memoryInitSize}"
+             memoryMaximumSize="${memoryMaxSize}">
         <classpath refid="tom.classpath"/>
       </javac>
     </presetdef>
