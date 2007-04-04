@@ -353,7 +353,7 @@ public class HookTypeExpander {
   }
 
   private HookDeclList makeACHookList(String opName, Decl mdecl, String scode) {
-    /* Can only be applied to a variadic operator, those domain and codomain
+    /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
     if (null == domain)
@@ -407,7 +407,7 @@ public class HookTypeExpander {
   }
 
   private HookDeclList makeAUHookList(String opName, Decl mdecl, String scode) {
-    /* Can only be applied to a variadic operator, those domain and codomain
+    /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
     if (null == domain)
@@ -416,18 +416,15 @@ public class HookTypeExpander {
     HookDeclList auHooks = `concHookDecl();
     String userNeutral = trimBracket(scode);
     /* The hook body is the name of the neutral element */
-    if (!"".equals(userNeutral)) {
+    if(userNeutral.length() > 0) {
       auHooks = `concHookDecl(
           MakeHookDecl(mdecl,concSlot(),Code("return "+userNeutral+";")),
           auHooks*);
-    }
-    /* Flatten and remove neutral */
-    /*
-     * if(<head>.isEmpty<conc>()) { return <tail>; }
-     * if(<tail>.isEmpty<conc>()) { return <head>; }
-     * if(<head>.isCons<conc>()) { return `<conc>(<head>*,<tail>); }
-     */
-    if(!"".equals(userNeutral)) {
+      /* 
+       * Remove neutral:
+       * if(<head> == makeNeutral) { return <tail>; }
+       * if(<tail> == makeNeutral) { return <head>; }
+       */
       auHooks = `concHookDecl(
           MakeHookDecl(
             mdecl,
@@ -439,6 +436,12 @@ public class HookTypeExpander {
           auHooks*);
     }
     /* getODecl call is safe here, since mdecl was checked by getSortAndCheck */
+    /*
+     * Remove neutral and flatten:
+     * if(<head>.isEmpty<conc>()) { return <tail>; }
+     * if(<tail>.isEmpty<conc>()) { return <head>; }
+     * if(<head>.isCons<conc>()) { return `<conc>(<head>*,<tail>); }
+     */
     auHooks = `concHookDecl(
         MakeHookDecl(
           mdecl,
@@ -452,7 +455,8 @@ public class HookTypeExpander {
             Code(") { return head; }\n"),
             Code("if ("),
             IsCons("head",mdecl.getODecl()),
-            Code(") { return `"+opName+"(head*,tail); }\n")
+            //Code(") { return `"+opName+"(head*,tail); }\n")
+            Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n")
           )),
         auHooks*);
 
