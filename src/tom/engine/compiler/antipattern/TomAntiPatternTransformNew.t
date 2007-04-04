@@ -94,7 +94,7 @@ public class TomAntiPatternTransformNew {
 		}
 
 		//System.out.println("Entered with: " + tomTerm);
-		Constraint andAntiCons = null;		
+		Constraint andAntiCons = `AndAntiConstraint();		
 		ArrayList replacedTerms = new ArrayList();
 		TomTerm termAntiReplaced = tomTerm;
 		while(true) {		
@@ -114,8 +114,7 @@ public class TomAntiPatternTransformNew {
 			TomType type = TomBase.getTermType(replacedTerm,symbolTable);
 			abstractVariable = abstractVariable.setAstType(type);
 			// add the new anti constraint
-			andAntiCons = andAntiCons == null ? `AndAntiConstraint(AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf)) 
-					: `AndAntiConstraint(AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf),andAntiCons*);
+			andAntiCons = `AndAntiConstraint(AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf),andAntiCons*);
 			//System.out.println("andAntiCons = " + andAntiCons);
 
 			// reinitialize

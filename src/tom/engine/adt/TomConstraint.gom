@@ -16,7 +16,23 @@ Constraint = Ensure(Variable:TomTerm)
 	   | ForAll(var:TomTerm,cons:Constraint)
 	   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
 	   | AndAntiConstraint(Constraint*)
-//AndAntiConstraint:AU() {}
+
+/** normalization hooks
+ *
+ * AndAntiConstraint(X*,AndAntiConstraint(),Y*) -> AndAntiConstraint(X*,Y*)
+ * AndAntiConstraint(X*,AndAntiConstraint(x))) -> AndAntiConstraint(X*,x)
+ *
+ */ 
+AndAntiConstraint:make_insert(el, list){
+	%match(el){
+		AndAntiConstraint() ->{
+			return list;
+		}
+		AndAntiConstraint(x) ->{
+			return realMake(`x,list);
+		}
+	}
+}
 
 ConstraintList = concConstraint(Constraint*)
 AConstraintList = concAnd(Constraint*)
