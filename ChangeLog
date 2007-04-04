@@ -4,6 +4,7 @@
 2007-04-04  pem
   * backquote uses tom_append only domain and codomain are differents
   * use tom_cons otherwise
+	* gom: generate specialized code for constants
 
 2007-04-03  pem
   * added f?(...) notation for AU operators

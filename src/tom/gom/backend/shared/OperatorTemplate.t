@@ -76,10 +76,19 @@ package @getPackage()@;
 @generateImport()@
 public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable, tom.library.sl.Visitable @generateInterface()@ {
 @generateBlock()@
-  private static @className()@ proto = new @className()@();
-  private int hashCode;
   private @className()@() {}
 ]%);
+if(slotList.length()>0) {
+writer.write(%[
+  private int hashCode;
+  private static @className()@ proto = new @className()@();
+]%);
+} else { 
+writer.write(%[
+  private static int hashCode = hashFunction();
+  private static @className()@ proto = (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(new @className()@());
+]%);
+}
 generateMembers(writer);
 generateBody(writer);
 writer.write(%[
@@ -92,6 +101,7 @@ writer.write(%[
     /* static constructor */
 ]%);
 generateConstructor(writer);
+if(slotList.length()>0) {
 writer.write(%[
   private void init(@childListWithType(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @int hashCode) {
 ]%);
@@ -116,6 +126,25 @@ writer.write(%[
     return @slotList.length()@;
   }
 ]%);
+  } else {
+writer.write(%[
+  private void init(@childListWithType(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @int hashCode) {
+]%);
+generateMembersInit(writer);
+    /* generate a specialized version for constants */
+writer.write(%[
+  }
+  private void initHashCode(@childListWithType(slotList)@) { }
+  /* name and arity */
+  public String symbolName() {
+    return "@className()@";
+  }
+
+  private static int getArity() {
+    return 0;
+  }
+]%);
+  }
 
   /*
    * Generate a toStringBuffer method if the operator is not associative
@@ -272,7 +301,7 @@ generateGetters(writer);
 
     writer.write(%[
       /* internal use */
-  protected int hashFunction() {
+  protected @((slotList.length()==0)?"static":"")@ int hashFunction() {
     int a, b, c;
 
     /* Set up the internal state */
@@ -735,21 +764,39 @@ writer.write(%[
     %match(hooks) {
       /* If there is no MakeHook */
       !concHook(_*,MakeHook[],_*) -> {
+        if(slotList.length()>0) {
         writer.write(%[
         public static @className()@ make(@childListWithType(slotList)@) {
           proto.initHashCode(@childList(slotList)@);
           return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
         }
   ]%);
+        } else {
+        writer.write(%[
+        public static @className()@ make(@childListWithType(slotList)@) {
+          return proto;
+        }
+  ]%);
+        }
       }
    
       /* If there is at least one MakeHook */
       lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
+        if(slotList.length()>0) {
         writer.write(%[
       private static @className()@ realMake(@childListWithType(slotList)@) {
         proto.initHashCode(@childList(slotList)@);
         return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
       }
+  ]%);
+      } else {
+        writer.write(%[
+        public static @className()@ realMake(@childListWithType(slotList)@) {
+          return proto;
+        }
+  ]%);
+      }
+        writer.write(%[
       public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
