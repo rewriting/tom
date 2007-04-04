@@ -16,12 +16,24 @@
   <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
   <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
+  <target name="init.external" unless="has.external.classpath">
+    <path id="external.classpath">
+    </path>
+  </target>
+
   <target name="tom.init">
     <fail unless="tom.home"
           message="tom.home has to be defined in your environment,
           to find the Tom classes"/>
     <!-- Define the classpath to run tom and related tools -->
+    <condition property="has.external.classpath">
+        <isreference refid="external.classpath"/>
+    </condition>
+    <antcall target="init.external"/>
+    <property name="unixpath" refid="external.classpath" />
+    <echo> unixpath ${unixpath} </echo>
     <path id="tom.classpath">
+      <path refid="external.classpath"/>
       <fileset dir="${tom.home}/lib">
         <include name="*.jar"/>
       </fileset>

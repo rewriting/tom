@@ -18,3 +18,6 @@ plugin.workspace.dir={WORKSPACE}
 
 # home of the findbugs installation: mandatory to use the findbugs target
 findbugs.home=<WORKSPACE>/findbugs/
+
+# home of the clover installation
+clover.home=<WORKSPACE>/clover-ant/
