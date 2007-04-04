@@ -346,7 +346,7 @@ visit TomTerm {
      */
     `Fail().visit(null);
   }
-  (BuildTerm|BuildEmptyList|BuildEmptyArray)[AstName=Name(name)] -> {
+  (BuildTerm|BuildEmptyArray)[AstName=Name(name)] -> {
     try {
       // System.out.println("build: " + `name);
       String moduleName = (String) stack.peek();
@@ -357,7 +357,7 @@ visit TomTerm {
       System.out.println("No moduleName in stack");
     }
   }
-  (BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[AstName=Name(name)] -> {
+  (BuildConsList|BuildEmptyList|BuildAppendList|BuildConsArray|BuildAppendArray)[AstName=Name(name)] -> {
     try {
       // System.out.println("build: " + `name);
       String moduleName = (String) stack.peek();

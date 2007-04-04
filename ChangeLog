@@ -1,6 +1,9 @@
+2007-04-04  tonio <reilles@loria.fr>
+  * tom_append fixed to support same domain and codomain
+
 2007-04-04  pem
   * backquote uses tom_append only domain and codomain are differents
-	* use tom_cons otherwise
+  * use tom_cons otherwise
 
 2007-04-03  pem
   * added f?(...) notation for AU operators

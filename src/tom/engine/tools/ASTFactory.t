@@ -470,10 +470,7 @@ public class ASTFactory {
 
       concTomTerm(head@VariableStar[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
-        if(topDomain != topCodomain) {
-          return `BuildAppendList(name,head,subList);
-        }
-        return `BuildConsList(name,head,subList);
+        return `BuildAppendList(name,head,subList);
       }
 
       concTomTerm(Composite(concTomTerm(head@VariableStar[],_*)),tail*) -> {
