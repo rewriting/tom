@@ -22,6 +22,7 @@ clean:
 	rm -rf antlrgrammar
 
 antlrgrammar/AntlrGrammar.tom: AntlrGrammar.gom AntlrCommons.gom AntlrRules.gom AntlrElement.gom
+	rm -rf antlrgrammar
 	gom AntlrGrammar.gom
 	rm -rf antlrcommons
 	rm -rf antlrrules
