@@ -92,7 +92,7 @@ AntlrWrongActions =
   | AntlrPlainWrongActions(actions:AntlrWrong)
 
 AntlrAction = AntlrGlobalAction(id:AntlrId,action:String)
-            | AntlrScopedAction(id:AntlrId,score:AntlrId,action:String)
+            | AntlrScopedAction(id:AntlrId,scope:AntlrId,action:String)
             | AntlrWrongAction(wrongAction:AntlrWrongAction)
 
 AntlrWrongAction =
