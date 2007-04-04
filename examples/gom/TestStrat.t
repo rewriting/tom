@@ -31,19 +31,14 @@ package gom;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
+import tom.library.sl.*;
 
 import gom.vlist.types.*;
 
 public class TestStrat extends TestCase {
   private static int max = 4;
 
-  %include { mutraveler.tom }
-
+  %include { sl.tom }
   %include { vlist/VList.tom }
 
   public VList genere(int n) {
@@ -62,24 +57,24 @@ public class TestStrat extends TestCase {
 
   public void testOncebottomUp() {
     VList subject = genere(max);
-    VisitableVisitor rule = new RewriteSystem();
+    Strategy rule = new RewriteSystem();
     VList result = null;
     try {
-      result = (VList) MuTraveler.init(`OnceBottomUp(rule)).visit(subject);
-    } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      result = (VList) `OnceBottomUp(rule).fire(subject);
+    } catch (FireException e) {
+      fail("catched FireException");
     }
     assertEquals(result.toString(),"conc(4,3,3)");
   }
 
   public void testBottomUp() {
     VList subject = genere(max);
-    VisitableVisitor rule = new RewriteSystem();
+    Strategy rule = new RewriteSystem();
     VList result = null;
     try {
-      result = (VList) MuTraveler.init(`BottomUp(Try(rule))).visit(subject);
-    } catch (VisitFailure e) {
-      fail("catched VisitFailure");
+      result = (VList) `BottomUp(Try(rule)).fire(subject);
+    } catch (FireException e) {
+      fail("catched FireException");
     }
     assertEquals("conc(5,4,3)",result.toString());
   }
@@ -93,14 +88,16 @@ public class TestStrat extends TestCase {
       super(`Fail());
     }
 
-    public VList visit_VList(VList arg) throws VisitFailure {
+    public VList visit_VList(VList arg){
       %match(VList arg) {
         conc(h,t*) -> {
           int v = `h+1;
           return `conc(v,t*);
         }
       }
-      return (VList)`Fail().visit(arg);
+      //fail
+      getEnvironment().setStatus(Environment.FAILURE);
+      return arg;
     }
   }
 }

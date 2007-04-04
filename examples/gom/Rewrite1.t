@@ -32,17 +32,12 @@ package gom;
 import gom.term.*;
 import gom.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Rewrite1 {
 
   %include { term/term.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   
   public final static void main(String[] args) {
     Rewrite1 test = new Rewrite1();
@@ -55,19 +50,19 @@ public class Rewrite1 {
     Term subject = `f(g(g(a(),b()),g(a(),a())));
     globalSubject = subject;
 
-    VisitableVisitor rule = new RewriteSystem();
-    VisitableVisitor ruleId = new RewriteSystemId();
+    Strategy rule = new RewriteSystem();
+    Strategy ruleId = new RewriteSystemId();
 
     try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + MuTraveler.init(`OnceBottomUp(rule)).visit(subject));
-      System.out.println("onceBottomUpId= " + MuTraveler.init(`OnceBottomUpId(ruleId)).visit(subject));
-      System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
-      System.out.println("bottomUpId    = " + MuTraveler.init(`BottomUp(ruleId)).visit(subject));
-      System.out.println("innermost     = " + MuTraveler.init(`Innermost(rule)).visit(subject));
-      System.out.println("innermostSlow = " + MuTraveler.init(`Repeat(OnceBottomUp(rule))).visit(subject));
-      System.out.println("innermostId   = " + MuTraveler.init(`InnermostId(ruleId)).visit(subject));
-    } catch (VisitFailure e) {
+      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).fire(subject));
+      System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).fire(subject));
+      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).fire(subject));
+      System.out.println("bottomUpId    = " + `BottomUp(ruleId).fire(subject));
+      System.out.println("innermost     = " + `Innermost(rule).fire(subject));
+      System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).fire(subject));
+      System.out.println("innermostId   = " + `InnermostId(ruleId).fire(subject));
+    } catch (FireException e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -78,24 +73,21 @@ public class Rewrite1 {
       super(`Fail());
     }
     
-    public Term visit_Term(Term arg) throws VisitFailure { 
-
-
+    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
       %match(Term arg) {
         //a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
         a() -> { 
-          Position pos = getPosition();
+          Position pos = getEnvironment().getPosition();
           System.out.println("a -> b at " + pos);
-          System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
-          System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
+          System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().fire(globalSubject));
+          System.out.println("rwr into: " + pos.getReplace(`b()).fire(globalSubject));
 
           return `b();
         }
-        b() -> { System.out.println("b -> c at " + getPosition()); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getPosition()); return `c(); }
+        b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
+        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
       }
-      return (Term)`Fail().visit(arg);
-      //throw new VisitFailure();
+      throw new jjtraveler.VisitFailure();
     }
   }
 
@@ -106,9 +98,9 @@ public class Rewrite1 {
     
     public Term visit_Term(Term arg) {
       %match(Term arg) {
-        a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
-        b() -> { System.out.println("b -> c at " + getPosition()); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getPosition()); return `c(); }
+        a() -> { System.out.println("a -> b at " + getEnvironment().getPosition()); return `b(); }
+        b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
+        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
       }
       return arg;
     }

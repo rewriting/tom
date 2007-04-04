@@ -31,15 +31,11 @@ package gom;
 import gom.reduce.terms.*;
 import gom.reduce.terms.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Reduce {
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   %gom {
     module Terms
@@ -62,10 +58,10 @@ public class Reduce {
 
   public void run() {
     Term subject = `F(F(B(),B()),F(B(),C()));
-    VisitableVisitor rule = new RewriteSystem();
+    Strategy rule = new RewriteSystem();
     try {
-      System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
-    } catch (VisitFailure e) {
+      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).fire(subject));
+    } catch (FireException e) {
       System.out.println("reduction failed on: " + subject);
     }
 

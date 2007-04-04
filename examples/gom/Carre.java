@@ -29,7 +29,7 @@
 package gom;
 import gom.rond.types.*;
 
-public class Carre implements jjtraveler.Visitable {
+public class Carre implements tom.library.sl.Visitable {
 
   public Rond r1;
   public Rond r2;
@@ -59,6 +59,17 @@ public class Carre implements jjtraveler.Visitable {
 
       default: throw new IndexOutOfBoundsException();
     }
+  }
+    
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+    r1 = (Rond) children[0];
+    r2 = (Rond) children[1];
+    return this;
+  }
+
+
+  public jjtraveler.Visitable[] getChildren() {
+    return new jjtraveler.Visitable[]{r1,r2};
   }
 
 }
