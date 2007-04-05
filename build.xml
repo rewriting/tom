@@ -1334,14 +1334,14 @@ ${user.home}/.ant/lib
 
   <target name="clover.html" depends="with.clover">
     <clover-report>
-      <current outfile="clover_html">
+      <current span="1h" outfile="clover_html">
         <format type="html"/>
       </current>
     </clover-report>
   </target>
 
   <target name="clover.view" depends="with.clover">
-    <clover-view/>
+    <clover-view span="1h"/>
   </target>
 
   <target name="findbugs" depends="src.dist, init.task.findbugs">
