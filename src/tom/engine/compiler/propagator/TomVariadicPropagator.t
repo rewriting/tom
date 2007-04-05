@@ -40,10 +40,10 @@ public class TomVariadicPropagator implements TomIBasePropagator{
             // if this is not a list, nothing to do
         //TODO - change the test into isSyntactic ?
         TomSymbol symbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName);
-//        if(!TomConstraintCompiler.isListOperator(symbol) 
-//            && !TomConstraintCompiler.isArrayOperator(symbol)) {return `m;}
-      if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
-      getSymbolFromName(`tomName))) {return `m;}    
+        if(!TomConstraintCompiler.isListOperator(symbol) 
+            && !TomConstraintCompiler.isArrayOperator(symbol)) {return `m;}
+//      if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
+//      getSymbolFromName(`tomName))) {return `m;}    
             // declare fresh variable
             TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
             TomTerm freshVariable = getFreshVariableStar(listType);				
