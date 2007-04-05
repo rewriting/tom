@@ -84,7 +84,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom}
 // ------------------------------------------------------------
  

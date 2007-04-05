@@ -61,7 +61,7 @@ options{
 {
 	private final static String DEFAULT_MODULE_NAME = "default";
 	private final static String TNODE_MODULE_NAME = "tnode";
-    %include{ adt/tomsignature/TomSignature.tom }
+    %include{ ../adt/tomsignature/TomSignature.tom }
     
     // the lexer for backquote language
     BackQuoteLexer bqlexer = null;

@@ -257,7 +257,7 @@
     <tomcompile fork="no"
          srcdir="${src.src}"
          destdir="${gen.destination}"
-         options="-I ${src.mapping} --optimize">
+         options="--optimize">
       <include name="tom/engine/**/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
       <include name="tom/library/**/*.t"/>
@@ -275,25 +275,25 @@
     <tomcompile fork="no"
       srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
-	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
+	    options="-I ${src.gen}/tom/engine/adt">
       <include name="**/TomLanguage.g.t"/>
     </tomcompile>
 
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
-	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
+	    options="-I ${src.gen}/tom/engine/adt">
       <include name="**/HostLanguage.g.t"/>
     </tomcompile>
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
-	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
+	    options="-I ${src.gen}/tom/engine/adt">
       <include name="**/BackQuoteLanguage.g.t"/>
     </tomcompile>
 
     <!-- gom parser -->
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/gom/parser/GomParser.g"
-	    options="-I ${src.mapping} -I ${gen.destination}">
+	    options="-I ${gen.destination}">
       <include name="tom/gom/**/GomParser.g.t"/>
     </tomcompile>
   </target>
@@ -367,7 +367,7 @@
     <!-- once mappings generated, compile AST2Gom.t -->
     <tomcompile srcdir="${src.src}"
          destdir="${gen.destination}"
-         options="-I ${src.mapping} --optimize">
+         options="--optimize">
       <include name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
   </target>
@@ -1323,6 +1323,7 @@ ${user.home}/.ant/lib
     </fail>
     <taskdef resource="clovertasks"
              classpathref="external.classpath"/>
+    <typedef resource="clovertypes"/> 
   </target>
 
   <target name="with.clover" depends="init.task.clover">

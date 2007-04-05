@@ -69,7 +69,7 @@ options{
 
     {
     //--------------------------
-    %include{ adt/tomsignature/TomSignature.tom }
+    %include{ ../adt/tomsignature/TomSignature.tom }
     //--------------------------
         
     public String currentFile(){

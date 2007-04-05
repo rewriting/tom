@@ -86,7 +86,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     return symbolTable.getUniversalType();
   }
 // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected TomTerm operatorsTogenerate(TomTerm subject)throws IOException {

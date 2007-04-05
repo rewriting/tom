@@ -60,7 +60,7 @@ import jjtraveler.VisitFailure;
  */
 public class TomCompiler extends TomGenericPlugin {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
   %include { java/util/types/Collection.tom}
   %include { java/util/types/Map.tom}

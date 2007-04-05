@@ -64,10 +64,10 @@ import tom.library.strategy.mutraveler.*;
  */
 public class TomOptimizer extends TomGenericPlugin {
 
-  %include{ adt/tomsignature/TomSignature.tom }
-  %include{ mustrategy.tom}
-  %include{java/util/ArrayList.tom}
-  %include{java/util/HashSet.tom}
+  %include{ ../adt/tomsignature/TomSignature.tom }
+  %include{ mustrategy.tom }
+  %include{ java/util/ArrayList.tom }
+  %include{ java/util/HashSet.tom }
 
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";

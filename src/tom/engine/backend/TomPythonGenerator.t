@@ -49,7 +49,7 @@ import tom.platform.OptionManager;
 public class TomPythonGenerator extends TomImperativeGenerator {
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
 

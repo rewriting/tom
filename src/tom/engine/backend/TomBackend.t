@@ -67,8 +67,8 @@ import jjtraveler.VisitFailure;
  */
 public class TomBackend extends TomGenericPlugin {
 
-  %include { adt/tomsignature/TomSignature.tom }
-  %include { adt/platformoption/PlatformOption.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../adt/platformoption/PlatformOption.tom }
   %include { mustrategy.tom }
 
   /** the tabulation starting value */

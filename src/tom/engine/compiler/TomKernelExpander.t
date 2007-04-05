@@ -91,7 +91,7 @@ public class TomKernelExpander extends TomBase {
     return getSymbolFromType(tomType, getSymbolTable());
   }
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
   /*

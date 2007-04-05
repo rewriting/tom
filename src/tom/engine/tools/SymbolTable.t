@@ -49,7 +49,7 @@ import tom.platform.OptionManager;
 
 public class SymbolTable {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
 
   private final static String TYPE_INT       = "int";
   private final static String TYPE_LONG      = "long";

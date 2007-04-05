@@ -59,7 +59,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
   /*

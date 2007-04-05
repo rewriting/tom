@@ -62,7 +62,7 @@ import jjtraveler.VisitFailure;
  */
 public class TomSyntaxChecker extends TomChecker {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
 
   /** the declared options string */

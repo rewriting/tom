@@ -52,7 +52,7 @@ import tom.platform.PlatformLogRecord;
 abstract public class TomChecker extends TomGenericPlugin {
   
     // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
     // ------------------------------------------------------------
   
     // Different kind of structures

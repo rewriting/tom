@@ -49,7 +49,7 @@ import tom.engine.exception.TomRuntimeException;
 import aterm.ATerm;
 
 public class ASTFactory {
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {
   }

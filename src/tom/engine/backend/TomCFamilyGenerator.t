@@ -49,7 +49,7 @@ import tom.platform.OptionManager;
 public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
 
