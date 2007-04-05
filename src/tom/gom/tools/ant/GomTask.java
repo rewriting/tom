@@ -259,6 +259,10 @@ public class GomTask extends MatchingTask {
       String tom_home = getProject().getProperty("tom.home");
       if (tom_home != null) {
         System.setProperty("tom.home",tom_home);
+        Variable var = new Variable();
+        var.setKey("tom.home");
+        var.setValue(tom_home);
+        javaRunner.addSysproperty(var);
       } else {
         log("\"tom.home\" is not defined, Tom hooks may not work");
       }

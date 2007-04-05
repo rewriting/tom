@@ -36,6 +36,7 @@ import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.GlobPatternMapper;
 import org.apache.tools.ant.util.SourceFileScanner;
 import org.apache.tools.ant.taskdefs.Java;
+import org.apache.tools.ant.types.Environment.Variable;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MatchingTask;
@@ -481,6 +482,10 @@ public class TomTask extends MatchingTask {
       String tom_home = getProject().getProperty("tom.home");
       if (tom_home != null) {
         System.setProperty("tom.home",tom_home);
+        Variable var = new Variable();
+        var.setKey("tom.home");
+        var.setValue(tom_home);
+        javaRunner.addSysproperty(var);
       } else {
         log("\"tom.home\" is not defined, some features may not work");
       }
