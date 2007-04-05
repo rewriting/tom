@@ -66,7 +66,6 @@ public class ATerm2AntlrAction {
      */
 
     public static AntlrAction getAntlrAction(ATerm t) throws AntlrWrongActionException {
-	System.out.println("coucou: "+t);
         %match(t) {
             AMPERSAND(_,x) -> {
                 Container container=new Container();
@@ -115,7 +114,6 @@ public class ATerm2AntlrAction {
     }
 
     private static void parseArgs(ATermList l,Container container) {
-	System.out.println("coucou1: "+l);
         %match(l) {
             // id or scope, we'll know later.
             concATerm(x@ID[],y*) -> {
@@ -141,7 +139,6 @@ public class ATerm2AntlrAction {
     }
 
     private static void parseArgs2(ATermList l,Container container) {
-	System.out.println("coucou2: "+l);
         %match(l) {
             // Was indeed id.
             concATerm(x@ACTION(NodeInfo(action,_,_),_),y*) -> {
@@ -151,7 +148,6 @@ public class ATerm2AntlrAction {
             }
             // Was scope, move it.
             concATerm(x@ID[],y*) -> {
-		System.out.println("scoped !!!");
                 container.scope=container.id;
                 try {
                     container.id=ATerm2AntlrId.getAntlrId(`x);
