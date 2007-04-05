@@ -10,8 +10,8 @@
     <mkdir dir="${examples.gen}/${caml}"/>
     <!-- build tom -->
     <tom destdir="${examples.gen}/${caml}"
-	        srcdir="${examples.dir}"
-                options="--camlCode -I ${tom.home}/share/jtom">
+         srcdir="${examples.dir}"
+         options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
       <classpath refid="tom.classpath"/>
     </tom>

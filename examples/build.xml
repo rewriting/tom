@@ -7,7 +7,7 @@
   <!-- set local properties for this build -->
   <property file="../local.properties"/>
 
-  <property name="tomfork" value="no"/>
+  <property name="tomfork" value="on"/>
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>

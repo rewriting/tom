@@ -75,6 +75,7 @@
       <javac target="${javacTarget}"
              source="${javacSource}"
              nowarn="${nowarnings}"
+             fork="${tomfork}"
              memoryInitialSize="${memoryInitSize}"
              memoryMaximumSize="${memoryMaxSize}">
         <classpath refid="tom.classpath"/>

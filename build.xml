@@ -1344,6 +1344,10 @@ ${user.home}/.ant/lib
     <clover-view span="1h"/>
   </target>
 
+  <target name="clover.clean" depends="with.clover">
+    <clover-clean keepdb="false"/>
+  </target>
+
   <target name="findbugs" depends="src.dist, init.task.findbugs">
     <path id="src.dist.classpath">
       <fileset dir="${src.dist.lib}">
