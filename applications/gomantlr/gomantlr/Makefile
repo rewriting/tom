@@ -5,7 +5,10 @@
 
 all: GenerateGom.java
 
-clean:
-	rm -f $(foreach v,$(wildcard *.t),$(shell echo $(basename $(v)).java))
+classclean:
 	rm -f *.class
+
+clean:
+	make classclean
+	rm -f $(foreach v,$(wildcard *.t),$(shell echo $(basename $(v)).java))
 	rm -f *~

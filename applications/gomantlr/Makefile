@@ -4,6 +4,7 @@
 	tom $<
 
 all: antlrgrammar/AntlrGrammar.tom Gomantlr.java
+	make classclean
 	cd gomantlr;make
 	cd aterm2antlrgrammar;make
 	cd utils;make
@@ -11,12 +12,17 @@ all: antlrgrammar/AntlrGrammar.tom Gomantlr.java
 	rm -f Gomantlr_Java.gom
 	java Gomantlr Java
 
+classclean:
+	cd utils;make classclean
+	cd aterm2antlrgrammar;make classclean
+	cd gomantlr;make classclean
+
 clean:
+	make classclean
 	cd utils;make clean
 	cd aterm2antlrgrammar;make clean
 	cd gomantlr;make clean
 	rm -f $(foreach v,$(wildcard *.t),$(shell echo $(basename $(v)).java))
-	rm -f *.class
 	rm -f *~
 	rm -rf `echo $(foreach v,$(wildcard *.gom),$(shell echo $(basename $(v)))) | tr A-Z a-z`
 	rm -rf antlrgrammar

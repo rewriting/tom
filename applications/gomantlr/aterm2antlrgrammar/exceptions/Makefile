@@ -5,7 +5,10 @@
 
 all: AntlrWrongActionException.java AntlrWrongActionsException.java AntlrWrongArgsException.java AntlrWrongCommentException.java AntlrWrongElementException.java AntlrWrongExceptionException.java AntlrWrongGrammarException.java AntlrWrongIdException.java AntlrWrongIntException.java AntlrWrongOptionException.java AntlrWrongOptionsException.java AntlrWrongRetException.java AntlrWrongRuleException.java AntlrWrongTokensException.java RecognitionException.java
 
-clean:
-	rm -f $(foreach v,$(wildcard *.t),$(shell echo $(basename $(v)).java))
+classclean:
 	rm -f *.class
+
+clean:
+	make classclean
+	rm -f $(foreach v,$(wildcard *.t),$(shell echo $(basename $(v)).java))
 	rm -f *~
