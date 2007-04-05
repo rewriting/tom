@@ -281,22 +281,16 @@ public class Position implements Cloneable,Path {
 
   public Path normalize(){
     if(length()==0) return (Path) clone();
-    System.out.println("Normalize begin "+this);
-    System.out.println("Normalize begin "+getTail());
     int[] normalizedTail = ((Position)(getTail().normalize())).toArray();
     if(normalizedTail.length==0 || omega[0]!=-normalizedTail[0]){
-      System.out.println("Normalize begin to simplify"+this);
       int[] result = new int[1+normalizedTail.length];
       result[0]=omega[0];
       System.arraycopy(normalizedTail,0,result,1,normalizedTail.length);
-      System.out.println("Normalize end"+new Position(result));
       return new Position(result);
     }
     else {
-      System.out.println("Normalize nothing to do"+this);
       int[] result = new int[normalizedTail.length-1];
       System.arraycopy(normalizedTail,1,result,0,normalizedTail.length-1);
-      System.out.println("Normalize end"+new Position(result));
       return new Position(result);
     }
   }
