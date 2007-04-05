@@ -95,6 +95,16 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     }
   }
 
+  protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
+    output.write("((");
+    generateExpression(deep,cond,moduleName);
+    output.write(")?(");
+    generateExpression(deep,exp1,moduleName);
+    output.write("):(");
+    generateExpression(deep,exp2,moduleName);
+    output.write("))");
+  }
+
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
 	output.write(" ( ");
 	generateExpression(deep,exp1,moduleName);
@@ -283,6 +293,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
+    String is_conc = "tom_is_fun_sym_" + name;
     String equal_term = "tom_equal_term_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_empty_list_" + name;
@@ -296,11 +307,23 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     s+= "    return l2;\n";  
     s+= "   } else if(" + is_empty + "(l2)) {\n";
     s+= "    return l1;\n";  
-    s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
-    s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
-    s+= "   } else { \n";  
-    s+= "    return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
-    s+= "   }\n";
+    if (listType == eltType) {
+      s+= "   } else if(" + is_conc + "(l1)) { \n";  
+      s+= "     if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
+      s+= "       return " + make_insert + "(" + get_head + "(l1),l2);\n";
+      s+= "     } else {\n";
+      s+= "       return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
+      s+= "     }\n";
+      s+= "   } else { \n";
+      s+= "    return " + make_insert + "(l1 , l2);\n";
+      s+= "   }\n";
+    } else {
+      s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
+      s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
+      s+= "   } else { \n";
+      s+= "    return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
+      s+= "   }\n";
+    }
     s+= "  }\n";
     s+= "\n";
     

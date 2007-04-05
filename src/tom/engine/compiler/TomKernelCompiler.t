@@ -586,9 +586,28 @@ public class TomKernelCompiler extends TomBase {
     Instruction letSave = `Let(variableSaveAST, TomTermToExpression(Ref(p.subjectListName)), UnamedBlock(concInstruction(let,letRestore)));
     return letSave;
   }
- 
+
+  /*
+   * check that the list is empty
+   * when domain=codomain, the test is extended to:
+   *   is_empty(l) || l==make_empty()
+   *   this is needed because get_tail() may return the neutral element 
+   */ 
+  private Expression genIsEmptyList(TomSymbol tomSymbol, TomTerm var) {
+    TomName opNameAST = tomSymbol.getAstName();
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Or(IsEmptyList(opNameAST, var), EqualTerm(codomain,var,BuildEmptyList(opNameAST)));
+    }
+    return `IsEmptyList(opNameAST, var);
+  }
   /*
    * return the head of the list
+   * when domain=codomain, the test is extended to:
+   *   is_fsym_f(t)?get_head(t):t 
+   *   the element itself is returned when it is not a list operator
+   *   this occurs because the last element of a loop may not be a list
    */ 
   private Expression genGetHead(TomSymbol tomSymbol, TomType type, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
@@ -602,6 +621,10 @@ public class TomKernelCompiler extends TomBase {
 
   /*
    * return the tail of the list
+   * when domain=codomain, the test is extended to:
+   *   is_fsym_f(t)?get_tail(t):make_empty() 
+   *   the neutral element is returned when it is not a list operator
+   *   this occurs because the last element of a loop may not be a list
    */ 
   private Expression genGetTail(TomSymbol tomSymbol, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
@@ -613,19 +636,6 @@ public class TomKernelCompiler extends TomBase {
     return `GetTail(opNameAST, var);
   }
 
-  private Expression genIsEmptyList(TomSymbol tomSymbol, TomTerm var) {
-    TomName opNameAST = tomSymbol.getAstName();
-    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
-    if(domain==codomain) {
-      return `Or(IsEmptyList(opNameAST, var), EqualTerm(codomain,var,BuildEmptyList(opNameAST)));
-    }
-    /* used to be: return `IsEmptyList(opNameAST, var); */
-    /* this complex test is needed to handle AU symbols */
-    /* the last element may be different from empty */
-    // return `Or(IsEmptyList(opNameAST, var),Negation(IsFsym(opNameAST,var)));
-    return `IsEmptyList(opNameAST, var);
-  }
 
     /*
      * function which compiles array-matching

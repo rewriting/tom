@@ -39,7 +39,7 @@ import java.io.OutputStreamWriter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassAdapter;
 
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
@@ -331,7 +331,7 @@ public class CFGViewer {
 
             // Compute the label map to allow us to retrieve an instruction from a label.
             HashMap labelMap = new HashMap();
-            `TopDown(BuildLabelMap(labelMap)).apply(ins);
+            `TopDown(BuildLabelMap(labelMap)).fire(ins);
 
             // Create a wrapper to pass a parent node to its children.
             InsWrapper insWrapper = new InsWrapper();
@@ -339,7 +339,7 @@ public class CFGViewer {
             // This strategy run through all node. For each of them, the node is printed.
             // Links between the current node and its children are printed by passing the parent to each of them.
             // AllCfg allows us to get all the children of the current node.
-            MuStrategy toDot = `TopDown(
+            Strategy toDot = `TopDown(
                 Try(
                   Sequence(
                     PrintDotNode(w),
@@ -347,10 +347,9 @@ public class CFGViewer {
                       Assign(insWrapper),
                       AllCfg(
                         PrintDotLink(w, insWrapper),
-                        labelMap,
-                        ins)))));
+                        labelMap)))));
 
-            toDot.apply(ins);
+            toDot.fire(ins);
 
             // Prints the try/catch/finally blocks.
             printTryCatchBlocks(`x.getcode().gettryCatchBlocks(), labelMap, w);

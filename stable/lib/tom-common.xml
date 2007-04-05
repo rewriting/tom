@@ -9,6 +9,8 @@
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
   <property name="tomfork"     value="off"/>
+  <property name="memoryInitSize" value="512m" />
+  <property name="memoryMaxSize"  value="1024m" />
 
   <property environment="env"/>
   <property name="tom.home"    value="${env.TOM_HOME}"/>
@@ -16,12 +18,19 @@
   <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
   <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
+  <path id="external.classpath">
+    <fileset dir="${user.home}/.ant/lib/">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
   <target name="tom.init">
     <fail unless="tom.home"
           message="tom.home has to be defined in your environment,
           to find the Tom classes"/>
     <!-- Define the classpath to run tom and related tools -->
     <path id="tom.classpath">
+      <path refid="external.classpath"/>
       <fileset dir="${tom.home}/lib">
         <include name="*.jar"/>
       </fileset>
@@ -65,7 +74,9 @@
     <presetdef name="javac.preset">
       <javac target="${javacTarget}"
              source="${javacSource}"
-             nowarn="${nowarnings}">
+             nowarn="${nowarnings}"
+             memoryInitialSize="${memoryInitSize}"
+             memoryMaximumSize="${memoryMaxSize}">
         <classpath refid="tom.classpath"/>
       </javac>
     </presetdef>

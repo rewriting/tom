@@ -252,9 +252,10 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(type, exp, RecordAppl[NameList=(nameAST@Name(opName))]) -> {
+      EqualFunctionSymbol(type, exp, RecordAppl[Option=optionList, NameList=(nameAST@Name(opName))]) -> {
+        TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
+        TomType type = TomBase.getSymbolCodomain(tomSymbol);
         if(getSymbolTable(moduleName).isBuiltinType(getTomType(`type))) {
-          TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
           if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol) || hasIsFsymDecl(tomSymbol)) {
             generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
             return;
@@ -262,6 +263,8 @@ public abstract class TomAbstractGenerator extends TomBase {
             generateExpression(deep,`EqualTerm(type,BuildConstant(nameAST),exp), moduleName);
             return;
           }
+        } else if(TomBase.hasTheory(`optionList, `TrueAU())) {
+	  generateExpression(deep,`IsSort(type,exp), moduleName);
         } else {
 	  generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
         }

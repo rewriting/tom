@@ -360,11 +360,11 @@ public class TomBase {
     return null;
   }
 
-  protected static Theory getTheory(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,MatchingTheory(theory),_*) -> { return `theory; }
+  protected static boolean hasTheory(OptionList optionList, ElementaryTheory elementaryTheory) {
+    %match(optionList) {
+      concOption(_*,MatchingTheory(concElementaryTheory(_*,theory,_*)),_*) -> { if(elementaryTheory == `theory) return true; }
     }
-    return `concElementaryTheory(Syntactic());
+    return false;
   }
 
   protected static Declaration getIsFsymDecl(OptionList optionList) {

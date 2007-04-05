@@ -66,8 +66,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
    * the method implementations are here common to C, Java, caml and python
    */
 
-
-
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
      if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch1Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch1Position1) ||  false  ) ) { if ( true ) {
  output.write("tom_get_head_" + getTomType(domain) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch1Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch1Position1); if ( true ) {

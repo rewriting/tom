@@ -69,7 +69,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     buildFunctionCall(deep, "tom_make_"+name, argList, moduleName);
   }
 
-
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();

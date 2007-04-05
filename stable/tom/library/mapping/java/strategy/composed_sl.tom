@@ -72,6 +72,10 @@
   make(v) { `mu(MuVar("_x"),SequenceId(v,MuVar("_x"))) }
 }
 
+%op Strategy OnceBottomUpId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),ChoiceId(OneId(MuVar("_x")),v)) }
+}
+
 %op Strategy InnermostId(s1:Strategy) {
   make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),SequenceId(v,MuVar("_x")))) }
 }

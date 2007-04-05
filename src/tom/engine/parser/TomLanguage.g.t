@@ -691,7 +691,11 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
           name = headSymbol[optionList] 
 	  (qm:QMARK)?
           { 
-	    if(qm!=null) { name = `Name(name.getString() + "__qm__"); }
+	    if(qm!=null) {
+              name = `Name(name.getString() + "__qm__"); 
+              //name = `Name(name.getString()); 
+              optionList.add(`MatchingTheory(concElementaryTheory(TrueAU())));
+            }
 	    nameList = `concTomName(nameList*,name);
           }
           implicit = args[list,secondOptionList]

@@ -468,9 +468,7 @@ public class HookTypeExpander {
               mdecl,
               CodeList(
                 Code("%oplist " + sortName),
-		/*
-		 * generate a second %oplist mapping for opName'?'
-		 */
+		 // generate a second %oplist mapping for opName'?'
                 Code(" " + opName + "?"),
                 Code("(" + sortName + "*) {\n"),
                 Code("is_fsym(t) { t instanceof "),

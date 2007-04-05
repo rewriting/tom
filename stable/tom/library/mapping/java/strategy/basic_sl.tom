@@ -135,3 +135,18 @@
   get_tail(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Sequence.THEN) }
   is_empty(t) { t instanceof tom.library.sl.Identity }
 }
+
+
+%op Strategy ChoiceId(s1:Strategy, s2:Strategy) {
+  is_fsym(t) { (t instanceof tom.library.sl.Choice) }
+  make(first,then) { new tom.library.sl.Choice(new tom.library.sl.FailOnId(first),then) }
+  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
+  get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.THEN) }
+}
+
+%op Strategy OneId(s1:Strategy) {
+  is_fsym(t) { (t instanceof tom.library.sl.One}
+  make(v) { new tom.library.sl.One(new tom.library.sl.FailOnId(v)) }
+  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.One.ARG) }
+}
+

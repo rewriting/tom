@@ -94,6 +94,12 @@ public class Polygraphes {
 
   }
 
+  public static TwoPath computeNF(TwoPath res) {
+    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
+    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    return res;
+  }
+
   %strategy Print() extends Identity() {
     visit TwoPath {
       x -> { System.out.println(`x); }

@@ -39,6 +39,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.taskdefs.Java;
+import org.apache.tools.ant.types.Environment.Variable;
 
 /**
  * Compiles GOM source files. this task can take the following
@@ -259,6 +260,10 @@ public class GomTask extends MatchingTask {
       String tom_home = getProject().getProperty("tom.home");
       if (tom_home != null) {
         System.setProperty("tom.home",tom_home);
+        Variable var = new Variable();
+        var.setKey("tom.home");
+        var.setValue(tom_home);
+        javaRunner.addSysproperty(var);
       } else {
         log("\"tom.home\" is not defined, Tom hooks may not work");
       }
