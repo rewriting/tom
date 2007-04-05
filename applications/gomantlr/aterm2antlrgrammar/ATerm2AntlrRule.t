@@ -264,14 +264,23 @@ public class ATerm2AntlrRule {
     
     private static void parseArgs6(ATermList l,Container container) {
         %match(l) {
-            concATerm(x@SCOPES[],y*) -> {
+            concATerm(x@SCOPE[],y*) -> {
                 AntlrScopes scopes=container.scopes;
-                container.scopes=`AntlrScopes(scopes*,ATerm2AntlrScope.getAntlrScope(x));
+		AntlrScope scope;
+		try {
+		    scope=ATerm2AntlrScope.getAntlrScope(`x);
+		} catch (AntlrWrongScopeException e) {
+		    container.goodParse=false;
+		    scope=e.getAntlrScope();
+		}
+                container.scopes=`AntlrScopes(scopes*,scope);
                 parseArgs6(`y,container);
                 return;
             }
-        }
-        parseArgs7(l,container);
+	    _ -> {
+		parseArgs7(l,container);
+	    }	
+	}	
     }
 
     /*

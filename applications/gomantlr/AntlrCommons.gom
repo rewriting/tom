@@ -80,7 +80,9 @@ AntlrTokens = AntlrNilTokens()
 
 AntlrScopes = AntlrScopes(AntlrScope*)
 
-AntlrScope =  AntlrScope(scope:AntlrUnrecognized)
+AntlrScope =  AntlrNilScope()
+           |  AntlrScope(scope:AntlrUnrecognized)
+           |  AntlrWrongScope(wrong:AntlrWrong)
 
 AntlrActions = AntlrActions(AntlrAction*)
              | AntlrWrongActions(actions:AntlrWrongActions)

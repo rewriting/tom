@@ -257,14 +257,23 @@ public class ATerm2AntlrGrammar {
     
     private static void parseArgs5(ATermList l,Container container) {
         %match(l) {
-            concATerm(x@SCOPES[],y*) -> {
+            concATerm(x@SCOPE[],y*) -> {
                 AntlrScopes scopes=container.scopes;
-                container.scopes=`AntlrScopes(scopes*,ATerm2AntlrScope.getAntlrScope(x));
+		AntlrScope scope;
+		try {
+		    scope=ATerm2AntlrScope.getAntlrScope(`x);
+		} catch (AntlrWrongScopeException e) {
+		    container.goodParse=false;
+		    scope=e.getAntlrScope();
+		}
+                container.scopes=`AntlrScopes(scopes*,scope);
                 parseArgs5(`y,container);
                 return;
             }
+	    _ -> {
+		parseArgs6(l,container);
+	    }
         }
-        parseArgs6(l,container);
     }
 
     /*

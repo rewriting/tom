@@ -84,7 +84,7 @@
   make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("ACTION",2,false),i,c) }
 }
 
-%op ATerm SCOPES(info:ATerm,childs:ATermList) {
+%op ATerm SCOPE(info:ATerm,childs:ATermList) {
   is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"scope\"",2,false) }
   get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
   get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }

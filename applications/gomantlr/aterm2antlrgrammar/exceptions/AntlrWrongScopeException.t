@@ -23,37 +23,29 @@
  *
  **/
 
-package aterm2antlrgrammar;
+package aterm2antlrgrammar.exceptions;
 
-import aterm.*;
-import aterm.pure.*;
+import antlrgrammar.AntlrGrammarAbstractType;
 
-import antlrcommons.types.AntlrScopes;
+import antlrgrammar.antlrcommons.types.AntlrWrong;
+import antlrgrammar.antlrcommons.types.AntlrScope;
 
-public class ATerm2AntlrScopes {
-   
-    %include { ../antlrgrammar/AntlrGrammar.tom }
-    %include { ../antlr.tom }
-
-    public static AntlrScopes getAntlrScopes(ATerm t) {
-        %match(t) {
-            SCOPES(_,(x*)) -> {
-                return `getAntlrScopes(x*);
-            }
-        }
+public class AntlrWrongScopeException extends RecognitionException {
+    public AntlrWrongScopeException(AntlrWrong t) {
+        super(t);
     }
 
-    private static AntlrScopes getAntlrScopes(ATermList l) {
-        %match(l) {
-            concATerm(x,y*) -> {
-                AntlrScopes scopes=`getAntlrScopes(y);
-                if(`x.getChildCount()!=0) {
-                    return `AntlrScopes(ATerm2AntlrScope.getAntlrScope(x),scopes*);
-                } else {
-                    return scopes;
-                }
-            }
-        }
-        return `AntlrScopes();
+    public AntlrGrammarAbstractType getAntlrGrammarAbstractType() {
+        return getAntlrScope();
     }
-}
+
+    public AntlrWrong getAntlrWrong() {
+        return (AntlrWrong)getAntlrGrammarWrongAbstractType();
+    }
+
+    %include { ../../antlrgrammar/AntlrGrammar.tom }
+
+    public AntlrScope getAntlrScope() {
+        return `AntlrWrongScope(getAntlrWrong());
+    }
+}        

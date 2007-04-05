@@ -30,11 +30,22 @@ import aterm.pure.*;
 
 import antlrgrammar.antlrcommons.types.AntlrScope;
 
+import aterm2antlrgrammar.exceptions.AntlrWrongScopeException;
+
 public class ATerm2AntlrScope {
    
     %include { ../antlrgrammar/AntlrGrammar.tom }
+    %include { ../antlr.tom }
 
-    public static AntlrScope getAntlrScope(ATerm t) {
-        return `AntlrScope(ATerm2AntlrUnrecognized.getAntlrUnrecognized(t));
+    public static AntlrScope getAntlrScope(ATerm t) throws AntlrWrongScopeException {
+        %match(t) {
+            SCOPE(_,concATerm()) -> {
+                return `AntlrNilScope();
+            }
+            SCOPE(_,x@concATerm(_,_*)) -> {
+                return `AntlrScope(ATerm2AntlrUnrecognized.getAntlrUnrecognized(x));
+            }
+        }
+        throw new AntlrWrongScopeException(ATerm2AntlrWrong.getAntlrWrong(t));
     }
 }
