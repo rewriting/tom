@@ -1323,10 +1323,11 @@ Download it from http://www.cenqua.com/clover/
 Then copy clover.jar and clover.licence to
 ${user.home}/.ant/lib
     </fail>
-    <taskdef resource="clovertasks"
-             classpathref="external.classpath"/>
     <typedef resource="clovertypes"/> 
   </target>
+
+    <taskdef resource="clovertasks"
+      classpathref="external.classpath"/>
 
   <target name="with.clover" depends="init.task.clover">
     <clover-setup initString="mycoverage.db"/>

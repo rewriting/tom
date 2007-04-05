@@ -127,13 +127,14 @@ public class HookTypeExpander {
             newHookList = `concHookDecl(
                 MakeHookDecl(mdecl,typedArgs,Code(scode)));
           }
+          HookKind("FL") -> {
+            return `makeFLHookList(hName,mdecl,scode);
+          }
           HookKind("AU") -> {
             return `makeAUHookList(hName,mdecl,scode);
-
           }
           HookKind("AC") -> {
             return `makeACHookList(hName,mdecl,scode);
-
           }
         }
         if (newHookList == `concHookDecl()) {
@@ -346,7 +347,7 @@ public class HookTypeExpander {
       }
       _ -> {
         getLogger().log(Level.SEVERE,
-            "AU hook can only be used on a variadic operator");
+            "FL/AU/AC hook can only be used on a variadic operator");
       }
     }
     return null;
@@ -502,6 +503,50 @@ public class HookTypeExpander {
       }
     }
     return auHooks;
+  }
+  
+  private HookDeclList makeFLHookList(String opName, Decl mdecl, String scode) {
+    /* Can only be applied to a variadic operator, whose domain and codomain
+     * are equals */
+    SortDecl domain = getSortAndCheck(mdecl);
+    if(null == domain) {
+      return `concHookDecl();
+    }
+
+    String userNeutral = trimBracket(scode);
+    if(userNeutral.length() > 0) {
+        getLogger().log(Level.SEVERE,
+            "FL hook does not allow the definition of a neutral element");
+    }
+
+    HookDeclList hooks = `concHookDecl();
+    /* getODecl call is safe here, since mdecl was checked by getSortAndCheck */
+    /*
+     * Remove neutral and flatten:
+     * if(<head>.isEmpty<conc>()) { return <tail>; }
+     * if(<head>.isCons<conc>()) { return make(head.head,make(head.tail,tail)); }
+     * if(!<tail>.isCons<conc>() && !<tail>.isEmpty<conc>()) { return make(<tail>,<empty>); }
+     */
+    hooks = `concHookDecl(
+        MakeHookDecl(
+          mdecl,
+          concSlot(Slot("head",domain),Slot("tail",domain)),
+          CodeList(
+            Code("if ("),
+            IsEmpty("head",mdecl.getODecl()),
+            Code(") { return tail; }\n"),
+            Code("if ("),
+            IsCons("head",mdecl.getODecl()),
+            Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n"),
+            Code("if (!"),
+            IsCons("tail",mdecl.getODecl()),
+            Code(" && !"),
+            IsEmpty("tail",mdecl.getODecl()),
+	    Code(") { return make(head,make(tail,Empty" + opName + ".make())); }\n")
+          )),
+        hooks*);
+
+    return hooks;
   }
 
   private Logger getLogger() {
