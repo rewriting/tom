@@ -90,7 +90,7 @@ public class ATerm2AntlrOptions {
                     container.goodParse=false;
                     option=e.getAntlrOption();
                 }
-                container.options=`AntlrOptions(option,options*);
+                container.options=`AntlrOptions(options*,option);
                 parseArgs(`y,container);
             }
         }
