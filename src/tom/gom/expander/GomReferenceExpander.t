@@ -108,8 +108,8 @@ public class GomReferenceExpander {
 
   /*
      We add 4 new operators for every sort
-     lab<Sort>,ref<Sort>,path<Sort>,exp<Sort>
-     and the corresponding hooks
+     lab<Sort>,ref<Sort>,path<Sort>     
+     and their corresponding hooks
    */
   private static OperatorDeclList getRefOperators(
       SortDecl sort,
@@ -118,8 +118,7 @@ public class GomReferenceExpander {
 
     OperatorDecl refOp = `OperatorDecl("ref"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl))));
 
-    String pathOpName = "path"+sort.getName();
-    OperatorDecl pathOp = `OperatorDecl(pathOpName,sort,Variadic(intSortDecl));
+    OperatorDecl pathOp = `OperatorDecl("path"+sort.getName(),sort,Variadic(intSortDecl));
     hookList.add(pathHooks(pathOp,sort));
 
     return `concOperator(labOp,refOp,pathOp);

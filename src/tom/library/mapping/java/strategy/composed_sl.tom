@@ -91,3 +91,7 @@
 %op Strategy OnceTopDownId(s1:Strategy) {
   make(v) { `mu(MuVar("_x"),Try(Choice(FailOnId(v),One(FailOnId(MuVar("_x")))))) }
 }
+
+%op Strategy OnceBottomUpId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),ChoiceId(OneId(MuVar("_x")),v)) }
+}

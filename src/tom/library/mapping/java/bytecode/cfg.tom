@@ -1,4 +1,4 @@
-%include { mustrategy.tom }
+%include { sl.tom }
 %include { util/types/Map.tom }
 %include { adt/bytecode/Bytecode.tom }
 
@@ -12,7 +12,7 @@
 %strategy BuildLabelMap(m:Map) extends Identity() {
   visit TInstructionList {
     c@ConsInstructionList(Anchor(l), _) -> {
-      m.put(`l, getPosition());
+      m.put(`l, getEnvironment().getPosition());
     }
   }
 }
@@ -29,49 +29,58 @@
  * @param m the label map (see the BuildLabelMap strategy).
  */
 
-%strategy AllCfg(s:Strategy, m:Map, root:TInstructionList) extends Identity() {
+%strategy AllCfg(s:Strategy, m:Map) extends Identity() {
   visit TInstructionList {
-
     c@ConsInstructionList(ins, t) -> {
+      System.out.println("AllCfg sur :"+`c);
       TInstruction ins = `ins;
       %match(TInstruction ins) {
         Goto(l) -> {
-          tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`l));
-          final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
-          root = (TInstructionList) p.getReplace(t).visit(root);
-          return  (TInstructionList) s.visit(getPosition().getSubterm().visit(root));
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+          tom.library.sl.Position current = getEnvironment().getPosition();
+          System.out.println("current :"+current.normalize());
+          System.out.println("target :"+p.normalize());
+          System.out.println("current-target:"+(current.sub(p)).normalize());
+          getEnvironment().goTo(current.sub(p));
+          execute(s);
+          getEnvironment().goTo(p.sub(current));
+          //do not visit to the next instruction
+          return (TInstructionList) getEnvironment().getSubject();
         }
 
         (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
-           tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`l));
-           final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
-           root = (TInstructionList) p.getReplace(t).visit(root);
-         }
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+          tom.library.sl.Position current = getEnvironment().getPosition();
+          getEnvironment().goTo(current.sub(p));
+          execute(s);
+          getEnvironment().goTo(p.sub(current));
+        }
 
         (Tableswitch|Lookupswitch)[dflt=dflt, labels=labels] -> {
           TLabelList labelList = `labels;
           %match(TLabelList labelList) {
             LabelList(_*, x, _*) -> {
-              tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`x));
-              final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
-              root = (TInstructionList) p.getReplace(t).visit(root);
+              tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
+              tom.library.sl.Position current = getEnvironment().getPosition();
+              getEnvironment().goTo(current.sub(p));
+              execute(s);
+              getEnvironment().goTo(p.sub(current));
             }
           }
-          tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`dflt));
-          final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
-          root = (TInstructionList) p.getReplace(t).visit(root);
-          return  (TInstructionList) s.visit(getPosition().getSubterm().visit(root));
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
+          tom.library.sl.Position current = getEnvironment().getPosition();
+          getEnvironment().goTo(current.sub(p));
+          execute(s);
+          getEnvironment().goTo(p.sub(current));
         }
 
         // Visit the next instruction.
         _ -> {
-          tom.library.strategy.mutraveler.Position p = getPosition();
-          p.down(2);
-          root = (TInstructionList) p.getReplace(s.visit(`t)).visit(root); 
-          p.up();
-          return  (TInstructionList) p.getSubterm().visit(root);
+          getEnvironment().down(2);
+          execute(s);
+          getEnvironment().up();
         }
       }
     }
@@ -103,8 +112,9 @@
   visit TInstructionList {
     c@_ -> {
       Object o = map.get(`c);
-      if(o == null)
-        throw new jjtraveler.VisitFailure();
+      if (o == null) {
+        getEnvironment().setStatus(Environment.FAILURE);
+      }
       int value = ((Integer)o).intValue() - 1;
       map.put(`c, new Integer(value));
     }
@@ -134,7 +144,11 @@
  * @param m the label map (see the BuildLabelMap strategy).
  * @param t the complete list of instructions
  */
-%op Strategy AUMap(s1:Strategy, s2:Strategy, m:Map, t:TInstructionList) {
-  make(s1,s2,m,t) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"),m,t)))) }
+%op Strategy AUMap(s1:Strategy, s2:Strategy, m:Map) {
+  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"),m)))) }
+}
+
+%op Strategy AGMap(s:Strategy, m:Map) {
+  make(s,m) { `mu(MuVar("x"),Sequence(s,AllCfg(MuVar("x"),m))) }
 }
 
