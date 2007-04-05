@@ -69,11 +69,12 @@ public class TomPropagationManager extends TomBase {
    */
   private static Constraint preparePropagations(Constraint constraintToCompile){
     ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
-    Constraint newConstr = (Constraint)`InnermostId(DetachConstraints(constraintList)).fire(constraintToCompile);		
+    // it is very important to have Outermost because we want the term first and only after its' subterms 
+    Constraint newConstr = (Constraint)`OutermostId(DetachConstraints(constraintList)).fire(constraintToCompile);		
     Constraint andList = `AndConstraint();
     for(Constraint constr: constraintList){
       andList = `AndConstraint(andList*,constr);
-    }
+    }    
     return `AndConstraint(newConstr,andList*);
   }
 
