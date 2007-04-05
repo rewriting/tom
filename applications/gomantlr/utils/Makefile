@@ -3,7 +3,7 @@
 .t.java:
 	cd ..;tom utils/$<
 
-all: PrintGomModule.java AST2ATerm.java PrintAntlrGrammar.java
+all: PrintGomModule.java AST2ATerm.java
 
 classclean:
 	rm -f *.class
