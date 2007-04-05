@@ -39,6 +39,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.taskdefs.Java;
+import org.apache.tools.ant.types.Environment.Variable;
 
 /**
  * Compiles GOM source files. this task can take the following
