@@ -85,6 +85,9 @@
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
+    <fileset dir="${user.home}/.ant/lib/">
+      <include name="*.jar"/>
+    </fileset>
   </path>
 
   <path id="stable.classpath">
@@ -808,14 +811,14 @@
 
   <target name="test" description="Compile and run acceptance tests"
           depends="src.dist">
-     <ant dir="${test}" target="build" inheritRefs="true">
+     <ant dir="${test}" target="build">
        <property name="tom.home" value="${src.dist}"/>
      </ant>
   </target>
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
           depends="stable.dist">
-     <ant dir="${test}" target="build" inheritRefs="true">
+     <ant dir="${test}" target="build">
        <property name="tom.home" value="${stable.dist}"/>
      </ant>
   </target>
@@ -823,7 +826,7 @@
   <target name="stable.junit"
           description="Runs junit acceptance tests compiled with stable"
           depends="clean.test, test.stable">
-     <ant dir="${test}" target="junit" inheritRefs="true">
+     <ant dir="${test}" target="junit">
        <property name="tom.home" value="${stable.dist}"/>
      </ant>
   </target>
@@ -831,7 +834,7 @@
   <target name="src.junit" depends="junit"/>
   <target name="junit" description="Runs junit acceptance tests"
           depends="clean.test, test">
-     <ant dir="${test}" target="junit" inheritRefs="true">
+     <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>
      </ant>
   </target>
@@ -1308,24 +1311,18 @@ findbugs.home=/home/login/soft/findbugs-1.1.1/
   </target>
 
   <target name="init.task.clover">
-    <fail unless="clover.home">
-Please define "clover.home"
+    <available property="clover.present"
+               classname="com.cenqua.clover.CloverInstr"
+               classpathref="external.classpath"/>
+    <fail unless="clover.present">
+Please install clover.
 To use clover, you should install it on your machine.
 Download it from http://www.cenqua.com/clover/
-Then define the "clover.home" property, giving it the path
-to the clover installation, e.g.
-clover.home=/home/login/soft/clover/
+Then copy clover.jar and clover.licence to
+${user.home}/.ant/lib
     </fail>
-    <path id="tom.clover">
-      <fileset dir="${clover.home}/lib/">
-        <include name="*.jar"/>
-      </fileset>
-    </path>
     <taskdef resource="clovertasks"
-             classpathref="tom.clover"/>
-    <path id="external.classpath">
-      <path refid="tom.clover"/>
-    </path>
+             classpathref="external.classpath"/>
   </target>
 
   <target name="with.clover" depends="init.task.clover">
