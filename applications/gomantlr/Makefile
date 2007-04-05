@@ -16,6 +16,7 @@ classclean:
 	cd utils;make classclean
 	cd aterm2antlrgrammar;make classclean
 	cd gomantlr;make classclean
+	rm -f *.class
 
 clean:
 	make classclean
