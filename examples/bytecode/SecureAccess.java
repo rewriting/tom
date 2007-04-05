@@ -39,10 +39,14 @@ import java.io.*;
 
 public class SecureAccess {
 
+
+  public SecureAccess(){
+    System.out.println("Creation of a secure access");
+  }
+
   public int sread(String filename){
     System.out.println("Secured reading request: ");
-    File f = new File(filename);  
-    try{
+    File f = new File(filename);    try{
       if(enforcePolicy(filename)){
         FileReader r = new FileReader(filename);
         return r.read(); 

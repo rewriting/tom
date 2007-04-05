@@ -52,26 +52,33 @@ public class Transformer2 {
   } 
 
   public static class IntWrapper{
-    private int index;
+    private int index_reader;
+    private int index_file;
 
-    public void set(int i){
-      index = i;
+    public void set(int reader,int file){
+      index_reader = reader;
+      index_file = file;
     }
 
-    public int get(){
-      return index;
+    public int getReaderIndex(){
+      return index_reader;
+    }
+
+    public int getFileIndex(){
+      return index_file;
     }
 
   }
 
   public static String clm;
 
-  %strategy NewFileReader(index:IntWrapper) extends Fail() {
+  %strategy NewFileReader(index:IntWrapper) extends Identity() {
     visit TInstructionList {
-      c@(New("java/io/FileReader"),Dup(),Aload(i),
+      c@(New("java/io/FileReader"),Dup(),Aload(file),
           Invokespecial[owner="java/io/FileReader", name="<init>"],
-          Astore(nombre2),_*) -> {
-        index.set(`i);
+          Astore(reader),_*) -> {
+        index.set(`reader,`file);
+        getEnvironment().setStatus(Environment.FAILURE);
         return `c;
       }
     }
@@ -82,11 +89,39 @@ public class Transformer2 {
       c@(Aload(i),
           inv@Invokevirtual[owner="java/io/FileReader",name="read"],
           Pop(), tail*)-> {
-        if(index.get()==`i){ 
-          `inv = `inv.setowner("bytecode/SecureAccess");
-          `inv = `inv.setname("sread");
-          return `InstructionList(New("bytecode/SecureAccess"),Dup(),Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),Aload(i),inv,Pop(),tail*);
+        if(index.getReaderIndex()==`i){ 
+          System.out.println("Attempt to read a file");
+          int index_file = index.getFileIndex();
+          return `InstructionList(
+              New("bytecode/SecureAccess"),
+              Dup(),
+              Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+              Aload(index_file),
+              Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
+              Pop(),
+              tail*);
         }
+      }
+    }
+  }
+
+  %strategy UpdateLabelMap(m:Map) extends Identity() {
+    visit TInstructionList {
+      _ -> {
+        Position current = getEnvironment().getPosition();
+        getEnvironment().goTo(current.inv());
+        execute(`TopDown(BuildLabelMap(m)));
+        getEnvironment().goTo(current);
+      }
+    }
+  }
+
+  %strategy Print() extends Identity() {
+    visit TInstructionList {
+      (i,_*) -> {
+        Position current = getEnvironment().getPosition();
+        System.out.println("at pos "+current);
+        System.out.println(`i);
       }
     }
   }
@@ -105,7 +140,10 @@ public class Transformer2 {
         HashMap indexMap = new HashMap();
         IntWrapper index = new IntWrapper();
         Strategy securiseAccess =
-          `Sequence(NewFileReader(index),AGMap(CallToSRead(index),labelMap));
+          `Sequence(NewFileReader(index),AGMap(Sequence(CallToSRead(index),UpdateLabelMap(labelMap)),labelMap));
+        /**
+        `AGMap(Print(),labelMap).fire(ins);
+        */
         TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).fire(ins);
         TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
         TMethod secureMethod = `x.setcode(secureCode);
