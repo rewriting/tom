@@ -28,7 +28,7 @@
  */
 package bytecode;
 
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 import java.io.FileOutputStream;
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
@@ -91,10 +91,6 @@ public class Transformer2 {
     }
   }
 
-  %op Strategy AG(s:Strategy, m:Map, root:TInstructionList) {
-    make(s,m,root) { `mu(MuVar("x"),Sequence(s,AllCfg(MuVar("x"),m,root))) }
-  }
-
   private static TClass fileAccesVerify(TClass givenClass) {
     TMethodList methods = givenClass.getmethods();
     TMethodList secureMethods = `MethodList();
@@ -105,12 +101,12 @@ public class Transformer2 {
         // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
-        `TopDown(BuildLabelMap(labelMap)).apply(ins);
+        `TopDown(BuildLabelMap(labelMap)).fire(ins);
         HashMap indexMap = new HashMap();
         IntWrapper index = new IntWrapper();
-        MuStrategy securiseAccess =
-          `Sequence(NewFileReader(index),AG(CallToSRead(index),labelMap,ins));
-        TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).apply(ins);
+        Strategy securiseAccess =
+          `Sequence(NewFileReader(index),AGMap(CallToSRead(index),labelMap));
+        TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).fire(ins);
         TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
         TMethod secureMethod = `x.setcode(secureCode);
         secureMethods = `MethodList(secureMethods*,secureMethod);	
@@ -125,7 +121,7 @@ public class Transformer2 {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).fire(newClass);
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {

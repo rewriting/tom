@@ -29,7 +29,7 @@
 package bytecode;
 
 import java.util.HashMap;
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
@@ -71,7 +71,7 @@ public class Analysis {
             map.put(var, new Integer(`i));
             return `c;
           }
-       }
+        }
       }
     }
   }
@@ -127,32 +127,32 @@ public class Analysis {
         // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
-        `TopDown(BuildLabelMap(labelMap)).apply(ins);
+        `TopDown(BuildLabelMap(labelMap)).fire(ins);
 
         HashMap indexMap = new HashMap();
-        MuStrategy noLoad =
+        Strategy noLoad =
           `AUMap(
               Not(Sequence(IsLoad(), HasIndex(indexMap, "index"))),
               Sequence(IsStore(indexMap, "useless"), HasIndex(indexMap, "index")),
-              labelMap,ins);
+              labelMap);
 
-        MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap, ins));
+        Strategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        `BottomUp(Try(ChoiceId(storeNotUsed,PrintInst()))).apply(ins);
+        `BottomUp(Try(ChoiceId(storeNotUsed,PrintInst()))).fire(ins);
 
         // Removes the useless stores of the method stratKiller
         // We have not managed to do it in the general case because of
         // stack size problems
         TInstructionList impInstList = ins;
         /*
-        if(`x.getinfo().getname().equals("stratKiller")) {
-          impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).apply(ins);
-        }
-        */
+           if(`x.getinfo().getname().equals("stratKiller")) {
+           impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).fire(ins);
+           }
+         */
         TMethodCode impCode = `x.getcode().setinstructions(impInstList);
         TMethod impMethod = `x.setcode(impCode);
         impClass = appendMethod(impClass, impMethod);
-        
+
       }
     }
     return impClass;
@@ -212,7 +212,7 @@ public class Analysis {
     String currentName = classInfo.getname();
 
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).fire(newClass);
   }
 
   public static void main(String[] args) {
@@ -220,25 +220,25 @@ public class Analysis {
       System.out.println("Usage : java bytecode.Analysis <class name>\nEx: java bytecode.Analysis bytecode.Subject");
       return;
     }
-      System.out.println("Parsing class file " + args[0] + " ...");
-      BytecodeReader cr = new BytecodeReader(args[0]);
-      System.out.println("Analyzing ...");
-      TClass c = cr.getTClass();
-      TClass cImproved = analyze(c);
+    System.out.println("Parsing class file " + args[0] + " ...");
+    BytecodeReader cr = new BytecodeReader(args[0]);
+    System.out.println("Analyzing ...");
+    TClass c = cr.getTClass();
+    TClass cImproved = analyze(c);
 
-      String impClassName = args[0] + "Imp";
-      System.out.println("Generating improved class " + impClassName + " ...");
-      cImproved = renameClass(cImproved, impClassName);
+    String impClassName = args[0] + "Imp";
+    System.out.println("Generating improved class " + impClassName + " ...");
+    cImproved = renameClass(cImproved, impClassName);
 
-      BytecodeGenerator bg = new BytecodeGenerator();
-      byte[] code = bg.toBytecode(cImproved);
-      try{
-        FileOutputStream fos = new FileOutputStream(impClassName + ".class");
-        fos.write(code);
-        fos.close();
-      }catch(java.io.IOException e){
-        System.out.println("IO Exception");
-      }
+    BytecodeGenerator bg = new BytecodeGenerator();
+    byte[] code = bg.toBytecode(cImproved);
+    try{
+      FileOutputStream fos = new FileOutputStream(impClassName + ".class");
+      fos.write(code);
+      fos.close();
+    }catch(java.io.IOException e){
+      System.out.println("IO Exception");
+    }
   }
 }
 
