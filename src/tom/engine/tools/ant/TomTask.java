@@ -481,7 +481,6 @@ public class TomTask extends MatchingTask {
       String tom_home = getProject().getProperty("tom.home");
       if (tom_home != null) {
         System.setProperty("tom.home",tom_home);
-        log("\"tom.home\" is set to \"" + tom_home + "\"");
       } else {
         log("\"tom.home\" is not defined, some features may not work");
       }
