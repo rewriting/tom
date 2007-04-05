@@ -8,7 +8,7 @@
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
-  <property name="tomfork"     value="off"/>
+  <property name="tomfork"     value="on"/>
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 

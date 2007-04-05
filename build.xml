@@ -175,6 +175,7 @@
   <!-- tasks for building src -->
   <target name="init.task.stable"> <!-- depends="stable.dist"-->
     <path id="tom.classpath">
+      <path refid="external.classpath"/>
       <fileset dir="${stable.dist.lib}">
         <include name="*.jar"/>
       </fileset>
@@ -194,6 +195,7 @@
   <!-- define task for running tom.src -->
   <target name="init.task.src" depends="src.dist">
     <path id="tomsrc.classpath">
+      <path refid="external.classpath"/>
       <fileset dir="${src.dist.lib}">
         <include name="*.jar"/>
       </fileset>
@@ -1336,6 +1338,10 @@ ${user.home}/.ant/lib
         <format type="html"/>
       </current>
     </clover-report>
+  </target>
+
+  <target name="clover.view" depends="with.clover">
+    <clover-view/>
   </target>
 
   <target name="findbugs" depends="src.dist, init.task.findbugs">
