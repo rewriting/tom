@@ -61,7 +61,7 @@ import jjtraveler.VisitFailure;
  */
 public class TomTypeChecker extends TomChecker {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
 
   /** the declared options string */

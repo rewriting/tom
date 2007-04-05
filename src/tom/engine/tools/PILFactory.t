@@ -50,7 +50,7 @@ import jjtraveler.VisitFailure;
 
 public class PILFactory extends TomBase {
 
-  %include{ adt/tomsignature/TomSignature.tom }
+  %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ java/util/types/Collection.tom }
   %include{ mustrategy.tom }
 

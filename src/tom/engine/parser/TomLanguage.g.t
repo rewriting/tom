@@ -69,7 +69,7 @@ options{
 
     {
     //--------------------------
-    %include{ adt/tomsignature/TomSignature.tom }
+    %include{ ../adt/tomsignature/TomSignature.tom }
     //--------------------------
         
     public String currentFile(){
@@ -648,116 +648,112 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
 }
     :  	(a:ANTI_SYM {anti = !anti;} )*    	
-        (   // xml term
-            result = xmlTerm[optionList, constraintList]
-            {
-            	if (anti){
-    		    	result = `AntiTerm(result);
-    		    }
-            }
+        ( // xml term
+          result = xmlTerm[optionList, constraintList]
+          {
+            if(anti) { result = `AntiTerm(result); }
+          }
 
-        |   // var* or _*
-        	{!anti}? // do not allow anti symbols on var* or _* 
-            (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
+        | // var* or _*
+          {!anti}? // do not allow anti symbols on var* or _* 
+          (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
 
-        |   // _
-            {!anti}? // do not allow anti symbols on _
-        	result = unamedVariable[optionList,constraintList] 
+        | // _
+          {!anti}? // do not allow anti symbols on _
+          result = unamedVariable[optionList,constraintList] 
 
-        |   // for a single constant. 
-            // ambiguous with the next rule so :
-        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
-            name = headSymbol[optionList] 
-            {
-	      result = `Variable(ASTFactory.makeOptionList(optionList),name,
-		  TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
-	      if (anti) {
-		result = `AntiTerm(result);
-	      }
-            }            
+        | // for a single constant. 
+          // ambiguous with the next rule so:
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
+          name = headSymbol[optionList] 
+          {
+            result = `Variable(ASTFactory.makeOptionList(optionList),name,
+              TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
+            if(anti) { result = `AntiTerm(result); }
+          }
 
-        |   // for a single constant. 
-            // ambiguous with the next rule so :
-       	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
+        | // for a single constant. 
+          // ambiguous with the next rule so:
+       	  {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
             nameList = headConstantList[optionList] 
-            {
-	      //nameList = `concTomName(nameList*,name);
-	      optionList.add(`Constant());
-	      result = `TermAppl(
-		  ASTFactory.makeOptionList(optionList),
-		  nameList,
-		  ASTFactory.makeList(list),
-		  ASTFactory.makeConstraintList(constraintList));
-	      if (anti) {
-		result = `AntiTerm(result);
-	      }
-            }
+          {
+	    //nameList = `concTomName(nameList*,name);
+	    optionList.add(`Constant());
+	    result = `TermAppl(
+                ASTFactory.makeOptionList(optionList),
+                nameList,
+                ASTFactory.makeList(list),
+                ASTFactory.makeConstraintList(constraintList));
+            if (anti) { result = `AntiTerm(result); }
+          }
 
-        |   // f(...) or f[...] or !f(...) or !f[...]
-            name = headSymbol[optionList] 
-            { nameList = `concTomName(nameList*,name); }
-            implicit = args[list,secondOptionList]
-            {
-              if(implicit) {
-                    result = `RecordAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeSlotList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              } else {
-                    result = `TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              }
-              if(anti) {
-                result = `AntiTerm(result);
-              }
+        | // f(...) or f[...] or !f(...) or !f[...]
+          name = headSymbol[optionList] 
+	  (qm:QMARK)?
+          { 
+	    if(qm!=null) {
+              name = `Name(name.getString() + "__qm__"); 
+              //name = `Name(name.getString()); 
+              optionList.add(`MatchingTheory(concElementaryTheory(TrueAU())));
             }
+	    nameList = `concTomName(nameList*,name);
+          }
+          implicit = args[list,secondOptionList]
+          {
+            if(implicit) {
+              result = `RecordAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeSlotList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
+            } else {
+              result = `TermAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
+            }
+            if(anti) { result = `AntiTerm(result); }
+          }
             
-        |   // (f|g...) 
-            // ambiguity with the last rule so use a lookahead
-            // if ALTERNATIVE then parse headSymbolList
-       	{LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
-            implicit = args[list, secondOptionList] 
-            {
-              if(implicit) {
-                    result = `RecordAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeSlotList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              } else {
-                    result = `TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              }
-              if(anti) {
-                  result = `AntiTerm(result);
-              }
+        | // (f|g...) 
+          // ambiguity with the last rule so use a lookahead
+          // if ALTERNATIVE then parse headSymbolList
+       	  {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
+          implicit = args[list, secondOptionList] 
+          {
+            if(implicit) {
+              result = `RecordAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeSlotList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
+            } else {
+              result = `TermAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
             }
-        |   // (...)
-            implicit = args[list,secondOptionList]
-            {
-                nameList = `concTomName(Name(""));
-                optionList.addAll(secondOptionList);
-                result = `TermAppl(
-                    ASTFactory.makeOptionList(optionList),
-                    nameList,
-                    ASTFactory.makeList(list),
-                    ASTFactory.makeConstraintList(constraintList)
+            if(anti) { result = `AntiTerm(result); }
+          }
+        | // (...)
+          implicit = args[list,secondOptionList]
+          {
+            nameList = `concTomName(Name(""));
+            optionList.addAll(secondOptionList);
+            result = `TermAppl(
+                ASTFactory.makeOptionList(optionList),
+                nameList,
+                ASTFactory.makeList(list),
+                ASTFactory.makeConstraintList(constraintList)
                 );
-                if(anti) {
-                    result = `AntiTerm(result);
-                }
-            }
+            if(anti) { result = `AntiTerm(result); }
+          }
         )
     ;
 
@@ -1109,7 +1105,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
-								result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
+                result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
         )
     ;
@@ -1383,7 +1379,7 @@ headSymbol [LinkedList optionList] returns [TomName result]
     result = null; 
 }
 : 
-  (i:ALL_ID 
+  (i:ALL_ID
   {
 		String name = i.getText();
 		int line = i.getLine();
@@ -1553,12 +1549,14 @@ operatorList returns [Declaration result] throws TomException
     TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
+    String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID
+        type:ALL_ID name:ALL_ID (qm:QMARK)?
         {
-            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            options.add(ot);
+	  opName = name.getText() + ((qm!=null)?"__qm__":"");
+	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
+	  options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
         {
@@ -1566,29 +1564,29 @@ operatorList returns [Declaration result] throws TomException
         }
         LBRACE
         (
-            attribute = keywordMakeEmptyList[name.getText()]
+            attribute = keywordMakeEmptyList[opName]
             { options.add(attribute); }
 
-        |   attribute = keywordMakeAddList[name.getText(),type.getText(),typeArg.getText()]
+        |   attribute = keywordMakeAddList[opName,type.getText(),typeArg.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordIsFsym[`Name(name.getText()), type.getText()]
+        |   attribute = keywordIsFsym[`Name(opName), type.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordGetHead[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetHead[`Name(opName), type.getText()]
             { options.add(attribute); }
-        |   attribute = keywordGetTail[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetTail[`Name(opName), type.getText()]
             { options.add(attribute); }
-        |   attribute = keywordIsEmpty[`Name(name.getText()), type.getText()]
+        |   attribute = keywordIsEmpty[`Name(opName), type.getText()]
             { options.add(attribute); }
 
         )*
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
-            putSymbol(name.getText(),astSymbol);
-            result = `ListSymbolDecl(Name(name.getText()));
+            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
+            putSymbol(opName,astSymbol);
+            result = `ListSymbolDecl(Name(opName));
             updatePosition(t.getLine(),t.getColumn());
             selector().pop(); 
         }
@@ -1600,12 +1598,14 @@ operatorArray returns [Declaration result] throws TomException
     TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
+    String opName = "";
 }
     :
-        type:ALL_ID name:ALL_ID
+        type:ALL_ID name:ALL_ID (qm:QMARK)?
         {
-            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            options.add(ot);
+	  opName = name.getText() + ((qm!=null)?"__qm__":"");
+	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
+	  options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
         {
@@ -1613,27 +1613,27 @@ operatorArray returns [Declaration result] throws TomException
         }
         LBRACE
         (
-            attribute = keywordMakeEmptyArray[name.getText(),type.getText()]
+            attribute = keywordMakeEmptyArray[opName,type.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordMakeAddArray[name.getText(),type.getText(),typeArg.getText()]
+        |   attribute = keywordMakeAddArray[opName,type.getText(),typeArg.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordIsFsym[`Name(name.getText()),type.getText()]
+        |   attribute = keywordIsFsym[`Name(opName),type.getText()]
             { options.add(attribute); }
 
-        |   attribute = keywordGetElement[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetElement[`Name(opName), type.getText()]
             { options.add(attribute); }
-        |   attribute = keywordGetSize[`Name(name.getText()), type.getText()]
+        |   attribute = keywordGetSize[`Name(opName), type.getText()]
             { options.add(attribute); }
         )*
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
-            putSymbol(name.getText(),astSymbol);
+            TomSymbol astSymbol = ASTFactory.makeSymbol(opName, `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
+            putSymbol(opName,astSymbol);
 
-            result = `ArraySymbolDecl(Name(name.getText()));
+            result = `ArraySymbolDecl(Name(opName));
 
             updatePosition(t.getLine(),t.getColumn());
 
@@ -2179,6 +2179,7 @@ COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
+QMARK       :   '?' ;
 UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ; 
 BACKQUOTE   :   "`" ;
 
@@ -2323,16 +2324,15 @@ NUM_INT
     :   (MINUS)?
     (
     DOT
-            ( ('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
-                {
+    ( ('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
+      {
         if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
-                  _ttype = NUM_FLOAT;
+          _ttype = NUM_FLOAT;
+        } else {
+          _ttype = NUM_DOUBLE; // assume double
         }
-        else {
-                  _ttype = NUM_DOUBLE; // assume double
-        }
-        }
-            )?
+      }
+    )?
 
   | ( '0' {isDecimal = true;} // special case for just '0'
       ( ('x'|'X')

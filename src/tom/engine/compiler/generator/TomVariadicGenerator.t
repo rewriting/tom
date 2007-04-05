@@ -24,7 +24,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
   %include { sl.tom }	
 
   public Expression generate(Expression expression){		
-    return (Expression)`TopDown(VariadicGenerator()).fire(expression);		
+    return (Expression)`InnermostId(VariadicGenerator()).fire(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
@@ -42,7 +42,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }			
-      // generate equal
+      // generate equal - this can come from variable's propagations
       ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain=type]),t)) ->{				
         return `EqualTerm(type,e,t);
       }

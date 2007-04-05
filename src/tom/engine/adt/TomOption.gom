@@ -1,19 +1,21 @@
 module TomOption
-imports TomSignature int
+imports TomSignature int Theory
 abstract syntax
-Option = DeclarationToOption(AstDeclaration:Declaration)
-       | TomNameToOption(AstName:TomName)
-       | TomTermToOption(AstTerm:TomTerm)
-       | DefinedSymbol()
-       | GeneratedMatch()
-       | OriginTracking(AstName:TomName,Line:int,FileName:String)
-       | OriginalText(AstName:TomName)
-       | Constant()
-       | Label(AstName:TomName)
-       | Debug(AstName:TomName)
-       | ModuleName(String:String)
-       | ImplicitXMLAttribut()
-       | ImplicitXMLChild()
-       | noOption()
+Option = 
+  | DeclarationToOption(AstDeclaration:Declaration)
+  | TomNameToOption(AstName:TomName)
+  | TomTermToOption(AstTerm:TomTerm)
+  | DefinedSymbol()
+  | GeneratedMatch()
+  | OriginTracking(AstName:TomName,Line:int,FileName:String)
+  | OriginalText(AstName:TomName)
+  | Constant()
+  | MatchingTheory(Theory:Theory)
+  | Label(AstName:TomName)
+  | Debug(AstName:TomName)
+  | ModuleName(String:String)
+  | ImplicitXMLAttribut()
+  | ImplicitXMLChild()
+  | noOption()
 
 OptionList = concOption(Option*)

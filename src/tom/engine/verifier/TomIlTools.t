@@ -92,11 +92,11 @@ public class TomIlTools extends TomBase {
     %match(Pattern pattern) {
       Pattern[SubjectList=subjectList] -> {
         TomList sl = `subjectList;
-          while(!sl.isEmptyconcTomTerm()) {
-            TomTerm head = sl.getHeadconcTomTerm();
-            sl = sl.getTailconcTomTerm();
-            list.add(tomTermToZTerm(head,map,unamedVarSet));
-          }
+        while(!sl.isEmptyconcTomTerm()) {
+          TomTerm head = sl.getHeadconcTomTerm();
+          sl = sl.getTailconcTomTerm();
+          list.add(tomTermToZTerm(head,map,unamedVarSet));
+        }
       }
     }
   }

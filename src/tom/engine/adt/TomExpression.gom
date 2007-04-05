@@ -45,3 +45,4 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   * check that source is of sort astType, and then execute inst
 		   */
            | IsSort(AstType:TomType,Variable:TomTerm)
+

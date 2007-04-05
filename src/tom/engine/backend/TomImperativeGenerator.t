@@ -59,14 +59,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
   /*
    * the method implementations are here common to C, Java, caml and python
    */
-
-
 
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {

@@ -49,7 +49,7 @@ import tom.platform.OptionManager;
 public class TomPythonGenerator extends TomImperativeGenerator {
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
 
@@ -90,6 +90,16 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     }
   }
   
+  protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
+    output.write("((");
+    generateExpression(deep,cond,moduleName);
+    output.write(")?(");
+    generateExpression(deep,exp1,moduleName);
+    output.write("):(");
+    generateExpression(deep,exp2,moduleName);
+    output.write("))");
+  }
+
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
     output.write(" ( ");
     generateExpression(deep,exp1,moduleName);

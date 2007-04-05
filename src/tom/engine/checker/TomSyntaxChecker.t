@@ -62,7 +62,7 @@ import jjtraveler.VisitFailure;
  */
 public class TomSyntaxChecker extends TomChecker {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
 
   /** the declared options string */
@@ -551,7 +551,7 @@ block: {
 		 AntiTerm(p) -> { subject = `p; }
 	       }
 	       %match(subject) {
-		 (TermAppl|RecordAppl|ListAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {
+		 (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {
 		   //System.out.println("X.length = " + `X*.length());
 		   if(`X*.length() == i) {
 		     TomSymbol symbol = null;

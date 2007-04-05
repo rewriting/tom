@@ -58,10 +58,10 @@ public class TomConstraintCompiler extends TomBase {
         // get the new names for subjects ( for further casts if needed - especially for lists)
         TomList renamedSubjects = renameSubjects(`subjectList);
         // for each pattern action <term>,...,<term> -> { action }
-        // build a matching automata  
+        // build a matching automata
         %match(patternInstructionList){
-          concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) ->{
-            Constraint constraint = TomConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);
+          concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) ->{            
+            Constraint constraint = TomConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);            
             try{
               actionNumber++;              
               Constraint propagationResult = TomPropagationManager.performPropagations(constraint);              
@@ -145,7 +145,7 @@ public class TomConstraintCompiler extends TomBase {
     while(!`patternList.isEmptyconcTomTerm()) {
       TomTerm pattern = `patternList.getHeadconcTomTerm();
       TomTerm subject = `subjectList.getHeadconcTomTerm();
-
+      
       constraint = `AndConstraint(MatchConstraint(pattern, subject),constraint*);
 
       `patternList = `patternList.getTailconcTomTerm();
@@ -187,6 +187,10 @@ public class TomConstraintCompiler extends TomBase {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
     return tomSymbol.getTypesToType().getCodomain();
+  }
+  
+  public static TomType getIntType(){
+    return symbolTable.getIntType();
   }
 
   public static TomType getTermTypeFromTerm(TomTerm tomTerm){

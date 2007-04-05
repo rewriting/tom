@@ -91,7 +91,7 @@ public class TomKernelExpander extends TomBase {
     return getSymbolFromType(tomType, getSymbolTable());
   }
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
   /*
@@ -310,7 +310,7 @@ matchBlock: {
 		  break matchBlock;
 		}
 
-		t@(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(tomName@Name(name),_*)] -> {
+		t@(TermAppl|RecordAppl)[NameList=concTomName(tomName@Name(name),_*)] -> {
 		  TomSymbol symbol = expander.getSymbolFromName(`name);
 		  TomType type = null;
 		  if(symbol!=null) {
@@ -450,23 +450,23 @@ private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionL
     concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
       TomTerm subject = `tmpSubject;
       %match(subject) {
-	AntiTerm(p) -> { subject = `p; }
+        AntiTerm(p) -> { subject = `p; }
       }
       %match(subject) {
-	(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)] -> {
-	  //System.out.println("X.length = " + `X*.length());
-	  if(`X*.length() == index) {
-	    TomSymbol symbol = getSymbolFromName(`name);
-	    //System.out.println("name = " + `name);
-	    if(symbol!=null) {
-	      TomType newType = getSymbolCodomain(symbol);
-	      //System.out.println("newType = " + `newType);
-	      return `newType;
-	    } else {
-	      return null;
-	    }
-	  }
-	}
+        (TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
+          //System.out.println("X.length = " + `X*.length());
+          if(`X*.length() == index) {
+            TomSymbol symbol = getSymbolFromName(`name);
+            //System.out.println("name = " + `name);
+            if(symbol!=null) {
+              TomType newType = getSymbolCodomain(symbol);
+              //System.out.println("newType = " + `newType);
+              return `newType;
+            } else {
+              return null;
+            }
+          }
+        }
       }
     }
   }

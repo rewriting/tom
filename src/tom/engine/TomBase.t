@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.theory.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -144,7 +145,7 @@ public class TomBase {
     }
   }   
 
-  protected static TomTypeList getSymbolDomain(TomSymbol symbol) {
+  public static TomTypeList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
       return symbol.getTypesToType().getDomain();
     } else {
@@ -357,6 +358,13 @@ public class TomBase {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
+  }
+
+  protected static boolean hasTheory(OptionList optionList, ElementaryTheory elementaryTheory) {
+    %match(optionList) {
+      concOption(_*,MatchingTheory(concElementaryTheory(_*,theory,_*)),_*) -> { if(elementaryTheory == `theory) return true; }
+    }
+    return false;
   }
 
   protected static Declaration getIsFsymDecl(OptionList optionList) {

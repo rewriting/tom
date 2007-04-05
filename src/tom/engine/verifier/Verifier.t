@@ -157,6 +157,7 @@ public class Verifier extends TomBase {
       EqualTerm[Kid1=t1,Kid2=t2] -> {
         return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
       }
+      IsSort[] -> { return `iltrue(subs(undefsubs())); }
     }
     System.out.println("exprFromExpression don't know how to handle this: " + expression);
     return `ilfalse();

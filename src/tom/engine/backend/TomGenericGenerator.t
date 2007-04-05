@@ -57,7 +57,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
   /*
@@ -68,7 +68,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException {
     buildFunctionCall(deep, "tom_make_"+name, argList, moduleName);
   }
-
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);

@@ -17,7 +17,6 @@ TomTerm =
    * @param Constraints a list of constraints
    */
     | TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
-    | ListAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
     | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
     | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
 

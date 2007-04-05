@@ -23,6 +23,23 @@ Constraint =
 		   | AndAntiConstraint(Constraint*)
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
 
+/** normalization hooks
+ *
+ * AndAntiConstraint(X*,AndAntiConstraint(),Y*) -> AndAntiConstraint(X*,Y*)
+ * AndAntiConstraint(X*,AndAntiConstraint(x))) -> AndAntiConstraint(X*,x)
+ *
+ */ 
+AndAntiConstraint:make_insert(el, list){
+	%match(el){
+		AndAntiConstraint() ->{
+			return list;
+		}
+		AndAntiConstraint(x) ->{
+			return realMake(`x,list);
+		}
+	}
+}
+
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
 OrConstraint:AU() { `FalseConstraint() }

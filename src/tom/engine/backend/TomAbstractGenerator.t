@@ -86,7 +86,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     return symbolTable.getUniversalType();
   }
 // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected TomTerm operatorsTogenerate(TomTerm subject)throws IOException {
@@ -207,6 +207,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      Conditional(cond,exp1,exp2) -> {
+        buildExpConditional(deep, `cond, `exp1, `exp2, moduleName);
+        return;
+      }
+
       And(exp1,exp2) -> {
         buildExpAnd(deep, `exp1, `exp2, moduleName);
         return;
@@ -247,16 +252,21 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(type, exp, RecordAppl[NameList=(nameAST@Name(opName))]) -> {
+      EqualFunctionSymbol(type, exp, RecordAppl[Option=optionList, NameList=(nameAST@Name(opName))]) -> {
+        TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
+        TomType type = TomBase.getSymbolCodomain(tomSymbol);
         if(getSymbolTable(moduleName).isBuiltinType(getTomType(`type))) {
-          TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
           if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol) || hasIsFsymDecl(tomSymbol)) {
             generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
+            return;
           } else {
             generateExpression(deep,`EqualTerm(type,BuildConstant(nameAST),exp), moduleName);
+            return;
           }
+        } else if(TomBase.hasTheory(`optionList, `TrueAU())) {
+	  generateExpression(deep,`IsSort(type,exp), moduleName);
         } else {
-          generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
+	  generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
         }
         return;
       }
@@ -290,7 +300,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetHead(opNameAST, codomain,exp) -> {
+      GetHead(opNameAST,codomain,exp) -> {
         `buildExpGetHead(deep, opNameAST, getTermType(exp), codomain, exp, moduleName);
         return;
       }
@@ -628,7 +638,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       MakeEmptyList(Name(opname), instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+        || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr, moduleName);
         }
         return;
@@ -804,6 +814,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException;
 
+  protected abstract void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException;
   protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException;

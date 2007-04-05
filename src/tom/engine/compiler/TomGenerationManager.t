@@ -21,7 +21,7 @@ import tom.engine.adt.tomtype.types.*;
  * This class is in charge with launching all the generators,
  * until no more generations can be made 
  */
-public class TomInstructionGenerationManager extends TomBase {
+public class TomGenerationManager extends TomBase {
 
 //------------------------------------------------------------	
   %include { adt/tomsignature/TomSignature.tom }	
