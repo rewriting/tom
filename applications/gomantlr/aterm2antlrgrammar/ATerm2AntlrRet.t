@@ -39,7 +39,10 @@ public class ATerm2AntlrRet {
 
     public static AntlrRet getAntlrRet(ATerm t) throws AntlrWrongRetException {
         %match(t) {
-            RET(_,x) -> {
+            RET(_,concATerm()) -> {
+                return `AntlrNilRet();
+            }
+            RET(_,x@concATerm(_,_*)) -> {
                 return `AntlrRet(ATerm2AntlrUnrecognized.getAntlrUnrecognized(x));
             }
         }

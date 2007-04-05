@@ -39,7 +39,10 @@ public class ATerm2AntlrArgs {
 
     public static AntlrArgs getAntlrArgs(ATerm t) throws AntlrWrongArgsException {
         %match(t) {
-            ARGS(_,x) -> {
+            ARGS(_,concATerm()) -> {
+                return `AntlrNilArgs();
+            }
+            ARGS(_,x@concATerm(_,_*)) -> {
                 return `AntlrArgs(ATerm2AntlrUnrecognized.getAntlrUnrecognized(x));
             }
         }
