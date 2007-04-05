@@ -39,7 +39,7 @@ class Gomoku2 {
   private final static int black = -1;
   private final static int white = -2;
 
-  %include { gomoku/gomoku.tom }
+  %include { gomoku/Gomoku.tom }
   
   public static Gomoku2 getGomoku(int size) {
     Gomoku2 gomoku = new Gomoku2();

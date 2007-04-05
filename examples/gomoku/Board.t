@@ -33,7 +33,7 @@ import gomoku.gomoku.types.*;
 
 class Board {
 
-  %include { gomoku/gomoku.tom }
+  %include { gomoku/Gomoku.tom }
 
   private final static int black = -1;
   private final static int white = -2;

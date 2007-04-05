@@ -1,4 +1,4 @@
-module gomoku.gomoku
+module gomoku.Gomoku
 imports int
 abstract syntax
   Pawn = pawn(color:int)
