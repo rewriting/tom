@@ -77,13 +77,18 @@ public class LambdaConverter {
       Appl(t1,t2) -> { return `ApplDB(convert(t1,table,offset),convert(t2,table,offset)); }
       
       Abs(v,t) -> {
-        if (table.containsKey(`v)) 
-          table.put(`v, table.get(`v)-offset);
-        else
-          table.put(`v,-offset);
+        LTermDB res = null;
 
-        LTermDB res = convert(`t,table,offset+1);
-        table.put(`v, table.get(`v)+offset);
+        if (table.containsKey(`v)) { 
+          table.put(`v, table.get(`v)-offset);
+          res = convert(`t,table,offset+1);
+          table.put(`v, table.get(`v)+offset);
+        }
+        else {
+          table.put(`v,-offset);
+          res = convert(`t,table,offset+1);
+          table.remove(`v);
+        }
         return `AbsDB(res);
       }
 
