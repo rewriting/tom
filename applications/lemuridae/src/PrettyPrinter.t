@@ -331,7 +331,7 @@ class PrettyPrinter {
 
       // set theory prettyprint
       relationAppl(relation("in"),(x,y)) -> {
-        return prettyPrint(`x) + " in " + prettyPrint(`y);
+        return prettyPrint(`x) + " ∈ " + prettyPrint(`y);
       }
 
       relationAppl(relation(r),x) -> {
