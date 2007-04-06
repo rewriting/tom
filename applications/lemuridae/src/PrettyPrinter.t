@@ -403,7 +403,24 @@ class PrettyPrinter {
       funAppl(fun("rond"),(x,y)) -> {
         return prettyPrint(`x) + " o " + prettyPrint(`y);
       }
-    
+
+      // lambda-pi
+      funAppl(fun("type"),()) -> {
+	return ("*");  
+      }
+
+      funAppl(fun("kind"),()) -> {
+	return ("□");   
+      }
+
+      funAppl(fun("pitype"),(x,y))  -> {
+	return "π⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+      }
+
+      funAppl(fun("pikind"),(x,y))  -> {
+	return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
+      }
+
 
       funAppl(fun(name),x) -> {
         return `name + "(" + prettyPrint(`x) + ")";
