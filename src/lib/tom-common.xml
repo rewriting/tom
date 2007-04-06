@@ -19,8 +19,8 @@
   <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
   <path id="external.classpath">
-    <fileset dir="${user.home}/.ant/lib/">
-      <include name="*.jar"/>
+    <fileset dir="${user.home}">
+      <include name=".ant/lib/*.jar"/>
     </fileset>
   </path>
 
