@@ -41,9 +41,12 @@ options {
 }
 
 {
-  public static TomJavaParser createParser(String fileName) throws FileNotFoundException,IOException {
+  public static TomJavaParser createParser(String fileName)
+	  throws FileNotFoundException,IOException {
     File file = new File(fileName);
-    TomJavaLexer lexer = new TomJavaLexer(new BufferedReader(new FileReader(file)));
+    TomJavaLexer lexer = new TomJavaLexer(
+		    new BufferedReader(
+			    new FileReader(file)));
     return new TomJavaParser(lexer);
   }
 }
@@ -59,15 +62,12 @@ javaPackageDeclaration returns [String result]
 class TomJavaLexer extends Lexer;
 options {
   k=2;
-  filter=IGNORE;
   // charVocabulary = '\3'..'\177';
   charVocabulary='\u0000'..'\uffff';
 }
 
 
 JAVA_PACKAGE: "package"! (~';')* ';'! ;
-
-protected IGNORE: c:. /*{System.out.println("ignore: " + c);}*/ ;
 
 STRING
 : '"' (~('"'|'\\'|'\n'|'\r'))* '"'
