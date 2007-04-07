@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
-import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
@@ -41,9 +40,6 @@ public class HookTypeExpander {
   %include { ../adt/gom/Gom.tom}
 
   private ModuleList moduleList;
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  }
 
   public HookTypeExpander(ModuleList moduleList) {
     this.moduleList = moduleList;
