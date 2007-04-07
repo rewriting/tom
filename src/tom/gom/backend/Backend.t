@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
-import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 
 import tom.gom.adt.objects.*;
@@ -60,10 +59,6 @@ public class Backend {
     this.tomHomePath = tomHomePath;
     this.strategySupport = strategySupport;
     this.importList = importList;
-  }
-
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
   }
 
   public int generate(GomClassList classList) {
