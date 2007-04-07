@@ -51,16 +51,7 @@ import aterm.ATerm;
 public class ASTFactory {
   %include { ../adt/tomsignature/TomSignature.tom }
    // Suppresses default constructor, ensuring non-instantiability.
-  private ASTFactory() {
-  }
-
-  public static int length(TomList l) {
-    if(l.isEmptyconcTomTerm()) {
-      return 0;
-    } else {
-      return 1 + length(l.getTailconcTomTerm());
-    }
-  }
+  private ASTFactory() {}
 
   public static TomList reverse(TomList l) {
     TomList reverse = `concTomTerm();

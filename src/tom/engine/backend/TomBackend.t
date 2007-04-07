@@ -125,11 +125,13 @@ public class TomBackend extends TomGenericPlugin {
 
           generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
           // verbose
-          getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
+          getLogger().log(Level.INFO,
+              TomMessage.tomGenerationPhase.getMessage(),
               new Integer((int)(System.currentTimeMillis()-startChrono)));
-          writer.close();
+          output.close();
         } catch (IOException e) {
-          getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
+          getLogger().log(Level.SEVERE,
+              TomMessage.backendIOException.getMessage(),
               new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
           return;
         } catch (Exception e) {
@@ -146,7 +148,6 @@ public class TomBackend extends TomGenericPlugin {
           System.out.println("IO Exception when computing generatedFileName");
           e.printStackTrace();
         }
-
       } else {
         // backend is desactivated
         getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
