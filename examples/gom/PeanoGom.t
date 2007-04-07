@@ -38,22 +38,26 @@ class PeanoGom {
     abstract syntax
     Nat = zero()
         | suc(pred:Nat)
-        | fib(val:Nat)
-        | plus(x1:Nat, x2:Nat)
    }
 
     // rule fib
-  %rule {
-    fib(zero())        -> suc(zero())
-    fib(suc(zero()))   -> suc(zero())
-    fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
+  public static Nat fib(Nat t) {
+    %match(t) {
+      zero() -> { return `suc(zero()); }
+      suc(zero()) -> { return `suc(zero()); }
+      suc(suc(x)) -> { return `plus(fib(x),fib(suc(x))); }
+    }
+    return null;
   }
 
     // rule plus
-  %rule {
-    plus(x, zero())    -> x
-    plus(x, suc(y))    -> suc(plus(x,y))
-  } // rule
+  public static Nat plus(Nat t1, Nat t2) {
+    %match(t2) {
+      zero() -> { return t1; }
+      suc(y)    -> { return `suc(plus(t1,y)); }
+    } 
+    return null;
+  }
   
   public void run() {
     System.out.println("running...");
@@ -66,7 +70,7 @@ class PeanoGom {
   }
 
   public Nat getFib(Nat n) {
-    return `fib(n);
+    return fib(n);
   }
   
   public Nat getFive() {
@@ -77,10 +81,4 @@ class PeanoGom {
     return `suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))));
   }
 
-/*
-  %rule {
-    mult(x, zero())    -> zero()
-    mult(x, suc(y))    -> plus(x,mult(x,y))
-  }
-*/
 }

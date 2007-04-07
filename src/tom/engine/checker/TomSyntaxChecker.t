@@ -173,11 +173,6 @@ public class TomSyntaxChecker extends TomChecker {
         /*  STRATEGY MATCH STRUCTURE*/
         tsc.verifyStrategy(`list);
       }
-      RuleSet(list, optionList) -> {
-        /*  TOM RULE STRUCTURE*/
-        tsc.verifyRule(`list, `optionList);
-        `Fail().visit(null);
-      }
       // Types
       TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
         tsc.verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, `tomName, `declarationList, `orgTrack);
@@ -674,91 +669,6 @@ block: {
     }
   }
 
-  /////////////////////////////////
-  // RULE VERIFICATION CONCERNS ///
-  /////////////////////////////////
-  private  void verifyRule(TomRuleList ruleList, OptionList optionList) {
-    int ruleNumber = 0;
-    currentTomStructureOrgTrack = TomBase.findOriginTracking(optionList);
-    String headSymbolName = "Unknown return type";
-    %match(TomRuleList ruleList) {  // for each rewrite rule
-      b1: concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),_,_),_*) -> {
-        headSymbolName = `verifyLhsRuleAndConstructorEgality(lhs, headSymbolName, ruleNumber);
-        if( headSymbolName == null ) { return; }
-        `verifyRhsRuleStructure(rhs, headSymbolName);
-        ruleNumber++;
-      }
-    }
-  }
-
-  private  String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  headSymbolName, int ruleNumber) {
-    String currentHeadSymbolName;
-    TomType lhsType  = null;
-    TomSymbol symbol = null;
-      // We support only TermAppl and RecordAppl
-    int termClass = getClass(lhs);
-    if(  termClass != TERM_APPL && termClass != RECORD_APPL) {
-      String termName;
-      if (termClass == XML_APPL) {
-        termName = "XML construct "+getName(lhs);
-      } else if (termClass ==  APPL_DISJUNCTION || termClass == RECORD_APPL_DISJUNCTION) {
-        termName = "Disjunction";
-      } else {
-        termName = getName(lhs);
-      }
-      messageError(findOriginTrackingFileName(lhs.getOption()),
-          findOriginTrackingLine(lhs.getOption()),
-          TomMessage.incorrectRuleLHSClass, new Object[]{termName});
-      return null;
-    }
-
-    currentHeadSymbolName = getName(lhs);
-    if(ruleNumber == 0) {
-      // update the root of lhs: it becomes a defined symbol
-      symbol = ASTFactory.updateDefinedSymbol(symbolTable(),lhs);
-      if( symbol == null ) {
-        messageError(findOriginTrackingFileName(lhs.getOption()),
-            findOriginTrackingLine(lhs.getOption()),
-            TomMessage.unknownSymbol,
-            new Object[]{currentHeadSymbolName});
-        // We can not continue anymore
-        return null;
-      }
-      //ensure we are able to construct this symbol
-      if ( !findMakeDecl(symbol.getOption())) {
-        messageError(findOriginTrackingFileName(lhs.getOption()),
-            findOriginTrackingLine(lhs.getOption()),
-                     TomMessage.noRuleMakeDecl,
-                     new Object[]{currentHeadSymbolName});
-      }
-
-      if(alreadyStudiedRule.contains(currentHeadSymbolName)) {
-        messageError(currentTomStructureOrgTrack.getFileName(),
-          currentTomStructureOrgTrack.getLine(),
-                     TomMessage.multipleRuleDefinition,
-                     new Object[]{currentHeadSymbolName});
-        return null;
-      } else {
-        alreadyStudiedRule.add(currentHeadSymbolName);
-      }
-    } else { //  ruleNumber > 0
-      // Test constructor equality
-      String newName = getName(lhs);
-      if (!headSymbolName.equals(currentHeadSymbolName)) {
-        messageError(findOriginTrackingFileName(lhs.getOption()),
-          findOriginTrackingLine(lhs.getOption()),
-                     TomMessage.differentRuleConstructor,
-                     new Object[]{headSymbolName, currentHeadSymbolName});
-      }
-    }
-    symbol = getSymbolFromName(currentHeadSymbolName);
-    lhsType = TomBase.getSymbolCodomain(symbol);
-    // analyse the term
-    validateTerm(lhs, lhsType,
-        TomBase.isListOperator(symbol)||TomBase.isArrayOperator(symbol), true, false);
-    return currentHeadSymbolName;
-  }
-
   private static boolean findMakeDecl(OptionList option) {
     %match(OptionList option) {
       (_*, DeclarationToOption(MakeDecl[]), _*) -> {
@@ -768,45 +678,6 @@ block: {
     return false;
   }
 
-  /**
-   * Rhs shall have no underscore, be a var* nor _*, nor a RecordAppl
-   */
-  private  void verifyRhsRuleStructure(TomTerm rhs, String lhsHeadSymbolName) {
-    int termClass = getClass(rhs); 
-    if(termClass != TERM_APPL && termClass != VARIABLE) {
-      String termName;
-      if (termClass == XML_APPL) {
-        termName = "XML construct "+getName(rhs);
-      } else if (termClass ==  APPL_DISJUNCTION || termClass == RECORD_APPL_DISJUNCTION) {
-        termName = "Disjunction";
-      } else if (termClass == RECORD_APPL) {
-        termName = getName(rhs)+"[...]";
-      } else {
-        termName = getName(rhs);
-      }
-      messageError(findOriginTrackingFileName(rhs.getOption()),
-          findOriginTrackingLine(rhs.getOption()),
-                   TomMessage.incorrectRuleRHSClass, new Object[]{termName});
-      return;
-    }
-
-    TomSymbol symbol = getSymbolFromName(lhsHeadSymbolName);
-    TomType lhsType = TomBase.getSymbolCodomain(symbol);
-    TermDescription termDesc = validateTerm(rhs, lhsType, TomBase.isListOperator(symbol)||TomBase.isArrayOperator(symbol), true, true);
-    TomType rhsType = termDesc.getType();
-    if(termClass == TERM_APPL && rhsType != lhsType) {
-        String rhsTypeName;
-        if(rhsType.isEmptyType()) {
-          rhsTypeName = "No Type Found";
-        } else {
-          rhsTypeName = rhsType.getString();
-			messageError(findOriginTrackingFileName(rhs.getOption()),
-					findOriginTrackingLine(rhs.getOption()),
-					TomMessage.incorrectRuleRHSType,
-					new Object[]{rhsTypeName, lhsType.getString()});
-        }
-		}
-	}
 
   /**
    * Analyse a term given an expected type and re-enter recursively on children

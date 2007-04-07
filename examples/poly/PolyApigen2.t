@@ -46,27 +46,25 @@ private final static int COMPLEXITY = 2;
 
   %include { expression/expression.tom }
 
-  %op Expression differentiate(arg1:Expression, arg2:Expression) {
-    is_fsym(t) { false }
-    make(t1,t2) { differentiate(t1,t2) }
-  }
+  %op Expression differentiate(arg1:Expression, arg2:Expression) {}
 
-  %rule {
-    differentiate(variable(v1),variable(v1)) -> one()
-    differentiate(plus(a1,a2),vx) -> plus(differentiate(a1,vx),
-                                          differentiate(a2,vx))
-    differentiate(mult(a1,a2),vx) -> plus(mult(a1,differentiate(a2,vx)),
-                                          mult(a2,differentiate(a1,vx)))
-    differentiate(e@exp(a1),vx)   -> mult(differentiate(a1,vx),e)
-    differentiate(variable(_),_)  -> zero()
-    differentiate(constant(_),_) -> zero()
-    differentiate(number(_),_)    -> zero()
-    differentiate(zero(),_)         -> zero() 
-    differentiate(one(),_)          -> zero()
+  public static Expression differentiate(Expression t1, Expression t2) {
+    %match(t1,t2) {
+      variable(v1),variable(v1) -> { return `one(); }
+      plus(a1,a2),vx -> { return `plus(differentiate(a1,vx), differentiate(a2,vx)); }
+      mult(a1,a2),vx -> { return `plus(mult(a1,differentiate(a2,vx)), mult(a2,differentiate(a1,vx))); }
+      e@exp(a1),vx   -> { return `mult(differentiate(a1,vx),e); }
+      variable(_),_  -> { return `zero(); }
+      constant(_),_ -> { return `zero(); }
+      number(_),_ -> { return `zero(); }
+      zero(),_ -> { return `zero(); }
+      one(),_ -> { return `zero(); }
+    }
+    return null;
   }
     
-    // simplification
-  public Expression simplify(Expression t) {
+  // simplification
+  public static Expression simplify(Expression t) {
     Expression res = t;
     block:{
       %match(Expression t) {

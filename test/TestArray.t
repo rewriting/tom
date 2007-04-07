@@ -58,17 +58,6 @@ public class TestArray extends TestCase {
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
 
-  %op L double3(s1:L) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "double3" }
-    //get_slot(s1,t) { return null; }
-    make(l) { double3(l) }
-  }
-
-  %rule {
-    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
-    double3(conc(X*)) -> conc(X*)
-  } 
-
   public static void main(String[] args) {
     level = Level.INFO;
     junit.textui.TestRunner.run(new TestSuite(TestArray.class));
@@ -125,12 +114,6 @@ public class TestArray extends TestCase {
     assertEquals(
         "double2 should remove all double element in a list",
         double2(sort2(listwithdoubles)),listwithoutdoubles);
-  }
-
-  public void testDouble3() {
-    assertEquals(
-        "double3 should remove all double element in a list",
-        double3(sort2(listwithdoubles)),listwithoutdoubles);
   }
 
   public void testDouble4() {

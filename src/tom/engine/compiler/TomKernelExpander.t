@@ -97,9 +97,6 @@ public class TomKernelExpander {
   /*
    * The "expandVariable" phase expands RecordAppl into Variable
    * we focus on
-   * - RewriteRule
-   * - MatchingCondition
-   * - EqualityCondition
    * - Match
    *
    * The types of subjects are inferred from the patterns
@@ -130,38 +127,6 @@ public class TomKernelExpander {
       }
     }
 
-    visit TomRule {
-      RewriteRule(Term(lhs@RecordAppl[NameList=(Name(tomName))]),
-	  Term(rhs),
-	  condList,
-	  option)  -> {
-	TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
-	TomType symbolType = TomBase.getSymbolCodomain(tomSymbol);
-	TomTerm newLhs = `Term((TomTerm)expander.expandVariable(contextType,lhs));
-	// build the list of variables that occur in the lhs
-	HashSet set = new HashSet();
-	TomBase.collectVariable(set,newLhs);
-	TomList varList = ASTFactory.makeList(set);
-	InstructionList newCondList = `concInstruction();
-	while(!`condList.isEmptyconcInstruction()) {
-	  Instruction cond = `condList.getHeadconcInstruction();
-
-	  Instruction newCond = (Instruction)expander.replaceInstantiatedVariable(`varList,cond);
-	  newCond = (Instruction) expander.expandVariable(contextType,newCond);
-
-	  newCondList = `concInstruction(newCond,newCondList*);
-	  TomBase.collectVariable(set,newCond);
-	  varList = ASTFactory.makeList(set);
-	  `condList = `condList.getTailconcInstruction();
-	}
-
-	TomTerm newRhs = (TomTerm)expander.replaceInstantiatedVariable(`varList,`rhs);
-	newRhs = `Term((TomTerm)expander.expandVariable(symbolType,newRhs));
-
-	return `RewriteRule(newLhs,newRhs,newCondList,option);
-      }
-    }
-
     visit TomVisit {
       VisitTerm(type,patternInstructionList,options) -> {
 	TomType newType = (TomType)`expander.expandVariable(contextType,`type);
@@ -171,106 +136,6 @@ public class TomKernelExpander {
     }
 
     visit Instruction {
-      MatchingCondition[Lhs=lhs@Variable[AstName=Name(_), AstType=lhsType],
-	Rhs=rhs@Variable[AstName=Name(_), AstType=rhsType]] -> {
-	  TomTerm newLhs = (TomTerm)expander.expandVariable(`rhsType,`lhs);
-	  return `MatchingCondition(newLhs,rhs);
-	}
-
-      MatchingCondition[Lhs=lhs@RecordAppl[NameList=(Name(lhsName))],
-	Rhs=rhs@Variable[AstName=Name(_), AstType=rhsType]] -> {
-	  TomSymbol lhsSymbol = expander.getSymbolFromName(`lhsName);
-	  TomType type;
-	  if(lhsSymbol != null) {
-	    type = TomBase.getSymbolCodomain(lhsSymbol);
-	  } else {
-	    throw new TomRuntimeException("lhs has an unknown sort: " + `lhsName);
-	  }
-
-	  TomTerm newLhs = (TomTerm)expander.expandVariable(`type,`lhs);
-	  TomTerm newRhs = (TomTerm)expander.expandVariable(`type,`rhs);
-	  return `MatchingCondition(newLhs,newRhs);
-	}
-
-      MatchingCondition[Lhs=lhs@Variable[AstName=Name(_), AstType=lhsType],
-	Rhs=rhs@RecordAppl[NameList=(Name(rhsName))]] -> {
-	  TomSymbol rhsSymbol = expander.getSymbolFromName(`rhsName);
-	  TomType type;
-	  if(rhsSymbol != null) {
-	    type = TomBase.getSymbolCodomain(rhsSymbol);
-	  } else {
-	    throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
-	  }
-
-	  TomTerm newLhs = (TomTerm)expander.expandVariable(`type,`lhs);
-	  TomTerm newRhs = (TomTerm)expander.expandVariable(`type,`rhs);
-	  return `MatchingCondition(newLhs,newRhs);
-	}
-
-      MatchingCondition[Lhs=lhs@RecordAppl[NameList=(Name(lhsName),_*)],
-	Rhs=rhs@RecordAppl[NameList=(Name(rhsName))]] -> {
-	  TomSymbol lhsSymbol = expander.getSymbolFromName(`lhsName);
-	  TomSymbol rhsSymbol = expander.getSymbolFromName(`rhsName);
-	  TomType type;
-	  // rhs is an application
-	  if(lhsSymbol != null) {
-	    type = TomBase.getSymbolCodomain(lhsSymbol);
-	  } else if(rhsSymbol != null) {
-	    type = TomBase.getSymbolCodomain(rhsSymbol);
-	  } else {
-	    // lhs is a variable, but rhs has an unknown top symbol
-	    // since lhs is a fresh variable, we look for rhs type
-	    throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
-	  }
-
-	  TomTerm newLhs = (TomTerm)expander.expandVariable(`type,`lhs);
-	  TomTerm newRhs = (TomTerm)expander.expandVariable(`type,`rhs);
-	  return `MatchingCondition(newLhs,newRhs);
-	}
-
-      EqualityCondition[Lhs=lhs@Variable[AstName=Name(_), AstType=type],
-	Rhs=rhs@Variable[AstName=Name(_), AstType=type]] -> {
-	  return `TypedEqualityCondition(type,lhs,rhs);
-	}
-
-      EqualityCondition[Lhs=lhs@Variable[AstName=Name(_), AstType=type],
-	Rhs=rhs@RecordAppl[NameList=(Name(_))]] -> {
-	  TomTerm newRhs = (TomTerm)expander.expandVariable(`type,`rhs);
-	  return `TypedEqualityCondition(type,lhs,newRhs);
-	}
-
-      EqualityCondition[Lhs=lhs@RecordAppl[NameList=(Name(_))],
-	Rhs=rhs@Variable[AstName=Name(_), AstType=type]] -> {
-	  TomTerm newLhs = (TomTerm)expander.expandVariable(`type,`lhs);
-	  return `TypedEqualityCondition(type,newLhs,rhs);
-	}
-
-      EqualityCondition[Lhs=lhs@RecordAppl[NameList=(Name(lhsName))],
-	Rhs=rhs@RecordAppl[NameList=(Name(rhsName))]] -> {
-	  TomSymbol lhsSymbol = expander.getSymbolFromName(`lhsName);
-	  TomSymbol rhsSymbol = expander.getSymbolFromName(`rhsName);
-	  TomType type;
-
-	  if(lhsSymbol != null) {
-	    type = TomBase.getSymbolCodomain(lhsSymbol);
-	  } else if(rhsSymbol != null) {
-	    type = TomBase.getSymbolCodomain(rhsSymbol);
-	  } else {
-	    // lhs and rhs have an unknown top symbol
-	    throw new TomRuntimeException("lhs and rhs have an unknown sort: " + `lhsName + ",  " + `rhsName);
-	  }
-
-	  //System.out.println("EqualityCondition type = " + type);
-
-	  TomTerm newLhs = (TomTerm)expander.expandVariable(`type,`lhs);
-	  TomTerm newRhs = (TomTerm)expander.expandVariable(`type,`rhs);
-
-	  //System.out.println("lhs    = " + lhs);
-	  //System.out.println("newLhs = " + newLhs);
-
-	  return `TypedEqualityCondition(type,newLhs,newRhs);
-	}
-
       /*
        * Expansion of a Match construct
        * to add types in subjects

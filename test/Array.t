@@ -50,17 +50,6 @@ public class Array {
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
 
-  %op L double3(s1:L) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "double3" }
-    //get_slot(s1,t) { return null; }
-    make(l) { double3(l) }
-  }
-
-  %rule {
-    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
-    double3(conc(X*)) -> conc(X*)
-  } 
-
   public final static void main(String[] args) {
     Array test = new Array();
     test.testArray1();
@@ -96,7 +85,6 @@ public class Array {
     
     assertTrue(double1(sort1(l)).equals(res));
     assertTrue(double2(sort2(l)).equals(res));
-    assertTrue(double3(sort2(l)).equals(res));
     assertTrue(double4(sort2(l)).equals(res));
     assertTrue(double5(sort2(l)).equals(res));
   }

@@ -113,7 +113,7 @@ public class TomTypeChecker extends TomChecker {
 
   /**
    * Main type checking entry point:
-   * We check all Match and RuleSet instructions
+   * We check all Match
    */
   %typeterm TomTypeChecker { implement { TomTypeChecker } }
 
@@ -129,11 +129,6 @@ public class TomTypeChecker extends TomChecker {
       Strategy(_,_,visitList,orgTrack) -> {
 	ttc.currentTomStructureOrgTrack = `orgTrack;
 	ttc.verifyStrategyVariable(`visitList);
-	`Fail().visit(null);
-      }
-      RuleSet(list, optionList) -> {
-	ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`optionList);
-	ttc.verifyRuleVariable(`list);
 	`Fail().visit(null);
       }
     }
@@ -234,87 +229,6 @@ public class TomTypeChecker extends TomChecker {
    * => no new fresh variables in r
    * (iv) the condition Qj==Dj shall never lead to the declaration of a new variable
    */
-  private void verifyRuleVariable(TomRuleList list) {
-    while(!list.isEmptyconcTomRule()) {
-      TomRule rewriteRule = list.getHeadconcTomRule();
-      TomTerm ruleLhs = rewriteRule.getLhs();
-      TomTerm ruleRhs = rewriteRule.getRhs();
-      InstructionList condList = rewriteRule.getCondList();
-      Option orgTrack = TomBase.findOriginTracking(rewriteRule.getOption());
-
-      // the accumulator for defined variables
-      Hashtable variableTable = new Hashtable();
-      // collect lhs variable 
-      ArrayList freshLhsVariableList = new ArrayList();
-      TomBase.collectVariable(freshLhsVariableList, ruleLhs);
-
-      // fill the table with found variables in lhs
-      if(!appendToTable(variableTable, freshLhsVariableList)) {
-	// there are already some coherence issues: same name but not same type
-	break;
-      }
-
-      %match(InstructionList condList) {
-	(_*, cond, _*) -> {
-	  Instruction condition = `cond ;
-	  %match(Instruction condition) {
-	    MatchingCondition(p@lhs, c@rhs) -> {
-	      // (i)
-	      ArrayList pVar = new ArrayList();
-	      TomBase.collectVariable(pVar, `p);
-	      if(!areAllFreshVariableTest(pVar, variableTable)) {
-		// at least one no fresh variable
-		break;
-	      }
-	      // (ii)
-	      ArrayList cVar = new ArrayList();
-	      TomBase.collectVariable(cVar, `c);
-	      if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInWhere)) {
-		// there is a fresh variable
-		break;
-	      }
-
-	      // fill the table
-	      if(!appendToTable(variableTable, pVar)) {
-		// there are some coherence issues: same name but not same type
-		break;
-	      }
-	    }
-	    TypedEqualityCondition(_, p@lhs, c@rhs) -> {
-	      // (iv)
-	      ArrayList pVar = new ArrayList();
-	      TomBase.collectVariable(pVar, `p);
-	      if(!areAllExistingVariableTest(pVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
-		// there is a fresh variable
-		break;
-	      }
-	      // (iv)
-	      ArrayList cVar = new ArrayList();
-	      TomBase.collectVariable(cVar, `c);
-	      if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
-		// there is a fresh variable
-		break;
-	      }
-
-	      // fill the table
-	      if(!appendToTable(variableTable, pVar)) {
-		// there are some coherence issues: same name but not same type
-		break;
-	      }
-	    }
-	  }
-	}
-      }
-
-      // (iii)
-      ArrayList variableRhs = new ArrayList();
-      TomBase.collectVariable(variableRhs, ruleRhs);
-      areAllExistingVariableTest(variableRhs, variableTable, TomMessage.unknownRuleRhsVariable);
-
-      // next rewrite rule
-      list = list.getTailconcTomRule();
-    }
-  } //verifyRuleVariable
 
   private void verifyVariableTypeListCoherence(ArrayList list) {
     // compute multiplicities

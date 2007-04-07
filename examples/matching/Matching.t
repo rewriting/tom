@@ -44,33 +44,34 @@ class Matching {
          | decomposeList(l1:TermList, l2:TermList)
     TermList = cons(head:Term,tail:TermList )
              | nil()
-  }
 
-  %rule {
-    decomposeList(nil(),nil()) -> True()
-    decomposeList(cons(h1,t1),cons(h2,t2)) -> And(Match(h1,h2),decomposeList(t1,t2))
-  } 
+    decomposeList:make(x,y) {
+      %match(x,y) {
+        nil(),nil() -> { return `True(); }
+        cons(h1,t1),cons(h2,t2) -> { return `And(Match(h1,h2),decomposeList(t1,t2)); }
+      }
+    }
+    
+    Match:make(x,y) {
+       %match(x,y) {
+         // Delete
+         Appl(name,nil()),Appl(name,nil()) -> { return `True(); }
+         // Decompose
+         Appl(name,a1),Appl(name,a2) -> { return `decomposeList(a1,a2); }
+         // SymbolClash
+         Appl(name1,args1),Appl(name2,args2) -> { return `False(); }
+       }
+    }
 
-  %rule {
-    // Delete
-    Match(Appl(name,nil()),Appl(name,nil())) -> True()
-        
-    // Decompose
-    Match(Appl(name,a1),Appl(name,a2)) -> decomposeList(a1,a2)
-        
-    // SymbolClash
-    Match(Appl(name1,args1),Appl(name2,args2)) -> False() //if name1 != name2
-  }
-
-  %rule {
-    // PropagateClash
-    And(False(),_) -> False()
-    And(_,False()) -> False()
-
-    // PropagateSuccess
-    And(True(),x) -> x
-    And(x,True()) -> x
-    And(x,x) -> x
+    And:make(a,b) {
+      %match(a,b) {
+        False(),_ -> { return `False(); }
+        _,False() -> { return `False(); }
+        True(),x -> { return `x; }
+        x,True() -> { return `x; }
+        x,x -> { return `x; }
+      }
+    }
   }
 
   //-------------------------------------------------------
@@ -99,6 +100,5 @@ class Matching {
     Matching test = new Matching();
     test.run();
   }
-
 
 }

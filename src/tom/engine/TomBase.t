@@ -112,21 +112,15 @@ public final class TomBase {
   }
 
   public static TomType getSymbolCodomain(TomSymbol symbol) {
-    if(symbol!=null) {
-      return symbol.getTypesToType().getCodomain();
-    } else {
-      //System.out.println("getSymbolCodomain: symbol = " + symbol);
-      return `EmptyType();
-    }
+    assert(symbol!=null);
+    return symbol.getTypesToType().getCodomain();
+    //null: return `EmptyType();
   }   
 
   public static TomTypeList getSymbolDomain(TomSymbol symbol) {
-    if(symbol!=null) {
-      return symbol.getTypesToType().getDomain();
-    } else {
-      //System.out.println("getSymbolDomain: symbol = " + symbol);
-      return `concTomType();
-    }
+    assert(symbol!=null);
+    return symbol.getTypesToType().getDomain();
+    //return null: `concTomType();
   }
 
   private static HashMap tomNumberListToStringMap = new HashMap();
@@ -201,10 +195,6 @@ public final class TomBase {
 	    buf.append("NameNumber");
 	    buf.append(identifier);
 	  }
-	  RuleVar() -> {
-	    //buf.insert(0,"RuleVar");
-	    buf.append("RuleVar");
-	  }
 	}
       }
       result = buf.toString();
@@ -257,11 +247,6 @@ public final class TomBase {
     throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
   
-  public static boolean isSyntacticOperator(TomSymbol subject) {
-    return (!(isListOperator(subject) || isArrayOperator(subject)));
-  }
-
-
   // ------------------------------------------------------------
   public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
     `TopDownCollect(collectVariable(collection)).apply(`subject);
@@ -319,15 +304,6 @@ public final class TomBase {
     return multiplicityMap;
   }
 
-  public boolean isAnnotedVariable(TomTerm t) {
-    %match(TomTerm t) {
-      (RecordAppl|Variable|VariableStar|UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
-        return getAssignToVariable(`constraintList)!=null;
-      }
-    }
-    return false;
-  }
-
   public static TomTerm getAssignToVariable(ConstraintList constraintList) {
     %match(ConstraintList constraintList) {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
@@ -364,20 +340,6 @@ public final class TomBase {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
     }
     return null;
-  }
-
-  public static String getDebug(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,Debug(Name(str)),_*) -> { return `str; }
-    }
-    return null;
-  }
-
-  public static boolean hasGeneratedMatch(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,GeneratedMatch(),_*) -> { return true; }
-    }
-    return false;
   }
 
   public static boolean hasConstant(OptionList optionList) {

@@ -58,6 +58,7 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
       <exclude name="Peano.t"/>
       <exclude name="TestPeano.t"/>
       <exclude name="TestWhen.t"/>
@@ -70,6 +71,7 @@
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
@@ -80,6 +82,7 @@
       <src path="${test.src}"/>
       <src path="${test.gen}"/>
       <exclude name="**/error/**"/>
+      <exclude name="**/rule/**"/>
       <exclude name="gen/**"/>
     </javac.preset>
     <copy todir="${test.build}">

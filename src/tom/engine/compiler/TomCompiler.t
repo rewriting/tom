@@ -285,56 +285,6 @@ matchBlock: {
         return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
 
-      RuleSet(rl@concTomRule(RewriteRule[Lhs=Term(RecordAppl[NameList=(Name(tomName))])],_*),optionList) -> {
-        TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
-        TomName name = tomSymbol.getAstName();
-        String moduleName = TomBase.getModuleName(`optionList);
-        PatternInstructionList patternInstructionList  = `concPatternInstruction();
-
-        //build variables list for lhs symbol
-        TomTypeList typesList = TomBase.getSymbolDomain(tomSymbol);
-        TomList subjectListAST = `concTomTerm();
-        TomNumberList path = `concTomNumber(RuleVar());
-        int index = 0;
-        while(!typesList.isEmptyconcTomType()) {
-          TomType subtermType = typesList.getHeadconcTomType();
-          TomTerm variable = `Variable(concOption(),PositionName(TomBase.appendNumber(index,path)),subtermType,concConstraint());
-          subjectListAST = `concTomTerm(subjectListAST*,variable);
-          typesList = typesList.getTailconcTomType();
-          index++;
-        }
-
-        TomRuleList ruleList = `rl;
-        TomList guardList = `concTomTerm();//no guardlist in pattern
-        while(!ruleList.isEmptyconcTomRule()) {
-          TomRule rule = ruleList.getHeadconcTomRule();
-          %match(rule) {
-            RewriteRule(Term(lhsTerm@RecordAppl[Slots=matchPatternsList]),
-                Term(rhsTerm),
-                condList,
-                option) -> {
-              //transform rhsTerm into Instruction to build PatternInstructionList
-              TomTerm newRhs = `BuildReducedTerm(rhsTerm,compiler.getTermType(lhsTerm));
-              Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
-              Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
-              Pattern pattern = `Pattern(subjectListAST,TomBase.slotListToTomList(matchPatternsList),guardList);
-              patternInstructionList = `concPatternInstruction(patternInstructionList*,PatternInstruction(pattern,RawAction(newRhsInst),option));
-            }
-          }
-          ruleList = ruleList.getTailconcTomRule();
-        }
-
-        Instruction matchAST = `Match(SubjectList(subjectListAST),
-            patternInstructionList, optionList);
-        //return type `name(subjectListAST)
-        Instruction buildAST = `Return(BuildTerm(name,(TomList) MuTraveler.init(preProcessing_makeTerm(compiler)).visit(subjectListAST),moduleName));
-        Instruction functionBody =  (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(`AbstractBlock(concInstruction(matchAST,buildAST)));
-
-        //find codomain
-        TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
-
-        return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
-      }
     }//end match
   } // end strategy
 
@@ -346,47 +296,6 @@ matchBlock: {
     visit TomTerm {
       t -> {return (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
     }
-  }
-
-  private Instruction buildCondition(InstructionList condList, Instruction action) {
-    %match(condList) {
-      concInstruction() -> { return action; }
-
-      concInstruction(MatchingCondition[Lhs=pattern,Rhs=subject], tail*) -> {
-        Instruction newAction = `buildCondition(tail,action);
-
-        TomType subjectType = getTermType(`pattern);
-        TomNumberList path = `concTomNumber();
-        path = `concTomNumber(path*,RuleVar());
-        TomTerm newSubject = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(subject,subjectType));
-        TomTerm introducedVariable = newSubject;
-        TomList guardList = `concTomTerm();
-        TomList generatedSubjectList = `concTomTerm(introducedVariable);
-        /*
-         * we do not use RawAction nor TypedAction here because the generated match should not
-         * produce any proof obligation for the verifier
-         */
-        PatternInstruction generatedPatternInstruction =
-          `PatternInstruction(Pattern(generatedSubjectList, concTomTerm(pattern),guardList),newAction, concOption());
-
-        // Warning: The options are not good
-        Instruction generatedMatch =
-          `Match(SubjectList(generatedSubjectList),
-              concPatternInstruction(generatedPatternInstruction),
-              concOption());
-        return generatedMatch;
-      }
-
-      concInstruction(TypedEqualityCondition[TomType=type,Lhs=lhs,Rhs=rhs], tail*) -> {
-	  Instruction newAction = `buildCondition(tail,action);
-	  TomTerm newLhs = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(lhs,type));
-	  TomTerm newRhs = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(rhs,type));
-	  Expression equality = `EqualTerm(type,newLhs,newRhs);
-	  Instruction generatedTest = `If(equality,newAction,Nop());
-	  return generatedTest;
-      }
-    }
-    throw new TomRuntimeException("buildCondition strange term: " + condList);
   }
 
   private static TomTerm renameVariable(TomTerm subject, Map multiplicityMap, Collection antiList, boolean treatConstraints) {

@@ -38,31 +38,10 @@ public class Peano {
     make(t1,t2) { plus2(t1,t2) }
   }
 
-  %op term fib1(s1:term) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "fib1" }
-    make(t) { fib1(t) }
-  }
-
-  %op term fib2(s1:term) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "fib2" }
-    make(t) { fib2(t) }
-  }
-
-  %op term fib5(s1:term) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "fib5" }
-    make(t) { fib2(t) }
-  }
-  
   %op appl term2appl(s1:term) {
     is_fsym(t) { ((ATermAppl)t).getName() == "term2appl" }
     get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
     make(t) { factory.makeAppl(factory.makeAFun("term2appl",1,false),t) }
-  }
-
-  %op term appl2term(s1:appl) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "appl2term" }
-    get_slot(s1,t) { (ATermAppl) ((ATermAppl)t).getArgument(0) }
-    make(t) { appl2term(t) }
   }
 
   public Peano(ATermFactory factory) {
@@ -85,12 +64,8 @@ public class Peano {
 
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
-      assertTrue( peano2int(fib1(N)) == fibint(i) );
-      assertTrue( peano2int(fib2(N)) == fibint(i) );
       assertTrue( peano2int(fib3(N)) == fibint(i) );
       assertTrue( peano2int(fib4(N)) == fibint(i) );
-      assertTrue
-        ( peano2int(fib5(N)) == fibint(i) );
     }
     
   }
@@ -133,29 +108,6 @@ public class Peano {
     return null;
   }
   
-  %rule {
-    fib1(zero())      -> suc(zero())
-    fib1(suc(zero())) -> suc(zero())
-    fib1(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
-  }
-  
-  %rule {
-    //    fib5(zero())      -> suc(appl2term(term2appl(x))) where x:= zero()
-    fib5(zero())      -> suc(x) where x:= zero()
-    fib5(x)           -> x      if x == suc(zero())
-    fib5(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
-  }
-  
-  %rule {
-    fib2(zero())-> suc(zero())
-    fib2(x@suc[pred=zero()]) -> suc(zero())
-    fib2(suc(y@suc(x))) -> plus2(fib2(x),fib2(y))
-  }
-
-  %rule {
-    appl2term(term2appl(x)) -> x
-  }
-
   public ATerm fib3(ATerm t) {
     %match(term t) {
       zero()             -> { return `suc(zero()); }

@@ -52,7 +52,10 @@ public class NegativeCleaningRule {
 		return c;
 	}
 	
-	%rule{
-		Neg(Match(Variable(name),s)) -> False()	
-	}  
+	public Constraint Neg(Constraint c) {
+    %match(c) {
+      Match(Variable(name),s) -> { return `False()	; }
+    }
+    return null;
+  }
 }

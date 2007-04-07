@@ -31,7 +31,6 @@ Instruction =
   | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
   | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
-  | MatchingCondition(Lhs:TomTerm,Rhs:TomTerm)
   | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
   | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
   /*

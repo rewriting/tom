@@ -17,7 +17,6 @@ TomNumber = MatchNumber(Integer:int)
           | AbsVar(Integer:int)
           | RenamedVar(AstName:TomName)
           | NameNumber(AstName:TomName)
-          | RuleVar()
 
 TomNumberList = concTomNumber(TomNumber*)
 

@@ -1,3 +1,6 @@
+2007-04-06  pem
+  * removed %rule
+
 2007-04-05  pem
   * FL hook in Gom: Flatened List
   * backtrack to previous backquote semantic (flattening)

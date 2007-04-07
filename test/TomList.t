@@ -46,16 +46,6 @@ public class TomList {
     make(l) { l }
   }
 
-  %op L double3(s1:L) {
-    is_fsym(t) { false }
-    make(l) { double3(l) }
-  }
-
-  %rule {
-    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
-    double3(conc(X*)) -> conc(X*)
-  } 
-
   public TomList(ATermFactory factory) {
     this.factory = factory;
   }
@@ -163,7 +153,6 @@ public class TomList {
     assertTrue(double1(sort1(l)) == res);
 
     assertTrue(double2(sort2(l)) == res);
-    assertTrue(double3(sort2(l)) == res);
     assertTrue(double4(sort2(l)) == res);
     assertTrue(double5(sort2(l)) == res);
 
