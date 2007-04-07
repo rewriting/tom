@@ -27,6 +27,7 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
+import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -68,8 +69,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {
-      EmptyName() -> { output.write("tom_get_head_" + getTomType(domain) + "("); }
-      Name(opName) -> { output.write("tom_get_head_" + `opName + "_" + getTomType(domain) + "("); }
+      EmptyName() -> { output.write("tom_get_head_" + TomBase.getTomType(domain) + "("); }
+      Name(opName) -> { output.write("tom_get_head_" + `opName + "_" + TomBase.getTomType(domain) + "("); }
     }
     generate(deep,var,moduleName);
     output.write(")");
@@ -77,8 +78,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   
   protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
     %match(TomName opNameAST) {
-      EmptyName() -> { output.write("tom_get_element_" + getTomType(domain) + "("); }
-      Name(opName) -> { output.write("tom_get_element_" + `opName + "_" + getTomType(domain) + "("); }
+      EmptyName() -> { output.write("tom_get_element_" + TomBase.getTomType(domain) + "("); }
+      Name(opName) -> { output.write("tom_get_element_" + `opName + "_" + TomBase.getTomType(domain) + "("); }
     }
 
     generate(deep,varName,moduleName);
@@ -153,24 +154,24 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected void genDeclArray(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
       return;
     }
 
-    String tomType = getTomType(listType);
-    String glType = getTLType(listType);
+    String tomType = TomBase.getTomType(listType);
+    String glType = TomBase.getTLType(listType);
     //String tlEltType = getTLType(eltType);
     String utype = glType;
     if(lazyMode) {
-      utype =  getTLType(getUniversalType());
+      utype =  TomBase.getTLType(getUniversalType());
     }
     
     String listCast = "(" + glType + ")";
-    String eltCast = "(" + getTLType(eltType) + ")";
+    String eltCast = "(" + TomBase.getTLType(eltType) + ")";
     String make_empty = listCast + "tom_empty_array_" + name;
     String make_insert = listCast + "tom_cons_array_" + name;
     String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;

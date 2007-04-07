@@ -50,7 +50,7 @@ import tom.engine.exception.TomRuntimeException;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class Verifier extends TomBase {
+public class Verifier {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -103,7 +103,7 @@ public class Verifier extends TomBase {
         return `var(stringname);
       }
       PositionName(numberlist) -> {
-        return `var(tomNumberListToString(numberlist));
+        return `var(TomBase.tomNumberListToString(numberlist));
       }
       EmptyName() -> {
         return `var("emptyName");

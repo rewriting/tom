@@ -145,19 +145,19 @@ public class TomCompiler extends TomGenericPlugin {
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
         SlotList newTermArgs = (SlotList) `preProcessing_makeTerm(compiler).visit(`termArgs);
-        TomList tomListArgs = slotListToTomList(newTermArgs);
+        TomList tomListArgs = TomBase.slotListToTomList(newTermArgs);
 
-        if(hasConstant(`optionList)) {
+        if(TomBase.hasConstant(`optionList)) {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
-          if(isListOperator(tomSymbol)) {
+          if(TomBase.isListOperator(tomSymbol)) {
             return ASTFactory.buildList(`name,tomListArgs,compiler.symbolTable());
-          } else if(isArrayOperator(tomSymbol)) {
+          } else if(TomBase.isArrayOperator(tomSymbol)) {
             return ASTFactory.buildArray(`name,tomListArgs);
-          } else if(isDefinedSymbol(tomSymbol)) {
-            return `FunctionCall(name,getSymbolCodomain(tomSymbol),tomListArgs);
+          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
+            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
           } else {
-            String moduleName = getModuleName(`optionList);
+            String moduleName = TomBase.getModuleName(`optionList);
             if(moduleName==null) {
               moduleName = TomBase.DEFAULT_MODULE_NAME;
             }
@@ -173,7 +173,7 @@ public class TomCompiler extends TomGenericPlugin {
 
     visit Instruction {
       Match(matchSubjectList,patternInstructionList, matchOptionList)  -> {
-        Option orgTrack = findOriginTracking(`matchOptionList);
+        Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
         PatternInstructionList newPatternInstructionList = `concPatternInstruction();
         PatternList negativePattern = `concPattern();
         TomTerm newMatchSubjectList = (TomTerm) `preProcessing(compiler).visit(`matchSubjectList);
@@ -271,7 +271,7 @@ matchBlock: {
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
               }
               TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
-              subjectListAST = append(arg,subjectListAST);
+              subjectListAST = `concTomTerm(subjectListAST*,arg);
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
               //return default strategy.visit(arg)
@@ -288,18 +288,18 @@ matchBlock: {
       RuleSet(rl@concTomRule(RewriteRule[Lhs=Term(RecordAppl[NameList=(Name(tomName))])],_*),optionList) -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
         TomName name = tomSymbol.getAstName();
-        String moduleName = getModuleName(`optionList);
+        String moduleName = TomBase.getModuleName(`optionList);
         PatternInstructionList patternInstructionList  = `concPatternInstruction();
 
         //build variables list for lhs symbol
-        TomTypeList typesList = getSymbolDomain(tomSymbol);
+        TomTypeList typesList = TomBase.getSymbolDomain(tomSymbol);
         TomList subjectListAST = `concTomTerm();
         TomNumberList path = `concTomNumber(RuleVar());
         int index = 0;
         while(!typesList.isEmptyconcTomType()) {
           TomType subtermType = typesList.getHeadconcTomType();
-          TomTerm variable = `Variable(concOption(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
-          subjectListAST = append(variable,subjectListAST);
+          TomTerm variable = `Variable(concOption(),PositionName(TomBase.appendNumber(index,path)),subtermType,concConstraint());
+          subjectListAST = `concTomTerm(subjectListAST*,variable);
           typesList = typesList.getTailconcTomType();
           index++;
         }
@@ -317,7 +317,7 @@ matchBlock: {
               TomTerm newRhs = `BuildReducedTerm(rhsTerm,compiler.getTermType(lhsTerm));
               Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
               Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
-              Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
+              Pattern pattern = `Pattern(subjectListAST,TomBase.slotListToTomList(matchPatternsList),guardList);
               patternInstructionList = `concPatternInstruction(patternInstructionList*,PatternInstruction(pattern,RawAction(newRhsInst),option));
             }
           }
@@ -331,7 +331,7 @@ matchBlock: {
         Instruction functionBody =  (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(`AbstractBlock(concInstruction(matchAST,buildAST)));
 
         //find codomain
-        TomType codomain = getSymbolCodomain(tomSymbol);
+        TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
 
         return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
       }
@@ -361,13 +361,13 @@ matchBlock: {
         TomTerm newSubject = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(subject,subjectType));
         TomTerm introducedVariable = newSubject;
         TomList guardList = `concTomTerm();
-        TomList generatedSubjectList = `cons(introducedVariable,concTomTerm());
+        TomList generatedSubjectList = `concTomTerm(introducedVariable);
         /*
          * we do not use RawAction nor TypedAction here because the generated match should not
          * produce any proof obligation for the verifier
          */
         PatternInstruction generatedPatternInstruction =
-          `PatternInstruction(Pattern(generatedSubjectList, cons(pattern,concTomTerm()),guardList),newAction, concOption());
+          `PatternInstruction(Pattern(generatedSubjectList, concTomTerm(pattern),guardList),newAction, concOption());
 
         // Warning: The options are not good
         Instruction generatedMatch =
@@ -492,7 +492,7 @@ matchBlock: {
 
       newElt = handleAntiReplacement(newElt,multiplicityMap,antiList);
   
-      newList = append(newElt,newList);
+      newList = `concTomTerm(newList*,newElt);
       subject = subject.getTailconcTomTerm();
     }
     return newList;
@@ -571,7 +571,7 @@ matchBlock: {
         TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 
         SlotList newArgs = `concSlot();
-        if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+        if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
           SlotList args = `arguments;
           while(!args.isEmptyconcSlot()) {
             Slot elt = args.getHeadconcSlot();
@@ -585,12 +585,11 @@ matchBlock: {
 
                 //System.out.println("Abstract: " + appl);
                 TomSymbol tomSymbol2 = symbolTable().getSymbolFromName(`tomName2);
-                if(isListOperator(tomSymbol2) || isArrayOperator(tomSymbol2)) {
+                if(TomBase.isListOperator(tomSymbol2) || TomBase.isArrayOperator(tomSymbol2)) {
                   TomType type2 = tomSymbol2.getTypesToType().getCodomain();
                   abstractedPattern.add(`appl);
 
                   TomNumberList path = `concTomNumber();
-                  //path = append(`AbsVar(Number(introducedVariable.size())),path);
                   absVarNumber++;
                   path = `concTomNumber(path*,AbsVar(absVarNumber));
 
@@ -607,7 +606,7 @@ matchBlock: {
             args = args.getTailconcSlot();
           }
         } else {
-          newArgs = mergeTomListWithSlotList(abstractPatternList(slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
+          newArgs = TomBase.mergeTomListWithSlotList(abstractPatternList(TomBase.slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
         }
         abstractedTerm = subject.setSlots(newArgs);
       }
@@ -640,8 +639,8 @@ matchBlock: {
     HashSet patternVariable = new HashSet();
     HashSet constraintVariable = new HashSet();
 
-    collectVariable(patternVariable,subjectList);
-    collectVariable(constraintVariable,constraint);
+    TomBase.collectVariable(patternVariable,subjectList);
+    TomBase.collectVariable(constraintVariable,constraint);
     Set variableSet = intersection(patternVariable,constraintVariable);
 
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);

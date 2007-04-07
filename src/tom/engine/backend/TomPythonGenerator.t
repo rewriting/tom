@@ -27,6 +27,7 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
+import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -75,14 +76,14 @@ public class TomPythonGenerator extends TomImperativeGenerator {
   }
   
 protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(getTomType(`type))) {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
       generate(deep,exp1,moduleName);
       output.write(" == ");
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_equal_term_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -218,16 +219,16 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
 
   protected void genDeclList(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
       return;
     }
 
-    String tomType = getTomType(listType);
-    String glType = getTLType(listType);
+    String tomType = TomBase.getTomType(listType);
+    String glType = TomBase.getTLType(listType);
     //String tlEltType = getTLType(eltType);
 
     //String utype = glType;

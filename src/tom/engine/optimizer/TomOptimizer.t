@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tom.engine.TomBase;
+
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -295,7 +297,7 @@ public class TomOptimizer extends TomGenericPlugin {
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
-              Option orgTrack = findOriginTracking(`var.getOption());
+              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
 	      TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
 		  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,
@@ -348,7 +350,7 @@ public class TomOptimizer extends TomGenericPlugin {
           //System.out.println("name: " + `name);
           if(mult == 0) {
             if(varName.length() > 0) {
-              Option orgTrack = findOriginTracking(`var.getOption());
+              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
 	      TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
 		  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,

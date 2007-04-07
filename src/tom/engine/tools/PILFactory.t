@@ -48,7 +48,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class PILFactory extends TomBase {
+public class PILFactory {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ java/util/types/Collection.tom }
@@ -255,7 +255,7 @@ public class PILFactory extends TomBase {
 
     %match(TomName subject) {
       PositionName(number_list) -> {
-	return "t"+ tomNumberListToString(`number_list);
+	return "t"+ TomBase.tomNumberListToString(`number_list);
       }
       Name(string) -> {
 	return `string;

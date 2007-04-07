@@ -51,7 +51,7 @@ import jjtraveler.reflective.VisitableVisitor;
  * overridden. Just remember : extending this class is by no means necessary
  * for a plugin, the only constraint is to implement the Plugin interface.
  */
-public abstract class TomGenericPlugin extends TomBase implements Plugin {
+public abstract class TomGenericPlugin implements Plugin {
   
   %include { adt/platformoption/PlatformOption.tom }
   %include{ mustrategy.tom }
@@ -161,15 +161,15 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   }
 
   protected TomSymbol getSymbolFromName(String tomName) {
-    return getSymbolFromName(tomName, streamManager.getSymbolTable());
+    return TomBase.getSymbolFromName(tomName, streamManager.getSymbolTable());
   }
   
   protected TomSymbol getSymbolFromType(TomType tomType) {
-    return getSymbolFromType(tomType, streamManager.getSymbolTable());
+    return TomBase.getSymbolFromType(tomType, streamManager.getSymbolTable());
   }
   
   protected TomType getTermType(TomTerm t) {
-    return  getTermType(t, streamManager.getSymbolTable());
+    return  TomBase.getTermType(t, streamManager.getSymbolTable());
   }
   
   protected TomType getUniversalType() {

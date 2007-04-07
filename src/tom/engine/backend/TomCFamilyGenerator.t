@@ -27,6 +27,7 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
+import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -80,14 +81,14 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
   }
 
   protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(getTomType(`type))) {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
       generate(deep,exp1,moduleName);
       output.write(" == ");
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_equal_term_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -122,7 +123,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
   }
  
   protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
-    output.write("((" + getTLCode(tlType) + ")");
+    output.write("((" + TomBase.getTLCode(tlType) + ")");
     generateExpression(deep,exp,moduleName);
     output.write(")");
   }
@@ -158,7 +159,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
 
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
                           Expression exp, Instruction body, String moduleName) throws IOException {
-    output.write(deep,"{" + getTLCode(tlType) + " ");
+    output.write(deep,"{" + TomBase.getTLCode(tlType) + " ");
     buildAssignVar(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
     output.writeln(deep,"}");
@@ -273,25 +274,25 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
 
   protected void genDeclList(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
       return;
     }
 
-    String tomType = getTomType(listType);
-    String glType = getTLType(listType);
+    String tomType = TomBase.getTomType(listType);
+    String glType = TomBase.getTLType(listType);
     //String tlEltType = getTLType(eltType);
 
     String utype = glType;
     if(lazyMode) {
-      utype = getTLType(getUniversalType());
+      utype = TomBase.getTLType(getUniversalType());
     }
     
     String listCast = "(" + glType + ")";
-    String eltCast = "(" + getTLType(eltType) + ")";
+    String eltCast = "(" + TomBase.getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String is_conc = "tom_is_fun_sym_" + name;
     String equal_term = "tom_equal_term_" + tomType;
@@ -350,13 +351,13 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
       return;
     }
 
-    s.append(modifier + getTLType(returnType) + " " + funName + "(");
+    s.append(modifier + TomBase.getTLType(returnType) + " " + funName + "(");
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm arg) {
           Variable[AstName=Name(name), AstType=Type[TomType=tomType,TlType=tlType@TLType[]]] -> {
-            s.append(getTLCode(`tlType) + " " + `name);
+            s.append(TomBase.getTLCode(`tlType) + " " + `name);
             break matchBlock;
           }
             

@@ -57,7 +57,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 
-public class TomKernelExpander extends TomBase {
+public class TomKernelExpander {
 
   %include { mustrategy.tom}
 
@@ -84,11 +84,11 @@ public class TomKernelExpander extends TomBase {
   }
 
   protected TomSymbol getSymbolFromName(String tomName) {
-    return getSymbolFromName(tomName, getSymbolTable());
+    return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
 
   protected TomSymbol getSymbolFromType(TomType tomType) {
-    return getSymbolFromType(tomType, getSymbolTable());
+    return TomBase.getSymbolFromType(tomType, getSymbolTable());
   }
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -136,11 +136,11 @@ public class TomKernelExpander extends TomBase {
 	  condList,
 	  option)  -> {
 	TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
-	TomType symbolType = getSymbolCodomain(tomSymbol);
+	TomType symbolType = TomBase.getSymbolCodomain(tomSymbol);
 	TomTerm newLhs = `Term((TomTerm)expander.expandVariable(contextType,lhs));
 	// build the list of variables that occur in the lhs
 	HashSet set = new HashSet();
-	collectVariable(set,newLhs);
+	TomBase.collectVariable(set,newLhs);
 	TomList varList = ASTFactory.makeList(set);
 	InstructionList newCondList = `concInstruction();
 	while(!`condList.isEmptyconcInstruction()) {
@@ -150,7 +150,7 @@ public class TomKernelExpander extends TomBase {
 	  newCond = (Instruction) expander.expandVariable(contextType,newCond);
 
 	  newCondList = `concInstruction(newCond,newCondList*);
-	  collectVariable(set,newCond);
+	  TomBase.collectVariable(set,newCond);
 	  varList = ASTFactory.makeList(set);
 	  `condList = `condList.getTailconcInstruction();
 	}
@@ -182,7 +182,7 @@ public class TomKernelExpander extends TomBase {
 	  TomSymbol lhsSymbol = expander.getSymbolFromName(`lhsName);
 	  TomType type;
 	  if(lhsSymbol != null) {
-	    type = getSymbolCodomain(lhsSymbol);
+	    type = TomBase.getSymbolCodomain(lhsSymbol);
 	  } else {
 	    throw new TomRuntimeException("lhs has an unknown sort: " + `lhsName);
 	  }
@@ -197,7 +197,7 @@ public class TomKernelExpander extends TomBase {
 	  TomSymbol rhsSymbol = expander.getSymbolFromName(`rhsName);
 	  TomType type;
 	  if(rhsSymbol != null) {
-	    type = getSymbolCodomain(rhsSymbol);
+	    type = TomBase.getSymbolCodomain(rhsSymbol);
 	  } else {
 	    throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
 	  }
@@ -214,9 +214,9 @@ public class TomKernelExpander extends TomBase {
 	  TomType type;
 	  // rhs is an application
 	  if(lhsSymbol != null) {
-	    type = getSymbolCodomain(lhsSymbol);
+	    type = TomBase.getSymbolCodomain(lhsSymbol);
 	  } else if(rhsSymbol != null) {
-	    type = getSymbolCodomain(rhsSymbol);
+	    type = TomBase.getSymbolCodomain(rhsSymbol);
 	  } else {
 	    // lhs is a variable, but rhs has an unknown top symbol
 	    // since lhs is a fresh variable, we look for rhs type
@@ -252,9 +252,9 @@ public class TomKernelExpander extends TomBase {
 	  TomType type;
 
 	  if(lhsSymbol != null) {
-	    type = getSymbolCodomain(lhsSymbol);
+	    type = TomBase.getSymbolCodomain(lhsSymbol);
 	  } else if(rhsSymbol != null) {
-	    type = getSymbolCodomain(rhsSymbol);
+	    type = TomBase.getSymbolCodomain(rhsSymbol);
 	  } else {
 	    // lhs and rhs have an unknown top symbol
 	    throw new TomRuntimeException("lhs and rhs have an unknown sort: " + `lhsName + ",  " + `rhsName);
@@ -314,7 +314,7 @@ matchBlock: {
 		  TomSymbol symbol = expander.getSymbolFromName(`name);
 		  TomType type = null;
 		  if(symbol!=null) {
-		    type = getSymbolCodomain(symbol);
+		    type = TomBase.getSymbolCodomain(symbol);
 		  } else {
 		    // unknown function call
 		    type = expander.guessTypeFromPatterns(`patternInstructionList,index);
@@ -370,7 +370,7 @@ matchBlock: {
 	  list.clear();
 	  // build the list of variables that occur in the lhs
 	  HashSet set = new HashSet();
-	  collectVariable(set,newTermList);
+	  TomBase.collectVariable(set,newTermList);
 	  TomList varList = ASTFactory.makeList(set);
 	  //System.out.println("varList = " + varList);
 	  while(!`guardList.isEmptyconcTomTerm()) {
@@ -405,7 +405,7 @@ matchBlock: {
 
       if(tomSymbol != null) {
 	SlotList subterm = expander.expandVariableList(tomSymbol, `slotList);
-	ConstraintList newConstraints = (ConstraintList)expander.expandVariable(getSymbolCodomain(tomSymbol),`constraints);
+	ConstraintList newConstraints = (ConstraintList)expander.expandVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
 	return `RecordAppl(option,nameList,subterm,newConstraints);
       } else {
 	%match(contextType) {
@@ -459,7 +459,7 @@ private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionL
             TomSymbol symbol = getSymbolFromName(`name);
             //System.out.println("name = " + `name);
             if(symbol!=null) {
-              TomType newType = getSymbolCodomain(symbol);
+              TomType newType = TomBase.getSymbolCodomain(symbol);
               //System.out.println("newType = " + `newType);
               return `newType;
             } else {
@@ -530,7 +530,7 @@ private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
     symb@Symbol[TypesToType=TypesToType(typelist,codomain)],
       concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
 	// process a list of subterms and a list of types
-	if(isListOperator(`symb) || isArrayOperator(`symb)) {
+	if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
 	  /*
 	   * todo:
 	   * when the symbol is an associative operator,
@@ -567,7 +567,7 @@ private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
 	  }
 	} else {
 	  SlotList sl = expandVariableList(symbol,`tail);
-	  return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(getSlotType(symb,slotName), slotAppl)),sl*);
+	  return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
 	}
       }
   }
