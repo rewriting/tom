@@ -757,7 +757,7 @@ public class Verifier {
     try {
       subject = (DerivTree) `TopDown(replaceUndefsubs(subs)).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-      throw new TomRuntimeException("Strategy collectProgramVariables failed");
+      throw new TomRuntimeException("Strategy replaceUndefsubs failed");
     }
     return subject;
   }
@@ -800,7 +800,7 @@ public class Verifier {
         try {
           t = (Term) `TopDown(replaceVariableByTerm(map)).visit(`term);
         } catch (jjtraveler.VisitFailure e) {
-          throw new TomRuntimeException("Strategy collectProgramVariables failed");
+          throw new TomRuntimeException("Strategy replaceVariableByTerm failed");
         }
         return t;
       }
@@ -816,7 +816,7 @@ public class Verifier {
         try {
           t = (Expr) `TopDown(replaceVariableByTerm(map)).visit(`term);
         } catch (jjtraveler.VisitFailure e) {
-          throw new TomRuntimeException("Strategy collectProgramVariables failed");
+          throw new TomRuntimeException("Strategy replaceVariableByTerm failed");
         }
         return t;
       }

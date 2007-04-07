@@ -69,17 +69,6 @@ public class ZenonOutput {
     this.tomiltools = new TomIlTools(verifier);
   }
 
-  public Collection zspecSetFromDerivationTreeSet(Collection derivationSet) {
-    Collection resset = new HashSet();
-    Iterator it = derivationSet.iterator();
-    while(it.hasNext()) {
-      DerivTree tree = (DerivTree) it.next();
-      ZSpec spec = zspecFromDerivationTree(tree);
-      resset.add(spec);
-    }
-    return resset;
-  }
-
   public Collection zspecSetFromConstraintMap(Map constraintMap) {
     Collection resset = new HashSet();
     Iterator it = constraintMap.entrySet().iterator();
@@ -148,113 +137,6 @@ public class ZenonOutput {
     ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
 
     return spec;
-  }
-
-  public ZSpec zspecFromDerivationTree(DerivTree tree) {
-
-    Map variableset = new HashMap();
-    tree = collectProgramVariables(tree,variableset);
-
-    // Use a TreeMap to have the conditions sorted
-    Map conditions = new TreeMap();
-    collectConstraints(tree,conditions);
-    Map conds = new TreeMap();
-
-    List subjectList = new LinkedList();
-    ZExpr pattern = null;
-    ZExpr negpattern = null;
-    // theorem to prove
-    %match(DerivTree tree) {
-      (derivrule|derivrule2)
-        [Post=ebs[Rhs=env(subsList,accept(positive,negative))]] -> {
-        Pattern positivePattern = Pattern.fromTerm(`positive);
-        PatternList negativePatternList = PatternList.fromTerm(`negative);
-        Map variableMap = ztermVariableMapFromSubstitutionList(`subsList,
-                                                               new HashMap());
-        tomiltools.getZTermSubjectListFromPattern(positivePattern,
-                                                  subjectList,
-                                                  variableMap);
-        pattern = tomiltools.patternToZExpr(positivePattern,variableMap);
-        if (verifier.isCamlSemantics()) {
-          negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
-        }
-      }
-    }
-
-    ZExpr constraints = `ztrue();
-    // we consider only the interesting conditions : dedexpr
-    Iterator it = conditions.entrySet().iterator();
-    while (it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
-      Seq value = (Seq) entry.getValue();
-      if (value.isdedexpr()) {
-        conds.put(((String) entry.getKey()),
-                  zexprFromSeq(cleanSeq(value)));
-      }
-    }
-    it = conds.entrySet().iterator();
-    while (it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
-      ZExpr value = (ZExpr) entry.getValue();
-      constraints = `zand(constraints,value);
-    }
-    ZExpr theorem = null;
-    if (pattern != null && constraints != null) {
-      if(verifier.isCamlSemantics() && negpattern != null) {
-        theorem = `zequiv(zand(pattern,znot(negpattern)),constraints);
-      } else {
-        theorem = `zequiv(pattern,constraints);
-      }
-    }
-
-    // now we have to to build the axiom list, starting from the
-    // signature.
-
-    // collects symbols in pattern
-    Collection symbols = tomiltools.collectSymbols(pattern);
-    // generates the axioms for this set of symbols
-    ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
-    // generates axioms for all subterm operations
-    ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
-
-    Iterator iter = subjectList.iterator();
-    while(iter.hasNext()) {
-      ZTerm input = (ZTerm)iter.next();
-      theorem = `zforall(input,ztype("T"),theorem);
-    }
-    ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
-
-    return spec;
-  }
-
-
-  /**
-   * collects all variable names in the DerivTree, and give a name to _'s
-   */
-  %strategy programVariablesCollector(store:Map) extends `Identity() {
-    visit Variable {
-      var(name) -> {
-        String newname = `name;
-        if (store.containsKey(`name)){
-          newname = (String) store.get(`name);
-        } else {
-          if (`name.startsWith("[") && `name.endsWith("]")) {
-            newname = "X_" + store.size();
-          }
-          store.put(`name,newname);
-        }
-        return `var(newname);
-      }
-    }
-  }
-
-  DerivTree collectProgramVariables(DerivTree tree, Map variables) {
-    try {
-      tree = (DerivTree) `TopDown(programVariablesCollector(variables)).visit(tree);
-    } catch (jjtraveler.VisitFailure e) {
-      throw new TomRuntimeException("Strategy collectProgramVariables failed");
-    }
-    return tree;
   }
 
   ZTerm ztermFromTerm(Term term) {
@@ -368,45 +250,18 @@ public class ZenonOutput {
     return `zvar("Error in ztermFromAbsTerm");
   }
 
-  Seq cleanSeq(Seq seq) {
-    %match(Seq seq) {
-      seq() -> { return seq; }
-      dedterm(concTerm(_*,t,v)) -> {
-          return `dedterm(concTerm(t,v));
-      }
-      dedexpr(concExpr(_*,t,v)) -> {
-        return `dedexpr(concExpr(t,v));
-      }
-    }
-    return seq;
-  }
-
   private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
-      (undefsubs(),t*)  -> { return ztermVariableMapFromSubstitutionList(`t,map);}
+      (undefsubs(),t*)  -> {
+        return ztermVariableMapFromSubstitutionList(`t,map);
+      }
       (is(var(name),term),t*)   -> {
         map.put(`name,ztermFromTerm(`term));
         return ztermVariableMapFromSubstitutionList(`t,map);
       }
     }
-    throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
+    throw new TomRuntimeException(
+        "verifier: strange substitution list: " + sublist);
   }
-
-  public void collectConstraints(DerivTree tree, Map conditions) {
-    %match(DerivTree tree) {
-      derivrule[Pre=pre,Cond=condition] -> {
-        String condname = Integer.toString(conditions.size()+1);
-        conditions.put(condname,`condition);
-        collectConstraints(`pre,conditions);
-      }
-      derivrule2[Pre=pre,Pre2=pre2,Cond=condition] -> {
-        String condname = Integer.toString(conditions.size()+1);
-        conditions.put(condname,`condition);
-        collectConstraints(`pre,conditions);
-        collectConstraints(`pre2,conditions);
-      }
-    }
-  }
-
 }
