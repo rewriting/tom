@@ -202,7 +202,7 @@ public class ConfigurationManager {
           return 1;
         }
 
-        TNode optionX = `xml(<string name="X" altName=""
+        TNode optionX = `xml(<string name="config" altName="X"
                        description="Tom XML file"
                        value=xmlConfigurationFileName
                        attrName="file"/>);
