@@ -766,16 +766,16 @@ writer.write(%[
       !concHook(_*,MakeHook[],_*) -> {
         if(slotList.length()>0) {
         writer.write(%[
-        public static @className()@ make(@childListWithType(slotList)@) {
-          proto.initHashCode(@childList(slotList)@);
-          return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-        }
+    public static @className()@ make(@childListWithType(slotList)@) {
+      proto.initHashCode(@childList(slotList)@);
+      return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+    }
   ]%);
         } else {
         writer.write(%[
-        public static @className()@ make(@childListWithType(slotList)@) {
-          return proto;
-        }
+    public static @className()@ make(@childListWithType(slotList)@) {
+      return proto;
+    }
   ]%);
         }
       }
@@ -784,25 +784,25 @@ writer.write(%[
       lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
         if(slotList.length()>0) {
         writer.write(%[
-      private static @className()@ realMake(@childListWithType(slotList)@) {
-        proto.initHashCode(@childList(slotList)@);
-        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-      }
+    private static @className()@ realMake(@childListWithType(slotList)@) {
+      proto.initHashCode(@childList(slotList)@);
+      return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+    }
   ]%);
       } else {
         writer.write(%[
-        public static @className()@ realMake(@childListWithType(slotList)@) {
-          return proto;
-        }
+    public static @className()@ realMake(@childListWithType(slotList)@) {
+      return proto;
+    }
   ]%);
       }
         writer.write(%[
-      public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+    public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
         writer.write(%[
-        return realMake(@unprotectedChildList(bargs)@);
-      }
+      return realMake(@unprotectedChildList(bargs)@);
+    }
   ]%);
         mapping.generate(writer); 
         break lbl;
