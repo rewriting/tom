@@ -233,6 +233,39 @@ public class TestBuiltin extends TestCase {
   public void testMatchString2() {
     assertTrue("Roger".equals(matchString("Roger")));
   }
+  
+  public void testMatchString3() {
+    String s = "abcaabbccabc";
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    int a_b = 0;
+    int a_c = 0;
+    int b_c = 0;
+    int ab = 0;
+    int bc = 0;
+    int abc = 0;
+    %match(s) {
+      concString(_*,'a',_*) -> { a++; }
+      concString(_*,'b',_*) -> { b++; }
+      concString(_*,'c',_*) -> { c++; }
+      concString(_*,'a',_*,'b',_*) -> { a_b++; }
+      concString(_*,'a',_*,'c',_*) -> { a_c++; }
+      concString(_*,'b',_*,'c',_*) -> { b_c++; }
+      concString(_*,'ab',_*) -> { ab++; }
+      concString(_*,'bc',_*) -> { bc++; }
+      concString(_*,'abc',_*) -> { abc++; }
+    }
+    assertEquals(a,4);
+    assertEquals(b,4);
+    assertEquals(c,4);
+    assertEquals(a_b,11);
+    assertEquals(a_c,11);
+    assertEquals(b_c,11);
+    assertEquals(ab,3);
+    assertEquals(bc,3);
+    assertEquals(abc,2);
+  }
 
   public void testMatchStringDefault() {
     assertTrue("Unknown".equals(matchString("Marcel")));
