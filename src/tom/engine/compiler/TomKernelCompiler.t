@@ -253,8 +253,7 @@ public class TomKernelCompiler {
              * if a label is assigned to a pattern (label:pattern -> action)
              * we generate corresponding labeled-block
              */
-          `instruction = `NamedBlock(getLabel(optionList).getString(),
-                                    concInstruction(instruction));
+          `instruction = `NamedBlock(getLabel(optionList).getString(), concInstruction(instruction));
                      
         }
         return `concInstruction(CompiledPattern(patternList,instruction), newList*);

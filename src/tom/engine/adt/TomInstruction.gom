@@ -22,7 +22,6 @@ Instruction =
   | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
   | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
   /**/
-  | AssignMatchSubject(Kid1:TomTerm,Source:Expression)
   | Return(Kid1:TomTerm)
   | Nop()
   | AbstractBlock(InstList:InstructionList)
@@ -31,8 +30,6 @@ Instruction =
   | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
   | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
-  | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
-  | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
   /*
    * a RawAction is an action that comes from the original program 
    */

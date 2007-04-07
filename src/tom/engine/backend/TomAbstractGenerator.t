@@ -363,11 +363,6 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      AssignMatchSubject(var@Variable[Option=option],exp) -> {
-        `buildAssignVar(deep, var, option, exp, moduleName);
-        return;
-      }
-
       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
         return;
       }
