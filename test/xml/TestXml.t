@@ -4,6 +4,8 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
+import java.io.StringWriter;
+import java.io.ByteArrayInputStream;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -111,9 +113,27 @@ public class TestXml extends TestCase {
   }
   
   public String dd(String x) {
-      return x+x;
-    }
+    return x+x;
+  }
 
+  public void testInOut() {
+    TNode node = `xml(
+				<Configuration>
+					<Cellule>
+						<Defaut R1="23" V1="34" B1="45"/>
+						<Selection R="0" V="0" B="255"/>
+						<VolumeSensible R="255" V="0" B="0"/>
+					</Cellule>
+				</Configuration>
+				);
+    StringWriter sw = new StringWriter();
+    xtools.writeXMLFileFromTNode(sw,node);
+    TNode renode = xtools.nodeToTNode(
+        xtools.convertToNode(
+          new ByteArrayInputStream(sw.toString().getBytes()))
+        );
+    assertEquals(node,renode.getDocElem());
+  }
 
 	public void testAttributeMatch(){
 		TNode node = `xml(
