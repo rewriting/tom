@@ -234,8 +234,8 @@ public class AST2Gom {
           ARROW[] -> {
             return `concProduction(getProduction(g),tmpL*);
           }
-          EQUALS[] -> {
-            ProductionList alter = getAlternatives(`g);
+          EQUALS(_,(type,alternatives*)) -> {
+            ProductionList alter = getAlternatives(`type,`alternatives*);
             return `concProduction(alter*,tmpL*);
           }
           //hook
@@ -269,15 +269,6 @@ public class AST2Gom {
       }
     }
     throw new GomRuntimeException("Unable to translate: " + altL);
-  }
-
-  private static ProductionList getAlternatives(ATerm t) {
-    %match(ATerm t) {
-      EQUALS(_,(type,alternatives*)) -> {
-        return getAlternatives(`type,`alternatives*);
-      }
-    }
-    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomTypeList getGomTypeList(ATermList l) {

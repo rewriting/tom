@@ -24,34 +24,34 @@ package gom;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import gom.testac.ac.types.*;
+import gom.testacu.acu.types.*;
 
-public class TestAC extends TestCase {
+public class TestACU extends TestCase {
 
   %gom {
-    module ac 
+    module acu
     abstract syntax
-    /* p is variadic, but not AC */
+    /* p is variadic, but not ACU */
     NAU = m()
         | n()
         | p(NAU*)
-    /* conc is AC, with the default neutral */
+    /* conc is ACU, with the default neutral */
     T = a()
       | b()
       | c()
       | d()
       | conc(T*)
-    conc:AC() {}
-    /* list is AC, with aa() as neutral */
+    conc:ACU() {}
+    /* list is ACU, with aa() as neutral */
     L = aa()
       | bb()
       | cc()
       | dd()
       | list(L*)
-    list:AC() { `aa() }
+    list:ACU() { `aa() }
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAC.class));
+    junit.textui.TestRunner.run(new TestSuite(TestACU.class));
   }
 
   /* First make sure simple test of the AU functionality do pass */

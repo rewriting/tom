@@ -129,8 +129,8 @@ public class HookTypeExpander {
           HookKind("AU") -> {
             return `makeAUHookList(hName,mdecl,scode);
           }
-          HookKind("AC") -> {
-            return `makeACHookList(hName,mdecl,scode);
+          HookKind("ACU") -> {
+            return `makeACUHookList(hName,mdecl,scode);
           }
         }
         if (newHookList == `concHookDecl()) {
@@ -343,13 +343,16 @@ public class HookTypeExpander {
       }
       _ -> {
         getLogger().log(Level.SEVERE,
-            "FL/AU/AC hook can only be used on a variadic operator");
+            "FL/AU/ACU hook can only be used on a variadic operator");
       }
     }
     return null;
   }
 
-  private HookDeclList makeACHookList(String opName, Decl mdecl, String scode) {
+  /*
+   * generate hooks for associative-commutative with neutral element
+   */
+  private HookDeclList makeACUHookList(String opName, Decl mdecl, String scode) {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
@@ -403,6 +406,9 @@ public class HookTypeExpander {
     return acHooks;
   }
 
+  /*
+   * generate hooks for associative with neutral element
+   */
   private HookDeclList makeAUHookList(String opName, Decl mdecl, String scode) {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
@@ -500,7 +506,10 @@ public class HookTypeExpander {
     }
     return auHooks;
   }
-  
+ 
+  /*
+   * generate hooks for flattened lists (with empty list as last element)
+   */
   private HookDeclList makeFLHookList(String opName, Decl mdecl, String scode) {
     /* Can only be applied to a variadic operator, whose domain and codomain
      * are equals */
