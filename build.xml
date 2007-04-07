@@ -1346,7 +1346,7 @@ ${user.home}/.ant/lib
   </target>
 
   <target name="clover.clean" depends="with.clover">
-    <clover-clean keepdb="false"/>
+    <clover-clean keepdb="true"/>
   </target>
 
   <target name="findbugs" depends="src.dist, init.task.findbugs">
