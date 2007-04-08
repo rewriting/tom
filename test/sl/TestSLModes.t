@@ -65,6 +65,13 @@ public class TestSLModes extends TestCase {
     }
   }
 
+  %strategy R4() extends `Identity() {
+    visit Term {
+      f(b()) -> { return `f(c()); }
+      c() -> { return `a(); }
+    }
+  }
+
   public void testIdentity() {
     Term subject = `f(a());
     Strategy s = `Identity();
@@ -645,5 +652,45 @@ public class TestSLModes extends TestCase {
     }
     assertNull(resJ);
     assertNull(resS);
+  }
+
+  public void testSequenceId() {
+    Term subject = `f(a());
+    Strategy s = `SequenceId(R1(),R4());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied SequenceId",resJ,`f(c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("SequenceId(R1,R4).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied SequenceId",resJ,`f(c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("SequenceId(R1,R4).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testSequenceIdFail1() {
+    Term subject = `f(c());
+    Strategy s = `SequenceId(R1(),Identity());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals(resJ,subject);
+    } catch (jjtraveler.VisitFailure e) {
+      fail("SequenceId(R1,id).visit should never throw failure");
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals(resS,subject);
+    } catch (tom.library.sl.FireException e) {
+      fail("SequenceId(R1,id).visit should never throw failure");
+    }
+    assertEquals(resJ,resS);
   }
 }
