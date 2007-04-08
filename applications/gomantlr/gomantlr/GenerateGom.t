@@ -267,7 +267,12 @@ public class GenerateGom {
                 return generateAndElementGom(rest,ruleName,ruleType,`concField(fieldList*,field),productionList,container);
             }
             AntlrWildcard() -> {
-                field=`NamedField("c",GomType("char"));
+                radix=container.grammarName+container.suffixSeparator+ruleName;
+
+                field=
+		    `NamedField(
+		        container.varPrefix+container.prefixSeparator+radix+container.suffixSeparator+num,
+		        GomType("char"));
                         
                 container.charUsed=true;
                 
