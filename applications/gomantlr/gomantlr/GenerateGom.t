@@ -241,23 +241,25 @@ public class GenerateGom {
                 return generateAndElementGom(rest,ruleName,ruleType,fieldList,productionList,container);
             }
             AntlrRuleRef(name) -> {
-                radix=container.grammarName+container.suffixSeparator+`name;
-                type=container.classPrefix+container.prefixSeparator+radix;
+                String nameRadix=container.grammarName+container.suffixSeparator+ruleName+container.suffixSeparator+num;
+                String typeRadix=container.grammarName+container.suffixSeparator+`name;
+                type=container.classPrefix+container.prefixSeparator+typeRadix;
                 
                 field=
                     `NamedField(
-                        container.varPrefix+container.prefixSeparator+radix,
+                        container.varPrefix+container.prefixSeparator+nameRadix,
                         GomType(type));
                 
                 return generateAndElementGom(rest,ruleName,ruleType,`concField(fieldList*,field),productionList,container);
             }
             AntlrToken(name) -> {
-                radix=container.grammarName+container.suffixSeparator+`name;
-                type=container.classPrefix+container.prefixSeparator+radix;
+                String nameRadix=container.grammarName+container.suffixSeparator+ruleName+container.suffixSeparator+num;
+                String typeRadix=container.grammarName+container.suffixSeparator+`name;
+                type=container.classPrefix+container.prefixSeparator+typeRadix;
             
                 field=
                     `NamedField(
-                        container.varPrefix+container.prefixSeparator+radix,
+                        container.varPrefix+container.prefixSeparator+nameRadix,
                         GomType(type));
             
                 addUsedToken(type,container);
@@ -360,7 +362,7 @@ public class GenerateGom {
                          container.varPrefix+container.prefixSeparator+radix,
                          GomType(type));
                                   
-                production=`Production(ruleType,concField(field),GomType(ruleType));
+                production=`Production(ruleType+container.suffixSeparator+num,concField(field),GomType(ruleType));
 
                 productionList2=generateOrElementGom(rest,ruleName,ruleType,productionList,num+1,container);
 
@@ -377,7 +379,7 @@ public class GenerateGom {
                                   
                 addUsedToken(type,container);
 
-                production=`Production(ruleType,concField(field),GomType(ruleType));
+                production=`Production(ruleType+container.suffixSeparator+num,concField(field),GomType(ruleType));
 
                 productionList2=generateOrElementGom(rest,ruleName,ruleType,productionList,num+1,container);
 
@@ -388,7 +390,7 @@ public class GenerateGom {
 
                 container.charUsed=true;
                                   
-                production=`Production(ruleType,concField(field),GomType(ruleType));
+                production=`Production(ruleType+container.suffixSeparator+num,concField(field),GomType(ruleType));
 
                 productionList2=generateOrElementGom(rest,ruleName,ruleType,productionList,num+1,container);
 
