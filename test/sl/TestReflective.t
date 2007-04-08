@@ -207,6 +207,19 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
+  public void testS3AllAllvisit() {
+    try {
+      Strategy s = (Strategy)`S3().visit(`All(All(Identity())));
+      %match(s) {
+        All(All(Identity())) -> { fail("S3 did not rewrite s"); }
+        All(Identity()) -> { return; }
+      }
+    } catch (jjtraveler.VisitFailure vf) {
+      fail("should not catch exception");
+    }
+    fail("should not be here");
+  }
+
   public void testS3AllAll() {
     Strategy s = (Strategy)`S3().fire(`All(All(Identity())));
     %match(s) {
