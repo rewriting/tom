@@ -328,6 +328,28 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
   }
 
+  public void testOmega0() {
+    Term subject = `f(a());
+    Strategy s = `Omega(0,R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      /* Omega(0,R) == Identity */
+      assertEquals("Applied a rule",resJ,`f(a()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Omega(0,R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      /* Omega(0,R) == Identity */
+      assertEquals("Applied a rule",resJ,`f(a()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Omega(0,R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
   public void testOmega1() {
     Term subject = `g(f(a()),b());
     Strategy s = `Omega(1,R2());
