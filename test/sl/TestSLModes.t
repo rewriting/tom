@@ -693,4 +693,103 @@ public class TestSLModes extends TestCase {
     }
     assertEquals(resJ,resS);
   }
+
+  public void testChoice1() {
+    Term subject = `f(a());
+    Strategy s = `Choice(R2(),R3());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied choice",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Choice(R2,R3).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied choice",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Choice(R2,R3).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testChoice2() {
+    Term subject = `f(a());
+    Strategy s = `Choice(R3(),R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied choice",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Choice(R3,R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied choice",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Choice(R3,R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testChoiceFail() {
+    Term subject = `f(a());
+    Strategy s = `Choice(R3(),R3());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("Choice(R3,R3).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("Choice(R3,R3).visit should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
+
+  public void testChoiceId1() {
+    Term subject = `f(a());
+    Strategy s = `ChoiceId(R2(),R3());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied choiceid",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("ChoiceId(R2,R3).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied choiceid",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("ChoiceId(R2,R3).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testChoiceId2() {
+    Term subject = `f(a());
+    Strategy s = `ChoiceId(Identity(),R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied choiceid",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("ChoiceId(R3,R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied choiceid",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("ChoiceId(R3,R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
 }
