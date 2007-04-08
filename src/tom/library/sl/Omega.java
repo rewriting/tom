@@ -56,7 +56,7 @@ public class Omega extends AbstractStrategy {
 
   public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     if(indexPosition==0) {
-      return any;
+      return visitors[ARG].visit(any);
     } else if(indexPosition>0 && indexPosition<=any.getChildCount()) {
       int childNumber = indexPosition-1;
       jjtraveler.Visitable newChild = visitors[ARG].visit(any.getChildAt(childNumber));
@@ -68,6 +68,7 @@ public class Omega extends AbstractStrategy {
 
   public void visit() {
     if(indexPosition==0) {
+      (visitors[ARG]).visit();
       return;
     } else if(indexPosition>0 && indexPosition<=getSubject().getChildCount()) {
       int childNumber = indexPosition-1;

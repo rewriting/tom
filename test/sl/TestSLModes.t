@@ -342,15 +342,13 @@ public class TestSLModes extends TestCase {
     Term resS = null;
     try {
       resJ = (Term) s.visit(subject);
-      /* Omega(0,R) == Identity */
-      assertEquals("Applied a rule",resJ,`f(a()));
+      assertEquals("Applied a rule",resJ,`f(b()));
     } catch (jjtraveler.VisitFailure e) {
       fail("Omega(0,R2).visit should not fail on "+subject);
     }
     try {
       resS = (Term) s.fire(subject);
-      /* Omega(0,R) == Identity */
-      assertEquals("Applied a rule",resJ,`f(a()));
+      assertEquals("Applied a rule",resJ,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("Omega(0,R2).fire should not fail on "+subject);
     }
