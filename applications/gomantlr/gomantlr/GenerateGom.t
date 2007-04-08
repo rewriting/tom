@@ -241,25 +241,25 @@ public class GenerateGom {
                 return generateAndElementGom(rest,ruleName,ruleType,fieldList,productionList,container);
             }
             AntlrRuleRef(name) -> {
-                String nameRadix=container.grammarName+container.suffixSeparator+ruleName+container.suffixSeparator+num;
+                String nameRadix=container.grammarName+container.suffixSeparator+ruleName;
                 String typeRadix=container.grammarName+container.suffixSeparator+`name;
                 type=container.classPrefix+container.prefixSeparator+typeRadix;
                 
                 field=
                     `NamedField(
-                        container.varPrefix+container.prefixSeparator+nameRadix,
+                        container.varPrefix+container.prefixSeparator+nameRadix+container.suffixSeparator+num,
                         GomType(type));
                 
                 return generateAndElementGom(rest,ruleName,ruleType,`concField(fieldList*,field),productionList,container);
             }
             AntlrToken(name) -> {
-                String nameRadix=container.grammarName+container.suffixSeparator+ruleName+container.suffixSeparator+num;
+                String nameRadix=container.grammarName+container.suffixSeparator+ruleName;
                 String typeRadix=container.grammarName+container.suffixSeparator+`name;
                 type=container.classPrefix+container.prefixSeparator+typeRadix;
             
                 field=
                     `NamedField(
-                        container.varPrefix+container.prefixSeparator+nameRadix,
+                        container.varPrefix+container.prefixSeparator+nameRadix+container.suffixSeparator+num,
                         GomType(type));
             
                 addUsedToken(type,container);
