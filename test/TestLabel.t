@@ -6,7 +6,7 @@ public class TestLabel extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestLabel.class));
   }
   
-  %include { String.tom }
+  %include { string.tom }
 
   public void test1() {
     int a = 0;
@@ -14,15 +14,15 @@ public class TestLabel extends TestCase {
     int c = 0;
     String s = "abcba";
     %match(s) {
-l1: concString(_*,'a',_*) -> { a++; break l2; }
-l2: concString(_*,'b',_*) -> { b++; break l4; }
+l1: concString(_*,'a',_*) -> { a++; break l1; }
+l2: concString(_*,'b',_*) -> { b++; break l2; }
 l3: concString(_*,'c',_*) -> { c++; }
 l4: concString(_*,'b',_*) -> { b++; }
 l5: concString(_*,'a',_*) -> { a++; }
     }
     assertEquals(a,3);
     assertEquals(b,3);
-    assertEquals(c,0);
+    assertEquals(c,1);
   }
 
 }
