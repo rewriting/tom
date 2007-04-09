@@ -37,6 +37,7 @@ import tom.library.sl.Strategy;
 public class TestReflective extends TestCase {
 
   %include { sl.tom }
+  %include { testsl/testsl.tom }
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestReflective.class));
@@ -272,6 +273,21 @@ public class TestReflective extends TestCase {
     assertEquals(
         "countAll should return 2 with `BottomUp(S3()).fire(`"+s+")", 2,
         countAll((Strategy)`BottomUp(S3()).fire(s)));
+  }
+
+  public void testStratNoStrat() {
+    assertEquals("S3 on something that is not a strat fails back to Id",
+        `a(),`S3().fire(`a()));
+  }
+
+  public void testStratNoStratFail() {
+    try {
+      `S4(S1(),0,S1()).fire(`a());
+      fail("This application should fail");
+    } catch (tom.library.sl.FireException e) {
+      return;
+    }
+    fail("The Exception should have been catched");
   }
 
   public void testcountAll3() {
