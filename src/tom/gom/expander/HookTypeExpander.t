@@ -62,10 +62,11 @@ public class HookTypeExpander {
                     _*) -> {
         %match(prodList) {
           concProduction(_*, prod, _*) -> {
-            /* generate FL hooks for list-operators */
+            /* generate a FL hook for list-operators without other hook */
             %match(prod, prodList) {
+              /* check domain and codomain are equals */
               Production(opName,concField(StarredField(codomain)),codomain),
-              /* check there is no hook attached to this operator */
+              /* check there is no other hook attached to this operator */
               !concProduction(_*, Hook[Name=opName], _*) -> {
                 String emptyCode = "{}";
                 Production hook = `Hook(KindOperator(),opName,HookKind("FL"),concArg(),emptyCode);
@@ -106,7 +107,7 @@ public class HookTypeExpander {
     return hookList;
   }
 
-  HookDeclList makeHookDeclList(Production hook, Decl mdecl) {
+  private HookDeclList makeHookDeclList(Production hook, Decl mdecl) {
     %match(hook) {
       Hook[HookType=hkind,
            Name=hName,
@@ -174,7 +175,7 @@ public class HookTypeExpander {
     * @param moduleList the queried ModuleList
     * @return the ModuleDecl for mname
     */
-  ModuleDecl getModuleDecl(String mname, ModuleList moduleList) {
+  private ModuleDecl getModuleDecl(String mname, ModuleList moduleList) {
     %match(moduleList) {
       concModule(_*,
         Module[MDecl=mdecl@ModuleDecl[
@@ -197,7 +198,7 @@ public class HookTypeExpander {
     * @param moduleList the queried ModuleList
     * @return the SortDecl for sname
     */
-  SortDecl getSortDecl(String sname, String modName, ModuleList moduleList) {
+  private SortDecl getSortDecl(String sname, String modName, ModuleList moduleList) {
     %match(String modName, moduleList) {
       mname,
       concModule(_*,
@@ -222,7 +223,7 @@ public class HookTypeExpander {
     * @param moduleList the queried ModuleList
     * @return the OperatorDecl for sname
     */
-  OperatorDecl getOperatorDecl(
+  private OperatorDecl getOperatorDecl(
       String oname,
       String modName,
       ModuleList moduleList) {

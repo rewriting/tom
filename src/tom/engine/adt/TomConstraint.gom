@@ -23,6 +23,7 @@ Constraint = Ensure(Variable:TomTerm)
  * AndAntiConstraint(X*,AndAntiConstraint(x))) -> AndAntiConstraint(X*,x)
  *
  */ 
+  /*
 AndAntiConstraint:make_insert(el, list) {
 	%match(el) {
 		AndAntiConstraint() -> {
@@ -33,6 +34,7 @@ AndAntiConstraint:make_insert(el, list) {
 		}
 	}
 }
+*/
 
 ConstraintList = concConstraint(Constraint*)
 AConstraintList = concAnd(Constraint*)

@@ -199,7 +199,7 @@ public class TypeExpander {
     return `BuiltinSortDecl(typename);
   }
 
-  TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
+  private TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
     %match(FieldList domain) {
       concField(StarredField(GomType(typename))) -> {
         return `Variadic(declFromTypename(typename,sortDeclList));
@@ -212,7 +212,7 @@ public class TypeExpander {
     throw new GomRuntimeException("TypeExpander::typedProduction: illformed Production");
   }
 
-  SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {
+  private SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {
     %match(FieldList fields) {
       concField() -> {
         return `concSlot();
