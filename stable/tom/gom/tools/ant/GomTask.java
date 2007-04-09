@@ -235,8 +235,8 @@ public class GomTask extends MatchingTask {
   protected void scanDir(File srcDir, File destDir, String[] files) {
 
     TomRegexpPatternMapper m = new TomRegexpPatternMapper();
-    m.setFrom("(\\w+)\\.gom");
-    m.setTo("\\L\\1" + protectedFileSeparator + "\\1.tom");
+    m.setFrom("((.*?" + protectedFileSeparator + ")?)(\\w+)\\.gom");
+    m.setTo("\\1\\L\\3" + protectedFileSeparator + "\\3.tom");
     SourceFileScanner sfs = new SourceFileScanner(this);
     File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
 
@@ -283,7 +283,7 @@ public class GomTask extends MatchingTask {
         DirectoryScanner ds = this.getDirectoryScanner(srcDir);
         String[] files = ds.getIncludedFiles();
 
-        scanDir(srcDir,getDestdirWithPackage(),files);
+        scanDir(srcDir,getDestdir().getCanonicalFile(),files);
       }
       printCompileList(compileList);
       if(getConfig() != null) {
@@ -374,11 +374,11 @@ public class GomTask extends MatchingTask {
 
   /**
    * Set the package name
-   * @param packagePrefix the package name
+   * @param pkgPrefix the package name
    */
-  public void setPackage(String packagePrefix) {
-    if (!packagePrefix.equals("")) {
-      this.packagePrefix = packagePrefix;
+  public void setPackage(String pkgPrefix) {
+    if (!pkgPrefix.equals("")) {
+      this.packagePrefix = pkgPrefix;
     }
   }
 

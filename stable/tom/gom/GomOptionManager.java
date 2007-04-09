@@ -72,7 +72,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   /**
-   * initialize does everything needed
+   * initialize the GomOptionManager
    *
    * @return  an error code :
    * <ul>
@@ -80,7 +80,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * <li>1 if something went wrong</li>
    * </ul>
    */
-  public int initialize(ConfigurationManager confManager, String[] commandLine) {
+  public int initialize(
+      ConfigurationManager confManager,
+      String[] commandLine) {
     List pluginList = confManager.getPluginsList();
     List optionOwnerList = new ArrayList(pluginList);
     optionOwnerList.add(this);
@@ -334,13 +336,17 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         if(option !=null) {
           PlatformValue localValue = option.getValue();
           if(tom_value!= localValue) {
-            getLogger().log(Level.SEVERE, GomMessage.incorrectOptionValue.getMessage(), new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
+            getLogger().log(Level.SEVERE,
+                GomMessage.incorrectOptionValue.getMessage(),
+                new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
             return false;
           } else {
             return checkOptionDependency(tom_tail);
           }
         } else {
-          getLogger().log(Level.SEVERE, GomMessage.incorrectOptionValue.getMessage(), new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
+          getLogger().log(Level.SEVERE,
+              GomMessage.incorrectOptionValue.getMessage(),
+              new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
           return false;
         }
        } } } } } } }tomMatch4Position1List1=tomMatch4Position1Save1; } } } } } } }

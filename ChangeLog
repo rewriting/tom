@@ -1,4 +1,5 @@
 2007-04-09  pem
+  * bootinstall
   * FL hook is generated automaticcaly for list-operator 
 	  whose domain=codomain. This occurs only if no other hook 
 		is defined.

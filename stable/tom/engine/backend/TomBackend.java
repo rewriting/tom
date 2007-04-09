@@ -125,11 +125,13 @@ public class TomBackend extends TomGenericPlugin {
 
           generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
           // verbose
-          getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
+          getLogger().log(Level.INFO,
+              TomMessage.tomGenerationPhase.getMessage(),
               new Integer((int)(System.currentTimeMillis()-startChrono)));
-          writer.close();
+          output.close();
         } catch (IOException e) {
-          getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
+          getLogger().log(Level.SEVERE,
+              TomMessage.backendIOException.getMessage(),
               new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
           return;
         } catch (Exception e) {
@@ -146,7 +148,6 @@ public class TomBackend extends TomGenericPlugin {
           System.out.println("IO Exception when computing generatedFileName");
           e.printStackTrace();
         }
-
       } else {
         // backend is desactivated
         getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
@@ -249,7 +250,7 @@ public class TomBackend extends TomGenericPlugin {
    private static class Collector  extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy   { private  tom.library.strategy.mutraveler.MuStrategy  markStrategy;  private  TomBackend  tb;  private  Stack  stack;  public Collector(  tom.library.strategy.mutraveler.MuStrategy  markStrategy ,   TomBackend  tb ,   Stack  stack ) { super(tom_make_Identity() ); this.markStrategy=markStrategy; this.tb=tb; this.stack=stack; } public  tom.library.strategy.mutraveler.MuStrategy  getmarkStrategy() { return markStrategy;} public  TomBackend  gettb() { return tb;} public  Stack  getstack() { return stack;} public int getChildCount() { return 2; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); case 1: return getmarkStrategy(); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); case 1: markStrategy = ( tom.library.strategy.mutraveler.MuStrategy )child; return this; default: throw new IndexOutOfBoundsException(); }} public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction(  tom.engine.adt.tominstruction.types.Instruction  tom__arg )  throws jjtraveler.VisitFailure { if (tom_is_sort_Instruction(tom__arg)) { { tom.engine.adt.tominstruction.types.Instruction  tomMatch1Position1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg); if ( ( tom_is_fun_sym_CompiledMatch(tomMatch1Position1) ||  false  ) ) { { tom.engine.adt.tominstruction.types.Instruction  tom_inst=tom_get_slot_CompiledMatch_AutomataInst(tomMatch1Position1); { tom.engine.adt.tomoption.types.OptionList  tom_optionList=tom_get_slot_CompiledMatch_Option(tomMatch1Position1); if ( true ) {
 
 
-        String moduleName = getModuleName(tom_optionList);
+        String moduleName = TomBase.getModuleName(tom_optionList);
         /*
          * push the modulename
          * or the wrapping modulename if the current one

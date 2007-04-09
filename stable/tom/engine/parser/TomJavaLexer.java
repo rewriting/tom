@@ -75,9 +75,6 @@ tryAgain:
 	for (;;) {
 		Token _token = null;
 		int _ttype = Token.INVALID_TYPE;
-		setCommitToPath(false);
-		int _m;
-		_m = mark();
 		resetText();
 		try {   // for char stream error handling
 			try {   // for lexical error handling
@@ -110,19 +107,9 @@ tryAgain:
 				default:
 				{
 					if (LA(1)==EOF_CHAR) {uponEOF(); _returnToken = makeToken(Token.EOF_TYPE);}
-				else {
-					commit();
-					try {mIGNORE(false);}
-					catch(RecognitionException e) {
-						// catastrophic failure
-						reportError(e);
-						consume();
-					}
-					continue tryAgain;
+				else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				}
-				}
-				commit();
 				if ( _returnToken==null ) continue tryAgain; // found SKIP token
 				_ttype = _returnToken.getType();
 				_ttype = testLiteralsTable(_ttype);
@@ -130,17 +117,6 @@ tryAgain:
 				return _returnToken;
 			}
 			catch (RecognitionException e) {
-				if ( !getCommitToPath() ) {
-					rewind(_m);
-					resetText();
-					try {mIGNORE(false);}
-					catch(RecognitionException ee) {
-						// horrendous failure: error in filter rule
-						reportError(ee);
-						consume();
-					}
-					continue tryAgain;
-				}
 				throw new TokenStreamRecognitionException(e);
 			}
 		}
@@ -185,21 +161,6 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	protected final void mIGNORE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = IGNORE;
-		int _saveIndex;
-		char  c = '\0';
-		
-		c = LA(1);
-		matchNot(EOF_CHAR);
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
 	public final void mSTRING(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = STRING;
@@ -207,7 +168,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop10:
+		_loop9:
 		do {
 			if ((_tokenSet_1.member(LA(1)))) {
 				{
@@ -215,7 +176,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop10;
+				break _loop9;
 			}
 			
 		} while (true);
@@ -317,7 +278,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop19:
+		_loop18:
 		do {
 			if ((_tokenSet_2.member(LA(1)))) {
 				{
@@ -325,7 +286,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop19;
+				break _loop18;
 			}
 			
 		} while (true);
@@ -371,10 +332,10 @@ tryAgain:
 		
 		}
 		{
-		_loop25:
+		_loop24:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/')) break _loop25;
+			if ((LA(1)=='*') && (LA(2)=='/')) break _loop24;
 			if ((LA(1)=='\r') && (LA(2)=='\n')) {
 				match('\r');
 				match('\n');
@@ -395,7 +356,7 @@ tryAgain:
 				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else {
-				break _loop25;
+				break _loop24;
 			}
 			
 		} while (true);

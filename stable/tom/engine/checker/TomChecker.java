@@ -30,6 +30,7 @@ import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
 
@@ -142,8 +143,8 @@ abstract public class TomChecker extends TomGenericPlugin {
    * Shared Functions 
    */
   protected String extractType(TomSymbol symbol) {
-    TomType type = getSymbolCodomain(symbol);
-    return getTomType(type);
+    TomType type = TomBase.getSymbolCodomain(symbol);
+    return TomBase.getTomType(type);
   }
   
   protected static String findOriginTrackingFileName(OptionList optionList) {

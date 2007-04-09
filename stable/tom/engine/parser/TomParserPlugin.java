@@ -146,15 +146,15 @@ public class TomParserPlugin extends TomGenericPlugin {
     try {
       // looking for java package
       if(java && (!currentFileName.equals("-"))) {
-        //         TomJavaLexer javaLexer = new TomJavaLexer(new BufferedReader(new FileReader(new File(currentFileName))));
-        //         Token token = javaLexer.nextToken();
-        //         System.out.println("token = '" + token + "'");
-        //         String packageName = "";
 
         /* Do not exhaust the stream !! */
         TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
-        String packageName = javaParser.javaPackageDeclaration();
-        //System.out.println("packageName = '" +packageName + "'");
+        String packageName = "";
+        try {
+          packageName = javaParser.javaPackageDeclaration();
+        } catch (TokenStreamException tse) {
+          /* no package was found: ignore */
+        }
  
         // Update streamManager to take into account package information
         getStreamManager().setPackagePath(packageName);

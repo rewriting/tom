@@ -31,10 +31,9 @@ public interface TomJavaParserTokenTypes {
 	int EOF = 1;
 	int NULL_TREE_LOOKAHEAD = 3;
 	int JAVA_PACKAGE = 4;
-	int IGNORE = 5;
-	int STRING = 6;
-	int WS = 7;
-	int COMMENT = 8;
-	int SL_COMMENT = 9;
-	int ML_COMMENT = 10;
+	int STRING = 5;
+	int WS = 6;
+	int COMMENT = 7;
+	int SL_COMMENT = 8;
+	int ML_COMMENT = 9;
 }

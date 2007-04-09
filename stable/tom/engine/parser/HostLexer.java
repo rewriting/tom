@@ -158,10 +158,6 @@ tryAgain:
 						mSTRATEGY(true);
 						theRetToken=_returnToken;
 					}
-					else if ((LA(1)=='%') && (LA(2)=='r')) {
-						mRULE(true);
-						theRetToken=_returnToken;
-					}
 					else if ((LA(1)=='%') && (LA(2)=='m')) {
 						mMATCH(true);
 						theRetToken=_returnToken;
@@ -249,20 +245,6 @@ tryAgain:
 		int _saveIndex;
 		
 		match("%strategy");
-		selector().push("tomlexer");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mRULE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = RULE;
-		int _saveIndex;
-		
-		match("%rule");
 		selector().push("tomlexer");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
@@ -366,10 +348,10 @@ tryAgain:
 			{
 			match('(');
 			{
-			_loop33:
+			_loop31:
 			do {
 				// nongreedy exit test
-				if ((LA(1)==')') && (true)) break _loop33;
+				if ((LA(1)==')') && (true)) break _loop31;
 				if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true)) {
 					match('\r');
 					match('\n');
@@ -389,7 +371,7 @@ tryAgain:
 					newline();
 				}
 				else {
-					break _loop33;
+					break _loop31;
 				}
 				
 			} while (true);
@@ -447,7 +429,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop39:
+		_loop37:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
@@ -458,7 +440,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop39;
+				break _loop37;
 			}
 			
 		} while (true);
@@ -525,17 +507,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt43=0;
-			_loop43:
+			int _cnt41=0;
+			_loop41:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt43>=1 ) { break _loop43; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt41>=1 ) { break _loop41; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt43++;
+				_cnt41++;
 			} while (true);
 			}
 			mHEX_DIGIT(false);
@@ -730,7 +712,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop57:
+		_loop55:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -738,7 +720,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop57;
+				break _loop55;
 			}
 			
 		} while (true);
@@ -790,10 +772,10 @@ tryAgain:
 		
 		}
 		{
-		_loop63:
+		_loop61:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop63;
+			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop61;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -814,7 +796,7 @@ tryAgain:
 				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else {
-				break _loop63;
+				break _loop61;
 			}
 			
 		} while (true);
@@ -851,10 +833,10 @@ tryAgain:
 		
 		}
 		{
-		_loop68:
+		_loop66:
 		do {
 			// nongreedy exit test
-			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop68;
+			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop66;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -874,7 +856,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop68;
+				break _loop66;
 			}
 			
 		} while (true);

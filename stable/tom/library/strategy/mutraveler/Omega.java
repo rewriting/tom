@@ -29,10 +29,11 @@
  * 
  **/
 package tom.library.strategy.mutraveler;
+
 import tom.library.strategy.mutraveler.AbstractMuStrategy;
-import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+import jjtraveler.Visitable;
 
 /**
  * <code>Omega(i,v)</code>
@@ -60,7 +61,7 @@ public class Omega extends AbstractMuStrategy {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     if(indexPosition==0) {
-      return any;
+      return visitors[ARG].visit(any);
     } else if(indexPosition>0 && indexPosition<=any.getChildCount()) {
       int childNumber = indexPosition-1;
       if(position==null) {
@@ -82,4 +83,3 @@ public class Omega extends AbstractMuStrategy {
     }
   }
 }
-

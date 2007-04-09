@@ -43,11 +43,8 @@ public class OutputCode {
   public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
     this.optionManager = optionManager;
-    this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
-  }
-
-  public OutputCode() {
-    this.file = new StringWriter();
+    this.pretty =
+      ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
   }
 
   public void setSingleLine() {

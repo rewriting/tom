@@ -232,31 +232,6 @@
   make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_LetAssign(s) }
 }
 
-%op Strategy Is_AssignMatchSubject() {
-  make() { `When_AssignMatchSubject(Identity()) }
-}
-
-%op Strategy _AssignMatchSubject(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction._AssignMatchSubject)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tominstruction.strategy.instruction._AssignMatchSubject(arg0, arg1) }
-}
-
-%op Strategy Make_AssignMatchSubject(_Kid1:Strategy, _Source:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_AssignMatchSubject)}
-
-  get_slot(_Kid1, t) { _Kid1 }
-  get_slot(_Source, t) { _Source }
-  make( new_Kid1,  new_Source) { new tom.engine.adt.tominstruction.strategy.instruction.Make_AssignMatchSubject( new_Kid1,  new_Source) }
-}
-
-%op Strategy When_AssignMatchSubject(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_AssignMatchSubject)}
-  make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_AssignMatchSubject(s) }
-}
-
 %op Strategy Is_Return() {
   make() { `When_Return(Identity()) }
 }
@@ -447,83 +422,6 @@
 %op Strategy When_CompiledPattern(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_CompiledPattern)}
   make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_CompiledPattern(s) }
-}
-
-%op Strategy Is_MatchingCondition() {
-  make() { `When_MatchingCondition(Identity()) }
-}
-
-%op Strategy _MatchingCondition(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction._MatchingCondition)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tominstruction.strategy.instruction._MatchingCondition(arg0, arg1) }
-}
-
-%op Strategy Make_MatchingCondition(_Lhs:Strategy, _Rhs:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_MatchingCondition)}
-
-  get_slot(_Lhs, t) { _Lhs }
-  get_slot(_Rhs, t) { _Rhs }
-  make( new_Lhs,  new_Rhs) { new tom.engine.adt.tominstruction.strategy.instruction.Make_MatchingCondition( new_Lhs,  new_Rhs) }
-}
-
-%op Strategy When_MatchingCondition(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_MatchingCondition)}
-  make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_MatchingCondition(s) }
-}
-
-%op Strategy Is_TypedEqualityCondition() {
-  make() { `When_TypedEqualityCondition(Identity()) }
-}
-
-%op Strategy _TypedEqualityCondition(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction._TypedEqualityCondition)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tominstruction.strategy.instruction._TypedEqualityCondition(arg0, arg1, arg2) }
-}
-
-%op Strategy Make_TypedEqualityCondition(_TomType:Strategy, _Lhs:Strategy, _Rhs:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_TypedEqualityCondition)}
-
-  get_slot(_TomType, t) { _TomType }
-  get_slot(_Lhs, t) { _Lhs }
-  get_slot(_Rhs, t) { _Rhs }
-  make( new_TomType,  new_Lhs,  new_Rhs) { new tom.engine.adt.tominstruction.strategy.instruction.Make_TypedEqualityCondition( new_TomType,  new_Lhs,  new_Rhs) }
-}
-
-%op Strategy When_TypedEqualityCondition(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_TypedEqualityCondition)}
-  make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_TypedEqualityCondition(s) }
-}
-
-%op Strategy Is_EqualityCondition() {
-  make() { `When_EqualityCondition(Identity()) }
-}
-
-%op Strategy _EqualityCondition(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction._EqualityCondition)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tominstruction.strategy.instruction._EqualityCondition(arg0, arg1) }
-}
-
-%op Strategy Make_EqualityCondition(_Lhs:Strategy, _Rhs:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_EqualityCondition)}
-
-  get_slot(_Lhs, t) { _Lhs }
-  get_slot(_Rhs, t) { _Rhs }
-  make( new_Lhs,  new_Rhs) { new tom.engine.adt.tominstruction.strategy.instruction.Make_EqualityCondition( new_Lhs,  new_Rhs) }
-}
-
-%op Strategy When_EqualityCondition(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_EqualityCondition)}
-  make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_EqualityCondition(s) }
 }
 
 %op Strategy Is_RawAction() {
@@ -1019,31 +917,6 @@
   make(s) { new tom.engine.adt.tomsignature.strategy.tomstructuretable.When_StructTable(s) }
 }
 
-%op Strategy Is_Entry() {
-  make() { `When_Entry(Identity()) }
-}
-
-%op Strategy _Entry(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentry._Entry)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomsignature.strategy.tomentry._Entry(arg0, arg1) }
-}
-
-%op Strategy Make_Entry(_StrName:String, _AstSymbol:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentry.Make_Entry)}
-
-  get_slot(_StrName, t) { _StrName }
-  get_slot(_AstSymbol, t) { _AstSymbol }
-  make( _StrName,  new_AstSymbol) { new tom.engine.adt.tomsignature.strategy.tomentry.Make_Entry( _StrName,  new_AstSymbol) }
-}
-
-%op Strategy When_Entry(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentry.When_Entry)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.tomentry.When_Entry(s) }
-}
-
 %op Strategy Is_TextPosition() {
   make() { `When_TextPosition(Identity()) }
 }
@@ -1069,169 +942,29 @@
   make(s) { new tom.engine.adt.tomsignature.strategy.position.When_TextPosition(s) }
 }
 
-%op Strategy Is_EmptyconcTomRule() {
-  make() { `When_EmptyconcTomRule(Identity()) }
+%op Strategy Is_Entry() {
+  make() { `When_Entry(Identity()) }
 }
 
-%op Strategy _EmptyconcTomRule() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrulelist._EmptyconcTomRule)}
-
-  make() { new tom.engine.adt.tomsignature.strategy.tomrulelist._EmptyconcTomRule() }
-}
-
-%op Strategy Make_EmptyconcTomRule() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrulelist.Make_EmptyconcTomRule)}
-
-  make() { new tom.engine.adt.tomsignature.strategy.tomrulelist.Make_EmptyconcTomRule() }
-}
-
-%op Strategy When_EmptyconcTomRule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrulelist.When_EmptyconcTomRule)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.tomrulelist.When_EmptyconcTomRule(s) }
-}
-
-%op Strategy Is_ConsconcTomRule() {
-  make() { `When_ConsconcTomRule(Identity()) }
-}
-
-%op Strategy _ConsconcTomRule(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrulelist._ConsconcTomRule)}
+%op Strategy _Entry(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentry._Entry)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomsignature.strategy.tomrulelist._ConsconcTomRule(arg0, arg1) }
+  make(arg0, arg1) { new tom.engine.adt.tomsignature.strategy.tomentry._Entry(arg0, arg1) }
 }
 
-%op Strategy Make_ConsconcTomRule(_HeadconcTomRule:Strategy, _TailconcTomRule:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrulelist.Make_ConsconcTomRule)}
+%op Strategy Make_Entry(_StrName:String, _AstSymbol:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentry.Make_Entry)}
 
-  get_slot(_HeadconcTomRule, t) { _HeadconcTomRule }
-  get_slot(_TailconcTomRule, t) { _TailconcTomRule }
-  make( new_HeadconcTomRule,  new_TailconcTomRule) { new tom.engine.adt.tomsignature.strategy.tomrulelist.Make_ConsconcTomRule( new_HeadconcTomRule,  new_TailconcTomRule) }
+  get_slot(_StrName, t) { _StrName }
+  get_slot(_AstSymbol, t) { _AstSymbol }
+  make( _StrName,  new_AstSymbol) { new tom.engine.adt.tomsignature.strategy.tomentry.Make_Entry( _StrName,  new_AstSymbol) }
 }
 
-%op Strategy When_ConsconcTomRule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrulelist.When_ConsconcTomRule)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.tomrulelist.When_ConsconcTomRule(s) }
-}
-
-%op Strategy Is_emptySymbol() {
-  make() { `When_emptySymbol(Identity()) }
-}
-
-%op Strategy _emptySymbol() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol._emptySymbol)}
-
-  make() { new tom.engine.adt.tomsignature.strategy.tomsymbol._emptySymbol() }
-}
-
-%op Strategy Make_emptySymbol() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.Make_emptySymbol)}
-
-  make() { new tom.engine.adt.tomsignature.strategy.tomsymbol.Make_emptySymbol() }
-}
-
-%op Strategy When_emptySymbol(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.When_emptySymbol)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.tomsymbol.When_emptySymbol(s) }
-}
-
-%op Strategy Is_Symbol() {
-  make() { `When_Symbol(Identity()) }
-}
-
-%op Strategy _Symbol(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol._Symbol)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  get_slot(arg3, t) { t.getArgument(3) }
-  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomsignature.strategy.tomsymbol._Symbol(arg0, arg1, arg2, arg3) }
-}
-
-%op Strategy Make_Symbol(_AstName:Strategy, _TypesToType:Strategy, _PairNameDeclList:Strategy, _Option:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.Make_Symbol)}
-
-  get_slot(_AstName, t) { _AstName }
-  get_slot(_TypesToType, t) { _TypesToType }
-  get_slot(_PairNameDeclList, t) { _PairNameDeclList }
-  get_slot(_Option, t) { _Option }
-  make( new_AstName,  new_TypesToType,  new_PairNameDeclList,  new_Option) { new tom.engine.adt.tomsignature.strategy.tomsymbol.Make_Symbol( new_AstName,  new_TypesToType,  new_PairNameDeclList,  new_Option) }
-}
-
-%op Strategy When_Symbol(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.When_Symbol)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.tomsymbol.When_Symbol(s) }
-}
-
-%op Strategy Is_UsedSymbolConstructor() {
-  make() { `When_UsedSymbolConstructor(Identity()) }
-}
-
-%op Strategy _UsedSymbolConstructor(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolConstructor)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolConstructor(arg0) }
-}
-
-%op Strategy Make_UsedSymbolConstructor(_Symbol:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolConstructor)}
-
-  get_slot(_Symbol, t) { _Symbol }
-  make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolConstructor( new_Symbol) }
-}
-
-%op Strategy When_UsedSymbolConstructor(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolConstructor)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolConstructor(s) }
-}
-
-%op Strategy Is_UsedSymbolDestructor() {
-  make() { `When_UsedSymbolDestructor(Identity()) }
-}
-
-%op Strategy _UsedSymbolDestructor(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolDestructor)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolDestructor(arg0) }
-}
-
-%op Strategy Make_UsedSymbolDestructor(_Symbol:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolDestructor)}
-
-  get_slot(_Symbol, t) { _Symbol }
-  make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolDestructor( new_Symbol) }
-}
-
-%op Strategy When_UsedSymbolDestructor(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolDestructor)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolDestructor(s) }
-}
-
-%op Strategy Is_UsedTypeDefinition() {
-  make() { `When_UsedTypeDefinition(Identity()) }
-}
-
-%op Strategy _UsedTypeDefinition(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedTypeDefinition)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedTypeDefinition(arg0) }
-}
-
-%op Strategy Make_UsedTypeDefinition(_Typedef:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedTypeDefinition)}
-
-  get_slot(_Typedef, t) { _Typedef }
-  make( new_Typedef) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedTypeDefinition( new_Typedef) }
-}
-
-%op Strategy When_UsedTypeDefinition(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.When_UsedTypeDefinition)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.keyentry.When_UsedTypeDefinition(s) }
+%op Strategy When_Entry(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentry.When_Entry)}
+  make(s) { new tom.engine.adt.tomsignature.strategy.tomentry.When_Entry(s) }
 }
 
 %op Strategy Is_EmptyconcTomEntry() {
@@ -1278,35 +1011,6 @@
 %op Strategy When_ConsconcTomEntry(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomentrylist.When_ConsconcTomEntry)}
   make(s) { new tom.engine.adt.tomsignature.strategy.tomentrylist.When_ConsconcTomEntry(s) }
-}
-
-%op Strategy Is_RewriteRule() {
-  make() { `When_RewriteRule(Identity()) }
-}
-
-%op Strategy _RewriteRule(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrule._RewriteRule)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  get_slot(arg3, t) { t.getArgument(3) }
-  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomsignature.strategy.tomrule._RewriteRule(arg0, arg1, arg2, arg3) }
-}
-
-%op Strategy Make_RewriteRule(_Lhs:Strategy, _Rhs:Strategy, _CondList:Strategy, _Option:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrule.Make_RewriteRule)}
-
-  get_slot(_Lhs, t) { _Lhs }
-  get_slot(_Rhs, t) { _Rhs }
-  get_slot(_CondList, t) { _CondList }
-  get_slot(_Option, t) { _Option }
-  make( new_Lhs,  new_Rhs,  new_CondList,  new_Option) { new tom.engine.adt.tomsignature.strategy.tomrule.Make_RewriteRule( new_Lhs,  new_Rhs,  new_CondList,  new_Option) }
-}
-
-%op Strategy When_RewriteRule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomrule.When_RewriteRule)}
-  make(s) { new tom.engine.adt.tomsignature.strategy.tomrule.When_RewriteRule(s) }
 }
 
 %op Strategy Is_EmptyconcTomVisit() {
@@ -1470,6 +1174,125 @@
 %op Strategy When_Table(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymboltable.When_Table)}
   make(s) { new tom.engine.adt.tomsignature.strategy.tomsymboltable.When_Table(s) }
+}
+
+%op Strategy Is_emptySymbol() {
+  make() { `When_emptySymbol(Identity()) }
+}
+
+%op Strategy _emptySymbol() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol._emptySymbol)}
+
+  make() { new tom.engine.adt.tomsignature.strategy.tomsymbol._emptySymbol() }
+}
+
+%op Strategy Make_emptySymbol() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.Make_emptySymbol)}
+
+  make() { new tom.engine.adt.tomsignature.strategy.tomsymbol.Make_emptySymbol() }
+}
+
+%op Strategy When_emptySymbol(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.When_emptySymbol)}
+  make(s) { new tom.engine.adt.tomsignature.strategy.tomsymbol.When_emptySymbol(s) }
+}
+
+%op Strategy Is_Symbol() {
+  make() { `When_Symbol(Identity()) }
+}
+
+%op Strategy _Symbol(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol._Symbol)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  get_slot(arg3, t) { t.getArgument(3) }
+  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomsignature.strategy.tomsymbol._Symbol(arg0, arg1, arg2, arg3) }
+}
+
+%op Strategy Make_Symbol(_AstName:Strategy, _TypesToType:Strategy, _PairNameDeclList:Strategy, _Option:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.Make_Symbol)}
+
+  get_slot(_AstName, t) { _AstName }
+  get_slot(_TypesToType, t) { _TypesToType }
+  get_slot(_PairNameDeclList, t) { _PairNameDeclList }
+  get_slot(_Option, t) { _Option }
+  make( new_AstName,  new_TypesToType,  new_PairNameDeclList,  new_Option) { new tom.engine.adt.tomsignature.strategy.tomsymbol.Make_Symbol( new_AstName,  new_TypesToType,  new_PairNameDeclList,  new_Option) }
+}
+
+%op Strategy When_Symbol(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbol.When_Symbol)}
+  make(s) { new tom.engine.adt.tomsignature.strategy.tomsymbol.When_Symbol(s) }
+}
+
+%op Strategy Is_UsedSymbolConstructor() {
+  make() { `When_UsedSymbolConstructor(Identity()) }
+}
+
+%op Strategy _UsedSymbolConstructor(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolConstructor)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolConstructor(arg0) }
+}
+
+%op Strategy Make_UsedSymbolConstructor(_Symbol:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolConstructor)}
+
+  get_slot(_Symbol, t) { _Symbol }
+  make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolConstructor( new_Symbol) }
+}
+
+%op Strategy When_UsedSymbolConstructor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolConstructor)}
+  make(s) { new tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolConstructor(s) }
+}
+
+%op Strategy Is_UsedSymbolDestructor() {
+  make() { `When_UsedSymbolDestructor(Identity()) }
+}
+
+%op Strategy _UsedSymbolDestructor(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolDestructor)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedSymbolDestructor(arg0) }
+}
+
+%op Strategy Make_UsedSymbolDestructor(_Symbol:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolDestructor)}
+
+  get_slot(_Symbol, t) { _Symbol }
+  make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolDestructor( new_Symbol) }
+}
+
+%op Strategy When_UsedSymbolDestructor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolDestructor)}
+  make(s) { new tom.engine.adt.tomsignature.strategy.keyentry.When_UsedSymbolDestructor(s) }
+}
+
+%op Strategy Is_UsedTypeDefinition() {
+  make() { `When_UsedTypeDefinition(Identity()) }
+}
+
+%op Strategy _UsedTypeDefinition(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedTypeDefinition)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedTypeDefinition(arg0) }
+}
+
+%op Strategy Make_UsedTypeDefinition(_Typedef:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedTypeDefinition)}
+
+  get_slot(_Typedef, t) { _Typedef }
+  make( new_Typedef) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedTypeDefinition( new_Typedef) }
+}
+
+%op Strategy When_UsedTypeDefinition(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.When_UsedTypeDefinition)}
+  make(s) { new tom.engine.adt.tomsignature.strategy.keyentry.When_UsedTypeDefinition(s) }
 }
 
 %op Strategy Is_Syntactic() {
@@ -2145,31 +1968,6 @@
   make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_Strategy(s) }
 }
 
-%op Strategy Is_RuleSet() {
-  make() { `When_RuleSet(Identity()) }
-}
-
-%op Strategy _RuleSet(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._RuleSet)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomdeclaration.strategy.declaration._RuleSet(arg0, arg1) }
-}
-
-%op Strategy Make_RuleSet(_RuleList:Strategy, _Option:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_RuleSet)}
-
-  get_slot(_RuleList, t) { _RuleList }
-  get_slot(_Option, t) { _Option }
-  make( new_RuleList,  new_Option) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_RuleSet( new_RuleList,  new_Option) }
-}
-
-%op Strategy When_RuleSet(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.When_RuleSet)}
-  make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_RuleSet(s) }
-}
-
 %op Strategy Is_FunctionDef() {
   make() { `When_FunctionDef(Identity()) }
 }
@@ -2625,27 +2423,6 @@
 %op Strategy When_NameNumber(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_NameNumber)}
   make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_NameNumber(s) }
-}
-
-%op Strategy Is_RuleVar() {
-  make() { `When_RuleVar(Identity()) }
-}
-
-%op Strategy _RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._RuleVar)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumber._RuleVar() }
-}
-
-%op Strategy Make_RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar() }
-}
-
-%op Strategy When_RuleVar(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_RuleVar)}
-  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_RuleVar(s) }
 }
 
 %op Strategy Is_EmptyconcTomNumber() {
@@ -5592,11 +5369,6 @@
             %op Strategy _concTomSymbol(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomSymbol(sub,MuVar("x")),_EmptyconcTomSymbol())) }
-            }
-            
-            %op Strategy _concTomRule(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomRule(sub,MuVar("x")),_EmptyconcTomRule())) }
             }
             
             %op Strategy _concTomEntry(sub:Strategy) {

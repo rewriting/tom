@@ -27,6 +27,7 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
+import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
 
 import tom.engine.adt.tomsignature.*;
@@ -75,29 +76,29 @@ public class TomCGenerator extends TomCFamilyGenerator {
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
-    output.writeln(deep,"goto matchlab" + tomNumberListToString(numberList) + ";");
+    output.writeln(deep,"goto matchlab" + TomBase.tomNumberListToString(numberList) + ";");
   }
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-    TomTypeList l = getSymbolDomain(tomSymbol);
-    TomType type1 = getSymbolCodomain(tomSymbol);
+    TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
+    TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-    if(isDefinedSymbol(tomSymbol)) {
+    if(TomBase.isDefinedSymbol(tomSymbol)) {
         // TODO: build an abstract declaration
       int argno=1;
       output.indent(deep);
       if(!l.isEmptyconcTomType()) {
-        output.write(getTLType(type1));
+        output.write(TomBase.getTLType(type1));
         output.writeSpace();
         output.write(name1);
         if(!l.isEmptyconcTomType()) {
           output.writeOpenBrace();
           while (!l.isEmptyconcTomType()) {
-            output.write(getTLType(l.getHeadconcTomType()));
+            output.write(TomBase.getTLType(l.getHeadconcTomType()));
               //out.writeUnderscore();
               //out.write(argno);
             argno++;
@@ -124,21 +125,21 @@ public class TomCGenerator extends TomCFamilyGenerator {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();        
-    TomTypeList l = getSymbolDomain(tomSymbol);
-    TomType type1 = getSymbolCodomain(tomSymbol);
+    TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
+    TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
     // TODO: build an abstract declaration
     int argno=1;
     output.indent(deep);
     if(!l.isEmptyconcTomType()) {
-      output.write(getTLType(type1));
+      output.write(TomBase.getTLType(type1));
       output.writeSpace();
       output.write(name1);
       if(!l.isEmptyconcTomType()) {
         output.writeOpenBrace();
         while (!l.isEmptyconcTomType()) {
-          output.write(getTLType(l.getHeadconcTomType()));
+          output.write(TomBase.getTLType(l.getHeadconcTomType()));
           output.writeUnderscore();
           output.write(argno);
           argno++;
@@ -164,20 +165,20 @@ public class TomCGenerator extends TomCFamilyGenerator {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-    TomTypeList l = getSymbolDomain(tomSymbol);
-    TomType type1 = getSymbolCodomain(tomSymbol);
+    TomTypeList l = TomBase.getSymbolDomain(tomSymbol);
+    TomType type1 = TomBase.getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     // TODO: build an abstract declaration
     int argno=1;
     output.indent(deep);
     if(!l.isEmptyconcTomType()) {
-      output.write(getTLType(type1));
+      output.write(TomBase.getTLType(type1));
       output.writeSpace();
       output.write(name1);
       if(!l.isEmptyconcTomType()) {
         output.writeOpenBrace();
         while (!l.isEmptyconcTomType()) {
-          output.write(getTLType(l.getHeadconcTomType()));
+          output.write(TomBase.getTLType(l.getHeadconcTomType()));
           output.writeUnderscore();
           output.write(argno);
           argno++;

@@ -8,7 +8,7 @@
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
-  <property name="tomfork"     value="off"/>
+  <property name="tomfork"     value="on"/>
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 
@@ -19,8 +19,8 @@
   <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
   <path id="external.classpath">
-    <fileset dir="${user.home}/.ant/lib/">
-      <include name="*.jar"/>
+    <fileset dir="${user.home}">
+      <include name=".ant/lib/*.jar"/>
     </fileset>
   </path>
 
@@ -75,6 +75,7 @@
       <javac target="${javacTarget}"
              source="${javacSource}"
              nowarn="${nowarnings}"
+             fork="${tomfork}"
              memoryInitialSize="${memoryInitSize}"
              memoryMaximumSize="${memoryMaxSize}">
         <classpath refid="tom.classpath"/>

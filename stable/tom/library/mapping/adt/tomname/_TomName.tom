@@ -256,27 +256,6 @@
   make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_NameNumber(s) }
 }
 
-%op Strategy Is_RuleVar() {
-  make() { `When_RuleVar(Identity()) }
-}
-
-%op Strategy _RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._RuleVar)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumber._RuleVar() }
-}
-
-%op Strategy Make_RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar() }
-}
-
-%op Strategy When_RuleVar(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_RuleVar)}
-  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_RuleVar(s) }
-}
-
 %op Strategy Is_EmptyconcTomNumber() {
   make() { `When_EmptyconcTomNumber(Identity()) }
 }

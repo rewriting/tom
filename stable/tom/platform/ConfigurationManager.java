@@ -202,7 +202,7 @@ public class ConfigurationManager {
           return 1;
         }
 
-        TNode optionX = tom_make_ElementNode("string",tom_cons_list_concTNode(tom_make_AttributeNode("altName","true",""),tom_cons_list_concTNode(tom_make_AttributeNode("attrName","true","file"),tom_cons_list_concTNode(tom_make_AttributeNode("description","true","Tom XML file"),tom_cons_list_concTNode(tom_make_AttributeNode("name","true","X"),tom_cons_list_concTNode(tom_make_AttributeNode("value","true",xmlConfigurationFileName),tom_empty_list_concTNode()))))),tom_empty_list_concTNode())
+        TNode optionX = tom_make_ElementNode("string",tom_cons_list_concTNode(tom_make_AttributeNode("altName","true","X"),tom_cons_list_concTNode(tom_make_AttributeNode("attrName","true","file"),tom_cons_list_concTNode(tom_make_AttributeNode("description","true","Tom XML file"),tom_cons_list_concTNode(tom_make_AttributeNode("name","true","config"),tom_cons_list_concTNode(tom_make_AttributeNode("value","true",xmlConfigurationFileName),tom_empty_list_concTNode()))))),tom_empty_list_concTNode())
 
 
 ;

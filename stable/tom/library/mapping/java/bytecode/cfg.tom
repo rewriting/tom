@@ -32,18 +32,14 @@
 %strategy AllCfg(s:Strategy, m:Map) extends Identity() {
   visit TInstructionList {
     c@ConsInstructionList(ins, t) -> {
-      System.out.println("AllCfg sur :"+`c);
       TInstruction ins = `ins;
       %match(TInstruction ins) {
         Goto(l) -> {
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
           tom.library.sl.Position current = getEnvironment().getPosition();
-          System.out.println("current :"+current.normalize());
-          System.out.println("target :"+p.normalize());
-          System.out.println("current-target:"+(current.sub(p)).normalize());
-          getEnvironment().goTo(current.sub(p));
-          execute(s);
           getEnvironment().goTo(p.sub(current));
+          execute(s);
+          getEnvironment().goTo(current.sub(p));
           //do not visit to the next instruction
           return (TInstructionList) getEnvironment().getSubject();
         }

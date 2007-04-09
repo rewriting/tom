@@ -28,6 +28,7 @@ package tom.engine.backend;
 import java.io.IOException;
 import java.util.HashMap;
 
+import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
 
 import tom.engine.adt.tomsignature.*;
@@ -87,8 +88,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList, String moduleName) throws IOException {
      if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch1Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch1Position1) ||  false  ) ) { if ( true ) {
- output.write("tom_is_empty_" + getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch1Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch1Position1); if ( true ) {
- output.write("tom_is_empty_" + tom_opName+ "_" + getTomType(type) + "(");  } } } } }
+ output.write("tom_is_empty_" + TomBase.getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch1Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch1Position1); if ( true ) {
+ output.write("tom_is_empty_" + tom_opName+ "_" + TomBase.getTomType(type) + "(");  } } } } }
 
     generate(deep,expList,moduleName);
     output.write(")");
@@ -98,18 +99,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generate(deep,expIndex,moduleName);
     output.write(" >= ");
      if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch2Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch2Position1) ||  false  ) ) { if ( true ) {
- output.write("tom_get_size_" + getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch2Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch2Position1); if ( true ) {
- output.write("tom_get_size_" + tom_opName+ "_" + getTomType(type) + "(");  } } } } }
+ output.write("tom_get_size_" + TomBase.getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch2Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch2Position1); if ( true ) {
+ output.write("tom_get_size_" + tom_opName+ "_" + TomBase.getTomType(type) + "(");  } } } } }
 
     generate(deep,expArray,moduleName);
     output.write(")");
   }
 
   protected void buildExpIsSort(int deep, TomType type, TomTerm exp1, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBuiltinType(getTomType(type))) {
+    if(getSymbolTable(moduleName).isBuiltinType(TomBase.getTomType(type))) {
       generateExpression(deep,tom_make_TrueTL(),moduleName);
     } else {
-      output.write("tom_is_sort_" + getTomType(type) + "(");
+      output.write("tom_is_sort_" + TomBase.getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(")");
     }
@@ -141,8 +142,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
      if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch3Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch3Position1) ||  false  ) ) { if ( true ) {
- output.write("tom_get_tail_" + getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch3Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch3Position1); if ( true ) {
- output.write("tom_get_tail_" + tom_opName+ "_" + getTomType(type) + "(");  } } } } }
+ output.write("tom_get_tail_" + TomBase.getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch3Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch3Position1); if ( true ) {
+ output.write("tom_get_tail_" + tom_opName+ "_" + TomBase.getTomType(type) + "(");  } } } } }
 
     generate(deep,var,moduleName);
     output.write(")");
@@ -150,8 +151,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
      if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch4Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch4Position1) ||  false  ) ) { if ( true ) {
- output.write("tom_get_size_" + getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch4Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch4Position1); if ( true ) {
- output.write("tom_get_size_" + tom_opName+ "_" + getTomType(type) + "(");  } } } } }
+ output.write("tom_get_size_" + TomBase.getTomType(type) + "(");  } } if ( ( tom_is_fun_sym_Name(tomMatch4Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch4Position1); if ( true ) {
+ output.write("tom_get_size_" + tom_opName+ "_" + TomBase.getTomType(type) + "(");  } } } } }
 
     generate(deep,var,moduleName);
     output.write(")");
@@ -188,25 +189,25 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       if(getSymbolTable(moduleName).isBuiltinType(type)) {
         argType = getSymbolTable(moduleName).getBuiltinType(type);
       }
-      args = new String[] { getTLType(argType), name };
+      args = new String[] { TomBase.getTLType(argType), name };
     } else {
-      args = new String[] { getTLCode(tlType), name };
+      args = new String[] { TomBase.getTLCode(tlType), name };
     }
 
     TomType returnType = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       returnType = getSymbolTable(moduleName).getBuiltinType(type);
     }
-    genDecl(getTLType(returnType),"tom_get_fun_sym", type,args,tlCode, moduleName);
+    genDecl(TomBase.getTLType(returnType),"tom_get_fun_sym", type,args,tlCode, moduleName);
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String name,
                                             TomType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
     if(!lazyMode) {
-      argType = getTLCode(tlType);
+      argType = TomBase.getTLCode(tlType);
     } else {
-      argType = getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     }
     String returnType = argType;
 
@@ -224,15 +225,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomType returnType = getSymbolTable(moduleName).getBooleanType();
     String argType;
     if(!lazyMode) {
-      argType = getTLCode(tlType);
+      argType = TomBase.getTLCode(tlType);
     } else {
-      argType = getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     }
 
-    genDeclInstr(getTLType(returnType),
-            "tom_is_fun_sym", opname,
-            new String[] { argType, name1 },
-            instr,deep,moduleName);
+    genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, new String[] { argType, name1 }, instr,deep,moduleName);
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String name1,
@@ -241,7 +239,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
 
-    int slotIndex = getSlotIndex(tomSymbol,slotName);
+    int slotIndex = TomBase.getSlotIndex(tomSymbol,slotName);
     TomTypeList l = typesList;
     for(int index = 0; !l.isEmptyconcTomType() && index<slotIndex ; index++) {
       l = l.getTailconcTomType();
@@ -250,11 +248,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     String argType;
     if(!lazyMode) {
-      argType = getTLCode(tlType);
+      argType = TomBase.getTLCode(tlType);
     } else {
-      argType = getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     }
-    genDeclInstr(getTLType(returnType),
+    genDeclInstr(TomBase.getTLType(returnType),
             "tom_get_slot", opname  + "_" + slotName.getString(),
             new String[] { argType, name1 },
             instr,deep,moduleName);
@@ -271,10 +269,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
     }
 
-    genDecl(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_cmp_fun_sym", type1,
+    genDecl(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_cmp_fun_sym", type1,
             new String[] {
-              getTLType(argType1), name1,
-              getTLType(argType2), name2
+              TomBase.getTLType(argType1), name1,
+              TomBase.getTLType(argType2), name2
             },
             tlCode, moduleName);
   }
@@ -290,10 +288,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
     }
 
-    genDeclInstr(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
+    genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
             new String[] {
-              getTLType(argType1), name1,
-              getTLType(argType2), name2
+              TomBase.getTLType(argType1), name1,
+              TomBase.getTLType(argType2), name2
             },
             instr,deep,moduleName);
   }
@@ -303,8 +301,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     if(getSymbolTable(moduleName).isBuiltinType(type1)) {
       argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
     }
-    genDeclInstr(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type1,
-        new String[] { getTLType(argType1), name1 },
+    genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_is_sort", type1,
+        new String[] { TomBase.getTLType(argType1), name1 },
         instr,deep,moduleName);
   }
 
@@ -319,19 +317,19 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
 
     if(lazyMode) {
-      returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
+      returnType = TomBase.getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     } else {
        if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch6Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch6Position1) ||  false  ) ) { if ( true ) {
 
-          returnType = getTLCode(codomain);
-          argType = getTLCode(domain);
+          returnType = TomBase.getTLCode(codomain);
+          argType = TomBase.getTLCode(domain);
          } } if ( ( tom_is_fun_sym_Name(tomMatch6Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch6Position1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_opName);
-          argType = getTLType(getSymbolCodomain(tomSymbol));
-          returnType = getTLType(getSymbolDomain(tomSymbol).getHeadconcTomType());
+          argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
+          returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
          } } } } }
 
     }
@@ -351,18 +349,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
 
     if(lazyMode) {
-      returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
+      returnType = TomBase.getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     } else {
        if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch8Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch8Position1) ||  false  ) ) { if ( true ) {
 
-          returnType = getTLCode(tlType);
+          returnType = TomBase.getTLCode(tlType);
           argType = returnType;
          } } if ( ( tom_is_fun_sym_Name(tomMatch8Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch8Position1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_opName);
-          returnType = getTLType(getSymbolCodomain(tomSymbol));
+          returnType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
           argType = returnType;
          } } } } }
 
@@ -382,21 +380,21 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
  functionName = functionName + "_" + tom_opName;  } } } } }
 
     if(lazyMode) {
-      argType = getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     } else {
        if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch10Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch10Position1) ||  false  ) ) { if ( true ) {
 
-          argType = getTLCode(tlType);
+          argType = TomBase.getTLCode(tlType);
          } } if ( ( tom_is_fun_sym_Name(tomMatch10Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch10Position1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_opName);
-          argType = getTLType(getSymbolCodomain(tomSymbol));
+          argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
          } } } } }
 
     }
 
-    genDeclInstr(getTLType(getSymbolTable(moduleName).getBooleanType()),
+    genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()),
             functionName, type,
             new String[] { argType, varName },
             instr,deep,moduleName);
@@ -413,19 +411,19 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
 
     if(lazyMode) {
-      returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
+      returnType = TomBase.getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     } else {
        if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch12Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch12Position1) ||  false  ) ) { if ( true ) {
 
-          returnType = getTLType(getUniversalType());
-          argType = getTLCode(domain);
+          returnType = TomBase.getTLType(getUniversalType());
+          argType = TomBase.getTLCode(domain);
          } } if ( ( tom_is_fun_sym_Name(tomMatch12Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch12Position1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_opName);
-          argType = getTLType(getSymbolCodomain(tomSymbol));
-          returnType = getTLType(getSymbolDomain(tomSymbol).getHeadconcTomType());
+          argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
+          returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
          } } } } }
 
     }
@@ -434,7 +432,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             functionName, type1,
             new String[] {
               argType, name1,
-              getTLType(getSymbolTable(moduleName).getIntType()), name2
+              TomBase.getTLType(getSymbolTable(moduleName).getIntType()), name2
             },
             instr,deep,moduleName);
   }
@@ -449,21 +447,21 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
 
     if(lazyMode) {
-      argType = getTLType(getUniversalType());
+      argType = TomBase.getTLType(getUniversalType());
     } else {
        if (tom_is_sort_TomName(opNameAST)) { { tom.engine.adt.tomname.types.TomName  tomMatch14Position1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tomMatch14Position1) ||  false  ) ) { if ( true ) {
 
-          argType = getTLCode(domain);
+          argType = TomBase.getTLCode(domain);
          } } if ( ( tom_is_fun_sym_Name(tomMatch14Position1) ||  false  ) ) { { String  tom_opName=tom_get_slot_Name_String(tomMatch14Position1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_opName);
-          argType = getTLType(getSymbolCodomain(tomSymbol));
+          argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
          } } } } }
 
     }
 
-    genDeclInstr(getTLType(getSymbolTable(moduleName).getIntType()),
+    genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getIntType()),
             functionName, type,
             new String[] { argType, name1 },
             instr,deep,moduleName);

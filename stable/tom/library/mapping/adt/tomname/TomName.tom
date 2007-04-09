@@ -100,11 +100,6 @@
   make(t0) { tom.engine.adt.tomname.types.tomnumber.NameNumber.make(t0)}
 }
 
-%op TomNumber RuleVar() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.RuleVar }
-  make() { tom.engine.adt.tomname.types.tomnumber.RuleVar.make()}
-}
-
 %op TomNumberList EmptyconcTomNumber() {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber }
   make() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make()}

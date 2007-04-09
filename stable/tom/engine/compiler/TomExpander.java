@@ -150,7 +150,7 @@ public class TomExpander extends TomGenericPlugin {
       /*
        * add default IsFsymDecl and MakeDecl, unless it is a builtin type
        */
-      if(!getStreamManager().getSymbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol)))) {
+      if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
         tomSymbol = addDefaultIsFsym(tomSymbol);
         tomSymbol = addDefaultMake(tomSymbol);
       }
@@ -191,7 +191,7 @@ public class TomExpander extends TomGenericPlugin {
         while(!typesList.isEmptyconcTomType()) {
           TomType subtermType = typesList.getHeadconcTomType();
           TomTerm variable = tom_make_Variable(tom_empty_list_concOption(),tom_make_Name("t"+index),subtermType,tom_empty_list_concConstraint());
-          argsAST = append(variable,argsAST);
+          argsAST = tom_append_list_concTomTerm(argsAST,tom_cons_list_concTomTerm(variable,tom_empty_list_concTomTerm()));
           typesList = typesList.getTailconcTomType();
           index++;
         }
@@ -249,7 +249,7 @@ public class TomExpander extends TomGenericPlugin {
 
 
         TomSymbol tomSymbol = expander.getSymbolFromName(tom_opName);
-        TomTypeList codomain = getSymbolDomain(tomSymbol);
+        TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
         if(codomain.length()==1) {
           Declaration t = (Declaration)tom_decl;
           t = t.setCodomain(codomain.getHeadconcTomType());
@@ -262,7 +262,7 @@ public class TomExpander extends TomGenericPlugin {
 
         TomSymbol tomSymbol = expander.getSymbolFromType(tom_domain);
         if(tomSymbol != null) {
-          TomTypeList codomain = getSymbolDomain(tomSymbol);
+          TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
 
           if(codomain.length()==1) {
             Declaration t = (Declaration)tom_decl;
@@ -285,7 +285,7 @@ public class TomExpander extends TomGenericPlugin {
             TomSymbol tomSymbol = expander.getSymbolFromName(tom_tomName);
             //System.out.println("appl = " + subject);
             if(tomSymbol != null) {
-              if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+              if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
                 //System.out.println("appl = " + subject);
                 SlotList newArgs = expander.expandChar(tom_args);
                 if(newArgs!=tom_args) {
@@ -372,7 +372,7 @@ public class TomExpander extends TomGenericPlugin {
 
     SlotList slotList = tom_empty_list_concSlot();
     VisitableVisitor expandStrategy = (tom_make_ChoiceTopDown(tom_make_expandTermApplTomSyntax(this)));
-    if(opName.equals("") || tomSymbol==null || isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+    if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
       while(!args.isEmptyconcTomTerm()) {
         try{
           TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
@@ -413,17 +413,17 @@ public class TomExpander extends TomGenericPlugin {
 
             //System.out.println("BackQuoteTerm: " + `tomName);
             //System.out.println("tomSymbol: " + tomSymbol);
-            if(hasConstant(tom_optionList)) {
+            if(TomBase.hasConstant(tom_optionList)) {
               return tom_make_BuildConstant(tom_name);
             } else if(tomSymbol != null) {
-              if(isListOperator(tomSymbol)) {
+              if(TomBase.isListOperator(tomSymbol)) {
                 return ASTFactory.buildList(tom_name,args,expander.symbolTable());
-              } else if(isArrayOperator(tomSymbol)) {
+              } else if(TomBase.isArrayOperator(tomSymbol)) {
                 return ASTFactory.buildArray(tom_name,args);
-              } else if(isDefinedSymbol(tomSymbol)) {
-                return tom_make_FunctionCall(tom_name,getSymbolCodomain(tomSymbol),args);
+              } else if(TomBase.isDefinedSymbol(tomSymbol)) {
+                return tom_make_FunctionCall(tom_name,TomBase.getSymbolCodomain(tomSymbol),args);
               } else {
-                String moduleName = getModuleName(tom_optionList);
+                String moduleName = TomBase.getModuleName(tom_optionList);
                 if(moduleName==null) {
                   moduleName = TomBase.DEFAULT_MODULE_NAME;
                 }
@@ -496,7 +496,7 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   private static OptionList convertOriginTracking(String name,OptionList optionList) {
-    Option originTracking = findOriginTracking(optionList);
+    Option originTracking = TomBase.findOriginTracking(optionList);
      if (tom_is_sort_Option(originTracking)) { { tom.engine.adt.tomoption.types.Option  tomMatch10Position1=(( tom.engine.adt.tomoption.types.Option )originTracking); if ( ( tom_is_fun_sym_OriginTracking(tomMatch10Position1) ||  false  ) ) { { int  tom_line=tom_get_slot_OriginTracking_Line(tomMatch10Position1); { String  tom_fileName=tom_get_slot_OriginTracking_FileName(tomMatch10Position1); if ( true ) {
 
         return tom_cons_list_concOption(tom_make_OriginTracking(tom_make_Name(name),tom_line,tom_fileName),tom_empty_list_concOption());
@@ -508,8 +508,8 @@ public class TomExpander extends TomGenericPlugin {
 
   protected TomTerm expandXMLAppl(OptionList optionList, TomNameList nameList,
       TomList attrList, TomList childList, ConstraintList constraints) {
-    boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
-    boolean implicitChild     = hasImplicitXMLChild(optionList);
+    boolean implicitAttribute = TomBase.hasImplicitXMLAttribut(optionList);
+    boolean implicitChild     = TomBase.hasImplicitXMLChild(optionList);
 
     TomList newAttrList  = tom_empty_list_concTomTerm();
     TomList newChildList = tom_empty_list_concTomTerm();

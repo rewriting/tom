@@ -469,11 +469,6 @@ public HostParser(ParserSharedInputState state) {
 				strategyConstruct(list);
 				break;
 			}
-			case RULE:
-			{
-				ruleConstruct(list);
-				break;
-			}
 			case GOM:
 			{
 				gomsignature(list);
@@ -595,39 +590,6 @@ public HostParser(ParserSharedInputState state) {
 		// call the tomparser for the construct
 		Declaration strategy = tomparser.strategyConstruct(ot);
 		list.add(strategy);
-		
-	}
-	
-	public final void ruleConstruct(
-		LinkedList list
-	) throws RecognitionException, TokenStreamException, TomException {
-		
-		Token  t = null;
-		
-		TargetLanguage code = null;
-		
-		
-		t = LT(1);
-		match(RULE);
-		
-		// add the target code preceeding the construct
-		String textCode = getCode();
-		
-		if(isCorrect(textCode)) {
-		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(t.getLine(),t.getColumn())
-		)
-		
-		
-		
-		;
-		list.add(code);
-		}
-		
-		Option ot = tom_make_OriginTracking(tom_make_Name("Rule"),t.getLine(),currentFile);
-		
-		// call the tomparser for the construct
-		Declaration ruleSet = tomparser.ruleConstruct(ot);
-		list.add(ruleSet);
 		
 	}
 	
@@ -1008,7 +970,6 @@ public HostParser(ParserSharedInputState state) {
 		"LBRACE",
 		"RBRACE",
 		"STRATEGY",
-		"RULE",
 		"MATCH",
 		"GOM",
 		"BACKQUOTE",
