@@ -50,7 +50,7 @@ public class StrategyFwd extends AbstractStrategy {
 
   public void visit() {
     try {
-      setSubject((Visitable)visitors[ARG].visit(getSubject()));
+      setSubject((Visitable)this.visit(getSubject()));
     } catch(jjtraveler.VisitFailure f) {
       setStatus(tom.library.sl.Environment.FAILURE);
     }

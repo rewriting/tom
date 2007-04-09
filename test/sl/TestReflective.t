@@ -343,4 +343,3 @@ public class TestReflective extends TestCase {
     }
   }
 }
-
