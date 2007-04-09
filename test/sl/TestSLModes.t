@@ -105,7 +105,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(b()));
+      assertEquals("Applied a rule",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("R1.fire should not fail on f(a)");
     }
@@ -125,7 +125,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,subject);
+      assertEquals("Applied a rule",resS,subject);
     } catch (tom.library.sl.FireException e) {
       fail("R1.fire should not throw failure on f(b)");
     }
@@ -145,7 +145,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(b()));
+      assertEquals("Applied a rule",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("R2.fire should not fail on f(a)");
     }
@@ -186,7 +186,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(c()));
+      assertEquals("Applied a rule",resS,`f(c()));
     } catch (tom.library.sl.FireException e) {
       fail("One(R1).fire should not fail on f(b)");
     }
@@ -227,7 +227,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(b()),b()));
+      assertEquals("Applied a rule",resS,`g(f(b()),b()));
     } catch (tom.library.sl.FireException e) {
       fail("OnceBottomUp(R2).fire should not fail on "+subject);
     }
@@ -242,7 +242,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(c()),b()));
+      assertEquals("Applied a rule",resS,`g(f(c()),b()));
     } catch (tom.library.sl.FireException e) {
       fail("OnceBottomUp(R2).fire should not fail on "+subject);
     }
@@ -257,7 +257,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(c()),c()));
+      assertEquals("Applied a rule",resS,`g(f(c()),c()));
     } catch (tom.library.sl.FireException e) {
       fail("OnceBottomUp(R2).fire should not fail on "+subject);
     }
@@ -293,7 +293,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(b()),c()));
+      assertEquals("Applied a rule",resS,`g(f(b()),c()));
     } catch (tom.library.sl.FireException e) {
       fail("All(R2).fire should not fail on "+subject);
     }
@@ -348,7 +348,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(b()));
+      assertEquals("Applied a rule",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("Omega(0,R2).fire should not fail on "+subject);
     }
@@ -368,7 +368,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(b()),b()));
+      assertEquals("Applied a rule",resS,`g(f(b()),b()));
     } catch (tom.library.sl.FireException e) {
       fail("Omega(1,R2).fire should not fail on "+subject);
     }
@@ -388,7 +388,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(a()),c()));
+      assertEquals("Applied a rule",resS,`g(f(a()),c()));
     } catch (tom.library.sl.FireException e) {
       fail("Omega(2,R2).fire should not fail on "+subject);
     }
@@ -414,6 +414,25 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  public void testOmegaAritOverflow() {
+    Term subject = `g(f(b()),b());
+    Strategy s = `Omega(3,R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("Omega(3,R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("Omega(3,R2).visit should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
+
   public void testMake_a() {
     Term subject = `f(c());
     Strategy s = `Make_a();
@@ -427,7 +446,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`a());
+      assertEquals("Applied a rule",resS,`a());
     } catch (tom.library.sl.FireException e) {
       fail("IfThenElse.fire should not fail on "+subject);
     }
@@ -447,7 +466,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(a()),b()));
+      assertEquals("Applied a rule",resS,`g(f(a()),b()));
     } catch (tom.library.sl.FireException e) {
       fail("IfThenElse.fire should not fail on "+subject);
     }
@@ -467,7 +486,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`a());
+      assertEquals("Applied a rule",resS,`a());
     } catch (tom.library.sl.FireException e) {
       fail("IfThenElse.fire should not fail on "+subject);
     }
@@ -487,7 +506,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`b());
+      assertEquals("Applied a rule",resS,`b());
     } catch (tom.library.sl.FireException e) {
       fail("IfThenElse.fire should not fail on "+subject);
     }
@@ -507,7 +526,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(c()));
+      assertEquals("Applied a rule",resS,`f(c()));
     } catch (tom.library.sl.FireException e) {
       fail("Sequence(R2,R3).fire should not fail on "+subject);
     }
@@ -565,7 +584,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(b()));
+      assertEquals("Applied a rule",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("When_f(R2).fire should not fail on "+subject);
     }
@@ -604,7 +623,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`g(f(b()),c()));
+      assertEquals("Applied a rule",resS,`g(f(b()),c()));
     } catch (tom.library.sl.FireException e) {
       fail("_g(R1,R2).fire should not fail on "+subject);
     }
@@ -624,7 +643,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied a rule",resJ,`f(b()));
+      assertEquals("Applied a rule",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("Not(R2).fire should not fail on f(b)");
     }
@@ -638,13 +657,13 @@ public class TestSLModes extends TestCase {
     Term resS = null;
     try {
       resJ = (Term) s.visit(subject);
-      fail("Not(R2).visit should fail on f(a)");
+      fail("Not(R2).visit should fail on "+subject);
     } catch (jjtraveler.VisitFailure e) {
       assertNull(resJ);
     }
     try {
       resS = (Term) s.fire(subject);
-      fail("Not(R2).fire should fail on f(a)");
+      fail("Not(R2).fire should fail on "+subject);
     } catch (tom.library.sl.FireException e) {
       assertNull(resS);
     }
@@ -665,7 +684,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied SequenceId",resJ,`f(c()));
+      assertEquals("Applied SequenceId",resS,`f(c()));
     } catch (tom.library.sl.FireException e) {
       fail("SequenceId(R1,R4).fire should not fail on "+subject);
     }
@@ -705,7 +724,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied choice",resJ,`f(b()));
+      assertEquals("Applied choice",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("Choice(R2,R3).fire should not fail on "+subject);
     }
@@ -725,7 +744,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied choice",resJ,`f(b()));
+      assertEquals("Applied choice",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("Choice(R3,R2).fire should not fail on "+subject);
     }
@@ -764,7 +783,7 @@ public class TestSLModes extends TestCase {
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied choiceid",resJ,`f(b()));
+      assertEquals("Applied choiceid",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
       fail("ChoiceId(R2,R3).fire should not fail on "+subject);
     }
@@ -780,14 +799,33 @@ public class TestSLModes extends TestCase {
       resJ = (Term) s.visit(subject);
       assertEquals("Applied choiceid",resJ,`f(b()));
     } catch (jjtraveler.VisitFailure e) {
-      fail("ChoiceId(R3,R2).visit should not fail on "+subject);
+      fail("ChoiceId(Identity,R2).visit should not fail on "+subject);
     }
     try {
       resS = (Term) s.fire(subject);
-      assertEquals("Applied choiceid",resJ,`f(b()));
+      assertEquals("Applied choiceid",resS,`f(b()));
     } catch (tom.library.sl.FireException e) {
-      fail("ChoiceId(R3,R2).fire should not fail on "+subject);
+      fail("ChoiceId(Identity,R2).fire should not fail on "+subject);
     }
     assertEquals(resJ,resS);
+  }
+
+  public void testChoiceIdFail1() {
+    Term subject = `f(b());
+    Strategy s = `ChoiceId(R2(),R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("ChoiceId(R2,R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("ChoiceId(R2,R2).fire should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
   }
 }
