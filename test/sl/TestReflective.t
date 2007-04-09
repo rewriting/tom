@@ -191,6 +191,24 @@ public class TestReflective extends TestCase {
     fail("no !");
   }
 
+  public void testS1Id() {
+    Strategy s = (Strategy)`S1().fire(`Identity());
+    %match(s) {
+      Identity() -> { fail("Id should rewrite to fail"); }
+      Fail() -> { return; }
+    }
+    fail("should not be here");
+  }
+
+  public void testS1Fail() {
+    Strategy s = (Strategy)`S1().fire(`Fail());
+    %match(s) {
+      Fail() -> { fail("Fail should rewrite to Identity"); }
+      Identity() -> { return; }
+    }
+    fail("should not be here");
+  }
+
   public void testS3Id() {
     Strategy s = (Strategy)`S3().fire(`Identity());
     %match(s) {
