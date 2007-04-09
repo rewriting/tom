@@ -24,6 +24,9 @@ Instruction =
   /**/
   | Return(Kid1:TomTerm)
   | Nop()
+  /*
+   * AbstrackBlock: conversion from InstructionList to Instruction
+   */
   | AbstractBlock(InstList:InstructionList)
   | UnamedBlock(InstList:InstructionList)
   | NamedBlock(BlockName:String,InstList:InstructionList)
@@ -34,7 +37,6 @@ Instruction =
    * a RawAction is an action that comes from the original program 
    */
   | RawAction(AstInstruction:Instruction)
-
   /*
    * a TypeAction knows the pattern to which it is attached (positivePattern),
    * and also the list a previously tried patterns, which are called negativePattern
@@ -43,3 +45,8 @@ Instruction =
   | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
 
 InstructionList = concInstruction(Instruction*)
+concInstruction:make_insert(e,l) {
+  %match(e) {
+    AbstractBlock(l1) -> { return `concInstruction(l1*,l*); }
+  }
+}

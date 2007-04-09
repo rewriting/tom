@@ -44,6 +44,7 @@ public class HookTypeExpander {
   public HookTypeExpander(ModuleList moduleList) {
     this.moduleList = moduleList;
   }
+
   /**
     * Get the correct types for hooks, and attach them the correct Decl
     */
@@ -55,32 +56,49 @@ public class HookTypeExpander {
           GomModule[ModuleName=GomModuleName[Name=moduleName],
                     SectionList=concSection(_*,
                       Public(concGrammar(_*,
-                          Grammar(concProduction(_*,hook@Hook[],_*)),
+                          Grammar(prodList),
                           _*)),
                       _*)],
-          _*) -> {
-        %match(hook) {
-          /* Hooks attached to a module */
-          Hook[NameType=KindModule(),Name=mname] -> {
-            if(`mname.equals(`moduleName)) {
-              ModuleDecl mdecl = getModuleDecl(`mname,moduleList);
-              HookDeclList newDeclList =
-                makeHookDeclList(`hook,`CutModule(mdecl));
-              hookList = `concHookDecl(newDeclList*,hookList*);
-            } else {
-              getLogger().log(Level.SEVERE,
-                  "Hooks on module are authorised only on the current module");
+                    _*) -> {
+        %match(prodList) {
+          concProduction(_*, prod, _*) -> {
+            /* generate FL hooks for list-operators */
+            %match(prod, prodList) {
+              Production(opName,concField(StarredField(codomain)),codomain),
+              /* check there is no hook attached to this operator */
+              !concProduction(_*, Hook[Name=opName], _*) -> {
+                String emptyCode = "{}";
+                Production hook = `Hook(KindOperator(),opName,HookKind("FL"),concArg(),emptyCode);
+                OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
+                HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
+                hookList = `concHookDecl(newDeclList*,hookList*);
+              }
             }
-          }
-          Hook[NameType=KindSort(),Name=sname] -> {
-            SortDecl sdecl = getSortDecl(`sname,`moduleName,moduleList);
-            HookDeclList newDeclList = makeHookDeclList(`hook,`CutSort(sdecl));
-            hookList = `concHookDecl(newDeclList*,hookList*);
-          }
-          Hook[NameType=KindOperator(),Name=oname] -> {
-            OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
-            HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
-            hookList = `concHookDecl(newDeclList*,hookList*);
+
+            /* Process hooks attached to a module */
+            %match(prod) {
+              hook@Hook[NameType=KindModule(),Name=mname] -> {
+                if(`mname.equals(`moduleName)) {
+                  ModuleDecl mdecl = getModuleDecl(`mname,moduleList);
+                  HookDeclList newDeclList =
+                    makeHookDeclList(`hook,`CutModule(mdecl));
+                  hookList = `concHookDecl(newDeclList*,hookList*);
+                } else {
+                  getLogger().log(Level.SEVERE,
+                      "Hooks on module are authorised only on the current module");
+                }
+              }
+              hook@Hook[NameType=KindSort(),Name=sname] -> {
+                SortDecl sdecl = getSortDecl(`sname,`moduleName,moduleList);
+                HookDeclList newDeclList = makeHookDeclList(`hook,`CutSort(sdecl));
+                hookList = `concHookDecl(newDeclList*,hookList*);
+              }
+              hook@Hook[NameType=KindOperator(),Name=oname] -> {
+                OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
+                HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
+                hookList = `concHookDecl(newDeclList*,hookList*);
+              }
+            }
           }
         }
       }
@@ -123,7 +141,12 @@ public class HookTypeExpander {
             newHookList = `concHookDecl(
                 MakeHookDecl(mdecl,typedArgs,Code(scode)));
           }
+          HookKind("Free") -> {
+            /* Free prevents hooks to be automatically generated */
+            return `concHookDecl();
+          }
           HookKind("FL") -> {
+            /* FL: flattened list */
             return `makeFLHookList(hName,mdecl,scode);
           }
           HookKind("AU") -> {

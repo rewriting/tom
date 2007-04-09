@@ -231,15 +231,6 @@ public class TomKernelCompiler {
     throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectList);
   }
 
-  private InstructionList concatInstruction(Instruction i1, Instruction i2) {
-    %match(i1, i2) {
-      AbstractBlock(l1), AbstractBlock(l2) -> { return `concInstruction(l1*,l2*); }
-      AbstractBlock(l1), y -> { return `concInstruction(l1*,y); }
-      x, AbstractBlock(l2) -> { return `concInstruction(x,l2*); }
-    }
-      return `concInstruction(i1,i2);
-  }
-
     /*
      * build a list of instructions from a list of automata
      */
@@ -839,7 +830,7 @@ public class TomKernelCompiler {
         TomTerm booleanVariable = `Variable(concOption(),PositionName(concTomNumber(NameNumber(Name("bool")),path*)),booleanType,concConstraint());
         Instruction ifBody = `collectSubtermIf(nameList,booleanVariable,currentTerm,termArgList,subjectVariableAST,path,moduleName);
         Instruction checkBody = `If(TomTermToExpression(booleanVariable),body,Nop()); 
-        Instruction newBody = `collectSubtermLetRefBottom(termArgList,tomSymbol,path,AbstractBlock(concatInstruction(ifBody,checkBody)));
+        Instruction newBody = `collectSubtermLetRefBottom(termArgList,tomSymbol,path,AbstractBlock(concInstruction(ifBody,checkBody)));
 
         return `LetRef(booleanVariable,FalseTL(),newBody);
 

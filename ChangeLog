@@ -1,3 +1,10 @@
+2007-04-09  pem
+  * FL hook is generated automaticcaly for list-operator 
+	  whose domain=codomain. This occurs only if no other hook 
+		is defined.
+  * Free hook has been added. This hook does nothing
+		but prevents FL to be activated
+
 2007-04-06  pem
   * removed %rule
 
