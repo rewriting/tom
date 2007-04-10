@@ -1448,7 +1448,20 @@ blockStatement returns [Gomantlr_Java_blockStatement bs]
 	;
 	
 localVariableDeclaration returns [Gomantlr_Java_localVariableDeclaration lvd]
-	:	('final')? type variableDeclarators ';'
+@init {
+    Gomantlr_Java_localVariableDeclaration_1 lvd1=`Gomantlr_Java_localVariableDeclaration_1_2();
+}
+	:	(
+            'final'
+            {
+                lvd1=`Gomantlr_Java_localVariableDeclaration_1_1();
+            }
+        )? 
+        t=type vd=variableDeclarators ';'
+        {
+            lvd=`Gomantlr_Java_localVariableDeclaration(lvd1,t,vd);
+        }
+        
 	;
 	
 statement returns [Gomantlr_Java_statement s]
