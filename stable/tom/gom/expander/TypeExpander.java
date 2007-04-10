@@ -199,7 +199,7 @@ public class TypeExpander {
     return tom_make_BuiltinSortDecl(typename);
   }
 
-  TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
+  private TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
      if (tom_is_sort_FieldList(domain)) { { tom.gom.adt.gom.types.FieldList  tomMatch5Position1=(( tom.gom.adt.gom.types.FieldList )domain); if ( ( tom_is_fun_sym_concField(tomMatch5Position1) ||  false  ) ) { {int tomMatch5Position1Index1=0; { tom.gom.adt.gom.types.FieldList  tomMatch5Position1List1=tomMatch5Position1; { tom.gom.adt.gom.types.FieldList  tomMatch5Position1Save1=tomMatch5Position1List1; { if (!(tom_is_empty_concField_FieldList(tomMatch5Position1List1))) { { tom.gom.adt.gom.types.Field  tomMatch5Position1Position1=tom_get_head_concField_FieldList(tomMatch5Position1List1);tomMatch5Position1Index1=tomMatch5Position1Index1 + 1;tomMatch5Position1List1=tom_get_tail_concField_FieldList(tomMatch5Position1List1); if ( ( tom_is_fun_sym_StarredField(tomMatch5Position1Position1) ||  false  ) ) { { tom.gom.adt.gom.types.GomType  tomMatch5Position1Position1NameNumberFieldType=tom_get_slot_StarredField_FieldType(tomMatch5Position1Position1); if ( ( tom_is_fun_sym_GomType(tomMatch5Position1Position1NameNumberFieldType) ||  false  ) ) { { String  tom_typename=tom_get_slot_GomType_Name(tomMatch5Position1Position1NameNumberFieldType); if (tom_is_empty_concField_FieldList(tomMatch5Position1List1)) { if ( true ) {
 
         return tom_make_Variadic(declFromTypename(tom_typename,sortDeclList));
@@ -212,7 +212,7 @@ public class TypeExpander {
     throw new GomRuntimeException("TypeExpander::typedProduction: illformed Production");
   }
 
-  SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {
+  private SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {
      if (tom_is_sort_FieldList(fields)) { { tom.gom.adt.gom.types.FieldList  tomMatch6Position1=(( tom.gom.adt.gom.types.FieldList )fields); if ( ( tom_is_fun_sym_concField(tomMatch6Position1) ||  false  ) ) { {int tomMatch6Position1Index1=0; { tom.gom.adt.gom.types.FieldList  tomMatch6Position1List1=tomMatch6Position1; if (tom_is_empty_concField_FieldList(tomMatch6Position1List1)) { if ( true ) {
 
         return tom_empty_list_concSlot();
