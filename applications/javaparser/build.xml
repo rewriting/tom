@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="javaparser" default="build" basedir=".">
+  <description>
+    Java parser producing a Gom ast
+  </description>
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="jparse.dir"      location="."/>
+  <property name="jparse.src"      location="src"/>
+  <property name="jparse.gen"      location="gen"/>
+  <property name="jparse.build"    location="build"/>
+
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${jparse.build}"/>
+    <mkdir dir="${jparse.gen}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <gom.preset srcdir="${jparse.src}"
+                destdir="${jparse.gen}">
+      <include name="*.gom"/>
+    </gom.preset>
+    <tom.preset outputfile="${jparse.gen}/Gomantlr_Java.g"
+                options="-I ${jparse.gen}"
+                srcdir="${jparse.src}">
+      <include name="Gomantlr_Java.g.t"/>
+    </tom.preset>
+
+    <antlr:antlr3 xmlns:antlr="antlib:org/apache/tools/ant/antlr"
+                  target="${jparse.gen}/Gomantlr_Java.g"
+                  outputdirectory="${jparse.gen}"
+                  libdirectory="${jparse.src}"
+                  multithreaded="true">
+    </antlr:antlr3>
+
+    <javac.preset destdir="${jparse.build}">
+      <src path="${jparse.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${jparse.gen}"/>
+    <delete dir="${jparse.build}"/>
+  </target>
+</project>
