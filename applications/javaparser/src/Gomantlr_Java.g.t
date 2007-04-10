@@ -49,236 +49,865 @@ protected boolean enumIsKeyword = false;
 
 // starting point for parsing a java file
 compilationUnit returns [Gomantlr_Java_compilationUnit cu]
-	:	annotations?
-		packageDeclaration?
-        importDeclaration*
-        typeDeclaration*
-        { cu=null; }
+@init {
+    Gomantlr_Java_compilationUnit_1 cu1=`Gomantlr_Java_compilationUnit_1_2();
+    Gomantlr_Java_compilationUnit_2 cu2=`Gomantlr_Java_compilationUnit_2_2();
+    Gomantlr_Java_compilationUnit_3 cu3=`Gomantlr_Java_compilationUnit_3_1();
+    Gomantlr_Java_compilationUnit_4 cu4=`Gomantlr_Java_compilationUnit_4_1();
+}
+	:	(
+            a=annotations
+            {
+                cu1=`Gomantlr_Java_compilationUnit_1_1(a);
+            }
+        )?
+		(
+            pd=packageDeclaration
+            {
+                cu2=`Gomantlr_Java_compilationUnit_2_1(pd);
+            }
+        )?
+        (
+            id=importDeclaration
+            {
+                cu3=`Gomantlr_Java_compilationUnit_3_1(cu3*,id);
+            }
+        )*
+        (
+            td=typeDeclaration
+            {
+                cu4=`Gomantlr_Java_compilationUnit_4_1(cu4*,td);
+            }
+        )*
+        {
+            cu=`Gomantlr_Java_compilationUnit(cu1,cu2,cu3,cu4);
+        }
 	;
 
 packageDeclaration returns [Gomantlr_Java_packageDeclaration pd]
-	:	'package' qualifiedName ';'
+	:	'package' qn=qualifiedName ';'
+        {
+            pd=`Gomantlr_Java_packageDeclaration(qn);
+        }
 	;
 	
 importDeclaration returns [Gomantlr_Java_importDeclaration id]
-	:	'import' 'static'? i1=Identifier ('.' i2=Identifier { System.out.println("i2:"+i2.getText()); })* ('.' '*')? ';'
+@init {
+    Gomantlr_Java_importDeclaration_1 id1=`Gomantlr_Java_importDeclaration_1_2();
+    Gomantlr_Java_importDeclaration_3 id3=`Gomantlr_Java_importDeclaration_3_1();
+    Gomantlr_Java_importDeclaration_4 id4=`Gomantlr_Java_importDeclaration_4_2();
+}
+	:	'import' 
+        (
+            'static'
+            {
+                id1=`Gomantlr_Java_importDeclaration_1_1();
+            }
+        )? 
+        i1=Identifier 
+        (
+            '.' i2=Identifier
+            {
+                id3=`Gomantlr_Java_importDeclaration_3_1(id3*,Gomantlr_Java_importDeclaration_3_1_1(Gomantlr_Java_Identifier(i2.getText())));
+            }
+        )* 
+        (
+            '.' '*'
+            {
+                id4=`Gomantlr_Java_importDeclaration_4_1(Gomantlr_Java_importDeclaration_4_1_1());
+            }
+        )?
+        ';'
         {
-            System.out.println("i1:"+i1.getText());
+            id=`Gomantlr_Java_importDeclaration(id1,Gomantlr_Java_Identifier(i1.getText()),id3,id4);
         }
 	;
 	
 typeDeclaration returns [Gomantlr_Java_typeDeclaration td]
-	:	classOrInterfaceDeclaration
+	:	coid=classOrInterfaceDeclaration
+        {
+            td=`Gomantlr_Java_typeDeclaration_1(coid);
+        }
     |   ';'
+        {
+            td=`Gomantlr_Java_typeDeclaration_2();
+        }
 	;
 	
 classOrInterfaceDeclaration returns [Gomantlr_Java_classOrInterfaceDeclaration coid]
-	:	modifier* (classDeclaration | interfaceDeclaration)
+@init {
+    Gomantlr_Java_classOrInterfaceDeclaration_1 coid1=`Gomantlr_Java_classOrInterfaceDeclaration_1_1();
+    Gomantlr_Java_classOrInterfaceDeclaration_2 coid2=null;
+}
+	:	
+        (
+            m=modifier
+            {
+                coid1=`Gomantlr_Java_classOrInterfaceDeclaration_1_1(coid1*,m);
+            }
+        )* 
+        ( 
+                cd=classDeclaration
+                {
+                    coid2=`Gomantlr_Java_classOrInterfaceDeclaration_2_1(cd);
+                }
+            | 
+                id=interfaceDeclaration
+                {
+                    coid2=`Gomantlr_Java_classOrInterfaceDeclaration_2_2(id);
+                }
+        )
+        {
+            coid=`Gomantlr_Java_classOrInterfaceDeclaration(coid1,coid2);
+        }
 	;
 	
 classDeclaration returns [Gomantlr_Java_classDeclaration cd]
-	:	normalClassDeclaration
-    |   enumDeclaration
+	:	ncd=normalClassDeclaration
+        {
+            cd=`Gomantlr_Java_classDeclaration_1(ncd);
+        }
+    |   ed=enumDeclaration
+        {
+            cd=`Gomantlr_Java_classDeclaration_2(ed);
+        }
 	;
 	
 normalClassDeclaration returns [Gomantlr_Java_normalClassDeclaration ncd]
-	:	'class' i=Identifier (typeParameters)?
-        ('extends' type)?
-        ('implements' typeList)?
-        classBody
-        { 
-            Gomantlr_Java_Identifier gji=`Gomantlr_Java_Identifier(i.getText()); 
-            System.out.println(gji);
+@init {
+    Gomantlr_Java_normalClassDeclaration_2 ncd2=`Gomantlr_Java_normalClassDeclaration_2_2();
+    Gomantlr_Java_normalClassDeclaration_3 ncd3=`Gomantlr_Java_normalClassDeclaration_3_2();
+    Gomantlr_Java_normalClassDeclaration_4 ncd4=`Gomantlr_Java_normalClassDeclaration_4_2();
+}
+	:	'class' i=Identifier
+        (
+            tp=typeParameters
+            {
+                ncd2=`Gomantlr_Java_normalClassDeclaration_2_1(tp);
+            }
+        )?
+        (
+            'extends' t=type
+            {
+                ncd3=`Gomantlr_Java_normalClassDeclaration_3_1(Gomantlr_Java_normalClassDeclaration_3_1_1(t));
+            }
+        )?
+        (
+            'implements' tl=typeList
+            {
+                ncd4=`Gomantlr_Java_normalClassDeclaration_4_1(Gomantlr_Java_normalClassDeclaration_4_1_1(tl));
+            }
+        )?
+        cb=classBody
+        {
+            ncd=`Gomantlr_Java_normalClassDeclaration(Gomantlr_Java_Identifier(i.getText()),ncd2,ncd3,ncd4,cb);
         }
 	;
 	
 typeParameters returns [Gomantlr_Java_typeParameters tp]
-	:	'<' typeParameter (',' typeParameter)* '>'
+@init {
+    Gomantlr_Java_typeParameters_2 ttp=`Gomantlr_Java_typeParameters_2_1();
+}
+	:	'<' tp1=typeParameter 
+        (
+            ',' tp2=typeParameter
+            {
+                ttp=`Gomantlr_Java_typeParameters_2_1(ttp*,Gomantlr_Java_typeParameters_2_1_1(tp2));
+            }
+        )*
+        '>'
+        {
+            tp=`Gomantlr_Java_typeParameters(tp1,ttp);
+        }
 	;
 
 typeParameter returns [Gomantlr_Java_typeParameter tp]
-	:	Identifier ('extends' bound)?
+@init {
+    Gomantlr_Java_typeParameter_2 tp2=`Gomantlr_Java_typeParameter_2_2();
+}
+	:	i=Identifier 
+        (
+            'extends' b=bound
+            {
+                tp2=`Gomantlr_Java_typeParameter_2_1(Gomantlr_Java_typeParameter_2_1_1(b));
+            }
+        )?
+        {
+            tp=`Gomantlr_Java_typeParameter(Gomantlr_Java_Identifier(i.getText()),tp2);
+        }
 	;
 		
 bound returns [Gomantlr_Java_bound b]
-	:	type ('&' type)*
+@init {
+    Gomantlr_Java_bound_2 b2=`Gomantlr_Java_bound_2_1();
+}
+	:	t1=type
+        (
+            '&' t2=type
+            {
+                b2=`Gomantlr_Java_bound_2_1(b2*,Gomantlr_Java_bound_2_1_1(t2));
+            }
+        )*
+        {
+            b=`Gomantlr_Java_bound(t1,b2);
+        }
 	;
 
 enumDeclaration returns [Gomantlr_Java_enumDeclaration ed]
-	:	ENUM Identifier ('implements' typeList)? enumBody
+@init {
+    Gomantlr_Java_enumDeclaration_3 ed3=`Gomantlr_Java_enumDeclaration_3_2();
+}
+	:	e=ENUM i=Identifier 
+        (
+            'implements' tl=typeList
+            {
+                ed3=`Gomantlr_Java_enumDeclaration_3_1(Gomantlr_Java_enumDeclaration_3_1_1(tl));
+            }
+        )?
+        eb=enumBody
+        {
+            ed=`Gomantlr_Java_enumDeclaration(Gomantlr_Java_ENUM(e.getText()),Gomantlr_Java_Identifier(i.getText()),ed3,eb);
+        }
 	;
 	
 enumBody returns [Gomantlr_Java_enumBody eb]
-	:	'{' enumConstants? ','? enumBodyDeclarations? '}'
+@init {
+    Gomantlr_Java_enumBody_1 eb1=`Gomantlr_Java_enumBody_1_2();
+    Gomantlr_Java_enumBody_2 eb2=`Gomantlr_Java_enumBody_2_2();
+    Gomantlr_Java_enumBody_3 eb3=`Gomantlr_Java_enumBody_3_2();
+}
+	:	'{'
+        (
+            ec=enumConstants
+            {
+                eb1=`Gomantlr_Java_enumBody_1_1(ec);
+            }
+        )? 
+        (
+            ','
+            {
+                eb2=`Gomantlr_Java_enumBody_2_1();
+            }
+        )? 
+        (
+            ebd=enumBodyDeclarations
+            {
+                eb3=`Gomantlr_Java_enumBody_3_1(ebd);
+            }
+        )?
+        '}'
+        {
+            eb=`Gomantlr_Java_enumBody(eb1,eb2,eb3);
+        }
 	;
 
 enumConstants returns [Gomantlr_Java_enumConstants ec]
-	:	enumConstant (',' enumConstant)*
+@init {
+    Gomantlr_Java_enumConstants_2 tec=`Gomantlr_Java_enumConstants_2_1();
+}
+	:	ec1=enumConstant 
+        (
+            ',' ec2=enumConstant
+            {
+                tec=`Gomantlr_Java_enumConstants_2_1(tec*,Gomantlr_Java_enumConstants_2_1_1(ec2));
+            }
+        )*
+        {
+            ec=`Gomantlr_Java_enumConstants(ec1,tec);
+        }
 	;
 	
 enumConstant returns [Gomantlr_Java_enumConstant ec]
-	:	annotations? Identifier (arguments)? (classBody)?
+@init {
+    Gomantlr_Java_enumConstant_1 ec1=`Gomantlr_Java_enumConstant_1_2();
+    Gomantlr_Java_enumConstant_3 ec3=`Gomantlr_Java_enumConstant_3_2();
+    Gomantlr_Java_enumConstant_4 ec4=`Gomantlr_Java_enumConstant_4_2();
+}
+	:	(
+            an=annotations
+            {
+                ec1=`Gomantlr_Java_enumConstant_1_1(an);
+            }
+        )? 
+        i=Identifier 
+        (
+            ar=arguments
+            {
+                ec3=`Gomantlr_Java_enumConstant_3_1(ar);
+            }
+        )?
+        (
+            cb=classBody
+            {
+                ec4=`Gomantlr_Java_enumConstant_4_1(cb);
+            }
+        )?
+        {
+            ec=`Gomantlr_Java_enumConstant(ec1,Gomantlr_Java_Identifier(i.getText()),ec3,ec4);
+        }
 	;
 	
 enumBodyDeclarations returns [Gomantlr_Java_enumBodyDeclarations ebd]
-	:	';' (classBodyDeclaration)*
+@init {
+    Gomantlr_Java_enumBodyDeclarations_1 ebd1=`Gomantlr_Java_enumBodyDeclarations_1_1();
+}
+	:	';' 
+        (
+            cbd=classBodyDeclaration
+            {
+                ebd1=`Gomantlr_Java_enumBodyDeclarations_1_1(ebd1*,cbd);
+            }
+        )*
+        {
+            ebd=`Gomantlr_Java_enumBodyDeclarations(ebd1);
+        }
 	;
 	
 interfaceDeclaration returns [Gomantlr_Java_interfaceDeclaration id]
-	:	normalInterfaceDeclaration
-		| annotationTypeDeclaration
+	:   nid=normalInterfaceDeclaration
+        {
+            id=`Gomantlr_Java_interfaceDeclaration_1(nid);
+        }
+    |   atd=annotationTypeDeclaration
+        {
+            id=`Gomantlr_Java_interfaceDeclaration_2(atd);
+        }
 	;
 	
 normalInterfaceDeclaration returns [Gomantlr_Java_normalInterfaceDeclaration nid]
-	:	'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody
+@init {
+    Gomantlr_Java_normalInterfaceDeclaration_2 nid2=`Gomantlr_Java_normalInterfaceDeclaration_2_2();
+    Gomantlr_Java_normalInterfaceDeclaration_3 nid3=`Gomantlr_Java_normalInterfaceDeclaration_3_2();
+}
+	:	'interface' i=Identifier 
+        (
+            tp=typeParameters
+            {
+                nid2=`Gomantlr_Java_normalInterfaceDeclaration_2_1(tp);
+            }
+        )?
+        (
+            'extends' tl=typeList
+            {
+                nid3=`Gomantlr_Java_normalInterfaceDeclaration_3_1(Gomantlr_Java_normalInterfaceDeclaration_3_1_1(tl));
+            }
+        )?
+        ib=interfaceBody
+        {
+            nid=`Gomantlr_Java_normalInterfaceDeclaration(Gomantlr_Java_Identifier(i.getText()),nid2,nid3,ib);
+        }
 	;
 	
 typeList returns [Gomantlr_Java_typeList tl]
-	:	type (',' type)*
+@init {
+    Gomantlr_Java_typeList_2 tl2=`Gomantlr_Java_typeList_2_1();
+}
+	:	t1=type 
+        (
+            ',' t2=type
+            {
+                tl2=`Gomantlr_Java_typeList_2_1(tl2*,Gomantlr_Java_typeList_2_1_1(t2));
+            }
+        )*
+        {
+            tl=`Gomantlr_Java_typeList(t1,tl2);
+        }
 	;
 	
 classBody returns [Gomantlr_Java_classBody cb]
-	:	'{' classBodyDeclaration* '}'
+@init {
+    Gomantlr_Java_classBody_1 cb1=`Gomantlr_Java_classBody_1_1();
+}
+	:	'{' 
+        (
+            cbd=classBodyDeclaration
+            {
+                cb1=`Gomantlr_Java_classBody_1_1(cb1*,cbd);
+            }
+        )*
+        '}'
+        {
+            cb=`Gomantlr_Java_classBody(cb1);
+        }
 	;
 	
 interfaceBody returns [Gomantlr_Java_interfaceBody ib]
-	:	'{' interfaceBodyDeclaration* '}'
+@init {
+    Gomantlr_Java_interfaceBody_1 ib1=`Gomantlr_Java_interfaceBody_1_1();
+}
+	:	'{' 
+        (
+            ibd=interfaceBodyDeclaration
+            {
+                ib1=`Gomantlr_Java_interfaceBody_1_1(ib1*,ibd);
+            }
+        )*
+        '}'
+        {
+            ib=`Gomantlr_Java_interfaceBody(ib1);
+        }
 	;
 
 classBodyDeclaration returns [Gomantlr_Java_classBodyDeclaration ebd]
-	:	';'
-	|	'static'? block
-	|	modifier* memberDecl
+@init {
+    Gomantlr_Java_classBodyDeclaration_2_1_1 ebd2=`Gomantlr_Java_classBodyDeclaration_2_1_1_2();
+    Gomantlr_Java_classBodyDeclaration_3_1_1 ebd3=`Gomantlr_Java_classBodyDeclaration_3_1_1_1();
+}
+	:	    ';'
+            {
+                ebd=`Gomantlr_Java_classBodyDeclaration_1();
+            }
+	    |
+            (
+                'static'
+                {
+                    ebd2=`Gomantlr_Java_classBodyDeclaration_2_1_1_1();
+                }
+            )?
+            b=block
+            {
+                ebd=`Gomantlr_Java_classBodyDeclaration_2(Gomantlr_Java_classBodyDeclaration_2_1(ebd2,b));
+            }
+	    |
+            (
+                m=modifier
+                {
+                    ebd3=`Gomantlr_Java_classBodyDeclaration_3_1_1_1(ebd3*,m);
+                }
+            )*
+            md=memberDecl
+            {
+                ebd=`Gomantlr_Java_classBodyDeclaration_3(Gomantlr_Java_classBodyDeclaration_3_1(ebd3,md));
+            }
 	;
 	
 memberDecl returns [Gomantlr_Java_memberDecl md]
-	:	genericMethodOrConstructorDecl
-	|	methodDeclaration
-	|	fieldDeclaration
-	|	'void' Identifier voidMethodDeclaratorRest
-	|	Identifier constructorDeclaratorRest
-	|	interfaceDeclaration
-	|	classDeclaration
+	:	gmocd=genericMethodOrConstructorDecl
+        {
+            md=`Gomantlr_Java_memberDecl_1(gmocd);
+        }
+	|	md1=methodDeclaration
+        {
+            md=`Gomantlr_Java_memberDecl_2(md1);
+        }
+	|	fd=fieldDeclaration
+        {
+            md=`Gomantlr_Java_memberDecl_3(fd);
+        }
+	|	'void' i=Identifier vmdr=voidMethodDeclaratorRest
+        {
+            md=`Gomantlr_Java_memberDecl_4(Gomantlr_Java_memberDecl_4_1(Gomantlr_Java_Identifier(i.getText()),vmdr));
+        }
+	|	i=Identifier cdr=constructorDeclaratorRest
+        {
+            md=`Gomantlr_Java_memberDecl_5(Gomantlr_Java_memberDecl_5_1(Gomantlr_Java_Identifier(i.getText()),cdr));
+        }
+	|	id=interfaceDeclaration
+        {
+            md=`Gomantlr_Java_memberDecl_6(id);
+        }
+	|	cd=classDeclaration
+        {
+            md=`Gomantlr_Java_memberDecl_7(cd);
+        }
 	;
 	
 genericMethodOrConstructorDecl returns [Gomantlr_Java_genericMethodOrConstructorDecl gmocd]
-	:	typeParameters genericMethodOrConstructorRest
+	:	tp=typeParameters gmocr=genericMethodOrConstructorRest
+        {
+            gmocd=`Gomantlr_Java_genericMethodOrConstructorDecl(tp,gmocr);
+        }
 	;
 	
 genericMethodOrConstructorRest returns [Gomantlr_Java_genericMethodOrConstructorRest gmocr]
-	:	(type | 'void') Identifier methodDeclaratorRest
-	|	Identifier constructorDeclaratorRest
+@init {
+    Gomantlr_Java_genericMethodOrConstructorRest_1_1_1 gmocr1=null;
+}
+	:	(
+                t=type 
+                {
+                    gmocr1=`Gomantlr_Java_genericMethodOrConstructorRest_1_1_1_1(t);
+                }
+            |
+                'void'
+                {
+                    gmocr1=`Gomantlr_Java_genericMethodOrConstructorRest_1_1_1_2();
+                }
+        )
+        i=Identifier mdr=methodDeclaratorRest
+        {
+            gmocr=`Gomantlr_Java_genericMethodOrConstructorRest_1(Gomantlr_Java_genericMethodOrConstructorRest_1_1(gmocr1,Gomantlr_Java_Identifier(i.getText()),mdr));
+        }
+	|	i=Identifier cdr=constructorDeclaratorRest
+        {
+            gmocr=`Gomantlr_Java_genericMethodOrConstructorRest_2(Gomantlr_Java_genericMethodOrConstructorRest_2_1(Gomantlr_Java_Identifier(i.getText()),cdr));
+        }
 	;
 
 methodDeclaration returns [Gomantlr_Java_methodDeclaration md]
-	:	type Identifier methodDeclaratorRest
+	:	t=type i=Identifier mdr=methodDeclaratorRest
+        {
+            md=`Gomantlr_Java_methodDeclaration(t,Gomantlr_Java_Identifier(i.getText()),mdr);
+        }
 	;
 
 fieldDeclaration returns [Gomantlr_Java_fieldDeclaration fd]
-	:	type variableDeclarators ';'
+	:	t=type vd=variableDeclarators ';'
+        {
+            fd=`Gomantlr_Java_fieldDeclaration(t,vd);
+        }
 	;
 		
 interfaceBodyDeclaration returns [Gomantlr_Java_interfaceBodyDeclaration ibd]
-	:	modifier* interfaceMemberDecl
+@init {
+    Gomantlr_Java_interfaceBodyDeclaration_1_1_1 ibd1=`Gomantlr_Java_interfaceBodyDeclaration_1_1_1_1();
+}
+	:	(
+            m=modifier
+            {
+                ibd1=`Gomantlr_Java_interfaceBodyDeclaration_1_1_1_1(ibd1*,m);
+            }
+        )* 
+        imd=interfaceMemberDecl
+        {
+            ibd=`Gomantlr_Java_interfaceBodyDeclaration_1(Gomantlr_Java_interfaceBodyDeclaration_1_1(ibd1,imd));
+        }
 	|   ';'
 	;
 
 interfaceMemberDecl returns [Gomantlr_Java_interfaceMemberDecl imd]
-	:	interfaceMethodOrFieldDecl
-	|   interfaceGenericMethodDecl
-    |   'void' Identifier voidInterfaceMethodDeclaratorRest
-    |   interfaceDeclaration
-    |   classDeclaration
+	:	imofd=interfaceMethodOrFieldDecl
+        {
+            imd=`Gomantlr_Java_interfaceMemberDecl_1(imofd);
+        }
+	|   igmd=interfaceGenericMethodDecl
+        {
+            imd=`Gomantlr_Java_interfaceMemberDecl_2(igmd);
+        }
+    |   'void' i=Identifier vimdr=voidInterfaceMethodDeclaratorRest
+        {
+            imd=`Gomantlr_Java_interfaceMemberDecl_3(Gomantlr_Java_interfaceMemberDecl_3_1(Gomantlr_Java_Identifier(i.getText()),vimdr));
+        }
+    |   id=interfaceDeclaration
+        {
+            imd=`Gomantlr_Java_interfaceMemberDecl_4(id);
+        }
+    |   cd=classDeclaration
+        {
+            imd=`Gomantlr_Java_interfaceMemberDecl_5(cd);
+        }
 	;
 	
 interfaceMethodOrFieldDecl returns [Gomantlr_Java_interfaceMethodOrFieldDecl imofd]
-	:	type Identifier interfaceMethodOrFieldRest
+	:	t=type i=Identifier imofr=interfaceMethodOrFieldRest
+        {
+            imofd=`Gomantlr_Java_interfaceMethodOrFieldDecl(t,Gomantlr_Java_Identifier(i.getText()),imofr);
+        }
 	;
 	
 interfaceMethodOrFieldRest returns [Gomantlr_Java_interfaceMethodOrFieldRest imofr]
-	:	constantDeclaratorsRest ';'
-	|	interfaceMethodDeclaratorRest
+	:	cdr=constantDeclaratorsRest ';'
+        {
+            imofr=`Gomantlr_Java_interfaceMethodOrFieldRest_1(Gomantlr_Java_interfaceMethodOrFieldRest_1_1(cdr));
+        }
+	|	imdr=interfaceMethodDeclaratorRest
+        {
+            imofr=`Gomantlr_Java_interfaceMethodOrFieldRest_2(imdr);
+        }
 	;
 	
 methodDeclaratorRest returns [Gomantlr_Java_methodDeclaratorRest mdr]
-	:	formalParameters ('[' ']')*
-        ('throws' qualifiedNameList)?
-        (   methodBody
-        |   ';'
+@init {
+    Gomantlr_Java_methodDeclaratorRest_2 mdr2=`Gomantlr_Java_methodDeclaratorRest_2_1();
+    Gomantlr_Java_methodDeclaratorRest_3 mdr3=`Gomantlr_Java_methodDeclaratorRest_3_2();
+    Gomantlr_Java_methodDeclaratorRest_4 mdr4=null;
+}
+	:	fp=formalParameters 
+        (
+            '[' ']'
+            {
+                mdr2=`Gomantlr_Java_methodDeclaratorRest_2_1(mdr2*,Gomantlr_Java_methodDeclaratorRest_2_1_1());
+            }
+        )*
+        (
+            'throws' qnl=qualifiedNameList
+            {
+                mdr3=`Gomantlr_Java_methodDeclaratorRest_3_1(Gomantlr_Java_methodDeclaratorRest_3_1_1(qnl));
+            }
+        )?
+        (
+                mb=methodBody
+                {
+                    mdr4=`Gomantlr_Java_methodDeclaratorRest_4_1(mb);
+                }
+            |
+                ';'
+                {
+                    mdr4=`Gomantlr_Java_methodDeclaratorRest_4_2();
+                }
         )
+        {
+            mdr=`Gomantlr_Java_methodDeclaratorRest(fp,mdr2,mdr3,mdr4);
+        }
 	;
 	
 voidMethodDeclaratorRest returns [Gomantlr_Java_voidMethodDeclaratorRest vmd]
-	:	formalParameters ('throws' qualifiedNameList)?
-        (   methodBody
-        |   ';'
+@init {
+    Gomantlr_Java_voidMethodDeclaratorRest_2 vmd2=`Gomantlr_Java_voidMethodDeclaratorRest_2_2();
+    Gomantlr_Java_voidMethodDeclaratorRest_3 vmd3=null;
+}
+	:	fp=formalParameters 
+        (
+            'throws' qnl=qualifiedNameList
+            {
+                vmd2=`Gomantlr_Java_voidMethodDeclaratorRest_2_1(Gomantlr_Java_voidMethodDeclaratorRest_2_1_1(qnl));
+            }
+        )?
+        (
+                mb=methodBody
+                {
+                    vmd3=`Gomantlr_Java_voidMethodDeclaratorRest_3_1(mb);
+                }
+            |
+                ';'
+                {
+                    vmd3=`Gomantlr_Java_voidMethodDeclaratorRest_3_2();
+                }
         )
+        {
+            vmd=`Gomantlr_Java_voidMethodDeclaratorRest(fp,vmd2,vmd3);
+        }
 	;
 	
 interfaceMethodDeclaratorRest returns [Gomantlr_Java_interfaceMethodDeclaratorRest imdr]
-	:	formalParameters ('[' ']')* ('throws' qualifiedNameList)? ';'
+@init {
+    Gomantlr_Java_interfaceMethodDeclaratorRest_2 imdr2=`Gomantlr_Java_interfaceMethodDeclaratorRest_2_1();
+    Gomantlr_Java_interfaceMethodDeclaratorRest_3 imdr3=`Gomantlr_Java_interfaceMethodDeclaratorRest_3_2();
+}
+	:	fp=formalParameters 
+        (
+            '[' ']'
+            {
+                imdr2=`Gomantlr_Java_interfaceMethodDeclaratorRest_2_1(imdr2*,Gomantlr_Java_interfaceMethodDeclaratorRest_2_1_1());
+            }
+            
+        )* 
+        (
+            'throws' qnl=qualifiedNameList
+            {
+                imdr3=`Gomantlr_Java_interfaceMethodDeclaratorRest_3_1(Gomantlr_Java_interfaceMethodDeclaratorRest_3_1_1(qnl));
+            }
+        )?
+        ';'
+        {
+            imdr=`Gomantlr_Java_interfaceMethodDeclaratorRest(fp,imdr2,imdr3);
+        }
 	;
 	
 interfaceGenericMethodDecl returns [Gomantlr_Java_interfaceGenericMethodDecl igmd]
-	:	typeParameters (type | 'void') Identifier
-        interfaceMethodDeclaratorRest
+@init {
+    Gomantlr_Java_interfaceGenericMethodDecl_2 igmd2=null;
+}
+	:	tp=typeParameters 
+        (
+                t=type 
+                {
+                    igmd2=`Gomantlr_Java_interfaceGenericMethodDecl_2_1(t);
+                }
+            |
+                'void'
+                {
+                    igmd2=`Gomantlr_Java_interfaceGenericMethodDecl_2_2();
+                }
+        ) 
+        i=Identifier
+        imdr=interfaceMethodDeclaratorRest
+        {
+            igmd=`Gomantlr_Java_interfaceGenericMethodDecl(tp,igmd2,Gomantlr_Java_Identifier(i.getText()),imdr);
+        }
 	;
 	
 voidInterfaceMethodDeclaratorRest returns [Gomantlr_Java_voidInterfaceMethodDeclaratorRest vimd]
-	:	formalParameters ('throws' qualifiedNameList)? ';'
+@init {
+    Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2 vimd2=`Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_2();
+}
+	:	fp=formalParameters 
+        (
+            'throws' qnl=qualifiedNameList
+            {
+                vimd2=`Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1(Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1_1(qnl));
+            }
+        )? 
+        ';'
+        {
+            vimd=`Gomantlr_Java_voidInterfaceMethodDeclaratorRest(fp,vimd2);
+        }
 	;
 	
 constructorDeclaratorRest returns [Gomantlr_Java_constructorDeclaratorRest cdr]
-	:	formalParameters ('throws' qualifiedNameList)? methodBody
+@init {
+    Gomantlr_Java_constructorDeclaratorRest_2 cdr2=`Gomantlr_Java_constructorDeclaratorRest_2_2();
+}
+	:	fp=formalParameters 
+        (
+            'throws' qnl=qualifiedNameList
+            {
+                cdr2=`Gomantlr_Java_constructorDeclaratorRest_2_1(Gomantlr_Java_constructorDeclaratorRest_2_1_1(qnl));
+            }
+        )? 
+        mb=methodBody
+        {
+            cdr=`Gomantlr_Java_constructorDeclaratorRest(fp,cdr2,mb);
+        }
 	;
 
 constantDeclarator returns [Gomantlr_Java_constantDeclarator cd]
-	:	Identifier constantDeclaratorRest
+	:	i=Identifier cdr=constantDeclaratorRest
+        {
+            cd=`Gomantlr_Java_constantDeclarator(Gomantlr_Java_Identifier(i.getText()),cdr);
+        }
 	;
 	
 variableDeclarators returns [Gomantlr_Java_variableDeclarators vd]
-	:	variableDeclarator (',' variableDeclarator)*
+@init {
+    Gomantlr_Java_variableDeclarators_2 tvd=`Gomantlr_Java_variableDeclarators_2_1();
+}
+	:	vd1=variableDeclarator 
+        (
+            ',' vd2=variableDeclarator
+            {
+                tvd=`Gomantlr_Java_variableDeclarators_2_1(tvd*,Gomantlr_Java_variableDeclarators_2_1_1(vd2));
+            }
+        )*
+        {
+            vd=`Gomantlr_Java_variableDeclarators(vd1,tvd);
+        }
 	;
 
 variableDeclarator returns [Gomantlr_Java_variableDeclarator vd]
-	:	Identifier variableDeclaratorRest
+	:	i=Identifier vdr=variableDeclaratorRest
+        {
+            vd=`Gomantlr_Java_variableDeclarator(Gomantlr_Java_Identifier(i.getText()),vdr);
+        }
 	;
 	
 variableDeclaratorRest returns [Gomantlr_Java_variableDeclaratorRest vdr]
-	:	('[' ']')+ ('=' variableInitializer)?
-	|	'=' variableInitializer
+@init {
+    Gomantlr_Java_variableDeclaratorRest_1_1_1 vdr1=`Gomantlr_Java_variableDeclaratorRest_1_1_1_1();
+    Gomantlr_Java_variableDeclaratorRest_1_1_2 vdr2=`Gomantlr_Java_variableDeclaratorRest_1_1_2_2();
+}
+	:	(
+            '[' ']'
+            {
+                vdr1=`Gomantlr_Java_variableDeclaratorRest_1_1_1_1(vdr1*,Gomantlr_Java_variableDeclaratorRest_1_1_1_1_1());
+            }
+        )+ 
+        (
+            '=' vi=variableInitializer
+            {
+                vdr2=`Gomantlr_Java_variableDeclaratorRest_1_1_2_1(Gomantlr_Java_variableDeclaratorRest_1_1_2_1_1(vi));
+            }
+        )?
+        {
+            vdr=`Gomantlr_Java_variableDeclaratorRest_1(Gomantlr_Java_variableDeclaratorRest_1_1(vdr1,vdr2));
+        }
+	|	'=' vi=variableInitializer
+        {
+            vdr=`Gomantlr_Java_variableDeclaratorRest_2(Gomantlr_Java_variableDeclaratorRest_2_1(vi));
+        }
 	|
+        {
+            vdr=`Gomantlr_Java_variableDeclaratorRest_3();
+        }
 	;
 	
-constantDeclaratorsRest returns [Gomantlr_Java_constantDeclaratorsRest cdr]
-    :   constantDeclaratorRest (',' constantDeclarator)*
+constantDeclaratorsRest returns [Gomantlr_Java_constantDeclaratorsRest cdr]@init {
+    Gomantlr_Java_constantDeclaratorsRest_2 tcdr=`Gomantlr_Java_constantDeclaratorsRest_2_1();
+}
+    :   cdr1=constantDeclaratorRest 
+        (
+            ',' cd=constantDeclarator
+            {
+                tcdr=`Gomantlr_Java_constantDeclaratorsRest_2_1(tcdr*,Gomantlr_Java_constantDeclaratorsRest_2_1_1(cd));
+            }
+        )*
+        {
+            cdr=`Gomantlr_Java_constantDeclaratorsRest(cdr1,tcdr);
+        }
     ;
 
 constantDeclaratorRest returns [Gomantlr_Java_constantDeclaratorRest cdr]
-	:	('[' ']')* '=' variableInitializer
+@init {
+    Gomantlr_Java_constantDeclaratorRest_1 cdr1=`Gomantlr_Java_constantDeclaratorRest_1_1();
+}
+	:	(
+            '[' ']'
+            {
+                cdr1=`Gomantlr_Java_constantDeclaratorRest_1_1(cdr1*,Gomantlr_Java_constantDeclaratorRest_1_1_1());
+            }
+        )* 
+        '=' vi=variableInitializer
+        {
+            cdr=`Gomantlr_Java_constantDeclaratorRest(cdr1,vi);
+        }
 	;
 	
 variableDeclaratorId returns [Gomantlr_Java_variableDeclaratorId vdi]
-	:	Identifier ('[' ']')*
+@init {
+    Gomantlr_Java_variableDeclaratorId_2 vdi2=`Gomantlr_Java_variableDeclaratorId_2_1();
+}
+	:	i=Identifier 
+        (
+            '[' ']'
+            {
+                vdi2=`Gomantlr_Java_variableDeclaratorId_2_1(vdi2*,Gomantlr_Java_variableDeclaratorId_2_1_1());
+            }
+        )*
+        {
+            vdi=`Gomantlr_Java_variableDeclaratorId(Gomantlr_Java_Identifier(i.getText()),vdi2);
+        }
 	;
 
 variableInitializer returns [Gomantlr_Java_variableInitializer vi]
-	:	arrayInitializer
-    |   expression
+	:	ai=arrayInitializer
+        {
+            vi=`Gomantlr_Java_variableInitializer_1(ai);
+        }
+    |   e=expression
+        {
+            vi=`Gomantlr_Java_variableInitializer_2(e);
+        }
 	;
 	
 arrayInitializer returns [Gomantlr_Java_arrayInitializer ai]
+@init {
+    Gomantlr_Java_arrayInitializer_1 ai1=`Gomantlr_Java_arrayInitializer_1_2();
+    Gomantlr_Java_arrayInitializer_1_1_1_2 ai2=`Gomantlr_Java_arrayInitializer_1_1_1_2_1();
+    Gomantlr_Java_arrayInitializer_1_1_1_3 ai3=`Gomantlr_Java_arrayInitializer_1_1_1_3_2();
+}
 	:	'{' 
         (
             vi1=variableInitializer 
             (
                 ',' vi2=variableInitializer
+                {
+                    ai2=`Gomantlr_Java_arrayInitializer_1_1_1_2_1(ai2*,Gomantlr_Java_arrayInitializer_1_1_1_2_1_1(vi2));
+                }
             )*
             (
                 ','
+                {
+                    ai3=`Gomantlr_Java_arrayInitializer_1_1_1_3_1();
+                }
             )?
+            {
+                ai1=`Gomantlr_Java_arrayInitializer_1_1(Gomantlr_Java_arrayInitializer_1_1_1(vi1,ai2,ai3));
+            }
         )?
         '}'
+        {
+            ai=`Gomantlr_Java_arrayInitializer(ai1);
+        }
 	;
 
 modifier returns [Gomantlr_Java_modifier m]
@@ -332,13 +961,49 @@ typeName returns [Gomantlr_Java_typeName tn]
 
 type returns [Gomantlr_Java_type t]
 @init {
-    Gomantlr_Java_type_2_1_2 gt=`Gomantlr_Java_type_2_1_2_1();
+    Gomantlr_Java_type_1_1_2 t1_2=`Gomantlr_Java_type_1_1_2_2();
+    Gomantlr_Java_type_1_1_3 t1_3=`Gomantlr_Java_type_1_1_3_1();
+    Gomantlr_Java_type_1_1_3_1_1_2 t1_3_2=`Gomantlr_Java_type_1_1_3_1_1_2_2();
+    Gomantlr_Java_type_1_1_4 t1_4=`Gomantlr_Java_type_1_1_4_1();
+    Gomantlr_Java_type_2_1_2 t2_2=`Gomantlr_Java_type_2_1_2_1();
 }
-	:	Identifier (typeArguments)? ('.' Identifier (typeArguments)? )* ('[' ']')*
-	|	pt=primitiveType
-        ('[' ']' { gt=`Gomantlr_Java_type_2_1_2_1(gt*,Gomantlr_Java_type_2_1_2_1_1()); } )*
+	:	i1=Identifier 
+        (
+            ta1=typeArguments
+            {
+                t1_2=`Gomantlr_Java_type_1_1_2_1(ta1);
+            }
+        )? 
+        (
+            '.' i2=Identifier 
+            (
+                ta2=typeArguments
+                {
+                    t1_3_2=`Gomantlr_Java_type_1_1_3_1_1_2_1(ta2);
+                }
+            )?
+            {
+                t1_3=`Gomantlr_Java_type_1_1_3_1(t1_3*,Gomantlr_Java_type_1_1_3_1_1(Gomantlr_Java_Identifier(i2.getText()),t1_3_2));
+            }
+        )*
+        (
+            '[' ']'
+            {
+                t1_4=`Gomantlr_Java_type_1_1_4_1(t1_4*,Gomantlr_Java_type_1_1_4_1_1());
+            }
+        )*
         {
-            t=`Gomantlr_Java_type_2(Gomantlr_Java_type_2_1(pt,gt));
+            t=`Gomantlr_Java_type_1(Gomantlr_Java_type_1_1(Gomantlr_Java_Identifier(i1.getText()),t1_2,t1_3,t1_4));
+        }
+	|	pt=primitiveType
+        (
+            '[' ']' 
+            {
+                t2_2=`Gomantlr_Java_type_2_1_2_1(t2_2*,Gomantlr_Java_type_2_1_2_1_1());
+            }
+        )*
+        {
+            t=`Gomantlr_Java_type_2(Gomantlr_Java_type_2_1(pt,t2_2));
         }
 	;
 
