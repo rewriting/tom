@@ -445,40 +445,101 @@ annotationTypeElementDeclaration returns [Gomantlr_Java_annotationTypeElementDec
 	;
 	
 annotationTypeElementRest returns [Gomantlr_Java_annotationTypeElementRest ater]
-	:	type Identifier annotationMethodOrConstantRest ';'
-	|   classDeclaration
-	|   interfaceDeclaration
-	|   enumDeclaration
-	|   annotationTypeDeclaration
+	:	t=type i=Identifier amocr=annotationMethodOrConstantRest ';'
+        {
+            ater=`Gomantlr_Java_annotationTypeElementRest_1(Gomantlr_Java_annotationTypeElementRest_1_1(t,Gomantlr_Java_Identifier(i.getText()),amocr));
+        }
+	|   cd=classDeclaration
+        {
+            ater=`Gomantlr_Java_annotationTypeElementRest_2(cd);
+        }
+	|   id=interfaceDeclaration
+        {
+            ater=`Gomantlr_Java_annotationTypeElementRest_3(id);
+        }
+	|   ed=enumDeclaration
+        {
+            ater=`Gomantlr_Java_annotationTypeElementRest_4(ed);
+        }
+	|   atd=annotationTypeDeclaration
+        {
+            ater=`Gomantlr_Java_annotationTypeElementRest_5(atd);
+        }
 	;
 	
 annotationMethodOrConstantRest returns [Gomantlr_Java_annotationMethodOrConstantRest amocr]
-	:	annotationMethodRest
-	|   annotationConstantRest
+	:	amr=annotationMethodRest
+        {
+            amocr=`Gomantlr_Java_annotationMethodOrConstantRest_1(amr);
+        }
+	|   acr=annotationConstantRest
+        {
+            amocr=`Gomantlr_Java_annotationMethodOrConstantRest_2(acr);
+        }
 	;
 	
 annotationMethodRest returns [Gomantlr_Java_annotationMethodRest amr]
- 	:	'(' ')' (defaultValue)?
+@init {
+    Gomantlr_Java_annotationMethodRest_1 amr1=`Gomantlr_Java_annotationMethodRest_1_2();
+}
+ 	:	'(' ')' 
+        (
+            dv=defaultValue
+            {
+                amr1=`Gomantlr_Java_annotationMethodRest_1_1(dv);
+            }
+        )?
+        {
+            amr=`Gomantlr_Java_annotationMethodRest(amr1);
+        }
  	;
  	
 annotationConstantRest returns [Gomantlr_Java_annotationConstantRest acr]
- 	:	variableDeclarators
+ 	:	vd=variableDeclarators
+        {
+            acr=`Gomantlr_Java_annotationConstantRest(vd);
+        }
  	;
  	
 defaultValue returns [Gomantlr_Java_defaultValue dv]
- 	:	'default' elementValue
+ 	:	'default' ev=elementValue
+        {
+            dv=`Gomantlr_Java_defaultValue(ev);
+        }
  	;
 
 // STATEMENTS / BLOCKS
 
 block returns [Gomantlr_Java_block b]
-	:	'{' blockStatement* '}'
+@init {
+    Gomantlr_Java_block_1 b1=`Gomantlr_Java_block_1_1();
+}
+	:	'{' 
+        (
+            bs=blockStatement
+            {
+                b1=`Gomantlr_Java_block_1_1(b1*,bs);
+            }
+        )*
+        '}'
+        {
+            b=`Gomantlr_Java_block(b1);
+        }
 	;
 	
 blockStatement returns [Gomantlr_Java_blockStatement bs]
-	:	localVariableDeclaration
-    |   classOrInterfaceDeclaration
-    |   statement
+	:	lvd=localVariableDeclaration
+        {
+            bs=`Gomantlr_Java_blockStatement_1(lvd);
+        }
+    |   coid=classOrInterfaceDeclaration
+        {
+            bs=`Gomantlr_Java_blockStatement_2(coid);
+        }
+    |   s=statement
+        {
+            bs=`Gomantlr_Java_blockStatement_3(s);
+        }
 	;
 	
 localVariableDeclaration returns [Gomantlr_Java_localVariableDeclaration lvd]
@@ -486,59 +547,247 @@ localVariableDeclaration returns [Gomantlr_Java_localVariableDeclaration lvd]
 	;
 	
 statement returns [Gomantlr_Java_statement s]
-	: block
-    | 'assert' expression (':' expression)? ';'
-    | 'if' parExpression statement ('else' statement)?
-    | 'for' '(' forControl ')' statement
-    | 'while' parExpression statement
-    | 'do' statement 'while' parExpression ';'
-    | 'try' block
-      (	catches 'finally' block
-      | catches
-      | 'finally' block
-      )
-    | 'switch' parExpression '{' switchBlockStatementGroups '}'
-    | 'synchronized' parExpression block
-    | 'return' expression? ';'
-    | 'throw' expression ';'
-    | 'break' Identifier? ';'
-    | 'continue' Identifier? ';'
-    | ';'
-    | statementExpression ';'
-    | Identifier ':' statement
+@init {
+    Gomantlr_Java_statement_2_1_2 ts2=`Gomantlr_Java_statement_2_1_2_2();
+    Gomantlr_Java_statement_3_1_3 ts3=`Gomantlr_Java_statement_3_1_3_2();
+    Gomantlr_Java_statement_7_1_2 ts7=null;
+    Gomantlr_Java_statement_10_1_1 ts10=`Gomantlr_Java_statement_10_1_1_2();
+    Gomantlr_Java_statement_12_1_1 ts12=`Gomantlr_Java_statement_12_1_1_2();
+    Gomantlr_Java_statement_13_1_1 ts13=`Gomantlr_Java_statement_13_1_1_2();
+}
+	: 
+            b=block
+            {
+                s=`Gomantlr_Java_statement_1(b);
+            }
+        | 
+            'assert' e1=expression 
+            (
+                ':' e2=expression
+                {
+                    ts2=`Gomantlr_Java_statement_2_1_2_1(Gomantlr_Java_statement_2_1_2_1_1(e2));
+                }
+            )?
+            ';'
+            {
+                s=`Gomantlr_Java_statement_2(Gomantlr_Java_statement_2_1(e1,ts2));
+            }
+        | 
+            'if' pe=parExpression s1=statement 
+            (
+                'else' s2=statement
+                {
+                    ts3=`Gomantlr_Java_statement_3_1_3_1(Gomantlr_Java_statement_3_1_3_1_1(s2));
+                }
+            )?
+            {
+                s=`Gomantlr_Java_statement_3(Gomantlr_Java_statement_3_1(pe,s1,ts3));
+            }
+        | 
+            'for' '(' fc=forControl ')' s1=statement
+            {
+                s=`Gomantlr_Java_statement_4(Gomantlr_Java_statement_4_1(fc,s1));
+            }
+        |
+            'while' pe=parExpression s1=statement
+            {
+                s=`Gomantlr_Java_statement_5(Gomantlr_Java_statement_5_1(pe,s1));
+            }
+        |
+            'do' s1=statement 'while' pe=parExpression ';'
+            {
+                s=`Gomantlr_Java_statement_6(Gomantlr_Java_statement_6_1(s1,pe));
+            }
+        |
+            'try' b=block
+            (
+                    c=catches 'finally' b=block
+                    {
+                        ts7=`Gomantlr_Java_statement_7_1_2_1(Gomantlr_Java_statement_7_1_2_1_1(c,b));
+                    }
+                | 
+                    c=catches
+                    {
+                        ts7=`Gomantlr_Java_statement_7_1_2_2(c);
+                    }
+                |
+                    'finally' b=block
+                    {
+                        ts7=`Gomantlr_Java_statement_7_1_2_3(Gomantlr_Java_statement_7_1_2_3_1(b));
+                    }
+            )
+            {
+                s=`Gomantlr_Java_statement_7(Gomantlr_Java_statement_7_1(b,ts7));
+            }
+        |
+            'switch' pe=parExpression '{' sbsg=switchBlockStatementGroups '}'
+            {
+                s=`Gomantlr_Java_statement_8(Gomantlr_Java_statement_8_1(pe,sbsg));
+            }
+        |
+            'synchronized' pe=parExpression b=block
+            {
+                s=`Gomantlr_Java_statement_9(Gomantlr_Java_statement_9_1(pe,b));
+            }
+        |
+            'return' 
+            (
+                e=expression
+                {
+                    ts10=`Gomantlr_Java_statement_10_1_1_1(e);
+                }
+            )? 
+            ';'
+            {
+                s=`Gomantlr_Java_statement_10(Gomantlr_Java_statement_10_1(ts10));
+            }
+        |
+            'throw' e=expression ';'
+            {
+                s=`Gomantlr_Java_statement_11(Gomantlr_Java_statement_11_1(e));
+            }
+        |
+            'break'
+            (
+                i=Identifier
+                {
+                    ts12=`Gomantlr_Java_statement_12_1_1_1(Gomantlr_Java_Identifier(i.getText()));
+                }
+            )?
+            ';'
+            {
+                s=`Gomantlr_Java_statement_12(Gomantlr_Java_statement_12_1(ts12));
+            }
+        |
+            'continue' 
+            (
+                i=Identifier
+                {
+                    ts13=`Gomantlr_Java_statement_13_1_1_1(Gomantlr_Java_Identifier(i.getText()));
+                }
+            )?
+            ';'
+            {
+                s=`Gomantlr_Java_statement_13(Gomantlr_Java_statement_13_1(ts13));
+            }
+        |
+            ';'
+            {
+                s=`Gomantlr_Java_statement_14();
+            }
+        |
+            se=statementExpression ';'
+            {
+                s=`Gomantlr_Java_statement_15(Gomantlr_Java_statement_15_1(se));
+            }
+        | 
+            i=Identifier ':' s1=statement
+            {
+                s=`Gomantlr_Java_statement_16(Gomantlr_Java_statement_16_1(Gomantlr_Java_Identifier(i.getText()),s1));
+            }
 	;
 	
 catches returns [Gomantlr_Java_catches c]
-	:	catchClause (catchClause)*
+@init {
+    Gomantlr_Java_catches_2 c2=`Gomantlr_Java_catches_2_1();
+}
+	:	cc1=catchClause
+        (
+            cc2=catchClause
+            {
+                c2=`Gomantlr_Java_catches_2_1(c2*,cc2);
+            }
+        )*
+        {
+            c=`Gomantlr_Java_catches(cc1,c2);
+        }
 	;
 	
 catchClause returns [Gomantlr_Java_catchClause cc]
-	:	'catch' '(' formalParameter ')' block
+	:	'catch' '(' fp=formalParameter ')' b=block
+        {
+            cc=`Gomantlr_Java_catchClause(fp,b);
+        }
 	;
 
 formalParameter returns [Gomantlr_Java_formalParameter fp]
-	:	variableModifier* type variableDeclaratorId
+@init {
+    Gomantlr_Java_formalParameter_1 fp1=`Gomantlr_Java_formalParameter_1_1();
+}
+	:	(
+            vm=variableModifier
+            {
+                fp1=`Gomantlr_Java_formalParameter_1_1(fp1*,vm);
+            }
+        )*
+        t=type vdi=variableDeclaratorId
+        {
+            fp=`Gomantlr_Java_formalParameter(fp1,t,vdi);
+        }
 	;
 	
 switchBlockStatementGroups returns [Gomantlr_Java_switchBlockStatementGroups sbsg]
-	:	(switchBlockStatementGroup)*
+@init {
+    sbsg=`Gomantlr_Java_switchBlockStatementGroups_1();
+}
+	:	(
+            sbsg1=switchBlockStatementGroup
+            {
+                sbsg=`Gomantlr_Java_switchBlockStatementGroups_1(sbsg*,sbsg1);
+            }
+        )*
 	;
 	
 switchBlockStatementGroup returns [Gomantlr_Java_switchBlockStatementGroup sbsg]
-	:	switchLabel blockStatement*
+@init {
+    Gomantlr_Java_switchBlockStatementGroup_2 sbsg2=`Gomantlr_Java_switchBlockStatementGroup_2_1();
+}
+	:	sl=switchLabel 
+        (
+            bs=blockStatement
+            {
+                sbsg2=`Gomantlr_Java_switchBlockStatementGroup_2_1(sbsg2*,bs);
+            }
+        )*
+        {
+            sbsg=`Gomantlr_Java_switchBlockStatementGroup(sl,sbsg2);
+        }
 	;
 	
 switchLabel returns [Gomantlr_Java_switchLabel sl]
-	:	'case' constantExpression ':'
-	|   'case' enumConstantName ':'
+	:
+            'case' ce=constantExpression ':'
+            {
+                sl=`Gomantlr_Java_switchLabel_1(Gomantlr_Java_switchLabel_1_1(ce));
+            }
+	|
+        'case' ecn=enumConstantName ':'
+            {
+                sl=`Gomantlr_Java_switchLabel_2(Gomantlr_Java_switchLabel_2_1(ecn));
+            }
 	|   'default' ':'
+            {
+                sl=`Gomantlr_Java_switchLabel_3(Gomantlr_Java_switchLabel_3_1());
+            }
 	;
 	
 moreStatementExpressions returns [Gomantlr_Java_moreStatementExpressions mse]
-	:	(',' statementExpression)*
+@init {
+    mse=`Gomantlr_Java_moreStatementExpressions_1();
+}
+	:	(
+            ',' se=statementExpression
+            {
+                mse=`Gomantlr_Java_moreStatementExpressions_1(mse*,Gomantlr_Java_moreStatementExpressions_1_1(se));
+            }
+        )*
 	;
 
 forControl returns [Gomantlr_Java_forControl fc]
+@init {
+    Gomantlr_Java_forControl_2_1_1 fc1=`Gomantlr_Java_forControl_2_1_1_2();
+    Gomantlr_Java_forControl_2_1_2 fc2=`Gomantlr_Java_forControl_2_1_2_2();
+    Gomantlr_Java_forControl_2_1_3 fc3=`Gomantlr_Java_forControl_2_1_3_2();}
 	:	    fvc=forVarControl
             {
                 fc=`Gomantlr_Java_forControl_1(fvc);
@@ -546,15 +795,27 @@ forControl returns [Gomantlr_Java_forControl fc]
 	    |   
             (
                 fi=forInit
+                {
+                    fc1=`Gomantlr_Java_forControl_2_1_1_1(fi);
+                }
             )?
             ';'
             (
                 e=expression
+                {
+                    fc2=`Gomantlr_Java_forControl_2_1_2_1(e);
+                }
             )?
             ';'
             (
                 fu=forUpdate
+                {
+                    fc3=`Gomantlr_Java_forControl_2_1_3_1(fu);
+                }
             )?
+            {
+                fc=`Gomantlr_Java_forControl_2(Gomantlr_Java_forControl_2_1(fc1,fc2,fc3));
+            }
 	;
 
 forInit returns [Gomantlr_Java_forInit fi]
