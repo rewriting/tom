@@ -189,13 +189,13 @@ normalClassDeclaration returns [Gomantlr_Java_normalClassDeclaration ncd]
         (
             'extends' t=type
             {
-                ncd3=`Gomantlr_Java_normalClassDeclaration_3_1(Gomantlr_Java_normalClassDeclaration_3_1_1(t));
+                ncd3=`Gomantlr_Java_normalClassDeclaration_3_1(t);
             }
         )?
         (
             'implements' tl=typeList
             {
-                ncd4=`Gomantlr_Java_normalClassDeclaration_4_1(Gomantlr_Java_normalClassDeclaration_4_1_1(tl));
+                ncd4=`Gomantlr_Java_normalClassDeclaration_4_1(tl);
             }
         )?
         cb=classBody
