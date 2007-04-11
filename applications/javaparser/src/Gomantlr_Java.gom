@@ -535,21 +535,21 @@ Gomantlr_Java_qualifierList =
     Gomantlr_Java_qualifierList(Gomantlr_Java_Identifier*)
 
 Gomantlr_Java_literal =
-    Gomantlr_Java_literal_1(gomantlr_Java_integerLiteral:Gomantlr_Java_integerLiteral)
-  | Gomantlr_Java_literal_2(gomantlr_Java_FloatingPointLiteral:Gomantlr_Java_FloatingPointLiteral)
-  | Gomantlr_Java_literal_3(gomantlr_Java_CharacterLiteral:Gomantlr_Java_CharacterLiteral)
-  | Gomantlr_Java_literal_4(gomantlr_Java_StringLiteral:Gomantlr_Java_StringLiteral)
-  | Gomantlr_Java_literal_5(gomantlr_Java_booleanLiteral:Gomantlr_Java_booleanLiteral)
-  | Gomantlr_Java_literal_6()
+    Gomantlr_Java_integerLiteral(gomantlr_Java_integerLiteral:Gomantlr_Java_integerLiteral)
+  | Gomantlr_Java_floatingPointLiteral(gomantlr_Java_FloatingPointLiteral:Gomantlr_Java_FloatingPointLiteral)
+  | Gomantlr_Java_characterLiteral(gomantlr_Java_CharacterLiteral:Gomantlr_Java_CharacterLiteral)
+  | Gomantlr_Java_stringLiteral(gomantlr_Java_StringLiteral:Gomantlr_Java_StringLiteral)
+  | Gomantlr_Java_booleanLiteral(gomantlr_Java_booleanLiteral:Gomantlr_Java_booleanLiteral)
+  | Gomantlr_Java_nullLiteral()
 
 Gomantlr_Java_integerLiteral =
-    Gomantlr_Java_integerLiteral_1(gomantlr_Java_HexLiteral:Gomantlr_Java_HexLiteral)
-  | Gomantlr_Java_integerLiteral_2(gomantlr_Java_OctalLiteral:Gomantlr_Java_OctalLiteral)
-  | Gomantlr_Java_integerLiteral_3(gomantlr_Java_DecimalLiteral:Gomantlr_Java_DecimalLiteral)
+    Gomantlr_Java_HexLiteral(s:String)
+  | Gomantlr_Java_OctalLiteral(s:String)
+  | Gomantlr_Java_DecimalLiteral(s:String)
 
 Gomantlr_Java_booleanLiteral =
-    Gomantlr_Java_booleanLiteral_1()
-  | Gomantlr_Java_booleanLiteral_2()
+    Gomantlr_Java_True()
+  | Gomantlr_Java_False()
 
 Gomantlr_Java_annotations =
     Gomantlr_Java_annotations_1(Gomantlr_Java_annotation*)
@@ -1376,12 +1376,3 @@ Gomantlr_Java_CharacterLiteral =
 
 Gomantlr_Java_StringLiteral =
     Gomantlr_Java_StringLiteral(s:String)
-
-Gomantlr_Java_HexLiteral =
-    Gomantlr_Java_HexLiteral(s:String)
-
-Gomantlr_Java_OctalLiteral =
-    Gomantlr_Java_OctalLiteral(s:String)
-
-Gomantlr_Java_DecimalLiteral =
-    Gomantlr_Java_DecimalLiteral(s:String)

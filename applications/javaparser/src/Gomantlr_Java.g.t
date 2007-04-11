@@ -1189,33 +1189,33 @@ qualifiedName returns [Gomantlr_Java_qualifiedName qn]
 	
 literal	returns [Gomantlr_Java_literal l]
 	:   il=integerLiteral
-        { l=`Gomantlr_Java_literal_1(il); }
+        { l=`Gomantlr_Java_integerLiteral(il); }
     |   fpl=FloatingPointLiteral
-        { l=`Gomantlr_Java_literal_2(Gomantlr_Java_FloatingPointLiteral(fpl.getText())); }
+        { l=`Gomantlr_Java_floatingPointLiteral(Gomantlr_Java_FloatingPointLiteral(fpl.getText())); }
     |   cl=CharacterLiteral
-        { l=`Gomantlr_Java_literal_3(Gomantlr_Java_CharacterLiteral(cl.getText())); }
+        { l=`Gomantlr_Java_characterLiteral(Gomantlr_Java_CharacterLiteral(cl.getText())); }
     |   sl=StringLiteral
-        { l=`Gomantlr_Java_literal_4(Gomantlr_Java_StringLiteral(sl.getText())); }
+        { l=`Gomantlr_Java_stringLiteral(Gomantlr_Java_StringLiteral(sl.getText())); }
     |   bl=booleanLiteral
-        { l=`Gomantlr_Java_literal_5(bl); }
+        { l=`Gomantlr_Java_booleanLiteral(bl); }
     |   'null'
-        { l=`Gomantlr_Java_literal_6(); }
+        { l=`Gomantlr_Java_nullLiteral(); }
 	;
 
 integerLiteral returns [Gomantlr_Java_integerLiteral il]
     :   h=HexLiteral 
-        { il=`Gomantlr_Java_integerLiteral_1(Gomantlr_Java_HexLiteral(h.getText())); }
+        { il=`Gomantlr_Java_HexLiteral(h.getText()); }
     |   o=OctalLiteral
-        { il=`Gomantlr_Java_integerLiteral_2(Gomantlr_Java_OctalLiteral(o.getText())); }
+        { il=`Gomantlr_Java_OctalLiteral(o.getText()); }
     |   d=DecimalLiteral
-        { il=`Gomantlr_Java_integerLiteral_3(Gomantlr_Java_DecimalLiteral(d.getText())); }
+        { il=`Gomantlr_Java_DecimalLiteral(d.getText()); }
     ;
 
 booleanLiteral returns [Gomantlr_Java_booleanLiteral bl]
     :   'true'
-        { bl=`Gomantlr_Java_booleanLiteral_1(); }
+        { bl=`Gomantlr_Java_True(); }
     |   'false'
-        { bl=`Gomantlr_Java_booleanLiteral_2(); }
+        { bl=`Gomantlr_Java_False(); }
     ;
 
 // ANNOTATIONS
