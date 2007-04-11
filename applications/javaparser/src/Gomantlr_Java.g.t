@@ -1005,7 +1005,7 @@ type returns [Java_type t]
 	;
 
 primitiveType returns [Java_primitiveType pt]
-    :   'boolean' { pt=`Java_primitiveTypeBoolean(); }
+    : 'boolean' { pt=`Java_primitiveTypeBoolean(); }
     |	'char' { pt=`Java_primitiveTypeChar(); }
     |	'byte' { pt=`Java_primitiveTypeByte(); }
     |	'short' { pt=`Java_primitiveTypeShort(); }
@@ -1093,19 +1093,16 @@ qualifiedNameList returns [Java_qualifiedNameList qnl]
 	
 formalParameters returns [Java_formalParameters fp]
 @init {
-    Java_formalParameters_1 fp1=`Java_formalParameters_1_2();
+    fp=`Java_emptyFormalParameters();
 }
 	:	'(' 
         (
             fpd=formalParameterDecls
             {
-                fp1=`Java_formalParameters_1_1(fpd);
+                fp=`Java_formalParameters(fpd);
             }
         )?
         ')'
-        {
-            fp=`Java_formalParameters(fp1);
-        }
 	;
 	
 formalParameterDecls returns [Java_formalParameterDecls fpd]

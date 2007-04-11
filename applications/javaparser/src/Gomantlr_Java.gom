@@ -451,11 +451,8 @@ Java_qualifiedNameList =
     Java_qualifiedNameList(Java_qualifiedName*)
 
 Java_formalParameters =
-    Java_formalParameters(formalParameters_1:Java_formalParameters_1)
-
-Java_formalParameters_1 =
-    Java_formalParameters_1_1(formalParameterDecls:Java_formalParameterDecls)
-  | Java_formalParameters_1_2()
+    Java_formalParameters(formalParameterDecls:Java_formalParameterDecls)
+  | Java_emptyFormalParameters()
 
 Java_formalParameterDecls =
     Java_formalParameterDecls(formalParameterDecls_1:Java_formalParameterDecls_1,formalParameterDecls_2:Java_formalParameterDecls_2,formalParameterDecls_3:Java_type,formalParameterDecls_4:Java_formalParameterDecls_4)
