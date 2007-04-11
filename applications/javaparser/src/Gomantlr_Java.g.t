@@ -2611,45 +2611,49 @@ explicitGenericInvocationSuffix returns [Java_explicitGenericInvocationSuffix eg
 	
 selector returns [Java_selector s]
 @init {
-    Java_selector_1_2 sel1=`Java_selector_1_2_2();
-    Java_selector_4_1 sel4=`Java_selector_4_1_2();
+    Java_arguments sel1=null;
+    Java_nonWildcardTypeArguments sel4=`Java_emptyNonWildcardTypeArguments();
 }
 	:	    '.' i=Identifier 
             (
                 a=arguments
                 {
-                    sel1=`Java_selector_1_2_1(a);
+                    sel1=a;
                 }
             )?
             {
-                s=`Java_selector_1(Java_Identifier(i.getText()),sel1);
+              if(null==sel1) {
+                s=`Java_selectorField(Java_Identifier(i.getText()));
+              } else {
+                s=`Java_selectorMethod(Java_Identifier(i.getText()),sel1);
+              }
             }
 	    |
             '.' 'this'
             {
-                s=`Java_selector_2();
+                s=`Java_selectorThis();
             } 
 	    |
             '.' 'super' s2=superSuffix
             {
-                s=`Java_selector_3(s2);
+                s=`Java_selectorSuper(s2);
             }
 	    |
             '.' 'new' 
             (
                 nwta=nonWildcardTypeArguments
                 {
-                    sel4=`Java_selector_4_1_1(nwta);
+                    sel4=nwta;
                 }
             )?
             ic=innerCreator
             {
-                s=`Java_selector_4(sel4,ic);
+                s=`Java_selectorInner(sel4,ic);
             }
 	    |
             '[' e=expression ']'
             {
-                s=`Java_selector_5(e);
+                s=`Java_selectorExpression(e);
             }
 	;
 	

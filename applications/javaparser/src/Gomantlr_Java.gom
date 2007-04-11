@@ -1083,25 +1083,19 @@ Java_explicitGenericInvocation =
 
 Java_nonWildcardTypeArguments =
     Java_nonWildcardTypeArguments(nonWildcardTypeArguments_1:Java_typeList)
+  | Java_emptyNonWildcardTypeArguments()
 
 Java_explicitGenericInvocationSuffix =
     Java_explicitGenericInvocationSuffix_1(explicitGenericInvocationSuffix_1_1:Java_superSuffix)
   | Java_explicitGenericInvocationSuffix_2(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
 
 Java_selector =
-    Java_selector_1(selector_1_1:Java_Identifier,selector_1_2:Java_selector_1_2)
-  | Java_selector_2()
-  | Java_selector_3(selector_3_1:Java_superSuffix)
-  | Java_selector_4(selector_4_1:Java_selector_4_1,selector_4_2:Java_innerCreator)
-  | Java_selector_5(selector_5_1:Java_expression)
-
-Java_selector_1_2 =
-    Java_selector_1_2_1(arguments:Java_arguments)
-  | Java_selector_1_2_2()
-
-Java_selector_4_1 =
-    Java_selector_4_1_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
-  | Java_selector_4_1_2()
+    Java_selectorField(selector_1_1:Java_Identifier)
+  | Java_selectorMethod(selector_1_1:Java_Identifier,arguments:Java_arguments)
+  | Java_selectorThis()
+  | Java_selectorSuper(selector_3_1:Java_superSuffix)
+  | Java_selectorInner(nonWildcardTypeArguments:Java_nonWildcardTypeArguments,selector_4_2:Java_innerCreator)
+  | Java_selectorExpression(selector_5_1:Java_expression)
 
 Java_superSuffix =
     Java_superConstructor(arguments:Java_arguments)
