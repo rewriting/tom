@@ -3,11 +3,7 @@ imports  String
 abstract syntax
 
 Gomantlr_Java_compilationUnit =
-    Gomantlr_Java_compilationUnit(gomantlr_Java_compilationUnit_1:Gomantlr_Java_compilationUnit_1,gomantlr_Java_compilationUnit_2:Gomantlr_Java_compilationUnit_2,gomantlr_Java_compilationUnit_3:Gomantlr_Java_compilationUnit_3,gomantlr_Java_compilationUnit_4:Gomantlr_Java_compilationUnit_4)
-
-Gomantlr_Java_compilationUnit_1 =
-    Gomantlr_Java_compilationUnit_1_1(gomantlr_Java_annotations:Gomantlr_Java_annotations)
-  | Gomantlr_Java_compilationUnit_1_2()
+    Gomantlr_Java_compilationUnit(gomantlr_Java_annotations:Gomantlr_Java_annotationList,gomantlr_Java_compilationUnit_2:Gomantlr_Java_compilationUnit_2,gomantlr_Java_compilationUnit_3:Gomantlr_Java_compilationUnit_3,gomantlr_Java_compilationUnit_4:Gomantlr_Java_compilationUnit_4)
 
 Gomantlr_Java_compilationUnit_2 =
     Gomantlr_Java_compilationUnit_2_1(gomantlr_Java_packageDeclaration:Gomantlr_Java_packageDeclaration)
@@ -132,7 +128,7 @@ Gomantlr_Java_enumConstant =
     Gomantlr_Java_enumConstant(gomantlr_Java_enumConstant_1:Gomantlr_Java_enumConstant_1,gomantlr_Java_enumConstant_2:Gomantlr_Java_Identifier,gomantlr_Java_enumConstant_3:Gomantlr_Java_enumConstant_3,gomantlr_Java_enumConstant_4:Gomantlr_Java_enumConstant_4)
 
 Gomantlr_Java_enumConstant_1 =
-    Gomantlr_Java_enumConstant_1_1(gomantlr_Java_annotations:Gomantlr_Java_annotations)
+    Gomantlr_Java_enumConstant_1_1(gomantlr_Java_annotations:Gomantlr_Java_annotationList)
   | Gomantlr_Java_enumConstant_1_2()
 
 Gomantlr_Java_enumConstant_3 =
@@ -501,7 +497,7 @@ Gomantlr_Java_formalParameterDecls_1 =
   | Gomantlr_Java_formalParameterDecls_1_2()
 
 Gomantlr_Java_formalParameterDecls_2 =
-    Gomantlr_Java_formalParameterDecls_2_1(gomantlr_Java_annotations:Gomantlr_Java_annotations)
+    Gomantlr_Java_formalParameterDecls_2_1(gomantlr_Java_annotations:Gomantlr_Java_annotationList)
   | Gomantlr_Java_formalParameterDecls_2_2()
 
 Gomantlr_Java_formalParameterDecls_4 =
@@ -542,8 +538,8 @@ Gomantlr_Java_booleanLiteral =
     Gomantlr_Java_True()
   | Gomantlr_Java_False()
 
-Gomantlr_Java_annotations =
-    Gomantlr_Java_annotations_1(Gomantlr_Java_annotation*)
+Gomantlr_Java_annotationList =
+    Gomantlr_Java_annotationList(Gomantlr_Java_annotation*)
 
 Gomantlr_Java_annotation =
     Gomantlr_Java_annotation(gomantlr_Java_annotation_1:Gomantlr_Java_typeName,gomantlr_Java_annotation_2:Gomantlr_Java_annotation_2)

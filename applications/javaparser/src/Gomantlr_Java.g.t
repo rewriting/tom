@@ -50,7 +50,7 @@ protected boolean enumIsKeyword = false;
 // starting point for parsing a java file
 compilationUnit returns [Gomantlr_Java_compilationUnit cu]
 @init {
-    Gomantlr_Java_compilationUnit_1 cu1=`Gomantlr_Java_compilationUnit_1_2();
+    Gomantlr_Java_annotationList cu1=`Gomantlr_Java_annotationList();
     Gomantlr_Java_compilationUnit_2 cu2=`Gomantlr_Java_compilationUnit_2_2();
     Gomantlr_Java_compilationUnit_3 cu3=`Gomantlr_Java_compilationUnit_3_1();
     Gomantlr_Java_compilationUnit_4 cu4=`Gomantlr_Java_compilationUnit_4_1();
@@ -58,7 +58,7 @@ compilationUnit returns [Gomantlr_Java_compilationUnit cu]
 	:	(
             a=annotations
             {
-                cu1=`Gomantlr_Java_compilationUnit_1_1(a);
+                cu1=a;
             }
         )?
 		(
@@ -1220,15 +1220,15 @@ booleanLiteral returns [Gomantlr_Java_booleanLiteral bl]
 
 // ANNOTATIONS
 
-annotations returns [Gomantlr_Java_annotations a]
+annotations returns [Gomantlr_Java_annotationList a]
 @init {
-    a=`Gomantlr_Java_annotations_1();
+    a=`Gomantlr_Java_annotationList();
 }
 	:	
         (
             a1=annotation
             {
-                a=`Gomantlr_Java_annotations_1(a*,a1);
+                a=`Gomantlr_Java_annotationList(a*,a1);
             }
         )+
 	;
