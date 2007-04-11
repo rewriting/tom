@@ -2278,28 +2278,28 @@ unaryExpressionNotPlusMinus returns [Gomantlr_Java_unaryExpressionNotPlusMinus u
 
 castExpression returns [Gomantlr_Java_castExpression ce]
 @init {
-    Gomantlr_Java_castExpression_2_1_1 ce2=null;
+    Gomantlr_Java_castExpression_2_1 ce2=null;
 }
     :       '(' pt=primitiveType ')' ue=unaryExpression
             {
-                ce=`Gomantlr_Java_castExpression_1(Gomantlr_Java_castExpression_1_1(pt,ue));
+                ce=`Gomantlr_Java_castExpression_1(pt,ue);
             }
         |  
             '(' 
             (
                     e=expression
                     {
-                        ce2=`Gomantlr_Java_castExpression_2_1_1_1(e);
+                        ce2=`Gomantlr_Java_castExpression_2_1_1(e);
                     }
                 | 
                     t=type
                     {
-                        ce2=`Gomantlr_Java_castExpression_2_1_1_2(t);
+                        ce2=`Gomantlr_Java_castExpression_2_1_2(t);
                     }
             )
             ')' uenpm=unaryExpressionNotPlusMinus
             {
-                ce=`Gomantlr_Java_castExpression_2(Gomantlr_Java_castExpression_2_1(ce2,uenpm));
+                ce=`Gomantlr_Java_castExpression_2(ce2,uenpm);
             }
     ;
 
