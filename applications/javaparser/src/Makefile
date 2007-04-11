@@ -8,10 +8,14 @@
 	rm -f $@
 	tom $<
 
-all: gomantlr_java/Gomantlr_Java.tom Gomantlr_JavaParser.java Main.java
+all: Gomantlr_JavaParser.java Main.java
 	make classclean
 	javac Main.java
 	java Main HelloWorld.java
+
+Gomantlr_Java.g: Gomantlr_Java.g.t gomantlr_java/Gomantlr_Java.tom
+	rm -f $@
+	tom $< --output $@
 
 Gomantlr_JavaParser.java: Gomantlr_Java.g
 	make antlrclean
