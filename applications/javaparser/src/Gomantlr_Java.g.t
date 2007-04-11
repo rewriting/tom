@@ -114,7 +114,7 @@ importDeclaration returns [Gomantlr_Java_importDeclaration id]
         (
             '.' '*'
             {
-                id4=`Gomantlr_Java_importDeclaration_4_1(Gomantlr_Java_importDeclaration_4_1_1());
+                id4=`Gomantlr_Java_importDeclaration_4_1();
             }
         )?
         ';'
