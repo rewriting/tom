@@ -19,11 +19,11 @@ Gomantlr_Java_packageDeclaration =
     Gomantlr_Java_packageDeclaration(gomantlr_Java_packageDeclaration_1:Gomantlr_Java_qualifiedName)
 
 Gomantlr_Java_importDeclaration =
-    Gomantlr_Java_importDeclaration(gomantlr_Java_importDeclaration_1:Gomantlr_Java_importDeclaration_1,gomantlr_Java_importDeclaration_2:Gomantlr_Java_Identifier,gomantlr_Java_importDeclaration_3:Gomantlr_Java_importDeclaration_3,gomantlr_Java_importDeclaration_4:Gomantlr_Java_importDeclaration_4)
+    Gomantlr_Java_importDeclaration(gomantlr_Java_importDeclaration_1:Gomantlr_Java_isStaticImport,gomantlr_Java_importDeclaration_2:Gomantlr_Java_Identifier,gomantlr_Java_importDeclaration_3:Gomantlr_Java_importDeclaration_3,gomantlr_Java_importDeclaration_4:Gomantlr_Java_importDeclaration_4)
 
-Gomantlr_Java_importDeclaration_1 =
-    Gomantlr_Java_importDeclaration_1_1()
-  | Gomantlr_Java_importDeclaration_1_2()
+Gomantlr_Java_isStaticImport =
+    Gomantlr_Java_staticImport()
+  | Gomantlr_Java_nonStaticImport()
 
 Gomantlr_Java_importDeclaration_3 =
     Gomantlr_Java_importDeclaration_3_1(Gomantlr_Java_importDeclaration_3_1_1*)

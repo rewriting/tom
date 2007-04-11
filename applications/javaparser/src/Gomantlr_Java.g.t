@@ -93,7 +93,7 @@ packageDeclaration returns [Gomantlr_Java_packageDeclaration pd]
 	
 importDeclaration returns [Gomantlr_Java_importDeclaration id]
 @init {
-    Gomantlr_Java_importDeclaration_1 id1=`Gomantlr_Java_importDeclaration_1_2();
+    Gomantlr_Java_isStaticImport id1=`Gomantlr_Java_nonStaticImport();
     Gomantlr_Java_importDeclaration_3 id3=`Gomantlr_Java_importDeclaration_3_1();
     Gomantlr_Java_importDeclaration_4 id4=`Gomantlr_Java_importDeclaration_4_2();
 }
@@ -101,7 +101,7 @@ importDeclaration returns [Gomantlr_Java_importDeclaration id]
         (
             'static'
             {
-                id1=`Gomantlr_Java_importDeclaration_1_1();
+                id1=`Gomantlr_Java_staticImport();
             }
         )? 
         i1=Identifier 
