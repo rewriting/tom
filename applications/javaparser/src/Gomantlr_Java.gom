@@ -767,10 +767,7 @@ Java_parExpression =
     Java_parExpression(parExpression_1:Java_expression)
 
 Java_expressionList =
-    Java_expressionList(expressionList_1:Java_expression,expressionList_2:Java_expressionList_2)
-
-Java_expressionList_2 =
-    Java_expressionList_2_1(Java_expressionList_2_1_1*)
+    Java_expressionList(Java_expression*)
 
 Java_expressionList_2_1_1 =
     Java_expressionList_2_1_1(expressionList_2_1_1_1:Java_expression)
@@ -1115,11 +1112,7 @@ Java_superSuffix_2_2 =
   | Java_superSuffix_2_2_2()
 
 Java_arguments =
-    Java_arguments(arguments_1:Java_arguments_1)
-
-Java_arguments_1 =
-    Java_arguments_1_1(expressionList:Java_expressionList)
-  | Java_arguments_1_2()
+    Java_arguments(arguments_1:Java_expressionList)
 
 Java_Identifier =
     Java_Identifier(s:String)

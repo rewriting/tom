@@ -1837,17 +1837,17 @@ parExpression returns [Java_parExpression pe]
 	
 expressionList returns [Java_expressionList el]
 @init {
-    Java_expressionList_2 el2=`Java_expressionList_2_1();
+    el=`Java_expressionList();
 }
     :   e1=expression 
         (
             ',' e2=expression
             {
-                el2=`Java_expressionList_2_1(el2*,Java_expressionList_2_1_1(e2));
+                el=`Java_expressionList(el*,e2);
             }
         )*
         {
-            el=`Java_expressionList(e1,el2);
+            el=`Java_expressionList(e1,el*);
         }
     ;
 
@@ -2677,13 +2677,13 @@ superSuffix returns [Java_superSuffix sup]
 
 arguments returns [Java_arguments a]
 @init {
-    Java_arguments_1 a1=`Java_arguments_1_2();
+    Java_expressionList a1=`Java_expressionList();
 }
 	:	'('
         (
             el=expressionList
             {
-                a1=`Java_arguments_1_1(el);
+                a1=el;
             }
         )? ')'
         {
