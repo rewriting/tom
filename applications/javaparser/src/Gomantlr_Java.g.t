@@ -261,7 +261,7 @@ enumDeclaration returns [Gomantlr_Java_enumDeclaration ed]
         (
             'implements' tl=typeList
             {
-                ed3=`Gomantlr_Java_enumDeclaration_3_1(Gomantlr_Java_enumDeclaration_3_1_1(tl));
+                ed3=`Gomantlr_Java_enumDeclaration_3_1(tl);
             }
         )?
         eb=enumBody
