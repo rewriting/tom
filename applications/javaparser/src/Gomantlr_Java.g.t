@@ -2236,7 +2236,7 @@ unaryExpression returns [Gomantlr_Java_unaryExpression ue]
 unaryExpressionNotPlusMinus returns [Gomantlr_Java_unaryExpressionNotPlusMinus uenpm]
 @init {
     Gomantlr_Java_unaryExpressionNotPlusMinus_4_2 uenpm2=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_2_1();
-    Gomantlr_Java_unaryExpressionNotPlusMinus_4_3 uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_2();
+    Gomantlr_Java_unaryExpressionNotPlusMinus_4_3 uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_0();
 }
     :       '~' ue=unaryExpression
             {
@@ -2263,12 +2263,12 @@ unaryExpressionNotPlusMinus returns [Gomantlr_Java_unaryExpressionNotPlusMinus u
             (
                     '++'
                     {
-                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1(Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1_1_1());
+                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1();
                     }
                 |
                     '--'
                     {
-                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1(Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1_1_2());
+                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_2();
                     }
             )?
             {
