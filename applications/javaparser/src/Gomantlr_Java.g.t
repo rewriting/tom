@@ -1940,7 +1940,7 @@ conditionalExpression returns [Gomantlr_Java_conditionalExpression ce]
         (
             '?' e1=expression ':' e2=expression 
             {
-                ce2=`Gomantlr_Java_conditionalExpression_2_1(Gomantlr_Java_conditionalExpression_2_1_1(e1,e2));
+                ce2=`Gomantlr_Java_conditionalExpression_2_1(e1,e2);
             }
         )?
         {
