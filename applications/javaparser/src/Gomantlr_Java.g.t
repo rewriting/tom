@@ -2530,9 +2530,9 @@ innerCreator returns [Gomantlr_Java_innerCreator ic]
 
 arrayCreatorRest returns [Gomantlr_Java_arrayCreatorRest acr]
 @init {
-    Gomantlr_Java_arrayCreatorRest_1_1_1_1 acr1=`Gomantlr_Java_arrayCreatorRest_1_1_1_1_1();
-    Gomantlr_Java_arrayCreatorRest_1_2_1_2 acr2=`Gomantlr_Java_arrayCreatorRest_1_2_1_2_1();
-    Gomantlr_Java_arrayCreatorRest_1_2_1_3 acr3=`Gomantlr_Java_arrayCreatorRest_1_2_1_3_1();
+    Gomantlr_Java_arrayCreatorRest_1_1 acr1=`Gomantlr_Java_arrayCreatorRest_1_1_1();
+    Gomantlr_Java_arrayCreatorRest_2_2 acr2=`Gomantlr_Java_arrayCreatorRest_2_2_1();
+    Gomantlr_Java_arrayCreatorRest_2_3 acr3=`Gomantlr_Java_arrayCreatorRest_2_3_1();
 }
 	:	'['
         (
@@ -2540,29 +2540,29 @@ arrayCreatorRest returns [Gomantlr_Java_arrayCreatorRest acr]
                 (
                     '[' ']' 
                     {
-                        acr1=`Gomantlr_Java_arrayCreatorRest_1_1_1_1_1(acr1*,Gomantlr_Java_arrayCreatorRest_1_1_1_1_1_1()); 
+                        acr1=`Gomantlr_Java_arrayCreatorRest_1_1_1(acr1*,Gomantlr_Java_arrayCreatorRest_1_1_1_1()); 
                     } 
                 )*
                 a=arrayInitializer
                 {
-                    acr=`Gomantlr_Java_arrayCreatorRest(Gomantlr_Java_arrayCreatorRest_1_1(Gomantlr_Java_arrayCreatorRest_1_1_1(acr1,a)));
+                    acr=`Gomantlr_Java_arrayCreatorRest_1(acr1,a);
                 }
             | 
                 e=expression ']' 
                 (
                     '[' e1=expression ']'
                     {
-                        acr2=`Gomantlr_Java_arrayCreatorRest_1_2_1_2_1(acr2*,Gomantlr_Java_arrayCreatorRest_1_2_1_2_1_1(e1));
+                        acr2=`Gomantlr_Java_arrayCreatorRest_2_2_1(acr2*,Gomantlr_Java_arrayCreatorRest_2_2_1_1(e1));
                     }
                 )*
                 (
                     '[' ']'
                     {
-                        acr3=`Gomantlr_Java_arrayCreatorRest_1_2_1_3_1(acr3*,Gomantlr_Java_arrayCreatorRest_1_2_1_3_1_1());
+                        acr3=`Gomantlr_Java_arrayCreatorRest_2_3_1(acr3*,Gomantlr_Java_arrayCreatorRest_2_3_1_1());
                     }
                 )*
                 {
-                    acr=`Gomantlr_Java_arrayCreatorRest(Gomantlr_Java_arrayCreatorRest_1_2(Gomantlr_Java_arrayCreatorRest_1_2_1(e,acr2,acr3)));
+                    acr=`Gomantlr_Java_arrayCreatorRest_2(e,acr2,acr3);
                 }
         )
 	;
