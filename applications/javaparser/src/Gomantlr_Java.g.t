@@ -2064,7 +2064,7 @@ instanceOfExpression returns [Gomantlr_Java_instanceOfExpression ioe]
         (
             'instanceof' t=type
             {
-                ioe2=`Gomantlr_Java_instanceOfExpression_2_1(Gomantlr_Java_instanceOfExpression_2_1_1(t));
+                ioe2=`Gomantlr_Java_instanceOfExpression_2_1(t);
             }
         )?
         {
