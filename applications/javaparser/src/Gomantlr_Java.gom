@@ -961,62 +961,38 @@ Gomantlr_Java_castExpression_2_1 =
 
 Gomantlr_Java_primary =
     Gomantlr_Java_primary_1(gomantlr_Java_parExpression:Gomantlr_Java_parExpression)
-  | Gomantlr_Java_primary_2(gomantlr_Java_primary_2_1:Gomantlr_Java_primary_2_1)
+  | Gomantlr_Java_primary_2(gomantlr_Java_primary_2_1:Gomantlr_Java_nonWildcardTypeArguments,gomantlr_Java_primary_2_2:Gomantlr_Java_primary_2_2)
   | Gomantlr_Java_primary_3(gomantlr_Java_primary_3_1:Gomantlr_Java_primary_3_1)
-  | Gomantlr_Java_primary_4(gomantlr_Java_primary_4_1:Gomantlr_Java_primary_4_1)
+  | Gomantlr_Java_primary_4(gomantlr_Java_primary_4_1:Gomantlr_Java_superSuffix)
   | Gomantlr_Java_primary_5(gomantlr_Java_literal:Gomantlr_Java_literal)
-  | Gomantlr_Java_primary_6(gomantlr_Java_primary_6_1:Gomantlr_Java_primary_6_1)
-  | Gomantlr_Java_primary_7(gomantlr_Java_primary_7_1:Gomantlr_Java_primary_7_1)
-  | Gomantlr_Java_primary_8(gomantlr_Java_primary_8_1:Gomantlr_Java_primary_8_1)
-  | Gomantlr_Java_primary_9(gomantlr_Java_primary_9_1:Gomantlr_Java_primary_9_1)
+  | Gomantlr_Java_primary_6(gomantlr_Java_primary_6_1:Gomantlr_Java_creator)
+  | Gomantlr_Java_primary_7(gomantlr_Java_primary_7_1:Gomantlr_Java_Identifier,gomantlr_Java_primary_7_2:Gomantlr_Java_primary_7_2,gomantlr_Java_primary_7_3:Gomantlr_Java_primary_7_3)
+  | Gomantlr_Java_primary_8(gomantlr_Java_primary_8_1:Gomantlr_Java_primitiveType,gomantlr_Java_primary_8_2:Gomantlr_Java_primary_8_2)
+  | Gomantlr_Java_primary_9()
 
-Gomantlr_Java_primary_2_1 =
-    Gomantlr_Java_primary_2_1(gomantlr_Java_primary_2_1_1:Gomantlr_Java_nonWildcardTypeArguments,gomantlr_Java_primary_2_1_2:Gomantlr_Java_primary_2_1_2)
-
-Gomantlr_Java_primary_2_1_2 =
-    Gomantlr_Java_primary_2_1_2_1(gomantlr_Java_explicitGenericInvocationSuffix:Gomantlr_Java_explicitGenericInvocationSuffix)
-  | Gomantlr_Java_primary_2_1_2_2(gomantlr_Java_primary_2_1_2_2_1:Gomantlr_Java_primary_2_1_2_2_1)
-
-Gomantlr_Java_primary_2_1_2_2_1 =
-    Gomantlr_Java_primary_2_1_2_2_1(gomantlr_Java_primary_2_1_2_2_1_1:Gomantlr_Java_arguments)
+Gomantlr_Java_primary_2_2 =
+    Gomantlr_Java_primary_2_2_1(gomantlr_Java_explicitGenericInvocationSuffix:Gomantlr_Java_explicitGenericInvocationSuffix)
+  | Gomantlr_Java_primary_2_2_2(gomantlr_Java_primary_2_2_2_1:Gomantlr_Java_arguments)
 
 Gomantlr_Java_primary_3_1 =
-    Gomantlr_Java_primary_3_1(gomantlr_Java_primary_3_1_1:Gomantlr_Java_primary_3_1_1)
+    Gomantlr_Java_primary_3_1_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
+  | Gomantlr_Java_primary_3_1_2()
 
-Gomantlr_Java_primary_3_1_1 =
-    Gomantlr_Java_primary_3_1_1_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_primary_3_1_1_2()
+Gomantlr_Java_primary_7_2 =
+    Gomantlr_Java_primary_7_2_1(Gomantlr_Java_primary_7_2_1_1*)
 
-Gomantlr_Java_primary_4_1 =
-    Gomantlr_Java_primary_4_1(gomantlr_Java_primary_4_1_1:Gomantlr_Java_superSuffix)
+Gomantlr_Java_primary_7_2_1_1 =
+    Gomantlr_Java_primary_7_2_1_1(gomantlr_Java_primary_7_2_1_1_1:Gomantlr_Java_Identifier)
 
-Gomantlr_Java_primary_6_1 =
-    Gomantlr_Java_primary_6_1(gomantlr_Java_primary_6_1_1:Gomantlr_Java_creator)
+Gomantlr_Java_primary_7_3 =
+    Gomantlr_Java_primary_7_3_1(gomantlr_Java_identifierSuffix:Gomantlr_Java_identifierSuffix)
+  | Gomantlr_Java_primary_7_3_2()
 
-Gomantlr_Java_primary_7_1 =
-    Gomantlr_Java_primary_7_1(gomantlr_Java_primary_7_1_1:Gomantlr_Java_Identifier,gomantlr_Java_primary_7_1_2:Gomantlr_Java_primary_7_1_2,gomantlr_Java_primary_7_1_3:Gomantlr_Java_primary_7_1_3)
+Gomantlr_Java_primary_8_2 =
+    Gomantlr_Java_primary_8_2_1(Gomantlr_Java_primary_8_2_1_1*)
 
-Gomantlr_Java_primary_7_1_2 =
-    Gomantlr_Java_primary_7_1_2_1(Gomantlr_Java_primary_7_1_2_1_1*)
-
-Gomantlr_Java_primary_7_1_2_1_1 =
-    Gomantlr_Java_primary_7_1_2_1_1(gomantlr_Java_primary_7_1_2_1_1_1:Gomantlr_Java_Identifier)
-
-Gomantlr_Java_primary_7_1_3 =
-    Gomantlr_Java_primary_7_1_3_1(gomantlr_Java_identifierSuffix:Gomantlr_Java_identifierSuffix)
-  | Gomantlr_Java_primary_7_1_3_2()
-
-Gomantlr_Java_primary_8_1 =
-    Gomantlr_Java_primary_8_1(gomantlr_Java_primary_8_1_1:Gomantlr_Java_primitiveType,gomantlr_Java_primary_8_1_2:Gomantlr_Java_primary_8_1_2)
-
-Gomantlr_Java_primary_8_1_2 =
-    Gomantlr_Java_primary_8_1_2_1(Gomantlr_Java_primary_8_1_2_1_1*)
-
-Gomantlr_Java_primary_8_1_2_1_1 =
-    Gomantlr_Java_primary_8_1_2_1_1()
-
-Gomantlr_Java_primary_9_1 =
-    Gomantlr_Java_primary_9_1()
+Gomantlr_Java_primary_8_2_1_1 =
+    Gomantlr_Java_primary_8_2_1_1()
 
 Gomantlr_Java_identifierSuffix =
     Gomantlr_Java_identifierSuffix_1(gomantlr_Java_identifierSuffix_1_1:Gomantlr_Java_identifierSuffix_1_1)

@@ -2305,11 +2305,11 @@ castExpression returns [Gomantlr_Java_castExpression ce]
 
 primary returns [Gomantlr_Java_primary p]
 @init {
-    Gomantlr_Java_primary_2_1_2 p2=null;
-    Gomantlr_Java_primary_3_1_1 p3=`Gomantlr_Java_primary_3_1_1_2();
-    Gomantlr_Java_primary_7_1_2 p7_2=`Gomantlr_Java_primary_7_1_2_1();
-    Gomantlr_Java_primary_7_1_3 p7_3=`Gomantlr_Java_primary_7_1_3_2();
-    Gomantlr_Java_primary_8_1_2 p8=`Gomantlr_Java_primary_8_1_2_1();
+    Gomantlr_Java_primary_2_2 p2=null;
+    Gomantlr_Java_primary_3_1 p3=`Gomantlr_Java_primary_3_1_2();
+    Gomantlr_Java_primary_7_2 p7_2=`Gomantlr_Java_primary_7_2_1();
+    Gomantlr_Java_primary_7_3 p7_3=`Gomantlr_Java_primary_7_3_2();
+    Gomantlr_Java_primary_8_2 p8=`Gomantlr_Java_primary_8_2_1();
 }
     :	    pe=parExpression
             {
@@ -2320,32 +2320,32 @@ primary returns [Gomantlr_Java_primary p]
             (
                     egis=explicitGenericInvocationSuffix 
                     {
-                        p2=`Gomantlr_Java_primary_2_1_2_1(egis);
+                        p2=`Gomantlr_Java_primary_2_2_1(egis);
                     }
                 |
                     'this' a=arguments
                     {
-                        p2=`Gomantlr_Java_primary_2_1_2_2(Gomantlr_Java_primary_2_1_2_2_1(a));
+                        p2=`Gomantlr_Java_primary_2_2_2(a);
                     }
             )
             {
-                p=`Gomantlr_Java_primary_2(Gomantlr_Java_primary_2_1(nwta,p2));
+                p=`Gomantlr_Java_primary_2(nwta,p2);
             }
         |
             'this' 
             (
                 a=arguments
                 {
-                    p3=`Gomantlr_Java_primary_3_1_1_1(a);
+                    p3=`Gomantlr_Java_primary_3_1_1(a);
                 }
             )?
             {
-                p=`Gomantlr_Java_primary_3(Gomantlr_Java_primary_3_1(p3));
+                p=`Gomantlr_Java_primary_3(p3);
             }
         |
             'super' sup=superSuffix
             {
-                p=`Gomantlr_Java_primary_4(Gomantlr_Java_primary_4_1(sup));
+                p=`Gomantlr_Java_primary_4(sup);
             }
         |
             l=literal
@@ -2355,41 +2355,41 @@ primary returns [Gomantlr_Java_primary p]
         |
             'new' c=creator
             {
-                p=`Gomantlr_Java_primary_6(Gomantlr_Java_primary_6_1(c));
+                p=`Gomantlr_Java_primary_6(c);
             }
         |
             i1=Identifier 
             (
                 '.' i2=Identifier
                 {
-                    p7_2=`Gomantlr_Java_primary_7_1_2_1(p7_2*,Gomantlr_Java_primary_7_1_2_1_1(Gomantlr_Java_Identifier(i2.getText())));
+                    p7_2=`Gomantlr_Java_primary_7_2_1(p7_2*,Gomantlr_Java_primary_7_2_1_1(Gomantlr_Java_Identifier(i2.getText())));
                 }
             )* 
             (
                 is=identifierSuffix
                 {
-                    p7_3=`Gomantlr_Java_primary_7_1_3_1(is);
+                    p7_3=`Gomantlr_Java_primary_7_3_1(is);
                 }
             )?
             {
-                p=`Gomantlr_Java_primary_7(Gomantlr_Java_primary_7_1(Gomantlr_Java_Identifier(i1.getText()),p7_2,p7_3));
+                p=`Gomantlr_Java_primary_7(Gomantlr_Java_Identifier(i1.getText()),p7_2,p7_3);
             }
         |
             pt=primitiveType 
             (
                 '[' ']'
                 {
-                    p8=`Gomantlr_Java_primary_8_1_2_1(p8*,Gomantlr_Java_primary_8_1_2_1_1());
+                    p8=`Gomantlr_Java_primary_8_2_1(p8*,Gomantlr_Java_primary_8_2_1_1());
                 }
             )*
             '.' 'class'
             {
-                p=`Gomantlr_Java_primary_8(Gomantlr_Java_primary_8_1(pt,p8));
+                p=`Gomantlr_Java_primary_8(pt,p8);
             }
         |
             'void' '.' 'class'
             {
-                p=`Gomantlr_Java_primary_9(Gomantlr_Java_primary_9_1());
+                p=`Gomantlr_Java_primary_9();
             }
 	;
 
