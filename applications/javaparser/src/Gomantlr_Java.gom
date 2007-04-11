@@ -637,10 +637,7 @@ Gomantlr_Java_defaultValue =
     Gomantlr_Java_defaultValue(gomantlr_Java_defaultValue_1:Gomantlr_Java_elementValue)
 
 Gomantlr_Java_block =
-    Gomantlr_Java_block(gomantlr_Java_block_1:Gomantlr_Java_block_1)
-
-Gomantlr_Java_block_1 =
-    Gomantlr_Java_block_1_1(Gomantlr_Java_blockStatement*)
+    Gomantlr_Java_block(Gomantlr_Java_blockStatement*)
 
 Gomantlr_Java_blockStatement =
     Gomantlr_Java_blockStatement_1(gomantlr_Java_localVariableDeclaration:Gomantlr_Java_localVariableDeclaration)

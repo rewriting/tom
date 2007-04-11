@@ -1421,19 +1421,16 @@ defaultValue returns [Gomantlr_Java_defaultValue dv]
 
 block returns [Gomantlr_Java_block b]
 @init {
-    Gomantlr_Java_block_1 b1=`Gomantlr_Java_block_1_1();
+    b=`Gomantlr_Java_block();
 }
 	:	'{' 
         (
             bs=blockStatement
             {
-                b1=`Gomantlr_Java_block_1_1(b1*,bs);
+                b=`Gomantlr_Java_block(b*,bs);
             }
         )*
         '}'
-        {
-            b=`Gomantlr_Java_block(b1);
-        }
 	;
 	
 blockStatement returns [Gomantlr_Java_blockStatement bs]
