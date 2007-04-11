@@ -1045,34 +1045,31 @@ typeArguments returns [Java_typeArgumentList ta]
 	
 typeArgument returns [Java_typeArgument ta]
 @init {
-    Java_typeArgument_2_1 ta1=`Java_typeArgument_2_1_2();
-    Java_typeArgument_2_1_1_1 ta2=null;
+    ta=`Java_emptyTypeArgumentExtended();
+    Java_typeArgumentQualifier ta2=null;
 }
 	:	t=type
         {
-            ta=`Java_typeArgument_1(t);
+            ta=`Java_typeArgumentType(t);
         }
 	|	'?' 
         (
             (
                     'extends' 
                     {
-                        ta2=`Java_typeArgument_2_1_1_1_1();
+                        ta2=`Java_typeArgumentExtends();
                     }
                 |
                     'super'
                     {
-                        ta2=`Java_typeArgument_2_1_1_1_2();
+                        ta2=`Java_typeArgumentSuper();
                     }
             )
             t=type
             {
-                ta1=`Java_typeArgument_2_1_1(ta2,t);
+                ta=`Java_typeArgumentExtended(ta2,t);
             }
         )?
-        {
-            ta=`Java_typeArgument_2(ta1);
-        }
 	;
 	
 qualifiedNameList returns [Java_qualifiedNameList qnl]
@@ -1251,19 +1248,19 @@ annotation returns [Java_annotation a]
 elementValue returns [Java_elementValue ev]
 	:	ce=conditionalExpression
         {
-            ev=`Java_elementValue_1(ce);
+            ev=`Java_elementValueConditional(ce);
         }
 	|   a=annotation
         {
-            ev=`Java_elementValue_2(a);
+            ev=`Java_elementValueAnnotation(a);
         }
 	|   evai=elementValueArrayInitializer
         {
-            ev=`Java_elementValue_3(evai);
+            ev=`evai;
         }
 	;
 	
-elementValueArrayInitializer returns [Java_elementValueArrayInitializer evai]
+elementValueArrayInitializer returns [Java_elementValue evai]
 @init {
     Java_elementValueArrayInitializer_1 evai1=`Java_elementValueArrayInitializer_1_2();
     Java_elementValueArrayInitializer_2 evai2=`Java_elementValueArrayInitializer_2_2();
@@ -2595,12 +2592,12 @@ nonWildcardTypeArguments returns [Java_nonWildcardTypeArguments nwta]
 explicitGenericInvocationSuffix returns [Java_explicitGenericInvocationSuffix egis]
 	:	    'super' s=superSuffix
             {
-                egis=`Java_explicitGenericInvocationSuffix_1(s);
+                egis=`Java_explicitGenericInvocationSuffixSuper(s);
             }
 	    |
             i=Identifier a=arguments
             {
-                egis=`Java_explicitGenericInvocationSuffix_2(Java_Identifier(i.getText()),a);
+                egis=`Java_explicitGenericInvocationSuffixMethod(Java_Identifier(i.getText()),a);
             }
  	;
 	

@@ -436,16 +436,13 @@ Java_typeArgumentList =
     Java_typeArgumentList(Java_typeArgument*)
 
 Java_typeArgument =
-    Java_typeArgument_1(type:Java_type)
-  | Java_typeArgument_2(typeArgument_2_1:Java_typeArgument_2_1)
+    Java_typeArgumentType(type:Java_type)
+  | Java_emptyTypeArgumentExtended()
+  | Java_typeArgumentExtended(typeArgumentQualifier:Java_typeArgumentQualifier,typeArgument_2_1_1_2:Java_type)
 
-Java_typeArgument_2_1 =
-    Java_typeArgument_2_1_1(typeArgument_2_1_1_1:Java_typeArgument_2_1_1_1,typeArgument_2_1_1_2:Java_type)
-  | Java_typeArgument_2_1_2()
-
-Java_typeArgument_2_1_1_1 =
-    Java_typeArgument_2_1_1_1_1()
-  | Java_typeArgument_2_1_1_1_2()
+Java_typeArgumentQualifier =
+    Java_typeArgumentExtends()
+  | Java_typeArgumentSuper()
 
 Java_qualifiedNameList =
     Java_qualifiedNameList(Java_qualifiedName*)
@@ -518,12 +515,9 @@ Java_annotation_2_1_1 =
   | Java_annotation_2_1_1_2()
 
 Java_elementValue =
-    Java_elementValue_1(conditionalExpression:Java_conditionalExpression)
-  | Java_elementValue_2(annotation:Java_annotation)
-  | Java_elementValue_3(elementValueArrayInitializer:Java_elementValueArrayInitializer)
-
-Java_elementValueArrayInitializer =
-    Java_elementValueArrayInitializer(elementValueArrayInitializer_1:Java_elementValueArrayInitializer_1,elementValueArrayInitializer_2:Java_elementValueArrayInitializer_2)
+    Java_elementValueConditional(conditionalExpression:Java_conditionalExpression)
+  | Java_elementValueAnnotation(annotation:Java_annotation)
+  | Java_elementValueArrayInitializer(elementValueArrayInitializer_1:Java_elementValueArrayInitializer_1,elementValueArrayInitializer_2:Java_elementValueArrayInitializer_2)
 
 Java_elementValueArrayInitializer_1 =
     Java_elementValueArrayInitializer_1_1(elementValue:Java_elementValue)
@@ -1045,8 +1039,8 @@ Java_nonWildcardTypeArguments =
   | Java_emptyNonWildcardTypeArguments()
 
 Java_explicitGenericInvocationSuffix =
-    Java_explicitGenericInvocationSuffix_1(explicitGenericInvocationSuffix_1_1:Java_superSuffix)
-  | Java_explicitGenericInvocationSuffix_2(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
+    Java_explicitGenericInvocationSuffixSuper(explicitGenericInvocationSuffix_1_1:Java_superSuffix)
+  | Java_explicitGenericInvocationSuffixMethod(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
 
 Java_selector =
     Java_selectorField(selector_1_1:Java_Identifier)
