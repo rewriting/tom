@@ -664,7 +664,7 @@ voidMethodDeclaratorRest returns [Gomantlr_Java_voidMethodDeclaratorRest vmd]
         (
             'throws' qnl=qualifiedNameList
             {
-                vmd2=`Gomantlr_Java_voidMethodDeclaratorRest_2_1(Gomantlr_Java_voidMethodDeclaratorRest_2_1_1(qnl));
+                vmd2=`Gomantlr_Java_voidMethodDeclaratorRest_2_1(qnl);
             }
         )?
         (
@@ -699,7 +699,7 @@ interfaceMethodDeclaratorRest returns [Gomantlr_Java_interfaceMethodDeclaratorRe
         (
             'throws' qnl=qualifiedNameList
             {
-                imdr3=`Gomantlr_Java_interfaceMethodDeclaratorRest_3_1(Gomantlr_Java_interfaceMethodDeclaratorRest_3_1_1(qnl));
+                imdr3=`Gomantlr_Java_interfaceMethodDeclaratorRest_3_1(qnl);
             }
         )?
         ';'
