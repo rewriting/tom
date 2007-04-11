@@ -450,8 +450,8 @@ interfaceBody returns [Gomantlr_Java_interfaceBody ib]
 
 classBodyDeclaration returns [Gomantlr_Java_classBodyDeclaration ebd]
 @init {
-    Gomantlr_Java_classBodyDeclaration_2_1_1 ebd2=`Gomantlr_Java_classBodyDeclaration_2_1_1_2();
-    Gomantlr_Java_classBodyDeclaration_3_1_1 ebd3=`Gomantlr_Java_classBodyDeclaration_3_1_1_1();
+    Gomantlr_Java_classBodyDeclaration_2_1 ebd2=`Gomantlr_Java_classBodyDeclaration_2_1_2();
+    Gomantlr_Java_classBodyDeclaration_3_1 ebd3=`Gomantlr_Java_classBodyDeclaration_3_1_1();
 }
 	:	    ';'
             {
@@ -461,23 +461,23 @@ classBodyDeclaration returns [Gomantlr_Java_classBodyDeclaration ebd]
             (
                 'static'
                 {
-                    ebd2=`Gomantlr_Java_classBodyDeclaration_2_1_1_1();
+                    ebd2=`Gomantlr_Java_classBodyDeclaration_2_1_1();
                 }
             )?
             b=block
             {
-                ebd=`Gomantlr_Java_classBodyDeclaration_2(Gomantlr_Java_classBodyDeclaration_2_1(ebd2,b));
+                ebd=`Gomantlr_Java_classBodyDeclaration_2(ebd2,b);
             }
 	    |
             (
                 m=modifier
                 {
-                    ebd3=`Gomantlr_Java_classBodyDeclaration_3_1_1_1(ebd3*,m);
+                    ebd3=`Gomantlr_Java_classBodyDeclaration_3_1_1(ebd3*,m);
                 }
             )*
             md=memberDecl
             {
-                ebd=`Gomantlr_Java_classBodyDeclaration_3(Gomantlr_Java_classBodyDeclaration_3_1(ebd3,md));
+                ebd=`Gomantlr_Java_classBodyDeclaration_3(ebd3,md);
             }
 	;
 	
