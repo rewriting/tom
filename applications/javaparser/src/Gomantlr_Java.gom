@@ -998,20 +998,17 @@ Gomantlr_Java_identifierSuffix =
     Gomantlr_Java_identifierSuffix_1(gomantlr_Java_identifierSuffix_1_1:Gomantlr_Java_identifierSuffix_1_1)
   | Gomantlr_Java_identifierSuffix_2(gomantlr_Java_identifierSuffix_2_1:Gomantlr_Java_identifierSuffix_2_1)
   | Gomantlr_Java_identifierSuffix_3(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_identifierSuffix_4(gomantlr_Java_identifierSuffix_4_1:Gomantlr_Java_identifierSuffix_4_1)
-  | Gomantlr_Java_identifierSuffix_5(gomantlr_Java_identifierSuffix_5_1:Gomantlr_Java_identifierSuffix_5_1)
-  | Gomantlr_Java_identifierSuffix_6(gomantlr_Java_identifierSuffix_6_1:Gomantlr_Java_identifierSuffix_6_1)
-  | Gomantlr_Java_identifierSuffix_7(gomantlr_Java_identifierSuffix_7_1:Gomantlr_Java_identifierSuffix_7_1)
-  | Gomantlr_Java_identifierSuffix_8(gomantlr_Java_identifierSuffix_8_1:Gomantlr_Java_identifierSuffix_8_1)
+  | Gomantlr_Java_identifierSuffix_4()
+  | Gomantlr_Java_identifierSuffix_5(gomantlr_Java_identifierSuffix_5_1:Gomantlr_Java_explicitGenericInvocation)
+  | Gomantlr_Java_identifierSuffix_6()
+  | Gomantlr_Java_identifierSuffix_7(gomantlr_Java_identifierSuffix_7_1:Gomantlr_Java_arguments)
+  | Gomantlr_Java_identifierSuffix_8(gomantlr_Java_identifierSuffix_8_1:Gomantlr_Java_identifierSuffix_8_1,gomantlr_Java_identifierSuffix_8_2:Gomantlr_Java_innerCreator)
 
 Gomantlr_Java_identifierSuffix_1_1 =
-    Gomantlr_Java_identifierSuffix_1_1(gomantlr_Java_identifierSuffix_1_1_1:Gomantlr_Java_identifierSuffix_1_1_1)
+    Gomantlr_Java_identifierSuffix_1_1_1(Gomantlr_Java_identifierSuffix_1_1_1_1*)
 
-Gomantlr_Java_identifierSuffix_1_1_1 =
-    Gomantlr_Java_identifierSuffix_1_1_1_1(Gomantlr_Java_identifierSuffix_1_1_1_1_1*)
-
-Gomantlr_Java_identifierSuffix_1_1_1_1_1 =
-    Gomantlr_Java_identifierSuffix_1_1_1_1_1()
+Gomantlr_Java_identifierSuffix_1_1_1_1 =
+    Gomantlr_Java_identifierSuffix_1_1_1_1()
 
 Gomantlr_Java_identifierSuffix_2_1 =
     Gomantlr_Java_identifierSuffix_2_1_1(Gomantlr_Java_identifierSuffix_2_1_1_1*)
@@ -1019,24 +1016,9 @@ Gomantlr_Java_identifierSuffix_2_1 =
 Gomantlr_Java_identifierSuffix_2_1_1_1 =
     Gomantlr_Java_identifierSuffix_2_1_1_1(gomantlr_Java_identifierSuffix_2_1_1_1_1:Gomantlr_Java_expression)
 
-Gomantlr_Java_identifierSuffix_4_1 =
-    Gomantlr_Java_identifierSuffix_4_1()
-
-Gomantlr_Java_identifierSuffix_5_1 =
-    Gomantlr_Java_identifierSuffix_5_1(gomantlr_Java_identifierSuffix_5_1_1:Gomantlr_Java_explicitGenericInvocation)
-
-Gomantlr_Java_identifierSuffix_6_1 =
-    Gomantlr_Java_identifierSuffix_6_1()
-
-Gomantlr_Java_identifierSuffix_7_1 =
-    Gomantlr_Java_identifierSuffix_7_1(gomantlr_Java_identifierSuffix_7_1_1:Gomantlr_Java_arguments)
-
 Gomantlr_Java_identifierSuffix_8_1 =
-    Gomantlr_Java_identifierSuffix_8_1(gomantlr_Java_identifierSuffix_8_1_1:Gomantlr_Java_identifierSuffix_8_1_1,gomantlr_Java_identifierSuffix_8_1_2:Gomantlr_Java_innerCreator)
-
-Gomantlr_Java_identifierSuffix_8_1_1 =
-    Gomantlr_Java_identifierSuffix_8_1_1_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
-  | Gomantlr_Java_identifierSuffix_8_1_1_2()
+    Gomantlr_Java_identifierSuffix_8_1_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
+  | Gomantlr_Java_identifierSuffix_8_1_2()
 
 Gomantlr_Java_creator =
     Gomantlr_Java_creator(gomantlr_Java_creator_1:Gomantlr_Java_creator_1,gomantlr_Java_creator_2:Gomantlr_Java_createdName,gomantlr_Java_creator_3:Gomantlr_Java_creator_3)

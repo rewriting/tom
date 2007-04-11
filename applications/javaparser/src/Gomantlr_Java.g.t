@@ -2395,19 +2395,19 @@ primary returns [Gomantlr_Java_primary p]
 
 identifierSuffix returns [Gomantlr_Java_identifierSuffix is]
 @init {
-    Gomantlr_Java_identifierSuffix_1_1_1 is1=`Gomantlr_Java_identifierSuffix_1_1_1_1();
+    Gomantlr_Java_identifierSuffix_1_1 is1=`Gomantlr_Java_identifierSuffix_1_1_1();
     Gomantlr_Java_identifierSuffix_2_1 is2=`Gomantlr_Java_identifierSuffix_2_1_1();
-    Gomantlr_Java_identifierSuffix_8_1_1 is8=`Gomantlr_Java_identifierSuffix_8_1_1_2();
+    Gomantlr_Java_identifierSuffix_8_1 is8=`Gomantlr_Java_identifierSuffix_8_1_2();
 }
 	:	    (
                 '[' ']'
                 {
-                    is1=`Gomantlr_Java_identifierSuffix_1_1_1_1(is1*,Gomantlr_Java_identifierSuffix_1_1_1_1_1());
+                    is1=`Gomantlr_Java_identifierSuffix_1_1_1(is1*,Gomantlr_Java_identifierSuffix_1_1_1_1());
                 }
             )+ 
             '.' 'class'
             {
-                is=`Gomantlr_Java_identifierSuffix_1(Gomantlr_Java_identifierSuffix_1_1(is1));
+                is=`Gomantlr_Java_identifierSuffix_1(is1);
             }
 	    |	
             (
@@ -2427,34 +2427,34 @@ identifierSuffix returns [Gomantlr_Java_identifierSuffix is]
         |
             '.' 'class'
             {
-                is=`Gomantlr_Java_identifierSuffix_4(Gomantlr_Java_identifierSuffix_4_1());
+                is=`Gomantlr_Java_identifierSuffix_4();
             }
         |
             '.' egi=explicitGenericInvocation
             {
-                is=`Gomantlr_Java_identifierSuffix_5(Gomantlr_Java_identifierSuffix_5_1(egi));
+                is=`Gomantlr_Java_identifierSuffix_5(egi);
             }
         |
             '.' 'this'
             {
-                is=`Gomantlr_Java_identifierSuffix_6(Gomantlr_Java_identifierSuffix_6_1());
+                is=`Gomantlr_Java_identifierSuffix_6();
             }
         |
             '.' 'super' a=arguments
             {
-                is=`Gomantlr_Java_identifierSuffix_7(Gomantlr_Java_identifierSuffix_7_1(a));
+                is=`Gomantlr_Java_identifierSuffix_7(a);
             }
         |
             '.' 'new' 
             (
                 nwta=nonWildcardTypeArguments
                 {
-                    is8=`Gomantlr_Java_identifierSuffix_8_1_1_1(nwta);
+                    is8=`Gomantlr_Java_identifierSuffix_8_1_1(nwta);
                 }
             )?
             ic=innerCreator
             {
-                is=`Gomantlr_Java_identifierSuffix_8(Gomantlr_Java_identifierSuffix_8_1(is8,ic));
+                is=`Gomantlr_Java_identifierSuffix_8(is8,ic);
             }
 	;
 
