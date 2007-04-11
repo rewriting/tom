@@ -3,17 +3,17 @@ imports  String
 abstract syntax
 
 Gomantlr_Java_compilationUnit =
-    Gomantlr_Java_compilationUnit(gomantlr_Java_annotations:Gomantlr_Java_annotationList,gomantlr_Java_compilationUnit_2:Gomantlr_Java_compilationUnit_2,gomantlr_Java_compilationUnit_3:Gomantlr_Java_compilationUnit_3,gomantlr_Java_compilationUnit_4:Gomantlr_Java_compilationUnit_4)
+    Gomantlr_Java_compilationUnit(gomantlr_Java_annotations:Gomantlr_Java_annotationList,gomantlr_Java_package:Gomantlr_Java_package,gomantlr_Java_importList:Gomantlr_Java_importDeclarationList,gomantlr_Java_typeList:Gomantlr_Java_typeDeclarationList)
 
-Gomantlr_Java_compilationUnit_2 =
-    Gomantlr_Java_compilationUnit_2_1(gomantlr_Java_packageDeclaration:Gomantlr_Java_packageDeclaration)
-  | Gomantlr_Java_compilationUnit_2_2()
+Gomantlr_Java_package =
+    Gomantlr_Java_package(gomantlr_Java_packageDeclaration:Gomantlr_Java_packageDeclaration)
+  | Gomantlr_Java_noPackage()
 
-Gomantlr_Java_compilationUnit_3 =
-    Gomantlr_Java_compilationUnit_3_1(Gomantlr_Java_importDeclaration*)
+Gomantlr_Java_importDeclarationList=
+    Gomantlr_Java_importDeclarationList(Gomantlr_Java_importDeclaration*)
 
-Gomantlr_Java_compilationUnit_4 =
-    Gomantlr_Java_compilationUnit_4_1(Gomantlr_Java_typeDeclaration*)
+Gomantlr_Java_typeDeclarationList=
+    Gomantlr_Java_typeDeclarationList(Gomantlr_Java_typeDeclaration*)
 
 Gomantlr_Java_packageDeclaration =
     Gomantlr_Java_packageDeclaration(gomantlr_Java_packageDeclaration_1:Gomantlr_Java_qualifiedName)

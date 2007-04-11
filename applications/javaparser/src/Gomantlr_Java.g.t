@@ -51,9 +51,9 @@ protected boolean enumIsKeyword = false;
 compilationUnit returns [Gomantlr_Java_compilationUnit cu]
 @init {
     Gomantlr_Java_annotationList cu1=`Gomantlr_Java_annotationList();
-    Gomantlr_Java_compilationUnit_2 cu2=`Gomantlr_Java_compilationUnit_2_2();
-    Gomantlr_Java_compilationUnit_3 cu3=`Gomantlr_Java_compilationUnit_3_1();
-    Gomantlr_Java_compilationUnit_4 cu4=`Gomantlr_Java_compilationUnit_4_1();
+    Gomantlr_Java_package cu2=`Gomantlr_Java_noPackage();
+    Gomantlr_Java_importDeclarationList cu3=`Gomantlr_Java_importDeclarationList();
+    Gomantlr_Java_typeDeclarationList cu4=`Gomantlr_Java_typeDeclarationList();
 }
 	:	(
             a=annotations
@@ -64,19 +64,19 @@ compilationUnit returns [Gomantlr_Java_compilationUnit cu]
 		(
             pd=packageDeclaration
             {
-                cu2=`Gomantlr_Java_compilationUnit_2_1(pd);
+                cu2=`Gomantlr_Java_package(pd);
             }
         )?
         (
             id=importDeclaration
             {
-                cu3=`Gomantlr_Java_compilationUnit_3_1(cu3*,id);
+                cu3=`Gomantlr_Java_importDeclarationList(cu3*,id);
             }
         )*
         (
             td=typeDeclaration
             {
-                cu4=`Gomantlr_Java_compilationUnit_4_1(cu4*,td);
+                cu4=`Gomantlr_Java_typeDeclarationList(cu4*,td);
             }
         )*
         {
