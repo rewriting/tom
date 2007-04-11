@@ -496,11 +496,11 @@ memberDecl returns [Gomantlr_Java_memberDecl md]
         }
 	|	'void' i=Identifier vmdr=voidMethodDeclaratorRest
         {
-            md=`Gomantlr_Java_memberDecl_4(Gomantlr_Java_memberDecl_4_1(Gomantlr_Java_Identifier(i.getText()),vmdr));
+            md=`Gomantlr_Java_memberDecl_4(Gomantlr_Java_Identifier(i.getText()),vmdr);
         }
 	|	i=Identifier cdr=constructorDeclaratorRest
         {
-            md=`Gomantlr_Java_memberDecl_5(Gomantlr_Java_memberDecl_5_1(Gomantlr_Java_Identifier(i.getText()),cdr));
+            md=`Gomantlr_Java_memberDecl_5(Gomantlr_Java_Identifier(i.getText()),cdr);
         }
 	|	id=interfaceDeclaration
         {
