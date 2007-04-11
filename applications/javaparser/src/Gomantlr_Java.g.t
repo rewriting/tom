@@ -957,8 +957,7 @@ type returns [Java_type t]
 @init {
     Java_type_1_2 t1_2=`Java_type_1_2_list();
     Java_type_1_2_item_2 t1_2_2=`Java_type_1_2_item_2_no();
-    Java_type_1_4 t1_4=`Java_type_1_4_1();
-    Java_type_2_2 t2_2=`Java_type_2_2_1();
+    Java_type_bracets t_b=`Java_type_brackets_list();
 }
 	:	i1=Identifier 
         (
@@ -987,21 +986,21 @@ type returns [Java_type t]
         (
             '[' ']'
             {
-                t1_4=`Java_type_1_4_1(t1_4*,Java_type_1_4_1_1());
+                t_b=`Java_type_brackets_list(t_b*,Java_type_brackets_item());
             }
         )*
         {
-            t=`Java_type_1(t1_2,t1_4);
+            t=`Java_type_1(t1_2,t_b);
         }
 	|	pt=primitiveType
         (
             '[' ']' 
             {
-                t2_2=`Java_type_2_2_1(t2_2*,Java_type_2_2_1_1());
+                t_b=`Java_type_brackets_list(t_b*,Java_type_brackets_item());
             }
         )*
         {
-            t=`Java_type_2(pt,t2_2);
+            t=`Java_type_2(pt,t_b);
         }
 	;
 

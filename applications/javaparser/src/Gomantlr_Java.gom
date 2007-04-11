@@ -386,8 +386,8 @@ Java_typeName =
   | Java_typeNameQualifiedIdentifier(PkgOrTypeName:Java_packageOrTypeName,Identifier:Java_Identifier)
 
 Java_type =
-    Java_type_1(type_1_2:Java_type_1_2,type_1_4:Java_type_1_4)
-  | Java_type_2(type_2_1:Java_primitiveType,type_2_2:Java_type_2_2)
+    Java_type_1(type_1_2:Java_type_1_2,type_brackets:Java_type_brackets)
+  | Java_type_2(type_2_1:Java_primitiveType,type_brackets:Java_type_brackets)
 
 Java_type_1_2 =
     Java_type_1_2_list(Java_type_1_2_item*)
@@ -399,17 +399,11 @@ Java_type_1_2_item_2 =
     Java_type_1_2_item_2_yes(type_1_2_item_2_ta:Java_typeArgumentList)
   | Java_type_1_2_item_2_no()
 
-Java_type_1_4 =
-    Java_type_1_4_1(Java_type_1_4_1_1*)
+Java_type_brackets =
+    Java_type_brackets_list(Java_type_brackets_item*)
 
-Java_type_1_4_1_1 =
-    Java_type_1_4_1_1()
-
-Java_type_2_2 =
-    Java_type_2_2_1(Java_type_2_2_1_1*)
-
-Java_type_2_2_1_1 =
-    Java_type_2_2_1_1()
+Java_type_brackets_item =
+    Java_type_brackets_item()
 
 Java_primitiveType =
     Java_primitiveTypeBoolean()
