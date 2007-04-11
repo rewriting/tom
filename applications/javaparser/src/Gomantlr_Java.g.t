@@ -739,7 +739,7 @@ voidInterfaceMethodDeclaratorRest returns [Gomantlr_Java_voidInterfaceMethodDecl
         (
             'throws' qnl=qualifiedNameList
             {
-                vimd2=`Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1(Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1_1(qnl));
+                vimd2=`Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1(qnl);
             }
         )? 
         ';'
