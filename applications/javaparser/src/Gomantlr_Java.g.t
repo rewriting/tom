@@ -1783,38 +1783,38 @@ forVarControl returns [Gomantlr_Java_forVarControl fvc]
 
 forVarControlRest returns [Gomantlr_Java_forVarControlRest fvcr]
 @init {
-    Gomantlr_Java_forVarControlRest_1_1_2 fvcr2=`Gomantlr_Java_forVarControlRest_1_1_2_1();
-    Gomantlr_Java_forVarControlRest_1_1_3 fvcr3=`Gomantlr_Java_forVarControlRest_1_1_3_2();
-    Gomantlr_Java_forVarControlRest_1_1_4 fvcr4=`Gomantlr_Java_forVarControlRest_1_1_4_2();
+    Gomantlr_Java_forVarControlRest_1_2 fvcr2=`Gomantlr_Java_forVarControlRest_1_2_1();
+    Gomantlr_Java_forVarControlRest_1_3 fvcr3=`Gomantlr_Java_forVarControlRest_1_3_2();
+    Gomantlr_Java_forVarControlRest_1_4 fvcr4=`Gomantlr_Java_forVarControlRest_1_4_2();
 }
 	:	    vdr=variableDeclaratorRest 
             (
                 ',' vd=variableDeclarator
                 {
-                    fvcr2=`Gomantlr_Java_forVarControlRest_1_1_2_1(fvcr2*,Gomantlr_Java_forVarControlRest_1_1_2_1_1(vd));
+                    fvcr2=`Gomantlr_Java_forVarControlRest_1_2_1(fvcr2*,Gomantlr_Java_forVarControlRest_1_2_1_1(vd));
                 }
             )*
             ';' 
             (
                 e=expression
                 {
-                    fvcr3=`Gomantlr_Java_forVarControlRest_1_1_3_1(e);
+                    fvcr3=`Gomantlr_Java_forVarControlRest_1_3_1(e);
                 }
             )?
             ':' 
             (
                 fu=forUpdate
                 {
-                    fvcr4=`Gomantlr_Java_forVarControlRest_1_1_4_1(fu);
+                    fvcr4=`Gomantlr_Java_forVarControlRest_1_4_1(fu);
                 }
             )?
             {
-                fvcr=`Gomantlr_Java_forVarControlRest_1(Gomantlr_Java_forVarControlRest_1_1(vdr,fvcr2,fvcr3,fvcr4));
+                fvcr=`Gomantlr_Java_forVarControlRest_1(vdr,fvcr2,fvcr3,fvcr4);
             }
         |   
             ':' e=expression
             {
-                fvcr=`Gomantlr_Java_forVarControlRest_2(Gomantlr_Java_forVarControlRest_2_1(e));
+                fvcr=`Gomantlr_Java_forVarControlRest_2(e);
             }
 	;
 
