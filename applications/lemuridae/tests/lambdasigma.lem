@@ -18,7 +18,6 @@ termrule( subst(b(),id()) ) -> b().
 termrule( subst(f(),id()) ) -> f().
 
 
-proof test: P(  lappl(lappl(lappl(swap(),f()),a()),b())   ).
-reduce.
+reduce term lappl(lappl(lappl(swap(),f()),a()),b()).
 
 

@@ -1,0 +1,18 @@
+termrule lappl(lambda(a),b) -> subst(a,slash(b)).
+termrule subst(lappl(a,b),s) -> lappl(subst(a,s),subst(b,s)).
+termrule subst(lambda(a),s) -> lambda(subst(a,lift(s))).
+termrule subst(one(),slash(a)) -> a.
+termrule subst(suc(n),slash(a)) -> n.
+termrule subst(one(),lift(s)) -> one().
+termrule subst(suc(n),lift(s)) -> subst(subst(n,s),shift()).
+termrule subst(n,shift()) -> suc(n).
+
+
+termrule swap() -> lambda(lambda(lambda(
+                      lappl(lappl(
+                                  suc(suc(one())),
+                                  one()),
+                                  suc(one()))))).
+
+reduce term lappl(lappl(lappl(swap(),f()),a()),b()).
+
