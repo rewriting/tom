@@ -412,19 +412,16 @@ typeList returns [Java_typeList tl]
 	
 classBody returns [Java_classBody cb]
 @init {
-    Java_classBody_1 cb1=`Java_classBody_1_1();
+    cb = `Java_classBody();
 }
 	:	'{' 
         (
             cbd=classBodyDeclaration
             {
-                cb1=`Java_classBody_1_1(cb1*,cbd);
+                cb=`Java_classBody(cb*,cbd);
             }
         )*
         '}'
-        {
-            cb=`Java_classBody(cb1);
-        }
 	;
 	
 interfaceBody returns [Java_interfaceBody ib]
@@ -2561,13 +2558,13 @@ arrayCreatorRest returns [Java_arrayCreatorRest acr]
 
 classCreatorRest returns [Java_classCreatorRest ccr]
 @init {
-    Java_classCreatorRest_2 ccr2=`Java_classCreatorRest_2_2();
+    Java_classBody ccr2=`Java_classBody();
 }
 	:	a=arguments 
         (
             cb=classBody
             {
-                ccr2=`Java_classCreatorRest_2_1(cb);
+                ccr2=cb;
             }
         )?
         {

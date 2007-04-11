@@ -160,10 +160,7 @@ Java_typeList_2_1_1 =
     Java_typeList_2_1_1(typeList_2_1_1_1:Java_type)
 
 Java_classBody =
-    Java_classBody(classBody_1:Java_classBody_1)
-
-Java_classBody_1 =
-    Java_classBody_1_1(Java_classBodyDeclaration*)
+    Java_classBody(Java_classBodyDeclaration*)
 
 Java_interfaceBody =
     Java_interfaceBody(interfaceBody_1:Java_interfaceBody_1)
@@ -1025,11 +1022,7 @@ Java_arrayCreatorRest_2_3_1_1 =
     Java_arrayCreatorRest_2_3_1_1()
 
 Java_classCreatorRest =
-    Java_classCreatorRest(classCreatorRest_1:Java_arguments,classCreatorRest_2:Java_classCreatorRest_2)
-
-Java_classCreatorRest_2 =
-    Java_classCreatorRest_2_1(classBody:Java_classBody)
-  | Java_classCreatorRest_2_2()
+    Java_classCreatorRest(classCreatorRest_1:Java_arguments,classBody:Java_classBody)
 
 Java_explicitGenericInvocation =
     Java_explicitGenericInvocation(explicitGenericInvocation_1:Java_nonWildcardTypeArguments,explicitGenericInvocation_2:Java_explicitGenericInvocationSuffix)
