@@ -1148,7 +1148,7 @@ formalParameterDecls returns [Gomantlr_Java_formalParameterDecls fpd]
 	
 formalParameterDeclsRest returns [Gomantlr_Java_formalParameterDeclsRest fpdr]
 @init {
-    Gomantlr_Java_formalParameterDeclsRest_1_2 fpdr2=`Gomantlr_Java_formalParameterDeclsRest_1_1_2();
+    Gomantlr_Java_formalParameterDeclsRest_1_2 fpdr2=`Gomantlr_Java_formalParameterDeclsRest_1_2_2();
 }
 	:	vdi=variableDeclaratorId 
         (
@@ -1236,7 +1236,7 @@ annotations returns [Gomantlr_Java_annotations a]
 annotation returns [Gomantlr_Java_annotation a]
 @init {
     Gomantlr_Java_annotation_2 a2=`Gomantlr_Java_annotation_2_2();
-    Gomantlr_Java_annotation_2_1_1_1 a3=`Gomantlr_Java_annotation_2_1_1_1_2();
+    Gomantlr_Java_annotation_2_1_1 a3=`Gomantlr_Java_annotation_2_1_1_2();
 }
 	:	'@' tn=typeName
         (
@@ -1244,13 +1244,13 @@ annotation returns [Gomantlr_Java_annotation a]
             (
                 i=Identifier '='
                 {
-                    a3=`Gomantlr_Java_annotation_2_1_1_1_1(Gomantlr_Java_annotation_2_1_1_1_1_1(Gomantlr_Java_Identifier(i.getText())));
+                    a3=`Gomantlr_Java_annotation_2_1_1_1(Gomantlr_Java_Identifier(i.getText()));
                 }
             )? 
             ev=elementValue
             ')'
             {
-                a2=`Gomantlr_Java_annotation_2_1(Gomantlr_Java_annotation_2_1_1(a3,ev));
+                a2=`Gomantlr_Java_annotation_2_1(a3,ev);
             }
         )?
         {
