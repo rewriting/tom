@@ -2655,22 +2655,26 @@ selector returns [Java_selector s]
 	
 superSuffix returns [Java_superSuffix sup]
 @init {
-    Java_superSuffix_2_2 s=`Java_superSuffix_2_2_2();
+    Java_arguments s=null;
 }
 	:	    a=arguments
             {
-                sup=`Java_superSuffix_1(a);
+                sup=`Java_superConstructor(a);
             }
 	    | 
             '.' i=Identifier 
             (
                 a=arguments
                 {
-                    s=`Java_superSuffix_2_2_1(a);
+                    s=a;
                 }
             )?
             {
-                sup=`Java_superSuffix_2(Java_Identifier(i.getText()),s);
+              if(null == s) {
+                sup=`Java_superMember(Java_Identifier(i.getText()));
+              } else {
+                sup=`Java_superMethod(Java_Identifier(i.getText()),s);
+              }
             }
         
     ;

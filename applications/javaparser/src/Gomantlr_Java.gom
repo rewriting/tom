@@ -1104,12 +1104,9 @@ Java_selector_4_1 =
   | Java_selector_4_1_2()
 
 Java_superSuffix =
-    Java_superSuffix_1(arguments:Java_arguments)
-  | Java_superSuffix_2(superSuffix_2_1:Java_Identifier,superSuffix_2_2:Java_superSuffix_2_2)
-
-Java_superSuffix_2_2 =
-    Java_superSuffix_2_2_1(arguments:Java_arguments)
-  | Java_superSuffix_2_2_2()
+    Java_superConstructor(arguments:Java_arguments)
+  | Java_superMember(superSuffix_2_1:Java_Identifier)
+  | Java_superMethod(superSuffix_2_1:Java_Identifier,arguments:Java_arguments)
 
 Java_arguments =
     Java_arguments(arguments_1:Java_expressionList)
