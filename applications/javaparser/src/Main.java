@@ -25,7 +25,7 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       Gomantlr_JavaParser parser = new Gomantlr_JavaParser(tokens);
 
-      Gomantlr_Java_compilationUnit cu = parser.compilationUnit();
+      Java_compilationUnit cu = parser.compilationUnit();
 
       System.out.println(cu);
     } catch (Exception e) {

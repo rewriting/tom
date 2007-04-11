@@ -2,1136 +2,1136 @@ module Gomantlr_Java
 imports  String
 abstract syntax
 
-Gomantlr_Java_compilationUnit =
-    Gomantlr_Java_compilationUnit(gomantlr_Java_annotations:Gomantlr_Java_annotationList,gomantlr_Java_package:Gomantlr_Java_package,gomantlr_Java_importList:Gomantlr_Java_importDeclarationList,gomantlr_Java_typeList:Gomantlr_Java_typeDeclarationList)
+Java_compilationUnit =
+    Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,typeList:Java_typeDeclarationList)
 
-Gomantlr_Java_package =
-    Gomantlr_Java_package(gomantlr_Java_packageDeclaration:Gomantlr_Java_packageDeclaration)
-  | Gomantlr_Java_noPackage()
+Java_package =
+    Java_package(packageDeclaration:Java_packageDeclaration)
+  | Java_noPackage()
 
-Gomantlr_Java_importDeclarationList=
-    Gomantlr_Java_importDeclarationList(Gomantlr_Java_importDeclaration*)
+Java_importDeclarationList=
+    Java_importDeclarationList(Java_importDeclaration*)
 
-Gomantlr_Java_typeDeclarationList=
-    Gomantlr_Java_typeDeclarationList(Gomantlr_Java_typeDeclaration*)
+Java_typeDeclarationList=
+    Java_typeDeclarationList(Java_typeDeclaration*)
 
-Gomantlr_Java_packageDeclaration =
-    Gomantlr_Java_packageDeclaration(gomantlr_Java_packageDeclaration_1:Gomantlr_Java_qualifiedName)
+Java_packageDeclaration =
+    Java_packageDeclaration(packageDeclaration_1:Java_qualifiedName)
 
-Gomantlr_Java_importDeclaration =
-    Gomantlr_Java_importDeclaration(gomantlr_Java_importDeclaration_1:Gomantlr_Java_isStaticImport,gomantlr_Java_importDeclaration_2:Gomantlr_Java_Identifier,gomantlr_Java_importDeclaration_3:Gomantlr_Java_importDeclaration_3,gomantlr_Java_importDeclaration_4:Gomantlr_Java_importDeclaration_4)
+Java_importDeclaration =
+    Java_importDeclaration(importDeclaration_1:Java_isStaticImport,importDeclaration_2:Java_Identifier,importDeclaration_3:Java_importDeclaration_3,importDeclaration_4:Java_importDeclaration_4)
 
-Gomantlr_Java_isStaticImport =
-    Gomantlr_Java_staticImport()
-  | Gomantlr_Java_nonStaticImport()
+Java_isStaticImport =
+    Java_staticImport()
+  | Java_nonStaticImport()
 
-Gomantlr_Java_importDeclaration_3 =
-    Gomantlr_Java_importDeclaration_3_1(Gomantlr_Java_importDeclaration_3_1_1*)
+Java_importDeclaration_3 =
+    Java_importDeclaration_3_1(Java_importDeclaration_3_1_1*)
 
-Gomantlr_Java_importDeclaration_3_1_1 =
-    Gomantlr_Java_importDeclaration_3_1_1(gomantlr_Java_importDeclaration_3_1_1_1:Gomantlr_Java_Identifier)
+Java_importDeclaration_3_1_1 =
+    Java_importDeclaration_3_1_1(importDeclaration_3_1_1_1:Java_Identifier)
 
-Gomantlr_Java_importDeclaration_4 =
-    Gomantlr_Java_importDeclaration_4_1()
-  | Gomantlr_Java_importDeclaration_4_2()
+Java_importDeclaration_4 =
+    Java_importDeclaration_4_1()
+  | Java_importDeclaration_4_2()
 
-Gomantlr_Java_typeDeclaration =
-    Gomantlr_Java_typeDeclaration_1(gomantlr_Java_classOrInterfaceDeclaration:Gomantlr_Java_classOrInterfaceDeclaration)
-  | Gomantlr_Java_typeDeclaration_2()
+Java_typeDeclaration =
+    Java_typeDeclaration_1(classOrInterfaceDeclaration:Java_classOrInterfaceDeclaration)
+  | Java_typeDeclaration_2()
 
-Gomantlr_Java_classOrInterfaceDeclaration =
-    Gomantlr_Java_classOrInterfaceDeclaration(gomantlr_Java_classOrInterfaceDeclaration_1:Gomantlr_Java_classOrInterfaceDeclaration_1,gomantlr_Java_classOrInterfaceDeclaration_2:Gomantlr_Java_classOrInterfaceDeclaration_2)
+Java_classOrInterfaceDeclaration =
+    Java_classOrInterfaceDeclaration(classOrInterfaceDeclaration_1:Java_classOrInterfaceDeclaration_1,classOrInterfaceDeclaration_2:Java_classOrInterfaceDeclaration_2)
 
-Gomantlr_Java_classOrInterfaceDeclaration_1 =
-    Gomantlr_Java_classOrInterfaceDeclaration_1_1(Gomantlr_Java_modifier*)
+Java_classOrInterfaceDeclaration_1 =
+    Java_classOrInterfaceDeclaration_1_1(Java_modifier*)
 
-Gomantlr_Java_classOrInterfaceDeclaration_2 =
-    Gomantlr_Java_classOrInterfaceDeclaration_2_1(gomantlr_Java_classDeclaration:Gomantlr_Java_classDeclaration)
-  | Gomantlr_Java_classOrInterfaceDeclaration_2_2(gomantlr_Java_interfaceDeclaration:Gomantlr_Java_interfaceDeclaration)
+Java_classOrInterfaceDeclaration_2 =
+    Java_classOrInterfaceDeclaration_2_1(classDeclaration:Java_classDeclaration)
+  | Java_classOrInterfaceDeclaration_2_2(interfaceDeclaration:Java_interfaceDeclaration)
 
-Gomantlr_Java_classDeclaration =
-    Gomantlr_Java_classDeclaration_1(gomantlr_Java_normalClassDeclaration:Gomantlr_Java_normalClassDeclaration)
-  | Gomantlr_Java_classDeclaration_2(gomantlr_Java_enumDeclaration:Gomantlr_Java_enumDeclaration)
+Java_classDeclaration =
+    Java_classDeclaration_1(normalClassDeclaration:Java_normalClassDeclaration)
+  | Java_classDeclaration_2(enumDeclaration:Java_enumDeclaration)
 
-Gomantlr_Java_normalClassDeclaration =
-    Gomantlr_Java_normalClassDeclaration(gomantlr_Java_normalClassDeclaration_1:Gomantlr_Java_Identifier,gomantlr_Java_normalClassDeclaration_2:Gomantlr_Java_normalClassDeclaration_2,gomantlr_Java_normalClassDeclaration_3:Gomantlr_Java_normalClassDeclaration_3,gomantlr_Java_normalClassDeclaration_4:Gomantlr_Java_normalClassDeclaration_4,gomantlr_Java_normalClassDeclaration_5:Gomantlr_Java_classBody)
+Java_normalClassDeclaration =
+    Java_normalClassDeclaration(normalClassDeclaration_1:Java_Identifier,normalClassDeclaration_2:Java_normalClassDeclaration_2,normalClassDeclaration_3:Java_normalClassDeclaration_3,normalClassDeclaration_4:Java_normalClassDeclaration_4,normalClassDeclaration_5:Java_classBody)
 
-Gomantlr_Java_normalClassDeclaration_2 =
-    Gomantlr_Java_normalClassDeclaration_2_1(gomantlr_Java_typeParameters:Gomantlr_Java_typeParameters)
-  | Gomantlr_Java_normalClassDeclaration_2_2()
+Java_normalClassDeclaration_2 =
+    Java_normalClassDeclaration_2_1(typeParameters:Java_typeParameters)
+  | Java_normalClassDeclaration_2_2()
 
-Gomantlr_Java_normalClassDeclaration_3 =
-    Gomantlr_Java_normalClassDeclaration_3_1(gomantlr_Java_normalClassDeclaration_3_1_1:Gomantlr_Java_type)
-  | Gomantlr_Java_normalClassDeclaration_3_2()
+Java_normalClassDeclaration_3 =
+    Java_normalClassDeclaration_3_1(normalClassDeclaration_3_1_1:Java_type)
+  | Java_normalClassDeclaration_3_2()
 
-Gomantlr_Java_normalClassDeclaration_4 =
-    Gomantlr_Java_normalClassDeclaration_4_1(gomantlr_Java_normalClassDeclaration_4_1_1:Gomantlr_Java_typeList)
-  | Gomantlr_Java_normalClassDeclaration_4_2()
+Java_normalClassDeclaration_4 =
+    Java_normalClassDeclaration_4_1(normalClassDeclaration_4_1_1:Java_typeList)
+  | Java_normalClassDeclaration_4_2()
 
-Gomantlr_Java_typeParameters =
-    Gomantlr_Java_typeParameters(gomantlr_Java_typeParameters_1:Gomantlr_Java_typeParameter,gomantlr_Java_typeParameters_2:Gomantlr_Java_typeParameters_2)
+Java_typeParameters =
+    Java_typeParameters(typeParameters_1:Java_typeParameter,typeParameters_2:Java_typeParameters_2)
 
-Gomantlr_Java_typeParameters_2 =
-    Gomantlr_Java_typeParameters_2_1(Gomantlr_Java_typeParameters_2_1_1*)
+Java_typeParameters_2 =
+    Java_typeParameters_2_1(Java_typeParameters_2_1_1*)
 
-Gomantlr_Java_typeParameters_2_1_1 =
-    Gomantlr_Java_typeParameters_2_1_1(gomantlr_Java_typeParameters_2_1_1_1:Gomantlr_Java_typeParameter)
+Java_typeParameters_2_1_1 =
+    Java_typeParameters_2_1_1(typeParameters_2_1_1_1:Java_typeParameter)
 
-Gomantlr_Java_typeParameter =
-    Gomantlr_Java_typeParameter(gomantlr_Java_typeParameter_1:Gomantlr_Java_Identifier,gomantlr_Java_typeParameter_2:Gomantlr_Java_typeParameter_2)
+Java_typeParameter =
+    Java_typeParameter(typeParameter_1:Java_Identifier,typeParameter_2:Java_typeParameter_2)
 
-Gomantlr_Java_typeParameter_2 =
-    Gomantlr_Java_typeParameter_2_1(gomantlr_Java_typeParameter_2_1_1:Gomantlr_Java_bound)
-  | Gomantlr_Java_typeParameter_2_2()
+Java_typeParameter_2 =
+    Java_typeParameter_2_1(typeParameter_2_1_1:Java_bound)
+  | Java_typeParameter_2_2()
 
-Gomantlr_Java_bound =
-    Gomantlr_Java_bound(gomantlr_Java_bound_1:Gomantlr_Java_type,gomantlr_Java_bound_2:Gomantlr_Java_bound_2)
+Java_bound =
+    Java_bound(bound_1:Java_type,bound_2:Java_bound_2)
 
-Gomantlr_Java_bound_2 =
-    Gomantlr_Java_bound_2_1(Gomantlr_Java_bound_2_1_1*)
+Java_bound_2 =
+    Java_bound_2_1(Java_bound_2_1_1*)
 
-Gomantlr_Java_bound_2_1_1 =
-    Gomantlr_Java_bound_2_1_1(gomantlr_Java_bound_2_1_1_1:Gomantlr_Java_type)
+Java_bound_2_1_1 =
+    Java_bound_2_1_1(bound_2_1_1_1:Java_type)
 
-Gomantlr_Java_enumDeclaration =
-    Gomantlr_Java_enumDeclaration(gomantlr_Java_enumDeclaration_1:Gomantlr_Java_ENUM,gomantlr_Java_enumDeclaration_2:Gomantlr_Java_Identifier,gomantlr_Java_enumDeclaration_3:Gomantlr_Java_enumDeclaration_3,gomantlr_Java_enumDeclaration_4:Gomantlr_Java_enumBody)
+Java_enumDeclaration =
+    Java_enumDeclaration(enumDeclaration_1:Java_ENUM,enumDeclaration_2:Java_Identifier,enumDeclaration_3:Java_enumDeclaration_3,enumDeclaration_4:Java_enumBody)
 
-Gomantlr_Java_enumDeclaration_3 =
-    Gomantlr_Java_enumDeclaration_3_1(gomantlr_Java_enumDeclaration_3_1_1:Gomantlr_Java_typeList)
-  | Gomantlr_Java_enumDeclaration_3_2()
+Java_enumDeclaration_3 =
+    Java_enumDeclaration_3_1(enumDeclaration_3_1_1:Java_typeList)
+  | Java_enumDeclaration_3_2()
 
-Gomantlr_Java_enumBody =
-    Gomantlr_Java_enumBody(gomantlr_Java_enumBody_1:Gomantlr_Java_enumBody_1,gomantlr_Java_enumBody_2:Gomantlr_Java_enumBody_2,gomantlr_Java_enumBody_3:Gomantlr_Java_enumBody_3)
+Java_enumBody =
+    Java_enumBody(enumBody_1:Java_enumBody_1,enumBody_2:Java_enumBody_2,enumBody_3:Java_enumBody_3)
 
-Gomantlr_Java_enumBody_1 =
-    Gomantlr_Java_enumBody_1_1(gomantlr_Java_enumConstants:Gomantlr_Java_enumConstants)
-  | Gomantlr_Java_enumBody_1_2()
+Java_enumBody_1 =
+    Java_enumBody_1_1(enumConstants:Java_enumConstants)
+  | Java_enumBody_1_2()
 
-Gomantlr_Java_enumBody_2 =
-    Gomantlr_Java_enumBody_2_1()
-  | Gomantlr_Java_enumBody_2_2()
+Java_enumBody_2 =
+    Java_enumBody_2_1()
+  | Java_enumBody_2_2()
 
-Gomantlr_Java_enumBody_3 =
-    Gomantlr_Java_enumBody_3_1(gomantlr_Java_enumBodyDeclarations:Gomantlr_Java_enumBodyDeclarations)
-  | Gomantlr_Java_enumBody_3_2()
+Java_enumBody_3 =
+    Java_enumBody_3_1(enumBodyDeclarations:Java_enumBodyDeclarations)
+  | Java_enumBody_3_2()
 
-Gomantlr_Java_enumConstants =
-    Gomantlr_Java_enumConstants(gomantlr_Java_enumConstants_1:Gomantlr_Java_enumConstant,gomantlr_Java_enumConstants_2:Gomantlr_Java_enumConstants_2)
+Java_enumConstants =
+    Java_enumConstants(enumConstants_1:Java_enumConstant,enumConstants_2:Java_enumConstants_2)
 
-Gomantlr_Java_enumConstants_2 =
-    Gomantlr_Java_enumConstants_2_1(Gomantlr_Java_enumConstants_2_1_1*)
+Java_enumConstants_2 =
+    Java_enumConstants_2_1(Java_enumConstants_2_1_1*)
 
-Gomantlr_Java_enumConstants_2_1_1 =
-    Gomantlr_Java_enumConstants_2_1_1(gomantlr_Java_enumConstants_2_1_1_1:Gomantlr_Java_enumConstant)
+Java_enumConstants_2_1_1 =
+    Java_enumConstants_2_1_1(enumConstants_2_1_1_1:Java_enumConstant)
 
-Gomantlr_Java_enumConstant =
-    Gomantlr_Java_enumConstant(gomantlr_Java_enumConstant_1:Gomantlr_Java_enumConstant_1,gomantlr_Java_enumConstant_2:Gomantlr_Java_Identifier,gomantlr_Java_enumConstant_3:Gomantlr_Java_enumConstant_3,gomantlr_Java_enumConstant_4:Gomantlr_Java_enumConstant_4)
+Java_enumConstant =
+    Java_enumConstant(enumConstant_1:Java_enumConstant_1,enumConstant_2:Java_Identifier,enumConstant_3:Java_enumConstant_3,enumConstant_4:Java_enumConstant_4)
 
-Gomantlr_Java_enumConstant_1 =
-    Gomantlr_Java_enumConstant_1_1(gomantlr_Java_annotations:Gomantlr_Java_annotationList)
-  | Gomantlr_Java_enumConstant_1_2()
+Java_enumConstant_1 =
+    Java_enumConstant_1_1(annotations:Java_annotationList)
+  | Java_enumConstant_1_2()
 
-Gomantlr_Java_enumConstant_3 =
-    Gomantlr_Java_enumConstant_3_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_enumConstant_3_2()
+Java_enumConstant_3 =
+    Java_enumConstant_3_1(arguments:Java_arguments)
+  | Java_enumConstant_3_2()
 
-Gomantlr_Java_enumConstant_4 =
-    Gomantlr_Java_enumConstant_4_1(gomantlr_Java_classBody:Gomantlr_Java_classBody)
-  | Gomantlr_Java_enumConstant_4_2()
+Java_enumConstant_4 =
+    Java_enumConstant_4_1(classBody:Java_classBody)
+  | Java_enumConstant_4_2()
 
-Gomantlr_Java_enumBodyDeclarations =
-    Gomantlr_Java_enumBodyDeclarations(gomantlr_Java_enumBodyDeclarations_1:Gomantlr_Java_enumBodyDeclarations_1)
+Java_enumBodyDeclarations =
+    Java_enumBodyDeclarations(enumBodyDeclarations_1:Java_enumBodyDeclarations_1)
 
-Gomantlr_Java_enumBodyDeclarations_1 =
-    Gomantlr_Java_enumBodyDeclarations_1_1(Gomantlr_Java_classBodyDeclaration*)
+Java_enumBodyDeclarations_1 =
+    Java_enumBodyDeclarations_1_1(Java_classBodyDeclaration*)
 
-Gomantlr_Java_interfaceDeclaration =
-    Gomantlr_Java_interfaceDeclaration_1(gomantlr_Java_normalInterfaceDeclaration:Gomantlr_Java_normalInterfaceDeclaration)
-  | Gomantlr_Java_interfaceDeclaration_2(gomantlr_Java_annotationTypeDeclaration:Gomantlr_Java_annotationTypeDeclaration)
+Java_interfaceDeclaration =
+    Java_interfaceDeclaration_1(normalInterfaceDeclaration:Java_normalInterfaceDeclaration)
+  | Java_interfaceDeclaration_2(annotationTypeDeclaration:Java_annotationTypeDeclaration)
 
-Gomantlr_Java_normalInterfaceDeclaration =
-    Gomantlr_Java_normalInterfaceDeclaration(gomantlr_Java_normalInterfaceDeclaration_1:Gomantlr_Java_Identifier,gomantlr_Java_normalInterfaceDeclaration_2:Gomantlr_Java_normalInterfaceDeclaration_2,gomantlr_Java_normalInterfaceDeclaration_3:Gomantlr_Java_normalInterfaceDeclaration_3,gomantlr_Java_normalInterfaceDeclaration_4:Gomantlr_Java_interfaceBody)
+Java_normalInterfaceDeclaration =
+    Java_normalInterfaceDeclaration(normalInterfaceDeclaration_1:Java_Identifier,normalInterfaceDeclaration_2:Java_normalInterfaceDeclaration_2,normalInterfaceDeclaration_3:Java_normalInterfaceDeclaration_3,normalInterfaceDeclaration_4:Java_interfaceBody)
 
-Gomantlr_Java_normalInterfaceDeclaration_2 =
-    Gomantlr_Java_normalInterfaceDeclaration_2_1(gomantlr_Java_typeParameters:Gomantlr_Java_typeParameters)
-  | Gomantlr_Java_normalInterfaceDeclaration_2_2()
+Java_normalInterfaceDeclaration_2 =
+    Java_normalInterfaceDeclaration_2_1(typeParameters:Java_typeParameters)
+  | Java_normalInterfaceDeclaration_2_2()
 
-Gomantlr_Java_normalInterfaceDeclaration_3 =
-    Gomantlr_Java_normalInterfaceDeclaration_3_1(gomantlr_Java_normalInterfaceDeclaration_3_1_1:Gomantlr_Java_typeList)
-  | Gomantlr_Java_normalInterfaceDeclaration_3_2()
+Java_normalInterfaceDeclaration_3 =
+    Java_normalInterfaceDeclaration_3_1(normalInterfaceDeclaration_3_1_1:Java_typeList)
+  | Java_normalInterfaceDeclaration_3_2()
 
-Gomantlr_Java_typeList =
-    Gomantlr_Java_typeList(gomantlr_Java_typeList_1:Gomantlr_Java_type,gomantlr_Java_typeList_2:Gomantlr_Java_typeList_2)
+Java_typeList =
+    Java_typeList(typeList_1:Java_type,typeList_2:Java_typeList_2)
 
-Gomantlr_Java_typeList_2 =
-    Gomantlr_Java_typeList_2_1(Gomantlr_Java_typeList_2_1_1*)
+Java_typeList_2 =
+    Java_typeList_2_1(Java_typeList_2_1_1*)
 
-Gomantlr_Java_typeList_2_1_1 =
-    Gomantlr_Java_typeList_2_1_1(gomantlr_Java_typeList_2_1_1_1:Gomantlr_Java_type)
+Java_typeList_2_1_1 =
+    Java_typeList_2_1_1(typeList_2_1_1_1:Java_type)
 
-Gomantlr_Java_classBody =
-    Gomantlr_Java_classBody(gomantlr_Java_classBody_1:Gomantlr_Java_classBody_1)
+Java_classBody =
+    Java_classBody(classBody_1:Java_classBody_1)
 
-Gomantlr_Java_classBody_1 =
-    Gomantlr_Java_classBody_1_1(Gomantlr_Java_classBodyDeclaration*)
+Java_classBody_1 =
+    Java_classBody_1_1(Java_classBodyDeclaration*)
 
-Gomantlr_Java_interfaceBody =
-    Gomantlr_Java_interfaceBody(gomantlr_Java_interfaceBody_1:Gomantlr_Java_interfaceBody_1)
+Java_interfaceBody =
+    Java_interfaceBody(interfaceBody_1:Java_interfaceBody_1)
 
-Gomantlr_Java_interfaceBody_1 =
-    Gomantlr_Java_interfaceBody_1_1(Gomantlr_Java_interfaceBodyDeclaration*)
+Java_interfaceBody_1 =
+    Java_interfaceBody_1_1(Java_interfaceBodyDeclaration*)
 
-Gomantlr_Java_classBodyDeclaration =
-    Gomantlr_Java_classBodyDeclaration_1()
-  | Gomantlr_Java_classBodyDeclaration_2(gomantlr_Java_classBodyDeclaration_2_1:Gomantlr_Java_classBodyDeclaration_2_1,gomantlr_Java_classBodyDeclaration_2_2:Gomantlr_Java_block)
-  | Gomantlr_Java_classBodyDeclaration_3(gomantlr_Java_classBodyDeclaration_3_1:Gomantlr_Java_classBodyDeclaration_3_1,gomantlr_Java_classBodyDeclaration_3_2:Gomantlr_Java_memberDecl)
+Java_classBodyDeclaration =
+    Java_classBodyDeclaration_1()
+  | Java_classBodyDeclaration_2(classBodyDeclaration_2_1:Java_classBodyDeclaration_2_1,classBodyDeclaration_2_2:Java_block)
+  | Java_classBodyDeclaration_3(classBodyDeclaration_3_1:Java_classBodyDeclaration_3_1,classBodyDeclaration_3_2:Java_memberDecl)
 
-Gomantlr_Java_classBodyDeclaration_2_1 =
-    Gomantlr_Java_classBodyDeclaration_2_1_1()
-  | Gomantlr_Java_classBodyDeclaration_2_1_2()
+Java_classBodyDeclaration_2_1 =
+    Java_classBodyDeclaration_2_1_1()
+  | Java_classBodyDeclaration_2_1_2()
 
 
-Gomantlr_Java_classBodyDeclaration_3_1 =
-    Gomantlr_Java_classBodyDeclaration_3_1_1(Gomantlr_Java_modifier*)
+Java_classBodyDeclaration_3_1 =
+    Java_classBodyDeclaration_3_1_1(Java_modifier*)
 
-Gomantlr_Java_memberDecl =
-    Gomantlr_Java_memberDecl_1(gomantlr_Java_genericMethodOrConstructorDecl:Gomantlr_Java_genericMethodOrConstructorDecl)
-  | Gomantlr_Java_memberDecl_2(gomantlr_Java_methodDeclaration:Gomantlr_Java_methodDeclaration)
-  | Gomantlr_Java_memberDecl_3(gomantlr_Java_fieldDeclaration:Gomantlr_Java_fieldDeclaration)
-  | Gomantlr_Java_memberDecl_4(gomantlr_Java_memberDecl_4_1:Gomantlr_Java_Identifier,gomantlr_Java_memberDecl_4_2:Gomantlr_Java_voidMethodDeclaratorRest)
-  | Gomantlr_Java_memberDecl_5(gomantlr_Java_memberDecl_5_1:Gomantlr_Java_Identifier,gomantlr_Java_memberDecl_5_2:Gomantlr_Java_constructorDeclaratorRest)
-  | Gomantlr_Java_memberDecl_6(gomantlr_Java_interfaceDeclaration:Gomantlr_Java_interfaceDeclaration)
-  | Gomantlr_Java_memberDecl_7(gomantlr_Java_classDeclaration:Gomantlr_Java_classDeclaration)
+Java_memberDecl =
+    Java_memberDecl_1(genericMethodOrConstructorDecl:Java_genericMethodOrConstructorDecl)
+  | Java_memberDecl_2(methodDeclaration:Java_methodDeclaration)
+  | Java_memberDecl_3(fieldDeclaration:Java_fieldDeclaration)
+  | Java_memberDecl_4(memberDecl_4_1:Java_Identifier,memberDecl_4_2:Java_voidMethodDeclaratorRest)
+  | Java_memberDecl_5(memberDecl_5_1:Java_Identifier,memberDecl_5_2:Java_constructorDeclaratorRest)
+  | Java_memberDecl_6(interfaceDeclaration:Java_interfaceDeclaration)
+  | Java_memberDecl_7(classDeclaration:Java_classDeclaration)
 
-Gomantlr_Java_genericMethodOrConstructorDecl =
-    Gomantlr_Java_genericMethodOrConstructorDecl(gomantlr_Java_genericMethodOrConstructorDecl_1:Gomantlr_Java_typeParameters,gomantlr_Java_genericMethodOrConstructorDecl_2:Gomantlr_Java_genericMethodOrConstructorRest)
+Java_genericMethodOrConstructorDecl =
+    Java_genericMethodOrConstructorDecl(genericMethodOrConstructorDecl_1:Java_typeParameters,genericMethodOrConstructorDecl_2:Java_genericMethodOrConstructorRest)
 
-Gomantlr_Java_genericMethodOrConstructorRest =
-    Gomantlr_Java_genericMethodOrConstructorRest_1(gomantlr_Java_genericMethodOrConstructorRest_1_1:Gomantlr_Java_genericMethodOrConstructorRest_1_1,gomantlr_Java_genericMethodOrConstructorRest_1_2:Gomantlr_Java_Identifier,gomantlr_Java_genericMethodOrConstructorRest_1_3:Gomantlr_Java_methodDeclaratorRest)
-  | Gomantlr_Java_genericMethodOrConstructorRest_2(gomantlr_Java_genericMethodOrConstructorRest_2_1:Gomantlr_Java_Identifier,gomantlr_Java_genericMethodOrConstructorRest_2_2:Gomantlr_Java_constructorDeclaratorRest)
+Java_genericMethodOrConstructorRest =
+    Java_genericMethodOrConstructorRest_1(genericMethodOrConstructorRest_1_1:Java_genericMethodOrConstructorRest_1_1,genericMethodOrConstructorRest_1_2:Java_Identifier,genericMethodOrConstructorRest_1_3:Java_methodDeclaratorRest)
+  | Java_genericMethodOrConstructorRest_2(genericMethodOrConstructorRest_2_1:Java_Identifier,genericMethodOrConstructorRest_2_2:Java_constructorDeclaratorRest)
 
-Gomantlr_Java_genericMethodOrConstructorRest_1_1 =
-    Gomantlr_Java_genericMethodOrConstructorRest_1_1_1(gomantlr_Java_type:Gomantlr_Java_type)
-  | Gomantlr_Java_genericMethodOrConstructorRest_1_1_2()
+Java_genericMethodOrConstructorRest_1_1 =
+    Java_genericMethodOrConstructorRest_1_1_1(type:Java_type)
+  | Java_genericMethodOrConstructorRest_1_1_2()
 
-Gomantlr_Java_genericMethodOrConstructorRest_2_1 =
-    Gomantlr_Java_genericMethodOrConstructorRest_2_1()
+Java_genericMethodOrConstructorRest_2_1 =
+    Java_genericMethodOrConstructorRest_2_1()
 
-Gomantlr_Java_methodDeclaration =
-    Gomantlr_Java_methodDeclaration(gomantlr_Java_methodDeclaration_1:Gomantlr_Java_type,gomantlr_Java_methodDeclaration_2:Gomantlr_Java_Identifier,gomantlr_Java_methodDeclaration_3:Gomantlr_Java_methodDeclaratorRest)
+Java_methodDeclaration =
+    Java_methodDeclaration(methodDeclaration_1:Java_type,methodDeclaration_2:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
 
-Gomantlr_Java_fieldDeclaration =
-    Gomantlr_Java_fieldDeclaration(gomantlr_Java_fieldDeclaration_1:Gomantlr_Java_type,gomantlr_Java_fieldDeclaration_2:Gomantlr_Java_variableDeclarators)
+Java_fieldDeclaration =
+    Java_fieldDeclaration(fieldDeclaration_1:Java_type,fieldDeclaration_2:Java_variableDeclarators)
 
-Gomantlr_Java_interfaceBodyDeclaration =
-    Gomantlr_Java_interfaceBodyDeclaration_1(gomantlr_Java_interfaceBodyDeclaration_1_1:Gomantlr_Java_interfaceBodyDeclaration_1_1,gomantlr_Java_interfaceBodyDeclaration_1_2:Gomantlr_Java_interfaceMemberDecl)
-  | Gomantlr_Java_interfaceBodyDeclaration_2()
+Java_interfaceBodyDeclaration =
+    Java_interfaceBodyDeclaration_1(interfaceBodyDeclaration_1_1:Java_interfaceBodyDeclaration_1_1,interfaceBodyDeclaration_1_2:Java_interfaceMemberDecl)
+  | Java_interfaceBodyDeclaration_2()
 
-Gomantlr_Java_interfaceBodyDeclaration_1_1 =
-    Gomantlr_Java_interfaceBodyDeclaration_1_1_1(Gomantlr_Java_modifier*)
+Java_interfaceBodyDeclaration_1_1 =
+    Java_interfaceBodyDeclaration_1_1_1(Java_modifier*)
 
-Gomantlr_Java_interfaceMemberDecl =
-    Gomantlr_Java_interfaceMemberDecl_1(gomantlr_Java_interfaceMethodOrFieldDecl:Gomantlr_Java_interfaceMethodOrFieldDecl)
-  | Gomantlr_Java_interfaceMemberDecl_2(gomantlr_Java_interfaceGenericMethodDecl:Gomantlr_Java_interfaceGenericMethodDecl)
-  | Gomantlr_Java_interfaceMemberDecl_3(gomantlr_Java_interfaceMemberDecl_3_1:Gomantlr_Java_Identifier,gomantlr_Java_interfaceMemberDecl_3_2:Gomantlr_Java_voidInterfaceMethodDeclaratorRest)
-  | Gomantlr_Java_interfaceMemberDecl_4(gomantlr_Java_interfaceDeclaration:Gomantlr_Java_interfaceDeclaration)
-  | Gomantlr_Java_interfaceMemberDecl_5(gomantlr_Java_classDeclaration:Gomantlr_Java_classDeclaration)
+Java_interfaceMemberDecl =
+    Java_interfaceMemberDecl_1(interfaceMethodOrFieldDecl:Java_interfaceMethodOrFieldDecl)
+  | Java_interfaceMemberDecl_2(interfaceGenericMethodDecl:Java_interfaceGenericMethodDecl)
+  | Java_interfaceMemberDecl_3(interfaceMemberDecl_3_1:Java_Identifier,interfaceMemberDecl_3_2:Java_voidInterfaceMethodDeclaratorRest)
+  | Java_interfaceMemberDecl_4(interfaceDeclaration:Java_interfaceDeclaration)
+  | Java_interfaceMemberDecl_5(classDeclaration:Java_classDeclaration)
 
-Gomantlr_Java_interfaceMethodOrFieldDecl =
-    Gomantlr_Java_interfaceMethodOrFieldDecl(gomantlr_Java_interfaceMethodOrFieldDecl_1:Gomantlr_Java_type,gomantlr_Java_interfaceMethodOrFieldDecl_2:Gomantlr_Java_Identifier,gomantlr_Java_interfaceMethodOrFieldDecl_3:Gomantlr_Java_interfaceMethodOrFieldRest)
+Java_interfaceMethodOrFieldDecl =
+    Java_interfaceMethodOrFieldDecl(interfaceMethodOrFieldDecl_1:Java_type,interfaceMethodOrFieldDecl_2:Java_Identifier,interfaceMethodOrFieldDecl_3:Java_interfaceMethodOrFieldRest)
 
-Gomantlr_Java_interfaceMethodOrFieldRest =
-    Gomantlr_Java_interfaceMethodOrFieldRest_1(gomantlr_Java_interfaceMethodOrFieldRest_1_1:Gomantlr_Java_constantDeclaratorsRest)
-  | Gomantlr_Java_interfaceMethodOrFieldRest_2(gomantlr_Java_interfaceMethodDeclaratorRest:Gomantlr_Java_interfaceMethodDeclaratorRest)
+Java_interfaceMethodOrFieldRest =
+    Java_interfaceMethodOrFieldRest_1(interfaceMethodOrFieldRest_1_1:Java_constantDeclaratorsRest)
+  | Java_interfaceMethodOrFieldRest_2(interfaceMethodDeclaratorRest:Java_interfaceMethodDeclaratorRest)
 
-Gomantlr_Java_methodDeclaratorRest =
-    Gomantlr_Java_methodDeclaratorRest(gomantlr_Java_methodDeclaratorRest_1:Gomantlr_Java_formalParameters,gomantlr_Java_methodDeclaratorRest_2:Gomantlr_Java_methodDeclaratorRest_2,gomantlr_Java_methodDeclaratorRest_3:Gomantlr_Java_methodDeclaratorRest_3,gomantlr_Java_methodDeclaratorRest_4:Gomantlr_Java_methodDeclaratorRest_4)
+Java_methodDeclaratorRest =
+    Java_methodDeclaratorRest(methodDeclaratorRest_1:Java_formalParameters,methodDeclaratorRest_2:Java_methodDeclaratorRest_2,methodDeclaratorRest_3:Java_methodDeclaratorRest_3,methodDeclaratorRest_4:Java_methodDeclaratorRest_4)
 
-Gomantlr_Java_methodDeclaratorRest_2 =
-    Gomantlr_Java_methodDeclaratorRest_2_1(Gomantlr_Java_methodDeclaratorRest_2_1_1*)
+Java_methodDeclaratorRest_2 =
+    Java_methodDeclaratorRest_2_1(Java_methodDeclaratorRest_2_1_1*)
 
-Gomantlr_Java_methodDeclaratorRest_2_1_1 =
-    Gomantlr_Java_methodDeclaratorRest_2_1_1()
+Java_methodDeclaratorRest_2_1_1 =
+    Java_methodDeclaratorRest_2_1_1()
 
-Gomantlr_Java_methodDeclaratorRest_3 =
-    Gomantlr_Java_methodDeclaratorRest_3_1(gomantlr_Java_methodDeclaratorRest_3_1_1:Gomantlr_Java_qualifiedNameList)
-  | Gomantlr_Java_methodDeclaratorRest_3_2()
+Java_methodDeclaratorRest_3 =
+    Java_methodDeclaratorRest_3_1(methodDeclaratorRest_3_1_1:Java_qualifiedNameList)
+  | Java_methodDeclaratorRest_3_2()
 
-Gomantlr_Java_methodDeclaratorRest_4 =
-    Gomantlr_Java_methodDeclaratorRest_4_1(gomantlr_Java_methodBody:Gomantlr_Java_methodBody)
-  | Gomantlr_Java_methodDeclaratorRest_4_2()
+Java_methodDeclaratorRest_4 =
+    Java_methodDeclaratorRest_4_1(methodBody:Java_methodBody)
+  | Java_methodDeclaratorRest_4_2()
 
-Gomantlr_Java_voidMethodDeclaratorRest =
-    Gomantlr_Java_voidMethodDeclaratorRest(gomantlr_Java_voidMethodDeclaratorRest_1:Gomantlr_Java_formalParameters,gomantlr_Java_voidMethodDeclaratorRest_2:Gomantlr_Java_voidMethodDeclaratorRest_2,gomantlr_Java_voidMethodDeclaratorRest_3:Gomantlr_Java_voidMethodDeclaratorRest_3)
+Java_voidMethodDeclaratorRest =
+    Java_voidMethodDeclaratorRest(voidMethodDeclaratorRest_1:Java_formalParameters,voidMethodDeclaratorRest_2:Java_voidMethodDeclaratorRest_2,voidMethodDeclaratorRest_3:Java_voidMethodDeclaratorRest_3)
 
-Gomantlr_Java_voidMethodDeclaratorRest_2 =
-    Gomantlr_Java_voidMethodDeclaratorRest_2_1(gomantlr_Java_voidMethodDeclaratorRest_2_1_1:Gomantlr_Java_qualifiedNameList)
-  | Gomantlr_Java_voidMethodDeclaratorRest_2_2()
+Java_voidMethodDeclaratorRest_2 =
+    Java_voidMethodDeclaratorRest_2_1(voidMethodDeclaratorRest_2_1_1:Java_qualifiedNameList)
+  | Java_voidMethodDeclaratorRest_2_2()
 
-Gomantlr_Java_voidMethodDeclaratorRest_3 =
-    Gomantlr_Java_voidMethodDeclaratorRest_3_1(gomantlr_Java_methodBody:Gomantlr_Java_methodBody)
-  | Gomantlr_Java_voidMethodDeclaratorRest_3_2()
+Java_voidMethodDeclaratorRest_3 =
+    Java_voidMethodDeclaratorRest_3_1(methodBody:Java_methodBody)
+  | Java_voidMethodDeclaratorRest_3_2()
 
-Gomantlr_Java_interfaceMethodDeclaratorRest =
-    Gomantlr_Java_interfaceMethodDeclaratorRest(gomantlr_Java_interfaceMethodDeclaratorRest_1:Gomantlr_Java_formalParameters,gomantlr_Java_interfaceMethodDeclaratorRest_2:Gomantlr_Java_interfaceMethodDeclaratorRest_2,gomantlr_Java_interfaceMethodDeclaratorRest_3:Gomantlr_Java_interfaceMethodDeclaratorRest_3)
+Java_interfaceMethodDeclaratorRest =
+    Java_interfaceMethodDeclaratorRest(interfaceMethodDeclaratorRest_1:Java_formalParameters,interfaceMethodDeclaratorRest_2:Java_interfaceMethodDeclaratorRest_2,interfaceMethodDeclaratorRest_3:Java_interfaceMethodDeclaratorRest_3)
 
-Gomantlr_Java_interfaceMethodDeclaratorRest_2 =
-    Gomantlr_Java_interfaceMethodDeclaratorRest_2_1(Gomantlr_Java_interfaceMethodDeclaratorRest_2_1_1*)
+Java_interfaceMethodDeclaratorRest_2 =
+    Java_interfaceMethodDeclaratorRest_2_1(Java_interfaceMethodDeclaratorRest_2_1_1*)
 
-Gomantlr_Java_interfaceMethodDeclaratorRest_2_1_1 =
-    Gomantlr_Java_interfaceMethodDeclaratorRest_2_1_1()
+Java_interfaceMethodDeclaratorRest_2_1_1 =
+    Java_interfaceMethodDeclaratorRest_2_1_1()
 
-Gomantlr_Java_interfaceMethodDeclaratorRest_3 =
-    Gomantlr_Java_interfaceMethodDeclaratorRest_3_1(gomantlr_Java_interfaceMethodDeclaratorRest_3_1_1:Gomantlr_Java_qualifiedNameList)
-  | Gomantlr_Java_interfaceMethodDeclaratorRest_3_2()
+Java_interfaceMethodDeclaratorRest_3 =
+    Java_interfaceMethodDeclaratorRest_3_1(interfaceMethodDeclaratorRest_3_1_1:Java_qualifiedNameList)
+  | Java_interfaceMethodDeclaratorRest_3_2()
 
-Gomantlr_Java_interfaceGenericMethodDecl =
-    Gomantlr_Java_interfaceGenericMethodDecl(gomantlr_Java_interfaceGenericMethodDecl_1:Gomantlr_Java_typeParameters,gomantlr_Java_interfaceGenericMethodDecl_2:Gomantlr_Java_interfaceGenericMethodDecl_2,gomantlr_Java_interfaceGenericMethodDecl_3:Gomantlr_Java_Identifier,gomantlr_Java_interfaceGenericMethodDecl_4:Gomantlr_Java_interfaceMethodDeclaratorRest)
+Java_interfaceGenericMethodDecl =
+    Java_interfaceGenericMethodDecl(interfaceGenericMethodDecl_1:Java_typeParameters,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,interfaceGenericMethodDecl_3:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
 
-Gomantlr_Java_interfaceGenericMethodDecl_2 =
-    Gomantlr_Java_interfaceGenericMethodDecl_2_1(gomantlr_Java_type:Gomantlr_Java_type)
-  | Gomantlr_Java_interfaceGenericMethodDecl_2_2()
+Java_interfaceGenericMethodDecl_2 =
+    Java_interfaceGenericMethodDecl_2_1(type:Java_type)
+  | Java_interfaceGenericMethodDecl_2_2()
 
-Gomantlr_Java_voidInterfaceMethodDeclaratorRest =
-    Gomantlr_Java_voidInterfaceMethodDeclaratorRest(gomantlr_Java_voidInterfaceMethodDeclaratorRest_1:Gomantlr_Java_formalParameters,gomantlr_Java_voidInterfaceMethodDeclaratorRest_2:Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2)
+Java_voidInterfaceMethodDeclaratorRest =
+    Java_voidInterfaceMethodDeclaratorRest(voidInterfaceMethodDeclaratorRest_1:Java_formalParameters,voidInterfaceMethodDeclaratorRest_2:Java_voidInterfaceMethodDeclaratorRest_2)
 
-Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2 =
-    Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1(gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_1_1:Gomantlr_Java_qualifiedNameList)
-  | Gomantlr_Java_voidInterfaceMethodDeclaratorRest_2_2()
+Java_voidInterfaceMethodDeclaratorRest_2 =
+    Java_voidInterfaceMethodDeclaratorRest_2_1(voidInterfaceMethodDeclaratorRest_2_1_1:Java_qualifiedNameList)
+  | Java_voidInterfaceMethodDeclaratorRest_2_2()
 
-Gomantlr_Java_constructorDeclaratorRest =
-    Gomantlr_Java_constructorDeclaratorRest(gomantlr_Java_constructorDeclaratorRest_1:Gomantlr_Java_formalParameters,gomantlr_Java_constructorDeclaratorRest_2:Gomantlr_Java_constructorDeclaratorRest_2,gomantlr_Java_constructorDeclaratorRest_3:Gomantlr_Java_methodBody)
+Java_constructorDeclaratorRest =
+    Java_constructorDeclaratorRest(constructorDeclaratorRest_1:Java_formalParameters,constructorDeclaratorRest_2:Java_constructorDeclaratorRest_2,constructorDeclaratorRest_3:Java_methodBody)
 
-Gomantlr_Java_constructorDeclaratorRest_2 =
-    Gomantlr_Java_constructorDeclaratorRest_2_1(gomantlr_Java_constructorDeclaratorRest_2_1_1:Gomantlr_Java_qualifiedNameList)
-  | Gomantlr_Java_constructorDeclaratorRest_2_2()
+Java_constructorDeclaratorRest_2 =
+    Java_constructorDeclaratorRest_2_1(constructorDeclaratorRest_2_1_1:Java_qualifiedNameList)
+  | Java_constructorDeclaratorRest_2_2()
 
-Gomantlr_Java_constantDeclarator =
-    Gomantlr_Java_constantDeclarator(gomantlr_Java_constantDeclarator_1:Gomantlr_Java_Identifier,gomantlr_Java_constantDeclarator_2:Gomantlr_Java_constantDeclaratorRest)
+Java_constantDeclarator =
+    Java_constantDeclarator(constantDeclarator_1:Java_Identifier,constantDeclarator_2:Java_constantDeclaratorRest)
 
-Gomantlr_Java_variableDeclarators =
-    Gomantlr_Java_variableDeclarators(gomantlr_Java_variableDeclarators_1:Gomantlr_Java_variableDeclarator,gomantlr_Java_variableDeclarators_2:Gomantlr_Java_variableDeclarators_2)
+Java_variableDeclarators =
+    Java_variableDeclarators(variableDeclarators_1:Java_variableDeclarator,variableDeclarators_2:Java_variableDeclarators_2)
 
-Gomantlr_Java_variableDeclarators_2 =
-    Gomantlr_Java_variableDeclarators_2_1(Gomantlr_Java_variableDeclarators_2_1_1*)
+Java_variableDeclarators_2 =
+    Java_variableDeclarators_2_1(Java_variableDeclarators_2_1_1*)
 
-Gomantlr_Java_variableDeclarators_2_1_1 =
-    Gomantlr_Java_variableDeclarators_2_1_1(gomantlr_Java_variableDeclarators_2_1_1_1:Gomantlr_Java_variableDeclarator)
+Java_variableDeclarators_2_1_1 =
+    Java_variableDeclarators_2_1_1(variableDeclarators_2_1_1_1:Java_variableDeclarator)
 
-Gomantlr_Java_variableDeclarator =
-    Gomantlr_Java_variableDeclarator(gomantlr_Java_variableDeclarator_1:Gomantlr_Java_Identifier,gomantlr_Java_variableDeclarator_2:Gomantlr_Java_variableDeclaratorRest)
+Java_variableDeclarator =
+    Java_variableDeclarator(variableDeclarator_1:Java_Identifier,variableDeclarator_2:Java_variableDeclaratorRest)
 
-Gomantlr_Java_variableDeclaratorRest =
-    Gomantlr_Java_variableDeclaratorRest_1(gomantlr_Java_variableDeclaratorRest_1_1:Gomantlr_Java_variableDeclaratorRest_1_1,gomantlr_Java_variableDeclaratorRest_1_2:Gomantlr_Java_variableDeclaratorRest_1_2)
-  | Gomantlr_Java_variableDeclaratorRest_2(gomantlr_Java_variableDeclaratorRest_2_1:Gomantlr_Java_variableInitializer)
-  | Gomantlr_Java_variableDeclaratorRest_3()
+Java_variableDeclaratorRest =
+    Java_variableDeclaratorRest_1(variableDeclaratorRest_1_1:Java_variableDeclaratorRest_1_1,variableDeclaratorRest_1_2:Java_variableDeclaratorRest_1_2)
+  | Java_variableDeclaratorRest_2(variableDeclaratorRest_2_1:Java_variableInitializer)
+  | Java_variableDeclaratorRest_3()
 
-Gomantlr_Java_variableDeclaratorRest_1_1 =
-    Gomantlr_Java_variableDeclaratorRest_1_1_1(Gomantlr_Java_variableDeclaratorRest_1_1_1_1*)
+Java_variableDeclaratorRest_1_1 =
+    Java_variableDeclaratorRest_1_1_1(Java_variableDeclaratorRest_1_1_1_1*)
 
-Gomantlr_Java_variableDeclaratorRest_1_1_1_1 =
-    Gomantlr_Java_variableDeclaratorRest_1_1_1_1()
+Java_variableDeclaratorRest_1_1_1_1 =
+    Java_variableDeclaratorRest_1_1_1_1()
 
-Gomantlr_Java_variableDeclaratorRest_1_2 =
-    Gomantlr_Java_variableDeclaratorRest_1_2_1(gomantlr_Java_variableDeclaratorRest_1_2_1_1:Gomantlr_Java_variableInitializer)
-  | Gomantlr_Java_variableDeclaratorRest_1_2_2()
+Java_variableDeclaratorRest_1_2 =
+    Java_variableDeclaratorRest_1_2_1(variableDeclaratorRest_1_2_1_1:Java_variableInitializer)
+  | Java_variableDeclaratorRest_1_2_2()
 
-Gomantlr_Java_constantDeclaratorsRest =
-    Gomantlr_Java_constantDeclaratorsRest(gomantlr_Java_constantDeclaratorsRest_1:Gomantlr_Java_constantDeclaratorRest,gomantlr_Java_constantDeclaratorsRest_2:Gomantlr_Java_constantDeclaratorsRest_2)
+Java_constantDeclaratorsRest =
+    Java_constantDeclaratorsRest(constantDeclaratorsRest_1:Java_constantDeclaratorRest,constantDeclaratorsRest_2:Java_constantDeclaratorsRest_2)
 
-Gomantlr_Java_constantDeclaratorsRest_2 =
-    Gomantlr_Java_constantDeclaratorsRest_2_1(Gomantlr_Java_constantDeclaratorsRest_2_1_1*)
+Java_constantDeclaratorsRest_2 =
+    Java_constantDeclaratorsRest_2_1(Java_constantDeclaratorsRest_2_1_1*)
 
-Gomantlr_Java_constantDeclaratorsRest_2_1_1 =
-    Gomantlr_Java_constantDeclaratorsRest_2_1_1(gomantlr_Java_constantDeclaratorsRest_2_1_1_1:Gomantlr_Java_constantDeclarator)
+Java_constantDeclaratorsRest_2_1_1 =
+    Java_constantDeclaratorsRest_2_1_1(constantDeclaratorsRest_2_1_1_1:Java_constantDeclarator)
 
-Gomantlr_Java_constantDeclaratorRest =
-    Gomantlr_Java_constantDeclaratorRest(gomantlr_Java_constantDeclaratorRest_1:Gomantlr_Java_constantDeclaratorRest_1,gomantlr_Java_constantDeclaratorRest_2:Gomantlr_Java_variableInitializer)
+Java_constantDeclaratorRest =
+    Java_constantDeclaratorRest(constantDeclaratorRest_1:Java_constantDeclaratorRest_1,constantDeclaratorRest_2:Java_variableInitializer)
 
-Gomantlr_Java_constantDeclaratorRest_1 =
-    Gomantlr_Java_constantDeclaratorRest_1_1(Gomantlr_Java_constantDeclaratorRest_1_1_1*)
+Java_constantDeclaratorRest_1 =
+    Java_constantDeclaratorRest_1_1(Java_constantDeclaratorRest_1_1_1*)
 
-Gomantlr_Java_constantDeclaratorRest_1_1_1 =
-    Gomantlr_Java_constantDeclaratorRest_1_1_1()
+Java_constantDeclaratorRest_1_1_1 =
+    Java_constantDeclaratorRest_1_1_1()
 
-Gomantlr_Java_variableDeclaratorId =
-    Gomantlr_Java_variableDeclaratorId(gomantlr_Java_variableDeclaratorId_1:Gomantlr_Java_Identifier,gomantlr_Java_variableDeclaratorId_2:Gomantlr_Java_variableDeclaratorId_2)
+Java_variableDeclaratorId =
+    Java_variableDeclaratorId(variableDeclaratorId_1:Java_Identifier,variableDeclaratorId_2:Java_variableDeclaratorId_2)
 
-Gomantlr_Java_variableDeclaratorId_2 =
-    Gomantlr_Java_variableDeclaratorId_2_1(Gomantlr_Java_variableDeclaratorId_2_1_1*)
+Java_variableDeclaratorId_2 =
+    Java_variableDeclaratorId_2_1(Java_variableDeclaratorId_2_1_1*)
 
-Gomantlr_Java_variableDeclaratorId_2_1_1 =
-    Gomantlr_Java_variableDeclaratorId_2_1_1()
+Java_variableDeclaratorId_2_1_1 =
+    Java_variableDeclaratorId_2_1_1()
 
-Gomantlr_Java_variableInitializer =
-    Gomantlr_Java_variableInitializer_1(gomantlr_Java_arrayInitializer:Gomantlr_Java_arrayInitializer)
-  | Gomantlr_Java_variableInitializer_2(gomantlr_Java_expression:Gomantlr_Java_expression)
+Java_variableInitializer =
+    Java_variableInitializer_1(arrayInitializer:Java_arrayInitializer)
+  | Java_variableInitializer_2(expression:Java_expression)
 
-Gomantlr_Java_arrayInitializer =
-    Gomantlr_Java_arrayInitializer(gomantlr_Java_arrayInitializer_1:Gomantlr_Java_arrayInitializer_1)
+Java_arrayInitializer =
+    Java_arrayInitializer(arrayInitializer_1:Java_arrayInitializer_1)
 
-Gomantlr_Java_arrayInitializer_1 =
-    Gomantlr_Java_arrayInitializer_1_1(gomantlr_Java_arrayInitializer_1_1_1:Gomantlr_Java_variableInitializer,gomantlr_Java_arrayInitializer_1_1_2:Gomantlr_Java_arrayInitializer_1_1_2,gomantlr_Java_arrayInitializer_1_1_3:Gomantlr_Java_arrayInitializer_1_1_3)
-  | Gomantlr_Java_arrayInitializer_1_2()
+Java_arrayInitializer_1 =
+    Java_arrayInitializer_1_1(arrayInitializer_1_1_1:Java_variableInitializer,arrayInitializer_1_1_2:Java_arrayInitializer_1_1_2,arrayInitializer_1_1_3:Java_arrayInitializer_1_1_3)
+  | Java_arrayInitializer_1_2()
 
-Gomantlr_Java_arrayInitializer_1_1_2 =
-    Gomantlr_Java_arrayInitializer_1_1_2_1(Gomantlr_Java_arrayInitializer_1_1_2_1_1*)
+Java_arrayInitializer_1_1_2 =
+    Java_arrayInitializer_1_1_2_1(Java_arrayInitializer_1_1_2_1_1*)
 
-Gomantlr_Java_arrayInitializer_1_1_2_1_1 =
-    Gomantlr_Java_arrayInitializer_1_1_2_1_1(gomantlr_Java_arrayInitializer_1_1_2_1_1_1:Gomantlr_Java_variableInitializer)
+Java_arrayInitializer_1_1_2_1_1 =
+    Java_arrayInitializer_1_1_2_1_1(arrayInitializer_1_1_2_1_1_1:Java_variableInitializer)
 
-Gomantlr_Java_arrayInitializer_1_1_3 =
-    Gomantlr_Java_arrayInitializer_1_1_3_1()
-  | Gomantlr_Java_arrayInitializer_1_1_3_2()
+Java_arrayInitializer_1_1_3 =
+    Java_arrayInitializer_1_1_3_1()
+  | Java_arrayInitializer_1_1_3_2()
 
-Gomantlr_Java_modifier =
-    Gomantlr_Java_modifier_1(gomantlr_Java_annotation:Gomantlr_Java_annotation)
-  | Gomantlr_Java_modifier_2()
-  | Gomantlr_Java_modifier_3()
-  | Gomantlr_Java_modifier_4()
-  | Gomantlr_Java_modifier_5()
-  | Gomantlr_Java_modifier_6()
-  | Gomantlr_Java_modifier_7()
-  | Gomantlr_Java_modifier_8()
-  | Gomantlr_Java_modifier_9()
-  | Gomantlr_Java_modifier_10()
-  | Gomantlr_Java_modifier_11()
-  | Gomantlr_Java_modifier_12()
+Java_modifier =
+    Java_modifier_1(annotation:Java_annotation)
+  | Java_modifier_2()
+  | Java_modifier_3()
+  | Java_modifier_4()
+  | Java_modifier_5()
+  | Java_modifier_6()
+  | Java_modifier_7()
+  | Java_modifier_8()
+  | Java_modifier_9()
+  | Java_modifier_10()
+  | Java_modifier_11()
+  | Java_modifier_12()
 
-Gomantlr_Java_packageOrTypeName =
-    Gomantlr_Java_packageOrTypeName(gomantlr_Java_packageOrTypeName_1:Gomantlr_Java_Identifier,gomantlr_Java_packageOrTypeName_2:Gomantlr_Java_packageOrTypeName_2)
+Java_packageOrTypeName =
+    Java_packageOrTypeName(packageOrTypeName_1:Java_Identifier,packageOrTypeName_2:Java_packageOrTypeName_2)
 
-Gomantlr_Java_packageOrTypeName_2 =
-    Gomantlr_Java_packageOrTypeName_2_1(Gomantlr_Java_packageOrTypeName_2_1_1*)
+Java_packageOrTypeName_2 =
+    Java_packageOrTypeName_2_1(Java_packageOrTypeName_2_1_1*)
 
-Gomantlr_Java_packageOrTypeName_2_1_1 =
-    Gomantlr_Java_packageOrTypeName_2_1_1(gomantlr_Java_packageOrTypeName_2_1_1_1:Gomantlr_Java_Identifier)
+Java_packageOrTypeName_2_1_1 =
+    Java_packageOrTypeName_2_1_1(packageOrTypeName_2_1_1_1:Java_Identifier)
 
-Gomantlr_Java_enumConstantName =
-    Gomantlr_Java_enumConstantName(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
+Java_enumConstantName =
+    Java_enumConstantName(Identifier:Java_Identifier)
 
-Gomantlr_Java_typeName =
-    Gomantlr_Java_typeName_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_typeName_2(gomantlr_Java_typeName_2_1_1:Gomantlr_Java_packageOrTypeName,gomantlr_Java_typeName_2_1_2:Gomantlr_Java_Identifier)
+Java_typeName =
+    Java_typeName_1(Identifier:Java_Identifier)
+  | Java_typeName_2(typeName_2_1_1:Java_packageOrTypeName,typeName_2_1_2:Java_Identifier)
 
-Gomantlr_Java_type =
-    Gomantlr_Java_type_1(gomantlr_Java_type_1_1:Gomantlr_Java_Identifier,gomantlr_Java_type_1_2:Gomantlr_Java_type_1_2,gomantlr_Java_type_1_3:Gomantlr_Java_type_1_3,gomantlr_Java_type_1_4:Gomantlr_Java_type_1_4)
-  | Gomantlr_Java_type_2(gomantlr_Java_type_2_1:Gomantlr_Java_primitiveType,gomantlr_Java_type_2_2:Gomantlr_Java_type_2_2)
+Java_type =
+    Java_type_1(type_1_1:Java_Identifier,type_1_2:Java_type_1_2,type_1_3:Java_type_1_3,type_1_4:Java_type_1_4)
+  | Java_type_2(type_2_1:Java_primitiveType,type_2_2:Java_type_2_2)
 
-Gomantlr_Java_type_1_2 =
-    Gomantlr_Java_type_1_2_1(gomantlr_Java_typeArguments:Gomantlr_Java_typeArguments)
-  | Gomantlr_Java_type_1_2_2()
+Java_type_1_2 =
+    Java_type_1_2_1(typeArguments:Java_typeArguments)
+  | Java_type_1_2_2()
 
-Gomantlr_Java_type_1_3 =
-    Gomantlr_Java_type_1_3_1(Gomantlr_Java_type_1_3_1_1*)
+Java_type_1_3 =
+    Java_type_1_3_1(Java_type_1_3_1_1*)
 
-Gomantlr_Java_type_1_3_1_1 =
-    Gomantlr_Java_type_1_3_1_1(gomantlr_Java_type_1_3_1_1_1:Gomantlr_Java_Identifier,gomantlr_Java_type_1_3_1_1_2:Gomantlr_Java_type_1_3_1_1_2)
+Java_type_1_3_1_1 =
+    Java_type_1_3_1_1(type_1_3_1_1_1:Java_Identifier,type_1_3_1_1_2:Java_type_1_3_1_1_2)
 
-Gomantlr_Java_type_1_3_1_1_2 =
-    Gomantlr_Java_type_1_3_1_1_2_1(gomantlr_Java_typeArguments:Gomantlr_Java_typeArguments)
-  | Gomantlr_Java_type_1_3_1_1_2_2()
+Java_type_1_3_1_1_2 =
+    Java_type_1_3_1_1_2_1(typeArguments:Java_typeArguments)
+  | Java_type_1_3_1_1_2_2()
 
-Gomantlr_Java_type_1_4 =
-    Gomantlr_Java_type_1_4_1(Gomantlr_Java_type_1_4_1_1*)
+Java_type_1_4 =
+    Java_type_1_4_1(Java_type_1_4_1_1*)
 
-Gomantlr_Java_type_1_4_1_1 =
-    Gomantlr_Java_type_1_4_1_1()
+Java_type_1_4_1_1 =
+    Java_type_1_4_1_1()
 
-Gomantlr_Java_type_2_2 =
-    Gomantlr_Java_type_2_2_1(Gomantlr_Java_type_2_2_1_1*)
+Java_type_2_2 =
+    Java_type_2_2_1(Java_type_2_2_1_1*)
 
-Gomantlr_Java_type_2_2_1_1 =
-    Gomantlr_Java_type_2_2_1_1()
+Java_type_2_2_1_1 =
+    Java_type_2_2_1_1()
 
-Gomantlr_Java_primitiveType =
-    Gomantlr_Java_primitiveType_1()
-  | Gomantlr_Java_primitiveType_2()
-  | Gomantlr_Java_primitiveType_3()
-  | Gomantlr_Java_primitiveType_4()
-  | Gomantlr_Java_primitiveType_5()
-  | Gomantlr_Java_primitiveType_6()
-  | Gomantlr_Java_primitiveType_7()
-  | Gomantlr_Java_primitiveType_8()
+Java_primitiveType =
+    Java_primitiveType_1()
+  | Java_primitiveType_2()
+  | Java_primitiveType_3()
+  | Java_primitiveType_4()
+  | Java_primitiveType_5()
+  | Java_primitiveType_6()
+  | Java_primitiveType_7()
+  | Java_primitiveType_8()
 
-Gomantlr_Java_variableModifier =
-    Gomantlr_Java_variableModifier_1()
-  | Gomantlr_Java_variableModifier_2(gomantlr_Java_annotation:Gomantlr_Java_annotation)
+Java_variableModifier =
+    Java_variableModifier_1()
+  | Java_variableModifier_2(annotation:Java_annotation)
 
-Gomantlr_Java_typeArguments =
-    Gomantlr_Java_typeArguments(gomantlr_Java_typeArguments_1:Gomantlr_Java_typeArgument,gomantlr_Java_typeArguments_2:Gomantlr_Java_typeArguments_2)
+Java_typeArguments =
+    Java_typeArguments(typeArguments_1:Java_typeArgument,typeArguments_2:Java_typeArguments_2)
 
-Gomantlr_Java_typeArguments_2 =
-    Gomantlr_Java_typeArguments_2_1(Gomantlr_Java_typeArguments_2_1_1*)
+Java_typeArguments_2 =
+    Java_typeArguments_2_1(Java_typeArguments_2_1_1*)
 
-Gomantlr_Java_typeArguments_2_1_1 =
-    Gomantlr_Java_typeArguments_2_1_1(gomantlr_Java_typeArguments_2_1_1_1:Gomantlr_Java_typeArgument)
+Java_typeArguments_2_1_1 =
+    Java_typeArguments_2_1_1(typeArguments_2_1_1_1:Java_typeArgument)
 
-Gomantlr_Java_typeArgument =
-    Gomantlr_Java_typeArgument_1(gomantlr_Java_type:Gomantlr_Java_type)
-  | Gomantlr_Java_typeArgument_2(gomantlr_Java_typeArgument_2_1:Gomantlr_Java_typeArgument_2_1)
+Java_typeArgument =
+    Java_typeArgument_1(type:Java_type)
+  | Java_typeArgument_2(typeArgument_2_1:Java_typeArgument_2_1)
 
-Gomantlr_Java_typeArgument_2_1 =
-    Gomantlr_Java_typeArgument_2_1_1(gomantlr_Java_typeArgument_2_1_1_1:Gomantlr_Java_typeArgument_2_1_1_1,gomantlr_Java_typeArgument_2_1_1_2:Gomantlr_Java_type)
-  | Gomantlr_Java_typeArgument_2_1_2()
+Java_typeArgument_2_1 =
+    Java_typeArgument_2_1_1(typeArgument_2_1_1_1:Java_typeArgument_2_1_1_1,typeArgument_2_1_1_2:Java_type)
+  | Java_typeArgument_2_1_2()
 
-Gomantlr_Java_typeArgument_2_1_1_1 =
-    Gomantlr_Java_typeArgument_2_1_1_1_1()
-  | Gomantlr_Java_typeArgument_2_1_1_1_2()
+Java_typeArgument_2_1_1_1 =
+    Java_typeArgument_2_1_1_1_1()
+  | Java_typeArgument_2_1_1_1_2()
 
-Gomantlr_Java_qualifiedNameList =
-    Gomantlr_Java_qualifiedNameList(Gomantlr_Java_qualifiedName*)
+Java_qualifiedNameList =
+    Java_qualifiedNameList(Java_qualifiedName*)
 
-Gomantlr_Java_formalParameters =
-    Gomantlr_Java_formalParameters(gomantlr_Java_formalParameters_1:Gomantlr_Java_formalParameters_1)
+Java_formalParameters =
+    Java_formalParameters(formalParameters_1:Java_formalParameters_1)
 
-Gomantlr_Java_formalParameters_1 =
-    Gomantlr_Java_formalParameters_1_1(gomantlr_Java_formalParameterDecls:Gomantlr_Java_formalParameterDecls)
-  | Gomantlr_Java_formalParameters_1_2()
+Java_formalParameters_1 =
+    Java_formalParameters_1_1(formalParameterDecls:Java_formalParameterDecls)
+  | Java_formalParameters_1_2()
 
-Gomantlr_Java_formalParameterDecls =
-    Gomantlr_Java_formalParameterDecls(gomantlr_Java_formalParameterDecls_1:Gomantlr_Java_formalParameterDecls_1,gomantlr_Java_formalParameterDecls_2:Gomantlr_Java_formalParameterDecls_2,gomantlr_Java_formalParameterDecls_3:Gomantlr_Java_type,gomantlr_Java_formalParameterDecls_4:Gomantlr_Java_formalParameterDecls_4)
+Java_formalParameterDecls =
+    Java_formalParameterDecls(formalParameterDecls_1:Java_formalParameterDecls_1,formalParameterDecls_2:Java_formalParameterDecls_2,formalParameterDecls_3:Java_type,formalParameterDecls_4:Java_formalParameterDecls_4)
 
-Gomantlr_Java_formalParameterDecls_1 =
-    Gomantlr_Java_formalParameterDecls_1_1()
-  | Gomantlr_Java_formalParameterDecls_1_2()
+Java_formalParameterDecls_1 =
+    Java_formalParameterDecls_1_1()
+  | Java_formalParameterDecls_1_2()
 
-Gomantlr_Java_formalParameterDecls_2 =
-    Gomantlr_Java_formalParameterDecls_2_1(gomantlr_Java_annotations:Gomantlr_Java_annotationList)
-  | Gomantlr_Java_formalParameterDecls_2_2()
+Java_formalParameterDecls_2 =
+    Java_formalParameterDecls_2_1(annotations:Java_annotationList)
+  | Java_formalParameterDecls_2_2()
 
-Gomantlr_Java_formalParameterDecls_4 =
-    Gomantlr_Java_formalParameterDecls_4_1(gomantlr_Java_formalParameterDeclsRest:Gomantlr_Java_formalParameterDeclsRest)
-  | Gomantlr_Java_formalParameterDecls_4_2()
+Java_formalParameterDecls_4 =
+    Java_formalParameterDecls_4_1(formalParameterDeclsRest:Java_formalParameterDeclsRest)
+  | Java_formalParameterDecls_4_2()
 
-Gomantlr_Java_formalParameterDeclsRest =
-    Gomantlr_Java_formalParameterDeclsRest_1(gomantlr_Java_formalParameterDeclsRest_1_1:Gomantlr_Java_variableDeclaratorId,gomantlr_Java_formalParameterDeclsRest_1_2:Gomantlr_Java_formalParameterDeclsRest_1_2)
-  | Gomantlr_Java_formalParameterDeclsRest_2(gomantlr_Java_formalParameterDeclsRest_2_1:Gomantlr_Java_variableDeclaratorId)
+Java_formalParameterDeclsRest =
+    Java_formalParameterDeclsRest_1(formalParameterDeclsRest_1_1:Java_variableDeclaratorId,formalParameterDeclsRest_1_2:Java_formalParameterDeclsRest_1_2)
+  | Java_formalParameterDeclsRest_2(formalParameterDeclsRest_2_1:Java_variableDeclaratorId)
 
-Gomantlr_Java_formalParameterDeclsRest_1_2 =
-    Gomantlr_Java_formalParameterDeclsRest_1_2_1(gomantlr_Java_formalParameterDeclsRest_1_2_1_1:Gomantlr_Java_formalParameterDecls)
-  | Gomantlr_Java_formalParameterDeclsRest_1_2_2()
+Java_formalParameterDeclsRest_1_2 =
+    Java_formalParameterDeclsRest_1_2_1(formalParameterDeclsRest_1_2_1_1:Java_formalParameterDecls)
+  | Java_formalParameterDeclsRest_1_2_2()
 
-Gomantlr_Java_methodBody =
-    Gomantlr_Java_methodBody(gomantlr_Java_block:Gomantlr_Java_block)
+Java_methodBody =
+    Java_methodBody(block:Java_block)
 
-Gomantlr_Java_qualifiedName =
-    Gomantlr_Java_qualifiedName(name:Gomantlr_Java_Identifier,qualifier:Gomantlr_Java_qualifierList)
+Java_qualifiedName =
+    Java_qualifiedName(name:Java_Identifier,qualifier:Java_qualifierList)
 
-Gomantlr_Java_qualifierList =
-    Gomantlr_Java_qualifierList(Gomantlr_Java_Identifier*)
+Java_qualifierList =
+    Java_qualifierList(Java_Identifier*)
 
-Gomantlr_Java_literal =
-    Gomantlr_Java_integerLiteral(gomantlr_Java_integerLiteral:Gomantlr_Java_integerLiteral)
-  | Gomantlr_Java_floatingPointLiteral(gomantlr_Java_FloatingPointLiteral:Gomantlr_Java_FloatingPointLiteral)
-  | Gomantlr_Java_characterLiteral(gomantlr_Java_CharacterLiteral:Gomantlr_Java_CharacterLiteral)
-  | Gomantlr_Java_stringLiteral(gomantlr_Java_StringLiteral:Gomantlr_Java_StringLiteral)
-  | Gomantlr_Java_booleanLiteral(gomantlr_Java_booleanLiteral:Gomantlr_Java_booleanLiteral)
-  | Gomantlr_Java_nullLiteral()
+Java_literal =
+    Java_integerLiteral(integerLiteral:Java_integerLiteral)
+  | Java_floatingPointLiteral(FloatingPointLiteral:Java_FloatingPointLiteral)
+  | Java_characterLiteral(CharacterLiteral:Java_CharacterLiteral)
+  | Java_stringLiteral(StringLiteral:Java_StringLiteral)
+  | Java_booleanLiteral(booleanLiteral:Java_booleanLiteral)
+  | Java_nullLiteral()
 
-Gomantlr_Java_integerLiteral =
-    Gomantlr_Java_HexLiteral(s:String)
-  | Gomantlr_Java_OctalLiteral(s:String)
-  | Gomantlr_Java_DecimalLiteral(s:String)
+Java_integerLiteral =
+    Java_HexLiteral(s:String)
+  | Java_OctalLiteral(s:String)
+  | Java_DecimalLiteral(s:String)
 
-Gomantlr_Java_booleanLiteral =
-    Gomantlr_Java_True()
-  | Gomantlr_Java_False()
+Java_booleanLiteral =
+    Java_True()
+  | Java_False()
 
-Gomantlr_Java_annotationList =
-    Gomantlr_Java_annotationList(Gomantlr_Java_annotation*)
+Java_annotationList =
+    Java_annotationList(Java_annotation*)
 
-Gomantlr_Java_annotation =
-    Gomantlr_Java_annotation(gomantlr_Java_annotation_1:Gomantlr_Java_typeName,gomantlr_Java_annotation_2:Gomantlr_Java_annotation_2)
+Java_annotation =
+    Java_annotation(annotation_1:Java_typeName,annotation_2:Java_annotation_2)
 
-Gomantlr_Java_annotation_2 =
-    Gomantlr_Java_annotation_2_1(gomantlr_Java_annotation_2_1_1:Gomantlr_Java_annotation_2_1_1,gomantlr_Java_annotation_2_1_2:Gomantlr_Java_elementValue)
-  | Gomantlr_Java_annotation_2_2()
+Java_annotation_2 =
+    Java_annotation_2_1(annotation_2_1_1:Java_annotation_2_1_1,annotation_2_1_2:Java_elementValue)
+  | Java_annotation_2_2()
 
-Gomantlr_Java_annotation_2_1_1 =
-    Gomantlr_Java_annotation_2_1_1_1(gomantlr_Java_annotation_2_1_1_1_1:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_annotation_2_1_1_2()
+Java_annotation_2_1_1 =
+    Java_annotation_2_1_1_1(annotation_2_1_1_1_1:Java_Identifier)
+  | Java_annotation_2_1_1_2()
 
-Gomantlr_Java_elementValue =
-    Gomantlr_Java_elementValue_1(gomantlr_Java_conditionalExpression:Gomantlr_Java_conditionalExpression)
-  | Gomantlr_Java_elementValue_2(gomantlr_Java_annotation:Gomantlr_Java_annotation)
-  | Gomantlr_Java_elementValue_3(gomantlr_Java_elementValueArrayInitializer:Gomantlr_Java_elementValueArrayInitializer)
+Java_elementValue =
+    Java_elementValue_1(conditionalExpression:Java_conditionalExpression)
+  | Java_elementValue_2(annotation:Java_annotation)
+  | Java_elementValue_3(elementValueArrayInitializer:Java_elementValueArrayInitializer)
 
-Gomantlr_Java_elementValueArrayInitializer =
-    Gomantlr_Java_elementValueArrayInitializer(gomantlr_Java_elementValueArrayInitializer_1:Gomantlr_Java_elementValueArrayInitializer_1,gomantlr_Java_elementValueArrayInitializer_2:Gomantlr_Java_elementValueArrayInitializer_2)
+Java_elementValueArrayInitializer =
+    Java_elementValueArrayInitializer(elementValueArrayInitializer_1:Java_elementValueArrayInitializer_1,elementValueArrayInitializer_2:Java_elementValueArrayInitializer_2)
 
-Gomantlr_Java_elementValueArrayInitializer_1 =
-    Gomantlr_Java_elementValueArrayInitializer_1_1(gomantlr_Java_elementValue:Gomantlr_Java_elementValue)
-  | Gomantlr_Java_elementValueArrayInitializer_1_2()
+Java_elementValueArrayInitializer_1 =
+    Java_elementValueArrayInitializer_1_1(elementValue:Java_elementValue)
+  | Java_elementValueArrayInitializer_1_2()
 
-Gomantlr_Java_elementValueArrayInitializer_2 =
-    Gomantlr_Java_elementValueArrayInitializer_2_1()
-  | Gomantlr_Java_elementValueArrayInitializer_2_2()
+Java_elementValueArrayInitializer_2 =
+    Java_elementValueArrayInitializer_2_1()
+  | Java_elementValueArrayInitializer_2_2()
 
-Gomantlr_Java_annotationTypeDeclaration =
-    Gomantlr_Java_annotationTypeDeclaration(gomantlr_Java_annotationTypeDeclaration_1:Gomantlr_Java_Identifier,gomantlr_Java_annotationTypeDeclaration_2:Gomantlr_Java_annotationTypeBody)
+Java_annotationTypeDeclaration =
+    Java_annotationTypeDeclaration(annotationTypeDeclaration_1:Java_Identifier,annotationTypeDeclaration_2:Java_annotationTypeBody)
 
-Gomantlr_Java_annotationTypeBody =
-    Gomantlr_Java_annotationTypeBody(gomantlr_Java_annotationTypeBody_1:Gomantlr_Java_annotationTypeBody_1)
+Java_annotationTypeBody =
+    Java_annotationTypeBody(annotationTypeBody_1:Java_annotationTypeBody_1)
 
-Gomantlr_Java_annotationTypeBody_1 =
-    Gomantlr_Java_annotationTypeBody_1_1(gomantlr_Java_annotationTypeElementDeclarations:Gomantlr_Java_annotationTypeElementDeclarations)
-  | Gomantlr_Java_annotationTypeBody_1_2()
+Java_annotationTypeBody_1 =
+    Java_annotationTypeBody_1_1(annotationTypeElementDeclarations:Java_annotationTypeElementDeclarations)
+  | Java_annotationTypeBody_1_2()
 
-Gomantlr_Java_annotationTypeElementDeclarations =
-    Gomantlr_Java_annotationTypeElementDeclarations(gomantlr_Java_annotationTypeElementDeclarations_1:Gomantlr_Java_annotationTypeElementDeclaration,gomantlr_Java_annotationTypeElementDeclarations_2:Gomantlr_Java_annotationTypeElementDeclarations_2)
+Java_annotationTypeElementDeclarations =
+    Java_annotationTypeElementDeclarations(annotationTypeElementDeclarations_1:Java_annotationTypeElementDeclaration,annotationTypeElementDeclarations_2:Java_annotationTypeElementDeclarations_2)
 
-Gomantlr_Java_annotationTypeElementDeclarations_2 =
-    Gomantlr_Java_annotationTypeElementDeclarations_2_1(Gomantlr_Java_annotationTypeElementDeclaration*)
+Java_annotationTypeElementDeclarations_2 =
+    Java_annotationTypeElementDeclarations_2_1(Java_annotationTypeElementDeclaration*)
 
-Gomantlr_Java_annotationTypeElementDeclaration =
-    Gomantlr_Java_annotationTypeElementDeclaration(gomantlr_Java_annotationTypeElementDeclaration_1:Gomantlr_Java_annotationTypeElementDeclaration_1,gomantlr_Java_annotationTypeElementDeclaration_2:Gomantlr_Java_annotationTypeElementRest)
+Java_annotationTypeElementDeclaration =
+    Java_annotationTypeElementDeclaration(annotationTypeElementDeclaration_1:Java_annotationTypeElementDeclaration_1,annotationTypeElementDeclaration_2:Java_annotationTypeElementRest)
 
-Gomantlr_Java_annotationTypeElementDeclaration_1 =
-    Gomantlr_Java_annotationTypeElementDeclaration_1_1(Gomantlr_Java_modifier*)
+Java_annotationTypeElementDeclaration_1 =
+    Java_annotationTypeElementDeclaration_1_1(Java_modifier*)
 
-Gomantlr_Java_annotationTypeElementRest =
-    Gomantlr_Java_annotationTypeElementRest_1(gomantlr_Java_annotationTypeElementRest_1_1:Gomantlr_Java_annotationTypeElementRest_1_1)
-  | Gomantlr_Java_annotationTypeElementRest_2(gomantlr_Java_classDeclaration:Gomantlr_Java_classDeclaration)
-  | Gomantlr_Java_annotationTypeElementRest_3(gomantlr_Java_interfaceDeclaration:Gomantlr_Java_interfaceDeclaration)
-  | Gomantlr_Java_annotationTypeElementRest_4(gomantlr_Java_enumDeclaration:Gomantlr_Java_enumDeclaration)
-  | Gomantlr_Java_annotationTypeElementRest_5(gomantlr_Java_annotationTypeDeclaration:Gomantlr_Java_annotationTypeDeclaration)
+Java_annotationTypeElementRest =
+    Java_annotationTypeElementRest_1(annotationTypeElementRest_1_1:Java_annotationTypeElementRest_1_1)
+  | Java_annotationTypeElementRest_2(classDeclaration:Java_classDeclaration)
+  | Java_annotationTypeElementRest_3(interfaceDeclaration:Java_interfaceDeclaration)
+  | Java_annotationTypeElementRest_4(enumDeclaration:Java_enumDeclaration)
+  | Java_annotationTypeElementRest_5(annotationTypeDeclaration:Java_annotationTypeDeclaration)
 
-Gomantlr_Java_annotationTypeElementRest_1_1 =
-    Gomantlr_Java_annotationTypeElementRest_1_1(gomantlr_Java_annotationTypeElementRest_1_1_1:Gomantlr_Java_type,gomantlr_Java_annotationTypeElementRest_1_1_2:Gomantlr_Java_Identifier,gomantlr_Java_annotationTypeElementRest_1_1_3:Gomantlr_Java_annotationMethodOrConstantRest)
+Java_annotationTypeElementRest_1_1 =
+    Java_annotationTypeElementRest_1_1(annotationTypeElementRest_1_1_1:Java_type,annotationTypeElementRest_1_1_2:Java_Identifier,annotationTypeElementRest_1_1_3:Java_annotationMethodOrConstantRest)
 
-Gomantlr_Java_annotationMethodOrConstantRest =
-    Gomantlr_Java_annotationMethodOrConstantRest_1(gomantlr_Java_annotationMethodRest:Gomantlr_Java_annotationMethodRest)
-  | Gomantlr_Java_annotationMethodOrConstantRest_2(gomantlr_Java_annotationConstantRest:Gomantlr_Java_annotationConstantRest)
+Java_annotationMethodOrConstantRest =
+    Java_annotationMethodOrConstantRest_1(annotationMethodRest:Java_annotationMethodRest)
+  | Java_annotationMethodOrConstantRest_2(annotationConstantRest:Java_annotationConstantRest)
 
-Gomantlr_Java_annotationMethodRest =
-    Gomantlr_Java_annotationMethodRest(gomantlr_Java_annotationMethodRest_1:Gomantlr_Java_annotationMethodRest_1)
+Java_annotationMethodRest =
+    Java_annotationMethodRest(annotationMethodRest_1:Java_annotationMethodRest_1)
 
-Gomantlr_Java_annotationMethodRest_1 =
-    Gomantlr_Java_annotationMethodRest_1_1(gomantlr_Java_defaultValue:Gomantlr_Java_defaultValue)
-  | Gomantlr_Java_annotationMethodRest_1_2()
+Java_annotationMethodRest_1 =
+    Java_annotationMethodRest_1_1(defaultValue:Java_defaultValue)
+  | Java_annotationMethodRest_1_2()
 
-Gomantlr_Java_annotationConstantRest =
-    Gomantlr_Java_annotationConstantRest(gomantlr_Java_variableDeclarators:Gomantlr_Java_variableDeclarators)
+Java_annotationConstantRest =
+    Java_annotationConstantRest(variableDeclarators:Java_variableDeclarators)
 
-Gomantlr_Java_defaultValue =
-    Gomantlr_Java_defaultValue(gomantlr_Java_defaultValue_1:Gomantlr_Java_elementValue)
+Java_defaultValue =
+    Java_defaultValue(defaultValue_1:Java_elementValue)
 
-Gomantlr_Java_block =
-    Gomantlr_Java_block(Gomantlr_Java_blockStatement*)
+Java_block =
+    Java_block(Java_blockStatement*)
 
-Gomantlr_Java_blockStatement =
-    Gomantlr_Java_localVariable(gomantlr_Java_localVariableDeclaration:Gomantlr_Java_localVariableDeclaration)
-  | Gomantlr_Java_classOrInterface(gomantlr_Java_classOrInterfaceDeclaration:Gomantlr_Java_classOrInterfaceDeclaration)
-  | Gomantlr_Java_statement(gomantlr_Java_statement:Gomantlr_Java_statement)
+Java_blockStatement =
+    Java_localVariable(localVariableDeclaration:Java_localVariableDeclaration)
+  | Java_classOrInterface(classOrInterfaceDeclaration:Java_classOrInterfaceDeclaration)
+  | Java_statement(statement:Java_statement)
 
-Gomantlr_Java_localVariableDeclaration =
-    Gomantlr_Java_localVariableDeclaration(gomantlr_Java_localVariableDeclaration_1:Gomantlr_Java_localVariableModifier,gomantlr_Java_localVariableDeclaration_2:Gomantlr_Java_type,gomantlr_Java_localVariableDeclaration_3:Gomantlr_Java_variableDeclarators)
+Java_localVariableDeclaration =
+    Java_localVariableDeclaration(localVariableDeclaration_1:Java_localVariableModifier,localVariableDeclaration_2:Java_type,localVariableDeclaration_3:Java_variableDeclarators)
 
-Gomantlr_Java_localVariableModifier =
-    Gomantlr_Java_localVariableModifierFinal()
-  | Gomantlr_Java_localVariableNoModifier()
+Java_localVariableModifier =
+    Java_localVariableModifierFinal()
+  | Java_localVariableNoModifier()
 
-Gomantlr_Java_statement =
-    Gomantlr_Java_statement_1(gomantlr_Java_block:Gomantlr_Java_block)
-  | Gomantlr_Java_statement_2(gomantlr_Java_statement_2_1:Gomantlr_Java_expression,gomantlr_Java_statement_2_2:Gomantlr_Java_statement_2_2)
-  | Gomantlr_Java_statement_3(gomantlr_Java_statement_3_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_3_2:Gomantlr_Java_statement,gomantlr_Java_statement_3_3:Gomantlr_Java_statement_3_3)
-  | Gomantlr_Java_statement_4(gomantlr_Java_statement_4_1:Gomantlr_Java_forControl,gomantlr_Java_statement_4_2:Gomantlr_Java_statement)
-  | Gomantlr_Java_statement_5(gomantlr_Java_statement_5_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_5_2:Gomantlr_Java_statement)
-  | Gomantlr_Java_statement_6(gomantlr_Java_statement_6_1:Gomantlr_Java_statement,gomantlr_Java_statement_6_2:Gomantlr_Java_parExpression)
-  | Gomantlr_Java_statement_7(gomantlr_Java_statement_7_1:Gomantlr_Java_block,gomantlr_Java_statement_7_2:Gomantlr_Java_statement_7_2)
-  | Gomantlr_Java_statement_8(gomantlr_Java_statement_8_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_8_2:Gomantlr_Java_switchBlockStatementGroups)
-  | Gomantlr_Java_statement_9(gomantlr_Java_statement_9_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_9_2:Gomantlr_Java_block)
-  | Gomantlr_Java_statement_10(gomantlr_Java_statement_10_1:Gomantlr_Java_statement_10_1)
-  | Gomantlr_Java_statement_11(gomantlr_Java_statement_11_1:Gomantlr_Java_expression)
-  | Gomantlr_Java_statement_12(gomantlr_Java_statement_12_1:Gomantlr_Java_statement_12_1)
-  | Gomantlr_Java_statement_13(gomantlr_Java_statement_13_1:Gomantlr_Java_statement_13_1)
-  | Gomantlr_Java_statement_14()
-  | Gomantlr_Java_statement_15(gomantlr_Java_statement_15_1:Gomantlr_Java_statementExpression)
-  | Gomantlr_Java_statement_16(gomantlr_Java_statement_16_1:Gomantlr_Java_Identifier,gomantlr_Java_statement_16_2:Gomantlr_Java_statement)
+Java_statement =
+    Java_statement_1(block:Java_block)
+  | Java_statement_2(statement_2_1:Java_expression,statement_2_2:Java_statement_2_2)
+  | Java_statement_3(statement_3_1:Java_parExpression,statement_3_2:Java_statement,statement_3_3:Java_statement_3_3)
+  | Java_statement_4(statement_4_1:Java_forControl,statement_4_2:Java_statement)
+  | Java_statement_5(statement_5_1:Java_parExpression,statement_5_2:Java_statement)
+  | Java_statement_6(statement_6_1:Java_statement,statement_6_2:Java_parExpression)
+  | Java_statement_7(statement_7_1:Java_block,statement_7_2:Java_statement_7_2)
+  | Java_statement_8(statement_8_1:Java_parExpression,statement_8_2:Java_switchBlockStatementGroups)
+  | Java_statement_9(statement_9_1:Java_parExpression,statement_9_2:Java_block)
+  | Java_statement_10(statement_10_1:Java_statement_10_1)
+  | Java_statement_11(statement_11_1:Java_expression)
+  | Java_statement_12(statement_12_1:Java_statement_12_1)
+  | Java_statement_13(statement_13_1:Java_statement_13_1)
+  | Java_statement_14()
+  | Java_statement_15(statement_15_1:Java_statementExpression)
+  | Java_statement_16(statement_16_1:Java_Identifier,statement_16_2:Java_statement)
 
-Gomantlr_Java_statement_2_2 =
-    Gomantlr_Java_statement_2_2_1(gomantlr_Java_statement_2_2_1_1:Gomantlr_Java_expression)
-  | Gomantlr_Java_statement_2_2_2()
+Java_statement_2_2 =
+    Java_statement_2_2_1(statement_2_2_1_1:Java_expression)
+  | Java_statement_2_2_2()
 
-Gomantlr_Java_statement_3_3 =
-    Gomantlr_Java_statement_3_3_1(gomantlr_Java_statement_3_3_1_1:Gomantlr_Java_statement)
-  | Gomantlr_Java_statement_3_3_2()
+Java_statement_3_3 =
+    Java_statement_3_3_1(statement_3_3_1_1:Java_statement)
+  | Java_statement_3_3_2()
 
-Gomantlr_Java_statement_7_2 =
-    Gomantlr_Java_statement_7_2_1(gomantlr_Java_catches:Gomantlr_Java_catches,gomantlr_Java_block:Gomantlr_Java_block)
-  | Gomantlr_Java_statement_7_2_2(gomantlr_Java_catches:Gomantlr_Java_catches)
-  | Gomantlr_Java_statement_7_2_3(gomantlr_Java_block:Gomantlr_Java_block)
+Java_statement_7_2 =
+    Java_statement_7_2_1(catches:Java_catches,block:Java_block)
+  | Java_statement_7_2_2(catches:Java_catches)
+  | Java_statement_7_2_3(block:Java_block)
 
-Gomantlr_Java_statement_10_1 =
-    Gomantlr_Java_statement_10_1_1(gomantlr_Java_expression:Gomantlr_Java_expression)
-  | Gomantlr_Java_statement_10_1_2()
+Java_statement_10_1 =
+    Java_statement_10_1_1(expression:Java_expression)
+  | Java_statement_10_1_2()
 
-Gomantlr_Java_statement_12_1 =
-    Gomantlr_Java_statement_12_1_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_statement_12_1_2()
+Java_statement_12_1 =
+    Java_statement_12_1_1(Identifier:Java_Identifier)
+  | Java_statement_12_1_2()
 
-Gomantlr_Java_statement_13_1 =
-    Gomantlr_Java_statement_13_1_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_statement_13_1_2()
+Java_statement_13_1 =
+    Java_statement_13_1_1(Identifier:Java_Identifier)
+  | Java_statement_13_1_2()
 
-Gomantlr_Java_catches =
-    Gomantlr_Java_catches(Gomantlr_Java_catchClause*)
+Java_catches =
+    Java_catches(Java_catchClause*)
 
-Gomantlr_Java_catchClause =
-    Gomantlr_Java_catchClause(gomantlr_Java_catchClause_1:Gomantlr_Java_formalParameter,gomantlr_Java_catchClause_2:Gomantlr_Java_block)
+Java_catchClause =
+    Java_catchClause(catchClause_1:Java_formalParameter,catchClause_2:Java_block)
 
-Gomantlr_Java_formalParameter =
-    Gomantlr_Java_formalParameter(gomantlr_Java_formalParameter_1:Gomantlr_Java_formalParameter_1,gomantlr_Java_formalParameter_2:Gomantlr_Java_type,gomantlr_Java_formalParameter_3:Gomantlr_Java_variableDeclaratorId)
+Java_formalParameter =
+    Java_formalParameter(formalParameter_1:Java_formalParameter_1,formalParameter_2:Java_type,formalParameter_3:Java_variableDeclaratorId)
 
-Gomantlr_Java_formalParameter_1 =
-    Gomantlr_Java_formalParameter_1_1(Gomantlr_Java_variableModifier*)
+Java_formalParameter_1 =
+    Java_formalParameter_1_1(Java_variableModifier*)
 
-Gomantlr_Java_switchBlockStatementGroups =
-    Gomantlr_Java_switchBlockStatementGroups_1(Gomantlr_Java_switchBlockStatementGroup*)
+Java_switchBlockStatementGroups =
+    Java_switchBlockStatementGroups_1(Java_switchBlockStatementGroup*)
 
-Gomantlr_Java_switchBlockStatementGroup =
-    Gomantlr_Java_switchBlockStatementGroup(gomantlr_Java_switchBlockStatementGroup_1:Gomantlr_Java_switchLabel,gomantlr_Java_switchBlockStatementGroup_2:Gomantlr_Java_switchBlockStatementGroup_2)
+Java_switchBlockStatementGroup =
+    Java_switchBlockStatementGroup(switchBlockStatementGroup_1:Java_switchLabel,switchBlockStatementGroup_2:Java_switchBlockStatementGroup_2)
 
-Gomantlr_Java_switchBlockStatementGroup_2 =
-    Gomantlr_Java_switchBlockStatementGroup_2_1(Gomantlr_Java_blockStatement*)
+Java_switchBlockStatementGroup_2 =
+    Java_switchBlockStatementGroup_2_1(Java_blockStatement*)
 
-Gomantlr_Java_switchLabel =
-    Gomantlr_Java_switchLabel_1(gomantlr_Java_constantExpression:Gomantlr_Java_constantExpression)
-  | Gomantlr_Java_switchLabel_2(gomantlr_Java_enumConstantName:Gomantlr_Java_enumConstantName)
-  | Gomantlr_Java_switchLabel_3()
+Java_switchLabel =
+    Java_switchLabel_1(constantExpression:Java_constantExpression)
+  | Java_switchLabel_2(enumConstantName:Java_enumConstantName)
+  | Java_switchLabel_3()
 
-Gomantlr_Java_moreStatementExpressions =
-    Gomantlr_Java_moreStatementExpressions_1(Gomantlr_Java_moreStatementExpressions_1_1*)
+Java_moreStatementExpressions =
+    Java_moreStatementExpressions_1(Java_moreStatementExpressions_1_1*)
 
-Gomantlr_Java_moreStatementExpressions_1_1 =
-    Gomantlr_Java_moreStatementExpressions_1_1(gomantlr_Java_moreStatementExpressions_1_1_1:Gomantlr_Java_statementExpression)
+Java_moreStatementExpressions_1_1 =
+    Java_moreStatementExpressions_1_1(moreStatementExpressions_1_1_1:Java_statementExpression)
 
-Gomantlr_Java_forControl =
-    Gomantlr_Java_forControl_1(gomantlr_Java_forVarControl:Gomantlr_Java_forVarControl)
-  | Gomantlr_Java_forControl_2(gomantlr_Java_forControl_2_1:Gomantlr_Java_forControl_2_1,gomantlr_Java_forControl_2_2:Gomantlr_Java_forControl_2_2,gomantlr_Java_forControl_2_3:Gomantlr_Java_forControl_2_3)
+Java_forControl =
+    Java_forControl_1(forVarControl:Java_forVarControl)
+  | Java_forControl_2(forControl_2_1:Java_forControl_2_1,forControl_2_2:Java_forControl_2_2,forControl_2_3:Java_forControl_2_3)
 
-Gomantlr_Java_forControl_2_1 =
-    Gomantlr_Java_forControl_2_1_1(gomantlr_Java_forInit:Gomantlr_Java_forInit)
-  | Gomantlr_Java_forControl_2_1_2()
+Java_forControl_2_1 =
+    Java_forControl_2_1_1(forInit:Java_forInit)
+  | Java_forControl_2_1_2()
 
-Gomantlr_Java_forControl_2_2 =
-    Gomantlr_Java_forControl_2_2_1(gomantlr_Java_expression:Gomantlr_Java_expression)
-  | Gomantlr_Java_forControl_2_2_2()
+Java_forControl_2_2 =
+    Java_forControl_2_2_1(expression:Java_expression)
+  | Java_forControl_2_2_2()
 
-Gomantlr_Java_forControl_2_3 =
-    Gomantlr_Java_forControl_2_3_1(gomantlr_Java_forUpdate:Gomantlr_Java_forUpdate)
-  | Gomantlr_Java_forControl_2_3_2()
+Java_forControl_2_3 =
+    Java_forControl_2_3_1(forUpdate:Java_forUpdate)
+  | Java_forControl_2_3_2()
 
-Gomantlr_Java_forInit =
-    Gomantlr_Java_forInit_1(gomantlr_Java_forInit_1_1:Gomantlr_Java_forInit_1_1,gomantlr_Java_forInit_1_2:Gomantlr_Java_type,gomantlr_Java_forInit_1_3:Gomantlr_Java_variableDeclarators)
-  | Gomantlr_Java_forInit_2(gomantlr_Java_expressionList:Gomantlr_Java_expressionList)
+Java_forInit =
+    Java_forInit_1(forInit_1_1:Java_forInit_1_1,forInit_1_2:Java_type,forInit_1_3:Java_variableDeclarators)
+  | Java_forInit_2(expressionList:Java_expressionList)
 
-Gomantlr_Java_forInit_1_1 =
-    Gomantlr_Java_forInit_1_1_1()
-  | Gomantlr_Java_forInit_1_1_2()
+Java_forInit_1_1 =
+    Java_forInit_1_1_1()
+  | Java_forInit_1_1_2()
 
-Gomantlr_Java_forVarControl =
-    Gomantlr_Java_forVarControl(gomantlr_Java_forVarControl_1:Gomantlr_Java_forVarControl_1,gomantlr_Java_forVarControl_2:Gomantlr_Java_forVarControl_2,gomantlr_Java_forVarControl_3:Gomantlr_Java_type,gomantlr_Java_forVarControl_4:Gomantlr_Java_Identifier,gomantlr_Java_forVarControl_5:Gomantlr_Java_forVarControlRest)
+Java_forVarControl =
+    Java_forVarControl(forVarControl_1:Java_forVarControl_1,forVarControl_2:Java_forVarControl_2,forVarControl_3:Java_type,forVarControl_4:Java_Identifier,forVarControl_5:Java_forVarControlRest)
 
-Gomantlr_Java_forVarControl_1 =
-    Gomantlr_Java_forVarControl_1_1()
-  | Gomantlr_Java_forVarControl_1_2()
+Java_forVarControl_1 =
+    Java_forVarControl_1_1()
+  | Java_forVarControl_1_2()
 
-Gomantlr_Java_forVarControl_2 =
-    Gomantlr_Java_forVarControl_2_1(gomantlr_Java_annotation:Gomantlr_Java_annotation)
-  | Gomantlr_Java_forVarControl_2_2()
+Java_forVarControl_2 =
+    Java_forVarControl_2_1(annotation:Java_annotation)
+  | Java_forVarControl_2_2()
 
-Gomantlr_Java_forVarControlRest =
-    Gomantlr_Java_forVarControlRest_1(gomantlr_Java_forVarControlRest_1_1:Gomantlr_Java_variableDeclaratorRest,gomantlr_Java_forVarControlRest_1_2:Gomantlr_Java_forVarControlRest_1_2,gomantlr_Java_forVarControlRest_1_3:Gomantlr_Java_forVarControlRest_1_3,gomantlr_Java_forVarControlRest_1_4:Gomantlr_Java_forVarControlRest_1_4)
-  | Gomantlr_Java_forVarControlRest_2(gomantlr_Java_forVarControlRest_2_1:Gomantlr_Java_expression)
+Java_forVarControlRest =
+    Java_forVarControlRest_1(forVarControlRest_1_1:Java_variableDeclaratorRest,forVarControlRest_1_2:Java_forVarControlRest_1_2,forVarControlRest_1_3:Java_forVarControlRest_1_3,forVarControlRest_1_4:Java_forVarControlRest_1_4)
+  | Java_forVarControlRest_2(forVarControlRest_2_1:Java_expression)
 
-Gomantlr_Java_forVarControlRest_1_2 =
-    Gomantlr_Java_forVarControlRest_1_2_1(Gomantlr_Java_forVarControlRest_1_2_1_1*)
+Java_forVarControlRest_1_2 =
+    Java_forVarControlRest_1_2_1(Java_forVarControlRest_1_2_1_1*)
 
-Gomantlr_Java_forVarControlRest_1_2_1_1 =
-    Gomantlr_Java_forVarControlRest_1_2_1_1(gomantlr_Java_forVarControlRest_1_2_1_1_1:Gomantlr_Java_variableDeclarator)
+Java_forVarControlRest_1_2_1_1 =
+    Java_forVarControlRest_1_2_1_1(forVarControlRest_1_2_1_1_1:Java_variableDeclarator)
 
-Gomantlr_Java_forVarControlRest_1_3 =
-    Gomantlr_Java_forVarControlRest_1_3_1(gomantlr_Java_expression:Gomantlr_Java_expression)
-  | Gomantlr_Java_forVarControlRest_1_3_2()
+Java_forVarControlRest_1_3 =
+    Java_forVarControlRest_1_3_1(expression:Java_expression)
+  | Java_forVarControlRest_1_3_2()
 
-Gomantlr_Java_forVarControlRest_1_4 =
-    Gomantlr_Java_forVarControlRest_1_4_1(gomantlr_Java_forUpdate:Gomantlr_Java_forUpdate)
-  | Gomantlr_Java_forVarControlRest_1_4_2()
+Java_forVarControlRest_1_4 =
+    Java_forVarControlRest_1_4_1(forUpdate:Java_forUpdate)
+  | Java_forVarControlRest_1_4_2()
 
-Gomantlr_Java_forUpdate =
-    Gomantlr_Java_forUpdate(gomantlr_Java_expressionList:Gomantlr_Java_expressionList)
+Java_forUpdate =
+    Java_forUpdate(expressionList:Java_expressionList)
 
-Gomantlr_Java_parExpression =
-    Gomantlr_Java_parExpression(gomantlr_Java_parExpression_1:Gomantlr_Java_expression)
+Java_parExpression =
+    Java_parExpression(parExpression_1:Java_expression)
 
-Gomantlr_Java_expressionList =
-    Gomantlr_Java_expressionList(gomantlr_Java_expressionList_1:Gomantlr_Java_expression,gomantlr_Java_expressionList_2:Gomantlr_Java_expressionList_2)
+Java_expressionList =
+    Java_expressionList(expressionList_1:Java_expression,expressionList_2:Java_expressionList_2)
 
-Gomantlr_Java_expressionList_2 =
-    Gomantlr_Java_expressionList_2_1(Gomantlr_Java_expressionList_2_1_1*)
+Java_expressionList_2 =
+    Java_expressionList_2_1(Java_expressionList_2_1_1*)
 
-Gomantlr_Java_expressionList_2_1_1 =
-    Gomantlr_Java_expressionList_2_1_1(gomantlr_Java_expressionList_2_1_1_1:Gomantlr_Java_expression)
+Java_expressionList_2_1_1 =
+    Java_expressionList_2_1_1(expressionList_2_1_1_1:Java_expression)
 
-Gomantlr_Java_statementExpression =
-    Gomantlr_Java_statementExpression(gomantlr_Java_expression:Gomantlr_Java_expression)
+Java_statementExpression =
+    Java_statementExpression(expression:Java_expression)
 
-Gomantlr_Java_constantExpression =
-    Gomantlr_Java_constantExpression(gomantlr_Java_expression:Gomantlr_Java_expression)
+Java_constantExpression =
+    Java_constantExpression(expression:Java_expression)
 
-Gomantlr_Java_expression =
-    Gomantlr_Java_expression(gomantlr_Java_expression_1:Gomantlr_Java_conditionalExpression,gomantlr_Java_expression_2:Gomantlr_Java_expression_2)
+Java_expression =
+    Java_expression(expression_1:Java_conditionalExpression,expression_2:Java_expression_2)
 
-Gomantlr_Java_expression_2 =
-    Gomantlr_Java_expression_2_1(gomantlr_Java_expression_2_1_1:Gomantlr_Java_assignmentOperator,gomantlr_Java_expression_2_1_2:Gomantlr_Java_expression)
-  | Gomantlr_Java_expression_2_2()
+Java_expression_2 =
+    Java_expression_2_1(expression_2_1_1:Java_assignmentOperator,expression_2_1_2:Java_expression)
+  | Java_expression_2_2()
 
-Gomantlr_Java_assignmentOperator =
-    Gomantlr_Java_assignmentOperator_1()
-  | Gomantlr_Java_assignmentOperator_2()
-  | Gomantlr_Java_assignmentOperator_3()
-  | Gomantlr_Java_assignmentOperator_4()
-  | Gomantlr_Java_assignmentOperator_5()
-  | Gomantlr_Java_assignmentOperator_6()
-  | Gomantlr_Java_assignmentOperator_7()
-  | Gomantlr_Java_assignmentOperator_8()
-  | Gomantlr_Java_assignmentOperator_9()
-  | Gomantlr_Java_assignmentOperator_10()
-  | Gomantlr_Java_assignmentOperator_11()
-  | Gomantlr_Java_assignmentOperator_12()
+Java_assignmentOperator =
+    Java_assignmentOperator_1()
+  | Java_assignmentOperator_2()
+  | Java_assignmentOperator_3()
+  | Java_assignmentOperator_4()
+  | Java_assignmentOperator_5()
+  | Java_assignmentOperator_6()
+  | Java_assignmentOperator_7()
+  | Java_assignmentOperator_8()
+  | Java_assignmentOperator_9()
+  | Java_assignmentOperator_10()
+  | Java_assignmentOperator_11()
+  | Java_assignmentOperator_12()
 
-Gomantlr_Java_conditionalExpression =
-    Gomantlr_Java_conditionalExpression(gomantlr_Java_conditionalExpression_1:Gomantlr_Java_conditionalOrExpression,gomantlr_Java_conditionalExpression_2:Gomantlr_Java_conditionalExpression_2)
+Java_conditionalExpression =
+    Java_conditionalExpression(conditionalExpression_1:Java_conditionalOrExpression,conditionalExpression_2:Java_conditionalExpression_2)
 
-Gomantlr_Java_conditionalExpression_2 =
-    Gomantlr_Java_conditionalExpression_2_1(gomantlr_Java_conditionalExpression_2_1_1:Gomantlr_Java_expression,gomantlr_Java_conditionalExpression_2_1_2:Gomantlr_Java_expression)
-  | Gomantlr_Java_conditionalExpression_2_2()
+Java_conditionalExpression_2 =
+    Java_conditionalExpression_2_1(conditionalExpression_2_1_1:Java_expression,conditionalExpression_2_1_2:Java_expression)
+  | Java_conditionalExpression_2_2()
 
-Gomantlr_Java_conditionalOrExpression =
-    Gomantlr_Java_conditionalOrExpression(gomantlr_Java_conditionalOrExpression_1:Gomantlr_Java_conditionalAndExpression,gomantlr_Java_conditionalOrExpression_2:Gomantlr_Java_conditionalOrExpression_2)
+Java_conditionalOrExpression =
+    Java_conditionalOrExpression(conditionalOrExpression_1:Java_conditionalAndExpression,conditionalOrExpression_2:Java_conditionalOrExpression_2)
 
-Gomantlr_Java_conditionalOrExpression_2 =
-    Gomantlr_Java_conditionalOrExpression_2_1(Gomantlr_Java_conditionalOrExpression_2_1_1*)
+Java_conditionalOrExpression_2 =
+    Java_conditionalOrExpression_2_1(Java_conditionalOrExpression_2_1_1*)
 
-Gomantlr_Java_conditionalOrExpression_2_1_1 =
-    Gomantlr_Java_conditionalOrExpression_2_1_1(gomantlr_Java_conditionalOrExpression_2_1_1_1:Gomantlr_Java_conditionalAndExpression)
+Java_conditionalOrExpression_2_1_1 =
+    Java_conditionalOrExpression_2_1_1(conditionalOrExpression_2_1_1_1:Java_conditionalAndExpression)
 
-Gomantlr_Java_conditionalAndExpression =
-    Gomantlr_Java_conditionalAndExpression(gomantlr_Java_conditionalAndExpression_1:Gomantlr_Java_inclusiveOrExpression,gomantlr_Java_conditionalAndExpression_2:Gomantlr_Java_conditionalAndExpression_2)
+Java_conditionalAndExpression =
+    Java_conditionalAndExpression(conditionalAndExpression_1:Java_inclusiveOrExpression,conditionalAndExpression_2:Java_conditionalAndExpression_2)
 
-Gomantlr_Java_conditionalAndExpression_2 =
-    Gomantlr_Java_conditionalAndExpression_2_1(Gomantlr_Java_conditionalAndExpression_2_1_1*)
+Java_conditionalAndExpression_2 =
+    Java_conditionalAndExpression_2_1(Java_conditionalAndExpression_2_1_1*)
 
-Gomantlr_Java_conditionalAndExpression_2_1_1 =
-    Gomantlr_Java_conditionalAndExpression_2_1_1(gomantlr_Java_conditionalAndExpression_2_1_1_1:Gomantlr_Java_inclusiveOrExpression)
+Java_conditionalAndExpression_2_1_1 =
+    Java_conditionalAndExpression_2_1_1(conditionalAndExpression_2_1_1_1:Java_inclusiveOrExpression)
 
-Gomantlr_Java_inclusiveOrExpression =
-    Gomantlr_Java_inclusiveOrExpression(gomantlr_Java_inclusiveOrExpression_1:Gomantlr_Java_exclusiveOrExpression,gomantlr_Java_inclusiveOrExpression_2:Gomantlr_Java_inclusiveOrExpression_2)
+Java_inclusiveOrExpression =
+    Java_inclusiveOrExpression(inclusiveOrExpression_1:Java_exclusiveOrExpression,inclusiveOrExpression_2:Java_inclusiveOrExpression_2)
 
-Gomantlr_Java_inclusiveOrExpression_2 =
-    Gomantlr_Java_inclusiveOrExpression_2_1(Gomantlr_Java_inclusiveOrExpression_2_1_1*)
+Java_inclusiveOrExpression_2 =
+    Java_inclusiveOrExpression_2_1(Java_inclusiveOrExpression_2_1_1*)
 
-Gomantlr_Java_inclusiveOrExpression_2_1_1 =
-    Gomantlr_Java_inclusiveOrExpression_2_1_1(gomantlr_Java_inclusiveOrExpression_2_1_1_1:Gomantlr_Java_exclusiveOrExpression)
+Java_inclusiveOrExpression_2_1_1 =
+    Java_inclusiveOrExpression_2_1_1(inclusiveOrExpression_2_1_1_1:Java_exclusiveOrExpression)
 
-Gomantlr_Java_exclusiveOrExpression =
-    Gomantlr_Java_exclusiveOrExpression(gomantlr_Java_exclusiveOrExpression_1:Gomantlr_Java_andExpression,gomantlr_Java_exclusiveOrExpression_2:Gomantlr_Java_exclusiveOrExpression_2)
+Java_exclusiveOrExpression =
+    Java_exclusiveOrExpression(exclusiveOrExpression_1:Java_andExpression,exclusiveOrExpression_2:Java_exclusiveOrExpression_2)
 
-Gomantlr_Java_exclusiveOrExpression_2 =
-    Gomantlr_Java_exclusiveOrExpression_2_1(Gomantlr_Java_exclusiveOrExpression_2_1_1*)
+Java_exclusiveOrExpression_2 =
+    Java_exclusiveOrExpression_2_1(Java_exclusiveOrExpression_2_1_1*)
 
-Gomantlr_Java_exclusiveOrExpression_2_1_1 =
-    Gomantlr_Java_exclusiveOrExpression_2_1_1(gomantlr_Java_exclusiveOrExpression_2_1_1_1:Gomantlr_Java_andExpression)
+Java_exclusiveOrExpression_2_1_1 =
+    Java_exclusiveOrExpression_2_1_1(exclusiveOrExpression_2_1_1_1:Java_andExpression)
 
-Gomantlr_Java_andExpression =
-    Gomantlr_Java_andExpression(gomantlr_Java_andExpression_1:Gomantlr_Java_equalityExpression,gomantlr_Java_andExpression_2:Gomantlr_Java_andExpression_2)
+Java_andExpression =
+    Java_andExpression(andExpression_1:Java_equalityExpression,andExpression_2:Java_andExpression_2)
 
-Gomantlr_Java_andExpression_2 =
-    Gomantlr_Java_andExpression_2_1(Gomantlr_Java_andExpression_2_1_1*)
+Java_andExpression_2 =
+    Java_andExpression_2_1(Java_andExpression_2_1_1*)
 
-Gomantlr_Java_andExpression_2_1_1 =
-    Gomantlr_Java_andExpression_2_1_1(gomantlr_Java_andExpression_2_1_1_1:Gomantlr_Java_equalityExpression)
+Java_andExpression_2_1_1 =
+    Java_andExpression_2_1_1(andExpression_2_1_1_1:Java_equalityExpression)
 
-Gomantlr_Java_equalityExpression =
-    Gomantlr_Java_equalityExpression(gomantlr_Java_equalityExpression_1:Gomantlr_Java_instanceOfExpression,gomantlr_Java_equalityExpression_2:Gomantlr_Java_equalityExpression_2)
+Java_equalityExpression =
+    Java_equalityExpression(equalityExpression_1:Java_instanceOfExpression,equalityExpression_2:Java_equalityExpression_2)
 
-Gomantlr_Java_equalityExpression_2 =
-    Gomantlr_Java_equalityExpression_2_1(Gomantlr_Java_equalityExpression_2_1_1*)
+Java_equalityExpression_2 =
+    Java_equalityExpression_2_1(Java_equalityExpression_2_1_1*)
 
-Gomantlr_Java_equalityExpression_2_1_1 =
-    Gomantlr_Java_equalityExpression_2_1_1(gomantlr_Java_equalityExpression_2_1_1_1:Gomantlr_Java_equalityExpression_2_1_1_1,gomantlr_Java_equalityExpression_2_1_1_2:Gomantlr_Java_instanceOfExpression)
+Java_equalityExpression_2_1_1 =
+    Java_equalityExpression_2_1_1(equalityExpression_2_1_1_1:Java_equalityExpression_2_1_1_1,equalityExpression_2_1_1_2:Java_instanceOfExpression)
 
-Gomantlr_Java_equalityExpression_2_1_1_1 =
-    Gomantlr_Java_equalityExpression_2_1_1_1_1()
-  | Gomantlr_Java_equalityExpression_2_1_1_1_2()
+Java_equalityExpression_2_1_1_1 =
+    Java_equalityExpression_2_1_1_1_1()
+  | Java_equalityExpression_2_1_1_1_2()
 
-Gomantlr_Java_instanceOfExpression =
-    Gomantlr_Java_instanceOfExpression(gomantlr_Java_instanceOfExpression_1:Gomantlr_Java_relationalExpression,gomantlr_Java_instanceOfExpression_2:Gomantlr_Java_instanceOfExpression_2)
+Java_instanceOfExpression =
+    Java_instanceOfExpression(instanceOfExpression_1:Java_relationalExpression,instanceOfExpression_2:Java_instanceOfExpression_2)
 
-Gomantlr_Java_instanceOfExpression_2 =
-    Gomantlr_Java_instanceOfExpression_2_1(gomantlr_Java_type:Gomantlr_Java_type)
-  | Gomantlr_Java_instanceOfExpression_2_2()
+Java_instanceOfExpression_2 =
+    Java_instanceOfExpression_2_1(type:Java_type)
+  | Java_instanceOfExpression_2_2()
 
-Gomantlr_Java_relationalExpression =
-    Gomantlr_Java_relationalExpression(gomantlr_Java_relationalExpression_1:Gomantlr_Java_shiftExpression,gomantlr_Java_relationalExpression_2:Gomantlr_Java_relationalExpression_2)
+Java_relationalExpression =
+    Java_relationalExpression(relationalExpression_1:Java_shiftExpression,relationalExpression_2:Java_relationalExpression_2)
 
-Gomantlr_Java_relationalExpression_2 =
-    Gomantlr_Java_relationalExpression_2_1(Gomantlr_Java_relationalExpression_2_1_1*)
+Java_relationalExpression_2 =
+    Java_relationalExpression_2_1(Java_relationalExpression_2_1_1*)
 
-Gomantlr_Java_relationalExpression_2_1_1 =
-    Gomantlr_Java_relationalExpression_2_1_1(gomantlr_Java_relationalExpression_2_1_1_1:Gomantlr_Java_relationalOp,gomantlr_Java_relationalExpression_2_1_1_2:Gomantlr_Java_shiftExpression)
+Java_relationalExpression_2_1_1 =
+    Java_relationalExpression_2_1_1(relationalExpression_2_1_1_1:Java_relationalOp,relationalExpression_2_1_1_2:Java_shiftExpression)
 
-Gomantlr_Java_relationalOp =
-    Gomantlr_Java_relationalOp_1()
-  | Gomantlr_Java_relationalOp_2()
-  | Gomantlr_Java_relationalOp_3()
-  | Gomantlr_Java_relationalOp_4()
+Java_relationalOp =
+    Java_relationalOp_1()
+  | Java_relationalOp_2()
+  | Java_relationalOp_3()
+  | Java_relationalOp_4()
 
-Gomantlr_Java_shiftExpression =
-    Gomantlr_Java_shiftExpression(gomantlr_Java_shiftExpression_1:Gomantlr_Java_additiveExpression,gomantlr_Java_shiftExpression_2:Gomantlr_Java_shiftExpression_2)
+Java_shiftExpression =
+    Java_shiftExpression(shiftExpression_1:Java_additiveExpression,shiftExpression_2:Java_shiftExpression_2)
 
-Gomantlr_Java_shiftExpression_2 =
-    Gomantlr_Java_shiftExpression_2_1(Gomantlr_Java_shiftExpression_2_1_1*)
+Java_shiftExpression_2 =
+    Java_shiftExpression_2_1(Java_shiftExpression_2_1_1*)
 
-Gomantlr_Java_shiftExpression_2_1_1 =
-    Gomantlr_Java_shiftExpression_2_1_1(gomantlr_Java_shiftExpression_2_1_1_1:Gomantlr_Java_shiftOp,gomantlr_Java_shiftExpression_2_1_1_2:Gomantlr_Java_additiveExpression)
+Java_shiftExpression_2_1_1 =
+    Java_shiftExpression_2_1_1(shiftExpression_2_1_1_1:Java_shiftOp,shiftExpression_2_1_1_2:Java_additiveExpression)
 
-Gomantlr_Java_shiftOp =
-    Gomantlr_Java_shiftOp_1()
-  | Gomantlr_Java_shiftOp_2()
-  | Gomantlr_Java_shiftOp_3()
+Java_shiftOp =
+    Java_shiftOp_1()
+  | Java_shiftOp_2()
+  | Java_shiftOp_3()
 
-Gomantlr_Java_additiveExpression =
-    Gomantlr_Java_additiveExpression(gomantlr_Java_additiveExpression_1:Gomantlr_Java_multiplicativeExpression,gomantlr_Java_additiveExpression_2:Gomantlr_Java_additiveExpression_2)
+Java_additiveExpression =
+    Java_additiveExpression(additiveExpression_1:Java_multiplicativeExpression,additiveExpression_2:Java_additiveExpression_2)
 
-Gomantlr_Java_additiveExpression_2 =
-    Gomantlr_Java_additiveExpression_2_1(Gomantlr_Java_additiveExpression_2_1_1*)
+Java_additiveExpression_2 =
+    Java_additiveExpression_2_1(Java_additiveExpression_2_1_1*)
 
-Gomantlr_Java_additiveExpression_2_1_1 =
-    Gomantlr_Java_additiveExpression_2_1_1(gomantlr_Java_additiveExpression_2_1_1_1:Gomantlr_Java_additiveExpression_2_1_1_1,gomantlr_Java_additiveExpression_2_1_1_2:Gomantlr_Java_multiplicativeExpression)
+Java_additiveExpression_2_1_1 =
+    Java_additiveExpression_2_1_1(additiveExpression_2_1_1_1:Java_additiveExpression_2_1_1_1,additiveExpression_2_1_1_2:Java_multiplicativeExpression)
 
-Gomantlr_Java_additiveExpression_2_1_1_1 =
-    Gomantlr_Java_additiveExpression_2_1_1_1_1()
-  | Gomantlr_Java_additiveExpression_2_1_1_1_2()
+Java_additiveExpression_2_1_1_1 =
+    Java_additiveExpression_2_1_1_1_1()
+  | Java_additiveExpression_2_1_1_1_2()
 
-Gomantlr_Java_multiplicativeExpression =
-    Gomantlr_Java_multiplicativeExpression(gomantlr_Java_multiplicativeExpression_1:Gomantlr_Java_unaryExpression,gomantlr_Java_multiplicativeExpression_2:Gomantlr_Java_multiplicativeExpression_2)
+Java_multiplicativeExpression =
+    Java_multiplicativeExpression(multiplicativeExpression_1:Java_unaryExpression,multiplicativeExpression_2:Java_multiplicativeExpression_2)
 
-Gomantlr_Java_multiplicativeExpression_2 =
-    Gomantlr_Java_multiplicativeExpression_2_1(Gomantlr_Java_multiplicativeExpression_2_1_1*)
+Java_multiplicativeExpression_2 =
+    Java_multiplicativeExpression_2_1(Java_multiplicativeExpression_2_1_1*)
 
-Gomantlr_Java_multiplicativeExpression_2_1_1 =
-    Gomantlr_Java_multiplicativeExpression_2_1_1(gomantlr_Java_multiplicativeExpression_2_1_1_1:Gomantlr_Java_multiplicativeExpression_2_1_1_1,gomantlr_Java_multiplicativeExpression_2_1_1_2:Gomantlr_Java_unaryExpression)
+Java_multiplicativeExpression_2_1_1 =
+    Java_multiplicativeExpression_2_1_1(multiplicativeExpression_2_1_1_1:Java_multiplicativeExpression_2_1_1_1,multiplicativeExpression_2_1_1_2:Java_unaryExpression)
 
-Gomantlr_Java_multiplicativeExpression_2_1_1_1 =
-    Gomantlr_Java_multiplicativeExpression_2_1_1_1_1()
-  | Gomantlr_Java_multiplicativeExpression_2_1_1_1_2()
-  | Gomantlr_Java_multiplicativeExpression_2_1_1_1_3()
+Java_multiplicativeExpression_2_1_1_1 =
+    Java_multiplicativeExpression_2_1_1_1_1()
+  | Java_multiplicativeExpression_2_1_1_1_2()
+  | Java_multiplicativeExpression_2_1_1_1_3()
 
-Gomantlr_Java_unaryExpression =
-    Gomantlr_Java_unaryExpression_1(gomantlr_Java_unaryExpression_1_1:Gomantlr_Java_unaryExpression)
-  | Gomantlr_Java_unaryExpression_2(gomantlr_Java_unaryExpression_2_1:Gomantlr_Java_unaryExpression)
-  | Gomantlr_Java_unaryExpression_3(gomantlr_Java_unaryExpression_3_1:Gomantlr_Java_primary)
-  | Gomantlr_Java_unaryExpression_4(gomantlr_Java_unaryExpression_4_1:Gomantlr_Java_primary)
-  | Gomantlr_Java_unaryExpression_5(gomantlr_Java_unaryExpressionNotPlusMinus:Gomantlr_Java_unaryExpressionNotPlusMinus)
+Java_unaryExpression =
+    Java_unaryExpression_1(unaryExpression_1_1:Java_unaryExpression)
+  | Java_unaryExpression_2(unaryExpression_2_1:Java_unaryExpression)
+  | Java_unaryExpression_3(unaryExpression_3_1:Java_primary)
+  | Java_unaryExpression_4(unaryExpression_4_1:Java_primary)
+  | Java_unaryExpression_5(unaryExpressionNotPlusMinus:Java_unaryExpressionNotPlusMinus)
 
-Gomantlr_Java_unaryExpressionNotPlusMinus =
-    Gomantlr_Java_unaryExpressionNotPlusMinus_1(gomantlr_Java_unaryExpressionNotPlusMinus_1_1:Gomantlr_Java_unaryExpression)
-  | Gomantlr_Java_unaryExpressionNotPlusMinus_2(gomantlr_Java_unaryExpressionNotPlusMinus_2_1:Gomantlr_Java_unaryExpression)
-  | Gomantlr_Java_unaryExpressionNotPlusMinus_3(gomantlr_Java_castExpression:Gomantlr_Java_castExpression)
-  | Gomantlr_Java_unaryExpressionNotPlusMinus_4(gomantlr_Java_unaryExpressionNotPlusMinus_4_1:Gomantlr_Java_primary,gomantlr_Java_unaryExpressionNotPlusMinus_4_2:Gomantlr_Java_unaryExpressionNotPlusMinus_4_2,gomantlr_Java_unaryExpressionNotPlusMinus_4_3:Gomantlr_Java_unaryExpressionNotPlusMinus_4_3)
+Java_unaryExpressionNotPlusMinus =
+    Java_unaryExpressionNotPlusMinus_1(unaryExpressionNotPlusMinus_1_1:Java_unaryExpression)
+  | Java_unaryExpressionNotPlusMinus_2(unaryExpressionNotPlusMinus_2_1:Java_unaryExpression)
+  | Java_unaryExpressionNotPlusMinus_3(castExpression:Java_castExpression)
+  | Java_unaryExpressionNotPlusMinus_4(unaryExpressionNotPlusMinus_4_1:Java_primary,unaryExpressionNotPlusMinus_4_2:Java_unaryExpressionNotPlusMinus_4_2,unaryExpressionNotPlusMinus_4_3:Java_unaryExpressionNotPlusMinus_4_3)
 
-Gomantlr_Java_unaryExpressionNotPlusMinus_4_2 =
-    Gomantlr_Java_unaryExpressionNotPlusMinus_4_2_1(Gomantlr_Java_selector*)
+Java_unaryExpressionNotPlusMinus_4_2 =
+    Java_unaryExpressionNotPlusMinus_4_2_1(Java_selector*)
 
-Gomantlr_Java_unaryExpressionNotPlusMinus_4_3 =
-    Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_0()
-  | Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1()
-  | Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_2()
+Java_unaryExpressionNotPlusMinus_4_3 =
+    Java_unaryExpressionNotPlusMinus_4_3_0()
+  | Java_unaryExpressionNotPlusMinus_4_3_1()
+  | Java_unaryExpressionNotPlusMinus_4_3_2()
 
-Gomantlr_Java_castExpression =
-    Gomantlr_Java_castExpression_1(gomantlr_Java_castExpression_1_1:Gomantlr_Java_primitiveType,gomantlr_Java_castExpression_1_2:Gomantlr_Java_unaryExpression)
-  | Gomantlr_Java_castExpression_2(gomantlr_Java_castExpression_2_1:Gomantlr_Java_castExpression_2_1,gomantlr_Java_castExpression_2_2:Gomantlr_Java_unaryExpressionNotPlusMinus)
+Java_castExpression =
+    Java_castExpression_1(castExpression_1_1:Java_primitiveType,castExpression_1_2:Java_unaryExpression)
+  | Java_castExpression_2(castExpression_2_1:Java_castExpression_2_1,castExpression_2_2:Java_unaryExpressionNotPlusMinus)
 
-Gomantlr_Java_castExpression_2_1 =
-    Gomantlr_Java_castExpression_2_1_1(gomantlr_Java_expression:Gomantlr_Java_expression)
-  | Gomantlr_Java_castExpression_2_1_2(gomantlr_Java_type:Gomantlr_Java_type)
+Java_castExpression_2_1 =
+    Java_castExpression_2_1_1(expression:Java_expression)
+  | Java_castExpression_2_1_2(type:Java_type)
 
-Gomantlr_Java_primary =
-    Gomantlr_Java_primary_1(gomantlr_Java_parExpression:Gomantlr_Java_parExpression)
-  | Gomantlr_Java_primary_2(gomantlr_Java_primary_2_1:Gomantlr_Java_nonWildcardTypeArguments,gomantlr_Java_primary_2_2:Gomantlr_Java_primary_2_2)
-  | Gomantlr_Java_primary_3(gomantlr_Java_primary_3_1:Gomantlr_Java_primary_3_1)
-  | Gomantlr_Java_primary_4(gomantlr_Java_primary_4_1:Gomantlr_Java_superSuffix)
-  | Gomantlr_Java_primary_5(gomantlr_Java_literal:Gomantlr_Java_literal)
-  | Gomantlr_Java_primary_6(gomantlr_Java_primary_6_1:Gomantlr_Java_creator)
-  | Gomantlr_Java_primary_7(gomantlr_Java_primary_7_1:Gomantlr_Java_Identifier,gomantlr_Java_primary_7_2:Gomantlr_Java_primary_7_2,gomantlr_Java_primary_7_3:Gomantlr_Java_primary_7_3)
-  | Gomantlr_Java_primary_8(gomantlr_Java_primary_8_1:Gomantlr_Java_primitiveType,gomantlr_Java_primary_8_2:Gomantlr_Java_primary_8_2)
-  | Gomantlr_Java_primary_9()
+Java_primary =
+    Java_primary_1(parExpression:Java_parExpression)
+  | Java_primary_2(primary_2_1:Java_nonWildcardTypeArguments,primary_2_2:Java_primary_2_2)
+  | Java_primary_3(primary_3_1:Java_primary_3_1)
+  | Java_primary_4(primary_4_1:Java_superSuffix)
+  | Java_primary_5(literal:Java_literal)
+  | Java_primary_6(primary_6_1:Java_creator)
+  | Java_primary_7(primary_7_1:Java_Identifier,primary_7_2:Java_primary_7_2,primary_7_3:Java_primary_7_3)
+  | Java_primary_8(primary_8_1:Java_primitiveType,primary_8_2:Java_primary_8_2)
+  | Java_primary_9()
 
-Gomantlr_Java_primary_2_2 =
-    Gomantlr_Java_primary_2_2_1(gomantlr_Java_explicitGenericInvocationSuffix:Gomantlr_Java_explicitGenericInvocationSuffix)
-  | Gomantlr_Java_primary_2_2_2(gomantlr_Java_primary_2_2_2_1:Gomantlr_Java_arguments)
+Java_primary_2_2 =
+    Java_primary_2_2_1(explicitGenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
+  | Java_primary_2_2_2(primary_2_2_2_1:Java_arguments)
 
-Gomantlr_Java_primary_3_1 =
-    Gomantlr_Java_primary_3_1_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_primary_3_1_2()
+Java_primary_3_1 =
+    Java_primary_3_1_1(arguments:Java_arguments)
+  | Java_primary_3_1_2()
 
-Gomantlr_Java_primary_7_2 =
-    Gomantlr_Java_primary_7_2_1(Gomantlr_Java_primary_7_2_1_1*)
+Java_primary_7_2 =
+    Java_primary_7_2_1(Java_primary_7_2_1_1*)
 
-Gomantlr_Java_primary_7_2_1_1 =
-    Gomantlr_Java_primary_7_2_1_1(gomantlr_Java_primary_7_2_1_1_1:Gomantlr_Java_Identifier)
+Java_primary_7_2_1_1 =
+    Java_primary_7_2_1_1(primary_7_2_1_1_1:Java_Identifier)
 
-Gomantlr_Java_primary_7_3 =
-    Gomantlr_Java_primary_7_3_1(gomantlr_Java_identifierSuffix:Gomantlr_Java_identifierSuffix)
-  | Gomantlr_Java_primary_7_3_2()
+Java_primary_7_3 =
+    Java_primary_7_3_1(identifierSuffix:Java_identifierSuffix)
+  | Java_primary_7_3_2()
 
-Gomantlr_Java_primary_8_2 =
-    Gomantlr_Java_primary_8_2_1(Gomantlr_Java_primary_8_2_1_1*)
+Java_primary_8_2 =
+    Java_primary_8_2_1(Java_primary_8_2_1_1*)
 
-Gomantlr_Java_primary_8_2_1_1 =
-    Gomantlr_Java_primary_8_2_1_1()
+Java_primary_8_2_1_1 =
+    Java_primary_8_2_1_1()
 
-Gomantlr_Java_identifierSuffix =
-    Gomantlr_Java_identifierSuffix_1(gomantlr_Java_identifierSuffix_1_1:Gomantlr_Java_identifierSuffix_1_1)
-  | Gomantlr_Java_identifierSuffix_2(gomantlr_Java_identifierSuffix_2_1:Gomantlr_Java_identifierSuffix_2_1)
-  | Gomantlr_Java_identifierSuffix_3(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_identifierSuffix_4()
-  | Gomantlr_Java_identifierSuffix_5(gomantlr_Java_identifierSuffix_5_1:Gomantlr_Java_explicitGenericInvocation)
-  | Gomantlr_Java_identifierSuffix_6()
-  | Gomantlr_Java_identifierSuffix_7(gomantlr_Java_identifierSuffix_7_1:Gomantlr_Java_arguments)
-  | Gomantlr_Java_identifierSuffix_8(gomantlr_Java_identifierSuffix_8_1:Gomantlr_Java_identifierSuffix_8_1,gomantlr_Java_identifierSuffix_8_2:Gomantlr_Java_innerCreator)
+Java_identifierSuffix =
+    Java_identifierSuffix_1(identifierSuffix_1_1:Java_identifierSuffix_1_1)
+  | Java_identifierSuffix_2(identifierSuffix_2_1:Java_identifierSuffix_2_1)
+  | Java_identifierSuffix_3(arguments:Java_arguments)
+  | Java_identifierSuffix_4()
+  | Java_identifierSuffix_5(identifierSuffix_5_1:Java_explicitGenericInvocation)
+  | Java_identifierSuffix_6()
+  | Java_identifierSuffix_7(identifierSuffix_7_1:Java_arguments)
+  | Java_identifierSuffix_8(identifierSuffix_8_1:Java_identifierSuffix_8_1,identifierSuffix_8_2:Java_innerCreator)
 
-Gomantlr_Java_identifierSuffix_1_1 =
-    Gomantlr_Java_identifierSuffix_1_1_1(Gomantlr_Java_identifierSuffix_1_1_1_1*)
+Java_identifierSuffix_1_1 =
+    Java_identifierSuffix_1_1_1(Java_identifierSuffix_1_1_1_1*)
 
-Gomantlr_Java_identifierSuffix_1_1_1_1 =
-    Gomantlr_Java_identifierSuffix_1_1_1_1()
+Java_identifierSuffix_1_1_1_1 =
+    Java_identifierSuffix_1_1_1_1()
 
-Gomantlr_Java_identifierSuffix_2_1 =
-    Gomantlr_Java_identifierSuffix_2_1_1(Gomantlr_Java_identifierSuffix_2_1_1_1*)
+Java_identifierSuffix_2_1 =
+    Java_identifierSuffix_2_1_1(Java_identifierSuffix_2_1_1_1*)
 
-Gomantlr_Java_identifierSuffix_2_1_1_1 =
-    Gomantlr_Java_identifierSuffix_2_1_1_1(gomantlr_Java_identifierSuffix_2_1_1_1_1:Gomantlr_Java_expression)
+Java_identifierSuffix_2_1_1_1 =
+    Java_identifierSuffix_2_1_1_1(identifierSuffix_2_1_1_1_1:Java_expression)
 
-Gomantlr_Java_identifierSuffix_8_1 =
-    Gomantlr_Java_identifierSuffix_8_1_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
-  | Gomantlr_Java_identifierSuffix_8_1_2()
+Java_identifierSuffix_8_1 =
+    Java_identifierSuffix_8_1_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
+  | Java_identifierSuffix_8_1_2()
 
-Gomantlr_Java_creator =
-    Gomantlr_Java_creator(gomantlr_Java_creator_1:Gomantlr_Java_creator_1,gomantlr_Java_creator_2:Gomantlr_Java_createdName,gomantlr_Java_creator_3:Gomantlr_Java_creator_3)
+Java_creator =
+    Java_creator(creator_1:Java_creator_1,creator_2:Java_createdName,creator_3:Java_creator_3)
 
-Gomantlr_Java_creator_1 =
-    Gomantlr_Java_creator_1_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
-  | Gomantlr_Java_creator_1_2()
+Java_creator_1 =
+    Java_creator_1_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
+  | Java_creator_1_2()
 
-Gomantlr_Java_creator_3 =
-    Gomantlr_Java_creator_3_1(gomantlr_Java_arrayCreatorRest:Gomantlr_Java_arrayCreatorRest)
-  | Gomantlr_Java_creator_3_2(gomantlr_Java_classCreatorRest:Gomantlr_Java_classCreatorRest)
+Java_creator_3 =
+    Java_creator_3_1(arrayCreatorRest:Java_arrayCreatorRest)
+  | Java_creator_3_2(classCreatorRest:Java_classCreatorRest)
 
-Gomantlr_Java_createdName =
-    Gomantlr_Java_createdName_1(gomantlr_Java_createdName_1_1:Gomantlr_Java_Identifier,gomantlr_Java_createdName_1_2:Gomantlr_Java_createdName_1_2,gomantlr_Java_createdName_1_3:Gomantlr_Java_createdName_1_3)
-  | Gomantlr_Java_createdName_2(gomantlr_Java_primitiveType:Gomantlr_Java_primitiveType)
+Java_createdName =
+    Java_createdName_1(createdName_1_1:Java_Identifier,createdName_1_2:Java_createdName_1_2,createdName_1_3:Java_createdName_1_3)
+  | Java_createdName_2(primitiveType:Java_primitiveType)
 
-Gomantlr_Java_createdName_1_2 =
-    Gomantlr_Java_createdName_1_2_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
-  | Gomantlr_Java_createdName_1_2_2()
+Java_createdName_1_2 =
+    Java_createdName_1_2_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
+  | Java_createdName_1_2_2()
 
-Gomantlr_Java_createdName_1_3 =
-    Gomantlr_Java_createdName_1_3_1(Gomantlr_Java_createdName_1_3_1_1*)
+Java_createdName_1_3 =
+    Java_createdName_1_3_1(Java_createdName_1_3_1_1*)
 
-Gomantlr_Java_createdName_1_3_1_1 =
-    Gomantlr_Java_createdName_1_3_1_1(gomantlr_Java_createdName_1_3_1_1_1:Gomantlr_Java_Identifier,gomantlr_Java_createdName_1_3_1_1_2:Gomantlr_Java_createdName_1_3_1_1_2)
+Java_createdName_1_3_1_1 =
+    Java_createdName_1_3_1_1(createdName_1_3_1_1_1:Java_Identifier,createdName_1_3_1_1_2:Java_createdName_1_3_1_1_2)
 
-Gomantlr_Java_createdName_1_3_1_1_2 =
-    Gomantlr_Java_createdName_1_3_1_1_2_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
-  | Gomantlr_Java_createdName_1_3_1_1_2_2()
+Java_createdName_1_3_1_1_2 =
+    Java_createdName_1_3_1_1_2_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
+  | Java_createdName_1_3_1_1_2_2()
 
-Gomantlr_Java_innerCreator =
-    Gomantlr_Java_innerCreator(gomantlr_Java_innerCreator_1:Gomantlr_Java_Identifier,gomantlr_Java_innerCreator_2:Gomantlr_Java_classCreatorRest)
+Java_innerCreator =
+    Java_innerCreator(innerCreator_1:Java_Identifier,innerCreator_2:Java_classCreatorRest)
 
-Gomantlr_Java_arrayCreatorRest =
-    Gomantlr_Java_arrayCreatorRest_1(gomantlr_Java_arrayCreatorRest_1_1:Gomantlr_Java_arrayCreatorRest_1_1,gomantlr_Java_arrayCreatorRest_1_2:Gomantlr_Java_arrayInitializer)
-  | Gomantlr_Java_arrayCreatorRest_2(gomantlr_Java_arrayCreatorRest_2_1:Gomantlr_Java_expression,gomantlr_Java_arrayCreatorRest_2_2:Gomantlr_Java_arrayCreatorRest_2_2,gomantlr_Java_arrayCreatorRest_2_3:Gomantlr_Java_arrayCreatorRest_2_3)
+Java_arrayCreatorRest =
+    Java_arrayCreatorRest_1(arrayCreatorRest_1_1:Java_arrayCreatorRest_1_1,arrayCreatorRest_1_2:Java_arrayInitializer)
+  | Java_arrayCreatorRest_2(arrayCreatorRest_2_1:Java_expression,arrayCreatorRest_2_2:Java_arrayCreatorRest_2_2,arrayCreatorRest_2_3:Java_arrayCreatorRest_2_3)
 
-Gomantlr_Java_arrayCreatorRest_1_1 =
-    Gomantlr_Java_arrayCreatorRest_1_1_1(Gomantlr_Java_arrayCreatorRest_1_1_1_1*)
+Java_arrayCreatorRest_1_1 =
+    Java_arrayCreatorRest_1_1_1(Java_arrayCreatorRest_1_1_1_1*)
 
-Gomantlr_Java_arrayCreatorRest_1_1_1_1 =
-    Gomantlr_Java_arrayCreatorRest_1_1_1_1()
+Java_arrayCreatorRest_1_1_1_1 =
+    Java_arrayCreatorRest_1_1_1_1()
 
-Gomantlr_Java_arrayCreatorRest_2_2 =
-    Gomantlr_Java_arrayCreatorRest_2_2_1(Gomantlr_Java_arrayCreatorRest_2_2_1_1*)
+Java_arrayCreatorRest_2_2 =
+    Java_arrayCreatorRest_2_2_1(Java_arrayCreatorRest_2_2_1_1*)
 
-Gomantlr_Java_arrayCreatorRest_2_2_1_1 =
-    Gomantlr_Java_arrayCreatorRest_2_2_1_1(gomantlr_Java_arrayCreatorRest_2_2_1_1_1:Gomantlr_Java_expression)
+Java_arrayCreatorRest_2_2_1_1 =
+    Java_arrayCreatorRest_2_2_1_1(arrayCreatorRest_2_2_1_1_1:Java_expression)
 
-Gomantlr_Java_arrayCreatorRest_2_3 =
-    Gomantlr_Java_arrayCreatorRest_2_3_1(Gomantlr_Java_arrayCreatorRest_2_3_1_1*)
+Java_arrayCreatorRest_2_3 =
+    Java_arrayCreatorRest_2_3_1(Java_arrayCreatorRest_2_3_1_1*)
 
-Gomantlr_Java_arrayCreatorRest_2_3_1_1 =
-    Gomantlr_Java_arrayCreatorRest_2_3_1_1()
+Java_arrayCreatorRest_2_3_1_1 =
+    Java_arrayCreatorRest_2_3_1_1()
 
-Gomantlr_Java_classCreatorRest =
-    Gomantlr_Java_classCreatorRest(gomantlr_Java_classCreatorRest_1:Gomantlr_Java_arguments,gomantlr_Java_classCreatorRest_2:Gomantlr_Java_classCreatorRest_2)
+Java_classCreatorRest =
+    Java_classCreatorRest(classCreatorRest_1:Java_arguments,classCreatorRest_2:Java_classCreatorRest_2)
 
-Gomantlr_Java_classCreatorRest_2 =
-    Gomantlr_Java_classCreatorRest_2_1(gomantlr_Java_classBody:Gomantlr_Java_classBody)
-  | Gomantlr_Java_classCreatorRest_2_2()
+Java_classCreatorRest_2 =
+    Java_classCreatorRest_2_1(classBody:Java_classBody)
+  | Java_classCreatorRest_2_2()
 
-Gomantlr_Java_explicitGenericInvocation =
-    Gomantlr_Java_explicitGenericInvocation(gomantlr_Java_explicitGenericInvocation_1:Gomantlr_Java_nonWildcardTypeArguments,gomantlr_Java_explicitGenericInvocation_2:Gomantlr_Java_explicitGenericInvocationSuffix)
+Java_explicitGenericInvocation =
+    Java_explicitGenericInvocation(explicitGenericInvocation_1:Java_nonWildcardTypeArguments,explicitGenericInvocation_2:Java_explicitGenericInvocationSuffix)
 
-Gomantlr_Java_nonWildcardTypeArguments =
-    Gomantlr_Java_nonWildcardTypeArguments(gomantlr_Java_nonWildcardTypeArguments_1:Gomantlr_Java_typeList)
+Java_nonWildcardTypeArguments =
+    Java_nonWildcardTypeArguments(nonWildcardTypeArguments_1:Java_typeList)
 
-Gomantlr_Java_explicitGenericInvocationSuffix =
-    Gomantlr_Java_explicitGenericInvocationSuffix_1(gomantlr_Java_explicitGenericInvocationSuffix_1_1:Gomantlr_Java_superSuffix)
-  | Gomantlr_Java_explicitGenericInvocationSuffix_2(gomantlr_Java_explicitGenericInvocationSuffix_2_1:Gomantlr_Java_Identifier,gomantlr_Java_explicitGenericInvocationSuffix_2_2:Gomantlr_Java_arguments)
+Java_explicitGenericInvocationSuffix =
+    Java_explicitGenericInvocationSuffix_1(explicitGenericInvocationSuffix_1_1:Java_superSuffix)
+  | Java_explicitGenericInvocationSuffix_2(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
 
-Gomantlr_Java_selector =
-    Gomantlr_Java_selector_1(gomantlr_Java_selector_1_1:Gomantlr_Java_Identifier,gomantlr_Java_selector_1_2:Gomantlr_Java_selector_1_2)
-  | Gomantlr_Java_selector_2()
-  | Gomantlr_Java_selector_3(gomantlr_Java_selector_3_1:Gomantlr_Java_superSuffix)
-  | Gomantlr_Java_selector_4(gomantlr_Java_selector_4_1:Gomantlr_Java_selector_4_1,gomantlr_Java_selector_4_2:Gomantlr_Java_innerCreator)
-  | Gomantlr_Java_selector_5(gomantlr_Java_selector_5_1:Gomantlr_Java_expression)
+Java_selector =
+    Java_selector_1(selector_1_1:Java_Identifier,selector_1_2:Java_selector_1_2)
+  | Java_selector_2()
+  | Java_selector_3(selector_3_1:Java_superSuffix)
+  | Java_selector_4(selector_4_1:Java_selector_4_1,selector_4_2:Java_innerCreator)
+  | Java_selector_5(selector_5_1:Java_expression)
 
-Gomantlr_Java_selector_1_2 =
-    Gomantlr_Java_selector_1_2_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_selector_1_2_2()
+Java_selector_1_2 =
+    Java_selector_1_2_1(arguments:Java_arguments)
+  | Java_selector_1_2_2()
 
-Gomantlr_Java_selector_4_1 =
-    Gomantlr_Java_selector_4_1_1(gomantlr_Java_nonWildcardTypeArguments:Gomantlr_Java_nonWildcardTypeArguments)
-  | Gomantlr_Java_selector_4_1_2()
+Java_selector_4_1 =
+    Java_selector_4_1_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
+  | Java_selector_4_1_2()
 
-Gomantlr_Java_superSuffix =
-    Gomantlr_Java_superSuffix_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_superSuffix_2(gomantlr_Java_superSuffix_2_1:Gomantlr_Java_Identifier,gomantlr_Java_superSuffix_2_2:Gomantlr_Java_superSuffix_2_2)
+Java_superSuffix =
+    Java_superSuffix_1(arguments:Java_arguments)
+  | Java_superSuffix_2(superSuffix_2_1:Java_Identifier,superSuffix_2_2:Java_superSuffix_2_2)
 
-Gomantlr_Java_superSuffix_2_2 =
-    Gomantlr_Java_superSuffix_2_2_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_superSuffix_2_2_2()
+Java_superSuffix_2_2 =
+    Java_superSuffix_2_2_1(arguments:Java_arguments)
+  | Java_superSuffix_2_2_2()
 
-Gomantlr_Java_arguments =
-    Gomantlr_Java_arguments(gomantlr_Java_arguments_1:Gomantlr_Java_arguments_1)
+Java_arguments =
+    Java_arguments(arguments_1:Java_arguments_1)
 
-Gomantlr_Java_arguments_1 =
-    Gomantlr_Java_arguments_1_1(gomantlr_Java_expressionList:Gomantlr_Java_expressionList)
-  | Gomantlr_Java_arguments_1_2()
+Java_arguments_1 =
+    Java_arguments_1_1(expressionList:Java_expressionList)
+  | Java_arguments_1_2()
 
-Gomantlr_Java_Identifier =
-    Gomantlr_Java_Identifier(s:String)
+Java_Identifier =
+    Java_Identifier(s:String)
 
-Gomantlr_Java_ENUM =
-    Gomantlr_Java_ENUM(s:String)
+Java_ENUM =
+    Java_ENUM(s:String)
 
-Gomantlr_Java_FloatingPointLiteral =
-    Gomantlr_Java_FloatingPointLiteral(s:String)
+Java_FloatingPointLiteral =
+    Java_FloatingPointLiteral(s:String)
 
-Gomantlr_Java_CharacterLiteral =
-    Gomantlr_Java_CharacterLiteral(s:String)
+Java_CharacterLiteral =
+    Java_CharacterLiteral(s:String)
 
-Gomantlr_Java_StringLiteral =
-    Gomantlr_Java_StringLiteral(s:String)
+Java_StringLiteral =
+    Java_StringLiteral(s:String)
