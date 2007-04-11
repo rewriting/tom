@@ -1704,9 +1704,9 @@ moreStatementExpressions returns [Gomantlr_Java_moreStatementExpressions mse]
 
 forControl returns [Gomantlr_Java_forControl fc]
 @init {
-    Gomantlr_Java_forControl_2_1_1 fc1=`Gomantlr_Java_forControl_2_1_1_2();
-    Gomantlr_Java_forControl_2_1_2 fc2=`Gomantlr_Java_forControl_2_1_2_2();
-    Gomantlr_Java_forControl_2_1_3 fc3=`Gomantlr_Java_forControl_2_1_3_2();}
+    Gomantlr_Java_forControl_2_1 fc1=`Gomantlr_Java_forControl_2_1_2();
+    Gomantlr_Java_forControl_2_2 fc2=`Gomantlr_Java_forControl_2_2_2();
+    Gomantlr_Java_forControl_2_3 fc3=`Gomantlr_Java_forControl_2_3_2();}
 	:	    fvc=forVarControl
             {
                 fc=`Gomantlr_Java_forControl_1(fvc);
@@ -1715,25 +1715,25 @@ forControl returns [Gomantlr_Java_forControl fc]
             (
                 fi=forInit
                 {
-                    fc1=`Gomantlr_Java_forControl_2_1_1_1(fi);
+                    fc1=`Gomantlr_Java_forControl_2_1_1(fi);
                 }
             )?
             ';'
             (
                 e=expression
                 {
-                    fc2=`Gomantlr_Java_forControl_2_1_2_1(e);
+                    fc2=`Gomantlr_Java_forControl_2_2_1(e);
                 }
             )?
             ';'
             (
                 fu=forUpdate
                 {
-                    fc3=`Gomantlr_Java_forControl_2_1_3_1(fu);
+                    fc3=`Gomantlr_Java_forControl_2_3_1(fu);
                 }
             )?
             {
-                fc=`Gomantlr_Java_forControl_2(Gomantlr_Java_forControl_2_1(fc1,fc2,fc3));
+                fc=`Gomantlr_Java_forControl_2(fc1,fc2,fc3);
             }
 	;
 
