@@ -1920,15 +1920,15 @@ assignmentOperator returns [Gomantlr_Java_assignmentOperator ao]
         }
     |   '<' '<' '='
         {
-            ao=`Gomantlr_Java_assignmentOperator_10(Gomantlr_Java_assignmentOperator_10_1());
+            ao=`Gomantlr_Java_assignmentOperator_10();
         }
     |   '>' '>' '='
         {
-            ao=`Gomantlr_Java_assignmentOperator_11(Gomantlr_Java_assignmentOperator_11_1());
+            ao=`Gomantlr_Java_assignmentOperator_11();
         }
     |   '>' '>' '>' '='
         {
-            ao=`Gomantlr_Java_assignmentOperator_12(Gomantlr_Java_assignmentOperator_12_1());
+            ao=`Gomantlr_Java_assignmentOperator_12();
         }
 	;
 

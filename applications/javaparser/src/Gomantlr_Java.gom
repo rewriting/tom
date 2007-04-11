@@ -798,18 +798,9 @@ Gomantlr_Java_assignmentOperator =
   | Gomantlr_Java_assignmentOperator_7()
   | Gomantlr_Java_assignmentOperator_8()
   | Gomantlr_Java_assignmentOperator_9()
-  | Gomantlr_Java_assignmentOperator_10(gomantlr_Java_assignmentOperator_10_1:Gomantlr_Java_assignmentOperator_10_1)
-  | Gomantlr_Java_assignmentOperator_11(gomantlr_Java_assignmentOperator_11_1:Gomantlr_Java_assignmentOperator_11_1)
-  | Gomantlr_Java_assignmentOperator_12(gomantlr_Java_assignmentOperator_12_1:Gomantlr_Java_assignmentOperator_12_1)
-
-Gomantlr_Java_assignmentOperator_10_1 =
-    Gomantlr_Java_assignmentOperator_10_1()
-
-Gomantlr_Java_assignmentOperator_11_1 =
-    Gomantlr_Java_assignmentOperator_11_1()
-
-Gomantlr_Java_assignmentOperator_12_1 =
-    Gomantlr_Java_assignmentOperator_12_1()
+  | Gomantlr_Java_assignmentOperator_10()
+  | Gomantlr_Java_assignmentOperator_11()
+  | Gomantlr_Java_assignmentOperator_12()
 
 Gomantlr_Java_conditionalExpression =
     Gomantlr_Java_conditionalExpression(gomantlr_Java_conditionalExpression_1:Gomantlr_Java_conditionalOrExpression,gomantlr_Java_conditionalExpression_2:Gomantlr_Java_conditionalExpression_2)
