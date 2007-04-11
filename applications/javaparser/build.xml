@@ -41,6 +41,7 @@
 
     <javac.preset destdir="${jparse.build}">
       <src path="${jparse.gen}"/>
+      <src path="${jparse.src}"/>
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
