@@ -797,27 +797,27 @@ variableDeclarator returns [Gomantlr_Java_variableDeclarator vd]
 	
 variableDeclaratorRest returns [Gomantlr_Java_variableDeclaratorRest vdr]
 @init {
-    Gomantlr_Java_variableDeclaratorRest_1_1_1 vdr1=`Gomantlr_Java_variableDeclaratorRest_1_1_1_1();
-    Gomantlr_Java_variableDeclaratorRest_1_1_2 vdr2=`Gomantlr_Java_variableDeclaratorRest_1_1_2_2();
+    Gomantlr_Java_variableDeclaratorRest_1_1 vdr1=`Gomantlr_Java_variableDeclaratorRest_1_1_1();
+    Gomantlr_Java_variableDeclaratorRest_1_2 vdr2=`Gomantlr_Java_variableDeclaratorRest_1_2_2();
 }
 	:	(
             '[' ']'
             {
-                vdr1=`Gomantlr_Java_variableDeclaratorRest_1_1_1_1(vdr1*,Gomantlr_Java_variableDeclaratorRest_1_1_1_1_1());
+                vdr1=`Gomantlr_Java_variableDeclaratorRest_1_1_1(vdr1*,Gomantlr_Java_variableDeclaratorRest_1_1_1_1());
             }
         )+ 
         (
             '=' vi=variableInitializer
             {
-                vdr2=`Gomantlr_Java_variableDeclaratorRest_1_1_2_1(Gomantlr_Java_variableDeclaratorRest_1_1_2_1_1(vi));
+                vdr2=`Gomantlr_Java_variableDeclaratorRest_1_2_1(vi);
             }
         )?
         {
-            vdr=`Gomantlr_Java_variableDeclaratorRest_1(Gomantlr_Java_variableDeclaratorRest_1_1(vdr1,vdr2));
+            vdr=`Gomantlr_Java_variableDeclaratorRest_1(vdr1,vdr2);
         }
 	|	'=' vi=variableInitializer
         {
-            vdr=`Gomantlr_Java_variableDeclaratorRest_2(Gomantlr_Java_variableDeclaratorRest_2_1(vi));
+            vdr=`Gomantlr_Java_variableDeclaratorRest_2(vi);
         }
 	|
         {
