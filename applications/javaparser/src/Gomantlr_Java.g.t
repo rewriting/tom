@@ -521,26 +521,26 @@ genericMethodOrConstructorDecl returns [Gomantlr_Java_genericMethodOrConstructor
 	
 genericMethodOrConstructorRest returns [Gomantlr_Java_genericMethodOrConstructorRest gmocr]
 @init {
-    Gomantlr_Java_genericMethodOrConstructorRest_1_1_1 gmocr1=null;
+    Gomantlr_Java_genericMethodOrConstructorRest_1_1 gmocr1=null;
 }
 	:	(
                 t=type 
                 {
-                    gmocr1=`Gomantlr_Java_genericMethodOrConstructorRest_1_1_1_1(t);
+                    gmocr1=`Gomantlr_Java_genericMethodOrConstructorRest_1_1_1(t);
                 }
             |
                 'void'
                 {
-                    gmocr1=`Gomantlr_Java_genericMethodOrConstructorRest_1_1_1_2();
+                    gmocr1=`Gomantlr_Java_genericMethodOrConstructorRest_1_1_2();
                 }
         )
         i=Identifier mdr=methodDeclaratorRest
         {
-            gmocr=`Gomantlr_Java_genericMethodOrConstructorRest_1(Gomantlr_Java_genericMethodOrConstructorRest_1_1(gmocr1,Gomantlr_Java_Identifier(i.getText()),mdr));
+            gmocr=`Gomantlr_Java_genericMethodOrConstructorRest_1(gmocr1,Gomantlr_Java_Identifier(i.getText()),mdr);
         }
 	|	i=Identifier cdr=constructorDeclaratorRest
         {
-            gmocr=`Gomantlr_Java_genericMethodOrConstructorRest_2(Gomantlr_Java_genericMethodOrConstructorRest_2_1(Gomantlr_Java_Identifier(i.getText()),cdr));
+            gmocr=`Gomantlr_Java_genericMethodOrConstructorRest_2(Gomantlr_Java_Identifier(i.getText()),cdr);
         }
 	;
 
