@@ -756,7 +756,7 @@ constructorDeclaratorRest returns [Gomantlr_Java_constructorDeclaratorRest cdr]
         (
             'throws' qnl=qualifiedNameList
             {
-                cdr2=`Gomantlr_Java_constructorDeclaratorRest_2_1(Gomantlr_Java_constructorDeclaratorRest_2_1_1(qnl));
+                cdr2=`Gomantlr_Java_constructorDeclaratorRest_2_1(qnl);
             }
         )? 
         mb=methodBody
