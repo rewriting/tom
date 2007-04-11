@@ -1084,17 +1084,17 @@ typeArgument returns [Gomantlr_Java_typeArgument ta]
 	
 qualifiedNameList returns [Gomantlr_Java_qualifiedNameList qnl]
 @init {
-    Gomantlr_Java_qualifiedNameList_2 qnl2=`Gomantlr_Java_qualifiedNameList_2_1();
+    qnl=`Gomantlr_Java_qualifiedNameList();
 }
 	:	qn1=qualifiedName 
         (
             ',' qn2=qualifiedName
             {
-                qnl2=`Gomantlr_Java_qualifiedNameList_2_1(qnl2*,Gomantlr_Java_qualifiedNameList_2_1_1(qn2));
+                qnl=`Gomantlr_Java_qualifiedNameList(qnl*,qn2);
             }
         )*
         {
-            qnl=`Gomantlr_Java_qualifiedNameList(qn1,qnl2);
+            qnl=`Gomantlr_Java_qualifiedNameList(qn1,qnl*);
         }
 	;
 	
@@ -1173,13 +1173,13 @@ methodBody returns [Gomantlr_Java_methodBody mb]
 
 qualifiedName returns [Gomantlr_Java_qualifiedName qn]
 @init {
-    Gomantlr_Java_qualifiedName_2 qn2=`Gomantlr_Java_qualifiedName_2_1();
+    Gomantlr_Java_qualifierList qn2=`Gomantlr_Java_qualifierList();
 }
 	:	i1=Identifier 
         (
             '.' i2=Identifier
             {
-                qn2=`Gomantlr_Java_qualifiedName_2_1(qn2*,Gomantlr_Java_qualifiedName_2_1_1(Gomantlr_Java_Identifier(i2.getText())));
+                qn2=`Gomantlr_Java_qualifierList(qn2*,Gomantlr_Java_Identifier(i2.getText()));
             }
         )*
         {
