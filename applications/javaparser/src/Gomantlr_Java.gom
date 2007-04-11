@@ -386,22 +386,18 @@ Java_typeName =
   | Java_typeNameQualifiedIdentifier(PkgOrTypeName:Java_packageOrTypeName,Identifier:Java_Identifier)
 
 Java_type =
-    Java_type_1(type_1_1:Java_Identifier,type_1_2:Java_type_1_2,type_1_3:Java_type_1_3,type_1_4:Java_type_1_4)
+    Java_type_1(type_1_2:Java_type_1_2,type_1_4:Java_type_1_4)
   | Java_type_2(type_2_1:Java_primitiveType,type_2_2:Java_type_2_2)
 
 Java_type_1_2 =
-    Java_type_1_2_1(typeArguments:Java_typeArgumentList)
-  | Java_type_1_2_2()
+    Java_type_1_2_list(Java_type_1_2_item*)
 
-Java_type_1_3 =
-    Java_type_1_3_1(Java_type_1_3_1_1*)
+Java_type_1_2_item =
+    Java_type_1_2_item(type_1_2_item_1:Java_Identifier,type_1_2_item_2:Java_type_1_2_item_2)
 
-Java_type_1_3_1_1 =
-    Java_type_1_3_1_1(type_1_3_1_1_1:Java_Identifier,type_1_3_1_1_2:Java_type_1_3_1_1_2)
-
-Java_type_1_3_1_1_2 =
-    Java_type_1_3_1_1_2_1(typeArguments:Java_typeArgumentList)
-  | Java_type_1_3_1_1_2_2()
+Java_type_1_2_item_2 =
+    Java_type_1_2_item_2_yes(type_1_2_item_2_ta:Java_typeArgumentList)
+  | Java_type_1_2_item_2_no()
 
 Java_type_1_4 =
     Java_type_1_4_1(Java_type_1_4_1_1*)

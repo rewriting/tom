@@ -955,9 +955,8 @@ typeName returns [Java_typeName tn]
 
 type returns [Java_type t]
 @init {
-    Java_type_1_2 t1_2=`Java_type_1_2_2();
-    Java_type_1_3 t1_3=`Java_type_1_3_1();
-    Java_type_1_3_1_1_2 t1_3_2=`Java_type_1_3_1_1_2_2();
+    Java_type_1_2 t1_2=`Java_type_1_2_list();
+    Java_type_1_2_item_2 t1_2_2=`Java_type_1_2_item_2_no();
     Java_type_1_4 t1_4=`Java_type_1_4_1();
     Java_type_2_2 t2_2=`Java_type_2_2_1();
 }
@@ -965,19 +964,24 @@ type returns [Java_type t]
         (
             ta1=typeArguments
             {
-                t1_2=`Java_type_1_2_1(ta1);
+                t1_2_2=`Java_type_1_2_item_2_yes(ta1);
             }
         )? 
+        {
+            t1_2=`Java_type_1_2_list(Java_type_1_2_item(Java_Identifier(i1.getText()),t1_2_2));
+            t1_2_2=`Java_type_1_2_item_2_no();
+        }
         (
             '.' i2=Identifier 
             (
                 ta2=typeArguments
                 {
-                    t1_3_2=`Java_type_1_3_1_1_2_1(ta2);
+                    t1_2_2=`Java_type_1_2_item_2_yes(ta2);
                 }
             )?
             {
-                t1_3=`Java_type_1_3_1(t1_3*,Java_type_1_3_1_1(Java_Identifier(i2.getText()),t1_3_2));
+                t1_2=`Java_type_1_2_list(t1_2*,Java_type_1_2_item(Java_Identifier(i2.getText()),t1_2_2));
+                t1_2_2=`Java_type_1_2_item_2_no();
             }
         )*
         (
@@ -987,7 +991,7 @@ type returns [Java_type t]
             }
         )*
         {
-            t=`Java_type_1(Java_Identifier(i1.getText()),t1_2,t1_3,t1_4);
+            t=`Java_type_1(t1_2,t1_4);
         }
 	|	pt=primitiveType
         (
