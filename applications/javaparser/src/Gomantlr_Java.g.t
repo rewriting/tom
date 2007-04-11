@@ -636,7 +636,7 @@ methodDeclaratorRest returns [Gomantlr_Java_methodDeclaratorRest mdr]
         (
             'throws' qnl=qualifiedNameList
             {
-                mdr3=`Gomantlr_Java_methodDeclaratorRest_3_1(Gomantlr_Java_methodDeclaratorRest_3_1_1(qnl));
+                mdr3=`Gomantlr_Java_methodDeclaratorRest_3_1(qnl);
             }
         )?
         (
