@@ -2278,28 +2278,33 @@ unaryExpressionNotPlusMinus returns [Java_unaryExpressionNotPlusMinus uenpm]
 
 castExpression returns [Java_castExpression ce]
 @init {
-    Java_castExpression_2_1 ce2=null;
+  Java_expression exp = null;
+  Java_type typ = null;
 }
     :       '(' pt=primitiveType ')' ue=unaryExpression
             {
-                ce=`Java_castExpression_1(pt,ue);
+                ce=`Java_castExpressionPrimitive(pt,ue);
             }
         |  
             '(' 
             (
                     e=expression
                     {
-                        ce2=`Java_castExpression_2_1_1(e);
+                        exp=e;
                     }
                 | 
                     t=type
                     {
-                        ce2=`Java_castExpression_2_1_2(t);
+                        typ=t;
                     }
             )
             ')' uenpm=unaryExpressionNotPlusMinus
             {
-                ce=`Java_castExpression_2(ce2,uenpm);
+              if(e != null) {
+                ce=`Java_castExpressionExpression(e,uenpm);
+              } else {
+                ce=`Java_castExpressionType(t,uenpm);
+              }
             }
     ;
 

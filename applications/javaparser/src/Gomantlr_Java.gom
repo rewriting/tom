@@ -949,12 +949,9 @@ Java_unaryExpressionNotPlusMinus_4_3 =
   | Java_unaryExpressionNotPlusMinus_4_3_2()
 
 Java_castExpression =
-    Java_castExpression_1(castExpression_1_1:Java_primitiveType,castExpression_1_2:Java_unaryExpression)
-  | Java_castExpression_2(castExpression_2_1:Java_castExpression_2_1,castExpression_2_2:Java_unaryExpressionNotPlusMinus)
-
-Java_castExpression_2_1 =
-    Java_castExpression_2_1_1(expression:Java_expression)
-  | Java_castExpression_2_1_2(type:Java_type)
+    Java_castExpressionPrimitive(primitive:Java_primitiveType,unexp:Java_unaryExpression)
+  | Java_castExpressionExpression(expression:Java_expression,sunexp:Java_unaryExpressionNotPlusMinus)
+  | Java_castExpressionType(type:Java_type,sunexp:Java_unaryExpressionNotPlusMinus)
 
 Java_primary =
     Java_primary_1(parExpression:Java_parExpression)
