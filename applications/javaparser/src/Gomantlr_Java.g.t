@@ -881,9 +881,9 @@ variableInitializer returns [Java_variableInitializer vi]
 	
 arrayInitializer returns [Java_arrayInitializer ai]
 @init {
-    Java_arrayInitializer_1 ai1=`Java_arrayInitializer_1_2();
-    Java_arrayInitializer_1_1_2 ai2=`Java_arrayInitializer_1_1_2_1();
-    Java_arrayInitializer_1_1_3 ai3=`Java_arrayInitializer_1_1_3_2();
+    ai = `Java_emptyArrayInitializer();
+    Java_variableInitializerList ai2=`Java_variableInitializerList();
+    Java_arrayInitializerOption ai3=`Java_arrayInitializerEmptyOption();
 }
 	:	'{' 
         (
@@ -891,23 +891,20 @@ arrayInitializer returns [Java_arrayInitializer ai]
             (
                 ',' vi2=variableInitializer
                 {
-                    ai2=`Java_arrayInitializer_1_1_2_1(ai2*,Java_arrayInitializer_1_1_2_1_1(vi2));
+                    ai2=`Java_variableInitializerList(ai2*,vi2);
                 }
             )*
             (
                 ','
                 {
-                    ai3=`Java_arrayInitializer_1_1_3_1();
+                    ai3=`Java_arrayInitializerComaOption();
                 }
             )?
             {
-                ai1=`Java_arrayInitializer_1_1(vi1,ai2,ai3);
+                ai=`Java_arrayInitializer(ai2,ai3);
             }
         )?
         '}'
-        {
-            ai=`Java_arrayInitializer(ai1);
-        }
 	;
 
 modifier returns [Java_modifier m]

@@ -351,22 +351,16 @@ Java_variableInitializer =
     Java_variableInitializer_1(arrayInitializer:Java_arrayInitializer)
   | Java_variableInitializer_2(expression:Java_expression)
 
+Java_variableInitializerList =
+    Java_variableInitializerList(Java_variableInitializer*)
+
 Java_arrayInitializer =
-    Java_arrayInitializer(arrayInitializer_1:Java_arrayInitializer_1)
+    Java_emptyArrayInitializer()
+  | Java_arrayInitializer(arrayInitializers:Java_variableInitializerList,arrayoption:Java_arrayInitializerOption)
 
-Java_arrayInitializer_1 =
-    Java_arrayInitializer_1_1(arrayInitializer_1_1_1:Java_variableInitializer,arrayInitializer_1_1_2:Java_arrayInitializer_1_1_2,arrayInitializer_1_1_3:Java_arrayInitializer_1_1_3)
-  | Java_arrayInitializer_1_2()
-
-Java_arrayInitializer_1_1_2 =
-    Java_arrayInitializer_1_1_2_1(Java_arrayInitializer_1_1_2_1_1*)
-
-Java_arrayInitializer_1_1_2_1_1 =
-    Java_arrayInitializer_1_1_2_1_1(arrayInitializer_1_1_2_1_1_1:Java_variableInitializer)
-
-Java_arrayInitializer_1_1_3 =
-    Java_arrayInitializer_1_1_3_1()
-  | Java_arrayInitializer_1_1_3_2()
+Java_arrayInitializerOption =
+    Java_arrayInitializerComaOption()
+  | Java_arrayInitializerEmptyOption()
 
 Java_modifier =
     Java_modifier_annotation(annotation:Java_annotation)
