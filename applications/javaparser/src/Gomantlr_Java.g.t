@@ -1148,21 +1148,21 @@ formalParameterDecls returns [Gomantlr_Java_formalParameterDecls fpd]
 	
 formalParameterDeclsRest returns [Gomantlr_Java_formalParameterDeclsRest fpdr]
 @init {
-    Gomantlr_Java_formalParameterDeclsRest_1_1_2 fpdr2=`Gomantlr_Java_formalParameterDeclsRest_1_1_2_2();
+    Gomantlr_Java_formalParameterDeclsRest_1_2 fpdr2=`Gomantlr_Java_formalParameterDeclsRest_1_1_2();
 }
 	:	vdi=variableDeclaratorId 
         (
             ',' fpd=formalParameterDecls
             {
-                fpdr2=`Gomantlr_Java_formalParameterDeclsRest_1_1_2_1(Gomantlr_Java_formalParameterDeclsRest_1_1_2_1_1(fpd));
+                fpdr2=`Gomantlr_Java_formalParameterDeclsRest_1_2_1(fpd);
             }
         )?
         {
-            fpdr=`Gomantlr_Java_formalParameterDeclsRest_1(Gomantlr_Java_formalParameterDeclsRest_1_1(vdi,fpdr2));
+            fpdr=`Gomantlr_Java_formalParameterDeclsRest_1(vdi,fpdr2);
         }
 	|   '...' vdi=variableDeclaratorId
         {
-            fpdr=`Gomantlr_Java_formalParameterDeclsRest_2(Gomantlr_Java_formalParameterDeclsRest_2_1(vdi));
+            fpdr=`Gomantlr_Java_formalParameterDeclsRest_2(vdi);
         }
 	;
 	
