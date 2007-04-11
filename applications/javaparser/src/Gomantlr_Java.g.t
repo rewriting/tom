@@ -560,19 +560,23 @@ fieldDeclaration returns [Gomantlr_Java_fieldDeclaration fd]
 		
 interfaceBodyDeclaration returns [Gomantlr_Java_interfaceBodyDeclaration ibd]
 @init {
-    Gomantlr_Java_interfaceBodyDeclaration_1_1_1 ibd1=`Gomantlr_Java_interfaceBodyDeclaration_1_1_1_1();
+    Gomantlr_Java_interfaceBodyDeclaration_1_1 ibd1=`Gomantlr_Java_interfaceBodyDeclaration_1_1_1();
 }
-	:	(
-            m=modifier
+    :       (
+                m=modifier
+                {
+                    ibd1=`Gomantlr_Java_interfaceBodyDeclaration_1_1_1(ibd1*,m);
+                }
+            )* 
+            imd=interfaceMemberDecl
             {
-                ibd1=`Gomantlr_Java_interfaceBodyDeclaration_1_1_1_1(ibd1*,m);
+                ibd=`Gomantlr_Java_interfaceBodyDeclaration_1(ibd1,imd);
             }
-        )* 
-        imd=interfaceMemberDecl
-        {
-            ibd=`Gomantlr_Java_interfaceBodyDeclaration_1(Gomantlr_Java_interfaceBodyDeclaration_1_1(ibd1,imd));
-        }
-	|   ';'
+	    |
+            ';'
+            {
+                ibd=`Gomantlr_Java_interfaceBodyDeclaration_2();
+            }
 	;
 
 interfaceMemberDecl returns [Gomantlr_Java_interfaceMemberDecl imd]
