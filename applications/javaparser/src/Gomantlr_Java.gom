@@ -1108,14 +1108,11 @@ Gomantlr_Java_selector_4_1 =
 
 Gomantlr_Java_superSuffix =
     Gomantlr_Java_superSuffix_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_superSuffix_2(gomantlr_Java_superSuffix_2_1:Gomantlr_Java_superSuffix_2_1)
+  | Gomantlr_Java_superSuffix_2(gomantlr_Java_superSuffix_2_1:Gomantlr_Java_Identifier,gomantlr_Java_superSuffix_2_2:Gomantlr_Java_superSuffix_2_2)
 
-Gomantlr_Java_superSuffix_2_1 =
-    Gomantlr_Java_superSuffix_2_1(gomantlr_Java_superSuffix_2_1_1:Gomantlr_Java_Identifier,gomantlr_Java_superSuffix_2_1_2:Gomantlr_Java_superSuffix_2_1_2)
-
-Gomantlr_Java_superSuffix_2_1_2 =
-    Gomantlr_Java_superSuffix_2_1_2_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
-  | Gomantlr_Java_superSuffix_2_1_2_2()
+Gomantlr_Java_superSuffix_2_2 =
+    Gomantlr_Java_superSuffix_2_2_1(gomantlr_Java_arguments:Gomantlr_Java_arguments)
+  | Gomantlr_Java_superSuffix_2_2_2()
 
 Gomantlr_Java_arguments =
     Gomantlr_Java_arguments(gomantlr_Java_arguments_1:Gomantlr_Java_arguments_1)

@@ -2655,7 +2655,7 @@ selector returns [Gomantlr_Java_selector s]
 	
 superSuffix returns [Gomantlr_Java_superSuffix sup]
 @init {
-    Gomantlr_Java_superSuffix_2_1_2 s=`Gomantlr_Java_superSuffix_2_1_2_2();
+    Gomantlr_Java_superSuffix_2_2 s=`Gomantlr_Java_superSuffix_2_2_2();
 }
 	:	    a=arguments
             {
@@ -2666,11 +2666,11 @@ superSuffix returns [Gomantlr_Java_superSuffix sup]
             (
                 a=arguments
                 {
-                    s=`Gomantlr_Java_superSuffix_2_1_2_1(a);
+                    s=`Gomantlr_Java_superSuffix_2_2_1(a);
                 }
             )?
             {
-                sup=`Gomantlr_Java_superSuffix_2(Gomantlr_Java_superSuffix_2_1(Gomantlr_Java_Identifier(i.getText()),s));
+                sup=`Gomantlr_Java_superSuffix_2(Gomantlr_Java_Identifier(i.getText()),s);
             }
         
     ;
