@@ -965,17 +965,17 @@ typeName returns [Gomantlr_Java_typeName tn]
 
 type returns [Gomantlr_Java_type t]
 @init {
-    Gomantlr_Java_type_1_1_2 t1_2=`Gomantlr_Java_type_1_1_2_2();
-    Gomantlr_Java_type_1_1_3 t1_3=`Gomantlr_Java_type_1_1_3_1();
-    Gomantlr_Java_type_1_1_3_1_1_2 t1_3_2=`Gomantlr_Java_type_1_1_3_1_1_2_2();
-    Gomantlr_Java_type_1_1_4 t1_4=`Gomantlr_Java_type_1_1_4_1();
-    Gomantlr_Java_type_2_1_2 t2_2=`Gomantlr_Java_type_2_1_2_1();
+    Gomantlr_Java_type_1_2 t1_2=`Gomantlr_Java_type_1_2_2();
+    Gomantlr_Java_type_1_3 t1_3=`Gomantlr_Java_type_1_3_1();
+    Gomantlr_Java_type_1_3_1_1_2 t1_3_2=`Gomantlr_Java_type_1_3_1_1_2_2();
+    Gomantlr_Java_type_1_4 t1_4=`Gomantlr_Java_type_1_4_1();
+    Gomantlr_Java_type_2_2 t2_2=`Gomantlr_Java_type_2_2_1();
 }
 	:	i1=Identifier 
         (
             ta1=typeArguments
             {
-                t1_2=`Gomantlr_Java_type_1_1_2_1(ta1);
+                t1_2=`Gomantlr_Java_type_1_2_1(ta1);
             }
         )? 
         (
@@ -983,31 +983,31 @@ type returns [Gomantlr_Java_type t]
             (
                 ta2=typeArguments
                 {
-                    t1_3_2=`Gomantlr_Java_type_1_1_3_1_1_2_1(ta2);
+                    t1_3_2=`Gomantlr_Java_type_1_3_1_1_2_1(ta2);
                 }
             )?
             {
-                t1_3=`Gomantlr_Java_type_1_1_3_1(t1_3*,Gomantlr_Java_type_1_1_3_1_1(Gomantlr_Java_Identifier(i2.getText()),t1_3_2));
+                t1_3=`Gomantlr_Java_type_1_3_1(t1_3*,Gomantlr_Java_type_1_3_1_1(Gomantlr_Java_Identifier(i2.getText()),t1_3_2));
             }
         )*
         (
             '[' ']'
             {
-                t1_4=`Gomantlr_Java_type_1_1_4_1(t1_4*,Gomantlr_Java_type_1_1_4_1_1());
+                t1_4=`Gomantlr_Java_type_1_4_1(t1_4*,Gomantlr_Java_type_1_4_1_1());
             }
         )*
         {
-            t=`Gomantlr_Java_type_1(Gomantlr_Java_type_1_1(Gomantlr_Java_Identifier(i1.getText()),t1_2,t1_3,t1_4));
+            t=`Gomantlr_Java_type_1(Gomantlr_Java_Identifier(i1.getText()),t1_2,t1_3,t1_4);
         }
 	|	pt=primitiveType
         (
             '[' ']' 
             {
-                t2_2=`Gomantlr_Java_type_2_1_2_1(t2_2*,Gomantlr_Java_type_2_1_2_1_1());
+                t2_2=`Gomantlr_Java_type_2_2_1(t2_2*,Gomantlr_Java_type_2_2_1_1());
             }
         )*
         {
-            t=`Gomantlr_Java_type_2(Gomantlr_Java_type_2_1(pt,t2_2));
+            t=`Gomantlr_Java_type_2(pt,t2_2);
         }
 	;
 

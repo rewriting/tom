@@ -419,40 +419,34 @@ Gomantlr_Java_typeName =
   | Gomantlr_Java_typeName_2(gomantlr_Java_typeName_2_1_1:Gomantlr_Java_packageOrTypeName,gomantlr_Java_typeName_2_1_2:Gomantlr_Java_Identifier)
 
 Gomantlr_Java_type =
-    Gomantlr_Java_type_1(gomantlr_Java_type_1_1:Gomantlr_Java_type_1_1)
-  | Gomantlr_Java_type_2(gomantlr_Java_type_2_1:Gomantlr_Java_type_2_1)
+    Gomantlr_Java_type_1(gomantlr_Java_type_1_1:Gomantlr_Java_Identifier,gomantlr_Java_type_1_2:Gomantlr_Java_type_1_2,gomantlr_Java_type_1_3:Gomantlr_Java_type_1_3,gomantlr_Java_type_1_4:Gomantlr_Java_type_1_4)
+  | Gomantlr_Java_type_2(gomantlr_Java_type_2_1:Gomantlr_Java_primitiveType,gomantlr_Java_type_2_2:Gomantlr_Java_type_2_2)
 
-Gomantlr_Java_type_1_1 =
-    Gomantlr_Java_type_1_1(gomantlr_Java_type_1_1_1:Gomantlr_Java_Identifier,gomantlr_Java_type_1_1_2:Gomantlr_Java_type_1_1_2,gomantlr_Java_type_1_1_3:Gomantlr_Java_type_1_1_3,gomantlr_Java_type_1_1_4:Gomantlr_Java_type_1_1_4)
+Gomantlr_Java_type_1_2 =
+    Gomantlr_Java_type_1_2_1(gomantlr_Java_typeArguments:Gomantlr_Java_typeArguments)
+  | Gomantlr_Java_type_1_2_2()
 
-Gomantlr_Java_type_1_1_2 =
-    Gomantlr_Java_type_1_1_2_1(gomantlr_Java_typeArguments:Gomantlr_Java_typeArguments)
-  | Gomantlr_Java_type_1_1_2_2()
+Gomantlr_Java_type_1_3 =
+    Gomantlr_Java_type_1_3_1(Gomantlr_Java_type_1_3_1_1*)
 
-Gomantlr_Java_type_1_1_3 =
-    Gomantlr_Java_type_1_1_3_1(Gomantlr_Java_type_1_1_3_1_1*)
+Gomantlr_Java_type_1_3_1_1 =
+    Gomantlr_Java_type_1_3_1_1(gomantlr_Java_type_1_3_1_1_1:Gomantlr_Java_Identifier,gomantlr_Java_type_1_3_1_1_2:Gomantlr_Java_type_1_3_1_1_2)
 
-Gomantlr_Java_type_1_1_3_1_1 =
-    Gomantlr_Java_type_1_1_3_1_1(gomantlr_Java_type_1_1_3_1_1_1:Gomantlr_Java_Identifier,gomantlr_Java_type_1_1_3_1_1_2:Gomantlr_Java_type_1_1_3_1_1_2)
+Gomantlr_Java_type_1_3_1_1_2 =
+    Gomantlr_Java_type_1_3_1_1_2_1(gomantlr_Java_typeArguments:Gomantlr_Java_typeArguments)
+  | Gomantlr_Java_type_1_3_1_1_2_2()
 
-Gomantlr_Java_type_1_1_3_1_1_2 =
-    Gomantlr_Java_type_1_1_3_1_1_2_1(gomantlr_Java_typeArguments:Gomantlr_Java_typeArguments)
-  | Gomantlr_Java_type_1_1_3_1_1_2_2()
+Gomantlr_Java_type_1_4 =
+    Gomantlr_Java_type_1_4_1(Gomantlr_Java_type_1_4_1_1*)
 
-Gomantlr_Java_type_1_1_4 =
-    Gomantlr_Java_type_1_1_4_1(Gomantlr_Java_type_1_1_4_1_1*)
+Gomantlr_Java_type_1_4_1_1 =
+    Gomantlr_Java_type_1_4_1_1()
 
-Gomantlr_Java_type_1_1_4_1_1 =
-    Gomantlr_Java_type_1_1_4_1_1()
+Gomantlr_Java_type_2_2 =
+    Gomantlr_Java_type_2_2_1(Gomantlr_Java_type_2_2_1_1*)
 
-Gomantlr_Java_type_2_1 =
-    Gomantlr_Java_type_2_1(gomantlr_Java_type_2_1_1:Gomantlr_Java_primitiveType,gomantlr_Java_type_2_1_2:Gomantlr_Java_type_2_1_2)
-
-Gomantlr_Java_type_2_1_2 =
-    Gomantlr_Java_type_2_1_2_1(Gomantlr_Java_type_2_1_2_1_1*)
-
-Gomantlr_Java_type_2_1_2_1_1 =
-    Gomantlr_Java_type_2_1_2_1_1()
+Gomantlr_Java_type_2_2_1_1 =
+    Gomantlr_Java_type_2_2_1_1()
 
 Gomantlr_Java_primitiveType =
     Gomantlr_Java_primitiveType_1()
