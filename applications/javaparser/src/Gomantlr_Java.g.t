@@ -1873,7 +1873,7 @@ expression returns [Gomantlr_Java_expression e]
         (
             ao=assignmentOperator e1=expression
             {
-                e2=`Gomantlr_Java_expression_2_1(Gomantlr_Java_expression_2_1_1(ao,e1));
+                e2=`Gomantlr_Java_expression_2_1(ao,e1);
             }
         )?
         {

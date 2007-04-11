@@ -785,11 +785,8 @@ Gomantlr_Java_expression =
     Gomantlr_Java_expression(gomantlr_Java_expression_1:Gomantlr_Java_conditionalExpression,gomantlr_Java_expression_2:Gomantlr_Java_expression_2)
 
 Gomantlr_Java_expression_2 =
-    Gomantlr_Java_expression_2_1(gomantlr_Java_expression_2_1_1:Gomantlr_Java_expression_2_1_1)
+    Gomantlr_Java_expression_2_1(gomantlr_Java_expression_2_1_1:Gomantlr_Java_assignmentOperator,gomantlr_Java_expression_2_1_2:Gomantlr_Java_expression)
   | Gomantlr_Java_expression_2_2()
-
-Gomantlr_Java_expression_2_1_1 =
-    Gomantlr_Java_expression_2_1_1(gomantlr_Java_expression_2_1_1_1:Gomantlr_Java_assignmentOperator,gomantlr_Java_expression_2_1_1_2:Gomantlr_Java_expression)
 
 Gomantlr_Java_assignmentOperator =
     Gomantlr_Java_assignmentOperator_1()
