@@ -1436,26 +1436,26 @@ block returns [Gomantlr_Java_block b]
 blockStatement returns [Gomantlr_Java_blockStatement bs]
 	:	lvd=localVariableDeclaration
         {
-            bs=`Gomantlr_Java_blockStatement_1(lvd);
+            bs=`Gomantlr_Java_localVariable(lvd);
         }
     |   coid=classOrInterfaceDeclaration
         {
-            bs=`Gomantlr_Java_blockStatement_2(coid);
+            bs=`Gomantlr_Java_classOrInterface(coid);
         }
     |   s=statement
         {
-            bs=`Gomantlr_Java_blockStatement_3(s);
+            bs=`Gomantlr_Java_statement(s);
         }
 	;
 	
 localVariableDeclaration returns [Gomantlr_Java_localVariableDeclaration lvd]
 @init {
-    Gomantlr_Java_localVariableDeclaration_1 lvd1=`Gomantlr_Java_localVariableDeclaration_1_2();
+    Gomantlr_Java_localVariableModifier lvd1=`Gomantlr_Java_localVariableNoModifier();
 }
 	:	(
             'final'
             {
-                lvd1=`Gomantlr_Java_localVariableDeclaration_1_1();
+                lvd1=`Gomantlr_Java_localVariableModifierFinal();
             }
         )? 
         t=type vd=variableDeclarators ';'

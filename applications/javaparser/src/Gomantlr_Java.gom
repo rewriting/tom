@@ -631,16 +631,16 @@ Gomantlr_Java_block =
     Gomantlr_Java_block(Gomantlr_Java_blockStatement*)
 
 Gomantlr_Java_blockStatement =
-    Gomantlr_Java_blockStatement_1(gomantlr_Java_localVariableDeclaration:Gomantlr_Java_localVariableDeclaration)
-  | Gomantlr_Java_blockStatement_2(gomantlr_Java_classOrInterfaceDeclaration:Gomantlr_Java_classOrInterfaceDeclaration)
-  | Gomantlr_Java_blockStatement_3(gomantlr_Java_statement:Gomantlr_Java_statement)
+    Gomantlr_Java_localVariable(gomantlr_Java_localVariableDeclaration:Gomantlr_Java_localVariableDeclaration)
+  | Gomantlr_Java_classOrInterface(gomantlr_Java_classOrInterfaceDeclaration:Gomantlr_Java_classOrInterfaceDeclaration)
+  | Gomantlr_Java_statement(gomantlr_Java_statement:Gomantlr_Java_statement)
 
 Gomantlr_Java_localVariableDeclaration =
-    Gomantlr_Java_localVariableDeclaration(gomantlr_Java_localVariableDeclaration_1:Gomantlr_Java_localVariableDeclaration_1,gomantlr_Java_localVariableDeclaration_2:Gomantlr_Java_type,gomantlr_Java_localVariableDeclaration_3:Gomantlr_Java_variableDeclarators)
+    Gomantlr_Java_localVariableDeclaration(gomantlr_Java_localVariableDeclaration_1:Gomantlr_Java_localVariableModifier,gomantlr_Java_localVariableDeclaration_2:Gomantlr_Java_type,gomantlr_Java_localVariableDeclaration_3:Gomantlr_Java_variableDeclarators)
 
-Gomantlr_Java_localVariableDeclaration_1 =
-    Gomantlr_Java_localVariableDeclaration_1_1()
-  | Gomantlr_Java_localVariableDeclaration_1_2()
+Gomantlr_Java_localVariableModifier =
+    Gomantlr_Java_localVariableModifierFinal()
+  | Gomantlr_Java_localVariableNoModifier()
 
 Gomantlr_Java_statement =
     Gomantlr_Java_statement_1(gomantlr_Java_block:Gomantlr_Java_block)
