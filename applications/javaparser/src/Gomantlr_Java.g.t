@@ -389,7 +389,7 @@ normalInterfaceDeclaration returns [Gomantlr_Java_normalInterfaceDeclaration nid
         (
             'extends' tl=typeList
             {
-                nid3=`Gomantlr_Java_normalInterfaceDeclaration_3_1(Gomantlr_Java_normalInterfaceDeclaration_3_1_1(tl));
+                nid3=`Gomantlr_Java_normalInterfaceDeclaration_3_1(tl);
             }
         )?
         ib=interfaceBody

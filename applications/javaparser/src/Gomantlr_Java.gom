@@ -161,11 +161,8 @@ Gomantlr_Java_normalInterfaceDeclaration_2 =
   | Gomantlr_Java_normalInterfaceDeclaration_2_2()
 
 Gomantlr_Java_normalInterfaceDeclaration_3 =
-    Gomantlr_Java_normalInterfaceDeclaration_3_1(gomantlr_Java_normalInterfaceDeclaration_3_1_1:Gomantlr_Java_normalInterfaceDeclaration_3_1_1)
+    Gomantlr_Java_normalInterfaceDeclaration_3_1(gomantlr_Java_normalInterfaceDeclaration_3_1_1:Gomantlr_Java_typeList)
   | Gomantlr_Java_normalInterfaceDeclaration_3_2()
-
-Gomantlr_Java_normalInterfaceDeclaration_3_1_1 =
-    Gomantlr_Java_normalInterfaceDeclaration_3_1_1(gomantlr_Java_normalInterfaceDeclaration_3_1_1_1:Gomantlr_Java_typeList)
 
 Gomantlr_Java_typeList =
     Gomantlr_Java_typeList(gomantlr_Java_typeList_1:Gomantlr_Java_type,gomantlr_Java_typeList_2:Gomantlr_Java_typeList_2)
