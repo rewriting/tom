@@ -229,7 +229,7 @@ typeParameter returns [Gomantlr_Java_typeParameter tp]
         (
             'extends' b=bound
             {
-                tp2=`Gomantlr_Java_typeParameter_2_1(Gomantlr_Java_typeParameter_2_1_1(b));
+                tp2=`Gomantlr_Java_typeParameter_2_1(b);
             }
         )?
         {

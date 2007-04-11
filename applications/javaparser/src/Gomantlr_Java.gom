@@ -85,11 +85,8 @@ Gomantlr_Java_typeParameter =
     Gomantlr_Java_typeParameter(gomantlr_Java_typeParameter_1:Gomantlr_Java_Identifier,gomantlr_Java_typeParameter_2:Gomantlr_Java_typeParameter_2)
 
 Gomantlr_Java_typeParameter_2 =
-    Gomantlr_Java_typeParameter_2_1(gomantlr_Java_typeParameter_2_1_1:Gomantlr_Java_typeParameter_2_1_1)
+    Gomantlr_Java_typeParameter_2_1(gomantlr_Java_typeParameter_2_1_1:Gomantlr_Java_bound)
   | Gomantlr_Java_typeParameter_2_2()
-
-Gomantlr_Java_typeParameter_2_1_1 =
-    Gomantlr_Java_typeParameter_2_1_1(gomantlr_Java_typeParameter_2_1_1_1:Gomantlr_Java_bound)
 
 Gomantlr_Java_bound =
     Gomantlr_Java_bound(gomantlr_Java_bound_1:Gomantlr_Java_type,gomantlr_Java_bound_2:Gomantlr_Java_bound_2)
