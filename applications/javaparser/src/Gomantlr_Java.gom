@@ -724,15 +724,12 @@ Gomantlr_Java_forControl_2_3 =
   | Gomantlr_Java_forControl_1_3_2()
 
 Gomantlr_Java_forInit =
-    Gomantlr_Java_forInit_1(gomantlr_Java_forInit_1_1:Gomantlr_Java_forInit_1_1)
+    Gomantlr_Java_forInit_1(gomantlr_Java_forInit_1_1:Gomantlr_Java_forInit_1_1,gomantlr_Java_forInit_1_2:Gomantlr_Java_type,gomantlr_Java_forInit_1_3:Gomantlr_Java_variableDeclarators)
   | Gomantlr_Java_forInit_2(gomantlr_Java_expressionList:Gomantlr_Java_expressionList)
 
 Gomantlr_Java_forInit_1_1 =
-    Gomantlr_Java_forInit_1_1(gomantlr_Java_forInit_1_1_1:Gomantlr_Java_forInit_1_1_1,gomantlr_Java_forInit_1_1_2:Gomantlr_Java_type,gomantlr_Java_forInit_1_1_3:Gomantlr_Java_variableDeclarators)
-
-Gomantlr_Java_forInit_1_1_1 =
-    Gomantlr_Java_forInit_1_1_1_1()
-  | Gomantlr_Java_forInit_1_1_1_2()
+    Gomantlr_Java_forInit_1_1_1()
+  | Gomantlr_Java_forInit_1_1_2()
 
 Gomantlr_Java_forVarControl =
     Gomantlr_Java_forVarControl(gomantlr_Java_forVarControl_1:Gomantlr_Java_forVarControl_1,gomantlr_Java_forVarControl_2:Gomantlr_Java_forVarControl_2,gomantlr_Java_forVarControl_3:Gomantlr_Java_type,gomantlr_Java_forVarControl_4:Gomantlr_Java_Identifier,gomantlr_Java_forVarControl_5:Gomantlr_Java_forVarControlRest)

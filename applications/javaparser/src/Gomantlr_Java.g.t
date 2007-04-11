@@ -1739,17 +1739,17 @@ forControl returns [Gomantlr_Java_forControl fc]
 
 forInit returns [Gomantlr_Java_forInit fi]
 @init {
-    Gomantlr_Java_forInit_1_1_1 fi1=`Gomantlr_Java_forInit_1_1_1_2();
+    Gomantlr_Java_forInit_1_1 fi1=`Gomantlr_Java_forInit_1_1_2();
 }
 	:	    (
                 'final'
                 {
-                    fi1=`Gomantlr_Java_forInit_1_1_1_1();
+                    fi1=`Gomantlr_Java_forInit_1_1_1();
                 }
             )?
             t=type vd=variableDeclarators
             {
-                fi=`Gomantlr_Java_forInit_1(Gomantlr_Java_forInit_1_1(fi1,t,vd));
+                fi=`Gomantlr_Java_forInit_1(fi1,t,vd);
             }
         |  
             el=expressionList
