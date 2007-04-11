@@ -590,7 +590,7 @@ interfaceMemberDecl returns [Gomantlr_Java_interfaceMemberDecl imd]
         }
     |   'void' i=Identifier vimdr=voidInterfaceMethodDeclaratorRest
         {
-            imd=`Gomantlr_Java_interfaceMemberDecl_3(Gomantlr_Java_interfaceMemberDecl_3_1(Gomantlr_Java_Identifier(i.getText()),vimdr));
+            imd=`Gomantlr_Java_interfaceMemberDecl_3(Gomantlr_Java_Identifier(i.getText()),vimdr);
         }
     |   id=interfaceDeclaration
         {
@@ -612,7 +612,7 @@ interfaceMethodOrFieldDecl returns [Gomantlr_Java_interfaceMethodOrFieldDecl imo
 interfaceMethodOrFieldRest returns [Gomantlr_Java_interfaceMethodOrFieldRest imofr]
 	:	cdr=constantDeclaratorsRest ';'
         {
-            imofr=`Gomantlr_Java_interfaceMethodOrFieldRest_1(Gomantlr_Java_interfaceMethodOrFieldRest_1_1(cdr));
+            imofr=`Gomantlr_Java_interfaceMethodOrFieldRest_1(cdr);
         }
 	|	imdr=interfaceMethodDeclaratorRest
         {
