@@ -385,8 +385,8 @@ Java_enumConstantName =
     Java_enumConstantName(Identifier:Java_Identifier)
 
 Java_typeName =
-    Java_typeName_1(Identifier:Java_Identifier)
-  | Java_typeName_2(typeName_2_1_1:Java_packageOrTypeName,typeName_2_1_2:Java_Identifier)
+    Java_typeNameIdentifier(Identifier:Java_Identifier)
+  | Java_typeNameQualifiedIdentifier(PkgOrTypeName:Java_packageOrTypeName,Identifier:Java_Identifier)
 
 Java_type =
     Java_type_1(type_1_1:Java_Identifier,type_1_2:Java_type_1_2,type_1_3:Java_type_1_3,type_1_4:Java_type_1_4)

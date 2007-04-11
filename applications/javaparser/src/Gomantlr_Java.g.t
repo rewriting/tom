@@ -948,11 +948,11 @@ enumConstantName returns [Java_enumConstantName ecn]
 typeName returns [Java_typeName tn]
 	:   i=Identifier
         {
-            tn=`Java_typeName_1(Java_Identifier(i.getText()));
+            tn=`Java_typeNameIdentifier(Java_Identifier(i.getText()));
         }
     |   potn=packageOrTypeName '.' i=Identifier
         {
-            tn=`Java_typeName_2(potn,Java_Identifier(i.getText()));
+            tn=`Java_typeNameQualifiedIdentifier(potn,Java_Identifier(i.getText()));
         }
 	;
 
