@@ -53,7 +53,7 @@ compilationUnit returns [Java_compilationUnit cu]
     Java_annotationList cu1=`Java_annotationList();
     Java_package cu2=`Java_noPackage();
     Java_importDeclarationList cu3=`Java_importDeclarationList();
-    Java_typeDeclarationList cu4=`Java_typeDeclarationList();
+    Java_classOrInterfaceDeclarationList cu4=`Java_concClassOrInterfaceDeclaration();
 }
 	:	(
             a=annotations
@@ -76,7 +76,7 @@ compilationUnit returns [Java_compilationUnit cu]
         (
             td=typeDeclaration
             {
-                cu4=`Java_typeDeclarationList(cu4*,td);
+                cu4=`Java_concClassOrInterfaceDeclaration(cu4*,td);
             }
         )*
         {
@@ -123,43 +123,39 @@ importDeclaration returns [Java_importDeclaration id]
         }
 	;
 	
-typeDeclaration returns [Java_typeDeclaration td]
+typeDeclaration returns [Java_classOrInterfaceDeclaration td]
 	:	coid=classOrInterfaceDeclaration
         {
-            td=`Java_typeDeclaration_1(coid);
+            td=coid;
         }
     |   ';'
         {
-            td=`Java_typeDeclaration_2();
+            td=null;
         }
 	;
 	
 classOrInterfaceDeclaration returns [Java_classOrInterfaceDeclaration coid]
 @init {
-    Java_classOrInterfaceDeclaration_1 coid1=`Java_classOrInterfaceDeclaration_1_1();
-    Java_classOrInterfaceDeclaration_2 coid2=null;
+    Java_modifierList ml=`Java_concModifier();
 }
 	:	
         (
             m=modifier
             {
-                coid1=`Java_classOrInterfaceDeclaration_1_1(coid1*,m);
+                ml=`Java_concModifier(ml*,m);
             }
         )* 
         ( 
                 cd=classDeclaration
                 {
-                    coid2=`Java_classOrInterfaceDeclaration_2_1(cd);
+                    coid=`Java_classDeclaration(ml,cd);
                 }
             | 
                 id=interfaceDeclaration
                 {
-                    coid2=`Java_classOrInterfaceDeclaration_2_2(id);
+                    coid=`Java_interfaceDeclaration(ml,id);
                 }
         )
-        {
-            coid=`Java_classOrInterfaceDeclaration(coid1,coid2);
-        }
 	;
 	
 classDeclaration returns [Java_classDeclaration cd]
@@ -451,7 +447,7 @@ interfaceBody returns [Java_interfaceBody ib]
 classBodyDeclaration returns [Java_classBodyDeclaration ebd]
 @init {
     Java_classBodyDeclaration_2_1 ebd2=`Java_classBodyDeclaration_2_1_2();
-    Java_classBodyDeclaration_3_1 ebd3=`Java_classBodyDeclaration_3_1_1();
+    Java_modifierList ebd3=`Java_concModifier();
 }
 	:	    ';'
             {
@@ -472,7 +468,7 @@ classBodyDeclaration returns [Java_classBodyDeclaration ebd]
             (
                 m=modifier
                 {
-                    ebd3=`Java_classBodyDeclaration_3_1_1(ebd3*,m);
+                    ebd3=`Java_concModifier(ebd3*,m);
                 }
             )*
             md=memberDecl
@@ -560,12 +556,12 @@ fieldDeclaration returns [Java_fieldDeclaration fd]
 		
 interfaceBodyDeclaration returns [Java_interfaceBodyDeclaration ibd]
 @init {
-    Java_interfaceBodyDeclaration_1_1 ibd1=`Java_interfaceBodyDeclaration_1_1_1();
+    Java_modifierList ibd1=`Java_concModifier();
 }
     :       (
                 m=modifier
                 {
-                    ibd1=`Java_interfaceBodyDeclaration_1_1_1(ibd1*,m);
+                    ibd1=`Java_concModifier(ibd1*,m);
                 }
             )* 
             imd=interfaceMemberDecl
@@ -915,18 +911,18 @@ arrayInitializer returns [Java_arrayInitializer ai]
 	;
 
 modifier returns [Java_modifier m]
-    :   a=annotation { m=`Java_modifier_1(a); }
-    |   'public' { m=`Java_modifier_2(); }
-    |   'protected' { m=`Java_modifier_3(); }
-    |   'private' { m=`Java_modifier_4(); }
-    |   'static' { m=`Java_modifier_5(); }
-    |   'abstract' { m=`Java_modifier_6(); }
-    |   'final' { m=`Java_modifier_7(); }
-    |   'native' { m=`Java_modifier_8(); }
-    |   'synchronized' { m=`Java_modifier_9(); }
-    |   'transient' { m=`Java_modifier_10(); }
-    |   'volatile' { m=`Java_modifier_11(); }
-    |   'strictfp' { m=`Java_modifier_12(); }
+    :   a=annotation { m=`Java_modifier_annotation(a); }
+    |   'public' { m=`Java_modifier_public(); }
+    |   'protected' { m=`Java_modifier_protected(); }
+    |   'private' { m=`Java_modifier_private(); }
+    |   'static' { m=`Java_modifier_static(); }
+    |   'abstract' { m=`Java_modifier_abstract(); }
+    |   'final' { m=`Java_modifier_final(); }
+    |   'native' { m=`Java_modifier_native(); }
+    |   'synchronized' { m=`Java_modifier_synchronized(); }
+    |   'transient' { m=`Java_modifier_transient(); }
+    |   'volatile' { m=`Java_modifier_volatile(); }
+    |   'strictfp' { m=`Java_modifier_strictfp(); }
     ;
 
 packageOrTypeName returns [Java_packageOrTypeName potn]
@@ -1339,12 +1335,12 @@ annotationTypeElementDeclarations returns [Java_annotationTypeElementDeclaration
 	
 annotationTypeElementDeclaration returns [Java_annotationTypeElementDeclaration ated]
 @init {
-    Java_annotationTypeElementDeclaration_1 ated1=`Java_annotationTypeElementDeclaration_1_1();
+    Java_modifierList ated1=`Java_concModifier();
 }
 	:	(
             m=modifier
             {
-                ated1=`Java_annotationTypeElementDeclaration_1_1(ated1*,m);
+                ated1=`Java_concModifier(ated1*,m);
             }
         )*
         ater=annotationTypeElementRest

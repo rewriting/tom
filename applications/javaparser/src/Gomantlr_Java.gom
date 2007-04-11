@@ -3,7 +3,7 @@ imports  String
 abstract syntax
 
 Java_compilationUnit =
-    Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,typeList:Java_typeDeclarationList)
+    Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,typeList:Java_classOrInterfaceDeclarationList)
 
 Java_package =
     Java_package(packageDeclaration:Java_packageDeclaration)
@@ -12,8 +12,11 @@ Java_package =
 Java_importDeclarationList=
     Java_importDeclarationList(Java_importDeclaration*)
 
-Java_typeDeclarationList=
-    Java_typeDeclarationList(Java_typeDeclaration*)
+Java_classOrInterfaceDeclarationList=
+    Java_concClassOrInterfaceDeclaration(Java_classOrInterfaceDeclaration*)
+Java_concClassOrInterfaceDeclaration:make_insert(e,l) {
+  if(e==null) { return l; }
+}
 
 Java_packageDeclaration =
     Java_packageDeclaration(packageDeclaration_1:Java_qualifiedName)
@@ -35,19 +38,9 @@ Java_importDeclaration_4 =
     Java_importDeclaration_4_1()
   | Java_importDeclaration_4_2()
 
-Java_typeDeclaration =
-    Java_typeDeclaration_1(classOrInterfaceDeclaration:Java_classOrInterfaceDeclaration)
-  | Java_typeDeclaration_2()
-
 Java_classOrInterfaceDeclaration =
-    Java_classOrInterfaceDeclaration(classOrInterfaceDeclaration_1:Java_classOrInterfaceDeclaration_1,classOrInterfaceDeclaration_2:Java_classOrInterfaceDeclaration_2)
-
-Java_classOrInterfaceDeclaration_1 =
-    Java_classOrInterfaceDeclaration_1_1(Java_modifier*)
-
-Java_classOrInterfaceDeclaration_2 =
-    Java_classOrInterfaceDeclaration_2_1(classDeclaration:Java_classDeclaration)
-  | Java_classOrInterfaceDeclaration_2_2(interfaceDeclaration:Java_interfaceDeclaration)
+    Java_classDeclaration(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)
+  | Java_interfaceDeclaration(modifierList:Java_modifierList,interfaceDeclaration:Java_interfaceDeclaration)
 
 Java_classDeclaration =
     Java_classDeclaration_1(normalClassDeclaration:Java_normalClassDeclaration)
@@ -184,15 +177,12 @@ Java_interfaceBody_1 =
 Java_classBodyDeclaration =
     Java_classBodyDeclaration_1()
   | Java_classBodyDeclaration_2(classBodyDeclaration_2_1:Java_classBodyDeclaration_2_1,classBodyDeclaration_2_2:Java_block)
-  | Java_classBodyDeclaration_3(classBodyDeclaration_3_1:Java_classBodyDeclaration_3_1,classBodyDeclaration_3_2:Java_memberDecl)
+  | Java_classBodyDeclaration_3(modifierList:Java_modifierList,classBodyDeclaration_3_2:Java_memberDecl)
 
 Java_classBodyDeclaration_2_1 =
     Java_classBodyDeclaration_2_1_1()
   | Java_classBodyDeclaration_2_1_2()
 
-
-Java_classBodyDeclaration_3_1 =
-    Java_classBodyDeclaration_3_1_1(Java_modifier*)
 
 Java_memberDecl =
     Java_memberDecl_1(genericMethodOrConstructorDecl:Java_genericMethodOrConstructorDecl)
@@ -224,11 +214,8 @@ Java_fieldDeclaration =
     Java_fieldDeclaration(fieldDeclaration_1:Java_type,fieldDeclaration_2:Java_variableDeclarators)
 
 Java_interfaceBodyDeclaration =
-    Java_interfaceBodyDeclaration_1(interfaceBodyDeclaration_1_1:Java_interfaceBodyDeclaration_1_1,interfaceBodyDeclaration_1_2:Java_interfaceMemberDecl)
+    Java_interfaceBodyDeclaration_1(modifierList:Java_modifierList,interfaceBodyDeclaration_1_2:Java_interfaceMemberDecl)
   | Java_interfaceBodyDeclaration_2()
-
-Java_interfaceBodyDeclaration_1_1 =
-    Java_interfaceBodyDeclaration_1_1_1(Java_modifier*)
 
 Java_interfaceMemberDecl =
     Java_interfaceMemberDecl_1(interfaceMethodOrFieldDecl:Java_interfaceMethodOrFieldDecl)
@@ -385,18 +372,20 @@ Java_arrayInitializer_1_1_3 =
   | Java_arrayInitializer_1_1_3_2()
 
 Java_modifier =
-    Java_modifier_1(annotation:Java_annotation)
-  | Java_modifier_2()
-  | Java_modifier_3()
-  | Java_modifier_4()
-  | Java_modifier_5()
-  | Java_modifier_6()
-  | Java_modifier_7()
-  | Java_modifier_8()
-  | Java_modifier_9()
-  | Java_modifier_10()
-  | Java_modifier_11()
-  | Java_modifier_12()
+    Java_modifier_annotation(annotation:Java_annotation)
+  | Java_modifier_public()
+  | Java_modifier_protected()
+  | Java_modifier_private()
+  | Java_modifier_static()
+  | Java_modifier_abstract()
+  | Java_modifier_final()
+  | Java_modifier_native()
+  | Java_modifier_synchronized()
+  | Java_modifier_transient()
+  | Java_modifier_volatile()
+  | Java_modifier_strictfp()
+
+Java_modifierList = Java_concModifier(Java_modifier*)
 
 Java_packageOrTypeName =
     Java_packageOrTypeName(packageOrTypeName_1:Java_Identifier,packageOrTypeName_2:Java_packageOrTypeName_2)
@@ -585,10 +574,7 @@ Java_annotationTypeElementDeclarations_2 =
     Java_annotationTypeElementDeclarations_2_1(Java_annotationTypeElementDeclaration*)
 
 Java_annotationTypeElementDeclaration =
-    Java_annotationTypeElementDeclaration(annotationTypeElementDeclaration_1:Java_annotationTypeElementDeclaration_1,annotationTypeElementDeclaration_2:Java_annotationTypeElementRest)
-
-Java_annotationTypeElementDeclaration_1 =
-    Java_annotationTypeElementDeclaration_1_1(Java_modifier*)
+    Java_annotationTypeElementDeclaration(modifierList:Java_modifierList,annotationTypeElementDeclaration_2:Java_annotationTypeElementRest)
 
 Java_annotationTypeElementRest =
     Java_annotationTypeElementRest_1(annotationTypeElementRest_1_1:Java_annotationTypeElementRest_1_1)
