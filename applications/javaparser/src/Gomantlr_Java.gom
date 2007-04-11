@@ -419,10 +419,7 @@ Gomantlr_Java_enumConstantName =
 
 Gomantlr_Java_typeName =
     Gomantlr_Java_typeName_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_typeName_2(gomantlr_Java_typeName_2_1:Gomantlr_Java_typeName_2_1)
-
-Gomantlr_Java_typeName_2_1 =
-    Gomantlr_Java_typeName_2_1(gomantlr_Java_typeName_2_1_1:Gomantlr_Java_packageOrTypeName,gomantlr_Java_typeName_2_1_2:Gomantlr_Java_Identifier)
+  | Gomantlr_Java_typeName_2(gomantlr_Java_typeName_2_1_1:Gomantlr_Java_packageOrTypeName,gomantlr_Java_typeName_2_1_2:Gomantlr_Java_Identifier)
 
 Gomantlr_Java_type =
     Gomantlr_Java_type_1(gomantlr_Java_type_1_1:Gomantlr_Java_type_1_1)

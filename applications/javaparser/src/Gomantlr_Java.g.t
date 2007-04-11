@@ -959,7 +959,7 @@ typeName returns [Gomantlr_Java_typeName tn]
         }
     |   potn=packageOrTypeName '.' i=Identifier
         {
-            tn=`Gomantlr_Java_typeName_2(Gomantlr_Java_typeName_2_1(potn,Gomantlr_Java_Identifier(i.getText())));
+            tn=`Gomantlr_Java_typeName_2(potn,Gomantlr_Java_Identifier(i.getText()));
         }
 	;
 
