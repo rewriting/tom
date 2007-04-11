@@ -2600,12 +2600,12 @@ nonWildcardTypeArguments returns [Gomantlr_Java_nonWildcardTypeArguments nwta]
 explicitGenericInvocationSuffix returns [Gomantlr_Java_explicitGenericInvocationSuffix egis]
 	:	    'super' s=superSuffix
             {
-                egis=`Gomantlr_Java_explicitGenericInvocationSuffix_1(Gomantlr_Java_explicitGenericInvocationSuffix_1_1(s));
+                egis=`Gomantlr_Java_explicitGenericInvocationSuffix_1(s);
             }
 	    |
             i=Identifier a=arguments
             {
-                egis=`Gomantlr_Java_explicitGenericInvocationSuffix_2(Gomantlr_Java_explicitGenericInvocationSuffix_2_1(Gomantlr_Java_Identifier(i.getText()),a));
+                egis=`Gomantlr_Java_explicitGenericInvocationSuffix_2(Gomantlr_Java_Identifier(i.getText()),a);
             }
  	;
 	
