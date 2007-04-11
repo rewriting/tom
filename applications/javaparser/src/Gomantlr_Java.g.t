@@ -927,17 +927,17 @@ modifier returns [Java_modifier m]
 
 packageOrTypeName returns [Java_packageOrTypeName potn]
 @init {
-    Java_packageOrTypeName_2 potn2=`Java_packageOrTypeName_2_1();
+    potn=`Java_packageOrTypeName();
 }
 	:	i1=Identifier 
         (
             '.' i2=Identifier
             {
-                potn2=`Java_packageOrTypeName_2_1(potn2*,Java_packageOrTypeName_2_1_1(Java_Identifier(i2.getText())));
+                potn=`Java_packageOrTypeName(potn*,Java_Identifier(i2.getText()));
             }
         )*
         {
-            potn=`Java_packageOrTypeName(Java_Identifier(i1.getText()),potn2);
+            potn=`Java_packageOrTypeName(Java_Identifier(i1.getText()),potn*);
         }
 	;
 
@@ -1008,41 +1008,41 @@ type returns [Java_type t]
 	;
 
 primitiveType returns [Java_primitiveType pt]
-    :   'boolean' { pt=`Java_primitiveType_1(); }
-    |	'char' { pt=`Java_primitiveType_2(); }
-    |	'byte' { pt=`Java_primitiveType_3(); }
-    |	'short' { pt=`Java_primitiveType_4(); }
-    |	'int' { pt=`Java_primitiveType_5(); }
-    |	'long' { pt=`Java_primitiveType_6(); }
-    |	'float' { pt=`Java_primitiveType_7(); }
-    |	'double' { pt=`Java_primitiveType_8(); }
+    :   'boolean' { pt=`Java_primitiveTypeBoolean(); }
+    |	'char' { pt=`Java_primitiveTypeChar(); }
+    |	'byte' { pt=`Java_primitiveTypeByte(); }
+    |	'short' { pt=`Java_primitiveTypeShort(); }
+    |	'int' { pt=`Java_primitiveTypeInt(); }
+    |	'long' { pt=`Java_primitiveTypeLong(); }
+    |	'float' { pt=`Java_primitiveTypeFloat(); }
+    |	'double' { pt=`Java_primitiveTypeDouble(); }
     ;
 
 variableModifier returns [Java_variableModifier vm]
 	:	'final'
         {
-            vm=`Java_variableModifier_1();
+            vm=`Java_variableModifierFinal();
         }
     |   a=annotation
         {
-            vm=`Java_variableModifier_2(a);
+            vm=`Java_variableModifierAnnotation(a);
         }
 	;
 
-typeArguments returns [Java_typeArguments ta]
+typeArguments returns [Java_typeArgumentList ta]
 @init {
-    Java_typeArguments_2 ta3=`Java_typeArguments_2_1();
+    ta=`Java_typeArgumentList();
 }
 	:	'<' ta1=typeArgument
         (
             ',' ta2=typeArgument
             {
-                ta3=`Java_typeArguments_2_1(ta3*,Java_typeArguments_2_1_1(ta2));
+                ta=`Java_typeArgumentList(ta*,ta2);
             }
         )*
         '>'
         {
-            ta=`Java_typeArguments(ta1,ta3);
+            ta=`Java_typeArgumentList(ta1,ta*);
         }
 	;
 	

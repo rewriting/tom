@@ -385,13 +385,7 @@ Java_modifier =
 Java_modifierList = Java_concModifier(Java_modifier*)
 
 Java_packageOrTypeName =
-    Java_packageOrTypeName(packageOrTypeName_1:Java_Identifier,packageOrTypeName_2:Java_packageOrTypeName_2)
-
-Java_packageOrTypeName_2 =
-    Java_packageOrTypeName_2_1(Java_packageOrTypeName_2_1_1*)
-
-Java_packageOrTypeName_2_1_1 =
-    Java_packageOrTypeName_2_1_1(packageOrTypeName_2_1_1_1:Java_Identifier)
+    Java_packageOrTypeName(Java_Identifier*)
 
 Java_enumConstantName =
     Java_enumConstantName(Identifier:Java_Identifier)
@@ -405,7 +399,7 @@ Java_type =
   | Java_type_2(type_2_1:Java_primitiveType,type_2_2:Java_type_2_2)
 
 Java_type_1_2 =
-    Java_type_1_2_1(typeArguments:Java_typeArguments)
+    Java_type_1_2_1(typeArguments:Java_typeArgumentList)
   | Java_type_1_2_2()
 
 Java_type_1_3 =
@@ -415,7 +409,7 @@ Java_type_1_3_1_1 =
     Java_type_1_3_1_1(type_1_3_1_1_1:Java_Identifier,type_1_3_1_1_2:Java_type_1_3_1_1_2)
 
 Java_type_1_3_1_1_2 =
-    Java_type_1_3_1_1_2_1(typeArguments:Java_typeArguments)
+    Java_type_1_3_1_1_2_1(typeArguments:Java_typeArgumentList)
   | Java_type_1_3_1_1_2_2()
 
 Java_type_1_4 =
@@ -431,27 +425,21 @@ Java_type_2_2_1_1 =
     Java_type_2_2_1_1()
 
 Java_primitiveType =
-    Java_primitiveType_1()
-  | Java_primitiveType_2()
-  | Java_primitiveType_3()
-  | Java_primitiveType_4()
-  | Java_primitiveType_5()
-  | Java_primitiveType_6()
-  | Java_primitiveType_7()
-  | Java_primitiveType_8()
+    Java_primitiveTypeBoolean()
+  | Java_primitiveTypeChar()
+  | Java_primitiveTypeByte()
+  | Java_primitiveTypeShort()
+  | Java_primitiveTypeInt()
+  | Java_primitiveTypeLong()
+  | Java_primitiveTypeFloat()
+  | Java_primitiveTypeDouble()
 
 Java_variableModifier =
-    Java_variableModifier_1()
-  | Java_variableModifier_2(annotation:Java_annotation)
+    Java_variableModifierFinal()
+  | Java_variableModifierAnnotation(annotation:Java_annotation)
 
-Java_typeArguments =
-    Java_typeArguments(typeArguments_1:Java_typeArgument,typeArguments_2:Java_typeArguments_2)
-
-Java_typeArguments_2 =
-    Java_typeArguments_2_1(Java_typeArguments_2_1_1*)
-
-Java_typeArguments_2_1_1 =
-    Java_typeArguments_2_1_1(typeArguments_2_1_1_1:Java_typeArgument)
+Java_typeArgumentList =
+    Java_typeArgumentList(Java_typeArgument*)
 
 Java_typeArgument =
     Java_typeArgument_1(type:Java_type)
