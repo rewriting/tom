@@ -634,100 +634,46 @@ Gomantlr_Java_localVariableModifier =
 
 Gomantlr_Java_statement =
     Gomantlr_Java_statement_1(gomantlr_Java_block:Gomantlr_Java_block)
-  | Gomantlr_Java_statement_2(gomantlr_Java_statement_2_1:Gomantlr_Java_statement_2_1)
-  | Gomantlr_Java_statement_3(gomantlr_Java_statement_3_1:Gomantlr_Java_statement_3_1)
-  | Gomantlr_Java_statement_4(gomantlr_Java_statement_4_1:Gomantlr_Java_statement_4_1)
-  | Gomantlr_Java_statement_5(gomantlr_Java_statement_5_1:Gomantlr_Java_statement_5_1)
-  | Gomantlr_Java_statement_6(gomantlr_Java_statement_6_1:Gomantlr_Java_statement_6_1)
-  | Gomantlr_Java_statement_7(gomantlr_Java_statement_7_1:Gomantlr_Java_statement_7_1)
-  | Gomantlr_Java_statement_8(gomantlr_Java_statement_8_1:Gomantlr_Java_statement_8_1)
-  | Gomantlr_Java_statement_9(gomantlr_Java_statement_9_1:Gomantlr_Java_statement_9_1)
+  | Gomantlr_Java_statement_2(gomantlr_Java_statement_2_1:Gomantlr_Java_expression,gomantlr_Java_statement_2_2:Gomantlr_Java_statement_2_2)
+  | Gomantlr_Java_statement_3(gomantlr_Java_statement_3_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_3_2:Gomantlr_Java_statement,gomantlr_Java_statement_3_3:Gomantlr_Java_statement_3_3)
+  | Gomantlr_Java_statement_4(gomantlr_Java_statement_4_1:Gomantlr_Java_forControl,gomantlr_Java_statement_4_2:Gomantlr_Java_statement)
+  | Gomantlr_Java_statement_5(gomantlr_Java_statement_5_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_5_2:Gomantlr_Java_statement)
+  | Gomantlr_Java_statement_6(gomantlr_Java_statement_6_1:Gomantlr_Java_statement,gomantlr_Java_statement_6_2:Gomantlr_Java_parExpression)
+  | Gomantlr_Java_statement_7(gomantlr_Java_statement_7_1:Gomantlr_Java_block,gomantlr_Java_statement_7_2:Gomantlr_Java_statement_7_2)
+  | Gomantlr_Java_statement_8(gomantlr_Java_statement_8_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_8_2:Gomantlr_Java_switchBlockStatementGroups)
+  | Gomantlr_Java_statement_9(gomantlr_Java_statement_9_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_9_2:Gomantlr_Java_block)
   | Gomantlr_Java_statement_10(gomantlr_Java_statement_10_1:Gomantlr_Java_statement_10_1)
-  | Gomantlr_Java_statement_11(gomantlr_Java_statement_11_1:Gomantlr_Java_statement_11_1)
+  | Gomantlr_Java_statement_11(gomantlr_Java_statement_11_1:Gomantlr_Java_expression)
   | Gomantlr_Java_statement_12(gomantlr_Java_statement_12_1:Gomantlr_Java_statement_12_1)
   | Gomantlr_Java_statement_13(gomantlr_Java_statement_13_1:Gomantlr_Java_statement_13_1)
   | Gomantlr_Java_statement_14()
-  | Gomantlr_Java_statement_15(gomantlr_Java_statement_15_1:Gomantlr_Java_statement_15_1)
-  | Gomantlr_Java_statement_16(gomantlr_Java_statement_16_1:Gomantlr_Java_statement_16_1)
+  | Gomantlr_Java_statement_15(gomantlr_Java_statement_15_1:Gomantlr_Java_statementExpression)
+  | Gomantlr_Java_statement_16(gomantlr_Java_statement_16_1:Gomantlr_Java_Identifier,gomantlr_Java_statement_16_2:Gomantlr_Java_statement)
 
-Gomantlr_Java_statement_2_1 =
-    Gomantlr_Java_statement_2_1(gomantlr_Java_statement_2_1_1:Gomantlr_Java_expression,gomantlr_Java_statement_2_1_2:Gomantlr_Java_statement_2_1_2)
+Gomantlr_Java_statement_2_2 =
+    Gomantlr_Java_statement_2_2_1(gomantlr_Java_statement_2_2_1_1:Gomantlr_Java_expression)
+  | Gomantlr_Java_statement_2_2_2()
 
-Gomantlr_Java_statement_2_1_2 =
-    Gomantlr_Java_statement_2_1_2_1(gomantlr_Java_statement_2_1_2_1_1:Gomantlr_Java_statement_2_1_2_1_1)
-  | Gomantlr_Java_statement_2_1_2_2()
+Gomantlr_Java_statement_3_3 =
+    Gomantlr_Java_statement_3_3_1(gomantlr_Java_statement_3_3_1_1:Gomantlr_Java_statement)
+  | Gomantlr_Java_statement_3_3_2()
 
-Gomantlr_Java_statement_2_1_2_1_1 =
-    Gomantlr_Java_statement_2_1_2_1_1(gomantlr_Java_statement_2_1_2_1_1_1:Gomantlr_Java_expression)
-
-Gomantlr_Java_statement_3_1 =
-    Gomantlr_Java_statement_3_1(gomantlr_Java_statement_3_1_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_3_1_2:Gomantlr_Java_statement,gomantlr_Java_statement_3_1_3:Gomantlr_Java_statement_3_1_3)
-
-Gomantlr_Java_statement_3_1_3 =
-    Gomantlr_Java_statement_3_1_3_1(gomantlr_Java_statement_3_1_3_1_1:Gomantlr_Java_statement_3_1_3_1_1)
-  | Gomantlr_Java_statement_3_1_3_2()
-
-Gomantlr_Java_statement_3_1_3_1_1 =
-    Gomantlr_Java_statement_3_1_3_1_1(gomantlr_Java_statement_3_1_3_1_1_1:Gomantlr_Java_statement)
-
-Gomantlr_Java_statement_4_1 =
-    Gomantlr_Java_statement_4_1(gomantlr_Java_statement_4_1_1:Gomantlr_Java_forControl,gomantlr_Java_statement_4_1_2:Gomantlr_Java_statement)
-
-Gomantlr_Java_statement_5_1 =
-    Gomantlr_Java_statement_5_1(gomantlr_Java_statement_5_1_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_5_1_2:Gomantlr_Java_statement)
-
-Gomantlr_Java_statement_6_1 =
-    Gomantlr_Java_statement_6_1(gomantlr_Java_statement_6_1_1:Gomantlr_Java_statement,gomantlr_Java_statement_6_1_2:Gomantlr_Java_parExpression)
-
-Gomantlr_Java_statement_7_1 =
-    Gomantlr_Java_statement_7_1(gomantlr_Java_statement_7_1_1:Gomantlr_Java_block,gomantlr_Java_statement_7_1_2:Gomantlr_Java_statement_7_1_2)
-
-Gomantlr_Java_statement_7_1_2 =
-    Gomantlr_Java_statement_7_1_2_1(gomantlr_Java_statement_7_1_2_1_1:Gomantlr_Java_statement_7_1_2_1_1)
-  | Gomantlr_Java_statement_7_1_2_2(gomantlr_Java_catches:Gomantlr_Java_catches)
-  | Gomantlr_Java_statement_7_1_2_3(gomantlr_Java_statement_7_1_2_3_1:Gomantlr_Java_statement_7_1_2_3_1)
-
-Gomantlr_Java_statement_7_1_2_1_1 =
-    Gomantlr_Java_statement_7_1_2_1_1(gomantlr_Java_statement_7_1_2_1_1_1:Gomantlr_Java_catches,gomantlr_Java_statement_7_1_2_1_1_2:Gomantlr_Java_block)
-
-Gomantlr_Java_statement_7_1_2_3_1 =
-    Gomantlr_Java_statement_7_1_2_3_1(gomantlr_Java_statement_7_1_2_3_1_1:Gomantlr_Java_block)
-
-Gomantlr_Java_statement_8_1 =
-    Gomantlr_Java_statement_8_1(gomantlr_Java_statement_8_1_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_8_1_2:Gomantlr_Java_switchBlockStatementGroups)
-
-Gomantlr_Java_statement_9_1 =
-    Gomantlr_Java_statement_9_1(gomantlr_Java_statement_9_1_1:Gomantlr_Java_parExpression,gomantlr_Java_statement_9_1_2:Gomantlr_Java_block)
+Gomantlr_Java_statement_7_2 =
+    Gomantlr_Java_statement_7_2_1(gomantlr_Java_catches:Gomantlr_Java_catches,gomantlr_Java_block:Gomantlr_Java_block)
+  | Gomantlr_Java_statement_7_2_2(gomantlr_Java_catches:Gomantlr_Java_catches)
+  | Gomantlr_Java_statement_7_2_3(gomantlr_Java_block:Gomantlr_Java_block)
 
 Gomantlr_Java_statement_10_1 =
-    Gomantlr_Java_statement_10_1(gomantlr_Java_statement_10_1_1:Gomantlr_Java_statement_10_1_1)
-
-Gomantlr_Java_statement_10_1_1 =
-    Gomantlr_Java_statement_10_1_1_1(gomantlr_Java_expression:Gomantlr_Java_expression)
-  | Gomantlr_Java_statement_10_1_1_2()
-
-Gomantlr_Java_statement_11_1 =
-    Gomantlr_Java_statement_11_1(gomantlr_Java_statement_11_1_1:Gomantlr_Java_expression)
+    Gomantlr_Java_statement_10_1_1(gomantlr_Java_expression:Gomantlr_Java_expression)
+  | Gomantlr_Java_statement_10_1_2()
 
 Gomantlr_Java_statement_12_1 =
-    Gomantlr_Java_statement_12_1(gomantlr_Java_statement_12_1_1:Gomantlr_Java_statement_12_1_1)
-
-Gomantlr_Java_statement_12_1_1 =
-    Gomantlr_Java_statement_12_1_1_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_statement_12_1_1_2()
+    Gomantlr_Java_statement_12_1_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
+  | Gomantlr_Java_statement_12_1_2()
 
 Gomantlr_Java_statement_13_1 =
-    Gomantlr_Java_statement_13_1(gomantlr_Java_statement_13_1_1:Gomantlr_Java_statement_13_1_1)
-
-Gomantlr_Java_statement_13_1_1 =
-    Gomantlr_Java_statement_13_1_1_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
-  | Gomantlr_Java_statement_13_1_1_2()
-
-Gomantlr_Java_statement_15_1 =
-    Gomantlr_Java_statement_15_1(gomantlr_Java_statement_15_1_1:Gomantlr_Java_statementExpression)
-
-Gomantlr_Java_statement_16_1 =
-    Gomantlr_Java_statement_16_1(gomantlr_Java_statement_16_1_1:Gomantlr_Java_Identifier,gomantlr_Java_statement_16_1_2:Gomantlr_Java_statement)
+    Gomantlr_Java_statement_13_1_1(gomantlr_Java_Identifier:Gomantlr_Java_Identifier)
+  | Gomantlr_Java_statement_13_1_2()
 
 Gomantlr_Java_catches =
     Gomantlr_Java_catches(Gomantlr_Java_catchClause*)

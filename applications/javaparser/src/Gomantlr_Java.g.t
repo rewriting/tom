@@ -1467,12 +1467,12 @@ localVariableDeclaration returns [Gomantlr_Java_localVariableDeclaration lvd]
 	
 statement returns [Gomantlr_Java_statement s]
 @init {
-    Gomantlr_Java_statement_2_1_2 ts2=`Gomantlr_Java_statement_2_1_2_2();
-    Gomantlr_Java_statement_3_1_3 ts3=`Gomantlr_Java_statement_3_1_3_2();
-    Gomantlr_Java_statement_7_1_2 ts7=null;
-    Gomantlr_Java_statement_10_1_1 ts10=`Gomantlr_Java_statement_10_1_1_2();
-    Gomantlr_Java_statement_12_1_1 ts12=`Gomantlr_Java_statement_12_1_1_2();
-    Gomantlr_Java_statement_13_1_1 ts13=`Gomantlr_Java_statement_13_1_1_2();
+    Gomantlr_Java_statement_2_2 ts2=`Gomantlr_Java_statement_2_2_2();
+    Gomantlr_Java_statement_3_3 ts3=`Gomantlr_Java_statement_3_3_2();
+    Gomantlr_Java_statement_7_2 ts7=null;
+    Gomantlr_Java_statement_10_1 ts10=`Gomantlr_Java_statement_10_1_2();
+    Gomantlr_Java_statement_12_1 ts12=`Gomantlr_Java_statement_12_1_2();
+    Gomantlr_Java_statement_13_1 ts13=`Gomantlr_Java_statement_13_1_2();
 }
 	: 
             b=block
@@ -1484,110 +1484,110 @@ statement returns [Gomantlr_Java_statement s]
             (
                 ':' e2=expression
                 {
-                    ts2=`Gomantlr_Java_statement_2_1_2_1(Gomantlr_Java_statement_2_1_2_1_1(e2));
+                    ts2=`Gomantlr_Java_statement_2_2_1(e2);
                 }
             )?
             ';'
             {
-                s=`Gomantlr_Java_statement_2(Gomantlr_Java_statement_2_1(e1,ts2));
+                s=`Gomantlr_Java_statement_2(e1,ts2);
             }
         | 
             'if' pe=parExpression s1=statement 
             (
                 'else' s2=statement
                 {
-                    ts3=`Gomantlr_Java_statement_3_1_3_1(Gomantlr_Java_statement_3_1_3_1_1(s2));
+                    ts3=`Gomantlr_Java_statement_3_3_1(s2);
                 }
             )?
             {
-                s=`Gomantlr_Java_statement_3(Gomantlr_Java_statement_3_1(pe,s1,ts3));
+                s=`Gomantlr_Java_statement_3(pe,s1,ts3);
             }
         | 
             'for' '(' fc=forControl ')' s1=statement
             {
-                s=`Gomantlr_Java_statement_4(Gomantlr_Java_statement_4_1(fc,s1));
+                s=`Gomantlr_Java_statement_4(fc,s1);
             }
         |
             'while' pe=parExpression s1=statement
             {
-                s=`Gomantlr_Java_statement_5(Gomantlr_Java_statement_5_1(pe,s1));
+                s=`Gomantlr_Java_statement_5(pe,s1);
             }
         |
             'do' s1=statement 'while' pe=parExpression ';'
             {
-                s=`Gomantlr_Java_statement_6(Gomantlr_Java_statement_6_1(s1,pe));
+                s=`Gomantlr_Java_statement_6(s1,pe);
             }
         |
             'try' b=block
             (
                     c=catches 'finally' b=block
                     {
-                        ts7=`Gomantlr_Java_statement_7_1_2_1(Gomantlr_Java_statement_7_1_2_1_1(c,b));
+                        ts7=`Gomantlr_Java_statement_7_2_1(c,b);
                     }
                 | 
                     c=catches
                     {
-                        ts7=`Gomantlr_Java_statement_7_1_2_2(c);
+                        ts7=`Gomantlr_Java_statement_7_2_2(c);
                     }
                 |
                     'finally' b=block
                     {
-                        ts7=`Gomantlr_Java_statement_7_1_2_3(Gomantlr_Java_statement_7_1_2_3_1(b));
+                        ts7=`Gomantlr_Java_statement_7_2_3(b);
                     }
             )
             {
-                s=`Gomantlr_Java_statement_7(Gomantlr_Java_statement_7_1(b,ts7));
+                s=`Gomantlr_Java_statement_7(b,ts7);
             }
         |
             'switch' pe=parExpression '{' sbsg=switchBlockStatementGroups '}'
             {
-                s=`Gomantlr_Java_statement_8(Gomantlr_Java_statement_8_1(pe,sbsg));
+                s=`Gomantlr_Java_statement_8(pe,sbsg);
             }
         |
             'synchronized' pe=parExpression b=block
             {
-                s=`Gomantlr_Java_statement_9(Gomantlr_Java_statement_9_1(pe,b));
+                s=`Gomantlr_Java_statement_9(pe,b);
             }
         |
             'return' 
             (
                 e=expression
                 {
-                    ts10=`Gomantlr_Java_statement_10_1_1_1(e);
+                    ts10=`Gomantlr_Java_statement_10_1_1(e);
                 }
             )? 
             ';'
             {
-                s=`Gomantlr_Java_statement_10(Gomantlr_Java_statement_10_1(ts10));
+                s=`Gomantlr_Java_statement_10(ts10);
             }
         |
             'throw' e=expression ';'
             {
-                s=`Gomantlr_Java_statement_11(Gomantlr_Java_statement_11_1(e));
+                s=`Gomantlr_Java_statement_11(e);
             }
         |
             'break'
             (
                 i=Identifier
                 {
-                    ts12=`Gomantlr_Java_statement_12_1_1_1(Gomantlr_Java_Identifier(i.getText()));
+                    ts12=`Gomantlr_Java_statement_12_1_1(Gomantlr_Java_Identifier(i.getText()));
                 }
             )?
             ';'
             {
-                s=`Gomantlr_Java_statement_12(Gomantlr_Java_statement_12_1(ts12));
+                s=`Gomantlr_Java_statement_12(ts12);
             }
         |
             'continue' 
             (
                 i=Identifier
                 {
-                    ts13=`Gomantlr_Java_statement_13_1_1_1(Gomantlr_Java_Identifier(i.getText()));
+                    ts13=`Gomantlr_Java_statement_13_1_1(Gomantlr_Java_Identifier(i.getText()));
                 }
             )?
             ';'
             {
-                s=`Gomantlr_Java_statement_13(Gomantlr_Java_statement_13_1(ts13));
+                s=`Gomantlr_Java_statement_13(ts13);
             }
         |
             ';'
@@ -1597,12 +1597,12 @@ statement returns [Gomantlr_Java_statement s]
         |
             se=statementExpression ';'
             {
-                s=`Gomantlr_Java_statement_15(Gomantlr_Java_statement_15_1(se));
+                s=`Gomantlr_Java_statement_15(se);
             }
         | 
             i=Identifier ':' s1=statement
             {
-                s=`Gomantlr_Java_statement_16(Gomantlr_Java_statement_16_1(Gomantlr_Java_Identifier(i.getText()),s1));
+                s=`Gomantlr_Java_statement_16(Gomantlr_Java_Identifier(i.getText()),s1);
             }
 	;
 	
