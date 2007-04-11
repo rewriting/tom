@@ -2235,17 +2235,17 @@ unaryExpression returns [Gomantlr_Java_unaryExpression ue]
 
 unaryExpressionNotPlusMinus returns [Gomantlr_Java_unaryExpressionNotPlusMinus uenpm]
 @init {
-    Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_2 uenpm2=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_2_1();
-    Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_3 uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_3_2();
+    Gomantlr_Java_unaryExpressionNotPlusMinus_4_2 uenpm2=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_2_1();
+    Gomantlr_Java_unaryExpressionNotPlusMinus_4_3 uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_2();
 }
     :       '~' ue=unaryExpression
             {
-                uenpm=`Gomantlr_Java_unaryExpressionNotPlusMinus_1(Gomantlr_Java_unaryExpressionNotPlusMinus_1_1(ue));
+                uenpm=`Gomantlr_Java_unaryExpressionNotPlusMinus_1(ue);
             }
         |
             '!' ue=unaryExpression
             {
-                uenpm=`Gomantlr_Java_unaryExpressionNotPlusMinus_2(Gomantlr_Java_unaryExpressionNotPlusMinus_2_1(ue));
+                uenpm=`Gomantlr_Java_unaryExpressionNotPlusMinus_2(ue);
             }
         |
             ce=castExpression
@@ -2257,22 +2257,22 @@ unaryExpressionNotPlusMinus returns [Gomantlr_Java_unaryExpressionNotPlusMinus u
             (
                 s=selector
                 {
-                    uenpm2=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_2_1(uenpm2*,s);
+                    uenpm2=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_2_1(uenpm2*,s);
                 }
             )* 
             (
                     '++'
                     {
-                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_3_1(Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_3_1_1_1());
+                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1(Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1_1_1());
                     }
                 |
                     '--'
                     {
-                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_3_1(Gomantlr_Java_unaryExpressionNotPlusMinus_4_1_3_1_1_2());
+                        uenpm3=`Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1(Gomantlr_Java_unaryExpressionNotPlusMinus_4_3_1_1_2());
                     }
             )?
             {
-                uenpm=`Gomantlr_Java_unaryExpressionNotPlusMinus_4(Gomantlr_Java_unaryExpressionNotPlusMinus_4_1(p,uenpm2,uenpm3));
+                uenpm=`Gomantlr_Java_unaryExpressionNotPlusMinus_4(p,uenpm2,uenpm3);
             }
     ;
 
