@@ -2209,22 +2209,22 @@ multiplicativeExpression returns [Gomantlr_Java_multiplicativeExpression me]
 unaryExpression returns [Gomantlr_Java_unaryExpression ue]
     :       '+' ue1=unaryExpression
             {
-                ue=`Gomantlr_Java_unaryExpression_1(Gomantlr_Java_unaryExpression_1_1(ue1));
+                ue=`Gomantlr_Java_unaryExpression_1(ue1);
             }
         |	
             '-' ue1=unaryExpression
             {
-                ue=`Gomantlr_Java_unaryExpression_2(Gomantlr_Java_unaryExpression_2_1(ue1));
+                ue=`Gomantlr_Java_unaryExpression_2(ue1);
             }
         |
             '++' p=primary
             {
-                ue=`Gomantlr_Java_unaryExpression_3(Gomantlr_Java_unaryExpression_3_1(p));
+                ue=`Gomantlr_Java_unaryExpression_3(p);
             }
         |
             '--' p=primary
             {
-                ue=`Gomantlr_Java_unaryExpression_4(Gomantlr_Java_unaryExpression_4_1(p));
+                ue=`Gomantlr_Java_unaryExpression_4(p);
             }
         |
             uenpm=unaryExpressionNotPlusMinus
