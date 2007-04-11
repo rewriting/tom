@@ -1608,17 +1608,17 @@ statement returns [Gomantlr_Java_statement s]
 	
 catches returns [Gomantlr_Java_catches c]
 @init {
-    Gomantlr_Java_catches_2 c2=`Gomantlr_Java_catches_2_1();
+    c=`Gomantlr_Java_catches();
 }
 	:	cc1=catchClause
         (
             cc2=catchClause
             {
-                c2=`Gomantlr_Java_catches_2_1(c2*,cc2);
+                c=`Gomantlr_Java_catches(c*,cc2);
             }
         )*
         {
-            c=`Gomantlr_Java_catches(cc1,c2);
+            c=`Gomantlr_Java_catches(cc1,c*);
         }
 	;
 	

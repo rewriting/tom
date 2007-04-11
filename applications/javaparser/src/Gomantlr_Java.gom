@@ -740,10 +740,7 @@ Gomantlr_Java_statement_16_1 =
     Gomantlr_Java_statement_16_1(gomantlr_Java_statement_16_1_1:Gomantlr_Java_Identifier,gomantlr_Java_statement_16_1_2:Gomantlr_Java_statement)
 
 Gomantlr_Java_catches =
-    Gomantlr_Java_catches(gomantlr_Java_catches_1:Gomantlr_Java_catchClause,gomantlr_Java_catches_2:Gomantlr_Java_catches_2)
-
-Gomantlr_Java_catches_2 =
-    Gomantlr_Java_catches_2_1(Gomantlr_Java_catchClause*)
+    Gomantlr_Java_catches(Gomantlr_Java_catchClause*)
 
 Gomantlr_Java_catchClause =
     Gomantlr_Java_catchClause(gomantlr_Java_catchClause_1:Gomantlr_Java_formalParameter,gomantlr_Java_catchClause_2:Gomantlr_Java_block)
