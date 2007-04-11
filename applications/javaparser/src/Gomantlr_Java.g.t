@@ -123,18 +123,18 @@ importDeclaration returns [Java_importDeclaration id]
         }
 	;
 	
-typeDeclaration returns [Java_classOrInterfaceDeclaration td]
+typeDeclaration returns [Java_classOrInterfaceDeclaration res]
 	:	coid=classOrInterfaceDeclaration
         {
-            td=coid;
+            res=coid;
         }
     |   ';'
         {
-            td=null;
+            res=null;
         }
 	;
 	
-classOrInterfaceDeclaration returns [Java_classOrInterfaceDeclaration coid]
+classOrInterfaceDeclaration returns [Java_classOrInterfaceDeclaration res]
 @init {
     Java_modifierList ml=`Java_concModifier();
 }
@@ -148,12 +148,12 @@ classOrInterfaceDeclaration returns [Java_classOrInterfaceDeclaration coid]
         ( 
                 cd=classDeclaration
                 {
-                    coid=`Java_classDeclaration(ml,cd);
+                    res=`Java_classDeclaration(ml,cd);
                 }
             | 
                 id=interfaceDeclaration
                 {
-                    coid=`Java_interfaceDeclaration(ml,id);
+                    res=`Java_interfaceDeclaration(ml,id);
                 }
         )
 	;
@@ -161,7 +161,7 @@ classOrInterfaceDeclaration returns [Java_classOrInterfaceDeclaration coid]
 classDeclaration returns [Java_classDeclaration cd]
 	:	ncd=normalClassDeclaration
         {
-            cd=`Java_classDeclaration_1(ncd);
+            cd=ncd;
         }
     |   ed=enumDeclaration
         {
@@ -169,7 +169,7 @@ classDeclaration returns [Java_classDeclaration cd]
         }
 	;
 	
-normalClassDeclaration returns [Java_normalClassDeclaration ncd]
+normalClassDeclaration returns [Java_classDeclaration ncd]
 @init {
     Java_normalClassDeclaration_2 ncd2=`Java_normalClassDeclaration_2_2();
     Java_normalClassDeclaration_3 ncd3=`Java_normalClassDeclaration_3_2();

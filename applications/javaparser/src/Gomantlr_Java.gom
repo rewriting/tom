@@ -12,12 +12,6 @@ Java_package =
 Java_importDeclarationList=
     Java_importDeclarationList(Java_importDeclaration*)
 
-Java_classOrInterfaceDeclarationList=
-    Java_concClassOrInterfaceDeclaration(Java_classOrInterfaceDeclaration*)
-Java_concClassOrInterfaceDeclaration:make_insert(e,l) {
-  if(e==null) { return l; }
-}
-
 Java_packageDeclaration =
     Java_packageDeclaration(packageDeclaration_1:Java_qualifiedName)
 
@@ -42,12 +36,15 @@ Java_classOrInterfaceDeclaration =
     Java_classDeclaration(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)
   | Java_interfaceDeclaration(modifierList:Java_modifierList,interfaceDeclaration:Java_interfaceDeclaration)
 
-Java_classDeclaration =
-    Java_classDeclaration_1(normalClassDeclaration:Java_normalClassDeclaration)
-  | Java_classDeclaration_2(enumDeclaration:Java_enumDeclaration)
+Java_classOrInterfaceDeclarationList=
+    Java_concClassOrInterfaceDeclaration(Java_classOrInterfaceDeclaration*)
+Java_concClassOrInterfaceDeclaration:make_insert(e,l) {
+  if(e==null) { return l; }
+}
 
-Java_normalClassDeclaration =
+Java_classDeclaration =
     Java_normalClassDeclaration(normalClassDeclaration_1:Java_Identifier,normalClassDeclaration_2:Java_normalClassDeclaration_2,normalClassDeclaration_3:Java_normalClassDeclaration_3,normalClassDeclaration_4:Java_normalClassDeclaration_4,normalClassDeclaration_5:Java_classBody)
+  | Java_classDeclaration_2(enumDeclaration:Java_enumDeclaration)
 
 Java_normalClassDeclaration_2 =
     Java_normalClassDeclaration_2_1(typeParameters:Java_typeParameters)
