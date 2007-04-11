@@ -1677,16 +1677,16 @@ switchLabel returns [Gomantlr_Java_switchLabel sl]
 	:
             'case' ce=constantExpression ':'
             {
-                sl=`Gomantlr_Java_switchLabel_1(Gomantlr_Java_switchLabel_1_1(ce));
+                sl=`Gomantlr_Java_switchLabel_1(ce);
             }
 	|
         'case' ecn=enumConstantName ':'
             {
-                sl=`Gomantlr_Java_switchLabel_2(Gomantlr_Java_switchLabel_2_1(ecn));
+                sl=`Gomantlr_Java_switchLabel_2(ecn);
             }
 	|   'default' ':'
             {
-                sl=`Gomantlr_Java_switchLabel_3(Gomantlr_Java_switchLabel_3_1());
+                sl=`Gomantlr_Java_switchLabel_3();
             }
 	;
 	

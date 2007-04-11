@@ -697,18 +697,9 @@ Gomantlr_Java_switchBlockStatementGroup_2 =
     Gomantlr_Java_switchBlockStatementGroup_2_1(Gomantlr_Java_blockStatement*)
 
 Gomantlr_Java_switchLabel =
-    Gomantlr_Java_switchLabel_1(gomantlr_Java_switchLabel_1_1:Gomantlr_Java_switchLabel_1_1)
-  | Gomantlr_Java_switchLabel_2(gomantlr_Java_switchLabel_2_1:Gomantlr_Java_switchLabel_2_1)
-  | Gomantlr_Java_switchLabel_3(gomantlr_Java_switchLabel_3_1:Gomantlr_Java_switchLabel_3_1)
-
-Gomantlr_Java_switchLabel_1_1 =
-    Gomantlr_Java_switchLabel_1_1(gomantlr_Java_switchLabel_1_1_1:Gomantlr_Java_constantExpression)
-
-Gomantlr_Java_switchLabel_2_1 =
-    Gomantlr_Java_switchLabel_2_1(gomantlr_Java_switchLabel_2_1_1:Gomantlr_Java_enumConstantName)
-
-Gomantlr_Java_switchLabel_3_1 =
-    Gomantlr_Java_switchLabel_3_1()
+    Gomantlr_Java_switchLabel_1(gomantlr_Java_constantExpression:Gomantlr_Java_constantExpression)
+  | Gomantlr_Java_switchLabel_2(gomantlr_Java_enumConstantName:Gomantlr_Java_enumConstantName)
+  | Gomantlr_Java_switchLabel_3()
 
 Gomantlr_Java_moreStatementExpressions =
     Gomantlr_Java_moreStatementExpressions_1(Gomantlr_Java_moreStatementExpressions_1_1*)
