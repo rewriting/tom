@@ -2611,45 +2611,45 @@ explicitGenericInvocationSuffix returns [Gomantlr_Java_explicitGenericInvocation
 	
 selector returns [Gomantlr_Java_selector s]
 @init {
-    Gomantlr_Java_selector_1_1_2 sel1=`Gomantlr_Java_selector_1_1_2_2();
-    Gomantlr_Java_selector_4_1_1 sel4=`Gomantlr_Java_selector_4_1_1_2();
+    Gomantlr_Java_selector_1_2 sel1=`Gomantlr_Java_selector_1_2_2();
+    Gomantlr_Java_selector_4_1 sel4=`Gomantlr_Java_selector_4_1_2();
 }
 	:	    '.' i=Identifier 
             (
                 a=arguments
                 {
-                    sel1=`Gomantlr_Java_selector_1_1_2_1(a);
+                    sel1=`Gomantlr_Java_selector_1_2_1(a);
                 }
             )?
             {
-                s=`Gomantlr_Java_selector_1(Gomantlr_Java_selector_1_1(Gomantlr_Java_Identifier(i.getText()),sel1));
+                s=`Gomantlr_Java_selector_1(Gomantlr_Java_Identifier(i.getText()),sel1);
             }
 	    |
             '.' 'this'
             {
-                s=`Gomantlr_Java_selector_2(Gomantlr_Java_selector_2_1());
+                s=`Gomantlr_Java_selector_2();
             } 
 	    |
             '.' 'super' s2=superSuffix
             {
-                s=`Gomantlr_Java_selector_3(Gomantlr_Java_selector_3_1(s2));
+                s=`Gomantlr_Java_selector_3(s2);
             }
 	    |
             '.' 'new' 
             (
                 nwta=nonWildcardTypeArguments
                 {
-                    sel4=`Gomantlr_Java_selector_4_1_1_1(nwta);
+                    sel4=`Gomantlr_Java_selector_4_1_1(nwta);
                 }
             )?
             ic=innerCreator
             {
-                s=`Gomantlr_Java_selector_4(Gomantlr_Java_selector_4_1(sel4,ic));
+                s=`Gomantlr_Java_selector_4(sel4,ic);
             }
 	    |
             '[' e=expression ']'
             {
-                s=`Gomantlr_Java_selector_5(Gomantlr_Java_selector_5_1(e));
+                s=`Gomantlr_Java_selector_5(e);
             }
 	;
 	
