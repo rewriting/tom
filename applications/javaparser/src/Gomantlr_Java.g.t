@@ -886,8 +886,8 @@ variableInitializer returns [Gomantlr_Java_variableInitializer vi]
 arrayInitializer returns [Gomantlr_Java_arrayInitializer ai]
 @init {
     Gomantlr_Java_arrayInitializer_1 ai1=`Gomantlr_Java_arrayInitializer_1_2();
-    Gomantlr_Java_arrayInitializer_1_1_1_2 ai2=`Gomantlr_Java_arrayInitializer_1_1_1_2_1();
-    Gomantlr_Java_arrayInitializer_1_1_1_3 ai3=`Gomantlr_Java_arrayInitializer_1_1_1_3_2();
+    Gomantlr_Java_arrayInitializer_1_1_2 ai2=`Gomantlr_Java_arrayInitializer_1_1_2_1();
+    Gomantlr_Java_arrayInitializer_1_1_3 ai3=`Gomantlr_Java_arrayInitializer_1_1_3_2();
 }
 	:	'{' 
         (
@@ -895,17 +895,17 @@ arrayInitializer returns [Gomantlr_Java_arrayInitializer ai]
             (
                 ',' vi2=variableInitializer
                 {
-                    ai2=`Gomantlr_Java_arrayInitializer_1_1_1_2_1(ai2*,Gomantlr_Java_arrayInitializer_1_1_1_2_1_1(vi2));
+                    ai2=`Gomantlr_Java_arrayInitializer_1_1_2_1(ai2*,Gomantlr_Java_arrayInitializer_1_1_2_1_1(vi2));
                 }
             )*
             (
                 ','
                 {
-                    ai3=`Gomantlr_Java_arrayInitializer_1_1_1_3_1();
+                    ai3=`Gomantlr_Java_arrayInitializer_1_1_3_1();
                 }
             )?
             {
-                ai1=`Gomantlr_Java_arrayInitializer_1_1(Gomantlr_Java_arrayInitializer_1_1_1(vi1,ai2,ai3));
+                ai1=`Gomantlr_Java_arrayInitializer_1_1(vi1,ai2,ai3);
             }
         )?
         '}'
