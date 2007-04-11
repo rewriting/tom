@@ -1052,8 +1052,8 @@ typeArguments returns [Gomantlr_Java_typeArguments ta]
 	
 typeArgument returns [Gomantlr_Java_typeArgument ta]
 @init {
-    Gomantlr_Java_typeArgument_2_1_1 ta1=`Gomantlr_Java_typeArgument_2_1_1_2();
-    Gomantlr_Java_typeArgument_2_1_1_1_1_1 ta2=null;
+    Gomantlr_Java_typeArgument_2_1 ta1=`Gomantlr_Java_typeArgument_2_1_2();
+    Gomantlr_Java_typeArgument_2_1_1_1 ta2=null;
 }
 	:	t=type
         {
@@ -1064,21 +1064,21 @@ typeArgument returns [Gomantlr_Java_typeArgument ta]
             (
                     'extends' 
                     {
-                        ta2=`Gomantlr_Java_typeArgument_2_1_1_1_1_1_1();
+                        ta2=`Gomantlr_Java_typeArgument_2_1_1_1_1();
                     }
                 |
                     'super'
                     {
-                        ta2=`Gomantlr_Java_typeArgument_2_1_1_1_1_1_2();
+                        ta2=`Gomantlr_Java_typeArgument_2_1_1_1_2();
                     }
             )
             t=type
             {
-                ta1=`Gomantlr_Java_typeArgument_2_1_1_1(Gomantlr_Java_typeArgument_2_1_1_1_1(ta2,t));
+                ta1=`Gomantlr_Java_typeArgument_2_1_1(ta2,t);
             }
         )?
         {
-            ta=`Gomantlr_Java_typeArgument_2(Gomantlr_Java_typeArgument_2_1(ta1));
+            ta=`Gomantlr_Java_typeArgument_2(ta1);
         }
 	;
 	
