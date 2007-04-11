@@ -899,18 +899,9 @@ Gomantlr_Java_shiftExpression_2_1_1 =
     Gomantlr_Java_shiftExpression_2_1_1(gomantlr_Java_shiftExpression_2_1_1_1:Gomantlr_Java_shiftOp,gomantlr_Java_shiftExpression_2_1_1_2:Gomantlr_Java_additiveExpression)
 
 Gomantlr_Java_shiftOp =
-    Gomantlr_Java_shiftOp_1(gomantlr_Java_shiftOp_1_1:Gomantlr_Java_shiftOp_1_1)
-  | Gomantlr_Java_shiftOp_2(gomantlr_Java_shiftOp_2_1:Gomantlr_Java_shiftOp_2_1)
-  | Gomantlr_Java_shiftOp_3(gomantlr_Java_shiftOp_3_1:Gomantlr_Java_shiftOp_3_1)
-
-Gomantlr_Java_shiftOp_1_1 =
-    Gomantlr_Java_shiftOp_1_1()
-
-Gomantlr_Java_shiftOp_2_1 =
-    Gomantlr_Java_shiftOp_2_1()
-
-Gomantlr_Java_shiftOp_3_1 =
-    Gomantlr_Java_shiftOp_3_1()
+    Gomantlr_Java_shiftOp_1()
+  | Gomantlr_Java_shiftOp_2()
+  | Gomantlr_Java_shiftOp_3()
 
 Gomantlr_Java_additiveExpression =
     Gomantlr_Java_additiveExpression(gomantlr_Java_additiveExpression_1:Gomantlr_Java_multiplicativeExpression,gomantlr_Java_additiveExpression_2:Gomantlr_Java_additiveExpression_2)

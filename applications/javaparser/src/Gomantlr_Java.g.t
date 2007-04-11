@@ -2131,15 +2131,15 @@ shiftOp returns [Gomantlr_Java_shiftOp so]
 	:	(
             '<' '<' 
             {
-                so=`Gomantlr_Java_shiftOp_1(Gomantlr_Java_shiftOp_1_1());
+                so=`Gomantlr_Java_shiftOp_1();
             }
             | '>' '>' '>'
             {
-                so=`Gomantlr_Java_shiftOp_2(Gomantlr_Java_shiftOp_2_1());
+                so=`Gomantlr_Java_shiftOp_2();
             }
             | '>' '>'
             {
-                so=`Gomantlr_Java_shiftOp_3(Gomantlr_Java_shiftOp_3_1());
+                so=`Gomantlr_Java_shiftOp_3();
             }
         )
 	;
