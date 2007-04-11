@@ -2092,11 +2092,11 @@ relationalOp returns [Gomantlr_Java_relationalOp ro]
 	:	(
             '<' '=' 
             {
-                ro=`Gomantlr_Java_relationalOp_1(Gomantlr_Java_relationalOp_1_1());
+                ro=`Gomantlr_Java_relationalOp_1();
             }
             | '>' '=' 
             {
-                ro=`Gomantlr_Java_relationalOp_2(Gomantlr_Java_relationalOp_2_1());
+                ro=`Gomantlr_Java_relationalOp_2();
             }
             | '<' 
             {

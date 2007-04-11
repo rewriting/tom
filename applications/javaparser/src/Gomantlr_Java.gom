@@ -884,16 +884,10 @@ Gomantlr_Java_relationalExpression_2_1_1 =
     Gomantlr_Java_relationalExpression_2_1_1(gomantlr_Java_relationalExpression_2_1_1_1:Gomantlr_Java_relationalOp,gomantlr_Java_relationalExpression_2_1_1_2:Gomantlr_Java_shiftExpression)
 
 Gomantlr_Java_relationalOp =
-    Gomantlr_Java_relationalOp_1(gomantlr_Java_relationalOp_1_1:Gomantlr_Java_relationalOp_1_1)
-  | Gomantlr_Java_relationalOp_2(gomantlr_Java_relationalOp_2_1:Gomantlr_Java_relationalOp_2_1)
+    Gomantlr_Java_relationalOp_1()
+  | Gomantlr_Java_relationalOp_2()
   | Gomantlr_Java_relationalOp_3()
   | Gomantlr_Java_relationalOp_4()
-
-Gomantlr_Java_relationalOp_1_1 =
-    Gomantlr_Java_relationalOp_1_1()
-
-Gomantlr_Java_relationalOp_2_1 =
-    Gomantlr_Java_relationalOp_2_1()
 
 Gomantlr_Java_shiftExpression =
     Gomantlr_Java_shiftExpression(gomantlr_Java_shiftExpression_1:Gomantlr_Java_additiveExpression,gomantlr_Java_shiftExpression_2:Gomantlr_Java_shiftExpression_2)
