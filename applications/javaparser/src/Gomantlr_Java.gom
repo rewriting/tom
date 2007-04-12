@@ -236,7 +236,7 @@ Java_type_1_2 =
     Java_type_1_2_list(Java_type_1_2_item*)
 
 Java_type_1_2_item =
-    Java_type_1_2_item(type_1_2_item_1:Java_Identifier,type_1_2_item_2:Java_TypeArgumentList)
+    Java_type_1_2_item(type_1_2_item_1:Java_Identifier,type_1_2_item_2:Java_typeArgumentList)
 
 Java_bracketsList =
     Java_bracketsList(Java_brackets*)
@@ -296,21 +296,16 @@ Java_qualifierList =
     Java_qualifierList(Java_Identifier*)
 
 Java_literal =
-    Java_integerLiteral(IntegerLiteral:Java_integerLiteral)
-  | Java_floatingPointLiteral(FloatingPointLiteral:Java_FloatingPointLiteral)
-  | Java_characterLiteral(CharacterLiteral:Java_CharacterLiteral)
-  | Java_stringLiteral(StringLiteral:Java_StringLiteral)
-  | Java_booleanLiteral(booleanLiteral:Java_booleanLiteral)
+    Java_integerLiteral(s:String)
+  | Java_floatingPointLiteral(s:String)
+  | Java_characterLiteral(s:String)
+  | Java_stringLiteral(s:String)
+  | Java_hexLiteral(s:String)
+  | Java_octalLiteral(s:String)
+  | Java_decimalLiteral(s:String)
+  | Java_true()
+  | Java_false()
   | Java_nullLiteral()
-
-Java_integerLiteral =
-    Java_HexLiteral(s:String)
-  | Java_OctalLiteral(s:String)
-  | Java_DecimalLiteral(s:String)
-
-Java_booleanLiteral =
-    Java_True()
-  | Java_False()
 
 Java_annotationList =
     Java_annotationList(Java_annotation*)
@@ -795,12 +790,3 @@ Java_Identifier =
 
 Java_ENUM =
     Java_ENUM(s:String)
-
-Java_FloatingPointLiteral =
-    Java_FloatingPointLiteral(s:String)
-
-Java_CharacterLiteral =
-    Java_CharacterLiteral(s:String)
-
-Java_StringLiteral =
-    Java_StringLiteral(s:String)

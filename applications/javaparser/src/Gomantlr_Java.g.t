@@ -962,7 +962,7 @@ type returns [Java_type t]
         )? 
         {
             t1_2=`Java_type_1_2_list(Java_type_1_2_item(Java_Identifier(i1.getText()),t1_2_2));
-            t1_2_2=`Java_typeArgumentList()
+            t1_2_2=`Java_typeArgumentList();
         }
         (
             '.' i2=Identifier 
@@ -1176,33 +1176,33 @@ qualifiedName returns [Java_qualifiedName qn]
 	
 literal	returns [Java_literal l]
 	:   il=integerLiteral
-        { l=`Java_integerLiteral(il); }
+        { l=i; }
     |   fpl=FloatingPointLiteral
-        { l=`Java_floatingPointLiteral(Java_FloatingPointLiteral(fpl.getText())); }
+        { l=`Java_floatingPointLiteral(fpl.getText()); }
     |   cl=CharacterLiteral
-        { l=`Java_characterLiteral(Java_CharacterLiteral(cl.getText())); }
+        { l=`Java_characterLiteral(cl.getText()); }
     |   sl=StringLiteral
-        { l=`Java_stringLiteral(Java_StringLiteral(sl.getText())); }
+        { l=`Java_stringLiteral(sl.getText()); }
     |   bl=booleanLiteral
-        { l=`Java_booleanLiteral(bl); }
+        { l=bl; }
     |   'null'
         { l=`Java_nullLiteral(); }
 	;
 
-integerLiteral returns [Java_integerLiteral il]
+integerLiteral returns [Java_literal il]
     :   h=HexLiteral 
-        { il=`Java_HexLiteral(h.getText()); }
+        { il=`Java_hexLiteral(h.getText()); }
     |   o=OctalLiteral
-        { il=`Java_OctalLiteral(o.getText()); }
+        { il=`Java_octalLiteral(o.getText()); }
     |   d=DecimalLiteral
-        { il=`Java_DecimalLiteral(d.getText()); }
+        { il=`Java_decimalLiteral(d.getText()); }
     ;
 
-booleanLiteral returns [Java_booleanLiteral bl]
+booleanLiteral returns [Java_literal bl]
     :   'true'
-        { bl=`Java_True(); }
+        { bl=`Java_true(); }
     |   'false'
-        { bl=`Java_False(); }
+        { bl=`Java_false(); }
     ;
 
 // ANNOTATIONS
