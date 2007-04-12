@@ -200,20 +200,20 @@ normalClassDeclaration returns [Java_classDeclaration ncd]
         }
 	;
 	
-typeParameters returns [Java_typeParameters tp]
+typeParameters returns [Java_typeParameterList tp]
 @init {
-    Java_typeParameters_2 ttp=`Java_typeParameters_2_1();
+    tp=`Java_typeParameterList();
 }
 	:	'<' tp1=typeParameter 
         (
             ',' tp2=typeParameter
             {
-                ttp=`Java_typeParameters_2_1(ttp*,Java_typeParameters_2_1_1(tp2));
+                tp=`Java_typeParameterList(tp*,tp2);
             }
         )*
         '>'
         {
-            tp=`Java_typeParameters(tp1,ttp);
+            tp=`Java_typeParameterList(tp1,tp*);
         }
 	;
 

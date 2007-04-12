@@ -47,7 +47,7 @@ Java_classDeclaration =
   | Java_classDeclaration_2(enumDeclaration:Java_enumDeclaration)
 
 Java_normalClassDeclaration_2 =
-    Java_normalClassDeclaration_2_1(typeParameters:Java_typeParameters)
+    Java_normalClassDeclaration_2_1(typeParameters:Java_typeParameterList)
   | Java_normalClassDeclaration_2_2()
 
 Java_normalClassDeclaration_3 =
@@ -58,14 +58,8 @@ Java_normalClassDeclaration_4 =
     Java_normalClassDeclaration_4_1(normalClassDeclaration_4_1_1:Java_typeList)
   | Java_normalClassDeclaration_4_2()
 
-Java_typeParameters =
-    Java_typeParameters(typeParameters_1:Java_typeParameter,typeParameters_2:Java_typeParameters_2)
-
-Java_typeParameters_2 =
-    Java_typeParameters_2_1(Java_typeParameters_2_1_1*)
-
-Java_typeParameters_2_1_1 =
-    Java_typeParameters_2_1_1(typeParameters_2_1_1_1:Java_typeParameter)
+Java_typeParameterList =
+    Java_typeParameterList(Java_typeParameter*)
 
 Java_typeParameter =
     Java_typeParameter(typeParameter_1:Java_Identifier,typeParameter_2:Java_typeParameter_2)
@@ -143,7 +137,7 @@ Java_normalInterfaceDeclaration =
     Java_normalInterfaceDeclaration(normalInterfaceDeclaration_1:Java_Identifier,normalInterfaceDeclaration_2:Java_normalInterfaceDeclaration_2,normalInterfaceDeclaration_3:Java_normalInterfaceDeclaration_3,normalInterfaceDeclaration_4:Java_interfaceBody)
 
 Java_normalInterfaceDeclaration_2 =
-    Java_normalInterfaceDeclaration_2_1(typeParameters:Java_typeParameters)
+    Java_normalInterfaceDeclaration_2_1(typeParameters:Java_typeParameterList)
   | Java_normalInterfaceDeclaration_2_2()
 
 Java_normalInterfaceDeclaration_3 =
@@ -188,7 +182,7 @@ Java_memberDecl =
   | Java_memberDecl_7(classDeclaration:Java_classDeclaration)
 
 Java_genericMethodOrConstructorDecl =
-    Java_genericMethodOrConstructorDecl(genericMethodOrConstructorDecl_1:Java_typeParameters,genericMethodOrConstructorDecl_2:Java_genericMethodOrConstructorRest)
+    Java_genericMethodOrConstructorDecl(genericMethodOrConstructorDecl_1:Java_typeParameterList,genericMethodOrConstructorDecl_2:Java_genericMethodOrConstructorRest)
 
 Java_genericMethodOrConstructorRest =
     Java_genericMethodOrConstructorRest_1(genericMethodOrConstructorRest_1_1:Java_genericMethodOrConstructorRest_1_1,genericMethodOrConstructorRest_1_2:Java_Identifier,genericMethodOrConstructorRest_1_3:Java_methodDeclaratorRest)
@@ -255,7 +249,7 @@ Java_interfaceMethodDeclaratorRest_3 =
   | Java_interfaceMethodDeclaratorRest_3_2()
 
 Java_interfaceGenericMethodDecl =
-    Java_interfaceGenericMethodDecl(interfaceGenericMethodDecl_1:Java_typeParameters,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,interfaceGenericMethodDecl_3:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
+    Java_interfaceGenericMethodDecl(interfaceGenericMethodDecl_1:Java_typeParameterList,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,interfaceGenericMethodDecl_3:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
 
 Java_interfaceGenericMethodDecl_2 =
     Java_interfaceGenericMethodDecl_2_1(type:Java_type)
