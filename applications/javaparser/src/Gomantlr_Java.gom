@@ -188,8 +188,8 @@ Java_variableDeclaratorId =
     Java_variableDeclaratorId(variableDeclaratorId_1:Java_Identifier,variableDeclaratorId_2:Java_bracketsList)
 
 Java_variableInitializer =
-    Java_variableInitializer_1(arrayInitializer:Java_arrayInitializer)
-  | Java_variableInitializer_2(expression:Java_expression)
+    Java_variableInitializerArray(arrayInitializer:Java_arrayInitializer)
+  | Java_variableInitializerExpression(expression:Java_expression)
 
 Java_variableInitializerList =
     Java_variableInitializerList(Java_variableInitializer*)
@@ -260,15 +260,15 @@ Java_primitiveType =
 
 Java_variableModifier =
     Java_variableModifierFinal()
-  | Java_variableModifierAnnotation(annotation:Java_annotation)
+  | Java_variableModifierAnnotation(Annotation:Java_annotation)
 
 Java_typeArgumentList =
     Java_typeArgumentList(Java_typeArgument*)
 
 Java_typeArgument =
-    Java_typeArgumentType(type:Java_type)
+    Java_typeArgumentType(Type:Java_type)
   | Java_emptyTypeArgumentExtended()
-  | Java_typeArgumentExtended(typeArgumentQualifier:Java_typeArgumentQualifier,typeArgument_2_1_1_2:Java_type)
+  | Java_typeArgumentExtended(typeArgumentQualifier:Java_typeArgumentQualifier,Type:Java_type)
 
 Java_typeArgumentQualifier =
     Java_typeArgumentExtends()
@@ -281,26 +281,26 @@ Java_formalParameterList =
     Java_formalParameterList(Java_formalParameterDecl*)
 
 Java_formalParameterDecl =
-    Java_formalParameterDeclIncomplete(IsFinal:Java_formalParameterDeclsIsFinal,annotations:Java_annotationList,type:Java_type)
-  | Java_formalParameterDecl(IsFinal:Java_formalParameterDeclsIsFinal,annotations:Java_annotationList,type:Java_type,variableId:Java_variableDeclaratorId)
-  | Java_formalParameterDeclVarArg(IsFinal:Java_formalParameterDeclsIsFinal,annotations:Java_annotationList,type:Java_type,variableId:Java_variableDeclaratorId)
+    Java_formalParameterDeclIncomplete(IsFinal:Java_formalParameterDeclsIsFinal,AnnotationList:Java_annotationList,Type:Java_type)
+  | Java_formalParameterDecl(IsFinal:Java_formalParameterDeclsIsFinal,AnnotationList:Java_annotationList,Type:Java_type,VariableId:Java_variableDeclaratorId)
+  | Java_formalParameterDeclVarArg(IsFinal:Java_formalParameterDeclsIsFinal,AnnotationList:Java_annotationList,Type:Java_type,VariableId:Java_variableDeclaratorId)
 
 Java_formalParameterDeclsIsFinal =
     Java_formalParameterDeclsNotFinal()
   | Java_formalParameterDeclsFinal()
 
 Java_methodBody =
-    Java_methodBody(block:Java_block)
+    Java_methodBody(Block:Java_block)
   | Java_emptyMethodBody()
 
 Java_qualifiedName =
-    Java_qualifiedName(name:Java_Identifier,qualifier:Java_qualifierList)
+    Java_qualifiedName(Identifier:Java_Identifier,Qualifier:Java_qualifierList)
 
 Java_qualifierList =
     Java_qualifierList(Java_Identifier*)
 
 Java_literal =
-    Java_integerLiteral(integerLiteral:Java_integerLiteral)
+    Java_integerLiteral(IntegerLiteral:Java_integerLiteral)
   | Java_floatingPointLiteral(FloatingPointLiteral:Java_FloatingPointLiteral)
   | Java_characterLiteral(CharacterLiteral:Java_CharacterLiteral)
   | Java_stringLiteral(StringLiteral:Java_StringLiteral)
@@ -320,22 +320,18 @@ Java_annotationList =
     Java_annotationList(Java_annotation*)
 
 Java_annotation =
-    Java_annotationSimple(annotation_1:Java_typeName)
-  | Java_annotationId(annotation_1:Java_typeName,ev:Java_elementValue)
-  | Java_annotationElem(annotation_1:Java_typeName,id:Java_Identifier,ev:Java_elementValue)
+    Java_annotationSimple(TypeName:Java_typeName)
+  | Java_annotationId(TypeName:Java_typeName,Ev:Java_elementValue)
+  | Java_annotationElem(TypeName:Java_typeName,Identifier:Java_Identifier,Ev:Java_elementValue)
 
 Java_elementValue =
-    Java_elementValueConditional(conditionalExpression:Java_conditionalExpression)
-  | Java_elementValueAnnotation(annotation:Java_annotation)
-  | Java_elementValueArrayInitializer(elementValueArrayInitializer_1:Java_elementValueArrayInitializer_1,elementValueArrayInitializer_2:Java_elementValueArrayInitializer_2)
+    Java_elementValueConditional(ConditionalExpression:Java_conditionalExpression)
+  | Java_elementValueAnnotation(Annotation:Java_annotation)
+  | Java_elementValueArrayInitializer(elementValueArrayInitializer_1:Java_elementValueArrayInitializer_1,OptionalComa:Java_optionalComa)
 
 Java_elementValueArrayInitializer_1 =
     Java_elementValueArrayInitializer_1_1(elementValue:Java_elementValue)
   | Java_elementValueArrayInitializer_1_2()
-
-Java_elementValueArrayInitializer_2 =
-    Java_elementValueArrayInitializer_2_1()
-  | Java_elementValueArrayInitializer_2_2()
 
 Java_annotationTypeDeclaration =
     Java_annotationTypeDeclaration(Identifier:Java_Identifier,annotationTypeDeclaration_2:Java_annotationTypeBody)

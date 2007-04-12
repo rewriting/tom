@@ -862,11 +862,11 @@ variableDeclaratorId returns [Java_variableDeclaratorId vdi]
 variableInitializer returns [Java_variableInitializer vi]
 	:	ai=arrayInitializer
         {
-            vi=`Java_variableInitializer_1(ai);
+            vi=`Java_variableInitializerArray(ai);
         }
     |   e=expression
         {
-            vi=`Java_variableInitializer_2(e);
+            vi=`Java_variableInitializerExpression(e);
         }
 	;
 	
@@ -1271,7 +1271,7 @@ elementValue returns [Java_elementValue ev]
 elementValueArrayInitializer returns [Java_elementValue evai]
 @init {
     Java_elementValueArrayInitializer_1 evai1=`Java_elementValueArrayInitializer_1_2();
-    Java_elementValueArrayInitializer_2 evai2=`Java_elementValueArrayInitializer_2_2();
+    Java_optionalComa evai2=`Java_noOptionalComa();
 }
 	:	'{' 
         (
@@ -1283,7 +1283,7 @@ elementValueArrayInitializer returns [Java_elementValue evai]
         (
             ','
             {
-                evai2=`Java_elementValueArrayInitializer_2_1();
+                evai2=`Java_optionalComa();
             }
         )?
         '}'
