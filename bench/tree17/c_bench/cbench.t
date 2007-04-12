@@ -34,7 +34,7 @@
 
 static AFun ftrue, ffalse, fz, fs;
 static AFun fequal,fplus,fmult,fexp,fsucc17,fpred17,fplus17,fmult17,fexp17;
-static AFun fexz,fexs,fexplus,fexmult,fexexp,fleaf,fnode,fbuildtree,fcalctree17;
+static AFun fexz,fexs,fexplus,fexmult,fexexp,fleaf,fnode,fcalctree17;
 static AFun fgetmax,fgetval,feval,feval17,fevalsym17;
 static AFun fdec, fexpand, fexone;
 
@@ -166,12 +166,7 @@ ATerm hook_getmax(ATerm t);
   get_slot(t3,t) { ATgetArgument(t,2) }
   get_slot(t4,t) { ATgetArgument(t,3) }
 }
-%op term buildtree(n1:term,n2:term) {
-  is_fsym(t) { ATgetAFun(t) ==  fbuildtree  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fbuildtree,t1,t2) }
-  get_slot(n1,t) { ATgetArgument(t,0) }
-  get_slot(n2,t) { ATgetArgument(t,1) }
-}
+
 %op term getmax(t1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fgetmax  }
   make(t) { hook_getmax(t) }
@@ -227,7 +222,6 @@ void init() {
   fz = ATmakeAFun("z", 0, ATfalse);
   fs = ATmakeAFun("s", 1, ATfalse);
   
-//  fequal = ATmakeAFun("equal", 2, ATfalse);
   fplus = ATmakeAFun("plus", 2, ATfalse);
   fmult = ATmakeAFun("mult", 2, ATfalse);
   fexp = ATmakeAFun("exp", 2, ATfalse);
@@ -246,7 +240,6 @@ void init() {
   
   fleaf = ATmakeAFun("leaf", 1, ATfalse);
   fnode = ATmakeAFun("node", 4, ATfalse);
-  fbuildtree = ATmakeAFun("buildtree", 2, ATfalse);
 
   fgetmax = ATmakeAFun("getmax", 1, ATfalse);
   fgetval = ATmakeAFun("getval", 1, ATfalse);
@@ -274,6 +267,22 @@ ATerm build_exs(int n) {
   return N;
 }
 
+ATerm buildtree(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    z,Val   -> { return (ATerm) `ATmakeAppl1(fleaf,Val); }
+    s(X), Y -> {
+      ATerm Left = `buildtree(X, Y);	
+      ATerm Max2 = `getmax(Left);
+      ATerm Right= `buildtree(X, succ17(Max2));
+      ATerm Val2 = `getval(Left);
+      ATerm Val3 = `getval(Right);
+      ATerm Val  = `plus17(Val2, Val3);
+      ATerm Max  = `getmax(Right);
+      return (ATerm) ATmakeAppl4(fnode,Val, Max, Left, Right);
+    }
+  }
+  return (ATerm) NULL;
+}
 
 ATerm equal(ATerm t1, ATerm t2) {
   if(t1==t2) {
@@ -295,7 +304,9 @@ ATerm bench_evalexp17(ATerm Xs) {
 
 ATerm bench_evaltree17(ATerm Xs) {
   ATerm y = `eval(Xs);
-  return `equal(calctree17(y),getval(buildtree(y,(ATerm)tz)));
+  ATprintf("calctree17(y) = %t\n", `calctree17(y));
+  ATprintf("getval... = %t\n", `getval(buildtree(y,z())) );
+  return `equal(calctree17(y),getval(buildtree(y,z())));
 }
 
 
@@ -332,22 +343,6 @@ void run(int n) {
   
 }
   
-ATerm buildtree(ATerm t1, ATerm t2) {
-  %match(term t1, term t2) {
-    z,Val   -> { return (ATerm) `ATmakeAppl1(fleaf,Val); }
-    s(X), Y -> {
-      ATerm Left = `buildtree(X, Y);	
-      ATerm Max2 = `getmax(Left);
-      ATerm Right= `buildtree(X, succ17(Max2));
-      ATerm Val2 = `getval(Left);
-      ATerm Val3 = `getval(Right);
-      ATerm Val  = `plus17(Val2, Val3);
-      ATerm Max  = `getmax(Right);
-      return (ATerm) ATmakeAppl4(fnode,Val, Max, Left, Right);
-    }
-  }
-  return (ATerm) NULL;
-}
 
 int main(int argc, char **argv) {
   int i;
