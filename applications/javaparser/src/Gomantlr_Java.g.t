@@ -1176,7 +1176,7 @@ qualifiedName returns [Java_qualifiedName qn]
 	
 literal	returns [Java_literal l]
 	:   il=integerLiteral
-        { l=i; }
+        { l=il; }
     |   fpl=FloatingPointLiteral
         { l=`Java_floatingPointLiteral(fpl.getText()); }
     |   cl=CharacterLiteral
