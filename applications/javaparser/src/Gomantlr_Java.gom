@@ -72,15 +72,7 @@ Java_interfaceDeclaration =
   | Java_interfaceDeclaration_2(annotationTypeDeclaration:Java_annotationTypeDeclaration)
 
 Java_normalInterfaceDeclaration =
-    Java_normalInterfaceDeclaration(normalInterfaceDeclaration_1:Java_Identifier,normalInterfaceDeclaration_2:Java_normalInterfaceDeclaration_2,normalInterfaceDeclaration_3:Java_normalInterfaceDeclaration_3,normalInterfaceDeclaration_4:Java_interfaceBody)
-
-Java_normalInterfaceDeclaration_2 =
-    Java_normalInterfaceDeclaration_2_1(typeParameters:Java_typeParameterList)
-  | Java_normalInterfaceDeclaration_2_2()
-
-Java_normalInterfaceDeclaration_3 =
-    Java_normalInterfaceDeclaration_3_1(normalInterfaceDeclaration_3_1_1:Java_typeList)
-  | Java_normalInterfaceDeclaration_3_2()
+    Java_normalInterfaceDeclaration(Identifier:Java_Identifier,typeParameters:Java_typeParameterList,Extends:Java_typeList,InterfaceBody:Java_interfaceBody)
 
 Java_typeList =
     Java_typeList(Java_type*)
@@ -89,10 +81,7 @@ Java_classBody =
     Java_classBody(Java_classBodyDeclaration*)
 
 Java_interfaceBody =
-    Java_interfaceBody(interfaceBody_1:Java_interfaceBody_1)
-
-Java_interfaceBody_1 =
-    Java_interfaceBody_1_1(Java_interfaceBodyDeclaration*)
+    Java_interfaceBody(Java_interfaceBodyDeclaration*)
 
 Java_classBodyDeclaration =
     Java_classBodyDeclaration_1()

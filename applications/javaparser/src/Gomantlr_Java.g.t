@@ -369,20 +369,20 @@ interfaceDeclaration returns [Java_interfaceDeclaration id]
 	
 normalInterfaceDeclaration returns [Java_normalInterfaceDeclaration nid]
 @init {
-    Java_normalInterfaceDeclaration_2 nid2=`Java_normalInterfaceDeclaration_2_2();
-    Java_normalInterfaceDeclaration_3 nid3=`Java_normalInterfaceDeclaration_3_2();
+    Java_typeParameterList nid2=`Java_typeParameterList();
+    Java_typeList nid3=`Java_typeList();
 }
 	:	'interface' i=Identifier 
         (
             tp=typeParameters
             {
-                nid2=`Java_normalInterfaceDeclaration_2_1(tp);
+                nid2=tp;
             }
         )?
         (
             'extends' tl=typeList
             {
-                nid3=`Java_normalInterfaceDeclaration_3_1(tl);
+                nid3=tl;
             }
         )?
         ib=interfaceBody
@@ -423,19 +423,16 @@ classBody returns [Java_classBody cb]
 	
 interfaceBody returns [Java_interfaceBody ib]
 @init {
-    Java_interfaceBody_1 ib1=`Java_interfaceBody_1_1();
+    ib=`Java_interfaceBody();
 }
 	:	'{' 
         (
             ibd=interfaceBodyDeclaration
             {
-                ib1=`Java_interfaceBody_1_1(ib1*,ibd);
+                ib=`Java_interfaceBody(ib*,ibd);
             }
         )*
         '}'
-        {
-            ib=`Java_interfaceBody(ib1);
-        }
 	;
 
 classBodyDeclaration returns [Java_classBodyDeclaration ebd]
