@@ -22,7 +22,7 @@ public class TomPropagationManager extends TomBase {
 
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 
-  private static final String[] propagatorsNames = {"TomSyntacticPropagator","TomVariadicPropagator"};
+  private static final String[] propagatorsNames = {"TomSyntacticPropagator","TomVariadicPropagator","TomArrayPropagator"};
 
   private static TomNumberList rootpath = null;
   private static short freshVarCounter = 0;

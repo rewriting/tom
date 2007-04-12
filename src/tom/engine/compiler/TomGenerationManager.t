@@ -31,7 +31,7 @@ public class TomGenerationManager extends TomBase {
 
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
-  private static final String[] generatorsNames = {"TomSyntacticGenerator","TomVariadicGenerator"};
+  private static final String[] generatorsNames = {"TomSyntacticGenerator","TomVariadicGenerator","TomArrayGenerator"};
 
   public static Instruction performGenerations(Constraint constraint, Instruction action) 
   throws ClassNotFoundException,InstantiationException,IllegalAccessException{		
@@ -84,9 +84,12 @@ public class TomGenerationManager extends TomBase {
       }
       EmptyListConstraint(opName,variable) ->{				
         return `IsEmptyList(opName,variable);
+      }      
+      EmptyArrayConstraint(opName,variable,index) ->{                          
+        return `IsEmptyArray(opName,Ref(variable),Ref(index));
       }
     }			
-    throw new TomRuntimeException("TomInstructionGenerationManager.prepareGeneration - strange constraint:" + constraint);
+    throw new TomRuntimeException("TomGenerationManager.prepareGeneration - strange constraint:" + constraint);
   }	
 
   /**
