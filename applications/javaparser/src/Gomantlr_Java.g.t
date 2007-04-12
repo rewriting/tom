@@ -1352,59 +1352,56 @@ annotationTypeElementDeclaration returns [Java_annotationTypeElementDeclaration 
 	;
 	
 annotationTypeElementRest returns [Java_annotationTypeElementRest ater]
-	:	t=type i=Identifier amocr=annotationMethodOrConstantRest ';'
+	:	t=type i=Identifier amocr=annotationMethodOrConstantRest[t,`Java_Identifier(i.getText())] ';'
         {
-            ater=`Java_annotationTypeElementRest_1(Java_annotationTypeElementRest_1_1(t,Java_Identifier(i.getText()),amocr));
+            ater=amocr;
         }
 	|   cd=classDeclaration
         {
-            ater=`Java_annotationTypeElementRest_2(cd);
+            ater=`Java_annotationTypeElementClass(cd);
         }
 	|   id=interfaceDeclaration
         {
-            ater=`Java_annotationTypeElementRest_3(id);
+            ater=`Java_annotationTypeElementInterface(id);
         }
 	|   ed=enumDeclaration
         {
-            ater=`Java_annotationTypeElementRest_4(ed);
+            ater=`Java_annotationTypeElementEnum(ed);
         }
 	|   atd=annotationTypeDeclaration
         {
-            ater=`Java_annotationTypeElementRest_5(atd);
+            ater=`Java_annotationTypeElementType(atd);
         }
 	;
 	
-annotationMethodOrConstantRest returns [Java_annotationMethodOrConstantRest amocr]
+annotationMethodOrConstantRest [Java_type typ, Java_Identifier ident] returns [Java_annotationTypeElementRest amocr]
 	:	amr=annotationMethodRest
         {
-            amocr=`Java_annotationMethodOrConstantRest_1(amr);
+            amocr=`Java_annotationTypeElementMethod(typ,ident,amr);
         }
 	|   acr=annotationConstantRest
         {
-            amocr=`Java_annotationMethodOrConstantRest_2(acr);
+            amocr=`Java_annotationTypeElementConstant(typ,ident,acr);
         }
 	;
 	
-annotationMethodRest returns [Java_annotationMethodRest amr]
+annotationMethodRest returns [Java_annotationMethod amr]
 @init {
-    Java_annotationMethodRest_1 amr1=`Java_annotationMethodRest_1_2();
+    amr=`Java_annotationMethodEmpty();
 }
  	:	'(' ')' 
         (
             dv=defaultValue
             {
-                amr1=`Java_annotationMethodRest_1_1(dv);
+                amr=`Java_annotationMethodDefault(dv);
             }
         )?
-        {
-            amr=`Java_annotationMethodRest(amr1);
-        }
  	;
  	
-annotationConstantRest returns [Java_annotationConstantRest acr]
+annotationConstantRest returns [Java_annotationConstant acr]
  	:	vd=variableDeclarators
         {
-            acr=`Java_annotationConstantRest(vd);
+            acr=`Java_annotationConstant(vd);
         }
  	;
  	

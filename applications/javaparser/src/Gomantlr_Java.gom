@@ -461,28 +461,19 @@ Java_annotationTypeElementDeclaration =
     Java_annotationTypeElementDeclaration(modifierList:Java_modifierList,annotationTypeElementDeclaration_2:Java_annotationTypeElementRest)
 
 Java_annotationTypeElementRest =
-    Java_annotationTypeElementRest_1(annotationTypeElementRest_1_1:Java_annotationTypeElementRest_1_1)
-  | Java_annotationTypeElementRest_2(classDeclaration:Java_classDeclaration)
-  | Java_annotationTypeElementRest_3(interfaceDeclaration:Java_interfaceDeclaration)
-  | Java_annotationTypeElementRest_4(enumDeclaration:Java_enumDeclaration)
-  | Java_annotationTypeElementRest_5(annotationTypeDeclaration:Java_annotationTypeDeclaration)
+    Java_annotationTypeElementConstant(type:Java_type,id:Java_Identifier,annotationConstant:Java_annotationConstant)
+  | Java_annotationTypeElementMethod(type:Java_type,id:Java_Identifier,annotationMethod:Java_annotationMethod)
+  | Java_annotationTypeElementClass(classDeclaration:Java_classDeclaration)
+  | Java_annotationTypeElementInterface(interfaceDeclaration:Java_interfaceDeclaration)
+  | Java_annotationTypeElementEnum(enumDeclaration:Java_enumDeclaration)
+  | Java_annotationTypeElementType(annotationTypeDeclaration:Java_annotationTypeDeclaration)
 
-Java_annotationTypeElementRest_1_1 =
-    Java_annotationTypeElementRest_1_1(annotationTypeElementRest_1_1_1:Java_type,annotationTypeElementRest_1_1_2:Java_Identifier,annotationTypeElementRest_1_1_3:Java_annotationMethodOrConstantRest)
+Java_annotationMethod =
+    Java_annotationMethodDefault(defaultValue:Java_defaultValue)
+  | Java_annotationMethodEmpty()
 
-Java_annotationMethodOrConstantRest =
-    Java_annotationMethodOrConstantRest_1(annotationMethodRest:Java_annotationMethodRest)
-  | Java_annotationMethodOrConstantRest_2(annotationConstantRest:Java_annotationConstantRest)
-
-Java_annotationMethodRest =
-    Java_annotationMethodRest(annotationMethodRest_1:Java_annotationMethodRest_1)
-
-Java_annotationMethodRest_1 =
-    Java_annotationMethodRest_1_1(defaultValue:Java_defaultValue)
-  | Java_annotationMethodRest_1_2()
-
-Java_annotationConstantRest =
-    Java_annotationConstantRest(variableDeclarators:Java_variableDeclaratorList)
+Java_annotationConstant =
+    Java_annotationConstant(variableDeclarators:Java_variableDeclaratorList)
 
 Java_defaultValue =
     Java_defaultValue(defaultValue_1:Java_elementValue)
