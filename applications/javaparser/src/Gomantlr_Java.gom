@@ -173,13 +173,13 @@ Java_classBodyDeclaration_2_1 =
 
 
 Java_memberDecl =
-    Java_memberDecl_1(genericMethodOrConstructorDecl:Java_genericMethodOrConstructorDecl)
-  | Java_memberDecl_2(methodDeclaration:Java_methodDeclaration)
-  | Java_memberDecl_3(fieldDeclaration:Java_fieldDeclaration)
-  | Java_memberDecl_4(memberDecl_4_1:Java_Identifier,memberDecl_4_2:Java_voidMethodDeclaratorRest)
-  | Java_memberDecl_5(memberDecl_5_1:Java_Identifier,memberDecl_5_2:Java_constructorDeclaratorRest)
-  | Java_memberDecl_6(interfaceDeclaration:Java_interfaceDeclaration)
-  | Java_memberDecl_7(classDeclaration:Java_classDeclaration)
+    Java_memberGenericMethodOrConstructorDecl(genericMethodOrConstructorDecl:Java_genericMethodOrConstructorDecl)
+  | Java_memberMethodDeclaration(methodDeclaration:Java_methodDeclaration)
+  | Java_memberFieldDeclaration(fieldDeclaration:Java_fieldDeclaration)
+  | Java_memberVoidMethodDeclaratorRest(memberDecl_4_1:Java_Identifier,memberDecl_4_2:Java_voidMethodDeclaratorRest)
+  | Java_memberConstructorDeclaratorRest(memberDecl_5_1:Java_Identifier,memberDecl_5_2:Java_constructorDeclaratorRest)
+  | Java_memberInterfaceDeclaration(interfaceDeclaration:Java_interfaceDeclaration)
+  | Java_memberClassDeclaration(classDeclaration:Java_classDeclaration)
 
 Java_genericMethodOrConstructorDecl =
     Java_genericMethodOrConstructorDecl(genericMethodOrConstructorDecl_1:Java_typeParameterList,genericMethodOrConstructorDecl_2:Java_genericMethodOrConstructorRest)

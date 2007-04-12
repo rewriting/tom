@@ -477,31 +477,31 @@ classBodyDeclaration returns [Java_classBodyDeclaration ebd]
 memberDecl returns [Java_memberDecl md]
 	:	gmocd=genericMethodOrConstructorDecl
         {
-            md=`Java_memberDecl_1(gmocd);
+            md=`Java_memberGenericMethodOrConstructorDecl(gmocd);
         }
 	|	md1=methodDeclaration
         {
-            md=`Java_memberDecl_2(md1);
+            md=`Java_memberMethodDeclaration(md1);
         }
 	|	fd=fieldDeclaration
         {
-            md=`Java_memberDecl_3(fd);
+            md=`Java_memberFieldDeclaration(fd);
         }
 	|	'void' i=Identifier vmdr=voidMethodDeclaratorRest
         {
-            md=`Java_memberDecl_4(Java_Identifier(i.getText()),vmdr);
+            md=`Java_memberVoidMethodDeclaratorRest(Java_Identifier(i.getText()),vmdr);
         }
 	|	i=Identifier cdr=constructorDeclaratorRest
         {
-            md=`Java_memberDecl_5(Java_Identifier(i.getText()),cdr);
+            md=`Java_memberConstructorDeclaratorRest(Java_Identifier(i.getText()),cdr);
         }
 	|	id=interfaceDeclaration
         {
-            md=`Java_memberDecl_6(id);
+            md=`Java_memberInterfaceDeclaration(id);
         }
 	|	cd=classDeclaration
         {
-            md=`Java_memberDecl_7(cd);
+            md=`Java_memberClassDeclaration(cd);
         }
 	;
 	
