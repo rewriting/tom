@@ -494,47 +494,30 @@ Java_localVariableModifier =
   | Java_localVariableNoModifier()
 
 Java_statement =
-    Java_statement_1(block:Java_block)
-  | Java_statement_2(statement_2_1:Java_expression,statement_2_2:Java_statement_2_2)
-  | Java_statement_3(statement_3_1:Java_parExpression,statement_3_2:Java_statement,statement_3_3:Java_statement_3_3)
-  | Java_statement_4(statement_4_1:Java_forControl,statement_4_2:Java_statement)
-  | Java_statement_5(statement_5_1:Java_parExpression,statement_5_2:Java_statement)
-  | Java_statement_6(statement_6_1:Java_statement,statement_6_2:Java_parExpression)
-  | Java_statement_7(statement_7_1:Java_block,statement_7_2:Java_statement_7_2)
-  | Java_statement_8(statement_8_1:Java_parExpression,statement_8_2:Java_switchBlockStatementGroups)
-  | Java_statement_9(statement_9_1:Java_parExpression,statement_9_2:Java_block)
-  | Java_statement_10(statement_10_1:Java_statement_10_1)
-  | Java_statement_11(statement_11_1:Java_expression)
-  | Java_statement_12(statement_12_1:Java_statement_12_1)
-  | Java_statement_13(statement_13_1:Java_statement_13_1)
-  | Java_statement_14()
-  | Java_statement_15(statement_15_1:Java_statementExpression)
-  | Java_statement_16(statement_16_1:Java_Identifier,statement_16_2:Java_statement)
+    Java_statementBlock(block:Java_block)
+  | Java_statementAssert(expression:Java_expression)
+  | Java_statementAssertWithValue(expression:Java_expression,value:Java_expression)
+  | Java_statementIfThen(Cond:Java_parExpression,Then:Java_statement)
+  | Java_statementIfThenElse(Cond:Java_parExpression,Then:Java_statement,Else:Java_statement)
+  | Java_statementFor(forControl:Java_forControl,statement:Java_statement)
+  | Java_statementWhile(parExpression:Java_parExpression,statement:Java_statement)
+  | Java_statementDoWhile(statement:Java_statement,parExpression:Java_parExpression)
+  | Java_statementTry(block:Java_block,catches:Java_catches)
+  | Java_statementTryFinally(block:Java_block,catches:Java_catches,finally:Java_block)
+  | Java_statementSwitch(parExpression:Java_parExpression,switchStatements:Java_switchBlockStatementGroups)
+  | Java_statementSynchronized(parExpression:Java_parExpression,block:Java_block)
+  | Java_statementReturn(expr:Java_expression)
+  | Java_statementReturnVoid()
+  | Java_statementThrow(expr:Java_expression)
+  | Java_statementBreak(idOrNone:Java_IdentifierOrNone)
+  | Java_statementContinue(idOrNone:Java_IdentifierOrNone)
+  | Java_statementNop()
+  | Java_statementExpression(expr:Java_expression)
+  | Java_statementLabel(label:Java_Identifier,statement:Java_statement)
 
-Java_statement_2_2 =
-    Java_statement_2_2_1(statement_2_2_1_1:Java_expression)
-  | Java_statement_2_2_2()
-
-Java_statement_3_3 =
-    Java_statement_3_3_1(statement_3_3_1_1:Java_statement)
-  | Java_statement_3_3_2()
-
-Java_statement_7_2 =
-    Java_statement_7_2_1(catches:Java_catches,block:Java_block)
-  | Java_statement_7_2_2(catches:Java_catches)
-  | Java_statement_7_2_3(block:Java_block)
-
-Java_statement_10_1 =
-    Java_statement_10_1_1(expression:Java_expression)
-  | Java_statement_10_1_2()
-
-Java_statement_12_1 =
-    Java_statement_12_1_1(Identifier:Java_Identifier)
-  | Java_statement_12_1_2()
-
-Java_statement_13_1 =
-    Java_statement_13_1_1(Identifier:Java_Identifier)
-  | Java_statement_13_1_2()
+Java_IdentifierOrNone =
+    Java_hasIdentifier(Identifier:Java_Identifier)
+  | Java_NoIdentifier()
 
 Java_catches =
     Java_catches(Java_catchClause*)
@@ -543,10 +526,10 @@ Java_catchClause =
     Java_catchClause(catchClause_1:Java_formalParameter,catchClause_2:Java_block)
 
 Java_formalParameter =
-    Java_formalParameter(formalParameter_1:Java_formalParameter_1,formalParameter_2:Java_type,formalParameter_3:Java_variableDeclaratorId)
+    Java_formalParameter(Modifiers:Java_variableModifierList,formalParameter_2:Java_type,formalParameter_3:Java_variableDeclaratorId)
 
-Java_formalParameter_1 =
-    Java_formalParameter_1_1(Java_variableModifier*)
+Java_variableModifierList =
+    Java_variableModifierList(Java_variableModifier*)
 
 Java_switchBlockStatementGroups =
     Java_switchBlockStatementGroups_1(Java_switchBlockStatementGroup*)
@@ -558,15 +541,12 @@ Java_switchBlockStatementGroup_2 =
     Java_switchBlockStatementGroup_2_1(Java_blockStatement*)
 
 Java_switchLabel =
-    Java_switchLabel_1(constantExpression:Java_constantExpression)
-  | Java_switchLabel_2(enumConstantName:Java_enumConstantName)
-  | Java_switchLabel_3()
+    Java_switchLabelExpression(constantExpression:Java_constantExpression)
+  | Java_switchLabelEnum(enumConstantName:Java_enumConstantName)
+  | Java_switchLabelDefault()
 
 Java_moreStatementExpressions =
-    Java_moreStatementExpressions_1(Java_moreStatementExpressions_1_1*)
-
-Java_moreStatementExpressions_1_1 =
-    Java_moreStatementExpressions_1_1(moreStatementExpressions_1_1_1:Java_statementExpression)
+    Java_moreStatementExpressions(Java_expression*)
 
 Java_forControl =
     Java_forControl_1(forVarControl:Java_forVarControl)
@@ -632,9 +612,6 @@ Java_expressionList =
 
 Java_expressionList_2_1_1 =
     Java_expressionList_2_1_1(expressionList_2_1_1_1:Java_expression)
-
-Java_statementExpression =
-    Java_statementExpression(expression:Java_expression)
 
 Java_constantExpression =
     Java_constantExpression(expression:Java_expression)

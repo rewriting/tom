@@ -1462,142 +1462,160 @@ localVariableDeclaration returns [Java_localVariableDeclaration lvd]
 	
 statement returns [Java_statement s]
 @init {
-    Java_statement_2_2 ts2=`Java_statement_2_2_2();
-    Java_statement_3_3 ts3=`Java_statement_3_3_2();
-    Java_statement_7_2 ts7=null;
-    Java_statement_10_1 ts10=`Java_statement_10_1_2();
-    Java_statement_12_1 ts12=`Java_statement_12_1_2();
-    Java_statement_13_1 ts13=`Java_statement_13_1_2();
+    Java_expression ts2=null;
+    Java_statement ts3=null;
+    Java_block ts7=null;
+    Java_expression ts10=null;
+    Java_IdentifierOrNone ts12=`Java_NoIdentifier();
+    Java_IdentifierOrNone ts13=`Java_NoIdentifier();
+    Java_catches tcatch=`Java_catches();
 }
 	: 
             b=block
             {
-                s=`Java_statement_1(b);
+                s=`Java_statementBlock(b);
             }
         | 
             'assert' e1=expression 
             (
                 ':' e2=expression
                 {
-                    ts2=`Java_statement_2_2_1(e2);
+                    ts2=e2;
                 }
             )?
             ';'
             {
-                s=`Java_statement_2(e1,ts2);
+              if (null == ts2) {
+                s=`Java_statementAssert(e1);
+              } else {
+                s=`Java_statementAssertWithValue(e1,ts2);
+              }
             }
         | 
             'if' pe=parExpression s1=statement 
             (
                 'else' s2=statement
                 {
-                    ts3=`Java_statement_3_3_1(s2);
+                    ts3=s2;
                 }
             )?
             {
-                s=`Java_statement_3(pe,s1,ts3);
+              if (null == ts3) {
+                s=`Java_statementIfThen(pe,s1);
+              } else {
+                s=`Java_statementIfThenElse(pe,s1,ts3);
+              }
             }
         | 
             'for' '(' fc=forControl ')' s1=statement
             {
-                s=`Java_statement_4(fc,s1);
+                s=`Java_statementFor(fc,s1);
             }
         |
             'while' pe=parExpression s1=statement
             {
-                s=`Java_statement_5(pe,s1);
+                s=`Java_statementWhile(pe,s1);
             }
         |
             'do' s1=statement 'while' pe=parExpression ';'
             {
-                s=`Java_statement_6(s1,pe);
+                s=`Java_statementDoWhile(s1,pe);
             }
         |
             'try' b=block
             (
                     c=catches 'finally' b=block
                     {
-                        ts7=`Java_statement_7_2_1(c,b);
+                        ts7=b;
+                        tcatch=c;
                     }
                 | 
                     c=catches
                     {
-                        ts7=`Java_statement_7_2_2(c);
+                        tcatch=c;
                     }
                 |
                     'finally' b=block
                     {
-                        ts7=`Java_statement_7_2_3(b);
+                        ts7=b;
                     }
             )
             {
-                s=`Java_statement_7(b,ts7);
+              if(null==ts7) {
+                s=`Java_statementTry(b,tcatch);
+              } else {
+                s=`Java_statementTryFinally(b,tcatch,ts7);
+              }
             }
         |
             'switch' pe=parExpression '{' sbsg=switchBlockStatementGroups '}'
             {
-                s=`Java_statement_8(pe,sbsg);
+                s=`Java_statementSwitch(pe,sbsg);
             }
         |
             'synchronized' pe=parExpression b=block
             {
-                s=`Java_statement_9(pe,b);
+                s=`Java_statementSynchronized(pe,b);
             }
         |
             'return' 
             (
                 e=expression
                 {
-                    ts10=`Java_statement_10_1_1(e);
+                    ts10=e;
                 }
             )? 
             ';'
             {
-                s=`Java_statement_10(ts10);
+              if(null == ts10) {
+                s=`Java_statementReturnVoid();
+              } else {
+                s=`Java_statementReturn(ts10);
+              }
             }
         |
             'throw' e=expression ';'
             {
-                s=`Java_statement_11(e);
+                s=`Java_statementThrow(e);
             }
         |
             'break'
             (
                 i=Identifier
                 {
-                    ts12=`Java_statement_12_1_1(Java_Identifier(i.getText()));
+                    ts12=`Java_hasIdentifier(Java_Identifier(i.getText()));
                 }
             )?
             ';'
             {
-                s=`Java_statement_12(ts12);
+                s=`Java_statementBreak(ts12);
             }
         |
             'continue' 
             (
                 i=Identifier
                 {
-                    ts13=`Java_statement_13_1_1(Java_Identifier(i.getText()));
+                    ts13=`Java_hasIdentifier(Java_Identifier(i.getText()));
                 }
             )?
             ';'
             {
-                s=`Java_statement_13(ts13);
+                s=`Java_statementContinue(ts13);
             }
         |
             ';'
             {
-                s=`Java_statement_14();
+                s=`Java_statementNop();
             }
         |
             se=statementExpression ';'
             {
-                s=`Java_statement_15(se);
+                s=`Java_statementExpression(se);
             }
         | 
             i=Identifier ':' s1=statement
             {
-                s=`Java_statement_16(Java_Identifier(i.getText()),s1);
+                s=`Java_statementLabel(Java_Identifier(i.getText()),s1);
             }
 	;
 	
@@ -1626,12 +1644,12 @@ catchClause returns [Java_catchClause cc]
 
 formalParameter returns [Java_formalParameter fp]
 @init {
-    Java_formalParameter_1 fp1=`Java_formalParameter_1_1();
+    Java_variableModifierList fp1=`Java_variableModifierList();
 }
 	:	(
             vm=variableModifier
             {
-                fp1=`Java_formalParameter_1_1(fp1*,vm);
+                fp1=`Java_variableModifierList(fp1*,vm);
             }
         )*
         t=type vdi=variableDeclaratorId
@@ -1672,27 +1690,27 @@ switchLabel returns [Java_switchLabel sl]
 	:
             'case' ce=constantExpression ':'
             {
-                sl=`Java_switchLabel_1(ce);
+                sl=`Java_switchLabelExpression(ce);
             }
 	|
         'case' ecn=enumConstantName ':'
             {
-                sl=`Java_switchLabel_2(ecn);
+                sl=`Java_switchLabelEnum(ecn);
             }
 	|   'default' ':'
             {
-                sl=`Java_switchLabel_3();
+                sl=`Java_switchLabelDefault();
             }
 	;
 	
 moreStatementExpressions returns [Java_moreStatementExpressions mse]
 @init {
-    mse=`Java_moreStatementExpressions_1();
+    mse=`Java_moreStatementExpressions();
 }
 	:	(
             ',' se=statementExpression
             {
-                mse=`Java_moreStatementExpressions_1(mse*,Java_moreStatementExpressions_1_1(se));
+                mse=`Java_moreStatementExpressions(mse*,se);
             }
         )*
 	;
@@ -1846,10 +1864,10 @@ expressionList returns [Java_expressionList el]
         }
     ;
 
-statementExpression returns [Java_statementExpression se]
+statementExpression returns [Java_expression se]
 	:	e=expression
         {
-            se=`Java_statementExpression(e);
+            se=e;
         }
 	;
 	
