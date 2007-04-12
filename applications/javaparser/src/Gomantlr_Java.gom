@@ -132,13 +132,7 @@ Java_normalInterfaceDeclaration_3 =
   | Java_normalInterfaceDeclaration_3_2()
 
 Java_typeList =
-    Java_typeList(typeList_1:Java_type,typeList_2:Java_typeList_2)
-
-Java_typeList_2 =
-    Java_typeList_2_1(Java_typeList_2_1_1*)
-
-Java_typeList_2_1_1 =
-    Java_typeList_2_1_1(typeList_2_1_1_1:Java_type)
+    Java_typeList(Java_type*)
 
 Java_classBody =
     Java_classBody(Java_classBodyDeclaration*)

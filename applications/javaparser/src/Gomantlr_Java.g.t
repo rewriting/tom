@@ -396,17 +396,17 @@ normalInterfaceDeclaration returns [Java_normalInterfaceDeclaration nid]
 	
 typeList returns [Java_typeList tl]
 @init {
-    Java_typeList_2 tl2=`Java_typeList_2_1();
+    tl=`Java_typeList();
 }
 	:	t1=type 
         (
             ',' t2=type
             {
-                tl2=`Java_typeList_2_1(tl2*,Java_typeList_2_1_1(t2));
+                tl=`Java_typeList(tl*,t2);
             }
         )*
         {
-            tl=`Java_typeList(t1,tl2);
+            tl=`Java_typeList(t1,tl*);
         }
 	;
 	
