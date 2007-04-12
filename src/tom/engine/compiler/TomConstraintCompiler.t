@@ -38,7 +38,7 @@ public class TomConstraintCompiler extends TomBase {
   private static short freshSubjectCounter = 0;	
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
-    TomConstraintCompiler.symbolTable = symbolTable;
+    TomConstraintCompiler.symbolTable = symbolTable;    
     return  (TomTerm)((Strategy)`InnermostId(CompileMatch())).fire(termToCompile);		
   }
 
