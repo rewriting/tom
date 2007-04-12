@@ -236,11 +236,7 @@ Java_type_1_2 =
     Java_type_1_2_list(Java_type_1_2_item*)
 
 Java_type_1_2_item =
-    Java_type_1_2_item(type_1_2_item_1:Java_Identifier,type_1_2_item_2:Java_type_1_2_item_2)
-
-Java_type_1_2_item_2 =
-    Java_type_1_2_item_2_yes(type_1_2_item_2_ta:Java_typeArgumentList)
-  | Java_type_1_2_item_2_no()
+    Java_type_1_2_item(type_1_2_item_1:Java_Identifier,type_1_2_item_2:Java_TypeArgumentList)
 
 Java_bracketsList =
     Java_bracketsList(Java_brackets*)
