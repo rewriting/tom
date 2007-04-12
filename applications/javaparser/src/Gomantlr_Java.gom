@@ -199,7 +199,7 @@ Java_methodDeclaration =
     Java_methodDeclaration(methodDeclaration_1:Java_type,methodDeclaration_2:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
 
 Java_fieldDeclaration =
-    Java_fieldDeclaration(fieldDeclaration_1:Java_type,fieldDeclaration_2:Java_variableDeclarators)
+    Java_fieldDeclaration(fieldDeclaration_1:Java_type,fieldDeclaration_2:Java_variableDeclaratorList)
 
 Java_interfaceBodyDeclaration =
     Java_interfaceBodyDeclaration_1(modifierList:Java_modifierList,interfaceBodyDeclaration_1_2:Java_interfaceMemberDecl)
@@ -272,14 +272,8 @@ Java_constructorDeclaratorRest_2 =
 Java_constantDeclarator =
     Java_constantDeclarator(constantDeclarator_1:Java_Identifier,constantDeclarator_2:Java_constantDeclaratorRest)
 
-Java_variableDeclarators =
-    Java_variableDeclarators(variableDeclarators_1:Java_variableDeclarator,variableDeclarators_2:Java_variableDeclarators_2)
-
-Java_variableDeclarators_2 =
-    Java_variableDeclarators_2_1(Java_variableDeclarators_2_1_1*)
-
-Java_variableDeclarators_2_1_1 =
-    Java_variableDeclarators_2_1_1(variableDeclarators_2_1_1_1:Java_variableDeclarator)
+Java_variableDeclaratorList =
+    Java_variableDeclaratorList(Java_variableDeclarator*)
 
 Java_variableDeclarator =
     Java_variableDeclarator(variableDeclarator_1:Java_Identifier,variableDeclarator_2:Java_variableDeclaratorRest)
@@ -519,7 +513,7 @@ Java_annotationMethodRest_1 =
   | Java_annotationMethodRest_1_2()
 
 Java_annotationConstantRest =
-    Java_annotationConstantRest(variableDeclarators:Java_variableDeclarators)
+    Java_annotationConstantRest(variableDeclarators:Java_variableDeclaratorList)
 
 Java_defaultValue =
     Java_defaultValue(defaultValue_1:Java_elementValue)
@@ -533,7 +527,7 @@ Java_blockStatement =
   | Java_statement(statement:Java_statement)
 
 Java_localVariableDeclaration =
-    Java_localVariableDeclaration(localVariableDeclaration_1:Java_localVariableModifier,localVariableDeclaration_2:Java_type,localVariableDeclaration_3:Java_variableDeclarators)
+    Java_localVariableDeclaration(localVariableDeclaration_1:Java_localVariableModifier,localVariableDeclaration_2:Java_type,localVariableDeclaration_3:Java_variableDeclaratorList)
 
 Java_localVariableModifier =
     Java_localVariableModifierFinal()
@@ -631,7 +625,7 @@ Java_forControl_2_3 =
   | Java_forControl_2_3_2()
 
 Java_forInit =
-    Java_forInit_1(forInit_1_1:Java_forInit_1_1,forInit_1_2:Java_type,forInit_1_3:Java_variableDeclarators)
+    Java_forInit_1(forInit_1_1:Java_forInit_1_1,forInit_1_2:Java_type,forInit_1_3:Java_variableDeclaratorList)
   | Java_forInit_2(expressionList:Java_expressionList)
 
 Java_forInit_1_1 =

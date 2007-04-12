@@ -765,19 +765,19 @@ constantDeclarator returns [Java_constantDeclarator cd]
         }
 	;
 	
-variableDeclarators returns [Java_variableDeclarators vd]
+variableDeclarators returns [Java_variableDeclaratorList vd]
 @init {
-    Java_variableDeclarators_2 tvd=`Java_variableDeclarators_2_1();
+    vd=`Java_variableDeclaratorList();
 }
 	:	vd1=variableDeclarator 
         (
             ',' vd2=variableDeclarator
             {
-                tvd=`Java_variableDeclarators_2_1(tvd*,Java_variableDeclarators_2_1_1(vd2));
+                vd=`Java_variableDeclaratorList(vd*,vd2);
             }
         )*
         {
-            vd=`Java_variableDeclarators(vd1,tvd);
+            vd=`Java_variableDeclaratorList(vd1,vd*);
         }
 	;
 
