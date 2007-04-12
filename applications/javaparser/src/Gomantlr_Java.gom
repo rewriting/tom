@@ -16,21 +16,18 @@ Java_packageDeclaration =
     Java_packageDeclaration(packageDeclaration_1:Java_qualifiedName)
 
 Java_importDeclaration =
-    Java_importDeclaration(importDeclaration_1:Java_isStaticImport,importDeclaration_2:Java_Identifier,importDeclaration_3:Java_importDeclaration_3,importDeclaration_4:Java_importDeclaration_4)
+    Java_importDeclaration(importDeclaration_1:Java_isStaticImport,importDeclaration_2:Java_Identifier,identifierList:Java_IdentifierList,importDeclaration_4:Java_importSuffix)
 
 Java_isStaticImport =
     Java_staticImport()
   | Java_nonStaticImport()
 
-Java_importDeclaration_3 =
-    Java_importDeclaration_3_1(Java_importDeclaration_3_1_1*)
+Java_IdentifierList =
+    Java_IdentifierList(Java_Identifier*)
 
-Java_importDeclaration_3_1_1 =
-    Java_importDeclaration_3_1_1(importDeclaration_3_1_1_1:Java_Identifier)
-
-Java_importDeclaration_4 =
-    Java_importDeclaration_4_1()
-  | Java_importDeclaration_4_2()
+Java_importSuffix =
+    Java_importSuffixStar()
+  | Java_importNoSuffix()
 
 Java_classOrInterfaceDeclaration =
     Java_classDeclaration(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)

@@ -94,8 +94,8 @@ packageDeclaration returns [Java_packageDeclaration pd]
 importDeclaration returns [Java_importDeclaration id]
 @init {
     Java_isStaticImport id1=`Java_nonStaticImport();
-    Java_importDeclaration_3 id3=`Java_importDeclaration_3_1();
-    Java_importDeclaration_4 id4=`Java_importDeclaration_4_2();
+    Java_IdentifierList id3=`Java_IdentifierList();
+    Java_importSuffix id4=`Java_importNoSuffix();
 }
 	:	'import' 
         (
@@ -108,13 +108,13 @@ importDeclaration returns [Java_importDeclaration id]
         (
             '.' i2=Identifier
             {
-                id3=`Java_importDeclaration_3_1(id3*,Java_importDeclaration_3_1_1(Java_Identifier(i2.getText())));
+                id3=`Java_IdentifierList(id3*,Java_Identifier(i2.getText()));
             }
         )* 
         (
             '.' '*'
             {
-                id4=`Java_importDeclaration_4_1();
+                id4=`Java_importSuffixStar();
             }
         )?
         ';'
