@@ -1,3 +1,5 @@
+all: cbench
+
 cbench.tom.c: cbench.t
 	tom -c cbench.t
 
