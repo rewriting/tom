@@ -615,7 +615,7 @@ interfaceMethodOrFieldRest returns [Java_interfaceMethodOrFieldRest imofr]
 	
 methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
 @init {
-    Java_methodDeclaratorRest_2 mdr2=`Java_methodDeclaratorRest_2_1();
+    Java_bracketsList b=`Java_bracketsList();
     Java_methodDeclaratorRest_3 mdr3=`Java_methodDeclaratorRest_3_2();
     Java_methodDeclaratorRest_4 mdr4=null;
 }
@@ -623,7 +623,7 @@ methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
         (
             '[' ']'
             {
-                mdr2=`Java_methodDeclaratorRest_2_1(mdr2*,Java_methodDeclaratorRest_2_1_1());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
         )*
         (
@@ -644,7 +644,7 @@ methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
                 }
         )
         {
-            mdr=`Java_methodDeclaratorRest(fp,mdr2,mdr3,mdr4);
+            mdr=`Java_methodDeclaratorRest(fp,b,mdr3,mdr4);
         }
 	;
 	
@@ -678,14 +678,14 @@ voidMethodDeclaratorRest returns [Java_voidMethodDeclaratorRest vmd]
 	
 interfaceMethodDeclaratorRest returns [Java_interfaceMethodDeclaratorRest imdr]
 @init {
-    Java_interfaceMethodDeclaratorRest_2 imdr2=`Java_interfaceMethodDeclaratorRest_2_1();
+    Java_bracketsList b=`Java_bracketsList();
     Java_interfaceMethodDeclaratorRest_3 imdr3=`Java_interfaceMethodDeclaratorRest_3_2();
 }
 	:	fp=formalParameters 
         (
             '[' ']'
             {
-                imdr2=`Java_interfaceMethodDeclaratorRest_2_1(imdr2*,Java_interfaceMethodDeclaratorRest_2_1_1());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
             
         )* 
@@ -697,7 +697,7 @@ interfaceMethodDeclaratorRest returns [Java_interfaceMethodDeclaratorRest imdr]
         )?
         ';'
         {
-            imdr=`Java_interfaceMethodDeclaratorRest(fp,imdr2,imdr3);
+            imdr=`Java_interfaceMethodDeclaratorRest(fp,b,imdr3);
         }
 	;
 	
@@ -790,13 +790,13 @@ variableDeclarator returns [Java_variableDeclarator vd]
 	
 variableDeclaratorRest returns [Java_variableDeclaratorRest vdr]
 @init {
-    Java_variableDeclaratorRest_1_1 vdr1=`Java_variableDeclaratorRest_1_1_1();
+    Java_bracketsList b=`Java_bracketsList();
     Java_variableDeclaratorRest_1_2 vdr2=`Java_variableDeclaratorRest_1_2_2();
 }
 	:	(
             '[' ']'
             {
-                vdr1=`Java_variableDeclaratorRest_1_1_1(vdr1*,Java_variableDeclaratorRest_1_1_1_1());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
         )+ 
         (
@@ -806,7 +806,7 @@ variableDeclaratorRest returns [Java_variableDeclaratorRest vdr]
             }
         )?
         {
-            vdr=`Java_variableDeclaratorRest_1(vdr1,vdr2);
+            vdr=`Java_variableDeclaratorRest_1(b,vdr2);
         }
 	|	'=' vi=variableInitializer
         {
@@ -835,33 +835,33 @@ constantDeclaratorsRest returns [Java_constantDeclaratorsRest cdr]@init {
 
 constantDeclaratorRest returns [Java_constantDeclaratorRest cdr]
 @init {
-    Java_constantDeclaratorRest_1 cdr1=`Java_constantDeclaratorRest_1_1();
+    Java_bracketsList b=`Java_bracketsList();
 }
 	:	(
             '[' ']'
             {
-                cdr1=`Java_constantDeclaratorRest_1_1(cdr1*,Java_constantDeclaratorRest_1_1_1());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
         )* 
         '=' vi=variableInitializer
         {
-            cdr=`Java_constantDeclaratorRest(cdr1,vi);
+            cdr=`Java_constantDeclaratorRest(b,vi);
         }
 	;
 	
 variableDeclaratorId returns [Java_variableDeclaratorId vdi]
 @init {
-    Java_variableDeclaratorId_2 vdi2=`Java_variableDeclaratorId_2_1();
+    Java_bracketsList b=`Java_bracketsList();
 }
 	:	i=Identifier 
         (
             '[' ']'
             {
-                vdi2=`Java_variableDeclaratorId_2_1(vdi2*,Java_variableDeclaratorId_2_1_1());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
         )*
         {
-            vdi=`Java_variableDeclaratorId(Java_Identifier(i.getText()),vdi2);
+            vdi=`Java_variableDeclaratorId(Java_Identifier(i.getText()),b);
         }
 	;
 
@@ -957,7 +957,7 @@ type returns [Java_type t]
 @init {
     Java_type_1_2 t1_2=`Java_type_1_2_list();
     Java_type_1_2_item_2 t1_2_2=`Java_type_1_2_item_2_no();
-    Java_type_bracets t_b=`Java_type_brackets_list();
+    Java_bracketsList b=`Java_bracketsList();
 }
 	:	i1=Identifier 
         (
@@ -986,21 +986,21 @@ type returns [Java_type t]
         (
             '[' ']'
             {
-                t_b=`Java_type_brackets_list(t_b*,Java_type_brackets_item());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
         )*
         {
-            t=`Java_type_1(t1_2,t_b);
+            t=`Java_type_1(t1_2,b);
         }
 	|	pt=primitiveType
         (
             '[' ']' 
             {
-                t_b=`Java_type_brackets_list(t_b*,Java_type_brackets_item());
+                b=`Java_bracketsList(b*,Java_brackets());
             }
         )*
         {
-            t=`Java_type_2(pt,t_b);
+            t=`Java_type_2(pt,b);
         }
 	;
 
@@ -2301,7 +2301,7 @@ primary returns [Java_primary p]
     Java_primary_3_1 p3=`Java_primary_3_1_2();
     Java_primary_7_2 p7_2=`Java_primary_7_2_1();
     Java_primary_7_3 p7_3=`Java_primary_7_3_2();
-    Java_primary_8_2 p8=`Java_primary_8_2_1();
+    Java_bracketsList b=`Java_bracketsList();
 }
     :	    pe=parExpression
             {
@@ -2371,12 +2371,12 @@ primary returns [Java_primary p]
             (
                 '[' ']'
                 {
-                    p8=`Java_primary_8_2_1(p8*,Java_primary_8_2_1_1());
+                    b=`Java_bracketsList(b*,Java_brackets());
                 }
             )*
             '.' 'class'
             {
-                p=`Java_primary_8(pt,p8);
+                p=`Java_primary_8(pt,b);
             }
         |
             'void' '.' 'class'
@@ -2387,19 +2387,19 @@ primary returns [Java_primary p]
 
 identifierSuffix returns [Java_identifierSuffix is]
 @init {
-    Java_identifierSuffix_1_1 is1=`Java_identifierSuffix_1_1_1();
+    Java_bracketsList b=`Java_bracketsList();
     Java_identifierSuffix_2_1 is2=`Java_identifierSuffix_2_1_1();
     Java_identifierSuffix_8_1 is8=`Java_identifierSuffix_8_1_2();
 }
 	:	    (
                 '[' ']'
                 {
-                    is1=`Java_identifierSuffix_1_1_1(is1*,Java_identifierSuffix_1_1_1_1());
+                   b=`Java_bracketsList(b*,Java_brackets());
                 }
             )+ 
             '.' 'class'
             {
-                is=`Java_identifierSuffix_1(is1);
+                is=`Java_identifierSuffix_1(b);
             }
 	    |	
             (
@@ -2522,9 +2522,8 @@ innerCreator returns [Java_innerCreator ic]
 
 arrayCreatorRest returns [Java_arrayCreatorRest acr]
 @init {
-    Java_arrayCreatorRest_1_1 acr1=`Java_arrayCreatorRest_1_1_1();
+    Java_bracketsList b=`Java_bracketsList();
     Java_arrayCreatorRest_2_2 acr2=`Java_arrayCreatorRest_2_2_1();
-    Java_arrayCreatorRest_2_3 acr3=`Java_arrayCreatorRest_2_3_1();
 }
 	:	'['
         (
@@ -2532,12 +2531,12 @@ arrayCreatorRest returns [Java_arrayCreatorRest acr]
                 (
                     '[' ']' 
                     {
-                        acr1=`Java_arrayCreatorRest_1_1_1(acr1*,Java_arrayCreatorRest_1_1_1_1()); 
+                        b=`Java_bracketsList(b*,Java_brackets()); 
                     } 
                 )*
                 a=arrayInitializer
                 {
-                    acr=`Java_arrayCreatorRest_1(acr1,a);
+                    acr=`Java_arrayCreatorRest_1(b,a);
                 }
             | 
                 e=expression ']' 
@@ -2550,11 +2549,11 @@ arrayCreatorRest returns [Java_arrayCreatorRest acr]
                 (
                     '[' ']'
                     {
-                        acr3=`Java_arrayCreatorRest_2_3_1(acr3*,Java_arrayCreatorRest_2_3_1_1());
+                        b=`Java_bracketsList(b*,Java_brackets());
                     }
                 )*
                 {
-                    acr=`Java_arrayCreatorRest_2(e,acr2,acr3);
+                    acr=`Java_arrayCreatorRest_2(e,acr2,b);
                 }
         )
 	;

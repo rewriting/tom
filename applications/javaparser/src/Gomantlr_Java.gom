@@ -226,13 +226,7 @@ Java_interfaceMethodOrFieldRest =
   | Java_interfaceMethodOrFieldRest_2(interfaceMethodDeclaratorRest:Java_interfaceMethodDeclaratorRest)
 
 Java_methodDeclaratorRest =
-    Java_methodDeclaratorRest(methodDeclaratorRest_1:Java_formalParameters,methodDeclaratorRest_2:Java_methodDeclaratorRest_2,methodDeclaratorRest_3:Java_methodDeclaratorRest_3,methodDeclaratorRest_4:Java_methodDeclaratorRest_4)
-
-Java_methodDeclaratorRest_2 =
-    Java_methodDeclaratorRest_2_1(Java_methodDeclaratorRest_2_1_1*)
-
-Java_methodDeclaratorRest_2_1_1 =
-    Java_methodDeclaratorRest_2_1_1()
+    Java_methodDeclaratorRest(methodDeclaratorRest_1:Java_formalParameters,methodDeclaratorRest_2:Java_bracketsList,methodDeclaratorRest_3:Java_methodDeclaratorRest_3,methodDeclaratorRest_4:Java_methodDeclaratorRest_4)
 
 Java_methodDeclaratorRest_3 =
     Java_methodDeclaratorRest_3_1(methodDeclaratorRest_3_1_1:Java_qualifiedNameList)
@@ -254,13 +248,7 @@ Java_voidMethodDeclaratorRest_3 =
   | Java_voidMethodDeclaratorRest_3_2()
 
 Java_interfaceMethodDeclaratorRest =
-    Java_interfaceMethodDeclaratorRest(interfaceMethodDeclaratorRest_1:Java_formalParameters,interfaceMethodDeclaratorRest_2:Java_interfaceMethodDeclaratorRest_2,interfaceMethodDeclaratorRest_3:Java_interfaceMethodDeclaratorRest_3)
-
-Java_interfaceMethodDeclaratorRest_2 =
-    Java_interfaceMethodDeclaratorRest_2_1(Java_interfaceMethodDeclaratorRest_2_1_1*)
-
-Java_interfaceMethodDeclaratorRest_2_1_1 =
-    Java_interfaceMethodDeclaratorRest_2_1_1()
+    Java_interfaceMethodDeclaratorRest(interfaceMethodDeclaratorRest_1:Java_formalParameters,interfaceMethodDeclaratorRest_2:Java_bracketsList,interfaceMethodDeclaratorRest_3:Java_interfaceMethodDeclaratorRest_3)
 
 Java_interfaceMethodDeclaratorRest_3 =
     Java_interfaceMethodDeclaratorRest_3_1(interfaceMethodDeclaratorRest_3_1_1:Java_qualifiedNameList)
@@ -303,15 +291,9 @@ Java_variableDeclarator =
     Java_variableDeclarator(variableDeclarator_1:Java_Identifier,variableDeclarator_2:Java_variableDeclaratorRest)
 
 Java_variableDeclaratorRest =
-    Java_variableDeclaratorRest_1(variableDeclaratorRest_1_1:Java_variableDeclaratorRest_1_1,variableDeclaratorRest_1_2:Java_variableDeclaratorRest_1_2)
+    Java_variableDeclaratorRest_1(variableDeclaratorRest_1_1:Java_bracketsList,variableDeclaratorRest_1_2:Java_variableDeclaratorRest_1_2)
   | Java_variableDeclaratorRest_2(variableDeclaratorRest_2_1:Java_variableInitializer)
   | Java_variableDeclaratorRest_3()
-
-Java_variableDeclaratorRest_1_1 =
-    Java_variableDeclaratorRest_1_1_1(Java_variableDeclaratorRest_1_1_1_1*)
-
-Java_variableDeclaratorRest_1_1_1_1 =
-    Java_variableDeclaratorRest_1_1_1_1()
 
 Java_variableDeclaratorRest_1_2 =
     Java_variableDeclaratorRest_1_2_1(variableDeclaratorRest_1_2_1_1:Java_variableInitializer)
@@ -327,22 +309,10 @@ Java_constantDeclaratorsRest_2_1_1 =
     Java_constantDeclaratorsRest_2_1_1(constantDeclaratorsRest_2_1_1_1:Java_constantDeclarator)
 
 Java_constantDeclaratorRest =
-    Java_constantDeclaratorRest(constantDeclaratorRest_1:Java_constantDeclaratorRest_1,constantDeclaratorRest_2:Java_variableInitializer)
-
-Java_constantDeclaratorRest_1 =
-    Java_constantDeclaratorRest_1_1(Java_constantDeclaratorRest_1_1_1*)
-
-Java_constantDeclaratorRest_1_1_1 =
-    Java_constantDeclaratorRest_1_1_1()
+    Java_constantDeclaratorRest(constantDeclaratorRest_1:Java_bracketsList,constantDeclaratorRest_2:Java_variableInitializer)
 
 Java_variableDeclaratorId =
-    Java_variableDeclaratorId(variableDeclaratorId_1:Java_Identifier,variableDeclaratorId_2:Java_variableDeclaratorId_2)
-
-Java_variableDeclaratorId_2 =
-    Java_variableDeclaratorId_2_1(Java_variableDeclaratorId_2_1_1*)
-
-Java_variableDeclaratorId_2_1_1 =
-    Java_variableDeclaratorId_2_1_1()
+    Java_variableDeclaratorId(variableDeclaratorId_1:Java_Identifier,variableDeclaratorId_2:Java_bracketsList)
 
 Java_variableInitializer =
     Java_variableInitializer_1(arrayInitializer:Java_arrayInitializer)
@@ -386,8 +356,8 @@ Java_typeName =
   | Java_typeNameQualifiedIdentifier(PkgOrTypeName:Java_packageOrTypeName,Identifier:Java_Identifier)
 
 Java_type =
-    Java_type_1(type_1_2:Java_type_1_2,type_brackets:Java_type_brackets)
-  | Java_type_2(type_2_1:Java_primitiveType,type_brackets:Java_type_brackets)
+    Java_type_1(type_1_2:Java_type_1_2,type_brackets:Java_bracketsList)
+  | Java_type_2(type_2_1:Java_primitiveType,type_brackets:Java_bracketsList)
 
 Java_type_1_2 =
     Java_type_1_2_list(Java_type_1_2_item*)
@@ -399,11 +369,11 @@ Java_type_1_2_item_2 =
     Java_type_1_2_item_2_yes(type_1_2_item_2_ta:Java_typeArgumentList)
   | Java_type_1_2_item_2_no()
 
-Java_type_brackets =
-    Java_type_brackets_list(Java_type_brackets_item*)
+Java_bracketsList =
+    Java_bracketsList(Java_brackets*)
 
-Java_type_brackets_item =
-    Java_type_brackets_item()
+Java_brackets =
+    Java_brackets()
 
 Java_primitiveType =
     Java_primitiveTypeBoolean()
@@ -904,7 +874,7 @@ Java_primary =
   | Java_primary_5(literal:Java_literal)
   | Java_primary_6(primary_6_1:Java_creator)
   | Java_primary_7(primary_7_1:Java_Identifier,primary_7_2:Java_primary_7_2,primary_7_3:Java_primary_7_3)
-  | Java_primary_8(primary_8_1:Java_primitiveType,primary_8_2:Java_primary_8_2)
+  | Java_primary_8(primary_8_1:Java_primitiveType,primary_8_2:Java_bracketsList)
   | Java_primary_9()
 
 Java_primary_2_2 =
@@ -925,14 +895,8 @@ Java_primary_7_3 =
     Java_primary_7_3_1(identifierSuffix:Java_identifierSuffix)
   | Java_primary_7_3_2()
 
-Java_primary_8_2 =
-    Java_primary_8_2_1(Java_primary_8_2_1_1*)
-
-Java_primary_8_2_1_1 =
-    Java_primary_8_2_1_1()
-
 Java_identifierSuffix =
-    Java_identifierSuffix_1(identifierSuffix_1_1:Java_identifierSuffix_1_1)
+    Java_identifierSuffix_1(identifierSuffix_1_1:Java_bracketsList)
   | Java_identifierSuffix_2(identifierSuffix_2_1:Java_identifierSuffix_2_1)
   | Java_identifierSuffix_3(arguments:Java_arguments)
   | Java_identifierSuffix_4()
@@ -940,12 +904,6 @@ Java_identifierSuffix =
   | Java_identifierSuffix_6()
   | Java_identifierSuffix_7(identifierSuffix_7_1:Java_arguments)
   | Java_identifierSuffix_8(identifierSuffix_8_1:Java_identifierSuffix_8_1,identifierSuffix_8_2:Java_innerCreator)
-
-Java_identifierSuffix_1_1 =
-    Java_identifierSuffix_1_1_1(Java_identifierSuffix_1_1_1_1*)
-
-Java_identifierSuffix_1_1_1_1 =
-    Java_identifierSuffix_1_1_1_1()
 
 Java_identifierSuffix_2_1 =
     Java_identifierSuffix_2_1_1(Java_identifierSuffix_2_1_1_1*)
@@ -990,26 +948,14 @@ Java_innerCreator =
     Java_innerCreator(innerCreator_1:Java_Identifier,innerCreator_2:Java_classCreatorRest)
 
 Java_arrayCreatorRest =
-    Java_arrayCreatorRest_1(arrayCreatorRest_1_1:Java_arrayCreatorRest_1_1,arrayCreatorRest_1_2:Java_arrayInitializer)
-  | Java_arrayCreatorRest_2(arrayCreatorRest_2_1:Java_expression,arrayCreatorRest_2_2:Java_arrayCreatorRest_2_2,arrayCreatorRest_2_3:Java_arrayCreatorRest_2_3)
-
-Java_arrayCreatorRest_1_1 =
-    Java_arrayCreatorRest_1_1_1(Java_arrayCreatorRest_1_1_1_1*)
-
-Java_arrayCreatorRest_1_1_1_1 =
-    Java_arrayCreatorRest_1_1_1_1()
+    Java_arrayCreatorRest_1(arrayCreatorRest_1_1:Java_bracketsList,arrayCreatorRest_1_2:Java_arrayInitializer)
+  | Java_arrayCreatorRest_2(arrayCreatorRest_2_1:Java_expression,arrayCreatorRest_2_2:Java_arrayCreatorRest_2_2,arrayCreatorRest_2_3:Java_bracketsList)
 
 Java_arrayCreatorRest_2_2 =
     Java_arrayCreatorRest_2_2_1(Java_arrayCreatorRest_2_2_1_1*)
 
 Java_arrayCreatorRest_2_2_1_1 =
     Java_arrayCreatorRest_2_2_1_1(arrayCreatorRest_2_2_1_1_1:Java_expression)
-
-Java_arrayCreatorRest_2_3 =
-    Java_arrayCreatorRest_2_3_1(Java_arrayCreatorRest_2_3_1_1*)
-
-Java_arrayCreatorRest_2_3_1_1 =
-    Java_arrayCreatorRest_2_3_1_1()
 
 Java_classCreatorRest =
     Java_classCreatorRest(classCreatorRest_1:Java_arguments,classBody:Java_classBody)
