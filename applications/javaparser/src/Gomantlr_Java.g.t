@@ -359,15 +359,15 @@ enumBodyDeclarations returns [Java_enumBodyDeclarationList ebd]
 interfaceDeclaration returns [Java_interfaceDeclaration id]
 	:   nid=normalInterfaceDeclaration
         {
-            id=`Java_interfaceDeclaration_1(nid);
+            id=nid;
         }
     |   atd=annotationTypeDeclaration
         {
-            id=`Java_interfaceDeclaration_2(atd);
+            id=`Java_annotationInterfaceDeclaration(atd);
         }
 	;
 	
-normalInterfaceDeclaration returns [Java_normalInterfaceDeclaration nid]
+normalInterfaceDeclaration returns [Java_interfaceDeclaration nid]
 @init {
     Java_typeParameterList nid2=`Java_typeParameterList();
     Java_typeList nid3=`Java_typeList();

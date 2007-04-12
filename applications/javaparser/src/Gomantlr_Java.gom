@@ -68,11 +68,8 @@ Java_enumBodyDeclarationList=
     Java_enumBodyDeclarationList(Java_classBodyDeclaration*)
 
 Java_interfaceDeclaration =
-    Java_interfaceDeclaration_1(normalInterfaceDeclaration:Java_normalInterfaceDeclaration)
-  | Java_interfaceDeclaration_2(annotationTypeDeclaration:Java_annotationTypeDeclaration)
-
-Java_normalInterfaceDeclaration =
     Java_normalInterfaceDeclaration(Identifier:Java_Identifier,typeParameters:Java_typeParameterList,Extends:Java_typeList,InterfaceBody:Java_interfaceBody)
+  | Java_annotationInterfaceDeclaration(annotationTypeDeclaration:Java_annotationTypeDeclaration)
 
 Java_typeList =
     Java_typeList(Java_type*)
@@ -373,7 +370,7 @@ Java_elementValueArrayInitializer_2 =
   | Java_elementValueArrayInitializer_2_2()
 
 Java_annotationTypeDeclaration =
-    Java_annotationTypeDeclaration(annotationTypeDeclaration_1:Java_Identifier,annotationTypeDeclaration_2:Java_annotationTypeBody)
+    Java_annotationTypeDeclaration(Identifier:Java_Identifier,annotationTypeDeclaration_2:Java_annotationTypeBody)
 
 Java_annotationTypeBody =
     Java_annotationTypeBody(Java_annotationTypeElementDeclaration*)
