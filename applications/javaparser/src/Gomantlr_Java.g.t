@@ -93,7 +93,7 @@ packageDeclaration returns [Java_packageDeclaration pd]
 	
 importDeclaration returns [Java_importDeclaration id]
 @init {
-    Java_isStaticImport id1=`Java_nonStaticImport();
+    Java_isStatic id1=`Java_nonStatic();
     Java_IdentifierList id3=`Java_IdentifierList();
     Java_importSuffix id4=`Java_importNoSuffix();
 }
@@ -101,7 +101,7 @@ importDeclaration returns [Java_importDeclaration id]
         (
             'static'
             {
-                id1=`Java_staticImport();
+                id1=`Java_static();
             }
         )? 
         i1=Identifier 
@@ -437,23 +437,23 @@ interfaceBody returns [Java_interfaceBody ib]
 
 classBodyDeclaration returns [Java_classBodyDeclaration ebd]
 @init {
-    Java_classBodyDeclaration_2_1 ebd2=`Java_classBodyDeclaration_2_1_2();
+    Java_isStatic ebd2=`Java_nonStatic();
     Java_modifierList ebd3=`Java_concModifier();
 }
 	:	    ';'
             {
-                ebd=`Java_classBodyDeclaration_1();
+                ebd=`Java_classBodyDeclarationEmpty();
             }
 	    |
             (
                 'static'
                 {
-                    ebd2=`Java_classBodyDeclaration_2_1_1();
+                    ebd2=`Java_static();
                 }
             )?
             b=block
             {
-                ebd=`Java_classBodyDeclaration_2(ebd2,b);
+                ebd=`Java_classBodyDeclarationBlock(ebd2,b);
             }
 	    |
             (
@@ -464,7 +464,7 @@ classBodyDeclaration returns [Java_classBodyDeclaration ebd]
             )*
             md=memberDecl
             {
-                ebd=`Java_classBodyDeclaration_3(ebd3,md);
+                ebd=`Java_classBodyDeclarationMember(ebd3,md);
             }
 	;
 	
@@ -610,8 +610,8 @@ interfaceMethodOrFieldRest returns [Java_interfaceMethodOrFieldRest imofr]
 methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
-    Java_methodDeclaratorRest_3 mdr3=`Java_methodDeclaratorRest_3_2();
-    Java_methodDeclaratorRest_4 mdr4=null;
+    Java_qualifiedNameList mdr3=`Java_qualifiedNameList();
+    Java_methodBody mdr4=null;
 }
 	:	fp=formalParameters 
         (
@@ -623,18 +623,18 @@ methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
         (
             'throws' qnl=qualifiedNameList
             {
-                mdr3=`Java_methodDeclaratorRest_3_1(qnl);
+                mdr3=qnl;
             }
         )?
         (
                 mb=methodBody
                 {
-                    mdr4=`Java_methodDeclaratorRest_4_1(mb);
+                    mdr4=mb;
                 }
             |
                 ';'
                 {
-                    mdr4=`Java_methodDeclaratorRest_4_2();
+                    mdr4=`Java_emptyMethodBody();
                 }
         )
         {
@@ -644,25 +644,25 @@ methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
 	
 voidMethodDeclaratorRest returns [Java_voidMethodDeclaratorRest vmd]
 @init {
-    Java_voidMethodDeclaratorRest_2 vmd2=`Java_voidMethodDeclaratorRest_2_2();
-    Java_voidMethodDeclaratorRest_3 vmd3=null;
+    Java_qualifiedNameList vmd2=`Java_qualifiedNameList();
+    Java_methodBody vmd3=null;
 }
 	:	fp=formalParameters 
         (
             'throws' qnl=qualifiedNameList
             {
-                vmd2=`Java_voidMethodDeclaratorRest_2_1(qnl);
+                vmd2=qnl;
             }
         )?
         (
                 mb=methodBody
                 {
-                    vmd3=`Java_voidMethodDeclaratorRest_3_1(mb);
+                    vmd3=mb;
                 }
             |
                 ';'
                 {
-                    vmd3=`Java_voidMethodDeclaratorRest_3_2();
+                    vmd3=`Java_emptyMethodBody();
                 }
         )
         {
@@ -673,7 +673,7 @@ voidMethodDeclaratorRest returns [Java_voidMethodDeclaratorRest vmd]
 interfaceMethodDeclaratorRest returns [Java_interfaceMethodDeclaratorRest imdr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
-    Java_interfaceMethodDeclaratorRest_3 imdr3=`Java_interfaceMethodDeclaratorRest_3_2();
+    Java_qualifiedNameList imdr3=`Java_qualifiedNameList();
 }
 	:	fp=formalParameters 
         (
@@ -686,7 +686,7 @@ interfaceMethodDeclaratorRest returns [Java_interfaceMethodDeclaratorRest imdr]
         (
             'throws' qnl=qualifiedNameList
             {
-                imdr3=`Java_interfaceMethodDeclaratorRest_3_1(qnl);
+                imdr3=qnl;
             }
         )?
         ';'
@@ -720,13 +720,13 @@ interfaceGenericMethodDecl returns [Java_interfaceGenericMethodDecl igmd]
 	
 voidInterfaceMethodDeclaratorRest returns [Java_voidInterfaceMethodDeclaratorRest vimd]
 @init {
-    Java_voidInterfaceMethodDeclaratorRest_2 vimd2=`Java_voidInterfaceMethodDeclaratorRest_2_2();
+    Java_qualifiedNameList vimd2=`Java_qualifiedNameList();
 }
 	:	fp=formalParameters 
         (
             'throws' qnl=qualifiedNameList
             {
-                vimd2=`Java_voidInterfaceMethodDeclaratorRest_2_1(qnl);
+                vimd2=qnl;
             }
         )? 
         ';'
@@ -737,13 +737,13 @@ voidInterfaceMethodDeclaratorRest returns [Java_voidInterfaceMethodDeclaratorRes
 	
 constructorDeclaratorRest returns [Java_constructorDeclaratorRest cdr]
 @init {
-    Java_constructorDeclaratorRest_2 cdr2=`Java_constructorDeclaratorRest_2_2();
+    Java_qualifiedNameList cdr2=`Java_qualifiedNameList();
 }
 	:	fp=formalParameters 
         (
             'throws' qnl=qualifiedNameList
             {
-                cdr2=`Java_constructorDeclaratorRest_2_1(qnl);
+                cdr2=qnl;
             }
         )? 
         mb=methodBody

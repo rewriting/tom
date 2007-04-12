@@ -16,11 +16,11 @@ Java_packageDeclaration =
     Java_packageDeclaration(packageDeclaration_1:Java_qualifiedName)
 
 Java_importDeclaration =
-    Java_importDeclaration(importDeclaration_1:Java_isStaticImport,importDeclaration_2:Java_Identifier,identifierList:Java_IdentifierList,importDeclaration_4:Java_importSuffix)
+    Java_importDeclaration(importDeclaration_1:Java_isStatic,importDeclaration_2:Java_Identifier,identifierList:Java_IdentifierList,importDeclaration_4:Java_importSuffix)
 
-Java_isStaticImport =
-    Java_staticImport()
-  | Java_nonStaticImport()
+Java_isStatic =
+    Java_static()
+  | Java_nonStatic()
 
 Java_IdentifierList =
     Java_IdentifierList(Java_Identifier*)
@@ -81,21 +81,16 @@ Java_interfaceBody =
     Java_interfaceBody(Java_interfaceBodyDeclaration*)
 
 Java_classBodyDeclaration =
-    Java_classBodyDeclaration_1()
-  | Java_classBodyDeclaration_2(classBodyDeclaration_2_1:Java_classBodyDeclaration_2_1,classBodyDeclaration_2_2:Java_block)
-  | Java_classBodyDeclaration_3(modifierList:Java_modifierList,classBodyDeclaration_3_2:Java_memberDecl)
-
-Java_classBodyDeclaration_2_1 =
-    Java_classBodyDeclaration_2_1_1()
-  | Java_classBodyDeclaration_2_1_2()
-
+    Java_classBodyDeclarationEmpty()
+  | Java_classBodyDeclarationBlock(IsStatic:Java_isStatic,block:Java_block)
+  | Java_classBodyDeclarationMember(ModifierList:Java_modifierList,Members:Java_memberDecl)
 
 Java_memberDecl =
     Java_memberGenericMethodOrConstructorDecl(genericMethodOrConstructorDecl:Java_genericMethodOrConstructorDecl)
   | Java_memberMethodDeclaration(methodDeclaration:Java_methodDeclaration)
   | Java_memberFieldDeclaration(fieldDeclaration:Java_fieldDeclaration)
-  | Java_memberVoidMethodDeclaratorRest(memberDecl_4_1:Java_Identifier,memberDecl_4_2:Java_voidMethodDeclaratorRest)
-  | Java_memberConstructorDeclaratorRest(memberDecl_5_1:Java_Identifier,memberDecl_5_2:Java_constructorDeclaratorRest)
+  | Java_memberVoidMethodDeclaratorRest(Identifier:Java_Identifier,memberDecl_4_2:Java_voidMethodDeclaratorRest)
+  | Java_memberConstructorDeclaratorRest(Identifier:Java_Identifier,memberDecl_5_2:Java_constructorDeclaratorRest)
   | Java_memberInterfaceDeclaration(interfaceDeclaration:Java_interfaceDeclaration)
   | Java_memberClassDeclaration(classDeclaration:Java_classDeclaration)
 
@@ -138,33 +133,13 @@ Java_interfaceMethodOrFieldRest =
   | Java_interfaceMethodOrFieldRest_2(interfaceMethodDeclaratorRest:Java_interfaceMethodDeclaratorRest)
 
 Java_methodDeclaratorRest =
-    Java_methodDeclaratorRest(methodDeclaratorRest_1:Java_formalParameterList,methodDeclaratorRest_2:Java_bracketsList,methodDeclaratorRest_3:Java_methodDeclaratorRest_3,methodDeclaratorRest_4:Java_methodDeclaratorRest_4)
-
-Java_methodDeclaratorRest_3 =
-    Java_methodDeclaratorRest_3_1(methodDeclaratorRest_3_1_1:Java_qualifiedNameList)
-  | Java_methodDeclaratorRest_3_2()
-
-Java_methodDeclaratorRest_4 =
-    Java_methodDeclaratorRest_4_1(methodBody:Java_methodBody)
-  | Java_methodDeclaratorRest_4_2()
+    Java_methodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
 
 Java_voidMethodDeclaratorRest =
-    Java_voidMethodDeclaratorRest(voidMethodDeclaratorRest_1:Java_formalParameterList,voidMethodDeclaratorRest_2:Java_voidMethodDeclaratorRest_2,voidMethodDeclaratorRest_3:Java_voidMethodDeclaratorRest_3)
-
-Java_voidMethodDeclaratorRest_2 =
-    Java_voidMethodDeclaratorRest_2_1(voidMethodDeclaratorRest_2_1_1:Java_qualifiedNameList)
-  | Java_voidMethodDeclaratorRest_2_2()
-
-Java_voidMethodDeclaratorRest_3 =
-    Java_voidMethodDeclaratorRest_3_1(methodBody:Java_methodBody)
-  | Java_voidMethodDeclaratorRest_3_2()
+    Java_voidMethodDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
 
 Java_interfaceMethodDeclaratorRest =
-    Java_interfaceMethodDeclaratorRest(interfaceMethodDeclaratorRest_1:Java_formalParameterList,interfaceMethodDeclaratorRest_2:Java_bracketsList,interfaceMethodDeclaratorRest_3:Java_interfaceMethodDeclaratorRest_3)
-
-Java_interfaceMethodDeclaratorRest_3 =
-    Java_interfaceMethodDeclaratorRest_3_1(interfaceMethodDeclaratorRest_3_1_1:Java_qualifiedNameList)
-  | Java_interfaceMethodDeclaratorRest_3_2()
+    Java_interfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList)
 
 Java_interfaceGenericMethodDecl =
     Java_interfaceGenericMethodDecl(interfaceGenericMethodDecl_1:Java_typeParameterList,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,interfaceGenericMethodDecl_3:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
@@ -174,21 +149,13 @@ Java_interfaceGenericMethodDecl_2 =
   | Java_interfaceGenericMethodDecl_2_2()
 
 Java_voidInterfaceMethodDeclaratorRest =
-    Java_voidInterfaceMethodDeclaratorRest(voidInterfaceMethodDeclaratorRest_1:Java_formalParameterList,voidInterfaceMethodDeclaratorRest_2:Java_voidInterfaceMethodDeclaratorRest_2)
-
-Java_voidInterfaceMethodDeclaratorRest_2 =
-    Java_voidInterfaceMethodDeclaratorRest_2_1(voidInterfaceMethodDeclaratorRest_2_1_1:Java_qualifiedNameList)
-  | Java_voidInterfaceMethodDeclaratorRest_2_2()
+    Java_voidInterfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList)
 
 Java_constructorDeclaratorRest =
-    Java_constructorDeclaratorRest(constructorDeclaratorRest_1:Java_formalParameterList,constructorDeclaratorRest_2:Java_constructorDeclaratorRest_2,constructorDeclaratorRest_3:Java_methodBody)
-
-Java_constructorDeclaratorRest_2 =
-    Java_constructorDeclaratorRest_2_1(constructorDeclaratorRest_2_1_1:Java_qualifiedNameList)
-  | Java_constructorDeclaratorRest_2_2()
+    Java_constructorDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
 
 Java_constantDeclarator =
-    Java_constantDeclarator(constantDeclarator_1:Java_Identifier,constantDeclarator_2:Java_constantDeclaratorRest)
+    Java_constantDeclarator(Identifier:Java_Identifier,constantDeclarator_2:Java_constantDeclaratorRest)
 
 Java_variableDeclaratorList =
     Java_variableDeclaratorList(Java_variableDeclarator*)
@@ -324,6 +291,7 @@ Java_formalParameterDeclsIsFinal =
 
 Java_methodBody =
     Java_methodBody(block:Java_block)
+  | Java_emptyMethodBody()
 
 Java_qualifiedName =
     Java_qualifiedName(name:Java_Identifier,qualifier:Java_qualifierList)
