@@ -697,18 +697,18 @@ interfaceMethodDeclaratorRest returns [Java_interfaceMethodDeclaratorRest imdr]
 	
 interfaceGenericMethodDecl returns [Java_interfaceGenericMethodDecl igmd]
 @init {
-    Java_interfaceGenericMethodDecl_2 igmd2=null;
+    Java_returnType igmd2=null;
 }
 	:	tp=typeParameters 
         (
                 t=type 
                 {
-                    igmd2=`Java_interfaceGenericMethodDecl_2_1(t);
+                    igmd2=`Java_returnType(t);
                 }
             |
                 'void'
                 {
-                    igmd2=`Java_interfaceGenericMethodDecl_2_2();
+                    igmd2=`Java_returnVoid();
                 }
         ) 
         i=Identifier
@@ -813,13 +813,13 @@ variableDeclaratorRest returns [Java_variableDeclaratorRest vdr]
 	;
 	
 constantDeclaratorsRest returns [Java_constantDeclaratorsRest cdr]@init {
-    Java_constantDeclaratorsRest_2 tcdr=`Java_constantDeclaratorsRest_2_1();
+    Java_constantDeclaratorList tcdr=`Java_constantDeclaratorList();
 }
     :   cdr1=constantDeclaratorRest 
         (
             ',' cd=constantDeclarator
             {
-                tcdr=`Java_constantDeclaratorsRest_2_1(tcdr*,Java_constantDeclaratorsRest_2_1_1(cd));
+                tcdr=`Java_constantDeclaratorList(tcdr*,cd);
             }
         )*
         {
@@ -984,7 +984,7 @@ type returns [Java_type t]
             }
         )*
         {
-            t=`Java_type_1(t1_2,b);
+            t=`Java_type(t1_2,b);
         }
 	|	pt=primitiveType
         (
@@ -994,7 +994,7 @@ type returns [Java_type t]
             }
         )*
         {
-            t=`Java_type_2(pt,b);
+            t=`Java_typePrimitive(pt,b);
         }
 	;
 

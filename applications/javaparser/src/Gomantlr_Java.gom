@@ -133,11 +133,7 @@ Java_interfaceMethodDeclaratorRest =
     Java_interfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList)
 
 Java_interfaceGenericMethodDecl =
-    Java_interfaceGenericMethodDecl(Parameters:Java_typeParameterList,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,Identifier:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
-
-Java_interfaceGenericMethodDecl_2 =
-    Java_interfaceGenericMethodDecl_2_1(type:Java_type)
-  | Java_interfaceGenericMethodDecl_2_2()
+    Java_interfaceGenericMethodDecl(Parameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
 
 Java_constructorDeclaratorRest =
     Java_constructorDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
@@ -161,13 +157,10 @@ Java_variableDeclaratorRest_1_2 =
   | Java_variableDeclaratorRest_1_2_2()
 
 Java_constantDeclaratorsRest =
-    Java_constantDeclaratorsRest(constantDeclaratorsRest_1:Java_constantDeclaratorRest,constantDeclaratorsRest_2:Java_constantDeclaratorsRest_2)
+    Java_constantDeclaratorsRest(constantDeclaratorsRest_1:Java_constantDeclaratorRest,constantDeclaratorsRest_2:Java_constantDeclaratorList)
 
-Java_constantDeclaratorsRest_2 =
-    Java_constantDeclaratorsRest_2_1(Java_constantDeclaratorsRest_2_1_1*)
-
-Java_constantDeclaratorsRest_2_1_1 =
-    Java_constantDeclaratorsRest_2_1_1(constantDeclaratorsRest_2_1_1_1:Java_constantDeclarator)
+Java_constantDeclaratorList =
+    Java_constantDeclaratorList(Java_constantDeclarator*)
 
 Java_constantDeclaratorRest =
     Java_constantDeclaratorRest(constantDeclaratorRest_1:Java_bracketsList,constantDeclaratorRest_2:Java_variableInitializer)
@@ -217,8 +210,8 @@ Java_typeName =
   | Java_typeNameQualifiedIdentifier(PkgOrTypeName:Java_packageOrTypeName,Identifier:Java_Identifier)
 
 Java_type =
-    Java_type_1(type_1_2:Java_type_1_2,type_brackets:Java_bracketsList)
-  | Java_type_2(type_2_1:Java_primitiveType,type_brackets:Java_bracketsList)
+    Java_type(type_1_2:Java_type_1_2,Brackets:Java_bracketsList)
+  | Java_typePrimitive(PrimitiveType:Java_primitiveType,Brackets:Java_bracketsList)
 
 Java_type_1_2 =
     Java_type_1_2_list(Java_type_1_2_item*)
