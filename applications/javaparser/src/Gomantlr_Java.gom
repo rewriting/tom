@@ -220,7 +220,7 @@ Java_interfaceMethodOrFieldRest =
   | Java_interfaceMethodOrFieldRest_2(interfaceMethodDeclaratorRest:Java_interfaceMethodDeclaratorRest)
 
 Java_methodDeclaratorRest =
-    Java_methodDeclaratorRest(methodDeclaratorRest_1:Java_formalParameters,methodDeclaratorRest_2:Java_bracketsList,methodDeclaratorRest_3:Java_methodDeclaratorRest_3,methodDeclaratorRest_4:Java_methodDeclaratorRest_4)
+    Java_methodDeclaratorRest(methodDeclaratorRest_1:Java_formalParameterList,methodDeclaratorRest_2:Java_bracketsList,methodDeclaratorRest_3:Java_methodDeclaratorRest_3,methodDeclaratorRest_4:Java_methodDeclaratorRest_4)
 
 Java_methodDeclaratorRest_3 =
     Java_methodDeclaratorRest_3_1(methodDeclaratorRest_3_1_1:Java_qualifiedNameList)
@@ -231,7 +231,7 @@ Java_methodDeclaratorRest_4 =
   | Java_methodDeclaratorRest_4_2()
 
 Java_voidMethodDeclaratorRest =
-    Java_voidMethodDeclaratorRest(voidMethodDeclaratorRest_1:Java_formalParameters,voidMethodDeclaratorRest_2:Java_voidMethodDeclaratorRest_2,voidMethodDeclaratorRest_3:Java_voidMethodDeclaratorRest_3)
+    Java_voidMethodDeclaratorRest(voidMethodDeclaratorRest_1:Java_formalParameterList,voidMethodDeclaratorRest_2:Java_voidMethodDeclaratorRest_2,voidMethodDeclaratorRest_3:Java_voidMethodDeclaratorRest_3)
 
 Java_voidMethodDeclaratorRest_2 =
     Java_voidMethodDeclaratorRest_2_1(voidMethodDeclaratorRest_2_1_1:Java_qualifiedNameList)
@@ -242,7 +242,7 @@ Java_voidMethodDeclaratorRest_3 =
   | Java_voidMethodDeclaratorRest_3_2()
 
 Java_interfaceMethodDeclaratorRest =
-    Java_interfaceMethodDeclaratorRest(interfaceMethodDeclaratorRest_1:Java_formalParameters,interfaceMethodDeclaratorRest_2:Java_bracketsList,interfaceMethodDeclaratorRest_3:Java_interfaceMethodDeclaratorRest_3)
+    Java_interfaceMethodDeclaratorRest(interfaceMethodDeclaratorRest_1:Java_formalParameterList,interfaceMethodDeclaratorRest_2:Java_bracketsList,interfaceMethodDeclaratorRest_3:Java_interfaceMethodDeclaratorRest_3)
 
 Java_interfaceMethodDeclaratorRest_3 =
     Java_interfaceMethodDeclaratorRest_3_1(interfaceMethodDeclaratorRest_3_1_1:Java_qualifiedNameList)
@@ -256,14 +256,14 @@ Java_interfaceGenericMethodDecl_2 =
   | Java_interfaceGenericMethodDecl_2_2()
 
 Java_voidInterfaceMethodDeclaratorRest =
-    Java_voidInterfaceMethodDeclaratorRest(voidInterfaceMethodDeclaratorRest_1:Java_formalParameters,voidInterfaceMethodDeclaratorRest_2:Java_voidInterfaceMethodDeclaratorRest_2)
+    Java_voidInterfaceMethodDeclaratorRest(voidInterfaceMethodDeclaratorRest_1:Java_formalParameterList,voidInterfaceMethodDeclaratorRest_2:Java_voidInterfaceMethodDeclaratorRest_2)
 
 Java_voidInterfaceMethodDeclaratorRest_2 =
     Java_voidInterfaceMethodDeclaratorRest_2_1(voidInterfaceMethodDeclaratorRest_2_1_1:Java_qualifiedNameList)
   | Java_voidInterfaceMethodDeclaratorRest_2_2()
 
 Java_constructorDeclaratorRest =
-    Java_constructorDeclaratorRest(constructorDeclaratorRest_1:Java_formalParameters,constructorDeclaratorRest_2:Java_constructorDeclaratorRest_2,constructorDeclaratorRest_3:Java_methodBody)
+    Java_constructorDeclaratorRest(constructorDeclaratorRest_1:Java_formalParameterList,constructorDeclaratorRest_2:Java_constructorDeclaratorRest_2,constructorDeclaratorRest_3:Java_methodBody)
 
 Java_constructorDeclaratorRest_2 =
     Java_constructorDeclaratorRest_2_1(constructorDeclaratorRest_2_1_1:Java_qualifiedNameList)
@@ -392,32 +392,17 @@ Java_typeArgumentQualifier =
 Java_qualifiedNameList =
     Java_qualifiedNameList(Java_qualifiedName*)
 
-Java_formalParameters =
-    Java_formalParameters(formalParameterDecls:Java_formalParameterDecls)
-  | Java_emptyFormalParameters()
+Java_formalParameterList =
+    Java_formalParameterList(Java_formalParameterDecl*)
 
-Java_formalParameterDecls =
-    Java_formalParameterDecls(formalParameterDecls_1:Java_formalParameterDecls_1,formalParameterDecls_2:Java_formalParameterDecls_2,formalParameterDecls_3:Java_type,formalParameterDecls_4:Java_formalParameterDecls_4)
+Java_formalParameterDecl =
+    Java_formalParameterDeclIncomplete(IsFinal:Java_formalParameterDeclsIsFinal,annotations:Java_annotationList,type:Java_type)
+  | Java_formalParameterDecl(IsFinal:Java_formalParameterDeclsIsFinal,annotations:Java_annotationList,type:Java_type,variableId:Java_variableDeclaratorId)
+  | Java_formalParameterDeclVarArg(IsFinal:Java_formalParameterDeclsIsFinal,annotations:Java_annotationList,type:Java_type,variableId:Java_variableDeclaratorId)
 
-Java_formalParameterDecls_1 =
-    Java_formalParameterDecls_1_1()
-  | Java_formalParameterDecls_1_2()
-
-Java_formalParameterDecls_2 =
-    Java_formalParameterDecls_2_1(annotations:Java_annotationList)
-  | Java_formalParameterDecls_2_2()
-
-Java_formalParameterDecls_4 =
-    Java_formalParameterDecls_4_1(formalParameterDeclsRest:Java_formalParameterDeclsRest)
-  | Java_formalParameterDecls_4_2()
-
-Java_formalParameterDeclsRest =
-    Java_formalParameterDeclsRest_1(formalParameterDeclsRest_1_1:Java_variableDeclaratorId,formalParameterDeclsRest_1_2:Java_formalParameterDeclsRest_1_2)
-  | Java_formalParameterDeclsRest_2(formalParameterDeclsRest_2_1:Java_variableDeclaratorId)
-
-Java_formalParameterDeclsRest_1_2 =
-    Java_formalParameterDeclsRest_1_2_1(formalParameterDeclsRest_1_2_1_1:Java_formalParameterDecls)
-  | Java_formalParameterDeclsRest_1_2_2()
+Java_formalParameterDeclsIsFinal =
+    Java_formalParameterDeclsNotFinal()
+  | Java_formalParameterDeclsFinal()
 
 Java_methodBody =
     Java_methodBody(block:Java_block)

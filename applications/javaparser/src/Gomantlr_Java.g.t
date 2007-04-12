@@ -1088,68 +1088,74 @@ qualifiedNameList returns [Java_qualifiedNameList qnl]
         }
 	;
 	
-formalParameters returns [Java_formalParameters fp]
+formalParameters returns [Java_formalParameterList fp]
 @init {
-    fp=`Java_emptyFormalParameters();
+    fp=`Java_formalParameterList();
 }
 	:	'(' 
         (
             fpd=formalParameterDecls
             {
-                fp=`Java_formalParameters(fpd);
+                fp=fpd;
             }
         )?
         ')'
 	;
 	
-formalParameterDecls returns [Java_formalParameterDecls fpd]
+formalParameterDecls returns [Java_formalParameterList fpd]
 @init {
-    Java_formalParameterDecls_1 fpd1=`Java_formalParameterDecls_1_2();
-    Java_formalParameterDecls_2 fpd2=`Java_formalParameterDecls_2_2();
-    Java_formalParameterDecls_4 fpd4=`Java_formalParameterDecls_4_2();
+    fpd = `Java_formalParameterList();
+    Java_formalParameterDeclsIsFinal fpd1=`Java_formalParameterDeclsNotFinal();
+    Java_annotationList fpd2=`Java_annotationList();
+    Java_formalParameterList fpdrest=`Java_formalParameterList();
 }
 	:	
         (
             'final'
             {
-                fpd1=`Java_formalParameterDecls_1_1();
+                fpd1=`Java_formalParameterDeclsFinal();
             }
         )?
         (
             a=annotations
             {
-                fpd2=`Java_formalParameterDecls_2_1(a);
+                fpd2=`a;
             }
         )?
         t=type 
         (
-            fpdr=formalParameterDeclsRest
+            fpdr=formalParameterDeclsRest[fpd1,fpd2,t]
             {
-                fpd4=`Java_formalParameterDecls_4_1(fpdr);
+                fpdrest=fpdr;
             }
         )?
         {
-            fpd=`Java_formalParameterDecls(fpd1,fpd2,t,fpd4);
+          if(fpdrest==`Java_formalParameterList()) {
+            fpd=`Java_formalParameterList(Java_formalParameterDeclIncomplete(fpd1,fpd2,t));
+          } else {
+            fpd=fpdrest;
+          }
         }
 	;
 	
-formalParameterDeclsRest returns [Java_formalParameterDeclsRest fpdr]
+formalParameterDeclsRest [Java_formalParameterDeclsIsFinal isFinal, Java_annotationList annos, Java_type type] returns [Java_formalParameterList fpdr]
 @init {
-    Java_formalParameterDeclsRest_1_2 fpdr2=`Java_formalParameterDeclsRest_1_2_2();
+    fpdr = `Java_formalParameterList();
+    Java_formalParameterList fpdr2=`Java_formalParameterList();
 }
 	:	vdi=variableDeclaratorId 
         (
             ',' fpd=formalParameterDecls
             {
-                fpdr2=`Java_formalParameterDeclsRest_1_2_1(fpd);
+                fpdr2=fpd;
             }
         )?
         {
-            fpdr=`Java_formalParameterDeclsRest_1(vdi,fpdr2);
+            fpdr=`Java_formalParameterList(Java_formalParameterDecl(isFinal,annos,type,vdi),fpdr2*);
         }
 	|   '...' vdi=variableDeclaratorId
         {
-            fpdr=`Java_formalParameterDeclsRest_2(vdi);
+            fpdr=`Java_formalParameterList(Java_formalParameterDeclVarArg(isFinal,annos,type,vdi));
         }
 	;
 	
