@@ -62,19 +62,7 @@ Java_enumConstantList =
     Java_enumConstantList(Java_enumConstant*)
 
 Java_enumConstant =
-    Java_enumConstant(enumConstant_1:Java_enumConstant_1,enumConstant_2:Java_Identifier,enumConstant_3:Java_enumConstant_3,enumConstant_4:Java_enumConstant_4)
-
-Java_enumConstant_1 =
-    Java_enumConstant_1_1(annotations:Java_annotationList)
-  | Java_enumConstant_1_2()
-
-Java_enumConstant_3 =
-    Java_enumConstant_3_1(arguments:Java_arguments)
-  | Java_enumConstant_3_2()
-
-Java_enumConstant_4 =
-    Java_enumConstant_4_1(classBody:Java_classBody)
-  | Java_enumConstant_4_2()
+    Java_enumConstant(annotations:Java_annotationList,enumConstant_2:Java_Identifier,arguments:Java_arguments,classBody:Java_classBody)
 
 Java_enumBodyDeclarationList=
     Java_enumBodyDeclarationList(Java_classBodyDeclaration*)

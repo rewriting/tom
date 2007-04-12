@@ -315,27 +315,27 @@ enumConstants returns [Java_enumConstantList ec]
 	
 enumConstant returns [Java_enumConstant ec]
 @init {
-    Java_enumConstant_1 ec1=`Java_enumConstant_1_2();
-    Java_enumConstant_3 ec3=`Java_enumConstant_3_2();
-    Java_enumConstant_4 ec4=`Java_enumConstant_4_2();
+    Java_annotationList ec1=`Java_annotationList();
+    Java_arguments ec3=`Java_arguments(Java_expressionList());
+    Java_classBody ec4=`Java_classBody();
 }
 	:	(
             an=annotations
             {
-                ec1=`Java_enumConstant_1_1(an);
+                ec1=an;
             }
         )? 
         i=Identifier 
         (
             ar=arguments
             {
-                ec3=`Java_enumConstant_3_1(ar);
+                ec3=ar;
             }
         )?
         (
             cb=classBody
             {
-                ec4=`Java_enumConstant_4_1(cb);
+                ec4=cb;
             }
         )?
         {
