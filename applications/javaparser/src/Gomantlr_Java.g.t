@@ -500,34 +500,34 @@ memberDecl returns [Java_memberDecl md]
 	;
 	
 genericMethodOrConstructorDecl returns [Java_genericMethodOrConstructorDecl gmocd]
-	:	tp=typeParameters gmocr=genericMethodOrConstructorRest
+	:	tp=typeParameters gmocr=genericMethodOrConstructorRest[tp]
         {
-            gmocd=`Java_genericMethodOrConstructorDecl(tp,gmocr);
+            gmocd=gmocr;
         }
 	;
 	
-genericMethodOrConstructorRest returns [Java_genericMethodOrConstructorRest gmocr]
+genericMethodOrConstructorRest [Java_typeParameterList tp] returns [Java_genericMethodOrConstructorDecl gmocr]
 @init {
-    Java_genericMethodOrConstructorRest_1_1 gmocr1=null;
+    Java_returnType gmocr1=`Java_returnVoid();
 }
 	:	(
-                t=type 
+                t=type
                 {
-                    gmocr1=`Java_genericMethodOrConstructorRest_1_1_1(t);
+                    gmocr1=`Java_returnType(t);
                 }
             |
                 'void'
                 {
-                    gmocr1=`Java_genericMethodOrConstructorRest_1_1_2();
+                    gmocr1=`Java_returnVoid();
                 }
         )
         i=Identifier mdr=methodDeclaratorRest
         {
-            gmocr=`Java_genericMethodOrConstructorRest_1(gmocr1,Java_Identifier(i.getText()),mdr);
+            gmocr=`Java_genericMethodDecl(tp,gmocr1,Java_Identifier(i.getText()),mdr);
         }
 	|	i=Identifier cdr=constructorDeclaratorRest
         {
-            gmocr=`Java_genericMethodOrConstructorRest_2(Java_Identifier(i.getText()),cdr);
+            gmocr=`Java_genericConstructorDecl(tp,Java_Identifier(i.getText()),cdr);
         }
 	;
 

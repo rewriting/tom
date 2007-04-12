@@ -95,21 +95,15 @@ Java_memberDecl =
   | Java_memberClassDeclaration(classDeclaration:Java_classDeclaration)
 
 Java_genericMethodOrConstructorDecl =
-    Java_genericMethodOrConstructorDecl(genericMethodOrConstructorDecl_1:Java_typeParameterList,genericMethodOrConstructorDecl_2:Java_genericMethodOrConstructorRest)
+    Java_genericMethodDecl(Parameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,genericMethodDeclRest:Java_methodDeclaratorRest)
+  | Java_genericConstructorDecl(Parameters:Java_typeParameterList,Identifier:Java_Identifier,genericConstructorDeclRest:Java_constructorDeclaratorRest)
 
-Java_genericMethodOrConstructorRest =
-    Java_genericMethodOrConstructorRest_1(genericMethodOrConstructorRest_1_1:Java_genericMethodOrConstructorRest_1_1,genericMethodOrConstructorRest_1_2:Java_Identifier,genericMethodOrConstructorRest_1_3:Java_methodDeclaratorRest)
-  | Java_genericMethodOrConstructorRest_2(genericMethodOrConstructorRest_2_1:Java_Identifier,genericMethodOrConstructorRest_2_2:Java_constructorDeclaratorRest)
-
-Java_genericMethodOrConstructorRest_1_1 =
-    Java_genericMethodOrConstructorRest_1_1_1(type:Java_type)
-  | Java_genericMethodOrConstructorRest_1_1_2()
-
-Java_genericMethodOrConstructorRest_2_1 =
-    Java_genericMethodOrConstructorRest_2_1()
+Java_returnType =
+    Java_returnType(type:Java_type)
+  | Java_returnVoid()
 
 Java_methodDeclaration =
-    Java_methodDeclaration(methodDeclaration_1:Java_type,methodDeclaration_2:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
+    Java_methodDeclaration(return:Java_type,methodDeclaration_2:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
 
 Java_fieldDeclaration =
     Java_fieldDeclaration(fieldDeclaration_1:Java_type,fieldDeclaration_2:Java_variableDeclaratorList)
