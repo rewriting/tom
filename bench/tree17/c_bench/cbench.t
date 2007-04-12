@@ -39,127 +39,126 @@ static AFun fgetmax,fgetval,feval,feval17,fevalsym17;
 static AFun fdec, fexpand, fexone;
 
 static ATermAppl ttrue, tfalse, tz, texz, texone;
-  
-%typeterm Bool {
-  implement           { ATerm }
-//  get_fun_sym(t)      { ATgetAFun(t) }
+
+
+ATerm hook_plus(ATerm t1,ATerm t2);
+ATerm hook_mult(ATerm t1,ATerm t2);
+ATerm hook_exp(ATerm t1,ATerm t2);
+ATerm hook_succ17(ATerm t);
+ATerm hook_pred17(ATerm t);
+ATerm hook_plus17(ATerm t1,ATerm t2);
+ATerm hook_mult17(ATerm t1,ATerm t2);
+ATerm hook_exp17(ATerm t1,ATerm t2);
+ATerm hook_eval(ATerm t);
+ATerm hook_evalsym17(ATerm t);
+ATerm hook_eval17(ATerm t);
+ATerm hook_expand(ATerm t);
+ATerm hook_getval(ATerm t);
+ATerm hook_getmax(ATerm t);
+
+
+%typeterm term {
+  implement      { ATerm }
+  is_sort(t)     { (0==0) }
   equals(t1,t2)  { t1 == t2 }
-//  get_subterm(t, n)   { ATgetArgument(t,n) }
 }
 
-%typeterm Nat {
-  implement           { ATerm }
-  equals(t1,t2)  { t1 == t2 }
-}
-
-%typeterm SNat {
-  implement           { ATerm }
-  equals(t1,t2)  { t1 == t2 }
-}
-
-%typeterm Tree {
-  implement           { ATerm }
-  equals(t1,t2)  { t1 == t2 }
-}
-
-
-
-%op Bool true() {
+%op term true() {
   is_fsym(t) { ATgetAFun(t) == ftrue }
   make() { (ATerm)ttrue }
 }
-%op Bool false() {
+%op term false() {
   is_fsym(t) { ATgetAFun(t) == ffalse }
   make() { (ATerm)tfalse }
 }
-%op Nat z() {
+%op term z() {
   is_fsym(t) { ATgetAFun(t) == fz }
   make() { (ATerm)tz }
 }
-%op Nat s(n1:Nat) {
+%op term s(n1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fs  }
   make(t) { (ATerm)ATmakeAppl1(fs,t) }
   get_slot(n1,t) { ATgetArgument(t,0) }
 }
-%op Nat plus(n1:Nat,n2:Nat) {
+%op term plus(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fplus  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fplus,t1,t2) }
+  make(t1,t2) { hook_plus(t1,t2) }
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) }
 }
-%op Nat mult(n1:Nat,n2:Nat) {
+%op term mult(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fmult  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fmult,t1,t2) }
+  make(t1,t2) { hook_mult(t1,t2) }
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) }
 }
-%op Nat exp(n1:Nat,n2:Nat) {
+%op term exp(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexp  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fexp,t1,t2) } 
+  make(t1,t2) { hook_exp(t1,t2) } 
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) }
 }
-%op Nat succ17(n1:Nat) {
+%op term succ17(n1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fsucc17  }
-  make(t) { (ATerm)ATmakeAppl1(fsucc17,t) }
+  make(t) { hook_succ17(t) }
   get_slot(n1,t) { ATgetArgument(t,0) }
 }
-%op Nat pred17(n1:Nat) {
+%op term pred17(n1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fpred17  }
-  make(t) { (ATerm)ATmakeAppl1(fpred17,t) }
+  make(t) { hook_pred17(t) }
   get_slot(n1,t) { ATgetArgument(t,0) }
 }
-%op Nat plus17(n1:Nat,n2:Nat) {
+%op term plus17(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fplus17  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fplus17,t1,t2) }
+  make(t1,t2) { hook_plus17(t1,t2) }
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) } 
 }
-%op Nat mult17(n1:Nat,n2:Nat) {
+%op term mult17(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fmult17  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fmult17,t1,t2) }
+  make(t1,t2) { hook_mult17(t1,t2) }
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) } 
 }
-%op Nat exp17(n1:Nat,n2:Nat) {
+%op term exp17(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexp17  }
-  make(t1,t2) { (ATerm)ATmakeAppl2(fexp17,t1,t2) }
+  make(t1,t2) { hook_exp17(t1,t2) }
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) } 
 }
-%op SNat exz() {
+%op term exz() {
   is_fsym(t) { ATgetAFun(t) ==  fexz  }
   make() { (ATerm)texz }
 }
-%op SNat exs(s1:SNat) {
+%op term exs(s1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexs  }
   make(t) { (ATerm)ATmakeAppl1(fexs,t) }
   get_slot(s1,t) { ATgetArgument(t,0) }
 }
-%op SNat explus(s1:SNat,s2:SNat) {
+%op term explus(s1:term,s2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexplus  }
   make(t1,t2) { (ATerm)ATmakeAppl2(fexplus,t1,t2) }
   get_slot(s1,t) { ATgetArgument(t,0) }
   get_slot(s2,t) { ATgetArgument(t,1) }
 }
-%op SNat exmult(s1:SNat,s2:SNat) {
+%op term exmult(s1:term,s2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexmult  }
   make(t1,t2) { (ATerm)ATmakeAppl2(fexmult,t1,t2) }
   get_slot(s1,t) { ATgetArgument(t,0) }
   get_slot(s2,t) { ATgetArgument(t,1) }
 }
-%op SNat exexp(s1:SNat,s2:SNat) {
+%op term exexp(s1:term,s2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexexp  }
   make(t1,t2) { (ATerm)ATmakeAppl2(fexexp,t1,t2) }
   get_slot(s1,t) { ATgetArgument(t,0) }
   get_slot(s2,t) { ATgetArgument(t,1) }
 }
-%op Tree leaf(n1:Nat) {
+%op term leaf(n1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fleaf  }
   make(t) { (ATerm)ATmakeAppl1(fleaf,t) }
   get_slot(n1,t) { ATgetArgument(t,0) }
 }
-%op Tree node(n1:Nat,n2:Nat,t3:Tree,t4:Tree) {
+%op term node(n1:term,n2:term,t3:term,t4:term) {
   is_fsym(t) { ATgetAFun(t) ==  fnode  }
   make(t1,t2,t3,t4) { (ATerm)ATmakeAppl4(fnode,t1,t2,t3,t4) }
   get_slot(n1,t) { ATgetArgument(t,0) }
@@ -167,59 +166,59 @@ static ATermAppl ttrue, tfalse, tz, texz, texone;
   get_slot(t3,t) { ATgetArgument(t,2) }
   get_slot(t4,t) { ATgetArgument(t,3) }
 }
-%op Tree buildtree(n1:Nat,n2:Nat) {
+%op term buildtree(n1:term,n2:term) {
   is_fsym(t) { ATgetAFun(t) ==  fbuildtree  }
   make(t1,t2) { (ATerm)ATmakeAppl2(fbuildtree,t1,t2) }
   get_slot(n1,t) { ATgetArgument(t,0) }
   get_slot(n2,t) { ATgetArgument(t,1) }
 }
-%op Nat getmax(t1:Tree) {
+%op term getmax(t1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fgetmax  }
-  make(t) { (ATerm)ATmakeAppl1(fgetmax,t) }
+  make(t) { hook_getmax(t) }
   get_slot(t1,t) { ATgetArgument(t,0) }
 }
-%op Nat getval(t1:Tree) {
+%op term getval(t1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fgetval  }
-  make(t) { (ATerm)ATmakeAppl1(fgetval,t) }
+  make(t) { hook_getval(t) }
   get_slot(t1,t) { ATgetArgument(t,0) }
 }
-%op Nat eval(s1:SNat) {
+%op term eval(s1:term) {
   is_fsym(t) { ATgetAFun(t) ==  feval  }
-  make(t) { (ATerm)ATmakeAppl1(feval,t) }
+  make(t) { hook_eval(t) }
   get_slot(s1,t) { ATgetArgument(t,0) }
 }
-%op Nat eval17(s1:SNat) {
+%op term eval17(s1:term) {
   is_fsym(t) { ATgetAFun(t) ==  feval17  }
-  make(t) { (ATerm)ATmakeAppl1(feval17,t) }
+  make(t) { hook_eval17(t) }
   get_slot(s1,t) { ATgetArgument(t,0) }
 }
-%op Nat evalsym17(s1:SNat) {
+%op term evalsym17(s1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fevalsym17  }
-  make(t) { (ATerm)ATmakeAppl1(fevalsym17,t) }
+  make(t) { hook_evalsym17(t) }
   get_slot(s1,t) { ATgetArgument(t,0) }
 }
-%op SNat dec(s1:SNat) {
+%op term dec(s1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fdec  }
   make(t) { (ATerm)ATmakeAppl1(fdec,t) }
   get_slot(s1,t) { ATgetArgument(t,0) }
 }
-%op SNat expand(s1:SNat) {
+%op term expand(s1:term) {
   is_fsym(t) { ATgetAFun(t) ==  fexpand  }
-  make(t) { (ATerm)ATmakeAppl1(fexpand,t) }
+  make(t) { hook_expand(t) }
   get_slot(s1,t) { ATgetArgument(t,0) }
 }
-%op SNat exone() {
+%op term exone() {
   is_fsym(t) { ATgetAFun(t) ==  fexone  }
   make { (ATerm)texone }
 }
 
 
 /* MACROS */
-%op Nat calctree17(n1:Nat) {
-  make(X) { (ATerm) mult17(exp17(s(s(z)), pred17(X)),pred17(exp17(s(s(z)),X))) }
+%op term calctree17(n1:term) {
+  make(X) { (ATerm) `mult17(exp17(s(s(z())), pred17(X)),pred17(exp17(s(s(z())),X))) }
 }
-%op Nat evalexp17(s1:SNat) {
-  make(Xs) { (ATerm) eval17(expand(Xs)) }
+%op term evalexp17(s1:term) {
+  make(Xs) { (ATerm) `eval17(expand(Xs)) }
 }
   
 void init() {
@@ -228,7 +227,7 @@ void init() {
   fz = ATmakeAFun("z", 0, ATfalse);
   fs = ATmakeAFun("s", 1, ATfalse);
   
-  fequal = ATmakeAFun("equal", 2, ATfalse);
+//  fequal = ATmakeAFun("equal", 2, ATfalse);
   fplus = ATmakeAFun("plus", 2, ATfalse);
   fmult = ATmakeAFun("mult", 2, ATfalse);
   fexp = ATmakeAFun("exp", 2, ATfalse);
@@ -248,16 +247,12 @@ void init() {
   fleaf = ATmakeAFun("leaf", 1, ATfalse);
   fnode = ATmakeAFun("node", 4, ATfalse);
   fbuildtree = ATmakeAFun("buildtree", 2, ATfalse);
-//  fcalctree17 = ATmakeAFun("calctree17", 2, ATfalse);
+
   fgetmax = ATmakeAFun("getmax", 1, ATfalse);
   fgetval = ATmakeAFun("getval", 1, ATfalse);
   feval = ATmakeAFun("eval", 1, ATfalse);
   feval17 = ATmakeAFun("eval17", 1, ATfalse);
   fevalsym17 = ATmakeAFun("evalsym17", 1, ATfalse);
-//  fevalexp17 = ATmakeAFun("evalexp17", 1, ATfalse);
-//  fbench_evalsym17 = ATmakeAFun("bench_evalsym17", 1, ATfalse);
-//  fbench_evalexp17 = ATmakeAFun("bench_evalexp17", 1, ATfalse);
-//  fbench_evaltree17 = ATmakeAFun("bench_evaltree17", 1, ATfalse);
   
   fdec = ATmakeAFun("dec", 1, ATfalse);
   fexpand = ATmakeAFun("expand", 1, ATfalse);
@@ -278,7 +273,32 @@ ATerm build_exs(int n) {
   }
   return N;
 }
-  
+
+
+ATerm equal(ATerm t1, ATerm t2) {
+  if(t1==t2) {
+    return `true();
+  } else {
+    return `false();
+  }
+}
+
+ATerm bench_evalsym17(ATerm Xs) {
+  ATerm Zs = `exexp(build_exs(2),Xs);
+  return `equal(eval17(Zs),evalsym17(Zs));
+}
+
+ATerm bench_evalexp17(ATerm Xs) {
+  ATerm Zs = `exexp(build_exs(2),Xs);
+  return `equal(eval17(Zs),evalexp17(Zs));
+}
+
+ATerm bench_evaltree17(ATerm Xs) {
+  ATerm y = `eval(Xs);
+  return `equal(calctree17(y),getval(buildtree(y,(ATerm)tz)));
+}
+
+
 void run(int n) {
   ATerm res;
   struct rusage before_self,after_self;
@@ -312,6 +332,23 @@ void run(int n) {
   
 }
   
+ATerm buildtree(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    z,Val   -> { return (ATerm) `ATmakeAppl1(fleaf,Val); }
+    s(X), Y -> {
+      ATerm Left = `buildtree(X, Y);	
+      ATerm Max2 = `getmax(Left);
+      ATerm Right= `buildtree(X, succ17(Max2));
+      ATerm Val2 = `getval(Left);
+      ATerm Val3 = `getval(Right);
+      ATerm Val  = `plus17(Val2, Val3);
+      ATerm Max  = `getmax(Right);
+      return (ATerm) ATmakeAppl4(fnode,Val, Max, Left, Right);
+    }
+  }
+  return (ATerm) NULL;
+}
+
 int main(int argc, char **argv) {
   int i;
   ATerm     bottomOfStack;
@@ -324,153 +361,157 @@ int main(int argc, char **argv) {
   return(0);
 }
 
-
-ATerm equal(ATerm t1, ATerm t2) {
-  if(t1==t2) {
-    return (ATerm)ttrue;
-  } else {
-    return (ATerm)tfalse;
+ATerm hook_plus(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    x,z() -> { return `x; }
+    x,s(y) -> { return `s(plus(x,y)); }
   }
+  return (ATerm)ATmakeAppl2(fplus,t1,t2); 
 }
 
-ATerm bench_evalsym17(ATerm Xs) {
-  ATerm Zs = (ATerm)tom_make_exexp(build_exs(2),Xs);
-  return equal(eval17(Zs),evalsym17(Zs));
+ATerm hook_mult(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    x,z() -> { return `z(); }
+    x,s(y) -> { return `plus(mult(x,y),x); } 
+  }
+  return (ATerm)ATmakeAppl2(fmult,t1,t2); 
+}
+ 
+
+ATerm hook_exp(ATerm t1,ATerm t2) {
+  %match(term t1, term t2) {
+    x,z() -> { return `s(z()); }
+    x,s(y) -> { return `mult(x,exp(x,y)); }
+  }
+  return (ATerm)ATmakeAppl2(fexp,t1,t2); 
 }
 
-ATerm bench_evalexp17(ATerm Xs) {
-  ATerm Zs = (ATerm)tom_make_exexp(build_exs(2),Xs);
-  return equal(eval17(Zs),evalexp17(Zs));
+ATerm hook_succ17(ATerm t) {
+  %match(term t) {
+    s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(z())))))))))))))))) -> { return `z(); } 
+    x -> { return `s(x); }
+  }
+  return (ATerm)ATmakeAppl1(fsucc17,t); 
 }
 
-ATerm bench_evaltree17(ATerm Xs) {
-  ATerm y = eval(Xs);
-  return equal(calctree17(y),getval(buildtree(y,(ATerm)tz)));
+ATerm hook_pred17(ATerm t) {
+  %match(term t) {
+    s(x) -> { return `x; } 
+    z() -> { return `s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(z())))))))))))))))); }
+  }
+  return (ATerm)ATmakeAppl1(fpred17,t); 
 }
 
-ATerm buildtree(ATerm t1, ATerm t2) {
-  %match(Nat t1, Nat t2) {
-    z,Val   -> { return (ATerm) `ATmakeAppl1(fleaf,Val); }
-    s(X), Y -> {
-      {
-      ATerm Left = `buildtree(X, Y);	
-      ATerm Max2 = getmax(Left);
-      ATerm Right= `buildtree(X, succ17(Max2));
-      ATerm Val2 = getval(Left);
-      ATerm Val3 = getval(Right);
-      ATerm Val  = plus17(Val2, Val3);
-      ATerm Max  = getmax(Right);
-      return ATmakeAppl4(fnode,Val, Max, Left, Right);
-      }
-    }
+ATerm hook_plus17(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    x,z() -> { return `x; }
+    x,s(y) -> { return `succ17(plus17(x,y)); }
   }
+  return (ATerm)ATmakeAppl2(fplus17,t1,t2); 
 }
 
-  %rule {
-    plus(x,z) -> x 
-    plus(x,s(y)) -> s(plus(x,y)) 
+ATerm hook_mult17(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    x,z() -> { return `z(); } 
+    x,s(y) -> { return `plus17(x,mult17(x,y)); }
   }
+  return (ATerm)ATmakeAppl2(fmult17,t1,t2); 
+}
+  
 
-  %rule {
-    mult(x,z) -> z 
-    mult(x,s(y)) -> plus(mult(x,y),x) 
+ATerm hook_exp17(ATerm t1, ATerm t2) {
+  %match(term t1, term t2) {
+    x,z() -> { return `succ17(z()); }
+    x,s(y) -> { return `mult17(x,exp17(x,y)); }
   }
-  
-  %rule {
-    exp(x,z) -> s(z) 
-    exp(x,s(y)) -> mult(x,exp(x,y)) 
+  return (ATerm)ATmakeAppl2(fexp17,t1,t2); 
+}
+ 
+ATerm hook_eval(ATerm t) {
+  %match(term t) {
+    exz() -> { return `z(); }
+    exs(xs) -> { return `s(eval(xs)); }
+    explus(xs,ys) -> { return `plus(eval(xs), eval(ys)); }
+    exmult(xs,ys) -> { return `mult(eval(xs), eval(ys)); }
+    exexp(xs,ys) -> { return `exp(eval(xs), eval(ys)); }
   }
-  
-  %rule {
-    succ17(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(z))))))))))))))))) -> z 
-    succ17(x) -> s(x) 
-  }
-  
-  %rule {
-    pred17(s(x)) -> x 
-    pred17(z) -> s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(z)))))))))))))))) 
-  }
-  
-  %rule {
-    plus17(x,z) -> x 
-    plus17(x,s(y)) -> succ17(plus17(x,y)) 
-  }
-  
-  %rule {
-    mult17(x,z) -> z 
-    mult17(x,s(y)) -> plus17(x,mult17(x,y)) 
-  }
-  
-  %rule {
-    exp17(x,z) -> succ17(z) 
-    exp17(x,s(y)) -> mult17(x,exp17(x,y)) 
-  }
-  
-  %rule {
-    eval(exz) -> z 
-    eval(exs(xs)) -> s(eval(xs)) 
-    eval(explus(xs,ys)) -> plus(eval(xs), eval(ys)) 
-    eval(exmult(xs,ys)) -> mult(eval(xs), eval(ys)) 
-    eval(exexp(xs,ys)) -> exp(eval(xs), eval(ys)) 
-  }
-  
-  %rule {
-    evalsym17(exz) -> z 
-    evalsym17(exs(Xs)) -> succ17(evalsym17(Xs)) 
-    evalsym17(explus(Xs,Ys)) -> plus17(evalsym17(Xs),evalsym17(Ys)) 
-    evalsym17(exmult(Xs,exz)) -> z 
-    evalsym17(exmult(Xs,exs(Ys))) ->
-                evalsym17(explus(exmult(Xs,Ys),Xs)) 
-    evalsym17(exmult(Xs,explus(Ys,Zs))) ->
-                evalsym17(explus(exmult(Xs,Ys),exmult(Xs,Zs))) 
-    evalsym17(exmult(Xs,exmult(Ys,Zs))) ->
-                evalsym17(exmult(exmult(Xs,Ys),Zs)) 
-    evalsym17(exmult(Xs,exexp(Ys,Zs))) ->
-                evalsym17(exmult(Xs,dec(exexp(Ys,Zs)))) 
-    evalsym17(exexp(Xs,exz)) -> succ17(z) 
-    evalsym17(exexp(Xs,exs(Ys))) ->
-                evalsym17(exmult(exexp(Xs,Ys),Xs)) 
-    evalsym17(exexp(Xs,explus(Ys,Zs))) ->
-                evalsym17(exmult(exexp(Xs,Ys),exexp(Xs,Zs))) 
-    evalsym17(exexp(Xs,exmult(Ys,Zs))) ->
-                evalsym17(exexp(exexp(Xs,Ys),Zs)) 
-    evalsym17(exexp(Xs,exexp(Ys,Zs))) ->
-                evalsym17(exexp(Xs,dec(exexp(Ys,Zs))))  
-  }
+  return (ATerm)ATmakeAppl1(feval,t); 
+}
 
-  %rule {
-    eval17(exone) -> s(z) 
-    eval17(exz) -> z
-    eval17(exs(xs)) -> succ17(eval17(xs))
-    eval17(explus(xs,ys)) -> plus17(eval17(xs), eval17(ys))
-    eval17(exmult(xs,ys)) -> mult17(eval17(xs), eval17(ys))
-    eval17(exexp(xs,ys)) -> exp17(eval17(xs), eval(ys))
+ATerm hook_evalsym17(ATerm t) {
+  %match(term t) {
+    exz() -> { return `z(); }
+    exs(Xs) -> { return `succ17(evalsym17(Xs)); }
+    explus(Xs,Ys) -> { return `plus17(evalsym17(Xs),evalsym17(Ys)); }
+    exmult(Xs,exz()) -> { return `z(); }
+    exmult(Xs,exs(Ys)) ->
+    { return `evalsym17(explus(exmult(Xs,Ys),Xs)); }
+    exmult(Xs,explus(Ys,Zs)) ->
+    { return `evalsym17(explus(exmult(Xs,Ys),exmult(Xs,Zs))); }
+    exmult(Xs,exmult(Ys,Zs)) ->
+    { return `evalsym17(exmult(exmult(Xs,Ys),Zs)); }
+    exmult(Xs,exexp(Ys,Zs)) ->
+    { return `evalsym17(exmult(Xs,dec(exexp(Ys,Zs)))); }
+    exexp(Xs,exz()) -> { return `succ17(z()); }
+    exexp(Xs,exs(Ys)) ->
+    { return `evalsym17(exmult(exexp(Xs,Ys),Xs)); }
+    exexp(Xs,explus(Ys,Zs)) ->
+    { return `evalsym17(exmult(exexp(Xs,Ys),exexp(Xs,Zs))); }
+    exexp(Xs,exmult(Ys,Zs)) ->
+    { return `evalsym17(exexp(exexp(Xs,Ys),Zs)); }
+    exexp(Xs,exexp(Ys,Zs)) ->
+    { return `evalsym17(exexp(Xs,dec(exexp(Ys,Zs)))); }
   }
+  return (ATerm)ATmakeAppl1(fevalsym17,t); 
+}
 
-  %rule {
-    expand(exz) -> exz 
-    expand(exone) -> exone 
-    expand(exs(Xs)) -> explus(exone,expand(Xs)) 
-    expand(explus(Xs,Ys)) -> explus(expand(Xs),expand(Ys)) 
-    expand(exmult(Xs,exz)) -> exz 
-    expand(exmult(Xs,exone)) -> expand(Xs) 
-    expand(exmult(Xs,explus(Ys,Zs))) ->
-                expand(explus(exmult(Xs,Ys),exmult(Xs,Zs))) 
-    expand(exmult(Xs,Ys)) -> expand(exmult(Xs,expand(Ys))) 
-    expand(exexp(Xs,exz)) -> exone 
-    expand(exexp(Xs,exone)) -> expand(Xs) 
-    expand(exexp(Xs,explus(Ys,Zs))) ->
-                expand(exmult(exexp(Xs,Ys),exexp(Xs,Zs))) 
-    expand(exexp(Xs,Ys)) -> expand(exexp(Xs, expand(Ys))) 
-  }
 
-  %rule {
-    getval(leaf(Val)) -> Val
-    getval(node(Val,Max,Left,Right)) -> Val
+ATerm hook_eval17(ATerm t) {
+  %match(term t) {
+    exone() -> { return `s(z()); }
+    exz() -> { return `z(); }
+    exs(xs) -> { return `succ17(eval17(xs)); }
+    explus(xs,ys) -> { return `plus17(eval17(xs), eval17(ys)); }
+    exmult(xs,ys) -> { return `mult17(eval17(xs), eval17(ys)); }
+    exexp(xs,ys) -> { return `exp17(eval17(xs), eval(ys)); }
   }
+  return (ATerm)ATmakeAppl1(feval17,t); 
 
-  %rule {
-    getmax(leaf(Val)) -> Val
-    getmax(node(Val,Max,Left,Right)) -> Max
+}
+
+ATerm hook_expand(ATerm t) {
+  %match(term t) {
+    exz() -> { return `exz(); }
+    exone() -> { return `exone(); }
+    exs(Xs) -> { return `explus(exone(),expand(Xs)); }
+    explus(Xs,Ys) -> { return `explus(expand(Xs),expand(Ys)); }
+    exmult(Xs,exz()) -> { return `exz(); } 
+    exmult(Xs,exone()) -> { return `expand(Xs); }
+    exmult(Xs,explus(Ys,Zs)) ->
+    { return `expand(explus(exmult(Xs,Ys),exmult(Xs,Zs))); }
+    exmult(Xs,Ys) -> { return `expand(exmult(Xs,expand(Ys))); }
+    exexp(Xs,exz()) -> { return `exone(); }
+    exexp(Xs,exone()) -> { return `expand(Xs); }
+    exexp(Xs,explus(Ys,Zs)) ->
+    { return `expand(exmult(exexp(Xs,Ys),exexp(Xs,Zs))); }
+    exexp(Xs,Ys) -> { return `expand(exexp(Xs, expand(Ys))); }
   }
+  return (ATerm)ATmakeAppl1(fexpand,t); 
+}
+
+ATerm hook_getval(ATerm t) {
+%match(term t) {
+    leaf(Val) -> { return `Val; }
+    node(Val,Max,Left,Right) -> { return `Val; }
+  }
+  return (ATerm)ATmakeAppl1(fgetval,t); 
+}
+
+ATerm hook_getmax(ATerm t) {
+%match(term t) {
+    leaf(Val) -> { return `Val; }
+    node(Val,Max,Left,Right) -> { return `Max; }
+  }
+  return (ATerm)ATmakeAppl1(fgetmax,t); 
+}
 
