@@ -59,20 +59,10 @@ Java_typeParameterList =
     Java_typeParameterList(Java_typeParameter*)
 
 Java_typeParameter =
-    Java_typeParameter(typeParameter_1:Java_Identifier,typeParameter_2:Java_typeParameter_2)
-
-Java_typeParameter_2 =
-    Java_typeParameter_2_1(typeParameter_2_1_1:Java_bound)
-  | Java_typeParameter_2_2()
+    Java_typeParameter(typeParameter_1:Java_Identifier,extends:Java_bound)
 
 Java_bound =
-    Java_bound(bound_1:Java_type,bound_2:Java_bound_2)
-
-Java_bound_2 =
-    Java_bound_2_1(Java_bound_2_1_1*)
-
-Java_bound_2_1_1 =
-    Java_bound_2_1_1(bound_2_1_1_1:Java_type)
+    Java_bound(Java_type*)
 
 Java_enumDeclaration =
     Java_enumDeclaration(enumDeclaration_1:Java_ENUM,enumDeclaration_2:Java_Identifier,enumDeclaration_3:Java_enumDeclaration_3,enumDeclaration_4:Java_enumBody)

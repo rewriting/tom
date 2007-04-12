@@ -219,13 +219,13 @@ typeParameters returns [Java_typeParameterList tp]
 
 typeParameter returns [Java_typeParameter tp]
 @init {
-    Java_typeParameter_2 tp2=`Java_typeParameter_2_2();
+    Java_bound tp2=`Java_bound();
 }
 	:	i=Identifier 
         (
             'extends' b=bound
             {
-                tp2=`Java_typeParameter_2_1(b);
+                tp2=b;
             }
         )?
         {
@@ -235,17 +235,17 @@ typeParameter returns [Java_typeParameter tp]
 		
 bound returns [Java_bound b]
 @init {
-    Java_bound_2 b2=`Java_bound_2_1();
+    b=`Java_bound();
 }
 	:	t1=type
         (
             '&' t2=type
             {
-                b2=`Java_bound_2_1(b2*,Java_bound_2_1_1(t2));
+                b=`Java_bound(b*,t2);
             }
         )*
         {
-            b=`Java_bound(t1,b2);
+            b=`Java_bound(t1,b*);
         }
 	;
 
