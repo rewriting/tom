@@ -434,15 +434,9 @@ Java_annotationList =
     Java_annotationList(Java_annotation*)
 
 Java_annotation =
-    Java_annotation(annotation_1:Java_typeName,annotation_2:Java_annotation_2)
-
-Java_annotation_2 =
-    Java_annotation_2_1(annotation_2_1_1:Java_annotation_2_1_1,annotation_2_1_2:Java_elementValue)
-  | Java_annotation_2_2()
-
-Java_annotation_2_1_1 =
-    Java_annotation_2_1_1_1(annotation_2_1_1_1_1:Java_Identifier)
-  | Java_annotation_2_1_1_2()
+    Java_annotationSimple(annotation_1:Java_typeName)
+  | Java_annotationId(annotation_1:Java_typeName,ev:Java_elementValue)
+  | Java_annotationElem(annotation_1:Java_typeName,id:Java_Identifier,ev:Java_elementValue)
 
 Java_elementValue =
     Java_elementValueConditional(conditionalExpression:Java_conditionalExpression)

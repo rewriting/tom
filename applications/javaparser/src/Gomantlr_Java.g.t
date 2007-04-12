@@ -1228,8 +1228,8 @@ annotations returns [Java_annotationList a]
 
 annotation returns [Java_annotation a]
 @init {
-    Java_annotation_2 a2=`Java_annotation_2_2();
-    Java_annotation_2_1_1 a3=`Java_annotation_2_1_1_2();
+  Java_Identifier ident = null;
+  Java_elementValue elemv = null;
 }
 	:	'@' tn=typeName
         (
@@ -1237,17 +1237,25 @@ annotation returns [Java_annotation a]
             (
                 i=Identifier '='
                 {
-                    a3=`Java_annotation_2_1_1_1(Java_Identifier(i.getText()));
+                    ident=`Java_Identifier(i.getText());
                 }
             )? 
             ev=elementValue
             ')'
             {
-                a2=`Java_annotation_2_1(a3,ev);
+                elemv=ev;
             }
         )?
         {
-            a=`Java_annotation(tn,a2);
+          if (elemv != null) {
+            if(null == ident) {
+              a=`Java_annotationId(tn,elemv);
+            } else {
+              a=`Java_annotationElem(tn,ident,elemv);
+            }
+          } else {
+            a=`Java_annotationSimple(tn);
+          }
         }
 	;
 	
