@@ -91,8 +91,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
           concSlot() ->{
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
           }
-        }// end match
-        TomTerm newFreshVarList = getFreshVariableStar(listType);            
+        }// end match                    
         // add head equality condition + fresh var declaration
         l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
             freshVarDeclaration,l*);
