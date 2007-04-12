@@ -557,53 +557,53 @@ interfaceBodyDeclaration returns [Java_interfaceBodyDeclaration ibd]
             )* 
             imd=interfaceMemberDecl
             {
-                ibd=`Java_interfaceBodyDeclaration_1(ibd1,imd);
+                ibd=`Java_interfaceBodyDeclaration(ibd1,imd);
             }
 	    |
             ';'
             {
-                ibd=`Java_interfaceBodyDeclaration_2();
+                ibd=`Java_interfaceEmptyBody();
             }
 	;
 
 interfaceMemberDecl returns [Java_interfaceMemberDecl imd]
 	:	imofd=interfaceMethodOrFieldDecl
         {
-            imd=`Java_interfaceMemberDecl_1(imofd);
+            imd=`Java_interfaceMemberMethodOrFieldDecl(imofd);
         }
 	|   igmd=interfaceGenericMethodDecl
         {
-            imd=`Java_interfaceMemberDecl_2(igmd);
+            imd=`Java_interfaceMemberGenericMethodDecl(igmd);
         }
-    |   'void' i=Identifier vimdr=voidInterfaceMethodDeclaratorRest
+    |   'void' i=Identifier vimdr=voidInterfaceMethodDeclaratorRest[`Java_Identifier(i.getText())]
         {
-            imd=`Java_interfaceMemberDecl_3(Java_Identifier(i.getText()),vimdr);
+            imd=vimdr;
         }
     |   id=interfaceDeclaration
         {
-            imd=`Java_interfaceMemberDecl_4(id);
+            imd=`Java_interfaceMemberInterfaceDecl(id);
         }
     |   cd=classDeclaration
         {
-            imd=`Java_interfaceMemberDecl_5(cd);
+            imd=`Java_interfaceMemberClassDecl(cd);
         }
 	;
 	
-interfaceMethodOrFieldDecl returns [Java_interfaceMethodOrFieldDecl imofd]
-	:	t=type i=Identifier imofr=interfaceMethodOrFieldRest
-        {
-            imofd=`Java_interfaceMethodOrFieldDecl(t,Java_Identifier(i.getText()),imofr);
-        }
+interfaceMethodOrFieldDecl returns [Java_interfaceMethodOrFieldDecl imofr]
+	:	t=type i=Identifier imofd=interfaceMethodOrFieldRest[t,`Java_Identifier(i.getText())]
+{
+  imofr=imofd;
+}
 	;
 	
-interfaceMethodOrFieldRest returns [Java_interfaceMethodOrFieldRest imofr]
+interfaceMethodOrFieldRest [Java_type typ, Java_Identifier ident] returns [Java_interfaceMethodOrFieldDecl imofr]
 	:	cdr=constantDeclaratorsRest ';'
         {
-            imofr=`Java_interfaceMethodOrFieldRest_1(cdr);
+            imofr=`Java_interfaceFieldDecl(typ,ident,cdr);
         }
 	|	imdr=interfaceMethodDeclaratorRest
         {
-            imofr=`Java_interfaceMethodOrFieldRest_2(imdr);
+            imofr=`Java_interfaceMethodDecl(typ,ident,imdr);
         }
 	;
 	
@@ -718,7 +718,7 @@ interfaceGenericMethodDecl returns [Java_interfaceGenericMethodDecl igmd]
         }
 	;
 	
-voidInterfaceMethodDeclaratorRest returns [Java_voidInterfaceMethodDeclaratorRest vimd]
+voidInterfaceMethodDeclaratorRest [Java_Identifier ident] returns [Java_interfaceMemberDecl vimd]
 @init {
     Java_qualifiedNameList vimd2=`Java_qualifiedNameList();
 }
@@ -731,7 +731,7 @@ voidInterfaceMethodDeclaratorRest returns [Java_voidInterfaceMethodDeclaratorRes
         )? 
         ';'
         {
-            vimd=`Java_voidInterfaceMethodDeclaratorRest(fp,vimd2);
+            vimd=`Java_interfaceMemberVoidMethodDecl(ident,fp,vimd2);
         }
 	;
 	
@@ -2081,13 +2081,13 @@ instanceOfExpression returns [Java_instanceOfExpression ioe]
 
 relationalExpression returns [Java_relationalExpression rexp]
 @init {
-    Java_relationalExpression_2 re2=`Java_relationalExpression_2_1();
+    Java_relationalExpressionList re2=`Java_relationalExpressionList();
 }
     :   se1=shiftExpression 
         ( 
             ro=relationalOp se2=shiftExpression 
             {
-                re2=`Java_relationalExpression_2_1(re2*,Java_relationalExpression_2_1_1(ro,se2));
+                re2=`Java_relationalExpressionList(re2*,Java_relationalExpressionElem(ro,se2));
             }
         )*
         {
@@ -2099,19 +2099,19 @@ relationalOp returns [Java_relationalOp ro]
 	:	(
             '<' '=' 
             {
-                ro=`Java_relationalOp_1();
+                ro=`Java_relationalOp("<=");
             }
             | '>' '=' 
             {
-                ro=`Java_relationalOp_2();
+                ro=`Java_relationalOp(">=");
             }
             | '<' 
             {
-                ro=`Java_relationalOp_3();
+                ro=`Java_relationalOp("<");
             }
             | '>'
             {
-                ro=`Java_relationalOp_4();
+                ro=`Java_relationalOp(">");
             }
         )
 	;

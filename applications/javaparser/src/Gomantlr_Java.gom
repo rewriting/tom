@@ -106,25 +106,22 @@ Java_methodDeclaration =
     Java_methodDeclaration(return:Java_type,methodDeclaration_2:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
 
 Java_fieldDeclaration =
-    Java_fieldDeclaration(fieldDeclaration_1:Java_type,fieldDeclaration_2:Java_variableDeclaratorList)
+    Java_fieldDeclaration(Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
 
 Java_interfaceBodyDeclaration =
-    Java_interfaceBodyDeclaration_1(modifierList:Java_modifierList,interfaceBodyDeclaration_1_2:Java_interfaceMemberDecl)
-  | Java_interfaceBodyDeclaration_2()
+    Java_interfaceBodyDeclaration(ModifierList:Java_modifierList,InterfaceDecl:Java_interfaceMemberDecl)
+  | Java_interfaceEmptyBody()
 
 Java_interfaceMemberDecl =
-    Java_interfaceMemberDecl_1(interfaceMethodOrFieldDecl:Java_interfaceMethodOrFieldDecl)
-  | Java_interfaceMemberDecl_2(interfaceGenericMethodDecl:Java_interfaceGenericMethodDecl)
-  | Java_interfaceMemberDecl_3(interfaceMemberDecl_3_1:Java_Identifier,interfaceMemberDecl_3_2:Java_voidInterfaceMethodDeclaratorRest)
-  | Java_interfaceMemberDecl_4(interfaceDeclaration:Java_interfaceDeclaration)
-  | Java_interfaceMemberDecl_5(classDeclaration:Java_classDeclaration)
+    Java_interfaceMemberMethodOrFieldDecl(MethodOrFieldDecl:Java_interfaceMethodOrFieldDecl)
+  | Java_interfaceMemberGenericMethodDecl(GenericMethodDecl:Java_interfaceGenericMethodDecl)
+  | Java_interfaceMemberVoidMethodDecl(Identifier:Java_Identifier,Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList)
+  | Java_interfaceMemberInterfaceDecl(InterfaceDecl:Java_interfaceDeclaration)
+  | Java_interfaceMemberClassDecl(ClassDecl:Java_classDeclaration)
 
 Java_interfaceMethodOrFieldDecl =
-    Java_interfaceMethodOrFieldDecl(interfaceMethodOrFieldDecl_1:Java_type,interfaceMethodOrFieldDecl_2:Java_Identifier,interfaceMethodOrFieldDecl_3:Java_interfaceMethodOrFieldRest)
-
-Java_interfaceMethodOrFieldRest =
-    Java_interfaceMethodOrFieldRest_1(interfaceMethodOrFieldRest_1_1:Java_constantDeclaratorsRest)
-  | Java_interfaceMethodOrFieldRest_2(interfaceMethodDeclaratorRest:Java_interfaceMethodDeclaratorRest)
+    Java_interfaceMethodDecl(Type:Java_type,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
+  | Java_interfaceFieldDecl(Type:Java_type,Identifier:Java_Identifier,ConstantDeclRest:Java_constantDeclaratorsRest)
 
 Java_methodDeclaratorRest =
     Java_methodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
@@ -136,14 +133,11 @@ Java_interfaceMethodDeclaratorRest =
     Java_interfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList)
 
 Java_interfaceGenericMethodDecl =
-    Java_interfaceGenericMethodDecl(interfaceGenericMethodDecl_1:Java_typeParameterList,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,interfaceGenericMethodDecl_3:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
+    Java_interfaceGenericMethodDecl(Parameters:Java_typeParameterList,interfaceGenericMethodDecl_2:Java_interfaceGenericMethodDecl_2,Identifier:Java_Identifier,interfaceGenericMethodDecl_4:Java_interfaceMethodDeclaratorRest)
 
 Java_interfaceGenericMethodDecl_2 =
     Java_interfaceGenericMethodDecl_2_1(type:Java_type)
   | Java_interfaceGenericMethodDecl_2_2()
-
-Java_voidInterfaceMethodDeclaratorRest =
-    Java_voidInterfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList)
 
 Java_constructorDeclaratorRest =
     Java_constructorDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
@@ -532,19 +526,16 @@ Java_instanceOfExpression_2 =
   | Java_instanceOfExpression_2_2()
 
 Java_relationalExpression =
-    Java_relationalExpression(relationalExpression_1:Java_shiftExpression,relationalExpression_2:Java_relationalExpression_2)
+    Java_relationalExpression(RelationalExpression:Java_shiftExpression,RelationalExpressionList:Java_relationalExpressionList)
 
-Java_relationalExpression_2 =
-    Java_relationalExpression_2_1(Java_relationalExpression_2_1_1*)
+Java_relationalExpressionList =
+    Java_relationalExpressionList(Java_relationalExpressionElem*)
 
-Java_relationalExpression_2_1_1 =
-    Java_relationalExpression_2_1_1(relationalExpression_2_1_1_1:Java_relationalOp,relationalExpression_2_1_1_2:Java_shiftExpression)
+Java_relationalExpressionElem =
+    Java_relationalExpressionElem(RelationalOp:Java_relationalOp,ShiftExpression:Java_shiftExpression)
 
 Java_relationalOp =
-    Java_relationalOp_1()
-  | Java_relationalOp_2()
-  | Java_relationalOp_3()
-  | Java_relationalOp_4()
+    Java_relationalOp(op:String)
 
 Java_shiftExpression =
     Java_shiftExpression(shiftExpression_1:Java_additiveExpression,shiftExpression_2:Java_shiftExpression_2)
