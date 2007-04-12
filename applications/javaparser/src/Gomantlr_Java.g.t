@@ -268,27 +268,27 @@ enumDeclaration returns [Java_enumDeclaration ed]
 	
 enumBody returns [Java_enumBody eb]
 @init {
-    Java_enumBody_1 eb1=`Java_enumBody_1_2();
-    Java_enumBody_2 eb2=`Java_enumBody_2_2();
-    Java_enumBody_3 eb3=`Java_enumBody_3_2();
+    Java_enumConstantList eb1=`Java_enumConstantList();
+    Java_optionalComa eb2=`Java_noOptionalComa();
+    Java_enumBodyDeclarationList eb3=`Java_enumBodyDeclarationList();
 }
 	:	'{'
         (
             ec=enumConstants
             {
-                eb1=`Java_enumBody_1_1(ec);
+                eb1=ec;
             }
         )? 
         (
             ','
             {
-                eb2=`Java_enumBody_2_1();
+                eb2=`Java_optionalComa();
             }
         )? 
         (
             ebd=enumBodyDeclarations
             {
-                eb3=`Java_enumBody_3_1(ebd);
+                eb3=ebd;
             }
         )?
         '}'
@@ -297,19 +297,19 @@ enumBody returns [Java_enumBody eb]
         }
 	;
 
-enumConstants returns [Java_enumConstants ec]
+enumConstants returns [Java_enumConstantList ec]
 @init {
-    Java_enumConstants_2 tec=`Java_enumConstants_2_1();
+    ec=`Java_enumConstantList();
 }
 	:	ec1=enumConstant 
         (
             ',' ec2=enumConstant
             {
-                tec=`Java_enumConstants_2_1(tec*,Java_enumConstants_2_1_1(ec2));
+                ec=`Java_enumConstantList(ec*,ec2);
             }
         )*
         {
-            ec=`Java_enumConstants(ec1,tec);
+            ec=`Java_enumConstantList(ec1,ec*);
         }
 	;
 	
@@ -343,20 +343,17 @@ enumConstant returns [Java_enumConstant ec]
         }
 	;
 	
-enumBodyDeclarations returns [Java_enumBodyDeclarations ebd]
+enumBodyDeclarations returns [Java_enumBodyDeclarationList ebd]
 @init {
-    Java_enumBodyDeclarations_1 ebd1=`Java_enumBodyDeclarations_1_1();
+    ebd=`Java_enumBodyDeclarationList();
 }
 	:	';' 
         (
             cbd=classBodyDeclaration
             {
-                ebd1=`Java_enumBodyDeclarations_1_1(ebd1*,cbd);
+                ebd=`Java_enumBodyDeclarationList(ebd*,cbd);
             }
         )*
-        {
-            ebd=`Java_enumBodyDeclarations(ebd1);
-        }
 	;
 	
 interfaceDeclaration returns [Java_interfaceDeclaration id]
@@ -880,7 +877,7 @@ arrayInitializer returns [Java_arrayInitializer ai]
 @init {
     ai = `Java_emptyArrayInitializer();
     Java_variableInitializerList ai2=`Java_variableInitializerList();
-    Java_arrayInitializerOption ai3=`Java_arrayInitializerEmptyOption();
+    Java_optionalComa ai3=`Java_noOptionalComa();
 }
 	:	'{' 
         (
@@ -894,7 +891,7 @@ arrayInitializer returns [Java_arrayInitializer ai]
             (
                 ','
                 {
-                    ai3=`Java_arrayInitializerComaOption();
+                    ai3=`Java_optionalComa();
                 }
             )?
             {

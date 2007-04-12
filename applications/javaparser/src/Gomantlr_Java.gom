@@ -53,31 +53,13 @@ Java_bound =
     Java_bound(Java_type*)
 
 Java_enumDeclaration =
-    Java_enumDeclaration(enumDeclaration_1:Java_ENUM,enumDeclaration_2:Java_Identifier,implements:Java_typeList,enumDeclaration_4:Java_enumBody)
+    Java_enumDeclaration(Enum:Java_ENUM,Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
 
 Java_enumBody =
-    Java_enumBody(enumBody_1:Java_enumBody_1,enumBody_2:Java_enumBody_2,enumBody_3:Java_enumBody_3)
+    Java_enumBody(Constants:Java_enumConstantList,OptionalComa:Java_optionalComa,EnumBody:Java_enumBodyDeclarationList)
 
-Java_enumBody_1 =
-    Java_enumBody_1_1(enumConstants:Java_enumConstants)
-  | Java_enumBody_1_2()
-
-Java_enumBody_2 =
-    Java_enumBody_2_1()
-  | Java_enumBody_2_2()
-
-Java_enumBody_3 =
-    Java_enumBody_3_1(enumBodyDeclarations:Java_enumBodyDeclarations)
-  | Java_enumBody_3_2()
-
-Java_enumConstants =
-    Java_enumConstants(enumConstants_1:Java_enumConstant,enumConstants_2:Java_enumConstants_2)
-
-Java_enumConstants_2 =
-    Java_enumConstants_2_1(Java_enumConstants_2_1_1*)
-
-Java_enumConstants_2_1_1 =
-    Java_enumConstants_2_1_1(enumConstants_2_1_1_1:Java_enumConstant)
+Java_enumConstantList =
+    Java_enumConstantList(Java_enumConstant*)
 
 Java_enumConstant =
     Java_enumConstant(enumConstant_1:Java_enumConstant_1,enumConstant_2:Java_Identifier,enumConstant_3:Java_enumConstant_3,enumConstant_4:Java_enumConstant_4)
@@ -94,11 +76,8 @@ Java_enumConstant_4 =
     Java_enumConstant_4_1(classBody:Java_classBody)
   | Java_enumConstant_4_2()
 
-Java_enumBodyDeclarations =
-    Java_enumBodyDeclarations(enumBodyDeclarations_1:Java_enumBodyDeclarations_1)
-
-Java_enumBodyDeclarations_1 =
-    Java_enumBodyDeclarations_1_1(Java_classBodyDeclaration*)
+Java_enumBodyDeclarationList=
+    Java_enumBodyDeclarationList(Java_classBodyDeclaration*)
 
 Java_interfaceDeclaration =
     Java_interfaceDeclaration_1(normalInterfaceDeclaration:Java_normalInterfaceDeclaration)
@@ -276,11 +255,11 @@ Java_variableInitializerList =
 
 Java_arrayInitializer =
     Java_emptyArrayInitializer()
-  | Java_arrayInitializer(arrayInitializers:Java_variableInitializerList,arrayoption:Java_arrayInitializerOption)
+  | Java_arrayInitializer(arrayInitializers:Java_variableInitializerList,arrayoption:Java_optionalComa)
 
-Java_arrayInitializerOption =
-    Java_arrayInitializerComaOption()
-  | Java_arrayInitializerEmptyOption()
+Java_optionalComa =
+    Java_optionalComa()
+  | Java_noOptionalComa()
 
 Java_modifier =
     Java_modifier_annotation(annotation:Java_annotation)
