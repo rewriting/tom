@@ -433,7 +433,7 @@ Java_forControl_2_3 =
 
 Java_forInit =
     Java_forInit_1(forInit_1_1:Java_forInit_1_1,forInit_1_2:Java_type,forInit_1_3:Java_variableDeclaratorList)
-  | Java_forInit_2(expressionList:Java_expressionList)
+  | Java_forInit_2(ExpressionList:Java_expressionList)
 
 Java_forInit_1_1 =
     Java_forInit_1_1_1()
@@ -469,40 +469,26 @@ Java_forVarControlRest_1_4 =
   | Java_forVarControlRest_1_4_2()
 
 Java_forUpdate =
-    Java_forUpdate(expressionList:Java_expressionList)
+    Java_forUpdate(ExpressionList:Java_expressionList)
 
 Java_parExpression =
-    Java_parExpression(parExpression_1:Java_expression)
+    Java_parExpression(Expression:Java_expression)
 
 Java_expressionList =
     Java_expressionList(Java_expression*)
 
-Java_expressionList_2_1_1 =
-    Java_expressionList_2_1_1(expressionList_2_1_1_1:Java_expression)
-
 Java_constantExpression =
-    Java_constantExpression(expression:Java_expression)
+    Java_constantExpression(Expression:Java_expression)
 
 Java_expression =
     Java_expression(expression_1:Java_conditionalExpression,expression_2:Java_expression_2)
 
 Java_expression_2 =
-    Java_expression_2_1(expression_2_1_1:Java_assignmentOperator,expression_2_1_2:Java_expression)
+    Java_expression_2_1(AssignmentOp:Java_assignmentOperator,Expression:Java_expression)
   | Java_expression_2_2()
 
 Java_assignmentOperator =
-    Java_assignmentOperator_1()
-  | Java_assignmentOperator_2()
-  | Java_assignmentOperator_3()
-  | Java_assignmentOperator_4()
-  | Java_assignmentOperator_5()
-  | Java_assignmentOperator_6()
-  | Java_assignmentOperator_7()
-  | Java_assignmentOperator_8()
-  | Java_assignmentOperator_9()
-  | Java_assignmentOperator_10()
-  | Java_assignmentOperator_11()
-  | Java_assignmentOperator_12()
+    Java_assignmentOperator(op:String)
 
 Java_conditionalExpression =
     Java_conditionalExpression(conditionalExpression_1:Java_conditionalOrExpression,conditionalExpression_2:Java_conditionalExpression_2)
@@ -512,62 +498,31 @@ Java_conditionalExpression_2 =
   | Java_conditionalExpression_2_2()
 
 Java_conditionalOrExpression =
-    Java_conditionalOrExpression(conditionalOrExpression_1:Java_conditionalAndExpression,conditionalOrExpression_2:Java_conditionalOrExpression_2)
-
-Java_conditionalOrExpression_2 =
-    Java_conditionalOrExpression_2_1(Java_conditionalOrExpression_2_1_1*)
-
-Java_conditionalOrExpression_2_1_1 =
-    Java_conditionalOrExpression_2_1_1(conditionalOrExpression_2_1_1_1:Java_conditionalAndExpression)
+    Java_conditionalOrExpression(Java_conditionalAndExpression*)
 
 Java_conditionalAndExpression =
-    Java_conditionalAndExpression(conditionalAndExpression_1:Java_inclusiveOrExpression,conditionalAndExpression_2:Java_conditionalAndExpression_2)
-
-Java_conditionalAndExpression_2 =
-    Java_conditionalAndExpression_2_1(Java_conditionalAndExpression_2_1_1*)
-
-Java_conditionalAndExpression_2_1_1 =
-    Java_conditionalAndExpression_2_1_1(conditionalAndExpression_2_1_1_1:Java_inclusiveOrExpression)
+    Java_conditionalAndExpression(Java_inclusiveOrExpression*)
 
 Java_inclusiveOrExpression =
-    Java_inclusiveOrExpression(inclusiveOrExpression_1:Java_exclusiveOrExpression,inclusiveOrExpression_2:Java_inclusiveOrExpression_2)
-
-Java_inclusiveOrExpression_2 =
-    Java_inclusiveOrExpression_2_1(Java_inclusiveOrExpression_2_1_1*)
-
-Java_inclusiveOrExpression_2_1_1 =
-    Java_inclusiveOrExpression_2_1_1(inclusiveOrExpression_2_1_1_1:Java_exclusiveOrExpression)
+    Java_inclusiveOrExpression(Java_exclusiveOrExpression*)
 
 Java_exclusiveOrExpression =
-    Java_exclusiveOrExpression(exclusiveOrExpression_1:Java_andExpression,exclusiveOrExpression_2:Java_exclusiveOrExpression_2)
-
-Java_exclusiveOrExpression_2 =
-    Java_exclusiveOrExpression_2_1(Java_exclusiveOrExpression_2_1_1*)
-
-Java_exclusiveOrExpression_2_1_1 =
-    Java_exclusiveOrExpression_2_1_1(exclusiveOrExpression_2_1_1_1:Java_andExpression)
+    Java_exclusiveOrExpression(Java_andExpression*)
 
 Java_andExpression =
-    Java_andExpression(andExpression_1:Java_equalityExpression,andExpression_2:Java_andExpression_2)
-
-Java_andExpression_2 =
-    Java_andExpression_2_1(Java_andExpression_2_1_1*)
-
-Java_andExpression_2_1_1 =
-    Java_andExpression_2_1_1(andExpression_2_1_1_1:Java_equalityExpression)
+    Java_andExpression(Java_equalityExpression*)
 
 Java_equalityExpression =
-    Java_equalityExpression(equalityExpression_1:Java_instanceOfExpression,equalityExpression_2:Java_equalityExpression_2)
+    Java_equalityExpression(equalityExpression:Java_instanceOfExpression,equalityExpressionList:Java_equalityExpressionList)
 
-Java_equalityExpression_2 =
-    Java_equalityExpression_2_1(Java_equalityExpression_2_1_1*)
+Java_equalityExpressionList =
+    Java_equalityExpressionList(Java_equalityExpressionElem*)
 
-Java_equalityExpression_2_1_1 =
-    Java_equalityExpression_2_1_1(equalityExpression_2_1_1_1:Java_equalityExpression_2_1_1_1,equalityExpression_2_1_1_2:Java_instanceOfExpression)
+Java_equalityExpressionElem =
+    Java_equalityExpressionElem(EqualityOperator:Java_equalityOperator,equalityExpression:Java_instanceOfExpression)
 
-Java_equalityExpression_2_1_1_1 =
-    Java_equalityExpression_2_1_1_1_1()
-  | Java_equalityExpression_2_1_1_1_2()
+Java_equalityOperator =
+    Java_equalityOperator(op:String)
 
 Java_instanceOfExpression =
     Java_instanceOfExpression(instanceOfExpression_1:Java_relationalExpression,instanceOfExpression_2:Java_instanceOfExpression_2)
@@ -777,7 +732,7 @@ Java_superSuffix =
   | Java_superMethod(superSuffix_2_1:Java_Identifier,arguments:Java_arguments)
 
 Java_arguments =
-    Java_arguments(arguments_1:Java_expressionList)
+    Java_arguments(ExpressionList:Java_expressionList)
 
 Java_Identifier =
     Java_Identifier(s:String)

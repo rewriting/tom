@@ -1891,51 +1891,51 @@ expression returns [Java_expression e]
 assignmentOperator returns [Java_assignmentOperator ao]
 	:	'='
         {
-            ao=`Java_assignmentOperator_1();
+            ao=`Java_assignmentOperator("=");
         }
     |   '+='
         {
-            ao=`Java_assignmentOperator_2();
+            ao=`Java_assignmentOperator("+=");
         }
     |   '-='
         {
-            ao=`Java_assignmentOperator_3();
+            ao=`Java_assignmentOperator("-=");
         }
     |   '*='
         {
-            ao=`Java_assignmentOperator_4();
+            ao=`Java_assignmentOperator("*=");
         }
     |   '/='
         {
-            ao=`Java_assignmentOperator_5();
+            ao=`Java_assignmentOperator("/=");
         }
     |   '&='
         {
-            ao=`Java_assignmentOperator_6();
+            ao=`Java_assignmentOperator("&=");
         }
     |   '|='
         {
-            ao=`Java_assignmentOperator_7();
+            ao=`Java_assignmentOperator("|=");
         }
     |   '^='
         {
-            ao=`Java_assignmentOperator_8();
+            ao=`Java_assignmentOperator("^=");
         }
     |   '%='
         {
-            ao=`Java_assignmentOperator_9();
+            ao=`Java_assignmentOperator("%=");
         }
     |   '<' '<' '='
         {
-            ao=`Java_assignmentOperator_10();
+            ao=`Java_assignmentOperator("<<=");
         }
     |   '>' '>' '='
         {
-            ao=`Java_assignmentOperator_11();
+            ao=`Java_assignmentOperator(">>=");
         }
     |   '>' '>' '>' '='
         {
-            ao=`Java_assignmentOperator_12();
+            ao=`Java_assignmentOperator(">>>=");
         }
 	;
 
@@ -1957,105 +1957,105 @@ conditionalExpression returns [Java_conditionalExpression ce]
 
 conditionalOrExpression returns [Java_conditionalOrExpression coe]
 @init {
-    Java_conditionalOrExpression_2 coe2=`Java_conditionalOrExpression_2_1();
+    coe=`Java_conditionalOrExpression();
 }
     :   cae1=conditionalAndExpression 
         ( 
             '||' cae2=conditionalAndExpression 
             {
-                coe2=`Java_conditionalOrExpression_2_1(coe2*,Java_conditionalOrExpression_2_1_1(cae2));
+                coe=`Java_conditionalOrExpression(coe*,cae2);
             }
         )*
         {
-            coe=`Java_conditionalOrExpression(cae1,coe2);
+            coe=`Java_conditionalOrExpression(cae1,coe*);
         }
 	;
 
 conditionalAndExpression returns [Java_conditionalAndExpression cae]
 @init {
-    Java_conditionalAndExpression_2 cae2=`Java_conditionalAndExpression_2_1();
+    cae=`Java_conditionalAndExpression();
 }
     :   ioe1=inclusiveOrExpression 
         (
             '&&' ioe2=inclusiveOrExpression 
             {
-                cae2=`Java_conditionalAndExpression_2_1(cae2*,Java_conditionalAndExpression_2_1_1(ioe2));
+                cae=`Java_conditionalAndExpression(cae*,ioe2);
             }
         )*
         {
-            cae=`Java_conditionalAndExpression(ioe1,cae2);
+            cae=`Java_conditionalAndExpression(ioe1,cae*);
         }
 	;
 
 inclusiveOrExpression returns [Java_inclusiveOrExpression ioe]
 @init {
-    Java_inclusiveOrExpression_2 ioe2=`Java_inclusiveOrExpression_2_1();
+    ioe=`Java_inclusiveOrExpression();
 }
     :   eoe1=exclusiveOrExpression 
         (
             '|' eoe2=exclusiveOrExpression 
             {
-                ioe2=`Java_inclusiveOrExpression_2_1(ioe2*,Java_inclusiveOrExpression_2_1_1(eoe2));
+                ioe=`Java_inclusiveOrExpression(ioe*,eoe2);
             }
         )*
         {
-            ioe=`Java_inclusiveOrExpression(eoe1,ioe2);
+            ioe=`Java_inclusiveOrExpression(eoe1,ioe*);
         }
 	;
 
 exclusiveOrExpression returns [Java_exclusiveOrExpression eoe]
 @init {
-    Java_exclusiveOrExpression_2 eoe2=`Java_exclusiveOrExpression_2_1();
+    eoe=`Java_exclusiveOrExpression();
 }
     :   ae1=andExpression
         (
             '^' ae2=andExpression 
             {
-                eoe2=`Java_exclusiveOrExpression_2_1(eoe2*,Java_exclusiveOrExpression_2_1_1(ae2));
+                eoe=`Java_exclusiveOrExpression(eoe*,ae2);
             }
         )*
         {
-            eoe=`Java_exclusiveOrExpression(ae1,eoe2);
+            eoe=`Java_exclusiveOrExpression(ae1,eoe*);
         }
 	;
 
 andExpression returns [Java_andExpression ae]
 @init {
-    Java_andExpression_2 ae2=`Java_andExpression_2_1();
+    ae=`Java_andExpression();
 }
     :   ee1=equalityExpression 
         (
             '&' ee2=equalityExpression 
             {
-                ae2=`Java_andExpression_2_1(ae2*,Java_andExpression_2_1_1(ee2));
+                ae=`Java_andExpression(ae*,ee2);
             }
         )*
         {
-            ae=`Java_andExpression(ee1,ae2);
+            ae=`Java_andExpression(ee1,ae*);
         }
 	;
 
 equalityExpression returns [Java_equalityExpression ee]
 @init {
-    Java_equalityExpression_2 ee2=`Java_equalityExpression_2_1();
-    Java_equalityExpression_2_1_1_1 ee3=null;
+    Java_equalityExpressionList ee2=`Java_equalityExpressionList();
+    Java_equalityOperator ee3=null;
 }
     :   ioe1=instanceOfExpression 
         (
             (
                     '=='
                     {
-                        ee3=`Java_equalityExpression_2_1_1_1_1();
+                        ee3=`Java_equalityOperator("==");
                     }
                 |
                     '!='
                     {
-                        ee3=`Java_equalityExpression_2_1_1_1_2();
+                        ee3=`Java_equalityOperator("!=");
                     }
             ) 
             ioe2=instanceOfExpression
             {
-                ee2=`Java_equalityExpression_2_1(ee2*,Java_equalityExpression_2_1_1(ee3,ioe2));
+                ee2=`Java_equalityExpressionList(ee2*,Java_equalityExpressionElem(ee3,ioe2));
             }
         )*
         {
