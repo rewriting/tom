@@ -1307,34 +1307,31 @@ annotationTypeDeclaration returns [Java_annotationTypeDeclaration atd]
 	
 annotationTypeBody returns [Java_annotationTypeBody atb]
 @init {
-    Java_annotationTypeBody_1 atb1=`Java_annotationTypeBody_1_2();
+    atb=`Java_annotationTypeBody();
 }
 	:	'{'
         (
             ated=annotationTypeElementDeclarations
             {
-                atb1=`Java_annotationTypeBody_1_1(ated);
+                atb=ated;
             }
         )? 
         '}'
-        {
-            atb=`Java_annotationTypeBody(atb1);
-        }
 	;
 	
-annotationTypeElementDeclarations returns [Java_annotationTypeElementDeclarations ated]
+annotationTypeElementDeclarations returns [Java_annotationTypeBody ated]
 @init {
-    Java_annotationTypeElementDeclarations_2 tated=`Java_annotationTypeElementDeclarations_2_1();
+    ated=`Java_annotationTypeBody();
 }
 	:	ated1=annotationTypeElementDeclaration 
         (
             ated2=annotationTypeElementDeclaration
             {
-                tated=`Java_annotationTypeElementDeclarations_2_1(tated*,ated2);
+                ated=`Java_annotationTypeBody(ated*,ated2);
             }
         )*
         {
-            ated=`Java_annotationTypeElementDeclarations(ated1,tated);
+            ated=`Java_annotationTypeBody(ated1,ated*);
         }
 	;
 	

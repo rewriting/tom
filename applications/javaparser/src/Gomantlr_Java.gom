@@ -455,17 +455,7 @@ Java_annotationTypeDeclaration =
     Java_annotationTypeDeclaration(annotationTypeDeclaration_1:Java_Identifier,annotationTypeDeclaration_2:Java_annotationTypeBody)
 
 Java_annotationTypeBody =
-    Java_annotationTypeBody(annotationTypeBody_1:Java_annotationTypeBody_1)
-
-Java_annotationTypeBody_1 =
-    Java_annotationTypeBody_1_1(annotationTypeElementDeclarations:Java_annotationTypeElementDeclarations)
-  | Java_annotationTypeBody_1_2()
-
-Java_annotationTypeElementDeclarations =
-    Java_annotationTypeElementDeclarations(annotationTypeElementDeclarations_1:Java_annotationTypeElementDeclaration,annotationTypeElementDeclarations_2:Java_annotationTypeElementDeclarations_2)
-
-Java_annotationTypeElementDeclarations_2 =
-    Java_annotationTypeElementDeclarations_2_1(Java_annotationTypeElementDeclaration*)
+    Java_annotationTypeBody(Java_annotationTypeElementDeclaration*)
 
 Java_annotationTypeElementDeclaration =
     Java_annotationTypeElementDeclaration(modifierList:Java_modifierList,annotationTypeElementDeclaration_2:Java_annotationTypeElementRest)
