@@ -22,7 +22,8 @@ Constraint =
 		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
 		   | AndAntiConstraint(Constraint*)
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
-
+  		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
+  		   
 /** normalization hooks
  *
  * AndAntiConstraint(X*,AndAntiConstraint(),Y*) -> AndAntiConstraint(X*,Y*)
