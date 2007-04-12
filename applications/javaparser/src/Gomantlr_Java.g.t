@@ -64,7 +64,7 @@ compilationUnit returns [Java_compilationUnit cu]
 		(
             pd=packageDeclaration
             {
-                cu2=`Java_package(pd);
+                cu2=pd;
             }
         )?
         (
@@ -84,10 +84,10 @@ compilationUnit returns [Java_compilationUnit cu]
         }
 	;
 
-packageDeclaration returns [Java_packageDeclaration pd]
+packageDeclaration returns [Java_package pd]
 	:	'package' qn=qualifiedName ';'
         {
-            pd=`Java_packageDeclaration(qn);
+            pd=`Java_package(qn);
         }
 	;
 	

@@ -6,14 +6,11 @@ Java_compilationUnit =
     Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,typeList:Java_classOrInterfaceDeclarationList)
 
 Java_package =
-    Java_package(packageDeclaration:Java_packageDeclaration)
+    Java_package(name:Java_qualifiedName)
   | Java_noPackage()
 
 Java_importDeclarationList=
     Java_importDeclarationList(Java_importDeclaration*)
-
-Java_packageDeclaration =
-    Java_packageDeclaration(packageDeclaration_1:Java_qualifiedName)
 
 Java_importDeclaration =
     Java_importDeclaration(importDeclaration_1:Java_isStatic,importDeclaration_2:Java_Identifier,identifierList:Java_IdentifierList,importDeclaration_4:Java_importSuffix)
