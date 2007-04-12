@@ -33,12 +33,12 @@ public class TomArrayPropagator implements TomIBasePropagator{
       // array[t1,X*,t2,Y*] = g -> array=SymbolOf(g) /\ fresh_index = 0 
       // /\ HasElement(fresh_index,g)  /\ t1=GetElement(fresh_index,g) /\ fresh_index1 = fresh_index + 1 
       // /\ begin1 = fresh_index1  /\ end1 = fresh_index1 /\ X* = VariableHeadArray(begin1,end1) /\ fresh_index2 = end1
-      // /\ HasElement(fresh_index,g) /\ t2=GetElement(fresh_index2,g)/\ fresh_index3 = fresh_index2 + 1  
+      // /\ HasElement(fresh_index2,g) /\ t2=GetElement(fresh_index2,g)/\ fresh_index3 = fresh_index2 + 1  
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
-      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {        
+      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
             if(!TomConstraintCompiler.isArrayOperator(TomConstraintCompiler.getSymbolTable().
-                getSymbolFromName(`tomName))) {return `m;}
+                getSymbolFromName(`tomName))) {return `m;}        
             TomType termType = TomConstraintCompiler.getTermTypeFromTerm(`t);
             // declare fresh index = 0            
             TomTerm freshIndex = getFreshIndex();				
@@ -55,7 +55,7 @@ public class TomArrayPropagator implements TomIBasePropagator{
                   l = `AndConstraint(l*,
                       MatchConstraint(beginIndex,freshIndex),
                       MatchConstraint(endIndex,freshIndex),
-                      MatchConstraint(appl,VariableHeadArray(name,beginIndex,endIndex)),
+                      MatchConstraint(appl,VariableHeadArray(name,g,beginIndex,endIndex)),
                       MatchConstraint(newFreshIndex,endIndex));							
                 }else{	// a term or a syntactic variable
                   l = `AndConstraint(l*,                      

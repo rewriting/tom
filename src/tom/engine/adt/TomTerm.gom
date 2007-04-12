@@ -39,7 +39,7 @@ TomTerm =
     | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
     | VariableHeadList(Opname:TomName,Begin:TomTerm,End:TomTerm)
-    | VariableHeadArray(Opname:TomName,BeginIndex:TomTerm,EndIndex:TomTerm)
+    | VariableHeadArray(Opname:TomName,Subject:TomTerm,BeginIndex:TomTerm,EndIndex:TomTerm)
     | TestVarStar(Variable:TomTerm)
 
   /**

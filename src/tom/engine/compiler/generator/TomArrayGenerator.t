@@ -31,22 +31,29 @@ public class TomArrayGenerator implements TomIBaseGenerator{
   %strategy ArrayGenerator() extends Identity(){
     visit Expression{
       // generate pre-loop for X* = or _* = 
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadArray(opName,begin,end@VariableStar[AstType=type]))) ->{
-        Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
-        Expression endExpression = `IfExpression(IsEmptyList(opName,end),EqualTerm(type,end,begin),
-            EqualTerm(type,end,ExpressionToTomTerm(GetTail(opName,end))));
+      /*
+       * do {
+       *   ...
+       *   end_i++;
+       * } while( subjectIndex <= GET_SIZE(subjectList) )
+       *
+       * *** we need <= instead of < to make the algorithm complete ***
+       */
+      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[AstType=termType],VariableHeadArray(opName,subject,begin,end))) ->{
+        Expression doWhileTest = `Negation(GreaterThan(TomTermToExpression(Ref(end)),GetSize(opName,Ref(subject))));
+        // expression at the end of the loop 
+        Expression endExpression = `EqualTerm(termType,end,ExpressionToTomTerm(AddOne(Ref(end))));
+        // if we have a varStar, then add its declaration also
         if (`v.isVariableStar()){
-          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end))));
+          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(
+                GetSliceArray(opName,Ref(subject),begin,Ref(end)))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }			
       // generate equal - this can come from variable's propagations
-      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain=type]),t)) ->{				
-        return `EqualTerm(type,e,t);
-      }
-      ConstraintToExpression(MatchConstraint(TestVarStar(v@VariableStar[AstType=type]),t)) ->{
-        return `EqualTerm(type,v,t);
+      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetElement[Codomain=termType]),t)) ->{				
+        return `EqualTerm(termType,e,t);
       }
     } // end visit
   } // end strategy	
