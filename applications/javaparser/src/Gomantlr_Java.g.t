@@ -171,27 +171,27 @@ classDeclaration returns [Java_classDeclaration cd]
 	
 normalClassDeclaration returns [Java_classDeclaration ncd]
 @init {
-    Java_normalClassDeclaration_2 ncd2=`Java_normalClassDeclaration_2_2();
-    Java_normalClassDeclaration_3 ncd3=`Java_normalClassDeclaration_3_2();
-    Java_normalClassDeclaration_4 ncd4=`Java_normalClassDeclaration_4_2();
+    Java_typeParameterList ncd2=`Java_typeParameterList();
+    Java_typeList ncd3=`Java_typeList();
+    Java_typeList ncd4=`Java_typeList();
 }
 	:	'class' i=Identifier
         (
             tp=typeParameters
             {
-                ncd2=`Java_normalClassDeclaration_2_1(tp);
+                ncd2=tp;
             }
         )?
         (
             'extends' t=type
             {
-                ncd3=`Java_normalClassDeclaration_3_1(t);
+                ncd3=`Java_typeList(t);
             }
         )?
         (
             'implements' tl=typeList
             {
-                ncd4=`Java_normalClassDeclaration_4_1(tl);
+                ncd4=tl;
             }
         )?
         cb=classBody
@@ -251,13 +251,13 @@ bound returns [Java_bound b]
 
 enumDeclaration returns [Java_enumDeclaration ed]
 @init {
-    Java_enumDeclaration_3 ed3=`Java_enumDeclaration_3_2();
+    Java_typeList ed3=`Java_typeList();
 }
 	:	e=ENUM i=Identifier 
         (
             'implements' tl=typeList
             {
-                ed3=`Java_enumDeclaration_3_1(tl);
+                ed3=tl;
             }
         )?
         eb=enumBody
