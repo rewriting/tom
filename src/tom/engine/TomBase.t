@@ -580,6 +580,8 @@ public class TomBase {
       FunctionCall[AstType=type] -> { return `type; }
 
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
+      
+      ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
     }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);
