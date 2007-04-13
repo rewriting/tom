@@ -1874,17 +1874,19 @@ constantExpression returns [Java_constantExpression ce]
 	
 expression returns [Java_expression e]
 @init {
-    Java_expressionOptionalAssign e2=`Java_expressionNoAssign();
+    e=null;
 }
 	:	ce=conditionalExpression 
         (
             ao=assignmentOperator e1=expression
             {
-                e2=`Java_expressionAssign(ao,e1);
+                e=`Java_expressionAssign(ce,ao,e1);
             }
         )?
         {
-            e=`Java_expression(ce,e2);
+          if(null==e) {
+            e=`Java_expression(ce);
+          }
         }
 	;
 	
@@ -1939,23 +1941,25 @@ assignmentOperator returns [Java_assignmentOperator ao]
         }
 	;
 
-conditionalExpression returns [Java_conditionalExpression ce]
+conditionalExpression returns [Java_expression ce]
 @init {
-    Java_conditionalExpression_2 ce2=`Java_conditionalExpression_2_2();
+    ce=null;
 }
     :   coe=conditionalOrExpression 
         (
             '?' e1=expression ':' e2=expression 
             {
-                ce2=`Java_conditionalExpression_2_1(e1,e2);
+                ce=`Java_conditionalExpression(coe,e1,e2);
             }
         )?
         {
-            ce=`Java_conditionalExpression(coe,ce2);
+          if(null==ce) {
+            ce=coe;
+          }
         }
 	;
 
-conditionalOrExpression returns [Java_conditionalOrExpression coe]
+conditionalOrExpression returns [Java_expression coe]
 @init {
     coe=`Java_conditionalOrExpression();
 }
@@ -1967,11 +1971,15 @@ conditionalOrExpression returns [Java_conditionalOrExpression coe]
             }
         )*
         {
+          if (`Java_conditionalOrExpression() == coe) {
+            coe=cae1;
+          } else {
             coe=`Java_conditionalOrExpression(cae1,coe*);
+          }
         }
 	;
 
-conditionalAndExpression returns [Java_conditionalAndExpression cae]
+conditionalAndExpression returns [Java_expression cae]
 @init {
     cae=`Java_conditionalAndExpression();
 }
@@ -1983,11 +1991,15 @@ conditionalAndExpression returns [Java_conditionalAndExpression cae]
             }
         )*
         {
+          if(`Java_conditionalAndExpression() == cae) {
+            cae=ioe1;
+          } else {
             cae=`Java_conditionalAndExpression(ioe1,cae*);
+          }
         }
 	;
 
-inclusiveOrExpression returns [Java_inclusiveOrExpression ioe]
+inclusiveOrExpression returns [Java_expression ioe]
 @init {
     ioe=`Java_inclusiveOrExpression();
 }
@@ -1999,11 +2011,15 @@ inclusiveOrExpression returns [Java_inclusiveOrExpression ioe]
             }
         )*
         {
+          if(`Java_inclusiveOrExpression() == ioe) {
+            ioe=eoe1;
+          } else {
             ioe=`Java_inclusiveOrExpression(eoe1,ioe*);
+          }
         }
 	;
 
-exclusiveOrExpression returns [Java_exclusiveOrExpression eoe]
+exclusiveOrExpression returns [Java_expression eoe]
 @init {
     eoe=`Java_exclusiveOrExpression();
 }
@@ -2015,11 +2031,15 @@ exclusiveOrExpression returns [Java_exclusiveOrExpression eoe]
             }
         )*
         {
+          if(`Java_exclusiveOrExpression()==eoe) {
+            eoe=ae1;
+          } else {
             eoe=`Java_exclusiveOrExpression(ae1,eoe*);
+          }
         }
 	;
 
-andExpression returns [Java_andExpression ae]
+andExpression returns [Java_expression ae]
 @init {
     ae=`Java_andExpression();
 }
@@ -2031,11 +2051,15 @@ andExpression returns [Java_andExpression ae]
             }
         )*
         {
+          if(`Java_andExpression()==ae) {
+            ae=ee1;
+          } else {
             ae=`Java_andExpression(ee1,ae*);
+          }
         }
 	;
 
-equalityExpression returns [Java_equalityExpression ee]
+equalityExpression returns [Java_expression ee]
 @init {
     Java_equalityExpressionList ee2=`Java_equalityExpressionList();
     Java_equalityOperator ee3=null;
@@ -2059,27 +2083,33 @@ equalityExpression returns [Java_equalityExpression ee]
             }
         )*
         {
+          if(`Java_equalityExpressionList()==ee2) {
+            ee=ioe1;
+          } else {
             ee=`Java_equalityExpression(ioe1,ee2);
+          }
         }
 	;
 
-instanceOfExpression returns [Java_instanceOfExpression ioe]
+instanceOfExpression returns [Java_expression ioe]
 @init {
-    Java_instanceOfExpression_2 ioe2=`Java_instanceOfExpression_2_2();
+    ioe=null;
 }
     :   rexp=relationalExpression 
         (
             'instanceof' t=type
             {
-                ioe2=`Java_instanceOfExpression_2_1(t);
+                ioe=`Java_instanceOfExpression(rexp,t);
             }
         )?
         {
-            ioe=`Java_instanceOfExpression(rexp,ioe2);
+          if(null==ioe) {
+            ioe=rexp;
+          }
         }
 	;
 
-relationalExpression returns [Java_relationalExpression rexp]
+relationalExpression returns [Java_expression rexp]
 @init {
     Java_relationalExpressionList re2=`Java_relationalExpressionList();
 }
@@ -2091,7 +2121,11 @@ relationalExpression returns [Java_relationalExpression rexp]
             }
         )*
         {
+          if(`Java_relationalExpressionList()==re2) {
             rexp=`Java_relationalExpression(se1,re2);
+          } else {
+            rexp=se1;
+          }
         }
 	;
 	
@@ -2116,20 +2150,24 @@ relationalOp returns [Java_relationalOp ro]
         )
 	;
 
-shiftExpression returns [Java_shiftExpression se]
+shiftExpression returns [Java_expression se]
 @init {
-    Java_shiftExpression_2 se2=`Java_shiftExpression_2_1();
+    Java_shiftExpressionList se2=`Java_shiftExpressionList();
 }
     :   ae1=additiveExpression 
         ( 
             so=shiftOp 
             ae2=additiveExpression 
             {
-                se2=`Java_shiftExpression_2_1(se2*,Java_shiftExpression_2_1_1(so,ae2));
+                se2=`Java_shiftExpressionList(se2*,Java_shiftExpressionElem(so,ae2));
             }
         )*
         {
+          if(`Java_shiftExpressionList()==se2) {
+            se=ae1;
+          } else {
             se=`Java_shiftExpression(ae1,se2);
+          }
         }
 	;
 
@@ -2152,9 +2190,9 @@ shiftOp returns [Java_shiftOp so]
 	;
 
 
-additiveExpression returns [Java_additiveExpression ae]
+additiveExpression returns [Java_expression ae]
 @init {
-    Java_additiveExpression_2 ae2=`Java_additiveExpression_2_1();
+    Java_additiveExpressionList ae2=`Java_additiveExpressionList();
     Java_additiveOperation ae3=null;
 }
     :   me1=multiplicativeExpression 
@@ -2172,17 +2210,21 @@ additiveExpression returns [Java_additiveExpression ae]
             )
             me2=multiplicativeExpression
             {
-                ae2=`Java_additiveExpression_2_1(ae2*,Java_additiveExpression_2_1_1(ae3,me2));
+                ae2=`Java_additiveExpressionList(ae2*,Java_additiveExpressionElem(ae3,me2));
             }
         )*
         {
+          if(`Java_additiveExpressionList()==ae2) {
+            ae=me1;
+          } else {
             ae=`Java_additiveExpression(me1,ae2);
+          }
         }
 	;
 
-multiplicativeExpression returns [Java_multiplicativeExpression me]
+multiplicativeExpression returns [Java_expression me]
 @init {
-    Java_multiplicativeExpression_2 me2=`Java_multiplicativeExpression_2_1();
+    Java_multiplicativeExpressionList me2=`Java_multiplicativeExpressionList();
     Java_multiplicativeOperation me3=null;
 }
     :   ue1=unaryExpression 
@@ -2205,38 +2247,42 @@ multiplicativeExpression returns [Java_multiplicativeExpression me]
             ) 
             ue2=unaryExpression
             {
-                me2=`Java_multiplicativeExpression_2_1(me2*,Java_multiplicativeExpression_2_1_1(me3,ue2));
+                me2=`Java_multiplicativeExpressionList(me2*,Java_multiplicativeExpressionElem(me3,ue2));
             }
         )*
         {
+          if(`Java_multiplicativeExpressionList()==me2) {
+            me=ue1;
+          } else {
             me=`Java_multiplicativeExpression(ue1,me2);
+          }
         }
 	;
 	
-unaryExpression returns [Java_unaryExpression ue]
+unaryExpression returns [Java_expression ue]
     :       '+' ue1=unaryExpression
             {
-                ue=`Java_unaryExpression_1(ue1);
+                ue=`Java_unaryExpressionPlus(ue1);
             }
         |	
             '-' ue1=unaryExpression
             {
-                ue=`Java_unaryExpression_2(ue1);
+                ue=`Java_unaryExpressionMinus(ue1);
             }
         |
             '++' p=primary
             {
-                ue=`Java_unaryExpression_3(p);
+                ue=`Java_unaryExpressionIncrement(p);
             }
         |
             '--' p=primary
             {
-                ue=`Java_unaryExpression_4(p);
+                ue=`Java_unaryExpressionDecrement(p);
             }
         |
             uenpm=unaryExpressionNotPlusMinus
             {
-                ue=`Java_unaryExpression_5(uenpm);
+                ue=`Java_unaryExpressionNotPlusMinus(uenpm);
             }
     ;
 

@@ -294,7 +294,7 @@ Java_annotation =
   | Java_annotationElem(TypeName:Java_typeName,Identifier:Java_Identifier,Ev:Java_elementValue)
 
 Java_elementValue =
-    Java_elementValueConditional(ConditionalExpression:Java_conditionalExpression)
+    Java_elementValueConditional(ConditionalExpression:Java_expression)
   | Java_elementValueAnnotation(Annotation:Java_annotation)
   | Java_elementValueArrayInitializer(OptElementValue:Java_optionalElementValue,OptionalComa:Java_optionalComa)
 
@@ -421,7 +421,7 @@ Java_forVarControl_1 =
   | Java_forVarControl_1_2()
 
 Java_forVarControl_2 =
-    Java_forVarControl_2_1(annotation:Java_annotation)
+    Java_forVarControl_2_1(Annotation:Java_annotation)
   | Java_forVarControl_2_2()
 
 Java_forVarControlRest =
@@ -429,7 +429,7 @@ Java_forVarControlRest =
   | Java_forVarControlRest_2(forVarControlRest_2_1:Java_expression)
 
 Java_forVarControlRest_1_3 =
-    Java_forVarControlRest_1_3_1(expression:Java_expression)
+    Java_forVarControlRest_1_3_1(Expression:Java_expression)
   | Java_forVarControlRest_1_3_2()
 
 Java_forUpdate =
@@ -446,115 +446,78 @@ Java_constantExpression =
     Java_constantExpression(Expression:Java_expression)
 
 Java_expression =
-    Java_expression(CondExpr:Java_conditionalExpression,AssignExpr:Java_expressionOptionalAssign)
+    Java_expression(CondExpr:Java_expression)
+  | Java_expressionAssign(CondExpr:Java_expression,AssignmentOp:Java_assignmentOperator,Expression:Java_expression)
+  | Java_conditionalExpression(CondExpression:Java_expression,Expression1:Java_expression,Expression2:Java_expression)
+  | Java_conditionalOrExpression(Java_expression*)
+  | Java_conditionalAndExpression(Java_expression*)
+  | Java_inclusiveOrExpression(Java_expression*)
+  | Java_exclusiveOrExpression(Java_expression*)
+  | Java_andExpression(Java_expression*)
+  | Java_equalityExpression(Expression:Java_expression,EqualityExpressionList:Java_equalityExpressionList)
+  | Java_instanceOfExpression(Expression:Java_expression,Type:Java_type)
+  | Java_relationalExpression(Expression:Java_expression,RelationalExpressionList:Java_relationalExpressionList)
+  | Java_shiftExpression(Expression:Java_expression,ShiftExpressionList:Java_shiftExpressionList)
+  | Java_additiveExpression(Expression:Java_expression,AdditiveExpressionList:Java_additiveExpressionList)
+  | Java_multiplicativeExpression(Expression:Java_expression,MultiplicativeExpressionList:Java_multiplicativeExpressionList)
+  | Java_unaryExpressionPlus(Expression:Java_expression)
+  | Java_unaryExpressionMinus(Expression:Java_expression)
+  | Java_unaryExpressionIncrement(Primary:Java_primary)
+  | Java_unaryExpressionDecrement(Primary:Java_primary)
+  | Java_unaryExpressionNotPlusMinus(unaryExpressionNotPlusMinus:Java_unaryExpressionNotPlusMinus)
 
-Java_expressionOptionalAssign =
-    Java_expressionAssign(AssignmentOp:Java_assignmentOperator,Expression:Java_expression)
-  | Java_expressionNoAssign()
+Java_multiplicativeExpressionList =
+    Java_multiplicativeExpressionList(Java_multiplicativeExpressionElem*)
+
+Java_multiplicativeExpressionElem =
+    Java_multiplicativeExpressionElem(MultiplicativeOp:Java_multiplicativeOperation,Expression:Java_expression)
+
+Java_additiveExpressionList =
+    Java_additiveExpressionList(Java_additiveExpressionElem*)
+
+Java_additiveExpressionElem =
+    Java_additiveExpressionElem(AddOperation:Java_additiveOperation,Expression:Java_expression)
+
+Java_shiftExpressionList =
+    Java_shiftExpressionList(Java_shiftExpressionElem*)
+
+Java_shiftExpressionElem =
+    Java_shiftExpressionElem(ShiftOp:Java_shiftOp,Expression:Java_expression)
 
 Java_assignmentOperator =
     Java_assignmentOperator(op:String)
-
-Java_conditionalExpression =
-    Java_conditionalExpression(conditionalExpression_1:Java_conditionalOrExpression,conditionalExpression_2:Java_conditionalExpression_2)
-
-Java_conditionalExpression_2 =
-    Java_conditionalExpression_2_1(Expression1:Java_expression,Expression2:Java_expression)
-  | Java_conditionalExpression_2_2()
-
-Java_conditionalOrExpression =
-    Java_conditionalOrExpression(Java_conditionalAndExpression*)
-
-Java_conditionalAndExpression =
-    Java_conditionalAndExpression(Java_inclusiveOrExpression*)
-
-Java_inclusiveOrExpression =
-    Java_inclusiveOrExpression(Java_exclusiveOrExpression*)
-
-Java_exclusiveOrExpression =
-    Java_exclusiveOrExpression(Java_andExpression*)
-
-Java_andExpression =
-    Java_andExpression(Java_equalityExpression*)
-
-Java_equalityExpression =
-    Java_equalityExpression(equalityExpression:Java_instanceOfExpression,equalityExpressionList:Java_equalityExpressionList)
 
 Java_equalityExpressionList =
     Java_equalityExpressionList(Java_equalityExpressionElem*)
 
 Java_equalityExpressionElem =
-    Java_equalityExpressionElem(EqualityOperator:Java_equalityOperator,equalityExpression:Java_instanceOfExpression)
+    Java_equalityExpressionElem(EqualityOperator:Java_equalityOperator,equalityExpression:Java_expression)
 
 Java_equalityOperator =
     Java_equalityOperator(op:String)
-
-Java_instanceOfExpression =
-    Java_instanceOfExpression(instanceOfExpression_1:Java_relationalExpression,instanceOfExpression_2:Java_instanceOfExpression_2)
-
-Java_instanceOfExpression_2 =
-    Java_instanceOfExpression_2_1(type:Java_type)
-  | Java_instanceOfExpression_2_2()
-
-Java_relationalExpression =
-    Java_relationalExpression(RelationalExpression:Java_shiftExpression,RelationalExpressionList:Java_relationalExpressionList)
 
 Java_relationalExpressionList =
     Java_relationalExpressionList(Java_relationalExpressionElem*)
 
 Java_relationalExpressionElem =
-    Java_relationalExpressionElem(RelationalOp:Java_relationalOp,ShiftExpression:Java_shiftExpression)
+    Java_relationalExpressionElem(RelationalOp:Java_relationalOp,ShiftExpression:Java_expression)
 
 Java_relationalOp =
     Java_relationalOp(op:String)
 
-Java_shiftExpression =
-    Java_shiftExpression(shiftExpression_1:Java_additiveExpression,shiftExpression_2:Java_shiftExpression_2)
-
-Java_shiftExpression_2 =
-    Java_shiftExpression_2_1(Java_shiftExpression_2_1_1*)
-
-Java_shiftExpression_2_1_1 =
-    Java_shiftExpression_2_1_1(shiftExpression_2_1_1_1:Java_shiftOp,shiftExpression_2_1_1_2:Java_additiveExpression)
-
 Java_shiftOp =
     Java_shiftOp(op:String)
-
-Java_additiveExpression =
-    Java_additiveExpression(additiveExpression_1:Java_multiplicativeExpression,additiveExpression_2:Java_additiveExpression_2)
-
-Java_additiveExpression_2 =
-    Java_additiveExpression_2_1(Java_additiveExpression_2_1_1*)
-
-Java_additiveExpression_2_1_1 =
-    Java_additiveExpression_2_1_1(AddOperation:Java_additiveOperation,additiveExpression_2_1_1_2:Java_multiplicativeExpression)
 
 Java_additiveOperation =
     Java_addition()
   | Java_subtration()
 
-Java_multiplicativeExpression =
-    Java_multiplicativeExpression(multiplicativeExpression_1:Java_unaryExpression,multiplicativeExpression_2:Java_multiplicativeExpression_2)
-
-Java_multiplicativeExpression_2 =
-    Java_multiplicativeExpression_2_1(Java_multiplicativeExpression_2_1_1*)
-
-Java_multiplicativeExpression_2_1_1 =
-    Java_multiplicativeExpression_2_1_1(multiplicativeExpression_2_1_1_1:Java_multiplicativeOperation,multiplicativeExpression_2_1_1_2:Java_unaryExpression)
-
 Java_multiplicativeOperation =
     Java_multiplicativeOperation(op:String)
 
-Java_unaryExpression =
-    Java_unaryExpression_1(unaryExpression_1_1:Java_unaryExpression)
-  | Java_unaryExpression_2(unaryExpression_2_1:Java_unaryExpression)
-  | Java_unaryExpression_3(unaryExpression_3_1:Java_primary)
-  | Java_unaryExpression_4(unaryExpression_4_1:Java_primary)
-  | Java_unaryExpression_5(unaryExpressionNotPlusMinus:Java_unaryExpressionNotPlusMinus)
-
 Java_unaryExpressionNotPlusMinus =
-    Java_unaryExpressionNotPlusMinus_1(unaryExpressionNotPlusMinus_1_1:Java_unaryExpression)
-  | Java_unaryExpressionNotPlusMinus_2(unaryExpressionNotPlusMinus_2_1:Java_unaryExpression)
+    Java_unaryExpressionNotPlusMinus_1(Expression:Java_expression)
+  | Java_unaryExpressionNotPlusMinus_2(Expression:Java_expression)
   | Java_unaryExpressionNotPlusMinus_3(castExpression:Java_castExpression)
   | Java_unaryExpressionNotPlusMinus_4(unaryExpressionNotPlusMinus_4_1:Java_primary,unaryExpressionNotPlusMinus_4_2:Java_unaryExpressionNotPlusMinus_4_2,unaryExpressionNotPlusMinus_4_3:Java_unaryExpressionNotPlusMinus_4_3)
 
@@ -567,7 +530,7 @@ Java_unaryExpressionNotPlusMinus_4_3 =
   | Java_unaryExpressionNotPlusMinus_4_3_2()
 
 Java_castExpression =
-    Java_castExpressionPrimitive(primitive:Java_primitiveType,unexp:Java_unaryExpression)
+    Java_castExpressionPrimitive(primitive:Java_primitiveType,Expression:Java_expression)
   | Java_castExpressionExpression(expression:Java_expression,sunexp:Java_unaryExpressionNotPlusMinus)
   | Java_castExpressionType(type:Java_type,sunexp:Java_unaryExpressionNotPlusMinus)
 
