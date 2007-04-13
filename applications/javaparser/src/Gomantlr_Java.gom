@@ -1,5 +1,5 @@
 module Gomantlr_Java
-imports  String
+imports String
 abstract syntax
 
 Java_compilationUnit =
@@ -255,13 +255,9 @@ Java_formalParameterList =
     Java_formalParameterList(Java_formalParameterDecl*)
 
 Java_formalParameterDecl =
-    Java_formalParameterDeclIncomplete(IsFinal:Java_formalParameterDeclsIsFinal,AnnotationList:Java_annotationList,Type:Java_type)
-  | Java_formalParameterDecl(IsFinal:Java_formalParameterDeclsIsFinal,AnnotationList:Java_annotationList,Type:Java_type,VariableId:Java_variableDeclaratorId)
-  | Java_formalParameterDeclVarArg(IsFinal:Java_formalParameterDeclsIsFinal,AnnotationList:Java_annotationList,Type:Java_type,VariableId:Java_variableDeclaratorId)
-
-Java_formalParameterDeclsIsFinal =
-    Java_formalParameterDeclsNotFinal()
-  | Java_formalParameterDeclsFinal()
+    Java_formalParameterDeclIncomplete(IsFinal:Java_isFinal,AnnotationList:Java_annotationList,Type:Java_type)
+  | Java_formalParameterDecl(IsFinal:Java_isFinal,AnnotationList:Java_annotationList,Type:Java_type,VariableId:Java_variableDeclaratorId)
+  | Java_formalParameterDeclVarArg(IsFinal:Java_isFinal,AnnotationList:Java_annotationList,Type:Java_type,VariableId:Java_variableDeclaratorId)
 
 Java_methodBody =
     Java_methodBody(Block:Java_block)
@@ -335,11 +331,11 @@ Java_blockStatement =
   | Java_statement(Statement:Java_statement)
 
 Java_localVariableDeclaration =
-    Java_localVariableDeclaration(Modifier:Java_localVariableModifier,Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
+    Java_localVariableDeclaration(IsFinal:Java_isFinal,Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
 
-Java_localVariableModifier =
-    Java_localVariableModifierFinal()
-  | Java_localVariableNoModifier()
+Java_isFinal =
+    Java_final()
+  | Java_nonFinal()
 
 Java_statement =
     Java_statementBlock(Block:Java_block)
@@ -374,7 +370,7 @@ Java_catchClause =
     Java_catchClause(FormalParameter:Java_formalParameter,Block:Java_block)
 
 Java_formalParameter =
-    Java_formalParameter(Modifiers:Java_variableModifierList,Type:Java_type,VariableDecl:Java_variableDeclaratorId)
+    Java_formalParameter(Modifiers:Java_variableModifierList,Type:Java_type,VariableDeclId:Java_variableDeclaratorId)
 
 Java_variableModifierList =
     Java_variableModifierList(Java_variableModifier*)
@@ -390,47 +386,23 @@ Java_switchLabel =
   | Java_switchLabelEnum(enumConstantName:Java_enumConstantName)
   | Java_switchLabelDefault()
 
-Java_moreStatementExpressions =
-    Java_moreStatementExpressions(Java_expression*)
-
 Java_forControl =
-    Java_forControl_1(forVarControl:Java_forVarControl)
-  | Java_forControl_2(forControl_2_1:Java_forControl_2_1,forControl_2_2:Java_forControl_2_2,ForUpdate:Java_forUpdate)
+    Java_forVarControl(IsFinal:Java_isFinal,OptAnnotation:Java_optionalAnnotation,Type:Java_type,VariableDecl:Java_variableDeclarator,VariableDeclList:Java_variableDeclaratorList,OptExpression:Java_optionalExpression,ForUpdate:Java_forUpdate)
+  | Java_foreachVarControl(IsFinal:Java_isFinal,OptAnnotation:Java_optionalAnnotation,Type:Java_type,Identifier:Java_Identifier,Expression:Java_expression)
+  | Java_forControl(ForInit:Java_forInit,OptExpression:Java_optionalExpression,ForUpdate:Java_forUpdate)
 
-Java_forControl_2_1 =
-    Java_forControl_2_1_1(forInit:Java_forInit)
-  | Java_forControl_2_1_2()
-
-Java_forControl_2_2 =
-    Java_forControl_2_2_1(expression:Java_expression)
-  | Java_forControl_2_2_2()
+Java_optionalExpression =
+    Java_optExpression(expression:Java_expression)
+  | Java_emptyOptExpression()
 
 Java_forInit =
-    Java_forInit_1(forInit_1_1:Java_forInit_1_1,forInit_1_2:Java_type,forInit_1_3:Java_variableDeclaratorList)
-  | Java_forInit_2(ExpressionList:Java_expressionList)
+    Java_forInitVariable(IsFinal:Java_isFinal,Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
+  | Java_forInitExpression(ExpressionList:Java_expressionList)
+  | Java_emptyForInit()
 
-Java_forInit_1_1 =
-    Java_forInit_1_1_1()
-  | Java_forInit_1_1_2()
-
-Java_forVarControl =
-    Java_forVarControl(forVarControl_1:Java_forVarControl_1,forVarControl_2:Java_forVarControl_2,forVarControl_3:Java_type,forVarControl_4:Java_Identifier,forVarControl_5:Java_forVarControlRest)
-
-Java_forVarControl_1 =
-    Java_forVarControl_1_1()
-  | Java_forVarControl_1_2()
-
-Java_forVarControl_2 =
-    Java_forVarControl_2_1(Annotation:Java_annotation)
-  | Java_forVarControl_2_2()
-
-Java_forVarControlRest =
-    Java_forVarControlRest_1(forVarControlRest_1_1:Java_variableDeclaratorRest,forVarControlRest_1_2:Java_variableDeclaratorList,forVarControlRest_1_3:Java_forVarControlRest_1_3,forVarControlRest_1_4:Java_forUpdate)
-  | Java_forVarControlRest_2(forVarControlRest_2_1:Java_expression)
-
-Java_forVarControlRest_1_3 =
-    Java_forVarControlRest_1_3_1(Expression:Java_expression)
-  | Java_forVarControlRest_1_3_2()
+Java_optionalAnnotation =
+    Java_optAnnotation(Annotation:Java_annotation)
+  | Java_noAnnotation()
 
 Java_forUpdate =
     Java_forUpdate(ExpressionList:Java_expressionList)
@@ -529,8 +501,8 @@ Java_castExpression =
   | Java_castExpressionType(Type:Java_type,Expression:Java_expression)
 
 Java_primary =
-    Java_primaryExpression(parExpression:Java_parExpression)
-  | Java_primaryGenericIdentifier(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,InvocationArgs:Java_argumentsOrGenericInvocation)
+    Java_primaryExpression(ParExpression:Java_parExpression)
+  | Java_primaryGenericIdentifier(NonWildcardTypeArguments:Java_typeList,InvocationArgs:Java_argumentsOrGenericInvocation)
   | Java_primaryThis(Arguments:Java_arguments)
   | Java_primarySuper(SuperSuffix:Java_superSuffix)
   | Java_primaryLiteral(Literal:Java_literal)
@@ -551,23 +523,23 @@ Java_identifierSuffix =
   | Java_identifierSuffixInvocation(Invocation:Java_explicitGenericInvocation)
   | Java_identifierSuffixThis()
   | Java_identifierSuffixSuper(Arguments:Java_arguments)
-  | Java_identifierSuffixInnerClass(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,InnerCreator:Java_innerCreator)
+  | Java_identifierSuffixInnerClass(NonWildcardTypeArguments:Java_typeList,InnerCreator:Java_innerCreator)
   | Java_emptyIdentifierSuffix()
 
 Java_creator =
-    Java_arrayCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ExpressionList:Java_expressionList,arrayCreatorRest_2_3:Java_bracketsList)
-  | Java_arrayCreatorWithInitializer(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,Brackets:Java_bracketsList,ArrayInitializer:Java_arrayInitializer)
-  | Java_classCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ClassCreatorRest:Java_classCreatorRest)
+    Java_arrayCreator(NonWildcardTypeArguments:Java_typeList,CreatedName:Java_createdName,ExpressionList:Java_expressionList,Brackets:Java_bracketsList)
+  | Java_arrayCreatorWithInitializer(NonWildcardTypeArguments:Java_typeList,CreatedName:Java_createdName,Brackets:Java_bracketsList,ArrayInitializer:Java_arrayInitializer)
+  | Java_classCreator(NonWildcardTypeArguments:Java_typeList,CreatedName:Java_createdName,ClassCreatorRest:Java_classCreatorRest)
 
 Java_createdName =
-    Java_createdName(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_nonWildcardTypeArguments,IdentifierNonWilcardList:Java_IdentifierNonWildcardList)
+    Java_createdName(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_typeList,IdentifierNonWilcardList:Java_IdentifierNonWildcardList)
   | Java_createdNamePrimitive(PrimitiveType:Java_primitiveType)
 
 Java_IdentifierNonWildcardList =
     Java_IdentifierNonWildcardList(Java_IdentifierNonWildcard*)
 
 Java_IdentifierNonWildcard =
-    Java_IdentifierNonWildcard(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_nonWildcardTypeArguments)
+    Java_IdentifierNonWildcard(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_typeList)
 
 Java_innerCreator =
     Java_innerCreator(Identifier:Java_Identifier,ClassCreatorRest:Java_classCreatorRest)
@@ -576,22 +548,18 @@ Java_classCreatorRest =
     Java_classCreatorRest(Arguments:Java_arguments,ClassBody:Java_classBody)
 
 Java_explicitGenericInvocation =
-    Java_explicitGenericInvocation(explicitGenericInvocation_1:Java_nonWildcardTypeArguments,explicitGenericInvocation_2:Java_explicitGenericInvocationSuffix)
-
-Java_nonWildcardTypeArguments =
-    Java_nonWildcardTypeArguments(TypeList:Java_typeList)
-  | Java_emptyNonWildcardTypeArguments()
+    Java_explicitGenericInvocation(NonWildcardTypeArguments:Java_typeList,GenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
 
 Java_explicitGenericInvocationSuffix =
     Java_explicitGenericInvocationSuffixSuper(SuperSuffix:Java_superSuffix)
-  | Java_explicitGenericInvocationSuffixMethod(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
+  | Java_explicitGenericInvocationSuffixMethod(Identifier:Java_Identifier,Arguments:Java_arguments)
 
 Java_selector =
     Java_selectorField(Identifier:Java_Identifier)
   | Java_selectorMethod(Identifier:Java_Identifier,Arguments:Java_arguments)
   | Java_selectorThis()
   | Java_selectorSuper(SuperSuffix:Java_superSuffix)
-  | Java_selectorInner(nonWildcardTypeArguments:Java_nonWildcardTypeArguments,InnerCreator:Java_innerCreator)
+  | Java_selectorInner(NonWildcardTypeArguments:Java_typeList,InnerCreator:Java_innerCreator)
   | Java_selectorExpression(Expression:Java_expression)
 
 Java_superSuffix =

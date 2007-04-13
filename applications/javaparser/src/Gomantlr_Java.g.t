@@ -1099,7 +1099,7 @@ formalParameters returns [Java_formalParameterList fp]
 formalParameterDecls returns [Java_formalParameterList fpd]
 @init {
     fpd = `Java_formalParameterList();
-    Java_formalParameterDeclsIsFinal fpd1=`Java_formalParameterDeclsNotFinal();
+    Java_isFinal fpd1=`Java_nonFinal();
     Java_annotationList fpd2=`Java_annotationList();
     Java_formalParameterList fpdrest=`Java_formalParameterList();
 }
@@ -1107,7 +1107,7 @@ formalParameterDecls returns [Java_formalParameterList fpd]
         (
             'final'
             {
-                fpd1=`Java_formalParameterDeclsFinal();
+                fpd1=`Java_final();
             }
         )?
         (
@@ -1132,7 +1132,7 @@ formalParameterDecls returns [Java_formalParameterList fpd]
         }
 	;
 	
-formalParameterDeclsRest [Java_formalParameterDeclsIsFinal isFinal, Java_annotationList annos, Java_type type] returns [Java_formalParameterList fpdr]
+formalParameterDeclsRest [Java_isFinal isFinal, Java_annotationList annos, Java_type type] returns [Java_formalParameterList fpdr]
 @init {
     fpdr = `Java_formalParameterList();
     Java_formalParameterList fpdr2=`Java_formalParameterList();
@@ -1439,12 +1439,12 @@ blockStatement returns [Java_blockStatement bs]
 	
 localVariableDeclaration returns [Java_localVariableDeclaration lvd]
 @init {
-    Java_localVariableModifier lvd1=`Java_localVariableNoModifier();
+    Java_isFinal lvd1=`Java_nonFinal();
 }
 	:	(
             'final'
             {
-                lvd1=`Java_localVariableModifierFinal();
+                lvd1=`Java_final();
             }
         )? 
         t=type vd=variableDeclarators ';'
@@ -1697,39 +1697,40 @@ switchLabel returns [Java_switchLabel sl]
             }
 	;
 	
-moreStatementExpressions returns [Java_moreStatementExpressions mse]
+moreStatementExpressions returns [Java_expressionList mse]
 @init {
-    mse=`Java_moreStatementExpressions();
+    mse=`Java_expressionList();
 }
 	:	(
             ',' se=statementExpression
             {
-                mse=`Java_moreStatementExpressions(mse*,se);
+                mse=`Java_expressionList(mse*,se);
             }
         )*
 	;
 
 forControl returns [Java_forControl fc]
 @init {
-    Java_forControl_2_1 fc1=`Java_forControl_2_1_2();
-    Java_forControl_2_2 fc2=`Java_forControl_2_2_2();
-    Java_forUpdate fc3=`Java_emptyforUpdate();}
+    Java_forInit fc1=`Java_emptyForInit();
+    Java_optionalExpression fc2=`Java_emptyOptExpression();
+    Java_forUpdate fc3=`Java_emptyforUpdate();
+}
 	:	    fvc=forVarControl
             {
-                fc=`Java_forControl_1(fvc);
+                fc=fvc;
             }
 	    |   
             (
                 fi=forInit
                 {
-                    fc1=`Java_forControl_2_1_1(fi);
+                    fc1=fi;
                 }
             )?
             ';'
             (
                 e=expression
                 {
-                    fc2=`Java_forControl_2_2_1(e);
+                    fc2=`Java_optExpression(e);
                 }
             )?
             ';'
@@ -1740,58 +1741,58 @@ forControl returns [Java_forControl fc]
                 }
             )?
             {
-                fc=`Java_forControl_2(fc1,fc2,fc3);
+                fc=`Java_forControl(fc1,fc2,fc3);
             }
 	;
 
 forInit returns [Java_forInit fi]
 @init {
-    Java_forInit_1_1 fi1=`Java_forInit_1_1_2();
+    Java_isFinal fi1=`Java_nonFinal();
 }
 	:	    (
                 'final'
                 {
-                    fi1=`Java_forInit_1_1_1();
+                    fi1=`Java_final();
                 }
             )?
             t=type vd=variableDeclarators
             {
-                fi=`Java_forInit_1(fi1,t,vd);
+                fi=`Java_forInitVariable(fi1,t,vd);
             }
         |  
             el=expressionList
             {
-                `Java_forInit_2(el);
+                `Java_forInitExpression(el);
             }
 	;
 	
-forVarControl returns [Java_forVarControl fvc]
+forVarControl returns [Java_forControl fvc]
 @init {
-    Java_forVarControl_1 fvc1=`Java_forVarControl_1_2();
-    Java_forVarControl_2 fvc2=`Java_forVarControl_2_2();
+    Java_isFinal fvc1=`Java_nonFinal();
+    Java_optionalAnnotation fvc2=`Java_noAnnotation();
 }
 	:	(
             'final'
             {
-                fvc1=`Java_forVarControl_1_1();
+                fvc1=`Java_final();
             }
         )?
         (
             a=annotation
             {
-                fvc2=`Java_forVarControl_2_1(a);
+                fvc2=`Java_optAnnotation(a);
             }
         )? 
-        t=type i=Identifier fvcr=forVarControlRest
+        t=type i=Identifier fvcr=forVarControlRest[fvc1,fvc2,t,`Java_Identifier(i.getText())]
         {
-            fvc=`Java_forVarControl(fvc1,fvc2,t,Java_Identifier(i.getText()),fvcr);
+            fvc=fvcr;
         }
 	;
 
-forVarControlRest returns [Java_forVarControlRest fvcr]
+forVarControlRest [Java_isFinal isf, Java_optionalAnnotation oan, Java_type jty, Java_Identifier ident] returns [Java_forControl fvcr]
 @init {
     Java_variableDeclaratorList fvcr2=`Java_variableDeclaratorList();
-    Java_forVarControlRest_1_3 fvcr3=`Java_forVarControlRest_1_3_2();
+    Java_optionalExpression fvcr3=`Java_emptyOptExpression();
     Java_forUpdate fvcr4=`Java_emptyforUpdate();
 }
 	:	    vdr=variableDeclaratorRest 
@@ -1805,7 +1806,7 @@ forVarControlRest returns [Java_forVarControlRest fvcr]
             (
                 e=expression
                 {
-                    fvcr3=`Java_forVarControlRest_1_3_1(e);
+                    fvcr3=`Java_optExpression(e);
                 }
             )?
             ':' 
@@ -1816,12 +1817,12 @@ forVarControlRest returns [Java_forVarControlRest fvcr]
                 }
             )?
             {
-                fvcr=`Java_forVarControlRest_1(vdr,fvcr2,fvcr3,fvcr4);
+                fvcr=`Java_forVarControl(isf,oan,jty,Java_variableDeclarator(ident,vdr),fvcr2,fvcr3,fvcr4);
             }
         |   
             ':' e=expression
             {
-                fvcr=`Java_forVarControlRest_2(e);
+                fvcr=`Java_foreachVarControl(isf,oan,jty,ident,e);
             }
 	;
 
@@ -2457,7 +2458,7 @@ identifierSuffix returns [Java_identifierSuffix is]
 @init {
     Java_bracketsList b=`Java_bracketsList();
     Java_identifierSuffix is2=`Java_identifierSuffixBracket();
-    Java_nonWildcardTypeArguments is8=`Java_emptyNonWildcardTypeArguments();
+    Java_typeList is8=`Java_typeList();
 }
 	:	    (
                 '[' ']'
@@ -2520,7 +2521,7 @@ identifierSuffix returns [Java_identifierSuffix is]
 
 creator returns [Java_creator c]
 @init {
-    Java_nonWildcardTypeArguments c1=`Java_emptyNonWildcardTypeArguments();
+    Java_typeList c1=`Java_typeList();
 }
 	:	(
             nwta=nonWildcardTypeArguments
@@ -2544,9 +2545,9 @@ creator returns [Java_creator c]
 
 createdName returns [Java_createdName cn]
 @init {
-    Java_nonWildcardTypeArguments cn2=`Java_emptyNonWildcardTypeArguments();
+    Java_typeList cn2=`Java_typeList();
     Java_IdentifierNonWildcardList cn1=`Java_IdentifierNonWildcardList();
-    Java_nonWildcardTypeArguments cn3=`Java_emptyNonWildcardTypeArguments();
+    Java_typeList cn3=`Java_typeList();
 }
 	:	    i=Identifier 
             (
@@ -2584,7 +2585,7 @@ innerCreator returns [Java_innerCreator ic]
         }
 	;
 
-arrayCreatorRest [Java_nonWildcardTypeArguments c1, Java_createdName cn] returns [Java_creator acr]
+arrayCreatorRest [Java_typeList c1, Java_createdName cn] returns [Java_creator acr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
     Java_expressionList acr2=`Java_expressionList();
@@ -2645,10 +2646,13 @@ explicitGenericInvocation returns [Java_explicitGenericInvocation egi]
         }
 	;
 	
-nonWildcardTypeArguments returns [Java_nonWildcardTypeArguments nwta]
+nonWildcardTypeArguments returns [Java_typeList nwta]
+@init {
+    nwta=`Java_typeList();
+}
 	:	'<' t=typeList '>'
         {
-            nwta=`Java_nonWildcardTypeArguments(t);
+            nwta=t;
         }
 	;
 	
@@ -2667,7 +2671,7 @@ explicitGenericInvocationSuffix returns [Java_explicitGenericInvocationSuffix eg
 selector returns [Java_selector s]
 @init {
     Java_arguments sel1=null;
-    Java_nonWildcardTypeArguments sel4=`Java_emptyNonWildcardTypeArguments();
+    Java_typeList sel4=`Java_typeList();
 }
 	:	    '.' i=Identifier 
             (
