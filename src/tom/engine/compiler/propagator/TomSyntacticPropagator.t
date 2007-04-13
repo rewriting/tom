@@ -31,8 +31,12 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
         Constraint l = `AndConstraint();				
         // for each slot
         %match(slots){
+          // if it is an unamed variable, don't generate anything
+          // TODO  - replace the test with an ap when the bug is solved
           concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{
-            l = `AndConstraint(l*,MatchConstraint(appl,Subterm(name,slotName,g)));
+            if (!`appl.isUnamedVariable()){
+              l = `AndConstraint(l*,MatchConstraint(appl,Subterm(name,slotName,g)));
+            }
           }
         }
         // add head equality condition

@@ -49,7 +49,7 @@ public class TomArrayPropagator implements TomIBasePropagator{
               concSlot(_*,PairSlotAppl[Appl=appl],X*,_)->{                
                 TomTerm newFreshIndex = getFreshIndex();
                 // if we have a star variable
-                if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
+                if(`appl.isVariableStar() || `appl.isUnamedVariableStar()){
                   TomTerm beginIndex = getBeginIndex();
                   TomTerm endIndex = getEndIndex();
                   l = `AndConstraint(l*,

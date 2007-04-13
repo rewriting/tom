@@ -52,12 +52,12 @@ public class TomVariadicPropagator implements TomIBasePropagator{
           concSlot(_*,PairSlotAppl[Appl=appl],X*,_)->{                
             TomTerm newFreshVarList = getFreshVariableStar(listType);
             // if we have a variable
-            if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
+            if((`appl).isVariableStar() || (`appl).isUnamedVariableStar()){
               TomTerm beginSublist = getBeginVariableStar(listType);
               TomTerm endSublist = getEndVariableStar(listType);
               l = `AndConstraint(l*,
                   MatchConstraint(beginSublist,freshVariable),
-                  MatchConstraint(endSublist,freshVariable),
+                  MatchConstraint(endSublist,freshVariable),             
                   MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
                   MatchConstraint(newFreshVarList,endSublist));							
             }else{	// a term or a syntactic variable
