@@ -2318,14 +2318,14 @@ castExpression returns [Java_castExpression ce]
 primary returns [Java_primary p]
 @init {
     Java_primary_2_2 p2=null;
-    Java_primary_3_1 p3=`Java_primary_3_1_2();
-    Java_primary_7_2 p7_2=`Java_primary_7_2_1();
-    Java_primary_7_3 p7_3=`Java_primary_7_3_2();
+    Java_arguments p3=`Java_arguments(Java_expressionList());
+    Java_IdentifierList p7_2=`Java_IdentifierList();
+    Java_identifierSuffix p7_3=`Java_emptyIdentifierSuffix();
     Java_bracketsList b=`Java_bracketsList();
 }
     :	    pe=parExpression
             {
-                p=`Java_primary_1(pe);
+                p=`Java_primaryExpression(pe);
             }
         |   
             nwta=nonWildcardTypeArguments
@@ -2348,43 +2348,43 @@ primary returns [Java_primary p]
             (
                 a=arguments
                 {
-                    p3=`Java_primary_3_1_1(a);
+                    p3=a;
                 }
             )?
             {
-                p=`Java_primary_3(p3);
+                p=`Java_primaryThis(p3);
             }
         |
             'super' sup=superSuffix
             {
-                p=`Java_primary_4(sup);
+                p=`Java_primarySuper(sup);
             }
         |
             l=literal
             {
-                p=`Java_primary_5(l);
+                p=`Java_primaryLiteral(l);
             }
         |
             'new' c=creator
             {
-                p=`Java_primary_6(c);
+                p=`Java_primaryNew(c);
             }
         |
             i1=Identifier 
             (
                 '.' i2=Identifier
                 {
-                    p7_2=`Java_primary_7_2_1(p7_2*,Java_primary_7_2_1_1(Java_Identifier(i2.getText())));
+                    p7_2=`Java_IdentifierList(p7_2*,Java_Identifier(i2.getText()));
                 }
             )* 
             (
                 is=identifierSuffix
                 {
-                    p7_3=`Java_primary_7_3_1(is);
+                    p7_3=is;
                 }
             )?
             {
-                p=`Java_primary_7(Java_Identifier(i1.getText()),p7_2,p7_3);
+                p=`Java_primary_7(Java_IdentifierList(Java_Identifier(i1.getText()),p7_2*),p7_3);
             }
         |
             pt=primitiveType 
@@ -2396,12 +2396,12 @@ primary returns [Java_primary p]
             )*
             '.' 'class'
             {
-                p=`Java_primary_8(pt,b);
+                p=`Java_primaryPrimitive(pt,b);
             }
         |
             'void' '.' 'class'
             {
-                p=`Java_primary_9();
+                p=`Java_primaryVoidClass();
             }
 	;
 
@@ -2496,15 +2496,15 @@ creator returns [Java_creator c]
 
 createdName returns [Java_createdName cn]
 @init {
-    Java_createdName_1_2 cn2=`Java_createdName_1_2_2();
-    Java_createdName_1_3 cn1=`Java_createdName_1_3_1();
-    Java_createdName_1_3_1_1_2 cn3=`Java_createdName_1_3_1_1_2_2();
+    Java_nonWildcardTypeArguments cn2=`Java_emptyNonWildcardTypeArguments();
+    Java_IdentifierNonWildcardList cn1=`Java_IdentifierNonWildcardList();
+    Java_nonWildcardTypeArguments cn3=`Java_emptyNonWildcardTypeArguments();
 }
 	:	    i=Identifier 
             (
                 nwta1=nonWildcardTypeArguments
                 {
-                    cn2=`Java_createdName_1_2_1(nwta1);
+                    cn2=nwta1;
                 }
             )?
             (
@@ -2512,20 +2512,20 @@ createdName returns [Java_createdName cn]
                 (
                     nwta2=nonWildcardTypeArguments
                     {
-                        cn3=`Java_createdName_1_3_1_1_2_1(nwta2);
+                        cn3=nwta2;
                     }
                 )?
                 {
-                    cn1=`Java_createdName_1_3_1(cn1*,Java_createdName_1_3_1_1(Java_Identifier(i.getText()),cn3));
+                    cn1=`Java_IdentifierNonWildcardList(cn1*,Java_IdentifierNonWildcard(Java_Identifier(i.getText()),cn3));
                 }
             )*
             {
-                cn=`Java_createdName_1(Java_Identifier(i.getText()),cn2,cn1);
+                cn=`Java_createdName(Java_Identifier(i.getText()),cn2,cn1);
             }
     |
             pt=primitiveType
             {
-                cn=`Java_createdName_2(pt);
+                cn=`Java_createdNamePrimitive(pt);
             }
 	;
 	
@@ -2539,7 +2539,7 @@ innerCreator returns [Java_innerCreator ic]
 arrayCreatorRest [Java_nonWildcardTypeArguments c1, Java_createdName cn] returns [Java_creator acr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
-    Java_arrayCreatorRest_2_2 acr2=`Java_arrayCreatorRest_2_2_1();
+    Java_expressionList acr2=`Java_expressionList();
 }
 	:	'['
         (
@@ -2552,14 +2552,14 @@ arrayCreatorRest [Java_nonWildcardTypeArguments c1, Java_createdName cn] returns
                 )*
                 a=arrayInitializer
                 {
-                    acr=`Java_arrayCreator(c1,cn,Java_arrayCreatorRest_1(b,a));
+                    acr=`Java_arrayCreatorWithInitializer(c1,cn,b,a);
                 }
             | 
                 e=expression ']' 
                 (
                     '[' e1=expression ']'
                     {
-                        acr2=`Java_arrayCreatorRest_2_2_1(acr2*,Java_arrayCreatorRest_2_2_1_1(e1));
+                        acr2=`Java_expressionList(acr2*,e1);
                     }
                 )*
                 (
@@ -2569,7 +2569,7 @@ arrayCreatorRest [Java_nonWildcardTypeArguments c1, Java_createdName cn] returns
                     }
                 )*
                 {
-                    acr=`Java_arrayCreator(c1,cn,Java_arrayCreatorRest_2(e,acr2,b));
+                    acr=`Java_arrayCreator(c1,cn,Java_expressionList(e,acr2*),b);
                 }
         )
 	;

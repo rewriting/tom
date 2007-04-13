@@ -578,33 +578,19 @@ Java_castExpression =
   | Java_castExpressionType(type:Java_type,sunexp:Java_unaryExpressionNotPlusMinus)
 
 Java_primary =
-    Java_primary_1(parExpression:Java_parExpression)
+    Java_primaryExpression(parExpression:Java_parExpression)
   | Java_primary_2(primary_2_1:Java_nonWildcardTypeArguments,primary_2_2:Java_primary_2_2)
-  | Java_primary_3(primary_3_1:Java_primary_3_1)
-  | Java_primary_4(primary_4_1:Java_superSuffix)
-  | Java_primary_5(literal:Java_literal)
-  | Java_primary_6(primary_6_1:Java_creator)
-  | Java_primary_7(primary_7_1:Java_Identifier,primary_7_2:Java_primary_7_2,primary_7_3:Java_primary_7_3)
-  | Java_primary_8(primary_8_1:Java_primitiveType,primary_8_2:Java_bracketsList)
-  | Java_primary_9()
+  | Java_primaryThis(Arguments:Java_arguments)
+  | Java_primarySuper(SuperSuffix:Java_superSuffix)
+  | Java_primaryLiteral(Literal:Java_literal)
+  | Java_primaryNew(Creator:Java_creator)
+  | Java_primary_7(IdentifierList:Java_IdentifierList,IdSuffix:Java_identifierSuffix)
+  | Java_primaryPrimitive(PrimitiveType:Java_primitiveType,Brackets:Java_bracketsList)
+  | Java_primaryVoidClass()
 
 Java_primary_2_2 =
     Java_primary_2_2_1(explicitGenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
   | Java_primary_2_2_2(primary_2_2_2_1:Java_arguments)
-
-Java_primary_3_1 =
-    Java_primary_3_1_1(arguments:Java_arguments)
-  | Java_primary_3_1_2()
-
-Java_primary_7_2 =
-    Java_primary_7_2_1(Java_primary_7_2_1_1*)
-
-Java_primary_7_2_1_1 =
-    Java_primary_7_2_1_1(primary_7_2_1_1_1:Java_Identifier)
-
-Java_primary_7_3 =
-    Java_primary_7_3_1(identifierSuffix:Java_identifierSuffix)
-  | Java_primary_7_3_2()
 
 Java_identifierSuffix =
     Java_identifierSuffixEmptyBracket(Brackets:Java_bracketsList)
@@ -615,41 +601,25 @@ Java_identifierSuffix =
   | Java_identifierSuffixThis()
   | Java_identifierSuffixSuper(Arguments:Java_arguments)
   | Java_identifierSuffixInnerClass(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,InnerCreator:Java_innerCreator)
+  | Java_emptyIdentifierSuffix()
 
 Java_creator =
-    Java_arrayCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ArrayCreatorRest:Java_arrayCreatorRest)
+    Java_arrayCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ExpressionList:Java_expressionList,arrayCreatorRest_2_3:Java_bracketsList)
+  | Java_arrayCreatorWithInitializer(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,Brackets:Java_bracketsList,ArrayInitializer:Java_arrayInitializer)
   | Java_classCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ClassCreatorRest:Java_classCreatorRest)
 
 Java_createdName =
-    Java_createdName_1(Identifier:Java_Identifier,createdName_1_2:Java_createdName_1_2,createdName_1_3:Java_createdName_1_3)
-  | Java_createdName_2(primitiveType:Java_primitiveType)
+    Java_createdName(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_nonWildcardTypeArguments,IdentifierNonWilcardList:Java_IdentifierNonWildcardList)
+  | Java_createdNamePrimitive(PrimitiveType:Java_primitiveType)
 
-Java_createdName_1_2 =
-    Java_createdName_1_2_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
-  | Java_createdName_1_2_2()
+Java_IdentifierNonWildcardList =
+    Java_IdentifierNonWildcardList(Java_IdentifierNonWildcard*)
 
-Java_createdName_1_3 =
-    Java_createdName_1_3_1(Java_createdName_1_3_1_1*)
-
-Java_createdName_1_3_1_1 =
-    Java_createdName_1_3_1_1(createdName_1_3_1_1_1:Java_Identifier,createdName_1_3_1_1_2:Java_createdName_1_3_1_1_2)
-
-Java_createdName_1_3_1_1_2 =
-    Java_createdName_1_3_1_1_2_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
-  | Java_createdName_1_3_1_1_2_2()
+Java_IdentifierNonWildcard =
+    Java_IdentifierNonWildcard(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_nonWildcardTypeArguments)
 
 Java_innerCreator =
-    Java_innerCreator(innerCreator_1:Java_Identifier,innerCreator_2:Java_classCreatorRest)
-
-Java_arrayCreatorRest =
-    Java_arrayCreatorRest_1(arrayCreatorRest_1_1:Java_bracketsList,arrayCreatorRest_1_2:Java_arrayInitializer)
-  | Java_arrayCreatorRest_2(arrayCreatorRest_2_1:Java_expression,arrayCreatorRest_2_2:Java_arrayCreatorRest_2_2,arrayCreatorRest_2_3:Java_bracketsList)
-
-Java_arrayCreatorRest_2_2 =
-    Java_arrayCreatorRest_2_2_1(Java_arrayCreatorRest_2_2_1_1*)
-
-Java_arrayCreatorRest_2_2_1_1 =
-    Java_arrayCreatorRest_2_2_1_1(arrayCreatorRest_2_2_1_1_1:Java_expression)
+    Java_innerCreator(Identifier:Java_Identifier,ClassCreatorRest:Java_classCreatorRest)
 
 Java_classCreatorRest =
     Java_classCreatorRest(classCreatorRest_1:Java_arguments,classBody:Java_classBody)
@@ -662,7 +632,7 @@ Java_nonWildcardTypeArguments =
   | Java_emptyNonWildcardTypeArguments()
 
 Java_explicitGenericInvocationSuffix =
-    Java_explicitGenericInvocationSuffixSuper(explicitGenericInvocationSuffix_1_1:Java_superSuffix)
+    Java_explicitGenericInvocationSuffixSuper(SuperSuffix:Java_superSuffix)
   | Java_explicitGenericInvocationSuffixMethod(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
 
 Java_selector =
