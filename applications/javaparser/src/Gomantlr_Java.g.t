@@ -1713,7 +1713,7 @@ forControl returns [Java_forControl fc]
 @init {
     Java_forControl_2_1 fc1=`Java_forControl_2_1_2();
     Java_forControl_2_2 fc2=`Java_forControl_2_2_2();
-    Java_forControl_2_3 fc3=`Java_forControl_2_3_2();}
+    Java_forUpdate fc3=`Java_emptyforUpdate();}
 	:	    fvc=forVarControl
             {
                 fc=`Java_forControl_1(fvc);
@@ -1736,7 +1736,7 @@ forControl returns [Java_forControl fc]
             (
                 fu=forUpdate
                 {
-                    fc3=`Java_forControl_2_3_1(fu);
+                    fc3=`Java_forUpdate(fu);
                 }
             )?
             {
@@ -1790,15 +1790,15 @@ forVarControl returns [Java_forVarControl fvc]
 
 forVarControlRest returns [Java_forVarControlRest fvcr]
 @init {
-    Java_forVarControlRest_1_2 fvcr2=`Java_forVarControlRest_1_2_1();
+    Java_variableDeclaratorList fvcr2=`Java_variableDeclaratorList();
     Java_forVarControlRest_1_3 fvcr3=`Java_forVarControlRest_1_3_2();
-    Java_forVarControlRest_1_4 fvcr4=`Java_forVarControlRest_1_4_2();
+    Java_forUpdate fvcr4=`Java_emptyforUpdate();
 }
 	:	    vdr=variableDeclaratorRest 
             (
                 ',' vd=variableDeclarator
                 {
-                    fvcr2=`Java_forVarControlRest_1_2_1(fvcr2*,Java_forVarControlRest_1_2_1_1(vd));
+                    fvcr2=`Java_variableDeclaratorList(fvcr2*,vd);
                 }
             )*
             ';' 
@@ -1812,7 +1812,7 @@ forVarControlRest returns [Java_forVarControlRest fvcr]
             (
                 fu=forUpdate
                 {
-                    fvcr4=`Java_forVarControlRest_1_4_1(fu);
+                    fvcr4=`Java_forUpdate(fu);
                 }
             )?
             {
@@ -1825,10 +1825,10 @@ forVarControlRest returns [Java_forVarControlRest fvcr]
             }
 	;
 
-forUpdate returns [Java_forUpdate fu]
+forUpdate returns [Java_expressionList fu]
 	:	el=expressionList
         {
-            fu=`Java_forUpdate(el);
+            fu=el;
         }
                                 
 	;

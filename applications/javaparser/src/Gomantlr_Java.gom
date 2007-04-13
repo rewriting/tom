@@ -401,7 +401,7 @@ Java_moreStatementExpressions =
 
 Java_forControl =
     Java_forControl_1(forVarControl:Java_forVarControl)
-  | Java_forControl_2(forControl_2_1:Java_forControl_2_1,forControl_2_2:Java_forControl_2_2,forControl_2_3:Java_forControl_2_3)
+  | Java_forControl_2(forControl_2_1:Java_forControl_2_1,forControl_2_2:Java_forControl_2_2,ForUpdate:Java_forUpdate)
 
 Java_forControl_2_1 =
     Java_forControl_2_1_1(forInit:Java_forInit)
@@ -410,10 +410,6 @@ Java_forControl_2_1 =
 Java_forControl_2_2 =
     Java_forControl_2_2_1(expression:Java_expression)
   | Java_forControl_2_2_2()
-
-Java_forControl_2_3 =
-    Java_forControl_2_3_1(forUpdate:Java_forUpdate)
-  | Java_forControl_2_3_2()
 
 Java_forInit =
     Java_forInit_1(forInit_1_1:Java_forInit_1_1,forInit_1_2:Java_type,forInit_1_3:Java_variableDeclaratorList)
@@ -435,25 +431,16 @@ Java_forVarControl_2 =
   | Java_forVarControl_2_2()
 
 Java_forVarControlRest =
-    Java_forVarControlRest_1(forVarControlRest_1_1:Java_variableDeclaratorRest,forVarControlRest_1_2:Java_forVarControlRest_1_2,forVarControlRest_1_3:Java_forVarControlRest_1_3,forVarControlRest_1_4:Java_forVarControlRest_1_4)
+    Java_forVarControlRest_1(forVarControlRest_1_1:Java_variableDeclaratorRest,forVarControlRest_1_2:Java_variableDeclaratorList,forVarControlRest_1_3:Java_forVarControlRest_1_3,forVarControlRest_1_4:Java_forUpdate)
   | Java_forVarControlRest_2(forVarControlRest_2_1:Java_expression)
-
-Java_forVarControlRest_1_2 =
-    Java_forVarControlRest_1_2_1(Java_forVarControlRest_1_2_1_1*)
-
-Java_forVarControlRest_1_2_1_1 =
-    Java_forVarControlRest_1_2_1_1(forVarControlRest_1_2_1_1_1:Java_variableDeclarator)
 
 Java_forVarControlRest_1_3 =
     Java_forVarControlRest_1_3_1(expression:Java_expression)
   | Java_forVarControlRest_1_3_2()
 
-Java_forVarControlRest_1_4 =
-    Java_forVarControlRest_1_4_1(forUpdate:Java_forUpdate)
-  | Java_forVarControlRest_1_4_2()
-
 Java_forUpdate =
     Java_forUpdate(ExpressionList:Java_expressionList)
+  | Java_emptyforUpdate()
 
 Java_parExpression =
     Java_parExpression(Expression:Java_expression)
