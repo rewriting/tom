@@ -39,8 +39,7 @@ public class TomArrayGenerator implements TomIBaseGenerator{
        *
        * *** we need <= instead of < to make the algorithm complete ***
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[AstType=termType],VariableHeadArray(opName,subject,begin,end))) ->{
-        System.out.println("opname:" + `subject);
+      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[AstType=termType],VariableHeadArray(opName,subject,begin,end))) ->{        
         Expression doWhileTest = `Negation(GreaterThan(TomTermToExpression(Ref(end)),GetSize(opName,Ref(subject))));
         // expression at the end of the loop 
         Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToTomTerm(AddOne(Ref(end)))));        
