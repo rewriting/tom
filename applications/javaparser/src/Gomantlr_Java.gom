@@ -73,7 +73,7 @@ Java_interfaceBody =
 
 Java_classBodyDeclaration =
     Java_classBodyDeclarationEmpty()
-  | Java_classBodyDeclarationBlock(IsStatic:Java_isStatic,block:Java_block)
+  | Java_classBodyDeclarationBlock(IsStatic:Java_isStatic,Block:Java_block)
   | Java_classBodyDeclarationMember(ModifierList:Java_modifierList,Members:Java_memberDecl)
 
 Java_memberDecl =
@@ -94,7 +94,7 @@ Java_returnType =
   | Java_returnVoid()
 
 Java_methodDeclaration =
-    Java_methodDeclaration(return:Java_type,methodDeclaration_2:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
+    Java_methodDeclaration(return:Java_type,Identifier:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
 
 Java_fieldDeclaration =
     Java_fieldDeclaration(Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
@@ -136,10 +136,10 @@ Java_variableDeclaratorList =
     Java_variableDeclaratorList(Java_variableDeclarator*)
 
 Java_variableDeclarator =
-    Java_variableDeclarator(variableDeclarator_1:Java_Identifier,variableDeclarator_2:Java_variableDeclaratorRest)
+    Java_variableDeclarator(Identifier:Java_Identifier,variableDeclarator_2:Java_variableDeclaratorRest)
 
 Java_variableDeclaratorRest =
-    Java_variableDeclaratorRest_1(variableDeclaratorRest_1_1:Java_bracketsList,variableDeclaratorRest_1_2:Java_variableDeclaratorRest_1_2)
+    Java_variableDeclaratorRest_1(Brackets:Java_bracketsList,variableDeclaratorRest_1_2:Java_variableDeclaratorRest_1_2)
   | Java_variableDeclaratorRest_2(variableDeclaratorRest_2_1:Java_variableInitializer)
   | Java_variableDeclaratorRest_3()
 
@@ -154,10 +154,10 @@ Java_constantDeclaratorList =
     Java_constantDeclaratorList(Java_constantDeclarator*)
 
 Java_constantDeclaratorRest =
-    Java_constantDeclaratorRest(constantDeclaratorRest_1:Java_bracketsList,constantDeclaratorRest_2:Java_variableInitializer)
+    Java_constantDeclaratorRest(Brackets:Java_bracketsList,constantDeclaratorRest_2:Java_variableInitializer)
 
 Java_variableDeclaratorId =
-    Java_variableDeclaratorId(variableDeclaratorId_1:Java_Identifier,variableDeclaratorId_2:Java_bracketsList)
+    Java_variableDeclaratorId(Identifier:Java_Identifier,Brackets:Java_bracketsList)
 
 Java_variableInitializer =
     Java_variableInitializerArray(arrayInitializer:Java_arrayInitializer)
@@ -168,7 +168,7 @@ Java_variableInitializerList =
 
 Java_arrayInitializer =
     Java_emptyArrayInitializer()
-  | Java_arrayInitializer(arrayInitializers:Java_variableInitializerList,arrayoption:Java_optionalComa)
+  | Java_arrayInitializer(ArrayInitializers:Java_variableInitializerList,OptionalComa:Java_optionalComa)
 
 Java_optionalComa =
     Java_optionalComa()
