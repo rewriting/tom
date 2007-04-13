@@ -949,7 +949,7 @@ typeName returns [Java_typeName tn]
 
 type returns [Java_type t]
 @init {
-    Java_type_1_2 t1_2=`Java_type_1_2_list();
+    Java_typeWithArgsList t1_2=`Java_typeWithArgsList();
     Java_typeArgumentList t1_2_2=`Java_typeArgumentList();
     Java_bracketsList b=`Java_bracketsList();
 }
@@ -961,7 +961,7 @@ type returns [Java_type t]
             }
         )? 
         {
-            t1_2=`Java_type_1_2_list(Java_type_1_2_item(Java_Identifier(i1.getText()),t1_2_2));
+            t1_2=`Java_typeWithArgsList(Java_typeWithArgs(Java_Identifier(i1.getText()),t1_2_2));
             t1_2_2=`Java_typeArgumentList();
         }
         (
@@ -973,7 +973,7 @@ type returns [Java_type t]
                 }
             )?
             {
-                t1_2=`Java_type_1_2_list(t1_2*,Java_type_1_2_item(Java_Identifier(i2.getText()),t1_2_2));
+                t1_2=`Java_typeWithArgsList(t1_2*,Java_typeWithArgs(Java_Identifier(i2.getText()),t1_2_2));
                 t1_2_2=`Java_typeArgumentList();
             }
         )*

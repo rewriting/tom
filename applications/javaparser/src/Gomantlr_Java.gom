@@ -207,14 +207,14 @@ Java_typeName =
   | Java_typeNameQualifiedIdentifier(PkgOrTypeName:Java_packageOrTypeName,Identifier:Java_Identifier)
 
 Java_type =
-    Java_type(type_1_2:Java_type_1_2,Brackets:Java_bracketsList)
+    Java_type(TypeWithArgs:Java_typeWithArgsList,Brackets:Java_bracketsList)
   | Java_typePrimitive(PrimitiveType:Java_primitiveType,Brackets:Java_bracketsList)
 
-Java_type_1_2 =
-    Java_type_1_2_list(Java_type_1_2_item*)
+Java_typeWithArgsList =
+    Java_typeWithArgsList(Java_typeWithArgs*)
 
-Java_type_1_2_item =
-    Java_type_1_2_item(type_1_2_item_1:Java_Identifier,type_1_2_item_2:Java_typeArgumentList)
+Java_typeWithArgs =
+    Java_typeWithArgs(Identifier:Java_Identifier,Arguments:Java_typeArgumentList)
 
 Java_bracketsList =
     Java_bracketsList(Java_brackets*)
@@ -620,7 +620,7 @@ Java_primary_7_3 =
   | Java_primary_7_3_2()
 
 Java_identifierSuffix =
-    Java_identifierSuffixEmptyBracket(identifierSuffix_1_1:Java_bracketsList)
+    Java_identifierSuffixEmptyBracket(Brackets:Java_bracketsList)
   | Java_identifierSuffixBracket(Java_expression*)
   | Java_identifierSuffixArguments(Arguments:Java_arguments)
   | Java_identifierSuffixClass()
