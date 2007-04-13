@@ -3,7 +3,7 @@ imports  String
 abstract syntax
 
 Java_compilationUnit =
-    Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,typeList:Java_classOrInterfaceDeclarationList)
+    Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,TypeList:Java_classOrInterfaceDeclarationList)
 
 Java_package =
     Java_package(name:Java_qualifiedName)
@@ -312,59 +312,56 @@ Java_annotationTypeElementDeclaration =
     Java_annotationTypeElementDeclaration(ModifierList:Java_modifierList,AnnotationTypeElementRest:Java_annotationTypeElementRest)
 
 Java_annotationTypeElementRest =
-    Java_annotationTypeElementConstant(type:Java_type,id:Java_Identifier,annotationConstant:Java_annotationConstant)
-  | Java_annotationTypeElementMethod(type:Java_type,id:Java_Identifier,annotationMethod:Java_annotationMethod)
-  | Java_annotationTypeElementClass(classDeclaration:Java_classDeclaration)
-  | Java_annotationTypeElementInterface(interfaceDeclaration:Java_interfaceDeclaration)
-  | Java_annotationTypeElementEnum(enumDeclaration:Java_enumDeclaration)
-  | Java_annotationTypeElementType(annotationTypeDeclaration:Java_annotationTypeDeclaration)
+    Java_annotationTypeElementConstant(Type:Java_type,Identifier:Java_Identifier,AnnotationConstant:Java_annotationConstant)
+  | Java_annotationTypeElementMethod(Type:Java_type,Identifier:Java_Identifier,AnnotationMethod:Java_annotationMethod)
+  | Java_annotationTypeElementClass(ClassDeclaration:Java_classDeclaration)
+  | Java_annotationTypeElementInterface(InterfaceDeclaration:Java_interfaceDeclaration)
+  | Java_annotationTypeElementEnum(EnumDeclaration:Java_enumDeclaration)
+  | Java_annotationTypeElementType(AnnotationTypeDeclaration:Java_annotationTypeDeclaration)
 
 Java_annotationMethod =
-    Java_annotationMethodDefault(defaultValue:Java_defaultValue)
+    Java_annotationMethodDefault(defaultValue:Java_elementValue)
   | Java_annotationMethodEmpty()
 
 Java_annotationConstant =
     Java_annotationConstant(variableDeclarators:Java_variableDeclaratorList)
 
-Java_defaultValue =
-    Java_defaultValue(defaultValue_1:Java_elementValue)
-
 Java_block =
     Java_block(Java_blockStatement*)
 
 Java_blockStatement =
-    Java_localVariable(localVariableDeclaration:Java_localVariableDeclaration)
-  | Java_classOrInterface(classOrInterfaceDeclaration:Java_classOrInterfaceDeclaration)
-  | Java_statement(statement:Java_statement)
+    Java_localVariable(LocalVariableDecl:Java_localVariableDeclaration)
+  | Java_classOrInterface(ClassOrInterfaceDeclaration:Java_classOrInterfaceDeclaration)
+  | Java_statement(Statement:Java_statement)
 
 Java_localVariableDeclaration =
-    Java_localVariableDeclaration(localVariableDeclaration_1:Java_localVariableModifier,localVariableDeclaration_2:Java_type,localVariableDeclaration_3:Java_variableDeclaratorList)
+    Java_localVariableDeclaration(Modifier:Java_localVariableModifier,Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
 
 Java_localVariableModifier =
     Java_localVariableModifierFinal()
   | Java_localVariableNoModifier()
 
 Java_statement =
-    Java_statementBlock(block:Java_block)
-  | Java_statementAssert(expression:Java_expression)
-  | Java_statementAssertWithValue(expression:Java_expression,value:Java_expression)
+    Java_statementBlock(Block:Java_block)
+  | Java_statementAssert(Expression:Java_expression)
+  | Java_statementAssertWithValue(Expression:Java_expression,Value:Java_expression)
   | Java_statementIfThen(Cond:Java_parExpression,Then:Java_statement)
   | Java_statementIfThenElse(Cond:Java_parExpression,Then:Java_statement,Else:Java_statement)
-  | Java_statementFor(forControl:Java_forControl,statement:Java_statement)
-  | Java_statementWhile(parExpression:Java_parExpression,statement:Java_statement)
-  | Java_statementDoWhile(statement:Java_statement,parExpression:Java_parExpression)
-  | Java_statementTry(block:Java_block,catches:Java_catches)
-  | Java_statementTryFinally(block:Java_block,catches:Java_catches,finally:Java_block)
-  | Java_statementSwitch(parExpression:Java_parExpression,switchStatements:Java_switchBlockStatementGroups)
-  | Java_statementSynchronized(parExpression:Java_parExpression,block:Java_block)
-  | Java_statementReturn(expr:Java_expression)
+  | Java_statementFor(ForControl:Java_forControl,Statement:Java_statement)
+  | Java_statementWhile(ParExpression:Java_parExpression,Statement:Java_statement)
+  | Java_statementDoWhile(Statement:Java_statement,ParExpression:Java_parExpression)
+  | Java_statementTry(Block:Java_block,Catches:Java_catches)
+  | Java_statementTryFinally(Block:Java_block,Catches:Java_catches,Finally:Java_block)
+  | Java_statementSwitch(ParExpression:Java_parExpression,SwitchStatements:Java_switchBlockStatementGroups)
+  | Java_statementSynchronized(ParExpression:Java_parExpression,Block:Java_block)
+  | Java_statementReturn(Expression:Java_expression)
   | Java_statementReturnVoid()
-  | Java_statementThrow(expr:Java_expression)
-  | Java_statementBreak(idOrNone:Java_IdentifierOrNone)
-  | Java_statementContinue(idOrNone:Java_IdentifierOrNone)
+  | Java_statementThrow(Expression:Java_expression)
+  | Java_statementBreak(IdOrNone:Java_IdentifierOrNone)
+  | Java_statementContinue(IdOrNone:Java_IdentifierOrNone)
   | Java_statementNop()
-  | Java_statementExpression(expr:Java_expression)
-  | Java_statementLabel(label:Java_Identifier,statement:Java_statement)
+  | Java_statementExpression(Expression:Java_expression)
+  | Java_statementLabel(Label:Java_Identifier,Statement:Java_statement)
 
 Java_IdentifierOrNone =
     Java_hasIdentifier(Identifier:Java_Identifier)
@@ -374,10 +371,10 @@ Java_catches =
     Java_catches(Java_catchClause*)
 
 Java_catchClause =
-    Java_catchClause(catchClause_1:Java_formalParameter,catchClause_2:Java_block)
+    Java_catchClause(FormalParameter:Java_formalParameter,Block:Java_block)
 
 Java_formalParameter =
-    Java_formalParameter(Modifiers:Java_variableModifierList,formalParameter_2:Java_type,formalParameter_3:Java_variableDeclaratorId)
+    Java_formalParameter(Modifiers:Java_variableModifierList,Type:Java_type,VariableDecl:Java_variableDeclaratorId)
 
 Java_variableModifierList =
     Java_variableModifierList(Java_variableModifier*)
@@ -386,10 +383,7 @@ Java_switchBlockStatementGroups =
     Java_switchBlockStatementGroups_1(Java_switchBlockStatementGroup*)
 
 Java_switchBlockStatementGroup =
-    Java_switchBlockStatementGroup(switchBlockStatementGroup_1:Java_switchLabel,switchBlockStatementGroup_2:Java_switchBlockStatementGroup_2)
-
-Java_switchBlockStatementGroup_2 =
-    Java_switchBlockStatementGroup_2_1(Java_blockStatement*)
+    Java_switchBlockStatementGroup(SwitchLabel:Java_switchLabel,SwitchBlock:Java_block)
 
 Java_switchLabel =
     Java_switchLabelExpression(constantExpression:Java_constantExpression)
@@ -465,7 +459,7 @@ Java_conditionalExpression =
     Java_conditionalExpression(conditionalExpression_1:Java_conditionalOrExpression,conditionalExpression_2:Java_conditionalExpression_2)
 
 Java_conditionalExpression_2 =
-    Java_conditionalExpression_2_1(conditionalExpression_2_1_1:Java_expression,conditionalExpression_2_1_2:Java_expression)
+    Java_conditionalExpression_2_1(Expression1:Java_expression,Expression2:Java_expression)
   | Java_conditionalExpression_2_2()
 
 Java_conditionalOrExpression =
@@ -590,7 +584,7 @@ Java_primary =
 
 Java_primary_2_2 =
     Java_primary_2_2_1(explicitGenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
-  | Java_primary_2_2_2(primary_2_2_2_1:Java_arguments)
+  | Java_primary_2_2_2(Arguments:Java_arguments)
 
 Java_identifierSuffix =
     Java_identifierSuffixEmptyBracket(Brackets:Java_bracketsList)
@@ -622,13 +616,13 @@ Java_innerCreator =
     Java_innerCreator(Identifier:Java_Identifier,ClassCreatorRest:Java_classCreatorRest)
 
 Java_classCreatorRest =
-    Java_classCreatorRest(classCreatorRest_1:Java_arguments,classBody:Java_classBody)
+    Java_classCreatorRest(Arguments:Java_arguments,ClassBody:Java_classBody)
 
 Java_explicitGenericInvocation =
     Java_explicitGenericInvocation(explicitGenericInvocation_1:Java_nonWildcardTypeArguments,explicitGenericInvocation_2:Java_explicitGenericInvocationSuffix)
 
 Java_nonWildcardTypeArguments =
-    Java_nonWildcardTypeArguments(nonWildcardTypeArguments_1:Java_typeList)
+    Java_nonWildcardTypeArguments(TypeList:Java_typeList)
   | Java_emptyNonWildcardTypeArguments()
 
 Java_explicitGenericInvocationSuffix =
@@ -636,17 +630,17 @@ Java_explicitGenericInvocationSuffix =
   | Java_explicitGenericInvocationSuffixMethod(explicitGenericInvocationSuffix_2_1:Java_Identifier,explicitGenericInvocationSuffix_2_2:Java_arguments)
 
 Java_selector =
-    Java_selectorField(selector_1_1:Java_Identifier)
-  | Java_selectorMethod(selector_1_1:Java_Identifier,arguments:Java_arguments)
+    Java_selectorField(Identifier:Java_Identifier)
+  | Java_selectorMethod(Identifier:Java_Identifier,Arguments:Java_arguments)
   | Java_selectorThis()
-  | Java_selectorSuper(selector_3_1:Java_superSuffix)
-  | Java_selectorInner(nonWildcardTypeArguments:Java_nonWildcardTypeArguments,selector_4_2:Java_innerCreator)
-  | Java_selectorExpression(selector_5_1:Java_expression)
+  | Java_selectorSuper(SuperSuffix:Java_superSuffix)
+  | Java_selectorInner(nonWildcardTypeArguments:Java_nonWildcardTypeArguments,InnerCreator:Java_innerCreator)
+  | Java_selectorExpression(Expression:Java_expression)
 
 Java_superSuffix =
-    Java_superConstructor(arguments:Java_arguments)
-  | Java_superMember(superSuffix_2_1:Java_Identifier)
-  | Java_superMethod(superSuffix_2_1:Java_Identifier,arguments:Java_arguments)
+    Java_superConstructor(Arguments:Java_arguments)
+  | Java_superMember(Identifier:Java_Identifier)
+  | Java_superMethod(Identifier:Java_Identifier,Arguments:Java_arguments)
 
 Java_arguments =
     Java_arguments(ExpressionList:Java_expressionList)

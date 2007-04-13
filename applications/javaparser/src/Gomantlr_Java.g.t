@@ -1399,10 +1399,10 @@ annotationConstantRest returns [Java_annotationConstant acr]
         }
  	;
  	
-defaultValue returns [Java_defaultValue dv]
+defaultValue returns [Java_elementValue dv]
  	:	'default' ev=elementValue
         {
-            dv=`Java_defaultValue(ev);
+            dv=ev;
         }
  	;
 
@@ -1666,13 +1666,13 @@ switchBlockStatementGroups returns [Java_switchBlockStatementGroups sbsg]
 	
 switchBlockStatementGroup returns [Java_switchBlockStatementGroup sbsg]
 @init {
-    Java_switchBlockStatementGroup_2 sbsg2=`Java_switchBlockStatementGroup_2_1();
+    Java_block sbsg2=`Java_block();
 }
 	:	sl=switchLabel 
         (
             bs=blockStatement
             {
-                sbsg2=`Java_switchBlockStatementGroup_2_1(sbsg2*,bs);
+                sbsg2=`Java_block(sbsg2*,bs);
             }
         )*
         {
