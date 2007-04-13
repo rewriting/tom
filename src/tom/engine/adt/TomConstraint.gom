@@ -20,27 +20,21 @@ Constraint =
 //		   | Exists(var:TomTerm,cons:Constraint)
 //		   | ForAll(var:TomTerm,cons:Constraint)
 		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
-		   | AndAntiConstraint(Constraint*)
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
   		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
-  		   
-/** normalization hooks
- *
- * AndAntiConstraint(X*,AndAntiConstraint(),Y*) -> AndAntiConstraint(X*,Y*)
- * AndAntiConstraint(X*,AndAntiConstraint(x))) -> AndAntiConstraint(X*,x)
- *
- */ 
-AndAntiConstraint:make_insert(el, list){
-	%match(el){
-		AndAntiConstraint() ->{
-			return list;
-		}
-		AndAntiConstraint(x) ->{
-			return realMake(`x,list);
-		}
-	}
-}
+
 
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
 OrConstraint:AU() { `FalseConstraint() }
+
+// we should not generate assignments for the unamed variables
+AndConstraint:make_insert(e,l) {
+	%match(e) {
+		MatchConstraint((UnamedVariable|UnamedVariableStar)[],t) ->{
+			return l;
+		}
+	}	
+}
+
+
