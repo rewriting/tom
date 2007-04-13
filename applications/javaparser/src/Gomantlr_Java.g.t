@@ -95,7 +95,7 @@ importDeclaration returns [Java_importDeclaration id]
 @init {
     Java_isStatic id1=`Java_nonStatic();
     Java_IdentifierList id3=`Java_IdentifierList();
-    Java_importSuffix id4=`Java_importNoSuffix();
+    boolean id4=false;
 }
 	:	'import' 
         (
@@ -114,12 +114,16 @@ importDeclaration returns [Java_importDeclaration id]
         (
             '.' '*'
             {
-                id4=`Java_importSuffixStar();
+                id4=true;
             }
         )?
         ';'
         {
-            id=`Java_importDeclaration(id1,Java_Identifier(i1.getText()),id3,id4);
+          if(id4) {
+            id=`Java_importDeclarationStar(id1,Java_IdentifierList(Java_Identifier(i1.getText()),id3*));
+          } else {
+            id=`Java_importDeclaration(id1,Java_IdentifierList(Java_Identifier(i1.getText()),id3*));
+          }
         }
 	;
 	
@@ -1652,19 +1656,19 @@ formalParameter returns [Java_formalParameter fp]
         }
 	;
 	
-switchBlockStatementGroups returns [Java_switchBlockStatementGroups sbsg]
+switchBlockStatementGroups returns [Java_switchBlockStatementList sbsg]
 @init {
-    sbsg=`Java_switchBlockStatementGroups_1();
+    sbsg=`Java_switchBlockStatementList();
 }
 	:	(
             sbsg1=switchBlockStatementGroup
             {
-                sbsg=`Java_switchBlockStatementGroups_1(sbsg*,sbsg1);
+                sbsg=`Java_switchBlockStatementList(sbsg*,sbsg1);
             }
         )*
 	;
 	
-switchBlockStatementGroup returns [Java_switchBlockStatementGroup sbsg]
+switchBlockStatementGroup returns [Java_labelBlock sbsg]
 @init {
     Java_block sbsg2=`Java_block();
 }
@@ -1676,7 +1680,7 @@ switchBlockStatementGroup returns [Java_switchBlockStatementGroup sbsg]
             }
         )*
         {
-            sbsg=`Java_switchBlockStatementGroup(sl,sbsg2);
+            sbsg=`Java_labelBlock(sl,sbsg2);
         }
 	;
 	
@@ -1866,10 +1870,10 @@ statementExpression returns [Java_expression se]
         }
 	;
 	
-constantExpression returns [Java_constantExpression ce]
+constantExpression returns [Java_expression ce]
 	:	e=expression
         {
-            ce=`Java_constantExpression(e);
+            ce=e;
         }
 	;
 	

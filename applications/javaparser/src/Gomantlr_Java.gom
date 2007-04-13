@@ -13,7 +13,8 @@ Java_importDeclarationList=
     Java_importDeclarationList(Java_importDeclaration*)
 
 Java_importDeclaration =
-    Java_importDeclaration(importDeclaration_1:Java_isStatic,importDeclaration_2:Java_Identifier,identifierList:Java_IdentifierList,importDeclaration_4:Java_importSuffix)
+    Java_importDeclaration(IsStatic:Java_isStatic,IdentifierList:Java_IdentifierList)
+  | Java_importDeclarationStar(IsStatic:Java_isStatic,IdentifierList:Java_IdentifierList)
 
 Java_isStatic =
     Java_static()
@@ -21,10 +22,6 @@ Java_isStatic =
 
 Java_IdentifierList =
     Java_IdentifierList(Java_Identifier*)
-
-Java_importSuffix =
-    Java_importSuffixStar()
-  | Java_importNoSuffix()
 
 Java_classOrInterfaceDeclaration =
     Java_classDeclaration(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)
@@ -348,7 +345,7 @@ Java_statement =
   | Java_statementDoWhile(Statement:Java_statement,ParExpression:Java_parExpression)
   | Java_statementTry(Block:Java_block,Catches:Java_catches)
   | Java_statementTryFinally(Block:Java_block,Catches:Java_catches,Finally:Java_block)
-  | Java_statementSwitch(ParExpression:Java_parExpression,SwitchStatements:Java_switchBlockStatementGroups)
+  | Java_statementSwitch(ParExpression:Java_parExpression,SwitchStatements:Java_switchBlockStatementList)
   | Java_statementSynchronized(ParExpression:Java_parExpression,Block:Java_block)
   | Java_statementReturn(Expression:Java_expression)
   | Java_statementReturnVoid()
@@ -375,14 +372,14 @@ Java_formalParameter =
 Java_variableModifierList =
     Java_variableModifierList(Java_variableModifier*)
 
-Java_switchBlockStatementGroups =
-    Java_switchBlockStatementGroups_1(Java_switchBlockStatementGroup*)
+Java_switchBlockStatementList =
+    Java_switchBlockStatementList(Java_labelBlock*)
 
-Java_switchBlockStatementGroup =
-    Java_switchBlockStatementGroup(SwitchLabel:Java_switchLabel,SwitchBlock:Java_block)
+Java_labelBlock =
+    Java_labelBlock(SwitchLabel:Java_switchLabel,SwitchBlock:Java_block)
 
 Java_switchLabel =
-    Java_switchLabelExpression(constantExpression:Java_constantExpression)
+    Java_switchLabelExpression(Expression:Java_expression)
   | Java_switchLabelEnum(enumConstantName:Java_enumConstantName)
   | Java_switchLabelDefault()
 
@@ -413,9 +410,6 @@ Java_parExpression =
 
 Java_expressionList =
     Java_expressionList(Java_expression*)
-
-Java_constantExpression =
-    Java_constantExpression(Expression:Java_expression)
 
 Java_expression =
     Java_expression(CondExpr:Java_expression)
