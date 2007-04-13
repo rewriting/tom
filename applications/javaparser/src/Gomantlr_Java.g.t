@@ -169,7 +169,7 @@ classDeclaration returns [Java_classDeclaration cd]
         }
     |   ed=enumDeclaration
         {
-            cd=`Java_classDeclaration_2(ed);
+            cd=`ed;
         }
 	;
 	
@@ -253,7 +253,7 @@ bound returns [Java_bound b]
         }
 	;
 
-enumDeclaration returns [Java_enumDeclaration ed]
+enumDeclaration returns [Java_classDeclaration ed]
 @init {
     Java_typeList ed3=`Java_typeList();
 }
@@ -1333,7 +1333,7 @@ annotationTypeElementDeclarations returns [Java_annotationTypeBody ated]
         }
 	;
 	
-annotationTypeElementDeclaration returns [Java_annotationTypeElementDeclaration ated]
+annotationTypeElementDeclaration returns [Java_annotationTypeElement ated]
 @init {
     Java_modifierList ated1=`Java_concModifier();
 }
@@ -1343,43 +1343,43 @@ annotationTypeElementDeclaration returns [Java_annotationTypeElementDeclaration 
                 ated1=`Java_concModifier(ated1*,m);
             }
         )*
-        ater=annotationTypeElementRest
+        ater=annotationTypeElementRest[ated1]
         {
-            ated=`Java_annotationTypeElementDeclaration(ated1,ater);
+            ated=ater;
         }
 	;
 	
-annotationTypeElementRest returns [Java_annotationTypeElementRest ater]
-	:	t=type i=Identifier amocr=annotationMethodOrConstantRest[t,`Java_Identifier(i.getText())] ';'
+annotationTypeElementRest [Java_modifierList ml] returns [Java_annotationTypeElement ater]
+	:	t=type i=Identifier amocr=annotationMethodOrConstantRest[ml,t,`Java_Identifier(i.getText())] ';'
         {
             ater=amocr;
         }
 	|   cd=classDeclaration
         {
-            ater=`Java_annotationTypeElementClass(cd);
+            ater=`Java_annotationTypeElementClass(ml,cd);
         }
 	|   id=interfaceDeclaration
         {
-            ater=`Java_annotationTypeElementInterface(id);
+            ater=`Java_annotationTypeElementInterface(ml,id);
         }
 	|   ed=enumDeclaration
         {
-            ater=`Java_annotationTypeElementEnum(ed);
+            ater=`Java_annotationTypeElementEnum(ml,ed);
         }
 	|   atd=annotationTypeDeclaration
         {
-            ater=`Java_annotationTypeElementType(atd);
+            ater=`Java_annotationTypeElementType(ml,atd);
         }
 	;
 	
-annotationMethodOrConstantRest [Java_type typ, Java_Identifier ident] returns [Java_annotationTypeElementRest amocr]
+annotationMethodOrConstantRest [Java_modifierList ml, Java_type typ, Java_Identifier ident] returns [Java_annotationTypeElement amocr]
 	:	amr=annotationMethodRest
         {
-            amocr=`Java_annotationTypeElementMethod(typ,ident,amr);
+            amocr=`Java_annotationTypeElementMethod(ml,typ,ident,amr);
         }
 	|   acr=annotationConstantRest
         {
-            amocr=`Java_annotationTypeElementConstant(typ,ident,acr);
+            amocr=`Java_annotationTypeElementConstant(ml,typ,ident,acr);
         }
 	;
 	

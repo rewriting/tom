@@ -35,7 +35,7 @@ Java_concClassOrInterfaceDeclaration:make_insert(e,l) {
 
 Java_classDeclaration =
     Java_normalClassDeclaration(ClassName:Java_Identifier,TypeParameters:Java_typeParameterList,Extends:Java_typeList,Implements:Java_typeList,ClassBody:Java_classBody)
-  | Java_classDeclaration_2(EnumDeclaration:Java_enumDeclaration)
+  | Java_enumDeclaration(Enum:Java_ENUM,Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
 
 Java_typeParameterList =
     Java_typeParameterList(Java_typeParameter*)
@@ -45,9 +45,6 @@ Java_typeParameter =
 
 Java_bound =
     Java_bound(Java_type*)
-
-Java_enumDeclaration =
-    Java_enumDeclaration(Enum:Java_ENUM,Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
 
 Java_enumBody =
     Java_enumBody(Constants:Java_enumConstantList,OptionalComa:Java_optionalComa,EnumBody:Java_enumBodyDeclarationList)
@@ -299,18 +296,15 @@ Java_annotationTypeDeclaration =
     Java_annotationTypeDeclaration(Identifier:Java_Identifier,AnnotationTypeBody:Java_annotationTypeBody)
 
 Java_annotationTypeBody =
-    Java_annotationTypeBody(Java_annotationTypeElementDeclaration*)
+    Java_annotationTypeBody(Java_annotationTypeElement*)
 
-Java_annotationTypeElementDeclaration =
-    Java_annotationTypeElementDeclaration(ModifierList:Java_modifierList,AnnotationTypeElementRest:Java_annotationTypeElementRest)
-
-Java_annotationTypeElementRest =
-    Java_annotationTypeElementConstant(Type:Java_type,Identifier:Java_Identifier,AnnotationConstant:Java_annotationConstant)
-  | Java_annotationTypeElementMethod(Type:Java_type,Identifier:Java_Identifier,AnnotationMethod:Java_annotationMethod)
-  | Java_annotationTypeElementClass(ClassDeclaration:Java_classDeclaration)
-  | Java_annotationTypeElementInterface(InterfaceDeclaration:Java_interfaceDeclaration)
-  | Java_annotationTypeElementEnum(EnumDeclaration:Java_enumDeclaration)
-  | Java_annotationTypeElementType(AnnotationTypeDeclaration:Java_annotationTypeDeclaration)
+Java_annotationTypeElement =
+    Java_annotationTypeElementConstant(ModifierList:Java_modifierList,Type:Java_type,Identifier:Java_Identifier,AnnotationConstant:Java_annotationConstant)
+  | Java_annotationTypeElementMethod(ModifierList:Java_modifierList,Type:Java_type,Identifier:Java_Identifier,AnnotationMethod:Java_annotationMethod)
+  | Java_annotationTypeElementClass(ModifierList:Java_modifierList,ClassDeclaration:Java_classDeclaration)
+  | Java_annotationTypeElementInterface(ModifierList:Java_modifierList,InterfaceDeclaration:Java_interfaceDeclaration)
+  | Java_annotationTypeElementEnum(ModifierList:Java_modifierList,EnumDeclaration:Java_classDeclaration)
+  | Java_annotationTypeElementType(ModifierList:Java_modifierList,AnnotationTypeDeclaration:Java_annotationTypeDeclaration)
 
 Java_annotationMethod =
     Java_annotationMethodDefault(defaultValue:Java_elementValue)
