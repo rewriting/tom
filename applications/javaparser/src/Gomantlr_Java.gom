@@ -462,9 +462,14 @@ Java_expression =
   | Java_multiplicativeExpression(Expression:Java_expression,MultiplicativeExpressionList:Java_multiplicativeExpressionList)
   | Java_unaryExpressionPlus(Expression:Java_expression)
   | Java_unaryExpressionMinus(Expression:Java_expression)
-  | Java_unaryExpressionIncrement(Primary:Java_primary)
-  | Java_unaryExpressionDecrement(Primary:Java_primary)
-  | Java_unaryExpressionNotPlusMinus(unaryExpressionNotPlusMinus:Java_unaryExpressionNotPlusMinus)
+  | Java_unaryExpressionPrefixIncrement(Primary:Java_primary)
+  | Java_unaryExpressionPrefixDecrement(Primary:Java_primary)
+  | Java_unaryExpressionBitwiseComplement(Expression:Java_expression)
+  | Java_unaryExpressionNot(Expression:Java_expression)
+  | Java_unaryExpressionCast(CastExpression:Java_castExpression)
+  | Java_unaryExpressionPostfix(Primary:Java_primary,SelectorList:Java_selectorList)
+  | Java_unaryExpressionPostfixIncrement(Primary:Java_primary,SelectorList:Java_selectorList)
+  | Java_unaryExpressionPostfixDecrement(Primary:Java_primary,SelectorList:Java_selectorList)
 
 Java_multiplicativeExpressionList =
     Java_multiplicativeExpressionList(Java_multiplicativeExpressionElem*)
@@ -491,7 +496,7 @@ Java_equalityExpressionList =
     Java_equalityExpressionList(Java_equalityExpressionElem*)
 
 Java_equalityExpressionElem =
-    Java_equalityExpressionElem(EqualityOperator:Java_equalityOperator,equalityExpression:Java_expression)
+    Java_equalityExpressionElem(EqualityOperator:Java_equalityOperator,Expression:Java_expression)
 
 Java_equalityOperator =
     Java_equalityOperator(op:String)
@@ -500,7 +505,7 @@ Java_relationalExpressionList =
     Java_relationalExpressionList(Java_relationalExpressionElem*)
 
 Java_relationalExpressionElem =
-    Java_relationalExpressionElem(RelationalOp:Java_relationalOp,ShiftExpression:Java_expression)
+    Java_relationalExpressionElem(RelationalOp:Java_relationalOp,Expression:Java_expression)
 
 Java_relationalOp =
     Java_relationalOp(op:String)
@@ -515,24 +520,13 @@ Java_additiveOperation =
 Java_multiplicativeOperation =
     Java_multiplicativeOperation(op:String)
 
-Java_unaryExpressionNotPlusMinus =
-    Java_unaryExpressionNotPlusMinus_1(Expression:Java_expression)
-  | Java_unaryExpressionNotPlusMinus_2(Expression:Java_expression)
-  | Java_unaryExpressionNotPlusMinus_3(castExpression:Java_castExpression)
-  | Java_unaryExpressionNotPlusMinus_4(unaryExpressionNotPlusMinus_4_1:Java_primary,unaryExpressionNotPlusMinus_4_2:Java_unaryExpressionNotPlusMinus_4_2,unaryExpressionNotPlusMinus_4_3:Java_unaryExpressionNotPlusMinus_4_3)
-
-Java_unaryExpressionNotPlusMinus_4_2 =
-    Java_unaryExpressionNotPlusMinus_4_2_1(Java_selector*)
-
-Java_unaryExpressionNotPlusMinus_4_3 =
-    Java_unaryExpressionNotPlusMinus_4_3_0()
-  | Java_unaryExpressionNotPlusMinus_4_3_1()
-  | Java_unaryExpressionNotPlusMinus_4_3_2()
+Java_selectorList =
+    Java_selectorList(Java_selector*)
 
 Java_castExpression =
-    Java_castExpressionPrimitive(primitive:Java_primitiveType,Expression:Java_expression)
-  | Java_castExpressionExpression(expression:Java_expression,sunexp:Java_unaryExpressionNotPlusMinus)
-  | Java_castExpressionType(type:Java_type,sunexp:Java_unaryExpressionNotPlusMinus)
+    Java_castExpressionPrimitive(Primitive:Java_primitiveType,Expression:Java_expression)
+  | Java_castExpressionExpression(Cast:Java_expression,Expression:Java_expression)
+  | Java_castExpressionType(Type:Java_type,Expression:Java_expression)
 
 Java_primary =
     Java_primaryExpression(parExpression:Java_parExpression)

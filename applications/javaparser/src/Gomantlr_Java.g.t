@@ -2121,10 +2121,10 @@ relationalExpression returns [Java_expression rexp]
             }
         )*
         {
-          if(`Java_relationalExpressionList()==re2) {
-            rexp=`Java_relationalExpression(se1,re2);
-          } else {
+          if(re2==`Java_relationalExpressionList()) {
             rexp=se1;
+          } else {
+            rexp=`Java_relationalExpression(se1,re2);
           }
         }
 	;
@@ -2272,60 +2272,62 @@ unaryExpression returns [Java_expression ue]
         |
             '++' p=primary
             {
-                ue=`Java_unaryExpressionIncrement(p);
+                ue=`Java_unaryExpressionPrefixIncrement(p);
             }
         |
             '--' p=primary
             {
-                ue=`Java_unaryExpressionDecrement(p);
+                ue=`Java_unaryExpressionPrefixDecrement(p);
             }
         |
             uenpm=unaryExpressionNotPlusMinus
             {
-                ue=`Java_unaryExpressionNotPlusMinus(uenpm);
+                ue=uenpm;
             }
     ;
 
-unaryExpressionNotPlusMinus returns [Java_unaryExpressionNotPlusMinus uenpm]
+unaryExpressionNotPlusMinus returns [Java_expression uenpm]
 @init {
-    Java_unaryExpressionNotPlusMinus_4_2 uenpm2=`Java_unaryExpressionNotPlusMinus_4_2_1();
-    Java_unaryExpressionNotPlusMinus_4_3 uenpm3=`Java_unaryExpressionNotPlusMinus_4_3_0();
+    Java_selectorList uenpm2=`Java_selectorList();
+    uenpm=null;
 }
     :       '~' ue=unaryExpression
             {
-                uenpm=`Java_unaryExpressionNotPlusMinus_1(ue);
+                uenpm=`Java_unaryExpressionBitwiseComplement(ue);
             }
         |
             '!' ue=unaryExpression
             {
-                uenpm=`Java_unaryExpressionNotPlusMinus_2(ue);
+                uenpm=`Java_unaryExpressionNot(ue);
             }
         |
             ce=castExpression
             {
-                uenpm=`Java_unaryExpressionNotPlusMinus_3(ce);
+                uenpm=`Java_unaryExpressionCast(ce);
             }
         |
             p=primary 
             (
                 s=selector
                 {
-                    uenpm2=`Java_unaryExpressionNotPlusMinus_4_2_1(uenpm2*,s);
+                    uenpm2=`Java_selectorList(uenpm2*,s);
                 }
             )* 
             (
                     '++'
                     {
-                        uenpm3=`Java_unaryExpressionNotPlusMinus_4_3_1();
+                        uenpm=`Java_unaryExpressionPostfixIncrement(p,uenpm2);
                     }
                 |
                     '--'
                     {
-                        uenpm3=`Java_unaryExpressionNotPlusMinus_4_3_2();
+                        uenpm=`Java_unaryExpressionPostfixDecrement(p,uenpm2);
                     }
             )?
             {
-                uenpm=`Java_unaryExpressionNotPlusMinus_4(p,uenpm2,uenpm3);
+              if(null==uenpm) {
+                uenpm=`Java_unaryExpressionPostfix(p,uenpm2);
+              }
             }
     ;
 
