@@ -1,9 +1,9 @@
 - optimize method call for subterm
 - should move Intruction generation out of generators ?
-- can we annotate X* ? if yes, make sur in TomPropagationManager.preparePropagations that this is handled
 - small optimization _* /\ _* -> _*
 - another optimization (....,X*,a) -> we shouldn't generate a loop for X*
 - remove commented code from propagators
 - comment the while generation
 - simplify generation !!
 - Ref(Variable)
+- simplify the propagators because now we do not care if the last element is a var star (we have hooks)

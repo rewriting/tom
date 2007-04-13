@@ -198,7 +198,7 @@ public class TomConstraintCompiler extends TomBase {
       RecordAppl[NameList=nameList@(headName,_*)] ->{
         return getTermTypeFromName(`headName);
       }
-      (Variable|UnamedVariable)[AstType=type] ->{
+      (Variable|UnamedVariable|VariableStar|UnamedVariableStar)[AstType=type] ->{
         return `type;
       }
       Subterm(constructorName, slotName, term) ->{

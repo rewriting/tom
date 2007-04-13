@@ -6,6 +6,7 @@ import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomtype.types.*;
 import tom.engine.compiler.propagator.*;
 
 /**
@@ -72,7 +73,7 @@ public class TomPropagationManager extends TomBase {
     // it is very important to have Outermost because we want the term first and only after its' subterms 
     Constraint newConstr = (Constraint)`OutermostId(DetachConstraints(constraintList)).fire(constraintToCompile);		
     Constraint andList = `AndConstraint();
-    for(Constraint constr: constraintList){
+    for(Constraint constr: constraintList){      
       andList = `AndConstraint(andList*,constr);
     }    
     return `AndConstraint(newConstr,andList*);
@@ -82,15 +83,24 @@ public class TomPropagationManager extends TomBase {
    * f(x,a@b@g(y)) << t -> f(x,z) << t /\ g(y) << z /\ a << z /\ b << z
    */
   %strategy DetachConstraints(bag:Collection) extends Identity(){
+    // if the constraints  = empty list, then is nothing to do
     visit TomTerm{
-      t@(RecordAppl|Variable|UnamedVariable)[Constraints=constraints] ->{
-        // if empty, nothing to do
-        if (`constraints.isEmptyconcConstraint()){
-          return `t;
-        }
+      t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] ->{
+
         TomNumberList path = TomConstraintCompiler.getRootpath();
         TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("fresh_"+ (++freshVarCounter)))));
-        TomTerm freshVariable = `Variable(concOption(),freshVarName,TomConstraintCompiler.getTermTypeFromTerm(t),concConstraint());
+        TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
+        TomTerm freshVariable = null;
+        // make sure that if we had a varStar, we replace with a varStar also
+match : %match(t) {
+          (VariableStar|UnamedVariableStar)[] ->{
+            freshVariable = `VariableStar(concOption(),freshVarName,freshVarType,concConstraint());
+            break match;
+          }
+          _ -> {
+            freshVariable = `Variable(concOption(),freshVarName,freshVarType,concConstraint());
+          }
+        }         
 
         bag.add(`MatchConstraint(t,freshVariable));
         // for each constraint
