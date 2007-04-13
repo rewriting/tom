@@ -1270,14 +1270,14 @@ elementValue returns [Java_elementValue ev]
 	
 elementValueArrayInitializer returns [Java_elementValue evai]
 @init {
-    Java_elementValueArrayInitializer_1 evai1=`Java_elementValueArrayInitializer_1_2();
+    Java_optionalElementValue evai1=`Java_noOptElementValue();
     Java_optionalComa evai2=`Java_noOptionalComa();
 }
 	:	'{' 
         (
             ev=elementValue
             {
-                evai1=`Java_elementValueArrayInitializer_1_1(ev);
+                evai1=`Java_optElementValue(ev);
             }
         )? 
         (

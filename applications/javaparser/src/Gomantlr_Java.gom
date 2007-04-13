@@ -296,20 +296,20 @@ Java_annotation =
 Java_elementValue =
     Java_elementValueConditional(ConditionalExpression:Java_conditionalExpression)
   | Java_elementValueAnnotation(Annotation:Java_annotation)
-  | Java_elementValueArrayInitializer(elementValueArrayInitializer_1:Java_elementValueArrayInitializer_1,OptionalComa:Java_optionalComa)
+  | Java_elementValueArrayInitializer(OptElementValue:Java_optionalElementValue,OptionalComa:Java_optionalComa)
 
-Java_elementValueArrayInitializer_1 =
-    Java_elementValueArrayInitializer_1_1(elementValue:Java_elementValue)
-  | Java_elementValueArrayInitializer_1_2()
+Java_optionalElementValue =
+    Java_optElementValue(elementValue:Java_elementValue)
+  | Java_noOptElementValue()
 
 Java_annotationTypeDeclaration =
-    Java_annotationTypeDeclaration(Identifier:Java_Identifier,annotationTypeDeclaration_2:Java_annotationTypeBody)
+    Java_annotationTypeDeclaration(Identifier:Java_Identifier,AnnotationTypeBody:Java_annotationTypeBody)
 
 Java_annotationTypeBody =
     Java_annotationTypeBody(Java_annotationTypeElementDeclaration*)
 
 Java_annotationTypeElementDeclaration =
-    Java_annotationTypeElementDeclaration(modifierList:Java_modifierList,annotationTypeElementDeclaration_2:Java_annotationTypeElementRest)
+    Java_annotationTypeElementDeclaration(ModifierList:Java_modifierList,AnnotationTypeElementRest:Java_annotationTypeElementRest)
 
 Java_annotationTypeElementRest =
     Java_annotationTypeElementConstant(type:Java_type,id:Java_Identifier,annotationConstant:Java_annotationConstant)
