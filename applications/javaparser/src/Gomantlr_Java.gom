@@ -465,11 +465,11 @@ Java_constantExpression =
     Java_constantExpression(Expression:Java_expression)
 
 Java_expression =
-    Java_expression(expression_1:Java_conditionalExpression,expression_2:Java_expression_2)
+    Java_expression(CondExpr:Java_conditionalExpression,AssignExpr:Java_expressionOptionalAssign)
 
-Java_expression_2 =
-    Java_expression_2_1(AssignmentOp:Java_assignmentOperator,Expression:Java_expression)
-  | Java_expression_2_2()
+Java_expressionOptionalAssign =
+    Java_expressionAssign(AssignmentOp:Java_assignmentOperator,Expression:Java_expression)
+  | Java_expressionNoAssign()
 
 Java_assignmentOperator =
     Java_assignmentOperator(op:String)
@@ -537,9 +537,7 @@ Java_shiftExpression_2_1_1 =
     Java_shiftExpression_2_1_1(shiftExpression_2_1_1_1:Java_shiftOp,shiftExpression_2_1_1_2:Java_additiveExpression)
 
 Java_shiftOp =
-    Java_shiftOp_1()
-  | Java_shiftOp_2()
-  | Java_shiftOp_3()
+    Java_shiftOp(op:String)
 
 Java_additiveExpression =
     Java_additiveExpression(additiveExpression_1:Java_multiplicativeExpression,additiveExpression_2:Java_additiveExpression_2)
@@ -548,11 +546,11 @@ Java_additiveExpression_2 =
     Java_additiveExpression_2_1(Java_additiveExpression_2_1_1*)
 
 Java_additiveExpression_2_1_1 =
-    Java_additiveExpression_2_1_1(additiveExpression_2_1_1_1:Java_additiveExpression_2_1_1_1,additiveExpression_2_1_1_2:Java_multiplicativeExpression)
+    Java_additiveExpression_2_1_1(AddOperation:Java_additiveOperation,additiveExpression_2_1_1_2:Java_multiplicativeExpression)
 
-Java_additiveExpression_2_1_1_1 =
-    Java_additiveExpression_2_1_1_1_1()
-  | Java_additiveExpression_2_1_1_1_2()
+Java_additiveOperation =
+    Java_addition()
+  | Java_subtration()
 
 Java_multiplicativeExpression =
     Java_multiplicativeExpression(multiplicativeExpression_1:Java_unaryExpression,multiplicativeExpression_2:Java_multiplicativeExpression_2)
@@ -561,12 +559,10 @@ Java_multiplicativeExpression_2 =
     Java_multiplicativeExpression_2_1(Java_multiplicativeExpression_2_1_1*)
 
 Java_multiplicativeExpression_2_1_1 =
-    Java_multiplicativeExpression_2_1_1(multiplicativeExpression_2_1_1_1:Java_multiplicativeExpression_2_1_1_1,multiplicativeExpression_2_1_1_2:Java_unaryExpression)
+    Java_multiplicativeExpression_2_1_1(multiplicativeExpression_2_1_1_1:Java_multiplicativeOperation,multiplicativeExpression_2_1_1_2:Java_unaryExpression)
 
-Java_multiplicativeExpression_2_1_1_1 =
-    Java_multiplicativeExpression_2_1_1_1_1()
-  | Java_multiplicativeExpression_2_1_1_1_2()
-  | Java_multiplicativeExpression_2_1_1_1_3()
+Java_multiplicativeOperation =
+    Java_multiplicativeOperation(op:String)
 
 Java_unaryExpression =
     Java_unaryExpression_1(unaryExpression_1_1:Java_unaryExpression)
@@ -624,38 +620,21 @@ Java_primary_7_3 =
   | Java_primary_7_3_2()
 
 Java_identifierSuffix =
-    Java_identifierSuffix_1(identifierSuffix_1_1:Java_bracketsList)
-  | Java_identifierSuffix_2(identifierSuffix_2_1:Java_identifierSuffix_2_1)
-  | Java_identifierSuffix_3(arguments:Java_arguments)
-  | Java_identifierSuffix_4()
-  | Java_identifierSuffix_5(identifierSuffix_5_1:Java_explicitGenericInvocation)
-  | Java_identifierSuffix_6()
-  | Java_identifierSuffix_7(identifierSuffix_7_1:Java_arguments)
-  | Java_identifierSuffix_8(identifierSuffix_8_1:Java_identifierSuffix_8_1,identifierSuffix_8_2:Java_innerCreator)
-
-Java_identifierSuffix_2_1 =
-    Java_identifierSuffix_2_1_1(Java_identifierSuffix_2_1_1_1*)
-
-Java_identifierSuffix_2_1_1_1 =
-    Java_identifierSuffix_2_1_1_1(identifierSuffix_2_1_1_1_1:Java_expression)
-
-Java_identifierSuffix_8_1 =
-    Java_identifierSuffix_8_1_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
-  | Java_identifierSuffix_8_1_2()
+    Java_identifierSuffixEmptyBracket(identifierSuffix_1_1:Java_bracketsList)
+  | Java_identifierSuffixBracket(Java_expression*)
+  | Java_identifierSuffixArguments(Arguments:Java_arguments)
+  | Java_identifierSuffixClass()
+  | Java_identifierSuffixInvocation(Invocation:Java_explicitGenericInvocation)
+  | Java_identifierSuffixThis()
+  | Java_identifierSuffixSuper(Arguments:Java_arguments)
+  | Java_identifierSuffixInnerClass(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,InnerCreator:Java_innerCreator)
 
 Java_creator =
-    Java_creator(creator_1:Java_creator_1,creator_2:Java_createdName,creator_3:Java_creator_3)
-
-Java_creator_1 =
-    Java_creator_1_1(nonWildcardTypeArguments:Java_nonWildcardTypeArguments)
-  | Java_creator_1_2()
-
-Java_creator_3 =
-    Java_creator_3_1(arrayCreatorRest:Java_arrayCreatorRest)
-  | Java_creator_3_2(classCreatorRest:Java_classCreatorRest)
+    Java_arrayCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ArrayCreatorRest:Java_arrayCreatorRest)
+  | Java_classCreator(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,CreatedName:Java_createdName,ClassCreatorRest:Java_classCreatorRest)
 
 Java_createdName =
-    Java_createdName_1(createdName_1_1:Java_Identifier,createdName_1_2:Java_createdName_1_2,createdName_1_3:Java_createdName_1_3)
+    Java_createdName_1(Identifier:Java_Identifier,createdName_1_2:Java_createdName_1_2,createdName_1_3:Java_createdName_1_3)
   | Java_createdName_2(primitiveType:Java_primitiveType)
 
 Java_createdName_1_2 =

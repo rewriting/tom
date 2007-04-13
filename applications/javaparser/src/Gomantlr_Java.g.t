@@ -1874,13 +1874,13 @@ constantExpression returns [Java_constantExpression ce]
 	
 expression returns [Java_expression e]
 @init {
-    Java_expression_2 e2=`Java_expression_2_2();
+    Java_expressionOptionalAssign e2=`Java_expressionNoAssign();
 }
 	:	ce=conditionalExpression 
         (
             ao=assignmentOperator e1=expression
             {
-                e2=`Java_expression_2_1(ao,e1);
+                e2=`Java_expressionAssign(ao,e1);
             }
         )?
         {
@@ -2138,15 +2138,15 @@ shiftOp returns [Java_shiftOp so]
 	:	(
             '<' '<' 
             {
-                so=`Java_shiftOp_1();
+                so=`Java_shiftOp("<<");
             }
             | '>' '>' '>'
             {
-                so=`Java_shiftOp_2();
+                so=`Java_shiftOp(">>>");
             }
             | '>' '>'
             {
-                so=`Java_shiftOp_3();
+                so=`Java_shiftOp(">>");
             }
         )
 	;
@@ -2155,19 +2155,19 @@ shiftOp returns [Java_shiftOp so]
 additiveExpression returns [Java_additiveExpression ae]
 @init {
     Java_additiveExpression_2 ae2=`Java_additiveExpression_2_1();
-    Java_additiveExpression_2_1_1_1 ae3=null;
+    Java_additiveOperation ae3=null;
 }
     :   me1=multiplicativeExpression 
         ( 
             (
                     '+' 
                     {
-                        ae3=`Java_additiveExpression_2_1_1_1_1();
+                        ae3=`Java_addition();
                     }
                 | 
                     '-'
                     {
-                        ae3=`Java_additiveExpression_2_1_1_1_2();
+                        ae3=`Java_subtration();
                     }
             )
             me2=multiplicativeExpression
@@ -2183,24 +2183,24 @@ additiveExpression returns [Java_additiveExpression ae]
 multiplicativeExpression returns [Java_multiplicativeExpression me]
 @init {
     Java_multiplicativeExpression_2 me2=`Java_multiplicativeExpression_2_1();
-    Java_multiplicativeExpression_2_1_1_1 me3=null;
+    Java_multiplicativeOperation me3=null;
 }
     :   ue1=unaryExpression 
         (
             ( 
                     '*' 
                     {
-                        me3=`Java_multiplicativeExpression_2_1_1_1_1();
+                        me3=`Java_multiplicativeOperation("*");
                     }
                 | 
                     '/' 
                     {
-                        me3=`Java_multiplicativeExpression_2_1_1_1_2();
+                        me3=`Java_multiplicativeOperation("/");
                     }
                 | 
                     '%' 
                     {
-                        me3=`Java_multiplicativeExpression_2_1_1_1_3();
+                        me3=`Java_multiplicativeOperation("%");
                     }
             ) 
             ue2=unaryExpression
@@ -2408,8 +2408,8 @@ primary returns [Java_primary p]
 identifierSuffix returns [Java_identifierSuffix is]
 @init {
     Java_bracketsList b=`Java_bracketsList();
-    Java_identifierSuffix_2_1 is2=`Java_identifierSuffix_2_1_1();
-    Java_identifierSuffix_8_1 is8=`Java_identifierSuffix_8_1_2();
+    Java_identifierSuffix is2=`Java_identifierSuffixBracket();
+    Java_nonWildcardTypeArguments is8=`Java_emptyNonWildcardTypeArguments();
 }
 	:	    (
                 '[' ']'
@@ -2419,83 +2419,79 @@ identifierSuffix returns [Java_identifierSuffix is]
             )+ 
             '.' 'class'
             {
-                is=`Java_identifierSuffix_1(b);
+                is=`Java_identifierSuffixEmptyBracket(b);
             }
 	    |	
             (
                 '[' e=expression ']'
                 {
-                    is2=`Java_identifierSuffix_2_1_1(is2*,Java_identifierSuffix_2_1_1_1(e));
+                    is2=`Java_identifierSuffixBracket(is2*,e);
                 }
             )+ // can also be matched by selector, but do here
             {
-                is=`Java_identifierSuffix_2(is2);
+                is=is2;
             }
         |   
             a=arguments
             {
-                is=`Java_identifierSuffix_3(a);
+                is=`Java_identifierSuffixArguments(a);
             }
         |
             '.' 'class'
             {
-                is=`Java_identifierSuffix_4();
+                is=`Java_identifierSuffixClass();
             }
         |
             '.' egi=explicitGenericInvocation
             {
-                is=`Java_identifierSuffix_5(egi);
+                is=`Java_identifierSuffixInvocation(egi);
             }
         |
             '.' 'this'
             {
-                is=`Java_identifierSuffix_6();
+                is=`Java_identifierSuffixThis();
             }
         |
             '.' 'super' a=arguments
             {
-                is=`Java_identifierSuffix_7(a);
+                is=`Java_identifierSuffixSuper(a);
             }
         |
             '.' 'new' 
             (
                 nwta=nonWildcardTypeArguments
                 {
-                    is8=`Java_identifierSuffix_8_1_1(nwta);
+                    is8=nwta;
                 }
             )?
             ic=innerCreator
             {
-                is=`Java_identifierSuffix_8(is8,ic);
+                is=`Java_identifierSuffixInnerClass(is8,ic);
             }
 	;
 
 creator returns [Java_creator c]
 @init {
-    Java_creator_1 c1=`Java_creator_1_2();
-    Java_creator_3 c3=null;
+    Java_nonWildcardTypeArguments c1=`Java_emptyNonWildcardTypeArguments();
 }
 	:	(
             nwta=nonWildcardTypeArguments
             {
-                c1=`Java_creator_1_1(nwta);
+                c1=nwta;
             }
         )?
         cn=createdName
         (
-                acr=arrayCreatorRest 
+                acr=arrayCreatorRest[c1,cn]
                 {
-                    c3=`Java_creator_3_1(acr);
+                    c=acr;
                 }
             |
                 ccr=classCreatorRest
                 {
-                    c3=`Java_creator_3_2(ccr);
+                    c=`Java_classCreator(c1,cn,ccr);
                 }
         )
-        {
-            c=`Java_creator(c1,cn,c3);
-        }
 	;
 
 createdName returns [Java_createdName cn]
@@ -2540,7 +2536,7 @@ innerCreator returns [Java_innerCreator ic]
         }
 	;
 
-arrayCreatorRest returns [Java_arrayCreatorRest acr]
+arrayCreatorRest [Java_nonWildcardTypeArguments c1, Java_createdName cn] returns [Java_creator acr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
     Java_arrayCreatorRest_2_2 acr2=`Java_arrayCreatorRest_2_2_1();
@@ -2556,7 +2552,7 @@ arrayCreatorRest returns [Java_arrayCreatorRest acr]
                 )*
                 a=arrayInitializer
                 {
-                    acr=`Java_arrayCreatorRest_1(b,a);
+                    acr=`Java_arrayCreator(c1,cn,Java_arrayCreatorRest_1(b,a));
                 }
             | 
                 e=expression ']' 
@@ -2573,7 +2569,7 @@ arrayCreatorRest returns [Java_arrayCreatorRest acr]
                     }
                 )*
                 {
-                    acr=`Java_arrayCreatorRest_2(e,acr2,b);
+                    acr=`Java_arrayCreator(c1,cn,Java_arrayCreatorRest_2(e,acr2,b));
                 }
         )
 	;
