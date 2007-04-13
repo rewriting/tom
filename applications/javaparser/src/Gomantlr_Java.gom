@@ -530,18 +530,18 @@ Java_castExpression =
 
 Java_primary =
     Java_primaryExpression(parExpression:Java_parExpression)
-  | Java_primary_2(primary_2_1:Java_nonWildcardTypeArguments,primary_2_2:Java_primary_2_2)
+  | Java_primaryGenericIdentifier(NonWildcardTypeArguments:Java_nonWildcardTypeArguments,InvocationArgs:Java_argumentsOrGenericInvocation)
   | Java_primaryThis(Arguments:Java_arguments)
   | Java_primarySuper(SuperSuffix:Java_superSuffix)
   | Java_primaryLiteral(Literal:Java_literal)
   | Java_primaryNew(Creator:Java_creator)
-  | Java_primary_7(IdentifierList:Java_IdentifierList,IdSuffix:Java_identifierSuffix)
+  | Java_primaryIdentifier(IdentifierList:Java_IdentifierList,IdSuffix:Java_identifierSuffix)
   | Java_primaryPrimitive(PrimitiveType:Java_primitiveType,Brackets:Java_bracketsList)
   | Java_primaryVoidClass()
 
-Java_primary_2_2 =
-    Java_primary_2_2_1(explicitGenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
-  | Java_primary_2_2_2(Arguments:Java_arguments)
+Java_argumentsOrGenericInvocation =
+    Java_genericInvocation(GenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
+  | Java_invocationArguments(Arguments:Java_arguments)
 
 Java_identifierSuffix =
     Java_identifierSuffixEmptyBracket(Brackets:Java_bracketsList)

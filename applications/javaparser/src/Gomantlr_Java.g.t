@@ -2365,7 +2365,7 @@ castExpression returns [Java_castExpression ce]
 
 primary returns [Java_primary p]
 @init {
-    Java_primary_2_2 p2=null;
+    Java_argumentsOrGenericInvocation p2=null;
     Java_arguments p3=`Java_arguments(Java_expressionList());
     Java_IdentifierList p7_2=`Java_IdentifierList();
     Java_identifierSuffix p7_3=`Java_emptyIdentifierSuffix();
@@ -2380,16 +2380,16 @@ primary returns [Java_primary p]
             (
                     egis=explicitGenericInvocationSuffix 
                     {
-                        p2=`Java_primary_2_2_1(egis);
+                        p2=`Java_genericInvocation(egis);
                     }
                 |
                     'this' a=arguments
                     {
-                        p2=`Java_primary_2_2_2(a);
+                        p2=`Java_invocationArguments(a);
                     }
             )
             {
-                p=`Java_primary_2(nwta,p2);
+                p=`Java_primaryGenericIdentifier(nwta,p2);
             }
         |
             'this' 
@@ -2432,7 +2432,7 @@ primary returns [Java_primary p]
                 }
             )?
             {
-                p=`Java_primary_7(Java_IdentifierList(Java_Identifier(i1.getText()),p7_2*),p7_3);
+                p=`Java_primaryIdentifier(Java_IdentifierList(Java_Identifier(i1.getText()),p7_2*),p7_3);
             }
         |
             pt=primitiveType 
