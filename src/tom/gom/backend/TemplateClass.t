@@ -177,9 +177,89 @@ public abstract class TemplateClass {
             res.append(%[@buffer@.append(@element@?1:0);
 ]%);
           } else if (`domain.equals(`ClassName("","String"))) {
-            res.append(%[@buffer@.append("\"");
-            @buffer@.append(@element@);
-            @buffer@.append("\"");
+            String atchar = "@";
+            res.append(%[@buffer@.append('"');
+            for (int i = 0; i < @element@.length(); i++) {
+              char c = @element@.charAt(i);
+              switch (c) {
+                case '\n':
+                  @buffer@.append('\\');
+                  @buffer@.append('n');
+                  break;
+                case '\t':
+                  @buffer@.append('\\');
+                  @buffer@.append('t');
+                  break;
+                case '\b':
+                  @buffer@.append('\\');
+                  @buffer@.append('b');
+                  break;
+                case '\r':
+                  @buffer@.append('\\');
+                  @buffer@.append('r');
+                  break;
+                case '\f':
+                  @buffer@.append('\\');
+                  @buffer@.append('f');
+                  break;
+                case '\\':
+                  @buffer@.append('\\');
+                  @buffer@.append('\\');
+                  break;
+                case '\'':
+                  @buffer@.append('\\');
+                  @buffer@.append('\'');
+                  break;
+                case '\"':
+                  @buffer@.append('\\');
+                  @buffer@.append('\"');
+                  break;
+                case '!':
+                case '@atchar@':
+                case '#':
+                case '$':
+                case '%':
+                case '^':
+                case '&':
+                case '*':
+                case '(':
+                case ')':
+                case '-':
+                case '_':
+                case '+':
+                case '=':
+                case '|':
+                case '~':
+                case '{':
+                case '}':
+                case '[':
+                case ']':
+                case ';':
+                case ':':
+                case '<':
+                case '>':
+                case ',':
+                case '.':
+                case '?':
+                case ' ':
+                case '/':
+                  @buffer@.append(c);
+                  break;
+
+                default:
+                  if (java.lang.Character.isLetterOrDigit(c)) {
+                    @buffer@.append(c);
+                  } else {
+                    @buffer@.append('\\');
+                    @buffer@.append((char) ('0' + c / 64));
+                    c = (char) (c % 64);
+                    @buffer@.append((char) ('0' + c / 8));
+                    c = (char) (c % 8);
+                    @buffer@.append((char) ('0' + c));
+                  }
+              }
+            }
+            @buffer@.append('"');
 ]%);
           } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
             res.append(%[@buffer@.append(@element@.toString());
