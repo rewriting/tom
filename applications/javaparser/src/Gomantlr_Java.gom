@@ -136,16 +136,10 @@ Java_variableDeclaratorList =
     Java_variableDeclaratorList(Java_variableDeclarator*)
 
 Java_variableDeclarator =
-    Java_variableDeclarator(Identifier:Java_Identifier,variableDeclarator_2:Java_variableDeclaratorRest)
-
-Java_variableDeclaratorRest =
-    Java_variableDeclaratorRest_1(Brackets:Java_bracketsList,variableDeclaratorRest_1_2:Java_variableDeclaratorRest_1_2)
-  | Java_variableDeclaratorRest_2(variableDeclaratorRest_2_1:Java_variableInitializer)
-  | Java_variableDeclaratorRest_3()
-
-Java_variableDeclaratorRest_1_2 =
-    Java_variableDeclaratorRest_1_2_1(variableDeclaratorRest_1_2_1_1:Java_variableInitializer)
-  | Java_variableDeclaratorRest_1_2_2()
+    Java_arrayVariableDecl(Identifier:Java_Identifier,Brackets:Java_bracketsList)
+  | Java_arrayVariableDeclInit(Identifier:Java_Identifier,Brackets:Java_bracketsList,Initialiser:Java_variableInitializer)
+  | Java_variableDeclInit(Identifier:Java_Identifier,Initialiser:Java_variableInitializer)
+  | Java_variableDecl(Identifier:Java_Identifier)
 
 Java_constantDeclaratorsRest =
     Java_constantDeclaratorsRest(constantDeclaratorsRest_1:Java_constantDeclaratorRest,constantDeclaratorsRest_2:Java_constantDeclaratorList)

@@ -780,16 +780,16 @@ variableDeclarators returns [Java_variableDeclaratorList vd]
 	;
 
 variableDeclarator returns [Java_variableDeclarator vd]
-	:	i=Identifier vdr=variableDeclaratorRest
+	:	i=Identifier vdr=variableDeclaratorRest[`Java_Identifier(i.getText())]
         {
-            vd=`Java_variableDeclarator(Java_Identifier(i.getText()),vdr);
+            vd=vdr;
         }
 	;
 	
-variableDeclaratorRest returns [Java_variableDeclaratorRest vdr]
+variableDeclaratorRest [Java_Identifier ident] returns [Java_variableDeclarator vdr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
-    Java_variableDeclaratorRest_1_2 vdr2=`Java_variableDeclaratorRest_1_2_2();
+    Java_variableInitializer vdr2=null;
 }
 	:	(
             '[' ']'
@@ -800,19 +800,23 @@ variableDeclaratorRest returns [Java_variableDeclaratorRest vdr]
         (
             '=' vi=variableInitializer
             {
-                vdr2=`Java_variableDeclaratorRest_1_2_1(vi);
+                vdr2=vi;
             }
         )?
         {
-            vdr=`Java_variableDeclaratorRest_1(b,vdr2);
+          if(null==vdr2) {
+            vdr=`Java_arrayVariableDecl(ident,b);
+          } else {
+            vdr=`Java_arrayVariableDeclInit(ident,b,vdr2);
+          }
         }
 	|	'=' vi=variableInitializer
         {
-            vdr=`Java_variableDeclaratorRest_2(vi);
+            vdr=`Java_variableDeclInit(ident,vi);
         }
 	|
         {
-            vdr=`Java_variableDeclaratorRest_3();
+            vdr=`Java_variableDecl(ident);
         }
 	;
 	
@@ -1799,7 +1803,7 @@ forVarControlRest [Java_isFinal isf, Java_optionalAnnotation oan, Java_type jty,
     Java_optionalExpression fvcr3=`Java_emptyOptExpression();
     Java_forUpdate fvcr4=`Java_emptyforUpdate();
 }
-	:	    vdr=variableDeclaratorRest 
+	:	    vdr=variableDeclaratorRest[ident]
             (
                 ',' vd=variableDeclarator
                 {
@@ -1821,7 +1825,7 @@ forVarControlRest [Java_isFinal isf, Java_optionalAnnotation oan, Java_type jty,
                 }
             )?
             {
-                fvcr=`Java_forVarControl(isf,oan,jty,Java_variableDeclarator(ident,vdr),fvcr2,fvcr3,fvcr4);
+                fvcr=`Java_forVarControl(isf,oan,jty,vdr,fvcr2,fvcr3,fvcr4);
             }
         |   
             ':' e=expression
