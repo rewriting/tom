@@ -152,12 +152,12 @@ classOrInterfaceDeclaration returns [Java_classOrInterfaceDeclaration res]
         ( 
                 cd=classDeclaration
                 {
-                    res=`Java_classDeclaration(ml,cd);
+                    res=`Java_classDecl(ml,cd);
                 }
             | 
                 id=interfaceDeclaration
                 {
-                    res=`Java_interfaceDeclaration(ml,id);
+                    res=`Java_interfaceDecl(ml,id);
                 }
         )
 	;
@@ -200,7 +200,7 @@ normalClassDeclaration returns [Java_classDeclaration ncd]
         )?
         cb=classBody
         {
-            ncd=`Java_normalClassDeclaration(Java_Identifier(i.getText()),ncd2,ncd3,ncd4,cb);
+            ncd=`Java_normalClassDecl(Java_Identifier(i.getText()),ncd2,ncd3,ncd4,cb);
         }
 	;
 	
@@ -266,7 +266,7 @@ enumDeclaration returns [Java_classDeclaration ed]
         )?
         eb=enumBody
         {
-            ed=`Java_enumDeclaration(Java_ENUM(e.getText()),Java_Identifier(i.getText()),ed3,eb);
+            ed=`Java_enumDecl(Java_ENUM(e.getText()),Java_Identifier(i.getText()),ed3,eb);
         }
 	;
 	
@@ -446,7 +446,7 @@ classBodyDeclaration returns [Java_classBodyDeclaration ebd]
 }
 	:	    ';'
             {
-                ebd=`Java_classBodyDeclarationEmpty();
+                ebd=`Java_classBodyEmptyDecl();
             }
 	    |
             (
@@ -457,7 +457,7 @@ classBodyDeclaration returns [Java_classBodyDeclaration ebd]
             )?
             b=block
             {
-                ebd=`Java_classBodyDeclarationBlock(ebd2,b);
+                ebd=`Java_classBodyBlockDecl(ebd2,b);
             }
 	    |
             (
@@ -468,14 +468,14 @@ classBodyDeclaration returns [Java_classBodyDeclaration ebd]
             )*
             md=memberDecl
             {
-                ebd=`Java_classBodyDeclarationMember(ebd3,md);
+                ebd=`Java_classBodyMemberDecl(ebd3,md);
             }
 	;
 	
 memberDecl returns [Java_memberDecl md]
 	:	gmocd=genericMethodOrConstructorDecl
         {
-            md=`Java_memberGenericMethodOrConstructorDecl(gmocd);
+            md=gmocd;
         }
 	|	md1=methodDeclaration
         {
@@ -489,28 +489,28 @@ memberDecl returns [Java_memberDecl md]
         {
             md=vmdr;
         }
-	|	i=Identifier cdr=constructorDeclaratorRest
+	|	i=Identifier cdr=constructorDeclaratorRest[`Java_typeParameterList(),`Java_Identifier(i.getText())]
         {
-            md=`Java_memberConstructorDeclaratorRest(Java_Identifier(i.getText()),cdr);
+            md=cdr;
         }
 	|	id=interfaceDeclaration
         {
-            md=`Java_memberInterfaceDeclaration(id);
+            md=`Java_memberInterfaceDecl(id);
         }
 	|	cd=classDeclaration
         {
-            md=`Java_memberClassDeclaration(cd);
+            md=`Java_memberClassDecl(cd);
         }
 	;
 	
-genericMethodOrConstructorDecl returns [Java_genericMethodOrConstructorDecl gmocd]
+genericMethodOrConstructorDecl returns [Java_memberDecl gmocd]
 	:	tp=typeParameters gmocr=genericMethodOrConstructorRest[tp]
         {
             gmocd=gmocr;
         }
 	;
 	
-genericMethodOrConstructorRest [Java_typeParameterList tp] returns [Java_genericMethodOrConstructorDecl gmocr]
+genericMethodOrConstructorRest [Java_typeParameterList tp] returns [Java_memberDecl gmocr]
 @init {
     Java_returnType gmocr1=`Java_returnVoid();
 }
@@ -525,27 +525,27 @@ genericMethodOrConstructorRest [Java_typeParameterList tp] returns [Java_generic
                     gmocr1=`Java_returnVoid();
                 }
         )
-        i=Identifier mdr=methodDeclaratorRest
+        i=Identifier mdr=methodDeclaratorRest[tp,gmocr1,`Java_Identifier(i.getText())]
         {
-            gmocr=`Java_genericMethodDecl(tp,gmocr1,Java_Identifier(i.getText()),mdr);
+            gmocr=mdr;
         }
-	|	i=Identifier cdr=constructorDeclaratorRest
+	|	i=Identifier cdr=constructorDeclaratorRest[tp,`Java_Identifier(i.getText())]
         {
-            gmocr=`Java_genericConstructorDecl(tp,Java_Identifier(i.getText()),cdr);
+            gmocr=cdr;
         }
 	;
 
 methodDeclaration returns [Java_memberDecl md]
-	:	t=type i=Identifier mdr=methodDeclaratorRest
+	:	t=type i=Identifier mdr=methodDeclaratorRest[`Java_typeParameterList(),`Java_returnType(t),`Java_Identifier(i.getText())]
         {
-            md=`Java_memberMethodDeclaration(t,Java_Identifier(i.getText()),mdr);
+            md=mdr;
         }
 	;
 
 fieldDeclaration returns [Java_memberDecl fd]
 	:	t=type vd=variableDeclarators ';'
         {
-            fd=`Java_memberFieldDeclaration(t,vd);
+            fd=`Java_memberFieldDecl(t,vd);
         }
 	;
 		
@@ -611,7 +611,7 @@ interfaceMethodOrFieldRest [Java_type typ, Java_Identifier ident] returns [Java_
         }
 	;
 	
-methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
+methodDeclaratorRest [Java_typeParameterList gp, Java_returnType ret, Java_Identifier ident] returns [Java_memberDecl mdr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
     Java_qualifiedNameList mdr3=`Java_qualifiedNameList();
@@ -642,7 +642,11 @@ methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
                 }
         )
         {
-            mdr=`Java_methodDeclaratorRest(fp,b,mdr3,mdr4);
+          if(gp==`Java_typeParameterList()) {
+            mdr=`Java_memberMethodDecl(ret,ident,fp,b,mdr3,mdr4);
+          } else {
+            mdr=`Java_memberGenericMethodDecl(gp,ret,ident,fp,b,mdr3,mdr4);
+          }
         }
 	;
 	
@@ -670,7 +674,7 @@ voidMethodDeclaratorRest [Java_Identifier ident] returns [Java_memberDecl vmd]
                 }
         )
         {
-            vmd=`Java_memberVoidMethodDeclaration(ident,fp,vmd2,vmd3);
+            vmd=`Java_memberVoidMethodDecl(ident,fp,vmd2,vmd3);
         }
 	;
 	
@@ -739,7 +743,7 @@ voidInterfaceMethodDeclaratorRest [Java_Identifier ident] returns [Java_interfac
         }
 	;
 	
-constructorDeclaratorRest returns [Java_constructorDeclaratorRest cdr]
+constructorDeclaratorRest [Java_typeParameterList gp, Java_Identifier ident] returns [Java_memberDecl cdr]
 @init {
     Java_qualifiedNameList cdr2=`Java_qualifiedNameList();
 }
@@ -752,7 +756,11 @@ constructorDeclaratorRest returns [Java_constructorDeclaratorRest cdr]
         )? 
         mb=methodBody
         {
-            cdr=`Java_constructorDeclaratorRest(fp,cdr2,mb);
+          if(gp==`Java_typeParameterList()) {
+            cdr=`Java_memberConstructorDecl(ident,fp,cdr2,mb);
+          } else {
+            cdr=`Java_memberGenericConstructorDecl(gp,ident,fp,cdr2,mb);
+          }
         }
 	;
 

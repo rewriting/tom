@@ -24,8 +24,8 @@ Java_IdentifierList =
     Java_IdentifierList(Java_Identifier*)
 
 Java_classOrInterfaceDeclaration =
-    Java_classDeclaration(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)
-  | Java_interfaceDeclaration(modifierList:Java_modifierList,interfaceDeclaration:Java_interfaceDeclaration)
+    Java_classDecl(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)
+  | Java_interfaceDecl(modifierList:Java_modifierList,interfaceDeclaration:Java_interfaceDeclaration)
 
 Java_classOrInterfaceDeclarationList=
     Java_concClassOrInterfaceDeclaration(Java_classOrInterfaceDeclaration*)
@@ -34,8 +34,8 @@ Java_concClassOrInterfaceDeclaration:make_insert(e,l) {
 }
 
 Java_classDeclaration =
-    Java_normalClassDeclaration(ClassName:Java_Identifier,TypeParameters:Java_typeParameterList,Extends:Java_typeList,Implements:Java_typeList,ClassBody:Java_classBody)
-  | Java_enumDeclaration(Enum:Java_ENUM,Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
+    Java_normalClassDecl(ClassName:Java_Identifier,TypeParameters:Java_typeParameterList,Extends:Java_typeList,Implements:Java_typeList,ClassBody:Java_classBody)
+  | Java_enumDecl(Enum:Java_ENUM,Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
 
 Java_typeParameterList =
     Java_typeParameterList(Java_typeParameter*)
@@ -72,22 +72,19 @@ Java_interfaceBody =
     Java_interfaceBody(Java_interfaceBodyDeclaration*)
 
 Java_classBodyDeclaration =
-    Java_classBodyDeclarationEmpty()
-  | Java_classBodyDeclarationBlock(IsStatic:Java_isStatic,Block:Java_block)
-  | Java_classBodyDeclarationMember(ModifierList:Java_modifierList,Members:Java_memberDecl)
+    Java_classBodyEmptyDecl()
+  | Java_classBodyBlockDecl(IsStatic:Java_isStatic,Block:Java_block)
+  | Java_classBodyMemberDecl(ModifierList:Java_modifierList,Member:Java_memberDecl)
 
 Java_memberDecl =
-    Java_memberGenericMethodOrConstructorDecl(genericMethodOrConstructorDecl:Java_genericMethodOrConstructorDecl)
-  | Java_memberMethodDeclaration(return:Java_type,Identifier:Java_Identifier,methodDeclaration_3:Java_methodDeclaratorRest)
-  | Java_memberFieldDeclaration(Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
-  | Java_memberVoidMethodDeclaration(Identifier:Java_Identifier,Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
-  | Java_memberConstructorDeclaratorRest(Identifier:Java_Identifier,memberDecl_5_2:Java_constructorDeclaratorRest)
-  | Java_memberInterfaceDeclaration(interfaceDeclaration:Java_interfaceDeclaration)
-  | Java_memberClassDeclaration(classDeclaration:Java_classDeclaration)
-
-Java_genericMethodOrConstructorDecl =
-    Java_genericMethodDecl(Parameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,genericMethodDeclRest:Java_methodDeclaratorRest)
-  | Java_genericConstructorDecl(Parameters:Java_typeParameterList,Identifier:Java_Identifier,genericConstructorDeclRest:Java_constructorDeclaratorRest)
+    Java_memberMethodDecl(ReturnType:Java_returnType,Identifier:Java_Identifier,Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
+  | Java_memberVoidMethodDecl(Identifier:Java_Identifier,Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
+  | Java_memberGenericMethodDecl(TypeParameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
+  | Java_memberConstructorDecl(Identifier:Java_Identifier,Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
+  | Java_memberGenericConstructorDecl(TypeParameters:Java_typeParameterList,Identifier:Java_Identifier,Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
+  | Java_memberFieldDecl(Type:Java_type,VariableDeclList:Java_variableDeclaratorList)
+  | Java_memberInterfaceDecl(InterfaceDeclaration:Java_interfaceDeclaration)
+  | Java_memberClassDecl(ClassDeclaration:Java_classDeclaration)
 
 Java_returnType =
     Java_returnType(type:Java_type)
@@ -108,17 +105,11 @@ Java_interfaceMethodOrFieldDecl =
     Java_interfaceMethodDecl(Type:Java_type,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
   | Java_interfaceFieldDecl(Type:Java_type,ConstantDeclList:Java_constantDeclaratorList)
 
-Java_methodDeclaratorRest =
-    Java_methodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
-
 Java_interfaceMethodDeclaratorRest =
     Java_interfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList)
 
 Java_interfaceGenericMethodDecl =
     Java_interfaceGenericMethodDecl(Parameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
-
-Java_constructorDeclaratorRest =
-    Java_constructorDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
 
 Java_constantDeclarator =
     Java_constantDeclarator(Identifier:Java_Identifier,Brackets:Java_bracketsList,Initializer:Java_variableInitializer)
