@@ -601,9 +601,9 @@ interfaceMethodOrFieldDecl returns [Java_interfaceMethodOrFieldDecl imofr]
 	;
 	
 interfaceMethodOrFieldRest [Java_type typ, Java_Identifier ident] returns [Java_interfaceMethodOrFieldDecl imofr]
-	:	cdr=constantDeclaratorsRest ';'
+	:	cdr=constantDeclaratorsRest[ident] ';'
         {
-            imofr=`Java_interfaceFieldDecl(typ,ident,cdr);
+            imofr=`Java_interfaceFieldDecl(typ,cdr);
         }
 	|	imdr=interfaceMethodDeclaratorRest
         {
@@ -757,9 +757,9 @@ constructorDeclaratorRest returns [Java_constructorDeclaratorRest cdr]
 	;
 
 constantDeclarator returns [Java_constantDeclarator cd]
-	:	i=Identifier cdr=constantDeclaratorRest
+	:	i=Identifier cdr=constantDeclaratorRest[`Java_Identifier(i.getText())]
         {
-            cd=`Java_constantDeclarator(Java_Identifier(i.getText()),cdr);
+            cd=cdr;
         }
 	;
 	
@@ -820,10 +820,10 @@ variableDeclaratorRest [Java_Identifier ident] returns [Java_variableDeclarator 
         }
 	;
 	
-constantDeclaratorsRest returns [Java_constantDeclaratorsRest cdr]@init {
+constantDeclaratorsRest [Java_Identifier ident] returns [Java_constantDeclaratorList cdr]@init {
     Java_constantDeclaratorList tcdr=`Java_constantDeclaratorList();
 }
-    :   cdr1=constantDeclaratorRest 
+    :   cdr1=constantDeclaratorRest[ident] 
         (
             ',' cd=constantDeclarator
             {
@@ -831,11 +831,11 @@ constantDeclaratorsRest returns [Java_constantDeclaratorsRest cdr]@init {
             }
         )*
         {
-            cdr=`Java_constantDeclaratorsRest(cdr1,tcdr);
+            cdr=`Java_constantDeclaratorList(cdr1,tcdr*);
         }
     ;
 
-constantDeclaratorRest returns [Java_constantDeclaratorRest cdr]
+constantDeclaratorRest [Java_Identifier ident] returns [Java_constantDeclarator cdr]
 @init {
     Java_bracketsList b=`Java_bracketsList();
 }
@@ -847,7 +847,7 @@ constantDeclaratorRest returns [Java_constantDeclaratorRest cdr]
         )* 
         '=' vi=variableInitializer
         {
-            cdr=`Java_constantDeclaratorRest(b,vi);
+            cdr=`Java_constantDeclarator(ident,b,vi);
         }
 	;
 	

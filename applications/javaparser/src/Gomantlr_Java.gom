@@ -112,7 +112,7 @@ Java_interfaceMemberDecl =
 
 Java_interfaceMethodOrFieldDecl =
     Java_interfaceMethodDecl(Type:Java_type,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
-  | Java_interfaceFieldDecl(Type:Java_type,Identifier:Java_Identifier,ConstantDeclRest:Java_constantDeclaratorsRest)
+  | Java_interfaceFieldDecl(Type:Java_type,ConstantDeclList:Java_constantDeclaratorList)
 
 Java_methodDeclaratorRest =
     Java_methodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList,methodBody:Java_methodBody)
@@ -130,25 +130,19 @@ Java_constructorDeclaratorRest =
     Java_constructorDeclaratorRest(Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList,MethodBody:Java_methodBody)
 
 Java_constantDeclarator =
-    Java_constantDeclarator(Identifier:Java_Identifier,constantDeclarator_2:Java_constantDeclaratorRest)
+    Java_constantDeclarator(Identifier:Java_Identifier,Brackets:Java_bracketsList,Initializer:Java_variableInitializer)
 
 Java_variableDeclaratorList =
     Java_variableDeclaratorList(Java_variableDeclarator*)
 
 Java_variableDeclarator =
     Java_arrayVariableDecl(Identifier:Java_Identifier,Brackets:Java_bracketsList)
-  | Java_arrayVariableDeclInit(Identifier:Java_Identifier,Brackets:Java_bracketsList,Initialiser:Java_variableInitializer)
-  | Java_variableDeclInit(Identifier:Java_Identifier,Initialiser:Java_variableInitializer)
+  | Java_arrayVariableDeclInit(Identifier:Java_Identifier,Brackets:Java_bracketsList,Initializer:Java_variableInitializer)
+  | Java_variableDeclInit(Identifier:Java_Identifier,Initializer:Java_variableInitializer)
   | Java_variableDecl(Identifier:Java_Identifier)
-
-Java_constantDeclaratorsRest =
-    Java_constantDeclaratorsRest(constantDeclaratorsRest_1:Java_constantDeclaratorRest,constantDeclaratorsRest_2:Java_constantDeclaratorList)
 
 Java_constantDeclaratorList =
     Java_constantDeclaratorList(Java_constantDeclarator*)
-
-Java_constantDeclaratorRest =
-    Java_constantDeclaratorRest(Brackets:Java_bracketsList,constantDeclaratorRest_2:Java_variableInitializer)
 
 Java_variableDeclaratorId =
     Java_variableDeclaratorId(Identifier:Java_Identifier,Brackets:Java_bracketsList)
