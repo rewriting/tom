@@ -2382,7 +2382,6 @@ castExpression returns [Java_castExpression ce]
 
 primary returns [Java_primary p]
 @init {
-    Java_argumentsOrGenericInvocation p2=null;
     Java_arguments p3=`Java_arguments(Java_expressionList());
     Java_IdentifierList p7_2=`Java_IdentifierList();
     Java_identifierSuffix p7_3=`Java_emptyIdentifierSuffix();
@@ -2395,19 +2394,16 @@ primary returns [Java_primary p]
         |   
             nwta=nonWildcardTypeArguments
             (
-                    egis=explicitGenericInvocationSuffix 
+                    egis=explicitGenericInvocationSuffix[nwta]
                     {
-                        p2=`Java_genericInvocation(egis);
+                        p=`Java_primaryGenericInvocation(egis);
                     }
                 |
                     'this' a=arguments
                     {
-                        p2=`Java_invocationArguments(a);
+                        p=`Java_primaryGenericThis(nwta,a);
                     }
             )
-            {
-                p=`Java_primaryGenericIdentifier(nwta,p2);
-            }
         |
             'this' 
             (
@@ -2656,9 +2652,9 @@ classCreatorRest returns [Java_classCreatorRest ccr]
 	;
 	
 explicitGenericInvocation returns [Java_explicitGenericInvocation egi]
-	:	nwta=nonWildcardTypeArguments egis=explicitGenericInvocationSuffix
+	:	nwta=nonWildcardTypeArguments egis=explicitGenericInvocationSuffix[nwta]
         {
-            egi=`Java_explicitGenericInvocation(nwta,egis);
+            egi=egis;
         }
 	;
 	
@@ -2672,15 +2668,15 @@ nonWildcardTypeArguments returns [Java_typeList nwta]
         }
 	;
 	
-explicitGenericInvocationSuffix returns [Java_explicitGenericInvocationSuffix egis]
+explicitGenericInvocationSuffix [Java_typeList nwta] returns [Java_explicitGenericInvocation egis]
 	:	    'super' s=superSuffix
             {
-                egis=`Java_explicitGenericInvocationSuffixSuper(s);
+                egis=`Java_explicitGenericInvocationSuper(nwta,s);
             }
 	    |
             i=Identifier a=arguments
             {
-                egis=`Java_explicitGenericInvocationSuffixMethod(Java_Identifier(i.getText()),a);
+                egis=`Java_explicitGenericInvocationMethod(nwta,Java_Identifier(i.getText()),a);
             }
  	;
 	

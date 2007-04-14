@@ -271,11 +271,11 @@ Java_annotationTypeElement =
   | Java_annotationTypeElementType(ModifierList:Java_modifierList,AnnotationTypeDeclaration:Java_annotationTypeDeclaration)
 
 Java_annotationMethod =
-    Java_annotationMethodDefault(defaultValue:Java_elementValue)
+    Java_annotationMethodDefault(DefaultValue:Java_elementValue)
   | Java_annotationMethodEmpty()
 
 Java_annotationConstant =
-    Java_annotationConstant(variableDeclarators:Java_variableDeclaratorList)
+    Java_annotationConstant(VariableDeclList:Java_variableDeclaratorList)
 
 Java_block =
     Java_block(Java_blockStatement*)
@@ -338,7 +338,7 @@ Java_labelBlock =
 
 Java_switchLabel =
     Java_switchLabelExpression(Expression:Java_expression)
-  | Java_switchLabelEnum(enumConstantName:Java_enumConstantName)
+  | Java_switchLabelEnum(EnumConstantName:Java_enumConstantName)
   | Java_switchLabelDefault()
 
 Java_forControl =
@@ -454,7 +454,8 @@ Java_castExpression =
 
 Java_primary =
     Java_primaryExpression(ParExpression:Java_parExpression)
-  | Java_primaryGenericIdentifier(NonWildcardTypeArguments:Java_typeList,InvocationArgs:Java_argumentsOrGenericInvocation)
+  | Java_primaryGenericThis(NonWildcardTypeArguments:Java_typeList,Arguments:Java_arguments)
+  | Java_primaryGenericInvocation(GenericInvocation:Java_explicitGenericInvocation)
   | Java_primaryThis(Arguments:Java_arguments)
   | Java_primarySuper(SuperSuffix:Java_superSuffix)
   | Java_primaryLiteral(Literal:Java_literal)
@@ -462,10 +463,6 @@ Java_primary =
   | Java_primaryIdentifier(IdentifierList:Java_IdentifierList,IdSuffix:Java_identifierSuffix)
   | Java_primaryPrimitive(PrimitiveType:Java_primitiveType,Brackets:Java_bracketsList)
   | Java_primaryVoidClass()
-
-Java_argumentsOrGenericInvocation =
-    Java_genericInvocation(GenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
-  | Java_invocationArguments(Arguments:Java_arguments)
 
 Java_identifierSuffix =
     Java_identifierSuffixEmptyBracket(Brackets:Java_bracketsList)
@@ -497,11 +494,8 @@ Java_classCreatorRest =
     Java_classCreatorRest(Arguments:Java_arguments,ClassBody:Java_classBody)
 
 Java_explicitGenericInvocation =
-    Java_explicitGenericInvocation(NonWildcardTypeArguments:Java_typeList,GenericInvocationSuffix:Java_explicitGenericInvocationSuffix)
-
-Java_explicitGenericInvocationSuffix =
-    Java_explicitGenericInvocationSuffixSuper(SuperSuffix:Java_superSuffix)
-  | Java_explicitGenericInvocationSuffixMethod(Identifier:Java_Identifier,Arguments:Java_arguments)
+    Java_explicitGenericInvocationSuper(NonWildcardTypeArguments:Java_typeList,SuperSuffix:Java_superSuffix)
+  | Java_explicitGenericInvocationMethod(NonWildcardTypeArguments:Java_typeList,Identifier:Java_Identifier,Arguments:Java_arguments)
 
 Java_selector =
     Java_selectorField(Identifier:Java_Identifier)
