@@ -2562,7 +2562,7 @@ creator returns [Java_creator c]
 createdName returns [Java_createdName cn]
 @init {
     Java_typeList cn2=`Java_typeList();
-    Java_IdentifierNonWildcardList cn1=`Java_IdentifierNonWildcardList();
+    Java_createdName cn1=`Java_createdName();
     Java_typeList cn3=`Java_typeList();
 }
 	:	    i=Identifier 
@@ -2581,11 +2581,11 @@ createdName returns [Java_createdName cn]
                     }
                 )?
                 {
-                    cn1=`Java_IdentifierNonWildcardList(cn1*,Java_IdentifierNonWildcard(Java_Identifier(i.getText()),cn3));
+                    cn1=`Java_createdName(cn1*,Java_IdentifierNonWildcard(Java_Identifier(i.getText()),cn3));
                 }
             )*
             {
-                cn=`Java_createdName(Java_Identifier(i.getText()),cn2,cn1);
+                cn=`Java_createdName(Java_IdentifierNonWildcard(Java_Identifier(i.getText()),cn2),cn1*);
             }
     |
             pt=primitiveType

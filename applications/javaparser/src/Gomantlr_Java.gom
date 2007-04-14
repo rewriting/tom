@@ -484,11 +484,8 @@ Java_creator =
   | Java_classCreator(NonWildcardTypeArguments:Java_typeList,CreatedName:Java_createdName,ClassCreatorRest:Java_classCreatorRest)
 
 Java_createdName =
-    Java_createdName(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_typeList,IdentifierNonWilcardList:Java_IdentifierNonWildcardList)
+    Java_createdName(Java_IdentifierNonWildcard*)
   | Java_createdNamePrimitive(PrimitiveType:Java_primitiveType)
-
-Java_IdentifierNonWildcardList =
-    Java_IdentifierNonWildcardList(Java_IdentifierNonWildcard*)
 
 Java_IdentifierNonWildcard =
     Java_IdentifierNonWildcard(Identifier:Java_Identifier,NonWildcardTypeArguments:Java_typeList)
