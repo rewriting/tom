@@ -573,11 +573,11 @@ interfaceBodyDeclaration returns [Java_interfaceBodyDeclaration ibd]
 interfaceMemberDecl returns [Java_interfaceMemberDecl imd]
 	:	imofd=interfaceMethodOrFieldDecl
         {
-            imd=`Java_interfaceMemberMethodOrFieldDecl(imofd);
+            imd=imofd;
         }
 	|   igmd=interfaceGenericMethodDecl
         {
-            imd=`Java_interfaceMemberGenericMethodDecl(igmd);
+            imd=igmd;
         }
     |   'void' i=Identifier vimdr=voidInterfaceMethodDeclaratorRest[`Java_Identifier(i.getText())]
         {
@@ -593,14 +593,14 @@ interfaceMemberDecl returns [Java_interfaceMemberDecl imd]
         }
 	;
 	
-interfaceMethodOrFieldDecl returns [Java_interfaceMethodOrFieldDecl imofr]
+interfaceMethodOrFieldDecl returns [Java_interfaceMemberDecl imofr]
 	:	t=type i=Identifier imofd=interfaceMethodOrFieldRest[t,`Java_Identifier(i.getText())]
 {
   imofr=imofd;
 }
 	;
 	
-interfaceMethodOrFieldRest [Java_type typ, Java_Identifier ident] returns [Java_interfaceMethodOrFieldDecl imofr]
+interfaceMethodOrFieldRest [Java_type typ, Java_Identifier ident] returns [Java_interfaceMemberDecl imofr]
 	:	cdr=constantDeclaratorsRest[ident] ';'
         {
             imofr=`Java_interfaceFieldDecl(typ,cdr);
@@ -703,7 +703,7 @@ interfaceMethodDeclaratorRest returns [Java_interfaceMethodDeclaratorRest imdr]
         }
 	;
 	
-interfaceGenericMethodDecl returns [Java_interfaceGenericMethodDecl igmd]
+interfaceGenericMethodDecl returns [Java_interfaceMemberDecl igmd]
 @init {
     Java_returnType igmd2=null;
 }

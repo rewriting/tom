@@ -3,10 +3,10 @@ imports String
 abstract syntax
 
 Java_compilationUnit =
-    Java_compilationUnit(annotations:Java_annotationList,package:Java_package,importList:Java_importDeclarationList,TypeList:Java_classOrInterfaceDeclarationList)
+    Java_compilationUnit(Annotations:Java_annotationList,Package:Java_package,ImportList:Java_importDeclarationList,TypeList:Java_classOrInterfaceDeclarationList)
 
 Java_package =
-    Java_package(name:Java_qualifiedName)
+    Java_package(Name:Java_qualifiedName)
   | Java_noPackage()
 
 Java_importDeclarationList=
@@ -24,8 +24,8 @@ Java_IdentifierList =
     Java_IdentifierList(Java_Identifier*)
 
 Java_classOrInterfaceDeclaration =
-    Java_classDecl(modifierList:Java_modifierList,classDeclaration:Java_classDeclaration)
-  | Java_interfaceDecl(modifierList:Java_modifierList,interfaceDeclaration:Java_interfaceDeclaration)
+    Java_classDecl(ModifierList:Java_modifierList,ClassDeclaration:Java_classDeclaration)
+  | Java_interfaceDecl(ModifierList:Java_modifierList,InterfaceDeclaration:Java_interfaceDeclaration)
 
 Java_classOrInterfaceDeclarationList=
     Java_concClassOrInterfaceDeclaration(Java_classOrInterfaceDeclaration*)
@@ -95,21 +95,15 @@ Java_interfaceBodyDeclaration =
   | Java_interfaceEmptyBody()
 
 Java_interfaceMemberDecl =
-    Java_interfaceMemberMethodOrFieldDecl(MethodOrFieldDecl:Java_interfaceMethodOrFieldDecl)
-  | Java_interfaceMemberGenericMethodDecl(GenericMethodDecl:Java_interfaceGenericMethodDecl)
+    Java_interfaceMethodDecl(Type:Java_type,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
+  | Java_interfaceFieldDecl(Type:Java_type,ConstantDeclList:Java_constantDeclaratorList)
+  | Java_interfaceGenericMethodDecl(TypeParameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
   | Java_interfaceMemberVoidMethodDecl(Identifier:Java_Identifier,Parameters:Java_formalParameterList,Throws:Java_qualifiedNameList)
   | Java_interfaceMemberInterfaceDecl(InterfaceDecl:Java_interfaceDeclaration)
   | Java_interfaceMemberClassDecl(ClassDecl:Java_classDeclaration)
 
-Java_interfaceMethodOrFieldDecl =
-    Java_interfaceMethodDecl(Type:Java_type,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
-  | Java_interfaceFieldDecl(Type:Java_type,ConstantDeclList:Java_constantDeclaratorList)
-
 Java_interfaceMethodDeclaratorRest =
     Java_interfaceMethodDeclaratorRest(Parameters:Java_formalParameterList,Brackets:Java_bracketsList,Throws:Java_qualifiedNameList)
-
-Java_interfaceGenericMethodDecl =
-    Java_interfaceGenericMethodDecl(Parameters:Java_typeParameterList,ReturnType:Java_returnType,Identifier:Java_Identifier,InterfaceMethodDeclRest:Java_interfaceMethodDeclaratorRest)
 
 Java_constantDeclarator =
     Java_constantDeclarator(Identifier:Java_Identifier,Brackets:Java_bracketsList,Initializer:Java_variableInitializer)
