@@ -479,15 +479,15 @@ memberDecl returns [Java_memberDecl md]
         }
 	|	md1=methodDeclaration
         {
-            md=`Java_memberMethodDeclaration(md1);
+            md=md1;
         }
 	|	fd=fieldDeclaration
         {
-            md=`Java_memberFieldDeclaration(fd);
+            md=fd;
         }
-	|	'void' i=Identifier vmdr=voidMethodDeclaratorRest
+	|	'void' i=Identifier vmdr=voidMethodDeclaratorRest[`Java_Identifier(i.getText())]
         {
-            md=`Java_memberVoidMethodDeclaratorRest(Java_Identifier(i.getText()),vmdr);
+            md=vmdr;
         }
 	|	i=Identifier cdr=constructorDeclaratorRest
         {
@@ -535,17 +535,17 @@ genericMethodOrConstructorRest [Java_typeParameterList tp] returns [Java_generic
         }
 	;
 
-methodDeclaration returns [Java_methodDeclaration md]
+methodDeclaration returns [Java_memberDecl md]
 	:	t=type i=Identifier mdr=methodDeclaratorRest
         {
-            md=`Java_methodDeclaration(t,Java_Identifier(i.getText()),mdr);
+            md=`Java_memberMethodDeclaration(t,Java_Identifier(i.getText()),mdr);
         }
 	;
 
-fieldDeclaration returns [Java_fieldDeclaration fd]
+fieldDeclaration returns [Java_memberDecl fd]
 	:	t=type vd=variableDeclarators ';'
         {
-            fd=`Java_fieldDeclaration(t,vd);
+            fd=`Java_memberFieldDeclaration(t,vd);
         }
 	;
 		
@@ -646,7 +646,7 @@ methodDeclaratorRest returns [Java_methodDeclaratorRest mdr]
         }
 	;
 	
-voidMethodDeclaratorRest returns [Java_voidMethodDeclaratorRest vmd]
+voidMethodDeclaratorRest [Java_Identifier ident] returns [Java_memberDecl vmd]
 @init {
     Java_qualifiedNameList vmd2=`Java_qualifiedNameList();
     Java_methodBody vmd3=null;
@@ -670,7 +670,7 @@ voidMethodDeclaratorRest returns [Java_voidMethodDeclaratorRest vmd]
                 }
         )
         {
-            vmd=`Java_voidMethodDeclaratorRest(fp,vmd2,vmd3);
+            vmd=`Java_memberVoidMethodDeclaration(ident,fp,vmd2,vmd3);
         }
 	;
 	
