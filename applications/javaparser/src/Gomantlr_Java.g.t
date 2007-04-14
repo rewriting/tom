@@ -257,7 +257,7 @@ enumDeclaration returns [Java_classDeclaration ed]
 @init {
     Java_typeList ed3=`Java_typeList();
 }
-	:	e=ENUM i=Identifier 
+	:	ENUM i=Identifier 
         (
             'implements' tl=typeList
             {
@@ -266,7 +266,7 @@ enumDeclaration returns [Java_classDeclaration ed]
         )?
         eb=enumBody
         {
-            ed=`Java_enumDecl(Java_ENUM(e.getText()),Java_Identifier(i.getText()),ed3,eb);
+            ed=`Java_enumDecl(Java_Identifier(i.getText()),ed3,eb);
         }
 	;
 	

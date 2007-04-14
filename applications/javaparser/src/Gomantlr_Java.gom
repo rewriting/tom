@@ -35,7 +35,7 @@ Java_concClassOrInterfaceDeclaration:make_insert(e,l) {
 
 Java_classDeclaration =
     Java_normalClassDecl(ClassName:Java_Identifier,TypeParameters:Java_typeParameterList,Extends:Java_typeList,Implements:Java_typeList,ClassBody:Java_classBody)
-  | Java_enumDecl(Enum:Java_ENUM,Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
+  | Java_enumDecl(Identifier:Java_Identifier,Implements:Java_typeList,EnumBody:Java_enumBody)
 
 Java_typeParameterList =
     Java_typeParameterList(Java_typeParameter*)
@@ -515,6 +515,3 @@ Java_arguments =
 
 Java_Identifier =
     Java_Identifier(s:String)
-
-Java_ENUM =
-    Java_ENUM(s:String)
