@@ -158,11 +158,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(")");
   }
 
-  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, String moduleName) throws IOException {
+  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tail, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
     generate(deep,varBegin,moduleName);
     output.write(",");
     generate(deep,varEnd,moduleName);
+    output.write(",");
+    generate(deep,tail,moduleName);
     output.write(")");
   }
   

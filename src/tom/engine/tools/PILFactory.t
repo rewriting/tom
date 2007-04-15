@@ -218,8 +218,8 @@ public class PILFactory {
 	return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
       }
 
-      GetSliceList(astName,variableBeginAST,variableEndAST) -> {
-	return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+")";
+      GetSliceList(astName,variableBeginAST,variableEndAST,tail) -> {
+	return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+"," + prettyPrint(`tail) + ")";
       }
 
       GetHead[Variable=variable] -> {

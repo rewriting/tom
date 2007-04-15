@@ -112,15 +112,19 @@ public final class TomBase {
   }
 
   public static TomType getSymbolCodomain(TomSymbol symbol) {
-    assert(symbol!=null);
-    return symbol.getTypesToType().getCodomain();
-    //null: return `EmptyType();
+    if(symbol!=null) {
+      return symbol.getTypesToType().getCodomain();
+    } else {
+      return `EmptyType();
+    }
   }   
 
   public static TomTypeList getSymbolDomain(TomSymbol symbol) {
-    assert(symbol!=null);
-    return symbol.getTypesToType().getDomain();
-    //return null: `concTomType();
+    if(symbol!=null) {
+      return symbol.getTypesToType().getDomain();
+    } else {
+      return `concTomType();
+    }
   }
 
   private static HashMap tomNumberListToStringMap = new HashMap();

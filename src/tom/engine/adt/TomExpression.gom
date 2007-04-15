@@ -31,7 +31,7 @@ Expression =
   | AddOne(Variable:TomTerm)
   | GetSize(Opname:TomName,Variable:TomTerm)
   | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
-  | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
+  | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
   | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
   /**
    * check that source is of sort astType, and then execute inst

@@ -50,7 +50,7 @@
       </fileset>
       <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
-      <zipfileset src="${tom.home}/lib/antlr.jar"/>
+      <zipfileset src="${tom.home}/lib/antlr-2.7.7.jar"/>
       <zipfileset src="${strategy.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
       <zipfileset src="${tom.home}/lib/aterm.jar"/>
     </jar>

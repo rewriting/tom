@@ -349,10 +349,10 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s+= "              " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2))\n";
     s+= "\n";
     
-    s+=  "let rec tom_get_slice_" + name + "(beginning, ending) =\n"; 
-    s+= "   if " + equal_term + "(beginning,ending) then " + make_empty + "()\n";
+    s+=  "let rec tom_get_slice_" + name + "(beginning, ending,tail) =\n"; 
+    s+= "   if " + equal_term + "(beginning,ending) then tail\n";
     s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
-      get_slice + "(" + get_tail + "(beginning),ending))\n";
+      get_slice + "(" + get_tail + "(beginning),ending,tail))\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
     TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);

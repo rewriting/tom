@@ -67,7 +67,6 @@ public class StratMappingTemplate extends MappingTemplateClass {
           _*) -> {
       writer.write(
         (new tom.gom.backend.strategy.IsOpTemplate(`op)).generateMapping());
-
       writer.write(
         (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
       writer.write(

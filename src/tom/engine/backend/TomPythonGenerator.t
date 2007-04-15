@@ -255,12 +255,12 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "     return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
     s+= "\n";
     
-    s+= "def tom_get_slice_" + name + "(begin, end):\n"; 
+    s+= "def tom_get_slice_" + name + "(begin, end,tail):\n"; 
     s+= "   if " + equal_term + "(begin,end):\n";
-    s+= "      return " +  make_empty + "()\n";
+    s+= "      return tail\n";
     s+= "   else:\n";
     s+= "      return " +  make_insert + "(" + get_head + "(begin)," + 
-      get_slice + "(" + get_tail + "(begin),end));\n";
+      get_slice + "(" + get_tail + "(begin),end,tail));\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
     TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);

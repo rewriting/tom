@@ -300,49 +300,28 @@ generateGetters(writer);
 ]%);
 
     writer.write(%[
-      /* internal use */
+    /* internal use */
   protected @((slotList.length()==0)?"static":"")@ int hashFunction() {
     int a, b, c;
-
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
     b = (@shared.HashFunctions.stringHashFunction(fullClassName(),slotList.length())@<<8);
     c = getArity();
-    /*---------------------------------------- handle most of the key */
-
-    /*------------------------------------- handle the last 11 bytes */
+    /* -------------------------------------- handle most of the key */
+    /* ------------------------------------ handle the last 11 bytes */
 ]%);
 generateHashArgs(writer);
 writer.write(%[
-    a -= b;
-    a -= c;
-    a ^= (c >> 13);
-    b -= c;
-    b -= a;
-    b ^= (a << 8);
-    c -= a;
-    c -= b;
-    c ^= (b >> 13);
-    a -= b;
-    a -= c;
-    a ^= (c >> 12);
-    b -= c;
-    b -= a;
-    b ^= (a << 16);
-    c -= a;
-    c -= b;
-    c ^= (b >> 5);
-    a -= b;
-    a -= c;
-    a ^= (c >> 3);
-    b -= c;
-    b -= a;
-    b ^= (a << 10);
-    c -= a;
-    c -= b;
-    c ^= (b >> 15);
-
-    /*-------------------------------------------- report the result */
+    a -= b; a -= c; a ^= (c >> 13);
+    b -= c; b -= a; b ^= (a << 8);
+    c -= a; c -= b; c ^= (b >> 13);
+    a -= b; a -= c; a ^= (c >> 12);
+    b -= c; b -= a; b ^= (a << 16);
+    c -= a; c -= b; c ^= (b >> 5);
+    a -= b; a -= c; a ^= (c >> 3);
+    b -= c; b -= a; b ^= (a << 10);
+    c -= a; c -= b; c ^= (b >> 15);
+    /* ------------------------------------------- report the result */
     return c;
   }
 ]%);
@@ -885,7 +864,7 @@ writer.write(%[
         writer.write(fullClassName());
         writer.write(".make(");
         slotArgs(writer,slotList);
-        writer.write(")}\n");
+        writer.write(") }\n");
         writer.write("}\n");
         writer.write("\n");
         return;

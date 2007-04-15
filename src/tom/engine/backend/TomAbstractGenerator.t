@@ -325,8 +325,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      GetSliceList(Name(name), varBegin, varEnd) -> {
-        buildExpGetSliceList(deep, `name, `varBegin, `varEnd, moduleName);
+      GetSliceList(Name(name), varBegin, varEnd, tailSlice) -> {
+        buildExpGetSliceList(deep, `name, `varBegin, `varEnd, `tailSlice,moduleName);
         return;
       }
       
@@ -827,7 +827,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpGetTail(int deep, TomName opName, TomType type1, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
-  protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, String moduleName) throws IOException;
+  protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tailSlice, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
   protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;

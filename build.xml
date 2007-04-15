@@ -840,6 +840,14 @@
        <property name="tom.home" value="${src.dist}"/>
      </ant>
   </target>
+  <target name="junit.opt" description="Runs junit acceptance tests iwth optimization"
+          depends="clean.test, test">
+     <ant dir="${test}" target="junit">
+       <property name="tom.home" value="${src.dist}"/>
+       <property name="optimize" value="on"/>
+       <property name="optimize2" value="on"/>
+     </ant>
+  </target>
 
   <target name="all" description="cleans, build, test all"
           depends="stable.all, src.all">
@@ -881,7 +889,7 @@
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
       <property name="optimize" value="on"/>
-      <property name="optimize2" value="off"/>
+      <property name="optimize2" value="on"/>
     </ant>
   </target>
 
@@ -911,7 +919,7 @@
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="on"/>
-      <property name="optimize2" value="off"/>
+      <property name="optimize2" value="on"/>
     </ant>
   </target>
 
@@ -941,6 +949,7 @@
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="on"/>
+      <property name="optimize2" value="on"/>
     </ant>
   </target>
 

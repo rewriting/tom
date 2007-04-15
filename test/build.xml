@@ -8,7 +8,7 @@
   <property name="test.gen"   location="gen"/>
   <property name="test.build" location="build"/>
 
-  <property name="optimize" value="off"/>
+  <!-- <property name="optimize" value="off"/> -->
 
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>

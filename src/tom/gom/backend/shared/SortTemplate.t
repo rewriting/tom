@@ -189,7 +189,6 @@ protected String generateInterface() {
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { @fullClassName(basicStrategy)@ }
 }
-
 ]%);
     return;
   }

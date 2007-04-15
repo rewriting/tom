@@ -460,7 +460,8 @@ public class TomKernelCompiler {
           TomTerm variableBeginAST = `Variable(concOption(),PositionName(pathBegin),termType,concConstraint());
           TomTerm variableEndAST   = `Variable(concOption(),PositionName(pathEnd),termType,concConstraint());
 
-          Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST));
+          Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST),BuildEmptyList(p.symbol.getAstName()));
+
           Instruction let = buildLet(`var, source, p.path, subAction, p.elseAction, moduleName);
           Instruction tailExp = `Assign(variableEndAST,genGetTail(p.symbol,Ref(variableEndAST)));
           Instruction loop;

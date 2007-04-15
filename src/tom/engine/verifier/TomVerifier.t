@@ -89,6 +89,12 @@ public class TomVerifier extends TomGenericPlugin {
   public void run() {
     boolean camlsemantics = getOptionBooleanValue("camlSemantics");
     boolean intermediate = getOptionBooleanValue("intermediate");
+    boolean optimize2 = getOptionBooleanValue("optimize2");
+
+    if(optimize2 && isActivated()) {
+      getLogger().log(Level.SEVERE, TomMessage.verifierNotCompatibleWithOptimize.getMessage());
+    }
+
     verif = new Verifier(camlsemantics);
     verif.setSymbolTable(this.symbolTable());
     // delay the zenonoutput creation, as it needs the verifiers

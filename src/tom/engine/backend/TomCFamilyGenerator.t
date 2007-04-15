@@ -328,12 +328,12 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     s+= "  }\n";
     s+= "\n";
     
-    s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end) {\n"; 
+    s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end," + utype + " tail) {\n"; 
     s+= "   if(" + equal_term + "(begin,end)) {\n";
-    s+= "     return " +  make_empty + "();\n";
+    s+= "     return tail;\n";
     s+= "   } else {\n";
     s+= "     return " +  make_insert + "(" + get_head + "(begin)," + 
-      get_slice + "(" + get_tail + "(begin),end));\n";
+      get_slice + "(" + get_tail + "(begin),end,tail));\n";
     s+= "   }\n";
     s+= "  }\n";
     s+= "\n";
