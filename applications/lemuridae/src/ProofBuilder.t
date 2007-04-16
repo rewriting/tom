@@ -763,7 +763,7 @@ b :{
       }
   }
 
-  %strategy ApplyAutoFail(newRules: RuleArrayList) extends `Fail() {
+  %strategy ApplyAuto(newRules: RuleArrayList) extends `Fail() {
     visit Tree {
       // right hand side (+ axiom)
       t@rule[c=sequent(_,(_*,p,_*))] -> { 
@@ -773,32 +773,29 @@ b :{
         if(r != null) strat = `ApplyRule(r,p,hm); 
         else strat = `ChoiceV(ApplyAxiom(),ApplyTop(),ApplyAndR(p),ApplyOrR(p),ApplyImpliesR(p),ApplyForAllR(p));
         try { 
-          Tree res = (Tree) strat.visit(`t);
+          Tree res = (Tree) strat.visit(`t); 
           return res;
         } catch (VisitFailure v) {}
       }
 
       // left hand side
       t@rule[c=sequent((_*,p,_*),_)] -> {
-	MuStrategy strat;
+        MuStrategy strat;
         Rule r = applicableInAuto(newRules, `p, true);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
         if(r != null) strat = `ApplyRule(r,p,hm); 
         else strat = `ChoiceV(ApplyBottom(),ApplyAndL(p),ApplyOrL(p),ApplyImpliesL(p),ApplyExistsL(p));
         try { 
-          Tree res = (Tree) strat.visit(`t);
+          Tree res = (Tree) strat.visit(`t); 
           return res;
         } catch (VisitFailure v) {}
       }
     }
   }
 
-  %op Strategy ApplyAuto(newRules: RuleArrayList) {
-      make(newRules) { `Try(ApplyAutoFail(newRules)) }
-  }
-
+  // TODO: optimize safetopdown like in the commented strategy in autoreduce
   %op Strategy SafeTopDown(s:Strategy) {
-    make(s) { `mu(MuVar("x"), Choice(Sequence(Not(Is_customRuleInfo()),s,All(MuVar("x"))), Identity()))  }
+    make(s) { `mu(MuVar("x"), Choice(Is_customRuleInfo(),Sequence(s,All(MuVar("x")))))  }
   }
 
 
@@ -979,13 +976,25 @@ b :{
           }
         }
 
+        /* intros case */
+        proofCommand("intros") -> {
+          try {
+            ArrayList<Rule> emptylist = new ArrayList<Rule>();
+            MuStrategy strat = `SafeTopDown(Try(ApplyAuto(emptylist)));
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+          } catch (Exception e) {
+            System.out.println("Can't apply intros" + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
         /* auto case */
         proofCommand("auto") -> {
           try {
-            MuStrategy strat = `SafeTopDown(ApplyAuto(newRules));
+            MuStrategy strat = `SafeTopDown(Try(ApplyAuto(newRules)));
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply auto" + e.getMessage());
+            System.out.println("Can't apply auto : " + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -994,30 +1003,20 @@ b :{
         proofCommand("autoreduce") -> {
           try {
 	      MuStrategy strat = 
+          `SafeTopDown(Try(Choice(ApplyAuto(newRules),ApplyReduce(newTermRules,newPropRules))));
 		  // Warning: _premisses uses "x" as MuVar
+          /*
 		  `mu(MuVar("y"), 
-		      Choice(Sequence(ApplyAutoFail(newRules),
-				      _rule(Identity(),_premisses(MuVar("y")),Identity(),Identity())),
-			     Choice(Sequence(ApplyReduce(newTermRules, newPropRules),
-					     _rule(Identity(),_premisses(MuVar("y")), Identity(),Identity())), 
-				    Identity())));
+          Choice(Sequence(ApplyAuto(newRules),
+              _rule(Identity(),_premisses(MuVar("y")),Identity(),Identity())),
+            Choice(Sequence(ApplyReduce(newTermRules, newPropRules),
+                _rule(Identity(),_premisses(MuVar("y")), Identity(),Identity())), 
+              Identity())));
+              */
 			     
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply autoreduce" + e.getMessage());
-            e.printStackTrace();
-          }
-        }
-
-
-        /* intros case */
-        proofCommand("intros") -> {
-          try {
-            ArrayList<Rule> emptylist = new ArrayList<Rule>();
-            MuStrategy strat = `SafeTopDown(ApplyAuto(emptylist));
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
-          } catch (Exception e) {
-            System.out.println("Can't apply intros" + e.getMessage());
+            System.out.println("Can't apply autoreduce : " + e + ", " + e.getMessage());
             e.printStackTrace();
           }
         }
