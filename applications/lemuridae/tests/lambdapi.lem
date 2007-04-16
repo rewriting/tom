@@ -53,7 +53,7 @@ rule NatListTheory(nat,z,succ,natList,nil,cons) ->
       	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))).
 */
 
-proof singletonZ: NatListTheory(nat,z,succ,natlist,nil,cons) =>
+proof singletonZ: NatListTheory(nat,z,succ,natList,nil,cons) =>
       in(lappl(lappl(lappl(cons, lappl(succ, z)), z), nil), lappl(natList,lappl(succ,z))).
 autoreduce.
 focus h7. rule. z.

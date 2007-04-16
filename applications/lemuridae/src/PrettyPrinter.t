@@ -406,19 +406,19 @@ class PrettyPrinter {
 
       // lambda-pi
       funAppl(fun("type"),()) -> {
-	return ("*");  
+        return ("*");  
       }
 
       funAppl(fun("kind"),()) -> {
-	return ("□");   
+        return ("□");   
       }
 
       funAppl(fun("pitype"),(x,y))  -> {
-	return "π⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
+        return "π⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
       }
 
       funAppl(fun("pikind"),(x,y))  -> {
-	return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
+        return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
       }
 
 
