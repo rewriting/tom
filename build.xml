@@ -818,6 +818,15 @@
      </ant>
   </target>
 
+  <target name="test.opt" description="Compile and run acceptance tests with optimizer"
+          depends="src.dist">
+     <ant dir="${test}" target="build">
+       <property name="tom.home" value="${src.dist}"/>
+       <property name="optimize" value="on"/>
+       <property name="optimize2" value="on"/>
+     </ant>
+  </target>
+
   <target name="test.stable" description="Compile and run acceptance tests with stable"
           depends="stable.dist">
      <ant dir="${test}" target="build">
@@ -841,7 +850,7 @@
      </ant>
   </target>
   <target name="junit.opt" description="Runs junit acceptance tests iwth optimization"
-          depends="clean.test, test">
+          depends="clean.test, test.opt">
      <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="on"/>
