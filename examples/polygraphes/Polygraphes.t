@@ -121,8 +121,8 @@ public class Polygraphes {
   %strategy Splitting() extends Fail() {
     visit TwoPath {
       /*
-       * Vertical Splitting rule
-       * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
+       * C0(id(m),g,tail*) -> C1(C0(id(m),g,id(source(tail*)),
+       *                         C0(id(m+target(g)),tail*)) g notin tail
        */
       c0(head@id(m), c1(f*,g*), tail*) -> {
         if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {

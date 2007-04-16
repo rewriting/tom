@@ -341,6 +341,8 @@ public class TomStreamManager {
   
   public String getOutputFileNameWithoutSuffix() {
     String outputFileName = getOutputFile().getPath();
+    //System.out.println("outputFileName: " +outputFileName);
+    //System.out.println("getOutputSuffix: " +getOutputSuffix());
     String res = outputFileName.substring(0, outputFileName.length() - getOutputSuffix().length());
     //System.out.println("OFNWS : " +res);
     return res;
