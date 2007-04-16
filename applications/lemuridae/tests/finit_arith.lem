@@ -25,8 +25,8 @@ proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 proprule in(l,emptyset()) -> \B.
-proprule in(l,P(p)) -> \En.(in(cons(n,l),p)).
-proprule in(l,C(p)) -> \An.(in(cons(n,l),p)).
+proprule in(l,P(p)) -> exists n.(in(cons(n,l),p)).
+proprule in(l,C(p)) -> forall n.(in(cons(n,l),p)).
 
 
 rule Pair(0) -> \T.

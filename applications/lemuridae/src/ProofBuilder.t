@@ -56,12 +56,8 @@ public class ProofBuilder {
         Prop conclusion = rule.getconcl();
         Tree expanded = rule.gettree();
 
-        // renommage temporaire pour eviter les collisions
-        // FIXME : renommer dans les regles de reecriture plutot
-        Prop active_prepared = (Prop) Unification.substPreTreatment(active);
-
         // recuperage de la table des symboles
-        HashMap<String,Term> tds = Unification.match(conclusion, active_prepared);
+        HashMap<String,Term> tds = Unification.match(conclusion, active);
         if (tds == null) throw new VisitFailure("active formula and rule conclusion don't match");
 
         //  -- building the original axiom with quantifiers --
@@ -101,9 +97,6 @@ public class ProofBuilder {
           expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
         }
 
-        // post traitement 
-        res = (SeqList) Unification.substPostTreatment(res);
-
         // creation des variables fraiches (forall right et exists left)
         Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
         for (Term fvar : fresh) {
@@ -128,6 +121,8 @@ public class ProofBuilder {
           // also replacing in the expanded tree
           expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
         }
+
+/*
 
         // adding instanciation steps for the expanded form
         // if it is a right rule
@@ -255,6 +250,8 @@ public class ProofBuilder {
           }
         }
 
+    */
+
         // ajout des contextes dans les premisses
 b: {
         %match (rule, seq, Prop active) {
@@ -287,8 +284,7 @@ b: {
    }
 
         // closing the expanding tree with the axiom
-        expanded = (Tree) ((MuStrategy) next.getOmega(`ApplyAxiom())).apply(expanded);
-        expanded = (Tree) Unification.substPostTreatment(expanded);
+        //expanded = (Tree) ((MuStrategy) next.getOmega(`ApplyAxiom())).apply(expanded);
 
         // creating open leaves
         Premisses newprems = `premisses();
@@ -1164,17 +1160,24 @@ b :{
         rewritesuper(p1,p2) -> {
           RuleList rl = RuleCalc.transform(`p1,`p2);
           %match(RuleList rl) {
-            (_*,r,_*) -> { newRules.add(`r);}
+            (_*,r,_*) -> { 
+              `r = (Rule) Unification.substPreTreatment(`r);
+              newRules.add(`r);
+            }
           }
           System.out.println("The new deduction rules are : \n");
           System.out.println(PrettyPrinter.prettyRule(rl));
         }
 
         rewriteterm(lhs,rhs) -> {
+          `lhs = (Term) Unification.substPreTreatment(`lhs);
+          `rhs = (Term) Unification.substPreTreatment(`rhs);
           newTermRules = `termrulelist(newTermRules*,termrule(lhs,rhs));
         }
 
         rewriteprop(lhs,rhs) -> {
+          `lhs = (Prop) Unification.substPreTreatment(`lhs);
+          `rhs = (Prop) Unification.substPreTreatment(`rhs);
           newPropRules = `proprulelist(newPropRules*,proprule(lhs,rhs));
         }
 

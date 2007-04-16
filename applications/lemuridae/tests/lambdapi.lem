@@ -32,7 +32,7 @@ rule C(cons(gamma,e(a,b))) ->
      C(gamma) /\ in(a,b).
 
 
-rule NatListTheory() ->
+rule NatListTheory(nat,z,succ,natList,nil,cons) ->
      WF(cons(cons(cons(cons(cons(cons(nil(),
      e(nat,type())),
      e(z,nat)), 
@@ -53,7 +53,7 @@ rule NatListTheory() ->
       	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))).
 */
 
-proof singletonZ: NatListTheory() =>
+proof singletonZ: NatListTheory(nat,z,succ,natlist,nil,cons) =>
       in(lappl(lappl(lappl(cons, lappl(succ, z)), z), nil), lappl(natList,lappl(succ,z))).
 autoreduce.
 focus h7. rule. z.
@@ -80,7 +80,7 @@ reduce. focus h2. rule. nil.
 autoreduce.
 autoreduce.
 
-rule SimpleTypeTheory() ->
+rule SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) ->
        \AA.(\AB.(\AC.(\AD.( WF(cons(cons(cons(cons(cons(cons(cons(cons(nil(),
        e(tp,type())),
        e(arrow, pitype(tp, pitype(subst(tp,shift()),subst(tp,rond(shift(),shift())))))),
@@ -105,7 +105,7 @@ rule SimpleTypeTheory() ->
 				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift())))))))) /\
        \AA.(\AB. (in(lam, pitype(pitype(lappl(lterm, A), lappl(subst(lterm,shift()),subst(B,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(A,shift())),subst(B,shift()))))))).*/
 
-proof lambdaXsX: SimpleTypeTheory() =>
+proof lambdaXsX: SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) =>
 	       in(lappl(lam, lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one()))),
 	          lappl(lterm, lappl(lappl(arrow, nat), nat))).
 intro. focus h1. rule. nat. nat. nat. nat.

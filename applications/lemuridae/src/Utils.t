@@ -88,8 +88,8 @@ class Utils {
     return res;
   }
 
-
-  %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Identity() {
+/*
+  %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Fail() {
     visit RuleType {
       forAllRightInfo(t) -> {
         if (`t==old_term) return `forAllRightInfo(new_term);
@@ -110,37 +110,105 @@ class Utils {
        TermList res = (TermList) replaceTerm(`tl, old_term, new_term);
         return `relationAppl(r, res);
       }
-
       r@forAll(x,_) -> { 
-        if  (`x != old_term.getname()) {
+        if  (`x == old_term.getname()) {
           return `r; 
         }
-        else
-          throw new VisitFailure();
       }
-
       r@exists(x,_) -> {
-        if  (`x != old_term.getname())
+        if  (`x == old_term.getname())
           return `r; 
-        else
-          throw new VisitFailure();
       }
     }
   }
+  */
+  
+  private static Prop 
+    replaceFreeVars(Prop p, Term old_term, Term new_term, Set<Term> nonfresh) {
+      %match(Prop p) {
+        forAll(n,p1) -> {
+          if (collectVars(new_term).contains(`Var(n))) {
+            Term fv = freshVar(`n,nonfresh);
+            Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
+            nonfresh.add(`Var(n));
+            Prop res = `forAll(fv.getname(),replaceFreeVars(np1,old_term,new_term,nonfresh));
+            nonfresh.remove(`Var(n));
+            return res;
+          } else {
+            return `forAll(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
+          }
+        }
+        exists(n,p1) -> {
+          if (collectVars(new_term).contains(`Var(n))) {
+            Term fv = freshVar(`n,nonfresh);
+            Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
+            nonfresh.add(`Var(n));
+            Prop res = `exists(fv.getname(), replaceFreeVars(np1,old_term,new_term,nonfresh));
+            nonfresh.remove(`Var(n));
+            return res;
+          } else {
+            return `exists(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
+          }
+        }
+        relationAppl(r,tl) -> {
+          TermList res = (TermList) replaceTerm(`tl, old_term, new_term);
+          return `relationAppl(r, res);
+        }
+        and(p1,p2) -> {
+          return `and(replaceFreeVars(p1,old_term,new_term,nonfresh), 
+                      replaceFreeVars(p2,old_term,new_term,nonfresh));
+        }
+        or(p1,p2) -> {
+          return `or(replaceFreeVars(p1,old_term,new_term,nonfresh), 
+                     replaceFreeVars(p2,old_term,new_term,nonfresh));
+        }
+        implies(p1,p2) -> {
+          return `implies(replaceFreeVars(p1,old_term,new_term,nonfresh), 
+                          replaceFreeVars(p2,old_term,new_term,nonfresh));
+        }
+      }
+      return p; 
+    }
+
+  public static Prop 
+    replaceFreeVars(Prop p, Term old_term, Term new_term) {
+      HashSet nonfresh = collectFreeVars(p);
+      nonfresh.addAll(collectVars(new_term));
+      return replaceFreeVars(p, old_term, new_term, nonfresh);
+    }
+
+  %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Identity() {
+    // FIXME : encore utile ?? surement pour l'expansion
+    visit RuleType {
+      forAllRightInfo(t) -> {
+        if (`t==old_term) return `forAllRightInfo(new_term);
+      }
+      forAllLeftInfo(t) -> {
+        if (`t==old_term) return `forAllLeftInfo(new_term);
+      }
+      existsRightInfo(t) -> {
+        if (`t==old_term) return `existsRightInfo(new_term);
+      }
+      existsLeftInfo(t) -> {
+        if (`t==old_term) return `existsLeftInfo(new_term);
+      }
+    }
+    
+    visit Prop {
+      p -> { return `replaceFreeVars(p,old_term,new_term); }
+    }
+  }
+
 
   public static sequentsAbstractType 
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
     {
-      p = Unification.substPreTreatment(p);
-      old_term = (Term) Unification.substPreTreatment(old_term);
-
-      VisitableVisitor r = `ReplaceFreeVars(old_term, new_term);
-      VisitableVisitor v = `mu(MuVar("x"),Try(Sequence(r,All(MuVar("x")))));
-      try {
-        p = (sequentsAbstractType) MuTraveler.init(v).visit(`p); 
-      } catch ( VisitFailure e) { e.printStackTrace(); }
+      VisitableVisitor v = `TopDown(ReplaceFreeVars(old_term, new_term));
+      //VisitableVisitor v = `mu(MuVar("x"),Try(Choice(r,All(MuVar("x")))));
+      try { p = (sequentsAbstractType) MuTraveler.init(v).visit(`p); }
+      catch ( VisitFailure e) { e.printStackTrace(); }
       
-      return Unification.substPostTreatment(p);
+      return  p; 
     }
 
   public static HashSet<Term> collectFreeVars(Prop p) {
@@ -163,11 +231,7 @@ class Utils {
             set.add(var);
         }
       }
-      (and|or)(p1,p2) -> {
-        collectFreeVars(`p1,set,bounded);
-        collectFreeVars(`p2,set,bounded);
-      }
-      implies(p1,p2) -> {
+      (and|or|implies)(p1,p2) -> {
         collectFreeVars(`p1,set,bounded);
         collectFreeVars(`p2,set,bounded);
       }
@@ -206,7 +270,6 @@ class Utils {
         i++;
     }
   }
-
 
   %strategy CollectConstraints(set: Collection) extends `Identity() {
     visit Term {

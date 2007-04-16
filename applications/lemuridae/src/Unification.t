@@ -146,53 +146,53 @@ class Unification {
     }
   }
 
- /* ---------- for reduce ----------*/
+ /* ---------- to ensure fresh vars in rewrite/super rules ----------*/
 
-  %strategy RenameIntoTemp() extends `Identity() {
-    visit Prop {
-      forAll(n,p) -> { return `forAll("temp_"+n,p); }
-      exists(n,p) -> { return `exists("temp_"+n,p); }
-    }
-    visit Term {
-       Var(name) -> { return `Var("temp_" + name); }
-    }
-  }
+  %typeterm StringSet { implement { Set<String> } }
 
-  %strategy RenameFromTemp() extends `Identity() {
+  %strategy RenameIntoTemp(bounded : StringSet) extends `Fail() {
     visit Prop {
-      forAll(n,p) -> { if (`n.startsWith("temp_")) return `forAll(n.substring(5),p); }
-      exists(n,p) -> { if (`n.startsWith("temp_")) return `exists(n.substring(5),p); }
-    }
+      forAll(n,p) -> { 
+        bounded.add(`n); 
+        Prop res = (Prop) 
+          ((MuStrategy) `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y"))))).apply(`p);
+        bounded.remove(`n);
+        return `forAll(n,res);
+      }
+      exists(n,p) -> { 
+        bounded.add(`n); 
+        Prop res = (Prop) 
+          ((MuStrategy) `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y"))))).apply(`p);
+        bounded.remove(`n);
+        return `exists(n,res);
+      }
+   }
     visit Term {
-       Var(name) -> { if (`name.startsWith("temp_")) return `Var(name.substring(5)); }
+       v@Var(name) -> { 
+         if (!bounded.contains(`name)) return `Var("@" + name); 
+         else return `v;
+       }
     }
   }
 
   public static sequentsAbstractType 
     substPreTreatment(sequentsAbstractType term) {
+      HashSet<String> bounded = new HashSet();
       return (sequentsAbstractType)
-        ((MuStrategy) `TopDown(RenameIntoTemp())).apply(term);
+        ((MuStrategy) `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y"))))).apply(term);
     }
-
-  public static sequentsAbstractType 
-    substPostTreatment(sequentsAbstractType term) {
-      return (sequentsAbstractType)
-        ((MuStrategy) `TopDown(RenameFromTemp())).apply(term);
-  }
 
  /* ----------------------------------*/
 
   public static Term reduceTerm(Term t, TermRule rule) {
     %match(TermRule rule) {
       termrule(lhs,rhs) -> {
-        t = (Term) substPreTreatment(t);
-
         // recuperage de la table des symboles
         HashMap<String,Term> tds = match(`lhs, t);
-        if (tds == null) return (Term) substPostTreatment(t); 
+        //System.out.println("tds:" + tds);
+        if (tds == null) return t;
 
         Term res = `rhs;
-
         // substitution
         Set<Map.Entry<String,Term>> entries = tds.entrySet();
         for (Map.Entry<String,Term> ent: entries) {
@@ -200,8 +200,7 @@ class Unification {
           Term new_term = ent.getValue();
           res = (Term) Utils.replaceTerm(res, old_var, new_term);
         }
-
-        return (Term) substPostTreatment(res);
+        return res;
       }
     }
     return t;
@@ -210,23 +209,19 @@ class Unification {
   public static Prop reduceProp(Prop p, PropRule rule) {
     %match(PropRule rule) {
       proprule(lhs,rhs) -> {
-        p = (Prop) substPreTreatment(p);
-
         // recuperage de la table des symboles
         HashMap<String,Term> tds = match(`lhs, p);
-        if (tds == null) return (Prop) substPostTreatment(p); 
+        if (tds == null) return p;
 
         Prop res = `rhs;
-
         // substitution
         Set<Map.Entry<String,Term>> entries = tds.entrySet();
         for (Map.Entry<String,Term> ent: entries) {
           Term old_var = `Var(ent.getKey());
           Term new_term = ent.getValue();
-          res = (Prop) Utils.replaceTerm(res, old_var, new_term);
+          res = Utils.replaceFreeVars(res, old_var, new_term);
         }
-
-        return (Prop) substPostTreatment(res);
+        return res;
       }
     }
     return p;
