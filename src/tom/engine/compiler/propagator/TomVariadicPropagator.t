@@ -123,20 +123,14 @@ public class TomVariadicPropagator implements TomIBasePropagator{
   }
 
   private static TomTerm getBeginVariableStar(TomType type){
-    TomNumberList path = TomConstraintCompiler.getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("begin_" + (++beginEndCounter)))));
-    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+    return TomConstraintCompiler.getFreshVariableStar("begin_" + (++beginEndCounter),type);
   }
 
-  private static TomTerm getEndVariableStar(TomType type){
-    TomNumberList path = TomConstraintCompiler.getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("end_" + beginEndCounter))));
-    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+  private static TomTerm getEndVariableStar(TomType type){    
+    return TomConstraintCompiler.getFreshVariableStar("end_" + beginEndCounter,type);
   }
 
-  private static TomTerm getFreshVariableStar(TomType type){
-    TomNumberList path = TomConstraintCompiler.getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshList_" + (++freshVarCounter)))));
-    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+  private static TomTerm getFreshVariableStar(TomType type){    
+    return TomConstraintCompiler.getFreshVariableStar("freshList_" + (++freshVarCounter),type);
   }
 }

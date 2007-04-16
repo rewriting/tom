@@ -22,7 +22,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
   %strategy SyntacticPatternMatching() extends `Identity(){		
     visit Constraint{			
       // Decompose
-      // f(t1,...,tn) = g -> f = SymbolOf(g) /\ t1=subterm1(g) /\ ... /\ tn=subtermn(g) 
+      // f(t1,...,tn) = g -> f = SymbolOf(g) /\ freshVar1=subterm1(g) /\ t1==freshVar1 /\ ... /\ freshVarn=subtermn(g) /\ tn==freshVarn 
       // we can decompose only if 'g' != SymbolOf 
       m@MatchConstraint(lhs@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
@@ -86,10 +86,5 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
         if (`name == varName) { return `MatchConstraint(value,t); }
       }
     }
-//  visit TomTerm {
-//  Variable[AstName=name] -> {
-//  if (`name == varName) { return value; }  
-//  }
-//  }
-  }
+  }// end strategy
 }

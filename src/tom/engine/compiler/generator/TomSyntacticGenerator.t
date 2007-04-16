@@ -38,6 +38,7 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
           concTomName(_*,name,_*) ->{
             Expression check = `EqualFunctionSymbol(termType,subject,RecordAppl(option,concTomName(name),l,concConstraint()));
 //          [pem] can we consider Or as AU with False() as neutral element: this would remove the test
+// TODO - yes, when Or will be variadic (for the moment is binary)            
             cond = (cond == null ? check : `Or(check,cond));	
           }
         }

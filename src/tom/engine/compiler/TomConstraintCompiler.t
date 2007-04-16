@@ -208,4 +208,16 @@ public class TomConstraintCompiler extends TomBase {
     }
     throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + tomTerm);
   }
+  
+  public static TomTerm getFreshVariable(String name, TomType type){
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `Variable(concOption(),freshVarName,type,concConstraint());
+  }
+  
+  public static TomTerm getFreshVariableStar(String name, TomType type){
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+  }
 }

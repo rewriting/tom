@@ -87,18 +87,17 @@ public class TomPropagationManager extends TomBase {
     visit TomTerm{
       t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] ->{
 
-        TomNumberList path = TomConstraintCompiler.getRootpath();
-        TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("fresh_"+ (++freshVarCounter)))));
+        String freshVarName  = "fresh_"+ (++freshVarCounter);
         TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = null;
         // make sure that if we had a varStar, we replace with a varStar also
 match : %match(t) {
           (VariableStar|UnamedVariableStar)[] ->{
-            freshVariable = `VariableStar(concOption(),freshVarName,freshVarType,concConstraint());
+            freshVariable = TomConstraintCompiler.getFreshVariableStar(freshVarName,freshVarType);
             break match;
           }
           _ -> {
-            freshVariable = `Variable(concOption(),freshVarName,freshVarType,concConstraint());
+            freshVariable = TomConstraintCompiler.getFreshVariable(freshVarName,freshVarType);
           }
         }         
 
