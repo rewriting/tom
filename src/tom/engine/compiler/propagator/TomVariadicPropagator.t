@@ -99,11 +99,9 @@ public class TomVariadicPropagator implements TomIBasePropagator{
       }					
       // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
       // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-      andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[]],p1),Y*) ->{
-        Constraint toApplyOn = `AndConstraint(Y*);
-        TomNumberList path = TomConstraintCompiler.getRootpath();
-        TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshVar_" + (++freshVarCounter)))));
-        TomTerm freshVar = `v.setAstName(freshVarName);
+      andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) ->{
+        Constraint toApplyOn = `AndConstraint(Y*);        
+        TomTerm freshVar = getFreshVariableStar(`type);
         Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
         if (res != toApplyOn){					
           return `AndConstraint(X*,eq,res);
