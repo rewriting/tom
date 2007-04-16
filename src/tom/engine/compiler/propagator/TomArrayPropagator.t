@@ -97,11 +97,9 @@ public class TomArrayPropagator implements TomIBasePropagator{
           }					
           // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
           // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-          andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[]],p1),Y*) ->{
-            Constraint toApplyOn = `AndConstraint(Y*);
-            TomNumberList path = TomConstraintCompiler.getRootpath();
-            TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshVar_" + (++freshVarCounter)))));
-            TomTerm freshVar = `v.setAstName(freshVarName);
+          andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) ->{
+            Constraint toApplyOn = `AndConstraint(Y*);            
+            TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar("freshVar_" + (++freshVarCounter),`type);
             Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
             if (res != toApplyOn){					
               return `AndConstraint(X*,eq,res);
@@ -120,21 +118,18 @@ public class TomArrayPropagator implements TomIBasePropagator{
     }
   }
 
-  private static TomTerm getBeginIndex(){
-    TomNumberList path = TomConstraintCompiler.getRootpath();
-    TomName freshIndexName  = `PositionName(concTomNumber(path*,NameNumber(Name("begin_" + (++beginEndCounter)))));
-    return `Variable(concOption(),freshIndexName,TomConstraintCompiler.getIntType(),concConstraint());
+  private static TomTerm getBeginIndex(){    
+    return TomConstraintCompiler.getFreshVariableStar("begin_" + (++beginEndCounter),
+        TomConstraintCompiler.getIntType());
   }
 
   private static TomTerm getEndIndex(){
-    TomNumberList path = TomConstraintCompiler.getRootpath();
-    TomName freshIndexName  = `PositionName(concTomNumber(path*,NameNumber(Name("end_" + beginEndCounter))));
-    return `Variable(concOption(),freshIndexName,TomConstraintCompiler.getIntType(),concConstraint());
+    return TomConstraintCompiler.getFreshVariableStar("end_" + beginEndCounter,
+        TomConstraintCompiler.getIntType());
   }
 
   private static TomTerm getFreshIndex(){
-    TomNumberList path = TomConstraintCompiler.getRootpath();
-    TomName freshIndexName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshIndex_" + (++freshVarCounter)))));
-    return `Variable(concOption(),freshIndexName,TomConstraintCompiler.getIntType(),concConstraint());    
+    return TomConstraintCompiler.getFreshVariableStar("freshIndex_" + (++freshVarCounter),
+        TomConstraintCompiler.getIntType());    
   }
 }
