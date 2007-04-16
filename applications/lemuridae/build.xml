@@ -5,6 +5,7 @@
   </description>
   <property name="javacSource" value="1.5"/>
   <property name="javacTarget" value="1.5"/>
+  <property name="optimize2"   value="on"/>
  
   <property environment="env"/>
   <property name="tom.home" value="${env.TOM_HOME}"/>
