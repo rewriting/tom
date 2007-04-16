@@ -751,7 +751,19 @@ b :{
     implement { ArrayList<Rule> }
   }
 
-  %strategy ApplyAuto(newRules: RuleArrayList) extends Identity() {
+  %strategy ApplyReduce(newTermRules: TermRuleList, newPropRules: PropRuleList) extends `Identity() {
+      visit Tree {
+	  rule[c=goal,active=a] -> {
+	      Sequent s = (Sequent) Unification.reduce(`goal,newTermRules,newPropRules);
+	      if(s.equals(`goal)) throw new jjtraveler.VisitFailure();
+	      Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
+	      // get new tree
+	      return `rule(reductionInfo(), prems, goal, a);
+	  }
+      }
+  }
+
+  %strategy ApplyAutoFail(newRules: RuleArrayList) extends `Fail() {
     visit Tree {
       // right hand side (+ axiom)
       t@rule[c=sequent(_,(_*,p,_*))] -> { 
@@ -768,7 +780,7 @@ b :{
 
       // left hand side
       t@rule[c=sequent((_*,p,_*),_)] -> {
-        MuStrategy strat;
+	MuStrategy strat;
         Rule r = applicableInAuto(newRules, `p, true);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
         if(r != null) strat = `ApplyRule(r,p,hm); 
@@ -780,10 +792,15 @@ b :{
       }
     }
   }
-  
+
+  %op Strategy ApplyAuto(newRules: RuleArrayList) {
+      make(newRules) { `Try(ApplyAutoFail(newRules)) }
+  }
+
   %op Strategy SafeTopDown(s:Strategy) {
     make(s) { `mu(MuVar("x"), Choice(Sequence(Not(Is_customRuleInfo()),s,All(MuVar("x"))), Identity()))  }
   }
+
 
   /* ------------------------------------------------------------------ */
 
@@ -973,6 +990,26 @@ b :{
           }
         }
 
+        /* experimental autoreduce case */
+        proofCommand("autoreduce") -> {
+          try {
+	      MuStrategy strat = 
+		  // Warning: _premisses uses "x" as MuVar
+		  `mu(MuVar("y"), 
+		      Choice(Sequence(ApplyAutoFail(newRules),
+				      _rule(Identity(),_premisses(MuVar("y")),Identity(),Identity())),
+			     Choice(Sequence(ApplyReduce(newTermRules, newPropRules),
+					     _rule(Identity(),_premisses(MuVar("y")), Identity(),Identity())), 
+				    Identity())));
+			     
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+          } catch (Exception e) {
+            System.out.println("Can't apply autoreduce" + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
+
         /* intros case */
         proofCommand("intros") -> {
           try {
@@ -1038,7 +1075,9 @@ b :{
         /* experimental reduce case */
         normalizeSequent() -> {
           try {
-            tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
+	      MuStrategy strat = `Try(ApplyReduce(newTermRules, newPropRules));
+	    tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+	    //old: tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }

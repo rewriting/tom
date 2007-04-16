@@ -24,9 +24,26 @@ rule in(a,pitype(b,c)) -> in(b,type()) /\ \Az. (in(z,b) =>
 	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),type()))).
 rule in(a,pikind(b,c)) -> in(b,type()) /\ \Az. (in(z,b) =>
 	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),kind()))).
- 	        
+
+rule WF(cons(gamma,e(a,b))) ->
+    (WF(gamma)=>(in(b,type())\/in(b,kind()))) => (C(gamma) /\in(a,b)).
+
+rule C(cons(gamma,e(a,b))) -> 
+     C(gamma) /\ in(a,b).
+
 
 rule NatListTheory() ->
+     WF(cons(cons(cons(cons(cons(cons(nil(),
+     e(nat,type())),
+     e(z,nat)), 
+     e(succ,pitype(nat,subst(nat,shift())))),
+     e(natList, pikind(nat, subst(type(),shift())))),
+     e(nil,lappl(natList,z))),
+     e(cons, pitype(nat, pitype(subst(nat,shift()), (pitype(lappl(subst(natList,rond(shift(),shift())), one()), 
+      	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))))).
+
+
+/*rule NatListTheory() ->
      in(nat,type) /\ 
      in(z,nat) /\ 
      in(succ,pitype(nat,subst(nat,shift()))) /\
@@ -34,21 +51,49 @@ rule NatListTheory() ->
      in(nil,lappl(natList,z)) /\ 
      in(cons, pitype(nat, pitype(subst(nat,shift()), (pitype(lappl(subst(natList,rond(shift(),shift())), one()), 
       	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))).
+*/
 
 proof singletonZ: NatListTheory() =>
       in(lappl(lappl(lappl(cons, lappl(succ, z)), z), nil), lappl(natList,lappl(succ,z))).
-intro. focus h1. rule.
-focus h6. rule. lappl(succ, z). reduce.
-focus h4. rule. z. reduce.
-axiom.
-reduce. axiom.
-reduce. focus h2. rule. z. 
-axiom.
+autoreduce.
+focus h7. rule. z.
+autoreduce.
+autoreduce.
+focus h6. rule. z.
+autoreduce.
+autoreduce.
+focus h7. rule. lappl(succ, z1).
+autoreduce.
+focus h7. rule. z1.
+autoreduce.
+autoreduce.
+focus h6. rule. z1.
+autoreduce.
+autoreduce.
+focus h7. rule. lappl(succ, z).
+focus h5. rule. z.
+autoreduce.
+autoreduce.
+reduce. focus h2. rule. z.
+autoreduce.
 reduce. focus h2. rule. nil.
-axiom.
-reduce. axiom.
+autoreduce.
+autoreduce.
 
 rule SimpleTypeTheory() ->
+       \AA.(\AB.(\AC.(\AD.( WF(cons(cons(cons(cons(cons(cons(cons(cons(nil(),
+       e(tp,type())),
+       e(arrow, pitype(tp, pitype(subst(tp,shift()),subst(tp,rond(shift(),shift())))))),
+       e(nat, tp)),
+       e(lterm, pikind(tp,subst(type(),shift())))),
+       e(z, lappl(lterm, nat))),
+       e(s, lappl(lterm, lappl(lappl(arrow,nat),nat)))),
+       e(app, pitype(lappl(lterm, lappl(lappl(arrow,A),B)),
+	       			pitype(lappl(subst(lterm,shift()),subst(A,shift())),
+				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift()))))))),
+       e(lam, pitype(pitype(lappl(lterm, C), lappl(subst(lterm,shift()),subst(D,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(C,shift())),subst(D,shift()))))))))))).
+
+/*rule SimpleTypeTheory() ->
        in(tp,type) /\
        in(arrow, pitype(tp, pitype(subst(tp,shift()),subst(tp,rond(shift(),shift()))))) /\
        in(nat, tp) /\
@@ -58,25 +103,128 @@ rule SimpleTypeTheory() ->
        \AA. (\AB. (in(app, pitype(lappl(lterm, lappl(lappl(arrow,A),B)),
 	       			pitype(lappl(subst(lterm,shift()),subst(A,shift())),
 				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift())))))))) /\
-       \AA.(\AB. (in(lam, pitype(pitype(lappl(lterm, A), lappl(subst(lterm,shift()),subst(B,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(A,shift())),subst(B,shift()))))))).
+       \AA.(\AB. (in(lam, pitype(pitype(lappl(lterm, A), lappl(subst(lterm,shift()),subst(B,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(A,shift())),subst(B,shift()))))))).*/
 
 proof lambdaXsX: SimpleTypeTheory() =>
 	       in(lappl(lam, lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one()))),
 	          lappl(lterm, lappl(lappl(arrow, nat), nat))).
 intro. focus h1. rule. nat. nat. nat. nat.
-focus h8. rule. lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one())).
-rule.
-reduce.
+autoreduce.
 focus h6. rule. nat.
-reduce. axiom.
-axiom.
+autoreduce.
+autoreduce.
 focus h5. rule. nat.
-reduce. axiom.
-axiom.
-reduce.
-focus h9. rule. s.
-axiom.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. lappl(lappl(arrow, nat), nat).
+autoreduce.
+focus h4. rule. nat.
+autoreduce.
+reduce. focus h2. rule. nat.
+
+autoreduce.
+autoreduce.
+focus h5. rule. lappl(lappl(arrow, nat), nat).
+autoreduce.
+focus h4. rule. nat.
+autoreduce.
+reduce. focus h2. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. lappl(lappl(arrow, nat), nat).
+autoreduce.
+focus h4. rule. nat.
+autoreduce.
+reduce. focus h2. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+focus h5. rule. nat.
+autoreduce.
+autoreduce.
+
+focus h9. rule. lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one())).
+autoreduce.
+focus h7. rule. nat.
+autoreduce.
+autoreduce.
+focus h6. rule. nat.
+autoreduce.
+autoreduce.
+focus h10. rule. s.
+autoreduce.
 reduce. focus h2. rule. z0.
-axiom.
-reduce. axiom.
-reduce. axiom.
+autoreduce.
+autoreduce.
+autoreduce.
