@@ -235,7 +235,7 @@ public class GomReferenceExpander {
 
     String codeStrategies = "";
     String CollectLabels= "Fail()",Collect = "Fail()";
-    String Min= "Identity()",Switch= "Identity()",ClearMarked= "Identity()",Label2Path = "Identity()";
+    String Label2Path = "Identity()",NormalizeLabel = "Identity()";
 
     %match(sorts){
       concSort(_*,Sort[Decl=SortDecl[Name=sortName]],_*) -> {
@@ -243,12 +243,9 @@ public class GomReferenceExpander {
           import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.*;
         ]%;
         codeStrategies += getStrategies(`sortName,moduleName);
-        Min = "Sequence(Min"+`sortName+"(info),"+Min+")";
-        Switch = "Sequence(Switch"+`sortName+"(info),"+Switch+")";
-        ClearMarked = "Sequence(ClearMarked"+`sortName+"(marked),"+ClearMarked+")";
         Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
         CollectLabels = "ChoiceV(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
-        Collect = "ChoiceV(Collect"+`sortName+"(marked,info),"+Collect+")";
+        NormalizeLabel = "Sequence(NormalizeLabel"+`sortName+"(map),"+NormalizeLabel+")";
       }
     }
 
@@ -261,6 +258,8 @@ public class GomReferenceExpander {
       }
     ]%;
 
+    /** 
+    */
 
 
     String codeBlockTermGraph =%[
@@ -269,9 +268,8 @@ public class GomReferenceExpander {
         Info info = new Info();
         ArrayList marked = new ArrayList();
         HashMap map = new HashMap();
-        Strategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(@Collect@),BottomUp(@Min@),TopDown(@Switch@))),@ClearMarked@));
-        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
-        return (@moduleName@AbstractType) `Sequence(normalization,label2path).fire(t);
+        @moduleName@AbstractType tt = (@moduleName@AbstractType) `InnermostIdSeq(@NormalizeLabel@).fire(t);
+        return label2path(tt);
       }
 
       public static @moduleName@AbstractType label2path(@moduleName@AbstractType t){
@@ -307,44 +305,6 @@ public class GomReferenceExpander {
         }
       }
 
-    %strategy Min@sortName@(info:Info) extends Identity(){
-      visit @sortName@{
-        ref@sortName@[label=label] -> {
-          if(`label.equals(info.label)){
-            if(getEnvironment().getPosition().compare(info.path)==-1){
-              info.path=getEnvironment().getPosition(); 
-            }
-          }
-        }
-      }
-    }
-
-    %strategy Switch@sortName@(info:Info) extends Identity(){
-      visit @sortName@{
-        ref@sortName@[label=label] -> {
-          if (info.path.equals(getEnvironment().getPosition())){
-            return (@sortName@) info.term;
-          }
-        }
-        lab@sortName@[label=label,term=term] -> {
-          if(`label.equals(info.label)){
-            if (! info.path.equals(getEnvironment().getPosition())){
-              return `ref@sortName@(label);
-            }
-          }
-        }
-      }
-    }
-
-
-    %strategy ClearMarked@sortName@(list:ArrayList) extends Identity(){
-      visit @sortName@{
-        _ -> {
-          list.clear();
-        }
-      }
-    }
-
     %strategy CollectLabels@sortName@(map:HashMap) extends Fail(){
       visit @sortName@{
         lab@sortName@[label=label,term=term]-> {
@@ -358,7 +318,7 @@ public class GomReferenceExpander {
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if (! map.containsKey(`label)) {
-            // ref with an unexistent label
+            // find a reference with an unexistent label
             throw new RuntimeException("Term-graph with a null reference at"+getEnvironment().getPosition());
           }
           else {
@@ -366,6 +326,49 @@ public class GomReferenceExpander {
             @sortName@ ref = (@sortName@) (path@sortName@.make(target.sub(getEnvironment().getPosition())).normalize());
             return ref;
           }
+        }
+      }
+    }
+
+    %strategy CollectSubterm@sortName@(label:String,subterm:Subterm) extends Identity(){
+      visit @sortName@ {
+        lab@sortName@[label=label,term=subterm] -> {
+          if(label.equals(`label)){
+            subterm.term = `subterm;
+            subterm.omega = getEnvironment().getPosition();
+            return `ref@sortName@(label);
+          }
+        }
+      }
+    }
+
+    %typeterm Subterm{
+      implement {Subterm}
+    }
+
+    static class Subterm{
+      public Position omega;
+      public @sortName@ term;
+    }
+
+
+    %strategy NormalizeLabel@sortName@(map:HashMap) extends Identity(){
+      visit @sortName@ {
+        ref@sortName@[label=label] -> {
+          if (! map.containsKey(`label)){
+            Subterm subterm = new Subterm();
+            Position pos = new Position(new int[]{});
+            Position old = getEnvironment().getPosition();
+            Position rootpos = new Position(new int[]{});
+            map.put(`label,old);
+            getEnvironment().goTo(rootpos.sub(getEnvironment().getPosition()));
+            execute(`Try(TopDown(CollectSubterm@sortName@(label,subterm))));
+            getEnvironment().goTo(old.sub(getEnvironment().getPosition()));
+            return `lab@sortName@(label,subterm.term);
+          }
+        }
+        lab@sortName@[label=label] -> {
+          map.put(`label,getEnvironment().getPosition());
         }
       }
     }
