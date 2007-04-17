@@ -1,5 +1,5 @@
 /* This grammar parses simple rules */
-grammar RuleParser;
+grammar Rule;
 
 @header {
 	package tom.gom.expander.rule;
