@@ -294,9 +294,9 @@
 
     <!-- gom parser -->
     <tomcompile srcdir="${src.src}"
-	    outputfile="${gen.destination}/tom/gom/parser/GomParser.g"
+            outputfile="${gen.destination}/tom/gom/expander/rule/RuleParser.g"
 	    options="-I ${gen.destination}">
-      <include name="tom/gom/**/GomParser.g.t"/>
+      <include name="tom/gom/expander/rule/RuleParser.g.t"/>
     </tomcompile>
   </target>
 
@@ -349,6 +349,18 @@
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
+
+    <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="stable.classpath"/>
+    </taskdef>
+    <antlr3 target="${gen.destination}/tom/gom/expander/rule/RuleParser.g"
+            outputdirectory="${gen.destination}/tom/gom/expander/rule"
+            libdirectory="${gen.destination}/tom/gom/expander/rule"
+            multithreaded="true">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
   </target>
 
   <target name="buildmappings">
