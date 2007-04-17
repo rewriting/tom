@@ -3,9 +3,9 @@
 %include { adt/bytecode/Bytecode.tom }
 
 /**
- * This strategy fills in the `Map' m with the `ConsInstructionList'
+ * This strategy fills in the `Map' m with the position 
  * corresponding to each `Anchor'.
- * Thus, we can retrieve the `ConsInstructionList' from a `Label'.
+ * Thus, we can retrieve the position from a `Label'.
  * @param m the map to be filled.
  */
 

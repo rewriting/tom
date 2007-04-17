@@ -228,8 +228,9 @@ public class CFGViewer {
    * @param list the try/catch/finally blocks to be printed.
    * @param labelMap the label map (see the BuildLabelMap strategy).
    * @param out the writer to be used for the dot output.
+   * @param inst the global list of instructions.
    */
-  private static void printTryCatchBlocks(TTryCatchBlockList list, Map labelMap, Writer out) {
+  private static void printTryCatchBlocks(TTryCatchBlockList list, Map labelMap, Writer out,TInstructionList inst) {
     %match(TTryCatchBlockList list) {
       TryCatchBlockList(_*, x, _*) -> {
         try {
@@ -239,23 +240,31 @@ public class CFGViewer {
 
           %match(THandler handler) {
             CatchHandler(h, t) -> {
+              Position labelPosition = (Position) labelMap.get(`h);
+              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().fire(inst);
               out.write(%[
                   @id@ [label="Catch\ntype : @`t@" shape=box];
-                  @id@ -> @getDotId((TInstructionList)labelMap.get(`h))@ [label="handler" style=dotted];
+                  @id@ -> @getDotId(labelInst)@ [label="handler" style=dotted];
                   ]%);
             }
 
             FinallyHandler(h) -> {
+              Position labelPosition = (Position) labelMap.get(`h);
+              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().fire(inst);
               out.write(%[
                   @id@ [label="Finally" shape=box];
-                  @id@ -> @getDotId((TInstructionList)labelMap.get(`h))@ [label="handler" style=dotted];
+                  @id@ -> @getDotId(labelInst)@ [label="handler" style=dotted];
                   ]%);
             }
           }
 
+          Position startPosition = (Position) labelMap.get(block.getstart());
+          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().fire(inst);
+          Position endPosition = (Position) labelMap.get(block.getend());
+          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().fire(inst);
           out.write(%[
-              @id@ -> @getDotId((TInstructionList)labelMap.get(block.getstart()))@ [label="start" style=dotted];
-              @id@ -> @getDotId((TInstructionList)labelMap.get(block.getend()))@ [label="end" style=dotted];
+              @id@ -> @getDotId(startInst)@ [label="start" style=dotted];
+              @id@ -> @getDotId(lastInst)@ [label="end" style=dotted];
               ]%);
         } catch(IOException e) {
           e.printStackTrace();
@@ -269,18 +278,23 @@ public class CFGViewer {
    * @param list the local variables list to be printed.
    * @param labelMap the label map (see the BuildLabelMap strategy).
    * @param out the writer to be used for the dot output.
+   * @param inst the global list of instructions.
    */
-  private static void printLocalVariables(TLocalVariableList list, Map labelMap, Writer out) {
+  private static void printLocalVariables(TLocalVariableList list, Map labelMap, Writer out, TInstructionList inst) {
     %match(TLocalVariableList list) {
       LocalVariableList(_*, x, _*) -> {
         try {
           TLocalVariable var = `x;
           String id = getDotId(var);
+          Position startPosition = (Position) labelMap.get(var.getstart());
+          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().fire(inst);
+          Position endPosition = (Position) labelMap.get(var.getend());
+          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().fire(inst);
 
           out.write(%[
               @id@ [label="var : @var.getname()@\ndescriptor : @var.gettypeDesc()@\nindex : @Integer.toString(var.getindex())@" shape=box];
-              @id@ -> @getDotId((TInstructionList)labelMap.get(var.getstart()))@ [label="start" style=dotted];
-              @id@ -> @getDotId((TInstructionList)labelMap.get(var.getend()))@ [label="end" style=dotted];
+              @id@ -> @getDotId(startInst)@ [label="start" style=dotted];
+              @id@ -> @getDotId(lastInst)@ [label="end" style=dotted];
               ]%);
         } catch(IOException e) {
           e.printStackTrace();
@@ -352,10 +366,10 @@ public class CFGViewer {
             toDot.fire(ins);
 
             // Prints the try/catch/finally blocks.
-            printTryCatchBlocks(`x.getcode().gettryCatchBlocks(), labelMap, w);
+            printTryCatchBlocks(`x.getcode().gettryCatchBlocks(), labelMap, w, ins);
 
             // Prints the local variables informations.
-            printLocalVariables(`x.getcode().getlocalVariables(), labelMap, w);
+            printLocalVariables(`x.getcode().getlocalVariables(), labelMap, w, ins);
           }
 
           w.write("}\n");
