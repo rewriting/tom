@@ -1,7 +1,13 @@
 /* This grammar parses simple rules */
 grammar Rule;
+options {
+  output=AST;
+}
 
 @header {
+	package tom.gom.expander.rule;
+}
+@lexer::header {
 	package tom.gom.expander.rule;
 }
 ruleset	:	(rule)* ;
@@ -28,3 +34,4 @@ ID	:
             ( LETTER | DIGIT | '_' )
         )*
     ;
+WS	:	(' '|'\t'|'\n')+ { $channel=99; } ;

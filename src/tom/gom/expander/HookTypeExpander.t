@@ -34,6 +34,7 @@ import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.expander.rule.RuleExpander;
 
 public class HookTypeExpander {
 
@@ -155,6 +156,9 @@ public class HookTypeExpander {
           }
           HookKind("ACU") -> {
             return `makeACUHookList(hName,mdecl,scode);
+          }
+          HookKind("rules") -> {
+            return `makeRulesHookList(hName,mdecl,scode);
           }
         }
         if (newHookList == `concHookDecl()) {
@@ -371,6 +375,14 @@ public class HookTypeExpander {
       }
     }
     return null;
+  }
+
+  /*
+   * generate hooks for associative-commutative with neutral element
+   */
+  private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
+    RuleExpander rexpander = new RuleExpander(moduleList);
+    return rexpander.expandRules(trimBracket(scode));
   }
 
   /*

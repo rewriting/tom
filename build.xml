@@ -268,7 +268,7 @@
       <include name="tom/antlrmapper/**/*.t"/>
 
       <exclude name="tom/engine/parser/*.g.t"/>
-      <exclude name="tom/gom/**/GomParser.g.t"/>
+      <exclude name="tom/gom/expander/rule/Rule.g.t"/>
       <!-- needs to generate mappings first -->
       <exclude name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>

@@ -25,6 +25,10 @@
 
 package tom.gom.expander.rule;
 
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.tree.Tree;
+
 import tom.gom.adt.gom.types.*;
 
 public class RuleExpander {
@@ -36,7 +40,17 @@ public class RuleExpander {
     this.moduleList = data;
   }
 
-  public HookDeclList expandRule(String ruleCode) {
+  public HookDeclList expandRules(String ruleCode) {
+    System.out.println("Rules to parse : " + ruleCode);
+    RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    RuleParser parser = new RuleParser(tokens);
+    try {
+      Tree ast = (Tree)parser.ruleset().getTree();
+      System.out.println("Rules : " + ast.toStringTree());
+    } catch (org.antlr.runtime.RecognitionException e) {
+      System.out.println("Got RecognitionException while parsing ruleset");
+    }
     return `concHookDecl();
   }
 }
