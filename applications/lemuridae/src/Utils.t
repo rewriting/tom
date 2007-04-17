@@ -26,60 +26,13 @@ class Utils {
     stream = newStream;
   }
   
-  // pour convenance
-
-  public static Tree axiom(Sequent s, Prop active) {
-    return `rule(axiomInfo(), premisses(), s, active);
-  }
-
-  public static Tree impliesL(Tree s1, Tree s2, Sequent c, Prop active) {
-    return `rule(impliesLeftInfo(), premisses(s1,s2), c, active);
-  }
-
-  public static Tree impliesR(Tree s, Sequent c, Prop active) {
-    return `rule(impliesRightInfo(), premisses(s), c, active);
-  }
-
-  public static Tree andL(Tree s, Sequent c, Prop active) {
-    return `rule(andLeftInfo(), premisses(s), c, active);
-  }
-
-  public static Tree andR(Tree s1, Tree s2, Sequent c, Prop active) {
-    return `rule(andRightInfo(), premisses(s1,s2), c, active);
-  }
-
-  public static Tree orR(Tree s, Sequent c, Prop active) {
-    return `rule(orRightInfo(), premisses(s), c, active);
-  }
-
-  public static Tree orL(Tree s1, Tree s2, Sequent c, Prop active) {
-    return `rule(orLeftInfo(), premisses(s1,s2), c, active);
-  }
-
-  public static Prop prop(String name) {  // relation d'arite nulle, pour convenance
-    return `relationAppl(relation(name), concTerm());
-  }
-
-
   %include { mutraveler.tom }
 
   %strategy ReplaceTerm(old_term: Term, new_term: Term) extends `Identity() {
     visit Term {
-      x -> { 
-        if (`x == old_term) return new_term;
-      }
+      x -> { if (`x == old_term) return new_term; }
     }
   }
-
-  /*
-  %strategy ReplaceProp(old_prop: Prop, new_prop: Prop) extends `Identity() {
-    visit Prop {
-      x -> {
-        if (`x == old_prop) return new_prop;
-      }
-    }
-  }
-*/
 
   public static sequentsAbstractType replaceTerm(sequentsAbstractType subject, 
       Term old_term, Term new_term) 
