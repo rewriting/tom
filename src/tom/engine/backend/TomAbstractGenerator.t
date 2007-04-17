@@ -264,9 +264,9 @@ public abstract class TomAbstractGenerator {
             return;
           }
         } else if(TomBase.hasTheory(`optionList, `TrueAU())) {
-	  generateExpression(deep,`IsSort(type,exp), moduleName);
+          generateExpression(deep,`IsSort(type,exp), moduleName);
         } else {
-	  generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
+          generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
         }
         return;
       }
@@ -557,8 +557,8 @@ public abstract class TomAbstractGenerator {
       }
 
       GetImplementationDecl(Variable[AstName=Name(name),
-                              AstType=Type(ASTTomType(type),tlType@TLType[])],
-                     instr, _) -> {
+                            AstType=Type(ASTTomType(type),tlType@TLType[])],
+                            instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
           `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
         }
@@ -566,9 +566,9 @@ public abstract class TomAbstractGenerator {
       }
 
       IsFsymDecl(Name(tomName),
-       Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]], instr, _) -> {
+       Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
-          `buildIsFsymDecl(deep, tomName, name, tlType, instr, moduleName);
+          `buildIsFsymDecl(deep, tomName, varname, tlType, instr, moduleName);
         }
         return;
       }

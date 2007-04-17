@@ -44,17 +44,21 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
 public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected HashMap isFsymMap = new HashMap();
   protected boolean lazyMode;
+  protected boolean nodeclMode;
+  protected String modifier = "";
 
   public TomGenericGenerator(OutputCode output, OptionManager optionManager,
                              SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
     lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
+    nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
   }
 
   // ------------------------------------------------------------
@@ -203,7 +207,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     genDecl(TomBase.getTLType(returnType),"tom_get_fun_sym", type,args,tlCode, moduleName);
   }
 
-  protected void buildGetImplementationDecl(int deep, String type, String name,
+  protected void buildGetImplementationDecl(int deep, String type, String typename,
                                             TomType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
     if(!lazyMode) {
@@ -215,11 +219,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     genDeclInstr(returnType,
             "tom_get_implementation", type,
-            new String[] { argType, name },
+            new String[] { argType, typename },
             instr,deep,moduleName);
   }
 
-  protected void buildIsFsymDecl(int deep, String tomName, String name1,
+  protected void buildIsFsymDecl(int deep, String tomName, String varname,
                                  TomType tlType, Instruction instr, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
@@ -232,10 +236,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType = TomBase.getTLType(getUniversalType());
     }
 
-    genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, new String[] { argType, name1 }, instr,deep,moduleName);
+    genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, 
+        new String[] { argType, varname }, instr,deep,moduleName);
   }
 
-  protected void buildGetSlotDecl(int deep, String tomName, String name1,
+  protected void buildGetSlotDecl(int deep, String tomName, String varname,
                                   TomType tlType, Instruction instr, TomName slotName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
@@ -256,7 +261,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     genDeclInstr(TomBase.getTLType(returnType),
             "tom_get_slot", opname  + "_" + slotName.getString(),
-            new String[] { argType, name1 },
+            new String[] { argType, varname },
             instr,deep,moduleName);
   }
 
@@ -467,6 +472,155 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             functionName, type,
             new String[] { argType, name1 },
             instr,deep,moduleName);
+  }
+
+  /*
+   * the method implementations are here common to C, Java, caml and python
+   */
+  protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_head_" + TomBase.getTomType(domain) + "("); }
+      Name(opName) -> { output.write("tom_get_head_" + `opName + "_" + TomBase.getTomType(domain) + "("); }
+    }
+    generate(deep,var,moduleName);
+    output.write(")");
+  }
+  
+  protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_element_" + TomBase.getTomType(domain) + "("); }
+      Name(opName) -> { output.write("tom_get_element_" + `opName + "_" + TomBase.getTomType(domain) + "("); }
+    }
+
+    generate(deep,varName,moduleName);
+    output.write(",");
+    generate(deep,varIndex,moduleName);
+    output.write(")");
+  }
+ 
+  protected void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException {
+    %match(TomTerm list) {
+      BuildEmptyList(Name(name)) -> {
+        output.write("tom_empty_list_" + `name + "()");
+        return;
+      }
+
+      BuildConsList(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_cons_list_" + `name + "(");
+        generate(deep,`headTerm,moduleName);
+        output.write(",");
+        generate(deep,`tailTerm,moduleName);
+        output.write(")");
+        return;
+      }
+
+      BuildAppendList(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_append_list_" + `name + "(");
+        generate(deep,`headTerm,moduleName);
+        output.write(",");
+        generate(deep,`tailTerm,moduleName);
+        output.write(")");
+        return;
+      }
+
+      BuildEmptyArray(Name(name),size) -> {
+        output.write("tom_empty_array_" + `name + "(" + `size + ")");
+        return;
+      }
+
+      BuildConsArray(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_cons_array_" + `name + "(");
+        generate(deep,`headTerm,moduleName);
+        output.write(",");
+        generate(deep,`tailTerm,moduleName);
+        output.write(")");
+        return;
+      }
+
+      BuildAppendArray(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_append_array_" + `name + "(");
+        generate(deep,`headTerm,moduleName);
+        output.write(",");
+        generate(deep,`tailTerm,moduleName);
+        output.write(")");
+        return;
+      }
+    }
+  }
+
+  protected void buildFunctionCall(int deep, String name, TomList argList, String moduleName) throws IOException {
+    output.write(name);
+    output.writeOpenBrace();
+    while(!argList.isEmptyconcTomTerm()) {
+      generate(deep,argList.getHeadconcTomTerm(),moduleName);
+      argList = argList.getTailconcTomTerm();
+      if(!argList.isEmptyconcTomTerm()) {
+        output.writeComa();
+      }
+    }
+    output.writeCloseBrace();
+  }
+
+
+  protected void genDeclArray(String name, String moduleName) throws IOException {
+    if(nodeclMode) {
+      return;
+    }
+
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+
+    String s = "";
+    String tomType = TomBase.getTomType(listType);
+    String glType = TomBase.getTLType(listType);
+    //String tlEltType = getTLType(eltType);
+    String utype = glType;
+    if(lazyMode) {
+      utype =  TomBase.getTLType(getUniversalType());
+    }
+    
+    String listCast = "(" + glType + ")";
+    String eltCast = "(" + TomBase.getTLType(eltType) + ")";
+    String make_empty = listCast + "tom_empty_array_" + name;
+    String make_insert = listCast + "tom_cons_array_" + name;
+    String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;
+    String get_size = "tom_get_size_" + name +"_" + tomType;
+    
+    s = modifier + utype + " tom_get_slice_" + name +  "(" + utype + " subject, int begin, int end) {\n";
+    s+= "   " + glType + " result = " + make_empty + "(end - begin);\n";
+    s+= "    while( begin != end ) {\n";
+    s+= "      result = " + make_insert + "(" + get_element + "(subject, begin),result);\n";
+    s+= "      begin++;\n";
+    s+= "     }\n";
+    s+= "    return result;\n";
+    s+= "  }\n";
+    s+= "\n";
+    
+    s+= modifier + utype + " tom_append_array_" + name +  "(" + utype + " l2, " + utype + " l1) {\n";
+    s+= "    int size1 = " + get_size + "(l1);\n";
+    s+= "    int size2 = " + get_size + "(l2);\n";
+    s+= "    int index;\n";
+    s+= "   " + glType + " result = " + make_empty + "(size1+size2);\n";
+
+    s+= "    index=size1;\n";
+    s+= "    while(index > 0) {\n";
+    s+= "      result = " + make_insert + "(" + get_element + "(l1,(size1-index)),result);\n";
+    s+= "      index--;\n";
+    s+= "    }\n";
+
+    s+= "    index=size2;\n";
+    s+= "    while(index > 0) {\n";
+    s+= "      result = " + make_insert + "(" + get_element + "(l2,(size2-index)),result);\n";
+    s+= "      index--;\n";
+    s+= "    }\n";
+   
+    s+= "    return result;\n";
+    s+= "  }\n";
+
+    //If necessary we remove \n code depending on pretty option
+    String res = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(res);
   }
 
 } // class TomGenericGenerator

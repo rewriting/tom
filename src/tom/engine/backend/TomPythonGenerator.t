@@ -47,7 +47,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomPythonGenerator extends TomImperativeGenerator {
+public class TomPythonGenerator extends TomGenericGenerator {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -263,10 +263,9 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
       get_slice + "(" + get_tail + "(begin),end,tail));\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
-    output.write(itl.getCode()); 
+    String res  = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(res);
   }
-  
 
   protected void genDeclMake(String funName, TomType returnType, 
       TomList argList, Instruction instr, String moduleName) throws IOException {

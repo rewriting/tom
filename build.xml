@@ -815,6 +815,8 @@
           depends="src.dist">
      <ant dir="${test}" target="build">
        <property name="tom.home" value="${src.dist}"/>
+       <property name="optimize" value="off"/>
+       <property name="optimize2" value="off"/>
      </ant>
   </target>
 

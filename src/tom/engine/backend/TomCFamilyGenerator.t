@@ -47,7 +47,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
+public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -210,13 +210,22 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
                          String args[],
                          TargetLanguage tlCode,
                          String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
     if(nodeclMode) {
       return;
     }
-    s.append(modifier + returnType + " " + declName + "_" + suffix + "(");
+
+    StringBuffer s = new StringBuffer();
+    s.append(modifier);
+    s.append(returnType);
+    s.append(" ");
+    s.append(declName);
+    s.append("_");
+    s.append(suffix);
+    s.append("(");
     for(int i=0 ; i<args.length ; ) {
-      s.append(args[i] + " " + args[i+1]);
+      s.append(args[i]); // parameter type
+      s.append(" ");
+      s.append(args[i+1]); // parameter name
       i+=2;
       if(i<args.length) {
         s.append(", ");
@@ -231,7 +240,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
         return;
       }
 
-      ITL(_) -> {  // pas de \n donc pas besoin de reworkTL
+      ITL(_) -> {
         output.write(s);
         return;
       }
@@ -245,43 +254,43 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
                          String args[],
                          Instruction instr,
                          int deep, String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
     if(nodeclMode) {
       return;
     }
-    s.append(modifier + returnType + " " + declName + "_" + suffix + "(");
+
+    StringBuffer s = new StringBuffer();
+    s.append(modifier);
+    s.append(returnType);
+    s.append(" ");
+    s.append(declName);
+    s.append("_");
+    s.append(suffix);
+    s.append("(");
     for(int i=0 ; i<args.length ; ) {
-      s.append(args[i] + " " + args[i+1]);
+      s.append(args[i]); // parameter type
+      s.append(" ");
+      s.append(args[i+1]); // parameter name
       i+=2;
       if(i<args.length) {
         s.append(", ");
       }
     } 
-
     s.append(") { ");
     output.write(s);
     generateInstruction(deep,instr,moduleName);
-    /*
-     * path to add a semi-colon for 'void instruction'
-     * This is the case of CheckStampDecl
-     */
-    if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();  
-    }
     output.write("}");
     output.writeln();
   }
 
   protected void genDeclList(String name, String moduleName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
-    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-
-    String s = "";
     if(nodeclMode) {
       return;
     }
 
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    StringBuffer s = new StringBuffer();
     String tomType = TomBase.getTomType(listType);
     String glType = TomBase.getTLType(listType);
     //String tlEltType = getTLType(eltType);
@@ -303,54 +312,52 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     String get_slice = listCast + "tom_get_slice_" + name;
     String get_index = "tom_get_index_" + name;
 
-    s+= modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
-    s+= "   if(" + is_empty + "(l1)) {\n";
-    s+= "    return l2;\n";  
-    s+= "   } else if(" + is_empty + "(l2)) {\n";
-    s+= "    return l1;\n";  
+    s.append(modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n");
+    s.append("   if(" + is_empty + "(l1)) {\n");
+    s.append("    return l2;\n");  
+    s.append("   } else if(" + is_empty + "(l2)) {\n");
+    s.append("    return l1;\n");
     if (listType == eltType) {
-      s+= "   } else if(" + is_conc + "(l1)) { \n";  
-      s+= "     if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
-      s+= "       return " + make_insert + "(" + get_head + "(l1),l2);\n";
-      s+= "     } else {\n";
-      s+= "       return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
-      s+= "     }\n";
-      s+= "   } else { \n";
-      s+= "    return " + make_insert + "(l1 , l2);\n";
-      s+= "   }\n";
+      s.append("   } else if(" + is_conc + "(l1)) { \n");  
+      s.append("     if(" + is_empty + "(" + get_tail + "(l1))) {\n");  
+      s.append("       return " + make_insert + "(" + get_head + "(l1),l2);\n");
+      s.append("     } else {\n");
+      s.append("       return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n");
+      s.append("     }\n");
+      s.append("   } else { \n");
+      s.append("    return " + make_insert + "(l1 , l2);\n");
+      s.append("   }\n");
     } else {
-      s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
-      s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
-      s+= "   } else { \n";
-      s+= "    return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
-      s+= "   }\n";
+      s.append("   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n");  
+      s.append("    return " + make_insert + "(" + get_head + "(l1),l2);\n");
+      s.append("   } else { \n");
+      s.append("    return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n");
+      s.append("   }\n");
     }
-    s+= "  }\n";
-    s+= "\n";
+    s.append("  }\n");
+    s.append("\n");
     
-    s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end," + utype + " tail) {\n"; 
-    s+= "   if(" + equal_term + "(begin,end)) {\n";
-    s+= "     return tail;\n";
-    s+= "   } else {\n";
-    s+= "     return " +  make_insert + "(" + get_head + "(begin)," + 
-      get_slice + "(" + get_tail + "(begin),end,tail));\n";
-    s+= "   }\n";
-    s+= "  }\n";
-    s+= "\n";
+    s.append(modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end," + utype + " tail) {\n"); 
+    s.append("   if(" + equal_term + "(begin,end)) {\n");
+    s.append("     return tail;\n");
+    s.append("   } else {\n");
+    s.append("     return " +  make_insert + "(" + get_head + "(begin)," + get_slice + "(" + get_tail + "(begin),end,tail));\n");
+    s.append("   }\n");
+    s.append("  }\n");
+    s.append("\n");
    
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
-    output.write(itl.getCode()); 
+    String res = ASTFactory.makeSingleLineCode(s.toString(), prettyMode);
+    output.write(res);
   }
 
   protected void genDeclMake(String funName, TomType returnType, 
                              TomList argList, Instruction instr, String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
-    StringBuffer check = new StringBuffer();
-    if( nodeclMode) {
+    if(nodeclMode) {
       return;
     }
 
+    StringBuffer s = new StringBuffer();
     s.append(modifier + TomBase.getTLType(returnType) + " " + funName + "(");
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
@@ -373,8 +380,6 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
       }
     }
     s.append(") { ");
-    s.append(check);
-
     output.write(s);
     output.write("return ");
     generateInstruction(0,instr,moduleName);

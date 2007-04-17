@@ -48,7 +48,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomCamlGenerator extends TomImperativeGenerator {
+public class TomCamlGenerator extends TomGenericGenerator {
 
   public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
@@ -280,7 +280,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
         return;
       }
 
-      ITL(_) -> {  // pas de \n donc pas besoin de reworkTL
+      ITL(_) -> {
         output.write(s);
         return;
       }
@@ -355,8 +355,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       get_slice + "(" + get_tail + "(beginning),ending,tail))\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
-    output.write(itl.getCode()); 
+    s = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(s);
   }
   
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType, String moduleName) throws IOException {
