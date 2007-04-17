@@ -111,37 +111,27 @@ class Unification {
   }
 
   public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl, PropRuleList pl) {
-    sequentsAbstractType res = null;
-    while(res != t) {
-      res = t;
-      %match(TermRuleList tl) {
-        (_*,r,_*) -> {
-          MuStrategy ar =  (MuStrategy) `InnermostId(ApplyTermRule(r));
-          t = (sequentsAbstractType) ar.apply(t);
-        }
-      }
-      %match(PropRuleList pl) {
-        (_*,r,_*) -> {
-          MuStrategy ar =  (MuStrategy) `InnermostId(ApplyPropRule(r));
-          t = (sequentsAbstractType) ar.apply(t);
-        }
-      }
-    }
-    return res;
+      MuStrategy ar =  (MuStrategy) `InnermostId(ApplyRules(tl,pl));
+      return (sequentsAbstractType) ar.apply(t);
   }
 
-  %strategy ApplyTermRule(rule:TermRule) extends `Identity() {
+  %strategy ApplyRules(tl:TermRuleList, pl:PropRuleList) extends `Identity() {
     visit Term {
-      x -> {
-        return `reduceTerm(x,rule);
+      x -> { 
+        Term res = `x;
+        %match(TermRuleList tl) {
+          (_*,r,_*) -> { res = `reduceTerm(res,r); }
+        }
+        return res;
       }
     }
-  }
-
-  %strategy ApplyPropRule(rule:PropRule) extends `Identity() {
     visit Prop {
-      x -> {
-        return `reduceProp(x,rule);
+      p -> { 
+        Prop res = `p;
+        %match(PropRuleList pl) {
+          (_*,r,_*) -> { res = `reduceProp(res,r); }
+        }
+        return res;
       }
     }
   }
@@ -192,14 +182,8 @@ class Unification {
         //System.out.println("tds:" + tds);
         if (tds == null) return t;
 
-        Term res = `rhs;
         // substitution
-        Set<Map.Entry<String,Term>> entries = tds.entrySet();
-        for (Map.Entry<String,Term> ent: entries) {
-          Term old_var = `Var(ent.getKey());
-          Term new_term = ent.getValue();
-          res = (Term) Utils.replaceTerm(res, old_var, new_term);
-        }
+        Term res = (Term) Utils.replaceVars(`rhs, tds);
         return res;
       }
     }

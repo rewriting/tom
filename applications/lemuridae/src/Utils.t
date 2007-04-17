@@ -4,6 +4,7 @@ import sequents.types.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Map;
 import java.util.Collection;
 
 import tom.library.strategy.mutraveler.MuTraveler;
@@ -70,6 +71,7 @@ class Utils {
     }
   }
 
+  /*
   %strategy ReplaceProp(old_prop: Prop, new_prop: Prop) extends `Identity() {
     visit Prop {
       x -> {
@@ -77,52 +79,42 @@ class Utils {
       }
     }
   }
+*/
 
   public static sequentsAbstractType replaceTerm(sequentsAbstractType subject, 
       Term old_term, Term new_term) 
   {
-    ReplaceTerm v = new ReplaceTerm(old_term, new_term);
+    VisitableVisitor v = `ReplaceTerm(old_term, new_term);
     sequentsAbstractType res = null;
     try { res = (sequentsAbstractType) MuTraveler.init(`TopDown(v)).visit(subject); }
     catch (VisitFailure e ) { e.printStackTrace(); }
     return res;
   }
 
-/*
-  %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Fail() {
-    visit RuleType {
-      forAllRightInfo(t) -> {
-        if (`t==old_term) return `forAllRightInfo(new_term);
-      }
-      forAllLeftInfo(t) -> {
-        if (`t==old_term) return `forAllLeftInfo(new_term);
-      }
-      existsRightInfo(t) -> {
-        if (`t==old_term) return `existsRightInfo(new_term);
-      }
-      existsLeftInfo(t) -> {
-        if (`t==old_term) return `existsLeftInfo(new_term);
-      }
-    }
-    
-    visit Prop {
-      relationAppl(r, tl) -> {
-       TermList res = (TermList) replaceTerm(`tl, old_term, new_term);
-        return `relationAppl(r, res);
-      }
-      r@forAll(x,_) -> { 
-        if  (`x == old_term.getname()) {
-          return `r; 
+  %typeterm StringTermMap{ implement { Map<String,Term> } }
+
+  // several vars in one pass  
+  %strategy ReplaceVars(map:StringTermMap) extends `Identity() {
+    visit Term {
+      Var(x) -> { 
+        Term res = map.get(`x);
+        if (res != null) {
+          return res;
         }
-      }
-      r@exists(x,_) -> {
-        if  (`x == old_term.getname())
-          return `r; 
       }
     }
   }
-  */
-  
+
+  public static sequentsAbstractType 
+    replaceVars(sequentsAbstractType subject, Map<String,Term> map) 
+  {
+    VisitableVisitor v = `ReplaceVars(map);
+    sequentsAbstractType res = null;
+    try { res = (sequentsAbstractType) MuTraveler.init(`TopDown(v)).visit(subject); }
+    catch (VisitFailure e ) { e.printStackTrace(); }
+    return res;
+  }
+
   private static Prop 
     replaceFreeVars(Prop p, Term old_term, Term new_term, Set<Term> nonfresh) {
       %match(Prop p) {

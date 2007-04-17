@@ -16,3 +16,13 @@ termrule swap() -> lambda(lambda(lambda(
 
 reduce term lappl(lappl(lappl(swap(),f()),a()),b()).
 
+
+// melange lambda + reecriture
+
+termrule 0 + x -> x.
+termrule succ(x) + y -> succ(x+y).
+termrule lappl(lappl(plus(),x),y) -> x+y.
+
+
+reduce term lappl(lappl(lappl(swap(),plus()),200),300).
+
