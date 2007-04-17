@@ -129,10 +129,6 @@ public class TomCamlGenerator extends TomGenericGenerator {
     return;
   }
 
-  protected void buildSemiColon() throws IOException {
-    // do nothing
-  }
-
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     if(instList.length()==1) {
       output.writeln(deep,"( (* begin unamed block*)");
@@ -416,13 +412,6 @@ public class TomCamlGenerator extends TomGenericGenerator {
     s.append(") = ");
     output.write(s);
     generateInstruction(deep,instr,moduleName);
-    /*
-     * path to add a semi-colon for 'void instruction'
-     * This is the case of CheckStampDecl
-     */
-    if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();
-    }
     output.write(";;");
   }
 

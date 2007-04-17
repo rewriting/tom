@@ -169,7 +169,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
-
  
   protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssignVar(deep, var, list, exp, moduleName);
@@ -186,10 +185,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(deep,";");
   }
 
-  protected void buildSemiColon() throws IOException {
-    output.write(";");
-  }
- 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     output.writeln(deep, "{");
     generateInstructionList(deep+1,instList, moduleName);

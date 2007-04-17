@@ -788,7 +788,6 @@ public abstract class TomAbstractGenerator {
   // ------------------------------------------------------------
 
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
-  protected abstract void buildSemiColon() throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException;
   protected abstract void buildRef(int deep, TomTerm term, String moduleName) throws IOException;

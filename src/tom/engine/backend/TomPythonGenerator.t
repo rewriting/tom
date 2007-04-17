@@ -168,10 +168,6 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     generate(deep,exp,moduleName);
   }
 
-  protected void buildSemiColon() throws IOException {
-    output.write(";");
-  }
-
   /* FIXME */
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     generateInstructionList(deep+1,instList, moduleName);
@@ -206,13 +202,6 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s.append("): ");
     output.write(deep,s);
     generateInstruction(deep+1,instr,moduleName);
-    /*
-     * path to add a semi-colon for 'void instruction'
-     * This is the case of CheckStampDecl
-     */
-    if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();  
-    }
     output.writeln();
   }
 
