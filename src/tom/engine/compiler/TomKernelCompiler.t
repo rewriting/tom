@@ -45,6 +45,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.theory.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -377,7 +378,7 @@ public class TomKernelCompiler {
 	  }
 	}
 	// generate is_fsym(t,f) || is_fsym(t,g)
-	Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm),moduleName);
+	Expression cond = `expandDisjunction(codomain,subjectVariableAST,nameList,TomBase.getTheory(currentTerm),moduleName);
 	return `If(cond,automataInstruction,elseAction);
       }
     } // end match
@@ -861,7 +862,7 @@ public class TomKernelCompiler {
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         Instruction elseBody = `collectSubtermIf(tail,booleanVariable,currentTerm,termArgList,subjectVariableAST,path,moduleName);
         Instruction assign = `collectSubtermLetAssign(termArgList,tomSymbol,subjectVariableAST,path,Nop(),moduleName);
-        Expression cond = `EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm.setNameList(concTomName(name)));
+        Expression cond = buildEqualFunctionSymbol(codomain,subjectVariableAST,`name,TomBase.getTheory(currentTerm),moduleName);
         return  `If(cond,LetAssign(booleanVariable,TrueTL(),assign),elseBody);
       }
     }
@@ -953,27 +954,37 @@ public class TomKernelCompiler {
     return `Nop();
   }
 
-  public Expression expandDisjunction(Expression exp, String moduleName) {
+  private Expression expandDisjunction(TomType type, TomTerm subject, TomNameList nameList, Theory theory, String moduleName) {
     Expression cond = `FalseTL();
-    %match(exp) {
-      EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
-        while(!`nameList.isEmptyconcTomName()) {
-          TomName name = `nameList.getHeadconcTomName();
-          boolean isAnti = (name instanceof AntiName);
-          if(isAnti) {
-	    name = name.getName();
-          }
-          Expression check = `EqualFunctionSymbol(termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
-          
-          if(isAnti) {
-	    check = `Negation(check);
-          }
-          cond = `Or(check,cond);
-          `nameList = `nameList.getTailconcTomName();
-        }
+    while(!`nameList.isEmptyconcTomName()) {
+      TomName name = `nameList.getHeadconcTomName();
+      boolean isAnti = (name instanceof AntiName);
+      if(isAnti) {
+        name = name.getName();
       }
+      Expression check = buildEqualFunctionSymbol(type,subject,name,theory,moduleName);
+        if(isAnti) {
+          check = `Negation(check);
+        }
+      cond = `Or(check,cond);
+      `nameList = `nameList.getTailconcTomName();
     }
     return cond;
+  }
+
+  private Expression buildEqualFunctionSymbol(TomType type, TomTerm subject,  TomName name, Theory theory, String moduleName) {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`name.getString());
+    //TomType type = TomBase.getSymbolCodomain(tomSymbol);
+    if(getSymbolTable(moduleName).isBuiltinType(TomBase.getTomType(`type))) {
+      if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
+        return `IsFsym(name,subject);
+      } else {
+        return `EqualTerm(type,BuildConstant(name),subject);
+      }
+    } else if(TomBase.hasTheory(theory, `TrueAU())) {
+      return `IsSort(type,subject);
+    } 
+    return `IsFsym(name,subject);
   }
 
   private Instruction buildLet(TomTerm dest,

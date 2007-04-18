@@ -567,28 +567,24 @@ public class TomOptimizer extends TomGenericPlugin {
             return `ref;
           }
         }
-        ref@And(EqualFunctionSymbol(astType,exp,term1),EqualFunctionSymbol(astType,exp,term2)) -> {
-          TomNameList l1 = `term1.getNameList();
-          TomNameList l2 = `term2.getNameList();
-          if(l1==l2) {
-            return `EqualFunctionSymbol(astType,exp,term1);
-          } else if(l1.length()==1 && l2.length()==1) {
-            /*
-             * may be true for list operator with doman=codomain
-             * two if_sym(f)==is_fsym(g) may be true due to mapping
-             */
-            TomName tomName = l1.getHeadconcTomName();
-            TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`tomName.getString());
-            if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-              //System.out.println("symbol = " + tomSymbol);
-              TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-              TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
-              if(domain!=codomain) {
-                return `FalseTL();
-              }
-            } else {
+        ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
+          if(`name1==`name2) {
+            return `IsFsym(name1,term);
+          }
+          /*
+           * may be true for list operator with domain=codomain
+           * two if_sym(f)==is_fsym(g) may be true due to mapping
+           */
+          TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
+          if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+            //System.out.println("symbol = " + tomSymbol);
+            TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+            TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+            if(domain!=codomain) {
               return `FalseTL();
             }
+          } else {
+            return `FalseTL();
           }
           return `ref;
         }

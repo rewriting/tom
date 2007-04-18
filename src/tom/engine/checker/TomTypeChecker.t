@@ -238,19 +238,20 @@ public class TomTypeChecker extends TomChecker {
     while(it.hasNext()) {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
-
       if(map.containsKey(name)) {
-	TomTerm var = (TomTerm)map.get(name);
-	TomType type1 = var.getAstType();
-	TomType type2 = variable.getAstType();
-	if(!(type1==type2)) {
-	  messageError(findOriginTrackingFileName(variable.getOption()),
-	      findOriginTrackingLine(variable.getOption()),
-	      TomMessage.incoherentVariable,
-	      new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
-	}
+        TomTerm var = (TomTerm)map.get(name);
+        //System.out.println("variable = " + variable);
+        //System.out.println("var = " + var);
+        TomType type1 = var.getAstType();
+        TomType type2 = variable.getAstType();
+        if(!(type1==type2)) {
+          messageError(findOriginTrackingFileName(variable.getOption()),
+              findOriginTrackingLine(variable.getOption()),
+              TomMessage.incoherentVariable,
+              new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
+        }
       } else {
-	map.put(name, variable);
+        map.put(name, variable);
       }
     }
   }  //verifyVariableTypeListCoherence  

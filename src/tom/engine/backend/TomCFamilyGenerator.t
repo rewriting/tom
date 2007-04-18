@@ -159,7 +159,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
                           Expression exp, Instruction body, String moduleName) throws IOException {
-    output.write(deep,"{" + TomBase.getTLCode(tlType) + " ");
+    output.write(deep,"{ " + TomBase.getTLCode(tlType) + " ");
     buildAssignVar(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
     output.writeln(deep,"}");

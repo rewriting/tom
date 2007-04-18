@@ -108,9 +108,6 @@ public class PILFactory {
       // clean Expressions
       Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
       Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
-      EqualFunctionSymbol(type,t1,appl@RecordAppl[Slots=concSlot(_,_*)]) -> {
-	return (Expression) `TopDown(replaceRemove()).visit(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
-      } 
     }
   }
 
@@ -202,8 +199,8 @@ public class PILFactory {
 	return "isSort\n\t";
       }
 
-      EqualFunctionSymbol(_,exp1,exp2) -> {
-	return "is_fun_sym(" + prettyPrint(`exp1) + "," + prettyPrint(`exp2) + ")";
+      IsFsym(name,term) -> {
+        return "is_fun_sym(" + prettyPrint(`name) + "," + prettyPrint(`term) + ")";
       }
 
       Negation(exp) -> {

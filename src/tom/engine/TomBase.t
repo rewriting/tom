@@ -315,11 +315,24 @@ public final class TomBase {
     return null;
   }
 
-  public static boolean hasTheory(OptionList optionList, ElementaryTheory elementaryTheory) {
-    %match(optionList) {
-      concOption(_*,MatchingTheory(concElementaryTheory(_*,theory,_*)),_*) -> { if(elementaryTheory == `theory) return true; }
+  public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
+    %match(theory) {
+      concElementaryTheory(_*,x,_*) -> { if(`x==elementaryTheory) return true; }
     }
     return false;
+  }
+ 
+  public static Theory getTheory(TomTerm term) {
+    %match(term) {
+      RecordAppl[Option=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
+    }
+    return `concElementaryTheory(Syntactic());
+  }
+  public static Theory getTheory(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,MatchingTheory(theory),_*) -> { return `theory; }
+    }
+    return `concElementaryTheory(Syntactic());
   }
 
   public static Declaration getIsFsymDecl(OptionList optionList) {
