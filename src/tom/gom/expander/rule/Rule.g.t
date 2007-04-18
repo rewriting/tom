@@ -5,14 +5,14 @@ options {
   ASTLabelType=CommonTree;
 }
 
-tokens {RULE; APPL;}
+tokens {RULELIST; RULE; APPL;}
 @header {
   package tom.gom.expander.rule;
 }
 @lexer::header {
   package tom.gom.expander.rule;
 }
-ruleset :	(rule)* EOF -> ^(rule)*;
+ruleset :	(rule)* EOF -> ^(RULELIST (rule)*);
 rule	:	pattern ARROW term (IF term)? -> ^(RULE pattern term+) ;
 pattern	:	ID LPAR (term (COMA term)*)? RPAR -> ^(APPL ID term*) ;
 term : pattern | ID | builtin ;
