@@ -45,9 +45,12 @@ public class RuleExpander {
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
+    parser.setTreeAdaptor(new ASTAdaptor());
     try {
       Tree ast = (Tree)parser.ruleset().getTree();
       System.out.println("Rules : " + ast.toStringTree());
+      ASTTree tast = (ASTTree) ast;
+      System.out.println("Term : " + tast.getTerm());
     } catch (org.antlr.runtime.RecognitionException e) {
       System.out.println("Got RecognitionException while parsing ruleset");
     }
