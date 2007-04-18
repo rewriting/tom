@@ -20,7 +20,6 @@ public class TomArrayPropagator implements TomIBasePropagator{
   %include { mustrategy.tom}
 //--------------------------------------------------------
 
-  private static short freshVarCounter = 0;
   private static short beginEndCounter = 0;
 
   public Constraint propagate(Constraint constraint){
@@ -99,7 +98,7 @@ public class TomArrayPropagator implements TomIBasePropagator{
           // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
           andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) ->{
             Constraint toApplyOn = `AndConstraint(Y*);            
-            TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar("freshVar_" + (++freshVarCounter),`type);
+            TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
             Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
             if (res != toApplyOn){					
               return `AndConstraint(X*,eq,res);
@@ -129,7 +128,6 @@ public class TomArrayPropagator implements TomIBasePropagator{
   }
 
   private static TomTerm getFreshIndex(){
-    return TomConstraintCompiler.getFreshVariableStar("freshIndex_" + (++freshVarCounter),
-        TomConstraintCompiler.getIntType());    
+    return TomConstraintCompiler.getFreshVariableStar(TomConstraintCompiler.getIntType());    
   }
 }

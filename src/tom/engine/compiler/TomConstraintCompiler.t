@@ -36,6 +36,8 @@ public class TomConstraintCompiler extends TomBase {
   // keeps track of the subject number to insure distinct variables' 
   // names when renaming subjects
   private static short freshSubjectCounter = 0;	
+  private static int freshVarCounter = 0;
+  private static final String freshVarPrefix = "_freshVar_";
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
     TomConstraintCompiler.symbolTable = symbolTable;    
@@ -53,6 +55,7 @@ public class TomConstraintCompiler extends TomBase {
         matchNumber++;
         rootpath = `concTomNumber(MatchNumber(matchNumber));
         freshSubjectCounter = 0;
+        freshVarCounter = 0;
         short actionNumber = 0;
         TomList automataList = `concTomTerm();	
         // get the new names for subjects ( for further casts if needed - especially for lists)
@@ -209,10 +212,22 @@ public class TomConstraintCompiler extends TomBase {
     throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + tomTerm);
   }
   
+  public static TomTerm getFreshVariable(TomType type){
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(freshVarPrefix + freshVarCounter++))));
+    return `Variable(concOption(),freshVarName,type,concConstraint());
+  }
+  
   public static TomTerm getFreshVariable(String name, TomType type){
     TomNumberList path = getRootpath();
     TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `Variable(concOption(),freshVarName,type,concConstraint());
+  }
+  
+  public static TomTerm getFreshVariableStar(TomType type){
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(freshVarPrefix + freshVarCounter++))));
+    return `VariableStar(concOption(),freshVarName,type,concConstraint());
   }
   
   public static TomTerm getFreshVariableStar(String name, TomType type){
