@@ -203,7 +203,7 @@ public class TermGraphRewriting {
 
   public static void main(String[] args){
 
-    Term t = `g(g(g(a(),g(pathTerm(-1,-2,1),pathTerm(-2,-2,-1,2))),a()),pathTerm(-2,1,1,2));
+    Term t = `g(g(g(a(),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,2));
     System.out.println("Initial term :"+t);
     HashMap map = new HashMap();
 
