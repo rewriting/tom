@@ -264,6 +264,6 @@ public class TomAntiPatternTransformNew {
 
 	public static void initialize(){
 		actionOnIf = 0;
-		varCounter = 0;
+	//	varCounter = 0;
 	}
 } // end class
