@@ -13,7 +13,7 @@ tokens {RULELIST; RULE; APPL;}
   package tom.gom.expander.rule;
 }
 ruleset :	(rule)* EOF -> ^(RULELIST (rule)*);
-rule	:	pattern ARROW term (IF term)? -> ^(RULE pattern term+) ;
+rule	:	pattern ARROW rhs=term (IF cond=term)? -> ^(RULE pattern $rhs ^(IF $cond)?) ;
 pattern	:	ID LPAR (term (COMA term)*)? RPAR -> ^(APPL ID term*) ;
 term : pattern | ID | builtin ;
 builtin : INT | STRING ;
