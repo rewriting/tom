@@ -5,33 +5,25 @@ options {
 }
 
 @header {
-	package tom.gom.expander.rule;
+  package tom.gom.expander.rule;
 }
 @lexer::header {
-	package tom.gom.expander.rule;
+  package tom.gom.expander.rule;
 }
-ruleset	:	(rule)* ;
-rule	:	pattern ARROW term (IF term)?;
-pattern	:	ID LPAR (term (COMMA term)*)? RPAR ;
+ruleset :	(rule)* EOF ;
+rule	:	pattern ARROW term (IF term)?  ;
+pattern	:	ID LPAR (term (COMA term)*)? RPAR ;
 term	:	pattern | ID | builtin;
 builtin	:	integer | STRING ;
-
 integer	:	DIGIT+ ;
 
 ARROW	:	'->' ;
 LPAR	:	'(' ;
 RPAR	:	')' ;
-COMMA	:	',' ;
+COMA	:	',' ;
 IF	:	'if' ;
-LETTER	:	('a'..'z' | 'A'..'Z') ;
 DIGIT	:	('0'..'9') ;
 ESC	:	'\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;
 STRING	:	'"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"' ;
-ID	:
-	('_')? LETTER
-       	(
-            options {greedy = true; }:
-            ( LETTER | DIGIT | '_' )
-        )*
-    ;
-WS	:	(' '|'\t'|'\n')+ { $channel=99; } ;
+ID	: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
+WS	:	(' '|'\t'|'\n')+ { $channel=HIDDEN; } ;
