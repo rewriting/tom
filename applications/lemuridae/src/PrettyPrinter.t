@@ -255,6 +255,45 @@ class PrettyPrinter {
         else return toLatex(`x) + "::" + toLatex(`y);
       }
 
+      // lambda-Pi
+     funAppl(fun("type"),()) -> {
+        return ("*");
+      }
+      funAppl(fun("kind"),()) -> {
+	  return ("\\square");
+      }
+      funAppl(fun("pitype"),(x,y)) -> {
+        return ("\\dot\\pi_*") + toLatex(`x) + " .~" +  toLatex(`y);
+      }
+      funAppl(fun("pikind"),(x,y)) -> {
+        return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
+      }
+      // lambda-sigma
+      funAppl(fun("subst"),(x,y)) -> {
+	  return toLatex(`x) + "[" + toLatex(`y) + "]";
+      }
+      funAppl(fun("rond"),(x,y)) -> {
+	  return toLatex(`x) + " \\circ " + toLatex(`y);
+      }
+      funAppl(fun("shift"),()) -> {
+	  return "\\uparrow";
+      }
+      funAppl(fun("one"),()) -> {
+	  return "\\mathsf{1}";
+      }
+      funAppl(fun("id"),()) -> {
+	  return "id";
+      }
+      funAppl(fun("lcons"),(x,y)) -> {
+	  return  toLatex(`x) + " \\cdot " + toLatex(`y);
+      }
+      funAppl(fun("lambda"),(x)) -> {
+        return "\\lambda " + toLatex(`x);
+      }
+      funAppl(fun("lappl"),(p,x*)) -> {
+	  return "(" + toLatex(`p) + " "+ toLatex(`x*) + ")";
+      }
+
       funAppl(fun[name=n], ()) -> { return `n + "()";}
       funAppl(fun[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
     }
@@ -516,7 +555,7 @@ class PrettyPrinter {
     FileWriter writer = new FileWriter(tmp);
     String path = tmp.getAbsolutePath();
 
-    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\begin{document}\n\\[\n");
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\[\n");
     writer.write(toLatex(term));
     writer.write("\n\\]\n");
     writer.write("\\end{document}\n");
@@ -524,9 +563,12 @@ class PrettyPrinter {
 
     System.out.println(path);
     Runtime rt = Runtime.getRuntime();
-    Process pr = rt.exec("latex -output-directory=/tmp " + path );
-    pr.waitFor(); 
-    pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
-    pr.waitFor();
+    Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
+    int ret = pr.waitFor(); 
+    if (ret == 0) {
+	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
+	pr.waitFor();}
+    else
+	System.err.println("An error occured during the LaTeX compilation.");
   }
 }
