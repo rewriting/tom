@@ -599,6 +599,6 @@ class PrettyPrinter {
 	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
 	pr.waitFor();}
     else
-	System.err.println("An error occured during the LaTeX compilation.");
+	System.err.println("An error occurred during the LaTeX compilation.");
   }
 }
