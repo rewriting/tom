@@ -1,0 +1,15 @@
+module Rule
+imports String int
+abstract syntax
+
+Term = Appl(symbol:String,args:TermList)
+     | Var(name:String)
+     | BuiltinInt(i:int)
+     | BuiltinString(s:String)
+
+TermList = TermList(Term*)
+
+Rule = Rule(lhs:Term,rhs:Term)
+     | ConditionalRule(lhs:Term,rhs:Term,cond:Term)
+
+RuleList = RuleList(Rule*)
