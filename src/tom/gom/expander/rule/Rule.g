@@ -2,7 +2,7 @@
 grammar Rule;
 options {
   output=AST;
-  ASTLabelType=CommonTree;
+  ASTLabelType=ASTTree;
 }
 
 tokens {
