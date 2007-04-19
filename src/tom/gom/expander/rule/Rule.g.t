@@ -6,6 +6,7 @@ options {
 }
 
 tokens {RULELIST; RULE; APPL;}
+
 @header {
   package tom.gom.expander.rule;
 }
@@ -13,7 +14,7 @@ tokens {RULELIST; RULE; APPL;}
   package tom.gom.expander.rule;
 }
 ruleset :	(rule)* EOF -> ^(RULELIST (rule)*);
-rule	:	pattern ARROW rhs=term (IF cond=term)? -> ^(RULE pattern $rhs ^(IF $cond)?) ;
+rule	:	pattern ARROW rhs=term (IF cond=term)? -> ^(RULE pattern $rhs ($cond)?) ;
 pattern	:	ID LPAR (term (COMA term)*)? RPAR -> ^(APPL ID term*) ;
 term : pattern | ID | builtin ;
 builtin : INT | STRING ;
