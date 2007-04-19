@@ -50,6 +50,7 @@
                 destdir="${test.gen}">
          <include name="gom/Dotted.gom"/>
          <include name="gom/MultiHook.gom"/>
+         <include name="gom/RuleBool.gom"/>
     </gom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
