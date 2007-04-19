@@ -31,6 +31,12 @@ rule WF(cons(gamma,e(a,b))) ->
 rule C(cons(gamma,e(a,b))) -> 
      C(gamma) /\ in(a,b).
 
+proof a_simple_proof: WF(cons(nil(),e(nat,type()))) => 
+      	 in(lambda(one()),pitype(nat,subst(nat,shift()))).
+
+autoreduce.
+
+display a_simple_proof.
 
 rule NatListTheory(nat,z,succ,natList,nil,cons) ->
      WF(cons(cons(cons(cons(cons(cons(nil(),

@@ -188,10 +188,20 @@ class PrettyPrinter {
         return toLatex(`x) + " \\supset " + toLatex(`y);
       }
 
+      // lamda-Pi
+      relationAppl(relation("WF"),(x)) -> {
+	  if (leftEndedByNil(`x))
+	      return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
+	  else
+	      return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
+      }
+      
       relationAppl(relation[name=n], ()) -> { return `n;}
       relationAppl(relation[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
       and(p1, p2) -> { return "(" + toLatex(`p1) + " \\land " + toLatex(`p2) + ")";}
       or(p1, p2) -> { return "(" + toLatex(`p1) + " \\lor " + toLatex(`p2) + ")";}
+      
+      
       //negation
       implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
       implies(p1, p2) -> { return "(" + toLatex(`p1) + " \\Rightarrow " + toLatex(`p2) + ")";}
@@ -268,6 +278,7 @@ class PrettyPrinter {
       funAppl(fun("pikind"),(x,y)) -> {
         return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
       }
+      
       // lambda-sigma
       funAppl(fun("subst"),(x,y)) -> {
 	  return toLatex(`x) + "[" + toLatex(`y) + "]";
@@ -291,7 +302,7 @@ class PrettyPrinter {
         return "\\lambda " + toLatex(`x);
       }
       funAppl(fun("lappl"),(p,x*)) -> {
-	  return "(" + toLatex(`p) + " "+ toLatex(`x*) + ")";
+	  return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
       }
 
       funAppl(fun[name=n], ()) -> { return `n + "()";}
@@ -316,6 +327,25 @@ class PrettyPrinter {
       funAppl(fun("cons"),(x,y)) -> {
         return toLatex(`x) + "," + listToLatex(`y); 
       }
+    }
+    return null;
+  }
+
+  // lambda-Pi context list pretty print (inverted order)
+  private static boolean leftEndedByNil(Term l) {
+    %match(Term l) {
+	  funAppl(fun("cons"),(funAppl(fun("nil"),()),y)) -> { return true; }
+	  funAppl(fun("cons"),(x,_)) -> { return leftEndedByNil(`x); }
+    }
+    return false;
+  }
+
+  public static String contextListToLatex(Term t) {
+    %match(Term t) {
+	  funAppl(fun("cons"),(funAppl(fun("nil"),()), funAppl(fun("e"),(a,b))))
+	      -> { return toLatex(`a) + " \\in " + toLatex(`b); }
+	  funAppl(fun("cons"),(x,funAppl(fun("e"),(a,b)))) -> {
+	      return contextListToLatex(`x) + "," + toLatex(`a) + " \\in " + toLatex(`b);      }
     }
     return null;
   }
