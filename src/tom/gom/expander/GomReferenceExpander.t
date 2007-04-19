@@ -85,7 +85,7 @@ public class GomReferenceExpander {
   %strategy ExpandModule(
       packagePath:String,
       forTermgraph:boolean,
-      hookList:ArrayList) extends `Identity(){
+      hookList:ArrayList) extends Identity(){
     visit Module {
       module@Module[
         MDecl=mdecl@ModuleDecl[ModuleName=modName],Sorts=sorts] -> {
@@ -118,7 +118,6 @@ public class GomReferenceExpander {
       import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
     ]%;
-
 
     String codeBlock =%[
 
@@ -224,7 +223,7 @@ public class GomReferenceExpander {
 
     %match(sorts){
       concSort(_*,Sort[Decl=SortDecl[Name=sortName]],_*) -> {
-        codeImport +=%[
+        codeImport += %[
           import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.*;
         ]%;
         codeStrategies += getStrategies(`sortName,moduleName);
@@ -242,10 +241,6 @@ public class GomReferenceExpander {
         return (@moduleName@AbstractType) `label2path.fire(t);
       }
     ]%;
-
-    /** 
-     */
-
 
     String codeBlockTermGraph =%[
 
@@ -276,6 +271,15 @@ public class GomReferenceExpander {
 
     String strategies =%[
 
+    %typeterm Info@sortName@{
+        implement {Info@sortName@}
+    }
+
+    static class Info@sortName@{
+      public Position omega;
+      public @sortName@ term;
+    }
+ 
       %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail(){
         visit @sortName@{
           lab@sortName@[label=label,term=term]-> {
@@ -315,25 +319,16 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy CollectSubterm@sortName@(label:String,subterm:Subterm) extends Identity(){
+    %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Identity(){
       visit @sortName@ {
         lab@sortName@[label=label,term=subterm] -> {
           if(label.equals(`label)){
-            subterm.term = `subterm;
-            subterm.omega = getEnvironment().getPosition();
+            info.term = `subterm;
+            info.omega = getEnvironment().getPosition();
             return `ref@sortName@(label);
           }
         }
       }
-    }
-
-    %typeterm Subterm{
-      implement {Subterm}
-    }
-
-    static class Subterm{
-      public Position omega;
-      public @sortName@ term;
     }
 
 
@@ -341,15 +336,15 @@ public class GomReferenceExpander {
       visit @sortName@ {
         ref@sortName@[label=label] -> {
           if (! map.containsKey(`label)){
-            Subterm subterm = new Subterm();
+            Info@sortName@ info = new Info@sortName@();
             Position pos = new Position(new int[]{});
             Position old = getEnvironment().getPosition();
             Position rootpos = new Position(new int[]{});
             map.put(`label,old);
             getEnvironment().goTo(rootpos.sub(getEnvironment().getPosition()));
-            execute(`Try(TopDown(CollectSubterm@sortName@(label,subterm))));
+            execute(`Try(TopDown(CollectSubterm@sortName@(label,info))));
             getEnvironment().goTo(old.sub(getEnvironment().getPosition()));
-            return `lab@sortName@(label,subterm.term);
+            return `lab@sortName@(label,info.term);
           }
         }
         lab@sortName@[label=label] -> {
