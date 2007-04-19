@@ -268,7 +268,6 @@
       <include name="tom/antlrmapper/**/*.t"/>
 
       <exclude name="tom/engine/parser/*.g.t"/>
-      <exclude name="tom/gom/expander/rule/Rule.g.t"/>
       <!-- needs to generate mappings first -->
       <exclude name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
@@ -290,13 +289,6 @@
 	    outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
 	    options="-I ${src.gen}/tom/engine/adt">
       <include name="**/BackQuoteLanguage.g.t"/>
-    </tomcompile>
-
-    <!-- gom parser -->
-    <tomcompile srcdir="${src.src}"
-            outputfile="${gen.destination}/tom/gom/expander/rule/Rule.g"
-	    options="-I ${gen.destination}">
-      <include name="tom/gom/expander/rule/Rule.g.t"/>
     </tomcompile>
   </target>
 
@@ -355,7 +347,7 @@
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
-    <antlr3 target="${gen.destination}/tom/gom/expander/rule/Rule.g"
+    <antlr3 target="${src.src}/tom/gom/expander/rule/Rule.g"
             outputdirectory="${gen.destination}/tom/gom/expander/rule"
             libdirectory="${gen.destination}/tom/gom/expander/rule"
             multithreaded="true">
