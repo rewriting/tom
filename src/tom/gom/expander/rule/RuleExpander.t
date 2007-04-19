@@ -50,7 +50,6 @@ public class RuleExpander {
   }
 
   public HookDeclList expandRules(String ruleCode) {
-    System.out.println("Rules to parse : " + ruleCode);
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
@@ -60,7 +59,6 @@ public class RuleExpander {
       ASTTree ast = (ASTTree)parser.ruleset().getTree();
       rulelist = (RuleList) ast.getTerm();
     } catch (org.antlr.runtime.RecognitionException e) {
-      System.out.println("Got RecognitionException while parsing ruleset");
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});
       return `concHookDecl();
