@@ -94,130 +94,115 @@ public class GomReferenceExpander {
     }
   }
 
-  %strategy ExpandSort(hookList:ArrayList) extends `Identity() {
+  %strategy ExpandSort(hookList:ArrayList) extends Identity() {
     visit Sort {
-      x -> { return expandSort(`x,`hookList); }
+      sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],Operators=ops] -> {
+         
+        //We add 3 new operators lab<Sort>,ref<Sort>,path<Sort>     
+        OperatorDecl labOp = `OperatorDecl("lab"+sortname,sortdecl,Slots(concSlot(Slot("label",stringSortDecl),Slot("term",sortdecl))));
+        OperatorDecl refOp = `OperatorDecl("ref"+sortname,sortdecl,Slots(concSlot(Slot("label",stringSortDecl))));
+        OperatorDecl pathOp = `OperatorDecl("path"+sortname,sortdecl,Variadic(intSortDecl));
+        hookList.add(pathHooks(pathOp,`sortdecl));
+        return `sort.setOperators(`concOperator(ops*,labOp,refOp,pathOp));
+
+      }
     }
   }
 
-  private static Sort expandSort(Sort sort, ArrayList hookList) {
-    OperatorDeclList l1 = sort.getOperators();
-    OperatorDeclList l2 = getRefOperators(sort.getDecl(),hookList);
-    return sort.setOperators(`concOperator(l1*,l2*));
-  }
-
-  /*
-     We add 4 new operators for every sort
-     lab<Sort>,ref<Sort>,path<Sort>     
-     and their corresponding hooks
-   */
-  private static OperatorDeclList getRefOperators(
-      SortDecl sort,
-      ArrayList hookList) {
-    OperatorDecl labOp = `OperatorDecl("lab"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl),Slot("term",sort))));
-
-    OperatorDecl refOp = `OperatorDecl("ref"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl))));
-
-    OperatorDecl pathOp = `OperatorDecl("path"+sort.getName(),sort,Variadic(intSortDecl));
-    hookList.add(pathHooks(pathOp,sort));
-
-    return `concOperator(labOp,refOp,pathOp);
-  }
-
   private static HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
-    
+
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
 
     String codeImport =%[
-    import @packagePath@.@moduleName.toLowerCase()@.types.*;
+      import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
     ]%;
-    
- 
+
+
     String codeBlock =%[
 
-   public Path add(Path p){
-     Position pp = Position.make(this);
-     return make(pp.add(p));
-   }
+      public Path add(Path p){
+        Position pp = Position.make(this);
+        return make(pp.add(p));
+      }
 
-   public Path inv(){
-     Position pp = Position.make(this);
-     return make(pp.inv());
-   }
+    public Path inv(){
+      Position pp = Position.make(this);
+      return make(pp.inv());
+    }
 
-   public Path sub(Path p){
-     Position pp = Position.make(this);
-     return make(pp.sub(p));
-   }
-  
-   public int getHead(){
-     return getHeadpath@sortName@();
-   }
+    public Path sub(Path p){
+      Position pp = Position.make(this);
+      return make(pp.sub(p));
+    }
 
-   public Path getTail(){
-     return (Path) getTailpath@sortName@();
-   }
+    public int getHead(){
+      return getHeadpath@sortName@();
+    }
 
-   public Path normalize(){
-     %match(this) {
-       path@sortName@(X*,x,y,Y*) -> {
-         if (`x==-`y) {
-           return ((Path)`path@sortName@(X*,Y*)).normalize();
-         }
-       }
-     }
-     return this;
-   }
+    public Path getTail(){
+      return (Path) getTailpath@sortName@();
+    }
 
-   public Path conc(int i){
-     path@sortName@ current = this;
-     return (Path) `Conspath@sortName@(i,current); 
-   }
+    public Path normalize(){
+      %match(this) {
+        path@sortName@(X*,x,y,Y*) -> {
+          if (`x==-`y) {
+            return ((Path)`path@sortName@(X*,Y*)).normalize();
+          }
+        }
+      }
+      return this;
+    }
 
-   public static path@sortName@ make(Path path){
-     @sortName@ ref = `path@sortName@();
-     Path pp = path.normalize();
-     int size = pp.length();
+    public Path conc(int i){
+      path@sortName@ current = this;
+      return (Path) `Conspath@sortName@(i,current); 
+    }
+
+    public static path@sortName@ make(Path path){
+      @sortName@ ref = `path@sortName@();
+      Path pp = path.normalize();
+      int size = pp.length();
       for(int i=0;i<size;i++){
         ref = `path@sortName@(ref*,pp.getHead());
         pp = pp.getTail();
       }
       return (path@sortName@) ref;
-   }
+    }
 
-   public int compare(Path p){
-     Position p1 = Position.make(this);
-     Position p2 = Position.make(p);
-     return p1.compare(p2);
-   }
-   ]%;
+    public int compare(Path p){
+      Position p1 = Position.make(this);
+      Position p2 = Position.make(p);
+      return p1.compare(p2);
+    }
+    ]%;
 
-   return 
+    return 
       `concHookDecl(
           ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
           InterfaceHookDecl(CutOperator(opDecl),
-                            Code("tom.library.sl.Path")),
+            Code("tom.library.sl.Path")),
           BlockHookDecl(CutOperator(opDecl),Code(codeBlock)));
   }
 
   private static HookDeclList expHooksModule(GomModuleName gomModuleName,
-                                             SortList sorts,
-                                             ModuleDecl mDecl,
-                                             String packagePath,
-                                             boolean forTermgraph) {
+      SortList sorts,
+      ModuleDecl mDecl,
+      String packagePath,
+      boolean forTermgraph) {
     String moduleName = gomModuleName.getName();
 
     String codeImport =%[
-    import @packagePath@.@moduleName.toLowerCase()@.types.*;
+      import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import @packagePath@.@moduleName.toLowerCase()@.*;
     import tom.library.sl.*;
     import java.util.*;
-   ]%;
+    ]%;
 
     String codeBlockCommon =%[
-    %include{java/util/HashMap.tom}
+      %include{java/util/HashMap.tom}
     %include{java/util/ArrayList.tom}
     %include{sl.tom}
 
@@ -259,7 +244,7 @@ public class GomReferenceExpander {
     ]%;
 
     /** 
-    */
+     */
 
 
     String codeBlockTermGraph =%[
@@ -272,11 +257,11 @@ public class GomReferenceExpander {
         return label2path(tt);
       }
 
-      public static @moduleName@AbstractType label2path(@moduleName@AbstractType t){
-        HashMap map = new HashMap();
-        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
-        return (@moduleName@AbstractType) label2path.fire(t);
-      }
+    public static @moduleName@AbstractType label2path(@moduleName@AbstractType t){
+      HashMap map = new HashMap();
+      Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
+      return (@moduleName@AbstractType) label2path.fire(t);
+    }
 
     ]%;
 
