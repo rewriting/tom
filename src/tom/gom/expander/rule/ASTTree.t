@@ -62,6 +62,10 @@ public class ASTTree extends CommonTree {
       case RuleParser.RULE:
         inAstTerm = `Rule(BuiltinInt(-1),BuiltinInt(-1));
         break;
+      case RuleParser.CONDRULE:
+        inAstTerm =
+          `ConditionalRule(BuiltinInt(-1),BuiltinInt(-1),BuiltinInt(-1));
+        break;
       case RuleParser.INT:
         inAstTerm = `BuiltinInt(Integer.parseInt(token.getText()));
         break;
@@ -102,16 +106,15 @@ public class ASTTree extends CommonTree {
       }
     }
     %match(inAstTerm) {
-      Rule(x,y) -> {
+      Rule[] -> {
         Term tm = (Term) trm;
-        if (childIndex < 2) {
-          inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,tm);
-          childIndex++;
-        } else if (childIndex == 2) {
-          inAstTerm = `ConditionalRule(x,y,tm);
-        } else {
-          return; /* error */
-        }
+        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,tm);
+        childIndex++;
+      }
+      ConditionalRule[] -> {
+        Term tm = (Term) trm;
+        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,tm);
+        childIndex++;
       }
     }
     %match(inAstTerm) {
