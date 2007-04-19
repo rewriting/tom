@@ -855,7 +855,9 @@
        <property name="tom.home" value="${src.dist}"/>
      </ant>
   </target>
-  <target name="junit.opt" description="Runs junit acceptance tests iwth optimization"
+
+  <target name="junit.opt"
+          description="Runs junit acceptance tests with optimization"
           depends="clean.test, test.opt">
      <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>

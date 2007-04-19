@@ -113,7 +113,7 @@ public class RuleExpander {
             output.append(";\n");
           }
           ConditionalRule(Appl[],rhs,cond) -> {
-            output.append("    if (");
+            output.append("    if `(");
             genTerm(`cond,output); 
             output.append(") { return `");
             genTerm(`rhs,output); 
@@ -138,7 +138,7 @@ public class RuleExpander {
           }
           ConditionalRule(Appl[args=argList],rhs,cond) -> {
             genTermList(`argList,output);
-            output.append(" -> { if (");
+            output.append(" -> { if `(");
             genTerm(`cond,output); 
             output.append(") { return `");
             genTerm(`rhs,output); 

@@ -200,11 +200,9 @@ public class TomParserPlugin extends TomGenericPlugin {
       e.printStackTrace();
       return;
     } catch (Exception e) {
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      e.printStackTrace(pw);
+      e.printStackTrace();
       getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(), 
-                      new Object[]{getClass().getName(), currentFileName, sw.toString()});
+                      new Object[]{getClass().getName(), currentFileName});
       return;
     }
     // Some extra stuff
