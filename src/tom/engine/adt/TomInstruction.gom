@@ -22,18 +22,17 @@ Instruction =
   | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
   | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
   /**/
-  | AssignMatchSubject(Kid1:TomTerm,Source:Expression)
   | Return(Kid1:TomTerm)
   | Nop()
+  /*
+   * AbstrackBlock: conversion from InstructionList to Instruction
+   */
   | AbstractBlock(InstList:InstructionList)
   | UnamedBlock(InstList:InstructionList)
   | NamedBlock(BlockName:String,InstList:InstructionList)
   | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
   | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
-  | MatchingCondition(Lhs:TomTerm,Rhs:TomTerm)
-  | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
-  | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
   /*
    * a RawAction is an action that comes from the original program 
    */
@@ -44,6 +43,12 @@ Instruction =
    * and also the list a previously tried patterns, which are called negativePattern
    * This information is used to perform extra verification/certification
    */
+
   | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
 
 InstructionList = concInstruction(Instruction*)
+concInstruction:make_insert(e,l) {
+  %match(e) {
+    AbstractBlock(l1) -> { return `concInstruction(l1*,l*); }
+  }
+}

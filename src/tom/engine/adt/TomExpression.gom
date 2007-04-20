@@ -1,6 +1,7 @@
 module TomExpression
 imports TomSignature String
 abstract syntax
+
 Expression = TomTermToExpression(AstTerm:TomTerm)
 		   | TomInstructionToExpression(Instruction:Instruction)
            /**
@@ -17,8 +18,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | FalseTL()
            // Exp1 - the subject
            // Exp2 - the pattern
-           | EqualFunctionSymbol(AstType:TomType,Exp1:TomTerm,Exp2:TomTerm)
-           | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
+  		   | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
            | Cast(AstType:TomType,Source:Expression)
            // AstName - the name of the function symbol from whom to extract the slot
            // Variable - from what to extract the slot 

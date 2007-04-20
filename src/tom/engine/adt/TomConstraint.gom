@@ -23,7 +23,6 @@ Constraint =
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
   		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
 
-
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
 OrConstraint:AU() { `FalseConstraint() }
