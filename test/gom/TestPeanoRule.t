@@ -49,6 +49,7 @@ public class TestPeanoRule extends TestCase {
            | Fib1(t:Term)
            | Fib5(t:Term)
            | Fib6(t:Term)
+           | NonZ(t:Term)
 
     module peano:rules() {
       Plus(x,Zero()) -> x
@@ -75,6 +76,10 @@ public class TestPeanoRule extends TestCase {
       Fib6(Zero())      -> Suc(Zero())
       Fib6(x)           -> x if x == Suc(Zero())
       Fib6(Suc(Suc(x))) -> Plus(Fib6(x),Fib6(Suc(x)))
+    }
+    module peano:rules() {
+      NonZ(x) -> x if Zero() != x
+      NonZ(x) -> Suc(x)
     }
   }
 
@@ -124,6 +129,15 @@ public class TestPeanoRule extends TestCase {
                peano2int(`Fib6(N)) == fibint(peano2int(N)));
     assertTrue("Testing fib6 with N =" + peano2int(N)+1 + ": ",
                peano2int(`Fib6(Suc(N))) == fibint(peano2int(N)+1));
+  }
+
+  public void testnonZ1() {
+    Term N = `Zero();
+    assertEquals("NonZ is not zero", `NonZ(N), `Suc(Zero()));
+  }
+  public void testnonZ2() {
+    Term N = `Suc(Zero());
+    assertEquals("NonZ is id for non Zero", `NonZ(N), N);
   }
 
   public int fibint(int n) {

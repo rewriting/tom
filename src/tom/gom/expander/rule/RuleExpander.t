@@ -196,6 +196,13 @@ public class RuleExpander {
         genTerm(`term2,output);
         output.append(")");
       }
+      CondNotEquals[t1=term1,t2=term2] -> {
+        output.append("(");
+        genTerm(`term1,output);
+        output.append(" != ");
+        genTerm(`term2,output);
+        output.append(")");
+      }
     }
   }
 

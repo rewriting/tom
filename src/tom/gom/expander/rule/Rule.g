@@ -12,6 +12,7 @@ tokens {
   APPL;
   CONDTERM;
   CONDEQUALS;
+  CONDNOTEQUALS;
 }
 
 @header {
@@ -24,16 +25,16 @@ ruleset :
   (rule)* EOF -> ^(RULELIST (rule)*)
   ;
 rule :
-  pattern ARROW rhs=term (IF cond=condition)?
-    -> { cond == null }? ^(RULE pattern $rhs)
-    -> ^(CONDRULE pattern $rhs $cond)
+  pattern ARROW term (IF cond=condition)?
+    -> { cond == null }? ^(RULE pattern term)
+    -> ^(CONDRULE pattern term $cond)
   ;
 condition :
-  p1=term (EQUALS p2=term)?
-    -> {p2 == null}? ^(CONDTERM $p1)
-    -> ^(CONDEQUALS $p1 $p2)
+  p1=term (EQUALS p2=term | NOTEQUALS p3=term)?
+    -> {p2!=null && p3==null}? ^(CONDEQUALS $p1 $p2)
+    -> {p2==null && p3!=null}? ^(CONDNOTEQUALS $p1 $p3)
+    -> ^(CONDTERM $p1)
   ;
-
 pattern :
   ID LPAR (term (COMA term)*)? RPAR -> ^(APPL ID term*)
   ;
@@ -49,6 +50,7 @@ LPAR : '(' ;
 RPAR : ')' ;
 COMA : ',' ;
 EQUALS : '==';
+NOTEQUALS : '!=';
 IF : 'if' ;
 INT : ('0'..'9')+ ;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;
