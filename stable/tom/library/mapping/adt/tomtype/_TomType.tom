@@ -2820,33 +2820,6 @@
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_FalseTL(s) }
 }
 
-%op Strategy Is_EqualFunctionSymbol() {
-  make() { `When_EqualFunctionSymbol(Identity()) }
-}
-
-%op Strategy _EqualFunctionSymbol(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._EqualFunctionSymbol)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tomexpression.strategy.expression._EqualFunctionSymbol(arg0, arg1, arg2) }
-}
-
-%op Strategy Make_EqualFunctionSymbol(_AstType:Strategy, _Exp1:Strategy, _Exp2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_EqualFunctionSymbol)}
-
-  get_slot(_AstType, t) { _AstType }
-  get_slot(_Exp1, t) { _Exp1 }
-  get_slot(_Exp2, t) { _Exp2 }
-  make( new_AstType,  new_Exp1,  new_Exp2) { new tom.engine.adt.tomexpression.strategy.expression.Make_EqualFunctionSymbol( new_AstType,  new_Exp1,  new_Exp2) }
-}
-
-%op Strategy When_EqualFunctionSymbol(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_EqualFunctionSymbol)}
-  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_EqualFunctionSymbol(s) }
-}
-
 %op Strategy Is_EqualTerm() {
   make() { `When_EqualTerm(Identity()) }
 }
@@ -3138,22 +3111,24 @@
   make() { `When_GetSliceList(Identity()) }
 }
 
-%op Strategy _GetSliceList(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+%op Strategy _GetSliceList(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._GetSliceList)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
   get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tomexpression.strategy.expression._GetSliceList(arg0, arg1, arg2) }
+  get_slot(arg3, t) { t.getArgument(3) }
+  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomexpression.strategy.expression._GetSliceList(arg0, arg1, arg2, arg3) }
 }
 
-%op Strategy Make_GetSliceList(_AstName:Strategy, _VariableBeginAST:Strategy, _VariableEndAST:Strategy) {
+%op Strategy Make_GetSliceList(_AstName:Strategy, _VariableBeginAST:Strategy, _VariableEndAST:Strategy, _Tail:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_GetSliceList)}
 
   get_slot(_AstName, t) { _AstName }
   get_slot(_VariableBeginAST, t) { _VariableBeginAST }
   get_slot(_VariableEndAST, t) { _VariableEndAST }
-  make( new_AstName,  new_VariableBeginAST,  new_VariableEndAST) { new tom.engine.adt.tomexpression.strategy.expression.Make_GetSliceList( new_AstName,  new_VariableBeginAST,  new_VariableEndAST) }
+  get_slot(_Tail, t) { _Tail }
+  make( new_AstName,  new_VariableBeginAST,  new_VariableEndAST,  new_Tail) { new tom.engine.adt.tomexpression.strategy.expression.Make_GetSliceList( new_AstName,  new_VariableBeginAST,  new_VariableEndAST,  new_Tail) }
 }
 
 %op Strategy When_GetSliceList(s:Strategy) {

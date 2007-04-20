@@ -1,9 +1,8 @@
-// $ANTLR 2.7.7 (20060906): "TomJavaParser.g" -> "TomJavaParser.java"$
 /*
  *
- * TOM - To One Matching Compiler
+ * GOM
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (C) 2007, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,20 +19,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
-package tom.engine.parser;
+package tom.gom.expander.rule;
 
+import org.antlr.runtime.Token;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
 
-public interface TomJavaParserTokenTypes {
-	int EOF = 1;
-	int NULL_TREE_LOOKAHEAD = 3;
-	int JAVA_PACKAGE = 4;
-	int STRING = 5;
-	int WS = 6;
-	int COMMENT = 7;
-	int SL_COMMENT = 8;
-	int ML_COMMENT = 9;
+public class ASTAdaptor extends CommonTreeAdaptor {
+
+	public Object create(Token payload) {
+		return new ASTTree(payload);
+	}
+
 }

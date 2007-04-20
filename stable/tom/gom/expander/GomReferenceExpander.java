@@ -90,111 +90,95 @@ public class GomReferenceExpander {
 
 
         hookList.add(expHooksModule(tom_modName,tom_sorts,tom_mdecl,packagePath,forTermgraph));
-       } } } } } } } } } return super.visit_Module(tom__arg) ;  } }private static  tom.library.sl.Strategy  tom_make_ExpandModule( String  t0,  boolean  t1,  java.util.ArrayList  t2) { return new ExpandModule(t0,t1,t2); } private static class ExpandSort  extends  tom.gom.adt.gom.GomBasicStrategy   { private  java.util.ArrayList  hookList;  public ExpandSort(  java.util.ArrayList  hookList ) { super(tom_make_Identity() ); this.hookList=hookList; } public  java.util.ArrayList  gethookList() { return hookList;} public int getChildCount() { return 1; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); default: throw new IndexOutOfBoundsException(); }} public  tom.gom.adt.gom.types.Sort  visit_Sort(  tom.gom.adt.gom.types.Sort  tom__arg )  throws jjtraveler.VisitFailure { if (tom_is_sort_Sort(tom__arg)) { { tom.gom.adt.gom.types.Sort  tom_x=(( tom.gom.adt.gom.types.Sort )tom__arg); if ( true ) {
+       } } } } } } } } } return super.visit_Module(tom__arg) ;  } }private static  tom.library.sl.Strategy  tom_make_ExpandModule( String  t0,  boolean  t1,  java.util.ArrayList  t2) { return new ExpandModule(t0,t1,t2); } private static class ExpandSort  extends  tom.gom.adt.gom.GomBasicStrategy   { private  java.util.ArrayList  hookList;  public ExpandSort(  java.util.ArrayList  hookList ) { super(tom_make_Identity() ); this.hookList=hookList; } public  java.util.ArrayList  gethookList() { return hookList;} public int getChildCount() { return 1; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); default: throw new IndexOutOfBoundsException(); }} public  tom.gom.adt.gom.types.Sort  visit_Sort(  tom.gom.adt.gom.types.Sort  tom__arg )  throws jjtraveler.VisitFailure { if (tom_is_sort_Sort(tom__arg)) { { tom.gom.adt.gom.types.Sort  tomMatch2Position1=(( tom.gom.adt.gom.types.Sort )tom__arg); if ( ( tom_is_fun_sym_Sort(tomMatch2Position1) ||  false  ) ) { { tom.gom.adt.gom.types.SortDecl  tomMatch2Position1NameNumberDecl=tom_get_slot_Sort_Decl(tomMatch2Position1); if ( ( tom_is_fun_sym_SortDecl(tomMatch2Position1NameNumberDecl) ||  false  ) ) { { String  tom_sortname=tom_get_slot_SortDecl_Name(tomMatch2Position1NameNumberDecl); { tom.gom.adt.gom.types.SortDecl  tom_sortdecl=tomMatch2Position1NameNumberDecl; { tom.gom.adt.gom.types.OperatorDeclList  tom_ops=tom_get_slot_Sort_Operators(tomMatch2Position1); { tom.gom.adt.gom.types.Sort  tom_sort=tomMatch2Position1; if ( true ) {
 
 
 
 
 
- return expandSort(tom_x,hookList);  } } } return super.visit_Sort(tom__arg) ;  } }private static  tom.library.sl.Strategy  tom_make_ExpandSort( java.util.ArrayList  t0) { return new ExpandSort(t0); }
+
+         
+        //We add 3 new operators lab<Sort>,ref<Sort>,path<Sort>     
+        OperatorDecl labOp = tom_make_OperatorDecl("lab"+tom_sortname,tom_sortdecl,tom_make_Slots(tom_cons_list_concSlot(tom_make_Slot("label",stringSortDecl),tom_cons_list_concSlot(tom_make_Slot("term",tom_sortdecl),tom_empty_list_concSlot()))));
+        OperatorDecl refOp = tom_make_OperatorDecl("ref"+tom_sortname,tom_sortdecl,tom_make_Slots(tom_cons_list_concSlot(tom_make_Slot("label",stringSortDecl),tom_empty_list_concSlot())));
+        OperatorDecl pathOp = tom_make_OperatorDecl("path"+tom_sortname,tom_sortdecl,tom_make_Variadic(intSortDecl));
+        hookList.add(pathHooks(pathOp,tom_sortdecl));
+        return tom_sort.setOperators(tom_append_list_concOperator(tom_ops,tom_cons_list_concOperator(labOp,tom_cons_list_concOperator(refOp,tom_cons_list_concOperator(pathOp,tom_empty_list_concOperator())))));
+
+       } } } } } } } } } } return super.visit_Sort(tom__arg) ;  } }private static  tom.library.sl.Strategy  tom_make_ExpandSort( java.util.ArrayList  t0) { return new ExpandSort(t0); }
 
 
-
-  private static Sort expandSort(Sort sort, ArrayList hookList) {
-    OperatorDeclList l1 = sort.getOperators();
-    OperatorDeclList l2 = getRefOperators(sort.getDecl(),hookList);
-    return sort.setOperators(tom_append_list_concOperator(l1,tom_append_list_concOperator(l2,tom_empty_list_concOperator())));
-  }
-
-  /*
-     We add 4 new operators for every sort
-     lab<Sort>,ref<Sort>,path<Sort>     
-     and their corresponding hooks
-   */
-  private static OperatorDeclList getRefOperators(
-      SortDecl sort,
-      ArrayList hookList) {
-    OperatorDecl labOp = tom_make_OperatorDecl("lab"+sort.getName(),sort,tom_make_Slots(tom_cons_list_concSlot(tom_make_Slot("label",stringSortDecl),tom_cons_list_concSlot(tom_make_Slot("term",sort),tom_empty_list_concSlot()))));
-
-    OperatorDecl refOp = tom_make_OperatorDecl("ref"+sort.getName(),sort,tom_make_Slots(tom_cons_list_concSlot(tom_make_Slot("label",stringSortDecl),tom_empty_list_concSlot())));
-
-    OperatorDecl pathOp = tom_make_OperatorDecl("path"+sort.getName(),sort,tom_make_Variadic(intSortDecl));
-    hookList.add(pathHooks(pathOp,sort));
-
-    return tom_cons_list_concOperator(labOp,tom_cons_list_concOperator(refOp,tom_cons_list_concOperator(pathOp,tom_empty_list_concOperator())));
-  }
 
   private static HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
-    
+
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
 
-    String codeImport ="\n    import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".types.*;\n    import tom.library.sl.*;\n    "
-
-
-;
-    
- 
-    String codeBlock ="\n\n   public Path add(Path p){\n     Position pp = Position.make(this);\n     return make(pp.add(p));\n   }\n\n   public Path inv(){\n     Position pp = Position.make(this);\n     return make(pp.inv());\n   }\n\n   public Path sub(Path p){\n     Position pp = Position.make(this);\n     return make(pp.sub(p));\n   }\n  \n   public int getHead(){\n     return getHeadpath"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n   }\n\n   public Path getTail(){\n     return (Path) getTailpath"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n   }\n\n   public Path normalize(){\n     %match(this) {\n       path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(X*,x,y,Y*) -> {\n         if (`x==-`y) {\n           return ((Path)`path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(X*,Y*)).normalize();\n         }\n       }\n     }\n     return this;\n   }\n\n   public Path conc(int i){\n     path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" current = this;\n     return (Path) `Conspath"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(i,current); \n   }\n\n   public static path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" make(Path path){\n     "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" ref = `path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n     Path pp = path.normalize();\n     int size = pp.length();\n      for(int i=0;i<size;i++){\n        ref = `path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(ref*,pp.getHead());\n        pp = pp.getTail();\n      }\n      return (path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+") ref;\n   }\n\n   public int compare(Path p){\n     Position p1 = Position.make(this);\n     Position p2 = Position.make(p);\n     return p1.compare(p2);\n   }\n   "
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    String codeImport ="\n      import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".types.*;\n    import tom.library.sl.*;\n    "
 
 
 ;
 
-   return 
+    String codeBlock ="\n\n      public Path add(Path p){\n        Position pp = Position.make(this);\n        return make(pp.add(p));\n      }\n\n    public Path inv(){\n      Position pp = Position.make(this);\n      return make(pp.inv());\n    }\n\n    public Path sub(Path p){\n      Position pp = Position.make(this);\n      return make(pp.sub(p));\n    }\n\n    public int getHead(){\n      return getHeadpath"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n    }\n\n    public Path getTail(){\n      return (Path) getTailpath"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n    }\n\n    public Path normalize(){\n      %match(this) {\n        path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(X*,x,y,Y*) -> {\n          if (`x==-`y) {\n            return ((Path)`path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(X*,Y*)).normalize();\n          }\n        }\n      }\n      return this;\n    }\n\n    public Path conc(int i){\n      path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" current = this;\n      return (Path) `Conspath"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(i,current); \n    }\n\n    public static path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" make(Path path){\n      "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" ref = `path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n      Path pp = path.normalize();\n      int size = pp.length();\n      for(int i=0;i<size;i++){\n        ref = `path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(ref*,pp.getHead());\n        pp = pp.getTail();\n      }\n      return (path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+") ref;\n    }\n\n    public int compare(Path p){\n      Position p1 = Position.make(this);\n      Position p2 = Position.make(p);\n      return p1.compare(p2);\n    }\n    "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+
+    return 
       tom_cons_list_concHookDecl(tom_make_ImportHookDecl(tom_make_CutOperator(opDecl),tom_make_Code(codeImport)),tom_cons_list_concHookDecl(tom_make_InterfaceHookDecl(tom_make_CutOperator(opDecl),tom_make_Code("tom.library.sl.Path")),tom_cons_list_concHookDecl(tom_make_BlockHookDecl(tom_make_CutOperator(opDecl),tom_make_Code(codeBlock)),tom_empty_list_concHookDecl())))
 
 
@@ -203,20 +187,20 @@ public class GomReferenceExpander {
   }
 
   private static HookDeclList expHooksModule(GomModuleName gomModuleName,
-                                             SortList sorts,
-                                             ModuleDecl mDecl,
-                                             String packagePath,
-                                             boolean forTermgraph) {
+      SortList sorts,
+      ModuleDecl mDecl,
+      String packagePath,
+      boolean forTermgraph) {
     String moduleName = gomModuleName.getName();
 
-    String codeImport ="\n    import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".types.*;\n    import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".*;\n    import tom.library.sl.*;\n    import java.util.*;\n   "
+    String codeImport ="\n      import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".types.*;\n    import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".*;\n    import tom.library.sl.*;\n    import java.util.*;\n    "
 
 
 
 
 ;
 
-    String codeBlockCommon ="\n    %include{java/util/HashMap.tom}\n    %include{java/util/ArrayList.tom}\n    %include{sl.tom}\n\n    %typeterm Info{\n      implement {Info}\n    }\n\n\n    public static class Info{\n      public String label;\n      public Path path;\n      public "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType term;\n    }\n    "
+    String codeBlockCommon ="\n      %include{java/util/HashMap.tom}\n    %include{java/util/ArrayList.tom}\n    %include{sl.tom}\n\n    %typeterm Info{\n      implement {Info}\n    }\n\n\n    public static class Info{\n      public String label;\n      public Path path;\n      public "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType term;\n    }\n    "
 
 
 
@@ -235,20 +219,17 @@ public class GomReferenceExpander {
 
     String codeStrategies = "";
     String CollectLabels= "Fail()",Collect = "Fail()";
-    String Min= "Identity()",Switch= "Identity()",ClearMarked= "Identity()",Label2Path = "Identity()";
+    String Label2Path = "Identity()",NormalizeLabel = "Identity()";
 
      if (tom_is_sort_SortList(sorts)) { { tom.gom.adt.gom.types.SortList  tomMatch3Position1=(( tom.gom.adt.gom.types.SortList )sorts); if ( ( tom_is_fun_sym_concSort(tomMatch3Position1) ||  false  ) ) { {int tomMatch3Position1Index1=0; { tom.gom.adt.gom.types.SortList  tomMatch3Position1List1=tomMatch3Position1; { tom.gom.adt.gom.types.SortList  tomMatch3Position1Begin1=tomMatch3Position1List1; { tom.gom.adt.gom.types.SortList  tomMatch3Position1End1=tomMatch3Position1List1; { while (!(tom_is_empty_concSort_SortList(tomMatch3Position1End1))) {tomMatch3Position1List1=tomMatch3Position1End1; { { tom.gom.adt.gom.types.SortList  tomMatch3Position1Save2=tomMatch3Position1List1; { { tom.gom.adt.gom.types.Sort  tomMatch3Position1Position2=tom_get_head_concSort_SortList(tomMatch3Position1List1);tomMatch3Position1Index1=tomMatch3Position1Index1 + 1;tomMatch3Position1List1=tom_get_tail_concSort_SortList(tomMatch3Position1List1); if ( ( tom_is_fun_sym_Sort(tomMatch3Position1Position2) ||  false  ) ) { { tom.gom.adt.gom.types.SortDecl  tomMatch3Position1Position2NameNumberDecl=tom_get_slot_Sort_Decl(tomMatch3Position1Position2); if ( ( tom_is_fun_sym_SortDecl(tomMatch3Position1Position2NameNumberDecl) ||  false  ) ) { { String  tom_sortName=tom_get_slot_SortDecl_Name(tomMatch3Position1Position2NameNumberDecl); if ( true ) {
 
-        codeImport +="\n          import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".types."/* Generated by TOM (version 2.5alpha): Do not edit this file */+tom_sortName.toLowerCase()+".*;\n        "
+        codeImport += "\n          import "/* Generated by TOM (version 2.5alpha): Do not edit this file */+packagePath+"."/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName.toLowerCase()+".types."/* Generated by TOM (version 2.5alpha): Do not edit this file */+tom_sortName.toLowerCase()+".*;\n        "
 
 ;
         codeStrategies += getStrategies(tom_sortName,moduleName);
-        Min = "Sequence(Min"+tom_sortName+"(info),"+Min+")";
-        Switch = "Sequence(Switch"+tom_sortName+"(info),"+Switch+")";
-        ClearMarked = "Sequence(ClearMarked"+tom_sortName+"(marked),"+ClearMarked+")";
         Label2Path = "Sequence(Label2Path"+tom_sortName+"(map),"+Label2Path+")";
         CollectLabels = "ChoiceV(CollectLabels"+tom_sortName+"(map),"+CollectLabels+")";
-        Collect = "ChoiceV(Collect"+tom_sortName+"(marked,info),"+Collect+")";
+        NormalizeLabel = "Sequence(NormalizeLabel"+tom_sortName+"(map),"+NormalizeLabel+")";
        } } } } } }tomMatch3Position1List1=tomMatch3Position1Save2; } }tomMatch3Position1End1=tom_get_tail_concSort_SortList(tomMatch3Position1End1); } }tomMatch3Position1List1=tomMatch3Position1Begin1; } } } } } } } }
 
 
@@ -261,10 +242,7 @@ public class GomReferenceExpander {
 
 ;
 
-
-
-    String codeBlockTermGraph ="\n\n      public static "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType expand("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType t){\n        Info info = new Info();\n        ArrayList marked = new ArrayList();\n        HashMap map = new HashMap();\n        Strategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+Collect+"),BottomUp("/* Generated by TOM (version 2.5alpha): Do not edit this file */+Min+"),TopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+Switch+"))),"/* Generated by TOM (version 2.5alpha): Do not edit this file */+ClearMarked+"));\n        Strategy label2path = `Sequence(Repeat(OnceTopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+CollectLabels+")),TopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+Label2Path+"));\n        return ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType) `Sequence(normalization,label2path).fire(t);\n      }\n\n      public static "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType label2path("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType t){\n        HashMap map = new HashMap();\n        Strategy label2path = `Sequence(Repeat(OnceTopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+CollectLabels+")),TopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+Label2Path+"));\n        return ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType) label2path.fire(t);\n      }\n\n    "
-
+    String codeBlockTermGraph ="\n\n      public static "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType expand("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType t){\n        Info info = new Info();\n        ArrayList marked = new ArrayList();\n        HashMap map = new HashMap();\n        "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType tt = ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType) `InnermostIdSeq("/* Generated by TOM (version 2.5alpha): Do not edit this file */+NormalizeLabel+").fire(t);\n        return label2path(tt);\n      }\n\n    public static "/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType label2path("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType t){\n      HashMap map = new HashMap();\n      Strategy label2path = `Sequence(Repeat(OnceTopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+CollectLabels+")),TopDown("/* Generated by TOM (version 2.5alpha): Do not edit this file */+Label2Path+"));\n      return ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+moduleName+"AbstractType) label2path.fire(t);\n    }\n\n    "
 
 
 
@@ -291,7 +269,12 @@ public class GomReferenceExpander {
 
   private static String getStrategies(String sortName, String moduleName){
 
-    String strategies ="\n\n      %strategy Collect"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(marked:ArrayList,info:Info) extends Fail(){\n        visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n          lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label,term=term]-> {\n            if(! marked.contains(`label)){\n              info.label=`label;\n              info.term=`lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label,term);\n              info.path=getEnvironment().getPosition();\n              marked.add(`label);\n              return `lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label,term);\n            }\n          }\n        }\n      }\n\n    %strategy Min"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(info:Info) extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label] -> {\n          if(`label.equals(info.label)){\n            if(getEnvironment().getPosition().compare(info.path)==-1){\n              info.path=getEnvironment().getPosition(); \n            }\n          }\n        }\n      }\n    }\n\n    %strategy Switch"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(info:Info) extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label] -> {\n          if (info.path.equals(getEnvironment().getPosition())){\n            return ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+") info.term;\n          }\n        }\n        lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label,term=term] -> {\n          if(`label.equals(info.label)){\n            if (! info.path.equals(getEnvironment().getPosition())){\n              return `ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label);\n            }\n          }\n        }\n      }\n    }\n\n\n    %strategy ClearMarked"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(list:ArrayList) extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        _ -> {\n          list.clear();\n        }\n      }\n    }\n\n    %strategy CollectLabels"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(map:HashMap) extends Fail(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label,term=term]-> {\n          map.put(`label,getEnvironment().getPosition());\n          return `term;\n        }\n      }\n    }\n\n    %strategy Label2Path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(map:HashMap) extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label] -> {\n          if (! map.containsKey(`label)) {\n            // ref with an unexistent label\n            throw new RuntimeException(\"Term-graph with a null reference at\"+getEnvironment().getPosition());\n          }\n          else {\n            Position target = (Position) map.get(`label);\n            "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" ref = ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+") (path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+".make(target.sub(getEnvironment().getPosition())).normalize());\n            return ref;\n          }\n        }\n      }\n    }\n    "
+    String strategies ="\n\n    %typeterm Info"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        implement {Info"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"}\n    }\n\n    static class Info"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n      public Position omega;\n      public "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" term;\n    }\n \n      %strategy Collect"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(marked:ArrayList,info:Info) extends Fail(){\n        visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n          lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label,term=term]-> {\n            if(! marked.contains(`label)){\n              info.label=`label;\n              info.term=`lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label,term);\n              info.path=getEnvironment().getPosition();\n              marked.add(`label);\n              return `lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label,term);\n            }\n          }\n        }\n      }\n\n    %strategy CollectLabels"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(map:HashMap) extends Fail(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label,term=term]-> {\n          map.put(`label,getEnvironment().getPosition());\n          return `term;\n        }\n      }\n    }\n\n    %strategy Label2Path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(map:HashMap) extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"{\n        ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label] -> {\n          if (! map.containsKey(`label)) {\n            // find a reference with an unexistent label\n            throw new RuntimeException(\"Term-graph with a null reference at\"+getEnvironment().getPosition());\n          }\n          else {\n            Position target = (Position) map.get(`label);\n            "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" ref = ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+") (path"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+".make(target.sub(getEnvironment().getPosition())).normalize());\n            return ref;\n          }\n        }\n      }\n    }\n\n    %strategy CollectSubterm"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label:String,info:Info"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+") extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" {\n        lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label,term=subterm] -> {\n          if(label.equals(`label)){\n            info.term = `subterm;\n            info.omega = getEnvironment().getPosition();\n            return `ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label);\n          }\n        }\n      }\n    }\n\n\n    %strategy NormalizeLabel"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(map:HashMap) extends Identity(){\n      visit "/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" {\n        ref"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label] -> {\n          if (! map.containsKey(`label)){\n            Info"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+" info = new Info"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"();\n            Position pos = new Position(new int[]{});\n            Position old = getEnvironment().getPosition();\n            Position rootpos = new Position(new int[]{});\n            map.put(`label,old);\n            getEnvironment().goTo(rootpos.sub(getEnvironment().getPosition()));\n            execute(`Try(TopDown(CollectSubterm"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label,info))));\n            getEnvironment().goTo(old.sub(getEnvironment().getPosition()));\n            return `lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"(label,info.term);\n          }\n        }\n        lab"/* Generated by TOM (version 2.5alpha): Do not edit this file */+sortName+"[label=label] -> {\n          map.put(`label,getEnvironment().getPosition());\n        }\n      }\n    }\n    "
+
+
+
+
+
 
 
 

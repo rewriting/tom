@@ -1,0 +1,146 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm Rule {
+  implement { tom.gom.adt.rule.types.Rule }
+  is_sort(t) { t instanceof tom.gom.adt.rule.types.Rule }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+}
+
+
+%typeterm RuleList {
+  implement { tom.gom.adt.rule.types.RuleList }
+  is_sort(t) { t instanceof tom.gom.adt.rule.types.RuleList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+}
+
+
+%typeterm TermList {
+  implement { tom.gom.adt.rule.types.TermList }
+  is_sort(t) { t instanceof tom.gom.adt.rule.types.TermList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+}
+
+
+%typeterm Condition {
+  implement { tom.gom.adt.rule.types.Condition }
+  is_sort(t) { t instanceof tom.gom.adt.rule.types.Condition }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+}
+
+
+%typeterm Term {
+  implement { tom.gom.adt.rule.types.Term }
+  is_sort(t) { t instanceof tom.gom.adt.rule.types.Term }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+}
+
+%op Rule Rule(lhs:Term, rhs:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.rule.Rule }
+  get_slot(lhs, t) { t.getlhs() }
+  get_slot(rhs, t) { t.getrhs() }
+  make(t0, t1) { tom.gom.adt.rule.types.rule.Rule.make(t0, t1)}
+}
+
+%op Rule ConditionalRule(lhs:Term, rhs:Term, cond:Condition) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.rule.ConditionalRule }
+  get_slot(lhs, t) { t.getlhs() }
+  get_slot(rhs, t) { t.getrhs() }
+  get_slot(cond, t) { t.getcond() }
+  make(t0, t1, t2) { tom.gom.adt.rule.types.rule.ConditionalRule.make(t0, t1, t2)}
+}
+
+%op RuleList EmptyRuleList() {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList }
+  make() { tom.gom.adt.rule.types.rulelist.EmptyRuleList.make()}
+}
+
+%op RuleList ConsRuleList(HeadRuleList:Rule, TailRuleList:RuleList) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList }
+  get_slot(HeadRuleList, t) { t.getHeadRuleList() }
+  get_slot(TailRuleList, t) { t.getTailRuleList() }
+  make(t0, t1) { tom.gom.adt.rule.types.rulelist.ConsRuleList.make(t0, t1)}
+}
+
+%op TermList EmptyTermList() {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.termlist.EmptyTermList }
+  make() { tom.gom.adt.rule.types.termlist.EmptyTermList.make()}
+}
+
+%op TermList ConsTermList(HeadTermList:Term, TailTermList:TermList) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.termlist.ConsTermList }
+  get_slot(HeadTermList, t) { t.getHeadTermList() }
+  get_slot(TailTermList, t) { t.getTailTermList() }
+  make(t0, t1) { tom.gom.adt.rule.types.termlist.ConsTermList.make(t0, t1)}
+}
+
+%op Condition CondTerm(t:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondTerm }
+  get_slot(t, t) { t.gett() }
+  make(t0) { tom.gom.adt.rule.types.condition.CondTerm.make(t0)}
+}
+
+%op Condition CondEquals(t1:Term, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondEquals }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondEquals.make(t0, t1)}
+}
+
+%op Condition CondNotEquals(t1:Term, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondNotEquals }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondNotEquals.make(t0, t1)}
+}
+
+%op Term Appl(symbol:String, args:TermList) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.Appl }
+  get_slot(symbol, t) { t.getsymbol() }
+  get_slot(args, t) { t.getargs() }
+  make(t0, t1) { tom.gom.adt.rule.types.term.Appl.make(t0, t1)}
+}
+
+%op Term Var(name:String) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.Var }
+  get_slot(name, t) { t.getname() }
+  make(t0) { tom.gom.adt.rule.types.term.Var.make(t0)}
+}
+
+%op Term BuiltinInt(i:int) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.BuiltinInt }
+  get_slot(i, t) { t.geti() }
+  make(t0) { tom.gom.adt.rule.types.term.BuiltinInt.make(t0)}
+}
+
+%op Term BuiltinString(s:String) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.BuiltinString }
+  get_slot(s, t) { t.gets() }
+  make(t0) { tom.gom.adt.rule.types.term.BuiltinString.make(t0)}
+}
+
+
+%oplist RuleList RuleList(Rule*) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList || t instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList }
+  make_empty() { tom.gom.adt.rule.types.rulelist.EmptyRuleList.make() }
+  make_insert(e,l) { tom.gom.adt.rule.types.rulelist.ConsRuleList.make(e,l) }
+  get_head(l) { l.getHeadRuleList() }
+  get_tail(l) { l.getTailRuleList() }
+  is_empty(l) { l.isEmptyRuleList() }
+}
+
+%oplist TermList TermList(Term*) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.termlist.ConsTermList || t instanceof tom.gom.adt.rule.types.termlist.EmptyTermList }
+  make_empty() { tom.gom.adt.rule.types.termlist.EmptyTermList.make() }
+  make_insert(e,l) { tom.gom.adt.rule.types.termlist.ConsTermList.make(e,l) }
+  get_head(l) { l.getHeadTermList() }
+  get_tail(l) { l.getTailTermList() }
+  is_empty(l) { l.isEmptyTermList() }
+}

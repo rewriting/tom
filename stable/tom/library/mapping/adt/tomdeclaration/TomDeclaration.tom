@@ -1114,14 +1114,6 @@
   make() { tom.engine.adt.tomexpression.types.expression.FalseTL.make()}
 }
 
-%op Expression EqualFunctionSymbol(AstType:TomType, Exp1:TomTerm, Exp2:TomTerm) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomexpression.types.expression.EqualFunctionSymbol }
-  get_slot(AstType, t) { t.getAstType() }
-  get_slot(Exp1, t) { t.getExp1() }
-  get_slot(Exp2, t) { t.getExp2() }
-  make(t0, t1, t2) { tom.engine.adt.tomexpression.types.expression.EqualFunctionSymbol.make(t0, t1, t2)}
-}
-
 %op Expression EqualTerm(TomType:TomType, Kid1:TomTerm, Kid2:TomTerm) {
   is_fsym(t) { t instanceof tom.engine.adt.tomexpression.types.expression.EqualTerm }
   get_slot(TomType, t) { t.getTomType() }
@@ -1205,12 +1197,13 @@
   make(t0, t1, t2, t3) { tom.engine.adt.tomexpression.types.expression.GetElement.make(t0, t1, t2, t3)}
 }
 
-%op Expression GetSliceList(AstName:TomName, VariableBeginAST:TomTerm, VariableEndAST:TomTerm) {
+%op Expression GetSliceList(AstName:TomName, VariableBeginAST:TomTerm, VariableEndAST:TomTerm, Tail:TomTerm) {
   is_fsym(t) { t instanceof tom.engine.adt.tomexpression.types.expression.GetSliceList }
   get_slot(AstName, t) { t.getAstName() }
   get_slot(VariableBeginAST, t) { t.getVariableBeginAST() }
   get_slot(VariableEndAST, t) { t.getVariableEndAST() }
-  make(t0, t1, t2) { tom.engine.adt.tomexpression.types.expression.GetSliceList.make(t0, t1, t2)}
+  get_slot(Tail, t) { t.getTail() }
+  make(t0, t1, t2, t3) { tom.engine.adt.tomexpression.types.expression.GetSliceList.make(t0, t1, t2, t3)}
 }
 
 %op Expression GetSliceArray(AstName:TomName, SubjectListName:TomTerm, VariableBeginAST:TomTerm, VariableEndAST:TomTerm) {

@@ -34,6 +34,7 @@ import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.expander.rule.RuleExpander;
 
 public class HookTypeExpander {
 
@@ -155,6 +156,9 @@ public class HookTypeExpander {
            } } } if ( ( tom_is_fun_sym_HookKind(tomMatch7Position1) ||  false  ) ) { if ( ( tom_equal_term_String("ACU", tom_get_slot_HookKind_kind(tomMatch7Position1)) ||  false  ) ) { if ( true ) {
 
             return makeACUHookList(tom_hName,mdecl,tom_scode);
+           } } } if ( ( tom_is_fun_sym_HookKind(tomMatch7Position1) ||  false  ) ) { if ( ( tom_equal_term_String("rules", tom_get_slot_HookKind_kind(tomMatch7Position1)) ||  false  ) ) { if ( true ) {
+
+            return makeRulesHookList(tom_hName,mdecl,tom_scode);
            } } } } }
 
         if (newHookList == tom_empty_list_concHookDecl()) {
@@ -371,6 +375,14 @@ public class HookTypeExpander {
        } } }
 
     return null;
+  }
+
+  /*
+   * generate hooks for associative-commutative with neutral element
+   */
+  private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
+    RuleExpander rexpander = new RuleExpander(moduleList);
+    return rexpander.expandRules(trimBracket(scode));
   }
 
   /*

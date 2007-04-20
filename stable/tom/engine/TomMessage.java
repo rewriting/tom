@@ -192,6 +192,8 @@ public class TomMessage implements PlatformMessage {
   // verifier
   public static final TomMessage verifierInactivated   =
       new TomMessage("The verifier is not activated and thus WILL NOT RUN.");
+  public static final TomMessage verifierNotCompatibleWithOptimize   =
+      new TomMessage("The verification cannot be performed when optimizing code with level>=2");
 
   // verbose messages
   public static final TomMessage tomParsingPhase       =
