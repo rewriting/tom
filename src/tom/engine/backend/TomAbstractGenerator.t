@@ -48,7 +48,7 @@ import tom.platform.OptionManager;
 
 import aterm.*;
 
-public abstract class TomAbstractGenerator extends TomBase {
+public abstract class TomAbstractGenerator {
 
   protected OutputCode output;
   protected OptionManager optionManager;
@@ -71,15 +71,15 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   protected TomSymbol getSymbolFromName(String tomName) {
-    return getSymbolFromName(tomName, symbolTable);
+    return TomBase.getSymbolFromName(tomName, symbolTable);
   }
 
   protected TomSymbol getSymbolFromType(TomType tomType) {
-    return getSymbolFromType(tomType, symbolTable);
+    return TomBase.getSymbolFromType(tomType, symbolTable);
   }
 
   protected TomType getTermType(TomTerm t) {
-    return getTermType(t, symbolTable);
+    return TomBase.getTermType(t, symbolTable);
   }
 
   protected TomType getUniversalType() {
@@ -154,7 +154,7 @@ public abstract class TomAbstractGenerator extends TomBase {
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
            */
-        output.write("tom" + tomNumberListToString(`l));
+        output.write("tom" + TomBase.tomNumberListToString(`l));
         return;
       }
 
@@ -164,7 +164,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       VariableStar[AstName=PositionName(l)] -> {
-        output.write("tom" + tomNumberListToString(`l));
+        output.write("tom" + TomBase.tomNumberListToString(`l));
         return;
       }
 
@@ -252,25 +252,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(type, exp, RecordAppl[Option=optionList, NameList=(nameAST@Name(opName))]) -> {
-        TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
-        TomType type = TomBase.getSymbolCodomain(tomSymbol);
-        if(getSymbolTable(moduleName).isBuiltinType(getTomType(`type))) {
-          if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol) || hasIsFsymDecl(tomSymbol)) {
-            generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
-            return;
-          } else {
-            generateExpression(deep,`EqualTerm(type,BuildConstant(nameAST),exp), moduleName);
-            return;
-          }
-        } else if(TomBase.hasTheory(`optionList, `TrueAU())) {
-	  generateExpression(deep,`IsSort(type,exp), moduleName);
-        } else {
-	  generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
-        }
-        return;
-      }
-
       EqualTerm(type,exp1,exp2) -> {
         `buildExpEqualTerm(deep, type, exp1, exp2, moduleName);
         return;
@@ -325,8 +306,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetSliceList(Name(name), varBegin, varEnd) -> {
-        buildExpGetSliceList(deep, `name, `varBegin, `varEnd, moduleName);
+      GetSliceList(Name(name), varBegin, varEnd, tailSlice) -> {
+        buildExpGetSliceList(deep, `name, `varBegin, `varEnd, `tailSlice,moduleName);
         return;
       }
       
@@ -360,11 +341,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       Nop() -> {
-        return;
-      }
-
-      AssignMatchSubject(var@Variable[Option=option],exp) -> {
-        `buildAssignVar(deep, var, option, exp, moduleName);
         return;
       }
 
@@ -562,8 +538,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetImplementationDecl(Variable[AstName=Name(name),
-                              AstType=Type(ASTTomType(type),tlType@TLType[])],
-                     instr, _) -> {
+                            AstType=Type(ASTTomType(type),tlType@TLType[])],
+                            instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
           `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
         }
@@ -571,9 +547,9 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       IsFsymDecl(Name(tomName),
-       Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]], instr, _) -> {
+       Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
-          `buildIsFsymDecl(deep, tomName, name, tlType, instr, moduleName);
+          `buildIsFsymDecl(deep, tomName, varname, tlType, instr, moduleName);
         }
         return;
       }
@@ -636,7 +612,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeEmptyList(Name(opname), instr, _) -> {
-        TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
+        TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
         || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr, moduleName);
@@ -667,19 +643,19 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetSizeDecl[Opname=opNameAST@Name(opname),
-				          Variable=Variable[AstName=Name(name),
-									AstType=Type(ASTTomType(type),tlType@TLType[])],
-				Instr=instr] -> {
-					if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-						`buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
-					}
-					return;
-			}
+	Variable=Variable[AstName=Name(name),
+	AstType=Type(ASTTomType(type),tlType@TLType[])],
+	Instr=instr] -> {
+	  if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+	    `buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
+	  }
+	  return;
+	}
 
       MakeEmptyArray(Name(opname),
                      Variable[Option=option,AstName=name,Constraints=constraints],
                      instr, _) -> {
-        TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
+	TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable(moduleName).getIntType(), constraints);
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
           `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), instr, moduleName);
@@ -793,7 +769,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   // ------------------------------------------------------------
 
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
-  protected abstract void buildSemiColon() throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException;
   protected abstract void buildRef(int deep, TomTerm term, String moduleName) throws IOException;
@@ -832,7 +807,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpGetTail(int deep, TomName opName, TomType type1, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
-  protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, String moduleName) throws IOException;
+  protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tailSlice, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
   protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;

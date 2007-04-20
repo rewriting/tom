@@ -28,6 +28,7 @@ package tom.engine.backend;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import tom.engine.TomBase;
 import tom.engine.tools.OutputCode;
 
 import tom.engine.adt.tomsignature.*;
@@ -69,7 +70,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 // ------------------------------------------------------------
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
-    String typeName = getTomType(type);
+    String typeName = TomBase.getTomType(type);
     if(getSymbolTable(moduleName).isIntType(typeName)
         || getSymbolTable(moduleName).isCharType(typeName)
         || getSymbolTable(moduleName).isLongType(typeName)
@@ -102,7 +103,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    TomTypeList tomTypes = getSymbolDomain(tomSymbol);
+    TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
     ArrayList stratChild = new ArrayList(); // child of type Strategy.
@@ -111,8 +112,8 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     int index = 0;
     while(!tomTypes.isEmptyconcTomType()) {
 	    TomType type = tomTypes.getHeadconcTomType();
-	    types.add(getTLType(type));
-      String name = getSlotName(tomSymbol, index).getString();
+	    types.add(TomBase.getTLType(type));
+      String name = TomBase.getSlotName(tomSymbol, index).getString();
       names.add(name);
 
       // test if the argument is a Strategy
@@ -204,13 +205,13 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
   }
 
   private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
-    output.write(deep, methodModifier + getTLType(`codomain) + " " + tomName + "(");
+    output.write(deep, methodModifier + TomBase.getTLType(`codomain) + " " + tomName + "(");
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm localVar) {
           v@Variable[AstType=type2] -> {
-            output.write(deep,getTLType(`type2) + " ");
+            output.write(deep,TomBase.getTLType(`type2) + " ");
             generate(deep,`v,moduleName);
             break matchBlock;
           }

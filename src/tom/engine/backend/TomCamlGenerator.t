@@ -29,6 +29,8 @@ import java.io.IOException;
 
 import tom.engine.exception.TomRuntimeException;
 
+import tom.engine.TomBase;
+
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -46,7 +48,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomCamlGenerator extends TomImperativeGenerator {
+public class TomCamlGenerator extends TomGenericGenerator {
 
   public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
@@ -61,14 +63,14 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    */
  
   protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(getTomType(`type))) {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
       generate(deep,exp1,moduleName);
       output.write(" = ");
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_equal_term_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -125,10 +127,6 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       instructionList = instructionList.getTailconcInstruction();
     }
     return;
-  }
-
-  protected void buildSemiColon() throws IOException {
-    // do nothing
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
@@ -278,7 +276,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
         return;
       }
 
-      ITL(_) -> {  // pas de \n donc pas besoin de reworkTL
+      ITL(_) -> {
         output.write(s);
         return;
       }
@@ -321,7 +319,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected void genDeclList(String name, String moduleName)  throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    TomType listType = getSymbolCodomain(tomSymbol);
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
     //TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
@@ -329,7 +327,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       return;
     }
 
-    String tomType = getTomType(listType);
+    String tomType = TomBase.getTomType(listType);
     String is_empty    = "tom_is_empty_" + name + "_" + tomType;
     String equal_term  = "tom_equal_term_" + tomType;
     String make_insert = "tom_cons_list_" + name;
@@ -347,14 +345,14 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s+= "              " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2))\n";
     s+= "\n";
     
-    s+=  "let rec tom_get_slice_" + name + "(beginning, ending) =\n"; 
-    s+= "   if " + equal_term + "(beginning,ending) then " + make_empty + "()\n";
+    s+=  "let rec tom_get_slice_" + name + "(beginning, ending,tail) =\n"; 
+    s+= "   if " + equal_term + "(beginning,ending) then tail\n";
     s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
-      get_slice + "(" + get_tail + "(beginning),ending))\n";
+      get_slice + "(" + get_tail + "(beginning),ending,tail))\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
-    output.write(itl.getCode()); 
+    s = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(s);
   }
   
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType, String moduleName) throws IOException {
@@ -414,13 +412,6 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s.append(") = ");
     output.write(s);
     generateInstruction(deep,instr,moduleName);
-    /*
-     * path to add a semi-colon for 'void instruction'
-     * This is the case of CheckStampDecl
-     */
-    if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();
-    }
     output.write(";;");
   }
 

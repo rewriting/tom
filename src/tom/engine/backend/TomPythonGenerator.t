@@ -27,6 +27,7 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
+import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -46,7 +47,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public class TomPythonGenerator extends TomImperativeGenerator {
+public class TomPythonGenerator extends TomGenericGenerator {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -75,14 +76,14 @@ public class TomPythonGenerator extends TomImperativeGenerator {
   }
   
 protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(getTomType(`type))) {
+    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
       output.write("(");
       generate(deep,exp1,moduleName);
       output.write(" == ");
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_equal_term_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -167,10 +168,6 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     generate(deep,exp,moduleName);
   }
 
-  protected void buildSemiColon() throws IOException {
-    output.write(";");
-  }
-
   /* FIXME */
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     generateInstructionList(deep+1,instList, moduleName);
@@ -205,29 +202,22 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s.append("): ");
     output.write(deep,s);
     generateInstruction(deep+1,instr,moduleName);
-    /*
-     * path to add a semi-colon for 'void instruction'
-     * This is the case of CheckStampDecl
-     */
-    if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();  
-    }
     output.writeln();
   }
 
 
   protected void genDeclList(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
-    TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType listType = TomBase.getSymbolCodomain(tomSymbol);
+    TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
       return;
     }
 
-    String tomType = getTomType(listType);
-    String glType = getTLType(listType);
+    String tomType = TomBase.getTomType(listType);
+    String glType = TomBase.getTLType(listType);
     //String tlEltType = getTLType(eltType);
 
     //String utype = glType;
@@ -254,18 +244,17 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "     return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
     s+= "\n";
     
-    s+= "def tom_get_slice_" + name + "(begin, end):\n"; 
+    s+= "def tom_get_slice_" + name + "(begin, end,tail):\n"; 
     s+= "   if " + equal_term + "(begin,end):\n";
-    s+= "      return " +  make_empty + "()\n";
+    s+= "      return tail\n";
     s+= "   else:\n";
     s+= "      return " +  make_insert + "(" + get_head + "(begin)," + 
-      get_slice + "(" + get_tail + "(begin),end));\n";
+      get_slice + "(" + get_tail + "(begin),end,tail));\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
-    output.write(itl.getCode()); 
+    String res  = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(res);
   }
-  
 
   protected void genDeclMake(String funName, TomType returnType, 
       TomList argList, Instruction instr, String moduleName) throws IOException {
