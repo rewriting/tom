@@ -69,17 +69,21 @@ public class TomGenerationManager {
    */
   private static Expression prepareGeneration(Constraint constraint){    
     %match(constraint){
-      and@AndConstraint(m,X*) ->{        
+      and@AndConstraint(m,X*) -> {        
         //TODO - erase the test when the match non-au will be available
         if ((`and) instanceof AndConstraint){
           return `And(prepareGeneration(m),
               prepareGeneration(AndConstraint(X*)));
         }
       }
-      m@MatchConstraint[] ->{        
+      OrConstraintDisjunction(m,X*) -> {
+        return `OrExpressionDisjunction(prepareGeneration(m),
+            prepareGeneration(OrConstraintDisjunction(X*)));
+      }
+      m@MatchConstraint[] -> {        
         return `ConstraintToExpression(m);
       }
-      Negate(c) ->{
+      Negate(c) -> {
         return `Negation(prepareGeneration(c));
       }
       EmptyListConstraint(opName,variable) ->{				
@@ -131,7 +135,10 @@ public class TomGenerationManager {
       // conditions			
       x ->{
         return `If(x,action,Nop());
-      }			
+      }	
+      or@OrExpressionDisjunction(_*) ->{
+        return buildExpressionDisjunction(`or,action);
+      }
     }
     throw new TomRuntimeException("TomInstructionGenerationManager.generateAutomata - strange expression:" + expression);
   }
@@ -163,4 +170,38 @@ public class TomGenerationManager {
       }
     }
   }
+  
+  /*
+   * Takes the OrConstraintDisjunction and generates the tests
+   * 
+   * boolean flag = false;
+   * if (is_fsym(f1)){
+   *    flag = true;
+   *    var = subterm_f1();
+   * }else if (is_fsym(f2)) {
+   *    flag = true;
+   *    var = subterm_f2(); 
+   * } ....
+   * if (flag) ...
+   *  
+   */
+  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action){
+    Instruction instruction = null; 
+    TomTerm flag = TomConstraintCompiler.getFreshVariable("bool",TomConstraintCompiler.getBooleanType());
+    Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    %match(orDisjunction){
+      OrExpressionDisjunction() -> {
+        return `Nop();
+      }
+      OrExpressionDisjunction(And(check,assign),X*) -> {
+        Instruction subtest = buildExpressionDisjunction(`OrExpressionDisjunction(X*),action);
+        instruction =  `If(check,AbstractBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
+      }
+    }
+    Instruction flagDeclaration = `LetRef(flag,FalseTL(),instruction);
+    return `AbstractBlock(concInstruction(flagDeclaration, 
+        If(EqualTerm(TomConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+  }
+
+  
 }

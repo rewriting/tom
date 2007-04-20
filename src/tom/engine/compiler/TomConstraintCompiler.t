@@ -201,6 +201,11 @@ public class TomConstraintCompiler{
   public static TomType getIntType(){
     return symbolTable.getIntType();
   }
+  
+  public static TomType getBooleanType(){
+    return symbolTable.getBooleanType();
+  }
+
 
   public static TomType getTermTypeFromTerm(TomTerm tomTerm){
     %match(tomTerm){

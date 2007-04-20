@@ -12,6 +12,12 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | Negation(Arg:Expression)
            | And(Arg1:Expression,Arg2:Expression)
            | Or(Arg1:Expression,Arg2:Expression)
+           /**
+		   * <code>OrExpressionDisjunction</code> used for the disjonction of symbols
+		   *
+		   * @param Expression the list of And() that are linked by Or
+		   */		              
+           | OrExpressionDisjunction(Expression*)
            | GreaterThan(Arg1:Expression,Arg2:Expression)
            | Conditional(Cond:Expression,Then:Expression,Else:Expression)
            | TrueTL()
@@ -31,7 +37,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | AddOne(Variable:TomTerm)
            | GetSize(Opname:TomName,Variable:TomTerm)
            | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
-           | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
+  		   | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | ConstraintToExpression(cons:Constraint)
            /**

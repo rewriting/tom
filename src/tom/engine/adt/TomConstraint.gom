@@ -15,6 +15,12 @@ Constraint =
 		   | Negate(c:Constraint)
 		   | AndConstraint(Constraint*)
 		   | OrConstraint(Constraint*)
+		  /**
+		   * <code>OrConstraintDisjunction</code> used for the disjonction of symbols
+		   *
+		   * @param Constraint the list of AndConstraints that are linked by Or
+		   */		   
+  		   | OrConstraintDisjunction(Constraint*)
 		   | MatchConstraint(pattern:TomTerm, subject:TomTerm)
 //		   | NMatchConstraint(pattern:TomTerm, subject:TomTerm)
 //		   | Exists(var:TomTerm,cons:Constraint)

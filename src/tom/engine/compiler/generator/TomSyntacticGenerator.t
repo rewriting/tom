@@ -30,20 +30,11 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
   // If we find ConstraintToExpression it means that this constraint was not processed	
   %strategy SyntacticGenerator() extends Identity(){
     visit Expression{      
-      // generate is_fsym(t,f) || is_fsym(t,g) || ...
-      ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[Option=option,NameList=nameList@(headName,_*),Slots=l],SymbolOf(subject))) ->{        
-        Expression cond = null;
-        TomType termType = TomConstraintCompiler.getTermTypeFromName(`headName);
-        // add condition for each name
-        %match(nameList){
-          concTomName(_*,name,_*) ->{            
-            Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));            
-//          [pem] can we consider Or as AU with False() as neutral element: this would remove the test
-// TODO - yes, when Or will be variadic (for the moment is binary)            
-            cond = (cond == null ? check : `Or(check,cond));	
-          }
-        }
-        return cond;
+      // generate is_fsym(t,f)
+      ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=nameList@(name)],SymbolOf(subject))) ->{
+        TomType termType = TomConstraintCompiler.getTermTypeFromName(`name);        
+        Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));     
+        return check;
       }
       // generate equality
       ConstraintToExpression(MatchConstraint(t@Subterm[],u@(Subterm|Variable)[])) ->{        
@@ -54,7 +45,6 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
   
   private static Expression buildEqualFunctionSymbol(TomType type, TomTerm subject,  TomName name, Theory theory) {    
     TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(name.getString());
-    //TomType type = TomBase.getSymbolCodomain(tomSymbol);
     if(TomConstraintCompiler.getSymbolTable().isBuiltinType(TomBase.getTomType(`type))) {
       if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
         return `IsFsym(name,subject);
@@ -66,5 +56,4 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
     } 
     return `IsFsym(name,subject);
   }
-
 }
