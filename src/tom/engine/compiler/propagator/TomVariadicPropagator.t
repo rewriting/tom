@@ -9,6 +9,7 @@ import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
+import tom.engine.TomBase;
 
 /**
  * Syntactic propagator
@@ -38,7 +39,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
       // /\ begin2 = fresh_var3  /\ end2 = fresh_var3 /\ Y* = VariableHeadList(begin2,end2) /\ fresh_var4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {        
         // if this is not a list, nothing to do
-        if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
+        if(!TomBase.isListOperator(TomConstraintCompiler.getSymbolTable().
             getSymbolFromName(`tomName))) {return `m;}    
         // declare fresh variable
         TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);

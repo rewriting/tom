@@ -9,6 +9,7 @@ import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
+import tom.engine.TomBase;
 
 /**
  * Syntactic propagator
@@ -36,7 +37,7 @@ public class TomArrayPropagator implements TomIBasePropagator{
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
-            if(!TomConstraintCompiler.isArrayOperator(TomConstraintCompiler.getSymbolTable().
+            if(!TomBase.isArrayOperator(TomConstraintCompiler.getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        
             TomType termType = TomConstraintCompiler.getTermTypeFromTerm(`t);
             // declare fresh index = 0            

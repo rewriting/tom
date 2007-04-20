@@ -13,7 +13,7 @@ import tom.engine.compiler.propagator.*;
  * This class is in charge with launching all the propagators,
  * until no more propagations can be made 
  */
-public class TomPropagationManager extends TomBase {
+public class TomPropagationManager {
 
 //------------------------------------------------------	
   %include { adt/tomsignature/TomSignature.tom }

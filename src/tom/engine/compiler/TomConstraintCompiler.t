@@ -23,7 +23,7 @@ import tom.engine.adt.tomconstraint.types.*;
  * - instruction generation from constraints
  * - ...   
  */
-public class TomConstraintCompiler extends TomBase {
+public class TomConstraintCompiler{
 
   %include { adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
@@ -72,7 +72,7 @@ public class TomConstraintCompiler extends TomBase {
               
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
-              automataList = append(automata,automataList);
+              automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
             }catch(Exception e){
               throw new TomRuntimeException("Propagation or generation exception:" + e);
             }																	    						
@@ -188,9 +188,15 @@ public class TomConstraintCompiler extends TomBase {
 
   public static TomType getTermTypeFromName(TomName tomName){
     String stringName = ((Name)tomName).getString();
-    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
+    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);    
     return tomSymbol.getTypesToType().getCodomain();
   }
+  
+  public static TomType getSlotType(TomName tomName, TomName slotName){
+    String stringName = ((Name)tomName).getString();
+    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
+    return TomBase.getSlotType(tomSymbol,slotName);    
+  } 
   
   public static TomType getIntType(){
     return symbolTable.getIntType();

@@ -1,10 +1,13 @@
 package tom.engine.compiler.propagator;
 
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.compiler.*;
+import tom.engine.TomBase;
+
 /**
  * Syntactic propagator
  */
@@ -26,18 +29,21 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
       // we can decompose only if 'g' != SymbolOf 
       m@MatchConstraint(lhs@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
-        if(!TomConstraintCompiler.isSyntacticOperator(
+        if(!TomBase.isSyntacticOperator(
             TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
         Constraint l = `AndConstraint();				
         // for each slot
         %match(slots){
-          // if it is an unamed variable, don't generate anything
-          // TODO  - replace the test with an ap when the bug is solved
-          concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{
-            if (!`appl.isUnamedVariable()){
-              l = `AndConstraint(l*,MatchConstraint(appl,Subterm(name,slotName,g)));
-            }
+          // if it is an unamed variable, we don't generate anything
+          // (this is taken care in the hooks)
+          concSlot(_*,PairSlotAppl(slotName,appl@!UnamedVariable[]),_*) ->{                        
+            TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getSlotType(`name,`slotName));            
+            l = `AndConstraint(l*,
+                MatchConstraint(freshVar,Subterm(name,slotName,g)),
+                MatchConstraint(appl,freshVar));
+//          l = `AndConstraint(l*,MatchConstraint(appl,Subterm(name,slotName,g)));
           }
+
         }
         // add head equality condition
         l = `AndConstraint(MatchConstraint(lhs.setSlots(concSlot()),SymbolOf(g)),l*);			

@@ -21,14 +21,14 @@ import tom.engine.adt.tomtype.types.*;
  * This class is in charge with launching all the generators,
  * until no more generations can be made 
  */
-public class TomGenerationManager extends TomBase {
+public class TomGenerationManager {
 
 //------------------------------------------------------------	
   %include { adt/tomsignature/TomSignature.tom }	
   %include { java/util/types/Collection.tom}
   %include { sl.tom}
 //------------------------------------------------------------	
-
+ 
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
   private static final String[] generatorsNames = {"TomSyntacticGenerator","TomVariadicGenerator","TomArrayGenerator"};
