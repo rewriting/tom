@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.platform.OptionParser;
 
@@ -112,14 +113,14 @@ public class TomTypeChecker extends TomChecker {
 
   /**
    * Main type checking entry point:
-   * We check all Match and RuleSet instructions
+   * We check all Match
    */
   %typeterm TomTypeChecker { implement { TomTypeChecker } }
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
     visit Instruction {
       Match(_, patternInstructionList, oplist) -> {  
-	ttc.currentTomStructureOrgTrack = findOriginTracking(`oplist);
+	ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
 	ttc.verifyMatchVariable(`patternInstructionList);
 	`Fail().visit(null);
       }
@@ -128,11 +129,6 @@ public class TomTypeChecker extends TomChecker {
       Strategy(_,_,visitList,orgTrack) -> {
 	ttc.currentTomStructureOrgTrack = `orgTrack;
 	ttc.verifyStrategyVariable(`visitList);
-	`Fail().visit(null);
-      }
-      RuleSet(list, optionList) -> {
-	ttc.currentTomStructureOrgTrack = findOriginTracking(`optionList);
-	ttc.verifyRuleVariable(`list);
 	`Fail().visit(null);
       }
     }
@@ -162,7 +158,7 @@ public class TomTypeChecker extends TomChecker {
       Pattern pattern = pa.getPattern();
       // collect variables
       ArrayList variableList = new ArrayList();
-      collectVariable(variableList, pattern);
+      TomBase.collectVariable(variableList, pattern);
       verifyVariableTypeListCoherence(variableList);
       // verify variables in WHEN instruction
       // collect unknown variables
@@ -233,87 +229,6 @@ public class TomTypeChecker extends TomChecker {
    * => no new fresh variables in r
    * (iv) the condition Qj==Dj shall never lead to the declaration of a new variable
    */
-  private void verifyRuleVariable(TomRuleList list) {
-    while(!list.isEmptyconcTomRule()) {
-      TomRule rewriteRule = list.getHeadconcTomRule();
-      TomTerm ruleLhs = rewriteRule.getLhs();
-      TomTerm ruleRhs = rewriteRule.getRhs();
-      InstructionList condList = rewriteRule.getCondList();
-      Option orgTrack = findOriginTracking(rewriteRule.getOption());
-
-      // the accumulator for defined variables
-      Hashtable variableTable = new Hashtable();
-      // collect lhs variable 
-      ArrayList freshLhsVariableList = new ArrayList();
-      collectVariable(freshLhsVariableList, ruleLhs);
-
-      // fill the table with found variables in lhs
-      if(!appendToTable(variableTable, freshLhsVariableList)) {
-	// there are already some coherence issues: same name but not same type
-	break;
-      }
-
-      %match(InstructionList condList) {
-	(_*, cond, _*) -> {
-	  Instruction condition = `cond ;
-	  %match(Instruction condition) {
-	    MatchingCondition(p@lhs, c@rhs) -> {
-	      // (i)
-	      ArrayList pVar = new ArrayList();
-	      collectVariable(pVar, `p);
-	      if(!areAllFreshVariableTest(pVar, variableTable)) {
-		// at least one no fresh variable
-		break;
-	      }
-	      // (ii)
-	      ArrayList cVar = new ArrayList();
-	      collectVariable(cVar, `c);
-	      if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInWhere)) {
-		// there is a fresh variable
-		break;
-	      }
-
-	      // fill the table
-	      if(!appendToTable(variableTable, pVar)) {
-		// there are some coherence issues: same name but not same type
-		break;
-	      }
-	    }
-	    TypedEqualityCondition(_, p@lhs, c@rhs) -> {
-	      // (iv)
-	      ArrayList pVar = new ArrayList();
-	      collectVariable(pVar, `p);
-	      if(!areAllExistingVariableTest(pVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
-		// there is a fresh variable
-		break;
-	      }
-	      // (iv)
-	      ArrayList cVar = new ArrayList();
-	      collectVariable(cVar, `c);
-	      if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
-		// there is a fresh variable
-		break;
-	      }
-
-	      // fill the table
-	      if(!appendToTable(variableTable, pVar)) {
-		// there are some coherence issues: same name but not same type
-		break;
-	      }
-	    }
-	  }
-	}
-      }
-
-      // (iii)
-      ArrayList variableRhs = new ArrayList();
-      collectVariable(variableRhs, ruleRhs);
-      areAllExistingVariableTest(variableRhs, variableTable, TomMessage.unknownRuleRhsVariable);
-
-      // next rewrite rule
-      list = list.getTailconcTomRule();
-    }
-  } //verifyRuleVariable
 
   private void verifyVariableTypeListCoherence(ArrayList list) {
     // compute multiplicities
@@ -323,19 +238,20 @@ public class TomTypeChecker extends TomChecker {
     while(it.hasNext()) {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
-
       if(map.containsKey(name)) {
-	TomTerm var = (TomTerm)map.get(name);
-	TomType type1 = var.getAstType();
-	TomType type2 = variable.getAstType();
-	if(!(type1==type2)) {
-	  messageError(findOriginTrackingFileName(variable.getOption()),
-	      findOriginTrackingLine(variable.getOption()),
-	      TomMessage.incoherentVariable,
-	      new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
-	}
+        TomTerm var = (TomTerm)map.get(name);
+        //System.out.println("variable = " + variable);
+        //System.out.println("var = " + var);
+        TomType type1 = var.getAstType();
+        TomType type2 = variable.getAstType();
+        if(!(type1==type2)) {
+          messageError(findOriginTrackingFileName(variable.getOption()),
+              findOriginTrackingLine(variable.getOption()),
+              TomMessage.incoherentVariable,
+              new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
+        }
       } else {
-	map.put(name, variable);
+        map.put(name, variable);
       }
     }
   }  //verifyVariableTypeListCoherence  
