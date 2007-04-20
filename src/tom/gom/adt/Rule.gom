@@ -10,6 +10,9 @@ Term = Appl(symbol:String,args:TermList)
 TermList = TermList(Term*)
 
 Rule = Rule(lhs:Term,rhs:Term)
-     | ConditionalRule(lhs:Term,rhs:Term,cond:Term)
+     | ConditionalRule(lhs:Term,rhs:Term,cond:Condition)
+
+Condition = CondTerm(t:Term)
+          | CondEquals(t1:Term,t2:Term)
 
 RuleList = RuleList(Rule*)

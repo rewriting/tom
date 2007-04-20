@@ -64,7 +64,16 @@ public class ASTTree extends CommonTree {
         break;
       case RuleParser.CONDRULE:
         inAstTerm =
-          `ConditionalRule(BuiltinInt(-1),BuiltinInt(-1),BuiltinInt(-1));
+          `ConditionalRule(
+              BuiltinInt(-1),BuiltinInt(-1),CondTerm(BuiltinInt(-1)));
+        break;
+      case RuleParser.CONDTERM:
+        inAstTerm =
+          `CondTerm(BuiltinInt(-1));
+        break;
+      case RuleParser.CONDEQUALS:
+        inAstTerm =
+          `CondEquals(BuiltinInt(-1),BuiltinInt(-1));
         break;
       case RuleParser.INT:
         inAstTerm = `BuiltinInt(Integer.parseInt(token.getText()));
@@ -107,13 +116,17 @@ public class ASTTree extends CommonTree {
     }
     %match(inAstTerm) {
       Rule[] -> {
-        Term tm = (Term) trm;
-        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,tm);
+        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
         childIndex++;
       }
       ConditionalRule[] -> {
-        Term tm = (Term) trm;
-        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,tm);
+        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
+        childIndex++;
+      }
+    }
+    %match(inAstTerm) {
+      (CondTerm|CondEquals)[] -> {
+        inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
         childIndex++;
       }
     }

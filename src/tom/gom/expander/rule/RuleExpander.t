@@ -114,7 +114,7 @@ public class RuleExpander {
           }
           ConditionalRule(Appl[],rhs,cond) -> {
             output.append("    if `(");
-            genTerm(`cond,output); 
+            genCondition(`cond,output); 
             output.append(") { return `");
             genTerm(`rhs,output); 
             output.append("; }\n");
@@ -139,7 +139,7 @@ public class RuleExpander {
           ConditionalRule(Appl[args=argList],rhs,cond) -> {
             genTermList(`argList,output);
             output.append(" -> { if `(");
-            genTerm(`cond,output); 
+            genCondition(`cond,output); 
             output.append(") { return `");
             genTerm(`rhs,output); 
             output.append("; } }\n");
@@ -180,6 +180,21 @@ public class RuleExpander {
       }
       BuiltinString(s) -> {
         output.append(`s);
+      }
+    }
+  }
+
+  private void genCondition(Condition cond, StringBuffer output) {
+    %match(cond) {
+      CondTerm[t=term] -> {
+        genTerm(`term,output);
+      }
+      CondEquals[t1=term1,t2=term2] -> {
+        output.append("(");
+        genTerm(`term1,output);
+        output.append(" == ");
+        genTerm(`term2,output);
+        output.append(")");
       }
     }
   }
