@@ -39,15 +39,13 @@ public class OutputCode {
   private int singleLine = 0;
 
   private boolean pretty = false;
+  private boolean indent = false;
 
   public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
     this.optionManager = optionManager;
     this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
-  }
-
-  public OutputCode() {
-    this.file = new StringWriter();
+    this.indent = ((Boolean)optionManager.getOptionValue("pCode")).booleanValue();
   }
 
   public void setSingleLine() {
@@ -143,7 +141,7 @@ public class OutputCode {
   }
 
   public void write(int deep, String s, int line, int length) throws IOException {
-    if (!pretty) {
+    if(!pretty) {
       if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
           String s1 = "\n#line "+line+"\n";
           s = s1+s;
@@ -168,14 +166,11 @@ public class OutputCode {
       if(lines.length==0) {
         write(deep, s.replaceFirst("^\\s+",""));
       } else {
-        for (int i=0; i<lines.length-1; i++) {
+        for (int i=0; i<lines.length; i++) {
           String ln = lines[i];
           ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
           writeln(deep, ln);
         }
-        String ln = lines[lines.length-1];
-        ln = ln.replaceFirst("^\\s+","");
-        writeln(deep, ln);
       }
     }
   }
@@ -207,13 +202,15 @@ public class OutputCode {
 
   public void indent(int deep) {
     try {
-      if(pretty) {
-        for(int i=0 ; i<deep ; i++) {
-          file.write(' ');
+      if(indent) {
+        if(pretty) {
+          for(int i=0 ; i<deep ; i++) {
+            file.write(' ');
+            file.write(' ');
+          }
+        } else {
           file.write(' ');
         }
-      } else {
-        file.write(' ');
       }
     } catch (IOException e) {
       System.out.println("write error");

@@ -58,7 +58,7 @@ import jjtraveler.VisitFailure;
  * Base class for most tom files in the compiler.
  * Provides access to the TomSignatureFactory and helper methods.
  */
-public class TomBase {
+public final class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
@@ -72,16 +72,7 @@ public class TomBase {
   
   %include { adt/platformoption/PlatformOption.tom }
   
-  protected static TomList cons(TomTerm t, TomList l) {
-    if(t!=null) {
-      return `concTomTerm(t,l*);
-    } else {
-      System.out.println("cons: Warning t == null");
-      return l;
-    }
-  }
-
-  protected static TomNumberList appendNumber(int n, TomNumberList path) {
+  public static TomNumberList appendNumber(int n, TomNumberList path) {
     /*
      * concTomNumber(path*,Position(n))
      * can be used instead of 
@@ -92,22 +83,6 @@ public class TomBase {
     //return `concTomNumber(path*,NameNumber(PositionName(concTomNumber(Position(n)))));
   }
     
-  protected static TomList append(TomTerm t, TomList l) {
-    if(l.isEmptyconcTomTerm()) {
-      return cons(t,l);
-    } else {
-      return cons(l.getHeadconcTomTerm(), append(t,l.getTailconcTomTerm()));
-    }
-  }
-
-  protected static TomList concat(TomList l1, TomList l2) {
-    if(l1.isEmptyconcTomTerm()) {
-      return l2;
-    } else {
-      return cons(l1.getHeadconcTomTerm(), concat(l1.getTailconcTomTerm(),l2));
-    }
-  }
-
   public static String getTomType(TomType type) {
     %match(TomType type) {
       ASTTomType(s) -> {return `s;}
@@ -119,7 +94,7 @@ public class TomBase {
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
-  protected static String getTLType(TomType type) {
+  public static String getTLType(TomType type) {
     %match(TomType type) {
       TLType[]  -> { return getTLCode(type); }
       Type[TlType=tlType] -> { return getTLCode(`tlType); }
@@ -127,7 +102,7 @@ public class TomBase {
     throw new TomRuntimeException("getTLType error on term: " + type);
   }
 
-  protected static String getTLCode(TomType type) {
+  public static String getTLCode(TomType type) {
     %match(TomType type) {
       TLType(TL[Code=tlType])  -> { return `tlType; }
       TLType(ITL[Code=tlType]) -> { return `tlType; }
@@ -140,7 +115,6 @@ public class TomBase {
     if(symbol!=null) {
       return symbol.getTypesToType().getCodomain();
     } else {
-      //System.out.println("getSymbolCodomain: symbol = " + symbol);
       return `EmptyType();
     }
   }   
@@ -149,13 +123,12 @@ public class TomBase {
     if(symbol!=null) {
       return symbol.getTypesToType().getDomain();
     } else {
-      //System.out.println("getSymbolDomain: symbol = " + symbol);
       return `concTomType();
     }
   }
 
   private static HashMap tomNumberListToStringMap = new HashMap();
-  protected static String tomNumberListToString(TomNumberList numberList) {
+  public static String tomNumberListToString(TomNumberList numberList) {
     String result = (String)tomNumberListToStringMap.get(numberList);
     if(result == null) {
       TomNumberList key = numberList;
@@ -226,10 +199,6 @@ public class TomBase {
 	    buf.append("NameNumber");
 	    buf.append(identifier);
 	  }
-	  RuleVar() -> {
-	    //buf.insert(0,"RuleVar");
-	    buf.append("RuleVar");
-	  }
 	}
       }
       result = buf.toString();
@@ -285,7 +254,6 @@ public class TomBase {
   public static boolean isSyntacticOperator(TomSymbol subject) {
     return (!(isListOperator(subject) || isArrayOperator(subject)));
   }
-
 
   // ------------------------------------------------------------
   public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
@@ -344,15 +312,6 @@ public class TomBase {
     return multiplicityMap;
   }
 
-  protected boolean isAnnotedVariable(TomTerm t) {
-    %match(TomTerm t) {
-      (RecordAppl|Variable|VariableStar|UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
-        return getAssignToVariable(`constraintList)!=null;
-      }
-    }
-    return false;
-  }
-
   public static TomTerm getAssignToVariable(ConstraintList constraintList) {
     %match(ConstraintList constraintList) {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
@@ -360,21 +319,34 @@ public class TomBase {
     return null;
   }
 
-  protected static boolean hasTheory(OptionList optionList, ElementaryTheory elementaryTheory) {
-    %match(optionList) {
-      concOption(_*,MatchingTheory(concElementaryTheory(_*,theory,_*)),_*) -> { if(elementaryTheory == `theory) return true; }
+  public static boolean hasTheory(Theory theory, ElementaryTheory elementaryTheory) {
+    %match(theory) {
+      concElementaryTheory(_*,x,_*) -> { if(`x==elementaryTheory) return true; }
     }
     return false;
   }
+ 
+  public static Theory getTheory(TomTerm term) {
+    %match(term) {
+      RecordAppl[Option=concOption(_*,MatchingTheory(theory),_*)] -> { return `theory; }
+    }
+    return `concElementaryTheory(Syntactic());
+  }
+  public static Theory getTheory(OptionList optionList) {
+    %match(optionList) {
+      concOption(_*,MatchingTheory(theory),_*) -> { return `theory; }
+    }
+    return `concElementaryTheory(Syntactic());
+  }
 
-  protected static Declaration getIsFsymDecl(OptionList optionList) {
+  public static Declaration getIsFsymDecl(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return `decl; }
     }
     return null;
   }
 
-  protected static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
+  public static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
     %match(tomSymbol) {
       Symbol[Option=concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*)] -> {
         return true;
@@ -384,56 +356,42 @@ public class TomBase {
   }
   
   
-  protected static String getModuleName(OptionList optionList) {
+  public static String getModuleName(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
     }
     return null;
   }
 
-  protected static String getDebug(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,Debug(Name(str)),_*) -> { return `str; }
-    }
-    return null;
-  }
-
-  protected static boolean hasGeneratedMatch(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,GeneratedMatch(),_*) -> { return true; }
-    }
-    return false;
-  }
-
-  protected static boolean hasConstant(OptionList optionList) {
+  public static boolean hasConstant(OptionList optionList) {
     %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;
   }
 
-  protected static boolean hasDefinedSymbol(OptionList optionList) {
+  public static boolean hasDefinedSymbol(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,DefinedSymbol(),_*) -> { return true; }
     }
     return false;
   }
 
-  protected static boolean hasImplicitXMLAttribut(OptionList optionList) {
+  public static boolean hasImplicitXMLAttribut(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,ImplicitXMLAttribut(),_*) -> { return true; }
     }
     return false;
   }
 
-  protected static boolean hasImplicitXMLChild(OptionList optionList) {
+  public static boolean hasImplicitXMLChild(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,ImplicitXMLChild(),_*) -> { return true; }
     }
     return false;
   } 
 
-  protected static TomName getSlotName(TomSymbol symbol, int number) {
+  public static TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
     for(int index = 0; !pairNameDeclList.isEmptyconcPairNameDecl() && index<number ; index++) {
       pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
@@ -452,7 +410,7 @@ public class TomBase {
     return pairNameDecl.getSlotName();
   }
 
-  protected static int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {
+  public static int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {
     int index = 0;
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     while(!pairNameDeclList.isEmptyconcPairNameDecl()) {
@@ -487,7 +445,7 @@ public class TomBase {
     throw new TomRuntimeException("getSlotType: bad slotName error");
   }
 
-  protected static boolean isDefinedSymbol(TomSymbol subject) {
+  public static boolean isDefinedSymbol(TomSymbol subject) {
     if(subject==null) {
       System.out.println("isDefinedSymbol: subject == null");
       return false;
@@ -500,7 +458,7 @@ public class TomBase {
     return false;
   }
 
-  protected static boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
+  public static boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
     if(symbol==null) {
       System.out.println("isDefinedSymbol: symbol == null");
       return false;
@@ -517,7 +475,7 @@ public class TomBase {
 
 
   // findOriginTracking(_) return the option containing OriginTracking information
-  protected static Option findOriginTracking(OptionList optionList) {
+  public static Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmptyconcOption()) {
       return `noOption();
     }
@@ -534,7 +492,7 @@ public class TomBase {
     throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
-  protected static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
+  public static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
     return symbolTable.getSymbolFromName(tomName);
   }
   
@@ -588,7 +546,7 @@ public class TomBase {
     return `EmptyType();
   }
   
-  protected static TomType getTermType(Expression t, SymbolTable symbolTable){
+  public static TomType getTermType(Expression t, SymbolTable symbolTable){
     %match(Expression t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
@@ -601,11 +559,11 @@ public class TomBase {
     throw new TomRuntimeException("getTermType error on term: " + t);
   }
 
-  protected static SlotList tomListToSlotList(TomList tomList) {
+  public static SlotList tomListToSlotList(TomList tomList) {
     return tomListToSlotList(tomList,1);
   }
 
-  protected static SlotList tomListToSlotList(TomList tomList, int index) {
+  public static SlotList tomListToSlotList(TomList tomList, int index) {
     %match(TomList tomList) {
       concTomTerm() -> { return `concSlot(); }
       concTomTerm(head,tail*) -> { 
@@ -617,7 +575,7 @@ public class TomBase {
     throw new TomRuntimeException("tomListToSlotList: " + tomList);
   }
 
-  protected static SlotList mergeTomListWithSlotList(TomList tomList, SlotList slotList) {
+  public static SlotList mergeTomListWithSlotList(TomList tomList, SlotList slotList) {
     %match(TomList tomList, SlotList slotList) {
       concTomTerm(), concSlot() -> { 
         return `concSlot(); 
@@ -630,7 +588,7 @@ public class TomBase {
     throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
   }
 
-  protected static TomList slotListToTomList(SlotList tomList) {
+  public static TomList slotListToTomList(SlotList tomList) {
     %match(SlotList tomList) {
       concSlot() -> { return `concTomTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {

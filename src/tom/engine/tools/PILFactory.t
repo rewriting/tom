@@ -48,7 +48,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class PILFactory extends TomBase {
+public class PILFactory {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ java/util/types/Collection.tom }
@@ -108,9 +108,6 @@ public class PILFactory extends TomBase {
       // clean Expressions
       Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
       Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
-      EqualFunctionSymbol(type,t1,appl@RecordAppl[Slots=concSlot(_,_*)]) -> {
-	return (Expression) `TopDown(replaceRemove()).visit(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
-      } 
     }
   }
 
@@ -202,8 +199,8 @@ public class PILFactory extends TomBase {
 	return "isSort\n\t";
       }
 
-      EqualFunctionSymbol(_,exp1,exp2) -> {
-	return "is_fun_sym(" + prettyPrint(`exp1) + "," + prettyPrint(`exp2) + ")";
+      IsFsym(name,term) -> {
+        return "is_fun_sym(" + prettyPrint(`name) + "," + prettyPrint(`term) + ")";
       }
 
       Negation(exp) -> {
@@ -218,8 +215,8 @@ public class PILFactory extends TomBase {
 	return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
       }
 
-      GetSliceList(astName,variableBeginAST,variableEndAST) -> {
-	return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+")";
+      GetSliceList(astName,variableBeginAST,variableEndAST,tail) -> {
+	return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+"," + prettyPrint(`tail) + ")";
       }
 
       GetHead[Variable=variable] -> {
@@ -255,7 +252,7 @@ public class PILFactory extends TomBase {
 
     %match(TomName subject) {
       PositionName(number_list) -> {
-	return "t"+ tomNumberListToString(`number_list);
+	return "t"+ TomBase.tomNumberListToString(`number_list);
       }
       Name(string) -> {
 	return `string;

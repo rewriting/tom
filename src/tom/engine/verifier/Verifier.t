@@ -50,7 +50,7 @@ import tom.engine.exception.TomRuntimeException;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class Verifier extends TomBase {
+public class Verifier {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -103,7 +103,7 @@ public class Verifier extends TomBase {
         return `var(stringname);
       }
       PositionName(numberlist) -> {
-        return `var(tomNumberListToString(numberlist));
+        return `var(TomBase.tomNumberListToString(numberlist));
       }
       EmptyName() -> {
         return `var("emptyName");
@@ -134,25 +134,13 @@ public class Verifier extends TomBase {
     return `repr("autre foirade avec " + expression);
   }
 
-  public String extractName(TomNameList nl) {
-    %match(TomNameList nl) {
-      (Name(name)) -> {
-        return `name;
-      }
-    }
-    return nl.toString();
-  }
-
   public Expr exprFromExpression(Expression expression) {
     %match(Expression expression) {
       TrueTL()  -> { return `iltrue(subs(undefsubs())); }
       FalseTL() -> { return `ilfalse(); }
-      EqualFunctionSymbol[Exp1=Variable[AstName=name],Exp2=RecordAppl[NameList=symbolName]] -> {
-        Term term = termFromTomName(`name);
-        return `isfsym(term,fsymbol(extractName(symbolName)));
-      }
-      EqualFunctionSymbol[Exp1=term1,Exp2=RecordAppl[NameList=symbolName]] -> {
-        return `isfsym(termFromTomTerm(term1),fsymbol(extractName(symbolName)));
+      IsFsym[AstName=Name(symbolName),Variable=Variable[AstName=varName]] -> {
+        Term term = termFromTomName(`varName);
+        return `isfsym(term,fsymbol(symbolName));
       }
       EqualTerm[Kid1=t1,Kid2=t2] -> {
         return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
@@ -757,7 +745,7 @@ public class Verifier extends TomBase {
     try {
       subject = (DerivTree) `TopDown(replaceUndefsubs(subs)).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-      throw new TomRuntimeException("Strategy collectProgramVariables failed");
+      throw new TomRuntimeException("Strategy replaceUndefsubs failed");
     }
     return subject;
   }
@@ -800,7 +788,7 @@ public class Verifier extends TomBase {
         try {
           t = (Term) `TopDown(replaceVariableByTerm(map)).visit(`term);
         } catch (jjtraveler.VisitFailure e) {
-          throw new TomRuntimeException("Strategy collectProgramVariables failed");
+          throw new TomRuntimeException("Strategy replaceVariableByTerm failed");
         }
         return t;
       }
@@ -816,7 +804,7 @@ public class Verifier extends TomBase {
         try {
           t = (Expr) `TopDown(replaceVariableByTerm(map)).visit(`term);
         } catch (jjtraveler.VisitFailure e) {
-          throw new TomRuntimeException("Strategy collectProgramVariables failed");
+          throw new TomRuntimeException("Strategy replaceVariableByTerm failed");
         }
         return t;
       }

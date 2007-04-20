@@ -51,16 +51,7 @@ import aterm.ATerm;
 public class ASTFactory {
   %include { ../adt/tomsignature/TomSignature.tom }
    // Suppresses default constructor, ensuring non-instantiability.
-  private ASTFactory() {
-  }
-
-  public static int length(TomList l) {
-    if(l.isEmptyconcTomTerm()) {
-      return 0;
-    } else {
-      return 1 + length(l.getTailconcTomTerm());
-    }
-  }
+  private ASTFactory() {}
 
   public static TomList reverse(TomList l) {
     TomList reverse = `concTomTerm();
@@ -332,16 +323,13 @@ public class ASTFactory {
     return null;
   }
 
-  public static TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {
-    if(!pretty){
-      String newTlCode = code.getCode();      
-      newTlCode = newTlCode.replace('\n', ' ');
-      newTlCode = newTlCode.replace('\t', ' ');
-      newTlCode = newTlCode.replace('\r', ' ');
-        //System.out.println("reworking"+newTlCode);
-      return code.setCode(newTlCode);
-    } else
-      return code;
+  public static String makeSingleLineCode(String code, boolean pretty) {
+    if(!pretty) {
+      code = code.replace('\n', ' ');
+      code = code.replace('\t', ' ');
+      code = code.replace('\r', ' ');
+    }
+    return code;
   }
 
   public static TomName makeName(String slotName) {

@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tom.engine.TomBase;
+
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -69,6 +71,10 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ java/util/ArrayList.tom }
   %include{ java/util/HashSet.tom }
 
+  %typeterm TomOptimizer {
+    implement { TomOptimizer }
+  }
+
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
@@ -98,14 +104,14 @@ public class TomOptimizer extends TomGenericPlugin {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       // Initialize strategies
 
-      VisitableVisitor optStrategy1 = `InnermostId(RewriteSystem1());
+      VisitableVisitor optStrategy1 = `InnermostId(Inline());
 
       VisitableVisitor optStrategy2 = `Sequence(
-          InnermostId(ChoiceId(RepeatId((NopElimAndFlatten())),NormExpr())),
+          InnermostId(ChoiceId(RepeatId((NopElimAndFlatten())),NormExpr(this))),
           InnermostId(
             ChoiceId(
-              Sequence(RepeatId(IfSwapping()), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
-              SequenceId(InterBlock(),OnceTopDownId(RepeatId(NopElimAndFlatten()))))
+              Sequence(RepeatId(IfSwapping(this)), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
+              SequenceId(InterBlock(this),OnceTopDownId(RepeatId(NopElimAndFlatten()))))
             )
           );
 
@@ -175,11 +181,19 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %op Strategy computeOccurences(variableName:TomName, list:ArrayList){
-    make(variableName, list) {`TopDown(findOccurence(variableName,list))}
+    make(variableName, list) {`mu(MuVar("current"),TopDownCollect(findOccurence(MuVar("current"),variableName,list)))}
   }
 
-  %strategy findOccurence(variableName:TomName, list:ArrayList) extends `Identity(){
-    visit TomTerm{ 
+  %strategy findOccurence(s:Strategy,variableName:TomName, list:ArrayList) extends `Identity() {
+    visit Instruction {
+      TypedAction[AstInstruction=inst] -> {
+        /* recursive call of the current strategy on the first child */
+        s.visit(`inst);
+        `Fail().visit(null);
+      }
+    }
+
+    visit TomTerm {
       t@(Variable|VariableStar)[AstName=name] -> {
         if(variableName == `name) {
           list.add(`t);
@@ -261,19 +275,23 @@ public class TomOptimizer extends TomGenericPlugin {
       return factory.remove(term1)==factory.remove(term2);
     }
 
-    %strategy RewriteSystem1() extends `Identity() {
+    %strategy Inline() extends `Identity() {
       visit TomTerm {
         ExpressionToTomTerm(TomTermToExpression(t)) -> {
           return `t;
         }
+        /* optimize the insertion of a slice into a list */
+        BuildAppendList(name,ExpressionToTomTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
+          return `ExpressionToTomTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
+        }
       }
+
       visit Expression {
         TomTermToExpression(ExpressionToTomTerm(t)) -> {
           return `t;
         }
       }
       visit Instruction {
-
         /*
          * 
          * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
@@ -281,7 +299,7 @@ public class TomOptimizer extends TomGenericPlugin {
          */
         let@(LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
           /*
-           * do not optimize Variable(TomNumber...) because LetRef X*=GeTTail(X*) in ...
+           * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
            * is not correctly handled 
            * we must check that X notin exp
            */
@@ -295,9 +313,9 @@ public class TomOptimizer extends TomGenericPlugin {
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
-              Option orgTrack = findOriginTracking(`var.getOption());
-	      TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-		  TomMessage.unusedVariable,`extractRealName(varName));
+              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+              TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
@@ -346,11 +364,12 @@ public class TomOptimizer extends TomGenericPlugin {
           int mult = list.size();
 
           //System.out.println("name: " + `name);
+          //System.out.println("mult: " + mult);
           if(mult == 0) {
             if(varName.length() > 0) {
-              Option orgTrack = findOriginTracking(`var.getOption());
-	      TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-		  TomMessage.unusedVariable,`extractRealName(varName));
+              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+              TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
@@ -417,18 +436,27 @@ public class TomOptimizer extends TomGenericPlugin {
 
     }
 
-    %strategy IfSwapping() extends `Identity() {
+    /*
+     * two expressions are incompatible when they cannot be true a the same time
+     */ 
+    private boolean incompatible(Expression c1, Expression c2) {
+      try {
+        Expression res = (Expression) `InnermostId(NormExpr(this)).visit(`And(c1,c2));
+        return res ==`FalseTL();
+      } catch(jjtraveler.VisitFailure e) {
+        return false;
+      }
+    }
 
+    %strategy IfSwapping(optimizer:TomOptimizer) extends `Identity() {
       visit Instruction {
         AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
           String s1 = factory.prettyPrint(factory.remove(`cond1));
           String s2 = factory.prettyPrint(factory.remove(`cond2));
-
           if(s1.compareTo(s2) < 0) {
-            Expression compatible = (Expression) `InnermostId(NormExpr()).visit(`And(cond1,cond2));
-            if(compatible==`FalseTL()) {
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                  new Object[]{"if-swapping"});     
+            /* swap two incompatible conditions */
+            if(optimizer.incompatible(`cond1,`cond2)) {
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"if-swapping"});     
               return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
             }
           }
@@ -438,7 +466,10 @@ public class TomOptimizer extends TomGenericPlugin {
 
     %strategy BlockFusion() extends `Identity() {
       visit Instruction {
-        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),X2*)) -> {
+        AbstractBlock(concInstruction(X1*,
+              Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
+              Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
+              X2*)) -> {
           /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {
@@ -463,7 +494,10 @@ public class TomOptimizer extends TomGenericPlugin {
 
     %strategy IfFusion() extends `Identity() {
       visit Instruction {
-        AbstractBlock(concInstruction(X1*,If(cond1,success1,failure1),If(cond2,success2,failure2),X2*)) -> {
+        AbstractBlock(concInstruction(X1*,
+              If(cond1,success1,failure1),
+              If(cond2,success2,failure2),
+              X2*)) -> {
           /* Fusion de 2 blocs If gardes par la meme condition */
           if(`compare(cond1,cond2)) {
             if(`failure1.isNop() && `failure2.isNop()) {
@@ -483,22 +517,22 @@ public class TomOptimizer extends TomGenericPlugin {
       }
     }
 
-    %strategy InterBlock() extends `Identity(){
+    %strategy InterBlock(optimizer:TomOptimizer) extends `Identity(){
       visit Instruction {
-        /* on entrelace deux blocs incompatibles */
-        AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
-          Expression compatible = (Expression) `InnermostId(NormExpr()).visit(`And(cond1,cond2));
-          if(compatible==`FalseTL()) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{"inter-block"});
+        /* interleave two incompatible conditions */
+        AbstractBlock(concInstruction(X1*,
+              If(cond1,suc1,fail1),
+              If(cond2,suc2,Nop()),
+              X2*)) -> {
+          if(optimizer.incompatible(`cond1,`cond2)) {
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"inter-block"});
             return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-
           }  
         }
       }      
     }
 
-    %strategy NormExpr() extends `Identity() {
+    %strategy NormExpr(optimizer:TomOptimizer) extends `Identity() {
       visit Expression {
         Or(_,TrueTL()) -> {
           return `TrueTL();
@@ -533,16 +567,26 @@ public class TomOptimizer extends TomGenericPlugin {
             return `ref;
           }
         }
-        ref@And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
-          TomNameList l1 = `exp1.getNameList();
-          TomNameList l2 = `exp2.getNameList();
-          if (`exp1.getNameList()==`exp2.getNameList()){
-            return `EqualFunctionSymbol(astType,exp,exp1);
-          } else if(l1.length()==1 && l2.length()==1) {
-            return `FalseTL();
-          } else {
-            return `ref;
+        ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
+          if(`name1==`name2) {
+            return `IsFsym(name1,term);
           }
+          /*
+           * may be true for list operator with domain=codomain
+           * two if_sym(f)==is_fsym(g) may be true due to mapping
+           */
+          TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
+          if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+            //System.out.println("symbol = " + tomSymbol);
+            TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+            TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+            if(domain!=codomain) {
+              return `FalseTL();
+            }
+          } else {
+            return `FalseTL();
+          }
+          return `ref;
         }
       } 
     }

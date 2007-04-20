@@ -29,6 +29,8 @@ package tom.engine.verifier;
 import tom.engine.*;
 import aterm.*;
 import java.util.*;
+
+import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -48,7 +50,7 @@ import tom.engine.adt.zenon.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 
-public class TomIlTools extends TomBase {
+public class TomIlTools {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -158,7 +160,7 @@ public class TomIlTools extends TomBase {
         // builds children list
         ZTermList zchild = `concZTerm();
         // take care to add unamedVariables for wildcards
-        TomSymbol symbol = `getSymbolFromName(name,getSymbolTable());
+        TomSymbol symbol = TomBase.getSymbolFromName(`name,getSymbolTable());
         // process all slots from symbol
         %match(TomSymbol symbol) {
           Symbol[PairNameDeclList=slots] -> {
@@ -193,7 +195,7 @@ public class TomIlTools extends TomBase {
         }
       }
       Variable[AstName=PositionName(numberList)] -> {
-        String name = verifier.tomNumberListToString(`numberList);
+        String name = TomBase.tomNumberListToString(`numberList);
         if (map.containsKey(name)) {
           return (ZTerm) map.get(name);
         } else {
@@ -244,7 +246,7 @@ public class TomIlTools extends TomBase {
     Iterator it = symbolnames.iterator();
     while (it.hasNext()) {
       String name = (String) it.next();
-      TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
+      TomSymbol symbol = TomBase.getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
       ZTerm abstractVariable = `zvar("t");
       //ZExpr exists = null;
@@ -277,7 +279,7 @@ public class TomIlTools extends TomBase {
     Iterator it = symbolnames.iterator();
     while (it.hasNext()) {
       String name = (String) it.next();
-      TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
+      TomSymbol symbol = TomBase.getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
       %match(TomSymbol symbol) {
         Symbol[PairNameDeclList=slots] -> {
@@ -306,7 +308,7 @@ public class TomIlTools extends TomBase {
   public List subtermList(String symbolName) {
     List nameList = new LinkedList();
 
-    TomSymbol symbol = getSymbolFromName(symbolName,getSymbolTable());
+    TomSymbol symbol = TomBase.getSymbolFromName(symbolName,getSymbolTable());
 
     %match(TomSymbol symbol) {
       Symbol[PairNameDeclList=slots] -> {

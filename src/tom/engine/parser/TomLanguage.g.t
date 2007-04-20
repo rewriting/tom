@@ -529,73 +529,7 @@ strategyVisit [LinkedList list] throws TomException
   }
 ;
 
-
-// The %rule construct
-ruleConstruct [Option ot] returns [Declaration result] throws TomException
-{
-    result = null;
-    TomRuleList ruleList = `concTomRule();
-    TomTerm lhs = null, rhs = null, pattern = null, subject = null;
-    TomList listOfLhs = `concTomTerm();
-    InstructionList conditionList = `concInstruction();
-    TomName orgText = null;
-    OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
-    clearText();
-}
-    :
-        LBRACE
-        (
-            lhs = annotedTerm 
-            {listOfLhs = `concTomTerm(lhs);}
-            ( ALTERNATIVE {text.append('|');} lhs = annotedTerm
-                { listOfLhs = `concTomTerm(listOfLhs*,lhs); }
-            )*
- 
-            ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,null,0]
-            (
-                WHERE pattern = annotedTerm AFFECT subject = annotedTerm 
-                { conditionList = `concInstruction(conditionList*,MatchingCondition(pattern,subject)); }
-            |   IF pattern = annotedTerm DOUBLEEQ subject = annotedTerm
-                { conditionList = `concInstruction(conditionList*,EqualityCondition(pattern,subject)); }
-            )*
-            
-            {
-                // get the last token's line
-                int line = lastLine;
-                Option ot2 = `OriginTracking( Name("Pattern"), line, currentFile()
-                );
-                OptionList optionList2 = `concOption(ot2,OriginalText(orgText),ModuleName(TomBase.DEFAULT_MODULE_NAME));
-                while(! listOfLhs.isEmptyconcTomTerm()){
-                    ruleList = `concTomRule(ruleList*,
-                        RewriteRule(
-                            Term(listOfLhs.getHeadconcTomTerm()),
-                            Term(rhs),
-                            conditionList,
-                            optionList2
-                        )
-                    );
-                    listOfLhs = listOfLhs.getTailconcTomTerm();
-                }
-                
-                conditionList = `concInstruction();
-                clearText();
-            }
-        )*
-        t:RBRACE
-        {
-            
-            // update for new target block...
-            updatePosition(t.getLine(),t.getColumn());
-
-            result = `RuleSet(ruleList,optionList);
-
-            // %rule finished: go back in target parser.
-            selector().pop();
-        }
-    ;
-
-
-// terms for %match and %rule
+// terms for %match
 annotedTerm returns [TomTerm result] throws TomException
 {
     result = null;
