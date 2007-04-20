@@ -48,6 +48,7 @@ public class TestPeanoRule extends TestCase {
            | Plus(s1:Term,s2:Term)
            | Fib1(t:Term)
            | Fib5(t:Term)
+           | Fib6(t:Term)
 
     module peano:rules() {
       Plus(x,Zero()) -> x
@@ -63,12 +64,17 @@ public class TestPeanoRule extends TestCase {
     module peano:rules() {
       Fib5(Zero())      -> Suc(Zero())
       Fib5(x)           -> x if eq(x,Suc(Zero()))
-      Fib5(Suc(Suc(x))) -> Plus(Fib1(x),Fib1(Suc(x)))
+      Fib5(Suc(Suc(x))) -> Plus(Fib5(x),Fib5(Suc(x)))
     }
     Fib5:block() {
       static boolean eq(Object o1, Object o2) {
         return o1 == o2;
       }
+    }
+    module peano:rules() {
+      Fib6(Zero())      -> Suc(Zero())
+      Fib6(x)           -> x if x == Suc(Zero())
+      Fib6(Suc(Suc(x))) -> Plus(Fib6(x),Fib6(Suc(x)))
     }
   }
 
@@ -96,12 +102,28 @@ public class TestPeanoRule extends TestCase {
     }
   }
 
-  public void testFib6() {
+  public void testFib5bis() {
     Term N = `Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))))));
     assertTrue("Testing fib5 with N =" + peano2int(N) + ": ",
                peano2int(`Fib5(N)) == fibint(peano2int(N)));
     assertTrue("Testing fib5 with N =" + peano2int(N)+1 + ": ",
                peano2int(`Fib5(Suc(N))) == fibint(peano2int(N)+1));
+  }
+
+  public void testFib6() {
+    for(int i=0 ; i<15 ; i++) {
+      Term N = int2peano(i);
+      assertTrue("Testing fib6 with N ="+N+": ",
+          peano2int(`Fib6(N)) == fibint(i) );
+    }
+  }
+
+  public void testFib6bis() {
+    Term N = `Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Suc(Zero()))))))))));
+    assertTrue("Testing fib6 with N =" + peano2int(N) + ": ",
+               peano2int(`Fib6(N)) == fibint(peano2int(N)));
+    assertTrue("Testing fib6 with N =" + peano2int(N)+1 + ": ",
+               peano2int(`Fib6(Suc(N))) == fibint(peano2int(N)+1));
   }
 
   public int fibint(int n) {
