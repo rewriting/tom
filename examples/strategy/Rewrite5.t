@@ -60,7 +60,7 @@ public class Rewrite5 {
       x -> {
         try {
           Term r = (Term)`strat.visit(`x);
-          collection.add(getPosition().getReplace(`x).visit(`root)); 
+          collection.add(getPosition().getReplace(`r).visit(`root)); 
         } catch(VisitFailure e) { }
       }
     }

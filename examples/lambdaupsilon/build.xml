@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the peano example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="lambdaupsilon" value="lambdaupsilon"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${lambdaupsilon}"/>
+    <delete dir="${examples.build}/${lambdaupsilon}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${lambdaupsilon}"/>
+    <tomcompile example="${lambdaupsilon}"/>
+    <javacompile example="${lambdaupsilon}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${lambdaupsilon}/*.java"/>
+        <include name="${lambdaupsilon}/*.gom"/>
+        <include name="${lambdaupsilon}/*.t"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

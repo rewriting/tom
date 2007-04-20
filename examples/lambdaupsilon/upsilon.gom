@@ -1,0 +1,69 @@
+module upsilon
+imports String
+
+abstract syntax
+
+  LTerm = lappl(fun:LTerm, arg:LTerm)
+        | lambda(t:LTerm)
+        | subst(t:LTerm, s:Subst)
+        | one()
+        | suc(n:LTerm)
+        | constant(name:String)
+
+  Subst = slash(t:LTerm)
+        | lift(s:Subst)
+        | shift()
+
+  module upsilon:rules() {
+    lappl(lambda(a),b) -> subst(a,slash(b))
+    subst(lappl(a,b),s) -> lappl(subst(a,s),subst(b,s))
+    subst(lambda(a),s) -> lambda(subst(a,lift(s)))
+    subst(one(),slash(a)) -> a
+    subst(suc(n),slash(a)) -> n
+    subst(one(),lift(s)) -> one()
+    subst(suc(n),lift(s)) -> subst(subst(n,s),shift())
+    subst(n,shift()) -> suc(n)
+  }
+
+  sort LTerm:block() {
+    public String toString() {
+      %match(this) {
+        lappl(t1,t2) -> { return %[(@`t1@ @`t2@)]%; }
+        lambda(t) -> { return %[\@`t@ ]%; }
+        subst(t,s) -> { return %[@`t@[@`s@]]%; }
+        one() -> { return "1"; }
+        n@suc(p) -> { 
+          if(`isInt(n)) return "" + `toInt(n);
+          else return %[suc(@`p@)]%;
+        }
+        constant(name) -> { return `name; }
+      }
+      return "";
+    }
+    private boolean isInt(LTerm n) {
+      %match(n) {
+        suc(m) -> { return isInt(`m); }
+        one() -> { return true; }
+      }
+      return false;
+    }
+    private int toInt(LTerm n) {
+      %match(n) {
+        suc(m) -> { return toInt(`m) + 1; }
+        one() -> { return 1; }
+      }
+      return -1;
+    }
+  }
+
+  sort Subst:block() {
+    public String toString() {
+      %match(this) {
+        slash(t) -> { return %[@`t@/]%; }
+        lift(s) -> { return %["(@`s@)]%; }
+        shift() -> { return "|"; }
+      }
+      return "";
+    }
+  }
+
