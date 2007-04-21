@@ -103,7 +103,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
       // we only apply this rule from right to left; this is not important for
       // classical pattern matching, but when anti-patterns are involved, if we replace
       // right_to_left, results are not always correct
-      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) ->{
+      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) ->{        
         Constraint toApplyOn = `AndConstraint(Y*);
         Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
         if (res != toApplyOn){					

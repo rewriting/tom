@@ -40,7 +40,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
        *     end_i = (TomList) GET_TAIL_TomList(end_i);
        * } while( end_i != begin_i ) 
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) ->{
+      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) ->{        
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));//`Negation(IsEmptyList(opName,end));
         Expression endExpression = `IfExpression(IsEmptyList(opName,end),EqualTerm(type,end,begin),
             EqualTerm(type,end,ExpressionToTomTerm(GetTail(opName,end))));

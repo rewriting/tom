@@ -37,7 +37,7 @@ OrConstraintDisjunction:AU() { }
 // we should not generate assignments for the unamed variables
 AndConstraint:make_insert(e,l) {
 	%match(e) {
-		MatchConstraint((UnamedVariable|UnamedVariableStar)[],t) ->{
+		MatchConstraint((UnamedVariable|UnamedVariableStar)[],t@!(VariableHeadList|VariableHeadArray)[]) ->{
 			return l;
 		}
 	}	

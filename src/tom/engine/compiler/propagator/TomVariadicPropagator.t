@@ -40,26 +40,26 @@ public class TomVariadicPropagator implements TomIBasePropagator{
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {        
         // if this is not a list, nothing to do
         if(!TomBase.isListOperator(TomConstraintCompiler.getSymbolTable().
-            getSymbolFromName(`tomName))) {return `m;}    
+            getSymbolFromName(`tomName))) {return `m;}        
         // declare fresh variable
         TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = TomConstraintCompiler.getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
 //      TODO - simplify below
-        Constraint l = `AndConstraint();
+        Constraint l = `AndConstraint();        
         match:  %match(slots){
           // last element needs special treatment - see below
-          concSlot(_*,PairSlotAppl[Appl=appl],X*,_)->{                
+          concSlot(_*,PairSlotAppl[Appl=appl],X*,_)->{
             TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);
             // if we have a variable
             if((`appl).isVariableStar() || (`appl).isUnamedVariableStar()){
               TomTerm beginSublist = getBeginVariableStar(listType);
-              TomTerm endSublist = getEndVariableStar(listType);
+              TomTerm endSublist = getEndVariableStar(listType);              
               l = `AndConstraint(l*,
                   MatchConstraint(beginSublist,freshVariable),
                   MatchConstraint(endSublist,freshVariable),             
                   MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
-                  MatchConstraint(newFreshVarList,endSublist));							
+                  MatchConstraint(newFreshVarList,endSublist));
             }else{	// a term or a syntactic variable
               l = `AndConstraint(l*,                      
                   Negate(EmptyListConstraint(name,freshVariable)),
@@ -72,15 +72,15 @@ public class TomVariadicPropagator implements TomIBasePropagator{
           // 1. if it is a VariableStar, we shouldn't generate a while, just an assignment for the variable                               
           // 2. if it is not a VariableStar, this means that we should check that the subject ends also
           // 3. if it is an UnamedVariableStar, there is nothing to do
-          concSlot(_*,PairSlotAppl[Appl=appl@VariableStar[]]) ->{
+          concSlot(_*,PairSlotAppl[Appl=appl@VariableStar[]]) ->{            
             l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
             break match;
           }
           // TODO - replace with an anti-pattern when the bug is solved
-          concSlot(_*,PairSlotAppl[Appl=appl@UnamedVariableStar[]]) ->{
+          concSlot(_*,PairSlotAppl[Appl=appl@UnamedVariableStar[]]) ->{            
             break match;
           }
-          concSlot(_*,PairSlotAppl[Appl=appl]) ->{                
+          concSlot(_*,PairSlotAppl[Appl=appl]) ->{
             TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);
             l = `AndConstraint(l*,
                 Negate(EmptyListConstraint(name,freshVariable)),
@@ -91,7 +91,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
           concSlot() ->{
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
           }
-        }// end match                    
+        }// end match
         // add head equality condition + fresh var declaration
         l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
             freshVarDeclaration,l*);
@@ -99,11 +99,11 @@ public class TomVariadicPropagator implements TomIBasePropagator{
       }					
       // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
       // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-      andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) ->{
+      andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) ->{        
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
         Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
-        if (res != toApplyOn){					
+        if (res != toApplyOn){
           return `AndConstraint(X*,eq,res);
         }
       }
@@ -112,7 +112,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 
   %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity(){
     visit Constraint {
-      MatchConstraint(v@VariableStar[AstName=name],p) -> {
+      MatchConstraint(v@VariableStar[AstName=name],p) -> {        
         if (`name == varName) {					
           return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVarStar(freshVar),v));
         }				  

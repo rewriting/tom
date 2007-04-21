@@ -37,7 +37,7 @@ public class TomGenerationManager {
   throws ClassNotFoundException,InstantiationException,IllegalAccessException{		
     // counts the generators that didn't change the instruction
     short genCounter = 0;
-    Expression result = null;
+    Expression result = null;    
     Expression expression = prepareGeneration(constraint);    
     // iterate until all propagators are applied and nothing was changed 
     mainLoop: while(true){		
@@ -103,10 +103,10 @@ public class TomGenerationManager {
     // it is done innermost because the expression is also simplified		
     expression = (Expression)`InnermostId(ReplaceSubterms()).fire(expression);		
     // generate automata
-    Instruction automata = generateAutomata(expression,action);		
+    Instruction automata = generateAutomata(expression,action);    
     // make sure that each variable is declared only once
     ArrayList<TomName> declaredVariables = new ArrayList<TomName>(); 		
-    automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).fire(automata);
+    automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).fire(automata);    
     return automata;
   }
 

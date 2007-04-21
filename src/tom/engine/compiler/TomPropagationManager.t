@@ -29,8 +29,8 @@ public class TomPropagationManager {
   private static short freshVarCounter = 0;
 
   public static Constraint performPropagations(Constraint constraintToCompile) 
-  throws ClassNotFoundException,InstantiationException,IllegalAccessException{
-
+            throws ClassNotFoundException,InstantiationException,IllegalAccessException{
+    
     freshVarCounter = 0;		
 
     // counts the propagators that didn't change the expression
