@@ -1,3 +1,9 @@
+2007-04-20  pem
+  * gom do no longer generate op? mapping
+  * the KernelCompiler generates correct call to IsFsym or IsSort
+    according to the theory
+  * the Backend generates correct definition of get_slice
+
 2007-04-19  tonio <reilles@loria.fr>
   * added "rule" hook
 

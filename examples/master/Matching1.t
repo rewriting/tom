@@ -35,8 +35,6 @@ public class Matching1 {
     module Peano
     imports String
     abstract syntax
-//       xx -> Nat
-//       yy -> Nat
     Nat = var(n:String)
         | zero()
         | suc(pred:Nat)
@@ -45,45 +43,43 @@ public class Matching1 {
         | False()
         | Match(pattern:Nat, subject:Nat)
         | And(n1:Nat,n2:Nat)
-   }
-
-  %rule {
+   
+  module Peano:rules() {
     // Delete
     Match(zero(),zero()) -> True()
 
     // Decompose
-      Match(suc(x),suc(y)) -> Match(x,y)
-      Match(plus(x1,x2),plus(y1,y2)) -> And(Match(x1,y1),Match(x2,y2))
+    Match(suc(x),suc(y)) -> Match(x,y)
+    Match(plus(x1,x2),plus(y1,y2)) -> And(Match(x1,y1),Match(x2,y2))
 
     // SymbolClash
-      Match(suc(_),zero()) -> False()
-      Match(zero(),suc(_)) -> False()
-      Match(plus(_,_),zero()) -> False()
-      Match(zero(),plus(_,_)) -> False()
-      Match(suc(_),plus(_,_)) -> False()
-      Match(plus(_,_),suc(_)) -> False()
-  }
-
-  %rule {
+    Match(suc(_),zero()) -> False()
+    Match(zero(),suc(_)) -> False()
+    Match(plus(_,_),zero()) -> False()
+    Match(zero(),plus(_,_)) -> False()
+    Match(suc(_),plus(_,_)) -> False()
+    Match(plus(_,_),suc(_)) -> False()
+  
     // PropagateClash
     And(False(),_) -> False()
-      And(_,False()) -> False()
+    And(_,False()) -> False()
 
     // PropagateSuccess
-      And(True(),X) -> X
-      And(X,True()) -> X
+    And(True(),X) -> X
+    And(X,True()) -> X
 
     // Merging
     And(X,X) -> X
 
     // MergingFail
-      And(Match(var(x),zero()),Match(var(x),suc(_))) -> False()
-      And(Match(var(x),suc(_)),Match(var(x),zero())) -> False()
-      And(Match(var(x),zero()),Match(var(x),plus(_,_))) -> False()
-      And(Match(var(x),plus(_,_)),Match(var(x),zero())) -> False()
-      And(Match(var(x),suc(_)),Match(var(x),plus(_,_))) -> False()
-      And(Match(var(x),plus(_,_)),Match(var(x),suc(_))) -> False()
+    And(Match(var(x),zero()),Match(var(x),suc(_))) -> False()
+    And(Match(var(x),suc(_)),Match(var(x),zero())) -> False()
+    And(Match(var(x),zero()),Match(var(x),plus(_,_))) -> False()
+    And(Match(var(x),plus(_,_)),Match(var(x),zero())) -> False()
+    And(Match(var(x),suc(_)),Match(var(x),plus(_,_))) -> False()
+    And(Match(var(x),plus(_,_)),Match(var(x),suc(_))) -> False()
   }
+}
 
   //-------------------------------------------------------
 

@@ -37,19 +37,17 @@ class RuleEvaluator {
       Expr = Cst(val:int) 
            | Plus(e1:Expr, e2:Expr) 
            | Mult(e1:Expr, e2:Expr) 
-  }
-
-
-  %rule {
+    module Expression:rules() {
       Plus(Cst(v1),Cst(v2)) -> Cst(intplus(v1,v2))
-  }
-  
-  %rule {
       Mult(Cst(v1),Cst(v2)) -> Cst(intmult(v1,v2))
+    }
+
+    Plus:block() { private static int intplus(int x,int y) { return x+y; } }
+    Mult:block() { private static int intmult(int x,int y) { return x*y; } }
+
   }
 
-  private static int intplus(int x,int y) { return x+y; }
-  private static int intmult(int x,int y) { return x*y; }
+  
   //-------------------------------------------------------
 
   public final static void main(String[] args) {

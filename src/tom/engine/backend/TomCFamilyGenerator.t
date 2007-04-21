@@ -277,6 +277,28 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln();
   }
 
+  private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject) {
+    String tomType = TomBase.getTomType(codomain);
+    String get = %[tom_get_head_@name@_@tomType@(@subject@)]%;
+    String is_conc = %[tom_is_fun_sym_@name@(@subject@)]%;
+    String cast = "";// "(" + TomBase.getTLType(domain) + ")";
+    if(domain==codomain) { 
+      return cast+%[((@is_conc@)?@get@:@subject@)]%;
+    }
+    return cast+get;
+  }
+  private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject) {
+    String tomType = TomBase.getTomType(codomain);
+    String get= %[tom_get_tail_@name@_@tomType@(@subject@)]%;
+    String is_conc = %[tom_is_fun_sym_@name@(@subject@)]%;
+    String empty = %[tom_empty_list_@name@()]%;
+    String cast = ""; //"(" + TomBase.getTLType(codomain)+ ")";
+    if(domain==codomain) { 
+      return cast+%[((@is_conc@)?@get@:@empty@)]%;
+    }
+    return cast+get;
+  }
+
   protected void genDeclList(String name, String moduleName) throws IOException {
     if(nodeclMode) {
       return;
@@ -285,10 +307,8 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = TomBase.getSymbolCodomain(tomSymbol);
     TomType eltType = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-    StringBuffer s = new StringBuffer();
     String tomType = TomBase.getTomType(listType);
     String glType = TomBase.getTLType(listType);
-    //String tlEltType = getTLType(eltType);
 
     String utype = glType;
     if(lazyMode) {
@@ -296,54 +316,63 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     }
     
     String listCast = "(" + glType + ")";
-    String eltCast = "(" + TomBase.getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String is_conc = "tom_is_fun_sym_" + name;
     String equal_term = "tom_equal_term_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_empty_list_" + name;
-    String get_head = eltCast + "tom_get_head_" + name + "_" + tomType;
-    String get_tail = listCast + "tom_get_tail_" + name + "_" + tomType;
     String get_slice = listCast + "tom_get_slice_" + name;
     String get_index = "tom_get_index_" + name;
 
-    s.append(modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n");
-    s.append("   if(" + is_empty + "(l1)) {\n");
-    s.append("    return l2;\n");  
-    s.append("   } else if(" + is_empty + "(l2)) {\n");
-    s.append("    return l1;\n");
-    if (listType == eltType) {
-      s.append("   } else if(" + is_conc + "(l1)) { \n");  
-      s.append("     if(" + is_empty + "(" + get_tail + "(l1))) {\n");  
-      s.append("       return " + make_insert + "(" + get_head + "(l1),l2);\n");
-      s.append("     } else {\n");
-      s.append("       return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n");
-      s.append("     }\n");
-      s.append("   } else { \n");
-      s.append("    return " + make_insert + "(l1 , l2);\n");
-      s.append("   }\n");
+    String s = "";
+    if(listType == eltType) {
+s = %[
+  @modifier@ @utype@ tom_append_list_@name@(@utype@l1, @utype@ l2) {
+    if(@is_empty@(l1)) {
+      return l2;
+    } else if(@is_empty@(l2)) {
+      return l1;
+    } else if(@is_conc@(l1)) {
+      if(@is_empty@(@genDeclGetTail(name,eltType,listType,"l1")@)) {
+        return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1")@,l2);
+      } else {
+        return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1")@,tom_append_list_@name@(@genDeclGetTail(name,eltType,listType,"l1")@,l2));
+      }
     } else {
-      s.append("   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n");  
-      s.append("    return " + make_insert + "(" + get_head + "(l1),l2);\n");
-      s.append("   } else { \n");
-      s.append("    return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n");
-      s.append("   }\n");
+      return @make_insert@(l1, l2);
     }
-    s.append("  }\n");
-    s.append("\n");
-    
-    s.append(modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end," + utype + " tail) {\n"); 
-    s.append("   if(" + equal_term + "(begin,end)) {\n");
-    s.append("     return tail;\n");
-    s.append("   } else {\n");
-    s.append("     return " +  make_insert + "(" + get_head + "(begin)," + get_slice + "(" + get_tail + "(begin),end,tail));\n");
-    s.append("   }\n");
-    s.append("  }\n");
-    s.append("\n");
+  }]%;
+
+    } else {
+
+s = %[
+  @modifier@ @utype@ tom_append_list_@name@(@utype@l1, @utype@ l2) {
+    if(@is_empty@(l1)) {
+      return l2;
+    } else if(@is_empty@(l2)) {
+      return l1;
+    } else if(@is_empty@(@genDeclGetTail(name,eltType,listType,"l1")@)) {
+      return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1")@,l2);
+    } else {
+      return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1")@,tom_append_list_@name@(@genDeclGetTail(name,eltType,listType,"l1")@,l2));
+    }
+  }]%;
+
+    }
+
+    s+= %[
+  @modifier@ @utype@ tom_get_slice_@name@(@utype@ begin, @utype@ end,@utype@ tail) {
+    if(@equal_term@(begin,end)) {
+      return tail;
+    } else {
+      return @make_insert@(@genDeclGetHead(name,eltType,listType,"begin")@,@get_slice@(@genDeclGetTail(name,eltType,listType,"begin")@,end,tail));
+    }
+  }
+  ]%;
    
     //If necessary we remove \n code depending on pretty option
-    String res = ASTFactory.makeSingleLineCode(s.toString(), prettyMode);
-    output.write(res);
+    s = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(s);
   }
 
   protected void genDeclMake(String funName, TomType returnType, 

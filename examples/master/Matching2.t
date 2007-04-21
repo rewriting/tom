@@ -42,10 +42,33 @@ class Matching2 {
          | Match(pattern:Term, subject:Term)
          | And(l:TermList)
     TermList = conc( Term* )
-    //decomposeList(l1:TermList, l2:TermList) -> TermList
+         | decomposeList(l1:TermList, l2:TermList)
+  
+    module Term:rules() {
+    // Delete
+    Match(Appl(name,conc()),Appl(name,conc())) -> True()
+
+    // Decompose
+    Match(Appl(name,a1),Appl(name,a2)) -> And(decomposeList(a1,a2))
+
+    // SymbolClash
+    Match(Appl(name1,args1),Appl(name2,args2)) -> False()
+
+    // PropagateClash
+    And(conc(_*,False(),_*)) -> False()
+    // PropagateSuccess
+    And(conc(X*,True(),Y*)) -> And(conc(X*,Y*))
+    And(conc(X*,True(),Y*)) -> And(conc(X*,Y*))
+    And(conc(X*,c,Y*,c,Z*)) -> And(conc(X*,c,Y*,Z*))
+    And(conc()) -> True()
+    
+    decomposeList(conc(),conc()) -> conc()
+    decomposeList(conc(h1,t1*),conc(h2,t2*)) -> conc(Match(h1,h2),decomposeList(t1,t2))
+    }
   }
 
-  private static TermList decomposeList(TermList l1, TermList l2) {
+  /*
+   private static TermList decomposeList(TermList l1, TermList l2) {
     %match(TermList l1, TermList l2) {
       conc(),conc() -> { return `conc(True()); }
       conc(h1,t1*),conc(h2,t2*) -> {
@@ -55,33 +78,7 @@ class Matching2 {
     }
     return `conc();
   }
-/*
-  %rule {
-    decomposeList(conc(),conc()) -> conc()
-    decomposeList(conc(h1,t1*),conc(h2,t2*)) -> conc(Match(h1,h2),t3*) where t3:=decomposeList(t1,t2)
-  }
-*/
-  %rule {
-    // Delete
-    Match(Appl(name,conc()),Appl(name,conc())) -> True()
-
-    // Decompose
-    Match(Appl(name,a1),Appl(name,a2)) -> And(decomposeList(a1,a2))
-
-    // SymbolClash
-    Match(Appl(name1,args1),Appl(name2,args2)) -> False()
-  }
-
-  %rule {
-    // PropagateClash
-    And(conc(_*,False(),_*)) -> False()
-    // PropagateSuccess
-    And(conc(X*,True(),Y*)) -> And(conc(X*,Y*))
-    And(conc(X*,True(),Y*)) -> And(conc(X*,Y*))
-    And(conc(X*,c,Y*,c,Z*)) -> And(conc(X*,c,Y*,Z*))
-    And(conc()) -> True()
-  }
-
+  */
   //-------------------------------------------------------
 
   public void run() {

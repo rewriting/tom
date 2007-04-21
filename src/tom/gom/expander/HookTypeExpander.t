@@ -499,6 +499,7 @@ public class HookTypeExpander {
         auHooks*);
 
     /* The mapping for AU operators has to be correct */
+    /*
     %match(mdecl) {
       CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
                                Prod=Variadic[]]) -> {
@@ -540,6 +541,7 @@ public class HookTypeExpander {
             auHooks*);
       }
     }
+    */
     return auHooks;
   }
  

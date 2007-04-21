@@ -45,33 +45,24 @@ class Matching {
          | decomposeList(l1:TermList, l2:TermList)
     TermList = cons(head:Term,tail:TermList)
              | nil()
-  }
 
-  %rule {
+    module Term:rules() {
     decomposeList(nil(),nil()) -> True()
     decomposeList(cons(h1,t1),cons(h2,t2)) -> And(Match(h1,h2),decomposeList(t1,t2))
-  } 
-
-  %rule {
     // Delete
     Match(Appl(name,nil()),Appl(name,nil())) -> True()
-        
     // Decompose
     Match(Appl(name,a1),Appl(name,a2)) -> decomposeList(a1,a2)
-        
     // SymbolClash
     Match(Appl(name1,args1),Appl(name2,args2)) -> False() //if name1 != name2
-  }
-
-  %rule {
     // PropagateClash
     And(False(),_) -> False()
     And(_,False()) -> False()
-
     // PropagateSuccess
     And(True(),x) -> x
     And(x,True()) -> x
     And(x,x) -> x
+    }
   }
 
   //-------------------------------------------------------

@@ -34,34 +34,26 @@ public class Fibonacci1 {
 
   %gom {
     module Peano
-    imports int
-    abstract syntax
-    Nat = zero()
-        | suc(pred:Nat)
-        | plus(x1:Nat, x2:Nat)
-        | mult(x1:Nat, x2:Nat)
-        | fib(x:Nat)
+      imports int
+      abstract syntax
+      Nat = zero()
+      | suc(pred:Nat)
+      | plus(x1:Nat, x2:Nat)
+      | mult(x1:Nat, x2:Nat)
+      | fib(x:Nat)
 
-        //fibint(n:int) -> int
-   }
-
-    // rule plus
-  %rule {
-    plus(x, zero())    -> x
-    plus(x, suc(y))    -> suc(plus(x,y))
-  } // rule
-  %rule {
-    mult(x, zero())    -> zero()
-    mult(x, suc(y))    -> plus(x,mult(x,y))
-  } // rule
-
-  /*
-     %rule {
-     fibint(0) -> 1
-     fib(1)    -> 1
-     fib(n)    -> fibint(n - 1) + fibint(n - 2)
-     }
-   */
+      //fibint(n:int) -> int
+      module Peano:rules() {
+        // rule plus
+        plus(x, zero())    -> x
+        plus(x, suc(y))    -> suc(plus(x,y))
+        mult(x, zero())    -> zero()
+        mult(x, suc(y))    -> plus(x,mult(x,y))
+        fib(zero())        -> suc(zero())
+        fib(suc(zero()))   -> suc(zero())
+        fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
+      } 
+  }
 
   public int fibint(int n) {
     %match(int n) {
@@ -74,12 +66,6 @@ public class Fibonacci1 {
       }
     }
     return -1;
-  }
-
-  %rule {
-    fib(zero())        -> suc(zero())
-    fib(suc(zero()))   -> suc(zero())
-    fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
   }
 
   //-------------------------------------------------------

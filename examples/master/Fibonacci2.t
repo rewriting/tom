@@ -34,6 +34,7 @@ public class Fibonacci2 {
 
   %gom {
     module Peano
+    imports int
     abstract syntax
     Nat = zero()
         | suc(pred:Nat)
@@ -41,31 +42,18 @@ public class Fibonacci2 {
         | plus(x1:Nat, x2:Nat)
         | mult(x1:Nat, x2:Nat)
         | fib(x:Nat)
-   }
-
-  // rule pred
-  %rule {
-    pred(suc(x))    -> x
-  }  // rule
-  // rule pred
-  %rule {
-    suc(pred(x))    -> x
-  } // rule
-  // rule plus
-  %rule {
-    plus(x, zero())    -> x
-    plus(x, suc(y))    -> suc(plus(x,y))
-    plus(x, pred(y))    -> pred(plus(x,y))
-  } // rule
-  %rule {
-    mult(x, zero())    -> zero()
-    mult(x, suc(y))    -> plus(x,mult(x,y))
-  } // rule
-
-  %rule {
-    fib(zero())        -> suc(zero())
-    fib(suc(zero()))   -> suc(zero())
-    fib(x)   -> plus(fib(pred(x)),fib(pred(pred(x))))
+    module Peano:rules() {
+      pred(suc(x))     -> x
+      suc(pred(x))     -> x
+      plus(x, zero())  -> x
+      plus(x, suc(y))  -> suc(plus(x,y))
+      plus(x, pred(y)) -> pred(plus(x,y))
+      mult(x, zero())  -> zero()
+      mult(x, suc(y))  -> plus(x,mult(x,y))
+      fib(zero())      -> suc(zero())
+      fib(suc(zero())) -> suc(zero())
+      fib(x)           -> plus(fib(pred(x)),fib(pred(pred(x))))
+    }
   }
 
   public int fibint(int n) {
