@@ -1,0 +1,20 @@
+module gom.RuleList
+abstract syntax
+Term = a() | b() | c() | d()
+     | f(x:Term)
+     | g(l:List)
+
+List = conc(Term*)
+
+Bool = True()
+     | False()
+     | And(Bool*)
+
+module RuleList:rules() {
+  f(a()) -> f(b())
+  conc(a()) -> conc(b())
+  conc(x,a()) -> conc(x,b())
+  conc(C1*,f(b()),C2*) -> conc(C1*,f(c()),C2*)
+  g(conc(C1*,f(c()),C2*)) -> g(conc(C1*,f(d()),C2*))
+}
+}
