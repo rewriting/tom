@@ -75,7 +75,7 @@ public class TomGenerationManager {
           return `And(prepareGeneration(m),
               prepareGeneration(AndConstraint(X*)));
         }
-      }
+      }      
       OrConstraintDisjunction(m,X*) -> {
         return `OrExpressionDisjunction(prepareGeneration(m),
             prepareGeneration(OrConstraintDisjunction(X*)));
@@ -131,14 +131,15 @@ public class TomGenerationManager {
       // 'if'
       IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) ->{
         return `If(condition,LetAssign(left1,TomTermToExpression(right1),Nop()),LetAssign(left2,TomTermToExpression(right2),Nop()));
-      }      
+      }
+      // disjunction of symbols
+      or@OrExpressionDisjunction(_*) ->{
+        return buildExpressionDisjunction(`or,action);
+      }
       // conditions			
       x ->{
         return `If(x,action,Nop());
       }	
-      or@OrExpressionDisjunction(_*) ->{
-        return buildExpressionDisjunction(`or,action);
-      }
     }
     throw new TomRuntimeException("TomInstructionGenerationManager.generateAutomata - strange expression:" + expression);
   }
@@ -175,33 +176,64 @@ public class TomGenerationManager {
    * Takes the OrConstraintDisjunction and generates the tests
    * 
    * boolean flag = false;
+   * var1 = null;
+   * var2 = null;
+   * ....
    * if (is_fsym(f1)){
    *    flag = true;
-   *    var = subterm_f1();
+   *    var1 = subterm1_f1();
+   *    var2 = subterm2_f1();
+   *    .....    
    * }else if (is_fsym(f2)) {
    *    flag = true;
-   *    var = subterm_f2(); 
+   *    var1 = subterm1_f2();
+   *    var2 = subterm2_f2();
+   *    ..... 
    * } ....
-   * if (flag) ...
+   * if (flag == true) ...
    *  
    */
   private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action){
-    Instruction instruction = null; 
-    TomTerm flag = TomConstraintCompiler.getFreshVariable("bool",TomConstraintCompiler.getBooleanType());
+     
+    TomTerm flag = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getBooleanType());
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
+    // collect variables
+    `TopDown(CollectVar(freshVarList)).fire(orDisjunction);
+    Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
+    // add the final test
+    instruction = `AbstractBlock(concInstruction(instruction,
+        If(EqualTerm(TomConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+    // add fresh variables' declarations
+    for(TomTerm var:freshVarList){
+      instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
+    }    
+    // stick the flag declaration also
+    return `LetRef(flag,FalseTL(),instruction);
+  }
+  
+  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue){
+    Instruction instr = null;
     %match(orDisjunction){
       OrExpressionDisjunction() -> {
         return `Nop();
       }
-      OrExpressionDisjunction(And(check,assign),X*) -> {
-        Instruction subtest = buildExpressionDisjunction(`OrExpressionDisjunction(X*),action);
-        instruction =  `If(check,AbstractBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
+      OrExpressionDisjunction(And(check,assign),X*) -> {        
+        Instruction subtest = buildDisjunctionIfElse(`OrExpressionDisjunction(X*),assignFlagTrue);
+        instr =  `If(check,UnamedBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
       }
     }
-    Instruction flagDeclaration = `LetRef(flag,FalseTL(),instruction);
-    return `AbstractBlock(concInstruction(flagDeclaration, 
-        If(EqualTerm(TomConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+    return instr;
   }
 
-  
+  /**
+   * Collect the variables in a term   
+   */
+  %strategy CollectVar(varList:Collection) extends Identity(){
+    visit Constraint{
+      MatchConstraint(v@Variable[],_) ->{
+        if (!varList.contains(`v)) { varList.add(`v); }
+      }      
+    }// end visit
+  }// end strategy
 }

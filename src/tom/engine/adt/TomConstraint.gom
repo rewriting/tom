@@ -16,7 +16,7 @@ Constraint =
 		   | AndConstraint(Constraint*)
 		   | OrConstraint(Constraint*)
 		  /**
-		   * <code>OrConstraintDisjunction</code> used for the disjonction of symbols
+		   * <code>OrConstraintDisjunction</code> used for the disjunction of symbols
 		   *
 		   * @param Constraint the list of AndConstraints that are linked by Or
 		   */		   
@@ -32,6 +32,7 @@ Constraint =
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
 OrConstraint:AU() { `FalseConstraint() }
+OrConstraintDisjunction:AU() { }
 
 // we should not generate assignments for the unamed variables
 AndConstraint:make_insert(e,l) {
