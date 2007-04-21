@@ -76,7 +76,7 @@ public class TomGenerationManager {
               prepareGeneration(AndConstraint(X*)));
         }
       }      
-      OrConstraintDisjunction(m,X*) -> {
+      OrConstraintDisjunction(m,X*) -> {        
         return `OrExpressionDisjunction(prepareGeneration(m),
             prepareGeneration(OrConstraintDisjunction(X*)));
       }
@@ -141,7 +141,7 @@ public class TomGenerationManager {
         return `If(x,action,Nop());
       }	
     }
-    throw new TomRuntimeException("TomInstructionGenerationManager.generateAutomata - strange expression:" + expression);
+    throw new TomRuntimeException("TomGenerationManager.generateAutomata - strange expression:" + expression);
   }
 
   /**
@@ -193,8 +193,7 @@ public class TomGenerationManager {
    * if (flag == true) ...
    *  
    */
-  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action){
-     
+  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action){     
     TomTerm flag = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getBooleanType());
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
@@ -203,27 +202,30 @@ public class TomGenerationManager {
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-        If(EqualTerm(TomConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+        If(EqualTerm(TomConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
     // add fresh variables' declarations
     for(TomTerm var:freshVarList){
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
-    }    
+    }
     // stick the flag declaration also
     return `LetRef(flag,FalseTL(),instruction);
   }
   
-  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue){
-    Instruction instr = null;
+  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue){    
     %match(orDisjunction){
       OrExpressionDisjunction() -> {
         return `Nop();
       }
       OrExpressionDisjunction(And(check,assign),X*) -> {        
         Instruction subtest = buildDisjunctionIfElse(`OrExpressionDisjunction(X*),assignFlagTrue);
-        instr =  `If(check,UnamedBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
+        return `If(check,UnamedBlock(concInstruction(assignFlagTrue,generateAutomata(assign,Nop()))),subtest);
+      }
+      OrExpressionDisjunction(check,X*) -> {        
+        Instruction subtest = buildDisjunctionIfElse(`OrExpressionDisjunction(X*),assignFlagTrue);
+        return `If(check, assignFlagTrue, subtest);
       }
     }
-    return instr;
+    throw new TomRuntimeException("TomGenerationManager.buildDisjunctionIfElse - strange expression:" + orDisjunction);
   }
 
   /**
@@ -231,8 +233,8 @@ public class TomGenerationManager {
    */
   %strategy CollectVar(varList:Collection) extends Identity(){
     visit Constraint{
-      MatchConstraint(v@Variable[],_) ->{
-        if (!varList.contains(`v)) { varList.add(`v); }
+      MatchConstraint(v@Variable[],_) ->{        
+        if (!varList.contains(`v)) { varList.add(`v); }        
       }      
     }// end visit
   }// end strategy
