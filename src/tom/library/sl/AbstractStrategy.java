@@ -64,7 +64,7 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public jjtraveler.Visitable[] getChildren() {
-    return visitors;
+    return (jjtraveler.Visitable[]) visitors.clone();
   }
 
   public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
