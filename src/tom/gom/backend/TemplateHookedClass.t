@@ -120,7 +120,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       ArrayList tomParams = new ArrayList();      
 
-      try{
+      try {
         Iterator it = importList.iterator();
         while(it.hasNext()){
           String importPath = ((File)it.next()).getCanonicalPath();
@@ -133,12 +133,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       tomParams.add("-X");
       tomParams.add(xmlFile.getPath());
-      /*
-       * remove optimization since there is a bug
-       * between AU+Opt
-       */
       tomParams.add("--optimize");
       tomParams.add("--optimize2");
+      /*
+       * we need to add --wall if this option is active
+       * we need to add --verbose if this option is active
+       */
       tomParams.add("--output");
       tomParams.add(file_path);
       tomParams.add("-");     
