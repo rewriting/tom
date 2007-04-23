@@ -64,7 +64,7 @@ public class ChoiceId extends AbstractStrategy {
     } else {
       if (getStatus() == Environment.FAILURE) {
         /* restore the subject */
-        /* we are juste intersted in the status */
+        /* we are juste interested in the status */
         getEnvironment().setSubject(subject);
         return;
       } else {

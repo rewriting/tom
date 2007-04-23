@@ -57,7 +57,7 @@ public class Sequence extends AbstractStrategy {
       visitors[THEN].visit();
     } else {
       /* restore the subject */
-      /* we are juste intersted in the status */
+      /* we are juste interested in the status */
       getEnvironment().setSubject(subject);
     }
   }
