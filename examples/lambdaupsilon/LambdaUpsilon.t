@@ -18,7 +18,7 @@ class LambdaUpsilon {
     LTerm t3 = `lappl(swap,constant("f"));
 
     System.out.println("(\\x.(x x) a) = " + t1);
-    System.out.println("swap = \\fyz.(f y x) = " + swap);
+    System.out.println("swap = \\fxy.(f y x) = " + swap);
     System.out.println("swap f a b = " + t2);
     System.out.println("swap f = " + t3);
   }
