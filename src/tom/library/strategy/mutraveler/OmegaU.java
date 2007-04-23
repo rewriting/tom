@@ -62,13 +62,11 @@ public class OmegaU extends AbstractMuStrategy {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     int arity = any.getChildCount();
-    int randomInt = Math.abs(random.nextInt());
+    int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return defaultStrategy.visit(any);
+      return visitors[ARG].visit(any);
     } else {
-      int selectedSubterm = (randomInt%arity)+1;
-      return (new Omega(selectedSubterm,visitors[ARG])).visit(any);
+      return (new Omega(selectedSubterm+1,visitors[ARG])).visit(any);
     }
   }
 }
-
