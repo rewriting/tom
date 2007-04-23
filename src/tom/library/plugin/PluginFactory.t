@@ -85,7 +85,7 @@ public class PluginFactory implements Plugin {
   private PlatformOptionList allRequiredOptions;
   private Map flagOwners;
   private Object[] argToRelay;
-  private OptionManager optionManager; // it is never written!
+  private OptionManager optionManager;
 
   private String pluginName;
   private Logger logger;
@@ -184,7 +184,9 @@ public class PluginFactory implements Plugin {
   /**
    * From OptionOwner interface inherited from Plugin interface
    */
-  public void setOptionManager(OptionManager optionManager) {}
+  public void setOptionManager(OptionManager optionManager) {
+    this.optionManager = optionManager;
+  }
 
   /**
    * From OptionOwner interface inherited from Plugin interface
