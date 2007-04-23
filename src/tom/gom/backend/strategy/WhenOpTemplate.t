@@ -77,6 +77,7 @@ public class @className()@  implements tom.library.strategy.mutraveler.MuStrateg
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {
     switch(index) {
       case 0: sub = (jjtraveler.reflective.VisitableVisitor)child;
+              return this;
       default: throw new IndexOutOfBoundsException();
     }
   }
