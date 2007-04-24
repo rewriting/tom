@@ -16,7 +16,7 @@ import tom.engine.compiler.propagator.*;
 public class TomPropagationManager {
 
 //------------------------------------------------------	
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
   %include { java/util/types/Collection.tom}
 //------------------------------------------------------

@@ -25,7 +25,7 @@ import tom.engine.adt.tomconstraint.types.*;
  */
 public class TomConstraintCompiler{
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
 
   private static SymbolTable symbolTable = null;

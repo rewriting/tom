@@ -24,7 +24,7 @@ import tom.engine.adt.tomtype.types.*;
 public class TomGenerationManager {
 
 //------------------------------------------------------------	
-  %include { adt/tomsignature/TomSignature.tom }	
+  %include { ../adt/tomsignature/TomSignature.tom }	
   %include { java/util/types/Collection.tom}
   %include { sl.tom}
 //------------------------------------------------------------	

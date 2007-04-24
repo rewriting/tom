@@ -20,7 +20,7 @@ import tom.engine.adt.theory.types.*;
  */
 public class TomSyntacticGenerator implements TomIBaseGenerator{
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }	
 
   public Expression generate(Expression expression){    

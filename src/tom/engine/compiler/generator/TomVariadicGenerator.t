@@ -20,7 +20,7 @@ import tom.engine.compiler.*;
  */
 public class TomVariadicGenerator implements TomIBaseGenerator{
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }	
 
   public Expression generate(Expression expression){		
