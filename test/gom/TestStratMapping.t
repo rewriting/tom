@@ -11,26 +11,49 @@ public class TestStratMapping extends TestCase {
   %gom(--strategies-mapping) {
     module M
     abstract syntax
-    S1 = f(h:S1,t:S2)
-       | g(s:S1)
+    S = f(h:S,t:S)
        | a() | b()
-    S2 = f2(h2:S2,t1:S1)
-       | h(s2:S2)
-       | k()
   }
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestStratMapping.class));
   }
 
+  %strategy Strat() extends Identity() {
+    visit S {
+      f(x,y)            -> { return `x; }
+    }
+  }
+
+
   public void testCongruenceConstant() {
-    S1 t = `a();
-    Strategy s = `_a();
+    S t = `f(f(a(),b()),f(b(),a()));
+    Strategy s1 = `_f(Strat(),Strat());
+    Strategy s2 = `When_f(Strat());
+    Strategy s3 = `Is_a();
+    Strategy s4 = `Is_f();
     try {
-      t = (S1) s.fire(t);
+      t = (S) s1.fire(t);
+      assertEquals(`f(a(),b()),t);
+         } catch (tom.library.sl.FireException ee) {
+      fail("s1 failed"); 
+    }
+
+    try {
+      t = (S) s2.fire(t);
       assertEquals(`a(),t);
-    } catch (tom.library.sl.FireException ee) {
-      fail("_a() failed on a()"); 
+     } catch (tom.library.sl.FireException ee) {
+      fail("s2 failed"); 
+    }
+    try {
+      t = (S) s3.fire(t);
+     } catch (tom.library.sl.FireException ee) {
+      fail("s3 failed"); 
+    }
+    try {
+      t = (S) s4.fire(t);
+      fail("_f() has not failed on a()"); 
+     } catch (tom.library.sl.FireException ee) {
     }
   }
 }

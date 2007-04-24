@@ -35,6 +35,7 @@ public class TestImport extends TestCase {
   %include { importing/Importing.tom }
   %typeterm Collection {
     implement { Collection }
+    is_sort(t) { t instanceof Collection } 
   }
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestImport.class));
