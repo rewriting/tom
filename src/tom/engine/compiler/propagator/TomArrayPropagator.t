@@ -17,7 +17,7 @@ import tom.engine.TomBase;
 public class TomArrayPropagator implements TomIBasePropagator{
 
 //--------------------------------------------------------	
-  %include { adt/tomsignature/TomSignature.tom }	
+  %include { ../../adt/tomsignature/TomSignature.tom }	
   %include { mustrategy.tom}
 //--------------------------------------------------------
 

@@ -24,7 +24,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
   %include { sl.tom }	
 
   public Expression generate(Expression expression){		
-    return (Expression)`InnermostId(VariadicGenerator()).fire(expression);		
+    return (Expression)`TopDown(VariadicGenerator()).fire(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
@@ -50,14 +50,54 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
-      }			
-      // generate equal - this can come from variable's propagations
-      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain=type]),t)) ->{				
-        return `EqualTerm(type,e,t);
       }
       ConstraintToExpression(MatchConstraint(TestVarStar(v@VariableStar[AstType=type]),t)) ->{
         return `EqualTerm(type,v,t);
       }
     } // end visit
+    visit TomTerm{
+      // generate getHead
+      ListHead(opName,type,variable) ->{
+        return `ExpressionToTomTerm(genGetHead(opName,type,variable));
+      }
+      // generate getTail
+      ListTail(opName,variable) ->{
+        return `ExpressionToTomTerm(genGetTail(opName,variable));
+      }
+    }
   } // end strategy	
+  
+  /**
+   * return the head of the list
+   * when domain=codomain, the test is extended to:
+   *   is_fsym_f(t)?get_head(t):t 
+   *   the element itself is returned when it is not a list operator
+   *   this occurs because the last element of a loop may not be a list
+   */ 
+  private static Expression genGetHead(TomName opName, TomType type, TomTerm var) {
+    TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Conditional(IsFsym(opName,var),GetHead(opName, type, var),TomTermToExpression(var));
+    }
+    return `GetHead(opName, type, var);
+  }
+
+  /**
+   * return the tail of the list
+   * when domain=codomain, the test is extended to:
+   *   is_fsym_f(t)?get_tail(t):make_empty() 
+   *   the neutral element is returned when it is not a list operator
+   *   this occurs because the last element of a loop may not be a list
+   */ 
+  private static Expression genGetTail(TomName opName, TomTerm var) {
+    TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Conditional(IsFsym(opName,var),GetTail(opName, var), TomTermToExpression(BuildEmptyList(opName)));
+    }
+    return `GetTail(opName, var);
+  }
 }

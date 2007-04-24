@@ -16,7 +16,7 @@ import java.util.*;
 public class TomSyntacticPropagator implements TomIBasePropagator{
 
 //--------------------------------------------------------	
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ../../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }	
 //--------------------------------------------------------
 

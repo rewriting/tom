@@ -6,6 +6,7 @@ import java.util.Iterator;
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomconstraint.types.constraint.*;
@@ -87,8 +88,8 @@ public class TomGenerationManager {
         return `Negation(prepareGeneration(c));
       }
       EmptyListConstraint(opName,variable) ->{				
-        return `IsEmptyList(opName,variable);
-      }      
+        return `genIsEmptyList(opName,variable);
+      }
       EmptyArrayConstraint(opName,variable,index) ->{                          
         return `IsEmptyArray(opName,Ref(variable),Ref(index));
       }
@@ -237,5 +238,21 @@ public class TomGenerationManager {
         if (!varList.contains(`v)) { varList.add(`v); }        
       }      
     }// end visit
-  }// end strategy
+  }// end strategy 
+
+  /**
+   * check that the list is empty
+   * when domain=codomain, the test is extended to:
+   *   is_empty(l) || l==make_empty()
+   *   this is needed because get_tail() may return the neutral element 
+   */ 
+  private static Expression genIsEmptyList(TomName opName, TomTerm var) {
+    TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Or(IsEmptyList(opName, var), EqualTerm(codomain,var,BuildEmptyList(opName)));
+    }
+    return `IsEmptyList(opName, var);
+  }
 }

@@ -17,7 +17,7 @@ import tom.engine.TomBase;
 public class TomVariadicPropagator implements TomIBasePropagator{
 
 //--------------------------------------------------------	
-  %include { adt/tomsignature/TomSignature.tom }	
+  %include { ../../adt/tomsignature/TomSignature.tom }	
   %include { mustrategy.tom}
 //--------------------------------------------------------
 
@@ -33,9 +33,9 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 //    TODO    	
       // Decompose - only if 'g' != SymbolOf 
       // conc(t1,X*,t2,Y*) = g -> conc=SymbolOf(g) /\ fresh_var = g 
-      // /\ NotEmpty(fresh_Var)  /\ t1=GetHead(fresh_var) /\ fresh_var1 = GetTail(fresh_var) 
+      // /\ NotEmpty(fresh_Var)  /\ t1=ListHead(fresh_var) /\ fresh_var1 = ListTail(fresh_var) 
       // /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\ X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1
-      // /\ NotEmpty(fresh_Var2) /\ t2=GetHead(fresh_var2)/\ fresh_var3 = GetTail(fresh_var2)  
+      // /\ NotEmpty(fresh_Var2) /\ t2=ListHead(fresh_var2)/\ fresh_var3 = ListTail(fresh_var2)  
       // /\ begin2 = fresh_var3  /\ end2 = fresh_var3 /\ Y* = VariableHeadList(begin2,end2) /\ fresh_var4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {        
         // if this is not a list, nothing to do
@@ -63,8 +63,8 @@ public class TomVariadicPropagator implements TomIBasePropagator{
             }else{	// a term or a syntactic variable
               l = `AndConstraint(l*,                      
                   Negate(EmptyListConstraint(name,freshVariable)),
-                  MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
-                  MatchConstraint(newFreshVarList,ExpressionToTomTerm(GetTail(name,freshVariable))));
+                  MatchConstraint(appl,ListHead(name,listType,freshVariable)),
+                  MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
             }
             freshVariable = newFreshVarList;
           }
@@ -84,8 +84,8 @@ public class TomVariadicPropagator implements TomIBasePropagator{
             TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);
             l = `AndConstraint(l*,
                 Negate(EmptyListConstraint(name,freshVariable)),
-                MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
-                MatchConstraint(newFreshVarList,ExpressionToTomTerm(GetTail(name,freshVariable))),
+                MatchConstraint(appl,ListHead(name,listType,freshVariable)),
+                MatchConstraint(newFreshVarList,ListTail(name,freshVariable)),
                 EmptyListConstraint(name,newFreshVarList));                                    
           }
           concSlot() ->{

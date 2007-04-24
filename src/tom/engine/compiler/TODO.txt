@@ -6,4 +6,4 @@
 - simplify generation !!
 - Ref(Variable)
 - simplify the propagators because now we do not care if the last element is a var star (we have hooks)
-- 
+- cache the propagators after they are obtained with reflection
