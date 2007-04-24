@@ -41,9 +41,9 @@ static class MapEntry {
   }
 }
 
-
 %typeterm MapEntry {
   implement      { MapEntry }
+  is_sort(t) { t instanceof MapEntry } 
   equals(e1,e2)  { e1.equals(e2) }
 }
 
@@ -55,5 +55,3 @@ static class MapEntry {
     get_slot(val,e)  { e.getVal() }
     make(key,val)    { new MapEntry(key,val) }   
 }
-
-

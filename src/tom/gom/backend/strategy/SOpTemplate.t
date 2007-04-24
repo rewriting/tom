@@ -339,7 +339,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
 }
 
 %op Strategy @isName@() {
-  make() { '@className()@(@genIdArgs(slotList.length())@) }
+  make() { `@className()@(@genIdArgs(slotList.length())@) }
 }
 ]%;
   }

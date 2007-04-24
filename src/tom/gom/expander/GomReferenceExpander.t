@@ -207,6 +207,7 @@ public class GomReferenceExpander {
 
     %typeterm Info{
       implement {Info}
+      is_sort(t) { t instanceof Info } 
     }
 
 
@@ -273,6 +274,7 @@ public class GomReferenceExpander {
 
     %typeterm Info@sortName@{
         implement {Info@sortName@}
+        is_sort(t) { t instanceof Info@sortName@ } 
     }
 
     static class Info@sortName@{
