@@ -45,6 +45,7 @@ static AFun f_fib;
 
 %typeterm term {
   implement           { ATerm }
+  is_sort(t)     { true }
 }
 
 %op term zero() {

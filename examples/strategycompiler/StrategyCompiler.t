@@ -257,9 +257,20 @@ public class StrategyCompiler {
     }
   }
 
-  %typeterm ClassCollector { implement { ClassCollector } }
-  %typeterm MethodCollector { implement { MethodCollector } }
-  %typeterm SymbolTable { implement { SymbolTable } }
+  %typeterm ClassCollector { 
+    implement { ClassCollector } 
+    is_sort(t)     { t instanceof ClassCollector }
+  }
+  
+  %typeterm MethodCollector { 
+    implement { MethodCollector } 
+    is_sort(t)     { t instanceof MethodCollector }
+  }
+  
+  %typeterm SymbolTable { 
+    implement { SymbolTable } 
+    is_sort(t)     { t instanceof SymbolTable }
+  }
 
   /**
    * Strategy used to rename instructions which are prone to name capture.

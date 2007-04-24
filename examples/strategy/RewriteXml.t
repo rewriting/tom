@@ -51,10 +51,12 @@ public class RewriteXml {
 
   %typeterm Collection {
     implement { java.util.Collection }
+    is_sort(t)     { t instanceof java.util.Collection }
   }
 
   %typeterm Position {
     implement { tom.library.strategy.mutraveler.Position }
+    is_sort(t)     { t instanceof Position }
   }
 
   public final static void main(String[] args) {

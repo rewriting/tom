@@ -53,6 +53,7 @@ public class AnalyserBasedOnRef{
 
   %typeterm VariableRef{
     implement {VariableRef}
+    is_sort(t) { t instanceof VariableRef } 
   }
 
   %strategy IsNotUsed(ref:VariableRef) extends `Identity(){

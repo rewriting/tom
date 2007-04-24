@@ -65,6 +65,7 @@ public class Multigraph {
 
   %typeterm StringWrapper{
       implement {StringWrapper}
+      is_sort(t)     { t instanceof StringWrapper }
   }
 
 

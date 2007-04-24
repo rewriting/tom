@@ -21,10 +21,11 @@ public class TestStrategy extends TestCase {
   %include { java/util/LinkedList.tom }
 
   %typeterm Hashtable{
-  implement {Hashtable}  
+    implement {Hashtable}  
+    is_sort(t)     { t instanceof Hashtable}
   }
-  
-%gom{
+
+  %gom{
     module Term
 
       abstract syntax
@@ -40,6 +41,7 @@ public class TestStrategy extends TestCase {
 
   %typeterm Position {
     implement { tom.library.strategy.mutraveler.Position }
+    is_sort(t)     { t instanceof tom.library.strategy.mutraveler.Position }
   }
 
   static boolean bool0 = true;

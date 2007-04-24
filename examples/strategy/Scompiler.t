@@ -56,6 +56,7 @@ public class Scompiler {
 
   %typeterm Collection {
     implement { Collection }
+    is_sort(t)     { t instanceof Collection }
   }
   %include { mutraveler.tom }
 

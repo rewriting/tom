@@ -55,6 +55,7 @@ public class Proba3 {
 
 	%typeterm Collection {
 		implement { Collection }
+    is_sort(t)     { t instanceof Collection }
 	}
 	
 	private static Random random = new Random();

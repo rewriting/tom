@@ -103,10 +103,12 @@ public class TermGraphRewriting {
 
   %typeterm Info{
     implement {Info}
+    is_sort(t)     { t instanceof Info }
   }
 
   %typeterm Position{
     implement {Position}
+    is_sort(t)     { t instanceof Position }
   }
 
 
@@ -220,7 +222,7 @@ public class TermGraphRewriting {
 
     /* term t with labels */
     Term tt = (Term) `UnExpand(map).fire(t);
-    
+
     /* redex with labels */
     Term redex = (Term) new Position(new int[]{1,1}).getSubterm().fire(tt);
 
@@ -248,7 +250,7 @@ public class TermGraphRewriting {
     t2 = (Term) termAbstractType.label2path(t2);
     t2 = (Term) posFinal.getSubterm().fire(t2);
     System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
-    
+
     /*  one directly based on positions */
     /************************************************************/
 
@@ -273,7 +275,7 @@ public class TermGraphRewriting {
     t3 = (Term) `InnermostIdSeq(NormalizePos()).fire(t3);
     t3 = (Term) posFinal.getSubterm().fire(t3);
     System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
-    
+
     t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
     System.out.println("\nMore complex initial term :"+t);
     /* rule g(x,y) -> f(x) at pos 1.1*/

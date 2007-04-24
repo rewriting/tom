@@ -48,6 +48,7 @@ public class Transformer2 {
 
   %typeterm IntWrapper {
     implement           { IntWrapper }
+    is_sort(t)     { t instanceof IntWrapper }
     equals(t1,t2)       { (t1.equals(t2)) }
   } 
 

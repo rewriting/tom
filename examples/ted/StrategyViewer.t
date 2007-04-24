@@ -39,7 +39,10 @@ import jjtraveler.*;
 public class StrategyViewer {
 
   %include{mustrategy.tom}
-  %typeterm Writer { implement {java.io.Writer} }
+  %typeterm Writer { 
+    implement {java.io.Writer} 
+    is_sort(t)     { t instanceof java.util.HashMap }
+  }
 
   private static int counter = 0;  
   static private String clean(String s) {

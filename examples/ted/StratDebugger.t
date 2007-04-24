@@ -55,6 +55,7 @@ public class StratDebugger {
 
   %typeterm DebugStrategyObserver {
     implement { ted.DebugStrategyObserver }
+    is_sort(t)     { t instanceof ted.DebugStrategyObserver }
   }
 
   %op Strategy DebugStrategy(obs:DebugStrategyObserver, s:Strategy) {

@@ -45,10 +45,8 @@ import java.util.*;
 
 
 public class PatternAnalyser{
-
   %include {util/HashSet.tom}
   %include {util/HashMap.tom}
-  %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
   %include {sl.tom}
@@ -347,6 +345,7 @@ public class PatternAnalyser{
 
   %typeterm Info{
     implement {Info}
+    is_sort(t) { t instanceof Info } 
   }
 
   public static class Info {

@@ -31,6 +31,7 @@
 
 %typeterm any {
   implement          { dontcare (* not used *)     }
+  is_sort(t)     { true }
 }
 
 %oplist list conc( any* ){

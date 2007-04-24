@@ -366,7 +366,10 @@ class SPropp {
     }
 		return result.getValue();
 	}
-  %typeterm MyBoolean { implement { MyBoolean } }
+  %typeterm MyBoolean { 
+    implement { MyBoolean } 
+    is_sort(t)     { t instanceof MyBoolean }
+  }
   %strategy IsValid(val:MyBoolean) extends `Identity() {
     visit Proof {
       hyp(_) -> { val.setValue(false) ; }
@@ -407,33 +410,36 @@ class SPropp {
 	//}}}
 	
 	//{{{ public class MyInt
-  %typeterm MyInt { implement { MyInt } }
-	public static class MyInt {
-		private int value;
-		public MyInt(int initValue) {
-			value = initValue;
-		}
-		public void setValue(int val) {
-			value = val;
-		}
-		public int getValue() {
-			return value;
-		}
-	}
-	//}}}
-	
-	//{{{ insertPair
-	public int comparePair(Pair p1,Pair p2) {
-		%match(Pair p1,Pair p2) {
-			pair(i,_),pair(j,_) -> {
-				if `(i < j) { return -1;}
-				else {return 1;}
-			}
-		}
-		return 0;
-	}
+  %typeterm MyInt { 
+    implement { MyInt } 
+    is_sort(t)     { t instanceof MyInt }
+  }
+  public static class MyInt {
+    private int value;
+    public MyInt(int initValue) {
+      value = initValue;
+    }
+    public void setValue(int val) {
+      value = val;
+    }
+    public int getValue() {
+      return value;
+    }
+  }
+  //}}}
 
-	public ListPair insertPair(Pair p,ListPair l) {
+  //{{{ insertPair
+  public int comparePair(Pair p1,Pair p2) {
+    %match(Pair p1,Pair p2) {
+      pair(i,_),pair(j,_) -> {
+        if `(i < j) { return -1;}
+        else {return 1;}
+      }
+    }
+    return 0;
+  }
+
+  public ListPair insertPair(Pair p,ListPair l) {
     ListPair res = null;
     if(l.isEmptyconcPair()) {
       res = `concPair(p,l*);
@@ -444,8 +450,8 @@ class SPropp {
       res = insertPair(p,`concPair(l.getHeadconcPair(),newTail*));
     }
     return res;
-	}
-	//}}}
+  }
+  //}}}
 
 	//{{{ public void write_proof_latex(Map tex_p,String file)
 	public void write_proof_latex(ListPair tex_p,String file) {

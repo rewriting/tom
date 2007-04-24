@@ -53,18 +53,21 @@ public class Analyser{
 
   %typeterm ControlFlowGraphList {
     implement { List }
+    is_sort(t) { t instanceof List } 
     equals(t1,t2) { t1.equals(t2) } 
     visitor_fwd { CFGVisitor }
   }
 
   %typeterm VariableList {
     implement { List }
+    is_sort(t) { t instanceof List } 
     equals(t1,t2) { t1.equals(t2) } 
     visitor_fwd { analysis.node.NodeBasicStrategy }
   }
 
   %typeterm ControlFlowGraph {
     implement {ControlFlowGraph}
+    is_sort(t) { t instanceof ControlFlowGraph } 
     equals(t1,t2) { t1.equals(t2) } 
     visitor_fwd { analysis.ControlFlowGraphBasicStrategy }
   }
@@ -72,6 +75,7 @@ public class Analyser{
 
   %typeterm Vertex {
     implement {Vertex}
+    is_sort(t) { t instanceof Vertex } 
     equals(t1,t2) { t1.equals(t2) } 
     visitor_fwd { analysis.ast.AstBasicStrategy }
   }

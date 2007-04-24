@@ -49,6 +49,7 @@ public class Rewrite4 {
 
   %typeterm Position {
     implement {Position}
+    is_sort(t)     { t instanceof Position }
   }
 
   public final static void main(String[] args) {

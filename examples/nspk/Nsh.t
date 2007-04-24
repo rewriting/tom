@@ -274,6 +274,7 @@ public class Nsh {
   
   %typeterm Collection {
     implement {java.util.Collection}
+    is_sort(t)     { t instanceof java.util.Collection }
   }
   public void collectOneStep(State state, Collection col) {
     try {

@@ -14,6 +14,7 @@ abs:block() {
  
 %typeterm Position{
   implement {Position}
+  is_sort(t)     { t instanceof Position }
 }
 
 %strategy ToDeBruinj(var:LambdaTerm) extends Identity(){

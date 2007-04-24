@@ -50,13 +50,8 @@ public class StructureGom {
 
   %include { structures/Structures.tom }
   %include { mutraveler.tom }
-
-  %typeterm Collection {
-    implement { Collection }
-  }
-  %typeterm HashSet {
-    implement { HashSet }
-  }
+  %include { util/types/Collection.tom }
+  %include { util/types/HashSet.tom }
 
   StructureGom() { }
   
