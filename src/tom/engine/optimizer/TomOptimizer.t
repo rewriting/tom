@@ -124,7 +124,7 @@ public class TomOptimizer extends TomGenericPlugin {
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
           renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
-        }else{
+        } else {
 	        if(getOptionBooleanValue("optimize")) {
 	          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
 	        }
@@ -180,11 +180,11 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %op Strategy computeOccurences(variableName:TomName, list:ArrayList){
+  %op Strategy computeOccurences(variableName:TomName, list:ArrayList) {
     make(variableName, list) {`mu(MuVar("current"),TopDownCollect(findOccurence(MuVar("current"),variableName,list)))}
   }
 
-  %strategy findOccurence(s:Strategy,variableName:TomName, list:ArrayList) extends `Identity() {
+  %strategy findOccurence(s:Strategy, variableName:TomName, list:ArrayList) extends `Identity() {
     visit Instruction {
       TypedAction[AstInstruction=inst] -> {
         /* recursive call of the current strategy on the first child */
@@ -205,7 +205,6 @@ public class TomOptimizer extends TomGenericPlugin {
   %op Strategy isAssigned(variableName:TomName){
     make(variableName) {`TopDown(findAssignment(variableName))}
   }
-
 
   %strategy findAssignment(variableName:TomName) extends `Identity(){
     visit Instruction {
@@ -277,9 +276,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
     %strategy Inline() extends `Identity() {
       visit TomTerm {
-        ExpressionToTomTerm(TomTermToExpression(t)) -> {
-          return `t;
-        }
+        ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
+
         /* optimize the insertion of a slice into a list */
         BuildAppendList(name,ExpressionToTomTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
           return `ExpressionToTomTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
@@ -287,9 +285,9 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
       visit Expression {
-        TomTermToExpression(ExpressionToTomTerm(t)) -> {
-          return `t;
-        }
+        TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
+
+        /* remove unecessary if(true) { ... } */
       }
       visit Instruction {
         /*
@@ -348,7 +346,6 @@ public class TomOptimizer extends TomGenericPlugin {
             }
           }
         }
-
 
         Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
           return `body; 

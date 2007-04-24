@@ -626,8 +626,8 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 	  (qm:QMARK)?
           { 
 	    if(qm!=null) {
-              name = `Name(name.getString() + "__qm__"); 
-              //name = `Name(name.getString()); 
+              //name = `Name(name.getString() + "__qm__"); 
+              name = `Name(name.getString()); 
               optionList.add(`MatchingTheory(concElementaryTheory(TrueAU())));
             }
 	    nameList = `concTomName(nameList*,name);
@@ -1488,7 +1488,7 @@ operatorList returns [Declaration result] throws TomException
     :
         type:ALL_ID name:ALL_ID (qm:QMARK)?
         {
-	  opName = name.getText() + ((qm!=null)?"__qm__":"");
+	  opName = name.getText(); // + ((qm!=null)?"__qm__":"");
 	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
 	  options.add(ot);
         }
@@ -1537,7 +1537,7 @@ operatorArray returns [Declaration result] throws TomException
     :
         type:ALL_ID name:ALL_ID (qm:QMARK)?
         {
-	  opName = name.getText() + ((qm!=null)?"__qm__":"");
+	  opName = name.getText(); // + ((qm!=null)?"__qm__":"");
 	  Option ot = `OriginTracking(Name(opName),name.getLine(),currentFile());
 	  options.add(ot);
         }

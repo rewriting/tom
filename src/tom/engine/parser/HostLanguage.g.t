@@ -543,6 +543,15 @@ gomsignature [LinkedList list] throws TomException
     parameters.add(destDir);
     parameters.add("--package");
     parameters.add(subPackageName);
+    if(getOptionManager().getOptionValue("wall")==Boolean.TRUE) {
+      parameters.add("--wall");
+    }
+    if(getOptionManager().getOptionValue("intermediate")==Boolean.TRUE) {
+      parameters.add("--intermediate");
+    }
+    if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {
+      parameters.add("--verbose");
+    }
     /* treat user supplied options */
     textCode = t.getText();
     if (textCode.length() > 6) {
@@ -554,7 +563,6 @@ gomsignature [LinkedList list] throws TomException
     }
     parameters.add("-");
     getLogger().log(Level.FINE,"Calling gom with: "+parameters);
-
     InputStream backupIn = System.in;
     System.setIn(new DataInputStream(new StringBufferInputStream(gomCode)));
 

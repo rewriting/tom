@@ -93,8 +93,6 @@ public class TomSyntaxChecker extends TomChecker {
   private  ArrayList alreadyStudiedTypes =  new ArrayList();
   /** the list of already studied and declared Symbol */
   private  ArrayList alreadyStudiedSymbols =  new ArrayList();
-  /** the list of already studied and declared Rule Symbol */
-  private  ArrayList alreadyStudiedRule =  new ArrayList();
 
   /** List of expected functional declaration in each type declaration */
   private final static ArrayList TypeTermSignature =
@@ -117,7 +115,6 @@ public class TomSyntaxChecker extends TomChecker {
     super.reinit();
     alreadyStudiedTypes   = new ArrayList();
     alreadyStudiedSymbols = new ArrayList();
-    alreadyStudiedRule    = new ArrayList();
   }
 
   public void run() {
@@ -156,7 +153,7 @@ public class TomSyntaxChecker extends TomChecker {
   /**
    * Syntax checking entry point:
    * Catch and verify all type and operator declaration,
-   * Match and RuleSet instructions
+   * Match instruction
    */
   %typeterm TomSyntaxChecker { implement { TomSyntaxChecker } }
   %strategy checkSyntax(tsc:TomSyntaxChecker) extends `Identity() {
