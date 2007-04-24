@@ -42,6 +42,7 @@ and fsuc  = get_fun_sym(Suc(Zero));;
 
 %typeterm peano {
   implement { peano }
+  is_sort(t) { true }
   equals(t1,t2) { t1=t2 }
 }
   

@@ -44,6 +44,7 @@ static ATermInt tzero;
 
 %typeterm Nat {
   implement           { ATermInt }
+  is_sort(t) { (0==0) }
 }
 
 %op Nat zero() {
@@ -57,6 +58,7 @@ static ATermInt tzero;
 
 %typeterm Term {
   implement           { ATerm }
+  is_sort(t) { (0==0) }
 }
 
 %op Term nqueens(sl:Nat,slt:Term) {

@@ -119,6 +119,7 @@ struct term *build_msg(struct term *data) {
 
 %typeterm term {
   implement { struct term* }
+  is_sort(t) { (0==0) }
 }
 
 %op term a() { 
@@ -140,6 +141,7 @@ struct term *build_msg(struct term *data) {
 
 %typeterm L {
   implement          { struct list* }
+  is_sort(t) { (0==0) }
   equals(l1,l2)      { list_equal(l1,l2) }
 }
 

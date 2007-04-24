@@ -35,6 +35,7 @@
 
 %typeterm Nat {
   implement { int }
+  is_sort(t) { (0==0) }
 }
 
 %op Nat zero() {

@@ -34,6 +34,7 @@ exception Erreur of string ;;
 
 %typeterm term {
   implement { mlpeano }
+  is_sort(t) { true }
   equals(t1,t2) {t1=t2}
 }
   

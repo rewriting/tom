@@ -1,10 +1,12 @@
 %typeterm int {
   implement           { int }
+  is_sort(t) { true }
   equals(t1,t2)       { (t1=t2) }
 }
 
 %typeterm int_list {
-    implement           { int list }
+  implement           { int list }
+  is_sort(t) { true }
   equals(t1,t2)       { (t1 = t2) }
 }
 

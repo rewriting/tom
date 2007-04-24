@@ -13,7 +13,7 @@
     <tomcompile example="${antipattern}"/>
     -->
     <tom.preset srcdir="${examples.dir}"
-	        options="--noStatic --intermediate"
+	        options="--noStatic "
                 destdir="${examples.gen}">          
        <include name="${antiptest}/**/*.t"/>
        <exclude name="${antiptest}/**/*.g.t"/>
