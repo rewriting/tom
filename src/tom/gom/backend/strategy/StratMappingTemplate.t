@@ -65,14 +65,10 @@ public class StratMappingTemplate extends MappingTemplateClass {
           op@OperatorClass[ClassName=opName,
                         Slots=slotList],
           _*) -> {
-      writer.write(
-        (new tom.gom.backend.strategy.IsOpTemplate(`op)).generateMapping());
-      writer.write(
+     writer.write(
         (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
       writer.write(
           (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
-      writer.write(
-          (new tom.gom.backend.strategy.WhenOpTemplate(`op)).generateMapping());
       }
       concGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,
@@ -87,7 +83,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
             ]%);
       }
     }
-  }
+      }
 
   protected String fileName() {
     return fullClassName().replace('.',File.separatorChar)+".tom";

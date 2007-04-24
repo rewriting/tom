@@ -314,12 +314,32 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return args.toString();
   }
 
+  private String genIdArgs(int count) {
+    StringBuffer args = new StringBuffer();
+    for(int i = 0; i < count; ++i) {
+      args.append((i==0?"":", "));
+      args.append("Identity()");
+    }
+    return args.toString();
+  }
+
   public String generateMapping() {
+
+    String whenName = className().replaceFirst("_","When_");
+    String isName = className().replaceFirst("_","Is_");
     return %[
 %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
   is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
 @genGetSlot(slotList.length(),"arg")@
   make(@genConstrArgs(slotList.length(),"arg")@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg")@) }
+}
+
+%op Strategy @whenName@(s:Strategy) {
+  make(s) { `Sequence(@className()@(@genIdArgs(slotList.length())@),s) }
+}
+
+%op Strategy @isName@() {
+  make() { '@className()@(@genIdArgs(slotList.length())@) }
 }
 ]%;
   }
@@ -347,7 +367,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private String genNonBuiltin() {
     String out = "";
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           out += "true, ";
         } else {

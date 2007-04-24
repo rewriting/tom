@@ -176,10 +176,6 @@ public class Backend {
 
         TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
         makeOpStrat.generateFile();
-         TemplateClass whenOpStrat =
-           new tom.gom.backend.strategy.WhenOpTemplate(gomclass);
-        whenOpStrat.generateFile();
-
        return 1;
       }
       VariadicOperatorClass[ClassName=className,
