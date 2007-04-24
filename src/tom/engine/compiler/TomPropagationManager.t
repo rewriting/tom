@@ -29,7 +29,7 @@ public class TomPropagationManager {
   private static short freshVarCounter = 0;
 
   public static Constraint performPropagations(Constraint constraintToCompile) 
-            throws ClassNotFoundException,InstantiationException,IllegalAccessException{
+    throws ClassNotFoundException,InstantiationException,IllegalAccessException{
     
     freshVarCounter = 0;		
 
@@ -41,26 +41,38 @@ public class TomPropagationManager {
     constraintToCompile = preparePropagations(constraintToCompile);
 
     // iterate until all propagators are applied and nothing was changed 
-    mainLoop: while(true){		
-      for(String i:propagatorsNames){
-
+    mainLoop: while(true) {
+      for(String i:propagatorsNames) {
+// [pem] do we really want to instantiate a new propagator inside the while loop ? can't we use an array of propagators instead ?
         TomIBasePropagator prop = (TomIBasePropagator)Class.forName(propagatorsPackage + i).newInstance();
         result = prop.propagate(constraintToCompile);
+// [pem] the algorithm is a bit complex: can't we find a simpler one ?
         // if nothing was done, start counting 
-        if (result == constraintToCompile){
+        if(result == constraintToCompile) {
           propCounter++;
-        }else{
+        } else {
           // reset counter
           propCounter = 0;
         }
 
         // if we applied all the propagators and nothing changed,
         // it's time to stop
-        if (propCounter == propagatorsNames.length) { break mainLoop; }
+        if(propCounter == propagatorsNames.length) { break mainLoop; }
         // reinitialize
         constraintToCompile = result;
       }
     } // end while
+
+/* [pem] a simpler algorithm could be something like :
+      N = propagatorsNames.length;
+      for(i=0 ; i<N ; i++) {
+      TomIBasePropagator prop[i] = (TomIBasePropagator)Class.forName(propagatorsPackage + i).newInstance();
+    }
+    while(result[i] != result[(i-N)%N]) {
+      result[i%N] = prop[i%N].propagate(result[(i-1)%N]);
+      i++;
+    }
+*/
     return result;
   }
 
@@ -68,12 +80,12 @@ public class TomPropagationManager {
    * Before propagations
    * - make sure that all constraints attached to terms are handled
    */
-  private static Constraint preparePropagations(Constraint constraintToCompile){
+  private static Constraint preparePropagations(Constraint constraintToCompile) {
     ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
     // it is very important to have Outermost because we want the term first and only after its' subterms 
     Constraint newConstr = (Constraint)`OutermostId(DetachConstraints(constraintList)).fire(constraintToCompile);		
     Constraint andList = `AndConstraint();
-    for(Constraint constr: constraintList){      
+    for(Constraint constr: constraintList) {
       andList = `AndConstraint(andList*,constr);
     }    
     return `AndConstraint(newConstr,andList*);
@@ -82,29 +94,31 @@ public class TomPropagationManager {
   /**
    * f(x,a@b@g(y)) << t -> f(x,z) << t /\ g(y) << z /\ a << z /\ b << z
    */
-  %strategy DetachConstraints(bag:Collection) extends Identity(){
+// [pem] if the order is important: use List instead of Collection
+  %strategy DetachConstraints(bag:Collection) extends Identity() {
     // if the constraints  = empty list, then is nothing to do
-    visit TomTerm{
-      t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] ->{
+    visit TomTerm {
+      t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] -> {
 
         String freshVarName  = "fresh_"+ (++freshVarCounter);
+// [pem] can we use TomBase.geTomType instead ?
         TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = null;
         // make sure that if we had a varStar, we replace with a varStar also
 match : %match(t) {
-          (VariableStar|UnamedVariableStar)[] ->{
+          (VariableStar|UnamedVariableStar)[] -> {
             freshVariable = TomConstraintCompiler.getFreshVariableStar(freshVarName,freshVarType);
             break match;
           }
           _ -> {
             freshVariable = TomConstraintCompiler.getFreshVariable(freshVarName,freshVarType);
           }
-        }         
+        }
 
         bag.add(`MatchConstraint(t,freshVariable));
         // for each constraint
-        %match(constraints){
-          concConstraint(_*,AssignTo(var),_*) ->{
+        %match(constraints) {
+          concConstraint(_*,AssignTo(var),_*) -> {
             // add constraint to bag and delete it from the term
             bag.add(`MatchConstraint(var,freshVariable));		    					    					    			
           }

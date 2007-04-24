@@ -1,4 +1,4 @@
-- should move Intruction generation out of generators ?
+- should move Instruction generation out of generators ?
 - small optimization _* /\ _* -> _*
 - another optimization (....,X*,a) -> we shouldn't generate a loop for X*
 - remove commented code from propagators

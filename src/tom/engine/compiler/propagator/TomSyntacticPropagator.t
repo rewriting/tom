@@ -13,19 +13,19 @@ import java.util.*;
 /**
  * Syntactic propagator
  */
-public class TomSyntacticPropagator implements TomIBasePropagator{
+public class TomSyntacticPropagator implements TomIBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }	
 //--------------------------------------------------------
 
-  public Constraint propagate(Constraint constraint){
+  public Constraint propagate(Constraint constraint) {
     return  (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint);
   }	
 
-  %strategy SyntacticPatternMatching() extends `Identity(){		
-    visit Constraint{			
+  %strategy SyntacticPatternMatching() extends `Identity() {
+    visit Constraint {
       // Decompose
       // f(t1,...,tn) = g -> f = SymbolOf(g) /\ freshVar1=subterm1(g) /\ t1=freshVar1 /\ ... /\ freshVarn=subtermn(g) /\ tn=freshVarn
       //
@@ -36,8 +36,8 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
             TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
         Constraint l = `AndConstraint();
         // for each slot
-        %match(slots){
-          concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{                        
+        %match(slots) {
+          concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
             TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getSlotType(`name,`slotName));            
             l = `AndConstraint(l*,
                 MatchConstraint(freshVar,Subterm(name,slotName,g)),
@@ -55,6 +55,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
       // \/ (f2 = SymbolOf(g) /\ freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) /\ t1=freshVar1 /\ ... /\ tn=freshVarn       
       // 
       // we can decompose only if 'g' != SymbolOf      
+// [pem] a bit complex, can't we share with the previous case ?      
       m@MatchConstraint(lhs@RecordAppl(options,nameList@(Name(tomName),_,_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
@@ -68,22 +69,22 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
         boolean firstTime = true;
         int counter = 0;
         // for each name
-        %match(nameList){
-          concTomName(_*,name,_*) ->{
+        %match(nameList) {
+          concTomName(_*,name,_*) -> {
             // the 'and' conjunction for each name
             Constraint andForName = `AndConstraint();
             // add condition for symbolOf
             andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),constraints),SymbolOf(g)));
             // for each slot
-            %match(slots){
+            %match(slots) {
               concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{                
-                if (firstTime){
+                if(firstTime) {
                   freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getSlotType(`name,`slotName));
                   // store the fresh variable
                   freshVarList.add(freshVar);
                   // build the last part
                   lastPart = `AndConstraint(lastPart*,MatchConstraint(appl,freshVar));
-                }else{                
+                } else {                
                   freshVar = freshVarList.get(counter);
                 }
                 andForName = `AndConstraint(andForName*,MatchConstraint(freshVar,Subterm(name,slotName,g)));
@@ -103,10 +104,10 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
       // we only apply this rule from right to left; this is not important for
       // classical pattern matching, but when anti-patterns are involved, if we replace
       // right_to_left, results are not always correct
-      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) ->{        
+      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);
         Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
-        if (res != toApplyOn){					
+        if(res != toApplyOn) {
           return `AndConstraint(X*,eq,res);
         }
       }
@@ -135,9 +136,9 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
     }
   }// end %strategy	
 
-  %strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity(){
-    visit Constraint{
-      MatchConstraint(Variable[AstName=name],t) ->{
+  %strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity() {
+    visit Constraint {
+      MatchConstraint(Variable[AstName=name],t) -> {
         if (`name == varName) { return `MatchConstraint(value,t); }
       }
     }

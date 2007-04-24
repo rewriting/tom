@@ -18,18 +18,18 @@ import tom.engine.compiler.*;
 /**
  * Variadic Generator
  */
-public class TomVariadicGenerator implements TomIBaseGenerator{
+public class TomVariadicGenerator implements TomIBaseGenerator {
 
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }	
 
-  public Expression generate(Expression expression){		
+  public Expression generate(Expression expression) {
     return (Expression)`TopDown(VariadicGenerator()).fire(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy VariadicGenerator() extends Identity(){
-    visit Expression{
+  %strategy VariadicGenerator() extends Identity() {
+    visit Expression {
       // generate pre-loop for X* = or _* = 
       /*
        * do {      
@@ -40,28 +40,28 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
        *     end_i = (TomList) GET_TAIL_TomList(end_i);
        * } while( end_i != begin_i ) 
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) ->{        
+      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
         Expression testEmpty = TomGenerationManager.genIsEmptyList(`opName,`end);
         Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
         // if we have a varStar, we generate its declaration also
-        if (`v.isVariableStar()){
+        if (`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }
-      ConstraintToExpression(MatchConstraint(TestVarStar(v@VariableStar[AstType=type]),t)) ->{
+      ConstraintToExpression(MatchConstraint(TestVarStar(v@VariableStar[AstType=type]),t)) -> {
         return `EqualTerm(type,v,t);
       }
     } // end visit
-    visit TomTerm{
+    visit TomTerm {
       // generate getHead
-      ListHead(opName,type,variable) ->{
+      ListHead(opName,type,variable) -> {
         return `ExpressionToTomTerm(genGetHead(opName,type,variable));
       }
       // generate getTail
-      ListTail(opName,variable) ->{
+      ListTail(opName,variable) -> {
         return `ExpressionToTomTerm(genGetTail(opName,variable));
       }
     }

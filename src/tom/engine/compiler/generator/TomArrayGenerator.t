@@ -28,7 +28,7 @@ public class TomArrayGenerator implements TomIBaseGenerator{
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy ArrayGenerator() extends Identity(){
+  %strategy ArrayGenerator() extends Identity() {
     visit Expression{
       // generate pre-loop for X* = or _* = 
       /*
@@ -39,12 +39,12 @@ public class TomArrayGenerator implements TomIBaseGenerator{
        *
        * *** we need <= instead of < to make the algorithm complete ***
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[AstType=termType],VariableHeadArray(opName,subject,begin,end))) ->{        
+      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[AstType=termType],VariableHeadArray(opName,subject,begin,end))) -> {
         Expression doWhileTest = `Negation(GreaterThan(TomTermToExpression(Ref(end)),GetSize(opName,Ref(subject))));
         // expression at the end of the loop 
         Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToTomTerm(AddOne(Ref(end)))));        
         // if we have a varStar, then add its declaration also
-        if (`v.isVariableStar()){
+        if (`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(
                 GetSliceArray(opName,Ref(subject),begin,Ref(end)))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
@@ -52,9 +52,11 @@ public class TomArrayGenerator implements TomIBaseGenerator{
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }			
       // generate equal - this can come from variable's propagations
-      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetElement[Codomain=termType]),t)) ->{				
+      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetElement[Codomain=termType]),t)) -> {
         return `EqualTerm(termType,e,t);
       }
     } // end visit
+
+// [pem] GetElement should be modified to handle AU theory, like in TomVariadicGenerator
   } // end strategy	
 }

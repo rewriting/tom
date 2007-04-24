@@ -23,25 +23,25 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }	
 
-  public Expression generate(Expression expression){    
+  public Expression generate(Expression expression) {
     return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy SyntacticGenerator() extends Identity(){
-    visit Expression{      
+  %strategy SyntacticGenerator() extends Identity() {
+    visit Expression {
       // generate is_fsym(t,f)
-      ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=nameList@(name)],SymbolOf(subject))) ->{
+      ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=nameList@(name)],SymbolOf(subject))) -> {
         TomType termType = TomConstraintCompiler.getTermTypeFromName(`name);        
-        Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));     
+        Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));
         return check;
       }
       // generate equality
-      ConstraintToExpression(MatchConstraint(t@Subterm[],u@(Subterm|Variable)[])) ->{        
-        return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);		        		      
+      ConstraintToExpression(MatchConstraint(t@Subterm[],u@(Subterm|Variable)[])) -> {
+        return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);
       }	
       // generate equal - this can come from variable's replacement ( in the syntactic propagator )
-      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain = type]),t)) ->{                             
+      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain = type]),t)) -> {
         return `EqualTerm(type,e,t);
       }
     } // end visit

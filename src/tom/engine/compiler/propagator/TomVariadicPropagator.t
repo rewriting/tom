@@ -27,8 +27,8 @@ public class TomVariadicPropagator implements TomIBasePropagator{
     return (Constraint)`InnermostId(VariadicPatternMatching()).apply(constraint);		
   }	
 
-  %strategy VariadicPatternMatching() extends `Identity(){		
-    visit Constraint{
+  %strategy VariadicPatternMatching() extends `Identity() {
+    visit Constraint {
 //    [pem] I need some explanations to deeply understand the rules
 //    TODO    	
       // Decompose - only if 'g' != SymbolOf 
@@ -110,7 +110,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
     }
   }// end %strategy
 
-  %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity(){
+  %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity() {
     visit Constraint {
       MatchConstraint(v@VariableStar[AstName=name],p) -> {        
         if (`name == varName) {					
@@ -120,11 +120,11 @@ public class TomVariadicPropagator implements TomIBasePropagator{
     }
   }
 
-  private static TomTerm getBeginVariableStar(TomType type){
+  private static TomTerm getBeginVariableStar(TomType type) {
     return TomConstraintCompiler.getFreshVariableStar("begin_" + (++beginEndCounter),type);
   }
 
-  private static TomTerm getEndVariableStar(TomType type){    
+  private static TomTerm getEndVariableStar(TomType type) {
     return TomConstraintCompiler.getFreshVariableStar("end_" + beginEndCounter,type);
   }
 }
