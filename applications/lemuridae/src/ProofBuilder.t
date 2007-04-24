@@ -491,7 +491,6 @@ b: {
     }
   }
 
-  // FIXME :  alpha renaming needed
   %strategy ApplyForAllL(active:Prop, term:Term) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
@@ -521,7 +520,6 @@ b: {
     }
   }
 
-  // FIXME :  alpha renaming needed
   %strategy ApplyExistsR(active:Prop, term:Term) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
@@ -541,6 +539,7 @@ b: {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent(d,(X*,act@exists(n,p),Y*)), act -> {
+            System.out.print("instance of " + `n + " > ");
             Term term = null;
             try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             return (Tree) `ApplyExistsR(active,term).visit(`r);
