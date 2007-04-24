@@ -31,5 +31,6 @@
 
 %typeterm String {
   implement           { char* }
+  is_sort(t) { (0==0) }
   equals(t1,t2)       { !strcmp(t1,t2) }
 }

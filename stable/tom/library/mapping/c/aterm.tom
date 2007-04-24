@@ -31,11 +31,13 @@
 
 %typeterm ATerm {
   implement           { ATerm }
+  is_sort(t) { (0==0) }
   equals(t1,t2)       { (t1==t2) }
 }
 
 %typeterm ATermString {
   implement           { ATermAppl }
+  is_sort(t) { (0==0) }
   equals(t1,t2)       { (t1==t2) }
 }
 

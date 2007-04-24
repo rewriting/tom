@@ -29,6 +29,7 @@
 
 %typeterm boolean {
   implement           { int }
+  is_sort(t) { (0==0) }
   equals(t1,t2)       { (t1==t2) || (t1!=0 && t2!=0) }
 }
 

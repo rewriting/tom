@@ -31,5 +31,6 @@
 
 %typeterm boolean {
     implement { bool }
+    is_sort(t) { true }
     equals(l1,l2) { (l1=l2) }
 }

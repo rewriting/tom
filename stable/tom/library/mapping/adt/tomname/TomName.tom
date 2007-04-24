@@ -10,14 +10,12 @@
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
 
-
 %typeterm TomNumberList {
   implement { tom.engine.adt.tomname.types.TomNumberList }
   is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumberList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
-
 
 %typeterm TomNameList {
   implement { tom.engine.adt.tomname.types.TomNameList }
@@ -26,125 +24,123 @@
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
 
-
 %typeterm TomName {
   implement { tom.engine.adt.tomname.types.TomName }
   is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomName }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
 }
-
 %op TomNumber MatchNumber(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.MatchNumber }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.MatchNumber.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.MatchNumber.make(t0) }
 }
 
 %op TomNumber PatternNumber(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.PatternNumber }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.PatternNumber.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.PatternNumber.make(t0) }
 }
 
 %op TomNumber ListNumber(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.ListNumber }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.ListNumber.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.ListNumber.make(t0) }
 }
 
 %op TomNumber IndexNumber(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.IndexNumber }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.IndexNumber.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.IndexNumber.make(t0) }
 }
 
 %op TomNumber Begin(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.Begin }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.Begin.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.Begin.make(t0) }
 }
 
 %op TomNumber End(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.End }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.End.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.End.make(t0) }
 }
 
 %op TomNumber Save(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.Save }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.Save.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.Save.make(t0) }
 }
 
 %op TomNumber Position(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.Position }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.Position.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.Position.make(t0) }
 }
 
 %op TomNumber AbsVar(Integer:int) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.AbsVar }
   get_slot(Integer, t) { t.getInteger() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.AbsVar.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.AbsVar.make(t0) }
 }
 
 %op TomNumber RenamedVar(AstName:TomName) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.RenamedVar }
   get_slot(AstName, t) { t.getAstName() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.RenamedVar.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.RenamedVar.make(t0) }
 }
 
 %op TomNumber NameNumber(AstName:TomName) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumber.NameNumber }
   get_slot(AstName, t) { t.getAstName() }
-  make(t0) { tom.engine.adt.tomname.types.tomnumber.NameNumber.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.NameNumber.make(t0) }
 }
 
 %op TomNumberList EmptyconcTomNumber() {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber }
-  make() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make()}
+  make() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make() }
 }
 
 %op TomNumberList ConsconcTomNumber(HeadconcTomNumber:TomNumber, TailconcTomNumber:TomNumberList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber }
   get_slot(HeadconcTomNumber, t) { t.getHeadconcTomNumber() }
   get_slot(TailconcTomNumber, t) { t.getTailconcTomNumber() }
-  make(t0, t1) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(t0, t1)}
+  make(t0, t1) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(t0, t1) }
 }
 
 %op TomNameList EmptyconcTomName() {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName }
-  make() { tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make()}
+  make() { tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make() }
 }
 
 %op TomNameList ConsconcTomName(HeadconcTomName:TomName, TailconcTomName:TomNameList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName }
   get_slot(HeadconcTomName, t) { t.getHeadconcTomName() }
   get_slot(TailconcTomName, t) { t.getTailconcTomName() }
-  make(t0, t1) { tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(t0, t1)}
+  make(t0, t1) { tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(t0, t1) }
 }
 
 %op TomName Name(String:String) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.Name }
   get_slot(String, t) { t.getString() }
-  make(t0) { tom.engine.adt.tomname.types.tomname.Name.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomname.Name.make(t0) }
 }
 
 %op TomName PositionName(NumberList:TomNumberList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.PositionName }
   get_slot(NumberList, t) { t.getNumberList() }
-  make(t0) { tom.engine.adt.tomname.types.tomname.PositionName.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomname.PositionName.make(t0) }
 }
 
 %op TomName EmptyName() {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.EmptyName }
-  make() { tom.engine.adt.tomname.types.tomname.EmptyName.make()}
+  make() { tom.engine.adt.tomname.types.tomname.EmptyName.make() }
 }
 
 %op TomName AntiName(Name:TomName) {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.AntiName }
   get_slot(Name, t) { t.getName() }
-  make(t0) { tom.engine.adt.tomname.types.tomname.AntiName.make(t0)}
+  make(t0) { tom.engine.adt.tomname.types.tomname.AntiName.make(t0) }
 }
 
 

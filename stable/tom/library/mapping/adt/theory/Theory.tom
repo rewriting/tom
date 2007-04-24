@@ -10,44 +10,42 @@
   visitor_fwd { tom.engine.adt.theory.TheoryBasicStrategy }
 }
 
-
 %typeterm Theory {
   implement { tom.engine.adt.theory.types.Theory }
   is_sort(t) { t instanceof tom.engine.adt.theory.types.Theory }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.theory.TheoryBasicStrategy }
 }
-
 %op ElementaryTheory Syntactic() {
   is_fsym(t) { t instanceof tom.engine.adt.theory.types.elementarytheory.Syntactic }
-  make() { tom.engine.adt.theory.types.elementarytheory.Syntactic.make()}
+  make() { tom.engine.adt.theory.types.elementarytheory.Syntactic.make() }
 }
 
 %op ElementaryTheory Associative() {
   is_fsym(t) { t instanceof tom.engine.adt.theory.types.elementarytheory.Associative }
-  make() { tom.engine.adt.theory.types.elementarytheory.Associative.make()}
+  make() { tom.engine.adt.theory.types.elementarytheory.Associative.make() }
 }
 
 %op ElementaryTheory Unitary() {
   is_fsym(t) { t instanceof tom.engine.adt.theory.types.elementarytheory.Unitary }
-  make() { tom.engine.adt.theory.types.elementarytheory.Unitary.make()}
+  make() { tom.engine.adt.theory.types.elementarytheory.Unitary.make() }
 }
 
 %op ElementaryTheory TrueAU() {
   is_fsym(t) { t instanceof tom.engine.adt.theory.types.elementarytheory.TrueAU }
-  make() { tom.engine.adt.theory.types.elementarytheory.TrueAU.make()}
+  make() { tom.engine.adt.theory.types.elementarytheory.TrueAU.make() }
 }
 
 %op Theory EmptyconcElementaryTheory() {
   is_fsym(t) { t instanceof tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory }
-  make() { tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory.make()}
+  make() { tom.engine.adt.theory.types.theory.EmptyconcElementaryTheory.make() }
 }
 
 %op Theory ConsconcElementaryTheory(HeadconcElementaryTheory:ElementaryTheory, TailconcElementaryTheory:Theory) {
   is_fsym(t) { t instanceof tom.engine.adt.theory.types.theory.ConsconcElementaryTheory }
   get_slot(HeadconcElementaryTheory, t) { t.getHeadconcElementaryTheory() }
   get_slot(TailconcElementaryTheory, t) { t.getTailconcElementaryTheory() }
-  make(t0, t1) { tom.engine.adt.theory.types.theory.ConsconcElementaryTheory.make(t0, t1)}
+  make(t0, t1) { tom.engine.adt.theory.types.theory.ConsconcElementaryTheory.make(t0, t1) }
 }
 
 

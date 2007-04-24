@@ -1,4 +1,4 @@
-// $ANTLR 3.0b6 /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-04-20 18:01:04
+// $ANTLR 3.0b6 /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-04-24 12:56:33
 
   package tom.gom.expander.rule;
 
@@ -21,11 +21,12 @@ public class RuleLexer extends Lexer {
     public static final int ESC=21;
     public static final int EQUALS=13;
     public static final int CONDTERM=8;
+    public static final int SLCOMMENT=23;
     public static final int CONDNOTEQUALS=10;
     public static final int IF=12;
     public static final int INT=19;
     public static final int EOF=-1;
-    public static final int Tokens=23;
+    public static final int Tokens=24;
     public static final int CONDRULE=6;
     public static final int APPL=7;
     public static final int COMA=17;
@@ -34,7 +35,7 @@ public class RuleLexer extends Lexer {
     public RuleLexer(CharStream input) {
         super(input);
     }
-    public String getGrammarFileName() { return "/home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
 
     // $ANTLR start ARROW
     public void mARROW() throws RecognitionException {
@@ -45,8 +46,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:9: ( '->' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:9: '->'
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:9: ( '->' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:9: '->'
             {
             match("->"); 
 
@@ -75,8 +76,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:49:8: ( '(' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:49:8: '('
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:49:8: ( '(' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:49:8: '('
             {
             match('('); 
 
@@ -104,8 +105,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:8: ( ')' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:8: ')'
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:8: ( ')' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:8: ')'
             {
             match(')'); 
 
@@ -133,8 +134,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:8: ( ',' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:8: ','
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:8: ( ',' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:8: ','
             {
             match(','); 
 
@@ -162,8 +163,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:10: ( '==' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:10: '=='
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:10: ( '==' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:10: '=='
             {
             match("=="); 
 
@@ -192,8 +193,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:13: ( '!=' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:13: '!='
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:13: ( '!=' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:13: '!='
             {
             match("!="); 
 
@@ -222,8 +223,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:54:6: ( 'if' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:54:6: 'if'
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:54:6: ( 'if' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:54:6: 'if'
             {
             match("if"); 
 
@@ -252,10 +253,10 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:7: ( ( '0' .. '9' )+ )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:7: ( '0' .. '9' )+
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:7: ( ( '0' .. '9' )+ )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:7: ( '0' .. '9' )+
             {
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:7: ( '0' .. '9' )+
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:7: ( '0' .. '9' )+
             int cnt1=0;
             loop1:
             do {
@@ -268,7 +269,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:8: '0' .. '9'
+            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:8: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -309,8 +310,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:7: ( '\\\\' ('n'|'r'|'t'|'b'|'f'|'\"'|'\\''|'\\\\'))
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:7: '\\\\' ('n'|'r'|'t'|'b'|'f'|'\"'|'\\''|'\\\\')
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:7: ( '\\\\' ('n'|'r'|'t'|'b'|'f'|'\"'|'\\''|'\\\\'))
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:7: '\\\\' ('n'|'r'|'t'|'b'|'f'|'\"'|'\\''|'\\\\')
             {
             match('\\'); 
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -348,11 +349,11 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:10: ( '\"' ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))* '\"' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:10: '\"' ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))* '\"'
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:10: ( '\"' ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))* '\"' )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:10: '\"' ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))* '\"'
             {
             match('\"'); 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:14: ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))*
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:14: ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))*
             loop2:
             do {
                 int alt2=3;
@@ -367,14 +368,14 @@ public class RuleLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:15: ESC
+            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:19: ~ ('\"'|'\\\\'|'\\n'|'\\r')
+            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:57:19: ~ ('\"'|'\\\\'|'\\n'|'\\r')
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -421,8 +422,8 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:6: ( ('a'..'z'|'A'..'Z'|'_') ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))* )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:6: ('a'..'z'|'A'..'Z'|'_') ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))*
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:6: ( ('a'..'z'|'A'..'Z'|'_') ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))* ( '*' )? )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:6: ('a'..'z'|'A'..'Z'|'_') ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))* ( '*' )?
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -434,7 +435,7 @@ public class RuleLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:30: ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))*
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:30: ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))*
             loop3:
             do {
                 int alt3=2;
@@ -446,7 +447,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:31: ('a'..'z'|'A'..'Z'|'_'|'0'..'9')
+            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:31: ('a'..'z'|'A'..'Z'|'_'|'0'..'9')
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -466,6 +467,23 @@ public class RuleLexer extends Lexer {
             	    break loop3;
                 }
             } while (true);
+
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:64: ( '*' )?
+            int alt4=2;
+            int LA4_0 = input.LA(1);
+            if ( (LA4_0=='*') ) {
+                alt4=1;
+            }
+            switch (alt4) {
+                case 1 :
+                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:65: '*'
+                    {
+                    match('*'); 
+
+                    }
+                    break;
+
+            }
 
 
             }
@@ -492,23 +510,23 @@ public class RuleLexer extends Lexer {
             int _line = getLine();
             int _charPosition = getCharPositionInLine();
             int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:6: ( ( (' '|'\\t'|'\\n'))+ )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:6: ( (' '|'\\t'|'\\n'))+
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:6: ( ( (' '|'\\t'|'\\n'))+ )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:6: ( (' '|'\\t'|'\\n'))+
             {
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:6: ( (' '|'\\t'|'\\n'))+
-            int cnt4=0;
-            loop4:
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:6: ( (' '|'\\t'|'\\n'))+
+            int cnt5=0;
+            loop5:
             do {
-                int alt4=2;
-                int LA4_0 = input.LA(1);
-                if ( ((LA4_0>='\t' && LA4_0<='\n')||LA4_0==' ') ) {
-                    alt4=1;
+                int alt5=2;
+                int LA5_0 = input.LA(1);
+                if ( ((LA5_0>='\t' && LA5_0<='\n')||LA5_0==' ') ) {
+                    alt5=1;
                 }
 
 
-                switch (alt4) {
+                switch (alt5) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:7: (' '|'\\t'|'\\n')
+            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:7: (' '|'\\t'|'\\n')
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)==' ' ) {
             	        input.consume();
@@ -525,12 +543,12 @@ public class RuleLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt4 >= 1 ) break loop4;
+            	    if ( cnt5 >= 1 ) break loop5;
                         EarlyExitException eee =
-                            new EarlyExitException(4, input);
+                            new EarlyExitException(5, input);
                         throw eee;
                 }
-                cnt4++;
+                cnt5++;
             } while (true);
 
              _channel=HIDDEN; 
@@ -550,40 +568,148 @@ public class RuleLexer extends Lexer {
     }
     // $ANTLR end WS
 
+    // $ANTLR start SLCOMMENT
+    public void mSLCOMMENT() throws RecognitionException {
+        try {
+            ruleNestingLevel++;
+            int _type = SLCOMMENT;
+            int _start = getCharIndex();
+            int _line = getLine();
+            int _charPosition = getCharPositionInLine();
+            int _channel = Token.DEFAULT_CHANNEL;
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:13: ( '//' (~ ('\\n'|'\\r'))* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:13: '//' (~ ('\\n'|'\\r'))* ( '\\n' | '\\r' ( '\\n' )? )?
+            {
+            match("//"); 
+
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:18: (~ ('\\n'|'\\r'))*
+            loop6:
+            do {
+                int alt6=2;
+                int LA6_0 = input.LA(1);
+                if ( ((LA6_0>='\u0000' && LA6_0<='\t')||(LA6_0>='\u000B' && LA6_0<='\f')||(LA6_0>='\u000E' && LA6_0<='\uFFFE')) ) {
+                    alt6=1;
+                }
+
+
+                switch (alt6) {
+            	case 1 :
+            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:19: ~ ('\\n'|'\\r')
+            	    {
+            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
+            	        input.consume();
+
+            	    }
+            	    else {
+            	        MismatchedSetException mse =
+            	            new MismatchedSetException(null,input);
+            	        recover(mse);    throw mse;
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop6;
+                }
+            } while (true);
+
+            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:34: ( '\\n' | '\\r' ( '\\n' )? )?
+            int alt8=3;
+            int LA8_0 = input.LA(1);
+            if ( (LA8_0=='\n') ) {
+                alt8=1;
+            }
+            else if ( (LA8_0=='\r') ) {
+                alt8=2;
+            }
+            switch (alt8) {
+                case 1 :
+                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:35: '\\n'
+                    {
+                    match('\n'); 
+
+                    }
+                    break;
+                case 2 :
+                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:40: '\\r' ( '\\n' )?
+                    {
+                    match('\r'); 
+                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:44: ( '\\n' )?
+                    int alt7=2;
+                    int LA7_0 = input.LA(1);
+                    if ( (LA7_0=='\n') ) {
+                        alt7=1;
+                    }
+                    switch (alt7) {
+                        case 1 :
+                            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:45: '\\n'
+                            {
+                            match('\n'); 
+
+                            }
+                            break;
+
+                    }
+
+
+                    }
+                    break;
+
+            }
+
+             _channel=HIDDEN; 
+
+            }
+
+
+
+                    if ( token==null && ruleNestingLevel==1 ) {
+                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
+                    }
+
+                        }
+        finally {
+            ruleNestingLevel--;
+        }
+    }
+    // $ANTLR end SLCOMMENT
+
     public void mTokens() throws RecognitionException {
-        // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | IF | INT | ESC | STRING | ID | WS )
-        int alt5=12;
+        // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
+        int alt9=13;
         switch ( input.LA(1) ) {
         case '-':
-            alt5=1;
+            alt9=1;
             break;
         case '(':
-            alt5=2;
+            alt9=2;
             break;
         case ')':
-            alt5=3;
+            alt9=3;
             break;
         case ',':
-            alt5=4;
+            alt9=4;
             break;
         case '=':
-            alt5=5;
+            alt9=5;
             break;
         case '!':
-            alt5=6;
+            alt9=6;
             break;
         case 'i':
-            int LA5_7 = input.LA(2);
-            if ( (LA5_7=='f') ) {
-                int LA5_13 = input.LA(3);
-                if ( ((LA5_13>='0' && LA5_13<='9')||(LA5_13>='A' && LA5_13<='Z')||LA5_13=='_'||(LA5_13>='a' && LA5_13<='z')) ) {
-                    alt5=11;
+            int LA9_7 = input.LA(2);
+            if ( (LA9_7=='f') ) {
+                int LA9_14 = input.LA(3);
+                if ( (LA9_14=='*'||(LA9_14>='0' && LA9_14<='9')||(LA9_14>='A' && LA9_14<='Z')||LA9_14=='_'||(LA9_14>='a' && LA9_14<='z')) ) {
+                    alt9=11;
                 }
                 else {
-                    alt5=7;}
+                    alt9=7;}
             }
             else {
-                alt5=11;}
+                alt9=11;}
             break;
         case '0':
         case '1':
@@ -595,13 +721,13 @@ public class RuleLexer extends Lexer {
         case '7':
         case '8':
         case '9':
-            alt5=8;
+            alt9=8;
             break;
         case '\\':
-            alt5=9;
+            alt9=9;
             break;
         case '\"':
-            alt5=10;
+            alt9=10;
             break;
         case 'A':
         case 'B':
@@ -655,102 +781,112 @@ public class RuleLexer extends Lexer {
         case 'x':
         case 'y':
         case 'z':
-            alt5=11;
+            alt9=11;
             break;
         case '\t':
         case '\n':
         case ' ':
-            alt5=12;
+            alt9=12;
+            break;
+        case '/':
+            alt9=13;
             break;
         default:
             NoViableAltException nvae =
-                new NoViableAltException("1:1: Tokens : ( ARROW | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | IF | INT | ESC | STRING | ID | WS );", 5, 0, input);
+                new NoViableAltException("1:1: Tokens : ( ARROW | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );", 9, 0, input);
 
             throw nvae;
         }
 
-        switch (alt5) {
+        switch (alt9) {
             case 1 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:10: ARROW
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:10: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
             case 2 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:16: LPAR
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:16: LPAR
                 {
                 mLPAR(); 
 
                 }
                 break;
             case 3 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:21: RPAR
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:21: RPAR
                 {
                 mRPAR(); 
 
                 }
                 break;
             case 4 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:26: COMA
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:26: COMA
                 {
                 mCOMA(); 
 
                 }
                 break;
             case 5 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:31: EQUALS
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:31: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
             case 6 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:38: NOTEQUALS
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:38: NOTEQUALS
                 {
                 mNOTEQUALS(); 
 
                 }
                 break;
             case 7 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:48: IF
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:48: IF
                 {
                 mIF(); 
 
                 }
                 break;
             case 8 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:51: INT
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:51: INT
                 {
                 mINT(); 
 
                 }
                 break;
             case 9 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:55: ESC
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:55: ESC
                 {
                 mESC(); 
 
                 }
                 break;
             case 10 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:59: STRING
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:59: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
             case 11 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:66: ID
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:66: ID
                 {
                 mID(); 
 
                 }
                 break;
             case 12 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:69: WS
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:69: WS
                 {
                 mWS(); 
+
+                }
+                break;
+            case 13 :
+                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:72: SLCOMMENT
+                {
+                mSLCOMMENT(); 
 
                 }
                 break;
