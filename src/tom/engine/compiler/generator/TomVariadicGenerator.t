@@ -41,9 +41,9 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
        * } while( end_i != begin_i ) 
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) ->{        
-        Expression doWhileTest = `Negation(EqualTerm(type,end,begin));//`Negation(IsEmptyList(opName,end));
-        Expression endExpression = `IfExpression(IsEmptyList(opName,end),EqualTerm(type,end,begin),
-            EqualTerm(type,end,ExpressionToTomTerm(GetTail(opName,end))));
+        Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
+        Expression testEmpty = TomGenerationManager.genIsEmptyList(`opName,`end);
+        Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()){
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));

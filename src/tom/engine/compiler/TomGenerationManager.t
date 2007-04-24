@@ -246,7 +246,7 @@ public class TomGenerationManager {
    *   is_empty(l) || l==make_empty()
    *   this is needed because get_tail() may return the neutral element 
    */ 
-  private static Expression genIsEmptyList(TomName opName, TomTerm var) {
+  public static Expression genIsEmptyList(TomName opName, TomTerm var) {
     TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
