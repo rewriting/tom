@@ -20,6 +20,7 @@ public class TestStrategy extends TestCase {
 
   %typeterm Hashtable {
     implement { Hashtable }
+    is_sort(t) { t instanceof Hashtable }
   }
   
 %gom{
