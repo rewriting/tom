@@ -18,7 +18,7 @@ public class TomPropagationManager {
 //------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
-  %include { java/util/types/Collection.tom}
+  %include { java/util/types/ArrayList.tom}
 //------------------------------------------------------
 
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
@@ -61,6 +61,7 @@ public class TomPropagationManager {
   /**
    * Before propagations
    * - make sure that all constraints attached to terms are handled
+   * - make sure that the aps are detached
    */
   private static Constraint preparePropagations(Constraint constraintToCompile) {
     ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
@@ -76,8 +77,7 @@ public class TomPropagationManager {
   /**
    * f(x,a@b@g(y)) << t -> f(x,z) << t /\ g(y) << z /\ a << z /\ b << z
    */
-// [pem] if the order is important: use List instead of Collection
-  %strategy DetachConstraints(bag:Collection) extends Identity() {
+  %strategy DetachConstraints(bag:ArrayList) extends Identity() {
     // if the constraints  = empty list, then is nothing to do
     visit TomTerm {
       t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] -> {
@@ -103,7 +103,26 @@ match : %match(t) {
           }
         }// end match		    	
         return freshVariable;		    	
-      }
+      }      
     } // end visit
   } // end strategy
+  
+//  /**
+//   * f(x,a@b@!g(y)) << t -> f(x,a@b@z) << t /\ !g(y) << z
+//   */
+//  %strategy DetachAntiPatterns(bag:List) extends Identity() {
+//    // if the constraints  = empty list, then is nothing to do
+//    visit TomTerm {
+//      aT@AntiTerm(t@(RecordAppl|Variable)[Constraints=constraints] -> {
+//
+//        TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
+//        TomTerm freshVariable = TomConstraintCompiler.getFreshVariable(freshVarType);
+//
+//        bag.add(`MatchConstraint(at,freshVariable));
+//        
+//        return freshVariable.setConstraints(constraints);                   
+//      }      
+//    } // end visit
+//  } // end strategy
+
 }

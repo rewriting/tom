@@ -2,6 +2,7 @@ package tom.engine.compiler.propagator;
 
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
@@ -26,6 +27,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
 
   %strategy SyntacticPatternMatching() extends `Identity() {
     visit Constraint {
+      //TODO - can be replaced by the one above ?      
       // Decompose
       // f(t1,...,tn) = g -> f = SymbolOf(g) /\ freshVar1=subterm1(g) /\ t1=freshVar1 /\ ... /\ freshVarn=subtermn(g) /\ tn=freshVarn
       //
@@ -98,10 +100,31 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
         }// end match        
         return `AndConstraint(l*,lastPart*);
       }
+      // Switch
+      // an antimatch should be always at the end, after the match constraints
+      // ex: for f(!x,x) << t -> we should generate x << t_2 /\ !x << t_1 and not 
+      // !x << t_1 /\ x << t_2 because at the generation the free x should be propagated
+      // and not the other one
+      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
+      }
+      
+      // an anti-pattern: just transform this into a AntiMatchConstraint and handle the @
+      // a@b@!p << t -> !p << t /\ a << t /\ b << t  
+      MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[Constraints=constraints]),s) -> {
+        Constraint assigns = `AndConstraint();
+        // for each constraint
+        %match(constraints) {
+          concConstraint(_*,AssignTo(var),_*) -> {
+            assigns = `AndConstraint(MatchConstraint(var,s),assigns*);                                                                                                                       
+          }
+        }// end match
+        return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),assigns*);
+      }
       
       // Replace
-      // Context1 /\ z = t /\ Context2( z = u ) -> z = t /\ Context( t = u )			 
-      // we only apply this rule from right to left; this is not important for
+      // Context1 /\ z = t /\ Context2( z = u ) -> Context1 /\ z = t /\ Context2( t = u )			 
+      // we only apply this rule from left to right; this is not important for
       // classical pattern matching, but when anti-patterns are involved, if we replace
       // right_to_left, results are not always correct
       AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {
@@ -110,29 +133,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
         if(res != toApplyOn) {
           return `AndConstraint(X*,eq,res);
         }
-      }
-      // // z = p1 /\ p2 = z -> z = p1 /\ p2 = p1 (this can occur because of the annotations of terms)
-//    // Delete
-//    EqualConstraint(a,a) ->{				
-//    return `TrueConstraint();
-//    }
-
-//    // SymbolClash
-//    EqualConstraint(RecordAppl[NameList=name1],RecordAppl[NameList=name2]) -> {
-//    if(`name1 != `name2) {					
-//    return `FalseConstraint();
-//    }
-//    }
-
-//    // PropagateClash
-//    AndConstraint(concAnd(_*,FalseConstraint(),_*)) -> {
-//    return `FalseConstraint();
-//    }		
-
-//    // PropagateSuccess
-//    AndConstraint(concAnd(X*,TrueConstraint(),Y*)) -> {
-//    return `AndConstraint(concAnd(X*,Y*));
-//    }
+      }      
     }
   }// end %strategy	
 

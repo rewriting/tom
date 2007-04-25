@@ -16,6 +16,7 @@ import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.library.sl.Visitable;
 
 
 /**
@@ -66,8 +67,8 @@ public class TomGenerationManager {
   }
 
   /**
-   * Prepares the generation phase
-   * 1. replaces all constraints with ConstraintToExpression 
+   * Prepares the generation phase: globally translates constraints into expressions
+   *   
    */
   private static Expression prepareGeneration(Constraint constraint){    
     %match(constraint){
@@ -84,6 +85,9 @@ public class TomGenerationManager {
       }
       m@MatchConstraint[] -> {        
         return `ConstraintToExpression(m);
+      }
+      AntiMatchConstraint(constr) -> {
+        return `AntiMatchExpression(prepareGeneration(constr));
       }
       Negate(c) -> {
         return `Negation(prepareGeneration(c));
@@ -138,6 +142,10 @@ public class TomGenerationManager {
       or@OrExpressionDisjunction(_*) ->{
         return buildExpressionDisjunction(`or,action);
       }
+      // anti-match
+      AntiMatchExpression(expr) -> {
+        return buildAntiMatchInstruction(`expr,action);
+      }
       // conditions			
       x ->{
         return `If(x,action,Nop());
@@ -147,19 +155,34 @@ public class TomGenerationManager {
   }
 
   /**
-   * Makes sure that no variable is declared twice   
+   * Makes sure that no variable is declared if the same variable was declared above  
    */
   %strategy ChangeVarDeclarations(declaredVariables:Collection) extends Identity(){
     visit Instruction{
       LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) ->{
-        if (declaredVariables.contains(`name)){
-          return `LetAssign(var,source,instruction);
-        }else{					
-          declaredVariables.add(`name);
-        }			
+        ArrayList<Boolean> list = new ArrayList<Boolean>();
+        Visitable root = getEnvironment().getRoot();
+        if (root != getEnvironment().getSubject()) {
+          getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name,list)).fire(root);        
+          if (list.size() > 0){
+            return `LetAssign(var,source,instruction);
+          }		
+        }
       }
     }// end visit
   }// end strategy
+  
+  // TODO - change this with a more appropriate method
+  %strategy CheckVarExistence(varName:TomName,bag:Collection) extends Identity(){
+    visit Instruction {
+      LetRef[Variable=v@(Variable|VariableStar)[AstName=name]] -> {
+        if (varName == (`name) ){
+          bag.add(new Boolean(true));
+        }
+      }
+    } // end visit
+  }// end strategy
+  
 
   /**
    * Converts 'Subterm' to 'GetSlot'
@@ -228,6 +251,27 @@ public class TomGenerationManager {
       }
     }
     throw new TomRuntimeException("TomGenerationManager.buildDisjunctionIfElse - strange expression:" + orDisjunction);
+  }
+  
+  /**
+   * generates:
+   * 
+   * bool matchSuccessful = false;
+   * if (expression){
+   *    matchSuccessful = true;
+   * }
+   * if (matchSuccessful == false){
+   *    action;
+   * }
+   */
+  private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action){
+    TomTerm flag = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getBooleanType());    
+    Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    Instruction automata = generateAutomata(expression, assignFlagTrue);    
+    // add the final test
+    Instruction result = `AbstractBlock(concInstruction(automata,
+        If(EqualTerm(TomConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
+    return `LetRef(flag,FalseTL(),result);
   }
 
   /**
