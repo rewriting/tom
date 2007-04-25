@@ -92,7 +92,7 @@ public class RuleExpander {
       OperatorDecl opDecl = (OperatorDecl) it.next();
       SlotList args = opArgs(opDecl.getProd().getSlots(),1);
       String hookCode =
-        generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));      
+        generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
       hookList =
         `concHookDecl(hookList*,
             MakeHookDecl(CutOperator(opDecl),args,Code(hookCode)));
@@ -109,14 +109,14 @@ public class RuleExpander {
         %match(rule) {
           Rule(Appl[],rhs) -> {
             output.append("    return `");
-            genTerm(`rhs,output); 
+            genTerm(`rhs,output);
             output.append(";\n");
           }
           ConditionalRule(Appl[],rhs,cond) -> {
             output.append("    if `(");
-            genCondition(`cond,output); 
+            genCondition(`cond,output);
             output.append(") { return `");
-            genTerm(`rhs,output); 
+            genTerm(`rhs,output);
             output.append("; }\n");
           }
         }
@@ -125,7 +125,7 @@ public class RuleExpander {
     } else {
       output.append("    %match(");
       matchArgs(slotList,output,1);
-      output.append(") {\n");       
+      output.append(") {\n");
       while(!ruleList.isEmptyRuleList()) {
         Rule rule = ruleList.getHeadRuleList();
         ruleList = ruleList.getTailRuleList();
@@ -133,20 +133,20 @@ public class RuleExpander {
           Rule(Appl[args=argList],rhs) -> {
             genTermList(`argList,output);
             output.append(" -> { return `");
-            genTerm(`rhs,output); 
+            genTerm(`rhs,output);
             output.append("; }\n");
           }
           ConditionalRule(Appl[args=argList],rhs,cond) -> {
             genTermList(`argList,output);
             output.append(" -> { if `(");
-            genCondition(`cond,output); 
+            genCondition(`cond,output);
             output.append(") { return `");
-            genTerm(`rhs,output); 
+            genTerm(`rhs,output);
             output.append("; } }\n");
           }
         }
       }
-      output.append("    }\n");       
+      output.append("    }\n");
     }
     return output.toString();
   }
@@ -157,7 +157,7 @@ public class RuleExpander {
       TermList(h,t*) -> {
         genTerm(`h,output);
         if (!`t.isEmptyTermList()) {
-          output.append(", "); 
+          output.append(", ");
         }
         genTermList(`t*,output);
       }
@@ -212,12 +212,12 @@ public class RuleExpander {
       concSlot(Slot[Sort=sort],t*) -> {
         %match(sort) {
           (SortDecl|BuiltinSortDecl)[Name=sName] -> {
-            output.append(`sName); 
-            output.append(" arg_"+count); 
+            output.append(`sName);
+            output.append(" arg_"+count);
           }
         }
         if (!`t.isEmptyconcSlot()) {
-          output.append(", "); 
+          output.append(", ");
         }
         matchArgs(`t*,output,count+1);
       }

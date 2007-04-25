@@ -50,7 +50,7 @@ import tom.library.adt.bytecode.types.*;
  */
 public class CFGViewer {
   %include { adt/bytecode/Bytecode.tom }
-  %include { bytecode/cfg.tom }
+  %include { ../mapping/java/bytecode/cfg.tom }
 
   %typeterm Writer { implement {java.io.Writer} }
 
