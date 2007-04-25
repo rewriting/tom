@@ -191,7 +191,7 @@ public class LambdaCalculus {
     visit LambdaTerm {
       p@pathLambdaTerm(_*) -> {
         Position source = getEnvironment().getPosition();
-        Position dest = ((Reference)`p).getDestPosition(source);
+        Position dest = (Position) source.add((Path)`p);
         if(dest.equals(info.omega)){
           if(info.firstOccur==null || !info.lazy){
             info.firstOccur = getEnvironment().getPosition();
@@ -251,7 +251,7 @@ public class LambdaCalculus {
         }
         else{
           Position source = getEnvironment().getPosition();
-          Position target = ((Reference)`p).getDestPosition(source);
+          Position target = (Position) source.add((Path)`p);
           return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
         }
       }
