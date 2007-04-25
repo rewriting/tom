@@ -542,7 +542,7 @@ public final class TomBase {
       ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
       
       Subterm(Name(name), slotName, term) -> {
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName(name);
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
       }
     }
