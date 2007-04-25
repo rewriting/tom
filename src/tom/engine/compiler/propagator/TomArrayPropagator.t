@@ -45,48 +45,44 @@ public class TomArrayPropagator implements TomIBasePropagator{
             Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
             Constraint l = `AndConstraint();
     match:  %match(slots){
-              // last element needs special treatment - see below
-              concSlot(_*,PairSlotAppl[Appl=appl],X*,_)->{                
-                TomTerm newFreshIndex = getFreshIndex();
-                // if we have a star variable
-                if(`appl.isVariableStar() || `appl.isUnamedVariableStar()){
-                  TomTerm beginIndex = getBeginIndex();
-                  TomTerm endIndex = getEndIndex();
-                  l = `AndConstraint(l*,
-                      MatchConstraint(beginIndex,freshIndex),
-                      MatchConstraint(endIndex,freshIndex),
-                      MatchConstraint(appl,VariableHeadArray(name,g,beginIndex,endIndex)),
-                      MatchConstraint(newFreshIndex,endIndex));							
-                }else{	// a term or a syntactic variable
-                  l = `AndConstraint(l*,                      
-                      Negate(EmptyArrayConstraint(name,g,freshIndex)),                      
-                      MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,Ref(freshIndex)))),
-                      MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(Ref(freshIndex)))));
-                }
+              concSlot(_*,PairSlotAppl[Appl=appl],X*)-> {                
+                TomTerm newFreshIndex = getFreshIndex();                
+          mAppl:%match(appl){
+                  // if we have a variable star
+                  (VariableStar | UnamedVariableStar)[] -> {                
+                    // if it is the last element               
+                    if (`X.length() == 0) {
+                      // and if it is a varStar we should only assign it, without generating a loop
+                      // (if it is unamed, we do nothing)
+                      if ((`appl).isVariableStar()){
+                        l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
+                            GetSliceArray(name,g,freshIndex,ExpressionToTomTerm(GetSize(name,g))))));
+                      }
+                    }else{
+                      TomTerm beginIndex = getBeginIndex();
+                      TomTerm endIndex = getEndIndex();
+                      l = `AndConstraint(l*,
+                          MatchConstraint(beginIndex,freshIndex),
+                          MatchConstraint(endIndex,freshIndex),
+                          MatchConstraint(appl,VariableHeadArray(name,g,beginIndex,endIndex)),
+                          MatchConstraint(newFreshIndex,endIndex));     
+                    }
+                    break mAppl;
+                  }
+                  _ -> {
+                    l = `AndConstraint(l*,                      
+                        Negate(EmptyArrayConstraint(name,g,freshIndex)),                      
+                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,Ref(freshIndex)))),
+                        MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(Ref(freshIndex)))));
+                    // for the last element, we should also check that the list ends
+                    if (`X.length() == 0) {                  
+                      l = `AndConstraint(l*, EmptyArrayConstraint(name,g,newFreshIndex));
+                    }
+                  }
+                }// end match
                 freshIndex = newFreshIndex;
               }
-              // the last element needs a special treatment
-              // 1. if it is a VariableStar, we shouldn't generate a while, just an assignment for the variable                               
-              // 2. if it is not a VariableStar, this means that we should check that the subject ends also
-              // 3. if it is an UnamedVariableStar, there is nothing to do
-              concSlot(_*,PairSlotAppl[Appl=appl@VariableStar[]]) ->{
-                l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
-                    GetSliceArray(name,g,freshIndex,ExpressionToTomTerm(GetSize(name,g))))));
-                break match;
-              }
-              // TODO - replace with an anti-pattern when the bug is solved
-              concSlot(_*,PairSlotAppl[Appl=appl@UnamedVariableStar[]]) ->{
-                break match;
-              }
-              concSlot(_*,PairSlotAppl[Appl=appl]) ->{                
-                TomTerm newFreshIndex = getFreshIndex();
-                l = `AndConstraint(l*,
-                    Negate(EmptyArrayConstraint(name,g,freshIndex)),
-                    MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,Ref(freshIndex)))),
-                    MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(Ref(freshIndex)))),
-                    EmptyArrayConstraint(name,g,newFreshIndex));                                    
-              }
-              concSlot() ->{
+              concSlot() -> {
                 l = `AndConstraint(l*,EmptyArrayConstraint(name,g,freshIndex));
               }
             }// end match                        

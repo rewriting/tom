@@ -45,48 +45,43 @@ public class TomVariadicPropagator implements TomIBasePropagator{
         TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = TomConstraintCompiler.getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
-//      TODO - simplify below
         Constraint l = `AndConstraint();        
-        match:  %match(slots){
-          // last element needs special treatment - see below
-          concSlot(_*,PairSlotAppl[Appl=appl],X*,_)->{
-            TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);
-            // if we have a variable
-            if((`appl).isVariableStar() || (`appl).isUnamedVariableStar()){
-              TomTerm beginSublist = getBeginVariableStar(listType);
-              TomTerm endSublist = getEndVariableStar(listType);              
-              l = `AndConstraint(l*,
-                  MatchConstraint(beginSublist,freshVariable),
-                  MatchConstraint(endSublist,freshVariable),             
-                  MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
-                  MatchConstraint(newFreshVarList,endSublist));
-            }else{	// a term or a syntactic variable
-              l = `AndConstraint(l*,                      
-                  Negate(EmptyListConstraint(name,freshVariable)),
-                  MatchConstraint(appl,ListHead(name,listType,freshVariable)),
-                  MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
-            }
+mSlots:  %match(slots){
+          concSlot(_*,PairSlotAppl[Appl=appl],X*)->{
+            TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);            
+      mAppl:%match(appl){
+              // if we have a variable star
+              (VariableStar | UnamedVariableStar)[] -> {                
+                // if it is the last element               
+                if (`X.length() == 0) {
+                  // and if it is a varStar we should only assign it, without generating a loop
+                  // (if it is unamed, we do nothing)
+                  if ((`appl).isVariableStar()){
+                    l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
+                  }
+                }else{
+                  TomTerm beginSublist = getBeginVariableStar(listType);
+                  TomTerm endSublist = getEndVariableStar(listType);              
+                  l = `AndConstraint(l*,
+                      MatchConstraint(beginSublist,freshVariable),
+                      MatchConstraint(endSublist,freshVariable),             
+                      MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
+                      MatchConstraint(newFreshVarList,endSublist));
+                }
+                break mAppl;
+              }
+              _ -> {
+                l = `AndConstraint(l*,                      
+                    Negate(EmptyListConstraint(name,freshVariable)),
+                    MatchConstraint(appl,ListHead(name,listType,freshVariable)),
+                    MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
+                // for the last element, we should also check that the list ends
+                if (`X.length() == 0) {                  
+                  l = `AndConstraint(l*, EmptyListConstraint(name,newFreshVarList));
+                }
+              }
+            }// end match
             freshVariable = newFreshVarList;
-          }
-          // the last element needs a special treatment
-          // 1. if it is a VariableStar, we shouldn't generate a while, just an assignment for the variable                               
-          // 2. if it is not a VariableStar, this means that we should check that the subject ends also
-          // 3. if it is an UnamedVariableStar, there is nothing to do
-          concSlot(_*,PairSlotAppl[Appl=appl@VariableStar[]]) ->{            
-            l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
-            break match;
-          }
-          // TODO - replace with an anti-pattern when the bug is solved
-          concSlot(_*,PairSlotAppl[Appl=appl@UnamedVariableStar[]]) ->{            
-            break match;
-          }
-          concSlot(_*,PairSlotAppl[Appl=appl]) ->{
-            TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);
-            l = `AndConstraint(l*,
-                Negate(EmptyListConstraint(name,freshVariable)),
-                MatchConstraint(appl,ListHead(name,listType,freshVariable)),
-                MatchConstraint(newFreshVarList,ListTail(name,freshVariable)),
-                EmptyListConstraint(name,newFreshVarList));                                    
           }
           concSlot() ->{
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
