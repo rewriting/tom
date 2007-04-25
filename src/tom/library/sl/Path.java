@@ -46,8 +46,8 @@ public interface Path {
    * <code>t1.add(t2) = (t1.getTail().add(t2)).conc(t1.getHead()) if t1.length()>0,</code> 
    * <p>
    * <code>t1.add(t2) = t2</code>  otherwise.
-   * @return the path corresponding to the addition of this and the parameter p.
    * @param p the path to add. 
+   * @return the path corresponding to the addition of this and the parameter p.
    */
   public Path add(Path p);
 
@@ -81,7 +81,7 @@ public interface Path {
   public Path getCanonicalPath();
 
   /**
-   * Computes the length which correpsonds to the number of moves
+   * Computes the length which corresponds to the number of moves
    * needed to go from the source to the target.
    * @return the length of the path
    */   
@@ -102,6 +102,11 @@ public interface Path {
    */
   public Path getTail();
 
+  /**
+   * Add the move i to the begining of the current path
+   * @param i the move to insert.
+   * @return the path corresponding to the insersion of i into this.
+   */
   public Path conc(int i);
 
 }
