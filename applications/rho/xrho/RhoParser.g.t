@@ -267,7 +267,8 @@ chgeMode returns [RTerm mode]
 {
   mode=null;
 }
-: WITHOUTPRINT {mode=`withoutPrint();} | WITHPRINT {mode=`withPrint();}
+: RESULT {mode=`result();} | STEPS {mode=`steps();} | STRONG {mode=`strong();} | WEAK {mode=`weak();} | EXPLICIT {mode=`explicit();} |  PLAIN {mode=`plain();}
+
 ;
 
 def returns [RTerm def]
@@ -305,8 +306,12 @@ AND : '^' ;
 EQ : '=' ;
 AT : '@' ;
 COMMA : ',' ;
-WITHPRINT : "$$" ;
-WITHOUTPRINT : '$' ;
+RESULT : "NF" ;
+STEPS : "DETAILS" ;
+STRONG : "STRONG" ;
+WEAK : "WEAK" ;
+EXPLICIT : "EXPLICIT" ;
+PLAIN : "PLAIN" ;
 END : ';' ;
 DEF options{ testLiterals = true; }: '!' 
 ('A'..'Z'

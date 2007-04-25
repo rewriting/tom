@@ -45,6 +45,7 @@ public class Rho {
 	
 	%include { mustrategy.tom }
 	%include { rhoterm/Rhoterm.tom }
+	%include { boolean.tom}
 	
 	%op Strategy Not_abs() {
 		make() {new Not_abs() }
@@ -56,8 +57,11 @@ public class Rho {
 	%op Strategy All_abs(strat:Strategy) {
 		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((MuStrategy)v)
 	}
+	%op Strategy OnceTopDownWeak(strat:Strategy) {
+		make(v) {`mu(MuVar("x"),Choice(v,One_abs(MuVar("x"))))}
+	}
 
-	MuStrategy rules = new ReductionRules();
+	/*MuStrategy rules = new ReductionRules();
 	MuStrategy onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rules));
 	MuStrategy print = new Print();
 	//STRATEGIE OUTERMOST
@@ -65,6 +69,18 @@ public class Rho {
 	MuStrategy weakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
 	MuStrategy strategyWithAllPrint = `Repeat(Sequence(oneStepWeakNormalisation,Try(print)));
 	MuStrategy strategyResult = `Repeat(oneStepWeakNormalisation);
+	MuStrategy strategyStrong = `Repeat(onceBottomUp);*/
+	MuStrategy rules=`Choice(RhoDelta(),Explicit());
+	MuStrategy oneStepWeakNormalisation = `OnceTopDownWeak(rules);
+	MuStrategy strategyStepsStrongPlain =`Repeat(Sequence(OnceBottomUp(Sequence(RhoDelta(),Innermost(Explicit()))),Try(Print())));
+	MuStrategy strategyStepsStrongExplicit =`Repeat(Sequence(OnceBottomUp(rules),Try(Print())));
+	MuStrategy strategyStepsWeakPlain = `Repeat(Sequence(OnceTopDownWeak(Sequence(RhoDelta(),Innermost(Explicit()))),Try(Print())));
+	MuStrategy strategyResultStrongPlain = `Innermost(rules);
+	MuStrategy strategyStepsWeakExplicit = `Repeat(Sequence(oneStepWeakNormalisation,Try(Print())));
+	MuStrategy strategyResultStrongExplicit  = `Innermost(rules);
+	MuStrategy strategyResultWeakPlain = `Repeat(oneStepWeakNormalisation);
+	MuStrategy strategyResultWeakExplicit = `Repeat(oneStepWeakNormalisation);
+
 
 	public final static void main(String[] args) {
 		Rho rhoEngine = new Rho();
@@ -74,13 +90,16 @@ public class Rho {
 
 	public void run(){
 		RTerm subject = `Const("undefined");
-		MuStrategy currentStrategy = strategyResult;
+		MuStrategy currentStrategy = strategyResultWeakPlain;
 		String s;
-		System.out.println(" ******************************************************************\n xRho: an experimental implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
+		System.out.println(" ******************************************************************\n xRho: an experimental implementation  in Tom of the explicit rho-calculus \n\n\n For weak normalisation type WEAK; for strong normalisation type STRONG; \n Strong normalisation is valid only for linear (variables at most once) terms\n\n For getting the reductions with all explicit steps type \'EXPLICIT\' otherwise type \'PLAIN\'\n\n For getting only the normal form \'NF\' and for getting all the evaluation steps type \'DETAILS\'\n \n By default the strategy is \'NF;PLAIN;WEAK\'\n\n By Germain Faure\n\n It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
     RhoLexer lexer = new RhoLexer(System.in); // Create parser attached to lexer
     RhoParser parser = new RhoParser(lexer);
+	boolean resultSteps=`false();
+	boolean weakStrong=`false();
+	boolean explicitPlain=`true();
 		while(true){
-			System.out.print("xRho>");
+			System.out.print("xr>");
       try {
 				subject = parser.program();
 			} catch (Exception e) {
@@ -89,9 +108,24 @@ public class Rho {
 			}
 			try{
 				%match(RTerm subject){
-					withPrint() -> {currentStrategy = strategyWithAllPrint;}
-					withoutPrint() -> {currentStrategy = strategyResult;}
-					_ -> 	 {System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
+					result() -> {resultSteps=`false();}
+					steps() -> {resultSteps=`true();}
+					weak() -> {weakStrong=`false();}
+					strong() -> {weakStrong=`true();}
+					explicit() ->{explicitPlain=`false();}
+					plain() ->{explicitPlain=`true();}
+					_ -> 	 {
+					%match(resultSteps,  weakStrong,  explicitPlain){
+						true(), true(), true() -> {currentStrategy=strategyStepsStrongPlain;}
+						true(), true(), false() -> {currentStrategy=strategyStepsStrongExplicit;}
+						true(), false(), true() -> {currentStrategy=strategyStepsWeakPlain;}
+						false(), true(), true() -> {currentStrategy=strategyResultStrongPlain;}
+						true(), false(), false() -> {currentStrategy=strategyStepsWeakExplicit;}
+						false(), true(), false() -> {currentStrategy=strategyResultStrongExplicit;}
+						false(), false(), true() -> {currentStrategy=strategyResultWeakPlain;}
+						false(), false(), false() -> {currentStrategy=strategyResultWeakExplicit;}
+}
+System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
 				}
 
 			} catch(VisitFailure e) {
@@ -111,7 +145,7 @@ public class Rho {
 			return e.toString();
 		}
 		try{
-			subject = (RTerm)strategyResult.visit(subject);
+			subject = (RTerm)strategyResultWeakPlain.visit(subject);
 			return stringInfix(subject);
 		} catch(VisitFailure e) {
 			return "reduction failed on: " + subject ;
@@ -129,79 +163,60 @@ public class Rho {
 			return e.toString();
 		}
 		try{
-			subject = (RTerm)strategyResult.visit(subject);
+			subject = (RTerm)strategyResultWeakPlain.visit(subject);
 			return stringInfix(subject);
 		} catch(VisitFailure e) {
 			return "reduction failed on: " + subject ;
 		}
 	}
 
-	
-	class Print extends RhotermBasicStrategy {
-		public Print() {
-			super(`Fail());
-		}
-		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			System.out.println("=>"  + stringInfix(arg));
-			return arg;
+	%strategy Print() extends `Fail() {
+		visit RTerm {
+			x -> {System.out.println("=>"  + stringInfix(`x)); return `x;}
 		}
 	}
-	class ReductionRules extends RhotermBasicStrategy {
-		public ReductionRules() {
-			super(`Fail());
+	
+	%strategy RhoDelta() extends `Fail() {
+		visit RTerm {
+				/*Rho*/
+				app(abs(P,M),N) -> {return `appC(andC(match(P,N)),M);}
+				/*Delta*/
+				app(struct(M1,M2),N) -> {return `struct(app(M1,N),app(M2,N));}
 		}
-		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			%match(RTerm arg){
-				/*Compose */
+	}
+	%strategy Explicit() extends `Fail(){
+		visit RTerm {
+			/*Compose */
 				appS(phi@andS(l*),appS(andS(L*),N)) -> {
 					ListSubst result = `mapS(((ListSubst)(reverse(L))),phi,andS());
 					return `appS(andS(l*,result*),N);}
 				//ALPHA-CONV
-				
-				
 				/* Garbage collector */
 				appC((_*,matchKO(),_*),_) -> {return `stk();}
 				app(stk(),A) -> {return `stk();}
 				struct(A,stk()) -> {return `A;}
 				struct(stk(),A) -> {return `A;}
-				
-				
-				/*Rho*/
-				app(abs(P,M),N) -> {return `appC(andC(match(P,N)),M);}
-				
-				/*Delta*/
-				app(struct(M1,M2),N) -> {return `struct(app(M1,N),app(M2,N));}
-				
-				/*ToSubst*/
+							/*ToSubst*/
 				appC(andC(C*,match(X@var[],M),D*),N) -> {return `appC(andC(C*,D*),appS(andS(eq(X,M)),N));}
 				//PATTERNS LINEAIRES
-				
 				/*Id*/ 
 				appC(andC(),M) -> {return `M;}
-				
 				/*Replace*/
 				appS(andS(_*,eq(var(X),M),_*),var(X)) -> {return `M;}
-				
 				/*Var*/
 				appS(_,Y@var[]) -> {return `Y;}
 				//cette regle est correcte sans condition de bord si
 				//on sait que on essaye toujours d'appliquer la regle
 				//Replace avant		
-				
 				/*Const*/
 				appS(_,c@Const[]) -> {return `c;}
-				
 				/*Abs*/
 				appS(phi,abs(P,M)) -> {return `abs(P,appS(phi,M));}
 				//ALPHA-CONVERSION NECESSAIRE!
-				
-				
 				/*App*/
 				appS(phi,app(M,N)) -> {return `app(appS(phi,M),appS(phi,N));}
-				
 				/*Struct*/
 				appS(phi,struct(M,N)) -> {return `struct(appS(phi,M),appS(phi,N));}
-				
 				/*Constraint*/
 				appS(phi,appC(andC(L*),M)) -> {
 					ListConstraint result = `mapC(((ListConstraint)(reverse(L))),phi,andC());
@@ -209,16 +224,9 @@ public class Rho {
 				/* La regle est correcte pour n is 0 */
 				//ALPHA-CONV!!
 				/* Patterns lineaires, pas besoin de la regle Idem */
-
-
-
-			 }
-			 throw new VisitFailure();
-
-		 }
- 		public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
- 			%match(ListConstraint l){
-				/*Decompose n = m = 0*/
+		}
+		visit ListConstraint {
+	/*Decompose n = m = 0*/
 				(X*,match(f@Const[],f),Y*) -> {return `andC(X*,Y*);}
 				
 				/*Decompose_ng n = m = 0*/
@@ -258,11 +266,9 @@ public class Rho {
 				(X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
 					return `andC(X*,match(M1,N1),match(M2,N2),Y*);
 				}
-			}
-			throw new VisitFailure();
- 		}
- 	}
-	public  String stringInfix(RTerm term){
+		}
+	}	
+	public  static String stringInfix(RTerm term){
 		//suis les priorites donnes par RhoParser.g.t
 		%match(RTerm term){
 			appS(substs,term1) -> {return "["+ stringInfix(`substs)+"]" + "("+stringInfix(`term1)+")";}
@@ -276,7 +282,7 @@ public class Rho {
 		}
      return "";
 	}
-	public String stringInfix(ListSubst substs){
+	public static String stringInfix(ListSubst substs){
 		%match(ListSubst substs){
 			andS(eq(term1,term2),eq(term3,term4),Y*) -> {return stringInfix(`term1)+"="+stringInfix(`term2) +"^"+ stringInfix(`term3)+"="+stringInfix(`term4) +stringInfix(`Y);}
 			andS(eq(term1,term2),X*) -> {return stringInfix(`term1)+"="+stringInfix(`term2);}
@@ -300,7 +306,7 @@ public class Rho {
 		}
 		
 	}
-	public String stringInfix(ListConstraint constraints){
+	public static String stringInfix(ListConstraint constraints){
 		%match(ListConstraint constraints){
 			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2) +"^"+ stringInfix(`term3)+"<"+stringInfix(`term4) +stringInfix(`Y);}
 			andC(match(term1,term2),X*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2);}
@@ -309,7 +315,7 @@ public class Rho {
     return "";
 	}	
 	
-	protected ListConstraint headIsConstant (Constraint l){
+	protected static ListConstraint headIsConstant (Constraint l){
 		%match(Constraint l){
 			match(app(A1,B1),app(A2,B2)) ->{ 
 				return `headIsConstant(match(A1,A2));
@@ -329,7 +335,7 @@ public class Rho {
 		}
     return `andC(l);
 	}
-	protected ListConstraint computeMatch(ListConstraint l){
+	protected static ListConstraint computeMatch(ListConstraint l){
 		%match(ListConstraint l){
 			(match(app(f@Const[],A),app(f,B))) -> {return `andC(match(A,B));}
 			(match(app(A1,B1),app(A2,B2))) -> {
@@ -340,7 +346,7 @@ public class Rho {
     return `l;
 
 	}
-	protected ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
+	protected static ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
 		%match(ListConstraint list) {
  	    (match(P,M),_*) ->{
 				return `mapC(list.getTailandC(),phi,andC(match(P,appS(phi,M)),result*));}
@@ -348,7 +354,7 @@ public class Rho {
 		}
     return `result;
 	} 
-	protected ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
+	protected static ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
 		%match(ListSubst list) {
 			(eq(X,M),_*) ->{
 				return `mapS(list.getTailandS(),phi,andS(eq(X,appS(phi,M)),result*));}
@@ -356,7 +362,7 @@ public class Rho {
     }	 
     return `result;
   }
-  protected ListSubst reverse(ListSubst l) {
+  protected static ListSubst reverse(ListSubst l) {
     %match(ListSubst l) {
       andS() -> { return l; }
       andS(h,t*) -> {
@@ -366,7 +372,7 @@ public class Rho {
     }
     return l;
   }
-  protected ListConstraint reverse(ListConstraint l) {
+  protected static ListConstraint reverse(ListConstraint l) {
     %match(ListConstraint l) {
       andC() -> { return l; }
       andC(h,t*) -> {
