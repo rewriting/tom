@@ -82,7 +82,6 @@ public interface Path {
    * Gives a canonical form of a path 
    * @return its canonical form 
    */
-
   public Path normalize();
 
   public Path conc(int i);

@@ -194,7 +194,7 @@ public class GomReferenceExpander {
     String moduleName = gomModuleName.getName();
 
     String codeImport =%[
-      import @packagePath@.@moduleName.toLowerCase()@.types.*;
+    import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import @packagePath@.@moduleName.toLowerCase()@.*;
     import tom.library.sl.*;
     import java.util.*;
