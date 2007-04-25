@@ -14,7 +14,7 @@ import tom.engine.TomBase;
 /**
  * Syntactic propagator
  */
-public class TomArrayPropagator implements TomIBasePropagator{
+public class TomArrayPropagator implements TomIBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
@@ -23,12 +23,12 @@ public class TomArrayPropagator implements TomIBasePropagator{
 
   private static short beginEndCounter = 0;
 
-  public Constraint propagate(Constraint constraint){
+  public Constraint propagate(Constraint constraint) {
     return (Constraint)`InnermostId(ArrayPatternMatching()).apply(constraint);		
   }	
 
-  %strategy ArrayPatternMatching() extends `Identity(){		
-    visit Constraint{      
+  %strategy ArrayPatternMatching() extends `Identity() {
+    visit Constraint {
       // Decompose - only if 'g' != SymbolOf 
       // array[t1,X*,t2,Y*] = g -> array=SymbolOf(g) /\ fresh_index = 0 
       // /\ HasElement(fresh_index,g)  /\ t1=GetElement(fresh_index,g) /\ fresh_index1 = fresh_index + 1 
@@ -44,21 +44,22 @@ public class TomArrayPropagator implements TomIBasePropagator{
             TomTerm freshIndex = getFreshIndex();				
             Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
             Constraint l = `AndConstraint();
-    match:  %match(slots){
-              concSlot(_*,PairSlotAppl[Appl=appl],X*)-> {                
+    match:  %match(slots) {
+              concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
                 TomTerm newFreshIndex = getFreshIndex();                
           mAppl:%match(appl){
                   // if we have a variable star
-                  (VariableStar | UnamedVariableStar)[] -> {                
+                  (VariableStar | UnamedVariableStar)[] -> {
                     // if it is the last element               
-                    if (`X.length() == 0) {
+// [pem] same remark: move the test outside the match
+                    if(`X.length() == 0) {
                       // and if it is a varStar we should only assign it, without generating a loop
                       // (if it is unamed, we do nothing)
-                      if ((`appl).isVariableStar()){
+                      if((`appl).isVariableStar()) {
                         l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
                             GetSliceArray(name,g,freshIndex,ExpressionToTomTerm(GetSize(name,g))))));
                       }
-                    }else{
+                    } else {
                       TomTerm beginIndex = getBeginIndex();
                       TomTerm endIndex = getEndIndex();
                       l = `AndConstraint(l*,
@@ -75,13 +76,14 @@ public class TomArrayPropagator implements TomIBasePropagator{
                         MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,Ref(freshIndex)))),
                         MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(Ref(freshIndex)))));
                     // for the last element, we should also check that the list ends
-                    if (`X.length() == 0) {                  
+                    if(`X.length() == 0) {                  
                       l = `AndConstraint(l*, EmptyArrayConstraint(name,g,newFreshIndex));
                     }
                   }
                 }// end match
                 freshIndex = newFreshIndex;
               }
+// [pem] same remark: move up
               concSlot() -> {
                 l = `AndConstraint(l*,EmptyArrayConstraint(name,g,freshIndex));
               }
@@ -93,38 +95,38 @@ public class TomArrayPropagator implements TomIBasePropagator{
           }					
           // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
           // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-          andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) ->{
+          andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
             Constraint toApplyOn = `AndConstraint(Y*);            
             TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
             Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
-            if (res != toApplyOn){					
+            if(res != toApplyOn) {
               return `AndConstraint(X*,eq,res);
             }
           }
     }
   }// end %strategy
 
-  %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity(){
+  %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity() {
     visit Constraint {
       MatchConstraint(v@VariableStar[AstName=name],p) -> {
-        if (`name == varName) {					
+        if(`name == varName) {					
           return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVarStar(freshVar),v));
         }				  
       }
     }
   }
 
-  private static TomTerm getBeginIndex(){    
+  private static TomTerm getBeginIndex() {
     return TomConstraintCompiler.getFreshVariableStar("begin_" + (++beginEndCounter),
         TomConstraintCompiler.getIntType());
   }
 
-  private static TomTerm getEndIndex(){
+  private static TomTerm getEndIndex() {
     return TomConstraintCompiler.getFreshVariableStar("end_" + beginEndCounter,
         TomConstraintCompiler.getIntType());
   }
 
-  private static TomTerm getFreshIndex(){
+  private static TomTerm getFreshIndex() {
     return TomConstraintCompiler.getFreshVariableStar(TomConstraintCompiler.getIntType());    
   }
 }

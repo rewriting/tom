@@ -32,10 +32,10 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
       // f(t1,...,tn) = g -> f = SymbolOf(g) /\ freshVar1=subterm1(g) /\ t1=freshVar1 /\ ... /\ freshVarn=subtermn(g) /\ tn=freshVarn
       //
       // we can decompose only if 'g' != SymbolOf            
-      m@MatchConstraint(lhs@RecordAppl(options,nameList@(name@Name(tomName)),slots,constraints),g@!SymbolOf[]) -> {
+      m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName)),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
-            TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
+            TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
         Constraint l = `AndConstraint();
         // for each slot
         %match(slots) {
@@ -47,30 +47,33 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
           }
         }
         // add head equality condition
-        l = `AndConstraint(MatchConstraint(lhs.setSlots(concSlot()),SymbolOf(g)),l*);			
+        l = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),constraints),SymbolOf(g)),l*);			
         return l;
       }	
       
       // Decompose
       // if f has multiple names (from f1|f2):
+// [pem] why g1|g2 ? why not g ?
       // (f1|f2)(t1,...,tn) = g1|g2 -> ( (f1 = SymbolOf(g) /\ freshVar1=subterm1_f1(g) /\ ... /\ freshVarn=subtermn_f1(g)) 
       // \/ (f2 = SymbolOf(g) /\ freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) /\ t1=freshVar1 /\ ... /\ tn=freshVarn       
       // 
       // we can decompose only if 'g' != SymbolOf      
-// [pem] a bit complex, can't we share with the previous case ?      
-      m@MatchConstraint(lhs@RecordAppl(options,nameList@(Name(tomName),_,_*),slots,constraints),g@!SymbolOf[]) -> {
+// [pem] a bit complex, can't we share with the previous case ?
+      m@MatchConstraint(RecordAppl(options,nameList@(Name(tomName),_,_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
-            TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
+            TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
         
         Constraint l = `OrConstraintDisjunction();
         Constraint lastPart = `AndConstraint();
-        TomTerm freshVar = null;
         ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
         // used to build the last part only once, and not for each name
         boolean firstTime = true;
         int counter = 0;
         // for each name
+// [pem] can't we duplicate the following match to consider the case concTomName(name,_*) and compute freshVarList
+// [pem] and then consider the general case, without 'firstTime'
+// [pem] this would make the algorithm simpler
         %match(nameList) {
           concTomName(_*,name,_*) -> {
             // the 'and' conjunction for each name
@@ -79,7 +82,8 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
             andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),constraints),SymbolOf(g)));
             // for each slot
             %match(slots) {
-              concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{                
+              concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
+                TomTerm freshVar = null;
                 if(firstTime) {
                   freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getSlotType(`name,`slotName));
                   // store the fresh variable
