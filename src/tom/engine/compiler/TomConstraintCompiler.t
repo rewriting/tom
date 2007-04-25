@@ -211,13 +211,7 @@ public class TomConstraintCompiler{
   }
   
   public static TomType getTermTypeFromTerm(TomTerm tomTerm) {    
-    %match(tomTerm){
-      Subterm(constructorName, slotName, term) -> {
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName(((TomName)`constructorName).getString());
-        return TomBase.getSlotType(tomSymbol, `slotName);
-      }
-    }
-    return TomBase.getTomType(tomTerm,symbolTable);    
+    return TomBase.getTermType(tomTerm,symbolTable);    
   }
   
   public static TomTerm getFreshVariable(TomType type) {

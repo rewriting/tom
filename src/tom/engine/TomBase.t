@@ -540,6 +540,11 @@ public final class TomBase {
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
       
       ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
+      
+      Subterm(Name(name), slotName, term) -> {
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(name);
+        return getSlotType(tomSymbol, `slotName);
+      }
     }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);
