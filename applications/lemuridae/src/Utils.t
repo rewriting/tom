@@ -72,28 +72,32 @@ class Utils {
     replaceFreeVars(Prop p, Term old_term, Term new_term, Set<Term> nonfresh) {
       %match(Prop p) {
         forAll(n,p1) -> {
-          if (collectVars(new_term).contains(`Var(n))) {
-            Term fv = freshVar(`n,nonfresh);
-            Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
-            nonfresh.add(`Var(n));
-            Prop res = `forAll(fv.getname(),replaceFreeVars(np1,old_term,new_term,nonfresh));
-            nonfresh.remove(`Var(n));
-            return res;
-          } else {
-            return `forAll(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
-          }
+          if(old_term != `Var(n)) {
+            if (collectVars(new_term).contains(`Var(n))) {
+              Term fv = freshVar(`n,nonfresh);
+              Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
+              nonfresh.add(`Var(n));
+              Prop res = `forAll(fv.getname(),replaceFreeVars(np1,old_term,new_term,nonfresh));
+              nonfresh.remove(`Var(n));
+              return res;
+            } else {
+              return `forAll(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
+            }
+          } else  return p;
         }
         exists(n,p1) -> {
-          if (collectVars(new_term).contains(`Var(n))) {
-            Term fv = freshVar(`n,nonfresh);
-            Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
-            nonfresh.add(`Var(n));
-            Prop res = `exists(fv.getname(), replaceFreeVars(np1,old_term,new_term,nonfresh));
-            nonfresh.remove(`Var(n));
-            return res;
-          } else {
-            return `exists(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
-          }
+          if(old_term != `Var(n)) {
+            if (collectVars(new_term).contains(`Var(n))) {
+              Term fv = freshVar(`n,nonfresh);
+              Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
+              nonfresh.add(`Var(n));
+              Prop res = `exists(fv.getname(), replaceFreeVars(np1,old_term,new_term,nonfresh));
+              nonfresh.remove(`Var(n));
+              return res;
+            } else {
+              return `exists(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
+            }
+          } else return p;
         }
         relationAppl(r,tl) -> {
           TermList res = (TermList) replaceTerm(`tl, old_term, new_term);
