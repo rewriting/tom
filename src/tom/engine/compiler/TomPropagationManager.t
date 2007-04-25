@@ -25,14 +25,11 @@ public class TomPropagationManager {
 
   private static final String[] propagatorsNames = {"TomSyntacticPropagator","TomVariadicPropagator","TomArrayPropagator"};
 
-  private static TomNumberList rootpath = null;
-  private static short freshVarCounter = 0;
+  private static TomNumberList rootpath = null;  
 
   public static Constraint performPropagations(Constraint constraintToCompile) 
     throws ClassNotFoundException,InstantiationException,IllegalAccessException{
     
-    freshVarCounter = 0;		
-
     // counts the propagators that didn't change the expression
     short propCounter = 0;
     Constraint result = null;	
@@ -100,21 +97,18 @@ public class TomPropagationManager {
     visit TomTerm {
       t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] -> {
 
-        String freshVarName  = "fresh_"+ (++freshVarCounter);
-// [pem] can we use TomBase.geTomType instead ?
         TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = null;
         // make sure that if we had a varStar, we replace with a varStar also
 match : %match(t) {
           (VariableStar|UnamedVariableStar)[] -> {
-            freshVariable = TomConstraintCompiler.getFreshVariableStar(freshVarName,freshVarType);
+            freshVariable = TomConstraintCompiler.getFreshVariableStar(freshVarType);
             break match;
           }
           _ -> {
-            freshVariable = TomConstraintCompiler.getFreshVariable(freshVarName,freshVarType);
+            freshVariable = TomConstraintCompiler.getFreshVariable(freshVarType);
           }
-        }
-
+        }// end match
         bag.add(`MatchConstraint(t,freshVariable));
         // for each constraint
         %match(constraints) {
