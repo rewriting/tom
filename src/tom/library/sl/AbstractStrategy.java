@@ -38,6 +38,7 @@ package tom.library.sl;
 
 public abstract class AbstractStrategy implements Strategy {
   protected Strategy[] visitors;
+  protected Environment environment;
 
   protected void initSubterm() {
     visitors = new Strategy[] {};
@@ -92,8 +93,7 @@ public abstract class AbstractStrategy implements Strategy {
 
   public void execute(Strategy s, Visitable v) {
     setSubject(v);
-    AbstractStrategy.init(s,getEnvironment());
-    s.visit();
+    execute(s);
   }
 
   public Visitable fire(Visitable any) {
@@ -107,15 +107,6 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
- /*
-  * For graphs
-  */
-
-  protected Environment environment;
-  public void setEnvironment(Environment env) {
-    this.environment = env;
-  }
-
   public Environment getEnvironment() {
     if(environment!=null) {
       return environment;
@@ -124,9 +115,10 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
-  /**
-   * getter and setter for the status
-   */
+  public void setEnvironment(Environment env) {
+    this.environment = env;
+  }
+
   public int getStatus() {
     return getEnvironment().getStatus();
   }
@@ -135,9 +127,6 @@ public abstract class AbstractStrategy implements Strategy {
     getEnvironment().setStatus(stat);
   }
 
-  /**
-   * getter and setter for the root term (i.e. top position)
-   */
   public Visitable getRoot() {
     return getEnvironment().getRoot();
   }
@@ -146,9 +135,6 @@ public abstract class AbstractStrategy implements Strategy {
     getEnvironment().setRoot(any);
   }
 
-  /**
-   * getter en setter for the term of the current position
-   */
   public Visitable getSubject() {
     return getEnvironment().getSubject();
   }

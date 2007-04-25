@@ -72,20 +72,36 @@ public interface Path {
    */
   public Path inv();
   
-  public int length();
-
-  public int getHead();
-
-  public Path getTail();
-
   /**
-   * Gives a canonical form of a path 
+   * Gives the canonical form of a path.
+   * Two paths are equivalent if for every source the corresponding targets are
+   * the same. In an equivalence class, the canonical form is the smallest path.
    * @return its canonical form 
    */
   public Path normalize();
 
-  public Path conc(int i);
+  /**
+   * Computes the length which correpsonds to the number of moves
+   * needed to go from the source to the target.
+   * @return the length of the path
+   */   
+  public int length();
 
-  public int compare(Path path);
+  /**
+   * Gives the first move of the path which is represented by an integer i.
+   * When i is positive, it corresponds to a move from the parent to th i-th
+   * child of the current location. Otherwise, it signifies a move from the
+   * i-th child to the parent.
+   * @return the first move.
+   */
+  public int getHead();
+
+  /**
+   * Gives the tail of the path which is also a path.
+   * @return the path after the first move.
+   */
+  public Path getTail();
+
+  public Path conc(int i);
 
 }
