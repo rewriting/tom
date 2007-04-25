@@ -40,9 +40,8 @@ public class TomConstraintCompiler{
   private static final String freshVarPrefix = "_freshVar_";
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
-    TomConstraintCompiler.symbolTable = symbolTable;    
-// [pem] why (Strategy) cast ?    
-    return  (TomTerm)((Strategy)`InnermostId(CompileMatch())).fire(termToCompile);		
+    TomConstraintCompiler.symbolTable = symbolTable;
+    return  (TomTerm)`InnermostId(CompileMatch()).fire(termToCompile);		
   }
 
   // looks for a 'Match' instruction:
@@ -57,8 +56,7 @@ public class TomConstraintCompiler{
         rootpath = `concTomNumber(MatchNumber(matchNumber));
         freshSubjectCounter = 0;
         freshVarCounter = 0;
-// [pem] why short ?
-        short actionNumber = 0;
+        int actionNumber = 0;
         TomList automataList = `concTomTerm();	
         // get the new names for subjects (for further casts if needed - especially for lists)
         TomList renamedSubjects = renameSubjects(`subjectList);
@@ -135,11 +133,10 @@ public class TomConstraintCompiler{
           }
         }// end match
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());  
-        renamedSubjects = `concTomTerm(renamedSubjects*,renamedVar);
-// [pem] we can use concTomTerm(renamedVar,renamedSubjects*) and call reverse
+        renamedSubjects = `concTomTerm(renamedVar,renamedSubjects*);
       }
     }// end match
-    return renamedSubjects;
+    return renamedSubjects.reverse();
   }
 
   /**
@@ -171,9 +168,8 @@ public class TomConstraintCompiler{
         // if a label is assigned to a pattern (label:pattern ->
         // action) we generate corresponding labeled-block				 
         %match(optionList) {
-// [pem] why not Name(name) instead ?
-          concOption(_*,Label(name@Name[]),_*) -> { 
-            `instruction = `NamedBlock(name.getString(),concInstruction(instruction));
+          concOption(_*,Label(Name(name)),_*) -> { 
+            `instruction = `NamedBlock(name,concInstruction(instruction));
           }
         }				
         return `concInstruction(CompiledPattern(patternList,instruction), newList*);
@@ -213,29 +209,19 @@ public class TomConstraintCompiler{
   public static TomType getBooleanType() {
     return symbolTable.getBooleanType();
   }
-
-// [pem] can't we use TomBase.getTomType(tomTerm,symbolTable) instead ?
-  public static TomType getTermTypeFromTerm(TomTerm tomTerm) {
+  
+  public static TomType getTermTypeFromTerm(TomTerm tomTerm) {    
     %match(tomTerm){
-      RecordAppl[NameList=nameList@(headName,_*)] -> {
-        return getTermTypeFromName(`headName);
-      }
-      (Variable|UnamedVariable|VariableStar|UnamedVariableStar)[AstType=type] -> {
-        return `type;
-      }
       Subterm(constructorName, slotName, term) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(((TomName)`constructorName).getString());
         return TomBase.getSlotType(tomSymbol, `slotName);
       }
     }
-    throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + tomTerm);
+    return TomBase.getTomType(tomTerm,symbolTable);    
   }
   
   public static TomTerm getFreshVariable(TomType type) {
-// [pem] return getFreshVariable(freshVarPrefix + freshVarCounter++, type);
-    TomNumberList path = getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(freshVarPrefix + freshVarCounter++))));
-    return `Variable(concOption(),freshVarName,type,concConstraint());
+    return getFreshVariable(freshVarPrefix + (freshVarCounter++), type);    
   }
   
   public static TomTerm getFreshVariable(String name, TomType type) {
@@ -245,10 +231,7 @@ public class TomConstraintCompiler{
   }
   
   public static TomTerm getFreshVariableStar(TomType type) {
-// [pem] return getFreshVariableStar(freshVarPrefix + freshVarCounter++, type);
-    TomNumberList path = getRootpath();
-    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(freshVarPrefix + freshVarCounter++))));
-    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+    return getFreshVariableStar(freshVarPrefix + (freshVarCounter++), type);
   }
   
   public static TomTerm getFreshVariableStar(String name, TomType type) {
