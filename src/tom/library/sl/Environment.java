@@ -117,20 +117,7 @@ public class Environment implements Cloneable {
     return size * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
-  /**
-   * Tests is prefix
-   */
-  public boolean isPrefix(Environment p) {
-    if(p.size < size) {
-      return false;
-    }
-    for(int i=0 ; i<size ; i++) {
-      if(omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
+  
 
   /**
    * get the current root
