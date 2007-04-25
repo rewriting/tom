@@ -244,9 +244,9 @@ public class LambdaCalculus {
         //it can be a ref corresponding to a sharing due to lazy evaluation
         Path pp = (Path)`p;
         if(pp.length()==1){
-          getEnvironment().goTo(pp);
+          getEnvironment().followPath(pp);
           LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-          getEnvironment().goTo(pp.inv());
+          getEnvironment().followPath(pp.inv());
           return var;
         }
         else{

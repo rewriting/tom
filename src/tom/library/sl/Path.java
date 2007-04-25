@@ -34,7 +34,7 @@ package tom.library.sl;
 /**
  * Represent a path between two locations in a term.
  * The implementations of this class must define several algebraic operations                                      
- * on these paths (i.e. addition, substraction, inverse).                                                          
+ * on these paths (i.e. addition, subtraction, inverse).                                                          
  */                                                                                                               
 
 public interface Path {
@@ -53,11 +53,11 @@ public interface Path {
 
   /**
    * Computes the path from the target of this to the target of the parameter p.
-   * The substraction of two paths must respect the following equation:
+   * The subtraction of two paths must respect the following equation:
    * <p>
    * <code>t1.sub(t2) = t2.inv().add(t1),</code> 
-   * @return the path corresponding to the substraction of this and the parameter p.
-   * @param p the path to substract. 
+   * @return the path corresponding to the subtraction of this and the parameter p.
+   * @param p the path to subtract. 
    */
   public Path sub(Path p);
 
@@ -70,7 +70,7 @@ public interface Path {
    * <code>t.inv() = t</code> otherwise 
    * @return the path corresponding to the inverse path of this.
    */
-  public Path inv();
+  public Path inverse();
   
   /**
    * Gives the canonical form of a path.
@@ -78,7 +78,7 @@ public interface Path {
    * the same. In an equivalence class, the canonical form is the smallest path.
    * @return its canonical form 
    */
-  public Path normalize();
+  public Path getCanonicalPath();
 
   /**
    * Computes the length which correpsonds to the number of moves

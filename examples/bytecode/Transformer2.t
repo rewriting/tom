@@ -110,9 +110,9 @@ public class Transformer2 {
     visit TInstructionList {
       _ -> {
         Position current = getEnvironment().getPosition();
-        getEnvironment().goTo(current.inv());
+        getEnvironment().followPath(current.inv());
         execute(`TopDown(BuildLabelMap(m)));
-        getEnvironment().goTo(current);
+        getEnvironment().followPath(current);
       }
     }
   }

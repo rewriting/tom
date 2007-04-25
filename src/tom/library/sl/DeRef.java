@@ -79,13 +79,13 @@ public class DeRef extends AbstractStrategy {
   private void visitPath(Path path) {
     if(relative) {
       Position current = environment.getPosition();
-      environment.goTo(path);
+      environment.followPath(path);
       visitors[ARG].visit();
       if (getStatus() != Environment.SUCCESS) {
-        environment.goTo(current.sub(getEnvironment().getPosition()));
+        environment.followPath(current.sub(getEnvironment().getPosition()));
         return;
       }
-      environment.goTo(current.sub(getEnvironment().getPosition()));
+      environment.followPath(current.sub(getEnvironment().getPosition()));
     }
   }
 

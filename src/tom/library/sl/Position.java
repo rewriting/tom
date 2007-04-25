@@ -99,8 +99,8 @@ public class Position implements Cloneable,Path {
    */
   public boolean equals(Object o) {
     if (o instanceof Position) {
-      Position p1  = (Position) this.normalize();
-      Position p2  = (Position) ((Position)o).normalize();
+      Position p1  = (Position) this.getCanonicalPath();
+      Position p2  = (Position) ((Position)o).getCanonicalPath();
       /* we need to check only the meaningful part of the omega array */
       if (p1.depth()==p2.depth()) {
         for(int i=0; i<p1.depth(); i++) {
@@ -233,10 +233,10 @@ public class Position implements Cloneable,Path {
   }
 
   public Path sub(Path p){
-    return (make(p).inv()).add(this);
+    return (make(p).inverse()).add(this);
   }
 
-  public Path inv(){
+  public Path inverse(){
     int[] inverse = new int[omega.length];
     for(int i=0;i<omega.length;i++){
       inverse[omega.length-(i+1)]=-omega[i];
@@ -245,7 +245,7 @@ public class Position implements Cloneable,Path {
   }
 
   public static Position make(Path p){
-    Path pp = p.normalize();
+    Path pp = p.getCanonicalPath();
     int size = pp.length();
     int[] omega = new int[size];
     for(int i=0;i<size;i++){
@@ -279,9 +279,9 @@ public class Position implements Cloneable,Path {
     return new Position(result);
   }
 
-  public Path normalize(){
+  public Path getCanonicalPath(){
     if(length()==0) return (Path) clone();
-    int[] normalizedTail = ((Position)(getTail().normalize())).toArray();
+    int[] normalizedTail = ((Position)(getTail().getCanonicalPath())).toArray();
     if(normalizedTail.length==0 || omega[0]!=-normalizedTail[0]){
       int[] result = new int[1+normalizedTail.length];
       result[0]=omega[0];

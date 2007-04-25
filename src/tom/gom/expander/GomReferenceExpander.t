@@ -87,7 +87,7 @@ public class GomReferenceExpander {
       forTermgraph:boolean,
       hookList:ArrayList) extends Identity(){
     visit Module {
-      module@Module[
+      Module[
         MDecl=mdecl@ModuleDecl[ModuleName=modName],Sorts=sorts] -> {
         hookList.add(expHooksModule(`modName,`sorts,`mdecl,packagePath,forTermgraph));
       }
@@ -126,9 +126,9 @@ public class GomReferenceExpander {
         return make(pp.add(p));
       }
 
-    public Path inv(){
+    public Path inverse(){
       Position pp = Position.make(this);
-      return make(pp.inv());
+      return make(pp.inverse());
     }
 
     public Path sub(Path p){
@@ -144,11 +144,11 @@ public class GomReferenceExpander {
       return (Path) getTailpath@sortName@();
     }
 
-    public Path normalize(){
+    public Path getCanonicalPath(){
       %match(this) {
         path@sortName@(X*,x,y,Y*) -> {
           if (`x==-`y) {
-            return ((Path)`path@sortName@(X*,Y*)).normalize();
+            return ((Path)`path@sortName@(X*,Y*)).getCanonicalPath();
           }
         }
       }
@@ -162,7 +162,7 @@ public class GomReferenceExpander {
 
     public static path@sortName@ make(Path path){
       @sortName@ ref = `path@sortName@();
-      Path pp = path.normalize();
+      Path pp = path.getCanonicalPath();
       int size = pp.length();
       for(int i=0;i<size;i++){
         ref = `path@sortName@(ref*,pp.getHead());
@@ -314,7 +314,7 @@ public class GomReferenceExpander {
           }
           else {
             Position target = (Position) map.get(`label);
-            @sortName@ ref = (@sortName@) (path@sortName@.make(target.sub(getEnvironment().getPosition())).normalize());
+            @sortName@ ref = (@sortName@) (path@sortName@.make(target.sub(getEnvironment().getPosition())).getCanonicalPath());
             return ref;
           }
         }
@@ -343,9 +343,9 @@ public class GomReferenceExpander {
             Position old = getEnvironment().getPosition();
             Position rootpos = new Position(new int[]{});
             map.put(`label,old);
-            getEnvironment().goTo(rootpos.sub(getEnvironment().getPosition()));
+            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
             execute(`Try(TopDown(CollectSubterm@sortName@(label,info))));
-            getEnvironment().goTo(old.sub(getEnvironment().getPosition()));
+            getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
             return `lab@sortName@(label,info.term);
           }
         }

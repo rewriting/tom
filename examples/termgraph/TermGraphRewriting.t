@@ -128,9 +128,9 @@ public class TermGraphRewriting {
           Position old = getEnvironment().getPosition();
           Position rootpos = new Position(new int[]{});
           map.put(`label,old);
-          getEnvironment().goTo(rootpos.sub(getEnvironment().getPosition()));
+          getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
           execute(`Try(TopDown(CollectSubterm(label,info))));
-          getEnvironment().goTo(old.sub(getEnvironment().getPosition()));
+          getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
           return `labTerm(label,info.term);
         }
       }
@@ -147,12 +147,12 @@ public class TermGraphRewriting {
         Position current = getEnvironment().getPosition(); 
         Position dest = (Position) current.add((Path)`p).normalize();
         if(current.compare(dest)== -1) {
-          getEnvironment().goTo((Path)`p);
+          getEnvironment().followPath((Path)`p);
           Position realDest = getEnvironment().getPosition(); 
           if(!realDest.equals(dest)) {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
-            getEnvironment().goTo(current.sub(getEnvironment().getPosition()));
+            getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
             return pathTerm.make(realDest.sub(current));
           } else {
             //we must switch the rel position and the pointed subterm
@@ -168,7 +168,7 @@ public class TermGraphRewriting {
 
             // 4. we replace at dest  the subterm by the new relative pos
             getEnvironment().setSubject(relref);
-            getEnvironment().goTo(current.sub(getEnvironment().getPosition()));
+            getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
             return subterm; 
           }
         }

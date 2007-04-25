@@ -170,7 +170,7 @@ public class Environment implements Cloneable {
    * get the current sub-position
    * @return the current sub-position
    */
-  public int getSubOmega() {
+  private int getSubOmega() {
     return omega[size-1];
   }
 
@@ -227,8 +227,8 @@ public class Environment implements Cloneable {
   }
 
 
-  public void goTo(Path path) {
-    Path normalizedPath = path.normalize();
+  public void followPath(Path path) {
+    Path normalizedPath = path.getCanonicalPath();
     int length = normalizedPath.length();
     for(int i=0;i<length;i++) {
       int head = normalizedPath.getHead();
@@ -237,7 +237,7 @@ public class Environment implements Cloneable {
         down(head);
         if (getSubject() instanceof Path && !(normalizedPath.length()==0)) {
           // we do not want to follow the last reference
-          goTo((Path)getSubject());
+          followPath((Path)getSubject());
         }
       } else {
         //verify that getsubomega() = -head
