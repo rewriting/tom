@@ -7,3 +7,5 @@
 - Ref(Variable)
 - simplify the propagators because now we do not care if the last element is a var star (we have hooks)
 - cache the propagators after they are obtained with reflection
+- optimze using java lists instead of conc(l*,a) or at least reverse
+- try to hava all variable generation in one place (even prefixes)

@@ -31,45 +31,30 @@ public class TomPropagationManager {
     throws ClassNotFoundException,InstantiationException,IllegalAccessException{
     
     // counts the propagators that didn't change the expression
-    short propCounter = 0;
-    Constraint result = null;	
+    int propCounter = 0;
+    int propNb = propagatorsNames.length;    	
 
     // some preparations
     constraintToCompile = preparePropagations(constraintToCompile);
-
-    // iterate until all propagators are applied and nothing was changed 
+    // cache the propagators
+    TomIBasePropagator[] prop = new TomIBasePropagator[propNb];
+    for(int i=0 ; i < propNb ; i++) {
+      prop[i] = (TomIBasePropagator)Class.forName(propagatorsPackage + propagatorsNames[i]).newInstance();
+    }
+    
+    Constraint result= null;
     mainLoop: while(true) {
-      for(String i:propagatorsNames) {
-// [pem] do we really want to instantiate a new propagator inside the while loop ? can't we use an array of propagators instead ?
-        TomIBasePropagator prop = (TomIBasePropagator)Class.forName(propagatorsPackage + i).newInstance();
-        result = prop.propagate(constraintToCompile);
-// [pem] the algorithm is a bit complex: can't we find a simpler one ?
+      for(int i=0 ; i < propNb ; i++) {
+        result = prop[i].propagate(constraintToCompile);
         // if nothing was done, start counting 
-        if(result == constraintToCompile) {
-          propCounter++;
-        } else {
-          // reset counter
-          propCounter = 0;
-        }
-
+        propCounter = (result == constraintToCompile) ? (propCounter+1) : 0;        
         // if we applied all the propagators and nothing changed,
         // it's time to stop
-        if(propCounter == propagatorsNames.length) { break mainLoop; }
+        if(propCounter == propNb) { break mainLoop; }
         // reinitialize
         constraintToCompile = result;
       }
-    } // end while
-
-/* [pem] a simpler algorithm could be something like :
-      N = propagatorsNames.length;
-      for(i=0 ; i<N ; i++) {
-      TomIBasePropagator prop[i] = (TomIBasePropagator)Class.forName(propagatorsPackage + i).newInstance();
-    }
-    while(result[i] != result[(i-N)%N]) {
-      result[i%N] = prop[i%N].propagate(result[(i-1)%N]);
-      i++;
-    }
-*/
+    } // end while    
     return result;
   }
 

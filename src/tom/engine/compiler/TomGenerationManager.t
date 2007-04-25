@@ -37,25 +37,26 @@ public class TomGenerationManager {
   public static Instruction performGenerations(Constraint constraint, Instruction action) 
   throws ClassNotFoundException,InstantiationException,IllegalAccessException{		
     // counts the generators that didn't change the instruction
-    short genCounter = 0;
+    int genCounter = 0;
+    int genNb = generatorsNames.length;
+    
     Expression result = null;    
-    Expression expression = prepareGeneration(constraint);    
+    Expression expression = prepareGeneration(constraint);
+    // cache the generators
+    TomIBaseGenerator[] gen = new TomIBaseGenerator[genNb];
+    for(int i=0 ; i < genNb ; i++) {
+      gen[i] = (TomIBaseGenerator)Class.forName(generatorsPackage + generatorsNames[i]).newInstance();
+    }
+    
     // iterate until all propagators are applied and nothing was changed 
     mainLoop: while(true){		
-      for(String i:generatorsNames){
-
-        TomIBaseGenerator gen = (TomIBaseGenerator)Class.forName(generatorsPackage + i).newInstance();
-        result = gen.generate(expression);
+      for(int i=0 ; i < genNb ; i++){        
+        result = gen[i].generate(expression);
         // if nothing was done, start counting 
-        if (result == expression){
-          genCounter++;
-        }else{
-          // reset counter
-          genCounter = 0;
-        }				
-        // if we applied all the propagators and nothing changed,
+        genCounter = (result == expression) ? (genCounter + 1) : 0;        				
+        // if we applied all the generators and nothing changed,
         // it's time to stop
-        if (genCounter == generatorsNames.length) { break mainLoop; }
+        if (genCounter == genNb) { break mainLoop; }
         // reinitialize
         expression = result; 
       }
