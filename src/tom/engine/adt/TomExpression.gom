@@ -19,6 +19,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   */		              
            | OrExpressionDisjunction(Expression*)
            | GreaterThan(Arg1:Expression,Arg2:Expression)
+           | AntiMatchExpression(Expression:Expression)
            | Conditional(Cond:Expression,Then:Expression,Else:Expression)
            | TrueTL()
            | FalseTL()

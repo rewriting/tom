@@ -22,10 +22,7 @@ Constraint =
 		   */		   
   		   | OrConstraintDisjunction(Constraint*)
 		   | MatchConstraint(pattern:TomTerm, subject:TomTerm)
-//		   | NMatchConstraint(pattern:TomTerm, subject:TomTerm)
-//		   | Exists(var:TomTerm,cons:Constraint)
-//		   | ForAll(var:TomTerm,cons:Constraint)
-		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
+		   | AntiMatchConstraint(Constraint:Constraint)
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
   		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
 
