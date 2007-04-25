@@ -28,24 +28,63 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **/
+
 package tom.library.sl;
+
+/**
+ * Represent a path between two locations in a term.
+ * The implementations of this class must define several algebraic operations                                      
+ * on these paths (i.e. addition, substraction, inverse).                                                          
+ */                                                                                                               
 
 public interface Path {
 
+  /**
+   * Computes the path from the source of this to the target of the parameter p.
+   * The addition of two paths must respect the following equations:
+   * <p>
+   * <code>t1.add(t2) = (t1.getTail().add(t2)).conc(t1.getHead()) if t1.length()>0,</code> 
+   * <p>
+   * <code>t1.add(t2) = t2</code>  otherwise.
+   * @return the path corresponding to the addition of this and the parameter p.
+   * @param p the path to add. 
+   */
   public Path add(Path p);
-  
-  public Path inv();
 
+  /**
+   * Computes the path from the target of this to the target of the parameter p.
+   * The substraction of two paths must respect the following equation:
+   * <p>
+   * <code>t1.sub(t2) = t2.inv().add(t1),</code> 
+   * @return the path corresponding to the substraction of this and the parameter p.
+   * @param p the path to substract. 
+   */
   public Path sub(Path p);
 
+  /**
+   * Computes the path from the target of this to the source of this.
+   * The inverse operation  must respect the following equations:
+   * <p>
+    * <code>t.inv() = t.getTail().inv().add(-t.getHead()) if t1.length()>0,</code> 
+   * <p>
+   * <code>t.inv() = t</code> otherwise 
+   * @return the path corresponding to the inverse path of this.
+   */
+  public Path inv();
+  
   public int length();
 
   public int getHead();
 
   public Path getTail();
-  
+
+  /**
+   * Gives a canonical form of a path 
+   * @return its canonical form 
+   */
+
   public Path normalize();
-  
+
   public Path conc(int i);
 
   public int compare(Path path);

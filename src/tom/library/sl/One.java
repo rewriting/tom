@@ -30,17 +30,22 @@
  **/
 package tom.library.sl;
 
-/**
- * <code>T(t1,...,ti,...,tN).accept(One(v)) = T(t1,...,ti.accept(v),...,tN)</code>
- * if <code>ti</code> is the first child that succeeds.
+
+/**                                                                                                                
+ * <p>                                                 
+ * Basic strategy combinator with one strategy argument <code>s</code>, that
+ * applies this strategy <code>s</code> to exactly one child. If for all children
+ * the strategy <code>s</code> fails, <code>One(s)</code>
+ * fails. Applying <code>One</code> combinator to a constant always                                    
+ * fails.
  * <p>
- * Basic visitor combinator with one visitor argument, that applies
- * this visitor to exactly one child. If no children are visited
- * successfully, then One(v) fails.
+ * <code>One(s)[f(t1,...,ti,...,tn)]=f(t1,...,ti',...,,tn)</code> if <code>s[t1], ..., s[ti-1]</code> fail and <code>s[ti]=ti'</code>
  * <p>
- * Note that side-effects of failing visits to children are not
- * undone.
- */
+ fails if <code>s[t1],...,s[tn]</code> fail.
+ * <p>
+ * <code> One(s)[c]</code> fails if <code>c</code> is a constant
+ * <p>
+ */       
 
 public class One extends AbstractStrategy {
   public final static int ARG = 0;
@@ -49,6 +54,9 @@ public class One extends AbstractStrategy {
     initSubterm(v);
   }
 
+  /** Method herited from the apply() method of mutraveler library
+   * @deprecated use fire() instead
+   */ 
   public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
@@ -60,6 +68,11 @@ public class One extends AbstractStrategy {
     throw new jjtraveler.VisitFailure();
   }
 
+  /**
+   *  Visits the current subject (found in the environment)
+   *  and place its result in the environment.
+   *  Sets the environment flag to Environment.FAILURE in case of failure
+   */
   public void visit() {
     int childCount = getSubject().getChildCount();
 

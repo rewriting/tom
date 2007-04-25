@@ -29,13 +29,23 @@
  *
  **/
 package tom.library.sl;
-
-/**
- * <code>All(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
+/**                                                                                                                
+ * <p>                                                 
+ * Basic strategy combinator with one strategy argument <code>s</code>, that
+ * applies this strategy <code>s</code> to all children. If there exists one
+ * child for which the strategy <code>s</code> fails, <code>All(s)</code>
+ * fails. Applying <code>All</code> combinator to a constant always                                    
+ * succeeds and behaves like the <code>Identity()</code> strategy.                                                  * <p>                                                 
+ * <code>All(s)[f(t1,...,tn)]=f(t1',...,tn')</code> if <code>s[t1]=t1', ..., s[tn]=tn'</code>
  * <p>
- * Basic visitor combinator with one visitor argument, that applies
- * this visitor to all children.
- */
+ fails if there exists <code>i</code> such that <code>s[ti]</code> fails.
+ * <p>
+ * <code> All(s)[c]=c</code> is <code>c</code> is a constant 
+ * <p>
+ * Note that this All is parallel in the sense that s is applied to every child
+ * before changing the current subject.
+ * If you are interested in a sequential behaviour, {@link tom.library.sl.AllSeq}
+ */       
 
 public class All extends AbstractStrategy {
   public final static int ARG = 0;
@@ -44,6 +54,9 @@ public class All extends AbstractStrategy {
     initSubterm(v);
   }
 
+  /** Method herited from the apply() method of mutraveler library
+   * @deprecated use fire() instead
+   */ 
   public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     int childCount = any.getChildCount();
     jjtraveler.Visitable result = any;
@@ -72,6 +85,11 @@ public class All extends AbstractStrategy {
     return result;
   }
 
+  /**
+   *  Visits the current subject (found in the environment)
+   *  and place its result in the environment.
+   *  Sets the environment flag to Environment.FAILURE in case of failure
+   */
   public void visit() {
     Visitable any = getSubject();
     int childCount = any.getChildCount();
