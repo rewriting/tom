@@ -90,12 +90,51 @@ public class RuleExpander {
     Iterator it = rulesForOperator.keySet().iterator();
     while (it.hasNext()) {
       OperatorDecl opDecl = (OperatorDecl) it.next();
-      SlotList args = opArgs(opDecl.getProd().getSlots(),1);
-      String hookCode =
-        generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
-      hookList =
-        `concHookDecl(hookList*,
-            MakeHookDecl(CutOperator(opDecl),args,Code(hookCode)));
+      TypedProduction prod = opDecl.getProd();
+      %match(prod) {
+        /* Syntactic operator */
+        Slots[Slots=slotList] -> {
+          SlotList args = opArgs(`slotList,1);
+          String hookCode =
+            generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
+          hookList =
+            `concHookDecl(hookList*,
+                MakeHookDecl(CutOperator(opDecl),args,Code(hookCode)));
+        }
+        /* Variadic operator */
+        Variadic[Sort=sort] -> {
+          RuleList rules = (RuleList) rulesForOperator.get(opDecl);
+          /* Handle rules for empty: there should be at least one */
+          int count = 0;
+          RuleList nonEmptyRules = rules;
+          %match(rules) {
+            RuleList(R1*,
+                rule@(Rule|ConditionalRule)[lhs=Appl[args=TermList()]],
+                R2*) -> {
+              count++;
+              nonEmptyRules = `RuleList(R1*,R2*);
+              String hookCode =
+                generateHookCode(`concSlot(),`RuleList(rule));
+              hookList =
+                `concHookDecl(hookList*,
+                    MakeHookDecl(CutOperator(opDecl),concSlot(),Code(hookCode)));
+            }
+          }
+          if (count>1) {
+            getLogger().log(Level.WARNING, "Multiple rules for empty {0}",
+                new Object[]{ opDecl.getName() });
+          }
+          /* Then handle rules for insert */
+          if (!nonEmptyRules.isEmptyRuleList()) {
+            SlotList args = `concSlot(Slot("head",sort),Slot("tail",opDecl.getSort()));
+            String hookCode =
+              generateVariadicHookCode(args, nonEmptyRules);
+            hookList =
+              `concHookDecl(hookList*,
+                  MakeHookDecl(CutOperator(opDecl),args,Code(hookCode)));
+          }
+        }
+      }
     }
     return hookList;
   }
@@ -151,6 +190,32 @@ public class RuleExpander {
     return output.toString();
   }
 
+  private String generateVariadicHookCode(SlotList slotList, RuleList ruleList) {
+    StringBuffer output = new StringBuffer();
+    output.append("    %match(realMake(head,tail)) {\n");
+    while(!ruleList.isEmptyRuleList()) {
+      Rule rule = ruleList.getHeadRuleList();
+      ruleList = ruleList.getTailRuleList();
+      %match(rule) {
+        Rule(lhs,rhs) -> {
+          genTerm(`lhs,output);
+          output.append(" -> { return `");
+          genTerm(`rhs,output);
+          output.append("; }\n");
+        }
+        ConditionalRule(lhs,rhs,cond) -> {
+          genTerm(`lhs,output);
+          output.append(" -> { if `(");
+          genCondition(`cond,output);
+          output.append(") { return `");
+          genTerm(`rhs,output);
+          output.append("; } }\n");
+        }
+      }
+    }
+    output.append("    }\n");
+    return output.toString();
+  }
   private void genTermList(TermList list, StringBuffer output) {
     %match(list) {
       TermList() -> { return; }

@@ -54,11 +54,11 @@ public class TestRuleList extends TestCase {
     assertEquals(`conc(f(b())),`conc(f(c())));
     assertEquals(`conc(f(b()),f(b())),`conc(f(c()),f(c())));
     assertEquals(`conc(f(a()),f(a())),`conc(f(c()),f(c())));
-    assertEquals(`conc(a(),f(a()),a(),f(a()),a()),`conc(a(),f(c()),a(),f(c())a()));
+    assertEquals(`conc(a(),f(a()),a(),f(a()),a()),`conc(a(),f(c()),a(),f(c()),a()));
   }
   public void test3() {
     assertEquals(`g(conc(f(a()))),`g(conc(f(d()))));
     assertEquals(`g(conc(f(a()),f(a()))),`g(conc(f(d()),f(d()))));
-    assertEquals(`g(conc(a(),f(a()),a(),f(a()),a())),`g(conc(a(),f(d()),a(),f(d())a())));
+    assertEquals(`g(conc(a(),f(a()),a(),f(a()),a())),`g(conc(a(),f(d()),a(),f(d()),a())));
   }
 }

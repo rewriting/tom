@@ -51,6 +51,7 @@
          <include name="gom/Dotted.gom"/>
          <include name="gom/MultiHook.gom"/>
          <include name="gom/RuleBool.gom"/>
+         <include name="gom/RuleList.gom"/>
     </gom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
