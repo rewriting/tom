@@ -120,6 +120,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
         // for each constraint
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
+            System.out.println("here");
             assigns = `AndConstraint(MatchConstraint(var,s),assigns*);                                                                                                                       
           }
         }// end match

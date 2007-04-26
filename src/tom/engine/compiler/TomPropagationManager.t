@@ -2,8 +2,6 @@ package tom.engine.compiler;
 
 import java.util.ArrayList;
 
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
-
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -20,6 +18,7 @@ public class TomPropagationManager {
 
 //------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/_TomSignature.tom }
   %include { sl.tom }
   %include { java/util/types/ArrayList.tom}
 //------------------------------------------------------
@@ -64,23 +63,22 @@ public class TomPropagationManager {
   /**
    * Before propagations
    * - make sure that all constraints attached to terms are handled
-   * - make sure that the aps are detached
+   * - do nothing for the anti-patterns
    */
   private static Constraint preparePropagations(Constraint constraintToCompile) {
-    ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
-    // it is very important to have Outermost because we want the term first and only after its' subterms 
-    Constraint newConstr = (Constraint)`OutermostId(Choice(IsAntiTerm(),DetachConstraints(constraintList))).fire(constraintToCompile);		
+    ArrayList<Constraint> constraintList = new ArrayList<Constraint>(); 
+    /* anti-terms are a little bit special and constraint detachment is performed in propagators
+     * here we shouldn't do it because of the non-linearity ()
+     * 
+     * The strategy makes a TopDown, and when finding an AntiTerm, it doesn't traverse its children
+     */    
+    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),Sequence(DetachConstraints(constraintList),All(MuVar("xx")))))
+                            .fire(constraintToCompile);    
     Constraint andList = `AndConstraint();
     for(Constraint constr: constraintList) {
       andList = `AndConstraint(andList*,constr);
     }    
     return `AndConstraint(newConstr,andList*);
-  }
-  
-  %strategy IsAntiTerm() extends Fail() {
-    visit TomTerm {
-      AntiTerm[] -> { }
-    }
   }
 
   /**
@@ -89,13 +87,7 @@ public class TomPropagationManager {
   %strategy DetachConstraints(bag:ArrayList) extends Identity() {
     // if the constraints  = empty list, then is nothing to do
     visit TomTerm {
-//      // anti-terms are a little bit special and constraint detachment is performed in propagators
-//      // here we shouldn't do it because of the non-linearity ()
-//      a@AntiTerm[] -> {
-//        throw new VisitFailure();
-//      }
       t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] -> {
-
         TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = null;
         // make sure that if we had a varStar, we replace with a varStar also
