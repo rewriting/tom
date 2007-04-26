@@ -101,16 +101,15 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
        */
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[Constraints=constraints]),s) -> {
         TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getTermTypeFromTerm(`term));
-        Constraint assigns = `AndConstraint();
+        Constraint assigns = `AndConstraint(AntiMatchConstraint(MatchConstraint(term,freshVar)));
         // for each constraint
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {            
-            assigns = `AndConstraint(MatchConstraint(var,freshVar),assigns*);                                                                                                                       
+            assigns = `AndConstraint(MatchConstraint(var,freshVar),assigns*);
           }
         }// end match
         // add fresh var assignment
-        assigns = `AndConstraint(MatchConstraint(freshVar,s),assigns*);
-        return `AndConstraint(assigns*,AntiMatchConstraint(MatchConstraint(term,freshVar)));
+        return = `AndConstraint(MatchConstraint(freshVar,s),assigns*);
       }
 
       /*
@@ -135,7 +134,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
   %strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity() {
     visit Constraint {
       MatchConstraint(Variable[AstName=name],t) -> {
-        if (`name == varName) { return `MatchConstraint(value,t); }
+        if(`name == varName) { return `MatchConstraint(value,t); }
       }
     }
   }// end strategy
