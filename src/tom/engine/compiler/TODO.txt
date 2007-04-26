@@ -9,3 +9,4 @@
 - cache the propagators after they are obtained with reflection
 - optimze using java lists instead of conc(l*,a) or at least reverse
 - try to hava all variable generation in one place (even prefixes)
+- all comments should be like in SynctacticPropagator
