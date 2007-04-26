@@ -75,6 +75,7 @@ public class One extends AbstractStrategy {
    */
   public void visit() {
     int childCount = getSubject().getChildCount();
+    Visitable originalsubject = getEnvironment().getSubject();
 
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
@@ -85,6 +86,7 @@ public class One extends AbstractStrategy {
       } else {
         /* Forget about the failure, to try another subterm */
         setStatus(Environment.SUCCESS);
+        setSubject(originalsubject);
       }
     }
     /* If we reach this point, there is a real failure */

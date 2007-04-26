@@ -62,10 +62,10 @@ public class ChoiceId extends AbstractStrategy {
     if (getStatus() == Environment.SUCCESS && ! getEnvironment().getSubject().equals(subject)) {
       return;
     } else {
+      /* restore the subject */
+      /* we are juste interested in the status */
+      getEnvironment().setSubject(subject);
       if (getStatus() == Environment.FAILURE) {
-        /* restore the subject */
-        /* we are juste interested in the status */
-        getEnvironment().setSubject(subject);
         return;
       } else {
         visitors[THEN].visit();
