@@ -27,39 +27,18 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
 
   %strategy SyntacticPatternMatching() extends `Identity() {
     visit Constraint {
-      //TODO - can be replaced by the one above ?      
-      // Decompose
-      // f(t1,...,tn) = g -> f = SymbolOf(g) /\ freshVar1=subterm1(g) /\ t1=freshVar1 /\ ... /\ freshVarn=subtermn(g) /\ tn=freshVarn
-      //
-      // we can decompose only if 'g' != SymbolOf            
-      m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName)),slots,constraints),g@!SymbolOf[]) -> {
-        // if this a list or array, nothing to do
-        if(!TomBase.isSyntacticOperator(
-            TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
-        Constraint l = `AndConstraint();
-        // for each slot
-        %match(slots) {
-          concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
-            TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getSlotType(`name,`slotName));            
-            l = `AndConstraint(l*,
-                MatchConstraint(freshVar,Subterm(name,slotName,g)),
-                MatchConstraint(appl,freshVar));
-          }
-        }
-        // add head equality condition
-        l = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),constraints),SymbolOf(g)),l*);			
-        return l;
-      }	
-      
-      // Decompose
-      // if f has multiple names (from f1|f2):
-// [pem] why g1|g2 ? why not g ?
-      // (f1|f2)(t1,...,tn) = g1|g2 -> ( (f1 = SymbolOf(g) /\ freshVar1=subterm1_f1(g) /\ ... /\ freshVarn=subtermn_f1(g)) 
-      // \/ (f2 = SymbolOf(g) /\ freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) /\ t1=freshVar1 /\ ... /\ tn=freshVarn       
-      // 
-      // we can decompose only if 'g' != SymbolOf      
-// [pem] a bit complex, can't we share with the previous case ?
-      m@MatchConstraint(RecordAppl(options,nameList@(Name(tomName),_,_*),slots,constraints),g@!SymbolOf[]) -> {
+      /* Decompose
+       * 
+       * f(t1,...,tn) = g -> f1 = SymbolOf(g) /\ freshVar1=subterm1_f(g) /\ ... /\ freshVarn=subterm1_f(g) 
+       * /\ t1=freshVar1 /\ ... /\ tn=freshVarn
+       * 
+       * if f has multiple names (from f1|f2): 
+       * (f1|f2)(t1,...,tn) = g -> ( (f1 = SymbolOf(g) /\ freshVar1=subterm1_f1(g) /\ ... /\ freshVarn=subtermn_f1(g))
+       * \/ (f2 = SymbolOf(g) /\ freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) /\ t1=freshVar1 /\ ... /\ tn=freshVarn
+       * 
+       * we can decompose only if 'g' != SymbolOf
+       */
+      m@MatchConstraint(RecordAppl(options,nameList@(Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
             TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
@@ -119,8 +98,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
         Constraint assigns = `AndConstraint();
         // for each constraint
         %match(constraints) {
-          concConstraint(_*,AssignTo(var),_*) -> {
-            System.out.println("here");
+          concConstraint(_*,AssignTo(var),_*) -> {            
             assigns = `AndConstraint(MatchConstraint(var,s),assigns*);                                                                                                                       
           }
         }// end match
