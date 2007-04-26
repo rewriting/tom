@@ -1,3 +1,6 @@
+2007-04-26  burel <burel@loria.fr>
+  * some more mappings for ocaml basis types (bool, char, string)
+
 2007-04-20  pem
   * gom do no longer generate op? mapping
   * the KernelCompiler generates correct call to IsFsym or IsSort
