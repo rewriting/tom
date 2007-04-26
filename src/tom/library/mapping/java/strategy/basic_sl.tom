@@ -145,8 +145,8 @@
 }
 
 %op Strategy OneId(s1:Strategy) {
-  is_fsym(t) { (t instanceof tom.library.sl.One}
-  make(v) { new tom.library.sl.One(new tom.library.sl.FailOnId(v)) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.One.ARG) }
+  is_fsym(t) { (t instanceof tom.library.sl.OneId }
+  make(v) { new tom.library.sl.OneId(v) }
+  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.OneId.ARG) }
 }
 
