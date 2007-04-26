@@ -1,0 +1,47 @@
+addrules lappl(lambda(a),b) -> subst(a,lcons(b,id.)) 
+addrules subst(lappl(b,a),s) -> lappl(subst(b,s),subst(a,s))
+addrules subst(one.,lcons(a,s)) -> a
+addrules subst(a,id.) -> a
+addrules subst(lambda(a),s) -> lambda(subst(a,lcons(one.,rond(s,shift.))))
+addrules subst(subst(a,s),t) -> subst(a,rond(s,t))
+addrules rond(id.,s) -> s
+addrules rond(shift.,lcons(a,s)) -> s
+addrules rond(rond(s1,s2),s3) -> rond(s1,rond(s2,s3))
+addrules rond(lcons(a,s),t) -> lcons(subst(a,t),rond(s,t))
+addrules rond(s,id.) -> s
+addrules lcons(one.,shift.) -> id.
+addrules lcons(subst(one.,s), rond(shift., s)) -> s
+
+addrules subst(pitype(a,b),s) -> pitype(subst(a,s),subst(b,lcons(one.,rond(s,shift.))))
+addrules subst(pikind(a,b),s) -> pikind(subst(a,s),subst(b,lcons(one.,rond(s,shift.))))
+
+addrules in(type.,kind.) --> A\/-A
+addrules in(pitype(a,b),type.) --> in(a,type.) /\ %
+		    (ALL z. (in(z,a) => in(subst(b,lcons(z,id.)), type.)))
+addrules in(pikind(a,b),kind.) --> in(a,type.) /\ %
+		    (ALL z. (in(z,a) => in(subst(b,lcons(z,id.)), kind.)))
+addrules in(a,pitype(b,c)) --> in(b,type.) /\ (ALL z. (in(z,b) => %
+	       	  (in(lappl(a,z),subst(c,lcons(z,id.))) /\ in(subst(c,lcons(z,id.)),type.))))
+addrules in(a,pikind(b,c)) --> in(b,type.) /\ (ALL z. (in(z,b) => %
+	       	  (in(lappl(a,z),subst(c,lcons(z,id.))) /\ in(subst(c,lcons(z,id.)),kind.))))
+
+addrules WF(cons(gamma,e(a,b))) --> %
+    (WF(gamma)=>(in(b,type.)\/in(b,kind.))) => (C(gamma) /\in(a,b))
+
+addrules C(cons(gamma,e(a,b))) --> %
+     C(gamma) /\ in(a,b)
+
+tab EX x. (in(a.,type.)=> in(pikind(a.,subst(x,shift.)),kind.))
+
+quit.
+
+tab (in(nat.,type.) /\ %
+     in(z.,nat.) /\ %
+     in(succ.,pitype(nat.,subst(nat.,shift.))) /\ %
+     in(natList., pikind(nat., subst(type.,shift.))) /\ %
+     in(nil.,lappl(natList.,z.)) /\ %
+     in(cons., pitype(nat., pitype(subst(nat.,shift.), pitype(lappl(subst(natList.,rond(shift.,shift.)), one.), %
+      	 	  	    lappl(subst(natList.,rond(shift.,rond(shift.,shift.))), lappl(subst(succ.,rond(shift.,rond(shift.,shift.))),subst(one.,shift.)))))))) %
+ => in(lappl(lappl(lappl(cons., lappl(succ., z.)), z.), nil.), lappl(natList.,lappl(succ.,z.)))
+
+quit

@@ -1,0 +1,38 @@
+rules appl(t,nil.) -> t, %
+ appl(one.,cons(t,l)) -> t, %
+ appl(S(n),cons(t,l)) -> appl(n,l), %
+ appl(succ(t),l) -> succ(appl(t,l)), %
+ appl(pred(t),l) -> pred(appl(t,l)), %
+ appl(plus(t1,t2),l) -> plus(appl(t1,l),appl(t2,l)), %
+ appl(mult(t1,t2),l) -> mult(appl(t1,l),appl(t2,l)), %
+  %
+ pred(O.) -> O., %
+ pred(succ(x)) -> x, %
+ plus(O., y) -> y, %
+ mult(O., y) -> O., %
+ plus(succ(x), y) -> succ(plus(x,y)), %
+ mult(succ(x),y) -> plus(mult(x, y), y), %
+  %
+ in(l,fNull(t)) --> Null(appl(t,l)), %
+ in(l,fEq(t1,t2)) --> eq( appl(t1,l), appl(t2,l) ), %
+ in(l,fN(t)) --> N(appl(t,l)), %
+ eq(s,t) --> ALL A. (  in(cons(s,nil.),A) => in(cons(t,nil.),A) ), %
+ N(n) --> ALL A. ( in(cons(O.,nil.),A) => ( ALL y. (in(cons(y,nil.),A) =>  in(cons(succ(y),nil.),A)) => in(cons(n,nil.),A) )), %
+  %
+ Null(O.) --> A \/ -A, %
+ Null(succ(x)) --> A /\ -A, %
+ in(l,inter(A,B)) --> in(l,A) /\ in(l,B), %
+ in(l,union(A,B)) --> in(l,A) \/ in(l,B), %
+ in(l,supset(A,B)) --> in(l,A) => in(l,B), %
+ in(l,emptyset.) --> A /\ -A, %
+ in(l,P(a)) --> EX n. (in(cons(n,l),A)), %
+ in(l,C(a)) --> ALL n. (in(cons(n,l),A)) 
+
+%comp
+
+%tab ALL x y. eq(x,y) => eq(succ(x),succ(y))
+%tab ALL x y. eq(x,y) => eq(y,x)
+
+%tab EX x. eq(plus(succ(x),succ(x)),succ(succ(O.)))
+
+tab EX x y z. eq(plus(mult(x,x),mult(y,y)),mult(z,z))

@@ -1,0 +1,5 @@
+rules %
+ plus(O., y) -> y, %
+ plus(succ(x),y) -> succ(plus(x,y))
+
+tab eq(succ(succ(succ(succ(O.)))),succ(succ(succ(succ(O.))))) => (EX x. eq(plus(x,x),succ(succ(succ(succ(O.))))))

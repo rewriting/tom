@@ -1,0 +1,11 @@
+rules a(a(K.,x),y) -> x, %
+      a(a(a(S.,x),y),z) -> a(a(x,z),a(y,z)), %
+      eq(x,x) --> A \/ -A
+
+%existence of the identity TPTP COL001
+%tab EX i. ALL x. eq(a(i,x),x)
+
+tab EX u. ALL x y. eq(a(a(u,x), y), a(y,a(a(x,x),y)))
+
+% strong fixpoint TPTP COL006
+%tab EX f. ALL x. eq(a(f,x),a(x,a(f,x)))

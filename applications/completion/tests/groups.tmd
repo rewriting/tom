@@ -1,0 +1,35 @@
+% complete rewrite system for a group
+rules plus(x,e.) -> x, %
+      plus(e.,x) -> x, %
+      plus(x,plus(y,z)) -> plus(plus(x,y),z), %
+      plus(x,i(x)) -> e., %
+      plus(i(x),x) -> e., %
+      i(e.) -> e., %
+      plus(plus(y,i(x)),x) -> y, %
+      plus(plus(y,x),i(x)) -> y, %
+      i(i(x)) -> x, %
+      i(plus(x,y)) -> plus(i(x),i(y)), %
+      eq(x,x) --> A \/ -A
+
+% TPTP GRP001
+tab (ALL x. eq(plus(x,x),e.)) => (ALL x. eq(plus(x,y),plus(y,x)))
+
+% unicity of the (left) neutral element
+tab (ALL x. (ALL y. eq(plus(x,y), y)) => eq(x,e.))
+
+% TPTP GRP005
+tab ((EX x. in(x,S.)) /\ (ALL x. ALL y. (in(x,S.) /\ in(y,S.)) => %
+    	 in(plus(x,i(y)),S.))) => in(e.,S.)
+
+% TPTP GRP006
+tab ((EX x. in(x,S.)) /\ (ALL x. ALL y. (in(x,S.) /\ in(y,S.)) => %
+    	 in(plus(x,i(y)),S.))) => (ALL x. in(x,S.) => in(i(x),S.))
+
+% left cancellation TPTP GRP011
+tab (ALL x. ALL y. eq(plus(x,y),plus(y,x))) => (eq(plus(b.,c.),plus(d.,c.)) => eq(b.,d.))
+
+addrules commut(x,y) -> plus(x,plus(y,plus(i(x),i(y))))
+
+% TPTP GRP002
+tab (ALL x. eq(plus(plus(x,x),x),e.)) => (ALL x y. eq(commut(commut(x,y),y),e.))
+
