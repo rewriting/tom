@@ -97,17 +97,20 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
        * Antipattern
        * 
        * an anti-pattern: just transform this into a AntiMatchConstraint and handle the @
-       * a@..b@!p << t -> a << t /\ ... /\ b << t /\ !(p << t) 
+       * a@..b@!p << t -> z << t /\ a << z /\ ... /\ b << z /\ !(p << z) 
        */
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[Constraints=constraints]),s) -> {
+        TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getTermTypeFromTerm(`term));
         Constraint assigns = `AndConstraint();
         // for each constraint
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {            
-            assigns = `AndConstraint(MatchConstraint(var,s),assigns*);                                                                                                                       
+            assigns = `AndConstraint(MatchConstraint(var,freshVar),assigns*);                                                                                                                       
           }
         }// end match
-        return `AndConstraint(assigns*,AntiMatchConstraint(MatchConstraint(term,s)));
+        // add fresh var assignment
+        assigns = `AndConstraint(MatchConstraint(freshVar,s),assigns*);
+        return `AndConstraint(assigns*,AntiMatchConstraint(MatchConstraint(term,freshVar)));
       }
 
       /*
