@@ -47,10 +47,28 @@ public class TomVariadicPropagator implements TomIBasePropagator {
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint l = `AndConstraint();        
 mSlots:  %match(slots) {
+          concSlot() -> {
+            l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
+          }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
             TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);            
 // [pem] I would have extracted the X.length==0 outside the mAppl match
 // [pem] if(X.lenght==0) { if(appl.isVariableStar) ... else ... }
+// [radu] it would duplicate  all the assignments for the last part           
+//            // if it is the last element               
+//            if(`X.length() == 0) {
+//              // and if it is a varStar we should only assign it, without generating a loop
+//              // (if it is unamed, we do nothing)
+//              if((`appl).isVariableStar()) {
+//                l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
+//              } else {
+//                if (!(`appl).isUnamedVariableStar()){
+//                  // for the last element, we should also check that the list ends
+//                  l = `AndConstraint(l*, EmptyListConstraint(name,newFreshVarList));
+//                }
+//              }              
+//            }// end if(X.lenght==0) 
+            
       mAppl:%match(appl) {
               // if we have a variable star
               (VariableStar | UnamedVariableStar)[] -> {                
@@ -84,20 +102,17 @@ mSlots:  %match(slots) {
               }
             }// end match
             freshVariable = newFreshVarList;
-          }
-// [pem] move the simplest case up
-          concSlot() -> {
-            l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
-          }
+          }          
         }// end match
         // add head equality condition + fresh var declaration
         l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
             freshVarDeclaration,l*);
         return l;
       }					
-      // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
-      // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-// [pem] I do not understand the rule according to the comment, may be a naming problem
+      /*
+       * Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
+       * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* ) 
+       */
       andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
