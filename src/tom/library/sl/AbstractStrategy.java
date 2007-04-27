@@ -86,11 +86,19 @@ public abstract class AbstractStrategy implements Strategy {
     return v.visit_Strategy(this);
   }
 
+  /** execute the strategy s in the current environment
+   * @parameter s the strategy to execute.
+   */
   public void execute(Strategy s) {
     AbstractStrategy.init(s,getEnvironment());
     s.visit();
   }
 
+  /** change the current subject with v and execute the strategy s in the
+   * modified environment
+   * @parameter v the new current subject.
+   * @parameter s the strategy to execute.
+   */
   public void execute(Strategy s, Visitable v) {
     setSubject(v);
     execute(s);
