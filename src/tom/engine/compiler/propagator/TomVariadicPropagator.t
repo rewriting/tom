@@ -93,7 +93,7 @@ mSlots:  %match(slots) {
               _ -> {
                 l = `AndConstraint(l*,                      
                     Negate(EmptyListConstraint(name,freshVariable)),
-                    MatchConstraint(appl,ListHead(name,listType,freshVariable)),
+                    MatchConstraint(appl,ListHead(name,TomConstraintCompiler.getTermTypeFromTerm(appl),freshVariable)),
                     MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if (`X.length() == 0) {                  
