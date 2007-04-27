@@ -38,15 +38,13 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 
 public class Matching5 implements Matching{
 	
-	%include{ mutraveler.tom }	
+	%include{ sl.tom }	
 	%include{ term/Term.tom }
 	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {

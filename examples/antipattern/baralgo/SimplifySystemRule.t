@@ -37,8 +37,6 @@ import antipattern.term.types.*;
 import jjtraveler.VisitFailure;
 import tom.library.sl.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
 public class SimplifySystemRule {
 
   %include{ term/Term.tom }
@@ -97,7 +95,7 @@ public class SimplifySystemRule {
     // it doesn't stop when an occurence is found
     ContainsTerm ct = new ContainsTerm(v,`Identity());
     try{
-      MuTraveler.init(`InnermostId(ct)).visit(l);
+      `InnermostId(ct).visit(l);
     }catch(VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);
@@ -118,7 +116,7 @@ public class SimplifySystemRule {
     Constraint res = null;
 
     try{
-      res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(l));
+      res = (Constraint) ruleStrategy.visit(`And(l));
     }catch(VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);

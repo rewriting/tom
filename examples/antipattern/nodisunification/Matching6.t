@@ -38,9 +38,8 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 
-//import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 

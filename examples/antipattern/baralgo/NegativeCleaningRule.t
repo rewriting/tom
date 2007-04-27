@@ -35,24 +35,23 @@ import antipattern.term.*;
 import antipattern.term.types.*;
 
 import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
 
 import java.util.Collection;
 
-import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.sl.*;
 
 public class NegativeCleaningRule {
-	
-	%include{ term/Term.tom }
-	%include{ mutraveler.tom }
-	
-	protected boolean isIdentity;
-	
-	public Constraint applyRules(Constraint c){
-		return c;
-	}
-	
-	public Constraint Neg(Constraint c) {
+
+  %include{ term/Term.tom }
+  %include{ sl.tom }
+
+  protected boolean isIdentity;
+
+  public Constraint applyRules(Constraint c){
+    return c;
+  }
+
+  public Constraint Neg(Constraint c) {
     %match(c) {
       Match(Variable(name),s) -> { return `False()	; }
     }

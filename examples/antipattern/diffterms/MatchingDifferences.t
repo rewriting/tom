@@ -39,155 +39,159 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 public class MatchingDifferences implements Matching {
-	
-	// %include{ atermmapping.tom }
-	%include{ term/Term.tom }
-	%include{ mutraveler.tom }
-	
-	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-		
-//		System.out.println("Problem to solve:" + c);
-		
-		//the anti-pattern to match against
-		Term ap = null;
-		//the subject to match
-		Term subject = null;
-		
-		%match(Constraint c){
-			Match(p,s) ->{
-				ap = `p;
-				subject = `s;
-			}
-		}		
-		
-		VisitableVisitor decomposeRule = new DecomposeAP(`Identity());
-		
-		try {		
-		
-			Term result = (Term) MuTraveler.init(`InnermostId(decomposeRule)).visit(ap);
-			return analyzeMembership(subject,result);			
-		} catch (VisitFailure e) {
-			
-			System.out.println("reduction failed on: " + c);
-			// e.printStackTrace();
-		}
-		return `False();
-	}	
-	
-	//checks to see if t is inside td
-	private Constraint analyzeMembership(Term t, Term td){
-		
-		//if the second is a simple term
-		//then just verify if it filters
-		%match(Term td){
-			
-			Appl(a,b) ->{
-				return termMatch(t,td);
-			}
-			
-			TermDiff(f,s)->{
-				return `isInDifference(t,f,s);
-			}
-		}	
-		
-		throw new RuntimeException("analyzeMembership: Should never get here");
-	}
-	
-	//checks to see if subjects in contained in first\second
-	private Constraint isInDifference(Term subject, Term first, Term second){
-		
-    /* System.out.println("Is in difference (subject/first/second):" + subject + " " + first + " " + second); */
-		
-		%match(Term first, Term second){
-			
-			Appl(_,_),TermDiff(dif1,dif2)->{	
-				
-				if (termMatch(subject,first) == `True() && isInDifference(subject,`dif1,`dif2) == `False()){
-					return `True();
-				}
-				
-				return `False();
-			}
-			
-			TermDiff(dif1,dif2),TermDiff(dif3,dif4)->{	
-				
-				if(`isInDifference(subject,dif1,dif2) == `True() && `isInDifference(subject,dif3,dif4) == `False()){
-					return `True();
-				}
-				
-				return `False();
-			}
-			
-			TermDiff(dif1,dif2),Appl(_,_)->{	
-				
-				if(`isInDifference(subject,dif1,dif2) == `True() && `termMatch(subject,second) == `False()){
-					return `True();
-				}
-				
-				return `False();
-			}
-			
-			Appl(_,_),Appl(_,_)->{	
-				
-				/* if the subject is in the first, but is not in the second, then
-           it means that it belongs to the difference */
-				if (termMatch(subject,first) == `True() && termMatch(subject,second) == `False()){
-					return `True();
-				}
-				
-				return `False();
-			}
-			
-			Variable(_),Appl(_,_)->{				
-				
-				if (termMatch(subject,second) == `False()){
-					return `True();
-				}
-				
-				return `False();
-			}
-			
-			Variable(_),TermDiff(dif1,dif2)->{	
-				
-				if(`isInDifference(subject,dif1,dif2) == `False()){
-					return `True();
-				}
-				
-				return `False();
-			}
-		}
-		
-		throw new RuntimeException("isInDifference: Should never get here");
-		/* return `False(); */
-	}
-	
-	/* matches two simple terms */
-	private Constraint termMatch(Term subject, Term pattern){
-		
-		VisitableVisitor matchRule = new ClassicalPatternMatching(`Identity());
-		
-		try {
-      /* System.out.println("Got:" + pattern + ", " + subject);*/
-			Constraint result = (Constraint) MuTraveler.init(`InnermostId(matchRule)).visit(`Match(pattern, subject));
-      /* System.out.println("Result:" + result);
-			if the result is a Match or an And, then this means success */
-			%match(Constraint result){
-				Match(_,_) | And(_) ->{
-					System.out.println("Part of solution:" + result);
-					return `True();
-				}
-			}
-			return result;
-		} catch (VisitFailure e) {
-			System.out.println("reduction failed on: " + `Match(pattern, subject));
-			throw new RuntimeException("termMatch: Should never get here");
-		}		
-	}
+
+  // %include{ atermmapping.tom }
+  %include{ term/Term.tom }
+  %include{ sl.tom }
+
+  public Constraint simplifyAndSolve(Constraint c, Collection solution) {
+
+//  System.out.println("Problem to solve:" + c);
+
+    // the anti-pattern to match against
+    Term ap = null;
+    // the subject to match
+    Term subject = null;
+
+    %match(Constraint c){
+      Match(p,s) ->{
+        ap = `p;
+        subject = `s;
+      }
+    }		
+
+    Strategy decomposeRule = new DecomposeAP(`Identity());
+
+    try {		
+
+      Term result = (Term) `InnermostId(decomposeRule).visit(ap);
+      return analyzeMembership(subject,result);			
+    } catch (VisitFailure e) {
+
+      System.out.println("reduction failed on: " + c);
+      // e.printStackTrace();
+    }
+    return `False();
+  }	
+
+  // checks to see if t is inside td
+  private Constraint analyzeMembership(Term t, Term td){
+
+    // if the second is a simple term
+    // then just verify if it filters
+    %match(Term td){
+
+      Appl(a,b) ->{
+        return termMatch(t,td);
+      }
+
+      TermDiff(f,s)->{
+        return `isInDifference(t,f,s);
+      }
+    }	
+
+    throw new RuntimeException("analyzeMembership: Should never get here");
+  }
+
+  // checks to see if subjects in contained in first\second
+  private Constraint isInDifference(Term subject, Term first, Term second){
+
+    /*
+     * System.out.println("Is in difference (subject/first/second):" + subject + " " +
+     * first + " " + second);
+     */
+
+    %match(Term first, Term second){
+
+      Appl(_,_),TermDiff(dif1,dif2)->{	
+
+        if (termMatch(subject,first) == `True() && isInDifference(subject,`dif1,`dif2) == `False()){
+          return `True();
+        }
+
+        return `False();
+      }
+
+      TermDiff(dif1,dif2),TermDiff(dif3,dif4)->{	
+
+        if(`isInDifference(subject,dif1,dif2) == `True() && `isInDifference(subject,dif3,dif4) == `False()){
+          return `True();
+        }
+
+        return `False();
+      }
+
+      TermDiff(dif1,dif2),Appl(_,_)->{	
+
+        if(`isInDifference(subject,dif1,dif2) == `True() && `termMatch(subject,second) == `False()){
+          return `True();
+        }
+
+        return `False();
+      }
+
+      Appl(_,_),Appl(_,_)->{	
+
+        /*
+         * if the subject is in the first, but is not in the second, then it
+         * means that it belongs to the difference
+         */
+        if (termMatch(subject,first) == `True() && termMatch(subject,second) == `False()){
+          return `True();
+        }
+
+        return `False();
+      }
+
+      Variable(_),Appl(_,_)->{				
+
+        if (termMatch(subject,second) == `False()){
+          return `True();
+        }
+
+        return `False();
+      }
+
+      Variable(_),TermDiff(dif1,dif2)->{	
+
+        if(`isInDifference(subject,dif1,dif2) == `False()){
+          return `True();
+        }
+
+        return `False();
+      }
+    }
+
+    throw new RuntimeException("isInDifference: Should never get here");
+    /* return `False(); */
+  }
+
+  /* matches two simple terms */
+  private Constraint termMatch(Term subject, Term pattern){
+
+    Strategy matchRule = new ClassicalPatternMatching(`Identity());
+
+    try {
+      /* System.out.println("Got:" + pattern + ", " + subject); */
+      Constraint result = (Constraint) `InnermostId(matchRule).visit(`Match(pattern, subject));
+      /*
+       * System.out.println("Result:" + result); if the result is a Match or an
+       * And, then this means success
+       */
+      %match(Constraint result){
+        Match(_,_) | And(_) ->{
+          System.out.println("Part of solution:" + result);
+          return `True();
+        }
+      }
+      return result;
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " + `Match(pattern, subject));
+      throw new RuntimeException("termMatch: Should never get here");
+    }		
+  }
 }
