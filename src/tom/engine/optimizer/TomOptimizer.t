@@ -56,9 +56,8 @@ import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 
 /**
@@ -68,7 +67,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ ../adt/tomsignature/_TomSignature.tom }
-  %include{ mustrategy.tom }
+  %include{ sl.tom }
   %include{ java/util/ArrayList.tom }
   %include{ java/util/HashSet.tom }
 
@@ -105,9 +104,9 @@ public class TomOptimizer extends TomGenericPlugin {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       // Initialize strategies
 
-      VisitableVisitor optStrategy1 = `InnermostId(Inline());
+      Strategy optStrategy1 = `InnermostId(Inline());
 
-      VisitableVisitor optStrategy2 = `Sequence(
+      Strategy optStrategy2 = `Sequence(
           InnermostId(ChoiceId(RepeatId((NopElimAndFlatten())),NormExpr(this))),
           InnermostId(
             ChoiceId(
@@ -223,7 +222,7 @@ public class TomOptimizer extends TomGenericPlugin {
   private static boolean expConstantInBody(Expression exp, Instruction body) {
     HashSet c = new HashSet();
     try {
-      MuTraveler.init(`TopDownCollect(findRefVariable(c))).visit(exp);
+      `TopDownCollect(findRefVariable(c)).visit(exp);
     } catch(VisitFailure e) {
       logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
     }
@@ -231,7 +230,7 @@ public class TomOptimizer extends TomGenericPlugin {
     while(it.hasNext()) {
       TomName name = (TomName) it.next();
       try {
-        MuTraveler.init(`isAssigned(name)).visit(body);
+        `isAssigned(name).visit(body);
       } catch(VisitFailure e) {
         return false;
       }
@@ -268,7 +267,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
 
 
-    private static boolean compare (jjtraveler.Visitable term1, jjtraveler.Visitable term2){
+    private static boolean compare (Visitable term1, Visitable term2){
       return factory.remove(term1)==factory.remove(term2);
     }
 
@@ -305,7 +304,9 @@ public class TomOptimizer extends TomGenericPlugin {
           }
 
           ArrayList list  = new ArrayList();
-          `findOccurencesUpTo(name,list,2).apply(`body);
+          try {
+          `findOccurencesUpTo(name,list,2).visit(`body);
+          } catch(VisitFailure e) { }
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -319,7 +320,9 @@ public class TomOptimizer extends TomGenericPlugin {
             return `body;
           } else if(mult == 1) {
             list.clear();
-            `findOccurencesUpTo(name,list,2).apply(`exp);
+            try {
+            `findOccurencesUpTo(name,list,2).visit(`exp);
+            } catch(VisitFailure e) { }
             if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -327,7 +330,7 @@ public class TomOptimizer extends TomGenericPlugin {
                     new Object[]{ new Integer(mult), `extractRealName(varName) });
               }
               //System.out.println("replace1: " + `var + "\nby: " + `exp);
-              return (Instruction) (MuTraveler.init(`inlineInstruction(name,exp)).visit(`body));
+              return (Instruction) `inlineInstruction(name,exp).visit(`body);
             } else {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -355,7 +358,9 @@ public class TomOptimizer extends TomGenericPlugin {
             Name(tomName) -> { varName = `tomName; }
           }
           ArrayList list  = new ArrayList();
-          `findOccurencesUpTo(name,list,2).apply(`body);
+          try {
+          `findOccurencesUpTo(name,list,2).visit(`body);
+          } catch(VisitFailure e) { }
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -377,7 +382,7 @@ public class TomOptimizer extends TomGenericPlugin {
                     new Object[]{ new Integer(mult), `extractRealName(varName) });
               }
               // System.out.println("replace2: " + `var + "\nby: " + `exp);
-              return (Instruction) (MuTraveler.init(`inlineInstruction(name,exp)).visit(`body));
+              return (Instruction) `inlineInstruction(name,exp).visit(`body);
             } else {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -470,12 +475,14 @@ public class TomOptimizer extends TomGenericPlugin {
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               ArrayList list  = new ArrayList();
-              `findOccurencesUpTo(name1,list,2).apply(`body2);
+              try {
+              `findOccurencesUpTo(name1,list,2).visit(`body2);
+              } catch(VisitFailure e) { }
               int mult = list.size();
               if(mult==0){
                 logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
                     new Object[]{"block-fusion2"});    
-                Instruction newBody2 =  (Instruction)(MuTraveler.init(`renameVariable(name2,name1)).visit(`body2));
+                Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visit(`body2));
                 return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
               }
             }

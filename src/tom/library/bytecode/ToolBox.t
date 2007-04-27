@@ -39,7 +39,7 @@ import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
 
 public class ToolBox {
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { adt/bytecode/Bytecode.tom }
 
   private final static int[] accessFlags = {
@@ -321,12 +321,12 @@ public class ToolBox {
 
   public static String buildDescriptor(TFieldDescriptor desc) {
     StringBuffer sb = new StringBuffer();
-    `TopDown(BuildDescriptor(sb)).apply(desc);
+    `TopDown(BuildDescriptor(sb)).fire(desc);
     return sb.toString();
   }
   public static String buildDescriptor(TMethodDescriptor desc) {
     StringBuffer sb = new StringBuffer();
-    `TopDown(BuildDescriptor(sb)).apply(desc);
+    `TopDown(BuildDescriptor(sb)).fire(desc);
     return sb.toString();
   }
 }

@@ -41,8 +41,6 @@ public interface MuStrategy extends jjtraveler.reflective.VisitableVisitor {
 
   public boolean hasPosition();
 
-  public jjtraveler.Visitable apply(jjtraveler.Visitable any);
-
   public MuStrategy accept(StrategyVisitorFwd v) throws jjtraveler.VisitFailure;
 }
 

@@ -42,17 +42,14 @@ import tom.engine.adt.tomterm.types.tomlist.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 
 import tom.engine.exception.*;
 import tom.engine.compiler.*;
 import tom.engine.tools.*;
 import tom.engine.TomBase;
 
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
-import jjtraveler.Visitable;
 
 import java.util.*;
 
@@ -63,7 +60,7 @@ public class TomAntiPatternUtils {
 	
 // ------------------------------------------------------------
 	%include { adt/tomsignature/TomSignature.tom }
-	%include { mustrategy.tom}
+	%include { sl.tom}
 	%include { java/util/ArrayList.tom}
 // ------------------------------------------------------------
 	
@@ -83,10 +80,12 @@ public class TomAntiPatternUtils {
 	 * @return true if tomTerm contains anti-symbols false otherwise
 	 */	
 	public static boolean hasAntiTerms(Visitable tomTerm){
-		MuStrategy findAnti = `OnceTopDownId(FindAnti());
-		if (tomTerm == findAnti.apply(tomTerm)){
+		Strategy findAnti = `OnceTopDownId(FindAnti());
+    try {
+		if (tomTerm == findAnti.visit(tomTerm)){
 			return false;
 		}
+    } catch(VisitFailure e) { }
 		return true;    
 	}
 	

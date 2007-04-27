@@ -53,8 +53,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 /**
@@ -63,7 +62,7 @@ import jjtraveler.VisitFailure;
 public class TomSyntaxChecker extends TomChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
@@ -126,8 +125,8 @@ public class TomSyntaxChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          MuTraveler.init(`mu(MuVar("x"),Try(Sequence(checkSyntax(this),All(MuVar("x")))))).visit((TomTerm)getWorkingTerm());
-        } catch(jjtraveler.VisitFailure e) {
+          `mu(MuVar("x"),Try(Sequence(checkSyntax(this),All(MuVar("x"))))).visit((TomTerm)getWorkingTerm());
+        } catch(VisitFailure e) {
           System.out.println("strategy failed");
         }
         // verbose

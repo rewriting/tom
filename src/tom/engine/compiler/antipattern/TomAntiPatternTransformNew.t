@@ -46,10 +46,7 @@ import tom.engine.exception.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.TomBase;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-import jjtraveler.reflective.VisitableVisitor;
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 /**
@@ -101,21 +98,24 @@ public class TomAntiPatternTransformNew {
 			// get the term with a variable instead of anti
 			String varName = FRESH_VAR_NAME + (varCounter++);
 			TomTerm abstractVariable = `Variable(concOption(OriginTracking(Name(varName),
-					termLine,fileName)),Name(varName),EmptyType(),concConstraint());		
-			TomTerm tmp = (TomTerm) `OnceTopDownId(AbstractTerm(abstractVariable,replacedTerms)).apply(termAntiReplaced);
-			// if nothing was done
-			if(tmp != termAntiReplaced) {
-				termAntiReplaced = tmp;
-			} else {
-				break;
-			}
-			TomTerm replacedTerm = (TomTerm)replacedTerms.get(0);			
-			// give the variable the correct type
-			TomType type = TomBase.getTermType(replacedTerm,symbolTable);
-			abstractVariable = abstractVariable.setAstType(type);
-			// add the new anti constraint
-			andAntiCons = `AndAntiConstraint(AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf),andAntiCons*);
-			//System.out.println("andAntiCons = " + andAntiCons);
+					termLine,fileName)),Name(varName),EmptyType(),concConstraint());
+      TomTerm tmp = termAntiReplaced;
+      try {
+        tmp = (TomTerm) `OnceTopDownId(AbstractTerm(abstractVariable,replacedTerms)).visit(termAntiReplaced);
+      } catch(VisitFailure e) { }
+      // if nothing was done
+      if(tmp != termAntiReplaced) {
+        termAntiReplaced = tmp;
+      } else {
+        break;
+      }
+      TomTerm replacedTerm = (TomTerm)replacedTerms.get(0);			
+      // give the variable the correct type
+      TomType type = TomBase.getTermType(replacedTerm,symbolTable);
+      abstractVariable = abstractVariable.setAstType(type);
+      // add the new anti constraint
+      andAntiCons = `AndAntiConstraint(AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf),andAntiCons*);
+      //System.out.println("andAntiCons = " + andAntiCons);
 
 			// reinitialize
 			replacedTerms.clear();
@@ -147,10 +147,14 @@ public class TomAntiPatternTransformNew {
 			Collection freeVarList) {	
 
 		// replace all unamed variables by named ones
-		c = (Constraint)`TopDown(ReplaceUnamedVariables()).apply(c);
+    try {
+      c = (Constraint)`TopDown(ReplaceUnamedVariables()).visit(c);
+    } catch(VisitFailure e) { }
 
 		// get the free variables of the pattern
-		`TopDownCollect(CollectPositiveVariable(freeVarList)).apply(c);
+    try {
+      `TopDownCollect(CollectPositiveVariable(freeVarList)).visit(c);
+    } catch(VisitFailure e) { }
 
 		// eliminate anti
 		return applyMainRule(c, quantifiedVarList);	
@@ -167,14 +171,16 @@ public class TomAntiPatternTransformNew {
 		 * during the abstraction then, re-instantiate the abstractedVariables
 		 * to deduce cNoAnti this would avoid the double recursive traversal
 		 */
-
+    Constraint cNoAnti = c;
 		// first get the constraint without the anti
-		Constraint cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).apply(c);
-		// if nothing changed, time to exit
-		if(cNoAnti == c) {
-			return c;
-		} 
-		cNoAnti = `Neg(applyMainRule(cNoAnti,quantifiedVarList));
+    try {
+      cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).visit(c);
+    } catch(VisitFailure e) { }
+    // if nothing changed, time to exit
+    if(cNoAnti == c) {
+      return c;
+    } 
+    cNoAnti = `Neg(applyMainRule(cNoAnti,quantifiedVarList));
 
 		/*
 		 * find an Anti(...) an then collect (under this Anti) variables which
@@ -182,7 +188,9 @@ public class TomAntiPatternTransformNew {
 		 * TODO: this is strange since we do not
 		 * collect variables which are in other branches
 		 */
-		`OnceTopDownId(SequenceId(ElimAnti(),TopDownCollect(CollectPositiveVariable(quantifiedVarList)))).apply(c);
+    try {
+      `OnceTopDownId(SequenceId(ElimAnti(),TopDownCollect(CollectPositiveVariable(quantifiedVarList)))).visit(c);
+    } catch(VisitFailure e) { }
 
 		// System.out.println("quantifiedVarList = " + quantifiedVarList);				
 
@@ -193,9 +201,11 @@ public class TomAntiPatternTransformNew {
 		quantifiedVarList.add(abstractVariable);
 
 		ArrayList tmp = new ArrayList();
-
-		Constraint cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable, tmp)).apply(c);
-		cAntiReplaced = applyMainRule(cAntiReplaced,quantifiedVarList);
+    Constraint cAntiReplaced = c;
+    try {
+      cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable, tmp)).visit(c);
+    } catch(VisitFailure e) { }
+    cAntiReplaced = applyMainRule(cAntiReplaced,quantifiedVarList);
 
 		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));
 	}

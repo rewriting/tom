@@ -31,120 +31,120 @@ public class OldBehaviour {
     }
   }
 
-  public Term test1() {
+  public Term test1() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `Identity();
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test2() {
+  public Term test2() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `(R1());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test3() {
+  public Term test3() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `One(R1());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test4() {
+  public Term test4() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `OnceBottomUp((R2()));
-    subject = (Term) s.apply(subject);
-    subject = (Term) s.apply(subject);
-    return (Term) s.apply(subject);
+    subject = (Term) s.visit(subject);
+    subject = (Term) s.visit(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test5() {
+  public Term test5() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `All((R2()));
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testChoice() {
+  public Term testChoice() throws jjtraveler.VisitFailure{
     Term subject = `f(b());
     MuStrategy s = `Choice(R2(),R1());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testChoiceSideEffect() {
+  public Term testChoiceSideEffect() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `Choice(Sequence(R1(),R2()),R1());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testNot() {
+  public Term testNot() throws jjtraveler.VisitFailure{
     Term subject = `f(b());
     MuStrategy s = `Not(R2());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testNotSideEffect() {
+  public Term testNotSideEffect() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `Not(Sequence(R1(),R2()));
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test6() {
+  public Term test6() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `Sequence(All(R2()),All(All(R1())));
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test7() {
+  public Term test7() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `Omega(1,R2());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test8() {
+  public Term test8() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `Omega(2,R2());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test9() {
+  public Term test9() throws jjtraveler.VisitFailure{
     Term subject = `f(b());
     MuStrategy s = `IfThenElse(R2(),Builda(),Buildb());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testITESideEffect() {
+  public Term testITESideEffect() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `IfThenElse(R2(),Identity(),Buildb());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test10() {
+  public Term test10() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `IfThenElse(R2(),Builda(),Buildb());
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test11() {
+  public Term test11() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `OnceTopDownId((R1()));
-    subject = (Term) s.apply(subject);
-    subject = (Term) s.apply(subject);
-    return (Term) s.apply(subject);
+    subject = (Term) s.visit(subject);
+    subject = (Term) s.visit(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test12(){
+  public Term test12()throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `Innermost((R2()));
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test13(){
+  public Term test13()throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `Outermost((R2()));
-    return (Term) s.apply(subject);
+    return (Term) s.visit(subject);
   }
 
 
-  public Term testWhen1() {
+  public Term testWhen1() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `When_f(R2());
     Term res;
@@ -155,7 +155,7 @@ public class OldBehaviour {
     }
   }
 
-  public Term testCongruence1() {
+  public Term testCongruence1() throws jjtraveler.VisitFailure{
     Term subject = `g(f(a()),b());
     MuStrategy s = `_g(R1(),R2());
     Term res;
@@ -166,7 +166,7 @@ public class OldBehaviour {
     }
   }
 
-  public Term testCongruence2() {
+  public Term testCongruence2() throws jjtraveler.VisitFailure{
     Term subject = `f(a());
     MuStrategy s = `_g(R1(),R2());
     try {
@@ -176,7 +176,7 @@ public class OldBehaviour {
     }
   }
 
-  public Term testCongruenceList() {
+  public Term testCongruenceList() throws jjtraveler.VisitFailure{
     Term subject = `l(a(),b());
     MuStrategy s = `_l(R1());
     try {

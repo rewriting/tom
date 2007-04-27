@@ -70,8 +70,8 @@ public class OneId extends AbstractStrategy {
     Visitable originalsubject = getEnvironment().getSubject();
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      (visitors[ARG]).visit();
       Visitable subject = getEnvironment().getSubject();
+      (visitors[ARG]).visit();
       Visitable newsubject = getEnvironment().getSubject();
       environment.up();
       if (getStatus() == Environment.SUCCESS && subject!=newsubject) {

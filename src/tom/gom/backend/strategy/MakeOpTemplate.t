@@ -118,17 +118,6 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return this;
   }
 
-  /*
-   * Apply the strategy, and returns the subject in case of VisitFailure
-   */
-  public jjtraveler.Visitable apply(jjtraveler.Visitable any) {
-    try {
-      return tom.library.strategy.mutraveler.MuTraveler.init(this).visit(any);
-    } catch (jjtraveler.VisitFailure f) {
-      return any;
-    }
-  }
-
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     getEnvironment().setRoot(any);

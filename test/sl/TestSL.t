@@ -47,67 +47,67 @@ public class TestSL extends TestCase {
 
   }
 
-  public void testSL1() {		
+  public void testSL1() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test1() == nb.test1() );
   }
-  public void testSL2() {		
+  public void testSL2() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test2() == nb.test2() );
   }
-  public void testSL3() {		
+  public void testSL3() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test3() == nb.test3() );
   }
-  public void testSL4() {		
+  public void testSL4() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test4() == nb.test4() );
   }
-  public void testSL5() {		
+  public void testSL5() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test5() == nb.test5() );
   }
-  public void testSLChoice() {		
+  public void testSLChoice() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testChoice() == nb.testChoice() );
   }
-  public void testSLChoiceSideEffect() {		
+  public void testSLChoiceSideEffect() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testChoiceSideEffect() == nb.testChoiceSideEffect() );
   } 
-  public void testSLNot() {		
+  public void testSLNot() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testNot() == nb.testNot() );
   }
-  public void testSLNotSideEffect() {		
+  public void testSLNotSideEffect() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testNotSideEffect() == nb.testNotSideEffect() );
   }
-  public void testSL6() {		
+  public void testSL6() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test6() == nb.test6() );
   }
-  public void testSL7() {		
+  public void testSL7() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test7() == nb.test7() );
   }
-  public void testSL8() {		
+  public void testSL8() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test8() == nb.test8() );
   }
-  public void testSL9() {		
+  public void testSL9() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test9() == nb.test9() );
   }
-  public void testITESideEffect() {		
+  public void testITESideEffect() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testITESideEffect() == nb.testITESideEffect() );
   }
-  public void testSL10() {		
+  public void testSL10() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test10() == nb.test10() );
   }
-  public void testSL11() {		
+  public void testSL11() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test11() == nb.test11() );
   }
-  public void testSL12() {		
+  public void testSL12() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test12() == nb.test12() );
   }
-  public void testSL13() {		
+  public void testSL13() throws jjtraveler.VisitFailure {		
     assertTrue( ob.test13() == nb.test13() );
   }
-  public void testSLWhen1() {		
+  public void testSLWhen1() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testWhen1() == nb.testWhen1() );
   }
-  public void testSLCongruence1() {		
+  public void testSLCongruence1() throws jjtraveler.VisitFailure {		
     assertTrue( ob.testCongruence1() == nb.testCongruence1() );
   }
-  public void testSLCongruence2() {	
+  public void testSLCongruence2() throws jjtraveler.VisitFailure {	
     try {
       ob.testCongruence2();
       fail();
@@ -118,7 +118,7 @@ public class TestSL extends TestCase {
       } catch (tom.library.sl.FireException ee) {/*success*/}
     }
   }
-  public void testSLCongruenceList() {
+  public void testSLCongruenceList() throws jjtraveler.VisitFailure {
     assertTrue( ob.testCongruenceList() == nb.testCongruenceList() );
   }
 

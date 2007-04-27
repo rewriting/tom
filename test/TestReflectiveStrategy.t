@@ -2,10 +2,10 @@
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 
 public class TestReflectiveStrategy extends TestCase {
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestReflectiveStrategy.class));
@@ -105,104 +105,104 @@ public class TestReflectiveStrategy extends TestCase {
     assertEquals("matchAll should return 2 with `All(All(Identity()))", 2, matchAll(`All(All(Identity()))));
   }
 
-  public void test21() {
-    assertTrue("matchIdentity should return true with `S3().apply(`Identity())", matchIdentity((MuStrategy)`S3().apply(`Identity())));
+  public void test21() throws jjtraveler.VisitFailure {
+    assertTrue("matchIdentity should return true with `S3().visit(`Identity())", matchIdentity((Strategy)`S3().visit(`Identity())));
   }
 
-  public void test22() {
-    assertEquals("matchAll should return 1 with `S3().apply(`All(Identity())", 1, matchAll((MuStrategy)`S3().apply(`All(Identity()))));
+  public void test22() throws jjtraveler.VisitFailure {
+    assertEquals("matchAll should return 1 with `S3().visit(`All(Identity())", 1, matchAll((Strategy)`S3().visit(`All(Identity()))));
   }
 
-  public void test23() {
-    assertEquals("matchAll should return 1 with `S3().apply(`All(All(Identity())))", 1, matchAll((MuStrategy)`S3().apply(`All(All(Identity())))));
+  public void test23() throws jjtraveler.VisitFailure  {
+    assertEquals("matchAll should return 1 with `S3().visit(`All(All(Identity())))", 1, matchAll((Strategy)`S3().visit(`All(All(Identity())))));
   }
 
-  public void test24() {
-    assertEquals("matchAll should return 1 with `TopDown(S3()).apply(`All(All(All(All(Identity())))))", 2, matchAll((MuStrategy)`TopDown(S3()).apply(`All(All(All(All(Identity())))))));
+  public void test24() throws jjtraveler.VisitFailure {
+    assertEquals("matchAll should return 1 with `TopDown(S3()).visit(`All(All(All(All(Identity())))))", 2, matchAll((Strategy)`TopDown(S3()).visit(`All(All(All(All(Identity())))))));
   }
 
-  public void test25() {
-    assertEquals("matchAll should return 1 with `BottomUp(S3()).apply(`All(All(All(All(Identity())))))", 1, matchAll((MuStrategy)`BottomUp(S3()).apply(`All(All(All(All(Identity())))))));
+  public void test25() throws jjtraveler.VisitFailure {
+    assertEquals("matchAll should return 1 with `BottomUp(S3()).visit(`All(All(All(All(Identity())))))", 1, matchAll((Strategy)`BottomUp(S3()).visit(`All(All(All(All(Identity())))))));
   }
 
-  public void test26() {
+  public void test26() throws jjtraveler.VisitFailure {
     assertEquals("countAll should return 3 with `All(S2(0, \"\", All(All(Identity()))))", 3, countAll(`All(S2(0, "", All(All(Identity()))))));
   }
 
-  public void test27() {
-    assertEquals("countAll should return 2 with `BottomUp(S3()).apply(`All(S2(0, \"\", All(All(Identity())))))", 2, countAll((MuStrategy)`BottomUp(S3()).apply(`All(S2(0, "", All(All(Identity())))))));
+  public void test27() throws jjtraveler.VisitFailure {
+    assertEquals("countAll should return 2 with `BottomUp(S3()).visit(`All(S2(0, \"\", All(All(Identity())))))", 2, countAll((Strategy)`BottomUp(S3()).visit(`All(S2(0, "", All(All(Identity())))))));
   }
 
-  public void test28() {
+  public void test28() throws jjtraveler.VisitFailure {
     assertEquals("countAll should return 6 with `All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 6, countAll(`All(S4(All(All(Identity())), 0, All(All(All(Identity())))))));
   }
 
-  public void test29() {
-    assertEquals("countAll should return 3 with `BottomUp(S3()).apply(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 3, countAll((MuStrategy)`BottomUp(S3()).apply(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))));
+  public void test29() throws jjtraveler.VisitFailure {
+    assertEquals("countAll should return 3 with `BottomUp(S3()).visit(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 3, countAll((Strategy)`BottomUp(S3()).visit(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))));
   }
 
-  public void test30() {
-    assertEquals("countAll should return 2 with `BottomUp(S5()).apply(`S4(Identity(), 0, Fail()))", 2, countAll((MuStrategy)`BottomUp(S5()).apply(`S4(Identity(), 0, Fail()))));
+  public void test30() throws jjtraveler.VisitFailure {
+    assertEquals("countAll should return 2 with `BottomUp(S5()).visit(`S4(Identity(), 0, Fail()))", 2, countAll((Strategy)`BottomUp(S5()).visit(`S4(Identity(), 0, Fail()))));
   }
   
-  public void test31() {
+  public void test31() throws jjtraveler.VisitFailure {
     Counter c = new Counter();
-    MuStrategy s = `mu(MuVar("x"),TopDownCollect(CollectExceptFirst(MuVar("x"),c)));
-    s.apply(`Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1()))));
+    Strategy s = `mu(MuVar("x"),TopDownCollect(CollectExceptFirst(MuVar("x"),c)));
+    s.visit(`Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1()))));
     assertEquals("collectExceptFirst should return 5 when applied on `Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1())))", 5, c.count);
   }
 
   // matching basic strategy
-  public boolean matchIdentity(MuStrategy s) {
-    %match(Strategy s) {
+  public boolean matchIdentity(Strategy s) {
+    %match(s) {
       Identity() -> { return true; }
     }
     return false;
   }
 
   // matching user defined strategy
-  public boolean matchS1(MuStrategy s) {
-    %match(Strategy s) {
+  public boolean matchS1(Strategy s) {
+    %match(s) {
       S1() -> { return true; }
     }
     return false;
   }
 
   // matching basic strategy with basic children
-  public boolean matchSequence1(MuStrategy s) {
-    %match(Strategy s) {
+  public boolean matchSequence1(Strategy s) {
+    %match(s) {
       Sequence(Identity(), Fail()) -> { return true; }
     }
     return false;
   }
 
   // matching basic strategy with user defined children
-  public boolean matchSequence2(MuStrategy s) {
-    %match(Strategy s) {
+  public boolean matchSequence2(Strategy s) {
+    %match(s) {
       Sequence(Identity(), S1()) -> { return true; }
     }
     return false;
   }
 
   // matching basic strategy with basic children using slots
-  public boolean matchSequence3(MuStrategy s) {
-    %match(Strategy s) {
+  public boolean matchSequence3(Strategy s) {
+    %match(s) {
       Sequence(s1, s2) -> { return matchSequence1(`Sequence(s1, s2)); }
     }
     return false;
   }
 
   // matching basic strategy with user defined children using slots
-  public boolean matchSequence4(MuStrategy s) {
-    %match(Strategy s) {
+  public boolean matchSequence4(Strategy s) {
+    %match(s) {
       Sequence(s1, s2) -> { return matchSequence2(`Sequence(s1, s2)); }
     }
     return false;
   }
 
   // matching user defined strategy and use slots
-  public int matchS2(MuStrategy s) {
-    %match(Strategy s) {
+  public int matchS2(Strategy s) {
+    %match(s) {
       S2(i, str, s1) -> {
         if (`i == 0) {
           return 1;
@@ -219,7 +219,7 @@ public class TestReflectiveStrategy extends TestCase {
   }
 
   // match 1 or 2 All
-  public int matchAll(MuStrategy s) {
+  public int matchAll(Strategy s) {
     %match(Strategy s) {
       All(All(x)) -> { return 2; }
       All(x) -> { return 1; }
@@ -266,14 +266,14 @@ public class TestReflectiveStrategy extends TestCase {
     implement { Counter }
     is_sort(t) { t instanceof Counter }
   }
-  public int countAll(MuStrategy s) {
+  public int countAll(Strategy s) throws jjtraveler.VisitFailure {
     Counter c = new Counter();
-    `TopDown(incAll(c)).apply(s);
+    `TopDown(incAll(c)).visit(s);
     return c.count;
   }
   %strategy incAll(c:Counter) extends `Identity() {
     visit Strategy {
-      All(_) -> { c.count++; }
+      All[] -> { c.count++; }
     }
   }
  

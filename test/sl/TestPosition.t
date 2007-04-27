@@ -54,7 +54,7 @@ public class TestPosition extends TestCase {
     assertEquals(r,new Position(new int[]{1,2,1,2,1,1,1,2,1}));
   }
 
-  public void testInv(){
+  public void testInverse(){
     Position p = new Position(new int[]{1,1,2});
     Path r = p.inverse();
     r = r.getCanonicalPath();

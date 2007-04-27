@@ -50,9 +50,7 @@ import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 /**
@@ -61,7 +59,7 @@ import jjtraveler.VisitFailure;
 public class TomCompiler extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
+  %include { ../../library/mapping/java/sl.tom }
   %include { java/util/types/Collection.tom}
   %include { java/util/types/Map.tom}
 
@@ -229,7 +227,7 @@ matchBlock: {
                       `Match(SubjectList(generatedSubjectList),
                           concPatternInstruction(generatedPatternInstruction),
                           generatedMatchOptionList);
-                    generatedMatch = (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(generatedMatch);
+                    generatedMatch = (Instruction) `preProcessing(compiler).visit(generatedMatch);
                     /*System.out.println("Generate new Match"+generatedMatch); */
                     newPatternInstruction =
                       `PatternInstruction(Pattern(subjectList,newTermList,emptyGuardList),generatedMatch, option);
@@ -282,7 +280,7 @@ matchBlock: {
           }
           jVisitList = jVisitList.getTailconcTomVisit();
         }
-        return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
+        return (Declaration) `preProcessing(compiler).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
 
     }//end match
@@ -294,7 +292,7 @@ matchBlock: {
 
   %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Identity()  {
     visit TomTerm {
-      t -> {return (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
+      t -> {return (TomTerm) `preProcessing(compiler).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
     }
   }
 
@@ -398,9 +396,8 @@ matchBlock: {
       // the antis only after we renamed the free variables
       ArrayList antiList = new ArrayList();      
       TomTerm newElt = renameVariable(elt,multiplicityMap,antiList,true);      
-
       newElt = handleAntiReplacement(newElt,multiplicityMap,antiList);
-  
+
       newList = `concTomTerm(newList*,newElt);
       subject = subject.getTailconcTomTerm();
     }
@@ -424,14 +421,17 @@ matchBlock: {
       multiplicityMapIntermediate.putAll(multiplicityMap);
       // just a copy of the current map	      
       Map multiplicityMapSnapShot = new HashMap();      
-      while(true){ 
+      while(true){
 	      while (!antiList.isEmpty()){
 	    	  TomTerm antiTerm = (TomTerm)antiList.remove(0);//antiList.get(0);	    	  
 	    	  // all have to be called with the initial multiplicityMap
 	    	  multiplicityMapSnapShot.clear();
 	    	  multiplicityMapSnapShot.putAll(multiplicityMap);
-	    	  // handle the renaming in this anti term
-	    	  newElt = (TomTerm)`OnceTopDownId(RenameAnti(antiTerm,multiplicityMapSnapShot,newAntiList)).apply(newElt);
+          // handle the renaming in this anti term
+          try {
+            newElt = (TomTerm)`OnceTopDownId(RenameAnti(antiTerm,multiplicityMapSnapShot,newAntiList)).visit(newElt);
+          } catch(VisitFailure e) { 
+          }
 	    	  // make sure we collect the changes to the map
 	    	  multiplicityMapIntermediate.putAll(multiplicityMapSnapShot);
 	    	  //antiList.remove(0);
@@ -553,8 +553,10 @@ matchBlock: {
     Set variableSet = intersection(patternVariable,constraintVariable);
 
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
-    TomList newSubjectList = null;
-    newSubjectList = (TomList) `attachConstraint(variableSet,constraint,this).apply(subjectList);
+    TomList newSubjectList = subjectList;
+    try {
+      newSubjectList = (TomList) `attachConstraint(variableSet,constraint,this).visit(subjectList);
+    } catch(VisitFailure e) { }
     return newSubjectList;
   }
 
@@ -574,7 +576,7 @@ itBlock: {
                  res.add(`var);
                  //break itBlock;
                }
-               var@VariableStar[AstName=ame], VariableStar[AstName=name] -> {
+               var@VariableStar[AstName=name], VariableStar[AstName=name] -> {
                  res.add(`var);
                  //break itBlock;
                }
@@ -599,7 +601,7 @@ itBlock: {
     visit TomTerm {
       var@(Variable|VariableStar)[Constraints=constraintList] -> {
 	if(variableSet.remove(`var) && variableSet.isEmpty()) {
-	  Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint,EmptyType())));
+	  Constraint c = `Ensure((TomTerm) preProcessing(compiler).visit(BuildReducedTerm(constraint,EmptyType())));
 	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
 	  return `var.setConstraints(newConstraintList);
 	}
@@ -607,7 +609,7 @@ itBlock: {
 
       appl@RecordAppl[Constraints=constraintList] -> {
 	if(variableSet.isEmpty()) {
-	  Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint,EmptyType())));
+	  Constraint c = `Ensure((TomTerm) preProcessing(compiler).visit(BuildReducedTerm(constraint,EmptyType())));
 	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
 	  return `appl.setConstraints(newConstraintList);
 	}
