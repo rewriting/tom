@@ -34,15 +34,12 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
-
-import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.sl.*;
 
 public class SimplifySystemRule {
 
   %include{ term/Term.tom }
-  %include{ mutraveler.tom }
+  %include{ sl.tom }
 
   %op Constraint AreSymbolsEqual(s1:Term, s2:Term){
     is_fsym(t) { false }
@@ -97,8 +94,8 @@ public class SimplifySystemRule {
     // it doesn't stop when an occurence is found
     ContainsTerm ct = new ContainsTerm(v,`Identity());
     try{
-      MuTraveler.init(`InnermostId(ct)).visit(l);
-    }catch(VisitFailure e){
+      `InnermostId(ct).visit(l);
+    }catch(jjtraveler.VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);
     }
@@ -111,15 +108,15 @@ public class SimplifySystemRule {
 
   private Constraint applyReplaceStrategy(Term var, Term value, AConstraintList l){
 
-    VisitableVisitor rule,ruleStrategy;            
+    Strategy rule,ruleStrategy;            
     rule = new ReplaceSystem(var,value, `Identity());
     ruleStrategy = `InnermostId(rule);
 
     Constraint res = null;
 
     try{
-      res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(l));
-    }catch(VisitFailure e){
+      res = (Constraint) ruleStrategy.visit(`And(l));
+    }catch(jjtraveler.VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);
     }
@@ -193,13 +190,13 @@ public class SimplifySystemRule {
     private boolean found = false;
     private Term objToSearchFor = null;
 
-    public ContainsTerm(Term obj, VisitableVisitor visitor) {		
+    public ContainsTerm(Term obj, Strategy visitor) {		
       super(visitor);
       this.objToSearchFor = obj;
       this.found = false;
     }
 
-    public Term visit_Term(Term arg) throws VisitFailure { 
+    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
       if(arg == objToSearchFor) {
         found = true;
         System.out.println("!!FOUND!!");

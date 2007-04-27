@@ -34,19 +34,18 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.Strategy;
 
 public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
 	
 	%include{ term/Term.tom }
-	%include{ mutraveler.tom }
+	%include{ sl.tom }
 
     private Term variable;
     private Term value;
     private boolean isIdentity;
 
-    public ReplaceSystem(Term variable, Term value, VisitableVisitor visitor) {
+    public ReplaceSystem(Term variable, Term value, Strategy visitor) {
       super(visitor);
       this.variable = variable;
       this.value = value;
@@ -54,7 +53,7 @@ public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
     		  true : false );       
     }
    
-    public Term visit_Term(Term arg) throws VisitFailure { 
+    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
       if(arg==variable) {
         return value;
       } 

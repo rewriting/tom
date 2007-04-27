@@ -34,23 +34,20 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
-
 import java.util.Collection;
 
-import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.sl.*;
 
 public class SolveSystemExtended extends antipattern.SolveSystem {    
 	
 	%include{ term/Term.tom }
-	%include{ mutraveler.tom }
+	%include{ sl.tom }
 	
-    public SolveSystemExtended(Collection c,VisitableVisitor vis) {
+    public SolveSystemExtended(Collection c,Strategy vis) {
       super(c,vis);            
     }
    
-    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
+    public Constraint visit_Constraint(Constraint arg) throws jjtraveler.VisitFailure {
     	
     	Constraint result = null;
     	
@@ -65,12 +62,12 @@ public class SolveSystemExtended extends antipattern.SolveSystem {
     		
     		return result;
     		
-    	}catch(VisitFailure vf){ //can only happen when the visit failed
+    	}catch(jjtraveler.VisitFailure vf){ //can only happen when the visit failed
     		return extendedVisit(arg);
     	}    	
     }
     
-    private Constraint extendedVisit(Constraint arg) throws VisitFailure {
+    private Constraint extendedVisit(Constraint arg) throws jjtraveler.VisitFailure {
     	
       %match(Constraint arg) {   	  
     	      	        

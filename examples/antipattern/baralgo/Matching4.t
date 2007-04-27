@@ -38,26 +38,21 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 public class Matching4 implements Matching {
 	
 	// %include{ atermmapping.tom }
 	%include{ term/Term.tom }
-	%include{ mutraveler.tom }
+	%include{ sl.tom }
 	
 	public Constraint checkReverse(Constraint c, Collection solution) {	
-		VisitableVisitor simplifyRule = new SimplifySystemModified(`Identity());
-		VisitableVisitor reverseEngRule = new ReverseEngAp(`Identity());
+		Strategy simplifyRule = new SimplifySystemModified(`Identity());
+		Strategy reverseEngRule = new ReverseEngAp(`Identity());
 		try {		
-			return (Constraint) MuTraveler.init(
-					`SequenceId(RepeatId(OutermostId(simplifyRule)),RepeatId(OutermostId(reverseEngRule)))
-			).visit(c);
-		} catch (VisitFailure e) {
+			return (Constraint)
+					`SequenceId(RepeatId(OutermostId(simplifyRule)),RepeatId(OutermostId(reverseEngRule))).visit(c);
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("reduction failed on: " + c);
 			// e.printStackTrace();
 		}
@@ -66,16 +61,11 @@ public class Matching4 implements Matching {
 	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
 		//System.out.println("Problem to solve:" + c);
-		VisitableVisitor simplifyRule = new SimplifySystemModified(`Identity());
-		VisitableVisitor negCleanRule = new NegativeCleaning(`Identity());
-		try {		
-		/*	return (Constraint) MuTraveler.init(
-					`RepeatId(ChoiceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
-			).visit(c);*/			
-			return (Constraint) MuTraveler.init(
-					`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule)))
-			).visit(c);
-		} catch (VisitFailure e) {
+		Strategy simplifyRule = new SimplifySystemModified(`Identity());
+		Strategy negCleanRule = new NegativeCleaning(`Identity());
+		try {
+      `RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule))).visit(c);
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("reduction failed on: " + c);
 			// e.printStackTrace();
 		}

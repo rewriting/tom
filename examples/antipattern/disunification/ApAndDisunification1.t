@@ -38,16 +38,11 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-//import jjtraveler.reflective.VisitableVisitor;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 public class ApAndDisunification1 implements Matching{
 	
-	%include{ mustrategy.tom }	
+	%include{ sl.tom }	
 	%include{ term/Term.tom }
 	
 	public static int varCounter = 0;
@@ -83,7 +78,7 @@ public class ApAndDisunification1 implements Matching{
 		Constraint noAnti = null;;
 		try{
 			noAnti = applyMainRule(transformedMatch);
-		}catch(VisitFailure e){
+		}catch(jjtraveler.VisitFailure e){
 			System.out.println("1. reduction failed on: " + transformedMatch);
 			e.printStackTrace();
 		}
@@ -91,11 +86,11 @@ public class ApAndDisunification1 implements Matching{
 //		System.out.println("Result after main rule: " + tools.formatConstraint(noAnti));
 		
 		// transform the problem into a disunification one
-		MuStrategy transInDisunif = `TransformIntoDisunification();
+		Strategy transInDisunif = `TransformIntoDisunification();
 		Constraint disunifProblem = null;
 		try {		
-			disunifProblem = (Constraint) MuTraveler.init(`InnermostId(transInDisunif)).visit(noAnti);			
-		} catch (VisitFailure e) {
+			disunifProblem = (Constraint) `InnermostId(transInDisunif).visit(noAnti);			
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("2. reduction failed on: " + noAnti);
 			e.printStackTrace();
 		}
@@ -108,15 +103,14 @@ public class ApAndDisunification1 implements Matching{
 		rulesCounter = 0;
 		long timeStart = System.currentTimeMillis();
 		
-		MuStrategy simplifyRule = `SimplifyWithDisunification();
-//		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
-		MuStrategy decomposeTerms = `DecomposeTerms();
-		MuStrategy solve = `SolveRes();
+		Strategy simplifyRule = `SimplifyWithDisunification();
+//		Strategy simplifyRule = `SimplifyWithDisunificationAll();
+		Strategy decomposeTerms = `DecomposeTerms();
+		Strategy solve = `SolveRes();
 		
 		try {		
-			compiledConstraint = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(disunifProblem);
-//			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
-		} catch (VisitFailure e) {
+			compiledConstraint = (Constraint) `InnermostId(simplifyRule).visit(disunifProblem);
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("3. reduction failed on: " + c);
 			e.printStackTrace();
 		}
@@ -134,7 +128,7 @@ public class ApAndDisunification1 implements Matching{
 	
 	// applies the main rule that transforms ap problems
 	// into dis-unification ones
-	public Constraint applyMainRule(Constraint c) throws VisitFailure{
+	public Constraint applyMainRule(Constraint c) throws jjtraveler.VisitFailure{
 		
 		Term pattern = null;
 		Term subject = null;
@@ -147,13 +141,13 @@ public class ApAndDisunification1 implements Matching{
 		}				
 		
 		// first get the constraint without the anti
-		Constraint cNoAnti =  `Equal((Term) MuTraveler.init(OnceTopDownId(ElimAnti())).visit(pattern),subject);
+		Constraint cNoAnti =  `Equal((Term) OnceTopDownId(ElimAnti()).visit(pattern),subject);
 		// if nothing changed, time to exit
 		if (cNoAnti == c){
 			return c;
 		}
 		// get the constraint with a variable instead of anti
-		Constraint cAntiReplaced =  `Equal((Term) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
+		Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visit(pattern),subject);
 		
 		cAntiReplaced = `Exists(Variable("v" + ApAndDisunification1.varCounter),
 				applyMainRule(cAntiReplaced));
@@ -166,7 +160,7 @@ public class ApAndDisunification1 implements Matching{
 		
 		quantifiedVarList.clear();
 		
-		MuTraveler.init(`OnceTopDownId(ApplyStrategy())).visit(c);
+		`OnceTopDownId(ApplyStrategy()).visit(c);
 		
 		Iterator it = quantifiedVarList.iterator();
 		while(it.hasNext()){
@@ -193,9 +187,9 @@ public class ApAndDisunification1 implements Matching{
 				
 //				System.out.println("Analyzing " + `v + " position=" + getPosition() );
 				
-				MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`CountAnti());				
+				Strategy useOmegaPath = (Strategy)getPosition().getOmegaPath(`CountAnti());				
 				
-				MuTraveler.init(useOmegaPath).visit(subject);
+				useOmegaPath.visit(subject);
 				
 //				System.out.println("After analyzing counter=" + antiCounter);
 				// if no anti-symbol found, than the variable can be quantified
@@ -243,7 +237,7 @@ public class ApAndDisunification1 implements Matching{
 		visit Term {
 			// main rule
 			anti@Anti(p) -> {
-				Term t = (Term)MuTraveler.init(`InnermostId(AnalyzeTerm(p))).visit(`p);				
+				Term t = (Term)`InnermostId(AnalyzeTerm(p)).visit(`p);				
 				// now it has to stop
 				return `p;
 			}
@@ -531,8 +525,8 @@ public class ApAndDisunification1 implements Matching{
 			And(concAnd(X*,eq@Equal(var@Variable(name),s),Y*)) -> {
 			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
 				            
-	            Constraint res = (Constraint) MuTraveler.init(
-	            		`BottomUp(ReplaceTerm(var,s))).visit(`And(concAnd(X*,Y*)));
+	            Constraint res = (Constraint)
+	            		`BottomUp(ReplaceTerm(var,s)).visit(`And(concAnd(X*,Y*)));
 	            if (res != `And(concAnd(X*,Y*))){
 	            	return `And(concAnd(eq,res));
 	            }
@@ -542,8 +536,8 @@ public class ApAndDisunification1 implements Matching{
 			Or(concOr(X*,eq@NEqual(var@Variable(name),s),Y*)) -> {
 			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
 				            
-	            Constraint res = (Constraint) MuTraveler.init(
-	            		`BottomUp(ReplaceTerm(var,s))).visit(`Or(concOr(X*,Y*)));
+	            Constraint res = (Constraint) 
+	            		`BottomUp(ReplaceTerm(var,s)).visit(`Or(concOr(X*,Y*)));
 	            if (res != `Or(concOr(X*,Y*))){
 	            	return `Or(concOr(eq,res));
 	            }

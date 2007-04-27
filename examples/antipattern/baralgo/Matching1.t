@@ -38,27 +38,23 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 public class Matching1 implements Matching {
 
   //%include{ atermmapping.tom }
   %include{ term/Term.tom }
-  %include{ mutraveler.tom }
+  %include{ sl.tom }
 
   public Constraint simplifyAndSolve(Constraint c,Collection solution) {
-   VisitableVisitor simplifyRule = new SimplifySystem(`Fail());
-   VisitableVisitor solveRule = new SolveSystem(solution,`Fail());
+   Strategy simplifyRule = new SimplifySystem(`Fail());
+   Strategy solveRule = new SolveSystem(solution,`Fail());
    try { 
-     return (Constraint) MuTraveler.init(
+     return (Constraint) 
          `Sequence(Innermost(simplifyRule),
            Repeat( Sequence( solveRule, Innermost(simplifyRule)))
-    				 )).visit(c);
-    } catch (VisitFailure e) {
+    				 ).visit(c);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       //e.printStackTrace();
     }

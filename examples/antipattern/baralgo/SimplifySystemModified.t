@@ -34,25 +34,22 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
-
-import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.sl.*;
 
 public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 	
 	%include{ term/Term.tom }
-	%include{ mutraveler.tom }
+	%include{ sl.tom }
 	
 	protected boolean isIdentity;
 	
-	public SimplifySystemModified(VisitableVisitor vis) {
+	public SimplifySystemModified(Strategy vis) {
 		super(vis);
 		this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
 				true : false ); 
 	}
 	
-	public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
+	public Constraint visit_Constraint(Constraint arg) throws jjtraveler.VisitFailure {
 
 		%match(Constraint arg) {
 			
@@ -83,7 +80,7 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 			
 			// Replace
 			input@And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> {	            
-	            VisitableVisitor rule,ruleStrategy;            
+	            Strategy rule,ruleStrategy;            
 	            if (isIdentity){
 	            	rule = new ReplaceSystem(`var,`s, `Identity());
 	            	ruleStrategy = `InnermostId(rule);
@@ -91,7 +88,7 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 	            	rule = new ReplaceSystem(`var,`s, `Fail());
 	            	ruleStrategy = `Innermost(rule);
 	            }            
-	            Constraint res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(concAnd(X*,Y*)));
+	            Constraint res = (Constraint) ruleStrategy.visit(`And(concAnd(X*,Y*)));
 	            if (res != `And(concAnd(X*,Y*))){
 	            	return `And(concAnd(match,res));
 	            }

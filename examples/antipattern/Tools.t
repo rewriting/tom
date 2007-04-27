@@ -38,15 +38,10 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
 public class Tools {
 
   %include{ term/Term.tom }
-  %include{ mutraveler.tom }	
+  %include{ sl.tom }	
   %include{ atermmapping.tom }
 
   public static void main(String[] args) {
@@ -317,9 +312,9 @@ public class Tools {
 		foundVariable = false;
 		
 		try{		
-			MuTraveler.init(`InnermostId(ConstraintContainsVariable(v))).visit(c);
-		}catch(VisitFailure e){
-			throw new RuntimeException("VisitFailure occured:" + e);
+			`InnermostId(ConstraintContainsVariable(v)).visit(c);
+		}catch(jjtraveler.VisitFailure e){
+			throw new RuntimeException("jjtraveler.VisitFailure occured:" + e);
 		}
 		
 		return foundVariable;
@@ -329,10 +324,10 @@ public class Tools {
 		
 		visit Constraint {
 			Equal(p,_) ->{
-				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+				`InnermostId(TermContainsVariable(v)).visit(`p);
 			}
 			NEqual(p,_) ->{
-				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+				`InnermostId(TermContainsVariable(v)).visit(`p);
 			}
 		}
 	}

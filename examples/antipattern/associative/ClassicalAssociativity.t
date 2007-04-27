@@ -36,20 +36,17 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
-
 // simple algorithm implementing the associative matching
 public class ClassicalAssociativity implements Matching {
 	
 	%include{ term/Term.tom }
-	%include{ mustrategy.tom }
+	%include{ sl.tom }
 	%include{ java/util/types/Collection.tom}
 	
 	private static int globalCounter = 0; 
 	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-		return (Constraint)`InnermostId(PerformAssociativeMatching()).apply(c);
+		return (Constraint)`InnermostId(PerformAssociativeMatching()).fire(c);
 	}
 	
 	%strategy PerformAssociativeMatching() extends Identity(){
@@ -202,7 +199,7 @@ public class ClassicalAssociativity implements Matching {
 	        	// if the variable does not exists - remove the Exists 
 	        	// if the variable exists only in one eq, just replace with true the eq
 	        	if (nbOccurences(`var,`x) <= 1){
-	        		return (Constraint)`TopDown(ReplaceEquality(var)).apply(`x);
+	        		return (Constraint)`TopDown(ReplaceEquality(var)).fire(`x);
 	        	}
 	        }
 	        
@@ -224,7 +221,7 @@ public class ClassicalAssociativity implements Matching {
 	        // Replace
 			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {				
 				Constraint toApplyOn = `And(concAnd(X*,Y*));				
-				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).apply(toApplyOn);
+				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).fire(toApplyOn);
 				if (res != toApplyOn){					
 					return `And(concAnd(equal,res));
 				}
@@ -241,7 +238,7 @@ public class ClassicalAssociativity implements Matching {
 	private int counter = 0;	
 	private int nbOccurences(Term t, Constraint toSearchIn){
 		counter = 0;
-		`TopDown(CheckOccurence(t)).apply(toSearchIn);
+		`TopDown(CheckOccurence(t)).fire(toSearchIn);
 		return counter;
 	}	
 	
