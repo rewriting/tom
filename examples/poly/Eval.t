@@ -36,7 +36,7 @@ public class Eval {
   %include { polynom/polynom.tom }
   %include { util/types/Collection.tom }
   %include { util/types/Map.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   public static void main(String[] arg) {
     Poly test = `Mult(Plus(Variable("a"),Parameter("a")),Number(2),Max(Variable("a"),Number(5)));
@@ -97,7 +97,9 @@ public class Eval {
    * @return subject with all variable occurences replaced by value
    */
   public static Poly applySubst(Poly subject, Poly variable, Poly value) {
-    return (Poly)`TopDown(Substitute(variable,value)).apply(subject);
+    try {
+    return (Poly)`TopDown(Substitute(variable,value)).visit(subject);
+    } catch(jjtraveler.VisitFailure e) { return subject; }
   }
 
   /**
@@ -124,7 +126,9 @@ public class Eval {
    * @return a Poly in normal form
    */
   public static Poly distribute(Poly subject) {
-    return (Poly) `InnermostId(Distribute()).apply(subject);
+    try {
+    return (Poly) `InnermostId(Distribute()).visit(subject);
+    } catch(jjtraveler.VisitFailure e) { return subject; }
   }
 
   /**
@@ -217,7 +221,9 @@ public class Eval {
    */
   public static Collection variableSet(Poly p) {
     Collection bag = new HashSet();
-    `BottomUp(CollectVariables(bag)).apply(p);
+    try {
+      `BottomUp(CollectVariables(bag)).visit(p);
+    } catch(jjtraveler.VisitFailure e) {}
     return bag;
   }
 
@@ -262,7 +268,9 @@ public class Eval {
    * @return the value of the evaluation
    */
   public static int eval(Map parameters, Poly p) {
-    p = (Poly)`BottomUp(Evaluate(parameters)).apply(p);
+    try {
+      p = (Poly)`BottomUp(Evaluate(parameters)).visit(p);
+    } catch(jjtraveler.VisitFailure e) {}
     %match(Poly p) {
       Number(n) -> { return `n; }
     }

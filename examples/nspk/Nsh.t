@@ -37,7 +37,7 @@ public class Nsh {
 
 // ------------------------------------------------------------  
   %include { term/term.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 // ------------------------------------------------------------  
  
   public void run(int nbAgent) {

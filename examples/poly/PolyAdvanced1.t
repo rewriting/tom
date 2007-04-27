@@ -35,6 +35,8 @@ import poly.poly.types.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import tom.library.sl.Strategy;
+
 public class PolyAdvanced1 extends TestCase {
     
   Term t;

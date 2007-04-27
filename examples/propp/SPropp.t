@@ -36,19 +36,17 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-
 import propp.seq.*;
 import propp.seq.types.*;
 
 import antlr.CommonAST;
+import tom.library.sl.Strategy;
 
 class SPropp {
 
 	// ------------------------------------------------------------  
 	%include { seq/Seq.tom }
-  %include{ mutraveler.tom }
+  %include{ sl.tom }
 	// ------------------------------------------------------------  
 
 	//{{{ public void run(String query)
@@ -83,8 +81,8 @@ class SPropp {
 
 	public Proof solve(Proof init) {
 
-		VisitableVisitor myrule = `CalculusRules();
-		VisitableVisitor bottomUp = `BottomUp(myrule);
+		Strategy myrule = `CalculusRules();
+		Strategy bottomUp = `BottomUp(myrule);
 
 		Proof res = null;
 		try {

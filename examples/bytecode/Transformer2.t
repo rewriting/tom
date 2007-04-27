@@ -110,7 +110,7 @@ public class Transformer2 {
     visit TInstructionList {
       _ -> {
         Position current = getEnvironment().getPosition();
-        getEnvironment().followPath(current.inv());
+        getEnvironment().followPath(current.inverse());
         execute(`TopDown(BuildLabelMap(m)));
         getEnvironment().followPath(current);
       }

@@ -34,11 +34,7 @@ import poly.expression.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import tom.library.strategy.mutraveler.Identity;
-
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.Strategy;
 
 public class PolyTraveler1 extends TestCase {
 
@@ -46,7 +42,7 @@ public class PolyTraveler1 extends TestCase {
   }
 
   %include { expression/expression.tom }
-  %include{ mutraveler.tom }
+  %include{ sl.tom }
     
   %strategy SimplifyPlus() extends `Identity() { 
 
@@ -63,9 +59,9 @@ public class PolyTraveler1 extends TestCase {
   }
   public void testSimplifyPlus() {
     Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));
-    VisitableVisitor v = `SimplifyPlus();
+    Strategy v = `SimplifyPlus();
     //v.setTerm(t);
-    VisitableVisitor bu = `BottomUp(v);
+    Strategy bu = `BottomUp(v);
     try {
     System.out.println(" bu.visit(" + t + ")");
     bu.visit(t);

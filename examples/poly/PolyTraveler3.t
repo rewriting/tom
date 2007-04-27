@@ -31,15 +31,13 @@ package poly;
 
 import poly.expression.*;
 import poly.expression.types.*;
-
-import tom.library.strategy.mutraveler.Fail;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.Strategy;
 
 public class PolyTraveler3 {
 
 
   %include { expression/expression.tom }
-  %include{ mutraveler.tom }
+  %include { sl.tom }
 
   public final static void main(String[] args) {
     PolyTraveler3 test = new PolyTraveler3();
@@ -64,10 +62,10 @@ public class PolyTraveler3 {
     Expression resSymplify = simplify(t);
     System.out.println("simplify in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
-    VisitableVisitor v = `SimplifyExpression();
-    VisitableVisitor bottomUp = `BottomUp(Try(v));
-    VisitableVisitor innermost = `Innermost(v);
-    VisitableVisitor repeatOnce = `Repeat(OnceBottomUp(v));
+    Strategy v = `SimplifyExpression();
+    Strategy bottomUp = `BottomUp(Try(v));
+    Strategy innermost = `Innermost(v);
+    Strategy repeatOnce = `Repeat(OnceBottomUp(v));
     Expression resBottomUp = null;
     Expression resInnermost = null;
     Expression resRepeatOnce = null;

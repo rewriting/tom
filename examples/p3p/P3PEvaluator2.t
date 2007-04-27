@@ -34,12 +34,10 @@ import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-
 public class P3PEvaluator2 {
    
   %include{ adt/tnode/TNode.tom }
-  %include{ mustrategy.tom }
+  %include{ sl.tom }
   %include{ java/util/types/Collection.tom }
  
   private XmlTools xtools;
@@ -59,7 +57,9 @@ public class P3PEvaluator2 {
      
   private TNode getDataGroup(TNode doc) {
     HashSet c = new HashSet();
-    `TopDownCollect(collectDatagroup(c)).apply(doc);
+    try {
+      `TopDownCollect(collectDatagroup(c)).visit(doc);
+    } catch(jjtraveler.VisitFailure e) {}
     Iterator it = c.iterator();
     while(it.hasNext()) {
       TNode datagroup = (TNode)it.next();

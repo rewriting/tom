@@ -33,16 +33,12 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.reflective.VisitableVisitor;
-
 import java.util.*;
 
 public class BPELAnalyser {
 
   %include{ adt/tnode/TNode.tom }
-  %include{ mustrategy.tom }
+  %include{ sl.tom }
   %include{ util/ArrayList.tom}
 
   private XmlTools xtools;
@@ -56,8 +52,8 @@ public class BPELAnalyser {
     xtools = new XmlTools();
     TNode term = xtools.convertXMLToTNode(filename);
     ArrayList controlDep = new ArrayList();
-    term = (TNode) `TopDown(removeTextNode()).apply(term);
-    `TopDown(analyse(controlDep)).apply(term);
+    term = (TNode) `TopDown(removeTextNode()).fire(term);
+    `TopDown(analyse(controlDep)).fire(term);
     System.out.println("Control dependence : "+controlDep);
   }
 
@@ -79,10 +75,10 @@ public class BPELAnalyser {
     visit TNode {
       <sequence>(_*,elt1,elt2,_*)</sequence> -> {
         ArrayList leaveList = new ArrayList();
-        `leaves(leaveList).apply(`elt1);
+        `leaves(leaveList).fire(`elt1);
         Iterator leaveIter = leaveList.iterator();
         ArrayList rootList = new ArrayList();
-        `roots(rootList).apply(`elt1);
+        `roots(rootList).fire(`elt1);
         while(leaveIter.hasNext()){
           String leave = (String) leaveIter.next();
           Iterator rootIter = rootList.iterator();

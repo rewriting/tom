@@ -34,11 +34,7 @@ import poly.poly.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.Strategy;
 
 public class PolyAdvanced2 extends TestCase {
  
@@ -46,7 +42,7 @@ public class PolyAdvanced2 extends TestCase {
   Term var1;
   Term var2;
   Term res;
-  VisitableVisitor rule;
+  Strategy rule;
 
   public PolyAdvanced2() {
     t    = `mult(X(),plus(X(),a()));
@@ -56,7 +52,7 @@ public class PolyAdvanced2 extends TestCase {
   }
 
   %include { poly/Poly.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   
   // Simplified version of differentiate
   public Term differentiate(Term poly, Term variable) {
@@ -93,8 +89,8 @@ public class PolyAdvanced2 extends TestCase {
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
 
     try{
-      res = (Term)MuTraveler.init(`BottomUp(rule)).visit(res);
-    } catch (VisitFailure e) {
+      res = (Term) `BottomUp(rule).visit(res);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + res);
     }
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1)) is plus(X,plus(X,a))",res, `plus(X(),plus(X(),a())));
@@ -108,8 +104,8 @@ public class PolyAdvanced2 extends TestCase {
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
 
     try{
-      res = (Term)MuTraveler.init(`BottomUp(rule)).visit(res);
-    } catch (VisitFailure e) {
+      res = (Term) `BottomUp(rule).visit(res);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + res);
     }
 

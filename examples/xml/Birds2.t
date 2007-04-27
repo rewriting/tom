@@ -33,14 +33,11 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.reflective.VisitableVisitor;
 
 public class Birds2 {
 
   %include{ adt/tnode/TNode.tom }
-  %include{ mustrategy.tom }
+  %include{ sl.tom }
 
   private XmlTools xtools;
 
@@ -52,7 +49,9 @@ public class Birds2 {
   private void run(String filename) {
     xtools = new XmlTools();
     TNode term = xtools.convertXMLToTNode(filename);
-    term = (TNode)`TopDown(replace()).apply(term);
+    try {
+      term = (TNode)`TopDown(replace()).visit(term);
+    }catch (jjtraveler.VisitFailure e) {}
     //xtools.printXMLFromTNode(term);
   }
 

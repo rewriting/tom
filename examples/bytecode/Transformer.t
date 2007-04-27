@@ -39,7 +39,7 @@ import java.util.Vector;
 
 public class Transformer {
 
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { adt/bytecode/Bytecode.tom }
 
   public static Vector  v = new Vector();
@@ -111,7 +111,7 @@ public class Transformer {
       MethodList(_*, x, _*) -> {
         System.out.println("Analysis of the method "+`x.getinfo().getname());
         TInstructionList ins = `x.getcode().getinstructions();
-        TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).apply(ins);
+        TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).fire(ins);
         TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
         TMethod secureMethod = `x.setcode(secureCode);
         secureMethods = `MethodList(secureMethods*,secureMethod);	
@@ -126,7 +126,7 @@ public class Transformer {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).fire(newClass);
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {

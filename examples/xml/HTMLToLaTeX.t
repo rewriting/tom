@@ -32,17 +32,12 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.io.*;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.Strategy;
 
 public class HTMLToLaTeX {
   
   %include{ adt/tnode/TNode.tom }
-  %include{ mutraveler.tom }
+  %include{ sl.tom }
     
   public static void main (String args[]) {
     HTMLToLaTeX html2latex = new HTMLToLaTeX();
@@ -80,20 +75,20 @@ public class HTMLToLaTeX {
   private static boolean firstLine, firstCol;
 
   private static void toLaTeX(TNode subject) {
-    VisitableVisitor rule = `ToLaTeX();
+    Strategy rule = `ToLaTeX();
     try {
       System.out.println("subject = " + subject);
-      MuTraveler.init(`TopDownCollect(ToLaTeX())).visit(subject);
-    } catch (VisitFailure e) {
+      `TopDownCollect(ToLaTeX()).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }
   private static void toLaTeX(TNodeList subject) {
-    VisitableVisitor rule = `ToLaTeX();
+    Strategy rule = `ToLaTeX();
     try {
       System.out.println("subject = " + subject);
-      MuTraveler.init(`TopDownCollect(ToLaTeX())).visit(subject);
-    } catch (VisitFailure e) {
+      `TopDownCollect(ToLaTeX()).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }
@@ -332,11 +327,11 @@ public class HTMLToLaTeX {
   private static int tableMaxCol(int vmax, int vcurrentMax, TNodeList subject) {
     max=vmax;
     currentMax=vcurrentMax;
-    VisitableVisitor rule = `ComputeWidth();
+    Strategy rule = `ComputeWidth();
     try {
       System.out.println("subject          = " + subject);
-      MuTraveler.init(`TopDownCollect(ComputeWidth())).visit(subject);
-    } catch (VisitFailure e) {
+      `TopDownCollect(ComputeWidth()).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
     return max;

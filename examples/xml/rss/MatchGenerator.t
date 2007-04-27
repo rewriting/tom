@@ -163,12 +163,10 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-
 public class @className@ implements IMatchXML{
   
   %include{adt/tnode/TNode.tom}
-  %include{ mustrategy.tom }	
+  %include{ sl.tom }	
   
   static TNodeList retList = `concTNode();
   

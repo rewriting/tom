@@ -2,12 +2,11 @@ package xml.rss;
 
 import tom.library.xml.*;
 import tom.library.adt.tnode.types.*;
-import tom.library.strategy.mutraveler.*;
 
 public class RssFeedTransformer {
 
   %include{ adt/tnode/TNode.tom }
-  %include{ mustrategy.tom }
+  %include{ sl.tom }
 
   public static void main (String args[]) {
     RssFeedTransformer trans = new RssFeedTransformer();
@@ -18,7 +17,7 @@ public class RssFeedTransformer {
   private void run(String filename){
     XmlTools xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToTNode(filename);
-    term = (TNode)`BottomUp(RemoveNonDico()).apply(term);
+    term = (TNode)`BottomUp(RemoveNonDico()).fire(term);
     // To print the result back
     xtools.printXMLFromTNode(term);
   }
