@@ -18,13 +18,13 @@ public class TomArrayPropagator implements TomIBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
-  %include { mustrategy.tom}
+  %include { sl.tom}
 //--------------------------------------------------------
 
   private static short beginEndCounter = 0;
 
   public Constraint propagate(Constraint constraint) {
-    return (Constraint)`InnermostId(ArrayPatternMatching()).apply(constraint);		
+    return (Constraint)`InnermostId(ArrayPatternMatching()).fire(constraint);		
   }	
 
   %strategy ArrayPatternMatching() extends `Identity() {
@@ -98,7 +98,7 @@ public class TomArrayPropagator implements TomIBasePropagator {
           andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
             Constraint toApplyOn = `AndConstraint(Y*);            
             TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
-            Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
+            Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).fire(toApplyOn);
             if(res != toApplyOn) {
               return `AndConstraint(X*,eq,res);
             }

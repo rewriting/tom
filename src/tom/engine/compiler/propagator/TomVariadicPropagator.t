@@ -18,13 +18,13 @@ public class TomVariadicPropagator implements TomIBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
-  %include { mustrategy.tom}
+  %include { sl.tom}
 //--------------------------------------------------------
 
   private static short beginEndCounter = 0;
 
   public Constraint propagate(Constraint constraint) {
-    return (Constraint)`InnermostId(VariadicPatternMatching()).apply(constraint);		
+    return (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);		
   }	
 
   %strategy VariadicPatternMatching() extends `Identity() {
@@ -116,7 +116,7 @@ mSlots:  %match(slots) {
       andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
-        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
+        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).fire(toApplyOn);
         if(res != toApplyOn) {
           return `AndConstraint(X*,eq,res);
         }
