@@ -8,7 +8,7 @@ public class Mu extends AbstractStrategy {
   public final static int V = 1;
 
   private MuStrategyTopDown muStrategyTopDown;
-  private boolean expanded =false;
+  private boolean expanded = false;
   public Mu(Strategy var, Strategy v) {
     initSubterm(var, v);
     muStrategyTopDown = new MuStrategyTopDown();
@@ -87,6 +87,7 @@ class MuStrategyTopDown {
   public MuStrategyTopDown() {
     stack = new LinkedList();
   }
+
   public void init() {
     stack.clear();
   }

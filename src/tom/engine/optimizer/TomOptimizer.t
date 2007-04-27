@@ -107,7 +107,7 @@ public class TomOptimizer extends TomGenericPlugin {
       Strategy optStrategy1 = `InnermostId(Inline());
 
       Strategy optStrategy2 = `Sequence(
-          InnermostId(ChoiceId(RepeatId((NopElimAndFlatten())),NormExpr(this))),
+          InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
           InnermostId(
             ChoiceId(
               Sequence(RepeatId(IfSwapping(this)), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
@@ -166,8 +166,8 @@ public class TomOptimizer extends TomGenericPlugin {
     return name;
   }
 
-  %op Strategy inlineInstruction(variableName:TomName, expression:Expression){
-    make(variableName, expression) {`TopDown(inlineInstrOnce(variableName,expression))}
+  private static Strategy inlineInstruction(TomName variableName, Expression expression) {
+    return `TopDown(inlineInstrOnce(variableName,expression));
   }
 
   %strategy inlineInstrOnce(variableName:TomName, expression:Expression) extends `Identity(){
@@ -181,8 +181,11 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   /* this strategy doesn't traverse the two last children of TypedAction() */
-  %op Strategy findOccurencesUpTo(variableName:TomName, list:ArrayList, max:int){
-    make(variableName, list, max) {`Try(mu(MuVar("current"),Sequence(findOccurence(variableName,list,max),IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))))}
+  private static Strategy findOccurencesUpTo(TomName variableName, ArrayList list, int max) {
+    return `Try(mu(MuVar("current"),
+          Sequence(
+            findOccurence(variableName,list,max),
+            IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))));
   }
 
   %strategy findOccurence(variableName:TomName,list : ArrayList, max:int) extends `Identity() {

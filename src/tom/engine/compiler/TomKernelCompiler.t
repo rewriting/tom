@@ -52,10 +52,7 @@ import tom.engine.tools.ASTFactory;
 import aterm.ATerm;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import tom.platform.*;
 
@@ -86,7 +83,7 @@ public class TomKernelCompiler {
 
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom}
+  %include { sl.tom}
 // ------------------------------------------------------------
  
   %typeterm TomKernelCompiler {
@@ -114,83 +111,83 @@ public class TomKernelCompiler {
   %strategy replace_compileMatching(compiler:TomKernelCompiler) extends `Identity() {
     visit Instruction {
       Match(SubjectList(l1),patternInstructionList, optionList)  -> {    	  
-	//TODO
-	String moduleName = "default";
-	TomNumberList rootpath = `concTomNumber();
-	compiler.matchNumber++;
-	rootpath = `concTomNumber(rootpath*,MatchNumber(compiler.matchNumber));
+        //TODO
+        String moduleName = "default";
+        TomNumberList rootpath = `concTomNumber();
+        compiler.matchNumber++;
+        rootpath = `concTomNumber(rootpath*,MatchNumber(compiler.matchNumber));
 
-	/*
-	 * for each pattern action (<term>,...,<term> -> <action>)
-	 * build a matching automata
-	 */
-	TomList automataList = `concTomTerm();
-	int actionNumber = 0;
-	VisitableVisitor compileStrategy = `ChoiceTopDown(replace_compileMatching(compiler));
-	while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
-	  actionNumber++;
-	  PatternInstruction pa = `patternInstructionList.getHeadconcPatternInstruction();
-	  SlotList patternList = TomBase.tomListToSlotList(pa.getPattern().getTomList());
-	  Instruction actionInst = pa.getAction();
-	  if(patternList==null || actionInst==null) {
-	    System.out.println("TomKernelCompiler: null value");
-	    throw new TomRuntimeException("TomKernelCompiler: null value");
-	  }
+        /*
+         * for each pattern action (<term>,...,<term> -> <action>)
+         * build a matching automata
+         */
+        TomList automataList = `concTomTerm();
+        int actionNumber = 0;
+        Strategy compileStrategy = `ChoiceTopDown(replace_compileMatching(compiler));
+        while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
+          actionNumber++;
+          PatternInstruction pa = `patternInstructionList.getHeadconcPatternInstruction();
+          SlotList patternList = TomBase.tomListToSlotList(pa.getPattern().getTomList());
+          Instruction actionInst = pa.getAction();
+          if(patternList==null || actionInst==null) {
+            System.out.println("TomKernelCompiler: null value");
+            throw new TomRuntimeException("TomKernelCompiler: null value");
+          }
 
-	  /*
-	   * compile nested match constructs
-	   * given a list of pattern: we build a matching automaton
-	   */	  
-	  actionInst = (Instruction) compileStrategy.visit(actionInst);
-	  Instruction matchingAutomata = null;
-	  // if we have anti-patterns, we should use a boolean flag
-	  if(TomAntiPatternUtils.hasAntiTerms(patternList)) {
-	    // anti flag
-	    TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));      
-	    antiFlagVariable = `Variable(
-		concOption(OriginTracking(antiFlagName,0,"")),
-		antiFlagName,antiFlagType,concConstraint());
-	    TomAntiPatternTransformNew.initialize();      
-	    // final test
-	    Instruction finalTest = `If(
-		EqualTerm( antiFlagType, Ref(antiFlagVariable), ExpressionToTomTerm(TrueTL())),
-		actionInst,
-		Nop());
-	    //LetAssign(antiFlagVariable,TrueTL(),Nop()));      
-	    matchingAutomata = compiler.genSyntacticMatchingAutomata( finalTest, `Nop(), patternList,rootpath,moduleName,null);
-	    // glue the flag declaration
-	    matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
-	  } else {
-	    matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,`Nop(), patternList,rootpath,moduleName,null);
-	  }
-	  OptionList automataOptionList = `concOption();
-	  TomName label = compiler.getLabel(pa.getOption());
-	  if(label != null) {
-	    automataOptionList = `concOption(Label(label),automataOptionList*);
-	  }
-	  TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
-	  TomTerm automata = `Automata(automataOptionList,TomBase.slotListToTomList(patternList),numberList,matchingAutomata);
+          /*
+           * compile nested match constructs
+           * given a list of pattern: we build a matching automaton
+           */	  
+          actionInst = (Instruction) compileStrategy.visit(actionInst);
+          Instruction matchingAutomata = null;
+          // if we have anti-patterns, we should use a boolean flag
+          if(TomAntiPatternUtils.hasAntiTerms(patternList)) {
+            // anti flag
+            TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));      
+            antiFlagVariable = `Variable(
+                concOption(OriginTracking(antiFlagName,0,"")),
+                antiFlagName,antiFlagType,concConstraint());
+            TomAntiPatternTransformNew.initialize();      
+            // final test
+            Instruction finalTest = `If(
+                EqualTerm( antiFlagType, Ref(antiFlagVariable), ExpressionToTomTerm(TrueTL())),
+                actionInst,
+                Nop());
+            //LetAssign(antiFlagVariable,TrueTL(),Nop()));      
+            matchingAutomata = compiler.genSyntacticMatchingAutomata( finalTest, `Nop(), patternList,rootpath,moduleName,null);
+            // glue the flag declaration
+            matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
+          } else {
+            matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,`Nop(), patternList,rootpath,moduleName,null);
+          }
+          OptionList automataOptionList = `concOption();
+          TomName label = compiler.getLabel(pa.getOption());
+          if(label != null) {
+            automataOptionList = `concOption(Label(label),automataOptionList*);
+          }
+          TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
+          TomTerm automata = `Automata(automataOptionList,TomBase.slotListToTomList(patternList),numberList,matchingAutomata);
 
-	  automataList = `concTomTerm(automataList*,automata);
-	  `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
-	}
+          automataList = `concTomTerm(automataList*,automata);
+          `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
+        }
 
-	/*
-	 * return the compiled Match construction
-	 */
-	InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
-	SlotList slots = TomBase.tomListToSlotList(`l1);
-	Instruction astAutomata = compiler.collectVariableFromSubjectList(slots,rootpath,`AbstractBlock(astAutomataList),moduleName);
-	//           System.out.println("Matching compiled: " + `CompiledMatch(astAutomata, optionList));
-	return `CompiledMatch(astAutomata, optionList);
+        /*
+         * return the compiled Match construction
+         */
+        InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
+        SlotList slots = TomBase.tomListToSlotList(`l1);
+        Instruction astAutomata = compiler.collectVariableFromSubjectList(slots,rootpath,`AbstractBlock(astAutomataList),moduleName);
+        //           System.out.println("Matching compiled: " + `CompiledMatch(astAutomata, optionList));
+        return `CompiledMatch(astAutomata, optionList);
       }
     } // end match
   } 
 
   public TomTerm compileMatching(TomTerm subject) {
-    try{
+    try {
       return (TomTerm) `ChoiceTopDown(replace_compileMatching(this)).visit(subject);
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       return subject;
     }
   }

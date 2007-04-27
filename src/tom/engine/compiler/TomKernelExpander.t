@@ -51,15 +51,11 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import aterm.ATerm;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 public class TomKernelExpander {
 
-  %include { mustrategy.tom}
+  %include { sl.tom}
 
   %typeterm TomKernelExpander {
     implement { TomKernelExpander }
@@ -129,9 +125,9 @@ public class TomKernelExpander {
 
     visit TomVisit {
       VisitTerm(type,patternInstructionList,options) -> {
-	TomType newType = (TomType)`expander.expandVariable(contextType,`type);
-	PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newType,`patternInstructionList);
-	return `VisitTerm(newType, newPatternInstructionList,options);
+        TomType newType = (TomType)`expander.expandVariable(contextType,`type);
+        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newType,`patternInstructionList);
+        return `VisitTerm(newType, newPatternInstructionList,options);
       }
     }
 
@@ -344,7 +340,7 @@ protected jjtraveler.Visitable expandVariable(TomType contextType, jjtraveler.Vi
   }
   try{
     return `ChoiceTopDown(replace_expandVariable(contextType,this)).visit(subject);
-  } catch(VisitFailure e) {
+  } catch(jjtraveler.VisitFailure e) {
     return subject;
   }
 }
@@ -464,7 +460,7 @@ protected jjtraveler.Visitable replaceInstantiatedVariable(TomList instantiatedV
   }
   try {
     return `ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
-  } catch(VisitFailure e) {
+  } catch(jjtraveler.VisitFailure e) {
     return subject;
   }
 }

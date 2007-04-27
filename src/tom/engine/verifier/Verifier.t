@@ -47,15 +47,14 @@ import tom.engine.adt.il.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.Strategy;
 
 public class Verifier {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/il/Il.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   %typeterm Collection {
     implement { java.util.Collection }
   }
@@ -843,7 +842,7 @@ public class Verifier {
   }
 
   public Expr booleanSimplify(Expr expr) {
-    VisitableVisitor booleanSimplifier = new BooleanSimplifier();
+    Strategy booleanSimplifier = new BooleanSimplifier();
     Expr res = `ilfalse();
     try {
       res = (Expr) `InnermostId(booleanSimplifier).visit(expr);
