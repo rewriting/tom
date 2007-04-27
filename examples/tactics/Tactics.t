@@ -2,17 +2,17 @@ package tactics;
 
 import tactics.trees.*;
 import tactics.trees.types.*;
-import tom.library.strategy.mutraveler.*;
 
 // debugger
 import ted.*;
 import jjtraveler.VisitFailure;
+import tom.library.sl.Strategy;
 
 public class Tactics {
 
   %include {trees/Trees.tom}
   %include {trees/_Trees.tom}
-  %include {mustrategy.tom}
+  %include {sl.tom}
 
 
   %op Strategy Apply(s:Strategy) {
@@ -56,10 +56,12 @@ public class Tactics {
 
   public static void main(String[] argv) {
     Tree tree = `node("root",nlist(open("a"),node("rule",nlist(open("z"),open("a"),open("a")))));
-    MuStrategy tact = (MuStrategy) `Brackets(Rule1(), Brackets(Rule2(), Brackets(Rule3(), Identity())));
+    Strategy tact = (Strategy) `Brackets(Rule1(), Brackets(Rule2(), Brackets(Rule3(), Identity())));
 
     System.out.println(tree);
-    tree = (Tree) tact.apply(tree);
+    try {
+      tree = (Tree) tact.visit(tree);
+    } catch(jjtraveler.VisitFailure e ) {}
     //tree = (Tree) StratDebugger.applyGraphicalDebug(tree,tact);
     //tree = (Tree) StratDebugger.applyDebug(tree,tact);
     System.out.println(tree);
