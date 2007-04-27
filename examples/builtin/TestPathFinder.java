@@ -57,10 +57,10 @@ public class TestPathFinder extends TestCase {
 								 28,res);
 	}
 
-	public void testdoubleBwhen() {
-    String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
-    int res = test.doubleBwhen(s1);
-		assertEquals("There are 28 ways to find 2 \"b\" among 8",
-								 28,res);
-	}
+//	public void testdoubleBwhen() {
+//    String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
+//    int res = test.doubleBwhen(s1);
+//		assertEquals("There are 28 ways to find 2 \"b\" among 8",
+//								 28,res);
+//	}
 }
