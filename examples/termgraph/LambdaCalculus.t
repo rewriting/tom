@@ -246,7 +246,7 @@ public class LambdaCalculus {
         if(pp.length()==1){
           getEnvironment().followPath(pp);
           LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-          getEnvironment().followPath(pp.inv());
+          getEnvironment().followPath(pp.inverse());
           return var;
         }
         else{

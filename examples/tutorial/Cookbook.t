@@ -31,12 +31,7 @@ package tutorial;
 
 import tutorial.cookbook.house.*;
 import tutorial.cookbook.house.types.*;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Cookbook {
   
@@ -59,7 +54,7 @@ public class Cookbook {
       | fridge()
   }
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   public final static void main(String Args[]) {
     Cookbook ex = new Cookbook();
@@ -67,15 +62,15 @@ public class Cookbook {
   }
   private void run() {
     House myHouse = `concRoom(room("kitchen",concPieceOfFurniture(chair(),chair(),fridge())),room("bedroom",concPieceOfFurniture(bed(),chair())));
-    VisitableVisitor seekChairs = `SeekChairs();
-    VisitableVisitor replaceChairs = `ReplaceChairs();
+    Strategy seekChairs = `SeekChairs();
+    Strategy replaceChairs = `ReplaceChairs();
     try {
       System.out.println("subject = " + myHouse);
-      MuTraveler.init(`BottomUp(seekChairs)).visit(myHouse);
-      myHouse = (House)MuTraveler.init(`BottomUp(replaceChairs)).visit(myHouse);
+      `BottomUp(seekChairs).fire(myHouse);
+      myHouse = (House)`BottomUp(replaceChairs).fire(myHouse);
       System.out.println("replacing chairs...");
       System.out.println("bottumup new subject = " + myHouse);
-    } catch (VisitFailure e) {
+    } catch (FireException e) {
       System.out.println("failed on = " + myHouse);
     }
   }

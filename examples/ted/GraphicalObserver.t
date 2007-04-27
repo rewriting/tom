@@ -178,7 +178,9 @@ class GraphicalObserver implements DebugStrategyObserver {
 
   }
   public void after(DebugStrategy s, Visitable res) {
-    term = ((MuStrategy) s.getPosition().getOmega(`Replace(res))).apply(term);
+    try {
+      term = ((MuStrategy) s.getPosition().getOmega(`Replace(res))).visit(term);
+    } catch(VisitFailure e) {}
     System.out.println("[" + (--scope) + "] new tree : " + term);
 
     try {

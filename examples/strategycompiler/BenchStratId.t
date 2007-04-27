@@ -90,15 +90,19 @@ public class BenchStratId {
     Term subject = baobab(baobabHeight);
 
 		long startChrono1 = System.currentTimeMillis();
-    `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).apply(subject);
-		long stopChrono1 = System.currentTimeMillis();
+    try {
+      `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).visit(subject);
+    } catch(VisitFailure e) {}
+    long stopChrono1 = System.currentTimeMillis();
 
     StrategyCompiler.clearCache();
 		long startChrono2 = System.currentTimeMillis();
     MuStrategy cs = StrategyCompiler.compile(`RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))), "sFail");
     long medChrono2 = System.currentTimeMillis();
-    cs.apply(subject);
-		long stopChrono2 = System.currentTimeMillis();
+    try {
+      cs.visit(subject);
+    } catch(VisitFailure e) {}
+    long stopChrono2 = System.currentTimeMillis();
 
 		System.out.println(baobabHeight + "\t" + (stopChrono1-startChrono1)/1000. + "\t\t" + (medChrono2-startChrono2)/1000. + "\t\t" + (stopChrono2-medChrono2)/1000. + "\t\t" + (stopChrono2-startChrono2)/1000.);
   }
@@ -107,15 +111,19 @@ public class BenchStratId {
     Term subject = baobab(baobabHeight);
 
     long startChrono1 = System.currentTimeMillis();
-    `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).apply(subject);
-		long stopChrono1 = System.currentTimeMillis();
+    try {
+      `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).visit(subject);
+    } catch(VisitFailure e) {}
+    long stopChrono1 = System.currentTimeMillis();
 
     StrategyCompiler.clearCache();
     long startChrono2 = System.currentTimeMillis();
     MuStrategy cs = StrategyCompiler.compile(`RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))), "sId");
     long medChrono2 = System.currentTimeMillis();
-    cs.apply(subject);
-		long stopChrono2 = System.currentTimeMillis();
+    try {
+      cs.visit(subject);
+    } catch(VisitFailure e) {}
+    long stopChrono2 = System.currentTimeMillis();
 
 		System.out.println(baobabHeight + "\t" + (stopChrono1-startChrono1)/1000. + "\t\t" + (medChrono2-startChrono2)/1000. + "\t\t" + (stopChrono2-medChrono2)/1000. + "\t\t" + (stopChrono2-startChrono2)/1000.);
   }

@@ -74,7 +74,9 @@ public class StratDebugger {
   }
 
   public static MuStrategy decorateStrategy(DebugStrategyObserver obs, MuStrategy s) {
-    return (MuStrategy) `BottomUp(DecorateStrategy(obs)).apply(s);
+    try {
+      return (MuStrategy) `BottomUp(DecorateStrategy(obs)).visit(s);
+    } catch(VisitFailure e) { return s; }
   }
 
   %strategy RS() extends `Identity() {
@@ -88,13 +90,17 @@ public class StratDebugger {
   public static Visitable applyDebug(Visitable subject, MuStrategy strat) {
     DummyObserver observer = new DummyObserver();
     strat = decorateStrategy(observer, strat);
-    return strat.apply(subject);
+    try {
+      return strat.visit(subject);
+    } catch(VisitFailure e) { return subject; }
   }
 
   public static Visitable applyGraphicalDebug(Visitable subject, MuStrategy strat) {
     GraphicalObserver observer = new GraphicalObserver(subject,strat);
     strat = decorateStrategy(observer, strat);
-    return strat.apply(subject);
+    try {
+      return strat.visit(subject);
+    } catch(VisitFailure e) { return subject; }
   }
 
 

@@ -31,11 +31,8 @@ import master.pico2.term.types.*;
 
 import java.util.*;
 
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
-
 class Pico2 {
-	%include { mutraveler.tom }
+	%include { sl.tom }
 	%include { java/util/types/HashMap.tom }
 
   %gom {
@@ -116,7 +113,7 @@ class Pico2 {
 		try {
 			`TopDown(Try(stratPrintCst())).visit(expr);
 			`TopDown(Try(Sequence(FindCst(),PrintTree()))).visit(expr);
-		} catch (VisitFailure e) {
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("strategy failed");
 		}
 	}
@@ -129,7 +126,7 @@ class Pico2 {
 			//`Sequence(Innermost(Sequence(Not(RenamedVar()),stratRenameVar())),PrintTree()).visit(expr);
 
 			`Sequence(Innermost(OptIf()),PrintTree()).visit(expr);
-		} catch (VisitFailure e) {
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("strategy failed");
 		}
 	}
@@ -173,7 +170,7 @@ class Pico2 {
 	public Expr propagate(HashMap env, Expr expr) {
 		try {
 			return (Expr) `TopDown(Try(PropagateCst(env))).visit(expr);
-		} catch (VisitFailure e) {
+		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("strategy failed");
 		}
 		return expr;

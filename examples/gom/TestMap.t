@@ -32,19 +32,16 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.util.*;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.Identity;
 
 import gom.elist.types.*;
+import jjtraveler.VisitFailure;
+import tom.library.sl.Strategy;
 
 public class TestMap extends TestCase {
 
   private static int cnt;
   %include { elist/Elist.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { elist/_Elist.tom }
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
@@ -54,8 +51,10 @@ public class TestMap extends TestCase {
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
-    MuStrategy maps = `mu(MuVar("x"),Choice(_Cons(Log(abag,bbag,cbag),MuVar("x")),_Empty()));
-    maps.apply(subject);
+    Strategy maps = `mu(MuVar("x"),Choice(_Cons(Log(abag,bbag,cbag),MuVar("x")),_Empty()));
+    try {
+    maps.visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals(1,abag.size());
     assertEquals(2,bbag.size());
     assertEquals(1,cbag.size());
@@ -79,12 +78,14 @@ public class TestMap extends TestCase {
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
-    MuStrategy maps = `mu(MuVar("x"),
+    Strategy maps = `mu(MuVar("x"),
         Choice(
           _Cons(BottomUp(Log(abag,bbag,cbag)),MuVar("x")),
           _Empty()
         ));
-    maps.apply(subject);
+    try {
+      maps.visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals(3,abag.size());
     assertEquals(3,bbag.size());
     assertEquals(2,cbag.size());
@@ -96,12 +97,14 @@ public class TestMap extends TestCase {
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
     /* cutbu is a custom bottomup, that do not go in the left part of an f */
-    MuStrategy cutbu = `mu(MuVar("x"),
+    Strategy cutbu = `mu(MuVar("x"),
         Sequence(
           Choice(_f(Identity(),Fail(),MuVar("x")),All(MuVar("x"))),
           Log(abag,bbag,cbag)
           ));
-    cutbu.apply(subject);
+    try {
+    cutbu.visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals("count a",1,abag.size());
     assertEquals("count b",1,bbag.size());
     assertEquals("count c",0,cbag.size());
@@ -109,7 +112,7 @@ public class TestMap extends TestCase {
 
   public void testMatch() {
     E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
-    MuStrategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_d()));
+    Strategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_d()));
     boolean state = false;
     try {
       match.visit(subject);
@@ -122,7 +125,7 @@ public class TestMap extends TestCase {
 
   public void testMatchFailure() {
     E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
-    MuStrategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_c()));
+    Strategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_c()));
     boolean state = true;
     try {
       match.visit(subject);
@@ -140,7 +143,7 @@ public class TestMap extends TestCase {
           Cons(b(),
             Cons(c(),
               Empty()))));
-    MuStrategy maps = `mu(MuVar("x"),
+    Strategy maps = `mu(MuVar("x"),
         Choice(
           _Cons(
             Try(
@@ -151,11 +154,15 @@ public class TestMap extends TestCase {
               )),MuVar("x")),
           _Empty()
         ));
-    subject = (Elist) maps.apply(subject);
+    try {
+    subject = (Elist) maps.visit(subject);
+    } catch(VisitFailure e) {}
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
-    `BottomUp(Log(abag,bbag,cbag)).apply(subject);
+    try {
+      `BottomUp(Log(abag,bbag,cbag)).visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals(5,abag.size());
     assertEquals(2,bbag.size());
     assertEquals(1,cbag.size());
@@ -169,12 +176,14 @@ public class TestMap extends TestCase {
             Cons(c(),
               Empty()))));
     /* encode the rule f(_,b) -> a */
-    MuStrategy rule = `BottomUp(
+    Strategy rule = `BottomUp(
         Try(
           Sequence(
             _f(Identity(),Identity(),_b()),
             Make_a())));
-    subject = (Elist) rule.apply(subject);
+    try {
+      subject = (Elist) rule.visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals(
         `Cons(a(),
           Cons(f(f(c(),1,f(b(),5,a())),4,a()),
@@ -200,20 +209,24 @@ public class TestMap extends TestCase {
           )
         );
     /* encode the rule f(a,a) -> a */
-    MuStrategy rule =
+    Strategy rule =
       `Sequence(
           _f(_a(),Identity(),_a()),
             Make_a()
             );
-    subject = (E) `Innermost(rule).apply(subject);
+    try {
+      subject = (E) `Innermost(rule).visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals(`a(),subject);
   }
 
   public void testMake_Strat() {
-    MuStrategy builder = `Make_f(Make_a(),2,Make_a());
-    assertEquals(`f(a(),2,a()),builder.apply(null));
-    assertEquals(`f(a(),2,a()),builder.apply(`a()));
-    assertEquals(`f(a(),2,a()),builder.apply(`f(a(),3,a())));
+    Strategy builder = `Make_f(Make_a(),2,Make_a());
+    try{
+      assertEquals(`f(a(),2,a()),builder.visit(null));
+      assertEquals(`f(a(),2,a()),builder.visit(`a()));
+      assertEquals(`f(a(),2,a()),builder.visit(`f(a(),3,a())));
+    } catch(VisitFailure e) { fail(); }
   }
 
   %strategy Assign(env:Map, name:String) extends Identity() {
@@ -244,12 +257,14 @@ public class TestMap extends TestCase {
         );
     Map env = new HashMap();
     /* encode the rule f(x,a) -> x */
-    MuStrategy rule =
+    Strategy rule =
       `Sequence(
          _f(Assign(env,"x"),Identity(),_a()),
          Get(env,"x")
        );
-    subject = (E) `Innermost(rule).apply(subject);
+    try {
+      subject = (E) `Innermost(rule).visit(subject);
+    } catch(VisitFailure e) {}
 
     assertEquals(`a(),subject);
   }
@@ -259,8 +274,10 @@ public class TestMap extends TestCase {
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
-    MuStrategy maps = `_conc(Log(abag,bbag,cbag));
-    maps.apply(subject);
+    Strategy maps = `_conc(Log(abag,bbag,cbag));
+    try {
+      maps.visit(subject);
+    } catch(VisitFailure e) {}
     assertEquals(1,abag.size());
     assertEquals(2,bbag.size());
     assertEquals(1,cbag.size());

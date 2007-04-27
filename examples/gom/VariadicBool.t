@@ -38,7 +38,7 @@ public class VariadicBool {
     test.run();
   }
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
   %gom {
     module Bool
     imports String

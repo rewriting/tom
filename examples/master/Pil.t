@@ -33,10 +33,9 @@ import master.pil.term.types.*;
 import java.util.*;
 
 import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
 
 class Pil {
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   %gom {
     module Term
@@ -61,10 +60,10 @@ class Pil {
     System.out.println("p1 = " + p1);
     //System.out.println(pretty(p1));
     
-    //System.out.println(`RenameVar("x","z").apply(p1));
+    //System.out.println(`RenameVar("x","z").fire(p1));
 
-    //System.out.println("renamed p1   = " + `OnceBottomUp(RenameVar("x","z")).apply(p1));
-    //System.out.println("optimized p1 = " + `BottomUp(RemoveLet()).apply(p1));
+    //System.out.println("renamed p1   = " + `OnceBottomUp(RenameVar("x","z")).fire(p1));
+    //System.out.println("optimized p1 = " + `BottomUp(RemoveLet()).fire(p1));
 
   }
 
@@ -77,10 +76,10 @@ class Pil {
   %strategy RemoveLet() extends Identity() {
     visit Expr {
       Let(Var(n),expr,body) -> { 
-        if(`body == `TopDown(RenameVar(n,"_"+n)).apply(`body)) {
-	  // if Var(n) is not used
-	  return `body;
-	}
+        if(`body == `TopDown(RenameVar(n,"_"+n)).fire(`body)) {
+          // if Var(n) is not used
+          return `body;
+        }
       }
     }
   }

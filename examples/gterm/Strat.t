@@ -28,11 +28,7 @@
  */
 package gterm;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
+import tom.library.strategy.mutraveler.*;
 
 public class Strat {
   %include { int.tom }
@@ -64,12 +60,12 @@ public class Strat {
 
   public void run(int max) {
 		List subject = genere(max);
-    VisitableVisitor rule = new RewriteSystem();
+    BasicStrategy rule = new RewriteSystem();
 		try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + MuTraveler.init(`OnceBottomUp(rule)).visit(subject));
-      System.out.println("BottomUp  = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
-    } catch (VisitFailure e) {
+      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
+      System.out.println("BottomUp  = " + `BottomUp(Try(rule)).visit(subject));
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     } catch (Exception e) {
 			System.out.println(e);
@@ -92,7 +88,7 @@ public class Strat {
       super(`Fail());
     }
     
-    public List visit_List(List arg) throws VisitFailure { 
+    public List visit_List(List arg) throws jjtraveler.VisitFailure { 
       %match(TomList arg) {
 				conc(h,t*) -> {
 					int v = `h+1;

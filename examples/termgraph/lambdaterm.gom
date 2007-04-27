@@ -10,7 +10,7 @@ LambdaTerm =
 
 
 abs:block() {
-%include { mustrategy.tom }
+%include { sl.tom }
  
 %typeterm Position{
   implement {Position}
@@ -30,9 +30,14 @@ abs:block() {
 }
 
 abs:make(var,arg) {
-  termgraph.lambdaterm.types.LambdaTerm newarg =(termgraph.lambdaterm.types.LambdaTerm)`TopDown(ToDeBruinj(var)).apply(arg);
+  termgraph.lambdaterm.types.LambdaTerm newarg; 
+  try {
+    newarg =(termgraph.lambdaterm.types.LambdaTerm)`TopDown(ToDeBruinj(var)).visit(arg);
+  } catch(jjtraveler.VisitFailure e) {
+    newarg = arg;
+  }
   if(true){
-  return `abs2(newarg); 
+    return `abs2(newarg); 
   }
 }
 

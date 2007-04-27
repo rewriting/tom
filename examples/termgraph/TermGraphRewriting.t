@@ -54,7 +54,7 @@ public class TermGraphRewriting {
     visit Term {
       p@pathTerm(_*) -> {
         Path target =
-          getEnvironment().getPosition().add((Path)`p).normalize();
+          getEnvironment().getPosition().add((Path)`p).getCanonicalPath();
         if (map.containsKey(target.toString())){
           String label = (String) map.get(target.toString());
           return `refTerm(label);
@@ -145,7 +145,7 @@ public class TermGraphRewriting {
     visit Term {
       p@pathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position dest = (Position) current.add((Path)`p).normalize();
+        Position dest = (Position) current.add((Path)`p).getCanonicalPath();
         if(current.compare(dest)== -1) {
           getEnvironment().followPath((Path)`p);
           Position realDest = getEnvironment().getPosition(); 
@@ -181,7 +181,7 @@ public class TermGraphRewriting {
     visit Term {
       p@pathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position dest = (Position) current.add((Path)`p).normalize();
+        Position dest = (Position) current.add((Path)`p).getCanonicalPath();
         if(current.hasPrefix(source) && !dest.hasPrefix(source)){
           //we must update this relative pos from the redex to the external
           current = current.changePrefix(source,target);

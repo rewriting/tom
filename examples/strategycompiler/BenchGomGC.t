@@ -111,7 +111,9 @@ class BenchGomGC {
       long startChrono = System.currentTimeMillis();
       while (post != pre) {
         pre = post;
-        post = (Nat)s.apply(post);
+        try {
+          post = (Nat)s.visit(post);
+        } catch(jjtraveler.VisitFailure e) {}
       }
       long stopChrono = System.currentTimeMillis();
 
@@ -126,7 +128,9 @@ class BenchGomGC {
       long startChrono = System.currentTimeMillis();
       while (post != pre) {
         pre = post;
-        post = (Nat)cs.apply(post);
+        try {
+          post = (Nat)cs.visit(post);
+        } catch(jjtraveler.VisitFailure e) {}
       }
       long stopChrono = System.currentTimeMillis();
 

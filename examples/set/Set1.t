@@ -34,10 +34,7 @@ import java.util.*;
 import set.jgset.*;
 import set.jgset.types.*;
 
-import tom.library.strategy.mutraveler.*;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import java.io.*;
 
@@ -47,7 +44,7 @@ import java.io.*;
 //when it is implemented in gom
 
 public class Set1 {
-  %include{mutraveler.tom}
+  %include{sl.tom}
     // Jean Goubault version 
   private Comparator comparator;
   private int depth;
@@ -189,8 +186,8 @@ public class Set1 {
   private JGSet reworkJGSet(JGSet t) {
     JGSet res = null;
     try {
-      res = (JGSet) MuTraveler.init(`RepeatId(TopDown(reworkJGSetOnce()))).visit(t);
-    } catch(VisitFailure e) { 
+      res = (JGSet) `RepeatId(TopDown(reworkJGSetOnce())).visit(t);
+    } catch(jjtraveler.VisitFailure e) { 
       System.out.println("failure in reworkJGSet strategy"); 
     }
     return res;
