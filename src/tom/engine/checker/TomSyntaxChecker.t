@@ -209,6 +209,12 @@ public class TomSyntaxChecker extends TomChecker {
     ArrayList verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
 
     %match(DeclarationList listOfDeclaration) {
+      !(_*, IsSortDecl[], _*) -> { 
+        // the declaration of IsSort is mandatory 
+          messageError(typeOrgTrack.getFileName(),typeOrgTrack.getLine(),
+                   TomMessage.IsSortNotDefined,
+                   new Object[]{tomName});
+      }
       (_*, d, _*) -> { // for each Declaration
         Declaration decl = `d;
         matchblock:{
@@ -241,7 +247,7 @@ public class TomSyntaxChecker extends TomChecker {
               break matchblock;
             }
           }
-        }
+                   }
       }
     }
     // remove non mandatory functions

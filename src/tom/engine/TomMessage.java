@@ -288,6 +288,8 @@ public class TomMessage implements PlatformMessage {
     new TomMessage("{0} is not allowed in non list symbol ");
   public static final TomMessage ambigousSymbolWithoutConstructor=
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
+  public static final TomMessage IsSortNotDefined =
+      new TomMessage("IsSort(t) is not defined for {0}");
 
   //strategy
   public static final TomMessage invalidStrategyName =
