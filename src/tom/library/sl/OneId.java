@@ -82,9 +82,5 @@ public class OneId extends AbstractStrategy {
         setSubject(originalsubject);
       }
     }
-    /* If we reach this point, there is a real failure */
-    setStatus(Environment.FAILURE);
-    return;
   }
-
 }

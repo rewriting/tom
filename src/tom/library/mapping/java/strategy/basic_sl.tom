@@ -121,12 +121,6 @@
   is_empty(t) { t instanceof tom.library.sl.Fail }
 }
 
-%op Strategy FailOnId(s1:Strategy) {
-  is_fsym(t) { (t instanceof tom.library.sl.FailOnId) }
-  make(v) { new tom.library.sl.FailOnId(v) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.FailOnId.ARG) }
-}
-
 %oplist Strategy SequenceId(Strategy*) {
   is_fsym(t) { (t instanceof tom.library.sl.SequenceId) }
   make_empty() { new tom.library.sl.Identity() }
