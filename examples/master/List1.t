@@ -45,8 +45,8 @@ public class List1 {
     %match(L l) {
       f(X*,e1,Z*,e2,Y*) -> {
         if(`gt(e1,e2)) {
-          return `swapSort(f(X*,e2,Z*,e1,Y*));
-          //System.out.println("("+`e1+","+`e2+")");
+          //return `swapSort(f(X*,e2,Z*,e1,Y*));
+          System.out.println("("+`e1+","+`e2+")");
         }
       }
     }
@@ -67,7 +67,7 @@ public class List1 {
   }
 
   public void run() {
-    L l = `f(a(),b(),c(),a(),b(),c(),a());
+    L l = `f(c(),b(),c(),a());
     L res1 = swapSort(l);
     L res2 = removeDouble(res1);
     System.out.println(" l       = " + l);

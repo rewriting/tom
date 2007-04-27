@@ -32,32 +32,19 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
 import java.util.*;
+import tom.library.sl.*;
 
 public class Rewrite3 {
 
   %include { term/term.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
-  public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return new tom.library.strategy.mutraveler.Mu(var,v);
-  }
-
   public final static void main(String[] args) {
-    Rewrite3 test = new Rewrite3();
-    test.run();
-  }
-
-  public void run() {
-    //VisitableVisitor rule = new RewriteSystemFail();
-
     try {
       Collection collection = new HashSet();
-      VisitableVisitor rule = `RewriteSystem(collection);
+      Strategy rule = `RewriteSystem(collection);
       Term subject = `f(g(g(a(),b()),g(a(),b())));
       `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);
@@ -66,41 +53,38 @@ public class Rewrite3 {
       subject = `f(g(g(a(),b()),g(c(),b())));
       `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);
-    } catch (VisitFailure e) {
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed");
     }
 
-
     System.out.println("occursTerm: " + occursTerm(`g(c(),c()), `f(g(g(a(),b()),g(a(),b()))) ));
     System.out.println("occursTerm: " + occursTerm(`g(c(),c()), `f(g(g(a(),b()),g(c(),c()))) ));
-
   }
   
   %strategy RewriteSystem(collection:Collection) extends `Fail() {
-
     visit Term {
-        g(x,b()) -> { collection.add(`x); }
+      g(x,b()) -> { collection.add(`x); }
     }
   }
 
   /*
    * Library
    */
-  
-  private boolean occursTerm(final jjtraveler.Visitable groundTerm, jjtraveler.Visitable subject) {
-    VisitableVisitor rule = new tom.library.strategy.mutraveler.VoidVisitor() {
-        public void voidVisit(jjtraveler.Visitable subject) throws VisitFailure {
-          if(groundTerm == subject) {
-            throw new VisitFailure(); 
-          }
+  %strategy findTerm(groundTerm:Term) extends Identity() {
+    visit Term {
+      subject -> { 
+        if(`groundTerm == `subject) {
+          `Fail().visit(null);
         }
-      };
+      }
+    }
+  }
   
-    VisitableVisitor bottomUp = `BottomUp(rule);
+  private static boolean occursTerm(final Term groundTerm, Term subject) {
     try {
-      bottomUp.visit(subject);
+      `BottomUp(findTerm(groundTerm)).visit(subject);
       return false;
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       return true;
     }
   }

@@ -31,12 +31,9 @@ package strategy;
 
 import strategy.proba2.state.*;
 import strategy.proba2.state.types.*;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Proba2 {
-
   %gom {
     // extension of adt syntax
     module State
@@ -47,48 +44,39 @@ public class Proba2 {
             | puits()
    }
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   public final static void main(String[] args) {
-    Proba2 test = new Proba2();
-    test.run();
-  }
-
-  public void run() {
     State subject = `a();
 
-    VisitableVisitor AB = new Transition(`a(),`b());
-    VisitableVisitor AC = new Transition(`a(),`c());
+    Strategy AB = new Transition(`a(),`b());
+    Strategy AC = new Transition(`a(),`c());
 
-    VisitableVisitor BA = new Transition(`b(),`a());
-    VisitableVisitor BC = new Transition(`b(),`c());;
-    VisitableVisitor BPuits = new Transition(`b(),`puits());
+    Strategy BA = new Transition(`b(),`a());
+    Strategy BC = new Transition(`b(),`c());;
+    Strategy BPuits = new Transition(`b(),`puits());
 
-    VisitableVisitor CA = new Transition(`c(),`a());
-    VisitableVisitor CB = new Transition(`c(),`b());
-    VisitableVisitor CPuits = new Transition(`c(),`puits());
+    Strategy CA = new Transition(`c(),`a());
+    Strategy CB = new Transition(`c(),`b());
+    Strategy CPuits = new Transition(`c(),`puits());
 
-    VisitableVisitor transitA = `Pselect(5,10,AC,AB);
-    VisitableVisitor transitB = `Pselect(8,10,BC,Pselect(1,50,BPuits,BA));
-    VisitableVisitor transitC = `Pselect(9,10,CA,Pselect(1,60,CPuits,CB));
+    Strategy transitA = `Pselect(5,10,AC,AB);
+    Strategy transitB = `Pselect(8,10,BC,Pselect(1,50,BPuits,BA));
+    Strategy transitC = `Pselect(9,10,CA,Pselect(1,60,CPuits,CB));
 
-    //VisitableVisitor transitC = `Pchoice(concStrat(Pstrat(4,CA),Pstrat(1,CPuits),Pstrat(5,CB)));
-
-    VisitableVisitor transit  = `Repeat(Choice(transitA,Choice(transitB,transitC)));
+    Strategy transit  = `Repeat(Choice(transitA,Choice(transitB,transitC)));
     
 
     try {
       System.out.println("subject       = " + subject);
       State s = (State) transit.visit(subject);
       System.out.println("s = " + s);
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
-
   }
 
   %strategy Transition(s1:State,s2:State) extends `Fail() { 
-
     visit State {
       state -> {
         if(`state == s1) {
@@ -99,5 +87,3 @@ public class Proba2 {
     }
   }
 }
-
- 

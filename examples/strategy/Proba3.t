@@ -31,11 +31,7 @@ package strategy;
 
 import strategy.proba3.term.*;
 import strategy.proba3.term.types.*;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
+import tom.library.sl.*;
 
 import java.util.*;
 
@@ -51,7 +47,7 @@ public class Proba3 {
 				 | g(s1:Term)
    }
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
 	%typeterm Collection {
 		implement { Collection }
@@ -61,33 +57,24 @@ public class Proba3 {
 	private static Random random = new Random();
 
 	public final static void main(String[] args) {
-		Proba3 test = new Proba3();
-		test.run();
-	}
-
-  public void run() {
     Term subject = `f(a(),f(b(),c()));
-
 		List c = new ArrayList();
 
-
-    //VisitableVisitor S  = `OmegaU(R1(), Fail());
-    VisitableVisitor S  = `mu(MuVar("x"),Choice(OmegaU(MuVar("x"),Fail()),R1()));
-    
+    Strategy S  = `mu(MuVar("x"),Choice(OmegaU(MuVar("x")),R1()));
 
     try {
       System.out.println("subject       = " + subject);
       Term s = (Term) S.visit(subject);
       System.out.println("s = " + s);
 
-			MuTraveler.init(`TopDown(GetPosition(c))).visit(subject);
+			`TopDown(GetPosition(c)).visit(subject);
 			System.out.println("set[pos] = " + c);
 			int index = Math.abs(random.nextInt()) % c.size();
 			Position pos = (Position)c.get(index);
 			Term pTerm = (Term)pos.getSubterm().visit(subject);
 			System.out.println("pos = " + pos + " --> " + pTerm);
 			
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -100,15 +87,15 @@ public class Proba3 {
 
   }
 
-	public Term pRewriteSubterm(Term subject, VisitableVisitor v) {
+	public static Term pRewriteSubterm(Term subject, Strategy v) {
 		List c = new ArrayList();
 		try {
-			MuTraveler.init(`TopDown(GetPosition(c))).visit(subject);
+			`TopDown(GetPosition(c)).fire(subject);
 			Position pos = (Position)c.get(Math.abs(random.nextInt()) % c.size());
-			Term res = (Term)pos.getOmega(v).visit(subject);
+			Term res = (Term)pos.getOmega(v).fire(subject);
 			System.out.println("selected pos = " + pos);
 			return res;	
-		} catch(VisitFailure e) {
+		} catch(FireException e) {
       System.out.println("reduction failed on: " + subject);
 		}
 		return subject;
@@ -123,7 +110,7 @@ public class Proba3 {
   
 	%strategy GetPosition(c:Collection) extends `Identity() { 
     visit Term {
-			_ -> { c.add(getPosition()); }
+			_ -> { c.add(getEnvironment().getPosition()); }
 		}
 	}
 

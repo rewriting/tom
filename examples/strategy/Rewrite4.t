@@ -32,79 +32,66 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import java.util.*;
 
 public class Rewrite4 {
 
   %include { term/term.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
   %typeterm Position {
-    implement {Position}
-    is_sort(t)     { t instanceof Position }
+    implement { Position }
+    is_sort(t) { t instanceof Position }
   }
 
   public final static void main(String[] args) {
-    Rewrite4 test = new Rewrite4();
-    test.run();
-  }
-
-  private Term globalSubject = null;
-  public void run() {
     //Term subject = `g(d(),d());
     //Term subject = `f(g(g(a(),b()),g(a(),a())));
     Term subject = `h(h(a(),a(),a()),h(a(),b(),c()),h(g(c(),d()),a(),f(a())));
-    globalSubject = subject;
 
     // find all leaf nodes positions
-    Collection leaves = new HashSet();
+    Collection leaves = new LinkedList();
     try {
-      MuStrategy getleaves = `FindLeaves(leaves);
-      MuTraveler.init(`BottomUp(getleaves)).visit(subject);
-    } catch (VisitFailure e) {
+      Strategy getleaves = `FindLeaves(leaves);
+      `BottomUp(getleaves).fire(subject);
+    } catch (FireException e) {
       System.out.println("Failed to get leaves" + subject);
     }
 
     Iterator it = leaves.iterator();
     while(it.hasNext()) {
       Position p = (Position)it.next();
+      Strategy s1 = `S1();
+      Strategy s2 = `S2();
+      Strategy eqPos = `EqPos(p);
+      Strategy subPos = `SubPos(p);
 
-      MuStrategy s1 = `S1();
-      MuStrategy s2 = `S2();
-      MuStrategy eqPos = `EqPos(p);
-      MuStrategy subPos = `SubPos(p);
-
-      MuStrategy xmastree = `mu(MuVar("x"),
+      Strategy xmastree = `mu(MuVar("x"),
           Sequence(s1,
             All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
 
-      MuStrategy useOmegaPath = (MuStrategy)p.getOmegaPath(`Sequence(s2,All(s1)));
+      Strategy useOmegaPath = (Strategy)p.getOmegaPath(`Sequence(s2,All(s1)));
 
       System.out.println("----------------------");
       System.out.println("subject       = " + subject);
       System.out.println("position      = " + p);
-      System.out.println("xmastree = " + xmastree.apply(subject));
-      System.out.println("omegapath = " + useOmegaPath.apply(subject));
+      System.out.println("xmastree = " + xmastree.fire(subject));
+      System.out.println("omegapath = " + useOmegaPath.fire(subject));
     }
   }
 
   %strategy S1() extends `Identity() { 
     visit Term {
       subject -> {
-        int depth = getPosition().depth();
+        int depth = getEnvironment().getPosition().depth();
         String offset = "";
         for (int i = 0; i<depth; i++){
           offset += "  ";
         }
-        System.out.println(offset + "s1: "+ `subject.symbolName() + " position: "+ getPosition());
+        System.out.println(offset + "s1: "+ `subject.symbolName() + " position: "+ getEnvironment().getPosition());
       }
     }
   }
@@ -113,12 +100,12 @@ public class Rewrite4 {
 
     visit Term {
       subject -> {
-        int depth = getPosition().depth();
+        int depth = getEnvironment().getPosition().depth();
         String offset = "";
         for (int i = 0; i<depth; i++){
           offset += "--";
         }
-        System.out.println(offset + "> s2: "+ `subject.symbolName() + " position: "+ getPosition());
+        System.out.println(offset + "> s2: "+ `subject.symbolName() + " position: "+ getEnvironment().getPosition());
       }
     }
   }
@@ -128,7 +115,7 @@ public class Rewrite4 {
     visit Term {
       subject -> {
         if (`subject.getChildCount() == 0) {
-          bag.add(getPosition());
+          bag.add(getEnvironment().getPosition());
         }
       }
     }
@@ -138,7 +125,7 @@ public class Rewrite4 {
 
     visit Term {
       subject -> {
-        if (getPosition().equals(p)) {
+        if (getEnvironment().getPosition().equals(p)) {
           return `subject;
         }
       }
@@ -149,7 +136,7 @@ public class Rewrite4 {
 
     visit Term {
       subject-> {
-        if (getPosition().isPrefix(p)) {
+        if (p.hasPrefix(getEnvironment().getPosition())) {
           return `subject;
         } 
       }

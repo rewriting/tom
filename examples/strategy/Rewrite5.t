@@ -32,36 +32,36 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
 
 import java.util.*;
+import tom.library.sl.*;
 
 public class Rewrite5 {
 
   %include { term/term.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
   public final static void main(String[] args) {
     Collection collection = new HashSet();
     Term subject = `f(g(g(a(),b()),g(a(),b())));
-    `BottomUp(Collector(subject,collection,RewriteSystem())).apply(subject);
+    `BottomUp(Collector(subject,collection,RewriteSystem())).fire(subject);
     System.out.println("collect : " + collection);
   }
-  
+
   %strategy RewriteSystem() extends `Fail() {
     visit Term {
-        g(x,b()) -> { return `x; }
+      g(x,b()) -> { return `x; }
     }
   }
+
   %strategy Collector(root:Term,collection:Collection,strat:Strategy) extends `Identity() {
     visit Term {
       x -> {
         try {
-          Term r = (Term)`strat.visit(`x);
-          collection.add(getPosition().getReplace(`x).visit(`root)); 
-        } catch(VisitFailure e) { }
+          Term r = (Term)`strat.fire(`x);
+          collection.add(getEnvironment().getPosition().getReplace(`x).fire(`root)); 
+        } catch(FireException e) {}
       }
     }
   }

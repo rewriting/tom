@@ -31,43 +31,32 @@ package strategy;
 
 import strategy.term.*;
 import strategy.term.types.*;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Rewrite2 {
 
   %include { term/term.tom }
   %include { string.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   public final static void main(String[] args) {
-    Rewrite2 test = new Rewrite2();
-    test.run();
-  }
-
-  public void run() {
-    //Term subject = `g(c(),c());
     Term subject = `f(g(g(a(),b()),g(a(),a())));
 
-    VisitableVisitor rule = `RewriteSystem();
-    VisitableVisitor onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rule));
-    VisitableVisitor innermostSlow = `mu(MuVar("y"),Choice(Sequence(onceBottomUp,MuVar("y")),Identity()));
-    VisitableVisitor innermost = `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(rule,MuVar("x")),Identity())));
+    Strategy rule = `RewriteSystem();
+    Strategy onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rule));
+    Strategy innermostSlow = `mu(MuVar("y"),Choice(Sequence(onceBottomUp,MuVar("y")),Identity()));
+    Strategy innermost = `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(rule,MuVar("x")),Identity())));
     try {
       System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
       System.out.println("innermostSlow = " + innermostSlow.visit(subject));
       System.out.println("innermost     = " + innermost.visit(subject));
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
-
-
   }
   
   %strategy RewriteSystem() extends `Fail() {
-
     visit Term { 
         a() -> { return `b(); }
         b() -> { return `c(); }

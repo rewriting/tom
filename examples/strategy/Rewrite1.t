@@ -32,77 +32,71 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.*;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import ted.*;
 public class Rewrite1 {
 
   %include { term/term.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   
   public final static void main(String[] args) {
-    Rewrite1 test = new Rewrite1();
-    test.run();
-  }
-
-  public void run() {
-    //Term subject = `g(d(),d());
     Term subject = `f(g(g(a(),b()),g(a(),a())));
 
-   MuStrategy rule = `RewriteSystem(subject);
-   MuStrategy ruleId = `RewriteSystemId();
+    Strategy rule = `RewriteSystem(subject);
+    Strategy ruleId = `RewriteSystemId();
 
     try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + MuTraveler.init(`OnceBottomUp(rule)).visit(subject));
-      System.out.println("onceBottomUpId= " + MuTraveler.init(`OnceBottomUpId(ruleId)).visit(subject));
-      System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
-      System.out.println("bottomUpId    = " + MuTraveler.init(`BottomUp(ruleId)).visit(subject));
+      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).fire(subject));
+      System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).fire(subject));
+      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).fire(subject));
+      System.out.println("bottomUpId    = " + `BottomUp(ruleId).fire(subject));
+      System.out.println("innermost     = " + `Innermost(rule).fire(subject));
+      System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).fire(subject));
+      System.out.println("innermostId   = " + `InnermostId(ruleId).fire(subject));
       //StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
-      System.out.println("innermost     = " + `Innermost(rule).apply(subject));
-      System.out.println("innermostSlow = " + MuTraveler.init(`Repeat(OnceBottomUp(rule))).visit(subject));
-      System.out.println("innermostId   = " + MuTraveler.init(`InnermostId(ruleId)).visit(subject));
-    } catch (VisitFailure e) {
+    } catch (FireException e) {
       System.out.println("reduction failed on: " + subject);
     }
-
   }
 
   %strategy RewriteSystem(subject:Term) extends Fail() {
     visit Term {
       a() -> { 
-        Position pos = getPosition();
+        Position pos = getEnvironment().getPosition();
         System.out.println("a -> b at " + pos);
-        System.out.println(subject + " at " + pos + " = " + pos.getSubterm().visit(subject));
-        System.out.println("rwr into: " + pos.getReplace(`b()).visit(subject));
-
+        System.out.println(subject + " at " + pos + " = " + pos.getSubterm().fire(subject));
+        System.out.println("rwr into: " + pos.getReplace(`b()).fire(subject));
         return `b();
       }
+
       b() -> {
-        System.out.println("b -> c at " + getPosition());
+        System.out.println("b -> c at " + getEnvironment().getPosition());
         return `c();
       }
+
       g(c(),c()) -> {
-        System.out.println("g(c,c) -> c at " + getPosition());
-        return `c(); }
+        System.out.println("g(c,c) -> c at " + getEnvironment().getPosition());
+        return `c(); 
+      }
     }
   }
 
-  %strategy RewriteSystemId() extends `Identity() {
+  %strategy RewriteSystemId() extends Identity() {
     visit Term {
       a() -> {
-        System.out.println("a -> b at " + getPosition());
+        System.out.println("a -> b at " + getEnvironment().getPosition());
         return `b();
       }
+
       b() -> {
-        System.out.println("b -> c at " + getPosition());
+        System.out.println("b -> c at " + getEnvironment().getPosition());
         return `c();
       }
+
       g(c(),c()) -> {
-        System.out.println("g(c,c) -> c at " + getPosition());
+        System.out.println("g(c,c) -> c at " + getEnvironment().getPosition());
         return `c();
       }
     }

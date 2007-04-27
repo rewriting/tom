@@ -32,49 +32,31 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class MuStrategy2 {
 
   %include { term/term.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   
   public final static void main(String[] args) {
-    MuStrategy2 test = new MuStrategy2();
-    test.run();
-  }
-
-  public void run() {
-    //Term subject = `g(d(),d());
     Term subject = `g(g(a(),a()),g(a(),b()));
-
-    VisitableVisitor rule = `RewriteSystem();
-
+    Strategy rule = `RewriteSystem();
     try {
       System.out.println("subject          = " + subject);
-      System.out.println("innermost        = " + MuTraveler.init(`Innermost(rule)).visit(subject));
-      System.out.println("innermostSlow    = " + MuTraveler.init(`Repeat(OnceBottomUp(rule))).visit(subject));
-      System.out.println("Repeat(BottomUp) = " + MuTraveler.init(`Repeat(BottomUp(rule))).visit(subject));
-    } catch (VisitFailure e) {
+      System.out.println("innermost        = " + `Innermost(rule).visit(subject));
+      System.out.println("innermostSlow    = " + `Repeat(OnceBottomUp(rule)).visit(subject));
+      System.out.println("Repeat(BottomUp) = " + `Repeat(BottomUp(rule)).visit(subject));
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
   }
   
   %strategy RewriteSystem() extends `Fail() {
-
     visit Term {
       a() -> { return `b(); }
       g(b(),a()) -> { return `c(); }
     }
   }
 }
-
- 
-
-
-
-

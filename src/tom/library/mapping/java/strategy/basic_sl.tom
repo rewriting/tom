@@ -144,3 +144,21 @@
   get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.OneId.ARG) }
 }
 
+/*
+ * basic probabilistic operators
+ */
+
+%op Strategy Pselect(p1:int, p2:int, s1:Strategy, s2:Strategy) {
+  is_fsym(t) { (t instanceof tom.library.sl.Pselect) }
+  make(p,q,first,then) { new tom.library.sl.Pselect(p,q,first,then) }
+  get_slot(p1, t) { t.getP() }
+  get_slot(p2, t) { t.getQ() }
+  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Pselect.FIRST) }
+  get_slot(s2, t) { (tom.library.strategy.sl)t.getChildAt(tom.library.sl.Pselect.THEN) }
+}
+
+%op Strategy OmegaU(s1:Strategy) {
+  is_fsym(t) { (t instanceof tom.library.sl.OmegaU) }
+  make(v) { new tom.library.sl.OmegaU(v) }
+  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.OmegaU.ARG) }
+}

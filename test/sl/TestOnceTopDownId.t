@@ -17,6 +17,7 @@ public class TestOnceTopDownId extends TestCase {
     abstract syntax
     Term = a()
          | b()
+         | c()
          | f(t1:Term,t2:Term)
   }
 
@@ -33,6 +34,10 @@ public class TestOnceTopDownId extends TestCase {
       fail("It should fail, but got "+t);
     } catch (jjtraveler.VisitFailure f) {
     }
+
+    Term t2 = `f(c(),c());
+    t = (Term)`OnceTopDownId(Bug()).fire(t2);
+    assertEquals("they should be equal",t,t2);
   }
 
   %strategy Bug() extends Identity() {
