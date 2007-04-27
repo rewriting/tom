@@ -51,9 +51,6 @@ public class TomVariadicGenerator implements TomIBaseGenerator {
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }
-      ConstraintToExpression(MatchConstraint(TestVarStar(v@VariableStar[AstType=type]),t)) -> {
-        return `EqualTerm(type,v,t);
-      }
     } // end visit
     visit TomTerm {
       // generate getHead

@@ -44,6 +44,10 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
       ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain = type]),t)) -> {
         return `EqualTerm(type,e,t);
       }
+      // generate equality test
+      ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
+        return `EqualTerm(type,v,t);
+      }
     } // end visit
   } // end strategy	
   

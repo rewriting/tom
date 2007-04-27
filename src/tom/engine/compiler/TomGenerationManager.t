@@ -121,25 +121,25 @@ public class TomGenerationManager {
    */
   private static Instruction generateAutomata(Expression expression, Instruction action){
     %match(expression){
-      And(left,right) ->{
+      And(left,right) -> {
         Instruction subInstruction = generateAutomata(`right,action);
         return `generateAutomata(left,subInstruction);
-      }
+      } 
       // variables' assignments
-      ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable|VariableStar)[],t)) ->{        
-        return `LetRef(v,TomTermToExpression(t),action);			
-      }      
+      ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable|VariableStar)[],t)) -> {
+        return `LetRef(v,TomTermToExpression(t),action);
+      }  
       // do while
-      DoWhileExpression(expr,condition) ->{
+      DoWhileExpression(expr,condition) -> {
         Instruction subInstruction = generateAutomata(`expr,`Nop());
         return `DoWhile(UnamedBlock(concInstruction(action,subInstruction)),condition);
       }
       // 'if'
-      IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) ->{
+      IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) -> {
         return `If(condition,LetAssign(left1,TomTermToExpression(right1),Nop()),LetAssign(left2,TomTermToExpression(right2),Nop()));
       }
       // disjunction of symbols
-      or@OrExpressionDisjunction(_*) ->{
+      or@OrExpressionDisjunction(_*) -> {
         return buildExpressionDisjunction(`or,action);
       }
       // anti-match
@@ -147,13 +147,13 @@ public class TomGenerationManager {
         return buildAntiMatchInstruction(`expr,action);
       }
       // conditions			
-      x ->{
+      x -> {
         return `If(x,action,Nop());
       }	
     }
     throw new TomRuntimeException("TomGenerationManager.generateAutomata - strange expression:" + expression);
   }
-
+ 
   /**
    * Makes sure that no variable is declared if the same variable was declared above  
    */

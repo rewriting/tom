@@ -72,15 +72,17 @@ public class TomPropagationManager {
      * 
      * The strategy makes a TopDown, and when finding an AntiTerm, it doesn't traverse its children
      */    
-    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),Sequence(DetachConstraints(constraintList),All(MuVar("xx")))))
-                            .fire(constraintToCompile);    
+    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
+        Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).fire(constraintToCompile);    
     Constraint andList = `AndConstraint();
     for(Constraint constr: constraintList) {
       andList = `AndConstraint(andList*,constr);
     }    
-    return `AndConstraint(newConstr,andList*);
+    return `AndConstraint(newConstr,andList*);    
   }
 
+  // TODO - wouldn't it be better to do this in propagators ?
+  
   /**
    * f(x,a@b@g(y)) << t -> f(x,z) << t /\ g(y) << z /\ a << z /\ b << z
    */
@@ -100,7 +102,8 @@ match : %match(t) {
             freshVariable = TomConstraintCompiler.getFreshVariable(freshVarType);
           }
         }// end match
-        bag.add(`MatchConstraint(t,freshVariable));
+        //make sure to apply on its subterms also
+        bag.add(preparePropagations(`MatchConstraint(t.setConstraints(concConstraint()),freshVariable)));
         // for each constraint
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {

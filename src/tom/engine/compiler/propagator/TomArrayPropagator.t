@@ -110,7 +110,7 @@ public class TomArrayPropagator implements TomIBasePropagator {
     visit Constraint {
       MatchConstraint(v@VariableStar[AstName=name],p) -> {
         if(`name == varName) {					
-          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVarStar(freshVar),v));
+          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
         }				  
       }
     }

@@ -80,7 +80,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
         }
         return `AndConstraint(l*,lastPart*);
       }
-
+ 
       /*
        * Switch
        * 
@@ -109,14 +109,14 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
           }
         }// end match
         // add fresh var assignment
-        return = `AndConstraint(MatchConstraint(freshVar,s),assigns*);
+        return `AndConstraint(MatchConstraint(freshVar,s),assigns*);
       }
 
       /*
        * Replace
        * 
-       * Context1 /\ z = t /\ Context2( z = u ) -> Context1 /\ z = t /\
-       * Context2( t = u ) we only apply this rule from left to right; this is
+       * Context1 /\ z = t /\ Context2( z = u ) -> Context1 /\ z = t /\ Context2( t = u ) 
+       * we only apply this rule from left to right; this is
        * not important for classical pattern matching, but when anti-patterns
        * are involved, if we replace right_to_left, results are not always
        * correct
@@ -134,7 +134,11 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
   %strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity() {
     visit Constraint {
       MatchConstraint(Variable[AstName=name],t) -> {
-        if(`name == varName) { return `MatchConstraint(value,t); }
+        if(`name == varName) { 
+          // if we propagate a variable, this should lead to en equality test
+          // otherwise, it is a just a match
+          return value.isVariable() ? `MatchConstraint(TestVar(value),t) : `MatchConstraint(value,t); 
+        }
       }
     }
   }// end strategy
