@@ -32,22 +32,15 @@ package strategy;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import java.util.*;
 
 public class RewriteXml {
 
-  private XmlTools xtools;
 
   %include { adt/tnode/TNode.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   %typeterm Collection {
     implement { java.util.Collection }
@@ -55,26 +48,20 @@ public class RewriteXml {
   }
 
   %typeterm Position {
-    implement { tom.library.strategy.mutraveler.Position }
+    implement { tom.library.sl.Position }
     is_sort(t)     { t instanceof Position }
   }
 
   public final static void main(String[] args) {
-    RewriteXml test = new RewriteXml();
-    test.run();
-  }
-
-  public void run() {
-
-    xtools = new XmlTools();
+    XmlTools xtools = new XmlTools();
     TNode subject = (TNode)xtools.convertXMLToTNode("strategy/minimenu.xml");
     subject = subject.getDocElem();
     Collection leaves = new HashSet();
 
     try {
-      VisitableVisitor findLeaves = `FindLeaves(leaves);
-      MuTraveler.init(`BottomUp(findLeaves)).visit(subject);
-    } catch (VisitFailure e) {
+      Strategy findLeaves = `FindLeaves(leaves);
+      `BottomUp(findLeaves).fire(subject);
+    } catch (FireException e) {
       System.out.println("Failed to get leaves" + subject);
     }
     System.out.println("bag: "+leaves);
@@ -83,27 +70,26 @@ public class RewriteXml {
     while(it.hasNext()) {
       Position p = (Position)it.next();
 
-      VisitableVisitor s1 = `S1();
-      VisitableVisitor s2 = `S2();
-      VisitableVisitor eqPos = `EqPos(p);
-      VisitableVisitor subPos = `SubPos(p);
+      Strategy s1 = `S1();
+      Strategy s2 = `S2();
+      Strategy eqPos = `EqPos(p);
+      Strategy subPos = `SubPos(p);
 
-      VisitableVisitor xmastree = `mu(MuVar("x"),
+      Strategy xmastree = `mu(MuVar("x"),
           All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1))));
 
       try {
         System.out.println("----------------------");
         System.out.println("position      = " + p);
-        xtools.printXMLFromTNode((TNode)MuTraveler.init(xmastree).visit(subject));
+        xtools.printXMLFromTNode((TNode)xmastree.visit(subject));
         System.out.println("-----------------------");
-      } catch (VisitFailure e) {
+      } catch (jjtraveler.VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
     }
   }
 
   %strategy S1() extends `Identity() {
-
     visit TNode {
       <section><title_fr>#TEXT(title)</title_fr></section> -> {
         // prune the sub-lists: we keep only the title
@@ -117,7 +103,6 @@ public class RewriteXml {
   }
 
   %strategy S2() extends `Identity() {
-
     visit TNode {
       arg -> { return `xml(<hilight>arg</hilight>); }
     }
@@ -126,7 +111,7 @@ public class RewriteXml {
   %strategy FindLeaves(c:Collection) extends `Identity() {
 
     visit TNode {
-      <subsection></subsection> -> { c.add(MuTraveler.getPosition(this));}
+      <subsection></subsection> -> { c.add(getEnvironment().getPosition());}
     }
   }
 
@@ -134,7 +119,7 @@ public class RewriteXml {
 
     visit TNode {
       arg -> {
-        if (MuTraveler.getPosition(this).equals(p)) {
+        if (getEnvironment().getPosition().equals(p)) {
           return `arg;
         }
       }
@@ -142,7 +127,7 @@ public class RewriteXml {
 
     visit TNodeList {
       arg -> {
-        if (MuTraveler.getPosition(this).equals(p)) {
+        if (getEnvironment().getPosition().equals(p)) {
           return `arg;
         } 
       }
@@ -153,7 +138,7 @@ public class RewriteXml {
 
     visit TNode {
       arg -> {
-        if (MuTraveler.getPosition(this).isPrefix(p)) {
+        if (p.hasPrefix(getEnvironment().getPosition())) {
           return `arg;
         } 
       }
@@ -161,7 +146,7 @@ public class RewriteXml {
 
     visit TNodeList {
       arg -> {
-        if (MuTraveler.getPosition(this).isPrefix(p)) {
+        if (p.hasPrefix(getEnvironment().getPosition())) {
           return `arg;
         } 
       }

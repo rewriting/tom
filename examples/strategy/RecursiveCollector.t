@@ -31,17 +31,12 @@ package strategy;
 
 import strategy.term.*;
 import strategy.term.types.*;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class RecursiveCollector {
 
   %include { term/term.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   
   public final static void main(String[] args) {
     //Term subject = `g(g(a(),b()),g(c(),d()));
@@ -50,9 +45,8 @@ public class RecursiveCollector {
     try {
       System.out.println("subject          = " + subject);
       System.out.println("collect all nodes, except those under the first subterm of g(...)");
-      MuTraveler.init(`mu(MuVar("x"),TopDownCollect(Collector(MuVar("x"))))).visit(subject);
-
-    } catch (VisitFailure e) {
+      `mu(MuVar("x"),TopDownCollect(Collector(MuVar("x")))).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
