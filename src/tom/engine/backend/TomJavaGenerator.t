@@ -169,6 +169,17 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 
     // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
     int stratChildCount = stratChild.size();
+
+    output.write(deep, "public jjtraveler.Visitable[] getChildren() { jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];");
+    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    output.write(deep, "return stratChilds;}");
+
+    output.write(deep, "public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {");
+    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    output.write(deep, "setChildAt(i,children[i]);}");
+    output.write(deep, "return this;}");
+
     output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");
 
     // write getChildAt

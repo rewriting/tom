@@ -55,8 +55,7 @@ import tom.platform.PluginPlatformMessage;
 import tom.platform.PlatformException;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 
@@ -69,7 +68,7 @@ public class TomBackend extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/platformoption/PlatformOption.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   /** the tabulation starting value */
   private final static int defaultDeep = 2;
@@ -219,32 +218,35 @@ public class TomBackend extends TomGenericPlugin {
   private void markUsedConstructorDestructor(TomTerm pilCode) {
     Stack stack = new Stack();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
-    `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).apply(pilCode);
+    try {
+      `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).visit(pilCode);
+    } catch(VisitFailure e) { }
   }
 
-  private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol, MuStrategy markStrategy) {
+  private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
-      markStrategy.apply(tomSymbol);
+      try {
+        markStrategy.visit(tomSymbol);
+      } catch(VisitFailure e) { }
+
+
     }
     getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
   }
 
-  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, MuStrategy markStrategy) {
+  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
-      markStrategy.apply(tomSymbol);
+      try {
+        markStrategy.visit(tomSymbol);
+      } catch(VisitFailure e) { }
     }
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
   }
 
-  private void setUsedTypeDefinition(String moduleName, String tomTypeName, MuStrategy markStrategy) {
-    //SymbolTable st = getSymbolTable(moduleName);
-    //if(!st.isUsedTypeDefinition(tomType)) {
-    //  markStrategy.apply(tomType);
-    //}
+  private void setUsedTypeDefinition(String moduleName, String tomTypeName, Strategy markStrategy) {
     getSymbolTable(moduleName).setUsedTypeDefinition(tomTypeName);
-    //System.out.println("use type: " + tomTypeName);
   }
 
   %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:Stack) extends `Identity() {

@@ -52,8 +52,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 /**
@@ -62,7 +61,7 @@ import jjtraveler.VisitFailure;
 public class TomSyntaxCheckerAp extends TomSyntaxChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   /**
    * Basicaly ignores the anti-symbol
    */
@@ -96,7 +95,9 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
   private void checkForAnnotations(TomTerm t, OptionList options){	  
     String fileName = findOriginTrackingFileName(options);
     int decLine = findOriginTrackingLine(options);
-    `TopDown(CheckForAnnotations(fileName,decLine,t)).apply(t);
+    try {
+      `TopDown(CheckForAnnotations(fileName,decLine,t)).visit(t);
+    } catch(VisitFailure e) { }
   }
 
 

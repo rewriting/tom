@@ -50,9 +50,7 @@ import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 /**
@@ -61,7 +59,7 @@ import jjtraveler.VisitFailure;
 public class TomCompiler extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
+  %include { ../../library/mapping/java/sl.tom }
   %include { java/util/types/Collection.tom}
   %include { java/util/types/Map.tom}
 
@@ -215,7 +213,7 @@ matchBlock: {
                       `Match(SubjectList(generatedSubjectList),
                           concPatternInstruction(generatedPatternInstruction),
                           generatedMatchOptionList);
-                    generatedMatch = (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(generatedMatch);
+                    generatedMatch = (Instruction) `preProcessing(compiler).visit(generatedMatch);
                     /*System.out.println("Generate new Match"+generatedMatch); */
                     newPatternInstruction =
                       `PatternInstruction(Pattern(subjectList,newTermList,concTomTerm()),generatedMatch, option);
@@ -268,7 +266,7 @@ matchBlock: {
           }
           jVisitList = jVisitList.getTailconcTomVisit();
         }
-        return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
+        return (Declaration) `preProcessing(compiler).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
     }//end match
   } // end strategy
@@ -279,7 +277,7 @@ matchBlock: {
 
   %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Identity()  {
     visit TomTerm {
-      t -> {return (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
+      t -> {return (TomTerm) `preProcessing(compiler).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
     }
   }
 
@@ -346,6 +344,85 @@ matchBlock: {
   }  
   
   /*
+<<<<<<< .working
+=======
+   * attach the when contraint to the right variable
+   */
+  private TomList attachConstraint(TomList subjectList, TomTerm constraint) {
+    HashSet patternVariable = new HashSet();
+    HashSet constraintVariable = new HashSet();
+
+    TomBase.collectVariable(patternVariable,subjectList);
+    TomBase.collectVariable(constraintVariable,constraint);
+    Set variableSet = intersection(patternVariable,constraintVariable);
+
+    //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
+    TomList newSubjectList = subjectList;
+    try {
+      newSubjectList = (TomList) `attachConstraint(variableSet,constraint,this).visit(subjectList);
+    } catch(VisitFailure e) { }
+    return newSubjectList;
+  }
+
+  /*
+   * build a set with all the variables in the intersection of two sets
+   * used by the when
+   */
+  private static Set intersection(Set patternVariable, Set constraintVariable) {
+    Set res = new HashSet();
+    for(Iterator it1 = patternVariable.iterator(); it1.hasNext() ; ) {
+      TomTerm patternTerm = (TomTerm) it1.next();
+itBlock: {
+           for(Iterator it2 = constraintVariable.iterator(); it2.hasNext() ; ) {
+             TomTerm constraintTerm = (TomTerm) it2.next();
+             %match(patternTerm, TomTerm constraintTerm) {
+               var@Variable[AstName=name], Variable[AstName=name] -> {
+                 res.add(`var);
+                 //break itBlock;
+               }
+               var@VariableStar[AstName=name], VariableStar[AstName=name] -> {
+                 res.add(`var);
+                 //break itBlock;
+               }
+             }
+           }
+         }
+    }
+    return res;
+  }
+
+  /*
+   * find the variable on which we should attach the constraint
+   * used by the when
+   */
+
+  %op Strategy attachConstraint(variableSet:Set,constraint:TomTerm,compiler:TomCompiler){
+    make(variableSet,constraint,compiler) { `ChoiceTopDown(attachConstraint_once(variableSet,constraint,compiler)) }
+  }
+
+  %strategy attachConstraint_once(variableSet:Set,constraint:TomTerm,compiler:TomCompiler) extends `Identity(){
+
+    visit TomTerm {
+      var@(Variable|VariableStar)[Constraints=constraintList] -> {
+	if(variableSet.remove(`var) && variableSet.isEmpty()) {
+	  Constraint c = `Ensure((TomTerm) preProcessing(compiler).visit(BuildReducedTerm(constraint,EmptyType())));
+	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
+	  return `var.setConstraints(newConstraintList);
+	}
+      }
+
+      appl@RecordAppl[Constraints=constraintList] -> {
+	if(variableSet.isEmpty()) {
+	  Constraint c = `Ensure((TomTerm) preProcessing(compiler).visit(BuildReducedTerm(constraint,EmptyType())));
+	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
+	  return `appl.setConstraints(newConstraintList);
+	}
+      }
+    }
+  }
+
+  /*
+>>>>>>> .merge-right.r6205
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
   %strategy findRenameVariable(context:Set) extends `Identity() {

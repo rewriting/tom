@@ -49,8 +49,7 @@ import tom.engine.exception.TomRuntimeException;
 
 import tom.platform.adt.platformoption.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 
@@ -257,7 +256,9 @@ public final class TomBase {
 
   // ------------------------------------------------------------
   public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
-    `TopDownCollect(collectVariable(collection)).apply(`subject);
+    try {
+    `TopDownCollect(collectVariable(collection)).visit(`subject);
+    } catch(VisitFailure e) { }
   }
 
   %strategy collectVariable(collection:Collection) extends `Identity() {
