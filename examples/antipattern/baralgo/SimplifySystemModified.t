@@ -84,12 +84,10 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
         Strategy rule,ruleStrategy;            
         if (isIdentity){
           rule = new ReplaceSystem(`var,`s, `Identity());
-          ruleStrategy = `InnermostId(rule);
-          System.out.println("is identity");
+          ruleStrategy = `InnermostId(rule);          
         }else{
           rule = new ReplaceSystem(`var,`s, `Fail());
-          ruleStrategy = `Innermost(rule);
-          System.out.println("is not identity");
+          ruleStrategy = `Innermost(rule);          
         }  
         Constraint res = null;
         
