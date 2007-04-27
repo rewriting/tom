@@ -51,6 +51,17 @@ public class TomVariadicGenerator implements TomIBaseGenerator {
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }
+      // generate equal - this can come from variable's replacement ( in the syntactic propagator )
+      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(getHead),t)) -> {
+        %match(getHead){
+          GetHead[Codomain = type] -> {
+            return `EqualTerm(type,e,t);
+          }
+          Conditional[Then = GetHead[Codomain = type]] -> {
+            return `EqualTerm(type,e,t);
+          }
+        }
+      }
     } // end visit
     visit TomTerm {
       // generate getHead

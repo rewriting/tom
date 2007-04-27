@@ -39,10 +39,6 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
       // generate equality
       ConstraintToExpression(MatchConstraint(t@Subterm[],u)) -> {
         return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);
-      }	
-      // generate equal - this can come from variable's replacement ( in the syntactic propagator )
-      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain = type]),t)) -> {
-        return `EqualTerm(type,e,t);
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
