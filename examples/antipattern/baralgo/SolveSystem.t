@@ -34,9 +34,10 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import java.util.Collection;
-
+import jjtraveler.VisitFailure;
 import tom.library.sl.*;
+
+import java.util.Collection;
 
 public class SolveSystem extends antipattern.term.TermBasicStrategy {
     
@@ -53,7 +54,7 @@ public class SolveSystem extends antipattern.term.TermBasicStrategy {
   		  true : false );      
     }
    
-    public Constraint visit_Constraint(Constraint arg) throws jjtraveler.VisitFailure {
+    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
     	
       %match(Constraint arg) {
         match@Match(var@Variable(name),s) -> {

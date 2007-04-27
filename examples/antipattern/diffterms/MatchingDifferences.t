@@ -39,13 +39,17 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.sl.*;
+import tom.library.strategy.mutraveler.MuTraveler;
+
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
 
 public class MatchingDifferences implements Matching {
 	
 	// %include{ atermmapping.tom }
 	%include{ term/Term.tom }
-	%include{ sl.tom }
+	%include{ mutraveler.tom }
 	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
 		
@@ -63,13 +67,13 @@ public class MatchingDifferences implements Matching {
 			}
 		}		
 		
-		Strategy decomposeRule = new DecomposeAP(`Identity());
+		VisitableVisitor decomposeRule = new DecomposeAP(`Identity());
 		
 		try {		
 		
-			Term result = (Term) `InnermostId(decomposeRule).visit(ap);
+			Term result = (Term) MuTraveler.init(`InnermostId(decomposeRule)).visit(ap);
 			return analyzeMembership(subject,result);			
-		} catch (jjtraveler.VisitFailure e) {
+		} catch (VisitFailure e) {
 			
 			System.out.println("reduction failed on: " + c);
 			// e.printStackTrace();
@@ -167,11 +171,11 @@ public class MatchingDifferences implements Matching {
 	/* matches two simple terms */
 	private Constraint termMatch(Term subject, Term pattern){
 		
-		Strategy matchRule = new ClassicalPatternMatching(`Identity());
+		VisitableVisitor matchRule = new ClassicalPatternMatching(`Identity());
 		
 		try {
       /* System.out.println("Got:" + pattern + ", " + subject);*/
-			Constraint result = (Constraint) `InnermostId(matchRule).visit(`Match(pattern, subject));
+			Constraint result = (Constraint) MuTraveler.init(`InnermostId(matchRule)).visit(`Match(pattern, subject));
       /* System.out.println("Result:" + result);
 			if the result is a Match or an And, then this means success */
 			%match(Constraint result){
@@ -181,7 +185,7 @@ public class MatchingDifferences implements Matching {
 				}
 			}
 			return result;
-		} catch (jjtraveler.VisitFailure e) {
+		} catch (VisitFailure e) {
 			System.out.println("reduction failed on: " + `Match(pattern, subject));
 			throw new RuntimeException("termMatch: Should never get here");
 		}		

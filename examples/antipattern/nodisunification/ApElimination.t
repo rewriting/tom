@@ -38,14 +38,18 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.sl.*;
+import tom.library.strategy.mutraveler.MuTraveler;
+
+//import jjtraveler.reflective.VisitableVisitor;
+import tom.library.strategy.mutraveler.MuStrategy;
+import jjtraveler.VisitFailure;
 
 // another algorithm for solving anti-pattern problems
 // applies the trasnformation rule, but after that it does not
 // use disunification, but rather some propagations and cleaning
 public class ApElimination implements Matching{
 	
-	%include{ sl.tom }	
+	%include{ sl.tom }        
 	%include{ boolean.tom }	
 	%include{ term/Term.tom }
 	
@@ -88,7 +92,7 @@ public class ApElimination implements Matching{
 		Constraint noAnti = null;;
 		try{
 			noAnti = applyMainRule(transformedMatch);
-		}catch(jjtraveler.VisitFailure e){
+		}catch(VisitFailure e){
 			System.out.println("1. reduction failed on: " + transformedMatch);
 			e.printStackTrace();
 		}
@@ -108,15 +112,15 @@ public class ApElimination implements Matching{
 		
 	
 		try {		
-			classicalMatch = (Constraint) `InnermostId(ClassicalPatternMatching()).visit(noAnti);
+			classicalMatch = (Constraint) MuTraveler.init(`InnermostId(ClassicalPatternMatching())).visit(noAnti);
 //			System.out.println("After classical match: " +  tools.formatConstraint(classicalMatch));
-			replacedVariables = (Constraint) `TopDown(ReplaceVariables()).visit(classicalMatch);
+			replacedVariables = (Constraint) MuTraveler.init(`TopDown(ReplaceVariables())).visit(classicalMatch);
 //			System.out.println("After variable replacement: " +  tools.formatConstraint(replacedVariables));
-			quantifierFree = (Constraint) `TopDown(EliminateQuantifiedVars()).visit(replacedVariables);
+			quantifierFree = (Constraint) MuTraveler.init(`TopDown(EliminateQuantifiedVars())).visit(replacedVariables);
 //			System.out.println("After quantified vars' elimination: " +  tools.formatConstraint(quantifierFree));
-			result = (Constraint) `InnermostId(Cleaning()).visit(quantifierFree);			
+			result = (Constraint) MuTraveler.init(`InnermostId(Cleaning())).visit(quantifierFree);			
 
-		} catch (jjtraveler.VisitFailure e) {
+		} catch (VisitFailure e) {
 			System.out.println("3. reduction failed on: " + c);
 			e.printStackTrace();
 		}
@@ -128,7 +132,7 @@ public class ApElimination implements Matching{
 	
 	// applies the main rule that transforms ap problems
 	// into dis-unification ones
-	public Constraint applyMainRule(Constraint c) throws jjtraveler.VisitFailure{
+	public Constraint applyMainRule(Constraint c) throws VisitFailure{
 		
 		Term pattern = null;
 		Term subject = null;
@@ -141,13 +145,13 @@ public class ApElimination implements Matching{
 		}
 		
 		// first get the constraint without the anti
-		Constraint cNoAnti =  `Equal((Term) OnceTopDownId(ElimAnti()).visit(pattern),subject);
+		Constraint cNoAnti =  `Equal((Term) MuTraveler.init(OnceTopDownId(ElimAnti())).visit(pattern),subject);
 		// if nothing changed, time to exit
 		if (cNoAnti == c){
 			return c;
 		}
 		// get the constraint with a variable instead of anti
-		Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visit(pattern),subject);
+		Constraint cAntiReplaced =  `Equal((Term) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
 		
 		quantifiedVarList.add(`Variable("v" + ApAndDisunification1.varCounter));
 		
@@ -155,7 +159,7 @@ public class ApElimination implements Matching{
 		cAntiReplaced = applyMainRule(cAntiReplaced);		
 		cNoAnti = `Neg(applyMainRule(cNoAnti));		
 		
-		`OnceTopDownId(ApplyStrategy()).visit(pattern);
+		MuTraveler.init(`OnceTopDownId(ApplyStrategy())).visit(pattern);
 		
 	//	System.out.println("antiCounter=" + antiCounter + " cNoAnti=" + tools.formatConstraint(cNoAnti));
 
@@ -175,9 +179,9 @@ public class ApElimination implements Matching{
 				
 //				System.out.println("Analyzing " + `v + " position=" + getPosition() );
 				
-				Strategy useOmegaPath = (Strategy)getPosition().getOmegaPath(`CountAnti());				
+				MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`CountAnti());				
 				
-				useOmegaPath.fire(subject);
+				MuTraveler.init(useOmegaPath).visit(subject);
 				
 //				System.out.println("After analyzing counter=" + antiCounter);
 				
@@ -231,7 +235,7 @@ public class ApElimination implements Matching{
 		visit Term {
 			// main rule
 			anti@Anti(p) -> {
-				`InnermostId(AnalyzeTerm(p,true)).visit(`p);				
+				MuTraveler.init(`InnermostId(AnalyzeTerm(p,true))).visit(`p);				
 				// now it has to stop
 				return `p;
 			}
@@ -319,8 +323,8 @@ public class ApElimination implements Matching{
 			// Replace 
 			And(concAnd(X*,eq@Equal(var@Variable[],s),Y*)) -> {
 				            
-	            Constraint res = (Constraint)
-	            		`BottomUp(ReplaceTerm(var,s)).visit(`And(concAnd(X*,Y*)));
+	            Constraint res = (Constraint) MuTraveler.init(
+	            		`BottomUp(ReplaceTerm(var,s))).visit(`And(concAnd(X*,Y*)));
 	            // if we replaced something
 	            if (res != `And(concAnd(X*,Y*))){
 	            	return `And(concAnd(eq,res));

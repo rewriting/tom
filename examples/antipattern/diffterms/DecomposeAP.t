@@ -34,24 +34,27 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.sl.*;
+import jjtraveler.VisitFailure;
+import jjtraveler.reflective.VisitableVisitor;
+
+import tom.library.strategy.mutraveler.MuTraveler;
 
 public class DecomposeAP extends antipattern.term.TermBasicStrategy {
 		
 	%include{ term/Term.tom }
-	%include{ sl.tom }
+	%include{ mutraveler.tom }
 	
 	protected boolean isIdentity;
 	
 	public static int varCounter = 0;
 	
-	public DecomposeAP(Strategy vis) {
+	public DecomposeAP(VisitableVisitor vis) {
 		super(vis);		
 		this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
 				true : false ); 
 	}
 
-	public Term visit_Term(Term arg) throws jjtraveler.VisitFailure {		
+	public Term visit_Term(Term arg) throws VisitFailure {		
 		
 		%match(Term arg){			
 			//first rule

@@ -34,7 +34,10 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import jjtraveler.VisitFailure;
 import tom.library.sl.*;
+
+import tom.library.strategy.mutraveler.MuTraveler;
 
 public class SimplifySystemRule {
 
@@ -94,8 +97,8 @@ public class SimplifySystemRule {
     // it doesn't stop when an occurence is found
     ContainsTerm ct = new ContainsTerm(v,`Identity());
     try{
-      `InnermostId(ct).visit(l);
-    }catch(jjtraveler.VisitFailure e){
+      MuTraveler.init(`InnermostId(ct)).visit(l);
+    }catch(VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);
     }
@@ -115,8 +118,8 @@ public class SimplifySystemRule {
     Constraint res = null;
 
     try{
-      res = (Constraint) ruleStrategy.visit(`And(l));
-    }catch(jjtraveler.VisitFailure e){
+      res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(l));
+    }catch(VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);
     }
@@ -196,7 +199,7 @@ public class SimplifySystemRule {
       this.found = false;
     }
 
-    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
+    public Term visit_Term(Term arg) throws VisitFailure { 
       if(arg == objToSearchFor) {
         found = true;
         System.out.println("!!FOUND!!");

@@ -60,17 +60,18 @@ public class TestAntiPattern extends TestCase {
 	public void testMatching4_1() {		
 		
 		System.out.println("Simple match");
-	/*	
+		
 		cons = tools.atermToConstraint("match(a, a)");		
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(a, b)");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
+		
 		cons = tools.atermToConstraint("match(anti(a), a)");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
-		*/
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
+		
 		cons = tools.atermToConstraint("match(anti(a), b)");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
 	public void testMatching4_2() {
@@ -78,16 +79,16 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(f(a,anti(b))");
 
 		cons = tools.atermToConstraint("match(f(a,anti(b)), f(a,a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(f(a,anti(b)), f(a,c))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(f(a,anti(b)), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(f(a,anti(b)), f(b,c))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 	}
 	
 	public void testMatching4_3() {
@@ -95,25 +96,25 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(anti(f(a,anti(b)))");
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), f(a,a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), f(a,c))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), f(b,c))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), g(b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(a,anti(b))), f(b,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
 	public void testMatching4_4() {
@@ -121,10 +122,10 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(f(X,X), f(a,a))");
 
 		cons = tools.atermToConstraint("match(f(X,X), f(a,a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`Match(Variable("X"),Appl("a",concTerm())));
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `Match(Variable("X"),Appl("a",concTerm())));
 		
 		cons = tools.atermToConstraint("match(f(X,X), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 	}
 	
 	public void testMatching4_5() {
@@ -132,13 +133,13 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(anti(f(X,X))");
 
 		cons = tools.atermToConstraint("match(anti(f(X,X)), f(a,a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(anti(f(X,X)), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(X,X)), g(a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
 	public void testMatching4_6() {
@@ -146,16 +147,16 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(f(X,anti(g(X)))");
 
 		cons = tools.atermToConstraint("match(f(X,anti(g(X))), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`Match(Variable("X"),Appl("a",concTerm())));
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `Match(Variable("X"),Appl("a",concTerm())));
 		
 		cons = tools.atermToConstraint("match(f(X,anti(g(X))), f(a,g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`Match(Variable("X"),Appl("a",concTerm())));
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `Match(Variable("X"),Appl("a",concTerm())));
 		
 		cons = tools.atermToConstraint("match(f(X,anti(g(X))), f(b,g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(f(X,anti(g(X))), g(b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 	}
 	
 	public void testMatching4_7() {
@@ -163,25 +164,25 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(anti(f(X,anti(g(X))))");
 
 		cons = tools.atermToConstraint("match(anti(f(X,anti(g(X)))), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(anti(f(X,anti(g(X)))), f(a,g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(anti(f(X,anti(g(X)))), f(b,g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(X,anti(g(X)))), g(b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(anti(f(X,anti(g(Y)))), f(b,g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 		
 		cons = tools.atermToConstraint("match(f(a,anti(g(Y))), f(b,g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(f(a,anti(g(Y))), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
 	public void testMatching4_8() {
@@ -189,10 +190,10 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(f(X,anti(X))");
 
 		cons = tools.atermToConstraint("match(f(X,anti(X)), f(a,a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(f(X,anti(X)), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`Match(Variable("X"),Appl("a",concTerm())));
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `Match(Variable("X"),Appl("a",concTerm())));
 	}
 	
 	public void testMatching4_9() {
@@ -200,10 +201,10 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(f(anti(g(X)),anti(g(X)))");
 		
 		cons = tools.atermToConstraint("match(f(anti(g(X)),anti(g(X))),f(g(a),g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(anti(f(anti(g(X)),anti(g(X)))),f(g(a),g(b)))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`True());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `True());
 	}
 	
 	public void testMatching4_10() {
@@ -211,10 +212,10 @@ public class TestAntiPattern extends TestCase {
 		System.out.println("match(f(anti(X),anti(X))");
 		
 		cons = tools.atermToConstraint("match(f(anti(X),anti(X)), f(a,a))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());
 		
 		cons = tools.atermToConstraint("match(f(anti(X),anti(X)), f(a,b))");
-		assertEquals(testM4.simplifyAndSolve(cons,null),`False());		
+		assertTrue(testM4.simplifyAndSolve(cons,null) == `False());		
 		
 	}
 }

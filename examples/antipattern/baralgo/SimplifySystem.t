@@ -34,22 +34,23 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.sl.*;
+import jjtraveler.VisitFailure;
+import jjtraveler.reflective.VisitableVisitor;
 
 public class SimplifySystem extends antipattern.term.TermBasicStrategy {
 	
 	%include{ term/Term.tom }
-	%include{ sl.tom }
+	%include{ mutraveler.tom }
 
 	protected boolean isIdentity;
 	
-	public SimplifySystem(Strategy vis) {
+	public SimplifySystem(VisitableVisitor vis) {
       super(vis);
       this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
     		  true : false ); 
     }
     
-    public Constraint visit_Constraint(Constraint arg) throws jjtraveler.VisitFailure {
+    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
     	
       %match(Constraint arg) {
         // AntiMatch

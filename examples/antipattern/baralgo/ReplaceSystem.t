@@ -34,7 +34,8 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.sl.Strategy;
+import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
 	
@@ -53,7 +54,7 @@ public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
     		  true : false );       
     }
    
-    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
+    public Term visit_Term(Term arg) throws VisitFailure { 
       if(arg==variable) {
         return value;
       } 

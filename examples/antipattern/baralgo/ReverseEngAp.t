@@ -34,24 +34,27 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import jjtraveler.VisitFailure;
+import jjtraveler.reflective.VisitableVisitor;
+
 import java.util.Collection;
 
-import tom.library.sl.*;
+import tom.library.strategy.mutraveler.MuTraveler;
 
 public class ReverseEngAp extends antipattern.term.TermBasicStrategy {
     
 	%include{ term/Term.tom }
-	%include{ sl.tom }
+	%include{ mutraveler.tom }
 
 	protected boolean isIdentity;
 	
-    public ReverseEngAp(Strategy vis) {
+    public ReverseEngAp(VisitableVisitor vis) {
       super(vis);      
       this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
   		  true : false );      
     }
    
-    public Constraint visit_Constraint(Constraint arg) throws jjtraveler.VisitFailure {
+    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
     	
       %match(Constraint arg) {        
         Neg(Match(a,b)) -> {             

@@ -38,6 +38,7 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import jjtraveler.VisitFailure;
 import tom.library.sl.*;
 
 public class Matching2 implements Matching {
@@ -50,11 +51,10 @@ public class Matching2 implements Matching {
    Strategy simplifyRule = new SimplifySystem(`Identity());
    Strategy solveRule = new SolveSystem(solution,`Identity());
    try { 
-     return (Constraint) 
-         `SequenceId(InnermostId(simplifyRule),
+     return (Constraint)`SequenceId(InnermostId(simplifyRule),
            RepeatId(SequenceId(solveRule, InnermostId(simplifyRule)))
            ).visit(c);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       //e.printStackTrace();
     }

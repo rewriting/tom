@@ -38,37 +38,43 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import jjtraveler.VisitFailure;
 import tom.library.sl.*;
 
 public class Matching4 implements Matching {
-	
-	// %include{ atermmapping.tom }
-	%include{ term/Term.tom }
-	%include{ sl.tom }
-	
-	public Constraint checkReverse(Constraint c, Collection solution) {	
-		Strategy simplifyRule = new SimplifySystemModified(`Identity());
-		Strategy reverseEngRule = new ReverseEngAp(`Identity());
-		try {		
-			return (Constraint)
-					`SequenceId(RepeatId(OutermostId(simplifyRule)),RepeatId(OutermostId(reverseEngRule))).visit(c);
-		} catch (jjtraveler.VisitFailure e) {
-			System.out.println("reduction failed on: " + c);
-			// e.printStackTrace();
-		}
-		return `False();
-	}
-	
-	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-		//System.out.println("Problem to solve:" + c);
-		Strategy simplifyRule = new SimplifySystemModified(`Identity());
-		Strategy negCleanRule = new NegativeCleaning(`Identity());
-		try {
-      `RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule))).visit(c);
-		} catch (jjtraveler.VisitFailure e) {
-			System.out.println("reduction failed on: " + c);
-			// e.printStackTrace();
-		}
-		return `False();
-	}	
+
+  // %include{ atermmapping.tom }
+  %include{ term/Term.tom }
+  %include{ sl.tom }
+
+  public Constraint checkReverse(Constraint c, Collection solution) {	
+    Strategy simplifyRule = new SimplifySystemModified(`Identity());
+    Strategy reverseEngRule = new ReverseEngAp(`Identity());
+    try {		
+      return (Constraint) `SequenceId(RepeatId(OutermostId(simplifyRule)),
+          RepeatId(OutermostId(reverseEngRule))).visit(c);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " + c);
+      // e.printStackTrace();
+    }
+    return `False();
+  }
+
+  public Constraint simplifyAndSolve(Constraint c, Collection solution) {
+    // System.out.println("Problem to solve:" + c);
+    Strategy simplifyRule = new SimplifySystemModified(`Identity());
+    Strategy negCleanRule = new NegativeCleaning(`Identity());
+    try {		
+      /*
+       * return (Constraint) MuTraveler.init(
+       * `RepeatId(ChoiceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
+       * ).visit(c);
+       */			
+      return (Constraint)`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule))).visit(c);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " + c);
+      // e.printStackTrace();
+    }
+    return `False();
+  }	
 }

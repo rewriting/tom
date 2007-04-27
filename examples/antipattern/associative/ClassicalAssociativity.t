@@ -36,11 +36,13 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import jjtraveler.VisitFailure;
+
 // simple algorithm implementing the associative matching
 public class ClassicalAssociativity implements Matching {
 	
-	%include{ term/Term.tom }
-	%include{ sl.tom }
+	%include{ term/Term.tom }	
+        %include{ sl.tom }
 	%include{ java/util/types/Collection.tom}
 	
 	private static int globalCounter = 0; 

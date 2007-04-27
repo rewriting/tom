@@ -38,76 +38,74 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import tom.library.sl.*;
+import tom.library.strategy.mutraveler.MuStrategy;
+
+//import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
 
 public class Matching6 implements Matching {
 	
-	%include{ sl.tom }	
+	%include{ sl.tom }
 	%include{ term/Term.tom }
 	%include { java/util/types/Collection.tom}
 	
-  public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-    Constraint result;
-    try {
-      result = (Constraint)`SequenceId(InnermostId(EnrichedPatternMatching()),InnermostId(Cleaning())).visit(c); 
-    } catch (jjtraveler.VisitFailure e) {
-      result = c;
-    }
-    return result;
-  }	
-
-  %strategy EnrichedPatternMatching() extends `Identity(){
-    visit Constraint{
-      // EqTransform		
-      Match(p,s) -> {
-        return `Equal(p,s);
-      }
-
-      //	AntiMatch
-      Equal(Anti(p),s) -> {
-        Collection quantifiedVarList = new ArrayList();
-        `TopDownCollect(CollectPositiveVariable(quantifiedVarList)).visit(`p);
-
-        Constraint ret = `Equal(p,s);
-
-        Iterator it = quantifiedVarList.iterator();
-        //System.out.println("nr var:" + quantifiedVarList.size());
-        while(it.hasNext()) {
-          Term t = (Term)it.next();
-          ret = `Exists(t,ret);
-        }
-
-        return `Neg(ret);
-      }
-
-      // Decompose
-      Equal(Appl(name,a1),Appl(name,a2)) -> {
-        AConstraintList l = `concAnd();
-        TermList args1 = `a1;
-        TermList args2 = `a2;
-        while(!args1.isEmptyconcTerm()) {
-          l = `concAnd(Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
-          args1 = args1.getTailconcTerm();
-          args2 = args2.getTailconcTerm();
-        }
-        return `And(l.reverse());
-      }
-
-      // Replace
-      input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {
-        Constraint toApplyOn = `And(concAnd(Y*));
-        Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).visit(toApplyOn);
-        if (res != toApplyOn){					
-          return `And(concAnd(X*,equal,res));
-        }
-      }
-
-      // SymbolClash
-      Equal(Appl(name1,args1),Appl(name2,args2)) -> {
-        if(`name1 != `name2) {
-          return `False();
-        }
-      }	        
+	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
+		return (Constraint)`SequenceId(InnermostId(EnrichedPatternMatching()),InnermostId(Cleaning())).fire(c);
+	}	
+	
+	%strategy EnrichedPatternMatching() extends `Identity(){
+		visit Constraint{
+			// EqTransform		
+			Match(p,s) -> {
+				return `Equal(p,s);
+			}
+			
+			//	AntiMatch
+	        Equal(Anti(p),s) -> {
+	        	Collection quantifiedVarList = new ArrayList();
+	            `TopDownCollect(CollectPositiveVariable(quantifiedVarList)).fire(`p);
+	            
+	            Constraint ret = `Equal(p,s);
+	
+	            Iterator it = quantifiedVarList.iterator();
+	            //System.out.println("nr var:" + quantifiedVarList.size());
+	            while(it.hasNext()) {
+	              Term t = (Term)it.next();
+	              ret = `Exists(t,ret);
+	            }
+	
+	            return `Neg(ret);
+	        }
+	
+	        // Decompose
+	        Equal(Appl(name,a1),Appl(name,a2)) -> {
+	          AConstraintList l = `concAnd();
+	          TermList args1 = `a1;
+	          TermList args2 = `a2;
+	          while(!args1.isEmptyconcTerm()) {
+	            l = `concAnd(Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+	            args1 = args1.getTailconcTerm();
+	            args2 = args2.getTailconcTerm();
+	          }
+	          return `And(l.reverse());
+	        }
+	        
+	        // Replace
+			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {
+				Constraint toApplyOn = `And(concAnd(Y*));
+				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).fire(toApplyOn);
+				if (res != toApplyOn){					
+					return `And(concAnd(X*,equal,res));
+				}
+	        }
+	        
+	        // SymbolClash
+	        Equal(Appl(name1,args1),Appl(name2,args2)) -> {
+	          if(`name1 != `name2) {
+	            return `False();
+	          }
+	        }	        
 
 		}
 	}
@@ -166,47 +164,47 @@ public class Matching6 implements Matching {
 	
 	private boolean contains(Term t, Constraint c){
 		
-    containsFlag = false;
-    try {	
-      `OnceTopDownId(CheckOccurence(t)).visit(c);
-    } catch (jjtraveler.VisitFailure e ) {}
-    return containsFlag;
-  }
-
-  private boolean containsFlag = false;
-
-  %strategy CheckOccurence(t:Term) extends `Identity(){
-    visit Term {
-      x -> {
-        if (t == `x){
-          containsFlag = true;
-          // just to make it stop
-          return `FalseTerm(); 
-        }
-      }
-    }
-  }
-
-  %strategy ReplaceStrat(var:Term, value:Term) extends `Identity(){
-    visit Term {
-      x -> {
-        if (`x == var) { return value; }  
-      }
-    }
-  }
-
-  // collect variables, a do not inspect under an AntiTerm
-  %strategy CollectPositiveVariable(bag:Collection) extends `Identity() {		
-    visit Term {
-      Anti[] -> {
-        throw new jjtraveler.VisitFailure();
-      }
-
-      v@Variable[] -> {
-        bag.add(`v);
-        throw new jjtraveler.VisitFailure();
-      }
-    }
-  }
+		containsFlag = false;
+		
+		`OnceTopDownId(CheckOccurence(t)).fire(c);
+		
+		return containsFlag;
+	}
+	
+	private boolean containsFlag = false;
+	
+	%strategy CheckOccurence(t:Term) extends `Identity(){
+		visit Term {
+			x -> {
+				if (t == `x){
+					containsFlag = true;
+					// just to make it stop
+					return `FalseTerm(); 
+				}
+			}
+		}
+	}
+	
+	%strategy ReplaceStrat(var:Term, value:Term) extends `Identity(){
+		visit Term {
+			x -> {
+				if (`x == var) { return value; }  
+			}
+		}
+	}
+	
+	// collect variables, a do not inspect under an AntiTerm
+	%strategy CollectPositiveVariable(bag:Collection) extends `Identity() {		
+	    visit Term {
+	      Anti[] -> {
+	        throw new VisitFailure();
+	      }
+	
+	      v@Variable[] -> {
+	        bag.add(`v);
+	        throw new VisitFailure();
+	      }
+	    }
+	}
 
 }

@@ -34,6 +34,9 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import jjtraveler.VisitFailure;
+
+
 import java.util.Collection;
 
 import tom.library.sl.*;
@@ -47,7 +50,7 @@ public class SolveSystemExtended extends antipattern.SolveSystem {
       super(c,vis);            
     }
    
-    public Constraint visit_Constraint(Constraint arg) throws jjtraveler.VisitFailure {
+    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
     	
     	Constraint result = null;
     	
@@ -62,12 +65,12 @@ public class SolveSystemExtended extends antipattern.SolveSystem {
     		
     		return result;
     		
-    	}catch(jjtraveler.VisitFailure vf){ //can only happen when the visit failed
+    	}catch(VisitFailure vf){ //can only happen when the visit failed
     		return extendedVisit(arg);
     	}    	
     }
     
-    private Constraint extendedVisit(Constraint arg) throws jjtraveler.VisitFailure {
+    private Constraint extendedVisit(Constraint arg) throws VisitFailure {
     	
       %match(Constraint arg) {   	  
     	      	        
