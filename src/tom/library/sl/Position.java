@@ -44,12 +44,12 @@ public class Position implements Cloneable,Path {
 
   private int[] omega;
 
-  public Position (int[] omega){
+  public Position(int[] omega){
     this.omega = new int[omega.length];
     System.arraycopy(omega, 0, this.omega, 0, omega.length);
   }
 
-  public Position (Position prefix,Position suffix){
+  public Position(Position prefix, Position suffix){
     int[] prefixArray = prefix.toArray();
     int[] suffixArray = suffix.toArray();
     omega = new int[suffixArray.length+prefixArray.length];
@@ -198,15 +198,33 @@ public class Position implements Cloneable,Path {
    */
   public Strategy getSubterm() {
     return new AbstractStrategy() {
-      { initSubterm(); } 
+      { initSubterm(); }
       public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure {
         final jjtraveler.Visitable[] ref = new jjtraveler.Visitable[1];
-        getOmega(new Identity() { public void visit() { ref[0]=getSubject(); } }).visit(subject);
+        getOmega(
+            new Identity() {
+              public void visit() {
+                ref[0]=getSubject();
+              }
+              public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
+                ref[0] = v;
+                return v;
+              }
+            }).visit(subject);
         return ref[0];
       }
       public void visit() {
         final Visitable[] ref = new Visitable[1];
-        Strategy s =getOmega(new Identity() { public void visit() { ref[0]=getSubject(); }}); 
+        Strategy s =getOmega(
+            new Identity() {
+              public void visit() {
+                ref[0]=getSubject();
+              }
+              public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
+                ref[0] = (Visitable)v;
+                return v;
+              }
+            });
         s.fire(getEnvironment().getRoot());
         environment.setSubject(ref[0]);
       }
@@ -230,7 +248,6 @@ public class Position implements Cloneable,Path {
     return r.toString();
   }
 
-  
   public Path add(Path p){
     if(p.length()>0) {
       Path result = this.conc(p.getHead());
