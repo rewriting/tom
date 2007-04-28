@@ -35,12 +35,9 @@ import java.util.*;
 import structure.structures.*;
 import structure.structures.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.AbstractMuStrategy;
-
+import tom.library.sl.Strategy;
+import tom.library.sl.FireException;
 
 public class StructureGom {
 
@@ -49,7 +46,7 @@ public class StructureGom {
   private final static boolean optim3 = true;
 
   %include { structures/Structures.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   %include { util/types/Collection.tom }
   %include { util/types/HashSet.tom }
 
@@ -260,11 +257,9 @@ public class StructureGom {
    */
   public void collectOneStep(final Collection collection, Struc subject) {
     try {
-      VisitableVisitor oneStep = new OneStep(subject,collection);
-      //MuTraveler.init(`BottomUp(oneStep)).visit(subject);
-      MuTraveler.init(new CompiledBottomUpWithPositions(oneStep)).visit(subject);
+      `BottomUp(OneStep(subject,collection)).fire(subject);
       //System.out.println(collection);
-    } catch (VisitFailure e) {
+    } catch (FireException e) {
       System.out.println("Failed to get successors " + subject);
     }
   }
@@ -283,14 +278,14 @@ public class StructureGom {
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parR = cop2par(`R*);
               Struc elt1 = `par(concPar(cop(concCop(par(concPar(parR*,U)),T*)),context*));
-              c.add(getPosition().getReplace(elt1).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt1).visit(subject));
             }
           }
           if(!optim3 || !canReact(`R,`U)) {
             if(!optim2 || canReact(`T,`U)) {
               StrucPar parT = cop2par(`T*);
               Struc elt2 = `par(concPar(cop(concCop(par(concPar(parT*,U)),R*)),context*));
-              c.add(getPosition().getReplace(elt2).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt2).visit(subject));
             }
           }
         }
@@ -308,7 +303,7 @@ public class StructureGom {
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parR = cop2par(`R*);
               Struc elt3 = `par(concPar(cop(concCop(par(concPar(parR*,U)),T*)),context*));
-              c.add(getPosition().getReplace(elt3).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt3).visit(subject));
             }
           }
 
@@ -316,7 +311,7 @@ public class StructureGom {
             if(!optim2 || canReact(`T,`U)) {
               StrucPar parT = cop2par(`T*);
               Struc elt4 = `par(concPar(cop(concCop(par(concPar(parT*,U)),R*)),context*));
-              c.add(getPosition().getReplace(elt4).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt4).visit(subject));
             }
           }
         }
@@ -326,9 +321,9 @@ public class StructureGom {
            [R,T] -> <T;R> */
         par(concPar(X1*,R,X2*,T,X3*)) -> {
           StrucPar context = `concPar(X1*,X2*,X3*);
-          c.add(getPosition().getReplace(
+          c.add(getEnvironment().getPosition().getReplace(
                 `par(concPar(seq(concSeq(R,T)),context*))).visit(subject));
-          c.add(getPosition().getReplace(
+          c.add(getEnvironment().getPosition().getReplace(
                 `par(concPar(seq(concSeq(T,R)),context*))).visit(subject));
         }
 
@@ -347,10 +342,10 @@ public class StructureGom {
                 StrucPar parU = seq2par(`U*);
                 StrucPar parT = seq2par(`T*);
                 StrucPar parV = seq2par(`V*);
-                c.add(getPosition().getReplace(
+                c.add(getEnvironment().getPosition().getReplace(
                       `par(concPar(seq(concSeq(par(concPar(parR*,parT*)),par(concPar(parU*,parV*)))),context*))
                       ).visit(subject));
-                c.add(getPosition().getReplace(
+                c.add(getEnvironment().getPosition().getReplace(
                       `par(concPar(seq(concSeq(par(concPar(parU*,parV*)),par(concPar(parR*,parT*)))),context*))
                       ).visit(subject));
               }
@@ -366,14 +361,14 @@ public class StructureGom {
             StrucPar context = `concPar(X1*,X2*,X3*);
             if(!optim2 || canReact(`R,`T)) {
               StrucPar parT = seq2par(`T*);
-              c.add(getPosition().getReplace(
+              c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
                     ).visit(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
-              c.add(getPosition().getReplace(
+              c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
                     ).visit(subject));
             }
@@ -389,14 +384,14 @@ public class StructureGom {
 
             if(!optim2 || canReact(`R,`T)) {
               StrucPar parT = seq2par(`T*);
-              c.add(getPosition().getReplace(
+              c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
                     ).visit(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
-              c.add(getPosition().getReplace(
+              c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
                     ).visit(subject));
             }
@@ -406,12 +401,12 @@ public class StructureGom {
         /* [X,-X] -> o */
         par(concPar(X1*,x,X2*,neg(x),X3*)) -> {
           Struc elt5 = `par(concPar(X1*,X2*,X3*));
-          c.add(getPosition().getReplace(elt5).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(elt5).visit(subject));
         }
         /* [-X,X] -> o */
         par(concPar(X1*,neg(x),X2*,x,X3*)) -> {
           Struc elt6 = `par(concPar(X1*,X2*,X3*));
-          c.add(getPosition().getReplace(elt6).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(elt6).visit(subject));
         }
       }
     }
@@ -470,9 +465,7 @@ public class StructureGom {
   public static int numberOfPair(StructuresAbstractType subject) {
     final Collection collection = new ArrayList();
     try {
-      VisitableVisitor countPairs = new CountPairs(collection);
-      //`BottomUp(countPairs).visit(subject);
-      new CompiledBottomUp(countPairs).visit(subject);
+      `BottomUp(CountPairs(collection)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to count pairs" + subject);
     }
@@ -539,9 +532,7 @@ public class StructureGom {
 
   private static void collectAtom(StructuresAbstractType subject, final HashSet positive, final HashSet negative) {
     try {
-      VisitableVisitor findAtoms = new FindAtoms(positive,negative);
-      //`BottomUp(findAtoms).visit(subject);
-      new CompiledBottomUp(findAtoms).visit(subject);
+      `BottomUp(FindAtoms(positive,negative)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get atoms" + subject);
     }
@@ -616,46 +607,5 @@ public class StructureGom {
       }
     }
     return t.toString();
-  }
-
-  static class CompiledBottomUp extends AbstractMuStrategy {
-    protected final static int ARG = 0;
-    public CompiledBottomUp(VisitableVisitor v) {
-      initSubterm(v);
-    }
-    public Visitable visit(Visitable any) throws VisitFailure {
-      // Compile All("x")
-      int childCount = any.getChildCount();
-      Visitable result = any;
-      for (int i = 0; i < childCount; i++) {
-        Visitable newChild = this.visit(result.getChildAt(i));
-        result = result.setChildAt(i, newChild);
-      }
-      
-      // Compile v
-      return getArgument(ARG).visit(result);
-    }
-  }
-
-  static class CompiledBottomUpWithPositions extends AbstractMuStrategy {
-    protected final static int ARG = 0;
-    public CompiledBottomUpWithPositions(VisitableVisitor v) {
-      initSubterm(v);
-    }
-    public Visitable visit(Visitable any) throws VisitFailure {
-      // Compile All("x")
-      int childCount = any.getChildCount();
-      Visitable result = any;
-      for (int i = 0; i < childCount; i++) {
-        getPosition().down(i+1);
-        Visitable newChild = this.visit(result.getChildAt(i));
-        /* no failure possible, so do not try {} catch */
-        getPosition().up();
-        result = result.setChildAt(i, newChild);
-      }
-      
-      // Compile v
-      return getArgument(ARG).visit(result);
-    }
   }
 }
