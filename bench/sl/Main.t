@@ -47,16 +47,27 @@ public class Main{
     }
     Nat base = buildInt(intbase);
     BenchMuTraveler.run(`F(M(),N(),P(),Zero(),Suc(Zero())), count,base);
+    BenchSlTraveler.run(`F(M(),N(),P(),Zero(),Suc(Zero())), count,base);
     BenchSl.run(`F(M(),N(),P(),Zero(),Suc(Zero())), count,base);
+    
     BenchMuTraveler. run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count,base);
+    BenchSlTraveler. run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count,base);
     BenchSl. run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count,base);
+    
     BenchMuTraveler.run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count,base);
+    BenchSlTraveler.run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count,base);
     BenchSl.run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count,base);
+    
     BenchMuTraveler.run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count,base);
+    BenchSlTraveler.run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count,base);
     BenchSl.run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count,base);
+    
     BenchMuTraveler.run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count,base);
+    BenchSlTraveler.run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count,base);
     BenchSl.run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count,base);
+    
     BenchMuTraveler.run(`F(P(), Suc(P()), Zero(), N(), P()), count,base);
+    BenchSlTraveler.run(`F(P(), Suc(P()), Zero(), N(), P()), count,base);
     BenchSl.run(`F(P(), Suc(P()), Zero(), N(), P()), count,base);
   }
 

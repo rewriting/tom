@@ -54,12 +54,16 @@ class BenchMuTraveler {
 
   public static void run(Nat subject, int count, Nat base) {
     System.out.println("mutraveler:");
-    long startChrono = System.currentTimeMillis();
-    for(int i = 0; i < count; ++i) {
-      `RepeatId(BottomUp(Rewrite(base))).apply(subject);
+    try {
+      long startChrono = System.currentTimeMillis();
+      for(int i = 0; i < count; ++i) {
+        `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+      }
+      long stopChrono = System.currentTimeMillis();
+      System.out.println((stopChrono-startChrono)/1000.);
+    } catch(jjtraveler.VisitFailure e) {
+      System.out.println("failure");
     }
-    long stopChrono = System.currentTimeMillis();
-    System.out.println((stopChrono-startChrono)/1000.);
   }
 
 }
