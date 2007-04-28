@@ -46,18 +46,20 @@ class BenchSl {
       C(Suc(x),y) -> { return `Suc(C(x,y)); }
       F(x,y,Suc(z),t,u) -> { return `F(x,y,z,C(t,t),u); } 
       F(x,Suc(y),Zero(),t,u) -> { return `F(x,y,P(),t,t); } 
-      F(Suc(x),Zero(),Zero(),t,u) -> {
-        return `F(x,N(),P(),Suc(Zero()),Zero());
-      }
+      F(Suc(x),Zero(),Zero(),t,u) -> { return `F(x,N(),P(),Suc(Zero()),Zero()); }
       F(Zero(),Zero(),Zero(),t,_) -> { return `t; } 
     }
   }
 
-  public static void run(Nat subject, int count, Nat base) {
-    System.out.println("sl:");
+  public static void run(Nat subject, int version, int count, Nat base) {
+    System.out.print("sl " + version + ": ");
     long startChrono = System.currentTimeMillis();
     for(int i = 0; i < count; ++i) {
-      `RepeatId(BottomUp(Rewrite(base))).fire(subject);
+      if(version == 1) {
+        `RepeatId(BottomUp(Rewrite(base))).fire(subject);
+      } else {
+        `InnermostId(Rewrite(base)).fire(subject);
+      }
     }
     long stopChrono = System.currentTimeMillis();
     System.out.println((stopChrono-startChrono)/1000.);

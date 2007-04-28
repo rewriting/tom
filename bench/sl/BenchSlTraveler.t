@@ -52,12 +52,16 @@ class BenchSlTraveler {
     }
   }
 
-  public static void run(Nat subject, int count, Nat base) {
-    System.out.println("sltraveler:");
+  public static void run(Nat subject, int version,  int count, Nat base) {
+    System.out.print("sl traveler " + version + ": ");
     try {
       long startChrono = System.currentTimeMillis();
       for(int i = 0; i < count; ++i) {
-        `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+        if(version==1) {
+          `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+        } else {
+          `InnermostId(Rewrite(base)).visit(subject);
+        }
       }
       long stopChrono = System.currentTimeMillis();
       System.out.println((stopChrono-startChrono)/1000.);

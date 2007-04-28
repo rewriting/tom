@@ -46,29 +46,22 @@ public class Main{
       return;
     }
     Nat base = buildInt(intbase);
-    BenchMuTraveler.run(`F(M(),N(),P(),Zero(),Suc(Zero())), count,base);
-    BenchSlTraveler.run(`F(M(),N(),P(),Zero(),Suc(Zero())), count,base);
-    BenchSl.run(`F(M(),N(),P(),Zero(),Suc(Zero())), count,base);
-    
-    BenchMuTraveler. run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count,base);
-    BenchSlTraveler. run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count,base);
-    BenchSl. run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count,base);
-    
-    BenchMuTraveler.run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count,base);
-    BenchSlTraveler.run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count,base);
-    BenchSl.run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count,base);
-    
-    BenchMuTraveler.run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count,base);
-    BenchSlTraveler.run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count,base);
-    BenchSl.run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count,base);
-    
-    BenchMuTraveler.run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count,base);
-    BenchSlTraveler.run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count,base);
-    BenchSl.run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count,base);
-    
-    BenchMuTraveler.run(`F(P(), Suc(P()), Zero(), N(), P()), count,base);
-    BenchSlTraveler.run(`F(P(), Suc(P()), Zero(), N(), P()), count,base);
-    BenchSl.run(`F(P(), Suc(P()), Zero(), N(), P()), count,base);
+    Nat[] query = new Nat[10];
+    int cpt = 0;
+    query[cpt++] = `F(M(),N(),P(),Zero(),Suc(Zero()));
+    query[cpt++] = `F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero()));
+    query[cpt++] = `C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P()));
+    query[cpt++] = `F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero());
+    query[cpt++] = `F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N()));
+    query[cpt++] = `F(P(), Suc(P()), Zero(), N(), P());
+    for(int i=0 ; i<cpt ; i++) {
+      BenchMuTraveler.run(query[i], 1, count,base);
+      BenchSlTraveler.run(query[i], 1, count,base);
+      BenchSl.run(query[i], 1, count,base);
+      BenchMuTraveler.run(query[i], 2, count,base);
+      BenchSlTraveler.run(query[i], 2, count,base);
+      BenchSl.run(query[i], 2, count,base);
+    }
   }
 
   public static Nat buildInt(int i) {

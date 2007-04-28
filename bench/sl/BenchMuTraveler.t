@@ -52,12 +52,16 @@ class BenchMuTraveler {
     }
   }
 
-  public static void run(Nat subject, int count, Nat base) {
-    System.out.println("mutraveler:");
+  public static void run(Nat subject, int version, int count, Nat base) {
+    System.out.print("mutraveler " + version + ": ");
     try {
       long startChrono = System.currentTimeMillis();
       for(int i = 0; i < count; ++i) {
-        `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+        if(version == 1) {
+          `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+        } else {
+          `InnermostId(Rewrite(base)).visit(subject);
+        }
       }
       long stopChrono = System.currentTimeMillis();
       System.out.println((stopChrono-startChrono)/1000.);
