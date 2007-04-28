@@ -41,7 +41,7 @@ syn match   tomType             "%typearray"
 syn match   tomArrow            "->"
 syn match   tomMake             "`.*;"
 syn match   tomMake             "`"
-syn keyword tomOpkey            implement get_fun_sym get_subterm cmp_fun_sym fsym
+syn keyword tomOpkey            implement is_sort get_fun_sym get_subterm cmp_fun_sym fsym
 syn keyword tomOpkey            equals get_head get_tail is_empty get_element is_fsym 
 syn keyword tomOpkey            get_size make_empty
 syn keyword tomOpkey            make_insert make_append
