@@ -9,6 +9,7 @@
   <property name="test.build" location="build"/>
 
   <!-- <property name="optimize" value="off"/> -->
+  <!-- <property name="verbose" value="on"/> -->
 
   <property name="javacSource"    value="1.5"/>
   <property name="javacTarget"    value="1.5"/>

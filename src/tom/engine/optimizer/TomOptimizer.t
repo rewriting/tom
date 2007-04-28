@@ -66,7 +66,7 @@ import tom.library.sl.*;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
-  %include{ ../adt/tomsignature/_TomSignature.tom }
+  //%include{ ../adt/tomsignature/_TomSignature.tom }
   %include{ ../../library/mapping/java/sl.tom }
   //%include{ mutraveler.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
@@ -181,7 +181,30 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
+  %op Strategy computeOccurences(variableName:TomName, list:ArrayList) {                                                                   
+    make(variableName, list) {`mu(MuVar("current"),TopDownCollect(findOccurence2(MuVar("current"),variableName,list)))}
+  }
+
+   %strategy findOccurence2(s:Strategy,variableName:TomName, list:ArrayList) extends `Identity() {
+    visit Instruction {
+      TypedAction[AstInstruction=inst] -> {
+        /* recursive call of the current strategy on the first child */
+        s.visit(`inst);
+        `Fail().visit(null);
+      }
+    }
+ 
+    visit TomTerm { 
+      t@(Variable|VariableStar)[AstName=name] -> { 
+        if(variableName == `name) { 
+          list.add(`t); 
+        } 
+      } 
+    } 
+  }
+
   /* this strategy doesn't traverse the two last children of TypedAction() */
+   /*
   private static Strategy findOccurencesUpTo(TomName variableName, ArrayList list, int max) {
     return `Try(mu(MuVar("current"),
           Sequence(
@@ -201,7 +224,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
     }
   }
-
+  */
 
   %op Strategy isAssigned(variableName:TomName){
     make(variableName) {`TopDown(findAssignment(variableName))}
@@ -307,7 +330,8 @@ public class TomOptimizer extends TomGenericPlugin {
           }
 
           ArrayList list  = new ArrayList();
-          `findOccurencesUpTo(name,list,2).visit(`body);
+          //`findOccurencesUpTo(name,list,2).visit(`body);
+          `computeOccurences(name,list).visit(`body);
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -321,7 +345,8 @@ public class TomOptimizer extends TomGenericPlugin {
             return `body;
           } else if(mult == 1) {
             list.clear();
-            `findOccurencesUpTo(name,list,2).visit(`exp);
+          //  `findOccurencesUpTo(name,list,2).visit(`exp);
+            `computeOccurences(name,list).visit(`exp);
             if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -358,7 +383,8 @@ public class TomOptimizer extends TomGenericPlugin {
           }
           ArrayList list  = new ArrayList();
           
-          `findOccurencesUpTo(name,list,2).visit(`body);
+          //`findOccurencesUpTo(name,list,2).visit(`body);
+            `computeOccurences(name,list).visit(`body);
 
           int mult = list.size();
           if(mult == 0) {
@@ -474,7 +500,8 @@ public class TomOptimizer extends TomGenericPlugin {
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               ArrayList list  = new ArrayList();
-              `findOccurencesUpTo(name1,list,2).visit(`body2);
+            //  `findOccurencesUpTo(name1,list,2).visit(`body2);
+            `computeOccurences(name1,list).visit(`body2);
               int mult = list.size();
               if(mult==0){
                 logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),

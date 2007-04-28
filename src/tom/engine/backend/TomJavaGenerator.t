@@ -172,21 +172,21 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 
     output.write(deep, "public jjtraveler.Visitable[] getChildren() {");
     output.write(deep, "jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];");
-    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    //output.write(deep, "stratChilds[i]=getChildAt(i);}");
-    for (int i = 0; i < stratChildCount; i++) {
-      int j = ((Integer)stratChild.get(i)).intValue();
-      output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
-    }
+    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    //for (int i = 0; i < stratChildCount; i++) {
+    //  int j = ((Integer)stratChild.get(i)).intValue();
+    //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
+    //}
     output.write(deep, "return stratChilds;}");
 
     output.write(deep, "public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {");
-    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    //output.write(deep, "setChildAt(i,children[i]);}");
-    for (int i = 0; i < stratChildCount; i++) {
-      int j = ((Integer)stratChild.get(i)).intValue();
-      output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
-    }
+    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    output.write(deep, "setChildAt(i,children[i]);}");
+    //for (int i = 0; i < stratChildCount; i++) {
+    //  int j = ((Integer)stratChild.get(i)).intValue();
+    //  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
+    //}
     output.write(deep, "return this;}");
 
     output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");
