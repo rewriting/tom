@@ -64,7 +64,7 @@ import tom.engine.adt.zenon.types.*;
 public class TomVerifier extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
   %typeterm Collection {
     implement { java.util.Collection }
   }

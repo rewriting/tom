@@ -54,7 +54,6 @@ import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
 
 /**
  * The TomSyntaxChecker plugin.
@@ -62,7 +61,7 @@ import jjtraveler.VisitFailure;
 public class TomSyntaxChecker extends TomChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
@@ -126,7 +125,7 @@ public class TomSyntaxChecker extends TomChecker {
         // perform analyse
         try {
           `mu(MuVar("x"),Try(Sequence(checkSyntax(this),All(MuVar("x"))))).visit((TomTerm)getWorkingTerm());
-        } catch(VisitFailure e) {
+        } catch(jjtraveler.VisitFailure e) {
           System.out.println("strategy failed");
         }
         // verbose

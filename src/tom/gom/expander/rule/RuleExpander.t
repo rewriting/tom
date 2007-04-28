@@ -41,7 +41,7 @@ public class RuleExpander {
 
   %include { ../../adt/gom/Gom.tom}
   %include { ../../adt/rule/Rule.tom }
-  %include { sl.tom}
+  %include { ../../../library/mapping/java/sl.tom}
 
   private ModuleList moduleList;
 

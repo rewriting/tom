@@ -60,8 +60,8 @@ public class TomCompiler extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
-  %include { java/util/types/Collection.tom}
-  %include { java/util/types/Map.tom}
+  %include { ../../library/mapping/java/util/types/Collection.tom}
+  %include { ../../library/mapping/java/util/types/Map.tom}
 
   %typeterm Set {
     implement      { java.util.Set }

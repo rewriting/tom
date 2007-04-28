@@ -56,9 +56,9 @@ import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import jjtraveler.VisitFailure;
 import tom.library.sl.*;
-
+//import tom.library.strategy.mutraveler.*;
+//import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * The TomOptimizer plugin.
@@ -67,9 +67,10 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
   %include{ ../adt/tomsignature/_TomSignature.tom }
-  %include{ sl.tom }
-  %include{ java/util/ArrayList.tom }
-  %include{ java/util/HashSet.tom }
+  %include{ ../../library/mapping/java/sl.tom }
+  //%include{ mutraveler.tom }
+  %include{ ../../library/mapping/java/util/ArrayList.tom }
+  %include{ ../../library/mapping/java/util/HashSet.tom }
 
   %typeterm TomOptimizer {
     implement { TomOptimizer }
@@ -210,13 +211,13 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Instruction {
       Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
-          throw new VisitFailure();
+          throw new jjtraveler.VisitFailure();
         }
       }
 
       LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
-          throw new VisitFailure();
+          throw new jjtraveler.VisitFailure();
         }
       }
     }
@@ -226,7 +227,7 @@ public class TomOptimizer extends TomGenericPlugin {
     HashSet c = new HashSet();
     try {
       `TopDownCollect(findRefVariable(c)).visit(exp);
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
     }
     Iterator it = c.iterator();
@@ -234,7 +235,7 @@ public class TomOptimizer extends TomGenericPlugin {
       TomName name = (TomName) it.next();
       try {
         `isAssigned(name).visit(body);
-      } catch(VisitFailure e) {
+      } catch(jjtraveler.VisitFailure e) {
         return false;
       }
     }
@@ -246,7 +247,7 @@ public class TomOptimizer extends TomGenericPlugin {
         Ref((Variable|VariableStar)[AstName=name])  -> {
           set.add(`name);
           //stop to visit this branch (like "return false" with traversal) 
-          throw new VisitFailure();
+          throw new jjtraveler.VisitFailure();
         }
       }
     }
@@ -269,8 +270,7 @@ public class TomOptimizer extends TomGenericPlugin {
       } // end match
     }
 
-
-    private static boolean compare (Visitable term1, Visitable term2){
+    private static boolean compare(jjtraveler.Visitable term1, jjtraveler.Visitable term2) {
       return factory.remove(term1)==factory.remove(term2);
     }
 
@@ -307,9 +307,7 @@ public class TomOptimizer extends TomGenericPlugin {
           }
 
           ArrayList list  = new ArrayList();
-          try {
           `findOccurencesUpTo(name,list,2).visit(`body);
-          } catch(VisitFailure e) { }
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -323,9 +321,7 @@ public class TomOptimizer extends TomGenericPlugin {
             return `body;
           } else if(mult == 1) {
             list.clear();
-            try {
             `findOccurencesUpTo(name,list,2).visit(`exp);
-            } catch(VisitFailure e) { }
             if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -361,9 +357,9 @@ public class TomOptimizer extends TomGenericPlugin {
             Name(tomName) -> { varName = `tomName; }
           }
           ArrayList list  = new ArrayList();
-          try {
+          
           `findOccurencesUpTo(name,list,2).visit(`body);
-          } catch(VisitFailure e) { }
+
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -478,9 +474,7 @@ public class TomOptimizer extends TomGenericPlugin {
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               ArrayList list  = new ArrayList();
-              try {
               `findOccurencesUpTo(name1,list,2).visit(`body2);
-              } catch(VisitFailure e) { }
               int mult = list.size();
               if(mult==0){
                 logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),

@@ -15,14 +15,12 @@ public class Mu extends AbstractStrategy {
   }
 
   public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    if(!expanded)
-      muExpand();
+    if(!expanded) { muExpand(); }
     return visitors[V].visit(any);
   }
 
   public void visit() {
-    if(!expanded)
-      muExpand();
+    if(!expanded) { muExpand(); }
     visitors[V].visit();
   }
 
@@ -73,6 +71,7 @@ class MuStrategyTopDown {
 
   %typeterm MuStrategyString {
     implement { String }
+    is_sort(t) { t instanceof String }
     equals(t1,t2) {t1.equals(t2)}
   }
 

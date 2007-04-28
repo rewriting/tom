@@ -54,7 +54,7 @@ public class Verifier {
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/il/Il.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
   %typeterm Collection {
     implement { java.util.Collection }
   }

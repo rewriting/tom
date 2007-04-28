@@ -59,9 +59,9 @@ import java.util.*;
 public class TomAntiPatternUtils {
 	
 // ------------------------------------------------------------
-	%include { adt/tomsignature/TomSignature.tom }
-	%include { sl.tom}
-	%include { java/util/ArrayList.tom}
+	%include { ../../adt/tomsignature/TomSignature.tom }
+	%include { ../../../library/mapping/java/sl.tom}
+	%include { ../../../library/mapping/java/util/ArrayList.tom}
 // ------------------------------------------------------------
 	
 	%typeterm SymbolTable {

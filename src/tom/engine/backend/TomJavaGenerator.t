@@ -170,31 +170,41 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
     int stratChildCount = stratChild.size();
 
-    output.write(deep, "public jjtraveler.Visitable[] getChildren() { jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];");
-    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    output.write(deep, "public jjtraveler.Visitable[] getChildren() {");
+    output.write(deep, "jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];");
+    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    //output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = ((Integer)stratChild.get(i)).intValue();
+      output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
+    }
     output.write(deep, "return stratChilds;}");
 
     output.write(deep, "public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {");
-    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    output.write(deep, "setChildAt(i,children[i]);}");
+    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    //output.write(deep, "setChildAt(i,children[i]);}");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = ((Integer)stratChild.get(i)).intValue();
+      output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
+    }
     output.write(deep, "return this;}");
 
     output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");
 
     // write getChildAt
-    output.write(deep, "public jjtraveler.Visitable getChildAt(int i) {");
-    output.write(deep, "switch (i) {");
+    output.write(deep, "public jjtraveler.Visitable getChildAt(int index) {");
+    output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return super.getChildAt(0);");
     for (int i = 0; i < stratChildCount; i++) {
-      output.write(deep, "case " + (i+1) + ": return get" + names.get(((Integer)stratChild.get(i)).intValue()) + "();");
+      int j = ((Integer)stratChild.get(i)).intValue();
+      output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
     }
     output.write(deep, "default: throw new IndexOutOfBoundsException();");
     output.write(deep, "}}");
 
     // write setChildAt
-    output.write(deep, "public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {");
-    output.write(deep, "switch (i) {");
+    output.write(deep, "public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {");
+    output.write(deep, "switch (index) {");
     output.write(deep, "case 0: return super.setChildAt(0, child);");
     for (int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();

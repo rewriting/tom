@@ -70,11 +70,11 @@ public class OneId extends AbstractStrategy {
     Visitable originalsubject = getEnvironment().getSubject();
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      Visitable subject = getEnvironment().getSubject();
-      (visitors[ARG]).visit();
-      Visitable newsubject = getEnvironment().getSubject();
+      Visitable oldSubject = getEnvironment().getSubject();
+      visitors[ARG].visit();
+      Visitable newSubject = getEnvironment().getSubject();
       environment.up();
-      if (getStatus() == Environment.SUCCESS && subject!=newsubject) {
+      if(getStatus() == Environment.SUCCESS && oldSubject!=newSubject) {
         return;
       } else {
         /* Forget about the failure, to try another subterm */

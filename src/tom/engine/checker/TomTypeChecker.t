@@ -60,7 +60,7 @@ import tom.library.sl.*;
 public class TomTypeChecker extends TomChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/></options>";

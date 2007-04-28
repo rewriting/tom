@@ -102,7 +102,9 @@ public class TomAntiPatternTransformNew {
       TomTerm tmp = termAntiReplaced;
       try {
         tmp = (TomTerm) `OnceTopDownId(AbstractTerm(abstractVariable,replacedTerms)).visit(termAntiReplaced);
-      } catch(VisitFailure e) { }
+      } catch(VisitFailure e) { 
+        tmp = termAntiReplaced; 
+      }
       // if nothing was done
       if(tmp != termAntiReplaced) {
         termAntiReplaced = tmp;
@@ -175,7 +177,9 @@ public class TomAntiPatternTransformNew {
 		// first get the constraint without the anti
     try {
       cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).visit(c);
-    } catch(VisitFailure e) { }
+    } catch(VisitFailure e) { 
+      cNoAnti = c;
+    }
     // if nothing changed, time to exit
     if(cNoAnti == c) {
       return c;
@@ -204,7 +208,9 @@ public class TomAntiPatternTransformNew {
     Constraint cAntiReplaced = c;
     try {
       cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable, tmp)).visit(c);
-    } catch(VisitFailure e) { }
+    } catch(VisitFailure e) { 
+      cAntiReplaced = c;
+    }
     cAntiReplaced = applyMainRule(cAntiReplaced,quantifiedVarList);
 
 		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));

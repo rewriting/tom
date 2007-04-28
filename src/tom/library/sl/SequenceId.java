@@ -41,7 +41,7 @@ package tom.library.sl;
 public class SequenceId   extends AbstractStrategy {
   public final static int FIRST = 0;
   public final static int THEN = 1;
-  public SequenceId (Strategy first, Strategy then) {
+  public SequenceId(Strategy first, Strategy then) {
     initSubterm(first,then);
   }
 

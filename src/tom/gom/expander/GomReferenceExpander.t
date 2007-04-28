@@ -39,10 +39,10 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public class GomReferenceExpander {
 
-  %include{java/util/HashMap.tom}
-  %include{java/util/ArrayList.tom}
-  %include{java/sl.tom}
-  %include{java/boolean.tom}
+  %include{../../library/mapping/java/util/HashMap.tom}
+  %include{../../library/mapping/java/util/ArrayList.tom}
+  %include{../../library/mapping/java/sl.tom}
+  %include{../../library/mapping/java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
   private static String packagePath;

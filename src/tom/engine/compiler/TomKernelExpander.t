@@ -55,7 +55,7 @@ import tom.library.sl.*;
 
 public class TomKernelExpander {
 
-  %include { sl.tom}
+  %include { ../../library/mapping/java/sl.tom}
 
   %typeterm TomKernelExpander {
     implement { TomKernelExpander }

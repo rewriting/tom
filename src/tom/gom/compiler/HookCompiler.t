@@ -42,7 +42,7 @@ import tom.library.sl.*;
 public class HookCompiler {
 
   %include { ../adt/objects/Objects.tom}
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();

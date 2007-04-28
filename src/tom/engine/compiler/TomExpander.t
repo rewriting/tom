@@ -64,7 +64,7 @@ import tom.library.sl.*;
 public class TomExpander extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   %typeterm TomExpander {
     implement { TomExpander }
@@ -138,7 +138,7 @@ public class TomExpander extends TomGenericPlugin {
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
     Iterator it = symbolTable.keySymbolIterator();
-    Strategy expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
+    Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
 
     while(it.hasNext()) {
       String tomName = (String)it.next();
@@ -367,19 +367,19 @@ public class TomExpander extends TomGenericPlugin {
      */
 
     SlotList slotList = `concSlot();
-    Strategy expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
+    Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
     if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
       while(!args.isEmptyconcTomTerm()) {
-        try{
+        try {
           TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
           TomName slotName = `EmptyName();
-	  /*
-	   * we cannot optimize when subterm.isUnamedVariable
-	   * since it can be constrained
-	   */	  
-	  slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
+          /*
+           * we cannot optimize when subterm.isUnamedVariable
+           * since it can be constrained
+           */	  
+          slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
-        } catch(jjtraveler.VisitFailure e){}
+        } catch(jjtraveler.VisitFailure e) {}
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
@@ -525,16 +525,16 @@ public class TomExpander extends TomGenericPlugin {
     /*
      * Attributes: go from implicit notation to explicit notation
      */
-    Strategy expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
+    Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
     while(!attrList.isEmptyconcTomTerm()) {
-      try{
+      try {
         TomTerm newPattern = (TomTerm) expandStrategy.visit(attrList.getHeadconcTomTerm());
         newAttrList = `concTomTerm(newPattern,newAttrList*);
         if(implicitAttribute) {
           newAttrList = `concTomTerm(star,newAttrList*);
         }
         attrList = attrList.getTailconcTomTerm();
-      }catch(jjtraveler.VisitFailure e){}
+      } catch(jjtraveler.VisitFailure e) {}
     }
     newAttrList = ASTFactory.reverse(newAttrList);
 

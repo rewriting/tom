@@ -49,8 +49,8 @@ import tom.library.sl.*;
 public class PILFactory {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
-  %include{ java/util/types/Collection.tom }
-  %include{ sl.tom }
+  %include{ ../../library/mapping/java/util/types/Collection.tom }
+  %include{ ../../library/mapping/java/sl.tom }
 
   /**
    * level specifies the level of details of the output

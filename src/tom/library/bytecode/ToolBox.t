@@ -39,7 +39,7 @@ import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
 
 public class ToolBox {
-  %include { sl.tom }
+  %include { ../mapping/java/sl.tom }
   %include { adt/bytecode/Bytecode.tom }
 
   private final static int[] accessFlags = {
@@ -321,12 +321,16 @@ public class ToolBox {
 
   public static String buildDescriptor(TFieldDescriptor desc) {
     StringBuffer sb = new StringBuffer();
-    `TopDown(BuildDescriptor(sb)).fire(desc);
+    try {
+      `TopDown(BuildDescriptor(sb)).visit(desc);
+    } catch(jjtraveler.VisitFailure e) { }
     return sb.toString();
   }
   public static String buildDescriptor(TMethodDescriptor desc) {
     StringBuffer sb = new StringBuffer();
-    `TopDown(BuildDescriptor(sb)).fire(desc);
+    try {
+      `TopDown(BuildDescriptor(sb)).visit(desc);
+    } catch(jjtraveler.VisitFailure e) { }
     return sb.toString();
   }
 }

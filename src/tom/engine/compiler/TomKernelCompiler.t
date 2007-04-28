@@ -83,7 +83,7 @@ public class TomKernelCompiler {
 
 // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom}
+  %include { ../../library/mapping/java/sl.tom}
 // ------------------------------------------------------------
  
   %typeterm TomKernelCompiler {
