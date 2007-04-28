@@ -10,6 +10,8 @@
 
   <!-- <property name="optimize" value="off"/> -->
 
+  <property name="javacSource"    value="1.5"/>
+  <property name="javacTarget"    value="1.5"/>
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
