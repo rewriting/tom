@@ -179,7 +179,15 @@ public class Position implements Cloneable,Path {
    * @return the omega strategy the performs the replacement
    */
   public Strategy getReplace(final Visitable t) {
-    return getOmega(new Identity() {public void visit(){ setSubject(t); }});
+    return getOmega(
+        new Identity() {
+          public void visit(){
+            setSubject(t);
+          }
+          public jjtraveler.Visitable visit(jjtraveler.Visitable x) {
+            return t;
+          }
+        });
   }
 
   /**
