@@ -1,5 +1,5 @@
-%include { sl.tom }
-%include { util/types/Map.tom }
+%include { ../sl.tom }
+%include { ../util/types/Map.tom }
 %include { adt/bytecode/Bytecode.tom }
 
 /**
