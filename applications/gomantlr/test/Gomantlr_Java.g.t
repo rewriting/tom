@@ -2491,7 +2491,7 @@ createdName returns [Gomantlr_Java_createdName cn]
     Gomantlr_Java_createdName_1_1_3 cn1=`Gomantlr_Java_createdName_1_1_3_1();
     Gomantlr_Java_createdName_1_1_3_1_1_2 cn3=`Gomantlr_Java_createdName_1_1_3_1_1_2_2();
 }
-	:	    i=Identifier 
+	:	    i1=Identifier 
             (
                 nwta1=nonWildcardTypeArguments
                 {
@@ -2499,7 +2499,7 @@ createdName returns [Gomantlr_Java_createdName cn]
                 }
             )?
             (
-                '.' i=Identifier 
+                '.' i2=Identifier 
                 (
                     nwta2=nonWildcardTypeArguments
                     {
@@ -2507,11 +2507,11 @@ createdName returns [Gomantlr_Java_createdName cn]
                     }
                 )?
                 {
-                    cn1=`Gomantlr_Java_createdName_1_1_3_1(cn1*,Gomantlr_Java_createdName_1_1_3_1_1(Gomantlr_Java_Identifier(i.getText()),cn3));
+                    cn1=`Gomantlr_Java_createdName_1_1_3_1(cn1*,Gomantlr_Java_createdName_1_1_3_1_1(Gomantlr_Java_Identifier(i2.getText()),cn3));
                 }
             )*
             {
-                cn=`Gomantlr_Java_createdName_1(Gomantlr_Java_createdName_1_1(Gomantlr_Java_Identifier(i.getText()),cn2,cn1));
+                cn=`Gomantlr_Java_createdName_1(Gomantlr_Java_createdName_1_1(Gomantlr_Java_Identifier(i1.getText()),cn2,cn1));
             }
     |
             pt=primitiveType
