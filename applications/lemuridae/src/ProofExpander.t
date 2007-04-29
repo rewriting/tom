@@ -15,6 +15,7 @@ public class ProofExpander {
 
   %typeterm Proposition {
     implement { Proposition }
+    is_sort(t) { t instanceof Proposition }
   }
 
   %strategy ApplyWeakL(active:Prop) extends Fail() {

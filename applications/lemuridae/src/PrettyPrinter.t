@@ -1,10 +1,11 @@
 import sequents.*;
 import sequents.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+//import tom.library.strategy.mutraveler.MuTraveler;
+//import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
+//import jjtraveler.VisitFailure;
+//import jjtraveler.reflective.VisitableVisitor;
 
 
 import java.util.HashMap;
@@ -18,9 +19,9 @@ import java.io.*;
 class PrettyPrinter {
 
   %include { sequents/sequents.tom }
-  %include { mutraveler.tom }
-  %typeterm Set {implement {Set}}
-  %typeterm Collection { implement {Collection}}
+  %include { sl.tom }
+  %typeterm Set {implement {Set} is_sort(t) {t instanceof Set} }
+  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
 
   private static String translate(RuleType rt) {
     %match(rt) {
@@ -115,13 +116,13 @@ class PrettyPrinter {
         %match(Context h) {
           (_*,x,_*) -> {
             res = (Tree) 
-              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x)))).apply(`res);
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).fire(`res);
           }
         }
         %match(Context c) {
           (_*,x,_*) -> {
             res = (Tree) 
-              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x)))).apply(`res);
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).fire(`res);
           }
         }
         return res;
@@ -135,7 +136,7 @@ class PrettyPrinter {
    * remove unused hypothesis and conclusions in subtrees
    **/
   public static Tree cleanTree(Tree tree, TermRuleList tl, PropRuleList pl) {
-    return (Tree) ((MuStrategy) `TopDown(Clean(tl,pl))).apply(tree);
+    return (Tree) `TopDown(Clean(tl,pl)).fire(tree);
   }
 
   public static String toLatex(sequentsAbstractType term) {

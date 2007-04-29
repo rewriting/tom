@@ -1,11 +1,12 @@
 import sequents.*;
 import sequents.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.Position;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+//import tom.library.strategy.mutraveler.MuTraveler;
+//import tom.library.strategy.mutraveler.MuStrategy;
+//import tom.library.strategy.mutraveler.Position;
+//import jjtraveler.VisitFailure;
+//import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class ProofBuilder {
 
   %include { sequents/sequents.tom }
   %include { sequents/_sequents.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { string.tom }
   %include { util/LinkedList.tom }
 
@@ -40,6 +41,7 @@ public class ProofBuilder {
 
   %typeterm TermMap {
     implement { Map<Term,Term> }
+    is_sort(t) { t instanceof Map }
   }
 
 
@@ -58,7 +60,7 @@ public class ProofBuilder {
 
         // recuperage de la table des symboles
         HashMap<String,Term> tds = Unification.match(conclusion, active);
-        if (tds == null) throw new VisitFailure("active formula and rule conclusion don't match");
+        if (tds == null)  `Fail().visit(null); // "active formula and rule conclusion don't match";
 
         //  -- building the original axiom with quantifiers --
 
@@ -110,12 +112,12 @@ public class ProofBuilder {
         // remplacement des nouvelles variables (forall left et exists right)
         Set<Term> new_vars = Utils.getNewVars(rule.getprem());
         if (new_vars.size() != args.size())
-          throw new VisitFailure("Wrong variables number");
+          `Fail().visit(null); // "Wrong variables number"
         Set<Map.Entry<Term,Term>> entries2 = args.entrySet();
         for (Map.Entry<Term,Term> ent: entries2) {
           Term old_term = ent.getKey();
           if (! new_vars.contains(old_term))
-            throw new VisitFailure("Variable " + old_term.getname() +" not present in the rule");
+            `Fail().visit(null); // "Variable " + old_term.getname() +" not present in the rule"
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
           // also replacing in the expanded tree
@@ -259,27 +261,27 @@ b: {
           // si c'est une regle gauche
           ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
             // also in expanded tree
-            expanded = (Tree) `TopDown(AddInContexts(ctxt)).apply(expanded); 
-            expanded = (Tree) `TopDown(PutInConclusion(c)).apply(expanded); 
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded); 
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
             Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
-            res = (SeqList) `TopDown(AddInContexts(gamma)).apply(res); 
-            res = (SeqList) `TopDown(PutInConclusion(c)).apply(res); 
+            res = (SeqList) `TopDown(AddInContexts(gamma)).fire(res); 
+            res = (SeqList) `TopDown(PutInConclusion(c)).fire(res); 
             break b;
           }
 
           // si c'est une regle droite
           ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
             // also in expanded tree
-            expanded = (Tree) `TopDown(AddInContexts(ctxt)).apply(expanded);
-            expanded = (Tree) `TopDown(PutInConclusion(c)).apply(expanded); 
-            res = (SeqList) `TopDown(AddInContexts(ctxt)).apply(res);
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded);
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            res = (SeqList) `TopDown(AddInContexts(ctxt)).fire(res);
             Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
-            res = (SeqList) `TopDown(PutInConclusion(delta)).apply(res); 
+            res = (SeqList) `TopDown(PutInConclusion(delta)).fire(res); 
             break b;
           }
 
           // probleme
-          _,_,_ -> { throw new VisitFailure("wrong hand side rule application"); }
+          _,_,_ -> { `Fail().visit(null); /* ("wrong hand side rule application") */  }
         }
    }
 
@@ -512,8 +514,8 @@ b: {
           sequent((X*,act@forAll(n,p),Y*),g), act -> {
             System.out.print("instance of " + `n + " > ");
             Term term = null;
-            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
-            return (Tree) `ApplyForAllL(active,term).visit(`r);
+            try { term = Utils.getTerm(); } catch (Exception e) { `Fail().visit(null); }
+            return (Tree) `ApplyForAllL(active,term).fire(`r);
           }
         }
       }
@@ -541,8 +543,8 @@ b: {
           sequent(d,(X*,act@exists(n,p),Y*)), act -> {
             System.out.print("instance of " + `n + " > ");
             Term term = null;
-            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
-            return (Tree) `ApplyExistsR(active,term).visit(`r);
+            try { term = Utils.getTerm(); } catch (Exception e) { `Fail().visit(null); }
+            return (Tree) `ApplyExistsR(active,term).fire(`r);
           }
         }
       }
@@ -611,26 +613,26 @@ b: {
     }
     visit Tree {
       r@rule[type=openInfo[]] -> {
-        list.add(getPosition());
+        list.add(getEnvironment().getPosition());
         return `r;
       }
     }
   }
 
   private static void getOpenPositions(Tree tree, LinkedList pl) {
-    MuStrategy s = (MuStrategy) `mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x"))));
-    s.apply(tree);
+    Strategy s = `mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x"))));
+    s.fire(tree);
   }
 
   private static void getOpenPositions(Tree tree, Position pos, LinkedList pl) {
-    MuStrategy s = (MuStrategy) pos.getOmega(`mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x")))));
-    s.apply(tree);
+    Strategy s = pos.getOmega(`mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x")))));
+    s.fire(tree);
   }
 
   private Sequent getSequentByPosition(Tree tree, Position pos) {
     Tree res = null;
-    try {res = (Tree) MuTraveler.init(pos.getSubterm()).visit(tree); }
-    catch (VisitFailure e) { e.printStackTrace(); }
+    try {res = (Tree) pos.getSubterm().fire(tree); }
+    catch (FireException e) { e.printStackTrace(); }
     return res.getc();
   }
 
@@ -665,7 +667,7 @@ b: {
         args.put(t, new_var);
       }
 
-      return (Tree) ((MuStrategy) pos.getOmega(`ApplyRule(rule,active,args))).apply(tree);
+      return (Tree) pos.getOmega(`ApplyRule(rule,active,args)).fire(tree);
     }
 
     else throw new Exception("rule " + n + " doesn't exist.");
@@ -676,35 +678,34 @@ b: {
 
     Tree thtree = theorems.get(`name);
     Prop conclusion = null;
-    Position poscopy = (Position) pos.clone();
 
     %match(Tree thtree) {
       rule(_,_,sequent((),(prop)),_) -> {
-        tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyCut(prop))).apply(tree);
-        poscopy.down(2);
-        poscopy.down(1);
+        tree = (Tree) pos.getOmega(`ApplyCut(prop)).fire(tree);
+        pos = pos.down(2);
+        pos = pos.down(1);
         conclusion = `prop;
       }
     }
 
     while(true) {
 b :{
-      Sequent goal = getSequentByPosition(tree, poscopy);
+      Sequent goal = getSequentByPosition(tree, pos);
       %match(Prop conclusion, goal) {
         // pattern means "only and at least one 'goal' in the sequent rhs"
         concl, sequent((),!(_*,concl,_*,!concl,_*)) -> {
-          return (Tree) ((MuStrategy) poscopy.getReplace(thtree)).apply(tree);
+          return (Tree) pos.getReplace(thtree).fire(tree);
         }
         _, sequent((p,_*),_) -> {
-          tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakL(p))).apply(tree);
-          poscopy.down(2);
-          poscopy.down(1);
+          tree = (Tree) pos.getOmega(`ApplyWeakL(p)).fire(tree);
+          pos = pos.down(2);
+          pos = pos.down(1);
           break b;
         }
         tokeep, sequent((),(_*,p@!tokeep,_*)) -> {
-            tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakR(p))).apply(tree);
-            poscopy.down(2);
-            poscopy.down(1);
+            tree = (Tree) pos.getOmega(`ApplyWeakR(p)).fire(tree);
+            pos = pos.down(2);
+            pos = pos.down(1);
             break b;
         }
       }
@@ -721,7 +722,7 @@ b :{
 
     // get new tree
     Tree newrule = `rule(reductionInfo(), prems, goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+    return (Tree) pos.getReplace(newrule).fire(tree); 
   }
 
 
@@ -744,46 +745,47 @@ b :{
 
   %typeterm RuleArrayList {
     implement { ArrayList<Rule> }
+    is_sort(t) { t instanceof ArrayList }
   }
 
   %strategy ApplyReduce(newTermRules: TermRuleList, newPropRules: PropRuleList) extends `Identity() {
-      visit Tree {
-	  rule[c=goal,active=a] -> {
-	      Sequent s = (Sequent) Unification.reduce(`goal,newTermRules,newPropRules);
-	      if(s.equals(`goal)) throw new jjtraveler.VisitFailure();
-	      Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
-	      // get new tree
-	      return `rule(reductionInfo(), prems, goal, a);
-	  }
+    visit Tree {
+      rule[c=goal,active=a] -> {
+        Sequent s = (Sequent) Unification.reduce(`goal,newTermRules,newPropRules);
+        if(s.equals(`goal)) `Fail().visit(null);
+        Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
+        // get new tree
+        return `rule(reductionInfo(), prems, goal, a);
       }
+    }
   }
 
   %strategy ApplyAuto(newRules: RuleArrayList) extends `Fail() {
     visit Tree {
       // right hand side (+ axiom)
       t@rule[c=sequent(_,(_*,p,_*))] -> { 
-        MuStrategy strat;
+        Strategy strat;
         Rule r = applicableInAuto(newRules, `p, false);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
         if(r != null) strat = `ApplyRule(r,p,hm); 
         else strat = `ChoiceV(ApplyAxiom(),ApplyTop(),ApplyAndR(p),ApplyOrR(p),ApplyImpliesR(p),ApplyForAllR(p));
         try { 
-          Tree res = (Tree) strat.visit(`t); 
+          Tree res = (Tree) strat.fire(`t); 
           return res;
-        } catch (VisitFailure v) {}
+        } catch (FireException v) {}
       }
 
       // left hand side
       t@rule[c=sequent((_*,p,_*),_)] -> {
-        MuStrategy strat;
+        Strategy strat;
         Rule r = applicableInAuto(newRules, `p, true);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
         if(r != null) strat = `ApplyRule(r,p,hm); 
         else strat = `ChoiceV(ApplyBottom(),ApplyAndL(p),ApplyOrL(p),ApplyImpliesL(p),ApplyExistsL(p));
         try { 
-          Tree res = (Tree) strat.visit(`t); 
+          Tree res = (Tree) strat.fire(`t); 
           return res;
-        } catch (VisitFailure v) {}
+        } catch (FireException v) {}
       }
     }
   }
@@ -934,14 +936,14 @@ b :{
         /* intro case */
         proofCommand("intro") -> {
           try {
-            MuStrategy strat;
+            Strategy strat;
 
             if (env.focus_left)
               strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active), ApplyExistsL(active));
             else
               strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active));
 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply intro" + e.getMessage());
           }
@@ -950,10 +952,10 @@ b :{
         /* duplicate case */
         proofCommand("duplicate") -> {
           try {
-            MuStrategy strat;
+            Strategy strat;
             if (env.focus_left) strat = `ApplyContractionL(active);
             else strat = `ApplyContractionR(active);
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply duplicate" + e.getMessage());
           }
@@ -962,10 +964,10 @@ b :{
         /* remove case */
         proofCommand("remove") -> {
           try {
-            MuStrategy strat;
+            Strategy strat;
             if (env.focus_left) strat = `ApplyWeakL(active);
             else strat = `ApplyWeakR(active);
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply duplicate" + e.getMessage());
           }
@@ -975,8 +977,8 @@ b :{
         proofCommand("intros") -> {
           try {
             ArrayList<Rule> emptylist = new ArrayList<Rule>();
-            MuStrategy strat = `SafeTopDown(Try(ApplyAuto(emptylist)));
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            Strategy strat = `SafeTopDown(Try(ApplyAuto(emptylist)));
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply intros" + e.getMessage());
             e.printStackTrace();
@@ -986,8 +988,8 @@ b :{
         /* auto case */
         proofCommand("auto") -> {
           try {
-            MuStrategy strat = `SafeTopDown(Try(ApplyAuto(newRules)));
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            Strategy strat = `SafeTopDown(Try(ApplyAuto(newRules)));
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply auto : " + e.getMessage());
             e.printStackTrace();
@@ -997,7 +999,7 @@ b :{
         /* experimental autoreduce case */
         proofCommand("autoreduce") -> {
           try {
-	      MuStrategy strat = 
+	      Strategy strat = 
           `SafeTopDown(Try(Choice(ApplyAuto(newRules),ApplyReduce(newTermRules,newPropRules))));
 		  // Warning: _premisses uses "x" as MuVar
           /*
@@ -1009,7 +1011,7 @@ b :{
               Identity())));
               */
 			     
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply autoreduce : " + e + ", " + e.getMessage());
             e.printStackTrace();
@@ -1019,8 +1021,8 @@ b :{
         /* Axiom case */
         proofCommand("axiom") -> {
           try {
-            MuStrategy strat = `ApplyAxiom(); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            Strategy strat = `ApplyAxiom(); 
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply rule axiom" + e.getMessage());
           }
@@ -1029,8 +1031,8 @@ b :{
         /* Bottom case */
         proofCommand("bottom") -> {
           try {
-            MuStrategy strat = `ApplyBottom(); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            Strategy strat = `ApplyBottom(); 
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply bottom rule : " + e.getMessage());
           }
@@ -1039,8 +1041,8 @@ b :{
         /* top case */
         proofCommand("top") -> {
           try {
-            MuStrategy strat = `ApplyTop(); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            Strategy strat = `ApplyTop(); 
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply top rule : " + e.getMessage());
           }
@@ -1049,8 +1051,8 @@ b :{
         /* cut case */
         cutCommand(prop) -> {
           try {
-            MuStrategy strat = `ApplyCut(prop); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+            Strategy strat = `ApplyCut(prop); 
+            tree = (Tree) ((Strategy) currentPos.getOmega(strat)).fire(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }
@@ -1069,9 +1071,9 @@ b :{
         /* experimental reduce case */
         normalizeSequent() -> {
           try {
-	      MuStrategy strat = `Try(ApplyReduce(newTermRules, newPropRules));
-	    tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
-	    //old: tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
+            Strategy strat = `Try(ApplyReduce(newTermRules, newPropRules));
+            tree = (Tree) currentPos.getOmega(strat).fire(env.tree);
+            //old: tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }

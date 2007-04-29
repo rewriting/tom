@@ -1,11 +1,12 @@
 import sequents.*;
 import sequents.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+//import tom.library.strategy.mutraveler.MuTraveler;
+//import tom.library.strategy.mutraveler.MuStrategy;
+//import jjtraveler.VisitFailure;
+//import jjtraveler.reflective.VisitableVisitor;
 
+import tom.library.sl.*;
 import java.util.*;
 
 import java.io.*;
@@ -15,7 +16,7 @@ import antlr.collections.*;
 class Unification {
 
   %include { sequents/sequents.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   /**
    * returns a Symbol Table if it matches, else null 
@@ -111,8 +112,8 @@ class Unification {
   }
 
   public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl, PropRuleList pl) {
-      MuStrategy ar =  (MuStrategy) `InnermostId(ApplyRules(tl,pl));
-      return (sequentsAbstractType) ar.apply(t);
+      Strategy ar =  `InnermostId(ApplyRules(tl,pl));
+      return (sequentsAbstractType) ar.fire(t);
   }
 
   %strategy ApplyRules(tl:TermRuleList, pl:PropRuleList) extends `Identity() {
@@ -138,21 +139,21 @@ class Unification {
 
  /* ---------- to ensure fresh vars in rewrite/super rules ----------*/
 
-  %typeterm StringSet { implement { Set<String> } }
+  %typeterm StringSet { implement { Set<String> } is_sort(t) { t instanceof Set} }
 
   %strategy RenameIntoTemp(bounded : StringSet) extends `Fail() {
     visit Prop {
       forAll(n,p) -> { 
         bounded.add(`n); 
         Prop res = (Prop) 
-          ((MuStrategy) `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y"))))).apply(`p);
+          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).fire(`p);
         bounded.remove(`n);
         return `forAll(n,res);
       }
       exists(n,p) -> { 
         bounded.add(`n); 
         Prop res = (Prop) 
-          ((MuStrategy) `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y"))))).apply(`p);
+          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).fire(`p);
         bounded.remove(`n);
         return `exists(n,res);
       }
@@ -169,7 +170,7 @@ class Unification {
     substPreTreatment(sequentsAbstractType term) {
       HashSet<String> bounded = new HashSet();
       return (sequentsAbstractType)
-        ((MuStrategy) `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y"))))).apply(term);
+        `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).fire(term);
     }
 
  /* ----------------------------------*/

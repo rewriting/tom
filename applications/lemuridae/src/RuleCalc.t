@@ -1,10 +1,11 @@
 import sequents.*;
 import sequents.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+//import tom.library.strategy.mutraveler.MuTraveler;
+//import tom.library.strategy.mutraveler.MuStrategy;
+//import jjtraveler.VisitFailure;
+//import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,13 +16,13 @@ import java.io.*;
 import antlr.*;
 import antlr.collections.*;
 
-import tom.library.strategy.mutraveler.Position;
+//import tom.library.strategy.mutraveler.Position;
 
 
 public class RuleCalc {
 
   %include { sequents/sequents.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
   %include { util/types/Collection.tom }
 
   /**
@@ -62,7 +63,7 @@ public class RuleCalc {
       // looks for permutability problems
       %match(PropRuleList pruleList) {
         (r1*, r@proprule(_,prop) ,r2*) -> {
-          lastPos = forallNeg(`prop, 0, 1, new Position());
+          lastPos = forallNeg(`prop, 0, 1, new Position(new int[0]));
           if(lastPos != null) {
             // removing lastRule from the rules
             pruleList = `proprulelist(r1*,r2*);
@@ -79,12 +80,12 @@ public class RuleCalc {
       if (lastProp == null)
         return;
 
-      Prop problematicProp = (Prop) ((MuStrategy) MuTraveler.init(lastPos.getSubterm())).apply(lastProp);
+      Prop problematicProp = (Prop) lastPos.getSubterm().fire(lastProp);
       HashSet<Term> freevars = Utils.collectFreeVars(problematicProp);
       TermList tl = `concTerm();
       for(Term var: freevars) {	tl = `concTerm(tl*,var); }
       Prop newPred = `relationAppl(relation(name),tl);
-      Prop cleanedProp = (Prop) ((MuStrategy) lastPos.getReplace(newPred)).apply(lastProp);
+      Prop cleanedProp = (Prop) lastPos.getReplace(newPred).fire(lastProp);
 
       // adding new prop to lastrule
       lastRule = `proprule(lastRule.getlhs(), cleanedProp);
@@ -95,7 +96,7 @@ public class RuleCalc {
 
     public Prop getProblem() {
       if(lastPos != null)
-        return (Prop) ((MuStrategy) MuTraveler.init(lastPos.getSubterm())).apply(lastProp);
+        return (Prop) lastPos.getSubterm().fire(lastProp);
       else return null;
     }
 
@@ -137,7 +138,7 @@ public class RuleCalc {
 
     private static SeqList collectPremises(Tree t) {
       HashSet<Sequent> set = new HashSet<Sequent>();
-      ((MuStrategy) `TopDown(CollectPremises(set))).apply(t);
+      `TopDown(CollectPremises(set)).fire(t);
       SeqList result = `concSeq();
       for(Sequent seq: set) {
         result = `concSeq(result*,seq);
@@ -265,31 +266,31 @@ public class RuleCalc {
         (relationAppl | top | bottom) [] -> { return null; }
 
         (and | or) (p1,p2) -> {
-          pos.down(1);
+          pos = pos.down(1);
           Position pos1 = forallNeg(`p1, last, current, pos);
           if (pos1 != null) return pos1;
-          pos.up();
-          pos.down(2);
+          pos = pos.up();
+          pos = pos.down(2);
           pos1 = forallNeg(`p2, last, current, pos);
           if (pos1 != null) return pos1;
-          pos.up();
+          pos = pos.up();
         }
 
         implies(p1,p2) -> {
-          pos.down(1);
+          pos = pos.down(1);
           Position pos1 = forallNeg(`p1, last, -current, pos);
           if (pos1 != null) return pos1;
-          pos.up();
-          pos.down(2);
+          pos = pos.up();
+          pos = pos.down(2);
           pos1 = forallNeg(`p2, last, current, pos);
           if (pos1 != null) return pos1;
-          pos.up();
+          pos = pos.up();
         }
 
         forAll(_,p1) -> {
           if(current*last >= 0) {
             // string are not taken into account by omega
-            pos.down(1);
+            pos = pos.down(1);
             return forallNeg(`p1,current,current,pos);
           }
           else return pos;
@@ -299,7 +300,7 @@ public class RuleCalc {
           if(current*last > 0)
             return pos;
           else {
-            pos.down(2);
+            pos = pos.down(2);
             return forallNeg(`p1,current,current,pos); 
           }
         }

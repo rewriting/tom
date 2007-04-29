@@ -7,10 +7,11 @@ import java.util.Stack;
 import java.util.Map;
 import java.util.Collection;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+//import tom.library.strategy.mutraveler.MuTraveler;
+//import tom.library.strategy.mutraveler.MuStrategy;
+//import jjtraveler.VisitFailure;
+//import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 
 import java.io.*;
 import antlr.*;
@@ -19,14 +20,13 @@ import antlr.collections.*;
 class Utils {
  
   %include { sequents/sequents.tom }
+  %include { sl.tom }
 
   private static InputStream stream = new DataInputStream(System.in);
 
   public static void setStream(InputStream newStream) {
     stream = newStream;
   }
-  
-  %include { mutraveler.tom }
 
   %strategy ReplaceTerm(old_term: Term, new_term: Term) extends `Identity() {
     visit Term {
@@ -37,14 +37,14 @@ class Utils {
   public static sequentsAbstractType replaceTerm(sequentsAbstractType subject, 
       Term old_term, Term new_term) 
   {
-    VisitableVisitor v = `ReplaceTerm(old_term, new_term);
+    Strategy v = `ReplaceTerm(old_term, new_term);
     sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) MuTraveler.init(`TopDown(v)).visit(subject); }
-    catch (VisitFailure e ) { e.printStackTrace(); }
+    try { res = (sequentsAbstractType) `TopDown(v).fire(subject); }
+    catch (FireException e ) { e.printStackTrace(); }
     return res;
   }
 
-  %typeterm StringTermMap{ implement { Map<String,Term> } }
+  %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
 
   // several vars in one pass  
   %strategy ReplaceVars(map:StringTermMap) extends `Identity() {
@@ -61,10 +61,10 @@ class Utils {
   public static sequentsAbstractType 
     replaceVars(sequentsAbstractType subject, Map<String,Term> map) 
   {
-    VisitableVisitor v = `ReplaceVars(map);
+    Strategy v = `ReplaceVars(map);
     sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) MuTraveler.init(`TopDown(v)).visit(subject); }
-    catch (VisitFailure e ) { e.printStackTrace(); }
+    try { res = (sequentsAbstractType) `TopDown(v).fire(subject); }
+    catch (FireException e ) { e.printStackTrace(); }
     return res;
   }
 
@@ -152,10 +152,10 @@ class Utils {
   public static sequentsAbstractType 
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
     {
-      VisitableVisitor v = `TopDown(ReplaceFreeVars(old_term, new_term));
+      Strategy v = `TopDown(ReplaceFreeVars(old_term, new_term));
       //VisitableVisitor v = `mu(MuVar("x"),Try(Choice(r,All(MuVar("x")))));
-      try { p = (sequentsAbstractType) MuTraveler.init(v).visit(`p); }
-      catch ( VisitFailure e) { e.printStackTrace(); }
+      try { p = (sequentsAbstractType) v.fire(`p); }
+      catch ( FireException e) { e.printStackTrace(); }
       
       return  p; 
     }
@@ -187,7 +187,7 @@ class Utils {
     }
   }
 
-  %typeterm Collection { implement {Collection}}
+  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
 
   %strategy VarCollector(vars:Collection) extends `Identity() {
     visit Term {
@@ -197,8 +197,8 @@ class Utils {
 
   public static HashSet<Term> collectVars(sequentsAbstractType t) {
     HashSet set = new HashSet();
-    MuStrategy v = (MuStrategy) `TopDown(VarCollector(set));
-    v.apply(t);
+    Strategy v = `TopDown(VarCollector(set));
+    v.fire(t);
     return set;
   }
 
@@ -229,8 +229,8 @@ class Utils {
   public static HashSet getSideConstraints(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
-      MuTraveler.init(`TopDown(CollectConstraints(set))).visit(list);
-    } catch ( VisitFailure e) {
+      `TopDown(CollectConstraints(set)).fire(list);
+    } catch (FireException e) {
       e.printStackTrace();
     }
     return set;
@@ -245,8 +245,8 @@ class Utils {
   public static HashSet getNewVars(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
-      MuTraveler.init(`TopDown(CollectNewVars(set))).visit(list);
-    } catch ( VisitFailure e) {
+      `TopDown(CollectNewVars(set)).fire(list);
+    } catch ( FireException e) {
       e.printStackTrace();
     }
     return set;
