@@ -304,6 +304,26 @@ public class Position implements Cloneable,Path {
     return new Position(result);
   }
 
+  /**
+   * For compatibility with mutraveler positions
+   **/
+  public Position up() {
+    int [] result = new int[length()-1];
+    System.arraycopy(omega,0,result,0,length()-1);
+    return new Position(result);
+  }
+
+  /**
+   * For compatibility with mutraveler positions
+   **/
+  public Position down(int i){
+    int[] result = new int[length()+1];
+    System.arraycopy(omega,0,result,0,length());
+    result[length()]=i;
+    return new Position(result);
+  }
+
+
   public Path getCanonicalPath(){
     if(length()==0) return (Path) clone();
     int[] normalizedTail = ((Position)(getTail().getCanonicalPath())).toArray();
