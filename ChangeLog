@@ -1,3 +1,7 @@
+2007-04-29  pem
+  * fix the problem mutraveler -> sl
+  * improved the mu-expansion by removing Mu and MuVar from the graph
+
 2007-04-26  burel <burel@loria.fr>
   * some more mappings for ocaml basis types (bool, char, string)
 

@@ -156,6 +156,12 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public static void init(Strategy s, Environment env) {
+    /* to avoid infinite loop during initialization
+     * TODO: use static typing
+     */
+    if((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) {
+      return;
+    }
     s.setEnvironment(env);
     for(int i=0 ; i<s.getChildCount() ; i++) {
       jjtraveler.Visitable child = s.getChildAt(i);
