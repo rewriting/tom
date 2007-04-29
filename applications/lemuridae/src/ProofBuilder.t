@@ -60,7 +60,7 @@ public class ProofBuilder {
 
         // recuperage de la table des symboles
         HashMap<String,Term> tds = Unification.match(conclusion, active);
-        if (tds == null)  `Fail().visit(null); // "active formula and rule conclusion don't match";
+        if (tds == null)  execute(`Fail()); // "active formula and rule conclusion don't match";
 
         //  -- building the original axiom with quantifiers --
 
@@ -112,12 +112,12 @@ public class ProofBuilder {
         // remplacement des nouvelles variables (forall left et exists right)
         Set<Term> new_vars = Utils.getNewVars(rule.getprem());
         if (new_vars.size() != args.size())
-          `Fail().visit(null); // "Wrong variables number"
+          execute(`Fail()); // "Wrong variables number"
         Set<Map.Entry<Term,Term>> entries2 = args.entrySet();
         for (Map.Entry<Term,Term> ent: entries2) {
           Term old_term = ent.getKey();
           if (! new_vars.contains(old_term))
-            `Fail().visit(null); // "Variable " + old_term.getname() +" not present in the rule"
+            execute(`Fail()); // "Variable " + old_term.getname() +" not present in the rule"
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
           // also replacing in the expanded tree
@@ -281,7 +281,7 @@ b: {
           }
 
           // probleme
-          _,_,_ -> { `Fail().visit(null); /* ("wrong hand side rule application") */  }
+          _,_,_ -> { execute(`Fail()); /* ("wrong hand side rule application") */  }
         }
    }
 
@@ -514,7 +514,7 @@ b: {
           sequent((X*,act@forAll(n,p),Y*),g), act -> {
             System.out.print("instance of " + `n + " > ");
             Term term = null;
-            try { term = Utils.getTerm(); } catch (Exception e) { `Fail().visit(null); }
+            try { term = Utils.getTerm(); } catch (Exception e) { execute(`Fail()); }
             return (Tree) `ApplyForAllL(active,term).fire(`r);
           }
         }
@@ -543,7 +543,7 @@ b: {
           sequent(d,(X*,act@exists(n,p),Y*)), act -> {
             System.out.print("instance of " + `n + " > ");
             Term term = null;
-            try { term = Utils.getTerm(); } catch (Exception e) { `Fail().visit(null); }
+            try { term = Utils.getTerm(); } catch (Exception e) { execute(`Fail()); }
             return (Tree) `ApplyExistsR(active,term).fire(`r);
           }
         }
@@ -752,7 +752,7 @@ b :{
     visit Tree {
       rule[c=goal,active=a] -> {
         Sequent s = (Sequent) Unification.reduce(`goal,newTermRules,newPropRules);
-        if(s.equals(`goal)) `Fail().visit(null);
+        if(s.equals(`goal)) execute(`Fail());
         Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
         // get new tree
         return `rule(reductionInfo(), prems, goal, a);
