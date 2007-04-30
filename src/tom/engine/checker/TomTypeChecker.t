@@ -52,10 +52,7 @@ import tom.engine.adt.tomtype.types.*;
 
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 /**
  * The TomTypeChecker plugin.
@@ -63,7 +60,7 @@ import jjtraveler.VisitFailure;
 public class TomTypeChecker extends TomChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/></options>";
@@ -89,7 +86,7 @@ public class TomTypeChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          MuTraveler.init(`mu(MuVar("x"),Try(Sequence(checkTypeInference(this),All(MuVar("x")))))).visit((TomTerm)getWorkingTerm());
+          `mu(MuVar("x"),Try(Sequence(checkTypeInference(this),All(MuVar("x"))))).visit((TomTerm)getWorkingTerm());
         } catch(jjtraveler.VisitFailure e) {
           System.out.println("strategy failed");
         }
@@ -163,7 +160,7 @@ public class TomTypeChecker extends TomChecker {
       // verify variables in WHEN instruction
       // collect unknown variables
       try {
-        MuTraveler.init(`TopDown(collectUnknownAppls(this))).visit(pattern.getGuards());
+        `TopDown(collectUnknownAppls(this)).visit(pattern.getGuards());
       } catch(jjtraveler.VisitFailure e) {
         System.out.println("strategy failed");
       }

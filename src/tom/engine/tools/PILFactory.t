@@ -44,15 +44,13 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class PILFactory {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
-  %include{ java/util/types/Collection.tom }
-  %include{ mustrategy.tom }
+  %include{ ../../library/mapping/java/util/types/Collection.tom }
+  %include{ ../../library/mapping/java/sl.tom }
 
   /**
    * level specifies the level of details of the output
@@ -72,7 +70,7 @@ public class PILFactory {
 
   public jjtraveler.Visitable remove(jjtraveler.Visitable subject) {
     try {
-      return MuTraveler.init(`TopDown(replaceRemove())).visit(subject);
+      return `TopDown(replaceRemove()).visit(subject);
     } catch(jjtraveler.VisitFailure e) {
       System.out.println("strategy failed");
     }
@@ -81,7 +79,7 @@ public class PILFactory {
 
   public TomTerm remove(TomTerm subject) {
     try {
-      return (TomTerm) MuTraveler.init(`TopDown(replaceRemove())).visit(subject);
+      return (TomTerm) `TopDown(replaceRemove()).visit(subject);
     } catch(jjtraveler.VisitFailure e) {
       System.out.println("strategy failed");
     }
@@ -312,7 +310,7 @@ public class PILFactory {
   public Collection collectMatch(jjtraveler.Visitable subject) {
     Collection result = new HashSet();
     try {
-      MuTraveler.init(`TopDown(collectMatch(result))).visit(subject);
+      `TopDown(collectMatch(result)).visit(subject);
     } catch(jjtraveler.VisitFailure e) {
       System.out.println("strategy failed");
     }

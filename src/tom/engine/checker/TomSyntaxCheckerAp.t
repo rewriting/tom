@@ -61,7 +61,7 @@ import jjtraveler.VisitFailure;
 public class TomSyntaxCheckerAp extends TomSyntaxChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom }
   /**
    * Basicaly ignores the anti-symbol
    */

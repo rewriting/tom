@@ -55,11 +55,7 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 /**
  * The TomExpander plugin.
@@ -68,7 +64,7 @@ import jjtraveler.VisitFailure;
 public class TomExpander extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
+  %include { ../../library/mapping/java/sl.tom }
 
   %typeterm TomExpander {
     implement { TomExpander }
@@ -142,7 +138,7 @@ public class TomExpander extends TomGenericPlugin {
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
     Iterator it = symbolTable.keySymbolIterator();
-    VisitableVisitor expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
+    Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
 
     while(it.hasNext()) {
       String tomName = (String)it.next();
@@ -156,7 +152,7 @@ public class TomExpander extends TomGenericPlugin {
       }
       try {
         tomSymbol = (TomSymbol) expandStrategy.visit(`tomSymbol);
-      } catch(VisitFailure e) {
+      } catch(jjtraveler.VisitFailure e) {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
@@ -371,19 +367,19 @@ public class TomExpander extends TomGenericPlugin {
      */
 
     SlotList slotList = `concSlot();
-    VisitableVisitor expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
+    Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
     if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
       while(!args.isEmptyconcTomTerm()) {
-        try{
+        try {
           TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
           TomName slotName = `EmptyName();
-	  /*
-	   * we cannot optimize when subterm.isUnamedVariable
-	   * since it can be constrained
-	   */	  
-	  slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
+          /*
+           * we cannot optimize when subterm.isUnamedVariable
+           * since it can be constrained
+           */	  
+          slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
-        }catch(VisitFailure e){}
+        } catch(jjtraveler.VisitFailure e) {}
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
@@ -398,7 +394,7 @@ public class TomExpander extends TomGenericPlugin {
 	  slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
           pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-        }catch(VisitFailure e){}
+        }catch(jjtraveler.VisitFailure e){}
       }
     }
 
@@ -529,16 +525,16 @@ public class TomExpander extends TomGenericPlugin {
     /*
      * Attributes: go from implicit notation to explicit notation
      */
-    VisitableVisitor expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
+    Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
     while(!attrList.isEmptyconcTomTerm()) {
-      try{
+      try {
         TomTerm newPattern = (TomTerm) expandStrategy.visit(attrList.getHeadconcTomTerm());
         newAttrList = `concTomTerm(newPattern,newAttrList*);
         if(implicitAttribute) {
           newAttrList = `concTomTerm(star,newAttrList*);
         }
         attrList = attrList.getTailconcTomTerm();
-      }catch(VisitFailure e){}
+      } catch(jjtraveler.VisitFailure e) {}
     }
     newAttrList = ASTFactory.reverse(newAttrList);
 
@@ -564,7 +560,7 @@ public class TomExpander extends TomGenericPlugin {
           }
         }
         childList = childList.getTailconcTomTerm();
-      }catch(VisitFailure e){}
+      }catch(jjtraveler.VisitFailure e){}
     }
     newChildList = ASTFactory.reverse(newChildList);
 
@@ -609,7 +605,7 @@ matchBlock: {
 
               //System.out.println("expandXML out:\n" + result);
               return result;
-            } catch(VisitFailure e) {
+            } catch(jjtraveler.VisitFailure e) {
               //must never be executed
               return star;
             }

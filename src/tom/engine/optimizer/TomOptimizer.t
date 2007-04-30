@@ -56,9 +56,9 @@ import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import jjtraveler.VisitFailure;
 import tom.library.sl.*;
-
+//import tom.library.strategy.mutraveler.*;
+//import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * The TomOptimizer plugin.
@@ -66,10 +66,11 @@ import tom.library.sl.*;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
-  %include{ ../adt/tomsignature/_TomSignature.tom }
-  %include{ sl.tom }
-  %include{ java/util/ArrayList.tom }
-  %include{ java/util/HashSet.tom }
+  //%include{ ../adt/tomsignature/_TomSignature.tom }
+  %include{ ../../library/mapping/java/sl.tom }
+  //%include{ mutraveler.tom }
+  %include{ ../../library/mapping/java/util/ArrayList.tom }
+  %include{ ../../library/mapping/java/util/HashSet.tom }
 
   %typeterm TomOptimizer {
     implement { TomOptimizer }
@@ -107,7 +108,7 @@ public class TomOptimizer extends TomGenericPlugin {
       Strategy optStrategy1 = `InnermostId(Inline());
 
       Strategy optStrategy2 = `Sequence(
-          InnermostId(ChoiceId(RepeatId((NopElimAndFlatten())),NormExpr(this))),
+          InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
           InnermostId(
             ChoiceId(
               Sequence(RepeatId(IfSwapping(this)), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
@@ -166,8 +167,8 @@ public class TomOptimizer extends TomGenericPlugin {
     return name;
   }
 
-  %op Strategy inlineInstruction(variableName:TomName, expression:Expression){
-    make(variableName, expression) {`TopDown(inlineInstrOnce(variableName,expression))}
+  private static Strategy inlineInstruction(TomName variableName, Expression expression) {
+    return `TopDown(inlineInstrOnce(variableName,expression));
   }
 
   %strategy inlineInstrOnce(variableName:TomName, expression:Expression) extends `Identity(){
@@ -180,9 +181,35 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
+  %op Strategy computeOccurences(variableName:TomName, list:ArrayList) {                                                                   
+    make(variableName, list) {`mu(MuVar("current"),TopDownCollect(findOccurence2(MuVar("current"),variableName,list)))}
+  }
+
+   %strategy findOccurence2(s:Strategy,variableName:TomName, list:ArrayList) extends `Identity() {
+    visit Instruction {
+      TypedAction[AstInstruction=inst] -> {
+        /* recursive call of the current strategy on the first child */
+        s.visit(`inst);
+        `Fail().visit(null);
+      }
+    }
+ 
+    visit TomTerm { 
+      t@(Variable|VariableStar)[AstName=name] -> { 
+        if(variableName == `name) { 
+          list.add(`t); 
+        } 
+      } 
+    } 
+  }
+
   /* this strategy doesn't traverse the two last children of TypedAction() */
-  %op Strategy findOccurencesUpTo(variableName:TomName, list:ArrayList, max:int){
-    make(variableName, list, max) {`Try(mu(MuVar("current"),Sequence(findOccurence(variableName,list,max),IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))))}
+   /*
+  private static Strategy findOccurencesUpTo(TomName variableName, ArrayList list, int max) {
+    return `Try(mu(MuVar("current"),
+          Sequence(
+            findOccurence(variableName,list,max),
+            IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))));
   }
 
   %strategy findOccurence(variableName:TomName,list : ArrayList, max:int) extends `Identity() {
@@ -197,7 +224,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
     }
   }
-
+  */
 
   %op Strategy isAssigned(variableName:TomName){
     make(variableName) {`TopDown(findAssignment(variableName))}
@@ -207,13 +234,13 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Instruction {
       Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
-          throw new VisitFailure();
+          throw new jjtraveler.VisitFailure();
         }
       }
 
       LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
-          throw new VisitFailure();
+          throw new jjtraveler.VisitFailure();
         }
       }
     }
@@ -223,7 +250,7 @@ public class TomOptimizer extends TomGenericPlugin {
     HashSet c = new HashSet();
     try {
       `TopDownCollect(findRefVariable(c)).visit(exp);
-    } catch(VisitFailure e) {
+    } catch(jjtraveler.VisitFailure e) {
       logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
     }
     Iterator it = c.iterator();
@@ -231,7 +258,7 @@ public class TomOptimizer extends TomGenericPlugin {
       TomName name = (TomName) it.next();
       try {
         `isAssigned(name).visit(body);
-      } catch(VisitFailure e) {
+      } catch(jjtraveler.VisitFailure e) {
         return false;
       }
     }
@@ -243,7 +270,7 @@ public class TomOptimizer extends TomGenericPlugin {
         Ref((Variable|VariableStar)[AstName=name])  -> {
           set.add(`name);
           //stop to visit this branch (like "return false" with traversal) 
-          throw new VisitFailure();
+          throw new jjtraveler.VisitFailure();
         }
       }
     }
@@ -266,8 +293,7 @@ public class TomOptimizer extends TomGenericPlugin {
       } // end match
     }
 
-
-    private static boolean compare (Visitable term1, Visitable term2){
+    private static boolean compare(jjtraveler.Visitable term1, jjtraveler.Visitable term2) {
       return factory.remove(term1)==factory.remove(term2);
     }
 
@@ -304,9 +330,8 @@ public class TomOptimizer extends TomGenericPlugin {
           }
 
           ArrayList list  = new ArrayList();
-          try {
-          `findOccurencesUpTo(name,list,2).visit(`body);
-          } catch(VisitFailure e) { }
+          //`findOccurencesUpTo(name,list,2).visit(`body);
+          `computeOccurences(name,list).visit(`body);
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -320,9 +345,8 @@ public class TomOptimizer extends TomGenericPlugin {
             return `body;
           } else if(mult == 1) {
             list.clear();
-            try {
-            `findOccurencesUpTo(name,list,2).visit(`exp);
-            } catch(VisitFailure e) { }
+          //  `findOccurencesUpTo(name,list,2).visit(`exp);
+            `computeOccurences(name,list).visit(`exp);
             if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -358,9 +382,10 @@ public class TomOptimizer extends TomGenericPlugin {
             Name(tomName) -> { varName = `tomName; }
           }
           ArrayList list  = new ArrayList();
-          try {
-          `findOccurencesUpTo(name,list,2).visit(`body);
-          } catch(VisitFailure e) { }
+          
+          //`findOccurencesUpTo(name,list,2).visit(`body);
+            `computeOccurences(name,list).visit(`body);
+
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -475,9 +500,8 @@ public class TomOptimizer extends TomGenericPlugin {
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               ArrayList list  = new ArrayList();
-              try {
-              `findOccurencesUpTo(name1,list,2).visit(`body2);
-              } catch(VisitFailure e) { }
+            //  `findOccurencesUpTo(name1,list,2).visit(`body2);
+            `computeOccurences(name1,list).visit(`body2);
               int mult = list.size();
               if(mult==0){
                 logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
