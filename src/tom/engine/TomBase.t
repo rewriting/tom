@@ -59,17 +59,18 @@ import jjtraveler.VisitFailure;
  */
 public final class TomBase {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ./adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
   %typeterm Collection {
     implement { java.util.Collection }
+    is_sort(t) { t instanceof java.util.Collection }
   }
 
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
   /** shortcut */
   
-  %include { adt/platformoption/PlatformOption.tom }
+  %include { ./adt/platformoption/PlatformOption.tom }
   
   public static TomNumberList appendNumber(int n, TomNumberList path) {
     /*

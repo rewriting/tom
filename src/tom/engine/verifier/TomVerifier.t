@@ -67,6 +67,7 @@ public class TomVerifier extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
   %typeterm Collection {
     implement { java.util.Collection }
+    is_sort(t) { t instanceof java.util.Collection }
   }
 
   public static final String DECLARED_OPTIONS =

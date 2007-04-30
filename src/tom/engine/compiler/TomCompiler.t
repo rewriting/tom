@@ -66,10 +66,12 @@ public class TomCompiler extends TomGenericPlugin {
   %typeterm Set {
     implement      { java.util.Set }
     equals(l1,l2)  { l1.equals(l2) }
+    is_sort(t) { t instanceof java.util.Set }
   }
 
   %typeterm TomCompiler {
     implement { TomCompiler }
+    is_sort(t) { t instanceof TomCompiler }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {

@@ -74,6 +74,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %typeterm TomOptimizer {
     implement { TomOptimizer }
+    is_sort(t) { t instanceof TomOptimizer }
   }
 
   /** some output suffixes */

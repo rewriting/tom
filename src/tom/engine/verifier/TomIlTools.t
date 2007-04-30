@@ -58,6 +58,7 @@ public class TomIlTools {
   %include { mustrategy.tom }
   %typeterm Collection {
     implement { java.util.Collection }
+    is_sort(t) { t instanceof java.util.Collection }
   }
   // ------------------------------------------------------------
 
