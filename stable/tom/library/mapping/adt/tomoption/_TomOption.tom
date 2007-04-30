@@ -2630,6 +2630,29 @@
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_TomTermToExpression(s) }
 }
 
+%op Strategy Is_TomInstructionToExpression() {
+  make() { `When_TomInstructionToExpression(Identity()) }
+}
+
+%op Strategy _TomInstructionToExpression(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._TomInstructionToExpression)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomexpression.strategy.expression._TomInstructionToExpression(arg0) }
+}
+
+%op Strategy Make_TomInstructionToExpression(_Instruction:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_TomInstructionToExpression)}
+
+  get_slot(_Instruction, t) { _Instruction }
+  make( new_Instruction) { new tom.engine.adt.tomexpression.strategy.expression.Make_TomInstructionToExpression( new_Instruction) }
+}
+
+%op Strategy When_TomInstructionToExpression(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_TomInstructionToExpression)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_TomInstructionToExpression(s) }
+}
+
 %op Strategy Is_Bottom() {
   make() { `When_Bottom(Identity()) }
 }
@@ -2726,6 +2749,52 @@
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_Or(s) }
 }
 
+%op Strategy Is_EmptyOrExpressionDisjunction() {
+  make() { `When_EmptyOrExpressionDisjunction(Identity()) }
+}
+
+%op Strategy _EmptyOrExpressionDisjunction() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._EmptyOrExpressionDisjunction)}
+
+  make() { new tom.engine.adt.tomexpression.strategy.expression._EmptyOrExpressionDisjunction() }
+}
+
+%op Strategy Make_EmptyOrExpressionDisjunction() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_EmptyOrExpressionDisjunction)}
+
+  make() { new tom.engine.adt.tomexpression.strategy.expression.Make_EmptyOrExpressionDisjunction() }
+}
+
+%op Strategy When_EmptyOrExpressionDisjunction(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_EmptyOrExpressionDisjunction)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_EmptyOrExpressionDisjunction(s) }
+}
+
+%op Strategy Is_ConsOrExpressionDisjunction() {
+  make() { `When_ConsOrExpressionDisjunction(Identity()) }
+}
+
+%op Strategy _ConsOrExpressionDisjunction(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._ConsOrExpressionDisjunction)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomexpression.strategy.expression._ConsOrExpressionDisjunction(arg0, arg1) }
+}
+
+%op Strategy Make_ConsOrExpressionDisjunction(_HeadOrExpressionDisjunction:Strategy, _TailOrExpressionDisjunction:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_ConsOrExpressionDisjunction)}
+
+  get_slot(_HeadOrExpressionDisjunction, t) { _HeadOrExpressionDisjunction }
+  get_slot(_TailOrExpressionDisjunction, t) { _TailOrExpressionDisjunction }
+  make( new_HeadOrExpressionDisjunction,  new_TailOrExpressionDisjunction) { new tom.engine.adt.tomexpression.strategy.expression.Make_ConsOrExpressionDisjunction( new_HeadOrExpressionDisjunction,  new_TailOrExpressionDisjunction) }
+}
+
+%op Strategy When_ConsOrExpressionDisjunction(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_ConsOrExpressionDisjunction)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_ConsOrExpressionDisjunction(s) }
+}
+
 %op Strategy Is_GreaterThan() {
   make() { `When_GreaterThan(Identity()) }
 }
@@ -2749,6 +2818,29 @@
 %op Strategy When_GreaterThan(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_GreaterThan)}
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_GreaterThan(s) }
+}
+
+%op Strategy Is_AntiMatchExpression() {
+  make() { `When_AntiMatchExpression(Identity()) }
+}
+
+%op Strategy _AntiMatchExpression(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._AntiMatchExpression)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomexpression.strategy.expression._AntiMatchExpression(arg0) }
+}
+
+%op Strategy Make_AntiMatchExpression(_Expression:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_AntiMatchExpression)}
+
+  get_slot(_Expression, t) { _Expression }
+  make( new_Expression) { new tom.engine.adt.tomexpression.strategy.expression.Make_AntiMatchExpression( new_Expression) }
+}
+
+%op Strategy When_AntiMatchExpression(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_AntiMatchExpression)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_AntiMatchExpression(s) }
 }
 
 %op Strategy Is_Conditional() {
@@ -3165,6 +3257,81 @@
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_GetSliceArray(s) }
 }
 
+%op Strategy Is_ConstraintToExpression() {
+  make() { `When_ConstraintToExpression(Identity()) }
+}
+
+%op Strategy _ConstraintToExpression(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._ConstraintToExpression)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomexpression.strategy.expression._ConstraintToExpression(arg0) }
+}
+
+%op Strategy Make_ConstraintToExpression(_cons:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_ConstraintToExpression)}
+
+  get_slot(_cons, t) { _cons }
+  make( new_cons) { new tom.engine.adt.tomexpression.strategy.expression.Make_ConstraintToExpression( new_cons) }
+}
+
+%op Strategy When_ConstraintToExpression(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_ConstraintToExpression)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_ConstraintToExpression(s) }
+}
+
+%op Strategy Is_DoWhileExpression() {
+  make() { `When_DoWhileExpression(Identity()) }
+}
+
+%op Strategy _DoWhileExpression(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._DoWhileExpression)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomexpression.strategy.expression._DoWhileExpression(arg0, arg1) }
+}
+
+%op Strategy Make_DoWhileExpression(_EndExpression:Strategy, _LoopCondition:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_DoWhileExpression)}
+
+  get_slot(_EndExpression, t) { _EndExpression }
+  get_slot(_LoopCondition, t) { _LoopCondition }
+  make( new_EndExpression,  new_LoopCondition) { new tom.engine.adt.tomexpression.strategy.expression.Make_DoWhileExpression( new_EndExpression,  new_LoopCondition) }
+}
+
+%op Strategy When_DoWhileExpression(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_DoWhileExpression)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_DoWhileExpression(s) }
+}
+
+%op Strategy Is_IfExpression() {
+  make() { `When_IfExpression(Identity()) }
+}
+
+%op Strategy _IfExpression(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._IfExpression)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomexpression.strategy.expression._IfExpression(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_IfExpression(_Condition:Strategy, _ThenExpression:Strategy, _ElseExpression:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_IfExpression)}
+
+  get_slot(_Condition, t) { _Condition }
+  get_slot(_ThenExpression, t) { _ThenExpression }
+  get_slot(_ElseExpression, t) { _ElseExpression }
+  make( new_Condition,  new_ThenExpression,  new_ElseExpression) { new tom.engine.adt.tomexpression.strategy.expression.Make_IfExpression( new_Condition,  new_ThenExpression,  new_ElseExpression) }
+}
+
+%op Strategy When_IfExpression(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_IfExpression)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_IfExpression(s) }
+}
+
 %op Strategy Is_IsSort() {
   make() { `When_IsSort(Identity()) }
 }
@@ -3188,98 +3355,6 @@
 %op Strategy When_IsSort(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_IsSort)}
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_IsSort(s) }
-}
-
-%op Strategy Is_EmptyconcOr() {
-  make() { `When_EmptyconcOr(Identity()) }
-}
-
-%op Strategy _EmptyconcOr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.oconstraintlist._EmptyconcOr)}
-
-  make() { new tom.engine.adt.tomconstraint.strategy.oconstraintlist._EmptyconcOr() }
-}
-
-%op Strategy Make_EmptyconcOr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.oconstraintlist.Make_EmptyconcOr)}
-
-  make() { new tom.engine.adt.tomconstraint.strategy.oconstraintlist.Make_EmptyconcOr() }
-}
-
-%op Strategy When_EmptyconcOr(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.oconstraintlist.When_EmptyconcOr)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.oconstraintlist.When_EmptyconcOr(s) }
-}
-
-%op Strategy Is_ConsconcOr() {
-  make() { `When_ConsconcOr(Identity()) }
-}
-
-%op Strategy _ConsconcOr(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.oconstraintlist._ConsconcOr)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.oconstraintlist._ConsconcOr(arg0, arg1) }
-}
-
-%op Strategy Make_ConsconcOr(_HeadconcOr:Strategy, _TailconcOr:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.oconstraintlist.Make_ConsconcOr)}
-
-  get_slot(_HeadconcOr, t) { _HeadconcOr }
-  get_slot(_TailconcOr, t) { _TailconcOr }
-  make( new_HeadconcOr,  new_TailconcOr) { new tom.engine.adt.tomconstraint.strategy.oconstraintlist.Make_ConsconcOr( new_HeadconcOr,  new_TailconcOr) }
-}
-
-%op Strategy When_ConsconcOr(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.oconstraintlist.When_ConsconcOr)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.oconstraintlist.When_ConsconcOr(s) }
-}
-
-%op Strategy Is_Ensure() {
-  make() { `When_Ensure(Identity()) }
-}
-
-%op Strategy _Ensure(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._Ensure)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._Ensure(arg0) }
-}
-
-%op Strategy Make_Ensure(_Variable:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_Ensure)}
-
-  get_slot(_Variable, t) { _Variable }
-  make( new_Variable) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_Ensure( new_Variable) }
-}
-
-%op Strategy When_Ensure(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_Ensure)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_Ensure(s) }
-}
-
-%op Strategy Is_Equal() {
-  make() { `When_Equal(Identity()) }
-}
-
-%op Strategy _Equal(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._Equal)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._Equal(arg0) }
-}
-
-%op Strategy Make_Equal(_Variable:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_Equal)}
-
-  get_slot(_Variable, t) { _Variable }
-  make( new_Variable) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_Equal( new_Variable) }
-}
-
-%op Strategy When_Equal(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_Equal)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_Equal(s) }
 }
 
 %op Strategy Is_AssignTo() {
@@ -3370,195 +3445,208 @@
   make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_FalseConstraint(s) }
 }
 
-%op Strategy Is_Neg() {
-  make() { `When_Neg(Identity()) }
+%op Strategy Is_Negate() {
+  make() { `When_Negate(Identity()) }
 }
 
-%op Strategy _Neg(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._Neg)}
+%op Strategy _Negate(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._Negate)}
 
   get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._Neg(arg0) }
+  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._Negate(arg0) }
 }
 
-%op Strategy Make_Neg(_c:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_Neg)}
+%op Strategy Make_Negate(_c:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_Negate)}
 
   get_slot(_c, t) { _c }
-  make( new_c) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_Neg( new_c) }
+  make( new_c) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_Negate( new_c) }
 }
 
-%op Strategy When_Neg(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_Neg)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_Neg(s) }
+%op Strategy When_Negate(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_Negate)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_Negate(s) }
 }
 
-%op Strategy Is_AndConstraint() {
-  make() { `When_AndConstraint(Identity()) }
+%op Strategy Is_EmptyAndConstraint() {
+  make() { `When_EmptyAndConstraint(Identity()) }
 }
 
-%op Strategy _AndConstraint(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._AndConstraint)}
+%op Strategy _EmptyAndConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndConstraint)}
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._AndConstraint(arg0) }
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndConstraint() }
 }
 
-%op Strategy Make_AndConstraint(_cla:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_AndConstraint)}
+%op Strategy Make_EmptyAndConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyAndConstraint)}
 
-  get_slot(_cla, t) { _cla }
-  make( new_cla) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_AndConstraint( new_cla) }
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyAndConstraint() }
 }
 
-%op Strategy When_AndConstraint(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_AndConstraint)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_AndConstraint(s) }
+%op Strategy When_EmptyAndConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyAndConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyAndConstraint(s) }
 }
 
-%op Strategy Is_OrConstraint() {
-  make() { `When_OrConstraint(Identity()) }
+%op Strategy Is_ConsAndConstraint() {
+  make() { `When_ConsAndConstraint(Identity()) }
 }
 
-%op Strategy _OrConstraint(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._OrConstraint)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._OrConstraint(arg0) }
-}
-
-%op Strategy Make_OrConstraint(_clo:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_OrConstraint)}
-
-  get_slot(_clo, t) { _clo }
-  make( new_clo) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_OrConstraint( new_clo) }
-}
-
-%op Strategy When_OrConstraint(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_OrConstraint)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_OrConstraint(s) }
-}
-
-%op Strategy Is_EqualConstraint() {
-  make() { `When_EqualConstraint(Identity()) }
-}
-
-%op Strategy _EqualConstraint(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EqualConstraint)}
+%op Strategy _ConsAndConstraint(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._ConsAndConstraint)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._EqualConstraint(arg0, arg1) }
+  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._ConsAndConstraint(arg0, arg1) }
 }
 
-%op Strategy Make_EqualConstraint(_pattern:Strategy, _genTerm:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EqualConstraint)}
+%op Strategy Make_ConsAndConstraint(_HeadAndConstraint:Strategy, _TailAndConstraint:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsAndConstraint)}
+
+  get_slot(_HeadAndConstraint, t) { _HeadAndConstraint }
+  get_slot(_TailAndConstraint, t) { _TailAndConstraint }
+  make( new_HeadAndConstraint,  new_TailAndConstraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsAndConstraint( new_HeadAndConstraint,  new_TailAndConstraint) }
+}
+
+%op Strategy When_ConsAndConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_ConsAndConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_ConsAndConstraint(s) }
+}
+
+%op Strategy Is_EmptyOrConstraint() {
+  make() { `When_EmptyOrConstraint(Identity()) }
+}
+
+%op Strategy _EmptyOrConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyOrConstraint)}
+
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyOrConstraint() }
+}
+
+%op Strategy Make_EmptyOrConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyOrConstraint)}
+
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyOrConstraint() }
+}
+
+%op Strategy When_EmptyOrConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyOrConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyOrConstraint(s) }
+}
+
+%op Strategy Is_ConsOrConstraint() {
+  make() { `When_ConsOrConstraint(Identity()) }
+}
+
+%op Strategy _ConsOrConstraint(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._ConsOrConstraint)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._ConsOrConstraint(arg0, arg1) }
+}
+
+%op Strategy Make_ConsOrConstraint(_HeadOrConstraint:Strategy, _TailOrConstraint:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsOrConstraint)}
+
+  get_slot(_HeadOrConstraint, t) { _HeadOrConstraint }
+  get_slot(_TailOrConstraint, t) { _TailOrConstraint }
+  make( new_HeadOrConstraint,  new_TailOrConstraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsOrConstraint( new_HeadOrConstraint,  new_TailOrConstraint) }
+}
+
+%op Strategy When_ConsOrConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_ConsOrConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_ConsOrConstraint(s) }
+}
+
+%op Strategy Is_EmptyOrConstraintDisjunction() {
+  make() { `When_EmptyOrConstraintDisjunction(Identity()) }
+}
+
+%op Strategy _EmptyOrConstraintDisjunction() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyOrConstraintDisjunction)}
+
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyOrConstraintDisjunction() }
+}
+
+%op Strategy Make_EmptyOrConstraintDisjunction() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyOrConstraintDisjunction)}
+
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyOrConstraintDisjunction() }
+}
+
+%op Strategy When_EmptyOrConstraintDisjunction(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyOrConstraintDisjunction)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyOrConstraintDisjunction(s) }
+}
+
+%op Strategy Is_ConsOrConstraintDisjunction() {
+  make() { `When_ConsOrConstraintDisjunction(Identity()) }
+}
+
+%op Strategy _ConsOrConstraintDisjunction(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._ConsOrConstraintDisjunction)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._ConsOrConstraintDisjunction(arg0, arg1) }
+}
+
+%op Strategy Make_ConsOrConstraintDisjunction(_HeadOrConstraintDisjunction:Strategy, _TailOrConstraintDisjunction:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsOrConstraintDisjunction)}
+
+  get_slot(_HeadOrConstraintDisjunction, t) { _HeadOrConstraintDisjunction }
+  get_slot(_TailOrConstraintDisjunction, t) { _TailOrConstraintDisjunction }
+  make( new_HeadOrConstraintDisjunction,  new_TailOrConstraintDisjunction) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsOrConstraintDisjunction( new_HeadOrConstraintDisjunction,  new_TailOrConstraintDisjunction) }
+}
+
+%op Strategy When_ConsOrConstraintDisjunction(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_ConsOrConstraintDisjunction)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_ConsOrConstraintDisjunction(s) }
+}
+
+%op Strategy Is_MatchConstraint() {
+  make() { `When_MatchConstraint(Identity()) }
+}
+
+%op Strategy _MatchConstraint(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._MatchConstraint)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._MatchConstraint(arg0, arg1) }
+}
+
+%op Strategy Make_MatchConstraint(_pattern:Strategy, _subject:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_MatchConstraint)}
 
   get_slot(_pattern, t) { _pattern }
-  get_slot(_genTerm, t) { _genTerm }
-  make( new_pattern,  new_genTerm) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EqualConstraint( new_pattern,  new_genTerm) }
+  get_slot(_subject, t) { _subject }
+  make( new_pattern,  new_subject) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_MatchConstraint( new_pattern,  new_subject) }
 }
 
-%op Strategy When_EqualConstraint(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EqualConstraint)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EqualConstraint(s) }
-}
-
-%op Strategy Is_NEqualConstraint() {
-  make() { `When_NEqualConstraint(Identity()) }
-}
-
-%op Strategy _NEqualConstraint(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._NEqualConstraint)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._NEqualConstraint(arg0, arg1) }
-}
-
-%op Strategy Make_NEqualConstraint(_pattern:Strategy, _genTerm:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_NEqualConstraint)}
-
-  get_slot(_pattern, t) { _pattern }
-  get_slot(_genTerm, t) { _genTerm }
-  make( new_pattern,  new_genTerm) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_NEqualConstraint( new_pattern,  new_genTerm) }
-}
-
-%op Strategy When_NEqualConstraint(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_NEqualConstraint)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_NEqualConstraint(s) }
-}
-
-%op Strategy Is_Exists() {
-  make() { `When_Exists(Identity()) }
-}
-
-%op Strategy _Exists(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._Exists)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._Exists(arg0, arg1) }
-}
-
-%op Strategy Make_Exists(_var:Strategy, _cons:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_Exists)}
-
-  get_slot(_var, t) { _var }
-  get_slot(_cons, t) { _cons }
-  make( new_var,  new_cons) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_Exists( new_var,  new_cons) }
-}
-
-%op Strategy When_Exists(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_Exists)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_Exists(s) }
-}
-
-%op Strategy Is_ForAll() {
-  make() { `When_ForAll(Identity()) }
-}
-
-%op Strategy _ForAll(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._ForAll)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._ForAll(arg0, arg1) }
-}
-
-%op Strategy Make_ForAll(_var:Strategy, _cons:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_ForAll)}
-
-  get_slot(_var, t) { _var }
-  get_slot(_cons, t) { _cons }
-  make( new_var,  new_cons) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_ForAll( new_var,  new_cons) }
-}
-
-%op Strategy When_ForAll(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_ForAll)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_ForAll(s) }
+%op Strategy When_MatchConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_MatchConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_MatchConstraint(s) }
 }
 
 %op Strategy Is_AntiMatchConstraint() {
   make() { `When_AntiMatchConstraint(Identity()) }
 }
 
-%op Strategy _AntiMatchConstraint(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+%op Strategy _AntiMatchConstraint(arg0:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._AntiMatchConstraint)}
 
   get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tomconstraint.strategy.constraint._AntiMatchConstraint(arg0, arg1, arg2) }
+  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._AntiMatchConstraint(arg0) }
 }
 
-%op Strategy Make_AntiMatchConstraint(_Pattern:Strategy, _Subject:Strategy, _ActionOnIf:int) {
+%op Strategy Make_AntiMatchConstraint(_Constraint:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_AntiMatchConstraint)}
 
-  get_slot(_Pattern, t) { _Pattern }
-  get_slot(_Subject, t) { _Subject }
-  get_slot(_ActionOnIf, t) { _ActionOnIf }
-  make( new_Pattern,  new_Subject,  _ActionOnIf) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_AntiMatchConstraint( new_Pattern,  new_Subject,  _ActionOnIf) }
+  get_slot(_Constraint, t) { _Constraint }
+  make( new_Constraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_AntiMatchConstraint( new_Constraint) }
 }
 
 %op Strategy When_AntiMatchConstraint(s:Strategy) {
@@ -3566,96 +3654,56 @@
   make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_AntiMatchConstraint(s) }
 }
 
-%op Strategy Is_EmptyAndAntiConstraint() {
-  make() { `When_EmptyAndAntiConstraint(Identity()) }
+%op Strategy Is_EmptyListConstraint() {
+  make() { `When_EmptyListConstraint(Identity()) }
 }
 
-%op Strategy _EmptyAndAntiConstraint() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndAntiConstraint)}
-
-  make() { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndAntiConstraint() }
-}
-
-%op Strategy Make_EmptyAndAntiConstraint() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyAndAntiConstraint)}
-
-  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyAndAntiConstraint() }
-}
-
-%op Strategy When_EmptyAndAntiConstraint(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyAndAntiConstraint)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyAndAntiConstraint(s) }
-}
-
-%op Strategy Is_ConsAndAntiConstraint() {
-  make() { `When_ConsAndAntiConstraint(Identity()) }
-}
-
-%op Strategy _ConsAndAntiConstraint(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._ConsAndAntiConstraint)}
+%op Strategy _EmptyListConstraint(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyListConstraint)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._ConsAndAntiConstraint(arg0, arg1) }
+  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyListConstraint(arg0, arg1) }
 }
 
-%op Strategy Make_ConsAndAntiConstraint(_HeadAndAntiConstraint:Strategy, _TailAndAntiConstraint:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsAndAntiConstraint)}
+%op Strategy Make_EmptyListConstraint(_Opname:Strategy, _Variable:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyListConstraint)}
 
-  get_slot(_HeadAndAntiConstraint, t) { _HeadAndAntiConstraint }
-  get_slot(_TailAndAntiConstraint, t) { _TailAndAntiConstraint }
-  make( new_HeadAndAntiConstraint,  new_TailAndAntiConstraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsAndAntiConstraint( new_HeadAndAntiConstraint,  new_TailAndAntiConstraint) }
+  get_slot(_Opname, t) { _Opname }
+  get_slot(_Variable, t) { _Variable }
+  make( new_Opname,  new_Variable) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyListConstraint( new_Opname,  new_Variable) }
 }
 
-%op Strategy When_ConsAndAntiConstraint(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_ConsAndAntiConstraint)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_ConsAndAntiConstraint(s) }
+%op Strategy When_EmptyListConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyListConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyListConstraint(s) }
 }
 
-%op Strategy Is_EmptyconcAnd() {
-  make() { `When_EmptyconcAnd(Identity()) }
+%op Strategy Is_EmptyArrayConstraint() {
+  make() { `When_EmptyArrayConstraint(Identity()) }
 }
 
-%op Strategy _EmptyconcAnd() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.aconstraintlist._EmptyconcAnd)}
-
-  make() { new tom.engine.adt.tomconstraint.strategy.aconstraintlist._EmptyconcAnd() }
-}
-
-%op Strategy Make_EmptyconcAnd() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.aconstraintlist.Make_EmptyconcAnd)}
-
-  make() { new tom.engine.adt.tomconstraint.strategy.aconstraintlist.Make_EmptyconcAnd() }
-}
-
-%op Strategy When_EmptyconcAnd(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.aconstraintlist.When_EmptyconcAnd)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.aconstraintlist.When_EmptyconcAnd(s) }
-}
-
-%op Strategy Is_ConsconcAnd() {
-  make() { `When_ConsconcAnd(Identity()) }
-}
-
-%op Strategy _ConsconcAnd(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.aconstraintlist._ConsconcAnd)}
+%op Strategy _EmptyArrayConstraint(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyArrayConstraint)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.aconstraintlist._ConsconcAnd(arg0, arg1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyArrayConstraint(arg0, arg1, arg2) }
 }
 
-%op Strategy Make_ConsconcAnd(_HeadconcAnd:Strategy, _TailconcAnd:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.aconstraintlist.Make_ConsconcAnd)}
+%op Strategy Make_EmptyArrayConstraint(_Opname:Strategy, _Variable:Strategy, _Index:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyArrayConstraint)}
 
-  get_slot(_HeadconcAnd, t) { _HeadconcAnd }
-  get_slot(_TailconcAnd, t) { _TailconcAnd }
-  make( new_HeadconcAnd,  new_TailconcAnd) { new tom.engine.adt.tomconstraint.strategy.aconstraintlist.Make_ConsconcAnd( new_HeadconcAnd,  new_TailconcAnd) }
+  get_slot(_Opname, t) { _Opname }
+  get_slot(_Variable, t) { _Variable }
+  get_slot(_Index, t) { _Index }
+  make( new_Opname,  new_Variable,  new_Index) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyArrayConstraint( new_Opname,  new_Variable,  new_Index) }
 }
 
-%op Strategy When_ConsconcAnd(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.aconstraintlist.When_ConsconcAnd)}
-  make(s) { new tom.engine.adt.tomconstraint.strategy.aconstraintlist.When_ConsconcAnd(s) }
+%op Strategy When_EmptyArrayConstraint(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyArrayConstraint)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_EmptyArrayConstraint(s) }
 }
 
 %op Strategy Is_EmptyconcConstraint() {
@@ -4049,6 +4097,137 @@
 %op Strategy When_UnamedVariableStar(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_UnamedVariableStar)}
   make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_UnamedVariableStar(s) }
+}
+
+%op Strategy Is_VariableHeadList() {
+  make() { `When_VariableHeadList(Identity()) }
+}
+
+%op Strategy _VariableHeadList(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._VariableHeadList)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomterm.strategy.tomterm._VariableHeadList(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_VariableHeadList(_Opname:Strategy, _Begin:Strategy, _End:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_VariableHeadList)}
+
+  get_slot(_Opname, t) { _Opname }
+  get_slot(_Begin, t) { _Begin }
+  get_slot(_End, t) { _End }
+  make( new_Opname,  new_Begin,  new_End) { new tom.engine.adt.tomterm.strategy.tomterm.Make_VariableHeadList( new_Opname,  new_Begin,  new_End) }
+}
+
+%op Strategy When_VariableHeadList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_VariableHeadList)}
+  make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_VariableHeadList(s) }
+}
+
+%op Strategy Is_VariableHeadArray() {
+  make() { `When_VariableHeadArray(Identity()) }
+}
+
+%op Strategy _VariableHeadArray(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._VariableHeadArray)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  get_slot(arg3, t) { t.getArgument(3) }
+  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomterm.strategy.tomterm._VariableHeadArray(arg0, arg1, arg2, arg3) }
+}
+
+%op Strategy Make_VariableHeadArray(_Opname:Strategy, _Subject:Strategy, _BeginIndex:Strategy, _EndIndex:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_VariableHeadArray)}
+
+  get_slot(_Opname, t) { _Opname }
+  get_slot(_Subject, t) { _Subject }
+  get_slot(_BeginIndex, t) { _BeginIndex }
+  get_slot(_EndIndex, t) { _EndIndex }
+  make( new_Opname,  new_Subject,  new_BeginIndex,  new_EndIndex) { new tom.engine.adt.tomterm.strategy.tomterm.Make_VariableHeadArray( new_Opname,  new_Subject,  new_BeginIndex,  new_EndIndex) }
+}
+
+%op Strategy When_VariableHeadArray(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_VariableHeadArray)}
+  make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_VariableHeadArray(s) }
+}
+
+%op Strategy Is_TestVar() {
+  make() { `When_TestVar(Identity()) }
+}
+
+%op Strategy _TestVar(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._TestVar)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomterm.strategy.tomterm._TestVar(arg0) }
+}
+
+%op Strategy Make_TestVar(_Variable:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_TestVar)}
+
+  get_slot(_Variable, t) { _Variable }
+  make( new_Variable) { new tom.engine.adt.tomterm.strategy.tomterm.Make_TestVar( new_Variable) }
+}
+
+%op Strategy When_TestVar(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_TestVar)}
+  make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_TestVar(s) }
+}
+
+%op Strategy Is_ListHead() {
+  make() { `When_ListHead(Identity()) }
+}
+
+%op Strategy _ListHead(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._ListHead)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomterm.strategy.tomterm._ListHead(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_ListHead(_Opname:Strategy, _Codomain:Strategy, _Variable:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_ListHead)}
+
+  get_slot(_Opname, t) { _Opname }
+  get_slot(_Codomain, t) { _Codomain }
+  get_slot(_Variable, t) { _Variable }
+  make( new_Opname,  new_Codomain,  new_Variable) { new tom.engine.adt.tomterm.strategy.tomterm.Make_ListHead( new_Opname,  new_Codomain,  new_Variable) }
+}
+
+%op Strategy When_ListHead(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_ListHead)}
+  make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_ListHead(s) }
+}
+
+%op Strategy Is_ListTail() {
+  make() { `When_ListTail(Identity()) }
+}
+
+%op Strategy _ListTail(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._ListTail)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomterm.strategy.tomterm._ListTail(arg0, arg1) }
+}
+
+%op Strategy Make_ListTail(_Opname:Strategy, _Variable:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_ListTail)}
+
+  get_slot(_Opname, t) { _Opname }
+  get_slot(_Variable, t) { _Variable }
+  make( new_Opname,  new_Variable) { new tom.engine.adt.tomterm.strategy.tomterm.Make_ListTail( new_Opname,  new_Variable) }
+}
+
+%op Strategy When_ListTail(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.When_ListTail)}
+  make(s) { new tom.engine.adt.tomterm.strategy.tomterm.When_ListTail(s) }
 }
 
 %op Strategy Is_TargetLanguageToTomTerm() {
@@ -5376,19 +5555,24 @@
             make(sub)  { `mu(MuVar("x"),Choice(_ConsconcDeclaration(sub,MuVar("x")),_EmptyconcDeclaration())) }
             }
             
-            %op Strategy _concOr(sub:Strategy) {
+            %op Strategy _OrExpressionDisjunction(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcOr(sub,MuVar("x")),_EmptyconcOr())) }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsOrExpressionDisjunction(sub,MuVar("x")),_EmptyOrExpressionDisjunction())) }
             }
             
-            %op Strategy _AndAntiConstraint(sub:Strategy) {
+            %op Strategy _AndConstraint(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_ConsAndAntiConstraint(sub,MuVar("x")),_EmptyAndAntiConstraint())) }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsAndConstraint(sub,MuVar("x")),_EmptyAndConstraint())) }
             }
             
-            %op Strategy _concAnd(sub:Strategy) {
+            %op Strategy _OrConstraint(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcAnd(sub,MuVar("x")),_EmptyconcAnd())) }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsOrConstraint(sub,MuVar("x")),_EmptyOrConstraint())) }
+            }
+            
+            %op Strategy _OrConstraintDisjunction(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsOrConstraintDisjunction(sub,MuVar("x")),_EmptyOrConstraintDisjunction())) }
             }
             
             %op Strategy _concConstraint(sub:Strategy) {

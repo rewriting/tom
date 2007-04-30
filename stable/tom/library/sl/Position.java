@@ -44,12 +44,12 @@ public class Position implements Cloneable,Path {
 
   private int[] omega;
 
-  public Position (int[] omega){
+  public Position(int[] omega){
     this.omega = new int[omega.length];
     System.arraycopy(omega, 0, this.omega, 0, omega.length);
   }
 
-  public Position (Position prefix,Position suffix){
+  public Position(Position prefix, Position suffix){
     int[] prefixArray = prefix.toArray();
     int[] suffixArray = suffix.toArray();
     omega = new int[suffixArray.length+prefixArray.length];
@@ -99,8 +99,8 @@ public class Position implements Cloneable,Path {
    */
   public boolean equals(Object o) {
     if (o instanceof Position) {
-      Position p1  = (Position) this.normalize();
-      Position p2  = (Position) ((Position)o).normalize();
+      Position p1  = (Position) this.getCanonicalPath();
+      Position p2  = (Position) ((Position)o).getCanonicalPath();
       /* we need to check only the meaningful part of the omega array */
       if (p1.depth()==p2.depth()) {
         for(int i=0; i<p1.depth(); i++) {
@@ -179,7 +179,15 @@ public class Position implements Cloneable,Path {
    * @return the omega strategy the performs the replacement
    */
   public Strategy getReplace(final Visitable t) {
-    return getOmega(new Identity() {public void visit(){ setSubject(t); }});
+    return getOmega(
+        new Identity() {
+          public void visit(){
+            environment.setSubject(t);
+          }
+          public jjtraveler.Visitable visit(jjtraveler.Visitable x) {
+            return t;
+          }
+        });
   }
 
   /**
@@ -190,16 +198,34 @@ public class Position implements Cloneable,Path {
    */
   public Strategy getSubterm() {
     return new AbstractStrategy() {
-      { initSubterm(); } 
+      { initSubterm(); }
       public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure {
         final jjtraveler.Visitable[] ref = new jjtraveler.Visitable[1];
-        getOmega(new Identity() { public void visit() { ref[0]=getSubject(); } }).visit(subject);
+        getOmega(
+            new Identity() {
+              public void visit() {
+                ref[0]=environment.getSubject();
+              }
+              public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
+                ref[0] = v;
+                return v;
+              }
+            }).visit(subject);
         return ref[0];
       }
       public void visit() {
         final Visitable[] ref = new Visitable[1];
-        Strategy s =getOmega(new Identity() { public void visit() { ref[0]=getSubject(); }}); 
-        s.fire(getEnvironment().getRoot());
+        Strategy s =getOmega(
+            new Identity() {
+              public void visit() {
+                ref[0]=environment.getSubject();
+              }
+              public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
+                ref[0] = (Visitable)v;
+                return v;
+              }
+            });
+        s.fire(environment.getRoot());
         environment.setSubject(ref[0]);
       }
     };
@@ -222,7 +248,6 @@ public class Position implements Cloneable,Path {
     return r.toString();
   }
 
-  
   public Path add(Path p){
     if(p.length()>0) {
       Path result = this.conc(p.getHead());
@@ -233,10 +258,10 @@ public class Position implements Cloneable,Path {
   }
 
   public Path sub(Path p){
-    return (make(p).inv()).add(this);
+    return (make(p).inverse()).add(this);
   }
 
-  public Path inv(){
+  public Path inverse(){
     int[] inverse = new int[omega.length];
     for(int i=0;i<omega.length;i++){
       inverse[omega.length-(i+1)]=-omega[i];
@@ -245,7 +270,7 @@ public class Position implements Cloneable,Path {
   }
 
   public static Position make(Path p){
-    Path pp = p.normalize();
+    Path pp = p.getCanonicalPath();
     int size = pp.length();
     int[] omega = new int[size];
     for(int i=0;i<size;i++){
@@ -279,9 +304,29 @@ public class Position implements Cloneable,Path {
     return new Position(result);
   }
 
-  public Path normalize(){
+  /**
+   * For compatibility with mutraveler positions
+   **/
+  public Position up() {
+    int [] result = new int[length()-1];
+    System.arraycopy(omega,0,result,0,length()-1);
+    return new Position(result);
+  }
+
+  /**
+   * For compatibility with mutraveler positions
+   **/
+  public Position down(int i){
+    int[] result = new int[length()+1];
+    System.arraycopy(omega,0,result,0,length());
+    result[length()]=i;
+    return new Position(result);
+  }
+
+
+  public Path getCanonicalPath(){
     if(length()==0) return (Path) clone();
-    int[] normalizedTail = ((Position)(getTail().normalize())).toArray();
+    int[] normalizedTail = ((Position)(getTail().getCanonicalPath())).toArray();
     if(normalizedTail.length==0 || omega[0]!=-normalizedTail[0]){
       int[] result = new int[1+normalizedTail.length];
       result[0]=omega[0];

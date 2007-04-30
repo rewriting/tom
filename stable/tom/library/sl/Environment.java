@@ -38,16 +38,17 @@ import java.util.Arrays;
  * the root is stored in the first cell
  */
 
-public class Environment implements Cloneable {
+public final class Environment implements Cloneable {
   private static final int DEFAULT_LENGTH = 8;
   public static final int SUCCESS = 0;
   public static final int FAILURE = 1;
   public static final int IDENTITY = 2;
   /*
-   * number of elements in the arrays
-   * the current position is int omega[size-1]
+   * number of elements-1 in the arrays
+   * the current position is int omega[current]
+   * the current subterm is subterm[current]
    * */
-  protected int size;
+  protected int current;
   protected int[] omega;
   protected Visitable[] subterm;
   protected int status = 0;
@@ -59,18 +60,17 @@ public class Environment implements Cloneable {
   private Environment(int length) {
     omega = new int[length+1];
     subterm = new Visitable[length+1];
-    size = 1; // root is in subterm[0]
+    current = 0; // root is in subterm[0]
     omega[0]=0; // the first cell is not used
   }
 
   private void ensureLength(int minLength) {
-    int current = omega.length;
-    if (minLength > current) {
-      int max = Math.max(current * 2, minLength);
+    if(minLength > omega.length) {
+      int max = Math.max(omega.length * 2, minLength);
       int[] newOmega = new int[max];
       Visitable[] newSubterm = new Visitable[max];
-      System.arraycopy(omega, 0, newOmega, 0, size);
-      System.arraycopy(subterm, 0, newSubterm, 0, size);
+      System.arraycopy(omega, 0, newOmega, 0, omega.length);
+      System.arraycopy(subterm, 0, newSubterm, 0, omega.length);
       omega = newOmega;
       subterm = newSubterm;
     }
@@ -80,9 +80,9 @@ public class Environment implements Cloneable {
     Environment clone = (Environment) super.clone();
     clone.omega = new int[omega.length];
     clone.subterm = new Visitable[omega.length];
-    System.arraycopy(omega, 0, clone.omega, 0, size);
-    System.arraycopy(subterm, 0, clone.subterm, 0, size);
-    clone.size = size;
+    System.arraycopy(omega, 0, clone.omega, 0, omega.length);
+    System.arraycopy(subterm, 0, clone.subterm, 0, omega.length);
+    clone.current = current;
     return clone;
   }
 
@@ -93,8 +93,8 @@ public class Environment implements Cloneable {
     if (o instanceof Environment) {
       Environment p = (Environment)o;
       /* we need to check only the meaningful part of the omega and subterm arrays */
-      if (size==p.size) {
-        for(int i=0; i<size; i++) {
+      if (current==p.current) {
+        for(int i=0; i<current+1; i++) {
           if (omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
             return false;
           }
@@ -110,27 +110,14 @@ public class Environment implements Cloneable {
 
   public int hashCode() {
     /* Hash only the interesting part of the array */
-    int[] hashedOmega = new int[size];
-    Visitable[] hashedSubterm = new Visitable[size];
-    System.arraycopy(omega,0,hashedOmega,0,size);
-    System.arraycopy(subterm,0,hashedSubterm,0,size);
-    return size * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
+    int[] hashedOmega = new int[current+1];
+    Visitable[] hashedSubterm = new Visitable[current+1];
+    System.arraycopy(omega,0,hashedOmega,0,current+1);
+    System.arraycopy(subterm,0,hashedSubterm,0,current+1);
+    return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
-  /**
-   * Tests is prefix
-   */
-  public boolean isPrefix(Environment p) {
-    if(p.size < size) {
-      return false;
-    }
-    for(int i=0 ; i<size ; i++) {
-      if(omega[i]!=p.omega[i] || subterm[i]!=p.subterm[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
+  
 
   /**
    * get the current root
@@ -167,7 +154,7 @@ public class Environment implements Cloneable {
    * @return the current term
    */
   public Visitable getSubject() {
-    return subterm[size-1];
+    return subterm[current];
   }
 
   /**
@@ -176,15 +163,15 @@ public class Environment implements Cloneable {
   public void setSubject(Visitable root) {
     //System.out.println("setsubject "+root);
     //System.out.println("in the env "+this);
-    this.subterm[size-1] = root;
+    this.subterm[current] = root;
   }
 
   /**
    * get the current sub-position
    * @return the current sub-position
    */
-  public int getSubOmega() {
-    return omega[size-1];
+  private int getSubOmega() {
+    return omega[current];
   }
 
   /**
@@ -204,7 +191,7 @@ public class Environment implements Cloneable {
    * @return depth on the position
    */
   public int depth() {
-    return size-1;
+    return current;
   }
 
   /**
@@ -214,10 +201,10 @@ public class Environment implements Cloneable {
    */
   public void up() {
     //System.out.println("before up: " + this);
-    int childIndex = getSubOmega()-1;
-    Visitable child = getSubject();
-    size--;
-    setSubject((Visitable)(getSubject().setChildAt(childIndex,child)));
+    int childIndex = omega[current]-1;
+    Visitable child = subterm[current];
+    current--;
+    subterm[current] = (Visitable) subterm[current].setChildAt(childIndex,child);
     //System.out.println("after up: " + this);
   }
 
@@ -229,28 +216,28 @@ public class Environment implements Cloneable {
   public void down(int n) {
     //System.out.println("before down: " + this);
     if(n>0) {
-      if (size == omega.length) {
-        ensureLength(size+1);
+      Visitable child = subterm[current];
+      current++;
+      if(current == omega.length) {
+        ensureLength(current+1);
       }
-      omega[size] = n;
-      subterm[size] = (Visitable) getSubject().getChildAt(n-1);
-      size++;
+      omega[current] = n;
+      subterm[current] = (Visitable) child.getChildAt(n-1);
     }
     //System.out.println("after down: " + this);
   }
 
-
-  public void goTo(Path path) {
-    Path normalizedPath = path.normalize();
+  public void followPath(Path path) {
+    Path normalizedPath = path.getCanonicalPath();
     int length = normalizedPath.length();
     for(int i=0;i<length;i++) {
       int head = normalizedPath.getHead();
       normalizedPath = normalizedPath.getTail();
       if(head>0){
         down(head);
-        if (getSubject() instanceof Path && !(normalizedPath.length()==0)) {
+        if (subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
           // we do not want to follow the last reference
-          goTo((Path)getSubject());
+          followPath((Path)subterm[current]);
         }
       } else {
         //verify that getsubomega() = -head
@@ -267,9 +254,9 @@ public class Environment implements Cloneable {
    */
   public String toString() {
     StringBuffer r = new StringBuffer("[");
-    for(int i=0 ; i<size ; i++) {
+    for(int i=0 ; i<current+1 ; i++) {
       r.append(omega[i]);
-      if(i<size-1) {
+      if(i<current) {
         r.append(", ");
       }
     }
@@ -277,9 +264,9 @@ public class Environment implements Cloneable {
 
     r.append("\n[");
 
-    for(int i=0 ; i<size ; i++) {
+    for(int i=0 ; i<current+1 ; i++) {
       r.append(subterm[i]);
-      if(i<size-1) {
+      if(i<current) {
         r.append(", ");
       }
     }

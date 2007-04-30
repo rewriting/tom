@@ -1,5 +1,5 @@
-%include { sl.tom }
-%include { util/types/Map.tom }
+%include { ../sl.tom }
+%include { ../util/types/Map.tom }
 %include { adt/bytecode/Bytecode.tom }
 
 /**
@@ -11,7 +11,7 @@
 
 %strategy BuildLabelMap(m:Map) extends Identity() {
   visit TInstructionList {
-    c@ConsInstructionList(Anchor(l), _) -> {
+    ConsInstructionList(Anchor(l), _) -> {
       m.put(`l, getEnvironment().getPosition());
     }
   }
@@ -31,15 +31,15 @@
 
 %strategy AllCfg(s:Strategy, m:Map) extends Identity() {
   visit TInstructionList {
-    c@ConsInstructionList(ins, t) -> {
+    ConsInstructionList(ins, t) -> {
       TInstruction ins = `ins;
       %match(TInstruction ins) {
         Goto(l) -> {
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
           tom.library.sl.Position current = getEnvironment().getPosition();
-          getEnvironment().goTo(p.sub(current));
+          getEnvironment().followPath(p.sub(current));
           execute(s);
-          getEnvironment().goTo(current.sub(p));
+          getEnvironment().followPath(current.sub(p));
           //do not visit to the next instruction
           return (TInstructionList) getEnvironment().getSubject();
         }
@@ -49,9 +49,9 @@
          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
           tom.library.sl.Position current = getEnvironment().getPosition();
-          getEnvironment().goTo(current.sub(p));
+          getEnvironment().followPath(current.sub(p));
           execute(s);
-          getEnvironment().goTo(p.sub(current));
+          getEnvironment().followPath(p.sub(current));
         }
 
         (Tableswitch|Lookupswitch)[dflt=dflt, labels=labels] -> {
@@ -60,16 +60,16 @@
             LabelList(_*, x, _*) -> {
               tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
               tom.library.sl.Position current = getEnvironment().getPosition();
-              getEnvironment().goTo(current.sub(p));
+              getEnvironment().followPath(current.sub(p));
               execute(s);
-              getEnvironment().goTo(p.sub(current));
+              getEnvironment().followPath(p.sub(current));
             }
           }
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
           tom.library.sl.Position current = getEnvironment().getPosition();
-          getEnvironment().goTo(current.sub(p));
+          getEnvironment().followPath(current.sub(p));
           execute(s);
-          getEnvironment().goTo(p.sub(current));
+          getEnvironment().followPath(p.sub(current));
         }
 
         // Visit the next instruction.

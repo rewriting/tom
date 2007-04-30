@@ -38,6 +38,7 @@ package tom.library.sl;
 
 public abstract class AbstractStrategy implements Strategy {
   protected Strategy[] visitors;
+  protected Environment environment;
 
   protected void initSubterm() {
     visitors = new Strategy[] {};
@@ -74,7 +75,7 @@ public abstract class AbstractStrategy implements Strategy {
 
   public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
     Strategy[] newVisitors = new Strategy[children.length];
-    for(int i = 0; i < children.length; ++i) {
+    for(int i = 0; i < children.length; i++) {
       newVisitors[i] = (Strategy) children[i];
     }
     this.visitors = newVisitors;
@@ -85,35 +86,33 @@ public abstract class AbstractStrategy implements Strategy {
     return v.visit_Strategy(this);
   }
 
+  /** execute the strategy s in the current environment
+   * @parameter s the strategy to execute.
+   */
   public void execute(Strategy s) {
-    AbstractStrategy.init(s,getEnvironment());
+    AbstractStrategy.init(s,environment);
     s.visit();
   }
 
+  /** change the current subject with v and execute the strategy s in the
+   * modified environment
+   * @parameter v the new current subject.
+   * @parameter s the strategy to execute.
+   */
   public void execute(Strategy s, Visitable v) {
-    setSubject(v);
-    AbstractStrategy.init(s,getEnvironment());
-    s.visit();
+    environment.setSubject(v);
+    execute(s);
   }
 
   public Visitable fire(Visitable any) {
     init();
     setRoot(any);
     visit();
-    if (getStatus() == Environment.SUCCESS) {
+    if(environment.getStatus() == Environment.SUCCESS) {
       return getRoot();
     } else {
       throw new tom.library.sl.FireException();
     }
-  }
-
- /*
-  * For graphs
-  */
-
-  protected Environment environment;
-  public void setEnvironment(Environment env) {
-    this.environment = env;
   }
 
   public Environment getEnvironment() {
@@ -124,37 +123,32 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
-  /**
-   * getter and setter for the status
-   */
+  public void setEnvironment(Environment env) {
+    this.environment = env;
+  }
+
   public int getStatus() {
-    return getEnvironment().getStatus();
+    return environment.getStatus();
   }
 
   public void setStatus(int stat) {
-    getEnvironment().setStatus(stat);
+    environment.setStatus(stat);
   }
 
-  /**
-   * getter and setter for the root term (i.e. top position)
-   */
   public Visitable getRoot() {
-    return getEnvironment().getRoot();
+    return environment.getRoot();
   }
 
   public void setRoot(Visitable any) {
-    getEnvironment().setRoot(any);
+    environment.setRoot(any);
   }
 
-  /**
-   * getter en setter for the term of the current position
-   */
   public Visitable getSubject() {
-    return getEnvironment().getSubject();
+    return environment.getSubject();
   }
 
   public void setSubject(Visitable any) {
-    getEnvironment().setSubject(any);
+    environment.setSubject(any);
   }
 
   public void init() {
@@ -162,6 +156,12 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public static void init(Strategy s, Environment env) {
+    /* to avoid infinite loop during initialization
+     * TODO: use static typing
+     */
+    if((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) {
+      return;
+    }
     s.setEnvironment(env);
     for(int i=0 ; i<s.getChildCount() ; i++) {
       jjtraveler.Visitable child = s.getChildAt(i);

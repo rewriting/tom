@@ -76,12 +76,13 @@ public class MuVar extends AbstractStrategy {
       throw new jjtraveler.VisitFailure();
     }
   }
+
   public void visit() {
     if(instance != null) {
       instance.visit();
       return;
     } else {
-      setStatus(Environment.FAILURE);
+      environment.setStatus(Environment.FAILURE);
     }
   }
 

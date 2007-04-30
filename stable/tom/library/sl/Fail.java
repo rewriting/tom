@@ -62,7 +62,7 @@ public class Fail extends AbstractStrategy {
   }
 
   public void visit() {
-    setStatus(Environment.FAILURE);
+    environment.setStatus(Environment.FAILURE);
     return;
   }
 }

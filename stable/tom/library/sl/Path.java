@@ -28,26 +28,85 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **/
+
 package tom.library.sl;
+
+/**
+ * Represent a path between two locations in a term.
+ * The implementations of this class must define several algebraic operations                                      
+ * on these paths (i.e. addition, subtraction, inverse).                                                          
+ */                                                                                                               
 
 public interface Path {
 
+  /**
+   * Computes the path from the source of this to the target of the parameter p.
+   * The addition of two paths must respect the following equations:
+   * <p>
+   * <code>t1.add(t2) = (t1.getTail().add(t2)).conc(t1.getHead()) if t1.length()>0,</code> 
+   * <p>
+   * <code>t1.add(t2) = t2</code>  otherwise.
+   * @param p the path to add. 
+   * @return the path corresponding to the addition of this and the parameter p.
+   */
   public Path add(Path p);
-  
-  public Path inv();
 
+  /**
+   * Computes the path from the target of this to the target of the parameter p.
+   * The subtraction of two paths must respect the following equation:
+   * <p>
+   * <code>t1.sub(t2) = t2.inv().add(t1),</code> 
+   * @return the path corresponding to the subtraction of this and the parameter p.
+   * @param p the path to subtract. 
+   */
   public Path sub(Path p);
 
+  /**
+   * Computes the path from the target of this to the source of this.
+   * The inverse operation  must respect the following equations:
+   * <p>
+    * <code>t.inv() = t.getTail().inv().add(-t.getHead()) if t1.length()>0,</code> 
+   * <p>
+   * <code>t.inv() = t</code> otherwise 
+   * @return the path corresponding to the inverse path of this.
+   */
+  public Path inverse();
+  
+  /**
+   * Gives the canonical form of a path.
+   * Two paths are equivalent if for every source the corresponding targets are
+   * the same. In an equivalence class, the canonical form is the smallest path.
+   * @return its canonical form 
+   */
+  public Path getCanonicalPath();
+
+  /**
+   * Computes the length which corresponds to the number of moves
+   * needed to go from the source to the target.
+   * @return the length of the path
+   */   
   public int length();
 
+  /**
+   * Gives the first move of the path which is represented by an integer i.
+   * When i is positive, it corresponds to a move from the parent to th i-th
+   * child of the current location. Otherwise, it signifies a move from the
+   * i-th child to the parent.
+   * @return the first move.
+   */
   public int getHead();
 
+  /**
+   * Gives the tail of the path which is also a path.
+   * @return the path after the first move.
+   */
   public Path getTail();
-  
-  public Path normalize();
-  
-  public Path conc(int i);
 
-  public int compare(Path path);
+  /**
+   * Add the move i to the begining of the current path
+   * @param i the move to insert.
+   * @return the path corresponding to the insersion of i into this.
+   */
+  public Path conc(int i);
 
 }

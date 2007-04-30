@@ -1,4 +1,4 @@
-// $ANTLR 3.0b6 /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-04-24 12:56:33
+// $ANTLR 3.0b6 /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g 2007-04-30 15:14:43
 
   package tom.gom.expander.rule;
 
@@ -51,7 +51,7 @@ public class RuleParser extends Parser {
     }
 
     public String[] getTokenNames() { return tokenNames; }
-    public String getGrammarFileName() { return "/home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g"; }
 
 
     public static class ruleset_return extends ParserRuleReturnScope {
@@ -60,7 +60,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start ruleset
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:24:1: ruleset : ( rule )* EOF -> ^( RULELIST ( rule )* ) ;
+    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:24:1: ruleset : ( rule )* EOF -> ^( RULELIST ( rule )* ) ;
     public ruleset_return ruleset() throws RecognitionException {
         ruleset_return retval = new ruleset_return();
         retval.start = input.LT(1);
@@ -75,10 +75,10 @@ public class RuleParser extends Parser {
         ASTTree EOF2_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:25:3: ( ( rule )* EOF -> ^( RULELIST ( rule )* ) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:25:3: ( rule )* EOF
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:25:3: ( ( rule )* EOF -> ^( RULELIST ( rule )* ) )
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:25:3: ( rule )* EOF
             {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:25:3: ( rule )*
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:25:3: ( rule )*
             loop1:
             do {
                 int alt1=2;
@@ -90,7 +90,7 @@ public class RuleParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:25:4: rule
+            	    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:25:4: rule
             	    {
             	    pushFollow(FOLLOW_rule_in_ruleset86);
             	    rule1=rule();
@@ -117,12 +117,12 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 25:15: -> ^( RULELIST ( rule )* )
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:25:18: ^( RULELIST ( rule )* )
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:25:18: ^( RULELIST ( rule )* )
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(RULELIST, "RULELIST"), root_1);
 
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:25:29: ( rule )*
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:25:29: ( rule )*
                 {
                 int n_1 = list_rule == null ? 0 : list_rule.size();
                  
@@ -165,7 +165,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start rule
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:27:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) ;
+    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:27:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) ;
     public rule_return rule() throws RecognitionException {
         rule_return retval = new rule_return();
         retval.start = input.LT(1);
@@ -189,8 +189,8 @@ public class RuleParser extends Parser {
         ASTTree IF6_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:28:3: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:28:3: pattern ARROW term ( IF cond= condition )?
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:28:3: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) )
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:28:3: pattern ARROW term ( IF cond= condition )?
             {
             pushFollow(FOLLOW_pattern_in_rule113);
             pattern3=pattern();
@@ -206,7 +206,7 @@ public class RuleParser extends Parser {
             _fsp--;
 
             list_term.add(term5.getTree());
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:28:22: ( IF cond= condition )?
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:28:22: ( IF cond= condition )?
             int alt2=2;
             int LA2_0 = input.LA(1);
             if ( (LA2_0==IF) ) {
@@ -214,7 +214,7 @@ public class RuleParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:28:23: IF cond= condition
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:28:23: IF cond= condition
                     {
                     IF6=(Token)input.LT(1);
                     match(input,IF,FOLLOW_IF_in_rule120); 
@@ -238,7 +238,7 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 29:5: -> { cond == null }? ^( RULE pattern term )
             if ( cond == null ) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:29:26: ^( RULE pattern term )
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:29:26: ^( RULE pattern term )
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(RULE, "RULE"), root_1);
@@ -252,7 +252,7 @@ public class RuleParser extends Parser {
             }
             else // 30:5: -> ^( CONDRULE pattern term $cond)
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:8: ^( CONDRULE pattern term $cond)
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:30:8: ^( CONDRULE pattern term $cond)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDRULE, "CONDRULE"), root_1);
@@ -292,7 +292,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start condition
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:32:1: condition : p1= term ( EQUALS p2= term | NOTEQUALS p3= term )? -> {p2!=null && p3==null}? ^( CONDEQUALS $p1 $p2) -> {p2==null && p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> ^( CONDTERM $p1) ;
+    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:32:1: condition : p1= term ( EQUALS p2= term | NOTEQUALS p3= term )? -> {p2!=null && p3==null}? ^( CONDEQUALS $p1 $p2) -> {p2==null && p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> ^( CONDTERM $p1) ;
     public condition_return condition() throws RecognitionException {
         condition_return retval = new condition_return();
         retval.start = input.LT(1);
@@ -314,15 +314,15 @@ public class RuleParser extends Parser {
         ASTTree NOTEQUALS8_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:3: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term )? -> {p2!=null && p3==null}? ^( CONDEQUALS $p1 $p2) -> {p2==null && p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> ^( CONDTERM $p1) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term )?
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:33:3: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term )? -> {p2!=null && p3==null}? ^( CONDEQUALS $p1 $p2) -> {p2==null && p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> ^( CONDTERM $p1) )
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:33:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term )?
             {
             pushFollow(FOLLOW_term_in_condition173);
             p1=term();
             _fsp--;
 
             list_term.add(p1.getTree());
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:11: ( EQUALS p2= term | NOTEQUALS p3= term )?
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:33:11: ( EQUALS p2= term | NOTEQUALS p3= term )?
             int alt3=3;
             int LA3_0 = input.LA(1);
             if ( (LA3_0==EQUALS) ) {
@@ -333,7 +333,7 @@ public class RuleParser extends Parser {
             }
             switch (alt3) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:12: EQUALS p2= term
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:33:12: EQUALS p2= term
                     {
                     EQUALS7=(Token)input.LT(1);
                     match(input,EQUALS,FOLLOW_EQUALS_in_condition176); 
@@ -348,7 +348,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:29: NOTEQUALS p3= term
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:33:29: NOTEQUALS p3= term
                     {
                     NOTEQUALS8=(Token)input.LT(1);
                     match(input,NOTEQUALS,FOLLOW_NOTEQUALS_in_condition184); 
@@ -372,7 +372,7 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 34:5: -> {p2!=null && p3==null}? ^( CONDEQUALS $p1 $p2)
             if (p2!=null && p3==null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:34:32: ^( CONDEQUALS $p1 $p2)
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:34:32: ^( CONDEQUALS $p1 $p2)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDEQUALS, "CONDEQUALS"), root_1);
@@ -386,7 +386,7 @@ public class RuleParser extends Parser {
             }
             else // 35:5: -> {p2==null && p3!=null}? ^( CONDNOTEQUALS $p1 $p3)
             if (p2==null && p3!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:35:32: ^( CONDNOTEQUALS $p1 $p3)
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:35:32: ^( CONDNOTEQUALS $p1 $p3)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDNOTEQUALS, "CONDNOTEQUALS"), root_1);
@@ -400,7 +400,7 @@ public class RuleParser extends Parser {
             }
             else // 36:5: -> ^( CONDTERM $p1)
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:36:8: ^( CONDTERM $p1)
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:36:8: ^( CONDTERM $p1)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDTERM, "CONDTERM"), root_1);
@@ -438,7 +438,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start pattern
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:1: pattern : ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) ;
+    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:38:1: pattern : ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) ;
     public pattern_return pattern() throws RecognitionException {
         pattern_return retval = new pattern_return();
         retval.start = input.LT(1);
@@ -464,8 +464,8 @@ public class RuleParser extends Parser {
         ASTTree RPAR14_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:3: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:3: ID LPAR ( term ( COMA term )* )? RPAR
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:3: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) )
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:3: ID LPAR ( term ( COMA term )* )? RPAR
             {
             ID9=(Token)input.LT(1);
             match(input,ID,FOLLOW_ID_in_pattern251); 
@@ -475,7 +475,7 @@ public class RuleParser extends Parser {
             match(input,LPAR,FOLLOW_LPAR_in_pattern253); 
             list_LPAR.add(LPAR10);
 
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:11: ( term ( COMA term )* )?
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:11: ( term ( COMA term )* )?
             int alt5=2;
             int LA5_0 = input.LA(1);
             if ( (LA5_0==ID||(LA5_0>=INT && LA5_0<=STRING)) ) {
@@ -483,14 +483,14 @@ public class RuleParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:12: term ( COMA term )*
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:12: term ( COMA term )*
                     {
                     pushFollow(FOLLOW_term_in_pattern256);
                     term11=term();
                     _fsp--;
 
                     list_term.add(term11.getTree());
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:17: ( COMA term )*
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:17: ( COMA term )*
                     loop4:
                     do {
                         int alt4=2;
@@ -502,7 +502,7 @@ public class RuleParser extends Parser {
 
                         switch (alt4) {
                     	case 1 :
-                    	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:18: COMA term
+                    	    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:18: COMA term
                     	    {
                     	    COMA12=(Token)input.LT(1);
                     	    match(input,COMA,FOLLOW_COMA_in_pattern259); 
@@ -539,13 +539,13 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 39:37: -> ^( APPL ID ( term )* )
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:40: ^( APPL ID ( term )* )
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:40: ^( APPL ID ( term )* )
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(APPL, "APPL"), root_1);
 
                 adaptor.addChild(root_1, (Token)list_ID.get(i_0));
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:50: ( term )*
+                // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:39:50: ( term )*
                 {
                 int n_1 = list_term == null ? 0 : list_term.size();
                  
@@ -588,7 +588,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start term
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:41:1: term : ( pattern | ID | builtin );
+    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:41:1: term : ( pattern | ID | builtin );
     public term_return term() throws RecognitionException {
         term_return retval = new term_return();
         retval.start = input.LT(1);
@@ -604,7 +604,7 @@ public class RuleParser extends Parser {
         ASTTree ID16_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:3: ( pattern | ID | builtin )
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:42:3: ( pattern | ID | builtin )
             int alt6=3;
             int LA6_0 = input.LA(1);
             if ( (LA6_0==ID) ) {
@@ -633,7 +633,7 @@ public class RuleParser extends Parser {
             }
             switch (alt6) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:3: pattern
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:42:3: pattern
                     {
                     root_0 = (ASTTree)adaptor.nil();
 
@@ -646,7 +646,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:13: ID
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:42:13: ID
                     {
                     root_0 = (ASTTree)adaptor.nil();
 
@@ -659,7 +659,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:18: builtin
+                    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:42:18: builtin
                     {
                     root_0 = (ASTTree)adaptor.nil();
 
@@ -695,7 +695,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start builtin
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:44:1: builtin : (INT|STRING);
+    // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:44:1: builtin : (INT|STRING);
     public builtin_return builtin() throws RecognitionException {
         builtin_return retval = new builtin_return();
         retval.start = input.LT(1);
@@ -707,8 +707,8 @@ public class RuleParser extends Parser {
         ASTTree set18_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:44:9: ( (INT|STRING))
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:45:3: (INT|STRING)
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:44:9: ( (INT|STRING))
+            // /home/radu/workspace/constraintCompiler/src/tom/gom/expander/rule/Rule.g:45:3: (INT|STRING)
             {
             root_0 = (ASTTree)adaptor.nil();
 

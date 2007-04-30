@@ -52,6 +52,7 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
   /**
    *  Visits the current subject (found in the environment)
    *  and place its result in the environment.
+   *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public void visit();
 

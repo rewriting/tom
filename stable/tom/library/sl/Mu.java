@@ -2,27 +2,26 @@
 
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.HashSet;
 
 public class Mu extends AbstractStrategy {
   public final static int VAR = 0;
   public final static int V = 1;
 
   private MuStrategyTopDown muStrategyTopDown;
-  private boolean expanded =false;
+  private boolean expanded = false;
   public Mu(Strategy var, Strategy v) {
     initSubterm(var, v);
     muStrategyTopDown = new MuStrategyTopDown();
   }
 
   public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    if(!expanded)
-      muExpand();
+    if(!expanded) { muExpand(); }
     return visitors[V].visit(any);
   }
 
   public void visit() {
-    if(!expanded)
-      muExpand();
+    if(!expanded) { muExpand(); }
     visitors[V].visit();
   }
 
@@ -73,7 +72,8 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategy(Object t) { return 
 
 
 
-t1.equals(t2);}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strategy  t) { return 
+
+t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { return  t instanceof String ;}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strategy  t) { return 
 
 
 
@@ -87,19 +87,37 @@ t1.equals(t2);}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strat
   public MuStrategyTopDown() {
     stack = new LinkedList();
   }
+
   public void init() {
     stack.clear();
   }
 
   public void visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch1Position1=(( tom.library.sl.Strategy )any);if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) {{  tom.library.sl.Strategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1);if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) {if ( true ) {
+    visit(any,null,0,new HashSet());
+  }
 
-        stack.addFirst(tomMatch1Position1);
-        visit(tom_get_slot_Mu_s2(tomMatch1Position1));
-        visit(tomMatch1Position1NameNumbers1);
+  /**
+   * @param any the node we visit
+   * @param parent the node we come from
+   * @param childNumber the n-th subtemr of parent
+   * @param set of already visited parent
+   */
+  private void visit(jjtraveler.Visitable any, jjtraveler.Visitable parent, int childNumber, HashSet set) throws jjtraveler.VisitFailure {
+    /* check that the current element has not already been expanded */
+    if(set.contains(any)) {
+      return;
+    } else {
+      set.add(parent);
+    }
+
+    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch1Position1=(( tom.library.sl.Strategy )any);if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) {{  tom.library.sl.Strategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1);if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) {{  tom.library.sl.Strategy  tom_m=tomMatch1Position1;if ( true ) {
+
+        stack.addFirst(tom_m);
+        visit(tom_get_slot_Mu_s2(tomMatch1Position1),tom_m,0,set);
+        visit(tomMatch1Position1NameNumbers1,null,0,set);
         stack.removeFirst();
         return;
-      }}}}if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+      }}}}}if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1) ||  false  ) ) {if ( true ) {
 
 
         MuVar muvar = (MuVar)tomMatch1Position1;
@@ -110,6 +128,18 @@ t1.equals(t2);}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strat
             if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tom_get_slot_MuVar_var(tomMatch1Position1))) {
               //System.out.println("MuVar: setInstance " + `n );
               muvar.setInstance(m);
+              if(parent!=null) {
+                /* shortcut: the MuVar is replaced by a pointer 
+                 * to the 2nd child of Mu
+                 * after expansion there is no more Mu or MuVar
+                 */
+                //System.out.println("parent: " + parent);
+                //System.out.println("childNumber: " + childNumber);
+                //System.out.println("V: " + m.visitors[Mu.V]);
+                parent.setChildAt(childNumber,m.visitors[Mu.V]);
+              } else {
+                //System.out.println("strange: " + `var);
+              }
               return;
             }
           }
@@ -121,7 +151,7 @@ t1.equals(t2);}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strat
 
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
-      visit(any.getChildAt(i));
+      visit(any.getChildAt(i),any,i,set);
     }
   }
 }
