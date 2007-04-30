@@ -50,6 +50,7 @@ public class GomStreamManager {
 
   /** The input file name (relative path, or -) */
   private String inputFileName;
+  private String intermediateName;
   
   /** The input stream */
   private Reader inputReader;
@@ -96,6 +97,12 @@ public class GomStreamManager {
     String pack = (String)optionManager.getOptionValue("package");
     if(pack.length() > 0) {
       setPackagePath(pack);
+    }
+    // output file name for intermediate
+    String intermediateName =
+      (String)optionManager.getOptionValue("intermediateName");
+    if(intermediateName.length() > 0) {
+      this.intermediateName = intermediateName;
     }
   }
 
@@ -157,8 +164,17 @@ public class GomStreamManager {
   }
 
   public String getInputFileNameWithoutSuffix() {
-    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
-    return res;
+    if (!inputFileName.equals("-")) {
+      String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+      return res;
+    } else {
+      /* if intermediateName is set, use it, otherwise use "-" */
+      if(null != intermediateName) {
+        return intermediateName;
+      } else {
+        return inputFileName;
+      }
+    }
   }
 
   public String getInputFileName() {

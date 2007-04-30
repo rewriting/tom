@@ -110,6 +110,11 @@
         description="Path for include"
         value=""
         attrName="path"/>
+      <string name='intermediateName'
+        altName='iname'
+        description='specify the prefix of intermediate files'
+        value=''
+        attrName='intermediateName'/>
       <boolean name="intermediate" altName="i"
         description="Generate intermediate files"
         value="false"/>
