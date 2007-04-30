@@ -27,8 +27,6 @@ public class TomPropagationManager {
 
   private static final String[] propagatorsNames = {"TomSyntacticPropagator","TomVariadicPropagator","TomArrayPropagator"};
 
-  private static TomNumberList rootpath = null;  
-
   public static Constraint performPropagations(Constraint constraintToCompile) 
     throws ClassNotFoundException,InstantiationException,IllegalAccessException{
     

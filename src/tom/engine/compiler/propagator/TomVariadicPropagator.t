@@ -21,8 +21,6 @@ public class TomVariadicPropagator implements TomIBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}
 //--------------------------------------------------------
 
-  private static short beginEndCounter = 0;
-
   public Constraint propagate(Constraint constraint) {
     return (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);		
   }	
@@ -80,8 +78,8 @@ mSlots:  %match(slots) {
                     l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
                   }
                 } else {
-                  TomTerm beginSublist = getBeginVariableStar(listType);
-                  TomTerm endSublist = getEndVariableStar(listType);              
+                  TomTerm beginSublist = TomConstraintCompiler.getBeginVariableStar(listType);
+                  TomTerm endSublist = TomConstraintCompiler.getEndVariableStar(listType);              
                   l = `AndConstraint(l*,
                       MatchConstraint(beginSublist,freshVariable),
                       MatchConstraint(endSublist,freshVariable),             
@@ -134,11 +132,4 @@ mSlots:  %match(slots) {
     }
   }
 
-  private static TomTerm getBeginVariableStar(TomType type) {
-    return TomConstraintCompiler.getFreshVariableStar("begin_" + (++beginEndCounter),type);
-  }
-
-  private static TomTerm getEndVariableStar(TomType type) {
-    return TomConstraintCompiler.getFreshVariableStar("end_" + beginEndCounter,type);
-  }
 }

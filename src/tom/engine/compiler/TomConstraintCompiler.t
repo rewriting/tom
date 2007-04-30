@@ -32,12 +32,14 @@ public class TomConstraintCompiler{
   private static TomNumberList rootpath = null;
   // keeps track of the match number to insure distinct variables' 
   // names for distinct match constructs
-  private static short matchNumber = 0;
+  private static int matchNumber = 0;
   // keeps track of the subject number to insure distinct variables' 
   // names when renaming subjects
-  private static short freshSubjectCounter = 0;	
+  private static int freshSubjectCounter = 0;	
   private static int freshVarCounter = 0;
   private static final String freshVarPrefix = "_freshVar_";
+  private static final String freshBeginPrefix = "_begin_";
+  private static final String freshEndPrefix = "_end_";
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
     TomConstraintCompiler.symbolTable = symbolTable;
@@ -177,6 +179,10 @@ public class TomConstraintCompiler{
     }
     return null;
   }
+  
+  /**
+   * helper functions - mostly related to free var generation
+   */
 
   public static TomNumberList getRootpath() {
     return rootpath;
@@ -186,14 +192,12 @@ public class TomConstraintCompiler{
     return symbolTable;
   }
 
- // [pem] useful ? can't it be private or protected ?
   public static TomType getTermTypeFromName(TomName tomName) {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);    
     return tomSymbol.getTypesToType().getCodomain();
   }
   
- // [pem] useful ? can't it be private or protected ?
   public static TomType getSlotType(TomName tomName, TomName slotName) {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
@@ -232,5 +236,13 @@ public class TomConstraintCompiler{
     TomNumberList path = getRootpath();
     TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `VariableStar(concOption(),freshVarName,type,concConstraint());
+  }
+  
+  public static TomTerm getBeginVariableStar(TomType type) {
+    return getFreshVariableStar(freshBeginPrefix + (freshVarCounter++),type);
+  }
+
+  public static TomTerm getEndVariableStar(TomType type) {
+    return TomConstraintCompiler.getFreshVariableStar(freshEndPrefix + (freshVarCounter++),type);
   }
 }
