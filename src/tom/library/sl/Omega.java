@@ -70,14 +70,14 @@ public class Omega extends AbstractStrategy {
     if(indexPosition==0) {
       (visitors[ARG]).visit();
       return;
-    } else if(indexPosition>0 && indexPosition<=getSubject().getChildCount()) {
+    } else if(indexPosition>0 && indexPosition<=environment.getSubject().getChildCount()) {
       int childNumber = indexPosition-1;
       environment.down(indexPosition);
       (visitors[ARG]).visit();
       environment.up();
       return ;
     } else {
-      setStatus(Environment.FAILURE);
+      environment.setStatus(Environment.FAILURE);
     }
   }
 }

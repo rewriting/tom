@@ -91,24 +91,24 @@ public class All extends AbstractStrategy {
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public void visit() {
-    Visitable any = getSubject();
+    Visitable any = environment.getSubject();
     int childCount = any.getChildCount();
 
     Visitable[] childs = null;
     for (int i = 0; i < childCount; i++) {
       Visitable oldChild = (Visitable)any.getChildAt(i);
       environment.down(i+1);
-      (visitors[ARG]).visit();
-      if (getStatus() != Environment.SUCCESS) {
+      visitors[ARG].visit();
+      if(environment.getStatus() != Environment.SUCCESS) {
         environment.up();
         return;
       }
-      Visitable newChild = getSubject();
+      Visitable newChild = environment.getSubject();
       if(childs != null) {
         childs[i] = newChild;
         environment.up();
         /* restore subject */
-        setSubject(any);
+        environment.setSubject(any);
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
         // childs = (Visitable[])any.getChildren();
@@ -120,14 +120,14 @@ public class All extends AbstractStrategy {
         childs[i] = newChild;
         environment.up();
         /* restore subject */
-        setSubject(any);
+        environment.setSubject(any);
       } else {
         /* no need to restore subject */
         environment.up();
       }
     }
     if(childs!=null) {
-      setSubject((Visitable)any.setChildren(childs));
+      environment.setSubject((Visitable)any.setChildren(childs));
     }
     return;
   }

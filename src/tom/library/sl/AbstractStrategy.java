@@ -75,7 +75,7 @@ public abstract class AbstractStrategy implements Strategy {
 
   public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
     Strategy[] newVisitors = new Strategy[children.length];
-    for(int i = 0; i < children.length; ++i) {
+    for(int i = 0; i < children.length; i++) {
       newVisitors[i] = (Strategy) children[i];
     }
     this.visitors = newVisitors;
@@ -90,7 +90,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @parameter s the strategy to execute.
    */
   public void execute(Strategy s) {
-    AbstractStrategy.init(s,getEnvironment());
+    AbstractStrategy.init(s,environment);
     s.visit();
   }
 
@@ -100,7 +100,7 @@ public abstract class AbstractStrategy implements Strategy {
    * @parameter s the strategy to execute.
    */
   public void execute(Strategy s, Visitable v) {
-    setSubject(v);
+    environment.setSubject(v);
     execute(s);
   }
 
@@ -108,7 +108,7 @@ public abstract class AbstractStrategy implements Strategy {
     init();
     setRoot(any);
     visit();
-    if (getStatus() == Environment.SUCCESS) {
+    if(environment.getStatus() == Environment.SUCCESS) {
       return getRoot();
     } else {
       throw new tom.library.sl.FireException();
@@ -128,27 +128,27 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public int getStatus() {
-    return getEnvironment().getStatus();
+    return environment.getStatus();
   }
 
   public void setStatus(int stat) {
-    getEnvironment().setStatus(stat);
+    environment.setStatus(stat);
   }
 
   public Visitable getRoot() {
-    return getEnvironment().getRoot();
+    return environment.getRoot();
   }
 
   public void setRoot(Visitable any) {
-    getEnvironment().setRoot(any);
+    environment.setRoot(any);
   }
 
   public Visitable getSubject() {
-    return getEnvironment().getSubject();
+    return environment.getSubject();
   }
 
   public void setSubject(Visitable any) {
-    getEnvironment().setSubject(any);
+    environment.setSubject(any);
   }
 
   public void init() {

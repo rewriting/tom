@@ -76,7 +76,7 @@ public class Pselect extends AbstractStrategy {
 
   public void visit() {
     int randomInt = random.nextInt(q);
-    Visitable subject = getEnvironment().getSubject();
+    Visitable subject = environment.getSubject();
     if(randomInt < p) {
       visitors[FIRST].visit();
       return ;

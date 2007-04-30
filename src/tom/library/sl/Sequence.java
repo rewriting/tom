@@ -51,14 +51,17 @@ public class Sequence extends AbstractStrategy {
   }
 
   public void visit() {
-    Visitable subject = getEnvironment().getSubject();
+    //Visitable subject = environment.getSubject();
     visitors[FIRST].visit();
-    if (getStatus() == Environment.SUCCESS) {
+    if(environment.getStatus() == Environment.SUCCESS) {
       visitors[THEN].visit();
     } else {
       /* restore the subject */
-      /* we are juste interested in the status */
-      getEnvironment().setSubject(subject);
+      /* we are just interested in the status */
+      //if(subject != environment.getSubject()) {
+        //System.out.println("houhou");
+      //}
+      //environment.setSubject(subject);
     }
   }
 }

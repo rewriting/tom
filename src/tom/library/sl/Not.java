@@ -52,16 +52,16 @@ public class Not extends AbstractStrategy {
 
   public void visit() {
     /* save the current subject */
-    Visitable subject = getEnvironment().getSubject();
+    Visitable subject = environment.getSubject();
     (visitors[ARG]).visit();
     /* restore the subject */
     /* we are juste interested in the status */
-    getEnvironment().setSubject(subject);
-    if (getStatus() != Environment.SUCCESS) {
-      setStatus(Environment.SUCCESS);
+    environment.setSubject(subject);
+    if (environment.getStatus() != Environment.SUCCESS) {
+      environment.setStatus(Environment.SUCCESS);
       return;
     } else {
-      setStatus(Environment.FAILURE);
+      environment.setStatus(Environment.FAILURE);
       return;
     }
   }

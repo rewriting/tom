@@ -54,6 +54,7 @@ public class Main{
     query[cpt++] = `F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero());
     query[cpt++] = `F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N()));
     query[cpt++] = `F(P(), Suc(P()), Zero(), N(), P());
+      
     for(int i=0 ; i<cpt ; i++) {
       BenchMuTraveler.run(query[i], 1, count,base);
       BenchSlTraveler.run(query[i], 1, count,base);

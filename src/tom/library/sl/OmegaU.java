@@ -61,7 +61,7 @@ public class OmegaU extends AbstractStrategy {
   }
 
   public void visit() {
-    Visitable subject = getEnvironment().getSubject();
+    Visitable subject = environment.getSubject();
     int arity = subject.getChildCount();
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {

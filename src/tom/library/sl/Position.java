@@ -182,7 +182,7 @@ public class Position implements Cloneable,Path {
     return getOmega(
         new Identity() {
           public void visit(){
-            setSubject(t);
+            environment.setSubject(t);
           }
           public jjtraveler.Visitable visit(jjtraveler.Visitable x) {
             return t;
@@ -204,7 +204,7 @@ public class Position implements Cloneable,Path {
         getOmega(
             new Identity() {
               public void visit() {
-                ref[0]=getSubject();
+                ref[0]=environment.getSubject();
               }
               public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
                 ref[0] = v;
@@ -218,14 +218,14 @@ public class Position implements Cloneable,Path {
         Strategy s =getOmega(
             new Identity() {
               public void visit() {
-                ref[0]=getSubject();
+                ref[0]=environment.getSubject();
               }
               public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
                 ref[0] = (Visitable)v;
                 return v;
               }
             });
-        s.fire(getEnvironment().getRoot());
+        s.fire(environment.getRoot());
         environment.setSubject(ref[0]);
       }
     };

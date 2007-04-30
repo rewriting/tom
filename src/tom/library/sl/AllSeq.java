@@ -55,11 +55,11 @@ public class AllSeq extends AbstractStrategy {
   }
 
   public void visit() {
-    int childCount = getSubject().getChildCount();
+    int childCount = environment.getSubject().getChildCount();
     for (int i = 0; i < childCount; i++) {
       environment.down(i+1);
       (visitors[ARG]).visit();
-      if (getStatus() != Environment.SUCCESS) {
+      if (environment.getStatus() != Environment.SUCCESS) {
         environment.up();
         return;
       } else {

@@ -65,8 +65,8 @@ public class DeRef extends AbstractStrategy {
   }
 
   public void visit() {
-    if (getSubject() instanceof Path){
-      visitPath((Path)getSubject());
+    if (environment.getSubject() instanceof Path){
+      visitPath((Path)environment.getSubject());
     } else {
       if(strict) {
         // does nothing when it is not a Ref
@@ -81,11 +81,11 @@ public class DeRef extends AbstractStrategy {
       Position current = environment.getPosition();
       environment.followPath(path);
       visitors[ARG].visit();
-      if (getStatus() != Environment.SUCCESS) {
-        environment.followPath(current.sub(getEnvironment().getPosition()));
+      if (environment.getStatus() != Environment.SUCCESS) {
+        environment.followPath(current.sub(environment.getPosition()));
         return;
       }
-      environment.followPath(current.sub(getEnvironment().getPosition()));
+      environment.followPath(current.sub(environment.getPosition()));
     }
   }
 

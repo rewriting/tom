@@ -55,14 +55,14 @@ public class SequenceId   extends AbstractStrategy {
   }
 
   public void visit() {
-    Visitable subject = getEnvironment().getSubject();
+    Visitable subject = environment.getSubject();
     visitors[FIRST].visit();
-    if (getStatus() == Environment.SUCCESS && ! getEnvironment().getSubject().equals(subject)) {
+    if (environment.getStatus() == Environment.SUCCESS && ! environment.getSubject().equals(subject)) {
         visitors[THEN].visit();
     } else {
       /* restore the subject */
       /* we are juste interested in the status */
-      getEnvironment().setSubject(subject);
+      environment.setSubject(subject);
     }
   }
 
