@@ -103,6 +103,7 @@ command returns [Command c]
   | #(TERM lhs=term) { c = `normalizeTerm(lhs); }
   | #(TRULE lhs=term rhs=term) { c = `rewriteterm(lhs,rhs); }
   | #(DISPLAY i2:ID) { c = `display(i2.getText()); }
+  | #(PROOFTERM i7:ID) { c = `proofterm(i7.getText()); }
   | QUIT { c = `quit(); }
   | #(PROOFCHECK i4:ID) { c = `proofcheck(i4.getText()); }
   | #(PRINT i3:ID) { c = `print(i3.getText()); }

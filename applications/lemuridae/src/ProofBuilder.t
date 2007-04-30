@@ -1,6 +1,9 @@
 import sequents.*;
 import sequents.types.*;
 
+import urban.*;
+import urban.types.*;
+
 //import tom.library.strategy.mutraveler.MuTraveler;
 //import tom.library.strategy.mutraveler.MuStrategy;
 //import tom.library.strategy.mutraveler.Position;
@@ -21,8 +24,9 @@ import antlr.collections.*;
 
 public class ProofBuilder {
 
-  %include { sequents/sequents.tom }
+  //%include { sequents/sequents.tom }
   %include { sequents/_sequents.tom }
+  %include { urban/urban.tom }
   %include { sl.tom }
   %include { string.tom }
   %include { util/LinkedList.tom }
@@ -1226,6 +1230,12 @@ b :{
           else PrettyPrinter.display(tree,newTermRules,newPropRules);
           //tree = ProofExpander.expand(tree);
           //PrettyPrinter.display(tree,newTermRules,newPropRules);
+        }
+
+        proofterm(name) -> {
+          Tree tree = theorems.get(`name);
+          if(tree==null) System.out.println(`name + " not found");
+          else System.out.println(Proofterms.getProofterm(tree));
         }
 
         gibber() -> {

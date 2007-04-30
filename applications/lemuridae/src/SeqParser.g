@@ -86,6 +86,7 @@ command: PROOF^ ID COLUMN! pred DOT!
        | NORMALIZE! TERM^ term DOT!
        | NORMALIZE! PROP^ pred DOT!
        | DISPLAY^ ID DOT!
+       | PROOFTERM^ ID DOT!
        | QUIT DOT!
        | PROOFCHECK^ ID DOT!
        | PRINT^ ID DOT!
@@ -207,6 +208,7 @@ FOCUS: "focus";
 ASKRULES: "showrules";
 CUT: "cut";
 DISPLAY: "display";
+PROOFTERM: "proofterm";
 QUIT: "quit";
 THEOREM: "theorem";
 PRINT: "print";
