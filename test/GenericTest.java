@@ -70,11 +70,11 @@ public abstract class GenericTest extends TestCase {
 
         if (returnType.equals(primitiveClasses[i])) {
           isPrimitive = true;
-          Method value = Class.forName(primitiveWrappers[i]).getMethod(primitiveTypes[i]+"Value",null);
+          Method value = Class.forName(primitiveWrappers[i]).getMethod(primitiveTypes[i]+"Value");
           assertEquals(
               td[0]+" : "+" expected "+td[2+2*nbParam]+" for term "+td[1+2*nbParam],
-              value.invoke(methode.invoke(this,parameters),null), 
-              value.invoke(td[2+2*nbParam],null));
+              value.invoke(methode.invoke(this,parameters)), 
+              value.invoke(td[2+2*nbParam]));
         }
       }
       if(!isPrimitive) {
