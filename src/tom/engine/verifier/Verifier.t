@@ -57,9 +57,11 @@ public class Verifier {
   %include { ../../library/mapping/java/sl.tom }
   %typeterm Collection {
     implement { java.util.Collection }
+    is_sort(t) { t instanceof java.util.Collection }
   }
   %typeterm Map {
     implement { java.util.Map }
+    is_sort(t) { t instanceof java.util.Map }
   }
   // ------------------------------------------------------------
 
@@ -751,6 +753,7 @@ public class Verifier {
 
   %typeterm SubstRef {
     implement { SubstRef }
+    is_sort(t) { t instanceof SubstRef }
   }
   static private class SubstRef {
     private SubstitutionList sublist;

@@ -59,17 +59,18 @@ import jjtraveler.VisitFailure;
  */
 public final class TomBase {
 
-  %include { adt/tomsignature/TomSignature.tom }
+  %include { ./adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
   %typeterm Collection {
     implement { java.util.Collection }
+    is_sort(t) { t instanceof java.util.Collection }
   }
 
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
   /** shortcut */
   
-  %include { adt/platformoption/PlatformOption.tom }
+  %include { ./adt/platformoption/PlatformOption.tom }
   
   public static TomNumberList appendNumber(int n, TomNumberList path) {
     /*
@@ -250,6 +251,10 @@ public final class TomBase {
     throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
   
+  public static boolean isSyntacticOperator(TomSymbol subject) {
+    return (!(isListOperator(subject) || isArrayOperator(subject)));
+  }
+
   // ------------------------------------------------------------
   public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
     try {
@@ -535,6 +540,13 @@ public final class TomBase {
       FunctionCall[AstType=type] -> { return `type; }
 
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
+      
+      ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
+      
+      Subterm(Name(name), slotName, term) -> {
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
+        return getSlotType(tomSymbol, `slotName);
+      }
     }
     //System.out.println("getTermType error on term: " + t);
     //throw new TomRuntimeException("getTermType error on term: " + t);

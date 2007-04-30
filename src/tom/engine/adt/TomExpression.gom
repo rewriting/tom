@@ -1,38 +1,56 @@
 module TomExpression
 imports TomSignature String
 abstract syntax
-Expression =
-  | TomTermToExpression(AstTerm:TomTerm)
-  /**
-   * We have different Bottom for different types
-   * For instance, builtin types can't be null in Java
-   */
-  | Bottom(TomType:TomType)
-  | Negation(Arg:Expression)
-  | And(Arg1:Expression,Arg2:Expression)
-  | Or(Arg1:Expression,Arg2:Expression)
-  | GreaterThan(Arg1:Expression,Arg2:Expression)
-  | Conditional(Cond:Expression,Then:Expression,Else:Expression)
-  | TrueTL()
-  | FalseTL()
-  // Exp1 - the subject
-  // Exp2 - the pattern
-  | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
-  | Cast(AstType:TomType,Source:Expression)
-  // AstName - the name of the function symbol from whom to extract the slot
-  // Variable - from what to extract the slot 
-  | GetSlot(Codomain:TomType,AstName:TomName,SlotNameString:String,Variable:TomTerm)
-  | IsFsym(AstName:TomName,Variable:TomTerm)
-  | GetHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
-  | GetTail(Opname:TomName,Variable:TomTerm)
-  | IsEmptyList(Opname:TomName,Variable:TomTerm)
-  | IsEmptyArray(Opname:TomName,Variable:TomTerm,Index:TomTerm)
-  | AddOne(Variable:TomTerm)
-  | GetSize(Opname:TomName,Variable:TomTerm)
-  | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
-  | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
-  | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
-  /**
-   * check that source is of sort astType, and then execute inst
-   */
-  | IsSort(AstType:TomType,Variable:TomTerm)
+
+Expression = TomTermToExpression(AstTerm:TomTerm)
+		   | TomInstructionToExpression(Instruction:Instruction)
+           /**
+            * We have different Bottom for different types
+            * For instance, builtin types can't be null in Java
+            */
+           | Bottom(TomType:TomType)
+           | Negation(Arg:Expression)
+           | And(Arg1:Expression,Arg2:Expression)
+           | Or(Arg1:Expression,Arg2:Expression)
+           /**
+		   * <code>OrExpressionDisjunction</code> used for the disjonction of symbols
+		   *
+		   * @param Expression the list of And() that are linked by Or
+		   */		              
+           | OrExpressionDisjunction(Expression*)
+           | GreaterThan(Arg1:Expression,Arg2:Expression)
+           | AntiMatchExpression(Expression:Expression)
+           | Conditional(Cond:Expression,Then:Expression,Else:Expression)
+           | TrueTL()
+           | FalseTL()
+           // Exp1 - the subject
+           // Exp2 - the pattern
+  		   | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
+           | Cast(AstType:TomType,Source:Expression)
+           // AstName - the name of the function symbol from whom to extract the slot
+           // Variable - from what to extract the slot 
+           | GetSlot(Codomain:TomType,AstName:TomName,SlotNameString:String,Variable:TomTerm)
+           | IsFsym(AstName:TomName,Variable:TomTerm)
+           | GetHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
+           | GetTail(Opname:TomName,Variable:TomTerm)
+           | IsEmptyList(Opname:TomName,Variable:TomTerm)
+           | IsEmptyArray(Opname:TomName,Variable:TomTerm,Index:TomTerm)
+           | AddOne(Variable:TomTerm)
+           | GetSize(Opname:TomName,Variable:TomTerm)
+           | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
+  		   | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
+           | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
+           | ConstraintToExpression(cons:Constraint)
+           /**
+		   * <code>WhileExpression</code> a do while loop
+		   *
+		   * @param LoopCondition the loop condition
+		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
+		   */
+           | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
+           | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)
+           /*
+		   * check that source is of sort astType, and then execute inst
+		   */
+           | IsSort(AstType:TomType,Variable:TomTerm)
+

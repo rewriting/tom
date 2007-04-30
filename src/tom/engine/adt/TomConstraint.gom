@@ -1,41 +1,43 @@
 module TomConstraint
-imports TomSignature
+imports TomTerm
 abstract syntax
-Constraint = Ensure(Variable:TomTerm)
-           | Equal(Variable:TomTerm)
-           | AssignTo(Variable:TomTerm)
-           | AssignPositionTo(Variable:TomTerm)
- 	   | TrueConstraint()
-	   | FalseConstraint()		   
-	   | Neg(c:Constraint)
-	   | AndConstraint(cla:AConstraintList)
-	   | OrConstraint(clo:OConstraintList)
-	   | EqualConstraint(pattern:TomTerm, genTerm:TomTerm)
-	   | NEqualConstraint(pattern:TomTerm, genTerm:TomTerm)
-	   | Exists(var:TomTerm,cons:Constraint)
-	   | ForAll(var:TomTerm,cons:Constraint)
-	   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
-	   | AndAntiConstraint(Constraint*)
 
-/** normalization hooks
- *
- * AndAntiConstraint(X*,AndAntiConstraint(),Y*) -> AndAntiConstraint(X*,Y*)
- * AndAntiConstraint(X*,AndAntiConstraint(x))) -> AndAntiConstraint(X*,x)
- *
- */ 
-  /*
-AndAntiConstraint:make_insert(el, list) {
-	%match(el) {
-		AndAntiConstraint() -> {
-			return list;
-		}
-		AndAntiConstraint(x) -> {
-			return realMake(`x,list);
-		}
-	}
-}
-*/
+Constraint = 
+		  /**
+		   * <code>AssignTo</code> specifies that we want to instanciate Variable with the term on which this constraint is attached
+		   *
+		   * @param Variable the variable to constrain
+		   */
+           | AssignTo(Variable:TomTerm)
+		   | AssignPositionTo(Variable:TomTerm)
+ 		   | TrueConstraint()
+		   | FalseConstraint()		   
+		   | Negate(c:Constraint)
+		   | AndConstraint(Constraint*)
+		   | OrConstraint(Constraint*)
+		  /**
+		   * <code>OrConstraintDisjunction</code> used for the disjunction of symbols
+		   *
+		   * @param Constraint the list of AndConstraints that are linked by Or
+		   */		   
+  		   | OrConstraintDisjunction(Constraint*)
+		   | MatchConstraint(pattern:TomTerm, subject:TomTerm)
+		   | AntiMatchConstraint(Constraint:Constraint)
+  		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
+  		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
 
 ConstraintList = concConstraint(Constraint*)
-AConstraintList = concAnd(Constraint*)
-OConstraintList = concOr(Constraint*)
+AndConstraint:AU() { `TrueConstraint() }
+OrConstraint:AU() { `FalseConstraint() }
+OrConstraintDisjunction:AU() { }
+
+// we should not generate assignments for the unamed variables
+AndConstraint:make_insert(e,l) {
+	%match(e) {
+		MatchConstraint((UnamedVariable|UnamedVariableStar)[],t@!(VariableHeadList|VariableHeadArray)[]) ->{
+			return l;
+		}
+	}	
+}
+
+

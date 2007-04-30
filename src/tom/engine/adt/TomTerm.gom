@@ -25,6 +25,9 @@ TomTerm =
    * <code>VariableStar</code> a list-variable
    * <code>UnamedVariable</code> a variable without name
    * <code>UnamedVariableStar</code> a list-variable without name
+   * <code>VariableHeadList</code> a head list that is variable ( starting from begining to end )
+   * <code>VariableArrayList</code> a head array that is variable ( starting from begining to end )
+   * <code>TestVar</code> instead of generating an assignment, this generates an equality test
    *
    * @param Option a list of options
    * @param AstName the name of the variable
@@ -35,6 +38,19 @@ TomTerm =
     | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+    | VariableHeadList(Opname:TomName,Begin:TomTerm,End:TomTerm)
+    | VariableHeadArray(Opname:TomName,Subject:TomTerm,BeginIndex:TomTerm,EndIndex:TomTerm)
+    | TestVar(Variable:TomTerm)
+  /**
+   * <code>ListHead</code> represents the head of a list
+   * <code>ListTail</code> the tail of a list
+   *
+   * @param Opname operator's name
+   * @param Codomain the type of the operator
+   * @param Variable the list from which to extract the head / tail
+   */
+	| ListHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
+    | ListTail(Opname:TomName,Variable:TomTerm)  		   
 
   /**
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm

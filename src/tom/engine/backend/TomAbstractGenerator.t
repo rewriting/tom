@@ -251,7 +251,7 @@ public abstract class TomAbstractGenerator {
         buildExpIsEmptyArray(deep, `opNameAST, getTermType(`expArray), `expIndex, `expArray, moduleName);
         return;
       }
-     
+
       EqualTerm(type,exp1,exp2) -> {
         `buildExpEqualTerm(deep, type, exp1, exp2, moduleName);
         return;
@@ -272,7 +272,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
  
-      GetSlot(_,Name(opname),slotName, var@(Variable|ExpressionToTomTerm)[]) -> {    	  
+      GetSlot(_,Name(opname),slotName, var@(Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }

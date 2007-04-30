@@ -59,6 +59,7 @@ public class TomKernelExpander {
 
   %typeterm TomKernelExpander {
     implement { TomKernelExpander }
+    is_sort(t) { t instanceof TomKernelExpander }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {

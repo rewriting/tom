@@ -1,5 +1,5 @@
 module TomInstruction
-imports TomSignature 
+imports TomSignature
 abstract syntax
 Instruction = 
   | TomTermToInstruction(Tom:TomTerm)
@@ -37,11 +37,13 @@ Instruction =
    * a RawAction is an action that comes from the original program 
    */
   | RawAction(AstInstruction:Instruction)
+
   /*
    * a TypeAction knows the pattern to which it is attached (positivePattern),
    * and also the list a previously tried patterns, which are called negativePattern
    * This information is used to perform extra verification/certification
    */
+
   | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
 
 InstructionList = concInstruction(Instruction*)

@@ -68,6 +68,7 @@ public class TomExpander extends TomGenericPlugin {
 
   %typeterm TomExpander {
     implement { TomExpander }
+    is_sort(t) { t instanceof TomExpander }
   }
   
   %op Strategy ChoiceTopDown(s1:Strategy) {

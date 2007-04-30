@@ -209,10 +209,12 @@ public class TomBackend extends TomGenericPlugin {
 
   %typeterm Stack {
     implement { Stack }
+    is_sort(t) { t instanceof Stack }
   }
 
   %typeterm TomBackend {
     implement { TomBackend }
+    is_sort(t) { t instanceof TomBackend }
   }
 
   private void markUsedConstructorDestructor(TomTerm pilCode) {
@@ -252,6 +254,7 @@ public class TomBackend extends TomGenericPlugin {
   %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
       CompiledMatch[AutomataInst=inst, Option=optionList] -> {
+
         String moduleName = TomBase.getModuleName(`optionList);
         /*
          * push the modulename
@@ -275,6 +278,7 @@ public class TomBackend extends TomGenericPlugin {
         //String pop = (String) stack.pop();
         //System.out.println("pop: " + pop);
         `Fail().visit(null);
+
       }
 
       TypedAction[AstInstruction=inst] -> {
@@ -328,6 +332,7 @@ public class TomBackend extends TomGenericPlugin {
       }
     }
 
+
     visit TomTerm {
       (TermAppl|RecordAppl)[NameList=nameList] -> {
         TomNameList l = `nameList;
@@ -380,5 +385,4 @@ public class TomBackend extends TomGenericPlugin {
     }
 
   }
-
 } // class TomBackend

@@ -153,7 +153,10 @@ public class TomSyntaxChecker extends TomChecker {
    * Catch and verify all type and operator declaration,
    * Match instruction
    */
-  %typeterm TomSyntaxChecker { implement { TomSyntaxChecker } }
+  %typeterm TomSyntaxChecker { 
+    implement { TomSyntaxChecker }
+    is_sort(t) { t instanceof TomSyntaxChecker }
+  }
   %strategy checkSyntax(tsc:TomSyntaxChecker) extends `Identity() {
     visit Declaration {
       Strategy[VisitList = list,OrgTrack=origin] -> {

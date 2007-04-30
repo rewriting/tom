@@ -112,7 +112,10 @@ public class TomTypeChecker extends TomChecker {
    * Main type checking entry point:
    * We check all Match
    */
-  %typeterm TomTypeChecker { implement { TomTypeChecker } }
+  %typeterm TomTypeChecker { 
+    implement { TomTypeChecker }
+    is_sort(t) { t instanceof TomTypeChecker }
+  }
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
     visit Instruction {
