@@ -52,7 +52,10 @@ public class CFGViewer {
   %include { adt/bytecode/Bytecode.tom }
   %include { ../mapping/java/bytecode/cfg.tom }
 
-  %typeterm Writer { implement {java.io.Writer} }
+  %typeterm Writer { 
+    implement {java.io.Writer} 
+    is_sort(t) { t instanceof java.io.Writer }
+  }
 
   /**
    * Returns the dot node id of the given TInstructionList.
@@ -307,7 +310,10 @@ public class CFGViewer {
    * Used to pass the stored instruction as a strategy parameter.
    */
   private static class InsWrapper { public TInstructionList ins; }
-  %typeterm InsWrapper { implement { InsWrapper } }
+  %typeterm InsWrapper { 
+    implement { InsWrapper }
+    is_sort(t) { t instanceof InsWrapper }
+  }
 
   /**
    * Assign the current instruction node to the given InsWrapper.

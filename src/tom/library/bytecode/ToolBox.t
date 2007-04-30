@@ -294,7 +294,10 @@ public class ToolBox {
     return `MethodDescriptor(fList, ret);
   }
 
-  %typeterm StringBuffer { implement { StringBuffer } }
+  %typeterm StringBuffer { 
+    implement { StringBuffer }
+    is_sort(t) { t instanceof StringBuffer }
+  }
   %strategy BuildDescriptor(sb:StringBuffer) extends Identity() {
     visit TFieldDescriptor {
       ObjectType(className) -> { sb.append("L" + `className + ";"); }
