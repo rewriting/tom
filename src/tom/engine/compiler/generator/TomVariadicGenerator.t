@@ -21,7 +21,7 @@ import tom.engine.compiler.*;
 public class TomVariadicGenerator implements TomIBaseGenerator {
 
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }	
+  %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) {
     return (Expression)`TopDown(VariadicGenerator()).fire(expression);		

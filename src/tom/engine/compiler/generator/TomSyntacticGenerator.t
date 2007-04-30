@@ -21,7 +21,7 @@ import tom.engine.adt.theory.types.*;
 public class TomSyntacticGenerator implements TomIBaseGenerator{
 
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }	
+  %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) {
     return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);

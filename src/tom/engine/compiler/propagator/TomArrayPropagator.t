@@ -18,7 +18,7 @@ public class TomArrayPropagator implements TomIBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
-  %include { sl.tom}
+  %include { ../../../library/mapping/java/sl.tom}
 //--------------------------------------------------------
 
   private static short beginEndCounter = 0;

@@ -19,7 +19,7 @@ public class TomPropagationManager {
 //------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/tomsignature/_TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom}
   %include { java/util/types/ArrayList.tom}
 //------------------------------------------------------
 

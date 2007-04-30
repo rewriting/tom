@@ -18,7 +18,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
 
 //--------------------------------------------------------
   %include { ../../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }	
+  %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) {

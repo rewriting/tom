@@ -26,7 +26,7 @@ import tom.engine.adt.tomconstraint.types.*;
 public class TomConstraintCompiler{
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { sl.tom }
+  %include { ../../library/mapping/java/sl.tom}
 
   private static SymbolTable symbolTable = null;
   private static TomNumberList rootpath = null;

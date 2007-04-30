@@ -28,7 +28,7 @@ public class TomGenerationManager {
 //------------------------------------------------------------	
   %include { ../adt/tomsignature/TomSignature.tom }	
   %include { java/util/types/Collection.tom}
-  %include { sl.tom}
+  %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------	
  
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
