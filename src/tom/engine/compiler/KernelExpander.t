@@ -53,7 +53,7 @@ import aterm.ATerm;
 
 import tom.library.sl.*;
 
-public class TomKernelExpander {
+public class KernelExpander {
 
   %include { ../../library/mapping/java/sl.tom}
 

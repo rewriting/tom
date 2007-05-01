@@ -56,7 +56,7 @@ import jjtraveler.VisitFailure;
 /**
  * The TomCompiler plugin.
  */
-public class TomCompiler extends TomGenericPlugin {
+public class Compiler extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }

@@ -61,7 +61,7 @@ import tom.library.sl.*;
  * The TomExpander plugin.
  * Perform syntax expansion and more.
  */
-public class TomExpander extends TomGenericPlugin {
+public class Expander extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
