@@ -13,7 +13,7 @@ public class Proofterms {
 
   public static ProofTerm getProofterm(Tree term) {
     %match(Tree term) {
-      rule(_,_,c,_) -> { return term2proofterm(term, seq2nseq(`c), 0, 1); }
+      rule(_,_,c,_) -> { return term2proofterm(term, seq2nseq(`c), 0, 0); }
     }
     return null;
   }
@@ -44,14 +44,14 @@ public class Proofterms {
         return `andL(name(ncount+1),name(ncount+2),term2proofterm(p,nsequent(ncontext(ng1*,nprop(name(ncount+1),A),nprop(name(ncount+2),B),ng2*),cnd),ncount+2,cncount),name);
       }
 
-      /*
+      
       rule(
           andRightInfo[],
           (p1@rule(_,_,sequent(g,(d1*,A,d2*)),_),p2@rule(_,_,sequent(g,(d1*,B,d2*)),_)),
           sequent(g,(d1*,a,d2*)),
           a@and(A,B)
           ),nsequent(ng,(nd1*,cnprop(coname, a),nd2*)) -> {
-        return andR(coname(cncount+1),term2proofterm(p1,nsequent(ng,cncontext(nd1*,cnprop(coname(cncount+1),A),nd2*)),ncount,cncount+2),coname(cncount+2),term2proofterm(p1,nsequent(ng,cncontext(nd1*,cnprop(coname(cncount+2),B),nd2*)),ncount,cncount+2),coname)
+        return `andR(coname(cncount+1),term2proofterm(p1,nsequent(ng,cncontext(nd1*,cnprop(coname(cncount+1),A),nd2*)),ncount,cncount+2),coname(cncount+2),term2proofterm(p2,nsequent(ng,cncontext(nd1*,cnprop(coname(cncount+2),B),nd2*)),ncount,cncount+2),coname);
       }
 
       rule(
@@ -59,29 +59,38 @@ public class Proofterms {
           (p@rule(_,_,sequent(g, (d1*,A,B,d2*)),_)),
           sequent(g, (d1*,a,d2*)),
           a@or(A,B)
-          )
-        -> { return proofcheck(`p);}
+          ), nsequent(ng, (cnd1*,cnprop(coname,a), cnd2*)) -> {
+        return `orR(coname(cncount+1),coname(cncount+2),term2proofterm(p,nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),A),cnprop(coname(cncount+2),B),cnd2*)),ncount,cncount+2), coname);
+      }
+
       rule(
           orLeftInfo[],
           (p1@rule(_,_,sequent((g1*,A,g2*), d),_),p2@rule(_,_,sequent((g1*,B,g2*), d),_)),
           sequent((g1*,a,g2*), d),
           a@or(A,B)
-          )
-        -> { return (proofcheck(`p1) && proofcheck(`p2)); }
+          ),nsequent((ng1*,nprop(name,a),ng2*),cnd) -> {
+        return `orL(name(ncount+1),term2proofterm(p1,nsequent(ncontext(ng1*,nprop(name(ncount+1),A),ng2*),cnd),ncount+1,cncount),name(ncount+2),term2proofterm(p2,nsequent(ncontext(ng1*,nprop(name(ncount+2),B),ng2*),cnd),ncount+2,cncount),name);
+      }
+
       rule(
           impliesRightInfo[],
           (p@rule(_,_,sequent((g*,A), (d1*, B, d2*)),_)),
           sequent(g, (d1*,a,d2*)),
           a@implies(A,B)
-          )
-        -> { return proofcheck(`p);}
+          ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*)) -> {
+        return `implyR(name(ncount+1),coname(cncount+1),term2proofterm(p,nsequent(ncontext(ng*,nprop(name(ncount+1),A)),cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount+1,cncount+1),coname);
+      }
+
       rule(
           impliesLeftInfo[],
           (p1@rule(_,_,sequent((g1*,g2*),(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)), 
           sequent((g1*,a,g2*),d),
           a@implies(A,B)
-          )
-        -> { return (proofcheck(`p1) && proofcheck(`p2)); } 
+          ),nsequent((ng1*,nprop(name,a),ng2*),cnd) -> {
+        return `implyL(coname(cncount+1),term2proofterm(p1,nsequent(ncontext(ng1*,ng2*),cncontext(cnprop(coname(cncount+1),A), cnd*)),ncount,cncount+1),name(ncount+1),term2proofterm(p2,nsequent(ncontext(ng1*,nprop(name(ncount+1),B),ng2*),cnd),ncount+1,cncount),name);
+      }
+
+      /*
       rule(
           contractionLeftInfo[],
           (p@rule(_,_,sequent((g1*,a,a,g2*), d),_)),
@@ -110,13 +119,18 @@ public class Proofterms {
           a
           )
         -> { return proofcheck(`p); }
+        */
+        
       rule(
           cutInfo(a),
           (p1@rule(_,_,sequent(g,(d*,a)),_), p2@rule(_,_,sequent((g*,a),d),_)),
           sequent(g,d),
           _
-          )
-        -> { return proofcheck(`p1) && proofcheck(`p2); }
+          ),nsequent(ng,cnd) -> {
+        return `cut(coname(cncount+1),term2proofterm(p1,nsequent(ng,cncontext(cnd*,cnprop(coname(cncount+1),a))),ncount+1,cncount+1),name(ncount+1),term2proofterm(p2,nsequent(ncontext(ng*,nprop(name(ncount+1),a)),cnd),ncount+1,cncount+1));
+      }
+
+      /*
 
       // first order logic
       rule(
