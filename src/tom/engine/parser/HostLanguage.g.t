@@ -520,16 +520,22 @@ gomsignature [LinkedList list] throws TomException
         config_xml = new File(tom_home,"Gom.xml");
       } else {
         // for the eclipse plugin for example
-        String tom_xml_filename = ((String)getOptionManager().getOptionValue("X"));
-        config_xml = new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
+        String tom_xml_filename =
+          ((String)getOptionManager().getOptionValue("X"));
+        config_xml =
+          new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
       }
       config_xml = config_xml.getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml.getPath());
+      getLogger().log(
+          Level.FINER,
+          "Failed to get canonical path for "+config_xml.getPath());
     }
 
-    String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
-    String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
+    String packageName =
+      getStreamManager().getPackagePath().replace(File.separatorChar, '.');
+    String inputFileNameWithoutExtension =
+      getStreamManager().getRawFileName().toLowerCase();
     String subPackageName = "";
     if(packageName.equals("")) {
       subPackageName = inputFileNameWithoutExtension;

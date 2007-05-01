@@ -54,6 +54,7 @@ import tom.library.strategy.mutraveler.Position;
     
   public class @className()@ extends @className(fwd)@ implements tom.library.strategy.mutraveler.MuStrategy, tom.library.sl.Strategy {
   private Position position;
+  private tom.library.sl.Environment environment;
 
   public void setPosition(Position pos) {
     this.position = pos;
@@ -112,23 +113,23 @@ import tom.library.strategy.mutraveler.Position;
   }
 
   public void execute(tom.library.sl.Strategy s) {
-    tom.library.sl.AbstractStrategy.init(s,getEnvironment());
+    tom.library.sl.AbstractStrategy.init(s,environment);
     s.visit();
   }
 
   public void execute(tom.library.sl.Strategy s, tom.library.sl.Visitable v) {
-    getEnvironment().setSubject(v);
-    tom.library.sl.AbstractStrategy.init(s,getEnvironment());
+    environment.setSubject(v);
+    tom.library.sl.AbstractStrategy.init(s,environment);
     s.visit();
   }
 
 
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
-    getEnvironment().setRoot(any);
+    environment.setRoot(any);
     visit();
-    if (getEnvironment().getStatus() == tom.library.sl.Environment.SUCCESS) {
-      return getEnvironment().getRoot();
+    if (environment.getStatus() == tom.library.sl.Environment.SUCCESS) {
+      return environment.getRoot();
     } else {
       throw new tom.library.sl.FireException();
     }
@@ -136,18 +137,22 @@ import tom.library.strategy.mutraveler.Position;
 
   public void visit() {
     try {
-      getEnvironment().setSubject((tom.library.sl.Visitable)this.visit(getEnvironment().getSubject()));
+      environment.setSubject((tom.library.sl.Visitable)this.visit(environment.getSubject()));
     } catch(jjtraveler.VisitFailure f) {
-      getEnvironment().setStatus(tom.library.sl.Environment.FAILURE);
+      environment.setStatus(tom.library.sl.Environment.FAILURE);
     }
   }
 
   public tom.library.sl.Environment getEnvironment() {
-    return ((tom.library.sl.Strategy)any).getEnvironment();
+    if(environment!=null) {
+      return environment;
+    } else {
+      throw new java.lang.RuntimeException("environment not initialized");
+    }
   }
 
   public void setEnvironment(tom.library.sl.Environment env) {
-    ((tom.library.sl.Strategy)any).setEnvironment(env);
+    this.environment = env;
   }
 
   public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
