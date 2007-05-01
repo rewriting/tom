@@ -1,0 +1,223 @@
+module sequents
+imports String int 
+
+abstract syntax
+
+Term = Var(name:String)
+     | funAppl(fun:String, p:TermList)
+     | NewVar(name:String, base_name: String) // asks for a new var
+     | FreshVar(name:String, base_name: String) // asks for a fresh var
+
+TermList = concTerm(Term*)
+
+Prop = relationAppl(r:String, t:TermList)
+     | and(p1:Prop, p2:Prop)
+     | or(p1:Prop, p2:Prop)
+     | implies(p1:Prop, p2:Prop)
+     | forAll(var:String, p:Prop)
+     | exists(var:String, p:Prop)
+     | bottom()
+     | top()
+     | nullProp() // for open leaves
+
+Context = context(Prop*)
+
+Sequent = sequent(h:Context,c:Context)
+
+Premisses = premisses(Tree*)
+
+// st == symbol table
+Tree = rule(type:RuleType, p:Premisses, c:Sequent, active:Prop)
+     | nullTree() // for conveniance
+
+RuleType = axiomInfo()
+         | impliesLeftInfo()
+         | impliesRightInfo()
+         | andLeftInfo()
+         | andRightInfo()
+         | orLeftInfo()
+         | orRightInfo()
+         | forAllRightInfo(freshvar:Term)
+         | forAllLeftInfo(newterm:Term)
+         | existsRightInfo(newterm:Term)
+         | existsLeftInfo(freshvar:Term)
+         | bottomInfo()
+         | topInfo()
+         | cutInfo(p:Prop)
+         | contractionLeftInfo()
+         | contractionRightInfo()
+         | weakLeftInfo()
+         | weakRightInfo()
+         | openInfo() // open leaf
+         | reductionInfo() // reduction step
+         | customRuleInfo(name:String,expanded:Tree)
+
+//--- new rules ---
+SeqList = concSeq(Sequent*)
+
+VarList = varlist(String*)
+
+// hs == hand-side : 0 left, 1 right
+Rule = ruledesc(hs:int, concl:Prop, prem:SeqList, tree:Tree)
+
+TermRule = termrule(lhs:Term,rh:Term)
+TermRuleList = termrulelist(TermRule*)
+PropRule = proprule(lhs:Prop,rhs:Prop)
+PropRuleList = proprulelist(PropRule*)
+
+// --- for the new rules computation---
+RuleList = rlist(Rule*)
+
+
+// parsed in interactive mode
+Command = rewriteprop(l:Prop, r:Prop)
+        | rewritesuper(l:Prop, r:Prop)
+        | rewriteterm(lt:Term, rt:Term)
+        | normalizeProp(p: Prop)
+        | normalizeTerm(t: Term)
+        | proof(name:String, p:Prop)
+        | display(name:String)
+        | proofterm(name:String)
+        | quit()
+        | proofcheck(name:String)
+        | print(name:String)
+        | resume(text:String)
+        | gibber()
+        | importfile(name:String)
+        | endoffile()
+	
+ProofCommand = proofCommand(text:String)
+             | focusCommand(hyp:String)
+             | cutCommand(p:Prop)
+             | ruleCommand(n:int)
+             | askrulesCommand()
+             | theoremCommand(name:String)
+             | normalizeSequent()
+             | proofquit()
+             | abort()
+             | proofendoffile()
+
+
+// hooks maintaining free vars
+
+
+sort Term:block() {
+  private java.util.HashSet<String> vars = null;
+
+  public java.util.HashSet<String> getVars() { return vars; }
+  public void setVars(java.util.HashSet<String> v) { vars = v; }
+}
+
+Var:make(name) {
+  sequents.types.Term res = realMake(name);
+  java.util.HashSet<String> vars = new java.util.HashSet();
+  vars.add(`name);
+  res.setVars(vars);
+  return res;
+}
+
+funAppl:make(fun,args) {
+  sequents.types.Term res = realMake(fun,args);
+  java.util.HashSet<String> vars = new java.util.HashSet();
+  %match(TermList args) {
+    (_*,x,_*) -> { vars.addAll(`x.getVars()); }
+  }
+  res.setVars(vars);
+  return res;
+}
+
+FreshVar:make(name,bname) {
+  sequents.types.Term res = realMake(name,bname);
+  java.util.HashSet<String> vars = new java.util.HashSet();
+  vars.add(`name);
+  res.setVars(vars);
+  return res;
+}
+
+NewVar:make(name,bname) {
+  sequents.types.Term res = realMake(name,bname);
+  java.util.HashSet<String> vars = new java.util.HashSet();
+  vars.add(`name);
+  res.setVars(vars);
+  return res;
+}
+
+sort Prop:block() {
+  private java.util.HashSet<String> freeVars = null;
+
+  public java.util.HashSet<String> getFreeVars() { return freeVars; }
+  public void setFreeVars(java.util.HashSet<String> v) { freeVars = v; }
+}
+
+relationAppl:make(r,tl) {
+  sequents.types.Prop res = realMake(r,tl);
+  java.util.HashSet<String> freeVars = new java.util.HashSet();
+  %match(TermList tl) {
+    (_*,x,_*) -> { freeVars.addAll(`x.getVars()); }
+  }
+  res.setFreeVars(freeVars);
+  return res;
+}
+
+and:make(p1,p2) {
+  sequents.types.Prop res = realMake(p1,p2);
+  java.util.HashSet<String> freeVars = new java.util.HashSet();
+  freeVars.addAll(p1.getFreeVars());
+  freeVars.addAll(p2.getFreeVars());
+  res.setFreeVars(freeVars);
+  return res;
+}
+
+or:make(p1,p2) {
+  sequents.types.Prop res = realMake(p1,p2);
+  java.util.HashSet<String> freeVars = new java.util.HashSet();
+  freeVars.addAll(p1.getFreeVars());
+  freeVars.addAll(p2.getFreeVars());
+  res.setFreeVars(freeVars);
+  return res;
+}
+
+implies:make(p1,p2) {
+  sequents.types.Prop res = realMake(p1,p2);
+  java.util.HashSet<String> freeVars = new java.util.HashSet();
+  freeVars.addAll(p1.getFreeVars());
+  freeVars.addAll(p2.getFreeVars());
+  res.setFreeVars(freeVars);
+  return res;
+}
+
+forAll:make(var,p) {
+  sequents.types.Prop res = realMake(var,p);
+  java.util.HashSet<String> freeVars = (java.util.HashSet<String>) p.getFreeVars().clone();
+  freeVars.remove(var);
+  res.setFreeVars(freeVars);
+  return res;
+}
+
+exists:make(var,p) {
+  sequents.types.Prop res = realMake(var,p);
+  java.util.HashSet<String> freeVars = (java.util.HashSet<String>) p.getFreeVars().clone();
+  freeVars.remove(var);
+  res.setFreeVars(freeVars);
+  return res;
+}
+
+
+bottom:make() {
+  sequents.types.Prop res = realMake();
+  res.setFreeVars(new java.util.HashSet<String>());
+  return res;
+}
+
+top:make() {
+  sequents.types.Prop res = realMake();
+  res.setFreeVars(new java.util.HashSet<String>());
+  return res;
+}
+
+nullProp:make() {
+  sequents.types.Prop res = realMake();
+  res.setFreeVars(new java.util.HashSet<String>());
+  return res;
+}
+

@@ -1,0 +1,61 @@
+module urban
+imports String int sequents
+
+abstract syntax
+
+
+NProp = nprop(x:Name,p:Prop)
+CNProp = cnprop(a:CoName,p:Prop)
+
+NContext = ncontext(NProp*)
+CNContext = cncontext(CNProp*)
+ncontext:make_insert(a,l) {
+  %match(NProp a, NContext l) {
+    nprop(x,p1),ncontext(_*,nprop(x,p2),_*) -> {
+      if (`p1 !=`p2) { throw new RuntimeException("illformed context"); }
+    }
+  }
+}
+
+cncontext:make_insert(a,l) {
+  %match(CNProp a, CNContext l) {
+    cnprop(x,p1),cncontext(_*,cnprop(x,p2),_*) -> {
+      if (`p1 !=`p2) { throw new RuntimeException("illformed context"); }
+    }
+  }
+}
+
+
+NSequent = nsequent(h:NContext,c:CNContext)
+
+
+// Proofterms
+Name = name(n:int)
+CoName = coname(n:int)
+
+ProofTerm = ax(x:Name,a:CoName)
+          | cut(a:CoName,m1:ProofTerm,x:Name,m2:ProofTerm)
+          | falseL(x:Name)
+          | trueR(a:CoName)
+          | andR(a:CoName,m1:ProofTerm,b:CoName,m2:ProofTerm, c:CoName)
+          | andL(x:Name,y:Name,m:ProofTerm, z:Name)
+          | orR(a:CoName,b:CoName,m:ProofTerm, c:CoName)
+          | orL(x:Name,m1:ProofTerm,y:Name,m2:ProofTerm, z:Name)
+          | implyR(x:Name,a:CoName,m1:ProofTerm, b:CoName)
+          | implyL(a:CoName,m1:ProofTerm,x:Name,m2:ProofTerm, y:Name)
+          | existsR(a:CoName,m:ProofTerm,t:Term,b:CoName)
+          | existsL(x:Name,varx:Term,m:ProofTerm,y:Name)
+          | forallR(a:CoName,varx:Term,m:ProofTerm,b:CoName)
+          | forallL(x:Name,m:ProofTerm,t:Term,y:Name)
+existsL:make(x,varx,m,y) {
+  %match(Term varx) {
+    !Var(varname) -> { throw new RuntimeException("Exists Left not on variable"); }
+  }
+}
+
+forallR:make(a,varx,m,b) {
+  %match(Term varx) {
+    !Var(varname) -> { throw new RuntimeException("Forall Right not on variable"); }
+  }
+}
+
