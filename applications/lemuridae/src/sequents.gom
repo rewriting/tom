@@ -4,17 +4,13 @@ imports String int
 abstract syntax
 
 Term = Var(name:String)
-     | funAppl(fun:Fun, p:TermList)
+     | funAppl(fun:String, p:TermList)
      | NewVar(name:String, base_name: String) // asks for a new var
      | FreshVar(name:String, base_name: String) // asks for a fresh var
 
-Fun  = fun(name:String)
-
 TermList = concTerm(Term*)
 
-Relation = relation(name:String)
-
-Prop = relationAppl(r:Relation, t:TermList)
+Prop = relationAppl(r:String, t:TermList)
      | and(p1:Prop, p2:Prop)
      | or(p1:Prop, p2:Prop)
      | implies(p1:Prop, p2:Prop)
@@ -100,4 +96,42 @@ ProofCommand = proofCommand(text:String)
              | proofquit()
              | abort()
              | proofendoffile()
+
+
+// hooks maintaining free vars
+
+/*
+
+sort Term:block() {
+  protected java.util.HashSet<String> freeVars = 
+    new java.util.HashSet();
+
+  public java.util.HashSet<String> getFreeVars() { return freeVars; }
+
+}
+
+Var:make(name) {
+  freeVars.add(`name);
+}
+
+funAppl:make(fun,args) {
+  %match(TermList args) {
+    (_*,x,_*) -> { freeVars.addAll(`x.getFreeVars()); }
+  }
+}
+
+FreshVar:make(name,bname) {
+  freeVars.add(`name);
+}
+
+NewVar:make(name,bname) {
+  freeVars.add(`name);
+}
+
+sort Prop:block() {
+  protected java.util.HashSet<String> freeVars = 
+    new java.util.HashSet();
+}
+
+*/
 

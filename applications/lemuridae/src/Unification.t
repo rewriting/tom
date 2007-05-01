@@ -61,14 +61,14 @@ class Unification {
       }
       forAll(var1,r1), forAll(var2,r2) -> {
         /* FIXME : not safe if we add _ in ids*/
-        Term new_var = `funAppl(fun("lemu_var_" + varcount),concTerm());
+        Term new_var = `funAppl(("lemu_var_" + varcount),concTerm());
         Prop new_r1 = (Prop) Utils.replaceFreeVars(`r1,`Var(var1),new_var);
         Prop new_r2 = (Prop) Utils.replaceFreeVars(`r2,`Var(var2),new_var);
         return match(new_r1, new_r2, tds, varcount+1);
       }
       exists(var1,r1), exists(var2,r2) -> {
         /* FIXME : not safe if we add _ in ids*/
-        Term new_var = `funAppl(fun("lemu_var_" + varcount),concTerm());
+        Term new_var = `funAppl(("lemu_var_" + varcount),concTerm());
         Prop new_r1 = (Prop) Utils.replaceFreeVars(`r1,`Var(var1),new_var);
         Prop new_r2 = (Prop) Utils.replaceFreeVars(`r2,`Var(var2),new_var);
         return match(new_r1, new_r2, tds, varcount+1);

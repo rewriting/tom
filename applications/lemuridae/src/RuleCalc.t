@@ -9,6 +9,7 @@ import tom.library.sl.*;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 
@@ -84,7 +85,7 @@ public class RuleCalc {
       HashSet<Term> freevars = Utils.collectFreeVars(problematicProp);
       TermList tl = `concTerm();
       for(Term var: freevars) {	tl = `concTerm(tl*,var); }
-      Prop newPred = `relationAppl(relation(name),tl);
+      Prop newPred = `relationAppl(name,tl);
       Prop cleanedProp = (Prop) lastPos.getReplace(newPred).fire(lastProp);
 
       // adding new prop to lastrule
@@ -137,10 +138,10 @@ public class RuleCalc {
     }
 
     private static SeqList collectPremises(Tree t) {
-      HashSet<Sequent> set = new HashSet<Sequent>();
-      `TopDown(CollectPremises(set)).fire(t);
+      LinkedList<Sequent> list = new LinkedList<Sequent>();
+      `TopDown(CollectPremises(list)).fire(t);
       SeqList result = `concSeq();
-      for(Sequent seq: set) {
+      for(Sequent seq: list) {
         result = `concSeq(result*,seq);
       }
       return result;

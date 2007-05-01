@@ -47,7 +47,7 @@ pred returns [Prop p]
       p = null;
       Term t1,t2;
     }
-      : i:ID { p = `relationAppl(relation(i.getText()), concTerm()); } 
+      : i:ID { p = `relationAppl(i.getText(), concTerm()); } 
       | BOTTOM { p = `bottom(); }
       | TOP { p = `top(); }
       | #(EQUIV a=pred b=pred )  { p = `and(implies(a,b),implies(b,a)); }
@@ -55,7 +55,7 @@ pred returns [Prop p]
       | #(OR a=pred b=pred ) { p = `or(a,b); }
       | #(AND a=pred b=pred ) {  p = `and(a,b); }
       | #(NOT a=pred ) {p = `implies(a,bottom());}
-      | #(LPAREN ap:ID l=term_list) { p = `relationAppl(relation(ap.getText()), l); }
+      | #(LPAREN ap:ID l=term_list) { p = `relationAppl(ap.getText(), l); }
       | #(FORALL x:ID a=pred) { p = `forAll(x.getText(),a); }
       | #(EXISTS y:ID a=pred) { p = `exists(y.getText(),a); }
       ;
@@ -82,11 +82,11 @@ term returns [Term t]
         try { t = PrettyPrinter.intToPeano(Integer.parseInt(i.getText())); }
         catch (NumberFormatException e) { e.printStackTrace(); } 
       }
-    | #(TIMES t1=term t2=term) { t = `funAppl(fun("mult"),concTerm(t1,t2)); }
-    | #(PLUS t1=term t2=term) { t = `funAppl(fun("plus"),concTerm(t1,t2)); }
-    | #(DIV t1=term t2=term) { t = `funAppl(fun("div"),concTerm(t1,t2)); }
-    | #(MINUS t1=term t2=term) { t = `funAppl(fun("minus"),concTerm(t1,t2)); }
-    | #(LPAREN f:ID l=term_list) { t = `funAppl(fun(f.getText()),l); }
+    | #(TIMES t1=term t2=term) { t = `funAppl("mult",concTerm(t1,t2)); }
+    | #(PLUS t1=term t2=term) { t = `funAppl("plus",concTerm(t1,t2)); }
+    | #(DIV t1=term t2=term) { t = `funAppl("div",concTerm(t1,t2)); }
+    | #(MINUS t1=term t2=term) { t = `funAppl("minus",concTerm(t1,t2)); }
+    | #(LPAREN f:ID l=term_list) { t = `funAppl(f.getText(),l); }
     ;
 
 
