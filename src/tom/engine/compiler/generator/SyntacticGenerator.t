@@ -43,27 +43,27 @@ import tom.engine.adt.theory.types.*;
 /**
  * Syntactic Generator
  */
-public class TomSyntacticGenerator implements TomIBaseGenerator{
+public class SyntacticGenerator implements IBaseGenerator {
 
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) {
-    return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);
+    return  (Expression)`TopDown(Generator()).fire(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy SyntacticGenerator() extends Identity() {
+  %strategy Generator() extends Identity() {
     visit Expression {
       // generate is_fsym(t,f)
       ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=nameList@(name)],SymbolOf(subject))) -> {
-        TomType termType = TomConstraintCompiler.getTermTypeFromName(`name);        
+        TomType termType = ConstraintCompiler.getTermTypeFromName(`name);        
         Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));
         return check;
       }
       // generate equality
       ConstraintToExpression(MatchConstraint(t@Subterm[],u)) -> {
-        return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);
+        return `EqualTerm(ConstraintCompiler.getTermTypeFromTerm(t),t,u);
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
@@ -73,8 +73,8 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
   } // end strategy	
   
   private static Expression buildEqualFunctionSymbol(TomType type, TomTerm subject,  TomName name, Theory theory) {    
-    TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(name.getString());
-    if(TomConstraintCompiler.getSymbolTable().isBuiltinType(TomBase.getTomType(`type))) {
+    TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(name.getString());
+    if(ConstraintCompiler.getSymbolTable().isBuiltinType(TomBase.getTomType(`type))) {
       if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
         return `IsFsym(name,subject);
       } else {

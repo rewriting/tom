@@ -41,19 +41,19 @@ import tom.engine.TomBase;
 
 import tom.engine.compiler.*;
 /**
- * Variadic Generator
+ * Array Generator
  */
-public class TomArrayGenerator implements TomIBaseGenerator{
+public class ArrayGenerator implements IBaseGenerator{
 
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 
-  public Expression generate(Expression expression){		
-    return (Expression)`InnermostId(ArrayGenerator()).fire(expression);		
+  public Expression generate(Expression expression) {
+    return (Expression)`InnermostId(Generator()).fire(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy ArrayGenerator() extends Identity() {
+  %strategy Generator() extends Identity() {
     visit Expression{
       // generate pre-loop for X* = or _* = 
       /*
@@ -82,6 +82,6 @@ public class TomArrayGenerator implements TomIBaseGenerator{
       }
     } // end visit
 
-// [pem] GetElement should be modified to handle AU theory, like in TomVariadicGenerator
+// [pem] GetElement should be modified to handle AU theory, like in VariadicGenerator
   } // end strategy	
 }

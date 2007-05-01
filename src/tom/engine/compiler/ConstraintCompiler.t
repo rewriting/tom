@@ -67,7 +67,7 @@ public class ConstraintCompiler {
   private static final String freshEndPrefix = "_end_";
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
-    TomConstraintCompiler.symbolTable = symbolTable;
+    ConstraintCompiler.symbolTable = symbolTable;
     return  (TomTerm)`InnermostId(CompileMatch()).fire(termToCompile);		
   }
 
@@ -91,11 +91,11 @@ public class ConstraintCompiler {
         // build a matching automata
         %match(patternInstructionList) {
           concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) -> {
-            Constraint constraint = TomConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);            
+            Constraint constraint = ConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);            
             try {
               actionNumber++;              
-              Constraint propagationResult = TomPropagationManager.performPropagations(constraint);              
-              Instruction matchingAutomata = TomGenerationManager.performGenerations(propagationResult, `action);
+              Constraint propagationResult = ConstraintPropagator.performPropagations(constraint);              
+              Instruction matchingAutomata = ConstraintGenerator.performGenerations(propagationResult, `action);
               
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
@@ -108,7 +108,7 @@ public class ConstraintCompiler {
         /*
          * return the compiled Match construction
          */
-        InstructionList astAutomataList = TomConstraintCompiler.automataListCompileMatchingList(automataList);
+        InstructionList astAutomataList = ConstraintCompiler.automataListCompileMatchingList(automataList);
         return `CompiledMatch(collectVariableFromSubjectList(subjectList,renamedSubjects,AbstractBlock(astAutomataList)), matchOptionList);
       }
     }// end visit
@@ -268,6 +268,6 @@ public class ConstraintCompiler {
   }
 
   public static TomTerm getEndVariableStar(TomType type) {
-    return TomConstraintCompiler.getFreshVariableStar(freshEndPrefix + (freshVarCounter++),type);
+    return ConstraintCompiler.getFreshVariableStar(freshEndPrefix + (freshVarCounter++),type);
   }
 }

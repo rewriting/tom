@@ -43,17 +43,17 @@ import tom.engine.compiler.*;
 /**
  * Variadic Generator
  */
-public class TomVariadicGenerator implements TomIBaseGenerator {
+public class VariadicGenerator implements IBaseGenerator {
 
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) {
-    return (Expression)`TopDown(VariadicGenerator()).fire(expression);		
+    return (Expression)`TopDown(Generator()).fire(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
-  %strategy VariadicGenerator() extends Identity() {
+  %strategy Generator() extends Identity() {
     visit Expression {
       // generate pre-loop for X* = or _* = 
       /*
@@ -67,7 +67,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator {
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
-        Expression testEmpty = TomGenerationManager.genIsEmptyList(`opName,`end);
+        Expression testEmpty = ConstraintGenerator.genIsEmptyList(`opName,`end);
         Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
         // if we have a varStar, we generate its declaration also
         if (`v.isVariableStar()) {
@@ -108,7 +108,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator {
    *   this occurs because the last element of a loop may not be a list
    */ 
   private static Expression genGetHead(TomName opName, TomType type, TomTerm var) {
-    TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
@@ -125,7 +125,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator {
    *   this occurs because the last element of a loop may not be a list
    */ 
   private static Expression genGetTail(TomName opName, TomTerm var) {
-    TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {

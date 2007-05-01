@@ -58,7 +58,7 @@ import aterm.ATerm;
 import tom.library.sl.*;
 
 /**
- * The TomExpander plugin.
+ * The Expander plugin.
  * Perform syntax expansion and more.
  */
 public class Expander extends TomGenericPlugin {
@@ -66,9 +66,9 @@ public class Expander extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
-  %typeterm TomExpander {
-    implement { TomExpander }
-    is_sort(t) { t instanceof TomExpander }
+  %typeterm Expander {
+    implement { Expander }
+    is_sort(t) { t instanceof Expander }
   }
   
   %op Strategy ChoiceTopDown(s1:Strategy) {
@@ -86,13 +86,13 @@ public class Expander extends TomGenericPlugin {
     "</options>";
 
   /** the kernel expander acting at very low level */
-  private TomKernelExpander tomKernelExpander;
+  private KernelExpander tomKernelExpander;
   /** the tomfactory for creating intermediate terms */
 
   /** Constructor*/
-  public TomExpander() {
-    super("TomExpander");
-    tomKernelExpander = new TomKernelExpander();
+  public Expander() {
+    super("Expander");
+    tomKernelExpander = new KernelExpander();
   }
 
   /**
@@ -204,7 +204,7 @@ public class Expander extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomExpander.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(Expander.DECLARED_OPTIONS);
   }
 
   private TomTerm expandVariable(TomType contextType, TomTerm subject) {
@@ -219,7 +219,7 @@ public class Expander extends TomGenericPlugin {
    * - each BackQuoteTerm by its compiled form
    */
 
-  %strategy expandTermApplTomSyntax(expander:TomExpander) extends `Identity(){
+  %strategy expandTermApplTomSyntax(expander:Expander) extends `Identity(){
     visit TomTerm {
       backQuoteTerm@BackQuoteAppl[] -> {
         TomTerm t = (TomTerm) (`ChoiceTopDown(expandBackQuoteAppl(expander))).visit(`backQuoteTerm);
@@ -242,7 +242,7 @@ public class Expander extends TomGenericPlugin {
    * this post-processing phase replaces untyped (universalType) codomain
    * by their precise type (according to the symbolTable)
    */
-  %strategy updateCodomain(expander:TomExpander) extends `Identity() {
+  %strategy updateCodomain(expander:Expander) extends `Identity() {
     visit Declaration {
       decl@GetHeadDecl[Opname=Name(opName)] -> {
         TomSymbol tomSymbol = expander.getSymbolFromName(`opName);
@@ -276,7 +276,7 @@ public class Expander extends TomGenericPlugin {
   /*
    * replace 'abc' by conc('a','b','c')
    */
-  %strategy expandString(expander:TomExpander) extends `Identity() {
+  %strategy expandString(expander:Expander) extends `Identity() {
         visit TomTerm {
           appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
             TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
@@ -402,7 +402,7 @@ public class Expander extends TomGenericPlugin {
     return `RecordAppl(option,nameList,slotList,constraints);
   }
 
-  %strategy expandBackQuoteAppl(expander:TomExpander) extends `Identity() {
+  %strategy expandBackQuoteAppl(expander:Expander) extends `Identity() {
         visit TomTerm {
           BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
             TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);

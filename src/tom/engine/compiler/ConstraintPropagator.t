@@ -50,7 +50,7 @@ public class ConstraintPropagator {
 
   private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 
-  private static final String[] propagatorsNames = {"TomSyntacticPropagator","TomVariadicPropagator","TomArrayPropagator"};
+  private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator"};
 
   public static Constraint performPropagations(Constraint constraintToCompile) 
     throws ClassNotFoundException,InstantiationException,IllegalAccessException{
@@ -62,9 +62,9 @@ public class ConstraintPropagator {
     // some preparations
     constraintToCompile = preparePropagations(constraintToCompile);
     // cache the propagators
-    TomIBasePropagator[] prop = new TomIBasePropagator[propNb];
+    IBasePropagator[] prop = new IBasePropagator[propNb];
     for(int i=0 ; i < propNb ; i++) {
-      prop[i] = (TomIBasePropagator)Class.forName(propagatorsPackage + propagatorsNames[i]).newInstance();
+      prop[i] = (IBasePropagator)Class.forName(propagatorsPackage + propagatorsNames[i]).newInstance();
     }
     
     Constraint result= null;
@@ -113,16 +113,16 @@ public class ConstraintPropagator {
     // if the constraints  = empty list, then is nothing to do
     visit TomTerm {
       t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] -> {
-        TomType freshVarType = TomConstraintCompiler.getTermTypeFromTerm(`t);
+        TomType freshVarType = ConstraintCompiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = null;
         // make sure that if we had a varStar, we replace with a varStar also
 match : %match(t) {
           (VariableStar|UnamedVariableStar)[] -> {
-            freshVariable = TomConstraintCompiler.getFreshVariableStar(freshVarType);
+            freshVariable = ConstraintCompiler.getFreshVariableStar(freshVarType);
             break match;
           }
           _ -> {
-            freshVariable = TomConstraintCompiler.getFreshVariable(freshVarType);
+            freshVariable = ConstraintCompiler.getFreshVariable(freshVarType);
           }
         }// end match
         //make sure to apply on its subterms also

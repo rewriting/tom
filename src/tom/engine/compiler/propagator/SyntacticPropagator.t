@@ -39,7 +39,7 @@ import java.util.*;
 /**
  * Syntactic propagator
  */
-public class TomSyntacticPropagator implements TomIBasePropagator {
+public class SyntacticPropagator implements IBasePropagator {
 
 //--------------------------------------------------------
   %include { ../../adt/tomsignature/TomSignature.tom }
@@ -69,14 +69,14 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
       m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
-            TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
+            ConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
         
         Constraint lastPart = `AndConstraint();
         ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
         // we build the last part only once, and we store the fresh variables we generate
         %match(slots) {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
-            TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getSlotType(`firstName,`slotName));
+            TomTerm freshVar = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getSlotType(`firstName,`slotName));
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part
@@ -125,7 +125,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator {
        * a@..b@!p << t -> z << t /\ a << z /\ ... /\ b << z /\ !(p << z) 
        */
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[Constraints=constraints]),s) -> {
-        TomTerm freshVar = TomConstraintCompiler.getFreshVariable(TomConstraintCompiler.getTermTypeFromTerm(`term));
+        TomTerm freshVar = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getTermTypeFromTerm(`term));
         Constraint assigns = `AndConstraint(AntiMatchConstraint(MatchConstraint(term,freshVar)));
         // for each constraint
         %match(constraints) {

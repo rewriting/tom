@@ -57,9 +57,9 @@ public class KernelExpander {
 
   %include { ../../library/mapping/java/sl.tom}
 
-  %typeterm TomKernelExpander {
-    implement { TomKernelExpander }
-    is_sort(t) { t instanceof TomKernelExpander }
+  %typeterm KernelExpander {
+    implement { KernelExpander }
+    is_sort(t) { t instanceof KernelExpander }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
@@ -68,7 +68,7 @@ public class KernelExpander {
 
   private SymbolTable symbolTable;
 
-  public TomKernelExpander() {
+  public KernelExpander() {
     super();
   }
 
@@ -101,7 +101,7 @@ public class KernelExpander {
    * Variable and TermAppl are expanded in the TomTerm case
    */
 
-  %strategy replace_expandVariable(contextType:TomType,expander:TomKernelExpander) extends `Identity() {
+  %strategy replace_expandVariable(contextType:TomType,expander:KernelExpander) extends `Identity() {
 
     visit Option {
       subject@OriginTracking[] -> { return `subject; }

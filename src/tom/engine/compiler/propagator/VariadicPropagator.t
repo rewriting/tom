@@ -39,7 +39,7 @@ import tom.engine.TomBase;
 /**
  * Syntactic propagator
  */
-public class TomVariadicPropagator implements TomIBasePropagator {
+public class VariadicPropagator implements IBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
@@ -62,11 +62,11 @@ public class TomVariadicPropagator implements TomIBasePropagator {
       // /\ begin2 = fresh_var3  /\ end2 = fresh_var3 /\ Y* = VariableHeadList(begin2,end2) /\ fresh_var4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {        
         // if this is not a list, nothing to do
-        if(!TomBase.isListOperator(TomConstraintCompiler.getSymbolTable().
+        if(!TomBase.isListOperator(ConstraintCompiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
         // declare fresh variable
-        TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
-        TomTerm freshVariable = TomConstraintCompiler.getFreshVariableStar(listType);				
+        TomType listType = ConstraintCompiler.getTermTypeFromTerm(`t);
+        TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint l = `AndConstraint();        
 mSlots:  %match(slots) {
@@ -74,7 +74,7 @@ mSlots:  %match(slots) {
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-            TomTerm newFreshVarList = TomConstraintCompiler.getFreshVariableStar(listType);            
+            TomTerm newFreshVarList = ConstraintCompiler.getFreshVariableStar(listType);            
 // [pem] I would have extracted the X.length==0 outside the mAppl match
 // [pem] if(X.lenght==0) { if(appl.isVariableStar) ... else ... }
 // [radu] it would duplicate  all the assignments for the last part           
@@ -103,8 +103,8 @@ mSlots:  %match(slots) {
                     l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
                   }
                 } else {
-                  TomTerm beginSublist = TomConstraintCompiler.getBeginVariableStar(listType);
-                  TomTerm endSublist = TomConstraintCompiler.getEndVariableStar(listType);              
+                  TomTerm beginSublist = ConstraintCompiler.getBeginVariableStar(listType);
+                  TomTerm endSublist = ConstraintCompiler.getEndVariableStar(listType);              
                   l = `AndConstraint(l*,
                       MatchConstraint(beginSublist,freshVariable),
                       MatchConstraint(endSublist,freshVariable),             
@@ -116,7 +116,7 @@ mSlots:  %match(slots) {
               _ -> {
                 l = `AndConstraint(l*,                      
                     Negate(EmptyListConstraint(name,freshVariable)),
-                    MatchConstraint(appl,ListHead(name,TomConstraintCompiler.getTermTypeFromTerm(appl),freshVariable)),
+                    MatchConstraint(appl,ListHead(name,ConstraintCompiler.getTermTypeFromTerm(appl),freshVariable)),
                     MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if (`X.length() == 0) {                  
@@ -138,7 +138,7 @@ mSlots:  %match(slots) {
        */
       andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
-        TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
+        TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
         Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).fire(toApplyOn);
         if(res != toApplyOn) {
           return `AndConstraint(X*,eq,res);

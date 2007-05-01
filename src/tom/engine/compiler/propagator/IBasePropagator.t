@@ -30,6 +30,6 @@ import tom.engine.adt.tomconstraint.types.*;
 /**
  * Base interface for propagators
  */
-public interface TomIBasePropagator {
+public interface IBasePropagator {
   public Constraint propagate(Constraint constraint);
 }

@@ -39,7 +39,7 @@ import tom.engine.TomBase;
 /**
  * Syntactic propagator
  */
-public class TomArrayPropagator implements TomIBasePropagator {
+public class ArrayPropagator implements IBasePropagator {
 
 //--------------------------------------------------------	
   %include { ../../adt/tomsignature/TomSignature.tom }	
@@ -60,9 +60,9 @@ public class TomArrayPropagator implements TomIBasePropagator {
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
-            if(!TomBase.isArrayOperator(TomConstraintCompiler.getSymbolTable().
+            if(!TomBase.isArrayOperator(ConstraintCompiler.getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        
-            TomType termType = TomConstraintCompiler.getTermTypeFromTerm(`t);
+            TomType termType = ConstraintCompiler.getTermTypeFromTerm(`t);
             // declare fresh index = 0            
             TomTerm freshIndex = getFreshIndex();				
             Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
@@ -119,7 +119,7 @@ public class TomArrayPropagator implements TomIBasePropagator {
           // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
           andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
             Constraint toApplyOn = `AndConstraint(Y*);            
-            TomTerm freshVar = TomConstraintCompiler.getFreshVariableStar(`type);
+            TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
             Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).fire(toApplyOn);
             if(res != toApplyOn) {
               return `AndConstraint(X*,eq,res);
@@ -139,14 +139,14 @@ public class TomArrayPropagator implements TomIBasePropagator {
   }
 
   private static TomTerm getBeginIndex() {
-    return TomConstraintCompiler.getBeginVariableStar(TomConstraintCompiler.getIntType());
+    return ConstraintCompiler.getBeginVariableStar(ConstraintCompiler.getIntType());
   }
 
   private static TomTerm getEndIndex() {
-    return TomConstraintCompiler.getEndVariableStar(TomConstraintCompiler.getIntType());
+    return ConstraintCompiler.getEndVariableStar(ConstraintCompiler.getIntType());
   }
 
   private static TomTerm getFreshIndex() {
-    return TomConstraintCompiler.getFreshVariableStar(TomConstraintCompiler.getIntType());    
+    return ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getIntType());    
   }
 }

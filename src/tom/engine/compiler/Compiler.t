@@ -54,7 +54,7 @@ import tom.library.sl.*;
 import jjtraveler.VisitFailure;
 
 /**
- * The TomCompiler plugin.
+ * The Compiler plugin.
  */
 public class Compiler extends TomGenericPlugin {
 
@@ -69,9 +69,9 @@ public class Compiler extends TomGenericPlugin {
     is_sort(t) { t instanceof java.util.Set }
   }
 
-  %typeterm TomCompiler {
-    implement { TomCompiler }
-    is_sort(t) { t instanceof TomCompiler }
+  %typeterm Compiler {
+    implement { Compiler }
+    is_sort(t) { t instanceof Compiler }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
@@ -88,12 +88,12 @@ public class Compiler extends TomGenericPlugin {
   private static int absVarNumber;
 
   /** Constructor*/
-  public TomCompiler() {
-    super("TomCompiler");
+  public Compiler() {
+    super("Compiler");
   }
 
   public void run() {
-    //TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
+    //KernelCompiler tomKernelCompiler = new KernelCompiler(getStreamManager().getSymbolTable());
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
@@ -102,7 +102,7 @@ public class Compiler extends TomGenericPlugin {
       TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visit((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       //TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
-      TomTerm compiledTerm = TomConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
+      TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
       Set hashSet = new HashSet();
       TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visit(compiledTerm);
       //TomTerm renamedTerm = compiledTerm;
@@ -115,13 +115,13 @@ public class Compiler extends TomGenericPlugin {
       }
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-          new Object[]{getStreamManager().getInputFileName(), "TomCompiler", e.getMessage()} );
+          new Object[]{getStreamManager().getInputFileName(), "Compiler", e.getMessage()} );
       e.printStackTrace();
     }
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(TomCompiler.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
   }
 
   /*
@@ -131,11 +131,11 @@ public class Compiler extends TomGenericPlugin {
    * abstract list-matching patterns
    */
 
-  %op Strategy preProcessing(compiler:TomCompiler){
+  %op Strategy preProcessing(compiler:Compiler){
     make(compiler) { `ChoiceTopDown(preProcessing_once(compiler)) }
   }
 
-  %strategy preProcessing_once(compiler:TomCompiler) extends `Identity(){
+  %strategy preProcessing_once(compiler:Compiler) extends `Identity(){
     visit TomTerm {
       BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
         return `var;
@@ -273,11 +273,11 @@ matchBlock: {
     }//end match
   } // end strategy
 
-  %op Strategy preProcessing_makeTerm(compiler:TomCompiler){
+  %op Strategy preProcessing_makeTerm(compiler:Compiler){
      make(compiler) { `ChoiceTopDown(preProcessing_makeTerm_once(compiler)) }
   }
 
-  %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Identity()  {
+  %strategy preProcessing_makeTerm_once(compiler:Compiler) extends `Identity()  {
     visit TomTerm {
       t -> {return (TomTerm) `preProcessing(compiler).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
     }
@@ -299,7 +299,7 @@ matchBlock: {
               appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
                 /*
                  * we no longer abstract syntactic subterm
-                 * they are compiled by the TomKernelCompiler
+                 * they are compiled by the KernelCompiler
                  */
 
                 //System.out.println("Abstract: " + appl);
