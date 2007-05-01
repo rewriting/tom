@@ -209,6 +209,14 @@ public final class Environment implements Cloneable {
   }
 
   /**
+   * package private
+   * remove the last sub-position but does not update the subject
+   */
+  void upLocal() {
+    current--;
+  }
+
+  /**
    * add a sub-position n
    *
    * @param n sub-position number. 1 is the first possible sub-position

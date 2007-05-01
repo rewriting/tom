@@ -75,18 +75,19 @@ public class One extends AbstractStrategy {
    */
   public void visit() {
     int childCount = environment.getSubject().getChildCount();
-    Visitable originalsubject = environment.getSubject();
+    //Visitable originalsubject = environment.getSubject();
 
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
       (visitors[ARG]).visit();
-      environment.up();
-      if (environment.getStatus() == Environment.SUCCESS) {
+      if(environment.getStatus() == Environment.SUCCESS) {
+        environment.up();
         return;
       } else {
+        environment.upLocal();
         /* Forget about the failure, to try another subterm */
         environment.setStatus(Environment.SUCCESS);
-        environment.setSubject(originalsubject);
+        //environment.setSubject(originalsubject);
       }
     }
     /* If we reach this point, there is a real failure */
