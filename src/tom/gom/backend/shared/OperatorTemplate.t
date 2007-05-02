@@ -86,7 +86,7 @@ writer.write(%[
 } else { 
 writer.write(%[
   private static int hashCode = hashFunction();
-  private static @className()@ proto = (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(new @className()@());
+  private static @className()@ proto = (@className()@) factory.build(new @className()@());
 ]%);
 }
 generateMembers(writer);
@@ -747,7 +747,7 @@ writer.write(%[
         writer.write(%[
     public static @className()@ make(@childListWithType(slotList)@) {
       proto.initHashCode(@childList(slotList)@);
-      return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+      return (@className()@) factory.build(proto);
     }
   ]%);
         } else {
@@ -765,7 +765,7 @@ writer.write(%[
         writer.write(%[
     private static @className()@ realMake(@childListWithType(slotList)@) {
       proto.initHashCode(@childList(slotList)@);
-      return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+      return (@className()@) factory.build(proto);
     }
   ]%);
       } else {
