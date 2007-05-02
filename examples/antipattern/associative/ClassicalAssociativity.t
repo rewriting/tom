@@ -26,311 +26,302 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package antipattern;
+package antipattern.associative;
 
 import aterm.*;
 import aterm.pure.*;
+import antipattern.*;
 
 import java.util.*;
 
-import antipattern.term.*;
-import antipattern.term.types.*;
+import antipattern.termaso.*;
+import antipattern.termaso.types.*;
 
 import jjtraveler.VisitFailure;
 
-// simple algorithm implementing the associative matching
-public class ClassicalAssociativity implements Matching {
-	
-	%include{ term/Term.tom }	
-        %include{ sl.tom }
-	%include{ java/util/types/Collection.tom}
-	
-	private static int globalCounter = 0; 
-	
-	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-		return (Constraint)`InnermostId(PerformAssociativeMatching()).fire(c);
-	}
-	
-	%strategy PerformAssociativeMatching() extends Identity(){
-		
-		visit Constraint{		
-			//	EqTransform		
-			Match(p,s) -> {
-				return `Equal(p,s);
-			}
-			
-	        // Decompose 1 & 2
-	        eq@Equal(f@Appl(name,a1),g@Appl(name,a2)) -> {
-	        	
-	        	if (`name.startsWith("e_")) {	        	
-	        		return `eq; // do nothing
-	        	}
-	        	
-	    		AConstraintList l = `concAnd();
-	            TermList args1 = `a1;
-	            TermList args2 = `a2;
-	            while(!args1.isEmptyconcTerm()) {
-	              l = `concAnd(Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
-	              args1 = args1.getTailconcTerm();
-	              args2 = args2.getTailconcTerm();
-	            }
-	            
-	            l = l.reverse();            
-	        	// if we do not have an associative symbol                
-	            if ( !isAssociative(`f) ){
-	            	return `And(l);
-	            }
-	            /////// Decompose 2 ////////////////////////////
-	            // reinitialize
-	            args1 = `a1;
-	            args2 = `a2;
-	            
-	            Term p_1 = args1.getHeadconcTerm(); // first elem
-	            Term p_2 = args1.getTailconcTerm().getHeadconcTerm(); // second elem
-	            
-	            Term t_1 = args2.getHeadconcTerm(); // first elem
-	            Term t_2 = args2.getTailconcTerm().getHeadconcTerm(); // second elem
-	            
-	            Term x_1 = `Variable("x" + ++globalCounter + "_a");
-	            Term x_2 = `Variable("x" + ++globalCounter + "_a");
-	            	            
-	            Constraint secondTerm = `Exists(x_1,Exists(x_2,
-	            							And( concAnd(
-		            							Equal(p_1,x_1), 
-		            							Equal(p_2,Appl(name,concTerm(x_2,t_2))),
-		            							Equal(Appl(name,concTerm(x_1,x_2)),t_1)
-	            								))
-	            							));
-	            Constraint thirdTerm = `Exists(x_1,Exists(x_2,
-											And( concAnd(
-												Equal(p_1,Appl(name,concTerm(t_1,x_1))), 
-												Equal(p_2,x_2),
-												Equal(Appl(name,concTerm(x_1,x_2)),t_2)
-												))
-											));
-	            
-	            return `Or(concOr(And(l),secondTerm,thirdTerm));
-	        }
-	        
-	        // Decompose 3
-	        eq@Equal(f@Appl(name1,a1),g@Appl(name2,a2)) -> {
-	        	
-	        	if (`name1.startsWith("e_")) {	        	
-	        		return `eq; // do nothing
-	        	}
-	        	
-	        	if (`name1 != `name2 && isAssociative(`f)){	        		
-	        		Term p_1 = `a1.getHeadconcTerm(); // first elem
-	                Term p_2 = `a1.getTailconcTerm().getHeadconcTerm(); // second elem
-	                
-	                Constraint firstTerm =  `And(concAnd(
-	                							Equal(p_1,getNeutralElem(f)),
-	                							Equal(p_2,g)
-	                							));
-	                Constraint secondTerm =  `And(concAnd(
-												Equal(p_1,g),
-												Equal(p_2,getNeutralElem(f))
-												));
-	                
-	                return `Or(concOr(firstTerm,secondTerm));
-	        	}
-	        }
-	      
-	        // SymbolClash 1
-	        Equal(f@Appl(name1,args1),Appl(name2,args2)) -> {
-	          if(`name1 != `name2 && !isAssociative(`f)) {
-	            return `False();
-	          }
-	        }
-	        
-//	        // SymbolClash 2
-//	        Equal(v@Variable(_),f@Appl[]) -> {
-//	          if(!isAssociative(`v) && isAssociative(`f)) {
-//	            return `False();
-//	          }
-//	        }
-	        
-	        // ConstrainedVar 1,2
-	        Equal(ConsVariable(v@var,parentName),f@Appl[]) -> {
-	        	
-	        	int sizeF = getSize(`parentName,`f);	     
-	        	
-	        	if ( sizeF == 1){	        		
-	        		return `Equal(v,f);	        	  
-	        	}else if(sizeF != -1){
-	        		return `False();
-	        	}
-	        }        
-	        
-	        //	Delete
-	        Equal(t1@Appl(name,_),t2@Appl(name,_)) -> {
-	        	if (`t1 == `t2) {  
-	        		return `True();        	
-	        	}
-	        }
-	       
-	        // PropagateClash 1
-	        And(concAnd(_*,False(),_*)) -> {
-	          return `False();
-	        }
-	        
-	        // PropagateClash 2
-	        Or(concOr(X*,False(),Y*)) -> {
-	          return `Or(concOr(X*,Y*));
-	        }        
-	        
-	        // PropagateSuccess
-	        And(concAnd(X*,True(),Y*)) -> {
-	          return `And(concAnd(X*,Y*));
-	        }
-	        
-	        // Distribution of And and Or
-	        And(concAnd(X*,Or(concOr(Z*)),Y*)) ->{
-	        	OConstraintList result = `concOr();
-	        	OConstraintList cOr = `Z*;
-	        	while(!cOr.isEmptyconcOr()){
-	        		result = `concOr(result*,And(concAnd(X*,cOr.getHeadconcOr(),Y*)));
-	        		cOr = cOr.getTailconcOr();
-	        	}
-	        	
-	        	return `Or(result);
-	        }
-	        
-	        //Exists
-	        Exists(var,x) ->{
-	        	// if the variable does not exists - remove the Exists 
-	        	// if the variable exists only in one eq, just replace with true the eq
-	        	if (nbOccurences(`var,`x) <= 1){
-	        		return (Constraint)`TopDown(ReplaceEquality(var)).fire(`x);
-	        	}
-	        }
-	        
-	        //Exists
-	        Exists(v@Variable(var),Or(list)) ->{
-				
-				OConstraintList l = `list;
-				OConstraintList result = `concOr();
-				
-				while(!l.isEmptyconcOr()){
-					result = `concOr(Exists(v,l.getHeadconcOr()),result*);
-					l = l.getTailconcOr();
-				}
-				
-				return `Or(result);
-			}
+//simple algorithm implementing the associative matching
+public class ClassicalAssociativity {
 
-	        
-	        // Replace
-			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {				
-				Constraint toApplyOn = `And(concAnd(X*,Y*));				
-				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).fire(toApplyOn);
-				if (res != toApplyOn){					
-					return `And(concAnd(equal,res));
-				}
-	        }
-			
-			// cleaning
-			Or(concOr(X*,x,Y*,x,Z*))->{
-				return `Or(concOr(X*,x,Y*,Z*));
-			}
-	        
-		} // end visit    
-	}
-	
-	private int counter = 0;	
-	private int nbOccurences(Term t, Constraint toSearchIn){
-		counter = 0;
-		`TopDown(CheckOccurence(t)).fire(toSearchIn);
-		return counter;
-	}	
-	
-	%strategy CheckOccurence(t:Term) extends `Identity(){
-		visit Term {
-			x -> {
-				if (t == `x){
-					counter++;
-				}
-			}
-		}
-	}
-	
-	private int getSize(String parentName, Term t){
-		try{
-			return size(parentName,t);
-		}catch(Exception e){
-			return -1;
-		}
-	}
-	
-	private int size(String parentName, Term t){		
-		%match(t){
-			Appl(name,childs) ->{
-				//System.out.println("name=" + `name);
-				//System.out.println("parentName=" + parentName);
-				if (`name.startsWith("e_")) { return 0; }
-				if (!`name.endsWith("_a") || `name != parentName) { return 1; }
-				if (`name.endsWith("_a")){
-					int finalRes = 0;
-					%match(childs){
-						concTerm(_*,x,_*) ->{
-							//System.out.println("computing for:" +`x);
-							finalRes += size(parentName,`x);
-						}
-					}
-					return finalRes;
-				}
-			}
-		}// end match
-		
-		throw new RuntimeException("Cannot compute the size of t=" + t);
-	}
-	
-	
-	private boolean isAssociative(Term t){
-		%match(t){
-			Appl(name,_) -> {
-				if (`name.endsWith("_a") /*|| `name.startsWith("e_")*/) {
-					return true;
-				}else{
-					return false;
-				}
-			}
-			
-//			Variable(name) -> {				
-//				if (`name.endsWith("_a")) {
-//					return true;
-//				}else{
-//					return false;
-//				}
-//			}
-		}
-		
-		return false;
-	}
-	
-	private Term getNeutralElem(Term t){
-		%match(t){
-			Appl(name,_) -> {
-				return `Appl("e_" + ((String)name).substring(0,name.indexOf("_")),concTerm());
-			}
-		}		
-		throw new RuntimeException("Cannot compute neutral elem for:" + t);
-	}
-	
-	%strategy ReplaceStrat(var:Term, value:Term) extends `Identity(){
-		visit Term {
-			x -> {
-				if (`x == var) { return value; }  
-			}
-		}
-	}
-	
-	%strategy ReplaceEquality(var:Term) extends `Identity(){
-		visit Constraint {
-			Equal(x,_) -> {
-				if (`x == var) { return `True(); }  
-			}
-		}
-	}
-	
+  %include{ ../termaso/TermAso.tom }	
+  %include{ sl.tom }
+  %include{ java/util/types/Collection.tom}
+
+  private static int globalCounter = 0; 
+
+  public Constraint simplifyAndSolve(Constraint c, Collection solution) {
+    return (Constraint)`InnermostId(PerformAssociativeMatching()).fire(c);
+  }
+
+  %strategy PerformAssociativeMatching() extends Identity(){
+
+    visit Constraint{		
+      // EqTransform
+      Match(p,s) -> {
+        return `Equal(p,s);
+      }
+
+      // Decompose 1 & 2
+      eq@Equal(f@Appl(name,a1),g@Appl(name,a2)) -> {
+
+        if (`name.startsWith("e_")) {	        	
+          return `eq; // do nothing
+        }
+
+        Constraint l = `And();
+        TermList args1 = `a1;
+        TermList args2 = `a2;
+        while(!args1.isEmptyconcTerm()) {
+          l = `And(Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+          args1 = args1.getTailconcTerm();
+          args2 = args2.getTailconcTerm();
+        }
+
+        l = l.reverse();            
+        // if we do not have an associative symbol
+        if ( !isAssociative(`f) ){
+          return `And(l);
+        }
+        // ///// Decompose 2 ////////////////////////////
+        // reinitialize
+        args1 = `a1;
+        args2 = `a2;
+
+        Term p_1 = args1.getHeadconcTerm(); // first elem
+        Term p_2 = args1.getTailconcTerm().getHeadconcTerm(); // second
+        // elem
+
+        Term t_1 = args2.getHeadconcTerm(); // first elem
+        Term t_2 = args2.getTailconcTerm().getHeadconcTerm(); // second
+        // elem
+
+        Term x_1 = `Variable("x" + ++globalCounter + "_a");
+        Term x_2 = `Variable("x" + ++globalCounter + "_a");
+
+        Constraint secondTerm = `Exists(x_1,Exists(x_2,
+            And( Equal(p_1,x_1), 
+                Equal(p_2,Appl(name,concTerm(x_2,t_2))),
+                Equal(Appl(name,concTerm(x_1,x_2)),t_1)
+            )
+        ));
+        Constraint thirdTerm = `Exists(x_1,Exists(x_2,
+            And( Equal(p_1,Appl(name,concTerm(t_1,x_1))), 
+                Equal(p_2,x_2),
+                Equal(Appl(name,concTerm(x_1,x_2)),t_2)
+            )
+        ));
+
+        return `Or(And(l),secondTerm,thirdTerm);
+      }
+
+      // Decompose 3
+      eq@Equal(f@Appl(name1,a1),g@Appl(name2,a2)) -> {
+
+        if (`name1.startsWith("e_")) {	        	
+          return `eq; // do nothing
+        }
+
+        if (`name1 != `name2 && isAssociative(`f)){	        		
+          Term p_1 = `a1.getHeadconcTerm(); // first elem
+          Term p_2 = `a1.getTailconcTerm().getHeadconcTerm(); // second
+          // elem
+
+          Constraint firstTerm =  `And(
+              Equal(p_1,getNeutralElem(f)),
+              Equal(p_2,g)
+          );
+          Constraint secondTerm =  `And(
+              Equal(p_1,g),
+              Equal(p_2,getNeutralElem(f))
+          );
+
+          return `Or(firstTerm,secondTerm);
+        }
+      }
+
+      // SymbolClash 1
+      Equal(f@Appl(name1,args1),Appl(name2,args2)) -> {
+        if(`name1 != `name2 && !isAssociative(`f)) {
+          return `False();
+        }
+      }
+
+//    // SymbolClash 2
+//    Equal(v@Variable(_),f@Appl[]) -> {
+//    if(!isAssociative(`v) && isAssociative(`f)) {
+//    return `False();
+//    }
+//    }
+
+      // ConstrainedVar 1,2
+      Equal(ConsVariable(v@var,parentName),f@Appl[]) -> {
+
+        int sizeF = getSize(`parentName,`f);	     
+
+        if ( sizeF == 1){	        		
+          return `Equal(v,f);	        	  
+        }else if(sizeF != -1){
+          return `False();
+        }
+      }        
+
+      // Delete
+      Equal(t1@Appl(name,_),t2@Appl(name,_)) -> {
+        if (`t1 == `t2) {  
+          return `True();        	
+        }
+      }
+
+      // PropagateClash 1
+      And(_*,False(),_*) -> {
+        return `False();
+      }
+
+      // Distribution of And and Or
+      And(X*,Or(Z*),Y*) ->{
+        Constraint result = `Or();
+        Constraint cOr = `Z*;
+        while(!cOr.isEmptyOr()){
+          result = `Or(result*,And(X*,cOr.getHeadOr(),Y*));
+          cOr = cOr.getTailOr();
+        }
+        return `Or(result);
+      }
+
+      // Exists
+      Exists(var,x) ->{
+        // if the variable does not exists - remove the Exists
+        // if the variable exists only in one eq, just replace with true the
+        // eq
+        if (nbOccurences(`var,`x) <= 1){
+          return (Constraint)`TopDown(ReplaceEquality(var)).fire(`x);
+        }
+      }
+
+      // Exists
+      Exists(v@Variable(var),Or(list)) ->{
+
+        Constraint l = `list;
+        Constraint result = `Or();
+
+        while(!l.isEmptyOr()){
+          result = `Or(Exists(v,l.getHeadOr()),result*);
+          l = l.getTailOr();
+        }
+
+        return `Or(result);
+      }
+
+      // Replace
+      input@And(X*,equal@Equal(var@Variable(name),s),Y*) -> {				
+        Constraint toApplyOn = `And(X*,Y*);				
+        Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).fire(toApplyOn);
+        if (res != toApplyOn){					
+          return `And(equal,res);
+        }
+      }
+
+      // cleaning
+      Or(X*,x,Y*,x,Z*)->{
+        return `Or(X*,x,Y*,Z*);
+      }
+
+    } // end visit
+  }
+
+  private int counter = 0;	
+  private int nbOccurences(Term t, Constraint toSearchIn){
+    counter = 0;
+    `TopDown(CheckOccurence(t)).fire(toSearchIn);
+    return counter;
+  }	
+
+  %strategy CheckOccurence(t:Term) extends `Identity(){
+    visit Term {
+      x -> {
+        if (t == `x){
+          counter++;
+        }
+      }
+    }
+  }
+
+  private int getSize(String parentName, Term t){
+    try{
+      return size(parentName,t);
+    }catch(Exception e){
+      return -1;
+    }
+  }
+
+  private int size(String parentName, Term t){		
+    %match(t){
+      Appl(name,childs) ->{
+        // System.out.println("name=" + `name);
+        // System.out.println("parentName=" + parentName);
+        if (`name.startsWith("e_")) { return 0; }
+        if (!`name.endsWith("_a") || `name != parentName) { return 1; }
+        if (`name.endsWith("_a")){
+          int finalRes = 0;
+          %match(childs){
+            concTerm(_*,x,_*) ->{
+              // System.out.println("computing for:" +`x);
+              finalRes += size(parentName,`x);
+            }
+          }
+          return finalRes;
+        }
+      }
+    }// end match
+
+    throw new RuntimeException("Cannot compute the size of t=" + t);
+  }
+
+
+  private boolean isAssociative(Term t){
+    %match(t){
+      Appl(name,_) -> {
+        if (`name.endsWith("_a") /* || `name.startsWith("e_") */) {
+          return true;
+        }else{
+          return false;
+        }
+      }
+
+//    Variable(name) -> {
+//    if (`name.endsWith("_a")) {
+//    return true;
+//    }else{
+//    return false;
+//    }
+//    }
+    }
+
+    return false;
+  }
+
+  private Term getNeutralElem(Term t){
+    %match(t){
+      Appl(name,_) -> {
+        return `Appl("e_" + ((String)name).substring(0,name.indexOf("_")),concTerm());
+      }
+    }		
+    throw new RuntimeException("Cannot compute neutral elem for:" + t);
+  }
+
+  %strategy ReplaceStrat(var:Term, value:Term) extends `Identity(){
+    visit Term {
+      x -> {
+        if (`x == var) { return value; }  
+      }
+    }
+  }
+
+  %strategy ReplaceEquality(var:Term) extends `Identity(){
+    visit Constraint {
+      Equal(x,_) -> {
+        if (`x == var) { return `True(); }  
+      }
+    }
+  }
+
 }// end class

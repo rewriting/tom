@@ -27,59 +27,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package antipattern;
+package antipattern.associative;
 
 import aterm.*;
 import aterm.pure.*;
+import antipattern.*;
 
 import java.io.*;
 import java.util.*;
 
-import antipattern.term.*;
-import antipattern.term.types.*;
+import antipattern.termaso.*;
+import antipattern.termaso.types.*;
 
 import jjtraveler.VisitFailure;
 import tom.library.sl.*;
 
 public class Tools {
 
-  %include{ term/Term.tom }
+  %include{ ../termaso/TermAso.tom }
   %include{ sl.tom }	
-  %include{ atermmapping.tom }
+  %include{ ../atermmapping.tom }
 
   public static void main(String[] args) {
     Tools tools = new Tools();
-//  System.out.println("\nRunning Matching1: \n");
-//  Matching test1 = new Matching2();
-//  tools.run(test1,args[0]);
-//  System.out.println("\nRunning Matching2: \n");
-//  Matching test2 = new Matching2();
-//  tools.run(test2,args[1]);
-//  System.out.println("\nRunning Matching3: \n");
-//  Matching test3 = new Matching3();
-//  tools.run(test3,args[2]);
-  System.out.println("\nRunning Matching4: \n");
-  Matching test4 = new Matching4();
-  tools.run(test4,args[0]);
-
-//  System.out.println("\nRunning Matching6: \n");
-//  Matching test6 = new Matching6();
-//  tools.run(test6,args[0]);
-
-//    System.out.println("\nRunning ClassicalAsso: \n");
-//    Matching testAsso = new ClassicalAssociativity();
-//    tools.run(testAsso,args[0]);
-
-
-//  System.out.println("\nRunning MatchingDifferences: \n");
-//  Matching test5 = new MatchingDifferences();
-//  tools.run(test5,args[3]);
-//  System.out.println("\nRunning anti-patterns with disunification: \n");
-//  Matching test6 = new ApAndDisunification2();
-//  tools.run(test6,args[0]);
+    System.out.println("\nRunning ClassicalAsso: \n");
+    ClassicalAssociativity testAsso = new ClassicalAssociativity();
+    tools.run(testAsso,args[0]);
   }
 
-  public void run(Matching match, String fileName) {
+  public void run(ClassicalAssociativity match, String fileName) {
     BufferedReader br = null;
     try {  
       br = new BufferedReader(new FileReader( 
@@ -98,10 +74,6 @@ public class Tools {
           Constraint c = atermToConstraint(at);
           Collection solution = new HashSet();
           System.out.println(formatConstraint(c));
-//        if (match instanceof Matching4) {
-//        Constraint reversedPattern = ((Matching4)match).checkReverse(c,solution);
-//        System.out.println(" !!!!--> " + reversedPattern);
-//        }
           Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
           System.out.println(" --> " + formatConstraint(simplifiedConstraint));
           if(simplifiedConstraint == `True() && !solution.isEmpty()) {
@@ -151,12 +123,12 @@ public class Tools {
     throw new RuntimeException("error on: " + at);
   }
 
-  private AConstraintList atermListToConstraintList(ATerm at) {
+  private Constraint atermListToConstraintList(ATerm at) {
     if(at instanceof ATermList) {
       ATermList atl = (ATermList) at;
-      AConstraintList l = `concAnd();
+      Constraint l = `And();
       while(!atl.isEmpty()) {
-        l = `concAnd(atermToConstraint(atl.getLast()),l*);
+        l = `And(atermToConstraint(atl.getLast()),l*);
         atl = atl.getPrefix();
       }
       return l;
@@ -180,7 +152,6 @@ public class Tools {
   }
 
   public Constraint atermToConstraint(String term) {
-
     return atermToConstraint(SingletonFactory.getInstance().parse(term));
   }
 
@@ -225,26 +196,26 @@ public class Tools {
       Neg(cons) ->{
         return "Neg(" + formatConstraint(`cons) + ")";
       }
-      And(concAnd(x,Z*)) ->{
+      And(x,Z*) ->{
 
-        AConstraintList l = `Z*;
+        Constraint l = `Z*;
         String result = formatConstraint(`x);
 
-        while(!l.isEmptyconcAnd()){
-          result ="(" + result + " and " + formatConstraint(l.getHeadconcAnd()) +")";
-          l = l.getTailconcAnd();
+        while(!l.isEmptyAnd()){
+          result ="(" + result + " and " + formatConstraint(l.getHeadAnd()) +")";
+          l = l.getTailAnd();
         }
 
         return result; 
       }
-      Or(concOr(x,Z*)) ->{
+      Or(x,Z*) ->{
 
-        OConstraintList l = `Z*;
+        Constraint l = `Z*;
         String result = formatConstraint(`x);
 
-        while(!l.isEmptyconcOr()){
-          result ="(" + result + " or " + formatConstraint(l.getHeadconcOr()) + ")";
-          l = l.getTailconcOr();
+        while(!l.isEmptyOr()){
+          result ="(" + result + " or " + formatConstraint(l.getHeadOr()) + ")";
+          l = l.getTailOr();
         }
 
         return result; 
