@@ -134,11 +134,11 @@ writer.write(%[
   }
 
   public static @fullClassName()@ fromString(String s) {
-    return fromTerm(aterm.pure.SingletonFactory.getInstance().parse(s));
+    return fromTerm(atermFactory.parse(s));
   }
 
   public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
-    return fromTerm(aterm.pure.SingletonFactory.getInstance().readFromFile(stream));
+    return fromTerm(atermFactory.readFromFile(stream));
   }
 
 ]%);

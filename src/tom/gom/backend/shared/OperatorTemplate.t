@@ -235,8 +235,8 @@ generateGetters(writer);
     writer.write(%[
   /* AbstractType */
   public aterm.ATerm toATerm() {
-    return aterm.pure.SingletonFactory.getInstance().makeAppl(
-      aterm.pure.SingletonFactory.getInstance().makeAFun(symbolName(),getArity(),false),
+    return atermFactory.makeAppl(
+      atermFactory.makeAFun(symbolName(),getArity(),false),
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 

@@ -76,6 +76,7 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
   private int uniqueID;
 
   protected static final shared.SharedObjectFactory factory = shared.SingletonSharedObjectFactory.getInstance();
+  protected static final aterm.ATermFactory atermFactory = aterm.pure.SingletonFactory.getInstance();
 
   public abstract aterm.ATerm toATerm();
 

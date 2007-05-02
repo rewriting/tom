@@ -280,32 +280,32 @@ public abstract class TemplateClass {
           res.append("().toATerm()");
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append("(aterm.ATerm) atermFactory.makeInt(");
             res.append(getMethod(slot));
             res.append("())");
           } else if (`domain.equals(`ClassName("","boolean"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append("(aterm.ATerm) atermFactory.makeInt(");
             res.append(getMethod(slot));
             res.append("()?1:0)");
           } else if (`domain.equals(`ClassName("","long"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeLong(");
+            res.append("(aterm.ATerm) atermFactory.makeLong(");
             res.append(getMethod(slot));
             res.append("())");
           } else if (`domain.equals(`ClassName("","double"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append("(aterm.ATerm) atermFactory.makeReal(");
             res.append(getMethod(slot));
             res.append("())");
           } else if (`domain.equals(`ClassName("","float"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append("(aterm.ATerm) atermFactory.makeReal(");
             res.append(getMethod(slot));
             res.append("())");
           } else if (`domain.equals(`ClassName("","char"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(((int)");
+            res.append("(aterm.ATerm) atermFactory.makeInt(((int)");
             res.append(getMethod(slot));
             res.append("()-(int)'0'))");
           } else if (`domain.equals(`ClassName("","String"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(");
-            res.append("aterm.pure.SingletonFactory.getInstance().makeAFun(");
+            res.append("(aterm.ATerm) atermFactory.makeAppl(");
+            res.append("atermFactory.makeAFun(");
             res.append(getMethod(slot));
             res.append("() ,0 , true))");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))){
