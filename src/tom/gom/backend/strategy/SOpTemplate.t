@@ -132,8 +132,8 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     getEnvironment().setRoot(any);
-    visit();
-    if(getEnvironment().getStatus() == tom.library.sl.Environment.SUCCESS) {
+    int status = visit();
+    if(status == tom.library.sl.Environment.SUCCESS) {
       return getEnvironment().getRoot();
     } else {
       throw new tom.library.sl.FireException();
@@ -242,7 +242,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
   }
 
-  public void visit() {
+  public int visit() {
     tom.library.sl.Visitable any = getEnvironment().getSubject();
     if(any instanceof @fullClassName(operator)@) {
     int childCount = any.getChildCount();
@@ -252,10 +252,10 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       tom.library.sl.Visitable oldChild = (tom.library.sl.Visitable)any.getChildAt(i);
       jjtraveler.Visitable[] array = getEnvironment().getSubject().getChildren();
       environment.down(i+1);
-      ((tom.library.sl.Strategy)args[i]).visit();
-      if (getEnvironment().getStatus() != tom.library.sl.Environment.SUCCESS) {
+      int status = ((tom.library.sl.Strategy)args[i]).visit();
+      if(status != tom.library.sl.Environment.SUCCESS) {
         environment.up();
-        return;
+        return status;
       }
       tom.library.sl.Visitable newChild = getEnvironment().getSubject();
       if(childs != null) {
@@ -286,8 +286,9 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
     //return;
     } else {
-      getEnvironment().setStatus(tom.library.sl.Environment.FAILURE);
+    return tom.library.sl.Environment.FAILURE;
     }
+    return tom.library.sl.Environment.SUCCESS;
   }
 }
 ]%);

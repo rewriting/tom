@@ -73,24 +73,21 @@ public class One extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public void visit() {
+  public int visit() {
     int childCount = environment.getSubject().getChildCount();
-    Visitable originalsubject = environment.getSubject();
-
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      (visitors[ARG]).visit();
-      environment.up();
-      if (environment.getStatus() == Environment.SUCCESS) {
-        return;
+      int status = visitors[ARG].visit();
+      if(status == Environment.SUCCESS) {
+        environment.up();
+        return Environment.SUCCESS;
       } else {
-        /* Forget about the failure, to try another subterm */
-        environment.setStatus(Environment.SUCCESS);
-        environment.setSubject(originalsubject);
+        environment.upLocal();
+        //setStatus(Environment.SUCCESS);
       }
     }
     /* If we reach this point, there is a real failure */
-    environment.setStatus(Environment.FAILURE);
-    return;
+    //setStatus(Environment.FAILURE);
+    return Environment.FAILURE;
   }
 }

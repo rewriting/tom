@@ -50,10 +50,11 @@ public class Sequence extends AbstractStrategy {
     return visitors[THEN].visit(visitors[FIRST].visit(visitable));
   }
 
-  public void visit() {
-    visitors[FIRST].visit();
-    if(environment.getStatus() == Environment.SUCCESS) {
-      visitors[THEN].visit();
+  public int visit() {
+    int status = visitors[FIRST].visit();
+    if(status == Environment.SUCCESS) {
+      return visitors[THEN].visit();
     }
+    return status;
   }
 }

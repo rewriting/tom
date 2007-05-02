@@ -54,7 +54,7 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public void visit();
+  public int visit();
 
   public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure;
 }

@@ -50,19 +50,19 @@ public class Not extends AbstractStrategy {
     throw new jjtraveler.VisitFailure();
   }
 
-  public void visit() {
+  public int visit() {
     /* save the current subject */
     Visitable subject = environment.getSubject();
-    (visitors[ARG]).visit();
+    int status = visitors[ARG].visit();
     /* restore the subject */
-    /* we are juste interested in the status */
+    /* we are just interested in the status */
     environment.setSubject(subject);
-    if (environment.getStatus() != Environment.SUCCESS) {
-      environment.setStatus(Environment.SUCCESS);
-      return;
+    if(status != Environment.SUCCESS) {
+      //setStatus(Environment.SUCCESS);
+      return Environment.SUCCESS;
     } else {
-      environment.setStatus(Environment.FAILURE);
-      return;
+      //setStatus(Environment.FAILURE);
+      return Environment.FAILURE;
     }
   }
 }

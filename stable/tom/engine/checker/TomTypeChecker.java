@@ -114,30 +114,30 @@ public class TomTypeChecker extends TomChecker {
    */
   private static boolean tom_is_sort_TomTypeChecker(Object t) { return 
 
- t instanceof TomTypeChecker ;}private static class checkTypeInference extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  TomTypeChecker  ttc; public checkTypeInference( TomTypeChecker  ttc) { super(tom_make_Identity());this.ttc=ttc;}public  TomTypeChecker  getttc() { return ttc;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int i) {switch (i) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {switch (i) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch1Position1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if ( ( tom_is_fun_sym_Match(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+ t instanceof TomTypeChecker ;}private static class checkTypeInference extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  TomTypeChecker  ttc; public checkTypeInference( TomTypeChecker  ttc) { super(tom_make_Identity());this.ttc=ttc;}public  TomTypeChecker  getttc() { return ttc;}public jjtraveler.Visitable[] getChildren() {jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch115NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_Match(tomMatch115NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch115NameNumber_freshVar_0=tom_get_slot_Match_SubjectList(tomMatch115NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.PatternInstructionList  tomMatch115NameNumber_freshVar_1=tom_get_slot_Match_AstPatternInstructionList(tomMatch115NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.OptionList  tomMatch115NameNumber_freshVar_2=tom_get_slot_Match_Option(tomMatch115NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
   
-        ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(tom_get_slot_Match_Option(tomMatch1Position1));
-        ttc.verifyMatchVariable(tom_get_slot_Match_AstPatternInstructionList(tomMatch1Position1));
+        ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(tomMatch115NameNumber_freshVar_2);
+        ttc.verifyMatchVariable(tomMatch115NameNumber_freshVar_1);
         tom_make_Fail().visit(null);
-      }}}}return super.visit_Instruction(tom__arg); }public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Declaration(tom__arg)) {{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch2Position1=(( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg);if ( ( tom_is_fun_sym_Strategy(tomMatch2Position1) ||  false  ) ) {if ( true ) {
+      }}}}}}}return super.visit_Instruction(tom__arg); }public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Declaration(tom__arg)) {{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch116NameNumberfreshSubject_1=(( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg);if (tom_is_fun_sym_Strategy(tomMatch116NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch116NameNumber_freshVar_0=tom_get_slot_Strategy_SName(tomMatch116NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch116NameNumber_freshVar_1=tom_get_slot_Strategy_ExtendsTerm(tomMatch116NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.TomVisitList  tomMatch116NameNumber_freshVar_2=tom_get_slot_Strategy_VisitList(tomMatch116NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.Option  tomMatch116NameNumber_freshVar_3=tom_get_slot_Strategy_OrgTrack(tomMatch116NameNumberfreshSubject_1);if ( true ) {
 
 
 
-        ttc.currentTomStructureOrgTrack = tom_get_slot_Strategy_OrgTrack(tomMatch2Position1);
-        ttc.verifyStrategyVariable(tom_get_slot_Strategy_VisitList(tomMatch2Position1));
+        ttc.currentTomStructureOrgTrack = tomMatch116NameNumber_freshVar_3;
+        ttc.verifyStrategyVariable(tomMatch116NameNumber_freshVar_2);
         tom_make_Fail().visit(null);
-      }}}}return super.visit_Declaration(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_checkTypeInference( TomTypeChecker  t0) { return new checkTypeInference(t0); }
+      }}}}}}}}return super.visit_Declaration(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_checkTypeInference( TomTypeChecker  t0) { return new checkTypeInference(t0); }
 
  //checkTypeInference
 
   /* 
    * Collect unknown (not in symbol table) appls without ()
    */
-  private static class collectUnknownAppls extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  TomTypeChecker  ttc; public collectUnknownAppls( TomTypeChecker  ttc) { super(tom_make_Identity());this.ttc=ttc;}public  TomTypeChecker  getttc() { return ttc;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int i) {switch (i) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {switch (i) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_TomTerm(tom__arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch3Position1=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);if ( ( tom_is_fun_sym_TermAppl(tomMatch3Position1) ||  false  ) ) {{  tom.engine.adt.tomterm.types.TomTerm  tom_app=tomMatch3Position1;if ( true ) {
+  private static class collectUnknownAppls extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  TomTypeChecker  ttc; public collectUnknownAppls( TomTypeChecker  ttc) { super(tom_make_Identity());this.ttc=ttc;}public  TomTypeChecker  getttc() { return ttc;}public jjtraveler.Visitable[] getChildren() {jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_TomTerm(tom__arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch117NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch117NameNumber_freshVar_0=tomMatch117NameNumberfreshSubject_1;if (tom_is_fun_sym_TermAppl(tomMatch117NameNumber_freshVar_0)) {{  tom.engine.adt.tomterm.types.TomTerm  tom_app=tomMatch117NameNumber_freshVar_0;if ( true ) {
 
 
         if(ttc.symbolTable().getSymbolFromName(ttc.getName(tom_app))==null) {
@@ -148,7 +148,7 @@ public class TomTypeChecker extends TomChecker {
         }
         // else, it's actually app()
         // else, it's a unknown (ie : java) function
-      }}}}}return super.visit_TomTerm(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_collectUnknownAppls( TomTypeChecker  t0) { return new collectUnknownAppls(t0); }
+      }}}}}}return super.visit_TomTerm(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_collectUnknownAppls( TomTypeChecker  t0) { return new collectUnknownAppls(t0); }
 
 
 
@@ -177,16 +177,16 @@ public class TomTypeChecker extends TomChecker {
     TomForwardType currentVisitorFwd = null;
     while(!list.isEmptyconcTomVisit()) {
       TomVisit visit = list.getHeadconcTomVisit();
-      if (tom_is_sort_TomVisit(visit)) {{  tom.engine.adt.tomsignature.types.TomVisit  tomMatch4Position1=(( tom.engine.adt.tomsignature.types.TomVisit )visit);if ( ( tom_is_fun_sym_VisitTerm(tomMatch4Position1) ||  false  ) ) {{  tom.engine.adt.tomtype.types.TomType  tom_visitType=tom_get_slot_VisitTerm_VNode(tomMatch4Position1);{  tom.engine.adt.tomoption.types.OptionList  tom_options=tom_get_slot_VisitTerm_Option(tomMatch4Position1);if ( true ) {
+      if (tom_is_sort_TomVisit(visit)) {{  tom.engine.adt.tomsignature.types.TomVisit  tomMatch119NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TomVisit )visit);if (tom_is_fun_sym_VisitTerm(tomMatch119NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch119NameNumber_freshVar_0=tom_get_slot_VisitTerm_VNode(tomMatch119NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.PatternInstructionList  tomMatch119NameNumber_freshVar_1=tom_get_slot_VisitTerm_AstPatternInstructionList(tomMatch119NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.OptionList  tomMatch119NameNumber_freshVar_2=tom_get_slot_VisitTerm_Option(tomMatch119NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tom_visitType=tomMatch119NameNumber_freshVar_0;{  tom.engine.adt.tomoption.types.OptionList  tom_options=tomMatch119NameNumber_freshVar_2;if ( true ) {
 
           String fileName =findOriginTrackingFileName(tom_options);
-          if (tom_is_sort_TomType(tom_visitType)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch5Position1=(( tom.engine.adt.tomtype.types.TomType )tom_visitType);if ( ( tom_is_fun_sym_TomTypeAlone(tomMatch5Position1) ||  false  ) ) {if ( true ) {
+          if (tom_is_sort_TomType(tom_visitType)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch118NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tom_visitType);if (tom_is_fun_sym_TomTypeAlone(tomMatch118NameNumberfreshSubject_1)) {{  String  tomMatch118NameNumber_freshVar_0=tom_get_slot_TomTypeAlone_String(tomMatch118NameNumberfreshSubject_1);if ( true ) {
 
               messageError(fileName,
                   findOriginTrackingLine(tom_options),
                   TomMessage.unknownVisitedType,
-                  new Object[]{(tom_get_slot_TomTypeAlone_String(tomMatch5Position1))});
-            }}if ( ( tom_is_fun_sym_Type(tomMatch5Position1) ||  false  ) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch5Position1NameNumberTomType=tom_get_slot_Type_TomType(tomMatch5Position1);{  tom.engine.adt.tomtype.types.TomType  tomMatch5Position1NameNumberTlType=tom_get_slot_Type_TlType(tomMatch5Position1);if ( ( tom_is_fun_sym_ASTTomType(tomMatch5Position1NameNumberTomType) ||  false  ) ) {{  String  tom_ASTVisitType=tom_get_slot_ASTTomType_String(tomMatch5Position1NameNumberTomType);if ( ( tom_is_fun_sym_TLType(tomMatch5Position1NameNumberTlType) ||  false  ) ) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tom_TLVisitType=tom_get_slot_TLType_Tl(tomMatch5Position1NameNumberTlType);if ( true ) {
+                  new Object[]{(tomMatch118NameNumber_freshVar_0)});
+            }}}if (tom_is_fun_sym_Type(tomMatch118NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch118NameNumber_freshVar_1=tom_get_slot_Type_TomType(tomMatch118NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch118NameNumber_freshVar_2=tom_get_slot_Type_TlType(tomMatch118NameNumberfreshSubject_1);if (tom_is_fun_sym_ASTTomType(tomMatch118NameNumber_freshVar_1)) {{  String  tomMatch118NameNumber_freshVar_3=tom_get_slot_ASTTomType_String(tomMatch118NameNumber_freshVar_1);{  String  tom_ASTVisitType=tomMatch118NameNumber_freshVar_3;if (tom_is_fun_sym_TLType(tomMatch118NameNumber_freshVar_2)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch118NameNumber_freshVar_4=tom_get_slot_TLType_Tl(tomMatch118NameNumber_freshVar_2);{  tom.engine.adt.tomsignature.types.TargetLanguage  tom_TLVisitType=tomMatch118NameNumber_freshVar_4;if ( true ) {
 
               //check that all visitType have same visitorFwd
 
@@ -208,10 +208,10 @@ public class TomTypeChecker extends TomChecker {
                       new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
                 }
               }
-              verifyMatchVariable(tom_get_slot_VisitTerm_AstPatternInstructionList(tomMatch4Position1));
-            }}}}}}}}}}
+              verifyMatchVariable(tomMatch119NameNumber_freshVar_1);
+            }}}}}}}}}}}}
 
-        }}}}}}
+        }}}}}}}}}
 
       // next visit
       list = list.getTailconcTomVisit();

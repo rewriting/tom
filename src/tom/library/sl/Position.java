@@ -181,8 +181,9 @@ public class Position implements Cloneable,Path {
   public Strategy getReplace(final Visitable t) {
     return getOmega(
         new Identity() {
-          public void visit(){
+          public int visit() {
             environment.setSubject(t);
+            return Environment.SUCCESS;
           }
           public jjtraveler.Visitable visit(jjtraveler.Visitable x) {
             return t;
@@ -203,8 +204,9 @@ public class Position implements Cloneable,Path {
         final jjtraveler.Visitable[] ref = new jjtraveler.Visitable[1];
         getOmega(
             new Identity() {
-              public void visit() {
+              public int visit() {
                 ref[0]=environment.getSubject();
+                return Environment.SUCCESS;
               }
               public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
                 ref[0] = v;
@@ -213,12 +215,13 @@ public class Position implements Cloneable,Path {
             }).visit(subject);
         return ref[0];
       }
-      public void visit() {
+      public int visit() {
         final Visitable[] ref = new Visitable[1];
-        Strategy s =getOmega(
+        Strategy s=getOmega(
             new Identity() {
-              public void visit() {
+              public int visit() {
                 ref[0]=environment.getSubject();
+                return Environment.SUCCESS;
               }
               public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
                 ref[0] = (Visitable)v;
@@ -227,6 +230,7 @@ public class Position implements Cloneable,Path {
             });
         s.fire(environment.getRoot());
         environment.setSubject(ref[0]);
+        return Environment.SUCCESS;
       }
     };
   }

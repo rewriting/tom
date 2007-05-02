@@ -60,18 +60,17 @@ public class OmegaU extends AbstractStrategy {
     }
   }
 
-  public void visit() {
+  public int visit() {
     Visitable subject = environment.getSubject();
     int arity = subject.getChildCount();
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      visitors[ARG].visit();
-      return ;
+      return visitors[ARG].visit();
     } else {
       environment.down(selectedSubterm+1);
-      visitors[ARG].visit();
+      int status = visitors[ARG].visit();
       environment.up();
-      return ;
+      return status;
     }
   }
 }

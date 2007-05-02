@@ -40,21 +40,21 @@ public class ForwardTemplate extends TemplateClass {
 
   public ForwardTemplate(GomClass gomClass) {
     super(gomClass);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch1Position1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( ( tom_is_fun_sym_FwdClass(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch330NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_FwdClass(tomMatch330NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch330NameNumber_freshVar_0=tom_get_slot_FwdClass_Visitor(tomMatch330NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch330NameNumber_freshVar_1=tom_get_slot_FwdClass_ImportedVisitors(tomMatch330NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch330NameNumber_freshVar_2=tom_get_slot_FwdClass_AbstractType(tomMatch330NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch330NameNumber_freshVar_3=tom_get_slot_FwdClass_ImportedAbstractTypes(tomMatch330NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch330NameNumber_freshVar_4=tom_get_slot_FwdClass_SortClasses(tomMatch330NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch330NameNumber_freshVar_5=tom_get_slot_FwdClass_OperatorClasses(tomMatch330NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
 
 
-        this.visitor = tom_get_slot_FwdClass_Visitor(tomMatch1Position1);
-        this.importedVisitors = tom_get_slot_FwdClass_ImportedVisitors(tomMatch1Position1);
-        this.abstractType = tom_get_slot_FwdClass_AbstractType(tomMatch1Position1);
-        this.importedAbstractTypes = tom_get_slot_FwdClass_ImportedAbstractTypes(tomMatch1Position1);
-        this.sortClasses = tom_get_slot_FwdClass_SortClasses(tomMatch1Position1);
-        this.operatorClasses = tom_get_slot_FwdClass_OperatorClasses(tomMatch1Position1);
+        this.visitor = tomMatch330NameNumber_freshVar_0;
+        this.importedVisitors = tomMatch330NameNumber_freshVar_1;
+        this.abstractType = tomMatch330NameNumber_freshVar_2;
+        this.importedAbstractTypes = tomMatch330NameNumber_freshVar_3;
+        this.sortClasses = tomMatch330NameNumber_freshVar_4;
+        this.operatorClasses = tomMatch330NameNumber_freshVar_5;
         return;
-      }}}}
+      }}}}}}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for ForwardTemplate: " + gomClass);
@@ -95,7 +95,7 @@ writer.write("\n}\n"
 
   private void generateVisitMethods(java.io.Writer writer) throws java.io.IOException {
     // generate a visit for each sort
-    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if ( ( tom_is_fun_sym_concGomClass(tomMatch2Position1) ||  false  ) ) {{ int tomMatch2Position1Index1=0;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1List1=tomMatch2Position1;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1Begin1=tomMatch2Position1List1;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1End1=tomMatch2Position1List1;{while (!(tom_is_empty_concGomClass_GomClassList(tomMatch2Position1End1))) {tomMatch2Position1List1=tomMatch2Position1End1;{{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1Save2=tomMatch2Position1List1;{{  tom.gom.adt.objects.types.GomClass  tomMatch2Position1Position2=tom_get_head_concGomClass_GomClassList(tomMatch2Position1List1);tomMatch2Position1Index1=tomMatch2Position1Index1 + 1;tomMatch2Position1List1=tom_get_tail_concGomClass_GomClassList(tomMatch2Position1List1);if ( ( tom_is_fun_sym_SortClass(tomMatch2Position1Position2) ||  false  ) ) {{  tom.gom.adt.objects.types.ClassName  tom_sortName=tom_get_slot_SortClass_ClassName(tomMatch2Position1Position2);if ( true ) {
+    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch331NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch331NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch331NameNumber_freshVar_0=tomMatch331NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch331NameNumberbegin_85=tomMatch331NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch331NameNumberend_85=tomMatch331NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch331NameNumber_freshVar_1=tomMatch331NameNumberend_85;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch331NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch331NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch331NameNumber_freshVar_4=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch331NameNumber_freshVar_1));{  tom.gom.adt.objects.types.ClassName  tom_sortName=tomMatch331NameNumber_freshVar_4;{  tom.gom.adt.objects.types.GomClassList  tomMatch331NameNumber_freshVar_2=tom_get_tail_concGomClass_GomClassList(tomMatch331NameNumber_freshVar_1);if ( true ) {
 
 
         writer.write("\n  public "/* Generated by TOM (version 2.5alpha): Do not edit this file */+ fullClassName(tom_sortName) +" "/* Generated by TOM (version 2.5alpha): Do not edit this file */+visitMethod(tom_sortName)+"("/* Generated by TOM (version 2.5alpha): Do not edit this file */+fullClassName(tom_sortName)+" arg) throws jjtraveler.VisitFailure {\n    return ("/* Generated by TOM (version 2.5alpha): Do not edit this file */+fullClassName(tom_sortName)+") any.visit(arg);\n  }\n"
@@ -103,7 +103,7 @@ writer.write("\n}\n"
 
 
 );
-      }}}}tomMatch2Position1List1=tomMatch2Position1Save2;}}tomMatch2Position1End1=tom_get_tail_concGomClass_GomClassList(tomMatch2Position1End1);}}tomMatch2Position1List1=tomMatch2Position1Begin1;}}}}}}}}
+      }}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch331NameNumberend_85)) {tomMatch331NameNumberend_85=tomMatch331NameNumberbegin_85;} else {tomMatch331NameNumberend_85=tom_get_tail_concGomClass_GomClassList(tomMatch331NameNumberend_85);}}} while(!(tom_equal_term_GomClassList(tomMatch331NameNumberend_85, tomMatch331NameNumberbegin_85)));}}}}}}
 
   }
 

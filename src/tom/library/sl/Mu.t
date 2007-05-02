@@ -20,9 +20,9 @@ public class Mu extends AbstractStrategy {
     return visitors[V].visit(any);
   }
 
-  public void visit() {
+  public int visit() {
     if(!expanded) { muExpand(); }
-    visitors[V].visit();
+    return visitors[V].visit();
   }
 
   private boolean isExpanded() {

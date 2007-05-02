@@ -57,18 +57,16 @@ public class Choice extends AbstractStrategy {
     }
   }
 
-  public void visit() {
+  public int visit() {
     Visitable subject = environment.getSubject();
-    visitors[FIRST].visit();
-    if (environment.getStatus() == Environment.SUCCESS) {
-      return;
+    int status = visitors[FIRST].visit();
+    if(status == Environment.SUCCESS) {
+      return status;
     } else {
-      /* forget about the previous failure, and try the Then part */
-      environment.setStatus(Environment.SUCCESS);
+      //setStatus(Environment.SUCCESS);
       /* reset the modifications from FIRST */
       environment.setSubject(subject);
-      visitors[THEN].visit();
-      return;
+      return visitors[THEN].visit();
     }
   }
 }

@@ -65,23 +65,21 @@ public class OneId extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public void visit() {
+  public int visit() {
     int childCount = environment.getSubject().getChildCount();
     //Visitable originalsubject = environment.getSubject();
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
       Visitable oldSubject = environment.getSubject();
-      visitors[ARG].visit();
+      int status = visitors[ARG].visit();
       Visitable newSubject = environment.getSubject();
-      if(environment.getStatus() == Environment.SUCCESS && oldSubject!=newSubject) {
+      if(status == Environment.SUCCESS && oldSubject!=newSubject) {
         environment.up();
-        return;
+        return Environment.SUCCESS;
       } else {
         environment.upLocal();
-        /* Forget about the failure, to try another subterm */
-        environment.setStatus(Environment.SUCCESS);
-        //environment.setSubject(originalsubject);
       }
     }
+    return Environment.SUCCESS;
   }
 }

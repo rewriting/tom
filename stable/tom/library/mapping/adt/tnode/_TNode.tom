@@ -3,29 +3,24 @@
    %include { mustrategy.tom }
    */
 
-%op Strategy Is_EmptyconcTNode() {
-  make() { `When_EmptyconcTNode(Identity()) }
-}
-
 %op Strategy _EmptyconcTNode() {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode)}
 
   make() { new tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode() }
 }
 
+%op Strategy When_EmptyconcTNode(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcTNode(),s) }
+}
+
+%op Strategy Is_EmptyconcTNode() {
+  make() { `_EmptyconcTNode() }
+}
+
 %op Strategy Make_EmptyconcTNode() {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode)}
 
   make() { new tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode() }
-}
-
-%op Strategy When_EmptyconcTNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.When_EmptyconcTNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnodelist.When_EmptyconcTNode(s) }
-}
-
-%op Strategy Is_ConsconcTNode() {
-  make() { `When_ConsconcTNode(Identity()) }
 }
 
 %op Strategy _ConsconcTNode(arg0:Strategy, arg1:Strategy) {
@@ -36,6 +31,14 @@
   make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcTNode(s:Strategy) {
+  make(s) { `Sequence(_ConsconcTNode(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcTNode() {
+  make() { `_ConsconcTNode(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcTNode(_HeadconcTNode:Strategy, _TailconcTNode:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode)}
 
@@ -44,34 +47,24 @@
   make( new_HeadconcTNode,  new_TailconcTNode) { new tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode( new_HeadconcTNode,  new_TailconcTNode) }
 }
 
-%op Strategy When_ConsconcTNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.When_ConsconcTNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnodelist.When_ConsconcTNode(s) }
-}
-
-%op Strategy Is_EmptyNode() {
-  make() { `When_EmptyNode(Identity()) }
-}
-
 %op Strategy _EmptyNode() {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._EmptyNode)}
 
   make() { new tom.library.adt.tnode.strategy.tnode._EmptyNode() }
 }
 
+%op Strategy When_EmptyNode(s:Strategy) {
+  make(s) { `Sequence(_EmptyNode(),s) }
+}
+
+%op Strategy Is_EmptyNode() {
+  make() { `_EmptyNode() }
+}
+
 %op Strategy Make_EmptyNode() {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_EmptyNode)}
 
   make() { new tom.library.adt.tnode.strategy.tnode.Make_EmptyNode() }
-}
-
-%op Strategy When_EmptyNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_EmptyNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_EmptyNode(s) }
-}
-
-%op Strategy Is_CommentNode() {
-  make() { `When_CommentNode(Identity()) }
 }
 
 %op Strategy _CommentNode(arg0:Strategy) {
@@ -81,20 +74,19 @@
   make(arg0) { new tom.library.adt.tnode.strategy.tnode._CommentNode(arg0) }
 }
 
+%op Strategy When_CommentNode(s:Strategy) {
+  make(s) { `Sequence(_CommentNode(Identity()),s) }
+}
+
+%op Strategy Is_CommentNode() {
+  make() { `_CommentNode(Identity()) }
+}
+
 %op Strategy Make_CommentNode(_Data:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_CommentNode)}
 
   get_slot(_Data, t) { _Data }
   make( _Data) { new tom.library.adt.tnode.strategy.tnode.Make_CommentNode( _Data) }
-}
-
-%op Strategy When_CommentNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_CommentNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_CommentNode(s) }
-}
-
-%op Strategy Is_ProcessingInstructionNode() {
-  make() { `When_ProcessingInstructionNode(Identity()) }
 }
 
 %op Strategy _ProcessingInstructionNode(arg0:Strategy, arg1:Strategy) {
@@ -105,21 +97,20 @@
   make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._ProcessingInstructionNode(arg0, arg1) }
 }
 
+%op Strategy When_ProcessingInstructionNode(s:Strategy) {
+  make(s) { `Sequence(_ProcessingInstructionNode(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ProcessingInstructionNode() {
+  make() { `_ProcessingInstructionNode(Identity(), Identity()) }
+}
+
 %op Strategy Make_ProcessingInstructionNode(_Target:String, _Data:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_ProcessingInstructionNode)}
 
   get_slot(_Target, t) { _Target }
   get_slot(_Data, t) { _Data }
   make( _Target,  _Data) { new tom.library.adt.tnode.strategy.tnode.Make_ProcessingInstructionNode( _Target,  _Data) }
-}
-
-%op Strategy When_ProcessingInstructionNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_ProcessingInstructionNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_ProcessingInstructionNode(s) }
-}
-
-%op Strategy Is_TextNode() {
-  make() { `When_TextNode(Identity()) }
 }
 
 %op Strategy _TextNode(arg0:Strategy) {
@@ -129,20 +120,19 @@
   make(arg0) { new tom.library.adt.tnode.strategy.tnode._TextNode(arg0) }
 }
 
+%op Strategy When_TextNode(s:Strategy) {
+  make(s) { `Sequence(_TextNode(Identity()),s) }
+}
+
+%op Strategy Is_TextNode() {
+  make() { `_TextNode(Identity()) }
+}
+
 %op Strategy Make_TextNode(_Data:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_TextNode)}
 
   get_slot(_Data, t) { _Data }
   make( _Data) { new tom.library.adt.tnode.strategy.tnode.Make_TextNode( _Data) }
-}
-
-%op Strategy When_TextNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_TextNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_TextNode(s) }
-}
-
-%op Strategy Is_CDATASectionNode() {
-  make() { `When_CDATASectionNode(Identity()) }
 }
 
 %op Strategy _CDATASectionNode(arg0:Strategy) {
@@ -152,20 +142,19 @@
   make(arg0) { new tom.library.adt.tnode.strategy.tnode._CDATASectionNode(arg0) }
 }
 
+%op Strategy When_CDATASectionNode(s:Strategy) {
+  make(s) { `Sequence(_CDATASectionNode(Identity()),s) }
+}
+
+%op Strategy Is_CDATASectionNode() {
+  make() { `_CDATASectionNode(Identity()) }
+}
+
 %op Strategy Make_CDATASectionNode(_Data:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_CDATASectionNode)}
 
   get_slot(_Data, t) { _Data }
   make( _Data) { new tom.library.adt.tnode.strategy.tnode.Make_CDATASectionNode( _Data) }
-}
-
-%op Strategy When_CDATASectionNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_CDATASectionNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_CDATASectionNode(s) }
-}
-
-%op Strategy Is_DocumentNode() {
-  make() { `When_DocumentNode(Identity()) }
 }
 
 %op Strategy _DocumentNode(arg0:Strategy, arg1:Strategy) {
@@ -176,21 +165,20 @@
   make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._DocumentNode(arg0, arg1) }
 }
 
+%op Strategy When_DocumentNode(s:Strategy) {
+  make(s) { `Sequence(_DocumentNode(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_DocumentNode() {
+  make() { `_DocumentNode(Identity(), Identity()) }
+}
+
 %op Strategy Make_DocumentNode(_DocType:Strategy, _DocElem:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_DocumentNode)}
 
   get_slot(_DocType, t) { _DocType }
   get_slot(_DocElem, t) { _DocElem }
   make( new_DocType,  new_DocElem) { new tom.library.adt.tnode.strategy.tnode.Make_DocumentNode( new_DocType,  new_DocElem) }
-}
-
-%op Strategy When_DocumentNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_DocumentNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_DocumentNode(s) }
-}
-
-%op Strategy Is_ElementNode() {
-  make() { `When_ElementNode(Identity()) }
 }
 
 %op Strategy _ElementNode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -202,6 +190,14 @@
   make(arg0, arg1, arg2) { new tom.library.adt.tnode.strategy.tnode._ElementNode(arg0, arg1, arg2) }
 }
 
+%op Strategy When_ElementNode(s:Strategy) {
+  make(s) { `Sequence(_ElementNode(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ElementNode() {
+  make() { `_ElementNode(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_ElementNode(_Name:String, _AttrList:Strategy, _ChildList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_ElementNode)}
 
@@ -209,15 +205,6 @@
   get_slot(_AttrList, t) { _AttrList }
   get_slot(_ChildList, t) { _ChildList }
   make( _Name,  new_AttrList,  new_ChildList) { new tom.library.adt.tnode.strategy.tnode.Make_ElementNode( _Name,  new_AttrList,  new_ChildList) }
-}
-
-%op Strategy When_ElementNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_ElementNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_ElementNode(s) }
-}
-
-%op Strategy Is_AttributeNode() {
-  make() { `When_AttributeNode(Identity()) }
 }
 
 %op Strategy _AttributeNode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -229,6 +216,14 @@
   make(arg0, arg1, arg2) { new tom.library.adt.tnode.strategy.tnode._AttributeNode(arg0, arg1, arg2) }
 }
 
+%op Strategy When_AttributeNode(s:Strategy) {
+  make(s) { `Sequence(_AttributeNode(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_AttributeNode() {
+  make() { `_AttributeNode(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_AttributeNode(_Name:String, _Specified:String, _Value:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_AttributeNode)}
 
@@ -236,15 +231,6 @@
   get_slot(_Specified, t) { _Specified }
   get_slot(_Value, t) { _Value }
   make( _Name,  _Specified,  _Value) { new tom.library.adt.tnode.strategy.tnode.Make_AttributeNode( _Name,  _Specified,  _Value) }
-}
-
-%op Strategy When_AttributeNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_AttributeNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_AttributeNode(s) }
-}
-
-%op Strategy Is_DocumentTypeNode() {
-  make() { `When_DocumentTypeNode(Identity()) }
 }
 
 %op Strategy _DocumentTypeNode(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
@@ -259,6 +245,14 @@
   make(arg0, arg1, arg2, arg3, arg4, arg5) { new tom.library.adt.tnode.strategy.tnode._DocumentTypeNode(arg0, arg1, arg2, arg3, arg4, arg5) }
 }
 
+%op Strategy When_DocumentTypeNode(s:Strategy) {
+  make(s) { `Sequence(_DocumentTypeNode(Identity(), Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_DocumentTypeNode() {
+  make() { `_DocumentTypeNode(Identity(), Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_DocumentTypeNode(_Name:String, _PublicId:String, _SystemId:String, _InternalSubset:String, _Entities:Strategy, _Notations:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_DocumentTypeNode)}
 
@@ -271,15 +265,6 @@
   make( _Name,  _PublicId,  _SystemId,  _InternalSubset,  new_Entities,  new_Notations) { new tom.library.adt.tnode.strategy.tnode.Make_DocumentTypeNode( _Name,  _PublicId,  _SystemId,  _InternalSubset,  new_Entities,  new_Notations) }
 }
 
-%op Strategy When_DocumentTypeNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_DocumentTypeNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_DocumentTypeNode(s) }
-}
-
-%op Strategy Is_EntityReferenceNode() {
-  make() { `When_EntityReferenceNode(Identity()) }
-}
-
 %op Strategy _EntityReferenceNode(arg0:Strategy, arg1:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._EntityReferenceNode)}
 
@@ -288,21 +273,20 @@
   make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._EntityReferenceNode(arg0, arg1) }
 }
 
+%op Strategy When_EntityReferenceNode(s:Strategy) {
+  make(s) { `Sequence(_EntityReferenceNode(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_EntityReferenceNode() {
+  make() { `_EntityReferenceNode(Identity(), Identity()) }
+}
+
 %op Strategy Make_EntityReferenceNode(_Name:String, _ChildList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_EntityReferenceNode)}
 
   get_slot(_Name, t) { _Name }
   get_slot(_ChildList, t) { _ChildList }
   make( _Name,  new_ChildList) { new tom.library.adt.tnode.strategy.tnode.Make_EntityReferenceNode( _Name,  new_ChildList) }
-}
-
-%op Strategy When_EntityReferenceNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_EntityReferenceNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_EntityReferenceNode(s) }
-}
-
-%op Strategy Is_EntityNode() {
-  make() { `When_EntityNode(Identity()) }
 }
 
 %op Strategy _EntityNode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -314,6 +298,14 @@
   make(arg0, arg1, arg2) { new tom.library.adt.tnode.strategy.tnode._EntityNode(arg0, arg1, arg2) }
 }
 
+%op Strategy When_EntityNode(s:Strategy) {
+  make(s) { `Sequence(_EntityNode(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_EntityNode() {
+  make() { `_EntityNode(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_EntityNode(_NotationName:String, _PublicId:String, _SystemId:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_EntityNode)}
 
@@ -321,15 +313,6 @@
   get_slot(_PublicId, t) { _PublicId }
   get_slot(_SystemId, t) { _SystemId }
   make( _NotationName,  _PublicId,  _SystemId) { new tom.library.adt.tnode.strategy.tnode.Make_EntityNode( _NotationName,  _PublicId,  _SystemId) }
-}
-
-%op Strategy When_EntityNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_EntityNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_EntityNode(s) }
-}
-
-%op Strategy Is_NotationNode() {
-  make() { `When_NotationNode(Identity()) }
 }
 
 %op Strategy _NotationNode(arg0:Strategy, arg1:Strategy) {
@@ -340,17 +323,20 @@
   make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._NotationNode(arg0, arg1) }
 }
 
+%op Strategy When_NotationNode(s:Strategy) {
+  make(s) { `Sequence(_NotationNode(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_NotationNode() {
+  make() { `_NotationNode(Identity(), Identity()) }
+}
+
 %op Strategy Make_NotationNode(_PublicId:String, _SystemId:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_NotationNode)}
 
   get_slot(_PublicId, t) { _PublicId }
   get_slot(_SystemId, t) { _SystemId }
   make( _PublicId,  _SystemId) { new tom.library.adt.tnode.strategy.tnode.Make_NotationNode( _PublicId,  _SystemId) }
-}
-
-%op Strategy When_NotationNode(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.When_NotationNode)}
-  make(s) { new tom.library.adt.tnode.strategy.tnode.When_NotationNode(s) }
 }
 
             %op Strategy _concTNode(sub:Strategy) {

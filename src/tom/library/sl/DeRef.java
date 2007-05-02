@@ -64,24 +64,25 @@ public class DeRef extends AbstractStrategy {
     throw new RuntimeException("The strategy operator DeRef can be used only with the methods visit() and fire()");
   }
 
-  public void visit() {
-    if (environment.getSubject() instanceof Path){
+  public int visit() {
+    if(environment.getSubject() instanceof Path) {
       visitPath((Path)environment.getSubject());
     } else {
       if(strict) {
         // does nothing when it is not a Ref
       } else {
-        visitors[ARG].visit();
+        return visitors[ARG].visit();
       }
     }
+    return Environment.SUCCESS;
   }
 
   private void visitPath(Path path) {
     if(relative) {
       Position current = environment.getPosition();
       environment.followPath(path);
-      visitors[ARG].visit();
-      if (environment.getStatus() != Environment.SUCCESS) {
+      int status = visitors[ARG].visit();
+      if(status != Environment.SUCCESS) {
         environment.followPath(current.sub(environment.getPosition()));
         return;
       }

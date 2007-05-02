@@ -42,16 +42,16 @@ public class MappingTemplate extends MappingTemplateClass {
 
   public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping) {
     super(gomClass);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch1Position1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( ( tom_is_fun_sym_TomMapping(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch332NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_TomMapping(tomMatch332NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch332NameNumber_freshVar_0=tom_get_slot_TomMapping_BasicStrategy(tomMatch332NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch332NameNumber_freshVar_1=tom_get_slot_TomMapping_SortClasses(tomMatch332NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch332NameNumber_freshVar_2=tom_get_slot_TomMapping_OperatorClasses(tomMatch332NameNumberfreshSubject_1);if ( true ) {
 
 
 
-        this.basicStrategy = tom_get_slot_TomMapping_BasicStrategy(tomMatch1Position1);
-        this.sortClasses = tom_get_slot_TomMapping_SortClasses(tomMatch1Position1);
-        this.operatorClasses = tom_get_slot_TomMapping_OperatorClasses(tomMatch1Position1);
+        this.basicStrategy = tomMatch332NameNumber_freshVar_0;
+        this.sortClasses = tomMatch332NameNumber_freshVar_1;
+        this.operatorClasses = tomMatch332NameNumber_freshVar_2;
         this.strategyMapping = strategyMapping;
         return;
-      }}}}
+      }}}}}}}
 
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
@@ -105,33 +105,33 @@ public class MappingTemplate extends MappingTemplateClass {
     }
 
     // generate a %typeterm for each class
-    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if ( ( tom_is_fun_sym_concGomClass(tomMatch2Position1) ||  false  ) ) {{ int tomMatch2Position1Index1=0;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1List1=tomMatch2Position1;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1Begin1=tomMatch2Position1List1;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1End1=tomMatch2Position1List1;{while (!(tom_is_empty_concGomClass_GomClassList(tomMatch2Position1End1))) {tomMatch2Position1List1=tomMatch2Position1End1;{{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1Save2=tomMatch2Position1List1;{{  tom.gom.adt.objects.types.GomClass  tomMatch2Position1Position2=tom_get_head_concGomClass_GomClassList(tomMatch2Position1List1);tomMatch2Position1Index1=tomMatch2Position1Index1 + 1;tomMatch2Position1List1=tom_get_tail_concGomClass_GomClassList(tomMatch2Position1List1);if ( ( tom_is_fun_sym_SortClass(tomMatch2Position1Position2) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch333NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch333NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch333NameNumber_freshVar_0=tomMatch333NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch333NameNumberbegin_86=tomMatch333NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch333NameNumberend_86=tomMatch333NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch333NameNumber_freshVar_1=tomMatch333NameNumberend_86;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch333NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch333NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch333NameNumber_freshVar_4=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch333NameNumber_freshVar_1));{  tom.gom.adt.objects.types.GomClassList  tomMatch333NameNumber_freshVar_2=tom_get_tail_concGomClass_GomClassList(tomMatch333NameNumber_freshVar_1);if ( true ) {
 
 
 
-        ((TemplateClass) templates.get(tom_get_slot_SortClass_ClassName(tomMatch2Position1Position2)))
+        ((TemplateClass) templates.get(tomMatch333NameNumber_freshVar_4))
           .generateTomMapping(writer,basicStrategy);
-      }}}tomMatch2Position1List1=tomMatch2Position1Save2;}}tomMatch2Position1End1=tom_get_tail_concGomClass_GomClassList(tomMatch2Position1End1);}}tomMatch2Position1List1=tomMatch2Position1Begin1;}}}}}}}}
+      }}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch333NameNumberend_86)) {tomMatch333NameNumberend_86=tomMatch333NameNumberbegin_86;} else {tomMatch333NameNumberend_86=tom_get_tail_concGomClass_GomClassList(tomMatch333NameNumberend_86);}}} while(!(tom_equal_term_GomClassList(tomMatch333NameNumberend_86, tomMatch333NameNumberbegin_86)));}}}}}}
 
 
     // generate a %op for each operator
-    if (tom_is_sort_GomClassList(operatorClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch3Position1=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);if ( ( tom_is_fun_sym_concGomClass(tomMatch3Position1) ||  false  ) ) {{ int tomMatch3Position1Index1=0;{  tom.gom.adt.objects.types.GomClassList  tomMatch3Position1List1=tomMatch3Position1;{  tom.gom.adt.objects.types.GomClassList  tomMatch3Position1Begin1=tomMatch3Position1List1;{  tom.gom.adt.objects.types.GomClassList  tomMatch3Position1End1=tomMatch3Position1List1;{while (!(tom_is_empty_concGomClass_GomClassList(tomMatch3Position1End1))) {tomMatch3Position1List1=tomMatch3Position1End1;{{  tom.gom.adt.objects.types.GomClassList  tomMatch3Position1Save2=tomMatch3Position1List1;{{  tom.gom.adt.objects.types.GomClass  tomMatch3Position1Position2=tom_get_head_concGomClass_GomClassList(tomMatch3Position1List1);tomMatch3Position1Index1=tomMatch3Position1Index1 + 1;tomMatch3Position1List1=tom_get_tail_concGomClass_GomClassList(tomMatch3Position1List1);if ( ( tom_is_fun_sym_OperatorClass(tomMatch3Position1Position2) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_GomClassList(operatorClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch334NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);if (tom_is_fun_sym_concGomClass(tomMatch334NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch334NameNumber_freshVar_0=tomMatch334NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch334NameNumberbegin_87=tomMatch334NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch334NameNumberend_87=tomMatch334NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch334NameNumber_freshVar_1=tomMatch334NameNumberend_87;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch334NameNumber_freshVar_1))) {if (tom_is_fun_sym_OperatorClass(tom_get_head_concGomClass_GomClassList(tomMatch334NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch334NameNumber_freshVar_4=tom_get_slot_OperatorClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch334NameNumber_freshVar_1));{  tom.gom.adt.objects.types.GomClassList  tomMatch334NameNumber_freshVar_2=tom_get_tail_concGomClass_GomClassList(tomMatch334NameNumber_freshVar_1);if ( true ) {
 
 
 
-        ((TemplateClass) templates.get(tom_get_slot_OperatorClass_ClassName(tomMatch3Position1Position2)))
+        ((TemplateClass) templates.get(tomMatch334NameNumber_freshVar_4))
           .generateTomMapping(writer,basicStrategy);
-      }}}tomMatch3Position1List1=tomMatch3Position1Save2;}}tomMatch3Position1End1=tom_get_tail_concGomClass_GomClassList(tomMatch3Position1End1);}}tomMatch3Position1List1=tomMatch3Position1Begin1;}}}}}}}}
+      }}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch334NameNumberend_87)) {tomMatch334NameNumberend_87=tomMatch334NameNumberbegin_87;} else {tomMatch334NameNumberend_87=tom_get_tail_concGomClass_GomClassList(tomMatch334NameNumberend_87);}}} while(!(tom_equal_term_GomClassList(tomMatch334NameNumberend_87, tomMatch334NameNumberbegin_87)));}}}}}}
 
 
     // generate a %oplist for each variadic operator
-    if (tom_is_sort_GomClassList(operatorClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch4Position1=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);if ( ( tom_is_fun_sym_concGomClass(tomMatch4Position1) ||  false  ) ) {{ int tomMatch4Position1Index1=0;{  tom.gom.adt.objects.types.GomClassList  tomMatch4Position1List1=tomMatch4Position1;{  tom.gom.adt.objects.types.GomClassList  tomMatch4Position1Begin1=tomMatch4Position1List1;{  tom.gom.adt.objects.types.GomClassList  tomMatch4Position1End1=tomMatch4Position1List1;{while (!(tom_is_empty_concGomClass_GomClassList(tomMatch4Position1End1))) {tomMatch4Position1List1=tomMatch4Position1End1;{{  tom.gom.adt.objects.types.GomClassList  tomMatch4Position1Save2=tomMatch4Position1List1;{{  tom.gom.adt.objects.types.GomClass  tomMatch4Position1Position2=tom_get_head_concGomClass_GomClassList(tomMatch4Position1List1);tomMatch4Position1Index1=tomMatch4Position1Index1 + 1;tomMatch4Position1List1=tom_get_tail_concGomClass_GomClassList(tomMatch4Position1List1);if ( ( tom_is_fun_sym_VariadicOperatorClass(tomMatch4Position1Position2) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_GomClassList(operatorClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch335NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )operatorClasses);if (tom_is_fun_sym_concGomClass(tomMatch335NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch335NameNumber_freshVar_0=tomMatch335NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch335NameNumberbegin_88=tomMatch335NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch335NameNumberend_88=tomMatch335NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch335NameNumber_freshVar_1=tomMatch335NameNumberend_88;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch335NameNumber_freshVar_1))) {if (tom_is_fun_sym_VariadicOperatorClass(tom_get_head_concGomClass_GomClassList(tomMatch335NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch335NameNumber_freshVar_4=tom_get_slot_VariadicOperatorClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch335NameNumber_freshVar_1));{  tom.gom.adt.objects.types.GomClassList  tomMatch335NameNumber_freshVar_2=tom_get_tail_concGomClass_GomClassList(tomMatch335NameNumber_freshVar_1);if ( true ) {
 
 
 
-        ((TemplateClass) templates.get(tom_get_slot_VariadicOperatorClass_ClassName(tomMatch4Position1Position2)))
+        ((TemplateClass) templates.get(tomMatch335NameNumber_freshVar_4))
           .generateTomMapping(writer,basicStrategy);
-      }}}tomMatch4Position1List1=tomMatch4Position1Save2;}}tomMatch4Position1End1=tom_get_tail_concGomClass_GomClassList(tomMatch4Position1End1);}}tomMatch4Position1List1=tomMatch4Position1Begin1;}}}}}}}}
+      }}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch335NameNumberend_88)) {tomMatch335NameNumberend_88=tomMatch335NameNumberbegin_88;} else {tomMatch335NameNumberend_88=tom_get_tail_concGomClass_GomClassList(tomMatch335NameNumberend_88);}}} while(!(tom_equal_term_GomClassList(tomMatch335NameNumberend_88, tomMatch335NameNumberbegin_88)));}}}}}}
 
     /* Include the strategy mapping if needed */
     if (strategyMapping != null) {

@@ -61,8 +61,8 @@ public class Fail extends AbstractStrategy {
     throw new jjtraveler.VisitFailure(message);
   }
 
-  public void visit() {
-    environment.setStatus(Environment.FAILURE);
-    return;
+  public int visit() {
+    //setStatus(Environment.FAILURE);
+    return Environment.FAILURE;
   }
 }

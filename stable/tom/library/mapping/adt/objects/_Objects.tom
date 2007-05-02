@@ -3,10 +3,6 @@
    %include { mustrategy.tom }
    */
 
-%op Strategy Is_Code() {
-  make() { `When_Code(Identity()) }
-}
-
 %op Strategy _Code(arg0:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._Code)}
 
@@ -14,20 +10,19 @@
   make(arg0) { new tom.gom.adt.code.strategy.code._Code(arg0) }
 }
 
+%op Strategy When_Code(s:Strategy) {
+  make(s) { `Sequence(_Code(Identity()),s) }
+}
+
+%op Strategy Is_Code() {
+  make() { `_Code(Identity()) }
+}
+
 %op Strategy Make_Code(_prog:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Code)}
 
   get_slot(_prog, t) { _prog }
   make( _prog) { new tom.gom.adt.code.strategy.code.Make_Code( _prog) }
-}
-
-%op Strategy When_Code(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_Code)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_Code(s) }
-}
-
-%op Strategy Is_IsEmpty() {
-  make() { `When_IsEmpty(Identity()) }
 }
 
 %op Strategy _IsEmpty(arg0:Strategy, arg1:Strategy) {
@@ -38,21 +33,20 @@
   make(arg0, arg1) { new tom.gom.adt.code.strategy.code._IsEmpty(arg0, arg1) }
 }
 
+%op Strategy When_IsEmpty(s:Strategy) {
+  make(s) { `Sequence(_IsEmpty(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_IsEmpty() {
+  make() { `_IsEmpty(Identity(), Identity()) }
+}
+
 %op Strategy Make_IsEmpty(_Var:String, _Operator:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_IsEmpty)}
 
   get_slot(_Var, t) { _Var }
   get_slot(_Operator, t) { _Operator }
   make( _Var,  new_Operator) { new tom.gom.adt.code.strategy.code.Make_IsEmpty( _Var,  new_Operator) }
-}
-
-%op Strategy When_IsEmpty(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_IsEmpty)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_IsEmpty(s) }
-}
-
-%op Strategy Is_IsCons() {
-  make() { `When_IsCons(Identity()) }
 }
 
 %op Strategy _IsCons(arg0:Strategy, arg1:Strategy) {
@@ -63,21 +57,20 @@
   make(arg0, arg1) { new tom.gom.adt.code.strategy.code._IsCons(arg0, arg1) }
 }
 
+%op Strategy When_IsCons(s:Strategy) {
+  make(s) { `Sequence(_IsCons(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_IsCons() {
+  make() { `_IsCons(Identity(), Identity()) }
+}
+
 %op Strategy Make_IsCons(_Var:String, _Operator:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_IsCons)}
 
   get_slot(_Var, t) { _Var }
   get_slot(_Operator, t) { _Operator }
   make( _Var,  new_Operator) { new tom.gom.adt.code.strategy.code.Make_IsCons( _Var,  new_Operator) }
-}
-
-%op Strategy When_IsCons(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_IsCons)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_IsCons(s) }
-}
-
-%op Strategy Is_Empty() {
-  make() { `When_Empty(Identity()) }
 }
 
 %op Strategy _Empty(arg0:Strategy) {
@@ -87,20 +80,19 @@
   make(arg0) { new tom.gom.adt.code.strategy.code._Empty(arg0) }
 }
 
+%op Strategy When_Empty(s:Strategy) {
+  make(s) { `Sequence(_Empty(Identity()),s) }
+}
+
+%op Strategy Is_Empty() {
+  make() { `_Empty(Identity()) }
+}
+
 %op Strategy Make_Empty(_Operator:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Empty)}
 
   get_slot(_Operator, t) { _Operator }
   make( new_Operator) { new tom.gom.adt.code.strategy.code.Make_Empty( new_Operator) }
-}
-
-%op Strategy When_Empty(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_Empty)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_Empty(s) }
-}
-
-%op Strategy Is_Cons() {
-  make() { `When_Cons(Identity()) }
 }
 
 %op Strategy _Cons(arg0:Strategy) {
@@ -110,20 +102,19 @@
   make(arg0) { new tom.gom.adt.code.strategy.code._Cons(arg0) }
 }
 
+%op Strategy When_Cons(s:Strategy) {
+  make(s) { `Sequence(_Cons(Identity()),s) }
+}
+
+%op Strategy Is_Cons() {
+  make() { `_Cons(Identity()) }
+}
+
 %op Strategy Make_Cons(_Operator:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Cons)}
 
   get_slot(_Operator, t) { _Operator }
   make( new_Operator) { new tom.gom.adt.code.strategy.code.Make_Cons( new_Operator) }
-}
-
-%op Strategy When_Cons(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_Cons)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_Cons(s) }
-}
-
-%op Strategy Is_FullSortClass() {
-  make() { `When_FullSortClass(Identity()) }
 }
 
 %op Strategy _FullSortClass(arg0:Strategy) {
@@ -133,20 +124,19 @@
   make(arg0) { new tom.gom.adt.code.strategy.code._FullSortClass(arg0) }
 }
 
+%op Strategy When_FullSortClass(s:Strategy) {
+  make(s) { `Sequence(_FullSortClass(Identity()),s) }
+}
+
+%op Strategy Is_FullSortClass() {
+  make() { `_FullSortClass(Identity()) }
+}
+
 %op Strategy Make_FullSortClass(_Sort:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_FullSortClass)}
 
   get_slot(_Sort, t) { _Sort }
   make( new_Sort) { new tom.gom.adt.code.strategy.code.Make_FullSortClass( new_Sort) }
-}
-
-%op Strategy When_FullSortClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_FullSortClass)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_FullSortClass(s) }
-}
-
-%op Strategy Is_Compare() {
-  make() { `When_Compare(Identity()) }
 }
 
 %op Strategy _Compare(arg0:Strategy, arg1:Strategy) {
@@ -157,6 +147,14 @@
   make(arg0, arg1) { new tom.gom.adt.code.strategy.code._Compare(arg0, arg1) }
 }
 
+%op Strategy When_Compare(s:Strategy) {
+  make(s) { `Sequence(_Compare(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_Compare() {
+  make() { `_Compare(Identity(), Identity()) }
+}
+
 %op Strategy Make_Compare(_LCode:Strategy, _RCode:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Compare)}
 
@@ -165,34 +163,24 @@
   make( new_LCode,  new_RCode) { new tom.gom.adt.code.strategy.code.Make_Compare( new_LCode,  new_RCode) }
 }
 
-%op Strategy When_Compare(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_Compare)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_Compare(s) }
-}
-
-%op Strategy Is_EmptyCodeList() {
-  make() { `When_EmptyCodeList(Identity()) }
-}
-
 %op Strategy _EmptyCodeList() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._EmptyCodeList)}
 
   make() { new tom.gom.adt.code.strategy.code._EmptyCodeList() }
 }
 
+%op Strategy When_EmptyCodeList(s:Strategy) {
+  make(s) { `Sequence(_EmptyCodeList(),s) }
+}
+
+%op Strategy Is_EmptyCodeList() {
+  make() { `_EmptyCodeList() }
+}
+
 %op Strategy Make_EmptyCodeList() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_EmptyCodeList)}
 
   make() { new tom.gom.adt.code.strategy.code.Make_EmptyCodeList() }
-}
-
-%op Strategy When_EmptyCodeList(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_EmptyCodeList)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_EmptyCodeList(s) }
-}
-
-%op Strategy Is_ConsCodeList() {
-  make() { `When_ConsCodeList(Identity()) }
 }
 
 %op Strategy _ConsCodeList(arg0:Strategy, arg1:Strategy) {
@@ -203,21 +191,20 @@
   make(arg0, arg1) { new tom.gom.adt.code.strategy.code._ConsCodeList(arg0, arg1) }
 }
 
+%op Strategy When_ConsCodeList(s:Strategy) {
+  make(s) { `Sequence(_ConsCodeList(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsCodeList() {
+  make() { `_ConsCodeList(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsCodeList(_HeadCodeList:Strategy, _TailCodeList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_ConsCodeList)}
 
   get_slot(_HeadCodeList, t) { _HeadCodeList }
   get_slot(_TailCodeList, t) { _TailCodeList }
   make( new_HeadCodeList,  new_TailCodeList) { new tom.gom.adt.code.strategy.code.Make_ConsCodeList( new_HeadCodeList,  new_TailCodeList) }
-}
-
-%op Strategy When_ConsCodeList(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.When_ConsCodeList)}
-  make(s) { new tom.gom.adt.code.strategy.code.When_ConsCodeList(s) }
-}
-
-%op Strategy Is_MakeHook() {
-  make() { `When_MakeHook(Identity()) }
 }
 
 %op Strategy _MakeHook(arg0:Strategy, arg1:Strategy) {
@@ -228,21 +215,20 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.hook._MakeHook(arg0, arg1) }
 }
 
+%op Strategy When_MakeHook(s:Strategy) {
+  make(s) { `Sequence(_MakeHook(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_MakeHook() {
+  make() { `_MakeHook(Identity(), Identity()) }
+}
+
 %op Strategy Make_MakeHook(_HookArguments:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_MakeHook)}
 
   get_slot(_HookArguments, t) { _HookArguments }
   get_slot(_Code, t) { _Code }
   make( new_HookArguments,  new_Code) { new tom.gom.adt.objects.strategy.hook.Make_MakeHook( new_HookArguments,  new_Code) }
-}
-
-%op Strategy When_MakeHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.When_MakeHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hook.When_MakeHook(s) }
-}
-
-%op Strategy Is_MakeBeforeHook() {
-  make() { `When_MakeBeforeHook(Identity()) }
 }
 
 %op Strategy _MakeBeforeHook(arg0:Strategy, arg1:Strategy) {
@@ -253,21 +239,20 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.hook._MakeBeforeHook(arg0, arg1) }
 }
 
+%op Strategy When_MakeBeforeHook(s:Strategy) {
+  make(s) { `Sequence(_MakeBeforeHook(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_MakeBeforeHook() {
+  make() { `_MakeBeforeHook(Identity(), Identity()) }
+}
+
 %op Strategy Make_MakeBeforeHook(_HookArguments:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_MakeBeforeHook)}
 
   get_slot(_HookArguments, t) { _HookArguments }
   get_slot(_Code, t) { _Code }
   make( new_HookArguments,  new_Code) { new tom.gom.adt.objects.strategy.hook.Make_MakeBeforeHook( new_HookArguments,  new_Code) }
-}
-
-%op Strategy When_MakeBeforeHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.When_MakeBeforeHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hook.When_MakeBeforeHook(s) }
-}
-
-%op Strategy Is_BlockHook() {
-  make() { `When_BlockHook(Identity()) }
 }
 
 %op Strategy _BlockHook(arg0:Strategy) {
@@ -277,20 +262,19 @@
   make(arg0) { new tom.gom.adt.objects.strategy.hook._BlockHook(arg0) }
 }
 
+%op Strategy When_BlockHook(s:Strategy) {
+  make(s) { `Sequence(_BlockHook(Identity()),s) }
+}
+
+%op Strategy Is_BlockHook() {
+  make() { `_BlockHook(Identity()) }
+}
+
 %op Strategy Make_BlockHook(_Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_BlockHook)}
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_BlockHook( new_Code) }
-}
-
-%op Strategy When_BlockHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.When_BlockHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hook.When_BlockHook(s) }
-}
-
-%op Strategy Is_InterfaceHook() {
-  make() { `When_InterfaceHook(Identity()) }
 }
 
 %op Strategy _InterfaceHook(arg0:Strategy) {
@@ -300,20 +284,19 @@
   make(arg0) { new tom.gom.adt.objects.strategy.hook._InterfaceHook(arg0) }
 }
 
+%op Strategy When_InterfaceHook(s:Strategy) {
+  make(s) { `Sequence(_InterfaceHook(Identity()),s) }
+}
+
+%op Strategy Is_InterfaceHook() {
+  make() { `_InterfaceHook(Identity()) }
+}
+
 %op Strategy Make_InterfaceHook(_Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_InterfaceHook)}
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_InterfaceHook( new_Code) }
-}
-
-%op Strategy When_InterfaceHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.When_InterfaceHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hook.When_InterfaceHook(s) }
-}
-
-%op Strategy Is_ImportHook() {
-  make() { `When_ImportHook(Identity()) }
 }
 
 %op Strategy _ImportHook(arg0:Strategy) {
@@ -323,20 +306,19 @@
   make(arg0) { new tom.gom.adt.objects.strategy.hook._ImportHook(arg0) }
 }
 
+%op Strategy When_ImportHook(s:Strategy) {
+  make(s) { `Sequence(_ImportHook(Identity()),s) }
+}
+
+%op Strategy Is_ImportHook() {
+  make() { `_ImportHook(Identity()) }
+}
+
 %op Strategy Make_ImportHook(_Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_ImportHook)}
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_ImportHook( new_Code) }
-}
-
-%op Strategy When_ImportHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.When_ImportHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hook.When_ImportHook(s) }
-}
-
-%op Strategy Is_MappingHook() {
-  make() { `When_MappingHook(Identity()) }
 }
 
 %op Strategy _MappingHook(arg0:Strategy) {
@@ -346,20 +328,19 @@
   make(arg0) { new tom.gom.adt.objects.strategy.hook._MappingHook(arg0) }
 }
 
+%op Strategy When_MappingHook(s:Strategy) {
+  make(s) { `Sequence(_MappingHook(Identity()),s) }
+}
+
+%op Strategy Is_MappingHook() {
+  make() { `_MappingHook(Identity()) }
+}
+
 %op Strategy Make_MappingHook(_Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_MappingHook)}
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_MappingHook( new_Code) }
-}
-
-%op Strategy When_MappingHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.When_MappingHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hook.When_MappingHook(s) }
-}
-
-%op Strategy Is_SlotField() {
-  make() { `When_SlotField(Identity()) }
 }
 
 %op Strategy _SlotField(arg0:Strategy, arg1:Strategy) {
@@ -370,6 +351,14 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.slotfield._SlotField(arg0, arg1) }
 }
 
+%op Strategy When_SlotField(s:Strategy) {
+  make(s) { `Sequence(_SlotField(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_SlotField() {
+  make() { `_SlotField(Identity(), Identity()) }
+}
+
 %op Strategy Make_SlotField(_Name:String, _Domain:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfield.Make_SlotField)}
 
@@ -378,34 +367,24 @@
   make( _Name,  new_Domain) { new tom.gom.adt.objects.strategy.slotfield.Make_SlotField( _Name,  new_Domain) }
 }
 
-%op Strategy When_SlotField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfield.When_SlotField)}
-  make(s) { new tom.gom.adt.objects.strategy.slotfield.When_SlotField(s) }
-}
-
-%op Strategy Is_EmptyconcSlotField() {
-  make() { `When_EmptyconcSlotField(Identity()) }
-}
-
 %op Strategy _EmptyconcSlotField() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist._EmptyconcSlotField)}
 
   make() { new tom.gom.adt.objects.strategy.slotfieldlist._EmptyconcSlotField() }
 }
 
+%op Strategy When_EmptyconcSlotField(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcSlotField(),s) }
+}
+
+%op Strategy Is_EmptyconcSlotField() {
+  make() { `_EmptyconcSlotField() }
+}
+
 %op Strategy Make_EmptyconcSlotField() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.Make_EmptyconcSlotField)}
 
   make() { new tom.gom.adt.objects.strategy.slotfieldlist.Make_EmptyconcSlotField() }
-}
-
-%op Strategy When_EmptyconcSlotField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.When_EmptyconcSlotField)}
-  make(s) { new tom.gom.adt.objects.strategy.slotfieldlist.When_EmptyconcSlotField(s) }
-}
-
-%op Strategy Is_ConsconcSlotField() {
-  make() { `When_ConsconcSlotField(Identity()) }
 }
 
 %op Strategy _ConsconcSlotField(arg0:Strategy, arg1:Strategy) {
@@ -416,21 +395,20 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.slotfieldlist._ConsconcSlotField(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcSlotField(s:Strategy) {
+  make(s) { `Sequence(_ConsconcSlotField(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcSlotField() {
+  make() { `_ConsconcSlotField(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcSlotField(_HeadconcSlotField:Strategy, _TailconcSlotField:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.Make_ConsconcSlotField)}
 
   get_slot(_HeadconcSlotField, t) { _HeadconcSlotField }
   get_slot(_TailconcSlotField, t) { _TailconcSlotField }
   make( new_HeadconcSlotField,  new_TailconcSlotField) { new tom.gom.adt.objects.strategy.slotfieldlist.Make_ConsconcSlotField( new_HeadconcSlotField,  new_TailconcSlotField) }
-}
-
-%op Strategy When_ConsconcSlotField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.When_ConsconcSlotField)}
-  make(s) { new tom.gom.adt.objects.strategy.slotfieldlist.When_ConsconcSlotField(s) }
-}
-
-%op Strategy Is_VisitableFwdClass() {
-  make() { `When_VisitableFwdClass(Identity()) }
 }
 
 %op Strategy _VisitableFwdClass(arg0:Strategy, arg1:Strategy) {
@@ -441,21 +419,20 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass(arg0, arg1) }
 }
 
+%op Strategy When_VisitableFwdClass(s:Strategy) {
+  make(s) { `Sequence(_VisitableFwdClass(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_VisitableFwdClass() {
+  make() { `_VisitableFwdClass(Identity(), Identity()) }
+}
+
 %op Strategy Make_VisitableFwdClass(_ClassName:Strategy, _Fwd:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass)}
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_Fwd, t) { _Fwd }
   make( new_ClassName,  new_Fwd) { new tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass( new_ClassName,  new_Fwd) }
-}
-
-%op Strategy When_VisitableFwdClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_VisitableFwdClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_VisitableFwdClass(s) }
-}
-
-%op Strategy Is_AbstractTypeClass() {
-  make() { `When_AbstractTypeClass(Identity()) }
 }
 
 %op Strategy _AbstractTypeClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
@@ -469,6 +446,14 @@
   make(arg0, arg1, arg2, arg3, arg4) { new tom.gom.adt.objects.strategy.gomclass._AbstractTypeClass(arg0, arg1, arg2, arg3, arg4) }
 }
 
+%op Strategy When_AbstractTypeClass(s:Strategy) {
+  make(s) { `Sequence(_AbstractTypeClass(Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_AbstractTypeClass() {
+  make() { `_AbstractTypeClass(Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_AbstractTypeClass(_ClassName:Strategy, _Mapping:Strategy, _Visitor:Strategy, _SortList:Strategy, _Hooks:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_AbstractTypeClass)}
 
@@ -478,15 +463,6 @@
   get_slot(_SortList, t) { _SortList }
   get_slot(_Hooks, t) { _Hooks }
   make( new_ClassName,  new_Mapping,  new_Visitor,  new_SortList,  new_Hooks) { new tom.gom.adt.objects.strategy.gomclass.Make_AbstractTypeClass( new_ClassName,  new_Mapping,  new_Visitor,  new_SortList,  new_Hooks) }
-}
-
-%op Strategy When_AbstractTypeClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_AbstractTypeClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_AbstractTypeClass(s) }
-}
-
-%op Strategy Is_SortClass() {
-  make() { `When_SortClass(Identity()) }
 }
 
 %op Strategy _SortClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy, arg7:Strategy, arg8:Strategy) {
@@ -504,6 +480,14 @@
   make(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) { new tom.gom.adt.objects.strategy.gomclass._SortClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) }
 }
 
+%op Strategy When_SortClass(s:Strategy) {
+  make(s) { `Sequence(_SortClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_SortClass() {
+  make() { `_SortClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_SortClass(_ClassName:Strategy, _AbstractType:Strategy, _Mapping:Strategy, _Visitor:Strategy, _Forward:Strategy, _Operators:Strategy, _VariadicOperators:Strategy, _Slots:Strategy, _Hooks:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_SortClass)}
 
@@ -517,15 +501,6 @@
   get_slot(_Slots, t) { _Slots }
   get_slot(_Hooks, t) { _Hooks }
   make( new_ClassName,  new_AbstractType,  new_Mapping,  new_Visitor,  new_Forward,  new_Operators,  new_VariadicOperators,  new_Slots,  new_Hooks) { new tom.gom.adt.objects.strategy.gomclass.Make_SortClass( new_ClassName,  new_AbstractType,  new_Mapping,  new_Visitor,  new_Forward,  new_Operators,  new_VariadicOperators,  new_Slots,  new_Hooks) }
-}
-
-%op Strategy When_SortClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_SortClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_SortClass(s) }
-}
-
-%op Strategy Is_OperatorClass() {
-  make() { `When_OperatorClass(Identity()) }
 }
 
 %op Strategy _OperatorClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy, arg7:Strategy) {
@@ -542,6 +517,14 @@
   make(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { new tom.gom.adt.objects.strategy.gomclass._OperatorClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) }
 }
 
+%op Strategy When_OperatorClass(s:Strategy) {
+  make(s) { `Sequence(_OperatorClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_OperatorClass() {
+  make() { `_OperatorClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_OperatorClass(_ClassName:Strategy, _AbstractType:Strategy, _ExtendsType:Strategy, _Mapping:Strategy, _SortName:Strategy, _Visitor:Strategy, _Slots:Strategy, _Hooks:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_OperatorClass)}
 
@@ -554,15 +537,6 @@
   get_slot(_Slots, t) { _Slots }
   get_slot(_Hooks, t) { _Hooks }
   make( new_ClassName,  new_AbstractType,  new_ExtendsType,  new_Mapping,  new_SortName,  new_Visitor,  new_Slots,  new_Hooks) { new tom.gom.adt.objects.strategy.gomclass.Make_OperatorClass( new_ClassName,  new_AbstractType,  new_ExtendsType,  new_Mapping,  new_SortName,  new_Visitor,  new_Slots,  new_Hooks) }
-}
-
-%op Strategy When_OperatorClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_OperatorClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_OperatorClass(s) }
-}
-
-%op Strategy Is_VariadicOperatorClass() {
-  make() { `When_VariadicOperatorClass(Identity()) }
 }
 
 %op Strategy _VariadicOperatorClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
@@ -578,6 +552,14 @@
   make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.gom.adt.objects.strategy.gomclass._VariadicOperatorClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6) }
 }
 
+%op Strategy When_VariadicOperatorClass(s:Strategy) {
+  make(s) { `Sequence(_VariadicOperatorClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_VariadicOperatorClass() {
+  make() { `_VariadicOperatorClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_VariadicOperatorClass(_ClassName:Strategy, _AbstractType:Strategy, _Mapping:Strategy, _SortName:Strategy, _Empty:Strategy, _Cons:Strategy, _Hooks:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VariadicOperatorClass)}
 
@@ -591,15 +573,6 @@
   make( new_ClassName,  new_AbstractType,  new_Mapping,  new_SortName,  new_Empty,  new_Cons,  new_Hooks) { new tom.gom.adt.objects.strategy.gomclass.Make_VariadicOperatorClass( new_ClassName,  new_AbstractType,  new_Mapping,  new_SortName,  new_Empty,  new_Cons,  new_Hooks) }
 }
 
-%op Strategy When_VariadicOperatorClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_VariadicOperatorClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_VariadicOperatorClass(s) }
-}
-
-%op Strategy Is_VisitorClass() {
-  make() { `When_VisitorClass(Identity()) }
-}
-
 %op Strategy _VisitorClass(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitorClass)}
 
@@ -609,6 +582,14 @@
   make(arg0, arg1, arg2) { new tom.gom.adt.objects.strategy.gomclass._VisitorClass(arg0, arg1, arg2) }
 }
 
+%op Strategy When_VisitorClass(s:Strategy) {
+  make(s) { `Sequence(_VisitorClass(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_VisitorClass() {
+  make() { `_VisitorClass(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_VisitorClass(_ClassName:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitorClass)}
 
@@ -616,15 +597,6 @@
   get_slot(_SortClasses, t) { _SortClasses }
   get_slot(_OperatorClasses, t) { _OperatorClasses }
   make( new_ClassName,  new_SortClasses,  new_OperatorClasses) { new tom.gom.adt.objects.strategy.gomclass.Make_VisitorClass( new_ClassName,  new_SortClasses,  new_OperatorClasses) }
-}
-
-%op Strategy When_VisitorClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_VisitorClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_VisitorClass(s) }
-}
-
-%op Strategy Is_FwdClass() {
-  make() { `When_FwdClass(Identity()) }
 }
 
 %op Strategy _FwdClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
@@ -640,6 +612,14 @@
   make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.gom.adt.objects.strategy.gomclass._FwdClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6) }
 }
 
+%op Strategy When_FwdClass(s:Strategy) {
+  make(s) { `Sequence(_FwdClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_FwdClass() {
+  make() { `_FwdClass(Identity(), Identity(), Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_FwdClass(_ClassName:Strategy, _Visitor:Strategy, _ImportedVisitors:Strategy, _AbstractType:Strategy, _ImportedAbstractTypes:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_FwdClass)}
 
@@ -653,15 +633,6 @@
   make( new_ClassName,  new_Visitor,  new_ImportedVisitors,  new_AbstractType,  new_ImportedAbstractTypes,  new_SortClasses,  new_OperatorClasses) { new tom.gom.adt.objects.strategy.gomclass.Make_FwdClass( new_ClassName,  new_Visitor,  new_ImportedVisitors,  new_AbstractType,  new_ImportedAbstractTypes,  new_SortClasses,  new_OperatorClasses) }
 }
 
-%op Strategy When_FwdClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_FwdClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_FwdClass(s) }
-}
-
-%op Strategy Is_TomMapping() {
-  make() { `When_TomMapping(Identity()) }
-}
-
 %op Strategy _TomMapping(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._TomMapping)}
 
@@ -670,6 +641,14 @@
   get_slot(arg2, t) { t.getArgument(2) }
   get_slot(arg3, t) { t.getArgument(3) }
   make(arg0, arg1, arg2, arg3) { new tom.gom.adt.objects.strategy.gomclass._TomMapping(arg0, arg1, arg2, arg3) }
+}
+
+%op Strategy When_TomMapping(s:Strategy) {
+  make(s) { `Sequence(_TomMapping(Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_TomMapping() {
+  make() { `_TomMapping(Identity(), Identity(), Identity(), Identity()) }
 }
 
 %op Strategy Make_TomMapping(_ClassName:Strategy, _BasicStrategy:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
@@ -682,21 +661,20 @@
   make( new_ClassName,  new_BasicStrategy,  new_SortClasses,  new_OperatorClasses) { new tom.gom.adt.objects.strategy.gomclass.Make_TomMapping( new_ClassName,  new_BasicStrategy,  new_SortClasses,  new_OperatorClasses) }
 }
 
-%op Strategy When_TomMapping(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.When_TomMapping)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclass.When_TomMapping(s) }
-}
-
-%op Strategy Is_ClassName() {
-  make() { `When_ClassName(Identity()) }
-}
-
 %op Strategy _ClassName(arg0:Strategy, arg1:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classname._ClassName)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.classname._ClassName(arg0, arg1) }
+}
+
+%op Strategy When_ClassName(s:Strategy) {
+  make(s) { `Sequence(_ClassName(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ClassName() {
+  make() { `_ClassName(Identity(), Identity()) }
 }
 
 %op Strategy Make_ClassName(_Pkg:String, _Name:String) {
@@ -707,34 +685,24 @@
   make( _Pkg,  _Name) { new tom.gom.adt.objects.strategy.classname.Make_ClassName( _Pkg,  _Name) }
 }
 
-%op Strategy When_ClassName(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classname.When_ClassName)}
-  make(s) { new tom.gom.adt.objects.strategy.classname.When_ClassName(s) }
-}
-
-%op Strategy Is_EmptyconcGomClass() {
-  make() { `When_EmptyconcGomClass(Identity()) }
-}
-
 %op Strategy _EmptyconcGomClass() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist._EmptyconcGomClass)}
 
   make() { new tom.gom.adt.objects.strategy.gomclasslist._EmptyconcGomClass() }
 }
 
+%op Strategy When_EmptyconcGomClass(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcGomClass(),s) }
+}
+
+%op Strategy Is_EmptyconcGomClass() {
+  make() { `_EmptyconcGomClass() }
+}
+
 %op Strategy Make_EmptyconcGomClass() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist.Make_EmptyconcGomClass)}
 
   make() { new tom.gom.adt.objects.strategy.gomclasslist.Make_EmptyconcGomClass() }
-}
-
-%op Strategy When_EmptyconcGomClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist.When_EmptyconcGomClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclasslist.When_EmptyconcGomClass(s) }
-}
-
-%op Strategy Is_ConsconcGomClass() {
-  make() { `When_ConsconcGomClass(Identity()) }
 }
 
 %op Strategy _ConsconcGomClass(arg0:Strategy, arg1:Strategy) {
@@ -745,6 +713,14 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.gomclasslist._ConsconcGomClass(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcGomClass(s:Strategy) {
+  make(s) { `Sequence(_ConsconcGomClass(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcGomClass() {
+  make() { `_ConsconcGomClass(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcGomClass(_HeadconcGomClass:Strategy, _TailconcGomClass:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist.Make_ConsconcGomClass)}
 
@@ -753,34 +729,24 @@
   make( new_HeadconcGomClass,  new_TailconcGomClass) { new tom.gom.adt.objects.strategy.gomclasslist.Make_ConsconcGomClass( new_HeadconcGomClass,  new_TailconcGomClass) }
 }
 
-%op Strategy When_ConsconcGomClass(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist.When_ConsconcGomClass)}
-  make(s) { new tom.gom.adt.objects.strategy.gomclasslist.When_ConsconcGomClass(s) }
-}
-
-%op Strategy Is_EmptyconcClassName() {
-  make() { `When_EmptyconcClassName(Identity()) }
-}
-
 %op Strategy _EmptyconcClassName() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist._EmptyconcClassName)}
 
   make() { new tom.gom.adt.objects.strategy.classnamelist._EmptyconcClassName() }
 }
 
+%op Strategy When_EmptyconcClassName(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcClassName(),s) }
+}
+
+%op Strategy Is_EmptyconcClassName() {
+  make() { `_EmptyconcClassName() }
+}
+
 %op Strategy Make_EmptyconcClassName() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist.Make_EmptyconcClassName)}
 
   make() { new tom.gom.adt.objects.strategy.classnamelist.Make_EmptyconcClassName() }
-}
-
-%op Strategy When_EmptyconcClassName(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist.When_EmptyconcClassName)}
-  make(s) { new tom.gom.adt.objects.strategy.classnamelist.When_EmptyconcClassName(s) }
-}
-
-%op Strategy Is_ConsconcClassName() {
-  make() { `When_ConsconcClassName(Identity()) }
 }
 
 %op Strategy _ConsconcClassName(arg0:Strategy, arg1:Strategy) {
@@ -791,6 +757,14 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.classnamelist._ConsconcClassName(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcClassName(s:Strategy) {
+  make(s) { `Sequence(_ConsconcClassName(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcClassName() {
+  make() { `_ConsconcClassName(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcClassName(_HeadconcClassName:Strategy, _TailconcClassName:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist.Make_ConsconcClassName)}
 
@@ -799,34 +773,24 @@
   make( new_HeadconcClassName,  new_TailconcClassName) { new tom.gom.adt.objects.strategy.classnamelist.Make_ConsconcClassName( new_HeadconcClassName,  new_TailconcClassName) }
 }
 
-%op Strategy When_ConsconcClassName(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist.When_ConsconcClassName)}
-  make(s) { new tom.gom.adt.objects.strategy.classnamelist.When_ConsconcClassName(s) }
-}
-
-%op Strategy Is_EmptyconcHook() {
-  make() { `When_EmptyconcHook(Identity()) }
-}
-
 %op Strategy _EmptyconcHook() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist._EmptyconcHook)}
 
   make() { new tom.gom.adt.objects.strategy.hooklist._EmptyconcHook() }
 }
 
+%op Strategy When_EmptyconcHook(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcHook(),s) }
+}
+
+%op Strategy Is_EmptyconcHook() {
+  make() { `_EmptyconcHook() }
+}
+
 %op Strategy Make_EmptyconcHook() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist.Make_EmptyconcHook)}
 
   make() { new tom.gom.adt.objects.strategy.hooklist.Make_EmptyconcHook() }
-}
-
-%op Strategy When_EmptyconcHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist.When_EmptyconcHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hooklist.When_EmptyconcHook(s) }
-}
-
-%op Strategy Is_ConsconcHook() {
-  make() { `When_ConsconcHook(Identity()) }
 }
 
 %op Strategy _ConsconcHook(arg0:Strategy, arg1:Strategy) {
@@ -837,21 +801,20 @@
   make(arg0, arg1) { new tom.gom.adt.objects.strategy.hooklist._ConsconcHook(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcHook(s:Strategy) {
+  make(s) { `Sequence(_ConsconcHook(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcHook() {
+  make() { `_ConsconcHook(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcHook(_HeadconcHook:Strategy, _TailconcHook:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist.Make_ConsconcHook)}
 
   get_slot(_HeadconcHook, t) { _HeadconcHook }
   get_slot(_TailconcHook, t) { _TailconcHook }
   make( new_HeadconcHook,  new_TailconcHook) { new tom.gom.adt.objects.strategy.hooklist.Make_ConsconcHook( new_HeadconcHook,  new_TailconcHook) }
-}
-
-%op Strategy When_ConsconcHook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist.When_ConsconcHook)}
-  make(s) { new tom.gom.adt.objects.strategy.hooklist.When_ConsconcHook(s) }
-}
-
-%op Strategy Is_Slot() {
-  make() { `When_Slot(Identity()) }
 }
 
 %op Strategy _Slot(arg0:Strategy, arg1:Strategy) {
@@ -862,6 +825,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.slot._Slot(arg0, arg1) }
 }
 
+%op Strategy When_Slot(s:Strategy) {
+  make(s) { `Sequence(_Slot(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_Slot() {
+  make() { `_Slot(Identity(), Identity()) }
+}
+
 %op Strategy Make_Slot(_Name:String, _Sort:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slot.Make_Slot)}
 
@@ -870,34 +841,24 @@
   make( _Name,  new_Sort) { new tom.gom.adt.gom.strategy.slot.Make_Slot( _Name,  new_Sort) }
 }
 
-%op Strategy When_Slot(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slot.When_Slot)}
-  make(s) { new tom.gom.adt.gom.strategy.slot.When_Slot(s) }
-}
-
-%op Strategy Is_EmptyconcArg() {
-  make() { `When_EmptyconcArg(Identity()) }
-}
-
 %op Strategy _EmptyconcArg() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist._EmptyconcArg)}
 
   make() { new tom.gom.adt.gom.strategy.arglist._EmptyconcArg() }
 }
 
+%op Strategy When_EmptyconcArg(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcArg(),s) }
+}
+
+%op Strategy Is_EmptyconcArg() {
+  make() { `_EmptyconcArg() }
+}
+
 %op Strategy Make_EmptyconcArg() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist.Make_EmptyconcArg)}
 
   make() { new tom.gom.adt.gom.strategy.arglist.Make_EmptyconcArg() }
-}
-
-%op Strategy When_EmptyconcArg(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist.When_EmptyconcArg)}
-  make(s) { new tom.gom.adt.gom.strategy.arglist.When_EmptyconcArg(s) }
-}
-
-%op Strategy Is_ConsconcArg() {
-  make() { `When_ConsconcArg(Identity()) }
 }
 
 %op Strategy _ConsconcArg(arg0:Strategy, arg1:Strategy) {
@@ -908,6 +869,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.arglist._ConsconcArg(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcArg(s:Strategy) {
+  make(s) { `Sequence(_ConsconcArg(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcArg() {
+  make() { `_ConsconcArg(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcArg(_HeadconcArg:Strategy, _TailconcArg:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist.Make_ConsconcArg)}
 
@@ -916,19 +885,18 @@
   make( new_HeadconcArg,  new_TailconcArg) { new tom.gom.adt.gom.strategy.arglist.Make_ConsconcArg( new_HeadconcArg,  new_TailconcArg) }
 }
 
-%op Strategy When_ConsconcArg(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist.When_ConsconcArg)}
-  make(s) { new tom.gom.adt.gom.strategy.arglist.When_ConsconcArg(s) }
-}
-
-%op Strategy Is_KindModule() {
-  make() { `When_KindModule(Identity()) }
-}
-
 %op Strategy _KindModule() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind._KindModule)}
 
   make() { new tom.gom.adt.gom.strategy.idkind._KindModule() }
+}
+
+%op Strategy When_KindModule(s:Strategy) {
+  make(s) { `Sequence(_KindModule(),s) }
+}
+
+%op Strategy Is_KindModule() {
+  make() { `_KindModule() }
 }
 
 %op Strategy Make_KindModule() {
@@ -937,19 +905,18 @@
   make() { new tom.gom.adt.gom.strategy.idkind.Make_KindModule() }
 }
 
-%op Strategy When_KindModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind.When_KindModule)}
-  make(s) { new tom.gom.adt.gom.strategy.idkind.When_KindModule(s) }
-}
-
-%op Strategy Is_KindSort() {
-  make() { `When_KindSort(Identity()) }
-}
-
 %op Strategy _KindSort() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind._KindSort)}
 
   make() { new tom.gom.adt.gom.strategy.idkind._KindSort() }
+}
+
+%op Strategy When_KindSort(s:Strategy) {
+  make(s) { `Sequence(_KindSort(),s) }
+}
+
+%op Strategy Is_KindSort() {
+  make() { `_KindSort() }
 }
 
 %op Strategy Make_KindSort() {
@@ -958,19 +925,18 @@
   make() { new tom.gom.adt.gom.strategy.idkind.Make_KindSort() }
 }
 
-%op Strategy When_KindSort(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind.When_KindSort)}
-  make(s) { new tom.gom.adt.gom.strategy.idkind.When_KindSort(s) }
-}
-
-%op Strategy Is_KindOperator() {
-  make() { `When_KindOperator(Identity()) }
-}
-
 %op Strategy _KindOperator() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind._KindOperator)}
 
   make() { new tom.gom.adt.gom.strategy.idkind._KindOperator() }
+}
+
+%op Strategy When_KindOperator(s:Strategy) {
+  make(s) { `Sequence(_KindOperator(),s) }
+}
+
+%op Strategy Is_KindOperator() {
+  make() { `_KindOperator() }
 }
 
 %op Strategy Make_KindOperator() {
@@ -979,34 +945,24 @@
   make() { new tom.gom.adt.gom.strategy.idkind.Make_KindOperator() }
 }
 
-%op Strategy When_KindOperator(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind.When_KindOperator)}
-  make(s) { new tom.gom.adt.gom.strategy.idkind.When_KindOperator(s) }
-}
-
-%op Strategy Is_EmptyconcGomModule() {
-  make() { `When_EmptyconcGomModule(Identity()) }
-}
-
 %op Strategy _EmptyconcGomModule() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist._EmptyconcGomModule)}
 
   make() { new tom.gom.adt.gom.strategy.gommodulelist._EmptyconcGomModule() }
 }
 
+%op Strategy When_EmptyconcGomModule(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcGomModule(),s) }
+}
+
+%op Strategy Is_EmptyconcGomModule() {
+  make() { `_EmptyconcGomModule() }
+}
+
 %op Strategy Make_EmptyconcGomModule() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist.Make_EmptyconcGomModule)}
 
   make() { new tom.gom.adt.gom.strategy.gommodulelist.Make_EmptyconcGomModule() }
-}
-
-%op Strategy When_EmptyconcGomModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist.When_EmptyconcGomModule)}
-  make(s) { new tom.gom.adt.gom.strategy.gommodulelist.When_EmptyconcGomModule(s) }
-}
-
-%op Strategy Is_ConsconcGomModule() {
-  make() { `When_ConsconcGomModule(Identity()) }
 }
 
 %op Strategy _ConsconcGomModule(arg0:Strategy, arg1:Strategy) {
@@ -1017,6 +973,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.gommodulelist._ConsconcGomModule(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcGomModule(s:Strategy) {
+  make(s) { `Sequence(_ConsconcGomModule(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcGomModule() {
+  make() { `_ConsconcGomModule(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcGomModule(_HeadconcGomModule:Strategy, _TailconcGomModule:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist.Make_ConsconcGomModule)}
 
@@ -1025,34 +989,24 @@
   make( new_HeadconcGomModule,  new_TailconcGomModule) { new tom.gom.adt.gom.strategy.gommodulelist.Make_ConsconcGomModule( new_HeadconcGomModule,  new_TailconcGomModule) }
 }
 
-%op Strategy When_ConsconcGomModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist.When_ConsconcGomModule)}
-  make(s) { new tom.gom.adt.gom.strategy.gommodulelist.When_ConsconcGomModule(s) }
-}
-
-%op Strategy Is_EmptyconcGrammar() {
-  make() { `When_EmptyconcGrammar(Identity()) }
-}
-
 %op Strategy _EmptyconcGrammar() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist._EmptyconcGrammar)}
 
   make() { new tom.gom.adt.gom.strategy.grammarlist._EmptyconcGrammar() }
 }
 
+%op Strategy When_EmptyconcGrammar(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcGrammar(),s) }
+}
+
+%op Strategy Is_EmptyconcGrammar() {
+  make() { `_EmptyconcGrammar() }
+}
+
 %op Strategy Make_EmptyconcGrammar() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist.Make_EmptyconcGrammar)}
 
   make() { new tom.gom.adt.gom.strategy.grammarlist.Make_EmptyconcGrammar() }
-}
-
-%op Strategy When_EmptyconcGrammar(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist.When_EmptyconcGrammar)}
-  make(s) { new tom.gom.adt.gom.strategy.grammarlist.When_EmptyconcGrammar(s) }
-}
-
-%op Strategy Is_ConsconcGrammar() {
-  make() { `When_ConsconcGrammar(Identity()) }
 }
 
 %op Strategy _ConsconcGrammar(arg0:Strategy, arg1:Strategy) {
@@ -1063,21 +1017,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.grammarlist._ConsconcGrammar(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcGrammar(s:Strategy) {
+  make(s) { `Sequence(_ConsconcGrammar(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcGrammar() {
+  make() { `_ConsconcGrammar(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcGrammar(_HeadconcGrammar:Strategy, _TailconcGrammar:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist.Make_ConsconcGrammar)}
 
   get_slot(_HeadconcGrammar, t) { _HeadconcGrammar }
   get_slot(_TailconcGrammar, t) { _TailconcGrammar }
   make( new_HeadconcGrammar,  new_TailconcGrammar) { new tom.gom.adt.gom.strategy.grammarlist.Make_ConsconcGrammar( new_HeadconcGrammar,  new_TailconcGrammar) }
-}
-
-%op Strategy When_ConsconcGrammar(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist.When_ConsconcGrammar)}
-  make(s) { new tom.gom.adt.gom.strategy.grammarlist.When_ConsconcGrammar(s) }
-}
-
-%op Strategy Is_Slots() {
-  make() { `When_Slots(Identity()) }
 }
 
 %op Strategy _Slots(arg0:Strategy) {
@@ -1087,20 +1040,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.typedproduction._Slots(arg0) }
 }
 
+%op Strategy When_Slots(s:Strategy) {
+  make(s) { `Sequence(_Slots(Identity()),s) }
+}
+
+%op Strategy Is_Slots() {
+  make() { `_Slots(Identity()) }
+}
+
 %op Strategy Make_Slots(_Slots:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction.Make_Slots)}
 
   get_slot(_Slots, t) { _Slots }
   make( new_Slots) { new tom.gom.adt.gom.strategy.typedproduction.Make_Slots( new_Slots) }
-}
-
-%op Strategy When_Slots(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction.When_Slots)}
-  make(s) { new tom.gom.adt.gom.strategy.typedproduction.When_Slots(s) }
-}
-
-%op Strategy Is_Variadic() {
-  make() { `When_Variadic(Identity()) }
 }
 
 %op Strategy _Variadic(arg0:Strategy) {
@@ -1110,20 +1062,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.typedproduction._Variadic(arg0) }
 }
 
+%op Strategy When_Variadic(s:Strategy) {
+  make(s) { `Sequence(_Variadic(Identity()),s) }
+}
+
+%op Strategy Is_Variadic() {
+  make() { `_Variadic(Identity()) }
+}
+
 %op Strategy Make_Variadic(_Sort:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction.Make_Variadic)}
 
   get_slot(_Sort, t) { _Sort }
   make( new_Sort) { new tom.gom.adt.gom.strategy.typedproduction.Make_Variadic( new_Sort) }
-}
-
-%op Strategy When_Variadic(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction.When_Variadic)}
-  make(s) { new tom.gom.adt.gom.strategy.typedproduction.When_Variadic(s) }
-}
-
-%op Strategy Is_EmptyconcSection() {
-  make() { `When_EmptyconcSection(Identity()) }
 }
 
 %op Strategy _EmptyconcSection() {
@@ -1132,19 +1083,18 @@
   make() { new tom.gom.adt.gom.strategy.sectionlist._EmptyconcSection() }
 }
 
+%op Strategy When_EmptyconcSection(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcSection(),s) }
+}
+
+%op Strategy Is_EmptyconcSection() {
+  make() { `_EmptyconcSection() }
+}
+
 %op Strategy Make_EmptyconcSection() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist.Make_EmptyconcSection)}
 
   make() { new tom.gom.adt.gom.strategy.sectionlist.Make_EmptyconcSection() }
-}
-
-%op Strategy When_EmptyconcSection(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist.When_EmptyconcSection)}
-  make(s) { new tom.gom.adt.gom.strategy.sectionlist.When_EmptyconcSection(s) }
-}
-
-%op Strategy Is_ConsconcSection() {
-  make() { `When_ConsconcSection(Identity()) }
 }
 
 %op Strategy _ConsconcSection(arg0:Strategy, arg1:Strategy) {
@@ -1155,6 +1105,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.sectionlist._ConsconcSection(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcSection(s:Strategy) {
+  make(s) { `Sequence(_ConsconcSection(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcSection() {
+  make() { `_ConsconcSection(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcSection(_HeadconcSection:Strategy, _TailconcSection:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist.Make_ConsconcSection)}
 
@@ -1163,34 +1121,24 @@
   make( new_HeadconcSection,  new_TailconcSection) { new tom.gom.adt.gom.strategy.sectionlist.Make_ConsconcSection( new_HeadconcSection,  new_TailconcSection) }
 }
 
-%op Strategy When_ConsconcSection(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist.When_ConsconcSection)}
-  make(s) { new tom.gom.adt.gom.strategy.sectionlist.When_ConsconcSection(s) }
-}
-
-%op Strategy Is_EmptyconcOperator() {
-  make() { `When_EmptyconcOperator(Identity()) }
-}
-
 %op Strategy _EmptyconcOperator() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist._EmptyconcOperator)}
 
   make() { new tom.gom.adt.gom.strategy.operatordecllist._EmptyconcOperator() }
 }
 
+%op Strategy When_EmptyconcOperator(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcOperator(),s) }
+}
+
+%op Strategy Is_EmptyconcOperator() {
+  make() { `_EmptyconcOperator() }
+}
+
 %op Strategy Make_EmptyconcOperator() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist.Make_EmptyconcOperator)}
 
   make() { new tom.gom.adt.gom.strategy.operatordecllist.Make_EmptyconcOperator() }
-}
-
-%op Strategy When_EmptyconcOperator(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist.When_EmptyconcOperator)}
-  make(s) { new tom.gom.adt.gom.strategy.operatordecllist.When_EmptyconcOperator(s) }
-}
-
-%op Strategy Is_ConsconcOperator() {
-  make() { `When_ConsconcOperator(Identity()) }
 }
 
 %op Strategy _ConsconcOperator(arg0:Strategy, arg1:Strategy) {
@@ -1201,6 +1149,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.operatordecllist._ConsconcOperator(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcOperator(s:Strategy) {
+  make(s) { `Sequence(_ConsconcOperator(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcOperator() {
+  make() { `_ConsconcOperator(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcOperator(_HeadconcOperator:Strategy, _TailconcOperator:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist.Make_ConsconcOperator)}
 
@@ -1209,34 +1165,24 @@
   make( new_HeadconcOperator,  new_TailconcOperator) { new tom.gom.adt.gom.strategy.operatordecllist.Make_ConsconcOperator( new_HeadconcOperator,  new_TailconcOperator) }
 }
 
-%op Strategy When_ConsconcOperator(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist.When_ConsconcOperator)}
-  make(s) { new tom.gom.adt.gom.strategy.operatordecllist.When_ConsconcOperator(s) }
-}
-
-%op Strategy Is_EmptyconcHookDecl() {
-  make() { `When_EmptyconcHookDecl(Identity()) }
-}
-
 %op Strategy _EmptyconcHookDecl() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist._EmptyconcHookDecl)}
 
   make() { new tom.gom.adt.gom.strategy.hookdecllist._EmptyconcHookDecl() }
 }
 
+%op Strategy When_EmptyconcHookDecl(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcHookDecl(),s) }
+}
+
+%op Strategy Is_EmptyconcHookDecl() {
+  make() { `_EmptyconcHookDecl() }
+}
+
 %op Strategy Make_EmptyconcHookDecl() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist.Make_EmptyconcHookDecl)}
 
   make() { new tom.gom.adt.gom.strategy.hookdecllist.Make_EmptyconcHookDecl() }
-}
-
-%op Strategy When_EmptyconcHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist.When_EmptyconcHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecllist.When_EmptyconcHookDecl(s) }
-}
-
-%op Strategy Is_ConsconcHookDecl() {
-  make() { `When_ConsconcHookDecl(Identity()) }
 }
 
 %op Strategy _ConsconcHookDecl(arg0:Strategy, arg1:Strategy) {
@@ -1247,6 +1193,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecllist._ConsconcHookDecl(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcHookDecl(s:Strategy) {
+  make(s) { `Sequence(_ConsconcHookDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcHookDecl() {
+  make() { `_ConsconcHookDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcHookDecl(_HeadconcHookDecl:Strategy, _TailconcHookDecl:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist.Make_ConsconcHookDecl)}
 
@@ -1255,34 +1209,24 @@
   make( new_HeadconcHookDecl,  new_TailconcHookDecl) { new tom.gom.adt.gom.strategy.hookdecllist.Make_ConsconcHookDecl( new_HeadconcHookDecl,  new_TailconcHookDecl) }
 }
 
-%op Strategy When_ConsconcHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist.When_ConsconcHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecllist.When_ConsconcHookDecl(s) }
-}
-
-%op Strategy Is_EmptyconcSortDecl() {
-  make() { `When_EmptyconcSortDecl(Identity()) }
-}
-
 %op Strategy _EmptyconcSortDecl() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist._EmptyconcSortDecl)}
 
   make() { new tom.gom.adt.gom.strategy.sortdecllist._EmptyconcSortDecl() }
 }
 
+%op Strategy When_EmptyconcSortDecl(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcSortDecl(),s) }
+}
+
+%op Strategy Is_EmptyconcSortDecl() {
+  make() { `_EmptyconcSortDecl() }
+}
+
 %op Strategy Make_EmptyconcSortDecl() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist.Make_EmptyconcSortDecl)}
 
   make() { new tom.gom.adt.gom.strategy.sortdecllist.Make_EmptyconcSortDecl() }
-}
-
-%op Strategy When_EmptyconcSortDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist.When_EmptyconcSortDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.sortdecllist.When_EmptyconcSortDecl(s) }
-}
-
-%op Strategy Is_ConsconcSortDecl() {
-  make() { `When_ConsconcSortDecl(Identity()) }
 }
 
 %op Strategy _ConsconcSortDecl(arg0:Strategy, arg1:Strategy) {
@@ -1293,21 +1237,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.sortdecllist._ConsconcSortDecl(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcSortDecl(s:Strategy) {
+  make(s) { `Sequence(_ConsconcSortDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcSortDecl() {
+  make() { `_ConsconcSortDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcSortDecl(_HeadconcSortDecl:Strategy, _TailconcSortDecl:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist.Make_ConsconcSortDecl)}
 
   get_slot(_HeadconcSortDecl, t) { _HeadconcSortDecl }
   get_slot(_TailconcSortDecl, t) { _TailconcSortDecl }
   make( new_HeadconcSortDecl,  new_TailconcSortDecl) { new tom.gom.adt.gom.strategy.sortdecllist.Make_ConsconcSortDecl( new_HeadconcSortDecl,  new_TailconcSortDecl) }
-}
-
-%op Strategy When_ConsconcSortDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist.When_ConsconcSortDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.sortdecllist.When_ConsconcSortDecl(s) }
-}
-
-%op Strategy Is_OperatorDecl() {
-  make() { `When_OperatorDecl(Identity()) }
 }
 
 %op Strategy _OperatorDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -1319,6 +1262,14 @@
   make(arg0, arg1, arg2) { new tom.gom.adt.gom.strategy.operatordecl._OperatorDecl(arg0, arg1, arg2) }
 }
 
+%op Strategy When_OperatorDecl(s:Strategy) {
+  make(s) { `Sequence(_OperatorDecl(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_OperatorDecl() {
+  make() { `_OperatorDecl(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_OperatorDecl(_Name:String, _Sort:Strategy, _Prod:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecl.Make_OperatorDecl)}
 
@@ -1326,15 +1277,6 @@
   get_slot(_Sort, t) { _Sort }
   get_slot(_Prod, t) { _Prod }
   make( _Name,  new_Sort,  new_Prod) { new tom.gom.adt.gom.strategy.operatordecl.Make_OperatorDecl( _Name,  new_Sort,  new_Prod) }
-}
-
-%op Strategy When_OperatorDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecl.When_OperatorDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.operatordecl.When_OperatorDecl(s) }
-}
-
-%op Strategy Is_GomModule() {
-  make() { `When_GomModule(Identity()) }
 }
 
 %op Strategy _GomModule(arg0:Strategy, arg1:Strategy) {
@@ -1345,21 +1287,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.gommodule._GomModule(arg0, arg1) }
 }
 
+%op Strategy When_GomModule(s:Strategy) {
+  make(s) { `Sequence(_GomModule(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_GomModule() {
+  make() { `_GomModule(Identity(), Identity()) }
+}
+
 %op Strategy Make_GomModule(_ModuleName:Strategy, _SectionList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodule.Make_GomModule)}
 
   get_slot(_ModuleName, t) { _ModuleName }
   get_slot(_SectionList, t) { _SectionList }
   make( new_ModuleName,  new_SectionList) { new tom.gom.adt.gom.strategy.gommodule.Make_GomModule( new_ModuleName,  new_SectionList) }
-}
-
-%op Strategy When_GomModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodule.When_GomModule)}
-  make(s) { new tom.gom.adt.gom.strategy.gommodule.When_GomModule(s) }
-}
-
-%op Strategy Is_ModHookPair() {
-  make() { `When_ModHookPair(Identity()) }
 }
 
 %op Strategy _ModHookPair(arg0:Strategy, arg1:Strategy) {
@@ -1370,21 +1311,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.pair._ModHookPair(arg0, arg1) }
 }
 
+%op Strategy When_ModHookPair(s:Strategy) {
+  make(s) { `Sequence(_ModHookPair(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ModHookPair() {
+  make() { `_ModHookPair(Identity(), Identity()) }
+}
+
 %op Strategy Make_ModHookPair(_Modules:Strategy, _Hooks:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.pair.Make_ModHookPair)}
 
   get_slot(_Modules, t) { _Modules }
   get_slot(_Hooks, t) { _Hooks }
   make( new_Modules,  new_Hooks) { new tom.gom.adt.gom.strategy.pair.Make_ModHookPair( new_Modules,  new_Hooks) }
-}
-
-%op Strategy When_ModHookPair(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.pair.When_ModHookPair)}
-  make(s) { new tom.gom.adt.gom.strategy.pair.When_ModHookPair(s) }
-}
-
-%op Strategy Is_Imports() {
-  make() { `When_Imports(Identity()) }
 }
 
 %op Strategy _Imports(arg0:Strategy) {
@@ -1394,20 +1334,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.section._Imports(arg0) }
 }
 
+%op Strategy When_Imports(s:Strategy) {
+  make(s) { `Sequence(_Imports(Identity()),s) }
+}
+
+%op Strategy Is_Imports() {
+  make() { `_Imports(Identity()) }
+}
+
 %op Strategy Make_Imports(_ImportList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section.Make_Imports)}
 
   get_slot(_ImportList, t) { _ImportList }
   make( new_ImportList) { new tom.gom.adt.gom.strategy.section.Make_Imports( new_ImportList) }
-}
-
-%op Strategy When_Imports(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section.When_Imports)}
-  make(s) { new tom.gom.adt.gom.strategy.section.When_Imports(s) }
-}
-
-%op Strategy Is_Public() {
-  make() { `When_Public(Identity()) }
 }
 
 %op Strategy _Public(arg0:Strategy) {
@@ -1417,20 +1356,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.section._Public(arg0) }
 }
 
+%op Strategy When_Public(s:Strategy) {
+  make(s) { `Sequence(_Public(Identity()),s) }
+}
+
+%op Strategy Is_Public() {
+  make() { `_Public(Identity()) }
+}
+
 %op Strategy Make_Public(_GrammarList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section.Make_Public)}
 
   get_slot(_GrammarList, t) { _GrammarList }
   make( new_GrammarList) { new tom.gom.adt.gom.strategy.section.Make_Public( new_GrammarList) }
-}
-
-%op Strategy When_Public(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section.When_Public)}
-  make(s) { new tom.gom.adt.gom.strategy.section.When_Public(s) }
-}
-
-%op Strategy Is_EmptyconcGomType() {
-  make() { `When_EmptyconcGomType(Identity()) }
 }
 
 %op Strategy _EmptyconcGomType() {
@@ -1439,19 +1377,18 @@
   make() { new tom.gom.adt.gom.strategy.gomtypelist._EmptyconcGomType() }
 }
 
+%op Strategy When_EmptyconcGomType(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcGomType(),s) }
+}
+
+%op Strategy Is_EmptyconcGomType() {
+  make() { `_EmptyconcGomType() }
+}
+
 %op Strategy Make_EmptyconcGomType() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist.Make_EmptyconcGomType)}
 
   make() { new tom.gom.adt.gom.strategy.gomtypelist.Make_EmptyconcGomType() }
-}
-
-%op Strategy When_EmptyconcGomType(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist.When_EmptyconcGomType)}
-  make(s) { new tom.gom.adt.gom.strategy.gomtypelist.When_EmptyconcGomType(s) }
-}
-
-%op Strategy Is_ConsconcGomType() {
-  make() { `When_ConsconcGomType(Identity()) }
 }
 
 %op Strategy _ConsconcGomType(arg0:Strategy, arg1:Strategy) {
@@ -1462,6 +1399,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.gomtypelist._ConsconcGomType(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcGomType(s:Strategy) {
+  make(s) { `Sequence(_ConsconcGomType(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcGomType() {
+  make() { `_ConsconcGomType(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcGomType(_HeadconcGomType:Strategy, _TailconcGomType:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist.Make_ConsconcGomType)}
 
@@ -1470,34 +1415,24 @@
   make( new_HeadconcGomType,  new_TailconcGomType) { new tom.gom.adt.gom.strategy.gomtypelist.Make_ConsconcGomType( new_HeadconcGomType,  new_TailconcGomType) }
 }
 
-%op Strategy When_ConsconcGomType(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist.When_ConsconcGomType)}
-  make(s) { new tom.gom.adt.gom.strategy.gomtypelist.When_ConsconcGomType(s) }
-}
-
-%op Strategy Is_EmptyconcProduction() {
-  make() { `When_EmptyconcProduction(Identity()) }
-}
-
 %op Strategy _EmptyconcProduction() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist._EmptyconcProduction)}
 
   make() { new tom.gom.adt.gom.strategy.productionlist._EmptyconcProduction() }
 }
 
+%op Strategy When_EmptyconcProduction(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcProduction(),s) }
+}
+
+%op Strategy Is_EmptyconcProduction() {
+  make() { `_EmptyconcProduction() }
+}
+
 %op Strategy Make_EmptyconcProduction() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist.Make_EmptyconcProduction)}
 
   make() { new tom.gom.adt.gom.strategy.productionlist.Make_EmptyconcProduction() }
-}
-
-%op Strategy When_EmptyconcProduction(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist.When_EmptyconcProduction)}
-  make(s) { new tom.gom.adt.gom.strategy.productionlist.When_EmptyconcProduction(s) }
-}
-
-%op Strategy Is_ConsconcProduction() {
-  make() { `When_ConsconcProduction(Identity()) }
 }
 
 %op Strategy _ConsconcProduction(arg0:Strategy, arg1:Strategy) {
@@ -1508,21 +1443,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.productionlist._ConsconcProduction(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcProduction(s:Strategy) {
+  make(s) { `Sequence(_ConsconcProduction(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcProduction() {
+  make() { `_ConsconcProduction(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcProduction(_HeadconcProduction:Strategy, _TailconcProduction:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist.Make_ConsconcProduction)}
 
   get_slot(_HeadconcProduction, t) { _HeadconcProduction }
   get_slot(_TailconcProduction, t) { _TailconcProduction }
   make( new_HeadconcProduction,  new_TailconcProduction) { new tom.gom.adt.gom.strategy.productionlist.Make_ConsconcProduction( new_HeadconcProduction,  new_TailconcProduction) }
-}
-
-%op Strategy When_ConsconcProduction(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist.When_ConsconcProduction)}
-  make(s) { new tom.gom.adt.gom.strategy.productionlist.When_ConsconcProduction(s) }
-}
-
-%op Strategy Is_CutModule() {
-  make() { `When_CutModule(Identity()) }
 }
 
 %op Strategy _CutModule(arg0:Strategy) {
@@ -1532,20 +1466,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.decl._CutModule(arg0) }
 }
 
+%op Strategy When_CutModule(s:Strategy) {
+  make(s) { `Sequence(_CutModule(Identity()),s) }
+}
+
+%op Strategy Is_CutModule() {
+  make() { `_CutModule(Identity()) }
+}
+
 %op Strategy Make_CutModule(_MDecl:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutModule)}
 
   get_slot(_MDecl, t) { _MDecl }
   make( new_MDecl) { new tom.gom.adt.gom.strategy.decl.Make_CutModule( new_MDecl) }
-}
-
-%op Strategy When_CutModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.When_CutModule)}
-  make(s) { new tom.gom.adt.gom.strategy.decl.When_CutModule(s) }
-}
-
-%op Strategy Is_CutSort() {
-  make() { `When_CutSort(Identity()) }
 }
 
 %op Strategy _CutSort(arg0:Strategy) {
@@ -1555,20 +1488,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.decl._CutSort(arg0) }
 }
 
+%op Strategy When_CutSort(s:Strategy) {
+  make(s) { `Sequence(_CutSort(Identity()),s) }
+}
+
+%op Strategy Is_CutSort() {
+  make() { `_CutSort(Identity()) }
+}
+
 %op Strategy Make_CutSort(_Sort:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutSort)}
 
   get_slot(_Sort, t) { _Sort }
   make( new_Sort) { new tom.gom.adt.gom.strategy.decl.Make_CutSort( new_Sort) }
-}
-
-%op Strategy When_CutSort(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.When_CutSort)}
-  make(s) { new tom.gom.adt.gom.strategy.decl.When_CutSort(s) }
-}
-
-%op Strategy Is_CutOperator() {
-  make() { `When_CutOperator(Identity()) }
 }
 
 %op Strategy _CutOperator(arg0:Strategy) {
@@ -1578,20 +1510,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.decl._CutOperator(arg0) }
 }
 
+%op Strategy When_CutOperator(s:Strategy) {
+  make(s) { `Sequence(_CutOperator(Identity()),s) }
+}
+
+%op Strategy Is_CutOperator() {
+  make() { `_CutOperator(Identity()) }
+}
+
 %op Strategy Make_CutOperator(_ODecl:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutOperator)}
 
   get_slot(_ODecl, t) { _ODecl }
   make( new_ODecl) { new tom.gom.adt.gom.strategy.decl.Make_CutOperator( new_ODecl) }
-}
-
-%op Strategy When_CutOperator(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.When_CutOperator)}
-  make(s) { new tom.gom.adt.gom.strategy.decl.When_CutOperator(s) }
-}
-
-%op Strategy Is_EmptyconcImportedModule() {
-  make() { `When_EmptyconcImportedModule(Identity()) }
 }
 
 %op Strategy _EmptyconcImportedModule() {
@@ -1600,19 +1531,18 @@
   make() { new tom.gom.adt.gom.strategy.importlist._EmptyconcImportedModule() }
 }
 
+%op Strategy When_EmptyconcImportedModule(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcImportedModule(),s) }
+}
+
+%op Strategy Is_EmptyconcImportedModule() {
+  make() { `_EmptyconcImportedModule() }
+}
+
 %op Strategy Make_EmptyconcImportedModule() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist.Make_EmptyconcImportedModule)}
 
   make() { new tom.gom.adt.gom.strategy.importlist.Make_EmptyconcImportedModule() }
-}
-
-%op Strategy When_EmptyconcImportedModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist.When_EmptyconcImportedModule)}
-  make(s) { new tom.gom.adt.gom.strategy.importlist.When_EmptyconcImportedModule(s) }
-}
-
-%op Strategy Is_ConsconcImportedModule() {
-  make() { `When_ConsconcImportedModule(Identity()) }
 }
 
 %op Strategy _ConsconcImportedModule(arg0:Strategy, arg1:Strategy) {
@@ -1623,21 +1553,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.importlist._ConsconcImportedModule(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcImportedModule(s:Strategy) {
+  make(s) { `Sequence(_ConsconcImportedModule(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcImportedModule() {
+  make() { `_ConsconcImportedModule(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcImportedModule(_HeadconcImportedModule:Strategy, _TailconcImportedModule:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist.Make_ConsconcImportedModule)}
 
   get_slot(_HeadconcImportedModule, t) { _HeadconcImportedModule }
   get_slot(_TailconcImportedModule, t) { _TailconcImportedModule }
   make( new_HeadconcImportedModule,  new_TailconcImportedModule) { new tom.gom.adt.gom.strategy.importlist.Make_ConsconcImportedModule( new_HeadconcImportedModule,  new_TailconcImportedModule) }
-}
-
-%op Strategy When_ConsconcImportedModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist.When_ConsconcImportedModule)}
-  make(s) { new tom.gom.adt.gom.strategy.importlist.When_ConsconcImportedModule(s) }
-}
-
-%op Strategy Is_Sort() {
-  make() { `When_Sort(Identity()) }
 }
 
 %op Strategy _Sort(arg0:Strategy, arg1:Strategy) {
@@ -1648,21 +1577,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.sort._Sort(arg0, arg1) }
 }
 
+%op Strategy When_Sort(s:Strategy) {
+  make(s) { `Sequence(_Sort(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_Sort() {
+  make() { `_Sort(Identity(), Identity()) }
+}
+
 %op Strategy Make_Sort(_Decl:Strategy, _Operators:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sort.Make_Sort)}
 
   get_slot(_Decl, t) { _Decl }
   get_slot(_Operators, t) { _Operators }
   make( new_Decl,  new_Operators) { new tom.gom.adt.gom.strategy.sort.Make_Sort( new_Decl,  new_Operators) }
-}
-
-%op Strategy When_Sort(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sort.When_Sort)}
-  make(s) { new tom.gom.adt.gom.strategy.sort.When_Sort(s) }
-}
-
-%op Strategy Is_SortDecl() {
-  make() { `When_SortDecl(Identity()) }
 }
 
 %op Strategy _SortDecl(arg0:Strategy, arg1:Strategy) {
@@ -1673,21 +1601,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.sortdecl._SortDecl(arg0, arg1) }
 }
 
+%op Strategy When_SortDecl(s:Strategy) {
+  make(s) { `Sequence(_SortDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_SortDecl() {
+  make() { `_SortDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_SortDecl(_Name:String, _ModuleDecl:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl.Make_SortDecl)}
 
   get_slot(_Name, t) { _Name }
   get_slot(_ModuleDecl, t) { _ModuleDecl }
   make( _Name,  new_ModuleDecl) { new tom.gom.adt.gom.strategy.sortdecl.Make_SortDecl( _Name,  new_ModuleDecl) }
-}
-
-%op Strategy When_SortDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl.When_SortDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.sortdecl.When_SortDecl(s) }
-}
-
-%op Strategy Is_BuiltinSortDecl() {
-  make() { `When_BuiltinSortDecl(Identity()) }
 }
 
 %op Strategy _BuiltinSortDecl(arg0:Strategy) {
@@ -1697,20 +1624,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.sortdecl._BuiltinSortDecl(arg0) }
 }
 
+%op Strategy When_BuiltinSortDecl(s:Strategy) {
+  make(s) { `Sequence(_BuiltinSortDecl(Identity()),s) }
+}
+
+%op Strategy Is_BuiltinSortDecl() {
+  make() { `_BuiltinSortDecl(Identity()) }
+}
+
 %op Strategy Make_BuiltinSortDecl(_Name:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl.Make_BuiltinSortDecl)}
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.sortdecl.Make_BuiltinSortDecl( _Name) }
-}
-
-%op Strategy When_BuiltinSortDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl.When_BuiltinSortDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.sortdecl.When_BuiltinSortDecl(s) }
-}
-
-%op Strategy Is_MakeHookDecl() {
-  make() { `When_MakeHookDecl(Identity()) }
 }
 
 %op Strategy _MakeHookDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -1722,6 +1648,14 @@
   make(arg0, arg1, arg2) { new tom.gom.adt.gom.strategy.hookdecl._MakeHookDecl(arg0, arg1, arg2) }
 }
 
+%op Strategy When_MakeHookDecl(s:Strategy) {
+  make(s) { `Sequence(_MakeHookDecl(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_MakeHookDecl() {
+  make() { `_MakeHookDecl(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_MakeHookDecl(_Pointcut:Strategy, _SlotArgs:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_MakeHookDecl)}
 
@@ -1729,15 +1663,6 @@
   get_slot(_SlotArgs, t) { _SlotArgs }
   get_slot(_Code, t) { _Code }
   make( new_Pointcut,  new_SlotArgs,  new_Code) { new tom.gom.adt.gom.strategy.hookdecl.Make_MakeHookDecl( new_Pointcut,  new_SlotArgs,  new_Code) }
-}
-
-%op Strategy When_MakeHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.When_MakeHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecl.When_MakeHookDecl(s) }
-}
-
-%op Strategy Is_BlockHookDecl() {
-  make() { `When_BlockHookDecl(Identity()) }
 }
 
 %op Strategy _BlockHookDecl(arg0:Strategy, arg1:Strategy) {
@@ -1748,21 +1673,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._BlockHookDecl(arg0, arg1) }
 }
 
+%op Strategy When_BlockHookDecl(s:Strategy) {
+  make(s) { `Sequence(_BlockHookDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_BlockHookDecl() {
+  make() { `_BlockHookDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_BlockHookDecl(_Pointcut:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_BlockHookDecl)}
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
   make( new_Pointcut,  new_Code) { new tom.gom.adt.gom.strategy.hookdecl.Make_BlockHookDecl( new_Pointcut,  new_Code) }
-}
-
-%op Strategy When_BlockHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.When_BlockHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecl.When_BlockHookDecl(s) }
-}
-
-%op Strategy Is_InterfaceHookDecl() {
-  make() { `When_InterfaceHookDecl(Identity()) }
 }
 
 %op Strategy _InterfaceHookDecl(arg0:Strategy, arg1:Strategy) {
@@ -1773,21 +1697,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._InterfaceHookDecl(arg0, arg1) }
 }
 
+%op Strategy When_InterfaceHookDecl(s:Strategy) {
+  make(s) { `Sequence(_InterfaceHookDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_InterfaceHookDecl() {
+  make() { `_InterfaceHookDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_InterfaceHookDecl(_Pointcut:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_InterfaceHookDecl)}
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
   make( new_Pointcut,  new_Code) { new tom.gom.adt.gom.strategy.hookdecl.Make_InterfaceHookDecl( new_Pointcut,  new_Code) }
-}
-
-%op Strategy When_InterfaceHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.When_InterfaceHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecl.When_InterfaceHookDecl(s) }
-}
-
-%op Strategy Is_ImportHookDecl() {
-  make() { `When_ImportHookDecl(Identity()) }
 }
 
 %op Strategy _ImportHookDecl(arg0:Strategy, arg1:Strategy) {
@@ -1798,21 +1721,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._ImportHookDecl(arg0, arg1) }
 }
 
+%op Strategy When_ImportHookDecl(s:Strategy) {
+  make(s) { `Sequence(_ImportHookDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ImportHookDecl() {
+  make() { `_ImportHookDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_ImportHookDecl(_Pointcut:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_ImportHookDecl)}
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
   make( new_Pointcut,  new_Code) { new tom.gom.adt.gom.strategy.hookdecl.Make_ImportHookDecl( new_Pointcut,  new_Code) }
-}
-
-%op Strategy When_ImportHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.When_ImportHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecl.When_ImportHookDecl(s) }
-}
-
-%op Strategy Is_MappingHookDecl() {
-  make() { `When_MappingHookDecl(Identity()) }
 }
 
 %op Strategy _MappingHookDecl(arg0:Strategy, arg1:Strategy) {
@@ -1823,6 +1745,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._MappingHookDecl(arg0, arg1) }
 }
 
+%op Strategy When_MappingHookDecl(s:Strategy) {
+  make(s) { `Sequence(_MappingHookDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_MappingHookDecl() {
+  make() { `_MappingHookDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_MappingHookDecl(_Pointcut:Strategy, _Code:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_MappingHookDecl)}
 
@@ -1831,34 +1761,24 @@
   make( new_Pointcut,  new_Code) { new tom.gom.adt.gom.strategy.hookdecl.Make_MappingHookDecl( new_Pointcut,  new_Code) }
 }
 
-%op Strategy When_MappingHookDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.When_MappingHookDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.hookdecl.When_MappingHookDecl(s) }
-}
-
-%op Strategy Is_EmptyconcModuleDecl() {
-  make() { `When_EmptyconcModuleDecl(Identity()) }
-}
-
 %op Strategy _EmptyconcModuleDecl() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist._EmptyconcModuleDecl)}
 
   make() { new tom.gom.adt.gom.strategy.moduledecllist._EmptyconcModuleDecl() }
 }
 
+%op Strategy When_EmptyconcModuleDecl(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcModuleDecl(),s) }
+}
+
+%op Strategy Is_EmptyconcModuleDecl() {
+  make() { `_EmptyconcModuleDecl() }
+}
+
 %op Strategy Make_EmptyconcModuleDecl() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist.Make_EmptyconcModuleDecl)}
 
   make() { new tom.gom.adt.gom.strategy.moduledecllist.Make_EmptyconcModuleDecl() }
-}
-
-%op Strategy When_EmptyconcModuleDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist.When_EmptyconcModuleDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.moduledecllist.When_EmptyconcModuleDecl(s) }
-}
-
-%op Strategy Is_ConsconcModuleDecl() {
-  make() { `When_ConsconcModuleDecl(Identity()) }
 }
 
 %op Strategy _ConsconcModuleDecl(arg0:Strategy, arg1:Strategy) {
@@ -1869,21 +1789,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.moduledecllist._ConsconcModuleDecl(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcModuleDecl(s:Strategy) {
+  make(s) { `Sequence(_ConsconcModuleDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcModuleDecl() {
+  make() { `_ConsconcModuleDecl(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcModuleDecl(_HeadconcModuleDecl:Strategy, _TailconcModuleDecl:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist.Make_ConsconcModuleDecl)}
 
   get_slot(_HeadconcModuleDecl, t) { _HeadconcModuleDecl }
   get_slot(_TailconcModuleDecl, t) { _TailconcModuleDecl }
   make( new_HeadconcModuleDecl,  new_TailconcModuleDecl) { new tom.gom.adt.gom.strategy.moduledecllist.Make_ConsconcModuleDecl( new_HeadconcModuleDecl,  new_TailconcModuleDecl) }
-}
-
-%op Strategy When_ConsconcModuleDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist.When_ConsconcModuleDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.moduledecllist.When_ConsconcModuleDecl(s) }
-}
-
-%op Strategy Is_Module() {
-  make() { `When_Module(Identity()) }
 }
 
 %op Strategy _Module(arg0:Strategy, arg1:Strategy) {
@@ -1894,6 +1813,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.module._Module(arg0, arg1) }
 }
 
+%op Strategy When_Module(s:Strategy) {
+  make(s) { `Sequence(_Module(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_Module() {
+  make() { `_Module(Identity(), Identity()) }
+}
+
 %op Strategy Make_Module(_MDecl:Strategy, _Sorts:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.module.Make_Module)}
 
@@ -1902,34 +1829,24 @@
   make( new_MDecl,  new_Sorts) { new tom.gom.adt.gom.strategy.module.Make_Module( new_MDecl,  new_Sorts) }
 }
 
-%op Strategy When_Module(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.module.When_Module)}
-  make(s) { new tom.gom.adt.gom.strategy.module.When_Module(s) }
-}
-
-%op Strategy Is_EmptyconcField() {
-  make() { `When_EmptyconcField(Identity()) }
-}
-
 %op Strategy _EmptyconcField() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist._EmptyconcField)}
 
   make() { new tom.gom.adt.gom.strategy.fieldlist._EmptyconcField() }
 }
 
+%op Strategy When_EmptyconcField(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcField(),s) }
+}
+
+%op Strategy Is_EmptyconcField() {
+  make() { `_EmptyconcField() }
+}
+
 %op Strategy Make_EmptyconcField() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist.Make_EmptyconcField)}
 
   make() { new tom.gom.adt.gom.strategy.fieldlist.Make_EmptyconcField() }
-}
-
-%op Strategy When_EmptyconcField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist.When_EmptyconcField)}
-  make(s) { new tom.gom.adt.gom.strategy.fieldlist.When_EmptyconcField(s) }
-}
-
-%op Strategy Is_ConsconcField() {
-  make() { `When_ConsconcField(Identity()) }
 }
 
 %op Strategy _ConsconcField(arg0:Strategy, arg1:Strategy) {
@@ -1940,21 +1857,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.fieldlist._ConsconcField(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcField(s:Strategy) {
+  make(s) { `Sequence(_ConsconcField(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcField() {
+  make() { `_ConsconcField(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcField(_HeadconcField:Strategy, _TailconcField:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist.Make_ConsconcField)}
 
   get_slot(_HeadconcField, t) { _HeadconcField }
   get_slot(_TailconcField, t) { _TailconcField }
   make( new_HeadconcField,  new_TailconcField) { new tom.gom.adt.gom.strategy.fieldlist.Make_ConsconcField( new_HeadconcField,  new_TailconcField) }
-}
-
-%op Strategy When_ConsconcField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist.When_ConsconcField)}
-  make(s) { new tom.gom.adt.gom.strategy.fieldlist.When_ConsconcField(s) }
-}
-
-%op Strategy Is_Grammar() {
-  make() { `When_Grammar(Identity()) }
 }
 
 %op Strategy _Grammar(arg0:Strategy) {
@@ -1964,20 +1880,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.grammar._Grammar(arg0) }
 }
 
+%op Strategy When_Grammar(s:Strategy) {
+  make(s) { `Sequence(_Grammar(Identity()),s) }
+}
+
+%op Strategy Is_Grammar() {
+  make() { `_Grammar(Identity()) }
+}
+
 %op Strategy Make_Grammar(_ProductionList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar.Make_Grammar)}
 
   get_slot(_ProductionList, t) { _ProductionList }
   make( new_ProductionList) { new tom.gom.adt.gom.strategy.grammar.Make_Grammar( new_ProductionList) }
-}
-
-%op Strategy When_Grammar(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar.When_Grammar)}
-  make(s) { new tom.gom.adt.gom.strategy.grammar.When_Grammar(s) }
-}
-
-%op Strategy Is_Sorts() {
-  make() { `When_Sorts(Identity()) }
 }
 
 %op Strategy _Sorts(arg0:Strategy) {
@@ -1987,20 +1902,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.grammar._Sorts(arg0) }
 }
 
+%op Strategy When_Sorts(s:Strategy) {
+  make(s) { `Sequence(_Sorts(Identity()),s) }
+}
+
+%op Strategy Is_Sorts() {
+  make() { `_Sorts(Identity()) }
+}
+
 %op Strategy Make_Sorts(_TypeList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar.Make_Sorts)}
 
   get_slot(_TypeList, t) { _TypeList }
   make( new_TypeList) { new tom.gom.adt.gom.strategy.grammar.Make_Sorts( new_TypeList) }
-}
-
-%op Strategy When_Sorts(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar.When_Sorts)}
-  make(s) { new tom.gom.adt.gom.strategy.grammar.When_Sorts(s) }
-}
-
-%op Strategy Is_EmptyconcSlot() {
-  make() { `When_EmptyconcSlot(Identity()) }
 }
 
 %op Strategy _EmptyconcSlot() {
@@ -2009,19 +1923,18 @@
   make() { new tom.gom.adt.gom.strategy.slotlist._EmptyconcSlot() }
 }
 
+%op Strategy When_EmptyconcSlot(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcSlot(),s) }
+}
+
+%op Strategy Is_EmptyconcSlot() {
+  make() { `_EmptyconcSlot() }
+}
+
 %op Strategy Make_EmptyconcSlot() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist.Make_EmptyconcSlot)}
 
   make() { new tom.gom.adt.gom.strategy.slotlist.Make_EmptyconcSlot() }
-}
-
-%op Strategy When_EmptyconcSlot(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist.When_EmptyconcSlot)}
-  make(s) { new tom.gom.adt.gom.strategy.slotlist.When_EmptyconcSlot(s) }
-}
-
-%op Strategy Is_ConsconcSlot() {
-  make() { `When_ConsconcSlot(Identity()) }
 }
 
 %op Strategy _ConsconcSlot(arg0:Strategy, arg1:Strategy) {
@@ -2032,6 +1945,14 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.slotlist._ConsconcSlot(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcSlot(s:Strategy) {
+  make(s) { `Sequence(_ConsconcSlot(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcSlot() {
+  make() { `_ConsconcSlot(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcSlot(_HeadconcSlot:Strategy, _TailconcSlot:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist.Make_ConsconcSlot)}
 
@@ -2040,34 +1961,24 @@
   make( new_HeadconcSlot,  new_TailconcSlot) { new tom.gom.adt.gom.strategy.slotlist.Make_ConsconcSlot( new_HeadconcSlot,  new_TailconcSlot) }
 }
 
-%op Strategy When_ConsconcSlot(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist.When_ConsconcSlot)}
-  make(s) { new tom.gom.adt.gom.strategy.slotlist.When_ConsconcSlot(s) }
-}
-
-%op Strategy Is_EmptyconcSort() {
-  make() { `When_EmptyconcSort(Identity()) }
-}
-
 %op Strategy _EmptyconcSort() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist._EmptyconcSort)}
 
   make() { new tom.gom.adt.gom.strategy.sortlist._EmptyconcSort() }
 }
 
+%op Strategy When_EmptyconcSort(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcSort(),s) }
+}
+
+%op Strategy Is_EmptyconcSort() {
+  make() { `_EmptyconcSort() }
+}
+
 %op Strategy Make_EmptyconcSort() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist.Make_EmptyconcSort)}
 
   make() { new tom.gom.adt.gom.strategy.sortlist.Make_EmptyconcSort() }
-}
-
-%op Strategy When_EmptyconcSort(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist.When_EmptyconcSort)}
-  make(s) { new tom.gom.adt.gom.strategy.sortlist.When_EmptyconcSort(s) }
-}
-
-%op Strategy Is_ConsconcSort() {
-  make() { `When_ConsconcSort(Identity()) }
 }
 
 %op Strategy _ConsconcSort(arg0:Strategy, arg1:Strategy) {
@@ -2078,21 +1989,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.sortlist._ConsconcSort(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcSort(s:Strategy) {
+  make(s) { `Sequence(_ConsconcSort(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcSort() {
+  make() { `_ConsconcSort(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcSort(_HeadconcSort:Strategy, _TailconcSort:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist.Make_ConsconcSort)}
 
   get_slot(_HeadconcSort, t) { _HeadconcSort }
   get_slot(_TailconcSort, t) { _TailconcSort }
   make( new_HeadconcSort,  new_TailconcSort) { new tom.gom.adt.gom.strategy.sortlist.Make_ConsconcSort( new_HeadconcSort,  new_TailconcSort) }
-}
-
-%op Strategy When_ConsconcSort(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist.When_ConsconcSort)}
-  make(s) { new tom.gom.adt.gom.strategy.sortlist.When_ConsconcSort(s) }
-}
-
-%op Strategy Is_Arg() {
-  make() { `When_Arg(Identity()) }
 }
 
 %op Strategy _Arg(arg0:Strategy) {
@@ -2102,20 +2012,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.arg._Arg(arg0) }
 }
 
+%op Strategy When_Arg(s:Strategy) {
+  make(s) { `Sequence(_Arg(Identity()),s) }
+}
+
+%op Strategy Is_Arg() {
+  make() { `_Arg(Identity()) }
+}
+
 %op Strategy Make_Arg(_Name:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arg.Make_Arg)}
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.arg.Make_Arg( _Name) }
-}
-
-%op Strategy When_Arg(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arg.When_Arg)}
-  make(s) { new tom.gom.adt.gom.strategy.arg.When_Arg(s) }
-}
-
-%op Strategy Is_GomModuleName() {
-  make() { `When_GomModuleName(Identity()) }
 }
 
 %op Strategy _GomModuleName(arg0:Strategy) {
@@ -2125,20 +2034,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.gommodulename._GomModuleName(arg0) }
 }
 
+%op Strategy When_GomModuleName(s:Strategy) {
+  make(s) { `Sequence(_GomModuleName(Identity()),s) }
+}
+
+%op Strategy Is_GomModuleName() {
+  make() { `_GomModuleName(Identity()) }
+}
+
 %op Strategy Make_GomModuleName(_Name:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulename.Make_GomModuleName)}
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.gommodulename.Make_GomModuleName( _Name) }
-}
-
-%op Strategy When_GomModuleName(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulename.When_GomModuleName)}
-  make(s) { new tom.gom.adt.gom.strategy.gommodulename.When_GomModuleName(s) }
-}
-
-%op Strategy Is_StarredField() {
-  make() { `When_StarredField(Identity()) }
 }
 
 %op Strategy _StarredField(arg0:Strategy) {
@@ -2148,20 +2056,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.field._StarredField(arg0) }
 }
 
+%op Strategy When_StarredField(s:Strategy) {
+  make(s) { `Sequence(_StarredField(Identity()),s) }
+}
+
+%op Strategy Is_StarredField() {
+  make() { `_StarredField(Identity()) }
+}
+
 %op Strategy Make_StarredField(_FieldType:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field.Make_StarredField)}
 
   get_slot(_FieldType, t) { _FieldType }
   make( new_FieldType) { new tom.gom.adt.gom.strategy.field.Make_StarredField( new_FieldType) }
-}
-
-%op Strategy When_StarredField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field.When_StarredField)}
-  make(s) { new tom.gom.adt.gom.strategy.field.When_StarredField(s) }
-}
-
-%op Strategy Is_NamedField() {
-  make() { `When_NamedField(Identity()) }
 }
 
 %op Strategy _NamedField(arg0:Strategy, arg1:Strategy) {
@@ -2172,21 +2079,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.field._NamedField(arg0, arg1) }
 }
 
+%op Strategy When_NamedField(s:Strategy) {
+  make(s) { `Sequence(_NamedField(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_NamedField() {
+  make() { `_NamedField(Identity(), Identity()) }
+}
+
 %op Strategy Make_NamedField(_Name:String, _FieldType:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field.Make_NamedField)}
 
   get_slot(_Name, t) { _Name }
   get_slot(_FieldType, t) { _FieldType }
   make( _Name,  new_FieldType) { new tom.gom.adt.gom.strategy.field.Make_NamedField( _Name,  new_FieldType) }
-}
-
-%op Strategy When_NamedField(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field.When_NamedField)}
-  make(s) { new tom.gom.adt.gom.strategy.field.When_NamedField(s) }
-}
-
-%op Strategy Is_Production() {
-  make() { `When_Production(Identity()) }
 }
 
 %op Strategy _Production(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -2198,6 +2104,14 @@
   make(arg0, arg1, arg2) { new tom.gom.adt.gom.strategy.production._Production(arg0, arg1, arg2) }
 }
 
+%op Strategy When_Production(s:Strategy) {
+  make(s) { `Sequence(_Production(Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_Production() {
+  make() { `_Production(Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_Production(_Name:String, _Domain:Strategy, _Codomain:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.Make_Production)}
 
@@ -2205,15 +2119,6 @@
   get_slot(_Domain, t) { _Domain }
   get_slot(_Codomain, t) { _Codomain }
   make( _Name,  new_Domain,  new_Codomain) { new tom.gom.adt.gom.strategy.production.Make_Production( _Name,  new_Domain,  new_Codomain) }
-}
-
-%op Strategy When_Production(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.When_Production)}
-  make(s) { new tom.gom.adt.gom.strategy.production.When_Production(s) }
-}
-
-%op Strategy Is_Hook() {
-  make() { `When_Hook(Identity()) }
 }
 
 %op Strategy _Hook(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
@@ -2227,6 +2132,14 @@
   make(arg0, arg1, arg2, arg3, arg4) { new tom.gom.adt.gom.strategy.production._Hook(arg0, arg1, arg2, arg3, arg4) }
 }
 
+%op Strategy When_Hook(s:Strategy) {
+  make(s) { `Sequence(_Hook(Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+}
+
+%op Strategy Is_Hook() {
+  make() { `_Hook(Identity(), Identity(), Identity(), Identity(), Identity()) }
+}
+
 %op Strategy Make_Hook(_NameType:Strategy, _Name:String, _HookType:Strategy, _Args:Strategy, _StringCode:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.Make_Hook)}
 
@@ -2238,21 +2151,20 @@
   make( new_NameType,  _Name,  new_HookType,  new_Args,  _StringCode) { new tom.gom.adt.gom.strategy.production.Make_Hook( new_NameType,  _Name,  new_HookType,  new_Args,  _StringCode) }
 }
 
-%op Strategy When_Hook(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.When_Hook)}
-  make(s) { new tom.gom.adt.gom.strategy.production.When_Hook(s) }
-}
-
-%op Strategy Is_ModuleDecl() {
-  make() { `When_ModuleDecl(Identity()) }
-}
-
 %op Strategy _ModuleDecl(arg0:Strategy, arg1:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecl._ModuleDecl)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.moduledecl._ModuleDecl(arg0, arg1) }
+}
+
+%op Strategy When_ModuleDecl(s:Strategy) {
+  make(s) { `Sequence(_ModuleDecl(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ModuleDecl() {
+  make() { `_ModuleDecl(Identity(), Identity()) }
 }
 
 %op Strategy Make_ModuleDecl(_ModuleName:Strategy, _Pkg:String) {
@@ -2263,34 +2175,24 @@
   make( new_ModuleName,  _Pkg) { new tom.gom.adt.gom.strategy.moduledecl.Make_ModuleDecl( new_ModuleName,  _Pkg) }
 }
 
-%op Strategy When_ModuleDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecl.When_ModuleDecl)}
-  make(s) { new tom.gom.adt.gom.strategy.moduledecl.When_ModuleDecl(s) }
-}
-
-%op Strategy Is_EmptyconcModule() {
-  make() { `When_EmptyconcModule(Identity()) }
-}
-
 %op Strategy _EmptyconcModule() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist._EmptyconcModule)}
 
   make() { new tom.gom.adt.gom.strategy.modulelist._EmptyconcModule() }
 }
 
+%op Strategy When_EmptyconcModule(s:Strategy) {
+  make(s) { `Sequence(_EmptyconcModule(),s) }
+}
+
+%op Strategy Is_EmptyconcModule() {
+  make() { `_EmptyconcModule() }
+}
+
 %op Strategy Make_EmptyconcModule() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist.Make_EmptyconcModule)}
 
   make() { new tom.gom.adt.gom.strategy.modulelist.Make_EmptyconcModule() }
-}
-
-%op Strategy When_EmptyconcModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist.When_EmptyconcModule)}
-  make(s) { new tom.gom.adt.gom.strategy.modulelist.When_EmptyconcModule(s) }
-}
-
-%op Strategy Is_ConsconcModule() {
-  make() { `When_ConsconcModule(Identity()) }
 }
 
 %op Strategy _ConsconcModule(arg0:Strategy, arg1:Strategy) {
@@ -2301,21 +2203,20 @@
   make(arg0, arg1) { new tom.gom.adt.gom.strategy.modulelist._ConsconcModule(arg0, arg1) }
 }
 
+%op Strategy When_ConsconcModule(s:Strategy) {
+  make(s) { `Sequence(_ConsconcModule(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsconcModule() {
+  make() { `_ConsconcModule(Identity(), Identity()) }
+}
+
 %op Strategy Make_ConsconcModule(_HeadconcModule:Strategy, _TailconcModule:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist.Make_ConsconcModule)}
 
   get_slot(_HeadconcModule, t) { _HeadconcModule }
   get_slot(_TailconcModule, t) { _TailconcModule }
   make( new_HeadconcModule,  new_TailconcModule) { new tom.gom.adt.gom.strategy.modulelist.Make_ConsconcModule( new_HeadconcModule,  new_TailconcModule) }
-}
-
-%op Strategy When_ConsconcModule(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist.When_ConsconcModule)}
-  make(s) { new tom.gom.adt.gom.strategy.modulelist.When_ConsconcModule(s) }
-}
-
-%op Strategy Is_GomType() {
-  make() { `When_GomType(Identity()) }
 }
 
 %op Strategy _GomType(arg0:Strategy) {
@@ -2325,20 +2226,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.gomtype._GomType(arg0) }
 }
 
+%op Strategy When_GomType(s:Strategy) {
+  make(s) { `Sequence(_GomType(Identity()),s) }
+}
+
+%op Strategy Is_GomType() {
+  make() { `_GomType(Identity()) }
+}
+
 %op Strategy Make_GomType(_Name:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtype.Make_GomType)}
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.gomtype.Make_GomType( _Name) }
-}
-
-%op Strategy When_GomType(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtype.When_GomType)}
-  make(s) { new tom.gom.adt.gom.strategy.gomtype.When_GomType(s) }
-}
-
-%op Strategy Is_Import() {
-  make() { `When_Import(Identity()) }
 }
 
 %op Strategy _Import(arg0:Strategy) {
@@ -2348,20 +2248,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.importedmodule._Import(arg0) }
 }
 
+%op Strategy When_Import(s:Strategy) {
+  make(s) { `Sequence(_Import(Identity()),s) }
+}
+
+%op Strategy Is_Import() {
+  make() { `_Import(Identity()) }
+}
+
 %op Strategy Make_Import(_ModuleName:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importedmodule.Make_Import)}
 
   get_slot(_ModuleName, t) { _ModuleName }
   make( new_ModuleName) { new tom.gom.adt.gom.strategy.importedmodule.Make_Import( new_ModuleName) }
-}
-
-%op Strategy When_Import(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importedmodule.When_Import)}
-  make(s) { new tom.gom.adt.gom.strategy.importedmodule.When_Import(s) }
-}
-
-%op Strategy Is_HookKind() {
-  make() { `When_HookKind(Identity()) }
 }
 
 %op Strategy _HookKind(arg0:Strategy) {
@@ -2371,16 +2270,19 @@
   make(arg0) { new tom.gom.adt.gom.strategy.hookkind._HookKind(arg0) }
 }
 
+%op Strategy When_HookKind(s:Strategy) {
+  make(s) { `Sequence(_HookKind(Identity()),s) }
+}
+
+%op Strategy Is_HookKind() {
+  make() { `_HookKind(Identity()) }
+}
+
 %op Strategy Make_HookKind(_kind:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookkind.Make_HookKind)}
 
   get_slot(_kind, t) { _kind }
   make( _kind) { new tom.gom.adt.gom.strategy.hookkind.Make_HookKind( _kind) }
-}
-
-%op Strategy When_HookKind(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookkind.When_HookKind)}
-  make(s) { new tom.gom.adt.gom.strategy.hookkind.When_HookKind(s) }
 }
 
             %op Strategy _CodeList(sub:Strategy) {

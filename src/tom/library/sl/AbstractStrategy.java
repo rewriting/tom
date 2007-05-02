@@ -89,9 +89,9 @@ public abstract class AbstractStrategy implements Strategy {
   /** execute the strategy s in the current environment
    * @parameter s the strategy to execute.
    */
-  public void execute(Strategy s) {
+  public int execute(Strategy s) {
     AbstractStrategy.init(s,environment);
-    s.visit();
+    return s.visit();
   }
 
   /** change the current subject with v and execute the strategy s in the
@@ -99,16 +99,16 @@ public abstract class AbstractStrategy implements Strategy {
    * @parameter v the new current subject.
    * @parameter s the strategy to execute.
    */
-  public void execute(Strategy s, Visitable v) {
+  public int execute(Strategy s, Visitable v) {
     environment.setSubject(v);
-    execute(s);
+    return execute(s);
   }
 
   public Visitable fire(Visitable any) {
     init();
     setRoot(any);
-    visit();
-    if(environment.getStatus() == Environment.SUCCESS) {
+    int status = visit();
+    if(status == Environment.SUCCESS) {
       return getRoot();
     } else {
       throw new tom.library.sl.FireException();
@@ -125,14 +125,6 @@ public abstract class AbstractStrategy implements Strategy {
 
   public void setEnvironment(Environment env) {
     this.environment = env;
-  }
-
-  public int getStatus() {
-    return environment.getStatus();
-  }
-
-  public void setStatus(int stat) {
-    environment.setStatus(stat);
   }
 
   public Visitable getRoot() {

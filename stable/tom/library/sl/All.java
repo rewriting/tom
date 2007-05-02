@@ -60,7 +60,7 @@ public class All extends AbstractStrategy {
   public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     int childCount = any.getChildCount();
     jjtraveler.Visitable result = any;
-    if (any instanceof Visitable) {
+    if(any instanceof Visitable) {
       jjtraveler.Visitable[] childs = null;
       for (int i = 0; i < childCount; i++) {
         jjtraveler.Visitable oldChild = any.getChildAt(i);
@@ -77,7 +77,7 @@ public class All extends AbstractStrategy {
         result = ((Visitable) any).setChildren(childs);
       }
     } else {
-      for (int i = 0; i < childCount; i++) {
+      for(int i = 0; i < childCount; i++) {
         jjtraveler.Visitable newChild = visitors[ARG].visit(result.getChildAt(i));
         result = result.setChildAt(i, newChild);
       }
@@ -90,45 +90,40 @@ public class All extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public void visit() {
+  public int visit() {
     Visitable any = environment.getSubject();
     int childCount = any.getChildCount();
+    /* we relax Visitable into jjtraveler.Visitable to use getChildren() */
+    jjtraveler.Visitable[] childs = null;
 
-    Visitable[] childs = null;
-    for (int i = 0; i < childCount; i++) {
+    for(int i = 0; i < childCount; i++) {
       Visitable oldChild = (Visitable)any.getChildAt(i);
       environment.down(i+1);
-      visitors[ARG].visit();
-      if(environment.getStatus() != Environment.SUCCESS) {
-        environment.up();
-        return;
+      int status = visitors[ARG].visit();
+      if(status != Environment.SUCCESS) {
+        environment.upLocal();
+        return status;
       }
       Visitable newChild = environment.getSubject();
       if(childs != null) {
         childs[i] = newChild;
-        environment.up();
-        /* restore subject */
-        environment.setSubject(any);
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        // childs = (Visitable[])any.getChildren();
+        childs = ((Visitable) any).getChildren();
+        /*
         jjtraveler.Visitable[] array = any.getChildren();
         childs = new Visitable[childCount];
         for(int j = 0; j < array.length; j++) {
           childs[j] = (Visitable) array[j];
         }
+        */
         childs[i] = newChild;
-        environment.up();
-        /* restore subject */
-        environment.setSubject(any);
-      } else {
-        /* no need to restore subject */
-        environment.up();
-      }
+      } 
+      environment.upLocal();
     }
     if(childs!=null) {
       environment.setSubject((Visitable)any.setChildren(childs));
     }
-    return;
+    return Environment.SUCCESS;
   }
 }

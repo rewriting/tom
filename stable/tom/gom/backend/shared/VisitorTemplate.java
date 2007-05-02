@@ -36,13 +36,13 @@ public class VisitorTemplate extends TemplateClass {
 
   public VisitorTemplate(GomClass gomClass) {
     super(gomClass);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch1Position1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( ( tom_is_fun_sym_VisitorClass(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch362NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_VisitorClass(tomMatch362NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch362NameNumber_freshVar_0=tom_get_slot_VisitorClass_SortClasses(tomMatch362NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch362NameNumber_freshVar_1=tom_get_slot_VisitorClass_OperatorClasses(tomMatch362NameNumberfreshSubject_1);if ( true ) {
 
 
-        this.sortClasses = tom_get_slot_VisitorClass_SortClasses(tomMatch1Position1);
-        this.operatorClasses = tom_get_slot_VisitorClass_OperatorClasses(tomMatch1Position1);
+        this.sortClasses = tomMatch362NameNumber_freshVar_0;
+        this.operatorClasses = tomMatch362NameNumber_freshVar_1;
         return;
-      }}}}
+      }}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for VisitorTemplate: " + gomClass);
@@ -56,10 +56,10 @@ public class VisitorTemplate extends TemplateClass {
     writer.write("\n");
 
     // generate a visit for each sort
-    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if ( ( tom_is_fun_sym_concGomClass(tomMatch2Position1) ||  false  ) ) {{ int tomMatch2Position1Index1=0;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1List1=tomMatch2Position1;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1Begin1=tomMatch2Position1List1;{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1End1=tomMatch2Position1List1;{while (!(tom_is_empty_concGomClass_GomClassList(tomMatch2Position1End1))) {tomMatch2Position1List1=tomMatch2Position1End1;{{  tom.gom.adt.objects.types.GomClassList  tomMatch2Position1Save2=tomMatch2Position1List1;{{  tom.gom.adt.objects.types.GomClass  tomMatch2Position1Position2=tom_get_head_concGomClass_GomClassList(tomMatch2Position1List1);tomMatch2Position1Index1=tomMatch2Position1Index1 + 1;tomMatch2Position1List1=tom_get_tail_concGomClass_GomClassList(tomMatch2Position1List1);if ( ( tom_is_fun_sym_SortClass(tomMatch2Position1Position2) ||  false  ) ) {{  tom.gom.adt.objects.types.ClassName  tom_sortName=tom_get_slot_SortClass_ClassName(tomMatch2Position1Position2);if ( true ) {
+    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch363NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_freshVar_0=tomMatch363NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumberbegin_106=tomMatch363NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumberend_106=tomMatch363NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_freshVar_1=tomMatch363NameNumberend_106;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch363NameNumber_freshVar_4=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1));{  tom.gom.adt.objects.types.ClassName  tom_sortName=tomMatch363NameNumber_freshVar_4;{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_freshVar_2=tom_get_tail_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1);if ( true ) {
 
         writer.write("\tpublic "+fullClassName(tom_sortName)+" "+visitMethod(tom_sortName)+"("+fullClassName(tom_sortName)+" arg) throws jjtraveler.VisitFailure;\n");
-      }}}}tomMatch2Position1List1=tomMatch2Position1Save2;}}tomMatch2Position1End1=tom_get_tail_concGomClass_GomClassList(tomMatch2Position1End1);}}tomMatch2Position1List1=tomMatch2Position1Begin1;}}}}}}}}
+      }}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch363NameNumberend_106)) {tomMatch363NameNumberend_106=tomMatch363NameNumberbegin_106;} else {tomMatch363NameNumberend_106=tom_get_tail_concGomClass_GomClassList(tomMatch363NameNumberend_106);}}} while(!(tom_equal_term_GomClassList(tomMatch363NameNumberend_106, tomMatch363NameNumberbegin_106)));}}}}}}
 
 
     writer.write("\n");

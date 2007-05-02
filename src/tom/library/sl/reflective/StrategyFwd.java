@@ -48,11 +48,12 @@ public class StrategyFwd extends AbstractStrategy {
     }
   }
 
-  public void visit() {
+  public int visit() {
     try {
       setSubject((Visitable)this.visit(getSubject()));
+      return tom.library.sl.Environment.SUCCESS;
     } catch(jjtraveler.VisitFailure f) {
-      setStatus(tom.library.sl.Environment.FAILURE);
+      return tom.library.sl.Environment.FAILURE;
     }
   }
 

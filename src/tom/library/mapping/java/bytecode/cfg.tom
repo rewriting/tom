@@ -108,8 +108,8 @@
   visit TInstructionList {
     c@_ -> {
       Object o = map.get(`c);
-      if (o == null) {
-        getEnvironment().setStatus(tom.library.sl.Environment.FAILURE);
+      if(o == null) {
+        throw new jjtraveler.VisitFailure();
       }
       int value = ((Integer)o).intValue() - 1;
       map.put(`c, new Integer(value));

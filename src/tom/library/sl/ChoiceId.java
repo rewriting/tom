@@ -56,19 +56,19 @@ public class ChoiceId extends AbstractStrategy {
     }
   }
 
-  public void visit() {
+  public int visit() {
     Visitable subject = environment.getSubject();
-    visitors[FIRST].visit();
-    if (environment.getStatus() == Environment.SUCCESS && ! environment.getSubject().equals(subject)) {
-      return;
+    int status = visitors[FIRST].visit();
+    if(status == Environment.SUCCESS && environment.getSubject() != subject) {
+      return status;
     } else {
       /* restore the subject */
-      /* we are juste interested in the status */
+      /* we are just interested in the status */
       environment.setSubject(subject);
-      if (environment.getStatus() == Environment.FAILURE) {
-        return;
+      if(status == Environment.SUCCESS) {
+        return visitors[THEN].visit();
       } else {
-        visitors[THEN].visit();
+        return status;
       }
     }
   }

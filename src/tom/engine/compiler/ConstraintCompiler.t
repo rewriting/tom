@@ -101,6 +101,7 @@ public class ConstraintCompiler {
               TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
             } catch(Exception e) {
+              e.printStackTrace();
               throw new TomRuntimeException("Propagation or generation exception:" + e);
             }																	    						
           }

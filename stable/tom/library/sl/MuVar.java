@@ -77,12 +77,12 @@ public class MuVar extends AbstractStrategy {
     }
   }
 
-  public void visit() {
+  public int visit() {
     if(instance != null) {
-      instance.visit();
-      return;
+      return instance.visit();
     } else {
-      environment.setStatus(Environment.FAILURE);
+      //setStatus(Environment.FAILURE);
+      return Environment.FAILURE;
     }
   }
 

@@ -1,3 +1,7 @@
+2007-05-02  pem
+  * visit() now returns the status
+  * bootinstall
+
 2007-04-29  pem
   * fix the problem mutraveler -> sl
   * improved the mu-expansion by removing Mu and MuVar from the graph

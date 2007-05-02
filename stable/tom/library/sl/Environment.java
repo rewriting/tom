@@ -51,7 +51,7 @@ public final class Environment implements Cloneable {
   protected int current;
   protected int[] omega;
   protected Visitable[] subterm;
-  protected int status = 0;
+  protected int status = Environment.SUCCESS;
 
   public Environment() {
     this(DEFAULT_LENGTH);
@@ -117,7 +117,8 @@ public final class Environment implements Cloneable {
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
-  
+ //public int getStatus() { return status; } 
+ //public void setStatus(int s) { this.status = s; }
 
   /**
    * get the current root
@@ -132,21 +133,6 @@ public final class Environment implements Cloneable {
    */
   public void setRoot(Visitable root) {
     this.subterm[0] = root;
-  }
-
-  /**
-   * get the current status
-   * @return the current status
-   */
-  public int getStatus() {
-    return status;
-  }
-
-  /**
-   * set the current status
-   */
-  public void setStatus(int status) {
-    this.status = status;
   }
 
   /**
@@ -206,6 +192,14 @@ public final class Environment implements Cloneable {
     current--;
     subterm[current] = (Visitable) subterm[current].setChildAt(childIndex,child);
     //System.out.println("after up: " + this);
+  }
+
+  /**
+   * package private
+   * remove the last sub-position but does not update the subject
+   */
+  void upLocal() {
+    current--;
   }
 
   /**

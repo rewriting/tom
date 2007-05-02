@@ -66,18 +66,18 @@ public class Omega extends AbstractStrategy {
     }
   }
 
-  public void visit() {
+  public int visit() {
     if(indexPosition==0) {
-      (visitors[ARG]).visit();
-      return;
+      return visitors[ARG].visit();
     } else if(indexPosition>0 && indexPosition<=environment.getSubject().getChildCount()) {
       int childNumber = indexPosition-1;
       environment.down(indexPosition);
-      (visitors[ARG]).visit();
+      int status = visitors[ARG].visit();
       environment.up();
-      return ;
+      return status;
     } else {
-      environment.setStatus(Environment.FAILURE);
+      //setStatus(Environment.FAILURE);
+      return Environment.FAILURE;
     }
   }
 }

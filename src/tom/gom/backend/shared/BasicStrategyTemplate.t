@@ -112,34 +112,35 @@ import tom.library.strategy.mutraveler.Position;
     }
   }
 
-  public void execute(tom.library.sl.Strategy s) {
+  public int execute(tom.library.sl.Strategy s) {
     tom.library.sl.AbstractStrategy.init(s,environment);
-    s.visit();
+    return s.visit();
   }
 
-  public void execute(tom.library.sl.Strategy s, tom.library.sl.Visitable v) {
+  public int execute(tom.library.sl.Strategy s, tom.library.sl.Visitable v) {
     environment.setSubject(v);
     tom.library.sl.AbstractStrategy.init(s,environment);
-    s.visit();
+    return s.visit();
   }
 
 
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     environment.setRoot(any);
-    visit();
-    if (environment.getStatus() == tom.library.sl.Environment.SUCCESS) {
+    int status = visit();
+    if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
       throw new tom.library.sl.FireException();
     }
   }
 
-  public void visit() {
+  public int visit() {
     try {
       environment.setSubject((tom.library.sl.Visitable)this.visit(environment.getSubject()));
+      return tom.library.sl.Environment.SUCCESS;
     } catch(jjtraveler.VisitFailure f) {
-      environment.setStatus(tom.library.sl.Environment.FAILURE);
+      return tom.library.sl.Environment.FAILURE;
     }
   }
 

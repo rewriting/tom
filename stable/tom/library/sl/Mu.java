@@ -20,9 +20,9 @@ public class Mu extends AbstractStrategy {
     return visitors[V].visit(any);
   }
 
-  public void visit() {
+  public int visit() {
     if(!expanded) { muExpand(); }
-    visitors[V].visit();
+    return visitors[V].visit();
   }
 
   private boolean isExpanded() {
@@ -110,22 +110,22 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
       set.add(parent);
     }
 
-    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch1Position1=(( tom.library.sl.Strategy )any);if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) {{  tom.library.sl.Strategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1);if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) {{  tom.library.sl.Strategy  tom_m=tomMatch1Position1;if ( true ) {
+    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch495NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_0=tomMatch495NameNumberfreshSubject_1;if (tom_is_fun_sym_Mu(tomMatch495NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_2=tom_get_slot_Mu_s1(tomMatch495NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_3=tom_get_slot_Mu_s2(tomMatch495NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_1=tomMatch495NameNumber_freshVar_2;if (tom_is_fun_sym_MuVar(tomMatch495NameNumber_freshVar_1)) {{  tom.library.sl.Strategy  tom_m=tomMatch495NameNumber_freshVar_0;if ( true ) {
 
         stack.addFirst(tom_m);
-        visit(tom_get_slot_Mu_s2(tomMatch1Position1),tom_m,0,set);
-        visit(tomMatch1Position1NameNumbers1,null,0,set);
+        visit(tomMatch495NameNumber_freshVar_3,tom_m,0,set);
+        visit(tomMatch495NameNumber_freshVar_1,null,0,set);
         stack.removeFirst();
         return;
-      }}}}}if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+      }}}}}}}}{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_4=tomMatch495NameNumberfreshSubject_1;if (tom_is_fun_sym_MuVar(tomMatch495NameNumber_freshVar_4)) {{  String  tomMatch495NameNumber_freshVar_5=tom_get_slot_MuVar_var(tomMatch495NameNumber_freshVar_4);if ( true ) {
 
 
-        MuVar muvar = (MuVar)tomMatch1Position1;
+        MuVar muvar = (MuVar)tomMatch495NameNumber_freshVar_4;
         if(!muvar.isExpanded()) {
           Iterator it = stack.iterator();
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tom_get_slot_MuVar_var(tomMatch1Position1))) {
+            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch495NameNumber_freshVar_5)) {
               //System.out.println("MuVar: setInstance " + `n );
               muvar.setInstance(m);
               if(parent!=null) {
@@ -146,7 +146,7 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
           //System.out.println("MuVar: " + `n + " not found");
           throw new jjtraveler.VisitFailure();
         }
-      }}}}
+      }}}}}}
 
 
     int childCount = any.getChildCount();

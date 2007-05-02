@@ -90,7 +90,7 @@ public class All extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public void visit() {
+  public int visit() {
     Visitable any = environment.getSubject();
     int childCount = any.getChildCount();
     /* we relax Visitable into jjtraveler.Visitable to use getChildren() */
@@ -99,10 +99,10 @@ public class All extends AbstractStrategy {
     for(int i = 0; i < childCount; i++) {
       Visitable oldChild = (Visitable)any.getChildAt(i);
       environment.down(i+1);
-      visitors[ARG].visit();
-      if(environment.getStatus() != Environment.SUCCESS) {
+      int status = visitors[ARG].visit();
+      if(status != Environment.SUCCESS) {
         environment.upLocal();
-        return;
+        return status;
       }
       Visitable newChild = environment.getSubject();
       if(childs != null) {
@@ -124,6 +124,6 @@ public class All extends AbstractStrategy {
     if(childs!=null) {
       environment.setSubject((Visitable)any.setChildren(childs));
     }
-    return;
+    return Environment.SUCCESS;
   }
 }

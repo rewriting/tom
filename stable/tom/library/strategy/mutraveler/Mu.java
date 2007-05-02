@@ -67,29 +67,29 @@ class MuTopDown {
   }
 
   public void visit(Visitable any) throws VisitFailure {
-    if (tom_is_sort_Strategy(any)) {{  tom.library.strategy.mutraveler.MuStrategy  tomMatch1Position1=(( tom.library.strategy.mutraveler.MuStrategy )any);if ( ( tom_is_fun_sym_Mu(tomMatch1Position1) ||  false  ) ) {{  tom.library.strategy.mutraveler.MuStrategy  tomMatch1Position1NameNumbers1=tom_get_slot_Mu_s1(tomMatch1Position1);if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1NameNumbers1) ||  false  ) ) {if ( true ) {
+    if (tom_is_sort_Strategy(any)) {{  tom.library.strategy.mutraveler.MuStrategy  tomMatch496NameNumberfreshSubject_1=(( tom.library.strategy.mutraveler.MuStrategy )any);{  tom.library.strategy.mutraveler.MuStrategy  tomMatch496NameNumber_freshVar_0=tomMatch496NameNumberfreshSubject_1;if (tom_is_fun_sym_Mu(tomMatch496NameNumber_freshVar_0)) {{  tom.library.strategy.mutraveler.MuStrategy  tomMatch496NameNumber_freshVar_2=tom_get_slot_Mu_s1(tomMatch496NameNumber_freshVar_0);{  tom.library.strategy.mutraveler.MuStrategy  tomMatch496NameNumber_freshVar_3=tom_get_slot_Mu_s2(tomMatch496NameNumber_freshVar_0);{  tom.library.strategy.mutraveler.MuStrategy  tomMatch496NameNumber_freshVar_1=tomMatch496NameNumber_freshVar_2;if (tom_is_fun_sym_MuVar(tomMatch496NameNumber_freshVar_1)) {{  String  tomMatch496NameNumber_freshVar_4=tom_get_slot_MuVar_var(tomMatch496NameNumber_freshVar_1);if ( true ) {
 
-	stack.addFirst(tomMatch1Position1);
-	visit(tom_get_slot_Mu_s2(tomMatch1Position1));
-	visit(tomMatch1Position1NameNumbers1);
+	stack.addFirst(tomMatch496NameNumber_freshVar_0);
+	visit(tomMatch496NameNumber_freshVar_3);
+	visit(tomMatch496NameNumber_freshVar_1);
 	stack.removeFirst();
 	return;
-      }}}}if ( ( tom_is_fun_sym_MuVar(tomMatch1Position1) ||  false  ) ) {if ( true ) {
+      }}}}}}}}{  tom.library.strategy.mutraveler.MuStrategy  tomMatch496NameNumber_freshVar_5=tomMatch496NameNumberfreshSubject_1;if (tom_is_fun_sym_MuVar(tomMatch496NameNumber_freshVar_5)) {{  String  tomMatch496NameNumber_freshVar_6=tom_get_slot_MuVar_var(tomMatch496NameNumber_freshVar_5);if ( true ) {
 
 
-	MuVar muvar = (MuVar)tomMatch1Position1;
+	MuVar muvar = (MuVar)tomMatch496NameNumber_freshVar_5;
 	if(!muvar.isExpanded()) {
 	  Iterator it = stack.iterator();
 	  while(it.hasNext()) {
 	    Mu m = (Mu)it.next();
-	    if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(tom_get_slot_MuVar_var(tomMatch1Position1))) {
+	    if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(tomMatch496NameNumber_freshVar_6)) {
 	      muvar.setInstance(m);
 	      return;
 	    }
 	  }
 	  throw new VisitFailure();
 	}
-      }}}}
+      }}}}}}
 
 
     int childCount = any.getChildCount();
