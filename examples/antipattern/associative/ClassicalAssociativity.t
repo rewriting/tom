@@ -71,12 +71,10 @@ public class ClassicalAssociativity {
         TermList args1 = `a1;
         TermList args2 = `a2;
         while(!args1.isEmptyconcTerm()) {
-          l = `And(Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+          l = `And(l*,Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()));
           args1 = args1.getTailconcTerm();
           args2 = args2.getTailconcTerm();
         }
-
-        l = l.reverse();            
         // if we do not have an associative symbol
         if ( !isAssociative(`f) ){
           return `And(l);
@@ -87,12 +85,10 @@ public class ClassicalAssociativity {
         args2 = `a2;
 
         Term p_1 = args1.getHeadconcTerm(); // first elem
-        Term p_2 = args1.getTailconcTerm().getHeadconcTerm(); // second
-        // elem
+        Term p_2 = args1.getTailconcTerm().getHeadconcTerm(); // second elem
 
         Term t_1 = args2.getHeadconcTerm(); // first elem
-        Term t_2 = args2.getTailconcTerm().getHeadconcTerm(); // second
-        // elem
+        Term t_2 = args2.getTailconcTerm().getHeadconcTerm(); // second elem
 
         Term x_1 = `Variable("x" + ++globalCounter + "_a");
         Term x_2 = `Variable("x" + ++globalCounter + "_a");
@@ -122,8 +118,7 @@ public class ClassicalAssociativity {
 
         if (`name1 != `name2 && isAssociative(`f)){	        		
           Term p_1 = `a1.getHeadconcTerm(); // first elem
-          Term p_2 = `a1.getTailconcTerm().getHeadconcTerm(); // second
-          // elem
+          Term p_2 = `a1.getTailconcTerm().getHeadconcTerm(); // second elem
 
           Constraint firstTerm =  `And(
               Equal(p_1,getNeutralElem(f)),
@@ -177,13 +172,11 @@ public class ClassicalAssociativity {
       }
 
       // Distribution of And and Or
-      And(X*,Or(Z*),Y*) ->{
-        Constraint result = `Or();
-        Constraint cOr = `Z*;
-        while(!cOr.isEmptyOr()){
-          result = `Or(result*,And(X*,cOr.getHeadOr(),Y*));
-          cOr = cOr.getTailOr();
-        }
+      And(X*,cOr@Or(Z*),Y*) ->{
+        Constraint result = `Or();        
+        %match(cOr){
+          Or(_*,x,_*) ->{ result = `Or(result*,And(X*,x,Y*)); }
+        }        
         return `Or(result);
       }
 
@@ -198,17 +191,12 @@ public class ClassicalAssociativity {
       }
 
       // Exists
-      Exists(v@Variable(var),Or(list)) ->{
-
-        Constraint l = `list;
+      Exists(v@Variable(var),l@Or(_*)) ->{        
         Constraint result = `Or();
-
-        while(!l.isEmptyOr()){
-          result = `Or(Exists(v,l.getHeadOr()),result*);
-          l = l.getTailOr();
+        %match(l){
+          Or(_*,x,_*) ->{ result = `Or(Exists(v,x),result*); }
         }
-
-        return `Or(result);
+        return result;
       }
 
       // Replace

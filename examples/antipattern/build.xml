@@ -14,6 +14,8 @@
     -->
     <tom.preset srcdir="${examples.dir}"
 	        options="--noStatic"
+    optimize="no"
+    optimize2="no"
                 destdir="${examples.gen}">          
        <include name="${antipattern}/**/*.t"/>
        <exclude name="${antipattern}/**/*.g.t"/>
@@ -22,8 +24,10 @@
   	<copy todir="${examples.build}/${antipattern}">
       <fileset dir="${antipattern}">
         <include name="*.txt"/>
+    	<include name="${antipattern}/**/*.txt"/> 
       </fileset>
     </copy>
+	
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 

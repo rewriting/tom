@@ -57,7 +57,7 @@ public class Tools {
 
   public void run(ClassicalAssociativity match, String fileName) {
     BufferedReader br = null;
-    try {  
+    try {
       br = new BufferedReader(new FileReader( 
           match.getClass().getResource(fileName).getFile()));
     } catch(FileNotFoundException e) {
@@ -71,7 +71,7 @@ public class Tools {
           System.out.println("---------------------------------------");
         } else {
           ATerm at = SingletonFactory.getInstance().parse(s);	        
-          Constraint c = atermToConstraint(at);
+          Constraint c = atermToConstraint(at);          
           Collection solution = new HashSet();
           System.out.println(formatConstraint(c));
           Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
@@ -196,29 +196,23 @@ public class Tools {
       Neg(cons) ->{
         return "Neg(" + formatConstraint(`cons) + ")";
       }
-      And(x,Z*) ->{
-
-        Constraint l = `Z*;
-        String result = formatConstraint(`x);
-
-        while(!l.isEmptyAnd()){
-          result ="(" + result + " and " + formatConstraint(l.getHeadAnd()) +")";
-          l = l.getTailAnd();
+      and@And(_*) ->{
+        String result = "(";
+        %match(and){
+          And(_*,x,Y*) ->{
+            result += formatConstraint(`x) + " and ";
+          }
         }
-
-        return result; 
+        return result.substring(0, result.length() - 5) + ")"; 
       }
-      Or(x,Z*) ->{
-
-        Constraint l = `Z*;
-        String result = formatConstraint(`x);
-
-        while(!l.isEmptyOr()){
-          result ="(" + result + " or " + formatConstraint(l.getHeadOr()) + ")";
-          l = l.getTailOr();
+      or@Or(_*) ->{
+        String result = "(";
+        %match(or){
+          Or(_*,x,Y*) ->{
+            result += formatConstraint(`x) + " or ";
+          }
         }
-
-        return result; 
+        return result.substring(0, result.length() - 4) + ")"; 
       }
       Equal(pattern, subject) ->{
         return formatTerm(`pattern) + "=" + formatTerm(`subject); 
@@ -227,10 +221,10 @@ public class Tools {
         return formatTerm(`pattern) + "!=" + formatTerm(`subject); 
       }
       Exists(Variable(name),cons) -> {
-        return "exists " + `name + ", ( " + formatConstraint(`cons) + " ) "; 
+        return "exists " + `name + ", [ " + formatConstraint(`cons) + " ] "; 
       }			
       ForAll(Variable(name),cons) -> {				
-        return "for all " + `name + ", ( " + formatConstraint(`cons) + " ) ";				
+        return "for all " + `name + ", [ " + formatConstraint(`cons) + " ] ";				
       }
       Match(pattern, subject) ->{
         return formatTerm(`pattern) + " << " + formatTerm(`subject); 
