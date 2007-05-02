@@ -1235,7 +1235,7 @@ b :{
         proofterm(name) -> {
           Tree tree = theorems.get(`name);
           if(tree==null) System.out.println(`name + " not found");
-          else System.out.println(Proofterms.getProofterm(tree));
+          else System.out.println(PrettyPrinter.prettyPrint(Proofterms.getProofterm(tree)));
         }
 
         gibber() -> {

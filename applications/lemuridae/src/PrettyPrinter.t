@@ -1,6 +1,9 @@
 import sequents.*;
 import sequents.types.*;
 
+import urban.*;
+import urban.types.*;
+
 //import tom.library.strategy.mutraveler.MuTraveler;
 //import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.sl.*;
@@ -18,7 +21,8 @@ import java.io.*;
 
 class PrettyPrinter {
 
-  %include { sequents/sequents.tom }
+//  %include { sequents/sequents.tom }
+  %include { urban/urban.tom }
   %include { sl.tom }
   %typeterm Set {implement {Set} is_sort(t) {t instanceof Set} }
   %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
@@ -504,6 +508,53 @@ class PrettyPrinter {
       () -> {return ""; }
       (h) -> { return prettyPrint(`h);}
       (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    return term.toString();
+  }
+
+  public static String prettyPrint(urbanAbstractType term) {
+
+    %match(Name term) {
+      name(n) -> {return "x"+`n; }
+    }
+
+    %match(CoName term) {
+      coname(cn) -> {return "a"+`cn; }
+    }
+
+    %match(NProp term) {
+      nprop(n,a) -> { return "<"+prettyPrint(`n)+":"+prettyPrint(`a)+">"; }
+    }
+
+    %match(CNProp term) {
+      cnprop(cn,a) -> { return "<"+prettyPrint(`cn)+":"+prettyPrint(`a)+">"; }
+    }
+
+    %match(NContext term) {
+      () -> { return ""; }
+      (h) -> { return  prettyPrint(`h); }
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(CNContext term) {
+      () -> { return ""; }
+      (h) -> { return  prettyPrint(`h); }
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(ProofTerm term) { // INCOMPLET manque les cas 1er ordre
+      ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
+      cut(a,m1,x,m2) -> {return "cut("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+")";}
+      falseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
+      trueR(cn) -> {return "trueR("+prettyPrint(`cn)+")";}
+      andR(a,m1,b,m2,nc) -> {return "andR("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`b)+" "+prettyPrint(`m2)+", "+prettyPrint(`nc)+")" ;}
+      andL(x,y,m,n) -> {return "andL("+prettyPrint(`x)+" "+prettyPrint(`y)+" "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      orR(a,b,m,cn) -> {return "orR("+prettyPrint(`a)+" "+prettyPrint(`b)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      orL(x,m1,y,m2,n) -> {return "orL("+prettyPrint(`x)+" "+prettyPrint(`m1)+", "+prettyPrint(`y)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      implyR(x,a,m,cn) -> {return "implyR("+prettyPrint(`x)+" "+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      implyL(a,m1,x,m2,n) -> {return "implyL("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+
     }
 
     return term.toString();
