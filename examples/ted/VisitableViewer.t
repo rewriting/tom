@@ -36,7 +36,8 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.*;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.Position;
- 
+
+import java.util.Stack;
 
 public class VisitableViewer {
 
@@ -50,7 +51,12 @@ public class VisitableViewer {
   public static void visitableToDotStdout(jjtraveler.Visitable v) {
     visitableToDotStdout(v,null,"");
   }
-  
+
+  public static void visitableToDot(jjtraveler.Visitable v, Writer w) 
+    throws java.io.IOException {
+      visitableToDot(v,w,null,"");
+    }
+
   public static void 
     visitableToDotStdout(jjtraveler.Visitable v, Position hilight, String color)
     {
@@ -63,12 +69,6 @@ public class VisitableViewer {
       }
     }
 
-  public static void visitableToDot(jjtraveler.Visitable v, Writer w) 
-    throws java.io.IOException {
-      visitableToDot(v,w,null,"");
-    }
-
-
   public static void 
     visitableToDot(jjtraveler.Visitable v, Writer w, Position hilight, String color) 
     throws java.io.IOException {
@@ -76,7 +76,7 @@ public class VisitableViewer {
       ATermToDot(at, w, hilight, color);
     }
 
-  public static 
+  private static 
     void ATermToDot(ATerm term, Writer w, Position hilight, String color) 
     throws java.io.IOException 
     {
@@ -115,6 +115,82 @@ public class VisitableViewer {
             w.write(%[@posToId(pos)@;]%);
             ATermToDotRec(t,w,pos,hilight,color);
             pos.up();
+          }
+        }
+      }
+    }
+
+  /* -------- pstree-like part --------- */
+  public static void toTreeStdout(jjtraveler.Visitable v) {
+    try {
+      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+      toTree(v,w);
+      w.write('\n');
+      w.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void toTree(jjtraveler.Visitable v, Writer w)
+    throws java.io.IOException {
+        ATerm at = atermFactory.parse(v.toString());
+        ATermToTree(at, w, new Stack<Integer>(), 0);
+      }
+
+  private static void writeContext(Writer w, Stack<Integer> context, int deep) 
+    throws java.io.IOException {
+    for(int i=0; i<deep; i++) {
+      if (context.contains(i))
+        w.write('│');
+      else
+        w.write(' ');
+    }
+  }
+
+
+
+  private static void ATermToTree(ATerm term, Writer w, Stack<Integer> context, int deep) 
+    throws java.io.IOException {
+      %match(term) {
+        ATermAppl(AFun[name=name],list) -> {
+          ATermAppl a = (ATermAppl) term;
+          if (`a.getArity() == 0) {  // no child
+            w.write("─"+`name);
+            return;
+          } else if (`a.getArity() == 1) {  // only one child
+            w.write("─" + `name + "──");
+            deep = deep + `name.length() + 3;
+            ATermToTree(`list.getFirst(),w,context,deep);
+            return;
+          } else {
+            int ndeep = deep + `name.length() + 3;
+            %match (ATermList `list) {
+              (first,l*,last) -> {
+                // first child
+                w.write("─" + `name + "─┬");
+                context.push(ndeep-1); 
+                ATermToTree(`first,w,context,ndeep);
+                context.pop();
+                w.write('\n');
+
+                // 2 ... n-1
+                %match (ATermList l) {
+                  (_*,c,_*) -> {
+                    writeContext(w,context,ndeep-1);
+                    w.write("├");
+                    context.push(ndeep-1);
+                    ATermToTree(`c,w,context,ndeep);
+                    context.pop();
+                    w.write('\n');
+                  }
+                }
+                // last child
+                writeContext(w,context,ndeep-1);
+                w.write("└");
+                ATermToTree(`last,w,context,ndeep);
+              }
+            }
           }
         }
       }
