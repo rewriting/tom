@@ -397,7 +397,7 @@ b: {
           sequent((X*,act@or(p1,p2),Y*),g), act -> {
             Tree t1 = createOpenLeaf(`sequent(context(X*,p1,Y*),g));
             Tree t2 = createOpenLeaf(`sequent(context(X*,p2,Y*),g));
-            return `rule(andLeftInfo(),premisses(t1,t2),seq,act);
+            return `rule(orLeftInfo(),premisses(t1,t2),seq,act);
           }
         }
       }
@@ -1132,6 +1132,7 @@ b :{
   private HashMap<String,Tree> theorems = new HashMap<String,Tree>();
   private HashMap<String,Stack<ProofEnv>> unprovedTheorems = new HashMap<String,Stack<ProofEnv>>();
   private Stack<InputStream> inputStreams = new Stack<InputStream>();
+  private HashMap<String,ProofTerm> pttheorems = new HashMap<String, ProofTerm>();
 
   // called when leaving proof mode
   private void store(Stack<ProofEnv> envStack, String name) {
@@ -1233,9 +1234,21 @@ b :{
         }
 
         proofterm(name) -> {
-          Tree tree = theorems.get(`name);
-          if(tree==null) System.out.println(`name + " not found");
-          else System.out.println(PrettyPrinter.prettyPrint(Proofterms.getProofterm(tree)));
+          ProofTerm pi = pttheorems.get(`name);
+          if (pi==null) {
+            Tree tree = theorems.get(`name);
+            if(tree==null) System.out.println(`name + " not found");
+            else {
+              pi = Proofterms.getProofterm(tree);
+              pttheorems.put(`name,pi);
+              System.out.println(PrettyPrinter.prettyPrint(pi));
+              PrettyPrinter.display(pi);
+            }
+          }
+          else {
+            System.out.println(PrettyPrinter.prettyPrint(pi));
+            PrettyPrinter.display(pi);
+          }
         }
 
         gibber() -> {
