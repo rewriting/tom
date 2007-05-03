@@ -536,7 +536,10 @@ genericMethodOrConstructorRest [Java_typeParameterList tp] returns [Java_memberD
 	;
 
 methodDeclaration returns [Java_memberDecl md]
-	:	t=type i=Identifier mdr=methodDeclaratorRest[`Java_typeParameterList(),`Java_returnType(t),`Java_Identifier(i.getText())]
+@init {
+    Java_returnType ret=null;
+}
+	:	t=type { ret=`Java_returnType(t); } i=Identifier mdr=methodDeclaratorRest[`Java_typeParameterList(),ret,`Java_Identifier(i.getText())]
         {
             md=mdr;
         }
