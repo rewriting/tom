@@ -53,16 +53,20 @@ class BenchSl {
 
   public static void run(Nat subject, int version, int count, Nat base) {
     System.out.print("sl " + version + ": ");
-    long startChrono = System.currentTimeMillis();
-    for(int i = 0; i < count; ++i) {
-      if(version == 1) {
-        `RepeatId(BottomUp(Rewrite(base))).fire(subject);
-      } else {
-        `InnermostId(Rewrite(base)).fire(subject);
+    try {
+      long startChrono = System.currentTimeMillis();
+      for(int i = 0; i < count; ++i) {
+        if(version == 1) {
+          `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+        } else {
+          `InnermostId(Rewrite(base)).visit(subject);
+        }
       }
+      long stopChrono = System.currentTimeMillis();
+      System.out.println((stopChrono-startChrono)/1000.);
+    } catch(VisitFailure e) {
+      System.out.println("failure");
     }
-    long stopChrono = System.currentTimeMillis();
-    System.out.println((stopChrono-startChrono)/1000.);
   }
 
 }

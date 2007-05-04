@@ -29,7 +29,7 @@
 package sl;
 
 import sl.term.types.*;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 class BenchSlTraveler {
 
@@ -65,7 +65,7 @@ class BenchSlTraveler {
       }
       long stopChrono = System.currentTimeMillis();
       System.out.println((stopChrono-startChrono)/1000.);
-    } catch(jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("failure");
     }
   }
