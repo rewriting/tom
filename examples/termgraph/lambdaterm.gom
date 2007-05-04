@@ -21,7 +21,7 @@ abs:block() {
   visit LambdaTerm{
     v@var[] -> {
       if(`v.equals(var)){
-        return `pathLambdaTerm(getPosition().depth()+1);
+        return `pathLambdaTerm(getEnvironment().getPosition().depth()+1);
       }
     }
   }
@@ -33,7 +33,7 @@ abs:make(var,arg) {
   termgraph.lambdaterm.types.LambdaTerm newarg; 
   try {
     newarg =(termgraph.lambdaterm.types.LambdaTerm)`TopDown(ToDeBruinj(var)).visit(arg);
-  } catch(jjtraveler.VisitFailure e) {
+  } catch(tom.library.sl.VisitFailure e) {
     newarg = arg;
   }
   if(true){

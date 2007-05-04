@@ -40,7 +40,7 @@ import propp.seq.*;
 import propp.seq.types.*;
 
 import antlr.CommonAST;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 class SPropp {
 

@@ -34,7 +34,7 @@ import poly.expression.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 public class PolyTraveler1 extends TestCase {
 

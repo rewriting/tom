@@ -31,7 +31,7 @@ package poly;
 
 import poly.expression.*;
 import poly.expression.types.*;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 public class PolyTraveler3 {
 

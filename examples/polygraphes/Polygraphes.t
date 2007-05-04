@@ -53,7 +53,7 @@ public class Polygraphes {
       // We want A here
       c1(head,tail*) -> { return s(`head); }
     }
-    throw new RuntimeException("strange term: " + t);
+    throw new tom.engine.exception.TomRuntimeException("strange term: " + t);
   }
 
   public static int t(TwoPath t) {
@@ -80,23 +80,29 @@ public class Polygraphes {
         c0(c1(dup,
             c0(suc,id(1))), id(1)),
         c0(id(1),c1(c0(suc,suc),add)));
+    try {
+      //System.out.println("res0 = " + res);
+      res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
+      //res = (TwoPath) `Repeat(OnceTopDown(Sequence(Print(),Splitting()))).visit(res);
 
-    //System.out.println("res0 = " + res);
-    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
-    //res = (TwoPath) `Repeat(OnceTopDown(Sequence(Print(),Splitting()))).visit(res);
+      //res = `c0(c1(dup, c0(suc,id(1))), id(1));
+      //res = (TwoPath) `Splitting().visit(res);
+      System.out.println("res1 = " + res);
 
-    //res = `c0(c1(dup, c0(suc,id(1))), id(1));
-    //res = (TwoPath) `Splitting().visit(res);
-    System.out.println("res1 = " + res);
-
-    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
-    System.out.println("res2 = " + res);
-
+      res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
+      System.out.println("res2 = " + res);
+    } catch(VisitFailure e) {
+      System.out.println("Failure");
+    }
   }
 
   public static TwoPath computeNF(TwoPath res) {
-    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
-    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
+    try {
+      res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
+      res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("strange term: " + res);
+    }
     return res;
   }
 
