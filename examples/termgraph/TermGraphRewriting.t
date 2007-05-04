@@ -30,10 +30,6 @@
 package termgraph;
 
 import tom.library.sl.*;
-
-
-
-import VisitFailure;
 import java.util.*;
 
 import termgraph.term.*;
@@ -129,7 +125,7 @@ public class TermGraphRewriting {
           Position rootpos = new Position(new int[]{});
           map.put(`label,old);
           getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
-          execute(`Try(TopDown(CollectSubterm(label,info))));
+          `Try(TopDown(CollectSubterm(label,info))).visit(getEnvironment());
           getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
           return `labTerm(label,info.term);
         }
@@ -161,7 +157,7 @@ public class TermGraphRewriting {
             Term relref = pathTerm.make(current.sub(dest));
 
             // 2. we update the part we want to change 
-            execute(`TopDown(UpdatePos(dest,current))); 
+            `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
 
             // 3. we save the subterm updated 
             Term subterm = (Term) getEnvironment().getSubject(); 
@@ -219,86 +215,89 @@ public class TermGraphRewriting {
 
     /* position of the final subject */
     Position posFinal = new Position(new int[]{1});
+    try {
+      /* term t with labels */
+      Term tt = (Term) `UnExpand(map).visit(t);
 
-    /* term t with labels */
-    Term tt = (Term) `UnExpand(map).visit(t);
+      /* redex with labels */
+      Term redex = (Term) new Position(new int[]{1,1}).getSubterm().visit(tt);
 
-    /* redex with labels */
-    Term redex = (Term) new Position(new int[]{1,1}).getSubterm().visit(tt);
+      /* add labels for variables x and y */
+      Position _x = new Position(new int[]{1});
+      Position _y = new Position(new int[]{2});
+      final Term term_x =  (Term) _x.getSubterm().visit(redex);
+      final Term term_y =  (Term) _y.getSubterm().visit(redex);
+      redex = (Term) _x.getReplace(`labTerm("x",term_x)).visit(redex);
+      redex = (Term) _y.getReplace(`labTerm("y",term_y)).visit(redex);
+      /* replace in t the lhs by the rhs */
+      tt = (Term) new Position(new int[]{1,1}).getReplace(`f(refTerm("x"))).visit(tt);
 
-    /* add labels for variables x and y */
-    Position _x = new Position(new int[]{1});
-    Position _y = new Position(new int[]{2});
-    final Term term_x =  (Term) _x.getSubterm().visit(redex);
-    final Term term_y =  (Term) _y.getSubterm().visit(redex);
-    redex = (Term) _x.getReplace(`labTerm("x",term_x)).visit(redex);
-    redex = (Term) _y.getReplace(`labTerm("y",term_y)).visit(redex);
-    /* replace in t the lhs by the rhs */
-    tt = (Term) new Position(new int[]{1,1}).getReplace(`f(refTerm("x"))).visit(tt);
+      /* concat the redex on top of the term */
+      tt = `substTerm(tt,redex);
 
-    /* concat the redex on top of the term */
-    tt = `substTerm(tt,redex);
+      /* normalization by point fix */
+      Term t1 = (Term) termAbstractType.expand(tt);
+      t1 = (Term) posFinal.getSubterm().visit(t1);
+      System.out.println("Canonical term obtained by a point fix: "+t1);
 
-    /* normalization by point fix */
-    Term t1 = (Term) termAbstractType.expand(tt);
-    t1 = (Term) posFinal.getSubterm().visit(t1);
-    System.out.println("Canonical term obtained by a point fix: "+t1);
+      /* normalization by innermost strategy */
+      map.clear();
+      Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(tt);
+      t2 = (Term) termAbstractType.label2path(t2);
+      t2 = (Term) posFinal.getSubterm().visit(t2);
+      System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
 
-    /* normalization by innermost strategy */
-    map.clear();
-    Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(tt);
-    t2 = (Term) termAbstractType.label2path(t2);
-    t2 = (Term) posFinal.getSubterm().visit(t2);
-    System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
+      /*  one directly based on positions */
+      /************************************************************/
 
-    /*  one directly based on positions */
-    /************************************************************/
+      /* redex */
+      Position posSubst = new Position(new int[]{2});
+      Position posRedex = new Position(new int[]{1,1,1});
 
-    /* redex */
-    Position posSubst = new Position(new int[]{2});
-    Position posRedex = new Position(new int[]{1,1,1});
+      /* concat a constant on top of the term */
+      Term t3 = `substTerm(t,a());
 
-    /* concat a constant on top of the term */
-    Term t3 = `substTerm(t,a());
+      /* update positions on phi(rhs) and on the redex */
+      t3 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t3);
 
-    /* update positions on phi(rhs) and on the redex */
-    t3 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t3);
+      /* concat the redex on top of the term */
+      redex = (Term) posRedex.getSubterm().visit(t3);
+      t3 = (Term) posSubst.getReplace(redex).visit(t3);
 
-    /* concat the redex on top of the term */
-    redex = (Term) posRedex.getSubterm().visit(t3);
-    t3 = (Term) posSubst.getReplace(redex).visit(t3);
+      /* replace in t the lhs by the rhs */
+      t3 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t3);
 
-    /* replace in t the lhs by the rhs */
-    t3 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t3);
+      /* normalization by innermost strategy */
+      t3 = (Term) `InnermostIdSeq(NormalizePos()).visit(t3);
+      t3 = (Term) posFinal.getSubterm().visit(t3);
+      System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
 
-    /* normalization by innermost strategy */
-    t3 = (Term) `InnermostIdSeq(NormalizePos()).visit(t3);
-    t3 = (Term) posFinal.getSubterm().visit(t3);
-    System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
+      t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
+      System.out.println("\nMore complex initial term :"+t);
+      /* rule g(x,y) -> f(x) at pos 1.1*/
+      System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
 
-    t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
-    System.out.println("\nMore complex initial term :"+t);
-    /* rule g(x,y) -> f(x) at pos 1.1*/
-    System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
+      /* concat a constant on top of the term */
+      Term t4 = `substTerm(t,a());
 
-    /* concat a constant on top of the term */
-    Term t4 = `substTerm(t,a());
+      /* update positions on phi(rhs) and on the redex */
+      t4 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t4);
 
-    /* update positions on phi(rhs) and on the redex */
-    t4 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t4);
+      /* concat the redex on top of the term */
+      redex = (Term) posRedex.getSubterm().visit(t4);
+      t4 = (Term) posSubst.getReplace(redex).visit(t4);
 
-    /* concat the redex on top of the term */
-    redex = (Term) posRedex.getSubterm().visit(t4);
-    t4 = (Term) posSubst.getReplace(redex).visit(t4);
+      /* replace in t the lhs by the rhs */
+      t4 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t4);
 
-    /* replace in t the lhs by the rhs */
-    t4 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t4);
+      /* normalization by innermost strategy */
+      t4 = (Term) `InnermostIdSeq(NormalizePos()).visit(t4);
+      t4 = (Term) posFinal.getSubterm().visit(t4);
+      System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t4);
+    } catch(VisitFailure e) {
+      System.out.println("Failure in main");
 
-    /* normalization by innermost strategy */
-    t4 = (Term) `InnermostIdSeq(NormalizePos()).visit(t4);
-    t4 = (Term) posFinal.getSubterm().visit(t4);
-    System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t4);
-
+    }
   }
 
 }//class TermGraphRewriting

@@ -103,8 +103,10 @@ public class LambdaCalculus {
       info.lazy=false;
       try{
         System.out.println("Call by value: "+prettyPrint((LambdaTerm)`InnermostRight(beta).visit(subject)));
-      }catch(java.lang.StackOverflowError e){
+      } catch(java.lang.StackOverflowError e){
         System.out.println("Call by value: Infinite loop");
+      } catch(VisitFailure f) {
+        System.out.println("Failure");
       }
 
     }
@@ -151,8 +153,8 @@ public class LambdaCalculus {
         int n = `x.getChildCount();
         for(int i = n; i>0; i--){
           getEnvironment().down(i);
-          s.visitLight();
-          if(getEnvironment().getStatus() != Environment.SUCCESS){
+          int status = s.visit();
+          if(status != Environment.SUCCESS){
             getEnvironment().up();
             return `x;
           }else{
@@ -214,11 +216,15 @@ public class LambdaCalculus {
   }
   public static String prettyPrint(LambdaTerm t){
     ppcounter = 0;
-    t = (LambdaTerm) `TopDownSeq(UnExpand()).visit(t);
-    %match(LambdaTerm t){
-      app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
-      abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
-      var(s) -> {return `s;}
+    try {
+      t = (LambdaTerm) `TopDownSeq(UnExpand()).visit(t);
+      %match(LambdaTerm t){
+        app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
+        abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
+        var(s) -> {return `s;}
+      }
+    } catch(VisitFailure f) {
+      System.out.println("Failure");
     }
     return "";
   }

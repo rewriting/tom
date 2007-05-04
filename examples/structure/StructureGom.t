@@ -35,7 +35,6 @@ import java.util.*;
 import structure.structures.*;
 import structure.structures.types.*;
 
-import VisitFailure;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;
 
