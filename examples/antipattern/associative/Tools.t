@@ -206,13 +206,13 @@ public class Tools {
         return result.substring(0, result.length() - 5) + ")"; 
       }
       or@Or(_*) ->{
-        String result = "(";
+        String result = "<";
         %match(or){
           Or(_*,x,Y*) ->{
             result += formatConstraint(`x) + " or ";
           }
         }
-        return result.substring(0, result.length() - 4) + ")"; 
+        return result.substring(0, result.length() - 4) + ">"; 
       }
       Equal(pattern, subject) ->{
         return formatTerm(`pattern) + "=" + formatTerm(`subject); 
