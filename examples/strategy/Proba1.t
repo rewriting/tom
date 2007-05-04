@@ -67,7 +67,7 @@ public class Proba1 {
         }
       }
       System.out.println("pile = " + pile + " face = " + face);
-    } catch(jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 

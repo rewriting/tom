@@ -28,10 +28,10 @@
  */
 package ted;
 
-import jjtraveler.Visitable;
-import jjtraveler.reflective.VisitableVisitor;
+
+
 import tom.library.strategy.mutraveler.*;
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import java.io.*;
 
 // -------------------- SVG -----------------------------
@@ -73,8 +73,8 @@ class GraphicalObserver implements DebugStrategyObserver {
   %include { mutraveler.tom }
 
   %typeterm Visitable {
-    implement { jjtraveler.Visitable }
-    is_sort(t) { t instanceof jjtraveler.Visitable }
+    implement { Visitable }
+    is_sort(t) { t instanceof Visitable }
     visitor_fwd { VisitableVisitorFwd }
   }
 

@@ -79,7 +79,7 @@ public class HTMLToLaTeX {
     try {
       System.out.println("subject = " + subject);
       `TopDownCollect(ToLaTeX()).visitLight(subject);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }
@@ -88,7 +88,7 @@ public class HTMLToLaTeX {
     try {
       System.out.println("subject = " + subject);
       `TopDownCollect(ToLaTeX()).visitLight(subject);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }
@@ -331,7 +331,7 @@ public class HTMLToLaTeX {
     try {
       System.out.println("subject          = " + subject);
       `TopDownCollect(ComputeWidth()).visitLight(subject);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
     return max;

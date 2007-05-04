@@ -32,9 +32,9 @@ package strategycompiler;
 import strategycompiler.benchstratid.term.*;
 import strategycompiler.benchstratid.term.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-import jjtraveler.Visitable;
+
+import VisitFailure;
+
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.Position;

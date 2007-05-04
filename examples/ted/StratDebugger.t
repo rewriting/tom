@@ -29,9 +29,9 @@
 package ted;
 
 import tom.library.strategy.mutraveler.*;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+
+
+import VisitFailure;
 import tom.library.strategy.mutraveler.MuStrategy;
 
 import ted.stratdebugger.entier.types.*;

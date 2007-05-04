@@ -65,7 +65,7 @@ public class Strat {
       System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visitLight(subject));
       System.out.println("BottomUp  = " + `BottomUp(Try(rule)).visitLight(subject));
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     } catch (Exception e) {
 			System.out.println(e);
@@ -88,7 +88,7 @@ public class Strat {
       super(`Fail());
     }
     
-    public List visit_List(List arg) throws jjtraveler.VisitFailure { 
+    public List visit_List(List arg) throws VisitFailure { 
       %match(TomList arg) {
 				conc(h,t*) -> {
 					int v = `h+1;

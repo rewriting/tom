@@ -33,8 +33,8 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.MuVar;
 import tom.library.strategy.mutraveler.Mu;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.*;
+
+
 
 public class StrategyViewer {
 

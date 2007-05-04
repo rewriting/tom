@@ -40,7 +40,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 
 
 public class Matching6 implements Matching {

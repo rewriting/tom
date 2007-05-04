@@ -38,8 +38,8 @@ import analysis.ast.types.*;
 
 import tom.library.sl.*;
 
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+
+import VisitFailure;
 import java.util.*;
 
 import org._3pq.jgrapht.edge.*;

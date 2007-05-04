@@ -38,7 +38,7 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import tom.library.sl.*;
 
 

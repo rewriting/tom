@@ -40,7 +40,7 @@ import antipattern.term.types.*;
 
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
+import VisitFailure;
 
 
 public class ApAndDisunification1 implements Matching{

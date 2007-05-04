@@ -51,7 +51,7 @@ public class Rewrite2 {
       System.out.println("onceBottomUp  = " + onceBottomUp.visitLight(subject));
       System.out.println("innermostSlow = " + innermostSlow.visitLight(subject));
       System.out.println("innermost     = " + innermost.visitLight(subject));
-    } catch(jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }

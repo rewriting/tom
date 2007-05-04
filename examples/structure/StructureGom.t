@@ -35,7 +35,7 @@ import java.util.*;
 import structure.structures.*;
 import structure.structures.types.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import tom.library.sl.Strategy;
 import tom.library.sl.FireException;
 

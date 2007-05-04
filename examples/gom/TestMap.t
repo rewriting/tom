@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
 import java.util.*;
 
 import gom.elist.types.*;
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import tom.library.sl.Strategy;
 
 public class TestMap extends TestCase {
@@ -117,7 +117,7 @@ public class TestMap extends TestCase {
     try {
       match.visitLight(subject);
       state = true;
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       fail("the match should not fail");
     }
     assertTrue("The strategie pattern should match",state);
@@ -130,7 +130,7 @@ public class TestMap extends TestCase {
     try {
       match.visitLight(subject);
       fail("the match should fail");
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       state = false;
     }
     assertFalse("The strategie pattern not have matched",state);

@@ -65,7 +65,7 @@ public class PolyTraveler1 extends TestCase {
     try {
     System.out.println(" bu.visitLight(" + t + ")");
     bu.visitLight(t);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());
     }
     assertSame("does nothing so nothing to assert",`mult(variable("x"),plus(variable("x"),constant("a"))),t);

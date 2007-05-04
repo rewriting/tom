@@ -28,10 +28,10 @@
  */
 package ted;
 
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
+import VisitFailure;
+
 import tom.library.strategy.mutraveler.*;
-import jjtraveler.Visitable;
+
 
 class DebugStrategy extends AbstractMuStrategy {
   protected DebugStrategyObserver obs;

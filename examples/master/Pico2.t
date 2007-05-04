@@ -113,7 +113,7 @@ class Pico2 {
 		try {
 			`TopDown(Try(stratPrintCst())).visitLight(expr);
 			`TopDown(Try(Sequence(FindCst(),PrintTree()))).visitLight(expr);
-		} catch (jjtraveler.VisitFailure e) {
+		} catch (VisitFailure e) {
 			System.out.println("strategy failed");
 		}
 	}
@@ -126,7 +126,7 @@ class Pico2 {
 			//`Sequence(Innermost(Sequence(Not(RenamedVar()),stratRenameVar())),PrintTree()).visitLight(expr);
 
 			`Sequence(Innermost(OptIf()),PrintTree()).visitLight(expr);
-		} catch (jjtraveler.VisitFailure e) {
+		} catch (VisitFailure e) {
 			System.out.println("strategy failed");
 		}
 	}
@@ -170,7 +170,7 @@ class Pico2 {
 	public Expr propagate(HashMap env, Expr expr) {
 		try {
 			return (Expr) `TopDown(Try(PropagateCst(env))).visitLight(expr);
-		} catch (jjtraveler.VisitFailure e) {
+		} catch (VisitFailure e) {
 			System.out.println("strategy failed");
 		}
 		return expr;

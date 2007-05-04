@@ -32,7 +32,7 @@ import master.pil.term.types.*;
 
 import java.util.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 
 class Pil {
   %include { sl.tom }

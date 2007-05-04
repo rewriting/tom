@@ -71,7 +71,7 @@ public class PolyTraveler2 extends TestCase {
       Expression res = (Expression)bu.visitLight(t);
       System.out.println("Simplified form is " + res);
       assertSame("bu.visitLight(mult(one,exp(variable(\"X\")))) is exp(variable(\"X\"))",`exp(variable("X")),res);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());
     }
   }

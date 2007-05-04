@@ -5,7 +5,7 @@ import tactics.trees.types.*;
 
 // debugger
 import ted.*;
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import tom.library.sl.Strategy;
 
 public class Tactics {
@@ -61,7 +61,7 @@ public class Tactics {
     System.out.println(tree);
     try {
       tree = (Tree) tact.visitLight(tree);
-    } catch(jjtraveler.VisitFailure e ) {}
+    } catch(VisitFailure e ) {}
     //tree = (Tree) StratDebugger.applyGraphicalDebug(tree,tact);
     //tree = (Tree) StratDebugger.applyDebug(tree,tact);
     System.out.println(tree);

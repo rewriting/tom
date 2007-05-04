@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package ted;
-import jjtraveler.Visitable;
+
 
 class DummyObserver implements DebugStrategyObserver {
 

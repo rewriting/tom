@@ -31,9 +31,9 @@ package termgraph;
 
 import tom.library.sl.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+
+
+import VisitFailure;
 import java.util.*;
 
 import termgraph.term.*;

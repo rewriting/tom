@@ -40,7 +40,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 
 //another algorithm for solving anti-pattern problems
 //applies the trasnformation rule, but after that it does not

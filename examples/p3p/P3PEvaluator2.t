@@ -59,7 +59,7 @@ public class P3PEvaluator2 {
     HashSet c = new HashSet();
     try {
       `TopDownCollect(collectDatagroup(c)).visitLight(doc);
-    } catch(jjtraveler.VisitFailure e) {}
+    } catch(VisitFailure e) {}
     Iterator it = c.iterator();
     while(it.hasNext()) {
       TNode datagroup = (TNode)it.next();

@@ -37,8 +37,8 @@ import java.lang.reflect.*;
 
 // pour le main
 //import tom.library.strategy.mutraveler.*;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.*;
+
+
 
 public class Ted {
 

@@ -34,7 +34,7 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import tom.library.sl.*;
 
 public class DecomposeAP extends antipattern.term.TermBasicStrategy {

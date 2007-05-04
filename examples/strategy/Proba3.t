@@ -74,7 +74,7 @@ public class Proba3 {
 			Term pTerm = (Term)pos.getSubterm().visitLight(subject);
 			System.out.println("pos = " + pos + " --> " + pTerm);
 			
-    } catch(jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 

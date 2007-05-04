@@ -32,9 +32,9 @@ package strategycompiler;
 import strategycompiler.benchstratidsl.term.*;
 import strategycompiler.benchstratidsl.term.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-import jjtraveler.Visitable;
+
+import VisitFailure;
+
 import tom.library.sl.*;
 
 import java.util.*;

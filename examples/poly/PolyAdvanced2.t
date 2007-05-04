@@ -90,7 +90,7 @@ public class PolyAdvanced2 extends TestCase {
 
     try{
       res = (Term) `BottomUp(rule).visitLight(res);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + res);
     }
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1)) is plus(X,plus(X,a))",res, `plus(X(),plus(X(),a())));
@@ -105,7 +105,7 @@ public class PolyAdvanced2 extends TestCase {
 
     try{
       res = (Term) `BottomUp(rule).visitLight(res);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + res);
     }
 

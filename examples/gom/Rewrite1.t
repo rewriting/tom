@@ -73,7 +73,7 @@ public class Rewrite1 {
       super(`Fail());
     }
     
-    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
+    public Term visit_Term(Term arg) throws VisitFailure { 
       %match(Term arg) {
         //a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
         a() -> { 
@@ -87,7 +87,7 @@ public class Rewrite1 {
         b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
         g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
   }
 

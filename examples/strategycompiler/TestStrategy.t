@@ -7,7 +7,7 @@ import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
 import tom.library.strategy.mutraveler.Position;
-import jjtraveler.VisitFailure;
+import VisitFailure;
 
 import strategycompiler.teststrategy.term.types.*;
 

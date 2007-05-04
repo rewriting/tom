@@ -83,7 +83,7 @@ public class RewriteXml {
         System.out.println("position      = " + p);
         xtools.printXMLFromTNode((TNode)xmastree.visitLight(subject));
         System.out.println("-----------------------");
-      } catch (jjtraveler.VisitFailure e) {
+      } catch (VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
     }

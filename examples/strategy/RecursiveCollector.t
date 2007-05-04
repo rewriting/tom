@@ -46,7 +46,7 @@ public class RecursiveCollector {
       System.out.println("subject          = " + subject);
       System.out.println("collect all nodes, except those under the first subterm of g(...)");
       `mu(MuVar("x"),TopDownCollect(Collector(MuVar("x")))).visitLight(subject);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 

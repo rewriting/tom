@@ -39,7 +39,7 @@ import java.util.*;
 import antipattern.termaso.*;
 import antipattern.termaso.types.*;
 
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import tom.library.sl.*;
 
 public class Tools {

@@ -53,7 +53,7 @@ public class Rewrite3 {
       subject = `f(g(g(a(),b()),g(c(),b())));
       `Try(BottomUp(rule)).visitLight(subject);
       System.out.println("collect : " + collection);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed");
     }
 
@@ -84,7 +84,7 @@ public class Rewrite3 {
     try {
       `BottomUp(findTerm(groundTerm)).visitLight(subject);
       return false;
-    } catch(jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       return true;
     }
   }

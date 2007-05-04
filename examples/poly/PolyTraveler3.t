@@ -82,7 +82,7 @@ public class PolyTraveler3 {
       resRepeatOnce = (Expression) repeatOnce.visitLight(t);
       System.out.println("RepeatOneBottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
       
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + t);
     }
 
@@ -156,7 +156,7 @@ public class PolyTraveler3 {
     }
     
     public poly.expression.types.Expression visit_Expression(poly.expression.types.Expression arg) 
-      throws jjtraveler.VisitFailure { 
+      throws VisitFailure { 
       %match(Expression arg) {
         exp(zero())    -> { return `one(); }
         plus(zero(),x) -> { return `x; }
@@ -166,7 +166,7 @@ public class PolyTraveler3 {
         mult(zero(),_) -> { return `zero(); }
         mult(_,zero()) -> { return `zero(); }
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
    
   }*/

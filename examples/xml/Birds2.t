@@ -51,7 +51,7 @@ public class Birds2 {
     TNode term = xtools.convertXMLToTNode(filename);
     try {
       term = (TNode)`TopDown(replace()).visitLight(term);
-    }catch (jjtraveler.VisitFailure e) {}
+    }catch (VisitFailure e) {}
     //xtools.printXMLFromTNode(term);
   }
 

@@ -113,7 +113,7 @@ class BenchGomGC {
         pre = post;
         try {
           post = (Nat)s.visitLight(post);
-        } catch(jjtraveler.VisitFailure e) {}
+        } catch(VisitFailure e) {}
       }
       long stopChrono = System.currentTimeMillis();
 
@@ -130,7 +130,7 @@ class BenchGomGC {
         pre = post;
         try {
           post = (Nat)cs.visitLight(post);
-        } catch(jjtraveler.VisitFailure e) {}
+        } catch(VisitFailure e) {}
       }
       long stopChrono = System.currentTimeMillis();
 

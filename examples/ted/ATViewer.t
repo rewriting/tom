@@ -34,8 +34,8 @@ import aterm.pure.SingletonFactory;
 import java.util.*;
 import java.lang.reflect.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.*;
+
+
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
