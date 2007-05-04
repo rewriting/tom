@@ -45,7 +45,7 @@ public class RecursiveCollector {
     try {
       System.out.println("subject          = " + subject);
       System.out.println("collect all nodes, except those under the first subterm of g(...)");
-      `mu(MuVar("x"),TopDownCollect(Collector(MuVar("x")))).visit(subject);
+      `mu(MuVar("x"),TopDownCollect(Collector(MuVar("x")))).visitLight(subject);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
@@ -62,10 +62,10 @@ public class RecursiveCollector {
   %strategy Collector(current:Strategy) extends `Identity() {
     visit Term {
       g(_,t2) -> {
-      //MuTraveler.getRoot(this).visit(`t2);
-      //MuTraveler.init(`TopDownCollect(Collector())).visit(`t2);
-      current.visit(`t2);
-      `Fail().visit(null); 
+      //MuTraveler.getRoot(this).visitLight(`t2);
+      //MuTraveler.init(`TopDownCollect(Collector())).visitLight(`t2);
+      current.visitLight(`t2);
+      throw new VisitFailure(); 
       }
 
       x -> { System.out.println("found " + `x); }

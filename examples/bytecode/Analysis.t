@@ -127,7 +127,7 @@ public class Analysis {
         // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
-        `TopDown(BuildLabelMap(labelMap)).fire(ins);
+        `TopDown(BuildLabelMap(labelMap)).visit(ins);
 
         HashMap indexMap = new HashMap();
         Strategy noLoad =
@@ -138,7 +138,7 @@ public class Analysis {
 
         Strategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        `BottomUp(Try(ChoiceId(storeNotUsed,PrintInst()))).fire(ins);
+        `BottomUp(Try(ChoiceId(storeNotUsed,PrintInst()))).visit(ins);
 
         // Removes the useless stores of the method stratKiller
         // We have not managed to do it in the general case because of
@@ -146,7 +146,7 @@ public class Analysis {
         TInstructionList impInstList = ins;
         /*
            if(`x.getinfo().getname().equals("stratKiller")) {
-           impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).fire(ins);
+           impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).visit(ins);
            }
          */
         TMethodCode impCode = `x.getcode().setinstructions(impInstList);
@@ -212,7 +212,7 @@ public class Analysis {
     String currentName = classInfo.getname();
 
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).fire(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
   }
 
   public static void main(String[] args) {

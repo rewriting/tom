@@ -66,7 +66,7 @@ public class TestCarre extends TestCase {
     Strategy print = makePrint(list);
 
     try {
-      `BottomUp(print).fire(subject);
+      `BottomUp(print).visit(subject);
     } catch (FireException e) {
       fail("catched VisitFailure");
     }
@@ -91,7 +91,7 @@ public class TestCarre extends TestCase {
     Strategy show = makeShowCarre(list);
 
     try {
-      `BottomUp(show).fire(subject);
+      `BottomUp(show).visit(subject);
     } catch (FireException e) {
       fail("catched VisitFailure");
     }
@@ -115,8 +115,8 @@ public class TestCarre extends TestCase {
     Strategy comb = `ChoiceId(makePrint(list),makeShowCarre(list));
 
     try {
-      `BottomUp(comb).fire(subject);
-      `TopDown(comb).fire(subject);
+      `BottomUp(comb).visit(subject);
+      `TopDown(comb).visit(subject);
     } catch (FireException e) {
       fail("catched VisitFailure");
     }

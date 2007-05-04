@@ -74,16 +74,16 @@ public class TestStrategy extends TestCase {
     MuStrategy rule9 = StrategyCompiler.compile(`S9(i), "s9");
    
     try{
-      assertSame("g(a,a) return a", MuTraveler.init(`rule0).visit(`g(a(),a())), `a());
-      assertSame("a return b", MuTraveler.init(`rule1).visit(`a()), `b());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule2).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule3).visit(`g(a(),a())), `a());
-      assertSame("g(a,b) return g(b,a)", MuTraveler.init(`rule4).visit(`g(a(),b())), `g(b(),a()));
-      assertSame("g(a,a) return a", MuTraveler.init(`rule5).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule6).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule7).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule8).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule9).visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule0).visitLight(`g(a(),a())), `a());
+      assertSame("a return b", MuTraveler.init(`rule1).visitLight(`a()), `b());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule2).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule3).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,b) return g(b,a)", MuTraveler.init(`rule4).visitLight(`g(a(),b())), `g(b(),a()));
+      assertSame("g(a,a) return a", MuTraveler.init(`rule5).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule6).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule7).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule8).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule9).visitLight(`g(a(),a())), `a());
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -98,9 +98,9 @@ public class TestStrategy extends TestCase {
     MuStrategy getPos3 = `GetPositionA(positions,"p3");
 
     try{
-      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos1), "pos1")).visit(t);
-      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos2), "pos2")).visit(t);
-      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos3), "pos3")).visit(tBis);
+      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos1), "pos1")).visitLight(t);
+      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos2), "pos2")).visitLight(t);
+      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos3), "pos3")).visitLight(tBis);
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }

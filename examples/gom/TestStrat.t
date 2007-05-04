@@ -60,7 +60,7 @@ public class TestStrat extends TestCase {
     Strategy rule = new RewriteSystem();
     VList result = null;
     try {
-      result = (VList) `OnceBottomUp(rule).fire(subject);
+      result = (VList) `OnceBottomUp(rule).visit(subject);
     } catch (FireException e) {
       fail("catched FireException");
     }
@@ -72,7 +72,7 @@ public class TestStrat extends TestCase {
     Strategy rule = new RewriteSystem();
     VList result = null;
     try {
-      result = (VList) `BottomUp(Try(rule)).fire(subject);
+      result = (VList) `BottomUp(Try(rule)).visit(subject);
     } catch (FireException e) {
       fail("catched FireException");
     }

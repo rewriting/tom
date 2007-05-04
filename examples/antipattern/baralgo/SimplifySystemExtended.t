@@ -110,6 +110,6 @@ public class SimplifySystemExtended extends antipattern.SimplifySystem {
       }
     }
 
-    return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
   }
 }

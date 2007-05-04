@@ -93,7 +93,7 @@ public class ApAndDisunification1 implements Matching{
     Strategy transInDisunif = `TransformIntoDisunification();
     Constraint disunifProblem = null;
     try {		
-      disunifProblem = (Constraint) `InnermostId(transInDisunif).visit(noAnti);			
+      disunifProblem = (Constraint) `InnermostId(transInDisunif).visitLight(noAnti);			
     } catch (VisitFailure e) {
       System.out.println("2. reduction failed on: " + noAnti);
       e.printStackTrace();
@@ -114,9 +114,9 @@ public class ApAndDisunification1 implements Matching{
     Strategy solve = `SolveRes();
 
     try {		
-      compiledConstraint = (Constraint)`InnermostId(simplifyRule).visit(disunifProblem);
+      compiledConstraint = (Constraint)`InnermostId(simplifyRule).visitLight(disunifProblem);
 //    solvedConstraint = (Constraint)
-//    MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
+//    MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visitLight(compiledConstraint);
     } catch (VisitFailure e) {
       System.out.println("3. reduction failed on: " + c);
       e.printStackTrace();
@@ -150,13 +150,13 @@ public class ApAndDisunification1 implements Matching{
     }				
 
     // first get the constraint without the anti
-    Constraint cNoAnti =  `Equal((Term) OnceTopDownId(ElimAnti()).visit(pattern),subject);
+    Constraint cNoAnti =  `Equal((Term) OnceTopDownId(ElimAnti()).visitLight(pattern),subject);
     // if nothing changed, time to exit
     if (cNoAnti == c){
       return c;
     }
     // get the constraint with a variable instead of anti
-    Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visit(pattern),subject);
+    Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visitLight(pattern),subject);
 
     cAntiReplaced = `Exists(Variable("v" + ApAndDisunification1.varCounter),
         applyMainRule(cAntiReplaced));
@@ -169,7 +169,7 @@ public class ApAndDisunification1 implements Matching{
 
     quantifiedVarList.clear();
 
-    `OnceTopDownId(ApplyStrategy()).visit(c);
+    `OnceTopDownId(ApplyStrategy()).visitLight(c);
 
     Iterator it = quantifiedVarList.iterator();
     while(it.hasNext()){
@@ -199,7 +199,7 @@ public class ApAndDisunification1 implements Matching{
 
         Strategy useOmegaPath = (Strategy)getPosition().getOmegaPath(`CountAnti());				
 
-        useOmegaPath.visit(subject);
+        useOmegaPath.visitLight(subject);
 
 //      System.out.println("After analyzing counter=" + antiCounter);
         // if no anti-symbol found, than the variable can be quantified
@@ -247,7 +247,7 @@ public class ApAndDisunification1 implements Matching{
     visit Term {
       // main rule
       anti@Anti(p) -> {
-        Term t = (Term)`InnermostId(AnalyzeTerm(p)).visit(`p);				
+        Term t = (Term)`InnermostId(AnalyzeTerm(p)).visitLight(`p);				
         // now it has to stop
         return `p;
       }
@@ -535,7 +535,7 @@ public class ApAndDisunification1 implements Matching{
       And(concAnd(X*,eq@Equal(var@Variable(name),s),Y*)) -> {
         // And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
 
-        Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visit(`And(concAnd(X*,Y*)));
+        Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visitLight(`And(concAnd(X*,Y*)));
         if (res != `And(concAnd(X*,Y*))){
           return `And(concAnd(eq,res));
         }
@@ -545,7 +545,7 @@ public class ApAndDisunification1 implements Matching{
       Or(concOr(X*,eq@NEqual(var@Variable(name),s),Y*)) -> {
         // And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
 
-        Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visit(`Or(concOr(X*,Y*)));
+        Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visitLight(`Or(concOr(X*,Y*)));
         if (res != `Or(concOr(X*,Y*))){
           return `Or(concOr(eq,res));
         }

@@ -86,7 +86,7 @@ public class LambdaCalculus {
       // call by name
       info = new LambdaInfo();
       try{
-        System.out.println("Call by name: "+prettyPrint((LambdaTerm)`Not(Sequence( RepeatId(TopDown(Try(beta))),OnceTopDown(beta) )).fire(subject)));
+        System.out.println("Call by name: "+prettyPrint((LambdaTerm)`Not(Sequence( RepeatId(TopDown(Try(beta))),OnceTopDown(beta) )).visit(subject)));
       }catch (FireException e){
         System.out.println("Call by name: Infinite loop");
       }
@@ -94,7 +94,7 @@ public class LambdaCalculus {
       // call by need
       info.lazy=true;
       try{
-        System.out.println("Call by need: "+prettyPrint((LambdaTerm)`Not(Sequence( RepeatId(TopDown(Try(betaRef))),OnceTopDown(betaRef) )).fire(subject)));
+        System.out.println("Call by need: "+prettyPrint((LambdaTerm)`Not(Sequence( RepeatId(TopDown(Try(betaRef))),OnceTopDown(betaRef) )).visit(subject)));
       }catch(FireException e){
         System.out.println("Call by need: Infinite loop");
       }
@@ -102,7 +102,7 @@ public class LambdaCalculus {
       // call by value
       info.lazy=false;
       try{
-        System.out.println("Call by value: "+prettyPrint((LambdaTerm)`InnermostRight(beta).fire(subject)));
+        System.out.println("Call by value: "+prettyPrint((LambdaTerm)`InnermostRight(beta).visit(subject)));
       }catch(java.lang.StackOverflowError e){
         System.out.println("Call by value: Infinite loop");
       }
@@ -151,7 +151,7 @@ public class LambdaCalculus {
         int n = `x.getChildCount();
         for(int i = n; i>0; i--){
           getEnvironment().down(i);
-          s.visit();
+          s.visitLight();
           if(getEnvironment().getStatus() != Environment.SUCCESS){
             getEnvironment().up();
             return `x;
@@ -214,7 +214,7 @@ public class LambdaCalculus {
   }
   public static String prettyPrint(LambdaTerm t){
     ppcounter = 0;
-    t = (LambdaTerm) `TopDownSeq(UnExpand()).fire(t);
+    t = (LambdaTerm) `TopDownSeq(UnExpand()).visit(t);
     %match(LambdaTerm t){
       app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
       abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
@@ -252,7 +252,7 @@ public class LambdaCalculus {
         else{
           Position source = getEnvironment().getPosition();
           Position target = (Position) source.add((Path)`p);
-          return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
+          return (LambdaTerm) target.getSubterm().visit(getEnvironment().getRoot());
         }
       }
 

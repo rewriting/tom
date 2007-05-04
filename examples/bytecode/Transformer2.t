@@ -137,15 +137,15 @@ public class Transformer2 {
         // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
-        `TopDown(BuildLabelMap(labelMap)).fire(ins);
+        `TopDown(BuildLabelMap(labelMap)).visit(ins);
         HashMap indexMap = new HashMap();
         IntWrapper index = new IntWrapper();
         Strategy securiseAccess =
           `Sequence(NewFileReader(index),AGMap(Sequence(CallToSRead(index),UpdateLabelMap(labelMap)),labelMap));
         /**
-        `AGMap(Print(),labelMap).fire(ins);
+        `AGMap(Print(),labelMap).visit(ins);
         */
-        TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).fire(ins);
+        TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).visit(ins);
         TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
         TMethod secureMethod = `x.setcode(secureCode);
         secureMethods = `MethodList(secureMethods*,secureMethod);	
@@ -160,7 +160,7 @@ public class Transformer2 {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).fire(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {

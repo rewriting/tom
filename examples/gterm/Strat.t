@@ -63,8 +63,8 @@ public class Strat {
     BasicStrategy rule = new RewriteSystem();
 		try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
-      System.out.println("BottomUp  = " + `BottomUp(Try(rule)).visit(subject));
+      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visitLight(subject));
+      System.out.println("BottomUp  = " + `BottomUp(Try(rule)).visitLight(subject));
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     } catch (Exception e) {
@@ -95,7 +95,7 @@ public class Strat {
 					return `conc(v,t*);
 				}
       }
-      return (List)`Fail().visit(arg);
+      return (List)`Fail().visitLight(arg);
     }
   }
 

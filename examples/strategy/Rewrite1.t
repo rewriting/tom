@@ -48,13 +48,13 @@ public class Rewrite1 {
 
     try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).fire(subject));
-      System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).fire(subject));
-      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).fire(subject));
-      System.out.println("bottomUpId    = " + `BottomUp(ruleId).fire(subject));
-      System.out.println("innermost     = " + `Innermost(rule).fire(subject));
-      System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).fire(subject));
-      System.out.println("innermostId   = " + `InnermostId(ruleId).fire(subject));
+      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
+      System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).visit(subject));
+      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
+      System.out.println("bottomUpId    = " + `BottomUp(ruleId).visit(subject));
+      System.out.println("innermost     = " + `Innermost(rule).visit(subject));
+      System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
+      System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
       //StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
     } catch (FireException e) {
       System.out.println("reduction failed on: " + subject);
@@ -66,8 +66,8 @@ public class Rewrite1 {
       a() -> { 
         Position pos = getEnvironment().getPosition();
         System.out.println("a -> b at " + pos);
-        System.out.println(subject + " at " + pos + " = " + pos.getSubterm().fire(subject));
-        System.out.println("rwr into: " + pos.getReplace(`b()).fire(subject));
+        System.out.println(subject + " at " + pos + " = " + pos.getSubterm().visit(subject));
+        System.out.println("rwr into: " + pos.getReplace(`b()).visit(subject));
         return `b();
       }
 

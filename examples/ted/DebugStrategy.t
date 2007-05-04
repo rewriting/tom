@@ -43,7 +43,7 @@ class DebugStrategy extends AbstractMuStrategy {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     obs.before(this);
-    Visitable res = getStrat().visit(any);
+    Visitable res = getStrat().visitLight(any);
     obs.after(this, res);
     return res;
   }

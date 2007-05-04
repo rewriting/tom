@@ -61,14 +61,14 @@ public class NegativeCleaning extends antipattern.term.TermBasicStrategy {
       // if the conjunction contains negative
       // then it shoudn't be replaced by false
       Neg(And(concAnd(X*,Neg(a),Y*))) -> {
-        return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+        return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
       }
       Neg(And(concAnd(X*))) -> {
         return `False();
       }
     }
 
-    return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
   }
 
 }

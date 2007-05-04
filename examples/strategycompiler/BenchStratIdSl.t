@@ -86,7 +86,7 @@ public class BenchStratIdSl {
     Term subject = baobab(baobabHeight);
     
     long startChrono = System.currentTimeMillis();
-    `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).fire(subject);
+    `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).visit(subject);
     long stopChrono = System.currentTimeMillis();
 
     System.out.println(baobabHeight + "\t" + (stopChrono-startChrono)/1000.);
@@ -96,7 +96,7 @@ public class BenchStratIdSl {
     Term subject = baobab(baobabHeight);
 
     long startChrono = System.currentTimeMillis();
-    `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).fire(subject);
+    `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).visit(subject);
     long stopChrono = System.currentTimeMillis();
 
     System.out.println(baobabHeight + "\t" + (stopChrono-startChrono)/1000.);

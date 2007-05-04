@@ -66,8 +66,8 @@ public class Cookbook {
     Strategy replaceChairs = `ReplaceChairs();
     try {
       System.out.println("subject = " + myHouse);
-      `BottomUp(seekChairs).fire(myHouse);
-      myHouse = (House)`BottomUp(replaceChairs).fire(myHouse);
+      `BottomUp(seekChairs).visit(myHouse);
+      myHouse = (House)`BottomUp(replaceChairs).visit(myHouse);
       System.out.println("replacing chairs...");
       System.out.println("bottumup new subject = " + myHouse);
     } catch (FireException e) {

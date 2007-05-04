@@ -60,7 +60,7 @@ public class RewriteXml {
 
     try {
       Strategy findLeaves = `FindLeaves(leaves);
-      `BottomUp(findLeaves).fire(subject);
+      `BottomUp(findLeaves).visit(subject);
     } catch (FireException e) {
       System.out.println("Failed to get leaves" + subject);
     }
@@ -81,7 +81,7 @@ public class RewriteXml {
       try {
         System.out.println("----------------------");
         System.out.println("position      = " + p);
-        xtools.printXMLFromTNode((TNode)xmastree.visit(subject));
+        xtools.printXMLFromTNode((TNode)xmastree.visitLight(subject));
         System.out.println("-----------------------");
       } catch (jjtraveler.VisitFailure e) {
         System.out.println("reduction failed on: " + subject);

@@ -105,7 +105,7 @@ public class SolveSystemExtended extends antipattern.SolveSystem {
         
       }
       
-      return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+      return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
     }  
     
   }

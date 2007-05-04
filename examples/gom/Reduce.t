@@ -60,7 +60,7 @@ public class Reduce {
     Term subject = `F(F(B(),B()),F(B(),C()));
     Strategy rule = new RewriteSystem();
     try {
-      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).fire(subject));
+      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
     } catch (FireException e) {
       System.out.println("reduction failed on: " + subject);
     }

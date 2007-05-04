@@ -64,14 +64,14 @@ public class Proba3 {
 
     try {
       System.out.println("subject       = " + subject);
-      Term s = (Term) S.visit(subject);
+      Term s = (Term) S.visitLight(subject);
       System.out.println("s = " + s);
 
-			`TopDown(GetPosition(c)).visit(subject);
+			`TopDown(GetPosition(c)).visitLight(subject);
 			System.out.println("set[pos] = " + c);
 			int index = Math.abs(random.nextInt()) % c.size();
 			Position pos = (Position)c.get(index);
-			Term pTerm = (Term)pos.getSubterm().visit(subject);
+			Term pTerm = (Term)pos.getSubterm().visitLight(subject);
 			System.out.println("pos = " + pos + " --> " + pTerm);
 			
     } catch(jjtraveler.VisitFailure e) {
@@ -90,9 +90,9 @@ public class Proba3 {
 	public static Term pRewriteSubterm(Term subject, Strategy v) {
 		List c = new ArrayList();
 		try {
-			`TopDown(GetPosition(c)).fire(subject);
+			`TopDown(GetPosition(c)).visit(subject);
 			Position pos = (Position)c.get(Math.abs(random.nextInt()) % c.size());
-			Term res = (Term)pos.getOmega(v).fire(subject);
+			Term res = (Term)pos.getOmega(v).visit(subject);
 			System.out.println("selected pos = " + pos);
 			return res;	
 		} catch(FireException e) {

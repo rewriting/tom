@@ -60,10 +60,10 @@ class Pil {
     System.out.println("p1 = " + p1);
     //System.out.println(pretty(p1));
     
-    //System.out.println(`RenameVar("x","z").fire(p1));
+    //System.out.println(`RenameVar("x","z").visit(p1));
 
-    //System.out.println("renamed p1   = " + `OnceBottomUp(RenameVar("x","z")).fire(p1));
-    //System.out.println("optimized p1 = " + `BottomUp(RemoveLet()).fire(p1));
+    //System.out.println("renamed p1   = " + `OnceBottomUp(RenameVar("x","z")).visit(p1));
+    //System.out.println("optimized p1 = " + `BottomUp(RemoveLet()).visit(p1));
 
   }
 
@@ -76,7 +76,7 @@ class Pil {
   %strategy RemoveLet() extends Identity() {
     visit Expr {
       Let(Var(n),expr,body) -> { 
-        if(`body == `TopDown(RenameVar(n,"_"+n)).fire(`body)) {
+        if(`body == `TopDown(RenameVar(n,"_"+n)).visit(`body)) {
           // if Var(n) is not used
           return `body;
         }

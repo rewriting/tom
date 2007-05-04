@@ -59,19 +59,19 @@ public class AnalyserBasedOnRef{
   %strategy IsNotUsed(ref:VariableRef) extends `Identity(){
     visit Term {
       t@Var(var) -> {
-        if(`var.equals(ref.getvariable())) return (Term) `Fail().fire(`t);
+        if(`var.equals(ref.getvariable())) return (Term) `Fail().visit(`t);
       }
     }
 
     visit Cfg {
         Affect(ast,_) -> {
-        `TopDown(this).visit(`ast.getChildAt(1)); //find use in the term affected
+        `TopDown(this).visitLight(`ast.getChildAt(1)); //find use in the term affected
       }
          BeginIf(ast,_,_) -> {
-        `TopDown(this).visit(`ast.getChildAt(0)); //find us in the boolean expression
+        `TopDown(this).visitLight(`ast.getChildAt(0)); //find us in the boolean expression
       }
          BeginWhile(ast,_) -> {
-        `TopDown(this).visit(`ast.getChildAt(0)); //find us in the boolean expression
+        `TopDown(this).visitLight(`ast.getChildAt(0)); //find us in the boolean expression
       }
     }
   }
@@ -135,7 +135,7 @@ public class AnalyserBasedOnRef{
   public ArrayList collectNotUsedAffectations(Cfg cfg){
     ArrayList list = new ArrayList();
     VariableRef var = new VariableRef();
-    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),AX(StrictDeRef(AU(StrictDeRef(IsNotUsed(var)),StrictDeRef(OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).fire(cfg);
+    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),AX(StrictDeRef(AU(StrictDeRef(IsNotUsed(var)),StrictDeRef(OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).visit(cfg);
     return list;
   }
 
@@ -161,7 +161,7 @@ public class AnalyserBasedOnRef{
     //onceUsedCond AX(A(s1 U s2))  
     Strategy onceUsed = `AX(StrictDeRef(AU(StrictDeRef(s1),StrictDeRef(s2))));
 
-    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).fire(cfg);
+    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).visit(cfg);
     return list;
   } 
 

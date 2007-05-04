@@ -49,7 +49,7 @@ public class ClassicalAssociativity {
   private static int globalCounter = 0; 
 
   public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-    return (Constraint)`InnermostId(PerformAssociativeMatching()).fire(c);
+    return (Constraint)`InnermostId(PerformAssociativeMatching()).visit(c);
   }
 
   %strategy PerformAssociativeMatching() extends Identity(){
@@ -186,7 +186,7 @@ public class ClassicalAssociativity {
         // if the variable exists only in one eq, just replace with true the
         // eq
         if (nbOccurences(`var,`x) <= 1){
-          return (Constraint)`TopDown(ReplaceEquality(var)).fire(`x);
+          return (Constraint)`TopDown(ReplaceEquality(var)).visit(`x);
         }
       }
 
@@ -202,7 +202,7 @@ public class ClassicalAssociativity {
       // Replace
       input@And(X*,equal@Equal(var@Variable(name),s),Y*) -> {				
         Constraint toApplyOn = `And(X*,Y*);				
-        Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).fire(toApplyOn);
+        Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).visit(toApplyOn);
         if (res != toApplyOn){					
           return `And(equal,res);
         }
@@ -219,7 +219,7 @@ public class ClassicalAssociativity {
   private int counter = 0;	
   private int nbOccurences(Term t, Constraint toSearchIn){
     counter = 0;
-    `TopDown(CheckOccurence(t)).fire(toSearchIn);
+    `TopDown(CheckOccurence(t)).visit(toSearchIn);
     return counter;
   }	
 

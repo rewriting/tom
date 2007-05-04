@@ -278,7 +278,7 @@ public class Nsh {
   }
   public void collectOneStep(State state, Collection col) {
     try {
-      `OneStep(col).visit(state);
+      `OneStep(col).visitLight(state);
     } catch (jjtraveler.VisitFailure f) {
       throw new RuntimeException("VisitFailure for "+state);
     }

@@ -58,7 +58,7 @@ public class P3PEvaluator2 {
   private TNode getDataGroup(TNode doc) {
     HashSet c = new HashSet();
     try {
-      `TopDownCollect(collectDatagroup(c)).visit(doc);
+      `TopDownCollect(collectDatagroup(c)).visitLight(doc);
     } catch(jjtraveler.VisitFailure e) {}
     Iterator it = c.iterator();
     while(it.hasNext()) {
@@ -93,7 +93,7 @@ public class P3PEvaluator2 {
     visit TNode {
       t@<DATA-GROUP> </DATA-GROUP> -> {
         collection.add(`t);
-        `Fail().visit(null);
+        throw new VisitFailure();
       }
     }
   } 

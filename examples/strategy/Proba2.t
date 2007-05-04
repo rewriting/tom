@@ -69,7 +69,7 @@ public class Proba2 {
 
     try {
       System.out.println("subject       = " + subject);
-      State s = (State) transit.visit(subject);
+      State s = (State) transit.visitLight(subject);
       System.out.println("s = " + s);
     } catch(jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);

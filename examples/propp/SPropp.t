@@ -86,7 +86,7 @@ class SPropp {
 
 		Proof res = null;
 		try {
-			res = (Proof)bottomUp.visit(init);
+			res = (Proof)bottomUp.visitLight(init);
 		} catch (jjtraveler.VisitFailure e) {
 			return init;
 		}
@@ -358,7 +358,7 @@ class SPropp {
 	public boolean isValid(Proof p) {
 		MyBoolean result = new MyBoolean(true);
     try {
-      `BottomUp(IsValid(result)).visit(p);
+      `BottomUp(IsValid(result)).visitLight(p);
     } catch (jjtraveler.VisitFailure f) {
       throw new RuntimeException("Failed to check validity");
     }
@@ -379,7 +379,7 @@ class SPropp {
 	public int rule_nbr(Proof p) {
 		MyInt result = new MyInt(0);
     try {
-      `BottomUp(CountRules(result)).visit(p);
+      `BottomUp(CountRules(result)).visitLight(p);
     } catch (jjtraveler.VisitFailure f) {
       throw new RuntimeException("Failed to check validity");
     }

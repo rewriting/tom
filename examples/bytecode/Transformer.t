@@ -111,7 +111,7 @@ public class Transformer {
       MethodList(_*, x, _*) -> {
         System.out.println("Analysis of the method "+`x.getinfo().getname());
         TInstructionList ins = `x.getcode().getinstructions();
-        TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).fire(ins);
+        TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).visit(ins);
         TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
         TMethod secureMethod = `x.setcode(secureCode);
         secureMethods = `MethodList(secureMethods*,secureMethod);	
@@ -126,7 +126,7 @@ public class Transformer {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).fire(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {

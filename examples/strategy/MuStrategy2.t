@@ -44,9 +44,9 @@ public class MuStrategy2 {
     Strategy rule = `RewriteSystem();
     try {
       System.out.println("subject          = " + subject);
-      System.out.println("innermost        = " + `Innermost(rule).visit(subject));
-      System.out.println("innermostSlow    = " + `Repeat(OnceBottomUp(rule)).visit(subject));
-      System.out.println("Repeat(BottomUp) = " + `Repeat(BottomUp(rule)).visit(subject));
+      System.out.println("innermost        = " + `Innermost(rule).visitLight(subject));
+      System.out.println("innermostSlow    = " + `Repeat(OnceBottomUp(rule)).visitLight(subject));
+      System.out.println("Repeat(BottomUp) = " + `Repeat(BottomUp(rule)).visitLight(subject));
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }

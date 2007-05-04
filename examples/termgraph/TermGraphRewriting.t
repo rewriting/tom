@@ -221,34 +221,34 @@ public class TermGraphRewriting {
     Position posFinal = new Position(new int[]{1});
 
     /* term t with labels */
-    Term tt = (Term) `UnExpand(map).fire(t);
+    Term tt = (Term) `UnExpand(map).visit(t);
 
     /* redex with labels */
-    Term redex = (Term) new Position(new int[]{1,1}).getSubterm().fire(tt);
+    Term redex = (Term) new Position(new int[]{1,1}).getSubterm().visit(tt);
 
     /* add labels for variables x and y */
     Position _x = new Position(new int[]{1});
     Position _y = new Position(new int[]{2});
-    final Term term_x =  (Term) _x.getSubterm().fire(redex);
-    final Term term_y =  (Term) _y.getSubterm().fire(redex);
-    redex = (Term) _x.getReplace(`labTerm("x",term_x)).fire(redex);
-    redex = (Term) _y.getReplace(`labTerm("y",term_y)).fire(redex);
+    final Term term_x =  (Term) _x.getSubterm().visit(redex);
+    final Term term_y =  (Term) _y.getSubterm().visit(redex);
+    redex = (Term) _x.getReplace(`labTerm("x",term_x)).visit(redex);
+    redex = (Term) _y.getReplace(`labTerm("y",term_y)).visit(redex);
     /* replace in t the lhs by the rhs */
-    tt = (Term) new Position(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(tt);
+    tt = (Term) new Position(new int[]{1,1}).getReplace(`f(refTerm("x"))).visit(tt);
 
     /* concat the redex on top of the term */
     tt = `substTerm(tt,redex);
 
     /* normalization by point fix */
     Term t1 = (Term) termAbstractType.expand(tt);
-    t1 = (Term) posFinal.getSubterm().fire(t1);
+    t1 = (Term) posFinal.getSubterm().visit(t1);
     System.out.println("Canonical term obtained by a point fix: "+t1);
 
     /* normalization by innermost strategy */
     map.clear();
-    Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).fire(tt);
+    Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(tt);
     t2 = (Term) termAbstractType.label2path(t2);
-    t2 = (Term) posFinal.getSubterm().fire(t2);
+    t2 = (Term) posFinal.getSubterm().visit(t2);
     System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
 
     /*  one directly based on positions */
@@ -262,18 +262,18 @@ public class TermGraphRewriting {
     Term t3 = `substTerm(t,a());
 
     /* update positions on phi(rhs) and on the redex */
-    t3 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).fire(t3);
+    t3 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t3);
 
     /* concat the redex on top of the term */
-    redex = (Term) posRedex.getSubterm().fire(t3);
-    t3 = (Term) posSubst.getReplace(redex).fire(t3);
+    redex = (Term) posRedex.getSubterm().visit(t3);
+    t3 = (Term) posSubst.getReplace(redex).visit(t3);
 
     /* replace in t the lhs by the rhs */
-    t3 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).fire(t3);
+    t3 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t3);
 
     /* normalization by innermost strategy */
-    t3 = (Term) `InnermostIdSeq(NormalizePos()).fire(t3);
-    t3 = (Term) posFinal.getSubterm().fire(t3);
+    t3 = (Term) `InnermostIdSeq(NormalizePos()).visit(t3);
+    t3 = (Term) posFinal.getSubterm().visit(t3);
     System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
 
     t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
@@ -285,18 +285,18 @@ public class TermGraphRewriting {
     Term t4 = `substTerm(t,a());
 
     /* update positions on phi(rhs) and on the redex */
-    t4 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).fire(t4);
+    t4 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t4);
 
     /* concat the redex on top of the term */
-    redex = (Term) posRedex.getSubterm().fire(t4);
-    t4 = (Term) posSubst.getReplace(redex).fire(t4);
+    redex = (Term) posRedex.getSubterm().visit(t4);
+    t4 = (Term) posSubst.getReplace(redex).visit(t4);
 
     /* replace in t the lhs by the rhs */
-    t4 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).fire(t4);
+    t4 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t4);
 
     /* normalization by innermost strategy */
-    t4 = (Term) `InnermostIdSeq(NormalizePos()).fire(t4);
-    t4 = (Term) posFinal.getSubterm().fire(t4);
+    t4 = (Term) `InnermostIdSeq(NormalizePos()).visit(t4);
+    t4 = (Term) posFinal.getSubterm().visit(t4);
     System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t4);
 
   }

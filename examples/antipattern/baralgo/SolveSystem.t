@@ -79,7 +79,7 @@ public class SolveSystem extends antipattern.term.TermBasicStrategy {
             	rule = new ReplaceSystem(`var,`s, `Fail());
             	ruleStrategy = `Innermost(rule);
             }            
-            Constraint res = (Constraint) ruleStrategy.visit(`And(concAnd(X*,Y*)));
+            Constraint res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
             /* System.out.println("[solve3] -> [" + match + "," + res + "]"); */
             return res;
         }
@@ -93,13 +93,13 @@ public class SolveSystem extends antipattern.term.TermBasicStrategy {
             	rule = new ReplaceSystem(`var,`s, `Fail());
             	ruleStrategy = `Innermost(rule);
             }
-            Constraint res = (Constraint) ruleStrategy.visit(`Neg(And(concAnd(X*,Y*))));
+            Constraint res = (Constraint) ruleStrategy.visitLight(`Neg(And(concAnd(X*,Y*))));
             /* System.out.println("[solve4] -> [" + match + "," + res + "]"); */
             return res;
         }
       }
       
-      return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+      return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
     }
   
 }

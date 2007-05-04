@@ -78,7 +78,7 @@ public class ApElimination implements Matching{
       Match(p,s) -> { 
         transformedMatch = `Equal(p,s/* GenericGroundTerm("SUBJECT") */);
         // collect free variables
-        `TopDown(AnalyzeTerm(p,false)).fire(`p);
+        `TopDown(AnalyzeTerm(p,false)).visit(`p);
         break label;
       }
       _ -> {
@@ -111,16 +111,16 @@ public class ApElimination implements Matching{
 
 
     try {		
-      classicalMatch = (Constraint) `InnermostId(ClassicalPatternMatching()).visit(noAnti);
+      classicalMatch = (Constraint) `InnermostId(ClassicalPatternMatching()).visitLight(noAnti);
 //    System.out.println("After classical match: " +
 //    tools.formatConstraint(classicalMatch));
-      replacedVariables = (Constraint) `TopDown(ReplaceVariables()).visit(classicalMatch);
+      replacedVariables = (Constraint) `TopDown(ReplaceVariables()).visitLight(classicalMatch);
 //    System.out.println("After variable replacement: " +
 //    tools.formatConstraint(replacedVariables));
-      quantifierFree = (Constraint) `TopDown(EliminateQuantifiedVars()).visit(replacedVariables);
+      quantifierFree = (Constraint) `TopDown(EliminateQuantifiedVars()).visitLight(replacedVariables);
 //    System.out.println("After quantified vars' elimination: " +
 //    tools.formatConstraint(quantifierFree));
-      result = (Constraint) `InnermostId(Cleaning()).visit(quantifierFree);			
+      result = (Constraint) `InnermostId(Cleaning()).visitLight(quantifierFree);			
 
     } catch (VisitFailure e) {
       System.out.println("3. reduction failed on: " + c);
@@ -148,13 +148,13 @@ public class ApElimination implements Matching{
     }
 
     // first get the constraint without the anti
-    Constraint cNoAnti =  `Equal((Term)OnceTopDownId(ElimAnti()).visit(pattern),subject);
+    Constraint cNoAnti =  `Equal((Term)OnceTopDownId(ElimAnti()).visitLight(pattern),subject);
     // if nothing changed, time to exit
     if (cNoAnti == c){
       return c;
     }
     // get the constraint with a variable instead of anti
-    Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visit(pattern),subject);
+    Constraint cAntiReplaced =  `Equal((Term) OnceTopDownId(ReplaceAnti()).visitLight(pattern),subject);
 
     quantifiedVarList.add(`Variable("v" + ApAndDisunification1.varCounter));
 
@@ -162,7 +162,7 @@ public class ApElimination implements Matching{
     cAntiReplaced = applyMainRule(cAntiReplaced);		
     cNoAnti = `Neg(applyMainRule(cNoAnti));		
 
-    `OnceTopDownId(ApplyStrategy()).visit(pattern);
+    `OnceTopDownId(ApplyStrategy()).visitLight(pattern);
 
     // System.out.println("antiCounter=" + antiCounter + " cNoAnti=" +
     // tools.formatConstraint(cNoAnti));
@@ -185,7 +185,7 @@ public class ApElimination implements Matching{
 
         Strategy useOmegaPath = (Strategy)getPosition().getOmegaPath(`CountAnti());				
 
-        useOmegaPath.visit(subject);
+        useOmegaPath.visitLight(subject);
 
 //      System.out.println("After analyzing counter=" + antiCounter);
 
@@ -239,7 +239,7 @@ public class ApElimination implements Matching{
     visit Term {
       // main rule
       anti@Anti(p) -> {
-        `InnermostId(AnalyzeTerm(p,true)).visit(`p);				
+        `InnermostId(AnalyzeTerm(p,true)).visitLight(`p);				
         // now it has to stop
         return `p;
       }
@@ -254,7 +254,7 @@ public class ApElimination implements Matching{
 //visit Term {
 //// main rule
 //var@Variable[] -> {
-//Term t = (Term)MuTraveler.init(`InnermostId(AnalyzeTerm(p,false))).visit(p);
+//Term t = (Term)MuTraveler.init(`InnermostId(AnalyzeTerm(p,false))).visitLight(p);
 //}
 //}
 //}
@@ -327,7 +327,7 @@ public class ApElimination implements Matching{
       // Replace
       And(concAnd(X*,eq@Equal(var@Variable[],s),Y*)) -> {
 
-        Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visit(`And(concAnd(X*,Y*)));
+        Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).visitLight(`And(concAnd(X*,Y*)));
         // if we replaced something
         if (res != `And(concAnd(X*,Y*))){
           return `And(concAnd(eq,res));

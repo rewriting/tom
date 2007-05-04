@@ -107,7 +107,7 @@ class BenchGomGCSl {
       long startChrono = System.currentTimeMillis();
       while (post != pre) {
         pre = post;
-        post = (Nat)s.fire(post);
+        post = (Nat)s.visit(post);
       }
       long stopChrono = System.currentTimeMillis();
 

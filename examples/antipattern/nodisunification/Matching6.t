@@ -50,7 +50,7 @@ public class Matching6 implements Matching {
 	%include { java/util/types/Collection.tom}
 	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-		return (Constraint)`SequenceId(InnermostId(EnrichedPatternMatching()),InnermostId(Cleaning())).fire(c);
+		return (Constraint)`SequenceId(InnermostId(EnrichedPatternMatching()),InnermostId(Cleaning())).visit(c);
 	}	
 	
 	%strategy EnrichedPatternMatching() extends `Identity(){
@@ -63,7 +63,7 @@ public class Matching6 implements Matching {
 			//	AntiMatch
 	        Equal(Anti(p),s) -> {
 	        	Collection quantifiedVarList = new ArrayList();
-	            `TopDownCollect(CollectPositiveVariable(quantifiedVarList)).fire(`p);
+	            `TopDownCollect(CollectPositiveVariable(quantifiedVarList)).visit(`p);
 	            
 	            Constraint ret = `Equal(p,s);
 	
@@ -93,7 +93,7 @@ public class Matching6 implements Matching {
 	        // Replace
 			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {
 				Constraint toApplyOn = `And(concAnd(Y*));
-				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).fire(toApplyOn);
+				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).visit(toApplyOn);
 				if (res != toApplyOn){					
 					return `And(concAnd(X*,equal,res));
 				}
@@ -165,7 +165,7 @@ public class Matching6 implements Matching {
 		
 		containsFlag = false;
 		
-		`OnceTopDownId(CheckOccurence(t)).fire(c);
+		`OnceTopDownId(CheckOccurence(t)).visit(c);
 		
 		return containsFlag;
 	}

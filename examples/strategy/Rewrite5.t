@@ -45,7 +45,7 @@ public class Rewrite5 {
   public final static void main(String[] args) {
     Collection collection = new HashSet();
     Term subject = `f(g(g(a(),b()),g(a(),b())));
-    `BottomUp(Collector(subject,collection,RewriteSystem())).fire(subject);
+    `BottomUp(Collector(subject,collection,RewriteSystem())).visit(subject);
     System.out.println("collect : " + collection);
   }
 
@@ -59,8 +59,8 @@ public class Rewrite5 {
     visit Term {
       x -> {
         try {
-          Term r = (Term)`strat.fire(`x);
-          collection.add(getEnvironment().getPosition().getReplace(`x).fire(`root)); 
+          Term r = (Term)`strat.visit(`x);
+          collection.add(getEnvironment().getPosition().getReplace(`x).visit(`root)); 
         } catch(FireException e) {}
       }
     }

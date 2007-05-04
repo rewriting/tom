@@ -71,15 +71,15 @@ public class PolyTraveler3 {
     Expression resRepeatOnce = null;
     try {
       startChrono = System.currentTimeMillis();
-      resBottomUp = (Expression) bottomUp.visit(t);
+      resBottomUp = (Expression) bottomUp.visitLight(t);
       System.out.println("BottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
       startChrono = System.currentTimeMillis();
-      resInnermost = (Expression) innermost.visit(t);
+      resInnermost = (Expression) innermost.visitLight(t);
       System.out.println("Innermost in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
       startChrono = System.currentTimeMillis();
-      resRepeatOnce = (Expression) repeatOnce.visit(t);
+      resRepeatOnce = (Expression) repeatOnce.visitLight(t);
       System.out.println("RepeatOneBottomUp in " + (System.currentTimeMillis()-startChrono)+ " ms");
       
     } catch (jjtraveler.VisitFailure e) {

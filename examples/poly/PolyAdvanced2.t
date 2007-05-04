@@ -89,7 +89,7 @@ public class PolyAdvanced2 extends TestCase {
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
 
     try{
-      res = (Term) `BottomUp(rule).visit(res);
+      res = (Term) `BottomUp(rule).visitLight(res);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + res);
     }
@@ -104,7 +104,7 @@ public class PolyAdvanced2 extends TestCase {
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
 
     try{
-      res = (Term) `BottomUp(rule).visit(res);
+      res = (Term) `BottomUp(rule).visitLight(res);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + res);
     }

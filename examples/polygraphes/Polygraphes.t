@@ -82,21 +82,21 @@ public class Polygraphes {
         c0(id(1),c1(c0(suc,suc),add)));
 
     //System.out.println("res0 = " + res);
-    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
-    //res = (TwoPath) `Repeat(OnceTopDown(Sequence(Print(),Splitting()))).fire(res);
+    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
+    //res = (TwoPath) `Repeat(OnceTopDown(Sequence(Print(),Splitting()))).visit(res);
 
     //res = `c0(c1(dup, c0(suc,id(1))), id(1));
-    //res = (TwoPath) `Splitting().fire(res);
+    //res = (TwoPath) `Splitting().visit(res);
     System.out.println("res1 = " + res);
 
-    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
     System.out.println("res2 = " + res);
 
   }
 
   public static TwoPath computeNF(TwoPath res) {
-    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
-    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).visit(res);
+    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).visit(res);
     return res;
   }
 

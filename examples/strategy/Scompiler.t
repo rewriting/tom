@@ -101,20 +101,20 @@ public class Scompiler {
     try {
       System.out.println("subject       = " + subject);
       VisitableVisitor S1 = `BottomUp(GetPosition(c));
-      S1.visit(subject);
+      S1.visitLight(subject);
       VisitableVisitor S2 = new CompiledBottomUp(`GetPosition(c));
-      S2.visit(subject);
+      S2.visitLight(subject);
       System.out.println("set[pos] = " + c);
 
       c = new ArrayList();
       S1 = `TopDown(GetPosition(c));
-      S1.visit(subject);
+      S1.visitLight(subject);
       S2 = new CompiledTopDown(`GetPosition(c));
-      S2.visit(subject);
+      S2.visitLight(subject);
       System.out.println("set[pos] = " + c);
 
       S1 = `Innermost(Reduce());
-      System.out.println("Innermost(Reduce()) : "+S1.visit(subject));
+      System.out.println("Innermost(Reduce()) : "+S1.visitLight(subject));
     } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
@@ -128,7 +128,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S1 = `BottomUp(GetPosition(c));
-        S1.visit(subject);
+        S1.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -145,7 +145,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S1 = `TopDown(GetPosition(c));
-        S1.visit(subject);
+        S1.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -162,7 +162,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S2 = new CompiledBottomUp(`GetPosition(c));
-        S2.visit(subject);
+        S2.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -179,7 +179,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S1 = `Innermost(Reduce());
-        S1.visit(subject);
+        S1.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -196,7 +196,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S1 = new CompiledInnermost(`Reduce());
-        S1.visit(subject);
+        S1.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -213,7 +213,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S1 = new HardCompiledInnermost();
-        S1.visit(subject);
+        S1.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -229,7 +229,7 @@ public class Scompiler {
       List c = new ArrayList();
       try {
         VisitableVisitor S2 = new CompiledTopDown(`GetPosition(c));
-        S2.visit(subject);
+        S2.visitLight(subject);
       } catch(VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -255,12 +255,12 @@ public class Scompiler {
       int childCount = any.getChildCount();
       Visitable result = any;
       for (int i = 0; i < childCount; i++) {
-        Visitable newChild = this.visit(result.getChildAt(i));
+        Visitable newChild = this.visitLight(result.getChildAt(i));
         result = result.setChildAt(i, newChild);
       }
       
       // Compile v
-      return getArgument(ARG).visit(result);
+      return getArgument(ARG).visitLight(result);
     }
   }
 
@@ -273,12 +273,12 @@ public class Scompiler {
     public Visitable visit(Visitable any) throws VisitFailure {
       Visitable result = any;
       // Compile v
-      result = getArgument(ARG).visit(result);
+      result = getArgument(ARG).visitLight(result);
 
       // Compile All(MuVar("x"))
       int childCount = any.getChildCount();
       for (int i = 0; i < childCount; i++) {
-        Visitable newChild = this.visit(result.getChildAt(i));
+        Visitable newChild = this.visitLight(result.getChildAt(i));
         result = result.setChildAt(i, newChild);
       }
 
@@ -297,15 +297,15 @@ public class Scompiler {
       // Compile All("x")
       int childCount = any.getChildCount();
       for (int i = 0; i < childCount; i++) {
-        Visitable newChild = this.visit(result.getChildAt(i));
+        Visitable newChild = this.visitLight(result.getChildAt(i));
         result = result.setChildAt(i, newChild);
       }
       // compile Try(Sequence(v,MuVar("x"))) =
       // Choice(Sequence(v,MuVar("x")),Identity())
       try {
         // Compile Sequence(v,MuVar("x"))
-        result = getArgument(ARG).visit(result);
-        result = this.visit(result);
+        result = getArgument(ARG).visitLight(result);
+        result = this.visitLight(result);
       } catch (VisitFailure f) {
         // Compile Identity()
         return result;
@@ -322,15 +322,15 @@ public class Scompiler {
       // Compile All("x")
       int childCount = any.getChildCount();
       for (int i = 0; i < childCount; i++) {
-        Visitable newChild = this.visit(result.getChildAt(i));
+        Visitable newChild = this.visitLight(result.getChildAt(i));
         result = result.setChildAt(i, newChild);
       }
       // compile Try(Sequence(v,MuVar("x"))) =
       // Choice(Sequence(v,MuVar("x")),Identity())
       try {
         // Compile Sequence(v,MuVar("x"))
-        result = v.visit(result);
-        result = this.visit(result);
+        result = v.visitLight(result);
+        result = this.visitLight(result);
       } catch (VisitFailure f) {
         // Compile Identity()
         return result;

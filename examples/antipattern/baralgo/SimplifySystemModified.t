@@ -91,7 +91,7 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
         }  
         Constraint res = null;
         
-        res = (Constraint) ruleStrategy.visit(`And(concAnd(X*,Y*)));
+        res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
         
         if (res != `And(concAnd(X*,Y*))){
           return `And(concAnd(match,res));
@@ -126,6 +126,6 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
       Neg(False()) -> { return `True(); }
 
     }
-    return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
   }
 }

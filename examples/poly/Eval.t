@@ -98,7 +98,7 @@ public class Eval {
    */
   public static Poly applySubst(Poly subject, Poly variable, Poly value) {
     try {
-    return (Poly)`TopDown(Substitute(variable,value)).visit(subject);
+    return (Poly)`TopDown(Substitute(variable,value)).visitLight(subject);
     } catch(jjtraveler.VisitFailure e) { return subject; }
   }
 
@@ -127,7 +127,7 @@ public class Eval {
    */
   public static Poly distribute(Poly subject) {
     try {
-    return (Poly) `InnermostId(Distribute()).visit(subject);
+    return (Poly) `InnermostId(Distribute()).visitLight(subject);
     } catch(jjtraveler.VisitFailure e) { return subject; }
   }
 
@@ -222,7 +222,7 @@ public class Eval {
   public static Collection variableSet(Poly p) {
     Collection bag = new HashSet();
     try {
-      `BottomUp(CollectVariables(bag)).visit(p);
+      `BottomUp(CollectVariables(bag)).visitLight(p);
     } catch(jjtraveler.VisitFailure e) {}
     return bag;
   }
@@ -269,7 +269,7 @@ public class Eval {
    */
   public static int eval(Map parameters, Poly p) {
     try {
-      p = (Poly)`BottomUp(Evaluate(parameters)).visit(p);
+      p = (Poly)`BottomUp(Evaluate(parameters)).visitLight(p);
     } catch(jjtraveler.VisitFailure e) {}
     %match(Poly p) {
       Number(n) -> { return `n; }

@@ -58,6 +58,6 @@ public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
       if(arg==variable) {
         return value;
       } 
-      return (isIdentity ? arg : (Term)`Fail().visit(arg));
+      return (isIdentity ? arg : (Term)`Fail().visitLight(arg));
     }
   }  

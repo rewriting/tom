@@ -95,7 +95,7 @@ public class SimplifySystemRule {
     // it doesn't stop when an occurence is found
     ContainsTerm ct = new ContainsTerm(v,`Identity());
     try{
-      `InnermostId(ct).visit(l);
+      `InnermostId(ct).visitLight(l);
     }catch(VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);
@@ -116,7 +116,7 @@ public class SimplifySystemRule {
     Constraint res = null;
 
     try{
-      res = (Constraint) ruleStrategy.visit(`And(l));
+      res = (Constraint) ruleStrategy.visitLight(`And(l));
     }catch(VisitFailure e){
       System.out.println("Exception:" + e.getMessage());
       System.exit(0);

@@ -110,6 +110,6 @@ public class ClassicalPatternMatching extends antipattern.term.TermBasicStrategy
       }
 
     }
-    return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
   }
 }

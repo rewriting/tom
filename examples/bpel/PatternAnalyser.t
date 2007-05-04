@@ -97,7 +97,7 @@ public class PatternAnalyser{
     public void substitute() {
       %match(HashMap nameToCondition) {
         (_*,mapEntry(k,v),_*) -> {
-          Condition newCond = (Condition) ((Strategy) `TopDown(Substitute(sourceToName))).fire((Condition) `v);
+          Condition newCond = (Condition) ((Strategy) `TopDown(Substitute(sourceToName))).visit((Condition) `v);
           nameToCondition.put(`k,newCond);
         }
       }
@@ -117,7 +117,7 @@ public class PatternAnalyser{
         return wfglist;
       }
       <sequence>proc</sequence> ->{
-        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).fire(wfg);
+        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).visit(wfg);
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
         wfg = `WfgNode(Activity(operation,noCond(),noCond())); 
@@ -140,7 +140,7 @@ public class PatternAnalyser{
         Wfg middle = bpelToWfg(`activity,explicitCond);
         Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
         Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), refWfg(label));
-        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).fire(begin);
+        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).visit(begin);
       }
       node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
         Wfg res = bpelToWfg(`activity,explicitCond);
@@ -214,7 +214,7 @@ public class PatternAnalyser{
     node.pos = null;
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
-    `PrintWfg(wfg,node,visited).fire(wfg) ;    
+    `PrintWfg(wfg,node,visited).visit(wfg) ;    
     //StratDebugger.applyDebug(wfg,`PrintWfg(wfg,node,visited));    
     System.out.println("}");
   }
@@ -244,7 +244,7 @@ public class PatternAnalyser{
   %strategy FindRef(node:Info) extends `Identity() {
     visit Wfg {
       refWfg(s) -> {
-        Activity act = (Activity) node.pos.getSubterm().fire(getEnvironment().getRoot());
+        Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
         if (`s.equals(act.getname())){
           getEnvironment().setStatus(Environment.FAILURE);
         }
@@ -255,7 +255,7 @@ public class PatternAnalyser{
   %strategy DefaultCond(node:Info) extends `Identity() {
     visit Wfg {
       a@Activity(name,incond,outcond) -> {
-        Activity act = (Activity) node.pos.getSubterm().fire(getEnvironment().getRoot());
+        Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
         String root_name = act.getname();
         if (root_name.equals("")) return `a;
         return `Activity(name,and(cond(refWfg(root_name)),incond),outcond);
@@ -310,7 +310,7 @@ public class PatternAnalyser{
     Info node = new Info();
     node.pos = null;
     HashSet visited = new HashSet();
-    return (Wfg) `AddCondWfg(node,visited,nameToCondition).fire(wfg);
+    return (Wfg) `AddCondWfg(node,visited,nameToCondition).visit(wfg);
     //return (Wfg) StratDebugger.applyGraphicalDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
   }
 
@@ -320,7 +320,7 @@ public class PatternAnalyser{
       a@Activity[name=name,incond=incond] ->{
         Position pos = node.pos;
         if(pos != null){
-          Activity act = (Activity) node.pos.getSubterm().fire(root);
+          Activity act = (Activity) node.pos.getSubterm().visit(root);
           System.out.println(act.getname()+ "[label=\""+ act.getname() + "\\n" + act.getincond() +"\"];");
           System.out.println(`name+ "[label=\""+ `name + "\\n" + `incond +"\"];");
           if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(`name + "[shape=box];");

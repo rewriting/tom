@@ -60,7 +60,7 @@ public class Tactics {
 
     System.out.println(tree);
     try {
-      tree = (Tree) tact.visit(tree);
+      tree = (Tree) tact.visitLight(tree);
     } catch(jjtraveler.VisitFailure e ) {}
     //tree = (Tree) StratDebugger.applyGraphicalDebug(tree,tact);
     //tree = (Tree) StratDebugger.applyDebug(tree,tact);

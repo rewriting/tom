@@ -65,6 +65,6 @@ public class DecomposeAP extends antipattern.term.TermBasicStrategy {
             Appl(name, concTerm(X*,secondTerm,Y*)));
       }			
     }
-    return  (isIdentity ? arg : (Term)`Fail().visit(arg));
+    return  (isIdentity ? arg : (Term)`Fail().visitLight(arg));
   }		
 }

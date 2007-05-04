@@ -52,7 +52,7 @@ public class Matching4 implements Matching {
     Strategy reverseEngRule = new ReverseEngAp(`Identity());
     try {		
       return (Constraint) `SequenceId(RepeatId(OutermostId(simplifyRule)),
-          RepeatId(OutermostId(reverseEngRule))).visit(c);
+          RepeatId(OutermostId(reverseEngRule))).visitLight(c);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       // e.printStackTrace();
@@ -68,9 +68,9 @@ public class Matching4 implements Matching {
       /*
        * return (Constraint) MuTraveler.init(
        * `RepeatId(ChoiceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
-       * ).visit(c);
+       * ).visitLight(c);
        */			
-      return (Constraint)`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule))).visit(c);
+      return (Constraint)`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule))).visitLight(c);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       // e.printStackTrace();

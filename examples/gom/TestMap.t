@@ -53,7 +53,7 @@ public class TestMap extends TestCase {
     Collection cbag = new HashSet();
     Strategy maps = `mu(MuVar("x"),Choice(_Cons(Log(abag,bbag,cbag),MuVar("x")),_Empty()));
     try {
-    maps.visit(subject);
+    maps.visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals(1,abag.size());
     assertEquals(2,bbag.size());
@@ -84,7 +84,7 @@ public class TestMap extends TestCase {
           _Empty()
         ));
     try {
-      maps.visit(subject);
+      maps.visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals(3,abag.size());
     assertEquals(3,bbag.size());
@@ -103,7 +103,7 @@ public class TestMap extends TestCase {
           Log(abag,bbag,cbag)
           ));
     try {
-    cutbu.visit(subject);
+    cutbu.visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals("count a",1,abag.size());
     assertEquals("count b",1,bbag.size());
@@ -115,7 +115,7 @@ public class TestMap extends TestCase {
     Strategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_d()));
     boolean state = false;
     try {
-      match.visit(subject);
+      match.visitLight(subject);
       state = true;
     } catch (jjtraveler.VisitFailure e) {
       fail("the match should not fail");
@@ -128,7 +128,7 @@ public class TestMap extends TestCase {
     Strategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_c()));
     boolean state = true;
     try {
-      match.visit(subject);
+      match.visitLight(subject);
       fail("the match should fail");
     } catch (jjtraveler.VisitFailure e) {
       state = false;
@@ -155,13 +155,13 @@ public class TestMap extends TestCase {
           _Empty()
         ));
     try {
-    subject = (Elist) maps.visit(subject);
+    subject = (Elist) maps.visitLight(subject);
     } catch(VisitFailure e) {}
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
     try {
-      `BottomUp(Log(abag,bbag,cbag)).visit(subject);
+      `BottomUp(Log(abag,bbag,cbag)).visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals(5,abag.size());
     assertEquals(2,bbag.size());
@@ -182,7 +182,7 @@ public class TestMap extends TestCase {
             _f(Identity(),Identity(),_b()),
             Make_a())));
     try {
-      subject = (Elist) rule.visit(subject);
+      subject = (Elist) rule.visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals(
         `Cons(a(),
@@ -215,7 +215,7 @@ public class TestMap extends TestCase {
             Make_a()
             );
     try {
-      subject = (E) `Innermost(rule).visit(subject);
+      subject = (E) `Innermost(rule).visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals(`a(),subject);
   }
@@ -223,9 +223,9 @@ public class TestMap extends TestCase {
   public void testMake_Strat() {
     Strategy builder = `Make_f(Make_a(),2,Make_a());
     try{
-      assertEquals(`f(a(),2,a()),builder.visit(null));
-      assertEquals(`f(a(),2,a()),builder.visit(`a()));
-      assertEquals(`f(a(),2,a()),builder.visit(`f(a(),3,a())));
+      assertEquals(`f(a(),2,a()),builder.visitLight(null));
+      assertEquals(`f(a(),2,a()),builder.visitLight(`a()));
+      assertEquals(`f(a(),2,a()),builder.visitLight(`f(a(),3,a())));
     } catch(VisitFailure e) { fail(); }
   }
 
@@ -263,7 +263,7 @@ public class TestMap extends TestCase {
          Get(env,"x")
        );
     try {
-      subject = (E) `Innermost(rule).visit(subject);
+      subject = (E) `Innermost(rule).visitLight(subject);
     } catch(VisitFailure e) {}
 
     assertEquals(`a(),subject);
@@ -276,7 +276,7 @@ public class TestMap extends TestCase {
     Collection cbag = new HashSet();
     Strategy maps = `_conc(Log(abag,bbag,cbag));
     try {
-      maps.visit(subject);
+      maps.visitLight(subject);
     } catch(VisitFailure e) {}
     assertEquals(1,abag.size());
     assertEquals(2,bbag.size());

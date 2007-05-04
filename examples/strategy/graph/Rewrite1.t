@@ -51,68 +51,68 @@ public class Rewrite1 {
   public final static void main(String[] args) {
     Visitable subject = `f(a());
     Strategy s = `Identity();
-    subject = s.fire(subject);
+    subject = s.visit(subject);
     System.out.println("root = " + subject);
 
     s = `(R1());
-    subject = `s.fire(subject);
+    subject = `s.visit(subject);
     System.out.println("root = " + subject);
 
     s = `One((R1()));
-    subject = `s.fire(subject);
+    subject = `s.visit(subject);
     System.out.println("root = " + subject);
   
     System.out.println("----------");
     s = `OnceBottomUp((R2()));
-    subject = `s.fire(`g(f(a()),b()));
+    subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
-    subject = `s.fire(subject);
+    subject = `s.visit(subject);
     System.out.println("root2 = " + subject);
-    subject = `s.fire(subject);
+    subject = `s.visit(subject);
     System.out.println("root3 = " + subject);
 
     System.out.println("----------");
     s = `All((R2()));
-    subject = `s.fire(`g(f(a()),b()));
+    subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------");
     s = `Sequence(All(R2()),All(All(R1())));
-    subject = `s.fire(`g(f(a()),b()));
+    subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------Omega(1)");
     s = `Omega(1,R2());
-    subject = `s.fire(`g(f(a()),b()));
+    subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------Omega(2)");
     s = `Omega(2,R2());
-    subject = `s.fire(`g(f(a()),b()));
+    subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------IfThenElse");
     s = `IfThenElse(R2(),Builda(),Buildb());
-    subject = `s.fire(`f(b()));
+    subject = `s.visit(`f(b()));
     System.out.println("root1 = " + subject);
-    subject = `s.fire(`f(a()));
+    subject = `s.visit(`f(a()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------When_f()");
     s = `When_f(R2());
-    subject = `s.fire(`f(a()));
+    subject = `s.visit(`f(a()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------IfThenElse...Make_?");
     s = `IfThenElse(R2(),Make_a(),Make_b());
-    subject = `s.fire(`f(b()));
+    subject = `s.visit(`f(b()));
     System.out.println("root1 = " + subject);
-    subject = `s.fire(`f(a()));
+    subject = `s.visit(`f(a()));
     System.out.println("root1 = " + subject);
 
     System.out.println("----------_f()");
     s = `_g(R2(),R1());
-    subject = `s.fire(`g(f(a()),b()));
+    subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
 
   }

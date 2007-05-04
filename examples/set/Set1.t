@@ -186,7 +186,7 @@ public class Set1 {
   private JGSet reworkJGSet(JGSet t) {
     JGSet res = null;
     try {
-      res = (JGSet) `RepeatId(TopDown(reworkJGSetOnce())).visit(t);
+      res = (JGSet) `RepeatId(TopDown(reworkJGSetOnce())).visitLight(t);
     } catch(jjtraveler.VisitFailure e) { 
       System.out.println("failure in reworkJGSet strategy"); 
     }

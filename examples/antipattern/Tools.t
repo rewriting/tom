@@ -315,7 +315,7 @@ public class Tools {
     foundVariable = false;
 
     try{		
-      `InnermostId(ConstraintContainsVariable(v)).visit(c);
+      `InnermostId(ConstraintContainsVariable(v)).visitLight(c);
     }catch(VisitFailure e){
       throw new RuntimeException("VisitFailure occured:" + e);
     }
@@ -327,10 +327,10 @@ public class Tools {
 
     visit Constraint {
       Equal(p,_) ->{
-        `InnermostId(TermContainsVariable(v)).visit(`p);
+        `InnermostId(TermContainsVariable(v)).visitLight(`p);
       }
       NEqual(p,_) ->{
-        `InnermostId(TermContainsVariable(v)).visit(`p);
+        `InnermostId(TermContainsVariable(v)).visitLight(`p);
       }
     }
   }

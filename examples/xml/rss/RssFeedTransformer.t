@@ -17,7 +17,7 @@ public class RssFeedTransformer {
   private void run(String filename){
     XmlTools xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToTNode(filename);
-    term = (TNode)`BottomUp(RemoveNonDico()).fire(term);
+    term = (TNode)`BottomUp(RemoveNonDico()).visit(term);
     // To print the result back
     xtools.printXMLFromTNode(term);
   }

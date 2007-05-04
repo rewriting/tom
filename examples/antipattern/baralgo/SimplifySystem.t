@@ -108,6 +108,6 @@ public class SimplifySystem extends antipattern.term.TermBasicStrategy {
       }
 
     }
-    return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
   }
 }

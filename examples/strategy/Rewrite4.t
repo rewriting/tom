@@ -56,7 +56,7 @@ public class Rewrite4 {
     Collection leaves = new LinkedList();
     try {
       Strategy getleaves = `FindLeaves(leaves);
-      `BottomUp(getleaves).fire(subject);
+      `BottomUp(getleaves).visit(subject);
     } catch (FireException e) {
       System.out.println("Failed to get leaves" + subject);
     }
@@ -78,8 +78,8 @@ public class Rewrite4 {
       System.out.println("----------------------");
       System.out.println("subject       = " + subject);
       System.out.println("position      = " + p);
-      System.out.println("xmastree = " + xmastree.fire(subject));
-      System.out.println("omegapath = " + useOmegaPath.fire(subject));
+      System.out.println("xmastree = " + xmastree.visit(subject));
+      System.out.println("omegapath = " + useOmegaPath.visit(subject));
     }
   }
 

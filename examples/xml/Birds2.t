@@ -50,7 +50,7 @@ public class Birds2 {
     xtools = new XmlTools();
     TNode term = xtools.convertXMLToTNode(filename);
     try {
-      term = (TNode)`TopDown(replace()).visit(term);
+      term = (TNode)`TopDown(replace()).visitLight(term);
     }catch (jjtraveler.VisitFailure e) {}
     //xtools.printXMLFromTNode(term);
   }

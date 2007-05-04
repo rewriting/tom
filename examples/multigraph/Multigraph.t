@@ -100,7 +100,7 @@ public class Multigraph {
       %strategy MyRule() extends Identity() {
         visit Nodes {
       ]%;
-    `TopDown(Generate(output)).fire(rules);
+    `TopDown(Generate(output)).visit(rules);
     output.buffer += "\n}\n}";
     return output.buffer;
   }

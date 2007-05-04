@@ -63,8 +63,8 @@ public class PolyTraveler1 extends TestCase {
     //v.setTerm(t);
     Strategy bu = `BottomUp(v);
     try {
-    System.out.println(" bu.visit(" + t + ")");
-    bu.visit(t);
+    System.out.println(" bu.visitLight(" + t + ")");
+    bu.visitLight(t);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());
     }

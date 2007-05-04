@@ -52,8 +52,8 @@ public class BPELAnalyser {
     xtools = new XmlTools();
     TNode term = xtools.convertXMLToTNode(filename);
     ArrayList controlDep = new ArrayList();
-    term = (TNode) `TopDown(removeTextNode()).fire(term);
-    `TopDown(analyse(controlDep)).fire(term);
+    term = (TNode) `TopDown(removeTextNode()).visit(term);
+    `TopDown(analyse(controlDep)).visit(term);
     System.out.println("Control dependence : "+controlDep);
   }
 
@@ -61,9 +61,9 @@ public class BPELAnalyser {
     visit TNodeList {
       concTNode(head,tail*)-> {
         %match(TNode head){
-          TextNode(_) -> {return (TNodeList) this.visit(`tail);} 
+          TextNode(_) -> {return (TNodeList) this.visitLight(`tail);} 
           _ -> {
-            TNodeList newTail = (TNodeList) this.visit(`tail); 
+            TNodeList newTail = (TNodeList) this.visitLight(`tail); 
             return `concTNode(head,newTail*);
           } 
         }
@@ -75,10 +75,10 @@ public class BPELAnalyser {
     visit TNode {
       <sequence>(_*,elt1,elt2,_*)</sequence> -> {
         ArrayList leaveList = new ArrayList();
-        `leaves(leaveList).fire(`elt1);
+        `leaves(leaveList).visit(`elt1);
         Iterator leaveIter = leaveList.iterator();
         ArrayList rootList = new ArrayList();
-        `roots(rootList).fire(`elt1);
+        `roots(rootList).visit(`elt1);
         while(leaveIter.hasNext()){
           String leave = (String) leaveIter.next();
           Iterator rootIter = rootList.iterator();
@@ -95,10 +95,10 @@ public class BPELAnalyser {
   %strategy roots(l:ArrayList) extends `Identity() {
     visit TNode {
       <sequence>(x,_*)</sequence> -> {
-        this.visit(`x);
+        this.visitLight(`x);
       }
       <flow>(_*,x,_*)</flow> -> {
-        this.visit(`x);
+        this.visitLight(`x);
       }
       <invoke>(_*,<activity name=x/>,_*)</invoke> -> {
         l.add(`x);
@@ -109,10 +109,10 @@ public class BPELAnalyser {
  %strategy leaves(l:ArrayList) extends `Identity() {
     visit TNode {
       <sequence>(_*,x)</sequence> -> {
-        this.visit(`x);
+        this.visitLight(`x);
       }
       <flow>(_*,x,_*)</flow> -> {
-        this.visit(`x);
+        this.visitLight(`x);
       }
       <invoke>(_*,<activity name=x/>,_*)</invoke> -> {
         l.add(`x);

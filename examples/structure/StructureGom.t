@@ -257,7 +257,7 @@ public class StructureGom {
    */
   public void collectOneStep(final Collection collection, Struc subject) {
     try {
-      `BottomUp(OneStep(subject,collection)).fire(subject);
+      `BottomUp(OneStep(subject,collection)).visit(subject);
       //System.out.println(collection);
     } catch (FireException e) {
       System.out.println("Failed to get successors " + subject);
@@ -278,14 +278,14 @@ public class StructureGom {
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parR = cop2par(`R*);
               Struc elt1 = `par(concPar(cop(concCop(par(concPar(parR*,U)),T*)),context*));
-              c.add(getEnvironment().getPosition().getReplace(elt1).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt1).visitLight(subject));
             }
           }
           if(!optim3 || !canReact(`R,`U)) {
             if(!optim2 || canReact(`T,`U)) {
               StrucPar parT = cop2par(`T*);
               Struc elt2 = `par(concPar(cop(concCop(par(concPar(parT*,U)),R*)),context*));
-              c.add(getEnvironment().getPosition().getReplace(elt2).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt2).visitLight(subject));
             }
           }
         }
@@ -303,7 +303,7 @@ public class StructureGom {
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parR = cop2par(`R*);
               Struc elt3 = `par(concPar(cop(concCop(par(concPar(parR*,U)),T*)),context*));
-              c.add(getEnvironment().getPosition().getReplace(elt3).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt3).visitLight(subject));
             }
           }
 
@@ -311,7 +311,7 @@ public class StructureGom {
             if(!optim2 || canReact(`T,`U)) {
               StrucPar parT = cop2par(`T*);
               Struc elt4 = `par(concPar(cop(concCop(par(concPar(parT*,U)),R*)),context*));
-              c.add(getEnvironment().getPosition().getReplace(elt4).visit(subject));
+              c.add(getEnvironment().getPosition().getReplace(elt4).visitLight(subject));
             }
           }
         }
@@ -322,9 +322,9 @@ public class StructureGom {
         par(concPar(X1*,R,X2*,T,X3*)) -> {
           StrucPar context = `concPar(X1*,X2*,X3*);
           c.add(getEnvironment().getPosition().getReplace(
-                `par(concPar(seq(concSeq(R,T)),context*))).visit(subject));
+                `par(concPar(seq(concSeq(R,T)),context*))).visitLight(subject));
           c.add(getEnvironment().getPosition().getReplace(
-                `par(concPar(seq(concSeq(T,R)),context*))).visit(subject));
+                `par(concPar(seq(concSeq(T,R)),context*))).visitLight(subject));
         }
 
         /* [<R;U>,<T;V>] -> <[R,T];[U,V]>
@@ -344,10 +344,10 @@ public class StructureGom {
                 StrucPar parV = seq2par(`V*);
                 c.add(getEnvironment().getPosition().getReplace(
                       `par(concPar(seq(concSeq(par(concPar(parR*,parT*)),par(concPar(parU*,parV*)))),context*))
-                      ).visit(subject));
+                      ).visitLight(subject));
                 c.add(getEnvironment().getPosition().getReplace(
                       `par(concPar(seq(concSeq(par(concPar(parU*,parV*)),par(concPar(parR*,parT*)))),context*))
-                      ).visit(subject));
+                      ).visitLight(subject));
               }
             }
           }
@@ -363,14 +363,14 @@ public class StructureGom {
               StrucPar parT = seq2par(`T*);
               c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
-                    ).visit(subject));
+                    ).visitLight(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
               c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
-                    ).visit(subject));
+                    ).visitLight(subject));
             }
           }
         }
@@ -386,14 +386,14 @@ public class StructureGom {
               StrucPar parT = seq2par(`T*);
               c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
-                    ).visit(subject));
+                    ).visitLight(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
               c.add(getEnvironment().getPosition().getReplace(
                     `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
-                    ).visit(subject));
+                    ).visitLight(subject));
             }
           }
         }
@@ -401,12 +401,12 @@ public class StructureGom {
         /* [X,-X] -> o */
         par(concPar(X1*,x,X2*,neg(x),X3*)) -> {
           Struc elt5 = `par(concPar(X1*,X2*,X3*));
-          c.add(getEnvironment().getPosition().getReplace(elt5).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(elt5).visitLight(subject));
         }
         /* [-X,X] -> o */
         par(concPar(X1*,neg(x),X2*,x,X3*)) -> {
           Struc elt6 = `par(concPar(X1*,X2*,X3*));
-          c.add(getEnvironment().getPosition().getReplace(elt6).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(elt6).visitLight(subject));
         }
       }
     }
@@ -465,7 +465,7 @@ public class StructureGom {
   public static int numberOfPair(StructuresAbstractType subject) {
     final Collection collection = new ArrayList();
     try {
-      `BottomUp(CountPairs(collection)).visit(subject);
+      `BottomUp(CountPairs(collection)).visitLight(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to count pairs" + subject);
     }
@@ -532,7 +532,7 @@ public class StructureGom {
 
   private static void collectAtom(StructuresAbstractType subject, final HashSet positive, final HashSet negative) {
     try {
-      `BottomUp(FindAtoms(positive,negative)).visit(subject);
+      `BottomUp(FindAtoms(positive,negative)).visitLight(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get atoms" + subject);
     }

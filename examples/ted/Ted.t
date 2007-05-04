@@ -146,7 +146,7 @@ public class Ted {
       ATermAppl(AFun[name="replace"], concATerm(tomatch, replacement)) -> {
         try {
           vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} );
-          return (ATerm) vtor.visit(res);
+          return (ATerm) vtor.visitLight(res);
         }
         catch ( Exception e ) { e.printStackTrace(); }
       }
@@ -154,7 +154,7 @@ public class Ted {
       ATermAppl(AFun[name="remove"], concATerm(tomatch)) -> {
         try {
           vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)});
-          return  (ATerm) vtor.visit(res);
+          return  (ATerm) vtor.visitLight(res);
         }
         catch ( Exception e ) { e.printStackTrace(); }
       }
@@ -165,7 +165,7 @@ public class Ted {
           GrepVisitor v =  new GrepVisitor(`tomatch);
           VisitableVisitor s = `mu(MuVar("x"),Try(Sequence(v,All(MuVar("x")))));
           vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {s});
-          s.visit(res);
+          s.visitLight(res);
           return v.getList();
         }
         catch ( Exception e ) { e.printStackTrace(); }

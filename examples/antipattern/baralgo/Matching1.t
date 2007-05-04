@@ -53,7 +53,7 @@ public class Matching1 implements Matching {
    try { 
      return (Constraint) `Sequence(Innermost(simplifyRule),
            Repeat( Sequence( solveRule, Innermost(simplifyRule)))
-    				 ).visit(c);
+    				 ).visitLight(c);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       //e.printStackTrace();

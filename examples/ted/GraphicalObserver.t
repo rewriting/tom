@@ -63,7 +63,7 @@ class VisitableVisitorFwd extends AbstractMuStrategy {
   }
 
   public Visitable visit_Visitable(Visitable any) throws VisitFailure {
-    return  getArgument(ARG).visit(any);
+    return  getArgument(ARG).visitLight(any);
   }
 }
 
@@ -179,7 +179,7 @@ class GraphicalObserver implements DebugStrategyObserver {
   }
   public void after(DebugStrategy s, Visitable res) {
     try {
-      term = ((MuStrategy) s.getPosition().getOmega(`Replace(res))).visit(term);
+      term = ((MuStrategy) s.getPosition().getOmega(`Replace(res))).visitLight(term);
     } catch(VisitFailure e) {}
     System.out.println("[" + (--scope) + "] new tree : " + term);
 

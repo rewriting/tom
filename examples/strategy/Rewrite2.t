@@ -48,9 +48,9 @@ public class Rewrite2 {
     Strategy innermost = `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(rule,MuVar("x")),Identity())));
     try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
-      System.out.println("innermostSlow = " + innermostSlow.visit(subject));
-      System.out.println("innermost     = " + innermost.visit(subject));
+      System.out.println("onceBottomUp  = " + onceBottomUp.visitLight(subject));
+      System.out.println("innermostSlow = " + innermostSlow.visitLight(subject));
+      System.out.println("innermost     = " + innermost.visitLight(subject));
     } catch(jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }

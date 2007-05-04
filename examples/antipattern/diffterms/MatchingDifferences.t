@@ -68,7 +68,7 @@ public class MatchingDifferences implements Matching {
 
     try {		
 
-      Term result = (Term) `InnermostId(decomposeRule).visit(ap);
+      Term result = (Term) `InnermostId(decomposeRule).visitLight(ap);
       return analyzeMembership(subject,result);			
     } catch (VisitFailure e) {
 
@@ -177,7 +177,7 @@ public class MatchingDifferences implements Matching {
 
     try {
       /* System.out.println("Got:" + pattern + ", " + subject); */
-      Constraint result = (Constraint) `InnermostId(matchRule).visit(`Match(pattern, subject));
+      Constraint result = (Constraint) `InnermostId(matchRule).visitLight(`Match(pattern, subject));
       /*
        * System.out.println("Result:" + result); if the result is a Match or an
        * And, then this means success

@@ -46,12 +46,12 @@ public class Rewrite3 {
       Collection collection = new HashSet();
       Strategy rule = `RewriteSystem(collection);
       Term subject = `f(g(g(a(),b()),g(a(),b())));
-      `Try(BottomUp(rule)).visit(subject);
+      `Try(BottomUp(rule)).visitLight(subject);
       System.out.println("collect : " + collection);
       
       collection.clear();
       subject = `f(g(g(a(),b()),g(c(),b())));
-      `Try(BottomUp(rule)).visit(subject);
+      `Try(BottomUp(rule)).visitLight(subject);
       System.out.println("collect : " + collection);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed");
@@ -74,7 +74,7 @@ public class Rewrite3 {
     visit Term {
       subject -> { 
         if(`groundTerm == `subject) {
-          `Fail().visit(null);
+          throw new VisitFailure();
         }
       }
     }
@@ -82,7 +82,7 @@ public class Rewrite3 {
   
   private static boolean occursTerm(final Term groundTerm, Term subject) {
     try {
-      `BottomUp(findTerm(groundTerm)).visit(subject);
+      `BottomUp(findTerm(groundTerm)).visitLight(subject);
       return false;
     } catch(jjtraveler.VisitFailure e) {
       return true;

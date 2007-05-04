@@ -67,10 +67,10 @@ public class PolyTraveler2 extends TestCase {
     //Strategy bu = `OnceBottomUp(v);
     Strategy bu = `BottomUp(Try(v));
     try {
-      System.out.println(" bu.visit(" + t + ")");
-      Expression res = (Expression)bu.visit(t);
+      System.out.println(" bu.visitLight(" + t + ")");
+      Expression res = (Expression)bu.visitLight(t);
       System.out.println("Simplified form is " + res);
-      assertSame("bu.visit(mult(one,exp(variable(\"X\")))) is exp(variable(\"X\"))",`exp(variable("X")),res);
+      assertSame("bu.visitLight(mult(one,exp(variable(\"X\")))) is exp(variable(\"X\"))",`exp(variable("X")),res);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());
     }

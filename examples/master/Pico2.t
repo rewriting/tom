@@ -111,8 +111,8 @@ class Pico2 {
 
 	public void printCst(Expr expr) {
 		try {
-			`TopDown(Try(stratPrintCst())).visit(expr);
-			`TopDown(Try(Sequence(FindCst(),PrintTree()))).visit(expr);
+			`TopDown(Try(stratPrintCst())).visitLight(expr);
+			`TopDown(Try(Sequence(FindCst(),PrintTree()))).visitLight(expr);
 		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("strategy failed");
 		}
@@ -120,12 +120,12 @@ class Pico2 {
 
 	public void optimize(Expr expr) {
 		try {
-			//`Sequence(TopDown(Try(stratRenameVar())),PrintTree()).visit(expr);
-			//`Repeat(Sequence(OnceBottomUp(stratRenameVar()),PrintTree())).visit(expr);
-			//`Repeat(Sequence(OnceBottomUp(Sequence(Not(RenamedVar()),stratRenameVar())),PrintTree())).visit(expr);
-			//`Sequence(Innermost(Sequence(Not(RenamedVar()),stratRenameVar())),PrintTree()).visit(expr);
+			//`Sequence(TopDown(Try(stratRenameVar())),PrintTree()).visitLight(expr);
+			//`Repeat(Sequence(OnceBottomUp(stratRenameVar()),PrintTree())).visitLight(expr);
+			//`Repeat(Sequence(OnceBottomUp(Sequence(Not(RenamedVar()),stratRenameVar())),PrintTree())).visitLight(expr);
+			//`Sequence(Innermost(Sequence(Not(RenamedVar()),stratRenameVar())),PrintTree()).visitLight(expr);
 
-			`Sequence(Innermost(OptIf()),PrintTree()).visit(expr);
+			`Sequence(Innermost(OptIf()),PrintTree()).visitLight(expr);
 		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("strategy failed");
 		}
@@ -169,7 +169,7 @@ class Pico2 {
 
 	public Expr propagate(HashMap env, Expr expr) {
 		try {
-			return (Expr) `TopDown(Try(PropagateCst(env))).visit(expr);
+			return (Expr) `TopDown(Try(PropagateCst(env))).visitLight(expr);
 		} catch (jjtraveler.VisitFailure e) {
 			System.out.println("strategy failed");
 		}
@@ -192,7 +192,7 @@ class Pico2 {
 	%strategy PropagateCst(m:HashMap) extends `Fail() {
 		visit Expr {
 			l@Let(n,e,b) -> { 
-				Expr newE = (Expr) this.visit(`e);
+				Expr newE = (Expr) this.visitLight(`e);
 				m.put(`n,newE);
 				return `l;
 			}

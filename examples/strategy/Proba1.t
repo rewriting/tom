@@ -59,7 +59,7 @@ public class Proba1 {
       int pile=0;
       int face=0;
       for(int i=0 ; i<100 ; i++) {
-        Piece p = (Piece) probS.visit(subject);
+        Piece p = (Piece) probS.visitLight(subject);
         if(p == `pile()) {
           pile++;
         } else {

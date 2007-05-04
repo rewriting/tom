@@ -91,7 +91,7 @@ public class BenchStratId {
 
 		long startChrono1 = System.currentTimeMillis();
     try {
-      `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).visit(subject);
+      `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).visitLight(subject);
     } catch(VisitFailure e) {}
     long stopChrono1 = System.currentTimeMillis();
 
@@ -100,7 +100,7 @@ public class BenchStratId {
     MuStrategy cs = StrategyCompiler.compile(`RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))), "sFail");
     long medChrono2 = System.currentTimeMillis();
     try {
-      cs.visit(subject);
+      cs.visitLight(subject);
     } catch(VisitFailure e) {}
     long stopChrono2 = System.currentTimeMillis();
 
@@ -112,7 +112,7 @@ public class BenchStratId {
 
     long startChrono1 = System.currentTimeMillis();
     try {
-      `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).visit(subject);
+      `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).visitLight(subject);
     } catch(VisitFailure e) {}
     long stopChrono1 = System.currentTimeMillis();
 
@@ -121,7 +121,7 @@ public class BenchStratId {
     MuStrategy cs = StrategyCompiler.compile(`RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))), "sId");
     long medChrono2 = System.currentTimeMillis();
     try {
-      cs.visit(subject);
+      cs.visitLight(subject);
     } catch(VisitFailure e) {}
     long stopChrono2 = System.currentTimeMillis();
 
