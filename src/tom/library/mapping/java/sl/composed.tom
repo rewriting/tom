@@ -1,0 +1,93 @@
+/*
+ *
+ * Copyright (c) 2000-2007, INRIA
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: 
+ * 	- Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.  
+ * 	- Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * 	- Neither the name of the INRIA nor the names of its
+ * 	contributors may be used to endorse or promote products derived from
+ * 	this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ **/
+/*
+ * complex strategies
+ */
+
+%op Strategy Try(s1:Strategy) {
+  make(v) { `Choice(v,Identity()) }
+}
+
+%op Strategy TopDown(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
+}
+
+%op Strategy TopDownCollect(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Try(Sequence(v,All(MuVar("_x"))))) }
+}
+
+%op Strategy BottomUp(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),v)) }
+}
+
+%op Strategy OnceBottomUp(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Choice(One(MuVar("_x")),v)) }
+}
+
+%op Strategy OnceTopDown(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Choice(v,One(MuVar("_x")))) }
+}
+
+%op Strategy Innermost(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) }
+}
+
+%op Strategy Outermost(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) }
+}
+
+%op Strategy Repeat(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Choice(Sequence(v,MuVar("_x")),Identity())) }
+}
+
+%op Strategy RepeatId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),SequenceId(v,MuVar("_x"))) }
+}
+
+%op Strategy OnceBottomUpId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),ChoiceId(OneId(MuVar("_x")),v)) }
+}
+
+%op Strategy InnermostId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),SequenceId(v,MuVar("_x")))) }
+}
+
+%op Strategy InnermostIdSeq(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(AllSeq(MuVar("_x")),SequenceId(v,MuVar("_x")))) }
+}
+
+%op Strategy OutermostId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(SequenceId(v,MuVar("_x")),All(MuVar("_x")))) }
+}
+
+%op Strategy OnceTopDownId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),ChoiceId(v,OneId(MuVar("_x")))) }
+}
