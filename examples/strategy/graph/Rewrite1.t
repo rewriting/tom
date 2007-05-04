@@ -48,7 +48,8 @@ public class Rewrite1 {
 }
 %include { rewrite1/term/_term.tom }
 
-  public final static void main(String[] args) {
+public final static void main(String[] args) {
+  try {
     Visitable subject = `f(a());
     Strategy s = `Identity();
     subject = s.visit(subject);
@@ -61,7 +62,7 @@ public class Rewrite1 {
     s = `One((R1()));
     subject = `s.visit(subject);
     System.out.println("root = " + subject);
-  
+
     System.out.println("----------");
     s = `OnceBottomUp((R2()));
     subject = `s.visit(`g(f(a()),b()));
@@ -114,8 +115,10 @@ public class Rewrite1 {
     s = `_g(R2(),R1());
     subject = `s.visit(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
-
+  } catch(VisitFailure e) {
+    System.out.println("Failure");
   }
+}
 
   %strategy R1() extends `Identity() {
     visit Term {

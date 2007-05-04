@@ -45,8 +45,12 @@ public class Rewrite5 {
   public final static void main(String[] args) {
     Collection collection = new HashSet();
     Term subject = `f(g(g(a(),b()),g(a(),b())));
-    `BottomUp(Collector(subject,collection,RewriteSystem())).visit(subject);
-    System.out.println("collect : " + collection);
+    try {
+      `BottomUp(Collector(subject,collection,RewriteSystem())).visit(subject);
+      System.out.println("collect : " + collection);
+    } catch(VisitFailure e) {
+      System.out.println("Failure");
+    }
   }
 
   %strategy RewriteSystem() extends `Fail() {

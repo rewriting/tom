@@ -60,26 +60,29 @@ public class Rewrite4 {
     } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
     }
+    try {
+      Iterator it = leaves.iterator();
+      while(it.hasNext()) {
+        Position p = (Position)it.next();
+        Strategy s1 = `S1();
+        Strategy s2 = `S2();
+        Strategy eqPos = `EqPos(p);
+        Strategy subPos = `SubPos(p);
 
-    Iterator it = leaves.iterator();
-    while(it.hasNext()) {
-      Position p = (Position)it.next();
-      Strategy s1 = `S1();
-      Strategy s2 = `S2();
-      Strategy eqPos = `EqPos(p);
-      Strategy subPos = `SubPos(p);
+        Strategy xmastree = `mu(MuVar("x"),
+            Sequence(s1,
+              All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
 
-      Strategy xmastree = `mu(MuVar("x"),
-          Sequence(s1,
-            All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
+        Strategy useOmegaPath = (Strategy)p.getOmegaPath(`Sequence(s2,All(s1)));
 
-      Strategy useOmegaPath = (Strategy)p.getOmegaPath(`Sequence(s2,All(s1)));
-
-      System.out.println("----------------------");
-      System.out.println("subject       = " + subject);
-      System.out.println("position      = " + p);
-      System.out.println("xmastree = " + xmastree.visit(subject));
-      System.out.println("omegapath = " + useOmegaPath.visit(subject));
+        System.out.println("----------------------");
+        System.out.println("subject       = " + subject);
+        System.out.println("position      = " + p);
+        System.out.println("xmastree = " + xmastree.visit(subject));
+        System.out.println("omegapath = " + useOmegaPath.visit(subject));
+      }
+    } catch (VisitFailure e) {
+      System.out.println("Failure main");
     }
   }
 
