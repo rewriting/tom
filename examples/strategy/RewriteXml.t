@@ -61,7 +61,7 @@ public class RewriteXml {
     try {
       Strategy findLeaves = `FindLeaves(leaves);
       `BottomUp(findLeaves).visit(subject);
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
     }
     System.out.println("bag: "+leaves);

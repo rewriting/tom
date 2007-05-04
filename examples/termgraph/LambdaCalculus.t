@@ -87,7 +87,7 @@ public class LambdaCalculus {
       info = new LambdaInfo();
       try{
         System.out.println("Call by name: "+prettyPrint((LambdaTerm)`Not(Sequence( RepeatId(TopDown(Try(beta))),OnceTopDown(beta) )).visit(subject)));
-      }catch (FireException e){
+      }catch (VisitFailure e){
         System.out.println("Call by name: Infinite loop");
       }
 
@@ -95,7 +95,7 @@ public class LambdaCalculus {
       info.lazy=true;
       try{
         System.out.println("Call by need: "+prettyPrint((LambdaTerm)`Not(Sequence( RepeatId(TopDown(Try(betaRef))),OnceTopDown(betaRef) )).visit(subject)));
-      }catch(FireException e){
+      }catch(VisitFailure e){
         System.out.println("Call by need: Infinite loop");
       }
 

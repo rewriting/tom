@@ -61,7 +61,7 @@ public class Reduce {
     Strategy rule = new RewriteSystem();
     try {
       System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 

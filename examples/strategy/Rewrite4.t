@@ -57,7 +57,7 @@ public class Rewrite4 {
     try {
       Strategy getleaves = `FindLeaves(leaves);
       `BottomUp(getleaves).visit(subject);
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
     }
 

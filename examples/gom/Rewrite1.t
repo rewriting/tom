@@ -62,7 +62,7 @@ public class Rewrite1 {
       System.out.println("innermost     = " + `Innermost(rule).visit(subject));
       System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
       System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 

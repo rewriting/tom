@@ -61,7 +61,7 @@ public class Rewrite5 {
         try {
           Term r = (Term)`strat.visit(`x);
           collection.add(getEnvironment().getPosition().getReplace(`x).visit(`root)); 
-        } catch(FireException e) {}
+        } catch(VisitFailure e) {}
       }
     }
   }

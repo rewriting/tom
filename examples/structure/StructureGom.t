@@ -37,7 +37,7 @@ import structure.structures.types.*;
 
 import VisitFailure;
 import tom.library.sl.Strategy;
-import tom.library.sl.FireException;
+import tom.library.sl.VisitFailure;
 
 public class StructureGom {
 
@@ -259,7 +259,7 @@ public class StructureGom {
     try {
       `BottomUp(OneStep(subject,collection)).visit(subject);
       //System.out.println(collection);
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       System.out.println("Failed to get successors " + subject);
     }
   }

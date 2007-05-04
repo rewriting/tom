@@ -61,8 +61,8 @@ public class TestStrat extends TestCase {
     VList result = null;
     try {
       result = (VList) `OnceBottomUp(rule).visit(subject);
-    } catch (FireException e) {
-      fail("catched FireException");
+    } catch (VisitFailure e) {
+      fail("catched VisitFailure");
     }
     assertEquals(result.toString(),"conc(4,3,3)");
   }
@@ -73,8 +73,8 @@ public class TestStrat extends TestCase {
     VList result = null;
     try {
       result = (VList) `BottomUp(Try(rule)).visit(subject);
-    } catch (FireException e) {
-      fail("catched FireException");
+    } catch (VisitFailure e) {
+      fail("catched VisitFailure");
     }
     assertEquals("conc(5,4,3)",result.toString());
   }

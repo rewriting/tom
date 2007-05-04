@@ -56,7 +56,7 @@ public class Rewrite1 {
       System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
       System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
       //StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }

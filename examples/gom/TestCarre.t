@@ -67,7 +67,7 @@ public class TestCarre extends TestCase {
 
     try {
       `BottomUp(print).visit(subject);
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
     // This is not really a robust way to test
@@ -92,7 +92,7 @@ public class TestCarre extends TestCase {
 
     try {
       `BottomUp(show).visit(subject);
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
     assertEquals(list.toString(),"[Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14)))]");
@@ -117,7 +117,7 @@ public class TestCarre extends TestCase {
     try {
       `BottomUp(comb).visit(subject);
       `TopDown(comb).visit(subject);
-    } catch (FireException e) {
+    } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
     assertEquals(list.toString(),"[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]");

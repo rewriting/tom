@@ -95,7 +95,7 @@ public class Proba3 {
 			Term res = (Term)pos.getOmega(v).visit(subject);
 			System.out.println("selected pos = " + pos);
 			return res;	
-		} catch(FireException e) {
+		} catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
 		}
 		return subject;
