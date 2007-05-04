@@ -30,16 +30,23 @@
  **/
 package tom.library.sl;
 
-public interface Visitable extends jjtraveler.Visitable {
+public interface Visitable {
 
     /**
      * Replaces all children of any visitable at once, and returns this
      * visitable.
      */
-    public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children);
+    public Visitable setChildren(Visitable[] children);
 
     /**
      * Returns the list of (non builtin) Visitable children
      */
-    public jjtraveler.Visitable[] getChildren();
+    public Visitable[] getChildren();
+
+    public Visitable getChildAt(int i); 
+
+    public Visitable setChildAt(int i, Visitable child); 
+
+    public int getChildCount();
+
 }

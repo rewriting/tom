@@ -29,9 +29,8 @@
  *
  **/
 package tom.library.sl.reflective;
-import tom.library.sl.AbstractStrategy;
-import tom.library.sl.Visitable;
-import tom.library.sl.Strategy;
+
+import tom.library.sl.*;
 
 public class StrategyFwd extends AbstractStrategy {
   public final static int ARG = 0;
@@ -40,25 +39,25 @@ public class StrategyFwd extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
     if (any instanceof Strategy) {
       return ((Strategy) any).accept(this);
     } else {
-      return visitors[ARG].visit(any);
+      return visitors[ARG].visitLight(any);
     }
   }
 
   public int visit() {
     try {
-      setSubject((Visitable)this.visit(getSubject()));
+      setSubject((Visitable)this.visitLight(getSubject()));
       return tom.library.sl.Environment.SUCCESS;
-    } catch(jjtraveler.VisitFailure f) {
+    } catch(VisitFailure f) {
       return tom.library.sl.Environment.FAILURE;
     }
   }
 
-  public Strategy visit_Strategy(Strategy any) throws jjtraveler.VisitFailure {
-    return (Strategy) visitors[ARG].visit(any);
+  public Strategy visit_Strategy(Strategy any) throws VisitFailure {
+    return (Strategy) visitors[ARG].visitLight(any);
   }
 }
 

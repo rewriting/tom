@@ -51,7 +51,6 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
 
 /**
  * The Compiler plugin.

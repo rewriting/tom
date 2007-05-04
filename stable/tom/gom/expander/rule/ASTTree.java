@@ -112,27 +112,27 @@ public class ASTTree extends CommonTree {
     if (null==trm || inAstTerm==null) {
       return;
     }
-    if (tom_is_sort_RuleList(inAstTerm)) {{  tom.gom.adt.rule.types.RuleList  tomMatch439NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.RuleList )inAstTerm);if (tom_is_fun_sym_RuleList(tomMatch439NameNumberfreshSubject_1)) {{  tom.gom.adt.rule.types.RuleList  tomMatch439NameNumber_freshVar_0=tomMatch439NameNumberfreshSubject_1;if ( true ) {
+    if (tom_is_sort_RuleList(inAstTerm)) {{  tom.gom.adt.rule.types.RuleList  tomMatch243NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.RuleList )inAstTerm);if (tom_is_fun_sym_RuleList(tomMatch243NameNumberfreshSubject_1)) {{  tom.gom.adt.rule.types.RuleList  tomMatch243NameNumber_freshVar_0=tomMatch243NameNumberfreshSubject_1;if ( true ) {
 
         Rule rl = (Rule) trm;
-        inAstTerm = tom_append_list_RuleList(tomMatch439NameNumber_freshVar_0,tom_cons_list_RuleList(rl,tom_empty_list_RuleList()));
-      }}}}}if (tom_is_sort_Rule(inAstTerm)) {{  tom.gom.adt.rule.types.Rule  tomMatch440NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.Rule )inAstTerm);if (tom_is_fun_sym_Rule(tomMatch440NameNumberfreshSubject_1)) {if ( true ) {
+        inAstTerm = tom_append_list_RuleList(tomMatch243NameNumber_freshVar_0,tom_cons_list_RuleList(rl,tom_empty_list_RuleList()));
+      }}}}}if (tom_is_sort_Rule(inAstTerm)) {{  tom.gom.adt.rule.types.Rule  tomMatch244NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.Rule )inAstTerm);if (tom_is_fun_sym_Rule(tomMatch244NameNumberfreshSubject_1)) {if ( true ) {
 
 
 
         inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
         childIndex++;
-      }}if (tom_is_fun_sym_ConditionalRule(tomMatch440NameNumberfreshSubject_1)) {if ( true ) {
+      }}if (tom_is_fun_sym_ConditionalRule(tomMatch244NameNumberfreshSubject_1)) {if ( true ) {
 
         inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
         childIndex++;
-      }}}}if (tom_is_sort_Condition(inAstTerm)) {{  tom.gom.adt.rule.types.Condition  tomMatch441NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.Condition )inAstTerm);{ boolean tomMatch441NameNumber_freshVar_0= false ;if (tom_is_fun_sym_CondTerm(tomMatch441NameNumberfreshSubject_1)) {tomMatch441NameNumber_freshVar_0= true ;} else {if (tom_is_fun_sym_CondEquals(tomMatch441NameNumberfreshSubject_1)) {tomMatch441NameNumber_freshVar_0= true ;} else {if (tom_is_fun_sym_CondNotEquals(tomMatch441NameNumberfreshSubject_1)) {tomMatch441NameNumber_freshVar_0= true ;}}}if ((tomMatch441NameNumber_freshVar_0 ==  true )) {if ( true ) {
+      }}}}if (tom_is_sort_Condition(inAstTerm)) {{  tom.gom.adt.rule.types.Condition  tomMatch245NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.Condition )inAstTerm);{ boolean tomMatch245NameNumber_freshVar_0= false ;if (tom_is_fun_sym_CondTerm(tomMatch245NameNumberfreshSubject_1)) {tomMatch245NameNumber_freshVar_0= true ;} else {if (tom_is_fun_sym_CondEquals(tomMatch245NameNumberfreshSubject_1)) {tomMatch245NameNumber_freshVar_0= true ;} else {if (tom_is_fun_sym_CondNotEquals(tomMatch245NameNumberfreshSubject_1)) {tomMatch245NameNumber_freshVar_0= true ;}}}if ((tomMatch245NameNumber_freshVar_0 ==  true )) {if ( true ) {
 
 
 
         inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
         childIndex++;
-      }}}}}if (tom_is_sort_Term(inAstTerm)) {{  tom.gom.adt.rule.types.Term  tomMatch442NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.Term )inAstTerm);if (tom_is_fun_sym_Appl(tomMatch442NameNumberfreshSubject_1)) {{  String  tomMatch442NameNumber_freshVar_0=tom_get_slot_Appl_symbol(tomMatch442NameNumberfreshSubject_1);{  tom.gom.adt.rule.types.TermList  tomMatch442NameNumber_freshVar_1=tom_get_slot_Appl_args(tomMatch442NameNumberfreshSubject_1);if (tom_is_fun_sym_TermList(tomMatch442NameNumber_freshVar_1)) {{  tom.gom.adt.rule.types.TermList  tomMatch442NameNumber_freshVar_2=tomMatch442NameNumber_freshVar_1;if ( true ) {
+      }}}}}if (tom_is_sort_Term(inAstTerm)) {{  tom.gom.adt.rule.types.Term  tomMatch246NameNumberfreshSubject_1=(( tom.gom.adt.rule.types.Term )inAstTerm);if (tom_is_fun_sym_Appl(tomMatch246NameNumberfreshSubject_1)) {{  String  tomMatch246NameNumber_freshVar_0=tom_get_slot_Appl_symbol(tomMatch246NameNumberfreshSubject_1);{  tom.gom.adt.rule.types.TermList  tomMatch246NameNumber_freshVar_1=tom_get_slot_Appl_args(tomMatch246NameNumberfreshSubject_1);if (tom_is_fun_sym_TermList(tomMatch246NameNumber_freshVar_1)) {{  tom.gom.adt.rule.types.TermList  tomMatch246NameNumber_freshVar_2=tomMatch246NameNumber_freshVar_1;if ( true ) {
 
 
 
@@ -141,7 +141,7 @@ public class ASTTree extends CommonTree {
           /* This first child has to be an ID, which is the symbol name */
           inAstTerm = tom_make_Appl(tm.getname(),tom_empty_list_TermList());
         } else {
-          inAstTerm = tom_make_Appl(tomMatch442NameNumber_freshVar_0,tom_append_list_TermList(tomMatch442NameNumber_freshVar_2,tom_cons_list_TermList(tm,tom_empty_list_TermList())));
+          inAstTerm = tom_make_Appl(tomMatch246NameNumber_freshVar_0,tom_append_list_TermList(tomMatch246NameNumber_freshVar_2,tom_cons_list_TermList(tm,tom_empty_list_TermList())));
         }
         childIndex++;
       }}}}}}}}

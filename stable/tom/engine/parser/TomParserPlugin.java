@@ -214,7 +214,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
-                           + PARSED_SUFFIX, (jjtraveler.Visitable)getWorkingTerm());
+                           + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
                            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
     }

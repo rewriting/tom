@@ -58,6 +58,7 @@ import tom.platform.adt.platformoption.types.*;
 import aterm.ATerm;
 import tom.engine.adt.il.types.*;
 import tom.engine.adt.zenon.types.*;
+import tom.library.sl.*;
 /**
  * The TomVerifier plugin.
  */
@@ -180,10 +181,10 @@ public class TomVerifier extends TomGenericPlugin {
     return getOptionBooleanValue("verify");
   }
 
-  private static class collectMatch extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  collection; public collectMatch( java.util.Collection  collection) { super(tom_make_Identity());this.collection=collection;}public  java.util.Collection  getcollection() { return collection;}public jjtraveler.Visitable[] getChildren() {jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch247NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_CompiledMatch(tomMatch247NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch247NameNumber_freshVar_0=tom_get_slot_CompiledMatch_AutomataInst(tomMatch247NameNumberfreshSubject_1);if ( true ) {
+  private static class collectMatch extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  collection; public collectMatch( java.util.Collection  collection) { super(tom_make_Identity());this.collection=collection;}public  java.util.Collection  getcollection() { return collection;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch150NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_CompiledMatch(tomMatch150NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch150NameNumber_freshVar_0=tom_get_slot_CompiledMatch_AutomataInst(tomMatch150NameNumberfreshSubject_1);if ( true ) {
 
 
-        collection.add(tomMatch247NameNumber_freshVar_0);
+        collection.add(tomMatch150NameNumber_freshVar_0);
       }}}}}return super.visit_Instruction(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_collectMatch( java.util.Collection  t0) { return new collectMatch(t0); }
 
 
@@ -191,8 +192,8 @@ public class TomVerifier extends TomGenericPlugin {
   public static Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     try {
-      tom_make_TopDown(tom_make_collectMatch(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      tom_make_TopDown(tom_make_collectMatch(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy collectMatch failed");
     }
     return result;
@@ -209,34 +210,34 @@ public class TomVerifier extends TomGenericPlugin {
     return purified;
   }
 
-  private static class ilSimplifier extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {public ilSimplifier() { super(tom_make_Identity());}public jjtraveler.Visitable[] getChildren() {jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch248NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);if (tom_is_fun_sym_Or(tomMatch248NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch248NameNumber_freshVar_0=tom_get_slot_Or_Arg1(tomMatch248NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch248NameNumber_freshVar_1=tom_get_slot_Or_Arg2(tomMatch248NameNumberfreshSubject_1);if (tom_is_fun_sym_FalseTL(tomMatch248NameNumber_freshVar_1)) {if ( true ) {
+  private static class ilSimplifier extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {public ilSimplifier() { super(tom_make_Identity());}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch151NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);if (tom_is_fun_sym_Or(tomMatch151NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch151NameNumber_freshVar_0=tom_get_slot_Or_Arg1(tomMatch151NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch151NameNumber_freshVar_1=tom_get_slot_Or_Arg2(tomMatch151NameNumberfreshSubject_1);if (tom_is_fun_sym_FalseTL(tomMatch151NameNumber_freshVar_1)) {if ( true ) {
 
 
-        return tomMatch248NameNumber_freshVar_0;
-      }}}}}}}return super.visit_Expression(tom__arg); }public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch249NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_If(tomMatch249NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch249NameNumber_freshVar_0=tom_get_slot_If_Condition(tomMatch249NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch249NameNumber_freshVar_1=tom_get_slot_If_SuccesInst(tomMatch249NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch249NameNumber_freshVar_2=tom_get_slot_If_FailureInst(tomMatch249NameNumberfreshSubject_1);if (tom_is_fun_sym_TrueTL(tomMatch249NameNumber_freshVar_0)) {if (tom_is_fun_sym_Nop(tomMatch249NameNumber_freshVar_2)) {if ( true ) {
+        return tomMatch151NameNumber_freshVar_0;
+      }}}}}}}return super.visit_Expression(tom__arg); }public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch152NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_If(tomMatch152NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch152NameNumber_freshVar_0=tom_get_slot_If_Condition(tomMatch152NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch152NameNumber_freshVar_1=tom_get_slot_If_SuccesInst(tomMatch152NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch152NameNumber_freshVar_2=tom_get_slot_If_FailureInst(tomMatch152NameNumberfreshSubject_1);if (tom_is_fun_sym_TrueTL(tomMatch152NameNumber_freshVar_0)) {if (tom_is_fun_sym_Nop(tomMatch152NameNumber_freshVar_2)) {if ( true ) {
 
 
 
 
-        return tomMatch249NameNumber_freshVar_1;
-      }}}}}}}{ boolean tomMatch249NameNumber_freshVar_6= false ;{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch249NameNumber_freshVar_3= null ;if (tom_is_fun_sym_UnamedBlock(tomMatch249NameNumberfreshSubject_1)) {{tomMatch249NameNumber_freshVar_6= true ;tomMatch249NameNumber_freshVar_3=tom_get_slot_UnamedBlock_InstList(tomMatch249NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_AbstractBlock(tomMatch249NameNumberfreshSubject_1)) {{tomMatch249NameNumber_freshVar_6= true ;tomMatch249NameNumber_freshVar_3=tom_get_slot_AbstractBlock_InstList(tomMatch249NameNumberfreshSubject_1);}}}if ((tomMatch249NameNumber_freshVar_6 ==  true )) {if (tom_is_fun_sym_concInstruction(tomMatch249NameNumber_freshVar_3)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch249NameNumber_freshVar_4=tomMatch249NameNumber_freshVar_3;if (!(tom_is_empty_concInstruction_InstructionList(tomMatch249NameNumber_freshVar_4))) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch249NameNumber_freshVar_5=tom_get_tail_concInstruction_InstructionList(tomMatch249NameNumber_freshVar_4);if (tom_is_empty_concInstruction_InstructionList(tomMatch249NameNumber_freshVar_5)) {if ( true ) {
+        return tomMatch152NameNumber_freshVar_1;
+      }}}}}}}{ boolean tomMatch152NameNumber_freshVar_6= false ;{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch152NameNumber_freshVar_3= null ;if (tom_is_fun_sym_UnamedBlock(tomMatch152NameNumberfreshSubject_1)) {{tomMatch152NameNumber_freshVar_6= true ;tomMatch152NameNumber_freshVar_3=tom_get_slot_UnamedBlock_InstList(tomMatch152NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_AbstractBlock(tomMatch152NameNumberfreshSubject_1)) {{tomMatch152NameNumber_freshVar_6= true ;tomMatch152NameNumber_freshVar_3=tom_get_slot_AbstractBlock_InstList(tomMatch152NameNumberfreshSubject_1);}}}if ((tomMatch152NameNumber_freshVar_6 ==  true )) {if (tom_is_fun_sym_concInstruction(tomMatch152NameNumber_freshVar_3)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch152NameNumber_freshVar_4=tomMatch152NameNumber_freshVar_3;if (!(tom_is_empty_concInstruction_InstructionList(tomMatch152NameNumber_freshVar_4))) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch152NameNumber_freshVar_5=tom_get_tail_concInstruction_InstructionList(tomMatch152NameNumber_freshVar_4);if (tom_is_empty_concInstruction_InstructionList(tomMatch152NameNumber_freshVar_5)) {if ( true ) {
 
-        return tom_get_head_concInstruction_InstructionList(tomMatch249NameNumber_freshVar_4);
-      }}}}}}}}}{ boolean tomMatch249NameNumber_freshVar_10= false ;{  tom.engine.adt.tominstruction.types.Instruction  tomMatch249NameNumber_freshVar_8= null ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch249NameNumber_freshVar_7= null ;if (tom_is_fun_sym_Let(tomMatch249NameNumberfreshSubject_1)) {{tomMatch249NameNumber_freshVar_10= true ;tomMatch249NameNumber_freshVar_7=tom_get_slot_Let_Variable(tomMatch249NameNumberfreshSubject_1);tomMatch249NameNumber_freshVar_8=tom_get_slot_Let_AstInstruction(tomMatch249NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_LetRef(tomMatch249NameNumberfreshSubject_1)) {{tomMatch249NameNumber_freshVar_10= true ;tomMatch249NameNumber_freshVar_7=tom_get_slot_LetRef_Variable(tomMatch249NameNumberfreshSubject_1);tomMatch249NameNumber_freshVar_8=tom_get_slot_LetRef_AstInstruction(tomMatch249NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_LetAssign(tomMatch249NameNumberfreshSubject_1)) {{tomMatch249NameNumber_freshVar_10= true ;tomMatch249NameNumber_freshVar_7=tom_get_slot_LetAssign_Variable(tomMatch249NameNumberfreshSubject_1);tomMatch249NameNumber_freshVar_8=tom_get_slot_LetAssign_AstInstruction(tomMatch249NameNumberfreshSubject_1);}}}}if ((tomMatch249NameNumber_freshVar_10 ==  true )) {{ boolean tomMatch249NameNumber_freshVar_9= false ;if (tom_is_fun_sym_UnamedVariable(tomMatch249NameNumber_freshVar_7)) {tomMatch249NameNumber_freshVar_9= true ;} else {if (tom_is_fun_sym_UnamedVariableStar(tomMatch249NameNumber_freshVar_7)) {tomMatch249NameNumber_freshVar_9= true ;}}if ((tomMatch249NameNumber_freshVar_9 ==  true )) {if ( true ) {
+        return tom_get_head_concInstruction_InstructionList(tomMatch152NameNumber_freshVar_4);
+      }}}}}}}}}{ boolean tomMatch152NameNumber_freshVar_10= false ;{  tom.engine.adt.tominstruction.types.Instruction  tomMatch152NameNumber_freshVar_8= null ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch152NameNumber_freshVar_7= null ;if (tom_is_fun_sym_Let(tomMatch152NameNumberfreshSubject_1)) {{tomMatch152NameNumber_freshVar_10= true ;tomMatch152NameNumber_freshVar_7=tom_get_slot_Let_Variable(tomMatch152NameNumberfreshSubject_1);tomMatch152NameNumber_freshVar_8=tom_get_slot_Let_AstInstruction(tomMatch152NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_LetRef(tomMatch152NameNumberfreshSubject_1)) {{tomMatch152NameNumber_freshVar_10= true ;tomMatch152NameNumber_freshVar_7=tom_get_slot_LetRef_Variable(tomMatch152NameNumberfreshSubject_1);tomMatch152NameNumber_freshVar_8=tom_get_slot_LetRef_AstInstruction(tomMatch152NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_LetAssign(tomMatch152NameNumberfreshSubject_1)) {{tomMatch152NameNumber_freshVar_10= true ;tomMatch152NameNumber_freshVar_7=tom_get_slot_LetAssign_Variable(tomMatch152NameNumberfreshSubject_1);tomMatch152NameNumber_freshVar_8=tom_get_slot_LetAssign_AstInstruction(tomMatch152NameNumberfreshSubject_1);}}}}if ((tomMatch152NameNumber_freshVar_10 ==  true )) {{ boolean tomMatch152NameNumber_freshVar_9= false ;if (tom_is_fun_sym_UnamedVariable(tomMatch152NameNumber_freshVar_7)) {tomMatch152NameNumber_freshVar_9= true ;} else {if (tom_is_fun_sym_UnamedVariableStar(tomMatch152NameNumber_freshVar_7)) {tomMatch152NameNumber_freshVar_9= true ;}}if ((tomMatch152NameNumber_freshVar_9 ==  true )) {if ( true ) {
 
-        return tomMatch249NameNumber_freshVar_8;
-      }}}}}}}if (tom_is_fun_sym_CompiledPattern(tomMatch249NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch249NameNumber_freshVar_11=tom_get_slot_CompiledPattern_AutomataInst(tomMatch249NameNumberfreshSubject_1);if ( true ) {
+        return tomMatch152NameNumber_freshVar_8;
+      }}}}}}}if (tom_is_fun_sym_CompiledPattern(tomMatch152NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch152NameNumber_freshVar_11=tom_get_slot_CompiledPattern_AutomataInst(tomMatch152NameNumberfreshSubject_1);if ( true ) {
 
 
-        return tomMatch249NameNumber_freshVar_11;
+        return tomMatch152NameNumber_freshVar_11;
       }}}}}return super.visit_Instruction(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_ilSimplifier() { return new ilSimplifier(); }
 
 
 
   private Instruction simplifyIl(Instruction subject) {
     try {
-      subject = (Instruction) tom_make_TopDown(tom_make_ilSimplifier()).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      subject = (Instruction) tom_make_TopDown(tom_make_ilSimplifier()).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy simplifyIl failed");
     }
     return subject;
@@ -251,29 +252,29 @@ public class TomVerifier extends TomGenericPlugin {
   boolean containsAssociativeOperator(Instruction subject) {
     Collection result = new HashSet();
     try {
-      tom_make_TopDown(tom_make_associativeOperatorCollector(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      tom_make_TopDown(tom_make_associativeOperatorCollector(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy containsAssociativeOperator failed");
     }
     return !result.isEmpty();
   }
 
-  private static class associativeOperatorCollector extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  store; public associativeOperatorCollector( java.util.Collection  store) { super(tom_make_Identity());this.store=store;}public  java.util.Collection  getstore() { return store;}public jjtraveler.Visitable[] getChildren() {jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch250NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch250NameNumber_freshVar_0=tomMatch250NameNumberfreshSubject_1;if (tom_is_fun_sym_LetRef(tomMatch250NameNumber_freshVar_0)) {if ( true ) {
+  private static class associativeOperatorCollector extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  store; public associativeOperatorCollector( java.util.Collection  store) { super(tom_make_Identity());this.store=store;}public  java.util.Collection  getstore() { return store;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch153NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch153NameNumber_freshVar_0=tomMatch153NameNumberfreshSubject_1;if (tom_is_fun_sym_LetRef(tomMatch153NameNumber_freshVar_0)) {if ( true ) {
 
 
-        store.add(tomMatch250NameNumber_freshVar_0);
-      }}}{  tom.engine.adt.tominstruction.types.Instruction  tomMatch250NameNumber_freshVar_1=tomMatch250NameNumberfreshSubject_1;if (tom_is_fun_sym_WhileDo(tomMatch250NameNumber_freshVar_1)) {if ( true ) {
+        store.add(tomMatch153NameNumber_freshVar_0);
+      }}}{  tom.engine.adt.tominstruction.types.Instruction  tomMatch153NameNumber_freshVar_1=tomMatch153NameNumberfreshSubject_1;if (tom_is_fun_sym_WhileDo(tomMatch153NameNumber_freshVar_1)) {if ( true ) {
 
-        store.add(tomMatch250NameNumber_freshVar_1);
-      }}}{  tom.engine.adt.tominstruction.types.Instruction  tomMatch250NameNumber_freshVar_2=tomMatch250NameNumberfreshSubject_1;if (tom_is_fun_sym_DoWhile(tomMatch250NameNumber_freshVar_2)) {if ( true ) {
+        store.add(tomMatch153NameNumber_freshVar_1);
+      }}}{  tom.engine.adt.tominstruction.types.Instruction  tomMatch153NameNumber_freshVar_2=tomMatch153NameNumberfreshSubject_1;if (tom_is_fun_sym_DoWhile(tomMatch153NameNumber_freshVar_2)) {if ( true ) {
 
-        store.add(tomMatch250NameNumber_freshVar_2);
-      }}}}}return super.visit_Instruction(tom__arg); }public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch251NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);{  tom.engine.adt.tomexpression.types.Expression  tomMatch251NameNumber_freshVar_0=tomMatch251NameNumberfreshSubject_1;if (tom_is_fun_sym_Or(tomMatch251NameNumber_freshVar_0)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch251NameNumber_freshVar_1=tom_get_slot_Or_Arg1(tomMatch251NameNumber_freshVar_0);{  tom.engine.adt.tomexpression.types.Expression  tomMatch251NameNumber_freshVar_2=tom_get_slot_Or_Arg2(tomMatch251NameNumber_freshVar_0);if ( true ) {
-
-
+        store.add(tomMatch153NameNumber_freshVar_2);
+      }}}}}return super.visit_Instruction(tom__arg); }public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch154NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);{  tom.engine.adt.tomexpression.types.Expression  tomMatch154NameNumber_freshVar_0=tomMatch154NameNumberfreshSubject_1;if (tom_is_fun_sym_Or(tomMatch154NameNumber_freshVar_0)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch154NameNumber_freshVar_1=tom_get_slot_Or_Arg1(tomMatch154NameNumber_freshVar_0);{  tom.engine.adt.tomexpression.types.Expression  tomMatch154NameNumber_freshVar_2=tom_get_slot_Or_Arg2(tomMatch154NameNumber_freshVar_0);if ( true ) {
 
 
-        store.add(tomMatch251NameNumber_freshVar_0);
+
+
+        store.add(tomMatch154NameNumber_freshVar_0);
       }}}}}}}return super.visit_Expression(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_associativeOperatorCollector( java.util.Collection  t0) { return new associativeOperatorCollector(t0); }
 
 
@@ -326,9 +327,9 @@ public class TomVerifier extends TomGenericPlugin {
 
   public String patternToString(Pattern pattern) {
     String result = "";
-    if (tom_is_sort_Pattern(pattern)) {{  tom.engine.adt.tomterm.types.Pattern  tomMatch252NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.Pattern )pattern);if (tom_is_fun_sym_Pattern(tomMatch252NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomList  tomMatch252NameNumber_freshVar_0=tom_get_slot_Pattern_TomList(tomMatch252NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_Pattern(pattern)) {{  tom.engine.adt.tomterm.types.Pattern  tomMatch155NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.Pattern )pattern);if (tom_is_fun_sym_Pattern(tomMatch155NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomList  tomMatch155NameNumber_freshVar_0=tom_get_slot_Pattern_TomList(tomMatch155NameNumberfreshSubject_1);if ( true ) {
 
-        return patternToString(tomMatch252NameNumber_freshVar_0);
+        return patternToString(tomMatch155NameNumber_freshVar_0);
       }}}}}
 
     return result;
@@ -352,7 +353,7 @@ public class TomVerifier extends TomGenericPlugin {
     return result.toString();
   }
   public String patternToString(TomTerm tomTerm) {
-    if (tom_is_sort_TomTerm(tomTerm)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch253NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomTerm);if (tom_is_fun_sym_TermAppl(tomMatch253NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomNameList  tomMatch253NameNumber_freshVar_0=tom_get_slot_TermAppl_NameList(tomMatch253NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomList  tomMatch253NameNumber_freshVar_1=tom_get_slot_TermAppl_Args(tomMatch253NameNumberfreshSubject_1);if (tom_is_fun_sym_concTomName(tomMatch253NameNumber_freshVar_0)) {{  tom.engine.adt.tomname.types.TomNameList  tomMatch253NameNumber_freshVar_2=tomMatch253NameNumber_freshVar_0;if (!(tom_is_empty_concTomName_TomNameList(tomMatch253NameNumber_freshVar_2))) {if (tom_is_fun_sym_Name(tom_get_head_concTomName_TomNameList(tomMatch253NameNumber_freshVar_2))) {{  String  tomMatch253NameNumber_freshVar_5=tom_get_slot_Name_String(tom_get_head_concTomName_TomNameList(tomMatch253NameNumber_freshVar_2));{  String  tom_name=tomMatch253NameNumber_freshVar_5;{  tom.engine.adt.tomname.types.TomNameList  tomMatch253NameNumber_freshVar_3=tom_get_tail_concTomName_TomNameList(tomMatch253NameNumber_freshVar_2);{  tom.engine.adt.tomterm.types.TomList  tom_childrens=tomMatch253NameNumber_freshVar_1;if ( true ) {
+    if (tom_is_sort_TomTerm(tomTerm)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch156NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomTerm);if (tom_is_fun_sym_TermAppl(tomMatch156NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomNameList  tomMatch156NameNumber_freshVar_0=tom_get_slot_TermAppl_NameList(tomMatch156NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomList  tomMatch156NameNumber_freshVar_1=tom_get_slot_TermAppl_Args(tomMatch156NameNumberfreshSubject_1);if (tom_is_fun_sym_concTomName(tomMatch156NameNumber_freshVar_0)) {{  tom.engine.adt.tomname.types.TomNameList  tomMatch156NameNumber_freshVar_2=tomMatch156NameNumber_freshVar_0;if (!(tom_is_empty_concTomName_TomNameList(tomMatch156NameNumber_freshVar_2))) {if (tom_is_fun_sym_Name(tom_get_head_concTomName_TomNameList(tomMatch156NameNumber_freshVar_2))) {{  String  tomMatch156NameNumber_freshVar_5=tom_get_slot_Name_String(tom_get_head_concTomName_TomNameList(tomMatch156NameNumber_freshVar_2));{  String  tom_name=tomMatch156NameNumber_freshVar_5;{  tom.engine.adt.tomname.types.TomNameList  tomMatch156NameNumber_freshVar_3=tom_get_tail_concTomName_TomNameList(tomMatch156NameNumber_freshVar_2);{  tom.engine.adt.tomterm.types.TomList  tom_childrens=tomMatch156NameNumber_freshVar_1;if ( true ) {
 
         if (tom_childrens.isEmptyconcTomTerm()) {
           return tom_name;
@@ -369,10 +370,10 @@ public class TomVerifier extends TomGenericPlugin {
           tom_name+= ")";
           return tom_name;
         }
-      }}}}}}}}}}}}if (tom_is_fun_sym_Variable(tomMatch253NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch253NameNumber_freshVar_6=tom_get_slot_Variable_AstName(tomMatch253NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch253NameNumber_freshVar_6)) {{  String  tomMatch253NameNumber_freshVar_7=tom_get_slot_Name_String(tomMatch253NameNumber_freshVar_6);if ( true ) {
+      }}}}}}}}}}}}if (tom_is_fun_sym_Variable(tomMatch156NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch156NameNumber_freshVar_6=tom_get_slot_Variable_AstName(tomMatch156NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch156NameNumber_freshVar_6)) {{  String  tomMatch156NameNumber_freshVar_7=tom_get_slot_Name_String(tomMatch156NameNumber_freshVar_6);if ( true ) {
 
-        return tomMatch253NameNumber_freshVar_7;
-      }}}}}if (tom_is_fun_sym_UnamedVariable(tomMatch253NameNumberfreshSubject_1)) {if ( true ) {
+        return tomMatch156NameNumber_freshVar_7;
+      }}}}}if (tom_is_fun_sym_UnamedVariable(tomMatch156NameNumberfreshSubject_1)) {if ( true ) {
 
         return "\\_";
       }}}}

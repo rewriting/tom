@@ -57,8 +57,8 @@ public class Fail extends AbstractStrategy {
     this.message = message;
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    throw new jjtraveler.VisitFailure(message);
+  public Visitable visitLight(Visitable any) throws VisitFailure {
+    throw new VisitFailure(message);
   }
 
   public int visit() {

@@ -38,9 +38,7 @@
   visitor_fwd { tom.library.sl.reflective.StrategyFwd }
 }
 
-
-
-%include { strategy/basic_sl.tom }
-%include { strategy/graph_sl.tom }
-%include { strategy/composed_sl.tom }
+%include { sl/basic.tom }
+%include { sl/graph.tom }
+%include { sl/composed.tom }
 

@@ -38,9 +38,9 @@
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
           tom.library.sl.Position current = getEnvironment().getPosition();
           getEnvironment().followPath(p.sub(current));
-          execute(s);
+          s.visit(getEnvironment());
           getEnvironment().followPath(current.sub(p));
-          //do not visit to the next instruction
+          //do not 
           return (TInstructionList) getEnvironment().getSubject();
         }
 
@@ -50,7 +50,7 @@
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
           tom.library.sl.Position current = getEnvironment().getPosition();
           getEnvironment().followPath(current.sub(p));
-          execute(s);
+          s.visit(getEnvironment());
           getEnvironment().followPath(p.sub(current));
         }
 
@@ -61,21 +61,21 @@
               tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
               tom.library.sl.Position current = getEnvironment().getPosition();
               getEnvironment().followPath(current.sub(p));
-              execute(s);
+              s.visit(getEnvironment());
               getEnvironment().followPath(p.sub(current));
             }
           }
           tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
           tom.library.sl.Position current = getEnvironment().getPosition();
           getEnvironment().followPath(current.sub(p));
-          execute(s);
+              s.visit(getEnvironment());
           getEnvironment().followPath(p.sub(current));
         }
 
         // Visit the next instruction.
         _ -> {
           getEnvironment().down(2);
-          execute(s);
+          s.visit(getEnvironment());
           getEnvironment().up();
         }
       }
@@ -109,7 +109,7 @@
     c@_ -> {
       Object o = map.get(`c);
       if(o == null) {
-        throw new jjtraveler.VisitFailure();
+        throw new tom.library.sl.VisitFailure();
       }
       int value = ((Integer)o).intValue() - 1;
       map.put(`c, new Integer(value));
@@ -126,7 +126,7 @@
     c@_ -> {
       Object o = map.get(`c);
       if(o == null || ((Integer)o).intValue() <= 0)
-        throw new jjtraveler.VisitFailure();
+        throw new tom.library.sl.VisitFailure();
     }
   }
 }

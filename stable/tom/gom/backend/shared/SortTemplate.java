@@ -46,18 +46,18 @@ public class SortTemplate extends TemplateHookedClass {
                       GomClass gomClass,
                       TemplateClass mapping) {
     super(gomClass,tomHomePath,importList,mapping);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch358NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_SortClass(tomMatch358NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch358NameNumber_freshVar_0=tom_get_slot_SortClass_AbstractType(tomMatch358NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch358NameNumber_freshVar_1=tom_get_slot_SortClass_Visitor(tomMatch358NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch358NameNumber_freshVar_2=tom_get_slot_SortClass_Operators(tomMatch358NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch358NameNumber_freshVar_3=tom_get_slot_SortClass_Mapping(tomMatch358NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch358NameNumber_freshVar_4=tom_get_slot_SortClass_VariadicOperators(tomMatch358NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch358NameNumber_freshVar_5=tom_get_slot_SortClass_Slots(tomMatch358NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch172NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_SortClass(tomMatch172NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch172NameNumber_freshVar_0=tom_get_slot_SortClass_AbstractType(tomMatch172NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch172NameNumber_freshVar_1=tom_get_slot_SortClass_Visitor(tomMatch172NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch172NameNumber_freshVar_2=tom_get_slot_SortClass_Operators(tomMatch172NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch172NameNumber_freshVar_3=tom_get_slot_SortClass_Mapping(tomMatch172NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch172NameNumber_freshVar_4=tom_get_slot_SortClass_VariadicOperators(tomMatch172NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch172NameNumber_freshVar_5=tom_get_slot_SortClass_Slots(tomMatch172NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
 
 
-        this.abstractType = tomMatch358NameNumber_freshVar_0;
-        this.visitor = tomMatch358NameNumber_freshVar_1;
-        this.operatorList = tomMatch358NameNumber_freshVar_2;
-        this.variadicOperatorList = tomMatch358NameNumber_freshVar_4;
-        this.slotList = tomMatch358NameNumber_freshVar_5;
+        this.abstractType = tomMatch172NameNumber_freshVar_0;
+        this.visitor = tomMatch172NameNumber_freshVar_1;
+        this.operatorList = tomMatch172NameNumber_freshVar_2;
+        this.variadicOperatorList = tomMatch172NameNumber_freshVar_4;
+        this.slotList = tomMatch172NameNumber_freshVar_5;
         return;
       }}}}}}}}}}
 

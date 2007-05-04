@@ -63,11 +63,11 @@ public class Backend {
     Map generators =
       new HashMap();
     // prepare stuff for the mappings
-    if (tom_is_sort_GomClassList(classList)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch305NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )classList);if (tom_is_fun_sym_concGomClass(tomMatch305NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch305NameNumber_freshVar_5=tomMatch305NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch305NameNumber_begin_7=tomMatch305NameNumber_freshVar_5;{  tom.gom.adt.objects.types.GomClassList  tomMatch305NameNumber_end_8=tomMatch305NameNumber_freshVar_5;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch305NameNumber_freshVar_6=tomMatch305NameNumber_end_8;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch305NameNumber_freshVar_6))) {{  tom.gom.adt.objects.types.GomClass  tomMatch305NameNumber_freshVar_0=tom_get_head_concGomClass_GomClassList(tomMatch305NameNumber_freshVar_6);{  tom.gom.adt.objects.types.GomClassList  tomMatch305NameNumber_freshVar_9=tom_get_tail_concGomClass_GomClassList(tomMatch305NameNumber_freshVar_6);if (tom_is_fun_sym_TomMapping(tomMatch305NameNumber_freshVar_0)) {{  tom.gom.adt.objects.types.ClassName  tomMatch305NameNumber_freshVar_2=tom_get_slot_TomMapping_ClassName(tomMatch305NameNumber_freshVar_0);{  tom.gom.adt.objects.types.ClassName  tomMatch305NameNumber_freshVar_1=tomMatch305NameNumber_freshVar_2;if (tom_is_fun_sym_ClassName(tomMatch305NameNumber_freshVar_1)) {{  String  tomMatch305NameNumber_freshVar_3=tom_get_slot_ClassName_Pkg(tomMatch305NameNumber_freshVar_1);{  String  tomMatch305NameNumber_freshVar_4=tom_get_slot_ClassName_Name(tomMatch305NameNumber_freshVar_1);{  tom.gom.adt.objects.types.GomClass  tom_gomclass=tomMatch305NameNumber_freshVar_0;if ( true ) {
+    if (tom_is_sort_GomClassList(classList)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch119NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )classList);if (tom_is_fun_sym_concGomClass(tomMatch119NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch119NameNumber_freshVar_5=tomMatch119NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch119NameNumber_begin_7=tomMatch119NameNumber_freshVar_5;{  tom.gom.adt.objects.types.GomClassList  tomMatch119NameNumber_end_8=tomMatch119NameNumber_freshVar_5;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch119NameNumber_freshVar_6=tomMatch119NameNumber_end_8;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch119NameNumber_freshVar_6))) {{  tom.gom.adt.objects.types.GomClass  tomMatch119NameNumber_freshVar_0=tom_get_head_concGomClass_GomClassList(tomMatch119NameNumber_freshVar_6);{  tom.gom.adt.objects.types.GomClassList  tomMatch119NameNumber_freshVar_9=tom_get_tail_concGomClass_GomClassList(tomMatch119NameNumber_freshVar_6);if (tom_is_fun_sym_TomMapping(tomMatch119NameNumber_freshVar_0)) {{  tom.gom.adt.objects.types.ClassName  tomMatch119NameNumber_freshVar_2=tom_get_slot_TomMapping_ClassName(tomMatch119NameNumber_freshVar_0);{  tom.gom.adt.objects.types.ClassName  tomMatch119NameNumber_freshVar_1=tomMatch119NameNumber_freshVar_2;if (tom_is_fun_sym_ClassName(tomMatch119NameNumber_freshVar_1)) {{  String  tomMatch119NameNumber_freshVar_3=tom_get_slot_ClassName_Pkg(tomMatch119NameNumber_freshVar_1);{  String  tomMatch119NameNumber_freshVar_4=tom_get_slot_ClassName_Name(tomMatch119NameNumber_freshVar_1);{  tom.gom.adt.objects.types.GomClass  tom_gomclass=tomMatch119NameNumber_freshVar_0;if ( true ) {
 
 
 
-        ClassName smappingclass = tom_make_ClassName(tomMatch305NameNumber_freshVar_3,"_"+tomMatch305NameNumber_freshVar_4);
+        ClassName smappingclass = tom_make_ClassName(tomMatch119NameNumber_freshVar_3,"_"+tomMatch119NameNumber_freshVar_4);
         GomClass nGomClass =
           tom_gomclass.setClassName(smappingclass);
         TemplateClass stratMapping =
@@ -83,8 +83,8 @@ public class Backend {
             templatefactory.makeTomMappingTemplate(tom_gomclass,null);
         }
         mappingSet.add(mapping);
-        generators.put(tomMatch305NameNumber_freshVar_1,mapping);
-      }}}}}}}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch305NameNumber_end_8)) {tomMatch305NameNumber_end_8=tomMatch305NameNumber_begin_7;} else {tomMatch305NameNumber_end_8=tom_get_tail_concGomClass_GomClassList(tomMatch305NameNumber_end_8);}}} while(!(tom_equal_term_GomClassList(tomMatch305NameNumber_end_8, tomMatch305NameNumber_begin_7)));}}}}}}
+        generators.put(tomMatch119NameNumber_freshVar_1,mapping);
+      }}}}}}}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch119NameNumber_end_8)) {tomMatch119NameNumber_end_8=tomMatch119NameNumber_begin_7;} else {tomMatch119NameNumber_end_8=tom_get_tail_concGomClass_GomClassList(tomMatch119NameNumber_end_8);}}} while(!(tom_equal_term_GomClassList(tomMatch119NameNumber_end_8, tomMatch119NameNumber_begin_7)));}}}}}}
 
     // generate a class for each element of the list
     while (!classList.isEmptyconcGomClass()) {
@@ -111,51 +111,51 @@ public class Backend {
   public int generateClass(
       GomClass gomclass,
       Map generators) {
-    if (tom_is_sort_GomClass(gomclass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch306NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);if (tom_is_fun_sym_TomMapping(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_0=tom_get_slot_TomMapping_ClassName(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomclass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch120NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);if (tom_is_fun_sym_TomMapping(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_0=tom_get_slot_TomMapping_ClassName(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
         /* It was processed by the caller: check it is already in generators */
-        if (!generators.containsKey(tomMatch306NameNumber_freshVar_0)) {
+        if (!generators.containsKey(tomMatch120NameNumber_freshVar_0)) {
           throw new GomRuntimeException(
               "Mapping should be processed before generateClass is called");
         }
         return 1;
-      }}}if (tom_is_fun_sym_FwdClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_1=tom_get_slot_FwdClass_ClassName(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_FwdClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_1=tom_get_slot_FwdClass_ClassName(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
         TemplateClass fwd = templatefactory.makeForwardTemplate(gomclass);
-        generators.put(tomMatch306NameNumber_freshVar_1,fwd);
+        generators.put(tomMatch120NameNumber_freshVar_1,fwd);
         return 1;
-      }}}if (tom_is_fun_sym_VisitableFwdClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_2=tom_get_slot_VisitableFwdClass_ClassName(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_VisitableFwdClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_2=tom_get_slot_VisitableFwdClass_ClassName(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
         TemplateClass visitablefwd =
           templatefactory.makeVisitableForwardTemplate(gomclass);
-        generators.put(tomMatch306NameNumber_freshVar_2,visitablefwd);
+        generators.put(tomMatch120NameNumber_freshVar_2,visitablefwd);
         return 1;
-      }}}if (tom_is_fun_sym_VisitorClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_3=tom_get_slot_VisitorClass_ClassName(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_VisitorClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_3=tom_get_slot_VisitorClass_ClassName(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
         TemplateClass visitor = templatefactory.makeVisitorTemplate(gomclass);
-        generators.put(tomMatch306NameNumber_freshVar_3,visitor);
+        generators.put(tomMatch120NameNumber_freshVar_3,visitor);
         return 1;
-      }}}if (tom_is_fun_sym_AbstractTypeClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_4=tom_get_slot_AbstractTypeClass_ClassName(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_5=tom_get_slot_AbstractTypeClass_Mapping(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_AbstractTypeClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_4=tom_get_slot_AbstractTypeClass_ClassName(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_5=tom_get_slot_AbstractTypeClass_Mapping(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
         TemplateClass abstracttype =
           templatefactory.makeAbstractTypeTemplate(
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(tomMatch306NameNumber_freshVar_5));
-        generators.put(tomMatch306NameNumber_freshVar_4,abstracttype);
+              (TemplateClass)generators.get(tomMatch120NameNumber_freshVar_5));
+        generators.put(tomMatch120NameNumber_freshVar_4,abstracttype);
         return 1;
-      }}}}if (tom_is_fun_sym_SortClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_6=tom_get_slot_SortClass_ClassName(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_7=tom_get_slot_SortClass_Mapping(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}}if (tom_is_fun_sym_SortClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_6=tom_get_slot_SortClass_ClassName(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_7=tom_get_slot_SortClass_Mapping(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
         TemplateClass sort =
           templatefactory.makeSortTemplate(
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(tomMatch306NameNumber_freshVar_7));
-        generators.put(tomMatch306NameNumber_freshVar_6,sort);
+              (TemplateClass)generators.get(tomMatch120NameNumber_freshVar_7));
+        generators.put(tomMatch120NameNumber_freshVar_6,sort);
         return 1;
-      }}}}if (tom_is_fun_sym_OperatorClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_8=tom_get_slot_OperatorClass_ClassName(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_9=tom_get_slot_OperatorClass_Mapping(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch306NameNumber_freshVar_10=tom_get_slot_OperatorClass_Slots(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}}if (tom_is_fun_sym_OperatorClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_8=tom_get_slot_OperatorClass_ClassName(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_9=tom_get_slot_OperatorClass_Mapping(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch120NameNumber_freshVar_10=tom_get_slot_OperatorClass_Slots(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
 
 
@@ -163,8 +163,8 @@ public class Backend {
             tomHomePath,
             importList,
             gomclass,
-            (TemplateClass)generators.get(tomMatch306NameNumber_freshVar_9));
-        generators.put(tomMatch306NameNumber_freshVar_8,operator);
+            (TemplateClass)generators.get(tomMatch120NameNumber_freshVar_9));
+        generators.put(tomMatch120NameNumber_freshVar_8,operator);
 
         TemplateClass sOpStrat =
           new tom.gom.backend.strategy.SOpTemplate(gomclass);
@@ -173,7 +173,7 @@ public class Backend {
         TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
         makeOpStrat.generateFile();
        return 1;
-      }}}}}if (tom_is_fun_sym_VariadicOperatorClass(tomMatch306NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_11=tom_get_slot_VariadicOperatorClass_ClassName(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch306NameNumber_freshVar_12=tom_get_slot_VariadicOperatorClass_Mapping(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch306NameNumber_freshVar_13=tom_get_slot_VariadicOperatorClass_Empty(tomMatch306NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch306NameNumber_freshVar_14=tom_get_slot_VariadicOperatorClass_Cons(tomMatch306NameNumberfreshSubject_1);if ( true ) {
+      }}}}}if (tom_is_fun_sym_VariadicOperatorClass(tomMatch120NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_11=tom_get_slot_VariadicOperatorClass_ClassName(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch120NameNumber_freshVar_12=tom_get_slot_VariadicOperatorClass_Mapping(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch120NameNumber_freshVar_13=tom_get_slot_VariadicOperatorClass_Empty(tomMatch120NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch120NameNumber_freshVar_14=tom_get_slot_VariadicOperatorClass_Cons(tomMatch120NameNumberfreshSubject_1);if ( true ) {
 
 
 
@@ -183,12 +183,12 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(tomMatch306NameNumber_freshVar_12));
-        generators.put(tomMatch306NameNumber_freshVar_11,operator);
+              (TemplateClass)generators.get(tomMatch120NameNumber_freshVar_12));
+        generators.put(tomMatch120NameNumber_freshVar_11,operator);
         /* Generate files for cons and empty */
         int ret = 1;
-        ret+=generateClass(tomMatch306NameNumber_freshVar_13,generators);
-        ret+=generateClass(tomMatch306NameNumber_freshVar_14,generators);
+        ret+=generateClass(tomMatch120NameNumber_freshVar_13,generators);
+        ret+=generateClass(tomMatch120NameNumber_freshVar_14,generators);
 
         return ret;
       }}}}}}}}

@@ -48,9 +48,9 @@ public abstract class TemplateClass {
   }
 
   public String className(ClassName clsName) {
-    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch312NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch312NameNumberfreshSubject_1)) {{  String  tomMatch312NameNumber_freshVar_0=tom_get_slot_ClassName_Name(tomMatch312NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch126NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch126NameNumberfreshSubject_1)) {{  String  tomMatch126NameNumber_freshVar_0=tom_get_slot_ClassName_Name(tomMatch126NameNumberfreshSubject_1);if ( true ) {
 
-        return tomMatch312NameNumber_freshVar_0;
+        return tomMatch126NameNumber_freshVar_0;
       }}}}}
 
     throw new GomRuntimeException(
@@ -62,7 +62,7 @@ public abstract class TemplateClass {
   }
 
   public static String fullClassName(ClassName clsName) {
-    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch313NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch313NameNumberfreshSubject_1)) {{  String  tomMatch313NameNumber_freshVar_0=tom_get_slot_ClassName_Pkg(tomMatch313NameNumberfreshSubject_1);{  String  tomMatch313NameNumber_freshVar_1=tom_get_slot_ClassName_Name(tomMatch313NameNumberfreshSubject_1);{  String  tom_pkgPrefix=tomMatch313NameNumber_freshVar_0;{  String  tom_name=tomMatch313NameNumber_freshVar_1;if ( true ) {
+    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch127NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch127NameNumberfreshSubject_1)) {{  String  tomMatch127NameNumber_freshVar_0=tom_get_slot_ClassName_Pkg(tomMatch127NameNumberfreshSubject_1);{  String  tomMatch127NameNumber_freshVar_1=tom_get_slot_ClassName_Name(tomMatch127NameNumberfreshSubject_1);{  String  tom_pkgPrefix=tomMatch127NameNumber_freshVar_0;{  String  tom_name=tomMatch127NameNumber_freshVar_1;if ( true ) {
 
         if(tom_pkgPrefix.length()==0) {
           return tom_name;
@@ -80,9 +80,9 @@ public abstract class TemplateClass {
   }
 
   public String getPackage(ClassName clsName) {
-    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch314NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch314NameNumberfreshSubject_1)) {{  String  tomMatch314NameNumber_freshVar_0=tom_get_slot_ClassName_Pkg(tomMatch314NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch128NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch128NameNumberfreshSubject_1)) {{  String  tomMatch128NameNumber_freshVar_0=tom_get_slot_ClassName_Pkg(tomMatch128NameNumberfreshSubject_1);if ( true ) {
 
-        return tomMatch314NameNumber_freshVar_0;
+        return tomMatch128NameNumber_freshVar_0;
       }}}}}
 
     throw new GomRuntimeException(
@@ -90,9 +90,9 @@ public abstract class TemplateClass {
   }
 
   public String hasMethod(SlotField slot) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch315NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch315NameNumberfreshSubject_1)) {{  String  tomMatch315NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch315NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch129NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch129NameNumberfreshSubject_1)) {{  String  tomMatch129NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch129NameNumberfreshSubject_1);if ( true ) {
 
-        return "has"+tomMatch315NameNumber_freshVar_0;
+        return "has"+tomMatch129NameNumber_freshVar_0;
       }}}}}
 
     throw new GomRuntimeException(
@@ -100,9 +100,9 @@ public abstract class TemplateClass {
   }
 
   public String getMethod(SlotField slot) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch316NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch316NameNumberfreshSubject_1)) {{  String  tomMatch316NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch316NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch130NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch130NameNumberfreshSubject_1)) {{  String  tomMatch130NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch130NameNumberfreshSubject_1);if ( true ) {
 
-        return "get"+tomMatch316NameNumber_freshVar_0;
+        return "get"+tomMatch130NameNumber_freshVar_0;
       }}}}}
 
     throw new GomRuntimeException(
@@ -110,9 +110,9 @@ public abstract class TemplateClass {
   }
 
   public String setMethod(SlotField slot) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch317NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch317NameNumberfreshSubject_1)) {{  String  tomMatch317NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch317NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch131NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch131NameNumberfreshSubject_1)) {{  String  tomMatch131NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch131NameNumberfreshSubject_1);if ( true ) {
 
-        return "set"+tomMatch317NameNumber_freshVar_0;
+        return "set"+tomMatch131NameNumber_freshVar_0;
       }}}}}
 
     throw new GomRuntimeException(
@@ -120,9 +120,9 @@ public abstract class TemplateClass {
   }
 
   public String index(SlotField slot) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch318NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch318NameNumberfreshSubject_1)) {{  String  tomMatch318NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch318NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch132NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch132NameNumberfreshSubject_1)) {{  String  tomMatch132NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch132NameNumberfreshSubject_1);if ( true ) {
 
-        return "index_"+tomMatch318NameNumber_freshVar_0;
+        return "index_"+tomMatch132NameNumber_freshVar_0;
       }}}}}
 
     throw new GomRuntimeException(
@@ -130,9 +130,9 @@ public abstract class TemplateClass {
   }
 
   public String slotDomain(SlotField slot) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch319NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch319NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch319NameNumber_freshVar_0=tom_get_slot_SlotField_Domain(tomMatch319NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch133NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch133NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch133NameNumber_freshVar_0=tom_get_slot_SlotField_Domain(tomMatch133NameNumberfreshSubject_1);if ( true ) {
 
-        return fullClassName(tomMatch319NameNumber_freshVar_0);
+        return fullClassName(tomMatch133NameNumber_freshVar_0);
       }}}}}
 
     throw new GomRuntimeException(
@@ -144,9 +144,9 @@ public abstract class TemplateClass {
   }
 
   public String classFieldName(ClassName clsName) {
-    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch320NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch320NameNumberfreshSubject_1)) {{  String  tomMatch320NameNumber_freshVar_0=tom_get_slot_ClassName_Name(tomMatch320NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch134NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch134NameNumberfreshSubject_1)) {{  String  tomMatch134NameNumber_freshVar_0=tom_get_slot_ClassName_Name(tomMatch134NameNumberfreshSubject_1);if ( true ) {
 
-        return tomMatch320NameNumber_freshVar_0.toLowerCase();
+        return tomMatch134NameNumber_freshVar_0.toLowerCase();
       }}}}}
 
     throw new GomRuntimeException(
@@ -155,7 +155,7 @@ public abstract class TemplateClass {
 
   public void toStringSlotField(StringBuffer res, SlotField slot,
                                 String element, String buffer) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch321NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch321NameNumberfreshSubject_1)) {{  String  tomMatch321NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch321NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch321NameNumber_freshVar_1=tom_get_slot_SlotField_Domain(tomMatch321NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch321NameNumber_freshVar_1;if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch135NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch135NameNumberfreshSubject_1)) {{  String  tomMatch135NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch135NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch135NameNumber_freshVar_1=tom_get_slot_SlotField_Domain(tomMatch135NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch135NameNumber_freshVar_1;if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           res.append(""/* Generated by TOM (version 2.5alpha): Do not edit this file */+element+".toStringBuffer("/* Generated by TOM (version 2.5alpha): Do not edit this file */+buffer+");\n"
@@ -273,7 +273,7 @@ public abstract class TemplateClass {
   }
 
   public void toATermSlotField(StringBuffer res, SlotField slot) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch322NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch322NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch322NameNumber_freshVar_0=tom_get_slot_SlotField_Domain(tomMatch322NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch322NameNumber_freshVar_0;if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch136NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch136NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch136NameNumber_freshVar_0=tom_get_slot_SlotField_Domain(tomMatch136NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch136NameNumber_freshVar_0;if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           res.append(getMethod(slot));
@@ -320,7 +320,7 @@ public abstract class TemplateClass {
   }
 
   public void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl) {
-    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch323NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch323NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch323NameNumber_freshVar_0=tom_get_slot_SlotField_Domain(tomMatch323NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch323NameNumber_freshVar_0;if ( true ) {
+    if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch137NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch137NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch137NameNumber_freshVar_0=tom_get_slot_SlotField_Domain(tomMatch137NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch137NameNumber_freshVar_0;if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           buffer.append(fullClassName(tom_domain));
@@ -393,11 +393,11 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadconcSlotField();
       slotList = slotList.getTailconcSlotField();
       if (index>0) { writer.write(", "); }
-      if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch324NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch324NameNumberfreshSubject_1)) {{  String  tomMatch324NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch324NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch324NameNumber_freshVar_1=tom_get_slot_SlotField_Domain(tomMatch324NameNumberfreshSubject_1);if (tom_is_fun_sym_ClassName(tomMatch324NameNumber_freshVar_1)) {{  String  tomMatch324NameNumber_freshVar_2=tom_get_slot_ClassName_Name(tomMatch324NameNumber_freshVar_1);if ( true ) {
+      if (tom_is_sort_SlotField(slot)) {{  tom.gom.adt.objects.types.SlotField  tomMatch138NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if (tom_is_fun_sym_SlotField(tomMatch138NameNumberfreshSubject_1)) {{  String  tomMatch138NameNumber_freshVar_0=tom_get_slot_SlotField_Name(tomMatch138NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch138NameNumber_freshVar_1=tom_get_slot_SlotField_Domain(tomMatch138NameNumberfreshSubject_1);if (tom_is_fun_sym_ClassName(tomMatch138NameNumber_freshVar_1)) {{  String  tomMatch138NameNumber_freshVar_2=tom_get_slot_ClassName_Name(tomMatch138NameNumber_freshVar_1);if ( true ) {
 
-          writer.write(tomMatch324NameNumber_freshVar_0);
+          writer.write(tomMatch138NameNumber_freshVar_0);
           writer.write(":");
-          writer.write(tomMatch324NameNumber_freshVar_2);
+          writer.write(tomMatch138NameNumber_freshVar_2);
           index++;
         }}}}}}}}
 

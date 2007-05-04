@@ -50,7 +50,7 @@ import tom.engine.exception.TomRuntimeException;
 import tom.platform.adt.platformoption.*;
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
+import tom.library.sl.VisitFailure;
 
 
 /**
@@ -257,13 +257,13 @@ return null;}}}}
   }
 
   // ------------------------------------------------------------
-  public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
+  public static void collectVariable(Collection collection, tom.library.sl.Visitable subject) {
     try {
-    tom_make_TopDownCollect(tom_make_collectVariable(collection)).visit(subject);
+    tom_make_TopDownCollect(tom_make_collectVariable(collection)).visitLight(subject);
     } catch(VisitFailure e) { }
   }
 
-  private static class collectVariable extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  collection; public collectVariable( java.util.Collection  collection) { super(tom_make_Identity());this.collection=collection;}public  java.util.Collection  getcollection() { return collection;}public jjtraveler.Visitable[] getChildren() {jjtraveler.Visitable[] stratChilds = new jjtraveler.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public jjtraveler.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg) throws jjtraveler.VisitFailure {if (tom_is_sort_TomTerm(tom__arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch12NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch12NameNumber_freshVar_0=tomMatch12NameNumberfreshSubject_1;{ boolean tomMatch12NameNumber_freshVar_2= false ;{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12NameNumber_freshVar_1= null ;if (tom_is_fun_sym_Variable(tomMatch12NameNumber_freshVar_0)) {{tomMatch12NameNumber_freshVar_2= true ;tomMatch12NameNumber_freshVar_1=tom_get_slot_Variable_Constraints(tomMatch12NameNumber_freshVar_0);}} else {if (tom_is_fun_sym_VariableStar(tomMatch12NameNumber_freshVar_0)) {{tomMatch12NameNumber_freshVar_2= true ;tomMatch12NameNumber_freshVar_1=tom_get_slot_VariableStar_Constraints(tomMatch12NameNumber_freshVar_0);}}}if ((tomMatch12NameNumber_freshVar_2 ==  true )) {{  tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch12NameNumber_freshVar_0;if ( true ) {
+  private static class collectVariable extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  collection; public collectVariable( java.util.Collection  collection) { super(tom_make_Identity());this.collection=collection;}public  java.util.Collection  getcollection() { return collection;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomTerm(tom__arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch12NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch12NameNumber_freshVar_0=tomMatch12NameNumberfreshSubject_1;{ boolean tomMatch12NameNumber_freshVar_2= false ;{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12NameNumber_freshVar_1= null ;if (tom_is_fun_sym_Variable(tomMatch12NameNumber_freshVar_0)) {{tomMatch12NameNumber_freshVar_2= true ;tomMatch12NameNumber_freshVar_1=tom_get_slot_Variable_Constraints(tomMatch12NameNumber_freshVar_0);}} else {if (tom_is_fun_sym_VariableStar(tomMatch12NameNumber_freshVar_0)) {{tomMatch12NameNumber_freshVar_2= true ;tomMatch12NameNumber_freshVar_1=tom_get_slot_VariableStar_Constraints(tomMatch12NameNumber_freshVar_0);}}}if ((tomMatch12NameNumber_freshVar_2 ==  true )) {{  tom.engine.adt.tomterm.types.TomTerm  tom_v=tomMatch12NameNumber_freshVar_0;if ( true ) {
 
 
         collection.add(tom_v);
@@ -271,7 +271,7 @@ return null;}}}}
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
-        tom_make_Fail().visit(tom_v);
+        tom_make_Fail().visitLight(tom_v);
       }}}}}}{  tom.engine.adt.tomterm.types.TomTerm  tomMatch12NameNumber_freshVar_3=tomMatch12NameNumberfreshSubject_1;{ boolean tomMatch12NameNumber_freshVar_5= false ;{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12NameNumber_freshVar_4= null ;if (tom_is_fun_sym_UnamedVariable(tomMatch12NameNumber_freshVar_3)) {{tomMatch12NameNumber_freshVar_5= true ;tomMatch12NameNumber_freshVar_4=tom_get_slot_UnamedVariable_Constraints(tomMatch12NameNumber_freshVar_3);}} else {if (tom_is_fun_sym_UnamedVariableStar(tomMatch12NameNumber_freshVar_3)) {{tomMatch12NameNumber_freshVar_5= true ;tomMatch12NameNumber_freshVar_4=tom_get_slot_UnamedVariableStar_Constraints(tomMatch12NameNumber_freshVar_3);}}}if ((tomMatch12NameNumber_freshVar_5 ==  true )) {if ( true ) {
 
 
@@ -279,7 +279,7 @@ return null;}}}}
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
-        tom_make_Fail().visit(tomMatch12NameNumber_freshVar_3);
+        tom_make_Fail().visitLight(tomMatch12NameNumber_freshVar_3);
       }}}}}{  tom.engine.adt.tomterm.types.TomTerm  tomMatch12NameNumber_freshVar_6=tomMatch12NameNumberfreshSubject_1;if (tom_is_fun_sym_RecordAppl(tomMatch12NameNumber_freshVar_6)) {{  tom.engine.adt.tomslot.types.SlotList  tomMatch12NameNumber_freshVar_7=tom_get_slot_RecordAppl_Slots(tomMatch12NameNumber_freshVar_6);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch12NameNumber_freshVar_8=tom_get_slot_RecordAppl_Constraints(tomMatch12NameNumber_freshVar_6);if ( true ) {
 
 
@@ -289,13 +289,13 @@ return null;}}}}
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
-        tom_make_Fail().visit(tomMatch12NameNumber_freshVar_6);
+        tom_make_Fail().visitLight(tomMatch12NameNumber_freshVar_6);
       }}}}}}}return super.visit_TomTerm(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_collectVariable( java.util.Collection  t0) { return new collectVariable(t0); }
 
 
 
 
-  public static Map collectMultiplicity(jjtraveler.Visitable subject) {
+  public static Map collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     ArrayList variableList = new ArrayList();
     collectVariable(variableList,subject);

@@ -15,9 +15,9 @@ public class Mu extends AbstractStrategy {
     muStrategyTopDown = new MuStrategyTopDown();
   }
 
-  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public final Visitable visitLight(Visitable any) throws VisitFailure {
     if(!expanded) { muExpand(); }
-    return visitors[V].visit(any);
+    return visitors[V].visitLight(any);
   }
 
   public int visit() {
@@ -32,9 +32,9 @@ public class Mu extends AbstractStrategy {
   public void muExpand() {
     try {
       muStrategyTopDown.init();
-      muStrategyTopDown.visit(this);
+      muStrategyTopDown.visitLight(this);
       expanded = true;
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("mu reduction failed");
     }
   }
@@ -92,8 +92,8 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
     stack.clear();
   }
 
-  public void visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    visit(any,null,0,new HashSet());
+  public void visitLight(Visitable any) throws VisitFailure {
+    visitLight(any,null,0,new HashSet());
   }
 
   /**
@@ -102,7 +102,7 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
    * @param childNumber the n-th subtemr of parent
    * @param set of already visited parent
    */
-  private void visit(jjtraveler.Visitable any, jjtraveler.Visitable parent, int childNumber, HashSet set) throws jjtraveler.VisitFailure {
+  private void visitLight(Visitable any, Visitable parent, int childNumber, HashSet set) throws VisitFailure {
     /* check that the current element has not already been expanded */
     if(set.contains(any)) {
       return;
@@ -110,22 +110,22 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
       set.add(parent);
     }
 
-    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch495NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_0=tomMatch495NameNumberfreshSubject_1;if (tom_is_fun_sym_Mu(tomMatch495NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_2=tom_get_slot_Mu_s1(tomMatch495NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_3=tom_get_slot_Mu_s2(tomMatch495NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_1=tomMatch495NameNumber_freshVar_2;if (tom_is_fun_sym_MuVar(tomMatch495NameNumber_freshVar_1)) {{  tom.library.sl.Strategy  tom_m=tomMatch495NameNumber_freshVar_0;if ( true ) {
+    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch264NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_0=tomMatch264NameNumberfreshSubject_1;if (tom_is_fun_sym_Mu(tomMatch264NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_2=tom_get_slot_Mu_s1(tomMatch264NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_3=tom_get_slot_Mu_s2(tomMatch264NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_1=tomMatch264NameNumber_freshVar_2;if (tom_is_fun_sym_MuVar(tomMatch264NameNumber_freshVar_1)) {{  tom.library.sl.Strategy  tom_m=tomMatch264NameNumber_freshVar_0;if ( true ) {
 
         stack.addFirst(tom_m);
-        visit(tomMatch495NameNumber_freshVar_3,tom_m,0,set);
-        visit(tomMatch495NameNumber_freshVar_1,null,0,set);
+        visitLight(tomMatch264NameNumber_freshVar_3,tom_m,0,set);
+        visitLight(tomMatch264NameNumber_freshVar_1,null,0,set);
         stack.removeFirst();
         return;
-      }}}}}}}}{  tom.library.sl.Strategy  tomMatch495NameNumber_freshVar_4=tomMatch495NameNumberfreshSubject_1;if (tom_is_fun_sym_MuVar(tomMatch495NameNumber_freshVar_4)) {{  String  tomMatch495NameNumber_freshVar_5=tom_get_slot_MuVar_var(tomMatch495NameNumber_freshVar_4);if ( true ) {
+      }}}}}}}}{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_4=tomMatch264NameNumberfreshSubject_1;if (tom_is_fun_sym_MuVar(tomMatch264NameNumber_freshVar_4)) {{  String  tomMatch264NameNumber_freshVar_5=tom_get_slot_MuVar_var(tomMatch264NameNumber_freshVar_4);if ( true ) {
 
 
-        MuVar muvar = (MuVar)tomMatch495NameNumber_freshVar_4;
+        MuVar muvar = (MuVar)tomMatch264NameNumber_freshVar_4;
         if(!muvar.isExpanded()) {
           Iterator it = stack.iterator();
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch495NameNumber_freshVar_5)) {
+            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch264NameNumber_freshVar_5)) {
               //System.out.println("MuVar: setInstance " + `n );
               muvar.setInstance(m);
               if(parent!=null) {
@@ -144,14 +144,14 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
             }
           }
           //System.out.println("MuVar: " + `n + " not found");
-          throw new jjtraveler.VisitFailure();
+          throw new VisitFailure();
         }
       }}}}}}
 
 
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
-      visit(any.getChildAt(i),any,i,set);
+      visitLight(any.getChildAt(i),any,i,set);
     }
   }
 }

@@ -46,8 +46,8 @@ public class Sequence extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
-    return visitors[THEN].visit(visitors[FIRST].visit(visitable));
+  public Visitable visitLight(Visitable visitable) throws VisitFailure {
+    return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable));
   }
 
   public int visit() {

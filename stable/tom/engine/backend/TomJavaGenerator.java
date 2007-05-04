@@ -117,7 +117,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       names.add(name);
 
       // test if the argument is a Strategy
-      if (tom_is_sort_TomType(type)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch1NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )type);if (tom_is_fun_sym_Type(tomMatch1NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch1NameNumber_freshVar_0=tom_get_slot_Type_TomType(tomMatch1NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch1NameNumber_freshVar_1=tom_get_slot_Type_TlType(tomMatch1NameNumberfreshSubject_1);if (tom_is_fun_sym_ASTTomType(tomMatch1NameNumber_freshVar_0)) {{  String  tomMatch1NameNumber_freshVar_2=tom_get_slot_ASTTomType_String(tomMatch1NameNumber_freshVar_0);if (tom_equal_term_String("Strategy", tomMatch1NameNumber_freshVar_2)) {if ( true ) {
+      if (tom_is_sort_TomType(type)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch66NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )type);if (tom_is_fun_sym_Type(tomMatch66NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch66NameNumber_freshVar_0=tom_get_slot_Type_TomType(tomMatch66NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch66NameNumber_freshVar_1=tom_get_slot_Type_TlType(tomMatch66NameNumberfreshSubject_1);if (tom_is_fun_sym_ASTTomType(tomMatch66NameNumber_freshVar_0)) {{  String  tomMatch66NameNumber_freshVar_2=tom_get_slot_ASTTomType_String(tomMatch66NameNumber_freshVar_0);if (tom_equal_term_String("Strategy", tomMatch66NameNumber_freshVar_2)) {if ( true ) {
 
           stratChild.add(new Integer(index));
         }}}}}}}}}
@@ -128,9 +128,9 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     }
     output.write(deep, modifier + "class " + tomName);
     //write extends
-		if (tom_is_sort_TomForwardType(extendsFwdType)) {{  tom.engine.adt.tomtype.types.TomForwardType  tomMatch2NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomForwardType )extendsFwdType);if (tom_is_fun_sym_TLForward(tomMatch2NameNumberfreshSubject_1)) {{  String  tomMatch2NameNumber_freshVar_0=tom_get_slot_TLForward_String(tomMatch2NameNumberfreshSubject_1);if ( true ) {
+		if (tom_is_sort_TomForwardType(extendsFwdType)) {{  tom.engine.adt.tomtype.types.TomForwardType  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomForwardType )extendsFwdType);if (tom_is_fun_sym_TLForward(tomMatch67NameNumberfreshSubject_1)) {{  String  tomMatch67NameNumber_freshVar_0=tom_get_slot_TLForward_String(tomMatch67NameNumberfreshSubject_1);if ( true ) {
 
-				output.write(deep," extends " + tomMatch2NameNumber_freshVar_0);
+				output.write(deep," extends " + tomMatch67NameNumber_freshVar_0);
 			}}}}}
 
     output.write(deep," {");
@@ -230,10 +230,10 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
-        if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch3NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch3NameNumber_freshVar_0=tomMatch3NameNumberfreshSubject_1;if (tom_is_fun_sym_Variable(tomMatch3NameNumber_freshVar_0)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch3NameNumber_freshVar_1=tom_get_slot_Variable_AstType(tomMatch3NameNumber_freshVar_0);if ( true ) {
+        if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_0=tomMatch68NameNumberfreshSubject_1;if (tom_is_fun_sym_Variable(tomMatch68NameNumber_freshVar_0)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch68NameNumber_freshVar_1=tom_get_slot_Variable_AstType(tomMatch68NameNumber_freshVar_0);if ( true ) {
 
-            output.write(deep,TomBase.getTLType(tomMatch3NameNumber_freshVar_1) + " ");
-            generate(deep,tomMatch3NameNumber_freshVar_0,moduleName);
+            output.write(deep,TomBase.getTLType(tomMatch68NameNumber_freshVar_1) + " ");
+            generate(deep,tomMatch68NameNumber_freshVar_0,moduleName);
             break matchBlock;
           }}}}if ( true ) {
 
@@ -250,9 +250,9 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     }
     output.writeln(deep,")");
 
-    if (tom_is_sort_TomType(throwsType)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch4NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )throwsType);if (tom_is_fun_sym_TomTypeAlone(tomMatch4NameNumberfreshSubject_1)) {{  String  tomMatch4NameNumber_freshVar_0=tom_get_slot_TomTypeAlone_String(tomMatch4NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_TomType(throwsType)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch69NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )throwsType);if (tom_is_fun_sym_TomTypeAlone(tomMatch69NameNumberfreshSubject_1)) {{  String  tomMatch69NameNumber_freshVar_0=tom_get_slot_TomTypeAlone_String(tomMatch69NameNumberfreshSubject_1);if ( true ) {
 
-        output.write(deep," throws " + tomMatch4NameNumber_freshVar_0);
+        output.write(deep," throws " + tomMatch69NameNumber_freshVar_0);
       }}}}}
 
 

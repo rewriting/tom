@@ -36,11 +36,11 @@ public class VisitorTemplate extends TemplateClass {
 
   public VisitorTemplate(GomClass gomClass) {
     super(gomClass);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch362NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_VisitorClass(tomMatch362NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch362NameNumber_freshVar_0=tom_get_slot_VisitorClass_SortClasses(tomMatch362NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch362NameNumber_freshVar_1=tom_get_slot_VisitorClass_OperatorClasses(tomMatch362NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch176NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_VisitorClass(tomMatch176NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch176NameNumber_freshVar_0=tom_get_slot_VisitorClass_SortClasses(tomMatch176NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch176NameNumber_freshVar_1=tom_get_slot_VisitorClass_OperatorClasses(tomMatch176NameNumberfreshSubject_1);if ( true ) {
 
 
-        this.sortClasses = tomMatch362NameNumber_freshVar_0;
-        this.operatorClasses = tomMatch362NameNumber_freshVar_1;
+        this.sortClasses = tomMatch176NameNumber_freshVar_0;
+        this.operatorClasses = tomMatch176NameNumber_freshVar_1;
         return;
       }}}}}}
 
@@ -56,10 +56,10 @@ public class VisitorTemplate extends TemplateClass {
     writer.write("\n");
 
     // generate a visit for each sort
-    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch363NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_freshVar_0=tomMatch363NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_begin_2=tomMatch363NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_end_3=tomMatch363NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_freshVar_1=tomMatch363NameNumber_end_3;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch363NameNumber_freshVar_6=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1));{  tom.gom.adt.objects.types.ClassName  tom_sortName=tomMatch363NameNumber_freshVar_6;{  tom.gom.adt.objects.types.GomClassList  tomMatch363NameNumber_freshVar_4=tom_get_tail_concGomClass_GomClassList(tomMatch363NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch177NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch177NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch177NameNumber_freshVar_0=tomMatch177NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch177NameNumber_begin_2=tomMatch177NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch177NameNumber_end_3=tomMatch177NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch177NameNumber_freshVar_1=tomMatch177NameNumber_end_3;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch177NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch177NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch177NameNumber_freshVar_6=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch177NameNumber_freshVar_1));{  tom.gom.adt.objects.types.ClassName  tom_sortName=tomMatch177NameNumber_freshVar_6;{  tom.gom.adt.objects.types.GomClassList  tomMatch177NameNumber_freshVar_4=tom_get_tail_concGomClass_GomClassList(tomMatch177NameNumber_freshVar_1);if ( true ) {
 
         writer.write("\tpublic "+fullClassName(tom_sortName)+" "+visitMethod(tom_sortName)+"("+fullClassName(tom_sortName)+" arg) throws tom.library.sl.VisitFailure;\n");
-      }}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch363NameNumber_end_3)) {tomMatch363NameNumber_end_3=tomMatch363NameNumber_begin_2;} else {tomMatch363NameNumber_end_3=tom_get_tail_concGomClass_GomClassList(tomMatch363NameNumber_end_3);}}} while(!(tom_equal_term_GomClassList(tomMatch363NameNumber_end_3, tomMatch363NameNumber_begin_2)));}}}}}}
+      }}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch177NameNumber_end_3)) {tomMatch177NameNumber_end_3=tomMatch177NameNumber_begin_2;} else {tomMatch177NameNumber_end_3=tom_get_tail_concGomClass_GomClassList(tomMatch177NameNumber_end_3);}}} while(!(tom_equal_term_GomClassList(tomMatch177NameNumber_end_3, tomMatch177NameNumber_begin_2)));}}}}}}
 
 
     writer.write("\n");

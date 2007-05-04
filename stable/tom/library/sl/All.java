@@ -54,17 +54,17 @@ public class All extends AbstractStrategy {
     initSubterm(v);
   }
 
-  /** Method herited from the apply() method of mutraveler library
-   * @deprecated use fire() instead
+  /** 
+   *  Visits the subject any without managing any environment
    */ 
-  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public final Visitable visitLight(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
-    jjtraveler.Visitable result = any;
+    Visitable result = any;
     if(any instanceof Visitable) {
-      jjtraveler.Visitable[] childs = null;
+      Visitable[] childs = null;
       for (int i = 0; i < childCount; i++) {
-        jjtraveler.Visitable oldChild = any.getChildAt(i);
-        jjtraveler.Visitable newChild = visitors[ARG].visit(oldChild);
+        Visitable oldChild = any.getChildAt(i);
+        Visitable newChild = visitors[ARG].visitLight(oldChild);
         if(childs != null) {
           childs[i] = newChild;
         } else if(newChild != oldChild) {
@@ -78,7 +78,7 @@ public class All extends AbstractStrategy {
       }
     } else {
       for(int i = 0; i < childCount; i++) {
-        jjtraveler.Visitable newChild = visitors[ARG].visit(result.getChildAt(i));
+        Visitable newChild = visitors[ARG].visitLight(result.getChildAt(i));
         result = result.setChildAt(i, newChild);
       }
     }
@@ -93,8 +93,8 @@ public class All extends AbstractStrategy {
   public int visit() {
     Visitable any = environment.getSubject();
     int childCount = any.getChildCount();
-    /* we relax Visitable into jjtraveler.Visitable to use getChildren() */
-    jjtraveler.Visitable[] childs = null;
+    /* we relax Visitable into Visitable to use getChildren() */
+    Visitable[] childs = null;
 
     for(int i = 0; i < childCount; i++) {
       Visitable oldChild = (Visitable)any.getChildAt(i);
@@ -111,7 +111,7 @@ public class All extends AbstractStrategy {
         // allocate the array, and fill it
         childs = ((Visitable) any).getChildren();
         /*
-        jjtraveler.Visitable[] array = any.getChildren();
+        Visitable[] array = any.getChildren();
         childs = new Visitable[childCount];
         for(int j = 0; j < array.length; j++) {
           childs[j] = (Visitable) array[j];
