@@ -31,6 +31,7 @@ package nspk;
 
 import java.util.*;
 import nspk.term.types.*;
+import tom.library.sl.VisitFailure;
 
 public class Nsh {
   private static boolean authVerif = true;

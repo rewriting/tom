@@ -28,7 +28,7 @@
  */
 package master;
 import master.pico2.term.types.*;
-
+import tom.library.sl.VisitFailure;
 import java.util.*;
 
 class Pico2 {

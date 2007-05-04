@@ -28,11 +28,9 @@
  */
 package master;
 import master.pil.term.types.*;
-//import pil.term.types.*;
+import tom.library.sl.VisitFailure;
 
 import java.util.*;
-
-import VisitFailure;
 
 class Pil {
   %include { sl.tom }

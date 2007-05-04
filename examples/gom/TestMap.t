@@ -34,8 +34,8 @@ import junit.framework.TestSuite;
 import java.util.*;
 
 import gom.elist.types.*;
-import VisitFailure;
 import tom.library.sl.Strategy;
+import tom.library.sl.VisitFailure;
 
 public class TestMap extends TestCase {
 

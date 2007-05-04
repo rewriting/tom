@@ -28,11 +28,11 @@
  */
 package gterm;
 
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 public class Strat {
   %include { int.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   %typeterm TomList {
     implement { List }

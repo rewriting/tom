@@ -33,6 +33,7 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
+import tom.library.sl.VisitFailure;
 
 public class P3PEvaluator2 {
    

@@ -30,10 +30,6 @@
 package multigraph;
 
 import tom.library.sl.*;
-
-
-
-import VisitFailure;
 import java.util.*;
 
 import multigraph.term.*;
@@ -100,7 +96,11 @@ public class Multigraph {
       %strategy MyRule() extends Identity() {
         visit Nodes {
       ]%;
-    `TopDown(Generate(output)).visit(rules);
+      try {
+        `TopDown(Generate(output)).visit(rules);
+      } catch(VisitFailure e) {
+        throw new tom.engine.exception.TomRuntimeException();
+      }
     output.buffer += "\n}\n}";
     return output.buffer;
   }
