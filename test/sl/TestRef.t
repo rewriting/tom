@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
 public class TestRef extends TestCase {
 
   %include { sl.tom }
-  %include { strategy/graph_sl.tom }
+  %include { sl/graph.tom }
   %include { testsl/_testsl.tom }
   %include { testsl/testsl.tom }
 
