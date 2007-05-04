@@ -58,9 +58,9 @@ class BenchSlTraveler {
       long startChrono = System.currentTimeMillis();
       for(int i = 0; i < count; ++i) {
         if(version==1) {
-          `RepeatId(BottomUp(Rewrite(base))).visit(subject);
+          `RepeatId(BottomUp(Rewrite(base))).visitLight(subject);
         } else {
-          `InnermostId(Rewrite(base)).visit(subject);
+          `InnermostId(Rewrite(base)).visitLight(subject);
         }
       }
       long stopChrono = System.currentTimeMillis();
