@@ -50,7 +50,7 @@ public class PatternAnalyser{
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
   %include {sl.tom}
-  %include {strategy/graph_sl.tom}
+  %include {sl/graph.tom}
   %include {adt/tnode/TNode.tom }
 
   %strategy Combine(wfg:Wfg) extends `Fail(){
@@ -97,8 +97,12 @@ public class PatternAnalyser{
     public void substitute() {
       %match(HashMap nameToCondition) {
         (_*,mapEntry(k,v),_*) -> {
-          Condition newCond = (Condition) ((Strategy) `TopDown(Substitute(sourceToName))).visit((Condition) `v);
-          nameToCondition.put(`k,newCond);
+          try {
+            Condition newCond = (Condition) ((Strategy) `TopDown(Substitute(sourceToName))).visit((Condition) `v);
+            nameToCondition.put(`k,newCond);
+          } catch(VisitFailure e) {
+            throw new tom.engine.exception.TomRuntimeException();
+          }
         }
       }
     }
@@ -117,7 +121,11 @@ public class PatternAnalyser{
         return wfglist;
       }
       <sequence>proc</sequence> ->{
-        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).visit(wfg);
+        try {
+          wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).visit(wfg);
+        } catch(VisitFailure e) {
+          throw new tom.engine.exception.TomRuntimeException();
+        }
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
         wfg = `WfgNode(Activity(operation,noCond(),noCond())); 
@@ -140,7 +148,11 @@ public class PatternAnalyser{
         Wfg middle = bpelToWfg(`activity,explicitCond);
         Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
         Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), refWfg(label));
-        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).visit(begin);
+        try {
+          wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).visit(begin);
+        } catch(VisitFailure e) {
+          throw new tom.engine.exception.TomRuntimeException();
+        }
       }
       node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
         Wfg res = bpelToWfg(`activity,explicitCond);
@@ -214,7 +226,11 @@ public class PatternAnalyser{
     node.pos = null;
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
-    `PrintWfg(wfg,node,visited).visit(wfg) ;    
+    try {
+      `PrintWfg(wfg,node,visited).visit(wfg) ;    
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException();
+    }
     //StratDebugger.applyDebug(wfg,`PrintWfg(wfg,node,visited));    
     System.out.println("}");
   }
@@ -246,7 +262,7 @@ public class PatternAnalyser{
       refWfg(s) -> {
         Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
         if (`s.equals(act.getname())){
-          getEnvironment().setStatus(Environment.FAILURE);
+          throw new VisitFailure();
         }
       }
     }
@@ -310,7 +326,11 @@ public class PatternAnalyser{
     Info node = new Info();
     node.pos = null;
     HashSet visited = new HashSet();
-    return (Wfg) `AddCondWfg(node,visited,nameToCondition).visit(wfg);
+    try {
+      return (Wfg) `AddCondWfg(node,visited,nameToCondition).visit(wfg);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException();
+    }
     //return (Wfg) StratDebugger.applyGraphicalDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
   }
 

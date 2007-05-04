@@ -33,13 +33,7 @@ import analysis.node.*;
 import analysis.node.types.*;
 import analysis.ast.*;
 import analysis.ast.types.*;
-
-
-
 import tom.library.sl.*;
-
-
-import VisitFailure;
 import java.util.*;
 
 import org._3pq.jgrapht.edge.*;

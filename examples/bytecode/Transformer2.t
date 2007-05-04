@@ -79,8 +79,8 @@ public class Transformer2 {
           Invokespecial[owner="java/io/FileReader", name="<init>"],
           Astore(reader),_*) -> {
         index.set(`reader,`file);
-        getEnvironment().setStatus(Environment.FAILURE);
-        return `c;
+        throw new VisitFailure();
+        //return `c;
       }
     }
   }
@@ -111,7 +111,7 @@ public class Transformer2 {
       _ -> {
         Position current = getEnvironment().getPosition();
         getEnvironment().followPath(current.inverse());
-        execute(`TopDown(BuildLabelMap(m)));
+        `TopDown(BuildLabelMap(m)).visit(getEnvironment());
         getEnvironment().followPath(current);
       }
     }
@@ -137,7 +137,11 @@ public class Transformer2 {
         // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
         // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
-        `TopDown(BuildLabelMap(labelMap)).visit(ins);
+        try {
+          `TopDown(BuildLabelMap(labelMap)).visit(ins);
+        } catch(VisitFailure e) {
+          throw new tom.engine.exception.TomRuntimeException();
+        }
         HashMap indexMap = new HashMap();
         IntWrapper index = new IntWrapper();
         Strategy securiseAccess =
@@ -145,10 +149,14 @@ public class Transformer2 {
         /**
         `AGMap(Print(),labelMap).visit(ins);
         */
-        TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).visit(ins);
-        TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
-        TMethod secureMethod = `x.setcode(secureCode);
-        secureMethods = `MethodList(secureMethods*,secureMethod);	
+        try {
+          TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).visit(ins);
+          TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
+          TMethod secureMethod = `x.setcode(secureCode);
+          secureMethods = `MethodList(secureMethods*,secureMethod);	
+        } catch(VisitFailure e) {
+          throw new tom.engine.exception.TomRuntimeException();
+        }
       } 
     }
     return givenClass.setmethods(secureMethods);
@@ -160,7 +168,11 @@ public class Transformer2 {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
+    try {
+      return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException();
+    }
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {

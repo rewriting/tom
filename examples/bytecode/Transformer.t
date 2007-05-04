@@ -35,6 +35,7 @@ import tom.library.adt.bytecode.types.tstringlist.*;
 import tom.library.adt.bytecode.types.tlabellist.*;
 import tom.library.adt.bytecode.types.tintlist.*;
 import tom.library.bytecode.*;
+import tom.library.sl.*;
 import java.util.Vector;
 
 public class Transformer {
@@ -111,10 +112,14 @@ public class Transformer {
       MethodList(_*, x, _*) -> {
         System.out.println("Analysis of the method "+`x.getinfo().getname());
         TInstructionList ins = `x.getcode().getinstructions();
-        TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).visit(ins);
-        TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
-        TMethod secureMethod = `x.setcode(secureCode);
-        secureMethods = `MethodList(secureMethods*,secureMethod);	
+        try {
+          TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).visit(ins);
+          TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
+          TMethod secureMethod = `x.setcode(secureCode);
+          secureMethods = `MethodList(secureMethods*,secureMethod);	
+        } catch(VisitFailure e) {
+          throw new tom.engine.exception.TomRuntimeException();
+        }
       } 
     }
     return givenClass.setmethods(secureMethods);
@@ -126,7 +131,11 @@ public class Transformer {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
+    try {
+      return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).visit(newClass);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException();
+    }
   }
 
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
