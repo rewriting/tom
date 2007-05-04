@@ -132,7 +132,7 @@ public class Analyser{
 
   %strategy InnerNotUsed(v:Variable) extends `Identity(){
     visit Term {
-      t@Var(var) -> {
+      Var(var) -> {
         if(`var.equals(v)) throw new VisitFailure();
       }
     }
@@ -229,14 +229,14 @@ public class Analyser{
 
 
 
-  public List notUsedAffectations(ControlFlowGraph cfg){
+  public List notUsedAffectations(ControlFlowGraph cfg) {
     List l = new ArrayList();
     try{
       Iterator iter = cfg.vertexSet().iterator();
       while(iter.hasNext()){
         Vertex n = (Vertex) (iter.next());
         Node nn = n.getNode();
-        %match(Node nn){
+        %match(Node nn) {
           affect(var,term) -> {
             //test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
             //s1 = notUsed(var)
@@ -245,14 +245,15 @@ public class Analyser{
             Strategy s2 = `OrCtl(Free(var),Affect(var));
             Strategy notUsedCond = `AX(AU(s1,s2));
             if(cfg.verify(notUsedCond,n)) {
-              System.out.println("Variable "+`var+" with the value "+`term+" is not used");
+              System.out.println(
+                  "Variable "+`var+" with the value "+`term+" is not used");
               l.add(n);
             }
           }
-        }	
+        }
       }
 
-    }catch(Exception e){
+    } catch(Exception e) {
       System.out.println(e);
     }
     return l ;

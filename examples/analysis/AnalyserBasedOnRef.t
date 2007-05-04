@@ -135,7 +135,11 @@ public class AnalyserBasedOnRef{
   public ArrayList collectNotUsedAffectations(Cfg cfg){
     ArrayList list = new ArrayList();
     VariableRef var = new VariableRef();
+    try {
     `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),AX(StrictDeRef(AU(StrictDeRef(IsNotUsed(var)),StrictDeRef(OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).visit(cfg);
+    } catch (VisitFailure f) {
+      return null;
+    }
     return list;
   }
 
@@ -161,9 +165,13 @@ public class AnalyserBasedOnRef{
     //onceUsedCond AX(A(s1 U s2))  
     Strategy onceUsed = `AX(StrictDeRef(AU(StrictDeRef(s1),StrictDeRef(s2))));
 
-    `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).visit(cfg);
+    try{
+      `TopDown(StrictDeRef(Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).visit(cfg);
+    } catch (VisitFailure e) {
+      return null;
+    }
     return list;
-  } 
+  }
 
 
   public static void main(String[] args){
