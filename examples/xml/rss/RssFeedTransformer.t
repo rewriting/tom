@@ -2,6 +2,7 @@ package xml.rss;
 
 import tom.library.xml.*;
 import tom.library.adt.tnode.types.*;
+import tom.library.sl.*;
 
 public class RssFeedTransformer {
 
@@ -17,9 +18,13 @@ public class RssFeedTransformer {
   private void run(String filename){
     XmlTools xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToTNode(filename);
-    term = (TNode)`BottomUp(RemoveNonDico()).visit(term);
-    // To print the result back
-    xtools.printXMLFromTNode(term);
+    try {
+      term = (TNode)`BottomUp(RemoveNonDico()).visit(term);
+      // To print the result back
+      xtools.printXMLFromTNode(term);
+    } catch(VisitFailure e) {
+      System.out.println("Failure");
+    }
   }
 
   %strategy RemoveNonDico() extends `Identity(){

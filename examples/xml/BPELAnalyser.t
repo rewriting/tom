@@ -32,6 +32,7 @@ package xml;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
+import tom.library.sl.*;
 
 import java.util.*;
 
@@ -52,9 +53,13 @@ public class BPELAnalyser {
     xtools = new XmlTools();
     TNode term = xtools.convertXMLToTNode(filename);
     ArrayList controlDep = new ArrayList();
-    term = (TNode) `TopDown(removeTextNode()).visit(term);
-    `TopDown(analyse(controlDep)).visit(term);
-    System.out.println("Control dependence : "+controlDep);
+    try {
+      term = (TNode) `TopDown(removeTextNode()).visit(term);
+      `TopDown(analyse(controlDep)).visit(term);
+      System.out.println("Control dependence : "+controlDep);
+    } catch(VisitFailure e) {
+      System.out.println("failure");
+    }
   }
 
   %strategy removeTextNode() extends Identity(){

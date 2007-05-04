@@ -32,7 +32,7 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.io.*;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 public class HTMLToLaTeX {
   
