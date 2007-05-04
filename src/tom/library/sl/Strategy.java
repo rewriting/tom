@@ -30,7 +30,7 @@
  **/
 package tom.library.sl;
 
-public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisitor {
+public interface Strategy extends Visitable {
 
   /**
    *  Set up a new environment
@@ -44,10 +44,25 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
   public Environment getEnvironment();
 
   /**
-   *  Apply the strategy
-   *  @throws FireException in case of failure
+   *  Visits the subject any by providing the environment
+   *  @throws VisitFailure in case of failure.
+   *  @parameter any the subject to visit.
    */
-  public Visitable fire(Visitable any);
+  public Visitable visit(Visitable any) throws VisitFailure;
+
+  /**
+   *  Visits the subject any in a light way (without environment)
+   *  @throws VisitFailure in case of failure.
+   *  @parameter any the subject to visit.
+   */
+  public Visitable visitLight(Visitable any) throws VisitFailure;
+
+  /** execute the strategy in the given environment (on its current subject).
+   * This method can only be used inside user strategies to execute another
+   * strategy but with the current environment of the user strategy.
+   * @parameter env the environment where execute the strategy.
+   */
+  public Visitable visit(Environment envt) throws VisitFailure;
 
   /**
    *  Visits the current subject (found in the environment)
@@ -56,6 +71,6 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
    */
   public int visit();
 
-  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure;
+  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure;
 }
 

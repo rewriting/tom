@@ -86,8 +86,8 @@ public class TomTypeChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          `mu(MuVar("x"),Try(Sequence(checkTypeInference(this),All(MuVar("x"))))).visit((TomTerm)getWorkingTerm());
-        } catch(jjtraveler.VisitFailure e) {
+          `mu(MuVar("x"),Try(Sequence(checkTypeInference(this),All(MuVar("x"))))).visitLight((TomTerm)getWorkingTerm());
+        } catch(tom.library.sl.VisitFailure e) {
           System.out.println("strategy failed");
         }
         // verbose
@@ -122,14 +122,14 @@ public class TomTypeChecker extends TomChecker {
       Match(_, patternInstructionList, oplist) -> {  
         ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
         ttc.verifyMatchVariable(`patternInstructionList);
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
     }
     visit Declaration {
       Strategy(_,_,visitList,orgTrack) -> {
         ttc.currentTomStructureOrgTrack = `orgTrack;
         ttc.verifyStrategyVariable(`visitList);
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
     }
   } //checkTypeInference
@@ -164,7 +164,7 @@ public class TomTypeChecker extends TomChecker {
       // collect unknown variables
       try {
         `TopDown(collectUnknownAppls(this)).visit(pattern.getGuards());
-      } catch(jjtraveler.VisitFailure e) {
+      } catch(tom.library.sl.VisitFailure e) {
         System.out.println("strategy failed");
       }
 

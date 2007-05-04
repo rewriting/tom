@@ -57,15 +57,15 @@ public class One extends AbstractStrategy {
   /** Method herited from the apply() method of mutraveler library
    * @deprecated use fire() instead
    */ 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
       try {
-        jjtraveler.Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
+        Visitable newChild = visitors[ARG].visitLight(any.getChildAt(i));
         return any.setChildAt(i,newChild);
-      } catch(jjtraveler.VisitFailure f) { }
+      } catch(VisitFailure f) { }
     }
-    throw new jjtraveler.VisitFailure();
+    throw new VisitFailure();
   }
 
   /**

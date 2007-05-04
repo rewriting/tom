@@ -65,18 +65,9 @@ public class MakeOpTemplate extends TemplateClass {
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;
+import tom.library.sl.*;
 
-public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy, tom.library.sl.Strategy {
-  /* Do not manage an internal position, since the arguments is not really
-   * used
-   */
-  public void setPosition(tom.library.strategy.mutraveler.Position pos) { ; /* who cares */ }
-
-  public tom.library.strategy.mutraveler.Position getPosition() {
-    throw new RuntimeException("Construction strategies have no position");
-  }
-
-  public boolean hasPosition() { return false; }
+public class @className()@ implements tom.library.sl.Strategy {
 
   protected tom.library.sl.Environment environment;
   public void setEnvironment(tom.library.sl.Environment env) {
@@ -96,44 +87,50 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   public int getChildCount() {
     return @nonBuiltinChildCount()@;
   }
-  public jjtraveler.Visitable getChildAt(int index) {
+  public Visitable getChildAt(int index) {
     switch(index) {
 @nonBuiltinsGetCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
-  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {
+  public Visitable setChildAt(int index, Visitable child) {
     switch(index) {
 @nonBuiltinMakeCases("child")@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public jjtraveler.Visitable[] getChildren() {
-    return new jjtraveler.Visitable[]{@generateMembersList()@};
+  public Visitable[] getChildren() {
+    return new Visitable[]{@generateMembersList()@};
   }
 
-  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+  public Visitable setChildren(Visitable[] children) {
     @generateMembersSetChildren("children")@
     return this;
   }
 
-  public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
+  public Visitable visit(Environment envt) throws VisitFailure {
+    setEnvironment(envt);
+    int status = visit();
+    if(status == Environment.SUCCESS) {
+      return environment.getRoot();
+    } else {
+      throw new VisitFailure();
+    }
+  }
+
+  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     getEnvironment().setRoot(any);
     int status = visit();
     if(status == tom.library.sl.Environment.SUCCESS) {
       return getEnvironment().getRoot();
     } else {
-      throw new tom.library.sl.FireException();
+      throw new tom.library.sl.VisitFailure();
     }
   }
 
-  public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
-    return v.visit_Strategy(this);
-  }
-
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
     return v.visit_Strategy(this);
   }
 
@@ -145,7 +142,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     * Builds a new @className(operator)@
     * If one of the sub-strategies application fails, throw a VisitFailure
     */
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
 @computeNewChilds(slotList,"any")@
     return @fullClassName(operator)@.make(@genMakeArguments(slotList)@);
   }
@@ -245,7 +242,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "  private jjtraveler.reflective.VisitableVisitor "+fieldName(`fieldName)+";\n";
+          res += "  private Strategy "+fieldName(`fieldName)+";\n";
         } else {
           res += "  private "+fullClassName(`domain)+" "+fieldName(`fieldName)+";\n";
         }
@@ -296,7 +293,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += %[      case @index@: @fieldName(`fieldName)@ = (jjtraveler.reflective.VisitableVisitor) @argName@; return this;
+          res += %[      case @index@: @fieldName(`fieldName)@ = (Strategy) @argName@; return this;
 ]%;
           index++;
         }
@@ -320,7 +317,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
             res.append(", ");
           }
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            res.append("jjtraveler.reflective.VisitableVisitor ");
+            res.append("Strategy ");
             res.append(fieldName(`name));
           } else {
             res.append(fullClassName(`domain));
@@ -387,7 +384,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=name,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "    this."+fieldName(`name)+" = (jjtraveler.reflective.VisitableVisitor)"+array+"["+index+"];\n";
+          res += "    this."+fieldName(`name)+" = (Strategy)"+array+"["+index+"];\n";
           index++;
         }
       }

@@ -33,27 +33,27 @@ public class TestStratMapping extends TestCase {
     Strategy s3 = `Is_a();
     Strategy s4 = `Is_f();
     try {
-      t = (S) s1.fire(t);
+      t = (S) s1.visit(t);
       assertEquals(`f(a(),b()),t);
-         } catch (tom.library.sl.FireException ee) {
+         } catch (tom.library.sl.VisitFailure ee) {
       fail("s1 failed"); 
     }
 
     try {
-      t = (S) s2.fire(t);
+      t = (S) s2.visit(t);
       assertEquals(`a(),t);
-     } catch (tom.library.sl.FireException ee) {
+     } catch (tom.library.sl.VisitFailure ee) {
       fail("s2 failed"); 
     }
     try {
-      t = (S) s3.fire(t);
-     } catch (tom.library.sl.FireException ee) {
+      t = (S) s3.visit(t);
+     } catch (tom.library.sl.VisitFailure ee) {
       fail("s3 failed"); 
     }
     try {
-      t = (S) s4.fire(t);
+      t = (S) s4.visit(t);
       fail("_f() has not failed on a()"); 
-     } catch (tom.library.sl.FireException ee) {
+     } catch (tom.library.sl.VisitFailure ee) {
     }
   }
 }

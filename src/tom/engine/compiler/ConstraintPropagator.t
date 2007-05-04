@@ -33,6 +33,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.compiler.propagator.*;
+import tom.engine.exception.TomRuntimeException;
 import tom.library.sl.*;
 
 /**
@@ -95,13 +96,18 @@ public class ConstraintPropagator {
      * 
      * The strategy makes a TopDown, and when finding an AntiTerm, it doesn't traverse its children
      */    
-    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
-        Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).fire(constraintToCompile);    
-    Constraint andList = `AndConstraint();
-    for(Constraint constr: constraintList) {
-      andList = `AndConstraint(andList*,constr);
-    }    
-    return `AndConstraint(newConstr,andList*);    
+    try {
+      Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
+            Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).visit(constraintToCompile);    
+
+      Constraint andList = `AndConstraint();
+      for(Constraint constr: constraintList) {
+        andList = `AndConstraint(andList*,constr);
+      }    
+      return `AndConstraint(newConstr,andList*);    
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
   }
 
   // TODO - wouldn't it be better to do this in propagators ?

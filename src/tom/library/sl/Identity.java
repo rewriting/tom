@@ -43,7 +43,7 @@ public class Identity extends AbstractStrategy {
     initSubterm();
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable x) {
+  public Visitable visitLight(Visitable x) {
     return x;
   }
 

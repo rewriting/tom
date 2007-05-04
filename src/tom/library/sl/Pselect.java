@@ -65,12 +65,12 @@ public class Pselect extends AbstractStrategy {
     return q;
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable visitable) throws VisitFailure {
     int randomInt = random.nextInt(q);
     if(randomInt < p) {
-      return visitors[FIRST].visit(visitable);
+      return visitors[FIRST].visitLight(visitable);
     } else {
-      return visitors[THEN].visit(visitable);
+      return visitors[THEN].visitLight(visitable);
     }
   }
 

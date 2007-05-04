@@ -58,7 +58,7 @@ public class VisitorTemplate extends TemplateClass {
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
       concGomClass(_*,SortClass[ClassName=sortName],_*) -> {
-        writer.write("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure;\n");
+        writer.write("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws tom.library.sl.VisitFailure;\n");
       }
     }
 

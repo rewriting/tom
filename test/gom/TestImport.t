@@ -31,7 +31,7 @@ import gom.imported.types.*;
 
 public class TestImport extends TestCase {
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
   %include { importing/Importing.tom }
   %typeterm Collection {
     implement { Collection }
@@ -51,7 +51,7 @@ public class TestImport extends TestCase {
     Out test = `Loop(Loop(Pack(Atom()),LeafSlot(Leaf())),Element(Element(Atom())));
     Collection set = new ArrayList(); /* Make sure we count all inserts */
     try {
-      `BottomUp(Count(set)).visit(test);
+      `BottomUp(Count(set)).visitLight(test);
     } catch (Exception e) {
       fail(e + " catched");
     }

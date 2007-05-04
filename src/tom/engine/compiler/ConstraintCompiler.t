@@ -68,7 +68,11 @@ public class ConstraintCompiler {
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
     ConstraintCompiler.symbolTable = symbolTable;
-    return  (TomTerm)`InnermostId(CompileMatch()).fire(termToCompile);		
+    try {
+      return  (TomTerm)`InnermostId(CompileMatch()).visit(termToCompile);		
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
   }
 
   // looks for a 'Match' instruction:

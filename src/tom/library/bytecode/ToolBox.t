@@ -325,15 +325,15 @@ public class ToolBox {
   public static String buildDescriptor(TFieldDescriptor desc) {
     StringBuffer sb = new StringBuffer();
     try {
-      `TopDown(BuildDescriptor(sb)).visit(desc);
-    } catch(jjtraveler.VisitFailure e) { }
+      `TopDown(BuildDescriptor(sb)).visitLight(desc);
+    } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
   public static String buildDescriptor(TMethodDescriptor desc) {
     StringBuffer sb = new StringBuffer();
     try {
-      `TopDown(BuildDescriptor(sb)).visit(desc);
-    } catch(jjtraveler.VisitFailure e) { }
+      `TopDown(BuildDescriptor(sb)).visitLight(desc);
+    } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
 }

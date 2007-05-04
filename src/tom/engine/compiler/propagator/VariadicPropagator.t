@@ -35,6 +35,7 @@ import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
 import tom.engine.TomBase;
+import tom.engine.exception.TomRuntimeException;
 
 /**
  * Syntactic propagator
@@ -47,7 +48,11 @@ public class VariadicPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) {
-    return (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);		
+    try {
+      return (Constraint)`InnermostId(VariadicPatternMatching()).visit(constraint);		
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
   }	
 
   %strategy VariadicPatternMatching() extends `Identity() {
@@ -139,9 +144,13 @@ mSlots:  %match(slots) {
       andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).fire(toApplyOn);
-        if(res != toApplyOn) {
-          return `AndConstraint(X*,eq,res);
+        try {
+          Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
+          if(res != toApplyOn) {
+            return `AndConstraint(X*,eq,res);
+          }
+        } catch (tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("Unexpected strategy failure!");
         }
       }
     }

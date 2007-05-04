@@ -35,6 +35,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.compiler.*;
 import tom.engine.TomBase;
 import java.util.*;
+import tom.engine.exception.TomRuntimeException;
 
 /**
  * Syntactic propagator
@@ -47,7 +48,11 @@ public class SyntacticPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) {
-    return  (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint);
+    try {
+      return  (Constraint)`InnermostId(SyntacticPatternMatching()).visit(constraint);
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
   }	
 
   %strategy SyntacticPatternMatching() extends `Identity() {
@@ -148,9 +153,13 @@ public class SyntacticPropagator implements IBasePropagator {
        */
       AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);
-        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
-        if(res != toApplyOn) {
-          return `AndConstraint(X*,eq,res);
+        try {
+          Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
+          if(res != toApplyOn) {
+            return `AndConstraint(X*,eq,res);
+          }
+        } catch (tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("Unexpected strategy failure!");
         }
       }      
     }

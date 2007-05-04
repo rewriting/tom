@@ -153,7 +153,7 @@ public class Expander extends TomGenericPlugin {
       }
       try {
         tomSymbol = (TomSymbol) expandStrategy.visit(`tomSymbol);
-      } catch(jjtraveler.VisitFailure e) {
+      } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
@@ -380,7 +380,7 @@ public class Expander extends TomGenericPlugin {
            */	  
           slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
-        } catch(jjtraveler.VisitFailure e) {}
+        } catch(tom.library.sl.VisitFailure e) {}
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
@@ -395,7 +395,7 @@ public class Expander extends TomGenericPlugin {
 	  slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
           pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-        }catch(jjtraveler.VisitFailure e){}
+        }catch(tom.library.sl.VisitFailure e){}
       }
     }
 
@@ -535,7 +535,7 @@ public class Expander extends TomGenericPlugin {
           newAttrList = `concTomTerm(star,newAttrList*);
         }
         attrList = attrList.getTailconcTomTerm();
-      } catch(jjtraveler.VisitFailure e) {}
+      } catch(tom.library.sl.VisitFailure e) {}
     }
     newAttrList = ASTFactory.reverse(newAttrList);
 
@@ -561,7 +561,7 @@ public class Expander extends TomGenericPlugin {
           }
         }
         childList = childList.getTailconcTomTerm();
-      }catch(jjtraveler.VisitFailure e){}
+      }catch(tom.library.sl.VisitFailure e){}
     }
     newChildList = ASTFactory.reverse(newChildList);
 
@@ -606,7 +606,7 @@ matchBlock: {
 
               //System.out.println("expandXML out:\n" + result);
               return result;
-            } catch(jjtraveler.VisitFailure e) {
+            } catch(tom.library.sl.VisitFailure e) {
               //must never be executed
               return star;
             }

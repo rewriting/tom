@@ -132,12 +132,20 @@ public class ConstraintGenerator {
    */
   private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){		
     // it is done innermost because the expression is also simplified		
-    expression = (Expression)`InnermostId(ReplaceSubterms()).fire(expression);		
+    try {
+    expression = (Expression)`InnermostId(ReplaceSubterms()).visit(expression);
+    } catch (tom.library.sl.VisitFailure e) {
+    throw new TomRuntimeException("Unexpected strategy failure!");
+    }
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
     // make sure that each variable is declared only once
     ArrayList<TomName> declaredVariables = new ArrayList<TomName>(); 		
-    automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).fire(automata);    
+    try {
+      automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).visit(automata);    
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
     return automata;
   }
 
@@ -188,7 +196,11 @@ public class ConstraintGenerator {
         ArrayList<Boolean> list = new ArrayList<Boolean>();
         Visitable root = getEnvironment().getRoot();
         if (root != getEnvironment().getSubject()) {
-          getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name,list)).fire(root);        
+          try {
+            getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name,list)).visit(root); 
+          } catch (tom.library.sl.VisitFailure e) {
+            throw new TomRuntimeException("Unexpected strategy failure!");
+          }
           if (list.size() > 0){
             return `LetAssign(var,source,instruction);
           }		
@@ -196,7 +208,7 @@ public class ConstraintGenerator {
       }
     }// end visit
   }// end strategy
-  
+
   // TODO - change this with a more appropriate method
   %strategy CheckVarExistence(varName:TomName,bag:Collection) extends Identity(){
     visit Instruction {
@@ -207,7 +219,7 @@ public class ConstraintGenerator {
       }
     } // end visit
   }// end strategy
-  
+
 
   /**
    * Converts 'Subterm' to 'GetSlot'
@@ -248,11 +260,15 @@ public class ConstraintGenerator {
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
     // collect variables
-    `TopDown(CollectVar(freshVarList)).fire(orDisjunction);
+    try {
+      `TopDown(CollectVar(freshVarList)).visit(orDisjunction);
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
-        If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
+          If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
     // add fresh variables' declarations
     for(TomTerm var:freshVarList){
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
@@ -260,7 +276,7 @@ public class ConstraintGenerator {
     // stick the flag declaration also
     return `LetRef(flag,FalseTL(),instruction);
   }
-  
+
   private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue){    
     %match(orDisjunction){
       OrExpressionDisjunction() -> {
@@ -277,7 +293,7 @@ public class ConstraintGenerator {
     }
     throw new TomRuntimeException("ConstraintGenerator.buildDisjunctionIfElse - strange expression:" + orDisjunction);
   }
-  
+
   /**
    * generates:
    * 
@@ -295,7 +311,7 @@ public class ConstraintGenerator {
     Instruction automata = generateAutomata(expression, assignFlagTrue);    
     // add the final test
     Instruction result = `AbstractBlock(concInstruction(automata,
-        If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
+          If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(FalseTL())),action,Nop())));
     return `LetRef(flag,FalseTL(),result);
   }
 

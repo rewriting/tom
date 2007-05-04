@@ -49,7 +49,11 @@ public class ArrayGenerator implements IBaseGenerator{
   %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) {
-    return (Expression)`InnermostId(Generator()).fire(expression);		
+    try {
+      return (Expression)`InnermostId(Generator()).visit(expression);		
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

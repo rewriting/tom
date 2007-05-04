@@ -56,7 +56,7 @@ import tom.platform.PlatformException;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
+import tom.library.sl.VisitFailure;
 
 
 /**
@@ -221,7 +221,7 @@ public class TomBackend extends TomGenericPlugin {
     Stack stack = new Stack();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
     try {
-      `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).visit(pilCode);
+      `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).visitLight(pilCode);
     } catch(VisitFailure e) { }
   }
 
@@ -229,7 +229,7 @@ public class TomBackend extends TomGenericPlugin {
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
       try {
-        markStrategy.visit(tomSymbol);
+        markStrategy.visitLight(tomSymbol);
       } catch(VisitFailure e) { }
 
 
@@ -241,7 +241,7 @@ public class TomBackend extends TomGenericPlugin {
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
       try {
-        markStrategy.visit(tomSymbol);
+        markStrategy.visitLight(tomSymbol);
       } catch(VisitFailure e) { }
     }
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
@@ -274,16 +274,16 @@ public class TomBackend extends TomGenericPlugin {
           //System.out.println("push1: " + moduleName);
         }
         //System.out.println("match -> moduleName = " + moduleName);
-        markStrategy.visit(`inst);
+        markStrategy.visitLight(`inst);
         //String pop = (String) stack.pop();
         //System.out.println("pop: " + pop);
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
 
       }
 
       TypedAction[AstInstruction=inst] -> {
-        markStrategy.visit(`inst);
-        `Fail().visit(null);
+        markStrategy.visitLight(`inst);
+        throw new tom.library.sl.VisitFailure();
       }
     }
 
@@ -328,7 +328,7 @@ public class TomBackend extends TomGenericPlugin {
       TypeTermDecl[] -> {
         // should not search under a declaration
         //System.out.println("skip: " + `x);
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
     }
 
@@ -354,7 +354,7 @@ public class TomBackend extends TomGenericPlugin {
          * here we can fail because the subterms appear in isFsym tests
          * therefore, they are marked when traversing the compiledAutomata
          */
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
       (BuildTerm|BuildEmptyArray)[AstName=Name(name)] -> {
         try {

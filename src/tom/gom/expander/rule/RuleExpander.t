@@ -304,7 +304,11 @@ public class RuleExpander {
   protected OperatorDecl getOperatorDecl(String name) {
     OperatorDecl decl = null;
     OpRef ref = new OpRef();
-    `TopDown(GetOperatorDecl(ref,name)).fire(moduleList);
+    try {
+      `TopDown(GetOperatorDecl(ref,name)).visit(moduleList);
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new GomRuntimeException("Unexpected strategy failure!");
+    }
     if (ref.val == null) {
       getLogger().log(Level.SEVERE, "Unknown constructor {0}",
           new Object[]{name});

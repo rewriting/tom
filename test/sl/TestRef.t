@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004-2007, INRIA
- * All rights reserved.
+ * All rights res.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -59,16 +59,26 @@ public class TestRef extends TestCase {
 
   public void testRef() {
     Term subject = (Term) testslAbstractType.expand(`g(g(a(),refTerm("l")),labTerm("l",a())));
+    Term subject2 = (Term) testslAbstractType.expand(`g(g(a(),labTerm("l",a())),refTerm("l")));
     try{
-      Term res = (Term) `TopDown(StrictDeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDown(DeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(StrictDeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(DeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",c()))));
-    } catch (tom.library.sl.FireException e) {
+      Term res = (Term) `TopDown(StrictDeRef(AB())).visit(subject);
+      //assertEquals(testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",a()))),res);
+      res = (Term) `TopDown(DeRef(AB())).visit(subject);
+      //assertEquals(testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",b()))),res);
+      res = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject);
+      assertEquals(testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))),res);
+      res = (Term) `TopDownSeq(DeRef(AB())).visit(subject);
+      assertEquals(testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",c()))),res);
+    
+      Term res2 = (Term) `TopDown(StrictDeRef(AB())).visit(subject2);
+      //assertEquals(testslAbstractType.expand(`g(g(a(),labTerm("n",a())),refTerm("n"))),res2);
+      res2 = (Term) `TopDown(DeRef(AB())).visit(subject2);
+      //assertEquals(testslAbstractType.expand(`g(g(b(),labTerm("n",b())),refTerm("n"))),res2);
+      res2 = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject2);
+      assertEquals(testslAbstractType.expand(`g(g(a(),labTerm("n",b())),refTerm("n"))),res2);
+      res2 = (Term) `TopDownSeq(DeRef(AB())).visit(subject2);
+      assertEquals(testslAbstractType.expand(`g(g(b(),labTerm("n",c())),refTerm("n"))),res2);
+    } catch (tom.library.sl.VisitFailure e) {
       fail("It should not fail");
     }
   }

@@ -54,15 +54,15 @@ public class Omega extends AbstractStrategy {
     return indexPosition;
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
     if(indexPosition==0) {
-      return visitors[ARG].visit(any);
+      return visitors[ARG].visitLight(any);
     } else if(indexPosition>0 && indexPosition<=any.getChildCount()) {
       int childNumber = indexPosition-1;
-      jjtraveler.Visitable newChild = visitors[ARG].visit(any.getChildAt(childNumber));
+      Visitable newChild = visitors[ARG].visitLight(any.getChildAt(childNumber));
       return any.setChildAt(childNumber,newChild);
     } else {
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
   }
 

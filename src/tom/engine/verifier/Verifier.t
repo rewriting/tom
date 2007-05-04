@@ -288,7 +288,7 @@ public class Verifier {
   %strategy substitutionCollector(outsubst:SubstRef) extends `Identity() {
     visit Expr {
       t@iltrue(subs(undefsubs())) -> {
-        `Fail().visit(`t);
+        `Fail().visitLight(`t);
       }
       iltrue(x) -> {
         outsubst.set(`x);
@@ -298,8 +298,8 @@ public class Verifier {
   public SubstitutionList collectSubstitutionInConstraint(Expr expr) {
     SubstRef output = new SubstRef(`subs());
     try {
-      `mu(MuVar("x"),Try(Sequence(substitutionCollector(output),All(MuVar("x"))))).visit(expr);
-    } catch (jjtraveler.VisitFailure e) {
+      `mu(MuVar("x"),Try(Sequence(substitutionCollector(output),All(MuVar("x"))))).visitLight(expr);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy substitutionCollector failed");
     }
     return output.get();
@@ -316,8 +316,8 @@ public class Verifier {
   public SubstitutionList getOutputSubstitution(DerivTree subject) {
     SubstRef output = new SubstRef(`subs());
     try {
-      `TopDown(outputSubstitutionCollector(output)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      `TopDown(outputSubstitutionCollector(output)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy outputSubstitutionCollector failed");
     }
     return output.get();
@@ -334,8 +334,8 @@ public class Verifier {
   public Collection collectAccept(Instruction subject) {
     Collection result = new HashSet();
     try {
-      `TopDown(acceptCollector(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      `TopDown(acceptCollector(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy collectAccept failed");
     }
     return result;
@@ -714,7 +714,7 @@ public class Verifier {
       x -> {
         if (`x == goal) {
           c.add(goal);
-          `Fail().visit(`x);
+          `Fail().visitLight(`x);
         }
       }
     }
@@ -722,8 +722,8 @@ public class Verifier {
   protected boolean instructionContains(Instr i, Instr goal) {
     Collection collect = new HashSet();
     try {
-      `mu(MuVar("x"),Try(Sequence(stratInstructionContains(goal,collect),All(MuVar("x"))))).visit(i);
-    } catch(jjtraveler.VisitFailure e) {
+      `mu(MuVar("x"),Try(Sequence(stratInstructionContains(goal,collect),All(MuVar("x"))))).visitLight(i);
+    } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy instructionContains failed");
     }
     return !collect.isEmpty();
@@ -744,8 +744,8 @@ public class Verifier {
   private DerivTree replaceUndefinedSubstitution(DerivTree subject,
                                       SubstitutionList subs) {
     try {
-      subject = (DerivTree) `TopDown(replaceUndefsubs(subs)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      subject = (DerivTree) `TopDown(replaceUndefsubs(subs)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy replaceUndefsubs failed");
     }
     return subject;
@@ -788,8 +788,8 @@ public class Verifier {
         Map map = buildVariableMap(`sublist, new HashMap());
         Term t = `term;
         try {
-          t = (Term) `TopDown(replaceVariableByTerm(map)).visit(`term);
-        } catch (jjtraveler.VisitFailure e) {
+          t = (Term) `TopDown(replaceVariableByTerm(map)).visitLight(`term);
+        } catch (tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("Strategy replaceVariableByTerm failed");
         }
         return t;
@@ -804,8 +804,8 @@ public class Verifier {
         Map map = buildVariableMap(`sublist, new HashMap());
         Expr t = `term;
         try {
-          t = (Expr) `TopDown(replaceVariableByTerm(map)).visit(`term);
-        } catch (jjtraveler.VisitFailure e) {
+          t = (Expr) `TopDown(replaceVariableByTerm(map)).visitLight(`term);
+        } catch (tom.library.sl.VisitFailure e) {
           throw new TomRuntimeException("Strategy replaceVariableByTerm failed");
         }
         return t;
@@ -848,8 +848,8 @@ public class Verifier {
     Strategy booleanSimplifier = new BooleanSimplifier();
     Expr res = `ilfalse();
     try {
-      res = (Expr) `InnermostId(booleanSimplifier).visit(expr);
-    } catch (jjtraveler.VisitFailure e) {
+      res = (Expr) `InnermostId(booleanSimplifier).visitLight(expr);
+    } catch (tom.library.sl.VisitFailure e) {
       System.out.println("humm");
     }
     return res;
@@ -860,7 +860,7 @@ public class Verifier {
       super(`Identity());
     }
 
-    public Expr visit_Expr(Expr arg) throws jjtraveler.VisitFailure {
+    public Expr visit_Expr(Expr arg) throws tom.library.sl.VisitFailure {
       %match(Expr arg) {
         iland(ilfalse(),_) -> {
           return `ilfalse();
@@ -887,7 +887,7 @@ public class Verifier {
           return `iltrue(subs());
         }
       }
-      return (Expr) any.visit(arg);
+      return (Expr) any.visitLight(arg);
     }
   }
 

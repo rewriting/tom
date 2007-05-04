@@ -53,7 +53,7 @@ import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
+import tom.library.sl.VisitFailure;
 
 /**
  * The TomSyntaxChecker plugin - justs adds anti-pattern facilities to the TomSyntaxChecker.
@@ -96,7 +96,7 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
     String fileName = findOriginTrackingFileName(options);
     int decLine = findOriginTrackingLine(options);
     try {
-      `TopDown(CheckForAnnotations(fileName,decLine,t)).visit(t);
+      `TopDown(CheckForAnnotations(fileName,decLine,t)).visitLight(t);
     } catch(VisitFailure e) { }
   }
 

@@ -45,19 +45,19 @@ public class IfThenElse extends AbstractStrategy {
   }
 
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable x) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable x) throws VisitFailure {
     boolean success;
-    jjtraveler.Visitable result;
+    Visitable result;
     try {
-      visitors[CONDITION].visit(x);
+      visitors[CONDITION].visitLight(x);
       success = true;
-    } catch (jjtraveler.VisitFailure vf) {
+    } catch (VisitFailure vf) {
       success = false;
     }
     if (success) {
-      result = visitors[TRUE_CASE].visit(x);
+      result = visitors[TRUE_CASE].visitLight(x);
     } else {
-      result = visitors[FALSE_CASE].visit(x);
+      result = visitors[FALSE_CASE].visitLight(x);
     }
     return result;
   }

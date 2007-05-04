@@ -58,6 +58,7 @@ import tom.platform.adt.platformoption.types.*;
 import aterm.ATerm;
 import tom.engine.adt.il.types.*;
 import tom.engine.adt.zenon.types.*;
+import tom.library.sl.*;
 /**
  * The TomVerifier plugin.
  */
@@ -191,8 +192,8 @@ public class TomVerifier extends TomGenericPlugin {
   public static Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     try {
-      `TopDown(collectMatch(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      `TopDown(collectMatch(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy collectMatch failed");
     }
     return result;
@@ -235,8 +236,8 @@ public class TomVerifier extends TomGenericPlugin {
 
   private Instruction simplifyIl(Instruction subject) {
     try {
-      subject = (Instruction) `TopDown(ilSimplifier()).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      subject = (Instruction) `TopDown(ilSimplifier()).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy simplifyIl failed");
     }
     return subject;
@@ -251,8 +252,8 @@ public class TomVerifier extends TomGenericPlugin {
   boolean containsAssociativeOperator(Instruction subject) {
     Collection result = new HashSet();
     try {
-      `TopDown(associativeOperatorCollector(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      `TopDown(associativeOperatorCollector(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy containsAssociativeOperator failed");
     }
     return !result.isEmpty();

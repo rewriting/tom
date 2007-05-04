@@ -34,6 +34,7 @@ import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
+import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 
 /**
@@ -47,7 +48,11 @@ public class ArrayPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) {
-    return (Constraint)`InnermostId(ArrayPatternMatching()).fire(constraint);		
+    try {
+      return (Constraint)`InnermostId(ArrayPatternMatching()).visit(constraint);		
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("Unexpected strategy failure!");
+    }
   }	
 
   %strategy ArrayPatternMatching() extends `Identity() {
@@ -117,14 +122,19 @@ public class ArrayPropagator implements IBasePropagator {
           }					
           // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
           // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-          andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
-            Constraint toApplyOn = `AndConstraint(Y*);            
-            TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-            Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).fire(toApplyOn);
-            if(res != toApplyOn) {
-              return `AndConstraint(X*,eq,res);
-            }
+      andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
+        Constraint toApplyOn = `AndConstraint(Y*);            
+        TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
+        try {
+          Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
+          if(res != toApplyOn) {
+            return `AndConstraint(X*,eq,res);
           }
+        } catch (tom.library.sl.VisitFailure e) {
+          throw new TomRuntimeException("Unexpected strategy failure!");
+        } 
+
+      }
     }
   }// end %strategy
 

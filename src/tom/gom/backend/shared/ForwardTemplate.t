@@ -67,15 +67,16 @@ public class ForwardTemplate extends TemplateClass {
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
 package @getPackage()@;
+import tom.library.sl.*;
 
-public class @className()@ implements @ className(visitor)+importedVisitorList(importedVisitors) @, jjtraveler.Visitor {
-  protected jjtraveler.Visitor any;
+public class @className()@ implements @ className(visitor)+importedVisitorList(importedVisitors) @ {
+  protected Strategy any;
 
-  public @className()@(jjtraveler.Visitor v) {
+  public @className()@(Strategy v) {
     this.any = v;
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable v) throws VisitFailure {
     if (v instanceof @fullClassName(abstractType)@) {
       return ((@fullClassName(abstractType)@) v).accept(this);
     }
@@ -83,7 +84,7 @@ public class @className()@ implements @ className(visitor)+importedVisitorList(i
 generateDispatch(writer,importedAbstractTypes);
 writer.write(%[
     else {
-      return any.visit(v);
+      return any.visitLight(v);
     }
   }
 ]%);
@@ -99,8 +100,8 @@ writer.write(%[
       concGomClass(_*,SortClass[ClassName=sortName],_*) -> {
 
         writer.write(%[
-  public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws jjtraveler.VisitFailure {
-    return (@fullClassName(`sortName)@) any.visit(arg);
+  public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws VisitFailure {
+    return (@fullClassName(`sortName)@) any.visitLight(arg);
   }
 ]%);
       }

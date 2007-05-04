@@ -233,7 +233,7 @@ public class CFGViewer {
    * @param out the writer to be used for the dot output.
    * @param inst the global list of instructions.
    */
-  private static void printTryCatchBlocks(TTryCatchBlockList list, Map labelMap, Writer out,TInstructionList inst) {
+  private static void printTryCatchBlocks(TTryCatchBlockList list, Map labelMap, Writer out,TInstructionList inst) throws VisitFailure{
     %match(TTryCatchBlockList list) {
       TryCatchBlockList(_*, x, _*) -> {
         try {
@@ -244,7 +244,7 @@ public class CFGViewer {
           %match(THandler handler) {
             CatchHandler(h, t) -> {
               Position labelPosition = (Position) labelMap.get(`h);
-              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().fire(inst);
+              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().visit(inst);
               out.write(%[
                   @id@ [label="Catch\ntype : @`t@" shape=box];
                   @id@ -> @getDotId(labelInst)@ [label="handler" style=dotted];
@@ -253,7 +253,7 @@ public class CFGViewer {
 
             FinallyHandler(h) -> {
               Position labelPosition = (Position) labelMap.get(`h);
-              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().fire(inst);
+              TInstructionList labelInst = (TInstructionList) labelPosition.getSubterm().visit(inst);
               out.write(%[
                   @id@ [label="Finally" shape=box];
                   @id@ -> @getDotId(labelInst)@ [label="handler" style=dotted];
@@ -262,9 +262,9 @@ public class CFGViewer {
           }
 
           Position startPosition = (Position) labelMap.get(block.getstart());
-          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().fire(inst);
+          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().visit(inst);
           Position endPosition = (Position) labelMap.get(block.getend());
-          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().fire(inst);
+          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().visit(inst);
           out.write(%[
               @id@ -> @getDotId(startInst)@ [label="start" style=dotted];
               @id@ -> @getDotId(lastInst)@ [label="end" style=dotted];
@@ -283,16 +283,16 @@ public class CFGViewer {
    * @param out the writer to be used for the dot output.
    * @param inst the global list of instructions.
    */
-  private static void printLocalVariables(TLocalVariableList list, Map labelMap, Writer out, TInstructionList inst) {
+  private static void printLocalVariables(TLocalVariableList list, Map labelMap, Writer out, TInstructionList inst) throws VisitFailure {
     %match(TLocalVariableList list) {
       LocalVariableList(_*, x, _*) -> {
         try {
           TLocalVariable var = `x;
           String id = getDotId(var);
           Position startPosition = (Position) labelMap.get(var.getstart());
-          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().fire(inst);
+          TInstructionList startInst = (TInstructionList) startPosition.getSubterm().visit(inst);
           Position endPosition = (Position) labelMap.get(var.getend());
-          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().fire(inst);
+          TInstructionList lastInst = (TInstructionList) endPosition.getSubterm().visit(inst);
 
           out.write(%[
               @id@ [label="var : @var.getname()@\ndescriptor : @var.gettypeDesc()@\nindex : @Integer.toString(var.getindex())@" shape=box];
@@ -329,7 +329,7 @@ public class CFGViewer {
    * Generates a control flow graph for each method of the given class.
    * @param clazz the gom-term subject representing the class.
    */
-  public static void classToDot(TClass clazz) {
+  public static void classToDot(TClass clazz) throws VisitFailure {
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
     TMethodList methods = clazz.getmethods();
     %match(TMethodList methods) {
@@ -351,7 +351,7 @@ public class CFGViewer {
 
             // Compute the label map to allow us to retrieve an instruction from a label.
             HashMap labelMap = new HashMap();
-            `TopDown(BuildLabelMap(labelMap)).fire(ins);
+            `TopDown(BuildLabelMap(labelMap)).visit(ins);
 
             // Create a wrapper to pass a parent node to its children.
             InsWrapper insWrapper = new InsWrapper();
@@ -369,7 +369,7 @@ public class CFGViewer {
                         PrintDotLink(w, insWrapper),
                         labelMap)))));
 
-            toDot.fire(ins);
+            toDot.visit(ins);
 
             // Prints the try/catch/finally blocks.
             printTryCatchBlocks(`x.getcode().gettryCatchBlocks(), labelMap, w, ins);
@@ -401,7 +401,11 @@ public class CFGViewer {
       }
       BytecodeReader cg = new BytecodeReader(args[0]);
       TClass c = cg.getTClass();
+      try {
       classToDot(c);
+      } catch (VisitFailure e) {
+        System.out.println("Unexpected failure in strategies");
+      }
     }
   }
 

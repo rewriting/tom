@@ -60,7 +60,7 @@ public class HookCompiler {
       GomClassList classes,
       Map declToClassName) {
     /* for each hook, find the class, and attach the hook */
-    if (tom_is_sort_HookDeclList(declList)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookDeclList )declList);if (tom_is_fun_sym_concHookDecl(tomMatch399NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_freshVar_0=tomMatch399NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumberbegin_134=tomMatch399NameNumber_freshVar_0;{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumberend_134=tomMatch399NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_freshVar_1=tomMatch399NameNumberend_134;if (!(tom_is_empty_concHookDecl_HookDeclList(tomMatch399NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.HookDecl  tom_hook=tom_get_head_concHookDecl_HookDeclList(tomMatch399NameNumber_freshVar_1);{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_freshVar_2=tom_get_tail_concHookDecl_HookDeclList(tomMatch399NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_HookDeclList(declList)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookDeclList )declList);if (tom_is_fun_sym_concHookDecl(tomMatch399NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_freshVar_0=tomMatch399NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_begin_2=tomMatch399NameNumber_freshVar_0;{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_end_3=tomMatch399NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_freshVar_1=tomMatch399NameNumber_end_3;if (!(tom_is_empty_concHookDecl_HookDeclList(tomMatch399NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.HookDecl  tom_hook=tom_get_head_concHookDecl_HookDeclList(tomMatch399NameNumber_freshVar_1);{  tom.gom.adt.gom.types.HookDeclList  tomMatch399NameNumber_freshVar_4=tom_get_tail_concHookDecl_HookDeclList(tomMatch399NameNumber_freshVar_1);if ( true ) {
 
         Decl decl = tom_hook.getPointcut();
         if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch398NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutModule(tomMatch398NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch398NameNumber_freshVar_0=tom_get_slot_CutModule_MDecl(tomMatch398NameNumberfreshSubject_1);if ( true ) {
@@ -80,7 +80,7 @@ public class HookCompiler {
               tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom_hook)).fire(classes);
           }}}}}
 
-      }}}}}if (tom_is_empty_concHookDecl_HookDeclList(tomMatch399NameNumberend_134)) {tomMatch399NameNumberend_134=tomMatch399NameNumberbegin_134;} else {tomMatch399NameNumberend_134=tom_get_tail_concHookDecl_HookDeclList(tomMatch399NameNumberend_134);}}} while(!(tom_equal_term_HookDeclList(tomMatch399NameNumberend_134, tomMatch399NameNumberbegin_134)));}}}}}}
+      }}}}}if (tom_is_empty_concHookDecl_HookDeclList(tomMatch399NameNumber_end_3)) {tomMatch399NameNumber_end_3=tomMatch399NameNumber_begin_2;} else {tomMatch399NameNumber_end_3=tom_get_tail_concHookDecl_HookDeclList(tomMatch399NameNumber_end_3);}}} while(!(tom_equal_term_HookDeclList(tomMatch399NameNumber_end_3, tomMatch399NameNumber_begin_2)));}}}}}}
 
     return classes;
   }

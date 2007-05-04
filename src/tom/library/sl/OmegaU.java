@@ -50,13 +50,13 @@ public class OmegaU extends AbstractStrategy {
     }
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
     int arity = any.getChildCount();
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visit(any);
+      return visitors[ARG].visitLight(any);
     } else {
-      return new Omega(selectedSubterm+1,visitors[ARG]).visit(any);
+      return new Omega(selectedSubterm+1,visitors[ARG]).visitLight(any);
     }
   }
 

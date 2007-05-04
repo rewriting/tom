@@ -1,11 +1,7 @@
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import tom.library.strategy.mutraveler.Position;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 import teststrategy.term.types.*;
 
@@ -13,7 +9,7 @@ import java.util.*;
 
 public class TestStrategy extends TestCase {
 
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { boolean.tom }
   %include { long.tom }
   %include { java/util/LinkedList.tom }
@@ -38,13 +34,13 @@ public class TestStrategy extends TestCase {
   } 
 
   %typeterm Position {
-    implement { tom.library.strategy.mutraveler.Position }
-    is_sort(t) { t instanceof tom.library.strategy.mutraveler.Position }
+    implement { tom.library.sl.Position }
+    is_sort(t) { t instanceof tom.library.sl.Position }
   }
 
   static boolean bool0 = true;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws VisitFailure{
     junit.textui.TestRunner.run(new TestSuite(TestStrategy.class));
   }
 
@@ -60,49 +56,45 @@ public class TestStrategy extends TestCase {
     String string = new String();
     int i = 0;
     
-    MuStrategy rule0 = `S0();
-    MuStrategy rule1 = `S1(bool);
-    MuStrategy rule2 = `S2(along,string);
-    MuStrategy rule3 = `S3(i);
-    MuStrategy rule4 = `S4(hashtable, linkedList);
-    MuStrategy rule5 = `S5();
-    MuStrategy rule6 = `S6();
-    MuStrategy rule7 = `S7();
-    MuStrategy rule8 = `S8(bool);
-    MuStrategy rule9 = `S9(i);
+    Strategy rule0 = `S0();
+    Strategy rule1 = `S1(bool);
+    Strategy rule2 = `S2(along,string);
+    Strategy rule3 = `S3(i);
+    Strategy rule4 = `S4(hashtable, linkedList);
+    Strategy rule5 = `S5();
+    Strategy rule6 = `S6();
+    Strategy rule7 = `S7();
+    Strategy rule8 = `S8(bool);
+    Strategy rule9 = `S9(i);
    
     try{
-      assertSame("g(a,a) return a", MuTraveler.init(`rule0).visit(`g(a(),a())), `a());
-      assertSame("a return b", MuTraveler.init(`rule1).visit(`a()), `b());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule2).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule3).visit(`g(a(),a())), `a());
-      assertSame("g(a,b) return g(b,a)", MuTraveler.init(`rule4).visit(`g(a(),b())), `g(b(),a()));
-      assertSame("g(a,a) return a", MuTraveler.init(`rule5).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule6).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule7).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule8).visit(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule9).visit(`g(a(),a())), `a());
-    } catch (VisitFailure e){
-      System.out.println("VisitFailure");
+      assertSame("g(a,a) return a", `rule0.visitLight(`g(a(),a())), `a());
+      assertSame("a return b", `rule1.visitLight(`a()), `b());
+      assertSame("g(a,a) return a", `rule2.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule3.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,b) return g(b,a)", `rule4.visitLight(`g(a(),b())), `g(b(),a()));
+      assertSame("g(a,a) return a", `rule5.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule6.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule7.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule8.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule9.visitLight(`g(a(),a())), `a());
+    } catch (tom.library.sl.VisitFailure e){
+      System.out.println("tom.library.sl.VisitFailure()");
     }
   }
 
-  public void testPosition() {
+  public void testPosition() throws VisitFailure {
     //3 positions for now
     Hashtable positions = new Hashtable(3);
     Term t = `f(a());
     Term tBis = `f(b());
-    MuStrategy getPos1 = `GetPositionA(positions,"p1");
-    MuStrategy getPos2 = `GetPositionA(positions,"p2");
-    MuStrategy getPos3 = `GetPositionA(positions,"p3");
-
-    try{
-      MuTraveler.init(`BottomUp(getPos1)).visit(t);
-      MuTraveler.init(`BottomUp(getPos2)).visit(t);
-      MuTraveler.init(`BottomUp(getPos3)).visit(tBis);
-    } catch (VisitFailure e){
-      System.out.println("VisitFailure");
-    }
+    Strategy getPos1 = `GetPositionA(positions,"p1");
+    Strategy getPos2 = `GetPositionA(positions,"p2");
+    Strategy getPos3 = `GetPositionA(positions,"p3");
+    
+    `BottomUp(getPos1).visit(t);
+    `BottomUp(getPos2).visit(t);
+    `BottomUp(getPos3).visit(tBis);
 
     Position p1 = (Position)positions.get("p1");
     Position p2 = (Position)positions.get("p2");
@@ -113,7 +105,7 @@ public class TestStrategy extends TestCase {
 
   %strategy GetPositionA(positions:Hashtable,posName:String) extends Identity(){
     visit Term {
-      a() -> {positions.put(posName,getPosition());}
+      a() -> {positions.put(posName,getEnvironment().getPosition());}
     }
   }
 

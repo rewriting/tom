@@ -66,18 +66,30 @@ public class HookCompiler {
         %match(decl) {
           CutModule(mdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`mdecl);
-            classes = (GomClassList)
-              `TopDown(AttachModuleHook(clsName,hook)).fire(classes);
+            try {
+              classes = (GomClassList)
+                `TopDown(AttachModuleHook(clsName,hook)).visit(classes);
+            } catch (tom.library.sl.VisitFailure e) {
+              throw new GomRuntimeException("Unexpected strategy failure!");
+            }
           }
           CutSort(sdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`sdecl);
-            classes = (GomClassList)
-              `TopDown(AttachSortHook(clsName,hook)).fire(classes);
+            try {
+              classes = (GomClassList)
+                `TopDown(AttachSortHook(clsName,hook)).visit(classes);
+            } catch (tom.library.sl.VisitFailure e) {
+              throw new GomRuntimeException("Unexpected strategy failure!");
+            }
           }
           CutOperator(odecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`odecl);
-            classes = (GomClassList)
-              `TopDown(AttachOperatorHook(clsName,hook)).fire(classes);
+            try {
+              classes = (GomClassList)
+                `TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
+            } catch (tom.library.sl.VisitFailure e) {
+              throw new GomRuntimeException("Unexpected strategy failure!");
+            }     
           }
         }
       }
@@ -87,63 +99,63 @@ public class HookCompiler {
 
   %strategy AttachModuleHook(cName:ClassName,hook:HookDecl)
     extends Identity() {
-    visit GomClass {
-      obj@AbstractTypeClass[ClassName=className,Hooks=oldHooks] -> {
-        if (`className == `cName) {
-          return
-            `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
-        }
-      }
-    }
-  }
-
-  %strategy AttachSortHook(cName:ClassName,hook:HookDecl)
-    extends Identity() {
-    visit GomClass {
-      obj@SortClass[ClassName=className,Hooks=oldHooks] -> {
-        if (`className == `cName) {
-          return
-            `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
-        }
-      }
-    }
-  }
-
-  %strategy AttachOperatorHook(cName:ClassName,hook:HookDecl)
-    extends Identity() {
-    visit GomClass {
-      obj@VariadicOperatorClass[ClassName=className,Hooks=oldHooks,
-                                Empty=emptyClass,Cons=consClass] -> {
-        if (`className == `cName) {
-          /* We may want to attach the hook to the cons or empty */
-          if (hook.isMakeHookDecl()) {
-            if (hook.getSlotArgs() != `concSlot()) {
-              HookList oldConsHooks = `consClass.getHooks();
-              GomClass newCons =
-                `consClass.setHooks(
-                    `concHook(makeHooksFromHookDecl(hook),oldConsHooks*));
-              return `obj.setCons(newCons);
-            } else if (hook.getSlotArgs() == `concSlot()) {
-              HookList oldEmptyHooks = `emptyClass.getHooks();
-              GomClass newEmpty =
-                `emptyClass.setHooks(
-                    `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
-              return `obj.setEmpty(newEmpty);
-            }
-          } else {
+      visit GomClass {
+        obj@AbstractTypeClass[ClassName=className,Hooks=oldHooks] -> {
+          if (`className == `cName) {
             return
               `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
-      obj@OperatorClass[ClassName=className,Hooks=oldHooks] -> {
-        if (`className == `cName) {
-          return
-            `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+    }
+
+  %strategy AttachSortHook(cName:ClassName,hook:HookDecl)
+    extends Identity() {
+      visit GomClass {
+        obj@SortClass[ClassName=className,Hooks=oldHooks] -> {
+          if (`className == `cName) {
+            return
+              `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+          }
         }
       }
     }
-  }
+
+  %strategy AttachOperatorHook(cName:ClassName,hook:HookDecl)
+    extends Identity() {
+      visit GomClass {
+        obj@VariadicOperatorClass[ClassName=className,Hooks=oldHooks,
+          Empty=emptyClass,Cons=consClass] -> {
+            if (`className == `cName) {
+              /* We may want to attach the hook to the cons or empty */
+              if (hook.isMakeHookDecl()) {
+                if (hook.getSlotArgs() != `concSlot()) {
+                  HookList oldConsHooks = `consClass.getHooks();
+                  GomClass newCons =
+                    `consClass.setHooks(
+                        `concHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+                  return `obj.setCons(newCons);
+                } else if (hook.getSlotArgs() == `concSlot()) {
+                  HookList oldEmptyHooks = `emptyClass.getHooks();
+                  GomClass newEmpty =
+                    `emptyClass.setHooks(
+                        `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                  return `obj.setEmpty(newEmpty);
+                }
+              } else {
+                return
+                  `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+              }
+            }
+          }
+        obj@OperatorClass[ClassName=className,Hooks=oldHooks] -> {
+          if (`className == `cName) {
+            return
+              `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+          }
+        }
+      }
+    }
 
   private static Hook makeHooksFromHookDecl(HookDecl hookDecl) {
     %match(hookDecl) {

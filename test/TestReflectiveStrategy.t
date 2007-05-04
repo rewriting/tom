@@ -105,50 +105,50 @@ public class TestReflectiveStrategy extends TestCase {
     assertEquals("matchAll should return 2 with `All(All(Identity()))", 2, matchAll(`All(All(Identity()))));
   }
 
-  public void test21() throws jjtraveler.VisitFailure {
-    assertTrue("matchIdentity should return true with `S3().visit(`Identity())", matchIdentity((Strategy)`S3().visit(`Identity())));
+  public void test21() throws tom.library.sl.VisitFailure {
+    assertTrue("matchIdentity should return true with `S3().visitLight(`Identity())", matchIdentity((Strategy)`S3().visitLight(`Identity())));
   }
 
-  public void test22() throws jjtraveler.VisitFailure {
-    assertEquals("matchAll should return 1 with `S3().visit(`All(Identity())", 1, matchAll((Strategy)`S3().visit(`All(Identity()))));
+  public void test22() throws tom.library.sl.VisitFailure {
+    assertEquals("matchAll should return 1 with `S3().visitLight(`All(Identity())", 1, matchAll((Strategy)`S3().visitLight(`All(Identity()))));
   }
 
-  public void test23() throws jjtraveler.VisitFailure  {
-    assertEquals("matchAll should return 1 with `S3().visit(`All(All(Identity())))", 1, matchAll((Strategy)`S3().visit(`All(All(Identity())))));
+  public void test23() throws tom.library.sl.VisitFailure  {
+    assertEquals("matchAll should return 1 with `S3().visitLight(`All(All(Identity())))", 1, matchAll((Strategy)`S3().visitLight(`All(All(Identity())))));
   }
 
-  public void test24() throws jjtraveler.VisitFailure {
-    assertEquals("matchAll should return 1 with `TopDown(S3()).visit(`All(All(All(All(Identity())))))", 2, matchAll((Strategy)`TopDown(S3()).visit(`All(All(All(All(Identity())))))));
+  public void test24() throws tom.library.sl.VisitFailure {
+    assertEquals("matchAll should return 1 with `TopDown(S3()).visitLight(`All(All(All(All(Identity())))))", 2, matchAll((Strategy)`TopDown(S3()).visitLight(`All(All(All(All(Identity())))))));
   }
 
-  public void test25() throws jjtraveler.VisitFailure {
-    assertEquals("matchAll should return 1 with `BottomUp(S3()).visit(`All(All(All(All(Identity())))))", 1, matchAll((Strategy)`BottomUp(S3()).visit(`All(All(All(All(Identity())))))));
+  public void test25() throws tom.library.sl.VisitFailure {
+    assertEquals("matchAll should return 1 with `BottomUp(S3()).visitLight(`All(All(All(All(Identity())))))", 1, matchAll((Strategy)`BottomUp(S3()).visitLight(`All(All(All(All(Identity())))))));
   }
 
-  public void test26() throws jjtraveler.VisitFailure {
+  public void test26() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 3 with `All(S2(0, \"\", All(All(Identity()))))", 3, countAll(`All(S2(0, "", All(All(Identity()))))));
   }
 
-  public void test27() throws jjtraveler.VisitFailure {
-    assertEquals("countAll should return 2 with `BottomUp(S3()).visit(`All(S2(0, \"\", All(All(Identity())))))", 2, countAll((Strategy)`BottomUp(S3()).visit(`All(S2(0, "", All(All(Identity())))))));
+  public void test27() throws tom.library.sl.VisitFailure {
+    assertEquals("countAll should return 2 with `BottomUp(S3()).visitLight(`All(S2(0, \"\", All(All(Identity())))))", 2, countAll((Strategy)`BottomUp(S3()).visitLight(`All(S2(0, "", All(All(Identity())))))));
   }
 
-  public void test28() throws jjtraveler.VisitFailure {
+  public void test28() throws tom.library.sl.VisitFailure {
     assertEquals("countAll should return 6 with `All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 6, countAll(`All(S4(All(All(Identity())), 0, All(All(All(Identity())))))));
   }
 
-  public void test29() throws jjtraveler.VisitFailure {
-    assertEquals("countAll should return 3 with `BottomUp(S3()).visit(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 3, countAll((Strategy)`BottomUp(S3()).visit(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))));
+  public void test29() throws tom.library.sl.VisitFailure {
+    assertEquals("countAll should return 3 with `BottomUp(S3()).visitLight(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 3, countAll((Strategy)`BottomUp(S3()).visitLight(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))));
   }
 
-  public void test30() throws jjtraveler.VisitFailure {
-    assertEquals("countAll should return 2 with `BottomUp(S5()).visit(`S4(Identity(), 0, Fail()))", 2, countAll((Strategy)`BottomUp(S5()).visit(`S4(Identity(), 0, Fail()))));
+  public void test30() throws tom.library.sl.VisitFailure {
+    assertEquals("countAll should return 2 with `BottomUp(S5()).visitLight(`S4(Identity(), 0, Fail()))", 2, countAll((Strategy)`BottomUp(S5()).visitLight(`S4(Identity(), 0, Fail()))));
   }
   
-  public void test31() throws jjtraveler.VisitFailure {
+  public void test31() throws tom.library.sl.VisitFailure {
     Counter c = new Counter();
     Strategy s = `mu(MuVar("x"),TopDownCollect(CollectExceptFirst(MuVar("x"),c)));
-    s.visit(`Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1()))));
+    s.visitLight(`Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1()))));
     assertEquals("collectExceptFirst should return 5 when applied on `Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1())))", 5, c.count);
   }
 
@@ -266,9 +266,9 @@ public class TestReflectiveStrategy extends TestCase {
     implement { Counter }
     is_sort(t) { t instanceof Counter }
   }
-  public int countAll(Strategy s) throws jjtraveler.VisitFailure {
+  public int countAll(Strategy s) throws tom.library.sl.VisitFailure {
     Counter c = new Counter();
-    `TopDown(incAll(c)).visit(s);
+    `TopDown(incAll(c)).visitLight(s);
     return c.count;
   }
   %strategy incAll(c:Counter) extends `Identity() {
@@ -281,8 +281,8 @@ public class TestReflectiveStrategy extends TestCase {
   %strategy CollectExceptFirst(current:Strategy, c:Counter) extends `Identity() {
     visit Strategy {
       Sequence(_,s2) -> {
-      current.visit(`s2);
-      `Fail().visit(null); 
+      current.visitLight(`s2);
+      throw new VisitFailure(); 
       }
 
       x -> { c.count++; }

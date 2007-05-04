@@ -74,7 +74,7 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ @gener
 
 @generateBlock()@
 
-  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure {
+  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure {
     return v.@visitMethod(className)@(this);
   }
 ]%);

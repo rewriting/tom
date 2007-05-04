@@ -1,5 +1,4 @@
-/*
- * Gom
+ /* Gom
  *
  * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
@@ -50,99 +49,72 @@ public class BasicStrategyTemplate extends TemplateClass {
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
 package @getPackage()@;
-import tom.library.strategy.mutraveler.Position;
-    
-  public class @className()@ extends @className(fwd)@ implements tom.library.strategy.mutraveler.MuStrategy, tom.library.sl.Strategy {
-  private Position position;
+import tom.library.sl.*;
+   
+  public class @className()@ extends @className(fwd)@ implements tom.library.sl.Strategy {
   private tom.library.sl.Environment environment;
-
-  public void setPosition(Position pos) {
-    this.position = pos;
-  }
-
-  public Position getPosition() {
-    if(hasPosition()) {
-      return (Position) position.clone();
-    } else {
-      throw new RuntimeException("position not initialized");
-    }
-  }
-
-  public boolean hasPosition() {
-    return position!=null;
-  }
-
-    
+      
   public int getChildCount() {
     return 1;
   }
     
-  public jjtraveler.Visitable getChildAt(int i) {
+  public Visitable getChildAt(int i) {
     switch (i) {
-      case 0: return (jjtraveler.Visitable) any;
+      case 0: return (Visitable) any;
       default: throw new IndexOutOfBoundsException();
     }
   }
     
-  public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
+  public Visitable setChildAt(int i, Visitable child) {
     switch (i) {
-      case 0: any = (jjtraveler.reflective.VisitableVisitor) child; return this;
+      case 0: any = (Strategy) child; return this;
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public jjtraveler.Visitable[] getChildren() {
-    return new jjtraveler.Visitable[]{(jjtraveler.Visitable)any};
+  public Visitable[] getChildren() {
+    return new Visitable[]{(Visitable)any};
   }
 
-  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
-    any = (jjtraveler.Visitor)children[0];
+  public Visitable setChildren(Visitable[] children) {
+    any = (Strategy)children[0];
     return this;
   }
 
-  /*
-   * Apply the strategy, and returns the subject in case of VisitFailure
-   */
-  public jjtraveler.Visitable apply(jjtraveler.Visitable any) {
-    // Obsolete: for compatibility purpose only
-    try {
-      return tom.library.strategy.mutraveler.MuTraveler.init(this).visit(any);
-    } catch (jjtraveler.VisitFailure f) {
-      return any;
+  public Visitable visit(Environment envt) throws VisitFailure {
+    setEnvironment(envt);
+    int status = visit();
+    if(status == Environment.SUCCESS) {
+      return environment.getRoot();
+    } else {
+      throw new VisitFailure();
     }
   }
 
-  public int execute(tom.library.sl.Strategy s) {
-    tom.library.sl.AbstractStrategy.init(s,environment);
-    return s.visit();
-  }
 
-  public int execute(tom.library.sl.Strategy s, tom.library.sl.Visitable v) {
-    environment.setSubject(v);
-    tom.library.sl.AbstractStrategy.init(s,environment);
-    return s.visit();
-  }
-
-
-  public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
+  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     environment.setRoot(any);
     int status = visit();
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
-      throw new tom.library.sl.FireException();
+      throw new VisitFailure();
     }
   }
 
   public int visit() {
     try {
-      environment.setSubject((tom.library.sl.Visitable)this.visit(environment.getSubject()));
+      environment.setSubject((tom.library.sl.Visitable)this.visitLight(environment.getSubject()));
       return tom.library.sl.Environment.SUCCESS;
-    } catch(jjtraveler.VisitFailure f) {
+    } catch(VisitFailure f) {
       return tom.library.sl.Environment.FAILURE;
     }
   }
+
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
+    return v.visit_Strategy(this);
+  } 
 
   public tom.library.sl.Environment getEnvironment() {
     if(environment!=null) {
@@ -156,15 +128,9 @@ import tom.library.strategy.mutraveler.Position;
     this.environment = env;
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
-    return v.visit_Strategy(this);
-  } 
-
-  public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
-    return v.visit_Strategy(this);
-  }
+   
     
-  public @className()@(jjtraveler.reflective.VisitableVisitor any) {
+  public @className()@(Strategy any) {
     super(any);
   }
 }

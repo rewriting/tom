@@ -67,15 +67,15 @@ public class TestReduceAll extends TestCase {
     Term resJ = null;
     Term resS = null;
     try {
-      resJ = (Term) s.visit(subject);
+      resJ = (Term) s.visitLight(subject);
       assertEquals(resJ,`a());
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (tom.library.sl.VisitFailure e) {
       fail("Identity.visit should not fail");
     }
     try {
-      resS = (Term) s.fire(subject);
+      resS = (Term) s.visit(subject);
       assertEquals(resS,`a());
-    } catch (tom.library.sl.FireException e) {
+    } catch (tom.library.sl.VisitFailure e) {
     }
     assertEquals(resJ,resS);
   }
@@ -85,9 +85,9 @@ public class TestReduceAll extends TestCase {
     Strategy s = `All(AB());
     Term resJ = null;
     try {
-      resJ = (Term) s.visit(subject);
+      resJ = (Term) s.visitLight(subject);
       assertEquals(resJ,`f(b(),c()));
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (tom.library.sl.VisitFailure e) {
       fail("Visit should not fail");
     }
   }
@@ -97,9 +97,9 @@ public class TestReduceAll extends TestCase {
     Strategy s = `All(AB());
     Term resS = null;
     try {
-      resS = (Term) s.fire(subject);
+      resS = (Term) s.visit(subject);
       assertEquals(resS,`f(b(),c()));
-    } catch (tom.library.sl.FireException e) {
+    } catch (tom.library.sl.VisitFailure e) {
       fail("Fire should not fail");
     }
   }
@@ -109,9 +109,9 @@ public class TestReduceAll extends TestCase {
     Strategy s = `_f(AB(),AB());
     Term resJ = null;
     try {
-      resJ = (Term) s.visit(subject);
+      resJ = (Term) s.visitLight(subject);
       assertEquals(resJ,`f(b(),c()));
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (tom.library.sl.VisitFailure e) {
       fail("Visit should not fail");
     }
   }
@@ -121,9 +121,9 @@ public class TestReduceAll extends TestCase {
     Strategy s = `_f(AB(),AB());
     Term resS = null;
     try {
-      resS = (Term) s.fire(subject);
+      resS = (Term) s.visit(subject);
       assertEquals(resS,`f(b(),c()));
-    } catch (tom.library.sl.FireException e) {
+    } catch (tom.library.sl.VisitFailure e) {
       fail("Fire should not fail");
     }
   }

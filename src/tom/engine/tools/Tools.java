@@ -35,7 +35,7 @@ import java.util.Collection;
 
 
 public class Tools {
-  public static void generateOutput(String outputFileName, jjtraveler.Visitable ast) {
+  public static void generateOutput(String outputFileName, Object ast) {
     try {
       OutputStream output = new FileOutputStream(outputFileName);
       Writer writer = new BufferedWriter(new OutputStreamWriter(output));

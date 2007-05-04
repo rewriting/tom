@@ -68,10 +68,10 @@ public class PILFactory {
     this.level = level;
   }
 
-  public jjtraveler.Visitable remove(jjtraveler.Visitable subject) {
+  public tom.library.sl.Visitable remove(tom.library.sl.Visitable subject) {
     try {
-      return `TopDown(replaceRemove()).visit(subject);
-    } catch(jjtraveler.VisitFailure e) {
+      return `TopDown(replaceRemove()).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy failed");
     }
     return subject;
@@ -79,8 +79,8 @@ public class PILFactory {
 
   public TomTerm remove(TomTerm subject) {
     try {
-      return (TomTerm) `TopDown(replaceRemove()).visit(subject);
-    } catch(jjtraveler.VisitFailure e) {
+      return (TomTerm) `TopDown(replaceRemove()).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy failed");
     }
     return subject;
@@ -104,12 +104,12 @@ public class PILFactory {
     }
     visit Expression {
       // clean Expressions
-      Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
-      Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
+      Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
+      Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
     }
   }
 
-  public String prettyPrintCompiledMatch(jjtraveler.Visitable subject) {
+  public String prettyPrintCompiledMatch(tom.library.sl.Visitable subject) {
     StringBuffer res = new StringBuffer();
     Collection matches = collectMatch(subject);
     Iterator it = matches.iterator();
@@ -121,7 +121,7 @@ public class PILFactory {
     return res.toString();
   }
 
-  public String prettyPrint(jjtraveler.Visitable subject) {
+  public String prettyPrint(tom.library.sl.Visitable subject) {
     %match(Instruction subject) {
       CompiledMatch(automata,_) -> { 
 	return prettyPrint(`automata); 
@@ -307,11 +307,11 @@ public class PILFactory {
     }
   } 
 
-  public Collection collectMatch(jjtraveler.Visitable subject) {
+  public Collection collectMatch(tom.library.sl.Visitable subject) {
     Collection result = new HashSet();
     try {
-      `TopDown(collectMatch(result)).visit(subject);
-    } catch(jjtraveler.VisitFailure e) {
+      `TopDown(collectMatch(result)).visitLight(subject);
+    } catch(tom.library.sl.VisitFailure e) {
       System.out.println("strategy failed");
     }
     return result;

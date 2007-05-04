@@ -60,20 +60,20 @@ public abstract class AbstractStrategy implements Strategy {
     return visitors.length;
   }
 
-  public jjtraveler.Visitable getChildAt(int i) {
+  public Visitable getChildAt(int i) {
     return visitors[i];
   }
 
-  public jjtraveler.Visitable[] getChildren() {
-    return (jjtraveler.Visitable[]) visitors.clone();
+  public Visitable[] getChildren() {
+    return (Visitable[]) visitors.clone();
   }
 
-  public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
+  public Visitable setChildAt(int i, Visitable child) {
     visitors[i] = (Strategy) child;
     return this;
   }
 
-  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+  public Visitable setChildren(Visitable[] children) {
     Strategy[] newVisitors = new Strategy[children.length];
     for(int i = 0; i < children.length; i++) {
       newVisitors[i] = (Strategy) children[i];
@@ -82,36 +82,28 @@ public abstract class AbstractStrategy implements Strategy {
     return this;
   }
 
-  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
+  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
     return v.visit_Strategy(this);
   }
 
-  /** execute the strategy s in the current environment
-   * @parameter s the strategy to execute.
-   */
-  public int execute(Strategy s) {
-    AbstractStrategy.init(s,environment);
-    return s.visit();
+  public Visitable visit(Environment envt) throws VisitFailure {
+    AbstractStrategy.init(this,envt);
+    int status = visit();
+    if(status == Environment.SUCCESS) {
+      return getRoot();
+    } else {
+      throw new VisitFailure();
+    }
   }
 
-  /** change the current subject with v and execute the strategy s in the
-   * modified environment
-   * @parameter v the new current subject.
-   * @parameter s the strategy to execute.
-   */
-  public int execute(Strategy s, Visitable v) {
-    environment.setSubject(v);
-    return execute(s);
-  }
-
-  public Visitable fire(Visitable any) {
+  public Visitable visit(Visitable any) throws VisitFailure{
     init();
     setRoot(any);
     int status = visit();
     if(status == Environment.SUCCESS) {
       return getRoot();
     } else {
-      throw new tom.library.sl.FireException();
+      throw new tom.library.sl.VisitFailure();
     }
   }
 
@@ -156,7 +148,7 @@ public abstract class AbstractStrategy implements Strategy {
     }
     s.setEnvironment(env);
     for(int i=0 ; i<s.getChildCount() ; i++) {
-      jjtraveler.Visitable child = s.getChildAt(i);
+      Visitable child = s.getChildAt(i);
       if(child instanceof Strategy) {
         init((Strategy)child,env);
       }

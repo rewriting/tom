@@ -74,7 +74,9 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
-public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable, tom.library.sl.Visitable @generateInterface()@ {
+import tom.library.sl.*;
+
+public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
 @generateBlock()@
   private @className()@() {}
 ]%);
@@ -255,26 +257,26 @@ generateGetters(writer);
 ]%);
 
     writer.write(%[
-  /* jjtraveler.Visitable */
+  /* Visitable */
   public int getChildCount() {
     return @nonBuiltinChildCount()@;
   }
 
-  public jjtraveler.Visitable getChildAt(int index) {
+  public Visitable getChildAt(int index) {
     switch(index) {
 @nonBuiltinsGetCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+  public Visitable setChildAt(int index, Visitable v) {
     switch(index) {
 @nonBuiltinMakeCases("v")@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public jjtraveler.Visitable setChilds(jjtraveler.Visitable[] childs) {
+  public Visitable setChildren(Visitable[] childs) {
     if (childs.length == @nonBuiltinChildCount()@) {
       return @nonBuiltinArrayMake("childs")@;
     } else {
@@ -282,20 +284,8 @@ generateGetters(writer);
     }
   }
 
-  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] childs) {
-    if (childs.length == @nonBuiltinChildCount()@) {
-      return @nonBuiltinArrayMake("childs")@;
-    } else {
-      throw new IndexOutOfBoundsException();
-    }
-  }
-
-  public jjtraveler.Visitable[] getChilds() {
-    return new jjtraveler.Visitable[] { @nonBuiltinChildList(slotList)@ };
-  }
-
-  public jjtraveler.Visitable[] getChildren() {
-    return new jjtraveler.Visitable[] { @nonBuiltinChildList(slotList)@ };
+  public Visitable[] getChildren() {
+    return new Visitable[] { @nonBuiltinChildList(slotList)@ };
   }
 ]%);
 

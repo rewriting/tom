@@ -70,10 +70,18 @@ public class GomReferenceExpander {
   public Pair expand(ModuleList list, HookDeclList hooks) {
     ModuleList expandedList = `concModule();
     ArrayList hookList = new ArrayList();
-    expandedList = (ModuleList) `TopDown(ExpandSort(hookList)).fire(list);
+    try {
+      expandedList = (ModuleList) `TopDown(ExpandSort(hookList)).visit(list);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+    }
     //add a global expand method in every ModuleDecl contained in the SortList
-    `TopDown(
-        ExpandModule(packagePath,forTermgraph,hookList)).fire(expandedList);
+    try {
+      `TopDown(
+          ExpandModule(packagePath,forTermgraph,hookList)).visit(expandedList);
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+    }
     Iterator it = hookList.iterator();
     while(it.hasNext()) {
       HookDeclList hList = (HookDeclList) it.next();
@@ -239,9 +247,13 @@ public class GomReferenceExpander {
       public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
         HashMap map = new HashMap();
         Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
-        return (@moduleName@AbstractType) `label2path.fire(t);
-      }
-    ]%;
+        try {
+          return (@moduleName@AbstractType) `label2path.visit(t);
+        } catch (tom.library.sl.VisitFailure e) {
+          throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+
+        }}
+        ]%;
 
     String codeBlockTermGraph =%[
 
@@ -249,14 +261,23 @@ public class GomReferenceExpander {
         Info info = new Info();
         ArrayList marked = new ArrayList();
         HashMap map = new HashMap();
-        @moduleName@AbstractType tt = (@moduleName@AbstractType) `InnermostIdSeq(@NormalizeLabel@).fire(t);
+        @moduleName@AbstractType tt = null;
+        try {
+          tt = (@moduleName@AbstractType) `InnermostIdSeq(@NormalizeLabel@).visit(t);
+        } catch (tom.library.sl.VisitFailure e) {
+          throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+        }
         return label2path(tt);
       }
 
     public static @moduleName@AbstractType label2path(@moduleName@AbstractType t){
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
-      return (@moduleName@AbstractType) label2path.fire(t);
+      try {
+        return (@moduleName@AbstractType) label2path.visit(t);
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+      }
     }
 
     ]%;
@@ -343,8 +364,8 @@ public class GomReferenceExpander {
             Position old = getEnvironment().getPosition();
             Position rootpos = new Position(new int[]{});
             map.put(`label,old);
-            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
-            execute(`Try(TopDown(CollectSubterm@sortName@(label,info))));
+            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));            
+            `Try(TopDown(CollectSubterm@sortName@(label,info))).visit(getEnvironment());            
             getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
             return `lab@sortName@(label,info.term);
           }

@@ -1,6 +1,7 @@
 package sl;
 import sl.testsl.types.*;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
+
 
 public class NewBehaviour {
 
@@ -32,140 +33,140 @@ public class NewBehaviour {
     }
   }
 
-  public Term test1() {
+  public Term test1() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `Identity();
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test2() {
+  public Term test2() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `(R1());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test3() {
+  public Term test3() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `One(R1());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test4() {
+  public Term test4() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `OnceBottomUp((R2()));
-    subject = (Term) s.fire(subject);
-    subject = (Term) s.fire(subject);
-    return (Term) s.fire(subject);
+    subject = (Term) s.visit(subject);
+    subject = (Term) s.visit(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test5() {
+  public Term test5() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `All((R2()));
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testChoice() {
+  public Term testChoice() throws VisitFailure{
     Term subject = `f(b());
     Strategy s = `Choice(R2(),R1());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testChoiceSideEffect() {
+  public Term testChoiceSideEffect() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `Choice(Sequence(R1(),R2()),R1());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testNot() {
+  public Term testNot() throws VisitFailure{
     Term subject = `f(b());
     Strategy s = `Not(R2());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testNotSideEffect() {
+  public Term testNotSideEffect() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `Not(Sequence(R1(),R2()));
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test6() {
+  public Term test6() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `Sequence(All(R2()),All(All(R1())));
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test7() {
+  public Term test7() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `Omega(1,R2());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test8() {
+  public Term test8() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `Omega(2,R2());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test9() {
+  public Term test9() throws VisitFailure{
     Term subject = `f(b());
     Strategy s = `IfThenElse(R2(),Builda(),Buildb());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
   
-  public Term testITESideEffect() {
+  public Term testITESideEffect() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `IfThenElse(R2(),Identity(),Buildb());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test10() {
+  public Term test10() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `IfThenElse(R2(),Builda(),Buildb());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test11() {
+  public Term test11() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `OnceTopDownId((R1()));
-    subject = (Term) s.fire(subject);
-    subject = (Term) s.fire(subject);
-    return (Term) s.fire(subject);
+    subject = (Term) s.visit(subject);
+    subject = (Term) s.visit(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test12(){
+  public Term test12() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `Innermost((R2()));
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term test13(){
+  public Term test13() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `Outermost((R2()));
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
 
-  public Term testWhen1() {
+  public Term testWhen1() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `When_f(R2());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testCongruence1() {
+  public Term testCongruence1() throws VisitFailure{
     Term subject = `g(f(a()),b());
     Strategy s = `_g(R1(),R2());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testCongruence2() {
+  public Term testCongruence2() throws VisitFailure{
     Term subject = `f(a());
     Strategy s = `_g(R1(),R2());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 
-  public Term testCongruenceList() {
+  public Term testCongruenceList() throws VisitFailure{
     Term subject = `l(a(),b());
     Strategy s = `_l(R1());
-    return (Term) s.fire(subject);
+    return (Term) s.visit(subject);
   }
 }

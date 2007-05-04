@@ -15,9 +15,9 @@ public class Mu extends AbstractStrategy {
     muStrategyTopDown = new MuStrategyTopDown();
   }
 
-  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public final Visitable visitLight(Visitable any) throws VisitFailure {
     if(!expanded) { muExpand(); }
-    return visitors[V].visit(any);
+    return visitors[V].visitLight(any);
   }
 
   public int visit() {
@@ -32,9 +32,9 @@ public class Mu extends AbstractStrategy {
   public void muExpand() {
     try {
       muStrategyTopDown.init();
-      muStrategyTopDown.visit(this);
+      muStrategyTopDown.visitLight(this);
       expanded = true;
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("mu reduction failed");
     }
   }
@@ -92,8 +92,8 @@ class MuStrategyTopDown {
     stack.clear();
   }
 
-  public void visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    visit(any,null,0,new HashSet());
+  public void visitLight(Visitable any) throws VisitFailure {
+    visitLight(any,null,0,new HashSet());
   }
 
   /**
@@ -102,7 +102,7 @@ class MuStrategyTopDown {
    * @param childNumber the n-th subtemr of parent
    * @param set of already visited parent
    */
-  private void visit(jjtraveler.Visitable any, jjtraveler.Visitable parent, int childNumber, HashSet set) throws jjtraveler.VisitFailure {
+  private void visitLight(Visitable any, Visitable parent, int childNumber, HashSet set) throws VisitFailure {
     /* check that the current element has not already been expanded */
     if(set.contains(any)) {
       return;
@@ -113,8 +113,8 @@ class MuStrategyTopDown {
     %match(any) {
       m@Mu(var@MuVar[], v) -> {
         stack.addFirst(`m);
-        visit(`v,`m,0,set);
-        visit(`var,null,0,set);
+        visitLight(`v,`m,0,set);
+        visitLight(`var,null,0,set);
         stack.removeFirst();
         return;
       }
@@ -144,14 +144,14 @@ class MuStrategyTopDown {
             }
           }
           //System.out.println("MuVar: " + `n + " not found");
-          throw new jjtraveler.VisitFailure();
+          throw new VisitFailure();
         }
       }
     }
 
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
-      visit(any.getChildAt(i),any,i,set);
+      visitLight(any.getChildAt(i),any,i,set);
     }
   }
 }

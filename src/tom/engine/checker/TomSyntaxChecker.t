@@ -124,8 +124,8 @@ public class TomSyntaxChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          `mu(MuVar("x"),Try(Sequence(checkSyntax(this),All(MuVar("x"))))).visit((TomTerm)getWorkingTerm());
-        } catch(jjtraveler.VisitFailure e) {
+          `mu(MuVar("x"),Try(Sequence(checkSyntax(this),All(MuVar("x"))))).visitLight((TomTerm)getWorkingTerm());
+        } catch(tom.library.sl.VisitFailure e) {
           System.out.println("strategy failed");
         }
         // verbose
@@ -174,20 +174,20 @@ public class TomSyntaxChecker extends TomChecker {
       // Types
       TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
         tsc.verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, `tomName, `declarationList, `orgTrack);
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
       // Symbols
       SymbolDecl(Name(tomName)) -> {
         tsc.verifySymbol(TomSyntaxChecker.CONSTRUCTOR, tsc.getSymbolFromName(`tomName));
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
       ArraySymbolDecl(Name(tomName)) -> {
         tsc.verifySymbol(TomSyntaxChecker.OP_ARRAY, tsc.getSymbolFromName(`tomName));
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
       ListSymbolDecl(Name(tomName))  -> {
         tsc.verifySymbol(TomSyntaxChecker.OP_LIST, tsc.getSymbolFromName(`tomName));
-        `Fail().visit(null);
+        throw new tom.library.sl.VisitFailure();
       }
     }
 

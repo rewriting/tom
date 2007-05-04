@@ -335,13 +335,13 @@ private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionL
   return null;
 }
 
-protected jjtraveler.Visitable expandVariable(TomType contextType, jjtraveler.Visitable subject) {
+protected tom.library.sl.Visitable expandVariable(TomType contextType, tom.library.sl.Visitable subject) {
   if(contextType == null) {
     throw new TomRuntimeException("expandVariable: null contextType");
   }
   try{
     return `ChoiceTopDown(replace_expandVariable(contextType,this)).visit(subject);
-  } catch(jjtraveler.VisitFailure e) {
+  } catch(tom.library.sl.VisitFailure e) {
     return subject;
   }
 }
@@ -455,13 +455,13 @@ private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
   }
 }
 
-protected jjtraveler.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, jjtraveler.Visitable subject) {
+protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
   if(instantiatedVariable == null) {
     throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
   }
   try {
     return `ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
-  } catch(jjtraveler.VisitFailure e) {
+  } catch(tom.library.sl.VisitFailure e) {
     return subject;
   }
 }

@@ -27,7 +27,6 @@
 package tom.engine.verifier;
 
 import tom.engine.*;
-import aterm.*;
 import java.util.*;
 
 import tom.engine.TomBase;
@@ -55,7 +54,7 @@ public class TomIlTools {
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/zenon/Zenon.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %typeterm Collection {
     implement { java.util.Collection }
     is_sort(t) { t instanceof java.util.Collection }
@@ -226,8 +225,8 @@ public class TomIlTools {
   public Collection collectSymbols(ZExpr subject) {
     Collection result = new HashSet();
     try {
-      `TopDown(collect_symbols(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      `TopDown(collect_symbols(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy collect_symbols failed");
     }
     return result;
@@ -235,8 +234,8 @@ public class TomIlTools {
   public Collection collectSymbolsFromZSpec(ZSpec subject) {
     Collection result = new HashSet();
     try {
-      `TopDown(collect_symbols(result)).visit(subject);
-    } catch (jjtraveler.VisitFailure e) {
+      `TopDown(collect_symbols(result)).visitLight(subject);
+    } catch (tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("Strategy collect_symbols failed");
     }
     return result;

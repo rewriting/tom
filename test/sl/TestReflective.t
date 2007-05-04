@@ -32,7 +32,7 @@ package sl;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 public class TestReflective extends TestCase {
 
@@ -192,8 +192,8 @@ public class TestReflective extends TestCase {
     fail("no !");
   }
 
-  public void testS1Id() {
-    Strategy s = (Strategy)`S1().fire(`Identity());
+  public void testS1Id() throws VisitFailure{
+    Strategy s = (Strategy)`S1().visit(`Identity());
     %match(s) {
       Identity() -> { fail("Id should rewrite to fail"); }
       Fail() -> { return; }
@@ -201,8 +201,8 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
-  public void testS1Fail() {
-    Strategy s = (Strategy)`S1().fire(`Fail());
+  public void testS1Fail() throws VisitFailure{
+    Strategy s = (Strategy)`S1().visit(`Fail());
     %match(s) {
       Fail() -> { fail("Fail should rewrite to Identity"); }
       Identity() -> { return; }
@@ -210,37 +210,37 @@ public class TestReflective extends TestCase {
     fail("should not be here");
   }
 
-  public void testS3Id() {
-    Strategy s = (Strategy)`S3().fire(`Identity());
+  public void testS3Id() throws VisitFailure{
+    Strategy s = (Strategy)`S3().visit(`Identity());
     %match(s) {
       Identity() -> { return; }
     }
     fail("should not be here");
   }
 
-  public void testS3All() {
-    Strategy s = (Strategy)`S3().fire(`All(Identity()));
+  public void testS3All() throws VisitFailure{
+    Strategy s = (Strategy)`S3().visit(`All(Identity()));
     %match(s) {
       All[] -> { return; }
     }
     fail("should not be here");
   }
 
-  public void testS3AllAllvisit() {
+  public void testS3AllAllvisit() throws VisitFailure{
     try {
-      Strategy s = (Strategy)`S3().visit(`All(All(Identity())));
+      Strategy s = (Strategy)`S3().visitLight(`All(All(Identity())));
       %match(s) {
         All(All(Identity())) -> { fail("S3 did not rewrite s"); }
         All(Identity()) -> { return; }
       }
-    } catch (jjtraveler.VisitFailure vf) {
+    } catch (tom.library.sl.VisitFailure vf) {
       fail("should not catch exception");
     }
     fail("should not be here");
   }
 
-  public void testS3AllAll() {
-    Strategy s = (Strategy)`S3().fire(`All(All(Identity())));
+  public void testS3AllAll() throws VisitFailure{
+    Strategy s = (Strategy)`S3().visit(`All(All(Identity())));
     %match(s) {
       All(All(Identity())) -> { fail("S3 did not rewrite s"); }
       All(Identity()) -> { return; }
@@ -248,65 +248,65 @@ public class TestReflective extends TestCase {
     fail("should not be here with "+s);
   }
 
-  public void testS3Allllll() {
-    Strategy s = (Strategy)`S3().fire(`All(All(All(All(Identity())))));
+  public void testS3Allllll() throws VisitFailure{
+    Strategy s = (Strategy)`S3().visit(`All(All(All(All(Identity())))));
     %match(s) {
       All(Identity()) -> { fail("should not be here"); }
     }
   }
 
-  public void testAlllllBU() {
-    Strategy s = (Strategy)`BottomUp(S3()).fire(`All(All(All(All(Identity())))));
+  public void testAlllllBU() throws VisitFailure{
+    Strategy s = (Strategy)`BottomUp(S3()).visit(`All(All(All(All(Identity())))));
     %match(s) {
       All(Identity()) -> { return; }
     }
     fail("should not be here with "+s);
   }
 
-  public void testcountAll1() {
+  public void testcountAll1() throws VisitFailure {
     Strategy s = `All(S2(0, "", All(All(Identity()))));
     assertEquals("countAll should return 3 with "+s, 3, countAll(s));
   }
 
-  public void testCountAll2() {
+  public void testCountAll2() throws VisitFailure{
     Strategy s = `All(S2(0, "", All(All(Identity()))));
     assertEquals(
-        "countAll should return 2 with `BottomUp(S3()).fire(`"+s+")", 2,
-        countAll((Strategy)`BottomUp(S3()).fire(s)));
+        "countAll should return 2 with `BottomUp(S3()).visit(`"+s+")", 2,
+        countAll((Strategy)`BottomUp(S3()).visit(s)));
   }
 
-  public void testStratNoStrat() {
+  public void testStratNoStrat() throws VisitFailure{
     assertEquals("S3 on something that is not a strat fails back to Id",
-        `a(),`S3().fire(`a()));
+        `a(),`S3().visit(`a()));
   }
 
-  public void testStratNoStratFail() {
+  public void testStratNoStratFail() throws VisitFailure{
     try {
-      `S4(S1(),0,S1()).fire(`a());
+      `S4(S1(),0,S1()).visit(`a());
       fail("This application should fail");
-    } catch (tom.library.sl.FireException e) {
+    } catch (tom.library.sl.VisitFailure e) {
       return;
     }
     fail("The Exception should have been catched");
   }
 
-  public void testcountAll3() {
+  public void testcountAll3() throws VisitFailure {
     Strategy s = `All(S4(All(All(Identity())), 0, All(All(All(Identity())))));
     assertEquals("countAll should return 6 with `"+s, 6, countAll(s));
   }
 
-  public void testcountAll4() {
+  public void testcountAll4() throws VisitFailure{
     Strategy s = `All(S4(All(All(Identity())), 0, All(All(All(Identity())))));
     assertEquals(
-        "countAll should return 3 with `BottomUp(S3()).fire("+s+")", 3,
-        countAll((Strategy)`BottomUp(S3()).fire(s)));
+        "countAll should return 3 with `BottomUp(S3()).visit("+s+")", 3,
+        countAll((Strategy)`BottomUp(S3()).visit(s)));
   }
 
-  public void testcountAll5() {
+  public void testcountAll5() throws VisitFailure{
     Strategy s = `S4(Identity(), 0, Fail());
     assertEquals(
-        "countAll should return 2 with `BottomUp(S5()).fire(`"+s+")", 2,
-        countAll((Strategy)`BottomUp(S5()).fire(s)));
+        "countAll should return 2 with `BottomUp(S5()).visit(`"+s+")", 2,
+        countAll((Strategy)`BottomUp(S5()).visit(s)));
   }
 
   %strategy S1() extends `Identity() {
@@ -347,9 +347,9 @@ public class TestReflective extends TestCase {
     implement { Counter }
     is_sort(t) { t instanceof Counter }
   }
-  public int countAll(Strategy s) {
+  public int countAll(Strategy s) throws VisitFailure {
     Counter c = new Counter();
-    `TopDown(incAll(c)).fire(s);
+    `TopDown(incAll(c)).visit(s);
     return c.count;
   }
 

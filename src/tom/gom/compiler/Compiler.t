@@ -40,16 +40,11 @@ import tom.gom.tools.error.GomRuntimeException;
 
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
+import tom.library.sl.VisitFailure;
 
 public class Compiler {
 
   %include { ../adt/objects/Objects.tom}
-
-  %include { mutraveler.tom }
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();

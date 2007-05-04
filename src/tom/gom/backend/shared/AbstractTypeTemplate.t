@@ -63,7 +63,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
 package @getPackage()@;
 @generateImport()@
 
-public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, tom.library.sl.Visitable, Comparable @generateInterface()@ {
+public abstract class @className()@ implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable @generateInterface()@ {
 ]%);
 
     if (! hooks.isEmptyconcHook()) {
@@ -102,7 +102,7 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
     this.uniqueID = uniqueID;
   }
 
-  abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
+  abstract public @className()@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure;
 }
 ]%);
  }

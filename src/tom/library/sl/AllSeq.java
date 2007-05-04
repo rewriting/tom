@@ -44,11 +44,11 @@ public class AllSeq extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public final Visitable visitLight(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
-    jjtraveler.Visitable result = any;
+    Visitable result = any;
     for (int i = 0; i < childCount; i++) {
-      jjtraveler.Visitable newChild = visitors[ARG].visit(result.getChildAt(i));
+      Visitable newChild = visitors[ARG].visitLight(result.getChildAt(i));
       result = result.setChildAt(i, newChild);
     }
     return result;

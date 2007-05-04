@@ -69,11 +69,11 @@ public class MuVar extends AbstractStrategy {
     }
   }
   
-  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+  public final Visitable visitLight(Visitable any) throws VisitFailure {
     if(instance != null) {
-      return instance.visit(any);
+      return instance.visitLight(any);
     } else {
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
   }
 

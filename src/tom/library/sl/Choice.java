@@ -49,11 +49,11 @@ public class Choice extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable visitable) throws VisitFailure {
     try {
-      return visitors[FIRST].visit(visitable);
-    } catch (jjtraveler.VisitFailure f) {
-      return visitors[THEN].visit(visitable);
+      return visitors[FIRST].visitLight(visitable);
+    } catch (VisitFailure f) {
+      return visitors[THEN].visitLight(visitable);
     }
   }
 

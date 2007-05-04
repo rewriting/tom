@@ -49,10 +49,10 @@ public class OneId extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws  jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable any) throws  VisitFailure {
     int childCount = any.getChildCount();
     for (int i = 0; i < childCount; i++) {
-      jjtraveler.Visitable newSubterm = visitors[ARG].visit(any.getChildAt(i));
+      Visitable newSubterm = visitors[ARG].visitLight(any.getChildAt(i));
       if (newSubterm != any.getChildAt(i)) {
         return any.setChildAt(i,newSubterm);
       } 

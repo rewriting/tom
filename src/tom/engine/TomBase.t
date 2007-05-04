@@ -50,7 +50,7 @@ import tom.engine.exception.TomRuntimeException;
 import tom.platform.adt.platformoption.*;
 
 import tom.library.sl.*;
-import jjtraveler.VisitFailure;
+import tom.library.sl.VisitFailure;
 
 
 /**
@@ -60,8 +60,9 @@ import jjtraveler.VisitFailure;
 public final class TomBase {
 
   %include { ./adt/tomsignature/TomSignature.tom }
-  %include { mustrategy.tom }
-  %typeterm Collection {
+  %include { sl.tom }
+  
+%typeterm Collection {
     implement { java.util.Collection }
     is_sort(t) { t instanceof java.util.Collection }
   }
@@ -256,9 +257,9 @@ public final class TomBase {
   }
 
   // ------------------------------------------------------------
-  public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
+  public static void collectVariable(Collection collection, tom.library.sl.Visitable subject) {
     try {
-    `TopDownCollect(collectVariable(collection)).visit(`subject);
+    `TopDownCollect(collectVariable(collection)).visitLight(`subject);
     } catch(VisitFailure e) { }
   }
 
@@ -270,7 +271,7 @@ public final class TomBase {
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
-        `Fail().visit(`v);
+        `Fail().visitLight(`v);
       }
 
       v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
@@ -278,7 +279,7 @@ public final class TomBase {
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
-        `Fail().visit(`v);
+        `Fail().visitLight(`v);
       }
 
       // to collect annoted nodes but avoid collect variables in optionSymbol
@@ -288,13 +289,13 @@ public final class TomBase {
         if(annotedVariable!=null) {
           collection.add(annotedVariable);
         }
-        `Fail().visit(`t);
+        `Fail().visitLight(`t);
       }
 
     }
   }
 
-  public static Map collectMultiplicity(jjtraveler.Visitable subject) {
+  public static Map collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
     ArrayList variableList = new ArrayList();
     collectVariable(variableList,`subject);

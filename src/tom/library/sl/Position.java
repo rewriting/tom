@@ -185,7 +185,7 @@ public class Position implements Cloneable,Path {
             environment.setSubject(t);
             return Environment.SUCCESS;
           }
-          public jjtraveler.Visitable visit(jjtraveler.Visitable x) {
+          public Visitable visitLight(Visitable x) {
             return t;
           }
         });
@@ -200,19 +200,19 @@ public class Position implements Cloneable,Path {
   public Strategy getSubterm() {
     return new AbstractStrategy() {
       { initSubterm(); }
-      public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure {
-        final jjtraveler.Visitable[] ref = new jjtraveler.Visitable[1];
+      public Visitable visitLight(Visitable subject) throws VisitFailure {
+        final Visitable[] ref = new Visitable[1];
         getOmega(
             new Identity() {
               public int visit() {
                 ref[0]=environment.getSubject();
                 return Environment.SUCCESS;
               }
-              public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
+              public Visitable visitLight(Visitable v) {
                 ref[0] = v;
                 return v;
               }
-            }).visit(subject);
+            }).visitLight(subject);
         return ref[0];
       }
       public int visit() {
@@ -223,14 +223,18 @@ public class Position implements Cloneable,Path {
                 ref[0]=environment.getSubject();
                 return Environment.SUCCESS;
               }
-              public jjtraveler.Visitable visit(jjtraveler.Visitable v) {
+              public Visitable visitLight(Visitable v) {
                 ref[0] = (Visitable)v;
                 return v;
               }
             });
-        s.fire(environment.getRoot());
-        environment.setSubject(ref[0]);
-        return Environment.SUCCESS;
+        try {
+          s.visit(environment.getRoot());
+          environment.setSubject(ref[0]);
+          return Environment.SUCCESS;
+        } catch(VisitFailure e) { 
+          return Environment.FAILURE;
+        }
       }
     };
   }

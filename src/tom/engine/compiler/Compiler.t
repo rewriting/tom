@@ -99,12 +99,12 @@ public class Compiler extends TomGenericPlugin {
     try {
       // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
-      TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visit((TomTerm)getWorkingTerm());
+      TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visitLight((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       //TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
       Set hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visit(compiledTerm);
+      TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visitLight(compiledTerm);
       //TomTerm renamedTerm = compiledTerm;
       // verbose
       getLogger().log( Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
@@ -143,7 +143,7 @@ public class Compiler extends TomGenericPlugin {
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = (SlotList) `preProcessing_makeTerm(compiler).visit(`termArgs);
+        SlotList newTermArgs = (SlotList) `preProcessing_makeTerm(compiler).visitLight(`termArgs);
         TomList tomListArgs = TomBase.slotListToTomList(newTermArgs);
 
         if(TomBase.hasConstant(`optionList)) {
@@ -175,13 +175,13 @@ public class Compiler extends TomGenericPlugin {
         Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
         PatternInstructionList newPatternInstructionList = `concPatternInstruction();
         PatternList negativePattern = `concPattern();
-        TomTerm newMatchSubjectList = (TomTerm) `preProcessing(compiler).visit(`matchSubjectList);
+        TomTerm newMatchSubjectList = (TomTerm) `preProcessing(compiler).visitLight(`matchSubjectList);
         while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
           /*
            * the call to preProcessing performs the recursive expansion
            * of nested match constructs
            */
-          PatternInstruction newPatternInstruction = (PatternInstruction) `preProcessing(compiler).visit(`patternInstructionList.getHeadconcPatternInstruction());
+          PatternInstruction newPatternInstruction = (PatternInstruction) `preProcessing(compiler).visitLight(`patternInstructionList.getHeadconcPatternInstruction());
 
 matchBlock: {
               %match(newPatternInstruction) {
@@ -215,7 +215,7 @@ matchBlock: {
                       `Match(SubjectList(generatedSubjectList),
                           concPatternInstruction(generatedPatternInstruction),
                           generatedMatchOptionList);
-                    generatedMatch = (Instruction) `preProcessing(compiler).visit(generatedMatch);
+                    generatedMatch = (Instruction) `preProcessing(compiler).visitLight(generatedMatch);
                     /*System.out.println("Generate new Match"+generatedMatch); */
                     newPatternInstruction =
                       `PatternInstruction(Pattern(subjectList,newTermList,concTomTerm()),generatedMatch, option);
@@ -260,15 +260,15 @@ matchBlock: {
               subjectListAST = `concTomTerm(subjectListAST*,arg);
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
-              //return default strategy.visit(arg)
+              //return default strategy.visitLight(arg)
               Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),vType,subjectListAST));
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
+              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
             }
           }
           jVisitList = jVisitList.getTailconcTomVisit();
         }
-        return (Declaration) `preProcessing(compiler).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
+        return (Declaration) `preProcessing(compiler).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
     }//end match
   } // end strategy
@@ -279,7 +279,7 @@ matchBlock: {
 
   %strategy preProcessing_makeTerm_once(compiler:Compiler) extends `Identity()  {
     visit TomTerm {
-      t -> {return (TomTerm) `preProcessing(compiler).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
+      t -> {return (TomTerm) `preProcessing(compiler).visitLight(`BuildReducedTerm(t,compiler.getTermType(t)));}
     }
   }
 
@@ -363,7 +363,7 @@ matchBlock: {
         Set newContext = new HashSet(map.keySet());
         newContext.addAll(context);
         //System.out.println("newContext = " + newContext);
-        return (Instruction)`TopDown(findRenameVariable(newContext)).visit(`instruction);
+        return (Instruction)`TopDown(findRenameVariable(newContext)).visitLight(`instruction);
       }
     }
   }

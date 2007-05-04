@@ -38,10 +38,6 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
 public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
@@ -49,7 +45,7 @@ public class Backend {
   private boolean strategySupport = true;
 
   %include { ../adt/objects/Objects.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   Backend(TemplateFactory templatefactory,
           File tomHomePath,

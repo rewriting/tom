@@ -41,7 +41,6 @@ import tom.platform.Plugin;
 import tom.platform.StatusHandler;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
-import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * TomGenericPlugin is an abstract class which provides some code to
@@ -54,7 +53,6 @@ import jjtraveler.reflective.VisitableVisitor;
 public abstract class TomGenericPlugin implements Plugin {
   
   %include { adt/platformoption/PlatformOption.tom }
-  %include{ mustrategy.tom }
 
   /** The name of the plugin. */
   private String pluginName;

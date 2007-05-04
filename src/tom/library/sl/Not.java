@@ -41,13 +41,13 @@ public class Not extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable x) throws jjtraveler.VisitFailure {
+  public Visitable visitLight(Visitable x) throws VisitFailure {
     try {
-      visitors[ARG].visit(x);
-    } catch (jjtraveler.VisitFailure f) {
+      visitors[ARG].visitLight(x);
+    } catch (VisitFailure f) {
       return x;
     }
-    throw new jjtraveler.VisitFailure();
+    throw new VisitFailure();
   }
 
   public int visit() {

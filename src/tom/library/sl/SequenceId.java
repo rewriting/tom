@@ -45,10 +45,10 @@ public class SequenceId   extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
-    jjtraveler.Visitable v = visitors[FIRST].visit(visitable);
+  public Visitable visitLight(Visitable visitable) throws VisitFailure {
+    Visitable v = visitors[FIRST].visitLight(visitable);
     if(v != visitable) {
-      return visitors[THEN].visit(v);
+      return visitors[THEN].visitLight(v);
     } else {
       return v;
     }

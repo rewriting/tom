@@ -123,12 +123,12 @@ public class TomOptimizer extends TomGenericPlugin {
         TomTerm renamedTerm = (TomTerm)getWorkingTerm();
 
         if(getOptionBooleanValue("optimize2")) {
-          renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
-          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
-          renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
+          renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
+          renamedTerm = (TomTerm) optStrategy1.visitLight(renamedTerm);
+          renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else {
 	        if(getOptionBooleanValue("optimize")) {
-	          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
+	          renamedTerm = (TomTerm) optStrategy1.visitLight(renamedTerm);
 	        }
         }
         setWorkingTerm(renamedTerm);
@@ -190,8 +190,8 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Instruction {
       TypedAction[AstInstruction=inst] -> {
         /* recursive call of the current strategy on the first child */
-        s.visit(`inst);
-        `Fail().visit(null);
+        s.visitLight(`inst);
+        throw new tom.library.sl.VisitFailure();
       }
     }
  
@@ -219,7 +219,7 @@ public class TomOptimizer extends TomGenericPlugin {
         if(variableName == `name) {
           list.add(`t);
           if (list.size() >= max ) {
-            `Fail().visit(null);
+            throw new tom.library.sl.VisitFailure();
           }
         }
       }
@@ -235,13 +235,13 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Instruction {
       Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
-          throw new jjtraveler.VisitFailure();
+          throw new tom.library.sl.VisitFailure();
         }
       }
 
       LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
-          throw new jjtraveler.VisitFailure();
+          throw new tom.library.sl.VisitFailure();
         }
       }
     }
@@ -250,16 +250,16 @@ public class TomOptimizer extends TomGenericPlugin {
   private static boolean expConstantInBody(Expression exp, Instruction body) {
     HashSet c = new HashSet();
     try {
-      `TopDownCollect(findRefVariable(c)).visit(exp);
-    } catch(jjtraveler.VisitFailure e) {
+      `TopDownCollect(findRefVariable(c)).visitLight(exp);
+    } catch(tom.library.sl.VisitFailure e) {
       logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
     }
     Iterator it = c.iterator();
     while(it.hasNext()) {
       TomName name = (TomName) it.next();
       try {
-        `isAssigned(name).visit(body);
-      } catch(jjtraveler.VisitFailure e) {
+        `isAssigned(name).visitLight(body);
+      } catch(tom.library.sl.VisitFailure e) {
         return false;
       }
     }
@@ -271,7 +271,7 @@ public class TomOptimizer extends TomGenericPlugin {
         Ref((Variable|VariableStar)[AstName=name])  -> {
           set.add(`name);
           //stop to visit this branch (like "return false" with traversal) 
-          throw new jjtraveler.VisitFailure();
+          throw new tom.library.sl.VisitFailure();
         }
       }
     }
@@ -294,7 +294,7 @@ public class TomOptimizer extends TomGenericPlugin {
       } // end match
     }
 
-    private static boolean compare(jjtraveler.Visitable term1, jjtraveler.Visitable term2) {
+    private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
       return factory.remove(term1)==factory.remove(term2);
     }
 
@@ -331,8 +331,8 @@ public class TomOptimizer extends TomGenericPlugin {
           }
 
           ArrayList list  = new ArrayList();
-          //`findOccurencesUpTo(name,list,2).visit(`body);
-          `computeOccurences(name,list).visit(`body);
+          //`findOccurencesUpTo(name,list,2).visitLight(`body);
+          `computeOccurences(name,list).visitLight(`body);
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
@@ -346,8 +346,8 @@ public class TomOptimizer extends TomGenericPlugin {
             return `body;
           } else if(mult == 1) {
             list.clear();
-          //  `findOccurencesUpTo(name,list,2).visit(`exp);
-            `computeOccurences(name,list).visit(`exp);
+          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
+            `computeOccurences(name,list).visitLight(`exp);
             if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -355,7 +355,7 @@ public class TomOptimizer extends TomGenericPlugin {
                     new Object[]{ new Integer(mult), `extractRealName(varName) });
               }
               //System.out.println("replace1: " + `var + "\nby: " + `exp);
-              return (Instruction) `inlineInstruction(name,exp).visit(`body);
+              return (Instruction) `inlineInstruction(name,exp).visitLight(`body);
             } else {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -384,8 +384,8 @@ public class TomOptimizer extends TomGenericPlugin {
           }
           ArrayList list  = new ArrayList();
           
-          //`findOccurencesUpTo(name,list,2).visit(`body);
-            `computeOccurences(name,list).visit(`body);
+          //`findOccurencesUpTo(name,list,2).visitLight(`body);
+            `computeOccurences(name,list).visitLight(`body);
 
           int mult = list.size();
           if(mult == 0) {
@@ -408,7 +408,7 @@ public class TomOptimizer extends TomGenericPlugin {
                     new Object[]{ new Integer(mult), `extractRealName(varName) });
               }
               // System.out.println("replace2: " + `var + "\nby: " + `exp);
-              return (Instruction) `inlineInstruction(name,exp).visit(`body);
+              return (Instruction) `inlineInstruction(name,exp).visitLight(`body);
             } else {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
@@ -464,9 +464,9 @@ public class TomOptimizer extends TomGenericPlugin {
      */ 
     private boolean incompatible(Expression c1, Expression c2) {
       try {
-        Expression res = (Expression) `InnermostId(NormExpr(this)).visit(`And(c1,c2));
+        Expression res = (Expression) `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
         return res ==`FalseTL();
-      } catch(jjtraveler.VisitFailure e) {
+      } catch(tom.library.sl.VisitFailure e) {
         return false;
       }
     }
@@ -501,13 +501,13 @@ public class TomOptimizer extends TomGenericPlugin {
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               ArrayList list  = new ArrayList();
-            //  `findOccurencesUpTo(name1,list,2).visit(`body2);
-            `computeOccurences(name1,list).visit(`body2);
+            //  `findOccurencesUpTo(name1,list,2).visitLight(`body2);
+            `computeOccurences(name1,list).visitLight(`body2);
               int mult = list.size();
               if(mult==0){
                 logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
                     new Object[]{"block-fusion2"});    
-                Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visit(`body2));
+                Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
                 return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
               }
             }
