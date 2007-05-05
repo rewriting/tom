@@ -40,7 +40,7 @@ import antipattern.term.types.*;
 
 
 import tom.library.sl.*;
-import VisitFailure;
+
 
 
 public class ApAndDisunification1 implements Matching{
@@ -197,7 +197,7 @@ public class ApAndDisunification1 implements Matching{
 
 //      System.out.println("Analyzing " + `v + " position=" + getPosition() );
 
-        Strategy useOmegaPath = (Strategy)getPosition().getOmegaPath(`CountAnti());				
+        Strategy useOmegaPath = (Strategy)getEnvironment().getPosition().getOmegaPath(`CountAnti());				
 
         useOmegaPath.visitLight(subject);
 

@@ -36,8 +36,9 @@ import java.util.*;
 
 import antipattern.termaso.*;
 import antipattern.termaso.types.*;
+import tom.library.sl.*;
 
-import VisitFailure;
+
 
 //simple algorithm implementing the associative matching
 public class ClassicalAssociativity {
@@ -49,7 +50,11 @@ public class ClassicalAssociativity {
   private static int globalCounter = 0; 
 
   public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-    return (Constraint)`InnermostId(PerformAssociativeMatching()).visit(c);
+    try {
+      return (Constraint)`InnermostId(PerformAssociativeMatching()).visit(c);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("Failure");
+    }
   }
 
   %strategy PerformAssociativeMatching() extends Identity(){
@@ -219,7 +224,11 @@ public class ClassicalAssociativity {
   private int counter = 0;	
   private int nbOccurences(Term t, Constraint toSearchIn){
     counter = 0;
-    `TopDown(CheckOccurence(t)).visit(toSearchIn);
+    try {
+      `TopDown(CheckOccurence(t)).visit(toSearchIn);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("Failure");
+    }
     return counter;
   }	
 

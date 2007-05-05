@@ -40,7 +40,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-import VisitFailure;
+
 
 //another algorithm for solving anti-pattern problems
 //applies the trasnformation rule, but after that it does not
@@ -78,7 +78,11 @@ public class ApElimination implements Matching{
       Match(p,s) -> { 
         transformedMatch = `Equal(p,s/* GenericGroundTerm("SUBJECT") */);
         // collect free variables
-        `TopDown(AnalyzeTerm(p,false)).visit(`p);
+        try {
+          `TopDown(AnalyzeTerm(p,false)).visit(`p);
+        } catch(VisitFailure e) {
+          throw new tom.engine.exception.TomRuntimeException("Failure");
+        }
         break label;
       }
       _ -> {
@@ -183,7 +187,7 @@ public class ApElimination implements Matching{
 
 //      System.out.println("Analyzing " + `v + " position=" + getPosition() );
 
-        Strategy useOmegaPath = (Strategy)getPosition().getOmegaPath(`CountAnti());				
+        Strategy useOmegaPath = (Strategy)getEnvironment().getPosition().getOmegaPath(`CountAnti());				
 
         useOmegaPath.visitLight(subject);
 

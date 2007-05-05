@@ -39,7 +39,7 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import VisitFailure;
+
 import tom.library.sl.*;
 
 public class MatchingDifferences implements Matching {

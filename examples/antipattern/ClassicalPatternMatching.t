@@ -34,7 +34,6 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import VisitFailure;
 import tom.library.sl.*;
 
 public class ClassicalPatternMatching extends antipattern.term.TermBasicStrategy {

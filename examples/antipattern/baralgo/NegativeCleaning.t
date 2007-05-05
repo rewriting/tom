@@ -34,7 +34,7 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-import VisitFailure;
+
 
 import java.util.Collection;
 import tom.library.sl.*;

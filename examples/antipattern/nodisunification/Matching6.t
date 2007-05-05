@@ -40,7 +40,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-import VisitFailure;
+
 
 
 public class Matching6 implements Matching {
@@ -50,7 +50,11 @@ public class Matching6 implements Matching {
 	%include { java/util/types/Collection.tom}
 	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-		return (Constraint)`SequenceId(InnermostId(EnrichedPatternMatching()),InnermostId(Cleaning())).visit(c);
+    try {
+      return (Constraint)`SequenceId(InnermostId(EnrichedPatternMatching()),InnermostId(Cleaning())).visit(c);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("Failure");
+    }
 	}	
 	
 	%strategy EnrichedPatternMatching() extends `Identity(){
@@ -165,7 +169,11 @@ public class Matching6 implements Matching {
 		
 		containsFlag = false;
 		
-		`OnceTopDownId(CheckOccurence(t)).visit(c);
+		try {
+      `OnceTopDownId(CheckOccurence(t)).visit(c);
+    } catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("Failure");
+    }
 		
 		return containsFlag;
 	}
