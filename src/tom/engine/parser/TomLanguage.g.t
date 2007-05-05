@@ -375,39 +375,52 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     LinkedList slotNameList = new LinkedList();
     LinkedList pairNameDeclList = new LinkedList();
     String stringSlotName = null;
+    String stringTypeArg = null;
 
     clearText();
 }
     :(
         name:ALL_ID
         {
-	Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+        Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
         options.add(ot);
-        if (symbolTable.getSymbolFromName(name.getText()) != null) {
-	throw new TomException(TomMessage.invalidStrategyName, new Object[]{name.getText()});
+        if(symbolTable.getSymbolFromName(name.getText()) != null) {
+          throw new TomException(TomMessage.invalidStrategyName, new Object[]{name.getText()});
         }
         }
         (
-            LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
+            LPAREN (firstSlot1:ALL_ID (colon:COLON)? secondSlot1:ALL_ID 
             {
-                stringSlotName = slotName.getText(); 
+              if(colon != null) {
+                stringSlotName = firstSlot1.getText(); 
+                stringTypeArg = secondSlot1.getText(); 
+                } else {
+                stringSlotName = secondSlot1.getText(); 
+                stringTypeArg = firstSlot1.getText(); 
+                }
                 TomName astName = `Name(stringSlotName);
                 slotNameList.add(astName); 
 
                 // Define get<slot> method.
-                Option slotOption = `OriginTracking(Name(stringSlotName),slotName.getLine(),currentFile());
+                Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
                 TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),TomTypeAlone("Strategy"),concConstraint());
                 Instruction slotInst = `Return((TargetLanguageToTomTerm(ITL("((" + name.getText() + ")t).get" + stringSlotName + "()"))));
                 Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,slotInst,slotOption);
 
                 pairNameDeclList.add(`PairNameDecl(astName,slotDecl)); 
-                types = `concTomType(types*,TomTypeAlone(typeArg.getText()));
+                types = `concTomType(types*,TomTypeAlone(stringTypeArg));
             }
             (
                 COMMA
-                slotName2:ALL_ID COLON typeArg2:ALL_ID
+                firstSlot2:ALL_ID (colon2:COLON)? secondSlot2:ALL_ID
                 {
-                    stringSlotName = slotName2.getText(); 
+              if(colon != null) {
+                stringSlotName = firstSlot2.getText(); 
+                stringTypeArg = secondSlot2.getText(); 
+                } else {
+                stringSlotName = secondSlot2.getText(); 
+                stringTypeArg = firstSlot2.getText(); 
+                }
                     TomName astName = ASTFactory.makeName(stringSlotName);
                     if(slotNameList.indexOf(astName) != -1) {
                       getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
@@ -417,13 +430,13 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                     slotNameList.add(astName); 
 
                     // Define get<slot> method.
-                    Option slotOption = `OriginTracking(Name(stringSlotName),slotName.getLine(),currentFile());
+                    Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
                     TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),TomTypeAlone("Strategy"),concConstraint());
                     Instruction slotInst = `Return((TargetLanguageToTomTerm(ITL("((" + name.getText() + ")t).get" + stringSlotName + "()"))));
                     Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,slotInst,slotOption);
 
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl)); 
-                    types = `concTomType(types*,TomTypeAlone(typeArg2.getText()));
+                    types = `concTomType(types*,TomTypeAlone(stringTypeArg));
                 }
             )*
             )? RPAREN

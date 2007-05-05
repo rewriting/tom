@@ -1,3 +1,9 @@
+2007-05-05  pem
+  * mutraveler has been removed
+  * new interface for strategies
+  * bootinstall
+  * new syntax: %strategy(Sort arg) can be used instead of %strategy(arg:Sort)
+
 2007-05-02  pem
   * visit() now returns the status
   * bootinstall
