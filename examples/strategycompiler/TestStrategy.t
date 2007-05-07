@@ -35,8 +35,8 @@ public class TestStrategy extends TestCase {
   } 
 
   %typeterm Position {
-    implement { tom.library.strategy.mutraveler.Position }
-    is_sort(t)     { t instanceof tom.library.strategy.mutraveler.Position }
+    implement { tom.library.sl.Position }
+    is_sort(t)     { t instanceof tom.library.sl.Position }
   }
 
   static boolean bool0 = true;
@@ -57,28 +57,28 @@ public class TestStrategy extends TestCase {
     String string = new String();
     int i = 0;
     
-    MuStrategy rule0 = StrategyCompiler.compile(`S0(), "s0");
-    MuStrategy rule1 = StrategyCompiler.compile(`S1(bool), "s1");
-    MuStrategy rule2 = StrategyCompiler.compile(`S2(along,string), "s2");
-    MuStrategy rule3 = StrategyCompiler.compile(`S3(i), "s3");
-    MuStrategy rule4 = StrategyCompiler.compile(`S4(hashtable, linkedList), "s4");
-    MuStrategy rule5 = StrategyCompiler.compile(`S5(), "s5");
-    MuStrategy rule6 = StrategyCompiler.compile(`S6(), "s6");
-    MuStrategy rule7 = StrategyCompiler.compile(`S7(), "s7");
-    MuStrategy rule8 = StrategyCompiler.compile(`S8(bool), "s8");
-    MuStrategy rule9 = StrategyCompiler.compile(`S9(i), "s9");
+    Strategy rule0 = StrategyCompiler.compile(`S0(), "s0");
+    Strategy rule1 = StrategyCompiler.compile(`S1(bool), "s1");
+    Strategy rule2 = StrategyCompiler.compile(`S2(along,string), "s2");
+    Strategy rule3 = StrategyCompiler.compile(`S3(i), "s3");
+    Strategy rule4 = StrategyCompiler.compile(`S4(hashtable, linkedList), "s4");
+    Strategy rule5 = StrategyCompiler.compile(`S5(), "s5");
+    Strategy rule6 = StrategyCompiler.compile(`S6(), "s6");
+    Strategy rule7 = StrategyCompiler.compile(`S7(), "s7");
+    Strategy rule8 = StrategyCompiler.compile(`S8(bool), "s8");
+    Strategy rule9 = StrategyCompiler.compile(`S9(i), "s9");
    
     try{
-      assertSame("g(a,a) return a", MuTraveler.init(`rule0).visitLight(`g(a(),a())), `a());
-      assertSame("a return b", MuTraveler.init(`rule1).visitLight(`a()), `b());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule2).visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule3).visitLight(`g(a(),a())), `a());
-      assertSame("g(a,b) return g(b,a)", MuTraveler.init(`rule4).visitLight(`g(a(),b())), `g(b(),a()));
-      assertSame("g(a,a) return a", MuTraveler.init(`rule5).visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule6).visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule7).visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule8).visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", MuTraveler.init(`rule9).visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule0.visitLight(`g(a(),a())), `a());
+      assertSame("a return b", `rule1.visitLight(`a()), `b());
+      assertSame("g(a,a) return a", `rule2.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule3.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,b) return g(b,a)", `rule4.visitLight(`g(a(),b())), `g(b(),a()));
+      assertSame("g(a,a) return a", `rule5.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule6.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule7.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule8.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule9.visitLight(`g(a(),a())), `a());
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -88,14 +88,14 @@ public class TestStrategy extends TestCase {
     Hashtable positions = new Hashtable(3);
     Term t = `f(a());
     Term tBis = `f(b());
-    MuStrategy getPos1 = `GetPositionA(positions,"p1");
-    MuStrategy getPos2 = `GetPositionA(positions,"p2");
-    MuStrategy getPos3 = `GetPositionA(positions,"p3");
+    Strategy getPos1 = `GetPositionA(positions,"p1");
+    Strategy getPos2 = `GetPositionA(positions,"p2");
+    Strategy getPos3 = `GetPositionA(positions,"p3");
 
     try{
-      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos1), "pos1")).visitLight(t);
-      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos2), "pos2")).visitLight(t);
-      MuTraveler.init(StrategyCompiler.compile(`BottomUp(getPos3), "pos3")).visitLight(tBis);
+      StrategyCompiler.compile(`BottomUp(getPos1), "pos1").visitLight(t);
+      StrategyCompiler.compile(`BottomUp(getPos2), "pos2").visitLight(t);
+      StrategyCompiler.compile(`BottomUp(getPos3), "pos3").visitLight(tBis);
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -111,7 +111,7 @@ public class TestStrategy extends TestCase {
 
   %strategy GetPositionA(positions:Hashtable,posName:String) extends Identity(){
     visit Term {
-      a() -> {positions.put(posName,getPosition());}
+      a() -> {positions.put(posName,getEnvironment().getPosition());}
     }
   }
 

@@ -97,8 +97,8 @@ class BenchGomGC {
     run(`F(P(), Suc(P()), Zero(), N(), P()), count);
   }
 
-  private static MuStrategy s = null;
-  private static MuStrategy cs = null;
+  private static Strategy s = null;
+  private static Strategy cs = null;
 
   private static void run(Nat subject, int count) {
     System.out.println("\n" + subject);

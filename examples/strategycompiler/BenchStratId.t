@@ -91,7 +91,7 @@ public class BenchStratId {
 
     StrategyCompiler.clearCache();
 		long startChrono2 = System.currentTimeMillis();
-    MuStrategy cs = StrategyCompiler.compile(`RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))), "sFail");
+    Strategy cs = StrategyCompiler.compile(`RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))), "sFail");
     long medChrono2 = System.currentTimeMillis();
     try {
       cs.visitLight(subject);
@@ -112,7 +112,7 @@ public class BenchStratId {
 
     StrategyCompiler.clearCache();
     long startChrono2 = System.currentTimeMillis();
-    MuStrategy cs = StrategyCompiler.compile(`RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))), "sId");
+    Strategy cs = StrategyCompiler.compile(`RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))), "sId");
     long medChrono2 = System.currentTimeMillis();
     try {
       cs.visitLight(subject);

@@ -18,8 +18,8 @@ import tom.library.adt.bytecode.types.*;
  * compiled class in the strategy compiler.
  * A subterms list is present too. It is used by the `compile' method of the
  * strategy compiler to instantiate the compiled strategy with `%strategy'
- * related `MuStrategy'.
- * Finally, a `MuStrategy' stack is used while inlining is running to store
+ * related `Strategy'.
+ * Finally, a `Strategy' stack is used while inlining is running to store
  * `getArgument' return values.
  */
 public class ClassCollector {
@@ -58,13 +58,13 @@ public class ClassCollector {
     return methodList;
   }
 
-  public void pushStrategy(MuStrategy s) {
+  public void pushStrategy(Strategy s) {
     strategyStack.push(s);
   }
 
-  public MuStrategy popStrategy() {
+  public Strategy popStrategy() {
     try {
-      return (MuStrategy)strategyStack.pop();
+      return (Strategy)strategyStack.pop();
     } catch(EmptyStackException ese) {
       ese.printStackTrace();
     }
@@ -72,15 +72,15 @@ public class ClassCollector {
     return null;
   }
 
-  public int addSubterm(MuStrategy subterm) {
+  public int addSubterm(Strategy subterm) {
     subtermList.add(subterm);
     return subtermList.size() - 1;
   }
 
-  public MuStrategy[] getSubterms() {
-    MuStrategy[] array = new MuStrategy[subtermList.size()];
+  public Strategy[] getSubterms() {
+    Strategy[] array = new Strategy[subtermList.size()];
     for(int i = 0; i < array.length; ++i)
-      array[i] = (MuStrategy)subtermList.get(i);
+      array[i] = (Strategy)subtermList.get(i);
     return array;
   }
 }

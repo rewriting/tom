@@ -1,11 +1,8 @@
 package strategycompiler;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.AbstractMuStrategy;
-import tom.library.strategy.mutraveler.Mu;
-import tom.library.strategy.mutraveler.MuVar;
 
 import java.util.HashMap;
+import tom.library.sl.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
@@ -26,14 +23,14 @@ public class StrategyCompiler {
    * `foo.CompiledClass' then the class will be compiled into the file
    * `./foo.CompiledClass' instead of `./foo/CompiledClass'.
    * Moreover, the compiled class has only one constructor taking an array of
-   * `MuStrategy'. Each object corresponding to an instance of each `user
+   * `Strategy'. Each object corresponding to an instance of each `user
    * strategy' defined by the `%strategy' mechanism. Thus, this method is not
    * really usefull at the moment..
    * 
    * @param subject The strategy to be compiled.
    * @param inlinedClassName The wanted compiled class name (without trailing `.class').
    */
-  public static void compileToFile(MuStrategy subject, String inlinedClassName) {
+  public static void compileToFile(Strategy subject, String inlinedClassName) {
     ClassCollector classCollector = new ClassCollector();
     TClass inlinedStrat = buildInlinedStrategy(subject, inlinedClassName, classCollector);
     ClassDumper.dumpTClassToFile(inlinedStrat, inlinedClassName);
@@ -51,10 +48,10 @@ public class StrategyCompiler {
    * @return An new instance of the compiled class, or the subject if the
    * compilation fails.
    */
-  public static MuStrategy compile(MuStrategy subject, String inlinedClassName) {
+  public static Strategy compile(Strategy subject, String inlinedClassName) {
     // Set the compiled strategy to subject in order to return it if the
     // compilation fails.
-    MuStrategy compiledStrategy = subject;
+    Strategy compiledStrategy = subject;
     try {
       // Compiles the strategy.
       ClassCollector classCollector = new ClassCollector();
@@ -68,7 +65,7 @@ public class StrategyCompiler {
       Class clazz = ClassDumper.dumpTClass(inlinedStrat);
       try {
         // Subterms are the `%strategy' instances which was not inlined.
-        MuStrategy[] subterms = classCollector.getSubterms();
+        Strategy[] subterms = classCollector.getSubterms();
         Class[] paramTypes = { subterms.getClass() };
 
         // Retrieves the constructor from the `Class' object.
@@ -76,7 +73,7 @@ public class StrategyCompiler {
         Object[] params = { subterms };
 
         // Get a new instance of the compiled class initialized with subterms.
-        compiledStrategy = (MuStrategy)constructor.newInstance(params);
+        compiledStrategy = (Strategy)constructor.newInstance(params);
       } catch(Exception e) {
         System.err.println("Error when instantiate the compiled strategy `" + inlinedClassName + "'.");
         e.printStackTrace();
@@ -101,7 +98,7 @@ public class StrategyCompiler {
    *
    * @return The Gom tree representing the compiled class.
    */
-  private static TClass buildInlinedStrategy(MuStrategy subject, String inlinedClassName, ClassCollector classCollector) {
+  private static TClass buildInlinedStrategy(Strategy subject, String inlinedClassName, ClassCollector classCollector) {
     //System.out.println("Compiling strategy `" + inlinedClassName + "'...");
 
     // Generates the constructor.
@@ -118,7 +115,7 @@ public class StrategyCompiler {
             inlinedClassName,
             EmptySignature(),
             AccessList(PUBLIC(), SUPER(), SYNCHRONIZED()),
-            "tom/library/strategy/mutraveler/AbstractMuStrategy",
+            "tom/library/strategy/mutraveler/AbstractStrategy",
             EmptyStringList(),
             EmptyInnerClassInfoList(),
             EmptyOuterClassInfo()),
@@ -138,7 +135,7 @@ public class StrategyCompiler {
    * @param inlinedClassName The compiled class name.
    * @param visitSuffix The suffix to be appened to the `visit' method name.
    */
-  private static void inlineClass(ClassCollector classCollector, MuStrategy subject, String inlinedClassName, String visitSuffix) {
+  private static void inlineClass(ClassCollector classCollector, Strategy subject, String inlinedClassName, String visitSuffix) {
     // As we generates a new `visitXXX' method, we need a new method collector.
     MethodCollector methodCollector = new MethodCollector();
 
@@ -173,7 +170,7 @@ public class StrategyCompiler {
    * @param subject The strategy to be inlined.
    * @param inlinedClassName The compiled class name.
    */
-  private static void inlineVisitMethod(ClassCollector classCollector, MethodCollector methodCollector, MuStrategy subject, String inlinedClassName) {
+  private static void inlineVisitMethod(ClassCollector classCollector, MethodCollector methodCollector, Strategy subject, String inlinedClassName) {
     String className = getClassName(subject);
     //System.out.println("Inlining `visit' method in `" + className + "'...");
 
@@ -222,7 +219,7 @@ public class StrategyCompiler {
           // Then, we handle `getArgument' call and `visit' call to process
           // the inlining.
           TLabel methodEnd = `Label(symbolTable.getFreshLabelIndex());
-          MuStrategy inliner =
+          Strategy inliner =
             `Sequence(
                 TopDown(
                   Rename(classCollector, subject, inlinedClassName, symbolTable, clazz.getfields())),
@@ -401,7 +398,7 @@ public class StrategyCompiler {
         if(index_flag) {
           // Gets the subterm normally returned by the `getArgument' call and
           // push it onto the strategy stack.
-          MuStrategy s = (MuStrategy)((tom.library.strategy.mutraveler.AbstractMuStrategy)subject).getArgument(index);
+          Strategy s = (Strategy)((AbstractStrategy)subject).getChildAt(index);
           classCollector.pushStrategy(s);
 
           // Replaces the matched instructions by a `Nop()' one to ensure
@@ -434,7 +431,7 @@ public class StrategyCompiler {
        tail*) -> {
         %match(String `owner) {
           ("jjtraveler/Visitor"|"jjtraveler/reflective/VisitableVisitor")() -> {
-            MuStrategy lastStrategy = classCollector.popStrategy();
+            Strategy lastStrategy = classCollector.popStrategy();
             handleVisit(classCollector, methodCollector, lastStrategy, inlinedClassName, symbolTable);
 
             // Replaces the matched instructions by a `Nop()' one to ensure
@@ -546,7 +543,7 @@ public class StrategyCompiler {
    * @param inlinedClassName The compiled class name.
    * @param symbolTable The current symbol table.
    */
-  private static void handleVisit(ClassCollector classCollector, MethodCollector methodCollector, MuStrategy subject, String inlinedClassName, SymbolTable symbolTable) {
+  private static void handleVisit(ClassCollector classCollector, MethodCollector methodCollector, Strategy subject, String inlinedClassName, SymbolTable symbolTable) {
     TMethodDescriptor desc = 
       `MethodDescriptor(
           ConsFieldDescriptorList(
@@ -561,20 +558,20 @@ public class StrategyCompiler {
     // subject is the first to be inlined.
     boolean isRoot = methodCollector.getInstructionList().isEmptyInstructionList();
 
-    // If subject is an instance of `AbstractMuStrategy', it means that we are
+    // If subject is an instance of `AbstractStrategy', it means that we are
     // inlining a 'base brick'.
-    if(subject instanceof AbstractMuStrategy) {
+    if(subject instanceof AbstractStrategy) {
       if(subject instanceof Mu) {
         // To be sure that the strategy has been mu-expanded.
         Mu m = (Mu)subject;
-        m.expand();
+        m.muExpand();
 
         String visitSuffix = cleanMethodName("_" + subject);
 
         // If the visited `Mu' has not been encountered before, then we inlined
         // it into a new `visitXXX' method.
         if(!methodExists("visit" + visitSuffix, classCollector.getMethodList())) {
-          MuStrategy child = (MuStrategy)m.getArgument(Mu.V);
+          Strategy child = (Strategy)m.getChildAt(Mu.V);
           inlineClass(classCollector, child, inlinedClassName, visitSuffix);
         }
 
@@ -655,7 +652,7 @@ public class StrategyCompiler {
   /**
    * Returns the Gom term for the constructor.
    *
-   * public `inlinedClassName'(MuStrategy[] array) {
+   * public `inlinedClassName'(Strategy[] array) {
    *   initSubterm(array);
    * }
    *
@@ -672,7 +669,7 @@ public class StrategyCompiler {
             FieldDescriptorList(
               ArrayType(
                 ObjectType(
-                  "tom/library/strategy/mutraveler/MuStrategy"))),
+                  "tom/library/strategy/mutraveler/Strategy"))),
             Void()),
           EmptySignature(),
           EmptyStringList()),
@@ -680,7 +677,7 @@ public class StrategyCompiler {
           InstructionList(
             Aload(0),
             Invokespecial(
-              "tom/library/strategy/mutraveler/AbstractMuStrategy",
+              "tom/library/strategy/mutraveler/AbstractStrategy",
               "<init>",
               MethodDescriptor(
                 EmptyFieldDescriptorList(),
