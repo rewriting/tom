@@ -142,7 +142,7 @@ public class VisitableViewer {
     throws java.io.IOException {
     for(int i=0; i<deep; i++) {
       if (context.contains(i))
-        w.write('│');
+        w.write('\u2502');
       else
         w.write(' ');
     }
@@ -156,10 +156,10 @@ public class VisitableViewer {
         ATermAppl(AFun[name=name],list) -> {
           ATermAppl a = (ATermAppl) term;
           if (`a.getArity() == 0) {  // no child
-            w.write("─"+`name);
+            w.write("\u2500"+`name);
             return;
           } else if (`a.getArity() == 1) {  // only one child
-            w.write("─" + `name + "──");
+            w.write('\u2500' + `name + "\u2500\u2500");
             deep = deep + `name.length() + 3;
             ATermToTree(`list.getFirst(),w,context,deep);
             return;
@@ -168,7 +168,7 @@ public class VisitableViewer {
             %match (ATermList `list) {
               (first,l*,last) -> {
                 // first child
-                w.write("─" + `name + "─┬");
+                w.write('\u2500' + `name + "\u2500\u252C");
                 context.push(ndeep-1); 
                 ATermToTree(`first,w,context,ndeep);
                 context.pop();
@@ -178,7 +178,7 @@ public class VisitableViewer {
                 %match (ATermList l) {
                   (_*,c,_*) -> {
                     writeContext(w,context,ndeep-1);
-                    w.write("├");
+                    w.write("\u251C");
                     context.push(ndeep-1);
                     ATermToTree(`c,w,context,ndeep);
                     context.pop();
@@ -187,7 +187,7 @@ public class VisitableViewer {
                 }
                 // last child
                 writeContext(w,context,ndeep-1);
-                w.write("└");
+                w.write("\u2514");
                 ATermToTree(`last,w,context,ndeep);
               }
             }
