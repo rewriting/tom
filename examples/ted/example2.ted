@@ -1,6 +1,6 @@
-jjtraveler.BottomUp
+tom.library.sl.BottomUp
 remove(g(<a>,b(1,2),<a>))
 
-jjtraveler.TopDown
+tom.library.sl.TopDown
 replace(a,replaced)
 

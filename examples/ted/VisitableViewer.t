@@ -31,12 +31,7 @@ package ted;
 import aterm.*;
 import aterm.pure.PureFactory;
 import java.io.*;
-
-
-
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.Position;
-
+import tom.library.sl.*;
 import java.util.Stack;
 
 public class VisitableViewer {

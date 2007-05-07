@@ -33,7 +33,7 @@ import aterm.*;
 import tom.library.sl.*;
 import aterm.pure.PureFactory;
 
-public class GrepVisitor extends aterm.ATermFwdVoid implements jjtraveler.reflective.VisitableVisitor {
+public class GrepVisitor extends aterm.ATermFwdVoid implements Strategy {
 
   private static ATermFactory atermFactory = new PureFactory();
   ATerm tomatch;
@@ -56,7 +56,7 @@ public class GrepVisitor extends aterm.ATermFwdVoid implements jjtraveler.reflec
     return res;
   }
 
-  /* for the visitablevisitor compatibility */
+  /* for the Strategy compatibility */
   public  Strategy setChildAt(int index, Strategy v) { throw new IndexOutOfBoundsException(); }
   public  Strategy getChildAt(int index) { throw new IndexOutOfBoundsException(); }
   public int getChildCount() { return 0; }

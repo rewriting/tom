@@ -28,6 +28,7 @@
  */
 package ted;
 
+import tom.library.sl.*;
 
 class DummyObserver implements DebugStrategyObserver {
 
@@ -36,7 +37,7 @@ class DummyObserver implements DebugStrategyObserver {
   public void before(DebugStrategy s) {
     String[] names = s.getStrat().getClass().getName().split("[\\.\\$]");
     String name = names[names.length-1];
-    System.out.println("[" + (scope++) + "] applying " + name + " at " + s.getPosition());
+    System.out.println("[" + (scope++) + "] applying " + name + " at " + s.getEnvironment().getPosition());
   }
   public void after(DebugStrategy s, Visitable res) {
     System.out.println("[" + (--scope) + "] new subtree : " + res);

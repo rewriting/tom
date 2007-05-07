@@ -29,12 +29,7 @@
 package ted;
 
 import java.io.*;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.MuVar;
-import tom.library.strategy.mutraveler.Mu;
-
-
+import tom.library.sl.*;
 
 public class StrategyViewer {
 
@@ -53,7 +48,7 @@ public class StrategyViewer {
   }
 
   private static void 
-    toDot(MuStrategy subj, Writer out, MuStrategy hilight, String color) {
+    toDot(Strategy subj, Writer out, Strategy hilight, String color) {
       %match (Strategy subj) {
         y@MuVar[] -> { return; }
 
@@ -85,7 +80,7 @@ public class StrategyViewer {
                 s = s.getChildAt(0);
               %match(Strategy s) {
                 y@MuVar[var=varName] -> {
-                  MuStrategy pointer = (MuStrategy) `((MuVar)y).getInstance();
+                  Strategy pointer = (Strategy) `((MuVar)y).getInstance();
                   if (pointer == null) return;
                   String idMu = clean(pointer.toString());
                   if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
@@ -114,20 +109,20 @@ public class StrategyViewer {
     }
 
   public static void 
-    stratToDot(MuStrategy s, Writer w) 
+    stratToDot(Strategy s, Writer w) 
     throws java.io.IOException {
       stratToDot(s,w,null,"");
     }
 
   public static void 
-    stratToDot(MuStrategy s, Writer w, MuStrategy hilight, String color) 
+    stratToDot(Strategy s, Writer w, Strategy hilight, String color) 
     throws java.io.IOException {
       w.write("digraph G { graph [ordering=out];");
       toDot(s,w,hilight,color);
       w.write("}\n");
     }
 
-  public static void stratToDotStdout(MuStrategy s) {
+  public static void stratToDotStdout(Strategy s) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out));
       stratToDot(s,w);
@@ -137,9 +132,9 @@ public class StrategyViewer {
 
 
   public static void main(String[] args) {
-    MuStrategy strat = `Repeat(R());
+    Strategy strat = `Repeat(R());
 
-    //MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
+    //Strategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
 
 
     stratToDotStdout(strat);

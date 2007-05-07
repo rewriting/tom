@@ -135,17 +135,17 @@ public class Ted {
   public static ATerm run(ATerm res, String strategy, ATerm action) throws java.io.IOException {
     Constructor ctor = null;
     try {
-      Class strategy_class = Class.forName("jjtraveler." + strategy);
-      ctor = strategy_class.getConstructor(new Class[] {jjtraveler.Visitor.class});
+      Class strategy_class = Class.forName("tom.library.sl." + strategy);
+      ctor = strategy_class.getConstructor(new Class[] {Strategy.class});
     }
     catch( Exception e ) { System.err.println("This strategy doesn't exist or has a bad signature : " + e.getMessage()); }
 
-    jjtraveler.Visitor vtor = null;
+    Strategy vtor = null;
 
     %match(ATerm action) {
       ATermAppl(AFun[name="replace"], concATerm(tomatch, replacement)) -> {
         try {
-          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} );
+          vtor = (Strategy) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} );
           return (ATerm) vtor.visitLight(res);
         }
         catch ( Exception e ) { e.printStackTrace(); }
@@ -153,7 +153,7 @@ public class Ted {
 
       ATermAppl(AFun[name="remove"], concATerm(tomatch)) -> {
         try {
-          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)});
+          vtor = (Strategy) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)});
           return  (ATerm) vtor.visitLight(res);
         }
         catch ( Exception e ) { e.printStackTrace(); }
@@ -163,8 +163,8 @@ public class Ted {
         try {
           ATermList l = `concATerm();
           GrepVisitor v =  new GrepVisitor(`tomatch);
-          VisitableVisitor s = `mu(MuVar("x"),Try(Sequence(v,All(MuVar("x")))));
-          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {s});
+          Strategy s = `mu(MuVar("x"),Try(Sequence(v,All(MuVar("x")))));
+          vtor = (Strategy) ctor.newInstance (new Object[] {s});
           s.visitLight(res);
           return v.getList();
         }

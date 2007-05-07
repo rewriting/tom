@@ -30,7 +30,7 @@ package ted;
 
 import java.io.*;
 import aterm.*;
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 
 public class MatchVisitor extends aterm.ATermFwdVoid {

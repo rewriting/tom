@@ -50,10 +50,10 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 // ----------------------------------------------------
 
-class VisitableVisitorFwd extends AbstractMuStrategy {
+class StrategyFwd extends AbstractStrategy {
   public final static int ARG = 0;
 
-  public VisitableVisitorFwd(VisitableVisitor v) {
+  public StrategyFwd(Strategy v) {
     initSubterm(v);
   }
 
@@ -74,7 +74,7 @@ class GraphicalObserver implements DebugStrategyObserver {
   %typeterm Visitable {
     implement { Visitable }
     is_sort(t) { t instanceof Visitable }
-    visitor_fwd { VisitableVisitorFwd }
+    visitor_fwd { StrategyFwd }
   }
 
   %strategy Replace(v:Visitable) extends `Identity() {
@@ -85,11 +85,11 @@ class GraphicalObserver implements DebugStrategyObserver {
 
   protected int scope = 0;
   protected Visitable term;
-  protected MuStrategy init_strat;
+  protected Strategy init_strat;
 
   
     
-  public GraphicalObserver(Visitable initialTerm, MuStrategy initialStrategy)  {
+  public GraphicalObserver(Visitable initialTerm, Strategy initialStrategy)  {
     term = initialTerm;
     init_strat = initialStrategy;
     javax.swing.SwingUtilities.invokeLater(
@@ -160,7 +160,7 @@ class GraphicalObserver implements DebugStrategyObserver {
 
       pr = rt.exec("dot -Tsvg");
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#6666FF");
+      StrategyViewer.stratToDot(init_strat, out, (Strategy) s.getStrat(),"#6666FF");
       out.close();
       //pr.waitFor();
       dom = streamToSVGDom(pr.getInputStream());
@@ -178,7 +178,7 @@ class GraphicalObserver implements DebugStrategyObserver {
   }
   public void after(DebugStrategy s, Visitable res) {
     try {
-      term = ((MuStrategy) s.getPosition().getOmega(`Replace(res))).visitLight(term);
+      term = ((Strategy) s.getPosition().getOmega(`Replace(res))).visitLight(term);
     } catch(VisitFailure e) {}
     System.out.println("[" + (--scope) + "] new tree : " + term);
 
@@ -195,7 +195,7 @@ class GraphicalObserver implements DebugStrategyObserver {
 
       pr = rt.exec("dot -Tsvg");
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#666666");
+      StrategyViewer.stratToDot(init_strat, out, (Strategy) s.getStrat(),"#666666");
       out.close();
       //pr.waitFor();
       dom = streamToSVGDom(pr.getInputStream());

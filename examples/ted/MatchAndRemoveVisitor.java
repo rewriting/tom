@@ -30,7 +30,7 @@ package ted;
 
 import java.io.*;
 import aterm.*;
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 // look at the sons and removes those which match the argument
 public class MatchAndRemoveVisitor extends aterm.ATermFwd {

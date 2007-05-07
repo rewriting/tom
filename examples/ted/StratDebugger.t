@@ -28,9 +28,6 @@
  */
 package ted;
 
-import tom.library.strategy.mutraveler.*;
-
-
 import tom.library.sl.*;
 import ted.stratdebugger.entier.types.*;
 
@@ -60,7 +57,7 @@ public class StratDebugger {
     is_fsym(t) { (t instanceof ted.DebugStrategy) }
     make(obs,s) { new DebugStrategy(obs,s) }
     get_slot(obs, t) { (DebugStrategyObserver) t.getObserver() }
-    get_slot(s, t) { (MuStrategy) t.getStrat() }
+    get_slot(s, t) { (Strategy) t.getStrat() }
   }
 
 
@@ -71,9 +68,9 @@ public class StratDebugger {
     }
   }
 
-  public static MuStrategy decorateStrategy(DebugStrategyObserver obs, MuStrategy s) {
+  public static Strategy decorateStrategy(DebugStrategyObserver obs, Strategy s) {
     try {
-      return (MuStrategy) `BottomUp(DecorateStrategy(obs)).visitLight(s);
+      return (Strategy) `BottomUp(DecorateStrategy(obs)).visitLight(s);
     } catch(VisitFailure e) { return s; }
   }
 
@@ -85,7 +82,7 @@ public class StratDebugger {
   }
  
 
-  public static Visitable applyDebug(Visitable subject, MuStrategy strat) {
+  public static Visitable applyDebug(Visitable subject, Strategy strat) {
     DummyObserver observer = new DummyObserver();
     strat = decorateStrategy(observer, strat);
     try {
@@ -93,7 +90,7 @@ public class StratDebugger {
     } catch(VisitFailure e) { return subject; }
   }
 
-  public static Visitable applyGraphicalDebug(Visitable subject, MuStrategy strat) {
+  public static Visitable applyGraphicalDebug(Visitable subject, Strategy strat) {
     GraphicalObserver observer = new GraphicalObserver(subject,strat);
     strat = decorateStrategy(observer, strat);
     try {
@@ -103,7 +100,7 @@ public class StratDebugger {
 
 
   public static void main(String[] argv) {
-    MuStrategy s = `InnermostId(RS());
+    Strategy s = `InnermostId(RS());
     Exp n = `plus(S(Zero()),S(Zero()));
 
     n = (Exp) applyGraphicalDebug(n,s);

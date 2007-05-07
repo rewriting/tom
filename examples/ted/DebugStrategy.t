@@ -30,10 +30,10 @@ package ted;
 
 import tom.library.sl.*;
 
-class DebugStrategy extends AbstractMuStrategy {
+class DebugStrategy extends AbstractStrategy {
   protected DebugStrategyObserver obs;
 
-  public DebugStrategy(DebugStrategyObserver obs, VisitableVisitor v) {
+  public DebugStrategy(DebugStrategyObserver obs, Strategy v) {
     initSubterm(v);
     this.obs = obs;
   }
@@ -49,8 +49,8 @@ class DebugStrategy extends AbstractMuStrategy {
     return obs;
   }
 
-  public MuStrategy getStrat() {
-    return (MuStrategy) getChildAt(0);
+  public Strategy getStrat() {
+    return (Strategy) getChildAt(0);
   }
 }
 
