@@ -55,23 +55,21 @@ public class StrategyCompiler {
     try {
       // Compiles the strategy.
       ClassCollector classCollector = new ClassCollector();
-      TClass inlinedStrat = buildInlinedStrategy(subject, inlinedClassName, classCollector);
+      TClass inlinedStrat = buildInlinedStrategy(subject, inlinedClassName, classCollector);      
       //bytecode.CFGViewer.classToDot(inlinedStrat);
 
       //DEBUG Dump the compiled class into a file 'tmp'
       // ClassDumper.dumpTClassToFile(inlinedStrat,inlinedClassName+"tmp");
  
       // Dump the compiled class into a `Class' object.
-      Class clazz = ClassDumper.dumpTClass(inlinedStrat);
+      Class clazz = ClassDumper.dumpTClass(inlinedStrat);      
       try {
         // Subterms are the `%strategy' instances which was not inlined.
-        Strategy[] subterms = classCollector.getSubterms();
+        Strategy[] subterms = classCollector.getSubterms();        
         Class[] paramTypes = { subterms.getClass() };
-
         // Retrieves the constructor from the `Class' object.
         java.lang.reflect.Constructor constructor = clazz.getConstructor(paramTypes);
         Object[] params = { subterms };
-
         // Get a new instance of the compiled class initialized with subterms.
         compiledStrategy = (Strategy)constructor.newInstance(params);
       } catch(Exception e) {
@@ -115,7 +113,7 @@ public class StrategyCompiler {
             inlinedClassName,
             EmptySignature(),
             AccessList(PUBLIC(), SUPER(), SYNCHRONIZED()),
-            "tom/library/strategy/mutraveler/AbstractStrategy",
+            "tom/library/sl/AbstractStrategy",
             EmptyStringList(),
             EmptyInnerClassInfoList(),
             EmptyOuterClassInfo()),
@@ -179,7 +177,7 @@ public class StrategyCompiler {
 
     // Iterates over each methods to find the `visit' definition.
     boolean visitMethodFlag = false;
-    TMethodList mList = clazz.getmethods();
+    TMethodList mList = clazz.getmethods();    
     %match(TMethodList mList) {
       (_*,
        Method(
@@ -188,8 +186,8 @@ public class StrategyCompiler {
            accessList,
            "visit",
            MethodDescriptor(
-             FieldDescriptorList(ObjectType("jjtraveler/Visitable")),
-             ReturnDescriptor(ObjectType("jjtraveler/Visitable"))),
+             FieldDescriptorList(ObjectType("tom/library/sl/Visitable")),
+             ReturnDescriptor(ObjectType("tom/library/sl/Visitable"))),
            _,
            _),
          code@MethodCode[instructions=instructions]),
@@ -423,14 +421,14 @@ public class StrategyCompiler {
                        MethodDescriptor(
                          ConsFieldDescriptorList(
                            ObjectType(
-                             "jjtraveler/Visitable"),
+                             "tom/library/sl/Visitable"),
                            EmptyFieldDescriptorList()),
                          ReturnDescriptor(
                            ObjectType(
-                             "jjtraveler/Visitable")))),
+                             "tom/library/sl/Visitable")))),
        tail*) -> {
-        %match(String `owner) {
-          ("jjtraveler/Visitor"|"jjtraveler/reflective/VisitableVisitor")() -> {
+//        %match(String `owner) {
+//          ("jjtraveler/Visitor"|"jjtraveler/reflective/VisitableVisitor")() -> {
             Strategy lastStrategy = classCollector.popStrategy();
             handleVisit(classCollector, methodCollector, lastStrategy, inlinedClassName, symbolTable);
 
@@ -441,8 +439,8 @@ public class StrategyCompiler {
             // It allow us to 'remove' them and thus the instructions will not
             // be added into the new instruction list builds in the collector.
             return `InstructionList(Nop(), tail*);
-          }
-        }
+//          }
+//        }
       }
     }
 
@@ -548,11 +546,11 @@ public class StrategyCompiler {
       `MethodDescriptor(
           ConsFieldDescriptorList(
             ObjectType(
-              "jjtraveler/Visitable"),
+              "tom/library/sl/Visitable"),
             EmptyFieldDescriptorList()),
           ReturnDescriptor(
             ObjectType(
-              "jjtraveler/Visitable")));
+              "tom/library/sl/Visitable")));
 
     // If no instructions were added into the instruction list, then the current
     // subject is the first to be inlined.
@@ -630,19 +628,19 @@ public class StrategyCompiler {
       methodCollector.addInstruction(
           `Invokevirtual(
             inlinedClassName,
-            "getArgument",
+            "getChildAt",
             MethodDescriptor(
               ConsFieldDescriptorList(
                 I(),
                 EmptyFieldDescriptorList()),
               ReturnDescriptor(
                 ObjectType(
-                  "jjtraveler/reflective/VisitableVisitor")))));
+                  "tom/library/sl/Visitable")))));
       if(isRoot)
         methodCollector.addInstruction(`Aload(1));
       else
         methodCollector.addInstruction(`Aload(freshIndex));
-      methodCollector.addInstruction(`Invokeinterface("jjtraveler/Visitor", "visit", desc));
+      methodCollector.addInstruction(`Invokeinterface("tom/library/sl/Strategy", "visit", desc));
     }
 
     if(isRoot)
@@ -669,7 +667,7 @@ public class StrategyCompiler {
             FieldDescriptorList(
               ArrayType(
                 ObjectType(
-                  "tom/library/strategy/mutraveler/Strategy"))),
+                  "tom/library/sl/Strategy"))),
             Void()),
           EmptySignature(),
           EmptyStringList()),
@@ -677,7 +675,7 @@ public class StrategyCompiler {
           InstructionList(
             Aload(0),
             Invokespecial(
-              "tom/library/strategy/mutraveler/AbstractStrategy",
+              "tom/library/sl/AbstractStrategy",
               "<init>",
               MethodDescriptor(
                 EmptyFieldDescriptorList(),
@@ -691,7 +689,7 @@ public class StrategyCompiler {
                 FieldDescriptorList(
                   ArrayType(
                     ObjectType(
-                      "jjtraveler/reflective/VisitableVisitor"))),
+                      "tom/library/sl/Strategy"))),
                 Void())),
             Return()),
       EmptyLocalVariableList(),
@@ -718,10 +716,10 @@ public class StrategyCompiler {
             AccessList(PUBLIC()),
             "visit" + methodSuffix,
             MethodDescriptor(
-              FieldDescriptorList(ObjectType("jjtraveler/Visitable")),
-              ReturnDescriptor(ObjectType("jjtraveler/Visitable"))),
+              FieldDescriptorList(ObjectType("tom/library/sl/Visitable")),
+              ReturnDescriptor(ObjectType("tom/library/sl/Visitable"))),
             EmptySignature(),
-            StringList("jjtraveler/VisitFailure")),  /* FIXME */
+            StringList("tom/library/sl/VisitFailure")),  /* FIXME */
           MethodCode(
             methodCollector.getInstructionList(),
             methodCollector.getVariableList(),

@@ -69,16 +69,16 @@ public class TestStrategy extends TestCase {
     Strategy rule9 = StrategyCompiler.compile(`S9(i), "s9");
    
     try{
-      assertSame("g(a,a) return a", `rule0.visitLight(`g(a(),a())), `a());
-      assertSame("a return b", `rule1.visitLight(`a()), `b());
-      assertSame("g(a,a) return a", `rule2.visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", `rule3.visitLight(`g(a(),a())), `a());
-      assertSame("g(a,b) return g(b,a)", `rule4.visitLight(`g(a(),b())), `g(b(),a()));
-      assertSame("g(a,a) return a", `rule5.visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", `rule6.visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", `rule7.visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", `rule8.visitLight(`g(a(),a())), `a());
-      assertSame("g(a,a) return a", `rule9.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule0.visit(`g(a(),a())), `a());
+      assertSame("a return b", `rule1.visit(`a()), `b());
+      assertSame("g(a,a) return a", `rule2.visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule3.visit(`g(a(),a())), `a());
+      assertSame("g(a,b) return g(b,a)", `rule4.visit(`g(a(),b())), `g(b(),a()));
+      assertSame("g(a,a) return a", `rule5.visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule6.visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule7.visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule8.visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule9.visit(`g(a(),a())), `a());
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -91,11 +91,11 @@ public class TestStrategy extends TestCase {
     Strategy getPos1 = `GetPositionA(positions,"p1");
     Strategy getPos2 = `GetPositionA(positions,"p2");
     Strategy getPos3 = `GetPositionA(positions,"p3");
-
+System.out.println("bottom up:" + `BottomUp(Identity()));
     try{
-      StrategyCompiler.compile(`BottomUp(getPos1), "pos1").visitLight(t);
-      StrategyCompiler.compile(`BottomUp(getPos2), "pos2").visitLight(t);
-      StrategyCompiler.compile(`BottomUp(getPos3), "pos3").visitLight(tBis);
+      StrategyCompiler.compile(`BottomUp(getPos1), "pos1").visit(t);
+      StrategyCompiler.compile(`(getPos2), "pos2").visit(t);
+      StrategyCompiler.compile(`(getPos3), "pos3").visit(tBis);
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
