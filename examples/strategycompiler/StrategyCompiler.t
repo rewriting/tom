@@ -17,7 +17,7 @@ import tom.library.adt.bytecode.types.*;
  * This class is aimed to be used at runtime.
  */
 public class StrategyCompiler {
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { adt/bytecode/Bytecode.tom }
  
   /**

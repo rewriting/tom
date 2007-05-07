@@ -31,12 +31,7 @@ package strategycompiler;
 
 import strategycompiler.benchstratidsl.term.*;
 import strategycompiler.benchstratidsl.term.types.*;
-
-
-import VisitFailure;
-
 import tom.library.sl.*;
-
 import java.util.*;
 
 public class BenchStratIdSl {

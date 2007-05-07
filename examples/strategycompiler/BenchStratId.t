@@ -33,13 +33,7 @@ import strategycompiler.benchstratid.term.*;
 import strategycompiler.benchstratid.term.types.*;
 
 
-import VisitFailure;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.AbstractMuStrategy;
-
+import tom.library.sl.*;
 import java.util.*;
 
 public class BenchStratId {
@@ -55,7 +49,7 @@ public class BenchStratId {
          | g(s1:Term)
    }
 
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   public final static void main(String[] args) {
     BenchStratId test = new BenchStratId();

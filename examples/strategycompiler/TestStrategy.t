@@ -3,12 +3,7 @@ package strategycompiler;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import tom.library.strategy.mutraveler.Position;
-import VisitFailure;
-
+import tom.library.sl.*;
 import strategycompiler.teststrategy.term.types.*;
 
 import java.util.*;
@@ -17,7 +12,7 @@ public class TestStrategy extends TestCase {
 
   %include { long.tom }
   %include { boolean.tom }
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { java/util/LinkedList.tom }
 
   %typeterm Hashtable{

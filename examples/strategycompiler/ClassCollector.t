@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import java.util.EmptyStackException;
 
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;

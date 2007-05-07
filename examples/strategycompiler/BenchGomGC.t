@@ -30,12 +30,12 @@ package strategycompiler;
 
 import strategycompiler.benchgomgc.spec.types.*;
 
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.sl.*;
 import strategycompiler.StrategyCompiler;
 
 class BenchGomGC {
 
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %gom {
     module spec
     abstract syntax
