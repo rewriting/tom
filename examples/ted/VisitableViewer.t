@@ -42,7 +42,7 @@ import java.util.Stack;
 public class VisitableViewer {
 
   %include { atermmapping.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   // for parsing
   private static ATermFactory atermFactory = new PureFactory();

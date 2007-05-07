@@ -30,8 +30,7 @@ package ted;
 
 
 
-import tom.library.strategy.mutraveler.*;
-import VisitFailure;
+import tom.library.sl.*;
 import java.io.*;
 
 // -------------------- SVG -----------------------------
@@ -70,7 +69,7 @@ class VisitableVisitorFwd extends AbstractMuStrategy {
 
 class GraphicalObserver implements DebugStrategyObserver {
 
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   %typeterm Visitable {
     implement { Visitable }

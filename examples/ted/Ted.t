@@ -43,7 +43,7 @@ import java.lang.reflect.*;
 public class Ted {
 
   %include { atermmapping.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   // for parsing
   private static ATermFactory atermFactory = new PureFactory();

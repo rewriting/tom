@@ -31,9 +31,7 @@ package ted;
 import tom.library.strategy.mutraveler.*;
 
 
-import VisitFailure;
-import tom.library.strategy.mutraveler.MuStrategy;
-
+import tom.library.sl.*;
 import ted.stratdebugger.entier.types.*;
 
 
@@ -49,7 +47,7 @@ public class StratDebugger {
         | plus(n:Exp,m:Exp)
   }
 
-  %include{ mustrategy.tom }
+  %include{ sl.tom }
 //  %include{ ref.tom }
 //  %include{ visitable.tom }
 

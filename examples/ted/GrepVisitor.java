@@ -30,10 +30,8 @@ package ted;
 
 import java.io.*;
 import aterm.*;
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 import aterm.pure.PureFactory;
-import VisitFailure;
-import jjtraveler.reflective.*;
 
 public class GrepVisitor extends aterm.ATermFwdVoid implements jjtraveler.reflective.VisitableVisitor {
 

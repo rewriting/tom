@@ -28,10 +28,7 @@
  */
 package ted;
 
-import VisitFailure;
-
-import tom.library.strategy.mutraveler.*;
-
+import tom.library.sl.*;
 
 class DebugStrategy extends AbstractMuStrategy {
   protected DebugStrategyObserver obs;

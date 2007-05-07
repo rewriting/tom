@@ -64,7 +64,7 @@ import javax.swing.JOptionPane;
 public class ATViewer extends JPanel implements ActionListener {
 
   %include { atermmapping.tom }
-  %include { mutraveler.tom }
+  %include { sl.tom }
 
   private JEditorPane commandPane;
   private JPanel intermediate;

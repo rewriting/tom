@@ -28,7 +28,7 @@
  */
 package ted;
 
-import Strategy;
+import tom.library.sl.*;
 
 interface DebugStrategyObserver {
   public void before(DebugStrategy s);

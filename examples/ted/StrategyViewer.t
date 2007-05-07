@@ -38,7 +38,7 @@ import tom.library.strategy.mutraveler.Mu;
 
 public class StrategyViewer {
 
-  %include{mustrategy.tom}
+  %include{sl.tom}
   %typeterm Writer { 
     implement {java.io.Writer} 
     is_sort(t)     { t instanceof java.util.HashMap }
