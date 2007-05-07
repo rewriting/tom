@@ -28,7 +28,7 @@
  */
 package ted;
 
-import jjtraveler.Visitable;
+import Strategy;
 
 interface DebugStrategyObserver {
   public void before(DebugStrategy s);

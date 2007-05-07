@@ -33,14 +33,14 @@ public class BasicStrategy extends Forward implements jjtraveler.reflective.Visi
     return 1;
   }
 
-  public jjtraveler.Visitable getChildAt(int i) {
+  public Strategy getChildAt(int i) {
     switch (i) {
-      case 0: return (jjtraveler.Visitable) any;
+      case 0: return (Strategy) any;
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
+  public Strategy setChildAt(int i, Strategy child) {
     switch (i) {
       case 0: any = (jjtraveler.reflective.VisitableVisitor) child; return this;
       default: throw new IndexOutOfBoundsException();

@@ -109,14 +109,14 @@ public class Int extends Element {
 		return null;
   }
 
-	public jjtraveler.Visitable getChildAt(int index) {
+	public Strategy getChildAt(int index) {
 		switch(index) {
 			// skip arg0:builtin
 			default: throw new IndexOutOfBoundsException();
 		}
   }
 
-  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+  public Strategy setChildAt(int index, Strategy v) {
 		switch(index) {
 			// skip arg0:builtin
 			default: throw new IndexOutOfBoundsException();

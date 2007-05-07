@@ -59,8 +59,8 @@ public class GrepVisitor extends aterm.ATermFwdVoid implements jjtraveler.reflec
   }
 
   /* for the visitablevisitor compatibility */
-  public  jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) { throw new IndexOutOfBoundsException(); }
-  public  jjtraveler.Visitable getChildAt(int index) { throw new IndexOutOfBoundsException(); }
+  public  Strategy setChildAt(int index, Strategy v) { throw new IndexOutOfBoundsException(); }
+  public  Strategy getChildAt(int index) { throw new IndexOutOfBoundsException(); }
   public int getChildCount() { return 0; }
 }
 

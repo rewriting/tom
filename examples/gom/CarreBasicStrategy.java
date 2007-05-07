@@ -34,7 +34,7 @@ public class CarreBasicStrategy extends gom.rond.RondBasicStrategy {
     super(v);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
+  public Strategy visit(Strategy v) throws jjtraveler.VisitFailure {
     if (v instanceof Carre) {
       return this.visit_Carre((Carre)v);
     } else {

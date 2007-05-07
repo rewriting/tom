@@ -35,7 +35,7 @@ public class Forward implements Visitor, jjtraveler.Visitor {
     this.any = v;
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
+  public Strategy visit(Strategy v) throws jjtraveler.VisitFailure {
     if (v instanceof Accept) {
       return ((Accept) v).accept(this);
     } else {

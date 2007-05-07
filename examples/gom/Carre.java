@@ -43,7 +43,7 @@ public class Carre implements tom.library.sl.Visitable {
     return 2;
   }
 
-  public jjtraveler.Visitable getChildAt(int index) {
+  public Strategy getChildAt(int index) {
     switch(index) {
       case 0: return r1;
       case 1: return r2;
@@ -52,7 +52,7 @@ public class Carre implements tom.library.sl.Visitable {
     }
   }
 
-  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+  public Strategy setChildAt(int index, Strategy v) {
     switch(index) {
       case 0: r1=(Rond)v; return this;
       case 1: r2=(Rond)v; return this;
@@ -61,15 +61,15 @@ public class Carre implements tom.library.sl.Visitable {
     }
   }
     
-  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+  public Strategy setChildren(Strategy[] children) {
     r1 = (Rond) children[0];
     r2 = (Rond) children[1];
     return this;
   }
 
 
-  public jjtraveler.Visitable[] getChildren() {
-    return new jjtraveler.Visitable[]{r1,r2};
+  public Strategy[] getChildren() {
+    return new Strategy[]{r1,r2};
   }
 
 }

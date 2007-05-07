@@ -115,12 +115,12 @@ public class ConsInt extends List {
 		return null;
   }
 
-  /* jjtraveler.Visitable */
+  /* Strategy */
   public int getChildCount() {
 		return 1; // skip arg0:builtin
   }
 
-	public jjtraveler.Visitable getChildAt(int index) {
+	public Strategy getChildAt(int index) {
 		switch(index) {
 			// skip arg0:builtin
 			case 0: return getTail();
@@ -128,7 +128,7 @@ public class ConsInt extends List {
 		}
   }
 
-  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+  public Strategy setChildAt(int index, Strategy v) {
 		switch(index) {
 			// skip arg0:builtin
 			case 0: return make(getHeadInt(),(List)v);

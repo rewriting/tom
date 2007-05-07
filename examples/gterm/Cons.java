@@ -116,7 +116,7 @@ public class Cons extends List  {
     return getArity();
   }
 
-	public jjtraveler.Visitable getChildAt(int index) {
+	public Strategy getChildAt(int index) {
 		switch(index) {
 			case 0: return getHead();
 			case 1: return getTail();
@@ -124,7 +124,7 @@ public class Cons extends List  {
 		}
   }
 
-  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+  public Strategy setChildAt(int index, Strategy v) {
 		switch(index) {
 			case 0: return make((Element)v,getTail());
 			case 1: return make(getHead(),(List)v);
