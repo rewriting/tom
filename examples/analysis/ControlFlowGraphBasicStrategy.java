@@ -38,18 +38,18 @@ public class ControlFlowGraphBasicStrategy extends analysis.node.NodeBasicStrate
     super(v);
   }
 
-  public Visitable visit(Visitable v) throws VisitFailure {
+  public Visitable visitLight(Visitable v) throws VisitFailure {
     if (v instanceof ControlFlowGraph) {
       return this.visit_ControlFlowGraph((ControlFlowGraph)v);
     } else {
-      return super.visit(v);
+      return super.visitLight(v);
     }
   }
 
 
   public ControlFlowGraph visit_ControlFlowGraph(ControlFlowGraph arg) throws VisitFailure {
     Node root = arg.getRoot().getNode();
-    Node result = (Node) visit(root);
+    Node result = (Node) visitLight(root);
     arg.getRoot().setNode(result);
     return arg;
   }

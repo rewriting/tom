@@ -160,7 +160,7 @@ public class ControlFlowGraph extends DefaultDirectedGraph implements tom.librar
 
   public boolean verify(Strategy temporalCond,Vertex n) {
     try {
-      temporalCond.visit(subGraph(n));
+      temporalCond.visitLight(subGraph(n));
       return true;
     } catch(VisitFailure e) { return false; }
   }
