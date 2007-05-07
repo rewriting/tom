@@ -107,7 +107,11 @@ class BenchGomGCSl {
       long startChrono = System.currentTimeMillis();
       while (post != pre) {
         pre = post;
-        post = (Nat)s.visit(post);
+        try{
+          post = (Nat)s.visit(post);
+        }catch(VisitFailure e){
+          System.out.println("Strategy failed !");
+        }
       }
       long stopChrono = System.currentTimeMillis();
 
