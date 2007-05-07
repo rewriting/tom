@@ -45,19 +45,8 @@ public class CarreBasicStrategy extends gom.rond.RondBasicStrategy {
     }
   }
 
-  public int visit() {
-    if (getEnvironment().getSubject() instanceof Carre) {
-      return this.visit_Carre();
-    } else {
-      return super.visit();
-    }
-  }
-
   public Carre visit_Carre(Carre arg) throws VisitFailure {
     return (Carre) any.visitLight(arg);
   }
 
-  public int visit_Carre() {
-    return any.visit();
-  }
 }
