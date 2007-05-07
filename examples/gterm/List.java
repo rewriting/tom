@@ -30,7 +30,7 @@ package gterm;
 
 public abstract class List extends AbstractType {
 
-  public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure {
+  public AbstractType accept(Visitor v) throws VisitFailure {
     return v.visit_List(this);
   }
 

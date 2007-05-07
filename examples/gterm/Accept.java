@@ -29,5 +29,5 @@
 package gterm;
 
 public interface Accept {
-	public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure;
+	public AbstractType accept(Visitor v) throws VisitFailure;
 }

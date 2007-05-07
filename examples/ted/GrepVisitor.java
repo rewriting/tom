@@ -32,7 +32,7 @@ import java.io.*;
 import aterm.*;
 import tom.library.strategy.mutraveler.*;
 import aterm.pure.PureFactory;
-import jjtraveler.VisitFailure;
+import VisitFailure;
 import jjtraveler.reflective.*;
 
 public class GrepVisitor extends aterm.ATermFwdVoid implements jjtraveler.reflective.VisitableVisitor {
@@ -46,7 +46,7 @@ public class GrepVisitor extends aterm.ATermFwdVoid implements jjtraveler.reflec
     this.tomatch = tomatch;
   }
 
-  public void voidVisitATerm(ATerm arg) throws jjtraveler.VisitFailure {
+  public void voidVisitATerm(ATerm arg) throws VisitFailure {
     if(Ted.match(tomatch, arg) != null) {
       res = res.append(arg);
       throw new VisitFailure();
