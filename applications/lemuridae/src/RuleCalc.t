@@ -84,13 +84,13 @@ public class RuleCalc {
       Prop problematicProp = null, cleanedProp = null;
 
       try { problematicProp = (Prop) lastPos.getSubterm().visit(lastProp); }
-      catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
       HashSet<Term> freevars = Utils.collectFreeVars(problematicProp);
       TermList tl = `concTerm();
       for(Term var: freevars) {	tl = `concTerm(tl*,var); }
       Prop newPred = `relationAppl(name,tl);
       try { cleanedProp = (Prop) lastPos.getReplace(newPred).visit(lastProp); }
-      catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
 
       // adding new prop to lastrule
       lastRule = `proprule(lastRule.getlhs(), cleanedProp);
@@ -102,7 +102,7 @@ public class RuleCalc {
     public Prop getProblem() {
       if(lastPos != null) {
         try { return (Prop) lastPos.getSubterm().visit(lastProp); }
-        catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+        catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
       }
       return null;
     }
@@ -146,7 +146,7 @@ public class RuleCalc {
     private static SeqList collectPremises(Tree t) {
       LinkedList<Sequent> list = new LinkedList<Sequent>();
       try { `TopDown(CollectPremises(list)).visit(t); }
-      catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
       SeqList result = `concSeq();
       for(Sequent seq: list) {
         result = `concSeq(result*,seq);

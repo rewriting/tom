@@ -114,8 +114,7 @@ class Unification {
   public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl, PropRuleList pl) {
       Strategy ar =  `InnermostId(ApplyRules(tl,pl));
       try { return (sequentsAbstractType) ar.visit(t); }
-      catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
-      return null;
+      catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 
   %strategy ApplyRules(tl:TermRuleList, pl:PropRuleList) extends `Identity() {
@@ -174,8 +173,7 @@ class Unification {
       try {
         return (sequentsAbstractType)
           `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(term);
-      } catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
-      return null;
+      } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     }
 
  /* ----------------------------------*/

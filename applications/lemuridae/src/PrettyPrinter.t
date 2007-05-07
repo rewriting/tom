@@ -137,8 +137,7 @@ class PrettyPrinter {
    **/
   public static Tree cleanTree(Tree tree, TermRuleList tl, PropRuleList pl) {
     try { return (Tree) `TopDown(Clean(tl,pl)).visit(tree); }
-    catch( VisitFailure e ) { e.printStackTrace(); System.exit(-1); }
-    return tree;
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 
   public static String toLatex(sequentsAbstractType term) {

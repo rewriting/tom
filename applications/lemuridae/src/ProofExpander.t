@@ -123,7 +123,6 @@ public class ProofExpander {
     Proposition axiom = new Proposition();
     Strategy expand = `Repeat(Sequence(OnceTopDown(ExpandLocally(axiom)),SafeAddInGamma(axiom)));
     try { return (Tree) expand.visit(tree); }
-    catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
-    return null;
+    catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 }

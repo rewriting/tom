@@ -268,7 +268,7 @@ b: {
             try {
               res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res); 
               res = (SeqList) `TopDown(PutInConclusion(c)).visit(res); 
-            } catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+            } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
             break b;
           }
 
@@ -283,7 +283,7 @@ b: {
             try {
               res = (SeqList) `TopDown(AddInContexts(ctxt)).visit(res);
               res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res); 
-            } catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+            } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
             break b;
           }
 
@@ -629,13 +629,13 @@ b: {
   private static void getOpenPositions(Tree tree, LinkedList pl) {
     Strategy s = `mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x"))));
     try { s.visit(tree); }
-    catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 
   private static void getOpenPositions(Tree tree, Position pos, LinkedList pl) {
     Strategy s = pos.getOmega(`mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x")))));
     try { s.visit(tree); }
-    catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 
   private Sequent getSequentByPosition(Tree tree, Position pos) {
@@ -734,8 +734,7 @@ b :{
     // get new tree
     Tree newrule = `rule(reductionInfo(), prems, goal, active);
     try { return (Tree) pos.getReplace(newrule).visit(tree); }
-    catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
-    return null;
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 
 

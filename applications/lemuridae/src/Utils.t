@@ -36,7 +36,7 @@ class Utils {
     Strategy v = `ReplaceTerm(old_term, new_term);
     sequentsAbstractType res = null;
     try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
-    catch (VisitFailure e ) { e.printStackTrace(); System.exit(-1); }
+    catch (VisitFailure e ) { e.printStackTrace(); throw new RuntimeException(); }
     return res;
   }
 
@@ -60,7 +60,7 @@ class Utils {
     Strategy v = `ReplaceVars(map);
     sequentsAbstractType res = null;
     try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
-    catch (VisitFailure e ) { e.printStackTrace(); System.exit(-1); }
+    catch (VisitFailure e ) { e.printStackTrace(); throw new RuntimeException(); }
     return res;
   }
 
@@ -150,7 +150,7 @@ class Utils {
     {
       Strategy v = `TopDown(ReplaceFreeVars(old_term, new_term));
       try { p = (sequentsAbstractType) v.visit(`p); }
-      catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
       
       return  p; 
     }
@@ -194,7 +194,7 @@ class Utils {
     HashSet set = new HashSet();
     Strategy v = `TopDown(VarCollector(set));
     try { v.visit(t); }
-    catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
   }
 
@@ -226,7 +226,7 @@ class Utils {
     HashSet set = new HashSet();
     try {
       `TopDown(CollectConstraints(set)).visit(list);
-    } catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+    } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
   }
 
@@ -240,7 +240,7 @@ class Utils {
     HashSet set = new HashSet();
     try {
       `TopDown(CollectNewVars(set)).visit(list);
-    } catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+    } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
   }
 
