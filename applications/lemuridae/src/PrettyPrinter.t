@@ -4,11 +4,7 @@ import sequents.types.*;
 import urban.*;
 import urban.types.*;
 
-//import tom.library.strategy.mutraveler.MuTraveler;
-//import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.sl.*;
-//import jjtraveler.VisitFailure;
-//import jjtraveler.reflective.VisitableVisitor;
 
 
 import java.util.HashMap;
@@ -120,13 +116,13 @@ class PrettyPrinter {
         %match(Context h) {
           (_*,x,_*) -> {
             res = (Tree) 
-              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).fire(`res);
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).visit(`res);
           }
         }
         %match(Context c) {
           (_*,x,_*) -> {
             res = (Tree) 
-              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).fire(`res);
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).visit(`res);
           }
         }
         return res;
@@ -140,7 +136,9 @@ class PrettyPrinter {
    * remove unused hypothesis and conclusions in subtrees
    **/
   public static Tree cleanTree(Tree tree, TermRuleList tl, PropRuleList pl) {
-    return (Tree) `TopDown(Clean(tl,pl)).fire(tree);
+    try { return (Tree) `TopDown(Clean(tl,pl)).visit(tree); }
+    catch( VisitFailure e ) { e.printStackTrace(); System.exit(-1); }
+    return tree;
   }
 
   public static String toLatex(sequentsAbstractType term) {

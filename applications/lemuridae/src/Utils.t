@@ -7,10 +7,6 @@ import java.util.Stack;
 import java.util.Map;
 import java.util.Collection;
 
-//import tom.library.strategy.mutraveler.MuTraveler;
-//import tom.library.strategy.mutraveler.MuStrategy;
-//import jjtraveler.VisitFailure;
-//import jjtraveler.reflective.VisitableVisitor;
 import tom.library.sl.*;
 
 import java.io.*;
@@ -39,8 +35,8 @@ class Utils {
   {
     Strategy v = `ReplaceTerm(old_term, new_term);
     sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) `TopDown(v).fire(subject); }
-    catch (FireException e ) { e.printStackTrace(); }
+    try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
+    catch (VisitFailure e ) { e.printStackTrace(); System.exit(-1); }
     return res;
   }
 
@@ -63,8 +59,8 @@ class Utils {
   {
     Strategy v = `ReplaceVars(map);
     sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) `TopDown(v).fire(subject); }
-    catch (FireException e ) { e.printStackTrace(); }
+    try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
+    catch (VisitFailure e ) { e.printStackTrace(); System.exit(-1); }
     return res;
   }
 
@@ -153,9 +149,8 @@ class Utils {
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
     {
       Strategy v = `TopDown(ReplaceFreeVars(old_term, new_term));
-      //VisitableVisitor v = `mu(MuVar("x"),Try(Choice(r,All(MuVar("x")))));
-      try { p = (sequentsAbstractType) v.fire(`p); }
-      catch ( FireException e) { e.printStackTrace(); }
+      try { p = (sequentsAbstractType) v.visit(`p); }
+      catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
       
       return  p; 
     }
@@ -198,7 +193,8 @@ class Utils {
   public static HashSet<Term> collectVars(sequentsAbstractType t) {
     HashSet set = new HashSet();
     Strategy v = `TopDown(VarCollector(set));
-    v.fire(t);
+    try { v.visit(t); }
+    catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
     return set;
   }
 
@@ -229,10 +225,8 @@ class Utils {
   public static HashSet getSideConstraints(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
-      `TopDown(CollectConstraints(set)).fire(list);
-    } catch (FireException e) {
-      e.printStackTrace();
-    }
+      `TopDown(CollectConstraints(set)).visit(list);
+    } catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
     return set;
   }
 
@@ -245,10 +239,8 @@ class Utils {
   public static HashSet getNewVars(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
-      `TopDown(CollectNewVars(set)).fire(list);
-    } catch ( FireException e) {
-      e.printStackTrace();
-    }
+      `TopDown(CollectNewVars(set)).visit(list);
+    } catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
     return set;
   }
 

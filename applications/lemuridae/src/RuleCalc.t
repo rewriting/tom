@@ -81,12 +81,16 @@ public class RuleCalc {
       if (lastProp == null)
         return;
 
-      Prop problematicProp = (Prop) lastPos.getSubterm().fire(lastProp);
+      Prop problematicProp = null, cleanedProp = null;
+
+      try { problematicProp = (Prop) lastPos.getSubterm().visit(lastProp); }
+      catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
       HashSet<Term> freevars = Utils.collectFreeVars(problematicProp);
       TermList tl = `concTerm();
       for(Term var: freevars) {	tl = `concTerm(tl*,var); }
       Prop newPred = `relationAppl(name,tl);
-      Prop cleanedProp = (Prop) lastPos.getReplace(newPred).fire(lastProp);
+      try { cleanedProp = (Prop) lastPos.getReplace(newPred).visit(lastProp); }
+      catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
 
       // adding new prop to lastrule
       lastRule = `proprule(lastRule.getlhs(), cleanedProp);
@@ -96,9 +100,11 @@ public class RuleCalc {
     }
 
     public Prop getProblem() {
-      if(lastPos != null)
-        return (Prop) lastPos.getSubterm().fire(lastProp);
-      else return null;
+      if(lastPos != null) {
+        try { return (Prop) lastPos.getSubterm().visit(lastProp); }
+        catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      }
+      return null;
     }
 
     // to avoid problems with calling getResult twice
@@ -139,7 +145,8 @@ public class RuleCalc {
 
     private static SeqList collectPremises(Tree t) {
       LinkedList<Sequent> list = new LinkedList<Sequent>();
-      `TopDown(CollectPremises(list)).fire(t);
+      try { `TopDown(CollectPremises(list)).visit(t); }
+      catch(VisitFailure e) { e.printStackTrace(); System.exit(-1); }
       SeqList result = `concSeq();
       for(Sequent seq: list) {
         result = `concSeq(result*,seq);

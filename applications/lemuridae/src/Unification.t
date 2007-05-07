@@ -113,7 +113,9 @@ class Unification {
 
   public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl, PropRuleList pl) {
       Strategy ar =  `InnermostId(ApplyRules(tl,pl));
-      return (sequentsAbstractType) ar.fire(t);
+      try { return (sequentsAbstractType) ar.visit(t); }
+      catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      return null;
   }
 
   %strategy ApplyRules(tl:TermRuleList, pl:PropRuleList) extends `Identity() {
@@ -146,14 +148,14 @@ class Unification {
       forAll(n,p) -> { 
         bounded.add(`n); 
         Prop res = (Prop) 
-          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).fire(`p);
+          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
         return `forAll(n,res);
       }
       exists(n,p) -> { 
         bounded.add(`n); 
         Prop res = (Prop) 
-          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).fire(`p);
+          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
         return `exists(n,res);
       }
@@ -169,8 +171,11 @@ class Unification {
   public static sequentsAbstractType 
     substPreTreatment(sequentsAbstractType term) {
       HashSet<String> bounded = new HashSet();
-      return (sequentsAbstractType)
-        `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).fire(term);
+      try {
+        return (sequentsAbstractType)
+          `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(term);
+      } catch (VisitFailure e) { e.printStackTrace(); System.exit(-1); }
+      return null;
     }
 
  /* ----------------------------------*/
@@ -180,7 +185,6 @@ class Unification {
       termrule(lhs,rhs) -> {
         // recuperage de la table des symboles
         HashMap<String,Term> tds = match(`lhs, t);
-        //System.out.println("tds:" + tds);
         if (tds == null) return t;
 
         // substitution
