@@ -5,8 +5,7 @@ import tactics.trees.types.*;
 
 // debugger
 import ted.*;
-import VisitFailure;
-import tom.library.sl.Strategy;
+import tom.library.sl.*;
 
 public class Tactics {
 
