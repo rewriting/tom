@@ -88,7 +88,7 @@ public class TestStrat extends TestCase {
       super(`Fail());
     }
 
-    public VList visit_VList(VList arg){
+    public VList visit_VList(VList arg) throws VisitFailure{
       %match(VList arg) {
         conc(h,t*) -> {
           int v = `h+1;
@@ -96,8 +96,7 @@ public class TestStrat extends TestCase {
         }
       }
       //fail
-      getEnvironment().setStatus(Environment.FAILURE);
-      return arg;
+      throw new VisitFailure();
     }
   }
 }

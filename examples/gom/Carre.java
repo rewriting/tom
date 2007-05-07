@@ -28,8 +28,9 @@
  */
 package gom;
 import gom.rond.types.*;
+import tom.library.sl.Visitable;
 
-public class Carre implements tom.library.sl.Visitable {
+public class Carre implements Visitable {
 
   public Rond r1;
   public Rond r2;
@@ -43,7 +44,7 @@ public class Carre implements tom.library.sl.Visitable {
     return 2;
   }
 
-  public Strategy getChildAt(int index) {
+  public Visitable getChildAt(int index) {
     switch(index) {
       case 0: return r1;
       case 1: return r2;
@@ -52,7 +53,7 @@ public class Carre implements tom.library.sl.Visitable {
     }
   }
 
-  public Strategy setChildAt(int index, Strategy v) {
+  public Visitable setChildAt(int index, Visitable v) {
     switch(index) {
       case 0: r1=(Rond)v; return this;
       case 1: r2=(Rond)v; return this;
@@ -61,15 +62,15 @@ public class Carre implements tom.library.sl.Visitable {
     }
   }
     
-  public Strategy setChildren(Strategy[] children) {
+  public Visitable setChildren(Visitable[] children) {
     r1 = (Rond) children[0];
     r2 = (Rond) children[1];
     return this;
   }
 
 
-  public Strategy[] getChildren() {
-    return new Strategy[]{r1,r2};
+  public Visitable[] getChildren() {
+    return new Visitable[]{r1,r2};
   }
 
 }

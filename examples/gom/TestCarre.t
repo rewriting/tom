@@ -48,13 +48,13 @@ public class TestCarre extends TestCase {
   %include { sl.tom }
 
   %typeterm Carre {
-    implement { gom.Carre }
-    is_sort(t) { t instanceof gom.Carre }
+    implement { Carre }
+    is_sort(t) { t instanceof Carre }
     equals(t1,t2) { t1.equals(t2) }
     visitor_fwd { CarreBasicStrategy }
   }
   %op Carre Carre(r1:Rond, r2:Rond) {
-    is_fsym(t) { (t!=null) && (t instanceof Carre) }
+    is_fsym(t) { t instanceof Carre }
     get_slot(r1, t) { t.r1 }
     get_slot(r2, t) { t.r2 }
     make(t0, t1) { new Carre(t0, t1)}
@@ -63,19 +63,15 @@ public class TestCarre extends TestCase {
   public void testPrint() {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
-    Strategy print = makePrint(list);
-
     try {
-      `BottomUp(print).visit(subject);
+      `BottomUp(Print(list)).visitLight(subject);
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
     // This is not really a robust way to test
-    assertEquals(list.toString(),"[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]");
+    assertEquals("[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]",list.toString());
   }
-  Strategy makePrint(ArrayList list) {
-    return new Print(list);
-  }
+  
   %strategy Print(list:ArrayList) extends `Identity() {
     visit Point {
       x -> {
@@ -88,18 +84,14 @@ public class TestCarre extends TestCase {
   public void testShowCarre() {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
-    Strategy show = makeShowCarre(list);
-
     try {
-      `BottomUp(show).visit(subject);
+      `BottomUp(ShowCarre(list)).visitLight(subject);
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
-    assertEquals(list.toString(),"[Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14)))]");
+    assertEquals("[Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14)))]",list.toString());
   }
-  Strategy makeShowCarre(ArrayList list) {
-    return new ShowCarre(list);
-  }
+  
   %strategy ShowCarre(list:ArrayList) extends `Identity() {
     visit Carre {
       arg@Carre(l,r) -> {
@@ -112,15 +104,15 @@ public class TestCarre extends TestCase {
   public void testCombin() {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
-    Strategy comb = `ChoiceId(makePrint(list),makeShowCarre(list));
+    Strategy comb = `ChoiceId(Print(list),ShowCarre(list));
 
     try {
-      `BottomUp(comb).visit(subject);
-      `TopDown(comb).visit(subject);
+      `BottomUp(comb).visitLight(subject);
+      `TopDown(comb).visitLight(subject);
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
-    assertEquals(list.toString(),"[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]");
+    assertEquals("[Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)), Cercle(Point(9,10),Point(11,12),Point(13,14))), Point(1,0), Point(3,7), Point(4,9), Point(9,10), Point(11,12), Point(13,14)]",list.toString());
   }
 
 }

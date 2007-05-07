@@ -27,24 +27,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package gom;
+import tom.library.sl.Strategy;
+import tom.library.sl.Visitable;
+import tom.library.sl.VisitFailure;
 
 public class CarreBasicStrategy extends gom.rond.RondBasicStrategy {
 
-  public CarreBasicStrategy(jjtraveler.reflective.VisitableVisitor v) {
+  public CarreBasicStrategy(Strategy v) {
     super(v);
   }
 
-  public Strategy visit(Strategy v) throws VisitFailure {
+  public Visitable visitLight(Visitable v) throws VisitFailure {
     if (v instanceof Carre) {
       return this.visit_Carre((Carre)v);
     } else {
-      return super.visit(v);
+      return super.visitLight(v);
     }
   }
 
-
-  public Carre visit_Carre(Carre arg) throws VisitFailure {
-    return (Carre) any.visit(arg);
+  public int visit() {
+    if (getEnvironment().getSubject() instanceof Carre) {
+      return this.visit_Carre();
+    } else {
+      return super.visit();
+    }
   }
 
+  public Carre visit_Carre(Carre arg) throws VisitFailure {
+    return (Carre) any.visitLight(arg);
+  }
+
+  public int visit_Carre() {
+    return any.visit();
+  }
 }
