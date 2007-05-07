@@ -43,17 +43,17 @@ public class VisitableViewer {
   private static ATermFactory atermFactory = new PureFactory();
 
 
-  public static void visitableToDotStdout(Visitable v) {
+  public static void visitableToDotStdout(tom.library.sl.Visitable v) {
     visitableToDotStdout(v,null,"");
   }
 
-  public static void visitableToDot(Visitable v, Writer w) 
+  public static void visitableToDot(tom.library.sl.Visitable v, Writer w) 
     throws java.io.IOException {
       visitableToDot(v,w,null,"");
     }
 
   public static void 
-    visitableToDotStdout(Visitable v, Position hilight, String color)
+    visitableToDotStdout(tom.library.sl.Visitable v, Position hilight, String color)
     {
       try {
         Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
@@ -65,7 +65,7 @@ public class VisitableViewer {
     }
 
   public static void 
-    visitableToDot(Visitable v, Writer w, Position hilight, String color) 
+    visitableToDot(tom.library.sl.Visitable v, Writer w, Position hilight, String color) 
     throws java.io.IOException {
       ATerm at = atermFactory.parse(v.toString());
       ATermToDot(at, w, hilight, color);
@@ -116,7 +116,7 @@ public class VisitableViewer {
     }
 
   /* -------- pstree-like part --------- */
-  public static void toTreeStdout(Visitable v) {
+  public static void toTreeStdout(tom.library.sl.Visitable v) {
     try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
       toTree(v,w);
@@ -127,7 +127,7 @@ public class VisitableViewer {
     }
   }
 
-  public static void toTree(Visitable v, Writer w)
+  public static void toTree(tom.library.sl.Visitable v, Writer w)
     throws java.io.IOException {
         ATerm at = atermFactory.parse(v.toString());
         ATermToTree(at, w, new Stack<Integer>(), 0);
