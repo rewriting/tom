@@ -91,11 +91,11 @@ public class TestStrategy extends TestCase {
     Strategy getPos1 = `GetPositionA(positions,"p1");
     Strategy getPos2 = `GetPositionA(positions,"p2");
     Strategy getPos3 = `GetPositionA(positions,"p3");
-System.out.println("bottom up:" + `BottomUp(Identity()));
+
     try{
       StrategyCompiler.compile(`BottomUp(getPos1), "pos1").visit(t);
-      StrategyCompiler.compile(`(getPos2), "pos2").visit(t);
-      StrategyCompiler.compile(`(getPos3), "pos3").visit(tBis);
+      StrategyCompiler.compile(`BottomUp(getPos2), "pos2").visit(t);
+      StrategyCompiler.compile(`BottomUp(getPos3), "pos3").visit(tBis);
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }

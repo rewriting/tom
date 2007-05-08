@@ -30,13 +30,13 @@ public class ClassDumper {
    * @return The Gom term representing the Java class.
    */
   public static TClass dumpClass(String className) {
-    System.err.println("className:" + className);
+    //System.err.println("className:" + className);
     String internalClassName = className.replace('.', '/');
-    System.err.println("internalClassName:" + internalClassName);
+    //System.err.println("internalClassName:" + internalClassName);
     Object o = loadedClass.get(internalClassName);
     TClass clazz = null;
     if(o == null) {
-        System.out.println("Parsing class file `" + internalClassName + "' ...");
+      //  System.out.println("Parsing class file `" + internalClassName + "' ...");
         BytecodeReader cr = new BytecodeReader(internalClassName);
         clazz = cr.getTClass();
         loadedClass.put(internalClassName, clazz);
