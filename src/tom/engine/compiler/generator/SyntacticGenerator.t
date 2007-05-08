@@ -48,12 +48,8 @@ public class SyntacticGenerator implements IBaseGenerator {
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 
-  public Expression generate(Expression expression) {
-    try {
-      return  (Expression)`TopDown(Generator()).visit(expression);
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+  public Expression generate(Expression expression) throws VisitFailure {
+    return  (Expression)`TopDown(Generator()).visit(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

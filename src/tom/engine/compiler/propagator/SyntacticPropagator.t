@@ -47,12 +47,8 @@ public class SyntacticPropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
 
-  public Constraint propagate(Constraint constraint) {
-    try {
-      return  (Constraint)`InnermostId(SyntacticPatternMatching()).visit(constraint);
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+  public Constraint propagate(Constraint constraint) throws VisitFailure {
+    return  (Constraint)`InnermostId(SyntacticPatternMatching()).visit(constraint);
   }	
 
   %strategy SyntacticPatternMatching() extends `Identity() {
@@ -153,13 +149,9 @@ public class SyntacticPropagator implements IBasePropagator {
        */
       AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);
-        try {
-          Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
-          if(res != toApplyOn) {
-            return `AndConstraint(X*,eq,res);
-          }
-        } catch (tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("Unexpected strategy failure!");
+        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
+        if(res != toApplyOn) {
+          return `AndConstraint(X*,eq,res);
         }
       }      
     }

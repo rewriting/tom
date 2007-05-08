@@ -66,13 +66,9 @@ public class ConstraintCompiler {
   private static final String freshBeginPrefix = "_begin_";
   private static final String freshEndPrefix = "_end_";
 
-  public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
+  public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
     ConstraintCompiler.symbolTable = symbolTable;
-    try {
-      return  (TomTerm)`InnermostId(CompileMatch()).visit(termToCompile);		
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+    return  (TomTerm)`InnermostId(CompileMatch()).visit(termToCompile);		
   }
 
   // looks for a 'Match' instruction:

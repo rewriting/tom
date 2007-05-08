@@ -41,7 +41,7 @@ import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.library.sl.Visitable;
+import tom.library.sl.*;
 
 
 /**
@@ -61,7 +61,7 @@ public class ConstraintGenerator {
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
 
   public static Instruction performGenerations(Constraint constraint, Instruction action) 
-  throws ClassNotFoundException,InstantiationException,IllegalAccessException{		
+       throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
     // counts the generators that didn't change the instruction
     int genCounter = 0;
     int genNb = generatorsNames.length;
@@ -130,29 +130,22 @@ public class ConstraintGenerator {
   /**
    * Converts the resulted expression (after generation) into instructions
    */
-  private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){		
+  private static Instruction buildInstructionFromExpression(Expression expression, Instruction action)
+      throws VisitFailure {		
     // it is done innermost because the expression is also simplified		
-    try {
     expression = (Expression)`InnermostId(ReplaceSubterms()).visit(expression);
-    } catch (tom.library.sl.VisitFailure e) {
-    throw new TomRuntimeException("Unexpected strategy failure!");
-    }
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
     // make sure that each variable is declared only once
-    ArrayList<TomName> declaredVariables = new ArrayList<TomName>(); 		
-    try {
-      automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).visit(automata);    
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+    ArrayList<TomName> declaredVariables = new ArrayList<TomName>();
+    automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).visit(automata);
     return automata;
   }
 
   /**
    * Generates the automata from the expression
    */
-  private static Instruction generateAutomata(Expression expression, Instruction action){
+  private static Instruction generateAutomata(Expression expression, Instruction action) throws VisitFailure {
     %match(expression){
       And(left,right) -> {
         Instruction subInstruction = generateAutomata(`right,action);
@@ -255,16 +248,13 @@ public class ConstraintGenerator {
    * if (flag == true) ...
    *  
    */
-  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action){     
+  private static Instruction buildExpressionDisjunction(Expression orDisjunction,Instruction action)
+         throws VisitFailure {     
     TomTerm flag = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getBooleanType());
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
-    // collect variables
-    try {
-      `TopDown(CollectVar(freshVarList)).visit(orDisjunction);
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+    // collect variables    
+    `TopDown(CollectVar(freshVarList)).visit(orDisjunction);    
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
@@ -277,7 +267,8 @@ public class ConstraintGenerator {
     return `LetRef(flag,FalseTL(),instruction);
   }
 
-  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue){    
+  private static Instruction buildDisjunctionIfElse(Expression orDisjunction,Instruction assignFlagTrue)
+      throws VisitFailure {    
     %match(orDisjunction){
       OrExpressionDisjunction() -> {
         return `Nop();
@@ -305,7 +296,8 @@ public class ConstraintGenerator {
    *    action;
    * }
    */
-  private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action){
+  private static Instruction buildAntiMatchInstruction(Expression expression, Instruction action)
+      throws VisitFailure {
     TomTerm flag = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getBooleanType());    
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
     Instruction automata = generateAutomata(expression, assignFlagTrue);    

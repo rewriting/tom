@@ -47,12 +47,8 @@ public class VariadicPropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}
 //--------------------------------------------------------
 
-  public Constraint propagate(Constraint constraint) {
-    try {
-      return (Constraint)`InnermostId(VariadicPatternMatching()).visit(constraint);		
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+  public Constraint propagate(Constraint constraint) throws VisitFailure {
+    return (Constraint)`InnermostId(VariadicPatternMatching()).visit(constraint);		
   }	
 
   %strategy VariadicPatternMatching() extends `Identity() {
@@ -144,13 +140,9 @@ mSlots:  %match(slots) {
       andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        try {
-          Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
-          if(res != toApplyOn) {
-            return `AndConstraint(X*,eq,res);
-          }
-        } catch (tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("Unexpected strategy failure!");
+        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
+        if(res != toApplyOn) {
+          return `AndConstraint(X*,eq,res);
         }
       }
     }

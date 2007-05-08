@@ -47,15 +47,11 @@ public class ArrayPropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}
 //--------------------------------------------------------
 
-  public Constraint propagate(Constraint constraint) {
-    try {
-      return (Constraint)`InnermostId(ArrayPatternMatching()).visit(constraint);		
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+  public Constraint propagate(Constraint constraint) throws VisitFailure {
+    return (Constraint)`InnermostId(ArrayPatternMatching()).visit(constraint);		
   }	
 
-  %strategy ArrayPatternMatching() extends `Identity() {
+  %strategy ArrayPatternMatching() extends Identity() {
     visit Constraint {
       // Decompose - only if 'g' != SymbolOf 
       // array[t1,X*,t2,Y*] = g -> array=SymbolOf(g) /\ fresh_index = 0 
@@ -125,15 +121,10 @@ public class ArrayPropagator implements IBasePropagator {
       andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);            
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        try {
-          Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
-          if(res != toApplyOn) {
-            return `AndConstraint(X*,eq,res);
-          }
-        } catch (tom.library.sl.VisitFailure e) {
-          throw new TomRuntimeException("Unexpected strategy failure!");
-        } 
-
+        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
+        if(res != toApplyOn) {
+          return `AndConstraint(X*,eq,res);
+        }
       }
     }
   }// end %strategy

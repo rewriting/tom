@@ -54,7 +54,7 @@ public class ConstraintPropagator {
   private static final String[] propagatorsNames = {"SyntacticPropagator","VariadicPropagator","ArrayPropagator"};
 
   public static Constraint performPropagations(Constraint constraintToCompile) 
-    throws ClassNotFoundException,InstantiationException,IllegalAccessException{
+    throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{
     
     // counts the propagators that didn't change the expression
     int propCounter = 0;
@@ -89,25 +89,22 @@ public class ConstraintPropagator {
    * - make sure that all constraints attached to terms are handled
    * - do nothing for the anti-patterns
    */
-  private static Constraint preparePropagations(Constraint constraintToCompile) {
+  private static Constraint preparePropagations(Constraint constraintToCompile) throws VisitFailure {
     ArrayList<Constraint> constraintList = new ArrayList<Constraint>(); 
     /* anti-terms are a little bit special and constraint detachment is performed in propagators
      * here we shouldn't do it because of the non-linearity ()
      * 
      * The strategy makes a TopDown, and when finding an AntiTerm, it doesn't traverse its children
      */    
-    try {
-      Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
-            Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).visit(constraintToCompile);    
 
-      Constraint andList = `AndConstraint();
-      for(Constraint constr: constraintList) {
-        andList = `AndConstraint(andList*,constr);
-      }    
-      return `AndConstraint(newConstr,andList*);    
-    } catch (tom.library.sl.VisitFailure e) {
-      throw new TomRuntimeException("Unexpected strategy failure!");
-    }
+    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
+        Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).visit(constraintToCompile);    
+
+    Constraint andList = `AndConstraint();
+    for(Constraint constr: constraintList) {
+      andList = `AndConstraint(andList*,constr);
+    }    
+    return `AndConstraint(newConstr,andList*);
   }
 
   // TODO - wouldn't it be better to do this in propagators ?
