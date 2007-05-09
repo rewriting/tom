@@ -811,10 +811,13 @@ b :{
       }
     }
   }
-
-  // TODO: optimize safetopdown like in the commented strategy in autoreduce
+	
+  // TODO: seems ok, check correctness again
   %op Strategy SafeTopDown(s:Strategy) {
-    make(s) { `mu(MuVar("x"), Choice(Is_customRuleInfo(),Sequence(s,All(MuVar("x")))))  }
+    make(s) { 
+      `mu(MuVar("y"),Try(Sequence(s,_rule(Identity(),_premisses(MuVar("y")),Identity(),Identity()))))
+    }
+    //make(s) { `mu(MuVar("x"), Choice(Is_customRuleInfo(),Sequence(s,All(MuVar("x")))))  }
   }
 
 
