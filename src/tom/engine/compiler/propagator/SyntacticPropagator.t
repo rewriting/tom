@@ -122,20 +122,10 @@ public class SyntacticPropagator implements IBasePropagator {
       /*
        * Antipattern
        * 
-       * an anti-pattern: just transform this into a AntiMatchConstraint and handle the @
-       * a@..b@!p << t -> z << t /\ a << z /\ ... /\ b << z /\ !(p << z) 
+       * an anti-pattern: just transform this into a AntiMatchConstraint 
        */
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[Constraints=constraints]),s) -> {
-        TomTerm freshVar = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getTermTypeFromTerm(`term));
-        Constraint assigns = `AndConstraint(AntiMatchConstraint(MatchConstraint(term,freshVar)));
-        // for each constraint
-        %match(constraints) {
-          concConstraint(_*,AssignTo(var),_*) -> {            
-            assigns = `AndConstraint(MatchConstraint(var,freshVar),assigns*);
-          }
-        }// end match
-        // add fresh var assignment
-        return `AndConstraint(MatchConstraint(freshVar,s),assigns*);
+        return `AntiMatchConstraint(MatchConstraint(term,s));
       }
 
       /*

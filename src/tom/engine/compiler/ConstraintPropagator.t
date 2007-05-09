@@ -97,15 +97,19 @@ public class ConstraintPropagator {
      * The strategy makes a TopDown, and when finding an AntiTerm, it doesn't traverse its children
      */    
 
-    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
-        Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).visit(constraintToCompile);    
+//    Constraint newConstr = (Constraint)`mu(MuVar("xx"),IfThenElse(Is_AntiTerm(),Identity(),
+//        Sequence(DetachConstraints(constraintList),All(MuVar("xx"))))).visit(constraintToCompile);
+    
+    Constraint newConstr = (Constraint)`TopDown(DetachConstraints(constraintList)).visit(constraintToCompile);    
+
 
     Constraint andList = `AndConstraint();
     for(Constraint constr: constraintList) {
       andList = `AndConstraint(andList*,constr);
-    }    
+    }
     return `AndConstraint(newConstr,andList*);
   }
+  
 
   // TODO - wouldn't it be better to do this in propagators ?
   
@@ -116,30 +120,42 @@ public class ConstraintPropagator {
     // if the constraints  = empty list, then is nothing to do
     visit TomTerm {
       t@(RecordAppl|Variable|UnamedVariable|VariableStar|UnamedVariableStar)[Constraints=constraints@!concConstraint()] -> {
-        TomType freshVarType = ConstraintCompiler.getTermTypeFromTerm(`t);
-        TomTerm freshVariable = null;
-        // make sure that if we had a varStar, we replace with a varStar also
-match : %match(t) {
-          (VariableStar|UnamedVariableStar)[] -> {
-            freshVariable = ConstraintCompiler.getFreshVariableStar(freshVarType);
-            break match;
-          }
-          _ -> {
-            freshVariable = ConstraintCompiler.getFreshVariable(freshVarType);
-          }
-        }// end match
-        //make sure to apply on its subterms also
-        bag.add(preparePropagations(`MatchConstraint(t.setConstraints(concConstraint()),freshVariable)));
-        // for each constraint
-        %match(constraints) {
-          concConstraint(_*,AssignTo(var),_*) -> {
-            // add constraint to bag and delete it from the term
-            bag.add(`MatchConstraint(var,freshVariable));                                                                                                                       
-          }
-        }// end match                   
-        return freshVariable;                   
-      }      
+        return `performDetach(bag,t.setConstraints(concConstraint()),constraints,false);
+      }
+      AntiTerm(t@(RecordAppl|Variable|VariableStar)[Constraints=constraints@!concConstraint()]) -> {
+        return `performDetach(bag,t.setConstraints(concConstraint()),constraints,true);
+      }
     } // end visit
   } // end strategy
-
+    
+  /**
+   * a@...b@g(y) << t -> g(y) << z /\ a << z /\ ... /\ b << z
+   * a@...b@!g(y) << t -> !g(y) << z /\ a << z /\ ... /\ b << z
+   *
+   */
+  private static TomTerm performDetach(ArrayList bag, TomTerm subject, ConstraintList constraints, boolean isAnti) throws VisitFailure {
+    TomType freshVarType = ConstraintCompiler.getTermTypeFromTerm(subject);
+    TomTerm freshVariable = null;
+    // make sure that if we had a varStar, we replace with a varStar also
+match : %match(subject) {
+      (VariableStar|UnamedVariableStar)[] -> {
+        freshVariable = ConstraintCompiler.getFreshVariableStar(freshVarType);
+        break match;
+      }
+      _ -> {
+        freshVariable = ConstraintCompiler.getFreshVariable(freshVarType);
+      }
+    }// end match
+    //make sure to apply on its subterms also    
+    subject = isAnti ? `AntiTerm(subject) : subject;
+    bag.add(preparePropagations(`MatchConstraint(subject,freshVariable)));
+    // for each constraint
+    %match(constraints) {
+      concConstraint(_*,AssignTo(var),_*) -> {
+        // add constraint to bag and delete it from the term
+        bag.add(`MatchConstraint(var,freshVariable));                                                                                                                       
+      }
+    }// end match                   
+    return freshVariable;      
+  }
 }
