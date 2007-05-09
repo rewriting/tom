@@ -218,16 +218,6 @@ class Utils {
 
   // handling user input
 
-  /*
-  public static String getInput() {
-    String res = null;
-    BufferedReader clav = new BufferedReader(new InputStreamReader(System.in));
-    try { res = clav.readLine(); }
-    catch (IOException e) { System.out.println(e); }
-    return res.trim();
-  }
-  */
-
   public static Prop getProp() throws RecognitionException, TokenStreamException {
     SeqLexer lexer = new SeqLexer(stream);
     SeqParser parser = new SeqParser(lexer);
