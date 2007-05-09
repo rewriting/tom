@@ -196,31 +196,6 @@ matchBlock: {
 
                   /* generate equality checks */
                   newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList,concTomTerm()),newAction, option);
-                  /* abstract patterns */
-                  ArrayList abstractedPattern  = new ArrayList();
-                  ArrayList introducedVariable = new ArrayList();
-                  TomList newTermList = compiler.abstractPatternList(`termList, abstractedPattern, introducedVariable);
-
-                  /* newPatternInstruction is overwritten when abstraction is performed */
-                  if(abstractedPattern.size() > 0) {
-                    /* generate a new match construct */
-
-                    TomList generatedSubjectList = `ASTFactory.makeList(introducedVariable);
-                    PatternInstruction generatedPatternInstruction =
-                      `PatternInstruction(Pattern(generatedSubjectList, ASTFactory.makeList(abstractedPattern),concTomTerm()),newAction, concOption());
-                    /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
-                    OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
-                    Instruction generatedMatch =
-                      `Match(SubjectList(generatedSubjectList),
-                          concPatternInstruction(generatedPatternInstruction),
-                          generatedMatchOptionList);
-                    generatedMatch = (Instruction) `preProcessing(compiler).visitLight(generatedMatch);
-                    /*System.out.println("Generate new Match"+generatedMatch); */
-                    newPatternInstruction =
-                      `PatternInstruction(Pattern(subjectList,newTermList,concTomTerm()),generatedMatch, option);
-
-                    /*System.out.println("newPatternInstruction = " + newPatternInstruction); */
-                  }
                   /* do nothing */
                   break matchBlock;
                 }
