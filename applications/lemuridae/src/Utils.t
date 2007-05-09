@@ -17,6 +17,8 @@ class Utils {
  
   %include { sequents/sequents.tom }
   %include { sl.tom }
+  %typeterm StringCollection { implement {Collection<String>} is_sort(t) { t instanceof Collection} }
+  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
 
   private static InputStream stream = new DataInputStream(System.in);
 
@@ -65,16 +67,16 @@ class Utils {
   }
 
   private static Prop 
-    replaceFreeVars(Prop p, Term old_term, Term new_term, Set<Term> nonfresh) {
+    replaceFreeVars(Prop p, Term old_term, Term new_term, Set<String> nonfresh) {
       %match(Prop p) {
         forAll(n,p1) -> {
           if(old_term != `Var(n)) {
-            if (collectVars(new_term).contains(`Var(n))) {
+            if (new_term.getVars().contains(`n)) {
               Term fv = freshVar(`n,nonfresh);
               Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
-              nonfresh.add(`Var(n));
+              nonfresh.add(`n);
               Prop res = `forAll(fv.getname(),replaceFreeVars(np1,old_term,new_term,nonfresh));
-              nonfresh.remove(`Var(n));
+              nonfresh.remove(`n);
               return res;
             } else {
               return `forAll(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
@@ -83,12 +85,12 @@ class Utils {
         }
         exists(n,p1) -> {
           if(old_term != `Var(n)) {
-            if (collectVars(new_term).contains(`Var(n))) {
+            if (new_term.getVars().contains(`n)) {
               Term fv = freshVar(`n,nonfresh);
               Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
-              nonfresh.add(`Var(n));
+              nonfresh.add(`n);
               Prop res = `exists(fv.getname(), replaceFreeVars(np1,old_term,new_term,nonfresh));
-              nonfresh.remove(`Var(n));
+              nonfresh.remove(`n);
               return res;
             } else {
               return `exists(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
@@ -117,8 +119,8 @@ class Utils {
 
   public static Prop 
     replaceFreeVars(Prop p, Term old_term, Term new_term) {
-      HashSet nonfresh = collectFreeVars(p);
-      nonfresh.addAll(collectVars(new_term));
+      Set<String> nonfresh = p.getFreeVars();
+      nonfresh.addAll(new_term.getVars());
       return replaceFreeVars(p, old_term, new_term, nonfresh);
     }
 
@@ -155,44 +157,15 @@ class Utils {
       return  p; 
     }
 
-  public static HashSet<Term> collectFreeVars(Prop p) {
-    HashSet<Term> res = new HashSet<Term>();
-    collectFreeVars(p, res, new Stack<Term>());
-    return res;
-  }
-
-  private static void collectFreeVars(Prop p, HashSet<Term> set, Stack<Term> bounded) {
-    %match(Prop p) {
-      (forAll|exists)(n,p1) -> {
-        bounded.push(`Var(n));
-        collectFreeVars(`p1,set,bounded);
-        bounded.pop();
-      }
-      relationAppl(r,t) -> {
-        HashSet<Term> vars = collectVars(`t);
-        for(Term var: vars) {
-          if (!bounded.contains(var))
-            set.add(var);
-        }
-      }
-      (and|or|implies)(p1,p2) -> {
-        collectFreeVars(`p1,set,bounded);
-        collectFreeVars(`p2,set,bounded);
-      }
-    }
-  }
-
-  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
-
-  %strategy VarCollector(vars:Collection) extends `Identity() {
+  %strategy VarCollector(vars:StringCollection) extends `Fail() {
     visit Term {
-      v@Var(_) -> { vars.add(`v); }
+      t -> { vars.addAll(`t.getVars()); return `t; }
     }
   }
 
-  public static HashSet<Term> collectVars(sequentsAbstractType t) {
+  public static Set<String> collectVars(sequentsAbstractType t) {
     HashSet set = new HashSet();
-    Strategy v = `TopDown(VarCollector(set));
+    Strategy v = `mu(MuVar("x"),Choice(VarCollector(set),All(MuVar("x"))));
     try { v.visit(t); }
     catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
@@ -200,17 +173,16 @@ class Utils {
 
 
   public static Term freshVar(String x, sequentsAbstractType term) {
-    HashSet<Term> set = collectVars(term);
+    Set<String> set = collectVars(term);
     return freshVar(x,set);
   }
 
-  public static Term freshVar(String x, Set<Term> set) {
+  public static Term freshVar(String x, Set<String> set) {
     int i = 0;
     while(true) {
       String s = x + i;
-      Term res = `Var(s);
-      if (!set.contains(res))
-        return res;
+      if (!set.contains(s))
+        return `Var(s);
       else
         i++;
     }
@@ -236,13 +208,13 @@ class Utils {
     }
   }
 
-  public static HashSet getNewVars(sequentsAbstractType list) {
-    HashSet set = new HashSet();
-    try {
-      `TopDown(CollectNewVars(set)).visit(list);
-    } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
-    return set;
-  }
+  public static HashSet getNewVars(sequentsAbstractType seq) {
+     HashSet set = new HashSet();
+     try {
+      `TopDown(CollectNewVars(set)).visit(seq);
+     } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+     return set;
+   }
 
   // handling user input
 

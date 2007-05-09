@@ -7,6 +7,7 @@ import urban.types.*;
 import tom.library.sl.*;
 
 import java.util.HashMap;
+import java.util.WeakHashMap;
 import java.util.Set;
 import java.util.Map;
 import java.util.LinkedList;
@@ -738,12 +739,21 @@ b :{
   }
 
 
+  static private WeakHashMap<Rule,Boolean> noNewVars = new WeakHashMap(); // to memoize
+
   private static Rule applicableInAuto(ArrayList<Rule> newRules, Prop prop, boolean left) {
     Rule res = null; 
 
     for(int i=0; i<newRules.size(); i++) {
       Rule rule = newRules.get(i); 
-      if( Utils.getNewVars(rule).size() == 0 ) {
+      boolean ok = false;
+      if (noNewVars.containsKey(rule)) {
+        ok = noNewVars.get(rule);
+      } else { 
+        ok = (Utils.getNewVars(rule).size() == 0);
+        noNewVars.put(rule,ok);
+      }
+      if( ok ) {
         Prop conclusion = rule.getconcl();
         HashMap<String,Term> tds = Unification.match(conclusion, prop);
         if (tds != null && ((left && rule.geths() == 0) || (!left && rule.geths() == 1))) {

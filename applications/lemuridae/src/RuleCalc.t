@@ -85,9 +85,9 @@ public class RuleCalc {
 
       try { problematicProp = (Prop) lastPos.getSubterm().visit(lastProp); }
       catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
-      HashSet<Term> freevars = Utils.collectFreeVars(problematicProp);
+      Set<String> freevars = problematicProp.getFreeVars();
       TermList tl = `concTerm();
-      for(Term var: freevars) {	tl = `concTerm(tl*,var); }
+      for(String var: freevars) {	tl = `concTerm(tl*,Var(var)); }
       Prop newPred = `relationAppl(name,tl);
       try { cleanedProp = (Prop) lastPos.getReplace(newPred).visit(lastProp); }
       catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
@@ -155,11 +155,11 @@ public class RuleCalc {
     }
 
     private static Tree buildTree(Sequent seq) {
-      HashSet<Term> set = Utils.collectVars(seq);
+      Set<String> set = Utils.collectVars(seq);
       return buildTree(seq,set);
     }
 
-    private static Tree buildTree(Sequent seq, Set<Term> freevars) {
+    private static Tree buildTree(Sequent seq, Set<String> freevars) {
       %match(seq) {
         // axiom
         s@sequent((_*,p,_*),(_*,p,_*)) -> {
@@ -223,7 +223,7 @@ public class RuleCalc {
         s@sequent(g,(u*,x@forAll(n,a),v*)) -> {
           String new_n = Utils.freshVar(`n,freevars).getname();
           Term fresh_v = `FreshVar(new_n,n);
-          freevars.add(`Var(fresh_v.getname()));
+          freevars.add(fresh_v.getname());
           Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
           Tree t = buildTree(`sequent(g,context(u*,new_a,v*)),freevars);
           return `rule(forAllRightInfo(fresh_v),premisses(t),s,x);
@@ -233,7 +233,7 @@ public class RuleCalc {
         s@sequent(g,(u*,x@exists(n,a),v*)) -> {
           String new_n = Utils.freshVar(`n,freevars).getname();
           Term new_v = `NewVar(new_n,n);
-          freevars.add(`Var(new_v.getname()));
+          freevars.add(new_v.getname());
           Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
           Tree t = buildTree(`sequent(g,context(u*,new_a,v*)),freevars);
           return `rule(existsRightInfo(new_v),premisses(t),s,x);
@@ -243,7 +243,7 @@ public class RuleCalc {
         s@sequent((u*,x@forAll(n,a),v*),d) -> {
           String new_n = Utils.freshVar(`n,freevars).getname();
           Term new_v = `NewVar(new_n,n);
-          freevars.add(`Var(new_v.getname()));
+          freevars.add(new_v.getname());
           Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
           Tree t = buildTree(`sequent(context(u*,new_a,v*),d),freevars);
           return `rule(forAllLeftInfo(new_v),premisses(t),s,x);
@@ -253,7 +253,7 @@ public class RuleCalc {
         s@sequent((u*,x@exists(n,a),v*),d) -> {
           String new_n = Utils.freshVar(`n,freevars).getname();
           Term fresh_v = `FreshVar(new_n,n);
-          freevars.add(`Var(fresh_v.getname()));
+          freevars.add(new_n);
           Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
           Tree t = buildTree(`sequent(context(u*,new_a,v*),d),freevars);
           return `rule(existsLeftInfo(fresh_v),premisses(t),s,x);

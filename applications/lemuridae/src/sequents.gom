@@ -97,4 +97,88 @@ ProofCommand = proofCommand(text:String)
              | abort()
              | proofendoffile()
 
+// hooks maintaining free vars
+
+
+sort Term:block() {
+  private static java.util.WeakHashMap<Term,java.util.Set<String>> vars = new java.util.WeakHashMap();
+
+  public java.util.Set<String> getVars() {
+    if(vars.containsKey(this)) {
+      return vars.get(this);
+    } else {
+      java.util.Set<String> res = new java.util.HashSet();
+      res = getVars(this,res);
+      vars.put(this,res);
+      return res;
+    }
+  }
+
+  public java.util.Set<String> getVars(Term t, java.util.Set<String> res) {
+    if(vars.containsKey(t)) {
+      return vars.get(t);
+    } else {
+      %match(t) {
+        Var(n) -> { res.add(`n); return res; }
+        funAppl(fun, l) -> {
+          %match(TermList l) {
+            (_*,c,_*) -> { `getVars(c,res); }
+          }
+        }
+      }
+      return res;
+    }
+  }
+}
+
+
+sort Prop:block() {
+  private static java.util.WeakHashMap<Prop,java.util.Set<String>> freevars = new java.util.WeakHashMap();
+
+  public java.util.Set<String> getFreeVars() {
+    if(freevars.containsKey(this)) {
+      return freevars.get(this);
+    } else {
+      java.util.Set<String> res = new java.util.HashSet();
+      res = getFreeVars(this,res);
+      freevars.put(this,res);
+      return res;
+    }
+  }
+
+  public java.util.Set<String> getFreeVars(Prop p, java.util.Set<String> res) {
+    if(freevars.containsKey(p)) {
+      return freevars.get(p);
+    } else {
+      %match(p) {
+        and(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        or(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        implies(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        forAll(var,sub) -> {
+          `getFreeVars(sub,res);
+          res.remove(`var);
+          return res;
+        }
+        exists(var,sub) -> {
+          `getFreeVars(sub,res);
+          res.remove(`var);
+          return res;
+        }
+      }
+      return res;
+    }
+  }
+}
 
