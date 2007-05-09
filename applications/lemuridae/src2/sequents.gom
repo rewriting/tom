@@ -97,127 +97,88 @@ ProofCommand = proofCommand(text:String)
              | abort()
              | proofendoffile()
 
-
 // hooks maintaining free vars
 
 
 sort Term:block() {
-  private java.util.HashSet<String> vars = null;
+  private static java.util.WeakHashMap<Term,java.util.Set<String>> vars = new java.util.WeakHashMap();
 
-  public java.util.HashSet<String> getVars() { return vars; }
-  public void setVars(java.util.HashSet<String> v) { vars = v; }
-}
-
-Var:make(name) {
-  sequents.types.Term res = realMake(name);
-  java.util.HashSet<String> vars = new java.util.HashSet();
-  vars.add(`name);
-  res.setVars(vars);
-  return res;
-}
-
-funAppl:make(fun,args) {
-  sequents.types.Term res = realMake(fun,args);
-  java.util.HashSet<String> vars = new java.util.HashSet();
-  %match(TermList args) {
-    (_*,x,_*) -> { vars.addAll(`x.getVars()); }
+  public java.util.Set<String> getVars() {
+    if(vars.containsKey(this)) {
+      return vars.get(this);
+    } else {
+      java.util.Set<String> res = new java.util.HashSet();
+      res = getVars(this,res);
+      vars.put(this,res);
+      return res;
+    }
   }
-  res.setVars(vars);
-  return res;
+
+  public java.util.Set<String> getVars(Term t, java.util.Set<String> res) {
+    if(vars.containsKey(t)) {
+      return vars.get(t);
+    } else {
+      %match(t) {
+        Var(n) -> { res.add(`n); return res; }
+        funAppl(fun, l) -> {
+          %match(TermList l) {
+            (_*,c,_*) -> { `getVars(c,res); }
+          }
+        }
+      }
+      return res;
+    }
+  }
 }
 
-FreshVar:make(name,bname) {
-  sequents.types.Term res = realMake(name,bname);
-  java.util.HashSet<String> vars = new java.util.HashSet();
-  vars.add(`name);
-  res.setVars(vars);
-  return res;
-}
-
-NewVar:make(name,bname) {
-  sequents.types.Term res = realMake(name,bname);
-  java.util.HashSet<String> vars = new java.util.HashSet();
-  vars.add(`name);
-  res.setVars(vars);
-  return res;
-}
 
 sort Prop:block() {
-  private java.util.HashSet<String> freeVars = null;
+  private static java.util.WeakHashMap<Prop,java.util.Set<String>> freevars = new java.util.WeakHashMap();
 
-  public java.util.HashSet<String> getFreeVars() { return freeVars; }
-  public void setFreeVars(java.util.HashSet<String> v) { freeVars = v; }
-}
-
-relationAppl:make(r,tl) {
-  sequents.types.Prop res = realMake(r,tl);
-  java.util.HashSet<String> freeVars = new java.util.HashSet();
-  %match(TermList tl) {
-    (_*,x,_*) -> { freeVars.addAll(`x.getVars()); }
+  public java.util.Set<String> getFreeVars() {
+    if(freevars.containsKey(this)) {
+      return freevars.get(this);
+    } else {
+      java.util.Set<String> res = new java.util.HashSet();
+      res = getFreeVars(this,res);
+      freevars.put(this,res);
+      return res;
+    }
   }
-  res.setFreeVars(freeVars);
-  return res;
-}
 
-and:make(p1,p2) {
-  sequents.types.Prop res = realMake(p1,p2);
-  java.util.HashSet<String> freeVars = new java.util.HashSet();
-  freeVars.addAll(p1.getFreeVars());
-  freeVars.addAll(p2.getFreeVars());
-  res.setFreeVars(freeVars);
-  return res;
-}
-
-or:make(p1,p2) {
-  sequents.types.Prop res = realMake(p1,p2);
-  java.util.HashSet<String> freeVars = new java.util.HashSet();
-  freeVars.addAll(p1.getFreeVars());
-  freeVars.addAll(p2.getFreeVars());
-  res.setFreeVars(freeVars);
-  return res;
-}
-
-implies:make(p1,p2) {
-  sequents.types.Prop res = realMake(p1,p2);
-  java.util.HashSet<String> freeVars = new java.util.HashSet();
-  freeVars.addAll(p1.getFreeVars());
-  freeVars.addAll(p2.getFreeVars());
-  res.setFreeVars(freeVars);
-  return res;
-}
-
-forAll:make(var,p) {
-  sequents.types.Prop res = realMake(var,p);
-  java.util.HashSet<String> freeVars = (java.util.HashSet<String>) p.getFreeVars().clone();
-  freeVars.remove(var);
-  res.setFreeVars(freeVars);
-  return res;
-}
-
-exists:make(var,p) {
-  sequents.types.Prop res = realMake(var,p);
-  java.util.HashSet<String> freeVars = (java.util.HashSet<String>) p.getFreeVars().clone();
-  freeVars.remove(var);
-  res.setFreeVars(freeVars);
-  return res;
-}
-
-
-bottom:make() {
-  sequents.types.Prop res = realMake();
-  res.setFreeVars(new java.util.HashSet<String>());
-  return res;
-}
-
-top:make() {
-  sequents.types.Prop res = realMake();
-  res.setFreeVars(new java.util.HashSet<String>());
-  return res;
-}
-
-nullProp:make() {
-  sequents.types.Prop res = realMake();
-  res.setFreeVars(new java.util.HashSet<String>());
-  return res;
+  public java.util.Set<String> getFreeVars(Prop p, java.util.Set<String> res) {
+    if(freevars.containsKey(p)) {
+      return freevars.get(p);
+    } else {
+      %match(p) {
+        and(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        or(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        implies(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        forAll(var,sub) -> {
+          `getFreeVars(sub,res);
+          res.remove(`var);
+          return res;
+        }
+        exists(var,sub) -> {
+          `getFreeVars(sub,res);
+          res.remove(`var);
+          return res;
+        }
+      }
+      return res;
+    }
+  }
 }
 

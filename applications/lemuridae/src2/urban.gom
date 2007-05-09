@@ -33,20 +33,20 @@ NSequent = nsequent(h:NContext,c:CNContext)
 Name = name(n:int)
 CoName = coname(n:int)
 
-ProofTerm = ax(x:Name,a:CoName)
-          | cut(a:CoName,m1:ProofTerm,x:Name,m2:ProofTerm)
-          | falseL(x:Name)
-          | trueR(a:CoName)
-          | andR(a:CoName,m1:ProofTerm,b:CoName,m2:ProofTerm, c:CoName)
-          | andL(x:Name,y:Name,m:ProofTerm, z:Name)
-          | orR(a:CoName,b:CoName,m:ProofTerm, c:CoName)
-          | orL(x:Name,m1:ProofTerm,y:Name,m2:ProofTerm, z:Name)
-          | implyR(x:Name,a:CoName,m1:ProofTerm, b:CoName)
-          | implyL(a:CoName,m1:ProofTerm,x:Name,m2:ProofTerm, y:Name)
-          | existsR(a:CoName,m:ProofTerm,t:Term,b:CoName)
-          | existsL(x:Name,varx:Term,m:ProofTerm,y:Name)
-          | forallR(a:CoName,varx:Term,m:ProofTerm,b:CoName)
-          | forallL(x:Name,m:ProofTerm,t:Term,y:Name)
+ProofTerm = ax(n:Name,cn:CoName)
+          | cut(a:CNProp,m1:ProofTerm,x:NProp,m2:ProofTerm)
+          | falseL(n:Name)
+          | trueR(cn:CoName)
+          | andR(a:CNProp,m1:ProofTerm,b:CNProp,m2:ProofTerm, nc:CoName)
+          | andL(x:NProp,y:NProp,m:ProofTerm, n:Name)
+          | orR(a:CNProp,b:CNProp,m:ProofTerm, cn:CoName)
+          | orL(x:NProp,m1:ProofTerm,y:NProp,m2:ProofTerm, n:Name)
+          | implyR(x:NProp,a:CNProp,m1:ProofTerm, cn:CoName)
+          | implyL(a:CNProp,m1:ProofTerm,x:NProp,m2:ProofTerm, n:Name)
+          | existsR(a:CNProp,m:ProofTerm,t:Term,cn:CoName)
+          | existsL(x:NProp,varx:Term,m:ProofTerm,n:Name)
+          | forallR(a:CNProp,varx:Term,m:ProofTerm,cn:CoName)
+          | forallL(x:NProp,m:ProofTerm,t:Term,n:Name)
 existsL:make(x,varx,m,y) {
   %match(Term varx) {
     !Var(varname) -> { throw new RuntimeException("Exists Left not on variable"); }
@@ -58,4 +58,8 @@ forallR:make(a,varx,m,b) {
     !Var(varname) -> { throw new RuntimeException("Forall Right not on variable"); }
   }
 }
+
+NPremisses = npremisses(NTree*)
+
+NTree = nrule(type:RuleType, p:NPremisses, c:NSequent, pt:ProofTerm)
 

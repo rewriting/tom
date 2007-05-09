@@ -7,10 +7,6 @@ import java.util.Stack;
 import java.util.Map;
 import java.util.Collection;
 
-//import tom.library.strategy.mutraveler.MuTraveler;
-//import tom.library.strategy.mutraveler.MuStrategy;
-//import jjtraveler.VisitFailure;
-//import jjtraveler.reflective.VisitableVisitor;
 import tom.library.sl.*;
 
 import java.io.*;
@@ -21,9 +17,8 @@ class Utils {
  
   %include { sequents/sequents.tom }
   %include { sl.tom }
-  %typeterm Collection { implement { Collection } is_sort(t) { t instanceof Collection} }
-  %typeterm StringCollection { implement { Collection<String> } is_sort(t) { t instanceof Collection} }
-  %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
+  %typeterm StringCollection { implement {Collection<String>} is_sort(t) { t instanceof Collection} }
+  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
 
   private static InputStream stream = new DataInputStream(System.in);
 
@@ -42,10 +37,12 @@ class Utils {
   {
     Strategy v = `ReplaceTerm(old_term, new_term);
     sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) `TopDown(v).fire(subject); }
-    catch (FireException e ) { e.printStackTrace(); }
+    try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
+    catch (VisitFailure e ) { e.printStackTrace(); throw new RuntimeException(); }
     return res;
   }
+
+  %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
 
   // several vars in one pass  
   %strategy ReplaceVars(map:StringTermMap) extends `Identity() {
@@ -64,8 +61,8 @@ class Utils {
   {
     Strategy v = `ReplaceVars(map);
     sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) `TopDown(v).fire(subject); }
-    catch (FireException e ) { e.printStackTrace(); }
+    try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
+    catch (VisitFailure e ) { e.printStackTrace(); throw new RuntimeException(); }
     return res;
   }
 
@@ -122,7 +119,7 @@ class Utils {
 
   public static Prop 
     replaceFreeVars(Prop p, Term old_term, Term new_term) {
-      HashSet<String> nonfresh = p.getFreeVars();
+      Set<String> nonfresh = p.getFreeVars();
       nonfresh.addAll(new_term.getVars());
       return replaceFreeVars(p, old_term, new_term, nonfresh);
     }
@@ -154,8 +151,9 @@ class Utils {
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
     {
       Strategy v = `TopDown(ReplaceFreeVars(old_term, new_term));
-      try { p = (sequentsAbstractType) v.fire(`p); }
-      catch ( FireException e) { e.printStackTrace(); }
+      try { p = (sequentsAbstractType) v.visit(`p); }
+      catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+      
       return  p; 
     }
 
@@ -165,7 +163,6 @@ class Utils {
     collectFreeVars(p, res, new Stack<Term>());
     return res;
   }
-  
 
   private static void collectFreeVars(Prop p, HashSet<Term> set, Stack<Term> bounded) {
     %match(Prop p) {
@@ -175,7 +172,7 @@ class Utils {
         bounded.pop();
       }
       relationAppl(_,t) -> {
-        HashSet<Term> vars = collectVars(`t);
+        Set<Term> vars = collectVars(`t);
         for(Term var: vars) {
           if (!bounded.contains(var))
             set.add(var);
@@ -195,16 +192,17 @@ class Utils {
     }
   }
 
-  public static HashSet<String> collectVars(sequentsAbstractType t) {
+  public static Set<String> collectVars(sequentsAbstractType t) {
     HashSet set = new HashSet();
     Strategy v = `mu(MuVar("x"),Choice(VarCollector(set),All(MuVar("x"))));
-    v.fire(t);
+    try { v.visit(t); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
   }
 
 
   public static Term freshVar(String x, sequentsAbstractType term) {
-    HashSet<String> set = collectVars(term);
+    Set<String> set = collectVars(term);
     return freshVar(x,set);
   }
 
@@ -228,10 +226,8 @@ class Utils {
   public static HashSet getSideConstraints(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
-      `TopDown(CollectConstraints(set)).fire(list);
-    } catch (FireException e) {
-      e.printStackTrace();
-    }
+      `TopDown(CollectConstraints(set)).visit(list);
+    } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
   }
 
@@ -244,10 +240,8 @@ class Utils {
   public static HashSet getNewVars(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
-      `TopDown(CollectNewVars(set)).fire(list);
-    } catch ( FireException e) {
-      e.printStackTrace();
-    }
+      `TopDown(CollectNewVars(set)).visit(list);
+    } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
   }
 

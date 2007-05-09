@@ -16,7 +16,7 @@ public class ProofChecker {
   %strategy ReplaceFreeVars(var: Term, new_term: Term) extends `Fail() {
     visit Prop {
       relationAppl(r, tl) -> {
-        TermList res = (TermList) `mu(MuVar("x"),Choice(ReplaceVar(var,new_term),All(MuVar("x")))).fire(`tl);
+        TermList res = (TermList) `mu(MuVar("x"),Choice(ReplaceVar(var,new_term),All(MuVar("x")))).visit(`tl);
         return `relationAppl(r, res);
       }
       r@(forAll|exists)(x,_) -> { 
@@ -31,8 +31,14 @@ public class ProofChecker {
     }
   }
 
+  private static Visitable tryVisit(Strategy s, Visitable v) {
+    Visitable res = null;
+    try { res = s.visit(v); return res; }
+    catch (VisitFailure e) { return v; }
+  }
+
   public static boolean boundedInContext(Term var, Context ctxt) {
-    return ((Context) `replaceFreeVars(var,Var("@notavar@")).fire(ctxt)) == ctxt; 
+    return tryVisit(`replaceFreeVars(var,Var("@notavar@")),ctxt) == ctxt; 
   }
 
   public static boolean proofcheck(Tree term) {
@@ -135,7 +141,7 @@ public class ProofChecker {
           a@forAll(v,A)
           )
         -> {
-          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
+          if (`tryVisit(replaceFreeVars(Var(v),new_var),A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
             return proofcheck(`p); 
         }
 
@@ -145,7 +151,7 @@ public class ProofChecker {
           sequent((g1*,a,g2*),d),
           a@forAll(v,A)
           )
-        -> { if (`replaceFreeVars(Var(v),new_term).fire(`A) == `B) return proofcheck(`p); } 
+        -> { if (`tryVisit(replaceFreeVars(Var(v),new_term),A) == `B) return proofcheck(`p); } 
 
       rule(
           existsRightInfo(new_term),
@@ -153,7 +159,7 @@ public class ProofChecker {
           sequent(g,(d1*,a,d2*)),
           a@exists(v,A)
           )
-        -> { if (`replaceFreeVars(Var(v),new_term).fire(`A) == `B) return proofcheck(`p); 
+        -> { if (`tryVisit(replaceFreeVars(Var(v),new_term),A) == `B) return proofcheck(`p); 
         } 
 
       rule(
@@ -163,7 +169,7 @@ public class ProofChecker {
           a@exists(v,A)
           )
         -> {
-          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(g1*,g2*,d*)))
+          if (`tryVisit(replaceFreeVars(Var(v),new_var),A) == `B && boundedInContext(`new_var,`context(g1*,g2*,d*)))
             return proofcheck(`p); 
         } 
 

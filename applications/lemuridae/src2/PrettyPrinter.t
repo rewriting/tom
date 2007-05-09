@@ -1,11 +1,10 @@
 import sequents.*;
 import sequents.types.*;
 
-//import tom.library.strategy.mutraveler.MuTraveler;
-//import tom.library.strategy.mutraveler.MuStrategy;
+import urban.*;
+import urban.types.*;
+
 import tom.library.sl.*;
-//import jjtraveler.VisitFailure;
-//import jjtraveler.reflective.VisitableVisitor;
 
 
 import java.util.HashMap;
@@ -18,7 +17,8 @@ import java.io.*;
 
 class PrettyPrinter {
 
-  %include { sequents/sequents.tom }
+//  %include { sequents/sequents.tom }
+  %include { urban/urban.tom }
   %include { sl.tom }
   %typeterm Set {implement {Set} is_sort(t) {t instanceof Set} }
   %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
@@ -116,13 +116,13 @@ class PrettyPrinter {
         %match(Context h) {
           (_*,x,_*) -> {
             res = (Tree) 
-              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).fire(`res);
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x))).visit(`res);
           }
         }
         %match(Context c) {
           (_*,x,_*) -> {
             res = (Tree) 
-              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).fire(`res);
+              `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x))).visit(`res);
           }
         }
         return res;
@@ -136,7 +136,8 @@ class PrettyPrinter {
    * remove unused hypothesis and conclusions in subtrees
    **/
   public static Tree cleanTree(Tree tree, TermRuleList tl, PropRuleList pl) {
-    return (Tree) `TopDown(Clean(tl,pl)).fire(tree);
+    try { return (Tree) `TopDown(Clean(tl,pl)).visit(tree); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 
   public static String toLatex(sequentsAbstractType term) {
@@ -312,6 +313,58 @@ class PrettyPrinter {
 
     return null;
   }
+
+  public static String toLatex(urbanAbstractType term) {
+    %match (NProp term) {
+      nprop(x,p) -> { return toLatex(`x)+":"+toLatex(`p);}
+    }
+
+    %match (CNProp term) {
+      cnprop(a,p) -> { return toLatex(`a)+":"+toLatex(`p);}
+    }
+
+    %match (NContext term) {
+      () -> {return "";}
+      (h) -> {return toLatex(`h); }
+      (h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
+    }
+
+    %match (CNContext term) {
+      () -> {return "";}
+      (h) -> {return toLatex(`h); }
+      (h,d*) -> {return toLatex(`h)+","+toLatex(`d);}
+    }
+
+    %match (NSequent term) {
+      nsequent(h,c) -> {return toLatex(`h)+"\\vdash "+toLatex(`c);}
+    }
+
+    %match (Name term) {
+      name(n) -> {return "x_"+`n;}
+    }
+
+    %match (CoName term) {
+      coname(n) -> {return "a_"+`n; }
+    }
+
+    %match (ProofTerm term) { // INCOMPLET manque le 1er ordre
+      ax(n,cn) -> {return "{\\sf Ax}("+toLatex(`n)+","+toLatex(`cn)+")";}
+      cut(a,m1,x,m2) -> {return "{\\sf Cut}("+toLatex(`a)+","+toLatex(`m1)+","+toLatex(`x)+","+toLatex(`m2)+")";}
+      falseL(n) -> {return "{\\sf False}_L("+toLatex(`n)+")";}
+      trueR(cn) -> {return "{\\sf True}_R("+toLatex(`cn)+")";}
+      andR(a,m1,b,m2,nc) -> {return "{\\sf And}_R(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m2)+","+toLatex(`nc)+")" ;}
+      orL(x,m1,y,m2,c) -> {return "{\\sf Or}_L(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`y)+"\\rangle "+toLatex(`m2)+","+toLatex(`c)+")" ;}
+      andL(x,y,m,n) -> {return "{\\sf And}_L(\\langle "+toLatex(`x)+"\\rangle\\langle "+toLatex(`y)+"\\rangle "+toLatex(`m)+","+toLatex(`n)+")";}
+      orR(a,b,m,cn) -> {return "{\\sf Or}_R(\\langle "+toLatex(`a)+"\\rangle\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m)+","+toLatex(`cn)+")";}
+      implyR(x,a,m1,cn) -> {return "{\\sf Imply}_R(\\langle "+toLatex(`x)+"\\rangle\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+","+toLatex(`cn)+")";}
+      implyL(a,m1,x,m2,n) -> {return "{\\sf Imply}_L(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m2)+","+toLatex(`n)+")" ;}
+
+    }
+
+    return null;
+    
+  }
+
 
   // finite 1st order theory of classes list pretty print
   private static boolean endedByNil(Term l) {
@@ -509,6 +562,53 @@ class PrettyPrinter {
     return term.toString();
   }
 
+  public static String prettyPrint(urbanAbstractType term) {
+
+    %match(Name term) {
+      name(n) -> {return "x"+`n; }
+    }
+
+    %match(CoName term) {
+      coname(cn) -> {return "a"+`cn; }
+    }
+
+    %match(NProp term) {
+      nprop(n,a) -> { return "<"+prettyPrint(`n)+":"+prettyPrint(`a)+">"; }
+    }
+
+    %match(CNProp term) {
+      cnprop(cn,a) -> { return "<"+prettyPrint(`cn)+":"+prettyPrint(`a)+">"; }
+    }
+
+    %match(NContext term) {
+      () -> { return ""; }
+      (h) -> { return  prettyPrint(`h); }
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(CNContext term) {
+      () -> { return ""; }
+      (h) -> { return  prettyPrint(`h); }
+      (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
+    }
+
+    %match(ProofTerm term) { // INCOMPLET manque les cas 1er ordre
+      ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
+      cut(a,m1,x,m2) -> {return "cut("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+")";}
+      falseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
+      trueR(cn) -> {return "trueR("+prettyPrint(`cn)+")";}
+      andR(a,m1,b,m2,nc) -> {return "andR("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`b)+" "+prettyPrint(`m2)+", "+prettyPrint(`nc)+")" ;}
+      andL(x,y,m,n) -> {return "andL("+prettyPrint(`x)+" "+prettyPrint(`y)+" "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      orR(a,b,m,cn) -> {return "orR("+prettyPrint(`a)+" "+prettyPrint(`b)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      orL(x,m1,y,m2,n) -> {return "orL("+prettyPrint(`x)+" "+prettyPrint(`m1)+", "+prettyPrint(`y)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      implyR(x,a,m,cn) -> {return "implyR("+prettyPrint(`x)+" "+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      implyL(a,m1,x,m2,n) -> {return "implyL("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+
+    }
+
+    return term.toString();
+  }
+
   // finite 1st order theory of classes list pretty print
   public static String prettyList(Term t) {
     %match(Term t) {
@@ -602,4 +702,29 @@ class PrettyPrinter {
     else
 	System.err.println("An error occurred during the LaTeX compilation.");
   }
+
+  // displays a latex output in xdvi
+  public static void display(urbanAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
+    File tmp = File.createTempFile("output",".tex");
+    FileWriter writer = new FileWriter(tmp);
+    String path = tmp.getAbsolutePath();
+
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\[\n");
+    writer.write(toLatex(term));
+    writer.write("\n\\]\n");
+    writer.write("\\end{document}\n");
+    writer.flush();
+
+    System.out.println(path);
+    Runtime rt = Runtime.getRuntime();
+    Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
+    int ret = pr.waitFor(); 
+    if (ret == 0) {
+	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
+	pr.waitFor();}
+    else
+	System.err.println("An error occurred during the LaTeX compilation.");
+  }
+
+
 }

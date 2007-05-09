@@ -51,10 +51,10 @@ public class ProofExpander {
           rule[c=wantedconcl] -> {
             %match(currentconcl,wantedconcl) {
               s@sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
-                return (Tree) `ApplyWeakL(p).fire(`r);
+                return (Tree) `ApplyWeakL(p).visit(`r);
               }
               s@sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
-                return (Tree) `ApplyWeakR(p).fire(`r);
+                return (Tree) `ApplyWeakR(p).visit(`r);
               }
               x,x -> {
                 return `t; 
@@ -90,8 +90,8 @@ public class ProofExpander {
           (_*,pr,_*) -> {
             Proposition axiom = new Proposition();
             axiom.prop = `prop;
-            `pr = (Tree) `SafeAddInGamma(axiom).fire(`pr);
-            result = (Tree) `OnceTopDown(PlugTree(pr)).fire(result);
+            `pr = (Tree) `SafeAddInGamma(axiom).visit(`pr);
+            result = (Tree) `OnceTopDown(PlugTree(pr)).visit(result);
           }
         }
         return result;
@@ -122,6 +122,7 @@ public class ProofExpander {
   public static Tree expand(Tree tree) {
     Proposition axiom = new Proposition();
     Strategy expand = `Repeat(Sequence(OnceTopDown(ExpandLocally(axiom)),SafeAddInGamma(axiom)));
-    return (Tree) expand.fire(tree);
+    try { return (Tree) expand.visit(tree); }
+    catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
   }
 }
