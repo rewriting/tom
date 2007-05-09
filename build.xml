@@ -1278,13 +1278,13 @@
           <arg value='".DS_Store"'/>
           <arg value='--exclude'/>
           <arg value='".cvsignore"'/>
-          <arg value="${src.doc}"/>
-          <arg value='loria:/local/tom/htdocs/doc/javadoc/'/>
+          <arg value="${src.doc}/"/>
+          <arg value='loria:/local/tom/htdocs/soft/unstable/javadoc/'/>
         </exec>
         <exec executable="ssh">
           <arg value='-4'/>
           <arg value="loria"/>
-          <arg value="find /local/tom/htdocs/doc/javadoc -user $${USER} | xargs chmod -f g+rw "/>
+          <arg value="find /local/tom/htdocs/soft/unstable/javadoc -user $${USER} | xargs chmod -f g+rw "/>
         </exec>
   </target>
 
