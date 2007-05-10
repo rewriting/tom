@@ -66,11 +66,11 @@ public class HookTypeExpander {
             /* generate a FL hook for list-operators without other hook */
             %match(prod, prodList) {
               /* check domain and codomain are equals */
-              Production(opName,concField(StarredField(codomain)),codomain),
+              Production(opName,concField(StarredField(codomain)),codomain,option),
               /* check there is no other hook attached to this operator */
               !concProduction(_*, Hook[Name=opName], _*) -> {
                 String emptyCode = "{}";
-                Production hook = `Hook(KindOperator(),opName,HookKind("FL"),concArg(),emptyCode);
+                Production hook = `Hook(KindOperator(),opName,HookKind("FL"),concArg(),emptyCode,OptionList());
                 OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
                 HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
                 hookList = `concHookDecl(newDeclList*,hookList*);

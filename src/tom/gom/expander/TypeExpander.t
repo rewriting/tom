@@ -164,7 +164,7 @@ public class TypeExpander {
       Map operatorsForSort) {
 
     %match(Production prod) {
-      Production(name,domain,GomType(codomain)) -> {
+      Production(name,domain,GomType(codomain),option) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
         OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts);
@@ -248,7 +248,17 @@ public class TypeExpander {
   private Collection getSortDeclarationInCodomain(GomModule module) {
     Collection result = new HashSet();
     %match(GomModule module) {
-      GomModule(modulename,concSection(_*,Public(concGrammar(_*,Grammar(concProduction(_*,Production(_,_,GomType(typeName)),_*)),_*)),_*)) -> {
+      GomModule(
+          modulename,
+          concSection(_*,
+            Public(
+              concGrammar(_*,
+                Grammar(
+                  concProduction(_*,
+                    Production(_,_,GomType(typeName),option),
+                    _*)),
+                _*)),
+            _*)) -> {
         result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath)));
       }
     }

@@ -214,12 +214,17 @@ public class AST2Gom {
 
   private static Production getProduction(ATerm t) {
     %match(ATerm t) {
-      ARROW(_,(name,fieldlist*, type)) -> {
-        return `Production(getId(name),getFieldList(fieldlist*),getGomType(type));
+      ARROW(NodeInfo[line=line],(name,fieldlist*, type)) -> {
+        return `Production(
+            getId(name),
+            getFieldList(fieldlist*),
+            getGomType(type),
+            Origin(line));
       }
-      COLON(NodeInfo(code,_,_),(idType,id,hook,args*)) -> {
+      COLON(NodeInfo[text=code,line=line],(idType,id,hook,args*)) -> {
         return `Hook(getIdkind(idType),getId(id),
-                     getHookKind(hook),getArgList(args),code);
+                     getHookKind(hook),getArgList(args),
+                     code,Origin(line));
       }
 
     }
@@ -255,14 +260,14 @@ public class AST2Gom {
     %match(ATermList altL) {
       (ALT(_,_),id,fieldlist*, ALT(_,_), tail*) -> {
         ProductionList tmpL = getAlternatives(type,`tail);
-        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)),tmpL*);
+        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)),tmpL*);
       }
       (id,fieldlist*, ALT(_,_), tail*) -> {
         ProductionList tmpL = getAlternatives(type,`tail);
-        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)),tmpL*);
+        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)),tmpL*);
       }
       (id,fieldlist*) -> {
-        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)));
+        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)));
       }
       concATerm() -> {
         return `concProduction();
@@ -297,6 +302,13 @@ public class AST2Gom {
       ID(NodeInfo[text=text],_) -> { return `text; }
     }
     throw new GomRuntimeException("Unable to translate: " + t);
+  }
+
+  private static Option getIdLine(ATerm t) {
+    %match(t) {
+      ID(NodeInfo[line=line],_) -> { return `Origin(line); }
+    }
+    throw new GomRuntimeException("Unable to get line for id: " + t);
   }
 
   private static IdKind getIdkind(ATerm t) {

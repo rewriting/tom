@@ -1,6 +1,9 @@
 module Gom
-imports String Code
+imports String Code int
 abstract syntax
+
+Option = Origin(Line:int)
+       | OptionList(Option*)
 
 /* Output from the parser */
 GomModule = GomModule(ModuleName:GomModuleName, SectionList:SectionList)
@@ -13,9 +16,10 @@ ImportList = concImportedModule(ImportedModule*)
 Grammar = Grammar(ProductionList:ProductionList)
         | Sorts(TypeList:GomTypeList)
 GrammarList = concGrammar(Grammar*)
-Production = Production(Name:String, Domain:FieldList, Codomain:GomType)
+Production = Production(Name:String, Domain:FieldList,
+                        Codomain:GomType, Option:Option)
            | Hook(NameType:IdKind, Name:String, HookType:HookKind,
-                  Args:ArgList, StringCode:String)
+                  Args:ArgList, StringCode:String,Option:Option)
 ProductionList = concProduction(Production*)
 HookKind = HookKind(kind:String)
 IdKind = KindModule()
