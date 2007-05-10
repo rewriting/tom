@@ -41,6 +41,8 @@ public class TestSublists extends TestCase {
       | b()
       | c()
       | list( Term* )
+      
+      TermList = termList(Term*)
   }
 
   public void test1() {
@@ -82,14 +84,73 @@ public class TestSublists extends TestCase {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
       list(X*,p@!list(_*,!b(),_*),Y*) -> {
-        if (`p == `list(b(),b()) || `p == `list()){
+        if (`p == `list(b(),b()) || `p == `list(b()) || `p == `list() ) {
           return;
+        }else{
+          fail();
         }
       }
     }
     fail();
   }
+
+  public void test5() {
+    TermList res = `termList(a(),b(),b(),c());
+    %match(res) {
+      termList(X*,p@list(_*,b(),_*),Y*) -> {
+        fail();
+      }
+    }    
+  }
   
+  public void test6() {
+    TermList res = `termList(a(),list(b(),b()),c());
+    %match(res) {
+      termList(X*,list(_*,b(),_*),Y*) -> {
+        return;
+      }
+    }    
+    fail();
+  }
+  
+  public void test7() {
+    TermList res = `termList(a(),b(),b(),c());
+    %match(res) {
+      termList(X*,termList(_*,b(),_*),Y*) -> {
+        return;
+      }
+    }    
+    fail();
+  }
+
+  public void test8() {
+    TermList res = `termList(a(),b(),b(),c());
+    %match(res) {
+      termList(X*,p@!termList(_*,!b(),_*),Y*) -> {
+        if( `p == `termList(b()) || `p == `termList(b(),b()) || `p == `termList()){
+          return;
+        }else{
+          fail();
+        }
+      }
+    }    
+    fail();
+  }
+  
+  public void test9() {
+    TermList res = `termList(a(),b(),b(),c());
+    %match(res) {
+      termList(X*,p@termList(b(),b()),Y*) -> {
+        if( `p == `termList(b(),b()) ) {
+          return;
+        }else{
+          fail();
+        }
+      }
+    }    
+    fail();
+  }
+
   
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestSublists.class));
