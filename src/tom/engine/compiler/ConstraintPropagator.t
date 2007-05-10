@@ -135,8 +135,18 @@ match:%match(strategyName) {
         %match(slots) { 
           concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot,TomName name) {
+            // TODO -some factorization below
               // if we find a child with the same name, we abstract
-              ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=nameList@(childName)]],childName ->{
+              ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=nameList@(childName)]],childName ->{                
+                TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t));
+                // make sure to apply on its subterms also 
+                bag.add(detach(`MatchConstraint(appl,freshVariable),"DetachSublists"));
+                bag.add(`MatchConstraint(appl,freshVariable));
+                newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
+                break matchSlot;
+              }
+              // the child can be an antiTerm - in this case, do as above
+              ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=nameList@(childName)])],childName ->{                
                 TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t));
                 // make sure to apply on its subterms also 
                 bag.add(detach(`MatchConstraint(appl,freshVariable),"DetachSublists"));
@@ -182,9 +192,9 @@ matchSlot:  %match(slot,TomName name) {
     TomType freshVarType = ConstraintCompiler.getTermTypeFromTerm(subject);
     TomTerm freshVariable = null;
     // make sure that if we had a varStar, we replace with a varStar also
-    if (needsVarStar(subject)){
+    if (needsVarStar(subject)){      
       freshVariable = ConstraintCompiler.getFreshVariableStar(freshVarType);
-    }else{
+    }else{      
       freshVariable = ConstraintCompiler.getFreshVariable(freshVarType);
     }
     //make sure to apply on its subterms also    
@@ -204,12 +214,6 @@ matchSlot:  %match(slot,TomName name) {
     %match(subject) {
       (VariableStar|UnamedVariableStar)[] -> {
         return true;
-      }
-      RecordAppl[NameList=nameList@(Name(tomName),_*)] -> {
-        if (!TomBase.isSyntacticOperator(ConstraintCompiler.getSymbolTable().
-            getSymbolFromName(`tomName))) {
-          return true;  
-        }
       }
     }
     return false;

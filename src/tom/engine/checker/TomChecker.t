@@ -135,8 +135,9 @@ abstract public class TomChecker extends TomGenericPlugin {
       VariableStar[AstName=Name(name)] -> { return `name+"*";}
       UnamedVariable[] -> { return "_";}
       UnamedVariableStar[] -> { return "_*";}
+      AntiTerm(t) -> { return getName(`t); }
     }
-    throw new TomRuntimeException("Invalid Term");
+    throw new TomRuntimeException("Invalid Term:" + term);
   }
   
   /**

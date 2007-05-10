@@ -149,9 +149,8 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   /**
-   * Syntax checking entry point:
-   * Catch and verify all type and operator declaration,
-   * Match instruction
+   * Syntax checking entry point: Catch and verify all type and operator
+   * declaration, Match instruction
    */
   %typeterm TomSyntaxChecker { 
     implement { TomSyntaxChecker }
@@ -168,7 +167,7 @@ public class TomSyntaxChecker extends TomChecker {
           }
           tsc.messageError("unknown",-1,TomMessage.emptyStrategy,new Object[]{});
         }
-        /*  STRATEGY MATCH STRUCTURE*/
+        /* STRATEGY MATCH STRUCTURE */
         tsc.verifyStrategy(`list);
       }
       // Types
@@ -193,15 +192,15 @@ public class TomSyntaxChecker extends TomChecker {
 
    visit Instruction {
      Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
-       /*  TOM MATCH STRUCTURE*/
+       /* TOM MATCH STRUCTURE */
        tsc.verifyMatch(`matchArgsList, `patternInstructionList, `list);
      }
    }
   }
 
-  ///////////////////////////////
+  // /////////////////////////////
   // TYPE DECLARATION CONCERNS //
-  //////////////////////////////
+  // ////////////////////////////
   private void verifyTypeDecl(String declType, String tomName, DeclarationList listOfDeclaration, Option typeOrgTrack) {
     currentTomStructureOrgTrack = typeOrgTrack;
     // ensure first definition
@@ -211,7 +210,7 @@ public class TomSyntaxChecker extends TomChecker {
 
     %match(DeclarationList listOfDeclaration) {
       !(_*, IsSortDecl[], _*) -> { 
-        // the declaration of IsSort is mandatory 
+        // the declaration of IsSort is mandatory
           messageError(typeOrgTrack.getFileName(),typeOrgTrack.getLine(),
                    TomMessage.IsSortNotDefined,
                    new Object[]{tomName});
@@ -258,7 +257,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(!verifyList.isEmpty()) {
       messageMissingMacroFunctions(declType, verifyList);
     }
-  } //verifyTypeDecl
+  } // verifyTypeDecl
 
   private void verifyMultipleDefinition(String name, String symbolType, String OperatorOrType) {
     ArrayList list;
@@ -275,7 +274,7 @@ public class TomSyntaxChecker extends TomChecker {
     } else {
       list.add(name);
     }
-  } //verifyMultipleDefinition
+  } // verifyMultipleDefinition
 
   private  void checkField(String function, ArrayList foundFunctions, Option orgTrack, String symbolType) {
     if(foundFunctions.contains(function)) {
@@ -285,7 +284,7 @@ public class TomSyntaxChecker extends TomChecker {
                    TomMessage.macroFunctionRepeated,
                    new Object[]{function});
     }
-  } //checkField
+  } // checkField
 
   private  void checkFieldAndLinearArgs(String function, ArrayList foundFunctions, Option orgTrack, String name1, String name2, String symbolType) {
     checkField(function,foundFunctions, orgTrack, symbolType);
@@ -294,11 +293,11 @@ public class TomSyntaxChecker extends TomChecker {
                    TomMessage.nonLinearMacroFunction,
                    new Object[]{function, name1});
     }
-  } //checkFieldAndLinearArgs
+  } // checkFieldAndLinearArgs
 
-  /////////////////////////////////
+  // ///////////////////////////////
   // SYMBOL DECLARATION CONCERNS //
-  /////////////////////////////////
+  // ///////////////////////////////
   private  void verifySymbol(String symbolType, TomSymbol tomSymbol){
     int domainLength;
     String symbStrName = tomSymbol.getAstName().getString();
@@ -306,12 +305,13 @@ public class TomSyntaxChecker extends TomChecker {
     // We save first the origin tracking of the symbol declaration
     currentTomStructureOrgTrack = TomBase.findOriginTracking(optionList);
 
-    // ensure first definition then Codomain, Domain, Macros and Slots (Simple operator)
+    // ensure first definition then Codomain, Domain, Macros and Slots (Simple
+    // operator)
     verifyMultipleDefinition(symbStrName, symbolType, TomSyntaxChecker.OPERATOR);
     verifySymbolCodomain(TomBase.getSymbolCodomain(tomSymbol), symbStrName, symbolType);
     domainLength = verifySymbolDomain(TomBase.getSymbolDomain(tomSymbol), symbStrName, symbolType);
     verifySymbolMacroFunctions(optionList, domainLength, symbolType);
-  } //verifySymbol
+  } // verifySymbol
 
   private  void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
     %match(TomType codomain) {
@@ -368,15 +368,16 @@ public class TomSyntaxChecker extends TomChecker {
                 new Object[]{symbName, `(typeName)});
           }
         }
-      } //match
+      } // match
       return 1;
     }
-  } //verifySymbolDomain
+  } // verifySymbolDomain
 
   private  void verifySymbolMacroFunctions(OptionList option, int domainLength, String symbolType) {
     ArrayList verifyList = new ArrayList();
     boolean foundOpMake = false;
-    if(symbolType.equals(TomSyntaxChecker.CONSTRUCTOR)) { //Nothing absolutely necessary
+    if(symbolType.equals(TomSyntaxChecker.CONSTRUCTOR)) { // Nothing absolutely
+                                                          // necessary
     } else if(symbolType == TomSyntaxChecker.OP_ARRAY ) {
       verifyList.add(TomSyntaxChecker.MAKE_EMPTY);
       verifyList.add(TomSyntaxChecker.MAKE_APPEND);
@@ -427,10 +428,11 @@ public class TomSyntaxChecker extends TomChecker {
     if(!verifyList.isEmpty()) {
       messageMissingMacroFunctions(symbolType, verifyList);
     }
-  }  //verifySymbolMacroFunctions
+  }  // verifySymbolMacroFunctions
 
   private  void verifyMakeDeclArgs(TomList argsList, int domainLength, Option orgTrack, String symbolType){
-      // we test the necessity to use different names for each variable-parameter.
+      // we test the necessity to use different names for each
+      // variable-parameter.
     int nbArgs = 0;
     ArrayList listVar = new ArrayList();
     %match(TomList argsList) {
@@ -450,7 +452,7 @@ public class TomSyntaxChecker extends TomChecker {
                    TomMessage.badMakeDefinition,
                    new Object[]{new Integer(nbArgs), new Integer(domainLength)});
     }
-  } //verifyMakeDeclArgs
+  } // verifyMakeDeclArgs
 
   private  void verifySymbolPairNameDeclList(PairNameDeclList pairNameDeclList, String symbolType) {
       // we test the existence of 2 same slot names
@@ -458,14 +460,14 @@ public class TomSyntaxChecker extends TomChecker {
     %match(PairNameDeclList pairNameDeclList) {
       (_*, PairNameDecl[SlotName=Name(name)], _*) -> { // for each Slot
         if(listSlot.contains(`name)) {
-            //TODO
-            //messageWarningTwoSameSlotDeclError(name, orgTrack, symbolType);
+            // TODO
+            // messageWarningTwoSameSlotDeclError(name, orgTrack, symbolType);
         } else {
           listSlot.add(`name);
         }
       }
     }
-  } //verifySymbolPairNameDeclList
+  } // verifySymbolPairNameDeclList
 
   private  void messageMissingMacroFunctions(String symbolType, ArrayList list) {
     StringBuffer listOfMissingMacros = new StringBuffer();
@@ -477,11 +479,11 @@ public class TomSyntaxChecker extends TomChecker {
         currentTomStructureOrgTrack.getLine(),
                  TomMessage.missingMacroFunctions,
                  new Object[]{stringListOfMissingMacros});
-  } //messageMissingMacroFunctions
+  } // messageMissingMacroFunctions
 
-  //////////////////////////////// /
+  // ////////////////////////////// /
   // MATCH VERIFICATION CONCERNS ///
-  //////////////////////////////////
+  // ////////////////////////////////
 
   /*
    * Given a MatchConstruct's subject list and pattern-action list
@@ -491,7 +493,8 @@ public class TomSyntaxChecker extends TomChecker {
     ArrayList typeMatchArgs = new ArrayList();
     ArrayList subjectMatchArgs = new ArrayList();
     int nbExpectedArgs = 0;
-    // From the subjects list(match definition), we test each used type and keep them in memory
+    // From the subjects list(match definition), we test each used type and keep
+    // them in memory
     while(!subjectList.isEmptyconcTomTerm()) {
       TomTerm subject = subjectList.getHeadconcTomTerm();
       // for each Match args
@@ -536,11 +539,11 @@ public class TomSyntaxChecker extends TomChecker {
     }
 
     /*
-     * if a type is not specified in the subjectList
-     * we look for a type in a column and we update typeMatchArgs
+     * if a type is not specified in the subjectList we look for a type in a
+     * column and we update typeMatchArgs
      */
     for(int i=0 ; i<typeMatchArgs.size() ; i++) {
-      //System.out.println("i = " + i);
+      // System.out.println("i = " + i);
 block: {
 	 if(typeMatchArgs.get(i) == null) {
 	   %match(PatternInstructionList patternInstructionList) {
@@ -551,7 +554,7 @@ block: {
 	       }
 	       %match(subject) {
 		 (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {
-		   //System.out.println("X.length = " + `X*.length());
+		   // System.out.println("X.length = " + `X*.length());
 		   if(`X*.length() == i) {
 		     TomSymbol symbol = null;
 		     if(`subject.isXMLAppl()) {
@@ -559,10 +562,10 @@ block: {
 		     } else {
 		       symbol = getSymbolFromName(`name);
 		     }
-		     //System.out.println("name = " + `name);
+		     // System.out.println("name = " + `name);
 		     if(symbol!=null) {
 		       TomType type = TomBase.getSymbolCodomain(symbol);
-		       //System.out.println("type = " + type);
+		       // System.out.println("type = " + type);
 		       typeMatchArgs.set(i,type);
 		       String typeName = TomBase.getTomType(`type);
 		       if(!testTypeExistence(typeName)) {
@@ -599,7 +602,8 @@ block: {
     }
   }
 
-  // each patternList shall have the expected length and each term shall be valid
+  // each patternList shall have the expected length and each term shall be
+  // valid
   private  void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
     int nbFoundArgs = termList.length();
     if(nbFoundArgs != nbExpectedArgs) {
@@ -607,7 +611,8 @@ block: {
       messageError(findOriginTrackingFileName(og),findOriginTrackingLine(og),
                    TomMessage.badMatchNumberArgument,
                    new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)});
-      // we cannot continue because we will use the fact that each element of the pattern
+      // we cannot continue because we will use the fact that each element of
+      // the pattern
       // has the expected type declared in the Match definition
       return ;
     }
@@ -615,7 +620,8 @@ block: {
     TomType expectedType;
     int counter = 0;
     %match(TomList termList) {
-      concTomTerm(_*, term, _*) -> { // no term can be a  Var* nor _*: not allowed as top leftmost symbol
+      concTomTerm(_*, term, _*) -> { // no term can be a Var* nor _*: not
+                                      // allowed as top leftmost symbol
         TermDescription termDesc = analyseTerm(`term);
         if(termDesc.getTermClass() == UNAMED_VARIABLE_STAR || termDesc.getTermClass() == VARIABLE_STAR) {
           messageError(termDesc.getFileName(),termDesc.getLine(),
@@ -643,9 +649,9 @@ block: {
     }
   }
 
-  /////////////////////////////////
-  //STRATEGY VERIFICATION CONCERNS /
-  /////////////////////////////////
+  // ///////////////////////////////
+  // STRATEGY VERIFICATION CONCERNS /
+  // ///////////////////////////////
   private  void verifyStrategy(TomVisitList visitList){
     while(!visitList.isEmptyconcTomVisit()) {
       TomVisit visit = visitList.getHeadconcTomVisit();
@@ -664,7 +670,7 @@ block: {
         %match(PatternInstructionList patternInstructionList) {
           concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms,Guards=guards]], _*) -> {
             // control each pattern vs the match definition
-            //always 1 expected argument in visit
+            // always 1 expected argument in visit
             `verifyMatchPattern(terms, typeMatchArgs, 1);
             `verifyWhenPattern(guards);
           }
@@ -705,12 +711,14 @@ block: {
           if(symbol == null) {
             break matchblock;
           } else {
-            //there is only one list symbol and its type is the expected one
+            // there is only one list symbol and its type is the expected one
             // (ensure by ensureValidUnamedList call)
             type = expectedType;
             termName = symbol.getAstName().getString();
-              // whatever the arity is, we continue recursively and there is only one element in the Domain
-            validateListOperatorArgs(`args, symbol.getTypesToType().getDomain().getHeadconcTomType(),permissive);
+              // whatever the arity is, we continue recursively and there is
+              // only one element in the Domain
+            validateListOperatorArgs(`args, symbol.getTypesToType().getDomain().getHeadconcTomType(),
+                symbol.getTypesToType().getCodomain(),permissive);
             if(permissive) { System.out.println("UnamedList but permissive");}
             break matchblock;
           }
@@ -731,15 +739,17 @@ block: {
             // Type is OK
           type = expectedType;
           TomName headName = `symbolNameList.getHeadconcTomName();
-          if (headName 
-        		  	instanceof AntiName){
-        	  headName = ((AntiName)headName).getName();
+          if (headName instanceof AntiName){
+            headName = ((AntiName)headName).getName();
           }
           termName = headName.getString();
           boolean listOp = (TomBase.isListOperator(symbol) || TomBase.isArrayOperator(symbol));
           if(listOp) {
-              // whatever the arity is, we continue recursively and there is only one element in the Domain
-            validateListOperatorArgs(args, symbol.getTypesToType().getDomain().getHeadconcTomType(),permissive);
+              // whatever the arity is, we continue recursively and there is
+              // only one element in the Domain
+              // - we can also have children that are sublists
+            validateListOperatorArgs(args, symbol.getTypesToType().getDomain().getHeadconcTomType(),
+                symbol.getTypesToType().getCodomain(),permissive);
           } else {
             // the arity is important also there are different types in Domain
             TomTypeList types = symbol.getTypesToType().getDomain();
@@ -751,8 +761,9 @@ block: {
               break matchblock;
             }
             while(!args.isEmptyconcTomTerm()) {
-                // repeat analyse with associated expected type and control arity
-              validateTerm(args.getHeadconcTomTerm(), types.getHeadconcTomType(), listOp/*false*/, false, permissive);
+                // repeat analyse with associated expected type and control
+                // arity
+              validateTerm(args.getHeadconcTomTerm(), types.getHeadconcTomType(), listOp/* false */, false, permissive);
               args = args.getTailconcTomTerm();
               types = types.getTailconcTomType();
             }
@@ -768,16 +779,15 @@ block: {
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
           termClass = RECORD_APPL;
-
           TomSymbol symbol = ensureValidRecordDisjunction(`symbolNameList, `slotList, expectedType, fileName, decLine, true);
           if(symbol == null) {
             break matchblock;
           }
 
           %match(TomNameList symbolNameList) {
-            /* 
-             * We perform tests as we have different RecordAppls: 
-             * they all must be valid and have the expected return type
+            /*
+             * We perform tests as we have different RecordAppls: they all must
+             * be valid and have the expected return type
              */
             (_*, Name(name), _*) -> {
               verifyRecordStructure(`options, `name, `slotList, fileName,decLine);
@@ -805,12 +815,12 @@ block: {
 
           TomList args = `childList;
           /*
-           * we cannot use the following expression
-           *   TomType TNodeType = symbolTable().getType(Constants.TNODE);
-           * because TNodeType should be a TomTypeAlone and not an expanded type
+           * we cannot use the following expression TomType TNodeType =
+           * symbolTable().getType(Constants.TNODE); because TNodeType should be
+           * a TomTypeAlone and not an expanded type
            */
           TomType TNodeType = TomBase.getSymbolCodomain(symbolTable().getSymbolFromName(Constants.ELEMENT_NODE));
-          //System.out.println("TNodeType = " + TNodeType);
+          // System.out.println("TNodeType = " + TNodeType);
           while(!args.isEmptyconcTomTerm()) {
             // repeat analyse with associated expected type and control arity
             validateTerm(args.getHeadconcTomTerm(), TNodeType, true, false, permissive);
@@ -1001,7 +1011,7 @@ block: {
         } else {
           messageWarning(fileName,decLine, TomMessage.unknownPermissiveSymbol, new Object[]{res});
         }
-      } else { //known symbol
+      } else { // known symbol
         if ( strictType  || !topLevel ) {
           if (!ensureSymbolCodomain(TomBase.getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, fileName,decLine)) {
             return null;
@@ -1010,7 +1020,7 @@ block: {
       }
       return symbol;
     } else {
-      //  this is a disjunction
+      // this is a disjunction
       if(permissive) {
 	messageError(fileName,decLine, TomMessage.impossiblePermissiveAndDisjunction, new Object[]{});
       }
@@ -1064,7 +1074,7 @@ block: {
 
   private  boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine) {
     if(currentCodomain != expectedType) {
-      //System.out.println(currentCodomain+"!="+expectedType);
+      // System.out.println(currentCodomain+"!="+expectedType);
       messageError(fileName,decLine,
                    msg,
                    new Object[]{symbolName, currentCodomain.getString(), expectedType.getString()});
@@ -1110,7 +1120,7 @@ block: {
               return null;
             }
           }
-          //System.out.println("domain = " + getSymbolDomain(symbol));
+          // System.out.println("domain = " + getSymbolDomain(symbol));
 
           if (referenceDomain == null) { // save Domain reference
             referenceSymbol = symbol;
@@ -1126,10 +1136,12 @@ block: {
               int currentSlotIndex = TomBase.getSlotIndex(symbol,slotName);
               int referenceSlotIndex = TomBase.getSlotIndex(referenceSymbol,slotName);
 
-              //System.out.println("index1 = " + currentSlotIndex);
-              //System.out.println("type1 = " + TomBase.elementAt(currentDomain,currentSlotIndex));
-              //System.out.println("index2 = " + referenceSlotIndex);
-              //System.out.println("type2 = " + TomBase.elementAt(referenceDomain,referenceSlotIndex));
+              // System.out.println("index1 = " + currentSlotIndex);
+              // System.out.println("type1 = " +
+              // TomBase.elementAt(currentDomain,currentSlotIndex));
+              // System.out.println("index2 = " + referenceSlotIndex);
+              // System.out.println("type2 = " +
+              // TomBase.elementAt(referenceDomain,referenceSlotIndex));
               if(TomBase.elementAt(currentDomain,currentSlotIndex) != TomBase.elementAt(referenceDomain,referenceSlotIndex)) {
                 messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{referenceName, `(dijName) });
                 return null;
@@ -1145,14 +1157,15 @@ block: {
     }
   }
 
-  ///////////////////////
+  // /////////////////////
   // RECORDS CONCERNS ///
-  ///////////////////////
+  // /////////////////////
   private  void verifyRecordStructure(OptionList option, String tomName, SlotList slotList, String fileName, int decLine)  {
     TomSymbol symbol = getSymbolFromName(tomName);
     if(symbol != null) {
         // constants have an emptyPairNameDeclList
-        // the length of the pairNameDeclList corresponds to the arity of the operator
+        // the length of the pairNameDeclList corresponds to the arity of the
+        // operator
         // list operator with [] no allowed
       if(slotList.isEmptyconcSlot() && (TomBase.isListOperator(symbol) ||  TomBase.isArrayOperator(symbol)) ) {
         messageError(fileName,decLine,
@@ -1174,7 +1187,7 @@ block: {
   TomName pairSlotName = null;
   ArrayList listOfPossibleSlot = null;
   ArrayList studiedSlotIndexList = new ArrayList();
-    //for each pair slotName <=> Appl
+    // for each pair slotName <=> Appl
   while( !slotList.isEmptyconcSlot() ) {
       pairSlotName = slotList.getHeadconcSlot().getSlotName();
         // First check for slot name correctness
@@ -1195,7 +1208,7 @@ block: {
         messageError(fileName,decLine,
                      TomMessage.badSlotName,
                      new Object[]{pairSlotName.getString(), methodName, listOfPossibleSlot.toString()});
-        return; //break analyses
+        return; // break analyses
       } else { // then check for repeated good slot name
         Integer integerIndex = new Integer(index);
         if(studiedSlotIndexList.contains(integerIndex)) {
@@ -1203,7 +1216,7 @@ block: {
           messageError(fileName,decLine,
                        TomMessage.slotRepeated,
                        new Object[]{methodName, pairSlotName.getString()});
-          return; //break analyses
+          return; // break analyses
         }
         studiedSlotIndexList.add(integerIndex);
       }
@@ -1239,9 +1252,23 @@ block: {
     }
   }
 
-  public  void validateListOperatorArgs(TomList args, TomType expectedType, boolean permissive) {
+  public  void validateListOperatorArgs(TomList args, TomType expectedType, TomType parentListCodomain, boolean permissive) {
     while(!args.isEmptyconcTomTerm()) {
-      validateTerm(args.getHeadconcTomTerm(), expectedType, true, false, permissive);
+      TomTerm currentArg = args.getHeadconcTomTerm();      
+      TomSymbol argSymbol = getSymbolFromName(getName(currentArg));
+      // if we have a sublist 
+      if (TomBase.isListOperator(argSymbol)){
+        // we can have two cases:
+        // 1. the sublist has the codomain = parentListCodomain
+        // 2. the sublist has the codomain = expectedType
+        if (argSymbol.getTypesToType().getCodomain() == parentListCodomain){
+            validateTerm(currentArg, parentListCodomain, true, false, permissive);            
+        }else{
+            validateTerm(currentArg, expectedType, true, false, permissive);    
+        }        
+      }else{
+        validateTerm(currentArg, expectedType, true, false, permissive);
+      }
       args = args.getTailconcTomTerm();
     }
   }
