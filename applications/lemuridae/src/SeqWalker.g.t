@@ -105,6 +105,7 @@ command returns [Command c]
   | #(DISPLAY i2:ID) { c = `display(i2.getText()); }
   | #(PROOFTERM i7:ID) { c = `proofterm(i7.getText()); }
   | QUIT { c = `quit(); }
+  | REINIT { c = `reinit(); }
   | #(PROOFCHECK i4:ID) { c = `proofcheck(i4.getText()); }
   | #(PRINT i3:ID) { c = `print(i3.getText()); }
   | #(RESUME i5:ID) { c = `resume(i5.getText()); }
@@ -128,6 +129,7 @@ proofcommand returns [ProofCommand c]
   | DISPLAY { c = `proofCommand("display"); }
   | ASKRULES { c = `askrulesCommand(); }
   | QUIT { c = `proofquit(); }
+  | REINIT { c = `proofreinit(); }
   | ABORT { c = `abort(); }
   | EOF { c = `proofendoffile(); }
   ;

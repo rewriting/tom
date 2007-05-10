@@ -13,12 +13,13 @@ import java.util.Map;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.Observable;
 
 import java.io.*;
 import antlr.*;
 import antlr.collections.*;
 
-public class ProofBuilder {
+public class ProofBuilder extends Observable {
 
   //%include { sequents/sequents.tom }
   %include { sequents/_sequents.tom }
@@ -26,6 +27,20 @@ public class ProofBuilder {
   %include { sl.tom }
   %include { string.tom }
   %include { util/LinkedList.tom }
+
+  // methode remplacant System.out.println
+  private void writeToOutputln (String text) {
+    writeToOutput(text+"\n");
+  }
+  
+  // methode remplacant System.out.print
+  private void writeToOutput (String text) {
+    if (countObservers() != 0) {
+      setChanged();
+      notifyObservers(text);
+    }
+    else System.out.print(text);
+  }
 
   %strategy AddInContexts(ctxt:Context) extends `Identity() {
     visit Sequent {
@@ -42,6 +57,11 @@ public class ProofBuilder {
   %typeterm TermMap {
     implement { Map<Term,Term> }
     is_sort(t) { t instanceof Map }
+  }
+
+  %typeterm ProofBuilder {
+    implement { ProofBuilder }
+    is_sort(t) { t instanceof ProofBuilder }
   }
 
 
@@ -515,12 +535,12 @@ b: {
     }
   }
 
-  %strategy ApplyForAllLInteractive(active:Prop) extends Fail() {
+  %strategy ApplyForAllLInteractive(active:Prop, o:ProofBuilder) extends Fail() {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent((X*,act@forAll(n,p),Y*),g), act -> {
-            System.out.print("instance of " + `n + " > ");
+            o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             return (Tree) `ApplyForAllL(active,term).visit(`r);
@@ -544,12 +564,12 @@ b: {
     }
   }
 
-  %strategy ApplyExistsRInteractive(active:Prop) extends Fail() {
+  %strategy ApplyExistsRInteractive(active:Prop, o:ProofBuilder) extends Fail() {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent(d,(X*,act@exists(n,p),Y*)), act -> {
-            System.out.print("instance of " + `n + " > ");
+            o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             return (Tree) `ApplyExistsR(active,term).visit(`r);
@@ -674,7 +694,7 @@ b: {
       Set<Term> new_vars = Utils.getNewVars(rule.getprem());
       for (Term t : new_vars) {
         String varname = t.getname();
-        System.out.print("new term for variable " + varname + " in rule " + n + " > ");
+        writeToOutput("new term for variable " + varname + " in rule " + n + " > ");
         Term new_var = Utils.getTerm();
         args.put(t, new_var);
       }
@@ -842,7 +862,7 @@ b :{
   }
 
   // builds the proof by manipulating a tree
-  private Stack buildProofTree(Sequent goal) {
+  private Stack buildProofTree(Sequent goal) throws ReInitException {
 
     // environnement stack to allow the "undo" command and incomplete proof save
     Stack<ProofEnv> envStack = new Stack<ProofEnv>();
@@ -860,7 +880,7 @@ b :{
 
   }
 
-  private Stack<ProofEnv> buildProofTreeFromStack(Stack<ProofEnv> envStack) {
+  private Stack<ProofEnv> buildProofTreeFromStack(Stack<ProofEnv> envStack)  throws ReInitException {
 
 	  ProofEnv env = envStack.pop(); 
 	  Sequent goal = null;
@@ -870,12 +890,12 @@ b :{
       Tree tree = null;
 
       // printing open goals
-      System.out.println("Open goals : ");
+      writeToOutputln("Open goals : ");
       LinkedList<Position> og = env.openGoals;
       %match(LinkedList og) {
         (_*,p,_*) -> {
           Position pos = (Position) `p;
-          System.out.println("\t"+PrettyPrinter.prettyPrint(getSequentByPosition(env.tree, pos)));
+          writeToOutputln("\t"+PrettyPrinter.prettyPrint(getSequentByPosition(env.tree, pos)));
         }
       }
 
@@ -887,12 +907,12 @@ b :{
       ArrayList<Prop> hyp = getHypothesis(goal);
       ArrayList<Prop> concl = getConclusions(goal);
       Prop active = env.focus_left ?  hyp.get(env.focus-1) : concl.get(env.focus-1);  // for conveniance
-      System.out.println("\n" + prettyGoal(hyp, concl, env.focus_left, env.focus) + "\n");
+      writeToOutputln("\n" + prettyGoal(hyp, concl, env.focus_left, env.focus) + "\n");
 
-      System.out.print("proof> ");
+      writeToOutput("proof> ");
       ProofCommand pcommand;
       try {pcommand = Utils.getProofCommand(); }
-      catch (Exception e) { System.out.println("Unknown command : " + e); continue; }
+      catch (Exception e) { writeToOutputln("Unknown command : " + e); continue; }
 
       /* begin of the big switch */
       %match(ProofCommand pcommand) {
@@ -909,7 +929,7 @@ b :{
 
         proofCommand("display") -> {
           try { PrettyPrinter.display(env.tree, newTermRules, newPropRules); }
-          catch (Exception e) { System.out.println("display failed : " + e); }
+          catch (Exception e) { writeToOutputln("display failed : " + e); }
         }
 
 
@@ -940,11 +960,11 @@ b :{
             // same side condition
             if (tds != null && ((rule_hs==0 && env.focus_left) || (rule_hs==1 && !env.focus_left))) 
             {
-              System.out.println("\n- rule " + i + " :\n");
-              System.out.println(PrettyPrinter.prettyRule(rule));
+              writeToOutputln("\n- rule " + i + " :\n");
+              writeToOutputln(PrettyPrinter.prettyRule(rule));
             }
           } // for
-          System.out.println();
+          writeToOutputln("");
         }
 
 
@@ -953,7 +973,7 @@ b :{
           try {
             tree = ruleCommand(env.tree, currentPos, active, env.focus_left, `n);
           } catch (Exception e) {
-            System.out.println("Can't apply custom rule "+ `n + ": " + e.getMessage());
+            writeToOutputln("Can't apply custom rule "+ `n + ": " + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -964,13 +984,13 @@ b :{
             Strategy strat;
 
             if (env.focus_left)
-              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active), ApplyExistsL(active));
+              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active, this), ApplyExistsL(active));
             else
-              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active));
+              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active, this));
 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("Can't apply intro" + e.getMessage());
+            writeToOutputln("Can't apply intro" + e.getMessage());
           }
         }
 
@@ -982,7 +1002,7 @@ b :{
             else strat = `ApplyContractionR(active);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("Can't apply duplicate" + e.getMessage());
+            writeToOutputln("Can't apply duplicate" + e.getMessage());
           }
         }
 
@@ -994,7 +1014,7 @@ b :{
             else strat = `ApplyWeakR(active);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("Can't apply duplicate" + e.getMessage());
+            writeToOutputln("Can't apply duplicate" + e.getMessage());
           }
         }
 
@@ -1005,7 +1025,7 @@ b :{
             Strategy strat = `SafeTopDown(Try(ApplyAuto(emptylist)));
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("Can't apply intros" + e.getMessage());
+            writeToOutputln("Can't apply intros" + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -1016,7 +1036,7 @@ b :{
             Strategy strat = `SafeTopDown(Try(ApplyAuto(newRules)));
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("Can't apply auto : " + e.getMessage());
+            writeToOutputln("Can't apply auto : " + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -1038,7 +1058,7 @@ b :{
 			     
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("Can't apply autoreduce : " + e + ", " + e.getMessage());
+            writeToOutputln("Can't apply autoreduce : " + e + ", " + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -1049,7 +1069,7 @@ b :{
             Strategy strat = `ApplyAxiom(); 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("can't apply rule axiom" + e.getMessage());
+            writeToOutputln("can't apply rule axiom" + e.getMessage());
           }
         }
 
@@ -1059,7 +1079,7 @@ b :{
             Strategy strat = `ApplyBottom(); 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("can't apply bottom rule : " + e.getMessage());
+            writeToOutputln("can't apply bottom rule : " + e.getMessage());
           }
         }
 
@@ -1069,7 +1089,7 @@ b :{
             Strategy strat = `ApplyTop(); 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("can't apply top rule : " + e.getMessage());
+            writeToOutputln("can't apply top rule : " + e.getMessage());
           }
         }
 
@@ -1079,7 +1099,7 @@ b :{
             Strategy strat = `ApplyCut(prop); 
             tree = (Tree) ((Strategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (VisitFailure e) {
-            System.out.println("can't apply cut rule : " + e.getMessage());
+            writeToOutputln("can't apply cut rule : " + e.getMessage());
           }
         }
 
@@ -1089,7 +1109,7 @@ b :{
             tree = theoremCommand(env.tree, currentPos, `name);
             //System.out.println(tree);
           } catch(Exception e) {
-            System.out.println("can't apply theorem " + `name + " : " + e.getMessage());
+            writeToOutputln("can't apply theorem " + `name + " : " + e.getMessage());
           }
         }
 
@@ -1100,13 +1120,18 @@ b :{
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
             //old: tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
           } catch (VisitFailure e) {
-            System.out.println("can't apply cut rule : " + e.getMessage());
+            writeToOutputln("can't apply cut rule : " + e.getMessage());
           }
         }
 
         /* quit */
         proofquit() -> {
           System.exit(0);
+        }
+
+        // reinit
+        proofreinit() -> {
+          throw new ReInitException();
         }
 
         /* abort */
@@ -1117,7 +1142,7 @@ b :{
 
         /* proof end of file */
         proofendoffile() -> {
-          System.out.println("Warning : The file ended while the theorem was not proved !\nProve it manually or abort.");
+          writeToOutputln("Warning : The file ended while the theorem was not proved !\nProve it manually or abort.");
           Utils.setStream(new DataInputStream(System.in));
           inputStreams.clear();
         }
@@ -1146,7 +1171,20 @@ b :{
     return envStack;
   }
 
+  class ReInitException extends Exception {
+  }
 
+  public void reInit() {
+    newRules = new ArrayList<Rule>();
+    newTermRules = `termrulelist();
+    newPropRules = `proprulelist();
+    theorems = new HashMap<String,Tree>();
+    unprovedTheorems = new HashMap<String,Stack<ProofEnv>>();
+    inputStreams = new Stack<InputStream>();
+    pttheorems = new HashMap<String, ProofTerm>();
+    writeToOutput("SESSIONRESTARTED"); // mot cle pour dire qu'on a redemarre la session
+  }
+ 
   private ArrayList<Rule> newRules = new ArrayList<Rule>();
   private TermRuleList newTermRules = `termrulelist();
   private PropRuleList newPropRules = `proprulelist();
@@ -1161,11 +1199,11 @@ b :{
       Tree tree = envStack.peek().tree;
       theorems.put(name,tree);
       unprovedTheorems.remove(name);
-      System.out.println(name + " proved.");
+      writeToOutputln(name + " proved.");
       //ted.VisitableViewer.toTreeStdout(tree);
     } else {
       unprovedTheorems.put(name, envStack);
-      System.out.println(name + " remains unproved !!");
+      writeToOutputln(name + " remains unproved !!");
     }
   }
   
@@ -1174,10 +1212,10 @@ b :{
       
     while(true) {
 
-      System.out.print("> ");
+      writeToOutput("> ");
       try { command = Utils.getCommand(); }
       catch (Exception e) {
-        System.out.println("Unknow command : " + e);
+        writeToOutputln("Unknow command : " + e);
         continue;
       }
 
@@ -1193,8 +1231,8 @@ b :{
               newRules.add(`r);
             }
           }
-          System.out.println("The new deduction rules are : \n");
-          System.out.println(PrettyPrinter.prettyRule(rl));
+          writeToOutputln("The new deduction rules are : \n");
+          writeToOutputln(PrettyPrinter.prettyRule(rl));
         }
 
         rewriteterm(lhs,rhs) -> {
@@ -1213,35 +1251,41 @@ b :{
 
         normalizeProp(p) -> {
           Prop res = (Prop) Unification.reduce(`p,newTermRules,newPropRules);
-          System.out.println(PrettyPrinter.prettyPrint(res));
+          writeToOutputln(PrettyPrinter.prettyPrint(res));
         }
 
         normalizeTerm(t) -> {
            Term res = (Term) Unification.reduce(`t,newTermRules,newPropRules);
-           System.out.println(PrettyPrinter.prettyPrint(res));
+           writeToOutputln(PrettyPrinter.prettyPrint(res));
         }
 
         /* proof handling */
 
         proof(name,p) -> {
-          Stack<ProofEnv> envStack = buildProofTree(`sequent(context(),context(p)));
-          store(envStack, `name);
+          try {
+            Stack<ProofEnv> envStack = buildProofTree(`sequent(context(),context(p)));
+            store(envStack, `name);
+          }
+          catch (ReInitException e) { reInit(); }
         }
 
         resume(name) -> {
           Stack<ProofEnv> envStack = unprovedTheorems.get(`name);
-          if(envStack==null) { System.out.println(`name + " not found"); } else {
-            envStack = buildProofTreeFromStack(envStack);
-            store(envStack, `name);
+          if(envStack==null) { writeToOutputln(`name + " not found"); } else {
+            try {
+              envStack = buildProofTreeFromStack(envStack);
+              store(envStack, `name);
+            }
+            catch (ReInitException e) {reInit(); }
           }
         }
 
         proofcheck(name) -> {
           Tree tree = theorems.get(`name);
-          if(tree==null) System.out.println(`name + " not found"); else {
+          if(tree==null) writeToOutputln(`name + " not found"); else {
             tree = ProofExpander.expand(tree);
-            if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
-            else System.out.println("Proof check failed :S");
+            if(ProofChecker.proofcheck(tree)) writeToOutputln("Proof check passed !");
+            else writeToOutputln("Proof check failed :S");
           }
         }
 
@@ -1249,7 +1293,7 @@ b :{
 
         display(name) -> {
           Tree tree = theorems.get(`name);
-          if(tree==null) System.out.println(`name + " not found");
+          if(tree==null) writeToOutputln(`name + " not found");
           else PrettyPrinter.display(tree,newTermRules,newPropRules);
           //tree = ProofExpander.expand(tree);
           //PrettyPrinter.display(tree,newTermRules,newPropRules);
@@ -1259,33 +1303,33 @@ b :{
           ProofTerm pi = pttheorems.get(`name);
           if (pi==null) {
             Tree tree = theorems.get(`name);
-            if(tree==null) System.out.println(`name + " not found");
+            if(tree==null) writeToOutputln(`name + " not found");
             else {
               pi = Proofterms.getProofterm(tree);
               pttheorems.put(`name,pi);
-              System.out.println(PrettyPrinter.prettyPrint(pi));
+              writeToOutputln(PrettyPrinter.prettyPrint(pi));
               PrettyPrinter.display(pi);
             }
           }
           else {
-            System.out.println(PrettyPrinter.prettyPrint(pi));
+            writeToOutputln(PrettyPrinter.prettyPrint(pi));
             PrettyPrinter.display(pi);
           }
         }
 
         gibber() -> {
-          System.out.println("        .=\"=.\n      _/.-.-.\\_\n     ( ( 0 0 ) )\n      |/  \"  \\|\n       \\'---'/\n        `\"\"\"`");
-          System.out.println("Have you gibbered today ?");
+          writeToOutputln("        .=\"=.\n      _/.-.-.\\_\n     ( ( 0 0 ) )\n      |/  \"  \\|\n       \\'---'/\n        `\"\"\"`");
+          writeToOutputln("Have you gibbered today ?");
         }
 
         print(name) -> {
           Tree tree = theorems.get(`name);
-          if(tree==null) System.out.println(`name + " not found"); 
+          if(tree==null) writeToOutputln(`name + " not found"); 
           else
             %match(Tree tree) {
               rule[c=concl] -> {
                 String str = `name + " : " + PrettyPrinter.prettyPrint(`concl);
-                System.out.println(str);
+                writeToOutputln(str);
               }
             }
         }
@@ -1300,12 +1344,12 @@ b :{
             inputStreams.push(stream);
           }
           catch (Exception FileNotFoundException) {
-            System.out.println(newname + " : File not found");
+            writeToOutputln(newname + " : File not found");
           }
         }
 
         endoffile() -> {
-          System.out.println("End of file");
+          writeToOutputln("End of file");
           InputStream stream = new DataInputStream(System.in);
           if (! inputStreams.empty()) stream = inputStreams.pop();
           Utils.setStream(stream);
@@ -1313,6 +1357,10 @@ b :{
   
         quit() -> {
           System.exit(0);
+        }
+
+        reinit() -> {
+          reInit();
         }
 
       }  // %match(Command)

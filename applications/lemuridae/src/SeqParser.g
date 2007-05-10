@@ -88,6 +88,7 @@ command: PROOF^ ID COLUMN! pred DOT!
        | DISPLAY^ ID DOT!
        | PROOFTERM^ ID DOT!
        | QUIT DOT!
+       | REINIT DOT!
        | PROOFCHECK^ ID DOT!
        | PRINT^ ID DOT!
        | RESUME^ ID DOT!
@@ -106,6 +107,7 @@ proofcommand: FOCUS^ ID DOT!
             | DISPLAY DOT!
             | ID DOT!
             | QUIT DOT!
+            | REINIT DOT!
             | ABORT DOT!
             | EOF
             ;
@@ -210,6 +212,7 @@ CUT: "cut";
 DISPLAY: "display";
 PROOFTERM: "proofterm";
 QUIT: "quit";
+REINIT: "init";
 THEOREM: "theorem";
 PRINT: "print";
 PROOFCHECK: "proofcheck";
