@@ -81,7 +81,7 @@
   <property name="javacVerbose"   value="false"/>
   <property name="nowarnings"     value="false" />
   <property name="memoryInitSize" value="512m" />
-  <property name="memoryMaxSize"  value="1024m" />
+  <property name="memoryMaxSize"  value="1524m" />
 
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">

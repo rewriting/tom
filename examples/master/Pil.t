@@ -85,21 +85,21 @@ class Pil {
   public static String pretty(Object e) {
     %match(e) {
       Var(name) -> { 
-	return `name; 
+        return `name; 
       }
       Let(var,expr,body) -> {
-	return "let " + pretty(`var) + "<-" + pretty(`expr) + " in " + pretty(`body);
+        return "let " + pretty(`var) + "<-" + pretty(`expr) + " in " + pretty(`body);
       }
       Seq(i1,i2) -> {
-	return pretty(`i1) + " ; " + pretty(`i2);
+        return pretty(`i1) + " ; " + pretty(`i2);
       }
       If(c,i1,i2) -> {
-	return "if(" + pretty(`c) + ") " + pretty(`i1) + " else " + pretty(`i2) + " end";
+        return "if(" + pretty(`c) + ") " + pretty(`i1) + " else " + pretty(`i2) + " end";
       }
     }
     %match(e) {
       Eq(e1,e2) -> {
-	return pretty(`e1) + " = " + pretty(`e2);
+        return pretty(`e1) + " = " + pretty(`e2);
       }
     }
     return e.toString();

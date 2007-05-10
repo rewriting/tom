@@ -61,12 +61,7 @@ public class Compiler extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
-
-  %typeterm Set {
-    implement      { java.util.Set }
-    equals(l1,l2)  { l1.equals(l2) }
-    is_sort(t) { t instanceof java.util.Set }
-  }
+  %include { ../../library/mapping/java/util/types/Collection.tom}
 
   %typeterm Compiler {
     implement { Compiler }
@@ -92,7 +87,6 @@ public class Compiler extends TomGenericPlugin {
   }
 
   public void run() {
-    //KernelCompiler tomKernelCompiler = new KernelCompiler(getStreamManager().getSymbolTable());
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
@@ -100,13 +94,13 @@ public class Compiler extends TomGenericPlugin {
       absVarNumber = 0;
       TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visitLight((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-      //TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
-      Set hashSet = new HashSet();
+      //System.out.println("compiledTerm = \n" + compiledTerm);
+      Collection hashSet = new HashSet();
       TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      //TomTerm renamedTerm = compiledTerm;
+      //System.out.println("renamedTerm = \n" + renamedTerm);
       // verbose
-      getLogger().log( Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
+      getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(renamedTerm);
       if(intermediate) {
@@ -184,7 +178,7 @@ public class Compiler extends TomGenericPlugin {
 
 matchBlock: {
               %match(newPatternInstruction) {
-                PatternInstruction(pattern@Pattern[SubjectList=subjectList,TomList=termList,Guards=guardList],actionInst, option) -> {
+                PatternInstruction(pattern@Pattern[SubjectList=subjectList,TomList=termList],actionInst, option) -> {
                   Instruction newAction = `actionInst;
                   /* expansion of RawAction into TypedAction */
                   %match(actionInst) {
@@ -322,7 +316,7 @@ matchBlock: {
   /*
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
-  %strategy findRenameVariable(context:Set) extends `Identity() {
+  %strategy findRenameVariable(context:Collection) extends `Identity() {
     visit TomTerm {
       var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
         if(context.contains(`astName)) {
@@ -334,7 +328,7 @@ matchBlock: {
     visit Instruction {
       CompiledPattern(patternList,instruction) -> {
         Map map = TomBase.collectMultiplicity(`patternList);
-        Set newContext = new HashSet(map.keySet());
+        Collection newContext = new HashSet(map.keySet());
         newContext.addAll(context);
         //System.out.println("newContext = " + newContext);
         return (Instruction)`TopDown(findRenameVariable(newContext)).visitLight(`instruction);

@@ -34,7 +34,6 @@ import strategy.term.types.*;
 
 import tom.library.sl.*;
 
-import ted.*;
 public class Rewrite1 {
 
   %include { term/term.tom }
@@ -55,7 +54,7 @@ public class Rewrite1 {
       System.out.println("innermost     = " + `Innermost(rule).visit(subject));
       System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
       System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
-      //StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
+      //ted.StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }

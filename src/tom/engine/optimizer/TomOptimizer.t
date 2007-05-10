@@ -57,8 +57,6 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.sl.*;
-//import tom.library.strategy.mutraveler.*;
-//import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * The TomOptimizer plugin.
@@ -68,7 +66,6 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ ../adt/tomsignature/TomSignature.tom }
   //%include{ ../adt/tomsignature/_TomSignature.tom }
   %include{ ../../library/mapping/java/sl.tom }
-  //%include{ mutraveler.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
   %include{ ../../library/mapping/java/util/HashSet.tom }
 
@@ -169,10 +166,10 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   private static Strategy inlineInstruction(TomName variableName, Expression expression) {
-    return `TopDown(inlineInstrOnce(variableName,expression));
+    return `TopDown(instantiateVariable(variableName,expression));
   }
 
-  %strategy inlineInstrOnce(variableName:TomName, expression:Expression) extends `Identity(){
+  %strategy instantiateVariable(variableName:TomName, expression:Expression) extends `Identity(){
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> {
         if(variableName == `name) {
@@ -336,6 +333,7 @@ public class TomOptimizer extends TomGenericPlugin {
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
+              //TODO: check variable occurence in TypedAction
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                   TomMessage.unusedVariable,`extractRealName(varName));
@@ -390,6 +388,7 @@ public class TomOptimizer extends TomGenericPlugin {
           int mult = list.size();
           if(mult == 0) {
             if(varName.length() > 0) {
+              //TODO: check variable occurence in TypedAction
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                   TomMessage.unusedVariable,`extractRealName(varName));

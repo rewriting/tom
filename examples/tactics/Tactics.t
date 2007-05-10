@@ -3,8 +3,6 @@ package tactics;
 import tactics.trees.*;
 import tactics.trees.types.*;
 
-// debugger
-import ted.*;
 import tom.library.sl.*;
 
 public class Tactics {
@@ -61,8 +59,8 @@ public class Tactics {
     try {
       tree = (Tree) tact.visitLight(tree);
     } catch(VisitFailure e ) {}
-    //tree = (Tree) StratDebugger.applyGraphicalDebug(tree,tact);
-    //tree = (Tree) StratDebugger.applyDebug(tree,tact);
+    //tree = (Tree) ted.StratDebugger.applyGraphicalDebug(tree,tact);
+    //tree = (Tree) ted.StratDebugger.applyDebug(tree,tact);
     System.out.println(tree);
 
     return;
