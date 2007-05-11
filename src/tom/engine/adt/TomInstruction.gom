@@ -40,7 +40,7 @@ Instruction =
 
   /*
    * a TypeAction knows the pattern to which it is attached (positivePattern),
-   * and also the list a previously tried patterns, which are called negativePattern
+   * and also the list of previously tried patterns, which are called negativePattern
    * This information is used to perform extra verification/certification
    */
 

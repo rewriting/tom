@@ -103,8 +103,6 @@ public class TomOptimizer extends TomGenericPlugin {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       // Initialize strategies
 
-      Strategy optStrategy1 = `InnermostId(Inline());
-
       Strategy optStrategy2 = `Sequence(
           InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
           InnermostId(
@@ -121,11 +119,11 @@ public class TomOptimizer extends TomGenericPlugin {
 
         if(getOptionBooleanValue("optimize2")) {
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-          renamedTerm = (TomTerm) optStrategy1.visitLight(renamedTerm);
+          renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else {
 	        if(getOptionBooleanValue("optimize")) {
-	          renamedTerm = (TomTerm) optStrategy1.visitLight(renamedTerm);
+	          renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
 	        }
         }
         setWorkingTerm(renamedTerm);
@@ -295,7 +293,7 @@ public class TomOptimizer extends TomGenericPlugin {
       return factory.remove(term1)==factory.remove(term2);
     }
 
-    %strategy Inline() extends `Identity() {
+    %strategy Inline(context:TomList) extends `Identity() {
       visit TomTerm {
         ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
 
@@ -311,6 +309,11 @@ public class TomOptimizer extends TomGenericPlugin {
         /* remove unecessary if(true) { ... } */
       }
       visit Instruction {
+        t@TypedAction[PositivePattern=Pattern[TomList=termList]] -> {
+          context = `termList;
+          //System.out.println("found context = " + context);
+          return `t;
+        }
         /*
          * 
          * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
@@ -334,12 +337,16 @@ public class TomOptimizer extends TomGenericPlugin {
           if(mult == 0) {
             if(varName.length() > 0) {
               //TODO: check variable occurence in TypedAction
-              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
-              TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,`extractRealName(varName));
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+              list.clear();
+              `computeOccurences(name,list).visitLight(`context);
+              if(list.size()<=1) {
+                Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                    TomMessage.unusedVariable,`extractRealName(varName));
+                logger.log( Level.INFO,
+                    TomMessage.remove.getMessage(),
+                    new Object[]{ new Integer(mult), `extractRealName(varName) });
+              }
             }
             return `body;
           } else if(mult == 1) {
@@ -375,7 +382,7 @@ public class TomOptimizer extends TomGenericPlugin {
           return `body; 
         } 
 
-        let@Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+        Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
           String varName = "";
           %match(name) {
             Name(tomName) -> { varName = `tomName; }
@@ -389,15 +396,18 @@ public class TomOptimizer extends TomGenericPlugin {
           if(mult == 0) {
             if(varName.length() > 0) {
               //TODO: check variable occurence in TypedAction
-              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
-              TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,`extractRealName(varName));
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+              list.clear();
+              `computeOccurences(name,list).visitLight(`context);
+              if(list.size()<=1) {
+                Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                    TomMessage.unusedVariable,`extractRealName(varName));
+                logger.log( Level.INFO,
+                    TomMessage.remove.getMessage(),
+                    new Object[]{ new Integer(mult), `extractRealName(varName) });
+              }
             }
             //System.out.println("elim2: " + `var);
-            //System.out.println("let: " + `let);
             return `body; 
           } else if(mult == 1) {
             if(expConstantInBody(`exp,`body)) {
