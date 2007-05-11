@@ -146,39 +146,22 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   public Visitable visitLight(Visitable any) throws VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
+      int childCount = any.getChildCount();
       Visitable result = any;
-      if (any instanceof tom.library.sl.Visitable) {
-        boolean updated = false;
-        Visitable[] childs = null;
-        for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-          if (nonbuiltin[i]) {
-            Visitable oldChild = any.getChildAt(nbi);
-            Visitable newChild = args[i].visitLight(oldChild);
-            if (updated || (newChild != oldChild)) {
-              if (!updated) { // this is the first change
-                updated = true;
-                // allocate the array, and fill it
-                childs = new Visitable[@nonBuiltinChildCount()@];
-                for (int j = 0 ; j<nbi ; j++) {
-                  childs[j] = any.getChildAt(j);
-                }
-              }
-              childs[nbi] = newChild;
-            }
-            nbi++;
-          }
+      Visitable[] childs = null;
+      for (int i = 0; i < childCount; i++) {
+        Visitable oldChild = any.getChildAt(i);
+        Visitable newChild = args[i].visitLight(oldChild);
+        if(childs != null) {
+          childs[i] = newChild;
+        } else if(newChild != oldChild) {
+          // allocate the array, and fill it
+          childs = ((Visitable) any).getChildren();
+          childs[i] = newChild;
         }
-        if (updated) {
-          result = ((tom.library.sl.Visitable) any).setChildren(childs);
-        }
-      } else {
-        for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-          if (nonbuiltin[i]) {
-            Visitable newChild = args[i].visitLight(result.getChildAt(nbi));
-            result = result.setChildAt(nbi, newChild);
-            nbi++;
-          }
-        }
+      }
+      if(childs!=null) {
+        result = ((Visitable) any).setChildren(childs);
       }
       return result;
     } else {
@@ -189,147 +172,131 @@ public class @className()@ implements tom.library.sl.Strategy {
   public int visit() {
     tom.library.sl.Visitable any = getEnvironment().getSubject();
     if(any instanceof @fullClassName(operator)@) {
-    int childCount = any.getChildCount();
 
-    tom.library.sl.Visitable[] childs = null;
-    for (int i = 0; i < childCount; i++) {
-      tom.library.sl.Visitable oldChild = (tom.library.sl.Visitable)any.getChildAt(i);
-      Visitable[] array = getEnvironment().getSubject().getChildren();
-      environment.down(i+1);
-      int status = ((tom.library.sl.Strategy)args[i]).visit();
-      if(status != tom.library.sl.Environment.SUCCESS) {
-        environment.up();
-        return status;
-      }
-      tom.library.sl.Visitable newChild = getEnvironment().getSubject();
-      if(childs != null) {
-        childs[i] = newChild;
-        environment.up();
-        /* restore subject */
-        getEnvironment().setSubject(any);
-      } else if(newChild != oldChild) {
-        // allocate the array, and fill it
-        // childs = (Visitable[])getEnvironment().getSubject().getChildren();
-        java.util.List list = java.util.Arrays.asList(array);
-        childs = new tom.library.sl.Visitable[childCount];
-        for(int j = 0; j < array.length; j++) {
-          childs[j] = (tom.library.sl.Visitable) array[j];
+      int childCount = any.getChildCount();
+      Visitable[] childs = null;
+
+      for(int i = 0; i < childCount; i++) {
+        Visitable oldChild = (Visitable)any.getChildAt(i);
+        environment.down(i+1);
+        int status = args[i].visit();
+        if(status != Environment.SUCCESS) {
+          environment.upLocal();
+          return status;
         }
-        childs[i] = newChild;
-        /* restore subject */
-        environment.up();
-        getEnvironment().setSubject(any);
-      } else {
-        /* no need to restore subject */
-        environment.up();
+        Visitable newChild = environment.getSubject();
+        if(childs != null) {
+          childs[i] = newChild;
+        } else if(newChild != oldChild) {
+          childs = ((Visitable) any).getChildren();
+          childs[i] = newChild;
+        } 
+        environment.upLocal();
       }
-    }
-
-    if(childs!=null) {
-      getEnvironment().setSubject((tom.library.sl.Visitable)getEnvironment().getSubject().setChildren(childs));
-    }
-    //return;
+      if(childs!=null) {
+        environment.setSubject((Visitable)any.setChildren(childs));
+      }
+      return tom.library.sl.Environment.SUCCESS;
     } else {
-    return tom.library.sl.Environment.FAILURE;
+      return tom.library.sl.Environment.FAILURE;
     }
-    return tom.library.sl.Environment.SUCCESS;
   }
 }
 ]%);
-  }
-
-  private String genConstrArgs(int count, String arg) {
-    StringBuffer args = new StringBuffer();
-    for(int i = 0; i < count; ++i) {
-      args.append((i==0?"":", "));
-      args.append(arg);
-      args.append(i);
-    }
-    return args.toString();
-  }
-
-  private String genIdArgs(int count) {
-    StringBuffer args = new StringBuffer();
-    for(int i = 0; i < count; ++i) {
-      args.append((i==0?"":", "));
-      args.append("Identity()");
-    }
-    return args.toString();
-  }
-
-  public String generateMapping() {
-
-    String whenName = className().replaceFirst("_","When_");
-    String isName = className().replaceFirst("_","Is_");
-    return %[
-%op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
-  is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
-@genGetSlot(slotList.length(),"arg")@
-  make(@genConstrArgs(slotList.length(),"arg")@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg")@) }
 }
 
-%op Strategy @whenName@(s:Strategy) {
-  make(s) { `Sequence(@className()@(@genIdArgs(slotList.length())@),s) }
+private String genConstrArgs(int count, String arg) {
+  StringBuffer args = new StringBuffer();
+  for(int i = 0; i < count; ++i) {
+    args.append((i==0?"":", "));
+    args.append(arg);
+    args.append(i);
+  }
+  return args.toString();
 }
 
-%op Strategy @isName@() {
-  make() { `@className()@(@genIdArgs(slotList.length())@) }
+private String genIdArgs(int count) {
+  StringBuffer args = new StringBuffer();
+  for(int i = 0; i < count; ++i) {
+    args.append((i==0?"":", "));
+    args.append("Identity()");
+  }
+  return args.toString();
 }
-]%;
-  }
 
-  private String genGetSlot(int count, String arg) {
-    StringBuffer out = new StringBuffer();
-    for (int i = 0; i < count; ++i) {
-      out.append(%[
-  get_slot(@arg+i@, t) { t.getArgument(@i@) }]%);
+public String generateMapping() {
+
+  String whenName = className().replaceFirst("_","When_");
+  String isName = className().replaceFirst("_","Is_");
+  return %[
+    %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
+      is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
+      @genGetSlot(slotList.length(),"arg")@
+        make(@genConstrArgs(slotList.length(),"arg")@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg")@) }
     }
-    return out.toString();
+
+  %op Strategy @whenName@(s:Strategy) {
+    make(s) { `Sequence(@className()@(@genIdArgs(slotList.length())@),s) }
   }
 
-  private String genStratArgs(int count, String arg) {
-    StringBuffer args = new StringBuffer();
-    for(int i = 0; i < count; ++i) {
-      args.append((i==0?"":", "));
-      args.append(arg);
-      args.append(i);
-      args.append(":Strategy");
-    }
-    return args.toString();
+  %op Strategy @isName@() {
+    make() { `@className()@(@genIdArgs(slotList.length())@) }
   }
+  ]%;
+}
 
-  private String genNonBuiltin() {
-    String out = "";
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          out += "true, ";
-        } else {
-          out += "false, ";
-        }
+private String genGetSlot(int count, String arg) {
+  StringBuffer out = new StringBuffer();
+  for (int i = 0; i < count; ++i) {
+    out.append(%[
+        get_slot(@arg+i@, t) { t.getArgument(@i@) }]%);
+  }
+  return out.toString();
+}
+
+private String genStratArgs(int count, String arg) {
+  StringBuffer args = new StringBuffer();
+  for(int i = 0; i < count; ++i) {
+    args.append((i==0?"":", "));
+    args.append(arg);
+    args.append(i);
+    args.append(":Strategy");
+  }
+  return args.toString();
+}
+
+private String genNonBuiltin() {
+  String out = "";
+  %match(SlotFieldList slotList) {
+    concSlotField(_*,SlotField[Domain=domain],_*) -> {
+      if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        out += "true, ";
+      } else {
+        out += "false, ";
       }
     }
-    if (out.length()!=0) {
-      return out.substring(0,out.length()-2);
-    } else {
-      return out;
-    }
   }
+  if (out.length()!=0) {
+    return out.substring(0,out.length()-2);
+  } else {
+    return out;
+  }
+}
 
-  private int nonBuiltinChildCount() {
-    int count = 0;
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          count++;
-        }
+private int nonBuiltinChildCount() {
+  int count = 0;
+  %match(SlotFieldList slotList) {
+    concSlotField(_*,SlotField[Domain=domain],_*) -> {
+      if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        count++;
       }
     }
-    return count;
   }
+  return count;
+}
 
-  /** the class logger instance*/
-  private Logger getLogger() {
-    return Logger.getLogger(getClass().getName());
-  }
+/** the class logger instance*/
+private Logger getLogger() {
+  return Logger.getLogger(getClass().getName());
+}
 }
