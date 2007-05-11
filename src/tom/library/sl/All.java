@@ -60,27 +60,20 @@ public class All extends AbstractStrategy {
   public final Visitable visitLight(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     Visitable result = any;
-    if(any instanceof Visitable) {
-      Visitable[] childs = null;
-      for (int i = 0; i < childCount; i++) {
-        Visitable oldChild = any.getChildAt(i);
-        Visitable newChild = visitors[ARG].visitLight(oldChild);
-        if(childs != null) {
-          childs[i] = newChild;
-        } else if(newChild != oldChild) {
-          // allocate the array, and fill it
-          childs = ((Visitable) any).getChildren();
-          childs[i] = newChild;
-        }
+    Visitable[] childs = null;
+    for (int i = 0; i < childCount; i++) {
+      Visitable oldChild = any.getChildAt(i);
+      Visitable newChild = visitors[ARG].visitLight(oldChild);
+      if(childs != null) {
+        childs[i] = newChild;
+      } else if(newChild != oldChild) {
+        // allocate the array, and fill it
+        childs = ((Visitable) any).getChildren();
+        childs[i] = newChild;
       }
-      if(childs!=null) {
-        result = ((Visitable) any).setChildren(childs);
-      }
-    } else {
-      for(int i = 0; i < childCount; i++) {
-        Visitable newChild = visitors[ARG].visitLight(result.getChildAt(i));
-        result = result.setChildAt(i, newChild);
-      }
+    }
+    if(childs!=null) {
+      result = ((Visitable) any).setChildren(childs);
     }
     return result;
   }

@@ -198,7 +198,7 @@ public final class Environment implements Cloneable {
    * package private
    * remove the last sub-position but does not update the subject
    */
-  void upLocal() {
+  public void upLocal() {
     current--;
   }
 
