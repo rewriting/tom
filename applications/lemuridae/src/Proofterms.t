@@ -131,35 +131,39 @@ public class Proofterms {
         return `cut(cnprop(coname(cncount+1),a),term2proofterm(p1,nsequent(ng,cncontext(cnd*,cnprop(coname(cncount+1),a))),ncount+1,cncount+1),nprop(name(ncount+1),a),term2proofterm(p2,nsequent(ncontext(ng*,nprop(name(ncount+1),a)),cnd),ncount+1,cncount+1));
       }
 
-      /*
-
       // first order logic
       rule(
           forAllRightInfo(new_var),
           (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
           sequent(g,(d1*,a,d2*)),
           a@forAll(v,A)
-          )
+          ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*))
         -> {
-          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
-            return proofcheck(`p); 
+          if ((Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B) && !Utils.getFreeVars(`context(d1*,d2*,g*)).contains(`new_var.getname()))  
+         return `forallR(cnprop(coname(cncount+1),B),new_var,term2proofterm(p,nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount,cncount+1),coname);
         }
 
+      
       rule(
           forAllLeftInfo(new_term),
           (p@rule(_,_,sequent((g1*,B,g2*),d),_)), 
           sequent((g1*,a,g2*),d),
           a@forAll(v,A)
-          )
-        -> { if (`replaceFreeVars(Var(v),new_term).fire(`A) == `B) return proofcheck(`p); } 
+          ),nsequent((ng1*,nprop(name,a),ng2*),cnd)
+        -> { 
+          if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B)
+            return `forallL(nprop(name(ncount+1),B),term2proofterm(p, nsequent(ncontext(ng1*,nprop(name(ncount+1),B),ng2*),cnd), ncount+1, cncount), new_term, name); 
+        }
 
       rule(
           existsRightInfo(new_term),
           (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
           sequent(g,(d1*,a,d2*)),
           a@exists(v,A)
-          )
-        -> { if (`replaceFreeVars(Var(v),new_term).fire(`A) == `B) return proofcheck(`p); 
+          ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*))
+        -> {
+          if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B) 
+            return `existsR(cnprop(coname(cncount+1),B),term2proofterm(p, nsequent(ng,cncontext(cnd1*,cnprop(coname(cncount+1),B),cnd2*)),ncount, cncount+1),new_term,coname); 
         } 
 
       rule(
@@ -167,11 +171,12 @@ public class Proofterms {
           (p@rule(_,_,sequent((g1*,B,g2*),d),_)), 
           sequent((g1*,a,g2*),d),
           a@exists(v,A)
-          )
+          ),nsequent((ng1*,nprop(name,a),ng2*),cnd)
         -> {
-          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(g1*,g2*,d*)))
-            return proofcheck(`p); 
-        } 
+          if ((Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B) && !Utils.getFreeVars(`context(g1*,g2*,d*)).contains(`new_var.getname()))
+            return `existsL(nprop(name(ncount+1),B),new_var,term2proofterm(p,nsequent(ncontext(ng1*,nprop(name(cncount+1),B),ng2*),cnd),ncount+1,cncount),name); 
+        }
+      /*
 
       // error case
       x -> {

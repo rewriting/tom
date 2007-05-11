@@ -202,9 +202,13 @@ public final class Gui implements Observer {
     myPanel.setLayout(new BorderLayout());
     myPanel.add(c,BorderLayout.CENTER);
     
+    // icone
+    ImageIcon icon = new ImageIcon("../icon/lemu.gif");
+    mainWindow.setIconImage(icon.getImage());
+    
     // on rajoute le panel a la fenetre principale
     mainWindow.add(myPanel);
-    
+
     // on rend le tous visible
     mainWindow.setSize(600,500);
     mainWindow.setVisible(true);
