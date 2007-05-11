@@ -1,3 +1,6 @@
+2007-05-11  radu
+  * sublists are now supported in variadic operators (domain=codomain or domain!=codomain)
+
 2007-05-05  pem
   * mutraveler has been removed
   * new interface for strategies
