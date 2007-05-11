@@ -146,6 +146,18 @@ class Utils {
     }
   }
 
+  %strategy CollectFreeVars(StringCollection res) extends `Fail() {
+    visit Prop {
+      p -> { res.addAll(`p.getFreeVars()); return `p; }
+    }
+  }
+
+  public static Set<String> getFreeVars(sequentsAbstractType t) {
+    Set<String> res = new HashSet();
+    try { `mu(MuVar("x"),Choice(CollectFreeVars(res),All(MuVar("x")))).visit(t); }
+    catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+    return res;
+  }
 
   public static sequentsAbstractType 
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
