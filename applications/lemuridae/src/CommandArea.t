@@ -63,7 +63,7 @@ public class CommandArea extends JTextArea implements KeyListener, CaretListener
     //getInputMap().put(KeyStroke.getKeyStroke("ctrl pressed UP"), up);
     //getInputMap().put(KeyStroke.getKeyStroke("ctrl pressed PAGE_UP"), allUp);
     //getInputMap().put(KeyStroke.getKeyStroke("ctrl pressed PAGE_DOWN"), allDown);
-    setFont(new Font("Monospaced",Font.PLAIN,10));
+    setFont(new Font("Monospace",Font.PLAIN,12));
     putClientProperty(com.sun.java.swing.SwingUtilities2.AA_TEXT_PROPERTY_KEY,Boolean.TRUE );
   }
   
