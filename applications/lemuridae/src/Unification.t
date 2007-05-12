@@ -97,7 +97,7 @@ class Unification {
         return match(`args1, `args2, tds,varcount);
       }
 
-      Var(x), t@Term -> { 
+      Var(x), t -> { 
         if(tds.containsKey(`x)) {
           if (tds.get(`x) == `t) return tds;
           else return null;

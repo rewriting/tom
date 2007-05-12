@@ -50,10 +50,10 @@ public class ProofExpander {
         %match(t) {
           rule[c=wantedconcl] -> {
             %match(currentconcl,wantedconcl) {
-              s@sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
+              sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
                 return (Tree) `ApplyWeakL(p).visit(`r);
               }
-              s@sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
+              sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
                 return (Tree) `ApplyWeakR(p).visit(`r);
               }
               x,x -> {
@@ -71,7 +71,7 @@ public class ProofExpander {
 
   %strategy Debug() extends Identity() {
     visit Tree {
-      x -> { System.out.println(getEnvironment()); }
+      _ -> { System.out.println(getEnvironment()); }
     }
   }
   
@@ -108,7 +108,7 @@ public class ProofExpander {
       x@customRuleInfo[] -> { return `x; }
     }
     visit Sequent {
-      x@sequent(g,d) -> {
+      sequent(g,d) -> {
         return `sequent(context(p.prop,g*),d);
       }
     }

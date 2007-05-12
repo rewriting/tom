@@ -105,7 +105,7 @@ class PrettyPrinter {
         }
       }
 
-      r@rule(name,_,_,p) -> { if (prop == `p) { return `r; } }
+      r@rule(_,_,_,p) -> { if (prop == `p) { return `r; } }
     }
   }
 
@@ -223,7 +223,7 @@ class PrettyPrinter {
 
       // arithmetic
       funAppl("z",()) -> { return "0"; }
-      i@funAppl("succ",x) -> {
+      i@funAppl("succ",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }
@@ -369,7 +369,7 @@ class PrettyPrinter {
   // finite 1st order theory of classes list pretty print
   private static boolean endedByNil(Term l) {
     %match(Term l) {
-      funAppl("cons",(x,funAppl("nil",()))) -> { return true; }
+      funAppl("cons",(_,funAppl("nil",()))) -> { return true; }
       funAppl("cons",(_,y)) -> { return endedByNil(`y); }
     }
     return false;
@@ -388,7 +388,7 @@ class PrettyPrinter {
   // lambda-Pi context list pretty print (inverted order)
   private static boolean leftEndedByNil(Term l) {
     %match(Term l) {
-	  funAppl("cons",(funAppl("nil",()),y)) -> { return true; }
+	  funAppl("cons",(funAppl("nil",()),_)) -> { return true; }
 	  funAppl("cons",(x,_)) -> { return leftEndedByNil(`x); }
     }
     return false;
@@ -475,7 +475,7 @@ class PrettyPrinter {
 
       // arithmetic pretty print
       funAppl("z",()) -> { return "0"; }
-      i@funAppl("succ",x) -> {
+      i@funAppl("succ",_) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }

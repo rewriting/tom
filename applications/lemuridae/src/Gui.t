@@ -193,7 +193,8 @@ public final class Gui implements Observer {
     // initialisation de la zone de messages
     msgArea = new JTextArea();
     msgArea.setEditable(false);
-    msgArea.setFont(new Font("Courier new",Font.PLAIN,12));
+    //msgArea.setFont(new Font("Courier new",Font.PLAIN,12));
+    msgArea.setFont(new Font("Monospaced",Font.PLAIN,12));
     msgArea.putClientProperty(com.sun.java.swing.SwingUtilities2.AA_TEXT_PROPERTY_KEY,Boolean.TRUE );
 
     // et de son scrollpane

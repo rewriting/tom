@@ -539,7 +539,7 @@ b: {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@forAll(n,p),Y*),g), act -> {
+          sequent((_*,act@forAll(n,_),_*),_), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
@@ -568,7 +568,7 @@ b: {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@exists(n,p),Y*)), act -> {
+          sequent(_,(_*,act@exists(n,_),_*)), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
