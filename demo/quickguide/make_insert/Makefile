@@ -7,4 +7,6 @@ Sort.java: Sort.t
 Sort.class: Sort.java
 	javac Sort.java
 
+clean:
+	rm -rf sort Sort.java Sort.class
 
