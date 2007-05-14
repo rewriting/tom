@@ -1,3 +1,6 @@
+2007-05-14  paul
+  * added <, <=, > and >= to gom side conditions
+
 2007-05-11  radu
   * sublists are now supported in variadic operators (domain=codomain or domain!=codomain)
 

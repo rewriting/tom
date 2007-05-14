@@ -48,6 +48,9 @@ public class HandMapping {
         System.out.println("c1 and c3 have the same " + `c + " color");
       }
     }
+    %match (c1,c1) {
+      x@car(s,c), x -> { "This is the same "+`c +" car with "+`s +" seats"; }
+    }
   }
 }
 

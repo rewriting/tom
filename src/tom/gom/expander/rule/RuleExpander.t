@@ -268,6 +268,34 @@ public class RuleExpander {
         genTerm(`term2,output);
         output.append(")");
       }
+      CondLessEquals[t1=term1,t2=term2] -> {
+        output.append("(");
+        genTerm(`term1,output);
+        output.append(" <= ");
+        genTerm(`term2,output);
+        output.append(")");
+      }
+      CondLessThan[t1=term1,t2=term2] -> {
+        output.append("(");
+        genTerm(`term1,output);
+        output.append(" < ");
+        genTerm(`term2,output);
+        output.append(")");
+      }
+      CondGreaterEquals[t1=term1,t2=term2] -> {
+        output.append("(");
+        genTerm(`term1,output);
+        output.append(" >= ");
+        genTerm(`term2,output);
+        output.append(")");
+      }
+      CondGreaterThan[t1=term1,t2=term2] -> {
+        output.append("(");
+        genTerm(`term1,output);
+        output.append(" > ");
+        genTerm(`term2,output);
+        output.append(")");
+      }
     }
   }
 

@@ -1,6 +1,6 @@
-import sort.sortedlist.types.*; 
+import rules.sortedlist.types.*; 
 
-public class Sort {
+public class Rules {
 
   %gom {
     module sortedlist
@@ -9,12 +9,8 @@ public class Sort {
 
       Integers = sorted(int*)
 
-      sorted:make_insert(e,l) {
-        %match(l) {
-          sorted(head,tail*) -> { 
-            if(e >= `head) return `realMake(head,sorted(e,tail*)); 
-          }
-        }
+      module sortedlist:rules() {
+        sorted(x,y,t*) -> sorted(y,x,t*) if y <= x 
       }
   }
 

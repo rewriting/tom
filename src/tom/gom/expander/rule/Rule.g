@@ -13,6 +13,10 @@ tokens {
   CONDTERM;
   CONDEQUALS;
   CONDNOTEQUALS;
+  CONDLEQ;
+  CONDLT;
+  CONDGEQ;
+  CONDGT;
 }
 
 @header {
@@ -30,9 +34,15 @@ rule :
     -> ^(CONDRULE pattern term $cond)
   ;
 condition :
-  p1=term (EQUALS p2=term | NOTEQUALS p3=term)?
-    -> {p2!=null && p3==null}? ^(CONDEQUALS $p1 $p2)
-    -> {p2==null && p3!=null}? ^(CONDNOTEQUALS $p1 $p3)
+  p1=term (EQUALS p2=term | NOTEQUALS p3=term |
+           LEQ p4=term | LT p5=term | 
+           GEQ p6=term | GT p7=term)?
+    -> {p2!=null}? ^(CONDEQUALS $p1 $p2)
+    -> {p3!=null}? ^(CONDNOTEQUALS $p1 $p3)
+    -> {p4!=null}? ^(CONDLEQ $p1 $p4)
+    -> {p5!=null}? ^(CONDLT $p1 $p5)
+    -> {p6!=null}? ^(CONDGEQ $p1 $p6)
+    -> {p7!=null}? ^(CONDGT $p1 $p7)
     -> ^(CONDTERM $p1)
   ;
 pattern :
@@ -51,6 +61,10 @@ RPAR : ')' ;
 COMA : ',' ;
 EQUALS : '==';
 NOTEQUALS : '!=';
+LEQ : '<=';
+LT : '<';
+GEQ : '>=';
+GT : '>';
 IF : 'if' ;
 INT : ('0'..'9')+ ;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\') ;
