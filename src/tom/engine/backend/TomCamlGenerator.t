@@ -184,9 +184,9 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.indent(deep);
     output.write("let ");
     generate(deep,var,moduleName);
-    output.write(" = ref ");
+    output.write(" = ref (");
     generateExpression(deep,exp,moduleName);
-    output.writeln(" in ");
+    output.writeln(") in ");
     generateInstruction(deep,body,moduleName);
   }
 
