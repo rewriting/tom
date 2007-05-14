@@ -704,8 +704,16 @@ class PrettyPrinter {
     Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
     int ret = pr.waitFor(); 
     if (ret == 0) {
+      pr = rt.exec("dvips " + path.substring(0,path.length()-4) +".dvi -X 300 -Y 300 -E -o "+path.substring(0,path.length()-4)+".ps");
+      ret = pr.waitFor();
+    }
+    if (ret ==0) {
+      pr = rt.exec("gv --scale=3 "+path.substring(0,path.length()-4)+".ps");
+      ret = pr.waitFor();
+    }
+/*    if (ret == 0) {
 	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
-	pr.waitFor();}
+	pr.waitFor();} */
     else
 	System.err.println("An error occurred during the LaTeX compilation.");
   }
@@ -727,44 +735,18 @@ class PrettyPrinter {
     Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
     int ret = pr.waitFor(); 
     if (ret == 0) {
+      pr = rt.exec("dvips " + path.substring(0,path.length()-4) +".dvi -X 300 -Y 300 -E -o "+path.substring(0,path.length()-4)+".ps");
+      ret = pr.waitFor();
+    }
+    if (ret ==0) {
+      pr = rt.exec("gv "+path.substring(0,path.length()-4)+".ps");
+      ret = pr.waitFor();
+    }
+/*    if (ret == 0) {
 	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
-	pr.waitFor();}
+	pr.waitFor();} */
     else
 	System.err.println("An error occurred during the LaTeX compilation.");
   }
-
-  // displays a latex output image : returns the path of the image generated
-  public static String show(urbanAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
-    File tmp = File.createTempFile("output",".tex");
-    FileWriter writer = new FileWriter(tmp);
-    String path = tmp.getAbsolutePath();
-
-    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
-    writer.write(toLatex(term));
-    writer.write("\n\\]\n");
-    writer.write("\\end{document}\n");
-    writer.flush();
-
-    System.out.println(path);
-    Runtime rt = Runtime.getRuntime();
-    Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
-    int ret = pr.waitFor(); 
-    if (ret == 0) {
-      pr = rt.exec("dvips " + path.substring(0,path.length()-4) +".dvi -E -o "+path.substring(0,path.length()-4)+".ps");
-      ret = pr.waitFor();
-    }
-    if (ret == 0) {
-      pr = rt.exec("convert " + path.substring(0,path.length()-4) +".ps -geometry 200%x200% "+ path.substring(0,path.length()-4) + ".png");
-      ret = pr.waitFor();
-    }
-//    if (ret == 0) {
-//      pr = rt.exec("open " + path.substring(0,path.length()-4) +".png");
-//      pr.waitFor();
-//    }
-    else
-      System.err.println("An error occurred during the LaTeX compilation.");
-    return path.substring(0,path.length()-4)+".png";
-  }
-
 
 }

@@ -1308,12 +1308,13 @@ b :{
               pi = Proofterms.getProofterm(tree);
               pttheorems.put(`name,pi);
               writeToOutputln(PrettyPrinter.prettyPrint(pi));
-              PrettyPrinter.show(pi);
+              //writeToOutput("IMG"+PrettyPrinter.show(pi));
+              PrettyPrinter.display(pi);
             }
           }
           else {
             writeToOutputln(PrettyPrinter.prettyPrint(pi));
-            PrettyPrinter.show(pi);
+            PrettyPrinter.display(pi);
           }
         }
 
