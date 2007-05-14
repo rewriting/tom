@@ -458,19 +458,51 @@ public class ASTFactory {
 
       concTomTerm(head@VariableStar[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
-        /* a VariableStar is always flatened */
+        /* a VariableStar is always flattened */
         return `BuildAppendList(name,head,subList);
       }
 
       concTomTerm(Composite(concTomTerm(head@VariableStar[],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
-        /* a VariableStar is always flatened */
+        /* a VariableStar is always flattened */
           return `BuildAppendList(name,head,subList);
       }
 
+/*
+      concTomTerm(head@Variable[AstType=varType],tail*) -> {
+	//System.out.println("topDomain = " + topDomain);
+	//System.out.println("topCodomain = " + topCodomain);
+	//System.out.println("varType = " + TomBase.getTomType(`varType));
+
+	TomTerm subList = buildList(name,`tail,symbolTable);
+	// a Variable is flattened if type and codomain are equals
+	if(topDomain != topCodomain) {
+	  if(TomBase.getTomType(`varType) == topCodomain) {
+	    return `BuildAppendList(name,head,subList);
+	  }
+	}
+	return `BuildConsList(name,head,subList);
+      }
+
+      concTomTerm(Composite(concTomTerm(head@Variable[AstType=varType],_*)),tail*) -> {
+	//System.out.println("topDomain = " + topDomain);
+	//System.out.println("topCodomain = " + topCodomain);
+	//System.out.println("varType = " + TomBase.getTomType(`varType));
+
+	TomTerm subList = buildList(name,`tail,symbolTable);
+	// a Variable is flattened if type and codomain are equals
+	if(topDomain != topCodomain) {
+	  if(TomBase.getTomType(`varType) == topCodomain) {
+	    return `BuildAppendList(name,head,subList);
+	  }
+	}
+	return `BuildConsList(name,head,subList);
+      }
+*/
+
       concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName],_*)),tail*) -> {
-        /* Flatten nested lists, unless domain and codomain are equals */
         TomTerm subList = buildList(name,`tail,symbolTable);
+        /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
           if(name==`opName) {
             return `BuildAppendList(name,head,subList);
@@ -479,7 +511,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName),ModuleName=module],_*)),tail*) -> {
+      concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName)],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
         /*
@@ -496,7 +528,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
+      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable)[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
       }

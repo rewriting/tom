@@ -126,9 +126,9 @@ public class KernelExpander {
 
     visit TomVisit {
       VisitTerm(type,patternInstructionList,options) -> {
-        TomType newType = (TomType)`expander.expandVariable(contextType,`type);
-        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newType,`patternInstructionList);
-        return `VisitTerm(newType, newPatternInstructionList,options);
+	TomType newType = (TomType)`expander.expandVariable(contextType,`type);
+	PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newType,`patternInstructionList);
+	return `VisitTerm(newType, newPatternInstructionList,options);
       }
     }
 
@@ -195,280 +195,278 @@ matchBlock: {
 	    `tomSubjectList=`tomSubjectList.getTailconcTomTerm();
 	}
 
-      TomTerm newTomSubjectList = (TomTerm)expander.expandVariable(contextType, `SubjectList(ASTFactory.makeList(newSubjectList)));
-      //System.out.println("newTomSubjectList = " + newTomSubjectList);
-      TomType newTypeList = `TypeList((TomTypeList)expander.expandVariable(contextType,typeList));
+	TomTerm newTomSubjectList = (TomTerm)expander.expandVariable(contextType, `SubjectList(ASTFactory.makeList(newSubjectList)));
+	//System.out.println("newTomSubjectList = " + newTomSubjectList);
+	TomType newTypeList = `TypeList((TomTypeList)expander.expandVariable(contextType,typeList));
 
-      PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newTypeList,`patternInstructionList);
-      //System.out.println("newPatternInstructionList = " + newPatternInstructionList);
-      return `Match(newTomSubjectList,newPatternInstructionList, option);
-    }
-  }
-
-
-
-  /*
-   * given a list of subjects
-   * for each pattern, perform type expansion according to the type of subjects
-   */
-  visit Pattern {
-    Pattern(subjectList,termList, guardList) -> {
-      %match(contextType) {
-	TypeList(typeList) -> {
-	  //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
-
-	  // process a list of subterms
-	  ArrayList list = new ArrayList();
-	  while(!`termList.isEmptyconcTomTerm()) {
-	    //System.out.println("type: " + `typeList.getHeadconcTomType());
-	    //System.out.println("term: " + `termList.getHeadconcTomTerm());
-	    list.add((TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `termList.getHeadconcTomTerm()));
-	    `termList = `termList.getTailconcTomTerm();
-	    `typeList = `typeList.getTailconcTomType();
-	  }
-	  TomList newTermList = ASTFactory.makeList(list);
-
-	  // process a list of guards
-	  list.clear();
-	  // build the list of variables that occur in the lhs
-	  HashSet set = new HashSet();
-	  TomBase.collectVariable(set,newTermList);
-	  TomList varList = ASTFactory.makeList(set);
-	  //System.out.println("varList = " + varList);
-	  while(!`guardList.isEmptyconcTomTerm()) {
-	    list.add((TomTerm)expander.replaceInstantiatedVariable(`varList, `guardList.getHeadconcTomTerm()));
-	    `guardList = `guardList.getTailconcTomTerm();
-	  }
-	  TomList newGuardList = ASTFactory.makeList(list);
-	  //System.out.println("newGuardList = " + newGuardList);
-	  return `Pattern(subjectList,newTermList,newGuardList);
-	}
+	PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newTypeList,`patternInstructionList);
+	//System.out.println("newPatternInstructionList = " + newPatternInstructionList);
+	return `Match(newTomSubjectList,newPatternInstructionList, option);
       }
     }
-  }
 
-  visit TomTerm {
-    RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
-      TomSymbol tomSymbol = null;
-      if(`tomName.equals("")) {
-	try {
-	  tomSymbol = expander.getSymbolFromType(contextType);
-	  if(tomSymbol==null) {
-	    throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
-	  }
-	  `nameList = `concTomName(tomSymbol.getAstName());
-	} catch(UnsupportedOperationException e) {
-	  // contextType has no AstType slot
-	  tomSymbol = null;
-	}
-      } else {
-	tomSymbol = expander.getSymbolFromName(`tomName);
-      }
-
-      if(tomSymbol != null) {
-	SlotList subterm = expander.expandVariableList(tomSymbol, `slotList);
-	ConstraintList newConstraints = (ConstraintList)expander.expandVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
-	return `RecordAppl(option,nameList,subterm,newConstraints);
-      } else {
+    /*
+     * given a list of subjects
+     * for each pattern, perform type expansion according to the type of subjects
+     */
+    visit Pattern {
+      //PatternInstruction(Pattern(subjectList,termList, guardList), action, optionList) -> {
+      Pattern(subjectList,termList, guardList) -> {
 	%match(contextType) {
-	  type@Type[] -> {
-	    SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
-	    ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`type,`constraints);
-	    return `RecordAppl(option,nameList,subterm,newConstraints);
-	  }
+	  TypeList(typeList) -> {
+	    //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
 
-	  _ -> {
-	    // do nothing
-	    //System.out.println("contextType = " + contextType);
-	    //System.out.println("subject        = " + subject);
-	  }
-	}
-      }
-    }
-
-    var@(Variable|UnamedVariable)[AstType=TomTypeAlone(tomType),Constraints=constraints] -> {
-      TomType localType = expander.getType(`tomType);
-      if(localType != null) {
-	// The variable has already a known type
-	return `var.setAstType(localType);
-      }
-
-      %match(contextType){
-	type@Type[] ->{
-	  ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`type,`constraints);
-	  return `var.setAstType(`type).setConstraints(newConstraints);
-	}
-      }
-    }
-
-  }
-}
-
-/**
- * @param index the column-index of the type that has to be infered
- */
-private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionList, int index) {
-  %match(patternInstructionList) {
-    concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
-      TomTerm subject = `tmpSubject;
-      %match(subject) {
-        AntiTerm(p) -> { subject = `p; }
-      }
-      %match(subject) {
-        (TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
-          //System.out.println("X.length = " + `X*.length());
-          if(`X*.length() == index) {
-            TomSymbol symbol = getSymbolFromName(`name);
-            //System.out.println("name = " + `name);
-            if(symbol!=null) {
-              TomType newType = TomBase.getSymbolCodomain(symbol);
-              //System.out.println("newType = " + `newType);
-              return `newType;
-            } else {
-              return null;
-            }
-          }
-        }
-      }
-    }
-  }
-  return null;
-}
-
-protected tom.library.sl.Visitable expandVariable(TomType contextType, tom.library.sl.Visitable subject) {
-  if(contextType == null) {
-    throw new TomRuntimeException("expandVariable: null contextType");
-  }
-  try{
-    return `ChoiceTopDown(replace_expandVariable(contextType,this)).visit(subject);
-  } catch(tom.library.sl.VisitFailure e) {
-    return subject;
-  }
-}
-
-private TomType getTypeFromVariableList(TomName name, TomList list) {
-
-  //System.out.println("name = " + name);
-  //System.out.println("list = " + list);
-
-  %match(list) {
-    concTomTerm() -> {
-      System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
-      throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
-    }
-
-    concTomTerm(Variable[AstName=varName,AstType=type@Type[]],_*) -> { if(name==`varName) return `type; }
-    concTomTerm(VariableStar[AstName=varName,AstType=type@Type[]],_*) -> { if(name==`varName) return `type; }
-    concTomTerm(_,tail*) -> { return getTypeFromVariableList(name,`tail); }
-
-  }
-  return null;
-}
-
-/*
- * perform type inference of subterms (subtermList)
- * under a given operator (symbol)
- */
-private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
-  if(symbol == null) {
-    throw new TomRuntimeException("expandVariableList: null symbol");
-  }
-
-  if(subtermList.isEmptyconcSlot()) {
-    return `concSlot();
-  }
-
-  //System.out.println("symbol = " + subject.getastname());
-  %match(symbol, subtermList) {
-    emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
-      /*
-       * if the top symbol is unknown, the subterms
-       * are expanded in an empty context
-       */
-      SlotList sl = expandVariableList(symbol,`tail);
-      return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(EmptyType(),slotAppl)),sl*);
-    }
-
-    symb@Symbol[TypesToType=TypesToType(typelist,codomain)],
-      concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
-	// process a list of subterms and a list of types
-	if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
-	  /*
-	   * todo:
-	   * when the symbol is an associative operator,
-	   * the signature has the form: list conc( element* )
-	   * the list of types is reduced to the singleton { element }
-	   *
-	   * consider a pattern: conc(e1*,x,e2*,y,e3*)
-	   *  assign the type "element" to each subterm: x and y
-	   *  assign the type "list" to each subtermlist: e1*,e2* and e3*
-	   */
-
-	  //System.out.println("listoperator: " + symb);
-	  //System.out.println("subtermlist: " + subtermlist);
-
-	  %match(slotAppl) {
-	    VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
-	      ConstraintList newconstraints = (ConstraintList)expandVariable(`codomain,`constraints);
-	      SlotList sl = expandVariableList(symbol,`tail);
-	      return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)),sl*);
+	    // process a list of subterms
+	    ArrayList list = new ArrayList();
+	    while(!`termList.isEmptyconcTomTerm()) {
+	      //System.out.println("type: " + `typeList.getHeadconcTomType());
+	      //System.out.println("term: " + `termList.getHeadconcTomTerm());
+	      list.add((TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `termList.getHeadconcTomTerm()));
+	      `termList = `termList.getTailconcTomTerm();
+	      `typeList = `typeList.getTailconcTomType();
 	    }
+	    TomList newTermList = ASTFactory.makeList(list);
 
-	    UnamedVariableStar[Option=option,Constraints=constraints] -> {
-	      ConstraintList newconstraints = (ConstraintList)expandVariable(`codomain,`constraints);
-	      SlotList sl = expandVariableList(symbol,`tail);
-	      return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
+	    // process a list of guards
+	    list.clear();
+	    // build the list of variables that occur in the lhs
+	    HashSet set = new HashSet();
+	    TomBase.collectVariable(set,newTermList);
+	    TomList varList = ASTFactory.makeList(set);
+	    //System.out.println("varList = " + varList);
+	    while(!`guardList.isEmptyconcTomTerm()) {
+	      list.add((TomTerm)expander.replaceInstantiatedVariable(`varList, `guardList.getHeadconcTomTerm()));
+	      `guardList = `guardList.getTailconcTomTerm();
+	    }
+	    TomList newGuardList = ASTFactory.makeList(list);
+	    //System.out.println("newGuardList = " + newGuardList);
+	    //Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
+	    //System.out.println("newAction = " + newAction);
+	    //return `PatternInstruction(Pattern(subjectList,newTermList,newGuardList), newAction,optionList);
+	    //return `PatternInstruction(Pattern(subjectList,newTermList,newGuardList), action,optionList);
+	    return `Pattern(subjectList,newTermList,newGuardList);
+	  }
+	}
+      }
+    }
+
+    visit TomTerm {
+      RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
+	TomSymbol tomSymbol = null;
+	if(`tomName.equals("")) {
+	  try {
+	    tomSymbol = expander.getSymbolFromType(contextType);
+	    if(tomSymbol==null) {
+	      throw new TomRuntimeException("No symbol found for type '" + contextType + "'");
+	    }
+	    `nameList = `concTomName(tomSymbol.getAstName());
+	  } catch(UnsupportedOperationException e) {
+	    // contextType has no AstType slot
+	    tomSymbol = null;
+	  }
+	} else {
+	  tomSymbol = expander.getSymbolFromName(`tomName);
+	}
+
+	if(tomSymbol != null) {
+	  SlotList subterm = expander.expandVariableList(tomSymbol, `slotList);
+	  ConstraintList newConstraints = (ConstraintList)expander.expandVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
+	  return `RecordAppl(option,nameList,subterm,newConstraints);
+	} else {
+	  %match(contextType) {
+	    type@Type[] -> {
+	      SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
+	      ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`type,`constraints);
+	      return `RecordAppl(option,nameList,subterm,newConstraints);
 	    }
 
 	    _ -> {
-	      TomType domaintype = `typelist.getHeadconcTomType();
-	      SlotList sl = expandVariableList(symbol,`tail);
-	      return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(domaintype, slotAppl)),sl*);
-
+	      // do nothing
+	      //System.out.println("contextType = " + contextType);
+	      //System.out.println("subject        = " + subject);
 	    }
 	  }
-	} else {
-	  SlotList sl = expandVariableList(symbol,`tail);
-	  return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
 	}
       }
-  }
-  System.out.println("expandVariableList: strange case: '" + symbol + "'");
-  throw new TomRuntimeException("expandVariableList: strange case: '" + symbol + "'");
-}
 
-%strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Identity() {
-  visit TomTerm {
-    subject -> {
-      %match(subject, instantiatedVariable) {
-	RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST] ,_*) -> {
-	  return `var;
+      var@(Variable|UnamedVariable)[AstType=TomTypeAlone(tomType),Constraints=constraints] -> {
+	TomType localType = expander.getType(`tomType);
+	if(localType != null) {
+	  // The variable has already a known type
+	  return `var.setAstType(localType);
 	}
-	Variable[AstName=opNameAST], concTomTerm(_*,var@Variable[AstName=opNameAST] ,_*) -> {
-	  return `var;
+
+	%match(contextType) {
+	  type@Type[] ->{
+	    ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`type,`constraints);
+	    return `var.setAstType(`type).setConstraints(newConstraints);
+	  }
 	}
-	VariableStar[AstName=opNameAST],concTomTerm(_*,var@VariableStar[AstName=opNameAST] ,_*) -> {
-	  return `var;
+      }
+
+    }
+  }
+
+  /**
+   * @param index the column-index of the type that has to be infered
+   */
+  private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionList, int index) {
+    %match(patternInstructionList) {
+      concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
+	TomTerm subject = `tmpSubject;
+	%match(subject) {
+	  AntiTerm(p) -> { subject = `p; }
+	}
+	%match(subject) {
+	  (TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
+	    //System.out.println("X.length = " + `X*.length());
+	    if(`X*.length() == index) {
+	      TomSymbol symbol = getSymbolFromName(`name);
+	      //System.out.println("name = " + `name);
+	      if(symbol!=null) {
+		TomType newType = TomBase.getSymbolCodomain(symbol);
+		//System.out.println("newType = " + `newType);
+		return `newType;
+	      } else {
+		return null;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    return null;
+  }
+
+  protected tom.library.sl.Visitable expandVariable(TomType contextType, tom.library.sl.Visitable subject) {
+    if(contextType == null) {
+      throw new TomRuntimeException("expandVariable: null contextType");
+    }
+    try {
+      return `ChoiceTopDown(replace_expandVariable(contextType,this)).visit(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      return subject;
+    }
+  }
+
+  /*
+     private TomType getTypeFromVariableList(TomName name, TomList list) {
+     %match(list) {
+     concTomTerm() -> {
+     System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
+     throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
+     }
+
+     concTomTerm(Variable[AstName=varName,AstType=type@Type[]],_*) -> { if(name==`varName) return `type; }
+     concTomTerm(VariableStar[AstName=varName,AstType=type@Type[]],_*) -> { if(name==`varName) return `type; }
+     concTomTerm(_,tail*) -> { return getTypeFromVariableList(name,`tail); }
+
+     }
+     return null;
+     }
+   */
+
+  /*
+   * perform type inference of subterms (subtermList)
+   * under a given operator (symbol)
+   */
+  private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
+    if(symbol == null) {
+      throw new TomRuntimeException("expandVariableList: null symbol");
+    }
+
+    if(subtermList.isEmptyconcSlot()) {
+      return `concSlot();
+    }
+
+    //System.out.println("symbol = " + subject.getastname());
+    %match(symbol, subtermList) {
+      emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+	/*
+	 * if the top symbol is unknown, the subterms
+	 * are expanded in an empty context
+	 */
+	SlotList sl = expandVariableList(symbol,`tail);
+	return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(EmptyType(),slotAppl)),sl*);
+      }
+
+      symb@Symbol[TypesToType=TypesToType(typelist,codomain)],
+	concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+	  // process a list of subterms and a list of types
+	  if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
+	    /*
+	     * todo:
+	     * when the symbol is an associative operator,
+	     * the signature has the form: list conc( element* )
+	     * the list of types is reduced to the singleton { element }
+	     *
+	     * consider a pattern: conc(e1*,x,e2*,y,e3*)
+	     *  assign the type "element" to each subterm: x and y
+	     *  assign the type "list" to each subtermlist: e1*,e2* and e3*
+	     */
+
+	    //System.out.println("listoperator: " + symb);
+	    //System.out.println("subtermlist: " + subtermlist);
+
+	    %match(slotAppl) {
+	      VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
+		ConstraintList newconstraints = (ConstraintList)expandVariable(`codomain,`constraints);
+		SlotList sl = expandVariableList(symbol,`tail);
+		return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)),sl*);
+	      }
+
+	      UnamedVariableStar[Option=option,Constraints=constraints] -> {
+		ConstraintList newconstraints = (ConstraintList)expandVariable(`codomain,`constraints);
+		SlotList sl = expandVariableList(symbol,`tail);
+		return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
+	      }
+
+	      _ -> {
+		TomType domaintype = `typelist.getHeadconcTomType();
+		SlotList sl = expandVariableList(symbol,`tail);
+		return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(domaintype, slotAppl)),sl*);
+
+	      }
+	    }
+	  } else {
+	    SlotList sl = expandVariableList(symbol,`tail);
+	    return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
+	  }
+	}
+    }
+    System.out.println("expandVariableList: strange case: '" + symbol + "'");
+    throw new TomRuntimeException("expandVariableList: strange case: '" + symbol + "'");
+  }
+
+  %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Identity() {
+    visit TomTerm {
+      subject -> {
+	%match(subject, instantiatedVariable) {
+	  RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+	    return `var;
+	  }
+	  (Variable|VariableStar)[AstName=opNameAST], concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST],_*) -> {
+	    return `var;
+	  }
+	  VariableStar[AstName=opNameAST], concTomTerm(_*,var@VariableStar[AstName=opNameAST],_*) -> {
+	    return `var;
+	  }
 	}
       }
     }
   }
-}
 
-protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
-  if(instantiatedVariable == null) {
-    throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
+  protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
+    try {
+      return `ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
+    }
   }
-  try {
-    return `ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
-  } catch(tom.library.sl.VisitFailure e) {
-    return subject;
-  }
-}
 
-private TomType getType(String tomName) {
-  TomType tomType = getSymbolTable().getType(tomName);
-  return tomType;
-}
+  private TomType getType(String tomName) {
+    TomType tomType = getSymbolTable().getType(tomName);
+    return tomType;
+  }
 
 }

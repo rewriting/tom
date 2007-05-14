@@ -71,7 +71,7 @@ public class TestSublists extends TestCase {
       list(X*,p@list(b(),b()),Y*) -> {        
         if (`p == `list(b(),b()) && `X == `list(a()) && `Y == `list(c())){
           return;
-        }else{
+        } else {
           fail();
         }
       }
@@ -86,7 +86,7 @@ public class TestSublists extends TestCase {
       list(X*,p@!list(_*,!b(),_*),Y*) -> {
         if (`p == `list(b(),b()) || `p == `list(b()) || `p == `list() ) {
           return;
-        }else{
+        } else {
           fail();
         }
       }
