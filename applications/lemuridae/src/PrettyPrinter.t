@@ -192,10 +192,10 @@ class PrettyPrinter {
 
       // lamda-Pi
       relationAppl("WF",(x)) -> {
-	  if (leftEndedByNil(`x))
-	      return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
-	  else
-	      return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
+        if (leftEndedByNil(`x))
+          return ("\\mathsf{WF}\\left(") + contextListToLatex(`x) + "\\right)";
+        else
+          return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
       }
       
       relationAppl(n, ()) -> { return `n;}
@@ -219,6 +219,7 @@ class PrettyPrinter {
     }
 
     %match(Term term) {
+      Var(('@',n*)) -> { return `n; }
       Var(n) -> { return `n; }
 
       // arithmetic
@@ -269,46 +270,46 @@ class PrettyPrinter {
 
       // lambda-Pi
      funAppl("type",()) -> {
-        return ("*");
-      }
-      funAppl("kind",()) -> {
-	  return ("\\square");
-      }
-      funAppl("pitype",(x,y)) -> {
-        return ("\\dot\\pi_*") + toLatex(`x) + " .~" +  toLatex(`y);
-      }
-      funAppl("pikind",(x,y)) -> {
-        return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
-      }
-      
-      // lambda-sigma
-      funAppl("subst",(x,y)) -> {
-	  return toLatex(`x) + "[" + toLatex(`y) + "]";
-      }
-      funAppl("rond",(x,y)) -> {
-	  return toLatex(`x) + " \\circ " + toLatex(`y);
-      }
-      funAppl("shift",()) -> {
-	  return "\\uparrow";
-      }
-      funAppl("one",()) -> {
-	  return "\\mathsf{1}";
-      }
-      funAppl("id",()) -> {
-	  return "id";
-      }
-      funAppl("lcons",(x,y)) -> {
-	  return  toLatex(`x) + " \\cdot " + toLatex(`y);
-      }
-      funAppl("lambda",(x)) -> {
-        return "\\lambda " + toLatex(`x);
-      }
-      funAppl("lappl",(p,x*)) -> {
-	  return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
-      }
+       return ("*");
+     }
+     funAppl("kind",()) -> {
+       return ("\\square");
+     }
+     funAppl("pitype",(x,y)) -> {
+       return ("\\dot\\pi_*") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
+     funAppl("pikind",(x,y)) -> {
+       return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
+     }
 
-      funAppl(n, ()) -> { return `n + "()";}
-      funAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
+     // lambda-sigma
+     funAppl("subst",(x,y)) -> {
+       return toLatex(`x) + "[" + toLatex(`y) + "]";
+     }
+     funAppl("rond",(x,y)) -> {
+       return toLatex(`x) + " \\circ " + toLatex(`y);
+     }
+     funAppl("shift",()) -> {
+       return "\\uparrow";
+     }
+     funAppl("one",()) -> {
+       return "\\mathsf{1}";
+     }
+     funAppl("id",()) -> {
+       return "id";
+     }
+     funAppl("lcons",(x,y)) -> {
+       return  toLatex(`x) + " \\cdot " + toLatex(`y);
+     }
+     funAppl("lambda",(x)) -> {
+       return "\\lambda " + toLatex(`x);
+     }
+     funAppl("lappl",(p,x*)) -> {
+       return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
+     }
+
+     funAppl(n, ()) -> { return `n + "()";}
+     funAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
     }
 
     return null;
@@ -470,8 +471,8 @@ class PrettyPrinter {
     }
 
     %match(Term term) {
+      Var(('@',n*)) -> { return `n; }
       Var(x) -> { return `x;}
-
 
       // arithmetic pretty print
       funAppl("z",()) -> { return "0"; }
