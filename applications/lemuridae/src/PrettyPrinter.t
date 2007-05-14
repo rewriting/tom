@@ -359,7 +359,10 @@ class PrettyPrinter {
       orR(a,b,m,cn) -> {return "{\\sf Or}_R(\\langle "+toLatex(`a)+"\\rangle\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m)+","+toLatex(`cn)+")";}
       implyR(x,a,m1,cn) -> {return "{\\sf Imply}_R(\\langle "+toLatex(`x)+"\\rangle\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+","+toLatex(`cn)+")";}
       implyL(a,m1,x,m2,n) -> {return "{\\sf Imply}_L(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m2)+","+toLatex(`n)+")" ;}
-
+      forallL(x,m,t,n) -> {return "{\\sf Forall}_L(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m)+", "+toLatex(`t)+", "+toLatex(`n)+")" ;}
+      forallR(a,varx,m,cn) -> {return "{\\sf Forall}_R(\\langle "+toLatex(`a)+"\\rangle \\langle "+toLatex(`varx)+"\\rangle "+toLatex(`m)+", "+toLatex(`cn)+")" ;}
+      existsL(x,varx,m,n) -> {return "{\\sf Exists}_L(\\langle "+toLatex(`x)+"\\rangle \\langle "+toLatex(`varx)+"\\rangle "+toLatex(`m)+", "+toLatex(`n)+")" ;}
+      existsR(a,m,t,cn) -> {return "{\\sf Exists}_R(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m)+", "+toLatex(`t)+", "+toLatex(`cn)+")" ;}
     }
 
     return null;
@@ -593,7 +596,7 @@ class PrettyPrinter {
       (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
-    %match(ProofTerm term) { // INCOMPLET manque les cas 1er ordre
+    %match(ProofTerm term) { 
       ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
       cut(a,m1,x,m2) -> {return "cut("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+")";}
       falseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
@@ -604,7 +607,10 @@ class PrettyPrinter {
       orL(x,m1,y,m2,n) -> {return "orL("+prettyPrint(`x)+" "+prettyPrint(`m1)+", "+prettyPrint(`y)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
       implyR(x,a,m,cn) -> {return "implyR("+prettyPrint(`x)+" "+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
       implyL(a,m1,x,m2,n) -> {return "implyL("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
-
+      existsL(x,varx,m,n) -> {return "existsL("+prettyPrint(`x)+" <"+prettyPrint(`varx)+"> "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      existsR(a,m,t,cn) -> {return "existsR("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
+      forallL(x,m,t,n) -> {return "forallL("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
+      forallR(a,varx,m,cn) -> {return "forallR("+prettyPrint(`a)+" <"+prettyPrint(`varx)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
     }
 
     return term.toString();
@@ -687,7 +693,7 @@ class PrettyPrinter {
     FileWriter writer = new FileWriter(tmp);
     String path = tmp.getAbsolutePath();
 
-    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\[\n");
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
     writer.write(toLatex(term));
     writer.write("\n\\]\n");
     writer.write("\\end{document}\n");
@@ -710,7 +716,7 @@ class PrettyPrinter {
     FileWriter writer = new FileWriter(tmp);
     String path = tmp.getAbsolutePath();
 
-    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\[\n");
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
     writer.write(toLatex(term));
     writer.write("\n\\]\n");
     writer.write("\\end{document}\n");
@@ -725,6 +731,39 @@ class PrettyPrinter {
 	pr.waitFor();}
     else
 	System.err.println("An error occurred during the LaTeX compilation.");
+  }
+
+  // displays a latex output image : returns the path of the image generated
+  public static String show(urbanAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
+    File tmp = File.createTempFile("output",".tex");
+    FileWriter writer = new FileWriter(tmp);
+    String path = tmp.getAbsolutePath();
+
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
+    writer.write(toLatex(term));
+    writer.write("\n\\]\n");
+    writer.write("\\end{document}\n");
+    writer.flush();
+
+    System.out.println(path);
+    Runtime rt = Runtime.getRuntime();
+    Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
+    int ret = pr.waitFor(); 
+    if (ret == 0) {
+      pr = rt.exec("dvips " + path.substring(0,path.length()-4) +".dvi -E -o "+path.substring(0,path.length()-4)+".ps");
+      ret = pr.waitFor();
+    }
+    if (ret == 0) {
+      pr = rt.exec("convert " + path.substring(0,path.length()-4) +".ps -geometry 200%x200% "+ path.substring(0,path.length()-4) + ".png");
+      ret = pr.waitFor();
+    }
+//    if (ret == 0) {
+//      pr = rt.exec("open " + path.substring(0,path.length()-4) +".png");
+//      pr.waitFor();
+//    }
+    else
+      System.err.println("An error occurred during the LaTeX compilation.");
+    return path.substring(0,path.length()-4)+".png";
   }
 
 
