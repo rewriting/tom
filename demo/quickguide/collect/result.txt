@@ -1,5 +1,3 @@
 polux@huggy$ tom Collect.t && javac Collect.java && java Collect
 vars: [var("x"), var("y")]
-free occurences of x: []
-free occurences of y: [[1, 1, 2, 1], [1, 2, 1, 1]]
 
