@@ -95,6 +95,10 @@ public class ASTTree extends CommonTree {
         inAstTerm =
           `CondGreaterThan(BuiltinInt(-1),BuiltinInt(-1));
         break;
+      case RuleParser.CONDMETHOD:
+        inAstTerm =
+          `CondMethod(BuiltinInt(-1),"-1",BuiltinInt(-1));
+        break;
       case RuleParser.INT:
         inAstTerm = `BuiltinInt(Integer.parseInt(token.getText()));
         break;
@@ -148,6 +152,18 @@ public class ASTTree extends CommonTree {
       (CondTerm|CondEquals|CondNotEquals|CondLessEquals|
        CondLessThan|CondGreaterEquals|CondGreaterThan)[] -> {
         inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
+        childIndex++;
+      }
+      CondMethod(t1,n,t2) -> {
+        if(childIndex == 1) {
+          Term tm = (Term) trm;
+          inAstTerm = `CondMethod(t1,tm.getname(),t2);
+        } else {
+          int idx = childIndex;
+          if(childIndex >= 2)
+            idx--;
+          inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(idx,trm);
+        }
         childIndex++;
       }
     }

@@ -296,6 +296,14 @@ public class RuleExpander {
         genTerm(`term2,output);
         output.append(")");
       }
+      CondMethod[t1=term1,name=name,t2=term2] -> {
+        genTerm(`term1,output);
+        output.append(".");
+        output.append(`name);
+        output.append("(");
+        genTerm(`term2,output);
+        output.append(")");
+      }
     }
   }
 

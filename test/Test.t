@@ -5,7 +5,7 @@ public class Test extends TestCase {
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(Test.class));
   }
-  
+
 %gom {
   module test
   imports

@@ -17,6 +17,7 @@ tokens {
   CONDLT;
   CONDGEQ;
   CONDGT;
+  CONDMETHOD;
 }
 
 @header {
@@ -34,15 +35,21 @@ rule :
     -> ^(CONDRULE pattern term $cond)
   ;
 condition :
-  p1=term (EQUALS p2=term | NOTEQUALS p3=term |
-           LEQ p4=term | LT p5=term | 
-           GEQ p6=term | GT p7=term)?
+  p1=term (EQUALS p2=term
+		  | NOTEQUALS p3=term
+		  | LEQ p4=term
+		  | LT p5=term
+		  | GEQ p6=term
+		  | GT p7=term
+		  | DOT ID LPAR p8=term RPAR
+	  )?
     -> {p2!=null}? ^(CONDEQUALS $p1 $p2)
     -> {p3!=null}? ^(CONDNOTEQUALS $p1 $p3)
     -> {p4!=null}? ^(CONDLEQ $p1 $p4)
     -> {p5!=null}? ^(CONDLT $p1 $p5)
     -> {p6!=null}? ^(CONDGEQ $p1 $p6)
     -> {p7!=null}? ^(CONDGT $p1 $p7)
+    -> {p8!=null}? ^(CONDMETHOD $p1 ID $p8)
     -> ^(CONDTERM $p1)
   ;
 pattern :
@@ -61,6 +68,7 @@ RPAR : ')' ;
 COMA : ',' ;
 EQUALS : '==';
 NOTEQUALS : '!=';
+DOT : '.';
 LEQ : '<=';
 LT : '<';
 GEQ : '>=';
