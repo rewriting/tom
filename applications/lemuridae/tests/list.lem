@@ -1,4 +1,4 @@
-termrule appl(st,nil()) -> t.
+termrule appl(t,nil()) -> t.
 termrule appl(one(),cons(t,l)) -> t.
 termrule appl(S(n),cons(t,l)) -> appl(n,l).
 proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
@@ -59,15 +59,12 @@ intro.
 reduce.
 axiom.
 
-
-proof testAppNilEnd: \A l. (List(l) => eq(l,append(l,lnil()))).
-intro. intro.
+proof testAppNilEnd: forall l, List(l) => eq(l,append(l,lnil())).
+intros.
 focus h1.
 rule. fEq(one(),append(one(),S(lnil()))).
 reduce.
 axiom.
-reduce.
-rule. axiom.
 focus c2. remove.
 rule.
 reduce.
@@ -78,16 +75,16 @@ reduce.
 axiom.
 reduce.
 rule. axiom.
+reduce.
+rule. axiom.
 
-proof appAss: forall l,(forall n,(forall m,( List(l) =>  eq(append(append(l,n),m), append(l,append(n,m)))))).
+proof appAss: forall l,(forall n,(forall m,  List(l) =>  eq(append(append(l,n),m), append(l,append(n,m))))).
 intros.
 focus h1.
 rule.
 fEq(append(append(one(),S(n0)),S(m0)) , append(one(),append(S(n0), S(m0)))).
 reduce.
 axiom.
-reduce.
-rule. axiom.
 focus c2. remove.
 focus h1. remove.
 rule. reduce.
@@ -98,13 +95,15 @@ reduce.
 axiom.
 reduce.
 rule. axiom.
+reduce.
+rule. axiom.
 
 
 proof lnilIsList: List(lnil()).
 rule.
 axiom.
 
-proof oneElemIsList: \A x.List(lcons(x,lnil())).
+proof oneElemIsList: forall x, List(lcons(x,lnil())).
 intro.
 rule.
 focus h2. rule. lnil(). x0.
@@ -112,8 +111,8 @@ axiom.
 axiom.
 
 
-rule IsNil(lnil()) -> \T.
-rule IsNil(lcons(x,y)) -> \B.
+rule IsNil(lnil()) -> True.
+rule IsNil(lcons(x,y)) -> False.
 proprule in(l,fIsNil(t)) -> IsNil(appl(t,l)).
 
 
@@ -123,14 +122,120 @@ focus h1.
 rule.
 fIsNil(one()).
 reduce.
-focus h1. rule. axiom.
-rule.
+focus h1. rule. 
 reduce.
 rule.
 
+/*
 proof appCommCons : forall x,(forall y,(forall a,(eq ( lcons(a,append(x,y)) , append(lcons(a,x),y) )))).
 intro. intro. intro.
 cut List(lcons(a0,lnil())) => 
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
