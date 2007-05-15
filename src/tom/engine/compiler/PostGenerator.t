@@ -53,27 +53,25 @@ import tom.library.sl.*;
 public class PostGenerator {
 	
 //------------------------------------------------------------  
-  %include { ../adt/tomsignature/TomSignature.tom }     
-  %include { java/util/types/Collection.tom}
+  %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
  
   public static TomTerm performPostGenerationTreatment(TomTerm term) 
        throws VisitFailure{
     term = (TomTerm)`TopDown(ChangeVarDeclarations()).visit(term);
-    return (TomTerm)`TopDown(AddRef()).visit(term);
+    return (TomTerm)`InnermostId(AddRef()).visit(term);
     //return term;
   }
 
   
   %strategy AddRef() extends Identity(){    
     visit Expression { 
-
-      EqualTerm(type,var@(Variable|VariableStar)[],t) -> {
+      EqualTerm(type,var@(Variable|VariableStar)[],t) -> {        
         return `EqualTerm(type,Ref(var),t);
       }
       
-      EqualTerm(type,e,var@(Variable|VariableStar)[]) -> {
+      EqualTerm(type,e,var@(Variable|VariableStar)[]) -> {        
         return `EqualTerm(type,e,Ref(var));
       }
       
@@ -85,38 +83,67 @@ public class PostGenerator {
         return `IsEmptyArray(opName,Ref(variable),Ref(index));
       }
       
-      Conditional(condition,ifAction,TomTermToExpression(var@!Ref[])) -> {
+      Conditional(condition,ifAction,TomTermToExpression(var@!Ref[])) -> {        
         return `Conditional(condition,ifAction,TomTermToExpression(Ref(var)));
       }
       
-      GetHead(opName, type, var@!Ref[]) -> {
+      GetHead(opName, type, var@!Ref[]) -> {        
         return `GetHead(opName, type, Ref(var));
       } 
       
-      GetTail(opName, var@!Ref[]) -> {
+      GetTail(opName, var@!Ref[]) -> {        
         return `GetTail(opName, Ref(var));
       }      
-//    IsFsym(opName,var) -> {
-//    return `IsFsym(opName,Ref(var));
-//  }
+      
+      IsFsym(opName,var@!Ref[]) -> {
+        return `IsFsym(opName,Ref(var));
+      }
+      
+      GetSlot(type,name,slotName,var@!Ref[]) -> {
+        return `GetSlot(type,name,slotName,Ref(var));
+      }
+      
+      GetSliceList(name,begin@!Ref[],end,tail) -> {
+        return `GetSliceList(name,Ref(begin),Ref(end),tail);
+      }
+      
+      GetSliceArray(name,subjectListName,begin@!Ref[],end) -> {
+        return `GetSliceArray(name,subjectListName,Ref(begin),Ref(end));
+      }
     }
     
     visit Instruction {      
       // flag test
-      If(EqualTerm(type,flag@!Ref[],ExpressionToTomTerm(value@(TrueTL|FalseTL)[])),action,Nop()) -> {
+      If(EqualTerm(type,flag@!Ref[],ExpressionToTomTerm(value@(TrueTL|FalseTL)[])),action,Nop()) -> {        
         return `If(EqualTerm(type,Ref(flag),ExpressionToTomTerm(value)),action,Nop());
+      }                
+      // if we have a variable introduced in the match process, we generate LetRef
+      // otherwise, let - for the variables of the initial pattern
+      LetRef(var@(Variable|VariableStar)[],src@TomTermToExpression(source@!Ref[]),instruction) -> {
+        TomName name = `var.getAstName(); 
+        %match(name){
+          PositionName[] -> {
+            return `LetRef(var,TomTermToExpression(Ref(source)),instruction);    
+          }
+        }
+        %match(source){
+          (Variable|VariableStar)[] -> {
+            return `Let(var,TomTermToExpression(Ref(source)),instruction);    
+          }
+          _ ->{
+            // we generate let for the variables of the initial pattern comming from lists
+            return `Let(var,src,instruction);    
+          }
+        }        
+      }      
+
+      LetAssign(var,TomTermToExpression(source@(Variable|VariableStar)[]),instruction) -> {        
+        return `LetAssign(var,TomTermToExpression(Ref(source)),instruction);
       }
-      
-      LetRef(var,TomTermToExpression(var@(Variable|VariableStar)[]),instruction) -> {
-        return `LetRef(var,TomTermToExpression(Ref(var)),instruction);
-      }
-      
-      LetAssign(var,TomTermToExpression(var@(Variable|VariableStar)[]),instruction) -> {
-        return `LetAssign(var,TomTermToExpression(Ref(var)),instruction);
-      }
+ 
     }// end visit
   }
- 
+  
   /**
    * Makes sure that no variable is declared if the same variable was declared above  
    */

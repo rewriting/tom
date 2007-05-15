@@ -272,7 +272,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
  
-      GetSlot(_,Name(opname),slotName, var@(Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
+      GetSlot(_,Name(opname),slotName, var@(Ref|Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }
