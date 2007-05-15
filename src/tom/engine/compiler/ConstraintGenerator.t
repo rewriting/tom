@@ -121,7 +121,7 @@ public class ConstraintGenerator {
         return `genIsEmptyList(opName,variable);
       }
       EmptyArrayConstraint(opName,variable,index) ->{                          
-        return `IsEmptyArray(opName,Ref(variable),Ref(index));
+        return `IsEmptyArray(opName,variable,index);
       }
     }			
     throw new TomRuntimeException("ConstraintGenerator.prepareGeneration - strange constraint:" + constraint);
@@ -186,28 +186,23 @@ public class ConstraintGenerator {
   %strategy ChangeVarDeclarations(declaredVariables:Collection) extends Identity(){
     visit Instruction{
       LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) ->{
-        ArrayList<Boolean> list = new ArrayList<Boolean>();
         Visitable root = getEnvironment().getRoot();
         if (root != getEnvironment().getSubject()) {
           try {
-            getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name,list)).visit(root); 
-          } catch (tom.library.sl.VisitFailure e) {
-            throw new TomRuntimeException("Unexpected strategy failure!");
-          }
-          if (list.size() > 0){
+            getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name)).visit(root); 
+          } catch (VisitFailure e) {
             return `LetAssign(var,source,instruction);
-          }		
+          }
         }
       }
     }// end visit
   }// end strategy
 
-  // TODO - change this with a more appropriate method
-  %strategy CheckVarExistence(varName:TomName,bag:Collection) extends Identity(){
+  %strategy CheckVarExistence(varName:TomName) extends Identity(){
     visit Instruction {
       LetRef[Variable=v@(Variable|VariableStar)[AstName=name]] -> {
         if (varName == (`name) ){
-          bag.add(new Boolean(true));
+          throw new VisitFailure();
         }
       }
     } // end visit

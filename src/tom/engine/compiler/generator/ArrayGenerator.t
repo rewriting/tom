@@ -65,13 +65,13 @@ public class ArrayGenerator implements IBaseGenerator{
        * *** we need <= instead of < to make the algorithm complete ***
        */
       ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[AstType=termType],VariableHeadArray(opName,subject,begin,end))) -> {
-        Expression doWhileTest = `Negation(GreaterThan(TomTermToExpression(Ref(end)),GetSize(opName,Ref(subject))));
+        Expression doWhileTest = `Negation(GreaterThan(TomTermToExpression(end),GetSize(opName,subject)));
         // expression at the end of the loop 
-        Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToTomTerm(AddOne(Ref(end)))));        
+        Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToTomTerm(AddOne(end))));        
         // if we have a varStar, then add its declaration also
         if (`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(
-                GetSliceArray(opName,Ref(subject),begin,Ref(end)))));
+                GetSliceArray(opName,subject,begin,end))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      

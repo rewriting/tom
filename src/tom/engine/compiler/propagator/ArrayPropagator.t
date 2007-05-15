@@ -100,8 +100,8 @@ public class ArrayPropagator implements IBasePropagator {
                   _ -> {
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,g,freshIndex)),                      
-                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,Ref(freshIndex)))),
-                        MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(Ref(freshIndex)))));
+                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,freshIndex))),
+                        MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(freshIndex))));
                     // for the last element, we should also check that the list ends
                     if(`X.length() == 0) {                  
                       l = `AndConstraint(l*, EmptyArrayConstraint(name,g,newFreshIndex));
