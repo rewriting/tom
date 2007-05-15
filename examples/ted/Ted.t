@@ -33,11 +33,7 @@ import aterm.*;
 import aterm.pure.PureFactory;
 import java.util.*;
 import java.lang.reflect.*;
-
-
-// pour le main
-//import tom.library.strategy.mutraveler.*;
-
+import tom.library.sl.*;
 
 
 public class Ted {
@@ -97,7 +93,7 @@ public class Ted {
       
       }
 
-      /* Placeholder with wrong format */
+      // Placeholder with wrong format
       ATermPlaceholder(_), _ -> {
         System.err.println("Bad placeholder format");
         System.exit(1);

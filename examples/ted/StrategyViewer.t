@@ -34,6 +34,7 @@ import tom.library.sl.*;
 public class StrategyViewer {
 
   %include{sl.tom}
+  
   %typeterm Writer { 
     implement {java.io.Writer} 
     is_sort(t)     { t instanceof java.util.HashMap }
@@ -52,7 +53,7 @@ public class StrategyViewer {
       %match (Strategy subj) {
         y@MuVar[] -> { return; }
 
-        x@Mu[] ->{  ((Mu)`x).expand(); } // to mu-expand
+        x@Mu[] ->{  ((Mu)`x).muExpand(); } // to mu-expand
 
         x -> { 
           if((`x) instanceof ted.DebugStrategy) 

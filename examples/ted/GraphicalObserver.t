@@ -145,13 +145,13 @@ class GraphicalObserver implements DebugStrategyObserver {
   public void before(DebugStrategy s)  {
     String[] names = s.getStrat().getClass().getName().split("[\\.\\$]");
     String name = names[names.length-1];
-    System.out.println("[" + (scope++) + "] applying " + name + " at " + s.getPosition());
+    System.out.println("[" + (scope++) + "] applying " + name + " at " + s.getEnvironment().getPosition());
 
     try {
       Runtime rt = Runtime.getRuntime();
       Process pr = rt.exec("dot -Tsvg");
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      VisitableViewer.visitableToDot(term, out, s.getPosition(), "#66FF66");
+      VisitableViewer.visitableToDot(term, out, s.getEnvironment().getPosition(), "#66FF66");
       out.close();
       //pr.waitFor();
       SVGDocument dom = streamToSVGDom(pr.getInputStream());
@@ -178,7 +178,7 @@ class GraphicalObserver implements DebugStrategyObserver {
   }
   public void after(DebugStrategy s, Visitable res) {
     try {
-      term = ((Strategy) s.getPosition().getOmega(`Replace(res))).visitLight(term);
+      term = ((Strategy) s.getEnvironment().getPosition().getOmega(`Replace(res))).visitLight(term);
     } catch(VisitFailure e) {}
     System.out.println("[" + (--scope) + "] new tree : " + term);
 
@@ -186,7 +186,7 @@ class GraphicalObserver implements DebugStrategyObserver {
       Runtime rt = Runtime.getRuntime();
       Process pr = rt.exec("dot -Tsvg");
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      VisitableViewer.visitableToDot(term, out, s.getPosition(), "#FF6666");
+      VisitableViewer.visitableToDot(term, out, s.getEnvironment().getPosition(), "#FF6666");
       out.close();
       //pr.waitFor();
       BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
