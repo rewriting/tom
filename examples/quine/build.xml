@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the quine example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="quine" value="quine"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${quine}"/>
+    <delete dir="${examples.build}/${quine}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${quine}"/>
+    <tomcompile example="${quine}"/>
+    <javacompile example="${quine}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${quine}/*.java"/>
+        <include name="${quine}/*.gom"/>
+        <include name="${quine}/*.t"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
