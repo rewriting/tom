@@ -692,6 +692,7 @@ class PrettyPrinter {
     File tmp = File.createTempFile("output",".tex");
     FileWriter writer = new FileWriter(tmp);
     String path = tmp.getAbsolutePath();
+    String basename = path.substring(0,path.length()-4);
 
     writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\usepa"+"ckage{amssymb}\n\\begin{document}\n\\pagestyle{empty}\n\\[\n");
     writer.write(toLatex(term));
@@ -701,14 +702,14 @@ class PrettyPrinter {
 
     System.out.println(path);
     Runtime rt = Runtime.getRuntime();
-    Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
+    Process pr = rt.exec(%[latex -output-directory=/tmp \nonstopmode\input{@path@}]%);
     int ret = pr.waitFor(); 
     if (ret == 0) {
-      pr = rt.exec("dvips " + path.substring(0,path.length()-4) +".dvi -X 300 -Y 300 -E -o "+path.substring(0,path.length()-4)+".ps");
+      pr = rt.exec(%[dvips @basename@.dvi -X 300 -Y 300 -E -o @basename@.ps]%);
       ret = pr.waitFor();
     }
     if (ret ==0) {
-      pr = rt.exec("gv --scale=3 "+path.substring(0,path.length()-4)+".ps");
+      pr = rt.exec(%[gv --scale=3 @basename@.ps]%);
       ret = pr.waitFor();
     }
 /*    if (ret == 0) {
@@ -733,20 +734,21 @@ class PrettyPrinter {
     System.out.println(path);
     Runtime rt = Runtime.getRuntime();
     Process pr = rt.exec("latex -output-directory=/tmp \\nonstopmode\\input{" + path + "}");
+    String basename = path.substring(0,path.length()-4);
     int ret = pr.waitFor(); 
     if (ret == 0) {
-      pr = rt.exec("dvips " + path.substring(0,path.length()-4) +".dvi -X 300 -Y 300 -E -o "+path.substring(0,path.length()-4)+".ps");
+      pr = rt.exec("dvips " + basename +".dvi -X 300 -Y 300 -E -o "+ basename +".ps");
       ret = pr.waitFor();
     }
     if (ret ==0) {
-      pr = rt.exec("gv "+path.substring(0,path.length()-4)+".ps");
+      pr = rt.exec("gv "+ basename +".ps");
       ret = pr.waitFor();
     }
-/*    if (ret == 0) {
-	pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
-	pr.waitFor();} */
+    /*    if (ret == 0) {
+          pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
+          pr.waitFor();} */
     else
-	System.err.println("An error occurred during the LaTeX compilation.");
+      System.err.println("An error occurred during the LaTeX compilation.");
   }
 
 }

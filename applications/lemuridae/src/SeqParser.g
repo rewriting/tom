@@ -22,19 +22,18 @@ seq: SEQ list_pred
 list_pred: pred (LIST^ pred)* ;
 */
 
+pred: FORALL^ ID COMMA! implpred
+    | EXISTS^ ID COMMA! implpred
+    | implpred
+    ;
 
-pred: equivpred (IMPL^ pred)? ;
+implpred: equivpred (IMPL^ pred)? ;
 
 equivpred: andpred (EQUIV^ andpred)* ;
 
 andpred: orpred (AND^ orpred)* ;
 
-orpred: quantif (OR^ quantif)* ;
-
-quantif: FORALL^ ID DOT! negpred
-       | EXISTS^ ID DOT! negpred
-       | negpred
-       ;
+orpred: negpred (OR^ negpred)* ;
 
 negpred: NOT^ simplepred
        | simplepred
@@ -52,7 +51,7 @@ atom: appl
 appl : ID LPAREN^ term_list  RPAREN!
      ;
 
-term_list: term (LIST^ term)* 
+term_list: term (COMMA^ term)* 
          | { #term_list = #[VOIDLIST,"VOIDLIST"]; }
          ;
 
@@ -156,50 +155,28 @@ ML_COMMENT
 ;
 
 LPAREN : '(' ;
-
 RPAREN : ')' ;
-
 SEQ : "|-";
-
 IMPL : "=>";
-
 EQUIV : "<=>";
-
 OR : "\\/" ;
-
 AND :  "/\\" ;
-
-LIST : ',' ;
-
 NOT : '!'
     | '^'
     | '~' ;
-
 DOT : '.' ;
-
+COMMA : ',' ;
 FORALL  : "\\A" | "forall";
-
 EXISTS : "\\E" | "exists";
-
 BOTTOM : "\\B" | "False";
-
 TOP: "\\T" | "True";
-
-
 ARROW : "->";
-
 COLUMN: ':';
-
 TIMES: '*';
-
 PLUS: '+';
-
 DIV: '/';
-
 MINUS: '-';
-
 GT: '>';
-
 LT: '<';
 
 PROOF: "proof";

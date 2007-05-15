@@ -67,7 +67,7 @@ term_list returns [TermList l]
        Term t;
     }
     : t = term { l = `concTerm(t,l*); }
-    | #(LIST left=term_list t=term) {  l = `concTerm(left*,t); }
+    | #(COMMA left=term_list t=term) {  l = `concTerm(left*,t); }
     | VOIDLIST {}
     ;
 

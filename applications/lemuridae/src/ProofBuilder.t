@@ -984,9 +984,9 @@ b :{
             Strategy strat;
 
             if (env.focus_left)
-              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active, this), ApplyExistsL(active));
+              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active, this), ApplyExistsL(active), ApplyBottom());
             else
-              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active, this));
+              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active, this), ApplyTop());
 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
@@ -1044,18 +1044,8 @@ b :{
         /* experimental autoreduce case */
         proofCommand("autoreduce") -> {
           try {
-	      Strategy strat = 
-          `SafeTopDown(Try(Choice(ApplyAuto(newRules),ApplyReduce(newTermRules,newPropRules))));
-		  // Warning: _premisses uses "x" as MuVar
-          /*
-		  `mu(MuVar("y"), 
-          Choice(Sequence(ApplyAuto(newRules),
-              _rule(Identity(),_premisses(MuVar("y")),Identity(),Identity())),
-            Choice(Sequence(ApplyReduce(newTermRules, newPropRules),
-                _rule(Identity(),_premisses(MuVar("y")), Identity(),Identity())), 
-              Identity())));
-              */
-			     
+            Strategy strat = 
+              `SafeTopDown(Try(Choice(ApplyAuto(newRules),ApplyReduce(newTermRules,newPropRules))));
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply autoreduce : " + e + ", " + e.getMessage());
@@ -1070,26 +1060,6 @@ b :{
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("can't apply rule axiom" + e.getMessage());
-          }
-        }
-
-        /* Bottom case */
-        proofCommand("bottom") -> {
-          try {
-            Strategy strat = `ApplyBottom(); 
-            tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
-          } catch (VisitFailure e) {
-            writeToOutputln("can't apply bottom rule : " + e.getMessage());
-          }
-        }
-
-        /* top case */
-        proofCommand("top") -> {
-          try {
-            Strategy strat = `ApplyTop(); 
-            tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
-          } catch (VisitFailure e) {
-            writeToOutputln("can't apply top rule : " + e.getMessage());
           }
         }
 
