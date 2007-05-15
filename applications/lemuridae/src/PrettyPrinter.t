@@ -316,6 +316,18 @@ class PrettyPrinter {
   }
 
   public static String toLatex(urbanAbstractType term) {
+    
+    %match(NTree term) {
+      nrule(n,(),c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd "+ toLatex(`c) +"}\n{}";}
+      nrule(n,p,c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd " + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
+    }
+
+    %match(NPremisses term) {
+      () -> { return ""; }
+      (x) -> { return toLatex(`x); }
+      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
+    }
+
     %match (NProp term) {
       nprop(x,p) -> { return toLatex(`x)+":"+toLatex(`p);}
     }
@@ -741,7 +753,7 @@ class PrettyPrinter {
       ret = pr.waitFor();
     }
     if (ret ==0) {
-      pr = rt.exec("gv "+ basename +".ps");
+      pr = rt.exec("gv --scale=3 "+ basename +".ps");
       ret = pr.waitFor();
     }
     /*    if (ret == 0) {

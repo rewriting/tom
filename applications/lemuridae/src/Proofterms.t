@@ -233,9 +233,31 @@ public class Proofterms {
       pt@trueR(coname), ns@nsequent(_,(_*,cnprop(coname,top()),_*)) -> {
         return `nrule(topInfo(),npremisses(),ns,pt);
       }
+      pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,cnprop(cn, and(A,B)),cnd2*)) -> {
+        return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,b,cnd2*)))),ns,pt);
+      }
+      pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, nprop(n, and(A,B)),ng2*), cnd) -> {
+        return `nrule(andLeftInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,y,ng2*),cnd))),ns,pt);
+      }
+      pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent((ng1*,nprop(n, or(A,B)),ng2*),cnd) -> {
+        return `nrule(orLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,x,ng2*),cnd)),typeProofterm(m2,nsequent(ncontext(ng1*,y,ng2*),cnd))),ns,pt);
+      }
+      pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,(cnd1*, cnprop(cn, or(A,B)),cnd2*)) -> {
+        return `nrule(orRightInfo(),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,b,cnd2*)))),ns,pt);
+      }
 
     }
     return null;
   }
-  
+ 
+  public static NTree typeProof(Tree proof) {
+    %match(Tree proof) {
+      rule(_,_,c,_) -> {
+        NSequent nseq = seq2nseq(`c);
+        ProofTerm pt = term2proofterm(proof, nseq, 0, 0); 
+        return typeProofterm(pt, nseq);
+      }
+    }
+   return null;
+  }
 }

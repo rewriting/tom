@@ -1288,6 +1288,7 @@ b :{
         }
 
         proofterm(name) -> {
+          /*
           ProofTerm pi = pttheorems.get(`name);
           if (pi==null) {
             Tree tree = theorems.get(`name);
@@ -1295,14 +1296,17 @@ b :{
             else {
               pi = Proofterms.getProofterm(tree);
               pttheorems.put(`name,pi);
-              writeToOutputln(PrettyPrinter.prettyPrint(pi));
-              //writeToOutput("IMG"+PrettyPrinter.show(pi));
-              PrettyPrinter.display(pi);
             }
           }
-          else {
+          if (pi!=null) {
             writeToOutputln(PrettyPrinter.prettyPrint(pi));
+            //writeToOutput("IMG"+PrettyPrinter.show(pi));
             PrettyPrinter.display(pi);
+          }*/
+          Tree tree = theorems.get(`name);
+          if(tree==null) writeToOutputln(`name + " not found");
+          else {
+            PrettyPrinter.display(Proofterms.typeProof(tree));
           }
         }
 
