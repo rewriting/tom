@@ -136,9 +136,6 @@ public class ConstraintGenerator {
     expression = (Expression)`InnermostId(ReplaceSubterms()).visit(expression);
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
-    // make sure that each variable is declared only once
-    ArrayList<TomName> declaredVariables = new ArrayList<TomName>();
-    automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).visit(automata);
     return automata;
   }
 
@@ -180,35 +177,6 @@ public class ConstraintGenerator {
     throw new TomRuntimeException("ConstraintGenerator.generateAutomata - strange expression:" + expression);
   }
  
-  /**
-   * Makes sure that no variable is declared if the same variable was declared above  
-   */
-  %strategy ChangeVarDeclarations(declaredVariables:Collection) extends Identity(){
-    visit Instruction{
-      LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) ->{
-        Visitable root = getEnvironment().getRoot();
-        if (root != getEnvironment().getSubject()) {
-          try {
-            getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name)).visit(root); 
-          } catch (VisitFailure e) {
-            return `LetAssign(var,source,instruction);
-          }
-        }
-      }
-    }// end visit
-  }// end strategy
-
-  %strategy CheckVarExistence(varName:TomName) extends Identity(){
-    visit Instruction {
-      LetRef[Variable=v@(Variable|VariableStar)[AstName=name]] -> {
-        if (varName == (`name) ){
-          throw new VisitFailure();
-        }
-      }
-    } // end visit
-  }// end strategy
-
-
   /**
    * Converts 'Subterm' to 'GetSlot'
    */

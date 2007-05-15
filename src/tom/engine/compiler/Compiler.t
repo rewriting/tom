@@ -96,8 +96,9 @@ public class Compiler extends TomGenericPlugin {
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);
+      TomTerm postGenerationTerm = PostGenerator.performPostGenerationTreatment(compiledTerm);      
       Collection hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visitLight(compiledTerm);
+      TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visitLight(postGenerationTerm);
       //System.out.println("renamedTerm = \n" + renamedTerm);
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
