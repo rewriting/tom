@@ -278,6 +278,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("The symbol ''{0}'' has type ''{1}'' but type ''{2}'' was required in disjunction");
   public static final TomMessage invalidDisjunctionDomain=
       new TomMessage("The symbols ''{0}'' and ''{1}'' do not have the same domain");
+  public static final TomMessage invalidDisjunctionSlotName =
+      new TomMessage("The symbol ''{0}'' does not have a slot named ''{1}''");
   public static final TomMessage bracketOnListSymbol     =
       new TomMessage("[] are not allowed on lists or arrays, see ''{0}''");
   public static final TomMessage slotRepeated=

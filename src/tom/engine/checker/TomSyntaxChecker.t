@@ -1136,6 +1136,17 @@ block: {
               // System.out.println("index2 = " + referenceSlotIndex);
               // System.out.println("type2 = " +
               // TomBase.elementAt(referenceDomain,referenceSlotIndex));
+              
+              if (referenceSlotIndex == -1){
+                messageError(fileName,decLine, TomMessage.invalidDisjunctionSlotName, new Object[]{referenceName,((Name)slotName).getString()});
+                return null;                
+              }
+              
+              if (currentSlotIndex == -1){
+                messageError(fileName,decLine, TomMessage.invalidDisjunctionSlotName, new Object[]{`(dijName),((Name)slotName).getString() });
+                return null;                
+              }
+              
               if(TomBase.elementAt(currentDomain,currentSlotIndex) != TomBase.elementAt(referenceDomain,referenceSlotIndex)) {
                 messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{referenceName, `(dijName) });
                 return null;
