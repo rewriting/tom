@@ -150,7 +150,9 @@ public class ConstraintCompiler {
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
-          Variable[AstType=variableType] -> { freshSubjectType = `variableType; }
+          (Variable|VariableStar)[AstType=variableType] -> { 
+            freshSubjectType = `variableType;
+          }
           sv@(BuildTerm|FunctionCall|BuildConstant)[AstName=Name(tomName)] -> {
             TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);				        
             if(tomSymbol != null) {

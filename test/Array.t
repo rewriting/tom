@@ -2,7 +2,6 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 
-
 public class Array {
 
   private static ATermFactory factory = SingletonFactory.getInstance();
@@ -11,9 +10,9 @@ public class Array {
   public ATermAppl tzero;
 
   %typeterm L {
-    implement { ArrayList }
-    is_sort(t) { t instanceof ArrayList }
-    equals(l1,l2)    { l1.equals(l2) }
+    implement     { ArrayList }
+    is_sort(t)    { t instanceof ArrayList }
+    equals(l1,l2) { l1.equals(l2) }
   }
 
   %oparray L conc( E* ) {
@@ -30,9 +29,9 @@ public class Array {
   }
   
   %typeterm E {
-    implement           { ATerm }
-    is_sort(t) { t instanceof Array }
-    equals(t1, t2)      { (t1.equals(t2)) }
+    implement      { ATerm }
+    is_sort(t)     { t instanceof Array }
+    equals(t1, t2) { (t1.equals(t2)) }
   }
 
   %op E a() {

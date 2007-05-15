@@ -146,7 +146,7 @@ public class Compiler extends TomGenericPlugin {
           if(TomBase.isListOperator(tomSymbol)) {
             return ASTFactory.buildList(`name,tomListArgs,compiler.symbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs);
+            return ASTFactory.buildArray(`name,tomListArgs,compiler.symbolTable());
           } else if(TomBase.isDefinedSymbol(tomSymbol)) {
             return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
           } else {

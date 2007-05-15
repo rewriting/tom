@@ -41,24 +41,33 @@ public class TestRuleList extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestRuleList.class));
   }
 
-  public void test1() {
-    assertEquals(`f(a()),`f(b()));
-    assertEquals(`conc(a()),`conc(b()));
-    assertEquals(`conc(a(),a()),`conc(a(),b()));
-    assertEquals(`conc(b(),a()),`conc(b(),b()));
-    assertEquals(`conc(f(a())),`conc(f(b())));
-    assertEquals(`conc(f(a()),a()),`conc(f(b()),b()));
+   public void test1() {
+    assertEquals(`f(b()),`f(a()));
+    assertEquals(`conc(a(),c()),`conc(a(),c()));
+    assertEquals(`conc(b()),`conc(a()));
+    assertEquals(`conc(a(),b()),`conc(a(),a()));
+    assertNotSame(`conc(b(),b()),`conc(a(),a()));
+    assertEquals(`conc(b(),b()),`conc(b(),a()));
+    assertEquals(`conc(f(c())),`conc(f(a())));
+    assertEquals(`conc(f(c()),b()),`conc(f(a()),a()));
   }
-  
+
   public void test2() {
-    assertEquals(`conc(f(b())),`conc(f(c())));
-    assertEquals(`conc(f(b()),f(b())),`conc(f(c()),f(c())));
-    assertEquals(`conc(f(a()),f(a())),`conc(f(c()),f(c())));
-    assertEquals(`conc(a(),f(a()),a(),f(a()),a()),`conc(a(),f(c()),a(),f(c()),a()));
+    assertEquals(`conc(f(c())),`conc(f(b())));
+    assertEquals(`conc(f(c()),f(c())),`conc(f(b()),f(b())));
+    assertEquals(`conc(f(c()),f(c())),`conc(f(a()),f(a())));
+    assertEquals(`conc(a(),f(c()),a(),f(c()),b()),`conc(a(),f(a()),a(),f(a()),a()));
+    assertEquals(`conc(a(),f(c())),`conc(a(),f(b())));
+    // tricky test: a() there because there is no reduction
+    assertEquals(`conc(a(),f(c()),a(),f(c()),b()),`conc(a(),f(a()),a(),f(c()),a()));
   }
+
   public void test3() {
-    assertEquals(`g(conc(f(a()))),`g(conc(f(d()))));
-    assertEquals(`g(conc(f(a()),f(a()))),`g(conc(f(d()),f(d()))));
-    assertEquals(`g(conc(a(),f(a()),a(),f(a()),a())),`g(conc(a(),f(d()),a(),f(d()),a())));
+    assertEquals(`g(conc(f(d()))),`g(conc(f(a()))));
+    // Note: we have a b() be because C1* can be reduced when rewriting f(b()) into f(c())
+    assertEquals(`g(conc(b(),f(d()))),`g(conc(a(),f(a()))));
+    assertEquals(`g(conc(f(d()),f(d()))),`g(conc(f(a()),f(a()))));
+    //tricky test: b() is the middle should really be there!
+    assertEquals(`g(conc(b(),f(d()),b(),f(d()),b())),`g(conc(a(),f(a()),a(),f(a()),a())));
   }
 }

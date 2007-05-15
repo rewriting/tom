@@ -30,7 +30,6 @@
 
 package bpel;
 
-import ted.*;
 import bpel.wfg.*;
 import bpel.wfg.types.*;
 import bpel.wfg.types.wfg.*;

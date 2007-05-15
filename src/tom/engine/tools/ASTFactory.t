@@ -442,6 +442,9 @@ public class ASTFactory {
     return list;
   }
 
+  //private TomList buildEmpty(TomName name) {
+  //}
+
   public static TomTerm buildList(TomName name,TomList args, SymbolTable symbolTable) {
     //if(!args.isEmptyconcTomTerm()) System.out.println("buildList: " + args.getHeadconcTomTerm());
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
@@ -462,45 +465,45 @@ public class ASTFactory {
         return `BuildAppendList(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(head@VariableStar[],_*)),tail*) -> {
+      concTomTerm(head@Composite(concTomTerm(VariableStar[],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         /* a VariableStar is always flattened */
           return `BuildAppendList(name,head,subList);
       }
 
-/*
+      /*
       concTomTerm(head@Variable[AstType=varType],tail*) -> {
-	//System.out.println("topDomain = " + topDomain);
-	//System.out.println("topCodomain = " + topCodomain);
-	//System.out.println("varType = " + TomBase.getTomType(`varType));
+        System.out.println("topDomain = " + topDomain);
+        System.out.println("topCodomain = " + topCodomain);
+        System.out.println("varType = " + TomBase.getTomType(`varType));
 
-	TomTerm subList = buildList(name,`tail,symbolTable);
-	// a Variable is flattened if type and codomain are equals
-	if(topDomain != topCodomain) {
-	  if(TomBase.getTomType(`varType) == topCodomain) {
-	    return `BuildAppendList(name,head,subList);
-	  }
-	}
-	return `BuildConsList(name,head,subList);
+        TomTerm subList = buildList(name,`tail,symbolTable);
+        // a Variable is flattened if type and codomain are equals
+        if(topDomain != topCodomain) {
+          if(TomBase.getTomType(`varType) == topCodomain) {
+            return `BuildAppendList(name,head,subList);
+          }
+        }
+        return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(head@Variable[AstType=varType],_*)),tail*) -> {
-	//System.out.println("topDomain = " + topDomain);
-	//System.out.println("topCodomain = " + topCodomain);
-	//System.out.println("varType = " + TomBase.getTomType(`varType));
+      concTomTerm(head@Composite(concTomTerm(Variable[AstType=varType],_*)),tail*) -> {
+        System.out.println("topDomain = " + topDomain);
+        System.out.println("topCodomain = " + topCodomain);
+        System.out.println("varType = " + TomBase.getTomType(`varType));
 
-	TomTerm subList = buildList(name,`tail,symbolTable);
-	// a Variable is flattened if type and codomain are equals
-	if(topDomain != topCodomain) {
-	  if(TomBase.getTomType(`varType) == topCodomain) {
-	    return `BuildAppendList(name,head,subList);
-	  }
-	}
-	return `BuildConsList(name,head,subList);
+        TomTerm subList = buildList(name,`tail,symbolTable);
+        // a Variable is flattened if type and codomain are equals
+        if(topDomain != topCodomain) {
+          if(TomBase.getTomType(`varType) == topCodomain) {
+            return `BuildAppendList(name,head,subList);
+          }
+        }
+        return `BuildConsList(name,head,subList);
       }
 */
 
-      concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName],_*)),tail*) -> {
+      concTomTerm(head@Composite(concTomTerm(BuildConsList[AstName=opName],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
@@ -511,7 +514,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName)],_*)),tail*) -> {
+      concTomTerm(head@Composite(concTomTerm(BuildTerm[AstName=Name(tomName)],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         if(topDomain != topCodomain) {
         /*
@@ -543,35 +546,102 @@ public class ASTFactory {
     throw new TomRuntimeException("buildList strange term: " + args);
   }
 
-  public static TomTerm buildArray(TomName name,TomList args) {
-    return buildArray(name,reverse(args),0);
+  public static TomTerm buildArray(TomName name,TomList args, SymbolTable symbolTable) {
+    return buildArray(name,reverse(args),0, symbolTable);
   }
 
-  private static TomTerm buildArray(TomName name,TomList args, int size) {
+  private static TomTerm buildArray(TomName name,TomList args, int size, SymbolTable symbolTable) {
+    //if(!args.isEmptyconcTomTerm()) System.out.println("buildArray: " + args.getHeadconcTomTerm());
+    TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
+    String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
+    String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
+
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyArray(name,size);
       }
 
       concTomTerm(head@VariableStar[],tail*) -> {
-          /*System.out.println("head = " + head);*/
-        TomTerm subList = buildArray(name,`tail,size+1);
+        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        /* a VariableStar is always flattened */
         return `BuildAppendArray(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(_*,head@VariableStar[],_*)),tail*) -> {
-          /*System.out.println("head = " + head);*/
-        TomTerm subList = buildArray(name,`tail,size+1);
+      concTomTerm(head@Composite(concTomTerm(VariableStar[],_*)),tail*) -> {
+        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        /* a VariableStar is always flattened */
         return `BuildAppendArray(name,head,subList);
       }
 
+      /*
+      concTomTerm(head@Variable[AstType=varType],tail*) -> {
+	//System.out.println("topDomain = " + topDomain);
+	//System.out.println("topCodomain = " + topCodomain);
+	//System.out.println("varType = " + TomBase.getTomType(`varType));
+
+	TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+	// a Variable is flattened if type and codomain are equals
+	if(topDomain != topCodomain) {
+	  if(TomBase.getTomType(`varType) == topCodomain) {
+	    return `BuildAppendArray(name,head,subList);
+	  }
+	}
+	return `BuildConsArray(name,head,subList);
+      }
+
+      concTomTerm(head@Composite(concTomTerm(Variable[AstType=varType],_*)),tail*) -> {
+	//System.out.println("topDomain = " + topDomain);
+	//System.out.println("topCodomain = " + topCodomain);
+	//System.out.println("varType = " + TomBase.getTomType(`varType));
+
+	TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+	// a Variable is flattened if type and codomain are equals
+	if(topDomain != topCodomain) {
+	  if(TomBase.getTomType(`varType) == topCodomain) {
+	    return `BuildAppendArray(name,head,subList);
+	  }
+	}
+	return `BuildConsArray(name,head,subList);
+      }
+*/
+
+      concTomTerm(head@Composite(concTomTerm(BuildConsArray[AstName=opName],_*)),tail*) -> {
+        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        /* Flatten nested lists, unless domain and codomain are equals */
+        if(topDomain != topCodomain) {
+          if(name==`opName) {
+            return `BuildAppendArray(name,head,subList);
+          }
+        }
+        //System.out.println("cons1: " +`head);
+        return `BuildConsArray(name,head,subList);
+      }
+
+      concTomTerm(head@Composite(concTomTerm(BuildTerm[AstName=Name(tomName)],_*)),tail*) -> {
+        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        if(topDomain != topCodomain) {
+        /*
+         * compare the codomain of tomName with topDomain
+         * if the codomain of the inserted element is equal to the codomain
+         * of the list operator, a BuildAppendArray is performed 
+         */
+          TomSymbol symbol = symbolTable.getSymbolFromName(`tomName);
+          String codomain = TomBase.getTomType(TomBase.getSymbolCodomain(symbol));
+          if(codomain == topCodomain) {
+            return `BuildAppendArray(name,head,subList);
+          } 
+        }
+        //System.out.println("cons2: " +`head);
+        return `BuildConsArray(name,head,subList);
+      }
       concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size+1);
+        TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
+        //System.out.println("cons3: " +`head);
         return `BuildConsArray(name,head,subList);
       }
 
       concTomTerm(TargetLanguageToTomTerm[],tail*) -> {
-        TomTerm subList = buildArray(name,`tail,size);
+        TomTerm subList = buildArray(name,`tail,size,symbolTable);
         return subList;
       }
 
