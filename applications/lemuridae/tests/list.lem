@@ -1,12 +1,12 @@
-termrule appl(t,nil()) -> t.
+termrule appl(st,nil()) -> t.
 termrule appl(one(),cons(t,l)) -> t.
 termrule appl(S(n),cons(t,l)) -> appl(n,l).
 proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 proprule in(l,emptyset()) -> \B.
-proprule in(l,P(p)) -> \En.(in(cons(n,l),p)).
-proprule in(l,C(p)) -> \An.(in(cons(n,l),p)).
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
 
 
 termrule pred(0) -> 0.
@@ -27,16 +27,16 @@ rule Null(succ(x)) -> \B.
 proprule in(l,fNull(t)) -> Null(appl(t,l)).
 
 
-rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
+rule eq(x,y) -> forall A,(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 
 
-rule Nat(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
+rule Nat(n) -> forall p, in(cons(0,nil()),p) => (forall y,in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p).
 herednat.
 proprule in(l,fNat(t)) -> Nat(appl(t,l)).
 
 
-rule List(l) -> \A p.(in(cons(lnil(),nil()),p) => \A a.(\A ll.(in(cons(ll,nil()),p) => in(cons(lcons(a,ll),nil()),p))) => in(cons(l,nil()),p)).
+rule List(l) -> forall p, in(cons(lnil(),nil()),p) => (forall a, (forall ll, in(cons(ll,nil()),p) => in(cons(lcons(a,ll),nil()),p))) => in(cons(l,nil()),p).
 heredlist.
 proprule in(l,fList(t)) -> List(appl(t,l)).
 
@@ -79,7 +79,7 @@ axiom.
 reduce.
 rule. axiom.
 
-proof appAss: \Al.(\An.(\Am.( List(l) =>  eq(append(append(l,n),m), append(l,append(n,m)))))).
+proof appAss: forall l,(forall n,(forall m,( List(l) =>  eq(append(append(l,n),m), append(l,append(n,m)))))).
 intros.
 focus h1.
 rule.
@@ -128,7 +128,7 @@ rule.
 reduce.
 rule.
 
-proof appCommCons : \Ax.(\Ay.(\Aa.(eq ( lcons(a,append(x,y)) , append(lcons(a,x),y) )))).
+proof appCommCons : forall x,(forall y,(forall a,(eq ( lcons(a,append(x,y)) , append(lcons(a,x),y) )))).
 intro. intro. intro.
 cut List(lcons(a0,lnil())) => 
 

@@ -103,22 +103,23 @@ ProofCommand = proofCommand(text:String)
 
 
 sort Term:block() {
-  private static java.util.WeakHashMap<Term,java.util.Set<String>> vars = new java.util.WeakHashMap();
+  private static java.util.WeakHashMap<Term,java.util.HashSet<String>> vars = new java.util.WeakHashMap();
 
-  public java.util.Set<String> getVars() {
+  public java.util.HashSet<String> getVars() {
     if(vars.containsKey(this)) {
-      return vars.get(this);
+      return (java.util.HashSet<String>) vars.get(this).clone();
     } else {
-      java.util.Set<String> res = new java.util.HashSet();
+      java.util.HashSet<String> res = new java.util.HashSet();
       res = getVars(this,res);
       vars.put(this,res);
-      return res;
+      return (java.util.HashSet<String>) res.clone();
     }
   }
 
-  public java.util.Set<String> getVars(Term t, java.util.Set<String> res) {
+  public static java.util.HashSet<String> getVars(Term t, java.util.HashSet<String> res) {
     if(vars.containsKey(t)) {
-      return vars.get(t);
+      res.addAll(vars.get(t));
+      return res;
     } else {
       %match(t) {
         Var(n) -> { res.add(`n); return res; }
@@ -135,22 +136,23 @@ sort Term:block() {
 
 
 sort Prop:block() {
-  private static java.util.WeakHashMap<Prop,java.util.Set<String>> freevars = new java.util.WeakHashMap();
+  private static java.util.WeakHashMap<Prop,java.util.HashSet<String>> freevars = new java.util.WeakHashMap();
 
-  public java.util.Set<String> getFreeVars() {
+  public java.util.HashSet<String> getFreeVars() {
     if(freevars.containsKey(this)) {
-      return freevars.get(this);
+      return (java.util.HashSet<String>) freevars.get(this).clone();
     } else {
-      java.util.Set<String> res = new java.util.HashSet();
+      java.util.HashSet<String> res = new java.util.HashSet();
       res = getFreeVars(this,res);
       freevars.put(this,res);
-      return res;
+      return (java.util.HashSet<String>) res.clone();
     }
   }
 
-  public java.util.Set<String> getFreeVars(Prop p, java.util.Set<String> res) {
+  public java.util.HashSet<String> getFreeVars(Prop p, java.util.HashSet<String> res) {
     if(freevars.containsKey(p)) {
-      return freevars.get(p);
+      res.addAll(freevars.get(p));
+      return res;
     } else {
       %match(p) {
         and(p1,p2) -> { 
@@ -177,6 +179,11 @@ sort Prop:block() {
           `getFreeVars(sub,res);
           res.remove(`var);
           return res;
+        }
+        relationAppl(_,l) -> {
+          %match(TermList l) {
+            (_*,c,_*) -> { Term.getVars(`c,res); }
+          }
         }
       }
       return res;

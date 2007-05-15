@@ -1176,6 +1176,24 @@ b :{
       writeToOutputln(name + " remains unproved !!");
     }
   }
+
+  public RuleList transform(Prop atom, Prop p) {
+    RuleCalc rc = new RuleCalc(atom,p);
+    Prop permut_problem = rc.getProblem();
+    int i = 1;
+    while((permut_problem = rc.getProblem()) != null) {
+      try {
+        writeToOutputln("name the proposition \"" + 
+            PrettyPrinter.prettyPrint(permut_problem) + "\" > ");
+        String name = Utils.getIdent();
+        // ask user for a name
+        rc.run(name);
+      } catch (Exception e) {
+        writeToOutputln("not a valid id : " + e.toString());
+      }
+    }
+    return rc.getResult();
+  }
   
   public void mainLoop() throws Exception {
     Command command = null;
@@ -1194,7 +1212,7 @@ b :{
         /* declarations */
 
         rewritesuper(p1,p2) -> {
-          RuleList rl = RuleCalc.transform(`p1,`p2);
+          RuleList rl = transform(`p1,`p2);
           %match(RuleList rl) {
             (_*,r,_*) -> { 
               `r = (Rule) Unification.substPreTreatment(`r);

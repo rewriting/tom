@@ -136,7 +136,8 @@ public class CommandArea extends JTextArea implements KeyListener, CaretListener
     try {
       if (currentline==getLineCount()-1) {append("\n");}
       int supposedOffsetLimit = 0;
-      try {supposedOffsetLimit = getLineEndOffset(currentline-1) ;} catch (Exception e) {System.out.println("it seems we are on the first line");}
+      try {supposedOffsetLimit = getLineEndOffset(currentline-1) ;} 
+      catch (Exception e) { /* System.out.println("it seems we are on the first line"); */ }
       if (offsetLimit == supposedOffsetLimit) { // on a rien rajoute sur la derniere ligne lue
         offsetLimit = getLineEndOffset(currentline);
         currentline++;

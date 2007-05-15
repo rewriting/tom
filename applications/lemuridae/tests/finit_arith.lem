@@ -16,8 +16,8 @@ termrule succ(x) * y -> x * y + y.
 proprule in(l,fNull(t)) -> Null(appl(t,l)).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 proprule in(l,fN(t)) -> N(appl(t,l)).
-rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
-rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
+rule eq(x,y) -> forall A,(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
+rule N(n) -> forall A,( in(cons(0,nil()),A) => ( forall y,(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
 hered.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
@@ -72,10 +72,10 @@ axiom.
 axiom.
 axiom.
 
-proof eqrefl: \Ax.eq(x,x).
+proof eqrefl: forall x,eq(x,x).
 auto.
 
-proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
+proof succisafun: forall x,(forall y,( eq(x,y) => eq(succ(x),succ(y)) )).
 intros.
 focus h1. rule. fEq(S(succ(x0)),succ(one())).
 reduce.
@@ -114,7 +114,7 @@ theorem ind.
 focus h3. intro. y0.
 intros.
 
-proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
+proof predsucc: forall n,(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
 intros.
 focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
 reduce.
@@ -126,7 +126,7 @@ intros.
 rule. reduce.
 auto.
 
-proof discriminate: \An.(~eq(0,succ(n))).
+proof discriminate: forall n,(~eq(0,succ(n))).
 intros.
 focus h1. rule. fNull(one()).
 reduce.
@@ -134,7 +134,7 @@ auto.
 reduce.
 rule.
 
-proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
+proof pair2n : forall x,(forall y,eq(x+y,y+x)) => forall n,(N(n) => Pair(succ(succ(0))*n)).
 reduce.
 intros.
 focus h2. rule. fPair(one()+one()).
@@ -152,7 +152,7 @@ reduce. auto.
 reduce. axiom.
 
 
-proof eqsym: \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
+proof eqsym: forall x,(forall y,( eq(x,y) => eq(y,x) )).
 intros.
 focus h1. rule. fEq(one(),S(x0)).
 reduce.
@@ -161,7 +161,7 @@ reduce.
 theorem eqrefl.
 focus h2. intro. x0. axiom.
 
-proof eqtrans:  \Ax.(\Ay.(\Az.( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
+proof eqtrans:  forall x,(forall y,(forall z,( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
 auto.
 focus h2. rule. A0.
 focus h4. rule. A0.
@@ -170,7 +170,7 @@ axiom.
 axiom.
 
 
-proof nplus0:   \An.(N(n) => eq(n+0,n)).
+proof nplus0:   forall n,(N(n) => eq(n+0,n)).
 intros.
 focus h1. rule. fEq(one()+S(0),one()).
 next.
@@ -185,7 +185,7 @@ theorem succisafun.
 focus h3. intro. (y0+0). focus h3. intro. (y0).
 intros.
 
-proof plusassoc:   \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
+proof plusassoc:   forall x,(forall y,(forall z,(N(x) => eq( x+(y+z) , (x+y)+z )))).
 intros.
 focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
 next. reduce. axiom.
@@ -198,7 +198,7 @@ theorem succisafun.
 focus h3. intro. y1+(y0+z0). focus h3. intro. (y1+y0)+z0. 
 intros.
 
-proof plusnSm:  \An.(\Am.( N(n) => eq(succ(n+m),n+succ(m)))).
+proof plusnSm:  forall n,(forall m,( N(n) => eq(succ(n+m),n+succ(m)))).
 intros.
 focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
 next. reduce. axiom.
@@ -212,7 +212,7 @@ focus h3. intro. succ(y0+m0). focus h3. intro. y0+succ(m0).
 intros.
 
 
-proof pluscommut:  \An.(\Am.(N(n)=>(N(m)=>eq(n+m,m+n)))).
+proof pluscommut:  forall n,(forall m,(N(n)=>(N(m)=>eq(n+m,m+n)))).
 intros.
 focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
 next. reduce. axiom.
@@ -238,7 +238,7 @@ focus h6. intro. succ(m0+y0).
 focus h6. intro. m0+succ(y0).
 intros.
 
-proof multn0:  \An.(N(n) => eq(0,n*0)).
+proof multn0:  forall n,(N(n) => eq(0,n*0)).
 intros..
 focus h1. rule. fEq(S(0),one()*S(0)).
 next. reduce. axiom.
@@ -272,7 +272,7 @@ reduce. axiom.
 
 
 
-proof letrans : \An.(\Am.(\Ap.( N(n) => N(m) => N(p) => le(n,m) => le(m,p) => le(n,p)))).
+proof letrans : forall n,(forall m,(forall p,( N(n) => N(m) => N(p) => le(n,m) => le(m,p) => le(n,p)))).
 intro.intro.intro. intro.intro.intro.
 focus h1. rule. supset(fLe(one(),S(m0)),supset(fLe(S(m0),S(p0)),fLe(one(),S(p0)))).
 next. reduce. axiom.
@@ -292,7 +292,7 @@ termrule fib(succ(succ(n))) -> fib(succ(n)) + fib(n).
 termrule appl(fib(n),l) -> fib(appl(n,l)).
 
 
-proof ltnsm: \An.(\Am.(N(n) => N(m) => lt(n,m) => lt(n,succ(m)))).
+proof ltnsm: forall n,(forall m,(N(n) => N(m) => lt(n,m) => lt(n,succ(m)))).
 intro. intro. intro. intro.
 focus h1. rule. supset(fLt(one(),S(m0)),fLt(one(),S(succ(m0)))).
 reduce.
@@ -307,7 +307,7 @@ pas fini
 
 
 
-proof plusmonoton: \An.(\Am.(N(n) => N(m) => lt(0,n) => lt(0,m) => lt(0,n+m))).
+proof plusmonoton: forall n,(forall m,(N(n) => N(m) => lt(0,n) => lt(0,m) => lt(0,n+m))).
 focus h1. rule. supset(fLt(S(0),one()),fLt(S(0),plus(one(),S(m0)))).
 reduce. intros.
 next.
@@ -319,7 +319,7 @@ pas fini
 
 
 
-proof fibmonoton: \Ax.(\Ay.(N(x) => N(y) => lt(x,y) => lt(fib(x),fib(y)))).
+proof fibmonoton: forall x,(forall y,(N(x) => N(y) => lt(x,y) => lt(fib(x),fib(y)))).
 intro.intro.intro.intro.
 focus h1. rule. supset(fLt(one(),S(y0)),fLt(fib(one()),fib(S(y0)))).
 next. reduce. axiom.

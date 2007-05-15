@@ -1,11 +1,11 @@
-rule subset(A,B) -> \Ax.(in(x,A) => in(x,B)).
+rule subset(A,B) -> forall x,(in(x,A) => in(x,B)).
 rule in(x,emptyset()) -> \B .
 rule in(x,union(X,Y))  ->  in(x,X) \/ in(x,Y).
 rule in(x,inter(X,Y)) -> in(x,X) /\ in(x,Y).
 rule in(x,symdiff(X,Y)) -> in(x,union(X,Y)) /\ ~in(x,inter(X,Y)).
 
 
-proof emptySetInAll:  \AA.subset(emptyset(),A).
+proof emptySetInAll:  forall A,subset(emptyset(),A).
 auto.
 proofcheck emptySetInAll.
 

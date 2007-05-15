@@ -1,15 +1,15 @@
-proof l: (\Ax.(A \/ B => \Ey.P(x,y)) /\ C /\ A /\ B) => (\Ax.(\Ey.D(x,y)) => ( \Ax.(\Ey.(P(x,y) => \T)) /\ (\T => \Ex.D(a(),x)))).
+proof l: (forall x,(A \/ B => exists y,P(x,y)) /\ C /\ A /\ B) => (forall x,(exists y,D(x,y)) => ( forall x,(exists y,(P(x,y) => \T)) /\ (\T => exists x,D(a(),x)))).
 auto.
 focus h5. intro. a(). auto.
 intro. y0. axiom.
 focus h1. intro. x0. auto.
 intro. y0. auto.
 
-proof l1: \Ax.P(x) => P(a()).
+proof l1: forall x,P(x) => P(a()).
 intro. focus h1. intro. a(). axiom.
 
 
-proof l2:  ( \Ax.P(x)  /\ (P(a()) => P(b())) )  => P(b()).
+proof l2:  ( forall x,P(x)  /\ (P(a()) => P(b())) )  => P(b()).
 auto.
 theorem l1.
 auto.

@@ -17,12 +17,12 @@ termrule subst(pikind(a,b),s) -> pikind(subst(a,s),subst(b,lcons(one(),rond(s,sh
 
 rule in(type(),kind()) -> \T.
 rule in(pitype(a,b),type()) -> in(a,type()) /\ 
-		    \Az. (in(z,a) => in(subst(b,lcons(z,id())), type())).
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), type())).
 rule in(pikind(a,b),kind()) -> in(a,type()) /\ 
-		    \Az. (in(z,a) => in(subst(b,lcons(z,id())), kind())).
-rule in(a,pitype(b,c)) -> in(b,type()) /\ \Az. (in(z,b) =>
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), kind())).
+rule in(a,pitype(b,c)) -> in(b,type()) /\ forall z, (in(z,b) =>
 	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),type()))).
-rule in(a,pikind(b,c)) -> in(b,type()) /\ \Az. (in(z,b) =>
+rule in(a,pikind(b,c)) -> in(b,type()) /\ forall z, (in(z,b) =>
 	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),kind()))).
 
 rule WF(cons(gamma,e(a,b))) ->
@@ -87,7 +87,7 @@ autoreduce.
 autoreduce.
 
 rule SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) ->
-       \AA.(\AB.(\AC.(\AD.( WF(cons(cons(cons(cons(cons(cons(cons(cons(nil(),
+       forall A,(forall B,(forall C,(forall D,( WF(cons(cons(cons(cons(cons(cons(cons(cons(nil(),
        e(tp,type())),
        e(arrow, pitype(tp, pitype(subst(tp,shift()),subst(tp,rond(shift(),shift())))))),
        e(nat, tp)),
@@ -106,10 +106,10 @@ rule SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) ->
        in(lterm, pikind(tp,subst(type(),shift()))) /\
        in(z, lappl(lterm, nat)) /\
        in(s, lappl(lterm, lappl(lappl(arrow,nat),nat))) /\
-       \AA. (\AB. (in(app, pitype(lappl(lterm, lappl(lappl(arrow,A),B)),
+       forall A, (forall B, (in(app, pitype(lappl(lterm, lappl(lappl(arrow,A),B)),
 	       			pitype(lappl(subst(lterm,shift()),subst(A,shift())),
 				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift())))))))) /\
-       \AA.(\AB. (in(lam, pitype(pitype(lappl(lterm, A), lappl(subst(lterm,shift()),subst(B,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(A,shift())),subst(B,shift()))))))).*/
+       forall A,(forall B, (in(lam, pitype(pitype(lappl(lterm, A), lappl(subst(lterm,shift()),subst(B,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(A,shift())),subst(B,shift()))))))).*/
 
 proof lambdaXsX: SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) =>
 	       in(lappl(lam, lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one()))),

@@ -5,24 +5,24 @@ proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 proprule in(l,emptyset()) -> \B.
-proprule in(l,P(p)) -> \En.(in(cons(n,l),p)).
-proprule in(l,C(p)) -> \An.(in(cons(n,l),p)).
+proprule in(l,P(p)) -> exists n,(in(cons(n,l),p)).
+proprule in(l,C(p)) -> forall n,(in(cons(n,l),p)).
 
 
-rule reflexive(r) -> \Ax.rel(r,x,x).
-rule symmetric(r) -> \Ax.(\Ay.(rel(r,x,y) => rel(r,y,x))).
-rule transitive(r) -> \Ax.(\Ay.(\Az.( rel(r,x,y) => rel(r,y,z) => rel(r,x,z) ))).
+rule reflexive(r) -> forall x,rel(r,x,x).
+rule symmetric(r) -> forall x,(forall y,(rel(r,x,y) => rel(r,y,x))).
+rule transitive(r) -> forall x,(forall y,(forall z,( rel(r,x,y) => rel(r,y,z) => rel(r,x,z) ))).
 rule equivalence(r) -> reflexive(r) /\ symmetric(r) /\ transitive(r).
 
 
-rule included(r1,r2) -> \Ax.(\Ay.( rel(r1,x,y) => rel(r2,x,y) )).
+rule included(r1,r2) -> forall x,(forall y,( rel(r1,x,y) => rel(r2,x,y) )).
 rule same(r1,r1) -> included(r1,r2) /\ included(r2,r1).
 
 
 
 rule
-closTrans(R,x,a) -> \Ap.(\Ax.(\Ay.(rel(R,x,y) => in(cons(x,cons(y,nil())),p))) => (
-                     \Ax.(\Ay.(\Az.(    closTrans(R,x,y) => in(cons(x,cons(y,nil())),p)
+closTrans(R,x,a) -> forall p,(forall x,(forall y,(rel(R,x,y) => in(cons(x,cons(y,nil())),p))) => (
+                     forall x,(forall y,(forall z,(    closTrans(R,x,y) => in(cons(x,cons(y,nil())),p)
                                      => closTrans(R,y,z) => in(cons(y,cons(z,nil())),p)
                                      => in(cons(x,cons(z,nil())),p) )))
                     ) => in(cons(x,cons(a,nil())),p)).
@@ -32,7 +32,7 @@ tTrans.
 proprule in(l,fClosTrans(r,x,y)) -> closTrans(appl(r,l),appl(x,l),appl(y,l)).
 proprule in(l,fRel(r,x,y))       -> rel(appl(r,l),appl(x,l),appl(y,l)).
 
-proof test1: \Ar.(\Aa.(\Ab.(   rel(r,a,b) => closTrans(r,a,b)  ))).
+proof test1: forall r,(forall a,(forall b,(   rel(r,a,b) => closTrans(r,a,b)  ))).
 intros.
 rule.
 focus h1. rule. b0. a0.
@@ -75,7 +75,7 @@ axiom.
 
 
 rule app(union(r1,r2),x,y) -> app(r1,x,y) \/ app(r2,x,y).
-rule app(composition(r1,r2),x,y) -> \Ez.(app(r1,x,z) /\ app(r2,z,y)).
+rule app(composition(r1,r2),x,y) -> exists z,(app(r1,x,z) /\ app(r2,z,y)).
 
 
 
@@ -88,17 +88,17 @@ rule app(symmReflTransClsr(r),x,y) -> app(union(symmClsr(r),reflTransClsr(r)),x,
 
 
 
-rule CR(r) -> \Ax.(\Ay.( app(symmReflTransClsr(r),x,y) =>  \Ez.( app(reflTransClsr(r),x,z) /\ app(reflTransClsr(r),y,z) ) )).
+rule CR(r) -> forall x,(forall y,( app(symmReflTransClsr(r),x,y) =>  exists z,( app(reflTransClsr(r),x,z) /\ app(reflTransClsr(r),y,z) ) )).
 commonReducedForm.
 
 
-rule confluent(r) -> \Ax.(\Au.(\Av.(  
+rule confluent(r) -> forall x,(forall u,(forall v,(  
                         ( app(reflTransClsr(r),x,u) /\ app(reflTransClsr(r),x,v) ) 
-		         => \Ez.( app(reflTransClsr(r),u,z) /\ app(reflTransClsr(r),v,z) )  ))).
+		         => exists z,( app(reflTransClsr(r),u,z) /\ app(reflTransClsr(r),v,z) )  ))).
 commonReducedForm2.
 
 
-proof confluentImpliesCR: \Ar.(confluent(r) => CR(r)).
+proof confluentImpliesCR: forall r,(confluent(r) => CR(r)).
 auto.
 focus c1. rule. z.
 focus c2. remove.
