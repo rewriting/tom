@@ -65,6 +65,16 @@ public class TestSublists extends TestCase {
     fail();
   }
   
+  public void test2_1() {
+    Term res = `list(a(),b(),c());
+    %match(res) {
+      list(_*,p@(a(),b(),c()),_*) -> {
+        return;
+      }
+    }
+    fail();
+  }
+  
   public void test3() {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
@@ -94,6 +104,8 @@ public class TestSublists extends TestCase {
     fail();
   }
 
+  //////// domain != codomain ///////////
+  
   public void test5() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -150,7 +162,17 @@ public class TestSublists extends TestCase {
     }    
     fail();
   }
-
+  
+  public void test10() {
+    TermList res = `termList(a(),b(),b(),c());
+    %match(res) {
+      termList(X*,p@(b(),!b()),Y*) -> {
+        if( `p == `list(b(),b()) ) {
+          fail();
+        }
+      }
+    }
+  }
   
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestSublists.class));
