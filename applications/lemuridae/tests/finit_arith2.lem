@@ -17,16 +17,16 @@ proprule in(l,fNull(t)) -> Null(appl(t,l)).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 proprule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> forall p,(  in(cons(x,nil()),p) => in(cons(y,nil()),p) ).
-rule N(n) -> forall p,( in(cons(0,nil()),p) => ( forall y,(N(y) => in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
+rule N(n) -> forall p, in(cons(0,nil()),p) => (forall y, N(y) => in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p).
 hered.
-rule Null(0) -> \T.
-rule Null(succ(x)) -> \B.
+rule Null(0) -> True.
+rule Null(succ(x)) -> False.
 proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
-proprule in(l,emptyset()) -> \B.
-proprule in(l,P(a)) -> exists n,(in(cons(n,l),a)).
-proprule in(l,C(a)) -> forall n,(in(cons(n,l),a)).
+proprule in(l,emptyset()) -> False.
+proprule in(l,P(a)) -> exists n, in(cons(n,l),a).
+proprule in(l,C(a)) -> forall n, in(cons(n,l),a).
 
 
 proof zisnat: N(0).
@@ -39,12 +39,12 @@ focus h2. rule. 0.
 axiom. axiom.
 theorem zisnat. axiom.
 
-proof ind: \A n. (N(n) => N(succ(n))).
+proof ind: forall n, N(n) => N(succ(n)).
 auto.
 focus h3. rule. p0.
-next. axiom.
-axiom.
 focus h3. rule. n0.
+axiom.
+axiom.
 axiom.
 axiom.
 axiom.
@@ -62,15 +62,17 @@ theorem eqrefl.
 focus h2. intro. succ(x0). axiom.
 
 
-proof prop1: \A n.(N(n) => (Null(n) \/ \E m.(N(m) /\ eq(n,succ(m))))).
+proof prop1: forall n, N(n) => (Null(n) \/ (exists m, N(m) /\ eq(n,succ(m)))).
 intros.
 focus h1. rule. union(fNull(one()),P(inter(fN(one()),fEq(S(one()),succ(one()))))).
-next. next.
-reduce. intros.
+reduce.
+intros.
 focus c2. intro. n1. 
 intros.
-next. reduce.
-intro. rule.
+next.
+reduce.
+intro.
+rule.
 focus h1. remove. focus c2. remove. focus c2. remove.
 rule. reduce.
 intros.

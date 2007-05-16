@@ -207,8 +207,8 @@ class PrettyPrinter {
       //negation
       implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
       implies(p1, p2) -> { return "(" + toLatex(`p1) + " \\Rightarrow " + toLatex(`p2) + ")";}
-      forAll(n, p) -> { return "\\forall " + `n + " . (" + toLatex(`p) + ")";}
-      exists(n, p) -> { return "\\exists " + `n + " . (" + toLatex(`p) + ")";}
+      forAll(n, p) -> { return "(\\forall " + `n + ", " + toLatex(`p) + ")";}
+      exists(n, p) -> { return "(\\exists " + `n + ", " + toLatex(`p) + ")";}
       bottom() -> { return "\\perp";  }
       top() -> { return "\\top";  }
     }	
@@ -445,10 +445,10 @@ class PrettyPrinter {
         return "(" + prettyPrint(`p1) + " => " + prettyPrint(`p2) + ")";
       }
       forAll(x,p1) -> {
-        return "forall " + `x + ".(" + prettyPrint(`p1) + ")";
+        return "(\u2208 " + `x + ", " + prettyPrint(`p1) + ")";
       }
       exists(x,p1) -> { 
-        return "exists " + `x + ".(" + prettyPrint(`p1) + ")";
+        return "(exists " + `x + ", " + prettyPrint(`p1) + ")";
       }
       relationAppl(r,()) -> {
         return `r;

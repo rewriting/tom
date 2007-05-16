@@ -1,5 +1,5 @@
-rule subset(A,B) -> forall x,(in(x,A) => in(x,B)).
-rule in(x,emptyset()) -> \B .
+rule subset(A,B) -> forall x, in(x,A) => in(x,B).
+rule in(x,emptyset()) -> False .
 rule in(x,union(X,Y))  ->  in(x,X) \/ in(x,Y).
 rule in(x,inter(X,Y)) -> in(x,X) /\ in(x,Y).
 rule in(x,symdiff(X,Y)) -> in(x,union(X,Y)) /\ ~in(x,inter(X,Y)).
@@ -7,9 +7,8 @@ rule in(x,symdiff(X,Y)) -> in(x,union(X,Y)) /\ ~in(x,inter(X,Y)).
 
 proof emptySetInAll:  forall A,subset(emptyset(),A).
 auto.
-proofcheck emptySetInAll.
 
-display emptySetInAll.
+//display emptySetInAll.
 
 proof l: ~in(x,inter(A,B)) => in(x,A) => ~in(x,B).
 auto.
@@ -17,5 +16,5 @@ auto.
 proof l2: in(x,symdiff(A,B)) => ~in(x,inter(A,B)).
 auto.
 
+//display l2.
 
-display l2.

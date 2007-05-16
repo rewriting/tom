@@ -6,12 +6,12 @@ proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 proprule in(l,emptyset()) -> \B.
-proprule in(l,P(a)) -> exists n,(in(cons(n,l),A)).
-proprule in(l,C(a)) -> forall n,(in(cons(n,l),A)).
+proprule in(l,P(a)) -> exists n, in(cons(n,l),A).
+proprule in(l,C(a)) -> forall n, in(cons(n,l),A).
 
-proprule eq(0,0) -> \T.
-proprule eq(0,succ(x)) -> \B.
-proprule eq(succ(x),0) -> \B.
+proprule eq(0,0) -> True.
+proprule eq(0,succ(x)) -> False.
+proprule eq(succ(x),0) -> False.
 proprule eq(succ(x),succ(y)) -> eq(x,y).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 
@@ -24,22 +24,17 @@ termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
 termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
 
 
-rule N(n) -> forall A,( in(cons(0,nil()),A) => ( forall y,(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
+rule N(n) -> forall A, in(cons(0,nil()),A) => (forall y, in(cons(y,nil()),A) => in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A).
 hered.
 proprule in(l,fN(t)) -> N(appl(t,l)).
 
-
-
 proof l: eq(3+5,2*4).
-reduce.
-top.
-
+autoreduce.
 
 proof lemme1: forall x,( N(x) =>  eq(0,x) => eq(x,0) ).
-intro.intro.
+intro. intro.
 focus h1. rule. supset(fEq(S(0),one()),fEq(one(),S(0))).
-reduce. auto.
-rule. reduce. auto.
-reduce.
-axiom.
+autoreduce.
+autoreduce.
+autoreduce.
 

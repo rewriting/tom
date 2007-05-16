@@ -227,9 +227,7 @@ public final class Gui implements Observer {
   // on affiche le message dans la zone des messages
   public void update(Observable o, Object arg) {
     String s = (String) arg;
-    try {
-      s = new String(s.getBytes(), "UTF8");
-    }
+    try { s = new String(s.getBytes(), "UTF8"); }
     catch (Exception e) { System.out.println("error during converting to UTF8 :"+e);}
     if (s.equals("SESSIONRESTARTED")) {
       msgArea.setDocument(new PlainDocument());

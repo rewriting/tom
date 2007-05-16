@@ -22,8 +22,8 @@ termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
 
 
 
-rule Null(0) -> \T.
-rule Null(succ(x)) -> \B.
+rule Null(0) -> True.
+rule Null(succ(x)) -> False.
 proprule in(l,fNull(t)) -> Null(appl(t,l)).
 
 
