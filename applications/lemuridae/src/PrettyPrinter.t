@@ -445,7 +445,7 @@ class PrettyPrinter {
         return "(" + prettyPrint(`p1) + " => " + prettyPrint(`p2) + ")";
       }
       forAll(x,p1) -> {
-        return "(\u2208 " + `x + ", " + prettyPrint(`p1) + ")";
+        return "(\u2200 " + `x + ", " + prettyPrint(`p1) + ")";
       }
       exists(x,p1) -> { 
         return "(exists " + `x + ", " + prettyPrint(`p1) + ")";
