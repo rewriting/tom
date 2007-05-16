@@ -78,7 +78,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
         writer.write(%[
             %op Strategy _@className(`vopName)@(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_@className(`cons)@(sub,MuVar("x")),_@className(`empty)@())) }
+            make(sub)  { `mu(MuVar("x_@className(`vopName)@"),Choice(_@className(`cons)@(sub,MuVar("x_@className(`vopName)@")),_@className(`empty)@())) }
             }
             ]%);
       }
