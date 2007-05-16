@@ -57,12 +57,21 @@ class StrategyFwd extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
     return visit_Visitable(any);
   }
 
+  public int visit() {
+    try {
+      environment.setSubject((tom.library.sl.Visitable)this.visitLight(environment.getSubject()));
+      return tom.library.sl.Environment.SUCCESS;
+    } catch(VisitFailure f) {
+      return tom.library.sl.Environment.FAILURE;
+    }
+  }
+
   public Visitable visit_Visitable(Visitable any) throws VisitFailure {
-    return  getArgument(ARG).visitLight(any);
+    return  visitors[ARG].visitLight(any);
   }
 }
 
@@ -87,8 +96,8 @@ class GraphicalObserver implements DebugStrategyObserver {
   protected Visitable term;
   protected Strategy init_strat;
 
-  
-    
+
+
   public GraphicalObserver(Visitable initialTerm, Strategy initialStrategy)  {
     term = initialTerm;
     init_strat = initialStrategy;
@@ -96,7 +105,7 @@ class GraphicalObserver implements DebugStrategyObserver {
         new Runnable() { public void run() { createAndShowGUI();} });
   }
 
-  
+
   // GUI
   JSVGCanvas svgCanvas1 = new JSVGCanvas();
   JSVGCanvas svgCanvas2 = new JSVGCanvas();
@@ -106,20 +115,20 @@ class GraphicalObserver implements DebugStrategyObserver {
     JFrame.setDefaultLookAndFeelDecorated(true);
     JFrame frame = new JFrame("Strategy Debugger");
     //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
+
 
     JButton button = new JButton("Next");
     button.addActionListener(
         new ActionListener () {
-          public void actionPerformed(ActionEvent e) {
-          synchronized (GraphicalObserver.this) {
-            GraphicalObserver.this.notify();
-            }
-          }
+        public void actionPerformed(ActionEvent e) {
+        synchronized (GraphicalObserver.this) {
+        GraphicalObserver.this.notify();
         }
-    );
+        }
+        }
+        );
 
-    
+
     JPanel pan = new JPanel(new GridLayout(1,2));
     pan.add(svgCanvas2);
     pan.add(svgCanvas1);

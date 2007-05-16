@@ -37,7 +37,6 @@ public class StrategyViewer {
   
   %typeterm Writer { 
     implement {java.io.Writer} 
-    is_sort(t)     { t instanceof java.util.HashMap }
   }
 
   private static int counter = 0;  

@@ -38,11 +38,21 @@ class DebugStrategy extends AbstractStrategy {
     this.obs = obs;
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public Visitable visitLight(Visitable any) throws VisitFailure {
     obs.before(this);
     Visitable res = getStrat().visitLight(any);
     obs.after(this, res);
     return res;
+  }
+
+
+  public int visit() {
+    try {
+      environment.setSubject((tom.library.sl.Visitable)this.visitLight(environment.getSubject()));
+      return tom.library.sl.Environment.SUCCESS;
+    } catch(VisitFailure f) {
+      return tom.library.sl.Environment.FAILURE;
+    }
   }
 
   public DebugStrategyObserver getObserver() {
