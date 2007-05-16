@@ -471,11 +471,10 @@ public class ASTFactory {
           return `BuildAppendList(name,head,subList);
       }
 
-      /*
       concTomTerm(head@Variable[AstType=varType],tail*) -> {
-        System.out.println("topDomain = " + topDomain);
-        System.out.println("topCodomain = " + topCodomain);
-        System.out.println("varType = " + TomBase.getTomType(`varType));
+        //System.out.println("topDomain = " + topDomain);
+        //System.out.println("topCodomain = " + topCodomain);
+        //System.out.println("varType = " + TomBase.getTomType(`varType));
 
         TomTerm subList = buildList(name,`tail,symbolTable);
         // a Variable is flattened if type and codomain are equals
@@ -488,9 +487,9 @@ public class ASTFactory {
       }
 
       concTomTerm(head@Composite(concTomTerm(Variable[AstType=varType],_*)),tail*) -> {
-        System.out.println("topDomain = " + topDomain);
-        System.out.println("topCodomain = " + topCodomain);
-        System.out.println("varType = " + TomBase.getTomType(`varType));
+        //System.out.println("topDomain = " + topDomain);
+        //System.out.println("topCodomain = " + topCodomain);
+        //System.out.println("varType = " + TomBase.getTomType(`varType));
 
         TomTerm subList = buildList(name,`tail,symbolTable);
         // a Variable is flattened if type and codomain are equals
@@ -501,7 +500,6 @@ public class ASTFactory {
         }
         return `BuildConsList(name,head,subList);
       }
-*/
 
       concTomTerm(head@Composite(concTomTerm(BuildConsList[AstName=opName],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);

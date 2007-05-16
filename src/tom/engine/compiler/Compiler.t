@@ -217,12 +217,12 @@ matchBlock: {
         DeclarationList l = `concDeclaration();//represents compiled Strategy
         TomVisitList jVisitList = `visitList;
         TomForwardType visitorFwd = null;
-        while (!jVisitList.isEmptyconcTomVisit()){
+        while(!jVisitList.isEmptyconcTomVisit()) {
           TomList subjectListAST = `concTomTerm();
           TomVisit visit = jVisitList.getHeadconcTomVisit();
           %match(visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],patternInstructionList,_) -> {
-              if (visitorFwd == null) {//first time in loop
+              if(visitorFwd == null) {//first time in loop
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
               }
               TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList

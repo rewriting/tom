@@ -107,7 +107,9 @@ public class Expander extends TomGenericPlugin {
       TomTerm syntaxExpandedTerm = (TomTerm) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
 
+      syntaxExpandedTerm = expandType(syntaxExpandedTerm);
       TomTerm variableExpandedTerm = expandVariable(`EmptyType(), syntaxExpandedTerm);
+      /* expand each BackQuoteTerm into its compiled form */
       TomTerm backQuoteExpandedTerm = (TomTerm) `ChoiceTopDown(expandBackQuoteAppl(this)).visit(`variableExpandedTerm);
       TomTerm stringExpandedTerm = (TomTerm) `ChoiceTopDown(expandString(this)).visit(backQuoteExpandedTerm);
       expandedTerm = (TomTerm) `ChoiceTopDown(updateCodomain(this)).visit(stringExpandedTerm);
@@ -153,7 +155,8 @@ public class Expander extends TomGenericPlugin {
         tomSymbol = addDefaultMake(tomSymbol);
       }
       try {
-        tomSymbol = (TomSymbol) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit(`tomSymbol);
+        tomSymbol = (TomSymbol) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit(tomSymbol);
+        tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = expandVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = (TomSymbol) `ChoiceTopDown(expandBackQuoteAppl(this)).visit(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
@@ -212,27 +215,16 @@ public class Expander extends TomGenericPlugin {
   private TomTerm expandVariable(TomType contextType, TomTerm subject) {
     return (TomTerm)tomKernelExpander.expandVariable(contextType,subject);
   }
+  private TomTerm expandType(TomTerm subject) {
+    return (TomTerm)tomKernelExpander.expandType(subject);
+  }
 
   /*
    * The 'expandTermApplTomSyntax' phase replaces:
    * - each 'TermAppl' by its expanded record form:
    *    placeholders are not removed
    *    slotName are attached to arguments
-   * - each BackQuoteTerm by its compiled form
    */
-
-  /*
-  %strategy expandBackQuote(expander:Expander) extends `Identity() {
-    visit TomTerm {
-      backQuoteTerm@BackQuoteAppl[] -> {
-        TomTerm t = (TomTerm) `ChoiceTopDown(expandBackQuoteAppl(expander)).visit(`backQuoteTerm);
-        System.out.println("t = " + t);
-        return t;
-      }
-    }
-  }
-*/
-
   %strategy expandTermApplTomSyntax(expander:Expander) extends `Identity() {
     visit TomTerm {
       //backQuoteTerm@BackQuoteAppl[] -> {

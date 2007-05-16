@@ -64,6 +64,10 @@ public class KernelExpander {
     make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
   }
 
+  %op Strategy TopDownStop(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Choice(v,All(MuVar("x")))) }
+  }
+
   private SymbolTable symbolTable;
 
   public KernelExpander() {
@@ -99,7 +103,27 @@ public class KernelExpander {
    * Variable and TermAppl are expanded in the TomTerm case
    */
 
-  %strategy replace_expandVariable(contextType:TomType,expander:KernelExpander) extends `Identity() {
+  protected tom.library.sl.Visitable expandType(tom.library.sl.Visitable subject) {
+    try {
+      return `TopDown(expandType(this)).visit(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("expandType: failure on " + subject);
+    }
+  }
+  %strategy expandType(expander:KernelExpander) extends `Identity() {
+    visit TomType {
+      subject@TomTypeAlone(tomType) -> {
+        TomType type = expander.getType(`tomType);
+        if(type != null) {
+          return type;
+        } else {
+          return `subject; // useful for TomTypeAlone("unknown type")
+        }
+      }
+    }
+  }
+
+  %strategy replace_expandVariable(contextType:TomType,expander:KernelExpander) extends `Fail() {
 
     visit Option {
       subject@OriginTracking[] -> { return `subject; }
@@ -124,8 +148,11 @@ public class KernelExpander {
 
     visit TomVisit {
       VisitTerm(type,patternInstructionList,options) -> {
+        //System.out.println("expander: patternInstructionList = " + `patternInstructionList);  
         TomType newType = (TomType)`expander.expandVariable(contextType,`type);
-        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newType,`patternInstructionList);
+        //System.out.println("newType = " + newType);
+        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(`TypeList(concTomType(newType)),`patternInstructionList);
+        //System.out.println("after: patternInstructionList = " + `newPatternInstructionList);  
         return `VisitTerm(newType, newPatternInstructionList,options);
       }
     }
@@ -152,6 +179,7 @@ matchBlock: {
                   TomTerm newVariable = null;
                   // tomType may be a TomTypeAlone or a type from an expanded variable
                   String type = TomBase.getTomType(`tomType);
+                  //System.out.println("match type = " + type);
                   if(expander.getType(`type) == null) {
                     /* the subject is a variable with an unknown type */
                     TomType newType = expander.guessTypeFromPatterns(`patternInstructionList,index);
@@ -200,6 +228,9 @@ matchBlock: {
         TomTerm newTomSubjectList = (TomTerm)expander.expandVariable(contextType, `SubjectList(ASTFactory.makeList(newSubjectList)));
         //System.out.println("newTomSubjectList = " + newTomSubjectList);
         TomType newTypeList = `TypeList((TomTypeList)expander.expandVariable(contextType,typeList));
+        //System.out.println("context = " + contextType);
+        //System.out.println("typelist = " + typeList);
+        //System.out.println("newtl = " + newTypeList);
 
         PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newTypeList,`patternInstructionList);
         //System.out.println("newPatternInstructionList = " + newPatternInstructionList);
@@ -213,7 +244,9 @@ matchBlock: {
      */
     //visit Pattern {
     visit PatternInstruction {
-      PatternInstruction(Pattern(subjectList,termList, guardList), action, optionList) -> {
+      pa@PatternInstruction(Pattern(subjectList,termList, guardList), action, optionList) -> {
+        //System.out.println("start pa: " + `pa);
+        //System.out.println("contextType = " + `contextType);
       //Pattern(subjectList,termList, guardList) -> {
         %match(contextType) {
           TypeList(typeList) -> {
@@ -223,36 +256,48 @@ matchBlock: {
              // System.out.println("term: " + `termList);
 
             // process a list of subterms
-            ArrayList list = new ArrayList();
-            while(!`termList.isEmptyconcTomTerm()) {
+            TomList newTermList = `concTomTerm();
+            TomList newSubjectList = `concTomTerm();
+            while(!`typeList.isEmptyconcTomType()) {
               //System.out.println("type: " + `typeList.getHeadconcTomType());
               //System.out.println("term: " + `termList.getHeadconcTomTerm());
-              list.add((TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `termList.getHeadconcTomTerm()));
+              //System.out.println("subject: " + `subjectList.getHeadconcTomTerm());
+              newTermList = `concTomTerm(newTermList*, (TomTerm)expander.expandVariable(typeList.getHeadconcTomType(), termList.getHeadconcTomTerm()));
+              TomTerm newSubject = (TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `subjectList.getHeadconcTomTerm());
+              //System.out.println("newSubject: " + newSubject);
+              newSubjectList = `concTomTerm(newSubjectList*, newSubject);
               `termList = `termList.getTailconcTomTerm();
+              `subjectList = `subjectList.getTailconcTomTerm();
               `typeList = `typeList.getTailconcTomType();
             }
-            TomList newTermList = ASTFactory.makeList(list);
+            //System.out.println("newTermList: " + newTermList);
+            //System.out.println("newSubjectList: " + newSubjectList);
 
             // process a list of guards
-            list.clear();
             // build the list of variables that occur in the lhs
             HashSet set = new HashSet();
             TomBase.collectVariable(set,newTermList);
             TomList varList = ASTFactory.makeList(set);
             //System.out.println("varList = " + varList);
+            TomList newGuardList = `concTomTerm();
             while(!`guardList.isEmptyconcTomTerm()) {
-              list.add((TomTerm)expander.replaceInstantiatedVariable(`varList, `guardList.getHeadconcTomTerm()));
+              newGuardList = `concTomTerm(newGuardList*, (TomTerm)expander.replaceInstantiatedVariable(varList, guardList.getHeadconcTomTerm()));
               `guardList = `guardList.getTailconcTomTerm();
             }
-            TomList newGuardList = ASTFactory.makeList(list);
             //System.out.println("newGuardList = " + newGuardList);
             Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
             //System.out.println("newAction1 = " + newAction);
             newAction = (Instruction)`expander.expandVariable(`EmptyType(),`newAction);
             //OptionList newOptionList = (OptionList)`expander.expandVariable(`EmptyType(),``optionList);
             OptionList newOptionList = `optionList;
-            return `PatternInstruction(Pattern(subjectList,newTermList,newGuardList), newAction,newOptionList);
+            return `PatternInstruction(Pattern(newSubjectList,newTermList,newGuardList), newAction,newOptionList);
             //return `Pattern(subjectList,newTermList,newGuardList);
+          }
+
+          _ -> {
+            System.out.println("Bad contextType: " + `contextType);
+            System.out.println(`pa);
+            //throw new TomRuntimeException("Bad contextType: " + `contextType);
           }
         }
       }
@@ -299,19 +344,22 @@ matchBlock: {
 
       var@(Variable|UnamedVariable)[AstType=TomTypeAlone(tomType),Constraints=constraints] -> {
         TomType localType = expander.getType(`tomType);
+        //System.out.println("localType = " + localType);
         if(localType != null) {
           // The variable has already a known type
           return `var.setAstType(localType);
         }
 
+        //System.out.println("contextType = " + contextType);
         %match(contextType) {
           ctype@Type[] -> {
             ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`ctype,`constraints);
-            return `var.setAstType(`ctype).setConstraints(newConstraints);
+            TomTerm newVar = `var.setAstType(`ctype);
+            //System.out.println("newVar = " + newVar);
+            return newVar.setConstraints(newConstraints);
           }
         }
       }
-
     }
     }
 
@@ -351,9 +399,14 @@ matchBlock: {
         throw new TomRuntimeException("expandVariable: null contextType");
       }
       try {
-        return `ChoiceTopDown(replace_expandVariable(contextType,this)).visit(subject);
+        //System.out.println("expandVariable: " + contextType);
+        //System.out.println("expandVariable subject: " + subject);
+        tom.library.sl.Visitable res = `TopDownStop(replace_expandVariable(contextType,this)).visit(subject);
+        //System.out.println("res: " + res);
+        return res;
       } catch(tom.library.sl.VisitFailure e) {
-        return subject;
+        throw new TomRuntimeException("expandVariable: failure on " + subject);
+        //return subject;
       }
     }
 
@@ -430,11 +483,10 @@ matchBlock: {
             }
           }
       }
-      System.out.println("expandVariableList: strange case: '" + symbol + "'");
       throw new TomRuntimeException("expandVariableList: strange case: '" + symbol + "'");
     }
 
-    %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Identity() {
+    %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Fail() {
       visit TomTerm {
         subject -> {
           %match(subject, instantiatedVariable) {
@@ -457,7 +509,9 @@ matchBlock: {
 
     protected tom.library.sl.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, tom.library.sl.Visitable subject) {
       try {
-        return `ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
+        //System.out.println("varlist = " + instantiatedVariable);
+        //System.out.println("subject = " + subject);
+        return `TopDownStop(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
       } catch(tom.library.sl.VisitFailure e) {
         throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
       }
