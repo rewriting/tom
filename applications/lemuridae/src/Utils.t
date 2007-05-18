@@ -10,8 +10,9 @@ import java.util.Collection;
 import tom.library.sl.*;
 
 import java.io.*;
-import antlr.*;
-import antlr.collections.*;
+import org.antlr.runtime.*;
+import org.antlr.runtime.tree.CommonTreeNodeStream;
+
 
 class Utils {
  
@@ -20,7 +21,7 @@ class Utils {
   %typeterm StringCollection { implement {Collection<String>} is_sort(t) { t instanceof Collection} }
   %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
 
-  private static InputStream stream = new DataInputStream(System.in);
+  private static InputStream stream = System.in;
 
   public static void setStream(InputStream newStream) {
     stream = newStream;
@@ -230,64 +231,72 @@ class Utils {
 
   // handling user input
 
-  public static Prop getProp() throws RecognitionException, TokenStreamException {
-    SeqLexer lexer = new SeqLexer(stream);
-    SeqParser parser = new SeqParser(lexer);
-    SeqTreeParser walker = new SeqTreeParser();
-
-    parser.start1();
-    AST t = parser.getAST();
-    Prop p  = walker.pred(t);
-    return p;
+  public static Prop getProp() throws RecognitionException, IOException {
+    CharStream input = new ANTLRInputStream(stream);
+    SeqLexer lex = new SeqLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lex);
+    SeqParser parser = new SeqParser(tokens);
+    SeqParser.start1_return root = parser.start1();
+    CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
+    SeqWalker walker = new SeqWalker(nodes);
+    return walker.pred();
   }
 
-  public static Term getTerm() throws RecognitionException, TokenStreamException {
-    SeqLexer lexer = new SeqLexer(stream);
-    SeqParser parser = new SeqParser(lexer);
-    SeqTreeParser walker = new SeqTreeParser();
-
-    parser.start2();
-    AST t = parser.getAST();
-    Term res  = walker.term(t);
-    return res;
+  public static Term getTerm() throws RecognitionException, IOException {
+    CharStream input = new ANTLRInputStream(stream);
+    SeqLexer lex = new SeqLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lex);
+    SeqParser parser = new SeqParser(tokens);
+    SeqParser.start2_return root = parser.start2();
+    CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
+    SeqWalker walker = new SeqWalker(nodes);
+    return walker.term();
   }
 
-  public static Command getCommand()
-    throws RecognitionException, TokenStreamException {
-      SeqLexer lexer = new SeqLexer(stream);
-      SeqParser parser = new SeqParser(lexer);
-      SeqTreeParser walker = new SeqTreeParser();
+  public static Command getCommand() throws RecognitionException, IOException {
+    System.out.println("ici0");
+    System.out.flush();
+    CharStream input = new ANTLRInputStream(stream);
+    System.out.println("ici1");
+    System.out.flush();
+    SeqLexer lex = new SeqLexer(input);
+    System.out.println("ici2");
+    System.out.flush();
+    CommonTokenStream tokens = new CommonTokenStream(lex);
+    System.out.println("ici3");
+    System.out.flush();
+    SeqParser parser = new SeqParser(tokens);
+    System.out.println("ici4");
+    System.out.flush();
+    SeqParser.command_return root = parser.command();
+    System.out.println("la");
+    System.out.flush();
+    CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
+    SeqWalker walker = new SeqWalker(nodes);
+    return walker.command();
+  }
 
-      parser.command();
-      AST t = parser.getAST();
-
-      Command res = walker.command(t);
-      return res;
-    }
-
-  public static ProofCommand getProofCommand()
-    throws RecognitionException, TokenStreamException {
-      SeqLexer lexer = new SeqLexer(stream);
-      SeqParser parser = new SeqParser(lexer);
-      SeqTreeParser walker = new SeqTreeParser();
-
-      parser.proofcommand();
-      AST t = parser.getAST();
-      ProofCommand res = walker.proofcommand(t);
-      return res;
-    }
+  public static ProofCommand getProofCommand() throws RecognitionException, IOException {
+    CharStream input = new ANTLRInputStream(stream);
+    SeqLexer lex = new SeqLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lex);
+    SeqParser parser = new SeqParser(tokens);
+    SeqParser.proofcommand_return root = parser.proofcommand();
+    CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
+    SeqWalker walker = new SeqWalker(nodes);
+    return walker.proofcommand();
+  }
 
   // FIXME : get rid of "ident" in parser and use lexer directly
-  public static String getIdent()
-    throws RecognitionException, TokenStreamException {
-      SeqLexer lexer = new SeqLexer(stream);
-      SeqParser parser = new SeqParser(lexer);
-      SeqTreeParser walker = new SeqTreeParser();
-
-      parser.ident();
-      AST t = parser.getAST();
-      String res = walker.ident(t);
-      return res;
+  public static String getIdent() throws RecognitionException, IOException {
+    CharStream input = new ANTLRInputStream(stream);
+    SeqLexer lex = new SeqLexer(input);
+    CommonTokenStream tokens = new CommonTokenStream(lex);
+    SeqParser parser = new SeqParser(tokens);
+    SeqParser.ident_return root = parser.ident();
+    CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
+    SeqWalker walker = new SeqWalker(nodes);
+    return walker.ident();
     }
 }
 

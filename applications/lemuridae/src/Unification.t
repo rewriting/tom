@@ -213,31 +213,5 @@ class Unification {
     }
     return p;
   }
-
-  public static void main(String[] args) throws Exception {
-    SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
-    SeqParser parser = new SeqParser(lexer);
-    parser.start1();
-    AST t = parser.getAST();
-    SeqTreeParser walker = new SeqTreeParser();
-    Prop p1  = walker.pred(t);
-    parser.start1();
-    t = parser.getAST();
-    Prop p2  = walker.pred(t);
-
-    Unification uni = new Unification();
-    HashMap<String, Term> res = uni.match(p1,p2);
-
-    if (res == null) {
-      System.out.println("clash !");
-    } else {
-      Set<Map.Entry<String,Term>> entries = res.entrySet();
-      for(Map.Entry<String,Term> ent: entries) {
-        System.out.println(ent.getKey() 
-            + " -> " 
-            + PrettyPrinter.prettyPrint((sequentsAbstractType)ent.getValue()));
-      }
-    }
-  }
 }
 

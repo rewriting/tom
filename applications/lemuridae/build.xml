@@ -56,6 +56,7 @@
 
     <!-- FIN LAMBDA -->
 
+    <!--
     <tomantlr target="${lemu.src}/SeqParser.g"
               outputdirectory="${lemu.gen}">
       <classpath refid="tom.classpath"/>
@@ -63,7 +64,8 @@
     <tomantlr target="${lemu.gen}/SeqWalker.g"
               outputdirectory="${lemu.gen}">
     	<classpath refid="tom.classpath"/> 	
-    </tomantlr>
+      </tomantlr>
+      -->
     <javac.preset destdir="${lemu.build}">
       <src path="${lemu.gen}"/>
       <classpath refid="tom.classpath"/>
