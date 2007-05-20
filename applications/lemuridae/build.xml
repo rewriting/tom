@@ -56,6 +56,20 @@
 
     <!-- FIN LAMBDA -->
 
+   <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="stable.classpath"/>
+    </taskdef>
+
+    <antlr3 target="${lemu.src}/Seq.g"
+            outputdirectory="${lemu.gen}">
+	    <classpath refid="tom.classpath"/>
+    </antlr3>
+    <antlr3 target="${lemu.src}/SeqWalker.g"
+            outputdirectory="${lemu.gen}">
+	    <classpath refid="tom.classpath"/>
+    </antlr3>
+
     <!--
     <tomantlr target="${lemu.src}/SeqParser.g"
               outputdirectory="${lemu.gen}">
