@@ -58,14 +58,14 @@
 
    <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
-      <classpath refid="stable.classpath"/>
+      <classpath refid="tom.classpath"/>
     </taskdef>
 
     <antlr3 target="${lemu.src}/Seq.g"
             outputdirectory="${lemu.gen}">
 	    <classpath refid="tom.classpath"/>
     </antlr3>
-    <antlr3 target="${lemu.src}/SeqWalker.g"
+    <antlr3 target="${lemu.gen}/SeqWalker.g"
             outputdirectory="${lemu.gen}">
 	    <classpath refid="tom.classpath"/>
     </antlr3>
