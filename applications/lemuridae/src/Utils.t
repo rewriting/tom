@@ -15,7 +15,7 @@ import org.antlr.runtime.tree.CommonTreeNodeStream;
 
 
 class Utils {
- 
+
   %include { sequents/sequents.tom }
   %include { sl.tom }
   %typeterm StringCollection { implement {Collection<String>} is_sort(t) { t instanceof Collection} }
@@ -59,13 +59,13 @@ class Utils {
 
   public static sequentsAbstractType 
     replaceVars(sequentsAbstractType subject, Map<String,Term> map) 
-  {
-    Strategy v = `ReplaceVars(map);
-    sequentsAbstractType res = null;
-    try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
-    catch (VisitFailure e ) { e.printStackTrace(); throw new RuntimeException(); }
-    return res;
-  }
+    {
+      Strategy v = `ReplaceVars(map);
+      sequentsAbstractType res = null;
+      try { res = (sequentsAbstractType) `TopDown(v).visit(subject); }
+      catch (VisitFailure e ) { e.printStackTrace(); throw new RuntimeException(); }
+      return res;
+    }
 
   private static Prop 
     replaceFreeVars(Prop p, Term old_term, Term new_term, Set<String> nonfresh) {
@@ -104,15 +104,15 @@ class Utils {
         }
         and(p1,p2) -> {
           return `and(replaceFreeVars(p1,old_term,new_term,nonfresh), 
-                      replaceFreeVars(p2,old_term,new_term,nonfresh));
+              replaceFreeVars(p2,old_term,new_term,nonfresh));
         }
         or(p1,p2) -> {
           return `or(replaceFreeVars(p1,old_term,new_term,nonfresh), 
-                     replaceFreeVars(p2,old_term,new_term,nonfresh));
+              replaceFreeVars(p2,old_term,new_term,nonfresh));
         }
         implies(p1,p2) -> {
           return `implies(replaceFreeVars(p1,old_term,new_term,nonfresh), 
-                          replaceFreeVars(p2,old_term,new_term,nonfresh));
+              replaceFreeVars(p2,old_term,new_term,nonfresh));
         }
       }
       return p; 
@@ -141,7 +141,7 @@ class Utils {
         if (`t==old_term) return `existsLeftInfo(new_term);
       }
     }
-    
+
     visit Prop {
       p -> { return `replaceFreeVars(p,old_term,new_term); }
     }
@@ -166,7 +166,7 @@ class Utils {
       Strategy v = `TopDown(ReplaceFreeVars(old_term, new_term));
       try { p = (sequentsAbstractType) v.visit(`p); }
       catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
-      
+
       return  p; 
     }
 
@@ -222,48 +222,63 @@ class Utils {
   }
 
   public static HashSet getNewVars(sequentsAbstractType seq) {
-     HashSet set = new HashSet();
-     try {
+    HashSet set = new HashSet();
+    try {
       `TopDown(CollectNewVars(set)).visit(seq);
-     } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
-     return set;
-   }
+    } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+    return set;
+  }
+
+  private static char[] append(char[] buf, int index, char c) {
+    if (index >= buf.length) {
+      char[] newbuf = new char[Math.max(index+1,buf.length*2)]; 
+      System.arraycopy(buf, 0, newbuf, 0, buf.length);
+      buf = newbuf;
+    }
+    buf[index] = c;
+    return buf;
+  }
+
+  private static class InputRes {
+    public InputRes(char[] buf, int size) {
+      this.buf = buf; this.size = size;
+    }
+    public char[] buf = null;
+    public int size = 0;
+  }
 
   // handling user input
-  public static String readToPoint() throws IOException {
-    StringBuffer res = new StringBuffer();
+  private static InputRes getInput() throws IOException {
+    char[] buf = new char[1024];
+    int index = 0;
     char c = 0;
     char last = 0;
+
     while (c != '.' && c != -1) {
       last = c;
       c = (char) stream.read();
-      res.append(c);
+      append(buf,index++,c);
       if (last == '/' && c == '/') {
         while(c != '\n') {
           last = c;
           c = (char) stream.read();
-          res.append(c);
+          append(buf,index++,c);
         }
       } else if (last == '/' && c == '*') {
         while( ! (last == '*' && c == '/')) {
           last = c;
           c = (char) stream.read();
-          res.append(c);
+          append(buf,index++,c);
         }
       }
     }
-    return res.toString();
-    /*
-    while(stream.available() < 1) System.out.println("ici");
-    byte[] b = new byte[stream.available()];
-    stream.read(b);
-    return new String(b);
-    */
+    return new InputRes(buf,index);
   }
 
   public static Prop getProp() throws RecognitionException, IOException {
-    CharStream input = new ANTLRStringStream(readToPoint());
-    SeqLexer lex = new SeqLexer(input);
+    InputRes input = getInput();
+    CharStream cinput = new ANTLRStringStream(input.buf,input.size);
+    SeqLexer lex = new SeqLexer(cinput);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
     SeqParser.start1_return root = parser.start1();
@@ -273,8 +288,9 @@ class Utils {
   }
 
   public static Term getTerm() throws RecognitionException, IOException {
-    CharStream input = new ANTLRStringStream(readToPoint());
-    SeqLexer lex = new SeqLexer(input);
+    InputRes input = getInput();
+    CharStream cinput = new ANTLRStringStream(input.buf,input.size);
+    SeqLexer lex = new SeqLexer(cinput);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
     SeqParser.start2_return root = parser.start2();
@@ -284,8 +300,9 @@ class Utils {
   }
 
   public static Command getCommand() throws RecognitionException, IOException {
-    CharStream input = new ANTLRStringStream(readToPoint());
-    SeqLexer lex = new SeqLexer(input);
+    InputRes input = getInput();
+    CharStream cinput = new ANTLRStringStream(input.buf,input.size);
+    SeqLexer lex = new SeqLexer(cinput);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
     SeqParser.command_return root = parser.command();
@@ -295,8 +312,9 @@ class Utils {
   }
 
   public static ProofCommand getProofCommand() throws RecognitionException, IOException {
-    CharStream input = new ANTLRStringStream(readToPoint());
-    SeqLexer lex = new SeqLexer(input);
+    InputRes input = getInput();
+    CharStream cinput = new ANTLRStringStream(input.buf,input.size);
+    SeqLexer lex = new SeqLexer(cinput);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
     SeqParser.proofcommand_return root = parser.proofcommand();
@@ -307,14 +325,15 @@ class Utils {
 
   // FIXME : get rid of "ident" in parser and use lexer directly
   public static String getIdent() throws RecognitionException, IOException {
-    CharStream input = new ANTLRStringStream(readToPoint());
-    SeqLexer lex = new SeqLexer(input);
+    InputRes input = getInput();
+    CharStream cinput = new ANTLRStringStream(input.buf,input.size);
+    SeqLexer lex = new SeqLexer(cinput);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
     SeqParser.ident_return root = parser.ident();
     CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
     SeqWalker walker = new SeqWalker(nodes);
     return walker.ident();
-    }
+  }
 }
 
