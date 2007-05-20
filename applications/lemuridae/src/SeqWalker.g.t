@@ -24,6 +24,9 @@ pred returns [sequents.types.Prop p]
       ;
 
 term_list returns [sequents.types.TermList l] 
+@init {
+  l = `concTerm();
+}
     : t=term { l = `concTerm(t,l*); }
     | ^(COMMA left=term_list t=term) {  l = `concTerm(left*,t); }
     ;
@@ -38,7 +41,8 @@ term returns [sequents.types.Term t]
     | ^(PLUS t1=term t2=term) { t = `funAppl("plus",concTerm(t1,t2)); }
     | ^(DIV t1=term t2=term) { t = `funAppl("div",concTerm(t1,t2)); }
     | ^(MINUS t1=term t2=term) { t = `funAppl("minus",concTerm(t1,t2)); }
-    | ^(LPAREN f=ID l=term_list) { t = `funAppl($f.text,l); }
+    | ^(FAPPL f=ID l=term_list) { t = `funAppl($f.text,l); }
+    | ^(FAPPL f=ID) { t = `funAppl($f.text,concTerm()); }
     ;
 
 
@@ -65,7 +69,7 @@ proofcommand returns [sequents.types.ProofCommand c]
   : i=ID { c = `proofCommand($i.text); }
   | ^(FOCUS v=ID) {c = `focusCommand($v.text); }
   | ^(RRULE n=NUMBER) {c = `ruleCommand(Integer.parseInt($n.text)); }
-  | RRULE { c = `ruleCommand(-1); }
+  | RRULEALONE { c = `ruleCommand(-1); }
   | ^(CUT p=pred) { c = `cutCommand(p); }
   | ^(THEOREM name=ID) { c = `theoremCommand($name.text); }
   | NORMALIZE { c = `normalizeSequent(); }

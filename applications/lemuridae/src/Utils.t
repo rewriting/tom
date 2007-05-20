@@ -230,9 +230,39 @@ class Utils {
    }
 
   // handling user input
+  public static String readToPoint() throws IOException {
+    StringBuffer res = new StringBuffer();
+    char c = 0;
+    char last = 0;
+    while (c != '.' && c != -1) {
+      last = c;
+      c = (char) stream.read();
+      res.append(c);
+      if (last == '/' && c == '/') {
+        while(c != '\n') {
+          last = c;
+          c = (char) stream.read();
+          res.append(c);
+        }
+      } else if (last == '/' && c == '*') {
+        while( ! (last == '*' && c == '/')) {
+          last = c;
+          c = (char) stream.read();
+          res.append(c);
+        }
+      }
+    }
+    return res.toString();
+    /*
+    while(stream.available() < 1) System.out.println("ici");
+    byte[] b = new byte[stream.available()];
+    stream.read(b);
+    return new String(b);
+    */
+  }
 
   public static Prop getProp() throws RecognitionException, IOException {
-    CharStream input = new ANTLRInputStream(stream);
+    CharStream input = new ANTLRStringStream(readToPoint());
     SeqLexer lex = new SeqLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
@@ -243,7 +273,7 @@ class Utils {
   }
 
   public static Term getTerm() throws RecognitionException, IOException {
-    CharStream input = new ANTLRInputStream(stream);
+    CharStream input = new ANTLRStringStream(readToPoint());
     SeqLexer lex = new SeqLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
@@ -254,30 +284,18 @@ class Utils {
   }
 
   public static Command getCommand() throws RecognitionException, IOException {
-    System.out.println("ici0");
-    System.out.flush();
-    CharStream input = new ANTLRInputStream(stream);
-    System.out.println("ici1");
-    System.out.flush();
+    CharStream input = new ANTLRStringStream(readToPoint());
     SeqLexer lex = new SeqLexer(input);
-    System.out.println("ici2");
-    System.out.flush();
     CommonTokenStream tokens = new CommonTokenStream(lex);
-    System.out.println("ici3");
-    System.out.flush();
     SeqParser parser = new SeqParser(tokens);
-    System.out.println("ici4");
-    System.out.flush();
     SeqParser.command_return root = parser.command();
-    System.out.println("la");
-    System.out.flush();
     CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
     SeqWalker walker = new SeqWalker(nodes);
     return walker.command();
   }
 
   public static ProofCommand getProofCommand() throws RecognitionException, IOException {
-    CharStream input = new ANTLRInputStream(stream);
+    CharStream input = new ANTLRStringStream(readToPoint());
     SeqLexer lex = new SeqLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);
@@ -289,7 +307,7 @@ class Utils {
 
   // FIXME : get rid of "ident" in parser and use lexer directly
   public static String getIdent() throws RecognitionException, IOException {
-    CharStream input = new ANTLRInputStream(stream);
+    CharStream input = new ANTLRStringStream(readToPoint());
     SeqLexer lex = new SeqLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lex);
     SeqParser parser = new SeqParser(tokens);

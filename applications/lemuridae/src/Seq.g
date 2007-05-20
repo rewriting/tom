@@ -5,7 +5,7 @@ options {
     ASTLabelType=CommonTree; // type of $stat.tree ref etc...
 }
 
-tokens { FAPPL; APPL; }
+tokens { FAPPL; APPL; RRULEALONE; }
 
 pred: implpred (EQUIV^ pred)*;
 
@@ -15,12 +15,13 @@ orpred: andpred (OR^ pred)*;
 
 andpred: negpred (AND^ pred)*;
 
-negpred: NOT^ pred
-       | FORALL^ ID COMMA! pred
-       | EXISTS^ ID COMMA! pred
-       | LPAREN! pred RPAREN!
-       | atom
-       ;
+negpred: NOT^ forallpred | forallpred;
+
+forallpred: FORALL^ ID COMMA! pred
+          | EXISTS^ ID COMMA! pred
+          | LPAREN! pred RPAREN!
+          | atom
+          ;
 
 atom: appl
     | BOTTOM
@@ -73,7 +74,7 @@ command: PROOF^ ID COLUMN! pred DOT!
 
 proofcommand: FOCUS^ ID DOT!
             | RRULE^ NUMBER DOT!
-            | RRULE DOT // TODO
+            | RRULE DOT -> ^(RRULEALONE) 
             | CUT^ pred DOT!
             | THEOREM^ ID DOT!
             | NORMALIZE^ DOT!

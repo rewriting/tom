@@ -81,7 +81,7 @@
       </tomantlr>
       -->
     <javac.preset destdir="${lemu.build}">
-      <src path="${lemu.gen}"/>
+      <src path="${lemu.gen}:${lemu.src}"/>
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
