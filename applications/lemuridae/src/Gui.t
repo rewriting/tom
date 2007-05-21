@@ -202,7 +202,6 @@ public final class Gui implements Observer {
     
     // initialisation du JSplitPane contenant les deux zones
     JSplitPane c = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollPane1,scrollPane2);
-    c.setDividerLocation(300);
     myPanel.setLayout(new BorderLayout());
     myPanel.add(c,BorderLayout.CENTER);
     
@@ -216,6 +215,9 @@ public final class Gui implements Observer {
     // on rend le tous visible
     mainWindow.setSize(600,500);
     mainWindow.setVisible(true);
+
+    // divider
+    c.setDividerLocation(.5);
   }
 
   // methode pour faire passer la commande de commandField a ProofBuilder et msgArea

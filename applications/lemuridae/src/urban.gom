@@ -9,6 +9,7 @@ CNProp = cnprop(a:CoName,p:Prop)
 
 NContext = ncontext(NProp*)
 CNContext = cncontext(CNProp*)
+/*
 ncontext:make_insert(a,l) {
   %match(NProp a, NContext l) {
     nprop(x,p1),ncontext(_*,nprop(x,p2),_*) -> {
@@ -24,6 +25,7 @@ cncontext:make_insert(a,l) {
     }
   }
 }
+*/
 
 
 NSequent = nsequent(h:NContext,c:CNContext)

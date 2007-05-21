@@ -88,23 +88,27 @@ public class Proofterms {
           ),nsequent((ng1*,nprop(name,a),ng2*),cnd) -> {
         return `implyL(cnprop(coname(cncount+1),A),term2proofterm(p1,nsequent(ncontext(ng1*,ng2*),cncontext(cnprop(coname(cncount+1),A), cnd*)),ncount,cncount+1),nprop(name(ncount+1),B),term2proofterm(p2,nsequent(ncontext(ng1*,nprop(name(ncount+1),B),ng2*),cnd),ncount+1,cncount),name);
       }
-      /*
 
       rule(
           contractionLeftInfo[],
           (p@rule(_,_,sequent((g1*,a,a,g2*), d),_)),
           sequent((g1*,a,g2*),d),
           a
-          )
-        -> { return proofcheck(`p);}
+          ),nsequent((ng1*,np@nprop(name,a),ng2*),cnd)
+        -> {
+          return `term2proofterm(p,nsequent(ncontext(ng1*,np,np,ng2*),cnd),ncount,cncount);
+        }
+      
       rule(
           contractionRightInfo[],
           (p@rule(_,_,sequent(g,(d1*,a,a,d2*)),_)),
           sequent(g,(d1*,a,d2*)),
           a
-          )
-        -> { return proofcheck(`p); }
-        */
+          ),nsequent(ng,(cnd1*,cnp@cnprop(coname,a),cnd2*))
+        -> {
+          return `term2proofterm(p,nsequent(ng,cncontext(cnd1*,cnp,cnp,cnd2*)),ncount,cncount);
+        }
+        
 
       rule(
           weakLeftInfo[],
