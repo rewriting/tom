@@ -16,8 +16,8 @@ termrule succ(x) * y -> x * y + y.
 proprule in(l,fNull(t)) -> Null(appl(t,l)).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 proprule in(l,fN(t)) -> N(appl(t,l)).
-rule eq(x,y) -> forall A,(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
-rule N(n) -> forall A, in(cons(0,nil()),A) => ( forall y,(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) ) => in(cons(n,nil()),A) .
+rule eq(x,y) -> forall A, in(cons(x,nil()),A) => in(cons(y,nil()),A).
+rule N(n) -> forall A, in(cons(0,nil()),A) => ( forall y,in(cons(y,nil()),A) => in(cons(succ(y),nil()),A) ) => in(cons(n,nil()),A) .
 hered.
 rule Null(0) -> True.
 rule Null(succ(x)) -> False.
@@ -75,7 +75,7 @@ axiom.
 proof eqrefl: forall x,eq(x,x).
 auto.
 
-proof succisafun: forall x,(forall y,( eq(x,y) => eq(succ(x),succ(y)) )).
+proof succisafun: forall x, forall y, eq(x,y) => eq(succ(x),succ(y)).
 intros.
 focus h1. rule. fEq(S(succ(x0)),succ(one())).
 reduce.
@@ -123,14 +123,14 @@ intros.
 autoreduce.
 autoreduce.
 
-proof discriminate: forall n,(~eq(0,succ(n))).
+proof discriminate: forall n, ~eq(0,succ(n)).
 intros.
 focus h1. rule. fNull(one()).
 autoreduce.
 autoreduce.
 
 
-proof pair2n : (forall x, (forall y, eq(x+y,y+x))) => forall n, N(n) => Pair(2*n).
+proof pair2n : (forall x, forall y, eq(x+y,y+x)) => forall n, N(n) => Pair(2*n).
 reduce.
 intros.
 focus h2. rule. fPair(one()+one()).
@@ -147,7 +147,7 @@ rule.
 axiom.
 autoreduce.
 
-proof eqsym: forall x,(forall y,( eq(x,y) => eq(y,x) )).
+proof eqsym: forall x, forall y, eq(x,y) => eq(y,x).
 intros.
 focus h1. rule. fEq(one(),S(x0)).
 reduce.
@@ -156,7 +156,7 @@ reduce.
 theorem eqrefl.
 focus h2. intro. x0. axiom.
 
-proof eqtrans:  forall x,(forall y,(forall z,( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
+proof eqtrans:  forall x, forall y, forall z,( eq(x,y) => (eq(y,z) => eq(x,z)).
 auto.
 focus h2. rule. A0.
 focus h4. rule. A0.
@@ -165,7 +165,7 @@ axiom.
 axiom.
 
 
-proof nplus0:   forall n,(N(n) => eq(n+0,n)).
+proof nplus0:   forall n, N(n) => eq(n+0,n).
 intros.
 focus h1. rule. fEq(one()+S(0),one()).
 reduce. axiom.
@@ -179,7 +179,7 @@ theorem eqrefl.
 focus h2. intro. 0.
 axiom.
 
-proof plusassoc:   forall x,(forall y,(forall z,(N(x) => eq( x+(y+z) , (x+y)+z )))).
+proof plusassoc:   forall x, forall y, forall z,(N(x) => eq( x+(y+z) , (x+y)+z ).
 intros.
 focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
 reduce. axiom.
@@ -193,7 +193,7 @@ theorem eqrefl.
 focus h2. intro. y0+z0. axiom.
 
 
-proof plusnSm:  forall n,(forall m,( N(n) => eq(succ(n+m),n+succ(m)))).
+proof plusnSm:  forall n, forall m, N(n) => eq(succ(n+m),n+succ(m)).
 intros.
 focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
 reduce. axiom.
@@ -206,7 +206,7 @@ reduce.
 theorem eqrefl.
 focus h2. intro. succ(m0). axiom.
 
-proof pluscommut:  forall n,(forall m,(N(n)=>(N(m)=>eq(n+m,m+n)))).
+proof pluscommut:  forall n, forall m, N(n)=>(N(m)=>eq(n+m,m+n)).
 intros.
 focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
 reduce. axiom.
@@ -233,7 +233,7 @@ focus h6. intro. succ(m0+y0).
 focus h6. intro. m0+succ(y0).
 intros.
 
-proof multn0:  forall n,(N(n) => eq(0,n*0)).
+proof multn0:  forall n, N(n) => eq(0,n*0).
 intros.
 focus h1. rule. fEq(S(0),one()*S(0)).
 reduce. axiom.

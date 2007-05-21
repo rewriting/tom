@@ -200,16 +200,30 @@ class PrettyPrinter {
       
       relationAppl(n, ()) -> { return `n;}
       relationAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
-      and(p1, p2) -> { return "(" + toLatex(`p1) + " \\land " + toLatex(`p2) + ")";}
-      or(p1, p2) -> { return "(" + toLatex(`p1) + " \\lor " + toLatex(`p2) + ")";}
-      
-      
-      //negation
+
       implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
-      implies(p1, p2) -> { return "(" + toLatex(`p1) + " \\Rightarrow " + toLatex(`p2) + ")";}
-      forAll(n, p) -> { return "(\\forall " + `n + ", " + toLatex(`p) + ")";}
-      exists(n, p) -> { return "(\\exists " + `n + ", " + toLatex(`p) + ")";}
-      bottom() -> { return "\\perp";  }
+
+      implies(p1@relationAppl[],p2) -> {
+        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@ ]% ; 
+      }
+      implies(p1,p2) -> {
+        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@ ]% ; 
+      }
+      or(p1@relationAppl[],p2) -> { 
+        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@ ]%; 
+      }
+      or(p1,p2) -> {
+        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@ ]%; 
+      }
+      and(p1@relationAppl[],p2) -> { 
+        return %[@toLatex(`p1)@ \land @toLatex(`p2)@ ]%; 
+      }
+      and(p1,p2) -> { 
+        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@ ]%; 
+      }
+      forAll(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
+      exists(n, p) -> { return "\\exists " + `n + ", " + toLatex(`p);}
+      bottom() -> { return "\\bot";  }
       top() -> { return "\\top";  }
     }	
 
@@ -435,20 +449,29 @@ class PrettyPrinter {
     }
 
     %match(Prop term) {
+      implies(p1@relationAppl[],p2) -> {
+        return %[@prettyPrint(`p1)@ => @prettyPrint(`p2)@ ]% ; 
+      }
+      implies(p1,p2) -> {
+        return %[(@prettyPrint(`p1)@) => @prettyPrint(`p2)@ ]% ; 
+      }
+      or(p1@relationAppl[],p2) -> { 
+        return %[@prettyPrint(`p1)@ \/ @prettyPrint(`p2)@ ]%; 
+      }
+      or(p1,p2) -> {
+        return %[(@prettyPrint(`p1)@) \/ @prettyPrint(`p2)@ ]%; 
+      }
+      and(p1@relationAppl[],p2) -> { 
+        return %[@prettyPrint(`p1)@ /\ @prettyPrint(`p2)@ ]%; 
+      }
       and(p1,p2) -> { 
-        return "(" + prettyPrint(`p1) + " /\\ " + prettyPrint(`p2) + ")";
-      }
-      or(p1,p2) -> { 
-        return "(" + prettyPrint(`p1) + " \\/ " + prettyPrint(`p2) + ")";
-      }
-      implies(p1,p2) -> { 
-        return "(" + prettyPrint(`p1) + " => " + prettyPrint(`p2) + ")";
+        return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@ ]%; 
       }
       forAll(x,p1) -> {
-        return "(forall " + `x + ", " + prettyPrint(`p1) + ")";
+        return "forall " + `x + ", " + prettyPrint(`p1);
       }
       exists(x,p1) -> { 
-        return "(exists " + `x + ", " + prettyPrint(`p1) + ")";
+        return "exists " + `x + ", " + prettyPrint(`p1);
       }
       relationAppl(r,()) -> {
         return `r;
