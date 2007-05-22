@@ -302,19 +302,31 @@ public class Proofterms {
       name -> {return true;}
     }
 
-    %match (ProofTerm term) {
+    %match (ProofTerm term) { // INCOMPLET MANQUE PREMIER ORDRE
       ax(n,cn) -> {return `nameAppearsFree(n,name); }
       cut(a,m1,x,m2) -> {return `nameAppearsFree(m2,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(a,name)));}
       falseL(n) -> {return `nameAppearsFree(n,name); }
       trueR(cn) -> {return false;}
       andR(a,m1,b,m2,nc) -> {return `nameAppearsFree(m1,name) || `nameAppearsFree(m2,name) ; }
-      andL(x,y,m,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m,name) && `nameAppearsFree(x,name) && `nameAppearsFree(y,name)) ;}
+      andL(x,y,m,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m,name) && (!`nameAppearsFree(x,name)) && (!`nameAppearsFree(y,name))) ;}
       orR(a,b,m,cn) -> {return `nameAppearsFree(m,name); }
       orL(x,m1,y,m2,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name))) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(y,name))); }
       implyR(x,a,m1,cn) -> {return `nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name)) ;}
+      implyL(a,m1,x,m2,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m1,name)) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(x,name)));}
     }
 
     // in any other case, return false
+    return false;
+  }
+
+  public static boolean nameTopIntroduced(ProofTerm term, Name name) { // INCOMPLET MANQUE PREMIER ORDRE
+    %match (ProofTerm term) {
+      ax(n,cn) -> {return `nameAppearsFree(n,name); }
+      falseL(n) -> {return `nameAppearsFree(n,name); }
+      andL(x,y,m,n) -> {return `nameAppearsFree(n,name) ;}
+      orL(x,m1,y,m2,n) -> {return `nameAppearsFree(n,name) ; }
+      implyL(a,m1,x,m2,n) -> {return `nameAppearsFree(n,name) ;}
+    }
     return false;
   }
 }
