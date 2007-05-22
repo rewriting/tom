@@ -76,6 +76,7 @@ begin
       repeat
         TomLib := '%TOM_HOME%\lib\' + FindRec.Name + ';' + TomLib + ';';
       until not FindNext(FindRec);
+      RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'TOM_LIB', TomLib + '.;');
       // if we can get the old classpath
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
         begin
@@ -85,7 +86,6 @@ begin
         begin
           RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', '%TOM_LIB%');
         end
-      RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'TOM_LIB', TomLib + '.;');
     finally
       FindClose(FindRec);
     end;
