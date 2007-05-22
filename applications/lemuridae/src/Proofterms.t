@@ -282,4 +282,39 @@ public class Proofterms {
     }
    return null;
   }
+
+  public static boolean nameAppearsFree(urbanAbstractType term, Name name) {
+    %match (NProp term) {
+      nprop(name,p) -> {return true;}
+      nprop(n,p) -> {return false;}
+    }
+
+    %match (NContext term) {
+      () -> {return false;}
+      (a,b*) -> {return `nameAppearsFree(a,name) || `nameAppearsFree(b,name);}
+    }
+
+    %match (NSequent term) {
+      nsequent(ncont,cncont) -> {return `nameAppearsFree(ncont,name); }
+    }
+
+    %match (Name term) {
+      name -> {return true;}
+    }
+
+    %match (ProofTerm term) {
+      ax(n,cn) -> {return `nameAppearsFree(n,name); }
+      cut(a,m1,x,m2) -> {return `nameAppearsFree(m2,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(a,name)));}
+      falseL(n) -> {return `nameAppearsFree(n,name); }
+      trueR(cn) -> {return false;}
+      andR(a,m1,b,m2,nc) -> {return `nameAppearsFree(m1,name) || `nameAppearsFree(m2,name) ; }
+      andL(x,y,m,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m,name) && `nameAppearsFree(x,name) && `nameAppearsFree(y,name)) ;}
+      orR(a,b,m,cn) -> {return `nameAppearsFree(m,name); }
+      orL(x,m1,y,m2,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name))) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(y,name))); }
+      implyR(x,a,m1,cn) -> {return `nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name)) ;}
+    }
+
+    // in any other case, return false
+    return false;
+  }
 }
