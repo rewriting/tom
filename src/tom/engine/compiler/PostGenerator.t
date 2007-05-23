@@ -57,10 +57,10 @@ public class PostGenerator {
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
  
-  public static TomTerm performPostGenerationTreatment(TomTerm term) 
+  public static Instruction performPostGenerationTreatment(Instruction instruction) 
        throws VisitFailure{
-    term = (TomTerm)`TopDown(ChangeVarDeclarations()).visit(term);
-    return (TomTerm)`InnermostId(AddRef()).visit(term);
+    instruction = (Instruction)`TopDown(ChangeVarDeclarations()).visit(instruction);
+    return (Instruction)`InnermostId(AddRef()).visit(instruction);
     //return term;
   }
 

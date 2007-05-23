@@ -74,8 +74,10 @@ public class ConstraintCompiler {
   // looks for a 'Match' instruction:
   // 1. transforms each sequence of patterns into a conjuction of MatchConstraint
   // 2. launch PropagationManager
-  // 3. launch GenerationManager
-  // 4. transforms resulted expression into a CompiledMatch
+  // 3. launch PreGenerator
+  // 4. launch GenerationManager
+  // 5. launch PostGenerator  
+  // 6. transforms resulted expression into a CompiledMatch
   %strategy CompileMatch() extends Identity(){
     visit Instruction {			
       Match(SubjectList(subjectList),patternInstructionList, matchOptionList)  -> {				
@@ -93,12 +95,15 @@ public class ConstraintCompiler {
           concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) -> {
             Constraint constraint = ConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);            
             try {
-              actionNumber++;              
-              Constraint propagationResult = ConstraintPropagator.performPropagations(constraint);              
-              Instruction matchingAutomata = ConstraintGenerator.performGenerations(propagationResult, `action);
+              actionNumber++;
               
+              Constraint propagationResult = ConstraintPropagator.performPropagations(constraint);
+              //Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
+              Instruction matchingAutomata = ConstraintGenerator.performGenerations(propagationResult, `action);
+              Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
+                            
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
-              TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
+              TomTerm automata = `Automata(optionList,patternList,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
             } catch(Exception e) {
               e.printStackTrace();
