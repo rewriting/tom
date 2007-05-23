@@ -224,54 +224,94 @@ public class Proofterms {
   }
 
   public static NTree typeProofterm (ProofTerm pi, NSequent nseq) { // INCOMPLET
-    %match (ProofTerm pi, NSequent nseq) {
-      pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
-        return `nrule(axiomInfo(),npremisses(),ns,pt);
+    if (isImplicitContraction(pi)) {
+      System.out.println("implicit contraction detected");
+      %match (ProofTerm pi, NSequent nseq) {
+        /*pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,cnprop(cn, and(A,B)),cnd2*)) -> {
+          return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,b,cnd2*)))),ns,pt);
+        }*/
+        pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, active@nprop(n, and(A,B)),ng2*), cnd) -> {
+          return `nrule(andLeftInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,y,ng2*),cnd))),ns,pt);
+        }
+        pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent((ng1*,active@nprop(n, or(A,B)),ng2*),cnd) -> {
+          return `nrule(orLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,active,x,ng2*),cnd)),typeProofterm(m2,nsequent(ncontext(ng1*,active,y,ng2*),cnd))),ns,pt);
+        }
+        /*pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,(cnd1*, cnprop(cn, or(A,B)),cnd2*)) -> {
+          return `nrule(orRightInfo(),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,b,cnd2*)))),ns,pt);
+        }*/
+        pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent((ng1*,active@nprop(name,implies(A,B)),ng2*),cnd) -> {
+          return `nrule(impliesLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,active,ng2*),cncontext(a,cnd*))),typeProofterm(m2,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
+        }
+        /*pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,cnprop(coname,implies(A,B)),cnd2*)) -> {
+          return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        }
+        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,forAll(var,B)),cnd2*)) -> {
+          return `nrule(forAllRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        }
+        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,nprop(name,forAll(var,B)),ng2*),cnd) -> {
+          return `nrule(forAllLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        }
+        pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,nprop(name,exists(var,B)),ng2*),cnd) -> {
+          return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        }
+        pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,exists(var,B)),cnd2*)) -> {
+          return `nrule(existsRightInfo(t),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        }*/
       }
-      pt@cut(cn@cnprop(_,a),pt1,n@nprop(_,a),pt2), ns@nsequent(ng, cnd) -> {
-        return `nrule(cutInfo(a),npremisses(typeProofterm(pt1,nsequent(ng, cncontext(cn,cnd*))),typeProofterm(pt2,nsequent(ncontext(ng*,n),cnd))),ns,pt);
-      }
-      pt@falseL(name), ns@nsequent((_*,nprop(name,bottom()),_*),_) -> {
-        return `nrule(bottomInfo(),npremisses(),ns,pt);
-      }
-      pt@trueR(coname), ns@nsequent(_,(_*,cnprop(coname,top()),_*)) -> {
-        return `nrule(topInfo(),npremisses(),ns,pt);
-      }
-      pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,cnprop(cn, and(A,B)),cnd2*)) -> {
-        return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,b,cnd2*)))),ns,pt);
-      }
-      pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, nprop(n, and(A,B)),ng2*), cnd) -> {
-        return `nrule(andLeftInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,y,ng2*),cnd))),ns,pt);
-      }
-      pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent((ng1*,nprop(n, or(A,B)),ng2*),cnd) -> {
-        return `nrule(orLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,x,ng2*),cnd)),typeProofterm(m2,nsequent(ncontext(ng1*,y,ng2*),cnd))),ns,pt);
-      }
-      pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,(cnd1*, cnprop(cn, or(A,B)),cnd2*)) -> {
-        return `nrule(orRightInfo(),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,b,cnd2*)))),ns,pt);
-      }
-      pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent((ng1*,nprop(name,implies(A,B)),ng2*),cnd) -> {
-        return `nrule(impliesLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,ng2*),cncontext(a,cnd*))),typeProofterm(m2,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
-      }
-      pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,cnprop(coname,implies(A,B)),cnd2*)) -> {
-        return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,a,cnd2*)))),ns,pt);
-      }
-      pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,forAll(var,B)),cnd2*)) -> {
-        return `nrule(forAllRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
-      }
-      pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,nprop(name,forAll(var,B)),ng2*),cnd) -> {
-        return `nrule(forAllLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
-      }
-      pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,nprop(name,exists(var,B)),ng2*),cnd) -> {
-        return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
-      }
-      pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,exists(var,B)),cnd2*)) -> {
-        return `nrule(existsRightInfo(t),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
+    }
+    else {
+      System.out.println("no Implicit Contraction");
+      System.out.println(pi);
+      %match (ProofTerm pi, NSequent nseq) {
+        pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
+          return `nrule(axiomInfo(),npremisses(),ns,pt);
+        }
+        pt@cut(cn@cnprop(_,a),pt1,n@nprop(_,a),pt2), ns@nsequent(ng, cnd) -> {
+          return `nrule(cutInfo(a),npremisses(typeProofterm(pt1,nsequent(ng, cncontext(cn,cnd*))),typeProofterm(pt2,nsequent(ncontext(ng*,n),cnd))),ns,pt);
+        }
+        pt@falseL(name), ns@nsequent((_*,nprop(name,bottom()),_*),_) -> {
+          return `nrule(bottomInfo(),npremisses(),ns,pt);
+        }
+        pt@trueR(coname), ns@nsequent(_,(_*,cnprop(coname,top()),_*)) -> {
+          return `nrule(topInfo(),npremisses(),ns,pt);
+        }
+        pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,cnprop(cn, and(A,B)),cnd2*)) -> {
+          return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,b,cnd2*)))),ns,pt);
+        }
+        pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, nprop(n, and(A,B)),ng2*), cnd) -> {
+          return `nrule(andLeftInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,y,ng2*),cnd))),ns,pt);
+        }
+        pt@orL(x@nprop(n1,A),m1,y@nprop(n2,B),m2,n), ns@nsequent((ng1*,nprop(n, or(A,B)),ng2*),cnd) -> {
+          return `nrule(orLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,x,ng2*),cnd)),typeProofterm(m2,nsequent(ncontext(ng1*,y,ng2*),cnd))),ns,pt);
+        }
+        pt@orR(a@cnprop(cn1,A),b@cnprop(cn2,B),m,cn), ns@nsequent(ng,(cnd1*, cnprop(cn, or(A,B)),cnd2*)) -> {
+          return `nrule(orRightInfo(),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,b,cnd2*)))),ns,pt);
+        }
+        pt@implyL(a@cnprop(cn,A),m1, x@nprop(n,B), m2, name), ns@nsequent((ng1*,nprop(name,implies(A,B)),ng2*),cnd) -> {
+          return `nrule(impliesLeftInfo(),npremisses(typeProofterm(m1,nsequent(ncontext(ng1*,ng2*),cncontext(a,cnd*))),typeProofterm(m2,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        }
+        pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,cnprop(coname,implies(A,B)),cnd2*)) -> {
+          return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        }
+        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,forAll(var,B)),cnd2*)) -> {
+          return `nrule(forAllRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        }
+        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,nprop(name,forAll(var,B)),ng2*),cnd) -> {
+          return `nrule(forAllLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        }
+        pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,nprop(name,exists(var,B)),ng2*),cnd) -> {
+          return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        }
+        pt@existsR(a@cnprop(cn,A), m, t, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,exists(var,B)),cnd2*)) -> {
+          return `nrule(existsRightInfo(t),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        }
       }
 
     }
+    System.out.println(pi+" , "+nseq);
     return null;
   }
- 
+
   public static NTree typeProof(Tree proof) {
     %match(Tree proof) {
       rule(_,_,c,_) -> {
@@ -291,7 +331,7 @@ public class Proofterms {
 
     %match (NContext term) {
       () -> {return false;}
-      (a,b*) -> {return `nameAppearsFree(a,name) || `nameAppearsFree(b,name);}
+      (a,b*) -> {return (`nameAppearsFree(a,name) || `nameAppearsFree(b,name));}
     }
 
     %match (NSequent term) {
@@ -299,20 +339,21 @@ public class Proofterms {
     }
 
     %match (Name term) {
-      name -> {return true;}
+      name -> { System.out.println("occurence of "+name+" found"); return true;} // c'est la que ca coince
+      n -> {System.out.println(`n+" non egal a "+name) ;return false;}
     }
 
     %match (ProofTerm term) { // INCOMPLET MANQUE PREMIER ORDRE
       ax(n,cn) -> {return `nameAppearsFree(n,name); }
-      cut(a,m1,x,m2) -> {return `nameAppearsFree(m2,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(a,name)));}
+      cut(a,m1,x,m2) -> {return (`nameAppearsFree(m2,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(a,name))));}
       falseL(n) -> {return `nameAppearsFree(n,name); }
       trueR(cn) -> {return false;}
-      andR(a,m1,b,m2,nc) -> {return `nameAppearsFree(m1,name) || `nameAppearsFree(m2,name) ; }
-      andL(x,y,m,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m,name) && (!`nameAppearsFree(x,name)) && (!`nameAppearsFree(y,name))) ;}
+      andR(a,m1,b,m2,nc) -> {return (`nameAppearsFree(m1,name) || `nameAppearsFree(m2,name)) ; }
+      andL(x,y,m,n) -> {return (`nameAppearsFree(n,name) || (`nameAppearsFree(m,name) && (!`nameAppearsFree(x,name)) && (!`nameAppearsFree(y,name)))) ;}
       orR(a,b,m,cn) -> {return `nameAppearsFree(m,name); }
-      orL(x,m1,y,m2,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name))) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(y,name))); }
-      implyR(x,a,m1,cn) -> {return `nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name)) ;}
-      implyL(a,m1,x,m2,n) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m1,name)) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(x,name)));}
+      orL(x,m1,y,m2,n) -> {return (`nameAppearsFree(n,name) || (`nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name))) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(y,name)))); }
+      implyR(x,a,m1,cn) -> {return (`nameAppearsFree(m1,name) && (! `nameAppearsFree(x,name))) ;}
+      implyL(a,m1,x,m2,n) -> {return (`nameAppearsFree(n,name) || (`nameAppearsFree(m1,name)) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(x,name))));}
     }
 
     // in any other case, return false
@@ -326,6 +367,15 @@ public class Proofterms {
       andL(x,y,m,n) -> {return `nameAppearsFree(n,name) ;}
       orL(x,m1,y,m2,n) -> {return `nameAppearsFree(n,name) ; }
       implyL(a,m1,x,m2,n) -> {return `nameAppearsFree(n,name) ;}
+    }
+    return false;
+  }
+
+  public static boolean isImplicitContraction(ProofTerm term) { // INCOMPLET MANQUE PREMIER ORDRE
+    %match (ProofTerm term) {
+      andL(x,y,m,n) -> {return (`nameAppearsFree(m,n) && (! `nameAppearsFree(x,n)) && (! `nameAppearsFree(y,n))); }
+      orL(x,m1,y,m2,n) -> {return ((`nameAppearsFree(m1,n) && (! `nameAppearsFree(x,n))) || (`nameAppearsFree(m2,n) && (! `nameAppearsFree(y,n))));}
+      implyL(a,m1,x,m2,n) -> {return (`nameAppearsFree(m1,n) || (`nameAppearsFree(m2,n) && (! `nameAppearsFree(x,n)))) ;}
     }
     return false;
   }
