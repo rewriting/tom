@@ -5,7 +5,7 @@ options {
     ASTLabelType=CommonTree; // type of $stat.tree ref etc...
 }
 
-tokens { FAPPL; APPL; RRULEALONE; }
+tokens { FAPPL; APPL; RRULEALONE; VARLIST; }
 
 pred: implpred (EQUIV^ pred)*;
 
@@ -17,8 +17,8 @@ andpred: negpred (AND^ pred)*;
 
 negpred: NOT^ forallpred | forallpred;
 
-forallpred: FORALL^ ID COMMA! pred
-          | EXISTS^ ID COMMA! pred
+forallpred: FORALL^ varlist COMMA! pred
+          | EXISTS^ varlist COMMA! pred
           | LPAREN! pred RPAREN!
           | atom
           ;
@@ -32,11 +32,11 @@ appl : ID LPAREN term_list  RPAREN -> ^(APPL ID term_list)
        | ID -> ^(APPL ID)
        ;
 
-//varlist	:	ID+;
-term_list 	:	term (COMMA^ term)*; 
-term 	:	minterm (PLUS^ minterm)*;
-minterm	:	mterm (MINUS^ mterm)* ;
-mterm 	:	divterm (TIMES^ divterm)*;
+varlist: ID+  -> ^(VARLIST ID)+;
+term_list: term (COMMA^ term)*; 
+term: minterm (PLUS^ minterm)*;
+minterm: mterm (MINUS^ mterm)* ;
+mterm: divterm (TIMES^ divterm)*;
 
 divterm: fterm (DIV^ fterm)*
        ;

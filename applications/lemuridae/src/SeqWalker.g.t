@@ -19,9 +19,14 @@ pred returns [sequents.types.Prop p]
       | ^(NOT a=pred ) {p = `implies(a,bottom());}
       | ^(APPL ap=ID l=term_list) { p = `relationAppl($ap.text, l); }
       | ^(APPL ap=ID) { p = `relationAppl($ap.text,concTerm()); }
-      | ^(FORALL x=ID a=pred) { p = `forAll($x.text,a); }
-      | ^(EXISTS y=ID a=pred) { p = `exists($y.text,a); }
+      | ^(FORALL vl=varlist a=pred) { p = `forAllList(vl,a); }
+      | ^(EXISTS vl=varlist a=pred) { p = `existsList(vl,a); }
       ;
+
+varlist returns [sequents.types.StringList l] 
+  : ^(VARLIST i=ID) vl=varlist { l = `strlist(vl*,$i.text); } 
+  | ^(VARLIST i=ID) { l = `strlist($i.text); } 
+  ;
 
 term_list returns [sequents.types.TermList l] 
 @init {
@@ -44,7 +49,6 @@ term returns [sequents.types.Term t]
     | ^(FAPPL f=ID l=term_list) { t = `funAppl($f.text,l); }
     | ^(FAPPL f=ID) { t = `funAppl($f.text,concTerm()); }
     ;
-
 
 command returns [sequents.types.Command c] 
   : ^(PROOF i1=ID l=pred) { c = `proof($i1.text,l); }

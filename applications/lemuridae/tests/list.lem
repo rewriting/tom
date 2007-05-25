@@ -36,7 +36,7 @@ herednat.
 proprule in(l,fNat(t)) -> Nat(appl(t,l)).
 
 
-rule List(l) -> forall p, in(cons(lnil(),nil()),p) => (forall a, forall ll, in(cons(ll,nil()),p) => in(cons(lcons(a,ll),nil()),p)) => in(cons(l,nil()),p).
+rule List(l) -> forall p, in(cons(lnil(),nil()),p) => (forall a ll, in(cons(ll,nil()),p) => in(cons(lcons(a,ll),nil()),p)) => in(cons(l,nil()),p).
 heredlist.
 proprule in(l,fList(t)) -> List(appl(t,l)).
 
@@ -78,7 +78,7 @@ rule. axiom.
 reduce.
 rule. axiom.
 
-proof appAss: forall l, forall n, forall m,  List(l) =>  eq(append(append(l,n),m), append(l,append(n,m))).
+proof appAss: forall l n m,  List(l) =>  eq(append(append(l,n),m), append(l,append(n,m))).
 intros.
 focus h1.
 rule.
@@ -126,11 +126,6 @@ focus h1. rule.
 reduce.
 rule.
 
-/*
-proof appCommCons : forall x,(forall y,(forall a,(eq ( lcons(a,append(x,y)) , append(lcons(a,x),y) )))).
-intro. intro. intro.
-cut List(lcons(a0,lnil())) => 
-*/
 
 
 

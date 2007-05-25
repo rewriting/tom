@@ -10,15 +10,36 @@ Term = Var(name:String)
 
 TermList = concTerm(Term*)
 
+StringList = strlist(String*)
+
 Prop = relationAppl(r:String, t:TermList)
      | and(p1:Prop, p2:Prop)
      | or(p1:Prop, p2:Prop)
      | implies(p1:Prop, p2:Prop)
      | forAll(var:String, p:Prop)
      | exists(var:String, p:Prop)
+     | forAllList(varlist:StringList, p: Prop)   // doesn't exists in normal form
+     | existsList(varlist:StringList, p: Prop)   // doesn't exists in normal form
      | bottom()
      | top()
      | nullProp() // for open leaves
+
+
+forAllList:make(l,p) {
+  sequents.types.Prop res = p;
+  %match(StringList l) {
+    (_*,v,_*) -> { res = `forAll(v,res); }
+  }
+  return res;
+}
+
+existsList:make(l,p) {
+  sequents.types.Prop res = p;
+  %match(StringList l) {
+    (_*,v,_*) -> { res = `exists(v,res); }
+  }
+  return res;
+}
 
 Context = context(Prop*)
 
