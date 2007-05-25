@@ -60,14 +60,13 @@ public class ConstraintGenerator {
   // the list of all generators
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
 
-  public static Instruction performGenerations(Constraint constraint, Instruction action) 
+  public static Instruction performGenerations(Expression expression, Instruction action) 
        throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
     // counts the generators that didn't change the instruction
     int genCounter = 0;
     int genNb = generatorsNames.length;
     
-    Expression result = null;    
-    Expression expression = prepareGeneration(constraint);
+    Expression result = null;
     // cache the generators
     IBaseGenerator[] gen = new IBaseGenerator[genNb];
     for(int i=0 ; i < genNb ; i++) {
@@ -90,43 +89,7 @@ public class ConstraintGenerator {
     //System.out.println("result: " + result);
     return buildInstructionFromExpression(result,action);
   }
-
-  /**
-   * Prepares the generation phase: globally translates constraints into expressions
-   *   
-   */
-  private static Expression prepareGeneration(Constraint constraint){    
-    %match(constraint){
-      and@AndConstraint(m,X*) -> {        
-        //TODO - erase the test when the match non-au will be available
-        if ((`and) instanceof AndConstraint){
-          return `And(prepareGeneration(m),
-              prepareGeneration(AndConstraint(X*)));
-        }
-      }      
-      OrConstraintDisjunction(m,X*) -> {        
-        return `OrExpressionDisjunction(prepareGeneration(m),
-            prepareGeneration(OrConstraintDisjunction(X*)));
-      }
-      m@MatchConstraint[] -> {        
-        return `ConstraintToExpression(m);
-      }
-      AntiMatchConstraint(constr) -> {
-        return `AntiMatchExpression(prepareGeneration(constr));
-      }
-      Negate(c) -> {
-        return `Negation(prepareGeneration(c));
-      }
-      EmptyListConstraint(opName,variable) ->{				
-        return `genIsEmptyList(opName,variable);
-      }
-      EmptyArrayConstraint(opName,variable,index) ->{                          
-        return `IsEmptyArray(opName,variable,index);
-      }
-    }			
-    throw new TomRuntimeException("ConstraintGenerator.prepareGeneration - strange constraint:" + constraint);
-  }	
-
+  
   /**
    * Converts the resulted expression (after generation) into instructions
    */
@@ -279,8 +242,8 @@ public class ConstraintGenerator {
         if (!varList.contains(`v)) { varList.add(`v); }        
       }      
     }// end visit
-  }// end strategy 
-
+  }// end strategy   
+  
   /**
    * check that the list is empty
    * when domain=codomain, the test is extended to:

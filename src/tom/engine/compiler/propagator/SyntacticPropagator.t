@@ -108,18 +108,6 @@ public class SyntacticPropagator implements IBasePropagator {
       }
  
       /*
-       * Switch
-       * 
-       * an antimatch should be always at the end, after the match constraints
-       * ex: for f(!x,x) << t -> we should generate x << t_2 /\ !x << t_1 and
-       * not !x << t_1 /\ x << t_2 because at the generation the free x should
-       * be propagated and not the other one
-       */
-      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
-        return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
-      }
-
-      /*
        * Antipattern
        * 
        * an anti-pattern: just transform this into a AntiMatchConstraint 
@@ -131,17 +119,13 @@ public class SyntacticPropagator implements IBasePropagator {
       /*
        * Replace
        * 
-       * Context1 /\ z = t /\ Context2( z = u ) -> Context1 /\ z = t /\ Context2( t = u ) 
-       * we only apply this rule from left to right; this is
-       * not important for classical pattern matching, but when anti-patterns
-       * are involved, if we replace right_to_left, results are not always
-       * correct
+       * Context1( z = v ) /\ z = t /\ Context2( z = u ) -> Context1( t = v ) /\ z = t /\ Context2( t = u ) 
        */
       AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {
-        Constraint toApplyOn = `AndConstraint(Y*);
+        Constraint toApplyOn = `AndConstraint(X*,Y*);
         Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
         if(res != toApplyOn) {
-          return `AndConstraint(X*,eq,res);
+          return `AndConstraint(eq,res);
         }
       }      
     }

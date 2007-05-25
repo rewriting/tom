@@ -98,8 +98,8 @@ public class ConstraintCompiler {
               actionNumber++;
               
               Constraint propagationResult = ConstraintPropagator.performPropagations(constraint);
-              //Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
-              Instruction matchingAutomata = ConstraintGenerator.performGenerations(propagationResult, `action);
+              Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
+              Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
                             
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
