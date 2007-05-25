@@ -461,4 +461,23 @@ public class Proofterms {
     }
     return false;
   }
+
+  // Reductions des termes
+
+  %typeterm Collection {
+    implement { Collection }
+    is_sort(t) { t instanceof Collection }
+  }
+
+  public static ProofTerm rename(Name a, Name b, ProofTerm m) {
+    return m;
+  }
+
+  %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
+    visit ProofTerm {
+      cut(a,m,nprop(n,phi),ax(n,cn)) -> { c.add(MuTraveler.getReplace(this, rename(a,cn,m)).visit(subject));}
+    }
+  }
+
+  
 }
