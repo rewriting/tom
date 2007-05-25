@@ -6,15 +6,15 @@ import urban.types.*;
 
 import tom.library.sl.*;
 
-import java.io.*;
-import antlr.*;
-import antlr.collections.*;
-
 import java.util.Collection;
+import java.util.ArrayList;
 
 public class Proofterms {
 //  %include { sequents/sequents.tom }
   %include { urban/urban.tom }
+  %include { urban/_urban.tom}
+  %include { sl.tom }
+  %include { util/types/Collection.tom}
 
   public static ProofTerm getProofterm(Tree term) {
     %match(Tree term) {
@@ -449,7 +449,20 @@ public class Proofterms {
     return false;
   }
 
-  public static boolean isImplicitContraction(ProofTerm term) { // INCOMPLET MANQUE conames
+  public static boolean conameTopIntroduced(ProofTerm term, CoName coname) { 
+    %match (ProofTerm term) {
+      ax(n,cn) -> {return `conameAppearsFree(cn,coname); }
+      trueR(cn) -> {return `conameAppearsFree(cn,coname); }
+      orR(a,b,m,cn) -> {return `conameAppearsFree(cn,coname) ;}
+      andR(a,m1,by,m2,cn) -> {return `conameAppearsFree(cn,coname) ; }
+      implyR(x,a,m,cn) -> {return `conameAppearsFree(cn,coname) ;}
+      existsR(a,m,t,cn) -> {return (`conameAppearsFree(cn,coname));}
+      forallR(a,varx,m,cn) -> {return (`conameAppearsFree(cn,coname));}
+    }
+    return false;
+  }
+
+  public static boolean isImplicitContraction(ProofTerm term) {
     %match (ProofTerm term) {
       // left
       andL(x,y,m,n) -> {return (`nameAppearsFree(m,n) && (! `nameAppearsFree(x,n)) && (! `nameAppearsFree(y,n))); }
@@ -467,22 +480,43 @@ public class Proofterms {
     return false;
   }
 
-  // Reductions des termes
-/*
-  %typeterm Collection {
-    implement { Collection }
-    is_sort(t) { t instanceof Collection }
+  public static boolean nameFreshlyIntroduced(ProofTerm t, Name n) {
+    return (nameTopIntroduced(t,n) && (! isImplicitContraction(t)));
   }
 
-  public static ProofTerm reconame(CoName a, CoName b, ProofTerm m) {
-    return m;
+  public static boolean conameFreshlyIntroduced(ProofTerm t, CoName cn) {
+    return (conameTopIntroduced(t,cn) && (! isImplicitContraction(t)));
+  }
+
+  // Reductions des termes
+
+  %strategy Reconame(CoName a, CoName b) extends `Identity() {
+    visit CoName {
+      x -> { if (`x == a) return b;}
+    }
+  }
+
+  private static Strategy TopDownReconame(CoName a, CoName b) {
+    return `mu(MuVar("x"), Choice(Is_cnprop(),Sequence(Reconame(a,b), All(MuVar("x")))));
   }
 
   %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
     visit ProofTerm {
-      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { c.add(((Position) subject).getReplace(this, `reconame(cn2,cn,m)).visit(subject));}
+      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> {
+        if (`conameFreshlyIntroduced(m,cn2)) {
+          ProofTerm mm = (ProofTerm) `TopDownReconame(cn2,cn).visit(`m); 
+          c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
+      }
     }
   }
-*/
+
+  public static Collection reduce(ProofTerm t) {
+    Collection c = new ArrayList();
+    try {
+      `TopDown(OneStep(t,c)).visit(t);
+    }
+    catch (VisitFailure e) { System.out.println(e); }
+    return c;
+  }
   
 }

@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Observable;
+import java.util.Collection;
 
 import java.io.*;
 import antlr.*;
@@ -1308,6 +1309,10 @@ b :{
           else {
             //PrettyPrinter.display(Proofterms.getProofterm(tree));
             PrettyPrinter.display(Proofterms.typeProof(tree));
+          }
+          Collection c = Proofterms.reduce(Proofterms.getProofterm(tree));
+          for (Object o:c) {
+            PrettyPrinter.prettyPrint((urbanAbstractType) o);
           }
         }
 
