@@ -6,10 +6,15 @@ import urban.types.*;
 
 import tom.library.sl.*;
 
+import java.io.*;
+import antlr.*;
+import antlr.collections.*;
+
+import java.util.Collection;
+
 public class Proofterms {
 //  %include { sequents/sequents.tom }
   %include { urban/urban.tom }
-  %include { sl.tom }
 
   public static ProofTerm getProofterm(Tree term) {
     %match(Tree term) {
@@ -463,21 +468,21 @@ public class Proofterms {
   }
 
   // Reductions des termes
-
+/*
   %typeterm Collection {
     implement { Collection }
     is_sort(t) { t instanceof Collection }
   }
 
-  public static ProofTerm rename(Name a, Name b, ProofTerm m) {
+  public static ProofTerm reconame(CoName a, CoName b, ProofTerm m) {
     return m;
   }
 
   %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
     visit ProofTerm {
-      cut(a,m,nprop(n,phi),ax(n,cn)) -> { c.add(MuTraveler.getReplace(this, rename(a,cn,m)).visit(subject));}
+      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { c.add(((Position) subject).getReplace(this, `reconame(cn2,cn,m)).visit(subject));}
     }
   }
-
+*/
   
 }
