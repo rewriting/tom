@@ -1307,7 +1307,7 @@ b :{
           Tree tree = theorems.get(`name);
           if(tree==null) writeToOutputln(`name + " not found");
           else {
-            //PrettyPrinter.display(Proofterms.getProofterm(tree));
+            writeToOutputln(PrettyPrinter.prettyPrint(Proofterms.getProofterm(tree)));
             PrettyPrinter.display(Proofterms.typeProof(tree));
           }
           Collection c = Proofterms.reduce(Proofterms.getProofterm(tree));

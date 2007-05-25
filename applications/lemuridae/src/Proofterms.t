@@ -513,11 +513,18 @@ public class Proofterms {
   %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
     visit ProofTerm {
       // COMMUTING CUTS
+      /* These rules are just wrong
       cut(cnprop(cn,phi),m1,x,m2) -> {
         if (! `conameAppearsFree(m1,cn)) {
           c.add(getEnvironment().getPosition().getReplace(`m2).visit(subject));
         }
       }
+
+      cut(a,m1,nprop(n,phi),m2) -> {
+        if (! `nameAppearsFree(m2,n)) {
+          c.add(getEnvironment().getPosition().getReplace(`m1).visit(subject));
+        }
+      }*/
 
       // LOGICAL CUTS
       cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> {
@@ -530,6 +537,11 @@ public class Proofterms {
         if (`nameFreshlyIntroduced(m,n2)) {
           ProofTerm mm = (ProofTerm) `TopDownRename(n2,n).visit(`m); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
+      }
+      cut(cnprop(cn,phi),p1@andR(a1,m1,a2,m2,cn),nprop(n,phi),p2@andL(x1,x2,m3,n)) -> {
+        if (`conameFreshlyIntroduced(p1,cn) && `nameFreshlyIntroduced(p2,n)) {
+          c.add(getEnvironment().getPosition().getReplace(`cut(a1,m1,x1,cut(a2,m2,x2,m3))).visit(subject));
+        }
       }
     }
   }
