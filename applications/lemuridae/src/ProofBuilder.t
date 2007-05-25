@@ -1311,8 +1311,9 @@ b :{
             PrettyPrinter.display(Proofterms.typeProof(tree));
           }
           Collection c = Proofterms.reduce(Proofterms.getProofterm(tree));
+          writeToOutputln("Number of one-step reducts found : "+c.size());
           for (Object o:c) {
-            PrettyPrinter.prettyPrint((urbanAbstractType) o);
+            writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
           }
         }
 

@@ -500,11 +500,35 @@ public class Proofterms {
     return `mu(MuVar("x"), Choice(Is_cnprop(),Sequence(Reconame(a,b), All(MuVar("x")))));
   }
 
+  %strategy Rename(Name x, Name y) extends `Identity() {
+    visit Name {
+      a -> { if (`a == x) return y;}
+    }
+  }
+
+  private static Strategy TopDownRename(Name x, Name y) {
+    return `mu(MuVar("x"), Choice(Is_cnprop(),Sequence(Rename(x,y), All(MuVar("x")))));
+  }
+
   %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
     visit ProofTerm {
+      // COMMUTING CUTS
+      cut(cnprop(cn,phi),m1,x,m2) -> {
+        if (! `conameAppearsFree(m1,cn)) {
+          c.add(getEnvironment().getPosition().getReplace(`m2).visit(subject));
+        }
+      }
+
+      // LOGICAL CUTS
       cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> {
         if (`conameFreshlyIntroduced(m,cn2)) {
           ProofTerm mm = (ProofTerm) `TopDownReconame(cn2,cn).visit(`m); 
+          c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
+        }
+      }
+      cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> {
+        if (`nameFreshlyIntroduced(m,n2)) {
+          ProofTerm mm = (ProofTerm) `TopDownRename(n2,n).visit(`m); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
       }
     }
