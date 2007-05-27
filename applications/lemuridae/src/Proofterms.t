@@ -22,6 +22,30 @@ public class Proofterms {
     }
     return null;
   }
+
+  public static TypableProofTerm getTypableProofterm(Tree term) {
+    %match(Tree term) {
+      rule(_,_,c,_) -> {
+        NSequent nseq = seq2nseq(`c);
+        return `typablePT(term2proofterm(term, nseq, 0, 0), nseq); 
+      }
+    }
+    return null;
+  }
+
+  public static ProofTerm typableProofterm2Proofterm(TypableProofTerm tpt) {
+    %match (TypableProofTerm tpt) {
+      typablePT(pt,nseq) -> { return `pt;}
+    }
+    return null;
+  }
+
+  public static NSequent typableProofterm2NSequent(TypableProofTerm tpt) {
+    %match (TypableProofTerm tpt) {
+      typablePT(pt,nseq) -> { return `nseq;}
+    }
+    return null;
+  }
   
   public static ProofTerm term2proofterm(Tree term, NSequent nseq, int ncount, int cncount) { // INCOMPLET manque les cas 1er ordre
     %match(Tree term,NSequent nseq) {
@@ -328,6 +352,13 @@ public class Proofterms {
    return null;
   }
 
+  public static NTree typeTypableProofterm(TypableProofTerm tpt) {
+    %match(TypableProofTerm tpt) {
+      typablePT(pt,nseq) -> { return `typeProofterm(pt, nseq);}
+    }
+    return null;
+  }
+
 /*  public static boolean nameAppearsFree(urbanAbstractType term, Name name) {
     boolean bool = nameAppearsFreeAux(term,name);
     System.out.println(term+" , "+name+" : "+bool);
@@ -527,20 +558,33 @@ public class Proofterms {
       }*/
 
       // LOGICAL CUTS
-      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> {
+      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { // ATTENTION CAPTURE DE VARIABLE
         if (`conameFreshlyIntroduced(m,cn2)) {
           ProofTerm mm = (ProofTerm) `TopDownReconame(cn2,cn).visit(`m); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
-      cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> {
+      cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> { // ATTENTION CAPTURE DE VARIABLE
         if (`nameFreshlyIntroduced(m,n2)) {
           ProofTerm mm = (ProofTerm) `TopDownRename(n2,n).visit(`m); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
       }
       cut(cnprop(cn,phi),p1@andR(a1,m1,a2,m2,cn),nprop(n,phi),p2@andL(x1,x2,m3,n)) -> {
         if (`conameFreshlyIntroduced(p1,cn) && `nameFreshlyIntroduced(p2,n)) {
+          c.add(getEnvironment().getPosition().getReplace(`cut(a2,m2,x2,cut(a1,m1,x1,m3))).visit(subject));
           c.add(getEnvironment().getPosition().getReplace(`cut(a1,m1,x1,cut(a2,m2,x2,m3))).visit(subject));
+        }
+      }
+      cut(cnprop(cn,phi),p1@orR(a1,a2,m1,cn),nprop(n,phi),p2@orL(x1,m2,x2,m3,n)) -> {
+        if (`conameFreshlyIntroduced(p1,cn) && `nameFreshlyIntroduced(p2,n)) {
+          c.add(getEnvironment().getPosition().getReplace(`cut(a1,cut(a2,m1,x2,m3),x1,m2)).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(`cut(a2,cut(a1,m1,x1,m2),x2,m3)).visit(subject));
+        }
+      }
+      cut(cnprop(cn,phi),p1@implyR(x1,a1,m1,cn),nprop(n,phi),p2@implyL(a2,m2,x2,m3,n)) -> {
+        if (`conameFreshlyIntroduced(p1,cn) && `nameFreshlyIntroduced(p2,n)) {
+          c.add(getEnvironment().getPosition().getReplace(`cut(a2,m2,x1,cut(a1,m1,x2,m3))).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(`cut(a1,cut(a2,m2,x1,m1),x2,m3)).visit(subject));
         }
       }
     }

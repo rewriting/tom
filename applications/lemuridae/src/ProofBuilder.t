@@ -1307,13 +1307,17 @@ b :{
           Tree tree = theorems.get(`name);
           if(tree==null) writeToOutputln(`name + " not found");
           else {
-            writeToOutputln(PrettyPrinter.prettyPrint(Proofterms.getProofterm(tree)));
-            PrettyPrinter.display(Proofterms.typeProof(tree));
-          }
-          Collection c = Proofterms.reduce(Proofterms.getProofterm(tree));
-          writeToOutputln("Number of one-step reducts found : "+c.size());
-          for (Object o:c) {
-            writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+            TypableProofTerm tpt = Proofterms.getTypableProofterm(tree);
+            ProofTerm pt = Proofterms.typableProofterm2Proofterm(tpt);
+            NSequent nseq = Proofterms.typableProofterm2NSequent(tpt);
+            writeToOutputln(PrettyPrinter.prettyPrint(pt));
+            PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
+            Collection c = Proofterms.reduce(pt);
+            writeToOutputln("Number of one-step reducts found : "+c.size());
+            for (Object o:c) {
+              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
+            }
           }
         }
 

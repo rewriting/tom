@@ -65,3 +65,4 @@ NPremisses = npremisses(NTree*)
 
 NTree = nrule(type:RuleType, p:NPremisses, c:NSequent, pt:ProofTerm)
 
+TypableProofTerm = typablePT(pt:ProofTerm, c:NSequent)
