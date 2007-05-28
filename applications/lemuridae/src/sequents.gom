@@ -24,6 +24,26 @@ Prop = relationAppl(r:String, t:TermList)
      | top()
      | nullProp() // for open leaves
 
+/*
+forAll:block() {
+  public boolean equals(Object o) { 
+if  (this == o) return true;
+else {
+	sequents.types.Prop p = (sequents.types.Prop) o;
+	%match (this,p) {
+		forAll(x,p1), forAll(y,p2) -> {
+			sequents.types.Termlist couple = `concTerm(p1,p2);
+                        sequents.types.Term fvar = Utils.freshVar(`x,couple);
+			sequents.types.Prop np1 = Utils.replaceFreeVars(`p1,fvar,`Var(x)); 
+			sequents.types.Prop np2 = Utils.replaceFreeVars(`p2,fvar,`Var(y));
+		       return np1.equals(np2);	
+			}
+		}
+		return false;
+	}
+	  }
+}
+*/
 
 forAllList:make(l,p) {
   sequents.types.Prop res = p;
