@@ -1,0 +1,3 @@
+polux@huggy$ tom RmDoubles.t && javac RmDoubles.java && java RmDoubles
+strlist("framboisier","eric","framboisier","remi","remi","framboisier","rene","bernard")
+strlist("framboisier","eric","remi","rene","bernard")
