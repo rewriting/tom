@@ -1,0 +1,2 @@
+proof l: (A /\ B) => A. intros. proof m: A => (( A \/ B ) \/ ((A/\B) => A)) . intro. intro. theorem l. intros. display m.
+

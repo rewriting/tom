@@ -725,16 +725,28 @@ b: {
 b :{
       Sequent goal = getSequentByPosition(tree, pos);
       %match(Prop conclusion, goal) {
-        // pattern means "only and at least one 'goal' in the sequent rhs"
-        concl, sequent((),!(_*,concl,_*,!concl,_*)) -> {
-          return (Tree) pos.getReplace(thtree).visit(tree);
+        // sequent of the form " |- concl, concl ..."
+        concl, sequent((),l@!(_*,!concl,_*)) -> {
+          %match (Context l) {
+            // more than one occurence
+            (x,x,_*) -> { 
+              tree = (Tree) pos.getOmega(`ApplyWeakR(x)).visit(tree);
+              pos = pos.down(2);
+              pos = pos.down(1);
+              break b;
+            }
+            // one left
+            (_) -> { return (Tree) pos.getReplace(thtree).visit(tree); }
+          }
         }
+        // weak lhs of sequent
         _, sequent((p,_*),_) -> {
           tree = (Tree) pos.getOmega(`ApplyWeakL(p)).visit(tree);
           pos = pos.down(2);
           pos = pos.down(1);
           break b;
         }
+        // remove non-conclusion props at the right of the sequent
         tokeep, sequent((),(_*,p@!tokeep,_*)) -> {
             tree = (Tree) pos.getOmega(`ApplyWeakR(p)).visit(tree);
             pos = pos.down(2);
