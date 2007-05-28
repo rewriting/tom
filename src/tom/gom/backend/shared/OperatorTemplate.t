@@ -33,6 +33,7 @@ import tom.gom.backend.CodeGen;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
+import tom.platform.OptionManager;
 
 public class OperatorTemplate extends TemplateHookedClass {
   ClassName abstractType;
@@ -44,10 +45,11 @@ public class OperatorTemplate extends TemplateHookedClass {
   %include { ../../adt/objects/Objects.tom}
 
   public OperatorTemplate(File tomHomePath,
+                          OptionManager manager,
                           List importList, 	
                           GomClass gomClass,
                           TemplateClass mapping) {
-    super(gomClass,tomHomePath,importList,mapping);
+    super(gomClass,manager,tomHomePath,importList,mapping);
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,

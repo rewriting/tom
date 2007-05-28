@@ -89,7 +89,6 @@ public class BackendPlugin extends GomGenericPlugin {
     getLogger().log(Level.INFO, "Start compilation");
     // make sure the environment has the correct streamManager
     environment().setStreamManager(getStreamManager());
-    String backendType = getOptionStringValue("generator");
     /* Try to guess tom.home */
     File tomHomePath = null;
     String tomHome = System.getProperty("tom.home");
@@ -104,7 +103,7 @@ public class BackendPlugin extends GomGenericPlugin {
     }
     boolean strategiesMapping = getOptionBooleanValue("strategies-mapping");
     Backend backend =
-      new Backend(TemplateFactory.getFactory(backendType),
+      new Backend(TemplateFactory.getFactory(getOptionManager()),
                   tomHomePath, strategiesMapping,
                   streamManager.getImportList());
     backend.generate(classList);

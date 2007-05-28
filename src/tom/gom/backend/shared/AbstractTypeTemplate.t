@@ -31,6 +31,7 @@ import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.platform.OptionManager;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
@@ -39,10 +40,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
   %include { ../../adt/objects/Objects.tom }
 
   public AbstractTypeTemplate(File tomHomePath,
+                              OptionManager manager,
                               List importList,
                               GomClass gomClass,
                               TemplateClass mapping) {
-    super(gomClass,tomHomePath,importList,mapping);
+    super(gomClass,manager,tomHomePath,importList,mapping);
     %match(gomClass) {
       AbstractTypeClass[Visitor=visitorName,
                         Mapping=mapping,

@@ -31,6 +31,7 @@ import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.platform.OptionManager;
 
 public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
@@ -42,10 +43,11 @@ public class SortTemplate extends TemplateHookedClass {
   %include { ../../adt/objects/Objects.tom}
 
   public SortTemplate(File tomHomePath,
+                      OptionManager manager,
                       List importList, 	
                       GomClass gomClass,
                       TemplateClass mapping) {
-    super(gomClass,tomHomePath,importList,mapping);
+    super(gomClass,manager,tomHomePath,importList,mapping);
     %match(gomClass) {
       SortClass[AbstractType=abstractType,
                 Visitor=visitor,

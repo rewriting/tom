@@ -30,18 +30,22 @@ import java.util.logging.*;
 import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
+import tom.platform.OptionManager;
 
 public abstract class TemplateHookedClass extends TemplateClass {
   protected HookList hooks;
   protected File tomHomePath;
   protected List importList;
   protected TemplateClass mapping;
+  protected OptionManager optionManager;
  
   public TemplateHookedClass(GomClass gomClass,
+                             OptionManager manager,
                              File tomHomePath,
                              List importList,
                              TemplateClass mapping) {
     super(gomClass);
+    this.optionManager = manager;
     this.hooks = gomClass.getHooks();
     this.tomHomePath = tomHomePath;
     this.importList = importList;
@@ -135,10 +139,15 @@ public abstract class TemplateHookedClass extends TemplateClass {
       tomParams.add(xmlFile.getPath());
       tomParams.add("--optimize");
       tomParams.add("--optimize2");
-      /*
-       * we need to add --wall if this option is active
-       * we need to add --verbose if this option is active
-       */
+      if(optionManager.getOptionValue("wall")==Boolean.TRUE) {
+        tomParams.add("--wall");
+      }
+      if(optionManager.getOptionValue("intermediate")==Boolean.TRUE) {
+        tomParams.add("--intermediate");
+      }
+      if(optionManager.getOptionValue("verbose")==Boolean.TRUE) {
+        tomParams.add("--verbose");
+      }
       tomParams.add("--output");
       tomParams.add(file_path);
       tomParams.add("-");     
