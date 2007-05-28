@@ -55,7 +55,7 @@ public class PluginPlatformFactory {
       // create a config equivalent to defaultlogging.properties file
       logger.setUseParentHandlers(false);
       Handler consoleHandler = new ConsoleHandler();
-      consoleHandler.setLevel(Level.ALL);
+      consoleHandler.setLevel(Level.WARNING);
       // by default, print everything that the logger sends
       consoleHandler.setFormatter(new PlatformFormatter());
       Handler[] handlers = PluginPlatformFactory.logger.getHandlers();
@@ -130,4 +130,4 @@ public class PluginPlatformFactory {
     return null;
   }
 
-} // class PluginPlatformFactory
+}

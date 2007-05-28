@@ -118,7 +118,7 @@ public class Tom {
   private static void initializeLogging()
     throws IOException, InstantiationException, ClassNotFoundException,
            IllegalAccessException {
-    String loggingConfigFile=System.getProperty(LOGGING_PROPERTY_FILE);
+    String loggingConfigFile = System.getProperty(LOGGING_PROPERTY_FILE);
     if (loggingConfigFile == null) { // default > no custom file is used
       // create a config equivalent to defaultlogging.properties file
       initTomRootLogger(false);

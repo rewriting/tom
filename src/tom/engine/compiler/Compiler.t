@@ -107,7 +107,7 @@ public class Compiler extends TomGenericPlugin {
         Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, (TomTerm)getWorkingTerm());
       }
     } catch (Exception e) {
-      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
+      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
           new Object[]{getStreamManager().getInputFileName(), "Compiler", e.getMessage()} );
       e.printStackTrace();
     }

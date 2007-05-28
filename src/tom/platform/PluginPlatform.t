@@ -112,7 +112,7 @@ public class PluginPlatform extends PluginPlatformBase {
           Plugin plugin = (Plugin)it.next();
           plugin.setArgs(pluginArg);
           if(statusHandler.hasError()) {
-            getLogger().log(Level.SEVERE, PluginPlatformMessage.settingArgError.getMessage());
+            getLogger().log(Level.INFO, PluginPlatformMessage.settingArgError.getMessage());
             success = false;
             globalSuccess = false;
             globalNbOfErrors += statusHandler.nbOfErrors();
@@ -121,7 +121,7 @@ public class PluginPlatform extends PluginPlatformBase {
           }
           plugin.run();
           if(statusHandler.hasError()) {
-            getLogger().log(Level.SEVERE, PluginPlatformMessage.processingError.getMessage(),
+            getLogger().log(Level.INFO, PluginPlatformMessage.processingError.getMessage(),
                 new Object[]{plugin.getClass().getName(), initArgument});
             success = false;
             globalSuccess = false;
@@ -141,8 +141,7 @@ public class PluginPlatform extends PluginPlatformBase {
       }
 
       if(!globalSuccess) {
-        // this is the highest possible level > will be printed no matter what
-        getLogger().log(Level.SEVERE, PluginPlatformMessage.runErrorMessage.getMessage(),
+        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),
             new Integer(globalNbOfErrors));
         return 1;
       } else if(globalNbOfWarnings>0) {
