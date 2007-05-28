@@ -1325,7 +1325,7 @@ b :{
             writeToOutputln(PrettyPrinter.prettyPrint(pt));
             PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
 //            Collection c = Proofterms.reduce(pt);
-            Collection c = Proofterms.computeNormalForms(pt);
+            Collection c = Proofterms.computeNormalForms(pt, nseq);
             writeToOutputln("Number of normal forms found : "+c.size());
             for (Object o:c) {
               writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));

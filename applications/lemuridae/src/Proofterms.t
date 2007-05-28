@@ -253,10 +253,17 @@ public class Proofterms {
   }
 
   public static NTree typeProofterm (ProofTerm pi, NSequent nseq) { // INCOMPLET
+    System.out.println(pi);
     if (isImplicitContraction(pi)) {
 //      System.out.println("implicit contraction detected");
       %match (ProofTerm pi, NSequent nseq) {
-        pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,active@cnprop(cn, and(A,B)),cnd2*)) -> {
+        _, nsequent((_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
+          if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`n); return null;}
+        }
+        _, nsequent(_,(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
+          if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`cn); return null;}
+        }
+         pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,active@cnprop(cn, and(A,B)),cnd2*)) -> {
           return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,active,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,active,b,cnd2*)))),ns,pt);
         }
         pt@andL(x@nprop(n1,A),y@nprop(n2,B),m,n), ns@nsequent((ng1*, active@nprop(n, and(A,B)),ng2*), cnd) -> {
@@ -292,7 +299,13 @@ public class Proofterms {
 //      System.out.println("no Implicit Contraction");
 //      System.out.println(pi);
       %match (ProofTerm pi, NSequent nseq) {
-        pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
+        _, nsequent((_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
+          if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`n); return null;}
+        }
+        _, nsequent(_,(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
+          if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`cn); return null;}
+        }
+         pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
           return `nrule(axiomInfo(),npremisses(),ns,pt);
         }
         pt@cut(cn@cnprop(_,a),pt1,n@nprop(_,a),pt2), ns@nsequent(ng, cnd) -> {
@@ -541,6 +554,20 @@ public class Proofterms {
     return `mu(MuVar("x"), Choice(Is_nprop(),Sequence(Rename(x,y), All(MuVar("x")))));
   }
 
+  /*
+  private static boolean bindsNameOnTop(ProofTerm pt, Name z) {
+    %match(ProofTerm pt) {
+      cut(nprop(x,_),_,_,_) -> {return (`x == z);}
+      andL(nprop(x,_),nprop(y,_),_,_) -> {return ((`x == z) || (`x == y));}
+//      orL(nprop(x,_),_,nprop(y,_),_,_) -> {}
+      implyR(nprop(x,_),_,_,_) -> {return (`x == z);}
+      implyL(_,_,nprop(x,_),_,_) -> {return (`x == z);}
+      existsL(nprop(x,_),_,_,_) -> {return (`x == z);}
+      forallL(nprop(x,_),_,_,_) -> {return (`x == z);}
+
+    }
+    return false;
+  }*/
 
   %strategy NameSubs(n:Name,cn:CoName,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
     visit ProofTerm {
@@ -574,7 +601,7 @@ public class Proofterms {
     return `mu(MuVar("x"),Choice(Choice(NameSubsAx(n,cn,pt,phi),Sequence(NameSubs(n,cn,pt,phi),_cut(Identity(),Identity(),Identity(),All(MuVar("x"))))),All(MuVar("x"))));
   }
 
-  %strategy CoNameSubs(cn:CoName,n:Name,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
+ %strategy CoNameSubs(cn:CoName,n:Name,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
     visit ProofTerm {
 /*      andL(x,y,m,n1) -> {
         if (n == `n1) {
@@ -611,7 +638,146 @@ public class Proofterms {
     return `mu(MuVar("x"),Choice(Choice(CoNameSubsAx(cn,n,pt,phi),Sequence(CoNameSubs(cn,n,pt,phi),_cut(Identity(),All(MuVar("x")),Identity(),Identity()))),All(MuVar("x"))));
   }
 
+ private static ProofTerm CoNameSubstitution(ProofTerm subj, CoName cn, Name n, ProofTerm pt, Prop phi) {
+    %match (ProofTerm subj) {
+      p@ax(n1,cn1) -> {
+        if (cn == `cn1) {
+//          System.out.println("renommage "+n+" en "+`n1+" dans \n"+pt);
+          ProofTerm pt2 = null;
+          try {
+            pt2 = (ProofTerm) `TopDownRename(n,n1).visit(pt);
+          }
+          catch (Exception e) { System.out.println(e); }
+//          System.out.println(pt2);
+          return pt2;
+        }
+        else return `p;
+      }
+      p -> {
+        if (conameTopIntroduced(`p,cn)) return `cut(cnprop(cn,phi),CoNameSubstitutionDescend(p,cn,n,pt,phi),nprop(n,phi),pt);
+        else return CoNameSubstitutionDescend(`p,cn,n,pt,phi);
+      }
+    }
+    return null;
+  }
 
+  private static ProofTerm CoNameSubstitutionDescend(ProofTerm subj, CoName cn, Name n, ProofTerm pt, Prop phi) { // MANQUE TRUE ET FALSE ET PREMIER ORDRE
+    %match (ProofTerm subj) {
+      cut(a@cnprop(coname,_),m1,x,m2) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (`coname == cn)) new_m1 = CoNameSubstitution(`m1,cn,n,pt,phi);
+        ProofTerm new_m2 = CoNameSubstitution(`m2,cn,n,pt,phi);
+        return `cut(a,new_m1,x,new_m2);
+      }
+      orR(a@cnprop(coname1,_),b@cnprop(coname2,_),m,coname) -> {
+        ProofTerm new_m = `m;
+        if ((! (`coname1 == cn)) && (! (`coname2 == cn))) new_m = CoNameSubstitution(`m,cn,n,pt,phi);
+        return `orR(a,b,new_m,coname);
+      }
+      orL(x,m1,y,m2,name) -> {
+        ProofTerm new_m1 = CoNameSubstitution(`m1,cn,n,pt,phi);
+        ProofTerm new_m2 = CoNameSubstitution(`m2,cn,n,pt,phi);
+        return `orL(x,new_m1,y,new_m2,name);
+
+      }
+      andR(a@cnprop(coname1,_),m1,b@cnprop(coname2,_),m2,coname) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (`coname1 == cn)) new_m1 = CoNameSubstitution(`m1,cn,n,pt,phi);
+        ProofTerm new_m2 = `m2;
+        if (! (`coname2 == cn)) new_m2 = CoNameSubstitution(`m2,cn,n,pt,phi);
+        return `andR(a,new_m1,b,new_m2,coname);
+      }
+      andL(x,y,m,name) -> {
+        ProofTerm new_m = CoNameSubstitution(`m,cn,n,pt,phi);
+        return `andL(x,y,new_m,name);
+      }
+      implyR(x,a@cnprop(coname1,_),m,coname) -> {
+        ProofTerm new_m = `m;
+        if (! (`coname1 == cn)) new_m = CoNameSubstitution(`m,cn,n,pt,phi);
+        return `implyR(x,a,new_m,coname);
+      }
+      implyL(a@cnprop(coname,_),m1,x,m2,name) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (`coname == cn)) new_m1 = CoNameSubstitution(`m1,cn,n,pt,phi);
+        ProofTerm new_m2 = CoNameSubstitution(`m2,cn,n,pt,phi);
+        return `implyL(a,new_m1,x,new_m2,name);
+      }
+//      existsL(nprop(x,_),_,_,_) -> {return (`x == z);}
+//      forallL(nprop(x,_),_,_,_) -> {return (`x == z);}
+    }
+    return null;
+  }
+
+   private static ProofTerm NameSubstitution(ProofTerm subj, Name n, CoName cn, ProofTerm pt, Prop phi) {
+    %match (ProofTerm subj) {
+      p@ax(n1,cn1) -> {
+        if (n == `n1) {
+//          System.out.println("renommage "+n+" en "+`n1+" dans \n"+pt);
+          ProofTerm pt2 = null;
+          try {
+            pt2 = (ProofTerm) `TopDownReconame(cn,cn1).visit(pt);
+          }
+          catch (Exception e) { System.out.println(e); }
+//          System.out.println(pt2);
+          return pt2;
+        }
+        else return `p;
+      }
+      p -> {
+        if (nameTopIntroduced(`p,n)) return `cut(cnprop(cn,phi),pt,nprop(n,phi),NameSubstitutionDescend(p,n,cn,pt,phi));
+        else return NameSubstitutionDescend(`p,n,cn,pt,phi);
+      }
+    }
+    return null;
+  }
+  
+  private static ProofTerm NameSubstitutionDescend(ProofTerm subj, Name n, CoName cn, ProofTerm pt, Prop phi) { // MANQUE TRUE ET FALSE ET PREMIER ORDRE
+    %match (ProofTerm subj) {
+      cut(a,m1,x@nprop(name,_),m2) -> {
+        ProofTerm new_m2 = `m2;
+        if (! (`name == n)) new_m2 = NameSubstitution(`m2,n,cn,pt,phi);
+        return `cut(a,NameSubstitution(m1,n,cn,pt,phi),x,new_m2);
+      }
+      andL(x@nprop(name1,_),y@nprop(name2,_),m,name) -> {
+        ProofTerm new_m = `m;
+        if ((! (`name1 == n)) && (! (`name2 == n))) new_m = NameSubstitution(`m,n,cn,pt,phi);
+        return `andL(x,y,new_m,name);
+      }
+      andR(a,m1,b,m2,coname) -> {
+        ProofTerm new_m1 = NameSubstitution(`m1,n,cn,pt,phi);
+        ProofTerm new_m2 = NameSubstitution(`m2,n,cn,pt,phi);
+        return `andR(a,new_m1,b,new_m2,coname);
+
+      }
+      orL(x@nprop(name1,_),m1,y@nprop(name2,_),m2,name) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (`name1 == n)) new_m1 = NameSubstitution(`m1,n,cn,pt,phi);
+        ProofTerm new_m2 = `m2;
+        if (! (`name2 == n)) new_m2 = NameSubstitution(`m2,n,cn,pt,phi);
+        return `orL(x,new_m1,y,new_m2,name);
+      }
+      orR(a,b,m,coname) -> {
+        ProofTerm new_m = NameSubstitution(`m,n,cn,pt,phi);
+        return `orR(a,b,new_m,coname);
+      }
+      implyR(x@nprop(name,_),a,m,coname) -> {
+        ProofTerm new_m = `m;
+        if (! (`name == n)) new_m = NameSubstitution(`m,n,cn,pt,phi);
+        return `implyR(x,a,new_m,coname);
+      }
+      implyL(a,m1,x@nprop(name2,_),m2,name) -> {
+        ProofTerm new_m2 = `m2;
+        if (! (`name2 == n)) new_m2 = NameSubstitution(`m2,n,cn,pt,phi);
+        ProofTerm new_m1 = NameSubstitution(`m1,n,cn,pt,phi);
+        return `implyL(a,new_m1,x,new_m2,name);
+      }
+//      existsL(nprop(x,_),_,_,_) -> {return (`x == z);}
+//      forallL(nprop(x,_),_,_,_) -> {return (`x == z);}
+    }
+    return null;
+  }
+
+ 
   %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
     visit ProofTerm {
       // COMMUTING CUTS
@@ -632,14 +798,14 @@ public class Proofterms {
 
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> {
         if (! `nameFreshlyIntroduced(m2,n)) {
-          ProofTerm mm = (ProofTerm) `TopDownNameSubs(n,cn,m1,phi).visit(`m2);
+          ProofTerm mm = (ProofTerm) `NameSubstitution(m2,n,cn,m1,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
 
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> {
         if (! `conameFreshlyIntroduced(m1,cn)) {
-          ProofTerm mm = (ProofTerm) `TopDownCoNameSubs(cn,n,m2,phi).visit(`m1);
+          ProofTerm mm = (ProofTerm) `CoNameSubstitution(m1,cn,n,m2,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
@@ -692,16 +858,16 @@ public class Proofterms {
     return c;
   }
 
-  public static Collection computeNormalForms(ProofTerm t) {
+  public static Collection computeNormalForms(ProofTerm t, NSequent nseq) {
     Collection nf = new ArrayList();
     Collection c = new ArrayList();
     c.add(t);
     while (true) {
       Collection buffer = new ArrayList();
       for (Object x : c) {
-//        System.out.println(PrettyPrinter.prettyPrint((ProofTerm) x));
+        System.out.println("\n----\n"+PrettyPrinter.prettyPrint((ProofTerm) x));
         Collection d = reduce((ProofTerm) x);
-//        for (Object y : d) { System.out.println("reduces to "+PrettyPrinter.prettyPrint((ProofTerm) y)); }
+        for (Object y : d) { System.out.println("\nreduces to \n"+PrettyPrinter.prettyPrint((ProofTerm) y)); typeTypableProofterm(`typablePT((ProofTerm) y, nseq)); }
         if (d.isEmpty()) {
           nf.add(x);
           System.out.println(nf.size()+" normal forms found");
