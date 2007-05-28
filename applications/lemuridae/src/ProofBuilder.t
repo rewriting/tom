@@ -1324,8 +1324,9 @@ b :{
             NSequent nseq = Proofterms.typableProofterm2NSequent(tpt);
             writeToOutputln(PrettyPrinter.prettyPrint(pt));
             PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
-            Collection c = Proofterms.reduce(pt);
-            writeToOutputln("Number of one-step reducts found : "+c.size());
+//            Collection c = Proofterms.reduce(pt);
+            Collection c = Proofterms.computeNormalForms(pt);
+            writeToOutputln("Number of normal forms found : "+c.size());
             for (Object o:c) {
               writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
               PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));

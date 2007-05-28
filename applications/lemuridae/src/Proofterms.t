@@ -141,16 +141,16 @@ public class Proofterms {
 
       rule(
           weakLeftInfo[],
-          (p@rule(_,_,sequent((g1*,g2*), d),_)),
-          sequent((g1*,a,g2*),d),
+          (p@rule(_,_,_,_)),
+          _,
           a
           ),nsequ
         -> { return term2proofterm(`p, `nsequ, ncount, cncount);}
       
       rule(
           weakRightInfo[],
-          (p@rule(_,_,sequent(g,(d1*,d2*)),_)),
-          sequent(g,(d1*,a,d2*)),
+          (p@rule(_,_,_,_)),
+          _,
           a
           ),nsequ
         -> { return term2proofterm(`p,`nsequ, ncount, cncount); }
@@ -538,24 +538,111 @@ public class Proofterms {
   }
 
   private static Strategy TopDownRename(Name x, Name y) {
-    return `mu(MuVar("x"), Choice(Is_cnprop(),Sequence(Rename(x,y), All(MuVar("x")))));
+    return `mu(MuVar("x"), Choice(Is_nprop(),Sequence(Rename(x,y), All(MuVar("x")))));
   }
+
+
+  %strategy NameSubs(n:Name,cn:CoName,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
+    visit ProofTerm {
+/*      andL(x,y,m,n1) -> {
+        if (n == `n1) {
+          return `cut(cnprop(cn,phi),pt,nprop(n,phi),andL(x,y,m,n1));
+        }
+      }
+      orL(x,m1,y,m2,n1) -> {
+        if (n == `n1) {
+          return `cut(cnprop(cn,phi),pt,nprop(n,phi),orL(x,m1,y,m2,n1));
+        }
+      }
+      */
+      p -> {
+        if (nameTopIntroduced(`p,n)) return `cut(cnprop(cn,phi),pt,nprop(n,phi),p);
+      }
+    }
+  }
+
+  %strategy NameSubsAx(n:Name,cn:CoName,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
+    visit ProofTerm {
+      ax(n1,cn1) -> {
+        if (n == `n1) return (ProofTerm) `TopDownReconame(cn,cn1).visit(pt);
+      }
+    }
+  }
+
+
+  private static Strategy TopDownNameSubs(Name n,CoName cn,ProofTerm pt, Prop phi) {
+    return `mu(MuVar("x"),Choice(Choice(NameSubsAx(n,cn,pt,phi),Sequence(NameSubs(n,cn,pt,phi),_cut(Identity(),Identity(),Identity(),All(MuVar("x"))))),All(MuVar("x"))));
+  }
+
+  %strategy CoNameSubs(cn:CoName,n:Name,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
+    visit ProofTerm {
+/*      andL(x,y,m,n1) -> {
+        if (n == `n1) {
+          return `cut(cnprop(cn,phi),pt,nprop(n,phi),andL(x,y,m,n1));
+        }
+      }
+      orL(x,m1,y,m2,n1) -> {
+        if (n == `n1) {
+          return `cut(cnprop(cn,phi),pt,nprop(n,phi),orL(x,m1,y,m2,n1));
+        }
+      }
+      */
+      p -> {
+        if (conameTopIntroduced(`p,cn)) return `cut(cnprop(cn,phi),p,nprop(n,phi),pt); 
+      }
+    }
+  }
+
+  %strategy CoNameSubsAx(cn:CoName,n:Name,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
+    visit ProofTerm {
+      ax(n1,cn1) -> {
+        if (cn == `cn1) {
+//          System.out.println("renommage "+n+" en "+`n1+" dans \n"+pt);
+          ProofTerm pt2 = (ProofTerm) `TopDownRename(n,n1).visit(pt);
+//          System.out.println(pt2);
+          return pt2;
+        }
+      }
+    }
+  }
+
+
+  private static Strategy TopDownCoNameSubs(CoName cn,Name n,ProofTerm pt, Prop phi) {
+    return `mu(MuVar("x"),Choice(Choice(CoNameSubsAx(cn,n,pt,phi),Sequence(CoNameSubs(cn,n,pt,phi),_cut(Identity(),All(MuVar("x")),Identity(),Identity()))),All(MuVar("x"))));
+  }
+
 
   %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
     visit ProofTerm {
       // COMMUTING CUTS
-      /* These rules are just wrong
+      
+      /*
       cut(cnprop(cn,phi),m1,x,m2) -> {
         if (! `conameAppearsFree(m1,cn)) {
-          c.add(getEnvironment().getPosition().getReplace(`m2).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(`m1).visit(subject));
         }
       }
 
       cut(a,m1,nprop(n,phi),m2) -> {
         if (! `nameAppearsFree(m2,n)) {
-          c.add(getEnvironment().getPosition().getReplace(`m1).visit(subject));
+          c.add(getEnvironment().getPosition().getReplace(`m2).visit(subject));
         }
-      }*/
+      }
+      */
+
+      cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> {
+        if (! `nameFreshlyIntroduced(m2,n)) {
+          ProofTerm mm = (ProofTerm) `TopDownNameSubs(n,cn,m1,phi).visit(`m2);
+          c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
+        }
+      }
+
+      cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> {
+        if (! `conameFreshlyIntroduced(m1,cn)) {
+          ProofTerm mm = (ProofTerm) `TopDownCoNameSubs(cn,n,m2,phi).visit(`m1);
+          c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
+        }
+      }
 
       // LOGICAL CUTS
       cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { // ATTENTION CAPTURE DE VARIABLE
@@ -587,6 +674,12 @@ public class Proofterms {
           c.add(getEnvironment().getPosition().getReplace(`cut(a1,cut(a2,m2,x1,m1),x2,m3)).visit(subject));
         }
       }
+      cut(cnprop(cn,phi),p1@trueR(cn),nprop(n,phi),p2) -> {
+          c.add(getEnvironment().getPosition().getReplace(`p2).visit(subject));
+      }
+      cut(cnprop(cn,phi),p1,nprop(n,phi),p2@falseL(n)) -> {
+          c.add(getEnvironment().getPosition().getReplace(`p1).visit(subject));
+      }
     }
   }
 
@@ -598,5 +691,27 @@ public class Proofterms {
     catch (VisitFailure e) { System.out.println(e); }
     return c;
   }
-  
+
+  public static Collection computeNormalForms(ProofTerm t) {
+    Collection nf = new ArrayList();
+    Collection c = new ArrayList();
+    c.add(t);
+    while (true) {
+      Collection buffer = new ArrayList();
+      for (Object x : c) {
+//        System.out.println(PrettyPrinter.prettyPrint((ProofTerm) x));
+        Collection d = reduce((ProofTerm) x);
+//        for (Object y : d) { System.out.println("reduces to "+PrettyPrinter.prettyPrint((ProofTerm) y)); }
+        if (d.isEmpty()) {
+          nf.add(x);
+          System.out.println(nf.size()+" normal forms found");
+        }
+        else buffer.addAll(d);
+      }
+      if (buffer.isEmpty()) break;
+      else c=buffer;
+    }
+    return nf;
+  }
+
 }

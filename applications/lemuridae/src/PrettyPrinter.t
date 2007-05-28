@@ -376,7 +376,7 @@ class PrettyPrinter {
 
     %match (ProofTerm term) { // INCOMPLET manque le 1er ordre
       ax(n,cn) -> {return "{\\sf Ax}("+toLatex(`n)+","+toLatex(`cn)+")";}
-      cut(a,m1,x,m2) -> {return "{\\sf Cut}("+toLatex(`a)+","+toLatex(`m1)+","+toLatex(`x)+","+toLatex(`m2)+")";}
+      cut(a,m1,x,m2) -> {return "{\\sf Cut}(\\langle "+toLatex(`a)+"\\rangle ,"+toLatex(`m1)+", \\langle "+toLatex(`x)+" \\rangle ,"+toLatex(`m2)+")";}
       falseL(n) -> {return "{\\sf False}_L("+toLatex(`n)+")";}
       trueR(cn) -> {return "{\\sf True}_R("+toLatex(`cn)+")";}
       andR(a,m1,b,m2,nc) -> {return "{\\sf And}_R(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m2)+","+toLatex(`nc)+")" ;}
