@@ -1,10 +1,7 @@
-rules in(R.,R.) --> ALL y. eq(y,R.) => (in(y,R.) => C), %
-      eq(y,z) --> ALL x. in(y,x) => in(z,x)
+rules in(R.,R.) --> ALL y. (ALL x. in(y,x) => in(R.,x)) => (in(y,R.) => C) 
 
 tab C
 
 comp
-
-addrules C --> A \/ -A
 
 tab C

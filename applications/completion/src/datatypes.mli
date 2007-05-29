@@ -4,6 +4,7 @@ type term_list = term list
 
 type prop =
     Atomic of string * term_list
+  | True | False
   | Not of prop
   | Or of prop * prop
   | And of prop * prop

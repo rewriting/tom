@@ -1,7 +1,7 @@
 %{
   let parse_error = Interp.error_handling
 %}
-%token EOL PIPE DASH COMMA LPAR RPAR AND OR DOT ARROW ALL EX IMP
+%token EOL PIPE DASH COMMA LPAR RPAR AND OR DOT ARROW ALL EX IMP FALSE TRUE
 %token TAB RULES QUIT UNIF ADDRULES COMP
 %token <string> STRING
 %right OR
@@ -57,7 +57,8 @@ smallprop:
 | STRING LPAR terms RPAR { Datatypes.Atomic($1,$3) }
 | DASH smallprop { Datatypes.Not $2 }
 | LPAR prop RPAR { $2 }
-
+| FALSE { Datatypes.False }
+| TRUE { Datatypes.True }
 
 terms:
   term { [$1] } 

@@ -40,6 +40,8 @@ rule token = parse
   | "=>"            { IMP }
   | "ALL"          { ALL }
   | "EX"           { EX }
+  | "FALSE"        { FALSE }
+  | "TRUE"         { TRUE }
   | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm
                    { try
                        Hashtbl.find keyword_table lxm

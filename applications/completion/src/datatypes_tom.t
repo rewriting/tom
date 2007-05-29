@@ -49,7 +49,17 @@
   get_slot(args,t) { (match t with Atomic (_,s) -> s |_-> failwith "Tom bug") }
     make(s,a) { Atomic(s,a) }
 }
- 
+
+%op prop True() {
+    is_fsym(t) { match t with True -> true | _ -> false }
+    make() { True }
+}
+
+%op prop False() {
+    is_fsym(t) { match t with False -> true | _ -> false }
+    make() { False }
+}
+
 %op prop not(prop:prop) {
   is_fsym(t) { match t with Not _ -> true | _ -> false }
   get_slot(prop,t) { (match t with Not s -> s |_-> failwith "Tom bug") }
@@ -150,6 +160,7 @@
 
 %typeterm a_prop {
     implement { a_prop }
+    is_sort(t)             { true }
     equals(s,t) { let (l,_) = s and (r,_) = t in prop_eq l r }
 }
 

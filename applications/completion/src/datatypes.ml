@@ -6,6 +6,8 @@ type term_list = term list
 
 type prop = 
     Atomic of string * term_list
+  | True 
+  | False
   | Not of prop
   | Or of prop * prop
   | And of prop * prop
@@ -49,6 +51,8 @@ let rec prop_to_string = function
 	     |  x::q ->  
 		  (List.fold_left (fun a t -> a ^  ", " ^ (term_to_string t)) 
 		    ("(" ^ (term_to_string x)) q) ^ ")")
+  | True -> "TRUE"
+  | False -> "FALSE"
   | Not(Atomic _ as p) -> "-" ^ (prop_to_string p)
   | Not p ->  Printf.sprintf "-(%s)" (prop_to_string p)
   | And(Atomic _ as p, (Atomic _ as q)) 
@@ -145,6 +149,8 @@ let rec subst sub = function
   | Or(p,q) -> Or(subst sub p, subst sub q)
   | All(x,q) -> All(x, subst (Term(Var x, Var x)::sub) q)
   | Ex(x,q) -> Ex(x, subst (Term(Var x, Var x)::sub) q)
+  | False -> False
+  | True -> True
 
 let fresh_counter = ref 0
 

@@ -15,7 +15,6 @@ addrules lcons(subst(one.,s), rond(shift., s)) -> s
 addrules subst(pitype(a,b),s) -> pitype(subst(a,s),subst(b,lcons(one.,rond(s,shift.))))
 addrules subst(pikind(a,b),s) -> pikind(subst(a,s),subst(b,lcons(one.,rond(s,shift.))))
 
-addrules in(type.,kind.) --> A\/-A
 addrules in(pitype(a,b),type.) --> in(a,type.) /\ %
 		    (ALL z. (in(z,a) => in(subst(b,lcons(z,id.)), type.)))
 addrules in(pikind(a,b),kind.) --> in(a,type.) /\ %
@@ -31,9 +30,12 @@ addrules WF(cons(gamma,e(a,b))) --> %
 addrules C(cons(gamma,e(a,b))) --> %
      C(gamma) /\ in(a,b)
 
-tab EX x. (in(a.,type.)=> in(pikind(a.,subst(x,shift.)),kind.))
+%At the end to make the proof close more quickly
+addrules in(type.,kind.) --> A\/-A
 
-quit.
+%tab EX x.(in(a.,type.)=> in(pikind(a., subst(x,shift.)),kind.))
+
+%quit.
 
 tab (in(nat.,type.) /\ %
      in(z.,nat.) /\ %

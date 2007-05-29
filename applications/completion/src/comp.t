@@ -301,6 +301,20 @@ let tableau rules tab =
 	    raise Hop
 	  end }
     
+    tab(b1*,b(conc(_*,a(True(),_),_*),_),b2*) ->
+	{ begin 
+	    fprintf (!proof_chan) "{true}";
+	    add (`tab(b1*,b2*));
+	    raise Hop
+	  end } 
+
+    tab(b1*,b(conc(_*,a(not(False()),_),_*),_),b2*) ->
+	{ begin 
+	    fprintf (!proof_chan) "{true}";
+	    add (`tab(b1*,b2*));
+	    raise Hop
+	  end } 
+
     tab(b1*,b(conc(_*,a(p,_),_*,a(not(p),_),_*),_),b2*) ->
 	{ begin 
 	    fprintf (!proof_chan) "{closure}";
@@ -314,6 +328,20 @@ let tableau rules tab =
 	    add (`tab(b1*,b2*));
 	    raise Hop
 	  end } 
+
+    tab(b1*,b(conc(gamma*,a(False(),_),delta*),s),b2*) ->
+	{ begin
+	    fprintf (!proof_chan) "{false}";
+	    add (`tab(b1*,b(conc(gamma*,delta*),s),b2*));
+	    raise Hop
+	  end }
+
+    tab(b1*,b(conc(gamma*,a(not(True()),_),delta*),s),b2*) ->
+	{ begin
+	    fprintf (!proof_chan) "{false}";
+	    add (`tab(b1*,b(conc(gamma*,delta*),s),b2*));
+	    raise Hop
+	  end }
     
     tab(b1*,b(conc(gamma*,ap,eta*,ap,delta*),s),b2*) ->
 	{ begin
@@ -321,6 +349,7 @@ let tableau rules tab =
 	    add (`tab(b1*,b(conc(gamma*,ap,eta*,delta*),s),b2*));
 	    raise Hop
 	  end }
+
 };
   (* closure *)
   closure tab;
@@ -424,19 +453,21 @@ let tableau rules tab =
   tab(b1*,b(bg@conc(_*,a(atomic(_,_),_),_*),an(_,_)),b2*) 
 | tab(b1*,b(bg@conc(_*,a(not(atomic(_,_)),_),_*),an(_,_)),b2*) -> { 
     (* rw *)
-    let rec aux accu c = function
-      | (Atomic(_,_) as p,(l,cs,rr))::r ->
-	  let rec aux2 = function
-	    | eq::eqs -> begin
-		try
+    let rec aux bunify accu c ap = 
+      let unify = if bunify then unify else pmatch in
+	match ap with
+	  | (Atomic(_,_) as p,(l,cs,rr))::r ->
+	      let rec aux2 = function
+		| eq::eqs -> begin
+		    try
 		  if List.mem eq rr then raise Not_match
 		  else
-		    let rp, rc = rewrite (refresh eq) cs p in
-		      aux ((rp,(l,rc,[]))::(p,(l,cs,eq::rr))::accu) true r
+		    let rp, rc = rewrite_gen unify (refresh eq) cs p in
+		      aux bunify ((rp,(l,rc,[]))::(p,(l,cs,eq::rr))::accu) true r
     		with
 		    Not_match -> aux2 eqs
 	      end
-	    | [] -> aux ((p,(l,cs,rr))::accu) c r
+	    | [] -> aux bunify ((p,(l,cs,rr))::accu) c r
 	  in aux2 rules
       | (Not(Atomic(_,_) as p),(l,cs,rr))::r ->
 	  let rec aux2 = function
@@ -444,16 +475,16 @@ let tableau rules tab =
 		try
 		  if List.mem eq rr then raise Not_match 
 		  else
-		    let rp, rc = rewrite (refresh eq) cs p in
-		      aux ((Not rp,(l,rc,[]))::((Not p,(l,rc,eq::rr)))::accu)
+		    let rp, rc = rewrite_gen unify (refresh eq) cs p in
+		      aux bunify ((Not rp,(l,rc,[]))::((Not p,(l,rc,eq::rr)))::accu)
 			true r
 		with
 		    Not_match -> aux2 eqs
 	      end
-	    | [] -> aux ((Not(p),(l,cs,rr))::accu) c r
+	    | [] -> aux bunify ((Not(p),(l,cs,rr))::accu) c r
 	  in aux2 rules 
-      | ap::r -> aux (ap::accu) c r
-      | [] -> [accu], c 
+      | ap::r -> aux bunify (ap::accu) c r
+      | [] -> if bunify || c then [accu], c else aux true [] c accu
     in
     let rec aux_s accu c = function
       | (Atomic(_,_) as p,(l,cs,rr))::r ->
@@ -496,7 +527,7 @@ let tableau rules tab =
     in
     let nbgs, c = if !Globals.split_rew then
       aux_s [[]] false (`bg)
-    else aux [] false (`bg) in
+    else aux false [] false (`bg) in
       if c then 
 	begin
 	  fprintf (!proof_chan) "{rw}";
@@ -602,7 +633,7 @@ let unify_max tab =
   in aux (T.add (List.fold_left (fun x b -> B.add b x) B.empty tab) (T.empty))
       
 
-let sort_result cut_prop res =
+let sort_result cut_prop tab =
   let rec aux accu = function
       (b,_)::bs -> 
 	aux
@@ -610,33 +641,34 @@ let sort_result cut_prop res =
 	     (fun res (p,_) -> 
 		if (cut_prop = p) or (Not(cut_prop) = p)	  
 		then res
-		else List.fold_left (fun res (q, _) -> insert (insert (p,[]) q,(true,true)) res) res accu)
-	     accu b)
+		else List.fold_left (fun res (q, _) -> insert (insert (Not(p),([],[],[])) q,(true,true)) res) res accu)
+	     [] b)
 	  bs
     | [] -> accu
-  in List.rev_map (aux [[],(true,true)]) res
+  in aux [[],(true,true)] tab
 
 exception Res_tab of tableau
 
-let clean res = 
-  let rec clean_tableau tab = 
-    try %match (tableau tab) {
+let rec clean tab = 
+  try %match (tableau tab) {
     tab(b1*,b(ps,_),b2*,b(ps,_),b3*) ->
-    { raise (Res_tab(clean_tableau (`tab(b1*,b(ps,an(true(),true())),b2*,b3*))))}
+    { raise (Res_tab(clean (`tab(b1*,b(ps,an(true(),true())),b2*,b3*))))}
 
     tab(b1*,b(conc(_*,a(p,_),_*,a(not(p),_),_*),_),b2*) ->
-	  { raise (Res_tab(clean_tableau (`tab(b1*,b2*))))}
+	  { raise (Res_tab(clean (`tab(b1*,b2*))))}
     
     tab(b1*,b(conc(_*,a(not(p),_),_*,a(p,_),_*),_),b2*) ->
-	  { raise (Res_tab(clean_tableau (`tab(b1*,b2*))))}
+	  { raise (Res_tab(clean (`tab(b1*,b2*))))}
+
+    tab(b1*,b(conc(gamma*,a(not(not(p)),l),delta*),_),b2*) ->
+    { raise (Res_tab(clean (`tab(b1*,b(conc(gamma*,a(p,l),delta*),an(true(),true())),b2*))))}
 
     tab(b1*,b(conc(gamma*,p,eta*,p,delta*),_),b2*) ->
-    { raise (Res_tab(clean_tableau (`tab(b1*,b(conc(gamma*,p,eta*,delta*),an(true(),true())),b2*))))}
+    { raise (Res_tab(clean (`tab(b1*,b(conc(gamma*,p,eta*,delta*),an(true(),true())),b2*))))}
 
   }; tab
     with Res_tab x -> x
-  in List.rev_map clean_tableau res
-
+ 
 let rec critic eq1 = function
     Prop(Atomic(n,a) as p,_) as eq2 ->
       let rp, sub1 = rewrite (refresh eq1) [] p in
@@ -649,7 +681,7 @@ let rec critic eq1 = function
 	[
 	  [bp,([],[],[]); rq,([],[],[])],(true,true);
 	  [Not(bp),([],[],[]); Not(rp),([],[],[])],(true,true)
-	]
+	], bp
   | Term(_,_) as eq2 -> begin
       match eq1 with
 	  Prop(_,_) -> critic eq2 eq1
@@ -658,32 +690,103 @@ let rec critic eq1 = function
       Printf.fprintf stderr "%s" (prop_to_string x); flush stderr;
       raise (Invalid_argument "Rule with non non-atomic proposition")
 
-let orify = function
-    [] -> Or(Atomic(" A",[]),Not(Atomic(" A",[])))
+let rec orify = function
+    [] -> False
+  | (False,_)::r -> orify r
   | (q,_)::r ->
       let rec aux accu = function 
-        | (p,_)::t -> aux (Or(p,accu)) t
+	| (False,_)::t -> aux accu t
+	| (p,_)::t -> aux (Or(p,accu)) t
 	| [] -> accu
       in 
 	aux q r
 
-let rec get_rules = function
-    [] -> []
-  | t::q ->
-      let rec aux = function
-	  [] -> []
-	| b::r -> try
+let rec get_rules = function 
+    b::r -> begin try
 %match (branch b) {
   b(conc(b1*,a(p@atomic(_,_),_),b2*),_) -> {
     raise (Res_eq_list 
-	     (Prop((`p), And((`p), Not(Or(orify (`b1), orify (`b2)))))::(aux r))
+	   (Prop((`p), Or((`p), Not(orify((orify (`b1),([],[],[]))::(`b2)))))::(get_rules r))
 	  ) }
     
- b(conc(b1*,a(not(p@atomic(_,_)),_),b2*),_) -> {
-    raise (Res_eq_list 
-	     (Prop((`p), Or((`p), Not(Or(orify (`b1), orify (`b2)))))::(aux r))
+    b(conc(b1*,a(not(p@atomic(_,_)),_),b2*),_) -> {
+   raise (Res_eq_list 
+	  (Prop((`p), And((`p), orify ((orify (`b1),([],[],[]))::(`b2))))::(get_rules r))
 	  ) }
-};
-	    failwith "Not in tableau expanded form" 
-  	  with Res_eq_list l -> l
-      in List.rev_append (aux t) (get_rules q)
+
+    b(conc(gamma*,a(not(not(p)),l),delta*),s) -> 
+	{ 
+	    raise (Res_eq_list 
+		   (get_rules (`tab(b(conc(gamma*,a(p,l),delta*),s),r*))))
+	}
+    
+    b(conc(gamma*,a(or(p,q),l),delta*),s) ->
+      { (* alpha *)
+	raise (Res_eq_list 
+	       (get_rules (`tab(b(conc(gamma*,a(p,l),a(q,l),delta*),s),r*))))
+      }
+	      
+    b(conc(gamma*,a(not(and(p,q)),l),delta*),s) ->
+      { (* alpha *)
+	raise (Res_eq_list 
+	       (get_rules (`tab(b(conc(gamma*,a(not(p),l),a(not(q),l),delta*),s),r*))))
+      }
+		    
+    b(conc(gamma*,a(all(x,p),cs@c(l,_,_)),delta*),s) ->
+      { (* delta *)
+	let e = Term(Var (`x), 
+		     Var(fresh_var "var_")) in
+	let q = subst [e] (`p) 
+	in
+	raise (Res_eq_list 
+	       (get_rules (`tab(b(conc(gamma*,a(q,cs),delta*),s),r*))))
+      }
+
+    b(conc(gamma*,a(not(ex(x,p)),cs@c(l,_,_)),delta*),s) ->
+      { (* delta *)
+	let e = Term(Var (`x), 
+		     Var (fresh_var "var_")) in
+	let q = subst [e] (`p) 
+	in
+	raise (Res_eq_list 
+	       (get_rules (`tab(b(conc(gamma*,a(not(q),cs),delta*),s),r*))))
+      }
+
+    b(conc(gamma*,a(and(p,q),l),delta*),s) -> 
+       { (* beta *)
+	 raise (Res_eq_list 
+		(get_rules (`tab(b(conc(gamma*,a(p,l),delta*),s),
+				 b(conc(gamma*,a(q,l),delta*),s),r*))))
+       }
+
+    b(conc(gamma*,a(not(or(p,q)),l),delta*),s) -> 
+      { (* beta *)
+       	  raise (Res_eq_list 
+		 (get_rules (`tab(b(conc(gamma*,a(not(p),l),delta*),s),
+				  b(conc(gamma*,a(not(q),l),delta*),s),r*))))
+      }
+
+   b(conc(gamma*,ap@a(ex(x,p),cs@c(l,_,_)),delta*),s) ->
+      { (* gamma *)
+	let e = Term(Var (`x), 
+		     Fun(fresh_var "const_",[])) in
+	let q = subst [e] (`p) 
+	in
+	raise (Res_eq_list 
+	       (get_rules (`tab(b(conc(gamma*,a(q,cs),delta*,ap),s),r*))))
+      }
+
+    b(conc(gamma*,ap@a(not(all(x,p)),cs@c(l,_,_)),delta*),s) ->
+      { (* gamma *)
+	let e = Term(Var (`x), 
+		     Fun(fresh_var "const_",[])) in
+	let q = subst [e] (`p) 
+	in
+	raise (Res_eq_list 
+	       (get_rules (`tab(b(conc(gamma*,a(not(q),cs),delta*,ap),s),r*))))
+      }
+
+}; failwith "Problem with the creation of the rules"
+    with Res_eq_list l -> l end
+  | [] -> []
+      
