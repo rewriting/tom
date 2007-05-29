@@ -7,7 +7,9 @@ import urban.types.*;
 import tom.library.sl.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Proofterms {
 //  %include { sequents/sequents.tom }
@@ -253,16 +255,18 @@ public class Proofterms {
   }
 
   public static NTree typeProofterm (ProofTerm pi, NSequent nseq) { // INCOMPLET
-    System.out.println(pi);
+//    System.out.println(pi);
     if (isImplicitContraction(pi)) {
 //      System.out.println("implicit contraction detected");
       %match (ProofTerm pi, NSequent nseq) {
+        /* plusieurs liaison d'une meme variable...
         _, nsequent((_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`n); return null;}
         }
         _, nsequent(_,(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`cn); return null;}
         }
+        */
          pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,active@cnprop(cn, and(A,B)),cnd2*)) -> {
           return `nrule(andRightInfo(),npremisses(typeProofterm(m1,nsequent(ng,cncontext(cnd1*,active,a,cnd2*))),typeProofterm(m2,nsequent(ng,cncontext(cnd1*,active,b,cnd2*)))),ns,pt);
         }
@@ -299,12 +303,14 @@ public class Proofterms {
 //      System.out.println("no Implicit Contraction");
 //      System.out.println(pi);
       %match (ProofTerm pi, NSequent nseq) {
+        /* plusieurs liaison d'une meme variable
         _, nsequent((_*,nprop(n,phi1),_*,nprop(n,phi2),_*),_) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`n); return null;}
         }
         _, nsequent(_,(_*,cnprop(cn,phi1),_*,cnprop(cn,phi2),_*)) -> {
           if (! (`phi1 == `phi2)) { System.out.println("double occurence of "+`cn); return null;}
         }
+        */
          pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
           return `nrule(axiomInfo(),npremisses(),ns,pt);
         }
@@ -534,13 +540,124 @@ public class Proofterms {
 
   // Reductions des termes
 
+  private static ProofTerm ReName(ProofTerm pt, Name name1, Name name2) { // INCOMPLET MANQUE PREMIER ORDRE
+    %match(ProofTerm pt) {
+      ax(n,cn) -> {
+        if (name1 == `n) return `ax(name2,cn); else return pt;
+      }
+      cut(a,m1,x@nprop(n,_),m2) -> {
+        ProofTerm new_m2 = `m2;
+        if (! (name1 == `n)) new_m2 = `ReName(m2,name1,name2);
+        ProofTerm new_m1 = `ReName(m1,name1,name2);
+        return `cut(a, new_m1, x, new_m2);
+      }
+      trueR(cn) -> { return pt;}
+      falseL(n) -> { if (name1 == `n) return `falseL(name2); else return pt;}
+      andL(x@nprop(n1,_),y@nprop(n2,_),m,n) -> {
+        ProofTerm new_m = `m;
+        if ((! (name1 == `n1)) && (! (name1 == `n2))) new_m = `ReName(m,name1,name2);
+        Name new_n = `n;
+        if (name1 == `n) new_n = name2;
+        return `andL(x,y,new_m, new_n);
+      }
+      andR(a,m1,b,m2,cn) -> {
+        ProofTerm new_m1 = `ReName(m1,name1,name2);
+        ProofTerm new_m2 = `ReName(m2,name1,name2);
+        return `andR(a,new_m1,b,new_m2,cn);
+      }
+      orL(x@nprop(n1,_),m1,y@nprop(n2,_),m2,n) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (name1 == `n1)) new_m1 = `ReName(m1,name1,name2);
+        ProofTerm new_m2 = `m2;
+        if (! (name1 == `n2)) new_m2 = `ReName(m2,name1,name2);
+         Name new_n = `n;
+        if (name1 == `n) new_n = name2;
+        return `orL(x,new_m1,y,new_m2,new_n);
+      }
+      orR(a,b,m,cn) -> {
+        ProofTerm new_m = `ReName(m,name1,name2);
+        return `orR(a,b,new_m,cn);
+      }
+      implyL(a,m1,x@nprop(n2,_),m2,n) ->{
+        ProofTerm new_m1 = `ReName(m1,name1,name2);
+        ProofTerm new_m2 = `m2;
+        if (! (name1 == `n2)) new_m2 = `ReName(m2,name1,name2);
+        Name new_n = `n;
+        if (name1 == `n) new_n = name2;
+        return `implyL(a,new_m1,x,new_m2,new_n);
+      }
+      implyR(x@nprop(n1,_),a,m1,cn) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (name1 == `n1)) new_m1 = `ReName(m1,name1,name2);
+        return `implyR(x,a,new_m1,cn);
+       }
+    }
+    return null;
+  }
+
+  private static ProofTerm ReCoName(ProofTerm pt, CoName coname1, CoName coname2) { // INCOMPLET MANQUE PREMIER ORDRE
+    %match(ProofTerm pt) {
+      ax(n,cn) -> {
+        if (coname1 == `cn) return `ax(n,coname2); else return pt;
+      }
+      cut(a@cnprop(cn,_),m1,x,m2) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (coname1 == `cn)) new_m1 = `ReCoName(m1,coname1,coname2);
+        ProofTerm new_m2 = `ReCoName(m2,coname1,coname2);
+        return `cut(a, new_m1, x, new_m2);
+      }
+      falseL(n) -> { return pt;}
+      trueR(cn) -> { if (coname1 == `cn) return `trueR(coname2); else return pt;}
+      orR(a@cnprop(cn1,_),b@cnprop(cn2,_),m,cn) -> {
+        ProofTerm new_m = `m;
+        if ((! (coname1 == `cn1)) && (! (coname1 == `cn2))) new_m = `ReCoName(m,coname1,coname2);
+        CoName new_cn = `cn;
+        if (coname1 == `cn) new_cn = coname2;
+        return `orR(a,b,new_m, new_cn);
+      }
+      orL(x,m1,y,m2,n) -> {
+        ProofTerm new_m1 = `ReCoName(m1,coname1,coname2);
+        ProofTerm new_m2 = `ReCoName(m2,coname1,coname2);
+        return `orL(x,new_m1,x,new_m2,n);
+      }
+      andR(a@cnprop(cn1,_),m1,b@cnprop(cn2,_),m2,cn) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (coname1 == `cn1)) new_m1 = `ReCoName(m1,coname1,coname2);
+        ProofTerm new_m2 = `m2;
+        if (! (coname1 == `cn2)) new_m2 = `ReCoName(m2,coname1,coname2);
+        CoName new_cn = `cn;
+        if (coname1 == `cn) new_cn = coname2;
+        return `andR(a,new_m1,b,new_m2,new_cn);
+      }
+      andL(x,y,m,n) -> {
+        ProofTerm new_m = `ReCoName(m,coname1,coname2);
+        return `andL(x,y,new_m,n);
+      }
+      implyL(a@cnprop(cn1,_),m1,x,m2,n) ->{
+        ProofTerm new_m2 = `ReCoName(m2,coname1,coname2);
+        ProofTerm new_m1 = `m1;
+        if (! (coname1 == `cn1)) new_m1 = `ReCoName(m1,coname1,coname2);
+        return `implyL(a,new_m1,x,new_m2,n);
+        }
+      implyR(x,a@cnprop(cn1,_),m1,cn) -> {
+        ProofTerm new_m1 = `m1;
+        if (! (coname1 == `cn1)) new_m1 = `ReCoName(m1,coname1,coname2);
+        CoName new_cn = `cn;
+        if (coname1 == `cn) new_cn = coname2;
+        return `implyR(x,a,new_m1,cn);
+        }
+    }
+    return null;
+  }
+
+  /*
   %strategy Reconame(CoName a, CoName b) extends `Identity() {
     visit CoName {
       x -> { if (`x == a) return b;}
     }
   }
 
-  private static Strategy TopDownReconame(CoName a, CoName b) {
+ private static Strategy TopDownReconame(CoName a, CoName b) {
     return `mu(MuVar("x"), Choice(Is_cnprop(),Sequence(Reconame(a,b), All(MuVar("x")))));
   }
 
@@ -554,7 +671,6 @@ public class Proofterms {
     return `mu(MuVar("x"), Choice(Is_nprop(),Sequence(Rename(x,y), All(MuVar("x")))));
   }
 
-  /*
   private static boolean bindsNameOnTop(ProofTerm pt, Name z) {
     %match(ProofTerm pt) {
       cut(nprop(x,_),_,_,_) -> {return (`x == z);}
@@ -591,7 +707,7 @@ public class Proofterms {
   %strategy NameSubsAx(n:Name,cn:CoName,pt:ProofTerm, phi:Prop) extends `Fail() { // ATTENTION CAPTURE DE VARIABLE
     visit ProofTerm {
       ax(n1,cn1) -> {
-        if (n == `n1) return (ProofTerm) `TopDownReconame(cn,cn1).visit(pt);
+        if (n == `n1) return (ProofTerm) `ReCoName(pt,cn,cn1);
       }
     }
   }
@@ -625,7 +741,7 @@ public class Proofterms {
       ax(n1,cn1) -> {
         if (cn == `cn1) {
 //          System.out.println("renommage "+n+" en "+`n1+" dans \n"+pt);
-          ProofTerm pt2 = (ProofTerm) `TopDownRename(n,n1).visit(pt);
+          ProofTerm pt2 = (ProofTerm) `ReName(pt,n,n1);
 //          System.out.println(pt2);
           return pt2;
         }
@@ -642,13 +758,13 @@ public class Proofterms {
     %match (ProofTerm subj) {
       p@ax(n1,cn1) -> {
         if (cn == `cn1) {
-//          System.out.println("renommage "+n+" en "+`n1+" dans \n"+pt);
+          System.out.println("renommage "+n+" en "+`n1+" dans \n"+PrettyPrinter.prettyPrint(pt));
           ProofTerm pt2 = null;
           try {
-            pt2 = (ProofTerm) `TopDownRename(n,n1).visit(pt);
+            pt2 = (ProofTerm) `ReName(pt,n,n1);
           }
           catch (Exception e) { System.out.println(e); }
-//          System.out.println(pt2);
+          System.out.println(PrettyPrinter.prettyPrint(pt2));
           return pt2;
         }
         else return `p;
@@ -712,13 +828,13 @@ public class Proofterms {
     %match (ProofTerm subj) {
       p@ax(n1,cn1) -> {
         if (n == `n1) {
-//          System.out.println("renommage "+n+" en "+`n1+" dans \n"+pt);
+          System.out.println("renommage "+cn+" en "+`cn1+" dans \n"+PrettyPrinter.prettyPrint(pt));
           ProofTerm pt2 = null;
           try {
-            pt2 = (ProofTerm) `TopDownReconame(cn,cn1).visit(pt);
+            pt2 = (ProofTerm) `ReCoName(pt,cn,cn1);
           }
           catch (Exception e) { System.out.println(e); }
-//          System.out.println(pt2);
+          System.out.println(PrettyPrinter.prettyPrint(pt2));
           return pt2;
         }
         else return `p;
@@ -796,15 +912,15 @@ public class Proofterms {
       }
       */
 
-      cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> {
-        if (! `nameFreshlyIntroduced(m2,n)) {
+      cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
+        if ((! `nameFreshlyIntroduced(m2,n)) && (`boundNamesAreNotFree(m2,m1)) && (`boundCoNamesAreNotFree(m2,m1))) {
           ProofTerm mm = (ProofTerm) `NameSubstitution(m2,n,cn,m1,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
 
-      cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> {
-        if (! `conameFreshlyIntroduced(m1,cn)) {
+      cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
+        if ((! `conameFreshlyIntroduced(m1,cn)) && (`boundNamesAreNotFree(m1,m2)) && (`boundCoNamesAreNotFree(m1,m2))) {
           ProofTerm mm = (ProofTerm) `CoNameSubstitution(m1,cn,n,m2,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
@@ -813,13 +929,13 @@ public class Proofterms {
       // LOGICAL CUTS
       cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { // ATTENTION CAPTURE DE VARIABLE
         if (`conameFreshlyIntroduced(m,cn2)) {
-          ProofTerm mm = (ProofTerm) `TopDownReconame(cn2,cn).visit(`m); 
+          ProofTerm mm = (ProofTerm) `ReCoName(m,cn2,cn); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
       cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> { // ATTENTION CAPTURE DE VARIABLE
         if (`nameFreshlyIntroduced(m,n2)) {
-          ProofTerm mm = (ProofTerm) `TopDownRename(n2,n).visit(`m); 
+          ProofTerm mm = (ProofTerm) `ReName(m,n2,n); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
       }
       cut(cnprop(cn,phi),p1@andR(a1,m1,a2,m2,cn),nprop(n,phi),p2@andL(x1,x2,m3,n)) -> {
@@ -859,6 +975,10 @@ public class Proofterms {
   }
 
   public static Collection computeNormalForms(ProofTerm t, NSequent nseq) {
+    VarGenerator refresher = new VarGenerator();
+    refresher.synchronize(t);
+    System.out.println(PrettyPrinter.prettyPrint(t));
+    System.out.println(PrettyPrinter.prettyPrint(refresher.refreshBoundVars(t)));
     Collection nf = new ArrayList();
     Collection c = new ArrayList();
     c.add(t);
@@ -878,6 +998,156 @@ public class Proofterms {
       else c=buffer;
     }
     return nf;
+  }
+
+  %strategy GetBoundCoNamesAux(c:Collection) extends Identity() {
+    visit CNProp {
+      cnprop(x,_) -> {c.add(`x); }
+    }
+  }
+
+  private static Strategy getBoundCoNames(Collection c) {
+    return `TopDown(GetBoundCoNamesAux(c));
+  }
+
+  private static boolean boundCoNamesAreNotFree(ProofTerm m1, ProofTerm m2) {
+    Collection c = new HashSet();
+    try {
+      getBoundCoNames(c).visit(m1);
+    }
+    catch (Exception e) { System.out.println(e);}
+    boolean res = true;
+    for (Object o : c) {
+      if (conameAppearsFree(m2,(CoName) o)) { res=false; } 
+    }
+    return res;
+  }
+
+  %strategy GetBoundNamesAux(c:Collection) extends Identity() {
+    visit NProp {
+      nprop(x,_) -> {c.add(`x); }
+    }
+  }
+
+  private static Strategy getBoundNames(Collection c) {
+    return `TopDown(GetBoundNamesAux(c));
+  }
+
+  private static boolean boundNamesAreNotFree(ProofTerm m1, ProofTerm m2) {
+    Collection c = new HashSet();
+    try {
+      getBoundNames(c).visit(m1);
+    }
+    catch (Exception e) { System.out.println(e);}
+    boolean res = true;
+    for (Object o : c) {
+      if (nameAppearsFree(m2,(Name) o)) { res=false;}
+    }
+    return res;
+  }
+
+  %strategy GetCoNamesAux(c:Collection) extends Identity() {
+    visit CoName {
+      coname(x) -> {c.add(`x); }
+    }
+  }
+
+  private static Strategy getCoNames(Collection c) {
+    return `TopDown(GetCoNamesAux(c));
+  }
+
+  %strategy GetNamesAux(c:Collection) extends Identity() {
+    visit Name {
+      name(x) -> {c.add(`x); }
+    }
+  }
+
+  private static Strategy getNames(Collection c) {
+    return `TopDown(GetNamesAux(c));
+  }
+
+  private static class VarGenerator {
+    private int name_int=0;
+    private int coname_int=0;
+
+    public Name newName() {
+      return `name(name_int++);
+    }
+
+    public CoName newCoName() {
+      return `coname(coname_int++);
+    }
+
+    public void synchronize(ProofTerm pt) {
+      Collection<Integer> c = new HashSet<Integer>();
+      try {
+        getNames(c).visit(pt);
+      }
+      catch (Exception e) {System.out.println(e);}
+      name_int = Collections.max(c)+1 ;
+      c = new HashSet<Integer>();
+      try {
+        getCoNames(c).visit(pt);
+      }
+      catch (Exception e) {System.out.println(e);}
+      coname_int = Collections.max(c)+1;
+    }
+
+    public ProofTerm refreshBoundVars(ProofTerm pt) { // INCOMPLET MANQUE 1er ORDRE
+      %match(ProofTerm pt) {
+        ax(_,_) -> {return pt; }
+        cut(cnprop(cn1,phi),m1,nprop(n1,phi),m2) -> {
+          CoName new_cn1 = newCoName();
+          ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
+          Name new_n1 = newName();
+          ProofTerm new_m2 = `ReName(m2,n1,new_n1);
+          return `cut(cnprop(new_cn1,phi),new_m1,nprop(new_n1,phi),new_m2);
+        }
+        andL(nprop(n1,phi1),nprop(n2,phi2),m,n) -> {
+          Name new_n1 = newName();
+          Name new_n2 = newName();
+          ProofTerm new_m = `ReName(m,n1,new_n1);
+          new_m = `ReName(new_m,n2,new_n2);
+          return `andL(nprop(new_n1,phi1),nprop(new_n2,phi2), new_m, n);
+        }
+        andR(cnprop(cn1,phi1),m1,cnprop(cn2,phi2),m2,cn) -> {
+          CoName new_cn1 = newCoName();
+          CoName new_cn2 = newCoName();
+          ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
+          ProofTerm new_m2 = `ReCoName(m2,cn2,new_cn2);
+          return `andR(cnprop(new_cn1,phi1),new_m1,cnprop(new_cn2,phi2),new_m2,cn);
+        }
+        orR(cnprop(cn1,phi1),cnprop(cn2,phi2),m,cn) -> {
+          CoName new_cn1 = newCoName();
+          CoName new_cn2 = newCoName();
+          ProofTerm new_m = `ReCoName(m,cn1,new_cn1);
+          new_m = `ReCoName(new_m,cn2,new_cn2);
+          return `orR(cnprop(new_cn1,phi1),cnprop(new_cn2,phi2), new_m, cn);
+        }
+        orL(nprop(n1,phi1),m1,nprop(n2,phi2),m2,n) -> {
+          Name new_n1 = newName();
+          Name new_n2 = newName();
+          ProofTerm new_m1 = `ReName(m1,n1,new_n1);
+          ProofTerm new_m2 = `ReName(m2,n2,new_n2);
+          return `orL(nprop(new_n1,phi1),new_m1,nprop(new_n2,phi2),new_m2,n);
+        }
+        implyL(cnprop(cn1,phi1),m1,nprop(n2,phi2),m2,n) -> {
+          CoName new_cn1 = newCoName();
+          ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
+          Name new_n2 = newName();
+          ProofTerm new_m2 = `ReName(m2,n2,new_n2);
+          return `implyL(cnprop(new_cn1,phi1),new_m1,nprop(new_n2,phi2),new_m2,n);
+        }
+        implyR(nprop(n1,phi1),cnprop(cn2,phi2),m1,cn) -> {
+          CoName new_cn2 = newCoName();
+          Name new_n1 = newName();
+          ProofTerm new_m1 = `ReCoName(m1,cn2,new_cn2);
+          new_m1 = `ReName(new_m1,n1,new_n1);
+          return `implyR(nprop(new_n1,phi1),cnprop(new_cn2,phi2),new_m1,cn);
+         }
+       }
+      return null;
+    }
   }
 
 }
