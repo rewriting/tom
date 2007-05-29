@@ -65,7 +65,6 @@ public class MakeOpTemplate extends TemplateClass {
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;
-import tom.library.sl.*;
 
 public class @className()@ implements tom.library.sl.Strategy {
 
@@ -87,39 +86,39 @@ public class @className()@ implements tom.library.sl.Strategy {
   public int getChildCount() {
     return @nonBuiltinChildCount()@;
   }
-  public Visitable getChildAt(int index) {
+  public tom.library.sl.Visitable getChildAt(int index) {
     switch(index) {
 @nonBuiltinsGetCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
-  public Visitable setChildAt(int index, Visitable child) {
+  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {
     switch(index) {
 @nonBuiltinMakeCases("child")@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public Visitable[] getChildren() {
-    return new Visitable[]{@generateMembersList()@};
+  public tom.library.sl.Visitable[] getChildren() {
+    return new tom.library.sl.Visitable[]{@generateMembersList()@};
   }
 
-  public Visitable setChildren(Visitable[] children) {
+  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
     @generateMembersSetChildren("children")@
     return this;
   }
 
-  public Visitable visit(Environment envt) throws VisitFailure {
+  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
     setEnvironment(envt);
     int status = visit();
-    if(status == Environment.SUCCESS) {
+    if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
-      throw new VisitFailure();
+      throw new tom.library.sl.VisitFailure();
     }
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
+  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     getEnvironment().setRoot(any);
     int status = visit();
@@ -130,7 +129,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
     return v.visit_Strategy(this);
   }
 
@@ -142,7 +141,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     * Builds a new @className(operator)@
     * If one of the sub-strategies application fails, throw a VisitFailure
     */
-  public Visitable visitLight(Visitable any) throws VisitFailure {
+  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
 @computeNewChilds(slotList,"any")@
     return @fullClassName(operator)@.make(@genMakeArguments(slotList)@);
   }
@@ -242,7 +241,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "  private Strategy "+fieldName(`fieldName)+";\n";
+          res += "  private tom.library.sl.Strategy "+fieldName(`fieldName)+";\n";
         } else {
           res += "  private "+fullClassName(`domain)+" "+fieldName(`fieldName)+";\n";
         }
@@ -293,7 +292,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += %[      case @index@: @fieldName(`fieldName)@ = (Strategy) @argName@; return this;
+          res += %[      case @index@: @fieldName(`fieldName)@ = (tom.library.sl.Strategy) @argName@; return this;
 ]%;
           index++;
         }
@@ -317,7 +316,7 @@ public class @className()@ implements tom.library.sl.Strategy {
             res.append(", ");
           }
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            res.append("Strategy ");
+            res.append("tom.library.sl.Strategy ");
             res.append(fieldName(`name));
           } else {
             res.append(fullClassName(`domain));
@@ -384,7 +383,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=name,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "    this."+fieldName(`name)+" = (Strategy)"+array+"["+index+"];\n";
+          res += "    this."+fieldName(`name)+" = (tom.library.sl.Strategy)"+array+"["+index+"];\n";
           index++;
         }
       }

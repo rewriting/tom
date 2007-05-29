@@ -65,7 +65,6 @@ public class SOpTemplate extends TemplateClass {
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;
-import tom.library.sl.*;
 
 public class @className()@ implements tom.library.sl.Strategy {
   private static final String msg = "Not an @className(operator)@";
@@ -84,33 +83,33 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  private Strategy[] args;
+  private tom.library.sl.Strategy[] args;
 
-  public Strategy getArgument(int i) {
+  public tom.library.sl.Strategy getArgument(int i) {
     return args[i];
   }
-  public void setArgument(int i, Strategy child) {
+  public void setArgument(int i, tom.library.sl.Strategy child) {
     args[i]= child;
   }
   public int getChildCount() {
     return args.length;
   }
-  public Visitable getChildAt(int i) {
+  public tom.library.sl.Visitable getChildAt(int i) {
       return args[i];
   }
-  public Visitable setChildAt(int i, Visitable child) {
-    args[i]= (Strategy) child;
+  public tom.library.sl.Visitable setChildAt(int i, tom.library.sl.Visitable child) {
+    args[i]= (tom.library.sl.Strategy) child;
     return this;
   }
 
-  public Visitable[] getChildren() {
-    return (Visitable[]) args.clone();
+  public tom.library.sl.Visitable[] getChildren() {
+    return (tom.library.sl.Visitable[]) args.clone();
   }
 
-  public Visitable setChildren(Visitable[] children) {
-    Strategy[] newArgs = new Strategy[children.length];
+  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
+    tom.library.sl.Strategy[] newArgs = new tom.library.sl.Strategy[children.length];
     for(int i = 0; i < children.length; i++) {
-      newArgs[i] = (Strategy) children[i];
+      newArgs[i] = (tom.library.sl.Strategy) children[i];
     }
     args = newArgs;
     return this;
@@ -127,35 +126,35 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
     return v.visit_Strategy(this);
   }
 
 
   private static boolean[] nonbuiltin = new boolean[]{@genNonBuiltin()@};
-  public @className()@(@genConstrArgs(slotList.length(),"Strategy arg")@) {
-    args = new Strategy[]{@genConstrArgs(slotList.length(),"arg")@};
+  public @className()@(@genConstrArgs(slotList.length(),"tom.library.sl.Strategy arg")@) {
+    args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg")@};
   }
 
-  public Visitable visit(Environment envt) throws VisitFailure {
+  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
     setEnvironment(envt);
     int status = visit();
-    if(status == Environment.SUCCESS) {
+    if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
-      throw new VisitFailure();
+      throw new tom.library.sl.VisitFailure();
     }
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
+  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
       int childCount = any.getChildCount();
-      Visitable result = any;
-      Visitable[] childs = null;
+      tom.library.sl.Visitable result = any;
+      tom.library.sl.Visitable[] childs = null;
       for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-        if (nonbuiltin[i]) {
-          Visitable oldChild = any.getChildAt(nbi);
-          Visitable newChild = args[i].visitLight(oldChild);
+        if(nonbuiltin[i]) {
+          tom.library.sl.Visitable oldChild = any.getChildAt(nbi);
+          tom.library.sl.Visitable newChild = args[i].visitLight(oldChild);
           if(childs != null) {
             childs[nbi] = newChild;
           } else if(newChild != oldChild) {
@@ -171,7 +170,7 @@ public class @className()@ implements tom.library.sl.Strategy {
       }
       return result;
     } else {
-      throw new VisitFailure(msg);
+      throw new tom.library.sl.VisitFailure(msg);
     }
   }
 
@@ -179,21 +178,21 @@ public class @className()@ implements tom.library.sl.Strategy {
     tom.library.sl.Visitable any = environment.getSubject();
     if(any instanceof @fullClassName(operator)@) {
       int childCount = any.getChildCount();
-      Visitable[] childs = null;
+      tom.library.sl.Visitable[] childs = null;
       for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-        if (nonbuiltin[i]) {
-          Visitable oldChild = (Visitable)any.getChildAt(nbi);
+        if(nonbuiltin[i]) {
+          tom.library.sl.Visitable oldChild = (tom.library.sl.Visitable)any.getChildAt(nbi);
           environment.down(nbi+1);
           int status = args[i].visit();
-          if(status != Environment.SUCCESS) {
+          if(status != tom.library.sl.Environment.SUCCESS) {
             environment.upLocal();
             return status;
           }
-          Visitable newChild = environment.getSubject();
+          tom.library.sl.Visitable newChild = environment.getSubject();
           if(childs != null) {
             childs[nbi] = newChild;
           } else if(newChild != oldChild) {
-            childs = ((Visitable) any).getChildren();
+            childs = ((tom.library.sl.Visitable) any).getChildren();
             childs[nbi] = newChild;
           } 
           environment.upLocal();
@@ -201,7 +200,7 @@ public class @className()@ implements tom.library.sl.Strategy {
         }
       }
       if(childs!=null) {
-        environment.setSubject((Visitable)any.setChildren(childs));
+        environment.setSubject((tom.library.sl.Visitable)any.setChildren(childs));
       }
       return tom.library.sl.Environment.SUCCESS;
     } else {

@@ -75,7 +75,6 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
-import tom.library.sl.*;
 
 public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
 @generateBlock()@
@@ -266,21 +265,21 @@ generateGetters(writer);
     return @nonBuiltinChildCount()@;
   }
 
-  public Visitable getChildAt(int index) {
+  public tom.library.sl.Visitable getChildAt(int index) {
     switch(index) {
 @nonBuiltinsGetCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public Visitable setChildAt(int index, Visitable v) {
+  public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
     switch(index) {
 @nonBuiltinMakeCases("v")@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public Visitable setChildren(Visitable[] childs) {
+  public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
     if (childs.length == @nonBuiltinChildCount()@) {
       return @nonBuiltinArrayMake("childs")@;
     } else {
@@ -288,8 +287,8 @@ generateGetters(writer);
     }
   }
 
-  public Visitable[] getChildren() {
-    return new Visitable[] { @nonBuiltinChildList(slotList)@ };
+  public tom.library.sl.Visitable[] getChildren() {
+    return new tom.library.sl.Visitable[] { @nonBuiltinChildList(slotList)@ };
   }
 ]%);
 

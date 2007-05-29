@@ -65,20 +65,19 @@ public class IsOpTemplate extends TemplateClass {
   public void generate(java.io.Writer writer) throws java.io.IOException {
 writer.write(%[
 package @getPackage()@;
-import tom.library.sl.*;
 
 public class @className()@ extends tom.library.sl.AbstractStrategy {
   private static final String msg = "Not an @className(operator)@";
 
-  public @className()@(){
+  public @className()@() {
     initSubterm();
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
+  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
      return any;
     } else {
-      throw new VisitFailure(msg);
+      throw new tom.library.sl.VisitFailure(msg);
     }
   }
 
