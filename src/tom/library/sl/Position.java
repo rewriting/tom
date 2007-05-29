@@ -229,7 +229,7 @@ public class Position implements Cloneable,Path {
                 return Environment.SUCCESS;
               }
               public Visitable visitLight(Visitable v) {
-                ref[0] = (Visitable)v;
+                ref[0] = v;
                 return v;
               }
             });

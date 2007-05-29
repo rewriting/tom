@@ -68,12 +68,12 @@ public class All extends AbstractStrategy {
         childs[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = ((Visitable) any).getChildren();
+        childs = any.getChildren();
         childs[i] = newChild;
       }
     }
     if(childs!=null) {
-      result = ((Visitable) any).setChildren(childs);
+      result = any.setChildren(childs);
     }
     return result;
   }
@@ -90,7 +90,7 @@ public class All extends AbstractStrategy {
     Visitable[] childs = null;
 
     for(int i = 0; i < childCount; i++) {
-      Visitable oldChild = (Visitable)any.getChildAt(i);
+      Visitable oldChild = any.getChildAt(i);
       environment.down(i+1);
       int status = visitors[ARG].visit();
       if(status != Environment.SUCCESS) {
@@ -102,20 +102,13 @@ public class All extends AbstractStrategy {
         childs[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = ((Visitable) any).getChildren();
-        /*
-        Visitable[] array = any.getChildren();
-        childs = new Visitable[childCount];
-        for(int j = 0; j < array.length; j++) {
-          childs[j] = (Visitable) array[j];
-        }
-        */
+        childs = any.getChildren();
         childs[i] = newChild;
       } 
       environment.upLocal();
     }
     if(childs!=null) {
-      environment.setSubject((Visitable)any.setChildren(childs));
+      environment.setSubject(any.setChildren(childs));
     }
     return Environment.SUCCESS;
   }

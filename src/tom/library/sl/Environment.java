@@ -190,7 +190,7 @@ public final class Environment implements Cloneable {
     int childIndex = omega[current]-1;
     Visitable child = subterm[current];
     current--;
-    subterm[current] = (Visitable) subterm[current].setChildAt(childIndex,child);
+    subterm[current] = subterm[current].setChildAt(childIndex,child);
     //System.out.println("after up: " + this);
   }
 
@@ -216,7 +216,7 @@ public final class Environment implements Cloneable {
         ensureLength(current+1);
       }
       omega[current] = n;
-      subterm[current] = (Visitable) child.getChildAt(n-1);
+      subterm[current] = child.getChildAt(n-1);
     }
     //System.out.println("after down: " + this);
   }
