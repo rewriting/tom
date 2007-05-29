@@ -298,7 +298,6 @@ options{
     //System.out.println("initial subject: '" + subject + "'");
     subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
     //System.out.println("subject: '" + subject + "'");
-
     String split[] = subject.split(escapeChar);
     boolean metaMode = true;
     String res = "";
@@ -325,6 +324,10 @@ options{
           throw new TomRuntimeException("Exception catched in tomSplitter");
         }
       }
+    }
+    if(subject.endsWith(escapeChar)) {
+      // add an empty string when %[...@...@]%
+      list.add(`ITL("\"\""));
     }
     return res;
   }
