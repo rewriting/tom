@@ -64,11 +64,13 @@ public class StratMappingTemplate extends MappingTemplateClass {
       concGomClass(_*,
           op@OperatorClass[ClassName=opName,
                         Slots=slotList],
-          _*) -> {
-     writer.write(
-        (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
-      writer.write(
-          (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
+                        _*) -> {
+        writer.write(
+            (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
+        writer.write(
+            (new tom.gom.backend.strategy.IsOpTemplate(`op)).generateMapping());
+        writer.write(
+            (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
       }
       concGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,

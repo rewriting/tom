@@ -170,6 +170,11 @@ public class Backend {
           new tom.gom.backend.strategy.SOpTemplate(gomclass);
         sOpStrat.generateFile();
 
+        TemplateClass isOpStrat =
+          new tom.gom.backend.strategy.IsOpTemplate(gomclass);
+        isOpStrat.generateFile();
+
+
         TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
         makeOpStrat.generateFile();
        return 1;

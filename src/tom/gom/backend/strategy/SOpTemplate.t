@@ -159,12 +159,12 @@ public class @className()@ implements tom.library.sl.Strategy {
           childs[i] = newChild;
         } else if(newChild != oldChild) {
           // allocate the array, and fill it
-          childs = ((Visitable) any).getChildren();
+          childs = any.getChildren();
           childs[i] = newChild;
         }
       }
       if(childs!=null) {
-        result = ((Visitable) any).setChildren(childs);
+        result = any.setChildren(childs);
       }
       return result;
     } else {
@@ -227,22 +227,13 @@ private String genIdArgs(int count) {
 
 public String generateMapping() {
 
-  String whenName = className().replaceFirst("_","When_");
-  String isName = className().replaceFirst("_","Is_");
   return %[
     %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
       is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
       @genGetSlot(slotList.length(),"arg")@
         make(@genConstrArgs(slotList.length(),"arg")@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg")@) }
     }
-
-  %op Strategy @whenName@(s:Strategy) {
-    make(s) { `Sequence(@className()@(@genIdArgs(slotList.length())@),s) }
-  }
-
-  %op Strategy @isName@() {
-    make() { `@className()@(@genIdArgs(slotList.length())@) }
-  }
+  
   ]%;
 }
 
