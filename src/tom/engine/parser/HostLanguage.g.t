@@ -559,7 +559,7 @@ gomsignature [LinkedList list] throws TomException
       parameters.add("--intermediate");
     }
     parameters.add("--intermediateName");
-    parameters.add(getStreamManager().getRawFileName());
+    parameters.add(getStreamManager().getRawFileName()+".t.gom");
     if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {
       parameters.add("--verbose");
     }

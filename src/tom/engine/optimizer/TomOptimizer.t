@@ -140,7 +140,7 @@ public class TomOptimizer extends TomGenericPlugin {
         return;
       }
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
+        Tools.generateOutput(getStreamManager().getOutputFileName() + OPTIMIZED_SUFFIX, 
             (TomTerm)getWorkingTerm() );
       }
     } else {

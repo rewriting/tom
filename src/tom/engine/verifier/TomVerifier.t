@@ -122,7 +122,7 @@ public class TomVerifier extends TomGenericPlugin {
 
         Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
         if(intermediate) {
-          Tools.generateOutputFromCollection(getStreamManager().getOutputFileNameWithoutSuffix() + INTERMEDIATE_SUFFIX, zspecSet);
+          Tools.generateOutputFromCollection(getStreamManager().getOutputFileName() + INTERMEDIATE_SUFFIX, zspecSet);
         }
 
         ZenonBackend back = new ZenonBackend(verif);
@@ -133,7 +133,7 @@ public class TomVerifier extends TomGenericPlugin {
         if (!zspecSet.isEmpty()) {
           try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
-                      getStreamManager().getOutputFileNameWithoutSuffix() + ZENON_SUFFIX
+                      getStreamManager().getOutputFileName() + ZENON_SUFFIX
                       ))));
             writer.write(output);
             writer.close();

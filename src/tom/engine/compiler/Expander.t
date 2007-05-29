@@ -124,9 +124,9 @@ public class Expander extends TomGenericPlugin {
       return;
     }
     if(intermediate) {
-      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
+      Tools.generateOutput(getStreamManager().getOutputFileName()
           + EXPANDED_SUFFIX, expandedTerm);
-      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
+      Tools.generateOutput(getStreamManager().getOutputFileName()
           + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
     }
   }

@@ -104,7 +104,7 @@ public class Compiler extends TomGenericPlugin {
           new Integer((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(renamedTerm);
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, (TomTerm)getWorkingTerm());
+        Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, (TomTerm)getWorkingTerm());
       }
     } catch (Exception e) {
       getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),

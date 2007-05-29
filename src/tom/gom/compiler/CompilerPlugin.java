@@ -92,7 +92,7 @@ public class CompilerPlugin extends GomGenericPlugin {
       getLogger().log(Level.FINE, "Compiled Modules: {0}",classList);
       getLogger().log(Level.INFO, "Compilation succeeds");
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
+        Tools.generateOutput(getStreamManager().getOutputFileName()
             + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
       }
     }

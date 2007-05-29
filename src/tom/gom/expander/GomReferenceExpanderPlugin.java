@@ -97,7 +97,7 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
         getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
         getLogger().log(Level.INFO, "Signature extension succeeds");
         if(intermediate) {
-          Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
+          Tools.generateOutput(getStreamManager().getOutputFileName()
               + TYPED_SUFFIX, (aterm.ATerm)referencedModuleList.toATerm());
         }
       }
