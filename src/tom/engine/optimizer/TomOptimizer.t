@@ -84,12 +84,13 @@ public class TomOptimizer extends TomGenericPlugin {
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
     "</options>";
 
+/**
   public void optionChanged(String optionName, Object optionValue) {
     if(optionName.equals("optimize2") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("pretty", Boolean.TRUE);        
     }
   }
-
+*/
   // this static field is necessary for %strategy instructions that generate static code
   private static PILFactory factory = new PILFactory();
   private static Logger logger = Logger.getLogger("tom.engine.optimizer.TomOptimizer");
