@@ -102,11 +102,18 @@ public class PreGenerator {
       /*
        * SwitchVar
        * 
-       *  p << z /\ S /\ z <<  t -> z << t /\ S /\ p << z        
+       *  p << z /\ S /\ z <<  t -> z << t /\ S /\ p << z
+       *  
+       *  p << ListHead(z) /\ S /\ z <<  t -> z << t /\ S /\ p << ListHead(z)
        *   
        */
-      AndConstraint(X*,first@MatchConstraint(_,v@Variable[]),Y*,second@MatchConstraint(v,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);        
+      AndConstraint(X*,first@MatchConstraint(_,rhs@(Variable|VariableStar|ListHead)[]),Y*,second@MatchConstraint(v,_),Z*) -> {
+        TomTerm varFound = null;
+  match:%match(rhs) {
+          var@(Variable|VariableStar)[] -> { varFound = `var;break match; }
+          ListHead[Variable=var@(Variable|VariableStar)[]] -> { varFound = `var;}
+        }
+        if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
       } 
     } // end visit
   }// end strategy
