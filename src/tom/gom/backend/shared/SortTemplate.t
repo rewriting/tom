@@ -157,7 +157,7 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 ]%);
-    if (! hooks.isEmptyconcHook()) {
+    if (!hooks.isEmptyconcHook()) {
       mapping.generate(writer); 
     }
   }

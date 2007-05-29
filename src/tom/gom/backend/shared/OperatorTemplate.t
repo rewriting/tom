@@ -56,8 +56,7 @@ public class OperatorTemplate extends TemplateHookedClass {
                     Mapping=mapping,
                     SortName=sortName,
                     Visitor=visitorName,
-                    Slots=slots,
-                    Hooks=hooks] -> {
+                    Slots=slots] -> {
         this.abstractType = `abstractType;
         this.extendsType = `extendsType;;
         this.sortName = `sortName;
@@ -82,20 +81,23 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 @generateBlock()@
   private @className()@() {}
 ]%);
-if(slotList.length()>0) {
-writer.write(%[
+  if(slotList.length()>0) {
+    writer.write(%[
   private int hashCode;
   private static @className()@ proto = new @className()@();
 ]%);
-} else { 
-writer.write(%[
+  } else { 
+    writer.write(%[
   private static int hashCode = hashFunction();
   private static @className()@ proto = (@className()@) factory.build(new @className()@());
 ]%);
-}
-generateMembers(writer);
-generateBody(writer);
-writer.write(%[
+  }
+  if (!hooks.isEmptyconcHook()) {
+    mapping.generate(writer); 
+  }
+  generateMembers(writer);
+  generateBody(writer);
+  writer.write(%[
 }
 ]%);
   }
@@ -775,7 +777,6 @@ writer.write(%[
       return realMake(@unprotectedChildList(bargs)@);
     }
   ]%);
-        mapping.generate(writer); 
         break lbl;
       }
     }

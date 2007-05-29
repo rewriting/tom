@@ -48,7 +48,11 @@ public class TestSortHook extends TestCase {
     }
     sort Sort2:block() {
       public String hookSort2() {
-        return "2"+symbolName();
+        %match(this) {
+          c() -> { return "2c"; }
+          d() -> { return "2d"; }
+        }
+        return "plonk";
       }
     }
   }
