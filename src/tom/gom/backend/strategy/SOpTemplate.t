@@ -152,15 +152,18 @@ public class @className()@ implements tom.library.sl.Strategy {
       int childCount = any.getChildCount();
       Visitable result = any;
       Visitable[] childs = null;
-      for (int i = 0; i < childCount; i++) {
-        Visitable oldChild = any.getChildAt(i);
-        Visitable newChild = args[i].visitLight(oldChild);
-        if(childs != null) {
-          childs[i] = newChild;
-        } else if(newChild != oldChild) {
-          // allocate the array, and fill it
-          childs = any.getChildren();
-          childs[i] = newChild;
+      for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
+        if (nonbuiltin[i]) {
+          Visitable oldChild = any.getChildAt(nbi);
+          Visitable newChild = args[i].visitLight(oldChild);
+          if(childs != null) {
+            childs[nbi] = newChild;
+          } else if(newChild != oldChild) {
+            // allocate the array, and fill it
+            childs = any.getChildren();
+            childs[nbi] = newChild;
+          }
+          nbi++;
         }
       }
       if(childs!=null) {
@@ -177,22 +180,25 @@ public class @className()@ implements tom.library.sl.Strategy {
     if(any instanceof @fullClassName(operator)@) {
       int childCount = any.getChildCount();
       Visitable[] childs = null;
-      for(int i = 0; i < childCount; i++) {
-        Visitable oldChild = (Visitable)any.getChildAt(i);
-        environment.down(i+1);
-        int status = args[i].visit();
-        if(status != Environment.SUCCESS) {
+      for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
+        if (nonbuiltin[i]) {
+          Visitable oldChild = (Visitable)any.getChildAt(nbi);
+          environment.down(nbi+1);
+          int status = args[i].visit();
+          if(status != Environment.SUCCESS) {
+            environment.upLocal();
+            return status;
+          }
+          Visitable newChild = environment.getSubject();
+          if(childs != null) {
+            childs[nbi] = newChild;
+          } else if(newChild != oldChild) {
+            childs = ((Visitable) any).getChildren();
+            childs[nbi] = newChild;
+          } 
           environment.upLocal();
-          return status;
+          nbi++;
         }
-        Visitable newChild = environment.getSubject();
-        if(childs != null) {
-          childs[i] = newChild;
-        } else if(newChild != oldChild) {
-          childs = ((Visitable) any).getChildren();
-          childs[i] = newChild;
-        } 
-        environment.upLocal();
       }
       if(childs!=null) {
         environment.setSubject((Visitable)any.setChildren(childs));

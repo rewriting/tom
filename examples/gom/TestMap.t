@@ -53,8 +53,10 @@ public class TestMap extends TestCase {
     Collection cbag = new HashSet();
     Strategy maps = `mu(MuVar("x"),Choice(_Cons(Log(abag,bbag,cbag),MuVar("x")),_Empty()));
     try {
-    maps.visitLight(subject);
-    } catch(VisitFailure e) {}
+      maps.visitLight(subject);
+    } catch(VisitFailure e) {
+      fail("Should not throw exception");
+    }
     assertEquals(1,abag.size());
     assertEquals(2,bbag.size());
     assertEquals(1,cbag.size());
@@ -103,8 +105,10 @@ public class TestMap extends TestCase {
           Log(abag,bbag,cbag)
           ));
     try {
-    cutbu.visitLight(subject);
-    } catch(VisitFailure e) {}
+      cutbu.visitLight(subject);
+    } catch(VisitFailure e) {
+      fail("Should not throw exception"); 
+    }
     assertEquals("count a",1,abag.size());
     assertEquals("count b",1,bbag.size());
     assertEquals("count c",0,cbag.size());
