@@ -1327,10 +1327,10 @@ b :{
 //            Collection c = Proofterms.reduce(pt);
             Collection c = Proofterms.computeNormalForms(pt, nseq);
             writeToOutputln("Number of normal forms found : "+c.size());
-            for (Object o:c) {
-              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
-              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
-            }
+//            for (Object o:c) {
+//              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+//              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
+//            }
           }
         }
 

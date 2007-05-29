@@ -18,6 +18,11 @@ public class Proofterms {
   %include { sl.tom }
   %include { util/types/Collection.tom}
 
+    %typeterm VarGenerator {
+    implement { VarGenerator }
+    is_sort(t) { t instanceof VarGenerator }
+  }
+
   public static ProofTerm getProofterm(Tree term) {
     %match(Tree term) {
       rule(_,_,c,_) -> { return term2proofterm(term, seq2nseq(`c), 0, 0); }
@@ -644,7 +649,7 @@ public class Proofterms {
         if (! (coname1 == `cn1)) new_m1 = `ReCoName(m1,coname1,coname2);
         CoName new_cn = `cn;
         if (coname1 == `cn) new_cn = coname2;
-        return `implyR(x,a,new_m1,cn);
+        return `implyR(x,a,new_m1,new_cn);
         }
     }
     return null;
@@ -894,7 +899,7 @@ public class Proofterms {
   }
 
  
-  %strategy OneStep(subject:ProofTerm,c:Collection) extends `Identity() {
+  %strategy OneStep(subject:ProofTerm,c:Collection,refresher:VarGenerator) extends `Identity() {
     visit ProofTerm {
       // COMMUTING CUTS
       
@@ -913,27 +918,38 @@ public class Proofterms {
       */
 
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
-        if ((! `nameFreshlyIntroduced(m2,n)) && (`boundNamesAreNotFree(m2,m1)) && (`boundCoNamesAreNotFree(m2,m1))) {
-          ProofTerm mm = (ProofTerm) `NameSubstitution(m2,n,cn,m1,phi);
+//        if ((! `nameFreshlyIntroduced(m2,n)) && (`boundNamesAreNotFree(m2,m1)) && (`boundCoNamesAreNotFree(m2,m1))) {
+        if (! `nameFreshlyIntroduced(m2,n)) {
+          ProofTerm new_m2 = refresher.refreshBoundVars(`m2);
+          System.out.println("\n refreshing bound vars of");
+          System.out.println(PrettyPrinter.prettyPrint(`m2));
+          System.out.println("into");
+          System.out.println(PrettyPrinter.prettyPrint(new_m2));
+          ProofTerm mm = (ProofTerm) `NameSubstitution(new_m2,n,cn,m1,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
 
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
         if ((! `conameFreshlyIntroduced(m1,cn)) && (`boundNamesAreNotFree(m1,m2)) && (`boundCoNamesAreNotFree(m1,m2))) {
-          ProofTerm mm = (ProofTerm) `CoNameSubstitution(m1,cn,n,m2,phi);
+          ProofTerm new_m1 = refresher.refreshBoundVars(`m1);
+          System.out.println("\n refreshing bound vars of");
+          System.out.println(PrettyPrinter.prettyPrint(`m1));
+          System.out.println("into");
+          System.out.println(PrettyPrinter.prettyPrint(new_m1));
+          ProofTerm mm = (ProofTerm) `CoNameSubstitution(new_m1,cn,n,m2,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
 
       // LOGICAL CUTS
-      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { // ATTENTION CAPTURE DE VARIABLE
+      cut(cnprop(cn2,phi),m,nprop(n,phi),ax(n,cn)) -> { // ATTENTION
         if (`conameFreshlyIntroduced(m,cn2)) {
           ProofTerm mm = (ProofTerm) `ReCoName(m,cn2,cn); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
       }
-      cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> { // ATTENTION CAPTURE DE VARIABLE
+      cut(cnprop(cn,phi),ax(n,cn),nprop(n2,phi),m) -> { // ATTENTION
         if (`nameFreshlyIntroduced(m,n2)) {
           ProofTerm mm = (ProofTerm) `ReName(m,n2,n); 
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));}
@@ -965,10 +981,10 @@ public class Proofterms {
     }
   }
 
-  public static Collection reduce(ProofTerm t) {
+  public static Collection reduce(ProofTerm t, VarGenerator refresher) {
     Collection c = new ArrayList();
     try {
-      `TopDown(OneStep(t,c)).visit(t);
+      `TopDown(OneStep(t,c, refresher)).visit(t);
     }
     catch (VisitFailure e) { System.out.println(e); }
     return c;
@@ -977,8 +993,6 @@ public class Proofterms {
   public static Collection computeNormalForms(ProofTerm t, NSequent nseq) {
     VarGenerator refresher = new VarGenerator();
     refresher.synchronize(t);
-    System.out.println(PrettyPrinter.prettyPrint(t));
-    System.out.println(PrettyPrinter.prettyPrint(refresher.refreshBoundVars(t)));
     Collection nf = new ArrayList();
     Collection c = new ArrayList();
     c.add(t);
@@ -986,7 +1000,7 @@ public class Proofterms {
       Collection buffer = new ArrayList();
       for (Object x : c) {
         System.out.println("\n----\n"+PrettyPrinter.prettyPrint((ProofTerm) x));
-        Collection d = reduce((ProofTerm) x);
+        Collection d = reduce((ProofTerm) x, refresher);
         for (Object y : d) { System.out.println("\nreduces to \n"+PrettyPrinter.prettyPrint((ProofTerm) y)); typeTypableProofterm(`typablePT((ProofTerm) y, nseq)); }
         if (d.isEmpty()) {
           nf.add(x);
@@ -1101,6 +1115,8 @@ public class Proofterms {
           ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
           Name new_n1 = newName();
           ProofTerm new_m2 = `ReName(m2,n1,new_n1);
+          new_m1 = refreshBoundVars(new_m1);
+          new_m2 = refreshBoundVars(new_m2);
           return `cut(cnprop(new_cn1,phi),new_m1,nprop(new_n1,phi),new_m2);
         }
         andL(nprop(n1,phi1),nprop(n2,phi2),m,n) -> {
@@ -1108,6 +1124,7 @@ public class Proofterms {
           Name new_n2 = newName();
           ProofTerm new_m = `ReName(m,n1,new_n1);
           new_m = `ReName(new_m,n2,new_n2);
+          new_m = refreshBoundVars(new_m);
           return `andL(nprop(new_n1,phi1),nprop(new_n2,phi2), new_m, n);
         }
         andR(cnprop(cn1,phi1),m1,cnprop(cn2,phi2),m2,cn) -> {
@@ -1115,6 +1132,8 @@ public class Proofterms {
           CoName new_cn2 = newCoName();
           ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
           ProofTerm new_m2 = `ReCoName(m2,cn2,new_cn2);
+          new_m1 = refreshBoundVars(new_m1);
+          new_m2 = refreshBoundVars(new_m2);
           return `andR(cnprop(new_cn1,phi1),new_m1,cnprop(new_cn2,phi2),new_m2,cn);
         }
         orR(cnprop(cn1,phi1),cnprop(cn2,phi2),m,cn) -> {
@@ -1122,6 +1141,7 @@ public class Proofterms {
           CoName new_cn2 = newCoName();
           ProofTerm new_m = `ReCoName(m,cn1,new_cn1);
           new_m = `ReCoName(new_m,cn2,new_cn2);
+          new_m = refreshBoundVars(new_m);
           return `orR(cnprop(new_cn1,phi1),cnprop(new_cn2,phi2), new_m, cn);
         }
         orL(nprop(n1,phi1),m1,nprop(n2,phi2),m2,n) -> {
@@ -1129,6 +1149,8 @@ public class Proofterms {
           Name new_n2 = newName();
           ProofTerm new_m1 = `ReName(m1,n1,new_n1);
           ProofTerm new_m2 = `ReName(m2,n2,new_n2);
+          new_m1 = refreshBoundVars(new_m1);
+          new_m2 = refreshBoundVars(new_m2);
           return `orL(nprop(new_n1,phi1),new_m1,nprop(new_n2,phi2),new_m2,n);
         }
         implyL(cnprop(cn1,phi1),m1,nprop(n2,phi2),m2,n) -> {
@@ -1136,6 +1158,8 @@ public class Proofterms {
           ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
           Name new_n2 = newName();
           ProofTerm new_m2 = `ReName(m2,n2,new_n2);
+          new_m1 = refreshBoundVars(new_m1);
+          new_m2 = refreshBoundVars(new_m2);
           return `implyL(cnprop(new_cn1,phi1),new_m1,nprop(new_n2,phi2),new_m2,n);
         }
         implyR(nprop(n1,phi1),cnprop(cn2,phi2),m1,cn) -> {
@@ -1143,6 +1167,7 @@ public class Proofterms {
           Name new_n1 = newName();
           ProofTerm new_m1 = `ReCoName(m1,cn2,new_cn2);
           new_m1 = `ReName(new_m1,n1,new_n1);
+          new_m1 = refreshBoundVars(new_m1);
           return `implyR(nprop(new_n1,phi1),cnprop(new_cn2,phi2),new_m1,cn);
          }
        }
