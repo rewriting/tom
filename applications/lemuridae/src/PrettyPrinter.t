@@ -204,22 +204,22 @@ class PrettyPrinter {
       implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
 
       implies(p1@relationAppl[],p2) -> {
-        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@ ]% ; 
+        return %[@toLatex(`p1)@ \Rightarrow @toLatex(`p2)@]% ; 
       }
       implies(p1,p2) -> {
-        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@ ]% ; 
+        return %[(@toLatex(`p1)@) \Rightarrow @toLatex(`p2)@]% ; 
       }
       or(p1@relationAppl[],p2) -> { 
-        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@ ]%; 
+        return %[@toLatex(`p1)@ \lor @toLatex(`p2)@]%; 
       }
       or(p1,p2) -> {
-        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@ ]%; 
+        return %[(@toLatex(`p1)@) \lor @toLatex(`p2)@]%; 
       }
       and(p1@relationAppl[],p2) -> { 
-        return %[@toLatex(`p1)@ \land @toLatex(`p2)@ ]%; 
+        return %[@toLatex(`p1)@ \land @toLatex(`p2)@]%; 
       }
       and(p1,p2) -> { 
-        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@ ]%; 
+        return %[(@toLatex(`p1)@) \land @toLatex(`p2)@]%; 
       }
       forAll(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
       exists(n, p) -> { return "\\exists " + `n + ", " + toLatex(`p);}
@@ -450,22 +450,22 @@ class PrettyPrinter {
 
     %match(Prop term) {
       implies(p1@relationAppl[],p2) -> {
-        return %[@prettyPrint(`p1)@ => @prettyPrint(`p2)@ ]% ; 
+        return %[@prettyPrint(`p1)@ => @prettyPrint(`p2)@]% ; 
       }
       implies(p1,p2) -> {
-        return %[(@prettyPrint(`p1)@) => @prettyPrint(`p2)@ ]% ; 
+        return %[(@prettyPrint(`p1)@) => @prettyPrint(`p2)@]% ; 
       }
       or(p1@relationAppl[],p2) -> { 
-        return %[@prettyPrint(`p1)@ \/ @prettyPrint(`p2)@ ]%; 
+        return %[@prettyPrint(`p1)@ \/ @prettyPrint(`p2)@]%; 
       }
       or(p1,p2) -> {
-        return %[(@prettyPrint(`p1)@) \/ @prettyPrint(`p2)@ ]%; 
+        return %[(@prettyPrint(`p1)@) \/ @prettyPrint(`p2)@]%; 
       }
       and(p1@relationAppl[],p2) -> { 
-        return %[@prettyPrint(`p1)@ /\ @prettyPrint(`p2)@ ]%; 
+        return %[@prettyPrint(`p1)@ /\ @prettyPrint(`p2)@]%; 
       }
       and(p1,p2) -> { 
-        return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@ ]%; 
+        return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@]%; 
       }
       forAll(x,p1) -> {
         return "forall " + `x + ", " + prettyPrint(`p1);
@@ -740,8 +740,8 @@ class PrettyPrinter {
 
     System.out.println(path);
     Runtime rt = Runtime.getRuntime();
-    System.out.println(%[latex -output-directory=/tmp @path@ ]%);
-    Process pr = rt.exec(%[latex -output-directory=/tmp @path@ ]%);
+    System.out.println(%[latex -output-directory=/tmp @path@]%);
+    Process pr = rt.exec(%[latex -output-directory=/tmp @path@]%);
     //Process pr = rt.exec(%[latex -output-directory=/tmp \nonstopmode\input{@path@}]%);
     int ret = pr.waitFor(); 
     if (ret == 0) {

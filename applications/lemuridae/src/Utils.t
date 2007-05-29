@@ -20,11 +20,23 @@ class Utils {
   %include { sl.tom }
   %typeterm StringCollection { implement {Collection<String>} is_sort(t) { t instanceof Collection} }
   %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
+  %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
 
-  private static InputStream stream = System.in;
 
-  public static void setStream(InputStream newStream) {
-    stream = newStream;
+  public static Prop forAllList(StringList l, Prop p) {
+    sequents.types.Prop res = p;
+    %match(StringList l) {
+      (_*,v,_*) -> { res = `forAll(v,res); }
+    }
+    return res;
+  }
+
+  public static Prop existsList(StringList l, Prop p) {
+    sequents.types.Prop res = p;
+    %match(StringList l) {
+      (_*,v,_*) -> { res = `exists(v,res); }
+    }
+    return res;
   }
 
   %strategy ReplaceTerm(old_term: Term, new_term: Term) extends `Identity() {
@@ -43,7 +55,6 @@ class Utils {
     return res;
   }
 
-  %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
 
   // several vars in one pass  
   %strategy ReplaceVars(map:StringTermMap) extends `Identity() {
@@ -273,6 +284,14 @@ class Utils {
       }
     }
     return new InputRes(buf,index);
+  }
+
+  // IO functions 
+
+  private static InputStream stream = System.in;
+
+  public static void setStream(InputStream newStream) {
+    stream = newStream;
   }
 
   public static Prop getProp() throws RecognitionException, IOException {

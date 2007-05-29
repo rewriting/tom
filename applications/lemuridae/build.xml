@@ -6,7 +6,7 @@
   <property name="javacSource" value="1.5"/>
   <property name="javacTarget" value="1.5"/>
   <property name="optimize"   value="on"/> 
-  <property name="optimize2"   value="on"/>
+  <property name="optimize2"   value="off"/>
  
   <property environment="env"/>
   <property name="tom.home" value="${env.TOM_HOME}"/>
@@ -30,9 +30,7 @@
       <include name="*.gom"/>
     </gom>
     <tom.preset srcdir="${lemu.src}"
-	    destdir="${lemu.gen}"
-	    optimize="no"
-	    optimize2="no">
+      destdir="${lemu.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
       <exclude name="**/LJ2NJ.t"/>

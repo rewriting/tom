@@ -1,3 +1,4 @@
+
 tree grammar SeqWalker;
 options {
     tokenVocab=Seq;
@@ -19,8 +20,8 @@ pred returns [sequents.types.Prop p]
       | ^(NOT a=pred ) {p = `implies(a,bottom());}
       | ^(APPL ap=ID l=term_list) { p = `relationAppl($ap.text, l); }
       | ^(APPL ap=ID) { p = `relationAppl($ap.text,concTerm()); }
-      | ^(FORALL vl=varlist a=pred) { p = `forAllList(vl,a); }
-      | ^(EXISTS vl=varlist a=pred) { p = `existsList(vl,a); }
+      | ^(FORALL vl=varlist a=pred) { p = Utils.forAllList(vl,a); }
+      | ^(EXISTS vl=varlist a=pred) { p = Utils.existsList(vl,a); }
       ;
 
 varlist returns [sequents.types.StringList l] 

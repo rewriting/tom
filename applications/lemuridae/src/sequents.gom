@@ -18,48 +18,49 @@ Prop = relationAppl(r:String, t:TermList)
      | implies(p1:Prop, p2:Prop)
      | forAll(var:String, p:Prop)
      | exists(var:String, p:Prop)
-     | forAllList(varlist:StringList, p: Prop)   // doesn't exists in normal form
-     | existsList(varlist:StringList, p: Prop)   // doesn't exists in normal form
      | bottom()
      | top()
      | nullProp() // for open leaves
 
 /*
 forAll:block() {
-  public boolean equals(Object o) { 
-if  (this == o) return true;
-else {
-	sequents.types.Prop p = (sequents.types.Prop) o;
-	%match (this,p) {
-		forAll(x,p1), forAll(y,p2) -> {
-			sequents.types.Termlist couple = `concTerm(p1,p2);
-                        sequents.types.Term fvar = Utils.freshVar(`x,couple);
-			sequents.types.Prop np1 = Utils.replaceFreeVars(`p1,fvar,`Var(x)); 
-			sequents.types.Prop np2 = Utils.replaceFreeVars(`p2,fvar,`Var(y));
-		       return np1.equals(np2);	
+	public boolean equals(Object o) { 
+		if  (this == o) return true;
+		else {
+			sequents.types.Prop p = (sequents.types.Prop) o;
+			%match (this,p) {
+				forAll(x,p1), forAll(y,p2) -> {
+					sequents.types.Context couple = `context(p1,p2);
+					sequents.types.Term fvar = Utils.freshVar(`x,couple);
+					sequents.types.Prop np1 = Utils.replaceFreeVars(`p1,fvar,`Var(x)); 
+					sequents.types.Prop np2 = Utils.replaceFreeVars(`p2,fvar,`Var(y));
+					return np1.equals(np2);	
+				}
 			}
+			return false;
 		}
-		return false;
 	}
-	  }
+}
+
+exists:block() {
+	public boolean equals(Object o) { 
+		if  (this == o) return true;
+		else {
+			sequents.types.Prop p = (sequents.types.Prop) o;
+			%match (this,p) {
+				exists(x,p1), exists(y,p2) -> {
+					sequents.types.Context couple = `context(p1,p2);
+					sequents.types.Term fvar = Utils.freshVar(`x,couple);
+					sequents.types.Prop np1 = Utils.replaceFreeVars(`p1,fvar,`Var(x)); 
+					sequents.types.Prop np2 = Utils.replaceFreeVars(`p2,fvar,`Var(y));
+					return np1.equals(np2);	
+				}
+			}
+			return false;
+		}
+	}
 }
 */
-
-forAllList:make(l,p) {
-  sequents.types.Prop res = p;
-  %match(StringList l) {
-    (_*,v,_*) -> { res = `forAll(v,res); }
-  }
-  return res;
-}
-
-existsList:make(l,p) {
-  sequents.types.Prop res = p;
-  %match(StringList l) {
-    (_*,v,_*) -> { res = `exists(v,res); }
-  }
-  return res;
-}
 
 Context = context(Prop*)
 
