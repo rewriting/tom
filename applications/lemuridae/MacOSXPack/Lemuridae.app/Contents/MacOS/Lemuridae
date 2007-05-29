@@ -1,0 +1,9 @@
+#!/bin/bash
+##SCRIPT DIR
+DIR_NAME=`dirname "$0"`
+DIR_NAME=`cd "$DIR_NAME"; pwd`
+cd "${DIR_NAME}"
+TOM_LIB=`echo ../Resources/libtom/*.jar | tr ' ' ':'`
+export CLASSPATH=${TOM_LIB}:${CLASSPATH}
+export CLASSPATH=$CLASSPATH:../Resources/build/
+exec java ${VM_ARGS} -Xdock:icon=../Resources/lemu.icns -Xdock:name="Lemuridae" -cp :${CLASSPATH} Gui ${SWT_ARGS} 
