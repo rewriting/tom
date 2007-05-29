@@ -387,7 +387,7 @@ s = %[
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm arg) {
-          Variable[AstName=Name(name), AstType=Type[TomType=tomType,TlType=tlType@TLType[]]] -> {
+          Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
             s.append(TomBase.getTLCode(`tlType) + " " + `name);
             break matchBlock;
           }

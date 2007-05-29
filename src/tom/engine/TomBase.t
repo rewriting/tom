@@ -351,7 +351,7 @@ public final class TomBase {
 
   public static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*)] -> {
+      Symbol[Option=concOption(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return true;
       }
     }
@@ -440,7 +440,7 @@ public final class TomBase {
 
   public static TomType getSlotType(TomSymbol symbol, TomName slotName) {
     %match(TomSymbol symbol) {
-      Symbol[TypesToType=TypesToType(typeList,codomain)] -> {
+      Symbol[TypesToType=TypesToType(typeList,_)] -> {
         int index = getSlotIndex(symbol,slotName);
         return elementAt(`typeList,index);
       }
@@ -544,7 +544,7 @@ public final class TomBase {
       
       ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
       
-      Subterm(Name(name), slotName, term) -> {
+      Subterm(Name(name), slotName, _) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
       }

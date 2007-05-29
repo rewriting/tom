@@ -147,9 +147,9 @@ public class PostGenerator {
   /**
    * Makes sure that no variable is declared if the same variable was declared above  
    */
-  %strategy ChangeVarDeclarations() extends Identity(){
-    visit Instruction{
-      LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) ->{
+  %strategy ChangeVarDeclarations() extends Identity() {
+    visit Instruction {
+      LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) -> {
         Visitable root = getEnvironment().getRoot();
         if (root != getEnvironment().getSubject()) {
           try {
@@ -164,8 +164,8 @@ public class PostGenerator {
 
   %strategy CheckVarExistence(varName:TomName) extends Identity(){
     visit Instruction {
-      LetRef[Variable=v@(Variable|VariableStar)[AstName=name]] -> {
-        if (varName == (`name) ){
+      LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
+        if(varName == (`name) ) {
           throw new VisitFailure();
         }
       }

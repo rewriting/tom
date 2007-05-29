@@ -269,7 +269,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
               %match(TomTerm arg) {
-                Variable[AstName=Name(name), AstType=Type[TomType=tomType,TlType=tlType@TLType[]]] -> {
+                Variable[AstName=Name(name), AstType=Type[TlType=TLType[]]] -> {
                   s.append(`name);
                   break matchBlock;
                 }
@@ -338,7 +338,7 @@ matchBlock: {
       TomTerm localVar = varList.getHeadconcTomTerm();
 matchBlock: {
               %match(TomTerm localVar) {
-                v@Variable[AstType=type2] -> {
+                v@Variable[] -> {
                   //output.write(deep,getTLType(`type2) + " ");
                   generate(deep,`v,moduleName);
                   break matchBlock;

@@ -123,7 +123,7 @@ public class PreGenerator {
    */
   private static Expression constraintsToExpressions(Constraint constraint){    
     %match(constraint){
-      and@AndConstraint(m,X*) -> {        
+      AndConstraint(m,X*) -> {        
           return `And(constraintsToExpressions(m),
               constraintsToExpressions(AndConstraint(X*)));
       }      

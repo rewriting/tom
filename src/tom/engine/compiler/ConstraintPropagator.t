@@ -126,7 +126,7 @@ match:%match(strategyName) {
   %strategy DetachSublists(bag:ArrayList) extends Identity() {
     visit TomTerm {
       // we only look for lists ( the lists can only have one name ) 
-      t@RecordAppl[NameList=nameList@(name@Name(tomName)),Slots=slots] -> {
+      t@RecordAppl[NameList=(name@Name(tomName)),Slots=slots] -> {
         if (!TomBase.isListOperator(ConstraintCompiler.getSymbolTable().
             getSymbolFromName(`tomName))) {
           return `t;

@@ -145,7 +145,7 @@ public class ConstraintGenerator {
    */
   %strategy ReplaceSubterms() extends Identity(){
     visit TomTerm{
-      s@Subterm(constructorName@Name(name), slotName, term) ->{
+      Subterm(constructorName@Name(name), slotName, term) ->{
         TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(`name);
         TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	
         return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));

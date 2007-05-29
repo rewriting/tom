@@ -257,7 +257,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      IsSort(Type[TomType=type@ASTTomType(typeName)], exp) -> {
+      IsSort(Type[TomType=type@ASTTomType[]], exp) -> {
         `buildExpIsSort(deep,type,exp,moduleName);
         return;
       }

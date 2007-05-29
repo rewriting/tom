@@ -118,7 +118,7 @@ public class ArrayPropagator implements IBasePropagator {
           }					
           // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
           // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-      andC@AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
+      AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);            
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
         Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);

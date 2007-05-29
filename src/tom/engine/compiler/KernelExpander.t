@@ -201,7 +201,7 @@ matchBlock: {
                   break matchBlock;
                 }
 
-                t@(TermAppl|RecordAppl)[NameList=concTomName(tomName@Name(name),_*)] -> {
+                t@(TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
                   TomSymbol symbol = expander.getSymbolFromName(`name);
                   TomType type = null;
                   if(symbol!=null) {

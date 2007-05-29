@@ -128,7 +128,7 @@ public class ConstraintCompiler {
   private static Instruction collectVariableFromSubjectList(TomList subjectList, TomList renamedSubjects, Instruction body) {
     %match(subjectList) { 
       concTomTerm() -> { return body; }
-      concTomTerm(subjectVar@Variable[Option=option,AstType=variableType],tail*) -> {
+      concTomTerm(subjectVar@Variable[AstType=variableType],tail*) -> {
         body = collectVariableFromSubjectList(`tail,renamedSubjects.getTailconcTomTerm(),body);		        
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
         Instruction let = `LetRef(renamedSubjects.getHeadconcTomTerm(),source,body);
