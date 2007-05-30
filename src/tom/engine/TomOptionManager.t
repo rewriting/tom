@@ -66,8 +66,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private Map mapShortNameToName;
 
   /** the list of input files extract from the commandLine */
-  private List inputFileList;
-
+  private List inputFileList; 
+  
+  private static Logger logger = Logger.getLogger("tom.engine.TomOptionManager");
   /**
    * Basic Constructor
    * constructing a configurationManager that needs to be initialized
@@ -99,6 +100,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     this.inputFileList = processArguments(commandLine);
     if(this.inputFileList == null) {
       return 1;
+    }
+    // only if it's not a call from GOM 
+    if(((Boolean)getOptionValue("optimize2")).booleanValue() 
+        && !(inputFileList.size() == 1 && "-".equals((String)inputFileList.get(0)) ) ) {        
+      logger.log(Level.WARNING, TomMessage.optimizerModifiesLineNumbers.getMessage());
     }
     return checkAllOptionsDepedencies(optionOwnerList);
   }
@@ -283,7 +289,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     return option;
   }
 
-  private PlatformOption setOptionFromName(String name, PlatformOption option) {
+  private PlatformOption setOptionFromName(String name, PlatformOption option) {    
     return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
   }
 

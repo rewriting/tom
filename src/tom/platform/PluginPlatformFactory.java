@@ -77,7 +77,7 @@ public class PluginPlatformFactory {
    * argument shall contain a sequence of string -X and configFileName
    * to be able to create the PluginPlatform.
    */
-  public PluginPlatform create(String[] commandLine, String logRadical) {
+  public PluginPlatform create(String[] commandLine, String logRadical) {    
     String confFileName = extractConfigFileName(commandLine);
     if(confFileName == null) {
       return null;

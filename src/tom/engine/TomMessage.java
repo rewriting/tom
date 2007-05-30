@@ -77,6 +77,10 @@ public class TomMessage implements PlatformMessage {
   // Debug messages
   public static final TomMessage setValue              =
       new TomMessage("TomOptionManager: Set ''{0}'' to ''{1}'' (old value : ''{2}'')");
+  // Warnings
+  public static final TomMessage optimizerModifiesLineNumbers              =
+    new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
+                " Please disable the optimizer in order to have correct line numbers.");  
 
   // TomPluginFactory
   public static final TomMessage classNotAPlugin       =

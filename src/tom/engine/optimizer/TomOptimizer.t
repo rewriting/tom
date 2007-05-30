@@ -117,8 +117,7 @@ public class TomOptimizer extends TomGenericPlugin {
       try {
         TomTerm renamedTerm = (TomTerm)getWorkingTerm();
 
-        if(getOptionBooleanValue("optimize2")) {
-          logger.log(Level.WARNING, "Be careful! The optimizer has activated the option pretty. Line numbers are not preserved in the generated code.");
+        if(getOptionBooleanValue("optimize2")) {          
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
           renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);

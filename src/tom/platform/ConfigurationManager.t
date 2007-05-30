@@ -31,6 +31,8 @@ import java.util.logging.*;
 import aterm.*;
 import aterm.pure.*;
 
+import tom.engine.TomMessage;
+
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import tom.library.xml.*;
@@ -62,6 +64,7 @@ public class ConfigurationManager {
   /** The OptionManager */
   private OptionManager optionManager;
   
+  private static Logger logger = Logger.getLogger("tom.platform.ConfigurationManager");
   /**
    * Basic Constructor
    * constructing a configurationManager that needs to be initialized
@@ -80,7 +83,7 @@ public class ConfigurationManager {
    * <li>1 if something went wrong</li>
    * </ul>
    */
-  public int initialize(String[] commandLine) {
+  public int initialize(String[] commandLine) {    
     XmlTools xtools = new XmlTools();
     TNode configurationNode = xtools.convertXMLToTNode(xmlConfigurationFileName);
     if(configurationNode == null) {
@@ -89,8 +92,12 @@ public class ConfigurationManager {
     }
     if(createPlugins(configurationNode.getDocElem())==1) {
       return 1;
-    }
-    if(createOptionManager(configurationNode.getDocElem()) == 1) {
+    }    
+    if(createOptionManager(configurationNode.getDocElem()) == 1) {     
+      if( ((Boolean)optionManager.getOptionValue("optimize2")).booleanValue()
+          && !(optionManager.getInputToCompileList().size() == 1 && "-".equals((String)optionManager.getInputToCompileList().get(0))) ) {        
+        logger.log(Level.WARNING, TomMessage.optimizerModifiesLineNumbers.getMessage());
+      }
       return 1;
     }
     return optionManager.initialize(this, commandLine);
