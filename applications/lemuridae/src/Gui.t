@@ -24,6 +24,10 @@ public final class Gui implements Observer {
   private PipedInputStream inpipe2;
   private BufferedReader reader2;
 
+
+  // Open Recent Files
+  private HashSet<String> recentFiles = new HashSet<String>(5);
+  
   // quelques actions qui pourront etre associes a des boutons, menus, etc.
 
   //Envoyer la prochaine commande au ProofBuilder
@@ -46,13 +50,23 @@ public final class Gui implements Observer {
     public void actionPerformed(ActionEvent event) { commandField.cancelAllCommand(); }
   };
 
+  // Clear the recent file list
+  private AbstractAction clear = new AbstractAction ("Clear") {
+    public void actionPerformed (ActionEvent event) {recentFiles = new HashSet(); refreshMenuBar(); }
+  };
+
   // Quitter
   private AbstractAction quit = new AbstractAction ("Quit") {
     public void actionPerformed (ActionEvent event) {System.exit(0); }
   };
 
+  // New
+  private AbstractAction newfile = new AbstractAction ("New") {
+    public void actionPerformed (ActionEvent event) {commandField.cancelAllCommand(); commandField.setText("");}
+  };
+
   // open file
-  private AbstractAction open = new AbstractAction ("Open File") {
+  private AbstractAction open = new AbstractAction ("Open...") {
     public void actionPerformed (ActionEvent event) {
       FileDialog fileDil = new FileDialog(mainWindow, "Open File", FileDialog.LOAD);
       //System.out.println("file dialog created");
@@ -65,7 +79,8 @@ public final class Gui implements Observer {
       // if filename == null, le FileDialog a ete annule par l'utilisateur
       if (filename != null) {
         String newname = directory+filename;
-        try { 
+        try {
+          commandField.cancelAllCommand();
           FileReader freader = new FileReader(newname);
           char[] buffer = new char[4096];    // Read 4K characters at a time
           int len;                           // How many chars read each time
@@ -76,6 +91,8 @@ public final class Gui implements Observer {
           }
           mainWindow.setTitle("Lemuridae: " + filename);  // Set the window title
           commandField.setCaretPosition(0);              // Go to start of file
+          recentFiles.add(newname);
+          refreshMenuBar();
         }
         catch (Exception e) {
           System.out.println(e);
@@ -83,9 +100,34 @@ public final class Gui implements Observer {
       }
     }
   };
-  
+ 
+  private AbstractAction open(String filename) {
+    final String name = filename;
+    AbstractAction new_action = new AbstractAction (filename) {
+      public void actionPerformed (ActionEvent event) {
+        try {
+          commandField.cancelAllCommand();
+          FileReader freader = new FileReader(name);
+          char[] buffer = new char[4096];    // Read 4K characters at a time
+          int len;                           // How many chars read each time
+          commandField.setText("");              // Clear the text area
+          while((len = freader.read(buffer)) != -1) { // Read a batch of chars
+            String s = new String(buffer, 0, len); // Convert to a string
+            commandField.append(s);                    // And display them
+          }
+          mainWindow.setTitle("Lemuridae: " + name);  // Set the window title
+          commandField.setCaretPosition(0);              // Go to start of file
+        }
+        catch (Exception e) {
+          System.out.println(e);
+        }
+      }
+    };
+  return new_action;
+  }
+
   // save file
-  private AbstractAction save = new AbstractAction ("Save File") {
+  private AbstractAction save = new AbstractAction ("Save...") {
     public void actionPerformed (ActionEvent event) {
       FileDialog fileDil = new FileDialog(mainWindow, "Save File", FileDialog.SAVE);
       //System.out.println("file dialog created");
@@ -106,6 +148,8 @@ public final class Gui implements Observer {
         catch (Exception e) {
           System.out.println(e);
         }
+        recentFiles.add(newname);
+        refreshMenuBar();
       }
     }
   };
@@ -120,65 +164,26 @@ public final class Gui implements Observer {
       pipeWriter = new OutputStreamWriter(outpipe);
     }
     catch (IOException e) {System.out.println("Pipe problem ?");}
+
+    // initialisation de la liste des fichiers recents
+    try {
+      FileInputStream f_in = new FileInputStream ("/tmp/lemuRecentFiles.data");
+      ObjectInputStream obj_in = new ObjectInputStream (f_in);
+      Object obj = obj_in.readObject ();
+      if (obj instanceof HashSet) {
+        recentFiles = (HashSet) obj;
+      }
+      else {System.out.println("warning : cannot import list of recent files");}
+    }
+    catch (Exception e) {System.out.println(e);}
     
     // initialisation de la fenetre principale
     mainWindow = new JFrame("Lemuridae");
     mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
-    // initialisation de la menubar
-    JMenuBar mainMenuBar = new JMenuBar();
-    
-    // menu 1
-    JMenu menu1 = new JMenu("File");
-    // Action open
-    JMenuItem menuItem = new JMenuItem("Open File");
-    menuItem.setAction(open);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-    menu1.add(menuItem);
-    // Action save
-    menuItem = new JMenuItem("Save File");
-    menuItem.setAction(save);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-    menu1.add(menuItem);
-    // Separator
-    menu1.addSeparator();
-    // Action quit
-    menuItem = new JMenuItem("Quit");
-    menuItem.setAction(quit);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
-    menu1.add(menuItem);
 
-    //menu 2
-    JMenu menu2 = new JMenu("Navigation");
-    // Action Down
-    menuItem = new JMenuItem("Forward");
-    menuItem.setAction(down);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, ActionEvent.CTRL_MASK));
-    menu2.add(menuItem);
-    // Action Up
-    menuItem = new JMenuItem("Backward");
-    menuItem.setAction(up);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, ActionEvent.CTRL_MASK));
-    menu2.add(menuItem);
-    // Separator
-    menu2.addSeparator();
-    // Action AllDown
-    menuItem = new JMenuItem("Go to end");
-    menuItem.setAction(allDown);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, ActionEvent.CTRL_MASK));
-    menu2.add(menuItem);
-    // Action AllUp
-    menuItem = new JMenuItem("Go to start");
-    menuItem.setAction(allUp);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, ActionEvent.CTRL_MASK));
-    menu2.add(menuItem);
-    
-    // Ajout des menus
-    mainMenuBar.add(menu1);
-    mainMenuBar.add(menu2);
-    // Ajout de la menubar
-    mainWindow.setJMenuBar(mainMenuBar);
-    
+    // MenuBar
+    refreshMenuBar();
+   
     // panel contenant les elements
     JPanel myPanel = new JPanel();
     
@@ -239,6 +244,90 @@ public final class Gui implements Observer {
       msgArea.append(s);
       msgArea.setCaretPosition(msgArea.getDocument().getLength());
     }
+  }
+
+  public void refreshMenuBar() {
+    // initialisation de la menubar
+    JMenuBar mainMenuBar = new JMenuBar();
+    
+    // menu 1
+    JMenu menu1 = new JMenu("File");
+    // Action new
+    JMenuItem menuItem = new JMenuItem("New");
+    menuItem.setAction(newfile);
+    menu1.add(menuItem);
+    // Action open
+    menuItem = new JMenuItem("Open...");
+    menuItem.setAction(open);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+    menu1.add(menuItem);
+    //Action open recent
+    JMenu submenu = new JMenu("Open Recent");
+    for (String filename : recentFiles) {
+      menuItem = new JMenuItem(filename);
+      menuItem.setAction(open(filename));
+      submenu.add(menuItem);
+    }
+    submenu.addSeparator();
+    menuItem = new JMenuItem("Clear");
+    menuItem.setAction(clear);
+    submenu.add(menuItem);
+    menu1.add(submenu);
+    // Action save
+    menuItem = new JMenuItem("Save...");
+    menuItem.setAction(save);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+    menu1.add(menuItem);
+    // Separator
+    menu1.addSeparator();
+    // Action quit
+    menuItem = new JMenuItem("Quit");
+    menuItem.setAction(quit);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+    menu1.add(menuItem);
+
+    //menu 2
+    JMenu menu2 = new JMenu("Navigation");
+    // Action Down
+    menuItem = new JMenuItem("Forward");
+    menuItem.setAction(down);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, ActionEvent.CTRL_MASK));
+    menu2.add(menuItem);
+    // Action Up
+    menuItem = new JMenuItem("Backward");
+    menuItem.setAction(up);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, ActionEvent.CTRL_MASK));
+    menu2.add(menuItem);
+    // Separator
+    menu2.addSeparator();
+    // Action AllDown
+    menuItem = new JMenuItem("Go to end");
+    menuItem.setAction(allDown);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, ActionEvent.CTRL_MASK));
+    menu2.add(menuItem);
+    // Action AllUp
+    menuItem = new JMenuItem("Go to start");
+    menuItem.setAction(allUp);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, ActionEvent.CTRL_MASK));
+    menu2.add(menuItem);
+    
+    // Ajout des menus
+    mainMenuBar.add(menu1);
+    mainMenuBar.add(menu2);
+    // Ajout de la menubar
+    mainWindow.setJMenuBar(mainMenuBar);
+    mainWindow.setSize(600,500);
+    mainWindow.setVisible(true);
+    
+    // save the list of Recent Files
+    try {
+      FileOutputStream f_out = new FileOutputStream ("/tmp/lemuRecentFiles.data");
+      ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
+      obj_out.writeObject(recentFiles);
+      obj_out.close();
+      f_out.close();
+    }
+    catch (Exception e) {System.out.println(e);}
   }
 
   // code a executer
