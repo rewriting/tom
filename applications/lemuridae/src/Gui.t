@@ -224,6 +224,7 @@ public final class Gui extends ComponentAdapter implements Observer {
 
     // divider
     c.setDividerLocation(.5);
+    c.setResizeWeight(.5);
   }
 
   // methode pour faire passer la commande de commandField a ProofBuilder et msgArea
@@ -331,23 +332,9 @@ public final class Gui extends ComponentAdapter implements Observer {
     catch (Exception e) {System.out.println(e);}
   }
 
-  // code execute quand le component est resized
-  public void componentResized(ComponentEvent e) {
-    c.setDividerLocation(.5);
-  }
-
-  public void setComponentListening() {
-    mainWindow.addComponentListener(this);
-  }
-
-
   // code a executer
   public static void main(String[] args) throws Exception {
     Gui newGui = new Gui();
-    
-    // pour les resizing
-    newGui.setComponentListening();
-    
     ProofBuilder test = new ProofBuilder();
     test.addObserver(newGui);
     Utils.setStream(newGui.inpipe);
