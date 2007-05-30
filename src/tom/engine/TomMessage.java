@@ -80,7 +80,7 @@ public class TomMessage implements PlatformMessage {
   // Warnings
   public static final TomMessage optimizerModifiesLineNumbers              =
     new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
-                " Please disable the optimizer in order to have correct line numbers.");  
+                " Please disable the optimizer if you need correct line numbers.");  
 
   // TomPluginFactory
   public static final TomMessage classNotAPlugin       =
