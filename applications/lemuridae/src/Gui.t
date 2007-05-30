@@ -7,13 +7,14 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-public final class Gui implements Observer {
+public final class Gui extends ComponentAdapter implements Observer {
 
   // Elements du Gui, zone de commande + zone des messages + fenetre principale
   protected CommandArea commandField;
   protected JTextArea msgArea;
   protected JFrame mainWindow;
-
+  protected JSplitPane c;
+  
   // communication Utils(ProofBuilder) <-> zone de commande
   private PipedInputStream inpipe;
   private PipedOutputStream outpipe;
@@ -206,7 +207,7 @@ public final class Gui implements Observer {
     JScrollPane scrollPane2 = new JScrollPane(msgArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     
     // initialisation du JSplitPane contenant les deux zones
-    JSplitPane c = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollPane1,scrollPane2);
+    c = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollPane1,scrollPane2);
     myPanel.setLayout(new BorderLayout());
     myPanel.add(c,BorderLayout.CENTER);
     
@@ -330,9 +331,23 @@ public final class Gui implements Observer {
     catch (Exception e) {System.out.println(e);}
   }
 
+  // code execute quand le component est resized
+  public void componentResized(ComponentEvent e) {
+    c.setDividerLocation(.5);
+  }
+
+  public void setComponentListening() {
+    mainWindow.addComponentListener(this);
+  }
+
+
   // code a executer
   public static void main(String[] args) throws Exception {
     Gui newGui = new Gui();
+    
+    // pour les resizing
+    newGui.setComponentListening();
+    
     ProofBuilder test = new ProofBuilder();
     test.addObserver(newGui);
     Utils.setStream(newGui.inpipe);
