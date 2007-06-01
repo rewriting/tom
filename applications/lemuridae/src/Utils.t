@@ -354,5 +354,20 @@ class Utils {
     SeqWalker walker = new SeqWalker(nodes);
     return walker.ident();
   }
+
+//C est nous
+  public static Sig getSig() throws RecognitionException, IOException {
+    InputRes input = getInput();
+    CharStream cinput = new ANTLRStringStream(input.buf,input.size);
+    SeqLexer lex = new SeqLexer(cinput);
+    CommonTokenStream tokens = new CommonTokenStream(lex);
+    SeqParser parser = new SeqParser(tokens);
+    SeqParser.rule1_return root = parser.rule1();
+    CommonTreeNodeStream nodes = new CommonTreeNodeStream((org.antlr.runtime.tree.Tree)root.tree);
+    SeqWalker walker = new SeqWalker(nodes);
+    return walker.rule1();
+  }
+//On a fini
+
 }
 

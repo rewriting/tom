@@ -5,7 +5,7 @@ options {
     ASTLabelType=CommonTree; // type of $stat.tree ref etc...
 }
 
-tokens { FAPPL; APPL; RRULEALONE; VARLIST; }
+tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; }
 
 pred: implpred (EQUIV^ pred)*;
 
@@ -69,6 +69,8 @@ command: PROOF^ ID COLUMN! pred DOT!
        | RESUME^ ID DOT!
        | GIBBER DOT!
        | IMPORT^ PATH DOT!
+       | INDUCTIVER^ rule1 DOT!  // c est nous
+       | INDUCTIVE^ rule1 DOT!  // c est nous
        | EOF
        ;
 
@@ -90,6 +92,21 @@ proofcommand: FOCUS^ ID DOT!
 start1: pred DOT! ;
 start2: term DOT! ;
 ident: ID DOT! ;
+
+//C est nous
+rule1: ctor AFFECT ctor_list -> ^(RULEINDUCT ctor ctor_list)
+     | ctor AFFECT -> ^(VOIDRULEINDUCT ctor) ;
+
+ctor_list: ctor (PIPE^ ctor)* 
+         ;
+
+ctor: ID LPAREN type_list RPAREN -> ^(RULECTOR ID type_list)
+    | ID LPAREN RPAREN -> ^(RULECTORARITYZERO ID) ;
+
+type_list: type (COMMA type)* -> ^(TYPELIST type)+;
+
+type: ID ;
+//On a fini
 
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n') {$channel=HIDDEN;}
     ;
@@ -119,6 +136,13 @@ EXISTS : '\\E' | 'exists';
 BOTTOM : '\\B' | 'False';
 TOP: '\\T' | 'True';
 ARROW : '->';
+
+//C est nous 
+PIPE : '|';
+
+AFFECT : ':=';
+//On a fini
+
 COLUMN: ':';
 TIMES: '*';
 PLUS: '+';
@@ -148,6 +172,8 @@ IMPORT: 'import';
 NORMALIZE: 'reduce';
 TERM: 'term';
 PROP: 'proposition';
+INDUCTIVER: 'inductiveR';  // c est nous
+INDUCTIVE: 'inductive';  // c est nous
 
 ID : ('_'|'A'..'Z'|'a'..'z')('_'|'A'..'Z'|'a'..'z'|'0'..'9')*;
 NUMBER: ('0'..'9')+;

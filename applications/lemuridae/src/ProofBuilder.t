@@ -1225,6 +1225,8 @@ b :{
         /* declarations */
 
         rewritesuper(p1,p2) -> {
+	  writeToOutputln(`p1.toString());
+          writeToOutputln(`p2.toString());
           RuleList rl = transform(`p1,`p2);
           %match(RuleList rl) {
             (_*,r,_*) -> { 
@@ -1299,6 +1301,43 @@ b :{
           //tree = ProofExpander.expand(tree);
           //PrettyPrinter.display(tree,newTermRules,newPropRules);
         }
+
+//c est nous
+        inductive(sig) -> {
+          Signature test = new Signature();
+          boolean casRecursif = false;
+
+          RuleList rl = transform(test.evalRule1(`sig),test.evalRule2(`sig, casRecursif));
+          writeToOutputln((`sig).toString());
+          writeToOutputln(PrettyPrinter.prettyPrint((test.evalRule1(`sig))));
+          writeToOutputln(PrettyPrinter.prettyPrint((test.evalRule2(`sig, casRecursif))));
+          %match(RuleList rl) {
+            (_*,r,_*) -> { 
+              `r = (Rule) Unification.substPreTreatment(`r);
+              newRules.add(`r);
+            }
+          }
+          writeToOutputln("The new deduction rules are : \n");
+          writeToOutputln(PrettyPrinter.prettyRule(rl));
+        }
+        inductiver(sig) -> {
+          Signature test = new Signature();
+          boolean casRecursif = true;
+
+          RuleList rl = transform(test.evalRule1(`sig),test.evalRule2(`sig, casRecursif));
+          writeToOutputln((`sig).toString());
+          writeToOutputln((test.evalRule1(`sig)).toString());
+          writeToOutputln((test.evalRule2(`sig, casRecursif)).toString());
+          %match(RuleList rl) {
+            (_*,r,_*) -> { 
+              `r = (Rule) Unification.substPreTreatment(`r);
+              newRules.add(`r);
+            }
+          }
+          writeToOutputln("The new deduction rules are : \n");
+          writeToOutputln(PrettyPrinter.prettyRule(rl));
+        }
+//on a fini
 
         proofterm(name) -> {
           /*
