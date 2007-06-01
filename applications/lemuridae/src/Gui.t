@@ -171,7 +171,7 @@ public final class Gui implements Observer {
     // initialisation de la liste des fichiers recents
     try {
       JFileChooser fchoose = new JFileChooser();
-      recentFileStore = fchoose.getFileSystemView().getHomeDirectory()+"/.lemuRecentFiles.data";
+      recentFileStore = fchoose.getFileSystemView().getHomeDirectory()+File.separator+".lemuRecentFiles.data";
       System.out.println(recentFileStore);
       FileInputStream f_in = new FileInputStream (recentFileStore);
       ObjectInputStream obj_in = new ObjectInputStream (f_in);
