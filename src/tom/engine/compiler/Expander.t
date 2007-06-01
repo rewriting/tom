@@ -290,7 +290,7 @@ public class Expander extends TomGenericPlugin {
           if(tomSymbol != null) {
             if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
               //System.out.println("appl = " + subject);
-              SlotList newArgs = expander.expandChar(`args);
+              SlotList newArgs = expander.expandChar(tomSymbol,`args);
               if(newArgs!=`args) {
                 return `appl.setSlots(newArgs);
               }
@@ -304,35 +304,47 @@ public class Expander extends TomGenericPlugin {
      * detect ill-formed char: 'abc'
      * and expand it into a list of char: 'a','b','c'
      */
-    private SlotList expandChar(SlotList args) {
+    private SlotList expandChar(TomSymbol tomSymbol,SlotList args) {
       if(args.isEmptyconcSlot()) {
         return args;
       } else {
         Slot head = args.getHeadconcSlot();
-        SlotList tail = expandChar(args.getTailconcSlot());
+        SlotList tail = expandChar(tomSymbol,args.getTailconcSlot());
         %match(head) {
-          PairSlotAppl(slotName,appl@RecordAppl[NameList=(Name(tomName)),Slots=()]) -> {
+          PairSlotAppl(slotName,RecordAppl[Option=optionList,NameList=(Name(tomName)),Slots=concSlot(),Constraints=constraintList]) -> {
             /*
              * ensure that the argument contains at least 1 character and 2 single quotes
              */
-            TomSymbol tomSymbol = getSymbolFromName(`tomName);
-            TomType termType = tomSymbol.getTypesToType().getCodomain();
+            TomSymbol stringSymbol = getSymbolFromName(`tomName);
+            TomType termType = stringSymbol.getTypesToType().getCodomain();
             String type = termType.getTomType().getString();
             if(symbolTable().isCharType(type) && `tomName.length()>3) {
               if(`tomName.charAt(0)=='\'' && `tomName.charAt(`tomName.length()-1)=='\'') {
-                SlotList newArgs = tail;
-                //System.out.println("bingo -> " + tomSymbol);
+                SlotList newArgs = `concSlot();
+                //System.out.println("bingo -> " + stringSymbol);
                 for(int i=`tomName.length()-2 ; i>0 ;  i--) {
                   char c = `tomName.charAt(i);
                   String newName = "'" + c + "'";
-                  TomSymbol newSymbol = tomSymbol.setAstName(`Name(newName));
+                  TomSymbol newSymbol = stringSymbol.setAstName(`Name(newName));
                   symbolTable().putSymbol(newName,newSymbol);
-                  Slot newHead = `PairSlotAppl(slotName,appl.setNameList(concTomName(Name(newName))));
+
+                  Slot newHead = `PairSlotAppl(slotName,RecordAppl(optionList,concTomName(Name(newName)),concSlot(),concConstraint()));
                   newArgs = `concSlot(newHead,newArgs*);
                   //System.out.println("newHead = " + newHead);
                   //System.out.println("newSymb = " + getSymbolFromName(newName));
                 }
-                return newArgs;
+                ConstraintList newConstraintList = `concConstraint();
+                %match(constraintList) {
+                  concConstraint(AssignTo(var@Variable[AstType=vartype])) -> {
+                    if(symbolTable().isCharType(TomBase.getTomType(`vartype))) {
+                      newConstraintList = `concConstraint(AssignTo(var.setAstType(symbolTable().getStringType())));
+                    }
+                  }
+                }
+
+                TomTerm newSublist = `RecordAppl(concOption(),concTomName(tomSymbol.getAstName()),newArgs,newConstraintList);
+                Slot newSlot = `PairSlotAppl(slotName,newSublist);
+                return `concSlot(newSlot,tail*);
               } else {
                 throw new TomRuntimeException("expandChar: strange char: " + `tomName);
               }
