@@ -6,8 +6,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.JFileChooser;
 
-public final class Gui extends ComponentAdapter implements Observer {
+public final class Gui implements Observer {
 
   // Elements du Gui, zone de commande + zone des messages + fenetre principale
   protected CommandArea commandField;
@@ -28,6 +29,7 @@ public final class Gui extends ComponentAdapter implements Observer {
 
   // Open Recent Files
   private HashSet<String> recentFiles = new HashSet<String>(5);
+  private String recentFileStore;
   
   // quelques actions qui pourront etre associes a des boutons, menus, etc.
 
@@ -168,7 +170,10 @@ public final class Gui extends ComponentAdapter implements Observer {
 
     // initialisation de la liste des fichiers recents
     try {
-      FileInputStream f_in = new FileInputStream ("/tmp/lemuRecentFiles.data");
+      JFileChooser fchoose = new JFileChooser();
+      recentFileStore = fchoose.getFileSystemView().getHomeDirectory()+"/.lemuRecentFiles.data";
+      System.out.println(recentFileStore);
+      FileInputStream f_in = new FileInputStream (recentFileStore);
       ObjectInputStream obj_in = new ObjectInputStream (f_in);
       Object obj = obj_in.readObject ();
       if (obj instanceof HashSet) {
@@ -318,12 +323,12 @@ public final class Gui extends ComponentAdapter implements Observer {
     mainMenuBar.add(menu2);
     // Ajout de la menubar
     mainWindow.setJMenuBar(mainMenuBar);
-    mainWindow.setSize(600,500);
+    //mainWindow.setSize(600,500);
     mainWindow.setVisible(true);
     
     // save the list of Recent Files
     try {
-      FileOutputStream f_out = new FileOutputStream ("/tmp/lemuRecentFiles.data");
+      FileOutputStream f_out = new FileOutputStream(recentFileStore);
       ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
       obj_out.writeObject(recentFiles);
       obj_out.close();
