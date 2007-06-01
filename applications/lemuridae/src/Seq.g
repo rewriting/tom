@@ -69,8 +69,8 @@ command: PROOF^ ID COLUMN! pred DOT!
        | RESUME^ ID DOT!
        | GIBBER DOT!
        | IMPORT^ PATH DOT!
-       | INDUCTIVER^ rule1 DOT!  // c est nous
-       | INDUCTIVE^ rule1 DOT!  // c est nous
+       | INDUCTIVER^ rule1 DOT!
+       | INDUCTIVE^ rule1 DOT!
        | EOF
        ;
 
@@ -93,7 +93,6 @@ start1: pred DOT! ;
 start2: term DOT! ;
 ident: ID DOT! ;
 
-//C est nous
 rule1: ctor AFFECT ctor_list -> ^(RULEINDUCT ctor ctor_list)
      | ctor AFFECT -> ^(VOIDRULEINDUCT ctor) ;
 
@@ -106,7 +105,6 @@ ctor: ID LPAREN type_list RPAREN -> ^(RULECTOR ID type_list)
 type_list: type (COMMA type)* -> ^(TYPELIST type)+;
 
 type: ID ;
-//On a fini
 
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n') {$channel=HIDDEN;}
     ;
@@ -172,8 +170,8 @@ IMPORT: 'import';
 NORMALIZE: 'reduce';
 TERM: 'term';
 PROP: 'proposition';
-INDUCTIVER: 'inductiveR';  // c est nous
-INDUCTIVE: 'inductive';  // c est nous
+INDUCTIVER: 'inductiveR';
+INDUCTIVE: 'inductive';
 
 ID : ('_'|'A'..'Z'|'a'..'z')('_'|'A'..'Z'|'a'..'z'|'0'..'9')*;
 NUMBER: ('0'..'9')+;

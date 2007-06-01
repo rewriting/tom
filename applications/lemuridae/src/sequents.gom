@@ -127,8 +127,8 @@ Command = rewriteprop(l:Prop, r:Prop)
         | resume(text:String)
         | gibber()
         | importfile(name:String)
-        | inductiver(s:Sig)  // c est nous
-        | inductive(s:Sig)  // c est nous
+        | inductiver(s:Sig)
+        | inductive(s:Sig)
         | endoffile()
 	
 ProofCommand = proofCommand(text:String)
@@ -144,17 +144,11 @@ ProofCommand = proofCommand(text:String)
              | proofendoffile()
 
 
-//c est nous
 Sig = Sig(l:Ctorlist)
-
 Ctorlist = clist(Ctor*)
-
 Ctor = ctor(s:String, tl:TypeList)
-
 TypeList = tlist(Type*)
-
 Type = type(s:String)
-//on a fini
 
 
 // hooks maintaining free vars

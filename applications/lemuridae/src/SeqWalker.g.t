@@ -67,8 +67,8 @@ command returns [sequents.types.Command c]
   | ^(RESUME i5=ID) { c = `resume($i5.text); }
   | GIBBER { c = `gibber(); }
   | ^(IMPORT i6=PATH) { c = `importfile($i6.text); }
-  | ^(INDUCTIVER s=rule1) { c = `inductiver(s); } //c est nous
-  | ^(INDUCTIVE s=rule1) { c = `inductive(s); } //c est nous
+  | ^(INDUCTIVER s=rule1) { c = `inductiver(s); }
+  | ^(INDUCTIVE s=rule1) { c = `inductive(s); }
   | EOF { c = `endoffile(); }
   ;
 
@@ -92,14 +92,13 @@ ident returns [String s]
   : i=ID { s = $i.text; }
   ;
 
-//C est nous
 rule1 returns [sequents.types.Sig s]
   : ^(VOIDRULEINDUCT h=ctor) { s = `Sig(clist(h)); }
   | ^(RULEINDUCT h=ctor l=ctor_list) { s = `Sig(clist(h,l*)); }
   ;
 
 ctor_list returns [sequents.types.Ctorlist cl]
-  : ^(PIPE c=ctor tail=ctor_list) { cl = `clist(tail*,c); }
+  : ^(PIPE c=ctor tail=ctor_list) { cl = `clist(c,tail*); }
   | c=ctor { cl = `clist(c); }
   ;
 
@@ -116,4 +115,3 @@ type_list returns [sequents.types.TypeList tl]
 type returns [sequents.types.Type s]
   : i = ID { s = `type($i.text); }
   ;
-//On a fini
