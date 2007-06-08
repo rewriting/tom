@@ -5,7 +5,7 @@ options {
     ASTLabelType=CommonTree; // type of $stat.tree ref etc...
 }
 
-tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; }
+tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; }
 
 pred: implpred (EQUIV^ pred)*;
 
@@ -96,8 +96,7 @@ ident: ID DOT! ;
 rule1: ctor AFFECT ctor_list -> ^(RULEINDUCT ctor ctor_list)
      | ctor AFFECT -> ^(VOIDRULEINDUCT ctor) ;
 
-ctor_list: ctor (PIPE^ ctor)* 
-         ;
+ctor_list: ctor (PIPE ctor)* -> ^(CTORLIST ctor)+;
 
 ctor: ID LPAREN type_list RPAREN -> ^(RULECTOR ID type_list)
     | ID LPAREN RPAREN -> ^(RULECTORARITYZERO ID) ;

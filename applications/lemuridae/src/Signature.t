@@ -13,17 +13,15 @@ public class Signature {
   public Prop evalRule1(Sig s) {
     %match (Sig s) {
       Sig(clist(ctor(t,tlist()),l*)) -> {return  `relationAppl(t,concTerm(Var("t")));}
-      _ -> {}
     }
-    return  `nullProp();
+    return  null;
   }
 
   public Prop evalRule2(Sig s, boolean casRec) {
     %match (Sig s) {
       Sig(clist(ctor(t,tlist()),l*)) -> {return  `forAll("p", RuleClists(l, t, 0, casRec));}
-      _ -> {}
     }
-    return  `nullProp();
+    return  null;
   }
 
   public Prop RuleClists(Ctorlist cl, String s, int i, boolean casRec) {

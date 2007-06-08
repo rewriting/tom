@@ -3,6 +3,7 @@ tree grammar SeqWalker;
 options {
     tokenVocab=Seq;
     ASTLabelType = Tree;
+    backtrack=true;
 }
 
 @members{
@@ -98,8 +99,8 @@ rule1 returns [sequents.types.Sig s]
   ;
 
 ctor_list returns [sequents.types.Ctorlist cl]
-  : ^(PIPE c=ctor tail=ctor_list) { cl = `clist(c,tail*); }
-  | c=ctor { cl = `clist(c); }
+  : ^(CTORLIST c=ctor) tail=ctor_list { cl = `clist(c,tail*); }
+  | ^(CTORLIST c=ctor) { cl = `clist(c); }
   ;
 
 ctor returns [sequents.types.Ctor c]
