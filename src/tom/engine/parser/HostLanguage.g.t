@@ -587,7 +587,12 @@ gomsignature [LinkedList list] throws TomException
     res = tom.gom.Gom.exec(params);
     System.setIn(backupIn);
     if (res != 0 ) {
-      throw new TomException(TomMessage.gomFailure,new Object[]{currentFile,new Integer(initialGomLine)});
+       getLogger().log(
+           new PlatformLogRecord(Level.SEVERE,
+             TomMessage.gomFailure,
+             new Object[]{currentFile,new Integer(initialGomLine)},
+             currentFile, initialGomLine));
+      return;
     }
     String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
 
