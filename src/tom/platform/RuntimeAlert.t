@@ -47,16 +47,30 @@ public class RuntimeAlert {
     nbWarnings = 0;
   }
 
+  /**
+   * Add the warning only if it is not already in the list 
+   */
   public void addWarning(String message, String file, int line) {
     Alert entry = `Warning(message, file, line);
-    warnings = `concAlert(entry,warnings*);
-    nbWarnings++;
+    %match(Alert entry,warnings){
+      x, !concAlert(_*,x,_*) -> {
+        warnings = `concAlert(entry,warnings*);
+        nbWarnings++;   
+      }
+    }    
   }
   
+  /**
+   * Add the error only if it is not already in the list 
+   */
   public void addError(String message, String file, int line) {
     Alert entry = `Error(message, file, line);
-    errors = `concAlert(entry,errors*);
-    nbErrors++;
+    %match(Alert entry,errors){
+      x, !concAlert(_*,x,_*) -> {
+        errors = `concAlert(entry,errors*);
+        nbErrors++;    
+      }
+    }    
   }
   
   public int getNbErrors() {
