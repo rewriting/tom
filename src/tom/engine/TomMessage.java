@@ -128,11 +128,11 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage errorWhileIncludingFile=
       new TomMessage("Exception ''{0}'' occurs in parsing file ''{1}'' included in file {2} at line {3,number,integer}: See stacktrace\n\n{4}");
   public static final TomMessage gomFailure =
-      new TomMessage("An error occurs dealing with %gom input in ''{0}'' at line {1,number,integer}");
+      new TomMessage("An error occured dealing with %gom input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasPlatformFailure    =
       new TomMessage("Fail to obtain a Vas PluginPlatform in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasFailure            =
-      new TomMessage("An error occurs dealing with vas input in ''{0}'' at line {1,number,integer}");
+      new TomMessage("An error occured dealing with vas input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage iOExceptionWithGeneratedTomFile=
       new TomMessage("Generated file ''{0}'' from vas in file ''{1}'' caused an IOException: {2}");
   public static final TomMessage exceptionWithGeneratedTomFile =
