@@ -49,6 +49,7 @@ public class StatusHandler extends Handler {
   }
 
   public void publish(LogRecord record) {
+    final LogRecord recordCopy = record; 
     Level recordLevel = record.getLevel();
     Integer newStats;
     if(!levelStats.containsKey(recordLevel)) {
@@ -58,19 +59,24 @@ public class StatusHandler extends Handler {
       newStats = new Integer(oldStats.intValue()+1);
     }
     levelStats.put(recordLevel, newStats);
-
-    if(record instanceof PlatformLogRecord) {
-      PlatformLogRecord plr = (PlatformLogRecord)record;
-      String input = plr.getFilePath();
-      RuntimeAlert ra;
-      if(!inputAlert.containsKey(input)) {
-        ra = new RuntimeAlert();
-      } else {
-        ra = (RuntimeAlert)inputAlert.get(input);
-      }
-      ra.add(plr);
-      inputAlert.put(input, ra);
+    if(!(record instanceof PlatformLogRecord)) {
+      if( recordLevel != Level.SEVERE ) { return; }
+      record = new PlatformLogRecord(recordLevel, new PlatformMessage(){
+          public String getMessage(){
+            return recordCopy.getMessage();  
+          }
+      }, record.getParameters(), PluginPlatform.getCurrentFileName(), 1);
     }
+    PlatformLogRecord plr = (PlatformLogRecord)record;
+    String input = plr.getFilePath();
+    RuntimeAlert ra;
+    if(!inputAlert.containsKey(input)) {
+      ra = new RuntimeAlert();
+    } else {
+      ra = (RuntimeAlert)inputAlert.get(input);
+    }
+    ra.add(plr);
+    inputAlert.put(input, ra);    
   }
 
   // Part of Handler abstract interface
