@@ -109,7 +109,6 @@ tokens
   SYNTAX   = "syntax";
   SORT     = "sort";
   OPERATOR = "operator";
-  IMPORT  = "import";
 }
 
 ARROW : "->";
