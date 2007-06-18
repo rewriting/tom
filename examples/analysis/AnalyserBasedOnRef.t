@@ -109,7 +109,7 @@ public class AnalyserBasedOnRef{
 
   %strategy Collect(list:ArrayList) extends `Identity() {
     visit Cfg{
-      x@_ -> {
+      x -> {
         list.add(`x); 
       }
     }
