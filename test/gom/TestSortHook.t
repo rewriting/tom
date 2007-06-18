@@ -46,6 +46,11 @@ public class TestSortHook extends TestCase {
         return "1"+symbolName();
       }
     }
+
+    sort Sort1:import() {
+      import java.util.*;
+    }
+
     sort Sort2:block() {
       public String hookSort2() {
         %match(this) {
