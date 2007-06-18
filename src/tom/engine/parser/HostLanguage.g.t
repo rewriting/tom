@@ -517,6 +517,7 @@ gomsignature [LinkedList list] throws TomException
     String destDir = getStreamManager().getDestDir().getPath();
 
     File config_xml = null;
+    ArrayList parameters = new ArrayList();
     try {
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
@@ -527,6 +528,12 @@ gomsignature [LinkedList list] throws TomException
           ((String)getOptionManager().getOptionValue("X"));
         config_xml =
           new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
+        // pass all the received parameters to gom in the case that it will call tom
+        java.util.List<File> imp = getStreamManager().getUserImportList();
+        for(File f:imp){
+          parameters.add("--import");
+          parameters.add(f.getCanonicalPath());
+        }
       }
       config_xml = config_xml.getCanonicalFile();
     } catch (IOException e) {
@@ -544,8 +551,7 @@ gomsignature [LinkedList list] throws TomException
       subPackageName = inputFileNameWithoutExtension;
     } else {
       subPackageName = packageName + "." + inputFileNameWithoutExtension;
-    }
-    ArrayList parameters = new ArrayList();
+    }    
     parameters.add("-X");
     parameters.add(config_xml.getPath());
     parameters.add("--destdir");
