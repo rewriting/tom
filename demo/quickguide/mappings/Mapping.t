@@ -12,7 +12,9 @@ public class Mapping {
     %match(LinkedList l) {
       (_*,x,_*) -> { System.out.println("interate: " + `x); }
       (_*,x,_*,x,_*) -> { System.out.println("appears twice: " + `x); }
-      (!concLinkedList(_*,x,_*),x,!concLinkedList(_*,x,_*)) -> { System.out.println("appears only once: " + `x); }
+    }
+    %match(LinkedList l, LinkedList l) {
+      (_*,x,_*), !(_*,x,_*,x,_*) -> { System.out.println("appears only once: " + `x); }
     }
   }
 }
