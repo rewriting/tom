@@ -1,8 +1,9 @@
 import pil.term.types.*;
 import java.util.*;
+import tom.library.sl.*;
 
 class Pil {
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
   %gom {
@@ -38,10 +39,14 @@ class Pil {
     System.out.println("p1 = " + p1);
     System.out.println(pretty(p1));
 
-Collection pt = new ArrayList();
-    //System.out.println("renamed p1   = " + `TopDown(RenameVar("x","z")).apply(p1));
-    System.out.println("optimized p1 = " + `BottomUp(RemoveLet(pt)).apply(p1));
-System.out.println("pt = " + pt);
+    Collection pt = new ArrayList();
+    try {
+    //System.out.println("renamed p1   = " + `TopDown(RenameVar("x","z")).visit(p1));
+    System.out.println("optimized p1 = " + `BottomUp(RemoveLet(pt)).visit(p1));
+    } catch(VisitFailure e) {
+    System.out.println("failure");
+    }
+    System.out.println("pt = " + pt);
   }
    
   // Renaming
@@ -55,16 +60,13 @@ System.out.println("pt = " + pt);
   %strategy RemoveLet(pt:Collection) extends Identity() {
     visit Expr {
       Let(Var(n),expr,body) -> { 
-        if(`body == `TopDown(RenameVar(n,"_"+n)).apply(`body)) {
+        if(`body == `TopDown(RenameVar(n,"_"+n)).visit(`body)) {
 	      // if Var(n) is not used
-pt.add(getPosition());
-	      return `body;
+          pt.add(getEnvironment().getPosition());
+          return `body;
 	    }
       }
     }
   }
 
 }
-
-//make(v) { `Choice(v,Identity()) }
-//make(v) { `mu(MuVar("_x"),Try(Sequence(v,MuVar("_x")))) }
