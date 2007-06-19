@@ -51,18 +51,18 @@ import tom.library.sl.*;
  * ... 
  */
 public class PreGenerator {
-	
-//------------------------------------------------------------  
+
+  //------------------------------------------------------------  
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
-//------------------------------------------------------------  
- 
+  //------------------------------------------------------------  
+
   public static Expression performPreGenerationTreatment(Constraint constraint) 
-       throws VisitFailure{
-    constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
-    return constraintsToExpressions(constraint);
-  }
-  
+    throws VisitFailure{
+      constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
+      return constraintsToExpressions(constraint);
+    }
+
   /**
    * Puts the constraints in the good order 
    * 
@@ -87,11 +87,12 @@ public class PreGenerator {
        * 
        */
       AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(v,_),Z*) -> {
-       TomTerm varFound = null;
-        match:%match(rhs) {
+        TomTerm varFound = null;
+match:%match(rhs) {
         var@(Variable|VariableStar)[]  -> { varFound = `var; break match; }
         ListHead[Variable=var] -> { varFound = `var; break match;}
-        ListTail[Variable=var] -> { varFound = `var;}
+        ListTail[Variable=var] -> { varFound = `var; break match;}
+        ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) -> { varFound = `var; break match;}
       }
       if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
       }
@@ -111,42 +112,86 @@ public class PreGenerator {
       /*
        * SwitchVar
        * 
-       *  Negate(EmptyList(z)) /\ S /\ z <<  t -> z << t /\ S /\ Negate(EmptyList(z))
+       *  EmptyList(z) /\ S /\ z <<  t -> z << t /\ S /\ Negate(EmptyList(z))
        */
-      AndConstraint(X*,first@Negate(EmptyListConstraint[Variable=v]),Y*,second@MatchConstraint(v,_),Z*) -> {
+      AndConstraint(X*,first@(EmptyArrayConstraint|EmptyListConstraint)[Variable=v],Y*,second@MatchConstraint(v,_),Z*) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
 
       /*
-       *  p << z /\ S /\ z <<  t -> z << t /\ S /\ p << z
+       * SwitchVar
+       * 
+       *  Negate(EmptyList(z)) /\ S /\ z <<  t -> z << t /\ S /\ Negate(EmptyList(z))
        */
-      AndConstraint(X*,first@MatchConstraint(_,v@(Variable|VariableStar)[]),Y*,second@MatchConstraint(v,_),Z*) -> {
+      AndConstraint(X*,first@Negate((EmptyArrayConstraint|EmptyListConstraint)[Variable=v]),Y*,second@MatchConstraint(v,_),Z*) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
 
-     /*
-      *  p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
-      *  p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
-      *  p << VariableHeadList(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << VariableHeadList(z)
-      *   
-      */
-     AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@Negate(EmptyListConstraint[Variable=v]),Z*) -> {
-       TomTerm varFound = null;
+      /*
+       *  p << u[z] /\ S /\ z <<  t -> z << t /\ S /\ p << u[z]
+       */
+      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v,_),Z*) -> {
+        TomTerm varFound = null;
 match:%match(rhs) {
+        var@(Variable|VariableStar)[] -> { varFound = `var;break match; }
         VariableHeadList[Begin=var] -> { varFound = `var;break match; }
+        VariableHeadArray[BeginIndex=var] -> { varFound = `var;break match; }
         VariableHeadList[End=var] -> { varFound = `var;break match; }
-        ListHead[Variable=var] -> { varFound = `var; break match;}
-        ListTail[Variable=var] -> { varFound = `var;}
+        VariableHeadArray[EndIndex=var] -> { varFound = `var;break match; }
+        (ListHead|ListTail)[Variable=var] -> { varFound = `var; break match;}
+        ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) -> { varFound = `var; break match;}
+        ExpressionToTomTerm(GetElement[Kid1=var]) -> { varFound = `var; break match;}
+        ExpressionToTomTerm(AddOne[Variable=var]) -> { varFound = `var; }
       }
       if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
-     }
-     /*
-      * pp << e /\ S /\ p << VariableHeadList(b,e) -> p << VariableHeadList(b,e) /\ S /\ pp << e       
-      *   
-      */
-     AndConstraint(X*,first@MatchConstraint(_,e@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=e]),Z*) -> {
-      return `AndConstraint(X*,second,Y*,first,Z*);
-     }
+      }
+
+      /*
+       *  p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
+       *  p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
+       *  p << VariableHeadList(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << VariableHeadList(z)
+       *   
+       */
+      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@Negate((EmptyArrayConstraint|EmptyListConstraint)[Variable=v]),Z*) -> {
+        TomTerm varFound = null;
+match:%match(rhs) {
+        VariableHeadList[Begin=var] -> { varFound = `var;break match; }
+        VariableHeadArray[BeginIndex=var] -> { varFound = `var;break match; }
+        VariableHeadList[End=var] -> { varFound = `var;break match; }
+        VariableHeadArray[EndIndex=var] -> { varFound = `var;break match; }
+        ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) -> { varFound = `var; break match;}
+        (ListHead|ListTail)[Variable=var] -> { varFound = `var; break match;}
+        ExpressionToTomTerm(GetElement[Kid1=var]) -> { varFound = `var; break match;}
+      }
+      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
+      }
+
+      /*
+       *  p << ListHead(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListHead(z)
+       *  p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
+       *  p << VariableHeadList(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << VariableHeadList(z)
+       *   
+       */
+      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@(EmptyArrayConstraint|EmptyListConstraint)[Variable=v],Z*) -> {
+        TomTerm varFound = null;
+match:%match(rhs) {
+        VariableHeadList[Begin=var] -> { varFound = `var;break match; }
+        VariableHeadArray[BeginIndex=var] -> { varFound = `var;break match; }
+        VariableHeadList[End=var] -> { varFound = `var;break match; }
+        VariableHeadArray[EndIndex=var] -> { varFound = `var;break match; }
+        (ListHead|ListTail)[Variable=var] -> { varFound = `var; break match;}
+        ExpressionToTomTerm(GetElement[Kid1=var]) -> { varFound = `var; break match;}
+      }
+      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
+      }
+
+      /*
+       * pp << e /\ S /\ p << VariableHeadList(b,e) -> p << VariableHeadList(b,e) /\ S /\ pp << e       
+       *   
+       */
+      AndConstraint(X*,first@MatchConstraint(_,e@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=e]),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
 
     } // end visit
   }// end strategy
