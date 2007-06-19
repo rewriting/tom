@@ -41,6 +41,7 @@ public class TestSublists extends TestCase {
       | b()
       | c()
       | list( Term* )
+      | f( l:TermList)
       
       TermList = termList(Term*)
   }
@@ -173,7 +174,19 @@ public class TestSublists extends TestCase {
       }
     }
   }
-  
+
+  public void test11() {
+    Term t = `f(termList(a(),b()));    
+    %match(t) {      
+      f(l) -> {        
+        %match(l) {          
+          z@termList(termList(a(),b())) -> {
+            System.out.println("OK"); }
+        }      
+      }    
+    } 
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestSublists.class));
   }
