@@ -42,7 +42,7 @@ public class TestSublists extends TestCase {
       | c()
       | list( Term* )
       | f( l:TermList)
-      
+
       TermList = termList(Term*)
   }
 
@@ -55,7 +55,7 @@ public class TestSublists extends TestCase {
     }
     fail();
   }
-  
+
   public void test2() {
     Term res = `list(a(),b(),c());
     %match(res) {
@@ -65,7 +65,7 @@ public class TestSublists extends TestCase {
     }
     fail();
   }
-  
+
   public void test2_1() {
     Term res = `list(a(),b(),c());
     %match(res) {
@@ -75,7 +75,7 @@ public class TestSublists extends TestCase {
     }
     fail();
   }
-  
+
   public void test3() {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
@@ -106,7 +106,7 @@ public class TestSublists extends TestCase {
   }
 
   //////// domain != codomain ///////////
-  
+
   public void test5() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -115,7 +115,7 @@ public class TestSublists extends TestCase {
       }
     }    
   }
-  
+
   public void test6() {
     TermList res = `termList(a(),list(b(),b()),c());
     %match(res) {
@@ -125,7 +125,7 @@ public class TestSublists extends TestCase {
     }    
     fail();
   }
-  
+
   public void test7() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -149,7 +149,7 @@ public class TestSublists extends TestCase {
     }    
     fail();
   }
-  
+
   public void test9() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -163,7 +163,7 @@ public class TestSublists extends TestCase {
     }    
     fail();
   }
-  
+
   public void test10() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
@@ -176,16 +176,14 @@ public class TestSublists extends TestCase {
   }
 
   public void test11() {
-    Term t = `f(termList(a(),b()));    
+    TermList t = `termList(termList(a(),b()));    
     %match(t) {      
-      f(l) -> {        
-        %match(l) {          
-          z@termList(termList(a(),b())) -> {
-            System.out.println("OK"); }
-        }      
-      }    
-    } 
-  }
+      z@termList(termList(a(),b())) -> {
+        return; 
+      }
+    }     
+    fail(); 
+  } 
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestSublists.class));
