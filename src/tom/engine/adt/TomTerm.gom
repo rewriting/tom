@@ -50,7 +50,7 @@ TomTerm =
    * @param Variable the list from which to extract the head / tail
    */
 	| ListHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
-    | ListTail(Opname:TomName,Variable:TomTerm)  		   
+  | ListTail(Opname:TomName,Variable:TomTerm)  		   
 
   /**
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm

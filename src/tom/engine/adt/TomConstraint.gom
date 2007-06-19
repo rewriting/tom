@@ -8,7 +8,7 @@ Constraint =
 		   *
 		   * @param Variable the variable to constrain
 		   */
-           | AssignTo(Variable:TomTerm)
+       | AssignTo(Variable:TomTerm)
 		   | AssignPositionTo(Variable:TomTerm)
  		   | TrueConstraint()
 		   | FalseConstraint()		   

@@ -78,6 +78,7 @@ public class PreGenerator {
       AndConstraint(X*,subterm@MatchConstraint(_,Subterm[GroundTerm=g]),Y*,symbolOf@MatchConstraint(_,SymbolOf(g)),Z*) -> {
         return `AndConstraint(X*,symbolOf,Y*,subterm,Z*);        
       }
+
       /*
        * SwitchSymbolOf2
        * 
@@ -85,9 +86,16 @@ public class PreGenerator {
        *  g <<  B /\ S /\ A = SymbolOf(g)
        * 
        */
-      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(g)),Y*,second@MatchConstraint(g,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);        
+      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(v,_),Z*) -> {
+       TomTerm varFound = null;
+        match:%match(rhs) {
+        var@(Variable|VariableStar)[]  -> { varFound = `var; break match; }
+        ListHead[Variable=var] -> { varFound = `var; break match;}
+        ListTail[Variable=var] -> { varFound = `var;}
       }
+      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
+      }
+
       /*
        * SwitchAnti
        * 
@@ -99,33 +107,58 @@ public class PreGenerator {
       AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
         return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
       }
+
       /*
        * SwitchVar
        * 
-       *  p << z /\ S /\ z <<  t -> z << t /\ S /\ p << z
-       *  
-       *  p << ListHead(z) /\ S /\ z <<  t -> z << t /\ S /\ p << ListHead(z)
-       *   
+       *  Negate(EmptyList(z)) /\ S /\ z <<  t -> z << t /\ S /\ Negate(EmptyList(z))
        */
-      AndConstraint(X*,first@MatchConstraint(_,rhs@(Variable|VariableStar|ListHead)[]),Y*,second@MatchConstraint(v,_),Z*) -> {
-        TomTerm varFound = null;
-  match:%match(rhs) {
-          var@(Variable|VariableStar)[] -> { varFound = `var;break match; }
-          ListHead[Variable=var@(Variable|VariableStar)[]] -> { varFound = `var;}
-        }
-        if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
-      } 
+      AndConstraint(X*,first@Negate(EmptyListConstraint[Variable=v]),Y*,second@MatchConstraint(v,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
+
+      /*
+       *  p << z /\ S /\ z <<  t -> z << t /\ S /\ p << z
+       */
+      AndConstraint(X*,first@MatchConstraint(_,v@(Variable|VariableStar)[]),Y*,second@MatchConstraint(v,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
+
+     /*
+      *  p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
+      *  p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
+      *  p << VariableHeadList(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << VariableHeadList(z)
+      *   
+      */
+     AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@Negate(EmptyListConstraint[Variable=v]),Z*) -> {
+       TomTerm varFound = null;
+match:%match(rhs) {
+        VariableHeadList[Begin=var] -> { varFound = `var;break match; }
+        VariableHeadList[End=var] -> { varFound = `var;break match; }
+        ListHead[Variable=var] -> { varFound = `var; break match;}
+        ListTail[Variable=var] -> { varFound = `var;}
+      }
+      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
+     }
+     /*
+      * pp << e /\ S /\ p << VariableHeadList(b,e) -> p << VariableHeadList(b,e) /\ S /\ pp << e       
+      *   
+      */
+     AndConstraint(X*,first@MatchConstraint(_,e@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=e]),Z*) -> {
+      return `AndConstraint(X*,second,Y*,first,Z*);
+     }
+
     } // end visit
   }// end strategy
-  
+
   /**
    * Translates constraints into expressions
    */
   private static Expression constraintsToExpressions(Constraint constraint){    
     %match(constraint){
       AndConstraint(m,X*) -> {        
-          return `And(constraintsToExpressions(m),
-              constraintsToExpressions(AndConstraint(X*)));
+        return `And(constraintsToExpressions(m),
+            constraintsToExpressions(AndConstraint(X*)));
       }      
       OrConstraintDisjunction(m,X*) -> {        
         return `OrExpressionDisjunction(constraintsToExpressions(m),
