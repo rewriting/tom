@@ -130,15 +130,17 @@ writer.write(%[
   private int getArity() {
     return @slotList.length()@;
   }
+
+  public shared.SharedObject duplicate() {
+    @className()@ clone = new @className()@();
+    clone.init(@childList(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @hashCode);
+    return clone;
+  }
+
 ]%);
   } else {
+    // case: constant
 writer.write(%[
-  private void init(@childListWithType(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @int hashCode) {
-]%);
-generateMembersInit(writer);
-    /* generate a specialized version for constants */
-writer.write(%[
-  }
   /* name and arity */
   public String symbolName() {
     return "@className()@";
@@ -147,6 +149,11 @@ writer.write(%[
   private static int getArity() {
     return 0;
   }
+
+  public shared.SharedObject duplicate() {
+    return new @className()@();
+  }
+
 ]%);
   }
 
@@ -214,12 +221,6 @@ writer.write(%[
   /* shared.SharedObject */
   public final int hashCode() {
     return hashCode;
-  }
-
-  public shared.SharedObject duplicate() {
-    @className()@ clone = new @className()@();
-    clone.init(@childList(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @hashCode);
-    return clone;
   }
 
   public final boolean equivalent(shared.SharedObject obj) {
@@ -737,16 +738,16 @@ writer.write(%[
       !concHook(_*,MakeHook[],_*) -> {
         if(slotList.length()>0) {
         writer.write(%[
-    public static @className()@ make(@childListWithType(slotList)@) {
-      proto.initHashCode(@childList(slotList)@);
-      return (@className()@) factory.build(proto);
-    }
+  public static @className()@ make(@childListWithType(slotList)@) {
+    proto.initHashCode(@childList(slotList)@);
+    return (@className()@) factory.build(proto);
+  }
   ]%);
         } else {
         writer.write(%[
-    public static @className()@ make(@childListWithType(slotList)@) {
-      return proto;
-    }
+  public static @className()@ make(@childListWithType(slotList)@) {
+    return proto;
+  }
   ]%);
         }
       }
