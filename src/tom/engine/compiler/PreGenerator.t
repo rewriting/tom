@@ -45,26 +45,25 @@ import tom.library.sl.*;
 
 
 /**
- * This class is in charge with all the pre treatments for generation needed after the propagation process
- * 1. make sure that the constraints are in the good order 
- * 2. translate constraints into expressions 
- * ... 
+ * This class is in charge with all the pre treatments for generation needed
+ * after the propagation process 1. make sure that the constraints are in the
+ * good order 2. translate constraints into expressions ...
  */
 public class PreGenerator {
 
-  //------------------------------------------------------------  
+  // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
-  //------------------------------------------------------------  
+  // ------------------------------------------------------------
 
   public static Expression performPreGenerationTreatment(Constraint constraint) 
-    throws VisitFailure{
-      constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
-      return constraintsToExpressions(constraint);
-    }
+  throws VisitFailure{
+    constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
+    return constraintsToExpressions(constraint);
+  }
 
   /**
-   * Puts the constraints in the good order 
+   * Puts the constraints in the good order
    * 
    */
   %strategy OrderConstraints() extends Identity(){
@@ -72,8 +71,8 @@ public class PreGenerator {
       /*
        * SwitchSymbolOf
        * 
-       *  z <<  subterm(i,g) /\ S /\ f = SymbolOf(g)
-       *  -> f = SymbolOf(g) /\ S /\ z <<  subterm(i,g) 
+       * z << subterm(i,g) /\ S /\ f = SymbolOf(g) -> f = SymbolOf(g) /\ S /\ z << subterm(i,g)
+       * 
        */
       AndConstraint(X*,subterm@MatchConstraint(_,Subterm[GroundTerm=g]),Y*,symbolOf@MatchConstraint(_,SymbolOf(g)),Z*) -> {
         return `AndConstraint(X*,symbolOf,Y*,subterm,Z*);        
@@ -82,19 +81,18 @@ public class PreGenerator {
       /*
        * SwitchSymbolOf2
        * 
-       * A = SymbolOf(g) /\ S /\ g <<  B ->
-       *  g <<  B /\ S /\ A = SymbolOf(g)
+       * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
        * 
        */
       AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(v,_),Z*) -> {
-        TomTerm varFound = null;
-match:%match(rhs) {
-        var@(Variable|VariableStar)[]  -> { varFound = `var; break match; }
-        ListHead[Variable=var] -> { varFound = `var; break match;}
-        ListTail[Variable=var] -> { varFound = `var; break match;}
-        ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) -> { varFound = `var; break match;}
-      }
-      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
+        boolean varFound = false;
+        match:%match(rhs,TomTerm v) {
+          var@(Variable|VariableStar)[],var  -> { varFound = true;break match; }
+          ListHead[Variable=var],var -> { varFound = true;break match; }
+          ListTail[Variable=var],var -> { varFound = true;break match; }
+          ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]), var -> { varFound = true;break match; }
+        }
+        if (varFound) { return `AndConstraint(X*,second,Y*,first,Z*); }        
       }
 
       /*
@@ -110,91 +108,92 @@ match:%match(rhs) {
       }
 
       /*
+       * SwitchEmpty - lists
+       * 
+       * EmptyList(z) /\ S /\ z << t -> z << t /\ S /\ EmptyList(z)
+       * 
+       * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
+       */
+      AndConstraint(X*,first@EmptyListConstraint[Variable=v],Y*,second@MatchConstraint(v,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
+      AndConstraint(X*,first@Negate(EmptyListConstraint[Variable=v]),Y*,second@MatchConstraint(v,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
+      
+      /*
+       * SwitchEmpty - arrays
+       * 
+       * EmptyArray(z) /\ S /\ z << t -> z << t /\ S /\ EmptyArray(z)
+       * 
+       * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
+       */
+      AndConstraint(X*,first@EmptyArrayConstraint[Index=idx],Y*,second@MatchConstraint(idx,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
+      AndConstraint(X*,first@Negate(EmptyArrayConstraint[Index=idx]),Y*,second@MatchConstraint(idx,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
+      }
+
+      /*
        * SwitchVar
        * 
-       *  EmptyList(z) /\ S /\ z <<  t -> z << t /\ S /\ Negate(EmptyList(z))
+       * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
        */
-      AndConstraint(X*,first@(EmptyArrayConstraint|EmptyListConstraint)[Variable=v],Y*,second@MatchConstraint(v,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
+      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
+        try{
+          `TopDown(HasTerm(v)).visitLight(`rhs);
+        }catch(VisitFailure ex){
+          return `AndConstraint(X*,second,Y*,first,Z*);
+        }
       }
 
       /*
-       * SwitchVar
+       * p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
+       * p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
+       *            
+       */
+      AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second@Negate(EmptyListConstraint[Variable=v]),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);         
+      }
+
+      /*
+       * p << ListHead(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListHead(z)
+       * p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
        * 
-       *  Negate(EmptyList(z)) /\ S /\ z <<  t -> z << t /\ S /\ Negate(EmptyList(z))
        */
-      AndConstraint(X*,first@Negate((EmptyArrayConstraint|EmptyListConstraint)[Variable=v]),Y*,second@MatchConstraint(v,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
+      AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second@EmptyListConstraint[Variable=v],Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);      
       }
-
+      
       /*
-       *  p << u[z] /\ S /\ z <<  t -> z << t /\ S /\ p << u[z]
+       * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)        
        */
-      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v,_),Z*) -> {
-        TomTerm varFound = null;
-match:%match(rhs) {
-        var@(Variable|VariableStar)[] -> { varFound = `var;break match; }
-        VariableHeadList[Begin=var] -> { varFound = `var;break match; }
-        VariableHeadArray[BeginIndex=var] -> { varFound = `var;break match; }
-        VariableHeadList[End=var] -> { varFound = `var;break match; }
-        VariableHeadArray[EndIndex=var] -> { varFound = `var;break match; }
-        (ListHead|ListTail)[Variable=var] -> { varFound = `var; break match;}
-        ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) -> { varFound = `var; break match;}
-        ExpressionToTomTerm(GetElement[Kid1=var]) -> { varFound = `var; break match;}
-        ExpressionToTomTerm(AddOne[Variable=var]) -> { varFound = `var; }
+      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid1=v])),Y*,second@Negate(EmptyArrayConstraint[Index=v]),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);       
       }
-      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
-      }
-
+      
       /*
-       *  p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
-       *  p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
-       *  p << VariableHeadList(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << VariableHeadList(z)
-       *   
+       * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
+       * 
        */
-      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@Negate((EmptyArrayConstraint|EmptyListConstraint)[Variable=v]),Z*) -> {
-        TomTerm varFound = null;
-match:%match(rhs) {
-        VariableHeadList[Begin=var] -> { varFound = `var;break match; }
-        VariableHeadArray[BeginIndex=var] -> { varFound = `var;break match; }
-        VariableHeadList[End=var] -> { varFound = `var;break match; }
-        VariableHeadArray[EndIndex=var] -> { varFound = `var;break match; }
-        ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) -> { varFound = `var; break match;}
-        (ListHead|ListTail)[Variable=var] -> { varFound = `var; break match;}
-        ExpressionToTomTerm(GetElement[Kid1=var]) -> { varFound = `var; break match;}
+      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid1=v])),Y*,second@EmptyArrayConstraint[Index=v],Z*) -> {
+         return `AndConstraint(X*,second,Y*,first,Z*);                
       }
-      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
-      }
-
-      /*
-       *  p << ListHead(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListHead(z)
-       *  p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
-       *  p << VariableHeadList(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << VariableHeadList(z)
-       *   
-       */
-      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@(EmptyArrayConstraint|EmptyListConstraint)[Variable=v],Z*) -> {
-        TomTerm varFound = null;
-match:%match(rhs) {
-        VariableHeadList[Begin=var] -> { varFound = `var;break match; }
-        VariableHeadArray[BeginIndex=var] -> { varFound = `var;break match; }
-        VariableHeadList[End=var] -> { varFound = `var;break match; }
-        VariableHeadArray[EndIndex=var] -> { varFound = `var;break match; }
-        (ListHead|ListTail)[Variable=var] -> { varFound = `var; break match;}
-        ExpressionToTomTerm(GetElement[Kid1=var]) -> { varFound = `var; break match;}
-      }
-      if (varFound == `v) { return `AndConstraint(X*,second,Y*,first,Z*); }        
-      }
-
-      /*
-       * pp << e /\ S /\ p << VariableHeadList(b,e) -> p << VariableHeadList(b,e) /\ S /\ pp << e       
-       *   
-       */
-      AndConstraint(X*,first@MatchConstraint(_,e@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=e]),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-
+      
     } // end visit
   }// end strategy
+  
+  /**
+   * Checks to see if the term is inside  
+   */
+  %strategy HasTerm(term:TomTerm) extends Identity(){
+    visit TomTerm {
+      x -> {        
+        if (`x == `term) { throw new VisitFailure(); }        
+      }      
+    }// end visit
+  }// end strategy 
 
   /**
    * Translates constraints into expressions
@@ -228,3 +227,18 @@ match:%match(rhs) {
     throw new TomRuntimeException("ConstraintGenerator.prepareGeneration - strange constraint:" + constraint);
   }     
 }
+
+                     
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+        
+        
