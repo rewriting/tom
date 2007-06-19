@@ -1,4 +1,0 @@
-polux@huggy$ tom Eval.t && javac Eval.java && java Eval
-plus(val(2),var("x"),mult(val(3),val(4)),var("y"),val(5))
-plus(var("x"),var("y"),val(19))
-

@@ -1,4 +1,0 @@
-polux@huggy$ tom HandMapping.t && javac HandMapping.java && java HandMapping
-this red car has 6 seats
-c1 and c3 have the same blue color
-

@@ -1,4 +1,0 @@
-polux@huggy$ tom Advanced.t && javac Advanced.java && java Advanced
-free occurences of x: []
-free occurences of y: [[1, 1, 2, 1], [1, 2, 1, 1]]
-

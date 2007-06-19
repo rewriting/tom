@@ -1,2 +1,0 @@
-polux@huggy$ tom Anti.t && javac Anti.java && java Anti
-

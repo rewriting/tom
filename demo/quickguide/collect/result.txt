@@ -1,3 +1,0 @@
-polux@huggy$ tom Collect.t && javac Collect.java && java Collect
-vars: [var("x"), var("y")]
-
