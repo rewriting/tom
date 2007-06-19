@@ -148,7 +148,6 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
-      int childCount = any.getChildCount();
       tom.library.sl.Visitable result = any;
       tom.library.sl.Visitable[] childs = null;
       for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
@@ -177,7 +176,6 @@ public class @className()@ implements tom.library.sl.Strategy {
   public int visit() {
     tom.library.sl.Visitable any = environment.getSubject();
     if(any instanceof @fullClassName(operator)@) {
-      int childCount = any.getChildCount();
       tom.library.sl.Visitable[] childs = null;
       for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
         if(nonbuiltin[i]) {
