@@ -139,7 +139,6 @@ generateMembersInit(writer);
     /* generate a specialized version for constants */
 writer.write(%[
   }
-  private void initHashCode(@childListWithType(slotList)@) { }
   /* name and arity */
   public String symbolName() {
     return "@className()@";
@@ -200,8 +199,8 @@ writer.write(%[
       return 0;
     /* use the hash values to discriminate */
     
-    if(this.hashCode != ao.hashCode())
-      return  (this.hashCode < ao.hashCode())?-1:1;
+    if(hashCode != ao.hashCode())
+      return (hashCode < ao.hashCode())?-1:1;
 
     /* If not, compare the symbols : back to the normal order */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
