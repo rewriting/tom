@@ -1,0 +1,77 @@
+// second order encoding
+
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+
+
+// defines naturals and operations 
+
+/* encodes: Nat(n) -> forall P, P(0) => (forall m, P(m) => P(s(m))) => P(n)  */
+
+rule N(n) -> forall P, in(cons(0,nil()),P) 
+             => (forall y,in(cons(y,nil()),P) => in(cons(succ(y),nil()),P))
+             => in(cons(n,nil()),P) .
+herednat. // focussing, we give a name to the predicate
+
+/* associated congruence rules for explicit substitutions */
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+proprule in(l,fNat(t)) -> Nat(appl(t,l)).
+
+termrule pred(0) -> 0.
+termrule pred(succ(x)) -> x.
+termrule appl(pred(t),l) -> pred(appl(t,l)).
+
+termrule 0 + y -> y.
+termrule succ(x) + y -> succ(x+y).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+
+termrule 0 * y -> 0.
+termrule succ(x) * y -> x * y + y.
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+
+rule Null(0) -> True.
+rule Null(succ(x)) -> False.
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
+
+
+// Leibniz equality
+
+rule eq(x,y) -> forall A, in(cons(x,nil()),A) => in(cons(y,nil()),A).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+
+
+// Congruence rule (can be proved, here as an axiom for concision)
+
+proprule eq(succ(x),succ(y)) -> eq(x,y).
+
+
+// equality reflexivity (can be proved, here as an axiom for concision)
+
+proprule eq(x,x) -> True.
+
+
+// zero commutativity
+
+proof nplus0:  forall n, N(n) => eq(n+0,n).
+intros.
+focus h1. 
+showrules. // the induction rule
+rule. 
+fEq(one()+S(0),one()). // encodes P(n) == (n+0=0)
+reduce. // performs second-order 'decoding'
+axiom.
+rule.
+reduce. // performs second-order 'decoding' + congruence
+axiom.
+reduce. // performs second-order 'decoding' +  equality reflexivity
+intro.
+display nplus0.
+
+
