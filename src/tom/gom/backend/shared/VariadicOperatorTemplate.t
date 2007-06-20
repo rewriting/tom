@@ -95,7 +95,6 @@ writer.write(%[
         cons.getSlots().getHeadconcSlotField().getDomain());
     writer.write(%[
   public int length() {
-    int count = 0;
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
       if (tl instanceof @className()@) {
