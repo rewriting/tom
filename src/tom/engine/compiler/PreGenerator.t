@@ -181,6 +181,22 @@ public class PreGenerator {
          return `AndConstraint(X*,second,Y*,first,Z*);                
       }
       
+      /*
+       * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
+       * 
+       */
+      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=v]),Z*) -> {
+         return `AndConstraint(X*,second,Y*,first,Z*);                
+      }
+
+      /*
+       * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
+       * 
+       */
+      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadArray[EndIndex=v]),Z*) -> {
+         return `AndConstraint(X*,second,Y*,first,Z*);                
+      }
+      
     } // end visit
   }// end strategy
   
