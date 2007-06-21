@@ -3,22 +3,23 @@
    %include { mustrategy.tom }
    */
 
-%op Strategy _Rule(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rule._Rule)}
+    %op Strategy _Rule(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rule._Rule)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.rule._Rule(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_Rule(s:Strategy) {
+    make(s) { `Sequence(Is_Rule(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.rule._Rule(arg0, arg1) }
-}
-
-%op Strategy When_Rule(s:Strategy) {
-  make(s) { `Sequence(_Rule(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_Rule() {
-  make() { `_Rule(Identity(), Identity()) }
-}
-
+  %op Strategy Is_Rule() {
+    make() { new tom.gom.adt.rule.strategy.rule.Is_Rule()}
+  }
+  
 %op Strategy Make_Rule(_lhs:Strategy, _rhs:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rule.Make_Rule)}
 
@@ -27,23 +28,24 @@
   make( new_lhs,  new_rhs) { new tom.gom.adt.rule.strategy.rule.Make_Rule( new_lhs,  new_rhs) }
 }
 
-%op Strategy _ConditionalRule(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rule._ConditionalRule)}
+    %op Strategy _ConditionalRule(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rule._ConditionalRule)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg2, t) { t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.rule.strategy.rule._ConditionalRule(arg0, arg1, arg2) }
+    }
+  
+  
+  %op Strategy When_ConditionalRule(s:Strategy) {
+    make(s) { `Sequence(Is_ConditionalRule(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.gom.adt.rule.strategy.rule._ConditionalRule(arg0, arg1, arg2) }
-}
-
-%op Strategy When_ConditionalRule(s:Strategy) {
-  make(s) { `Sequence(_ConditionalRule(Identity(), Identity(), Identity()),s) }
-}
-
-%op Strategy Is_ConditionalRule() {
-  make() { `_ConditionalRule(Identity(), Identity(), Identity()) }
-}
-
+  %op Strategy Is_ConditionalRule() {
+    make() { new tom.gom.adt.rule.strategy.rule.Is_ConditionalRule()}
+  }
+  
 %op Strategy Make_ConditionalRule(_lhs:Strategy, _rhs:Strategy, _cond:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rule.Make_ConditionalRule)}
 
@@ -53,42 +55,44 @@
   make( new_lhs,  new_rhs,  new_cond) { new tom.gom.adt.rule.strategy.rule.Make_ConditionalRule( new_lhs,  new_rhs,  new_cond) }
 }
 
-%op Strategy _EmptyRuleList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rulelist._EmptyRuleList)}
+    %op Strategy _EmptyRuleList() {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rulelist._EmptyRuleList)}
+      
+        make() { new tom.gom.adt.rule.strategy.rulelist._EmptyRuleList() }
+    }
+  
+  
+  %op Strategy When_EmptyRuleList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyRuleList(),s) }
+  }
 
-  make() { new tom.gom.adt.rule.strategy.rulelist._EmptyRuleList() }
-}
-
-%op Strategy When_EmptyRuleList(s:Strategy) {
-  make(s) { `Sequence(_EmptyRuleList(),s) }
-}
-
-%op Strategy Is_EmptyRuleList() {
-  make() { `_EmptyRuleList() }
-}
-
+  %op Strategy Is_EmptyRuleList() {
+    make() { new tom.gom.adt.rule.strategy.rulelist.Is_EmptyRuleList()}
+  }
+  
 %op Strategy Make_EmptyRuleList() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rulelist.Make_EmptyRuleList)}
 
   make() { new tom.gom.adt.rule.strategy.rulelist.Make_EmptyRuleList() }
 }
 
-%op Strategy _ConsRuleList(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rulelist._ConsRuleList)}
+    %op Strategy _ConsRuleList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rulelist._ConsRuleList)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.rulelist._ConsRuleList(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsRuleList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsRuleList(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.rulelist._ConsRuleList(arg0, arg1) }
-}
-
-%op Strategy When_ConsRuleList(s:Strategy) {
-  make(s) { `Sequence(_ConsRuleList(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_ConsRuleList() {
-  make() { `_ConsRuleList(Identity(), Identity()) }
-}
-
+  %op Strategy Is_ConsRuleList() {
+    make() { new tom.gom.adt.rule.strategy.rulelist.Is_ConsRuleList()}
+  }
+  
 %op Strategy Make_ConsRuleList(_HeadRuleList:Strategy, _TailRuleList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.rulelist.Make_ConsRuleList)}
 
@@ -97,42 +101,44 @@
   make( new_HeadRuleList,  new_TailRuleList) { new tom.gom.adt.rule.strategy.rulelist.Make_ConsRuleList( new_HeadRuleList,  new_TailRuleList) }
 }
 
-%op Strategy _EmptyTermList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.termlist._EmptyTermList)}
+    %op Strategy _EmptyTermList() {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.termlist._EmptyTermList)}
+      
+        make() { new tom.gom.adt.rule.strategy.termlist._EmptyTermList() }
+    }
+  
+  
+  %op Strategy When_EmptyTermList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyTermList(),s) }
+  }
 
-  make() { new tom.gom.adt.rule.strategy.termlist._EmptyTermList() }
-}
-
-%op Strategy When_EmptyTermList(s:Strategy) {
-  make(s) { `Sequence(_EmptyTermList(),s) }
-}
-
-%op Strategy Is_EmptyTermList() {
-  make() { `_EmptyTermList() }
-}
-
+  %op Strategy Is_EmptyTermList() {
+    make() { new tom.gom.adt.rule.strategy.termlist.Is_EmptyTermList()}
+  }
+  
 %op Strategy Make_EmptyTermList() {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.termlist.Make_EmptyTermList)}
 
   make() { new tom.gom.adt.rule.strategy.termlist.Make_EmptyTermList() }
 }
 
-%op Strategy _ConsTermList(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.termlist._ConsTermList)}
+    %op Strategy _ConsTermList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.termlist._ConsTermList)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.termlist._ConsTermList(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsTermList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsTermList(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.termlist._ConsTermList(arg0, arg1) }
-}
-
-%op Strategy When_ConsTermList(s:Strategy) {
-  make(s) { `Sequence(_ConsTermList(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_ConsTermList() {
-  make() { `_ConsTermList(Identity(), Identity()) }
-}
-
+  %op Strategy Is_ConsTermList() {
+    make() { new tom.gom.adt.rule.strategy.termlist.Is_ConsTermList()}
+  }
+  
 %op Strategy Make_ConsTermList(_HeadTermList:Strategy, _TailTermList:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.termlist.Make_ConsTermList)}
 
@@ -141,21 +147,22 @@
   make( new_HeadTermList,  new_TailTermList) { new tom.gom.adt.rule.strategy.termlist.Make_ConsTermList( new_HeadTermList,  new_TailTermList) }
 }
 
-%op Strategy _CondTerm(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondTerm)}
+    %op Strategy _CondTerm(arg0:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondTerm)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.condition._CondTerm(arg0) }
+    }
+  
+  
+  %op Strategy When_CondTerm(s:Strategy) {
+    make(s) { `Sequence(Is_CondTerm(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.gom.adt.rule.strategy.condition._CondTerm(arg0) }
-}
-
-%op Strategy When_CondTerm(s:Strategy) {
-  make(s) { `Sequence(_CondTerm(Identity()),s) }
-}
-
-%op Strategy Is_CondTerm() {
-  make() { `_CondTerm(Identity()) }
-}
-
+  %op Strategy Is_CondTerm() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondTerm()}
+  }
+  
 %op Strategy Make_CondTerm(_t:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondTerm)}
 
@@ -163,22 +170,23 @@
   make( new_t) { new tom.gom.adt.rule.strategy.condition.Make_CondTerm( new_t) }
 }
 
-%op Strategy _CondEquals(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondEquals)}
+    %op Strategy _CondEquals(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondEquals)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondEquals(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_CondEquals(s:Strategy) {
+    make(s) { `Sequence(Is_CondEquals(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondEquals(arg0, arg1) }
-}
-
-%op Strategy When_CondEquals(s:Strategy) {
-  make(s) { `Sequence(_CondEquals(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondEquals() {
-  make() { `_CondEquals(Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondEquals() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondEquals()}
+  }
+  
 %op Strategy Make_CondEquals(_t1:Strategy, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondEquals)}
 
@@ -187,22 +195,23 @@
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondEquals( new_t1,  new_t2) }
 }
 
-%op Strategy _CondNotEquals(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondNotEquals)}
+    %op Strategy _CondNotEquals(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondNotEquals)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondNotEquals(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_CondNotEquals(s:Strategy) {
+    make(s) { `Sequence(Is_CondNotEquals(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondNotEquals(arg0, arg1) }
-}
-
-%op Strategy When_CondNotEquals(s:Strategy) {
-  make(s) { `Sequence(_CondNotEquals(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondNotEquals() {
-  make() { `_CondNotEquals(Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondNotEquals() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondNotEquals()}
+  }
+  
 %op Strategy Make_CondNotEquals(_t1:Strategy, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondNotEquals)}
 
@@ -211,22 +220,23 @@
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondNotEquals( new_t1,  new_t2) }
 }
 
-%op Strategy _CondLessEquals(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondLessEquals)}
+    %op Strategy _CondLessEquals(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondLessEquals)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondLessEquals(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_CondLessEquals(s:Strategy) {
+    make(s) { `Sequence(Is_CondLessEquals(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondLessEquals(arg0, arg1) }
-}
-
-%op Strategy When_CondLessEquals(s:Strategy) {
-  make(s) { `Sequence(_CondLessEquals(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondLessEquals() {
-  make() { `_CondLessEquals(Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondLessEquals() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondLessEquals()}
+  }
+  
 %op Strategy Make_CondLessEquals(_t1:Strategy, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondLessEquals)}
 
@@ -235,22 +245,23 @@
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondLessEquals( new_t1,  new_t2) }
 }
 
-%op Strategy _CondLessThan(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondLessThan)}
+    %op Strategy _CondLessThan(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondLessThan)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondLessThan(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_CondLessThan(s:Strategy) {
+    make(s) { `Sequence(Is_CondLessThan(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondLessThan(arg0, arg1) }
-}
-
-%op Strategy When_CondLessThan(s:Strategy) {
-  make(s) { `Sequence(_CondLessThan(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondLessThan() {
-  make() { `_CondLessThan(Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondLessThan() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondLessThan()}
+  }
+  
 %op Strategy Make_CondLessThan(_t1:Strategy, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondLessThan)}
 
@@ -259,22 +270,23 @@
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondLessThan( new_t1,  new_t2) }
 }
 
-%op Strategy _CondGreaterEquals(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondGreaterEquals)}
+    %op Strategy _CondGreaterEquals(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondGreaterEquals)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondGreaterEquals(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_CondGreaterEquals(s:Strategy) {
+    make(s) { `Sequence(Is_CondGreaterEquals(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondGreaterEquals(arg0, arg1) }
-}
-
-%op Strategy When_CondGreaterEquals(s:Strategy) {
-  make(s) { `Sequence(_CondGreaterEquals(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondGreaterEquals() {
-  make() { `_CondGreaterEquals(Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondGreaterEquals() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondGreaterEquals()}
+  }
+  
 %op Strategy Make_CondGreaterEquals(_t1:Strategy, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondGreaterEquals)}
 
@@ -283,22 +295,23 @@
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondGreaterEquals( new_t1,  new_t2) }
 }
 
-%op Strategy _CondGreaterThan(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondGreaterThan)}
+    %op Strategy _CondGreaterThan(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondGreaterThan)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondGreaterThan(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_CondGreaterThan(s:Strategy) {
+    make(s) { `Sequence(Is_CondGreaterThan(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._CondGreaterThan(arg0, arg1) }
-}
-
-%op Strategy When_CondGreaterThan(s:Strategy) {
-  make(s) { `Sequence(_CondGreaterThan(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondGreaterThan() {
-  make() { `_CondGreaterThan(Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondGreaterThan() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondGreaterThan()}
+  }
+  
 %op Strategy Make_CondGreaterThan(_t1:Strategy, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondGreaterThan)}
 
@@ -307,23 +320,24 @@
   make( new_t1,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondGreaterThan( new_t1,  new_t2) }
 }
 
-%op Strategy _CondMethod(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondMethod)}
+    %op Strategy _CondMethod(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition._CondMethod)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg2, t) { t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.gom.adt.rule.strategy.condition._CondMethod(arg0, arg1, arg2) }
+    }
+  
+  
+  %op Strategy When_CondMethod(s:Strategy) {
+    make(s) { `Sequence(Is_CondMethod(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.gom.adt.rule.strategy.condition._CondMethod(arg0, arg1, arg2) }
-}
-
-%op Strategy When_CondMethod(s:Strategy) {
-  make(s) { `Sequence(_CondMethod(Identity(), Identity(), Identity()),s) }
-}
-
-%op Strategy Is_CondMethod() {
-  make() { `_CondMethod(Identity(), Identity(), Identity()) }
-}
-
+  %op Strategy Is_CondMethod() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondMethod()}
+  }
+  
 %op Strategy Make_CondMethod(_t1:Strategy, _name:String, _t2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondMethod)}
 
@@ -333,22 +347,23 @@
   make( new_t1,  _name,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondMethod( new_t1,  _name,  new_t2) }
 }
 
-%op Strategy _Appl(arg0:Strategy, arg1:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._Appl)}
+    %op Strategy _Appl(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._Appl)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.term._Appl(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_Appl(s:Strategy) {
+    make(s) { `Sequence(Is_Appl(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.gom.adt.rule.strategy.term._Appl(arg0, arg1) }
-}
-
-%op Strategy When_Appl(s:Strategy) {
-  make(s) { `Sequence(_Appl(Identity(), Identity()),s) }
-}
-
-%op Strategy Is_Appl() {
-  make() { `_Appl(Identity(), Identity()) }
-}
-
+  %op Strategy Is_Appl() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_Appl()}
+  }
+  
 %op Strategy Make_Appl(_symbol:String, _args:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_Appl)}
 
@@ -357,21 +372,22 @@
   make( _symbol,  new_args) { new tom.gom.adt.rule.strategy.term.Make_Appl( _symbol,  new_args) }
 }
 
-%op Strategy _Var(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._Var)}
+    %op Strategy _Var(arg0:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._Var)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.term._Var(arg0) }
+    }
+  
+  
+  %op Strategy When_Var(s:Strategy) {
+    make(s) { `Sequence(Is_Var(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.gom.adt.rule.strategy.term._Var(arg0) }
-}
-
-%op Strategy When_Var(s:Strategy) {
-  make(s) { `Sequence(_Var(Identity()),s) }
-}
-
-%op Strategy Is_Var() {
-  make() { `_Var(Identity()) }
-}
-
+  %op Strategy Is_Var() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_Var()}
+  }
+  
 %op Strategy Make_Var(_name:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_Var)}
 
@@ -379,21 +395,22 @@
   make( _name) { new tom.gom.adt.rule.strategy.term.Make_Var( _name) }
 }
 
-%op Strategy _BuiltinInt(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._BuiltinInt)}
+    %op Strategy _BuiltinInt(arg0:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._BuiltinInt)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.term._BuiltinInt(arg0) }
+    }
+  
+  
+  %op Strategy When_BuiltinInt(s:Strategy) {
+    make(s) { `Sequence(Is_BuiltinInt(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.gom.adt.rule.strategy.term._BuiltinInt(arg0) }
-}
-
-%op Strategy When_BuiltinInt(s:Strategy) {
-  make(s) { `Sequence(_BuiltinInt(Identity()),s) }
-}
-
-%op Strategy Is_BuiltinInt() {
-  make() { `_BuiltinInt(Identity()) }
-}
-
+  %op Strategy Is_BuiltinInt() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_BuiltinInt()}
+  }
+  
 %op Strategy Make_BuiltinInt(_i:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_BuiltinInt)}
 
@@ -401,21 +418,22 @@
   make( _i) { new tom.gom.adt.rule.strategy.term.Make_BuiltinInt( _i) }
 }
 
-%op Strategy _BuiltinString(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._BuiltinString)}
+    %op Strategy _BuiltinString(arg0:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._BuiltinString)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.term._BuiltinString(arg0) }
+    }
+  
+  
+  %op Strategy When_BuiltinString(s:Strategy) {
+    make(s) { `Sequence(Is_BuiltinString(),s) }
+  }
 
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.gom.adt.rule.strategy.term._BuiltinString(arg0) }
-}
-
-%op Strategy When_BuiltinString(s:Strategy) {
-  make(s) { `Sequence(_BuiltinString(Identity()),s) }
-}
-
-%op Strategy Is_BuiltinString() {
-  make() { `_BuiltinString(Identity()) }
-}
-
+  %op Strategy Is_BuiltinString() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_BuiltinString()}
+  }
+  
 %op Strategy Make_BuiltinString(_s:String) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_BuiltinString)}
 
@@ -425,11 +443,11 @@
 
             %op Strategy _RuleList(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_ConsRuleList(sub,MuVar("x")),_EmptyRuleList())) }
+            make(sub)  { `mu(MuVar("x_RuleList"),Choice(_ConsRuleList(sub,MuVar("x_RuleList")),_EmptyRuleList())) }
             }
             
             %op Strategy _TermList(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x"),Choice(_ConsTermList(sub,MuVar("x")),_EmptyTermList())) }
+            make(sub)  { `mu(MuVar("x_TermList"),Choice(_ConsTermList(sub,MuVar("x_TermList")),_EmptyTermList())) }
             }
             
