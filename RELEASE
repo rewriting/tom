@@ -13,7 +13,7 @@ How to prepare a release:
 - build manual
 - cp manual.pdf manual-<version>.pdf
 - make manual.zip
-- mkdir manuel-<version> ; cd manual-<version> ; unzip ../manual.zip
+- mkdir manual-<version> ; cd manual-<version> ; unzip ../manual.zip
 - cd .. ; zip -r manual-<version>.zip manual-<version>
 
 - prepare the eclipse plugin
