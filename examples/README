@@ -43,10 +43,7 @@ To relax, take a look at quine example
 
 * Examples to document
 ------------------------
-+strategycompiler
-+multigraph              
 +tactics
-+polygraphes             
 +lambdaupsilon           
 
 * Running the examples:
@@ -271,6 +268,10 @@ To relax, take a look at quine example
     _Apigen:   Same as before, but based on ApiGen.
                Also introduce the notion of rewrite rule system.
 
+* polygraphes             
+  Representation of polygraphs in Tom
+  Concepts: Gom asssociative operators, normalization rules 
+
 * prodrule
   Implementation of Fibonacci in a Production rule style
   Concepts: Production rule, Rete
@@ -294,6 +295,11 @@ To relax, take a look at quine example
 * strategy
   Show how to use the MuTraveler strategy language
   Concepts: strategies
+
+* strategycompiler
+  Compiler for the strategy language based on inlining by Bytecode
+  transformation
+  Concepts: bytecode transformation
 
 * strings
   Tiny example based on string matching

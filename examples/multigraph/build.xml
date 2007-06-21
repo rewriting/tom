@@ -27,15 +27,4 @@
     <tomcompile example="${multigraph}"/>
     <javacompile example="${multigraph}"/>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-      update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${multigraph}/*.t"/>
-        <include name="${multigraph}/*.tom"/>
-        <include name="${multigraph}/*.java"/>
-        <include name="${multigraph}/*.gom"/>
-      </zipfileset>
-    </zip>
-  </target>
 </project>

@@ -11,13 +11,4 @@
     <tomcompile example="${set}"/>
     <javacompile example="${set}"/>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${set}/*.t"/>
-        <include name="${set}/*.gom"/>
-      </zipfileset>
-    </zip>
-  </target>
-</project>
+  </project>
