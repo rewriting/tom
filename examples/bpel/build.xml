@@ -43,9 +43,10 @@
       update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="${bpel}/*.t"/>
-        <include name="${bpel}/*.tom"/>
         <include name="${bpel}/*.java"/>
         <include name="${bpel}/*.gom"/>
+        <include name="${bpel}/*.xml"/>
+        <include name="${bpel}/*.g"/>
       </zipfileset>
     </zip>
   </target>

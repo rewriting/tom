@@ -38,16 +38,16 @@ If you come from the
    => start with:
       - integerc
 
+To relax, take a look at quine example 
+(a small self-reproducing program in Tom)
+
 * Examples to document
 ------------------------
-+csmaca                  
 +strategycompiler
 +multigraph              
 +tactics
-+bpel                    
 +polygraphes             
 +lambdaupsilon           
-+quine
 
 * Running the examples:
 ------------------------
@@ -145,6 +145,13 @@ If you come from the
   to complete web design technologies.
   Concepts: XML pattern matching
 
+* bpel
+  transformation of BPEL specification
+  This example contains an example that constructs from a BPEL specification in
+  XML the corresponding work flow graph. This example is based on the
+  implementation of termgraph in Gom. See the termgraph example.
+  Concepts: Gom Termgraph, XML pattern matching
+
 * boulderdash
   Simulate how rocks go down in the boulder-dash game
   Coordinate system for Java 2D and used Topology:
@@ -176,6 +183,10 @@ If you come from the
 * cell
   Cellular automata
   Concepts: pattern matching
+
+* csmaca
+  Simulation of the network protocol CSMA/CA
+  Concepts: probabilistic strategies
 
 * dom
   XML manipulation based on DOM
@@ -267,6 +278,10 @@ If you come from the
 * propp
   Propositional prover
   Concepts: using ANTLR with tom
+
+* quine
+  Example of small self-reproducing Tom program
+  Concepts: using % brackets 
 
 * rbtree
   Red-Black Tree algorithm

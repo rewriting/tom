@@ -14,7 +14,7 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="not distributed"/>
+        <include name="${csmaca}/*.t"/>
       </zipfileset>
     </zip>
   </target>
