@@ -11,4 +11,7 @@
     <tomcompile example="${set}"/>
     <javacompile example="${set}"/>
   </target>
-  </project>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
+</project>

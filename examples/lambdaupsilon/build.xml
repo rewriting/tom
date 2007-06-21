@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build the peano example" default="build" basedir="..">
+<project name="Build the lambdaupsilon example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="lambdaupsilon" value="lambdaupsilon"/>
   <target name="clean" description="Cleans examples directory">
@@ -10,5 +10,8 @@
     <gomcompile example="${lambdaupsilon}"/>
     <tomcompile example="${lambdaupsilon}"/>
     <javacompile example="${lambdaupsilon}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
   </target>
 </project>

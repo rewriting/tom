@@ -15,4 +15,7 @@
     <tomcompile example="${gasel}"/>
     <javacompile example="${gasel}"/>
   </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
 </project>

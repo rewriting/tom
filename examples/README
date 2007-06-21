@@ -194,10 +194,6 @@ To relax, take a look at quine example
 * ferus
   Show how to use apigen in a C environment
 
-* gasel [no longer in the distribution]
-  Look for a pattern in a graph
-  Concepts: complex user-defined mapping
-
 * gom
   gom usage demonstration
   Concepts: gom
@@ -286,10 +282,6 @@ To relax, take a look at quine example
   Red-Black Tree algorithm
   Concepts: apigen, disjunction of patterns
 
-* set [no longer in the distribution]
-  Implementation of Set with maximal sharing
-  Concepts: apigen, ATerm with unique id
-
 * strategy
   Show how to use the MuTraveler strategy language
   Concepts: strategies
@@ -329,9 +321,6 @@ To relax, take a look at quine example
 * xml
   XML manipulation based on TNode
   Concepts: XML, list-matching, TNode
-
-* xquery [no longer in the distribution]
-  XQuery use cases
 
 * zenon
   certification of tom's output using zenon and coq

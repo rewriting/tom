@@ -27,4 +27,7 @@
     <tomcompile example="${multigraph}"/>
     <javacompile example="${multigraph}"/>
   </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
 </project>
