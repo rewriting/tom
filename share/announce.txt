@@ -42,6 +42,11 @@ This new release contains many improvements and new features:
     A strategy is now a term that can be matched like any other term.
     This allows to dynamically build or transform a strategy at runtime.
 
+  - Rule sets:
+    It is now possible to specify an invariant in Gom by a set of
+    conditional rewrite rules. This replaces the deprecated %rule
+    construct, and is safer with respect to strategies.
+
   - Congruence Strategies:
     Gom generates new elementary congruence and constructions
     strategies. This allows for instance to define the Map operation in
