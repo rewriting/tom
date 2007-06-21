@@ -60,7 +60,7 @@ This new release contains many improvements and new features:
 
 Tom is available, in open source (GPL/BSD License), from the web page:
 
-  http://tom.loria.fr
+  http://tom.loria.fr/
 
   Best regards,
   Tom development team
