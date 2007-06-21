@@ -2,8 +2,11 @@ version 2.5:
  - %rule has been removed
  - Gom support a "rules" hook, that intend to replace %rule, and allows to
    define rules that are systematically applied.
+ - Gom support various list theory hooks (in particular, AU and ACU). 
  - The new strategy library sl allows access to more context information, such
    as the root of the term to which the strategy is applied
+ - Tom has a new compiler based on constraint solving.
+ - Tom supports associative matching with neutral element   
 
 version 2.4:
  - the eclipse plugin is back, for eclipse version 3.2

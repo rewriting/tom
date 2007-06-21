@@ -48,7 +48,7 @@ This new release contains many improvements and new features:
 
     - hooks to alter the generated API
   
-  - Gom extension for terms with pointers and term-graphs (?)
+  - Gom extension for terms with pointers and term-graphs (wip)
 
   - Associative matching with neutral element   
 
