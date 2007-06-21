@@ -1297,10 +1297,11 @@
           description="Creates a  ready to distribute tom-sources.tgz ">
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/checkout"/>
-    <cvs cvsRoot=":pserver:anonymous@scm.gforge.inria.fr:/cvsroot/tom"
-	 command="checkout -P jtom"
-         dest="${dist}/checkout">
-    </cvs>
+    <exec dir="${dist}/checkout" executable="svn">
+      <arg value="co"/>
+      <arg value="svn://scm.gforge.inria.fr/svn/tom/jtom/trunk"/>
+      <arg value="jtom"/>
+    </exec>
     <tar tarfile="${dist}/tom-src-${stable.version}.tar.gz" compression="gzip">
       <tarfileset dir="${dist}/checkout/jtom" prefix="tom-src-${stable.version}" mode="755">
         <include name="**/*.sh"/>
