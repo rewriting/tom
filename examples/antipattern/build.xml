@@ -33,11 +33,12 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${antipattern}/*.t"/>
-        <include name="${antipattern}/*.txt"/>
-        <include name="${antipattern}/Matching.java"/>
-        <include name="${antipattern}/*.gom"/>
-        <include name="${antipattern}/atermmapping.tom"/>
+        <include name="${antipattern}/*/*.t"/>
+        <include name="${antipattern}/*/*.txt"/>
+        <include name="${antipattern}/*/*.java"/>
+        <include name="${antipattern}/*/*.gom"/>
+        <include name="${antipattern}/*/*.tom"/>
+        <include name="${antipattern}/*/*.tom"/>
       </zipfileset>
     </zip>
   </target>

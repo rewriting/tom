@@ -21,8 +21,8 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${xml}/**/*.t"/>
-        <include name="${xml}/**/*.xml"/>
+        <include name="${xml}/dommapping/*.t"/>
+        <include name="${xml}/dommapping/*.xml"/>
         <include name="${xml}/*.t"/>
         <include name="${xml}/*.xml"/>
       </zipfileset>
