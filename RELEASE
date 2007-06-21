@@ -6,7 +6,7 @@ How to prepare a release:
 - ./build.sh bootinstall
 - ./build.sh bootinstall
 - ./build.sh all
-- cvs commit
+- svn commit
 
 - update the version of the manual (template.hva, tom.sty)
 - update the date of the manual (manual.tex)
@@ -29,7 +29,8 @@ How to prepare a release:
 
 
 - update Changelog, commit, tag the release with
-  cvs -d $GFORGE rtag -R tom-2_4rc1 jtom
+  cvs -d $GFORGE rtag -R tom-2.5 jtom
+  svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.5 -m "tag tree"
 
 - add news entry in jtom-doc/www/{index.php,news.php}
 
