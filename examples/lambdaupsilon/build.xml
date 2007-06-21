@@ -11,14 +11,4 @@
     <tomcompile example="${lambdaupsilon}"/>
     <javacompile example="${lambdaupsilon}"/>
   </target>
-  <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <zip destfile="${distrib.zip}" 
-         update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${lambdaupsilon}/*.java"/>
-        <include name="${lambdaupsilon}/*.gom"/>
-        <include name="${lambdaupsilon}/*.t"/>
-      </zipfileset>
-    </zip>
-  </target>
 </project>

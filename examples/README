@@ -26,6 +26,7 @@ If you come from the
    => start with
       - dom
       - xml
+      - bpel
 
  - Java programming community
    => start with:
@@ -33,6 +34,8 @@ If you come from the
       - peano
       - strings
       - expression (quite complex)
+      - bytecode
+      - strategycompiler
 
  - C programming community
    => start with:
@@ -40,11 +43,6 @@ If you come from the
 
 To relax, take a look at quine example 
 (a small self-reproducing program in Tom)
-
-* Examples to document
-------------------------
-+tactics
-+lambdaupsilon           
 
 * Running the examples:
 ------------------------
@@ -310,6 +308,10 @@ To relax, take a look at quine example
 * structure
   Calculus of strutures
   Concepts: complex list-matching, exploration strategies
+
+* tactics
+  Implementation of classical theorem prover tactics with the strategy language
+  Concepts: Tom strategies
 
 * ted
   Toolbox for live aterms manipulation/representation
