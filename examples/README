@@ -38,6 +38,16 @@ If you come from the
    => start with:
       - integerc
 
+* Examples to document
+------------------------
++csmaca                  
++strategycompiler
++multigraph              
++tactics
++bpel                    
++polygraphes             
++lambdaupsilon           
++quine
 
 * Running the examples:
 ------------------------
@@ -155,6 +165,8 @@ If you come from the
   Class pretty printer
   An example use of the TOM bytecode manipulation library mapping
   Loads a java class using the mapping and prints some information
+  Example of strategies to follow the control flow of a Bytecode program
+  //TODO: document the SClassLoader
   Concepts: bytecode
 
 * caml

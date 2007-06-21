@@ -47,8 +47,9 @@ public class Transformer {
   public static String clm;
 
   %strategy FindFileAccess() extends Identity() {
-    //Case 1: new FileReader(nameFile).read();
     visit TInstructionList {
+    
+      //Case 1: new FileReader(nameFile).read();
       (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
        Astore(nombre2),middle*,Aload(nombre2),Aload(nombre1),
@@ -67,7 +68,6 @@ public class Transformer {
       }
 
       //Case 2: FileReader r = new FileReader(nameFile); ... ; r.read()
-
       (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
        middle*,
@@ -84,8 +84,6 @@ public class Transformer {
             Pop(),
             Return(),
             after*);
-
-
       }
 
       //Case 3
@@ -181,8 +179,6 @@ public class Transformer {
     }
 
   }
-
-
 
   public static byte[] transform(String file){
     v.add(file);
