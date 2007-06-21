@@ -1,8 +1,8 @@
-Tom 2.4 announcement
+Tom 2.5 announcement
 --------------------
 
 It is our great privilege and pleasure to announce the availability of
-Tom version 2.4.
+Tom version 2.5.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
