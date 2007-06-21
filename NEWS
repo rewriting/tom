@@ -1,3 +1,10 @@
+version 2.5:
+ - %rule has been removed
+ - Gom support a "rules" hook, that intend to replace %rule, and allows to
+   define rules that are systematically applied.
+ - The new strategy library sl allows access to more context information, such
+   as the root of the term to which the strategy is applied
+
 version 2.4:
  - the eclipse plugin is back, for eclipse version 3.2
 
