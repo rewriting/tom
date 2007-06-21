@@ -38,11 +38,6 @@ public class Reading {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    try {
-      new FileReader(nameFile).read();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   public static void read2(int Entier,String nameFile){
@@ -64,8 +59,11 @@ public class Reading {
 
   public static void main(String[] args) {
     String nameFile = args[0];
+    System.out.println("read1---------");
     read1(nameFile);
+    System.out.println("read2---------");
     read2(1,nameFile);
+    System.out.println("read3---------");
     read3(nameFile);
   }
 

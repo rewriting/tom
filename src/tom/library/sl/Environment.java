@@ -117,8 +117,9 @@ public final class Environment implements Cloneable {
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
- //public int getStatus() { return status; } 
- //public void setStatus(int s) { this.status = s; }
+ public int getStatus() { return status; } 
+ 
+ public void setStatus(int s) { this.status = s; }
 
   /**
    * get the current root
@@ -239,6 +240,26 @@ public final class Environment implements Cloneable {
       }
     }
   }
+
+  public void followPathLocal(Path path) {
+    Path normalizedPath = path.getCanonicalPath();
+    int length = normalizedPath.length();
+    for(int i=0;i<length;i++) {
+      int head = normalizedPath.getHead();
+      normalizedPath = normalizedPath.getTail();
+      if(head>0){
+        down(head);
+        if (subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
+          // we do not want to follow the last reference
+          followPath((Path)subterm[current]);
+        }
+      } else {
+        //verify that getsubomega() = -head
+        upLocal();
+      }
+    }
+  }
+
 
   /**
    * Returns a <code>String</code> object representing the position.

@@ -85,6 +85,27 @@ public class Transformer2 {
     }
   }
 
+  %strategy NewFileReaderAndCallToRead() extends Fail() {
+    visit TInstructionList {
+      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+       Invokespecial[owner="java/io/FileReader", name="<init>"],
+       Invokevirtual[owner ="java/io/FileReader",name="read"], 
+       Pop(),
+       after*) -> {
+        return `InstructionList(before*,
+            New("bytecode/SecureAccess"),
+            Dup(),
+            Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+            Aload(nombre),
+            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
+            Pop(),
+            Return(),
+            after*);
+      }
+    }
+  }
+
+
   %strategy CallToSRead(index:IntWrapper) extends Identity() {
     visit TInstructionList {
       c@(Aload(i),
@@ -145,10 +166,7 @@ public class Transformer2 {
         HashMap indexMap = new HashMap();
         IntWrapper index = new IntWrapper();
         Strategy securiseAccess =
-          `Sequence(NewFileReader(index),AGMap(Sequence(CallToSRead(index),UpdateLabelMap(labelMap)),labelMap));
-        /**
-        `AGMap(Print(),labelMap).visit(ins);
-        */
+          `Choice(NewFileReaderAndCallToRead(),Sequence(NewFileReader(index),AGMap(Sequence(CallToSRead(index),UpdateLabelMap(labelMap)),labelMap)));
         try {
           TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).visit(ins);
           TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);

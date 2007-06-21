@@ -38,7 +38,7 @@
         <ResourceAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
           AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id"/>
       </Apply>
-      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">bytecode/toto.txt</AttributeValue>
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">bytecode/policy.xml</AttributeValue>
     </Condition>
   </Rule>
 

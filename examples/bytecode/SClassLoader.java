@@ -45,7 +45,7 @@ public class SClassLoader extends ClassLoader {
     super();
   }
 
-  public synchronized Class loadClass(String name)throws ClassNotFoundException{
+  public synchronized Class loadClass(String name) throws ClassNotFoundException{
     if (!(name.startsWith("java.")) && !(name.equals("SecureAccess")) 
         && !(name.startsWith("javax.")) && !(name.startsWith("com."))
         && !(name.startsWith("sun.")) && !(name.startsWith("org."))
