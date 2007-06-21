@@ -32,36 +32,25 @@ applications. It comes with documentation, programming, and debugging
 support.
 
 This new release contains many improvements and new features:
-  - Anti-Patterns:
-    Tom now supports not only pattern matching, but also anti-pattern
-    matching. For example, the pattern (_*,!a(),_*) denotes a list
-    which contains at least one element different from a(). In a similar
-    way, !(_*,a(),_*) denotes a list which does not contain any a().
 
-  - Reflexive Strategies:
-    A strategy is now a term that can be matched like any other term.
-    This allows to dynamically build or transform a strategy at runtime.
+  - A new Compiler based on constraint solving:
 
-  - Rule sets:
-    It is now possible to specify an invariant in Gom by a set of
-    conditional rewrite rules. This replaces the deprecated %rule
-    construct, and is safer with respect to strategies.
+  - A new strategy library:
 
-  - Congruence Strategies:
-    Gom generates new elementary congruence and constructions
-    strategies. This allows for instance to define the Map operation in
-    a easy way: map(s) = _conc(s)
+  _ New Gom hooks:
 
-  - Java Bytecode:
-    A support for Java bytecode analysis and transformation is available
-    in the runtime library. This allows class loading, bytecode analysis
-    and transformation in an algebraic framework.
-    Using the strategy language, the control flow graph can be explored
-    and visualized using dot.
+    - Rule sets:
+      It is now possible to specify an invariant in Gom by a set of
+      conditional rewrite rules. This replaces the deprecated %rule
+      construct, and is safer with respect to strategies.
+    
+    - List theory hooks 
 
-  - Eclipse Plugin:
-    It is back for Eclipse version 3.2.
-    It also supports Gom and all new functionalities.
+    - hooks to alter the generated API
+  
+  - Gom extension for terms with pointers and term-graphs (?)
+
+  - Associative matching with neutral element   
 
 Tom is available, in open source (GPL/BSD License), from the web page:
 
