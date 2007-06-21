@@ -28,8 +28,8 @@ non linear syntactic matching, associative matching with neutral element
 equational rewriting.
 This offers the possibility to analyze and transform any kind of
 data-structure. Tom can be used for large scale developments and
-applications. It comes with documentation, programming, and debugging
-support.
+applications. It comes with documentation, as well as with programming 
+and debugging support.
 
 This new release contains many improvements and new features:
 

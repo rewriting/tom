@@ -1,6 +1,6 @@
 version 2.5:
  - %rule has been removed
- - Gom support a "rules" hook, that intend to replace %rule, and allows to
+ - Gom support a "rules" hook, that intends to replace %rule, and allows to
    define rules that are systematically applied.
  - Gom support various list theory hooks (in particular, AU and ACU). 
  - The new strategy library sl allows access to more context information, such
