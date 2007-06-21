@@ -48,10 +48,9 @@ public interface ANTLRMapperGomParserTokenTypes {
 	int OPERATOR = 21;
 	int STAR = 22;
 	int PRIVATE = 23;
-	int IMPORT = 24;
-	int LBRACE = 25;
-	int RBRACE = 26;
-	int WS = 27;
-	int SLCOMMENT = 28;
-	int ML_COMMENT = 29;
+	int LBRACE = 24;
+	int RBRACE = 25;
+	int WS = 26;
+	int SLCOMMENT = 27;
+	int ML_COMMENT = 28;
 }

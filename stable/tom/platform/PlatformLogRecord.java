@@ -62,4 +62,4 @@ public class PlatformLogRecord extends LogRecord {
     return message;
   }
 
-} // class PlatformLogRecord
+}

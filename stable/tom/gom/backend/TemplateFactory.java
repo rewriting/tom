@@ -25,12 +25,14 @@ package tom.gom.backend;
 
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
+import tom.platform.OptionManager;
 
 public abstract class TemplateFactory {
 
-  public static TemplateFactory getFactory(String mode) {
+  public static TemplateFactory getFactory(OptionManager manager) {
+    String mode = (String) manager.getOptionValue("generator");
     if (mode.equals("shared")) {
-      return new SharedTemplateFactory();
+      return new SharedTemplateFactory(manager);
     } else {
       throw new GomRuntimeException("Output mode "+mode+" not supported");
     }
@@ -50,6 +52,11 @@ public abstract class TemplateFactory {
 
 class SharedTemplateFactory extends TemplateFactory {
 
+  private OptionManager manager;
+  SharedTemplateFactory(OptionManager manager) {
+    this.manager = manager;
+  }
+
   public MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
       TemplateClass strategyMapping) {
@@ -66,15 +73,15 @@ class SharedTemplateFactory extends TemplateFactory {
     return new tom.gom.backend.shared.VisitorTemplate(gomClass);
   }
   public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, importList, gomClass,mapping);
+    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass,mapping);
   }
   public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.SortTemplate(tomHomePath, importList, gomClass,mapping);
+    return new tom.gom.backend.shared.SortTemplate(tomHomePath, manager, importList, gomClass,mapping);
   }
   public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, importList, gomClass,mapping);
+    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping);
   }
   public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, importList, gomClass,mapping);
+    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, manager, importList, gomClass,mapping);
   }
 }

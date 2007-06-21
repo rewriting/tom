@@ -350,10 +350,10 @@ return null;}}}}
   }
 
   public static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
-    if (tom_is_sort_TomSymbol(tomSymbol)) {{  tom.engine.adt.tomsignature.types.TomSymbol  tomMatch18NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TomSymbol )tomSymbol);if (tom_is_fun_sym_Symbol(tomMatch18NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_1=tom_get_slot_Symbol_Option(tomMatch18NameNumberfreshSubject_1);if (tom_is_fun_sym_concOption(tomMatch18NameNumber_freshVar_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_2=tomMatch18NameNumber_freshVar_1;{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_begin_4=tomMatch18NameNumber_freshVar_2;{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_end_5=tomMatch18NameNumber_freshVar_2;do {{{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_3=tomMatch18NameNumber_end_5;if (!(tom_is_empty_concOption_OptionList(tomMatch18NameNumber_freshVar_3))) {if (tom_is_fun_sym_DeclarationToOption(tom_get_head_concOption_OptionList(tomMatch18NameNumber_freshVar_3))) {{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch18NameNumber_freshVar_8=tom_get_slot_DeclarationToOption_AstDeclaration(tom_get_head_concOption_OptionList(tomMatch18NameNumber_freshVar_3));{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch18NameNumber_freshVar_0=tomMatch18NameNumber_freshVar_8;{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_6=tom_get_tail_concOption_OptionList(tomMatch18NameNumber_freshVar_3);if (tom_is_fun_sym_IsFsymDecl(tomMatch18NameNumber_freshVar_0)) {if ( true ) {
+    if (tom_is_sort_TomSymbol(tomSymbol)) {{  tom.engine.adt.tomsignature.types.TomSymbol  tomMatch18NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TomSymbol )tomSymbol);if (tom_is_fun_sym_Symbol(tomMatch18NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_0=tom_get_slot_Symbol_Option(tomMatch18NameNumberfreshSubject_1);if (tom_is_fun_sym_concOption(tomMatch18NameNumber_freshVar_0)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_1=tomMatch18NameNumber_freshVar_0;{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_begin_3=tomMatch18NameNumber_freshVar_1;{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_end_4=tomMatch18NameNumber_freshVar_1;do {{{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_2=tomMatch18NameNumber_end_4;if (!(tom_is_empty_concOption_OptionList(tomMatch18NameNumber_freshVar_2))) {if (tom_is_fun_sym_DeclarationToOption(tom_get_head_concOption_OptionList(tomMatch18NameNumber_freshVar_2))) {{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch18NameNumber_freshVar_7=tom_get_slot_DeclarationToOption_AstDeclaration(tom_get_head_concOption_OptionList(tomMatch18NameNumber_freshVar_2));if (tom_is_fun_sym_IsFsymDecl(tomMatch18NameNumber_freshVar_7)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch18NameNumber_freshVar_5=tom_get_tail_concOption_OptionList(tomMatch18NameNumber_freshVar_2);if ( true ) {
 
         return true;
-      }}}}}}}}if (tom_is_empty_concOption_OptionList(tomMatch18NameNumber_end_5)) {tomMatch18NameNumber_end_5=tomMatch18NameNumber_begin_4;} else {tomMatch18NameNumber_end_5=tom_get_tail_concOption_OptionList(tomMatch18NameNumber_end_5);}}} while(!(tom_equal_term_OptionList(tomMatch18NameNumber_end_5, tomMatch18NameNumber_begin_4)));}}}}}}}}
+      }}}}}}}if (tom_is_empty_concOption_OptionList(tomMatch18NameNumber_end_4)) {tomMatch18NameNumber_end_4=tomMatch18NameNumber_begin_3;} else {tomMatch18NameNumber_end_4=tom_get_tail_concOption_OptionList(tomMatch18NameNumber_end_4);}}} while(!(tom_equal_term_OptionList(tomMatch18NameNumber_end_4, tomMatch18NameNumber_begin_3)));}}}}}}}}
 
     return false;
   }
@@ -445,7 +445,7 @@ return null;}}}}
         return elementAt(tomMatch25NameNumber_freshVar_1,index);
       }}}}}}}}
 
-    throw new TomRuntimeException("getSlotType: bad slotName error");
+    throw new TomRuntimeException("getSlotType: bad slotName error " + symbol);
   }
 
   public static boolean isDefinedSymbol(TomSymbol subject) {

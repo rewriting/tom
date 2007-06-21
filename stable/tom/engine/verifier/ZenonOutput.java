@@ -90,10 +90,10 @@ public class ZenonOutput {
     ZExpr negpattern = null;
 
     // theorem to prove
-    if (tom_is_sort_Instr(accept)) {{  tom.engine.adt.il.types.Instr  tomMatch104NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Instr )accept);if (tom_is_fun_sym_accept(tomMatch104NameNumberfreshSubject_1)) {{  aterm.ATerm  tomMatch104NameNumber_freshVar_0=tom_get_slot_accept_Positive(tomMatch104NameNumberfreshSubject_1);{  aterm.ATerm  tomMatch104NameNumber_freshVar_1=tom_get_slot_accept_Negative(tomMatch104NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_Instr(accept)) {{  tom.engine.adt.il.types.Instr  tomMatch301NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Instr )accept);if (tom_is_fun_sym_accept(tomMatch301NameNumberfreshSubject_1)) {{  aterm.ATerm  tomMatch301NameNumber_freshVar_0=tom_get_slot_accept_Positive(tomMatch301NameNumberfreshSubject_1);{  aterm.ATerm  tomMatch301NameNumber_freshVar_1=tom_get_slot_accept_Negative(tomMatch301NameNumberfreshSubject_1);if ( true ) {
 
-        Pattern positivePattern = Pattern.fromTerm(tomMatch104NameNumber_freshVar_0);
-        PatternList negativePatternList = PatternList.fromTerm(tomMatch104NameNumber_freshVar_1);
+        Pattern positivePattern = Pattern.fromTerm(tomMatch301NameNumber_freshVar_0);
+        PatternList negativePatternList = PatternList.fromTerm(tomMatch301NameNumber_freshVar_1);
         // we need the substitution to generate the pattern part of the theorem
         SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
         Map variableMap = ztermVariableMapFromSubstitutionList(subsList,
@@ -141,19 +141,19 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromTerm(Term term) {
-    if (tom_is_sort_Term(term)) {{  tom.engine.adt.il.types.Term  tomMatch105NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Term )term);if (tom_is_fun_sym_tau(tomMatch105NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch105NameNumber_freshVar_0=tom_get_slot_tau_Abst(tomMatch105NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_Term(term)) {{  tom.engine.adt.il.types.Term  tomMatch302NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Term )term);if (tom_is_fun_sym_tau(tomMatch302NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch302NameNumber_freshVar_0=tom_get_slot_tau_Abst(tomMatch302NameNumberfreshSubject_1);if ( true ) {
 
-        return ztermFromAbsTerm(tomMatch105NameNumber_freshVar_0);
-      }}}if (tom_is_fun_sym_repr(tomMatch105NameNumberfreshSubject_1)) {if ( true ) {
+        return ztermFromAbsTerm(tomMatch302NameNumber_freshVar_0);
+      }}}if (tom_is_fun_sym_repr(tomMatch302NameNumberfreshSubject_1)) {if ( true ) {
 
         return tom_make_zvar("Error in ztermFromTerm repr");
-      }}if (tom_is_fun_sym_subterm(tomMatch105NameNumberfreshSubject_1)) {if ( true ) {
+      }}if (tom_is_fun_sym_subterm(tomMatch302NameNumberfreshSubject_1)) {if ( true ) {
 
         return tom_make_zvar("Error in ztermFromTerm subterm");
-      }}if (tom_is_fun_sym_slot(tomMatch105NameNumberfreshSubject_1)) {if ( true ) {
+      }}if (tom_is_fun_sym_slot(tomMatch302NameNumberfreshSubject_1)) {if ( true ) {
 
         return tom_make_zvar("Error in ztermFromTerm "+ term+" slot");
-      }}if (tom_is_fun_sym_appSubsT(tomMatch105NameNumberfreshSubject_1)) {if ( true ) {
+      }}if (tom_is_fun_sym_appSubsT(tomMatch302NameNumberfreshSubject_1)) {if ( true ) {
 
         // probleme: la substitution devrait etre appliquee
         return tom_make_zvar("Error in ztermFromTerm appsubsT ");
@@ -163,73 +163,73 @@ public class ZenonOutput {
   }
 
   ZExpr zexprFromExpr(Expr expr) {
-    if (tom_is_sort_Expr(expr)) {{  tom.engine.adt.il.types.Expr  tomMatch106NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Expr )expr);if (tom_is_fun_sym_iltrue(tomMatch106NameNumberfreshSubject_1)) {if ( true ) {
- return tom_make_ztrue();}}if (tom_is_fun_sym_ilfalse(tomMatch106NameNumberfreshSubject_1)) {if ( true ) {
- return tom_make_zfalse();}}if (tom_is_fun_sym_tisfsym(tomMatch106NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch106NameNumber_freshVar_0=tom_get_slot_tisfsym_Abst(tomMatch106NameNumberfreshSubject_1);{  tom.engine.adt.il.types.Symbol  tomMatch106NameNumber_freshVar_1=tom_get_slot_tisfsym_Symbol(tomMatch106NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_Expr(expr)) {{  tom.engine.adt.il.types.Expr  tomMatch303NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Expr )expr);if (tom_is_fun_sym_iltrue(tomMatch303NameNumberfreshSubject_1)) {if ( true ) {
+ return tom_make_ztrue();}}if (tom_is_fun_sym_ilfalse(tomMatch303NameNumberfreshSubject_1)) {if ( true ) {
+ return tom_make_zfalse();}}if (tom_is_fun_sym_tisfsym(tomMatch303NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch303NameNumber_freshVar_0=tom_get_slot_tisfsym_Abst(tomMatch303NameNumberfreshSubject_1);{  tom.engine.adt.il.types.Symbol  tomMatch303NameNumber_freshVar_1=tom_get_slot_tisfsym_Symbol(tomMatch303NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zisfsym(ztermFromAbsTerm(tomMatch106NameNumber_freshVar_0),zsymbolFromSymbol(tomMatch106NameNumber_freshVar_1));
-      }}}}if (tom_is_fun_sym_teq(tomMatch106NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch106NameNumber_freshVar_2=tom_get_slot_teq_Labst(tomMatch106NameNumberfreshSubject_1);{  tom.engine.adt.il.types.AbsTerm  tomMatch106NameNumber_freshVar_3=tom_get_slot_teq_Rabst(tomMatch106NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_zisfsym(ztermFromAbsTerm(tomMatch303NameNumber_freshVar_0),zsymbolFromSymbol(tomMatch303NameNumber_freshVar_1));
+      }}}}if (tom_is_fun_sym_teq(tomMatch303NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch303NameNumber_freshVar_2=tom_get_slot_teq_Labst(tomMatch303NameNumberfreshSubject_1);{  tom.engine.adt.il.types.AbsTerm  tomMatch303NameNumber_freshVar_3=tom_get_slot_teq_Rabst(tomMatch303NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zeq(ztermFromAbsTerm(tomMatch106NameNumber_freshVar_2),ztermFromAbsTerm(tomMatch106NameNumber_freshVar_3));
-      }}}}if (tom_is_fun_sym_isfsym(tomMatch106NameNumberfreshSubject_1)) {if ( true ) {
+        return tom_make_zeq(ztermFromAbsTerm(tomMatch303NameNumber_freshVar_2),ztermFromAbsTerm(tomMatch303NameNumber_freshVar_3));
+      }}}}if (tom_is_fun_sym_isfsym(tomMatch303NameNumberfreshSubject_1)) {if ( true ) {
 
         // this should not occur
         return tom_make_zisfsym(tom_make_zvar("Error in zexprFromExpr"),tom_make_zsymbol("isfsym"));
-      }}if (tom_is_fun_sym_eq(tomMatch106NameNumberfreshSubject_1)) {if ( true ) {
+      }}if (tom_is_fun_sym_eq(tomMatch303NameNumberfreshSubject_1)) {if ( true ) {
 
         // this should not occur
         return tom_make_zeq(tom_make_zvar("Error in zexprFromExpr"),tom_make_zvar("eq"));
-      }}if (tom_is_fun_sym_appSubsE(tomMatch106NameNumberfreshSubject_1)) {if ( true ) {
+      }}if (tom_is_fun_sym_appSubsE(tomMatch303NameNumberfreshSubject_1)) {if ( true ) {
 
         // this should not occur
         return tom_make_zeq(tom_make_zvar("Error in zexprFromExpr"),tom_make_zvar("appSubsE"));
-      }}if (tom_is_fun_sym_iland(tomMatch106NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Expr  tomMatch106NameNumber_freshVar_4=tom_get_slot_iland_Left(tomMatch106NameNumberfreshSubject_1);{  tom.engine.adt.il.types.Expr  tomMatch106NameNumber_freshVar_5=tom_get_slot_iland_Right(tomMatch106NameNumberfreshSubject_1);if ( true ) {
+      }}if (tom_is_fun_sym_iland(tomMatch303NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Expr  tomMatch303NameNumber_freshVar_4=tom_get_slot_iland_Left(tomMatch303NameNumberfreshSubject_1);{  tom.engine.adt.il.types.Expr  tomMatch303NameNumber_freshVar_5=tom_get_slot_iland_Right(tomMatch303NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zand(zexprFromExpr(tomMatch106NameNumber_freshVar_4),zexprFromExpr(tomMatch106NameNumber_freshVar_5));
-      }}}}if (tom_is_fun_sym_ilor(tomMatch106NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Expr  tomMatch106NameNumber_freshVar_6=tom_get_slot_ilor_Left(tomMatch106NameNumberfreshSubject_1);{  tom.engine.adt.il.types.Expr  tomMatch106NameNumber_freshVar_7=tom_get_slot_ilor_Right(tomMatch106NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_zand(zexprFromExpr(tomMatch303NameNumber_freshVar_4),zexprFromExpr(tomMatch303NameNumber_freshVar_5));
+      }}}}if (tom_is_fun_sym_ilor(tomMatch303NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Expr  tomMatch303NameNumber_freshVar_6=tom_get_slot_ilor_Left(tomMatch303NameNumberfreshSubject_1);{  tom.engine.adt.il.types.Expr  tomMatch303NameNumber_freshVar_7=tom_get_slot_ilor_Right(tomMatch303NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zor(zexprFromExpr(tomMatch106NameNumber_freshVar_6),zexprFromExpr(tomMatch106NameNumber_freshVar_7));
-      }}}}if (tom_is_fun_sym_ilnot(tomMatch106NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Expr  tomMatch106NameNumber_freshVar_8=tom_get_slot_ilnot_Exp(tomMatch106NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_zor(zexprFromExpr(tomMatch303NameNumber_freshVar_6),zexprFromExpr(tomMatch303NameNumber_freshVar_7));
+      }}}}if (tom_is_fun_sym_ilnot(tomMatch303NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Expr  tomMatch303NameNumber_freshVar_8=tom_get_slot_ilnot_Exp(tomMatch303NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_znot(zexprFromExpr(tomMatch106NameNumber_freshVar_8));
+        return tom_make_znot(zexprFromExpr(tomMatch303NameNumber_freshVar_8));
       }}}}}
 
     return tom_make_zeq(tom_make_zvar("Error in zexprFromExpr"),tom_make_zvar("end " + expr.toString()));
   }
 
   ZSymbol zsymbolFromSymbol(Symbol symb) {
-    if (tom_is_sort_Symbol(symb)) {{  tom.engine.adt.il.types.Symbol  tomMatch107NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Symbol )symb);if (tom_is_fun_sym_fsymbol(tomMatch107NameNumberfreshSubject_1)) {{  String  tomMatch107NameNumber_freshVar_0=tom_get_slot_fsymbol_Name(tomMatch107NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_Symbol(symb)) {{  tom.engine.adt.il.types.Symbol  tomMatch304NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Symbol )symb);if (tom_is_fun_sym_fsymbol(tomMatch304NameNumberfreshSubject_1)) {{  String  tomMatch304NameNumber_freshVar_0=tom_get_slot_fsymbol_Name(tomMatch304NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zsymbol(tomMatch107NameNumber_freshVar_0);
+        return tom_make_zsymbol(tomMatch304NameNumber_freshVar_0);
       }}}}}
 
     return tom_make_zsymbol("random");
   }
 
   ZExpr zexprFromSeq(Seq seq) {
-    if (tom_is_sort_Seq(seq)) {{  tom.engine.adt.il.types.Seq  tomMatch111NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Seq )seq);if (tom_is_fun_sym_seq(tomMatch111NameNumberfreshSubject_1)) {if ( true ) {
+    if (tom_is_sort_Seq(seq)) {{  tom.engine.adt.il.types.Seq  tomMatch308NameNumberfreshSubject_1=(( tom.engine.adt.il.types.Seq )seq);if (tom_is_fun_sym_seq(tomMatch308NameNumberfreshSubject_1)) {if ( true ) {
 
         return tom_make_ztrue();
-      }}if (tom_is_fun_sym_dedterm(tomMatch111NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.TermList  tomMatch111NameNumber_freshVar_0=tom_get_slot_dedterm_Terms(tomMatch111NameNumberfreshSubject_1);{  tom.engine.adt.il.types.TermList  tom_termlist=tomMatch111NameNumber_freshVar_0;if ( true ) {if (tom_is_sort_TermList(tom_termlist)) {{  tom.engine.adt.il.types.TermList  tomMatch108NameNumberfreshSubject_1=(( tom.engine.adt.il.types.TermList )tom_termlist);if (tom_is_fun_sym_concTerm(tomMatch108NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.TermList  tomMatch108NameNumber_freshVar_0=tomMatch108NameNumberfreshSubject_1;{  tom.engine.adt.il.types.TermList  tomMatch108NameNumber_begin_2=tomMatch108NameNumber_freshVar_0;{  tom.engine.adt.il.types.TermList  tomMatch108NameNumber_end_3=tomMatch108NameNumber_freshVar_0;do {{{  tom.engine.adt.il.types.TermList  tomMatch108NameNumber_freshVar_1=tomMatch108NameNumber_end_3;if (!(tom_is_empty_concTerm_TermList(tomMatch108NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.TermList  tomMatch108NameNumber_freshVar_4=tom_get_tail_concTerm_TermList(tomMatch108NameNumber_freshVar_1);if (!(tom_is_empty_concTerm_TermList(tomMatch108NameNumber_freshVar_4))) {{  tom.engine.adt.il.types.TermList  tomMatch108NameNumber_freshVar_5=tom_get_tail_concTerm_TermList(tomMatch108NameNumber_freshVar_4);if (tom_is_empty_concTerm_TermList(tomMatch108NameNumber_freshVar_5)) {if ( true ) {
+      }}if (tom_is_fun_sym_dedterm(tomMatch308NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.TermList  tomMatch308NameNumber_freshVar_0=tom_get_slot_dedterm_Terms(tomMatch308NameNumberfreshSubject_1);{  tom.engine.adt.il.types.TermList  tom_termlist=tomMatch308NameNumber_freshVar_0;if ( true ) {if (tom_is_sort_TermList(tom_termlist)) {{  tom.engine.adt.il.types.TermList  tomMatch305NameNumberfreshSubject_1=(( tom.engine.adt.il.types.TermList )tom_termlist);if (tom_is_fun_sym_concTerm(tomMatch305NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.TermList  tomMatch305NameNumber_freshVar_0=tomMatch305NameNumberfreshSubject_1;{  tom.engine.adt.il.types.TermList  tomMatch305NameNumber_begin_2=tomMatch305NameNumber_freshVar_0;{  tom.engine.adt.il.types.TermList  tomMatch305NameNumber_end_3=tomMatch305NameNumber_freshVar_0;do {{{  tom.engine.adt.il.types.TermList  tomMatch305NameNumber_freshVar_1=tomMatch305NameNumber_end_3;if (!(tom_is_empty_concTerm_TermList(tomMatch305NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.TermList  tomMatch305NameNumber_freshVar_4=tom_get_tail_concTerm_TermList(tomMatch305NameNumber_freshVar_1);if (!(tom_is_empty_concTerm_TermList(tomMatch305NameNumber_freshVar_4))) {{  tom.engine.adt.il.types.TermList  tomMatch305NameNumber_freshVar_5=tom_get_tail_concTerm_TermList(tomMatch305NameNumber_freshVar_4);if (tom_is_empty_concTerm_TermList(tomMatch305NameNumber_freshVar_5)) {if ( true ) {
 
 
 
-            return tom_make_zeq(ztermFromTerm(tom_get_head_concTerm_TermList(tomMatch108NameNumber_freshVar_1)),ztermFromTerm(tom_get_head_concTerm_TermList(tomMatch108NameNumber_freshVar_4)));
-          }}}}}}}if (tom_is_empty_concTerm_TermList(tomMatch108NameNumber_end_3)) {tomMatch108NameNumber_end_3=tomMatch108NameNumber_begin_2;} else {tomMatch108NameNumber_end_3=tom_get_tail_concTerm_TermList(tomMatch108NameNumber_end_3);}}} while(!(tom_equal_term_TermList(tomMatch108NameNumber_end_3, tomMatch108NameNumber_begin_2)));}}}}}}
+            return tom_make_zeq(ztermFromTerm(tom_get_head_concTerm_TermList(tomMatch305NameNumber_freshVar_1)),ztermFromTerm(tom_get_head_concTerm_TermList(tomMatch305NameNumber_freshVar_4)));
+          }}}}}}}if (tom_is_empty_concTerm_TermList(tomMatch305NameNumber_end_3)) {tomMatch305NameNumber_end_3=tomMatch305NameNumber_begin_2;} else {tomMatch305NameNumber_end_3=tom_get_tail_concTerm_TermList(tomMatch305NameNumber_end_3);}}} while(!(tom_equal_term_TermList(tomMatch305NameNumber_end_3, tomMatch305NameNumber_begin_2)));}}}}}}
 
-      }}}}if (tom_is_fun_sym_dedexpr(tomMatch111NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch111NameNumber_freshVar_1=tom_get_slot_dedexpr_Exprs(tomMatch111NameNumberfreshSubject_1);{  tom.engine.adt.il.types.ExprList  tom_exprlist=tomMatch111NameNumber_freshVar_1;if ( true ) {if (tom_is_sort_ExprList(tom_exprlist)) {{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumberfreshSubject_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist);if (tom_is_fun_sym_concExpr(tomMatch109NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumber_freshVar_0=tomMatch109NameNumberfreshSubject_1;{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumber_begin_2=tomMatch109NameNumber_freshVar_0;{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumber_end_3=tomMatch109NameNumber_freshVar_0;do {{{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumber_freshVar_1=tomMatch109NameNumber_end_3;if (!(tom_is_empty_concExpr_ExprList(tomMatch109NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumber_freshVar_4=tom_get_tail_concExpr_ExprList(tomMatch109NameNumber_freshVar_1);if (!(tom_is_empty_concExpr_ExprList(tomMatch109NameNumber_freshVar_4))) {if (tom_is_fun_sym_iltrue(tom_get_head_concExpr_ExprList(tomMatch109NameNumber_freshVar_4))) {{  tom.engine.adt.il.types.ExprList  tomMatch109NameNumber_freshVar_5=tom_get_tail_concExpr_ExprList(tomMatch109NameNumber_freshVar_4);if (tom_is_empty_concExpr_ExprList(tomMatch109NameNumber_freshVar_5)) {if ( true ) {
-
-
-
-            return zexprFromExpr(tom_get_head_concExpr_ExprList(tomMatch109NameNumber_freshVar_1));
-          }}}}}}}}if (tom_is_empty_concExpr_ExprList(tomMatch109NameNumber_end_3)) {tomMatch109NameNumber_end_3=tomMatch109NameNumber_begin_2;} else {tomMatch109NameNumber_end_3=tom_get_tail_concExpr_ExprList(tomMatch109NameNumber_end_3);}}} while(!(tom_equal_term_ExprList(tomMatch109NameNumber_end_3, tomMatch109NameNumber_begin_2)));}}}}}}
-
-      }}}}if (tom_is_fun_sym_dedexpr(tomMatch111NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch111NameNumber_freshVar_2=tom_get_slot_dedexpr_Exprs(tomMatch111NameNumberfreshSubject_1);{  tom.engine.adt.il.types.ExprList  tom_exprlist=tomMatch111NameNumber_freshVar_2;if ( true ) {if (tom_is_sort_ExprList(tom_exprlist)) {{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumberfreshSubject_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist);if (tom_is_fun_sym_concExpr(tomMatch110NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumber_freshVar_0=tomMatch110NameNumberfreshSubject_1;{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumber_begin_2=tomMatch110NameNumber_freshVar_0;{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumber_end_3=tomMatch110NameNumber_freshVar_0;do {{{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumber_freshVar_1=tomMatch110NameNumber_end_3;if (!(tom_is_empty_concExpr_ExprList(tomMatch110NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumber_freshVar_4=tom_get_tail_concExpr_ExprList(tomMatch110NameNumber_freshVar_1);if (!(tom_is_empty_concExpr_ExprList(tomMatch110NameNumber_freshVar_4))) {if (tom_is_fun_sym_ilfalse(tom_get_head_concExpr_ExprList(tomMatch110NameNumber_freshVar_4))) {{  tom.engine.adt.il.types.ExprList  tomMatch110NameNumber_freshVar_5=tom_get_tail_concExpr_ExprList(tomMatch110NameNumber_freshVar_4);if (tom_is_empty_concExpr_ExprList(tomMatch110NameNumber_freshVar_5)) {if ( true ) {
+      }}}}if (tom_is_fun_sym_dedexpr(tomMatch308NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch308NameNumber_freshVar_1=tom_get_slot_dedexpr_Exprs(tomMatch308NameNumberfreshSubject_1);{  tom.engine.adt.il.types.ExprList  tom_exprlist=tomMatch308NameNumber_freshVar_1;if ( true ) {if (tom_is_sort_ExprList(tom_exprlist)) {{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumberfreshSubject_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist);if (tom_is_fun_sym_concExpr(tomMatch306NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumber_freshVar_0=tomMatch306NameNumberfreshSubject_1;{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumber_begin_2=tomMatch306NameNumber_freshVar_0;{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumber_end_3=tomMatch306NameNumber_freshVar_0;do {{{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumber_freshVar_1=tomMatch306NameNumber_end_3;if (!(tom_is_empty_concExpr_ExprList(tomMatch306NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumber_freshVar_4=tom_get_tail_concExpr_ExprList(tomMatch306NameNumber_freshVar_1);if (!(tom_is_empty_concExpr_ExprList(tomMatch306NameNumber_freshVar_4))) {if (tom_is_fun_sym_iltrue(tom_get_head_concExpr_ExprList(tomMatch306NameNumber_freshVar_4))) {{  tom.engine.adt.il.types.ExprList  tomMatch306NameNumber_freshVar_5=tom_get_tail_concExpr_ExprList(tomMatch306NameNumber_freshVar_4);if (tom_is_empty_concExpr_ExprList(tomMatch306NameNumber_freshVar_5)) {if ( true ) {
 
 
 
-            return tom_make_znot(zexprFromExpr(tom_get_head_concExpr_ExprList(tomMatch110NameNumber_freshVar_1)));
-          }}}}}}}}if (tom_is_empty_concExpr_ExprList(tomMatch110NameNumber_end_3)) {tomMatch110NameNumber_end_3=tomMatch110NameNumber_begin_2;} else {tomMatch110NameNumber_end_3=tom_get_tail_concExpr_ExprList(tomMatch110NameNumber_end_3);}}} while(!(tom_equal_term_ExprList(tomMatch110NameNumber_end_3, tomMatch110NameNumber_begin_2)));}}}}}}
+            return zexprFromExpr(tom_get_head_concExpr_ExprList(tomMatch306NameNumber_freshVar_1));
+          }}}}}}}}if (tom_is_empty_concExpr_ExprList(tomMatch306NameNumber_end_3)) {tomMatch306NameNumber_end_3=tomMatch306NameNumber_begin_2;} else {tomMatch306NameNumber_end_3=tom_get_tail_concExpr_ExprList(tomMatch306NameNumber_end_3);}}} while(!(tom_equal_term_ExprList(tomMatch306NameNumber_end_3, tomMatch306NameNumber_begin_2)));}}}}}}
+
+      }}}}if (tom_is_fun_sym_dedexpr(tomMatch308NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch308NameNumber_freshVar_2=tom_get_slot_dedexpr_Exprs(tomMatch308NameNumberfreshSubject_1);{  tom.engine.adt.il.types.ExprList  tom_exprlist=tomMatch308NameNumber_freshVar_2;if ( true ) {if (tom_is_sort_ExprList(tom_exprlist)) {{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumberfreshSubject_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist);if (tom_is_fun_sym_concExpr(tomMatch307NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumber_freshVar_0=tomMatch307NameNumberfreshSubject_1;{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumber_begin_2=tomMatch307NameNumber_freshVar_0;{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumber_end_3=tomMatch307NameNumber_freshVar_0;do {{{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumber_freshVar_1=tomMatch307NameNumber_end_3;if (!(tom_is_empty_concExpr_ExprList(tomMatch307NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumber_freshVar_4=tom_get_tail_concExpr_ExprList(tomMatch307NameNumber_freshVar_1);if (!(tom_is_empty_concExpr_ExprList(tomMatch307NameNumber_freshVar_4))) {if (tom_is_fun_sym_ilfalse(tom_get_head_concExpr_ExprList(tomMatch307NameNumber_freshVar_4))) {{  tom.engine.adt.il.types.ExprList  tomMatch307NameNumber_freshVar_5=tom_get_tail_concExpr_ExprList(tomMatch307NameNumber_freshVar_4);if (tom_is_empty_concExpr_ExprList(tomMatch307NameNumber_freshVar_5)) {if ( true ) {
+
+
+
+            return tom_make_znot(zexprFromExpr(tom_get_head_concExpr_ExprList(tomMatch307NameNumber_freshVar_1)));
+          }}}}}}}}if (tom_is_empty_concExpr_ExprList(tomMatch307NameNumber_end_3)) {tomMatch307NameNumber_end_3=tomMatch307NameNumber_begin_2;} else {tomMatch307NameNumber_end_3=tom_get_tail_concExpr_ExprList(tomMatch307NameNumber_end_3);}}} while(!(tom_equal_term_ExprList(tomMatch307NameNumber_end_3, tomMatch307NameNumber_begin_2)));}}}}}}
 
       }}}}}}
 
@@ -237,29 +237,29 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromAbsTerm(AbsTerm absterm) {
-    if (tom_is_sort_AbsTerm(absterm)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch112NameNumberfreshSubject_1=(( tom.engine.adt.il.types.AbsTerm )absterm);if (tom_is_fun_sym_absvar(tomMatch112NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Variable  tomMatch112NameNumber_freshVar_0=tom_get_slot_absvar_Varname(tomMatch112NameNumberfreshSubject_1);if (tom_is_fun_sym_var(tomMatch112NameNumber_freshVar_0)) {{  String  tomMatch112NameNumber_freshVar_1=tom_get_slot_var_Name(tomMatch112NameNumber_freshVar_0);if ( true ) {
+    if (tom_is_sort_AbsTerm(absterm)) {{  tom.engine.adt.il.types.AbsTerm  tomMatch309NameNumberfreshSubject_1=(( tom.engine.adt.il.types.AbsTerm )absterm);if (tom_is_fun_sym_absvar(tomMatch309NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Variable  tomMatch309NameNumber_freshVar_0=tom_get_slot_absvar_Varname(tomMatch309NameNumberfreshSubject_1);if (tom_is_fun_sym_var(tomMatch309NameNumber_freshVar_0)) {{  String  tomMatch309NameNumber_freshVar_1=tom_get_slot_var_Name(tomMatch309NameNumber_freshVar_0);if ( true ) {
 
-        return tom_make_zvar(tomMatch112NameNumber_freshVar_1);
-      }}}}}if (tom_is_fun_sym_st(tomMatch112NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Symbol  tomMatch112NameNumber_freshVar_2=tom_get_slot_st_Symbol(tomMatch112NameNumberfreshSubject_1);{  tom.engine.adt.il.types.AbsTerm  tomMatch112NameNumber_freshVar_3=tom_get_slot_st_Abst(tomMatch112NameNumberfreshSubject_1);{  int  tomMatch112NameNumber_freshVar_4=tom_get_slot_st_Index(tomMatch112NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_zvar(tomMatch309NameNumber_freshVar_1);
+      }}}}}if (tom_is_fun_sym_st(tomMatch309NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Symbol  tomMatch309NameNumber_freshVar_2=tom_get_slot_st_Symbol(tomMatch309NameNumberfreshSubject_1);{  tom.engine.adt.il.types.AbsTerm  tomMatch309NameNumber_freshVar_3=tom_get_slot_st_Abst(tomMatch309NameNumberfreshSubject_1);{  int  tomMatch309NameNumber_freshVar_4=tom_get_slot_st_Index(tomMatch309NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zst(ztermFromAbsTerm(tomMatch112NameNumber_freshVar_3),tomMatch112NameNumber_freshVar_4);
-      }}}}}if (tom_is_fun_sym_sl(tomMatch112NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Symbol  tomMatch112NameNumber_freshVar_5=tom_get_slot_sl_Symbol(tomMatch112NameNumberfreshSubject_1);{  tom.engine.adt.il.types.AbsTerm  tomMatch112NameNumber_freshVar_6=tom_get_slot_sl_Abst(tomMatch112NameNumberfreshSubject_1);{  String  tomMatch112NameNumber_freshVar_7=tom_get_slot_sl_Name(tomMatch112NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_zst(ztermFromAbsTerm(tomMatch309NameNumber_freshVar_3),tomMatch309NameNumber_freshVar_4);
+      }}}}}if (tom_is_fun_sym_sl(tomMatch309NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.Symbol  tomMatch309NameNumber_freshVar_5=tom_get_slot_sl_Symbol(tomMatch309NameNumberfreshSubject_1);{  tom.engine.adt.il.types.AbsTerm  tomMatch309NameNumber_freshVar_6=tom_get_slot_sl_Abst(tomMatch309NameNumberfreshSubject_1);{  String  tomMatch309NameNumber_freshVar_7=tom_get_slot_sl_Name(tomMatch309NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_zsl(ztermFromAbsTerm(tomMatch112NameNumber_freshVar_6),tomMatch112NameNumber_freshVar_7);
+        return tom_make_zsl(ztermFromAbsTerm(tomMatch309NameNumber_freshVar_6),tomMatch309NameNumber_freshVar_7);
       }}}}}}}
 
     return tom_make_zvar("Error in ztermFromAbsTerm");
   }
 
   private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
-    if (tom_is_sort_SubstitutionList(sublist)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch113NameNumberfreshSubject_1=(( tom.engine.adt.il.types.SubstitutionList )sublist);if (tom_is_fun_sym_subs(tomMatch113NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch113NameNumber_freshVar_0=tomMatch113NameNumberfreshSubject_1;if (tom_is_empty_subs_SubstitutionList(tomMatch113NameNumber_freshVar_0)) {if ( true ) {
- return map; }}}}if (tom_is_fun_sym_subs(tomMatch113NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch113NameNumber_freshVar_1=tomMatch113NameNumberfreshSubject_1;if (!(tom_is_empty_subs_SubstitutionList(tomMatch113NameNumber_freshVar_1))) {if (tom_is_fun_sym_undefsubs(tom_get_head_subs_SubstitutionList(tomMatch113NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch113NameNumber_freshVar_2=tom_get_tail_subs_SubstitutionList(tomMatch113NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_SubstitutionList(sublist)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch310NameNumberfreshSubject_1=(( tom.engine.adt.il.types.SubstitutionList )sublist);if (tom_is_fun_sym_subs(tomMatch310NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch310NameNumber_freshVar_0=tomMatch310NameNumberfreshSubject_1;if (tom_is_empty_subs_SubstitutionList(tomMatch310NameNumber_freshVar_0)) {if ( true ) {
+ return map; }}}}if (tom_is_fun_sym_subs(tomMatch310NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch310NameNumber_freshVar_1=tomMatch310NameNumberfreshSubject_1;if (!(tom_is_empty_subs_SubstitutionList(tomMatch310NameNumber_freshVar_1))) {if (tom_is_fun_sym_undefsubs(tom_get_head_subs_SubstitutionList(tomMatch310NameNumber_freshVar_1))) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch310NameNumber_freshVar_2=tom_get_tail_subs_SubstitutionList(tomMatch310NameNumber_freshVar_1);if ( true ) {
 
-        return ztermVariableMapFromSubstitutionList(tomMatch113NameNumber_freshVar_2,map);
-      }}}}}}if (tom_is_fun_sym_subs(tomMatch113NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch113NameNumber_freshVar_24=tomMatch113NameNumberfreshSubject_1;if (!(tom_is_empty_subs_SubstitutionList(tomMatch113NameNumber_freshVar_24))) {if (tom_is_fun_sym_is(tom_get_head_subs_SubstitutionList(tomMatch113NameNumber_freshVar_24))) {{  tom.engine.adt.il.types.Variable  tomMatch113NameNumber_freshVar_37=tom_get_slot_is_Var(tom_get_head_subs_SubstitutionList(tomMatch113NameNumber_freshVar_24));{  tom.engine.adt.il.types.Term  tomMatch113NameNumber_freshVar_38=tom_get_slot_is_Term(tom_get_head_subs_SubstitutionList(tomMatch113NameNumber_freshVar_24));if (tom_is_fun_sym_var(tomMatch113NameNumber_freshVar_37)) {{  String  tomMatch113NameNumber_freshVar_39=tom_get_slot_var_Name(tomMatch113NameNumber_freshVar_37);{  tom.engine.adt.il.types.SubstitutionList  tomMatch113NameNumber_freshVar_25=tom_get_tail_subs_SubstitutionList(tomMatch113NameNumber_freshVar_24);if ( true ) {
+        return ztermVariableMapFromSubstitutionList(tomMatch310NameNumber_freshVar_2,map);
+      }}}}}}if (tom_is_fun_sym_subs(tomMatch310NameNumberfreshSubject_1)) {{  tom.engine.adt.il.types.SubstitutionList  tomMatch310NameNumber_freshVar_24=tomMatch310NameNumberfreshSubject_1;if (!(tom_is_empty_subs_SubstitutionList(tomMatch310NameNumber_freshVar_24))) {if (tom_is_fun_sym_is(tom_get_head_subs_SubstitutionList(tomMatch310NameNumber_freshVar_24))) {{  tom.engine.adt.il.types.Variable  tomMatch310NameNumber_freshVar_37=tom_get_slot_is_Var(tom_get_head_subs_SubstitutionList(tomMatch310NameNumber_freshVar_24));{  tom.engine.adt.il.types.Term  tomMatch310NameNumber_freshVar_38=tom_get_slot_is_Term(tom_get_head_subs_SubstitutionList(tomMatch310NameNumber_freshVar_24));if (tom_is_fun_sym_var(tomMatch310NameNumber_freshVar_37)) {{  String  tomMatch310NameNumber_freshVar_39=tom_get_slot_var_Name(tomMatch310NameNumber_freshVar_37);{  tom.engine.adt.il.types.SubstitutionList  tomMatch310NameNumber_freshVar_25=tom_get_tail_subs_SubstitutionList(tomMatch310NameNumber_freshVar_24);if ( true ) {
 
-        map.put(tomMatch113NameNumber_freshVar_39,ztermFromTerm(tomMatch113NameNumber_freshVar_38));
-        return ztermVariableMapFromSubstitutionList(tomMatch113NameNumber_freshVar_25,map);
+        map.put(tomMatch310NameNumber_freshVar_39,ztermFromTerm(tomMatch310NameNumber_freshVar_38));
+        return ztermVariableMapFromSubstitutionList(tomMatch310NameNumber_freshVar_25,map);
       }}}}}}}}}}}}
 
     throw new TomRuntimeException(

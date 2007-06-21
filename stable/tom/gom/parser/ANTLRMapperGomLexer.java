@@ -65,16 +65,15 @@ public ANTLRMapperGomLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("public", this), new Integer(8));
-	literals.put(new ANTLRHashString("module", this), new Integer(4));
-	literals.put(new ANTLRHashString("abstract", this), new Integer(10));
-	literals.put(new ANTLRHashString("syntax", this), new Integer(11));
-	literals.put(new ANTLRHashString("sort", this), new Integer(20));
-	literals.put(new ANTLRHashString("private", this), new Integer(23));
-	literals.put(new ANTLRHashString("sorts", this), new Integer(9));
-	literals.put(new ANTLRHashString("import", this), new Integer(24));
-	literals.put(new ANTLRHashString("operator", this), new Integer(21));
 	literals.put(new ANTLRHashString("imports", this), new Integer(7));
+	literals.put(new ANTLRHashString("abstract", this), new Integer(10));
+	literals.put(new ANTLRHashString("private", this), new Integer(23));
+	literals.put(new ANTLRHashString("module", this), new Integer(4));
+	literals.put(new ANTLRHashString("sort", this), new Integer(20));
+	literals.put(new ANTLRHashString("public", this), new Integer(8));
+	literals.put(new ANTLRHashString("operator", this), new Integer(21));
+	literals.put(new ANTLRHashString("syntax", this), new Integer(11));
+	literals.put(new ANTLRHashString("sorts", this), new Integer(9));
 }
 
 public Token nextToken() throws TokenStreamException {

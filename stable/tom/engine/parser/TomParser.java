@@ -614,7 +614,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop54:
+		_loop56:
 		do {
 			if ((LA(1)==ANTI_SYM)) {
 				a = LT(1);
@@ -624,7 +624,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop54;
+				break _loop56;
 			}
 			
 		} while (true);
@@ -639,10 +639,10 @@ inputState.guessing--;
 			}
 		}
 		else {
-			boolean synPredMatched57 = false;
+			boolean synPredMatched59 = false;
 			if ((((LA(1)==ALL_ID||LA(1)==UNDERSCORE))&&(!anti))) {
-				int _m57 = mark();
-				synPredMatched57 = true;
+				int _m59 = mark();
+				synPredMatched59 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -650,12 +650,12 @@ inputState.guessing--;
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched57 = false;
+					synPredMatched59 = false;
 				}
-				rewind(_m57);
+				rewind(_m59);
 inputState.guessing--;
 			}
-			if ( synPredMatched57 ) {
+			if ( synPredMatched59 ) {
 				result=variableStar(optionList,constraintList);
 			}
 			else if (((LA(1)==UNDERSCORE))&&(!anti)) {
@@ -884,10 +884,10 @@ inputState.guessing--;
 		
 		{
 		{
-		boolean synPredMatched48 = false;
+		boolean synPredMatched50 = false;
 		if (((LA(1)==ALL_ID))) {
-			int _m48 = mark();
-			synPredMatched48 = true;
+			int _m50 = mark();
+			synPredMatched50 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -896,12 +896,12 @@ inputState.guessing--;
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched48 = false;
+				synPredMatched50 = false;
 			}
-			rewind(_m48);
+			rewind(_m50);
 inputState.guessing--;
 		}
-		if ( synPredMatched48 ) {
+		if ( synPredMatched50 ) {
 			lname = LT(1);
 			match(ALL_ID);
 			match(COLON);
@@ -922,10 +922,10 @@ inputState.guessing--;
 		
 		}
 		{
-		boolean synPredMatched51 = false;
+		boolean synPredMatched53 = false;
 		if (((LA(1)==ALL_ID))) {
-			int _m51 = mark();
-			synPredMatched51 = true;
+			int _m53 = mark();
+			synPredMatched53 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -934,12 +934,12 @@ inputState.guessing--;
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched51 = false;
+				synPredMatched53 = false;
 			}
-			rewind(_m51);
+			rewind(_m53);
 inputState.guessing--;
 		}
-		if ( synPredMatched51 ) {
+		if ( synPredMatched53 ) {
 			name = LT(1);
 			match(ALL_ID);
 			match(AT);
@@ -988,10 +988,12 @@ inputState.guessing--;
 		Declaration result;
 		
 		Token  name = null;
-		Token  slotName = null;
-		Token  typeArg = null;
-		Token  slotName2 = null;
-		Token  typeArg2 = null;
+		Token  firstSlot1 = null;
+		Token  colon = null;
+		Token  secondSlot1 = null;
+		Token  firstSlot2 = null;
+		Token  colon2 = null;
+		Token  secondSlot2 = null;
 		Token  t = null;
 		
 		result = null;
@@ -1005,6 +1007,7 @@ inputState.guessing--;
 		LinkedList slotNameList = new LinkedList();
 		LinkedList pairNameDeclList = new LinkedList();
 		String stringSlotName = null;
+		String stringTypeArg = null;
 		
 		clearText();
 		
@@ -1014,10 +1017,10 @@ inputState.guessing--;
 		match(ALL_ID);
 		if ( inputState.guessing==0 ) {
 			
-				Option ot = tom_make_OriginTracking(tom_make_Name(name.getText()),name.getLine(),currentFile());
+			Option ot = tom_make_OriginTracking(tom_make_Name(name.getText()),name.getLine(),currentFile());
 			options.add(ot);
-			if (symbolTable.getSymbolFromName(name.getText()) != null) {
-				throw new TomException(TomMessage.invalidStrategyName, new Object[]{name.getText()});
+			if(symbolTable.getSymbolFromName(name.getText()) != null) {
+			throw new TomException(TomMessage.invalidStrategyName, new Object[]{name.getText()});
 			}
 			
 		}
@@ -1027,40 +1030,86 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case ALL_ID:
 		{
-			slotName = LT(1);
+			firstSlot1 = LT(1);
 			match(ALL_ID);
-			match(COLON);
-			typeArg = LT(1);
+			{
+			switch ( LA(1)) {
+			case COLON:
+			{
+				colon = LT(1);
+				match(COLON);
+				break;
+			}
+			case ALL_ID:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			secondSlot1 = LT(1);
 			match(ALL_ID);
 			if ( inputState.guessing==0 ) {
 				
-				stringSlotName = slotName.getText(); 
+				if(colon != null) {
+				stringSlotName = firstSlot1.getText(); 
+				stringTypeArg = secondSlot1.getText(); 
+				} else {
+				stringSlotName = secondSlot1.getText(); 
+				stringTypeArg = firstSlot1.getText(); 
+				}
 				TomName astName = tom_make_Name(stringSlotName);
 				slotNameList.add(astName); 
 				
 				// Define get<slot> method.
-				Option slotOption = tom_make_OriginTracking(tom_make_Name(stringSlotName),slotName.getLine(),currentFile());
+				Option slotOption = tom_make_OriginTracking(tom_make_Name(stringSlotName),firstSlot1.getLine(),currentFile());
 				TomTerm slotVar = tom_make_Variable(tom_cons_list_concOption(slotOption,tom_empty_list_concOption()),tom_make_Name("t"),tom_make_TomTypeAlone("Strategy"),tom_empty_list_concConstraint());
 				Instruction slotInst = tom_make_Return((tom_make_TargetLanguageToTomTerm(tom_make_ITL("((" + name.getText() + ")t).get" + stringSlotName+ "()"))));
 				Declaration slotDecl = tom_make_GetSlotDecl(tom_make_Name(name.getText()),tom_make_Name(stringSlotName),slotVar,slotInst,slotOption);
 				
 				pairNameDeclList.add(tom_make_PairNameDecl(astName,slotDecl)); 
-				types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_TomTypeAlone(typeArg.getText()),tom_empty_list_concTomType()));
+				types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_TomTypeAlone(stringTypeArg),tom_empty_list_concTomType()));
 				
 			}
 			{
-			_loop36:
+			_loop38:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
-					slotName2 = LT(1);
+					firstSlot2 = LT(1);
 					match(ALL_ID);
-					match(COLON);
-					typeArg2 = LT(1);
+					{
+					switch ( LA(1)) {
+					case COLON:
+					{
+						colon2 = LT(1);
+						match(COLON);
+						break;
+					}
+					case ALL_ID:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
+					secondSlot2 = LT(1);
 					match(ALL_ID);
 					if ( inputState.guessing==0 ) {
 						
-						stringSlotName = slotName2.getText(); 
+						if(colon != null) {
+						stringSlotName = firstSlot2.getText(); 
+						stringTypeArg = secondSlot2.getText(); 
+						} else {
+						stringSlotName = secondSlot2.getText(); 
+						stringTypeArg = firstSlot2.getText(); 
+						}
 						TomName astName = ASTFactory.makeName(stringSlotName);
 						if(slotNameList.indexOf(astName) != -1) {
 						getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
@@ -1070,18 +1119,18 @@ inputState.guessing--;
 						slotNameList.add(astName); 
 						
 						// Define get<slot> method.
-						Option slotOption = tom_make_OriginTracking(tom_make_Name(stringSlotName),slotName.getLine(),currentFile());
+						Option slotOption = tom_make_OriginTracking(tom_make_Name(stringSlotName),firstSlot2.getLine(),currentFile());
 						TomTerm slotVar = tom_make_Variable(tom_cons_list_concOption(slotOption,tom_empty_list_concOption()),tom_make_Name("t"),tom_make_TomTypeAlone("Strategy"),tom_empty_list_concConstraint());
 						Instruction slotInst = tom_make_Return((tom_make_TargetLanguageToTomTerm(tom_make_ITL("((" + name.getText() + ")t).get" + stringSlotName+ "()"))));
 						Declaration slotDecl = tom_make_GetSlotDecl(tom_make_Name(name.getText()),tom_make_Name(stringSlotName),slotVar,slotInst,slotOption);
 						
 						pairNameDeclList.add(tom_make_PairNameDecl(tom_make_Name(stringSlotName),slotDecl)); 
-						types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_TomTypeAlone(typeArg2.getText()),tom_empty_list_concTomType()));
+						types = tom_append_list_concTomType(types,tom_cons_list_concTomType(tom_make_TomTypeAlone(stringTypeArg),tom_empty_list_concTomType()));
 						
 					}
 				}
 				else {
-					break _loop36;
+					break _loop38;
 				}
 				
 			} while (true);
@@ -1178,13 +1227,13 @@ inputState.guessing--;
 		
 		
 		{
-		_loop39:
+		_loop41:
 		do {
 			if ((LA(1)==ALL_ID)) {
 				strategyVisit(list);
 			}
 			else {
-				break _loop39;
+				break _loop41;
 			}
 			
 		} while (true);
@@ -1227,13 +1276,13 @@ inputState.guessing--;
 			
 		}
 		{
-		_loop43:
+		_loop45:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				patternInstruction(subjectList,patternInstructionList);
 			}
 			else {
-				break _loop43;
+				break _loop45;
 			}
 			
 		} while (true);
@@ -1601,7 +1650,7 @@ inputState.guessing--;
 			result = tom_append_list_concTomName(result,tom_cons_list_concTomName(name,tom_empty_list_concTomName()));
 		}
 		{
-		_loop132:
+		_loop134:
 		do {
 			if ((LA(1)==ALTERNATIVE)) {
 				match(ALTERNATIVE);
@@ -1614,7 +1663,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop132;
+				break _loop134;
 			}
 			
 		} while (true);
@@ -1772,7 +1821,7 @@ inputState.guessing--;
 			
 		}
 		{
-		_loop125:
+		_loop127:
 		do {
 			if ((LA(1)==ALTERNATIVE)) {
 				match(ALTERNATIVE);
@@ -1787,7 +1836,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop125;
+				break _loop127;
 			}
 			
 		} while (true);
@@ -1829,7 +1878,7 @@ inputState.guessing--;
 		case ANTI_SYM:
 		{
 			{
-			_loop87:
+			_loop89:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					a = LT(1);
@@ -1839,7 +1888,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop87;
+					break _loop89;
 				}
 				
 			} while (true);
@@ -1878,7 +1927,7 @@ inputState.guessing--;
 		{
 			match(LPAREN);
 			{
-			_loop89:
+			_loop91:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					b = LT(1);
@@ -1888,7 +1937,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop89;
+					break _loop91;
 				}
 				
 			} while (true);
@@ -1909,12 +1958,12 @@ inputState.guessing--;
 				
 			}
 			{
-			_loop93:
+			_loop95:
 			do {
 				if ((LA(1)==ALTERNATIVE)) {
 					match(ALTERNATIVE);
 					{
-					_loop92:
+					_loop94:
 					do {
 						if ((LA(1)==ANTI_SYM)) {
 							c = LT(1);
@@ -1924,7 +1973,7 @@ inputState.guessing--;
 							}
 						}
 						else {
-							break _loop92;
+							break _loop94;
 						}
 						
 					} while (true);
@@ -1944,7 +1993,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop93;
+					break _loop95;
 				}
 				
 			} while (true);
@@ -1996,7 +2045,7 @@ inputState.guessing--;
 					list.add(term);
 				}
 				{
-				_loop66:
+				_loop68:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -2009,7 +2058,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop66;
+						break _loop68;
 					}
 					
 				} while (true);
@@ -2051,7 +2100,7 @@ inputState.guessing--;
 					list.add(term);
 				}
 				{
-				_loop69:
+				_loop71:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -2064,7 +2113,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop69;
+						break _loop71;
 					}
 					
 				} while (true);
@@ -2096,7 +2145,7 @@ inputState.guessing--;
 		case UNDERSCORE:
 		{
 			{
-			_loop71:
+			_loop73:
 			do {
 				if (((LA(1)==ALL_ID||LA(1)==UNDERSCORE))&&(LA(1) != XML_CLOSE)) {
 					term=xmlAttribute();
@@ -2105,7 +2154,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop71;
+					break _loop73;
 				}
 				
 			} while (true);
@@ -2273,7 +2322,7 @@ inputState.guessing--;
 			
 			}
 			{
-			_loop76:
+			_loop78:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					a = LT(1);
@@ -2283,7 +2332,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop76;
+					break _loop78;
 				}
 				
 			} while (true);
@@ -2349,7 +2398,7 @@ inputState.guessing--;
 			
 			}
 			{
-			_loop80:
+			_loop82:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					b = LT(1);
@@ -2359,7 +2408,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop80;
+					break _loop82;
 				}
 				
 			} while (true);
@@ -2470,7 +2519,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop83:
+		_loop85:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				term=annotedTerm();
@@ -2479,7 +2528,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop83;
+				break _loop85;
 			}
 			
 		} while (true);
@@ -2528,7 +2577,7 @@ inputState.guessing--;
 				list.add(term);
 			}
 			{
-			_loop102:
+			_loop104:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2541,7 +2590,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop102;
+					break _loop104;
 				}
 				
 			} while (true);
@@ -2583,7 +2632,7 @@ inputState.guessing--;
 			list.add(term);
 		}
 		{
-		_loop112:
+		_loop114:
 		do {
 			if ((LA(1)==COMMA)) {
 				match(COMMA);
@@ -2596,7 +2645,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop112;
+				break _loop114;
 			}
 			
 		} while (true);
@@ -2629,7 +2678,7 @@ inputState.guessing--;
 			list.add(tom_make_PairSlotAppl(tom_make_Name(name.getText()),term));
 		}
 		{
-		_loop116:
+		_loop118:
 		do {
 			if ((LA(1)==COMMA)) {
 				match(COMMA);
@@ -2651,7 +2700,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop116;
+				break _loop118;
 			}
 			
 		} while (true);
@@ -2790,7 +2839,7 @@ inputState.guessing--;
 				
 			}
 			{
-			_loop138:
+			_loop140:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2815,7 +2864,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop138;
+					break _loop140;
 				}
 				
 			} while (true);
@@ -2842,7 +2891,7 @@ inputState.guessing--;
 			
 		}
 		{
-		_loop141:
+		_loop143:
 		do {
 			switch ( LA(1)) {
 			case MAKE:
@@ -2902,7 +2951,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop141;
+				break _loop143;
 			}
 			}
 		} while (true);
@@ -2979,7 +3028,7 @@ inputState.guessing--;
 					
 				}
 				{
-				_loop181:
+				_loop183:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -3005,7 +3054,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop181;
+						break _loop183;
 					}
 					
 				} while (true);
@@ -3192,7 +3241,7 @@ inputState.guessing--;
 		}
 		match(LBRACE);
 		{
-		_loop145:
+		_loop147:
 		do {
 			switch ( LA(1)) {
 			case MAKE_EMPTY:
@@ -3245,7 +3294,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop145;
+				break _loop147;
 			}
 			}
 		} while (true);
@@ -3541,7 +3590,7 @@ inputState.guessing--;
 		}
 		match(LBRACE);
 		{
-		_loop149:
+		_loop151:
 		do {
 			switch ( LA(1)) {
 			case MAKE_EMPTY:
@@ -3586,7 +3635,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop149;
+				break _loop151;
 			}
 			}
 		} while (true);
@@ -3810,7 +3859,7 @@ inputState.guessing--;
 		match(LBRACE);
 		implement=keywordImplement();
 		{
-		_loop153:
+		_loop155:
 		do {
 			switch ( LA(1)) {
 			case VISITOR_FWD:
@@ -3847,7 +3896,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop153;
+				break _loop155;
 			}
 			}
 		} while (true);

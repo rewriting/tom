@@ -110,7 +110,7 @@ public class Gom {
   }
 
   private static void initializeLogging()
-    throws InstantiationException,ClassNotFoundException,
+    throws InstantiationException, ClassNotFoundException,
            IllegalAccessException, IOException {
     String loggingConfigFile = System.getProperty(LOGGINGPROPERTYFILE);
     if (loggingConfigFile == null) { // default > no custom file is used

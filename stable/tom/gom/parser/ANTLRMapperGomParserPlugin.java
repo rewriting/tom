@@ -103,7 +103,7 @@ public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
       if (t != null){
         if(intermediate) {
           Tools.generateOutput(
-              getStreamManager().getInputFileNameWithoutSuffix()
+              getStreamManager().getOutputFileName()
               + PARSEDTERM_SUFFIX, t.genATermFromAST(TokenTable.getTokenMap()));
         }
         module = AST2Gom.getGomModule(t,getStreamManager());
@@ -140,7 +140,7 @@ public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
 
     getLogger().log(Level.INFO, "Parsing succeeds");
     if(intermediate) {
-      Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
+      Tools.generateOutput(getStreamManager().getOutputFileName()
                            + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
     }
   }

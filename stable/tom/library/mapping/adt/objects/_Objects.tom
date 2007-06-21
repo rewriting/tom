@@ -2095,33 +2095,35 @@
   make( _Name,  new_FieldType) { new tom.gom.adt.gom.strategy.field.Make_NamedField( _Name,  new_FieldType) }
 }
 
-%op Strategy _Production(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+%op Strategy _Production(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production._Production)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
   get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.gom.adt.gom.strategy.production._Production(arg0, arg1, arg2) }
+  get_slot(arg3, t) { t.getArgument(3) }
+  make(arg0, arg1, arg2, arg3) { new tom.gom.adt.gom.strategy.production._Production(arg0, arg1, arg2, arg3) }
 }
 
 %op Strategy When_Production(s:Strategy) {
-  make(s) { `Sequence(_Production(Identity(), Identity(), Identity()),s) }
+  make(s) { `Sequence(_Production(Identity(), Identity(), Identity(), Identity()),s) }
 }
 
 %op Strategy Is_Production() {
-  make() { `_Production(Identity(), Identity(), Identity()) }
+  make() { `_Production(Identity(), Identity(), Identity(), Identity()) }
 }
 
-%op Strategy Make_Production(_Name:String, _Domain:Strategy, _Codomain:Strategy) {
+%op Strategy Make_Production(_Name:String, _Domain:Strategy, _Codomain:Strategy, _Option:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.Make_Production)}
 
   get_slot(_Name, t) { _Name }
   get_slot(_Domain, t) { _Domain }
   get_slot(_Codomain, t) { _Codomain }
-  make( _Name,  new_Domain,  new_Codomain) { new tom.gom.adt.gom.strategy.production.Make_Production( _Name,  new_Domain,  new_Codomain) }
+  get_slot(_Option, t) { _Option }
+  make( _Name,  new_Domain,  new_Codomain,  new_Option) { new tom.gom.adt.gom.strategy.production.Make_Production( _Name,  new_Domain,  new_Codomain,  new_Option) }
 }
 
-%op Strategy _Hook(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
+%op Strategy _Hook(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production._Hook)}
 
   get_slot(arg0, t) { t.getArgument(0) }
@@ -2129,18 +2131,19 @@
   get_slot(arg2, t) { t.getArgument(2) }
   get_slot(arg3, t) { t.getArgument(3) }
   get_slot(arg4, t) { t.getArgument(4) }
-  make(arg0, arg1, arg2, arg3, arg4) { new tom.gom.adt.gom.strategy.production._Hook(arg0, arg1, arg2, arg3, arg4) }
+  get_slot(arg5, t) { t.getArgument(5) }
+  make(arg0, arg1, arg2, arg3, arg4, arg5) { new tom.gom.adt.gom.strategy.production._Hook(arg0, arg1, arg2, arg3, arg4, arg5) }
 }
 
 %op Strategy When_Hook(s:Strategy) {
-  make(s) { `Sequence(_Hook(Identity(), Identity(), Identity(), Identity(), Identity()),s) }
+  make(s) { `Sequence(_Hook(Identity(), Identity(), Identity(), Identity(), Identity(), Identity()),s) }
 }
 
 %op Strategy Is_Hook() {
-  make() { `_Hook(Identity(), Identity(), Identity(), Identity(), Identity()) }
+  make() { `_Hook(Identity(), Identity(), Identity(), Identity(), Identity(), Identity()) }
 }
 
-%op Strategy Make_Hook(_NameType:Strategy, _Name:String, _HookType:Strategy, _Args:Strategy, _StringCode:String) {
+%op Strategy Make_Hook(_NameType:Strategy, _Name:String, _HookType:Strategy, _Args:Strategy, _StringCode:String, _Option:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.Make_Hook)}
 
   get_slot(_NameType, t) { _NameType }
@@ -2148,7 +2151,8 @@
   get_slot(_HookType, t) { _HookType }
   get_slot(_Args, t) { _Args }
   get_slot(_StringCode, t) { _StringCode }
-  make( new_NameType,  _Name,  new_HookType,  new_Args,  _StringCode) { new tom.gom.adt.gom.strategy.production.Make_Hook( new_NameType,  _Name,  new_HookType,  new_Args,  _StringCode) }
+  get_slot(_Option, t) { _Option }
+  make( new_NameType,  _Name,  new_HookType,  new_Args,  _StringCode,  new_Option) { new tom.gom.adt.gom.strategy.production.Make_Hook( new_NameType,  _Name,  new_HookType,  new_Args,  _StringCode,  new_Option) }
 }
 
 %op Strategy _ModuleDecl(arg0:Strategy, arg1:Strategy) {
@@ -2261,6 +2265,72 @@
 
   get_slot(_ModuleName, t) { _ModuleName }
   make( new_ModuleName) { new tom.gom.adt.gom.strategy.importedmodule.Make_Import( new_ModuleName) }
+}
+
+%op Strategy _Origin(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option._Origin)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.gom.adt.gom.strategy.option._Origin(arg0) }
+}
+
+%op Strategy When_Origin(s:Strategy) {
+  make(s) { `Sequence(_Origin(Identity()),s) }
+}
+
+%op Strategy Is_Origin() {
+  make() { `_Origin(Identity()) }
+}
+
+%op Strategy Make_Origin(_Line:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option.Make_Origin)}
+
+  get_slot(_Line, t) { _Line }
+  make( _Line) { new tom.gom.adt.gom.strategy.option.Make_Origin( _Line) }
+}
+
+%op Strategy _EmptyOptionList() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option._EmptyOptionList)}
+
+  make() { new tom.gom.adt.gom.strategy.option._EmptyOptionList() }
+}
+
+%op Strategy When_EmptyOptionList(s:Strategy) {
+  make(s) { `Sequence(_EmptyOptionList(),s) }
+}
+
+%op Strategy Is_EmptyOptionList() {
+  make() { `_EmptyOptionList() }
+}
+
+%op Strategy Make_EmptyOptionList() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option.Make_EmptyOptionList)}
+
+  make() { new tom.gom.adt.gom.strategy.option.Make_EmptyOptionList() }
+}
+
+%op Strategy _ConsOptionList(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option._ConsOptionList)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.gom.adt.gom.strategy.option._ConsOptionList(arg0, arg1) }
+}
+
+%op Strategy When_ConsOptionList(s:Strategy) {
+  make(s) { `Sequence(_ConsOptionList(Identity(), Identity()),s) }
+}
+
+%op Strategy Is_ConsOptionList() {
+  make() { `_ConsOptionList(Identity(), Identity()) }
+}
+
+%op Strategy Make_ConsOptionList(_HeadOptionList:Strategy, _TailOptionList:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option.Make_ConsOptionList)}
+
+  get_slot(_HeadOptionList, t) { _HeadOptionList }
+  get_slot(_TailOptionList, t) { _TailOptionList }
+  make( new_HeadOptionList,  new_TailOptionList) { new tom.gom.adt.gom.strategy.option.Make_ConsOptionList( new_HeadOptionList,  new_TailOptionList) }
 }
 
 %op Strategy _HookKind(arg0:Strategy) {
@@ -2383,5 +2453,10 @@
             %op Strategy _concModule(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x"),Choice(_ConsconcModule(sub,MuVar("x")),_EmptyconcModule())) }
+            }
+            
+            %op Strategy _OptionList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsOptionList(sub,MuVar("x")),_EmptyOptionList())) }
             }
             

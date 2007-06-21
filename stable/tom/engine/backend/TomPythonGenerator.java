@@ -268,11 +268,11 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              if (tom_is_sort_TomTerm(arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch70NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if (tom_is_fun_sym_Variable(tomMatch70NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch70NameNumber_freshVar_1=tom_get_slot_Variable_AstName(tomMatch70NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_2=tom_get_slot_Variable_AstType(tomMatch70NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch70NameNumber_freshVar_1)) {{  String  tomMatch70NameNumber_freshVar_3=tom_get_slot_Name_String(tomMatch70NameNumber_freshVar_1);if (tom_is_fun_sym_Type(tomMatch70NameNumber_freshVar_2)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_4=tom_get_slot_Type_TomType(tomMatch70NameNumber_freshVar_2);{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_5=tom_get_slot_Type_TlType(tomMatch70NameNumber_freshVar_2);{  tom.engine.adt.tomtype.types.TomType  tomMatch70NameNumber_freshVar_0=tomMatch70NameNumber_freshVar_5;if (tom_is_fun_sym_TLType(tomMatch70NameNumber_freshVar_0)) {if ( true ) {
+              if (tom_is_sort_TomTerm(arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch75NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if (tom_is_fun_sym_Variable(tomMatch75NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch75NameNumber_freshVar_0=tom_get_slot_Variable_AstName(tomMatch75NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch75NameNumber_freshVar_1=tom_get_slot_Variable_AstType(tomMatch75NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch75NameNumber_freshVar_0)) {{  String  tomMatch75NameNumber_freshVar_2=tom_get_slot_Name_String(tomMatch75NameNumber_freshVar_0);if (tom_is_fun_sym_Type(tomMatch75NameNumber_freshVar_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch75NameNumber_freshVar_3=tom_get_slot_Type_TlType(tomMatch75NameNumber_freshVar_1);if (tom_is_fun_sym_TLType(tomMatch75NameNumber_freshVar_3)) {if ( true ) {
 
-                  s.append(tomMatch70NameNumber_freshVar_3);
+                  s.append(tomMatch75NameNumber_freshVar_2);
                   break matchBlock;
-                }}}}}}}}}}}if ( true ) {
+                }}}}}}}}}if ( true ) {
 
 
                   System.out.println("genDeclMake: strange term: " + arg);
@@ -337,12 +337,12 @@ matchBlock: {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
 matchBlock: {
-              if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch71NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch71NameNumber_freshVar_0=tomMatch71NameNumberfreshSubject_1;if (tom_is_fun_sym_Variable(tomMatch71NameNumber_freshVar_0)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch71NameNumber_freshVar_1=tom_get_slot_Variable_AstType(tomMatch71NameNumber_freshVar_0);if ( true ) {
+              if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch76NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch76NameNumber_freshVar_0=tomMatch76NameNumberfreshSubject_1;if (tom_is_fun_sym_Variable(tomMatch76NameNumber_freshVar_0)) {if ( true ) {
 
                   //output.write(deep,getTLType(`type2) + " ");
-                  generate(deep,tomMatch71NameNumber_freshVar_0,moduleName);
+                  generate(deep,tomMatch76NameNumber_freshVar_0,moduleName);
                   break matchBlock;
-                }}}}if ( true ) {
+                }}}if ( true ) {
 
                   System.out.println("MakeFunction: strange term: " + localVar);
                   throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
@@ -386,11 +386,11 @@ matchBlock: {
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     s.append("):\n " + returnValue + "\n");
 
-    if (tom_is_sort_TargetLanguage(tlCode)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch72NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if (tom_is_fun_sym_TL(tomMatch72NameNumberfreshSubject_1)) {{  String  tomMatch72NameNumber_freshVar_0=tom_get_slot_TL_Code(tomMatch72NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch72NameNumber_freshVar_1=tom_get_slot_TL_Start(tomMatch72NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch72NameNumber_freshVar_2=tom_get_slot_TL_End(tomMatch72NameNumberfreshSubject_1);if (tom_is_fun_sym_TextPosition(tomMatch72NameNumber_freshVar_1)) {{  int  tomMatch72NameNumber_freshVar_3=tom_get_slot_TextPosition_Line(tomMatch72NameNumber_freshVar_1);{  int  tom_startLine=tomMatch72NameNumber_freshVar_3;if (tom_is_fun_sym_TextPosition(tomMatch72NameNumber_freshVar_2)) {{  int  tomMatch72NameNumber_freshVar_4=tom_get_slot_TextPosition_Line(tomMatch72NameNumber_freshVar_2);if ( true ) {
+    if (tom_is_sort_TargetLanguage(tlCode)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch77NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if (tom_is_fun_sym_TL(tomMatch77NameNumberfreshSubject_1)) {{  String  tomMatch77NameNumber_freshVar_0=tom_get_slot_TL_Code(tomMatch77NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch77NameNumber_freshVar_1=tom_get_slot_TL_Start(tomMatch77NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch77NameNumber_freshVar_2=tom_get_slot_TL_End(tomMatch77NameNumberfreshSubject_1);if (tom_is_fun_sym_TextPosition(tomMatch77NameNumber_freshVar_1)) {{  int  tomMatch77NameNumber_freshVar_3=tom_get_slot_TextPosition_Line(tomMatch77NameNumber_freshVar_1);{  int  tom_startLine=tomMatch77NameNumber_freshVar_3;if (tom_is_fun_sym_TextPosition(tomMatch77NameNumber_freshVar_2)) {{  int  tomMatch77NameNumber_freshVar_4=tom_get_slot_TextPosition_Line(tomMatch77NameNumber_freshVar_2);if ( true ) {
 
-        output.write(0,s, tom_startLine, tomMatch72NameNumber_freshVar_4- tom_startLine);
+        output.write(0,s, tom_startLine, tomMatch77NameNumber_freshVar_4- tom_startLine);
         return;
-      }}}}}}}}}}if (tom_is_fun_sym_ITL(tomMatch72NameNumberfreshSubject_1)) {{  String  tomMatch72NameNumber_freshVar_5=tom_get_slot_ITL_Code(tomMatch72NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}}}}}if (tom_is_fun_sym_ITL(tomMatch77NameNumberfreshSubject_1)) {{  String  tomMatch77NameNumber_freshVar_5=tom_get_slot_ITL_Code(tomMatch77NameNumberfreshSubject_1);if ( true ) {
 
   // pas de \n donc pas besoin de reworkTL
         output.write(s);

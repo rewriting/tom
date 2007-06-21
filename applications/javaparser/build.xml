@@ -32,6 +32,12 @@
       <include name="Gomantlr_Java.g.t"/>
     </tom.preset>
 
+    <tom.preset srcdir="${jparse.src}"
+                destdir="${jparse.gen}">
+      <include name="*.t"/>
+      <exclude name="Gomantlr_Java.g.t"/>
+    </tom.preset>
+
     <antlr:antlr3 xmlns:antlr="antlib:org/apache/tools/ant/antlr"
                   target="${jparse.gen}/Gomantlr_Java.g"
                   outputdirectory="${jparse.gen}"

@@ -96,6 +96,42 @@
   make(t0, t1) { tom.gom.adt.rule.types.condition.CondNotEquals.make(t0, t1) }
 }
 
+%op Condition CondLessEquals(t1:Term, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondLessEquals }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondLessEquals.make(t0, t1) }
+}
+
+%op Condition CondLessThan(t1:Term, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondLessThan }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondLessThan.make(t0, t1) }
+}
+
+%op Condition CondGreaterEquals(t1:Term, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondGreaterEquals }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondGreaterEquals.make(t0, t1) }
+}
+
+%op Condition CondGreaterThan(t1:Term, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondGreaterThan }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondGreaterThan.make(t0, t1) }
+}
+
+%op Condition CondMethod(t1:Term, name:String, t2:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.condition.CondMethod }
+  get_slot(t1, t) { t.gett1() }
+  get_slot(name, t) { t.getname() }
+  get_slot(t2, t) { t.gett2() }
+  make(t0, t1, t2) { tom.gom.adt.rule.types.condition.CondMethod.make(t0, t1, t2) }
+}
+
 %op Term Appl(symbol:String, args:TermList) {
   is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.Appl }
   get_slot(symbol, t) { t.getsymbol() }

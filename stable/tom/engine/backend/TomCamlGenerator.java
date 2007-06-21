@@ -184,9 +184,9 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.indent(deep);
     output.write("let ");
     generate(deep,var,moduleName);
-    output.write(" = ref ");
+    output.write(" = ref (");
     generateExpression(deep,exp,moduleName);
-    output.writeln(" in ");
+    output.writeln(") in ");
     generateInstruction(deep,body,moduleName);
   }
 
@@ -231,7 +231,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
 
   protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
-    output.writeln(deep,"let tom_internal_cond = ref true in");
+    output.writeln(deep,"let tom_internal_cond = ref true in ");
     output.writeln(deep,"while !tom_internal_cond do");
     generateInstruction(deep+1,succes,moduleName);
     output.writeln(deep+1,"; tom_internal_cond := ");
@@ -270,11 +270,11 @@ public class TomCamlGenerator extends TomGenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    if (tom_is_sort_TargetLanguage(tlCode)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch47NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if (tom_is_fun_sym_TL(tomMatch47NameNumberfreshSubject_1)) {{  String  tomMatch47NameNumber_freshVar_0=tom_get_slot_TL_Code(tomMatch47NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch47NameNumber_freshVar_1=tom_get_slot_TL_Start(tomMatch47NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch47NameNumber_freshVar_2=tom_get_slot_TL_End(tomMatch47NameNumberfreshSubject_1);if (tom_is_fun_sym_TextPosition(tomMatch47NameNumber_freshVar_1)) {{  int  tomMatch47NameNumber_freshVar_3=tom_get_slot_TextPosition_Line(tomMatch47NameNumber_freshVar_1);{  int  tom_startLine=tomMatch47NameNumber_freshVar_3;if (tom_is_fun_sym_TextPosition(tomMatch47NameNumber_freshVar_2)) {{  int  tomMatch47NameNumber_freshVar_4=tom_get_slot_TextPosition_Line(tomMatch47NameNumber_freshVar_2);if ( true ) {
+    if (tom_is_sort_TargetLanguage(tlCode)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch52NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if (tom_is_fun_sym_TL(tomMatch52NameNumberfreshSubject_1)) {{  String  tomMatch52NameNumber_freshVar_0=tom_get_slot_TL_Code(tomMatch52NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch52NameNumber_freshVar_1=tom_get_slot_TL_Start(tomMatch52NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch52NameNumber_freshVar_2=tom_get_slot_TL_End(tomMatch52NameNumberfreshSubject_1);if (tom_is_fun_sym_TextPosition(tomMatch52NameNumber_freshVar_1)) {{  int  tomMatch52NameNumber_freshVar_3=tom_get_slot_TextPosition_Line(tomMatch52NameNumber_freshVar_1);{  int  tom_startLine=tomMatch52NameNumber_freshVar_3;if (tom_is_fun_sym_TextPosition(tomMatch52NameNumber_freshVar_2)) {{  int  tomMatch52NameNumber_freshVar_4=tom_get_slot_TextPosition_Line(tomMatch52NameNumber_freshVar_2);if ( true ) {
 
-        output.write(0,s, tom_startLine, tomMatch47NameNumber_freshVar_4- tom_startLine);
+        output.write(0,s, tom_startLine, tomMatch52NameNumber_freshVar_4- tom_startLine);
         return;
-      }}}}}}}}}}if (tom_is_fun_sym_ITL(tomMatch47NameNumberfreshSubject_1)) {{  String  tomMatch47NameNumber_freshVar_5=tom_get_slot_ITL_Code(tomMatch47NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}}}}}if (tom_is_fun_sym_ITL(tomMatch52NameNumberfreshSubject_1)) {{  String  tomMatch52NameNumber_freshVar_5=tom_get_slot_ITL_Code(tomMatch52NameNumberfreshSubject_1);if ( true ) {
 
 
         output.write(s);
@@ -293,10 +293,10 @@ public class TomCamlGenerator extends TomGenericGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-        if (tom_is_sort_TomTerm(arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch48NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if (tom_is_fun_sym_Variable(tomMatch48NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch48NameNumber_freshVar_0=tom_get_slot_Variable_AstName(tomMatch48NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch48NameNumber_freshVar_0)) {{  String  tomMatch48NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch48NameNumber_freshVar_0);if ( true ) {
+        if (tom_is_sort_TomTerm(arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch53NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if (tom_is_fun_sym_Variable(tomMatch53NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch53NameNumber_freshVar_0=tom_get_slot_Variable_AstName(tomMatch53NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch53NameNumber_freshVar_0)) {{  String  tomMatch53NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch53NameNumber_freshVar_0);if ( true ) {
 
 
-            s.append(tomMatch48NameNumber_freshVar_1);
+            s.append(tomMatch53NameNumber_freshVar_1);
             break matchBlock;
           }}}}}if ( true ) {
 

@@ -77,6 +77,10 @@ public class TomMessage implements PlatformMessage {
   // Debug messages
   public static final TomMessage setValue              =
       new TomMessage("TomOptionManager: Set ''{0}'' to ''{1}'' (old value : ''{2}'')");
+  // Warnings
+  public static final TomMessage optimizerModifiesLineNumbers              =
+    new TomMessage("WARNING: The optimizer has activated the option pretty and line numbers are not preserved in the generated code." +
+                " Please disable the optimizer if you need correct line numbers.");  
 
   // TomPluginFactory
   public static final TomMessage classNotAPlugin       =
@@ -124,11 +128,11 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage errorWhileIncludingFile=
       new TomMessage("Exception ''{0}'' occurs in parsing file ''{1}'' included in file {2} at line {3,number,integer}: See stacktrace\n\n{4}");
   public static final TomMessage gomFailure =
-      new TomMessage("An error occurs dealing with %gom input in ''{0}'' at line {1,number,integer}");
+      new TomMessage("An error occured dealing with %gom input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasPlatformFailure    =
       new TomMessage("Fail to obtain a Vas PluginPlatform in ''{0}'' at line {1,number,integer}");
   public static final TomMessage vasFailure            =
-      new TomMessage("An error occurs dealing with vas input in ''{0}'' at line {1,number,integer}");
+      new TomMessage("An error occured dealing with vas input in ''{0}'' at line {1,number,integer}");
   public static final TomMessage iOExceptionWithGeneratedTomFile=
       new TomMessage("Generated file ''{0}'' from vas in file ''{1}'' caused an IOException: {2}");
   public static final TomMessage exceptionWithGeneratedTomFile =
@@ -278,6 +282,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("The symbol ''{0}'' has type ''{1}'' but type ''{2}'' was required in disjunction");
   public static final TomMessage invalidDisjunctionDomain=
       new TomMessage("The symbols ''{0}'' and ''{1}'' do not have the same domain");
+  public static final TomMessage invalidDisjunctionSlotName =
+      new TomMessage("The symbol ''{0}'' does not have a slot named ''{1}''");
   public static final TomMessage bracketOnListSymbol     =
       new TomMessage("[] are not allowed on lists or arrays, see ''{0}''");
   public static final TomMessage slotRepeated=

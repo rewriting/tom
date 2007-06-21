@@ -213,9 +213,9 @@ public class TomParserPlugin extends TomGenericPlugin {
       Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
       }
     if(intermediate) {
-      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
+      Tools.generateOutput(getStreamManager().getOutputFileName() 
                            + PARSED_SUFFIX, (tom.library.sl.Visitable)getWorkingTerm());
-      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
+      Tools.generateOutput(getStreamManager().getOutputFileName() 
                            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
     }
   }

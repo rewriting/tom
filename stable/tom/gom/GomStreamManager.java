@@ -163,17 +163,12 @@ public class GomStreamManager {
     }
   }
 
-  public String getInputFileNameWithoutSuffix() {
-    if (!inputFileName.equals("-")) {
-      String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
-      return res;
+  public String getOutputFileName() {
+    /* if intermediateName is set and we use stdin, use it, otherwise use "-" */
+    if (inputFileName.equals("-") && null != intermediateName) {
+      return intermediateName;
     } else {
-      /* if intermediateName is set, use it, otherwise use "-" */
-      if(null != intermediateName) {
-        return intermediateName;
-      } else {
-        return inputFileName;
-      }
+      return inputFileName;
     }
   }
 

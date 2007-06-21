@@ -251,11 +251,11 @@ public class TomBackend extends TomGenericPlugin {
     getSymbolTable(moduleName).setUsedTypeDefinition(tomTypeName);
   }
 
-  private static class Collector extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  tom.library.sl.Strategy  markStrategy; private  TomBackend  tb; private  Stack  stack; public Collector( tom.library.sl.Strategy  markStrategy,  TomBackend  tb,  Stack  stack) { super(tom_make_Identity());this.markStrategy=markStrategy;this.tb=tb;this.stack=stack;}public  tom.library.sl.Strategy  getmarkStrategy() { return markStrategy;}public  TomBackend  gettb() { return tb;}public  Stack  getstack() { return stack;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 2; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);case 1: return getmarkStrategy();default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);case 1: markStrategy = ( tom.library.sl.Strategy )child; return this;default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch1NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_CompiledMatch(tomMatch1NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch1NameNumber_freshVar_0=tom_get_slot_CompiledMatch_AutomataInst(tomMatch1NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.OptionList  tomMatch1NameNumber_freshVar_1=tom_get_slot_CompiledMatch_Option(tomMatch1NameNumberfreshSubject_1);if ( true ) {
+  private static class Collector extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  tom.library.sl.Strategy  markStrategy; private  TomBackend  tb; private  Stack  stack; public Collector( tom.library.sl.Strategy  markStrategy,  TomBackend  tb,  Stack  stack) { super(tom_make_Identity());this.markStrategy=markStrategy;this.tb=tb;this.stack=stack;}public  tom.library.sl.Strategy  getmarkStrategy() { return markStrategy;}public  TomBackend  gettb() { return tb;}public  Stack  getstack() { return stack;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 2; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);case 1: return getmarkStrategy();default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);case 1: markStrategy = ( tom.library.sl.Strategy )child; return this;default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch45NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if (tom_is_fun_sym_CompiledMatch(tomMatch45NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch45NameNumber_freshVar_0=tom_get_slot_CompiledMatch_AutomataInst(tomMatch45NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.OptionList  tomMatch45NameNumber_freshVar_1=tom_get_slot_CompiledMatch_Option(tomMatch45NameNumberfreshSubject_1);if ( true ) {
 
 
 
-        String moduleName = TomBase.getModuleName(tomMatch1NameNumber_freshVar_1);
+        String moduleName = TomBase.getModuleName(tomMatch45NameNumber_freshVar_1);
         /*
          * push the modulename
          * or the wrapping modulename if the current one
@@ -274,17 +274,17 @@ public class TomBackend extends TomGenericPlugin {
           //System.out.println("push1: " + moduleName);
         }
         //System.out.println("match -> moduleName = " + moduleName);
-        markStrategy.visitLight(tomMatch1NameNumber_freshVar_0);
+        markStrategy.visitLight(tomMatch45NameNumber_freshVar_0);
         //String pop = (String) stack.pop();
         //System.out.println("pop: " + pop);
         throw new tom.library.sl.VisitFailure();
 
-      }}}}if (tom_is_fun_sym_TypedAction(tomMatch1NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch1NameNumber_freshVar_2=tom_get_slot_TypedAction_AstInstruction(tomMatch1NameNumberfreshSubject_1);if ( true ) {
+      }}}}if (tom_is_fun_sym_TypedAction(tomMatch45NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch45NameNumber_freshVar_2=tom_get_slot_TypedAction_AstInstruction(tomMatch45NameNumberfreshSubject_1);if ( true ) {
 
 
-        markStrategy.visitLight(tomMatch1NameNumber_freshVar_2);
+        markStrategy.visitLight(tomMatch45NameNumber_freshVar_2);
         throw new tom.library.sl.VisitFailure();
-      }}}}}return super.visit_Instruction(tom__arg); }public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch2NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);{ boolean tomMatch2NameNumber_freshVar_2= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch2NameNumber_freshVar_0= null ;if (tom_is_fun_sym_IsEmptyList(tomMatch2NameNumberfreshSubject_1)) {{tomMatch2NameNumber_freshVar_2= true ;tomMatch2NameNumber_freshVar_0=tom_get_slot_IsEmptyList_Opname(tomMatch2NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_IsEmptyArray(tomMatch2NameNumberfreshSubject_1)) {{tomMatch2NameNumber_freshVar_2= true ;tomMatch2NameNumber_freshVar_0=tom_get_slot_IsEmptyArray_Opname(tomMatch2NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_GetHead(tomMatch2NameNumberfreshSubject_1)) {{tomMatch2NameNumber_freshVar_2= true ;tomMatch2NameNumber_freshVar_0=tom_get_slot_GetHead_Opname(tomMatch2NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_GetTail(tomMatch2NameNumberfreshSubject_1)) {{tomMatch2NameNumber_freshVar_2= true ;tomMatch2NameNumber_freshVar_0=tom_get_slot_GetTail_Opname(tomMatch2NameNumberfreshSubject_1);}}}}}if ((tomMatch2NameNumber_freshVar_2 ==  true )) {if (tom_is_fun_sym_Name(tomMatch2NameNumber_freshVar_0)) {{  String  tomMatch2NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch2NameNumber_freshVar_0);if ( true ) {
+      }}}}}return super.visit_Instruction(tom__arg); }public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch46NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);{ boolean tomMatch46NameNumber_freshVar_2= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch46NameNumber_freshVar_0= null ;if (tom_is_fun_sym_IsEmptyList(tomMatch46NameNumberfreshSubject_1)) {{tomMatch46NameNumber_freshVar_2= true ;tomMatch46NameNumber_freshVar_0=tom_get_slot_IsEmptyList_Opname(tomMatch46NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_IsEmptyArray(tomMatch46NameNumberfreshSubject_1)) {{tomMatch46NameNumber_freshVar_2= true ;tomMatch46NameNumber_freshVar_0=tom_get_slot_IsEmptyArray_Opname(tomMatch46NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_GetHead(tomMatch46NameNumberfreshSubject_1)) {{tomMatch46NameNumber_freshVar_2= true ;tomMatch46NameNumber_freshVar_0=tom_get_slot_GetHead_Opname(tomMatch46NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_GetTail(tomMatch46NameNumberfreshSubject_1)) {{tomMatch46NameNumber_freshVar_2= true ;tomMatch46NameNumber_freshVar_0=tom_get_slot_GetTail_Opname(tomMatch46NameNumberfreshSubject_1);}}}}}if ((tomMatch46NameNumber_freshVar_2 ==  true )) {if (tom_is_fun_sym_Name(tomMatch46NameNumber_freshVar_0)) {{  String  tomMatch46NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch46NameNumber_freshVar_0);if ( true ) {
 
 
 
@@ -293,35 +293,35 @@ public class TomBackend extends TomGenericPlugin {
           // System.out.println("list check: " + `name);
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch2NameNumber_freshVar_1,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch46NameNumber_freshVar_1,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}if (tom_is_fun_sym_IsFsym(tomMatch2NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch2NameNumber_freshVar_3=tom_get_slot_IsFsym_AstName(tomMatch2NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch2NameNumber_freshVar_3)) {{  String  tomMatch2NameNumber_freshVar_4=tom_get_slot_Name_String(tomMatch2NameNumber_freshVar_3);if ( true ) {
+      }}}}}}if (tom_is_fun_sym_IsFsym(tomMatch46NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch46NameNumber_freshVar_3=tom_get_slot_IsFsym_AstName(tomMatch46NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch46NameNumber_freshVar_3)) {{  String  tomMatch46NameNumber_freshVar_4=tom_get_slot_Name_String(tomMatch46NameNumber_freshVar_3);if ( true ) {
 
 
         try {
           // System.out.println("list check: " + `name);
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch2NameNumber_freshVar_4,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch46NameNumber_freshVar_4,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}}return super.visit_Expression(tom__arg); }public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomType(tom__arg)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch3NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tom__arg);if (tom_is_fun_sym_Type(tomMatch3NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch3NameNumber_freshVar_0=tom_get_slot_Type_TomType(tomMatch3NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch3NameNumber_freshVar_1=tom_get_slot_Type_TlType(tomMatch3NameNumberfreshSubject_1);if (tom_is_fun_sym_ASTTomType(tomMatch3NameNumber_freshVar_0)) {{  String  tomMatch3NameNumber_freshVar_2=tom_get_slot_ASTTomType_String(tomMatch3NameNumber_freshVar_0);if ( true ) {
+      }}}}}}}return super.visit_Expression(tom__arg); }public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomType(tom__arg)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch47NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tom__arg);if (tom_is_fun_sym_Type(tomMatch47NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch47NameNumber_freshVar_0=tom_get_slot_Type_TomType(tomMatch47NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch47NameNumber_freshVar_1=tom_get_slot_Type_TlType(tomMatch47NameNumberfreshSubject_1);if (tom_is_fun_sym_ASTTomType(tomMatch47NameNumber_freshVar_0)) {{  String  tomMatch47NameNumber_freshVar_2=tom_get_slot_ASTTomType_String(tomMatch47NameNumber_freshVar_0);if ( true ) {
 
 
 
 
         try {
           String moduleName = (String) stack.peek();
-          tb.setUsedTypeDefinition(moduleName,tomMatch3NameNumber_freshVar_2,markStrategy);
+          tb.setUsedTypeDefinition(moduleName,tomMatch47NameNumber_freshVar_2,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}}}return super.visit_TomType(tom__arg); }public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Declaration(tom__arg)) {{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch4NameNumberfreshSubject_1=(( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg);if (tom_is_fun_sym_TypeTermDecl(tomMatch4NameNumberfreshSubject_1)) {if ( true ) {
+      }}}}}}}}return super.visit_TomType(tom__arg); }public  tom.engine.adt.tomdeclaration.types.Declaration  visit_Declaration( tom.engine.adt.tomdeclaration.types.Declaration  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Declaration(tom__arg)) {{  tom.engine.adt.tomdeclaration.types.Declaration  tomMatch48NameNumberfreshSubject_1=(( tom.engine.adt.tomdeclaration.types.Declaration )tom__arg);if (tom_is_fun_sym_TypeTermDecl(tomMatch48NameNumberfreshSubject_1)) {if ( true ) {
 
 
 
@@ -329,13 +329,13 @@ public class TomBackend extends TomGenericPlugin {
         // should not search under a declaration
         //System.out.println("skip: " + `x);
         throw new tom.library.sl.VisitFailure();
-      }}}}return super.visit_Declaration(tom__arg); }public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomTerm(tom__arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch5NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);{ boolean tomMatch5NameNumber_freshVar_1= false ;{  tom.engine.adt.tomname.types.TomNameList  tomMatch5NameNumber_freshVar_0= null ;if (tom_is_fun_sym_TermAppl(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_1= true ;tomMatch5NameNumber_freshVar_0=tom_get_slot_TermAppl_NameList(tomMatch5NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_RecordAppl(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_1= true ;tomMatch5NameNumber_freshVar_0=tom_get_slot_RecordAppl_NameList(tomMatch5NameNumberfreshSubject_1);}}}if ((tomMatch5NameNumber_freshVar_1 ==  true )) {if ( true ) {
+      }}}}return super.visit_Declaration(tom__arg); }public  tom.engine.adt.tomterm.types.TomTerm  visit_TomTerm( tom.engine.adt.tomterm.types.TomTerm  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomTerm(tom__arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch49NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tom__arg);{ boolean tomMatch49NameNumber_freshVar_1= false ;{  tom.engine.adt.tomname.types.TomNameList  tomMatch49NameNumber_freshVar_0= null ;if (tom_is_fun_sym_TermAppl(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_1= true ;tomMatch49NameNumber_freshVar_0=tom_get_slot_TermAppl_NameList(tomMatch49NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_RecordAppl(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_1= true ;tomMatch49NameNumber_freshVar_0=tom_get_slot_RecordAppl_NameList(tomMatch49NameNumberfreshSubject_1);}}}if ((tomMatch49NameNumber_freshVar_1 ==  true )) {if ( true ) {
 
 
 
 
 
-        TomNameList l = tomMatch5NameNumber_freshVar_0;
+        TomNameList l = tomMatch49NameNumber_freshVar_0;
         // System.out.println("dest " + `l);
         while(!l.isEmptyconcTomName()) {
           try {
@@ -355,24 +355,24 @@ public class TomBackend extends TomGenericPlugin {
          * therefore, they are marked when traversing the compiledAutomata
          */
         throw new tom.library.sl.VisitFailure();
-      }}}}{ boolean tomMatch5NameNumber_freshVar_4= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch5NameNumber_freshVar_2= null ;if (tom_is_fun_sym_BuildTerm(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_4= true ;tomMatch5NameNumber_freshVar_2=tom_get_slot_BuildTerm_AstName(tomMatch5NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildEmptyArray(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_4= true ;tomMatch5NameNumber_freshVar_2=tom_get_slot_BuildEmptyArray_AstName(tomMatch5NameNumberfreshSubject_1);}}}if ((tomMatch5NameNumber_freshVar_4 ==  true )) {if (tom_is_fun_sym_Name(tomMatch5NameNumber_freshVar_2)) {{  String  tomMatch5NameNumber_freshVar_3=tom_get_slot_Name_String(tomMatch5NameNumber_freshVar_2);if ( true ) {
+      }}}}{ boolean tomMatch49NameNumber_freshVar_4= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch49NameNumber_freshVar_2= null ;if (tom_is_fun_sym_BuildTerm(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_4= true ;tomMatch49NameNumber_freshVar_2=tom_get_slot_BuildTerm_AstName(tomMatch49NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildEmptyArray(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_4= true ;tomMatch49NameNumber_freshVar_2=tom_get_slot_BuildEmptyArray_AstName(tomMatch49NameNumberfreshSubject_1);}}}if ((tomMatch49NameNumber_freshVar_4 ==  true )) {if (tom_is_fun_sym_Name(tomMatch49NameNumber_freshVar_2)) {{  String  tomMatch49NameNumber_freshVar_3=tom_get_slot_Name_String(tomMatch49NameNumber_freshVar_2);if ( true ) {
 
         try {
           // System.out.println("build: " + `name);
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch5NameNumber_freshVar_3,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch49NameNumber_freshVar_3,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
-      }}}}}}{ boolean tomMatch5NameNumber_freshVar_7= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch5NameNumber_freshVar_5= null ;if (tom_is_fun_sym_BuildConsList(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_7= true ;tomMatch5NameNumber_freshVar_5=tom_get_slot_BuildConsList_AstName(tomMatch5NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildEmptyList(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_7= true ;tomMatch5NameNumber_freshVar_5=tom_get_slot_BuildEmptyList_AstName(tomMatch5NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildAppendList(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_7= true ;tomMatch5NameNumber_freshVar_5=tom_get_slot_BuildAppendList_AstName(tomMatch5NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildConsArray(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_7= true ;tomMatch5NameNumber_freshVar_5=tom_get_slot_BuildConsArray_AstName(tomMatch5NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildAppendArray(tomMatch5NameNumberfreshSubject_1)) {{tomMatch5NameNumber_freshVar_7= true ;tomMatch5NameNumber_freshVar_5=tom_get_slot_BuildAppendArray_AstName(tomMatch5NameNumberfreshSubject_1);}}}}}}if ((tomMatch5NameNumber_freshVar_7 ==  true )) {if (tom_is_fun_sym_Name(tomMatch5NameNumber_freshVar_5)) {{  String  tomMatch5NameNumber_freshVar_6=tom_get_slot_Name_String(tomMatch5NameNumber_freshVar_5);if ( true ) {
+      }}}}}}{ boolean tomMatch49NameNumber_freshVar_7= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch49NameNumber_freshVar_5= null ;if (tom_is_fun_sym_BuildConsList(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_7= true ;tomMatch49NameNumber_freshVar_5=tom_get_slot_BuildConsList_AstName(tomMatch49NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildEmptyList(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_7= true ;tomMatch49NameNumber_freshVar_5=tom_get_slot_BuildEmptyList_AstName(tomMatch49NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildAppendList(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_7= true ;tomMatch49NameNumber_freshVar_5=tom_get_slot_BuildAppendList_AstName(tomMatch49NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildConsArray(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_7= true ;tomMatch49NameNumber_freshVar_5=tom_get_slot_BuildConsArray_AstName(tomMatch49NameNumberfreshSubject_1);}} else {if (tom_is_fun_sym_BuildAppendArray(tomMatch49NameNumberfreshSubject_1)) {{tomMatch49NameNumber_freshVar_7= true ;tomMatch49NameNumber_freshVar_5=tom_get_slot_BuildAppendArray_AstName(tomMatch49NameNumberfreshSubject_1);}}}}}}if ((tomMatch49NameNumber_freshVar_7 ==  true )) {if (tom_is_fun_sym_Name(tomMatch49NameNumber_freshVar_5)) {{  String  tomMatch49NameNumber_freshVar_6=tom_get_slot_Name_String(tomMatch49NameNumber_freshVar_5);if ( true ) {
 
         try {
           // System.out.println("build: " + `name);
           String moduleName = (String) stack.peek();
           //System.out.println("moduleName: " + moduleName);
-          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch5NameNumber_freshVar_6,tb.getSymbolTable(moduleName)); 
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(tomMatch49NameNumber_freshVar_6,tb.getSymbolTable(moduleName)); 
           tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
           /* XXX: Also mark the destructors as used, since some generated
            * functions will use them */

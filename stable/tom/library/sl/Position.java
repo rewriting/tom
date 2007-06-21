@@ -44,6 +44,11 @@ public class Position implements Cloneable,Path {
 
   private int[] omega;
 
+  /* construct the root position */
+  public Position(){
+    omega = new int[0];
+  }
+  
   public Position(int[] omega){
     this.omega = new int[omega.length];
     System.arraycopy(omega, 0, this.omega, 0, omega.length);
@@ -224,7 +229,7 @@ public class Position implements Cloneable,Path {
                 return Environment.SUCCESS;
               }
               public Visitable visitLight(Visitable v) {
-                ref[0] = (Visitable)v;
+                ref[0] = v;
                 return v;
               }
             });

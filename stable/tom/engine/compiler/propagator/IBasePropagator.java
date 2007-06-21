@@ -26,10 +26,11 @@
 package tom.engine.compiler.propagator;
 
 import tom.engine.adt.tomconstraint.types.*;
+import tom.library.sl.*;
 
 /**
  * Base interface for propagators
  */
 public interface IBasePropagator {
-  public Constraint propagate(Constraint constraint);
+  public Constraint propagate(Constraint constraint) throws VisitFailure;
 }

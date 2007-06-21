@@ -61,6 +61,14 @@ public class PluginPlatform extends PluginPlatformBase {
 
   /** Radical of the logger */
   private String loggerRadical;
+  
+  /**
+   * The current file name to process - this is used in the status handler 
+   * in order to have the file name when it was not passed at logging 
+   * 
+   * (generally, this information mostly serves for the eclipse plugin) 
+   */
+  private static String currentFileName = null; 
 
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
@@ -110,9 +118,10 @@ public class PluginPlatform extends PluginPlatformBase {
         Iterator it = pluginsList.iterator();
         while(it.hasNext()) {
           Plugin plugin = (Plugin)it.next();
+          currentFileName = (String)input;
           plugin.setArgs(pluginArg);
           if(statusHandler.hasError()) {
-            getLogger().log(Level.SEVERE, PluginPlatformMessage.settingArgError.getMessage());
+            getLogger().log(Level.INFO, PluginPlatformMessage.settingArgError.getMessage());
             success = false;
             globalSuccess = false;
             globalNbOfErrors += statusHandler.nbOfErrors();
@@ -121,7 +130,7 @@ public class PluginPlatform extends PluginPlatformBase {
           }
           plugin.run();
           if(statusHandler.hasError()) {
-            getLogger().log(Level.SEVERE, PluginPlatformMessage.processingError.getMessage(),
+            getLogger().log(Level.INFO, PluginPlatformMessage.processingError.getMessage(),
                 new Object[]{plugin.getClass().getName(), initArgument});
             success = false;
             globalSuccess = false;
@@ -141,8 +150,7 @@ public class PluginPlatform extends PluginPlatformBase {
       }
 
       if(!globalSuccess) {
-        // this is the highest possible level > will be printed no matter what
-        getLogger().log(Level.SEVERE, PluginPlatformMessage.runErrorMessage.getMessage(),
+        getLogger().log(Level.INFO, PluginPlatformMessage.runErrorMessage.getMessage(),
             new Integer(globalNbOfErrors));
         return 1;
       } else if(globalNbOfWarnings>0) {
@@ -187,4 +195,7 @@ public class PluginPlatform extends PluginPlatformBase {
     return Logger.getLogger(getClass().getName());
   }
 
+  public static String getCurrentFileName(){
+    return currentFileName;
+  }
 }

@@ -306,7 +306,6 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     //System.out.println("initial subject: '" + subject + "'");
     subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
     //System.out.println("subject: '" + subject + "'");
-
     String split[] = subject.split(escapeChar);
     boolean metaMode = true;
     String res = "";
@@ -333,6 +332,10 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
           throw new TomRuntimeException("Exception catched in tomSplitter");
         }
       }
+    }
+    if(subject.endsWith(escapeChar)) {
+      // add an empty string when %[...@...@]%
+      list.add(tom_make_ITL("\"\""));
     }
     return res;
   }
@@ -625,6 +628,7 @@ public HostParser(ParserSharedInputState state) {
 		String destDir = getStreamManager().getDestDir().getPath();
 		
 		File config_xml = null;
+		ArrayList parameters = new ArrayList();
 		try {
 		String tom_home = System.getProperty("tom.home");
 		if(tom_home != null) {
@@ -635,6 +639,12 @@ public HostParser(ParserSharedInputState state) {
 		((String)getOptionManager().getOptionValue("X"));
 		config_xml =
 		new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
+		// pass all the received parameters to gom in the case that it will call tom
+		java.util.List<File> imp = getStreamManager().getUserImportList();
+		for(File f:imp){
+		parameters.add("--import");
+		parameters.add(f.getCanonicalPath());
+		}
 		}
 		config_xml = config_xml.getCanonicalFile();
 		} catch (IOException e) {
@@ -652,8 +662,7 @@ public HostParser(ParserSharedInputState state) {
 		subPackageName = inputFileNameWithoutExtension;
 		} else {
 		subPackageName = packageName + "." + inputFileNameWithoutExtension;
-		}
-		ArrayList parameters = new ArrayList();
+		}    
 		parameters.add("-X");
 		parameters.add(config_xml.getPath());
 		parameters.add("--destdir");
@@ -667,7 +676,7 @@ public HostParser(ParserSharedInputState state) {
 		parameters.add("--intermediate");
 		}
 		parameters.add("--intermediateName");
-		parameters.add(getStreamManager().getRawFileName());
+		parameters.add(getStreamManager().getRawFileName()+".t.gom");
 		if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {
 		parameters.add("--verbose");
 		}
@@ -695,7 +704,12 @@ public HostParser(ParserSharedInputState state) {
 		res = tom.gom.Gom.exec(params);
 		System.setIn(backupIn);
 		if (res != 0 ) {
-		throw new TomException(TomMessage.gomFailure,new Object[]{currentFile,new Integer(initialGomLine)});
+		getLogger().log(
+		new PlatformLogRecord(Level.SEVERE,
+		TomMessage.gomFailure,
+		new Object[]{currentFile,new Integer(initialGomLine)},
+		currentFile, initialGomLine));
+		return;
 		}
 		String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
 		

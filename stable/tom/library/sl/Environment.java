@@ -117,8 +117,9 @@ public final class Environment implements Cloneable {
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
- //public int getStatus() { return status; } 
- //public void setStatus(int s) { this.status = s; }
+ public int getStatus() { return status; } 
+ 
+ public void setStatus(int s) { this.status = s; }
 
   /**
    * get the current root
@@ -190,7 +191,7 @@ public final class Environment implements Cloneable {
     int childIndex = omega[current]-1;
     Visitable child = subterm[current];
     current--;
-    subterm[current] = (Visitable) subterm[current].setChildAt(childIndex,child);
+    subterm[current] = subterm[current].setChildAt(childIndex,child);
     //System.out.println("after up: " + this);
   }
 
@@ -198,7 +199,7 @@ public final class Environment implements Cloneable {
    * package private
    * remove the last sub-position but does not update the subject
    */
-  void upLocal() {
+  public void upLocal() {
     current--;
   }
 
@@ -216,7 +217,7 @@ public final class Environment implements Cloneable {
         ensureLength(current+1);
       }
       omega[current] = n;
-      subterm[current] = (Visitable) child.getChildAt(n-1);
+      subterm[current] = child.getChildAt(n-1);
     }
     //System.out.println("after down: " + this);
   }
@@ -239,6 +240,26 @@ public final class Environment implements Cloneable {
       }
     }
   }
+
+  public void followPathLocal(Path path) {
+    Path normalizedPath = path.getCanonicalPath();
+    int length = normalizedPath.length();
+    for(int i=0;i<length;i++) {
+      int head = normalizedPath.getHead();
+      normalizedPath = normalizedPath.getTail();
+      if(head>0){
+        down(head);
+        if (subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
+          // we do not want to follow the last reference
+          followPath((Path)subterm[current]);
+        }
+      } else {
+        //verify that getsubomega() = -head
+        upLocal();
+      }
+    }
+  }
+
 
   /**
    * Returns a <code>String</code> object representing the position.

@@ -779,7 +779,6 @@ public ANTLRMapperGomParser(ParserSharedInputState state) {
 		"\"operator\"",
 		"STAR",
 		"\"private\"",
-		"\"import\"",
 		"LBRACE",
 		"RBRACE",
 		"WS",

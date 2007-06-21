@@ -62,7 +62,7 @@ public interface Strategy extends Visitable {
    * strategy but with the current environment of the user strategy.
    * @parameter env the environment where execute the strategy.
    */
-  public Visitable visit(Environment env) throws VisitFailure;
+  public Visitable visit(Environment envt) throws VisitFailure;
 
   /**
    *  Visits the current subject (found in the environment)

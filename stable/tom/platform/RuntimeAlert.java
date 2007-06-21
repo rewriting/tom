@@ -47,16 +47,30 @@ public class RuntimeAlert {
     nbWarnings = 0;
   }
 
+  /**
+   * Add the warning only if it is not already in the list 
+   */
   public void addWarning(String message, String file, int line) {
     Alert entry = tom_make_Warning(message,file,line);
-    warnings = tom_cons_list_concAlert(entry,tom_append_list_concAlert(warnings,tom_empty_list_concAlert()));
-    nbWarnings++;
+    if (tom_is_sort_Alert(entry)) {{  tom.platform.adt.platformalert.types.Alert  tomMatch516NameNumberfreshSubject_1=(( tom.platform.adt.platformalert.types.Alert )entry);if (tom_is_sort_AlertList(warnings)) {{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumberfreshSubject_2=(( tom.platform.adt.platformalert.types.AlertList )warnings);{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumber_freshVar_0=tomMatch516NameNumberfreshSubject_2;{ boolean tomMatch516NameNumber_freshVar_7= false ;if (tom_is_fun_sym_concAlert(tomMatch516NameNumber_freshVar_0)) {{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumber_freshVar_1=tomMatch516NameNumber_freshVar_0;{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumber_begin_3=tomMatch516NameNumber_freshVar_1;{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumber_end_4=tomMatch516NameNumber_freshVar_1;do {{{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumber_freshVar_2=tomMatch516NameNumber_end_4;if (!(tom_is_empty_concAlert_AlertList(tomMatch516NameNumber_freshVar_2))) {if (tom_equal_term_Alert(tomMatch516NameNumberfreshSubject_1, tom_get_head_concAlert_AlertList(tomMatch516NameNumber_freshVar_2))) {{  tom.platform.adt.platformalert.types.AlertList  tomMatch516NameNumber_freshVar_5=tom_get_tail_concAlert_AlertList(tomMatch516NameNumber_freshVar_2);tomMatch516NameNumber_freshVar_7= true ;}}}}if (tom_is_empty_concAlert_AlertList(tomMatch516NameNumber_end_4)) {tomMatch516NameNumber_end_4=tomMatch516NameNumber_begin_3;} else {tomMatch516NameNumber_end_4=tom_get_tail_concAlert_AlertList(tomMatch516NameNumber_end_4);}}} while(!(tom_equal_term_AlertList(tomMatch516NameNumber_end_4, tomMatch516NameNumber_begin_3)));}}}}if ((tomMatch516NameNumber_freshVar_7 ==  false )) {if ( true ) {
+
+        warnings = tom_cons_list_concAlert(entry,tom_append_list_concAlert(warnings,tom_empty_list_concAlert()));
+        nbWarnings++;   
+      }}}}}}}}
+    
   }
   
+  /**
+   * Add the error only if it is not already in the list 
+   */
   public void addError(String message, String file, int line) {
     Alert entry = tom_make_Error(message,file,line);
-    errors = tom_cons_list_concAlert(entry,tom_append_list_concAlert(errors,tom_empty_list_concAlert()));
-    nbErrors++;
+    if (tom_is_sort_Alert(entry)) {{  tom.platform.adt.platformalert.types.Alert  tomMatch517NameNumberfreshSubject_1=(( tom.platform.adt.platformalert.types.Alert )entry);if (tom_is_sort_AlertList(errors)) {{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumberfreshSubject_2=(( tom.platform.adt.platformalert.types.AlertList )errors);{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumber_freshVar_0=tomMatch517NameNumberfreshSubject_2;{ boolean tomMatch517NameNumber_freshVar_7= false ;if (tom_is_fun_sym_concAlert(tomMatch517NameNumber_freshVar_0)) {{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumber_freshVar_1=tomMatch517NameNumber_freshVar_0;{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumber_begin_3=tomMatch517NameNumber_freshVar_1;{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumber_end_4=tomMatch517NameNumber_freshVar_1;do {{{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumber_freshVar_2=tomMatch517NameNumber_end_4;if (!(tom_is_empty_concAlert_AlertList(tomMatch517NameNumber_freshVar_2))) {if (tom_equal_term_Alert(tomMatch517NameNumberfreshSubject_1, tom_get_head_concAlert_AlertList(tomMatch517NameNumber_freshVar_2))) {{  tom.platform.adt.platformalert.types.AlertList  tomMatch517NameNumber_freshVar_5=tom_get_tail_concAlert_AlertList(tomMatch517NameNumber_freshVar_2);tomMatch517NameNumber_freshVar_7= true ;}}}}if (tom_is_empty_concAlert_AlertList(tomMatch517NameNumber_end_4)) {tomMatch517NameNumber_end_4=tomMatch517NameNumber_begin_3;} else {tomMatch517NameNumber_end_4=tom_get_tail_concAlert_AlertList(tomMatch517NameNumber_end_4);}}} while(!(tom_equal_term_AlertList(tomMatch517NameNumber_end_4, tomMatch517NameNumber_begin_3)));}}}}if ((tomMatch517NameNumber_freshVar_7 ==  false )) {if ( true ) {
+
+        errors = tom_cons_list_concAlert(entry,tom_append_list_concAlert(errors,tom_empty_list_concAlert()));
+        nbErrors++;    
+      }}}}}}}}
+    
   }
   
   public int getNbErrors() {

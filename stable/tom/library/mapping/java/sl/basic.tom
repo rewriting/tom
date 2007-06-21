@@ -38,8 +38,8 @@
 %op Strategy Mu(s1:Strategy, s2:Strategy) {
   is_fsym(t) { (t instanceof tom.library.sl.Mu) }
   make(var, v) { new tom.library.sl.Mu(var, v) }
-  get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Mu.VAR) }
-  get_slot(s2, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Mu.V) }
+  get_slot(s1, t) { (tom.library.sl.MuVar)t.getChildAt(tom.library.sl.Mu.VAR) }
+  get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.V) }
 }
 
 %op Strategy MuVar(var:String) {

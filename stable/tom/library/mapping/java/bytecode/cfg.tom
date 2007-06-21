@@ -17,6 +17,89 @@
   }
 }
 
+/**
+ * `OneCfg' stands for OneControlFlowGraph.
+ * This works as the classical `One' strategy but is
+ * adapted for a ControlFlowGraph run.
+ * (i.e. a `Goto' instruction has one child : the one to jump to;
+ * a `IfXX' instruction has two children : the one which
+ * satisfies the expression, and the other...)
+ * @param s the strategy to be applied on each child.
+ * @param m the label map (see the BuildLabelMap strategy).
+ */
+
+%strategy OneCfg(s:Strategy, m:Map) extends Identity() {
+  visit TInstructionList {
+    ConsInstructionList(Goto(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+      return (TInstructionList) getEnvironment().getSubject();
+    }
+
+    ConsInstructionList((Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
+          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
+          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+        return (TInstructionList) getEnvironment().getSubject();
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+    }
+
+    ConsInstructionList((Tableswitch|Lookupswitch)[dflt=dflt, labels=labels],_) -> {
+      TLabelList labelList = `labels;
+      %match(TLabelList labelList) {
+        LabelList(_*, x, _*) -> {
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
+          tom.library.sl.Position current = getEnvironment().getPosition();
+          getEnvironment().followPath(p.sub(current));
+          s.visit(getEnvironment());
+          if(getEnvironment().getStatus() == Environment.SUCCESS) {
+            getEnvironment().followPath(current.sub(p));
+            return (TInstructionList) getEnvironment().getSubject();
+          } else {
+            //do not take in account the changes 
+            getEnvironment().followPathLocal(current.sub(p));
+          }
+        }
+      }
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+        return (TInstructionList) getEnvironment().getSubject();
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }
+
+    }
+
+    // Visit the next instruction.
+    //only if the tail of the list is not empty
+    ConsInstructionList(_,!InstructionList()) -> {
+      getEnvironment().down(2);
+      s.visit(getEnvironment());
+      getEnvironment().up();
+    }
+  }
+}
 
 /**
  * `AllCfg' stands for AllControlFlowGraph.
@@ -31,57 +114,72 @@
 
 %strategy AllCfg(s:Strategy, m:Map) extends Identity() {
   visit TInstructionList {
-    ConsInstructionList(ins, t) -> {
-      TInstruction ins = `ins;
-      %match(TInstruction ins) {
-        Goto(l) -> {
-          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
-          tom.library.sl.Position current = getEnvironment().getPosition();
-          getEnvironment().followPath(p.sub(current));
-          s.visit(getEnvironment());
-          getEnvironment().followPath(current.sub(p));
-          //do not 
-          return (TInstructionList) getEnvironment().getSubject();
-        }
 
-        (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
-         If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
-         If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
-          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+    ConsInstructionList(Goto(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }         
+      return (TInstructionList) getEnvironment().getSubject();
+    }
+
+    ConsInstructionList((Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
+          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
+          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l),_) -> {
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`l));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
+      }         
+    }
+
+    ConsInstructionList((Tableswitch|Lookupswitch)[dflt=dflt, labels=labels],_) -> {
+      TLabelList labelList = `labels;
+      %match(TLabelList labelList) {
+        LabelList(_*, x, _*) -> {
+          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
           tom.library.sl.Position current = getEnvironment().getPosition();
           getEnvironment().followPath(current.sub(p));
           s.visit(getEnvironment());
-          getEnvironment().followPath(p.sub(current));
-        }
-
-        (Tableswitch|Lookupswitch)[dflt=dflt, labels=labels] -> {
-          TLabelList labelList = `labels;
-          %match(TLabelList labelList) {
-            LabelList(_*, x, _*) -> {
-              tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`x));
-              tom.library.sl.Position current = getEnvironment().getPosition();
-              getEnvironment().followPath(current.sub(p));
-              s.visit(getEnvironment());
-              getEnvironment().followPath(p.sub(current));
-            }
-          }
-          tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
-          tom.library.sl.Position current = getEnvironment().getPosition();
-          getEnvironment().followPath(current.sub(p));
-              s.visit(getEnvironment());
-          getEnvironment().followPath(p.sub(current));
-        }
-
-        // Visit the next instruction.
-        _ -> {
-          getEnvironment().down(2);
-          s.visit(getEnvironment());
-          getEnvironment().up();
-        }
+          if(getEnvironment().getStatus() == Environment.SUCCESS) {
+            getEnvironment().followPath(current.sub(p));
+          } else {
+            //do not take in account the changes 
+            getEnvironment().followPathLocal(current.sub(p));
+          }     
+        }         
+      }
+      tom.library.sl.Position p = (tom.library.sl.Position) (m.get(`dflt));
+      tom.library.sl.Position current = getEnvironment().getPosition();
+      getEnvironment().followPath(p.sub(current));
+      s.visit(getEnvironment());
+      if(getEnvironment().getStatus() == Environment.SUCCESS) {
+        getEnvironment().followPath(current.sub(p));
+      } else {
+        //do not take in account the changes 
+        getEnvironment().followPathLocal(current.sub(p));
       }
     }
-  }
 
+    // Visit the next instruction.
+    //only if the tail of the list is not empty
+    ConsInstructionList(_,!InstructionList()) -> {
+      getEnvironment().down(2);
+      s.visit(getEnvironment());
+      getEnvironment().up();
+    }
+  }
 }
 
 /**

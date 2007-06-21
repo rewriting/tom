@@ -1,6 +1,8 @@
 
 %include { string.tom }
 
+%include { int.tom }
+
 %typeterm Code {
   implement { tom.gom.adt.code.types.Code }
   is_sort(t) { t instanceof tom.gom.adt.code.types.Code }
@@ -305,6 +307,13 @@
 %typeterm ImportedModule {
   implement { tom.gom.adt.gom.types.ImportedModule }
   is_sort(t) { t instanceof tom.gom.adt.gom.types.ImportedModule }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.gom.adt.objects.ObjectsBasicStrategy }
+}
+
+%typeterm Option {
+  implement { tom.gom.adt.gom.types.Option }
+  is_sort(t) { t instanceof tom.gom.adt.gom.types.Option }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.gom.adt.objects.ObjectsBasicStrategy }
 }
@@ -911,22 +920,24 @@
   make(t0, t1) { tom.gom.adt.gom.types.field.NamedField.make(t0, t1) }
 }
 
-%op Production Production(Name:String, Domain:FieldList, Codomain:GomType) {
+%op Production Production(Name:String, Domain:FieldList, Codomain:GomType, Option:Option) {
   is_fsym(t) { t instanceof tom.gom.adt.gom.types.production.Production }
   get_slot(Name, t) { t.getName() }
   get_slot(Domain, t) { t.getDomain() }
   get_slot(Codomain, t) { t.getCodomain() }
-  make(t0, t1, t2) { tom.gom.adt.gom.types.production.Production.make(t0, t1, t2) }
+  get_slot(Option, t) { t.getOption() }
+  make(t0, t1, t2, t3) { tom.gom.adt.gom.types.production.Production.make(t0, t1, t2, t3) }
 }
 
-%op Production Hook(NameType:IdKind, Name:String, HookType:HookKind, Args:ArgList, StringCode:String) {
+%op Production Hook(NameType:IdKind, Name:String, HookType:HookKind, Args:ArgList, StringCode:String, Option:Option) {
   is_fsym(t) { t instanceof tom.gom.adt.gom.types.production.Hook }
   get_slot(NameType, t) { t.getNameType() }
   get_slot(Name, t) { t.getName() }
   get_slot(HookType, t) { t.getHookType() }
   get_slot(Args, t) { t.getArgs() }
   get_slot(StringCode, t) { t.getStringCode() }
-  make(t0, t1, t2, t3, t4) { tom.gom.adt.gom.types.production.Hook.make(t0, t1, t2, t3, t4) }
+  get_slot(Option, t) { t.getOption() }
+  make(t0, t1, t2, t3, t4, t5) { tom.gom.adt.gom.types.production.Hook.make(t0, t1, t2, t3, t4, t5) }
 }
 
 %op ModuleDecl ModuleDecl(ModuleName:GomModuleName, Pkg:String) {
@@ -958,6 +969,24 @@
   is_fsym(t) { t instanceof tom.gom.adt.gom.types.importedmodule.Import }
   get_slot(ModuleName, t) { t.getModuleName() }
   make(t0) { tom.gom.adt.gom.types.importedmodule.Import.make(t0) }
+}
+
+%op Option Origin(Line:int) {
+  is_fsym(t) { t instanceof tom.gom.adt.gom.types.option.Origin }
+  get_slot(Line, t) { t.getLine() }
+  make(t0) { tom.gom.adt.gom.types.option.Origin.make(t0) }
+}
+
+%op Option EmptyOptionList() {
+  is_fsym(t) { t instanceof tom.gom.adt.gom.types.option.EmptyOptionList }
+  make() { tom.gom.adt.gom.types.option.EmptyOptionList.make() }
+}
+
+%op Option ConsOptionList(HeadOptionList:Option, TailOptionList:Option) {
+  is_fsym(t) { t instanceof tom.gom.adt.gom.types.option.ConsOptionList }
+  get_slot(HeadOptionList, t) { t.getHeadOptionList() }
+  get_slot(TailOptionList, t) { t.getTailOptionList() }
+  make(t0, t1) { tom.gom.adt.gom.types.option.ConsOptionList.make(t0, t1) }
 }
 
 %op HookKind HookKind(kind:String) {
@@ -1145,4 +1174,13 @@
   get_head(l) { l.getHeadconcModule() }
   get_tail(l) { l.getTailconcModule() }
   is_empty(l) { l.isEmptyconcModule() }
+}
+
+%oplist Option OptionList(Option*) {
+  is_fsym(t) { t instanceof tom.gom.adt.gom.types.option.ConsOptionList || t instanceof tom.gom.adt.gom.types.option.EmptyOptionList }
+  make_empty() { tom.gom.adt.gom.types.option.EmptyOptionList.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.option.ConsOptionList.make(e,l) }
+  get_head(l) { l.getHeadOptionList() }
+  get_tail(l) { l.getTailOptionList() }
+  is_empty(l) { l.isEmptyOptionList() }
 }

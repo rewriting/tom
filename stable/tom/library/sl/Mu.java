@@ -110,22 +110,22 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
       set.add(parent);
     }
 
-    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch264NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_0=tomMatch264NameNumberfreshSubject_1;if (tom_is_fun_sym_Mu(tomMatch264NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_2=tom_get_slot_Mu_s1(tomMatch264NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_3=tom_get_slot_Mu_s2(tomMatch264NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_1=tomMatch264NameNumber_freshVar_2;if (tom_is_fun_sym_MuVar(tomMatch264NameNumber_freshVar_1)) {{  tom.library.sl.Strategy  tom_m=tomMatch264NameNumber_freshVar_0;if ( true ) {
+    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch509NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);{  tom.library.sl.Strategy  tomMatch509NameNumber_freshVar_0=tomMatch509NameNumberfreshSubject_1;if (tom_is_fun_sym_Mu(tomMatch509NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tomMatch509NameNumber_freshVar_2=tom_get_slot_Mu_s1(tomMatch509NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch509NameNumber_freshVar_3=tom_get_slot_Mu_s2(tomMatch509NameNumber_freshVar_0);{  tom.library.sl.Strategy  tomMatch509NameNumber_freshVar_1=tomMatch509NameNumber_freshVar_2;if (tom_is_fun_sym_MuVar(tomMatch509NameNumber_freshVar_1)) {{  tom.library.sl.Strategy  tom_m=tomMatch509NameNumber_freshVar_0;if ( true ) {
 
         stack.addFirst(tom_m);
-        visitLight(tomMatch264NameNumber_freshVar_3,tom_m,0,set);
-        visitLight(tomMatch264NameNumber_freshVar_1,null,0,set);
+        visitLight(tomMatch509NameNumber_freshVar_3,tom_m,0,set);
+        visitLight(tomMatch509NameNumber_freshVar_1,null,0,set);
         stack.removeFirst();
         return;
-      }}}}}}}}{  tom.library.sl.Strategy  tomMatch264NameNumber_freshVar_4=tomMatch264NameNumberfreshSubject_1;if (tom_is_fun_sym_MuVar(tomMatch264NameNumber_freshVar_4)) {{  String  tomMatch264NameNumber_freshVar_5=tom_get_slot_MuVar_var(tomMatch264NameNumber_freshVar_4);if ( true ) {
+      }}}}}}}}{  tom.library.sl.Strategy  tomMatch509NameNumber_freshVar_4=tomMatch509NameNumberfreshSubject_1;if (tom_is_fun_sym_MuVar(tomMatch509NameNumber_freshVar_4)) {{  String  tomMatch509NameNumber_freshVar_5=tom_get_slot_MuVar_var(tomMatch509NameNumber_freshVar_4);if ( true ) {
 
 
-        MuVar muvar = (MuVar)tomMatch264NameNumber_freshVar_4;
+        MuVar muvar = (MuVar)tomMatch509NameNumber_freshVar_4;
         if(!muvar.isExpanded()) {
           Iterator it = stack.iterator();
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch264NameNumber_freshVar_5)) {
+            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch509NameNumber_freshVar_5)) {
               //System.out.println("MuVar: setInstance " + `n );
               muvar.setInstance(m);
               if(parent!=null) {
