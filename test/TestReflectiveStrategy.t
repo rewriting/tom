@@ -280,7 +280,7 @@ public class TestReflectiveStrategy extends TestCase {
   /* collect all strategies, except those in first argument of a sequence */
   %strategy CollectExceptFirst(current:Strategy, c:Counter) extends `Identity() {
     visit Strategy {
-      Sequence(_,s2) -> {
+      Sequence(_,s2*) -> {
       current.visitLight(`s2);
       throw new VisitFailure(); 
       }

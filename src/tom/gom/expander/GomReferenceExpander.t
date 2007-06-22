@@ -237,7 +237,7 @@ public class GomReferenceExpander {
         ]%;
         codeStrategies += getStrategies(`sortName,moduleName);
         Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
-        CollectLabels = "ChoiceV(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
+        CollectLabels = "Choice(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
         NormalizeLabel = "Sequence(NormalizeLabel"+`sortName+"(map),"+NormalizeLabel+")";
       }
     }

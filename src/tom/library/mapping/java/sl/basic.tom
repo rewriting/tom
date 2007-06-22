@@ -98,45 +98,40 @@
 
 %oplist Strategy Sequence(Strategy*) {
   is_fsym(t) { (t instanceof tom.library.sl.Sequence) }
-  make_empty() { new tom.library.sl.Identity() }
-  make_insert(head,tail) { new tom.library.sl.Sequence(head,tail) }
+  make_empty() { null }
+  make_insert(head,tail) { (tail==null)?head:new tom.library.sl.Sequence(head,tail) }
   get_head(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Sequence.FIRST) }
   get_tail(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Sequence.THEN) }
-  is_empty(t) { t instanceof tom.library.sl.Identity }
+  is_empty(t) { t == null }
 }
 
-%op Strategy Choice(s1:Strategy, s2:Strategy) {
+%oplist Strategy Choice(Strategy*) {
   is_fsym(t) { (t instanceof tom.library.sl.Choice) }
-  make(first,then) { new tom.library.sl.Choice(first,then) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
-  get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.THEN) }
-}
-
-%oplist Strategy ChoiceV(Strategy*) {
-  is_fsym(t) { (t instanceof tom.library.sl.Choice) }
-  make_empty() { new tom.library.sl.Fail() }
-  make_insert(head,tail) { new tom.library.sl.Choice(head,tail) }
+  make_empty() { null }
+  make_insert(head,tail) { (tail==null)?head:new tom.library.sl.Choice(head,tail) }
   get_head(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
   get_tail(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.THEN) }
-  is_empty(t) { t instanceof tom.library.sl.Fail }
+  is_empty(t) { t ==null }
 }
 
 %oplist Strategy SequenceId(Strategy*) {
   is_fsym(t) { (t instanceof tom.library.sl.SequenceId) }
-  make_empty() { new tom.library.sl.Identity() }
-  make_insert(head,tail) { new tom.library.sl.SequenceId(head,tail) }
+  make_empty() { null }
+  make_insert(head,tail) { (tail==null)?head:new tom.library.sl.SequenceId(head,tail) }
   get_head(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.SequenceId.FIRST) }
   get_tail(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.SequenceId.THEN) }
-  is_empty(t) { t instanceof tom.library.sl.Identity }
+  is_empty(t) { t == null }
 }
 
-
-%op Strategy ChoiceId(s1:Strategy, s2:Strategy) {
+%oplist Strategy ChoiceId(Strategy*) {
   is_fsym(t) { (t instanceof tom.library.sl.ChoiceId) }
-  make(first,then) { new tom.library.sl.ChoiceId(first,then) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.ChoiceId.FIRST) }
-  get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.ChoiceId.THEN) }
+  make_empty() { null }
+  make_insert(head,tail) { (tail==null)?head:new tom.library.sl.ChoiceId(head,tail) }
+  get_head(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.ChoiceId.FIRST) }
+  get_tail(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.ChoiceId.THEN) }
+  is_empty(t) { t ==null }
 }
+
 
 %op Strategy OneId(s1:Strategy) {
   is_fsym(t) { (t instanceof tom.library.sl.OneId }
