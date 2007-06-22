@@ -1,13 +1,20 @@
 version 2.5:
  - %rule has been removed
- - Gom support a "rules" hook, that intends to replace %rule, and allows to
+ - Gom supports a "rules" hook, that intends to replace %rule, and allows to
    define rules that are systematically applied.
- - Gom support various list theory hooks (in particular, AU and ACU). 
+ - Gom supports various list theory hooks (in particular, AU and ACU). The
+   data-structure can be normalized wrt. to associative-commutative (AC) or AC
+   with neutral element (ACU).
+ - Gom supports terms with pointers to manipulate graph structures.
+ - Tom has a new compiler based on constraint solving.
+ - Tom supports list-operators whose domain is equal to the codomain.
+    This corresponds to associative matching with neutral element (AU).
+    An interesting variant for flattened lists (FL) has also been developed. 
+ - Tom supports any combination of patterns, anti-patterns, and list-operators
+   are fully supported.
  - The new strategy library sl allows access to more context information, such
    as the root of the term to which the strategy is applied
- - Tom has a new compiler based on constraint solving.
- - Tom supports associative matching with neutral element   
-
+ 
 version 2.4:
  - the eclipse plugin is back, for eclipse version 3.2
 

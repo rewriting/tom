@@ -52,8 +52,6 @@ This new release contains many improvements and new features:
   - any combination of patterns, anti-patterns, and list-operators are fully
     supported.
 
-  - a library for manipulating Java bytecode.
-
   - the possibility to define terms with pointers. This is very useful to
     represent, analyze,  and transform term-graphs like CFG for example.
 
