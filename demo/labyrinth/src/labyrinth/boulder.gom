@@ -1,0 +1,13 @@
+module boulder
+imports int
+abstract syntax
+	Position = pos(x:int,y:int)
+	Bead = bead(pos:Position,value:BeadType)
+	BeadType = 
+			| Empty()
+			| Wall()
+			| Walked()
+			| Goal()
+			| Player()
+			| PlayerHappy()
+			
