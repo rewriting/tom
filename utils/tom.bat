@@ -101,7 +101,7 @@ set TOM_OPTS=
 :doneSetArgs
 
 rem execute TOM
-%_RUNJAVA% %JAVA_OPTS% -Dtom.home=%TOM_HOME% -classpath "%CLASSPATH%%TOM_LIB%" %MAINCLASS% %TOM_OPTS% %CMD_LINE_ARGS%
+%_RUNJAVA% %JAVA_OPTS% -Dtom.home="%TOM_HOME%" -classpath "%CLASSPATH%%TOM_LIB%" "%MAINCLASS%" %TOM_OPTS% %CMD_LINE_ARGS%
 
 :end
 
