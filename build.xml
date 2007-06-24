@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.5rc1"/>
+  <property name="stable.version" value="2.5rc2"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 

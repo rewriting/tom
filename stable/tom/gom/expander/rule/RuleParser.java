@@ -1,4 +1,4 @@
-// $ANTLR 3.0b6 /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-06-22 14:47:29
+// $ANTLR 3.0b6 /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-06-24 23:12:16
 
   package tom.gom.expander.rule;
 
@@ -61,7 +61,7 @@ public class RuleParser extends Parser {
     }
 
     public String[] getTokenNames() { return tokenNames; }
-    public String getGrammarFileName() { return "/home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
 
 
     public static class ruleset_return extends ParserRuleReturnScope {
@@ -70,7 +70,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start ruleset
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:29:1: ruleset : ( rule )* EOF -> ^( RULELIST ( rule )* ) ;
+    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:29:1: ruleset : ( rule )* EOF -> ^( RULELIST ( rule )* ) ;
     public ruleset_return ruleset() throws RecognitionException {
         ruleset_return retval = new ruleset_return();
         retval.start = input.LT(1);
@@ -85,10 +85,10 @@ public class RuleParser extends Parser {
         ASTTree EOF2_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:3: ( ( rule )* EOF -> ^( RULELIST ( rule )* ) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:3: ( rule )* EOF
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:3: ( ( rule )* EOF -> ^( RULELIST ( rule )* ) )
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:3: ( rule )* EOF
             {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:3: ( rule )*
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:3: ( rule )*
             loop1:
             do {
                 int alt1=2;
@@ -100,7 +100,7 @@ public class RuleParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:4: rule
+            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:4: rule
             	    {
             	    pushFollow(FOLLOW_rule_in_ruleset111);
             	    rule1=rule();
@@ -127,12 +127,12 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 30:15: -> ^( RULELIST ( rule )* )
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:18: ^( RULELIST ( rule )* )
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:18: ^( RULELIST ( rule )* )
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(RULELIST, "RULELIST"), root_1);
 
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:29: ( rule )*
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:30:29: ( rule )*
                 {
                 int n_1 = list_rule == null ? 0 : list_rule.size();
                  
@@ -175,7 +175,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start rule
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:32:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) ;
+    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:32:1: rule : pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) ;
     public rule_return rule() throws RecognitionException {
         rule_return retval = new rule_return();
         retval.start = input.LT(1);
@@ -199,8 +199,8 @@ public class RuleParser extends Parser {
         ASTTree IF6_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:3: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:3: pattern ARROW term ( IF cond= condition )?
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:3: ( pattern ARROW term ( IF cond= condition )? -> { cond == null }? ^( RULE pattern term ) -> ^( CONDRULE pattern term $cond) )
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:3: pattern ARROW term ( IF cond= condition )?
             {
             pushFollow(FOLLOW_pattern_in_rule138);
             pattern3=pattern();
@@ -216,7 +216,7 @@ public class RuleParser extends Parser {
             _fsp--;
 
             list_term.add(term5.getTree());
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:22: ( IF cond= condition )?
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:22: ( IF cond= condition )?
             int alt2=2;
             int LA2_0 = input.LA(1);
             if ( (LA2_0==IF) ) {
@@ -224,7 +224,7 @@ public class RuleParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:23: IF cond= condition
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:33:23: IF cond= condition
                     {
                     IF6=(Token)input.LT(1);
                     match(input,IF,FOLLOW_IF_in_rule145); 
@@ -248,7 +248,7 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 34:5: -> { cond == null }? ^( RULE pattern term )
             if ( cond == null ) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:34:26: ^( RULE pattern term )
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:34:26: ^( RULE pattern term )
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(RULE, "RULE"), root_1);
@@ -262,7 +262,7 @@ public class RuleParser extends Parser {
             }
             else // 35:5: -> ^( CONDRULE pattern term $cond)
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:35:8: ^( CONDRULE pattern term $cond)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:35:8: ^( CONDRULE pattern term $cond)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDRULE, "CONDRULE"), root_1);
@@ -302,7 +302,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start condition
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:37:1: condition : p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )? -> {p2!=null}? ^( CONDEQUALS $p1 $p2) -> {p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> {p4!=null}? ^( CONDLEQ $p1 $p4) -> {p5!=null}? ^( CONDLT $p1 $p5) -> {p6!=null}? ^( CONDGEQ $p1 $p6) -> {p7!=null}? ^( CONDGT $p1 $p7) -> {p8!=null}? ^( CONDMETHOD $p1 ID $p8) -> ^( CONDTERM $p1) ;
+    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:37:1: condition : p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )? -> {p2!=null}? ^( CONDEQUALS $p1 $p2) -> {p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> {p4!=null}? ^( CONDLEQ $p1 $p4) -> {p5!=null}? ^( CONDLT $p1 $p5) -> {p6!=null}? ^( CONDGEQ $p1 $p6) -> {p7!=null}? ^( CONDGT $p1 $p7) -> {p8!=null}? ^( CONDMETHOD $p1 ID $p8) -> ^( CONDTERM $p1) ;
     public condition_return condition() throws RecognitionException {
         condition_return retval = new condition_return();
         retval.start = input.LT(1);
@@ -358,15 +358,15 @@ public class RuleParser extends Parser {
         ASTTree RPAR16_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:3: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )? -> {p2!=null}? ^( CONDEQUALS $p1 $p2) -> {p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> {p4!=null}? ^( CONDLEQ $p1 $p4) -> {p5!=null}? ^( CONDLT $p1 $p5) -> {p6!=null}? ^( CONDGEQ $p1 $p6) -> {p7!=null}? ^( CONDGT $p1 $p7) -> {p8!=null}? ^( CONDMETHOD $p1 ID $p8) -> ^( CONDTERM $p1) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )?
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:3: (p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )? -> {p2!=null}? ^( CONDEQUALS $p1 $p2) -> {p3!=null}? ^( CONDNOTEQUALS $p1 $p3) -> {p4!=null}? ^( CONDLEQ $p1 $p4) -> {p5!=null}? ^( CONDLT $p1 $p5) -> {p6!=null}? ^( CONDGEQ $p1 $p6) -> {p7!=null}? ^( CONDGT $p1 $p7) -> {p8!=null}? ^( CONDMETHOD $p1 ID $p8) -> ^( CONDTERM $p1) )
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:3: p1= term ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )?
             {
             pushFollow(FOLLOW_term_in_condition198);
             p1=term();
             _fsp--;
 
             list_term.add(p1.getTree());
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:11: ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )?
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:11: ( EQUALS p2= term | NOTEQUALS p3= term | LEQ p4= term | LT p5= term | GEQ p6= term | GT p7= term | DOT ID LPAR p8= term RPAR )?
             int alt3=8;
             switch ( input.LA(1) ) {
                 case EQUALS:
@@ -394,7 +394,7 @@ public class RuleParser extends Parser {
 
             switch (alt3) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:12: EQUALS p2= term
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:38:12: EQUALS p2= term
                     {
                     EQUALS7=(Token)input.LT(1);
                     match(input,EQUALS,FOLLOW_EQUALS_in_condition201); 
@@ -409,7 +409,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:7: NOTEQUALS p3= term
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:39:7: NOTEQUALS p3= term
                     {
                     NOTEQUALS8=(Token)input.LT(1);
                     match(input,NOTEQUALS,FOLLOW_NOTEQUALS_in_condition213); 
@@ -424,7 +424,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:40:7: LEQ p4= term
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:40:7: LEQ p4= term
                     {
                     LEQ9=(Token)input.LT(1);
                     match(input,LEQ,FOLLOW_LEQ_in_condition225); 
@@ -439,7 +439,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:41:7: LT p5= term
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:41:7: LT p5= term
                     {
                     LT10=(Token)input.LT(1);
                     match(input,LT,FOLLOW_LT_in_condition237); 
@@ -454,7 +454,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:7: GEQ p6= term
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:42:7: GEQ p6= term
                     {
                     GEQ11=(Token)input.LT(1);
                     match(input,GEQ,FOLLOW_GEQ_in_condition249); 
@@ -469,7 +469,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:43:7: GT p7= term
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:43:7: GT p7= term
                     {
                     GT12=(Token)input.LT(1);
                     match(input,GT,FOLLOW_GT_in_condition261); 
@@ -484,7 +484,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:44:7: DOT ID LPAR p8= term RPAR
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:44:7: DOT ID LPAR p8= term RPAR
                     {
                     DOT13=(Token)input.LT(1);
                     match(input,DOT,FOLLOW_DOT_in_condition273); 
@@ -520,7 +520,7 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 46:5: -> {p2!=null}? ^( CONDEQUALS $p1 $p2)
             if (p2!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:46:20: ^( CONDEQUALS $p1 $p2)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:46:20: ^( CONDEQUALS $p1 $p2)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDEQUALS, "CONDEQUALS"), root_1);
@@ -534,7 +534,7 @@ public class RuleParser extends Parser {
             }
             else // 47:5: -> {p3!=null}? ^( CONDNOTEQUALS $p1 $p3)
             if (p3!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:47:20: ^( CONDNOTEQUALS $p1 $p3)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:47:20: ^( CONDNOTEQUALS $p1 $p3)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDNOTEQUALS, "CONDNOTEQUALS"), root_1);
@@ -548,7 +548,7 @@ public class RuleParser extends Parser {
             }
             else // 48:5: -> {p4!=null}? ^( CONDLEQ $p1 $p4)
             if (p4!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:20: ^( CONDLEQ $p1 $p4)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:48:20: ^( CONDLEQ $p1 $p4)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDLEQ, "CONDLEQ"), root_1);
@@ -562,7 +562,7 @@ public class RuleParser extends Parser {
             }
             else // 49:5: -> {p5!=null}? ^( CONDLT $p1 $p5)
             if (p5!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:49:20: ^( CONDLT $p1 $p5)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:49:20: ^( CONDLT $p1 $p5)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDLT, "CONDLT"), root_1);
@@ -576,7 +576,7 @@ public class RuleParser extends Parser {
             }
             else // 50:5: -> {p6!=null}? ^( CONDGEQ $p1 $p6)
             if (p6!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:20: ^( CONDGEQ $p1 $p6)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:50:20: ^( CONDGEQ $p1 $p6)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDGEQ, "CONDGEQ"), root_1);
@@ -590,7 +590,7 @@ public class RuleParser extends Parser {
             }
             else // 51:5: -> {p7!=null}? ^( CONDGT $p1 $p7)
             if (p7!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:20: ^( CONDGT $p1 $p7)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:51:20: ^( CONDGT $p1 $p7)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDGT, "CONDGT"), root_1);
@@ -604,7 +604,7 @@ public class RuleParser extends Parser {
             }
             else // 52:5: -> {p8!=null}? ^( CONDMETHOD $p1 ID $p8)
             if (p8!=null) {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:20: ^( CONDMETHOD $p1 ID $p8)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:52:20: ^( CONDMETHOD $p1 ID $p8)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDMETHOD, "CONDMETHOD"), root_1);
@@ -619,7 +619,7 @@ public class RuleParser extends Parser {
             }
             else // 53:5: -> ^( CONDTERM $p1)
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:8: ^( CONDTERM $p1)
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:53:8: ^( CONDTERM $p1)
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(CONDTERM, "CONDTERM"), root_1);
@@ -657,7 +657,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start pattern
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:1: pattern : ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) ;
+    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:55:1: pattern : ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) ;
     public pattern_return pattern() throws RecognitionException {
         pattern_return retval = new pattern_return();
         retval.start = input.LT(1);
@@ -683,8 +683,8 @@ public class RuleParser extends Parser {
         ASTTree RPAR22_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:3: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) )
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:3: ID LPAR ( term ( COMA term )* )? RPAR
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:3: ( ID LPAR ( term ( COMA term )* )? RPAR -> ^( APPL ID ( term )* ) )
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:3: ID LPAR ( term ( COMA term )* )? RPAR
             {
             ID17=(Token)input.LT(1);
             match(input,ID,FOLLOW_ID_in_pattern442); 
@@ -694,7 +694,7 @@ public class RuleParser extends Parser {
             match(input,LPAR,FOLLOW_LPAR_in_pattern444); 
             list_LPAR.add(LPAR18);
 
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:11: ( term ( COMA term )* )?
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:11: ( term ( COMA term )* )?
             int alt5=2;
             int LA5_0 = input.LA(1);
             if ( (LA5_0==ID||(LA5_0>=INT && LA5_0<=STRING)) ) {
@@ -702,14 +702,14 @@ public class RuleParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:12: term ( COMA term )*
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:12: term ( COMA term )*
                     {
                     pushFollow(FOLLOW_term_in_pattern447);
                     term19=term();
                     _fsp--;
 
                     list_term.add(term19.getTree());
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:17: ( COMA term )*
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:17: ( COMA term )*
                     loop4:
                     do {
                         int alt4=2;
@@ -721,7 +721,7 @@ public class RuleParser extends Parser {
 
                         switch (alt4) {
                     	case 1 :
-                    	    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:18: COMA term
+                    	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:18: COMA term
                     	    {
                     	    COMA20=(Token)input.LT(1);
                     	    match(input,COMA,FOLLOW_COMA_in_pattern450); 
@@ -758,13 +758,13 @@ public class RuleParser extends Parser {
             root_0 = (ASTTree)adaptor.nil();
             // 56:37: -> ^( APPL ID ( term )* )
             {
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:40: ^( APPL ID ( term )* )
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:40: ^( APPL ID ( term )* )
                 {
                 ASTTree root_1 = (ASTTree)adaptor.nil();
                 root_1 = (ASTTree)adaptor.becomeRoot(adaptor.create(APPL, "APPL"), root_1);
 
                 adaptor.addChild(root_1, (Token)list_ID.get(i_0));
-                // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:50: ( term )*
+                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:56:50: ( term )*
                 {
                 int n_1 = list_term == null ? 0 : list_term.size();
                  
@@ -807,7 +807,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start term
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:1: term : ( pattern | ID | builtin );
+    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:58:1: term : ( pattern | ID | builtin );
     public term_return term() throws RecognitionException {
         term_return retval = new term_return();
         retval.start = input.LT(1);
@@ -823,7 +823,7 @@ public class RuleParser extends Parser {
         ASTTree ID24_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:3: ( pattern | ID | builtin )
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:3: ( pattern | ID | builtin )
             int alt6=3;
             int LA6_0 = input.LA(1);
             if ( (LA6_0==ID) ) {
@@ -852,7 +852,7 @@ public class RuleParser extends Parser {
             }
             switch (alt6) {
                 case 1 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:3: pattern
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:3: pattern
                     {
                     root_0 = (ASTTree)adaptor.nil();
 
@@ -865,7 +865,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:13: ID
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:13: ID
                     {
                     root_0 = (ASTTree)adaptor.nil();
 
@@ -878,7 +878,7 @@ public class RuleParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:18: builtin
+                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:59:18: builtin
                     {
                     root_0 = (ASTTree)adaptor.nil();
 
@@ -914,7 +914,7 @@ public class RuleParser extends Parser {
     };
 
     // $ANTLR start builtin
-    // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:1: builtin : (INT|STRING);
+    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:1: builtin : (INT|STRING);
     public builtin_return builtin() throws RecognitionException {
         builtin_return retval = new builtin_return();
         retval.start = input.LT(1);
@@ -926,8 +926,8 @@ public class RuleParser extends Parser {
         ASTTree set26_tree=null;
 
         try {
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:9: ( (INT|STRING))
-            // /home/balland/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:3: (INT|STRING)
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:61:9: ( (INT|STRING))
+            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:62:3: (INT|STRING)
             {
             root_0 = (ASTTree)adaptor.nil();
 

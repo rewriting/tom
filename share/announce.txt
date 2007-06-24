@@ -10,8 +10,8 @@ and rule based programming facilities into C and Java.
 Tom is a pattern matching compiler developed at INRIA. It is
 particularly well-suited for programming various transformations on
 trees/terms and XML based documents. Its design follows our research on
-the semantics and the efficient compilation of rule based languages (e.g. ELAN,
-developed at INRIA-Loria).
+the semantics and the efficient compilation of rule based languages
+(e.g. ELAN, developed at INRIA-Loria).
 
 Many applications have been developed in Tom. Among them, let us mention:
  - the Tom compiler itself
@@ -23,38 +23,40 @@ Many applications have been developed in Tom. Among them, let us mention:
  - a compiler algorithm for anti-pattern matching and disunification
 
 Tom is a complex compiler which adds powerful constructs to C and Java:
-rewrite rules, strategies, non linear syntactic matching, associative matching
-with neutral element (a.k.a. list-matching), XML based pattern matching, string
-matching, and equational rewriting.
+rewrite rules, strategies, non linear syntactic matching, associative
+matching with neutral element (a.k.a. list-matching), XML based pattern
+matching, string matching, and equational rewriting.
 This offers the possibility to analyze and transform any kind of
 data-structure. Tom can be used for large scale developments and
-applications. It comes with documentation, as well as with programming 
+applications. It comes with documentation, as well as with programming
 and debugging support.
 
 This new release contains many improvements and new features:
 
-  - a new compiler based on constraint propagation. This makes the code simpler
-    and ready for combinations of theories.
+  - a new compiler based on constraint propagation. This makes the code
+    simpler and ready for combinations of theories.
 
-  - a new strategy library, simpler to use, more efficient, and ready for graph
-    traversal.
+  - a new strategy library, simpler to use, more efficient, and ready
+    for graph traversal.
 
-  - a new "rule" constructs to specify conditional rewrite rules that are
-    always apply (the data-structure is in normal form by construction).
+  - a new "rule" constructs to specify conditional rewrite rules that
+    are always apply (the data-structure is in normal form by
+    construction).
 
-  - a full support of list-operators whose domain is equal to the codomain.
-    This corresponds to associative matching with neutral element (AU).
-    An interesting variant for flattened lists (FL) has also been developed. 
+  - a full support of list-operators whose domain is equal to the
+    codomain. This corresponds to associative matching with neutral
+    element (AU). An interesting variant for flattened lists (FL) has
+    also been developed.
 
   - the data-structure can be normalized wrt. to associative-commutative
     (AC) or AC with neutral element (ACU).
 
-  - any combination of patterns, anti-patterns, and list-operators are fully
-    supported.
+  - any combination of patterns, anti-patterns, and list-operators are
+    fully supported.
 
-  - the possibility to define terms with pointers. This is very useful to
-    represent, analyze,  and transform term-graphs like CFG for example.
-
+  - the possibility to define terms with pointers. This is very useful
+    to represent, analyze, and transform term-graphs like CFG for
+    example.
 
 Tom is available, in open source (GPL/BSD License), from the web page:
 

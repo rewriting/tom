@@ -1,3 +1,9 @@
+2007-06-24  tonio <reilles@loria.fr>
+  * bootinstall for 2.5rc2
+
+2007-06-22  emilie
+  * library/sl: remove ChoiceV, Choice is now variadic
+
 2007-06-21  tonio <reilles@loria.fr>
   * bootinstall for 2.5rc1
 
@@ -8,7 +14,8 @@
   * added <, <=, > and >= to gom side conditions
 
 2007-05-11  radu
-  * sublists are now supported in variadic operators (domain=codomain or domain!=codomain)
+  * sublists are now supported in variadic operators (domain=codomain or
+    domain!=codomain)
 
 2007-05-05  pem
   * mutraveler has been removed
