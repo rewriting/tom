@@ -1314,6 +1314,8 @@
         <exclude name="**/*.exe"/>
         <exclude name="**/*-tom"/>
         <exclude name="**/.svn/**"/>
+        <!-- XXX: Exclude the rss example for 2.5, remove ir lated -->
+        <exclude name="examples/xml/rss/**"/>
         <exclude name="applications/**"/>
       </tarfileset>
     </tar>
