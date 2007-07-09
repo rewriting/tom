@@ -60,7 +60,11 @@ fi
 
 # set TOM_LIB location
 TOM_LIB="${@TOM_HOME@}/lib"
-TOM_JAR=`echo $TOM_LIB/*.jar | tr ' ' ':'`
+TOM_JAR=""
+for i in "${TOM_LIB}"/*.jar
+do
+	TOM_JAR="$TOM_JAR:$i"
+done
 EXTERNAL_JAR=
 JAVACMD=java$JAVA_ARGS
 
@@ -82,4 +86,4 @@ if $cygwin; then
   SCRIPT_CONFIG_FILE=`cygpath --windows "$SCRIPT_CONFIG_FILE"`
 fi
 
-exec $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$@TOM_HOME@ @MAIN_CLASS@ -I $SCRIPT_INC -X $SCRIPT_CONFIG_FILE $SCRIPT_ARGS
+exec $JAVACMD -cp "$LOCALCLASSPATH" -Dtom.home="$@TOM_HOME@" @MAIN_CLASS@ -I "$SCRIPT_INC" -X "$SCRIPT_CONFIG_FILE" $SCRIPT_ARGS
