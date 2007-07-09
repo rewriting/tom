@@ -68,7 +68,10 @@ to do:
   - To run the examples, we also suggest you to define a TOM_LIB variable
     and update your CLASSPATH:
 (bash)
-  TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
+  for i in "${TOM_HOME}"/lib/*.jar
+  do
+    TOM_LIB="$TOM_LIB:$i"
+  done
   export CLASSPATH=${TOM_LIB}:${CLASSPATH}
 
 (csh)
