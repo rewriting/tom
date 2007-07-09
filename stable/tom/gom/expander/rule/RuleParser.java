@@ -1,4 +1,4 @@
-// $ANTLR 3.0b6 /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-06-24 23:12:16
+// $ANTLR 3.0b6 /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-07-09 14:36:01
 
   package tom.gom.expander.rule;
 

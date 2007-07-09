@@ -1,3 +1,7 @@
+2007-07-09  tonio <reilles@loria.fr>
+  * Fix scripts to support install path with spaces
+  * bootinstall for 2.5
+
 2007-06-24  tonio <reilles@loria.fr>
   * bootinstall for 2.5rc2
 
