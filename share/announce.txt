@@ -39,7 +39,7 @@ This new release contains many improvements and new features:
   - a new strategy library, simpler to use, more efficient, and ready
     for graph traversal.
 
-  - a new "rule" constructs to specify conditional rewrite rules that
+  - a new "rule" construct to specify conditional rewrite rules that
     are always applied (the data-structure is in normal form by
     construction).
 
@@ -51,7 +51,7 @@ This new release contains many improvements and new features:
   - the data-structure can be normalized wrt. to associative-commutative
     (AC) or AC with neutral element (ACU).
 
-  - any combination of patterns, anti-patterns, and list-operators are
+  - any combination of patterns, anti-patterns, and list-operators is
     fully supported.
 
   - the possibility to define terms with pointers. This is very useful
