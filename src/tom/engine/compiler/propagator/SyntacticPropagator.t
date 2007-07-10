@@ -53,19 +53,22 @@ public class SyntacticPropagator implements IBasePropagator {
 
   %strategy SyntacticPatternMatching() extends `Identity() {
     visit Constraint {
-      /*
+      /**
        * Decompose
        * 
-       * f(t1,...,tn) = g -> f1 = SymbolOf(g) /\ freshVar1=subterm1_f(g) /\ ... /\
-       * freshVarn=subterm1_f(g) /\ t1=freshVar1 /\ ... /\ tn=freshVarn
+       * f(t1,...,tn) = g 
+       * -> f1 = SymbolOf(g) /\ freshVar1=subterm1_f(g) /\ ... /\ freshVarn=subterm1_f(g) 
+       *                /\ t1=freshVar1 /\ ... /\ tn=freshVarn
        * 
-       * if f has multiple names (from f1|f2): (f1|f2)(t1,...,tn) = g -> ( (f1 =
-       * SymbolOf(g) /\ freshVar1=subterm1_f1(g) /\ ... /\
-       * freshVarn=subtermn_f1(g)) \/ (f2 = SymbolOf(g) /\
-       * freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) /\
-       * t1=freshVar1 /\ ... /\ tn=freshVarn
+       * if f has multiple names (from f1|f2): 
+       * (f1|f2)(t1,...,tn) = g 
+       * -> ( (f1 = SymbolOf(g) /\ freshVar1=subterm1_f1(g) /\ ... /\ freshVarn=subtermn_f1(g)) 
+       *       \/ (f2 = SymbolOf(g) /\ freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) 
+       *  /\ t1=freshVar1 /\ ... /\ tn=freshVarn
        * 
        * we can decompose only if 'g' != SymbolOf
+       * if the symbol was annotated, annotations are detached:
+       *        a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
       m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
@@ -91,7 +94,7 @@ public class SyntacticPropagator implements IBasePropagator {
             // the 'and' conjunction for each name
             Constraint andForName = `AndConstraint();
             // add condition for symbolOf
-            andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),constraints),SymbolOf(g)));
+            andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(g)));
             int counter = 0;          
             // for each slot
             %match(slots) {
@@ -104,19 +107,21 @@ public class SyntacticPropagator implements IBasePropagator {
             l = `OrConstraintDisjunction(l*,andForName);
           }
         }
-        return `AndConstraint(l*,lastPart*);
+        return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
       }
  
-      /*
+      /**
        * Antipattern
        * 
-       * an anti-pattern: just transform this into a AntiMatchConstraint 
+       * an anti-pattern: just transform this into a AntiMatchConstraint and detach the constraints:
+       * a@!g(...) << t -> AntiMatch(g(...) << t) /\ a << t 
        */
-      MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[Constraints=constraints]),s) -> {
-        return `AntiMatchConstraint(MatchConstraint(term,s));
+      MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[]),s) -> {        
+        return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),
+            ConstraintPropagator.performDetach(MatchConstraint(term,s)));
       }
 
-      /*
+      /**
        * Replace
        * 
        * Context1( z = v ) /\ z = t /\ Context2( z = u ) -> Context1( t = v ) /\ z = t /\ Context2( t = u ) 

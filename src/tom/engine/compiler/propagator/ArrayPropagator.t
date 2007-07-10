@@ -53,6 +53,23 @@ public class ArrayPropagator implements IBasePropagator {
 
   %strategy ArrayPatternMatching() extends Identity() {
     visit Constraint {
+      /**
+       * Detach sublists
+       * 
+       * Make sure that the sublists in a list are replaced by star variables - this is only happening 
+       * when the lists and the sublists have the same name
+       * 
+       * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
+       * 
+       */ 
+      m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=slots@!concSlot()],g) -> {
+        // if this is not an array, nothing to do
+        if(!TomBase.isArrayOperator(ConstraintCompiler.getSymbolTable().
+            getSymbolFromName(`tomName))) { return `m; }
+        Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
+        // if something changed
+        if (detachedConstr != `m) { return detachedConstr; }
+      }      
       // Decompose - only if 'g' != SymbolOf 
       // array[t1,X*,t2,Y*] = g -> array=SymbolOf(g) /\ fresh_index = 0 
       // /\ HasElement(fresh_index,g)  /\ t1=GetElement(fresh_index,g) /\ fresh_index1 = fresh_index + 1 
@@ -111,33 +128,13 @@ public class ArrayPropagator implements IBasePropagator {
                 freshIndex = newFreshIndex;
               }
             }// end match                        
-            // add head equality condition + fresh var declaration
-            l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
-                freshIndexDeclaration,l*);
+            // add head equality condition + fresh var declaration + detached constraints
+            l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(g)),
+                freshIndexDeclaration,ConstraintPropagator.performDetach(m),l*);
             return l;
-          }					
-          // Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
-          // X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
-      AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
-        Constraint toApplyOn = `AndConstraint(Y*);            
-        TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
-        if(res != toApplyOn) {
-          return `AndConstraint(X*,eq,res);
         }
-      }
     }
   }// end %strategy
-
-  %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity() {
-    visit Constraint {
-      MatchConstraint(v@VariableStar[AstName=name],p) -> {
-        if(`name == varName) {					
-          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
-        }				  
-      }
-    }
-  }
 
   private static TomTerm getBeginIndex() {
     return ConstraintCompiler.getBeginVariableStar(ConstraintCompiler.getIntType());
