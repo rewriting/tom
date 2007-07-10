@@ -129,10 +129,10 @@ public class GomReferenceExpander {
 
     String codeBlock =%[
 
-      public Path add(Path p){
+    public Path add(Path p){
         Position pp = Position.make(this);
         return make(pp.add(p));
-      }
+    }
 
     public Path inverse(){
       Position pp = Position.make(this);
@@ -209,7 +209,7 @@ public class GomReferenceExpander {
     ]%;
 
     String codeBlockCommon =%[
-      %include{java/util/HashMap.tom}
+    %include{java/util/HashMap.tom}
     %include{java/util/ArrayList.tom}
     %include{sl.tom}
 

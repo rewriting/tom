@@ -35,6 +35,7 @@ import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.expander.rule.RuleExpander;
+import tom.gom.expander.rule.GraphRuleExpander;
 
 public class HookTypeExpander {
 
@@ -160,13 +161,17 @@ public class HookTypeExpander {
           HookKind("rules") -> {
             return `makeRulesHookList(hName,mdecl,scode);
           }
+          HookKind("graphrules") -> {
+            //TODO: verify if the option termgraph is on
+            return `makeGraphRulesHookList(hName,mdecl,scode);
+          }
         }
         if (newHookList == `concHookDecl()) {
           throw new GomRuntimeException(
               "GomTypeExpander:typeModuleHook unknown HookKind: "+`hkind);
         }
         return newHookList;
-      }
+           }
     }
     throw new GomRuntimeException(
         "HookTypeExpander: this hook is not a hook: "+`hook);
@@ -378,13 +383,21 @@ public class HookTypeExpander {
   }
 
   /*
-   * generate hooks for associative-commutative with neutral element
+   * generate hooks for normalizing rules 
    */
   private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
     RuleExpander rexpander = new RuleExpander(moduleList);
     return rexpander.expandRules(trimBracket(scode));
   }
 
+  /*
+   * generate hooks for term-graph rules 
+   */
+  private HookDeclList makeGraphRulesHookList(String opName, Decl mdecl, String scode) {
+    GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
+    return rexpander.expandGraphRules(trimBracket(scode),mdecl);
+  }
+  
   /*
    * generate hooks for associative-commutative with neutral element
    */
@@ -438,7 +451,7 @@ public class HookTypeExpander {
             Code("  }\n"),
             Code("}\n")
             )),
-        acHooks*);
+            acHooks*);
     return acHooks;
   }
 
@@ -495,56 +508,56 @@ public class HookTypeExpander {
             Code("if ("),
             IsCons("head",mdecl.getODecl()),
             Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n")
-          )),
+            )),
         auHooks*);
 
     /* The mapping for AU operators has to be correct */
     /*
-    %match(mdecl) {
-      CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
-                               Prod=Variadic[]]) -> {
-        auHooks = `concHookDecl(
-            MappingHookDecl(
-              mdecl,
-              CodeList(
-                Code("%oplist " + sortName),
-		 // generate a second %oplist mapping for opName'?'
-                Code(" " + opName + "?"),
-                Code("(" + sortName + "*) {\n"),
-                Code("is_fsym(t) { t instanceof "),
-                FullSortClass(domainsdecl),
-                Code("}\n"),
-                Code("make_empty() { "),
-                Empty(mdecl.getODecl()),
-                Code(".make() }\n"),
-                Code("make_insert(e,l) { "),
-                Cons(mdecl.getODecl()),
-                Code(".make(e,l) }\n"),
-                Code("get_head(l) { ("),
-                IsCons("l",mdecl.getODecl()),
-                Code(")?(l."),
-                Code("getHead" + opName + "()"),
-                Code("):(l) }\n"),
-                Code("get_tail(l) { ("),
-                IsCons("l",mdecl.getODecl()),
-                Code(")?(l."),
-                Code("getTail" + opName + "()"),
-                Code("):("),
-                Empty(mdecl.getODecl()),
-                Code(".make()) }\n"),
-                Code("is_empty(l) { "),
-                Code("l == "),
-                Empty(mdecl.getODecl()),
-                Code(".make() }\n"),
-                Code("}\n")
-                )),
-            auHooks*);
-      }
+       %match(mdecl) {
+       CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
+       Prod=Variadic[]]) -> {
+       auHooks = `concHookDecl(
+       MappingHookDecl(
+       mdecl,
+       CodeList(
+       Code("%oplist " + sortName),
+    // generate a second %oplist mapping for opName'?'
+    Code(" " + opName + "?"),
+    Code("(" + sortName + "*) {\n"),
+    Code("is_fsym(t) { t instanceof "),
+    FullSortClass(domainsdecl),
+    Code("}\n"),
+    Code("make_empty() { "),
+    Empty(mdecl.getODecl()),
+    Code(".make() }\n"),
+    Code("make_insert(e,l) { "),
+    Cons(mdecl.getODecl()),
+    Code(".make(e,l) }\n"),
+    Code("get_head(l) { ("),
+    IsCons("l",mdecl.getODecl()),
+    Code(")?(l."),
+    Code("getHead" + opName + "()"),
+    Code("):(l) }\n"),
+    Code("get_tail(l) { ("),
+    IsCons("l",mdecl.getODecl()),
+    Code(")?(l."),
+    Code("getTail" + opName + "()"),
+    Code("):("),
+    Empty(mdecl.getODecl()),
+    Code(".make()) }\n"),
+    Code("is_empty(l) { "),
+    Code("l == "),
+    Empty(mdecl.getODecl()),
+    Code(".make() }\n"),
+    Code("}\n")
+    )),
+    auHooks*);
     }
-    */
+    }
+     */
     return auHooks;
   }
- 
+
   /*
    * generate hooks for flattened lists (with empty list as last element)
    */
@@ -558,8 +571,8 @@ public class HookTypeExpander {
 
     String userNeutral = trimBracket(scode);
     if(userNeutral.length() > 0) {
-        getLogger().log(Level.SEVERE,
-            "FL hook does not allow the definition of a neutral element");
+      getLogger().log(Level.SEVERE,
+          "FL hook does not allow the definition of a neutral element");
     }
 
     HookDeclList hooks = `concHookDecl();
@@ -585,8 +598,8 @@ public class HookTypeExpander {
             IsCons("tail",mdecl.getODecl()),
             Code(" && !"),
             IsEmpty("tail",mdecl.getODecl()),
-	    Code(") { return make(head,make(tail,Empty" + opName + ".make())); }\n")
-          )),
+            Code(") { return make(head,make(tail,Empty" + opName + ".make())); }\n")
+            )),
         hooks*);
 
     return hooks;
