@@ -40,7 +40,7 @@ This new release contains many improvements and new features:
     for graph traversal.
 
   - a new "rule" constructs to specify conditional rewrite rules that
-    are always apply (the data-structure is in normal form by
+    are always applied (the data-structure is in normal form by
     construction).
 
   - a full support of list-operators whose domain is equal to the
