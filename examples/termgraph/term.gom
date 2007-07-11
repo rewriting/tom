@@ -4,3 +4,7 @@ Term = a() | b() | c() | d()
      | f(arg1:Term)
      | g(arg1:Term, arg2:Term)
      | substTerm(arg1:Term, arg2:Term)
+
+module term: graphrules() {
+  g(x,y) -> f(x)
+}
