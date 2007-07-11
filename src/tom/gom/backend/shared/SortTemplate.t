@@ -71,6 +71,7 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
+import @getPackage()@.@className().toLowerCase()@.*;
 
 public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@{
 

@@ -272,7 +272,7 @@ public class TermGraphRewriting {
       t3 = (Term) posFinal.getSubterm().visit(t3);
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t3);
 
-      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(termAbstractType.GraphRule()).visit(t));
+      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
       
       t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
       System.out.println("\nMore complex initial term :\n"+t);
@@ -296,7 +296,7 @@ public class TermGraphRewriting {
       t4 = (Term) `InnermostIdSeq(NormalizePos()).visit(t4);
       t4 = (Term) posFinal.getSubterm().visit(t4);
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t4);
-      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(termAbstractType.GraphRule()).visit(t));
+      System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
       
 
     } catch(VisitFailure e) {

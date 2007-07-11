@@ -5,6 +5,6 @@ Term = a() | b() | c() | d()
      | g(arg1:Term, arg2:Term)
      | substTerm(arg1:Term, arg2:Term)
 
-module term: graphrules() {
+sort Term: graphrules() {
   g(x,y) -> f(x)
 }

@@ -163,6 +163,8 @@ public class HookTypeExpander {
           }
           HookKind("graphrules") -> {
             //TODO: verify if the option termgraph is on
+            // for now, this hook is only available with one sort T
+            //TODO: authorize TGRS with a multisort signature
             return `makeGraphRulesHookList(hName,mdecl,scode);
           }
         }
@@ -395,7 +397,7 @@ public class HookTypeExpander {
    */
   private HookDeclList makeGraphRulesHookList(String opName, Decl mdecl, String scode) {
     GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
-    return rexpander.expandGraphRules(trimBracket(scode),mdecl);
+    return rexpander.expandGraphRules(opName,trimBracket(scode),mdecl);
   }
   
   /*

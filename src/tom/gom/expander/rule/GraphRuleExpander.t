@@ -45,12 +45,14 @@ public class GraphRuleExpander {
   %include { ../../../library/mapping/java/sl.tom}
 
   private ModuleList moduleList;
+  private String sortname;
 
   public GraphRuleExpander(ModuleList data) {
     this.moduleList = data;
   }
 
-  public HookDeclList expandGraphRules(String ruleCode, Decl mdecl) {
+  public HookDeclList expandGraphRules(String sortname, String ruleCode, Decl mdecl) {
+    this.sortname = sortname; 
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
@@ -75,26 +77,26 @@ public class GraphRuleExpander {
     StringBuffer output = new StringBuffer();
     output.append(
         %[
-        %include {sl.tom }
+   %include {sl.tom }
 
-        %typeterm Position{
+    %typeterm Position{
         implement {Position}
         is_sort(t)     { t instanceof Position }
-        }
+    }
 
-        private static Term Swap(Position p1, Position p2, Term subject) {
+    private static @sortname@ Swap(Position p1, Position p2, @sortname@ subject) {
         try {
-          Term updatedSubject =  (Term) `TopDown(Sequence(UpdatePos(p1,p2),UpdatePos2(p1,p2))).visit(subject);
-          Term subterm_p1 = (Term) p1.getSubterm().visit(updatedSubject);
-          Term subterm_p2 = (Term) p2.getSubterm().visit(updatedSubject);
-          return (Term) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
+          @sortname@ updatedSubject =  (@sortname@) `TopDown(Sequence(UpdatePos(p1,p2),UpdatePos2(p1,p2))).visit(subject);
+          @sortname@ subterm_p1 = (@sortname@) p1.getSubterm().visit(updatedSubject);
+          @sortname@ subterm_p2 = (@sortname@) p2.getSubterm().visit(updatedSubject);
+          return (@sortname@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
           } catch (VisitFailure e) { return null; }
-        }
+    }
 
 
-        %strategy Normalize() extends Identity(){
-        visit Term {
-          p@getArobase()@pathTerm(_*) -> {
+   %strategy Normalize() extends Identity(){
+        visit @sortname@ {
+          p@getArobase()@path@sortname@(_*) -> {
             Position current = getEnvironment().getPosition(); 
             Position dest = (Position) current.add((Path)`p).getCanonicalPath();
             if(current.compare(dest)== -1) {
@@ -104,18 +106,18 @@ public class GraphRuleExpander {
                 //the subterm pointed was a pos (in case of previous switch) 
                 //and we must only update the relative position
                 getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
-                return pathTerm.make(realDest.sub(current));
+                return path@sortname@.make(realDest.sub(current));
             }  else {
                 //switch the rel position and the pointed subterm
 
                 // 1. construct the new relative position
-                Term relref = pathTerm.make(current.sub(dest));
+                @sortname@ relref = path@sortname@.make(current.sub(dest));
 
                 // 2. update the part to change 
                 `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
 
                 // 3. save the subterm updated 
-                Term subterm = (Term) getEnvironment().getSubject(); 
+                @sortname@ subterm = (@sortname@) getEnvironment().getSubject(); 
 
                 // 4. replace at dest the subterm by the new relative pos
                 getEnvironment().setSubject(relref);
@@ -128,68 +130,68 @@ public class GraphRuleExpander {
     }
 
    %strategy UpdatePos(source:Position,target:Position) extends Identity() {
-          visit Term {
-            p@getArobase()@pathTerm(_*) -> {
+          visit @sortname@ {
+            p@getArobase()@path@sortname@(_*) -> {
               Position current = getEnvironment().getPosition(); 
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
               if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){
                 //update this relative pos from the redex to the external
                 current = current.changePrefix(source,target);
-                return pathTerm.make(dest.sub(current));
+                return path@sortname@.make(dest.sub(current));
               }
 
               if (dest.hasPrefix(source)  && !current.hasPrefix(target) && !current.hasPrefix(source)){
                 //update this relative pos from the external to the redex
                 dest = dest.changePrefix(source,target); 
-                return pathTerm.make(dest.sub(current));
+                return path@sortname@.make(dest.sub(current));
               }
             }
           }
    }
 
    %strategy UpdatePos2(p1:Position,p2:Position) extends Identity() {
-          visit Term {
-            p@getArobase()@pathTerm(_*) -> {
+          visit @sortname@ {
+            p@getArobase()@path@sortname@(_*) -> {
               Position src = getEnvironment().getPosition(); 
               Position dest = (Position) src.add((Path)`p).getCanonicalPath();
               if(src.hasPrefix(p1) && dest.hasPrefix(p2)){
                 //update this relative pos from the subterm at p1 to the subterm at p2
                 Position newsrc = src.changePrefix(p1,p2);
                 Position newdest = dest.changePrefix(p2,p1);
-                return pathTerm.make(newdest.sub(newsrc));
+                return path@sortname@.make(newdest.sub(newsrc));
               }
 
               if(src.hasPrefix(p2) && dest.hasPrefix(p1)){
                 //update this relative pos from the subterm at p2 to the subterm at p1
                 Position newsrc = src.changePrefix(p2,p1);
                 Position newdest = dest.changePrefix(p1,p2);
-                return pathTerm.make(newdest.sub(newsrc));
+                return path@sortname@.make(newdest.sub(newsrc));
               }
             }
           }
    }
 
 
-  private static Term computeRhsWithPath(Term lhs, Term rhs, Position posRedex) {
+  private static @sortname@ computeRhsWithPath(@sortname@ lhs, @sortname@ rhs, Position posRedex) {
     try {
-      return (Term) `TopDown(FromVarToPath(lhs,posRedex)).visit(`rhs);
+      return (@sortname@) `TopDown(FromVarToPath(lhs,posRedex)).visit(`rhs);
     } catch(VisitFailure e) { return null; }
   }
 
-  %strategy FromVarToPath(lhs:Term,posRedex:Position) extends Identity() {
-    visit Term {
-      refTerm(name) -> { 
+  %strategy FromVarToPath(lhs:@sortname@,posRedex:Position) extends Identity() {
+    visit @sortname@ {
+      ref@sortname@(name) -> { 
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
         Position wwl = (Position) (new Position(new int[]{1})).add(posRedex).add(wl); 
         Position wwr = (Position) (new Position(new int[]{2})).add(wr); 
         Position res = (Position) wwl.sub(wwr);
-        return pathTerm.make(res);
+        return path@sortname@.make(res);
       }
     }
   }
 
-  private static Position getVarPos(Term term, String varname) {
+  private static Position getVarPos(@sortname@ term, String varname) {
     Position p = new Position();
     try {
       `OnceTopDown(GetVarPos(p,varname)).visit(term);
@@ -198,8 +200,8 @@ public class GraphRuleExpander {
   }
 
   %strategy GetVarPos(Position p, String varname) extends Fail() {
-    visit Term {
-      v@getArobase()@refTerm(name) -> { 
+    visit @sortname@ {
+      v@getArobase()@ref@sortname@(name) -> { 
         if (`name.equals(varname)) { 
           p.setValue(getEnvironment().getPosition().toArray()); 
           return `v; } 
@@ -212,13 +214,14 @@ public class GraphRuleExpander {
   }
 
   %strategy GraphRule() extends Identity() {
-    visit Term {
+    visit @sortname@ {
       ]%);
 
-        /*TODO: order the rules by sort */
+        /*TODO: in case of multisorted signature, order the rules by sort */
 
         %match(rulelist) {
           RuleList(_*,(Rule|ConditionalRule)[lhs=lhs,rhs=rhs],_*) -> {
+            //TODO: verify that the lhs of the rules are of the good sort  
             output.append(%[
                 @genTerm(`lhs)@ -> {
                 /* 1. save the current pos w */
@@ -230,26 +233,26 @@ public class GraphRuleExpander {
                 getEnvironment().followPath(omega.inverse());
 
                 /*3. construct tt=substTerm(t,r) */
-                Term r = computeRhsWithPath(`@genTermWithRef(`lhs)@,`@genTermWithRef(`rhs)@,omega);
-                Term tt = `substTerm((Term)getEnvironment().getSubject(),r);
+                @sortname@ r = computeRhsWithPath(`@genTermWithRef(`lhs)@,`@genTermWithRef(`rhs)@,omega);
+                @sortname@ tt = `subst@sortname@((@sortname@)getEnvironment().getSubject(),r);
                 
                 /* 4. set the global term to norm(swap(tt,1.w,2))|1 i */
-                Term ttt = Swap((Position) posFinal.add(omega),posRhs,tt); 
-                Term res = (Term) `InnermostIdSeq(Normalize()).visit(ttt); 
+                @sortname@ ttt = Swap((Position) posFinal.add(omega),posRhs,tt); 
+                @sortname@ res = (@sortname@) `InnermostIdSeq(Normalize()).visit(ttt); 
                 getEnvironment().setSubject(posFinal.getSubterm().visit(res));
 
                 /* 5. go to the position w */
                 getEnvironment().followPath(omega);
 
-                return (Term) getEnvironment().getSubject();
+                return (@sortname@) getEnvironment().getSubject();
                 }
                 ]%);
           }
         }
 
         output.append(%[
-            }
-            }
+    }
+  }
             ]%);
 
         String imports = %[
@@ -307,7 +310,7 @@ public class GraphRuleExpander {
         output.append(")");
       }
       Var(name) -> {
-        output.append("refTerm(\""+`name+"\")");
+        output.append("ref"+sortname+"(\""+`name+"\")");
       }
       BuiltinInt(i) -> {
         output.append(`i);
