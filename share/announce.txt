@@ -10,8 +10,7 @@ and rule based programming facilities into C and Java.
 Tom is a pattern matching compiler developed at INRIA. It is
 particularly well-suited for programming various transformations on
 trees/terms and XML based documents. Its design follows our research on
-the semantics and the efficient compilation of rule based languages
-(e.g. ELAN, developed at INRIA-Loria).
+the semantics and the efficient compilation of rule based languages.
 
 Many applications have been developed in Tom. Among them, let us mention:
  - the Tom compiler itself
