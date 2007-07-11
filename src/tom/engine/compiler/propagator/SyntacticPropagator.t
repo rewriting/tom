@@ -56,7 +56,7 @@ public class SyntacticPropagator implements IBasePropagator {
       /**
        * Decompose
        * 
-       * f(t1,...,tn) = g 
+       * f1(t1,...,tn) = g 
        * -> f1 = SymbolOf(g) /\ freshVar1=subterm1_f(g) /\ ... /\ freshVarn=subterm1_f(g) 
        *                /\ t1=freshVar1 /\ ... /\ tn=freshVarn
        * 
@@ -109,27 +109,16 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
       }
- 
-      /**
-       * Antipattern
-       * 
-       * an anti-pattern: just transform this into a AntiMatchConstraint and detach the constraints:
-       * a@!g(...) << t -> AntiMatch(g(...) << t) /\ a << t 
-       */
-      MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[]),s) -> {        
-        return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),
-            ConstraintPropagator.performDetach(MatchConstraint(term,s)));
-      }
 
       /**
        * Replace
        * 
        * Context1( z = v ) /\ z = t /\ Context2( z = u ) -> Context1( t = v ) /\ z = t /\ Context2( t = u ) 
        */
-      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {
+      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {        
         Constraint toApplyOn = `AndConstraint(X*,Y*);
         Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
-        if(res != toApplyOn) {
+        if(res != toApplyOn) {          
           return `AndConstraint(eq,res);
         }
       }      
@@ -139,7 +128,7 @@ public class SyntacticPropagator implements IBasePropagator {
   %strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity() {
     visit Constraint {
       MatchConstraint(Variable[AstName=name],t) -> {
-        if(`name == varName) { 
+        if(`name == varName) {
           // if we propagate a variable, this should lead to en equality test
           // otherwise, it is a just a match
           return value.isVariable() ? `MatchConstraint(TestVar(value),t) : `MatchConstraint(value,t); 

@@ -87,19 +87,31 @@ public class ConstraintPropagator {
    * Detaches the annotations
    * 
    * a@...b@g(y) << t -> g(y) << t /\ a << t /\ ... /\ b << t
-   * a@...b@!g(y) << t -> !g(y) << t /\ a << t /\ ... /\ b << t
-   *
+   * 
+   * For variableStars: a@...b@X* << t -> Z* << t /\ X* << Z* /\ a << Z* /\ ... /\ b << Z*  
+   * This is because the varStars can have at the rhs something that will generate loops,
+   * and we don't want to duplicate that to the constraints  
    */
-  public static Constraint performDetach(Constraint subject) {
+  public static Constraint performDetach(Constraint subject) {    
     Constraint result = `AndConstraint(); 
     %match(subject){
-      MatchConstraint(RecordAppl[Constraints=constraints@!concConstraint()],g) -> {
+      MatchConstraint((RecordAppl|Variable|UnamedVariable)[Constraints=constraints@!concConstraint()],g) -> {
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
             // add constraint to the list
             result = `AndConstraint(MatchConstraint(var,g),result*);                                                                                                                       
           }
         }// end match   
+      }      
+      MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
+        TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(`type);
+        %match(constraints) {
+          concConstraint(_*,AssignTo(var),_*) -> {
+            result = `AndConstraint(MatchConstraint(var,freshVariable),result*);                                                                                                                       
+          }
+        }// end match   
+        result = `AndConstraint(MatchConstraint(freshVariable,g),
+            MatchConstraint(t.setConstraints(concConstraint()),freshVariable),result*);
       }      
     }
     return result;

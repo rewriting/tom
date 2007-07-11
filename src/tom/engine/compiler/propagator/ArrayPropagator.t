@@ -97,12 +97,9 @@ public class ArrayPropagator implements IBasePropagator {
                     // if it is the last element               
 // [pem] same remark: move the test outside the match
                     if(`X.length() == 0) {
-                      // and if it is a varStar we should only assign it, without generating a loop
-                      // (if it is unamed, we do nothing)
-                      if((`appl).isVariableStar()) {
-                        l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
+                      // we should only assign it, without generating a loop
+                      l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
                             GetSliceArray(name,g,freshIndex,ExpressionToTomTerm(GetSize(name,g))))));
-                      }
                     } else {
                       TomTerm beginIndex = getBeginIndex();
                       TomTerm endIndex = getEndIndex();
@@ -114,7 +111,7 @@ public class ArrayPropagator implements IBasePropagator {
                     }
                     break mAppl;
                   }
-                  _ -> {
+                  _ -> {                    
                     l = `AndConstraint(l*,                      
                         Negate(EmptyArrayConstraint(name,g,freshIndex)),                      
                         MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,freshIndex))),

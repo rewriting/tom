@@ -107,11 +107,8 @@ mSlots:  %match(slots) {
               (VariableStar | UnamedVariableStar)[] -> {                
                 // if it is the last element               
                 if(`X.length() == 0) {
-                  // and if it is a varStar we should only assign it, without generating a loop
-                  // (if it is unamed, we do nothing)
-                  if((`appl).isVariableStar()) {
-                    l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
-                  }
+                  // we should only assign it, without generating a loop
+                  l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
                 } else {
                   TomTerm beginSublist = ConstraintCompiler.getBeginVariableStar(listType);
                   TomTerm endSublist = ConstraintCompiler.getEndVariableStar(listType);              

@@ -84,9 +84,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
        *  
        *  a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
-      m@MatchConstraint(term@(Variable|VariableStar|RecordAppl)[Constraints = !concConstraint()],g) -> {
-        return `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g)
-            ,ConstraintPropagator.performDetach(m));        
+      m@MatchConstraint(term@(Variable|VariableStar|UnamedVariableStar|UnamedVariable)[Constraints = !concConstraint()],g) -> {
+        Constraint result = ConstraintPropagator.performDetach(`m);
+        if (`term.isVariable()) {
+          result = `AndConstraint(MatchConstraint(term.setConstraints(concConstraint()),g),result);
+        }
+        return result;
       }
 
     }

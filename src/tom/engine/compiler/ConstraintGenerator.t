@@ -112,9 +112,13 @@ public class ConstraintGenerator {
         return `generateAutomata(left,subInstruction);
       } 
       // variables' assignments
-      ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable|VariableStar)[],t)) -> {
+      ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
         return `LetRef(v,TomTermToExpression(t),action);
       }  
+      // nothing for unamed ones
+      ConstraintToExpression(m@MatchConstraint((UnamedVariableStar|UnamedVariable)[],t)) -> {       
+        return action;      
+      }
       // do while
       DoWhileExpression(expr,condition) -> {
         Instruction subInstruction = generateAutomata(`expr,`Nop());
