@@ -22,11 +22,27 @@ public class Message {
     public Message(String text) {
         this.text = text;
     }
+    
+    public Message(Long id,String text) {
+      this.text = text;
+      this.id = id;
+    }
+    
+//    public Message(Long id, String text, Message nextMessage) {
+//      this.text = text;
+//      this.id = id;
+//      this.nextMessage = nextMessage;
+//    }
+//    
+//    public Message(String text, Message nextMessage) {
+//      this.text = text;      
+//      this.nextMessage = nextMessage;
+//    }
 
     public Long getId() {
         return id;
     }
-    private void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
