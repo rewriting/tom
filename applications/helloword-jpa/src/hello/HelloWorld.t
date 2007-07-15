@@ -2,10 +2,6 @@ package hello;
 
 import java.util.*;
 import javax.persistence.*;
-import beans.*;
-import beans.entities.types.accounts.*;
-import beans.entities.types.accountslist.*;
-import beans.entities.types.*;
 
 public class HelloWorld {
  
