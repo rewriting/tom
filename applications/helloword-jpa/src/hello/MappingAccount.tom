@@ -1,0 +1,219 @@
+
+%include { boolean.tom }
+
+%include { string.tom }
+
+%include { float.tom }
+
+%include { Long.tom }
+
+/*******************************************************************************/
+
+%typeterm Account {
+  implement 	{ hello.account.Account }
+  is_sort(t) 	{ t instanceof hello.account.Account }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op Account Account(acctNum:String, name:String, created:String, status:Status, balance:float, description:String) {
+  is_fsym(t) 				{ t hello.account.Account }
+  get_slot(acctNum, t) 		{ t.getAcctNum() }
+  get_slot(name, t) 		{ t.getName() }
+  get_slot(created, t) 		{ t.getCreated() } 
+  get_slot(status, t) 		{ t.getStatus() }
+  get_slot(balance, t) 		{ t.getBalance() }
+  get_slot(description, t) 	{ t.getDescription() }   
+}
+
+%typeterm AccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray AccountList accountList(Account*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (Account)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+%typeterm Status {
+  implement 	{ hello.account.Account.Status }
+  is_sort(t) 	{ t instanceof hello.account.Account.Status }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+/*******************************************************************************/
+
+%typeterm BankAccount {
+  implement 	{ hello.account.BankAccount }
+  is_sort(t) 	{ t instanceof hello.account.BankAccount }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op BankAccount BankAccount(bankName:String) {
+  is_fsym(t) 				{ t hello.account.BankAccount }
+  get_slot(bankName, t) 	{ t.getBankName() }
+}
+
+%typeterm BankAccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray BankAccountList bankAccountList(BankAccount*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (BankAccount)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+%typeterm BrokerageAccount {
+  implement 	{ hello.account.BrokerageAccount }
+  is_sort(t) 	{ t instanceof hello.account.BrokerageAccount }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op BankAccount BrokerageAccount(tradeFees:float) {
+  is_fsym(t) 				{ t hello.account.BrokerageAccount }
+  get_slot(tradeFees, t) 	{ t.getTradeFees() }
+}
+
+%typeterm BrokerageAccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray BrokerageAccountList brokerageAccountList(BrokerageAccount*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (BrokerageAccount)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+%typeterm CheckingAccount {
+  implement 	{ hello.account.CheckingAccount }
+  is_sort(t) 	{ t instanceof hello.account.CheckingAccount }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op CheckingAccount CheckingAccount(isOverDraftAllowed:boolean) {
+  is_fsym(t) 						{ t hello.account.Account }
+  get_slot(isOverDraftAllowed, t) 	{ t.isOverDraftAllowed() }
+}
+
+%typeterm CheckingAccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray CheckingAccountList checkingAccountList(Account*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (CheckingAccount)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+%typeterm CreditCardAccount {
+  implement 	{ hello.account.CreditCardAccount }
+  is_sort(t) 	{ t instanceof hello.account.CreditCardAccount }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op CreditCardAccount CreditCardAccount(issuingBank:String, creditCardNumber:String, expiresOn:String) {
+  is_fsym(t) 						{ t hello.account.CreditCardAccount }
+  get_slot(issuingBank, t) 			{ t.getIssuingBank() }
+  get_slot(creditCardNumber, t) 	{ t.getCreditCardNumber() }
+  get_slot(expiresOn, t) 			{ t.getExpiresOn() }
+}
+
+%typeterm CreditCardAccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray CreditCardAccountList creditCardAccountList(Account*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (CreditCardAccount)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+%typeterm MarginAccount {
+  implement 	{ hello.account.MarginAccount }
+  is_sort(t) 	{ t instanceof hello.account.MarginAccount }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op MarginAccount MarginAccount(maxLoanAllowed:float) {
+  is_fsym(t) 						{ t hello.account.CreditCardAccount }
+  get_slot(maxLoanAllowed, t) 		{ t.getMaxLoanAllowed() }
+}
+
+%typeterm MarginAccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray MarginAccountList MarginAccountList(Account*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (MarginAccount)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+%typeterm SavingsAccount {
+  implement 	{ hello.account.SavingsAccount }
+  is_sort(t) 	{ t instanceof hello.account.SavingsAccount }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op SavingsAccount SavingsAccount(savingsRate:float) {
+  is_fsym(t) 					{ t hello.account.SavingsAccount }
+  get_slot(savingsRate, t) 		{ t.getSavingsRate() }
+}
+
+%typeterm SavingsAccountList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray SavingsAccountList SavingsAccountList(Account*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (SavingsAccount)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
+private static ArrayList myAdd(Object e,ArrayList l) {
+  l.add(e);
+  return l;
+}
