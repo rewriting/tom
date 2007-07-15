@@ -7,6 +7,8 @@
 
 %include { Long.tom }
 
+%include { Collection.tom }
+
 /*******************************************************************************/
 
 %typeterm Account {
@@ -15,14 +17,15 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op Account Account(acctNum:String, name:String, created:String, status:Status, balance:float, description:String) {
+%op Account Account(acctNum:String, name:String, created:String, status:Status, balance:float, description:String, accountOwner: AccountOwner) {
   is_fsym(t) 				{ t instanceof hello.account.Account }
   get_slot(acctNum, t) 		{ t.getAcctNum() }
   get_slot(name, t) 		{ t.getName() }
   get_slot(created, t) 		{ t.getCreated() } 
   get_slot(status, t) 		{ t.getStatus() }
   get_slot(balance, t) 		{ t.getBalance() }
-  get_slot(description, t) 	{ t.getDescription() }   
+  get_slot(description, t) 	{ t.getDescription() }  
+  get_slot(accountOwner, t) { t.getAccountOwner() }   
 }
 
 %typeterm AccountList {
@@ -38,6 +41,38 @@
   get_element(l,n) 			{ (Account)l.get(n)        }
   get_size(l)      			{ l.size()                }
 }
+
+/*******************************************************************************/
+
+%typeterm AccountOwner {
+  implement 	{ hello.account.AccountOwner }
+  is_sort(t) 	{ t instanceof hello.account.AccountOwner }
+  equals(t1,t2) { t1.equals(t2) }
+}
+
+%op AccountOwner AccountOwner(id:long, name:String, accounts:Collection) {
+  is_fsym(t) 				{ t instanceof hello.account.AccountOwner }
+  get_slot(id, t) 			{ t.getId() }
+  get_slot(name, t) 		{ t.getName() }
+  get_slot(accounts, t) 	{ t.getAccounts() } 
+}
+
+%typeterm AccountOwnerList {
+  implement 				{ java.util.List }
+  is_sort(t) 				{ t instanceof java.util.List }
+  equals(t1,t2) 			{ t1.equals(t2) }
+}
+
+%oparray AccountOwnerList accountOwnerList(AccountOwner*) {
+  is_fsym(t) 				{ t instanceof java.util.List  }
+  make_empty(n) 			{ new java.util.ArrayList(n) }
+  make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
+  get_element(l,n) 			{ (AccountOwner)l.get(n)        }
+  get_size(l)      			{ l.size()                }
+}
+
+/*******************************************************************************/
+
 
 /*******************************************************************************/
 

@@ -1,9 +1,9 @@
-package hello; 
+package hello;  
 
-import java.util.*;
+import java.util.*; 
 import javax.persistence.*;
 import hello.account.*;
-
+ 
 public class HelloWorldAccount {
    
   %include{ MappingAccount.tom }          
@@ -68,10 +68,12 @@ public class HelloWorldAccount {
     System.out.println( accounts.size() + " account(s) found" );
      
     %match(accounts) {
-      accountList(_*,Account[name=n],_*) -> { System.out.println("Account name:" + `n); }
+      accountList(_*,Account[name=n,accountOwner=AccountOwner[name=owname]],_*) -> { 
+        System.out.println("Account name:" + `n + " with owner name:" + `owname); 
+        }
     }
     
-    // TODO - a nice example with owner 
+    // TODO - a nice example with owner  
     
     %match(accounts) {
       accountList(_*,x,_*) -> { 
