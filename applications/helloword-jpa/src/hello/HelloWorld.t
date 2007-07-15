@@ -25,7 +25,7 @@ public class HelloWorld {
     em.persist(mes1);
     Message mes2 = new Message("cucu_2");
     mes2.setNextMessage(mes1);
-    em.persist(mes2);
+    em.persist(mes2); 
 
     tx.commit();
     em.close();

@@ -32,7 +32,6 @@
   get_slot(text, t) { t.getText() }
   get_slot(id, t) { t.getId() }
   get_slot(nextMessage, t) { t.getNextMessage() }
-  make(t0, t1, t2) { makeMessage(t0,t1,t2) }
 }
 
 private static Message makeMessage(Long id, String text, Message nextMess){
