@@ -66,6 +66,7 @@
   <property name="src.configfile"       location="${src.config}/Tom.xml"/>
   <property name="stable.gomconfigfile" location="${stable.config}/Gom.xml"/>
   <property name="src.gomconfigfile"    location="${src.config}/Gom.xml"/>
+  <property name="src.adapterconfig"    location="${src.config}/GomAntlrAdaptor.xml"/>
 
   <!-- Aircube bundle -->
   <property name="bundle.temp.dir"      value="bundle"/>
@@ -621,6 +622,7 @@
     <!-- "tom config file" -->
     <copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
     <copy tofile="${src.dist}/Gom.xml" file="${src.gomconfigfile}"/>
+    <copy tofile="${src.dist}/GomAntlrAdaptor.xml" file="${src.adapterconfig}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
@@ -649,6 +651,13 @@
 	    <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
 	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+    </replace>
+    <copy tofile="${src.dist.bin}/gomantlradaptor" file="${utils}/script.in"/>
+    <replace file="${src.dist.bin}/gomantlradaptor">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="GomAntlrAdaptor.xml"/>
 	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
