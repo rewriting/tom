@@ -16,7 +16,7 @@
 }
 
 %op Account Account(acctNum:String, name:String, created:String, status:Status, balance:float, description:String) {
-  is_fsym(t) 				{ t hello.account.Account }
+  is_fsym(t) 				{ t instanceof hello.account.Account }
   get_slot(acctNum, t) 		{ t.getAcctNum() }
   get_slot(name, t) 		{ t.getName() }
   get_slot(created, t) 		{ t.getCreated() } 
@@ -55,9 +55,9 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op BankAccount BankAccount(bankName:String) {
-  is_fsym(t) 				{ t hello.account.BankAccount }
-  get_slot(bankName, t) 	{ t.getBankName() }
+%op Account BankAccount(bankName:String) {
+  is_fsym(t) 				{ t instanceof hello.account.BankAccount }
+  get_slot(bankName, t) 	{ ((BankAccount)t).getBankName() }  
 }
 
 %typeterm BankAccountList {
@@ -66,7 +66,7 @@
   equals(t1,t2) 			{ t1.equals(t2) }
 }
 
-%oparray BankAccountList bankAccountList(BankAccount*) {
+%oparray AccountList bankAccountList(BankAccount*) {
   is_fsym(t) 				{ t instanceof java.util.List  }
   make_empty(n) 			{ new java.util.ArrayList(n) }
   make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
@@ -82,9 +82,9 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op BankAccount BrokerageAccount(tradeFees:float) {
-  is_fsym(t) 				{ t hello.account.BrokerageAccount }
-  get_slot(tradeFees, t) 	{ t.getTradeFees() }
+%op Account BrokerageAccount(tradeFees:float) {
+  is_fsym(t) 				{ t instanceof hello.account.BrokerageAccount }
+  get_slot(tradeFees, t) 	{ ((BrokerageAccount)t).getTradeFees() }
 }
 
 %typeterm BrokerageAccountList {
@@ -93,7 +93,7 @@
   equals(t1,t2) 			{ t1.equals(t2) }
 }
 
-%oparray BrokerageAccountList brokerageAccountList(BrokerageAccount*) {
+%oparray AccountList brokerageAccountList(BrokerageAccount*) {
   is_fsym(t) 				{ t instanceof java.util.List  }
   make_empty(n) 			{ new java.util.ArrayList(n) }
   make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
@@ -109,9 +109,9 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op CheckingAccount CheckingAccount(isOverDraftAllowed:boolean) {
-  is_fsym(t) 						{ t hello.account.Account }
-  get_slot(isOverDraftAllowed, t) 	{ t.isOverDraftAllowed() }
+%op Account CheckingAccount(isOverDraftAllowed:boolean) {
+  is_fsym(t) 						{ t instanceof hello.account.CheckingAccount }
+  get_slot(isOverDraftAllowed, t) 	{ ((CheckingAccount)t).isIsOverDraftAllowed() }
 }
 
 %typeterm CheckingAccountList {
@@ -120,7 +120,7 @@
   equals(t1,t2) 			{ t1.equals(t2) }
 }
 
-%oparray CheckingAccountList checkingAccountList(Account*) {
+%oparray AccountList checkingAccountList(Account*) {
   is_fsym(t) 				{ t instanceof java.util.List  }
   make_empty(n) 			{ new java.util.ArrayList(n) }
   make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
@@ -136,11 +136,11 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op CreditCardAccount CreditCardAccount(issuingBank:String, creditCardNumber:String, expiresOn:String) {
-  is_fsym(t) 						{ t hello.account.CreditCardAccount }
-  get_slot(issuingBank, t) 			{ t.getIssuingBank() }
-  get_slot(creditCardNumber, t) 	{ t.getCreditCardNumber() }
-  get_slot(expiresOn, t) 			{ t.getExpiresOn() }
+%op Account CreditCardAccount(issuingBank:String, creditCardNumber:String, expiresOn:String) {
+  is_fsym(t) 						{ t instanceof hello.account.CreditCardAccount }
+  get_slot(issuingBank, t) 			{ ((CreditCardAccount)t).getIssuingBank() }
+  get_slot(creditCardNumber, t) 	{ ((CreditCardAccount)t).getCreditCardNumber() }
+  get_slot(expiresOn, t) 			{ ((CreditCardAccount)t).getExpiresOn() }
 }
 
 %typeterm CreditCardAccountList {
@@ -149,7 +149,7 @@
   equals(t1,t2) 			{ t1.equals(t2) }
 }
 
-%oparray CreditCardAccountList creditCardAccountList(Account*) {
+%oparray AccountList creditCardAccountList(Account*) {
   is_fsym(t) 				{ t instanceof java.util.List  }
   make_empty(n) 			{ new java.util.ArrayList(n) }
   make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
@@ -165,9 +165,9 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op MarginAccount MarginAccount(maxLoanAllowed:float) {
-  is_fsym(t) 						{ t hello.account.CreditCardAccount }
-  get_slot(maxLoanAllowed, t) 		{ t.getMaxLoanAllowed() }
+%op Account MarginAccount(maxLoanAllowed:float) {
+  is_fsym(t) 						{ t instanceof hello.account.CreditCardAccount }
+  get_slot(maxLoanAllowed, t) 		{ ((MarginAccount)t).getMaxLoanAllowed() }
 }
 
 %typeterm MarginAccountList {
@@ -176,7 +176,7 @@
   equals(t1,t2) 			{ t1.equals(t2) }
 }
 
-%oparray MarginAccountList MarginAccountList(Account*) {
+%oparray AccountList marginAccountList(Account*) {
   is_fsym(t) 				{ t instanceof java.util.List  }
   make_empty(n) 			{ new java.util.ArrayList(n) }
   make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
@@ -192,9 +192,15 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op SavingsAccount SavingsAccount(savingsRate:float) {
-  is_fsym(t) 					{ t hello.account.SavingsAccount }
-  get_slot(savingsRate, t) 		{ t.getSavingsRate() }
+%op Account SavingsAccount(savingsRate:float,acctNum:String, name:String, created:String, status:Status, balance:float, description:String) {
+  is_fsym(t) 					{ t instanceof hello.account.SavingsAccount }
+  get_slot(savingsRate, t) 		{ ((SavingsAccount)t).getSavingsRate() }
+  get_slot(acctNum, t) 		{ t.getAcctNum() }
+  get_slot(name, t) 		{ t.getName() }
+  get_slot(created, t) 		{ t.getCreated() } 
+  get_slot(status, t) 		{ t.getStatus() }
+  get_slot(balance, t) 		{ t.getBalance() }
+  get_slot(description, t) 	{ t.getDescription() }     
 }
 
 %typeterm SavingsAccountList {
@@ -203,7 +209,7 @@
   equals(t1,t2) 			{ t1.equals(t2) }
 }
 
-%oparray SavingsAccountList SavingsAccountList(Account*) {
+%oparray AccountList savingsAccountList(Account*) {
   is_fsym(t) 				{ t instanceof java.util.List  }
   make_empty(n) 			{ new java.util.ArrayList(n) }
   make_append(e,l) 			{ myAdd(e,(ArrayList)l)  }
