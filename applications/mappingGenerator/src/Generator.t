@@ -80,7 +80,10 @@ public class Generator {
     generateTypeTerm(classFName, strBuilder);
     // generate %op
     generateOperator(classFName, strBuilder, primitiveTypes);
-    // take it's super class that
+    // generate %oparray (only for base classes)
+    if (Object.class.equals( classFName.getSuperclass())){
+      generateOpArray(className, strBuilder);
+    }
   }
 
   private void generateTypeTerm(Class classFName, StringBuilder strBuilder){
@@ -159,6 +162,26 @@ public class Generator {
     return result.toString();
   }
 
+  private void generateOpArray(String className, StringBuilder strBuilder){
+    className = className.substring(className.lastIndexOf('.') + 1);
+    String opName = Character.toLowerCase(className.charAt(0)) +  className.substring(1); 
+    strBuilder.append(%[ 
+%typeterm @className@List {
+  implement                 { java.util.List }
+  is_sort(t)                { t instanceof java.util.List }
+  equals(t1,t2)             { t1.equals(t2) }
+}
+
+%oparray @className@List @opName@List(@className@*) {
+  is_fsym(t)                { t instanceof java.util.List  }
+  make_empty(n)             { new java.util.ArrayList(n) }
+  make_append(e,l)          { myAdd(e,(ArrayList)l)  }
+  get_element(l,n)          { (@className@)l.get(n)        }
+  get_size(l)               { l.size()                }
+}
+    ]%); 
+  }
+  
   public String getPath() {
     String className = getClass().getName();
     return ClassLoader.getSystemResource(className + ".class").getPath();
