@@ -1,5 +1,7 @@
-import java.io.BufferedWriter;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class Generator {
 
@@ -57,7 +59,7 @@ public class Generator {
 
   private void generate(String currentPackage, File startPointFile, File destination, String mappingsFileName,
       StringBuilder strBuilder) throws IOException, ClassNotFoundException {
-    File[] files = startPointFile.listFiles();
+    File[] files = startPointFile.listFiles(); 
     for (File file : files) {
       if (file.isDirectory()) {
         generate(currentPackage + "." + file.getName(), file, destination, mappingsFileName, strBuilder);
@@ -72,6 +74,8 @@ public class Generator {
     Class classFName = Class.forName(className);
     // generate %typeterm
     generateTypeTerm(classFName, strBuilder);
+    // generate %op
+    generateOperator(classFName, strBuilder);
     // take it's super class that
   }
 
@@ -82,9 +86,69 @@ public class Generator {
   implement     { @classFName.getCanonicalName()@ }
   is_sort(t)    { t instanceof @classFName.getCanonicalName()@ }
   equals(t1,t2) { t1.equals(t2) }      
-}]%
-    );
+}
+    ]%);
   }
+  
+  private void generateOperator(Class classFName, StringBuilder strBuilder){
+    String fullClassName = classFName.getCanonicalName();
+    String className = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
+    Method[] methods = classFName.getMethods();    
+    // find the class that is the highest in the hierarchy
+    String superClassName = null;    
+    while(classFName.getSuperclass() != null) {      
+      superClassName = classFName.getCanonicalName();
+      classFName = classFName.getSuperclass();
+    }
+    String codomain = null;
+    // if we have some super class
+    if(superClassName != null) {
+      codomain = superClassName.substring(superClassName.lastIndexOf('.') + 1);
+    }else{
+      codomain = className;
+    }    
+    strBuilder.append(%[
+%op @codomain@ @className@(@getFieldsDeclarations(methods)@) {
+  is_fsym(t)                { t instanceof @fullClassName@ } @getSlotDeclarations(methods)@     
+}
+    ]%);
+  }
+  
+  private String getFieldsDeclarations(Method[] methods){
+    StringBuilder result = new StringBuilder();    
+    for(Method m: methods){
+      // not a 'get' or an 'is' 
+      String methodName = m.getName();   
+      if (!methodName.startsWith("get") && !methodName.startsWith("is")) {continue;};
+      String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
+      fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
+      result.append(fieldName + ":");
+      if( m.getReturnType().isPrimitive() ){
+        result.append(m.getReturnType().getName());
+      }else{
+        result.append(m.getReturnType().getCanonicalName().substring(m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
+      }
+      result.append(",");
+    }
+    // remove the ","
+    String finalString = result.toString(); 
+    return ( finalString == null || "".equals(finalString) ) ? "" : finalString.substring(0,finalString.length()-1);
+  }
+  
+  private String getSlotDeclarations(Method[] methods){
+    StringBuilder result = new StringBuilder();
+    for(Method m: methods){
+      // not a 'get' or an 'is'
+      String methodName = m.getName();
+      if (!methodName.startsWith("get") && !methodName.startsWith("is")) {continue;};
+      String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
+      fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
+      result.append(%[
+  get_slot(@fieldName@, t)  { t.@methodName@() }]%);    
+    }
+    return result.toString();
+  }
+
 
   public String getPath() {
     String className = getClass().getName();
