@@ -1,13 +1,9 @@
 import java.io.BufferedWriter;
 import java.io.*;
 
-
 public class Generator {
-  
-  //TODO - the includes
-  private StringBuilder mappingBuilder = new StringBuilder();
 
-  public static void main(String[] args) throws IOException{
+  public static void main(String[] args) throws IOException {
     if (args.length == 0) {
       // TODO
       System.out.println("Usage");
@@ -16,67 +12,77 @@ public class Generator {
       System.exit(0);
     }
 
-    Generator gen = new Generator();    
-    gen.generate(args[0], args[1], args[2]);
+    Generator gen = new Generator();
+    gen.generate(args[0], args[1], args.length > 2 ? args[2] : null);
   }
 
-  private void generate(String startPoint, String destination, String mappingsFileName) throws IOException{
+  private void generate(String startPoint, String mappingsFileName, String destination) throws IOException {
 
     File currentClassFile = new File(getPath());
     String parentPath = currentClassFile.getParent();
     String startPointFullPath = null;
-    if (parentPath != null){ 
-      startPointFullPath = (new File(parentPath)).getCanonicalPath() + File.pathSeparator + startPoint;
-    }else{
+    if (parentPath != null) {
+      startPointFullPath = (new File(parentPath)).getCanonicalPath() + File.separator + startPoint;
+    } else {
       startPointFullPath = startPoint;
-    }    
-    
-    File startPointFile = new File(startPointFullPath);    
-    if (!startPointFile.exists()){
-      throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
-    }    
-    
-    if(destination != null){
-      File destinationFile = new File(destination);    
-      if (!destinationFile.exists()){
-        throw new FileNotFoundException("Unable to find destination path '" + destination + "'.");
-      }
-      generate(startPointFile,destinationFile,mappingsFileName);
-    }else{
-      generate(startPointFile,new File(parentPath == null ? "" : parentPath),mappingsFileName);
     }
-  }  
 
-  private void generate(File startPointFile, File destination, String mappingsFileName) {
-    File[] files = startPointFile.listFiles();
+    File startPointFile = new File(startPointFullPath);
+    if (!startPointFile.exists()) {
+      throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
+    }
+
     Writer writer = null;
-    try{
-      writer = new BufferedWriter(new FileWriter(mappingsFileName));
-      for(File file:files){
-        extractMapping(file, writer);
+    StringBuilder strBuilder = new StringBuilder();
+    try {
+      if (destination != null) {
+        File destinationFile = new File(destination);
+        if (!destinationFile.exists()) {
+          throw new FileNotFoundException("Unable to find destination path '" + destination + "'.");
+        }
+        generate(startPoint, startPointFile, destinationFile, mappingsFileName, strBuilder);
+      } else {
+        generate(startPoint, startPointFile, new File(parentPath == null ? "" : parentPath), mappingsFileName,strBuilder);
       }
-      // TODO - call recursivelly
-    }catch(Exception e){      
+      writer = new BufferedWriter(new FileWriter(mappingsFileName));
+      writer.write(strBuilder.toString());      
+    } catch (Exception e) {
+      System.out.println("An error occured. See the stack trace for more information.\n");
       e.printStackTrace();
-    }finally{
+    } finally {
+      writer.flush();
       writer.close();
     }
   }
 
-  private void extractMapping(File file, Writer writer) throws ClassNotFoundException, IOException {
-    Class classFName = Class.forName(file.getCanonicalPath());
+  private void generate(String currentPackage, File startPointFile, File destination, String mappingsFileName,
+      StringBuilder strBuilder) throws IOException, ClassNotFoundException {
+    File[] files = startPointFile.listFiles();
+    for (File file : files) {
+      if (file.isDirectory()) {
+        generate(currentPackage + "." + file.getName(), file, destination, mappingsFileName, strBuilder);
+      } else {
+        System.out.println("Extracting mapping for:" + file.getName());
+        extractMapping(currentPackage + "." + file.getName().substring(0, file.getName().indexOf('.')), strBuilder);
+      }
+    }
+  }
+
+  private void extractMapping(String className, StringBuilder strBuilder) throws ClassNotFoundException, IOException {
+    Class classFName = Class.forName(className);
     // generate %typeterm
-    classFName.getc
+    generateTypeTerm(classFName, strBuilder);
     // take it's super class that
   }
-  
-  private void generateTypeTerm(Class classFName){
-    mappingBuilder.append(%[
-      %typeterm @classFName.getName()@ {
-        implement     { @classFName.getCanonicalName()@ }
-        is_sort(t)    { t instanceof @classFName.getCanonicalName()@ }
-        equals(t1,t2) { t1.equals(t2) }      
-      }]%
+
+  private void generateTypeTerm(Class classFName, StringBuilder strBuilder){
+    String className = classFName.getCanonicalName().substring(classFName.getCanonicalName().lastIndexOf('.') + 1);
+    strBuilder.append(%[
+%typeterm @className@ {
+  implement     { @classFName.getCanonicalName()@ }
+  is_sort(t)    { t instanceof @classFName.getCanonicalName()@ }
+  equals(t1,t2) { t1.equals(t2) }      
+}]%
     );
   }
 
