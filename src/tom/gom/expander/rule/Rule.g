@@ -10,6 +10,8 @@ tokens {
   RULE;
   CONDRULE;
   APPL;
+  LAB;
+  REF;
   CONDTERM;
   CONDEQUALS;
   CONDNOTEQUALS;
@@ -34,6 +36,14 @@ rule :
     -> { cond == null }? ^(RULE pattern term)
     -> ^(CONDRULE pattern term $cond)
   ;
+graphruleset :
+  (graphrule)* EOF -> ^(RULELIST (graphrule)*)
+  ;
+graphrule :
+  lhs=labelledpattern ARROW rhs=labelledpattern (IF cond=condition)?
+    -> { cond == null }? ^(RULE $lhs $rhs)
+    -> ^(CONDRULE $lhs $rhs $cond)
+  ;
 condition :
   p1=term (EQUALS p2=term
 		  | NOTEQUALS p3=term
@@ -54,15 +64,33 @@ condition :
   ;
 pattern :
   ID LPAR (term (COMA term)*)? RPAR -> ^(APPL ID term*)
-  ;
+;
 term :
-  pattern | ID | builtin
-  ;
+  pattern  | ID | builtin 
+;
 builtin :
-  INT | STRING
-  ;
+INT | STRING
+;
+
+labelledpattern :
+  (namelabel=ID AROBASE)? p=graphpattern
+ -> {$namelabel!=null}? ^(LAB $namelabel $p)
+ -> $p
+;
+graphpattern :
+  constructor | ID | builtin | ref
+;
+ref :
+STAR ID -> ^(REF ID)
+;
+constructor :
+ID LPAR (labelledpattern (COMA labelledpattern)*)? RPAR
+-> ^(APPL ID labelledpattern*)
+;
 
 ARROW : '->' ;
+STAR : '*' ;
+AROBASE : '@' ;
 LPAR : '(' ;
 RPAR : ')' ;
 COMA : ',' ;

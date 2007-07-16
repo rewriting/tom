@@ -106,12 +106,15 @@ public class GomReferenceExpander {
     visit Sort {
       sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],Operators=ops] -> {
          
-        //We add 3 new operators lab<Sort>,ref<Sort>,path<Sort>     
+        //We add 4 new operators lab<Sort>,ref<Sort>,path<Sort>,subst<Sort>,var<Sort>
+        //the two last ones are only used to implement the termgraph rewriting step
         OperatorDecl labOp = `OperatorDecl("lab"+sortname,sortdecl,Slots(concSlot(Slot("label",stringSortDecl),Slot("term",sortdecl))));
         OperatorDecl refOp = `OperatorDecl("ref"+sortname,sortdecl,Slots(concSlot(Slot("label",stringSortDecl))));
         OperatorDecl pathOp = `OperatorDecl("path"+sortname,sortdecl,Variadic(intSortDecl));
+        OperatorDecl substOp = `OperatorDecl("subst"+sortname,sortdecl,Slots(concSlot(Slot("globalTerm",sortdecl),Slot("substitution",sortdecl))));
+        OperatorDecl varOp = `OperatorDecl("var"+sortname,sortdecl,Slots(concSlot(Slot("label",stringSortDecl))));
         hookList.add(pathHooks(pathOp,`sortdecl));
-        return `sort.setOperators(`concOperator(ops*,labOp,refOp,pathOp));
+        return `sort.setOperators(`concOperator(ops*,labOp,refOp,pathOp,substOp,varOp));
 
       }
     }
@@ -329,11 +332,7 @@ public class GomReferenceExpander {
     %strategy Label2Path@sortName@(map:HashMap) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
-          if (! map.containsKey(`label)) {
-            // find a reference with an unexistent label
-            throw new RuntimeException("Term-graph with a null reference at"+getEnvironment().getPosition());
-          }
-          else {
+          if (map.containsKey(`label)) {
             Position target = (Position) map.get(`label);
             @sortName@ ref = (@sortName@) (path@sortName@.make(target.sub(getEnvironment().getPosition())).getCanonicalPath());
             return ref;

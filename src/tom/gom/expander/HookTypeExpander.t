@@ -395,9 +395,9 @@ public class HookTypeExpander {
   /*
    * generate hooks for term-graph rules 
    */
-  private HookDeclList makeGraphRulesHookList(String opName, Decl mdecl, String scode) {
+  private HookDeclList makeGraphRulesHookList(String sortname, Decl mdecl, String scode) {
     GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
-    return rexpander.expandGraphRules(opName,trimBracket(scode),mdecl);
+    return rexpander.expandGraphRules(sortname,trimBracket(scode),mdecl);
   }
   
   /*

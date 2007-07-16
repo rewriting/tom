@@ -1,4 +1,4 @@
-// $ANTLR 3.0b6 /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g 2007-07-09 14:36:01
+// $ANTLR 3.0 ../src/tom/gom/expander/rule/Rule.g 2007-07-16 10:32:48
 
   package tom.gom.expander.rule;
 
@@ -9,416 +9,300 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class RuleLexer extends Lexer {
-    public static final int CONDGEQ=13;
-    public static final int NOTEQUALS=19;
-    public static final int RPAR=27;
-    public static final int CONDLT=12;
-    public static final int WS=32;
-    public static final int LPAR=26;
-    public static final int ARROW=16;
-    public static final int STRING=30;
-    public static final int LT=21;
-    public static final int LEQ=20;
-    public static final int GT=23;
-    public static final int CONDGT=14;
+    public static final int CONDGEQ=14;
+    public static final int NOTEQUALS=20;
+    public static final int RPAR=28;
+    public static final int CONDLT=13;
+    public static final int WS=34;
+    public static final int LPAR=27;
+    public static final int ARROW=17;
+    public static final int STRING=31;
+    public static final int LT=22;
+    public static final int LEQ=21;
+    public static final int GT=24;
+    public static final int CONDGT=15;
     public static final int RULE=5;
     public static final int RULELIST=4;
-    public static final int GEQ=22;
-    public static final int CONDEQUALS=9;
-    public static final int ESC=31;
-    public static final int DOT=24;
-    public static final int EQUALS=18;
-    public static final int CONDTERM=8;
-    public static final int SLCOMMENT=33;
-    public static final int CONDNOTEQUALS=10;
-    public static final int CONDMETHOD=15;
-    public static final int IF=17;
-    public static final int INT=29;
-    public static final int CONDLEQ=11;
+    public static final int GEQ=23;
+    public static final int CONDEQUALS=10;
+    public static final int ESC=33;
+    public static final int LAB=8;
+    public static final int DOT=25;
+    public static final int EQUALS=19;
+    public static final int CONDTERM=9;
+    public static final int SLCOMMENT=35;
+    public static final int CONDNOTEQUALS=11;
+    public static final int CONDMETHOD=16;
+    public static final int IF=18;
+    public static final int INT=30;
+    public static final int CONDLEQ=12;
     public static final int EOF=-1;
-    public static final int Tokens=34;
+    public static final int Tokens=36;
     public static final int CONDRULE=6;
+    public static final int COLON=32;
     public static final int APPL=7;
-    public static final int COMA=28;
-    public static final int ID=25;
+    public static final int COMA=29;
+    public static final int ID=26;
     public RuleLexer() {;} 
     public RuleLexer(CharStream input) {
         super(input);
     }
-    public String getGrammarFileName() { return "/home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "../src/tom/gom/expander/rule/Rule.g"; }
 
     // $ANTLR start ARROW
-    public void mARROW() throws RecognitionException {
+    public final void mARROW() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = ARROW;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:65:9: ( '->' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:65:9: '->'
+            // ../src/tom/gom/expander/rule/Rule.g:87:9: ( '->' )
+            // ../src/tom/gom/expander/rule/Rule.g:87:9: '->'
             {
             match("->"); 
 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end ARROW
 
-    // $ANTLR start LPAR
-    public void mLPAR() throws RecognitionException {
+    // $ANTLR start COLON
+    public final void mCOLON() throws RecognitionException {
         try {
-            ruleNestingLevel++;
+            int _type = COLON;
+            // ../src/tom/gom/expander/rule/Rule.g:88:9: ( ':' )
+            // ../src/tom/gom/expander/rule/Rule.g:88:9: ':'
+            {
+            match(':'); 
+
+            }
+
+            this.type = _type;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end COLON
+
+    // $ANTLR start LPAR
+    public final void mLPAR() throws RecognitionException {
+        try {
             int _type = LPAR;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:66:8: ( '(' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:66:8: '('
+            // ../src/tom/gom/expander/rule/Rule.g:89:8: ( '(' )
+            // ../src/tom/gom/expander/rule/Rule.g:89:8: '('
             {
             match('('); 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end LPAR
 
     // $ANTLR start RPAR
-    public void mRPAR() throws RecognitionException {
+    public final void mRPAR() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = RPAR;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:67:8: ( ')' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:67:8: ')'
+            // ../src/tom/gom/expander/rule/Rule.g:90:8: ( ')' )
+            // ../src/tom/gom/expander/rule/Rule.g:90:8: ')'
             {
             match(')'); 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end RPAR
 
     // $ANTLR start COMA
-    public void mCOMA() throws RecognitionException {
+    public final void mCOMA() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = COMA;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:68:8: ( ',' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:68:8: ','
+            // ../src/tom/gom/expander/rule/Rule.g:91:8: ( ',' )
+            // ../src/tom/gom/expander/rule/Rule.g:91:8: ','
             {
             match(','); 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end COMA
 
     // $ANTLR start EQUALS
-    public void mEQUALS() throws RecognitionException {
+    public final void mEQUALS() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = EQUALS;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:69:10: ( '==' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:69:10: '=='
+            // ../src/tom/gom/expander/rule/Rule.g:92:10: ( '==' )
+            // ../src/tom/gom/expander/rule/Rule.g:92:10: '=='
             {
             match("=="); 
 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end EQUALS
 
     // $ANTLR start NOTEQUALS
-    public void mNOTEQUALS() throws RecognitionException {
+    public final void mNOTEQUALS() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = NOTEQUALS;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:70:13: ( '!=' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:70:13: '!='
+            // ../src/tom/gom/expander/rule/Rule.g:93:13: ( '!=' )
+            // ../src/tom/gom/expander/rule/Rule.g:93:13: '!='
             {
             match("!="); 
 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end NOTEQUALS
 
     // $ANTLR start DOT
-    public void mDOT() throws RecognitionException {
+    public final void mDOT() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = DOT;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:71:7: ( '.' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:71:7: '.'
+            // ../src/tom/gom/expander/rule/Rule.g:94:7: ( '.' )
+            // ../src/tom/gom/expander/rule/Rule.g:94:7: '.'
             {
             match('.'); 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end DOT
 
     // $ANTLR start LEQ
-    public void mLEQ() throws RecognitionException {
+    public final void mLEQ() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = LEQ;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:72:7: ( '<=' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:72:7: '<='
+            // ../src/tom/gom/expander/rule/Rule.g:95:7: ( '<=' )
+            // ../src/tom/gom/expander/rule/Rule.g:95:7: '<='
             {
             match("<="); 
 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end LEQ
 
     // $ANTLR start LT
-    public void mLT() throws RecognitionException {
+    public final void mLT() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = LT;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:73:6: ( '<' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:73:6: '<'
+            // ../src/tom/gom/expander/rule/Rule.g:96:6: ( '<' )
+            // ../src/tom/gom/expander/rule/Rule.g:96:6: '<'
             {
             match('<'); 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end LT
 
     // $ANTLR start GEQ
-    public void mGEQ() throws RecognitionException {
+    public final void mGEQ() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = GEQ;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:74:7: ( '>=' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:74:7: '>='
+            // ../src/tom/gom/expander/rule/Rule.g:97:7: ( '>=' )
+            // ../src/tom/gom/expander/rule/Rule.g:97:7: '>='
             {
             match(">="); 
 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end GEQ
 
     // $ANTLR start GT
-    public void mGT() throws RecognitionException {
+    public final void mGT() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = GT;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:75:6: ( '>' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:75:6: '>'
+            // ../src/tom/gom/expander/rule/Rule.g:98:6: ( '>' )
+            // ../src/tom/gom/expander/rule/Rule.g:98:6: '>'
             {
             match('>'); 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end GT
 
     // $ANTLR start IF
-    public void mIF() throws RecognitionException {
+    public final void mIF() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = IF;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:76:6: ( 'if' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:76:6: 'if'
+            // ../src/tom/gom/expander/rule/Rule.g:99:6: ( 'if' )
+            // ../src/tom/gom/expander/rule/Rule.g:99:6: 'if'
             {
             match("if"); 
 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end IF
 
     // $ANTLR start INT
-    public void mINT() throws RecognitionException {
+    public final void mINT() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = INT;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:77:7: ( ( '0' .. '9' )+ )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:77:7: ( '0' .. '9' )+
+            // ../src/tom/gom/expander/rule/Rule.g:100:7: ( ( '0' .. '9' )+ )
+            // ../src/tom/gom/expander/rule/Rule.g:100:7: ( '0' .. '9' )+
             {
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:77:7: ( '0' .. '9' )+
+            // ../src/tom/gom/expander/rule/Rule.g:100:7: ( '0' .. '9' )+
             int cnt1=0;
             loop1:
             do {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
+
                 if ( ((LA1_0>='0' && LA1_0<='9')) ) {
                     alt1=1;
                 }
@@ -426,7 +310,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:77:8: '0' .. '9'
+            	    // ../src/tom/gom/expander/rule/Rule.g:100:8: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -445,30 +329,19 @@ public class RuleLexer extends Lexer {
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end INT
 
     // $ANTLR start ESC
-    public void mESC() throws RecognitionException {
+    public final void mESC() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = ESC;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:78:7: ( '\\\\' ('n'|'r'|'t'|'b'|'f'|'\"'|'\\''|'\\\\'))
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:78:7: '\\\\' ('n'|'r'|'t'|'b'|'f'|'\"'|'\\''|'\\\\')
+            // ../src/tom/gom/expander/rule/Rule.g:101:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            // ../src/tom/gom/expander/rule/Rule.g:101:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); 
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -484,37 +357,27 @@ public class RuleLexer extends Lexer {
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end ESC
 
     // $ANTLR start STRING
-    public void mSTRING() throws RecognitionException {
+    public final void mSTRING() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = STRING;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:79:10: ( '\"' ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))* '\"' )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:79:10: '\"' ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))* '\"'
+            // ../src/tom/gom/expander/rule/Rule.g:102:10: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // ../src/tom/gom/expander/rule/Rule.g:102:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:79:14: ( ESC | ~ ('\"'|'\\\\'|'\\n'|'\\r'))*
+            // ../src/tom/gom/expander/rule/Rule.g:102:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop2:
             do {
                 int alt2=3;
                 int LA2_0 = input.LA(1);
+
                 if ( (LA2_0=='\\') ) {
                     alt2=1;
                 }
@@ -525,14 +388,14 @@ public class RuleLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:79:15: ESC
+            	    // ../src/tom/gom/expander/rule/Rule.g:102:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:79:19: ~ ('\"'|'\\\\'|'\\n'|'\\r')
+            	    // ../src/tom/gom/expander/rule/Rule.g:102:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -557,30 +420,19 @@ public class RuleLexer extends Lexer {
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end STRING
 
     // $ANTLR start ID
-    public void mID() throws RecognitionException {
+    public final void mID() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = ID;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:80:6: ( ('a'..'z'|'A'..'Z'|'_') ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))* ( '*' )? )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:80:6: ('a'..'z'|'A'..'Z'|'_') ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))* ( '*' )?
+            // ../src/tom/gom/expander/rule/Rule.g:103:6: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )? )
+            // ../src/tom/gom/expander/rule/Rule.g:103:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )?
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -592,11 +444,12 @@ public class RuleLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:80:30: ( ('a'..'z'|'A'..'Z'|'_'|'0'..'9'))*
+            // ../src/tom/gom/expander/rule/Rule.g:103:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
                 int LA3_0 = input.LA(1);
+
                 if ( ((LA3_0>='0' && LA3_0<='9')||(LA3_0>='A' && LA3_0<='Z')||LA3_0=='_'||(LA3_0>='a' && LA3_0<='z')) ) {
                     alt3=1;
                 }
@@ -604,7 +457,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:80:31: ('a'..'z'|'A'..'Z'|'_'|'0'..'9')
+            	    // ../src/tom/gom/expander/rule/Rule.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -625,15 +478,16 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:80:64: ( '*' )?
+            // ../src/tom/gom/expander/rule/Rule.g:103:64: ( '*' )?
             int alt4=2;
             int LA4_0 = input.LA(1);
+
             if ( (LA4_0=='*') ) {
                 alt4=1;
             }
             switch (alt4) {
                 case 1 :
-                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:80:65: '*'
+                    // ../src/tom/gom/expander/rule/Rule.g:103:65: '*'
                     {
                     match('*'); 
 
@@ -645,37 +499,27 @@ public class RuleLexer extends Lexer {
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end ID
 
     // $ANTLR start WS
-    public void mWS() throws RecognitionException {
+    public final void mWS() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = WS;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:81:6: ( ( (' '|'\\t'|'\\n'))+ )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:81:6: ( (' '|'\\t'|'\\n'))+
+            // ../src/tom/gom/expander/rule/Rule.g:104:6: ( ( ' ' | '\\t' | '\\n' )+ )
+            // ../src/tom/gom/expander/rule/Rule.g:104:6: ( ' ' | '\\t' | '\\n' )+
             {
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:81:6: ( (' '|'\\t'|'\\n'))+
+            // ../src/tom/gom/expander/rule/Rule.g:104:6: ( ' ' | '\\t' | '\\n' )+
             int cnt5=0;
             loop5:
             do {
                 int alt5=2;
                 int LA5_0 = input.LA(1);
+
                 if ( ((LA5_0>='\t' && LA5_0<='\n')||LA5_0==' ') ) {
                     alt5=1;
                 }
@@ -683,7 +527,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:81:7: (' '|'\\t'|'\\n')
+            	    // ../src/tom/gom/expander/rule/Rule.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)==' ' ) {
             	        input.consume();
@@ -708,42 +552,32 @@ public class RuleLexer extends Lexer {
                 cnt5++;
             } while (true);
 
-             _channel=HIDDEN; 
+             channel=HIDDEN; 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end WS
 
     // $ANTLR start SLCOMMENT
-    public void mSLCOMMENT() throws RecognitionException {
+    public final void mSLCOMMENT() throws RecognitionException {
         try {
-            ruleNestingLevel++;
             int _type = SLCOMMENT;
-            int _start = getCharIndex();
-            int _line = getLine();
-            int _charPosition = getCharPositionInLine();
-            int _channel = Token.DEFAULT_CHANNEL;
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:13: ( '//' (~ ('\\n'|'\\r'))* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:13: '//' (~ ('\\n'|'\\r'))* ( '\\n' | '\\r' ( '\\n' )? )?
+            // ../src/tom/gom/expander/rule/Rule.g:106:13: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // ../src/tom/gom/expander/rule/Rule.g:106:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:18: (~ ('\\n'|'\\r'))*
+            // ../src/tom/gom/expander/rule/Rule.g:106:18: (~ ( '\\n' | '\\r' ) )*
             loop6:
             do {
                 int alt6=2;
                 int LA6_0 = input.LA(1);
+
                 if ( ((LA6_0>='\u0000' && LA6_0<='\t')||(LA6_0>='\u000B' && LA6_0<='\f')||(LA6_0>='\u000E' && LA6_0<='\uFFFE')) ) {
                     alt6=1;
                 }
@@ -751,7 +585,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:19: ~ ('\\n'|'\\r')
+            	    // ../src/tom/gom/expander/rule/Rule.g:106:19: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -772,9 +606,10 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:34: ( '\\n' | '\\r' ( '\\n' )? )?
+            // ../src/tom/gom/expander/rule/Rule.g:106:34: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt8=3;
             int LA8_0 = input.LA(1);
+
             if ( (LA8_0=='\n') ) {
                 alt8=1;
             }
@@ -783,25 +618,26 @@ public class RuleLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:35: '\\n'
+                    // ../src/tom/gom/expander/rule/Rule.g:106:35: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:40: '\\r' ( '\\n' )?
+                    // ../src/tom/gom/expander/rule/Rule.g:106:40: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:44: ( '\\n' )?
+                    // ../src/tom/gom/expander/rule/Rule.g:106:44: ( '\\n' )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
+
                     if ( (LA7_0=='\n') ) {
                         alt7=1;
                     }
                     switch (alt7) {
                         case 1 :
-                            // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:83:45: '\\n'
+                            // ../src/tom/gom/expander/rule/Rule.g:106:45: '\\n'
                             {
                             match('\n'); 
 
@@ -816,76 +652,99 @@ public class RuleLexer extends Lexer {
 
             }
 
-             _channel=HIDDEN; 
+             channel=HIDDEN; 
 
             }
 
-
-
-                    if ( token==null && ruleNestingLevel==1 ) {
-                        emit(_type,_line,_charPosition,_channel,_start,getCharIndex()-1);
-                    }
-
-                        }
+            this.type = _type;
+        }
         finally {
-            ruleNestingLevel--;
         }
     }
     // $ANTLR end SLCOMMENT
 
     public void mTokens() throws RecognitionException {
-        // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
-        int alt9=18;
+        // ../src/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
+        int alt9=19;
         switch ( input.LA(1) ) {
         case '-':
+            {
             alt9=1;
+            }
+            break;
+        case ':':
+            {
+            alt9=2;
+            }
             break;
         case '(':
-            alt9=2;
+            {
+            alt9=3;
+            }
             break;
         case ')':
-            alt9=3;
+            {
+            alt9=4;
+            }
             break;
         case ',':
-            alt9=4;
+            {
+            alt9=5;
+            }
             break;
         case '=':
-            alt9=5;
+            {
+            alt9=6;
+            }
             break;
         case '!':
-            alt9=6;
+            {
+            alt9=7;
+            }
             break;
         case '.':
-            alt9=7;
+            {
+            alt9=8;
+            }
             break;
         case '<':
-            int LA9_8 = input.LA(2);
-            if ( (LA9_8=='=') ) {
-                alt9=8;
+            {
+            int LA9_9 = input.LA(2);
+
+            if ( (LA9_9=='=') ) {
+                alt9=9;
             }
             else {
-                alt9=9;}
+                alt9=10;}
+            }
             break;
         case '>':
-            int LA9_9 = input.LA(2);
-            if ( (LA9_9=='=') ) {
-                alt9=10;
+            {
+            int LA9_10 = input.LA(2);
+
+            if ( (LA9_10=='=') ) {
+                alt9=11;
             }
             else {
-                alt9=11;}
+                alt9=12;}
+            }
             break;
         case 'i':
-            int LA9_10 = input.LA(2);
-            if ( (LA9_10=='f') ) {
-                int LA9_21 = input.LA(3);
-                if ( (LA9_21=='*'||(LA9_21>='0' && LA9_21<='9')||(LA9_21>='A' && LA9_21<='Z')||LA9_21=='_'||(LA9_21>='a' && LA9_21<='z')) ) {
-                    alt9=16;
+            {
+            int LA9_11 = input.LA(2);
+
+            if ( (LA9_11=='f') ) {
+                int LA9_22 = input.LA(3);
+
+                if ( (LA9_22=='*'||(LA9_22>='0' && LA9_22<='9')||(LA9_22>='A' && LA9_22<='Z')||LA9_22=='_'||(LA9_22>='a' && LA9_22<='z')) ) {
+                    alt9=17;
                 }
                 else {
-                    alt9=12;}
+                    alt9=13;}
             }
             else {
-                alt9=16;}
+                alt9=17;}
+            }
             break;
         case '0':
         case '1':
@@ -897,13 +756,19 @@ public class RuleLexer extends Lexer {
         case '7':
         case '8':
         case '9':
-            alt9=13;
+            {
+            alt9=14;
+            }
             break;
         case '\\':
-            alt9=14;
+            {
+            alt9=15;
+            }
             break;
         case '\"':
-            alt9=15;
+            {
+            alt9=16;
+            }
             break;
         case 'A':
         case 'B':
@@ -957,145 +822,158 @@ public class RuleLexer extends Lexer {
         case 'x':
         case 'y':
         case 'z':
-            alt9=16;
+            {
+            alt9=17;
+            }
             break;
         case '\t':
         case '\n':
         case ' ':
-            alt9=17;
+            {
+            alt9=18;
+            }
             break;
         case '/':
-            alt9=18;
+            {
+            alt9=19;
+            }
             break;
         default:
             NoViableAltException nvae =
-                new NoViableAltException("1:1: Tokens : ( ARROW | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );", 9, 0, input);
+                new NoViableAltException("1:1: Tokens : ( ARROW | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );", 9, 0, input);
 
             throw nvae;
         }
 
         switch (alt9) {
             case 1 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:10: ARROW
+                // ../src/tom/gom/expander/rule/Rule.g:1:10: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
             case 2 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:16: LPAR
+                // ../src/tom/gom/expander/rule/Rule.g:1:16: COLON
+                {
+                mCOLON(); 
+
+                }
+                break;
+            case 3 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:22: LPAR
                 {
                 mLPAR(); 
 
                 }
                 break;
-            case 3 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:21: RPAR
+            case 4 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:27: RPAR
                 {
                 mRPAR(); 
 
                 }
                 break;
-            case 4 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:26: COMA
+            case 5 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:32: COMA
                 {
                 mCOMA(); 
 
                 }
                 break;
-            case 5 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:31: EQUALS
+            case 6 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:37: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
-            case 6 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:38: NOTEQUALS
+            case 7 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:44: NOTEQUALS
                 {
                 mNOTEQUALS(); 
 
                 }
                 break;
-            case 7 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:48: DOT
+            case 8 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:54: DOT
                 {
                 mDOT(); 
 
                 }
                 break;
-            case 8 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:52: LEQ
+            case 9 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:58: LEQ
                 {
                 mLEQ(); 
 
                 }
                 break;
-            case 9 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:56: LT
+            case 10 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:62: LT
                 {
                 mLT(); 
 
                 }
                 break;
-            case 10 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:59: GEQ
+            case 11 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:65: GEQ
                 {
                 mGEQ(); 
 
                 }
                 break;
-            case 11 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:63: GT
+            case 12 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:69: GT
                 {
                 mGT(); 
 
                 }
                 break;
-            case 12 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:66: IF
+            case 13 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:72: IF
                 {
                 mIF(); 
 
                 }
                 break;
-            case 13 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:69: INT
+            case 14 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:75: INT
                 {
                 mINT(); 
 
                 }
                 break;
-            case 14 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:73: ESC
+            case 15 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:79: ESC
                 {
                 mESC(); 
 
                 }
                 break;
-            case 15 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:77: STRING
+            case 16 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:83: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
-            case 16 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:84: ID
+            case 17 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:90: ID
                 {
                 mID(); 
 
                 }
                 break;
-            case 17 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:87: WS
+            case 18 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:93: WS
                 {
                 mWS(); 
 
                 }
                 break;
-            case 18 :
-                // /home/tonio/workspace/jtom/src/tom/gom/expander/rule/Rule.g:1:90: SLCOMMENT
+            case 19 :
+                // ../src/tom/gom/expander/rule/Rule.g:1:96: SLCOMMENT
                 {
                 mSLCOMMENT(); 
 

@@ -51,7 +51,7 @@ public class GraphRuleExpander {
     this.moduleList = data;
   }
 
-  public HookDeclList expandGraphRules(String sortname, String ruleCode, Decl mdecl) {
+  public HookDeclList expandGraphRules(String sortname, String ruleCode, Decl sdecl) {
     this.sortname = sortname; 
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -59,22 +59,23 @@ public class GraphRuleExpander {
     parser.setTreeAdaptor(new ASTAdaptor());
     RuleList rulelist = `RuleList();
     try {
-      ASTTree ast = (ASTTree)parser.ruleset().getTree();
+      ASTTree ast = (ASTTree)parser.graphruleset().getTree();
       rulelist = (RuleList) ast.getTerm();
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});
       return `concHookDecl();
     }
-    return expand(rulelist,mdecl);
+    return expand(rulelist,sdecl);
   }
 
   private String getArobase(){
     return "@";
   }
 
-  protected HookDeclList expand(RuleList rulelist, Decl mdecl) {
+  protected HookDeclList expand(RuleList rulelist, Decl sdecl) {
     StringBuffer output = new StringBuffer();
+    String modulename = sdecl.getSort().getModuleDecl().getModuleName().getName();
     output.append(
         %[
    %include {sl.tom }
@@ -180,7 +181,7 @@ public class GraphRuleExpander {
 
   %strategy FromVarToPath(lhs:@sortname@,posRedex:Position) extends Identity() {
     visit @sortname@ {
-      ref@sortname@(name) -> { 
+      var@sortname@(name) -> { 
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
         Position wwl = (Position) (new Position(new int[]{1})).add(posRedex).add(wl); 
@@ -201,7 +202,7 @@ public class GraphRuleExpander {
 
   %strategy GetVarPos(Position p, String varname) extends Fail() {
     visit @sortname@ {
-      v@getArobase()@ref@sortname@(name) -> { 
+      v@getArobase()@var@sortname@(name) -> { 
         if (`name.equals(varname)) { 
           p.setValue(getEnvironment().getPosition().toArray()); 
           return `v; } 
@@ -222,6 +223,7 @@ public class GraphRuleExpander {
         %match(rulelist) {
           RuleList(_*,(Rule|ConditionalRule)[lhs=lhs,rhs=rhs],_*) -> {
             //TODO: verify that the lhs of the rules are of the good sort  
+            //TODO: verify the linearity of lhs and rhs
             output.append(%[
                 @genTerm(`lhs)@ -> {
                 /* 1. save the current pos w */
@@ -233,7 +235,9 @@ public class GraphRuleExpander {
                 getEnvironment().followPath(omega.inverse());
 
                 /*3. construct tt=substTerm(t,r) */
-                @sortname@ r = computeRhsWithPath(`@genTermWithRef(`lhs)@,`@genTermWithRef(`rhs)@,omega);
+                @sortname@ expandedLhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(`lhs)@);
+                @sortname@ expandedRhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(`rhs)@);
+                @sortname@ r = computeRhsWithPath(expandedLhs,expandedRhs,omega);
                 @sortname@ tt = `subst@sortname@((@sortname@)getEnvironment().getSubject(),r);
                 
                 /* 4. set the global term to norm(swap(tt,1.w,2))|1 i */
@@ -258,14 +262,29 @@ public class GraphRuleExpander {
         String imports = %[
           import tom.library.sl.*;
           import java.util.*;
-        ]%;
+          ]%;
+        
 
-        return `concHookDecl(BlockHookDecl(mdecl,Code(output.toString())),ImportHookDecl(mdecl,Code(imports)));
+        return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
   }
 
   private String genTerm(Term term) {
     StringBuffer output = new StringBuffer();
     %match(term) {
+      LabTerm(label,term) -> {
+        output.append("lab"+sortname);
+        output.append("(");
+        output.append(`label);
+        output.append(",");
+        output.append(genTerm(`term));
+        output.append(")");
+      }
+      RefTerm(label) -> {
+        output.append("ref"+sortname);
+        output.append("(");
+        output.append(`label);
+        output.append(")");
+      }
       Appl(symbol,args) -> {
         output.append(`symbol);
         output.append("(");
@@ -300,17 +319,31 @@ public class GraphRuleExpander {
     return output.toString();
   }
 
-  private String genTermWithRef(Term term) {
+  private String genTermWithExplicitVar(Term term) {
     StringBuffer output = new StringBuffer();
     %match(term) {
+      LabTerm(label,term) -> {
+        output.append("lab"+sortname);
+        output.append("(");
+        output.append(`label);
+        output.append(",");
+        output.append(genTermWithExplicitVar(`term));
+        output.append(")");
+      }
+      RefTerm(label) -> {
+        output.append("ref"+sortname);
+        output.append("(");
+        output.append(`label);
+        output.append(")");
+      }
       Appl(symbol,args) -> {
         output.append(`symbol);
         output.append("(");
-        output.append(genTermListWithRef(`args));
+        output.append(genTermListWithExplicitVar(`args));
         output.append(")");
       }
       Var(name) -> {
-        output.append("ref"+sortname+"(\""+`name+"\")");
+        output.append("var"+sortname+"(\""+`name+"\")");
       }
       BuiltinInt(i) -> {
         output.append(`i);
@@ -322,16 +355,16 @@ public class GraphRuleExpander {
     return output.toString();
   }
 
-  private String genTermListWithRef(TermList list) {
+  private String genTermListWithExplicitVar(TermList list) {
     StringBuffer output = new StringBuffer();
     %match(list) {
       TermList() -> { return ""; }
       TermList(h,t*) -> {
-        output.append(genTermWithRef(`h));
+        output.append(genTermWithExplicitVar(`h));
         if (!`t.isEmptyTermList()) {
           output.append(", ");
         }
-        output.append(genTermListWithRef(`t*));
+        output.append(genTermListWithExplicitVar(`t*));
       }
     }
     return output.toString();

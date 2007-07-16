@@ -105,6 +105,12 @@ public class ASTTree extends CommonTree {
       case RuleParser.APPL:
         inAstTerm = `Appl(token.getText(),TermList());
         break;
+      case RuleParser.LAB:
+        inAstTerm = `LabTerm(token.getText(),BuiltinInt(-1));
+        break;
+      case RuleParser.REF:
+        inAstTerm = `RefTerm(token.getText());
+        break;
       case RuleParser.STRING:
         inAstTerm = `BuiltinString(token.getText());
         break;
@@ -168,6 +174,15 @@ public class ASTTree extends CommonTree {
       }
     }
     %match(inAstTerm) {
+      LabTerm(l,t) -> {
+        Term tm = (Term) trm;
+        if (childIndex == 0 ) {
+          inAstTerm = `LabTerm(tm.getname(),t);
+        } else {
+          inAstTerm = `LabTerm(l,tm);
+        }
+        childIndex++;
+      }
       Appl(s,TermList(args*)) -> {
         Term tm = (Term) trm;
         if (childIndex == 0 ) {
