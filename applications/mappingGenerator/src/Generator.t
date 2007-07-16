@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Generator {
 
@@ -35,19 +36,22 @@ public class Generator {
     }
 
     Writer writer = null;
-    StringBuilder strBuilder = new StringBuilder();
+    StringBuilder strBuilder = new StringBuilder("%include { string.tom } \n%include { Collection.tom }\n");
     try {
+      HashSet<String> primitiveTypes = new HashSet<String>();
       if (destination != null) {
         File destinationFile = new File(destination);
         if (!destinationFile.exists()) {
           throw new FileNotFoundException("Unable to find destination path '" + destination + "'.");
         }
-        generate(startPoint, startPointFile, destinationFile, mappingsFileName, strBuilder);
-      } else {
-        generate(startPoint, startPointFile, new File(parentPath == null ? "" : parentPath), mappingsFileName,strBuilder);
+        mappingsFileName = destinationFile.getCanonicalPath() + File.separator + mappingsFileName;        
+      }      
+      generate(startPoint, startPointFile, strBuilder, primitiveTypes);
+      for(String str:primitiveTypes){
+        strBuilder.insert(0, "%include { " + str + ".tom }\n");
       }
       writer = new BufferedWriter(new FileWriter(mappingsFileName));
-      writer.write(strBuilder.toString());      
+      writer.write(strBuilder.toString());
     } catch (Exception e) {
       System.out.println("An error occured. See the stack trace for more information.\n");
       e.printStackTrace();
@@ -57,25 +61,25 @@ public class Generator {
     }
   }
 
-  private void generate(String currentPackage, File startPointFile, File destination, String mappingsFileName,
-      StringBuilder strBuilder) throws IOException, ClassNotFoundException {
-    File[] files = startPointFile.listFiles(); 
+  private void generate(String currentPackage, File startPointFile, StringBuilder strBuilder,
+      HashSet<String> primitiveTypes) throws IOException, ClassNotFoundException {
+    File[] files = startPointFile.listFiles();
     for (File file : files) {
       if (file.isDirectory()) {
-        generate(currentPackage + "." + file.getName(), file, destination, mappingsFileName, strBuilder);
+        generate(currentPackage + "." + file.getName(), file, strBuilder, primitiveTypes);
       } else {
         System.out.println("Extracting mapping for:" + file.getName());
-        extractMapping(currentPackage + "." + file.getName().substring(0, file.getName().indexOf('.')), strBuilder);
+        extractMapping(currentPackage + "." + file.getName().substring(0, file.getName().indexOf('.')), strBuilder, primitiveTypes);
       }
     }
   }
 
-  private void extractMapping(String className, StringBuilder strBuilder) throws ClassNotFoundException, IOException {
+  private void extractMapping(String className, StringBuilder strBuilder, HashSet<String> primitiveTypes) throws ClassNotFoundException, IOException {
     Class classFName = Class.forName(className);
     // generate %typeterm
     generateTypeTerm(classFName, strBuilder);
     // generate %op
-    generateOperator(classFName, strBuilder);
+    generateOperator(classFName, strBuilder, primitiveTypes);
     // take it's super class that
   }
 
@@ -87,10 +91,10 @@ public class Generator {
   is_sort(t)    { t instanceof @classFName.getCanonicalName()@ }
   equals(t1,t2) { t1.equals(t2) }      
 }
-    ]%);
+]%);
   }
-  
-  private void generateOperator(Class classFName, StringBuilder strBuilder){
+
+  private void generateOperator(Class classFName, StringBuilder strBuilder, HashSet<String> primitiveTypes){
     String fullClassName = classFName.getCanonicalName();
     String className = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
     Method[] methods = classFName.getMethods();    
@@ -108,33 +112,39 @@ public class Generator {
       codomain = className;
     }    
     strBuilder.append(%[
-%op @codomain@ @className@(@getFieldsDeclarations(methods)@) {
+%op @codomain@ @className@(@getFieldsDeclarations(methods,primitiveTypes)@) {
   is_fsym(t)                { t instanceof @fullClassName@ } @getSlotDeclarations(methods)@     
 }
-    ]%);
+]%);
   }
-  
-  private String getFieldsDeclarations(Method[] methods){
-    StringBuilder result = new StringBuilder();    
-    for(Method m: methods){
-      // not a 'get' or an 'is' 
-      String methodName = m.getName();   
-      if (!methodName.startsWith("get") && !methodName.startsWith("is")) {continue;};
+
+  private String getFieldsDeclarations(Method[] methods, HashSet<String> primitiveTypes) {
+    StringBuilder result = new StringBuilder();
+    for (Method m : methods) {
+      // not a 'get' or an 'is'
+      String methodName = m.getName();
+      if (!methodName.startsWith("get") && !methodName.startsWith("is")) {
+        continue;
+      }
+      ;
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
-      fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
+      fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
       result.append(fieldName + ":");
-      if( m.getReturnType().isPrimitive() ){
+      if (m.getReturnType().isPrimitive()) {
         result.append(m.getReturnType().getName());
-      }else{
-        result.append(m.getReturnType().getCanonicalName().substring(m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
+        // put the include also
+        primitiveTypes.add(m.getReturnType().getName());
+      } else {
+        result.append(m.getReturnType().getCanonicalName().substring(
+            m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
       }
       result.append(",");
     }
     // remove the ","
-    String finalString = result.toString(); 
-    return ( finalString == null || "".equals(finalString) ) ? "" : finalString.substring(0,finalString.length()-1);
+    String finalString = result.toString();
+    return (finalString == null || "".equals(finalString)) ? "" : finalString.substring(0, finalString.length() - 1);
   }
-  
+
   private String getSlotDeclarations(Method[] methods){
     StringBuilder result = new StringBuilder();
     for(Method m: methods){
@@ -148,7 +158,6 @@ public class Generator {
     }
     return result.toString();
   }
-
 
   public String getPath() {
     String className = getClass().getName();
