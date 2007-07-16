@@ -51,7 +51,7 @@ public class AdapterGenerator {
     this.importList = importList;
   }
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../adt/gom/Gom.tom}
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom }
 
@@ -61,6 +61,7 @@ public class AdapterGenerator {
 
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
     writeTokenFile(moduleList);
+    writeAdapterFile(moduleList);
   }
 
   public int writeTokenFile(ModuleList moduleList) {
@@ -77,6 +78,50 @@ public class AdapterGenerator {
       return 1;
     }
     return 0;
+  }
+
+  public int writeAdapterFile(ModuleList moduleList) {
+    try {
+       File output = adaptorFileToGenerate();
+       // make sure the directory exists
+       output.getParentFile().mkdirs();
+       Writer writer =
+         new BufferedWriter(
+             new OutputStreamWriter(
+               new FileOutputStream(output)));
+       generateAdapterFile(moduleList, writer);
+       writer.flush();
+       writer.close();
+    } catch(Exception e) {
+      e.printStackTrace();
+      return 1;
+    }
+    return 0;
+  }
+
+  public void generateAdapterFile(ModuleList moduleList, Writer writer)
+    throws java.io.IOException {
+    String packagePrefix =
+      environment()
+        .getStreamManager()
+          .getPackagePath().replace(File.separatorChar,'.');
+    String adaptPkg =
+      (packagePrefix==""?filename():packagePrefix+filename()).toLowerCase();
+    writer.write(
+    %[
+package @adaptPkg@;
+
+import org.antlr.runtime.Token;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
+
+public class @filename()@Adaptor extends CommonTreeAdaptor {
+
+	public Object create(Token payload) {
+		return new @filename()@Tree(payload);
+	}
+
+}
+]%);
   }
 
   public void generateTokenFile(ModuleList moduleList, Writer writer)
@@ -103,7 +148,8 @@ public class AdapterGenerator {
   }
 
   protected String filename() {
-    String filename = environment().getStreamManager().getOutputFileName();
+    String filename =
+      (new File(environment().getStreamManager().getOutputFileName())).getName();
     int dotidx = filename.indexOf('.');
     if(-1 != dotidx) {
       filename = filename.substring(0,dotidx);
@@ -118,10 +164,10 @@ public class AdapterGenerator {
     return output;
   }
 
-  protected File fileToGenerate() {
+  protected File adaptorFileToGenerate() {
     File output = new File(
         environment().getStreamManager().getDestDir(),
-        filename()+"TreeAdapter.java");
+        filename()+"Adaptor.java");
     return output;
   }
 }
