@@ -76,6 +76,7 @@ public class Generator {
 
   private void extractMapping(String className, StringBuilder strBuilder, HashSet<String> primitiveTypes) throws ClassNotFoundException, IOException {
     Class classFName = Class.forName(className);
+    strBuilder.append("\n/*******************************************************************************/\n");
     // generate %typeterm
     generateTypeTerm(classFName, strBuilder);
     // generate %op
@@ -83,7 +84,7 @@ public class Generator {
     // generate %oparray (only for base classes)
     if (Object.class.equals( classFName.getSuperclass())){
       generateOpArray(className, strBuilder);
-    }
+    }   
   }
 
   private void generateTypeTerm(Class classFName, StringBuilder strBuilder){
@@ -116,7 +117,7 @@ public class Generator {
     }    
     strBuilder.append(%[
 %op @codomain@ @className@(@getFieldsDeclarations(methods,primitiveTypes)@) {
-  is_fsym(t)                { t instanceof @fullClassName@ } @getSlotDeclarations(methods)@     
+  is_fsym(t)                { t instanceof @fullClassName@ } @getSlotDeclarations(methods,className)@     
 }
 ]%);
   }
@@ -148,7 +149,7 @@ public class Generator {
     return (finalString == null || "".equals(finalString)) ? "" : finalString.substring(0, finalString.length() - 1);
   }
 
-  private String getSlotDeclarations(Method[] methods){
+  private String getSlotDeclarations(Method[] methods, String className){
     StringBuilder result = new StringBuilder();
     for(Method m: methods){
       // not a 'get' or an 'is'
@@ -157,7 +158,7 @@ public class Generator {
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
       fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
       result.append(%[
-  get_slot(@fieldName@, t)  { t.@methodName@() }]%);    
+  get_slot(@fieldName@, t)  { ((@className@)t).@methodName@() }]%);    
     }
     return result.toString();
   }
