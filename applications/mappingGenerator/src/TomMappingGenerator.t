@@ -8,14 +8,10 @@ import java.util.HashSet;
 public class Generator {
   
   public static void main(String[] args) throws IOException {
-    if (args.length == 0) {
-      // TODO
-      System.out.println("Usage");
-      // TODO
-      System.out.println("Ex:");
+    if (args.length < 2) {
+      System.out.println("Usage: ");
       System.exit(0);
     }
-
     Generator gen = new Generator();
     gen.generate(args[0], args[1], args.length > 2 ? args[2] : null);
   }
