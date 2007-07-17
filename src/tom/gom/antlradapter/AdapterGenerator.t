@@ -62,6 +62,7 @@ public class AdapterGenerator {
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
     writeTokenFile(moduleList);
     writeAdapterFile(moduleList);
+    writeTreeFile(moduleList);
   }
 
   public int writeTokenFile(ModuleList moduleList) {
@@ -69,8 +70,30 @@ public class AdapterGenerator {
        File output = tokenFileToGenerate();
        // make sure the directory exists
        output.getParentFile().mkdirs();
-       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+       Writer writer =
+         new BufferedWriter(
+             new OutputStreamWriter(
+               new FileOutputStream(output)));
        generateTokenFile(moduleList, writer);
+       writer.flush();
+       writer.close();
+    } catch(Exception e) {
+      e.printStackTrace();
+      return 1;
+    }
+    return 0;
+  }
+
+  public int writeTreeFile(ModuleList moduleList) {
+    try {
+       File output = treeFileToGenerate();
+       // make sure the directory exists
+       output.getParentFile().mkdirs();
+       Writer writer =
+         new BufferedWriter(
+             new OutputStreamWriter(
+               new FileOutputStream(output)));
+       generateTreeFile(moduleList, writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {
@@ -99,17 +122,20 @@ public class AdapterGenerator {
     return 0;
   }
 
-  public void generateAdapterFile(ModuleList moduleList, Writer writer)
-    throws java.io.IOException {
+  private String adapterPkg() {
     String packagePrefix =
       environment()
         .getStreamManager()
           .getPackagePath().replace(File.separatorChar,'.');
-    String adaptPkg =
+    return
       (packagePrefix==""?filename():packagePrefix+filename()).toLowerCase();
+  }
+
+  public void generateAdapterFile(ModuleList moduleList, Writer writer)
+    throws java.io.IOException {
     writer.write(
     %[
-package @adaptPkg@;
+package @adapterPkg()@;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
@@ -121,6 +147,50 @@ public class @filename()@Adaptor extends CommonTreeAdaptor {
 	}
 
 }
+]%);
+  }
+
+  public void generateTreeFile(ModuleList moduleList, Writer writer)
+    throws java.io.IOException {
+    writer.write(%[
+package @adapterPkg()@;
+
+import org.antlr.runtime.Token;
+import org.antlr.runtime.tree.*;
+
+public class @filename()@Tree extends CommonTree {
+
+	public @filename()@Tree(CommonTree node) {
+		super(node);
+		this.token = node.token;
+    initAstTerm(node.token);
+	}
+
+	public @filename()@Tree(Token t) {
+		this.token = t;
+    initAstTerm(t);
+	}
+
+  private void initAstTerm(Token t) {
+    if(null==t) {
+      return;
+    }
+    switch (t.getType()) {
+      // TODO
+    }
+  }
+
+  public void addChild(Tree t) {
+    super.addChild(t);
+    if (null==t) {
+      return;
+    }
+    // TODO
+    }
+  }
+]%);
+    writer.write(%[
+}        
 ]%);
   }
 
@@ -168,6 +238,13 @@ public class @filename()@Adaptor extends CommonTreeAdaptor {
     File output = new File(
         environment().getStreamManager().getDestDir(),
         filename()+"Adaptor.java");
+    return output;
+  }
+
+  protected File treeFileToGenerate() {
+    File output = new File(
+        environment().getStreamManager().getDestDir(),
+        filename()+"Tree.java");
     return output;
   }
 }
