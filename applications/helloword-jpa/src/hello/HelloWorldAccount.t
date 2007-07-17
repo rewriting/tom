@@ -6,7 +6,7 @@ import hello.account.*;
 
 public class HelloWorldAccount {
 
-  %include{ testMP.tom } 
+  %include{ generatedMappingAcct.tom }  
 
   public static void main(String[] args) {   
 

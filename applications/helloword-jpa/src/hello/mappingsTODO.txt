@@ -1,5 +1,0 @@
-1. mapping for each class
-2. mapping for a collection corresponding to each class (unless it is a subclass)
-3. subclasses should have the codomain of the parent
-4. operators for the subclasses should have all the fields of the parents
-

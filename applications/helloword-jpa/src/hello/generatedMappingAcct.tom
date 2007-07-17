@@ -47,7 +47,7 @@
   get_element(l,n)          { (Account)l.get(n)        }
   get_size(l)               { l.size()                }
 }
-    
+
 /*******************************************************************************/
 
 %typeterm AccountOwner {
@@ -76,7 +76,7 @@
   get_element(l,n)          { (AccountOwner)l.get(n)        }
   get_size(l)               { l.size()                }
 }
-    
+
 /*******************************************************************************/
 
 %typeterm BankAccount {
@@ -202,9 +202,44 @@
   get_slot(status, t)  { ((SavingsAccount)t).getStatus() }     
 }
 
+/*******************************************************************************/
+
+%typeterm Message {
+  implement     { hello.Message }
+  is_sort(t)    { t instanceof hello.Message }
+  equals(t1,t2) { t1.equals(t2) }      
+}
+
+%op Message Message(nextMessage:Message,id:Long,text:String) {
+  is_fsym(t)                { t instanceof hello.Message } 
+  get_slot(nextMessage, t)  { ((Message)t).getNextMessage() }
+  get_slot(id, t)  { ((Message)t).getId() }
+  get_slot(text, t)  { ((Message)t).getText() }     
+}
+ 
+%typeterm MessageList {
+  implement                 { java.util.List }
+  is_sort(t)                { t instanceof java.util.List }
+  equals(t1,t2)             { t1.equals(t2) }
+}
+
+%oparray MessageList messageList(Message*) {
+  is_fsym(t)                { t instanceof java.util.List  }
+  make_empty(n)             { new java.util.ArrayList(n) }
+  make_append(e,l)          { myAdd(e,(ArrayList)l)  }
+  get_element(l,n)          { (Message)l.get(n)        }
+  get_size(l)               { l.size()                }
+}
+
 %typeterm String {
   implement     { java.lang.String }
   is_sort(t)    { t instanceof java.lang.String }
+  equals(t1,t2) { t1.equals(t2) }      
+}
+
+%typeterm Long {
+  implement     { java.lang.Long }
+  is_sort(t)    { t instanceof java.lang.Long }
   equals(t1,t2) { t1.equals(t2) }      
 }
 
@@ -217,12 +252,6 @@
 %typeterm Enum {
   implement     { java.lang.Enum }
   is_sort(t)    { t instanceof java.lang.Enum }
-  equals(t1,t2) { t1.equals(t2) }      
-}
-
-%typeterm Long {
-  implement     { java.lang.Long }
-  is_sort(t)    { t instanceof java.lang.Long }
   equals(t1,t2) { t1.equals(t2) }      
 }
       
