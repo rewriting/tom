@@ -2,10 +2,11 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 public class Generator {
-
+  
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
       // TODO
@@ -36,9 +37,12 @@ public class Generator {
     }
 
     Writer writer = null;
-    StringBuilder strBuilder = new StringBuilder("%include { string.tom } \n%include { Collection.tom }\n");
+    StringBuilder strBuilder = new StringBuilder("%include { Collection.tom }\n");
     try {
-      HashSet<String> primitiveTypes = new HashSet<String>();
+      // the types used in operator declaration
+      HashSet<Class> usedTypes = new HashSet<Class>();
+      // the types declared
+      HashSet<Class> declaredTypes = new HashSet<Class>();      
       if (destination != null) {
         File destinationFile = new File(destination);
         if (!destinationFile.exists()) {
@@ -46,10 +50,25 @@ public class Generator {
         }
         mappingsFileName = destinationFile.getCanonicalPath() + File.separator + mappingsFileName;        
       }      
-      generate(startPoint, startPointFile, strBuilder, primitiveTypes);
-      for(String str:primitiveTypes){
-        strBuilder.insert(0, "%include { " + str + ".tom }\n");
-      }
+      generate(startPoint, startPointFile, strBuilder, usedTypes, declaredTypes);
+      // generate a mapping for each used type that was not declared
+      for(Class usedType: usedTypes){
+        if (!declaredTypes.contains(usedType) && !Collection.class.equals(usedType)){
+          if (usedType.isPrimitive()){
+            strBuilder.insert(0, "%include { " + usedType.getName() + ".tom }\n");
+          } else {
+            // generate %typeterm
+            generateTypeTerm(usedType, strBuilder, declaredTypes);
+          }
+        }
+      }  
+      // add 'myAdd' method
+      strBuilder.append(%[      
+private static ArrayList myAdd(Object e,ArrayList l) {
+  l.add(e);
+  return l;
+}
+]%);      
       writer = new BufferedWriter(new FileWriter(mappingsFileName));
       writer.write(strBuilder.toString());
     } catch (Exception e) {
@@ -62,33 +81,36 @@ public class Generator {
   }
 
   private void generate(String currentPackage, File startPointFile, StringBuilder strBuilder,
-      HashSet<String> primitiveTypes) throws IOException, ClassNotFoundException {
+      HashSet<Class> usedTypes, HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {
     File[] files = startPointFile.listFiles();
     for (File file : files) {
       if (file.isDirectory()) {
-        generate(currentPackage + "." + file.getName(), file, strBuilder, primitiveTypes);
+        generate(currentPackage + "." + file.getName(), file, strBuilder, usedTypes, declaredTypes);
       } else {
         System.out.println("Extracting mapping for:" + file.getName());
-        extractMapping(currentPackage + "." + file.getName().substring(0, file.getName().indexOf('.')), strBuilder, primitiveTypes);
+        extractMapping(currentPackage + "." + file.getName().substring(0, file.getName().indexOf('.')), strBuilder, 
+            usedTypes, declaredTypes);
       }
     }
   }
 
-  private void extractMapping(String className, StringBuilder strBuilder, HashSet<String> primitiveTypes) throws ClassNotFoundException, IOException {
+  private void extractMapping(String className, StringBuilder strBuilder, HashSet<Class> usedTypes, 
+      HashSet<Class> declaredTypes) throws ClassNotFoundException, IOException {
     Class classFName = Class.forName(className);
     strBuilder.append("\n/*******************************************************************************/\n");
     // generate %typeterm
-    generateTypeTerm(classFName, strBuilder);
+    generateTypeTerm(classFName, strBuilder, declaredTypes);
     // generate %op
-    generateOperator(classFName, strBuilder, primitiveTypes);
+    generateOperator(classFName, strBuilder, usedTypes);
     // generate %oparray (only for base classes)
     if (Object.class.equals( classFName.getSuperclass())){
       generateOpArray(className, strBuilder);
     }   
   }
 
-  private void generateTypeTerm(Class classFName, StringBuilder strBuilder){
+  private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashSet<Class> declaredTypes){
     String className = classFName.getCanonicalName().substring(classFName.getCanonicalName().lastIndexOf('.') + 1);
+    declaredTypes.add(classFName);
     strBuilder.append(%[
 %typeterm @className@ {
   implement     { @classFName.getCanonicalName()@ }
@@ -98,50 +120,51 @@ public class Generator {
 ]%);
   }
 
-  private void generateOperator(Class classFName, StringBuilder strBuilder, HashSet<String> primitiveTypes){
+  private void generateOperator(Class classFName, StringBuilder strBuilder, HashSet<Class> usedTypes){
     String fullClassName = classFName.getCanonicalName();
     String className = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
     Method[] methods = classFName.getMethods();    
     // find the class that is the highest in the hierarchy
-    String superClassName = null;    
-    while(classFName.getSuperclass() != null) {      
-      superClassName = classFName.getCanonicalName();
-      classFName = classFName.getSuperclass();
+    Class superClass = null;    
+    while(classFName.getSuperclass() != null && !Object.class.equals(classFName.getSuperclass()) ) {      
+      superClass = classFName.getSuperclass();
+      classFName = superClass;
     }
     String codomain = null;
     // if we have some super class
-    if(superClassName != null) {
-      codomain = superClassName.substring(superClassName.lastIndexOf('.') + 1);
+    if(superClass != null) {
+      codomain = superClass.getCanonicalName().substring(superClass.getCanonicalName().lastIndexOf('.') + 1);
+      usedTypes.add(superClass);
     }else{
       codomain = className;
-    }    
+      usedTypes.add(classFName);
+    }
     strBuilder.append(%[
-%op @codomain@ @className@(@getFieldsDeclarations(methods,primitiveTypes)@) {
+%op @codomain@ @className@(@getFieldsDeclarations(methods,usedTypes)@) {
   is_fsym(t)                { t instanceof @fullClassName@ } @getSlotDeclarations(methods,className)@     
 }
 ]%);
   }
 
-  private String getFieldsDeclarations(Method[] methods, HashSet<String> primitiveTypes) {
+  private String getFieldsDeclarations(Method[] methods, HashSet<Class> usedTypes) {
     StringBuilder result = new StringBuilder();
     for (Method m : methods) {
       // not a 'get' or an 'is'
       String methodName = m.getName();
       if (!methodName.startsWith("get") && !methodName.startsWith("is")) {
         continue;
-      }
-      ;
+      }      
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
       fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
+      if ("class".equalsIgnoreCase(fieldName)) { continue; }
       result.append(fieldName + ":");
       if (m.getReturnType().isPrimitive()) {
-        result.append(m.getReturnType().getName());
-        // put the include also
-        primitiveTypes.add(m.getReturnType().getName());
+        result.append(m.getReturnType().getName());        
       } else {
         result.append(m.getReturnType().getCanonicalName().substring(
             m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
       }
+      usedTypes.add(m.getReturnType());
       result.append(",");
     }
     // remove the ","
@@ -157,6 +180,7 @@ public class Generator {
       if (!methodName.startsWith("get") && !methodName.startsWith("is")) {continue;};
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
       fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
+      if ("class".equalsIgnoreCase(fieldName)) { continue; }
       result.append(%[
   get_slot(@fieldName@, t)  { ((@className@)t).@methodName@() }]%);    
     }
