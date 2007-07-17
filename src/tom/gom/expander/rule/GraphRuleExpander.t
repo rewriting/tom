@@ -43,6 +43,7 @@ public class GraphRuleExpander {
   %include { ../../adt/gom/Gom.tom}
   %include { ../../adt/rule/Rule.tom }
   %include { ../../../library/mapping/java/sl.tom}
+  %include{../../../library/mapping/java/util/HashMap.tom}
 
   private ModuleList moduleList;
   private String sortname;
@@ -270,19 +271,18 @@ public class GraphRuleExpander {
 
   private String genTerm(Term term) {
     StringBuffer output = new StringBuffer();
+    term = expand(term);
     %match(term) {
-      LabTerm(label,term) -> {
-        output.append("lab"+sortname);
+      PathTerm(i,tail*) -> {
+        output.append("path"+sortname);
         output.append("(");
-        output.append(`label);
-        output.append(",");
-        output.append(genTerm(`term));
-        output.append(")");
-      }
-      RefTerm(label) -> {
-        output.append("ref"+sortname);
-        output.append("(");
-        output.append(`label);
+        output.append((`i>0)?`i-1:`i+1);
+        %match(tail) {
+          PathTerm(_*,j,_*) -> {
+            output.append(",");
+            output.append((`j>0)?`j-1:`j+1);
+          }
+        }
         output.append(")");
       }
       Appl(symbol,args) -> {
@@ -325,7 +325,7 @@ public class GraphRuleExpander {
       LabTerm(label,term) -> {
         output.append("lab"+sortname);
         output.append("(");
-        output.append(`label);
+        output.append("\""+`label+"\"");
         output.append(",");
         output.append(genTermWithExplicitVar(`term));
         output.append(")");
@@ -333,7 +333,7 @@ public class GraphRuleExpander {
       RefTerm(label) -> {
         output.append("ref"+sortname);
         output.append("(");
-        output.append(`label);
+        output.append("\""+`label+"\"");
         output.append(")");
       }
       Appl(symbol,args) -> {
@@ -371,6 +371,96 @@ public class GraphRuleExpander {
   }
 
 
+  public static Term expand(Term t) {
+    HashMap map = new HashMap();
+    Term tt = null;
+    try {
+      tt = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(t);
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+    }
+    return label2path(tt);
+  }
+
+  %typeterm Info {
+    implement {Info}
+    is_sort(t) { t instanceof Info } 
+  }
+
+  static class Info {
+    public Position omega;
+    public Term term;
+  }
+
+  %strategy CollectSubterm(label:String,info:Info) extends Identity(){
+    visit Term {
+      LabTerm[l=label,t=subterm] -> {
+        if(label.equals(`label)){
+          info.term = `subterm;
+          info.omega = getEnvironment().getPosition();
+          return `RefTerm(label);
+        }
+      }
+    }
+  }
+
+  %strategy NormalizeLabel(map:HashMap) extends Identity(){
+    visit Term {
+      RefTerm[l=label] -> {
+        if (! map.containsKey(`label)){
+          Info info = new Info();
+          Position pos = new Position(new int[]{});
+          Position old = getEnvironment().getPosition();
+          Position rootpos = new Position(new int[]{});
+          map.put(`label,old);
+          getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));            
+          `Try(TopDown(CollectSubterm(label,info))).visit(getEnvironment());            
+          getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
+          return `LabTerm(label,info.term);
+        }
+      }
+      LabTerm[l=label] -> {
+        map.put(`label,getEnvironment().getPosition());
+      }
+    }
+  }
+
+  public static Term label2path(Term t) {
+    HashMap map = new HashMap();
+    try {
+      return (Term) `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
+    } catch (tom.library.sl.VisitFailure e) {
+      throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+    }  
+  }
+
+  %strategy CollectLabels(map:HashMap) extends Fail(){
+    visit Term {
+      LabTerm[l=label,t=term]-> {
+        map.put(`label,getEnvironment().getPosition());
+        return `term;
+      }
+    }
+  }
+
+  %strategy Label2Path(map:HashMap) extends Identity(){
+    visit Term {
+      RefTerm[l=label] -> {
+        if (map.containsKey(`label)) {
+          Position target = (Position) map.get(`label);
+          Path ref = target.sub(getEnvironment().getPosition());
+          Term path = `PathTerm();
+          int head;
+          while(ref.length()!=0) {
+            head = ref.getHead();
+            ref  = ref.getTail();
+            path = `PathTerm(path*,head);
+          }
+          return path;
+        }
+      }
+    }
+  }
 
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

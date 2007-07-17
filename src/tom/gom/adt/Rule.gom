@@ -8,6 +8,7 @@ Term = Appl(symbol:String,args:TermList)
      | BuiltinString(s:String)
      | LabTerm(l:String,t:Term)
      | RefTerm(l:String)
+     | PathTerm(int*)
 
 TermList = TermList(Term*)
 

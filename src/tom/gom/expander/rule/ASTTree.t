@@ -183,6 +183,10 @@ public class ASTTree extends CommonTree {
         }
         childIndex++;
       }
+      RefTerm(l) -> {
+        Term tm = (Term) trm;
+        inAstTerm = `RefTerm(tm.getname());
+      }
       Appl(s,TermList(args*)) -> {
         Term tm = (Term) trm;
         if (childIndex == 0 ) {
