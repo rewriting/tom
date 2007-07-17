@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class TomMappingGenerator {
-  
+
   public static void main(String[] args) throws IOException {
     if (args.length < 2) {
       System.out.println("Usage: java TomMappingGenerator start_point_package_name mapping_file_name");
@@ -26,10 +26,14 @@ public class TomMappingGenerator {
     } else {
       startPointFullPath = startPoint;
     }
-    
+
     File startPointFile = new File(startPointFullPath);
     if (!startPointFile.exists()) {
       throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
+    }
+    // if the user provided . (current folder) as the start point
+    if (startPointFile.getCanonicalPath().equals(currentClassFile.getParent())){
+      startPoint = "";
     }
 
     Writer writer = null;    
@@ -64,26 +68,32 @@ private static ArrayList myAdd(Object e,ArrayList l) {
       System.out.println("An error occured. See the stack trace for more information.\n");
       e.printStackTrace();
     } finally {
-      writer.flush();
-      writer.close();
-    }
-  }
-
-  private void generate(String currentPackage, File startPointFile, StringBuilder strBuilder,
-      HashSet<Class> usedTypes, HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {
-    File[] files = startPointFile.listFiles();
-    for (File file : files) {
-      if (file.isDirectory()) {
-        generate(currentPackage + "." + file.getName(), file, strBuilder, usedTypes, declaredTypes);
-      } else {
-        System.out.println("Extracting mapping for:" + file.getName());
-        extractMapping(currentPackage + "." + file.getName().substring(0, file.getName().indexOf('.')), strBuilder, 
-            usedTypes, declaredTypes);
+      if (writer != null){
+        writer.flush();
+        writer.close();
       }
     }
   }
 
-  private void extractMapping(String className, StringBuilder strBuilder, HashSet<Class> usedTypes, 
+  private void generate(String currentPackage, File startPointFile, StringBuilder strBuilder, HashSet<Class> usedTypes,
+      HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {    
+    File[] files = startPointFile.listFiles();
+    for (File file : files) {
+      String fileName = (currentPackage == null || "".equals(currentPackage)) ? file.getName() : currentPackage + "."
+          + file.getName();
+      if (file.isDirectory()) {
+        generate(fileName, file, strBuilder, usedTypes, declaredTypes);
+      } else {
+        if (!fileName.endsWith(".class")) {
+          continue;
+        }
+        System.out.println("Extracting mapping for:" + file.getName());        
+        extractMapping(fileName.substring(0, fileName.lastIndexOf('.')), strBuilder, usedTypes, declaredTypes);
+      }
+    }
+  }
+
+  private void extractMapping(String className, StringBuilder strBuilder, HashSet<Class> usedTypes,
       HashSet<Class> declaredTypes) throws ClassNotFoundException, IOException {
     Class classFName = Class.forName(className);
     strBuilder.append("\n/*******************************************************************************/\n");
@@ -92,9 +102,9 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     // generate %op
     generateOperator(classFName, strBuilder, usedTypes);
     // generate %oparray (only for base classes)
-    if (Object.class.equals( classFName.getSuperclass())){
+    if (Object.class.equals(classFName.getSuperclass())) {
       generateOpArray(className, strBuilder);
-    }   
+    }
   }
 
   private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashSet<Class> declaredTypes){
@@ -142,13 +152,15 @@ private static ArrayList myAdd(Object e,ArrayList l) {
       String methodName = m.getName();
       if (!methodName.startsWith("get") && !methodName.startsWith("is")) {
         continue;
-      }      
+      }
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
       fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-      if ("class".equalsIgnoreCase(fieldName)) { continue; }
+      if ("class".equalsIgnoreCase(fieldName)) {
+        continue;
+      }
       result.append(fieldName + ":");
       if (m.getReturnType().isPrimitive()) {
-        result.append(m.getReturnType().getName());        
+        result.append(m.getReturnType().getName());
       } else {
         result.append(m.getReturnType().getCanonicalName().substring(
             m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
@@ -193,9 +205,9 @@ private static ArrayList myAdd(Object e,ArrayList l) {
   get_element(l,n)          { (@className@)l.get(n)        }
   get_size(l)               { l.size()                }
 }
-    ]%); 
+]%); 
   }
-  
+
   public String getPath() {
     String className = getClass().getName();
     return ClassLoader.getSystemResource(className + ".class").getPath();
