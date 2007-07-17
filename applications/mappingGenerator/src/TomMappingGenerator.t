@@ -1,51 +1,44 @@
 import java.io.*;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class Generator {
+public class TomMappingGenerator {
   
   public static void main(String[] args) throws IOException {
     if (args.length < 2) {
-      System.out.println("Usage: ");
+      System.out.println("Usage: java TomMappingGenerator start_point_package_name mapping_file_name");
       System.exit(0);
     }
-    Generator gen = new Generator();
-    gen.generate(args[0], args[1], args.length > 2 ? args[2] : null);
+    TomMappingGenerator gen = new TomMappingGenerator();
+    gen.generate(args[0], args[1]);
   }
 
-  private void generate(String startPoint, String mappingsFileName, String destination) throws IOException {
+  private void generate(String startPoint, String mappingsFileName) throws IOException {
 
     File currentClassFile = new File(getPath());
     String parentPath = currentClassFile.getParent();
     String startPointFullPath = null;
     if (parentPath != null) {
-      startPointFullPath = (new File(parentPath)).getCanonicalPath() + File.separator + startPoint;
+      String baseFolder = (new File(parentPath)).getCanonicalPath() + File.separator;
+      startPointFullPath = baseFolder + startPoint;
+      mappingsFileName = baseFolder + mappingsFileName;
     } else {
       startPointFullPath = startPoint;
     }
-
+    
     File startPointFile = new File(startPointFullPath);
     if (!startPointFile.exists()) {
       throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
     }
 
-    Writer writer = null;
+    Writer writer = null;    
     StringBuilder strBuilder = new StringBuilder("%include { Collection.tom }\n");
     try {
       // the types used in operator declaration
       HashSet<Class> usedTypes = new HashSet<Class>();
       // the types declared
-      HashSet<Class> declaredTypes = new HashSet<Class>();      
-      if (destination != null) {
-        File destinationFile = new File(destination);
-        if (!destinationFile.exists()) {
-          throw new FileNotFoundException("Unable to find destination path '" + destination + "'.");
-        }
-        mappingsFileName = destinationFile.getCanonicalPath() + File.separator + mappingsFileName;        
-      }      
+      HashSet<Class> declaredTypes = new HashSet<Class>();
       generate(startPoint, startPointFile, strBuilder, usedTypes, declaredTypes);
       // generate a mapping for each used type that was not declared
       for(Class usedType: usedTypes){
