@@ -3,25 +3,25 @@ package hello;
 import java.util.*; 
 import javax.persistence.*;
 import hello.account.*;
- 
+
 public class HelloWorldAccount {
-   
-  %include{ MappingAccount.tom }          
- 
-  public static void main(String[] args) {
+
+  %include{ testMP.tom } 
+
+  public static void main(String[] args) {   
 
     // Start EntityManagerFactory
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("helloworld");
-   
-    // First unit of work
+
+//    // First unit of work
 //    EntityManager em = emf.createEntityManager();
 //    EntityTransaction tx = em.getTransaction();
 //    tx.begin();
-//    
+//
 //    AccountOwner owner = new AccountOwner();
 //    owner.setId((long)1);
 //    owner.setName("John Doe");
-//    
+//
 //    Account account1 = new SavingsAccount();
 //    account1.setAcctNum("1");
 //    account1.setBalance(100);
@@ -30,7 +30,7 @@ public class HelloWorldAccount {
 //    account1.setCreated((new Date()).getTime() + "");
 //    ((SavingsAccount)account1).setSavingsRate(5);
 //    account1.setAccountOwner(owner);
-//    
+//
 //    Account account2 = new CheckingAccount();
 //    account2.setAcctNum("2");
 //    account2.setBalance(200);
@@ -39,9 +39,9 @@ public class HelloWorldAccount {
 //    account2.setCreated((new Date()).getTime() + "");
 //    ((CheckingAccount)account2).setIsOverDraftAllowed(false);
 //    account2.setAccountOwner(owner);
-//    
+//
 //    Account account3 = new CreditCardAccount();
-//    account3.setAcctNum("3");
+//    account3.setAcctNum("3"); 
 //    account3.setBalance(300);
 //    account3.setDescription("third account");
 //    account3.setName("credit card account 1");
@@ -66,22 +66,19 @@ public class HelloWorldAccount {
 
     List accounts = newEm.createQuery("select m from Account m").getResultList();
     System.out.println( accounts.size() + " account(s) found" );
-     
+
     %match(accounts) {
       accountList(_*,Account[name=n,accountOwner=AccountOwner[name=owname]],_*) -> { 
         System.out.println("Account name:" + `n + " with owner name:" + `owname); 
-        }
+      }
     }
-    
-    // TODO - a nice example with owner  
-    
+
     %match(accounts) {
-      accountList(_*,x,_*) -> { 
-        System.out.println("x=" + `x);
+      accountList(_*,x@CheckingAccount[status=st],_*) -> {
         %match(x){          
           SavingsAccount[name=n]  -> { System.out.println("a savings, with name=" + `n);}
-          CreditCardAccount[] -> { System.out.println("a credit card");}   
-          CheckingAccount[] -> { System.out.println("checking");}                   
+          CreditCardAccount[acctNum=an] -> { System.out.println("a credit card, with number:" + `an);}   
+          CheckingAccount[] -> { System.out.println("checking");}          
         }
       }
     }

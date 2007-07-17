@@ -41,7 +41,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="DCOL")
-public abstract class Account extends BaseAccount{
+public abstract class Account{
 
  public enum Status { OPEN, CLOSED}
 
@@ -116,6 +116,10 @@ public abstract class Account extends BaseAccount{
     public void setAcctNum(String acctNum) {
         this.acctNum = acctNum;
     }
+    
+    public float computeBalance(float principal, float rate){
+      return principal * (1.0f + rate/100.0f);
+  }
  
  
 }

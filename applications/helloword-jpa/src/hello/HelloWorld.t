@@ -30,7 +30,7 @@ public class HelloWorld {
     EntityManager newEm = emf.createEntityManager();
     EntityTransaction newTx = newEm.getTransaction();
     newTx.begin(); 
-
+  
     List messages = newEm.createQuery("select m from Message m").getResultList();
     System.out.println( messages.size() + " messages(s) found:" );
     
