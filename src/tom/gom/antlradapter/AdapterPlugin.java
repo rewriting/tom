@@ -95,8 +95,9 @@ public class AdapterPlugin extends GomGenericPlugin {
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
+    String grammarName = (String)getOptionManager().getOptionValue("grammar");
     AdapterGenerator adapter =
-      new AdapterGenerator(tomHomePath, streamManager.getImportList());
+      new AdapterGenerator(tomHomePath, streamManager.getImportList(),grammarName);
     adapter.generate(moduleList,hookList);
     getLogger().log(Level.INFO, "Adapter generation succeeded");
   }

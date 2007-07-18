@@ -33,8 +33,10 @@ import tom.gom.GomMessage;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.backend.CodeGen;
 import tom.gom.tools.error.GomRuntimeException;
 
+import tom.gom.adt.code.types.*;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 import tom.library.sl.VisitFailure;
@@ -45,15 +47,21 @@ public class AdapterGenerator {
   /* Attributes needed to call tom properly */
   private File tomHomePath;
   private List importList = null;
+  private String grammarName = "";
 
-  AdapterGenerator(File tomHomePath, List importList) {
+  AdapterGenerator(File tomHomePath, List importList, String grammar) {
     this.tomHomePath = tomHomePath;
     this.importList = importList;
+    this.grammarName = grammar;
   }
 
   %include { ../adt/gom/Gom.tom}
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom }
+  %typeterm Writer {
+    implement { Writer }
+    is_sort(t) { t instanceof Writer }
+  }
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
@@ -160,32 +168,60 @@ import org.antlr.runtime.tree.*;
 
 public class @filename()@Tree extends CommonTree {
 
-	public @filename()@Tree(CommonTree node) {
-		super(node);
-		this.token = node.token;
-    initAstTerm(node.token);
-	}
+  private int termIndex = 0;
+  private int childCount = 0;
+  /* Use SharedObject as type, as most general type */
+  private shared.SharedObject inAstTerm = null;
 
-	public @filename()@Tree(Token t) {
-		this.token = t;
+  public @filename()@Tree(CommonTree node) {
+    super(node);
+    this.token = node.token;
+    initAstTerm(token);
+  }
+
+  public @filename()@Tree(Token t) {
+    this.token = t;
     initAstTerm(t);
-	}
+  }
+
+  public shared.SharedObject getTerm() {
+    return inAstTerm;
+  }
 
   private void initAstTerm(Token t) {
     if(null==t) {
       return;
     }
     switch (t.getType()) {
-      // TODO
+]%);
+    /* generate case statement for each constructor */
+    try {
+      `TopDown(GenerateInitCase(writer, grammarName)).visitLight(moduleList);
+    } catch (VisitFailure f) {
+      throw new GomRuntimeException("GenerateInitCase should not fail");
+    }
+    writer.write(%[
     }
   }
+]%);
+    /* Add fields for each slot */
+    try {
+      `TopDown(GenerateSlots(writer)).visitLight(moduleList);
+    } catch (VisitFailure f) {
+      throw new GomRuntimeException("GenerateSlots should not fail");
+    }
+
+    writer.write(%[
 
   public void addChild(Tree t) {
     super.addChild(t);
     if (null==t) {
       return;
     }
-    // TODO
+    /* Depending on the token number and the child count, fill the correct field */
+
+    termIndex++;
+    /* Instantiate the term if needed */
     }
   }
 ]%);
@@ -213,6 +249,77 @@ public class @filename()@Tree extends CommonTree {
     visit OperatorDecl {
       OperatorDecl[Name=name] -> {
         bag.add(`name);
+      }
+    }
+  }
+
+  %strategy GenerateSlots(writer:Writer) extends Identity() {
+    visit OperatorDecl {
+      OperatorDecl[Prod=Slots[Slots=
+                     concSlot(_*,Slot[Name=name,Sort=sortDecl],_*)]] -> {
+        Code code =
+          `CodeList(
+              Code("  "),
+              FullSortClass(sortDecl),
+              Code(" "),
+              Code(name),
+              Code(";\n")
+           );
+        try {
+          CodeGen.generateCode(code,writer);
+        } catch (IOException e) {
+          throw new VisitFailure("IOException " + e);
+        }
+      }
+      op@OperatorDecl[Name=name,Sort=sortDecl,Prod=Variadic[]] -> {
+        Code code =
+          `CodeList(
+              Code("  "),
+              FullSortClass(sortDecl),
+              Code(" "),
+              Code(name),
+              Code("List = "),
+              Empty(op),
+              Code(".make();\n")
+           );
+        try {
+          CodeGen.generateCode(code,writer);
+        } catch (IOException e) {
+          throw new VisitFailure("IOException " + e);
+        }
+      }
+    }
+  }
+
+  %strategy GenerateInitCase(writer:Writer,grammar:String) extends Identity() {
+    visit OperatorDecl {
+      opDecl@OperatorDecl[Name=opName,
+                   Prod=Slots[Slots=
+                     slotList@concSlot(_*,Slot[Sort=sortDecl],_*)]] -> {
+        Code initTerm = `Code("");
+        if(0 == `slotList.length()) {
+          initTerm = `CodeList(
+              Code("        inAstTerm = "),
+              FullOperatorClass(opDecl),
+              Code(".make();\n")
+              );
+        }
+        Code code =
+          `CodeList(
+              Code("      case "+grammar+"Parser."),
+              Code(opName),
+              Code(":\n"),
+              Code("        childCount = "),
+              Code(Integer.toString(slotList.length())),
+              Code(";\n"),
+              initTerm,
+              Code("        break;\n")
+           );
+        try {
+          CodeGen.generateCode(code,writer);
+        } catch (IOException e) {
+          throw new VisitFailure("IOException " + e);
+        }
       }
     }
   }

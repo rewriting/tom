@@ -33,6 +33,7 @@ import org.antlr.runtime.tree.*;
 public class ASTTree extends CommonTree {
 
   %include { ../../adt/rule/Rule.tom }
+
   private RuleAbstractType inAstTerm = null;
   private int childIndex = 0;
 
@@ -160,7 +161,7 @@ public class ASTTree extends CommonTree {
         inAstTerm = (RuleAbstractType) inAstTerm.setChildAt(childIndex,trm);
         childIndex++;
       }
-      CondMethod(t1,n,t2) -> {
+      CondMethod(t1,_,t2) -> {
         if(childIndex == 1) {
           Term tm = (Term) trm;
           inAstTerm = `CondMethod(t1,tm.getname(),t2);
@@ -183,7 +184,7 @@ public class ASTTree extends CommonTree {
         }
         childIndex++;
       }
-      RefTerm(l) -> {
+      RefTerm(_) -> {
         Term tm = (Term) trm;
         inAstTerm = `RefTerm(tm.getname());
       }

@@ -120,10 +120,27 @@ public class CodeGen {
             new Object[] { `(opdecl) });
         return;
       }
+      FullOperatorClass[
+          Operator=OperatorDecl[
+            Name=opName,
+            Sort=SortDecl[
+              Name=sortName,
+              ModuleDecl=moduleDecl]]] -> {
+        String sortNamePackage = `sortName.toLowerCase();
+        ClassName className = `ClassName(
+            tom.gom.compiler.Compiler.packagePrefix(
+              moduleDecl)+".types."+sortNamePackage,opName);
+        writer.write(tom.gom.backend.TemplateClass.fullClassName(className));        
+        return;
+      }
       FullSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
         ClassName sortClassName = `ClassName(
             tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+".types",sortName);
         writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));        
+        return;
+      }
+      FullSortClass(BuiltinSortDecl[Name=sortName]) -> {
+        writer.write(`sortName);        
         return;
       }
       Compare[LCode=lcode,RCode=rcode] -> {
