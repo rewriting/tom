@@ -35,6 +35,7 @@ import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.expander.rule.RuleExpander;
+import tom.gom.expander.rule.GraphRuleExpander;
 
 public class HookTypeExpander {
 
@@ -52,7 +53,7 @@ public class HookTypeExpander {
   public HookDeclList expand(GomModuleList gomModuleList) {
     HookDeclList hookList = tom_empty_list_concHookDecl();
     /* For each hook in the GomModuleList */
-    if (tom_is_sort_GomModuleList(gomModuleList)) {{  tom.gom.adt.gom.types.GomModuleList  tomMatch425NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.GomModuleList )gomModuleList);if (tom_is_fun_sym_concGomModule(tomMatch425NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.GomModuleList  tomMatch425NameNumber_freshVar_0=tomMatch425NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.GomModuleList  tomMatch425NameNumber_begin_2=tomMatch425NameNumber_freshVar_0;{  tom.gom.adt.gom.types.GomModuleList  tomMatch425NameNumber_end_3=tomMatch425NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.GomModuleList  tomMatch425NameNumber_freshVar_1=tomMatch425NameNumber_end_3;if (!(tom_is_empty_concGomModule_GomModuleList(tomMatch425NameNumber_freshVar_1))) {if (tom_is_fun_sym_GomModule(tom_get_head_concGomModule_GomModuleList(tomMatch425NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.GomModuleName  tomMatch425NameNumber_freshVar_6=tom_get_slot_GomModule_ModuleName(tom_get_head_concGomModule_GomModuleList(tomMatch425NameNumber_freshVar_1));{  tom.gom.adt.gom.types.SectionList  tomMatch425NameNumber_freshVar_7=tom_get_slot_GomModule_SectionList(tom_get_head_concGomModule_GomModuleList(tomMatch425NameNumber_freshVar_1));if (tom_is_fun_sym_GomModuleName(tomMatch425NameNumber_freshVar_6)) {{  String  tomMatch425NameNumber_freshVar_8=tom_get_slot_GomModuleName_Name(tomMatch425NameNumber_freshVar_6);{  String  tom_moduleName=tomMatch425NameNumber_freshVar_8;if (tom_is_fun_sym_concSection(tomMatch425NameNumber_freshVar_7)) {{  tom.gom.adt.gom.types.SectionList  tomMatch425NameNumber_freshVar_9=tomMatch425NameNumber_freshVar_7;{  tom.gom.adt.gom.types.SectionList  tomMatch425NameNumber_begin_11=tomMatch425NameNumber_freshVar_9;{  tom.gom.adt.gom.types.SectionList  tomMatch425NameNumber_end_12=tomMatch425NameNumber_freshVar_9;do {{{  tom.gom.adt.gom.types.SectionList  tomMatch425NameNumber_freshVar_10=tomMatch425NameNumber_end_12;if (!(tom_is_empty_concSection_SectionList(tomMatch425NameNumber_freshVar_10))) {if (tom_is_fun_sym_Public(tom_get_head_concSection_SectionList(tomMatch425NameNumber_freshVar_10))) {{  tom.gom.adt.gom.types.GrammarList  tomMatch425NameNumber_freshVar_15=tom_get_slot_Public_GrammarList(tom_get_head_concSection_SectionList(tomMatch425NameNumber_freshVar_10));if (tom_is_fun_sym_concGrammar(tomMatch425NameNumber_freshVar_15)) {{  tom.gom.adt.gom.types.GrammarList  tomMatch425NameNumber_freshVar_16=tomMatch425NameNumber_freshVar_15;{  tom.gom.adt.gom.types.GrammarList  tomMatch425NameNumber_begin_18=tomMatch425NameNumber_freshVar_16;{  tom.gom.adt.gom.types.GrammarList  tomMatch425NameNumber_end_19=tomMatch425NameNumber_freshVar_16;do {{{  tom.gom.adt.gom.types.GrammarList  tomMatch425NameNumber_freshVar_17=tomMatch425NameNumber_end_19;if (!(tom_is_empty_concGrammar_GrammarList(tomMatch425NameNumber_freshVar_17))) {if (tom_is_fun_sym_Grammar(tom_get_head_concGrammar_GrammarList(tomMatch425NameNumber_freshVar_17))) {{  tom.gom.adt.gom.types.ProductionList  tomMatch425NameNumber_freshVar_22=tom_get_slot_Grammar_ProductionList(tom_get_head_concGrammar_GrammarList(tomMatch425NameNumber_freshVar_17));{  tom.gom.adt.gom.types.ProductionList  tom_prodList=tomMatch425NameNumber_freshVar_22;{  tom.gom.adt.gom.types.GrammarList  tomMatch425NameNumber_freshVar_20=tom_get_tail_concGrammar_GrammarList(tomMatch425NameNumber_freshVar_17);{  tom.gom.adt.gom.types.SectionList  tomMatch425NameNumber_freshVar_13=tom_get_tail_concSection_SectionList(tomMatch425NameNumber_freshVar_10);{  tom.gom.adt.gom.types.GomModuleList  tomMatch425NameNumber_freshVar_4=tom_get_tail_concGomModule_GomModuleList(tomMatch425NameNumber_freshVar_1);if ( true ) {if (tom_is_sort_ProductionList(tom_prodList)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ProductionList )tom_prodList);if (tom_is_fun_sym_concProduction(tomMatch424NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumber_freshVar_0=tomMatch424NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumber_begin_2=tomMatch424NameNumber_freshVar_0;{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumber_end_3=tomMatch424NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumber_freshVar_1=tomMatch424NameNumber_end_3;if (!(tom_is_empty_concProduction_ProductionList(tomMatch424NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.Production  tom_prod=tom_get_head_concProduction_ProductionList(tomMatch424NameNumber_freshVar_1);{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumber_freshVar_4=tom_get_tail_concProduction_ProductionList(tomMatch424NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_GomModuleList(gomModuleList)) {{  tom.gom.adt.gom.types.GomModuleList  tomMatch424NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.GomModuleList )gomModuleList);if (tom_is_fun_sym_concGomModule(tomMatch424NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.GomModuleList  tomMatch424NameNumber_freshVar_0=tomMatch424NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.GomModuleList  tomMatch424NameNumber_begin_2=tomMatch424NameNumber_freshVar_0;{  tom.gom.adt.gom.types.GomModuleList  tomMatch424NameNumber_end_3=tomMatch424NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.GomModuleList  tomMatch424NameNumber_freshVar_1=tomMatch424NameNumber_end_3;if (!(tom_is_empty_concGomModule_GomModuleList(tomMatch424NameNumber_freshVar_1))) {if (tom_is_fun_sym_GomModule(tom_get_head_concGomModule_GomModuleList(tomMatch424NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.GomModuleName  tomMatch424NameNumber_freshVar_6=tom_get_slot_GomModule_ModuleName(tom_get_head_concGomModule_GomModuleList(tomMatch424NameNumber_freshVar_1));{  tom.gom.adt.gom.types.SectionList  tomMatch424NameNumber_freshVar_7=tom_get_slot_GomModule_SectionList(tom_get_head_concGomModule_GomModuleList(tomMatch424NameNumber_freshVar_1));if (tom_is_fun_sym_GomModuleName(tomMatch424NameNumber_freshVar_6)) {{  String  tomMatch424NameNumber_freshVar_8=tom_get_slot_GomModuleName_Name(tomMatch424NameNumber_freshVar_6);{  String  tom_moduleName=tomMatch424NameNumber_freshVar_8;if (tom_is_fun_sym_concSection(tomMatch424NameNumber_freshVar_7)) {{  tom.gom.adt.gom.types.SectionList  tomMatch424NameNumber_freshVar_9=tomMatch424NameNumber_freshVar_7;{  tom.gom.adt.gom.types.SectionList  tomMatch424NameNumber_begin_11=tomMatch424NameNumber_freshVar_9;{  tom.gom.adt.gom.types.SectionList  tomMatch424NameNumber_end_12=tomMatch424NameNumber_freshVar_9;do {{{  tom.gom.adt.gom.types.SectionList  tomMatch424NameNumber_freshVar_10=tomMatch424NameNumber_end_12;if (!(tom_is_empty_concSection_SectionList(tomMatch424NameNumber_freshVar_10))) {if (tom_is_fun_sym_Public(tom_get_head_concSection_SectionList(tomMatch424NameNumber_freshVar_10))) {{  tom.gom.adt.gom.types.GrammarList  tomMatch424NameNumber_freshVar_15=tom_get_slot_Public_GrammarList(tom_get_head_concSection_SectionList(tomMatch424NameNumber_freshVar_10));if (tom_is_fun_sym_concGrammar(tomMatch424NameNumber_freshVar_15)) {{  tom.gom.adt.gom.types.GrammarList  tomMatch424NameNumber_freshVar_16=tomMatch424NameNumber_freshVar_15;{  tom.gom.adt.gom.types.GrammarList  tomMatch424NameNumber_begin_18=tomMatch424NameNumber_freshVar_16;{  tom.gom.adt.gom.types.GrammarList  tomMatch424NameNumber_end_19=tomMatch424NameNumber_freshVar_16;do {{{  tom.gom.adt.gom.types.GrammarList  tomMatch424NameNumber_freshVar_17=tomMatch424NameNumber_end_19;if (!(tom_is_empty_concGrammar_GrammarList(tomMatch424NameNumber_freshVar_17))) {if (tom_is_fun_sym_Grammar(tom_get_head_concGrammar_GrammarList(tomMatch424NameNumber_freshVar_17))) {{  tom.gom.adt.gom.types.ProductionList  tomMatch424NameNumber_freshVar_22=tom_get_slot_Grammar_ProductionList(tom_get_head_concGrammar_GrammarList(tomMatch424NameNumber_freshVar_17));{  tom.gom.adt.gom.types.ProductionList  tom_prodList=tomMatch424NameNumber_freshVar_22;{  tom.gom.adt.gom.types.GrammarList  tomMatch424NameNumber_freshVar_20=tom_get_tail_concGrammar_GrammarList(tomMatch424NameNumber_freshVar_17);{  tom.gom.adt.gom.types.SectionList  tomMatch424NameNumber_freshVar_13=tom_get_tail_concSection_SectionList(tomMatch424NameNumber_freshVar_10);{  tom.gom.adt.gom.types.GomModuleList  tomMatch424NameNumber_freshVar_4=tom_get_tail_concGomModule_GomModuleList(tomMatch424NameNumber_freshVar_1);if ( true ) {if (tom_is_sort_ProductionList(tom_prodList)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch423NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ProductionList )tom_prodList);if (tom_is_fun_sym_concProduction(tomMatch423NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch423NameNumber_freshVar_0=tomMatch423NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.ProductionList  tomMatch423NameNumber_begin_2=tomMatch423NameNumber_freshVar_0;{  tom.gom.adt.gom.types.ProductionList  tomMatch423NameNumber_end_3=tomMatch423NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.ProductionList  tomMatch423NameNumber_freshVar_1=tomMatch423NameNumber_end_3;if (!(tom_is_empty_concProduction_ProductionList(tomMatch423NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.Production  tom_prod=tom_get_head_concProduction_ProductionList(tomMatch423NameNumber_freshVar_1);{  tom.gom.adt.gom.types.ProductionList  tomMatch423NameNumber_freshVar_4=tom_get_tail_concProduction_ProductionList(tomMatch423NameNumber_freshVar_1);if ( true ) {
 
 
 
@@ -64,7 +65,7 @@ public class HookTypeExpander {
 
 
             /* generate a FL hook for list-operators without other hook */
-            if (tom_is_sort_Production(tom_prod)) {{  tom.gom.adt.gom.types.Production  tomMatch422NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Production )tom_prod);if (tom_is_sort_ProductionList(tom_prodList)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch422NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.ProductionList )tom_prodList);if (tom_is_fun_sym_Production(tomMatch422NameNumberfreshSubject_1)) {{  String  tomMatch422NameNumber_freshVar_0=tom_get_slot_Production_Name(tomMatch422NameNumberfreshSubject_1);{  String  tom_opName=tomMatch422NameNumber_freshVar_0;{  tom.gom.adt.gom.types.FieldList  tomMatch422NameNumber_freshVar_1=tom_get_slot_Production_Domain(tomMatch422NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.GomType  tomMatch422NameNumber_freshVar_2=tom_get_slot_Production_Codomain(tomMatch422NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.Option  tomMatch422NameNumber_freshVar_3=tom_get_slot_Production_Option(tomMatch422NameNumberfreshSubject_1);if (tom_is_fun_sym_concField(tomMatch422NameNumber_freshVar_1)) {{  tom.gom.adt.gom.types.FieldList  tomMatch422NameNumber_freshVar_10=tomMatch422NameNumber_freshVar_1;if (!(tom_is_empty_concField_FieldList(tomMatch422NameNumber_freshVar_10))) {if (tom_is_fun_sym_StarredField(tom_get_head_concField_FieldList(tomMatch422NameNumber_freshVar_10))) {{  tom.gom.adt.gom.types.GomType  tomMatch422NameNumber_freshVar_13=tom_get_slot_StarredField_FieldType(tom_get_head_concField_FieldList(tomMatch422NameNumber_freshVar_10));{  tom.gom.adt.gom.types.FieldList  tomMatch422NameNumber_freshVar_11=tom_get_tail_concField_FieldList(tomMatch422NameNumber_freshVar_10);if (tom_is_empty_concField_FieldList(tomMatch422NameNumber_freshVar_11)) {if (tom_equal_term_GomType(tomMatch422NameNumber_freshVar_13, tomMatch422NameNumber_freshVar_2)) {{ boolean tomMatch422NameNumber_freshVar_14= false ;if (tom_is_fun_sym_concProduction(tomMatch422NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch422NameNumber_freshVar_4=tomMatch422NameNumberfreshSubject_2;{  tom.gom.adt.gom.types.ProductionList  tomMatch422NameNumber_begin_6=tomMatch422NameNumber_freshVar_4;{  tom.gom.adt.gom.types.ProductionList  tomMatch422NameNumber_end_7=tomMatch422NameNumber_freshVar_4;do {{{  tom.gom.adt.gom.types.ProductionList  tomMatch422NameNumber_freshVar_5=tomMatch422NameNumber_end_7;if (!(tom_is_empty_concProduction_ProductionList(tomMatch422NameNumber_freshVar_5))) {if (tom_is_fun_sym_Hook(tom_get_head_concProduction_ProductionList(tomMatch422NameNumber_freshVar_5))) {{  String  tomMatch422NameNumber_freshVar_12=tom_get_slot_Hook_Name(tom_get_head_concProduction_ProductionList(tomMatch422NameNumber_freshVar_5));if (tom_equal_term_String(tomMatch422NameNumber_freshVar_0, tomMatch422NameNumber_freshVar_12)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch422NameNumber_freshVar_8=tom_get_tail_concProduction_ProductionList(tomMatch422NameNumber_freshVar_5);tomMatch422NameNumber_freshVar_14= true ;}}}}}}if (tom_is_empty_concProduction_ProductionList(tomMatch422NameNumber_end_7)) {tomMatch422NameNumber_end_7=tomMatch422NameNumber_begin_6;} else {tomMatch422NameNumber_end_7=tom_get_tail_concProduction_ProductionList(tomMatch422NameNumber_end_7);}}} while(!(tom_equal_term_ProductionList(tomMatch422NameNumber_end_7, tomMatch422NameNumber_begin_6)));}}}}if ((tomMatch422NameNumber_freshVar_14 ==  false )) {if ( true ) {
+            if (tom_is_sort_Production(tom_prod)) {{  tom.gom.adt.gom.types.Production  tomMatch421NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Production )tom_prod);if (tom_is_sort_ProductionList(tom_prodList)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch421NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.ProductionList )tom_prodList);if (tom_is_fun_sym_Production(tomMatch421NameNumberfreshSubject_1)) {{  String  tomMatch421NameNumber_freshVar_0=tom_get_slot_Production_Name(tomMatch421NameNumberfreshSubject_1);{  String  tom_opName=tomMatch421NameNumber_freshVar_0;{  tom.gom.adt.gom.types.FieldList  tomMatch421NameNumber_freshVar_1=tom_get_slot_Production_Domain(tomMatch421NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.GomType  tomMatch421NameNumber_freshVar_2=tom_get_slot_Production_Codomain(tomMatch421NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.Option  tomMatch421NameNumber_freshVar_3=tom_get_slot_Production_Option(tomMatch421NameNumberfreshSubject_1);if (tom_is_fun_sym_concField(tomMatch421NameNumber_freshVar_1)) {{  tom.gom.adt.gom.types.FieldList  tomMatch421NameNumber_freshVar_10=tomMatch421NameNumber_freshVar_1;if (!(tom_is_empty_concField_FieldList(tomMatch421NameNumber_freshVar_10))) {if (tom_is_fun_sym_StarredField(tom_get_head_concField_FieldList(tomMatch421NameNumber_freshVar_10))) {{  tom.gom.adt.gom.types.GomType  tomMatch421NameNumber_freshVar_13=tom_get_slot_StarredField_FieldType(tom_get_head_concField_FieldList(tomMatch421NameNumber_freshVar_10));{  tom.gom.adt.gom.types.FieldList  tomMatch421NameNumber_freshVar_11=tom_get_tail_concField_FieldList(tomMatch421NameNumber_freshVar_10);if (tom_is_empty_concField_FieldList(tomMatch421NameNumber_freshVar_11)) {if (tom_equal_term_GomType(tomMatch421NameNumber_freshVar_13, tomMatch421NameNumber_freshVar_2)) {{ boolean tomMatch421NameNumber_freshVar_14= false ;if (tom_is_fun_sym_concProduction(tomMatch421NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch421NameNumber_freshVar_4=tomMatch421NameNumberfreshSubject_2;{  tom.gom.adt.gom.types.ProductionList  tomMatch421NameNumber_begin_6=tomMatch421NameNumber_freshVar_4;{  tom.gom.adt.gom.types.ProductionList  tomMatch421NameNumber_end_7=tomMatch421NameNumber_freshVar_4;do {{{  tom.gom.adt.gom.types.ProductionList  tomMatch421NameNumber_freshVar_5=tomMatch421NameNumber_end_7;if (!(tom_is_empty_concProduction_ProductionList(tomMatch421NameNumber_freshVar_5))) {if (tom_is_fun_sym_Hook(tom_get_head_concProduction_ProductionList(tomMatch421NameNumber_freshVar_5))) {{  String  tomMatch421NameNumber_freshVar_12=tom_get_slot_Hook_Name(tom_get_head_concProduction_ProductionList(tomMatch421NameNumber_freshVar_5));if (tom_equal_term_String(tomMatch421NameNumber_freshVar_0, tomMatch421NameNumber_freshVar_12)) {{  tom.gom.adt.gom.types.ProductionList  tomMatch421NameNumber_freshVar_8=tom_get_tail_concProduction_ProductionList(tomMatch421NameNumber_freshVar_5);tomMatch421NameNumber_freshVar_14= true ;}}}}}}if (tom_is_empty_concProduction_ProductionList(tomMatch421NameNumber_end_7)) {tomMatch421NameNumber_end_7=tomMatch421NameNumber_begin_6;} else {tomMatch421NameNumber_end_7=tom_get_tail_concProduction_ProductionList(tomMatch421NameNumber_end_7);}}} while(!(tom_equal_term_ProductionList(tomMatch421NameNumber_end_7, tomMatch421NameNumber_begin_6)));}}}}if ((tomMatch421NameNumber_freshVar_14 ==  false )) {if ( true ) {
 
 
 
@@ -78,62 +79,62 @@ public class HookTypeExpander {
 
 
             /* Process hooks attached to a module */
-            if (tom_is_sort_Production(tom_prod)) {{  tom.gom.adt.gom.types.Production  tomMatch423NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Production )tom_prod);{  tom.gom.adt.gom.types.Production  tomMatch423NameNumber_freshVar_0=tomMatch423NameNumberfreshSubject_1;if (tom_is_fun_sym_Hook(tomMatch423NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.IdKind  tomMatch423NameNumber_freshVar_1=tom_get_slot_Hook_NameType(tomMatch423NameNumber_freshVar_0);{  String  tomMatch423NameNumber_freshVar_2=tom_get_slot_Hook_Name(tomMatch423NameNumber_freshVar_0);if (tom_is_fun_sym_KindModule(tomMatch423NameNumber_freshVar_1)) {{  String  tom_mname=tomMatch423NameNumber_freshVar_2;if ( true ) {
+            if (tom_is_sort_Production(tom_prod)) {{  tom.gom.adt.gom.types.Production  tomMatch422NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Production )tom_prod);{  tom.gom.adt.gom.types.Production  tomMatch422NameNumber_freshVar_0=tomMatch422NameNumberfreshSubject_1;if (tom_is_fun_sym_Hook(tomMatch422NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.IdKind  tomMatch422NameNumber_freshVar_1=tom_get_slot_Hook_NameType(tomMatch422NameNumber_freshVar_0);{  String  tomMatch422NameNumber_freshVar_2=tom_get_slot_Hook_Name(tomMatch422NameNumber_freshVar_0);if (tom_is_fun_sym_KindModule(tomMatch422NameNumber_freshVar_1)) {{  String  tom_mname=tomMatch422NameNumber_freshVar_2;if ( true ) {
 
                 if(tom_mname.equals(tom_moduleName)) {
                   ModuleDecl mdecl = getModuleDecl(tom_mname,moduleList);
                   HookDeclList newDeclList =
-                    makeHookDeclList(tomMatch423NameNumber_freshVar_0,tom_make_CutModule(mdecl));
+                    makeHookDeclList(tomMatch422NameNumber_freshVar_0,tom_make_CutModule(mdecl));
                   hookList = tom_append_list_concHookDecl(newDeclList,tom_append_list_concHookDecl(hookList,tom_empty_list_concHookDecl()));
                 } else {
                   getLogger().log(Level.SEVERE,
                       "Hooks on module are authorised only on the current module");
                 }
-              }}}}}}}{  tom.gom.adt.gom.types.Production  tomMatch423NameNumber_freshVar_3=tomMatch423NameNumberfreshSubject_1;if (tom_is_fun_sym_Hook(tomMatch423NameNumber_freshVar_3)) {{  tom.gom.adt.gom.types.IdKind  tomMatch423NameNumber_freshVar_4=tom_get_slot_Hook_NameType(tomMatch423NameNumber_freshVar_3);{  String  tomMatch423NameNumber_freshVar_5=tom_get_slot_Hook_Name(tomMatch423NameNumber_freshVar_3);if (tom_is_fun_sym_KindSort(tomMatch423NameNumber_freshVar_4)) {if ( true ) {
+              }}}}}}}{  tom.gom.adt.gom.types.Production  tomMatch422NameNumber_freshVar_3=tomMatch422NameNumberfreshSubject_1;if (tom_is_fun_sym_Hook(tomMatch422NameNumber_freshVar_3)) {{  tom.gom.adt.gom.types.IdKind  tomMatch422NameNumber_freshVar_4=tom_get_slot_Hook_NameType(tomMatch422NameNumber_freshVar_3);{  String  tomMatch422NameNumber_freshVar_5=tom_get_slot_Hook_Name(tomMatch422NameNumber_freshVar_3);if (tom_is_fun_sym_KindSort(tomMatch422NameNumber_freshVar_4)) {if ( true ) {
 
-                SortDecl sdecl = getSortDecl(tomMatch423NameNumber_freshVar_5,tom_moduleName,moduleList);
-                HookDeclList newDeclList = makeHookDeclList(tomMatch423NameNumber_freshVar_3,tom_make_CutSort(sdecl));
+                SortDecl sdecl = getSortDecl(tomMatch422NameNumber_freshVar_5,tom_moduleName,moduleList);
+                HookDeclList newDeclList = makeHookDeclList(tomMatch422NameNumber_freshVar_3,tom_make_CutSort(sdecl));
                 hookList = tom_append_list_concHookDecl(newDeclList,tom_append_list_concHookDecl(hookList,tom_empty_list_concHookDecl()));
-              }}}}}}{  tom.gom.adt.gom.types.Production  tomMatch423NameNumber_freshVar_6=tomMatch423NameNumberfreshSubject_1;if (tom_is_fun_sym_Hook(tomMatch423NameNumber_freshVar_6)) {{  tom.gom.adt.gom.types.IdKind  tomMatch423NameNumber_freshVar_7=tom_get_slot_Hook_NameType(tomMatch423NameNumber_freshVar_6);{  String  tomMatch423NameNumber_freshVar_8=tom_get_slot_Hook_Name(tomMatch423NameNumber_freshVar_6);if (tom_is_fun_sym_KindOperator(tomMatch423NameNumber_freshVar_7)) {if ( true ) {
+              }}}}}}{  tom.gom.adt.gom.types.Production  tomMatch422NameNumber_freshVar_6=tomMatch422NameNumberfreshSubject_1;if (tom_is_fun_sym_Hook(tomMatch422NameNumber_freshVar_6)) {{  tom.gom.adt.gom.types.IdKind  tomMatch422NameNumber_freshVar_7=tom_get_slot_Hook_NameType(tomMatch422NameNumber_freshVar_6);{  String  tomMatch422NameNumber_freshVar_8=tom_get_slot_Hook_Name(tomMatch422NameNumber_freshVar_6);if (tom_is_fun_sym_KindOperator(tomMatch422NameNumber_freshVar_7)) {if ( true ) {
 
-                OperatorDecl odecl = getOperatorDecl(tomMatch423NameNumber_freshVar_8,tom_moduleName,moduleList);
-                HookDeclList newDeclList = makeHookDeclList(tomMatch423NameNumber_freshVar_6,tom_make_CutOperator(odecl));
+                OperatorDecl odecl = getOperatorDecl(tomMatch422NameNumber_freshVar_8,tom_moduleName,moduleList);
+                HookDeclList newDeclList = makeHookDeclList(tomMatch422NameNumber_freshVar_6,tom_make_CutOperator(odecl));
                 hookList = tom_append_list_concHookDecl(newDeclList,tom_append_list_concHookDecl(hookList,tom_empty_list_concHookDecl()));
               }}}}}}}}
 
-          }}}}}if (tom_is_empty_concProduction_ProductionList(tomMatch424NameNumber_end_3)) {tomMatch424NameNumber_end_3=tomMatch424NameNumber_begin_2;} else {tomMatch424NameNumber_end_3=tom_get_tail_concProduction_ProductionList(tomMatch424NameNumber_end_3);}}} while(!(tom_equal_term_ProductionList(tomMatch424NameNumber_end_3, tomMatch424NameNumber_begin_2)));}}}}}}
+          }}}}}if (tom_is_empty_concProduction_ProductionList(tomMatch423NameNumber_end_3)) {tomMatch423NameNumber_end_3=tomMatch423NameNumber_begin_2;} else {tomMatch423NameNumber_end_3=tom_get_tail_concProduction_ProductionList(tomMatch423NameNumber_end_3);}}} while(!(tom_equal_term_ProductionList(tomMatch423NameNumber_end_3, tomMatch423NameNumber_begin_2)));}}}}}}
 
-      }}}}}}}}}if (tom_is_empty_concGrammar_GrammarList(tomMatch425NameNumber_end_19)) {tomMatch425NameNumber_end_19=tomMatch425NameNumber_begin_18;} else {tomMatch425NameNumber_end_19=tom_get_tail_concGrammar_GrammarList(tomMatch425NameNumber_end_19);}}} while(!(tom_equal_term_GrammarList(tomMatch425NameNumber_end_19, tomMatch425NameNumber_begin_18)));}}}}}}}}if (tom_is_empty_concSection_SectionList(tomMatch425NameNumber_end_12)) {tomMatch425NameNumber_end_12=tomMatch425NameNumber_begin_11;} else {tomMatch425NameNumber_end_12=tom_get_tail_concSection_SectionList(tomMatch425NameNumber_end_12);}}} while(!(tom_equal_term_SectionList(tomMatch425NameNumber_end_12, tomMatch425NameNumber_begin_11)));}}}}}}}}}}}}if (tom_is_empty_concGomModule_GomModuleList(tomMatch425NameNumber_end_3)) {tomMatch425NameNumber_end_3=tomMatch425NameNumber_begin_2;} else {tomMatch425NameNumber_end_3=tom_get_tail_concGomModule_GomModuleList(tomMatch425NameNumber_end_3);}}} while(!(tom_equal_term_GomModuleList(tomMatch425NameNumber_end_3, tomMatch425NameNumber_begin_2)));}}}}}}
+      }}}}}}}}}if (tom_is_empty_concGrammar_GrammarList(tomMatch424NameNumber_end_19)) {tomMatch424NameNumber_end_19=tomMatch424NameNumber_begin_18;} else {tomMatch424NameNumber_end_19=tom_get_tail_concGrammar_GrammarList(tomMatch424NameNumber_end_19);}}} while(!(tom_equal_term_GrammarList(tomMatch424NameNumber_end_19, tomMatch424NameNumber_begin_18)));}}}}}}}}if (tom_is_empty_concSection_SectionList(tomMatch424NameNumber_end_12)) {tomMatch424NameNumber_end_12=tomMatch424NameNumber_begin_11;} else {tomMatch424NameNumber_end_12=tom_get_tail_concSection_SectionList(tomMatch424NameNumber_end_12);}}} while(!(tom_equal_term_SectionList(tomMatch424NameNumber_end_12, tomMatch424NameNumber_begin_11)));}}}}}}}}}}}}if (tom_is_empty_concGomModule_GomModuleList(tomMatch424NameNumber_end_3)) {tomMatch424NameNumber_end_3=tomMatch424NameNumber_begin_2;} else {tomMatch424NameNumber_end_3=tom_get_tail_concGomModule_GomModuleList(tomMatch424NameNumber_end_3);}}} while(!(tom_equal_term_GomModuleList(tomMatch424NameNumber_end_3, tomMatch424NameNumber_begin_2)));}}}}}}
 
     return hookList;
   }
 
   private HookDeclList makeHookDeclList(Production hook, Decl mdecl) {
-    if (tom_is_sort_Production(hook)) {{  tom.gom.adt.gom.types.Production  tomMatch427NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Production )hook);if (tom_is_fun_sym_Hook(tomMatch427NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.HookKind  tomMatch427NameNumber_freshVar_0=tom_get_slot_Hook_HookType(tomMatch427NameNumberfreshSubject_1);{  String  tomMatch427NameNumber_freshVar_1=tom_get_slot_Hook_Name(tomMatch427NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.ArgList  tomMatch427NameNumber_freshVar_2=tom_get_slot_Hook_Args(tomMatch427NameNumberfreshSubject_1);{  String  tomMatch427NameNumber_freshVar_3=tom_get_slot_Hook_StringCode(tomMatch427NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.HookKind  tom_hkind=tomMatch427NameNumber_freshVar_0;{  String  tom_hName=tomMatch427NameNumber_freshVar_1;{  String  tom_scode=tomMatch427NameNumber_freshVar_3;if ( true ) {
+    if (tom_is_sort_Production(hook)) {{  tom.gom.adt.gom.types.Production  tomMatch426NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Production )hook);if (tom_is_fun_sym_Hook(tomMatch426NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.HookKind  tomMatch426NameNumber_freshVar_0=tom_get_slot_Hook_HookType(tomMatch426NameNumberfreshSubject_1);{  String  tomMatch426NameNumber_freshVar_1=tom_get_slot_Hook_Name(tomMatch426NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.ArgList  tomMatch426NameNumber_freshVar_2=tom_get_slot_Hook_Args(tomMatch426NameNumberfreshSubject_1);{  String  tomMatch426NameNumber_freshVar_3=tom_get_slot_Hook_StringCode(tomMatch426NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.HookKind  tom_hkind=tomMatch426NameNumber_freshVar_0;{  String  tom_hName=tomMatch426NameNumber_freshVar_1;{  String  tom_scode=tomMatch426NameNumber_freshVar_3;if ( true ) {
 
 
 
 
         HookDeclList newHookList = tom_empty_list_concHookDecl();
-        if (tom_is_sort_HookKind(tom_hkind)) {{  tom.gom.adt.gom.types.HookKind  tomMatch426NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookKind )tom_hkind);if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_0=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("block", tomMatch426NameNumber_freshVar_0)) {if ( true ) {
+        if (tom_is_sort_HookKind(tom_hkind)) {{  tom.gom.adt.gom.types.HookKind  tomMatch425NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookKind )tom_hkind);if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_0=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("block", tomMatch425NameNumber_freshVar_0)) {if ( true ) {
 
             newHookList = tom_cons_list_concHookDecl(tom_make_BlockHookDecl(mdecl,tom_make_Code(trimBracket(tom_scode))),tom_empty_list_concHookDecl())
 ;
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_1=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("interface", tomMatch426NameNumber_freshVar_1)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_1=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("interface", tomMatch425NameNumber_freshVar_1)) {if ( true ) {
 
             newHookList = tom_cons_list_concHookDecl(tom_make_InterfaceHookDecl(mdecl,tom_make_Code(trimBracket(tom_scode))),tom_empty_list_concHookDecl())
 ;
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_2=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("import", tomMatch426NameNumber_freshVar_2)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_2=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("import", tomMatch425NameNumber_freshVar_2)) {if ( true ) {
 
             newHookList = tom_cons_list_concHookDecl(tom_make_ImportHookDecl(mdecl,tom_make_Code(trimBracket(tom_scode))),tom_empty_list_concHookDecl())
 ;
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_3=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("mapping", tomMatch426NameNumber_freshVar_3)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_3=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("mapping", tomMatch425NameNumber_freshVar_3)) {if ( true ) {
 
             newHookList = tom_cons_list_concHookDecl(tom_make_MappingHookDecl(mdecl,tom_make_Code(trimBracket(tom_scode))),tom_empty_list_concHookDecl())
 ;
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_4=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);{ boolean tomMatch426NameNumber_freshVar_5= false ;if (tom_equal_term_String("make", tomMatch426NameNumber_freshVar_4)) {tomMatch426NameNumber_freshVar_5= true ;} else {if (tom_equal_term_String("make_insert", tomMatch426NameNumber_freshVar_4)) {tomMatch426NameNumber_freshVar_5= true ;} else {if (tom_equal_term_String("make_empty", tomMatch426NameNumber_freshVar_4)) {tomMatch426NameNumber_freshVar_5= true ;}}}if ((tomMatch426NameNumber_freshVar_5 ==  true )) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_4=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);{ boolean tomMatch425NameNumber_freshVar_5= false ;if (tom_equal_term_String("make", tomMatch425NameNumber_freshVar_4)) {tomMatch425NameNumber_freshVar_5= true ;} else {if (tom_equal_term_String("make_insert", tomMatch425NameNumber_freshVar_4)) {tomMatch425NameNumber_freshVar_5= true ;} else {if (tom_equal_term_String("make_empty", tomMatch425NameNumber_freshVar_4)) {tomMatch425NameNumber_freshVar_5= true ;}}}if ((tomMatch425NameNumber_freshVar_5 ==  true )) {if ( true ) {
 
-            SlotList typedArgs = typeArguments(tomMatch427NameNumber_freshVar_2,tom_hkind,mdecl);
+            SlotList typedArgs = typeArguments(tomMatch426NameNumber_freshVar_2,tom_hkind,mdecl);
             if (typedArgs == null) {
               getLogger().log(Level.SEVERE,
                   GomMessage.discardedHook.getMessage(),
@@ -142,23 +143,29 @@ public class HookTypeExpander {
             }
             newHookList = tom_cons_list_concHookDecl(tom_make_MakeHookDecl(mdecl,typedArgs,tom_make_Code(tom_scode)),tom_empty_list_concHookDecl())
 ;
-          }}}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_6=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("Free", tomMatch426NameNumber_freshVar_6)) {if ( true ) {
+          }}}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_6=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("Free", tomMatch425NameNumber_freshVar_6)) {if ( true ) {
 
             /* Free prevents hooks to be automatically generated */
             return tom_empty_list_concHookDecl();
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_7=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("FL", tomMatch426NameNumber_freshVar_7)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_7=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("FL", tomMatch425NameNumber_freshVar_7)) {if ( true ) {
 
             /* FL: flattened list */
             return makeFLHookList(tom_hName,mdecl,tom_scode);
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_8=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("AU", tomMatch426NameNumber_freshVar_8)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_8=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("AU", tomMatch425NameNumber_freshVar_8)) {if ( true ) {
 
             return makeAUHookList(tom_hName,mdecl,tom_scode);
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_9=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("ACU", tomMatch426NameNumber_freshVar_9)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_9=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("ACU", tomMatch425NameNumber_freshVar_9)) {if ( true ) {
 
             return makeACUHookList(tom_hName,mdecl,tom_scode);
-          }}}}if (tom_is_fun_sym_HookKind(tomMatch426NameNumberfreshSubject_1)) {{  String  tomMatch426NameNumber_freshVar_10=tom_get_slot_HookKind_kind(tomMatch426NameNumberfreshSubject_1);if (tom_equal_term_String("rules", tomMatch426NameNumber_freshVar_10)) {if ( true ) {
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_10=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("rules", tomMatch425NameNumber_freshVar_10)) {if ( true ) {
 
             return makeRulesHookList(tom_hName,mdecl,tom_scode);
+          }}}}if (tom_is_fun_sym_HookKind(tomMatch425NameNumberfreshSubject_1)) {{  String  tomMatch425NameNumber_freshVar_11=tom_get_slot_HookKind_kind(tomMatch425NameNumberfreshSubject_1);if (tom_equal_term_String("graphrules", tomMatch425NameNumber_freshVar_11)) {if ( true ) {
+
+            //TODO: verify if the option termgraph is on
+            // for now, this hook is only available with one sort T
+            //TODO: authorize TGRS with a multisort signature
+            return makeGraphRulesHookList(tom_hName,mdecl,tom_scode);
           }}}}}}
 
         if (newHookList == tom_empty_list_concHookDecl()) {
@@ -166,7 +173,7 @@ public class HookTypeExpander {
               "GomTypeExpander:typeModuleHook unknown HookKind: "+tom_hkind);
         }
         return newHookList;
-      }}}}}}}}}}}
+           }}}}}}}}}}}
 
     throw new GomRuntimeException(
         "HookTypeExpander: this hook is not a hook: "+hook);
@@ -180,15 +187,15 @@ public class HookTypeExpander {
     * @return the ModuleDecl for mname
     */
   private ModuleDecl getModuleDecl(String mname, ModuleList moduleList) {
-    if (tom_is_sort_ModuleList(moduleList)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ModuleList )moduleList);if (tom_is_fun_sym_concModule(tomMatch428NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_freshVar_3=tomMatch428NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_begin_5=tomMatch428NameNumber_freshVar_3;{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_end_6=tomMatch428NameNumber_freshVar_3;do {{{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_freshVar_4=tomMatch428NameNumber_end_6;if (!(tom_is_empty_concModule_ModuleList(tomMatch428NameNumber_freshVar_4))) {if (tom_is_fun_sym_Module(tom_get_head_concModule_ModuleList(tomMatch428NameNumber_freshVar_4))) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch428NameNumber_freshVar_9=tom_get_slot_Module_MDecl(tom_get_head_concModule_ModuleList(tomMatch428NameNumber_freshVar_4));{  tom.gom.adt.gom.types.ModuleDecl  tomMatch428NameNumber_freshVar_0=tomMatch428NameNumber_freshVar_9;{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_freshVar_7=tom_get_tail_concModule_ModuleList(tomMatch428NameNumber_freshVar_4);if (tom_is_fun_sym_ModuleDecl(tomMatch428NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.GomModuleName  tomMatch428NameNumber_freshVar_1=tom_get_slot_ModuleDecl_ModuleName(tomMatch428NameNumber_freshVar_0);if (tom_is_fun_sym_GomModuleName(tomMatch428NameNumber_freshVar_1)) {{  String  tomMatch428NameNumber_freshVar_2=tom_get_slot_GomModuleName_Name(tomMatch428NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_ModuleList(moduleList)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch427NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ModuleList )moduleList);if (tom_is_fun_sym_concModule(tomMatch427NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch427NameNumber_freshVar_3=tomMatch427NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.ModuleList  tomMatch427NameNumber_begin_5=tomMatch427NameNumber_freshVar_3;{  tom.gom.adt.gom.types.ModuleList  tomMatch427NameNumber_end_6=tomMatch427NameNumber_freshVar_3;do {{{  tom.gom.adt.gom.types.ModuleList  tomMatch427NameNumber_freshVar_4=tomMatch427NameNumber_end_6;if (!(tom_is_empty_concModule_ModuleList(tomMatch427NameNumber_freshVar_4))) {if (tom_is_fun_sym_Module(tom_get_head_concModule_ModuleList(tomMatch427NameNumber_freshVar_4))) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch427NameNumber_freshVar_9=tom_get_slot_Module_MDecl(tom_get_head_concModule_ModuleList(tomMatch427NameNumber_freshVar_4));{  tom.gom.adt.gom.types.ModuleDecl  tomMatch427NameNumber_freshVar_0=tomMatch427NameNumber_freshVar_9;{  tom.gom.adt.gom.types.ModuleList  tomMatch427NameNumber_freshVar_7=tom_get_tail_concModule_ModuleList(tomMatch427NameNumber_freshVar_4);if (tom_is_fun_sym_ModuleDecl(tomMatch427NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.GomModuleName  tomMatch427NameNumber_freshVar_1=tom_get_slot_ModuleDecl_ModuleName(tomMatch427NameNumber_freshVar_0);if (tom_is_fun_sym_GomModuleName(tomMatch427NameNumber_freshVar_1)) {{  String  tomMatch427NameNumber_freshVar_2=tom_get_slot_GomModuleName_Name(tomMatch427NameNumber_freshVar_1);if ( true ) {
 
 
 
 
-        if (tomMatch428NameNumber_freshVar_2.equals(mname)) {
-          return tomMatch428NameNumber_freshVar_0;
+        if (tomMatch427NameNumber_freshVar_2.equals(mname)) {
+          return tomMatch427NameNumber_freshVar_0;
         }
-      }}}}}}}}}}}if (tom_is_empty_concModule_ModuleList(tomMatch428NameNumber_end_6)) {tomMatch428NameNumber_end_6=tomMatch428NameNumber_begin_5;} else {tomMatch428NameNumber_end_6=tom_get_tail_concModule_ModuleList(tomMatch428NameNumber_end_6);}}} while(!(tom_equal_term_ModuleList(tomMatch428NameNumber_end_6, tomMatch428NameNumber_begin_5)));}}}}}}
+      }}}}}}}}}}}if (tom_is_empty_concModule_ModuleList(tomMatch427NameNumber_end_6)) {tomMatch427NameNumber_end_6=tomMatch427NameNumber_begin_5;} else {tomMatch427NameNumber_end_6=tom_get_tail_concModule_ModuleList(tomMatch427NameNumber_end_6);}}} while(!(tom_equal_term_ModuleList(tomMatch427NameNumber_end_6, tomMatch427NameNumber_begin_5)));}}}}}}
 
     throw new GomRuntimeException(
         "HookTypeExpander: Module not found: "+mname);
@@ -203,17 +210,17 @@ public class HookTypeExpander {
     * @return the SortDecl for sname
     */
   private SortDecl getSortDecl(String sname, String modName, ModuleList moduleList) {
-    if ( true ) {{  String  tomMatch429NameNumberfreshSubject_1=(( String )modName);if (tom_is_sort_ModuleList(moduleList)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.ModuleList )moduleList);if (tom_is_fun_sym_concModule(tomMatch429NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_freshVar_2=tomMatch429NameNumberfreshSubject_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_begin_4=tomMatch429NameNumber_freshVar_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_end_5=tomMatch429NameNumber_freshVar_2;do {{{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_freshVar_3=tomMatch429NameNumber_end_5;if (!(tom_is_empty_concModule_ModuleList(tomMatch429NameNumber_freshVar_3))) {if (tom_is_fun_sym_Module(tom_get_head_concModule_ModuleList(tomMatch429NameNumber_freshVar_3))) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch429NameNumber_freshVar_8=tom_get_slot_Module_MDecl(tom_get_head_concModule_ModuleList(tomMatch429NameNumber_freshVar_3));if (tom_is_fun_sym_ModuleDecl(tomMatch429NameNumber_freshVar_8)) {{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_9=tom_get_slot_Module_Sorts(tom_get_head_concModule_ModuleList(tomMatch429NameNumber_freshVar_3));{  tom.gom.adt.gom.types.GomModuleName  tomMatch429NameNumber_freshVar_10=tom_get_slot_ModuleDecl_ModuleName(tomMatch429NameNumber_freshVar_8);if (tom_is_fun_sym_GomModuleName(tomMatch429NameNumber_freshVar_10)) {{  String  tomMatch429NameNumber_freshVar_11=tom_get_slot_GomModuleName_Name(tomMatch429NameNumber_freshVar_10);if (tom_is_fun_sym_concSort(tomMatch429NameNumber_freshVar_9)) {{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_12=tomMatch429NameNumber_freshVar_9;{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_begin_14=tomMatch429NameNumber_freshVar_12;{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_end_15=tomMatch429NameNumber_freshVar_12;do {{{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_13=tomMatch429NameNumber_end_15;if (!(tom_is_empty_concSort_SortList(tomMatch429NameNumber_freshVar_13))) {if (tom_is_fun_sym_Sort(tom_get_head_concSort_SortList(tomMatch429NameNumber_freshVar_13))) {{  tom.gom.adt.gom.types.SortDecl  tomMatch429NameNumber_freshVar_18=tom_get_slot_Sort_Decl(tom_get_head_concSort_SortList(tomMatch429NameNumber_freshVar_13));{  tom.gom.adt.gom.types.SortDecl  tomMatch429NameNumber_freshVar_0=tomMatch429NameNumber_freshVar_18;{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_16=tom_get_tail_concSort_SortList(tomMatch429NameNumber_freshVar_13);{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_freshVar_6=tom_get_tail_concModule_ModuleList(tomMatch429NameNumber_freshVar_3);if (tom_equal_term_String(tomMatch429NameNumber_freshVar_11, tomMatch429NameNumberfreshSubject_1)) {if (tom_is_fun_sym_SortDecl(tomMatch429NameNumber_freshVar_0)) {{  String  tomMatch429NameNumber_freshVar_1=tom_get_slot_SortDecl_Name(tomMatch429NameNumber_freshVar_0);if ( true ) {
+    if ( true ) {{  String  tomMatch428NameNumberfreshSubject_1=(( String )modName);if (tom_is_sort_ModuleList(moduleList)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.ModuleList )moduleList);if (tom_is_fun_sym_concModule(tomMatch428NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_freshVar_2=tomMatch428NameNumberfreshSubject_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_begin_4=tomMatch428NameNumber_freshVar_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_end_5=tomMatch428NameNumber_freshVar_2;do {{{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_freshVar_3=tomMatch428NameNumber_end_5;if (!(tom_is_empty_concModule_ModuleList(tomMatch428NameNumber_freshVar_3))) {if (tom_is_fun_sym_Module(tom_get_head_concModule_ModuleList(tomMatch428NameNumber_freshVar_3))) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch428NameNumber_freshVar_8=tom_get_slot_Module_MDecl(tom_get_head_concModule_ModuleList(tomMatch428NameNumber_freshVar_3));if (tom_is_fun_sym_ModuleDecl(tomMatch428NameNumber_freshVar_8)) {{  tom.gom.adt.gom.types.SortList  tomMatch428NameNumber_freshVar_9=tom_get_slot_Module_Sorts(tom_get_head_concModule_ModuleList(tomMatch428NameNumber_freshVar_3));{  tom.gom.adt.gom.types.GomModuleName  tomMatch428NameNumber_freshVar_10=tom_get_slot_ModuleDecl_ModuleName(tomMatch428NameNumber_freshVar_8);if (tom_is_fun_sym_GomModuleName(tomMatch428NameNumber_freshVar_10)) {{  String  tomMatch428NameNumber_freshVar_11=tom_get_slot_GomModuleName_Name(tomMatch428NameNumber_freshVar_10);if (tom_is_fun_sym_concSort(tomMatch428NameNumber_freshVar_9)) {{  tom.gom.adt.gom.types.SortList  tomMatch428NameNumber_freshVar_12=tomMatch428NameNumber_freshVar_9;{  tom.gom.adt.gom.types.SortList  tomMatch428NameNumber_begin_14=tomMatch428NameNumber_freshVar_12;{  tom.gom.adt.gom.types.SortList  tomMatch428NameNumber_end_15=tomMatch428NameNumber_freshVar_12;do {{{  tom.gom.adt.gom.types.SortList  tomMatch428NameNumber_freshVar_13=tomMatch428NameNumber_end_15;if (!(tom_is_empty_concSort_SortList(tomMatch428NameNumber_freshVar_13))) {if (tom_is_fun_sym_Sort(tom_get_head_concSort_SortList(tomMatch428NameNumber_freshVar_13))) {{  tom.gom.adt.gom.types.SortDecl  tomMatch428NameNumber_freshVar_18=tom_get_slot_Sort_Decl(tom_get_head_concSort_SortList(tomMatch428NameNumber_freshVar_13));{  tom.gom.adt.gom.types.SortDecl  tomMatch428NameNumber_freshVar_0=tomMatch428NameNumber_freshVar_18;{  tom.gom.adt.gom.types.SortList  tomMatch428NameNumber_freshVar_16=tom_get_tail_concSort_SortList(tomMatch428NameNumber_freshVar_13);{  tom.gom.adt.gom.types.ModuleList  tomMatch428NameNumber_freshVar_6=tom_get_tail_concModule_ModuleList(tomMatch428NameNumber_freshVar_3);if (tom_equal_term_String(tomMatch428NameNumber_freshVar_11, tomMatch428NameNumberfreshSubject_1)) {if (tom_is_fun_sym_SortDecl(tomMatch428NameNumber_freshVar_0)) {{  String  tomMatch428NameNumber_freshVar_1=tom_get_slot_SortDecl_Name(tomMatch428NameNumber_freshVar_0);if ( true ) {
 
 
 
 
 
 
-        if (tomMatch429NameNumber_freshVar_1.equals(sname)) {
-          return tomMatch429NameNumber_freshVar_0;
+        if (tomMatch428NameNumber_freshVar_1.equals(sname)) {
+          return tomMatch428NameNumber_freshVar_0;
         }
-      }}}}}}}}}}}if (tom_is_empty_concSort_SortList(tomMatch429NameNumber_end_15)) {tomMatch429NameNumber_end_15=tomMatch429NameNumber_begin_14;} else {tomMatch429NameNumber_end_15=tom_get_tail_concSort_SortList(tomMatch429NameNumber_end_15);}}} while(!(tom_equal_term_SortList(tomMatch429NameNumber_end_15, tomMatch429NameNumber_begin_14)));}}}}}}}}}}}}}if (tom_is_empty_concModule_ModuleList(tomMatch429NameNumber_end_5)) {tomMatch429NameNumber_end_5=tomMatch429NameNumber_begin_4;} else {tomMatch429NameNumber_end_5=tom_get_tail_concModule_ModuleList(tomMatch429NameNumber_end_5);}}} while(!(tom_equal_term_ModuleList(tomMatch429NameNumber_end_5, tomMatch429NameNumber_begin_4)));}}}}}}}}
+      }}}}}}}}}}}if (tom_is_empty_concSort_SortList(tomMatch428NameNumber_end_15)) {tomMatch428NameNumber_end_15=tomMatch428NameNumber_begin_14;} else {tomMatch428NameNumber_end_15=tom_get_tail_concSort_SortList(tomMatch428NameNumber_end_15);}}} while(!(tom_equal_term_SortList(tomMatch428NameNumber_end_15, tomMatch428NameNumber_begin_14)));}}}}}}}}}}}}}if (tom_is_empty_concModule_ModuleList(tomMatch428NameNumber_end_5)) {tomMatch428NameNumber_end_5=tomMatch428NameNumber_begin_4;} else {tomMatch428NameNumber_end_5=tom_get_tail_concModule_ModuleList(tomMatch428NameNumber_end_5);}}} while(!(tom_equal_term_ModuleList(tomMatch428NameNumber_end_5, tomMatch428NameNumber_begin_4)));}}}}}}}}
 
     throw new GomRuntimeException(
         "HookTypeExpander: Sort not found: "+sname);
@@ -231,7 +238,7 @@ public class HookTypeExpander {
       String oname,
       String modName,
       ModuleList moduleList) {
-    if ( true ) {{  String  tomMatch430NameNumberfreshSubject_1=(( String )modName);if (tom_is_sort_ModuleList(moduleList)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch430NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.ModuleList )moduleList);if (tom_is_fun_sym_concModule(tomMatch430NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch430NameNumber_freshVar_2=tomMatch430NameNumberfreshSubject_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch430NameNumber_begin_4=tomMatch430NameNumber_freshVar_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch430NameNumber_end_5=tomMatch430NameNumber_freshVar_2;do {{{  tom.gom.adt.gom.types.ModuleList  tomMatch430NameNumber_freshVar_3=tomMatch430NameNumber_end_5;if (!(tom_is_empty_concModule_ModuleList(tomMatch430NameNumber_freshVar_3))) {if (tom_is_fun_sym_Module(tom_get_head_concModule_ModuleList(tomMatch430NameNumber_freshVar_3))) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch430NameNumber_freshVar_8=tom_get_slot_Module_MDecl(tom_get_head_concModule_ModuleList(tomMatch430NameNumber_freshVar_3));if (tom_is_fun_sym_ModuleDecl(tomMatch430NameNumber_freshVar_8)) {{  tom.gom.adt.gom.types.SortList  tomMatch430NameNumber_freshVar_9=tom_get_slot_Module_Sorts(tom_get_head_concModule_ModuleList(tomMatch430NameNumber_freshVar_3));{  tom.gom.adt.gom.types.GomModuleName  tomMatch430NameNumber_freshVar_10=tom_get_slot_ModuleDecl_ModuleName(tomMatch430NameNumber_freshVar_8);if (tom_is_fun_sym_GomModuleName(tomMatch430NameNumber_freshVar_10)) {{  String  tomMatch430NameNumber_freshVar_11=tom_get_slot_GomModuleName_Name(tomMatch430NameNumber_freshVar_10);if (tom_is_fun_sym_concSort(tomMatch430NameNumber_freshVar_9)) {{  tom.gom.adt.gom.types.SortList  tomMatch430NameNumber_freshVar_12=tomMatch430NameNumber_freshVar_9;{  tom.gom.adt.gom.types.SortList  tomMatch430NameNumber_begin_14=tomMatch430NameNumber_freshVar_12;{  tom.gom.adt.gom.types.SortList  tomMatch430NameNumber_end_15=tomMatch430NameNumber_freshVar_12;do {{{  tom.gom.adt.gom.types.SortList  tomMatch430NameNumber_freshVar_13=tomMatch430NameNumber_end_15;if (!(tom_is_empty_concSort_SortList(tomMatch430NameNumber_freshVar_13))) {if (tom_is_fun_sym_Sort(tom_get_head_concSort_SortList(tomMatch430NameNumber_freshVar_13))) {{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch430NameNumber_freshVar_18=tom_get_slot_Sort_Operators(tom_get_head_concSort_SortList(tomMatch430NameNumber_freshVar_13));if (tom_is_fun_sym_concOperator(tomMatch430NameNumber_freshVar_18)) {{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch430NameNumber_freshVar_19=tomMatch430NameNumber_freshVar_18;{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch430NameNumber_begin_21=tomMatch430NameNumber_freshVar_19;{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch430NameNumber_end_22=tomMatch430NameNumber_freshVar_19;do {{{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch430NameNumber_freshVar_20=tomMatch430NameNumber_end_22;if (!(tom_is_empty_concOperator_OperatorDeclList(tomMatch430NameNumber_freshVar_20))) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch430NameNumber_freshVar_0=tom_get_head_concOperator_OperatorDeclList(tomMatch430NameNumber_freshVar_20);{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch430NameNumber_freshVar_23=tom_get_tail_concOperator_OperatorDeclList(tomMatch430NameNumber_freshVar_20);{  tom.gom.adt.gom.types.SortList  tomMatch430NameNumber_freshVar_16=tom_get_tail_concSort_SortList(tomMatch430NameNumber_freshVar_13);{  tom.gom.adt.gom.types.ModuleList  tomMatch430NameNumber_freshVar_6=tom_get_tail_concModule_ModuleList(tomMatch430NameNumber_freshVar_3);if (tom_equal_term_String(tomMatch430NameNumber_freshVar_11, tomMatch430NameNumberfreshSubject_1)) {if (tom_is_fun_sym_OperatorDecl(tomMatch430NameNumber_freshVar_0)) {{  String  tomMatch430NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Name(tomMatch430NameNumber_freshVar_0);if ( true ) {
+    if ( true ) {{  String  tomMatch429NameNumberfreshSubject_1=(( String )modName);if (tom_is_sort_ModuleList(moduleList)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.ModuleList )moduleList);if (tom_is_fun_sym_concModule(tomMatch429NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_freshVar_2=tomMatch429NameNumberfreshSubject_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_begin_4=tomMatch429NameNumber_freshVar_2;{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_end_5=tomMatch429NameNumber_freshVar_2;do {{{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_freshVar_3=tomMatch429NameNumber_end_5;if (!(tom_is_empty_concModule_ModuleList(tomMatch429NameNumber_freshVar_3))) {if (tom_is_fun_sym_Module(tom_get_head_concModule_ModuleList(tomMatch429NameNumber_freshVar_3))) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch429NameNumber_freshVar_8=tom_get_slot_Module_MDecl(tom_get_head_concModule_ModuleList(tomMatch429NameNumber_freshVar_3));if (tom_is_fun_sym_ModuleDecl(tomMatch429NameNumber_freshVar_8)) {{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_9=tom_get_slot_Module_Sorts(tom_get_head_concModule_ModuleList(tomMatch429NameNumber_freshVar_3));{  tom.gom.adt.gom.types.GomModuleName  tomMatch429NameNumber_freshVar_10=tom_get_slot_ModuleDecl_ModuleName(tomMatch429NameNumber_freshVar_8);if (tom_is_fun_sym_GomModuleName(tomMatch429NameNumber_freshVar_10)) {{  String  tomMatch429NameNumber_freshVar_11=tom_get_slot_GomModuleName_Name(tomMatch429NameNumber_freshVar_10);if (tom_is_fun_sym_concSort(tomMatch429NameNumber_freshVar_9)) {{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_12=tomMatch429NameNumber_freshVar_9;{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_begin_14=tomMatch429NameNumber_freshVar_12;{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_end_15=tomMatch429NameNumber_freshVar_12;do {{{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_13=tomMatch429NameNumber_end_15;if (!(tom_is_empty_concSort_SortList(tomMatch429NameNumber_freshVar_13))) {if (tom_is_fun_sym_Sort(tom_get_head_concSort_SortList(tomMatch429NameNumber_freshVar_13))) {{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch429NameNumber_freshVar_18=tom_get_slot_Sort_Operators(tom_get_head_concSort_SortList(tomMatch429NameNumber_freshVar_13));if (tom_is_fun_sym_concOperator(tomMatch429NameNumber_freshVar_18)) {{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch429NameNumber_freshVar_19=tomMatch429NameNumber_freshVar_18;{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch429NameNumber_begin_21=tomMatch429NameNumber_freshVar_19;{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch429NameNumber_end_22=tomMatch429NameNumber_freshVar_19;do {{{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch429NameNumber_freshVar_20=tomMatch429NameNumber_end_22;if (!(tom_is_empty_concOperator_OperatorDeclList(tomMatch429NameNumber_freshVar_20))) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch429NameNumber_freshVar_0=tom_get_head_concOperator_OperatorDeclList(tomMatch429NameNumber_freshVar_20);{  tom.gom.adt.gom.types.OperatorDeclList  tomMatch429NameNumber_freshVar_23=tom_get_tail_concOperator_OperatorDeclList(tomMatch429NameNumber_freshVar_20);{  tom.gom.adt.gom.types.SortList  tomMatch429NameNumber_freshVar_16=tom_get_tail_concSort_SortList(tomMatch429NameNumber_freshVar_13);{  tom.gom.adt.gom.types.ModuleList  tomMatch429NameNumber_freshVar_6=tom_get_tail_concModule_ModuleList(tomMatch429NameNumber_freshVar_3);if (tom_equal_term_String(tomMatch429NameNumber_freshVar_11, tomMatch429NameNumberfreshSubject_1)) {if (tom_is_fun_sym_OperatorDecl(tomMatch429NameNumber_freshVar_0)) {{  String  tomMatch429NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Name(tomMatch429NameNumber_freshVar_0);if ( true ) {
 
 
 
@@ -240,10 +247,10 @@ public class HookTypeExpander {
 
 
 
-        if (tomMatch430NameNumber_freshVar_1.equals(oname)) {
-          return tomMatch430NameNumber_freshVar_0;
+        if (tomMatch429NameNumber_freshVar_1.equals(oname)) {
+          return tomMatch429NameNumber_freshVar_0;
         }
-      }}}}}}}}}}if (tom_is_empty_concOperator_OperatorDeclList(tomMatch430NameNumber_end_22)) {tomMatch430NameNumber_end_22=tomMatch430NameNumber_begin_21;} else {tomMatch430NameNumber_end_22=tom_get_tail_concOperator_OperatorDeclList(tomMatch430NameNumber_end_22);}}} while(!(tom_equal_term_OperatorDeclList(tomMatch430NameNumber_end_22, tomMatch430NameNumber_begin_21)));}}}}}}}}if (tom_is_empty_concSort_SortList(tomMatch430NameNumber_end_15)) {tomMatch430NameNumber_end_15=tomMatch430NameNumber_begin_14;} else {tomMatch430NameNumber_end_15=tom_get_tail_concSort_SortList(tomMatch430NameNumber_end_15);}}} while(!(tom_equal_term_SortList(tomMatch430NameNumber_end_15, tomMatch430NameNumber_begin_14)));}}}}}}}}}}}}}if (tom_is_empty_concModule_ModuleList(tomMatch430NameNumber_end_5)) {tomMatch430NameNumber_end_5=tomMatch430NameNumber_begin_4;} else {tomMatch430NameNumber_end_5=tom_get_tail_concModule_ModuleList(tomMatch430NameNumber_end_5);}}} while(!(tom_equal_term_ModuleList(tomMatch430NameNumber_end_5, tomMatch430NameNumber_begin_4)));}}}}}}}}
+      }}}}}}}}}}if (tom_is_empty_concOperator_OperatorDeclList(tomMatch429NameNumber_end_22)) {tomMatch429NameNumber_end_22=tomMatch429NameNumber_begin_21;} else {tomMatch429NameNumber_end_22=tom_get_tail_concOperator_OperatorDeclList(tomMatch429NameNumber_end_22);}}} while(!(tom_equal_term_OperatorDeclList(tomMatch429NameNumber_end_22, tomMatch429NameNumber_begin_21)));}}}}}}}}if (tom_is_empty_concSort_SortList(tomMatch429NameNumber_end_15)) {tomMatch429NameNumber_end_15=tomMatch429NameNumber_begin_14;} else {tomMatch429NameNumber_end_15=tom_get_tail_concSort_SortList(tomMatch429NameNumber_end_15);}}} while(!(tom_equal_term_SortList(tomMatch429NameNumber_end_15, tomMatch429NameNumber_begin_14)));}}}}}}}}}}}}}if (tom_is_empty_concModule_ModuleList(tomMatch429NameNumber_end_5)) {tomMatch429NameNumber_end_5=tomMatch429NameNumber_begin_4;} else {tomMatch429NameNumber_end_5=tom_get_tail_concModule_ModuleList(tomMatch429NameNumber_end_5);}}} while(!(tom_equal_term_ModuleList(tomMatch429NameNumber_end_5, tomMatch429NameNumber_begin_4)));}}}}}}}}
 
     throw new GomRuntimeException(
         "HookTypeExpander: Operator not found: "+oname);
@@ -253,13 +260,13 @@ public class HookTypeExpander {
       ArgList args,
       HookKind kind,
       Decl decl) {
-    if (tom_is_sort_HookKind(kind)) {{  tom.gom.adt.gom.types.HookKind  tomMatch436NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookKind )kind);if (tom_is_fun_sym_HookKind(tomMatch436NameNumberfreshSubject_1)) {{  String  tomMatch436NameNumber_freshVar_0=tom_get_slot_HookKind_kind(tomMatch436NameNumberfreshSubject_1);if (tom_equal_term_String("make", tomMatch436NameNumber_freshVar_0)) {if ( true ) {
+    if (tom_is_sort_HookKind(kind)) {{  tom.gom.adt.gom.types.HookKind  tomMatch435NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookKind )kind);if (tom_is_fun_sym_HookKind(tomMatch435NameNumberfreshSubject_1)) {{  String  tomMatch435NameNumber_freshVar_0=tom_get_slot_HookKind_kind(tomMatch435NameNumberfreshSubject_1);if (tom_equal_term_String("make", tomMatch435NameNumber_freshVar_0)) {if ( true ) {
 
         /*
          * The TypedProduction has to be Slots
          * A KindMakeHook is attached to an operator
          */
-        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch431NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutOperator(tomMatch431NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch431NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch431NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch431NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.TypedProduction  tomMatch431NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Prod(tomMatch431NameNumber_freshVar_0);if (tom_is_fun_sym_Slots(tomMatch431NameNumber_freshVar_1)) {{  tom.gom.adt.gom.types.SlotList  tomMatch431NameNumber_freshVar_2=tom_get_slot_Slots_Slots(tomMatch431NameNumber_freshVar_1);{  tom.gom.adt.gom.types.SlotList  tom_slotList=tomMatch431NameNumber_freshVar_2;if ( true ) {
+        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch430NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutOperator(tomMatch430NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch430NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch430NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch430NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.TypedProduction  tomMatch430NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Prod(tomMatch430NameNumber_freshVar_0);if (tom_is_fun_sym_Slots(tomMatch430NameNumber_freshVar_1)) {{  tom.gom.adt.gom.types.SlotList  tomMatch430NameNumber_freshVar_2=tom_get_slot_Slots_Slots(tomMatch430NameNumber_freshVar_1);{  tom.gom.adt.gom.types.SlotList  tom_slotList=tomMatch430NameNumber_freshVar_2;if ( true ) {
 
             /* tests the arguments number */
             if (args.length() != tom_slotList.length()) {
@@ -279,24 +286,24 @@ public class HookTypeExpander {
             return null;
           }}}
 
-      }}}}if (tom_is_fun_sym_HookKind(tomMatch436NameNumberfreshSubject_1)) {{  String  tomMatch436NameNumber_freshVar_2=tom_get_slot_HookKind_kind(tomMatch436NameNumberfreshSubject_1);{  String  tomMatch436NameNumber_freshVar_1=tomMatch436NameNumber_freshVar_2;if (tom_equal_term_String("make_insert", tomMatch436NameNumber_freshVar_1)) {if ( true ) {
+      }}}}if (tom_is_fun_sym_HookKind(tomMatch435NameNumberfreshSubject_1)) {{  String  tomMatch435NameNumber_freshVar_2=tom_get_slot_HookKind_kind(tomMatch435NameNumberfreshSubject_1);{  String  tomMatch435NameNumber_freshVar_1=tomMatch435NameNumber_freshVar_2;if (tom_equal_term_String("make_insert", tomMatch435NameNumber_freshVar_1)) {if ( true ) {
 
         /*
          * The TypedProduction has to be Variadic
          * Then we get the codomain from the operatordecl
          */
-        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch433NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutOperator(tomMatch433NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch433NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch433NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch433NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch433NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Sort(tomMatch433NameNumber_freshVar_0);{  tom.gom.adt.gom.types.TypedProduction  tomMatch433NameNumber_freshVar_2=tom_get_slot_OperatorDecl_Prod(tomMatch433NameNumber_freshVar_0);if (tom_is_fun_sym_Variadic(tomMatch433NameNumber_freshVar_2)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch433NameNumber_freshVar_3=tom_get_slot_Variadic_Sort(tomMatch433NameNumber_freshVar_2);if ( true ) {
+        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch432NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutOperator(tomMatch432NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch432NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch432NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch432NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch432NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Sort(tomMatch432NameNumber_freshVar_0);{  tom.gom.adt.gom.types.TypedProduction  tomMatch432NameNumber_freshVar_2=tom_get_slot_OperatorDecl_Prod(tomMatch432NameNumber_freshVar_0);if (tom_is_fun_sym_Variadic(tomMatch432NameNumber_freshVar_2)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch432NameNumber_freshVar_3=tom_get_slot_Variadic_Sort(tomMatch432NameNumber_freshVar_2);if ( true ) {
 
 
             // for a make_insert hook, there are two arguments: head, tail
-            if (tom_is_sort_ArgList(args)) {{  tom.gom.adt.gom.types.ArgList  tomMatch432NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ArgList )args);if (tom_is_fun_sym_concArg(tomMatch432NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch432NameNumber_freshVar_0=tomMatch432NameNumberfreshSubject_1;if (!(tom_is_empty_concArg_ArgList(tomMatch432NameNumber_freshVar_0))) {if (tom_is_fun_sym_Arg(tom_get_head_concArg_ArgList(tomMatch432NameNumber_freshVar_0))) {{  String  tomMatch432NameNumber_freshVar_3=tom_get_slot_Arg_Name(tom_get_head_concArg_ArgList(tomMatch432NameNumber_freshVar_0));{  tom.gom.adt.gom.types.ArgList  tomMatch432NameNumber_freshVar_1=tom_get_tail_concArg_ArgList(tomMatch432NameNumber_freshVar_0);if (!(tom_is_empty_concArg_ArgList(tomMatch432NameNumber_freshVar_1))) {if (tom_is_fun_sym_Arg(tom_get_head_concArg_ArgList(tomMatch432NameNumber_freshVar_1))) {{  String  tomMatch432NameNumber_freshVar_4=tom_get_slot_Arg_Name(tom_get_head_concArg_ArgList(tomMatch432NameNumber_freshVar_1));{  tom.gom.adt.gom.types.ArgList  tomMatch432NameNumber_freshVar_2=tom_get_tail_concArg_ArgList(tomMatch432NameNumber_freshVar_1);if (tom_is_empty_concArg_ArgList(tomMatch432NameNumber_freshVar_2)) {if ( true ) {
+            if (tom_is_sort_ArgList(args)) {{  tom.gom.adt.gom.types.ArgList  tomMatch431NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ArgList )args);if (tom_is_fun_sym_concArg(tomMatch431NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch431NameNumber_freshVar_0=tomMatch431NameNumberfreshSubject_1;if (!(tom_is_empty_concArg_ArgList(tomMatch431NameNumber_freshVar_0))) {if (tom_is_fun_sym_Arg(tom_get_head_concArg_ArgList(tomMatch431NameNumber_freshVar_0))) {{  String  tomMatch431NameNumber_freshVar_3=tom_get_slot_Arg_Name(tom_get_head_concArg_ArgList(tomMatch431NameNumber_freshVar_0));{  tom.gom.adt.gom.types.ArgList  tomMatch431NameNumber_freshVar_1=tom_get_tail_concArg_ArgList(tomMatch431NameNumber_freshVar_0);if (!(tom_is_empty_concArg_ArgList(tomMatch431NameNumber_freshVar_1))) {if (tom_is_fun_sym_Arg(tom_get_head_concArg_ArgList(tomMatch431NameNumber_freshVar_1))) {{  String  tomMatch431NameNumber_freshVar_4=tom_get_slot_Arg_Name(tom_get_head_concArg_ArgList(tomMatch431NameNumber_freshVar_1));{  tom.gom.adt.gom.types.ArgList  tomMatch431NameNumber_freshVar_2=tom_get_tail_concArg_ArgList(tomMatch431NameNumber_freshVar_1);if (tom_is_empty_concArg_ArgList(tomMatch431NameNumber_freshVar_2)) {if ( true ) {
 
-                return tom_cons_list_concSlot(tom_make_Slot(tomMatch432NameNumber_freshVar_3,tomMatch433NameNumber_freshVar_3),tom_cons_list_concSlot(tom_make_Slot(tomMatch432NameNumber_freshVar_4,tomMatch433NameNumber_freshVar_1),tom_empty_list_concSlot()));
+                return tom_cons_list_concSlot(tom_make_Slot(tomMatch431NameNumber_freshVar_3,tomMatch432NameNumber_freshVar_3),tom_cons_list_concSlot(tom_make_Slot(tomMatch431NameNumber_freshVar_4,tomMatch432NameNumber_freshVar_1),tom_empty_list_concSlot()));
               }}}}}}}}}}}}if ( true ) {
 
                 getLogger().log(Level.SEVERE,
                     GomMessage.badHookArguments.getMessage(),
-                    new Object[]{ (tomMatch436NameNumber_freshVar_1), new Integer(args.length())});
+                    new Object[]{ (tomMatch435NameNumber_freshVar_1), new Integer(args.length())});
                 return null;
               }}}
 
@@ -308,22 +315,22 @@ public class HookTypeExpander {
             return null;
           }}}
 
-      }}}}}if (tom_is_fun_sym_HookKind(tomMatch436NameNumberfreshSubject_1)) {{  String  tomMatch436NameNumber_freshVar_4=tom_get_slot_HookKind_kind(tomMatch436NameNumberfreshSubject_1);{  String  tomMatch436NameNumber_freshVar_3=tomMatch436NameNumber_freshVar_4;if (tom_equal_term_String("make_empty", tomMatch436NameNumber_freshVar_3)) {if ( true ) {
+      }}}}}if (tom_is_fun_sym_HookKind(tomMatch435NameNumberfreshSubject_1)) {{  String  tomMatch435NameNumber_freshVar_4=tom_get_slot_HookKind_kind(tomMatch435NameNumberfreshSubject_1);{  String  tomMatch435NameNumber_freshVar_3=tomMatch435NameNumber_freshVar_4;if (tom_equal_term_String("make_empty", tomMatch435NameNumber_freshVar_3)) {if ( true ) {
 
         /*
          * The TypedProduction has to be Variadic
          * Then we get the codomain from the operatordecl
          */
-        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch435NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutOperator(tomMatch435NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch435NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch435NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch435NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch435NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Sort(tomMatch435NameNumber_freshVar_0);{  tom.gom.adt.gom.types.TypedProduction  tomMatch435NameNumber_freshVar_2=tom_get_slot_OperatorDecl_Prod(tomMatch435NameNumber_freshVar_0);if (tom_is_fun_sym_Variadic(tomMatch435NameNumber_freshVar_2)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch435NameNumber_freshVar_3=tom_get_slot_Variadic_Sort(tomMatch435NameNumber_freshVar_2);if ( true ) {
+        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch434NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutOperator(tomMatch434NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch434NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch434NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch434NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch434NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Sort(tomMatch434NameNumber_freshVar_0);{  tom.gom.adt.gom.types.TypedProduction  tomMatch434NameNumber_freshVar_2=tom_get_slot_OperatorDecl_Prod(tomMatch434NameNumber_freshVar_0);if (tom_is_fun_sym_Variadic(tomMatch434NameNumber_freshVar_2)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch434NameNumber_freshVar_3=tom_get_slot_Variadic_Sort(tomMatch434NameNumber_freshVar_2);if ( true ) {
 
 
             // for a make_empty hook, there is no argument
-            if (tom_is_sort_ArgList(args)) {{  tom.gom.adt.gom.types.ArgList  tomMatch434NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ArgList )args);if (tom_is_fun_sym_concArg(tomMatch434NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch434NameNumber_freshVar_0=tomMatch434NameNumberfreshSubject_1;if (tom_is_empty_concArg_ArgList(tomMatch434NameNumber_freshVar_0)) {if ( true ) {
+            if (tom_is_sort_ArgList(args)) {{  tom.gom.adt.gom.types.ArgList  tomMatch433NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ArgList )args);if (tom_is_fun_sym_concArg(tomMatch433NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch433NameNumber_freshVar_0=tomMatch433NameNumberfreshSubject_1;if (tom_is_empty_concArg_ArgList(tomMatch433NameNumber_freshVar_0)) {if ( true ) {
  return tom_empty_list_concSlot(); }}}}if ( true ) {
 
                 getLogger().log(Level.SEVERE,
                     GomMessage.badHookArguments.getMessage(),
-                    new Object[]{ (tomMatch436NameNumber_freshVar_3), new Integer(args.length())});
+                    new Object[]{ (tomMatch435NameNumber_freshVar_3), new Integer(args.length())});
                 return null;
               }}}
 
@@ -341,13 +348,13 @@ public class HookTypeExpander {
   }
 
   private SlotList recArgSlots(ArgList args, SlotList slots) {
-    if (tom_is_sort_ArgList(args)) {{  tom.gom.adt.gom.types.ArgList  tomMatch437NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ArgList )args);if (tom_is_sort_SlotList(slots)) {{  tom.gom.adt.gom.types.SlotList  tomMatch437NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.SlotList )slots);if (tom_is_fun_sym_concSlot(tomMatch437NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.SlotList  tomMatch437NameNumber_freshVar_0=tomMatch437NameNumberfreshSubject_2;if (tom_is_empty_concSlot_SlotList(tomMatch437NameNumber_freshVar_0)) {if (tom_is_fun_sym_concArg(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch437NameNumber_freshVar_1=tomMatch437NameNumberfreshSubject_1;if (tom_is_empty_concArg_ArgList(tomMatch437NameNumber_freshVar_1)) {if ( true ) {
+    if (tom_is_sort_ArgList(args)) {{  tom.gom.adt.gom.types.ArgList  tomMatch436NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.ArgList )args);if (tom_is_sort_SlotList(slots)) {{  tom.gom.adt.gom.types.SlotList  tomMatch436NameNumberfreshSubject_2=(( tom.gom.adt.gom.types.SlotList )slots);if (tom_is_fun_sym_concSlot(tomMatch436NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.SlotList  tomMatch436NameNumber_freshVar_0=tomMatch436NameNumberfreshSubject_2;if (tom_is_empty_concSlot_SlotList(tomMatch436NameNumber_freshVar_0)) {if (tom_is_fun_sym_concArg(tomMatch436NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch436NameNumber_freshVar_1=tomMatch436NameNumberfreshSubject_1;if (tom_is_empty_concArg_ArgList(tomMatch436NameNumber_freshVar_1)) {if ( true ) {
 
         return tom_empty_list_concSlot();
-      }}}}}}}if (tom_is_fun_sym_concSlot(tomMatch437NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.SlotList  tomMatch437NameNumber_freshVar_2=tomMatch437NameNumberfreshSubject_2;if (!(tom_is_empty_concSlot_SlotList(tomMatch437NameNumber_freshVar_2))) {if (tom_is_fun_sym_Slot(tom_get_head_concSlot_SlotList(tomMatch437NameNumber_freshVar_2))) {{  tom.gom.adt.gom.types.SortDecl  tomMatch437NameNumber_freshVar_37=tom_get_slot_Slot_Sort(tom_get_head_concSlot_SlotList(tomMatch437NameNumber_freshVar_2));{  tom.gom.adt.gom.types.SlotList  tomMatch437NameNumber_freshVar_3=tom_get_tail_concSlot_SlotList(tomMatch437NameNumber_freshVar_2);if (tom_is_fun_sym_concArg(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch437NameNumber_freshVar_10=tomMatch437NameNumberfreshSubject_1;if (!(tom_is_empty_concArg_ArgList(tomMatch437NameNumber_freshVar_10))) {if (tom_is_fun_sym_Arg(tom_get_head_concArg_ArgList(tomMatch437NameNumber_freshVar_10))) {{  String  tomMatch437NameNumber_freshVar_38=tom_get_slot_Arg_Name(tom_get_head_concArg_ArgList(tomMatch437NameNumber_freshVar_10));{  tom.gom.adt.gom.types.ArgList  tomMatch437NameNumber_freshVar_11=tom_get_tail_concArg_ArgList(tomMatch437NameNumber_freshVar_10);if ( true ) {
+      }}}}}}}if (tom_is_fun_sym_concSlot(tomMatch436NameNumberfreshSubject_2)) {{  tom.gom.adt.gom.types.SlotList  tomMatch436NameNumber_freshVar_2=tomMatch436NameNumberfreshSubject_2;if (!(tom_is_empty_concSlot_SlotList(tomMatch436NameNumber_freshVar_2))) {if (tom_is_fun_sym_Slot(tom_get_head_concSlot_SlotList(tomMatch436NameNumber_freshVar_2))) {{  tom.gom.adt.gom.types.SortDecl  tomMatch436NameNumber_freshVar_37=tom_get_slot_Slot_Sort(tom_get_head_concSlot_SlotList(tomMatch436NameNumber_freshVar_2));{  tom.gom.adt.gom.types.SlotList  tomMatch436NameNumber_freshVar_3=tom_get_tail_concSlot_SlotList(tomMatch436NameNumber_freshVar_2);if (tom_is_fun_sym_concArg(tomMatch436NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ArgList  tomMatch436NameNumber_freshVar_10=tomMatch436NameNumberfreshSubject_1;if (!(tom_is_empty_concArg_ArgList(tomMatch436NameNumber_freshVar_10))) {if (tom_is_fun_sym_Arg(tom_get_head_concArg_ArgList(tomMatch436NameNumber_freshVar_10))) {{  String  tomMatch436NameNumber_freshVar_38=tom_get_slot_Arg_Name(tom_get_head_concArg_ArgList(tomMatch436NameNumber_freshVar_10));{  tom.gom.adt.gom.types.ArgList  tomMatch436NameNumber_freshVar_11=tom_get_tail_concArg_ArgList(tomMatch436NameNumber_freshVar_10);if ( true ) {
 
-        SlotList tail = recArgSlots(tomMatch437NameNumber_freshVar_11,tomMatch437NameNumber_freshVar_3);
-        return tom_cons_list_concSlot(tom_make_Slot(tomMatch437NameNumber_freshVar_38,tomMatch437NameNumber_freshVar_37),tom_append_list_concSlot(tail,tom_empty_list_concSlot()));
+        SlotList tail = recArgSlots(tomMatch436NameNumber_freshVar_11,tomMatch436NameNumber_freshVar_3);
+        return tom_cons_list_concSlot(tom_make_Slot(tomMatch436NameNumber_freshVar_38,tomMatch436NameNumber_freshVar_37),tom_append_list_concSlot(tail,tom_empty_list_concSlot()));
       }}}}}}}}}}}}}}}}}
 
     throw new GomRuntimeException("GomTypeExpander:recArgSlots failed "+args+" "+slots);
@@ -360,9 +367,9 @@ public class HookTypeExpander {
   }
 
   private SortDecl getSortAndCheck(Decl mdecl) {
-    if (tom_is_sort_Decl(mdecl)) {{  tom.gom.adt.gom.types.Decl  tomMatch438NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )mdecl);if (tom_is_fun_sym_CutOperator(tomMatch438NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch438NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch438NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch438NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch438NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Sort(tomMatch438NameNumber_freshVar_0);{  tom.gom.adt.gom.types.TypedProduction  tomMatch438NameNumber_freshVar_2=tom_get_slot_OperatorDecl_Prod(tomMatch438NameNumber_freshVar_0);if (tom_is_fun_sym_Variadic(tomMatch438NameNumber_freshVar_2)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch438NameNumber_freshVar_3=tom_get_slot_Variadic_Sort(tomMatch438NameNumber_freshVar_2);{  tom.gom.adt.gom.types.SortDecl  tom_sdecl=tomMatch438NameNumber_freshVar_3;if ( true ) {
+    if (tom_is_sort_Decl(mdecl)) {{  tom.gom.adt.gom.types.Decl  tomMatch437NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )mdecl);if (tom_is_fun_sym_CutOperator(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch437NameNumber_freshVar_0=tom_get_slot_CutOperator_ODecl(tomMatch437NameNumberfreshSubject_1);if (tom_is_fun_sym_OperatorDecl(tomMatch437NameNumber_freshVar_0)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch437NameNumber_freshVar_1=tom_get_slot_OperatorDecl_Sort(tomMatch437NameNumber_freshVar_0);{  tom.gom.adt.gom.types.TypedProduction  tomMatch437NameNumber_freshVar_2=tom_get_slot_OperatorDecl_Prod(tomMatch437NameNumber_freshVar_0);if (tom_is_fun_sym_Variadic(tomMatch437NameNumber_freshVar_2)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch437NameNumber_freshVar_3=tom_get_slot_Variadic_Sort(tomMatch437NameNumber_freshVar_2);{  tom.gom.adt.gom.types.SortDecl  tom_sdecl=tomMatch437NameNumber_freshVar_3;if ( true ) {
 
-        if (tomMatch438NameNumber_freshVar_1== tom_sdecl) {
+        if (tomMatch437NameNumber_freshVar_1== tom_sdecl) {
           return tom_sdecl;
         } else {
           getLogger().log(Level.SEVERE,
@@ -378,13 +385,21 @@ public class HookTypeExpander {
   }
 
   /*
-   * generate hooks for associative-commutative with neutral element
+   * generate hooks for normalizing rules 
    */
   private HookDeclList makeRulesHookList(String opName, Decl mdecl, String scode) {
     RuleExpander rexpander = new RuleExpander(moduleList);
     return rexpander.expandRules(trimBracket(scode));
   }
 
+  /*
+   * generate hooks for term-graph rules 
+   */
+  private HookDeclList makeGraphRulesHookList(String sortname, Decl mdecl, String scode) {
+    GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
+    return rexpander.expandGraphRules(sortname,trimBracket(scode),mdecl);
+  }
+  
   /*
    * generate hooks for associative-commutative with neutral element
    */
@@ -484,7 +499,7 @@ public class HookTypeExpander {
      * if(<head>.isCons<conc>()) { return make(head.head,make(head.tail,tail)); }
      */
     auHooks = tom_cons_list_concHookDecl(tom_make_MakeHookDecl(mdecl,tom_cons_list_concSlot(tom_make_Slot("head",domain),tom_cons_list_concSlot(tom_make_Slot("tail",domain),tom_empty_list_concSlot())),tom_cons_list_CodeList(tom_make_Code("if ("),tom_cons_list_CodeList(tom_make_IsEmpty("head",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(") { return tail; }\n"),tom_cons_list_CodeList(tom_make_Code("if ("),tom_cons_list_CodeList(tom_make_IsEmpty("tail",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(") { return head; }\n"),tom_cons_list_CodeList(tom_make_Code("if ("),tom_cons_list_CodeList(tom_make_IsCons("head",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(") { return make(head.getHead" + opName+ "(),make(head.getTail" + opName+ "(),tail)); }\n")
-          ,tom_empty_list_CodeList())))))))))),tom_append_list_concHookDecl(auHooks,tom_empty_list_concHookDecl()))
+            ,tom_empty_list_CodeList())))))))))),tom_append_list_concHookDecl(auHooks,tom_empty_list_concHookDecl()))
 
 
 
@@ -503,51 +518,51 @@ public class HookTypeExpander {
 
     /* The mapping for AU operators has to be correct */
     /*
-    %match(mdecl) {
-      CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
-                               Prod=Variadic[]]) -> {
-        auHooks = `concHookDecl(
-            MappingHookDecl(
-              mdecl,
-              CodeList(
-                Code("%oplist " + sortName),
-		 // generate a second %oplist mapping for opName'?'
-                Code(" " + opName + "?"),
-                Code("(" + sortName + "*) {\n"),
-                Code("is_fsym(t) { t instanceof "),
-                FullSortClass(domainsdecl),
-                Code("}\n"),
-                Code("make_empty() { "),
-                Empty(mdecl.getODecl()),
-                Code(".make() }\n"),
-                Code("make_insert(e,l) { "),
-                Cons(mdecl.getODecl()),
-                Code(".make(e,l) }\n"),
-                Code("get_head(l) { ("),
-                IsCons("l",mdecl.getODecl()),
-                Code(")?(l."),
-                Code("getHead" + opName + "()"),
-                Code("):(l) }\n"),
-                Code("get_tail(l) { ("),
-                IsCons("l",mdecl.getODecl()),
-                Code(")?(l."),
-                Code("getTail" + opName + "()"),
-                Code("):("),
-                Empty(mdecl.getODecl()),
-                Code(".make()) }\n"),
-                Code("is_empty(l) { "),
-                Code("l == "),
-                Empty(mdecl.getODecl()),
-                Code(".make() }\n"),
-                Code("}\n")
-                )),
-            auHooks*);
-      }
+       %match(mdecl) {
+       CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
+       Prod=Variadic[]]) -> {
+       auHooks = `concHookDecl(
+       MappingHookDecl(
+       mdecl,
+       CodeList(
+       Code("%oplist " + sortName),
+    // generate a second %oplist mapping for opName'?'
+    Code(" " + opName + "?"),
+    Code("(" + sortName + "*) {\n"),
+    Code("is_fsym(t) { t instanceof "),
+    FullSortClass(domainsdecl),
+    Code("}\n"),
+    Code("make_empty() { "),
+    Empty(mdecl.getODecl()),
+    Code(".make() }\n"),
+    Code("make_insert(e,l) { "),
+    Cons(mdecl.getODecl()),
+    Code(".make(e,l) }\n"),
+    Code("get_head(l) { ("),
+    IsCons("l",mdecl.getODecl()),
+    Code(")?(l."),
+    Code("getHead" + opName + "()"),
+    Code("):(l) }\n"),
+    Code("get_tail(l) { ("),
+    IsCons("l",mdecl.getODecl()),
+    Code(")?(l."),
+    Code("getTail" + opName + "()"),
+    Code("):("),
+    Empty(mdecl.getODecl()),
+    Code(".make()) }\n"),
+    Code("is_empty(l) { "),
+    Code("l == "),
+    Empty(mdecl.getODecl()),
+    Code(".make() }\n"),
+    Code("}\n")
+    )),
+    auHooks*);
     }
-    */
+    }
+     */
     return auHooks;
   }
- 
+
   /*
    * generate hooks for flattened lists (with empty list as last element)
    */
@@ -561,8 +576,8 @@ public class HookTypeExpander {
 
     String userNeutral = trimBracket(scode);
     if(userNeutral.length() > 0) {
-        getLogger().log(Level.SEVERE,
-            "FL hook does not allow the definition of a neutral element");
+      getLogger().log(Level.SEVERE,
+          "FL hook does not allow the definition of a neutral element");
     }
 
     HookDeclList hooks = tom_empty_list_concHookDecl();
@@ -574,7 +589,7 @@ public class HookTypeExpander {
      * if(!<tail>.isCons<conc>() && !<tail>.isEmpty<conc>()) { return make(<tail>,<empty>); }
      */
     hooks = tom_cons_list_concHookDecl(tom_make_MakeHookDecl(mdecl,tom_cons_list_concSlot(tom_make_Slot("head",domain),tom_cons_list_concSlot(tom_make_Slot("tail",domain),tom_empty_list_concSlot())),tom_cons_list_CodeList(tom_make_Code("if ("),tom_cons_list_CodeList(tom_make_IsEmpty("head",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(") { return tail; }\n"),tom_cons_list_CodeList(tom_make_Code("if ("),tom_cons_list_CodeList(tom_make_IsCons("head",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(") { return make(head.getHead" + opName+ "(),make(head.getTail" + opName+ "(),tail)); }\n"),tom_cons_list_CodeList(tom_make_Code("if (!"),tom_cons_list_CodeList(tom_make_IsCons("tail",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(" && !"),tom_cons_list_CodeList(tom_make_IsEmpty("tail",mdecl.getODecl()),tom_cons_list_CodeList(tom_make_Code(") { return make(head,make(tail,Empty" + opName+ ".make())); }\n")
-          ,tom_empty_list_CodeList())))))))))))),tom_append_list_concHookDecl(hooks,tom_empty_list_concHookDecl()))
+            ,tom_empty_list_CodeList())))))))))))),tom_append_list_concHookDecl(hooks,tom_empty_list_concHookDecl()))
 
 
 

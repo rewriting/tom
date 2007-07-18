@@ -50,8 +50,7 @@ public class Position implements Cloneable,Path {
   }
   
   public Position(int[] omega){
-    this.omega = new int[omega.length];
-    System.arraycopy(omega, 0, this.omega, 0, omega.length);
+    setValue(omega);
   }
 
   public Position(Position prefix, Position suffix){
@@ -70,6 +69,11 @@ public class Position implements Cloneable,Path {
     int[] copy  = new int[depth()];
     System.arraycopy(omega, 0, copy, 0, depth());
     return copy;
+  }
+
+  public void setValue(int[] omega){
+    this.omega = new int[omega.length];
+    System.arraycopy(omega, 0, this.omega, 0, omega.length);
   }
 
   public Object clone() {

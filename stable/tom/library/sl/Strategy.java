@@ -46,21 +46,21 @@ public interface Strategy extends Visitable {
   /**
    *  Visits the subject any by providing the environment
    *  @throws VisitFailure in case of failure.
-   *  @parameter any the subject to visit.
+   *  @param any the subject to visit.
    */
   public Visitable visit(Visitable any) throws VisitFailure;
 
   /**
    *  Visits the subject any in a light way (without environment)
    *  @throws VisitFailure in case of failure.
-   *  @parameter any the subject to visit.
+   *  @param any the subject to visit.
    */
   public Visitable visitLight(Visitable any) throws VisitFailure;
 
   /** execute the strategy in the given environment (on its current subject).
    * This method can only be used inside user strategies to execute another
    * strategy but with the current environment of the user strategy.
-   * @parameter env the environment where execute the strategy.
+   * @param envt the environment where execute the strategy.
    */
   public Visitable visit(Environment envt) throws VisitFailure;
 

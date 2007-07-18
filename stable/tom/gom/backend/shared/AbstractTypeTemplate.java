@@ -45,12 +45,12 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               GomClass gomClass,
                               TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch339NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_AbstractTypeClass(tomMatch339NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch339NameNumber_freshVar_0=tom_get_slot_AbstractTypeClass_Visitor(tomMatch339NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch339NameNumber_freshVar_1=tom_get_slot_AbstractTypeClass_Mapping(tomMatch339NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch339NameNumber_freshVar_2=tom_get_slot_AbstractTypeClass_SortList(tomMatch339NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch338NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_AbstractTypeClass(tomMatch338NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch338NameNumber_freshVar_0=tom_get_slot_AbstractTypeClass_Visitor(tomMatch338NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch338NameNumber_freshVar_1=tom_get_slot_AbstractTypeClass_Mapping(tomMatch338NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch338NameNumber_freshVar_2=tom_get_slot_AbstractTypeClass_SortList(tomMatch338NameNumberfreshSubject_1);if ( true ) {
 
 
 
-        this.visitor = tomMatch339NameNumber_freshVar_0;
-        this.sortList = tomMatch339NameNumber_freshVar_2;
+        this.visitor = tomMatch338NameNumber_freshVar_0;
+        this.sortList = tomMatch338NameNumber_freshVar_2;
         return;
       }}}}}}}
 

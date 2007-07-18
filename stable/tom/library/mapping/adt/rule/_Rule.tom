@@ -441,6 +441,100 @@
   make( _s) { new tom.gom.adt.rule.strategy.term.Make_BuiltinString( _s) }
 }
 
+    %op Strategy _LabTerm(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._LabTerm)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.term._LabTerm(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_LabTerm(s:Strategy) {
+    make(s) { `Sequence(Is_LabTerm(),s) }
+  }
+
+  %op Strategy Is_LabTerm() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_LabTerm()}
+  }
+  
+%op Strategy Make_LabTerm(_l:String, _t:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_LabTerm)}
+
+  get_slot(_l, t) { _l }
+  get_slot(_t, t) { _t }
+  make( _l,  new_t) { new tom.gom.adt.rule.strategy.term.Make_LabTerm( _l,  new_t) }
+}
+
+    %op Strategy _RefTerm(arg0:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._RefTerm)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.term._RefTerm(arg0) }
+    }
+  
+  
+  %op Strategy When_RefTerm(s:Strategy) {
+    make(s) { `Sequence(Is_RefTerm(),s) }
+  }
+
+  %op Strategy Is_RefTerm() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_RefTerm()}
+  }
+  
+%op Strategy Make_RefTerm(_l:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_RefTerm)}
+
+  get_slot(_l, t) { _l }
+  make( _l) { new tom.gom.adt.rule.strategy.term.Make_RefTerm( _l) }
+}
+
+    %op Strategy _EmptyPathTerm() {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._EmptyPathTerm)}
+      
+        make() { new tom.gom.adt.rule.strategy.term._EmptyPathTerm() }
+    }
+  
+  
+  %op Strategy When_EmptyPathTerm(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyPathTerm(),s) }
+  }
+
+  %op Strategy Is_EmptyPathTerm() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_EmptyPathTerm()}
+  }
+  
+%op Strategy Make_EmptyPathTerm() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_EmptyPathTerm)}
+
+  make() { new tom.gom.adt.rule.strategy.term.Make_EmptyPathTerm() }
+}
+
+    %op Strategy _ConsPathTerm(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term._ConsPathTerm)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg1, t) { t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.term._ConsPathTerm(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsPathTerm(s:Strategy) {
+    make(s) { `Sequence(Is_ConsPathTerm(),s) }
+  }
+
+  %op Strategy Is_ConsPathTerm() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_ConsPathTerm()}
+  }
+  
+%op Strategy Make_ConsPathTerm(_HeadPathTerm:int, _TailPathTerm:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.rule.strategy.term.Make_ConsPathTerm)}
+
+  get_slot(_HeadPathTerm, t) { _HeadPathTerm }
+  get_slot(_TailPathTerm, t) { _TailPathTerm }
+  make( _HeadPathTerm,  new_TailPathTerm) { new tom.gom.adt.rule.strategy.term.Make_ConsPathTerm( _HeadPathTerm,  new_TailPathTerm) }
+}
+
             %op Strategy _RuleList(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_RuleList"),Choice(_ConsRuleList(sub,MuVar("x_RuleList")),_EmptyRuleList())) }
@@ -449,5 +543,10 @@
             %op Strategy _TermList(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_TermList"),Choice(_ConsTermList(sub,MuVar("x_TermList")),_EmptyTermList())) }
+            }
+            
+            %op Strategy _PathTerm(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_PathTerm"),Choice(_ConsPathTerm(sub,MuVar("x_PathTerm")),_EmptyPathTerm())) }
             }
             

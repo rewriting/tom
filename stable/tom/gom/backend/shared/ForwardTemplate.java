@@ -40,19 +40,19 @@ public class ForwardTemplate extends TemplateClass {
 
   public ForwardTemplate(GomClass gomClass) {
     super(gomClass);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch341NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_FwdClass(tomMatch341NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch341NameNumber_freshVar_0=tom_get_slot_FwdClass_Visitor(tomMatch341NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch341NameNumber_freshVar_1=tom_get_slot_FwdClass_ImportedVisitors(tomMatch341NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch341NameNumber_freshVar_2=tom_get_slot_FwdClass_AbstractType(tomMatch341NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch341NameNumber_freshVar_3=tom_get_slot_FwdClass_ImportedAbstractTypes(tomMatch341NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_freshVar_4=tom_get_slot_FwdClass_SortClasses(tomMatch341NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_freshVar_5=tom_get_slot_FwdClass_OperatorClasses(tomMatch341NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch340NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_FwdClass(tomMatch340NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch340NameNumber_freshVar_0=tom_get_slot_FwdClass_Visitor(tomMatch340NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch340NameNumber_freshVar_1=tom_get_slot_FwdClass_ImportedVisitors(tomMatch340NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch340NameNumber_freshVar_2=tom_get_slot_FwdClass_AbstractType(tomMatch340NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch340NameNumber_freshVar_3=tom_get_slot_FwdClass_ImportedAbstractTypes(tomMatch340NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch340NameNumber_freshVar_4=tom_get_slot_FwdClass_SortClasses(tomMatch340NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClassList  tomMatch340NameNumber_freshVar_5=tom_get_slot_FwdClass_OperatorClasses(tomMatch340NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
 
 
-        this.visitor = tomMatch341NameNumber_freshVar_0;
-        this.importedVisitors = tomMatch341NameNumber_freshVar_1;
-        this.abstractType = tomMatch341NameNumber_freshVar_2;
-        this.importedAbstractTypes = tomMatch341NameNumber_freshVar_3;
-        this.sortClasses = tomMatch341NameNumber_freshVar_4;
-        this.operatorClasses = tomMatch341NameNumber_freshVar_5;
+        this.visitor = tomMatch340NameNumber_freshVar_0;
+        this.importedVisitors = tomMatch340NameNumber_freshVar_1;
+        this.abstractType = tomMatch340NameNumber_freshVar_2;
+        this.importedAbstractTypes = tomMatch340NameNumber_freshVar_3;
+        this.sortClasses = tomMatch340NameNumber_freshVar_4;
+        this.operatorClasses = tomMatch340NameNumber_freshVar_5;
         return;
       }}}}}}}}}}
 
@@ -96,7 +96,7 @@ writer.write("\n}\n"
 
   private void generateVisitMethods(java.io.Writer writer) throws java.io.IOException {
     // generate a visit for each sort
-    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch342NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch342NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch342NameNumber_freshVar_0=tomMatch342NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch342NameNumber_begin_2=tomMatch342NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch342NameNumber_end_3=tomMatch342NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch342NameNumber_freshVar_1=tomMatch342NameNumber_end_3;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch342NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch342NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch342NameNumber_freshVar_6=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch342NameNumber_freshVar_1));{  tom.gom.adt.objects.types.ClassName  tom_sortName=tomMatch342NameNumber_freshVar_6;{  tom.gom.adt.objects.types.GomClassList  tomMatch342NameNumber_freshVar_4=tom_get_tail_concGomClass_GomClassList(tomMatch342NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_GomClassList(sortClasses)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses);if (tom_is_fun_sym_concGomClass(tomMatch341NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_freshVar_0=tomMatch341NameNumberfreshSubject_1;{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_begin_2=tomMatch341NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_end_3=tomMatch341NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_freshVar_1=tomMatch341NameNumber_end_3;if (!(tom_is_empty_concGomClass_GomClassList(tomMatch341NameNumber_freshVar_1))) {if (tom_is_fun_sym_SortClass(tom_get_head_concGomClass_GomClassList(tomMatch341NameNumber_freshVar_1))) {{  tom.gom.adt.objects.types.ClassName  tomMatch341NameNumber_freshVar_6=tom_get_slot_SortClass_ClassName(tom_get_head_concGomClass_GomClassList(tomMatch341NameNumber_freshVar_1));{  tom.gom.adt.objects.types.ClassName  tom_sortName=tomMatch341NameNumber_freshVar_6;{  tom.gom.adt.objects.types.GomClassList  tomMatch341NameNumber_freshVar_4=tom_get_tail_concGomClass_GomClassList(tomMatch341NameNumber_freshVar_1);if ( true ) {
 
 
         writer.write("\n  public "/* Generated by TOM (version 2.5): Do not edit this file */+ fullClassName(tom_sortName) +" "/* Generated by TOM (version 2.5): Do not edit this file */+visitMethod(tom_sortName)+"("/* Generated by TOM (version 2.5): Do not edit this file */+fullClassName(tom_sortName)+" arg) throws VisitFailure {\n    return ("/* Generated by TOM (version 2.5): Do not edit this file */+fullClassName(tom_sortName)+") any.visitLight(arg);\n  }\n"
@@ -104,7 +104,7 @@ writer.write("\n}\n"
 
 
 );
-      }}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch342NameNumber_end_3)) {tomMatch342NameNumber_end_3=tomMatch342NameNumber_begin_2;} else {tomMatch342NameNumber_end_3=tom_get_tail_concGomClass_GomClassList(tomMatch342NameNumber_end_3);}}} while(!(tom_equal_term_GomClassList(tomMatch342NameNumber_end_3, tomMatch342NameNumber_begin_2)));}}}}}}
+      }}}}}}}if (tom_is_empty_concGomClass_GomClassList(tomMatch341NameNumber_end_3)) {tomMatch341NameNumber_end_3=tomMatch341NameNumber_begin_2;} else {tomMatch341NameNumber_end_3=tom_get_tail_concGomClass_GomClassList(tomMatch341NameNumber_end_3);}}} while(!(tom_equal_term_GomClassList(tomMatch341NameNumber_end_3, tomMatch341NameNumber_begin_2)));}}}}}}
 
   }
 

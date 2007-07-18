@@ -157,6 +157,31 @@
   make(t0) { tom.gom.adt.rule.types.term.BuiltinString.make(t0) }
 }
 
+%op Term LabTerm(l:String, t:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.LabTerm }
+  get_slot(l, t) { t.getl() }
+  get_slot(t, t) { t.gett() }
+  make(t0, t1) { tom.gom.adt.rule.types.term.LabTerm.make(t0, t1) }
+}
+
+%op Term RefTerm(l:String) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.RefTerm }
+  get_slot(l, t) { t.getl() }
+  make(t0) { tom.gom.adt.rule.types.term.RefTerm.make(t0) }
+}
+
+%op Term EmptyPathTerm() {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.EmptyPathTerm }
+  make() { tom.gom.adt.rule.types.term.EmptyPathTerm.make() }
+}
+
+%op Term ConsPathTerm(HeadPathTerm:int, TailPathTerm:Term) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.ConsPathTerm }
+  get_slot(HeadPathTerm, t) { t.getHeadPathTerm() }
+  get_slot(TailPathTerm, t) { t.getTailPathTerm() }
+  make(t0, t1) { tom.gom.adt.rule.types.term.ConsPathTerm.make(t0, t1) }
+}
+
 
 %oplist RuleList RuleList(Rule*) {
   is_fsym(t) { t instanceof tom.gom.adt.rule.types.rulelist.ConsRuleList || t instanceof tom.gom.adt.rule.types.rulelist.EmptyRuleList }
@@ -174,4 +199,13 @@
   get_head(l) { l.getHeadTermList() }
   get_tail(l) { l.getTailTermList() }
   is_empty(l) { l.isEmptyTermList() }
+}
+
+%oplist Term PathTerm(int*) {
+  is_fsym(t) { t instanceof tom.gom.adt.rule.types.term.ConsPathTerm || t instanceof tom.gom.adt.rule.types.term.EmptyPathTerm }
+  make_empty() { tom.gom.adt.rule.types.term.EmptyPathTerm.make() }
+  make_insert(e,l) { tom.gom.adt.rule.types.term.ConsPathTerm.make(e,l) }
+  get_head(l) { l.getHeadPathTerm() }
+  get_tail(l) { l.getTailPathTerm() }
+  is_empty(l) { l.isEmptyPathTerm() }
 }

@@ -86,26 +86,26 @@ public class PILFactory {
     return subject;
   }
 
-  private static class replaceRemove extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {public replaceRemove() { super(tom_make_Identity());}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomoption.types.OptionList  visit_OptionList( tom.engine.adt.tomoption.types.OptionList  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_OptionList(tom__arg)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch233NameNumberfreshSubject_1=(( tom.engine.adt.tomoption.types.OptionList )tom__arg);if ( true ) {
+  private static class replaceRemove extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {public replaceRemove() { super(tom_make_Identity());}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tomoption.types.OptionList  visit_OptionList( tom.engine.adt.tomoption.types.OptionList  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_OptionList(tom__arg)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch232NameNumberfreshSubject_1=(( tom.engine.adt.tomoption.types.OptionList )tom__arg);if ( true ) {
 
 
- return tom_empty_list_concOption(); }}}return super.visit_OptionList(tom__arg); }public  tom.engine.adt.tomoption.types.Option  visit_Option( tom.engine.adt.tomoption.types.Option  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Option(tom__arg)) {{  tom.engine.adt.tomoption.types.Option  tomMatch234NameNumberfreshSubject_1=(( tom.engine.adt.tomoption.types.Option )tom__arg);if ( true ) {
+ return tom_empty_list_concOption(); }}}return super.visit_OptionList(tom__arg); }public  tom.engine.adt.tomoption.types.Option  visit_Option( tom.engine.adt.tomoption.types.Option  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Option(tom__arg)) {{  tom.engine.adt.tomoption.types.Option  tomMatch233NameNumberfreshSubject_1=(( tom.engine.adt.tomoption.types.Option )tom__arg);if ( true ) {
 
 
- return tom_make_noOption(); }}}return super.visit_Option(tom__arg); }public  tom.engine.adt.tomsignature.types.TargetLanguage  visit_TargetLanguage( tom.engine.adt.tomsignature.types.TargetLanguage  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TargetLanguage(tom__arg)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch235NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tom__arg);if ( true ) {
-
-
-
- return tom_make_noTL(); }}}return super.visit_TargetLanguage(tom__arg); }public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomType(tom__arg)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch236NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tom__arg);if (tom_is_fun_sym_Type(tomMatch236NameNumberfreshSubject_1)) {if ( true ) {
+ return tom_make_noOption(); }}}return super.visit_Option(tom__arg); }public  tom.engine.adt.tomsignature.types.TargetLanguage  visit_TargetLanguage( tom.engine.adt.tomsignature.types.TargetLanguage  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TargetLanguage(tom__arg)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch234NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tom__arg);if ( true ) {
 
 
 
- return tom_make_EmptyType(); }}}}return super.visit_TomType(tom__arg); }public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);if (tom_is_fun_sym_Cast(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_0=tom_get_slot_Cast_Source(tomMatch237NameNumberfreshSubject_1);if ( true ) {
+ return tom_make_noTL(); }}}return super.visit_TargetLanguage(tom__arg); }public  tom.engine.adt.tomtype.types.TomType  visit_TomType( tom.engine.adt.tomtype.types.TomType  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TomType(tom__arg)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch235NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )tom__arg);if (tom_is_fun_sym_Type(tomMatch235NameNumberfreshSubject_1)) {if ( true ) {
 
 
 
- return (Expression) tom_make_TopDown(tom_make_replaceRemove()).visitLight(tomMatch237NameNumber_freshVar_0); }}}if (tom_is_fun_sym_Or(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_1=tom_get_slot_Or_Arg1(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_2=tom_get_slot_Or_Arg2(tomMatch237NameNumberfreshSubject_1);if (tom_is_fun_sym_FalseTL(tomMatch237NameNumber_freshVar_2)) {if ( true ) {
- return (Expression) tom_make_TopDown(tom_make_replaceRemove()).visitLight(tomMatch237NameNumber_freshVar_1); }}}}}}}return super.visit_Expression(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_replaceRemove() { return new replaceRemove(); }
+ return tom_make_EmptyType(); }}}}return super.visit_TomType(tom__arg); }public  tom.engine.adt.tomexpression.types.Expression  visit_Expression( tom.engine.adt.tomexpression.types.Expression  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Expression(tom__arg)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch236NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )tom__arg);if (tom_is_fun_sym_Cast(tomMatch236NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch236NameNumber_freshVar_0=tom_get_slot_Cast_Source(tomMatch236NameNumberfreshSubject_1);if ( true ) {
+
+
+
+ return (Expression) tom_make_TopDown(tom_make_replaceRemove()).visitLight(tomMatch236NameNumber_freshVar_0); }}}if (tom_is_fun_sym_Or(tomMatch236NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch236NameNumber_freshVar_1=tom_get_slot_Or_Arg1(tomMatch236NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch236NameNumber_freshVar_2=tom_get_slot_Or_Arg2(tomMatch236NameNumberfreshSubject_1);if (tom_is_fun_sym_FalseTL(tomMatch236NameNumber_freshVar_2)) {if ( true ) {
+ return (Expression) tom_make_TopDown(tom_make_replaceRemove()).visitLight(tomMatch236NameNumber_freshVar_1); }}}}}}}return super.visit_Expression(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_replaceRemove() { return new replaceRemove(); }
 
 
 
@@ -122,161 +122,161 @@ public class PILFactory {
   }
 
   public String prettyPrint(tom.library.sl.Visitable subject) {
-    if (tom_is_sort_Instruction(subject)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )subject);if (tom_is_fun_sym_CompiledMatch(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_0=tom_get_slot_CompiledMatch_AutomataInst(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.OptionList  tomMatch238NameNumber_freshVar_1=tom_get_slot_CompiledMatch_Option(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_Instruction(subject)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )subject);if (tom_is_fun_sym_CompiledMatch(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_0=tom_get_slot_CompiledMatch_AutomataInst(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomoption.types.OptionList  tomMatch237NameNumber_freshVar_1=tom_get_slot_CompiledMatch_Option(tomMatch237NameNumberfreshSubject_1);if ( true ) {
  
-	return prettyPrint(tomMatch238NameNumber_freshVar_0); 
-      }}}}if (tom_is_fun_sym_Let(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_2=tom_get_slot_Let_Variable(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_3=tom_get_slot_Let_Source(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_4=tom_get_slot_Let_AstInstruction(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return prettyPrint(tomMatch237NameNumber_freshVar_0); 
+      }}}}if (tom_is_fun_sym_Let(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch237NameNumber_freshVar_2=tom_get_slot_Let_Variable(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_3=tom_get_slot_Let_Source(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_4=tom_get_slot_Let_AstInstruction(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "let " + prettyPrint(tomMatch238NameNumber_freshVar_2) + " = " + prettyPrint(tomMatch238NameNumber_freshVar_3) + " in\n\t" + prettyPrint(tomMatch238NameNumber_freshVar_4).replaceAll("\n","\n\t");
-      }}}}}if (tom_is_fun_sym_LetRef(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_5=tom_get_slot_LetRef_Variable(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_6=tom_get_slot_LetRef_Source(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_7=tom_get_slot_LetRef_AstInstruction(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return "let " + prettyPrint(tomMatch237NameNumber_freshVar_2) + " = " + prettyPrint(tomMatch237NameNumber_freshVar_3) + " in\n\t" + prettyPrint(tomMatch237NameNumber_freshVar_4).replaceAll("\n","\n\t");
+      }}}}}if (tom_is_fun_sym_LetRef(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch237NameNumber_freshVar_5=tom_get_slot_LetRef_Variable(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_6=tom_get_slot_LetRef_Source(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_7=tom_get_slot_LetRef_AstInstruction(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "letRef " + prettyPrint(tomMatch238NameNumber_freshVar_5) + " = " + prettyPrint(tomMatch238NameNumber_freshVar_6) + " in\n\t" + prettyPrint(tomMatch238NameNumber_freshVar_7).replaceAll("\n","\n\t");
-      }}}}}if (tom_is_fun_sym_LetAssign(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_8=tom_get_slot_LetAssign_Variable(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_9=tom_get_slot_LetAssign_Source(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_10=tom_get_slot_LetAssign_AstInstruction(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return "letRef " + prettyPrint(tomMatch237NameNumber_freshVar_5) + " = " + prettyPrint(tomMatch237NameNumber_freshVar_6) + " in\n\t" + prettyPrint(tomMatch237NameNumber_freshVar_7).replaceAll("\n","\n\t");
+      }}}}}if (tom_is_fun_sym_LetAssign(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch237NameNumber_freshVar_8=tom_get_slot_LetAssign_Variable(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_9=tom_get_slot_LetAssign_Source(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_10=tom_get_slot_LetAssign_AstInstruction(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "letAssign " + prettyPrint(tomMatch238NameNumber_freshVar_8) + " = " + prettyPrint(tomMatch238NameNumber_freshVar_9) + " in\n\t" + prettyPrint(tomMatch238NameNumber_freshVar_10).replaceAll("\n","\n\t");
-      }}}}}if (tom_is_fun_sym_Assign(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_11=tom_get_slot_Assign_Variable(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_12=tom_get_slot_Assign_Source(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return "letAssign " + prettyPrint(tomMatch237NameNumber_freshVar_8) + " = " + prettyPrint(tomMatch237NameNumber_freshVar_9) + " in\n\t" + prettyPrint(tomMatch237NameNumber_freshVar_10).replaceAll("\n","\n\t");
+      }}}}}if (tom_is_fun_sym_Assign(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch237NameNumber_freshVar_11=tom_get_slot_Assign_Variable(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_12=tom_get_slot_Assign_Source(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "Assign " + prettyPrint(tomMatch238NameNumber_freshVar_11) + " = " + prettyPrint(tomMatch238NameNumber_freshVar_12) ;
-      }}}}if (tom_is_fun_sym_DoWhile(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_13=tom_get_slot_DoWhile_DoInst(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_14=tom_get_slot_DoWhile_Condition(tomMatch238NameNumberfreshSubject_1);if ( true ) {
-
-
-
-	return "do\n\t " + prettyPrint(tomMatch238NameNumber_freshVar_13).replaceAll("\n","\n\t") +"while "+ prettyPrint(tomMatch238NameNumber_freshVar_14);
-      }}}}if (tom_is_fun_sym_WhileDo(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_15=tom_get_slot_WhileDo_Condition(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_16=tom_get_slot_WhileDo_DoInst(tomMatch238NameNumberfreshSubject_1);if ( true ) {
-
-
-	return "while "+ prettyPrint(tomMatch238NameNumber_freshVar_15)+" do\n\t " + prettyPrint(tomMatch238NameNumber_freshVar_16).replaceAll("\n","\n\t");
-      }}}}if (tom_is_fun_sym_If(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_17=tom_get_slot_If_Condition(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_18=tom_get_slot_If_SuccesInst(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_19=tom_get_slot_If_FailureInst(tomMatch238NameNumberfreshSubject_1);if (tom_is_fun_sym_Nop(tomMatch238NameNumber_freshVar_19)) {if ( true ) {
+	return "Assign " + prettyPrint(tomMatch237NameNumber_freshVar_11) + " = " + prettyPrint(tomMatch237NameNumber_freshVar_12) ;
+      }}}}if (tom_is_fun_sym_DoWhile(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_13=tom_get_slot_DoWhile_DoInst(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_14=tom_get_slot_DoWhile_Condition(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
 
-	return  "if " + prettyPrint(tomMatch238NameNumber_freshVar_17) + " then \n\t" + prettyPrint(tomMatch238NameNumber_freshVar_18).replaceAll("\n","\n\t"); 
-      }}}}}}if (tom_is_fun_sym_If(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_20=tom_get_slot_If_Condition(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_21=tom_get_slot_If_SuccesInst(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_22=tom_get_slot_If_FailureInst(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return "do\n\t " + prettyPrint(tomMatch237NameNumber_freshVar_13).replaceAll("\n","\n\t") +"while "+ prettyPrint(tomMatch237NameNumber_freshVar_14);
+      }}}}if (tom_is_fun_sym_WhileDo(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_15=tom_get_slot_WhileDo_Condition(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_16=tom_get_slot_WhileDo_DoInst(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "if " + prettyPrint(tomMatch238NameNumber_freshVar_20) + " then \n\t" + prettyPrint(tomMatch238NameNumber_freshVar_21).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(tomMatch238NameNumber_freshVar_22).replaceAll("\n","\n\t")+"\n";
-      }}}}}if (tom_is_fun_sym_AbstractBlock(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_23=tom_get_slot_AbstractBlock_InstList(tomMatch238NameNumberfreshSubject_1);if (tom_is_fun_sym_concInstruction(tomMatch238NameNumber_freshVar_23)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_24=tomMatch238NameNumber_freshVar_23;{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_begin_26=tomMatch238NameNumber_freshVar_24;{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_end_27=tomMatch238NameNumber_freshVar_24;do {{{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_25=tomMatch238NameNumber_end_27;if (!(tom_is_empty_concInstruction_InstructionList(tomMatch238NameNumber_freshVar_25))) {if (tom_is_fun_sym_Nop(tom_get_head_concInstruction_InstructionList(tomMatch238NameNumber_freshVar_25))) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_28=tom_get_tail_concInstruction_InstructionList(tomMatch238NameNumber_freshVar_25);if ( true ) {
+	return "while "+ prettyPrint(tomMatch237NameNumber_freshVar_15)+" do\n\t " + prettyPrint(tomMatch237NameNumber_freshVar_16).replaceAll("\n","\n\t");
+      }}}}if (tom_is_fun_sym_If(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_17=tom_get_slot_If_Condition(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_18=tom_get_slot_If_SuccesInst(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_19=tom_get_slot_If_FailureInst(tomMatch237NameNumberfreshSubject_1);if (tom_is_fun_sym_Nop(tomMatch237NameNumber_freshVar_19)) {if ( true ) {
 
 
-	return prettyPrint(tom_make_AbstractBlock(tom_append_list_concInstruction(tom_get_slice_concInstruction(tomMatch238NameNumber_begin_26,tomMatch238NameNumber_end_27,tom_empty_list_concInstruction()),tom_append_list_concInstruction(tomMatch238NameNumber_freshVar_28,tom_empty_list_concInstruction()))));
-      }}}}}if (tom_is_empty_concInstruction_InstructionList(tomMatch238NameNumber_end_27)) {tomMatch238NameNumber_end_27=tomMatch238NameNumber_begin_26;} else {tomMatch238NameNumber_end_27=tom_get_tail_concInstruction_InstructionList(tomMatch238NameNumber_end_27);}}} while(!(tom_equal_term_InstructionList(tomMatch238NameNumber_end_27, tomMatch238NameNumber_begin_26)));}}}}}}if (tom_is_fun_sym_AbstractBlock(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_102=tom_get_slot_AbstractBlock_InstList(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+
+	return  "if " + prettyPrint(tomMatch237NameNumber_freshVar_17) + " then \n\t" + prettyPrint(tomMatch237NameNumber_freshVar_18).replaceAll("\n","\n\t"); 
+      }}}}}}if (tom_is_fun_sym_If(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch237NameNumber_freshVar_20=tom_get_slot_If_Condition(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_21=tom_get_slot_If_SuccesInst(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_22=tom_get_slot_If_FailureInst(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return prettyPrint(tomMatch238NameNumber_freshVar_102);
-      }}}if (tom_is_fun_sym_UnamedBlock(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_103=tom_get_slot_UnamedBlock_InstList(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return "if " + prettyPrint(tomMatch237NameNumber_freshVar_20) + " then \n\t" + prettyPrint(tomMatch237NameNumber_freshVar_21).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(tomMatch237NameNumber_freshVar_22).replaceAll("\n","\n\t")+"\n";
+      }}}}}if (tom_is_fun_sym_AbstractBlock(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_23=tom_get_slot_AbstractBlock_InstList(tomMatch237NameNumberfreshSubject_1);if (tom_is_fun_sym_concInstruction(tomMatch237NameNumber_freshVar_23)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_24=tomMatch237NameNumber_freshVar_23;{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_begin_26=tomMatch237NameNumber_freshVar_24;{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_end_27=tomMatch237NameNumber_freshVar_24;do {{{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_25=tomMatch237NameNumber_end_27;if (!(tom_is_empty_concInstruction_InstructionList(tomMatch237NameNumber_freshVar_25))) {if (tom_is_fun_sym_Nop(tom_get_head_concInstruction_InstructionList(tomMatch237NameNumber_freshVar_25))) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_28=tom_get_tail_concInstruction_InstructionList(tomMatch237NameNumber_freshVar_25);if ( true ) {
 
 
-	return prettyPrint(tomMatch238NameNumber_freshVar_103);
-      }}}if (tom_is_fun_sym_NamedBlock(tomMatch238NameNumberfreshSubject_1)) {{  String  tomMatch238NameNumber_freshVar_104=tom_get_slot_NamedBlock_BlockName(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch238NameNumber_freshVar_105=tom_get_slot_NamedBlock_InstList(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return prettyPrint(tom_make_AbstractBlock(tom_append_list_concInstruction(tom_get_slice_concInstruction(tomMatch237NameNumber_begin_26,tomMatch237NameNumber_end_27,tom_empty_list_concInstruction()),tom_append_list_concInstruction(tomMatch237NameNumber_freshVar_28,tom_empty_list_concInstruction()))));
+      }}}}}if (tom_is_empty_concInstruction_InstructionList(tomMatch237NameNumber_end_27)) {tomMatch237NameNumber_end_27=tomMatch237NameNumber_begin_26;} else {tomMatch237NameNumber_end_27=tom_get_tail_concInstruction_InstructionList(tomMatch237NameNumber_end_27);}}} while(!(tom_equal_term_InstructionList(tomMatch237NameNumber_end_27, tomMatch237NameNumber_begin_26)));}}}}}}if (tom_is_fun_sym_AbstractBlock(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_102=tom_get_slot_AbstractBlock_InstList(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
-	return tomMatch238NameNumber_freshVar_104+ " : " + prettyPrint(tomMatch238NameNumber_freshVar_105);
-      }}}}if (tom_is_fun_sym_TypedAction(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_106=tom_get_slot_TypedAction_AstInstruction(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.Pattern  tomMatch238NameNumber_freshVar_107=tom_get_slot_TypedAction_PositivePattern(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.PatternList  tomMatch238NameNumber_freshVar_108=tom_get_slot_TypedAction_NegativePatternList(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+	return prettyPrint(tomMatch237NameNumber_freshVar_102);
+      }}}if (tom_is_fun_sym_UnamedBlock(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_103=tom_get_slot_UnamedBlock_InstList(tomMatch237NameNumberfreshSubject_1);if ( true ) {
+
+
+	return prettyPrint(tomMatch237NameNumber_freshVar_103);
+      }}}if (tom_is_fun_sym_NamedBlock(tomMatch237NameNumberfreshSubject_1)) {{  String  tomMatch237NameNumber_freshVar_104=tom_get_slot_NamedBlock_BlockName(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.InstructionList  tomMatch237NameNumber_freshVar_105=tom_get_slot_NamedBlock_InstList(tomMatch237NameNumberfreshSubject_1);if ( true ) {
+
+
+	return tomMatch237NameNumber_freshVar_104+ " : " + prettyPrint(tomMatch237NameNumber_freshVar_105);
+      }}}}if (tom_is_fun_sym_TypedAction(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_106=tom_get_slot_TypedAction_AstInstruction(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.Pattern  tomMatch237NameNumber_freshVar_107=tom_get_slot_TypedAction_PositivePattern(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.PatternList  tomMatch237NameNumber_freshVar_108=tom_get_slot_TypedAction_NegativePatternList(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
 
 
 	return "targetLanguageInstructions";
-      }}}}}if (tom_is_fun_sym_CompiledPattern(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomList  tomMatch238NameNumber_freshVar_109=tom_get_slot_CompiledPattern_PatternList(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch238NameNumber_freshVar_110=tom_get_slot_CompiledPattern_AutomataInst(tomMatch238NameNumberfreshSubject_1);if ( true ) {
+      }}}}}if (tom_is_fun_sym_CompiledPattern(tomMatch237NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomList  tomMatch237NameNumber_freshVar_109=tom_get_slot_CompiledPattern_PatternList(tomMatch237NameNumberfreshSubject_1);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch237NameNumber_freshVar_110=tom_get_slot_CompiledPattern_AutomataInst(tomMatch237NameNumberfreshSubject_1);if ( true ) {
 
  
-	return prettyPrint(tomMatch238NameNumber_freshVar_110); 
-      }}}}}}if (tom_is_sort_Expression(subject)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch239NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )subject);if (tom_is_fun_sym_TomTermToExpression(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_0=tom_get_slot_TomTermToExpression_AstTerm(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return prettyPrint(tomMatch237NameNumber_freshVar_110); 
+      }}}}}}if (tom_is_sort_Expression(subject)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumberfreshSubject_1=(( tom.engine.adt.tomexpression.types.Expression )subject);if (tom_is_fun_sym_TomTermToExpression(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_0=tom_get_slot_TomTermToExpression_AstTerm(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
 
-	return prettyPrint(tomMatch239NameNumber_freshVar_0);
-      }}}if (tom_is_fun_sym_IsSort(tomMatch239NameNumberfreshSubject_1)) {if ( true ) {
+	return prettyPrint(tomMatch238NameNumber_freshVar_0);
+      }}}if (tom_is_fun_sym_IsSort(tomMatch238NameNumberfreshSubject_1)) {if ( true ) {
 
 
 	return "isSort\n\t";
-      }}if (tom_is_fun_sym_IsFsym(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch239NameNumber_freshVar_1=tom_get_slot_IsFsym_AstName(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_2=tom_get_slot_IsFsym_Variable(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+      }}if (tom_is_fun_sym_IsFsym(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch238NameNumber_freshVar_1=tom_get_slot_IsFsym_AstName(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_2=tom_get_slot_IsFsym_Variable(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-        return "is_fun_sym(" + prettyPrint(tomMatch239NameNumber_freshVar_1) + "," + prettyPrint(tomMatch239NameNumber_freshVar_2) + ")";
-      }}}}if (tom_is_fun_sym_Negation(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch239NameNumber_freshVar_3=tom_get_slot_Negation_Arg(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+        return "is_fun_sym(" + prettyPrint(tomMatch238NameNumber_freshVar_1) + "," + prettyPrint(tomMatch238NameNumber_freshVar_2) + ")";
+      }}}}if (tom_is_fun_sym_Negation(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomexpression.types.Expression  tomMatch238NameNumber_freshVar_3=tom_get_slot_Negation_Arg(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "not " + prettyPrint(tomMatch239NameNumber_freshVar_3);
-      }}}if (tom_is_fun_sym_IsEmptyList(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_4=tom_get_slot_IsEmptyList_Variable(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return "not " + prettyPrint(tomMatch238NameNumber_freshVar_3);
+      }}}if (tom_is_fun_sym_IsEmptyList(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_4=tom_get_slot_IsEmptyList_Variable(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "is_empty(" + prettyPrint(tomMatch239NameNumber_freshVar_4) + ")";
-      }}}if (tom_is_fun_sym_EqualTerm(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch239NameNumber_freshVar_5=tom_get_slot_EqualTerm_TomType(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_6=tom_get_slot_EqualTerm_Kid1(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_7=tom_get_slot_EqualTerm_Kid2(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return "is_empty(" + prettyPrint(tomMatch238NameNumber_freshVar_4) + ")";
+      }}}if (tom_is_fun_sym_EqualTerm(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch238NameNumber_freshVar_5=tom_get_slot_EqualTerm_TomType(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_6=tom_get_slot_EqualTerm_Kid1(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_7=tom_get_slot_EqualTerm_Kid2(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "equal(" + prettyPrint(tomMatch239NameNumber_freshVar_6) + "," + prettyPrint(tomMatch239NameNumber_freshVar_7) + ")";
-      }}}}}if (tom_is_fun_sym_GetSliceList(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch239NameNumber_freshVar_8=tom_get_slot_GetSliceList_AstName(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_9=tom_get_slot_GetSliceList_VariableBeginAST(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_10=tom_get_slot_GetSliceList_VariableEndAST(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_11=tom_get_slot_GetSliceList_Tail(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return "equal(" + prettyPrint(tomMatch238NameNumber_freshVar_6) + "," + prettyPrint(tomMatch238NameNumber_freshVar_7) + ")";
+      }}}}}if (tom_is_fun_sym_GetSliceList(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch238NameNumber_freshVar_8=tom_get_slot_GetSliceList_AstName(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_9=tom_get_slot_GetSliceList_VariableBeginAST(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_10=tom_get_slot_GetSliceList_VariableEndAST(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_11=tom_get_slot_GetSliceList_Tail(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "getSliceList("+prettyPrint(tomMatch239NameNumber_freshVar_8)+","+prettyPrint(tomMatch239NameNumber_freshVar_9)+","+prettyPrint(tomMatch239NameNumber_freshVar_10)+"," + prettyPrint(tomMatch239NameNumber_freshVar_11) + ")";
-      }}}}}}if (tom_is_fun_sym_GetHead(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_12=tom_get_slot_GetHead_Variable(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return "getSliceList("+prettyPrint(tomMatch238NameNumber_freshVar_8)+","+prettyPrint(tomMatch238NameNumber_freshVar_9)+","+prettyPrint(tomMatch238NameNumber_freshVar_10)+"," + prettyPrint(tomMatch238NameNumber_freshVar_11) + ")";
+      }}}}}}if (tom_is_fun_sym_GetHead(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_12=tom_get_slot_GetHead_Variable(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "getHead("+prettyPrint(tomMatch239NameNumber_freshVar_12)+")";
-      }}}if (tom_is_fun_sym_GetTail(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_13=tom_get_slot_GetTail_Variable(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return "getHead("+prettyPrint(tomMatch238NameNumber_freshVar_12)+")";
+      }}}if (tom_is_fun_sym_GetTail(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_13=tom_get_slot_GetTail_Variable(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "getTail("+prettyPrint(tomMatch239NameNumber_freshVar_13)+")";
-      }}}if (tom_is_fun_sym_GetSlot(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch239NameNumber_freshVar_14=tom_get_slot_GetSlot_Codomain(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomName  tomMatch239NameNumber_freshVar_15=tom_get_slot_GetSlot_AstName(tomMatch239NameNumberfreshSubject_1);{  String  tomMatch239NameNumber_freshVar_16=tom_get_slot_GetSlot_SlotNameString(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_17=tom_get_slot_GetSlot_Variable(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+	return "getTail("+prettyPrint(tomMatch238NameNumber_freshVar_13)+")";
+      }}}if (tom_is_fun_sym_GetSlot(tomMatch238NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch238NameNumber_freshVar_14=tom_get_slot_GetSlot_Codomain(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomName  tomMatch238NameNumber_freshVar_15=tom_get_slot_GetSlot_AstName(tomMatch238NameNumberfreshSubject_1);{  String  tomMatch238NameNumber_freshVar_16=tom_get_slot_GetSlot_SlotNameString(tomMatch238NameNumberfreshSubject_1);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch238NameNumber_freshVar_17=tom_get_slot_GetSlot_Variable(tomMatch238NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "get_slot_"+prettyPrint(tomMatch239NameNumber_freshVar_15)+"_"+tomMatch239NameNumber_freshVar_16+"("+prettyPrint(tomMatch239NameNumber_freshVar_17)+")";
-      }}}}}}}}if (tom_is_sort_TomTerm(subject)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch240NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )subject);if (tom_is_fun_sym_Variable(tomMatch240NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch240NameNumber_freshVar_0=tom_get_slot_Variable_Option(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomName  tomMatch240NameNumber_freshVar_1=tom_get_slot_Variable_AstName(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch240NameNumber_freshVar_2=tom_get_slot_Variable_AstType(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch240NameNumber_freshVar_3=tom_get_slot_Variable_Constraints(tomMatch240NameNumberfreshSubject_1);if ( true ) {
-
-
-
-
-	return prettyPrint(tomMatch240NameNumber_freshVar_1);
-      }}}}}}if (tom_is_fun_sym_VariableStar(tomMatch240NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch240NameNumber_freshVar_4=tom_get_slot_VariableStar_Option(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomName  tomMatch240NameNumber_freshVar_5=tom_get_slot_VariableStar_AstName(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch240NameNumber_freshVar_6=tom_get_slot_VariableStar_AstType(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch240NameNumber_freshVar_7=tom_get_slot_VariableStar_Constraints(tomMatch240NameNumberfreshSubject_1);if ( true ) {
-
-
-	return prettyPrint(tomMatch240NameNumber_freshVar_5);
-      }}}}}}if (tom_is_fun_sym_Ref(tomMatch240NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch240NameNumber_freshVar_8=tom_get_slot_Ref_TomTerm(tomMatch240NameNumberfreshSubject_1);if ( true ) {
-
-
-	return prettyPrint(tomMatch240NameNumber_freshVar_8);
-      }}}if (tom_is_fun_sym_RecordAppl(tomMatch240NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch240NameNumber_freshVar_9=tom_get_slot_RecordAppl_Option(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomNameList  tomMatch240NameNumber_freshVar_10=tom_get_slot_RecordAppl_NameList(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomslot.types.SlotList  tomMatch240NameNumber_freshVar_11=tom_get_slot_RecordAppl_Slots(tomMatch240NameNumberfreshSubject_1);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch240NameNumber_freshVar_12=tom_get_slot_RecordAppl_Constraints(tomMatch240NameNumberfreshSubject_1);if ( true ) {
-
-
-	return prettyPrint(tomMatch240NameNumber_freshVar_10); 
-      }}}}}}}}if (tom_is_sort_TomName(subject)) {{  tom.engine.adt.tomname.types.TomName  tomMatch241NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )subject);if (tom_is_fun_sym_PositionName(tomMatch241NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomNumberList  tomMatch241NameNumber_freshVar_0=tom_get_slot_PositionName_NumberList(tomMatch241NameNumberfreshSubject_1);if ( true ) {
+	return "get_slot_"+prettyPrint(tomMatch238NameNumber_freshVar_15)+"_"+tomMatch238NameNumber_freshVar_16+"("+prettyPrint(tomMatch238NameNumber_freshVar_17)+")";
+      }}}}}}}}if (tom_is_sort_TomTerm(subject)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )subject);if (tom_is_fun_sym_Variable(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch239NameNumber_freshVar_0=tom_get_slot_Variable_Option(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomName  tomMatch239NameNumber_freshVar_1=tom_get_slot_Variable_AstName(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch239NameNumber_freshVar_2=tom_get_slot_Variable_AstType(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch239NameNumber_freshVar_3=tom_get_slot_Variable_Constraints(tomMatch239NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
-	return "t"+ TomBase.tomNumberListToString(tomMatch241NameNumber_freshVar_0);
-      }}}if (tom_is_fun_sym_Name(tomMatch241NameNumberfreshSubject_1)) {{  String  tomMatch241NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch241NameNumberfreshSubject_1);if ( true ) {
-
-	return tomMatch241NameNumber_freshVar_1;
-      }}}}}if (tom_is_sort_TomNumber(subject)) {{  tom.engine.adt.tomname.types.TomNumber  tomMatch242NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomNumber )subject);if (tom_is_fun_sym_Position(tomMatch242NameNumberfreshSubject_1)) {{  int  tomMatch242NameNumber_freshVar_0=tom_get_slot_Position_Integer(tomMatch242NameNumberfreshSubject_1);if ( true ) {
+	return prettyPrint(tomMatch239NameNumber_freshVar_1);
+      }}}}}}if (tom_is_fun_sym_VariableStar(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch239NameNumber_freshVar_4=tom_get_slot_VariableStar_Option(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomName  tomMatch239NameNumber_freshVar_5=tom_get_slot_VariableStar_AstName(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomtype.types.TomType  tomMatch239NameNumber_freshVar_6=tom_get_slot_VariableStar_AstType(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch239NameNumber_freshVar_7=tom_get_slot_VariableStar_Constraints(tomMatch239NameNumberfreshSubject_1);if ( true ) {
 
 
+	return prettyPrint(tomMatch239NameNumber_freshVar_5);
+      }}}}}}if (tom_is_fun_sym_Ref(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch239NameNumber_freshVar_8=tom_get_slot_Ref_TomTerm(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+
+
+	return prettyPrint(tomMatch239NameNumber_freshVar_8);
+      }}}if (tom_is_fun_sym_RecordAppl(tomMatch239NameNumberfreshSubject_1)) {{  tom.engine.adt.tomoption.types.OptionList  tomMatch239NameNumber_freshVar_9=tom_get_slot_RecordAppl_Option(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomname.types.TomNameList  tomMatch239NameNumber_freshVar_10=tom_get_slot_RecordAppl_NameList(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomslot.types.SlotList  tomMatch239NameNumber_freshVar_11=tom_get_slot_RecordAppl_Slots(tomMatch239NameNumberfreshSubject_1);{  tom.engine.adt.tomconstraint.types.ConstraintList  tomMatch239NameNumber_freshVar_12=tom_get_slot_RecordAppl_Constraints(tomMatch239NameNumberfreshSubject_1);if ( true ) {
+
+
+	return prettyPrint(tomMatch239NameNumber_freshVar_10); 
+      }}}}}}}}if (tom_is_sort_TomName(subject)) {{  tom.engine.adt.tomname.types.TomName  tomMatch240NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )subject);if (tom_is_fun_sym_PositionName(tomMatch240NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomNumberList  tomMatch240NameNumber_freshVar_0=tom_get_slot_PositionName_NumberList(tomMatch240NameNumberfreshSubject_1);if ( true ) {
 
 
 
-	return "" + tomMatch242NameNumber_freshVar_0;
-      }}}if (tom_is_fun_sym_NameNumber(tomMatch242NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch242NameNumber_freshVar_1=tom_get_slot_NameNumber_AstName(tomMatch242NameNumberfreshSubject_1);if ( true ) {
+
+	return "t"+ TomBase.tomNumberListToString(tomMatch240NameNumber_freshVar_0);
+      }}}if (tom_is_fun_sym_Name(tomMatch240NameNumberfreshSubject_1)) {{  String  tomMatch240NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch240NameNumberfreshSubject_1);if ( true ) {
+
+	return tomMatch240NameNumber_freshVar_1;
+      }}}}}if (tom_is_sort_TomNumber(subject)) {{  tom.engine.adt.tomname.types.TomNumber  tomMatch241NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomNumber )subject);if (tom_is_fun_sym_Position(tomMatch241NameNumberfreshSubject_1)) {{  int  tomMatch241NameNumber_freshVar_0=tom_get_slot_Position_Integer(tomMatch241NameNumberfreshSubject_1);if ( true ) {
 
 
-	return prettyPrint(tomMatch242NameNumber_freshVar_1);
-      }}}if (tom_is_fun_sym_ListNumber(tomMatch242NameNumberfreshSubject_1)) {{  int  tomMatch242NameNumber_freshVar_2=tom_get_slot_ListNumber_Integer(tomMatch242NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "listNumber"+tomMatch242NameNumber_freshVar_2;
-      }}}if (tom_is_fun_sym_Begin(tomMatch242NameNumberfreshSubject_1)) {{  int  tomMatch242NameNumber_freshVar_3=tom_get_slot_Begin_Integer(tomMatch242NameNumberfreshSubject_1);if ( true ) {
+
+	return "" + tomMatch241NameNumber_freshVar_0;
+      }}}if (tom_is_fun_sym_NameNumber(tomMatch241NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch241NameNumber_freshVar_1=tom_get_slot_NameNumber_AstName(tomMatch241NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "begin"+tomMatch242NameNumber_freshVar_3;
-      }}}if (tom_is_fun_sym_End(tomMatch242NameNumberfreshSubject_1)) {{  int  tomMatch242NameNumber_freshVar_4=tom_get_slot_End_Integer(tomMatch242NameNumberfreshSubject_1);if ( true ) {
+	return prettyPrint(tomMatch241NameNumber_freshVar_1);
+      }}}if (tom_is_fun_sym_ListNumber(tomMatch241NameNumberfreshSubject_1)) {{  int  tomMatch241NameNumber_freshVar_2=tom_get_slot_ListNumber_Integer(tomMatch241NameNumberfreshSubject_1);if ( true ) {
 
 
-	return "end"+tomMatch242NameNumber_freshVar_4;
+	return "listNumber"+tomMatch241NameNumber_freshVar_2;
+      }}}if (tom_is_fun_sym_Begin(tomMatch241NameNumberfreshSubject_1)) {{  int  tomMatch241NameNumber_freshVar_3=tom_get_slot_Begin_Integer(tomMatch241NameNumberfreshSubject_1);if ( true ) {
+
+
+	return "begin"+tomMatch241NameNumber_freshVar_3;
+      }}}if (tom_is_fun_sym_End(tomMatch241NameNumberfreshSubject_1)) {{  int  tomMatch241NameNumber_freshVar_4=tom_get_slot_End_Integer(tomMatch241NameNumberfreshSubject_1);if ( true ) {
+
+
+	return "end"+tomMatch241NameNumber_freshVar_4;
       }}}}}
 
 
@@ -299,10 +299,10 @@ public class PILFactory {
     return subject.toString();
   }
 
-  private static class collectMatch extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  c; public collectMatch( java.util.Collection  c) { super(tom_make_Identity());this.c=c;}public  java.util.Collection  getc() { return c;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch243NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch243NameNumber_freshVar_0=tomMatch243NameNumberfreshSubject_1;if (tom_is_fun_sym_CompiledMatch(tomMatch243NameNumber_freshVar_0)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch243NameNumber_freshVar_1=tom_get_slot_CompiledMatch_AutomataInst(tomMatch243NameNumber_freshVar_0);if ( true ) {
+  private static class collectMatch extends  tom.engine.adt.tomsignature.TomSignatureBasicStrategy  {private  java.util.Collection  c; public collectMatch( java.util.Collection  c) { super(tom_make_Identity());this.c=c;}public  java.util.Collection  getc() { return c;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.engine.adt.tominstruction.types.Instruction  visit_Instruction( tom.engine.adt.tominstruction.types.Instruction  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_Instruction(tom__arg)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch242NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);{  tom.engine.adt.tominstruction.types.Instruction  tomMatch242NameNumber_freshVar_0=tomMatch242NameNumberfreshSubject_1;if (tom_is_fun_sym_CompiledMatch(tomMatch242NameNumber_freshVar_0)) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch242NameNumber_freshVar_1=tom_get_slot_CompiledMatch_AutomataInst(tomMatch242NameNumber_freshVar_0);if ( true ) {
 
 
-	c.add(tomMatch243NameNumber_freshVar_0);
+	c.add(tomMatch242NameNumber_freshVar_0);
       }}}}}}return super.visit_Instruction(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_collectMatch( java.util.Collection  t0) { return new collectMatch(t0); }
 
  

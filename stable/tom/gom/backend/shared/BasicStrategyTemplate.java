@@ -35,10 +35,10 @@ public class BasicStrategyTemplate extends TemplateClass {
 
   public BasicStrategyTemplate(GomClass basic) {
     super(basic);
-    if (tom_is_sort_GomClass(basic)) {{  tom.gom.adt.objects.types.GomClass  tomMatch340NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )basic);if (tom_is_fun_sym_VisitableFwdClass(tomMatch340NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch340NameNumber_freshVar_0=tom_get_slot_VisitableFwdClass_ClassName(tomMatch340NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch340NameNumber_freshVar_1=tom_get_slot_VisitableFwdClass_Fwd(tomMatch340NameNumberfreshSubject_1);if (tom_is_fun_sym_FwdClass(tomMatch340NameNumber_freshVar_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch340NameNumber_freshVar_2=tom_get_slot_FwdClass_ClassName(tomMatch340NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_GomClass(basic)) {{  tom.gom.adt.objects.types.GomClass  tomMatch339NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )basic);if (tom_is_fun_sym_VisitableFwdClass(tomMatch339NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch339NameNumber_freshVar_0=tom_get_slot_VisitableFwdClass_ClassName(tomMatch339NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch339NameNumber_freshVar_1=tom_get_slot_VisitableFwdClass_Fwd(tomMatch339NameNumberfreshSubject_1);if (tom_is_fun_sym_FwdClass(tomMatch339NameNumber_freshVar_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch339NameNumber_freshVar_2=tom_get_slot_FwdClass_ClassName(tomMatch339NameNumber_freshVar_1);if ( true ) {
 
 
-        this.fwd = tomMatch340NameNumber_freshVar_2;
+        this.fwd = tomMatch339NameNumber_freshVar_2;
         return;
       }}}}}}}}
 

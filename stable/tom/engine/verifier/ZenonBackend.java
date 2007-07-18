@@ -48,10 +48,10 @@ public class ZenonBackend {
   }
 
   public String genZSymbol(ZSymbol symbol) {
-    if (tom_is_sort_ZSymbol(symbol)) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch295NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSymbol )symbol);if (tom_is_fun_sym_zsymbol(tomMatch295NameNumberfreshSubject_1)) {{  String  tomMatch295NameNumber_freshVar_0=tom_get_slot_zsymbol_Name(tomMatch295NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ZSymbol(symbol)) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch294NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSymbol )symbol);if (tom_is_fun_sym_zsymbol(tomMatch294NameNumberfreshSubject_1)) {{  String  tomMatch294NameNumber_freshVar_0=tom_get_slot_zsymbol_Name(tomMatch294NameNumberfreshSubject_1);if ( true ) {
 
         // manage builtins
-        String symbolName = tomiltools.replaceNumbersByString(tomMatch295NameNumber_freshVar_0);
+        String symbolName = tomiltools.replaceNumbersByString(tomMatch294NameNumber_freshVar_0);
         return symbolName+ "_";
       }}}}}
 
@@ -59,27 +59,27 @@ public class ZenonBackend {
   }
 
   public String genZType(ZType type) {
-    if (tom_is_sort_ZType(type)) {{  tom.engine.adt.zenon.types.ZType  tomMatch296NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZType )type);if (tom_is_fun_sym_ztype(tomMatch296NameNumberfreshSubject_1)) {{  String  tomMatch296NameNumber_freshVar_0=tom_get_slot_ztype_Tname(tomMatch296NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ZType(type)) {{  tom.engine.adt.zenon.types.ZType  tomMatch295NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZType )type);if (tom_is_fun_sym_ztype(tomMatch295NameNumberfreshSubject_1)) {{  String  tomMatch295NameNumber_freshVar_0=tom_get_slot_ztype_Tname(tomMatch295NameNumberfreshSubject_1);if ( true ) {
 
-        return tomMatch296NameNumber_freshVar_0;
+        return tomMatch295NameNumber_freshVar_0;
       }}}}}
 
     return "errorZType";
   }
 
   public String genZTerm(ZTerm term) {
-    if (tom_is_sort_ZTerm(term)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if (tom_is_fun_sym_zvar(tomMatch297NameNumberfreshSubject_1)) {{  String  tomMatch297NameNumber_freshVar_0=tom_get_slot_zvar_Varname(tomMatch297NameNumberfreshSubject_1);if ( true ) {
- return tomMatch297NameNumber_freshVar_0; }}}if (tom_is_fun_sym_zappl(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch297NameNumber_freshVar_1=tom_get_slot_zappl_Zsymb(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZTermList  tomMatch297NameNumber_freshVar_2=tom_get_slot_zappl_Termlist(tomMatch297NameNumberfreshSubject_1);if (tom_is_fun_sym_zsymbol(tomMatch297NameNumber_freshVar_1)) {{  String  tomMatch297NameNumber_freshVar_3=tom_get_slot_zsymbol_Name(tomMatch297NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_ZTerm(term)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch296NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if (tom_is_fun_sym_zvar(tomMatch296NameNumberfreshSubject_1)) {{  String  tomMatch296NameNumber_freshVar_0=tom_get_slot_zvar_Varname(tomMatch296NameNumberfreshSubject_1);if ( true ) {
+ return tomMatch296NameNumber_freshVar_0; }}}if (tom_is_fun_sym_zappl(tomMatch296NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch296NameNumber_freshVar_1=tom_get_slot_zappl_Zsymb(tomMatch296NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZTermList  tomMatch296NameNumber_freshVar_2=tom_get_slot_zappl_Termlist(tomMatch296NameNumberfreshSubject_1);if (tom_is_fun_sym_zsymbol(tomMatch296NameNumber_freshVar_1)) {{  String  tomMatch296NameNumber_freshVar_3=tom_get_slot_zsymbol_Name(tomMatch296NameNumber_freshVar_1);if ( true ) {
  
         // manage builtins
-        String realName = tomiltools.replaceNumbersByString(tomMatch297NameNumber_freshVar_3);
-        return "(" + realName +" "+genZTermList(tomMatch297NameNumber_freshVar_2)+")"; 
-      }}}}}}if (tom_is_fun_sym_zst(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_4=tom_get_slot_zst_Abst(tomMatch297NameNumberfreshSubject_1);{  int  tomMatch297NameNumber_freshVar_5=tom_get_slot_zst_Index(tomMatch297NameNumberfreshSubject_1);if ( true ) {
+        String realName = tomiltools.replaceNumbersByString(tomMatch296NameNumber_freshVar_3);
+        return "(" + realName +" "+genZTermList(tomMatch296NameNumber_freshVar_2)+")"; 
+      }}}}}}if (tom_is_fun_sym_zst(tomMatch296NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch296NameNumber_freshVar_4=tom_get_slot_zst_Abst(tomMatch296NameNumberfreshSubject_1);{  int  tomMatch296NameNumber_freshVar_5=tom_get_slot_zst_Index(tomMatch296NameNumberfreshSubject_1);if ( true ) {
  
-        return "(_"+tomMatch297NameNumber_freshVar_5+" "+genZTerm(tomMatch297NameNumber_freshVar_4)+")";
-      }}}}if (tom_is_fun_sym_zsl(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_6=tom_get_slot_zsl_Abst(tomMatch297NameNumberfreshSubject_1);{  String  tomMatch297NameNumber_freshVar_7=tom_get_slot_zsl_Name(tomMatch297NameNumberfreshSubject_1);if ( true ) {
+        return "(_"+tomMatch296NameNumber_freshVar_5+" "+genZTerm(tomMatch296NameNumber_freshVar_4)+")";
+      }}}}if (tom_is_fun_sym_zsl(tomMatch296NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch296NameNumber_freshVar_6=tom_get_slot_zsl_Abst(tomMatch296NameNumberfreshSubject_1);{  String  tomMatch296NameNumber_freshVar_7=tom_get_slot_zsl_Name(tomMatch296NameNumberfreshSubject_1);if ( true ) {
  
-        return "(_"+tomMatch297NameNumber_freshVar_7+" "+genZTerm(tomMatch297NameNumber_freshVar_6)+")";
+        return "(_"+tomMatch296NameNumber_freshVar_7+" "+genZTerm(tomMatch296NameNumber_freshVar_6)+")";
       }}}}}}
 
     return "errorZTerm";
@@ -95,21 +95,21 @@ public class ZenonBackend {
   }
 
   public String genZExpr(ZExpr expr) {
-    if (tom_is_sort_ZExpr(expr)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if (tom_is_fun_sym_ztrue(tomMatch298NameNumberfreshSubject_1)) {if ( true ) {
- return "True";}}if (tom_is_fun_sym_zfalse(tomMatch298NameNumberfreshSubject_1)) {if ( true ) {
- return "False";}}if (tom_is_fun_sym_zisfsym(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch298NameNumber_freshVar_0=tom_get_slot_zisfsym_T(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZSymbol  tomMatch298NameNumber_freshVar_1=tom_get_slot_zisfsym_Symbol(tomMatch298NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ZExpr(expr)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if (tom_is_fun_sym_ztrue(tomMatch297NameNumberfreshSubject_1)) {if ( true ) {
+ return "True";}}if (tom_is_fun_sym_zfalse(tomMatch297NameNumberfreshSubject_1)) {if ( true ) {
+ return "False";}}if (tom_is_fun_sym_zisfsym(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_0=tom_get_slot_zisfsym_T(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZSymbol  tomMatch297NameNumber_freshVar_1=tom_get_slot_zisfsym_Symbol(tomMatch297NameNumberfreshSubject_1);if ( true ) {
 
-        return "((symb "+genZTerm(tomMatch298NameNumber_freshVar_0)+") = "+genZSymbol(tomMatch298NameNumber_freshVar_1)+")";
-      }}}}if (tom_is_fun_sym_zeq(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch298NameNumber_freshVar_2=tom_get_slot_zeq_Lt(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZTerm  tomMatch298NameNumber_freshVar_3=tom_get_slot_zeq_Rt(tomMatch298NameNumberfreshSubject_1);if ( true ) {
+        return "((symb "+genZTerm(tomMatch297NameNumber_freshVar_0)+") = "+genZSymbol(tomMatch297NameNumber_freshVar_1)+")";
+      }}}}if (tom_is_fun_sym_zeq(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_2=tom_get_slot_zeq_Lt(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_3=tom_get_slot_zeq_Rt(tomMatch297NameNumberfreshSubject_1);if ( true ) {
 
-        return "("+genZTerm(tomMatch298NameNumber_freshVar_2)+" = "+genZTerm(tomMatch298NameNumber_freshVar_3)+")";
-      }}}}if (tom_is_fun_sym_zforall(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch298NameNumber_freshVar_4=tom_get_slot_zforall_Var(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZType  tomMatch298NameNumber_freshVar_5=tom_get_slot_zforall_Aztype(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_6=tom_get_slot_zforall_Expr(tomMatch298NameNumberfreshSubject_1);if ( true ) {
+        return "("+genZTerm(tomMatch297NameNumber_freshVar_2)+" = "+genZTerm(tomMatch297NameNumber_freshVar_3)+")";
+      }}}}if (tom_is_fun_sym_zforall(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_4=tom_get_slot_zforall_Var(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZType  tomMatch297NameNumber_freshVar_5=tom_get_slot_zforall_Aztype(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_6=tom_get_slot_zforall_Expr(tomMatch297NameNumberfreshSubject_1);if ( true ) {
 
-        return "forall "+genZTerm(tomMatch298NameNumber_freshVar_4)+" : "+genZType(tomMatch298NameNumber_freshVar_5)+",\n "+genZExpr(tomMatch298NameNumber_freshVar_6);
-      }}}}}if (tom_is_fun_sym_zexists(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch298NameNumber_freshVar_7=tom_get_slot_zexists_Var(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZType  tomMatch298NameNumber_freshVar_8=tom_get_slot_zexists_Aztype(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_9=tom_get_slot_zexists_Expr(tomMatch298NameNumberfreshSubject_1);if ( true ) {
+        return "forall "+genZTerm(tomMatch297NameNumber_freshVar_4)+" : "+genZType(tomMatch297NameNumber_freshVar_5)+",\n "+genZExpr(tomMatch297NameNumber_freshVar_6);
+      }}}}}if (tom_is_fun_sym_zexists(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch297NameNumber_freshVar_7=tom_get_slot_zexists_Var(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZType  tomMatch297NameNumber_freshVar_8=tom_get_slot_zexists_Aztype(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_9=tom_get_slot_zexists_Expr(tomMatch297NameNumberfreshSubject_1);if ( true ) {
 
-        return "exists "+genZTerm(tomMatch298NameNumber_freshVar_7)+" : "+genZType(tomMatch298NameNumber_freshVar_8)+", "+genZExpr(tomMatch298NameNumber_freshVar_9);
-      }}}}}if (tom_is_fun_sym_zand(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_10=tom_get_slot_zand_Lte(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_11=tom_get_slot_zand_Rte(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch298NameNumber_freshVar_10;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch298NameNumber_freshVar_11;if ( true ) {
+        return "exists "+genZTerm(tomMatch297NameNumber_freshVar_7)+" : "+genZType(tomMatch297NameNumber_freshVar_8)+", "+genZExpr(tomMatch297NameNumber_freshVar_9);
+      }}}}}if (tom_is_fun_sym_zand(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_10=tom_get_slot_zand_Lte(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_11=tom_get_slot_zand_Rte(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch297NameNumber_freshVar_10;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch297NameNumber_freshVar_11;if ( true ) {
 
         if(tom_l== tom_make_ztrue()) {
           return "("+ genZExpr(tom_r) +")";
@@ -118,7 +118,7 @@ public class ZenonBackend {
           return "("+ genZExpr(tom_l) +")";
         }
         return "("+genZExpr(tom_l)+") /\\ ("+genZExpr(tom_r)+")";
-      }}}}}}if (tom_is_fun_sym_zor(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_12=tom_get_slot_zor_Lte(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_13=tom_get_slot_zor_Rte(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch298NameNumber_freshVar_12;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch298NameNumber_freshVar_13;if ( true ) {
+      }}}}}}if (tom_is_fun_sym_zor(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_12=tom_get_slot_zor_Lte(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_13=tom_get_slot_zor_Rte(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch297NameNumber_freshVar_12;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch297NameNumber_freshVar_13;if ( true ) {
 
         if(tom_l== tom_make_zfalse()) {
           return "("+ genZExpr(tom_r) +")";
@@ -127,21 +127,21 @@ public class ZenonBackend {
           return "("+ genZExpr(tom_l) +")";
         }
         return "("+genZExpr(tom_l)+") \\/ ("+genZExpr(tom_r)+")";
-      }}}}}}if (tom_is_fun_sym_znot(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_14=tom_get_slot_znot_Nex(tomMatch298NameNumberfreshSubject_1);if ( true ) {
- return "~("+genZExpr(tomMatch298NameNumber_freshVar_14)+")"; }}}if (tom_is_fun_sym_zequiv(tomMatch298NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_15=tom_get_slot_zequiv_Lte(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_16=tom_get_slot_zequiv_Rte(tomMatch298NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}if (tom_is_fun_sym_znot(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_14=tom_get_slot_znot_Nex(tomMatch297NameNumberfreshSubject_1);if ( true ) {
+ return "~("+genZExpr(tomMatch297NameNumber_freshVar_14)+")"; }}}if (tom_is_fun_sym_zequiv(tomMatch297NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_15=tom_get_slot_zequiv_Lte(tomMatch297NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch297NameNumber_freshVar_16=tom_get_slot_zequiv_Rte(tomMatch297NameNumberfreshSubject_1);if ( true ) {
 
-        return "("+genZExpr(tomMatch298NameNumber_freshVar_15)+") <-> ("+genZExpr(tomMatch298NameNumber_freshVar_16)+")";
+        return "("+genZExpr(tomMatch297NameNumber_freshVar_15)+") <-> ("+genZExpr(tomMatch297NameNumber_freshVar_16)+")";
       }}}}}}
 
     return "errorZExpr";
   }
 
   public String genZAxiom(ZAxiom axiom) {
-    if (tom_is_sort_ZAxiom(axiom)) {{  tom.engine.adt.zenon.types.ZAxiom  tomMatch299NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZAxiom )axiom);if (tom_is_fun_sym_zaxiom(tomMatch299NameNumberfreshSubject_1)) {{  String  tomMatch299NameNumber_freshVar_0=tom_get_slot_zaxiom_Name(tomMatch299NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch299NameNumber_freshVar_1=tom_get_slot_zaxiom_Ax(tomMatch299NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ZAxiom(axiom)) {{  tom.engine.adt.zenon.types.ZAxiom  tomMatch298NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZAxiom )axiom);if (tom_is_fun_sym_zaxiom(tomMatch298NameNumberfreshSubject_1)) {{  String  tomMatch298NameNumber_freshVar_0=tom_get_slot_zaxiom_Name(tomMatch298NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZExpr  tomMatch298NameNumber_freshVar_1=tom_get_slot_zaxiom_Ax(tomMatch298NameNumberfreshSubject_1);if ( true ) {
 
         // manage builtins
-        String realName = tomiltools.replaceNumbersByString(tomMatch299NameNumber_freshVar_0);
-        return "Parameter " + realName +" :\n    " + genZExpr(tomMatch299NameNumber_freshVar_1) + ".\n";
+        String realName = tomiltools.replaceNumbersByString(tomMatch298NameNumber_freshVar_0);
+        return "Parameter " + realName +" :\n    " + genZExpr(tomMatch298NameNumber_freshVar_1) + ".\n";
       }}}}}}
 
     return "errorZAxiom";
@@ -157,12 +157,12 @@ public class ZenonBackend {
   }
 
   public String genZSpec(ZSpec spec) {
-    if (tom_is_sort_ZSpec(spec)) {{  tom.engine.adt.zenon.types.ZSpec  tomMatch300NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSpec )spec);if (tom_is_fun_sym_zthm(tomMatch300NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch300NameNumber_freshVar_0=tom_get_slot_zthm_Thm(tomMatch300NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZAxiomList  tomMatch300NameNumber_freshVar_1=tom_get_slot_zthm_By(tomMatch300NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ZSpec(spec)) {{  tom.engine.adt.zenon.types.ZSpec  tomMatch299NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSpec )spec);if (tom_is_fun_sym_zthm(tomMatch299NameNumberfreshSubject_1)) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch299NameNumber_freshVar_0=tom_get_slot_zthm_Thm(tomMatch299NameNumberfreshSubject_1);{  tom.engine.adt.zenon.types.ZAxiomList  tomMatch299NameNumber_freshVar_1=tom_get_slot_zthm_By(tomMatch299NameNumberfreshSubject_1);if ( true ) {
 
         return "\n" 
-          + genZExpr(tomMatch300NameNumber_freshVar_0) 
+          + genZExpr(tomMatch299NameNumber_freshVar_0) 
           + "\n" 
-          + genZAxiomList(tomMatch300NameNumber_freshVar_1)+"\n";
+          + genZAxiomList(tomMatch299NameNumber_freshVar_1)+"\n";
       }}}}}}
 
     return "errorZSpec";
