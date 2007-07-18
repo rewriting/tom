@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 public class HelloWorld {
  
-  %include{ MappingMessage.tom }     
+  %include{ generatedMappingAcct.tom }     
 
   public static void main(String[] args) {
 
@@ -24,7 +24,7 @@ public class HelloWorld {
     em.persist(mes2); 
 
     tx.commit();
-    em.close();
+    em.close(); 
 
     // Second unit of work
     EntityManager newEm = emf.createEntityManager();
@@ -35,7 +35,7 @@ public class HelloWorld {
     System.out.println( messages.size() + " messages(s) found:" );
     
     %match(messages) {
-      messList(_*,Message[text=tx,nextMessage=Message[text=nextText]],_*) -> {
+      messageList(_*,Message[text=tx,nextMessage=Message[text=nextText]],_*) -> {
         System.out.println("Message with text=" + `tx + " and next mes Text:" + `nextText);
       }
     }
