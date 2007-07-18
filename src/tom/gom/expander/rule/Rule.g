@@ -73,7 +73,7 @@ INT | STRING
 ;
 
 labelledpattern :
-  (namelabel=ID AROBASE)? p=graphpattern
+  (namelabel=ID COLON)? p=graphpattern
  -> {$namelabel!=null}? ^(LAB $namelabel $p)
  -> $p
 ;
@@ -81,7 +81,7 @@ graphpattern :
   constructor | ID | builtin | ref
 ;
 ref :
-STAR ID -> ^(REF ID)
+AMPERCENT ID -> ^(REF ID)
 ;
 constructor :
 ID LPAR (labelledpattern (COMA labelledpattern)*)? RPAR
@@ -89,8 +89,8 @@ ID LPAR (labelledpattern (COMA labelledpattern)*)? RPAR
 ;
 
 ARROW : '->' ;
-STAR : '*' ;
-AROBASE : '@' ;
+AMPERCENT : '&' ;
+COLON : ':' ;
 LPAR : '(' ;
 RPAR : ')' ;
 COMA : ',' ;

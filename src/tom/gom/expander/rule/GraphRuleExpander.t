@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 import tom.gom.adt.gom.types.*;
 import tom.gom.adt.rule.types.*;
+import tom.gom.adt.rule.types.term.*;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.library.sl.*;
 
@@ -227,6 +228,7 @@ public class GraphRuleExpander {
             //TODO: verify the linearity of lhs and rhs
             output.append(%[
                 @genTerm(`lhs)@ -> {
+
                 /* 1. save the current pos w */
                 Position omega = getEnvironment().getPosition();
                 Position posRhs = new Position(new int[]{2});
@@ -276,11 +278,11 @@ public class GraphRuleExpander {
       PathTerm(i,tail*) -> {
         output.append("path"+sortname);
         output.append("(");
-        output.append((`i>0)?`i-1:`i+1);
+        output.append(`i);
         %match(tail) {
           PathTerm(_*,j,_*) -> {
             output.append(",");
-            output.append((`j>0)?`j-1:`j+1);
+            output.append(`j);
           }
         }
         output.append(")");
@@ -443,12 +445,30 @@ public class GraphRuleExpander {
     }
   }
 
+  %strategy PathForPattern() extends Identity(){
+    visit Term {
+      PathTerm(X*,PathTerm(-1,sublist@!PathTerm(_*,!-2,_*),-1),Y*) -> {
+        int k = 1+`sublist.length();
+        PathTerm newX = (PathTerm) `PathForPattern().visit(`X);
+        PathTerm newY = (PathTerm) `PathForPattern().visit(`Y);
+        return `PathTerm(newX*,-k,newY*);
+      }
+      PathTerm(X*,PathTerm(1,sublist@!PathTerm(_*,!2,_*),1),Y*) -> {
+        int k = 1+`sublist.length();
+        PathTerm newX = (PathTerm) `PathForPattern().visit(`X);
+        PathTerm newY = (PathTerm) `PathForPattern().visit(`Y);
+        return `PathTerm(newX*,k,newY*);
+      }
+    }
+  }
+
   %strategy Label2Path(map:HashMap) extends Identity(){
     visit Term {
       RefTerm[l=label] -> {
         if (map.containsKey(`label)) {
-          Position target = (Position) map.get(`label);
-          Path ref = target.sub(getEnvironment().getPosition());
+          Path target = (Path) map.get(`label);
+          Path ref = (target.sub(getEnvironment().getPosition()));
+          //transform the path to obtain the corresponding one in the pattern
           Term path = `PathTerm();
           int head;
           while(ref.length()!=0) {
@@ -456,11 +476,24 @@ public class GraphRuleExpander {
             ref  = ref.getTail();
             path = `PathTerm(path*,head);
           }
-          return path;
+          Term newpath = normalize((Term)`PathForPattern().visitLight(path));
+          return newpath;
         }
       }
     }
   }
+
+    public static Term normalize(Term path){
+      %match(path) {
+        PathTerm(X*,x,y,Y*) -> {
+          if (`x==-`y) {
+            return normalize(`PathTerm(X*,Y*));
+          }
+        }
+      }
+      return path;
+    }
+
 
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
