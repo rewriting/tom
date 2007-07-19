@@ -335,9 +335,7 @@ public class @filename()@Tree extends CommonTree {
 
   %strategy GenerateInitCase(writer:Writer,grammar:String) extends Identity() {
     visit OperatorDecl {
-      opDecl@OperatorDecl[Name=opName,
-                   Prod=Slots[Slots=
-                     slotList@concSlot(_*,Slot[Sort=sortDecl],_*)]] -> {
+      opDecl@OperatorDecl[Name=opName,Prod=Slots[Slots=slotList]] -> {
         Code initTerm = `Code("");
         if(0 == `slotList.length()) {
           initTerm = `CodeList(
