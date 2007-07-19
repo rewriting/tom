@@ -165,7 +165,11 @@ public class HookTypeExpander {
             //TODO: verify if the option termgraph is on
             // for now, this hook is only available with one sort T
             //TODO: authorize TGRS with a multisort signature
-            return `makeGraphRulesHookList(hName,mdecl,scode);
+            if(`hookArgs.length()!=2) {
+              throw new GomRuntimeException(
+                  "GomTypeExpander:graphrules hooks need two parameters: the name of the generated strategy and its default behaviour");
+            }
+            return `makeGraphRulesHookList(hName,hookArgs,mdecl,scode);
           }
         }
         if (newHookList == `concHookDecl()) {
@@ -395,11 +399,16 @@ public class HookTypeExpander {
   /*
    * generate hooks for term-graph rules 
    */
-  private HookDeclList makeGraphRulesHookList(String sortname, Decl mdecl, String scode) {
-    GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
-    return rexpander.expandGraphRules(sortname,trimBracket(scode),mdecl);
+  private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl mdecl, String scode) {
+    %match(args) {
+      concArg(Arg[Name=stratname],Arg[Name=defaultstrat]) -> {
+        GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
+        return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),mdecl);
+      }
+    }
+    return null;
   }
-  
+
   /*
    * generate hooks for associative-commutative with neutral element
    */

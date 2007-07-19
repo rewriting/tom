@@ -53,7 +53,7 @@ public class GraphRuleExpander {
     this.moduleList = data;
   }
 
-  public HookDeclList expandGraphRules(String sortname, String ruleCode, Decl sdecl) {
+  public HookDeclList expandGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
     this.sortname = sortname; 
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -68,14 +68,14 @@ public class GraphRuleExpander {
           new Object[]{});
       return `concHookDecl();
     }
-    return expand(rulelist,sdecl);
+    return expand(rulelist,sdecl,stratname,defaultstrat);
   }
 
   private String getArobase(){
     return "@";
   }
 
-  protected HookDeclList expand(RuleList rulelist, Decl sdecl) {
+  protected HookDeclList expand(RuleList rulelist, Decl sdecl, String stratname, String defaultstrat) {
     StringBuffer output = new StringBuffer();
     String modulename = sdecl.getSort().getModuleDecl().getModuleName().getName();
     output.append(
@@ -212,11 +212,11 @@ public class GraphRuleExpander {
     }
   }
 
-  public static Strategy GraphRule(){
-    return `GraphRule();
+  public static Strategy @stratname@(){
+    return `@stratname@();
   }
 
-  %strategy GraphRule() extends Identity() {
+  %strategy @stratname@() extends @defaultstrat@() {
     visit @sortname@ {
       ]%);
 
