@@ -136,7 +136,7 @@ public class AdapterGenerator {
         .getStreamManager()
           .getPackagePath().replace(File.separatorChar,'.');
     return
-      (packagePrefix==""?filename():packagePrefix+filename()).toLowerCase();
+      (packagePrefix==""?filename():packagePrefix+"."+filename()).toLowerCase();
   }
 
   public void generateAdapterFile(ModuleList moduleList, Writer writer)
@@ -439,6 +439,11 @@ public class @filename()@Tree extends CommonTree {
     return res;
   }
 
+  protected String fullFileName() {
+
+    return (adapterPkg() + "." + filename()).replace('.',File.separatorChar);
+  }
+
   protected String filename() {
     String filename =
       (new File(environment().getStreamManager().getOutputFileName())).getName();
@@ -452,21 +457,21 @@ public class @filename()@Tree extends CommonTree {
   protected File tokenFileToGenerate() {
     File output = new File(
         environment().getStreamManager().getDestDir(),
-        filename()+"TokenList.txt");
+        fullFileName()+"TokenList.txt");
     return output;
   }
 
   protected File adaptorFileToGenerate() {
     File output = new File(
         environment().getStreamManager().getDestDir(),
-        filename()+"Adaptor.java");
+        fullFileName()+"Adaptor.java");
     return output;
   }
 
   protected File treeFileToGenerate() {
     File output = new File(
         environment().getStreamManager().getDestDir(),
-        filename()+"Tree.java");
+        fullFileName()+"Tree.java");
     return output;
   }
 }
