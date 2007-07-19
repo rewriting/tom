@@ -160,6 +160,10 @@ public class @filename()@Adaptor extends CommonTreeAdaptor {
 
   public void generateTreeFile(ModuleList moduleList, Writer writer)
     throws java.io.IOException {
+    String packagePrefix =
+      environment()
+        .getStreamManager()
+          .getPackagePath().replace(File.separatorChar,'.');
     Collection operatorset = new HashSet();
     Collection slotset = new HashSet();
     try {
@@ -172,6 +176,7 @@ package @adapterPkg()@;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.*;
+import @packagePrefix@.@grammarName@Parser;
 
 public class @filename()@Tree extends CommonTree {
 
@@ -237,7 +242,6 @@ public class @filename()@Tree extends CommonTree {
 
     termIndex++;
     /* Instantiate the term if needed */
-    }
   }
 ]%);
     writer.write(%[
@@ -331,7 +335,8 @@ public class @filename()@Tree extends CommonTree {
           `CodeList(
               Code("      case "+grammarName+"Parser."),
               Code(opName),
-              Code(":\n")
+              Code(":\n"),
+              Code("      {\n")
               );
         %match(prod) {
           Slots[Slots=slotList] -> {
@@ -354,7 +359,7 @@ public class @filename()@Tree extends CommonTree {
                   Code("          "),
                   Code("case "+idx+":\n"),
                   Code("            "),
-                  Code(slot.getName() + " = ("),
+                  Code(slot.getName() + " = "),
                   cast*,
                   Code(";\n")
                   );
@@ -386,7 +391,7 @@ public class @filename()@Tree extends CommonTree {
                 cast*,
                 Code(";\n"),
                 Code("        "),
-                FullSortClass(sortDecl),
+                FullOperatorClass(op),
                 Code(" list = ("),
                 FullOperatorClass(op),
                 Code(") inAstTerm;\n"),
@@ -395,7 +400,9 @@ public class @filename()@Tree extends CommonTree {
                 );
           }
         }
-        code = `CodeList(code,Code("        break;\n"));
+        code = `CodeList(code,
+            Code("        break;\n"),
+            Code("        }\n"));
         CodeGen.generateCode(code,writer);
       }
     }
