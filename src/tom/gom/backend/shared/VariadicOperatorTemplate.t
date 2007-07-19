@@ -52,7 +52,6 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     %match(gomClass) {
       VariadicOperatorClass[AbstractType=abstractType,
                             SortName=sortName,
-                            Mapping=mapping,
                             Empty=empty,
                             Cons=cons] -> {
         this.abstractType = `abstractType;
@@ -148,6 +147,29 @@ writer.write(%[
       return rev;
     } else {
       return this;
+    }
+  }
+
+  public @fullClassName(sortName)@ add(@domainClassName@ element) {
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
+      if (tl instanceof @className()@) {
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).add(element));
+      } else {
+]%);
+    if(fullClassName(sortName)==domainClassName) {
+      writer.write(%[
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),@fullClassName(cons.getClassName())@.make(tl,element));
+]%);
+    } else {
+      writer.write(%[
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),@fullClassName(cons.getClassName())@.make(element,tl));
+]%);
+    }
+    writer.write(%[
+      }
+    } else {
+      return @fullClassName(cons.getClassName())@.make(element,this);
     }
   }
 

@@ -103,6 +103,16 @@ public class TestList extends TestCase {
     assertEquals(l,list);
   }
 
+  public void testZeroAdd() {
+    List l = `conc();
+    assertEquals(`conc(a()),((conc)l).add(`a()));
+  }
+
+  public void testOneAdd() {
+    List l = `conc(a());
+    assertEquals(`conc(a(),b()),((conc)l).add(`b()));
+  }
+
   public void testZeroReverse() {
     List l = `conc();
     assertEquals(getListReverse(l),l.reverse());
@@ -151,7 +161,6 @@ public class TestList extends TestCase {
     }
     return array;
   }
-
 
   public static int getListLength(List l) {
     %match(List l) {
