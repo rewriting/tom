@@ -5,7 +5,7 @@
   </description>
   <property name="javacSource" value="1.5"/>
   <property name="javacTarget" value="1.5"/>
-  <property name="optimize"   value="on"/> 
+  <property name="optimize"   value="off"/> 
   <property name="optimize2"   value="off"/>
  
   <property environment="env"/>
@@ -25,31 +25,40 @@
 
   <target name="build" depends="init">
     <gom config="${gomconfigfile}"
-         srcdir="${lemu.src}"
-         destdir="${lemu.gen}">
-      <include name="*.gom"/>
+      srcdir="${lemu.src}/lambdapp"
+         destdir="${lemu.gen}"
+         package="lambdapp">
+         <include name="**/*.gom"/>
     </gom>
+    <gom config="${gomconfigfile}"
+      srcdir="${lemu.src}/lemu"
+         destdir="${lemu.gen}"
+         package="lemu">
+         <include name="**/*.gom"/>
+    </gom>
+
+
     <tom.preset srcdir="${lemu.src}"
       destdir="${lemu.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
       <exclude name="**/LJ2NJ.t"/>
     </tom.preset>
-    <tom.preset outputfile="${lemu.gen}/SeqWalker.g"
-                options="-I ${lemu.gen}"
-                srcdir="${lemu.src}"> 
+    <tom.preset outputfile="${lemu.gen}/lemu/SeqWalker.g"
+      options="-I ${lemu.gen}/lemu"
+      srcdir="${lemu.src}/lemu"> 
       <include name="SeqWalker.g.t"/>
     </tom.preset>
 
     <!-- LAMBDA -->
-    <tom.preset outputfile="${lemu.gen}/LambdaParser.g"
-      options="-I ${lemu.gen}"
-      srcdir="${lemu.src}"> 
+    <tom.preset outputfile="${lemu.gen}/lambdapp/LambdaParser.g"
+      options="-I ${lemu.gen}/lambdapp"
+      srcdir="${lemu.src}/lambdapp"> 
       <include name="LambdaParser.g.t"/>
     </tom.preset>
 
-    <tomantlr target="${lemu.gen}/LambdaParser.g"
-              outputdirectory="${lemu.gen}">
+    <tomantlr target="${lemu.gen}/lambdapp/LambdaParser.g"
+      outputdirectory="${lemu.gen}/lemu">
       <classpath refid="tom.classpath"/>
     </tomantlr>
  
@@ -61,27 +70,18 @@
       <classpath refid="tom.classpath"/>
     </taskdef>
 
-    <antlr3 target="${lemu.src}/Seq.g"
-            outputdirectory="${lemu.gen}">
+    <antlr3 target="${lemu.src}/lemu/Seq.g"
+      outputdirectory="${lemu.gen}/lemu">
 	    <classpath refid="tom.classpath"/>
     </antlr3>
-    <antlr3 target="${lemu.gen}/SeqWalker.g"
-            outputdirectory="${lemu.gen}">
+    <antlr3 target="${lemu.gen}/lemu/SeqWalker.g"
+      outputdirectory="${lemu.gen}/lemu">
 	    <classpath refid="tom.classpath"/>
     </antlr3>
 
-    <!--
-    <tomantlr target="${lemu.src}/SeqParser.g"
-              outputdirectory="${lemu.gen}">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
-    <tomantlr target="${lemu.gen}/SeqWalker.g"
-              outputdirectory="${lemu.gen}">
-    	<classpath refid="tom.classpath"/> 	
-      </tomantlr>
-      -->
-    <javac.preset destdir="${lemu.build}">
-      <src path="${lemu.gen}:${lemu.src}"/>
+    <javac.preset destdir="${lemu.build}" fork="yes">
+      <src path="${lemu.src}"/>
+      <src path="${lemu.gen}"/>
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
