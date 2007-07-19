@@ -176,19 +176,16 @@ import org.antlr.runtime.tree.*;
 public class @filename()@Tree extends CommonTree {
 
   private int termIndex = 0;
-  private int childCount = 0;
   /* Use SharedObject as type, as most general type */
   private shared.SharedObject inAstTerm = null;
 
   public @filename()@Tree(CommonTree node) {
     super(node);
     this.token = node.token;
-    initAstTerm(token);
   }
 
   public @filename()@Tree(Token t) {
     this.token = t;
-    initAstTerm(t);
   }
 
 ]%);
@@ -218,36 +215,12 @@ public class @filename()@Tree extends CommonTree {
     return inAstTerm;
   }
 
-  private void initAstTerm(Token t) {
-    if(null==t) {
-      return;
-    }
-    switch (t.getType()) {
-]%);
-    /* generate case statement for each constructor */
-    it = operatorset.iterator();
-    while(it.hasNext()) {
-      OperatorDecl op = (OperatorDecl) it.next();
-      try {
-        `GenerateInitCase(writer, grammarName).visitLight(op);
-      } catch (VisitFailure f) {
-        throw new GomRuntimeException("GenerateInitCase should not fail");
-      }
-    }
-    writer.write(%[
-    }
-  }
-
   public void addChild(Tree t) {
     super.addChild(t);
     if (null==t) {
       return;
     }
     @filename()@Tree tree = (@filename()@Tree) t;
-    shared.SharedObject trm = tree.getTerm();
-    if (null==trm || null==inAstTerm) {
-      return;
-    }
     /* Depending on the token number and the child count, fill the correct field */
     switch (this.token.getType()) {
 ]%);
@@ -351,37 +324,6 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-  %strategy GenerateInitCase(writer:Writer,grammar:String) extends Identity() {
-    visit OperatorDecl {
-      opDecl@OperatorDecl[Name=opName,Prod=Slots[Slots=slotList]] -> {
-        Code initTerm = `Code("");
-        if(0 == `slotList.length()) {
-          initTerm = `CodeList(
-              Code("        inAstTerm = "),
-              FullOperatorClass(opDecl),
-              Code(".make();\n")
-              );
-        }
-        Code code =
-          `CodeList(
-              Code("      case "+grammar+"Parser."),
-              Code(opName),
-              Code(":\n"),
-              Code("        childCount = "),
-              Code(Integer.toString(slotList.length())),
-              Code(";\n"),
-              initTerm,
-              Code("        break;\n")
-           );
-        try {
-          CodeGen.generateCode(code,writer);
-        } catch (IOException e) {
-          throw new VisitFailure("IOException " + e);
-        }
-      }
-    }
-  }
-
   protected void generateAddChildCase(OperatorDecl op, Writer writer) throws IOException {
     %match(op) { 
       op@OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod] -> {
@@ -400,20 +342,21 @@ public class @filename()@Tree extends CommonTree {
                 FullOperatorClass(op),
                 Code(") inAstTerm;\n"),
                 Code("        "),
-                Code("switch(childCount) {\n")
+                Code("switch(termIndex) {\n")
                 );
             int idx = 0;
             SlotList sList = `slotList;
             while(sList.isConsconcSlot()) {
               Slot slot = sList.getHeadconcSlot();
               sList = sList.getTailconcSlot();
+              Code cast = genGetSubterm(slot.getSort());
               code = `CodeList(code,
                   Code("          "),
                   Code("case "+idx+":\n"),
                   Code("            "),
                   Code(slot.getName() + " = ("),
-                  FullSortClass(slot.getSort()),
-                  Code(") trm;\n")
+                  cast*,
+                  Code(";\n")
                   );
               if(idx == `slotList.length() - 1) {
                 code = `CodeList(code,
@@ -435,12 +378,13 @@ public class @filename()@Tree extends CommonTree {
                 );
           }
           Variadic[Sort=domainSort] -> {
+            Code cast = genGetSubterm(`domainSort);
             code = `CodeList(code,
                 Code("        "),
                 FullSortClass(domainSort),
-                Code(" elem = ("),
-                FullSortClass(domainSort),
-                Code(") trm;\n"),
+                Code(" elem = "),
+                cast*,
+                Code(";\n"),
                 Code("        "),
                 FullSortClass(sortDecl),
                 Code(" list = ("),
@@ -455,6 +399,30 @@ public class @filename()@Tree extends CommonTree {
         CodeGen.generateCode(code,writer);
       }
     }
+  }
+
+  protected Code genGetSubterm(SortDecl sort) {
+    Code code = `CodeList();;
+    %match(sort) {
+      SortDecl[] -> {
+        code = `CodeList(code,
+            Code("("),
+            FullSortClass(sort),
+            Code(") tree.getTerm()"));
+      }
+      BuiltinSortDecl[Name=name] -> {
+        if("int".equals(`name)) {
+          code = `CodeList(code,
+              Code("Integer.parseInt(t.getText())"));
+        } else if ("String".equals(`name)) {
+          code = `CodeList(code,
+              Code("t.getText()"));
+        } else {
+          throw new RuntimeException("Unsupported builtin");
+        }
+      }
+    }
+    return code;
   }
 
   protected String genArgsList(SlotList slots) {
