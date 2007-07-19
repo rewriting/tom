@@ -99,6 +99,8 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage deprecatedSyntax =
     new GomMessage("The Vas compatibility syntax is deprecated, "+
         "and should be converted to plain Gom syntax");
+  public static final GomMessage unableToCloseReaderMessage =
+    new GomMessage("An error occured when closing reader");  
 
   // verbose messages
   public static final GomMessage gomParsingPhase =
