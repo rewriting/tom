@@ -244,10 +244,7 @@ matchBlock: {
      */
     //visit Pattern {
     visit PatternInstruction {
-      pa@PatternInstruction(Pattern(subjectList,termList, guardList), action, optionList) -> {
-        //System.out.println("start pa: " + `pa);
-        //System.out.println("contextType = " + `contextType);
-      //Pattern(subjectList,termList, guardList) -> {
+      pa@PatternInstruction(Pattern(subjectList,termList), action, optionList) -> {
         %match(contextType) {
           TypeList(typeList) -> {
             //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
@@ -273,24 +270,16 @@ matchBlock: {
             //System.out.println("newTermList: " + newTermList);
             //System.out.println("newSubjectList: " + newSubjectList);
 
-            // process a list of guards
             // build the list of variables that occur in the lhs
             HashSet set = new HashSet();
             TomBase.collectVariable(set,newTermList);
             TomList varList = ASTFactory.makeList(set);
-            //System.out.println("varList = " + varList);
-            TomList newGuardList = `concTomTerm();
-            while(!`guardList.isEmptyconcTomTerm()) {
-              newGuardList = `concTomTerm(newGuardList*, (TomTerm)expander.replaceInstantiatedVariable(varList, guardList.getHeadconcTomTerm()));
-              `guardList = `guardList.getTailconcTomTerm();
-            }
-            //System.out.println("newGuardList = " + newGuardList);
             Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
             //System.out.println("newAction1 = " + newAction);
             newAction = (Instruction)`expander.expandVariable(`EmptyType(),`newAction);
             //OptionList newOptionList = (OptionList)`expander.expandVariable(`EmptyType(),``optionList);
             OptionList newOptionList = `optionList;
-            return `PatternInstruction(Pattern(newSubjectList,newTermList,newGuardList), newAction,newOptionList);
+            return `PatternInstruction(Pattern(newSubjectList,newTermList), newAction,newOptionList);
             //return `Pattern(subjectList,newTermList,newGuardList);
           }
 

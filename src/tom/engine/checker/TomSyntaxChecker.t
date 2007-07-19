@@ -588,10 +588,9 @@ block: {
 
     // we now compare pattern to its definition
     %match(PatternInstructionList patternInstructionList) {
-      concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms,Guards=guards]], _*) -> {
+      concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms]], _*) -> {
         // control each pattern vs the match definition
-        `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
-        `verifyWhenPattern(guards);
+        `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);        
       }
     }
   }
@@ -633,16 +632,6 @@ block: {
     }
   }
 
-  // each term shall be valid
-  private  void verifyWhenPattern(TomList termList) {
-    %match(TomList termList) {
-      concTomTerm(_*, term, _*) -> {
-        // the type is boolean, no variablestar, toplevel and permissive
-        `validateTerm(term, TomTypeAlone("boolean") , false, true, true);
-      }
-    }
-  }
-
   // ///////////////////////////////
   // STRATEGY VERIFICATION CONCERNS /
   // ///////////////////////////////
@@ -662,11 +651,10 @@ block: {
         typeMatchArgs.add(`type);
         // we now compare pattern to its definition
         %match(PatternInstructionList patternInstructionList) {
-          concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms,Guards=guards]], _*) -> {
+          concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms]], _*) -> {
             // control each pattern vs the match definition
             // always 1 expected argument in visit
-            `verifyMatchPattern(terms, typeMatchArgs, 1);
-            `verifyWhenPattern(guards);
+            `verifyMatchPattern(terms, typeMatchArgs, 1);            
           }
         }
       }

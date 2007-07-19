@@ -107,9 +107,8 @@ TomTerm =
    *
    * @param SubjectList the list of subjects against which the pattern is matched
    * @param TomList the list of terms 
-   * @param Guards a list of constraints
    */
-Pattern = Pattern(SubjectList:TomList,TomList:TomList,Guards:TomList)
+Pattern = Pattern(SubjectList:TomList,TomList:TomList)
   /**
    * <code>PatternInstruction</code> a tuple (Pattern,Action)
    *

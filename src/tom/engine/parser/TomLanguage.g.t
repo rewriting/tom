@@ -228,8 +228,6 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     LinkedList listOrgTrackPattern = new LinkedList();
     LinkedList blockList = new LinkedList();
 
-    LinkedList matchGuardsList = new LinkedList();
-
     Option option = null;
 
     clearText();
@@ -258,11 +256,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                                    currentFile(), getLine()));
 
                 }
-            )* 
-            {
-                matchGuardsList.clear();
-            }
-            ( WHEN matchGuards[matchGuardsList] )?
+            )*
             ARROW t:LBRACE
             {
                 // update for new target block
@@ -302,10 +296,8 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                         OriginalText(Name(patternText))
                     );
 
-                    //System.out.println("pattern = " + `Pattern(subjectList,patterns,ASTFactory.makeList(matchGuardsList)));
-
                     list.add(`PatternInstruction(
-                            Pattern(subjectList,patterns,ASTFactory.makeList(matchGuardsList)),
+                            Pattern(subjectList,patterns),
                             RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
                             optionList)
                     );
@@ -325,22 +317,6 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
-            ( 
-                COMMA {text.append('\n');}  
-                term = annotedTerm {list.add(term);}
-            )*
-        )
-    ;
-
-matchGuards [LinkedList list] throws TomException
-{
-    TomTerm term = null;
-}
-    :   (
-             term = annotedTerm 
-            {
-                list.add(term);
-            }
             ( 
                 COMMA {text.append('\n');}  
                 term = annotedTerm {list.add(term);}

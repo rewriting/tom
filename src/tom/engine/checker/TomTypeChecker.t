@@ -160,14 +160,6 @@ public class TomTypeChecker extends TomChecker {
       ArrayList variableList = new ArrayList();
       TomBase.collectVariable(variableList, pattern);
       verifyVariableTypeListCoherence(variableList);
-      // verify variables in WHEN instruction
-      // collect unknown variables
-      try {
-        `TopDown(collectUnknownAppls(this)).visit(pattern.getGuards());
-      } catch(tom.library.sl.VisitFailure e) {
-        System.out.println("strategy failed");
-      }
-
       patternInstructionList = patternInstructionList.getTailconcPatternInstruction();
     }
   }

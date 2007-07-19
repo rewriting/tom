@@ -45,6 +45,11 @@ Instruction =
    */
 
   | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
+  | AndInstruction(Instruction*)
+  | OrInstruction(Instruction*)
+  
+AndInstruction:AU() { }
+OrInstruction:AU() { }  
 
 InstructionList = concInstruction(Instruction*)
 concInstruction:make_insert(e,l) {

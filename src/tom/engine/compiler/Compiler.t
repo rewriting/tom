@@ -189,7 +189,7 @@ matchBlock: {
                   negativePattern = `concPattern(negativePattern*,pattern);
 
                   /* generate equality checks */
-                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList,concTomTerm()),newAction, option);
+                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList),newAction, option);
                   /* do nothing */
                   break matchBlock;
                 }
