@@ -384,7 +384,7 @@ public class @filename()@Tree extends CommonTree {
 
   protected void generateAddChildCase(OperatorDecl op, Writer writer) throws IOException {
     %match(op) { 
-      OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod] -> {
+      op@OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod] -> {
         Code code =
           `CodeList(
               Code("      case "+grammarName+"Parser."),
@@ -393,7 +393,46 @@ public class @filename()@Tree extends CommonTree {
               );
         %match(prod) {
           Slots[Slots=slotList] -> {
-            // TODO
+            code = `CodeList(code,
+                Code("        "),
+                FullSortClass(sortDecl),
+                Code(" term = ("),
+                FullOperatorClass(op),
+                Code(") inAstTerm;\n"),
+                Code("        "),
+                Code("switch(childCount) {\n")
+                );
+            int idx = 0;
+            SlotList sList = `slotList;
+            while(sList.isConsconcSlot()) {
+              Slot slot = sList.getHeadconcSlot();
+              sList = sList.getTailconcSlot();
+              code = `CodeList(code,
+                  Code("          "),
+                  Code("case "+idx+":\n"),
+                  Code("            "),
+                  Code(slot.getName() + " = ("),
+                  FullSortClass(slot.getSort()),
+                  Code(") trm;\n")
+                  );
+              if(idx == `slotList.length() - 1) {
+                code = `CodeList(code,
+                    Code("            inAstTerm = "),
+                    FullOperatorClass(op),
+                    Code(".make("),
+                    Code(genArgsList(slotList)),
+                    Code(");\n")
+                    );
+              }
+              code = `CodeList(code,
+                  Code("            break;\n")
+                  );
+              idx++;
+            }
+            code = `CodeList(code,
+                Code("        "),
+                Code("}\n")
+                );
           }
           Variadic[Sort=domainSort] -> {
             code = `CodeList(code,
@@ -405,7 +444,7 @@ public class @filename()@Tree extends CommonTree {
                 Code("        "),
                 FullSortClass(sortDecl),
                 Code(" list = ("),
-                FullSortClass(sortDecl),
+                FullOperatorClass(op),
                 Code(") inAstTerm;\n"),
                 Code("        "),
                 Code("inAstTerm = list.add(elem);\n")
@@ -416,6 +455,20 @@ public class @filename()@Tree extends CommonTree {
         CodeGen.generateCode(code,writer);
       }
     }
+  }
+
+  protected String genArgsList(SlotList slots) {
+    String res = "";
+    SlotList sList = slots;
+    while(sList.isConsconcSlot()) {
+      Slot slot = sList.getHeadconcSlot();
+      sList = sList.getTailconcSlot();
+      res += slot.getName();
+      if(sList.isConsconcSlot()) {
+        res += ", ";
+      }
+    }
+    return res;
   }
 
   protected String filename() {
