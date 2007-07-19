@@ -1,6 +1,8 @@
+package lemu;
+
 //import signature.signature.types.*;
-import sequents.*;
-import sequents.types.*;
+import lemu.sequents.*;
+import lemu.sequents.types.*;
 
 import java.util.*;
 

@@ -1,5 +1,7 @@
-import sequents.*;
-import sequents.types.*;
+package lemu;
+
+import lemu.sequents.*;
+import lemu.sequents.types.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,8 +15,7 @@ import java.io.*;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 
-
-class Utils {
+public class Utils {
 
   %include { sequents/sequents.tom }
   %include { sl.tom }
@@ -24,7 +25,7 @@ class Utils {
 
 
   public static Prop forAllList(StringList l, Prop p) {
-    sequents.types.Prop res = p;
+    Prop res = p;
     %match(StringList l) {
       (_*,v,_*) -> { res = `forAll(v,res); }
     }
@@ -32,7 +33,7 @@ class Utils {
   }
 
   public static Prop existsList(StringList l, Prop p) {
-    sequents.types.Prop res = p;
+    Prop res = p;
     %match(StringList l) {
       (_*,v,_*) -> { res = `exists(v,res); }
     }

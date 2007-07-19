@@ -1,10 +1,11 @@
-//header {
-//package parsingtests;
-//}
+
+header {
+ package lambdapp;
+}
 
 {
-  import lambda.*;
-  import lambda.types.*;
+  import lambdapp.lambda.*;
+  import lambdapp.lambda.types.*;
 }
 
 

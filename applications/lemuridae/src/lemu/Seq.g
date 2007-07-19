@@ -1,3 +1,4 @@
+
 grammar Seq;
 
 options {
@@ -6,6 +7,14 @@ options {
 }
 
 tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; }
+
+@parser::header {
+  package lemu;
+}
+
+@lexer::header {
+  package lemu;
+}
 
 pred: implpred (EQUIV^ pred)*;
 

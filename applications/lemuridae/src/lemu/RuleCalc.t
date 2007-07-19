@@ -1,5 +1,7 @@
-import sequents.*;
-import sequents.types.*;
+package lemu;
+
+import lemu.sequents.*;
+import lemu.sequents.types.*;
 
 //import tom.library.strategy.mutraveler.MuTraveler;
 //import tom.library.strategy.mutraveler.MuStrategy;

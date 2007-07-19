@@ -1,8 +1,10 @@
-import sequents.*;
-import sequents.types.*;
+package lemu;
 
-import urban.*;
-import urban.types.*;
+import lemu.sequents.*;
+import lemu.sequents.types.*;
+
+import lemu.urban.*;
+import lemu.urban.types.*;
 
 import tom.library.sl.*;
 

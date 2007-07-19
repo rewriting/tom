@@ -1,8 +1,10 @@
-import sequents.*;
-import sequents.types.*;
+package lemu;
 
-import urban.*;
-import urban.types.*;
+import lemu.sequents.*;
+import lemu.sequents.types.*;
+
+import lemu.urban.*;
+import lemu.urban.types.*;
 
 import tom.library.sl.*;
 
@@ -823,7 +825,7 @@ b :{
         Rule r = applicableInAuto(newRules, `p, false);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
         if(r != null) strat = `ApplyRule(r,p,hm); 
-        else strat = `ChoiceV(ApplyAxiom(),ApplyTop(),ApplyAndR(p),ApplyOrR(p),ApplyImpliesR(p),ApplyForAllR(p));
+        else strat = `Choice(ApplyAxiom(),ApplyTop(),ApplyAndR(p),ApplyOrR(p),ApplyImpliesR(p),ApplyForAllR(p));
         try {
           Tree res = (Tree) strat.visit(`t); 
           return res;
@@ -836,7 +838,7 @@ b :{
         Rule r = applicableInAuto(newRules, `p, true);
         HashMap<Term,Term> hm = new HashMap<Term,Term>();
         if(r != null) strat = `ApplyRule(r,p,hm); 
-        else strat = `ChoiceV(ApplyBottom(),ApplyAndL(p),ApplyOrL(p),ApplyImpliesL(p),ApplyExistsL(p));
+        else strat = `Choice(ApplyBottom(),ApplyAndL(p),ApplyOrL(p),ApplyImpliesL(p),ApplyExistsL(p));
         try{
           Tree res = (Tree) strat.visit(`t); 
           return res;
@@ -997,13 +999,13 @@ b :{
             Strategy strat;
 
             if (env.focus_left)
-              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active, this), ApplyExistsL(active), ApplyBottom());
+              strat = `Choice(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active, this), ApplyExistsL(active), ApplyBottom());
             else
-              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active, this), ApplyTop());
+              strat = `Choice(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active, this), ApplyTop());
 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            writeToOutputln("Can't apply intro" + e.getMessage());
+            writeToOutputln("Can't apply intro " + e.getMessage());
           }
         }
 
@@ -1015,7 +1017,7 @@ b :{
             else strat = `ApplyContractionR(active);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            writeToOutputln("Can't apply duplicate" + e.getMessage());
+            writeToOutputln("Can't apply duplicate " + e.getMessage());
           }
         }
 
@@ -1027,7 +1029,7 @@ b :{
             else strat = `ApplyWeakR(active);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            writeToOutputln("Can't apply duplicate" + e.getMessage());
+            writeToOutputln("Can't apply duplicate " + e.getMessage());
           }
         }
 
@@ -1038,7 +1040,7 @@ b :{
             Strategy strat = `SafeTopDown(Try(ApplyAuto(emptylist)));
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            writeToOutputln("Can't apply intros" + e.getMessage());
+            writeToOutputln("Can't apply intros " + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -1072,7 +1074,7 @@ b :{
             Strategy strat = `ApplyAxiom(); 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
-            writeToOutputln("can't apply rule axiom" + e.getMessage());
+            writeToOutputln("Can't apply rule axiom " + e.getMessage());
           }
         }
 
@@ -1082,7 +1084,7 @@ b :{
             Strategy strat = `ApplyCut(prop); 
             tree = (Tree) ((Strategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (VisitFailure e) {
-            writeToOutputln("can't apply cut rule : " + e.getMessage());
+            writeToOutputln("Can't apply cut rule : " + e.getMessage());
           }
         }
 
@@ -1092,7 +1094,7 @@ b :{
             tree = theoremCommand(env.tree, currentPos, `name);
             //System.out.println(tree);
           } catch(Exception e) {
-            writeToOutputln("can't apply theorem " + `name + " : " + e.getMessage());
+            writeToOutputln("Can't apply theorem " + `name + " : " + e.getMessage());
           }
         }
 
@@ -1103,7 +1105,7 @@ b :{
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
             //old: tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
           } catch (VisitFailure e) {
-            writeToOutputln("can't apply cut rule : " + e.getMessage());
+            writeToOutputln("Can't apply cut rule : " + e.getMessage());
           }
         }
 

@@ -27,18 +27,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//import tom.library.sl.*;
+package lambdapp;
+
 import java.util.*;
 
-import lambda.*;
-import lambda.types.*;
+import lambdapp.lambda.*;
+import lambdapp.lambda.types.*;
 
 public class LambdaConverter {
 
   private static int comptVariable = 0;	
-//  %include { sl.tom }
   %include {lambda/lambda.tom}
-//  %include {lambdaterm/_lambdaterm.tom}
   %include {util/HashMap.tom}
 
 

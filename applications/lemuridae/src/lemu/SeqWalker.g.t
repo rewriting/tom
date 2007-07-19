@@ -6,11 +6,15 @@ options {
     backtrack=true;
 }
 
+@header{
+  package lemu;
+}
+
 @members{
   %include { sequents/sequents.tom }
 }
 
-pred returns [sequents.types.Prop p]
+pred returns [lemu.sequents.types.Prop p]
       : i=ID { p = `relationAppl($i.text, concTerm()); } 
       | BOTTOM { p = `bottom(); }
       | TOP { p = `top(); }
@@ -25,12 +29,12 @@ pred returns [sequents.types.Prop p]
       | ^(EXISTS vl=varlist a=pred) { p = Utils.existsList(vl,a); }
       ;
 
-varlist returns [sequents.types.StringList l] 
+varlist returns [lemu.sequents.types.StringList l] 
   : ^(VARLIST i=ID) vl=varlist { l = `strlist(vl*,$i.text); } 
   | ^(VARLIST i=ID) { l = `strlist($i.text); } 
   ;
 
-term_list returns [sequents.types.TermList l] 
+term_list returns [lemu.sequents.types.TermList l] 
 @init {
   l = `concTerm();
 }
@@ -38,7 +42,7 @@ term_list returns [sequents.types.TermList l]
     | ^(COMMA left=term_list t=term) {  l = `concTerm(left*,t); }
     ;
 
-term returns [sequents.types.Term t] 
+term returns [lemu.sequents.types.Term t] 
     : v=ID { t = `Var($v.text);  }
     | i=NUMBER {
         try { t = PrettyPrinter.intToPeano(Integer.parseInt($i.text)); }
@@ -52,7 +56,7 @@ term returns [sequents.types.Term t]
     | ^(FAPPL f=ID) { t = `funAppl($f.text,concTerm()); }
     ;
 
-command returns [sequents.types.Command c] 
+command returns [lemu.sequents.types.Command c] 
   : ^(PROOF i1=ID l=pred) { c = `proof($i1.text,l); }
   | ^(RRULE l=pred r=pred) { c = `rewritesuper(l,r); }
   | ^(PRULE l=pred r=pred) { c = `rewriteprop(l,r); }
@@ -73,7 +77,7 @@ command returns [sequents.types.Command c]
   | EOF { c = `endoffile(); }
   ;
 
-proofcommand returns [sequents.types.ProofCommand c]
+proofcommand returns [lemu.sequents.types.ProofCommand c]
   : i=ID { c = `proofCommand($i.text); }
   | ^(FOCUS v=ID) {c = `focusCommand($v.text); }
   | ^(RRULE n=NUMBER) {c = `ruleCommand(Integer.parseInt($n.text)); }
@@ -93,26 +97,26 @@ ident returns [String s]
   : i=ID { s = $i.text; }
   ;
 
-rule1 returns [sequents.types.Sig s]
+rule1 returns [lemu.sequents.types.Sig s]
   : ^(VOIDRULEINDUCT h=ctor) { s = `Sig(clist(h)); }
   | ^(RULEINDUCT h=ctor l=ctor_list) { s = `Sig(clist(h,l*)); }
   ;
 
-ctor_list returns [sequents.types.Ctorlist cl]
+ctor_list returns [lemu.sequents.types.Ctorlist cl]
   : ^(CTORLIST c=ctor) tail=ctor_list { cl = `clist(c,tail*); }
   | ^(CTORLIST c=ctor) { cl = `clist(c); }
   ;
 
-ctor returns [sequents.types.Ctor c]
+ctor returns [lemu.sequents.types.Ctor c]
   : ^(RULECTORARITYZERO i=ID) { c = `ctor($i.text,tlist()); }
   | ^(RULECTOR i=ID tl=type_list) { c = `ctor($i.text,tl*); }
   ;
 
-type_list returns [sequents.types.TypeList tl]
+type_list returns [lemu.sequents.types.TypeList tl]
   : ^(TYPELIST t=type) tail=type_list { tl = `tlist(t,tail*); }
   | ^(TYPELIST t=type) { tl = `tlist(t); }
   ;
 
-type returns [sequents.types.Type s]
+type returns [lemu.sequents.types.Type s]
   : i = ID { s = `type($i.text); }
   ;
