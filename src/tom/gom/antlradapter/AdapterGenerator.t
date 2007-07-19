@@ -160,6 +160,13 @@ public class @filename()@Adaptor extends CommonTreeAdaptor {
 
   public void generateTreeFile(ModuleList moduleList, Writer writer)
     throws java.io.IOException {
+    Collection operatorset = new HashSet();
+    Collection slotset = new HashSet();
+    try {
+      `TopDown(Sequence(CollectOperators(operatorset),CollectSlots(slotset))).visitLight(moduleList);
+    } catch (VisitFailure f) {
+      throw new GomRuntimeException("CollectOperators should not fail");
+    }
     writer.write(%[
 package @adapterPkg()@;
 
@@ -183,6 +190,28 @@ public class @filename()@Tree extends CommonTree {
     this.token = t;
     initAstTerm(t);
   }
+]%);
+    /* Add fields for each slot : first for variadic operators, then constructor slots */
+    Iterator it = operatorset.iterator();
+    while(it.hasNext()) {
+      OperatorDecl op = (OperatorDecl) it.next();
+      try {
+        `GenerateSlots(writer).visitLight(op);
+      } catch (VisitFailure f) {
+        throw new GomRuntimeException("GenerateSlots for variadic operators should not fail");
+      }
+    }
+    it = slotset.iterator();
+    while(it.hasNext()) {
+      Slot slot = (Slot) it.next();
+      try {
+        `GenerateSlots(writer).visitLight(slot);
+      } catch (VisitFailure f) {
+        throw new GomRuntimeException("GenerateSlots for slots should not fail");
+      }
+    }
+
+    writer.write(%[
 
   public shared.SharedObject getTerm() {
     return inAstTerm;
@@ -195,23 +224,18 @@ public class @filename()@Tree extends CommonTree {
     switch (t.getType()) {
 ]%);
     /* generate case statement for each constructor */
-    try {
-      `TopDown(GenerateInitCase(writer, grammarName)).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("GenerateInitCase should not fail");
+    it = operatorset.iterator();
+    while(it.hasNext()) {
+      OperatorDecl op = (OperatorDecl) it.next();
+      try {
+        `GenerateInitCase(writer, grammarName).visitLight(op);
+      } catch (VisitFailure f) {
+        throw new GomRuntimeException("GenerateInitCase should not fail");
+      }
     }
     writer.write(%[
     }
   }
-]%);
-    /* Add fields for each slot */
-    try {
-      `TopDown(GenerateSlots(writer)).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("GenerateSlots should not fail");
-    }
-
-    writer.write(%[
 
   public void addChild(Tree t) {
     super.addChild(t);
@@ -234,9 +258,9 @@ public class @filename()@Tree extends CommonTree {
     throws java.io.IOException {
     Collection bag = new HashSet();
     try {
-      `TopDown(CollectOperators(bag)).visitLight(moduleList);
+      `TopDown(CollectOperatorNames(bag)).visitLight(moduleList);
     } catch (VisitFailure f) {
-      throw new GomRuntimeException("CollectOperators should not fail");
+      throw new GomRuntimeException("CollectOperatorNames should not fail");
     }
     Iterator it = bag.iterator();
     while(it.hasNext()) {
@@ -245,7 +269,7 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-  %strategy CollectOperators(bag:Collection) extends Identity() {
+  %strategy CollectOperatorNames(bag:Collection) extends Identity() {
     visit OperatorDecl {
       OperatorDecl[Name=name] -> {
         bag.add(`name);
@@ -253,10 +277,26 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-  %strategy GenerateSlots(writer:Writer) extends Identity() {
+  %strategy CollectOperators(bag:Collection) extends Identity() {
     visit OperatorDecl {
-      OperatorDecl[Prod=Slots[Slots=
-                     concSlot(_*,Slot[Name=name,Sort=sortDecl],_*)]] -> {
+      op@OperatorDecl[] -> {
+        bag.add(`op);
+      }
+    }
+  }
+
+  %strategy CollectSlots(bag:Collection) extends Identity() {
+    visit Slot {
+      slot@Slot[] -> {
+        bag.add(`slot);
+      }
+    }
+  }
+
+
+  %strategy GenerateSlots(writer:Writer) extends Identity() {
+    visit Slot {
+      Slot[Name=name,Sort=sortDecl] -> {
         Code code =
           `CodeList(
               Code("  "),
@@ -271,6 +311,8 @@ public class @filename()@Tree extends CommonTree {
           throw new VisitFailure("IOException " + e);
         }
       }
+    }
+    visit OperatorDecl {
       op@OperatorDecl[Name=name,Sort=sortDecl,Prod=Variadic[]] -> {
         Code code =
           `CodeList(
