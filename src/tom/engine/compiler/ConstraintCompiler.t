@@ -157,8 +157,8 @@ public class ConstraintCompiler {
         %match(subject) {
           (Variable|VariableStar)[AstType=variableType] -> { 
             freshSubjectType = `variableType;
-          }
-          sv@(BuildTerm|FunctionCall|BuildConstant)[AstName=Name(tomName)] -> {
+          }          
+          sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
             TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);				        
             if(tomSymbol != null) {
               freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
