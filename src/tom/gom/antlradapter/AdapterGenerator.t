@@ -190,6 +190,7 @@ public class @filename()@Tree extends CommonTree {
     this.token = t;
     initAstTerm(t);
   }
+
 ]%);
     /* Add fields for each slot : first for variadic operators, then constructor slots */
     Iterator it = operatorset.iterator();
@@ -242,7 +243,24 @@ public class @filename()@Tree extends CommonTree {
     if (null==t) {
       return;
     }
+    @filename()@Tree tree = (@filename()@Tree) t;
+    shared.SharedObject trm = tree.getTerm();
+    if (null==trm || null==inAstTerm) {
+      return;
+    }
     /* Depending on the token number and the child count, fill the correct field */
+    switch (this.token.getType()) {
+]%);
+
+    it = operatorset.iterator();
+    while(it.hasNext()) {
+      OperatorDecl op = (OperatorDecl) it.next();
+      generateAddChildCase(op, writer);
+    }
+
+    writer.write(%[
+      default: break;
+    }
 
     termIndex++;
     /* Instantiate the term if needed */
@@ -250,7 +268,7 @@ public class @filename()@Tree extends CommonTree {
   }
 ]%);
     writer.write(%[
-}        
+}
 ]%);
   }
 
@@ -360,6 +378,42 @@ public class @filename()@Tree extends CommonTree {
         } catch (IOException e) {
           throw new VisitFailure("IOException " + e);
         }
+      }
+    }
+  }
+
+  protected void generateAddChildCase(OperatorDecl op, Writer writer) throws IOException {
+    %match(op) { 
+      OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod] -> {
+        Code code =
+          `CodeList(
+              Code("      case "+grammarName+"Parser."),
+              Code(opName),
+              Code(":\n")
+              );
+        %match(prod) {
+          Slots[Slots=slotList] -> {
+            // TODO
+          }
+          Variadic[Sort=domainSort] -> {
+            code = `CodeList(code,
+                Code("        "),
+                FullSortClass(domainSort),
+                Code(" elem = ("),
+                FullSortClass(domainSort),
+                Code(") trm;\n"),
+                Code("        "),
+                FullSortClass(sortDecl),
+                Code(" list = ("),
+                FullSortClass(sortDecl),
+                Code(") inAstTerm;\n"),
+                Code("        "),
+                Code("inAstTerm = list.add(elem);\n")
+                );
+          }
+        }
+        code = `CodeList(code,Code("        break;\n"));
+        CodeGen.generateCode(code,writer);
       }
     }
   }
