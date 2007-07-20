@@ -42,7 +42,8 @@ import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment.Variable;
 
 /**
- * Compiles GOM source files. This task can take the following
+ * Compiles GOM source files into an Antlr adaptor.
+ * This task can take the following
  * arguments:
  * <ul>
  * <li>config</li>
@@ -52,8 +53,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>options</li>
  * <li>failonerror</li>
  * <li>fork</li>
- * <li>termgraph</li>
- * <li>pointer</li>
+ * <li>grammar</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -63,11 +63,11 @@ import org.apache.tools.ant.types.Environment.Variable;
  *
 */
 
-public class GomTask extends MatchingTask {
+public class GomAntlrAdapterTask extends MatchingTask {
 
   private Path src;
   private String options;
-  private File   destdir;
+  private File destdir;
   private String packagePrefix = null;
   private File configFile = null;
   private File[] compileList = null;
@@ -75,7 +75,7 @@ public class GomTask extends MatchingTask {
   private boolean failOnError = true;
   private boolean fork = false;
   private boolean pointer = false;
-  private boolean termgraph = false;
+  private String grammar = "";
 
   private String protectedFileSeparator = "\\"+File.separatorChar;
 
@@ -131,38 +131,6 @@ public class GomTask extends MatchingTask {
    */
   public boolean getFork() {
     return fork;
-  }
-
-  /**
-   * If true, asks the compiler for Gom signature with pointers.
-   * @param pointer if true, asks the compiler for Gom signature with pointers
-   */
-  public void setPointer(boolean pointer) {
-    this.pointer = pointer;
-  }
-
-  /**
-   * Gets the pointer flag.
-   * @return the pointer flag
-   */
-  public boolean getPointer() {
-    return pointer;
-  }
-
-  /**
-   * If true, asks the compiler for Gom signature with pointers.
-   * @param termgraph if true, asks the compiler for Gom signature with pointers
-   */
-  public void setTermgraph(boolean termgraph) {
-    this.termgraph = termgraph;
-  }
-
-  /**
-   * Gets the termgraph flag.
-   * @return the termgraph flag
-   */
-  public boolean getTermgraph() {
-    return termgraph;
   }
 
   /**
@@ -236,7 +204,7 @@ public class GomTask extends MatchingTask {
 
     TomRegexpPatternMapper m = new TomRegexpPatternMapper();
     m.setFrom("((.*?" + protectedFileSeparator + ")?)(\\w+)\\.gom");
-    m.setTo("\\1\\L\\3" + protectedFileSeparator + "\\3.tom");
+    m.setTo("\\1\\L\\3" + protectedFileSeparator + "\\3TokenList.txt");
     SourceFileScanner sfs = new SourceFileScanner(this);
     File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
 
@@ -264,8 +232,6 @@ public class GomTask extends MatchingTask {
         var.setKey("tom.home");
         var.setValue(tom_home);
         javaRunner.addSysproperty(var);
-      } else {
-        log("\"tom.home\" is not defined, Tom hooks may not work");
       }
 
       // scan sourcedir, build list
@@ -307,13 +273,10 @@ public class GomTask extends MatchingTask {
       if(getVerbose() == true) {
         javaRunner.createArg().setValue("--verbose");
       }
-      if(getTermgraph() == true) {
-        javaRunner.createArg().setValue("--termgraph");
+      if(getGrammar() != null && getGrammar().length() > 0) {
+        javaRunner.createArg().setValue("--grammar");
+        javaRunner.createArg().setValue(getGrammar());
       }
-      if(getPointer() == true) {
-        javaRunner.createArg().setValue("--pointer");
-      }
-
 
       for (int i = 0; i < compileList.length; i++) {
         javaRunner.createArg().setValue(compileList[i].getAbsolutePath());
@@ -332,7 +295,7 @@ public class GomTask extends MatchingTask {
         throw (BuildException)e;
       } else {
         e.printStackTrace();
-        throw new BuildException("Gom generation failed");
+        throw new BuildException("GomAntlrAdaptor generation failed");
       }
     }
   }
@@ -363,13 +326,25 @@ public class GomTask extends MatchingTask {
     } else {
       String tom_home = getProject().getProperty("tom.home");
       try {
-        return new File(tom_home,File.separator+"Gom.xml").getCanonicalFile();
+        return new File(tom_home,File.separator+"GomAntlrAdaptor.xml").getCanonicalFile();
       } catch (IOException e) {
         throw new BuildException(
-            "Unable to find Gom.xml in "+tom_home,
+            "Unable to find GomAntlrAdaptor.xml in "+tom_home,
             getLocation());
       }
     }
+  }
+
+  /**
+   * Set the grammar name
+   * @param grammarName the grammar name
+   */
+  public void setGrammar(String grammarName) {
+    this.grammar = grammarName;
+  }
+
+  public String getGrammar() {
+    return grammar;
   }
 
   /**

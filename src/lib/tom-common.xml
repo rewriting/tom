@@ -17,6 +17,7 @@
 
   <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
   <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
+  <property name="gomantlradapterconfigfile"  location="${tom.home}/GomAntlrAdaptor.xml"/>
 
   <path id="external.classpath">
     <fileset dir="${user.home}">
@@ -46,6 +47,9 @@
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
+    <taskdef name="gomantlradapter"
+             classname="tom.gom.tools.ant.GomAntlrAdapterTask"
+             classpathref="tom.classpath"/>
     <taskdef name="antlrmapper"
              classname="tom.antlrmapper.AntTask"
              classpathref="tom.classpath"/>
@@ -69,6 +73,12 @@
       <gom config="${gomconfigfile}">
         <classpath refid="tom.classpath"/>
       </gom>
+    </presetdef>
+
+    <presetdef name="gomantlradapter.preset">
+      <gomantlradapter config="${gomantlradapterconfigfile}">
+        <classpath refid="tom.classpath"/>
+      </gomantlradapter>
     </presetdef>
 
     <presetdef name="javac.preset">
