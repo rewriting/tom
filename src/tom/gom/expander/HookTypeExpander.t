@@ -80,7 +80,13 @@ public class HookTypeExpander {
 
             /* Process hooks attached to a module */
             %match(prod) {
-              hook@Hook[NameType=KindModule(),Name=mname] -> {
+              hook@Hook[NameType=KindModule(),HookType=hkind,Name=mname] -> {
+                //Graph-rewrite rules hooks are only allowed for sorts
+                if(`hkind.getkind().equals("graphrules")) {
+                  getLogger().log(Level.SEVERE,
+                      "Grapphrules hooks are authorised only on sorts");
+
+                }
                 if(`mname.equals(`moduleName)) {
                   ModuleDecl mdecl = getModuleDecl(`mname,moduleList);
                   HookDeclList newDeclList =
@@ -96,7 +102,13 @@ public class HookTypeExpander {
                 HookDeclList newDeclList = makeHookDeclList(`hook,`CutSort(sdecl));
                 hookList = `concHookDecl(newDeclList*,hookList*);
               }
-              hook@Hook[NameType=KindOperator(),Name=oname] -> {
+              hook@Hook[NameType=KindOperator(),HookType=hkind,Name=oname] -> {
+                //Graph-rewrite rules hooks are only allowed for sorts
+                if(`hkind.getkind().equals("graphrules")) {
+                  getLogger().log(Level.SEVERE,
+                      "Grapphrules hooks are authorised only on sorts");
+
+                }
                 OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
                 HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
                 hookList = `concHookDecl(newDeclList*,hookList*);
