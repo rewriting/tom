@@ -340,7 +340,7 @@ public class @filename()@Tree extends CommonTree {
           `CodeList(
               Code("  "),
               FullSortClass(sortDecl),
-              Code(" "),
+              Code(" field"),
               Code(name),
               Code(";\n")
            );
@@ -383,7 +383,7 @@ public class @filename()@Tree extends CommonTree {
               code = `CodeList(code,
                   Code("          "),
                   Code("case "+idx+":\n"),
-                  Code("            "),
+                  Code("            field"),
                   Code(slot.getName() + " = "),
                   cast*,
                   Code(";\n")
@@ -463,7 +463,7 @@ public class @filename()@Tree extends CommonTree {
     while(sList.isConsconcSlot()) {
       Slot slot = sList.getHeadconcSlot();
       sList = sList.getTailconcSlot();
-      res += slot.getName();
+      res += "field" + slot.getName();
       if(sList.isConsconcSlot()) {
         res += ", ";
       }

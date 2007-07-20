@@ -2,47 +2,36 @@
 grammar Rule;
 options {
   output=AST;
-  ASTLabelType=ASTTree;
+  ASTLabelType=RuleTree;
 }
 
 tokens {
-  RULELIST;
-  RULE;
-  CONDRULE;
-  APPL;
-  LAB;
-  REF;
-  CONDTERM;
-  CONDEQUALS;
-  CONDNOTEQUALS;
-  CONDLEQ;
-  CONDLT;
-  CONDGEQ;
-  CONDGT;
-  CONDMETHOD;
+  %include { rule/RuleTokenList.txt }
 }
 
 @header {
   package tom.gom.expander.rule;
+  import tom.gom.adt.rule.RuleTree;
 }
 @lexer::header {
   package tom.gom.expander.rule;
+  import tom.gom.adt.rule.RuleTree;
 }
 ruleset :
-  (rule)* EOF -> ^(RULELIST (rule)*)
+  (rule)* EOF -> ^(RuleList (rule)*)
   ;
 rule :
   pattern ARROW term (IF cond=condition)?
-    -> { cond == null }? ^(RULE pattern term)
-    -> ^(CONDRULE pattern term $cond)
+    -> { cond == null }? ^(Rule pattern term)
+    -> ^(ConditionalRule pattern term $cond)
   ;
 graphruleset :
-  (graphrule)* EOF -> ^(RULELIST (graphrule)*)
+  (graphrule)* EOF -> ^(RuleList (graphrule)*)
   ;
 graphrule :
   lhs=labelledpattern ARROW rhs=labelledpattern (IF cond=condition)?
-    -> { cond == null }? ^(RULE $lhs $rhs)
-    -> ^(CONDRULE $lhs $rhs $cond)
+    -> { cond == null }? ^(Rule $lhs $rhs)
+    -> ^(ConditionalRule $lhs $rhs $cond)
   ;
 condition :
   p1=term (EQUALS p2=term
@@ -53,39 +42,45 @@ condition :
 		  | GT p7=term
 		  | DOT ID LPAR p8=term RPAR
 	  )?
-    -> {p2!=null}? ^(CONDEQUALS $p1 $p2)
-    -> {p3!=null}? ^(CONDNOTEQUALS $p1 $p3)
-    -> {p4!=null}? ^(CONDLEQ $p1 $p4)
-    -> {p5!=null}? ^(CONDLT $p1 $p5)
-    -> {p6!=null}? ^(CONDGEQ $p1 $p6)
-    -> {p7!=null}? ^(CONDGT $p1 $p7)
-    -> {p8!=null}? ^(CONDMETHOD $p1 ID $p8)
-    -> ^(CONDTERM $p1)
+    -> {p2!=null}? ^(CondEquals $p1 $p2)
+    -> {p3!=null}? ^(CondNotEquals $p1 $p3)
+    -> {p4!=null}? ^(CondLessEquals $p1 $p4)
+    -> {p5!=null}? ^(CondLessThan $p1 $p5)
+    -> {p6!=null}? ^(CondGreaterEquals $p1 $p6)
+    -> {p7!=null}? ^(CondGreaterThan $p1 $p7)
+    -> {p8!=null}? ^(CondMethod $p1 ID $p8)
+    -> ^(CondTerm $p1)
   ;
 pattern :
-  ID LPAR (term (COMA term)*)? RPAR -> ^(APPL ID term*)
+  ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
 ;
 term :
-  pattern  | ID | builtin 
+  pattern
+  | ID -> ^(Var ID)
+  | builtin
 ;
 builtin :
-INT | STRING
+  INT -> ^(BuiltinInt INT)
+  | STRING -> ^(BuiltinString STRING)
 ;
 
 labelledpattern :
   (namelabel=ID COLON)? p=graphpattern
- -> {$namelabel!=null}? ^(LAB $namelabel $p)
- -> $p
+  -> {$namelabel!=null}? ^(LabTerm $namelabel $p)
+  -> $p
 ;
 graphpattern :
-  constructor | ID | builtin | ref
+  constructor
+  | ID -> ^(Var ID)
+  | builtin
+  | ref
 ;
 ref :
-AMPERCENT ID -> ^(REF ID)
+  AMPERCENT ID -> ^(RefTerm ID)
 ;
 constructor :
-ID LPAR (labelledpattern (COMA labelledpattern)*)? RPAR
--> ^(APPL ID labelledpattern*)
+  ID LPAR (labelledpattern (COMA labelledpattern)*)? RPAR
+  -> ^(Appl ID ^(TermList labelledpattern*))
 ;
 
 ARROW : '->' ;

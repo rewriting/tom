@@ -28,6 +28,8 @@ package tom.gom.expander.rule;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.tree.Tree;
+import tom.gom.adt.rule.RuleTree;
+import tom.gom.adt.rule.RuleAdaptor;
 import java.util.logging.Level;
 import java.util.Map;
 import java.util.HashMap;
@@ -53,10 +55,10 @@ public class RuleExpander {
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
-    parser.setTreeAdaptor(new ASTAdaptor());
+    parser.setTreeAdaptor(new RuleAdaptor());
     RuleList rulelist = `RuleList();
     try {
-      ASTTree ast = (ASTTree)parser.ruleset().getTree();
+      RuleTree ast = (RuleTree) parser.ruleset().getTree();
       rulelist = (RuleList) ast.getTerm();
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",

@@ -2,6 +2,7 @@
   * bootinstall
   * add gomantlradapter, a tool to allow creating gom trees in antlr's rewrite
   actions
+  * use gomantlradapter to build the parser for gom rules construct
 
 2007-07-09  tonio <reilles@loria.fr>
   * Fix scripts to support install path with spaces

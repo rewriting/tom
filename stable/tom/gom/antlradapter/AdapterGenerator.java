@@ -337,7 +337,7 @@ public class AdapterGenerator {
 
 
         Code code =
-          tom_cons_list_CodeList(tom_make_Code("  "),tom_cons_list_CodeList(tom_make_FullSortClass(tomMatch5NameNumber_freshVar_1),tom_cons_list_CodeList(tom_make_Code(" "),tom_cons_list_CodeList(tom_make_Code(tomMatch5NameNumber_freshVar_0),tom_cons_list_CodeList(tom_make_Code(";\n")
+          tom_cons_list_CodeList(tom_make_Code("  "),tom_cons_list_CodeList(tom_make_FullSortClass(tomMatch5NameNumber_freshVar_1),tom_cons_list_CodeList(tom_make_Code(" field"),tom_cons_list_CodeList(tom_make_Code(tomMatch5NameNumber_freshVar_0),tom_cons_list_CodeList(tom_make_Code(";\n")
            ,tom_empty_list_CodeList())))))
 
 
@@ -383,7 +383,7 @@ public class AdapterGenerator {
               Slot slot = sList.getHeadconcSlot();
               sList = sList.getTailconcSlot();
               Code cast = genGetSubterm(slot.getSort());
-              code = tom_cons_list_CodeList(code,tom_cons_list_CodeList(tom_make_Code("          "),tom_cons_list_CodeList(tom_make_Code("case "+idx+":\n"),tom_cons_list_CodeList(tom_make_Code("            "),tom_cons_list_CodeList(tom_make_Code(slot.getName() + " = "),tom_append_list_CodeList(cast,tom_cons_list_CodeList(tom_make_Code(";\n")
+              code = tom_cons_list_CodeList(code,tom_cons_list_CodeList(tom_make_Code("          "),tom_cons_list_CodeList(tom_make_Code("case "+idx+":\n"),tom_cons_list_CodeList(tom_make_Code("            field"),tom_cons_list_CodeList(tom_make_Code(slot.getName() + " = "),tom_append_list_CodeList(cast,tom_cons_list_CodeList(tom_make_Code(";\n")
                   ,tom_empty_list_CodeList())))))))
 
 
@@ -471,7 +471,7 @@ public class AdapterGenerator {
     while(sList.isConsconcSlot()) {
       Slot slot = sList.getHeadconcSlot();
       sList = sList.getTailconcSlot();
-      res += slot.getName();
+      res += "field" + slot.getName();
       if(sList.isConsconcSlot()) {
         res += ", ";
       }
