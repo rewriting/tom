@@ -47,10 +47,13 @@ pattern :
   ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
 ;
 term :
-  pattern  | ID | builtin 
+  pattern
+  | ID -> ^(Var ID)
+  | builtin
 ;
 builtin :
-INT | STRING
+  INT -> ^(BuiltinInt INT)
+| STRING -> ^(BuiltinInt STRING)
 ;
 
 ARROW : '->' ;

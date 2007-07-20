@@ -226,6 +226,10 @@ public class @filename()@Tree extends CommonTree {
       return;
     }
     @filename()@Tree tree = (@filename()@Tree) t;
+    if(this.token == null || tree.token == null) {
+      return;
+    }
+
     /* Depending on the token number and the child count, fill the correct field */
     switch (this.token.getType()) {
 ]%);
