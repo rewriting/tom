@@ -171,7 +171,7 @@ public class @className()@ implements tom.library.sl.Strategy {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[Name=name,Domain=domain] -> {
+        SlotField[Name=name] -> {
           out.append(%[
   get_slot(@fieldName(`name)@, t) { @fieldName(`name)@ }]%);
         }
@@ -206,7 +206,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   private String genNonBuiltin() {
     StringBuffer out = new StringBuffer();
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           out.append("true, ");
         } else {
