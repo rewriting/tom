@@ -236,7 +236,7 @@
       </gom>
     </presetdef>
     <presetdef name="gomantlradaptercompile">
-      <gomantlradapter config="${stable.gomantlradapter}">
+      <gomantlradapter config="${stable.adapterconfig}">
         <classpath refid="tom.classpath"/>
       </gomantlradapter>
     </presetdef>
@@ -254,7 +254,7 @@
       </tomsrc>
     </presetdef>
     <presetdef name="gomantlradaptercompile">
-      <gomantlradaptersrc config="${stable.gomantlradapter}">
+      <gomantlradaptersrc config="${stable.adapterconfig}">
         <classpath refid="tomsrc.classpath"/>
       </gomantlradaptersrc>
     </presetdef>
@@ -446,6 +446,14 @@
                 destdir="${src.gen}">
      <include name="tom/gom/adt/*.gom"/>
     </gomcompile>
+    <!--
+    <gomantlradaptercompile srcdir="${src.src}"
+                            package="tom.gom.adt"
+                            grammar="tom.gom.expander.rule.Rule"
+                            destdir="${src.gen}">
+     <include name="tom/gom/adt/Rule.gom"/>
+    </gomantlradaptercompile>
+    -->
 
     <copy todir="${src.mapping}/adt">
       <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>

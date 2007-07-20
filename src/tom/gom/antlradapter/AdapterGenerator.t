@@ -47,12 +47,25 @@ public class AdapterGenerator {
   /* Attributes needed to call tom properly */
   private File tomHomePath;
   private List importList = null;
+  private String grammarPkg = "";
   private String grammarName = "";
 
   AdapterGenerator(File tomHomePath, List importList, String grammar) {
     this.tomHomePath = tomHomePath;
     this.importList = importList;
-    this.grammarName = grammar;
+    int lastDot = grammar.lastIndexOf('.');
+    if (-1 != lastDot) {
+      // the grammar is in a package different from the gom file
+      this.grammarPkg = grammar.substring(0,lastDot);
+      this.grammarName = grammar.substring(lastDot+1,grammar.length());
+    } else {
+      String packagePrefix =
+        environment()
+        .getStreamManager()
+        .getPackagePath().replace(File.separatorChar,'.');
+      this.grammarName = grammar;
+      this.grammarPkg = packagePrefix;
+    }
   }
 
   %include { ../adt/gom/Gom.tom}
@@ -160,10 +173,6 @@ public class @filename()@Adaptor extends CommonTreeAdaptor {
 
   public void generateTreeFile(ModuleList moduleList, Writer writer)
     throws java.io.IOException {
-    String packagePrefix =
-      environment()
-        .getStreamManager()
-          .getPackagePath().replace(File.separatorChar,'.');
     Collection operatorset = new HashSet();
     Collection slotset = new HashSet();
     try {
@@ -176,7 +185,7 @@ package @adapterPkg()@;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.*;
-import @packagePrefix@.@grammarName@Parser;
+import @grammarPkg@.@grammarName@Parser;
 
 public class @filename()@Tree extends CommonTree {
 
