@@ -175,8 +175,6 @@ public class HookTypeExpander {
           }
           HookKind("graphrules") -> {
             //TODO: verify if the option termgraph is on
-            // for now, this hook is only available with one sort T
-            //TODO: authorize TGRS with a multisort signature
             if(`hookArgs.length()!=2) {
               throw new GomRuntimeException(
                   "GomTypeExpander:graphrules hooks need two parameters: the name of the generated strategy and its default behaviour");
@@ -414,6 +412,10 @@ public class HookTypeExpander {
   private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl mdecl, String scode) {
     %match(args) {
       concArg(Arg[Name=stratname],Arg[Name=defaultstrat]) -> {
+        if (!`defaultstrat.equals("Fail") && !`defaultstrat.equals("Identity")) {
+        getLogger().log(Level.SEVERE,
+            "In graphrules hooks, the default strategies authorized are only Fail and Identity");
+        }
         GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
         return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),mdecl);
       }

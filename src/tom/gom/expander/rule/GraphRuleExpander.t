@@ -220,8 +220,6 @@ public class GraphRuleExpander {
     visit @sortname@ {
       ]%);
 
-        /*TODO: in case of multisorted signature, order the rules by sort */
-
         %match(rulelist) {
           RuleList(_*,(Rule|ConditionalRule)[lhs=lhs,rhs=rhs],_*) -> {
             //TODO: verify that the lhs of the rules are of the good sort  
