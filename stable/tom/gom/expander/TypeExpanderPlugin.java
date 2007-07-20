@@ -88,7 +88,7 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       getLogger().log(Level.INFO, "Expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPED_SUFFIX, (aterm.ATerm)typedModuleList.toATerm());
+            + TYPED_SUFFIX, typedModuleList);
       }
     }
     HookTypeExpander hooktyper = new HookTypeExpander(typedModuleList);
@@ -102,7 +102,7 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
       getLogger().log(Level.INFO, "Hook expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
-            + TYPEDHOOK_SUFFIX, (aterm.ATerm)typedHookList.toATerm());
+            + TYPEDHOOK_SUFFIX, typedHookList);
       }
     }
   }

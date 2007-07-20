@@ -136,6 +136,16 @@ public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
       getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(),
           new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
       return;
+    } finally {
+      if (inputReader != null){
+        try {
+          inputReader.close();
+        }catch(java.io.IOException ioExcep){
+          // nothing to do
+          getLogger().log(Level.INFO, GomMessage.unableToCloseReaderMessage.getMessage(),
+              new Object[]{});
+        }
+      }
     }
 
     getLogger().log(Level.INFO, "Parsing succeeds");

@@ -262,19 +262,19 @@ public class XMLToTNode {
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
-    if (tom_is_sort_TNode(elt)) {{  tom.library.adt.tnode.types.TNode  tomMatch520NameNumberfreshSubject_1=(( tom.library.adt.tnode.types.TNode )elt);if (tom_is_sort_TNodeList(list)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch520NameNumberfreshSubject_2=(( tom.library.adt.tnode.types.TNodeList )list);if (tom_is_fun_sym_concTNode(tomMatch520NameNumberfreshSubject_2)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch520NameNumber_freshVar_1=tomMatch520NameNumberfreshSubject_2;if (tom_is_empty_concTNode_TNodeList(tomMatch520NameNumber_freshVar_1)) {if (tom_is_fun_sym_AttributeNode(tomMatch520NameNumberfreshSubject_1)) {{  String  tomMatch520NameNumber_freshVar_0=tom_get_slot_AttributeNode_Name(tomMatch520NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_TNode(elt)) {{  tom.library.adt.tnode.types.TNode  tomMatch530NameNumberfreshSubject_1=(( tom.library.adt.tnode.types.TNode )elt);if (tom_is_sort_TNodeList(list)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch530NameNumberfreshSubject_2=(( tom.library.adt.tnode.types.TNodeList )list);if (tom_is_fun_sym_concTNode(tomMatch530NameNumberfreshSubject_2)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch530NameNumber_freshVar_1=tomMatch530NameNumberfreshSubject_2;if (tom_is_empty_concTNode_TNodeList(tomMatch530NameNumber_freshVar_1)) {if (tom_is_fun_sym_AttributeNode(tomMatch530NameNumberfreshSubject_1)) {{  String  tomMatch530NameNumber_freshVar_0=tom_get_slot_AttributeNode_Name(tomMatch530NameNumberfreshSubject_1);if ( true ) {
 
         return tom_cons_list_concTNode(elt,tom_append_list_concTNode(list,tom_empty_list_concTNode()));
-      }}}}}}if (tom_is_fun_sym_concTNode(tomMatch520NameNumberfreshSubject_2)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch520NameNumber_freshVar_5=tomMatch520NameNumberfreshSubject_2;if (!(tom_is_empty_concTNode_TNodeList(tomMatch520NameNumber_freshVar_5))) {{  tom.library.adt.tnode.types.TNode  tomMatch520NameNumber_freshVar_2=tom_get_head_concTNode_TNodeList(tomMatch520NameNumber_freshVar_5);{  tom.library.adt.tnode.types.TNodeList  tomMatch520NameNumber_freshVar_6=tom_get_tail_concTNode_TNodeList(tomMatch520NameNumber_freshVar_5);if (tom_is_fun_sym_AttributeNode(tomMatch520NameNumberfreshSubject_1)) {{  String  tomMatch520NameNumber_freshVar_3=tom_get_slot_AttributeNode_Name(tomMatch520NameNumberfreshSubject_1);if (tom_is_fun_sym_AttributeNode(tomMatch520NameNumber_freshVar_2)) {{  String  tomMatch520NameNumber_freshVar_4=tom_get_slot_AttributeNode_Name(tomMatch520NameNumber_freshVar_2);if ( true ) {
+      }}}}}}if (tom_is_fun_sym_concTNode(tomMatch530NameNumberfreshSubject_2)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch530NameNumber_freshVar_3=tomMatch530NameNumberfreshSubject_2;if (!(tom_is_empty_concTNode_TNodeList(tomMatch530NameNumber_freshVar_3))) {if (tom_is_fun_sym_AttributeNode(tom_get_head_concTNode_TNodeList(tomMatch530NameNumber_freshVar_3))) {{  String  tomMatch530NameNumber_freshVar_12=tom_get_slot_AttributeNode_Name(tom_get_head_concTNode_TNodeList(tomMatch530NameNumber_freshVar_3));{  tom.library.adt.tnode.types.TNodeList  tomMatch530NameNumber_freshVar_4=tom_get_tail_concTNode_TNodeList(tomMatch530NameNumber_freshVar_3);if (tom_is_fun_sym_AttributeNode(tomMatch530NameNumberfreshSubject_1)) {{  String  tomMatch530NameNumber_freshVar_2=tom_get_slot_AttributeNode_Name(tomMatch530NameNumberfreshSubject_1);if ( true ) {
 
 
-        if(tomMatch520NameNumber_freshVar_3.compareTo(tomMatch520NameNumber_freshVar_4) >= 0) {
-          TNodeList tl = insertSortedAttribute(elt,tomMatch520NameNumber_freshVar_6);
-          return tom_cons_list_concTNode(tomMatch520NameNumber_freshVar_2,tom_append_list_concTNode(tl,tom_empty_list_concTNode()));
+        if(tomMatch530NameNumber_freshVar_2.compareTo(tomMatch530NameNumber_freshVar_12) >= 0) {
+          TNodeList tl = insertSortedAttribute(elt,tomMatch530NameNumber_freshVar_4);
+          return tom_cons_list_concTNode(tom_get_head_concTNode_TNodeList(tomMatch530NameNumber_freshVar_3),tom_append_list_concTNode(tl,tom_empty_list_concTNode()));
         } else {
           return tom_cons_list_concTNode(elt,tom_append_list_concTNode(list,tom_empty_list_concTNode()));
         }
-      }}}}}}}}}}}}}}
+      }}}}}}}}}}}}}
 
     System.err.println("insertSortedAttribute: Strange case");
     return list;

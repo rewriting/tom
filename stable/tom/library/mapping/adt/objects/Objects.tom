@@ -362,6 +362,12 @@
   make(t0) { tom.gom.adt.code.types.code.FullSortClass.make(t0) }
 }
 
+%op Code FullOperatorClass(Operator:OperatorDecl) {
+  is_fsym(t) { t instanceof tom.gom.adt.code.types.code.FullOperatorClass }
+  get_slot(Operator, t) { t.getOperator() }
+  make(t0) { tom.gom.adt.code.types.code.FullOperatorClass.make(t0) }
+}
+
 %op Code Compare(LCode:Code, RCode:Code) {
   is_fsym(t) { t instanceof tom.gom.adt.code.types.code.Compare }
   get_slot(LCode, t) { t.getLCode() }

@@ -1,3 +1,8 @@
+2007-07-20  tonio <reilles@loria.fr>
+  * bootinstall
+  * add gomantlradapter, a tool to allow creating gom trees in antlr's rewrite
+  actions
+
 2007-07-09  tonio <reilles@loria.fr>
   * Fix scripts to support install path with spaces
   * bootinstall for 2.5

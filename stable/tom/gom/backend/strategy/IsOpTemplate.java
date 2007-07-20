@@ -44,17 +44,17 @@ public class IsOpTemplate extends TemplateClass {
   public IsOpTemplate(GomClass gomClass) {
     super(gomClass);
     ClassName clsName = this.className;
-    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch374NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch374NameNumberfreshSubject_1)) {{  String  tomMatch374NameNumber_freshVar_0=tom_get_slot_ClassName_Pkg(tomMatch374NameNumberfreshSubject_1);{  String  tomMatch374NameNumber_freshVar_1=tom_get_slot_ClassName_Name(tomMatch374NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_ClassName(clsName)) {{  tom.gom.adt.objects.types.ClassName  tomMatch381NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if (tom_is_fun_sym_ClassName(tomMatch381NameNumberfreshSubject_1)) {{  String  tomMatch381NameNumber_freshVar_0=tom_get_slot_ClassName_Pkg(tomMatch381NameNumberfreshSubject_1);{  String  tomMatch381NameNumber_freshVar_1=tom_get_slot_ClassName_Name(tomMatch381NameNumberfreshSubject_1);if ( true ) {
 
-        String newpkg = tomMatch374NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
-        String newname = "Is_"+tomMatch374NameNumber_freshVar_1;
+        String newpkg = tomMatch381NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
+        String newname = "Is_"+tomMatch381NameNumber_freshVar_1;
         this.className = tom_make_ClassName(newpkg,newname);
-      }}}}}}if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch375NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_OperatorClass(tomMatch375NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch375NameNumber_freshVar_0=tom_get_slot_OperatorClass_ClassName(tomMatch375NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch375NameNumber_freshVar_1=tom_get_slot_OperatorClass_Slots(tomMatch375NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch382NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_OperatorClass(tomMatch382NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch382NameNumber_freshVar_0=tom_get_slot_OperatorClass_ClassName(tomMatch382NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch382NameNumber_freshVar_1=tom_get_slot_OperatorClass_Slots(tomMatch382NameNumberfreshSubject_1);if ( true ) {
 
 
 
-        this.operator = tomMatch375NameNumber_freshVar_0;
-        this.slotList = tomMatch375NameNumber_freshVar_1;
+        this.operator = tomMatch382NameNumber_freshVar_0;
+        this.slotList = tomMatch382NameNumber_freshVar_1;
         return;
       }}}}}}
 

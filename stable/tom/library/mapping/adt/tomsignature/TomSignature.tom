@@ -413,6 +413,30 @@
   make(t0, t1, t2) { tom.engine.adt.tominstruction.types.instruction.TypedAction.make(t0, t1, t2) }
 }
 
+%op Instruction EmptyAndInstruction() {
+  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.EmptyAndInstruction }
+  make() { tom.engine.adt.tominstruction.types.instruction.EmptyAndInstruction.make() }
+}
+
+%op Instruction ConsAndInstruction(HeadAndInstruction:Instruction, TailAndInstruction:Instruction) {
+  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.ConsAndInstruction }
+  get_slot(HeadAndInstruction, t) { t.getHeadAndInstruction() }
+  get_slot(TailAndInstruction, t) { t.getTailAndInstruction() }
+  make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.ConsAndInstruction.make(t0, t1) }
+}
+
+%op Instruction EmptyOrInstruction() {
+  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.EmptyOrInstruction }
+  make() { tom.engine.adt.tominstruction.types.instruction.EmptyOrInstruction.make() }
+}
+
+%op Instruction ConsOrInstruction(HeadOrInstruction:Instruction, TailOrInstruction:Instruction) {
+  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.ConsOrInstruction }
+  get_slot(HeadOrInstruction, t) { t.getHeadOrInstruction() }
+  get_slot(TailOrInstruction, t) { t.getTailOrInstruction() }
+  make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.ConsOrInstruction.make(t0, t1) }
+}
+
 %op InstructionList EmptyconcInstruction() {
   is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction }
   make() { tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction.make() }
@@ -1231,12 +1255,11 @@
   make(t0, t1, t2) { tom.engine.adt.tomterm.types.patterninstruction.PatternInstruction.make(t0, t1, t2) }
 }
 
-%op Pattern Pattern(SubjectList:TomList, TomList:TomList, Guards:TomList) {
+%op Pattern Pattern(SubjectList:TomList, TomList:TomList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.pattern.Pattern }
   get_slot(SubjectList, t) { t.getSubjectList() }
   get_slot(TomList, t) { t.getTomList() }
-  get_slot(Guards, t) { t.getGuards() }
-  make(t0, t1, t2) { tom.engine.adt.tomterm.types.pattern.Pattern.make(t0, t1, t2) }
+  make(t0, t1) { tom.engine.adt.tomterm.types.pattern.Pattern.make(t0, t1) }
 }
 
 %op TomList EmptyconcTomTerm() {
@@ -1798,6 +1821,24 @@
   make(t0, t1) { tom.engine.adt.tomslot.types.slot.PairSlotAppl.make(t0, t1) }
 }
 
+
+%oplist Instruction AndInstruction(Instruction*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.ConsAndInstruction || t instanceof tom.engine.adt.tominstruction.types.instruction.EmptyAndInstruction }
+  make_empty() { tom.engine.adt.tominstruction.types.instruction.EmptyAndInstruction.make() }
+  make_insert(e,l) { tom.engine.adt.tominstruction.types.instruction.ConsAndInstruction.make(e,l) }
+  get_head(l) { l.getHeadAndInstruction() }
+  get_tail(l) { l.getTailAndInstruction() }
+  is_empty(l) { l.isEmptyAndInstruction() }
+}
+
+%oplist Instruction OrInstruction(Instruction*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.ConsOrInstruction || t instanceof tom.engine.adt.tominstruction.types.instruction.EmptyOrInstruction }
+  make_empty() { tom.engine.adt.tominstruction.types.instruction.EmptyOrInstruction.make() }
+  make_insert(e,l) { tom.engine.adt.tominstruction.types.instruction.ConsOrInstruction.make(e,l) }
+  get_head(l) { l.getHeadOrInstruction() }
+  get_tail(l) { l.getTailOrInstruction() }
+  is_empty(l) { l.isEmptyOrInstruction() }
+}
 
 %oplist InstructionList concInstruction(Instruction*) {
   is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction || t instanceof tom.engine.adt.tominstruction.types.instructionlist.EmptyconcInstruction }

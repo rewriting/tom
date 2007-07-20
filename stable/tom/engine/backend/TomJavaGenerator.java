@@ -230,12 +230,12 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
-        if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumber_freshVar_0=tomMatch73NameNumberfreshSubject_1;if (tom_is_fun_sym_Variable(tomMatch73NameNumber_freshVar_0)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_1=tom_get_slot_Variable_AstType(tomMatch73NameNumber_freshVar_0);if ( true ) {
+        if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);if (tom_is_fun_sym_Variable(tomMatch73NameNumberfreshSubject_1)) {{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_0=tom_get_slot_Variable_AstType(tomMatch73NameNumberfreshSubject_1);if ( true ) {
 
-            output.write(deep,TomBase.getTLType(tomMatch73NameNumber_freshVar_1) + " ");
-            generate(deep,tomMatch73NameNumber_freshVar_0,moduleName);
+            output.write(deep,TomBase.getTLType(tomMatch73NameNumber_freshVar_0) + " ");
+            generate(deep,tomMatch73NameNumberfreshSubject_1,moduleName);
             break matchBlock;
-          }}}}if ( true ) {
+          }}}if ( true ) {
 
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);

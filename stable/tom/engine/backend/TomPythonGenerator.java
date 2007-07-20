@@ -337,12 +337,12 @@ matchBlock: {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
 matchBlock: {
-              if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch76NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch76NameNumber_freshVar_0=tomMatch76NameNumberfreshSubject_1;if (tom_is_fun_sym_Variable(tomMatch76NameNumber_freshVar_0)) {if ( true ) {
+              if (tom_is_sort_TomTerm(localVar)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch76NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);if (tom_is_fun_sym_Variable(tomMatch76NameNumberfreshSubject_1)) {if ( true ) {
 
                   //output.write(deep,getTLType(`type2) + " ");
-                  generate(deep,tomMatch76NameNumber_freshVar_0,moduleName);
+                  generate(deep,tomMatch76NameNumberfreshSubject_1,moduleName);
                   break matchBlock;
-                }}}if ( true ) {
+                }}if ( true ) {
 
                   System.out.println("MakeFunction: strange term: " + localVar);
                   throw new TomRuntimeException("MakeFunction: strange term: " + localVar);

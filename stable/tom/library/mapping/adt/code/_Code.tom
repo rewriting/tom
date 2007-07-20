@@ -779,6 +779,29 @@
   make( new_Sort) { new tom.gom.adt.code.strategy.code.Make_FullSortClass( new_Sort) }
 }
 
+    %op Strategy _FullOperatorClass(arg0:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._FullOperatorClass)}
+      
+        get_slot(arg0, t) { t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.code.strategy.code._FullOperatorClass(arg0) }
+    }
+  
+  
+  %op Strategy When_FullOperatorClass(s:Strategy) {
+    make(s) { `Sequence(Is_FullOperatorClass(),s) }
+  }
+
+  %op Strategy Is_FullOperatorClass() {
+    make() { new tom.gom.adt.code.strategy.code.Is_FullOperatorClass()}
+  }
+  
+%op Strategy Make_FullOperatorClass(_Operator:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_FullOperatorClass)}
+
+  get_slot(_Operator, t) { _Operator }
+  make( new_Operator) { new tom.gom.adt.code.strategy.code.Make_FullOperatorClass( new_Operator) }
+}
+
     %op Strategy _Compare(arg0:Strategy, arg1:Strategy) {
       is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._Compare)}
       
