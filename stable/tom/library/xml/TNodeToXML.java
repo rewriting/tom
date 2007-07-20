@@ -73,16 +73,16 @@ public void convert(String filename) {
   }
 
   public void tnodeToXML(TNode n) {
-    if (tom_is_sort_TNode(n)) {{  tom.library.adt.tnode.types.TNode  tomMatch529NameNumberfreshSubject_1=(( tom.library.adt.tnode.types.TNode )n);if (tom_is_fun_sym_DocumentNode(tomMatch529NameNumberfreshSubject_1)) {{  tom.library.adt.tnode.types.TNode  tomMatch529NameNumber_freshVar_0=tom_get_slot_DocumentNode_DocType(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNode  tomMatch529NameNumber_freshVar_1=tom_get_slot_DocumentNode_DocElem(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_TNode(n)) {{  tom.library.adt.tnode.types.TNode  tomMatch525NameNumberfreshSubject_1=(( tom.library.adt.tnode.types.TNode )n);if (tom_is_fun_sym_DocumentNode(tomMatch525NameNumberfreshSubject_1)) {{  tom.library.adt.tnode.types.TNode  tomMatch525NameNumber_freshVar_0=tom_get_slot_DocumentNode_DocType(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNode  tomMatch525NameNumber_freshVar_1=tom_get_slot_DocumentNode_DocElem(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
         write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        tnodeToXML(tomMatch529NameNumber_freshVar_0);
-        tnodeToXML(tomMatch529NameNumber_freshVar_1);
+        tnodeToXML(tomMatch525NameNumber_freshVar_0);
+        tnodeToXML(tomMatch525NameNumber_freshVar_1);
         write("\n");
         return;
-      }}}}if (tom_is_fun_sym_DocumentTypeNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_2=tom_get_slot_DocumentTypeNode_Name(tomMatch529NameNumberfreshSubject_1);{  String  tomMatch529NameNumber_freshVar_3=tom_get_slot_DocumentTypeNode_PublicId(tomMatch529NameNumberfreshSubject_1);{  String  tomMatch529NameNumber_freshVar_4=tom_get_slot_DocumentTypeNode_SystemId(tomMatch529NameNumberfreshSubject_1);{  String  tomMatch529NameNumber_freshVar_5=tom_get_slot_DocumentTypeNode_InternalSubset(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_6=tom_get_slot_DocumentTypeNode_Entities(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_7=tom_get_slot_DocumentTypeNode_Notations(tomMatch529NameNumberfreshSubject_1);{  String  tom_publicId=tomMatch529NameNumber_freshVar_3;{  String  tom_systemId=tomMatch529NameNumber_freshVar_4;{  String  tom_internalSubset=tomMatch529NameNumber_freshVar_5;if ( true ) {
+      }}}}if (tom_is_fun_sym_DocumentTypeNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_2=tom_get_slot_DocumentTypeNode_Name(tomMatch525NameNumberfreshSubject_1);{  String  tomMatch525NameNumber_freshVar_3=tom_get_slot_DocumentTypeNode_PublicId(tomMatch525NameNumberfreshSubject_1);{  String  tomMatch525NameNumber_freshVar_4=tom_get_slot_DocumentTypeNode_SystemId(tomMatch525NameNumberfreshSubject_1);{  String  tomMatch525NameNumber_freshVar_5=tom_get_slot_DocumentTypeNode_InternalSubset(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_6=tom_get_slot_DocumentTypeNode_Entities(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_7=tom_get_slot_DocumentTypeNode_Notations(tomMatch525NameNumberfreshSubject_1);{  String  tom_publicId=tomMatch525NameNumber_freshVar_3;{  String  tom_systemId=tomMatch525NameNumber_freshVar_4;{  String  tom_internalSubset=tomMatch525NameNumber_freshVar_5;if ( true ) {
 
-        write("<!DOCTYPE "+tomMatch529NameNumber_freshVar_2);
+        write("<!DOCTYPE "+tomMatch525NameNumber_freshVar_2);
         if (!tom_publicId.equals("UNDEF") && !tom_systemId.equals("UNDEF"))
           write(" PUBLIC \""+tom_publicId+"\" \"");
         else if (!tom_systemId.equals("UNDEF") && tom_publicId.equals("UNDEF"))
@@ -96,47 +96,47 @@ public void convert(String filename) {
           write(" ["+tom_internalSubset+"]");
           write(">\n");
           return;
-      }}}}}}}}}}}if (tom_is_fun_sym_ElementNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_8=tom_get_slot_ElementNode_Name(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_9=tom_get_slot_ElementNode_AttrList(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_10=tom_get_slot_ElementNode_ChildList(tomMatch529NameNumberfreshSubject_1);if (tom_is_fun_sym_concTNode(tomMatch529NameNumber_freshVar_10)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_11=tomMatch529NameNumber_freshVar_10;if (tom_is_empty_concTNode_TNodeList(tomMatch529NameNumber_freshVar_11)) {if ( true ) {
+      }}}}}}}}}}}if (tom_is_fun_sym_ElementNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_8=tom_get_slot_ElementNode_Name(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_9=tom_get_slot_ElementNode_AttrList(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_10=tom_get_slot_ElementNode_ChildList(tomMatch525NameNumberfreshSubject_1);if (tom_is_fun_sym_concTNode(tomMatch525NameNumber_freshVar_10)) {{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_11=tomMatch525NameNumber_freshVar_10;if (tom_is_empty_concTNode_TNodeList(tomMatch525NameNumber_freshVar_11)) {if ( true ) {
 
-        write("<"+tomMatch529NameNumber_freshVar_8);
-        tnodeListToXML(tomMatch529NameNumber_freshVar_9);
+        write("<"+tomMatch525NameNumber_freshVar_8);
+        tnodeListToXML(tomMatch525NameNumber_freshVar_9);
         write("/>");
         return;
-      }}}}}}}}if (tom_is_fun_sym_ElementNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_12=tom_get_slot_ElementNode_Name(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_13=tom_get_slot_ElementNode_AttrList(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_14=tom_get_slot_ElementNode_ChildList(tomMatch529NameNumberfreshSubject_1);{  String  tom_name=tomMatch529NameNumber_freshVar_12;if ( true ) {
+      }}}}}}}}if (tom_is_fun_sym_ElementNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_12=tom_get_slot_ElementNode_Name(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_13=tom_get_slot_ElementNode_AttrList(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_14=tom_get_slot_ElementNode_ChildList(tomMatch525NameNumberfreshSubject_1);{  String  tom_name=tomMatch525NameNumber_freshVar_12;if ( true ) {
 
         write("<"+tom_name);
-        tnodeListToXML(tomMatch529NameNumber_freshVar_13);
+        tnodeListToXML(tomMatch525NameNumber_freshVar_13);
         write(">");
-        tnodeListToXML(tomMatch529NameNumber_freshVar_14);
+        tnodeListToXML(tomMatch525NameNumber_freshVar_14);
         write("</"+tom_name+">");
         return;
-      }}}}}}if (tom_is_fun_sym_AttributeNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_15=tom_get_slot_AttributeNode_Name(tomMatch529NameNumberfreshSubject_1);{  String  tomMatch529NameNumber_freshVar_16=tom_get_slot_AttributeNode_Specified(tomMatch529NameNumberfreshSubject_1);{  String  tomMatch529NameNumber_freshVar_17=tom_get_slot_AttributeNode_Value(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}if (tom_is_fun_sym_AttributeNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_15=tom_get_slot_AttributeNode_Name(tomMatch525NameNumberfreshSubject_1);{  String  tomMatch525NameNumber_freshVar_16=tom_get_slot_AttributeNode_Specified(tomMatch525NameNumberfreshSubject_1);{  String  tomMatch525NameNumber_freshVar_17=tom_get_slot_AttributeNode_Value(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
-        if (tomMatch529NameNumber_freshVar_16.equals("true")) {
-          write(" " + tomMatch529NameNumber_freshVar_15+ "=\"" + tomMatch529NameNumber_freshVar_17+ "\"");
+        if (tomMatch525NameNumber_freshVar_16.equals("true")) {
+          write(" " + tomMatch525NameNumber_freshVar_15+ "=\"" + tomMatch525NameNumber_freshVar_17+ "\"");
         }
         return;
-      }}}}}if (tom_is_fun_sym_TextNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_18=tom_get_slot_TextNode_Data(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+      }}}}}if (tom_is_fun_sym_TextNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_18=tom_get_slot_TextNode_Data(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
-        write(tomMatch529NameNumber_freshVar_18);
+        write(tomMatch525NameNumber_freshVar_18);
         return;
-      }}}if (tom_is_fun_sym_CommentNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_19=tom_get_slot_CommentNode_Data(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_CommentNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_19=tom_get_slot_CommentNode_Data(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
-        write("<!-- "+tomMatch529NameNumber_freshVar_19+" -->");
+        write("<!-- "+tomMatch525NameNumber_freshVar_19+" -->");
         return;
-      }}}if (tom_is_fun_sym_CDATASectionNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_20=tom_get_slot_CDATASectionNode_Data(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_CDATASectionNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_20=tom_get_slot_CDATASectionNode_Data(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
-        write("<![CDATA["+tomMatch529NameNumber_freshVar_20+"]]>");
+        write("<![CDATA["+tomMatch525NameNumber_freshVar_20+"]]>");
         return;
-      }}}if (tom_is_fun_sym_ProcessingInstructionNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_21=tom_get_slot_ProcessingInstructionNode_Target(tomMatch529NameNumberfreshSubject_1);{  String  tomMatch529NameNumber_freshVar_22=tom_get_slot_ProcessingInstructionNode_Data(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+      }}}if (tom_is_fun_sym_ProcessingInstructionNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_21=tom_get_slot_ProcessingInstructionNode_Target(tomMatch525NameNumberfreshSubject_1);{  String  tomMatch525NameNumber_freshVar_22=tom_get_slot_ProcessingInstructionNode_Data(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
-        write("<?"+tomMatch529NameNumber_freshVar_21+" "+tomMatch529NameNumber_freshVar_22+"?>");
+        write("<?"+tomMatch525NameNumber_freshVar_21+" "+tomMatch525NameNumber_freshVar_22+"?>");
         return;
-      }}}}if (tom_is_fun_sym_EntityReferenceNode(tomMatch529NameNumberfreshSubject_1)) {{  String  tomMatch529NameNumber_freshVar_23=tom_get_slot_EntityReferenceNode_Name(tomMatch529NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch529NameNumber_freshVar_24=tom_get_slot_EntityReferenceNode_ChildList(tomMatch529NameNumberfreshSubject_1);if ( true ) {
+      }}}}if (tom_is_fun_sym_EntityReferenceNode(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_23=tom_get_slot_EntityReferenceNode_Name(tomMatch525NameNumberfreshSubject_1);{  tom.library.adt.tnode.types.TNodeList  tomMatch525NameNumber_freshVar_24=tom_get_slot_EntityReferenceNode_ChildList(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
-        write("&"+tomMatch529NameNumber_freshVar_23+";");
+        write("&"+tomMatch525NameNumber_freshVar_23+";");
         return;
-      }}}}if (tom_is_fun_sym_EmptyNode(tomMatch529NameNumberfreshSubject_1)) {if ( true ) {
+      }}}}if (tom_is_fun_sym_EmptyNode(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
 
         return;
       }}if ( true ) {
