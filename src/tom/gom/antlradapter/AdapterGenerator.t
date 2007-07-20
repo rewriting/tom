@@ -187,15 +187,47 @@ public class @filename()@Tree extends CommonTree {
   public @filename()@Tree(CommonTree node) {
     super(node);
     this.token = node.token;
+    initAstTerm(node.token);
   }
 
   public @filename()@Tree(Token t) {
     this.token = t;
+    initAstTerm(t);
+  }
+
+  private void initAstTerm(Token t) {
+    if(null==t) {
+      return;
+    }
+    switch (t.getType()) {
+]%);
+    Iterator it = operatorset.iterator();
+    while(it.hasNext()) {
+      OperatorDecl op = (OperatorDecl) it.next();
+      %match(op) {
+        op@OperatorDecl[Name=opName,Prod=Variadic[]] -> {
+          Code code =
+            `CodeList(
+                Code("      case "+grammarName+"Parser."),
+                Code(opName),
+                Code(":\n"),
+                Code("      {\n"),
+                Code("        inAstTerm = "),
+                Empty(op),
+                Code(".make();\n"),
+                Code("        break;\n"),
+                Code("        }\n"));
+          CodeGen.generateCode(code,writer);
+        }
+      }
+    }
+    writer.write(%[
+    }
   }
 
 ]%);
     /* Add fields for each slot : first for variadic operators, then constructor slots */
-    Iterator it = operatorset.iterator();
+    it = operatorset.iterator();
     while(it.hasNext()) {
       OperatorDecl op = (OperatorDecl) it.next();
       try {
@@ -292,7 +324,6 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-
   %strategy GenerateSlots(writer:Writer) extends Identity() {
     visit Slot {
       Slot[Name=name,Sort=sortDecl] -> {
@@ -303,25 +334,6 @@ public class @filename()@Tree extends CommonTree {
               Code(" "),
               Code(name),
               Code(";\n")
-           );
-        try {
-          CodeGen.generateCode(code,writer);
-        } catch (IOException e) {
-          throw new VisitFailure("IOException " + e);
-        }
-      }
-    }
-    visit OperatorDecl {
-      op@OperatorDecl[Name=name,Sort=sortDecl,Prod=Variadic[]] -> {
-        Code code =
-          `CodeList(
-              Code("  "),
-              FullSortClass(sortDecl),
-              Code(" "),
-              Code(name),
-              Code("List = "),
-              Empty(op),
-              Code(".make();\n")
            );
         try {
           CodeGen.generateCode(code,writer);

@@ -53,7 +53,7 @@ term :
 ;
 builtin :
   INT -> ^(BuiltinInt INT)
-| STRING -> ^(BuiltinInt STRING)
+| STRING -> ^(BuiltinString STRING)
 ;
 
 ARROW : '->' ;
