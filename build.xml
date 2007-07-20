@@ -189,6 +189,9 @@
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
+    <taskdef name="gomantlradapter"
+             classname="tom.gom.tools.ant.GomAntlrAdapterTask"
+             classpathref="tom.classpath"/>
     <taskdef name="tom"
              classname="tom.engine.tools.ant.TomTask"
              classpathref="tom.classpath"/>
@@ -208,6 +211,9 @@
              classpathref="tomsrc.classpath"/>
     <taskdef name="gomsrc"
              classname="tom.gom.tools.ant.GomTask"
+             classpathref="tomsrc.classpath"/>
+    <taskdef name="gomantlradaptersrc"
+             classname="tom.gom.tools.ant.GomAntlrAdapterTask"
              classpathref="tomsrc.classpath"/>
     <taskdef name="tomsrc"
              classname="tom.engine.tools.ant.TomTask"
@@ -229,6 +235,11 @@
         <classpath refid="tom.classpath"/>
       </gom>
     </presetdef>
+    <presetdef name="gomantlradaptercompile">
+      <gomantlradapter config="${stable.gomantlradapter}">
+        <classpath refid="tom.classpath"/>
+      </gomantlradapter>
+    </presetdef>
     <presetdef name="antlrmappercompile">
       <antlrmapper>
         <classpath refid="tom.classpath"/>
@@ -241,6 +252,11 @@
       <tomsrc config="${src.configfile}">
         <classpath refid="tomsrc.classpath"/>
       </tomsrc>
+    </presetdef>
+    <presetdef name="gomantlradaptercompile">
+      <gomantlradaptersrc config="${stable.gomantlradapter}">
+        <classpath refid="tomsrc.classpath"/>
+      </gomantlradaptersrc>
     </presetdef>
     <presetdef name="gomcompile">
       <gomsrc config="${src.gomconfigfile}">
