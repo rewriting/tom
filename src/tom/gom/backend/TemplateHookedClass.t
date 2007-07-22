@@ -58,7 +58,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
     StringBuffer res = new StringBuffer();
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
-      concHook(L1*,BlockHook(code),L2*) -> {
+      concHook(_*,BlockHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
       }
@@ -70,7 +70,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
     StringBuffer res = new StringBuffer();
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
-      concHook(L1*,ImportHook(code),L2*) -> {
+      concHook(_*,ImportHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
       }
@@ -82,7 +82,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
     StringBuffer res = new StringBuffer();
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
-      concHook(L1*,InterfaceHook(code),L2*) -> {
+      concHook(_*,InterfaceHook(code),_*) -> {
         res.append(",");
         res.append(CodeGen.generateCode(`code));
         res.append("\n");

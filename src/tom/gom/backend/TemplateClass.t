@@ -156,7 +156,7 @@ public abstract class TemplateClass {
   public void toStringSlotField(StringBuffer res, SlotField slot,
                                 String element, String buffer) {
     %match(SlotField slot) {
-      SlotField[Name=slotName,Domain=domain] -> {
+      SlotField[Domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append(%[@element@.toStringBuffer(@buffer@);
 ]%);

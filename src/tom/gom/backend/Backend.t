@@ -156,9 +156,7 @@ public class Backend {
         generators.put(`className,sort);
         return 1;
       }
-      OperatorClass[ClassName=className,
-                    Mapping=mapping,
-                    Slots=slots] -> {
+      OperatorClass[ClassName=className,Mapping=mapping] -> {
         TemplateClass operator = templatefactory.makeOperatorTemplate(
             tomHomePath,
             importList,

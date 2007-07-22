@@ -36,8 +36,7 @@ public class BasicStrategyTemplate extends TemplateClass {
   public BasicStrategyTemplate(GomClass basic) {
     super(basic);
     %match(basic) {
-      VisitableFwdClass[ClassName=className,
-                        Fwd=FwdClass[ClassName=fwdClass]] -> {
+      VisitableFwdClass[Fwd=FwdClass[ClassName=fwdClass]] -> {
         this.fwd = `fwdClass;
         return;
       }

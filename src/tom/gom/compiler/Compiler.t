@@ -220,7 +220,7 @@ public class Compiler {
     }
 
     %match(moduleList) {
-      concModule(_*,mod@Module[MDecl=moduleDecl],_*) -> {
+      concModule(_*,Module[MDecl=moduleDecl],_*) -> {
         String moduleName = `moduleDecl.getModuleName().getName();
 
         GomClassList allOperatorClasses = `concGomClass();

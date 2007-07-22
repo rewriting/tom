@@ -337,7 +337,7 @@ public class HookTypeExpander {
          */
         %match(decl) {
           CutOperator[
-            ODecl=OperatorDecl[Sort=sort,Prod=Variadic(sortDecl)]] -> {
+            ODecl=OperatorDecl[Prod=Variadic[]]] -> {
             // for a make_empty hook, there is no argument
             %match(ArgList args) {
               concArg() -> { return `concSlot(); }
