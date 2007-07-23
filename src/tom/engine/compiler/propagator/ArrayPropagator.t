@@ -62,7 +62,7 @@ public class ArrayPropagator implements IBasePropagator {
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
-      m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=slots@!concSlot()],g) -> {
+      m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not an array, nothing to do
         if(!TomBase.isArrayOperator(ConstraintCompiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
@@ -76,7 +76,7 @@ public class ArrayPropagator implements IBasePropagator {
       // /\ begin1 = fresh_index1  /\ end1 = fresh_index1 /\ X* = VariableHeadArray(begin1,end1) /\ fresh_index2 = end1
       // /\ HasElement(fresh_index2,g) /\ t2=GetElement(fresh_index2,g)/\ fresh_index3 = fresh_index2 + 1  
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
-      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {      
+      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
             if(!TomBase.isArrayOperator(ConstraintCompiler.getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        

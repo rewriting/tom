@@ -116,7 +116,7 @@ public class ConstraintGenerator {
         return `LetRef(v,TomTermToExpression(t),action);
       }  
       // nothing for unamed ones
-      ConstraintToExpression(m@MatchConstraint((UnamedVariableStar|UnamedVariable)[],t)) -> {       
+      ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
         return action;      
       }
       // do while
