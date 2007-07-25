@@ -58,28 +58,28 @@ public class TestTermgraph extends TestCase {
   }
 
   public void testExpand() {
-    Term subject = `g(g(g(labTerm("a1",a()),labTerm("g",g(refTerm("a1"),refTerm("a2")))),labTerm("a2",a())),refTerm("g"));
-    Term expanded = `g(g(g(a(),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,2));
+    Term subject = `g(g(g(LabTerm("a1",a()),LabTerm("g",g(RefTerm("a1"),RefTerm("a2")))),LabTerm("a2",a())),RefTerm("g"));
+    Term expanded = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
     assertEquals(expanded,mAbstractType.expand(subject));
   }
     
     
   public void testGraphRules() {
-    Term t1 = (Term) mAbstractType.expand(`g(refTerm("a"),labTerm("a",a())));
+    Term t1 = (Term) mAbstractType.expand(`g(RefTerm("a"),LabTerm("a",a())));
     try {
       assertEquals(`f(b()),Term.Test().visit(t1));
     } catch(VisitFailure e) { fail(); }
-    Term t2 = (Term) mAbstractType.expand(`f(g(g(a(),refTerm("b")),labTerm("b",b()))));
+    Term t2 = (Term) mAbstractType.expand(`f(g(g(a(),RefTerm("b")),LabTerm("b",b()))));
     try {
       assertEquals(`f(c()),Term.Test().visit(t2));
     } catch(VisitFailure e) { fail(); }
-    Term t3 = `g(g(g(a(),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,2));
+    Term t3 = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
     try {
-      assertEquals(`g(g(f(a()),a()),g(pathTerm(-1,-2,1,1,1),pathTerm(-2,-2,1,2))),new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t3));
+      assertEquals(`g(g(f(a()),a()),g(PathTerm(-1,-2,1,1,1),PathTerm(-2,-2,1,2))),new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t3));
     } catch(VisitFailure e) { fail(); }
-    Term t4 = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
+    Term t4 = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
     try {
-      assertEquals(`g(g(f(f(a())),a()),pathTerm(-2,1,1,1,1)),new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t4));
+      assertEquals(`g(g(f(f(a())),a()),PathTerm(-2,1,1,1,1)),new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t4));
     } catch(VisitFailure e) { fail(); }
   }
 
