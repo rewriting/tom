@@ -101,7 +101,7 @@ public class GraphRuleExpander {
 
    %strategy Normalize() extends Identity(){
         visit @sortname@ {
-          p@getArobase()@path@sortname@(_*) -> {
+          p@getArobase()@Path@sortname@(_*) -> {
             Position current = getEnvironment().getPosition(); 
             Position dest = (Position) current.add((Path)`p).getCanonicalPath();
             if(current.compare(dest)== -1) {
@@ -111,12 +111,12 @@ public class GraphRuleExpander {
                 //the subterm pointed was a pos (in case of previous switch) 
                 //and we must only update the relative position
                 getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
-                return path@sortname@.make(realDest.sub(current));
+                return Path@sortname@.make(realDest.sub(current));
             }  else {
                 //switch the rel position and the pointed subterm
 
                 // 1. construct the new relative position
-                @sortname@ relref = path@sortname@.make(current.sub(dest));
+                @sortname@ relref = Path@sortname@.make(current.sub(dest));
 
                 // 2. update the part to change 
                 `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
@@ -136,19 +136,19 @@ public class GraphRuleExpander {
 
    %strategy UpdatePos(source:Position,target:Position) extends Identity() {
           visit @sortname@ {
-            p@getArobase()@path@sortname@(_*) -> {
+            p@getArobase()@Path@sortname@(_*) -> {
               Position current = getEnvironment().getPosition(); 
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
               if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){
                 //update this relative pos from the redex to the external
                 current = current.changePrefix(source,target);
-                return path@sortname@.make(dest.sub(current));
+                return Path@sortname@.make(dest.sub(current));
               }
 
               if (dest.hasPrefix(source)  && !current.hasPrefix(target) && !current.hasPrefix(source)){
                 //update this relative pos from the external to the redex
                 dest = dest.changePrefix(source,target); 
-                return path@sortname@.make(dest.sub(current));
+                return Path@sortname@.make(dest.sub(current));
               }
             }
           }
@@ -156,21 +156,21 @@ public class GraphRuleExpander {
 
    %strategy UpdatePos2(p1:Position,p2:Position) extends Identity() {
           visit @sortname@ {
-            p@getArobase()@path@sortname@(_*) -> {
+            p@getArobase()@Path@sortname@(_*) -> {
               Position src = getEnvironment().getPosition(); 
               Position dest = (Position) src.add((Path)`p).getCanonicalPath();
               if(src.hasPrefix(p1) && dest.hasPrefix(p2)){
                 //update this relative pos from the subterm at p1 to the subterm at p2
                 Position newsrc = src.changePrefix(p1,p2);
                 Position newdest = dest.changePrefix(p2,p1);
-                return path@sortname@.make(newdest.sub(newsrc));
+                return Path@sortname@.make(newdest.sub(newsrc));
               }
 
               if(src.hasPrefix(p2) && dest.hasPrefix(p1)){
                 //update this relative pos from the subterm at p2 to the subterm at p1
                 Position newsrc = src.changePrefix(p2,p1);
                 Position newdest = dest.changePrefix(p1,p2);
-                return path@sortname@.make(newdest.sub(newsrc));
+                return Path@sortname@.make(newdest.sub(newsrc));
               }
             }
           }
@@ -185,13 +185,13 @@ public class GraphRuleExpander {
 
   %strategy FromVarToPath(lhs:@sortname@,posRedex:Position) extends Identity() {
     visit @sortname@ {
-      var@sortname@(name) -> { 
+      Var@sortname@(name) -> { 
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
         Position wwl = (Position) (new Position(new int[]{1})).add(posRedex).add(wl); 
         Position wwr = (Position) (new Position(new int[]{2})).add(wr); 
         Position res = (Position) wwl.sub(wwr);
-        return path@sortname@.make(res);
+        return Path@sortname@.make(res);
       }
     }
   }
@@ -206,7 +206,7 @@ public class GraphRuleExpander {
 
   %strategy GetVarPos(Position p, String varname) extends Fail() {
     visit @sortname@ {
-      v@getArobase()@var@sortname@(name) -> { 
+      v@getArobase()@Var@sortname@(name) -> { 
         if (`name.equals(varname)) { 
           p.setValue(getEnvironment().getPosition().toArray()); 
           return `v; } 
@@ -237,11 +237,11 @@ public class GraphRuleExpander {
                 /*  2. go to the root and get the global term-graph */
                 getEnvironment().followPath(omega.inverse());
 
-                /*3. construct tt=substTerm(t,r) */
+                /*3. construct tt=SubstTerm(t,r) */
                 @sortname@ expandedLhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(`lhs)@);
                 @sortname@ expandedRhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(`rhs)@);
                 @sortname@ r = computeRhsWithPath(expandedLhs,expandedRhs,omega);
-                @sortname@ tt = `subst@sortname@((@sortname@)getEnvironment().getSubject(),r);
+                @sortname@ tt = `Subst@sortname@((@sortname@)getEnvironment().getSubject(),r);
                 
                 /* 4. set the global term to norm(swap(tt,1.w,2))|1 i */
                 @sortname@ ttt = Swap((Position) posFinal.add(omega),posRhs,tt); 
@@ -276,7 +276,7 @@ public class GraphRuleExpander {
     term = expand(term);
     %match(term) {
       PathTerm(i,tail*) -> {
-        output.append("path"+sortname);
+        output.append("Path"+sortname);
         output.append("(");
         output.append(`i);
         %match(tail) {
@@ -325,7 +325,7 @@ public class GraphRuleExpander {
     StringBuffer output = new StringBuffer();
     %match(term) {
       LabTerm(label,term) -> {
-        output.append("lab"+sortname);
+        output.append("Lab"+sortname);
         output.append("(");
         output.append("\""+`label+"\"");
         output.append(",");
@@ -333,7 +333,7 @@ public class GraphRuleExpander {
         output.append(")");
       }
       RefTerm(label) -> {
-        output.append("ref"+sortname);
+        output.append("Ref"+sortname);
         output.append("(");
         output.append("\""+`label+"\"");
         output.append(")");
@@ -345,7 +345,7 @@ public class GraphRuleExpander {
         output.append(")");
       }
       Var(name) -> {
-        output.append("var"+sortname+"(\""+`name+"\")");
+        output.append("Var"+sortname+"(\""+`name+"\")");
       }
       BuiltinInt(i) -> {
         output.append(`i);

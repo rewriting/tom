@@ -54,6 +54,8 @@
       class='tom.gom.expander.ExpanderPlugin'/>
     <plugin name='TypeExpander'
       class='tom.gom.expander.TypeExpanderPlugin'/>
+    <plugin name='ReferenceExpander'
+      class='tom.gom.expander.GomReferenceExpanderPlugin'/>
     <plugin name='AntlrAdaptor'
       class='tom.gom.antlradapter.AdapterPlugin'/>
   </plugins>
@@ -71,6 +73,14 @@
         altName='v'
         description='Display compilation information'
         value='false'/>
+      <boolean name='pointer' 
+        altName='tp' 
+        description='Extend the signature for pointers' 
+        value='false'/> 
+      <boolean name='termgraph' 
+        altName='tg'
+        description='Extend the signature for term-graphs' 
+        value='false'/> 
       <boolean name='debug'
         altName='vv'
         description='Display debugging info'

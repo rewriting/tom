@@ -53,6 +53,8 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>options</li>
  * <li>failonerror</li>
  * <li>fork</li>
+ * <li>termgraph</li>
+ * <li>pointer</li>
  * <li>grammar</li>
  * <li></li>
  * </ul>
@@ -75,6 +77,7 @@ public class GomAntlrAdapterTask extends MatchingTask {
   private boolean failOnError = true;
   private boolean fork = false;
   private boolean pointer = false;
+  private boolean termgraph = false;
   private String grammar = "";
 
   private String protectedFileSeparator = "\\"+File.separatorChar;
@@ -131,6 +134,38 @@ public class GomAntlrAdapterTask extends MatchingTask {
    */
   public boolean getFork() {
     return fork;
+  }
+
+  /**
+   * If true, asks the compiler for Gom signature with pointers.
+   * @param pointer if true, asks the compiler for Gom signature with pointers
+   */
+  public void setPointer(boolean pointer) {
+    this.pointer = pointer;
+  }
+
+  /**
+   * Gets the pointer flag.
+   * @return the pointer flag
+   */
+  public boolean getPointer() {
+    return pointer;
+  }
+
+  /**
+   * If true, asks the compiler for Gom signature with pointers.
+   * @param termgraph if true, asks the compiler for Gom signature with pointers
+   */
+  public void setTermgraph(boolean termgraph) {
+    this.termgraph = termgraph;
+  }
+
+  /**
+   * Gets the termgraph flag.
+   * @return the termgraph flag
+   */
+  public boolean getTermgraph() {
+    return termgraph;
   }
 
   /**
@@ -272,6 +307,12 @@ public class GomAntlrAdapterTask extends MatchingTask {
       }
       if(getVerbose() == true) {
         javaRunner.createArg().setValue("--verbose");
+      }
+      if(getTermgraph() == true) {
+        javaRunner.createArg().setValue("--termgraph");
+      }
+      if(getPointer() == true) {
+        javaRunner.createArg().setValue("--pointer");
       }
       if(getGrammar() != null && getGrammar().length() > 0) {
         javaRunner.createArg().setValue("--grammar");

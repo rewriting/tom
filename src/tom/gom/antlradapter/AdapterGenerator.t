@@ -185,7 +185,13 @@ package @adapterPkg()@;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.*;
+]%);
+    if (!"".equals(grammarPkg)) {
+    writer.write(%[
 import @grammarPkg@.@grammarName@Parser;
+]%);
+    }
+    writer.write(%[
 
 public class @filename()@Tree extends CommonTree {
 
@@ -223,6 +229,21 @@ public class @filename()@Tree extends CommonTree {
                 Code("      {\n"),
                 Code("        inAstTerm = "),
                 Empty(op),
+                Code(".make();\n"),
+                Code("        break;\n"),
+                Code("        }\n"));
+          CodeGen.generateCode(code,writer);
+        }
+        op@OperatorDecl[Name=opName,Prod=Slots[Slots=concSlot()]] -> {
+          /* Initialise constants */
+          Code code =
+            `CodeList(
+                Code("      case "+grammarName+"Parser."),
+                Code(opName),
+                Code(":\n"),
+                Code("      {\n"),
+                Code("        inAstTerm = "),
+                FullOperatorClass(op),
                 Code(".make();\n"),
                 Code("        break;\n"),
                 Code("        }\n"));
