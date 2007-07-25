@@ -2,23 +2,23 @@ package parser;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
-import parser.rule.RuleTree;
-import parser.rule.RuleAdaptor;
+import parser.term.TermTree;
+import parser.term.TermAdaptor;
 
-public class Main {
+public class GraphMain {
 
   public static void main(String[] args) {
     try {
-      String ruleCode = "a() -> b()\n";
-      RuleLexer lexer = new RuleLexer(new ANTLRInputStream(System.in));
+      GraphLexer lexer = new GraphLexer(new ANTLRInputStream(System.in));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      RuleParser parser = new RuleParser(tokens);
-      parser.setTreeAdaptor(new RuleAdaptor());
+      GraphParser parser = new GraphParser(tokens);
+      parser.setTreeAdaptor(new TermAdaptor());
       // Parse the input expression
-      RuleTree b = (RuleTree) parser.ruleset().getTree();
+      TermTree b = (TermTree) parser.node().getTree();
       System.out.println("Result = " + b.getTerm());
     } catch (Exception e) {
       System.err.println("exception: " + e);
+      e.printStackTrace();
       return;
     }
   }
