@@ -57,23 +57,29 @@ public class TestRef extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestRef.class));
   }
 
-  public void testRef() {
+  public void testRef1() {
     Term subject = (Term) testslAbstractType.expand(`g(g(a(),RefTerm("l")),LabTerm("l",a())));
-    Term subject2 = (Term) testslAbstractType.expand(`g(g(a(),LabTerm("l",a())),RefTerm("l")));
     try{
       Term res = (Term) `TopDown(StrictDeRef(AB())).visit(subject);
-      //assertEquals(testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",a()))),res);
+      //assertEquals(testslAbstractType.expand(`g(g(a(),RefTerm("n")),LabTerm("n",a()))),res);
       res = (Term) `TopDown(DeRef(AB())).visit(subject);
-      //assertEquals(testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",b()))),res);
+      //assertEquals(testslAbstractType.expand(`g(g(b(),RefTerm("n")),LabTerm("n",b()))),res);
       res = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject);
       assertEquals(testslAbstractType.expand(`g(g(a(),RefTerm("n")),LabTerm("n",b()))),res);
       res = (Term) `TopDownSeq(DeRef(AB())).visit(subject);
       assertEquals(testslAbstractType.expand(`g(g(b(),RefTerm("n")),LabTerm("n",c()))),res);
+    } catch (tom.library.sl.VisitFailure e) {
+      fail("It should not fail");
+    }
+  }
 
+  public void testRef2() {
+    Term subject2 = (Term) testslAbstractType.expand(`g(g(a(),LabTerm("l",a())),RefTerm("l")));
+    try{
       Term res2 = (Term) `TopDown(StrictDeRef(AB())).visit(subject2);
-      //assertEquals(testslAbstractType.expand(`g(g(a(),labTerm("n",a())),refTerm("n"))),res2);
+      //assertEquals(testslAbstractType.expand(`g(g(a(),LabTerm("n",a())),RefTerm("n"))),res2);
       res2 = (Term) `TopDown(DeRef(AB())).visit(subject2);
-      //assertEquals(testslAbstractType.expand(`g(g(b(),labTerm("n",b())),refTerm("n"))),res2);
+      //assertEquals(testslAbstractType.expand(`g(g(b(),LabTerm("n",b())),RefTerm("n"))),res2);
       res2 = (Term) `TopDownSeq(StrictDeRef(AB())).visit(subject2);
       assertEquals(testslAbstractType.expand(`g(g(a(),LabTerm("n",b())),RefTerm("n"))),res2);
       res2 = (Term) `TopDownSeq(DeRef(AB())).visit(subject2);
