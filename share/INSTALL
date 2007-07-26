@@ -6,8 +6,6 @@ The binary distribution of Tom consists of the following directory layout:
   tom
    +--- bin  // contains launcher scripts
    |
-   +--- doc  // contains documentation
-   |
    +--- lib  // contains Tom jars plus necessary dependencies
    |
    +--- share
