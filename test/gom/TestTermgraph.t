@@ -5,14 +5,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.
- * 	- Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * 	- Neither the name of the INRIA nor the names of its
- * 	contributors may be used to endorse or promote products derived from
- * 	this software without specific prior written permission.
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -43,7 +43,7 @@ public class TestTermgraph extends TestCase {
       Term = a()
       | b()
       | c()
-      | f(arg1:Term) 
+      | f(arg1:Term)
       | g(arg1:Term, arg2:Term)
 
       sort Term: graphrules(Test,Identity) {
@@ -62,25 +62,48 @@ public class TestTermgraph extends TestCase {
     Term expanded = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
     assertEquals(expanded,mAbstractType.expand(subject));
   }
-    
-    
-  public void testGraphRules() {
+
+  public void testGraphRules1() {
     Term t1 = (Term) mAbstractType.expand(`g(RefTerm("a"),LabTerm("a",a())));
     try {
-      assertEquals(`f(b()),Term.Test().visit(t1));
-    } catch(VisitFailure e) { fail(); }
-    Term t2 = (Term) mAbstractType.expand(`f(g(g(a(),RefTerm("b")),LabTerm("b",b()))));
-    try {
-      assertEquals(`f(c()),Term.Test().visit(t2));
-    } catch(VisitFailure e) { fail(); }
-    Term t3 = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
-    try {
-      assertEquals(`g(g(f(a()),a()),g(PathTerm(-1,-2,1,1,1),PathTerm(-2,-2,1,2))),new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t3));
-    } catch(VisitFailure e) { fail(); }
-    Term t4 = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
-    try {
-      assertEquals(`g(g(f(f(a())),a()),PathTerm(-2,1,1,1,1)),new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t4));
-    } catch(VisitFailure e) { fail(); }
+      assertEquals(
+          `f(b()),
+          Term.Test().visit(t1));
+    } catch(VisitFailure e) {
+      fail();
+    }
   }
 
+  public void testGraphRules2() {
+    Term t2 = (Term) mAbstractType.expand(`f(g(g(a(),RefTerm("b")),LabTerm("b",b()))));
+    try {
+      assertEquals(
+          `f(c()),
+          Term.Test().visit(t2));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void testGraphRules3() {
+    Term t3 = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
+    try {
+      assertEquals(
+          `g(g(f(a()),a()),g(PathTerm(-1,-2,1,1,1),PathTerm(-2,-2,1,2))),
+          new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t3));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void testGraphRules4() {
+    Term t4 = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
+    try {
+      assertEquals(
+          `g(g(f(f(a())),a()),PathTerm(-2,1,1,1,1)),
+          new Position(new int[]{1,1}).getOmega(Term.Test()).visit(t4));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
 }
