@@ -30,7 +30,12 @@ Instruction =
   | AbstractBlock(InstList:InstructionList)
   | UnamedBlock(InstList:InstructionList)
   | NamedBlock(BlockName:String,InstList:InstructionList)
-  | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
+  /**
+   * <code>Match</code> a match instruction
+   *
+   * @param ConstraintsInstructionList a list of (list of constraints and an action)
+   */
+  | Match(ConstraintsInstructionList:ConstraintsInstructionList, Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
   | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
   /*
@@ -47,6 +52,14 @@ Instruction =
   | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
   | AndInstruction(Instruction*)
   | OrInstruction(Instruction*)
+  
+/**
+ * <code>ConstraintsInstructionList</code> a line in a match instruction - a touple (ConstraintList,Action)
+ *
+ * @param ConstraintList a list of constraints
+ * @param Action the action to execute if the constraints are evaluated to true
+ */  
+ConstraintsInstructionList = ConstraintsInstructionList(ConstraintList:ConstraintList, Action:Instruction, Option:OptionList)  
   
 AndInstruction:AU() { }
 OrInstruction:AU() { }  
