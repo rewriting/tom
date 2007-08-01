@@ -155,22 +155,18 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     result = null;
     OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
     LinkedList argumentList = new LinkedList();
-    LinkedList patternInstructionList = new LinkedList();
+    LinkedList constraintInstructionList = new LinkedList();
     TomList subjectList = null;
 }
   : (
             LPAREN matchArguments[argumentList] RPAREN 
             LBRACE { subjectList = ASTFactory.makeList(argumentList); }
             ( 
-             patternInstruction[subjectList,patternInstructionList] 
+             patternInstruction[subjectList,constraintInstructionList] 
             )* 
             t:RBRACE 
             { 
-                result = `Match(
-                    SubjectList(subjectList),
-                    ASTFactory.makePatternInstructionList(patternInstructionList),
-                    optionList
-                );
+                result = `Match(constraintInstructionList.get(0),optionList);
                 
                 // update for new target block...
                 updatePosition(t.getLine(),t.getColumn());
@@ -223,11 +219,12 @@ matchArgument [LinkedList list] throws TomException
 patternInstruction [TomList subjectList, LinkedList list] throws TomException
 {
     LinkedList matchPatternList = new LinkedList();
-    LinkedList listOfMatchPatternList = new LinkedList();
-    LinkedList listTextPattern = new LinkedList();
-    LinkedList listOrgTrackPattern = new LinkedList();
+    LinkedList matchSubjectList = new LinkedList();
     LinkedList blockList = new LinkedList();
-
+    
+    boolean isAnd = true;
+    ConstraintList constraints = `True();
+    OptionList optionList = null;
     Option option = null;
 
     clearText();
@@ -235,27 +232,33 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     :   (
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
              option = matchPattern[matchPatternList] 
-            {
-                listOfMatchPatternList.add(ASTFactory.makeList(matchPatternList));
-                matchPatternList.clear();
-                listTextPattern.add(text.toString());
-                clearText();
-                listOrgTrackPattern.add(option);
+            { 
+              for(int i=0 ;  i < matchPatternList.size() ; i++) {
+                constraints = `AndConstraint(constraints*,MatchConstraint(matchPatternList.get(i),subjectList.get(i)));
+              }
+              
+              optionList = `concOption(option,
+                  OriginalText(Name(text.toString()))
+              );
+              
+              matchPatternList.clear();
+              clearText();              
             }
-            ( 
-                ALTERNATIVE option = matchPattern[matchPatternList] 
-                {
-                    listOfMatchPatternList.add(ASTFactory.makeList(matchPatternList));
-                    matchPatternList.clear();
-                    listTextPattern.add(text.toString());
-                    clearText();
-                    listOrgTrackPattern.add(option);
-
-                getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.deprecatedDisjunction,
-                                new Object[]{currentFile(), new Integer(getLine())},
-                                   currentFile(), getLine()));
-
+            (
+              (AND_CONNECTOR | OR_CONNECTOR)
+              { isAnd = text.equals(AND_CONNECTOR);  }
+              option = matchPattern[matchPatternList] consType:CONSTRAINT_TYPE matchArgument[matchSubjectList]
+              {
+                Constraint currentConstr = null;
+                %match(consType){
+                  MATCH_CONSTRAINT -> { currentConstr = `MatchConstraint(matchPatternList.get(0),matchSubjectList.get(0)); }                  
                 }
+                constraints = isAnd ? `AndConstraint(constraints*,currentConstraint) : `OrConstraint(constraints*,currentConstraint);
+                
+                optionList = `concOption(option,
+                    OriginalText(Name(text.toString()))
+                );
+              }
             )*
             ARROW t:LBRACE
             {
@@ -270,38 +273,17 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 // target parser finished : pop the target lexer
                 selector().pop();
 
-                blockList.add(tlCode);
-                OptionList optionList = `concOption();
+                blockList.add(tlCode);                
                 
                 if(label != null){
-                    optionList = `concOption(Label(Name(label.getText())));
+                    optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
-
-                TomList patterns = null;
-                String patternText = null;
-                /*
-                 * The following loop splits disjuntions of patterns
-                 * into several PatternInstructions
-                 */
-                for(int i=0 ;  i<listOfMatchPatternList.size() ; i++) {
-                    patterns = (TomList) listOfMatchPatternList.get(i);
-                    patternText = (String) listTextPattern.get(i);
-
-                    //TODO solve with xmlterm
-                    //if (patternText == null) patternText = "";
-                    
-                    optionList = `concOption(
-                        optionList*, 
-                        (Option) listOrgTrackPattern.get(i),
-                        OriginalText(Name(patternText))
-                    );
-
-                    list.add(`PatternInstruction(
-                            Pattern(subjectList,patterns),
-                            RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
-                            optionList)
-                    );
-                }
+                
+                list.add(`ConstraintsInstruction(
+                    constraints,
+                    RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
+                    optionList)
+                );
             }
         )
     ;
@@ -2170,6 +2152,10 @@ STRING
   ;
 
 ANTI_SYM  : '!';
+MATCH_CONSTRAINT  : '<|';
+AND_CONNECTOR  : '/\';
+OR_CONNECTOR  : '\/';
+CONSTRAINT_TYPE : MATCH_CONSTRAINT 
 
 protected
 ESC
