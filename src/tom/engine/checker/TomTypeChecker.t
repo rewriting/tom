@@ -119,9 +119,9 @@ public class TomTypeChecker extends TomChecker {
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
     visit Instruction {
-      Match(_, patternInstructionList, oplist) -> {  
+      Match(constraintsInstruction, oplist) -> {  
         ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
-        ttc.verifyMatchVariable(`patternInstructionList);
+        ttc.verifyMatchVariable(`constraintsInstruction);
         throw new tom.library.sl.VisitFailure();
       }
     }
@@ -152,15 +152,20 @@ public class TomTypeChecker extends TomChecker {
     } 
   }
 
-  private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
-    while(!patternInstructionList.isEmptyconcPatternInstruction()) {
-      PatternInstruction pa = patternInstructionList.getHeadconcPatternInstruction();
-      Pattern pattern = pa.getPattern();
-      // collect variables
-      ArrayList variableList = new ArrayList();
-      TomBase.collectVariable(variableList, pattern);
-      verifyVariableTypeListCoherence(variableList);
-      patternInstructionList = patternInstructionList.getTailconcPatternInstruction();
+  private void verifyMatchVariable(ConstraintsInstruction constraintsInstruction) {
+    ConstraintList constraints = constraintsInstruction.getConstraintList();    
+    while(!constraints.isEmptyconcConstraint()) {
+      Constraint constr = constraints.getHeadconcConstraint(); 
+      %match(constr){
+        MatchConstraint(pattern,subject) -> {
+          // collect variables
+          ArrayList variableList = new ArrayList();
+          TomBase.collectVariable(variableList, pattern);
+          verifyVariableTypeListCoherence(variableList);
+        }
+      }
+      
+      constraints = constraints.getTailconcConstraint();
     }
   }
 
