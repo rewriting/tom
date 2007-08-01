@@ -166,7 +166,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
             )* 
             t:RBRACE 
             { 
-                result = `Match(constraintInstructionList.get(0),optionList);
+                result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
                 
                 // update for new target block...
                 updatePosition(t.getLine(),t.getColumn());

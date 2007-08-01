@@ -193,9 +193,9 @@ public class TomSyntaxChecker extends TomChecker {
     }
 
    visit Instruction {
-     Match(constraintInstruction, list) -> {
+     Match(constraintInstructionList, list) -> {
        /* TOM MATCH STRUCTURE */
-       tsc.verifyMatch(`constraintInstruction, `list);
+       tsc.verifyMatch(`constraintInstructionList, `list);
      }
    }
   }
@@ -480,14 +480,14 @@ public class TomSyntaxChecker extends TomChecker {
   // ////////////////////////////// /
   // MATCH VERIFICATION CONCERNS ///
   // ////////////////////////////////
-
   /**
-   * Given a MatchConstruct's subject list and pattern-action list
+   * Verifies the match construct
+   * 1. Verifies all MatchConstraints
    */
-  private void verifyMatch(ConstraintsInstruction constraintsInstruction, OptionList option) {
+  private void verifyMatch(ConstraintsInstructionList constraintsInstructionList, OptionList option) {
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
     ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
-    `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintsInstruction.getConstraintList());
+    `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintsInstructionList);
     TomType typeMatch = null;
     for(Constraint constr: matchConstraints){
       %match(constr){
@@ -621,14 +621,14 @@ public class TomSyntaxChecker extends TomChecker {
 
   private  void verifyVisit(TomVisit visit){
     %match(TomVisit visit) {
-      VisitTerm(type,constraintInstruction,option) -> {        
+      VisitTerm(type,constraintInstructionList,option) -> {        
         ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
         `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintInstruction.getConstraint());
         // for the first constraint, check that the type is conform to the type specified in visit
         // just for compatibility reasons
         MatchConstraint matchConstr = matchConstraints.get(0); 
         `verifyMatchPattern(matchConstr.getPattern(), type);
-        `verifyMatch(constraintInstruction,option);
+        `verifyMatch(constraintInstructionList,option);
       }
     }
   }

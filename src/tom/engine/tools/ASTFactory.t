@@ -140,6 +140,17 @@ public class ASTFactory {
     }
     return list;
   }
+  
+  public static ConstraintList makeConstraintInstructionList(List argumentList) {
+    ConstraintInstructionList list = `concConstraintInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      Object elt = argumentList.get(i);
+      ConstraintInstruction term;
+      term = (ConstraintInstruction)elt;
+      list = `concConstraintInstruction(term,list*);
+    }
+    return list;
+  }
 
   public static TomNameList makeNameList(List argumentList) {
     TomNameList list = `concTomName();

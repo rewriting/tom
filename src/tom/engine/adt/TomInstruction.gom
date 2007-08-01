@@ -33,9 +33,9 @@ Instruction =
   /**
    * <code>Match</code> a match instruction
    *
-   * @param ConstraintInstructionList a list of (list of constraints and an action)
+   * @param ConstraintInstructionList a list of (constraint and an action)
    */
-  | Match(ConstraintInstruction:ConstraintInstruction, Option:OptionList)
+  | Match(ConstraintInstructionList:ConstraintInstructionList, Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
   | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
   /*

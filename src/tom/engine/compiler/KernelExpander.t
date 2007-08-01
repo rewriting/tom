@@ -147,13 +147,21 @@ public class KernelExpander {
     }
 
     visit TomVisit {
-      VisitTerm(type,ConstraintInstruction(constraint,action,optionConstraint),options) -> {
-        //System.out.println("expander: patternInstructionList = " + `patternInstructionList);  
+      VisitTerm(type,constraintInstructionList,options) -> {
         TomType newType = (TomType)`expander.expandVariable(contextType,`type);
-        ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-        Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
-        Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
-        return `VisitTerm(newType, ConstraintInstruction(newConstraint,newAction,optionConstraint),options);
+        ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
+        %match(constraintInstructionList) {
+          concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionConstraint),_*) -> {
+            /*
+             * Try to guess types for tomSubjectList
+             */
+            ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
+            Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
+            Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
+            newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
+          }
+        }        
+        return `VisitTerm(newType, ConstraintInstruction(newConstraint,newAction,optionConstraint),options);   
       }
     }
 
@@ -163,14 +171,20 @@ public class KernelExpander {
        * to add types in subjects
        * to add types in variables of patterns and rhs
        */
-      Match(ConstraintInstruction(constraint,action,optionConstraint), option) -> {
-        /*
-         * Try to guess types for tomSubjectList
-         */
-        ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-        Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
-        Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
-        return `Match(ConstraintInstruction(newConstraint,newAction,optionConstraint),option);      
+      Match(constraintInstructionList, option) -> {
+        ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
+        %match(constraintInstructionList) {
+          concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionConstraint),_*) -> {
+            /*
+             * Try to guess types for tomSubjectList
+             */
+            ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
+            Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
+            Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
+            newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
+          }
+        }        
+        return `Match(newConstraintInstructionList,option);      
       }      
     }
     

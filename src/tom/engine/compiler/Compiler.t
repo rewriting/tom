@@ -163,9 +163,9 @@ public class Compiler extends TomGenericPlugin {
     } // end match
 
     visit Instruction {
-      Match(matchSubjectList,patternInstructionList, matchOptionList)  -> {
+      Match(constraintInstructionList, matchOptionList)  -> {
         Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
-        PatternInstructionList newPatternInstructionList = `concPatternInstruction();
+        ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
         PatternList negativePattern = `concPattern();
         TomTerm newMatchSubjectList = (TomTerm) `preProcessing(compiler).visitLight(`matchSubjectList);
         while(!`patternInstructionList.isEmptyconcPatternInstruction()) {

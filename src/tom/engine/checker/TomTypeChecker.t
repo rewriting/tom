@@ -119,9 +119,9 @@ public class TomTypeChecker extends TomChecker {
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
     visit Instruction {
-      Match(constraintInstruction, oplist) -> {  
+      Match(constraintInstructionList, oplist) -> {  
         ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
-        ttc.verifyMatchVariable(`constraintInstruction);
+        ttc.verifyMatchVariable(`constraintInstructionList);
         throw new tom.library.sl.VisitFailure();
       }
     }
@@ -152,8 +152,8 @@ public class TomTypeChecker extends TomChecker {
     } 
   }
 
-  private void verifyMatchVariable(ConstraintInstruction constraintInstruction) {
-    `TopDown(VerifyMatchVariable()).visitLight(constraintInstruction.getConstraint());
+  private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) {
+    `TopDown(VerifyMatchVariable()).visitLight(constraintInstructionList);
   }
   
   %strategy VerifyMatchVariable() extends Identity(){
