@@ -33,9 +33,9 @@ Instruction =
   /**
    * <code>Match</code> a match instruction
    *
-   * @param ConstraintsInstructionList a list of (list of constraints and an action)
+   * @param ConstraintInstructionList a list of (list of constraints and an action)
    */
-  | Match(ConstraintsInstruction:ConstraintsInstruction, Option:OptionList)
+  | Match(ConstraintInstruction:ConstraintInstruction, Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
   | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
   /*
@@ -54,13 +54,13 @@ Instruction =
   | OrInstruction(Instruction*)
   
 /**
- * <code>ConstraintsInstruction</code> a line in a match instruction - a touple (ConstraintList,Action)
+ * <code>ConstraintInstruction</code> a line in a match instruction - a touple (Constraint,Action)
  *
- * @param ConstraintList a list of constraints
+ * @param Constraint a constraint (can be a OR or an AND)
  * @param Action the action to execute if the constraints are evaluated to true
  */  
-ConstraintsInstruction = ConstraintsInstruction(ConstraintList:ConstraintList, Action:Instruction, Option:OptionList)  
-ConstraintsInstructionList = concConstraintsInstruction(ConstraintsInstruction*)    
+ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Option:OptionList)  
+ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   
 AndInstruction:AU() { }
 OrInstruction:AU() { }  

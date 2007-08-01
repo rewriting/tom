@@ -193,9 +193,9 @@ public class TomSyntaxChecker extends TomChecker {
     }
 
    visit Instruction {
-     Match(constraintsInstruction, list) -> {
+     Match(constraintInstruction, list) -> {
        /* TOM MATCH STRUCTURE */
-       tsc.verifyMatch(`constraintsInstruction, `list);
+       tsc.verifyMatch(`constraintInstruction, `list);
      }
    }
   }
@@ -621,14 +621,14 @@ public class TomSyntaxChecker extends TomChecker {
 
   private  void verifyVisit(TomVisit visit){
     %match(TomVisit visit) {
-      VisitTerm(type,constraintsInstruction,option) -> {        
+      VisitTerm(type,constraintInstruction,option) -> {        
         ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
-        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintsInstruction.getConstraintList());
+        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintInstruction.getConstraint());
         // for the first constraint, check that the type is conform to the type specified in visit
         // just for compatibility reasons
         MatchConstraint matchConstr = matchConstraints.get(0); 
         `verifyMatchPattern(matchConstr.getPattern(), type);
-        `verifyMatch(constraintsInstruction,option);
+        `verifyMatch(constraintInstruction,option);
       }
     }
   }

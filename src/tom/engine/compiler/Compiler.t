@@ -61,8 +61,7 @@ public class Compiler extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
-  %include { ../../library/mapping/java/util/types/Collection.tom}
-
+  
   %typeterm Compiler {
     implement { Compiler }
     is_sort(t) { t instanceof Compiler }

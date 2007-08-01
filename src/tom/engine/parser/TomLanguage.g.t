@@ -223,7 +223,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     LinkedList blockList = new LinkedList();
     
     boolean isAnd = true;
-    ConstraintList constraints = `True();
+    Constraint constraint = `True();
     OptionList optionList = null;
     Option option = null;
 
@@ -232,9 +232,16 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     :   (
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
              option = matchPattern[matchPatternList] 
-            { 
+            {
+              if(matchPatternList.size() != subjectList.size()) {        
+                messageError(currentFile(),getLine(),
+                             TomMessage.badMatchNumberArgument,
+                             new Object[]{new Integer(matchSubjectList.size()), new Integer(matchPatternList.size())});
+                return;
+              }
+              
               for(int i=0 ;  i < matchPatternList.size() ; i++) {
-                constraints = `AndConstraint(constraints*,MatchConstraint(matchPatternList.get(i),subjectList.get(i)));
+                constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(i),subjectList.get(i)));
               }
               
               optionList = `concOption(option,
@@ -253,7 +260,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 %match(consType){
                   MATCH_CONSTRAINT -> { currentConstr = `MatchConstraint(matchPatternList.get(0),matchSubjectList.get(0)); }                  
                 }
-                constraints = isAnd ? `AndConstraint(constraints*,currentConstraint) : `OrConstraint(constraints*,currentConstraint);
+                constraint = isAnd ? `AndConstraint(constraint,currentConstraint) : `OrConstraint(constraints,currentConstraint);
                 
                 optionList = `concOption(option,
                     OriginalText(Name(text.toString()))
@@ -280,7 +287,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 }
                 
                 list.add(`ConstraintsInstruction(
-                    constraints,
+                    constraint,
                     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
                     optionList)
                 );

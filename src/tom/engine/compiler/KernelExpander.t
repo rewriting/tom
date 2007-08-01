@@ -147,13 +147,13 @@ public class KernelExpander {
     }
 
     visit TomVisit {
-      VisitTerm(type,patternInstructionList,options) -> {
+      VisitTerm(type,ConstraintInstruction(constraint,action,optionConstraint),options) -> {
         //System.out.println("expander: patternInstructionList = " + `patternInstructionList);  
         TomType newType = (TomType)`expander.expandVariable(contextType,`type);
-        //System.out.println("newType = " + newType);
-        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(`TypeList(concTomType(newType)),`patternInstructionList);
-        //System.out.println("after: patternInstructionList = " + `newPatternInstructionList);  
-        return `VisitTerm(newType, newPatternInstructionList,options);
+        ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
+        Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
+        Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
+        return `VisitTerm(newType, ConstraintInstruction(newConstraint,newAction,optionConstraint),options);
       }
     }
 
@@ -163,135 +163,17 @@ public class KernelExpander {
        * to add types in subjects
        * to add types in variables of patterns and rhs
        */
-      Match(SubjectList(tomSubjectList),patternInstructionList, option) -> {
+      Match(ConstraintInstruction(constraint,action,optionConstraint), option) -> {
         /*
          * Try to guess types for tomSubjectList
          */
-        ArrayList newSubjectList = new ArrayList();
-        TomTypeList typeList = `concTomType();
-        int index = 0;
-        while(!`tomSubjectList.isEmptyconcTomTerm()) {
-          TomTerm subject = `tomSubjectList.getHeadconcTomTerm();
-matchBlock: {
-              //System.out.println("subject = " + subject);
-              %match(subject) {
-                (Variable|VariableStar)(variableOption,astName@Name(name),tomType,constraints) -> {
-                  TomTerm newVariable = null;
-                  // tomType may be a TomTypeAlone or a type from an expanded variable
-                  String type = TomBase.getTomType(`tomType);
-                  //System.out.println("match type = " + type);
-                  if(expander.getType(`type) == null) {
-                    /* the subject is a variable with an unknown type */
-                    TomType newType = expander.guessTypeFromPatterns(`patternInstructionList,index);
-                    if(newType!=null) {
-                      newVariable = `Variable(variableOption,astName,newType,constraints);
-                    } else {
-                      throw new TomRuntimeException("No symbol found for name '" + `name + "'");
-                    }
-                  } else {
-                    newVariable = subject;
-                  }
-                  if(newVariable == null) {
-                    throw new TomRuntimeException("Type cannot be guessed for '" + subject + "'");
-                  } else {
-                    newSubjectList.add(newVariable);
-                    typeList = `concTomType(typeList*,newVariable.getAstType());
-                    //System.out.println("add type = " + newVariable.getAstType());
-                  }
-                  break matchBlock;
-                }
-
-                t@(TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
-                  TomSymbol symbol = expander.getSymbolFromName(`name);
-                  TomType type = null;
-                  if(symbol!=null) {
-                    type = TomBase.getSymbolCodomain(symbol);
-                  } else {
-                    // unknown function call
-                    type = expander.guessTypeFromPatterns(`patternInstructionList,index);
-                  }
-                  if(type!=null) {
-                    newSubjectList.add(`BuildReducedTerm(t,type));
-                  } else {
-                    throw new TomRuntimeException("No symbol found for name '" + `name + "'");
-                  }
-                  typeList = `concTomType(typeList*,type);
-                    //System.out.println("add type2 = " + type);
-                }
-
-              }
-            } // end matchBlock
-            index++;
-            `tomSubjectList=`tomSubjectList.getTailconcTomTerm();
-        }
-
-        TomTerm newTomSubjectList = (TomTerm)expander.expandVariable(contextType, `SubjectList(ASTFactory.makeList(newSubjectList)));
-        //System.out.println("newTomSubjectList = " + newTomSubjectList);
-        TomType newTypeList = `TypeList((TomTypeList)expander.expandVariable(contextType,typeList));
-        //System.out.println("context = " + contextType);
-        //System.out.println("typelist = " + typeList);
-        //System.out.println("newtl = " + newTypeList);
-
-        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newTypeList,`patternInstructionList);
-        //System.out.println("newPatternInstructionList = " + newPatternInstructionList);
-        return `Match(newTomSubjectList,newPatternInstructionList, option);
-      }
+        ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
+        Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
+        Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
+        return `Match(ConstraintInstruction(newConstraint,newAction,optionConstraint),option);      
+      }      
     }
-
-    /*
-     * given a list of subjects
-     * for each pattern, perform type expansion according to the type of subjects
-     */
-    //visit Pattern {
-    visit PatternInstruction {
-      pa@PatternInstruction(Pattern(subjectList,termList), action, optionList) -> {
-        %match(contextType) {
-          TypeList(typeList) -> {
-            //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
-
-             // System.out.println("type: " + `typeList);
-             // System.out.println("term: " + `termList);
-
-            // process a list of subterms
-            TomList newTermList = `concTomTerm();
-            TomList newSubjectList = `concTomTerm();
-            while(!`typeList.isEmptyconcTomType()) {
-              //System.out.println("type: " + `typeList.getHeadconcTomType());
-              //System.out.println("term: " + `termList.getHeadconcTomTerm());
-              //System.out.println("subject: " + `subjectList.getHeadconcTomTerm());
-              newTermList = `concTomTerm(newTermList*, (TomTerm)expander.expandVariable(typeList.getHeadconcTomType(), termList.getHeadconcTomTerm()));
-              TomTerm newSubject = (TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `subjectList.getHeadconcTomTerm());
-              //System.out.println("newSubject: " + newSubject);
-              newSubjectList = `concTomTerm(newSubjectList*, newSubject);
-              `termList = `termList.getTailconcTomTerm();
-              `subjectList = `subjectList.getTailconcTomTerm();
-              `typeList = `typeList.getTailconcTomType();
-            }
-            //System.out.println("newTermList: " + newTermList);
-            //System.out.println("newSubjectList: " + newSubjectList);
-
-            // build the list of variables that occur in the lhs
-            HashSet set = new HashSet();
-            TomBase.collectVariable(set,newTermList);
-            TomList varList = ASTFactory.makeList(set);
-            Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
-            //System.out.println("newAction1 = " + newAction);
-            newAction = (Instruction)`expander.expandVariable(`EmptyType(),`newAction);
-            //OptionList newOptionList = (OptionList)`expander.expandVariable(`EmptyType(),``optionList);
-            OptionList newOptionList = `optionList;
-            return `PatternInstruction(Pattern(newSubjectList,newTermList), newAction,newOptionList);
-            //return `Pattern(subjectList,newTermList,newGuardList);
-          }
-
-          _ -> {
-            System.out.println("Bad contextType: " + `contextType);
-            System.out.println(`pa);
-            //throw new TomRuntimeException("Bad contextType: " + `contextType);
-          }
-        }
-      }
-    }
-
+    
     visit TomTerm {
       RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
@@ -350,38 +232,160 @@ matchBlock: {
         }
       }
     }
-    }
-
-    /**
-     * @param index the column-index of the type that has to be infered
-     */
-    private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionList, int index) {
-      %match(patternInstructionList) {
-        concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
-          TomTerm subject = `tmpSubject;
-          %match(subject) {
-            AntiTerm(p) -> { subject = `p; }
-          }
-          %match(subject) {
-            (TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
-              //System.out.println("X.length = " + `X*.length());
-              if(`X*.length() == index) {
-                TomSymbol symbol = getSymbolFromName(`name);
-                //System.out.println("name = " + `name);
-                if(symbol!=null) {
-                  TomType newType = TomBase.getSymbolCodomain(symbol);
-                  //System.out.println("newType = " + `newType);
-                  return `newType;
-                } else {
-                  return null;
-                }
+   }
+  
+  private Instruction expandAction(Intruction action, TomList newPatternList) { 
+    //  build the list of variables that occur in the lhs
+    HashSet set = new HashSet();
+    TomBase.collectVariable(set,newPatternList);
+    TomList varList = ASTFactory.makeList(set);
+    Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
+    //System.out.println("newAction1 = " + newAction);
+    newAction = (Instruction)`expander.expandVariable(`EmptyType(),`newAction);
+    return newAction;
+  }
+  
+  /**
+   * Try to guess the type for the subjects
+   */
+  %strategy expandConstraints(TomType contextType, Collection newPatternList) extends Identity(){
+    visit Constraint {
+      MatchConstraint(pattern, subject) -> {
+        TomTerm newSubject = null;
+        TomTerm newSubjectType = null;
+        %match(subject) {
+          (Variable|VariableStar)(variableOption,astName@Name(name),tomType,constraints) -> {
+            TomTerm newVariable = null;
+            // tomType may be a TomTypeAlone or a type from an expanded variable
+            String type = TomBase.getTomType(`tomType);
+            //System.out.println("match type = " + type);
+            if(expander.getType(`type) == null) {
+              /* the subject is a variable with an unknown type */
+              newSubjectType = expander.guessTypeFromPatterns(subject,matchConstraints);
+              if(newType!=null) {
+                newVariable = `Variable(variableOption,astName,newSubjectType,constraints);
+              } else {
+                throw new TomRuntimeException("No symbol found for name '" + `name + "'");
               }
+            } else {
+              newVariable = subject;
             }
+            if(newVariable == null) {
+              throw new TomRuntimeException("Type cannot be guessed for '" + subject + "'");
+            } else {
+              newSubject = newVariable;
+              newSubjectType = newVariable.getAstType();
+            }                  
+          }
+
+          t@(TermAppl|RecordAppl)[NameList=concTomName(Name(name),_*)] -> {
+            TomSymbol symbol = expander.getSymbolFromName(`name);
+            TomType type = null;
+            if(symbol!=null) {
+              type = TomBase.getSymbolCodomain(symbol);
+            } else {
+              // unknown function call
+              type = expander.guessTypeFromPatterns(subject,matchConstraints);
+            }
+            if( type != null ) {
+              newSubject = `BuildReducedTerm(t,type);
+            } else {
+              throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+            }
+            newSubjectType = type;                    
+          }
+        } // end match subject        
+        newSubjectType = `(TomType)expander.expandVariable(contextType,newSubjectType);
+        newSubject = (TomTerm)expander.expandVariable(newSubjectType, newSubject);
+        newPattern = `(TomTerm)expander.expandVariable(newSubjectType, pattern));
+        newPatternList.add(newPattern);
+        return `MatchConstraint(newPattern,newSubject);
+      }
+    }
+  }
+  
+  /**
+   * performs type expansion of the pattern according to the type of subject
+   */
+  private expandPattern(){
+    
+    //visit Pattern {
+    visit PatternInstruction {
+      pa@PatternInstruction(Pattern(subjectList,termList), action, optionList) -> {
+        %match(contextType) {
+          TypeList(typeList) -> {
+            //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
+
+             // System.out.println("type: " + `typeList);
+             // System.out.println("term: " + `termList);
+
+            // process a list of subterms
+            TomList newTermList = `concTomTerm();
+            TomList newSubjectList = `concTomTerm();
+            while(!`typeList.isEmptyconcTomType()) {
+              //System.out.println("type: " + `typeList.getHeadconcTomType());
+              //System.out.println("term: " + `termList.getHeadconcTomTerm());
+              //System.out.println("subject: " + `subjectList.getHeadconcTomTerm());
+              newTermList = `concTomTerm(newTermList*, (TomTerm)expander.expandVariable(typeList.getHeadconcTomType(), termList.getHeadconcTomTerm()));
+              TomTerm newSubject = (TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `subjectList.getHeadconcTomTerm());
+              //System.out.println("newSubject: " + newSubject);
+              newSubjectList = `concTomTerm(newSubjectList*, newSubject);
+              `termList = `termList.getTailconcTomTerm();
+              `subjectList = `subjectList.getTailconcTomTerm();
+              `typeList = `typeList.getTailconcTomType();
+            }
+            //System.out.println("newTermList: " + newTermList);
+            //System.out.println("newSubjectList: " + newSubjectList);
+
+            // build the list of variables that occur in the lhs
+            HashSet set = new HashSet();
+            TomBase.collectVariable(set,newTermList);
+            TomList varList = ASTFactory.makeList(set);
+            Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
+            //System.out.println("newAction1 = " + newAction);
+            newAction = (Instruction)`expander.expandVariable(`EmptyType(),`newAction);
+            //OptionList newOptionList = (OptionList)`expander.expandVariable(`EmptyType(),``optionList);
+            OptionList newOptionList = `optionList;
+            return `PatternInstruction(Pattern(newSubjectList,newTermList), newAction,newOptionList);
+            //return `Pattern(subjectList,newTermList,newGuardList);
+          }
+
+          _ -> {
+            System.out.println("Bad contextType: " + `contextType);
+            System.out.println(`pa);
+            //throw new TomRuntimeException("Bad contextType: " + `contextType);
           }
         }
       }
-      return null;
     }
+  }
+
+  private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> matchConstraints){    
+    for(Constraint constr:matchConstraints){
+      %match(constr,TomTerm subject){
+        MatchConstraint(pattern,s),s -> {
+          %match(pattern) {
+            AntiTerm(p) -> { pattern = `p; }
+          }
+          %match(pattern) {
+            (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
+                TomSymbol symbol = null;
+                if(`pattern.isXMLAppl()) {
+                  symbol = getSymbolFromName(Constants.ELEMENT_NODE);
+                } else {
+                  symbol = getSymbolFromName(`name);
+                }
+                // System.out.println("name = " + `name);
+                if(symbol!=null) {
+                  return TomBase.getSymbolCodomain(symbol);;
+                }
+             }      
+          }
+        }
+      }
+    }// for    
+    return null;
+  }
 
     protected tom.library.sl.Visitable expandVariable(TomType contextType, tom.library.sl.Visitable subject) {
       if(contextType == null) {
