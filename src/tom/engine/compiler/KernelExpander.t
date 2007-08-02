@@ -159,7 +159,7 @@ public class KernelExpander {
              * Try to guess types for tomSubjectList
              */
             ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(contextType,newPatternList,matchConstraints,expander)).visitLight(`constraint);
+            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(newType,newPatternList,matchConstraints,expander)).visitLight(`constraint);
             Instruction newAction = expandAction(`action,ASTFactory.makeList(newPatternList),expander);
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
           }
@@ -271,7 +271,7 @@ public class KernelExpander {
     visit Constraint {
       MatchConstraint(pattern, subject) -> {
         TomTerm newSubject = null;
-        TomType newSubjectType = null;
+        TomType newSubjectType = null;        
         %match(subject) {
           (Variable|VariableStar)(variableOption,astName@Name(name),tomType,constraints) -> {
             TomTerm newVariable = null;
@@ -313,6 +313,12 @@ public class KernelExpander {
             }
             newSubjectType = type;                    
           }
+          
+          TomTypeToTomTerm(type) -> {
+            newSubject = `Variable(concOption(),Name("tom__arg"),type,concConstraint());
+            newSubjectType = `type;
+          }
+          
         } // end match subject        
         newSubjectType = (TomType)expander.expandVariable(contextType,newSubjectType);
         newSubject = (TomTerm)expander.expandVariable(newSubjectType, newSubject);
@@ -487,3 +493,4 @@ public class KernelExpander {
     }// end strategy   
 
   }
+

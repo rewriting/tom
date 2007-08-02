@@ -524,11 +524,17 @@ public class TomSyntaxChecker extends TomChecker {
                 typeMatch = guessSubjectType(`subject,matchConstraints);
               }
             }
-          }          
-          messageError(currentTomStructureOrgTrack.getFileName(),
+            TomTypeToTomTerm(TomTypeAlone[]) -> {
+              // this is from %strategy construct and is already cheked in verifyStrategy
+              return;
+            }
+          }
+          if (typeMatch == null) {
+            messageError(currentTomStructureOrgTrack.getFileName(),
               currentTomStructureOrgTrack.getLine(),
               TomMessage.cannotGuessMatchType,
               new Object[]{`(subject)});
+          }
 
           // we now compare the pattern to its definition
           verifyMatchPattern(`pattern, typeMatch);
@@ -543,7 +549,7 @@ public class TomSyntaxChecker extends TomChecker {
   private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> matchConstraints){    
     for(Constraint constr:matchConstraints){
       %match(constr,TomTerm subject){
-        MatchConstraint(patt,s),s -> {
+        MatchConstraint(patt,s),s -> {          
           TomTerm pattern = `patt;
           %match(pattern) {
             AntiTerm(p) -> { pattern = `p; }
@@ -555,8 +561,7 @@ public class TomSyntaxChecker extends TomChecker {
                   symbol = getSymbolFromName(Constants.ELEMENT_NODE);
                 } else {
                   symbol = getSymbolFromName(`name);
-                }
-                // System.out.println("name = " + `name);
+                }                
                 if(symbol!=null) {
                   TomType type = TomBase.getSymbolCodomain(symbol);
                   // System.out.println("type = " + type);            
@@ -623,12 +628,16 @@ public class TomSyntaxChecker extends TomChecker {
   private  void verifyVisit(TomVisit visit) throws VisitFailure {
     %match(TomVisit visit) {
       VisitTerm(type,constraintInstructionList,option) -> {        
-        ArrayList<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
-        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraintInstructionList);
-        // for the first constraint, check that the type is conform to the type specified in visit
-        // just for compatibility reasons
-        MatchConstraint matchConstr = (MatchConstraint)matchConstraints.get(0); 
-        `verifyMatchPattern(matchConstr.getpattern(), type);
+        %match(constraintInstructionList){
+          concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
+            ArrayList<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
+            `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraint);   
+            // for the first constraint, check that the type is conform to the type specified in visit
+            MatchConstraint matchConstr = (MatchConstraint)matchConstraints.get(0); 
+            `verifyMatchPattern(matchConstr.getpattern(), type);
+          }
+        }    
+        // check the rest of the constraints
         `verifyMatch(constraintInstructionList,option);
       }
     }

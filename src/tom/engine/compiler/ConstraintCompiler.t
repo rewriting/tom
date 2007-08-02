@@ -39,7 +39,7 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
 import tom.engine.adt.tomconstraint.types.*;
-import java.util.ArrayList;
+import java.util.*;
 import tom.engine.tools.ASTFactory;
 
 /**
@@ -54,7 +54,7 @@ public class ConstraintCompiler {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
-  %include { ../../library/mapping/java/util/types/Collection.tom}
+  %include { ../../library/mapping/java/util/types/ArrayList.tom}
 
   private static SymbolTable symbolTable = null;
   private static TomNumberList rootpath = null;
@@ -70,10 +70,11 @@ public class ConstraintCompiler {
   private static final String freshEndPrefix = "_end_";
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
-    ConstraintCompiler.symbolTable = symbolTable;
+    ConstraintCompiler.symbolTable = symbolTable;    
+    // TODO - topdonw and visitlight
     return  (TomTerm)`InnermostId(CompileMatch()).visit(termToCompile);		
   }
-
+  
   // looks for a 'Match' instruction:
   // 1. transforms each sequence of patterns into a conjuction of MatchConstraint
   // 2. launch PropagationManager
@@ -83,23 +84,25 @@ public class ConstraintCompiler {
   // 6. transforms resulted expression into a CompiledMatch
   %strategy CompileMatch() extends Identity(){
     visit Instruction {			
-      Match(constraintInstructionList, matchOptionList)  -> {				
+      Match(constraintInstructionList, matchOptionList)  -> {        
         matchNumber++;
         rootpath = `concTomNumber(MatchNumber(matchNumber));
         freshSubjectCounter = 0;
         freshVarCounter = 0;
         int actionNumber = 0;
         TomList automataList = `concTomTerm();	
-        // get the new names for subjects (for further casts if needed - especially for lists)
         ArrayList subjectList = new ArrayList();
         ArrayList renamedSubjects = new ArrayList();
-        `TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraintInstructionList);
         // for each pattern action <term>,...,<term> -> { action }
         // build a matching automata
         %match(constraintInstructionList) {
           concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {                        
             try {
               actionNumber++;
+              // get the new names for subjects (for further casts if needed - especially for lists)
+              // this is performed here, and not above, because in the case of nested matches, we do not want 
+              // to go in the action and collect from there                      
+              `constraint = (Constraint)`TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
               
               Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);
               Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
@@ -155,9 +158,13 @@ public class ConstraintCompiler {
    * @param subjectList the list of old subjects
    * @param renamedSubjects the list of renamed subjects
    */
-  %strategy renameSubjects(Collection subjectList,Collection renamedSubjects) extends Identity(){
+  %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity(){
     visit Constraint {
       MatchConstraint(pattern,subject) -> {
+        // test if we already renamed this subject
+        if (subjectList.contains(`subject)) {
+          return `MatchConstraint(pattern,(TomTerm)renamedSubjects.get(subjectList.indexOf(subject))); 
+        }
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
