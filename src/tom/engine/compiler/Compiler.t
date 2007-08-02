@@ -166,45 +166,44 @@ public class Compiler extends TomGenericPlugin {
       Match(constraintInstructionList, matchOptionList)  -> {
         Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
         ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
-        PatternList negativePattern = `concPattern();
-        TomTerm newMatchSubjectList = (TomTerm) `preProcessing(compiler).visitLight(`matchSubjectList);
-        while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
+        ConstraintList negativeConstraint = `concConstraint();        
+        while(!`constraintInstructionList.isEmptyconcConstraintInstruction()) {
           /*
            * the call to preProcessing performs the recursive expansion
            * of nested match constructs
            */
-          PatternInstruction newPatternInstruction = (PatternInstruction) `preProcessing(compiler).visitLight(`patternInstructionList.getHeadconcPatternInstruction());
+          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `preProcessing(compiler).visitLight(`constraintInstructionList.getHeadconcConstraintInstruction());
 
 matchBlock: {
-              %match(newPatternInstruction) {
-                PatternInstruction(pattern@Pattern[SubjectList=subjectList,TomList=termList],actionInst, option) -> {
+              %match(newConstraintInstruction) {
+                ConstraintInstruction(constraint,actionInst, option) -> {
                   Instruction newAction = `actionInst;
                   /* expansion of RawAction into TypedAction */
                   %match(actionInst) {
                     RawAction(x) -> {
-                      newAction=`TypedAction(If(TrueTL(),x,Nop()),pattern,negativePattern);
+                      newAction=`TypedAction(If(TrueTL(),x,Nop()),constraint,negativeConstraint);
                     }
                   }
-                  negativePattern = `concPattern(negativePattern*,pattern);
+                  negativeConstraint = `concConstraint(negativeConstraint*,constraint);
 
                   /* generate equality checks */
-                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList),newAction, option);
+                  newConstraintInstruction = `ConstraintInstruction(constraint,newAction, option);
                   /* do nothing */
                   break matchBlock;
                 }
 
                 _ -> {
-                  System.out.println("preProcessing: strange PatternInstruction: " + `newPatternInstruction);
-                  throw new TomRuntimeException("preProcessing: strange PatternInstruction: " + `newPatternInstruction);
+                  System.out.println("Compiler.preProcessing: strange ConstraintInstruction: " + `newConstraintInstruction);
+                  throw new TomRuntimeException("Compiler.preProcessing: strange ConstraintInstruction: " + `newConstraintInstruction);
                 }
               }
             } // end matchBlock
 
-            newPatternInstructionList = `concPatternInstruction(newPatternInstructionList*,newPatternInstruction);
-            `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
+            newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
+            `constraintInstructionList = `constraintInstructionList.getTailconcConstraintInstruction();
         }
 
-        Instruction newMatch = `Match(newMatchSubjectList, newPatternInstructionList, matchOptionList);
+        Instruction newMatch = `Match(newConstraintInstructionList, matchOptionList);
         return newMatch;
       }
 
@@ -219,14 +218,14 @@ matchBlock: {
           TomList subjectListAST = `concTomTerm();
           TomVisit visit = jVisitList.getHeadconcTomVisit();
           %match(visit) {
-            VisitTerm(vType@Type[TomType=ASTTomType(type)],patternInstructionList,_) -> {
+            VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {
               if(visitorFwd == null) {//first time in loop
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
               }
               TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg);
               String funcName = "visit_" + `type;//function name
-              Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
+              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
               //return default strategy.visitLight(arg)
               Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),vType,subjectListAST));
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);

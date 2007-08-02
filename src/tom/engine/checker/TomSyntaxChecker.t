@@ -484,10 +484,10 @@ public class TomSyntaxChecker extends TomChecker {
    * Verifies the match construct
    * 1. Verifies all MatchConstraints
    */
-  private void verifyMatch(ConstraintsInstructionList constraintsInstructionList, OptionList option) {
+  private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure{
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
     ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
-    `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintsInstructionList);
+    `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintInstructionList);
     TomType typeMatch = null;
     for(Constraint constr: matchConstraints){
       %match(constr){
@@ -543,7 +543,8 @@ public class TomSyntaxChecker extends TomChecker {
   private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> matchConstraints){    
     for(Constraint constr:matchConstraints){
       %match(constr,TomTerm subject){
-        MatchConstraint(pattern,s),s -> {
+        MatchConstraint(patt,s),s -> {
+          TomTerm pattern = `patt;
           %match(pattern) {
             AntiTerm(p) -> { pattern = `p; }
           }
@@ -602,7 +603,7 @@ public class TomSyntaxChecker extends TomChecker {
       // Analyse the term if type != null
       if (type != null) {
         // the type is known and found in the match signature
-        validateTerm(`term, expectedType, false, true, false);
+        validateTerm(`term, type, false, true, false);
       }
     }
   }
@@ -610,7 +611,7 @@ public class TomSyntaxChecker extends TomChecker {
   // ///////////////////////////////
   // STRATEGY VERIFICATION CONCERNS /
   // ///////////////////////////////
-  private  void verifyStrategy(TomVisitList visitList){
+  private  void verifyStrategy(TomVisitList visitList) throws VisitFailure {
     while(!visitList.isEmptyconcTomVisit()) {
       TomVisit visit = visitList.getHeadconcTomVisit();
       verifyVisit(visit);
@@ -619,15 +620,15 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private  void verifyVisit(TomVisit visit){
+  private  void verifyVisit(TomVisit visit) throws VisitFailure {
     %match(TomVisit visit) {
       VisitTerm(type,constraintInstructionList,option) -> {        
-        ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
-        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(constraintInstruction.getConstraint());
+        ArrayList<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
+        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraintInstructionList);
         // for the first constraint, check that the type is conform to the type specified in visit
         // just for compatibility reasons
-        MatchConstraint matchConstr = matchConstraints.get(0); 
-        `verifyMatchPattern(matchConstr.getPattern(), type);
+        MatchConstraint matchConstr = (MatchConstraint)matchConstraints.get(0); 
+        `verifyMatchPattern(matchConstr.getpattern(), type);
         `verifyMatch(constraintInstructionList,option);
       }
     }

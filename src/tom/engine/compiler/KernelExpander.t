@@ -25,7 +25,7 @@
 
 package tom.engine.compiler;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -54,6 +54,7 @@ import tom.library.sl.*;
 
 public class KernelExpander {
   %include { ../../library/mapping/java/sl.tom}
+  %include { ../../library/mapping/java/util/types/Collection.tom}
 
   %typeterm KernelExpander {
     implement { KernelExpander }
@@ -148,6 +149,8 @@ public class KernelExpander {
 
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
+        ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
+        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraintInstructionList);
         TomType newType = (TomType)`expander.expandVariable(contextType,`type);
         ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
         %match(constraintInstructionList) {
@@ -156,12 +159,12 @@ public class KernelExpander {
              * Try to guess types for tomSubjectList
              */
             ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-            Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
-            Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
+            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(contextType,newPatternList,matchConstraints,expander)).visitLight(`constraint);
+            Instruction newAction = expandAction(`action,ASTFactory.makeList(newPatternList),expander);
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
           }
         }        
-        return `VisitTerm(newType, ConstraintInstruction(newConstraint,newAction,optionConstraint),options);   
+        return `VisitTerm(newType, newConstraintInstructionList,options);   
       }
     }
 
@@ -172,6 +175,8 @@ public class KernelExpander {
        * to add types in variables of patterns and rhs
        */
       Match(constraintInstructionList, option) -> {
+        ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
+        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraintInstructionList);
         ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
         %match(constraintInstructionList) {
           concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionConstraint),_*) -> {
@@ -179,8 +184,8 @@ public class KernelExpander {
              * Try to guess types for tomSubjectList
              */
             ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-            Constraint newConstraint = `TopDown(expandConstraint(contextType,newPatternList)).visitLight(constraint);
-            Instruction newAction = expandAction(action,ASTFactory.makeList(newPatternList));
+            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(contextType,newPatternList,matchConstraints,expander)).visitLight(`constraint);
+            Instruction newAction = expandAction(`action,ASTFactory.makeList(newPatternList),expander);
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
           }
         }        
@@ -248,7 +253,7 @@ public class KernelExpander {
     }
    }
   
-  private Instruction expandAction(Intruction action, TomList newPatternList) { 
+  private static Instruction expandAction(Instruction action, TomList newPatternList, KernelExpander expander) { 
     //  build the list of variables that occur in the lhs
     HashSet set = new HashSet();
     TomBase.collectVariable(set,newPatternList);
@@ -262,11 +267,11 @@ public class KernelExpander {
   /**
    * Try to guess the type for the subjects
    */
-  %strategy expandConstraints(TomType contextType, Collection newPatternList) extends Identity(){
+  %strategy expandConstraint(TomType contextType, Collection newPatternList, Collection matchConstraints, KernelExpander expander) extends Identity(){
     visit Constraint {
       MatchConstraint(pattern, subject) -> {
         TomTerm newSubject = null;
-        TomTerm newSubjectType = null;
+        TomType newSubjectType = null;
         %match(subject) {
           (Variable|VariableStar)(variableOption,astName@Name(name),tomType,constraints) -> {
             TomTerm newVariable = null;
@@ -275,17 +280,17 @@ public class KernelExpander {
             //System.out.println("match type = " + type);
             if(expander.getType(`type) == null) {
               /* the subject is a variable with an unknown type */
-              newSubjectType = expander.guessTypeFromPatterns(subject,matchConstraints);
-              if(newType!=null) {
+              newSubjectType = expander.guessSubjectType(`subject,matchConstraints);
+              if( newSubjectType != null ) {
                 newVariable = `Variable(variableOption,astName,newSubjectType,constraints);
               } else {
                 throw new TomRuntimeException("No symbol found for name '" + `name + "'");
               }
             } else {
-              newVariable = subject;
+              newVariable = `subject;
             }
             if(newVariable == null) {
-              throw new TomRuntimeException("Type cannot be guessed for '" + subject + "'");
+              throw new TomRuntimeException("Type cannot be guessed for '" + `subject + "'");
             } else {
               newSubject = newVariable;
               newSubjectType = newVariable.getAstType();
@@ -299,7 +304,7 @@ public class KernelExpander {
               type = TomBase.getSymbolCodomain(symbol);
             } else {
               // unknown function call
-              type = expander.guessTypeFromPatterns(subject,matchConstraints);
+              type = expander.guessSubjectType(`subject,matchConstraints);
             }
             if( type != null ) {
               newSubject = `BuildReducedTerm(t,type);
@@ -309,89 +314,30 @@ public class KernelExpander {
             newSubjectType = type;                    
           }
         } // end match subject        
-        newSubjectType = `(TomType)expander.expandVariable(contextType,newSubjectType);
+        newSubjectType = (TomType)expander.expandVariable(contextType,newSubjectType);
         newSubject = (TomTerm)expander.expandVariable(newSubjectType, newSubject);
-        newPattern = `(TomTerm)expander.expandVariable(newSubjectType, pattern));
+        TomTerm newPattern = (TomTerm)expander.expandVariable(newSubjectType, `pattern);
         newPatternList.add(newPattern);
         return `MatchConstraint(newPattern,newSubject);
       }
     }
-  }
-  
-  /**
-   * performs type expansion of the pattern according to the type of subject
-   */
-  private expandPattern(){
-    
-    //visit Pattern {
-    visit PatternInstruction {
-      pa@PatternInstruction(Pattern(subjectList,termList), action, optionList) -> {
-        %match(contextType) {
-          TypeList(typeList) -> {
-            //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
+  } 
 
-             // System.out.println("type: " + `typeList);
-             // System.out.println("term: " + `termList);
-
-            // process a list of subterms
-            TomList newTermList = `concTomTerm();
-            TomList newSubjectList = `concTomTerm();
-            while(!`typeList.isEmptyconcTomType()) {
-              //System.out.println("type: " + `typeList.getHeadconcTomType());
-              //System.out.println("term: " + `termList.getHeadconcTomTerm());
-              //System.out.println("subject: " + `subjectList.getHeadconcTomTerm());
-              newTermList = `concTomTerm(newTermList*, (TomTerm)expander.expandVariable(typeList.getHeadconcTomType(), termList.getHeadconcTomTerm()));
-              TomTerm newSubject = (TomTerm)expander.expandVariable(`typeList.getHeadconcTomType(), `subjectList.getHeadconcTomTerm());
-              //System.out.println("newSubject: " + newSubject);
-              newSubjectList = `concTomTerm(newSubjectList*, newSubject);
-              `termList = `termList.getTailconcTomTerm();
-              `subjectList = `subjectList.getTailconcTomTerm();
-              `typeList = `typeList.getTailconcTomType();
-            }
-            //System.out.println("newTermList: " + newTermList);
-            //System.out.println("newSubjectList: " + newSubjectList);
-
-            // build the list of variables that occur in the lhs
-            HashSet set = new HashSet();
-            TomBase.collectVariable(set,newTermList);
-            TomList varList = ASTFactory.makeList(set);
-            Instruction newAction = (Instruction)expander.replaceInstantiatedVariable(`varList,`action);
-            //System.out.println("newAction1 = " + newAction);
-            newAction = (Instruction)`expander.expandVariable(`EmptyType(),`newAction);
-            //OptionList newOptionList = (OptionList)`expander.expandVariable(`EmptyType(),``optionList);
-            OptionList newOptionList = `optionList;
-            return `PatternInstruction(Pattern(newSubjectList,newTermList), newAction,newOptionList);
-            //return `Pattern(subjectList,newTermList,newGuardList);
-          }
-
-          _ -> {
-            System.out.println("Bad contextType: " + `contextType);
-            System.out.println(`pa);
-            //throw new TomRuntimeException("Bad contextType: " + `contextType);
-          }
-        }
-      }
-    }
-  }
-
-  private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> matchConstraints){    
-    for(Constraint constr:matchConstraints){
+  private TomType guessSubjectType(TomTerm subject, Collection matchConstraints){    
+    for(Object constr:matchConstraints){
       %match(constr,TomTerm subject){
         MatchConstraint(pattern,s),s -> {
+          TomTerm patt = `pattern;
           %match(pattern) {
-            AntiTerm(p) -> { pattern = `p; }
+            AntiTerm(p) -> { patt = `p; }
           }
-          %match(pattern) {
+          %match(patt) {
             (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
                 TomSymbol symbol = null;
-                if(`pattern.isXMLAppl()) {
-                  symbol = getSymbolFromName(Constants.ELEMENT_NODE);
-                } else {
-                  symbol = getSymbolFromName(`name);
-                }
+                symbol = getSymbolFromName(`name);
                 // System.out.println("name = " + `name);
-                if(symbol!=null) {
-                  return TomBase.getSymbolCodomain(symbol);;
+                if( symbol != null ) {
+                  return TomBase.getSymbolCodomain(symbol);
                 }
              }      
           }
@@ -528,5 +474,16 @@ public class KernelExpander {
       TomType tomType = getSymbolTable().getType(tomName);
       return tomType;
     }
+    
+    /**
+     * Collect the matchConstraints in a list of constraints   
+     */
+    %strategy CollectMatchConstraints(constrList:Collection) extends Identity(){
+      visit Constraint{
+        m@MatchConstraint[] -> {        
+          constrList.add(`m);         
+        }      
+      }// end visit
+    }// end strategy   
 
   }

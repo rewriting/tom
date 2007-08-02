@@ -83,7 +83,7 @@ TomTerm =
     | SymbolOf(GroundTerm:TomTerm)
     | Ref(TomTerm:TomTerm)
 
-    | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
+    | Automata(Option:OptionList,Constraint:Constraint,NumberList:TomNumberList,Inst:Instruction)
 
     | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
   /**

@@ -39,6 +39,8 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
 import tom.engine.adt.tomconstraint.types.*;
+import java.util.ArrayList;
+import tom.engine.tools.ASTFactory;
 
 /**
  * Tom compiler based on constraints.
@@ -52,6 +54,7 @@ public class ConstraintCompiler {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
+  %include { ../../library/mapping/java/util/types/Collection.tom}
 
   private static SymbolTable symbolTable = null;
   private static TomNumberList rootpath = null;
@@ -80,7 +83,7 @@ public class ConstraintCompiler {
   // 6. transforms resulted expression into a CompiledMatch
   %strategy CompileMatch() extends Identity(){
     visit Instruction {			
-      Match(SubjectList(subjectList),patternInstructionList, matchOptionList)  -> {				
+      Match(constraintInstructionList, matchOptionList)  -> {				
         matchNumber++;
         rootpath = `concTomNumber(MatchNumber(matchNumber));
         freshSubjectCounter = 0;
@@ -88,22 +91,23 @@ public class ConstraintCompiler {
         int actionNumber = 0;
         TomList automataList = `concTomTerm();	
         // get the new names for subjects (for further casts if needed - especially for lists)
-        TomList renamedSubjects = renameSubjects(`subjectList);
+        ArrayList subjectList = new ArrayList();
+        ArrayList renamedSubjects = new ArrayList();
+        `TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraintInstructionList);
         // for each pattern action <term>,...,<term> -> { action }
         // build a matching automata
-        %match(patternInstructionList) {
-          concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) -> {
-            Constraint constraint = ConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);            
+        %match(constraintInstructionList) {
+          concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {                        
             try {
               actionNumber++;
               
-              Constraint propagationResult = ConstraintPropagator.performPropagations(constraint);
+              Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);
               Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
               Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
                             
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
-              TomTerm automata = `Automata(optionList,patternList,numberList,postGenerationAutomata);
+              TomTerm automata = `Automata(optionList,constraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
             } catch(Exception e) {
               e.printStackTrace();
@@ -115,7 +119,7 @@ public class ConstraintCompiler {
          * return the compiled Match construction
          */
         InstructionList astAutomataList = ConstraintCompiler.automataListCompileMatchingList(automataList);
-        return `CompiledMatch(collectVariableFromSubjectList(subjectList,renamedSubjects,AbstractBlock(astAutomataList)), matchOptionList);
+        return `CompiledMatch(collectVariableFromSubjectList(ASTFactory.makeList(subjectList),ASTFactory.makeList(renamedSubjects),AbstractBlock(astAutomataList)), matchOptionList);
       }
     }// end visit
   }// end strategy
@@ -146,12 +150,14 @@ public class ConstraintCompiler {
   }
 
   /**
-   * given the list of match variables (from match(t1,...,tn)), it renames them and returns the new list 
+   * Takes all MatchConstraints and renames the subjects; collects the old and the new subjects in the received bags
+   * 
+   * @param subjectList the list of old subjects
+   * @param renamedSubjects the list of renamed subjects
    */
-  private static TomList renameSubjects(TomList subjectList) {
-    TomList renamedSubjects = `concTomTerm();
-    %match(subjectList) { 
-      concTomTerm(_*,subject,_*) -> {
+  %strategy renameSubjects(Collection subjectList,Collection renamedSubjects) extends Identity(){
+    visit Constraint {
+      MatchConstraint(pattern,subject) -> {
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
@@ -159,7 +165,7 @@ public class ConstraintCompiler {
             freshSubjectType = `variableType;
           }          
           sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
-            TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);				        
+            TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);                      
             if(tomSymbol != null) {
               freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
             } else if(`sv.isFunctionCall()) {
@@ -167,38 +173,21 @@ public class ConstraintCompiler {
             }
           }
         }// end match
-        TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());  
-        renamedSubjects = `concTomTerm(renamedVar,renamedSubjects*);
+        TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
+        subjectList.add(`subject);
+        renamedSubjects.add(renamedVar);
+        return `MatchConstraint(pattern,renamedVar);
       }
-    }// end match
-    return renamedSubjects.reverse();
+    }
   }
-
-  /**
-   * takes a list of patterns (p1...pn) and a list of subjects (s1...sn)
-   * and generates p1 << s1 /\ .... /\ pn << sn
-   */
-  private static Constraint buildConstraintConjunction(TomList patternList, TomList subjectList) {
-    Constraint constraint = `AndConstraint();
-    while(!`patternList.isEmptyconcTomTerm()) {
-      TomTerm pattern = `patternList.getHeadconcTomTerm();
-      TomTerm subject = `subjectList.getHeadconcTomTerm();
-      
-      constraint = `AndConstraint(MatchConstraint(pattern, subject),constraint*);
-
-      `patternList = `patternList.getTailconcTomTerm();
-      `subjectList = `subjectList.getTailconcTomTerm();
-    }// end while
-    return constraint;
-  }	
-
+  
   /**
    * builds a list of instructions from a list of automata
    */
   private static InstructionList automataListCompileMatchingList(TomList automataList) {
     %match(automataList) {
       concTomTerm() -> { return `concInstruction(); }
-      concTomTerm(Automata(optionList,patternList,_,instruction),l*)  -> {
+      concTomTerm(Automata(optionList,constraint,_,instruction),l*)  -> {
         InstructionList newList = automataListCompileMatchingList(`l);				
         // if a label is assigned to a pattern (label:pattern ->
         // action) we generate corresponding labeled-block				 
@@ -207,7 +196,7 @@ public class ConstraintCompiler {
             `instruction = `NamedBlock(name,concInstruction(instruction));
           }
         }				
-        return `concInstruction(CompiledPattern(patternList,instruction), newList*);
+        return `concInstruction(CompiledPattern(constraint,instruction), newList*);
       }
     }
     return null;

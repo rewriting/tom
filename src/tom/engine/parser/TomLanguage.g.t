@@ -223,7 +223,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     LinkedList blockList = new LinkedList();
     
     boolean isAnd = true;
-    Constraint constraint = `True();
+    Constraint constraint = `TrueConstraint();
     OptionList optionList = null;
     Option option = null;
 
@@ -233,15 +233,19 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
              option = matchPattern[matchPatternList] 
             {
-              if(matchPatternList.size() != subjectList.size()) {        
-                messageError(currentFile(),getLine(),
-                             TomMessage.badMatchNumberArgument,
-                             new Object[]{new Integer(matchSubjectList.size()), new Integer(matchPatternList.size())});
+              if(matchPatternList.size() != subjectList.length()) {                       
+                getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
+                    new Object[]{new Integer(matchSubjectList.size()), new Integer(matchPatternList.size())},
+                    currentFile(), getLine()));
                 return;
               }
               
-              for(int i=0 ;  i < matchPatternList.size() ; i++) {
-                constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(i),subjectList.get(i)));
+              int counter = 0;
+              %match(subjectList){
+                concTomTerm(_*,subjectAtIndex,_*) -> {
+                  constraint = `AndConstraint(constraint,MatchConstraint((TomTerm)matchPatternList.get(counter),subjectAtIndex));
+                  counter++;
+                }
               }
               
               optionList = `concOption(option,
@@ -257,14 +261,19 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
               option = matchPattern[matchPatternList] consType:CONSTRAINT_TYPE matchArgument[matchSubjectList]
               {
                 Constraint currentConstr = null;
-                %match(consType){
-                  MATCH_CONSTRAINT -> { currentConstr = `MatchConstraint(matchPatternList.get(0),matchSubjectList.get(0)); }                  
+                String contraintType = consType.getText();
+                %match(String contraintType){
+                  MATCH_CONSTRAINT -> { currentConstr = `MatchConstraint((TomTerm)matchPatternList.get(0),(TomTerm)matchSubjectList.get(0)); }                  
                 }
-                constraint = isAnd ? `AndConstraint(constraint,currentConstraint) : `OrConstraint(constraints,currentConstraint);
+                constraint = isAnd ? `AndConstraint(constraint,currentConstr) : `OrConstraint(constraint,currentConstr);
                 
                 optionList = `concOption(option,
                     OriginalText(Name(text.toString()))
                 );
+                
+                matchPatternList.clear();
+                matchSubjectList.clear();
+                clearText();
               }
             )*
             ARROW t:LBRACE
@@ -286,7 +295,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                     optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
                 
-                list.add(`ConstraintsInstruction(
+                list.add(`ConstraintInstruction(
                     constraint,
                     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
                     optionList)
@@ -474,7 +483,7 @@ strategyVisitList [LinkedList list] throws TomException
 
 strategyVisit [LinkedList list] throws TomException
 {
-  LinkedList patternInstructionList = new LinkedList();
+  LinkedList constraintInstructionList = new LinkedList();
   TomType vType = null;
   TomList subjectList = `concTomTerm();
 
@@ -495,7 +504,7 @@ strategyVisit [LinkedList list] throws TomException
     subjectList = `concTomTerm(TomTypeToTomTerm(vType));
     }
     (  
-      patternInstruction[subjectList,patternInstructionList] 
+      patternInstruction[subjectList,constraintInstructionList] 
     )* 
     RBRACE
   )
@@ -503,7 +512,7 @@ strategyVisit [LinkedList list] throws TomException
     LinkedList optionList = new LinkedList();
     optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
-    list.add(`VisitTerm(vType,ASTFactory.makePatternInstructionList(patternInstructionList),options));
+    list.add(`VisitTerm(vType,ASTFactory.makeConstraintInstructionList(constraintInstructionList),options));
   }
 ;
 
@@ -2159,10 +2168,11 @@ STRING
   ;
 
 ANTI_SYM  : '!';
-MATCH_CONSTRAINT  : '<|';
-AND_CONNECTOR  : '/\';
-OR_CONNECTOR  : '\/';
-CONSTRAINT_TYPE : MATCH_CONSTRAINT 
+MATCH_CONSTRAINT  : "<|";
+LESS_CONSTRAINT  : "<";  
+AND_CONNECTOR  : "/\\";
+OR_CONNECTOR  : "\\/";
+CONSTRAINT_TYPE : MATCH_CONSTRAINT | LESS_CONSTRAINT;
 
 protected
 ESC
