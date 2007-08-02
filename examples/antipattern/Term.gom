@@ -10,7 +10,7 @@ Term = Variable(name:String)
      | GenericGroundTerm(termName:String)         
      | Subterm(nr:int,groundTerm:Term)
      | SymbolOf(groundTerm:Term)
-     | | FalseTerm()
+     | FalseTerm()
 
 TermList = concTerm(Term*)
 

@@ -183,7 +183,7 @@ public class MatchingDifferences implements Matching {
        * And, then this means success
        */
       %match(Constraint result){
-        Match(_,_) | And(_) ->{
+        (Match|And)[] ->{
           System.out.println("Part of solution:" + result);
           return `True();
         }
