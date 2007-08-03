@@ -217,11 +217,7 @@ matchArgument [LinkedList list] throws TomException
         ;
 
 patternInstruction [TomList subjectList, LinkedList list] throws TomException
-options{
-  backtrack = true;
-}
-{  
-  
+{    
     LinkedList optionListLinked = new LinkedList();
     LinkedList matchPatternList = new LinkedList();
     LinkedList blockList = new LinkedList();
@@ -232,7 +228,7 @@ options{
     OptionList optionList = null;
     Option option = null;
     
-    int consType = -1;
+    int consType = -1; 
     
     clearText();
 }
@@ -264,8 +260,9 @@ options{
             }            
             ( 
                 (   
+                    {LA(2) != LBRACE}?
                     constr = matchConstraintCompositionNoPar[optionListLinked]
-                    | constr = matchConstraintCompositionPar[optionListLinked]
+                    | {LA(2) == LBRACE}? constr = matchConstraintCompositionPar[optionListLinked]
                 )
                 { 
                   if (result == null) {
@@ -319,7 +316,7 @@ options{
     ;
 
 matchConstraintCompositionNoPar [LinkedList optionListLinked] returns [Constraint result] throws TomException
-{ System.out.println("call 1");
+{ 
   boolean isAnd = false;
   Constraint matchConstr = null;
   result = null;
@@ -334,22 +331,22 @@ matchConstraintCompositionNoPar [LinkedList optionListLinked] returns [Constrain
 ;
 
 matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint result] throws TomException
-{System.out.println("call 2");
+{
   boolean isAnd = false;
   Constraint matchConstr = null;
   Constraint constr = null;
   result = null;
 } : ( 
-    AND_CONNECTOR { isAnd = true;} 
-    | OR_CONNECTOR  { isAnd = false;} 
+      AND_CONNECTOR { isAnd = true;} 
+      | OR_CONNECTOR  { isAnd = false;} 
     ) 
-    LPAREN 
-    { System.out.println("ici 1");}
+    LBRACE    
       matchConstr = matchConstraint[optionListLinked]
        (    
           ( 
+              {LA(2) != LBRACE}?
               constr = matchConstraintCompositionNoPar[optionListLinked]
-              | constr = matchConstraintCompositionPar[optionListLinked]
+              | {LA(2) == LBRACE}? constr = matchConstraintCompositionPar[optionListLinked]
           ) 
           {
             if (result == null) {
@@ -364,7 +361,7 @@ matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint 
             }         
           }        
        )*                                                                                
-    RPAREN                                                                                         
+       RBRACE                                                                                         
   {
     if ( result == null ) {
       result = isAnd ? `AndMarker(matchConstr) : `OrMarker(matchConstr);
@@ -378,7 +375,7 @@ matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint 
 ;
 
 matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws TomException
-{System.out.println("call 3");
+{
   LinkedList matchPatternList = new LinkedList();
   LinkedList matchSubjectList = new LinkedList();
   Option option = null;
@@ -2284,6 +2281,8 @@ GREATEROREQUAL_CONSTRAINT  : ">=";
 AND_CONNECTOR  : "&&";
 OR_CONNECTOR  : "||";
 
+CONSTRAINT_GROUP_START : '{' ;  
+CONSTRAINT_GROUP_END : '}' ;
 
 protected
 ESC
