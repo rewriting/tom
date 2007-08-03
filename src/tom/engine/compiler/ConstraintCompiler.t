@@ -70,9 +70,8 @@ public class ConstraintCompiler {
   private static final String freshEndPrefix = "_end_";
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
-    ConstraintCompiler.symbolTable = symbolTable;    
-    // TODO - topdonw and visitlight
-    return  (TomTerm)`InnermostId(CompileMatch()).visit(termToCompile);		
+    ConstraintCompiler.symbolTable = symbolTable;
+    return  (TomTerm)`TopDown(CompileMatch()).visitLight(termToCompile);		
   }
   
   // looks for a 'Match' instruction:
