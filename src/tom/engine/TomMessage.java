@@ -150,7 +150,9 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("TomBackend: IOException occurs writting to file ''{0}'': {1} ");
   public static final TomMessage deprecatedDisjunction =
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
-
+  public static final TomMessage invalidConstraintType =
+      new TomMessage("Invalid Constraint type ");
+ 
   // checker.TomChecker
   public static final TomMessage findOTL               =
     new TomMessage("{0}: findOriginTrackingLine : not found (TomChecker)");

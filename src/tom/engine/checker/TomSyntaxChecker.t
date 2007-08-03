@@ -557,8 +557,11 @@ public class TomSyntaxChecker extends TomChecker {
    */
   private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> matchConstraints){    
     for(Constraint constr:matchConstraints){
-      %match(constr,TomTerm subject){
-        MatchConstraint(patt,s),s -> {          
+      %match(constr){        
+        MatchConstraint(patt,s) -> {
+          // we want two terms to be equal even if their option is different 
+          //( because of their possition for example )
+          if ((`s.setOption(`concOption())) != (subject.setOption(`concOption()))) { continue; }
           TomTerm pattern = `patt;
           %match(pattern) {
             AntiTerm(p) -> { pattern = `p; }

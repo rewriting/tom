@@ -331,8 +331,11 @@ public class KernelExpander {
 
   private TomType guessSubjectType(TomTerm subject, Collection matchConstraints){    
     for(Object constr:matchConstraints){
-      %match(constr,TomTerm subject){
-        MatchConstraint(pattern,s),s -> {
+      %match(constr){
+        MatchConstraint(pattern,s) -> {
+          // we want two terms to be equal even if their option is different 
+          //( because of their possition for example )
+          if ((`s.setOption(`concOption())) != (subject.setOption(`concOption()))) { continue; }
           TomTerm patt = `pattern;
           %match(pattern) {
             AntiTerm(p) -> { patt = `p; }

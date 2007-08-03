@@ -25,6 +25,11 @@ Constraint =
 		   | AntiMatchConstraint(Constraint:Constraint)
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
   		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
+  		   /**
+  		   * Used in the parser to mark that we started an And or an Or
+  		   */
+  		   | AndMarker(Constraint:Constraint)
+  		   | OrMarker(Constraint:Constraint)
 
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }

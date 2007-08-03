@@ -64,7 +64,7 @@ class TomParser extends Parser;
 
 options{
     k=1; // the lookahead value during parsing
-    defaultErrorHandler = false;
+    defaultErrorHandler = false;        
 }
 
     {
@@ -167,7 +167,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
             t:RBRACE 
             { 
                 result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
-                
+                //System.out.println("Parsed cl: " + constraintInstructionList);
                 // update for new target block...
                 updatePosition(t.getLine(),t.getColumn());
                 
@@ -217,16 +217,23 @@ matchArgument [LinkedList list] throws TomException
         ;
 
 patternInstruction [TomList subjectList, LinkedList list] throws TomException
-{
+options{
+  backtrack = true;
+}
+{  
+  
+    LinkedList optionListLinked = new LinkedList();
     LinkedList matchPatternList = new LinkedList();
-    LinkedList matchSubjectList = new LinkedList();
     LinkedList blockList = new LinkedList();
     
-    boolean isAnd = true;
     Constraint constraint = `TrueConstraint();
+    Constraint result = null;
+    Constraint constr = null;
     OptionList optionList = null;
     Option option = null;
-
+    
+    int consType = -1;
+    
     clearText();
 }
     :   (
@@ -254,30 +261,32 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
               
               matchPatternList.clear();
               clearText();              
-            }
-            (
-              (AND_CONNECTOR | OR_CONNECTOR)
-              { isAnd = text.equals(AND_CONNECTOR);  }
-              option = matchPattern[matchPatternList] consType:CONSTRAINT_TYPE matchArgument[matchSubjectList]
-              {
-                Constraint currentConstr = null;
-                String contraintType = consType.getText();
-                %match(String contraintType){
-                  MATCH_CONSTRAINT -> { currentConstr = `MatchConstraint((TomTerm)matchPatternList.get(0),(TomTerm)matchSubjectList.get(0)); }                  
-                }
-                constraint = isAnd ? `AndConstraint(constraint,currentConstr) : `OrConstraint(constraint,currentConstr);
-                
-                optionList = `concOption(option,
-                    OriginalText(Name(text.toString()))
-                );
-                
-                matchPatternList.clear();
-                matchSubjectList.clear();
-                clearText();
-              }
+            }            
+            ( 
+                (   
+                    constr = matchConstraintCompositionNoPar[optionListLinked]
+                    | constr = matchConstraintCompositionPar[optionListLinked]
+                )
+                { 
+                  if (result == null) {
+                    result = constr;
+                  }else{
+                    %match(constr,result){
+                      AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
+                      AndMarker(x),OrMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
+                      OrMarker(x),AndMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
+                      OrMarker(x),OrMarker(y) -> { result = `OrMarker(OrConstraint(y,x)); }
+                    }
+                  }         
+                }    
             )*
             ARROW t:LBRACE
             {
+                %match(result){
+                  AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }
+                  OrMarker(x) -> { constraint = `OrConstraint(constraint,x); }
+                }  
+              
                 // update for new target block
                 updatePosition(t.getLine(),t.getColumn());
                 
@@ -291,6 +300,11 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
 
                 blockList.add(tlCode);                
                 
+                optionList = `concOption();
+                for(Object op:optionListLinked){
+                  optionList = `concOption(optionList*,(Option)op);
+                }
+                optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
                 if(label != null){
                     optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
@@ -304,6 +318,99 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
         )
     ;
 
+matchConstraintCompositionNoPar [LinkedList optionListLinked] returns [Constraint result] throws TomException
+{ System.out.println("call 1");
+  boolean isAnd = false;
+  Constraint matchConstr = null;
+  result = null;
+} :   ( 
+        AND_CONNECTOR { isAnd = true;} 
+        | OR_CONNECTOR  { isAnd = false;} 
+      ) 
+      matchConstr = matchConstraint[optionListLinked]
+  {
+    result = isAnd ? `AndMarker(matchConstr) : `OrMarker(matchConstr);
+  }
+;
+
+matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint result] throws TomException
+{System.out.println("call 2");
+  boolean isAnd = false;
+  Constraint matchConstr = null;
+  Constraint constr = null;
+  result = null;
+} : ( 
+    AND_CONNECTOR { isAnd = true;} 
+    | OR_CONNECTOR  { isAnd = false;} 
+    ) 
+    LPAREN 
+    { System.out.println("ici 1");}
+      matchConstr = matchConstraint[optionListLinked]
+       (    
+          ( 
+              constr = matchConstraintCompositionNoPar[optionListLinked]
+              | constr = matchConstraintCompositionPar[optionListLinked]
+          ) 
+          {
+            if (result == null) {
+              result = constr;
+            }else{
+              %match(constr,result){
+                AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
+                AndMarker(x),OrMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
+                OrMarker(x),AndMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
+                OrMarker(x),OrMarker(y) -> { result = `OrMarker(OrConstraint(y,x)); }
+              }
+            }         
+          }        
+       )*                                                                                
+    RPAREN                                                                                         
+  {
+    if ( result == null ) {
+      result = isAnd ? `AndMarker(matchConstr) : `OrMarker(matchConstr);
+    }else{
+      %match(result){
+        AndMarker(x) -> { result = isAnd ? `AndMarker(AndConstraint(matchConstr,x)) : `OrMarker(AndConstraint(matchConstr,x)); }
+        OrMarker(x) -> { result = isAnd ? `AndMarker(OrConstraint(matchConstr,x)) : `OrMarker(OrConstraint(matchConstr,x)); }
+      }
+    }    
+  }
+;
+
+matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws TomException
+{System.out.println("call 3");
+  LinkedList matchPatternList = new LinkedList();
+  LinkedList matchSubjectList = new LinkedList();
+  Option option = null;
+  result = null;
+  int consType = -1;
+}
+: option = matchPattern[matchPatternList] consType = constraintType matchArgument[matchSubjectList]
+  {
+    switch(consType){
+      case MATCH_CONSTRAINT : { 
+        optionListLinked.add(option);
+        return `MatchConstraint((TomTerm)matchPatternList.get(0),(TomTerm)matchSubjectList.get(0));           
+      }                  
+    } 
+    // should never reach this statement because of the parsing error that should occur before
+    throw new TomException(TomMessage.invalidConstraintType);
+  }
+;
+
+constraintType returns [int result]
+{
+  result = -1;
+}
+:   (
+      MATCH_CONSTRAINT              { result = MATCH_CONSTRAINT; }
+/*      | LESS_CONSTRAINT             { result = LESS_CONSTRAINT; }
+      | LESSOREQUAL_CONSTRAINT      { result = LESSOREQUAL_CONSTRAINT; }
+      | GREATER_CONSTRAINT          { result = GREATER_CONSTRAINT; }
+      | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }*/
+    )  
+;
+
 matchPattern [LinkedList list] returns [Option result] throws TomException
 {
     result = null;
@@ -315,7 +422,7 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
-            ( 
+            ( { System.out.println("ici 2");}
                 COMMA {text.append('\n');}  
                 term = annotedTerm {list.add(term);}
             )*
@@ -2168,11 +2275,15 @@ STRING
   ;
 
 ANTI_SYM  : '!';
-MATCH_CONSTRAINT  : "<|";
-LESS_CONSTRAINT  : "<";  
-AND_CONNECTOR  : "/\\";
-OR_CONNECTOR  : "\\/";
-CONSTRAINT_TYPE : MATCH_CONSTRAINT | LESS_CONSTRAINT;
+MATCH_CONSTRAINT  : "<<";
+LESS_CONSTRAINT  : "<:";
+LESSOREQUAL_CONSTRAINT  : "<=";  
+GREATER_CONSTRAINT  : ":>";
+GREATEROREQUAL_CONSTRAINT  : ">=";  
+  
+AND_CONNECTOR  : "&&";
+OR_CONNECTOR  : "||";
+
 
 protected
 ESC
