@@ -56,8 +56,7 @@ public class PreGenerator {
   %include { ../../library/mapping/java/sl.tom}
   // ------------------------------------------------------------
 
-  public static Expression performPreGenerationTreatment(Constraint constraint) 
-  throws VisitFailure{
+  public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure{    
     constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
     return constraintsToExpressions(constraint);
   }
@@ -141,6 +140,13 @@ public class PreGenerator {
        * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
        */
       AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
+        try{
+          `TopDown(HasTerm(v)).visitLight(`rhs);
+        }catch(VisitFailure ex){
+          return `AndConstraint(X*,second,Y*,first,Z*);
+        }
+      }
+      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
         try{
           `TopDown(HasTerm(v)).visitLight(`rhs);
         }catch(VisitFailure ex){
