@@ -270,8 +270,8 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                   }else{
                     %match(constr,result){
                       AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
-                      AndMarker(x),OrMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
-                      OrMarker(x),AndMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
+                      AndMarker(x),OrMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
+                      OrMarker(x),AndMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
                       OrMarker(x),OrMarker(y) -> { result = `OrMarker(OrConstraint(y,x)); }
                     }
                   }         
@@ -305,7 +305,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 if(label != null){
                     optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
-                
+                System.out.println("parsed: " + constraint);
                 list.add(`ConstraintInstruction(
                     constraint,
                     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
@@ -354,8 +354,8 @@ matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint 
             }else{
               %match(constr,result){
                 AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
-                AndMarker(x),OrMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
-                OrMarker(x),AndMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
+                AndMarker(x),OrMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
+                OrMarker(x),AndMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
                 OrMarker(x),OrMarker(y) -> { result = `OrMarker(OrConstraint(y,x)); }
               }
             }         
