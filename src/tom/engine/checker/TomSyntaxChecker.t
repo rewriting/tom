@@ -530,10 +530,19 @@ public class TomSyntaxChecker extends TomChecker {
             }
           }
           if (typeMatch == null) {
+            Object messageContent = `subject;
+            %match(subject){
+              Variable[AstName=Name(stringName)] -> {
+                messageContent = `stringName;
+              }
+              TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
+                messageContent = `stringName;
+              }
+            }
             messageError(currentTomStructureOrgTrack.getFileName(),
               currentTomStructureOrgTrack.getLine(),
               TomMessage.cannotGuessMatchType,
-              new Object[]{`(subject)});
+              new Object[]{`(messageContent)});
           }
 
           // we now compare the pattern to its definition
