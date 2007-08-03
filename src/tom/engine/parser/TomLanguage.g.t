@@ -235,7 +235,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
             {
               if(matchPatternList.size() != subjectList.length()) {                       
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
-                    new Object[]{new Integer(matchSubjectList.size()), new Integer(matchPatternList.size())},
+                    new Object[]{new Integer(subjectList.length()), new Integer(matchPatternList.size())},
                     currentFile(), getLine()));
                 return;
               }
