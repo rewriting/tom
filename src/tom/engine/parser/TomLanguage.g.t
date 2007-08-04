@@ -305,7 +305,6 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 if(label != null){
                     optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
-                System.out.println("parsed: " + constraint);
                 list.add(`ConstraintInstruction(
                     constraint,
                     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
