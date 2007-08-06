@@ -32,7 +32,7 @@ package andor;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import andor.testand.m.types.*;
+import andor.testandor.m.types.*;
 
 public class TestAndOr extends TestCase {
   %gom {
@@ -185,6 +185,19 @@ public class TestAndOr extends TestCase {
     if (counter != 3){
       fail();
     }
+  }
+  
+  public void test14() {
+    Term s = `f(g(a()),g(b()));
+    int counter = 0;
+    %match(s) {
+      // used to generate an error with the optimizer
+      f(_,_) && {z << a() || z << b()} -> {
+        if (`z != `a() && `z != `b()){
+          fail();
+        }        
+      }
+    }    
   }
   
 
