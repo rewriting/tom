@@ -16,6 +16,7 @@ public class TestFold {
   }
 
   %include { plus.tom }
+  %include { mult.tom }
   %include { fold.tom }
 
   private static int natToInt(Nat n, int i) {
@@ -47,18 +48,25 @@ public class TestFold {
   public void run() {
     try {
       Natlist l = `nlist();
-      Nat max = intToNat(20);
-      for(Nat n=`z(); n != max ;n = `s(n)) {
+      Nat max = intToNat(8);
+      for(Nat n=`s(z()); n != max ;n = `s(n)) {
         l = `nlist(l*,n);
       }
-      Strategy add = (Strategy) new plus();
-      Strategy fld = (Strategy) new fold();
+      System.out.println("l = " + `prettyList(l));
+
+      Strategy fld = `fold();
+
+      Strategy add = `plus();
       // addall = fold add 0
       Strategy addall = (Strategy) ((Strategy) fld.visit(add)).visit(`z());
-      System.out.println("l = " + `prettyList(l));
       // n = addall l
       Nat n = (Nat) addall.visit(l);
-      System.out.println("fold add 0 l = " + prettyNat(n));
+      System.out.println("fold plus 0 l = " + prettyNat(n));
+
+      Strategy times = (Strategy) `mult();
+      n = (Nat) ((Strategy) ((Strategy) fld.visit(times)).visit(`s(z()))).visit(l);
+      System.out.println("fold mult 1 l = " + prettyNat(n));
+
     } catch (VisitFailure ex) {
       System.out.println(ex);
     }

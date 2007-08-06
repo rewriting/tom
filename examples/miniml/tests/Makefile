@@ -21,7 +21,7 @@ TestFold.java: TestFold.t
 TestPlus.java: TestPlus.t
 	tom TestPlus.t
 
-TestFold.t: fold.tom plus.tom
+TestFold.t: fold.tom plus.tom mult.tom
 
 TestPlus.t: plus.tom
 
@@ -35,4 +35,8 @@ plus.tom: plus.ml
 	&& java Compiler ../tests/plus.ml > ../tests/plus.tom \
 	&& cd ../tests
 
+mult.tom: mult.ml
+	cd ../build \
+	&& java Compiler ../tests/mult.ml > ../tests/mult.tom \
+	&& cd ../tests
 

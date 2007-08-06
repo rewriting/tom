@@ -217,13 +217,15 @@ public class Compiler {
       }
       %match(Expr e) {
         typed[e=letlist(alist(affect(v,_,fun)),typed[e=skip()])] -> {
-          res += "public class " + `v + " extends AbstractStrategy {\n";
+          res += "public static class " + `v + " extends AbstractStrategy {\n";
           res += "public " + `v + "() { initSubterm(); }\n";
           res += "public Visitable visitLight(Visitable v) "
                 +"throws VisitFailure { return v; }\n";
           res += "public "+`v+" make"+`v+"() { return new "+`v+"(); }\n";
           res += `toJava(fun);
           res += "}\n";
+          res += "%op Strategy " + `v + " () { "; 
+          res += "make() { new "+`v+"() } }\n"; 
         }
         typed[e=letlist(al,in@typed(!skip(),t))] -> {
           %match(AffectList al) {
