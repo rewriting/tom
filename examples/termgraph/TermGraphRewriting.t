@@ -48,18 +48,18 @@ public class TermGraphRewriting {
 
   %strategy CollectRef(map:HashMap) extends Identity(){
     visit Term {
-      p@pathTerm(_*) -> {
+      p@PathTerm(_*) -> {
         Path target =
           getEnvironment().getPosition().add((Path)`p).getCanonicalPath();
         if (map.containsKey(target.toString())){
           String label = (String) map.get(target.toString());
-          return `refTerm(label);
+          return `RefTerm(label);
         }
         else{
           i++;
           String label = "tom_label"+i;
           map.put(target.toString(),label);
-          return `refTerm(label);
+          return `RefTerm(label);
         }
       }
     }
@@ -68,11 +68,11 @@ public class TermGraphRewriting {
 
   %strategy CollectSubterm(label:String,info:Info) extends Identity(){
     visit Term {
-      labTerm[label=label,term=subterm] -> {
+      LabTerm[label=label,term=subterm] -> {
         if(label.equals(`label)){
           info.term = `subterm;
           info.omega = getEnvironment().getPosition();
-          return `refTerm(label);
+          return `RefTerm(label);
         }
       }
     }
@@ -83,7 +83,7 @@ public class TermGraphRewriting {
       t -> {
         if (map.containsKey(getEnvironment().getPosition().toString())) {
           String label = (String) map.get(getEnvironment().getPosition().toString());
-          return `labTerm(label,t);
+          return `LabTerm(label,t);
         }
       }
     }
@@ -117,7 +117,7 @@ public class TermGraphRewriting {
   // In this strategy, the failure is Identity
   %strategy NormalizeLabel(map:HashMap) extends Identity(){
     visit Term {
-      refTerm[label=label] -> {
+      RefTerm[label=label] -> {
         if (! map.containsKey(`label)){
           Info info = new Info();
           Position pos = new Position(new int[]{});
@@ -127,10 +127,10 @@ public class TermGraphRewriting {
           getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));
           `Try(TopDown(CollectSubterm(label,info))).visit(getEnvironment());
           getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
-          return `labTerm(label,info.term);
+          return `LabTerm(label,info.term);
         }
       }
-      labTerm[label=label] -> {
+      LabTerm[label=label] -> {
         map.put(`label,getEnvironment().getPosition());
       }
     }
@@ -139,7 +139,7 @@ public class TermGraphRewriting {
   // In this strategy, the failure is Identity
   %strategy NormalizePos() extends Identity(){
     visit Term {
-      p@pathTerm(_*) -> {
+      p@PathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
         Position dest = (Position) current.add((Path)`p).getCanonicalPath();
         if(current.compare(dest)== -1) {
@@ -149,12 +149,12 @@ public class TermGraphRewriting {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
             getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
-            return pathTerm.make(realDest.sub(current));
+            return PathTerm.make(realDest.sub(current));
           } else {
             //we must switch the rel position and the pointed subterm
 
             // 1. we construct the new relative position
-            Term relref = pathTerm.make(current.sub(dest));
+            Term relref = PathTerm.make(current.sub(dest));
 
             // 2. we update the part we want to change 
             `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
@@ -175,19 +175,19 @@ public class TermGraphRewriting {
 
   %strategy UpdatePos(source:Position,target:Position) extends Identity() {
     visit Term {
-      p@pathTerm(_*) -> {
+      p@PathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
         Position dest = (Position) current.add((Path)`p).getCanonicalPath();
         if(current.hasPrefix(source) && !dest.hasPrefix(source)){
           //we must update this relative pos from the redex to the external
           current = current.changePrefix(source,target);
-          return pathTerm.make(dest.sub(current));
+          return PathTerm.make(dest.sub(current));
         }
 
         if (dest.hasPrefix(source) && !current.hasPrefix(source)){
           //we must update this relative pos from the external to the redex
           dest = dest.changePrefix(source,target); 
-          return pathTerm.make(dest.sub(current));
+          return PathTerm.make(dest.sub(current));
         }
       }
     }
@@ -201,7 +201,7 @@ public class TermGraphRewriting {
 
   public static void main(String[] args){
 
-    Term t = `g(g(g(a(),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,2));
+    Term t = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
     System.out.println("Initial term :\n"+t);
     HashMap map = new HashMap();
 
@@ -227,13 +227,13 @@ public class TermGraphRewriting {
       Position _y = new Position(new int[]{2});
       final Term term_x =  (Term) _x.getSubterm().visit(redex);
       final Term term_y =  (Term) _y.getSubterm().visit(redex);
-      redex = (Term) _x.getReplace(`labTerm("x",term_x)).visit(redex);
-      redex = (Term) _y.getReplace(`labTerm("y",term_y)).visit(redex);
+      redex = (Term) _x.getReplace(`LabTerm("x",term_x)).visit(redex);
+      redex = (Term) _y.getReplace(`LabTerm("y",term_y)).visit(redex);
       /* replace in t the lhs by the rhs */
-      tt = (Term) new Position(new int[]{1,1}).getReplace(`f(refTerm("x"))).visit(tt);
+      tt = (Term) new Position(new int[]{1,1}).getReplace(`f(RefTerm("x"))).visit(tt);
 
       /* concat the redex on top of the term */
-      tt = `substTerm(tt,redex);
+      tt = `SubstTerm(tt,redex);
 
       /* normalization by point fix */
       Term t1 = (Term) termAbstractType.expand(tt);
@@ -255,7 +255,7 @@ public class TermGraphRewriting {
       Position posRedex = new Position(new int[]{1,1,1});
 
       /* concat a constant on top of the term */
-      Term t3 = `substTerm(t,a());
+      Term t3 = `SubstTerm(t,a());
 
       /* update positions on phi(rhs) and on the redex */
       t3 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t3);
@@ -265,7 +265,7 @@ public class TermGraphRewriting {
       t3 = (Term) posSubst.getReplace(redex).visit(t3);
 
       /* replace in t the lhs by the rhs */
-      t3 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t3);
+      t3 = (Term) posRedex.getReplace(`f(PathTerm(-1,-1,-1,-1,2,1))).visit(t3);
 
       /* normalization by innermost strategy */
       t3 = (Term) `InnermostIdSeq(NormalizePos()).visit(t3);
@@ -274,13 +274,13 @@ public class TermGraphRewriting {
 
       System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
       
-      t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
+      t = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
       System.out.println("\nMore complex initial term :\n"+t);
       /* rule g(x,y) -> f(x) at pos 1.1*/
       System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
 
       /* concat a constant on top of the term */
-      Term t4 = `substTerm(t,a());
+      Term t4 = `SubstTerm(t,a());
 
       /* update positions on phi(rhs) and on the redex */
       t4 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).visit(t4);
@@ -290,7 +290,7 @@ public class TermGraphRewriting {
       t4 = (Term) posSubst.getReplace(redex).visit(t4);
 
       /* replace in t the lhs by the rhs */
-      t4 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).visit(t4);
+      t4 = (Term) posRedex.getReplace(`f(PathTerm(-1,-1,-1,-1,2,1))).visit(t4);
 
       /* normalization by innermost strategy */
       t4 = (Term) `InnermostIdSeq(NormalizePos()).visit(t4);

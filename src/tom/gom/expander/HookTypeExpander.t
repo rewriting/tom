@@ -42,9 +42,11 @@ public class HookTypeExpander {
   %include { ../adt/gom/Gom.tom}
 
   private ModuleList moduleList;
+  private ArrayList sortsWithGraphrules;
 
   public HookTypeExpander(ModuleList moduleList) {
     this.moduleList = moduleList;
+    sortsWithGraphrules = new ArrayList();
   }
 
   /**
@@ -409,7 +411,7 @@ public class HookTypeExpander {
   /*
    * generate hooks for term-graph rules 
    */
-  private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl mdecl, String scode) {
+  private HookDeclList makeGraphRulesHookList(String sortname, ArgList args, Decl sdecl, String scode) {
     %match(args) {
       concArg(Arg[Name=stratname],Arg[Name=defaultstrat]) -> {
         if (!`defaultstrat.equals("Fail") && !`defaultstrat.equals("Identity")) {
@@ -417,7 +419,12 @@ public class HookTypeExpander {
             "In graphrules hooks, the default strategies authorized are only Fail and Identity");
         }
         GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
-        return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),mdecl);
+        if (sortsWithGraphrules.contains(sdecl)) {
+        return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
+        } else {
+          sortsWithGraphrules.add(sdecl);
+          return rexpander.expandFirstGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
+        }
       }
     }
     return null;

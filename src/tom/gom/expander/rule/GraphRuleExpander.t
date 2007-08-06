@@ -50,6 +50,7 @@ public class GraphRuleExpander {
 
   private ModuleList moduleList;
   private String sortname;
+  private String modulename;
 
   public GraphRuleExpander(ModuleList data) {
     this.moduleList = data;
@@ -57,6 +58,7 @@ public class GraphRuleExpander {
 
   public HookDeclList expandGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
     this.sortname = sortname; 
+    this.modulename = sdecl.getSort().getModuleDecl().getModuleName().getName();
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
@@ -70,16 +72,23 @@ public class GraphRuleExpander {
           new Object[]{});
       return `concHookDecl();
     }
-    return expand(rulelist,sdecl,stratname,defaultstrat);
+    return expand(rulelist,stratname,defaultstrat,sdecl);
+  }
+
+  public HookDeclList expandFirstGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
+    HookDeclList expandedrules = expandGraphRules(sortname,stratname,defaultstrat,ruleCode, sdecl);
+    HookDeclList commonpart = expandFirst(sdecl);
+    return `concHookDecl(commonpart*,expandedrules*);  
   }
 
   private String getArobase(){
     return "@";
   }
 
-  protected HookDeclList expand(RuleList rulelist, Decl sdecl, String stratname, String defaultstrat) {
-    StringBuffer output = new StringBuffer();
-    String modulename = sdecl.getSort().getModuleDecl().getModuleName().getName();
+
+  //add the common methods, includes and imports for all graphrule strategies of a sort 
+  protected HookDeclList expandFirst(Decl sdecl) {
+  StringBuffer output = new StringBuffer();
     output.append(
         %[
    %include {sl.tom }
@@ -214,6 +223,19 @@ public class GraphRuleExpander {
     }
   }
 
+   ]%);
+
+  String imports = %[
+import tom.library.sl.*;
+import java.util.*;
+   ]%;
+
+   return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
+  }
+
+  protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
+    StringBuffer output = new StringBuffer();
+    output.append(%[
   public static Strategy @stratname@(){
     return `@stratname@();
   }
@@ -262,13 +284,7 @@ public class GraphRuleExpander {
   }
             ]%);
 
-        String imports = %[
-          import tom.library.sl.*;
-          import java.util.*;
-          ]%;
-        
-
-        return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
+          return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())));
   }
 
   private String genTerm(Term term) {
