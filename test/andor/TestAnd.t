@@ -131,6 +131,62 @@ public class TestAnd extends TestCase {
     fail();
   }
 
+  /*
+   * completeness tests
+   */
+  
+  public void test10() {
+    Term s = `f(g(a()),b());
+    int counter = 0;
+    %match(s) {
+      f(x,y) && { a() << a() || b() << b() } -> {        
+        counter++;
+      }
+    }
+    if (counter != 2){
+      fail();
+    }
+  }
+  
+  public void test11() {
+    Term s = `f(g(a()),b());
+    int counter = 0;
+    %match(s) {
+      f(x,y) && { g(x) << g(g(a())) || x << g(a()) } -> {
+        counter++;
+      }
+    }
+    if (counter != 2){
+      fail();
+    }
+  }
+  
+  public void test12() {
+    Term s = `f(g(a()),g(b()));
+    int counter = 0;
+    %match(s) {
+      f(_,_) || f(g(_),g(_)) << s -> {
+        counter++;
+      }
+    }
+    if (counter != 2){
+      fail();
+    }
+  }
+
+  public void test13() {
+    Term s = `f(g(a()),g(b()));
+    int counter = 0;
+    %match(s) {
+      f(_,_) || f(g(a()),g(b())) << s || f(g(_),g(_)) << s -> {
+        counter++;
+      }
+    }
+    if (counter != 3){
+      fail();
+    }
+  }
+  
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestAnd.class));
