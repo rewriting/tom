@@ -182,9 +182,9 @@ public class ConstraintGenerator {
    *            flag = true;
    *        }
    *    }    
+   *    if (flag == true) ...
    *    counter++;
    * } while (counter < n)
-   * if (flag == true) ...
    *  
    */
   private static Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
@@ -202,8 +202,11 @@ public class ConstraintGenerator {
         cnt++;
       }
     }
+    // add the final test
+    instruction = `AbstractBlock(concInstruction(instruction,
+          If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
     // counter++ : expression at the end of the loop 
-    Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());
+    Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());    
     instruction = `AbstractBlock(concInstruction(instruction,counterIncrement));
     instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter),TomTermToExpression(Variable(concOption(),Name(cnt+""),intType,concConstraint()))));
     
@@ -212,10 +215,6 @@ public class ConstraintGenerator {
     if ( !ConstraintCompiler.getSymbolTable().isUsedTypeDefinition(typeDefinition) ) {
       ConstraintCompiler.getSymbolTable().setUsedTypeDefinition(typeDefinition);
     }
-    
-    // add the final test
-    instruction = `AbstractBlock(concInstruction(instruction,
-          If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));    
     
     // add fresh variables' declarations
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
