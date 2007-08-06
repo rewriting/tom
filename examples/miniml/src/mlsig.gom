@@ -1,0 +1,38 @@
+module mlsig
+imports String
+abstract syntax
+
+
+Pattern = pvar(n:String)
+        | pconstr(f:String,l:PatternList)
+PatternList = patternlist(Pattern*) 
+
+Expr = typed(e:Expr, type:Type)
+     | var(n:String)
+     | scopedvar(scope:String,n:String)
+     | constr(f:String,l:ExprList)
+     | appl(e1:Expr, e2:Expr) 
+     | match(var:String, rl:RuleList)
+     | function(arg:String,e:Expr)
+     | let(a:Affect,body:Expr)
+     | skip()
+     /* after transformation */
+     | letlist(affects:AffectList,in:Expr)
+ExprList = exprlist(Expr*)
+
+Affect = affect(var:String,type:Type,val:Expr)
+AffectList = alist(Affect*)
+
+Type = basetype(n:String)
+     | abs(l:Type,r:Type)
+     | unit()
+     | undef()
+
+Rule = rule(lhs:Pattern,rhs:Expr)
+RuleList = rulelist(Rule*)
+
+// for the symbol table:
+TypedVar = typedvar(s:String,t:Type)
+TypedVarList = typedvarlist(TypedVar*)
+Scope = scope(name:String,list:TypedVarList)
+ScopeSearchResult = scopeAndType(sname:String,t:Type)

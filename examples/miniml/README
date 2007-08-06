@@ -1,0 +1,13 @@
+Ml compiler proof of concept
+
+Translates a minimal subset of ml into tom code.
+
+Usage :
+	ant
+	cd build
+	java Compiler somefile.ml > somefile.t
+
+Examples:
+	cd tests
+	make
+
