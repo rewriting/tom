@@ -43,26 +43,94 @@ public class TestAnd extends TestCase {
       | b()
       | c()
       | list( Term* )
-      | f( l:TermList)
+      | f(t1:Term,t2:Term)
+      | h( l:TermList)
       | g(t:Term)
 
       TermList = termList(Term*)
   }
   
   public void test1() {
-    Term res = `list(a(),b(),c());
-    Term x = `b();
-    %match(list(x)) {
-      x -> {System.out.println("match, with x = " + `x);}
+    %match(f(a(),b())) {
+      f(x,y) && { x << a() || x << b() } -> {        
+        return;
+      }
     }
-//    %match(res) {
-//      list(_*,list(a(),b(),c()),_*) and x << a()  -> {        
-//        System.out.println("match, with x = " + `x);
-//        return;
-//      }
-//    }
     fail();
-  }  
+  }
+  
+  public void test2() {
+    %match(f(b(),b())) {
+      f(x,y) && { x << a() || x << b() } -> {        
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test3() {
+    %match(f(c(),b())) {
+      f(x,y) && { x << a() || x << b() } -> {
+        fail();
+      }
+    }
+  }
+  
+  public void test4() {
+    %match(f(c(),b())) {
+      f(x,y) && { x << g(a()) || x << b() } -> {
+        fail();
+      }
+    }
+  }
+  
+  public void test5() {
+    %match(f(c(),b())) {
+      f(x,y) && { x << g(a()) || x << b() } -> {
+        fail();
+      }
+    }
+  }
+  
+  public void test6() {
+    %match(f(g(a()),b())) {
+      f(x,y) && { x << g(a()) || x << b() } -> {
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test7() {
+    Term s = `f(g(a()),b());
+    %match(s) {
+      f(a(),y) || f(b(),y) << s -> {
+        fail();
+      }
+    }
+    return;
+  }
+  
+  public void test8() {
+    Term s = `f(g(a()),b());
+    %match(s) {
+      f(g(a()),y) || f(b(),y) << s -> {
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test9() {
+    Term s = `f(g(a()),b());
+    %match(s) {
+      f(b(),y) || f(g(a()),y) << s -> {
+        return;
+      }
+    }
+    fail();
+  }
+
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestAnd.class));
