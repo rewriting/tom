@@ -418,7 +418,7 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
-            ( { System.out.println("ici 2");}
+            ( 
                 COMMA {text.append('\n');}  
                 term = annotedTerm {list.add(term);}
             )*

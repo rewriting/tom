@@ -6,19 +6,26 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   | TomInstructionToExpression(Instruction:Instruction)
            /**
             * We have different Bottom for different types
-            * For instance, builtin types can't be null in Java
+            * For instance, built-in types can't be null in Java
             */
            | Bottom(TomType:TomType)
            | Negation(Arg:Expression)
            | And(Arg1:Expression,Arg2:Expression)
            | Or(Arg1:Expression,Arg2:Expression)
            /**
-		   * <code>OrExpressionDisjunction</code> used for the disjonction of symbols
+		   * <code>OrExpressionDisjunction</code> used for the disjunction of symbols
 		   *
 		   * @param Expression the list of And() that are linked by Or
 		   */		              
            | OrExpressionDisjunction(Expression*)
+           /**
+		   * <code>OrConnector</code> this is the 'or' connector that initially connected the constraints in the lhs of the rule
+		   *
+		   * @param Expression the list of expressions that are linked by Or
+           */
+           | OrConnector(Expression*)
            | GreaterThan(Arg1:Expression,Arg2:Expression)
+           | LessThan(Arg1:Expression,Arg2:Expression)
            | AntiMatchExpression(Expression:Expression)
            | Conditional(Cond:Expression,Then:Expression,Else:Expression)
            | TrueTL()

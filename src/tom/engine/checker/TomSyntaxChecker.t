@@ -117,7 +117,7 @@ public class TomSyntaxChecker extends TomChecker {
     alreadyStudiedSymbols = new ArrayList();
   }
 
-  public void run() {
+  public void run() {       
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();

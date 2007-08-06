@@ -89,6 +89,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(" > ");
     generateExpression(deep,exp2,moduleName);
   }
+  
+  protected void buildExpLessThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    generateExpression(deep,exp1,moduleName);
+    output.write(" < ");
+    generateExpression(deep,exp2,moduleName);
+  }
 
   protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList, String moduleName) throws IOException {
     %match(TomName opNameAST) {

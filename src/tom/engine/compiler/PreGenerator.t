@@ -225,7 +225,11 @@ public class PreGenerator {
       AndConstraint(m,X*) -> {        
         return `And(constraintsToExpressions(m),
             constraintsToExpressions(AndConstraint(X*)));
-      }      
+      }
+      OrConstraint(m,X*) -> {        
+        return `OrConnector(constraintsToExpressions(m),
+            constraintsToExpressions(OrConstraint(X*)));
+      }
       OrConstraintDisjunction(m,X*) -> {        
         return `OrExpressionDisjunction(constraintsToExpressions(m),
             constraintsToExpressions(OrConstraintDisjunction(X*)));
@@ -246,7 +250,7 @@ public class PreGenerator {
         return `IsEmptyArray(opName,variable,index);
       }
     }                   
-    throw new TomRuntimeException("ConstraintGenerator.prepareGeneration - strange constraint:" + constraint);
+    throw new TomRuntimeException("PreGenerator.constraintsToExpressions - strange constraint:" + constraint);
   }     
 }
 
