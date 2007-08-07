@@ -70,7 +70,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* ) 
        */
-      AndConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[],AstType=type],p1),Y*) -> {
+      AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],_),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
         Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
@@ -109,19 +109,19 @@ public class GeneralPurposePropagator implements IBasePropagator {
     SlotList newSlots = `concSlot();
     Constraint constraintList = `AndConstraint();
     %match(constraint) {      
-      MatchConstraint(t@RecordAppl[NameList=(name@Name(tomName)),Slots=slots@!concSlot()],g) -> {      
+      MatchConstraint(t@RecordAppl[NameList=(name@Name[]),Slots=slots@!concSlot()],g) -> {      
       %match(slots) { 
         concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot,TomName name) {
             // if we find a child with the same name, we abstract
-            ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=nameList@(childName)]],childName -> {
+            ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=(childName)]],childName -> {
               TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t));                
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
               break matchSlot;
             }
             // the child can be an antiTerm - in this case, do as above
-            ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=nameList@(childName)])],childName -> {
+            ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=(childName)])],childName -> {
               TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t)); 
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));

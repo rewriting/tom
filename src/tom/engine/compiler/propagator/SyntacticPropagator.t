@@ -70,7 +70,7 @@ public class SyntacticPropagator implements IBasePropagator {
        * if the symbol was annotated, annotations are detached:
        *        a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
-      m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
+      m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
             ConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
@@ -98,7 +98,7 @@ public class SyntacticPropagator implements IBasePropagator {
             int counter = 0;          
             // for each slot
             %match(slots) {
-              concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {                                          
+              concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
                 TomTerm freshVar = freshVarList.get(counter);          
                 andForName = `AndConstraint(andForName*,MatchConstraint(freshVar,Subterm(name,slotName,g)));
                 counter++;

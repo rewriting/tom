@@ -63,7 +63,7 @@ public class VariadicPropagator implements IBasePropagator {
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
-      m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=slots@!concSlot()],g) -> {
+      m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not a list, nothing to do
         if(!TomBase.isListOperator(ConstraintCompiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
@@ -87,7 +87,7 @@ public class VariadicPropagator implements IBasePropagator {
        * if the symbol was annotated, annotations are detached: 
        *        a@...b@conc(...) << t -> conc(...) << t /\ a << t /\ ... /\ b << t   
        */
-      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
+      m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this is not a list, nothing to do
         if(!TomBase.isListOperator(ConstraintCompiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }        
