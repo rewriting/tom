@@ -57,7 +57,7 @@ public class PreGenerator {
   // ------------------------------------------------------------
 
   public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure{    
-    constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
+    constraint = (Constraint)`InnermostId(OrderConstraints()).visitLight(constraint);    
     return constraintsToExpressions(constraint);
   }
 
