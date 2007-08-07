@@ -3,7 +3,7 @@ grammar Seq;
 
 options {
     output=AST;
-    ASTLabelType=CommonTree; // type of $stat.tree ref etc...
+    ASTLabelType=CommonTree; 
 }
 
 tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; }
@@ -57,8 +57,8 @@ fterm : LPAREN! term RPAREN!
       ;
 
 funappl : ID LPAREN term_list RPAREN -> ^(FAPPL ID term_list)
-             | ID LPAREN RPAREN -> ^(FAPPL ID)
-             ;
+        | ID LPAREN RPAREN -> ^(FAPPL ID)
+        ;
 
 
 // points d'entree pour les programmes
@@ -102,6 +102,7 @@ start1: pred DOT! ;
 start2: term DOT! ;
 ident: ID DOT! ;
 
+/* --- stagiaires -- */
 rule1: ctor AFFECT ctor_list -> ^(RULEINDUCT ctor ctor_list)
      | ctor AFFECT -> ^(VOIDRULEINDUCT ctor) ;
 
@@ -113,6 +114,7 @@ ctor: ID LPAREN type_list RPAREN -> ^(RULECTOR ID type_list)
 type_list: type (COMMA type)* -> ^(TYPELIST type)+;
 
 type: ID ;
+/* ----------------- */
 
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n') {$channel=HIDDEN;}
     ;
@@ -143,11 +145,10 @@ BOTTOM : '\\B' | 'False';
 TOP: '\\T' | 'True';
 ARROW : '->';
 
-//C est nous 
+/* -- stagiaires -- */
 PIPE : '|';
-
 AFFECT : ':=';
-//On a fini
+/* ----------------*/
 
 COLUMN: ':';
 TIMES: '*';

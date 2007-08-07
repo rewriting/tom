@@ -1131,6 +1131,17 @@ b :{
           Utils.setStream(new DataInputStream(System.in));
           inputStreams.clear();
         }
+        
+        /* debug commands */
+        proofCommand("debugprop") -> {
+          writeToOutputln(active.toString());
+        }
+        proofCommand("debuggoal") -> {
+          writeToOutputln(goal.toString());
+        }
+        proofCommand("debugtree") -> {
+          writeToOutputln(env.tree.toString());
+        }
 
       } /* end of the big command switch */
 
@@ -1227,7 +1238,7 @@ b :{
         /* declarations */
 
         rewritesuper(p1,p2) -> {
-	  writeToOutputln(`p1.toString());
+          writeToOutputln(`p1.toString());
           writeToOutputln(`p2.toString());
           RuleList rl = transform(`p1,`p2);
           %match(RuleList rl) {

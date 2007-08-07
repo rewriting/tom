@@ -22,6 +22,45 @@ Prop = relationAppl(r:String, t:TermList)
      | top()
      | nullProp() // for open leaves
 
+
+/* -- alpha equivalence -- */
+
+and:block() {
+	public boolean equals(Object o) {
+		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+		%match(this,p) {
+			and(p11,p12),and(p21,p22) -> {
+				return `p11.equals(`p21) && `p12.equals(`p22);
+			}
+		}
+		return false;
+	}
+}
+
+or:block() {
+	public boolean equals(Object o) {
+		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+		%match(this,p) {
+			or(p11,p12),or(p21,p22) -> {
+				return `p11.equals(`p21) && `p12.equals(`p22);
+			}
+		}
+		return false;
+	}
+}
+
+implies:block() {
+	public boolean equals(Object o) {
+		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+		%match(this,p) {
+			implies(p11,p12),implies(p21,p22) -> {
+				return `p11.equals(`p21) && `p12.equals(`p22);
+			}
+		}
+		return false;
+	}
+}
+
 forAll:block() {
 	public boolean equals(Object o) { 
 		if  (this == o) return true;
@@ -59,6 +98,8 @@ exists:block() {
 		}
 	}
 }
+
+/* ---------------------- */
 
 Context = context(Prop*)
 

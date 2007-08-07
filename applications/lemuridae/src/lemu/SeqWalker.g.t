@@ -3,7 +3,6 @@ tree grammar SeqWalker;
 options {
     tokenVocab=Seq;
     ASTLabelType = Tree;
-    backtrack=true;
 }
 
 @header{
@@ -103,8 +102,10 @@ rule1 returns [lemu.sequents.types.Sig s]
   ;
 
 ctor_list returns [lemu.sequents.types.Ctorlist cl]
-  : ^(CTORLIST c=ctor) tail=ctor_list { cl = `clist(c,tail*); }
-  | ^(CTORLIST c=ctor) { cl = `clist(c); }
+@init {
+  cl = `clist();
+}
+  : (^(CTORLIST c=ctor) {cl = `clist(c,cl*);} )+
   ;
 
 ctor returns [lemu.sequents.types.Ctor c]
@@ -113,8 +114,10 @@ ctor returns [lemu.sequents.types.Ctor c]
   ;
 
 type_list returns [lemu.sequents.types.TypeList tl]
-  : ^(TYPELIST t=type) tail=type_list { tl = `tlist(t,tail*); }
-  | ^(TYPELIST t=type) { tl = `tlist(t); }
+@init {
+  tl = `tlist();
+}
+  : (^(TYPELIST t=type) { tl = `tlist(t,tl*); } )+
   ;
 
 type returns [lemu.sequents.types.Type s]
