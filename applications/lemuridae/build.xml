@@ -17,7 +17,6 @@
   <property name="lemu.gen"      location="gen"/>
   <property name="lemu.build"    location="build"/>
 
-
   <target name="init" depends="tom.init">
     <mkdir dir="${lemu.build}"/>
     <mkdir dir="${lemu.gen}"/>
@@ -57,7 +56,7 @@
     </tom.preset>
 
     <tomantlr target="${lemu.gen}/lambdapp/LambdaParser.g"
-      outputdirectory="${lemu.gen}/lemu">
+      outputdirectory="${lemu.gen}/lambdapp">
       <classpath refid="tom.classpath"/>
     </tomantlr>
  
