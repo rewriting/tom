@@ -923,7 +923,8 @@
   <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
-    <antcall target="src.junit"/>
+    <antcall target="src.junit"/>  	
+  	<echo>Runs junit acceptance tests with optimization</echo>
   	<antcall target="src.junit.opt"/>
   	
   	<echo>Test tom-source in examples</echo>
