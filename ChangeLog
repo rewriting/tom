@@ -1,3 +1,13 @@
+2007-08-08 radu
+	* constraint ordering seems to work faster 
+	* compilation is a lot faster - at least on oana's example, it is 5 times faster
+
+2007-08-06 radu
+	* added <<
+	* added && 
+	* added ||
+	* added { }	
+
 2007-07-09  tonio <reilles@loria.fr>
   * Fix scripts to support install path with spaces
   * bootinstall for 2.5
