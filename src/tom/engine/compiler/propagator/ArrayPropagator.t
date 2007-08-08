@@ -48,7 +48,7 @@ public class ArrayPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`InnermostId(ArrayPatternMatching()).visit(constraint);		
+    return (Constraint)`TopDown(ArrayPatternMatching()).visitLight(constraint);		
   }	
 
   %strategy ArrayPatternMatching() extends Identity() {

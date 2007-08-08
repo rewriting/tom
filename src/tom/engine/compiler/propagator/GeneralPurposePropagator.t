@@ -50,7 +50,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return  (Constraint)`InnermostId(GeneralPropagations()).visit(constraint);
+    return  (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
   }	
 
   %strategy GeneralPropagations() extends `Identity() {

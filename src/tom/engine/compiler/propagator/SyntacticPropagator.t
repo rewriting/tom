@@ -48,7 +48,7 @@ public class SyntacticPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return  (Constraint)`InnermostId(SyntacticPatternMatching()).visit(constraint);
+    return  (Constraint)`TopDown(SyntacticPatternMatching()).visitLight(constraint);
   }	
 
   %strategy SyntacticPatternMatching() extends `Identity() {
@@ -109,17 +109,28 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
       }
+      
+      /**
+       * SwithAnti : here is just for efficiency reasons, and not for ordering, 
+       * because now the replace can be applied left-right; the ordering is done anyway in the pre-generator
+       *       
+       * AntiMatchConstraint[] /\ ... /\ MatchConstraint[] ->  MatchConstraint[] /\ ... /\ AntiMatchConstraint[] 
+       */
+      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
+      }
+
 
       /**
        * Replace
        * 
-       * Context1( z = v ) /\ z = t /\ Context2( z = u ) -> Context1( t = v ) /\ z = t /\ Context2( t = u ) 
+       * z = t /\ Context2( z = u ) ->  z = t /\ Context2( t = u ) 
        */
       AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {        
-        Constraint toApplyOn = `AndConstraint(X*,Y*);
-        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
+        Constraint toApplyOn = `AndConstraint(Y*);
+        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visitLight(toApplyOn);
         if(res != toApplyOn) {          
-          return `AndConstraint(eq,res);
+          return `AndConstraint(X*,eq,res);
         }
       }      
     }
