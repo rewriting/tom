@@ -58,6 +58,10 @@ public class Reading {
   }
 
   public static void main(String[] args) {
+  if(args.length != 1) {
+      System.out.println("Usage : java -Djava.system.class.loader=bytecode.SClassLoader bytecode/Reading <classToRead>");
+      return;
+    }
     String nameFile = args[0];
     System.out.println("read1---------");
     read1(nameFile);
