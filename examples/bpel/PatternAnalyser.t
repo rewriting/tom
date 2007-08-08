@@ -60,7 +60,7 @@ public class PatternAnalyser{
 
       node@WfgNode(leaf@Activity[],refList*) -> {
         %match(Wfg refList){
-          WfgNode(_*,!refWfg[],_*) -> {
+          WfgNode(_*,!RefWfg[],_*) -> {
             // node is not a leaf
             return `node;
           }
@@ -80,7 +80,7 @@ public class PatternAnalyser{
     %strategy Substitute(sourceToName:HashMap) extends `Identity() {
       visit Condition {
         label(n) -> {
-          return `cond(refWfg( (String) sourceToName.get(n) ));
+          return `cond(RefWfg( (String) sourceToName.get(n) ));
         }
       }
     }
@@ -134,10 +134,10 @@ public class PatternAnalyser{
           }
           (_*,<source linkName=linkName/>,_*) -> {
             explicitCond.putLinkName(`linkName,`operation);
-            wfg = `WfgNode(wfg*,refWfg(linkName));
+            wfg = `WfgNode(wfg*,RefWfg(linkName));
           }
           (_*,<target linkName=linkName/>,_*) -> {
-            wfg = `labWfg(linkName,wfg);
+            wfg = `LabWfg(linkName,wfg);
           }
         }
       }
@@ -145,8 +145,8 @@ public class PatternAnalyser{
         whileCounter++;
         String label = "loop" + whileCounter;
         Wfg middle = bpelToWfg(`activity,explicitCond);
-        Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
-        Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), refWfg(label));
+        Wfg begin = `LabWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
+        Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), RefWfg(label));
         try {
           wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).visit(begin);
         } catch(VisitFailure e) {
@@ -184,10 +184,10 @@ public class PatternAnalyser{
             wfg = `WfgNode(Activity(buffer.toString(),noCond(),noCond())); 
           }
           (_*,<source linkName=linkName/>,_*) -> {
-            wfg = `WfgNode(wfg*,refWfg(linkName));
+            wfg = `WfgNode(wfg*,RefWfg(linkName));
           }
           (_*,<target linkName=linkName/>,_*) -> {
-            wfg = `labWfg(linkName,wfg);
+            wfg = `LabWfg(linkName,wfg);
           }
         }
       }
@@ -248,7 +248,7 @@ public class PatternAnalyser{
       a@Activity[name=name] -> {
         if (!visited.contains(`name)){
           visited.add(`name);
-          return `labWfg(name,a);
+          return `LabWfg(name,a);
         }
       }
     }
@@ -258,7 +258,7 @@ public class PatternAnalyser{
   // fails when finding the right ref
   %strategy FindRef(node:Info) extends `Identity() {
     visit Wfg {
-      refWfg(s) -> {
+      RefWfg(s) -> {
         Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
         if (`s.equals(act.getname())){
           throw new VisitFailure();
@@ -273,7 +273,7 @@ public class PatternAnalyser{
         Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
         String root_name = act.getname();
         if (root_name.equals("")) return `a;
-        return `Activity(name,and(cond(refWfg(root_name)),incond),outcond);
+        return `Activity(name,and(cond(RefWfg(root_name)),incond),outcond);
       }
     }
   }

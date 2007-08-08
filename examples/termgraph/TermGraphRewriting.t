@@ -68,7 +68,7 @@ public class TermGraphRewriting {
 
   %strategy CollectSubterm(label:String,info:Info) extends Identity(){
     visit Term {
-      LabTerm[label=label,term=subterm] -> {
+      LabTerm[labelTerm=label,termTerm=subterm] -> {
         if(label.equals(`label)){
           info.term = `subterm;
           info.omega = getEnvironment().getPosition();
@@ -117,7 +117,7 @@ public class TermGraphRewriting {
   // In this strategy, the failure is Identity
   %strategy NormalizeLabel(map:HashMap) extends Identity(){
     visit Term {
-      RefTerm[label=label] -> {
+      RefTerm[labelTerm=label] -> {
         if (! map.containsKey(`label)){
           Info info = new Info();
           Position pos = new Position(new int[]{});
@@ -130,7 +130,7 @@ public class TermGraphRewriting {
           return `LabTerm(label,info.term);
         }
       }
-      LabTerm[label=label] -> {
+      LabTerm[labelTerm=label] -> {
         map.put(`label,getEnvironment().getPosition());
       }
     }
