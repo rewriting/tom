@@ -492,7 +492,7 @@ writer.write(%[
     //in case of reference, paths are considered as constants
     //to avoid traversal inside a path
     //TODO: in the future Gom replace this code by a hook
-    if(className().equals("Conspath"+sortName.getName())) return count;
+    if(className().equals("ConsPath"+sortName.getName())) return count;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
