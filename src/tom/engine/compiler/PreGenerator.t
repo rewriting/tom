@@ -74,7 +74,7 @@ public class PreGenerator {
        * 
        */
       AndConstraint(X*,subterm@MatchConstraint(_,Subterm[GroundTerm=g]),Y*,symbolOf@MatchConstraint(_,SymbolOf(g)),Z*) -> {
-        return `AndConstraint(X*,symbolOf,Y*,subterm,Z*);        
+        return `AndConstraint(X*,Y*,symbolOf,subterm,Z*);        
       }
 
       /*
@@ -91,7 +91,7 @@ public class PreGenerator {
           ListTail[Variable=var],var -> { varFound = true;break match; }
           ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]), var -> { varFound = true;break match; }
         }
-        if (varFound) { return `AndConstraint(X*,second,Y*,first,Z*); }        
+        if (varFound) { return `AndConstraint(X*,Y*,second,first,Z*); }        
       }
 
       /*
@@ -114,10 +114,10 @@ public class PreGenerator {
        * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
        */
       AndConstraint(X*,first@EmptyListConstraint[Variable=v],Y*,second@MatchConstraint(v,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
+        return `AndConstraint(X*,Y*,second,first,Z*);
       }
       AndConstraint(X*,first@Negate(EmptyListConstraint[Variable=v]),Y*,second@MatchConstraint(v,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
+        return `AndConstraint(X*,Y*,second,first,Z*);
       }
       
       /*
@@ -128,10 +128,10 @@ public class PreGenerator {
        * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
        */
       AndConstraint(X*,first@EmptyArrayConstraint[Index=idx],Y*,second@MatchConstraint(idx,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
+        return `AndConstraint(X*,Y*,second,first,Z*);
       }
       AndConstraint(X*,first@Negate(EmptyArrayConstraint[Index=idx]),Y*,second@MatchConstraint(idx,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
+        return `AndConstraint(X*,Y*,second,first,Z*);
       }
 
       /*
@@ -143,14 +143,14 @@ public class PreGenerator {
         try{
           `TopDown(HasTerm(v)).visitLight(`rhs);
         }catch(VisitFailure ex){
-          return `AndConstraint(X*,second,Y*,first,Z*);
+          return `AndConstraint(X*,Y*,second,first,Z*);
         }
       }
       AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
         try{
           `TopDown(HasTerm(v)).visitLight(`rhs);
         }catch(VisitFailure ex){
-          return `AndConstraint(X*,second,Y*,first,Z*);
+          return `AndConstraint(X*,Y*,second,first,Z*);
         }
       }
 
@@ -160,7 +160,7 @@ public class PreGenerator {
        *            
        */
       AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second@Negate(EmptyListConstraint[Variable=v]),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);         
+        return `AndConstraint(X*,Y*,second,first,Z*);         
       }
 
       /*
@@ -169,14 +169,14 @@ public class PreGenerator {
        * 
        */
       AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second@EmptyListConstraint[Variable=v],Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);      
+        return `AndConstraint(X*,Y*,second,first,Z*);      
       }
       
       /*
        * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)        
        */
       AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid1=v])),Y*,second@Negate(EmptyArrayConstraint[Index=v]),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);       
+        return `AndConstraint(X*,Y*,second,first,Z*);       
       }
       
       /*
@@ -184,7 +184,7 @@ public class PreGenerator {
        * 
        */
       AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid1=v])),Y*,second@EmptyArrayConstraint[Index=v],Z*) -> {
-         return `AndConstraint(X*,second,Y*,first,Z*);                
+         return `AndConstraint(X*,Y*,second,first,Z*);                
       }
       
       /*
@@ -192,7 +192,7 @@ public class PreGenerator {
        * 
        */
       AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=v]),Z*) -> {
-         return `AndConstraint(X*,second,Y*,first,Z*);                
+         return `AndConstraint(X*,Y*,second,first,Z*);                
       }
 
       /*
@@ -200,7 +200,7 @@ public class PreGenerator {
        * 
        */
       AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadArray[EndIndex=v]),Z*) -> {
-         return `AndConstraint(X*,second,Y*,first,Z*);                
+         return `AndConstraint(X*,Y*,second,first,Z*);                
       }
       
     } // end visit
