@@ -5,7 +5,7 @@ abstract syntax
 
 Term = Var(name:String)
      | funAppl(fun:String, p:TermList)
-     | NewVar(name:String, base_name: String) // asks for a new var
+     | NewVar(name:String, base_name: String) // asks for a new term 
      | FreshVar(name:String, base_name: String) // asks for a fresh var
 
 TermList = concTerm(Term*)
@@ -182,13 +182,13 @@ ProofCommand = proofCommand(text:String)
              | abort()
              | proofendoffile()
 
-
-Sig = Sig(l:Ctorlist)
+/* --- stagiaires --- */
+Sig = sig(defined:String,l:Ctorlist)
 Ctorlist = clist(Ctor*)
 Ctor = ctor(s:String, tl:TypeList)
 TypeList = tlist(Type*)
 Type = type(s:String)
-
+/* ------------------ */
 
 // hooks maintaining free vars
 

@@ -103,8 +103,8 @@ start2: term DOT! ;
 ident: ID DOT! ;
 
 /* --- stagiaires -- */
-rule1: ctor AFFECT ctor_list -> ^(RULEINDUCT ctor ctor_list)
-     | ctor AFFECT -> ^(VOIDRULEINDUCT ctor) ;
+rule1: ID AFFECT ctor_list -> ^(RULEINDUCT ID ctor_list)
+     | ID AFFECT -> ^(VOIDRULEINDUCT ID) ;
 
 ctor_list: ctor (PIPE ctor)* -> ^(CTORLIST ctor)+;
 
@@ -179,7 +179,7 @@ IMPORT: 'import';
 NORMALIZE: 'reduce';
 TERM: 'term';
 PROP: 'proposition';
-INDUCTIVER: 'inductiveR';
+INDUCTIVER: 'recinductive';
 INDUCTIVE: 'inductive';
 
 ID : ('_'|'A'..'Z'|'a'..'z')('_'|'A'..'Z'|'a'..'z'|'0'..'9')*;

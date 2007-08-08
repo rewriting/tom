@@ -96,16 +96,18 @@ ident returns [String s]
   : i=ID { s = $i.text; }
   ;
 
+/* -- stagiaires -- */
+
 rule1 returns [lemu.sequents.types.Sig s]
-  : ^(VOIDRULEINDUCT h=ctor) { s = `Sig(clist(h)); }
-  | ^(RULEINDUCT h=ctor l=ctor_list) { s = `Sig(clist(h,l*)); }
+  : ^(VOIDRULEINDUCT i=ID) { s = `sig($i.text,clist()); }
+  | ^(RULEINDUCT i=ID l=ctor_list) { s = `sig($i.text,l); }
   ;
 
 ctor_list returns [lemu.sequents.types.Ctorlist cl]
 @init {
   cl = `clist();
 }
-  : (^(CTORLIST c=ctor) {cl = `clist(c,cl*);} )+
+  : (^(CTORLIST c=ctor) {cl = `clist(cl*,c);} )+
   ;
 
 ctor returns [lemu.sequents.types.Ctor c]
@@ -117,9 +119,11 @@ type_list returns [lemu.sequents.types.TypeList tl]
 @init {
   tl = `tlist();
 }
-  : (^(TYPELIST t=type) { tl = `tlist(t,tl*); } )+
+  : (^(TYPELIST t=type) { tl = `tlist(tl*,t); } )+
   ;
 
 type returns [lemu.sequents.types.Type s]
   : i = ID { s = `type($i.text); }
   ;
+
+/* -----------------*/

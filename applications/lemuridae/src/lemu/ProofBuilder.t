@@ -1203,7 +1203,7 @@ b :{
     }
   }
 
-  public RuleList transform(Prop atom, Prop p) {
+  private RuleList cleanRules(Prop atom, Prop p) {
     RuleCalc rc = new RuleCalc(atom,p);
     Prop permut_problem = rc.getProblem();
     int i = 1;
@@ -1220,7 +1220,19 @@ b :{
     }
     return rc.getResult();
   }
-  
+
+  private void addSuperRule(Prop atom, Prop phi) {
+    RuleList rl = `cleanRules(atom,phi);
+    %match(RuleList rl) {
+      (_*,r,_*) -> { 
+        `r = (Rule) Unification.substPreTreatment(`r);
+        newRules.add(`r);
+      }
+    }
+    writeToOutputln("The new deduction rules are : \n");
+    writeToOutputln(PrettyPrinter.prettyRule(rl));
+  }
+
   public void mainLoop() throws Exception {
     Command command = null;
       
@@ -1238,17 +1250,7 @@ b :{
         /* declarations */
 
         rewritesuper(p1,p2) -> {
-          writeToOutputln(`p1.toString());
-          writeToOutputln(`p2.toString());
-          RuleList rl = transform(`p1,`p2);
-          %match(RuleList rl) {
-            (_*,r,_*) -> { 
-              `r = (Rule) Unification.substPreTreatment(`r);
-              newRules.add(`r);
-            }
-          }
-          writeToOutputln("The new deduction rules are : \n");
-          writeToOutputln(PrettyPrinter.prettyRule(rl));
+          `addSuperRule(p1,p2);
         }
 
         rewriteterm(lhs,rhs) -> {
@@ -1261,6 +1263,16 @@ b :{
           `lhs = (Prop) Unification.substPreTreatment(`lhs);
           `rhs = (Prop) Unification.substPreTreatment(`rhs);
           newPropRules = `proprulelist(newPropRules*,proprule(lhs,rhs));
+        }
+
+        inductive(sig) -> {
+         writeToOutputln("sig = " + `sig);
+         writeToOutputln(PrettyPrinter.prettyPrint(Inductive.getLhs(`sig)));
+         writeToOutputln(PrettyPrinter.prettyPrint(Inductive.getRhs(`sig,false)));
+         `addSuperRule(Inductive.getLhs(sig),Inductive.getRhs(sig,false));
+        }
+        inductiver(sig) -> {
+          `addSuperRule(Inductive.getLhs(sig),Inductive.getRhs(sig,true));
         }
 
         /* reduce command */
@@ -1313,35 +1325,6 @@ b :{
           else PrettyPrinter.display(tree,newTermRules,newPropRules);
           //tree = ProofExpander.expand(tree);
           //PrettyPrinter.display(tree,newTermRules,newPropRules);
-        }
-
-        inductive(sig) -> {
-          Signature test = new Signature();
-          boolean casRecursif = false;
-
-          RuleList rl = transform(test.evalRule1(`sig),test.evalRule2(`sig, casRecursif));
-          %match(RuleList rl) {
-            (_*,r,_*) -> { 
-              `r = (Rule) Unification.substPreTreatment(`r);
-              newRules.add(`r);
-            }
-          }
-          writeToOutputln("The new deduction rules are : \n");
-          writeToOutputln(PrettyPrinter.prettyRule(rl));
-        }
-        inductiver(sig) -> {
-          Signature test = new Signature();
-          boolean casRecursif = true;
-
-          RuleList rl = transform(test.evalRule1(`sig),test.evalRule2(`sig, casRecursif));
-          %match(RuleList rl) {
-            (_*,r,_*) -> { 
-              `r = (Rule) Unification.substPreTreatment(`r);
-              newRules.add(`r);
-            }
-          }
-          writeToOutputln("The new deduction rules are : \n");
-          writeToOutputln(PrettyPrinter.prettyRule(rl));
         }
 
         proofterm(name) -> {

@@ -495,7 +495,7 @@ class PrettyPrinter {
 
       // set theory prettyprint
       relationAppl("in",(x,y)) -> {
-        return prettyPrint(`x) + " ∈ " + prettyPrint(`y);
+        return prettyPrint(`x) + " \u2208 " + prettyPrint(`y);
       }
 
       relationAppl(r,x) -> {
@@ -678,7 +678,7 @@ class PrettyPrinter {
       var =  it.next();
       res += ", " + prettyPrint(var);
     }
-    return res + " not in FV";
+    return res + " fresh";
   }
 
   public static String prettyRule(sequentsAbstractType term) {
