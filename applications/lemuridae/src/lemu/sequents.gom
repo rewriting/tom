@@ -89,8 +89,8 @@ exists:block() {
 				exists(x,p1), exists(y,p2) -> {
 					lemu.sequents.types.Context couple = `context(p1,p2);
 					lemu.sequents.types.Term fvar = lemu.Utils.freshVar(`x,couple);
-					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,fvar,`Var(x)); 
-					lemu.sequents.types.Prop np2 = lemu.Utils.replaceFreeVars(`p2,fvar,`Var(y));
+					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,`Var(x),fvar); 
+					lemu.sequents.types.Prop np2 = lemu.Utils.replaceFreeVars(`p2,`Var(y),fvar);
 					return np1.equals(np2);	
 				}
 			}
@@ -187,7 +187,7 @@ Sig = sig(defined:String,l:Ctorlist)
 Ctorlist = clist(Ctor*)
 Ctor = ctor(s:String, tl:TypeList)
 TypeList = tlist(Type*)
-Type = type(s:String)
+Type = type(label:String,name:String)
 /* ------------------ */
 
 // hooks maintaining free vars

@@ -6,7 +6,8 @@ options {
     ASTLabelType=CommonTree; 
 }
 
-tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; }
+tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; 
+         RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; LABELLEDTYPE; }
 
 @parser::header {
   package lemu;
@@ -113,7 +114,7 @@ ctor: ID LPAREN type_list RPAREN -> ^(RULECTOR ID type_list)
 
 type_list: type (COMMA type)* -> ^(TYPELIST type)+;
 
-type: ID ;
+type: ID COLUMN ID -> ^(LABELLEDTYPE ID ID);
 /* ----------------- */
 
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n') {$channel=HIDDEN;}
@@ -147,7 +148,7 @@ ARROW : '->';
 
 /* -- stagiaires -- */
 PIPE : '|';
-AFFECT : ':=';
+AFFECT : '=';
 /* ----------------*/
 
 COLUMN: ':';

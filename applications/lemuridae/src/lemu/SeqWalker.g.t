@@ -123,7 +123,7 @@ type_list returns [lemu.sequents.types.TypeList tl]
   ;
 
 type returns [lemu.sequents.types.Type s]
-  : i = ID { s = `type($i.text); }
+  : ^(LABELLEDTYPE l=ID i=ID) { s = `type($l.text,$i.text); }
   ;
 
 /* -----------------*/

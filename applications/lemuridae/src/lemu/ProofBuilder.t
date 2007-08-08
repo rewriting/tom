@@ -1266,9 +1266,6 @@ b :{
         }
 
         inductive(sig) -> {
-         writeToOutputln("sig = " + `sig);
-         writeToOutputln(PrettyPrinter.prettyPrint(Inductive.getLhs(`sig)));
-         writeToOutputln(PrettyPrinter.prettyPrint(Inductive.getRhs(`sig,false)));
          `addSuperRule(Inductive.getLhs(sig),Inductive.getRhs(sig,false));
         }
         inductiver(sig) -> {
