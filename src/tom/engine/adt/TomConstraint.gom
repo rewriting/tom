@@ -23,6 +23,7 @@ Constraint =
   		   | OrConstraintDisjunction(Constraint*)
 		   | MatchConstraint(pattern:TomTerm, subject:TomTerm)
 		   | AntiMatchConstraint(Constraint:Constraint)
+		   | NumericConstraint(Left:TomTerm, Right:TomTerm, Type:NumericConstraintType)
   		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
   		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
   		   /**
@@ -30,6 +31,12 @@ Constraint =
   		   */
   		   | AndMarker(Constraint:Constraint)
   		   | OrMarker(Constraint:Constraint)
+
+NumericConstraintType = NumLessThan() 
+					| NumLessOrEqualThan()
+					| NumGreaterThan()
+					| NumGreaterOrEqualThan()
+					| NumEqualTo()
 
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
