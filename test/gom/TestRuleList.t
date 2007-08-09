@@ -41,10 +41,19 @@ public class TestRuleList extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestRuleList.class));
   }
 
-   public void test1() {
+   public void testf1() {
     assertEquals(`f(b()),`f(a()));
+   }
+
+   public void testconc1() {
     assertEquals(`conc(a(),c()),`conc(a(),c()));
+   }
+
+   public void testconcsingle() {
     assertEquals(`conc(b()),`conc(a()));
+   }
+
+   public void test1() {
     assertEquals(`conc(a(),b()),`conc(a(),a()));
     assertNotSame(`conc(b(),b()),`conc(a(),a()));
     assertEquals(`conc(b(),b()),`conc(b(),a()));
