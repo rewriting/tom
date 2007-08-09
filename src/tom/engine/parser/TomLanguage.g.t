@@ -405,7 +405,7 @@ matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws
       case DIFFERENT_CONSTRAINT : {         
         return `NumericConstraint(left,right, NumDifferent());           
       }
-      case EQUAL_CONSTRAINT : {         
+      case DOUBLEEQ : {         
         return `NumericConstraint(left,right, NumEqual());           
       }      
     } 
@@ -424,7 +424,9 @@ constraintType returns [int result]
       | LESSOREQUAL_CONSTRAINT      { result = LESSOREQUAL_CONSTRAINT; }
       | GREATER_CONSTRAINT          { result = GREATER_CONSTRAINT; }
       | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }
-    )  
+      | DOUBLEEQ                    { result = DOUBLEEQ; }
+      | DIFFERENT_CONSTRAINT        { result = DIFFERENT_CONSTRAINT; }
+    )      
 ;
 
 matchPattern [LinkedList list] returns [Option result] throws TomException
@@ -2297,7 +2299,7 @@ LESSOREQUAL_CONSTRAINT  : "<=";
 GREATER_CONSTRAINT  : ":>";
 GREATEROREQUAL_CONSTRAINT  : ">=";  
 DIFFERENT_CONSTRAINT  : "!=";
-EQUAL_CONSTRAINT  : "==";
+//EQUAL_CONSTRAINT = DOUBLEEQ;
   
 AND_CONNECTOR  : "&&";
 OR_CONNECTOR  : "||";

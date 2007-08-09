@@ -159,15 +159,15 @@ public class ConstraintCompiler {
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity(){
     visit Constraint {
-label: constr -> {
+visitL: constr -> {
         TomTerm subject = null;
         TomTerm pattern = null;
         NumericConstraintType numericType = null;
         boolean isMatchConstraint = false;
-        %match(constr){
-          MatchConstraint(p, s) -> {pattern = `p;subject = `s;isMatchConstraint = true;}
-          NumericConstraint(left, right, nt) -> {pattern = `left;subject = `right; numericType = `nt;}
-          _ -> { break label; }
+matchL: %match(constr){
+          MatchConstraint(p, s) -> {pattern = `p;subject = `s;isMatchConstraint = true;break matchL;}
+          NumericConstraint(left, right, nt) -> {pattern = `left;subject = `right; numericType = `nt;break matchL;}
+          _ -> { break visitL; }
         }
         // test if we already renamed this subject
         if (subjectList.contains(`subject)) {
