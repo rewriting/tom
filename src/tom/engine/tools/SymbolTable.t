@@ -328,6 +328,11 @@ public class SymbolTable {
     return isIntType(type) || isLongType(type) || isCharType(type) ||
       isStringType(type) || isBooleanType(type) || isDoubleType(type);
   }
+  
+  public boolean isNumericType(String type) {
+    return isIntType(type) || isLongType(type) || isDoubleType(type) || isFloatType(type);
+  }
+
 
   public TomType getBuiltinType(String type) {
     if(isIntType(type)) {
