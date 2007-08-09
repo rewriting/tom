@@ -149,8 +149,8 @@ public class KernelExpander {
 
     visit TomVisit {
       VisitTerm(type,constraintInstructionList,options) -> {
-        ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
-        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraintInstructionList);
+        ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+        `TopDown(CollectConstraints(constraints)).visitLight(`constraintInstructionList);
         TomType newType = (TomType)`expander.expandVariable(contextType,`type);
         ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
         %match(constraintInstructionList) {
@@ -159,7 +159,7 @@ public class KernelExpander {
              * Try to guess types for tomSubjectList
              */
             ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(newType,newPatternList,matchConstraints,expander)).visitLight(`constraint);
+            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(newType,newPatternList,constraints,expander)).visitLight(`constraint);
             Instruction newAction = expandAction(`action,ASTFactory.makeList(newPatternList),expander);
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
           }
@@ -175,8 +175,8 @@ public class KernelExpander {
        * to add types in variables of patterns and rhs
        */
       Match(constraintInstructionList, option) -> {
-        ArrayList<Constraint> matchConstraints = new ArrayList<Constraint>();
-        `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraintInstructionList);
+        ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+        `TopDown(CollectConstraints(constraints)).visitLight(`constraintInstructionList);
         ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
         %match(constraintInstructionList) {
           concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionConstraint),_*) -> {
@@ -184,7 +184,7 @@ public class KernelExpander {
              * Try to guess types for tomSubjectList
              */
             ArrayList<TomTerm> newPatternList = new ArrayList<TomTerm>();
-            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(contextType,newPatternList,matchConstraints,expander)).visitLight(`constraint);
+            Constraint newConstraint = (Constraint)`TopDown(expandConstraint(contextType,newPatternList,constraints,expander)).visitLight(`constraint);
             Instruction newAction = expandAction(`action,ASTFactory.makeList(newPatternList),expander);
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,ConstraintInstruction(newConstraint,newAction,optionConstraint));
           }
@@ -267,9 +267,18 @@ public class KernelExpander {
   /**
    * Try to guess the type for the subjects
    */
-  %strategy expandConstraint(TomType contextType, Collection newPatternList, Collection matchConstraints, KernelExpander expander) extends Identity(){
+  %strategy expandConstraint(TomType contextType, Collection newPatternList, Collection constraintList, KernelExpander expander) extends Identity(){
     visit Constraint {
-      MatchConstraint(pattern, subject) -> {
+ label:constr -> {
+        TomTerm subject = null;
+        TomTerm pattern = null;
+        NumericConstraintType numericType = null;
+        boolean isMatchConstraint = false;
+        %match(constr){
+          MatchConstraint(p, s) -> {pattern = `p;subject = `s;isMatchConstraint = true;}
+          NumericConstraint(left, right, nt) -> {pattern = `left;subject = `right;numericType = `nt;}
+          _ -> { break label; }
+        }
         TomTerm newSubject = null;
         TomType newSubjectType = null;        
         %match(subject) {
@@ -280,7 +289,7 @@ public class KernelExpander {
             //System.out.println("match type = " + type);
             if(expander.getType(`type) == null) {
               /* the subject is a variable with an unknown type */
-              newSubjectType = expander.guessSubjectType(`subject,matchConstraints);
+              newSubjectType = expander.guessSubjectType(`subject,constraintList);
               if( newSubjectType != null ) {
                 newVariable = `Variable(variableOption,astName,newSubjectType,constraints);
               } else {
@@ -304,7 +313,7 @@ public class KernelExpander {
               type = TomBase.getSymbolCodomain(symbol);
             } else {
               // unknown function call
-              type = expander.guessSubjectType(`subject,matchConstraints);
+              type = expander.guessSubjectType(`subject,constraintList);
             }
             if( type != null ) {
               newSubject = `BuildReducedTerm(t,type);
@@ -324,7 +333,7 @@ public class KernelExpander {
         newSubject = (TomTerm)expander.expandVariable(newSubjectType, newSubject);
         TomTerm newPattern = (TomTerm)expander.expandVariable(newSubjectType, `pattern);
         newPatternList.add(newPattern);
-        return `MatchConstraint(newPattern,newSubject);
+        return isMatchConstraint ? `MatchConstraint(newPattern,newSubject) : `NumericConstraint(newPattern,newSubject,numericType);
       }
     }
   } 
@@ -495,5 +504,15 @@ public class KernelExpander {
       }// end visit
     }// end strategy   
 
+    /**
+     * Collect the constraints (match and numeric)
+     */
+    %strategy CollectConstraints(constrList:Collection) extends Identity(){
+      visit Constraint{
+        c@(MatchConstraint|NumericConstraint)[] -> {        
+          constrList.add(`c);         
+        }      
+      }// end visit
+    }// end strategy   
   }
 

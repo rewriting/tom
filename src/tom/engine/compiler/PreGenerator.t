@@ -203,6 +203,16 @@ public class PreGenerator {
          return `AndConstraint(X*,second,Y*,first,Z*);                
       }
       
+      /*
+       * SwitchNumericConstraints
+       * 
+       * an numeric constraint should be always at the end, after the match constraints
+       * because the numeric constraints never instantiate variables
+       */
+      AndConstraint(X*,numeric@NumericConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        return `AndConstraint(X*,Y*,match,Z*,numeric);        
+      }
+      
     } // end visit
   }// end strategy
   
@@ -234,7 +244,7 @@ public class PreGenerator {
         return `OrExpressionDisjunction(constraintsToExpressions(m),
             constraintsToExpressions(OrConstraintDisjunction(X*)));
       }
-      m@MatchConstraint[] -> {        
+      m@(MatchConstraint|NumericConstraint)[] -> {        
         return `ConstraintToExpression(m);
       }
       AntiMatchConstraint(constr) -> {

@@ -30,6 +30,7 @@ import java.util.Iterator;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -121,6 +122,10 @@ public class ConstraintGenerator {
       // nothing for unamed ones
       ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
         return action;      
+      }
+      // numeric constraints
+      ConstraintToExpression(n@NumericConstraint[]) -> {
+        return buildNumericCondition(`n,action);
       }
       // do while
       DoWhileExpression(expr,condition) -> {
@@ -350,5 +355,25 @@ public class ConstraintGenerator {
       return `Or(IsEmptyList(opName, var), EqualTerm(codomain,var,BuildEmptyList(opName)));
     }
     return `IsEmptyList(opName, var);
+  }
+  
+  private static Instruction buildNumericCondition(Constraint c, Instruction action) {
+    %match(c){
+      NumericConstraint(left,right,type) -> {
+        TomType tomType = ((Variable)`(left)).getAstType();
+        Expression leftExpr = `TomTermToExpression(left);
+        Expression rightExpr = `TomTermToExpression(right);
+        %match(type){
+          NumLessThan()             -> { return `If(LessThan(rightExpr,leftExpr),action,Nop());} 
+          NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(rightExpr,leftExpr),action,Nop());}
+          NumGreaterThan()          -> { return `If(GreaterThan(rightExpr,leftExpr),action,Nop());}
+          NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(rightExpr,leftExpr),action,Nop());}
+          NumEqual()                -> { return `If(EqualTerm(tomType,right,left),action,Nop());}
+          NumDifferent()            -> { return `If(Negation(EqualTerm(tomType,right,left)),action,Nop());}                
+        }
+      }
+    }
+    // should never reach here
+    throw new TomRuntimeException("Untreated numeric constraint: " + `c);
   }
 }

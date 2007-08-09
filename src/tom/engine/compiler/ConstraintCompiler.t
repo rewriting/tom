@@ -159,10 +159,20 @@ public class ConstraintCompiler {
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity(){
     visit Constraint {
-      MatchConstraint(pattern,subject) -> {
+label: constr -> {
+        TomTerm subject = null;
+        TomTerm pattern = null;
+        NumericConstraintType numericType = null;
+        boolean isMatchConstraint = false;
+        %match(constr){
+          MatchConstraint(p, s) -> {pattern = `p;subject = `s;isMatchConstraint = true;}
+          NumericConstraint(left, right, nt) -> {pattern = `left;subject = `right; numericType = `nt;}
+          _ -> { break label; }
+        }
         // test if we already renamed this subject
         if (subjectList.contains(`subject)) {
-          return `MatchConstraint(pattern,(TomTerm)renamedSubjects.get(subjectList.indexOf(subject))); 
+          TomTerm renamedSubj = (TomTerm)renamedSubjects.get(subjectList.indexOf(subject));
+          return isMatchConstraint ? `MatchConstraint(pattern,renamedSubj) : `NumericConstraint(pattern,renamedSubj,numericType); 
         }
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
@@ -182,7 +192,7 @@ public class ConstraintCompiler {
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
-        return `MatchConstraint(pattern,renamedVar);
+        return isMatchConstraint ? `MatchConstraint(pattern,renamedVar) : `NumericConstraint(pattern,renamedVar,numericType);
       }
     }
   }

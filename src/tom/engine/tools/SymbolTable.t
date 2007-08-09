@@ -332,6 +332,17 @@ public class SymbolTable {
   public boolean isNumericType(String type) {
     return isIntType(type) || isLongType(type) || isDoubleType(type) || isFloatType(type);
   }
+  
+  public boolean isNumericType(TomType type) {    
+    if (type.equals(getIntType()) 
+        || type.equals(getLongType()) 
+        || type.equals(getFloatType())  
+        || type.equals(getDoubleType())) {
+      return true;
+    }
+    return false;    
+  }
+
 
 
   public TomType getBuiltinType(String type) {

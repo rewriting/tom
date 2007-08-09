@@ -145,6 +145,11 @@ public class SyntacticPropagator implements IBasePropagator {
           return value.isVariable() ? `MatchConstraint(TestVar(value),t) : `MatchConstraint(value,t); 
         }
       }
+      NumericConstraint(Variable[AstName=name],right,numericType) -> {
+        if(`name == varName) {          
+          return `NumericConstraint(value,right,numericType); 
+        }
+      }
     }
   }// end strategy
 }

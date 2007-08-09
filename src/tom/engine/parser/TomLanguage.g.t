@@ -402,6 +402,12 @@ matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws
       case GREATEROREQUAL_CONSTRAINT : {         
         return `NumericConstraint(left,right, NumGreaterOrEqualThan());           
       }
+      case DIFFERENT_CONSTRAINT : {         
+        return `NumericConstraint(left,right, NumDifferent());           
+      }
+      case EQUAL_CONSTRAINT : {         
+        return `NumericConstraint(left,right, NumEqual());           
+      }      
     } 
     // should never reach this statement because of the parsing error that should occur before
     throw new TomException(TomMessage.invalidConstraintType);
@@ -2290,6 +2296,8 @@ LESS_CONSTRAINT  : "<:";
 LESSOREQUAL_CONSTRAINT  : "<=";  
 GREATER_CONSTRAINT  : ":>";
 GREATEROREQUAL_CONSTRAINT  : ">=";  
+DIFFERENT_CONSTRAINT  : "!=";
+EQUAL_CONSTRAINT  : "==";
   
 AND_CONNECTOR  : "&&";
 OR_CONNECTOR  : "||";

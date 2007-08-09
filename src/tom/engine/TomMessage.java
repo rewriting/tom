@@ -251,7 +251,11 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage badMakeDefinition       =
       new TomMessage("Bad number of arguments in ''make(...)'' macro-function: {0,number,integer} arguments found but {1,number,integer} expected in symbol definition");
   public static final TomMessage listSymbolDomainError   =
-      new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");
+      new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");  
+  public static final TomMessage invalidLeftSideNumericConstraint   =
+    new TomMessage("The symbol ''{0}'' has to be a variable in order to be used in a numeric constraint");
+  public static final TomMessage numericTypeRequired   =
+    new TomMessage("The symbol ''{0}'' has to have a numeric type (ex: int,long,float,double) in order to be used in a numeric constraint");
   
   // Error messages linked to slot declaration during parsing
   public static final TomMessage badSlotName             =

@@ -36,7 +36,8 @@ NumericConstraintType = NumLessThan()
 					| NumLessOrEqualThan()
 					| NumGreaterThan()
 					| NumGreaterOrEqualThan()
-					| NumEqualTo()
+					| NumDifferent()
+					| NumEqual()
 
 ConstraintList = concConstraint(Constraint*)
 AndConstraint:AU() { `TrueConstraint() }
