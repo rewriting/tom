@@ -383,11 +383,25 @@ matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws
 }
 : option = matchPattern[matchPatternList] consType = constraintType matchArgument[matchSubjectList]
   {
+    optionListLinked.add(option);
+    TomTerm left  = (TomTerm)matchPatternList.get(0);
+    TomTerm right = (TomTerm)matchSubjectList.get(0);
     switch(consType){
-      case MATCH_CONSTRAINT : { 
-        optionListLinked.add(option);
-        return `MatchConstraint((TomTerm)matchPatternList.get(0),(TomTerm)matchSubjectList.get(0));           
-      }                  
+      case MATCH_CONSTRAINT : {
+        return `MatchConstraint(left,right);           
+      }
+      case LESS_CONSTRAINT : {         
+        return `NumericConstraint(left,right, NumLessThan());           
+      }
+      case LESSOREQUAL_CONSTRAINT : {         
+        return `NumericConstraint(left,right, NumLessOrEqualThan());           
+      }
+      case GREATER_CONSTRAINT : {         
+        return `NumericConstraint(left,right, NumGreaterThan());           
+      }
+      case GREATEROREQUAL_CONSTRAINT : {         
+        return `NumericConstraint(left,right, NumGreaterOrEqualThan());           
+      }
     } 
     // should never reach this statement because of the parsing error that should occur before
     throw new TomException(TomMessage.invalidConstraintType);
@@ -400,10 +414,10 @@ constraintType returns [int result]
 }
 :   (
       MATCH_CONSTRAINT              { result = MATCH_CONSTRAINT; }
-/*      | LESS_CONSTRAINT             { result = LESS_CONSTRAINT; }
+      | LESS_CONSTRAINT             { result = LESS_CONSTRAINT; }
       | LESSOREQUAL_CONSTRAINT      { result = LESSOREQUAL_CONSTRAINT; }
       | GREATER_CONSTRAINT          { result = GREATER_CONSTRAINT; }
-      | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }*/
+      | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }
     )  
 ;
 
