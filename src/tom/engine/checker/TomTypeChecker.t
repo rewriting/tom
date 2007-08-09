@@ -153,18 +153,14 @@ public class TomTypeChecker extends TomChecker {
   }
 
   private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) throws VisitFailure{
-    `TopDown(VerifyMatchVariable()).visitLight(constraintInstructionList);
-  }
-  
-  %strategy VerifyMatchVariable() extends Identity(){
-    visit Constraint {
-      MatchConstraint(pattern,_) -> {
+    %match(constraintInstructionList){
+      concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
         // collect variables
         ArrayList variableList = new ArrayList();
-        TomBase.collectVariable(variableList, `pattern);
-        verifyVariableTypeListCoherence(variableList);
+        TomBase.collectVariable(variableList, `constraint);
+        verifyVariableTypeListCoherence(variableList);        
       }
-    }
+    }    
   }
 
   private void verifyStrategyVariable(TomVisitList list) throws VisitFailure{
@@ -213,7 +209,7 @@ public class TomTypeChecker extends TomChecker {
     }
   }
 
-  private static void verifyVariableTypeListCoherence(ArrayList list) {
+  private void verifyVariableTypeListCoherence(ArrayList list) {
     // compute multiplicities
     //System.out.println("list = " + list);
     HashMap map = new HashMap();
@@ -228,7 +224,7 @@ public class TomTypeChecker extends TomChecker {
         TomType type1 = var.getAstType();
         TomType type2 = variable.getAstType();
         if(!(type1==type2)) {
-          messageError((TomTypeChecker.class).toString(),findOriginTrackingFileName(variable.getOption()),
+          messageError(findOriginTrackingFileName(variable.getOption()),
               findOriginTrackingLine(variable.getOption()),
               TomMessage.incoherentVariable,
               new Object[]{name.getString(), TomBase.getTomType(type1), TomBase.getTomType(type2)});
