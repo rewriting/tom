@@ -350,7 +350,12 @@ public class KernelExpander {
         MatchConstraint(pattern,s) -> {
           // we want two terms to be equal even if their option is different 
           //( because of their possition for example )
-          if ((`s.setOption(`concOption())) != (subject.setOption(`concOption()))) { continue; }
+matchL:  %match(subject,s){
+            Variable[AstName=astName,AstType=tomType],Variable[AstName=astName,AstType=tomType] -> {break matchL;}
+            TermAppl[NameList=tomNameList,Args=tomList],TermAppl[NameList=tomNameList,Args=tomList] -> {break matchL;}
+            BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
+            _,_ -> { continue; }
+          }
           TomTerm patt = `pattern;
           %match(pattern) {
             AntiTerm(p) -> { patt = `p; }
