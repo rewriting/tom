@@ -359,15 +359,15 @@ public class ConstraintGenerator {
   
   private static Instruction buildNumericCondition(Constraint c, Instruction action) {
     %match(c){
-      NumericConstraint(left,right,type) -> {
-        TomType tomType = ((Variable)`(left)).getAstType();
+      NumericConstraint(left,right,type) -> {        
+        TomType tomType = ConstraintCompiler.getTermTypeFromTerm(`left);
         Expression leftExpr = `TomTermToExpression(left);
         Expression rightExpr = `TomTermToExpression(right);
         %match(type){
-          NumLessThan()             -> { return `If(LessThan(rightExpr,leftExpr),action,Nop());} 
-          NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(rightExpr,leftExpr),action,Nop());}
-          NumGreaterThan()          -> { return `If(GreaterThan(rightExpr,leftExpr),action,Nop());}
-          NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(rightExpr,leftExpr),action,Nop());}
+          NumLessThan()             -> { return `If(LessThan(leftExpr,rightExpr),action,Nop());} 
+          NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(leftExpr,rightExpr),action,Nop());}
+          NumGreaterThan()          -> { return `If(GreaterThan(leftExpr,rightExpr),action,Nop());}
+          NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(leftExpr,rightExpr),action,Nop());}
           NumEqual()                -> { return `If(EqualTerm(tomType,right,left),action,Nop());}
           NumDifferent()            -> { return `If(Negation(EqualTerm(tomType,right,left)),action,Nop());}                
         }
