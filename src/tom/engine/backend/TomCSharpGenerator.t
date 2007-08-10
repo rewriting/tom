@@ -127,7 +127,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
 	    tomTypes = tomTypes.getTailconcTomType();
 	    index++;
     }
-    output.write(deep, modifier + "class " + tomName);
+    output.write(deep, /*modifier +*/ "class " + tomName);
     //write extends
 		%match(TomForwardType extendsFwdType) {
 			TLForward(code) -> {
@@ -171,7 +171,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
     int stratChildCount = stratChild.size();
 
-    output.write(deep, "public tom.library.sl.Visitable[] getChildren() {");
+    output.write(deep, "override public tom.library.sl.Visitable[] getChildren() {");
     output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "stratChilds[i]=getChildAt(i);}");
@@ -181,7 +181,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     //}
     output.write(deep, "return stratChilds;}");
 
-    output.write(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
+    output.write(deep, "override public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
     output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
     output.write(deep, "setChildAt(i,children[i]);}");
     //for (int i = 0; i < stratChildCount; i++) {
@@ -190,30 +190,31 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     //}
     output.write(deep, "return this;}");
 
-    output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");
+    output.write(deep, "override public int getChildCount() { return " + (stratChildCount + 1) + "; }");
 
     // write getChildAt
-    output.write(deep, "public tom.library.sl.Visitable getChildAt(int index) {");
+    output.write(deep, "override public tom.library.sl.Visitable getChildAt(int index) {");
     output.write(deep, "switch (index) {");
-    output.write(deep, "case 0: return super.getChildAt(0);");
+    output.write(deep, "case 0: return base.getChildAt(0);");
     for (int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();
       output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
     }
-    output.write(deep, "default: throw new IndexOutOfBoundsException();");
+    output.write(deep, "default: throw new IndexOutOfRangeException();");
     output.write(deep, "}}");
 
     // write setChildAt
-    output.write(deep, "public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
+    output.write(deep, "override public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
     output.write(deep, "switch (index) {");
-    output.write(deep, "case 0: return super.setChildAt(0, child);");
+    output.write(deep, "case 0: return base.setChildAt(0, child);");
     for (int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();
       output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
     }
-    output.write(deep, "default: throw new IndexOutOfBoundsException();");
+    output.write(deep, "default: throw new IndexOutOfRangeException();");
     output.write(deep, "}}");
 
+    output.write(deep, "override ");
     generateDeclaration(deep,`declaration,moduleName);
     output.write(deep,"}");
   }

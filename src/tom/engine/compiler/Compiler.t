@@ -229,7 +229,8 @@ matchBlock: {
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
               //return default strategy.visitLight(arg)
-              Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),vType,subjectListAST));
+              // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
+              Instruction returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);
               l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
             }
