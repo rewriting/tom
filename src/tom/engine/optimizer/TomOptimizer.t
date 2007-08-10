@@ -437,7 +437,7 @@ public class TomOptimizer extends TomGenericPlugin {
         } else if(mult == 1) {
           //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
-           //modified between the last assignment and the read
+          //modified between the last assignment and the read
           if(info.lastassignment!=null) {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
