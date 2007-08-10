@@ -29,6 +29,7 @@ package tom.engine.parser;
 }
 
 {
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -188,33 +189,40 @@ matchArgument [LinkedList list] throws TomException
   TomTerm subject1 = null;
   TomTerm subject2 = null;
   TomType tomType = null;
+  
+  String s1 = null;
+  String s2 = null;
 }
     :   
 
     //(type:ALL_ID { tomType = `TomTypeAlone(type.getText()); })?
     //(BACKQUOTE)?
-    subject1 = plainTerm[null,null,0] 
-    (BACKQUOTE)?
-    (subject2 = plainTerm[null,null,0])?
-    {
+    subject1 = plainTerm[null,null,0] { s1 = text.toString();text.delete(0, text.length()); }
+    (BACKQUOTE { text.delete(0, text.length()); } )?
+    (subject2 = plainTerm[null,null,0] { s2 = text.toString(); })?
+{
       if(subject2==null) {
-	//System.out.println("matchArgument = " + subject1);
-	list.add(subject1); 
+        // System.out.println("matchArgument = " + subject1);
+        list.add(subject1);        
       } else {
-	if(subject1.isVariable() && subject2.isVariable()) {
-	  String type = subject1.getAstName().getString();
-	  TomName name = subject2.getAstName();
-	  //LinkedList optionList = new LinkedList();
-	  //optionList.add(`OriginTracking(name,type.getLine(),currentFile()));
-	  //list.add(`Variable(ASTFactory.makeOptionList(optionList),name,tomType,concConstraint()));
-	  Option ot = `OriginTracking(name, lastLine, currentFile());
-	  list.add(`Variable(concOption(ot),name,TomTypeAlone(type),concConstraint()));
-	} else { 
-	  throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
-	}
+        if(subject1.isVariable()) {
+          String type = subject1.getAstName().getString();
+          %match(subject2){
+            Variable[AstName=name] -> {
+              Option ot = `OriginTracking(name, lastLine, currentFile());
+              list.add(`Variable(concOption(ot),name,TomTypeAlone(type),concConstraint()));  
+              return;
+            }
+            t@TermAppl[] -> {
+              list.add(`BuildReducedTerm(t,TomTypeAlone(type)));
+              return;
+            }
+          }        
+        }  
+        throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
       }
-    }
-        ;
+}
+;
 
 patternInstruction [TomList subjectList, LinkedList list] throws TomException
 {    

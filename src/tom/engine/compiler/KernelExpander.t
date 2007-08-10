@@ -328,6 +328,12 @@ public class KernelExpander {
             newSubjectType = `type;
           }
           
+          // the user specified the type (already cheked for consistence in SyntaxChecker)
+          term@BuildReducedTerm[AstType=userType] -> {            
+            newSubjectType = `userType;
+            newSubject = `term;
+          }
+          
         } // end match subject        
         newSubjectType = (TomType)expander.expandVariable(contextType,newSubjectType);
         newSubject = (TomTerm)expander.expandVariable(newSubjectType, newSubject);

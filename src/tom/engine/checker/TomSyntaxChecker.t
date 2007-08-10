@@ -558,7 +558,7 @@ public class TomSyntaxChecker extends TomChecker {
                 new Object[]{messageContent});
 
             return;
-          } else {
+          } else {            
             if (!symbolTable().isNumericType(typeMatch)){
               messageError(currentTomStructureOrgTrack.getFileName(),
                   currentTomStructureOrgTrack.getLine(),
@@ -610,7 +610,22 @@ public class TomSyntaxChecker extends TomChecker {
           // try to guess
           return guessSubjectType(`subject,constraints);
         }
-      }      
+      }
+      // the user specified the type
+      BuildReducedTerm(TermAppl[NameList=concTomName(Name(name))],userType) -> {
+        TomSymbol symbol = getSymbolFromName(`name);
+        if(symbol != null) { // check that the type provided by the user is consistent
+          TomType type = TomBase.getSymbolCodomain(symbol);
+          if (!`(userType).equals(type)){
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.inconsistentTypes,
+                new Object[]{`name, TomBase.getTomType(type), TomBase.getTomType(`userType)});
+          }
+        }
+        // a function call 
+        return `userType;
+      }
     }
     return null;
   }

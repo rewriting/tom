@@ -334,6 +334,11 @@ public class SymbolTable {
   }
   
   public boolean isNumericType(TomType type) {    
+    %match(type){
+      TomTypeAlone(str) -> {
+        return isNumericType(`str);
+      }
+    }
     if (type.equals(getIntType()) 
         || type.equals(getLongType()) 
         || type.equals(getFloatType())  
