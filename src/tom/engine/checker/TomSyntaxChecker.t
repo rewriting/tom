@@ -533,12 +533,27 @@ public class TomSyntaxChecker extends TomChecker {
               TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
                 messageContent = `stringName;             
               }
+              UnamedVariable[] -> {
+                messageContent = "_";             
+              }
+              UnamedVariableStar[] -> {
+                messageContent = "_*";             
+              }
+              AntiTerm[] -> {
+                messageError(currentTomStructureOrgTrack.getFileName(),
+                    currentTomStructureOrgTrack.getLine(),
+                    TomMessage.forbiddenAntiTermInNumeric,
+                    new Object[]{});
+                return;                
+              }
             }
+          } 
+          if (`(left).getConstraints() != `concConstraint()){
             messageError(currentTomStructureOrgTrack.getFileName(),
                 currentTomStructureOrgTrack.getLine(),
-                TomMessage.invalidLeftSideNumericConstraint,
-                new Object[]{messageContent});
-            return;
+                TomMessage.forbiddenAnnotationsNumeric,
+                new Object[]{});
+            return;   
           }
           typeMatch = getSubjectType(`right,constraints);  
           // the right side should have a numeric type

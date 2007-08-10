@@ -253,12 +253,16 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage listSymbolDomainError   =
       new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");  
   public static final TomMessage invalidLeftSideNumericConstraint   =
-    new TomMessage("The symbol ''{0}'' has to be a variable in order to be used in a numeric constraint");
+    new TomMessage("The symbol ''{0}'' has to be a named variable in order to be used in a numeric constraint");
   public static final TomMessage numericTypeRequired   =
     new TomMessage("The symbol ''{0}'' has to have a numeric type (ex: int,long,float,double) in order to be used in a numeric constraint");
   public static final TomMessage inconsistentTypes   =
     new TomMessage("The symbol ''{0}'' already had type ''{1}''. Type ''{2}'' is invalid");
- 
+  public static final TomMessage forbiddenAntiTermInNumeric   =
+    new TomMessage("Anti-patterns are forbidden in numeric constraints");
+  public static final TomMessage forbiddenAnnotationsNumeric   =
+    new TomMessage("Annotations are forbidden in numeric constraints");
+   
   
   // Error messages linked to slot declaration during parsing
   public static final TomMessage badSlotName             =
