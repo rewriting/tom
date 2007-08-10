@@ -188,8 +188,14 @@ public class TomOptimizer extends TomGenericPlugin {
         s.visitLight(`inst);
         throw new tom.library.sl.VisitFailure();
       }
+
+      LetAssign[AstInstruction=inst] -> {
+        /* recursive call of the current strategy on the first child */
+        s.visitLight(`inst);
+        throw new tom.library.sl.VisitFailure();
+      }
     }
- 
+
     visit TomTerm { 
       t@(Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) { 
@@ -197,7 +203,7 @@ public class TomOptimizer extends TomGenericPlugin {
         } 
       } 
     } 
-  }
+   }
 
   /* this strategy doesn't traverse the two last children of TypedAction() */
    /*
@@ -293,6 +299,18 @@ public class TomOptimizer extends TomGenericPlugin {
       return factory.remove(term1)==factory.remove(term2);
     }
 
+    %op Strategy CleanAssign(varname: TomName){
+      make(varname) {`TopDown(CleanAssignOnce(varname))}
+    }
+
+    %strategy CleanAssignOnce(varname:TomName) extends `Identity() {
+      visit Instruction {
+        LetAssign(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+          if (`name.equals(varname)) { return `body; }
+        }
+      }
+    }
+
     %strategy Inline(context:TomList) extends `Identity() {
       visit TomTerm {
         ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
@@ -319,7 +337,7 @@ public class TomOptimizer extends TomGenericPlugin {
          * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
          * x should not appear in exp
          */
-        let@(LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+        let@LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
           /*
            * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
            * is not correctly handled 
@@ -334,12 +352,17 @@ public class TomOptimizer extends TomGenericPlugin {
           //`findOccurencesUpTo(name,list,2).visitLight(`body);
           `computeOccurences(name,list).visitLight(`body);
           int mult = list.size();
+          // mult0 -> unused variable
+          // suppress the letref and all the corresponding letassigns in the body
           if(mult == 0) {
+            // why this test?
             if(varName.length() > 0) {
-              //TODO: check variable occurence in TypedAction
+              // TODO: check variable occurence in TypedAction
               list.clear();
               `computeOccurences(name,list).visitLight(`context);
               if(list.size()<=1) {
+                // verify linearity in case of variables from the pattern
+                // warning to indicate that this var is unused in the rhs
                 Option orgTrack = TomBase.findOriginTracking(`var.getOption());
                 TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                     TomMessage.unusedVariable,`extractRealName(varName));
@@ -348,12 +371,13 @@ public class TomOptimizer extends TomGenericPlugin {
                     new Object[]{ new Integer(mult), `extractRealName(varName) });
               }
             }
-            return `body;
+            //remove all the unused letassign in the letref body
+            return (Instruction) `CleanAssign(name).visitLight(`body);
           } else if(mult == 1) {
             list.clear();
-          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
+            //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
             `computeOccurences(name,list).visitLight(`exp);
-            if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
+            if(expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
                     TomMessage.inline.getMessage(),
@@ -592,8 +616,8 @@ public class TomOptimizer extends TomGenericPlugin {
           return `FalseTL();
         }
         ref@EqualTerm(_,kid1,kid2) -> {
-//System.out.println("kid1 = " + `kid1);
-//System.out.println("kid2 = " + `kid2);
+          //System.out.println("kid1 = " + `kid1);
+          //System.out.println("kid2 = " + `kid2);
           if(`compare(kid1,kid2)){
             return `TrueTL();
           } else {
