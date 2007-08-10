@@ -163,21 +163,7 @@ public class TomOptimizer extends TomGenericPlugin {
     return name;
   }
 
-  private static Strategy inlineInstruction(TomName variableName, Expression expression) {
-    return `TopDown(instantiateVariable(variableName,expression));
-  }
-
-  %strategy instantiateVariable(variableName:TomName, expression:Expression) extends `Identity(){
-    visit TomTerm { 
-      (Variable|VariableStar)[AstName=name] -> {
-        if(variableName == `name) {
-          return `ExpressionToTomTerm(expression);
-        }
-      }
-    }
-  }
-
-  %op Strategy computeOccurences(variableName:TomName, info:InfoVariable) {                                                                   
+  %op Strategy computeOccurences(variableName:TomName, info:InfoVariable) {
     make(variableName, info) {`mu(MuVar("current"),Try(Choice(findOccurenceSpecialCase(MuVar("current"),variableName,info),Sequence(findOccurenceBaseCase(variableName,info),All(MuVar("current"))))))}
   }
 
@@ -202,9 +188,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
     }
 
-
-    public InfoVariable() {
-    }
+    public InfoVariable() {}
 
     public InfoVariable(Expression lastassignment) {
       setlastvalue(lastassignment);
@@ -212,6 +196,17 @@ public class TomOptimizer extends TomGenericPlugin {
 
   }
 
+  %strategy findRefVariable(set: HashSet) extends `Identity(){
+    visit TomTerm {
+      Ref((Variable|VariableStar)[AstName=name])  -> {
+        set.add(`name);
+        //stop to visit this branch (like "return false" with traversal) 
+        throw new tom.library.sl.VisitFailure();
+      }
+    }
+  }
+
+  //case where failure is used to cut branches
   %strategy findOccurenceSpecialCase(s:Strategy,variableName:TomName, info:InfoVariable) extends `Fail() {
     visit Instruction {
       action@TypedAction[AstInstruction=inst] -> {
@@ -252,6 +247,8 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
+  //case where failure is used to stop the execution
+  //we are only interested in 0 or 1 occurence 
   %strategy findOccurenceBaseCase(variableName:TomName, info:InfoVariable) extends `Identity() {
     visit TomTerm { 
       t@(Variable|VariableStar)[AstName=name] -> { 
@@ -289,59 +286,9 @@ public class TomOptimizer extends TomGenericPlugin {
      }
    */
 
-  %op Strategy isAssigned(variableName:TomName){
-    make(variableName) {`TopDown(findAssignment(variableName))}
-  }
-
-  %strategy findAssignment(variableName:TomName) extends `Identity(){
-    visit Instruction {
-      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
-        if(variableName == `name) {
-          throw new tom.library.sl.VisitFailure();
-        }
-      }
-
-      LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
-        if(variableName == `name) {
-          throw new tom.library.sl.VisitFailure();
-        }
-      }
-    }
-  }
-
-  private static boolean expConstantInBody(Expression exp, Instruction body) {
-    HashSet c = new HashSet();
-    try {
-      `TopDownCollect(findRefVariable(c)).visitLight(exp);
-    } catch(tom.library.sl.VisitFailure e) {
-      logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
-    }
-    Iterator it = c.iterator();
-    while(it.hasNext()) {
-      TomName name = (TomName) it.next();
-      try {
-        `isAssigned(name).visitLight(body);
-      } catch(tom.library.sl.VisitFailure e) {
-        return false;
-      }
-    }
-    return true; 
-  }
-
-  %strategy findRefVariable(set: HashSet) extends `Identity(){
-    visit TomTerm {
-      Ref((Variable|VariableStar)[AstName=name])  -> {
-        set.add(`name);
-        //stop to visit this branch (like "return false" with traversal) 
-        throw new tom.library.sl.VisitFailure();
-      }
-    }
-  }
-
   /* 
    * rename variable1 into variable2
    */
-
   %op Strategy renameVariable(variable1: TomName, variable2: TomName){
     make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
   }
@@ -356,10 +303,6 @@ public class TomOptimizer extends TomGenericPlugin {
     } // end match
   }
 
-  private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
-    return factory.remove(term1)==factory.remove(term2);
-  }
-
   %op Strategy CleanAssign(varname: TomName){
     make(varname) {`TopDown(CleanAssignOnce(varname))}
   }
@@ -370,6 +313,10 @@ public class TomOptimizer extends TomGenericPlugin {
         if (`name.equals(varname)) { return `body; }
       }
     }
+  }
+  
+  private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
+    return factory.remove(term1)==factory.remove(term2);
   }
 
   %strategy Inline(context:TomList) extends `Identity() {
