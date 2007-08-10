@@ -660,6 +660,8 @@ public class TomSyntaxChecker extends TomChecker {
  matchL:  %match(subject,s){
             Variable[AstName=astName,AstType=tomType],Variable[AstName=astName,AstType=tomType] -> {break matchL;}
             TermAppl[NameList=tomNameList,Args=tomList],TermAppl[NameList=tomNameList,Args=tomList] -> {break matchL;}
+            RecordAppl[NameList=tomNameList,Slots=slotList],RecordAppl[NameList=tomNameList,Slots=slotList] -> {break matchL;}
+            XMLAppl[NameList=tomNameList,AttrList=tomList,ChildList=tomList],XMLAppl[NameList=tomNameList,AttrList=tomList,ChildList=tomList] -> { break matchL; }
             BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
             _,_ -> { continue; }
           }
