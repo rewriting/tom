@@ -193,16 +193,16 @@ public class AnalyserBasedOnRef{
 
 
     Cfg cfg = (Cfg) analysis.cfg.CfgAbstractType.expand(`ConcCfg(
-        BeginIf(cond,refCfg("success"),refCfg("failure")), 
-        labCfg("success",Nil(refCfg("letz"))),
-        labCfg("failure",Affect(letrefx,refCfg("letassignx"))),
-        labCfg("letassignx",Affect(letassignx,refCfg("lety"))),
-        labCfg("lety",Affect(lety,refCfg("freey"))),
-        labCfg("freey",Free(var_y,refCfg("freex"))),
-        labCfg("freex",Free(var_x,refCfg("letz"))),
-        labCfg("letz",Affect(letz,refCfg("freez"))),
-        labCfg("freez",Free(var_z,refCfg("end"))),
-        labCfg("end",End())
+        BeginIf(cond,RefCfg("success"),RefCfg("failure")), 
+        LabCfg("success",Nil(RefCfg("letz"))),
+        LabCfg("failure",Affect(letrefx,RefCfg("letassignx"))),
+        LabCfg("letassignx",Affect(letassignx,RefCfg("lety"))),
+        LabCfg("lety",Affect(lety,RefCfg("freey"))),
+        LabCfg("freey",Free(var_y,RefCfg("freex"))),
+        LabCfg("freex",Free(var_x,RefCfg("letz"))),
+        LabCfg("letz",Affect(letz,RefCfg("freez"))),
+        LabCfg("freez",Free(var_z,RefCfg("end"))),
+        LabCfg("end",End())
         ));
 
     AnalyserBasedOnRef analyser = new AnalyserBasedOnRef();
