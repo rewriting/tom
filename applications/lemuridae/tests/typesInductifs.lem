@@ -34,6 +34,15 @@ proprule in(l,fNull(t)) -> Null(appl(t,l)).
 proof eqrefl: forall x,eq(x,x).
 auto.
 
+proof eqsym: forall x y, eq(x,y) => eq(y,x).
+intros.
+focus h1. rule. fEq(one(),S(x0)).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. x0. axiom.
+
 proof succ_injective: forall x y, eq(x,y) => eq(succ(x),succ(y)).
 intros.
 focus h1. rule. fEq(S(succ(x0)),succ(one())).
@@ -43,19 +52,20 @@ reduce.
 theorem eqrefl.
 focus h2. intro. succ(x0). axiom.
 
-proof null_is_zero: forall x, Nat(x) => (Null(x) <=> eq(x,0).
+proof null_is_zero: forall x, Nat(x) => (Null(x) <=> eq(x,0)).
 intros.
-cut eq(0,x0).
+theorem eqsym.
+focus h3. intro. x0. focus h3. intro. 0.
+intros.
 focus h3. rule. fNull(one()).
 autoreduce.
 autoreduce.
-focus h2. rule. fEq(one(),S(x0)).
-reduce. axiom.
-reduce.
-auto.
-/* partie dure */
+focus h1. rule. supset(fNull(one()),fEq(one(),S(0))).
+reduce. intros.
+autoreduce.
+autoreduce.
 
-proof natcase: forall n, Nat(n) => (Null(n) \/ (exists m, Nat(m) /\ eq(n,succ(m)))).
+proof natcase1: forall n, Nat(n) => (Nat(n) /\ Null(n) \/ (exists m, Nat(m) /\ eq(n,succ(m)))).
 intros.
 focus h1. rule. inter(fNat(one()),union(fNull(one()),P(inter(fNat(one()),fEq(S(one()),succ(one())))))).
 autoreduce.
@@ -82,3 +92,53 @@ axiom.
 focus h2.
 focus c2. intro. 0.
 intros.
+theorem null_is_zero.
+focus h3. intro. m0.
+cut eq(m0,0).
+theorem succ_injective.
+focus h5. intro. m0. focus h5. intro. 0.
+intros.
+intros.
+auto.
+rule.
+focus h2. rule. m0.
+axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+rule.
+focus h2. rule. m0.
+axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+
+proof natcase2: forall n, ((Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m)))) => Nat(n).
+intros.
+theorem eqsym.
+focus h3. intro. n0. focus h3. intro. succ(m0). 
+intros.
+focus h3. rule. fNat(one()).
+reduce. axiom.
+reduce.
+rule.
+focus h2. rule. m0.
+reduce. axiom.
+focus h3. rule. p0.
+axiom.
+axiom.
+axiom.
+
+proof natcase: 
+forall n, ((Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m)))) <=> Nat(n).
+theorem natcase1.
+theorem natcase2.
+intro.
+focus h1. intro. n0.
+focus h2. intro. n0.
+intros.
+
+// on peut donc ajouter le raisonnement par cas : 
+rule Nat(n) -> (Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m))).
