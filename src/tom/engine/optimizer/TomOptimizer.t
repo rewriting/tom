@@ -89,7 +89,7 @@ public class TomOptimizer extends TomGenericPlugin {
       setOptionValue("pretty", Boolean.TRUE);        
     }
   }
-  
+
   // this static field is necessary for %strategy instructions that generate static code
   private static PILFactory factory = new PILFactory();
   private static Logger logger = Logger.getLogger("tom.engine.optimizer.TomOptimizer");
@@ -122,9 +122,9 @@ public class TomOptimizer extends TomGenericPlugin {
           renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else {
-	        if(getOptionBooleanValue("optimize")) {
-	          renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
-	        }
+          if(getOptionBooleanValue("optimize")) {
+            renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
+          }
         }
         setWorkingTerm(renamedTerm);
 
@@ -177,56 +177,117 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %op Strategy computeOccurences(variableName:TomName, list:ArrayList) {                                                                   
-    make(variableName, list) {`mu(MuVar("current"),TopDownCollect(findOccurence2(MuVar("current"),variableName,list)))}
+  %op Strategy computeOccurences(variableName:TomName, info:InfoVariable) {                                                                   
+    make(variableName, info) {`mu(MuVar("current"),Try(Choice(findOccurenceSpecialCase(MuVar("current"),variableName,info),Sequence(findOccurenceBaseCase(variableName,info),All(MuVar("current"))))))}
   }
 
-   %strategy findOccurence2(s:Strategy,variableName:TomName, list:ArrayList) extends `Identity() {
-    visit Instruction {
-      TypedAction[AstInstruction=inst] -> {
-        /* recursive call of the current strategy on the first child */
-        s.visitLight(`inst);
-        throw new tom.library.sl.VisitFailure();
-      }
+  %typeterm InfoVariable {
+    implement{ InfoVariable }
+  }
 
-      LetAssign[AstInstruction=inst] -> {
-        /* recursive call of the current strategy on the first child */
-        s.visitLight(`inst);
-        throw new tom.library.sl.VisitFailure();
+  private static class InfoVariable {
+
+    public tom.library.sl.Position lastRead;
+    public Expression lastassignment;
+    public HashSet<TomName> lastassignmentVariables= new HashSet();
+    public int readCount=0;
+
+    public void setlastvalue(Expression newassignment) {
+      lastassignment=newassignment;
+      lastassignmentVariables.clear();
+      try {
+        `TopDownCollect(findRefVariable(lastassignmentVariables)).visitLight(newassignment);
+      } catch(tom.library.sl.VisitFailure e) {
+        logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
       }
     }
 
+
+    public InfoVariable() {
+    }
+
+    public InfoVariable(Expression lastassignment) {
+      setlastvalue(lastassignment);
+    } 
+
+  }
+
+  %strategy findOccurenceSpecialCase(s:Strategy,variableName:TomName, info:InfoVariable) extends `Fail() {
+    visit Instruction {
+      action@TypedAction[AstInstruction=inst] -> {
+        /* recursive call of the current strategy on the first child */
+        s.visitLight(`inst);
+        return `action;
+      }
+
+      assign@LetAssign(Variable[AstName=varname],src,inst) -> {
+        if (`varname.equals(variableName)) {
+          info.setlastvalue(`src);
+        }
+        else {
+          if (info.lastassignmentVariables.contains(`varname)) {
+            info.lastassignment = null;
+            info.lastassignmentVariables.clear();
+          }
+        }
+        /* recursive call of the current strategy on the first child */
+        s.visitLight(`src);
+        s.visitLight(`inst);
+        return `assign;
+      }
+      assign@Assign(Variable[AstName=varname],src) -> {
+        if (`varname.equals(variableName)) {
+          info.setlastvalue(`src);
+        }
+        else {
+          if (info.lastassignmentVariables.contains(`varname)) {
+            info.lastassignment = null;
+            info.lastassignmentVariables.clear();
+          }
+        }
+        /* recursive call of the current strategy on the first child */
+        s.visitLight(`src);
+        return `assign;
+      }
+    }
+  }
+
+  %strategy findOccurenceBaseCase(variableName:TomName, info:InfoVariable) extends `Identity() {
     visit TomTerm { 
       t@(Variable|VariableStar)[AstName=name] -> { 
-        if(variableName == `name) { 
-          list.add(`t); 
+        if(variableName == `name) {
+          info.readCount++;
+          info.lastRead=getEnvironment().getPosition(); 
+          if (info.readCount==1) {
+            throw new tom.library.sl.VisitFailure();
+          }
         } 
       } 
     } 
-   }
+  }
 
   /* this strategy doesn't traverse the two last children of TypedAction() */
-   /*
-  private static Strategy findOccurencesUpTo(TomName variableName, ArrayList list, int max) {
-    return `Try(mu(MuVar("current"),
-          Sequence(
-            findOccurence(variableName,list,max),
-            IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))));
-  }
+  /*
+     private static Strategy findOccurencesUpTo(TomName variableName, ArrayList list, int max) {
+     return `Try(mu(MuVar("current"),
+     Sequence(
+     findOccurence(variableName,list,max),
+     IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))));
+     }
 
-  %strategy findOccurence(variableName:TomName,list : ArrayList, max:int) extends `Identity() {
-    visit TomTerm {
-      t@(Variable|VariableStar)[AstName=name] -> {
-        if(variableName == `name) {
-          list.add(`t);
-          if (list.size() >= max ) {
-            throw new tom.library.sl.VisitFailure();
-          }
-        }
-      }
-    }
-  }
-  */
+     %strategy findOccurence(variableName:TomName,list : ArrayList, max:int) extends `Identity() {
+     visit TomTerm {
+     t@(Variable|VariableStar)[AstName=name] -> {
+     if(variableName == `name) {
+     list.add(`t);
+     if (list.size() >= max ) {
+     throw new tom.library.sl.VisitFailure();
+     }
+     }
+     }
+     }
+     }
+   */
 
   %op Strategy isAssigned(variableName:TomName){
     make(variableName) {`TopDown(findAssignment(variableName))}
@@ -267,385 +328,331 @@ public class TomOptimizer extends TomGenericPlugin {
     return true; 
   }
 
-    %strategy findRefVariable(set: HashSet) extends `Identity(){
-      visit TomTerm {
-        Ref((Variable|VariableStar)[AstName=name])  -> {
-          set.add(`name);
-          //stop to visit this branch (like "return false" with traversal) 
-          throw new tom.library.sl.VisitFailure();
+  %strategy findRefVariable(set: HashSet) extends `Identity(){
+    visit TomTerm {
+      Ref((Variable|VariableStar)[AstName=name])  -> {
+        set.add(`name);
+        //stop to visit this branch (like "return false" with traversal) 
+        throw new tom.library.sl.VisitFailure();
+      }
+    }
+  }
+
+  /* 
+   * rename variable1 into variable2
+   */
+
+  %op Strategy renameVariable(variable1: TomName, variable2: TomName){
+    make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
+  }
+
+  %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
+    visit TomTerm{
+      var@(Variable|VariableStar)[AstName=astName] -> {
+        if(variable1 == `astName) {
+          return `var.setAstName(variable2);
         }
+      }
+    } // end match
+  }
+
+  private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
+    return factory.remove(term1)==factory.remove(term2);
+  }
+
+  %op Strategy CleanAssign(varname: TomName){
+    make(varname) {`TopDown(CleanAssignOnce(varname))}
+  }
+
+  %strategy CleanAssignOnce(varname:TomName) extends `Identity() {
+    visit Instruction {
+      LetAssign(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+        if (`name.equals(varname)) { return `body; }
+      }
+    }
+  }
+
+  %strategy Inline(context:TomList) extends `Identity() {
+    visit TomTerm {
+      ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
+
+      /* optimize the insertion of a slice into a list */
+      BuildAppendList(name,ExpressionToTomTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
+        return `ExpressionToTomTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
       }
     }
 
-    /* 
-     * rename variable1 into variable2
-     */
+    visit Expression {
+      TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
 
-    %op Strategy renameVariable(variable1: TomName, variable2: TomName){
-      make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
+      /* remove unecessary if(true) { ... } */
     }
-
-    %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
-      visit TomTerm{
-        var@(Variable|VariableStar)[AstName=astName] -> {
-          if(variable1 == `astName) {
-            return `var.setAstName(variable2);
-          }
-        }
-      } // end match
-    }
-
-    private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
-      return factory.remove(term1)==factory.remove(term2);
-    }
-
-    %op Strategy CleanAssign(varname: TomName){
-      make(varname) {`TopDown(CleanAssignOnce(varname))}
-    }
-
-    %strategy CleanAssignOnce(varname:TomName) extends `Identity() {
-      visit Instruction {
-        LetAssign(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
-          if (`name.equals(varname)) { return `body; }
-        }
+    visit Instruction {
+      t@TypedAction[PositivePattern=Pattern[TomList=termList]] -> {
+        context = `termList;
+        //System.out.println("found context = " + context);
+        return `t;
       }
-    }
-
-    %strategy Inline(context:TomList) extends `Identity() {
-      visit TomTerm {
-        ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
-
-        /* optimize the insertion of a slice into a list */
-        BuildAppendList(name,ExpressionToTomTerm(GetSliceList(name,begin,end,tailSlice)),tail) -> {
-          return `ExpressionToTomTerm(GetSliceList(name,begin,end,BuildAppendList(name,tailSlice,tail)));
-        }
-      }
-
-      visit Expression {
-        TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
-
-        /* remove unecessary if(true) { ... } */
-      }
-      visit Instruction {
-        t@TypedAction[PositivePattern=Pattern[TomList=termList]] -> {
-          context = `termList;
-          //System.out.println("found context = " + context);
-          return `t;
-        }
+      /*
+       * 
+       * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
+       * x should not appear in exp
+       */
+      let@(Let|LetRef)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
         /*
-         * 
-         * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
-         * x should not appear in exp
+         * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
+         * is not correctly handled 
+         * we must check that X notin exp
          */
-        let@LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
-          /*
-           * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
-           * is not correctly handled 
-           * we must check that X notin exp
-           */
-          String varName = "";
-          %match(name) {
-            Name(tomName) -> { varName = `tomName; }
-          }
+        String varName = "";
+        %match(name) {
+          Name(tomName) -> { varName = `tomName; }
+        }
 
-          ArrayList list  = new ArrayList();
-          //`findOccurencesUpTo(name,list,2).visitLight(`body);
-          `computeOccurences(name,list).visitLight(`body);
-          int mult = list.size();
-          // mult0 -> unused variable
-          // suppress the letref and all the corresponding letassigns in the body
-          if(mult == 0) {
-            // why this test?
-            if(varName.length() > 0) {
-              // TODO: check variable occurence in TypedAction
-              list.clear();
-              `computeOccurences(name,list).visitLight(`context);
-              if(list.size()<=1) {
-                // verify linearity in case of variables from the pattern
-                // warning to indicate that this var is unused in the rhs
-                Option orgTrack = TomBase.findOriginTracking(`var.getOption());
-                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                    TomMessage.unusedVariable,`extractRealName(varName));
-                logger.log( Level.INFO,
-                    TomMessage.remove.getMessage(),
-                    new Object[]{ new Integer(mult), `extractRealName(varName) });
-              }
-            }
-            //remove all the unused letassign in the letref body
-            return (Instruction) `CleanAssign(name).visitLight(`body);
-          } else if(mult == 1) {
-            list.clear();
-            //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
-            `computeOccurences(name,list).visitLight(`exp);
-            if(expConstantInBody(`exp,`body) && list.size()==0) {
-              if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.inline.getMessage(),
-                    new Object[]{ new Integer(mult), `extractRealName(varName) });
-              }
-              //System.out.println("replace1: " + `var + "\nby: " + `exp);
-              return (Instruction) `inlineInstruction(name,exp).visitLight(`body);
-            } else {
-              if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.noInline.getMessage(),
-                    new Object[]{ new Integer(mult), `extractRealName(varName) });
-              }
-            }
-          } else {
-            /* do nothing: traversal() */
-            if(varName.length() > 0) {
+        //`findOccurencesUpTo(name,list,2).visitLight(`body);
+        InfoVariable info = new InfoVariable(`exp);
+        `computeOccurences(name,info).visit(`body);
+        int mult = info.readCount;
+        // 0 -> unused variable
+        // suppress the letref and all the corresponding letassigns in the body
+        if(mult == 0) {
+          // why this test?
+          if(varName.length() > 0) {
+            // TODO: check variable occurence in TypedAction
+            info = new InfoVariable();
+            `computeOccurences(name,info).visit(`context);
+            if(info.readCount<=1) {
+              // verify linearity in case of variables from the pattern
+              // warning to indicate that this var is unused in the rhs
+              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
+              TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+                  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,
-                  TomMessage.doNothing.getMessage(),
+                  TomMessage.remove.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
             }
           }
-        }
-
-        Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-          return `body; 
-        } 
-
-        Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
-          String varName = "";
-          %match(name) {
-            Name(tomName) -> { varName = `tomName; }
-          }
-          ArrayList list  = new ArrayList();
-          
-          //`findOccurencesUpTo(name,list,2).visitLight(`body);
-            `computeOccurences(name,list).visitLight(`body);
-
-          int mult = list.size();
-          if(mult == 0) {
-            if(varName.length() > 0) {
-              //TODO: check variable occurence in TypedAction
-              list.clear();
-              `computeOccurences(name,list).visitLight(`context);
-              if(list.size()<=1) {
-                Option orgTrack = TomBase.findOriginTracking(`var.getOption());
-                TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                    TomMessage.unusedVariable,`extractRealName(varName));
-                logger.log( Level.INFO,
-                    TomMessage.remove.getMessage(),
-                    new Object[]{ new Integer(mult), `extractRealName(varName) });
-              }
-            }
-            //System.out.println("elim2: " + `var);
-            return `body; 
-          } else if(mult == 1) {
-            if(expConstantInBody(`exp,`body)) {
-              if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.inline.getMessage(),
-                    new Object[]{ new Integer(mult), `extractRealName(varName) });
-              }
-              // System.out.println("replace2: " + `var + "\nby: " + `exp);
-              return (Instruction) `inlineInstruction(name,exp).visitLight(`body);
-            } else {
-              if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.noInline.getMessage(),
-                    new Object[]{ new Integer(mult), `extractRealName(varName) });
-              }
-            }
-          } else {
-            /* do nothing: traversal() */
+          //remove all the unused letassign in the letref body
+          return (Instruction) `CleanAssign(name).visitLight(`body);
+        } else if(mult == 1) {
+          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
+          //test if variables contained in the exp to assign have not been
+           //modified between the last assignment and the read
+          if(info.lastassignment!=null) {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
-                  TomMessage.doNothing.getMessage(),
+                  TomMessage.inline.getMessage(),
+                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+            }
+            //System.out.println("replace1: " + `var + "\nby: " + `exp);
+            return (Instruction) info.lastRead.getReplace(`ExpressionToTomTerm(info.lastassignment)).visitLight(`body);
+          } else {
+            if(varName.length() > 0) {
+              logger.log( Level.INFO,
+                  TomMessage.noInline.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
             }
           }
-        }
-
-      } // end match
-    }
-
-    %strategy NopElimAndFlatten() extends `Identity() {
-      visit Instruction {
-
-        AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-              "flatten");     
-          return `AbstractBlock(concInstruction(C1*,L1*,C2*));
-        }
-
-        AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-              "nop-elim");     
-          return `AbstractBlock(concInstruction(C1*,C2*));
-        }  
-
-        AbstractBlock(concInstruction()) -> {
-          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-              "abstractblock-elim1");     
-          return `Nop();
-        } 
-
-        AbstractBlock(concInstruction(i)) -> {
-          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-              "abstractblock-elim2");     
-          return `i;
-        }
-      }      
-
-    }
-
-    /*
-     * two expressions are incompatible when they cannot be true a the same time
-     */ 
-    private boolean incompatible(Expression c1, Expression c2) {
-      try {
-        Expression res = (Expression) `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
-        return res ==`FalseTL();
-      } catch(tom.library.sl.VisitFailure e) {
-        return false;
-      }
-    }
-
-    %strategy IfSwapping(optimizer:TomOptimizer) extends `Identity() {
-      visit Instruction {
-        AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
-          String s1 = factory.prettyPrint(factory.remove(`cond1));
-          String s2 = factory.prettyPrint(factory.remove(`cond2));
-          if(s1.compareTo(s2) < 0) {
-            /* swap two incompatible conditions */
-            if(optimizer.incompatible(`cond1,`cond2)) {
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"if-swapping"});     
-              return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
-            }
+        } else {
+          /* do nothing: traversal() */
+          if(varName.length() > 0) {
+            logger.log( Level.INFO,
+                TomMessage.doNothing.getMessage(),
+                new Object[]{ new Integer(mult), `extractRealName(varName) });
           }
         }
+      }
+
+      Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+        return `body; 
+      } 
+    } // end match
+  }
+
+  %strategy NopElimAndFlatten() extends `Identity() {
+    visit Instruction {
+
+      AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+            "flatten");     
+        return `AbstractBlock(concInstruction(C1*,L1*,C2*));
+      }
+
+      AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+            "nop-elim");     
+        return `AbstractBlock(concInstruction(C1*,C2*));
+      }  
+
+      AbstractBlock(concInstruction()) -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+            "abstractblock-elim1");     
+        return `Nop();
+      } 
+
+      AbstractBlock(concInstruction(i)) -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+            "abstractblock-elim2");     
+        return `i;
       }
     }      
 
-    %strategy BlockFusion() extends `Identity() {
-      visit Instruction {
-        AbstractBlock(concInstruction(X1*,
-              Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
-              Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
-              X2*)) -> {
-          /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
-          if(`compare(term1,term2)) {
-            if(`compare(var1,var2)) {
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                  new Object[]{"block-fusion1"});     
-              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
-            } else {
-              ArrayList list  = new ArrayList();
-            //  `findOccurencesUpTo(name1,list,2).visitLight(`body2);
-            `computeOccurences(name1,list).visitLight(`body2);
-              int mult = list.size();
-              if(mult==0){
-                logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                    new Object[]{"block-fusion2"});    
-                Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
-                return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
-              }
-            }
-          }
-        }
-      }
-    }      
+  }
 
-    %strategy IfFusion() extends `Identity() {
-      visit Instruction {
-        AbstractBlock(concInstruction(X1*,
-              If(cond1,success1,failure1),
-              If(cond2,success2,failure2),
-              X2*)) -> {
-          /* Fusion de 2 blocs If gardes par la meme condition */
-          if(`compare(cond1,cond2)) {
-            if(`failure1.isNop() && `failure2.isNop()) {
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                  new Object[]{"if-fusion1"});
-              Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
-              //System.out.println(res);
-
-              return res;
-            } else {
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                  new Object[]{ "if-fusion2"});
-              return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
-            }
-          }
-        }
-      }
+  /*
+   * two expressions are incompatible when they cannot be true a the same time
+   */ 
+  private boolean incompatible(Expression c1, Expression c2) {
+    try {
+      Expression res = (Expression) `InnermostId(NormExpr(this)).visitLight(`And(c1,c2));
+      return res ==`FalseTL();
+    } catch(tom.library.sl.VisitFailure e) {
+      return false;
     }
+  }
 
-    %strategy InterBlock(optimizer:TomOptimizer) extends `Identity(){
-      visit Instruction {
-        /* interleave two incompatible conditions */
-        AbstractBlock(concInstruction(X1*,
-              If(cond1,suc1,fail1),
-              If(cond2,suc2,Nop()),
-              X2*)) -> {
+  %strategy IfSwapping(optimizer:TomOptimizer) extends `Identity() {
+    visit Instruction {
+      AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
+        String s1 = factory.prettyPrint(factory.remove(`cond1));
+        String s2 = factory.prettyPrint(factory.remove(`cond2));
+        if(s1.compareTo(s2) < 0) {
+          /* swap two incompatible conditions */
           if(optimizer.incompatible(`cond1,`cond2)) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"inter-block"});
-            return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-          }  
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"if-swapping"});     
+            return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
+          }
         }
-      }      
+      }
     }
+  }      
 
-    %strategy NormExpr(optimizer:TomOptimizer) extends `Identity() {
-      visit Expression {
-        Or(_,TrueTL()) -> {
-          return `TrueTL();
-        }
-        Or(TrueTL(),_) -> {
-          return `TrueTL();
-        }
-        Or(t1,FalseTL()) -> {
-          return `t1;
-        }
-        Or(FalseTL(),t1) -> {
-          return `t1;
-        }
-        And(TrueTL(),t1) -> {
-          return `t1;
-        }
-        And(t1,TrueTL()) -> {
-          return `t1;
-        }
-        And(FalseTL(),_) -> {
-          return `FalseTL();
-        }
-        And(TrueTL(),_) -> {
-          return `FalseTL();
-        }
-        ref@EqualTerm(_,kid1,kid2) -> {
-          //System.out.println("kid1 = " + `kid1);
-          //System.out.println("kid2 = " + `kid2);
-          if(`compare(kid1,kid2)){
-            return `TrueTL();
+  %strategy BlockFusion() extends `Identity() {
+    visit Instruction {
+      AbstractBlock(concInstruction(X1*,
+            Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),
+            Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),
+            X2*)) -> {
+        /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
+        if(`compare(term1,term2)) {
+          if(`compare(var1,var2)) {
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                new Object[]{"block-fusion1"});     
+            return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
           } else {
-            return `ref;
-          }
-        }
-        ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
-          if(`name1==`name2) {
-            return `IsFsym(name1,term);
-          }
-          /*
-           * may be true for list operator with domain=codomain
-           * two if_sym(f)==is_fsym(g) may be true due to mapping
-           */
-          TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
-          if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-            //System.out.println("symbol = " + tomSymbol);
-            TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-            TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
-            if(domain!=codomain) {
-              return `FalseTL();
+            InfoVariable info = new InfoVariable();
+            //  `findOccurencesUpTo(name1,list,2).visitLight(`body2);
+            `computeOccurences(name1,info).visitLight(`body2);
+            int mult = info.readCount; 
+            if(mult==0){
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                  new Object[]{"block-fusion2"});    
+              Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
+              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
             }
-          } else {
-            return `FalseTL();
           }
+        }
+      }
+    }
+  }      
+
+  %strategy IfFusion() extends `Identity() {
+    visit Instruction {
+      AbstractBlock(concInstruction(X1*,
+            If(cond1,success1,failure1),
+            If(cond2,success2,failure2),
+            X2*)) -> {
+        /* Fusion de 2 blocs If gardes par la meme condition */
+        if(`compare(cond1,cond2)) {
+          if(`failure1.isNop() && `failure2.isNop()) {
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                new Object[]{"if-fusion1"});
+            Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
+            //System.out.println(res);
+
+            return res;
+          } else {
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                new Object[]{ "if-fusion2"});
+            return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
+          }
+        }
+      }
+    }
+  }
+
+  %strategy InterBlock(optimizer:TomOptimizer) extends `Identity(){
+    visit Instruction {
+      /* interleave two incompatible conditions */
+      AbstractBlock(concInstruction(X1*,
+            If(cond1,suc1,fail1),
+            If(cond2,suc2,Nop()),
+            X2*)) -> {
+        if(optimizer.incompatible(`cond1,`cond2)) {
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"inter-block"});
+          return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
+        }  
+      }
+    }      
+  }
+
+  %strategy NormExpr(optimizer:TomOptimizer) extends `Identity() {
+    visit Expression {
+      Or(_,TrueTL()) -> {
+        return `TrueTL();
+      }
+      Or(TrueTL(),_) -> {
+        return `TrueTL();
+      }
+      Or(t1,FalseTL()) -> {
+        return `t1;
+      }
+      Or(FalseTL(),t1) -> {
+        return `t1;
+      }
+      And(TrueTL(),t1) -> {
+        return `t1;
+      }
+      And(t1,TrueTL()) -> {
+        return `t1;
+      }
+      And(FalseTL(),_) -> {
+        return `FalseTL();
+      }
+      And(TrueTL(),_) -> {
+        return `FalseTL();
+      }
+      ref@EqualTerm(_,kid1,kid2) -> {
+        //System.out.println("kid1 = " + `kid1);
+        //System.out.println("kid2 = " + `kid2);
+        if(`compare(kid1,kid2)){
+          return `TrueTL();
+        } else {
           return `ref;
         }
-      } 
-    }
+      }
+      ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
+        if(`name1==`name2) {
+          return `IsFsym(name1,term);
+        }
+        /*
+         * may be true for list operator with domain=codomain
+         * two if_sym(f)==is_fsym(g) may be true due to mapping
+         */
+        TomSymbol tomSymbol = optimizer.symbolTable().getSymbolFromName(`name1.getString());
+        if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+          //System.out.println("symbol = " + tomSymbol);
+          TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+          TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+          if(domain!=codomain) {
+            return `FalseTL();
+          }
+        } else {
+          return `FalseTL();
+        }
+        return `ref;
+      }
+    } 
+  }
 
-  } // class TomOptimizer
+} // class TomOptimizer
