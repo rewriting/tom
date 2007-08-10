@@ -475,7 +475,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   /*
-   * the method implementations are here common to C, Java, caml and python
+   * the method implementations are here common to C, Java, C#, caml and python
    */
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {

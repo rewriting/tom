@@ -78,6 +78,7 @@ public class TomBackend extends TomGenericPlugin {
     "<options>" +
     "<boolean name='noOutput' altName=''  description='Do not generate code' value='false'/>" +
     "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
+    "<boolean name='csCode'    altName=''  description='Generate C# code' value='false'/>" + 
     "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
     "<boolean name='camlCode' altName=''  description='Generate Caml code' value='false'/>" + 
     "<boolean name='pCode'    altName=''  description='Generate Python code' value='false'/>" + 
@@ -112,6 +113,8 @@ public class TomBackend extends TomGenericPlugin {
             generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("pCode")) {
             generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("csCode")) {
+            generator = new CSharpGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("jCode")) {
             generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
           } else {
