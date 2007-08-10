@@ -158,6 +158,39 @@ public class TestNumericConditions extends TestCase {
     }
     fail();
   }
+  
+  public void test13() {
+    %match(f(a(),6)) {
+      f(x,y) && y :> int getIntegerValue() -> {        
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test14() {
+    %match(f(a(),6)) {
+      f(x,y) && y == int getIntegerValue() -> {        
+        fail();
+      }
+    }
+    return;
+  } 
+  
+  public void test15() {
+    int m = 6;
+    %match(f(a(),6)) {
+      f(x,y) && y == int m -> {        
+        return;
+      }
+    }
+    fail();
+  } 
+
+  
+  private int getIntegerValue(){
+    return 5;
+  }
 
 
   public static void main(String[] args) {
