@@ -174,15 +174,15 @@ public class TomOptimizer extends TomGenericPlugin {
   private static class InfoVariable {
 
     public tom.library.sl.Position lastRead;
-    public Expression lastassignment;
-    public HashSet<TomName> lastassignmentVariables= new HashSet();
+    public Expression lastAssignment;
+    public HashSet<TomName> lastAssignmentVariables= new HashSet();
     public int readCount=0;
 
     public void setlastvalue(Expression newassignment) {
-      lastassignment=newassignment;
-      lastassignmentVariables.clear();
+      lastAssignment=newassignment;
+      lastAssignmentVariables.clear();
       try {
-        `TopDownCollect(findRefVariable(lastassignmentVariables)).visitLight(newassignment);
+        `TopDownCollect(findRefVariable(lastAssignmentVariables)).visitLight(newassignment);
       } catch(tom.library.sl.VisitFailure e) {
         logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
       }
@@ -190,8 +190,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public InfoVariable() {}
 
-    public InfoVariable(Expression lastassignment) {
-      setlastvalue(lastassignment);
+    public InfoVariable(Expression lastAssignment) {
+      setlastvalue(lastAssignment);
     } 
 
   }
@@ -209,10 +209,13 @@ public class TomOptimizer extends TomGenericPlugin {
   //case where failure is used to cut branches
   %strategy findOccurenceSpecialCase(s:Strategy,variableName:TomName, info:InfoVariable) extends `Fail() {
     visit Instruction {
-      action@TypedAction[AstInstruction=inst] -> {
+      TypedAction[AstInstruction=inst] -> {
         /* recursive call of the current strategy on the first child */
-        s.visitLight(`inst);
-        return `action;
+        Environment current = getEnvironment();
+        current.down(1);
+        s.visit(current);
+        current.up();
+        return (Instruction) getEnvironment().getSubject();
       }
 
       assign@LetAssign(Variable[AstName=varname],src,inst) -> {
@@ -220,29 +223,38 @@ public class TomOptimizer extends TomGenericPlugin {
           info.setlastvalue(`src);
         }
         else {
-          if (info.lastassignmentVariables.contains(`varname)) {
-            info.lastassignment = null;
-            info.lastassignmentVariables.clear();
+          if (info.lastAssignmentVariables.contains(`varname)) {
+            info.lastAssignment = null;
+            info.lastAssignmentVariables.clear();
           }
         }
-        /* recursive call of the current strategy on the first child */
-        s.visitLight(`src);
-        s.visitLight(`inst);
-        return `assign;
+        /* recursive call of the current strategy on src */
+        Environment current = getEnvironment();
+        current.down(2);
+        s.visit(current);
+        current.up();
+        /* recursive call of the current strategy on inst */
+        current.down(3);
+        s.visit(current);
+        current.up();
+        return (Instruction) current.getSubject();
       }
-      assign@Assign(Variable[AstName=varname],src) -> {
+      Assign(Variable[AstName=varname],src) -> {
         if (`varname.equals(variableName)) {
           info.setlastvalue(`src);
         }
         else {
-          if (info.lastassignmentVariables.contains(`varname)) {
-            info.lastassignment = null;
-            info.lastassignmentVariables.clear();
+          if (info.lastAssignmentVariables.contains(`varname)) {
+            info.lastAssignment = null;
+            info.lastAssignmentVariables.clear();
           }
         }
-        /* recursive call of the current strategy on the first child */
-        s.visitLight(`src);
-        return `assign;
+         /* recursive call of the current strategy on src */
+        Environment current = getEnvironment();
+        current.down(2);
+        s.visit(current);
+        current.up();
+        return (Instruction) current.getSubject();
       }
     }
   }
@@ -251,7 +263,7 @@ public class TomOptimizer extends TomGenericPlugin {
   //we are only interested in 0 or 1 occurence 
   %strategy findOccurenceBaseCase(variableName:TomName, info:InfoVariable) extends `Identity() {
     visit TomTerm { 
-      t@(Variable|VariableStar)[AstName=name] -> { 
+      (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
           info.readCount++;
           info.lastRead=getEnvironment().getPosition(); 
@@ -262,29 +274,6 @@ public class TomOptimizer extends TomGenericPlugin {
       } 
     } 
   }
-
-  /* this strategy doesn't traverse the two last children of TypedAction() */
-  /*
-     private static Strategy findOccurencesUpTo(TomName variableName, ArrayList list, int max) {
-     return `Try(mu(MuVar("current"),
-     Sequence(
-     findOccurence(variableName,list,max),
-     IfThenElse(Is_TypedAction(),_TypedAction(MuVar("current"),Identity(),Identity()),All(MuVar("current"))))));
-     }
-
-     %strategy findOccurence(variableName:TomName,list : ArrayList, max:int) extends `Identity() {
-     visit TomTerm {
-     t@(Variable|VariableStar)[AstName=name] -> {
-     if(variableName == `name) {
-     list.add(`t);
-     if (list.size() >= max ) {
-     throw new tom.library.sl.VisitFailure();
-     }
-     }
-     }
-     }
-     }
-   */
 
   /* 
    * rename variable1 into variable2
@@ -331,9 +320,9 @@ public class TomOptimizer extends TomGenericPlugin {
 
     visit Expression {
       TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
-
-      /* remove unecessary if(true) { ... } */
     }
+    
+
     visit Instruction {
       t@TypedAction[PositivePattern=Pattern[TomList=termList]] -> {
         context = `termList;
@@ -360,6 +349,8 @@ public class TomOptimizer extends TomGenericPlugin {
         InfoVariable info = new InfoVariable(`exp);
         `computeOccurences(name,info).visit(`body);
         int mult = info.readCount;
+        tom.library.sl.Position readPos = info.lastRead;
+        TomTerm value = `ExpressionToTomTerm(info.lastAssignment);
         // 0 -> unused variable
         // suppress the letref and all the corresponding letassigns in the body
         if(mult == 0) {
@@ -385,14 +376,14 @@ public class TomOptimizer extends TomGenericPlugin {
           //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
-          if(info.lastassignment!=null) {
+          if(info.lastAssignment!=null) {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
             }
             //System.out.println("replace1: " + `var + "\nby: " + `exp);
-            return (Instruction) info.lastRead.getReplace(`ExpressionToTomTerm(info.lastassignment)).visitLight(`body);
+            return (Instruction) readPos.getReplace(value).visit(`body);
           } else {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
