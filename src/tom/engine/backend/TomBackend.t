@@ -114,7 +114,7 @@ public class TomBackend extends TomGenericPlugin {
           } else if(getOptionBooleanValue("pCode")) {
             generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("csCode")) {
-            generator = new CSharpGenerator(output, getOptionManager(), symbolTable());
+            generator = new TomCSharpGenerator(output, getOptionManager(), symbolTable());
           } else if(getOptionBooleanValue("jCode")) {
             generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
           } else {
