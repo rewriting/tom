@@ -127,10 +127,11 @@ public class ProofChecker {
           a
           )
         -> { return proofcheck(`p); }
+      /* the syntax could be improved when the bug #3786 is fixed */ 
       rule(
           cutInfo(a),
-          (p1@rule(_,_,sequent(g,(d*,a)),_), p2@rule(_,_,sequent((g*,a),d),_)),
-          sequent(g,d),
+          (p1@rule(_,_,sequent((g*),(d*,a)),_), p2@rule(_,_,sequent((g*,a),(d*)),_)),
+          sequent((g*),(d*)),
           _
           )
         -> { return proofcheck(`p1) && proofcheck(`p2); }

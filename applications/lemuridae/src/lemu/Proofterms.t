@@ -163,11 +163,11 @@ public class Proofterms {
           a
           ),nsequ
         -> { return term2proofterm(`p,`nsequ, ncount, cncount); }
-      
+      /* the syntax could be improved when the bug #3786 is fixed */ 
       rule(
           cutInfo(a),
-          (p1@rule(_,_,sequent(g,(d*,a)),_), p2@rule(_,_,sequent((g*,a),d),_)),
-          sequent(g,d),
+          (p1@rule(_,_,sequent((g*),(d*,a)),_), p2@rule(_,_,sequent((g*,a),(d*)),_)),
+          sequent((g*),(d*)),
           _
           ),nsequent(ng,cnd) -> {
         return `cut(cnprop(coname(cncount+1),a),term2proofterm(p1,nsequent(ng,cncontext(cnd*,cnprop(coname(cncount+1),a))),ncount+1,cncount+1),nprop(name(ncount+1),a),term2proofterm(p2,nsequent(ncontext(ng*,nprop(name(ncount+1),a)),cnd),ncount+1,cncount+1));
