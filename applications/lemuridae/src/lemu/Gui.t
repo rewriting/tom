@@ -344,7 +344,7 @@ public final class Gui implements Observer {
     Gui newGui = new Gui();
     ProofBuilder test = new ProofBuilder();
     test.addObserver(newGui);
-    Utils.setStream(newGui.inpipe);
+    IO.setStream(newGui.inpipe);
     test.mainLoop();
   }
 

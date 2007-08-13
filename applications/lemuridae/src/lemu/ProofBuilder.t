@@ -545,7 +545,7 @@ b: {
           sequent((_*,act@forAll(n,_),_*),_), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
-            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
+            try { term = IO.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             return (Tree) `ApplyForAllL(active,term).visit(`r);
           }
         }
@@ -574,7 +574,7 @@ b: {
           sequent(_,(_*,act@exists(n,_),_*)), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
-            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
+            try { term = IO.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             return (Tree) `ApplyExistsR(active,term).visit(`r);
           }
         }
@@ -698,7 +698,7 @@ b: {
       for (Term t : new_vars) {
         String varname = t.getname();
         writeToOutput("new term for variable " + varname + " in rule " + n + " > ");
-        Term new_var = Utils.getTerm();
+        Term new_var = IO.getTerm();
         args.put(t, new_var);
       }
 
@@ -926,7 +926,7 @@ b :{
 
       writeToOutput("proof> ");
       ProofCommand pcommand;
-      try {pcommand = Utils.getProofCommand(); }
+      try {pcommand = IO.getProofCommand(); }
       catch (Exception e) { writeToOutputln("Unknown command : " + e); continue; }
 
       /* begin of the big switch */
@@ -1128,7 +1128,7 @@ b :{
         /* proof end of file */
         proofendoffile() -> {
           writeToOutputln("Warning : The file ended while the theorem was not proved !\nProve it manually or abort.");
-          Utils.setStream(new DataInputStream(System.in));
+          IO.setStream(new DataInputStream(System.in));
           inputStreams.clear();
         }
         
@@ -1211,7 +1211,7 @@ b :{
       try {
         writeToOutputln("name the proposition \"" + 
             PrettyPrinter.prettyPrint(permut_problem) + "\" > ");
-        String name = Utils.getIdent();
+        String name = IO.getIdent();
         // ask user for a name
         rc.run(name);
       } catch (Exception e) {
@@ -1239,7 +1239,7 @@ b :{
     while(true) {
 
       writeToOutput("> ");
-      try { command = Utils.getCommand(); }
+      try { command = IO.getCommand(); }
       catch (Exception e) {
         writeToOutputln("Unknow command : " + e);
         continue;
@@ -1381,7 +1381,7 @@ b :{
           String newname = `name.substring(1, `name.length()-1);
           try { 
             InputStream stream = new FileInputStream(newname);
-            Utils.setStream(stream);
+            IO.setStream(stream);
             inputStreams.push(stream);
           }
           catch (Exception FileNotFoundException) {
@@ -1393,7 +1393,7 @@ b :{
           writeToOutputln("End of file");
           InputStream stream = new DataInputStream(System.in);
           if (! inputStreams.empty()) stream = inputStreams.pop();
-          Utils.setStream(stream);
+          IO.setStream(stream);
         }
   
         quit() -> {
