@@ -73,7 +73,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
       AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],_),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
+        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visitLight(toApplyOn);
         if(res != toApplyOn) {
           return `AndConstraint(X*,eq,res);
         }

@@ -150,6 +150,14 @@ public class SyntacticPropagator implements IBasePropagator {
           return `NumericConstraint(value,right,numericType); 
         }
       }
+      // we can have the same variable both as variable and as variablestar
+      // we know that this is ok, because the type checker authorized it
+      MatchConstraint(v@VariableStar[AstName=name@!PositionName[],AstType=type],p) -> {        
+        if(`name == varName) {           
+          TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
+          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
+        }                                 
+      }      
     }
   }// end strategy
 }

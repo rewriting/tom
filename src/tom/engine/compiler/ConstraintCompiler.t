@@ -103,7 +103,7 @@ public class ConstraintCompiler {
               // to go in the action and collect from there                      
               `constraint = (Constraint)`TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
               
-              Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);
+              Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);              
               Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
               Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
