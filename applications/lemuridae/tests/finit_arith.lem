@@ -248,6 +248,7 @@ theorem eqrefl.
 focus h2. intro. 0. axiom.
 
 
+quit.
 
 /*
 
@@ -326,7 +327,6 @@ reduce. axiom.
 rule. reduce.
 
 */
-
 
 
 

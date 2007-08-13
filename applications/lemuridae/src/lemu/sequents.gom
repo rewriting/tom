@@ -27,6 +27,7 @@ Prop = relationAppl(r:String, t:TermList)
 
 and:block() {
 	public boolean equals(Object o) {
+		if (this==o) return true;
 		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
 		%match(this,p) {
 			and(p11,p12),and(p21,p22) -> {
@@ -39,6 +40,7 @@ and:block() {
 
 or:block() {
 	public boolean equals(Object o) {
+		if (this==o) return true;
 		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
 		%match(this,p) {
 			or(p11,p12),or(p21,p22) -> {
@@ -51,6 +53,7 @@ or:block() {
 
 implies:block() {
 	public boolean equals(Object o) {
+		if (this==o) return true;
 		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
 		%match(this,p) {
 			implies(p11,p12),implies(p21,p22) -> {

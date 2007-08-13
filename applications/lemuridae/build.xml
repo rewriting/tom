@@ -42,7 +42,6 @@
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
       <exclude name="**/LJ2NJ.t"/>
-      <exclude name="**/ProofChecker.t"/>
     </tom.preset>
     <tom.preset outputfile="${lemu.gen}/lemu/SeqWalker.g"
       options="-I ${lemu.gen}/lemu"
