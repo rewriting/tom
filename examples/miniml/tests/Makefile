@@ -26,17 +26,17 @@ TestFold.t: fold.tom plus.tom mult.tom
 TestPlus.t: plus.tom
 
 fold.tom: fold.ml
-	cd ../build \
-	&& java Compiler ../tests/fold.ml > ../tests/fold.tom \
-	&& cd ../tests
+	cd .. \
+	&& java Compiler tests/fold.ml > tests/fold.tom \
+	&& cd tests
 
 plus.tom: plus.ml
-	cd ../build \
-	&& java Compiler ../tests/plus.ml > ../tests/plus.tom \
-	&& cd ../tests
+	cd .. \
+	&& java Compiler tests/plus.ml > tests/plus.tom \
+	&& cd tests
 
 mult.tom: mult.ml
-	cd ../build \
-	&& java Compiler ../tests/mult.ml > ../tests/mult.tom \
-	&& cd ../tests
+	cd build \
+	&& java Compiler tests/mult.ml > tests/mult.tom \
+	&& cd tests
 

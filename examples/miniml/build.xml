@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="miniml" default="build" basedir=".">
+<project name="miniml" default="build" basedir="..">
   <description>
-    The miniml proof assistant
+    ml to tom proof of concept 
   </description>
-  <property name="javacSource" value="1.5"/>
-  <property name="javacTarget" value="1.5"/>
-  <property name="optimize"   value="on"/> 
-  <property name="optimize2"   value="off"/>
  
-  <property environment="env"/>
-  <property name="tom.home" value="${env.TOM_HOME}"/>
-  <import file="${tom.home}/lib/tom-common.xml"/>
+  <import file="../common.xml"/>
 
-  <property name="miniml.dir"      location="."/>
-  <property name="miniml.src"      location="src"/>
-  <property name="miniml.gen"      location="gen"/>
-  <property name="miniml.build"    location="build"/>
-
+  <property name="miniml" value="miniml"/>
+  <property name="miniml.dir"      location="${examples.dir}/${miniml}"/>
+  <property name="miniml.src"      location="${miniml.dir}/src"/>
+  <property name="miniml.gen"      location="${examples.gen}/${miniml}"/>
+  <property name="miniml.build"    location="${examples.build}/${miniml}"/>
 
   <target name="init" depends="tom.init">
     <mkdir dir="${miniml.build}"/>
@@ -24,11 +18,11 @@
   </target>
 
   <target name="build" depends="init">
-    <gom config="${gomconfigfile}"
+    <gom.preset config="${gomconfigfile}"
          srcdir="${miniml.src}"
          destdir="${miniml.gen}">
       <include name="*.gom"/>
-    </gom>
+    </gom.preset>
     <tom.preset outputfile="${miniml.gen}/MlWalker.g"
                 options="-I ${miniml.gen}"
                 srcdir="${miniml.src}"> 
@@ -57,6 +51,10 @@
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
+
+    <copy todir="${miniml.build}/tests">
+      <fileset dir="${miniml.dir}/tests" />
+    </copy>
   </target>
 
   <target name="clean" description="make clean">
