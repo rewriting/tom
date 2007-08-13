@@ -142,3 +142,58 @@ intros.
 
 // on peut donc ajouter le raisonnement par cas : 
 rule Nat(n) -> (Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m))).
+
+
+proof strongind1: forall n, Nat(n) 
+                  => forall p, in(cons(0,nil()),p) 
+                  => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+                  => in(cons(n,nil()),p) .
+intros.
+focus h1. rule 3. inter(fNat(one()),p0).
+reduce. intros.
+next. reduce. intros.
+rule 2.
+axiom.
+rule. reduce.
+intros.
+focus h5. intro. m0. intros.
+showrules.
+rule 2.
+focus h3. rule 3. p1.
+focus h3. rule. m0.
+axiom.
+axiom.
+axiom.
+axiom.
+
+proof strongind2: forall n, 
+                  (forall p, in(cons(0,nil()),p) 
+                   => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+                   => in(cons(n,nil()),p)
+                 ) => Nat(n).
+intros.
+rule 2.
+focus h3. intro. p0.
+intros.
+focus h2. rule. m0.
+axiom.
+axiom.
+
+proof strongind: forall n, Nat(n) <=> 
+                 (forall p, in(cons(0,nil()),p) 
+                  => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+                  => in(cons(n,nil()),p)) .
+theorem strongind1.
+theorem strongind2.
+intro.
+focus h1. intro. n0.
+focus h2. intro. n0.
+intros.
+
+// on peut donc ajouter l'induction forte : 
+rule Nat(n) -> forall p, in(cons(0,nil()),p) 
+               => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
+               => in(cons(n,nil()),p).
+hered_strong_nat.
+
+

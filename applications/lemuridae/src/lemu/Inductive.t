@@ -55,7 +55,7 @@ public class Inductive {
 
     /* quantification and label typing :
         - !recursive: p = forall n, Nat(n) -> forall t1, forall t2, [old p]
-        - !recursive: p = forall n, Nat(n) -> forall t1, BinTree(t1) ...
+        - recursive: p = forall n, Nat(n) -> forall t1, BinTree(t1) -> ...
      */
     %match(TypeList tl) {
       (_*,type(lab,name),_*) -> {
