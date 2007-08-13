@@ -61,7 +61,7 @@ class Unification {
       top(),top() -> {
         return tds;
       }
-      forAll(var1,r1), forAll(var2,r2) -> {
+      forall(var1,r1), forall(var2,r2) -> {
         /* FIXME : not safe if we add _ in ids*/
         Term new_var = `funAppl(("lemu_var_" + varcount),concTerm());
         Prop new_r1 = (Prop) Utils.replaceFreeVars(`r1,`Var(var1),new_var);
@@ -146,12 +146,12 @@ class Unification {
 
   %strategy RenameIntoTemp(bounded : StringSet) extends `Fail() {
     visit Prop {
-      forAll(n,p) -> { 
+      forall(n,p) -> { 
         bounded.add(`n); 
         Prop res = (Prop) 
           `mu(MuVar("y"),Choice(RenameIntoTemp(bounded),All(MuVar("y")))).visit(`p);
         bounded.remove(`n);
-        return `forAll(n,res);
+        return `forall(n,res);
       }
       exists(n,p) -> { 
         bounded.add(`n); 

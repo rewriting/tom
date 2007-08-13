@@ -141,8 +141,7 @@ focus h2. intro. n0.
 intros.
 
 // on peut donc ajouter le raisonnement par cas : 
-rule Nat(n) -> (Nat(n) /\ Null(n)) \/ (exists m, Nat(m) /\ eq(n,succ(m))).
-
+rule natcase.
 
 proof strongind1: forall n, Nat(n) 
                   => forall p, in(cons(0,nil()),p) 
@@ -191,9 +190,7 @@ focus h2. intro. n0.
 intros.
 
 // on peut donc ajouter l'induction forte : 
-rule Nat(n) -> forall p, in(cons(0,nil()),p) 
-               => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
-               => in(cons(n,nil()),p).
+rule strongind.
 hered_strong_nat.
 
 

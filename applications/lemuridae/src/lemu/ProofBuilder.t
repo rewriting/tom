@@ -24,7 +24,6 @@ import antlr.collections.*;
 
 public class ProofBuilder extends Observable {
 
-  //%include { sequents/sequents.tom }
   %include { sequents/_sequents.tom }
   %include { urban/urban.tom }
   %include { sl.tom }
@@ -87,7 +86,7 @@ public class ProofBuilder extends Observable {
 
         //  -- building the original axiom with quantifiers --
 
-        // building p => phi /\ phi -> p
+        // building p => phi /\ phi => p
         Prop conj = null;
         if (rule.geths() == 1) { // right rule
           %match (expanded) {
@@ -107,7 +106,7 @@ public class ProofBuilder extends Observable {
         Prop newconcl = conj;
         Set<String> vars = tds.keySet();
         for (String var: vars) {
-          newconcl = `forAll(var,newconcl);
+          newconcl = `forall(var,newconcl);
         }
 
         // -- 
@@ -161,7 +160,7 @@ public class ProofBuilder extends Observable {
               for(int i=0; i<tds.size(); i++) {
                 Tree leaf = (Tree) next.getSubterm().apply(newt);
                 %match(leaf) { 
-                  rule[c=sequent(context(f@forAll(var,_)),())] -> {
+                  rule[c=sequent(context(f@forall(var,_)),())] -> {
                     Term newterm = tds.get(`var); 
                     newt = (Tree) ((MuStrategy) next.getOmega(`ApplyForAllL(f,newterm))).apply(newt);
                     next.down(2);
@@ -220,7 +219,7 @@ public class ProofBuilder extends Observable {
               for(int i=0; i<tds.size(); i++) {
                 Tree leaf = (Tree) next.getSubterm().apply(newt);
                 %match(leaf) { 
-                  rule[c=sequent(context(f@forAll(var,_)),())] -> {
+                  rule[c=sequent(context(f@forall(var,_)),())] -> {
                     Term newterm = tds.get(`var); 
                     newt = (Tree) ((MuStrategy) next.getOmega(`ApplyForAllL(f,newterm))).apply(newt);
                     next.down(2);
@@ -513,11 +512,11 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@forAll(n,p),Y*)), act -> {
+          sequent(d,(X*,act@forall(n,p),Y*)), act -> {
             Term nvar = Utils.freshVar(`n,`seq);
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
-            return `rule(forAllRightInfo(nvar),premisses(t1),seq,act);
+            return `rule(forallRightInfo(nvar),premisses(t1),seq,act);
           }
         }
       }
@@ -528,10 +527,10 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((X*,act@forAll(n,p),Y*),g), act -> {
+          sequent((X*,act@forall(n,p),Y*),g), act -> {
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
             Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
-            return `rule(forAllLeftInfo(term),premisses(t1),seq,act);
+            return `rule(forallLeftInfo(term),premisses(t1),seq,act);
           }
         }
       }
@@ -542,7 +541,7 @@ b: {
     visit Tree {
       r@rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent((_*,act@forAll(n,_),_*),_), act -> {
+          sequent((_*,act@forall(n,_),_*),_), act -> {
             o.writeToOutput("instance of " + `n + " > ");
             Term term = null;
             try { term = IO.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
@@ -1167,8 +1166,7 @@ b :{
     return envStack;
   }
 
-  class ReInitException extends Exception {
-  }
+  class ReInitException extends Exception {}
 
   public void reInit() {
     newRules = new ArrayList<Rule>();
@@ -1199,7 +1197,7 @@ b :{
       //ted.VisitableViewer.toTreeStdout(tree);
     } else {
       unprovedTheorems.put(name, envStack);
-      writeToOutputln(name + " remains unproved !!");
+      writeToOutputln(name + " remains unproved.");
     }
   }
 
@@ -1233,9 +1231,60 @@ b :{
     writeToOutputln(PrettyPrinter.prettyRule(rl));
   }
 
+  private void addSuperRule(Tree theorem) {
+    try {
+      %match(theorem) {
+        rule[c=sequent((),(p))] -> {
+          PropRule pr = Utils.theoremToPropRewriteRule(`p); 
+          %match(pr) { proprule(lhs,rhs) -> { `addSuperRule(lhs,rhs); } }
+        }
+      }
+    } catch (Exception e) {
+      writeToOutputln("Can't convert theorem :" + e.getMessage());
+    }
+  }
+
+  private void addPropRule(Prop atom, Prop phi) {
+    `atom = (Prop) Unification.substPreTreatment(`atom);
+    `phi = (Prop) Unification.substPreTreatment(`phi);
+    newPropRules = `proprulelist(newPropRules*,proprule(atom,phi));
+  }
+
+  private void addPropRule(Tree theorem) {
+    try {
+      %match(theorem) {
+        rule[c=sequent((),(p))] -> {
+          PropRule pr = Utils.theoremToPropRewriteRule(`p); 
+          %match(pr) { proprule(lhs,rhs) -> { `addPropRule(lhs,rhs); } }
+        }
+      }
+    } catch (Exception e) {
+      writeToOutputln("Can't convert theorem :" + e.getMessage());
+    }
+  }
+
+  private void addTermRule(Term lhs, Term rhs) {
+    `lhs = (Term) Unification.substPreTreatment(`lhs);
+    `rhs = (Term) Unification.substPreTreatment(`rhs);
+    newTermRules = `termrulelist(newTermRules*,termrule(lhs,rhs));
+  }
+
+  private void addTermRule(Tree t) {
+    try {
+      %match(t) {
+        rule[c=sequent((),(p))] -> {
+          TermRule pr = Utils.theoremToTermRewriteRule(`p); 
+          %match(pr) { termrule(lhs,rhs) -> { `addTermRule(lhs,rhs); } }
+        }
+      }
+    } catch (Exception e) {
+      writeToOutputln("Can't convert theorem :" + e.getMessage());
+    }
+  }
+
   public void mainLoop() throws Exception {
     Command command = null;
-      
+
     while(true) {
 
       writeToOutput("> ");
@@ -1249,25 +1298,34 @@ b :{
 
         /* declarations */
 
-        rewritesuper(p1,p2) -> {
-          `addSuperRule(p1,p2);
+        rewritesuper(p1,p2) -> { `addSuperRule(p1,p2); }
+
+        rewritesuperFromTheorem(th) -> {
+          Tree t = theorems.get(`th);
+          if (t == null) writeToOutputln(`th + " not found");
+          else addSuperRule(t);
         }
 
-        rewriteterm(lhs,rhs) -> {
-          `lhs = (Term) Unification.substPreTreatment(`lhs);
-          `rhs = (Term) Unification.substPreTreatment(`rhs);
-          newTermRules = `termrulelist(newTermRules*,termrule(lhs,rhs));
+        rewriteterm(lhs,rhs) -> { `addTermRule(lhs,rhs); } 
+
+        rewritetermFromTheorem(th) -> {
+          Tree t = theorems.get(`th);
+          if (t == null) writeToOutputln(`th + " not found");
+          else addTermRule(t);
         }
 
-        rewriteprop(lhs,rhs) -> {
-          `lhs = (Prop) Unification.substPreTreatment(`lhs);
-          `rhs = (Prop) Unification.substPreTreatment(`rhs);
-          newPropRules = `proprulelist(newPropRules*,proprule(lhs,rhs));
+        rewriteprop(lhs,rhs) -> { `addPropRule(lhs,rhs); }
+
+        rewritepropFromTheorem(th) -> {
+          Tree t = theorems.get(`th);
+          if (t == null) writeToOutputln(`th + " not found");
+          else addPropRule(t);
         }
 
         inductive(sig) -> {
-         `addSuperRule(Inductive.getLhs(sig),Inductive.getRhs(sig,false));
+          `addSuperRule(Inductive.getLhs(sig),Inductive.getRhs(sig,false));
         }
+
         inductiver(sig) -> {
           `addSuperRule(Inductive.getLhs(sig),Inductive.getRhs(sig,true));
         }
@@ -1280,8 +1338,8 @@ b :{
         }
 
         normalizeTerm(t) -> {
-           Term res = (Term) Unification.reduce(`t,newTermRules,newPropRules);
-           writeToOutputln(PrettyPrinter.prettyPrint(res));
+          Term res = (Term) Unification.reduce(`t,newTermRules,newPropRules);
+          writeToOutputln(PrettyPrinter.prettyPrint(res));
         }
 
         /* proof handling */
@@ -1326,19 +1384,19 @@ b :{
 
         proofterm(name) -> {
           /*
-          ProofTerm pi = pttheorems.get(`name);
-          if (pi==null) {
-            Tree tree = theorems.get(`name);
-            if(tree==null) writeToOutputln(`name + " not found");
-            else {
-              pi = Proofterms.getProofterm(tree);
-              pttheorems.put(`name,pi);
-            }
-          }
-          if (pi!=null) {
-            writeToOutputln(PrettyPrinter.prettyPrint(pi));
-            //writeToOutput("IMG"+PrettyPrinter.show(pi));
-            PrettyPrinter.display(pi);
+             ProofTerm pi = pttheorems.get(`name);
+             if (pi==null) {
+             Tree tree = theorems.get(`name);
+             if(tree==null) writeToOutputln(`name + " not found");
+             else {
+             pi = Proofterms.getProofterm(tree);
+             pttheorems.put(`name,pi);
+             }
+             }
+             if (pi!=null) {
+             writeToOutputln(PrettyPrinter.prettyPrint(pi));
+          //writeToOutput("IMG"+PrettyPrinter.show(pi));
+          PrettyPrinter.display(pi);
           }*/
           Tree tree = theorems.get(`name);
           if(tree==null) writeToOutputln(`name + " not found");
@@ -1348,13 +1406,13 @@ b :{
             NSequent nseq = Proofterms.typableProofterm2NSequent(tpt);
             writeToOutputln(PrettyPrinter.prettyPrint(pt));
             PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
-//            Collection c = Proofterms.reduce(pt);
+            //            Collection c = Proofterms.reduce(pt);
             Collection c = Proofterms.computeNormalForms(pt, nseq);
             writeToOutputln("Number of normal forms found : "+c.size());
-//            for (Object o:c) {
-//              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
-//              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
-//            }
+            //            for (Object o:c) {
+            //              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+            //              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
+            //            }
           }
         }
 
@@ -1395,7 +1453,7 @@ b :{
           if (! inputStreams.empty()) stream = inputStreams.pop();
           IO.setStream(stream);
         }
-  
+
         quit() -> {
           System.exit(0);
         }

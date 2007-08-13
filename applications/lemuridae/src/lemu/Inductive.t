@@ -17,7 +17,7 @@ public class Inductive {
   // e.g. forall P, (P(0) -> forall m ...
   public static Prop getRhs(Sig s, boolean recursive) {
     %match (Sig s) {
-      sig(def,(l*)) -> {return `forAll("p",getAxiom(l,def,recursive));}
+      sig(def,(l*)) -> {return `forall("p",getAxiom(l,def,recursive));}
     }
     throw new RuntimeException("should not happen");
   }
@@ -62,7 +62,7 @@ public class Inductive {
         if(recursive || !`name.equals(def)) {
           p = `implies(relationAppl(name,concTerm(Var(lab))),p);
         }
-        p = `forAll(lab, p);
+        p = `forall(lab, p);
       }
     }
 

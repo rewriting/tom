@@ -19,15 +19,22 @@ public class Utils {
   %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
   %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
 
-
-  public static Prop forAllList(StringList l, Prop p) {
+  /** 
+   * for convenience 
+   * forallList((x,y),p) -> forall(x,forall(y,p)) 
+   */
+  public static Prop forallList(StringList l, Prop p) {
     Prop res = p;
     %match(StringList l) {
-      (_*,v,_*) -> { res = `forAll(v,res); }
+      (_*,v,_*) -> { res = `forall(v,res); }
     }
     return res;
   }
 
+  /** 
+   * for convenience 
+   * existsList((x,y),p) -> exists(x,exists(y,p)) 
+   */
   public static Prop existsList(StringList l, Prop p) {
     Prop res = p;
     %match(StringList l) {
@@ -78,17 +85,17 @@ public class Utils {
   private static Prop 
     replaceFreeVars(Prop p, Term old_term, Term new_term, Set<String> nonfresh) {
       %match(Prop p) {
-        forAll(n,p1) -> {
+        forall(n,p1) -> {
           if(old_term != `Var(n)) {
             if (new_term.getVars().contains(`n)) {
               Term fv = freshVar(`n,nonfresh);
               Prop np1 = `replaceFreeVars(p1,Var(n),fv,nonfresh);
               nonfresh.add(`n);
-              Prop res = `forAll(fv.getname(),replaceFreeVars(np1,old_term,new_term,nonfresh));
+              Prop res = `forall(fv.getname(),replaceFreeVars(np1,old_term,new_term,nonfresh));
               nonfresh.remove(`n);
               return res;
             } else {
-              return `forAll(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
+              return `forall(n,replaceFreeVars(p1,old_term,new_term,nonfresh));
             }
           } else  return p;
         }
@@ -136,11 +143,11 @@ public class Utils {
   %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Identity() {
     // FIXME : encore utile ?? surement pour l'expansion
     visit RuleType {
-      forAllRightInfo(t) -> {
-        if (`t==old_term) return `forAllRightInfo(new_term);
+      forallRightInfo(t) -> {
+        if (`t==old_term) return `forallRightInfo(new_term);
       }
-      forAllLeftInfo(t) -> {
-        if (`t==old_term) return `forAllLeftInfo(new_term);
+      forallLeftInfo(t) -> {
+        if (`t==old_term) return `forallLeftInfo(new_term);
       }
       existsRightInfo(t) -> {
         if (`t==old_term) return `existsRightInfo(new_term);
@@ -235,6 +242,59 @@ public class Utils {
       `TopDown(CollectNewVars(set)).visit(seq);
     } catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
+  }
+
+  public static boolean isClosed(sequentsAbstractType t) {
+    return getFreeVars(t).isEmpty();
+  }
+
+  private static PropRule theoremToPropRewriteRuleRec(Prop th) throws Exception {
+    %match (th) {
+      forall(x,p) -> { return `theoremToPropRewriteRuleRec(p); }
+      and(implies(a@relationAppl[],b),implies(b,a@relationAppl[]))  -> {
+        return `proprule(a,b); 
+      }
+      and(implies(a,b@relationAppl[]),implies(b@relationAppl[],a))  -> {
+        return `proprule(b,a); 
+      }
+    }
+    throw new Exception("Theorem has not the shape of a proposition rewrite rule");
+  }
+
+
+  /** 
+   * Converts a theorem into a proposition rewrite rule
+   * 
+   * @param th Prop of the shape 'forall x1..xn, Atom(x1,..,xn) &lt;&eq;&gt; Phi(x1,..,xn)'
+   * @throws Exception if the theorem has a wrong shape
+   * @return the rewrite rule is NOT prepared to avoid captures (no @ in front of variables)
+   */
+  public static PropRule theoremToPropRewriteRule(Prop th) throws Exception {
+    if(! isClosed(th)) throw new Exception("The theorem contains free variables");
+    else return theoremToPropRewriteRuleRec(th);
+  }
+
+  private static TermRule theoremToTermRewriteRuleRec(Prop th) throws Exception {
+    %match (th) {
+      forall(x,p) -> { return `theoremToTermRewriteRuleRec(p); }
+      relationAppl("eq",concTerm(x,y))  -> {
+        return `termrule(x,y); 
+      }
+    }
+    throw new Exception("Theorem has not the shape of a term rewrite rule");
+  }
+
+
+  /** 
+   * Converts a theorem into a term rewrite rule
+   * 
+   * @param th Prop of the shape 'forall x1..xn, f(x1,..,xn) &eq; g(x1,..,xn)'
+   * @throws Exception if the theorem has a wrong shape
+   * @return the rewrite rule is NOT prepared to avoid captures (no @ in front of variables)
+   */
+  public static TermRule theoremToTermRewriteRule(Prop th) throws Exception {
+    if(! isClosed(th)) throw new Exception("The theorem contains free variables");
+    else return theoremToTermRewriteRuleRec(th);
   }
 
 }

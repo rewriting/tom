@@ -66,8 +66,11 @@ funappl : ID LPAREN term_list RPAREN -> ^(FAPPL ID term_list)
 
 command: PROOF^ ID COLUMN! pred DOT!
        | RRULE^ atom ARROW! pred DOT!
+       | RRULE^ ID DOT!
        | TRULE^ term ARROW! term DOT!
+       | TRULE^ ID DOT!
        | PRULE^ atom ARROW! pred DOT!
+       | PRULE^ ID DOT!
        | NORMALIZE! TERM^ term DOT!
        | NORMALIZE! PROP^ pred DOT!
        | DISPLAY^ ID DOT!

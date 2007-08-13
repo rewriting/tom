@@ -16,7 +16,7 @@ Prop = relationAppl(r:String, t:TermList)
      | and(p1:Prop, p2:Prop)
      | or(p1:Prop, p2:Prop)
      | implies(p1:Prop, p2:Prop)
-     | forAll(var:String, p:Prop)
+     | forall(var:String, p:Prop)
      | exists(var:String, p:Prop)
      | bottom()
      | top()
@@ -64,13 +64,13 @@ implies:block() {
 	}
 }
 
-forAll:block() {
+forall:block() {
 	public boolean equals(Object o) { 
 		if  (this == o) return true;
 		else {
 			lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
 			%match (this,p) {
-				forAll(x,p1), forAll(y,p2) -> {
+				forall(x,p1), forall(y,p2) -> {
 					lemu.sequents.types.Context couple = `context(p1,p2);
 					lemu.sequents.types.Term fvar = lemu.Utils.freshVar(`x,couple);
 					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,`Var(x),fvar); 
@@ -121,8 +121,8 @@ RuleType = axiomInfo()
          | andRightInfo()
          | orLeftInfo()
          | orRightInfo()
-         | forAllRightInfo(freshvar:Term)
-         | forAllLeftInfo(newterm:Term)
+         | forallRightInfo(freshvar:Term)
+         | forallLeftInfo(newterm:Term)
          | existsRightInfo(newterm:Term)
          | existsLeftInfo(freshvar:Term)
          | bottomInfo()
@@ -155,8 +155,11 @@ RuleList = rlist(Rule*)
 
 // parsed in interactive mode
 Command = rewriteprop(l:Prop, r:Prop)
+        | rewritepropFromTheorem(th:String)
         | rewritesuper(l:Prop, r:Prop)
+        | rewritesuperFromTheorem(th:String)
         | rewriteterm(lt:Term, rt:Term)
+        | rewritetermFromTheorem(th:String)
         | normalizeProp(p: Prop)
         | normalizeTerm(t: Term)
         | proof(name:String, p:Prop)
@@ -264,7 +267,7 @@ sort Prop:block() {
           `getFreeVars(p2,res);  
           return res; 
         }
-        forAll(var,sub) -> {
+        forall(var,sub) -> {
           `getFreeVars(sub,res);
           res.remove(`var);
           return res;

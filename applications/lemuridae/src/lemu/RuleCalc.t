@@ -220,13 +220,13 @@ public class RuleCalc {
       }
 
       // forall R
-      s@sequent(g,(u*,x@forAll(n,a),v*)) -> {
+      s@sequent(g,(u*,x@forall(n,a),v*)) -> {
         String new_n = Utils.freshVar(`n,freevars).getname();
         Term fresh_v = `FreshVar(new_n,n);
         freevars.add(fresh_v.getname());
         Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
         Tree t = buildTree(`sequent(g,context(u*,new_a,v*)),freevars);
-        return `rule(forAllRightInfo(fresh_v),premisses(t),s,x);
+        return `rule(forallRightInfo(fresh_v),premisses(t),s,x);
       }
 
       // exists R
@@ -240,13 +240,13 @@ public class RuleCalc {
       }
 
       // forall L
-      s@sequent((u*,x@forAll(n,a),v*),d) -> {
+      s@sequent((u*,x@forall(n,a),v*),d) -> {
         String new_n = Utils.freshVar(`n,freevars).getname();
         Term new_v = `NewVar(new_n,n);
         freevars.add(new_v.getname());
         Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
         Tree t = buildTree(`sequent(context(u*,new_a,v*),d),freevars);
-        return `rule(forAllLeftInfo(new_v),premisses(t),s,x);
+        return `rule(forallLeftInfo(new_v),premisses(t),s,x);
       }
 
       // exists L
@@ -295,7 +295,7 @@ public class RuleCalc {
         pos = pos.up();
       }
 
-      forAll(_,p1) -> {
+      forall(_,p1) -> {
         if(current*last >= 0) {
           // string are not taken into account by omega
           pos = pos.down(1);

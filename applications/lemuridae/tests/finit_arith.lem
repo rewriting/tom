@@ -156,7 +156,7 @@ reduce.
 theorem eqrefl.
 focus h2. intro. x0. axiom.
 
-proof eqtrans:  forall x y z,( eq(x,y) => (eq(y,z) => eq(x,z)).
+proof eqtrans:  forall x y z, eq(x,y) => (eq(y,z) => eq(x,z)).
 auto.
 focus h2. rule. A0.
 focus h4. rule. A0.
@@ -179,7 +179,7 @@ theorem eqrefl.
 focus h2. intro. 0.
 axiom.
 
-proof plusassoc:   forall x y z,(N(x) => eq( x+(y+z) , (x+y)+z ).
+proof plusassoc:   forall x y z, N(x) => eq( x+(y+z) , (x+y)+z ).
 intros.
 focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
 reduce. axiom.
@@ -247,8 +247,6 @@ reduce.
 theorem eqrefl.
 focus h2. intro. 0. axiom.
 
-
-quit.
 
 /*
 

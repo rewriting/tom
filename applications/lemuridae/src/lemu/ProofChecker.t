@@ -21,7 +21,7 @@ public class ProofChecker {
         TermList res = (TermList) `mu(MuVar("x"),Choice(ReplaceVar(var,new_term),All(MuVar("x")))).visit(`tl);
         return `relationAppl(r, res);
       }
-      r@(forAll|exists)(x,_) -> { 
+      r@(forall|exists)(x,_) -> { 
         if  (`Var(x) == var)  return `r; 
       }
     }
@@ -138,10 +138,10 @@ public class ProofChecker {
 
       // first order logic
       rule(
-          forAllRightInfo(new_var),
+          forallRightInfo(new_var),
           (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
           sequent(g,(d1*,a,d2*)),
-          a@forAll(v,A)
+          a@forall(v,A)
           )
         -> {
           if (`tryVisit(replaceFreeVars(Var(v),new_var),A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
@@ -149,10 +149,10 @@ public class ProofChecker {
         }
 
       rule(
-          forAllLeftInfo(new_term),
+          forallLeftInfo(new_term),
           (p@rule(_,_,sequent((g1*,B,g2*),d),_)), 
           sequent((g1*,a,g2*),d),
-          a@forAll(v,A)
+          a@forall(v,A)
           )
         -> { if (`tryVisit(replaceFreeVars(Var(v),new_term),A) == `B) return proofcheck(`p); } 
 

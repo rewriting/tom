@@ -34,8 +34,8 @@ class PrettyPrinter {
       andRightInfo[] -> { return "\\land_\\mathcal{R}"; }
       orLeftInfo[] -> { return "\\lor_\\mathcal{L}"; }
       orRightInfo[] -> { return "\\lor_\\mathcal{R}"; }
-      forAllRightInfo[] -> { return "\\forall_\\mathcal{R}"; }
-      forAllLeftInfo[] -> { return "\\forall_\\mathcal{L}"; }
+      forallRightInfo[] -> { return "\\forall_\\mathcal{R}"; }
+      forallLeftInfo[] -> { return "\\forall_\\mathcal{L}"; }
       existsRightInfo[] -> { return "\\exists_\\mathcal{R}"; }
       existsLeftInfo[] -> { return "\\exists_\\mathcal{L}"; }
       bottomInfo[] -> { return "\\bot"; }
@@ -223,7 +223,7 @@ class PrettyPrinter {
       and(p1,p2) -> { 
         return %[(@toLatex(`p1)@) \land @toLatex(`p2)@]%; 
       }
-      forAll(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
+      forall(n, p) -> { return "\\forall " + `n + ", " + toLatex(`p);}
       exists(n, p) -> { return "\\exists " + `n + ", " + toLatex(`p);}
       bottom() -> { return "\\bot";  }
       top() -> { return "\\top";  }
@@ -469,7 +469,7 @@ class PrettyPrinter {
       and(p1,p2) -> { 
         return %[(@prettyPrint(`p1)@) /\ @prettyPrint(`p2)@]%; 
       }
-      forAll(x,p1) -> {
+      forall(x,p1) -> {
         return "forall " + `x + ", " + prettyPrint(`p1);
       }
       exists(x,p1) -> { 

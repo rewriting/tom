@@ -175,10 +175,10 @@ public class Proofterms {
 
       // first order logic
       rule(
-          forAllRightInfo(new_var),
+          forallRightInfo(new_var),
           (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
           sequent(g,(d1*,a,d2*)),
-          a@forAll(v,A)
+          a@forall(v,A)
           ),nsequent(ng,(cnd1*,cnprop(coname,a),cnd2*))
         -> {
           if ((Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B) && !Utils.getFreeVars(`context(d1*,d2*,g*)).contains(`new_var.getname()))  
@@ -187,10 +187,10 @@ public class Proofterms {
 
       
       rule(
-          forAllLeftInfo(new_term),
+          forallLeftInfo(new_term),
           (p@rule(_,_,sequent((g1*,B,g2*),d),_)), 
           sequent((g1*,a,g2*),d),
-          a@forAll(v,A)
+          a@forall(v,A)
           ),nsequent((ng1*,nprop(name,a),ng2*),cnd)
         -> { 
           if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B)
@@ -292,11 +292,11 @@ public class Proofterms {
         pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,active@cnprop(coname,implies(A,B)),cnd2*)) -> {
           return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
         }
-        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,active@cnprop(coname,forAll(var,B)),cnd2*)) -> {
-          return `nrule(forAllRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
+        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,active@cnprop(coname,forall(var,B)),cnd2*)) -> {
+          return `nrule(forallRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
         }
-        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,active@nprop(name,forAll(var,B)),ng2*),cnd) -> {
-          return `nrule(forAllLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
+        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,active@nprop(name,forall(var,B)),ng2*),cnd) -> {
+          return `nrule(forallLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
         }
         pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,active@nprop(name,exists(var,B)),ng2*),cnd) -> {
           return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
@@ -348,11 +348,11 @@ public class Proofterms {
         pt@implyR(x@nprop(n,A),a@cnprop(cn,B),m,coname), ns@nsequent(ng,(cnd1*,cnprop(coname,implies(A,B)),cnd2*)) -> {
           return `nrule(impliesRightInfo(),npremisses(typeProofterm(m,nsequent(ncontext(ng*,x),cncontext(cnd1*,a,cnd2*)))),ns,pt);
         }
-        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,forAll(var,B)),cnd2*)) -> {
-          return `nrule(forAllRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
+        pt@forallR(a@cnprop(cn,A), varx, m, coname), ns@nsequent(ng,(cnd1*,cnprop(coname,forall(var,B)),cnd2*)) -> {
+          return `nrule(forallRightInfo(varx),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
         }
-        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,nprop(name,forAll(var,B)),ng2*),cnd) -> {
-          return `nrule(forAllLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        pt@forallL(x@nprop(n,A), m, t, name), ns@nsequent((ng1*,nprop(name,forall(var,B)),ng2*),cnd) -> {
+          return `nrule(forallLeftInfo(t),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
         }
         pt@existsL(x@nprop(n,A), varx, m, name), ns@nsequent((ng1*,nprop(name,exists(var,B)),ng2*),cnd) -> {
           return `nrule(existsLeftInfo(varx),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);

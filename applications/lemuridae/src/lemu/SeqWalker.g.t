@@ -24,7 +24,7 @@ pred returns [lemu.sequents.types.Prop p]
       | ^(NOT a=pred ) {p = `implies(a,bottom());}
       | ^(APPL ap=ID l=term_list) { p = `relationAppl($ap.text, l); }
       | ^(APPL ap=ID) { p = `relationAppl($ap.text,concTerm()); }
-      | ^(FORALL vl=varlist a=pred) { p = Utils.forAllList(vl,a); }
+      | ^(FORALL vl=varlist a=pred) { p = Utils.forallList(vl,a); }
       | ^(EXISTS vl=varlist a=pred) { p = Utils.existsList(vl,a); }
       ;
 
@@ -58,10 +58,13 @@ term returns [lemu.sequents.types.Term t]
 command returns [lemu.sequents.types.Command c] 
   : ^(PROOF i1=ID l=pred) { c = `proof($i1.text,l); }
   | ^(RRULE l=pred r=pred) { c = `rewritesuper(l,r); }
+  | ^(RRULE th=ID) { c = `rewritesuperFromTheorem($th.text); }
   | ^(PRULE l=pred r=pred) { c = `rewriteprop(l,r); }
+  | ^(PRULE th=ID) { c = `rewritepropFromTheorem($th.text); }
   | ^(PROP l=pred) { c = `normalizeProp(l); }
   | ^(TERM lhs=term) { c = `normalizeTerm(lhs); }
   | ^(TRULE lhs=term rhs=term) { c = `rewriteterm(lhs,rhs); }
+  | ^(TRULE th=ID) { c = `rewritetermFromTheorem($th.text); }
   | ^(DISPLAY i2=ID) { c = `display($i2.text); }
   | ^(PROOFTERM i7=ID) { c = `proofterm($i7.text); }
   | QUIT { c = `quit(); }
