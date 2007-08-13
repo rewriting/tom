@@ -1,3 +1,6 @@
+2007-08-10 radu
+	* added numeric constraints
+
 2007-08-08 radu
 	* constraint ordering seems to work faster 
 	* compilation is a lot faster - at least on oana's example, it is 5 times faster
