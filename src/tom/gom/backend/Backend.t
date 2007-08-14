@@ -120,11 +120,6 @@ public class Backend {
         }
         return 1;
       }
-      FwdClass[ClassName=className] -> {
-        TemplateClass fwd = templatefactory.makeForwardTemplate(gomclass);
-        generators.put(`className,fwd);
-        return 1;
-      }
       VisitableFwdClass[ClassName=className] -> {
         TemplateClass visitablefwd =
           templatefactory.makeVisitableForwardTemplate(gomclass);

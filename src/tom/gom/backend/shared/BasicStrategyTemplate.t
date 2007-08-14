@@ -29,15 +29,31 @@ import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
 public class BasicStrategyTemplate extends TemplateClass {
-  ClassName fwd;
+  ClassName visitor;
+  ClassNameList importedVisitors;
+  ClassName abstractType;
+  ClassNameList importedAbstractTypes;
+  GomClassList sortClasses;
+  GomClassList operatorClasses;
+
 
   %include { ../../adt/objects/Objects.tom }
 
   public BasicStrategyTemplate(GomClass basic) {
     super(basic);
     %match(basic) {
-      VisitableFwdClass[Fwd=FwdClass[ClassName=fwdClass]] -> {
-        this.fwd = `fwdClass;
+      VisitableFwdClass[Visitor=visitorClass,
+               ImportedVisitors=importedVisitors,
+               AbstractType=abstractType,
+               ImportedAbstractTypes=imported,
+               SortClasses=sortClasses,
+               OperatorClasses=ops] -> {
+        this.visitor = `visitorClass;
+        this.importedVisitors = `importedVisitors;
+        this.abstractType = `abstractType;
+        this.importedAbstractTypes = `imported;
+        this.sortClasses = `sortClasses;
+        this.operatorClasses = `ops;
         return;
       }
     }
@@ -50,9 +66,14 @@ public class BasicStrategyTemplate extends TemplateClass {
 package @getPackage()@;
 import tom.library.sl.*;
    
-  public class @className()@ extends @className(fwd)@ implements tom.library.sl.Strategy {
+  public class @className()@ implements tom.library.sl.Strategy,@ className(visitor)+importedVisitorList(importedVisitors) @ {
   private tom.library.sl.Environment environment;
-      
+  protected Strategy any;
+  
+  public @className()@(Strategy v) {
+    this.any = v;
+  }
+    
   public int getChildCount() {
     return 1;
   }
@@ -80,11 +101,27 @@ import tom.library.sl.*;
     return this;
   }
 
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
+    return v.visit_Strategy(this);
+  } 
+
+  public tom.library.sl.Environment getEnvironment() {
+    if(environment!=null) {
+      return environment;
+    } else {
+      throw new java.lang.RuntimeException("environment not initialized");
+    }
+  }
+
+  public void setEnvironment(tom.library.sl.Environment env) {
+    this.environment = env;
+  }
+ 
   public Visitable visit(Environment envt) throws VisitFailure {
     setEnvironment(envt);
     int status = visit();
     if(status == Environment.SUCCESS) {
-      return environment.getRoot();
+      return environment.getSubject();
     } else {
       throw new VisitFailure();
     }
@@ -111,28 +148,60 @@ import tom.library.sl.*;
     }
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this);
-  } 
+  public Visitable visitLight(Visitable v) throws VisitFailure {
+    if (v instanceof @fullClassName(abstractType)@) {
+      return ((@fullClassName(abstractType)@) v).accept(this);
+    }
+]%);
+generateDispatch(writer,importedAbstractTypes);
+writer.write(%[
+    else {
+      return any.visitLight(v);
+    }
+  }
+]%);
+generateVisitMethods(writer);
+writer.write(%[
+}
+]%);
+}
 
-  public tom.library.sl.Environment getEnvironment() {
-    if(environment!=null) {
-      return environment;
-    } else {
-      throw new java.lang.RuntimeException("environment not initialized");
+  private void generateVisitMethods(java.io.Writer writer) throws java.io.IOException {
+    // generate a visit for each sort
+    %match(GomClassList sortClasses) {
+      concGomClass(_*,SortClass[ClassName=sortName],_*) -> {
+
+        writer.write(%[
+  public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws VisitFailure {
+   if(environment!=null) {
+      //TODO: must be removed
+      assert(arg.equals(environment.getSubject()));
+   return (@fullClassName(`sortName)@) any.visit(environment);
+   } else {
+    return (@fullClassName(`sortName)@) any.visitLight(arg);
+   }
+ }
+]%);
+      }
     }
   }
 
-  public void setEnvironment(tom.library.sl.Environment env) {
-    this.environment = env;
+  private void generateDispatch(java.io.Writer writer, ClassNameList types) throws java.io.IOException {
+    while(!types.isEmptyconcClassName()) {
+      writer.write(%[    else if (v instanceof @fullClassName(types.getHeadconcClassName())@) {
+      return ((@fullClassName(types.getHeadconcClassName())@) v).accept(this);
+    }]%);
+      types = types.getTailconcClassName();
+    }
+  }
+  
+  private String importedVisitorList(ClassNameList list) {
+    StringBuffer out = new StringBuffer();
+    while(!list.isEmptyconcClassName()) {
+      out.append(", "+fullClassName(list.getHeadconcClassName()));
+      list = list.getTailconcClassName();
+    }
+    return out.toString();
   }
 
-   
-    
-  public @className()@(Strategy any) {
-    super(any);
-  }
-}
-]%);
-  }
 }

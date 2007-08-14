@@ -90,7 +90,7 @@ public abstract class AbstractStrategy implements Strategy {
     AbstractStrategy.init(this,envt);
     int status = visit();
     if(status == Environment.SUCCESS) {
-      return getRoot();
+      return getSubject();
     } else {
       throw new VisitFailure();
     }

@@ -264,17 +264,11 @@ public class Compiler {
         GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
         classList = `concGomClass(visitorclass,classList*);
 
-        /* create a Fwd class */
-        ClassNameList importedVisitors = allClassForImports(visitorNameForModule,`moduleDecl);
-        ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Forward");
-        ClassNameList importedAbstractType = allClassForImports(abstractTypeNameForModule,`moduleDecl);
-        GomClass fwdclass = `FwdClass(fwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
-        classList = `concGomClass(fwdclass,classList*);
-
         /* create a VisitableFwd class */
-        ClassName visitablefwdName = (ClassName)
-          visitableForwardNameForModule.get(`moduleDecl);
-        GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
+        ClassNameList importedVisitors = allClassForImports(visitorNameForModule,`moduleDecl);
+        ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"BasicStrategy");
+        ClassNameList importedAbstractType = allClassForImports(abstractTypeNameForModule,`moduleDecl);
+        GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
         classList = `concGomClass(visitablefwdclass,classList*);
 
         /* create a TomMapping */
