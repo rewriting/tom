@@ -163,27 +163,15 @@ public class TomOptimizer extends TomGenericPlugin {
     return name;
   }
 
-  %strategy findRefVariable(set: HashSet) extends `Identity(){
-    visit TomTerm {
-      Ref((Variable|VariableStar)[AstName=name])  -> {
-        set.add(`name);
-        //stop to visit this branch (like "return false" with traversal) 
-        throw new tom.library.sl.VisitFailure();
-      }
-    }
+  %op Strategy computeOccurences(variableName:TomName, info:InfoVariable) {
+    make(variableName, info) {`mu(MuVar("current"),Try(Choice(findOccurenceSpecialCase(MuVar("current"),variableName,info),Sequence(findOccurenceBaseCase(variableName,info),All(MuVar("current"))))))}
   }
 
-
-  /* strategies for LetRef inlining */
-  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariableLetRef) {
-    make(variableName, info) {`mu(MuVar("current"),Try(Sequence(findOccurenceSpecialCaseLetRef(MuVar("current"),variableName,info),findOccurenceBaseCaseLetRef(variableName,info),All(MuVar("current")))))}
+  %typeterm InfoVariable {
+    implement{ InfoVariable }
   }
 
-  %typeterm InfoVariableLetRef {
-    implement{ InfoVariableLetRef }
-  }
-
-  private static class InfoVariableLetRef {
+  private static class InfoVariable {
 
     public tom.library.sl.Position lastRead;
     public Expression lastAssignment;
@@ -200,17 +188,26 @@ public class TomOptimizer extends TomGenericPlugin {
       }
     }
 
-    public InfoVariableLetRef() {}
+    public InfoVariable() {}
 
-    public InfoVariableLetRef(Expression lastAssignment) {
+    public InfoVariable(Expression lastAssignment) {
       setlastvalue(lastAssignment);
     } 
 
   }
 
+  %strategy findRefVariable(set: HashSet) extends `Identity(){
+    visit TomTerm {
+      Ref((Variable|VariableStar)[AstName=name])  -> {
+        set.add(`name);
+        //stop to visit this branch (like "return false" with traversal) 
+        throw new tom.library.sl.VisitFailure();
+      }
+    }
+  }
 
   //case where failure is used to cut branches
-  %strategy findOccurenceSpecialCaseLetRef(s:Strategy,variableName:TomName, info:InfoVariableLetRef) extends `Identity() {
+  %strategy findOccurenceSpecialCase(s:Strategy,variableName:TomName, info:InfoVariable) extends `Fail() {
     visit Instruction {
       TypedAction[AstInstruction=inst] -> {
         /* recursive call of the current strategy on the first child */
@@ -218,7 +215,7 @@ public class TomOptimizer extends TomGenericPlugin {
         current.down(1);
         s.visit(current);
         current.up();
-        throw new tom.library.sl.VisitFailure();
+        return (Instruction) getEnvironment().getSubject();
       }
 
       assign@LetAssign(Variable[AstName=varname],src,inst) -> {
@@ -240,9 +237,8 @@ public class TomOptimizer extends TomGenericPlugin {
         current.down(3);
         s.visit(current);
         current.up();
-        throw new tom.library.sl.VisitFailure();
+        return (Instruction) current.getSubject();
       }
-
       Assign(Variable[AstName=varname],src) -> {
         if (`varname.equals(variableName)) {
           info.setlastvalue(`src);
@@ -253,103 +249,19 @@ public class TomOptimizer extends TomGenericPlugin {
             info.lastAssignmentVariables.clear();
           }
         }
-        /* recursive call of the current strategy on src */
+         /* recursive call of the current strategy on src */
         Environment current = getEnvironment();
         current.down(2);
         s.visit(current);
         current.up();
-        throw new tom.library.sl.VisitFailure();
+        return (Instruction) current.getSubject();
       }
     }
   }
 
   //case where failure is used to stop the execution
   //we are only interested in 0 or 1 occurence 
-  %strategy findOccurenceBaseCaseLetRef(variableName:TomName, info:InfoVariableLetRef) extends `Identity() {
-    visit TomTerm { 
-      (Variable|VariableStar)[AstName=name] -> { 
-        if(variableName == `name) {
-          info.readCount++;
-          info.lastRead=getEnvironment().getPosition(); 
-          if (info.readCount==1) {
-            throw new tom.library.sl.VisitFailure();
-          }
-        } 
-      } 
-    } 
-  }
-
-  /* strategies for Let inlining */
-  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariableLet) {
-    make(variableName, info) {`Try(mu(MuVar("current"),Sequence(findOccurenceSpecialCaseLet1(info),Try(Sequence(findOccurenceSpecialCaseLet2(MuVar("current"),variableName,info),Sequence(findOccurenceBaseCaseLet(variableName,info),All(MuVar("current"))))))))}
-  }
-
-  %typeterm InfoVariableLet {
-    implement{ InfoVariableLet }
-  }
-
-  private static class InfoVariableLet {
-
-    public tom.library.sl.Position lastRead;
-    public HashSet<TomName> assignmentVariables= new HashSet();
-    public int readCount=0;
-    public boolean modifiedAssignmentVariables=false;
-
-    public void setlastvalue(Expression newassignment) {
-      assignmentVariables.clear();
-      try {
-        `TopDownCollect(findRefVariable(assignmentVariables)).visitLight(newassignment);
-      } catch(tom.library.sl.VisitFailure e) {
-        logger.log( Level.SEVERE, "Error during collecting variables in "+newassignment);
-      }
-    }
-
-    public InfoVariableLet(Expression assignment) {
-      setlastvalue(assignment);
-    } 
-
-
-    public InfoVariableLet() {}
-
-  }
-
-
-  %strategy findOccurenceSpecialCaseLet1(info:InfoVariableLet) extends `Identity() {
-    visit Instruction {
-      (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
-        if (info.assignmentVariables.contains(`varname)) {
-          info.modifiedAssignmentVariables=true;
-          throw new tom.library.sl.VisitFailure();
-        }
-      }
-    }
-  } 
-
-  //case where failure is used to cut branches
-  %strategy findOccurenceSpecialCaseLet2(s:Strategy,variableName:TomName, info:InfoVariableLet) extends `Identity() {
-    visit Instruction {
-      TypedAction[AstInstruction=inst] -> {
-        /* recursive call of the current strategy on the first child */
-        Environment current = getEnvironment();
-        current.down(1);
-        s.visit(current);
-        current.up();
-        throw new tom.library.sl.VisitFailure();
-      }
-
-      (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
-        if (variableName.equals(`varname)) {
-          logger.log( Level.SEVERE, "TomOptimizer: Assignment cannot be done for a variable declared in a Let",
-              new Object[]{} );
-        }
-      }
-
-    }
-  }
-
-  //case where failure is used to stop the execution
-  //we are only interested in 0 or 1 occurence 
-  %strategy findOccurenceBaseCaseLet(variableName:TomName, info:InfoVariableLet) extends `Identity() {
+  %strategy findOccurenceBaseCase(variableName:TomName, info:InfoVariable) extends `Identity() {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
@@ -391,7 +303,7 @@ public class TomOptimizer extends TomGenericPlugin {
       }
     }
   }
-
+  
   private static boolean compare(tom.library.sl.Visitable term1, tom.library.sl.Visitable term2) {
     return factory.remove(term1)==factory.remove(term2);
   }
@@ -409,7 +321,7 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Expression {
       TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
     }
-
+    
 
     visit Instruction {
       t@TypedAction[PositivePattern=Pattern[TomList=termList]] -> {
@@ -417,13 +329,12 @@ public class TomOptimizer extends TomGenericPlugin {
         //System.out.println("found context = " + context);
         return `t;
       }
-
       /*
        * 
        * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+      let@(Let|LetRef)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled 
@@ -435,8 +346,8 @@ public class TomOptimizer extends TomGenericPlugin {
         }
 
         //`findOccurencesUpTo(name,list,2).visitLight(`body);
-        InfoVariableLetRef info = new InfoVariableLetRef(`exp);
-        `computeOccurencesLetRef(name,info).visit(`body);
+        InfoVariable info = new InfoVariable(`exp);
+        `computeOccurences(name,info).visit(`body);
         int mult = info.readCount;
         tom.library.sl.Position readPos = info.lastRead;
         TomTerm value = `ExpressionToTomTerm(info.lastAssignment);
@@ -446,8 +357,8 @@ public class TomOptimizer extends TomGenericPlugin {
           // why this test?
           if(varName.length() > 0) {
             // TODO: check variable occurence in TypedAction
-            info = new InfoVariableLetRef();
-            `computeOccurencesLetRef(name,info).visit(`context);
+            info = new InfoVariable();
+            `computeOccurences(name,info).visit(`context);
             if(info.readCount<=1) {
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
@@ -472,78 +383,7 @@ public class TomOptimizer extends TomGenericPlugin {
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
             }
             //System.out.println("replace1: " + `var + "\nby: " + `exp);
-            return (Instruction) readPos.getReplace(value).visitLight(`body);
-          } else {
-            if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
-            }
-          }
-        } else {
-          /* do nothing: traversal() */
-          if(varName.length() > 0) {
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(varName) });
-          }
-        }
-      }
-
-      /*
-       * 
-       * Let x<-exp in body where x is used 0 or 1 ==> eliminate
-       * x should not appear in exp
-       */
-      Let(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
-        /*
-         * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
-         * is not correctly handled 
-         * we must check that X notin exp
-         */
-        String varName = "";
-        %match(name) {
-          Name(tomName) -> { varName = `tomName; }
-        }
-
-        //`findOccurencesUpTo(name,list,2).visitLight(`body);
-        InfoVariableLet info = new InfoVariableLet(`exp);
-        `computeOccurencesLet(name,info).visit(`body);
-        int mult = info.readCount;
-        tom.library.sl.Position readPos = info.lastRead;
-        // 0 -> unused variable
-        // suppress the letref and all the corresponding letassigns in the body
-        if(mult == 0) {
-          // why this test?
-          if(varName.length() > 0) {
-            // TODO: check variable occurence in TypedAction
-            info = new InfoVariableLet();
-            `computeOccurencesLet(name,info).visit(`context);
-            if(info.readCount<=1) {
-              // verify linearity in case of variables from the pattern
-              // warning to indicate that this var is unused in the rhs
-              Option orgTrack = TomBase.findOriginTracking(`var.getOption());
-              TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,`extractRealName(varName));
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
-            }
-          }
-          //remove all the unused letassign in the letref body
-          return `body;
-        } else if(mult == 1) {
-          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
-          //test if variables contained in the exp to assign have not been
-          //modified between the last assignment and the read
-          if(! info.modifiedAssignmentVariables) {
-            if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
-            }
-            //System.out.println("replace1: " + `var + "\nby: " + `exp);
-            return (Instruction) readPos.getReplace(`ExpressionToTomTerm(exp)).visitLight(`body);
+            return (Instruction) readPos.getReplace(value).visit(`body);
           } else {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
@@ -563,8 +403,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
       Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         return `body; 
-      }
-
+      } 
     } // end match
   }
 
@@ -639,9 +478,9 @@ public class TomOptimizer extends TomGenericPlugin {
                 new Object[]{"block-fusion1"});     
             return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
           } else {
-            InfoVariableLet info = new InfoVariableLet();
+            InfoVariable info = new InfoVariable();
             //  `findOccurencesUpTo(name1,list,2).visitLight(`body2);
-            `computeOccurencesLet(name1,info).visitLight(`body2);
+            `computeOccurences(name1,info).visitLight(`body2);
             int mult = info.readCount; 
             if(mult==0){
               logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
