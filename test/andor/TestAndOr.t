@@ -199,10 +199,17 @@ public class TestAndOr extends TestCase {
       }
     }    
   }
-  
+
+  public void Test15() {
+    %match(a()) {
+      x || x << b() || x << c()  -> {        
+        Term res = `x;
+      }
+    }
+  }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
+   junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
   }
 
 }
