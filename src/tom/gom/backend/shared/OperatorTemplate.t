@@ -53,7 +53,6 @@ public class OperatorTemplate extends TemplateHookedClass {
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
-                    Mapping=mapping,
                     SortName=sortName,
                     Visitor=visitorName,
                     Slots=slots] -> {
@@ -611,7 +610,7 @@ writer.write(%[
     StringBuffer res = new StringBuffer();
     int fullindex = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,itslot@SlotField[Name=fieldName,Domain=domain],_*) -> {
+      concSlotField(_*,itslot@SlotField[Name=fieldName],_*) -> {
         if(fullindex>0) { res.append(", "); }
         if (`itslot == slot) {
           res.append(argName);

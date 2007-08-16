@@ -120,11 +120,6 @@ public class Backend {
         }
         return 1;
       }
-      FwdClass[ClassName=className] -> {
-        TemplateClass fwd = templatefactory.makeForwardTemplate(gomclass);
-        generators.put(`className,fwd);
-        return 1;
-      }
       VisitableFwdClass[ClassName=className] -> {
         TemplateClass visitablefwd =
           templatefactory.makeVisitableForwardTemplate(gomclass);
@@ -156,9 +151,7 @@ public class Backend {
         generators.put(`className,sort);
         return 1;
       }
-      OperatorClass[ClassName=className,
-                    Mapping=mapping,
-                    Slots=slots] -> {
+      OperatorClass[ClassName=className,Mapping=mapping] -> {
         TemplateClass operator = templatefactory.makeOperatorTemplate(
             tomHomePath,
             importList,

@@ -52,7 +52,6 @@ public class SortTemplate extends TemplateHookedClass {
       SortClass[AbstractType=abstractType,
                 Visitor=visitor,
                 Operators=ops,
-                Mapping=mapping,
                 VariadicOperators=variops,
                 Slots=slots] -> {
         this.abstractType = `abstractType;

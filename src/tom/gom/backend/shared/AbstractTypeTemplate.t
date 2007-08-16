@@ -47,7 +47,6 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     super(gomClass,manager,tomHomePath,importList,mapping);
     %match(gomClass) {
       AbstractTypeClass[Visitor=visitorName,
-                        Mapping=mapping,
                         SortList=sortList] -> {
         this.visitor = `visitorName;
         this.sortList = `sortList;
