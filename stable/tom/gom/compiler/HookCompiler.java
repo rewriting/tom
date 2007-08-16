@@ -60,30 +60,30 @@ public class HookCompiler {
       GomClassList classes,
       Map declToClassName) {
     /* for each hook, find the class, and attach the hook */
-    if (tom_is_sort_HookDeclList(declList)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch411NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookDeclList )declList);if (tom_is_fun_sym_concHookDecl(tomMatch411NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch411NameNumber_freshVar_0=tomMatch411NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.HookDeclList  tomMatch411NameNumber_begin_2=tomMatch411NameNumber_freshVar_0;{  tom.gom.adt.gom.types.HookDeclList  tomMatch411NameNumber_end_3=tomMatch411NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.HookDeclList  tomMatch411NameNumber_freshVar_1=tomMatch411NameNumber_end_3;if (!(tom_is_empty_concHookDecl_HookDeclList(tomMatch411NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.HookDecl  tom_hook=tom_get_head_concHookDecl_HookDeclList(tomMatch411NameNumber_freshVar_1);{  tom.gom.adt.gom.types.HookDeclList  tomMatch411NameNumber_freshVar_4=tom_get_tail_concHookDecl_HookDeclList(tomMatch411NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_HookDeclList(declList)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch433NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookDeclList )declList);if (tom_is_fun_sym_concHookDecl(tomMatch433NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.HookDeclList  tomMatch433NameNumber_freshVar_0=tomMatch433NameNumberfreshSubject_1;{  tom.gom.adt.gom.types.HookDeclList  tomMatch433NameNumber_begin_2=tomMatch433NameNumber_freshVar_0;{  tom.gom.adt.gom.types.HookDeclList  tomMatch433NameNumber_end_3=tomMatch433NameNumber_freshVar_0;do {{{  tom.gom.adt.gom.types.HookDeclList  tomMatch433NameNumber_freshVar_1=tomMatch433NameNumber_end_3;if (!(tom_is_empty_concHookDecl_HookDeclList(tomMatch433NameNumber_freshVar_1))) {{  tom.gom.adt.gom.types.HookDecl  tom_hook=tom_get_head_concHookDecl_HookDeclList(tomMatch433NameNumber_freshVar_1);{  tom.gom.adt.gom.types.HookDeclList  tomMatch433NameNumber_freshVar_4=tom_get_tail_concHookDecl_HookDeclList(tomMatch433NameNumber_freshVar_1);if ( true ) {
 
         Decl decl = tom_hook.getPointcut();
-        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch410NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutModule(tomMatch410NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch410NameNumber_freshVar_0=tom_get_slot_CutModule_MDecl(tomMatch410NameNumberfreshSubject_1);if ( true ) {
+        if (tom_is_sort_Decl(decl)) {{  tom.gom.adt.gom.types.Decl  tomMatch432NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Decl )decl);if (tom_is_fun_sym_CutModule(tomMatch432NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.ModuleDecl  tomMatch432NameNumber_freshVar_0=tom_get_slot_CutModule_MDecl(tomMatch432NameNumberfreshSubject_1);if ( true ) {
 
-            ClassName clsName = (ClassName) declToClassName.get(tomMatch410NameNumber_freshVar_0);
+            ClassName clsName = (ClassName) declToClassName.get(tomMatch432NameNumber_freshVar_0);
             try {
               classes = (GomClassList)
                 tom_make_TopDown(tom_make_AttachModuleHook(clsName,tom_hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }
-          }}}if (tom_is_fun_sym_CutSort(tomMatch410NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch410NameNumber_freshVar_1=tom_get_slot_CutSort_Sort(tomMatch410NameNumberfreshSubject_1);if ( true ) {
+          }}}if (tom_is_fun_sym_CutSort(tomMatch432NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.SortDecl  tomMatch432NameNumber_freshVar_1=tom_get_slot_CutSort_Sort(tomMatch432NameNumberfreshSubject_1);if ( true ) {
 
-            ClassName clsName = (ClassName) declToClassName.get(tomMatch410NameNumber_freshVar_1);
+            ClassName clsName = (ClassName) declToClassName.get(tomMatch432NameNumber_freshVar_1);
             try {
               classes = (GomClassList)
                 tom_make_TopDown(tom_make_AttachSortHook(clsName,tom_hook)).visit(classes);
             } catch (tom.library.sl.VisitFailure e) {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }
-          }}}if (tom_is_fun_sym_CutOperator(tomMatch410NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch410NameNumber_freshVar_2=tom_get_slot_CutOperator_ODecl(tomMatch410NameNumberfreshSubject_1);if ( true ) {
+          }}}if (tom_is_fun_sym_CutOperator(tomMatch432NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch432NameNumber_freshVar_2=tom_get_slot_CutOperator_ODecl(tomMatch432NameNumberfreshSubject_1);if ( true ) {
 
-            ClassName clsName = (ClassName) declToClassName.get(tomMatch410NameNumber_freshVar_2);
+            ClassName clsName = (ClassName) declToClassName.get(tomMatch432NameNumber_freshVar_2);
             try {
               classes = (GomClassList)
                 tom_make_TopDown(tom_make_AttachOperatorHook(clsName,tom_hook)).visit(classes);
@@ -92,20 +92,20 @@ public class HookCompiler {
             }     
           }}}}}
 
-      }}}}}if (tom_is_empty_concHookDecl_HookDeclList(tomMatch411NameNumber_end_3)) {tomMatch411NameNumber_end_3=tomMatch411NameNumber_begin_2;} else {tomMatch411NameNumber_end_3=tom_get_tail_concHookDecl_HookDeclList(tomMatch411NameNumber_end_3);}}} while(!(tom_equal_term_HookDeclList(tomMatch411NameNumber_end_3, tomMatch411NameNumber_begin_2)));}}}}}}
+      }}}}}if (tom_is_empty_concHookDecl_HookDeclList(tomMatch433NameNumber_end_3)) {tomMatch433NameNumber_end_3=tomMatch433NameNumber_begin_2;} else {tomMatch433NameNumber_end_3=tom_get_tail_concHookDecl_HookDeclList(tomMatch433NameNumber_end_3);}}} while(!(tom_equal_term_HookDeclList(tomMatch433NameNumber_end_3, tomMatch433NameNumber_begin_2)));}}}}}}
 
     return classes;
   }
 
-  private static class AttachModuleHook extends  tom.gom.adt.objects.ObjectsBasicStrategy  {private  tom.gom.adt.objects.types.ClassName  cName; private  tom.gom.adt.gom.types.HookDecl  hook; public AttachModuleHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook) { super(tom_make_Identity());this.cName=cName;this.hook=hook;}public  tom.gom.adt.objects.types.ClassName  getcName() { return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() { return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_GomClass(tom__arg)) {{  tom.gom.adt.objects.types.GomClass  tomMatch412NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tom__arg);{  tom.gom.adt.objects.types.GomClass  tomMatch412NameNumber_freshVar_0=tomMatch412NameNumberfreshSubject_1;if (tom_is_fun_sym_AbstractTypeClass(tomMatch412NameNumber_freshVar_0)) {{  tom.gom.adt.objects.types.ClassName  tomMatch412NameNumber_freshVar_1=tom_get_slot_AbstractTypeClass_ClassName(tomMatch412NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch412NameNumber_freshVar_2=tom_get_slot_AbstractTypeClass_Hooks(tomMatch412NameNumber_freshVar_0);if ( true ) {
+  private static class AttachModuleHook extends  tom.gom.adt.objects.ObjectsBasicStrategy  {private  tom.gom.adt.objects.types.ClassName  cName; private  tom.gom.adt.gom.types.HookDecl  hook; public AttachModuleHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook) { super(tom_make_Identity());this.cName=cName;this.hook=hook;}public  tom.gom.adt.objects.types.ClassName  getcName() { return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() { return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_GomClass(tom__arg)) {{  tom.gom.adt.objects.types.GomClass  tomMatch434NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tom__arg);if (tom_is_fun_sym_AbstractTypeClass(tomMatch434NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch434NameNumber_freshVar_0=tom_get_slot_AbstractTypeClass_ClassName(tomMatch434NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.HookList  tomMatch434NameNumber_freshVar_1=tom_get_slot_AbstractTypeClass_Hooks(tomMatch434NameNumberfreshSubject_1);if ( true ) {
 
 
 
-          if (tomMatch412NameNumber_freshVar_1== cName) {
+          if (tomMatch434NameNumber_freshVar_0== cName) {
             return
-              tomMatch412NameNumber_freshVar_0.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch412NameNumber_freshVar_2,tom_empty_list_concHook())));
+              tomMatch434NameNumberfreshSubject_1.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch434NameNumber_freshVar_1,tom_empty_list_concHook())));
           }
-        }}}}}}}return super.visit_GomClass(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_AttachModuleHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1) { return new AttachModuleHook(t0,t1); }private static class AttachSortHook extends  tom.gom.adt.objects.ObjectsBasicStrategy  {private  tom.gom.adt.objects.types.ClassName  cName; private  tom.gom.adt.gom.types.HookDecl  hook; public AttachSortHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook) { super(tom_make_Identity());this.cName=cName;this.hook=hook;}public  tom.gom.adt.objects.types.ClassName  getcName() { return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() { return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_GomClass(tom__arg)) {{  tom.gom.adt.objects.types.GomClass  tomMatch413NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tom__arg);{  tom.gom.adt.objects.types.GomClass  tomMatch413NameNumber_freshVar_0=tomMatch413NameNumberfreshSubject_1;if (tom_is_fun_sym_SortClass(tomMatch413NameNumber_freshVar_0)) {{  tom.gom.adt.objects.types.ClassName  tomMatch413NameNumber_freshVar_1=tom_get_slot_SortClass_ClassName(tomMatch413NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch413NameNumber_freshVar_2=tom_get_slot_SortClass_Hooks(tomMatch413NameNumber_freshVar_0);if ( true ) {
+        }}}}}}return super.visit_GomClass(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_AttachModuleHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1) { return new AttachModuleHook(t0,t1); }private static class AttachSortHook extends  tom.gom.adt.objects.ObjectsBasicStrategy  {private  tom.gom.adt.objects.types.ClassName  cName; private  tom.gom.adt.gom.types.HookDecl  hook; public AttachSortHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook) { super(tom_make_Identity());this.cName=cName;this.hook=hook;}public  tom.gom.adt.objects.types.ClassName  getcName() { return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() { return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_GomClass(tom__arg)) {{  tom.gom.adt.objects.types.GomClass  tomMatch435NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tom__arg);if (tom_is_fun_sym_SortClass(tomMatch435NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch435NameNumber_freshVar_0=tom_get_slot_SortClass_ClassName(tomMatch435NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.HookList  tomMatch435NameNumber_freshVar_1=tom_get_slot_SortClass_Hooks(tomMatch435NameNumberfreshSubject_1);if ( true ) {
 
 
 
@@ -113,11 +113,11 @@ public class HookCompiler {
 
 
 
-          if (tomMatch413NameNumber_freshVar_1== cName) {
+          if (tomMatch435NameNumber_freshVar_0== cName) {
             return
-              tomMatch413NameNumber_freshVar_0.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch413NameNumber_freshVar_2,tom_empty_list_concHook())));
+              tomMatch435NameNumberfreshSubject_1.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch435NameNumber_freshVar_1,tom_empty_list_concHook())));
           }
-        }}}}}}}return super.visit_GomClass(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_AttachSortHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1) { return new AttachSortHook(t0,t1); }private static class AttachOperatorHook extends  tom.gom.adt.objects.ObjectsBasicStrategy  {private  tom.gom.adt.objects.types.ClassName  cName; private  tom.gom.adt.gom.types.HookDecl  hook; public AttachOperatorHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook) { super(tom_make_Identity());this.cName=cName;this.hook=hook;}public  tom.gom.adt.objects.types.ClassName  getcName() { return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() { return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_GomClass(tom__arg)) {{  tom.gom.adt.objects.types.GomClass  tomMatch414NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tom__arg);{  tom.gom.adt.objects.types.GomClass  tomMatch414NameNumber_freshVar_0=tomMatch414NameNumberfreshSubject_1;if (tom_is_fun_sym_VariadicOperatorClass(tomMatch414NameNumber_freshVar_0)) {{  tom.gom.adt.objects.types.ClassName  tomMatch414NameNumber_freshVar_1=tom_get_slot_VariadicOperatorClass_ClassName(tomMatch414NameNumber_freshVar_0);{  tom.gom.adt.objects.types.HookList  tomMatch414NameNumber_freshVar_2=tom_get_slot_VariadicOperatorClass_Hooks(tomMatch414NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch414NameNumber_freshVar_3=tom_get_slot_VariadicOperatorClass_Empty(tomMatch414NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tomMatch414NameNumber_freshVar_4=tom_get_slot_VariadicOperatorClass_Cons(tomMatch414NameNumber_freshVar_0);{  tom.gom.adt.objects.types.GomClass  tom_emptyClass=tomMatch414NameNumber_freshVar_3;{  tom.gom.adt.objects.types.GomClass  tom_consClass=tomMatch414NameNumber_freshVar_4;{  tom.gom.adt.objects.types.GomClass  tom_obj=tomMatch414NameNumber_freshVar_0;if ( true ) {
+        }}}}}}return super.visit_GomClass(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_AttachSortHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1) { return new AttachSortHook(t0,t1); }private static class AttachOperatorHook extends  tom.gom.adt.objects.ObjectsBasicStrategy  {private  tom.gom.adt.objects.types.ClassName  cName; private  tom.gom.adt.gom.types.HookDecl  hook; public AttachOperatorHook( tom.gom.adt.objects.types.ClassName  cName,  tom.gom.adt.gom.types.HookDecl  hook) { super(tom_make_Identity());this.cName=cName;this.hook=hook;}public  tom.gom.adt.objects.types.ClassName  getcName() { return cName;}public  tom.gom.adt.gom.types.HookDecl  gethook() { return hook;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.objects.types.GomClass  visit_GomClass( tom.gom.adt.objects.types.GomClass  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_GomClass(tom__arg)) {{  tom.gom.adt.objects.types.GomClass  tomMatch436NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )tom__arg);if (tom_is_fun_sym_VariadicOperatorClass(tomMatch436NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch436NameNumber_freshVar_0=tom_get_slot_VariadicOperatorClass_ClassName(tomMatch436NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.HookList  tomMatch436NameNumber_freshVar_1=tom_get_slot_VariadicOperatorClass_Hooks(tomMatch436NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch436NameNumber_freshVar_2=tom_get_slot_VariadicOperatorClass_Empty(tomMatch436NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tomMatch436NameNumber_freshVar_3=tom_get_slot_VariadicOperatorClass_Cons(tomMatch436NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.GomClass  tom_emptyClass=tomMatch436NameNumber_freshVar_2;{  tom.gom.adt.objects.types.GomClass  tom_consClass=tomMatch436NameNumber_freshVar_3;{  tom.gom.adt.objects.types.GomClass  tom_obj=tomMatch436NameNumberfreshSubject_1;if ( true ) {
 
 
 
@@ -126,7 +126,7 @@ public class HookCompiler {
 
 
 
-            if (tomMatch414NameNumber_freshVar_1== cName) {
+            if (tomMatch436NameNumber_freshVar_0== cName) {
               /* We may want to attach the hook to the cons or empty */
               if (hook.isMakeHookDecl()) {
                 if (hook.getSlotArgs() != tom_empty_list_concSlot()) {
@@ -144,36 +144,36 @@ public class HookCompiler {
                 }
               } else {
                 return
-                  tom_obj.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch414NameNumber_freshVar_2,tom_empty_list_concHook())));
+                  tom_obj.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch436NameNumber_freshVar_1,tom_empty_list_concHook())));
               }
             }
-          }}}}}}}}}}{  tom.gom.adt.objects.types.GomClass  tomMatch414NameNumber_freshVar_5=tomMatch414NameNumberfreshSubject_1;if (tom_is_fun_sym_OperatorClass(tomMatch414NameNumber_freshVar_5)) {{  tom.gom.adt.objects.types.ClassName  tomMatch414NameNumber_freshVar_6=tom_get_slot_OperatorClass_ClassName(tomMatch414NameNumber_freshVar_5);{  tom.gom.adt.objects.types.HookList  tomMatch414NameNumber_freshVar_7=tom_get_slot_OperatorClass_Hooks(tomMatch414NameNumber_freshVar_5);if ( true ) {
+          }}}}}}}}}if (tom_is_fun_sym_OperatorClass(tomMatch436NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch436NameNumber_freshVar_4=tom_get_slot_OperatorClass_ClassName(tomMatch436NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.HookList  tomMatch436NameNumber_freshVar_5=tom_get_slot_OperatorClass_Hooks(tomMatch436NameNumberfreshSubject_1);if ( true ) {
 
-          if (tomMatch414NameNumber_freshVar_6== cName) {
+          if (tomMatch436NameNumber_freshVar_4== cName) {
             return
-              tomMatch414NameNumber_freshVar_5.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch414NameNumber_freshVar_7,tom_empty_list_concHook())));
+              tomMatch436NameNumberfreshSubject_1.setHooks(tom_cons_list_concHook(makeHooksFromHookDecl(hook),tom_append_list_concHook(tomMatch436NameNumber_freshVar_5,tom_empty_list_concHook())));
           }
-        }}}}}}}return super.visit_GomClass(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_AttachOperatorHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1) { return new AttachOperatorHook(t0,t1); }
+        }}}}}}return super.visit_GomClass(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_AttachOperatorHook( tom.gom.adt.objects.types.ClassName  t0,  tom.gom.adt.gom.types.HookDecl  t1) { return new AttachOperatorHook(t0,t1); }
 
 
 
   private static Hook makeHooksFromHookDecl(HookDecl hookDecl) {
-    if (tom_is_sort_HookDecl(hookDecl)) {{  tom.gom.adt.gom.types.HookDecl  tomMatch415NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookDecl )hookDecl);if (tom_is_fun_sym_MakeHookDecl(tomMatch415NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.SlotList  tomMatch415NameNumber_freshVar_0=tom_get_slot_MakeHookDecl_SlotArgs(tomMatch415NameNumberfreshSubject_1);{  tom.gom.adt.code.types.Code  tomMatch415NameNumber_freshVar_1=tom_get_slot_MakeHookDecl_Code(tomMatch415NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_HookDecl(hookDecl)) {{  tom.gom.adt.gom.types.HookDecl  tomMatch437NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.HookDecl )hookDecl);if (tom_is_fun_sym_MakeHookDecl(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.gom.types.SlotList  tomMatch437NameNumber_freshVar_0=tom_get_slot_MakeHookDecl_SlotArgs(tomMatch437NameNumberfreshSubject_1);{  tom.gom.adt.code.types.Code  tomMatch437NameNumber_freshVar_1=tom_get_slot_MakeHookDecl_Code(tomMatch437NameNumberfreshSubject_1);if ( true ) {
 
-        SlotFieldList newArgs = makeSlotFieldListFromSlotList(tomMatch415NameNumber_freshVar_0);
-        return tom_make_MakeHook(newArgs,tomMatch415NameNumber_freshVar_1);
-      }}}}if (tom_is_fun_sym_BlockHookDecl(tomMatch415NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch415NameNumber_freshVar_2=tom_get_slot_BlockHookDecl_Code(tomMatch415NameNumberfreshSubject_1);if ( true ) {
+        SlotFieldList newArgs = makeSlotFieldListFromSlotList(tomMatch437NameNumber_freshVar_0);
+        return tom_make_MakeHook(newArgs,tomMatch437NameNumber_freshVar_1);
+      }}}}if (tom_is_fun_sym_BlockHookDecl(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch437NameNumber_freshVar_2=tom_get_slot_BlockHookDecl_Code(tomMatch437NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_BlockHook(tomMatch415NameNumber_freshVar_2);
-      }}}if (tom_is_fun_sym_InterfaceHookDecl(tomMatch415NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch415NameNumber_freshVar_3=tom_get_slot_InterfaceHookDecl_Code(tomMatch415NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_BlockHook(tomMatch437NameNumber_freshVar_2);
+      }}}if (tom_is_fun_sym_InterfaceHookDecl(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch437NameNumber_freshVar_3=tom_get_slot_InterfaceHookDecl_Code(tomMatch437NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_InterfaceHook(tomMatch415NameNumber_freshVar_3);
-      }}}if (tom_is_fun_sym_ImportHookDecl(tomMatch415NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch415NameNumber_freshVar_4=tom_get_slot_ImportHookDecl_Code(tomMatch415NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_InterfaceHook(tomMatch437NameNumber_freshVar_3);
+      }}}if (tom_is_fun_sym_ImportHookDecl(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch437NameNumber_freshVar_4=tom_get_slot_ImportHookDecl_Code(tomMatch437NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_ImportHook(tomMatch415NameNumber_freshVar_4);
-      }}}if (tom_is_fun_sym_MappingHookDecl(tomMatch415NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch415NameNumber_freshVar_5=tom_get_slot_MappingHookDecl_Code(tomMatch415NameNumberfreshSubject_1);if ( true ) {
+        return tom_make_ImportHook(tomMatch437NameNumber_freshVar_4);
+      }}}if (tom_is_fun_sym_MappingHookDecl(tomMatch437NameNumberfreshSubject_1)) {{  tom.gom.adt.code.types.Code  tomMatch437NameNumber_freshVar_5=tom_get_slot_MappingHookDecl_Code(tomMatch437NameNumberfreshSubject_1);if ( true ) {
 
-        return tom_make_MappingHook(tomMatch415NameNumber_freshVar_5);
+        return tom_make_MappingHook(tomMatch437NameNumber_freshVar_5);
       }}}}}
 
     throw new GomRuntimeException(
@@ -185,11 +185,11 @@ public class HookCompiler {
     while(!args.isEmptyconcSlot()) {
       Slot arg = args.getHeadconcSlot();
       args = args.getTailconcSlot();
-      if (tom_is_sort_Slot(arg)) {{  tom.gom.adt.gom.types.Slot  tomMatch416NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Slot )arg);if (tom_is_fun_sym_Slot(tomMatch416NameNumberfreshSubject_1)) {{  String  tomMatch416NameNumber_freshVar_0=tom_get_slot_Slot_Name(tomMatch416NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.SortDecl  tomMatch416NameNumber_freshVar_1=tom_get_slot_Slot_Sort(tomMatch416NameNumberfreshSubject_1);if ( true ) {
+      if (tom_is_sort_Slot(arg)) {{  tom.gom.adt.gom.types.Slot  tomMatch438NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Slot )arg);if (tom_is_fun_sym_Slot(tomMatch438NameNumberfreshSubject_1)) {{  String  tomMatch438NameNumber_freshVar_0=tom_get_slot_Slot_Name(tomMatch438NameNumberfreshSubject_1);{  tom.gom.adt.gom.types.SortDecl  tomMatch438NameNumber_freshVar_1=tom_get_slot_Slot_Sort(tomMatch438NameNumberfreshSubject_1);if ( true ) {
 
           ClassName slotClassName = (ClassName)
-            sortClassNameForSortDecl.get(tomMatch416NameNumber_freshVar_1);
-          newArgs = tom_append_list_concSlotField(newArgs,tom_cons_list_concSlotField(tom_make_SlotField(tomMatch416NameNumber_freshVar_0,slotClassName),tom_empty_list_concSlotField()));
+            sortClassNameForSortDecl.get(tomMatch438NameNumber_freshVar_1);
+          newArgs = tom_append_list_concSlotField(newArgs,tom_cons_list_concSlotField(tom_make_SlotField(tomMatch438NameNumber_freshVar_0,slotClassName),tom_empty_list_concSlotField()));
         }}}}}}
 
     }

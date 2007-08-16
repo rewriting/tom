@@ -41,7 +41,6 @@ public abstract class TemplateFactory {
   public abstract MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
       TemplateClass strategyMapping);
-  public abstract TemplateClass makeForwardTemplate(GomClass gomClass);
   public abstract TemplateClass makeVisitableForwardTemplate(GomClass gomClass);
   public abstract TemplateClass makeVisitorTemplate(GomClass gomClass);
   public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
@@ -62,9 +61,6 @@ class SharedTemplateFactory extends TemplateFactory {
       TemplateClass strategyMapping) {
     return
       new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping);
-  }
-  public TemplateClass makeForwardTemplate(GomClass gomClass) {
-    return new tom.gom.backend.shared.ForwardTemplate(gomClass);
   }
   public TemplateClass makeVisitableForwardTemplate(GomClass gomClass) {
     return new tom.gom.backend.shared.BasicStrategyTemplate(gomClass);

@@ -48,20 +48,19 @@ public class SortTemplate extends TemplateHookedClass {
                       GomClass gomClass,
                       TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch368NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_SortClass(tomMatch368NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch368NameNumber_freshVar_0=tom_get_slot_SortClass_AbstractType(tomMatch368NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch368NameNumber_freshVar_1=tom_get_slot_SortClass_Visitor(tomMatch368NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch368NameNumber_freshVar_2=tom_get_slot_SortClass_Operators(tomMatch368NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch368NameNumber_freshVar_3=tom_get_slot_SortClass_Mapping(tomMatch368NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch368NameNumber_freshVar_4=tom_get_slot_SortClass_VariadicOperators(tomMatch368NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch368NameNumber_freshVar_5=tom_get_slot_SortClass_Slots(tomMatch368NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch390NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_SortClass(tomMatch390NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch390NameNumber_freshVar_0=tom_get_slot_SortClass_AbstractType(tomMatch390NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch390NameNumber_freshVar_1=tom_get_slot_SortClass_Visitor(tomMatch390NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch390NameNumber_freshVar_2=tom_get_slot_SortClass_Operators(tomMatch390NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch390NameNumber_freshVar_3=tom_get_slot_SortClass_VariadicOperators(tomMatch390NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.SlotFieldList  tomMatch390NameNumber_freshVar_4=tom_get_slot_SortClass_Slots(tomMatch390NameNumberfreshSubject_1);if ( true ) {
 
 
 
 
 
-
-        this.abstractType = tomMatch368NameNumber_freshVar_0;
-        this.visitor = tomMatch368NameNumber_freshVar_1;
-        this.operatorList = tomMatch368NameNumber_freshVar_2;
-        this.variadicOperatorList = tomMatch368NameNumber_freshVar_4;
-        this.slotList = tomMatch368NameNumber_freshVar_5;
+        this.abstractType = tomMatch390NameNumber_freshVar_0;
+        this.visitor = tomMatch390NameNumber_freshVar_1;
+        this.operatorList = tomMatch390NameNumber_freshVar_2;
+        this.variadicOperatorList = tomMatch390NameNumber_freshVar_3;
+        this.slotList = tomMatch390NameNumber_freshVar_4;
         return;
-      }}}}}}}}}}
+      }}}}}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for SortTemplate: " + gomClass);
