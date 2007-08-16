@@ -165,11 +165,11 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
-      if (tom_is_sort_PlatformOption(option)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch309NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )option);if (tom_is_fun_sym_PluginOption(tomMatch309NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch309NameNumber_freshVar_0=tom_get_slot_PluginOption_Value(tomMatch309NameNumberfreshSubject_1);if (tom_is_fun_sym_BooleanValue(tomMatch309NameNumber_freshVar_0)) {{  tom.platform.adt.platformoption.types.PlatformBoolean  tomMatch309NameNumber_freshVar_1=tom_get_slot_BooleanValue_BooleanValue(tomMatch309NameNumber_freshVar_0);if (tom_is_fun_sym_True(tomMatch309NameNumber_freshVar_1)) {if ( true ) {
- return Boolean.valueOf(true); }}}}}}if (tom_is_fun_sym_PluginOption(tomMatch309NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch309NameNumber_freshVar_2=tom_get_slot_PluginOption_Value(tomMatch309NameNumberfreshSubject_1);if (tom_is_fun_sym_BooleanValue(tomMatch309NameNumber_freshVar_2)) {{  tom.platform.adt.platformoption.types.PlatformBoolean  tomMatch309NameNumber_freshVar_3=tom_get_slot_BooleanValue_BooleanValue(tomMatch309NameNumber_freshVar_2);if (tom_is_fun_sym_False(tomMatch309NameNumber_freshVar_3)) {if ( true ) {
- return Boolean.valueOf(false); }}}}}}if (tom_is_fun_sym_PluginOption(tomMatch309NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch309NameNumber_freshVar_4=tom_get_slot_PluginOption_Value(tomMatch309NameNumberfreshSubject_1);if (tom_is_fun_sym_IntegerValue(tomMatch309NameNumber_freshVar_4)) {{  int  tomMatch309NameNumber_freshVar_5=tom_get_slot_IntegerValue_IntegerValue(tomMatch309NameNumber_freshVar_4);if ( true ) {
- return new Integer(tomMatch309NameNumber_freshVar_5); }}}}}if (tom_is_fun_sym_PluginOption(tomMatch309NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch309NameNumber_freshVar_6=tom_get_slot_PluginOption_Value(tomMatch309NameNumberfreshSubject_1);if (tom_is_fun_sym_StringValue(tomMatch309NameNumber_freshVar_6)) {{  String  tomMatch309NameNumber_freshVar_7=tom_get_slot_StringValue_StringValue(tomMatch309NameNumber_freshVar_6);if ( true ) {
- return tomMatch309NameNumber_freshVar_7; }}}}}}}
+      if (tom_is_sort_PlatformOption(option)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch317NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )option);if (tom_is_fun_sym_PluginOption(tomMatch317NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch317NameNumber_freshVar_0=tom_get_slot_PluginOption_Value(tomMatch317NameNumberfreshSubject_1);if (tom_is_fun_sym_BooleanValue(tomMatch317NameNumber_freshVar_0)) {{  tom.platform.adt.platformoption.types.PlatformBoolean  tomMatch317NameNumber_freshVar_1=tom_get_slot_BooleanValue_BooleanValue(tomMatch317NameNumber_freshVar_0);if (tom_is_fun_sym_True(tomMatch317NameNumber_freshVar_1)) {if ( true ) {
+ return Boolean.valueOf(true); }}}}}}if (tom_is_fun_sym_PluginOption(tomMatch317NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch317NameNumber_freshVar_2=tom_get_slot_PluginOption_Value(tomMatch317NameNumberfreshSubject_1);if (tom_is_fun_sym_BooleanValue(tomMatch317NameNumber_freshVar_2)) {{  tom.platform.adt.platformoption.types.PlatformBoolean  tomMatch317NameNumber_freshVar_3=tom_get_slot_BooleanValue_BooleanValue(tomMatch317NameNumber_freshVar_2);if (tom_is_fun_sym_False(tomMatch317NameNumber_freshVar_3)) {if ( true ) {
+ return Boolean.valueOf(false); }}}}}}if (tom_is_fun_sym_PluginOption(tomMatch317NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch317NameNumber_freshVar_4=tom_get_slot_PluginOption_Value(tomMatch317NameNumberfreshSubject_1);if (tom_is_fun_sym_IntegerValue(tomMatch317NameNumber_freshVar_4)) {{  int  tomMatch317NameNumber_freshVar_5=tom_get_slot_IntegerValue_IntegerValue(tomMatch317NameNumber_freshVar_4);if ( true ) {
+ return new Integer(tomMatch317NameNumber_freshVar_5); }}}}}if (tom_is_fun_sym_PluginOption(tomMatch317NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch317NameNumber_freshVar_6=tom_get_slot_PluginOption_Value(tomMatch317NameNumberfreshSubject_1);if (tom_is_fun_sym_StringValue(tomMatch317NameNumber_freshVar_6)) {{  String  tomMatch317NameNumber_freshVar_7=tom_get_slot_StringValue_StringValue(tomMatch317NameNumber_freshVar_6);if ( true ) {
+ return tomMatch317NameNumber_freshVar_7; }}}}}}}
 
     } else {
       getLogger().log(Level.SEVERE,GomMessage.optionNotFound.getMessage(),name);
@@ -209,7 +209,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       owner.setOptionManager((OptionManager)this);
       while(!list.isEmptyconcPlatformOption()) {
         PlatformOption option = list.getHeadconcPlatformOption();
-        if (tom_is_sort_PlatformOption(option)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch310NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )option);if (tom_is_fun_sym_PluginOption(tomMatch310NameNumberfreshSubject_1)) {{  String  tomMatch310NameNumber_freshVar_0=tom_get_slot_PluginOption_Name(tomMatch310NameNumberfreshSubject_1);{  String  tomMatch310NameNumber_freshVar_1=tom_get_slot_PluginOption_AltName(tomMatch310NameNumberfreshSubject_1);{  String  tom_name=tomMatch310NameNumber_freshVar_0;{  String  tom_altName=tomMatch310NameNumber_freshVar_1;if ( true ) {
+        if (tom_is_sort_PlatformOption(option)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch318NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )option);if (tom_is_fun_sym_PluginOption(tomMatch318NameNumberfreshSubject_1)) {{  String  tomMatch318NameNumber_freshVar_0=tom_get_slot_PluginOption_Name(tomMatch318NameNumberfreshSubject_1);{  String  tomMatch318NameNumber_freshVar_1=tom_get_slot_PluginOption_AltName(tomMatch318NameNumberfreshSubject_1);{  String  tom_name=tomMatch318NameNumber_freshVar_0;{  String  tom_altName=tomMatch318NameNumber_freshVar_1;if ( true ) {
 
             setOptionOwnerFromName(tom_name, owner);
             setOptionFromName(tom_name, option);
@@ -293,16 +293,16 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
     for(Iterator it = mapNameToOption.values().iterator(); it.hasNext() ; ) {
       PlatformOption h = (PlatformOption)it.next();
-      if (tom_is_sort_PlatformOption(h)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch311NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )h);if (tom_is_fun_sym_PluginOption(tomMatch311NameNumberfreshSubject_1)) {{  String  tomMatch311NameNumber_freshVar_0=tom_get_slot_PluginOption_Name(tomMatch311NameNumberfreshSubject_1);{  String  tomMatch311NameNumber_freshVar_1=tom_get_slot_PluginOption_AltName(tomMatch311NameNumberfreshSubject_1);{  String  tomMatch311NameNumber_freshVar_2=tom_get_slot_PluginOption_Description(tomMatch311NameNumberfreshSubject_1);{  String  tomMatch311NameNumber_freshVar_3=tom_get_slot_PluginOption_AttrName(tomMatch311NameNumberfreshSubject_1);{  String  tom_altName=tomMatch311NameNumber_freshVar_1;{  String  tom_attrName=tomMatch311NameNumber_freshVar_3;if ( true ) {
+      if (tom_is_sort_PlatformOption(h)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch319NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )h);if (tom_is_fun_sym_PluginOption(tomMatch319NameNumberfreshSubject_1)) {{  String  tomMatch319NameNumber_freshVar_0=tom_get_slot_PluginOption_Name(tomMatch319NameNumberfreshSubject_1);{  String  tomMatch319NameNumber_freshVar_1=tom_get_slot_PluginOption_AltName(tomMatch319NameNumberfreshSubject_1);{  String  tomMatch319NameNumber_freshVar_2=tom_get_slot_PluginOption_Description(tomMatch319NameNumberfreshSubject_1);{  String  tomMatch319NameNumber_freshVar_3=tom_get_slot_PluginOption_AttrName(tomMatch319NameNumberfreshSubject_1);{  String  tom_altName=tomMatch319NameNumber_freshVar_1;{  String  tom_attrName=tomMatch319NameNumber_freshVar_3;if ( true ) {
 
-          buffer.append("\t--" + tomMatch311NameNumber_freshVar_0);
+          buffer.append("\t--" + tomMatch319NameNumber_freshVar_0);
           if(tom_attrName.length() > 0) {
             buffer.append(" <" + tom_attrName+ ">");
           }
           if(tom_altName.length() > 0) {
             buffer.append(" | -" + tom_altName);
           }
-          buffer.append(":\t" + tomMatch311NameNumber_freshVar_2);
+          buffer.append(":\t" + tomMatch319NameNumber_freshVar_2);
           buffer.append("\n");
         }}}}}}}}}}
 
@@ -326,10 +326,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
-    if (tom_is_sort_PlatformOptionList(requiredOptions)) {{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch312NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions);if (tom_is_fun_sym_concPlatformOption(tomMatch312NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch312NameNumber_freshVar_0=tomMatch312NameNumberfreshSubject_1;if (tom_is_empty_concPlatformOption_PlatformOptionList(tomMatch312NameNumber_freshVar_0)) {if ( true ) {
+    if (tom_is_sort_PlatformOptionList(requiredOptions)) {{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch320NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOptionList )requiredOptions);if (tom_is_fun_sym_concPlatformOption(tomMatch320NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch320NameNumber_freshVar_0=tomMatch320NameNumberfreshSubject_1;if (tom_is_empty_concPlatformOption_PlatformOptionList(tomMatch320NameNumber_freshVar_0)) {if ( true ) {
 
         return true;
-      }}}}if (tom_is_fun_sym_concPlatformOption(tomMatch312NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch312NameNumber_freshVar_1=tomMatch312NameNumberfreshSubject_1;if (!(tom_is_empty_concPlatformOption_PlatformOptionList(tomMatch312NameNumber_freshVar_1))) {if (tom_is_fun_sym_PluginOption(tom_get_head_concPlatformOption_PlatformOptionList(tomMatch312NameNumber_freshVar_1))) {{  String  tomMatch312NameNumber_freshVar_9=tom_get_slot_PluginOption_Name(tom_get_head_concPlatformOption_PlatformOptionList(tomMatch312NameNumber_freshVar_1));{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch312NameNumber_freshVar_10=tom_get_slot_PluginOption_Value(tom_get_head_concPlatformOption_PlatformOptionList(tomMatch312NameNumber_freshVar_1));{  String  tom_name=tomMatch312NameNumber_freshVar_9;{  tom.platform.adt.platformoption.types.PlatformValue  tom_value=tomMatch312NameNumber_freshVar_10;{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch312NameNumber_freshVar_2=tom_get_tail_concPlatformOption_PlatformOptionList(tomMatch312NameNumber_freshVar_1);if ( true ) {
+      }}}}if (tom_is_fun_sym_concPlatformOption(tomMatch320NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch320NameNumber_freshVar_1=tomMatch320NameNumberfreshSubject_1;if (!(tom_is_empty_concPlatformOption_PlatformOptionList(tomMatch320NameNumber_freshVar_1))) {if (tom_is_fun_sym_PluginOption(tom_get_head_concPlatformOption_PlatformOptionList(tomMatch320NameNumber_freshVar_1))) {{  String  tomMatch320NameNumber_freshVar_9=tom_get_slot_PluginOption_Name(tom_get_head_concPlatformOption_PlatformOptionList(tomMatch320NameNumber_freshVar_1));{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch320NameNumber_freshVar_10=tom_get_slot_PluginOption_Value(tom_get_head_concPlatformOption_PlatformOptionList(tomMatch320NameNumber_freshVar_1));{  String  tom_name=tomMatch320NameNumber_freshVar_9;{  tom.platform.adt.platformoption.types.PlatformValue  tom_value=tomMatch320NameNumber_freshVar_10;{  tom.platform.adt.platformoption.types.PlatformOptionList  tomMatch320NameNumber_freshVar_2=tom_get_tail_concPlatformOption_PlatformOptionList(tomMatch320NameNumber_freshVar_1);if ( true ) {
 
 
         PlatformOption option = getOptionFromName(tom_name);
@@ -341,7 +341,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
                 new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
             return false;
           } else {
-            return checkOptionDependency(tomMatch312NameNumber_freshVar_2);
+            return checkOptionDependency(tomMatch320NameNumber_freshVar_2);
           }
         } else {
           getLogger().log(Level.SEVERE,
@@ -423,15 +423,15 @@ public class GomOptionManager implements OptionManager, OptionOwner {
             displayHelp();
             return null;
           } else {
-            if (tom_is_sort_PlatformOption(option)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch313NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )option);if (tom_is_fun_sym_PluginOption(tomMatch313NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch313NameNumber_freshVar_0=tom_get_slot_PluginOption_Value(tomMatch313NameNumberfreshSubject_1);if (tom_is_fun_sym_BooleanValue(tomMatch313NameNumber_freshVar_0)) {if ( true ) {
+            if (tom_is_sort_PlatformOption(option)) {{  tom.platform.adt.platformoption.types.PlatformOption  tomMatch321NameNumberfreshSubject_1=(( tom.platform.adt.platformoption.types.PlatformOption )option);if (tom_is_fun_sym_PluginOption(tomMatch321NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch321NameNumber_freshVar_0=tom_get_slot_PluginOption_Value(tomMatch321NameNumberfreshSubject_1);if (tom_is_fun_sym_BooleanValue(tomMatch321NameNumber_freshVar_0)) {if ( true ) {
 
                 setOptionValue(argument, Boolean.TRUE);
-              }}}}if (tom_is_fun_sym_PluginOption(tomMatch313NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch313NameNumber_freshVar_1=tom_get_slot_PluginOption_Value(tomMatch313NameNumberfreshSubject_1);if (tom_is_fun_sym_IntegerValue(tomMatch313NameNumber_freshVar_1)) {if ( true ) {
+              }}}}if (tom_is_fun_sym_PluginOption(tomMatch321NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch321NameNumber_freshVar_1=tom_get_slot_PluginOption_Value(tomMatch321NameNumberfreshSubject_1);if (tom_is_fun_sym_IntegerValue(tomMatch321NameNumber_freshVar_1)) {if ( true ) {
 
 
                 String t = argumentList[++i];
                 setOptionValue(argument, new Integer(t));
-              }}}}if (tom_is_fun_sym_PluginOption(tomMatch313NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch313NameNumber_freshVar_2=tom_get_slot_PluginOption_Value(tomMatch313NameNumberfreshSubject_1);if (tom_is_fun_sym_StringValue(tomMatch313NameNumber_freshVar_2)) {if ( true ) {
+              }}}}if (tom_is_fun_sym_PluginOption(tomMatch321NameNumberfreshSubject_1)) {{  tom.platform.adt.platformoption.types.PlatformValue  tomMatch321NameNumber_freshVar_2=tom_get_slot_PluginOption_Value(tomMatch321NameNumberfreshSubject_1);if (tom_is_fun_sym_StringValue(tomMatch321NameNumber_freshVar_2)) {if ( true ) {
 
 
                 if ( !( argument.equals("import") || argument.equals("I") ) ) {

@@ -381,13 +381,6 @@
   make(t0, t1) { tom.gom.adt.objects.types.slotfieldlist.ConsconcSlotField.make(t0, t1) }
 }
 
-%op GomClass VisitableFwdClass(ClassName:ClassName, Fwd:GomClass) {
-  is_fsym(t) { t instanceof tom.gom.adt.objects.types.gomclass.VisitableFwdClass }
-  get_slot(ClassName, t) { t.getClassName() }
-  get_slot(Fwd, t) { t.getFwd() }
-  make(t0, t1) { tom.gom.adt.objects.types.gomclass.VisitableFwdClass.make(t0, t1) }
-}
-
 %op GomClass AbstractTypeClass(ClassName:ClassName, Mapping:ClassName, Visitor:ClassName, SortList:ClassNameList, Hooks:HookList) {
   is_fsym(t) { t instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass }
   get_slot(ClassName, t) { t.getClassName() }
@@ -445,8 +438,8 @@
   make(t0, t1, t2) { tom.gom.adt.objects.types.gomclass.VisitorClass.make(t0, t1, t2) }
 }
 
-%op GomClass FwdClass(ClassName:ClassName, Visitor:ClassName, ImportedVisitors:ClassNameList, AbstractType:ClassName, ImportedAbstractTypes:ClassNameList, SortClasses:GomClassList, OperatorClasses:GomClassList) {
-  is_fsym(t) { t instanceof tom.gom.adt.objects.types.gomclass.FwdClass }
+%op GomClass VisitableFwdClass(ClassName:ClassName, Visitor:ClassName, ImportedVisitors:ClassNameList, AbstractType:ClassName, ImportedAbstractTypes:ClassNameList, SortClasses:GomClassList, OperatorClasses:GomClassList) {
+  is_fsym(t) { t instanceof tom.gom.adt.objects.types.gomclass.VisitableFwdClass }
   get_slot(ClassName, t) { t.getClassName() }
   get_slot(Visitor, t) { t.getVisitor() }
   get_slot(ImportedVisitors, t) { t.getImportedVisitors() }
@@ -454,7 +447,7 @@
   get_slot(ImportedAbstractTypes, t) { t.getImportedAbstractTypes() }
   get_slot(SortClasses, t) { t.getSortClasses() }
   get_slot(OperatorClasses, t) { t.getOperatorClasses() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.FwdClass.make(t0, t1, t2, t3, t4, t5, t6) }
+  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.VisitableFwdClass.make(t0, t1, t2, t3, t4, t5, t6) }
 }
 
 %op GomClass TomMapping(ClassName:ClassName, BasicStrategy:ClassName, SortClasses:GomClassList, OperatorClasses:GomClassList) {

@@ -45,14 +45,13 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               GomClass gomClass,
                               TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch345NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_AbstractTypeClass(tomMatch345NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch345NameNumber_freshVar_0=tom_get_slot_AbstractTypeClass_Visitor(tomMatch345NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassName  tomMatch345NameNumber_freshVar_1=tom_get_slot_AbstractTypeClass_Mapping(tomMatch345NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch345NameNumber_freshVar_2=tom_get_slot_AbstractTypeClass_SortList(tomMatch345NameNumberfreshSubject_1);if ( true ) {
+    if (tom_is_sort_GomClass(gomClass)) {{  tom.gom.adt.objects.types.GomClass  tomMatch353NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if (tom_is_fun_sym_AbstractTypeClass(tomMatch353NameNumberfreshSubject_1)) {{  tom.gom.adt.objects.types.ClassName  tomMatch353NameNumber_freshVar_0=tom_get_slot_AbstractTypeClass_Visitor(tomMatch353NameNumberfreshSubject_1);{  tom.gom.adt.objects.types.ClassNameList  tomMatch353NameNumber_freshVar_1=tom_get_slot_AbstractTypeClass_SortList(tomMatch353NameNumberfreshSubject_1);if ( true ) {
 
 
-
-        this.visitor = tomMatch345NameNumber_freshVar_0;
-        this.sortList = tomMatch345NameNumber_freshVar_2;
+        this.visitor = tomMatch353NameNumber_freshVar_0;
+        this.sortList = tomMatch353NameNumber_freshVar_1;
         return;
-      }}}}}}}
+      }}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for AbstractTypeTemplate: " + gomClass);

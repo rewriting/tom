@@ -104,18 +104,18 @@ public class ToolBox {
       map.put(accessObj[i],new Integer(accessFlags[i]));
     }
 
-    if (tom_is_sort_TAccessList(list)) {{  tom.library.adt.bytecode.types.TAccessList  tomMatch515NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TAccessList )list);if (tom_is_fun_sym_AccessList(tomMatch515NameNumberfreshSubject_1)) {{  tom.library.adt.bytecode.types.TAccessList  tomMatch515NameNumber_freshVar_0=tomMatch515NameNumberfreshSubject_1;{  tom.library.adt.bytecode.types.TAccessList  tomMatch515NameNumber_begin_2=tomMatch515NameNumber_freshVar_0;{  tom.library.adt.bytecode.types.TAccessList  tomMatch515NameNumber_end_3=tomMatch515NameNumber_freshVar_0;do {{{  tom.library.adt.bytecode.types.TAccessList  tomMatch515NameNumber_freshVar_1=tomMatch515NameNumber_end_3;if (!(tom_is_empty_AccessList_TAccessList(tomMatch515NameNumber_freshVar_1))) {{  tom.library.adt.bytecode.types.TAccessList  tomMatch515NameNumber_freshVar_4=tom_get_tail_AccessList_TAccessList(tomMatch515NameNumber_freshVar_1);if ( true ) {
+    if (tom_is_sort_TAccessList(list)) {{  tom.library.adt.bytecode.types.TAccessList  tomMatch522NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TAccessList )list);if (tom_is_fun_sym_AccessList(tomMatch522NameNumberfreshSubject_1)) {{  tom.library.adt.bytecode.types.TAccessList  tomMatch522NameNumber_freshVar_0=tomMatch522NameNumberfreshSubject_1;{  tom.library.adt.bytecode.types.TAccessList  tomMatch522NameNumber_begin_2=tomMatch522NameNumber_freshVar_0;{  tom.library.adt.bytecode.types.TAccessList  tomMatch522NameNumber_end_3=tomMatch522NameNumber_freshVar_0;do {{{  tom.library.adt.bytecode.types.TAccessList  tomMatch522NameNumber_freshVar_1=tomMatch522NameNumber_end_3;if (!(tom_is_empty_AccessList_TAccessList(tomMatch522NameNumber_freshVar_1))) {{  tom.library.adt.bytecode.types.TAccessList  tomMatch522NameNumber_freshVar_4=tom_get_tail_AccessList_TAccessList(tomMatch522NameNumber_freshVar_1);if ( true ) {
 
-        value = value | ((Integer)map.get(tom_get_head_AccessList_TAccessList(tomMatch515NameNumber_freshVar_1))).intValue();
-      }}}}if (tom_is_empty_AccessList_TAccessList(tomMatch515NameNumber_end_3)) {tomMatch515NameNumber_end_3=tomMatch515NameNumber_begin_2;} else {tomMatch515NameNumber_end_3=tom_get_tail_AccessList_TAccessList(tomMatch515NameNumber_end_3);}}} while(!(tom_equal_term_TAccessList(tomMatch515NameNumber_end_3, tomMatch515NameNumber_begin_2)));}}}}}}
+        value = value | ((Integer)map.get(tom_get_head_AccessList_TAccessList(tomMatch522NameNumber_freshVar_1))).intValue();
+      }}}}if (tom_is_empty_AccessList_TAccessList(tomMatch522NameNumber_end_3)) {tomMatch522NameNumber_end_3=tomMatch522NameNumber_begin_2;} else {tomMatch522NameNumber_end_3=tom_get_tail_AccessList_TAccessList(tomMatch522NameNumber_end_3);}}} while(!(tom_equal_term_TAccessList(tomMatch522NameNumber_end_3, tomMatch522NameNumber_begin_2)));}}}}}}
 
     return value;   
   }
 
   public static String buildSignature(TSignature signature){
     String sig = null;
-    if (tom_is_sort_TSignature(signature)) {{  tom.library.adt.bytecode.types.TSignature  tomMatch516NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TSignature )signature);if (tom_is_fun_sym_Signature(tomMatch516NameNumberfreshSubject_1)) {{  String  tomMatch516NameNumber_freshVar_0=tom_get_slot_Signature_sig(tomMatch516NameNumberfreshSubject_1);if ( true ) {
-sig=tomMatch516NameNumber_freshVar_0;}}}}}
+    if (tom_is_sort_TSignature(signature)) {{  tom.library.adt.bytecode.types.TSignature  tomMatch523NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TSignature )signature);if (tom_is_fun_sym_Signature(tomMatch523NameNumberfreshSubject_1)) {{  String  tomMatch523NameNumber_freshVar_0=tom_get_slot_Signature_sig(tomMatch523NameNumberfreshSubject_1);if ( true ) {
+sig=tomMatch523NameNumber_freshVar_0;}}}}}
 
     return sig;
   }
@@ -136,12 +136,12 @@ sig=tomMatch516NameNumber_freshVar_0;}}}}}
   }
 
   public static Object buildConstant(TValue value) {
-      if (tom_is_sort_TValue(value)) {{  tom.library.adt.bytecode.types.TValue  tomMatch517NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TValue )value);if (tom_is_fun_sym_StringValue(tomMatch517NameNumberfreshSubject_1)) {{  String  tomMatch517NameNumber_freshVar_0=tom_get_slot_StringValue_s(tomMatch517NameNumberfreshSubject_1);if ( true ) {
- return tomMatch517NameNumber_freshVar_0;}}}if (tom_is_fun_sym_IntValue(tomMatch517NameNumberfreshSubject_1)) {{  int  tomMatch517NameNumber_freshVar_1=tom_get_slot_IntValue_i(tomMatch517NameNumberfreshSubject_1);if ( true ) {
-return new Integer(tomMatch517NameNumber_freshVar_1);}}}if (tom_is_fun_sym_LongValue(tomMatch517NameNumberfreshSubject_1)) {{  long  tomMatch517NameNumber_freshVar_2=tom_get_slot_LongValue_l(tomMatch517NameNumberfreshSubject_1);if ( true ) {
-return new Long(tomMatch517NameNumber_freshVar_2);}}}if (tom_is_fun_sym_FloatValue(tomMatch517NameNumberfreshSubject_1)) {{  float  tomMatch517NameNumber_freshVar_3=tom_get_slot_FloatValue_f(tomMatch517NameNumberfreshSubject_1);if ( true ) {
-return new Float(tomMatch517NameNumber_freshVar_3);}}}if (tom_is_fun_sym_DoubleValue(tomMatch517NameNumberfreshSubject_1)) {{  double  tomMatch517NameNumber_freshVar_4=tom_get_slot_DoubleValue_d(tomMatch517NameNumberfreshSubject_1);if ( true ) {
-return new Double(tomMatch517NameNumber_freshVar_4);}}}}}
+      if (tom_is_sort_TValue(value)) {{  tom.library.adt.bytecode.types.TValue  tomMatch524NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TValue )value);if (tom_is_fun_sym_StringValue(tomMatch524NameNumberfreshSubject_1)) {{  String  tomMatch524NameNumber_freshVar_0=tom_get_slot_StringValue_s(tomMatch524NameNumberfreshSubject_1);if ( true ) {
+ return tomMatch524NameNumber_freshVar_0;}}}if (tom_is_fun_sym_IntValue(tomMatch524NameNumberfreshSubject_1)) {{  int  tomMatch524NameNumber_freshVar_1=tom_get_slot_IntValue_i(tomMatch524NameNumberfreshSubject_1);if ( true ) {
+return new Integer(tomMatch524NameNumber_freshVar_1);}}}if (tom_is_fun_sym_LongValue(tomMatch524NameNumberfreshSubject_1)) {{  long  tomMatch524NameNumber_freshVar_2=tom_get_slot_LongValue_l(tomMatch524NameNumberfreshSubject_1);if ( true ) {
+return new Long(tomMatch524NameNumber_freshVar_2);}}}if (tom_is_fun_sym_FloatValue(tomMatch524NameNumberfreshSubject_1)) {{  float  tomMatch524NameNumber_freshVar_3=tom_get_slot_FloatValue_f(tomMatch524NameNumberfreshSubject_1);if ( true ) {
+return new Float(tomMatch524NameNumber_freshVar_3);}}}if (tom_is_fun_sym_DoubleValue(tomMatch524NameNumberfreshSubject_1)) {{  double  tomMatch524NameNumber_freshVar_4=tom_get_slot_DoubleValue_d(tomMatch524NameNumberfreshSubject_1);if ( true ) {
+return new Double(tomMatch524NameNumber_freshVar_4);}}}}}
 
       return null;
   }
@@ -296,28 +296,28 @@ return new Double(tomMatch517NameNumber_freshVar_4);}}}}}
 
   private static boolean tom_is_sort_StringBuffer(Object t) { return 
 
- t instanceof StringBuffer ;}private static class BuildDescriptor extends  tom.library.adt.bytecode.BytecodeBasicStrategy  {private  StringBuffer  sb; public BuildDescriptor( StringBuffer  sb) { super(tom_make_Identity());this.sb=sb;}public  StringBuffer  getsb() { return sb;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.adt.bytecode.types.TFieldDescriptor  visit_TFieldDescriptor( tom.library.adt.bytecode.types.TFieldDescriptor  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TFieldDescriptor(tom__arg)) {{  tom.library.adt.bytecode.types.TFieldDescriptor  tomMatch518NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg);if (tom_is_fun_sym_ObjectType(tomMatch518NameNumberfreshSubject_1)) {{  String  tomMatch518NameNumber_freshVar_0=tom_get_slot_ObjectType_className(tomMatch518NameNumberfreshSubject_1);if ( true ) {
+ t instanceof StringBuffer ;}private static class BuildDescriptor extends  tom.library.adt.bytecode.BytecodeBasicStrategy  {private  StringBuffer  sb; public BuildDescriptor( StringBuffer  sb) { super(tom_make_Identity());this.sb=sb;}public  StringBuffer  getsb() { return sb;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];for (int i = 0; i < getChildCount(); i++) {stratChilds[i]=getChildAt(i);}return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {for (int i = 0; i < getChildCount(); i++) {setChildAt(i,children[i]);}return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.adt.bytecode.types.TFieldDescriptor  visit_TFieldDescriptor( tom.library.adt.bytecode.types.TFieldDescriptor  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TFieldDescriptor(tom__arg)) {{  tom.library.adt.bytecode.types.TFieldDescriptor  tomMatch525NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg);if (tom_is_fun_sym_ObjectType(tomMatch525NameNumberfreshSubject_1)) {{  String  tomMatch525NameNumber_freshVar_0=tom_get_slot_ObjectType_className(tomMatch525NameNumberfreshSubject_1);if ( true ) {
 
 
 
- sb.append("L" + tomMatch518NameNumber_freshVar_0+ ";"); }}}if (tom_is_fun_sym_ArrayType(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('['); }}if (tom_is_fun_sym_B(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('B'); }}if (tom_is_fun_sym_C(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('C'); }}if (tom_is_fun_sym_D(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('D'); }}if (tom_is_fun_sym_F(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('F'); }}if (tom_is_fun_sym_I(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('I'); }}if (tom_is_fun_sym_J(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('J'); }}if (tom_is_fun_sym_S(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('S'); }}if (tom_is_fun_sym_Z(tomMatch518NameNumberfreshSubject_1)) {if ( true ) {
- sb.append('Z'); }}}}return super.visit_TFieldDescriptor(tom__arg); }public  tom.library.adt.bytecode.types.TMethodDescriptor  visit_TMethodDescriptor( tom.library.adt.bytecode.types.TMethodDescriptor  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TMethodDescriptor(tom__arg)) {{  tom.library.adt.bytecode.types.TMethodDescriptor  tomMatch519NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TMethodDescriptor )tom__arg);if ( true ) {
+ sb.append("L" + tomMatch525NameNumber_freshVar_0+ ";"); }}}if (tom_is_fun_sym_ArrayType(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('['); }}if (tom_is_fun_sym_B(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('B'); }}if (tom_is_fun_sym_C(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('C'); }}if (tom_is_fun_sym_D(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('D'); }}if (tom_is_fun_sym_F(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('F'); }}if (tom_is_fun_sym_I(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('I'); }}if (tom_is_fun_sym_J(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('J'); }}if (tom_is_fun_sym_S(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('S'); }}if (tom_is_fun_sym_Z(tomMatch525NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append('Z'); }}}}return super.visit_TFieldDescriptor(tom__arg); }public  tom.library.adt.bytecode.types.TMethodDescriptor  visit_TMethodDescriptor( tom.library.adt.bytecode.types.TMethodDescriptor  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TMethodDescriptor(tom__arg)) {{  tom.library.adt.bytecode.types.TMethodDescriptor  tomMatch526NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TMethodDescriptor )tom__arg);if ( true ) {
 
 
 
- sb.append('('); }}}return super.visit_TMethodDescriptor(tom__arg); }public  tom.library.adt.bytecode.types.TReturnDescriptor  visit_TReturnDescriptor( tom.library.adt.bytecode.types.TReturnDescriptor  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TReturnDescriptor(tom__arg)) {{  tom.library.adt.bytecode.types.TReturnDescriptor  tomMatch520NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TReturnDescriptor )tom__arg);if ( true ) {
+ sb.append('('); }}}return super.visit_TMethodDescriptor(tom__arg); }public  tom.library.adt.bytecode.types.TReturnDescriptor  visit_TReturnDescriptor( tom.library.adt.bytecode.types.TReturnDescriptor  tom__arg) throws tom.library.sl.VisitFailure {if (tom_is_sort_TReturnDescriptor(tom__arg)) {{  tom.library.adt.bytecode.types.TReturnDescriptor  tomMatch527NameNumberfreshSubject_1=(( tom.library.adt.bytecode.types.TReturnDescriptor )tom__arg);if ( true ) {
 
 
 
- sb.append(')'); }if (tom_is_fun_sym_Void(tomMatch520NameNumberfreshSubject_1)) {if ( true ) {
+ sb.append(')'); }if (tom_is_fun_sym_Void(tomMatch527NameNumberfreshSubject_1)) {if ( true ) {
  sb.append('V'); }}}}return super.visit_TReturnDescriptor(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_BuildDescriptor( StringBuffer  t0) { return new BuildDescriptor(t0); }
 
 

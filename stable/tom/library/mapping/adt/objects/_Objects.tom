@@ -452,31 +452,6 @@
   make( new_HeadconcSlotField,  new_TailconcSlotField) { new tom.gom.adt.objects.strategy.slotfieldlist.Make_ConsconcSlotField( new_HeadconcSlotField,  new_TailconcSlotField) }
 }
 
-    %op Strategy _VisitableFwdClass(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass)}
-      
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        make(arg0, arg1) { new tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass(arg0, arg1) }
-    }
-  
-  
-  %op Strategy When_VisitableFwdClass(s:Strategy) {
-    make(s) { `Sequence(Is_VisitableFwdClass(),s) }
-  }
-
-  %op Strategy Is_VisitableFwdClass() {
-    make() { new tom.gom.adt.objects.strategy.gomclass.Is_VisitableFwdClass()}
-  }
-  
-%op Strategy Make_VisitableFwdClass(_ClassName:Strategy, _Fwd:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass)}
-
-  get_slot(_ClassName, t) { _ClassName }
-  get_slot(_Fwd, t) { _Fwd }
-  make( new_ClassName,  new_Fwd) { new tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass( new_ClassName,  new_Fwd) }
-}
-
     %op Strategy _AbstractTypeClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
       is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._AbstractTypeClass)}
       
@@ -646,8 +621,8 @@
   make( new_ClassName,  new_SortClasses,  new_OperatorClasses) { new tom.gom.adt.objects.strategy.gomclass.Make_VisitorClass( new_ClassName,  new_SortClasses,  new_OperatorClasses) }
 }
 
-    %op Strategy _FwdClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._FwdClass)}
+    %op Strategy _VisitableFwdClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
+      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass)}
       
         get_slot(arg0, t) { t.getArgument(0) }
         get_slot(arg1, t) { t.getArgument(1) }
@@ -656,20 +631,20 @@
         get_slot(arg4, t) { t.getArgument(4) }
         get_slot(arg5, t) { t.getArgument(5) }
         get_slot(arg6, t) { t.getArgument(6) }
-        make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.gom.adt.objects.strategy.gomclass._FwdClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6) }
+        make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6) }
     }
   
   
-  %op Strategy When_FwdClass(s:Strategy) {
-    make(s) { `Sequence(Is_FwdClass(),s) }
+  %op Strategy When_VisitableFwdClass(s:Strategy) {
+    make(s) { `Sequence(Is_VisitableFwdClass(),s) }
   }
 
-  %op Strategy Is_FwdClass() {
-    make() { new tom.gom.adt.objects.strategy.gomclass.Is_FwdClass()}
+  %op Strategy Is_VisitableFwdClass() {
+    make() { new tom.gom.adt.objects.strategy.gomclass.Is_VisitableFwdClass()}
   }
   
-%op Strategy Make_FwdClass(_ClassName:Strategy, _Visitor:Strategy, _ImportedVisitors:Strategy, _AbstractType:Strategy, _ImportedAbstractTypes:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_FwdClass)}
+%op Strategy Make_VisitableFwdClass(_ClassName:Strategy, _Visitor:Strategy, _ImportedVisitors:Strategy, _AbstractType:Strategy, _ImportedAbstractTypes:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass)}
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_Visitor, t) { _Visitor }
@@ -678,7 +653,7 @@
   get_slot(_ImportedAbstractTypes, t) { _ImportedAbstractTypes }
   get_slot(_SortClasses, t) { _SortClasses }
   get_slot(_OperatorClasses, t) { _OperatorClasses }
-  make( new_ClassName,  new_Visitor,  new_ImportedVisitors,  new_AbstractType,  new_ImportedAbstractTypes,  new_SortClasses,  new_OperatorClasses) { new tom.gom.adt.objects.strategy.gomclass.Make_FwdClass( new_ClassName,  new_Visitor,  new_ImportedVisitors,  new_AbstractType,  new_ImportedAbstractTypes,  new_SortClasses,  new_OperatorClasses) }
+  make( new_ClassName,  new_Visitor,  new_ImportedVisitors,  new_AbstractType,  new_ImportedAbstractTypes,  new_SortClasses,  new_OperatorClasses) { new tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass( new_ClassName,  new_Visitor,  new_ImportedVisitors,  new_AbstractType,  new_ImportedAbstractTypes,  new_SortClasses,  new_OperatorClasses) }
 }
 
     %op Strategy _TomMapping(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {

@@ -110,22 +110,22 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { r
       set.add(parent);
     }
 
-    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch524NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);if (tom_is_fun_sym_Mu(tomMatch524NameNumberfreshSubject_1)) {{  tom.library.sl.Strategy  tomMatch524NameNumber_freshVar_0=tom_get_slot_Mu_s1(tomMatch524NameNumberfreshSubject_1);{  tom.library.sl.Strategy  tomMatch524NameNumber_freshVar_1=tom_get_slot_Mu_s2(tomMatch524NameNumberfreshSubject_1);if (tom_is_fun_sym_MuVar(tomMatch524NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tom_m=tomMatch524NameNumberfreshSubject_1;if ( true ) {
+    if (tom_is_sort_MuStrategy(any)) {{  tom.library.sl.Strategy  tomMatch531NameNumberfreshSubject_1=(( tom.library.sl.Strategy )any);if (tom_is_fun_sym_Mu(tomMatch531NameNumberfreshSubject_1)) {{  tom.library.sl.Strategy  tomMatch531NameNumber_freshVar_0=tom_get_slot_Mu_s1(tomMatch531NameNumberfreshSubject_1);{  tom.library.sl.Strategy  tomMatch531NameNumber_freshVar_1=tom_get_slot_Mu_s2(tomMatch531NameNumberfreshSubject_1);if (tom_is_fun_sym_MuVar(tomMatch531NameNumber_freshVar_0)) {{  tom.library.sl.Strategy  tom_m=tomMatch531NameNumberfreshSubject_1;if ( true ) {
 
         stack.addFirst(tom_m);
-        visitLight(tomMatch524NameNumber_freshVar_1,tom_m,0,set);
-        visitLight(tomMatch524NameNumber_freshVar_0,null,0,set);
+        visitLight(tomMatch531NameNumber_freshVar_1,tom_m,0,set);
+        visitLight(tomMatch531NameNumber_freshVar_0,null,0,set);
         stack.removeFirst();
         return;
-      }}}}}}if (tom_is_fun_sym_MuVar(tomMatch524NameNumberfreshSubject_1)) {{  String  tomMatch524NameNumber_freshVar_2=tom_get_slot_MuVar_var(tomMatch524NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}if (tom_is_fun_sym_MuVar(tomMatch531NameNumberfreshSubject_1)) {{  String  tomMatch531NameNumber_freshVar_2=tom_get_slot_MuVar_var(tomMatch531NameNumberfreshSubject_1);if ( true ) {
 
 
-        MuVar muvar = (MuVar)tomMatch524NameNumberfreshSubject_1;
+        MuVar muvar = (MuVar)tomMatch531NameNumberfreshSubject_1;
         if(!muvar.isExpanded()) {
           Iterator it = stack.iterator();
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch524NameNumber_freshVar_2)) {
+            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(tomMatch531NameNumber_freshVar_2)) {
               //System.out.println("MuVar: setInstance " + `n );
               muvar.setInstance(m);
               if(parent!=null) {

@@ -270,11 +270,11 @@ public class TomCamlGenerator extends TomGenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    if (tom_is_sort_TargetLanguage(tlCode)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch52NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if (tom_is_fun_sym_TL(tomMatch52NameNumberfreshSubject_1)) {{  String  tomMatch52NameNumber_freshVar_0=tom_get_slot_TL_Code(tomMatch52NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch52NameNumber_freshVar_1=tom_get_slot_TL_Start(tomMatch52NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch52NameNumber_freshVar_2=tom_get_slot_TL_End(tomMatch52NameNumberfreshSubject_1);if (tom_is_fun_sym_TextPosition(tomMatch52NameNumber_freshVar_1)) {{  int  tomMatch52NameNumber_freshVar_3=tom_get_slot_TextPosition_Line(tomMatch52NameNumber_freshVar_1);{  int  tom_startLine=tomMatch52NameNumber_freshVar_3;if (tom_is_fun_sym_TextPosition(tomMatch52NameNumber_freshVar_2)) {{  int  tomMatch52NameNumber_freshVar_4=tom_get_slot_TextPosition_Line(tomMatch52NameNumber_freshVar_2);if ( true ) {
+    if (tom_is_sort_TargetLanguage(tlCode)) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch55NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if (tom_is_fun_sym_TL(tomMatch55NameNumberfreshSubject_1)) {{  String  tomMatch55NameNumber_freshVar_0=tom_get_slot_TL_Code(tomMatch55NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch55NameNumber_freshVar_1=tom_get_slot_TL_Start(tomMatch55NameNumberfreshSubject_1);{  tom.engine.adt.tomsignature.types.Position  tomMatch55NameNumber_freshVar_2=tom_get_slot_TL_End(tomMatch55NameNumberfreshSubject_1);if (tom_is_fun_sym_TextPosition(tomMatch55NameNumber_freshVar_1)) {{  int  tomMatch55NameNumber_freshVar_3=tom_get_slot_TextPosition_Line(tomMatch55NameNumber_freshVar_1);{  int  tom_startLine=tomMatch55NameNumber_freshVar_3;if (tom_is_fun_sym_TextPosition(tomMatch55NameNumber_freshVar_2)) {{  int  tomMatch55NameNumber_freshVar_4=tom_get_slot_TextPosition_Line(tomMatch55NameNumber_freshVar_2);if ( true ) {
 
-        output.write(0,s, tom_startLine, tomMatch52NameNumber_freshVar_4- tom_startLine);
+        output.write(0,s, tom_startLine, tomMatch55NameNumber_freshVar_4- tom_startLine);
         return;
-      }}}}}}}}}}if (tom_is_fun_sym_ITL(tomMatch52NameNumberfreshSubject_1)) {{  String  tomMatch52NameNumber_freshVar_5=tom_get_slot_ITL_Code(tomMatch52NameNumberfreshSubject_1);if ( true ) {
+      }}}}}}}}}}if (tom_is_fun_sym_ITL(tomMatch55NameNumberfreshSubject_1)) {{  String  tomMatch55NameNumber_freshVar_5=tom_get_slot_ITL_Code(tomMatch55NameNumberfreshSubject_1);if ( true ) {
 
 
         output.write(s);
@@ -293,10 +293,10 @@ public class TomCamlGenerator extends TomGenericGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-        if (tom_is_sort_TomTerm(arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch53NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if (tom_is_fun_sym_Variable(tomMatch53NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch53NameNumber_freshVar_0=tom_get_slot_Variable_AstName(tomMatch53NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch53NameNumber_freshVar_0)) {{  String  tomMatch53NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch53NameNumber_freshVar_0);if ( true ) {
+        if (tom_is_sort_TomTerm(arg)) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch56NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if (tom_is_fun_sym_Variable(tomMatch56NameNumberfreshSubject_1)) {{  tom.engine.adt.tomname.types.TomName  tomMatch56NameNumber_freshVar_0=tom_get_slot_Variable_AstName(tomMatch56NameNumberfreshSubject_1);if (tom_is_fun_sym_Name(tomMatch56NameNumber_freshVar_0)) {{  String  tomMatch56NameNumber_freshVar_1=tom_get_slot_Name_String(tomMatch56NameNumber_freshVar_0);if ( true ) {
 
 
-            s.append(tomMatch53NameNumber_freshVar_1);
+            s.append(tomMatch56NameNumber_freshVar_1);
             break matchBlock;
           }}}}}if ( true ) {
 
