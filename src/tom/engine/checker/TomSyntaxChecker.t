@@ -46,6 +46,7 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
@@ -485,6 +486,7 @@ public class TomSyntaxChecker extends TomChecker {
    * Verifies the match construct
    * 1. Verifies all MatchConstraints
    * 2. Verifies all NumericConstraints (left side a variable, and the type of the right side numeric)
+   * 3. Verifies that in an OrConstraint, all the members have the same free variables
    */
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure{
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
@@ -586,9 +588,69 @@ public class TomSyntaxChecker extends TomChecker {
           // we now compare the pattern to its definition
           verifyMatchPattern(`left, typeMatch);
         }
+        
+        oc@OrConstraint(_*) -> {
+          if (!verifyOrConstraint(`oc)){
+            return;
+          }
+        }
       }
     } // for
   }
+  
+  /**
+   * Verifies that in an OrConstraint, all the members have the same free variables 
+   */
+  private boolean verifyOrConstraint(Constraint orConstraint) throws VisitFailure{
+    ArrayList<TomTerm> freeVarList1 = new ArrayList<TomTerm>();
+    ArrayList<TomTerm> freeVarList2 = new ArrayList<TomTerm>();
+    %match(orConstraint){
+      OrConstraint(_*,MatchConstraint(pattern,_),_*) -> {
+        `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+        if (!freeVarList1.isEmpty()) {
+          for(TomTerm term:freeVarList2){
+            if (!freeVarList1.contains(term)){
+              String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+              messageError(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.freeVarNotPresentInOr,
+                  new Object[]{varName});
+              return false;
+            }
+          }
+          for(TomTerm term:freeVarList1){
+            if (!freeVarList2.contains(term)){
+              String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+              messageError(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.freeVarNotPresentInOr,
+                  new Object[]{varName});
+              return false;
+            }
+          }          
+        }
+        freeVarList1 = (ArrayList<TomTerm>)freeVarList2.clone();
+        freeVarList2.clear();
+      }
+    }
+    return true;
+  }
+  
+  /**
+   * Collect the free variables in an constraint (do not inspect under a anti)  
+   */
+  %strategy CollectFreeVar(varList:Collection) extends Identity() {     
+    visit TomTerm {
+      v@(Variable|VariableStar)[] -> {
+        if (!varList.contains(`v)) { varList.add(`v); }     
+        throw new VisitFailure();
+      }
+      AntiTerm[] -> {        
+        throw new VisitFailure();
+      }
+    }
+  }
+
   
   /**
    * tries to give the type of the tomTerm received as parameter
@@ -743,6 +805,9 @@ public class TomSyntaxChecker extends TomChecker {
       c@(MatchConstraint|NumericConstraint)[] -> {        
         constrList.add(`c);         
       }      
+      oc@OrConstraint(_*) -> {
+        constrList.add(`oc);
+      }
     }// end visit
   }// end strategy   
   

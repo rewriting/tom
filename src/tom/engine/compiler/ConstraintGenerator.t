@@ -327,7 +327,7 @@ public class ConstraintGenerator {
   }// end strategy   
   
   /**
-   * Collect the free variables in a constraint (do not inspect under a anti)  
+   * Collect the free variables in an expression (do not inspect under a anti)  
    */
   %strategy CollectFreeVar(varList:Collection) extends Identity() {     
     visit Expression {
