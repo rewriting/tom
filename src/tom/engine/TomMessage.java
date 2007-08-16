@@ -170,8 +170,10 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage unknownRuleRhsVariable=
       new TomMessage("Rule right hand side uses an undeclared variable ''{0}''");
   
-  public static final TomMessage illegalAnnotationInAntiPattern=
-      new TomMessage("It is forbidden to make annotations under an anti symbol");  
+  public static final TomMessage illegalAnnotationInAntiPattern =
+      new TomMessage("It is forbidden to make annotations under an anti symbol");
+  public static final TomMessage freeVarNotPresentInOr =
+    new TomMessage("In a disjunction, the (free) variables of all the patterns must be the same. Variable ''{0}'' not found in all disjunctions");
   
   // compiler
   public static final TomMessage errorMissingSlotDecl=
