@@ -106,6 +106,10 @@ public class GomReferenceExpander {
     }
   }
 
+  private static String getArobase(){
+    return "@";
+  }
+
   %strategy ExpandSort(hookList:ArrayList) extends Identity() {
     visit Sort {
       sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],Operators=ops] -> {
@@ -307,8 +311,8 @@ public class GomReferenceExpander {
     }
 
     static class Info@sortName@{
-      public Position omega;
-      public @CodeGen.generateCode(`FullSortClass(sDecl))@ term;
+      public Position omegaRef;
+      public @CodeGen.generateCode(`FullSortClass(sDecl))@ sharedTerm;
     }
  
       %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail(){
@@ -346,35 +350,45 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Identity(){
+    %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Fail(){
       visit @sortName@ {
-        Lab@sortName@[label@sortName@=label,term@sortName@=subterm] -> {
-          if(label.equals(`label)){
-            info.term = `subterm;
-            info.omega = getEnvironment().getPosition();
+        term@getArobase()@Lab@sortName@[label@sortName@=label,term@sortName@=subterm] -> {
+         Position current = getEnvironment().getPosition();
+        if (label.equals(`label)) {
+          //test if it is not a cycle
+          if (!info.omegaRef.hasPrefix(current)) {
+           //return a ref
+            info.sharedTerm = `subterm;
             return `Ref@sortName@(label);
+          }
+          else {
+            //do not return a ref and stop to collect
+            return `term;  
           }
         }
       }
     }
-
+  }
 
     %strategy NormalizeLabel@sortName@(map:HashMap) extends Identity(){
       visit @sortName@ {
         Ref@sortName@[label@sortName@=label] -> {
           if (! map.containsKey(`label)){
-            Info@sortName@ info = new Info@sortName@();
-            Position pos = new Position(new int[]{});
             Position old = getEnvironment().getPosition();
             Position rootpos = new Position(new int[]{});
-            map.put(`label,old);
-            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));            
-            `Try(TopDown(CollectSubterm@sortName@(label,info))).visit(getEnvironment());            
+            Info@sortName@ info = new Info@sortName@();
+            info.omegaRef = old;
+            getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           
+            `OnceTopDown(CollectSubterm@sortName@(label,info)).visit(getEnvironment());            
             getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
-            return `Lab@sortName@(label,info.term);
+          //test if it is not a ref to a cycle
+          if (info.sharedTerm!=null) {
+            map.put(`label,old);
+            return `Lab@sortName@(label,info.sharedTerm);
           }
         }
-        Lab@sortName@[label@sortName@=label] -> {
+      }
+      Lab@sortName@[label@sortName@=label] -> {
           map.put(`label,getEnvironment().getPosition());
         }
       }

@@ -406,17 +406,25 @@ import java.util.*;
   }
 
   static class Info {
-    public Position omega;
-    public Term term;
+    public Position omegaRef;
+    public Term sharedTerm;
   }
 
-  %strategy CollectSubterm(label:String,info:Info) extends Identity(){
+  %strategy CollectSubterm(label:String,info:Info) extends Fail(){
     visit Term {
-      LabTerm[l=label,t=subterm] -> {
-        if(label.equals(`label)){
-          info.term = `subterm;
-          info.omega = getEnvironment().getPosition();
-          return `RefTerm(label);
+      term@LabTerm[l=label,t=subterm] -> {
+        Position current = getEnvironment().getPosition();
+        if (label.equals(`label)) {
+          //test if it is not a cycle
+          if (!info.omegaRef.hasPrefix(current)) {
+           //return a ref
+            info.sharedTerm = `subterm;
+            return `RefTerm(label);
+          }
+          else {
+            //do not return a ref and stop to collect
+            return `term;  
+          }
         }
       }
     }
@@ -426,15 +434,18 @@ import java.util.*;
     visit Term {
       RefTerm[l=label] -> {
         if (! map.containsKey(`label)){
-          Info info = new Info();
-          Position pos = new Position(new int[]{});
           Position old = getEnvironment().getPosition();
           Position rootpos = new Position(new int[]{});
-          map.put(`label,old);
-          getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));            
-          `Try(TopDown(CollectSubterm(label,info))).visit(getEnvironment());            
+          Info info = new Info();
+          info.omegaRef = old;
+          getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           
+          `OnceTopDown(CollectSubterm(label,info)).visit(getEnvironment());            
           getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
-          return `LabTerm(label,info.term);
+          //test if is is not a ref to a cycle
+          if (info.sharedTerm!=null) {
+            map.put(`label,old);
+            return `LabTerm(label,info.sharedTerm);
+          }
         }
       }
       LabTerm[l=label] -> {
@@ -499,16 +510,16 @@ import java.util.*;
     }
   }
 
-    public static Term normalize(Term path){
-      %match(path) {
-        PathTerm(X*,x,y,Y*) -> {
-          if (`x==-`y) {
-            return normalize(`PathTerm(X*,Y*));
-          }
+  public static Term normalize(Term path){
+    %match(path) {
+      PathTerm(X*,x,y,Y*) -> {
+        if (`x==-`y) {
+          return normalize(`PathTerm(X*,Y*));
         }
       }
-      return path;
     }
+    return path;
+  }
 
 
   private Logger getLogger() {

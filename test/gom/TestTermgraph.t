@@ -63,6 +63,12 @@ public class TestTermgraph extends TestCase {
     assertEquals(expanded,mAbstractType.expand(subject));
   }
 
+  public void testExpandCycle() {
+    Term subject = `LabTerm("l",f(RefTerm("l")));
+    Term expanded = `f(PathTerm(-1));
+    assertEquals(expanded,mAbstractType.expand(subject));
+  }
+
   public void testGraphRules1() {
     Term t1 = (Term) mAbstractType.expand(`g(RefTerm("a"),LabTerm("a",a())));
     try {
