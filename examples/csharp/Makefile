@@ -8,10 +8,10 @@ Test.exe: Test.cs term.dll tom-dist.dll
 
 Test.cs: Test.t term
 	tom -csCode -o Test.cs Test.t
-	sed -i s/instanceof/is/g Test.cs
-	sed -i s/boolean/bool/g Test.cs
-	sed -i s/equals/Equals/g Test.cs
-	sed -i s/super/base/g Test.cs  # should not exist, bad backend/compiler design
+	sed -i -e 's/instanceof/is/g' Test.cs
+	sed -i -e 's/boolean/bool/g' Test.cs
+	sed -i -e 's/equals/Equals/g' Test.cs
+	sed -i -e 's/super/base/g' Test.cs  # should not exist, bad backend/compiler design
 
 term: term.gom
 	gom term.gom
