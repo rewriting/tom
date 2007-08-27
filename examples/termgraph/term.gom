@@ -4,6 +4,16 @@ Term = a() | b() | c() | d()
      | f(arg1:Term)
      | g(arg1:Term, arg2:Term)
 
+List = doublelinkedlist(previous:List,element:List,next:List)
+     | nil()
+     | insert(element:List,list:List)
+     | aa() | bb() | cc() | dd()
+
 sort Term: graphrules(GraphRule,Identity) {
   g(x,y) -> f(x)
+}
+
+sort List: graphrules(Insert,Identity) {
+  l:doublelinkedlist(previous,y,insert(x,doublelinkedlist(&l,z,next))) ->
+  l1:doublelinkedlist(previous,y,l2:doublelinkedlist(&l1,x,doublelinkedlist(&l2,z,next)))  
 }
