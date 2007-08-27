@@ -298,21 +298,21 @@ writer.write(%[
   /*
    * to get a Collection for an immutable list
    */
-  public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollectioncons() {
-    return new Collectioncons(this);
+  public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollection@className()@() {
+    return new Collection@className()@(this);
   }
 
   /*
    * private static class
    */
-  private static class Collectioncons implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> {
+  private static class Collection@className()@ implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> {
     private @className()@ list;
 
     public @className()@ get@className(sortName)@() {
       return list; 
     }
 
-    public Collectioncons(@className()@ list) {
+    public Collection@className()@(@className()@ list) {
       this.list = list;
     }
 

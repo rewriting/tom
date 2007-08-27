@@ -1,3 +1,14 @@
+2007-08-25  pem
+	* modified Gom such that generated sorts implement 
+	  the Collection interface
+	* use getCollection<op> to get a mutable collection
+	* and get<sort> to get back to the immutable implementation
+  * for(<T> e:c) { ... } can be used
+	* compatibility issue: "Empty" can non longer be used for a constructor
+	  since two isEmpty() are generated
+	* Note: feel free to improve the implementation!
+	* added a test
+
 2007-07-20  tonio <reilles@loria.fr>
   * bootinstall
   * add gomantlradapter, a tool to allow creating gom trees in antlr's rewrite
