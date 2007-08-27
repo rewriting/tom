@@ -106,27 +106,6 @@ writer.write(%[
     }
     }
 
-  public @domainClassName@[] toArray() {
-    @domainClassName@[] array;
-    if(this instanceof @fullClassName(cons.getClassName())@) {
-      @domainClassName@ h = ((@fullClassName(cons.getClassName())@)this).getHead@className()@();
-      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
-      if (tl instanceof @className()@) {
-        @domainClassName@[] tailArray =((@className()@)tl).toArray();
-        array = new @domainClassName@[1+tailArray.length];
-        array[0]=h;
-        for(int i =0;i<tailArray.length;i++){
-          array[i+1]=tailArray[i];
-        }
-      } else {
-        array = new @domainClassName@[1];
-        array[0]=h;
-      }
-    } else {
-      array = new @domainClassName@[0];
-    }
-    return array;
-  }
 
   public static @fullClassName(sortName)@ fromArray(@domainClassName@[] array) {
     @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
@@ -209,10 +188,217 @@ writer.write(%[
     }
     return null;
   }
+
+  /*
+   * methods from Collection
+   */
+  public boolean containsAll(java.util.Collection c) {
+    java.util.Iterator it = c.iterator();
+    while(it.hasNext()) {
+      if(!this.contains(it.next())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public boolean contains(Object o) {
+    @fullClassName(sortName)@ cur = this;
+    if(cur instanceof @fullClassName(cons.getClassName())@) {
+      while(cur instanceof @fullClassName(cons.getClassName())@) {
+        if( ((@fullClassName(cons.getClassName())@)cur).getHead@className()@() == o ) {
+          return true;
+        }
+        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+      }
+    }
+    return false;
+  }
+
+  //public boolean equals(Object o) { return this == o; }
+
+  //public int hashCode() { return hashCode(); }
+
+  public boolean isEmpty() { return isEmpty@className()@() ; }
+
+  public java.util.Iterator<@primitiveToReferenceType(domainClassName)@> iterator() {
+    return new java.util.Iterator<@primitiveToReferenceType(domainClassName)@>() {
+      @fullClassName(sortName)@ list = @className()@.this;
+
+      public boolean hasNext() {
+        return list.isCons@className()@();
+      }
+
+      public @primitiveToReferenceType(domainClassName)@ next() {
+        if(list.isEmpty@className()@()) {
+          throw new java.util.NoSuchElementException();
+        }
+        @primitiveToReferenceType(domainClassName)@ head = ((@fullClassName(cons.getClassName())@)list).getHead@className()@();
+        list = ((@fullClassName(cons.getClassName())@)list).getTail@className()@();
+        return head;
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException("Not yet implemented");
+      }
+    };
+
+  }
+
+  public boolean remove(Object o) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean removeAll(java.util.Collection c) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean retainAll(java.util.Collection c) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public int size() { return length(); }
+
+  public Object[] toArray() {
+    int size = this.length();
+    Object[] array = new Object[size];
+    int i=0;
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(sortName)@ cur = this;
+      while(cur instanceof @fullClassName(cons.getClassName())@) {
+        @primitiveToReferenceType(domainClassName)@ elem = ((@fullClassName(cons.getClassName())@)cur).getHead@className()@();
+        array[i] = elem;
+        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        i++;
+      }
+    }
+    return array;
+  }
+
+  public Object[] toArray(Object[] array) {
+    int size = this.length();
+    if (array.length < size) {
+      array = (Object[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
+    } else if (array.length > size) {
+      array[size] = null;
+    }
+    int i=0;
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(sortName)@ cur = this;
+      while(cur instanceof @fullClassName(cons.getClassName())@) {
+        @primitiveToReferenceType(domainClassName)@ elem = ((@fullClassName(cons.getClassName())@)cur).getHead@className()@();
+        array[i] = elem;
+        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
+        i++;
+      }
+    }
+    return array;
+  }
+
+  /*
+   * to get a Collection for an immutable list
+   */
+  public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollectioncons() {
+    return new Collectioncons(this);
+  }
+
+  /*
+   * private static class
+   */
+  private static class Collectioncons implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> {
+    private @className()@ list;
+
+    public @className()@ get@className(sortName)@() {
+      return list; 
+    }
+
+    public Collectioncons(@className()@ list) {
+      this.list = list;
+    }
+
+    /**
+     * generic
+     */
+  public boolean addAll(java.util.Collection<? extends @primitiveToReferenceType(domainClassName)@> c) {
+    boolean modified = false;
+    java.util.Iterator<? extends @primitiveToReferenceType(domainClassName)@> it = c.iterator();
+    while(it.hasNext()) {
+      modified = modified || add(it.next());
+    }
+    return modified;
+  }
+
+  public boolean contains(Object o) {
+    return get@className(sortName)@().contains(o);
+  }
+
+  public boolean containsAll(java.util.Collection<?> c) {
+    return get@className(sortName)@().containsAll(c);
+  }
+
+  public boolean equals(Object o) { return get@className(sortName)@().equals(o); }
+
+  public int hashCode() { return get@className(sortName)@().hashCode(); }
+
+  public java.util.Iterator<@primitiveToReferenceType(domainClassName)@> iterator() {
+    return get@className(sortName)@().iterator();
+  }
+
+  public int size() { return get@className(sortName)@().size(); }
+
+  public Object[] toArray() { return get@className(sortName)@().toArray(); }
+
+  public <T> T[] toArray(T[] array) {
+    int size = get@className(sortName)@().length();
+    if (array.length < size) {
+      array = (T[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
+    } else if (array.length > size) {
+      array[size] = null;
+    }
+    int i=0;
+    for(java.util.Iterator it=iterator() ; it.hasNext() ; i++) {
+        array[i] = (T)it.next();
+    }
+    return array;
+  }
+
+    /**
+     * Collection
+     */
+
+    public boolean add(@primitiveToReferenceType(domainClassName)@ o) {
+      if(o instanceof @primitiveToReferenceType(domainClassName)@) {
+        list = (@className()@) @fullClassName(cons.getClassName())@.make((@domainClassName@)o,list);
+        return true;
+      }
+      return false;
+    }
+
+    public void clear() {
+      list = (@className()@) @fullClassName(empty.getClassName())@.make();
+    }
+
+    public boolean isEmpty() { return list.isEmpty@className()@(); }
+
+    public boolean remove(Object o) {
+      throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public boolean removeAll(java.util.Collection<?> c) {
+      throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public boolean retainAll(java.util.Collection<?> c) {
+      throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+  }
+
 ]%);
     if (! hooks.isEmptyconcHook()) {
       mapping.generate(writer); 
     }
+
   }
 
   private String toStringChild(String buffer, String element) {

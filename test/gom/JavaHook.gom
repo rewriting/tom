@@ -1,12 +1,12 @@
 module JavaHook
 abstract syntax
-Term = Empty()
+Term = EmptyTerm()
      | Unary(slot:Term)
      | Binary(ls:Term,rs:Term)
      | Ternary(ls:Term,cs:Term,rs:Term)
      | Vary(Term*)
-Empty:make() {
-  System.out.println("Empty()");
+EmptyTerm:make() {
+  System.out.println("EmptyTerm()");
 }
 Binary:make(l,r) {
   System.out.println("Binary("+l+","+r+")");

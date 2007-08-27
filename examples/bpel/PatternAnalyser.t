@@ -54,7 +54,7 @@ public class PatternAnalyser{
 
   %strategy Combine(wfg:Wfg) extends `Fail(){
     visit Wfg{
-      Empty() -> {
+      EmptyWfg() -> {
         return wfg; 
       }
 
@@ -108,7 +108,7 @@ public class PatternAnalyser{
   }
 
   public static Wfg bpelToWfg(TNode term, ExplicitConditions explicitCond){
-    Wfg wfg  = `Empty();
+    Wfg wfg  = `EmptyWfg();
     Wfg wfglist = `ConcWfg();
 
     %match(TNode term){

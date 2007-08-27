@@ -352,6 +352,20 @@ public abstract class TemplateClass {
     }
   }
 
+  protected String primitiveToReferenceType(String classname) {
+    %match(classname) {
+      "byte" -> { return "java.lang.Byte"; }
+      "short" -> { return "java.lang.Short"; }
+      "int" -> { return "java.lang.Integer"; }
+      "long" -> { return "java.lang.Long"; }
+      "float" -> { return "java.lang.Float"; }
+      "double" -> { return "java.lang.Double"; }
+      "boolean" -> { return "java.lang.Boolean"; }
+      "char" -> { return "java.lang.Character"; }
+    }
+    return classname;
+  }
+
   protected String fileName() {
     return fullClassName().replace('.',File.separatorChar)+".java";
   }
@@ -384,6 +398,10 @@ public abstract class TemplateClass {
 
   public String isOperatorMethod(ClassName opName) {
     return "is"+className(opName);
+  }
+
+  public String getCollectionMethod(ClassName opName) {
+    return "getCollection"+className(opName);
   }
 
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)

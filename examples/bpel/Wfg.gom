@@ -5,7 +5,7 @@ abstract syntax
 Wfg = WfgNode(Wfg*)
     | Activity(name:String,incond:Condition,outcond:Condition)
     | ConcWfg(Wfg*)
-    | Empty()
+    | EmptyWfg()
 
 Condition = and(c1:Condition,c2:Condition) 
           | or(c1:Condition,c2:Condition)
@@ -24,7 +24,7 @@ WfgNode:make_insert(node,wfg) {
 
 ConcWfg:make_insert(wfg,wfglist) {
   %match(Wfg wfg){
-    Empty() -> {
+    EmptyWfg() -> {
       return wfglist;
     }
   }

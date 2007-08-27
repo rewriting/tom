@@ -73,7 +73,7 @@ package @getPackage()@;
 import @getPackage()@.@className().toLowerCase()@.*;
 import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 
-public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@{
+public abstract class @className()@ extends @fullClassName(abstractType)@ implements java.util.Collection@super.generateInterface()@ {
 
 @generateBlock()@
 
@@ -102,16 +102,10 @@ writer.write(%[
 ]%);
     }
     // methods for each slot
-    while (!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
-
-      /* Do not generate "hasOp" methods for now
-      writer.write("\tpublic boolean "+hasMethod(slot)+"() {\n");
-      writer.write("\t\treturn false;\n");
-      writer.write("\t}\n");
-      writer.write("\n");
-      */
+    SlotFieldList sl = slotList;
+    while (!sl.isEmptyconcSlotField()) {
+      SlotField slot = sl.getHeadconcSlotField();
+      sl = sl.getTailconcSlotField();
 
       writer.write(%[
   public @slotDomain(slot)@ @getMethod(slot)@() {
@@ -157,17 +151,95 @@ writer.write(%[
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
   }
+
+  /**
+   * Collection
+   */
+
+  public boolean add(Object o) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean addAll(java.util.Collection c) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public void clear() {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean containsAll(java.util.Collection c) {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
+
+  public boolean contains(Object o) {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
+
+  public boolean equals(Object o) { return this == o; }
+
+  public int hashCode() { return hashCode(); }
+
+  public boolean isEmpty() { return false; }
+
+  public java.util.Iterator iterator() {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
+
+  public boolean remove(Object o) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean removeAll(java.util.Collection c) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean retainAll(java.util.Collection c) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public int size() { return length(); }
+
+  public Object[] toArray() {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
+
+  public Object[] toArray(Object[] a) {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+  ]%);
+
+    // methods for each variadic operator
+    consum = variadicOperatorList;
+    while(!consum.isEmptyconcClassName()) {
+      ClassName operatorName = consum.getHeadconcClassName();
+      consum = consum.getTailconcClassName();
+      // look for the corresponding domain
+matchblock: {
+      %match(slotList) {
+        concSlotField(_*,slot@SlotField[Name=opname,Domain=domain],_*) -> {
+          if(`opname.equals("Head"+operatorName.getName())) {
+      writer.write(%[
+  public java.util.Collection<@primitiveToReferenceType(slotDomain(`slot))@> @getCollectionMethod(operatorName)@() {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
 ]%);
+      break matchblock;
+          }
+        }
+      }
+            }
+    }
+
     if (!hooks.isEmptyconcHook()) {
       mapping.generate(writer); 
     }
   }
-
-protected String generateInterface() {
-  String interfaces = super.generateInterface();
-  if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
-  else return interfaces;
-}
 
   private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
     ClassNameList consum = `concClassName(operatorList*,variadicOperatorList*);

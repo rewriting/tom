@@ -1,5 +1,5 @@
 module List
 imports int
 abstract syntax
-List = Empty()
+List = Nil()
      | Cons(head:int,tail:List)

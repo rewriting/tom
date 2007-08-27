@@ -19,52 +19,52 @@ public class TestJavaHook extends TestCase {
     PrintStream tmpOut = System.out;
     ByteArrayOutputStream res = new ByteArrayOutputStream();
     System.setOut(new PrintStream(res));
-    `Empty();
+    `EmptyTerm();
     System.setOut(tmpOut);
-    assertEquals(res.toString(),"Empty()" + newline);
+    assertEquals(res.toString(),"EmptyTerm()" + newline);
   }
 
   public void testUnaryMakeHook() {
     PrintStream tmpOut = System.out;
     ByteArrayOutputStream res = new ByteArrayOutputStream();
     System.setOut(new PrintStream(res));
-    Term empty = `Unary(Empty());
+    Term empty = `Unary(EmptyTerm());
     System.setOut(tmpOut);
-    assertEquals(res.toString(),"Empty()"+newline+"Unary(Empty())" + newline);
+    assertEquals(res.toString(),"EmptyTerm()"+newline+"Unary(EmptyTerm())" + newline);
   }
 
   public void testBinaryMakeBeforeHook() {
     PrintStream tmpOut = System.out;
     ByteArrayOutputStream res = new ByteArrayOutputStream();
     System.setOut(new PrintStream(res));
-    Term empty = `Binary(Empty(),Empty());
+    Term empty = `Binary(EmptyTerm(),EmptyTerm());
     System.setOut(tmpOut);
-    assertEquals(res.toString(),"Empty()" + newline + "Empty()" + newline + "Binary(Empty(),Empty())" + newline );
+    assertEquals(res.toString(),"EmptyTerm()" + newline + "EmptyTerm()" + newline + "Binary(EmptyTerm(),EmptyTerm())" + newline );
   }
 
   public void testTernaryMakeBeforeHook() {
     PrintStream tmpOut = System.out;
     ByteArrayOutputStream res = new ByteArrayOutputStream();
     System.setOut(new PrintStream(res));
-    Term empty = `Ternary(Empty(),Empty(),Binary(Empty(),Unary(Empty())));
+    Term empty = `Ternary(EmptyTerm(),EmptyTerm(),Binary(EmptyTerm(),Unary(EmptyTerm())));
     System.setOut(tmpOut);
     assertEquals(res.toString(),
-        "Empty()"+newline +"Empty()"+newline +"Empty()"+newline +"Empty()"+newline +"Unary(Empty())"+newline +"Binary(Empty(),Unary(Empty()))"+newline +"Ternary(Empty(),Empty(),Binary(Empty(),Unary(Empty())))" + newline);
+        "EmptyTerm()"+newline +"EmptyTerm()"+newline +"EmptyTerm()"+newline +"EmptyTerm()"+newline +"Unary(EmptyTerm())"+newline +"Binary(EmptyTerm(),Unary(EmptyTerm()))"+newline +"Ternary(EmptyTerm(),EmptyTerm(),Binary(EmptyTerm(),Unary(EmptyTerm())))" + newline);
   }
 
   public void testVaryMakeInsertHook() {
     PrintStream tmpOut = System.out;
     ByteArrayOutputStream res = new ByteArrayOutputStream();
     System.setOut(new PrintStream(res));
-    Term empty = `Vary(Empty(),Empty(),Empty(),Empty());
+    Term empty = `Vary(EmptyTerm(),EmptyTerm(),EmptyTerm(),EmptyTerm());
     System.setOut(tmpOut);
-    assertEquals(res.toString(),"Empty()"+ newline +
-        "Empty()"+ newline +
-        "Empty()"+ newline +
-        "Empty()"+ newline +
-        "inserting(Empty(),Vary())" + newline +
-        "inserting(Empty(),Vary(Empty()))" + newline +
-        "inserting(Empty(),Vary(Empty(),Empty()))" + newline +
-        "inserting(Empty(),Vary(Empty(),Empty(),Empty()))" + newline);
+    assertEquals(res.toString(),"EmptyTerm()"+ newline +
+        "EmptyTerm()"+ newline +
+        "EmptyTerm()"+ newline +
+        "EmptyTerm()"+ newline +
+        "inserting(EmptyTerm(),Vary())" + newline +
+        "inserting(EmptyTerm(),Vary(EmptyTerm()))" + newline +
+        "inserting(EmptyTerm(),Vary(EmptyTerm(),EmptyTerm()))" + newline +
+        "inserting(EmptyTerm(),Vary(EmptyTerm(),EmptyTerm(),EmptyTerm()))" + newline);
   }
 }

@@ -1,6 +1,6 @@
 %include { boolean.tom }
 %include { float.tom }
-%include { Collection.tom }
+%include { util/types/Collection.tom }
 
 /*******************************************************************************/
 

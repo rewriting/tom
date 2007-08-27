@@ -47,11 +47,11 @@ public class TestMap extends TestCase {
   %include { java/util/types/Map.tom }
 
   public void testMap() {
-    Elist subject = `Cons(a(),Cons(b(),Cons(b(),Cons(c(),Empty()))));
+    Elist subject = `Cons(a(),Cons(b(),Cons(b(),Cons(c(),Nil()))));
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
-    Strategy maps = `mu(MuVar("x"),Choice(_Cons(Log(abag,bbag,cbag),MuVar("x")),_Empty()));
+    Strategy maps = `mu(MuVar("x"),Choice(_Cons(Log(abag,bbag,cbag),MuVar("x")),_Nil()));
     try {
       maps.visitLight(subject);
     } catch(VisitFailure e) {
@@ -76,14 +76,14 @@ public class TestMap extends TestCase {
         Cons(f(f(c(),1,f(b(),5,a())),4,f(a(),2,b())),
           Cons(b(),
             Cons(c(),
-              Empty()))));
+              Nil()))));
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
     Strategy maps = `mu(MuVar("x"),
         Choice(
           _Cons(BottomUp(Log(abag,bbag,cbag)),MuVar("x")),
-          _Empty()
+          _Nil()
         ));
     try {
       maps.visitLight(subject);
@@ -146,7 +146,7 @@ public class TestMap extends TestCase {
         Cons(f(f(c(),1,f(b(),5,a())),4,f(a(),2,b())),
           Cons(b(),
             Cons(c(),
-              Empty()))));
+              Nil()))));
     Strategy maps = `mu(MuVar("x"),
         Choice(
           _Cons(
@@ -156,7 +156,7 @@ public class TestMap extends TestCase {
                 Identity(),
                 _f(Identity(),Identity(),Make_a())
               )),MuVar("x")),
-          _Empty()
+          _Nil()
         ));
     try {
     subject = (Elist) maps.visitLight(subject);
@@ -178,7 +178,7 @@ public class TestMap extends TestCase {
         Cons(f(f(c(),1,f(b(),5,a())),4,f(a(),2,b())),
           Cons(b(),
             Cons(c(),
-              Empty()))));
+              Nil()))));
     /* encode the rule f(_,b) -> a */
     Strategy rule = `BottomUp(
         Try(
@@ -193,7 +193,7 @@ public class TestMap extends TestCase {
           Cons(f(f(c(),1,f(b(),5,a())),4,a()),
             Cons(b(),
               Cons(c(),
-                Empty())))),
+                Nil())))),
         subject);
   }
 

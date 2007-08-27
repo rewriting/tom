@@ -1,7 +1,7 @@
 module Elist
 imports int
 abstract syntax
-Elist = Empty()
+Elist = Nil()
       | Cons(head:E,tail:Elist)
 E = a()
   | b()

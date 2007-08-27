@@ -32,7 +32,7 @@ The following Ant targets are available:
 
 5. Check the DDL that was also exported to the file helloworld-jpa-ddl.sql
 
-6. Run the example with ant run and read the log output on the console
+6. Run the example with ant runHWAccount and read the log output on the console
 
 7. Reduce/increase the log output by tweaking src/etc/log4j.properties and
    src/etc/META-INF/persistence.xml
