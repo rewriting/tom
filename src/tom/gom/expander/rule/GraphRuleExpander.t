@@ -260,8 +260,8 @@ import java.util.*;
                 getEnvironment().followPath(omega.inverse());
 
                 /*3. construct tt=SubstTerm(t,r) */
-                @sortname@ expandedLhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(`lhs)@);
-                @sortname@ expandedRhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(`rhs)@);
+                @sortname@ expandedLhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(null,0,`lhs)@);
+                @sortname@ expandedRhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(null,0,`rhs)@);
                 @sortname@ r = computeRhsWithPath(expandedLhs,expandedRhs,omega);
                 @sortname@ tt = `Subst@sortname@((@sortname@)getEnvironment().getSubject(),r);
                 
@@ -337,7 +337,7 @@ import java.util.*;
     return output.toString();
   }
 
-  private String genTermWithExplicitVar(Term term) {
+  private String genTermWithExplicitVar(String fathersymbol, int omega, Term term) {
     StringBuffer output = new StringBuffer();
     %match(term) {
       LabTerm(label,term) -> {
@@ -345,7 +345,7 @@ import java.util.*;
         output.append("(");
         output.append("\""+`label+"\"");
         output.append(",");
-        output.append(genTermWithExplicitVar(`term));
+        output.append(genTermWithExplicitVar(null,0,`term));
         output.append(")");
       }
       RefTerm(label) -> {
@@ -357,11 +357,14 @@ import java.util.*;
       Appl(symbol,args) -> {
         output.append(`symbol);
         output.append("(");
-        output.append(genTermListWithExplicitVar(`args));
+        output.append(genTermListWithExplicitVar(`symbol,`args));
         output.append(")");
       }
       Var(name) -> {
-        output.append("Var"+sortname+"(\""+`name+"\")");
+        //the variable must be replaced by a meta representation of the var
+        //in the signature of the corresponding  sort
+        String sortvar = getSort(fathersymbol,omega); 
+        output.append("Var"+sortvar+"(\""+`name+"\")");
       }
       BuiltinInt(i) -> {
         output.append(`i);
@@ -373,16 +376,17 @@ import java.util.*;
     return output.toString();
   }
 
-  private String genTermListWithExplicitVar(TermList list) {
+  private String genTermListWithExplicitVar(String fathersymbol, TermList list) {
     StringBuffer output = new StringBuffer();
+    int omega=1;
     %match(list) {
       TermList() -> { return ""; }
-      TermList(h,t*) -> {
-        output.append(genTermWithExplicitVar(`h));
+      TermList(_*,h,t*) -> {
+        output.append(genTermWithExplicitVar(fathersymbol,omega,`h));
+        omega++;
         if (!`t.isEmptyTermList()) {
           output.append(", ");
         }
-        output.append(genTermListWithExplicitVar(`t*));
       }
     }
     return output.toString();
@@ -521,6 +525,28 @@ import java.util.*;
     return path;
   }
 
+  private String getSort(String symbolOperator,int omega) {
+    %match(moduleList) {
+      concModule(_*,Module[Sorts=concSort(_*,Sort[Operators=concOperator(_*,  OperatorDecl[Name=name,Prod=prod],_*)],_*)],_*) -> {
+        if(`name.equals(symbolOperator)) {
+          int count=1;
+          %match(prod) {
+            Variadic(sortVar) -> {
+              return `sortVar.getName();
+            }
+            Slots(concSlot(_*,Slot[Sort=SortDecl[Name=type]],_*)) -> {
+              if (count==omega) {
+                return `type;
+              } else {
+                count++;
+              }
+            }
+          }
+        }
+      }
+    }
+    throw new RuntimeException("cannot determine the sort of the "+omega+"th child of the constructor "+symbolOperator);
+  }
 
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

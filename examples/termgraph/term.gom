@@ -4,10 +4,9 @@ Term = a() | b() | c() | d()
      | f(arg1:Term)
      | g(arg1:Term, arg2:Term)
 
-List = doublelinkedlist(previous:List,element:List,next:List)
+List = doublelinkedlist(previous:List,element:Term,next:List)
      | nil()
-     | insert(element:List,list:List)
-     | aa() | bb() | cc() | dd()
+     | insert(element:Term,list:List)
 
 sort Term: graphrules(GraphRule,Identity) {
   g(x,y) -> f(x)

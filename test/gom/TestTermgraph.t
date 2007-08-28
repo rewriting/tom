@@ -45,11 +45,15 @@ public class TestTermgraph extends TestCase {
       | c()
       | f(arg1:Term)
       | g(arg1:Term, arg2:Term)
+      | h(arg:Term2)
+      
+      Term2 = d()
 
       sort Term: graphrules(Test,Identity) {
           g(l:a(),&l) -> f(b())
           f(g(g(a(),&l),l:b())) -> f(c())
           g(x,y) -> f(x)
+          h(x) -> f(h(x))
       }
   }
 
@@ -112,4 +116,16 @@ public class TestTermgraph extends TestCase {
       fail();
     }
   }
+
+  public void testGraphRules5() {
+    Term t5 = `h(d());
+    try {
+      assertEquals(
+          `f(h(d())),
+          Term.Test().visit(t5));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
 }

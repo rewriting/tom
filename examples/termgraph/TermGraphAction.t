@@ -108,7 +108,7 @@ public class TermGraphAction {
   }
 
   public static void main(String[] args) {
-    List abcd = `LabList("1", doublelinkedlist(nil(),aa(),LabList("2",insert(aa(),LabList("3",doublelinkedlist(RefList("1"),bb(),LabList("4",doublelinkedlist(RefList("3"),cc(),doublelinkedlist(RefList("4"),dd(),nil())))))))));
+    List abcd = `LabList("1", doublelinkedlist(nil(),a(),LabList("2",insert(a(),LabList("3",doublelinkedlist(RefList("1"),b(),LabList("4",doublelinkedlist(RefList("3"),c(),doublelinkedlist(RefList("4"),d(),nil())))))))));
     System.out.println("Original list: "+termAbstractType.expand(abcd));
     try {
       System.out.println("Rachid insertion: "+termAbstractType.expand((List) `TopDown(Insertion()).visit(abcd)));
