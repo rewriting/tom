@@ -176,13 +176,13 @@ public class ConstraintGenerator {
    * varm = null;
    * int counter = 0;
    * do{ // n is the number of 'or'
-   *    if (counter == 0) {
+   *    if (counter >= 0 && counter <=0 ) { //generated like this because if we use "counter == 0", we have to include "int.tom" 
    *        if ( code_for_first_constraint_in_disjunction ){
    *            flag = true;
    *        }
    *    }
    *    ....
-   *    if (counter == n-1) {
+   *    if (counter >= n-1 && counter <= n-1) {
    *        if ( code_for_n_constraint_in_disjunction ){
    *            flag = true;
    *        }
@@ -201,8 +201,10 @@ public class ConstraintGenerator {
     int cnt = 0;
     %match(orConnector){
       OrConnector(_*,x,_*) -> {
+        TomTerm counterValue = `Variable(concOption(),Name(cnt+""),intType,concConstraint());
         instruction = `AbstractBlock(concInstruction(instruction,
-            If(EqualTerm(intType,counter,Variable(concOption(),Name(cnt+""),intType,concConstraint())),
+            If(And(GreaterOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue)),
+                  LessOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue))),
                 generateAutomata(x,assignFlagTrue),Nop())));
         cnt++;
       }
@@ -214,12 +216,6 @@ public class ConstraintGenerator {
     Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());    
     instruction = `AbstractBlock(concInstruction(instruction,counterIncrement));
     instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter),TomTermToExpression(Variable(concOption(),Name(cnt+""),intType,concConstraint()))));
-    
-    // make sure that equal_int function is generated
-    TomTypeDefinition typeDefinition = `TypeDefinition(ConstraintCompiler.getIntType(), EmptyForward());
-    if ( !ConstraintCompiler.getSymbolTable().isUsedTypeDefinition(typeDefinition) ) {
-      ConstraintCompiler.getSymbolTable().setUsedTypeDefinition(typeDefinition);
-    }
     
     // add fresh variables' declarations
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
