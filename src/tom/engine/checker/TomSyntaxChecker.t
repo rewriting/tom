@@ -600,13 +600,20 @@ public class TomSyntaxChecker extends TomChecker {
   
   /**
    * Verifies that in an OrConstraint, all the members have the same free variables 
+   * (only the match constraints have free variables - because only this type
+   * of constraints can generate assignments)
    */
   private boolean verifyOrConstraint(Constraint orConstraint) throws VisitFailure{
     ArrayList<TomTerm> freeVarList1 = new ArrayList<TomTerm>();
     ArrayList<TomTerm> freeVarList2 = new ArrayList<TomTerm>();
     %match(orConstraint){
-      OrConstraint(_*,MatchConstraint(pattern,_),_*) -> {
-        `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+      OrConstraint(_*,x,_*) -> {
+        // we collect the free vars only from match constraints
+        // and we check these variables for numeric constraints also
+        // ex: 'y << a() && x > 3' should generate an error 
+        %match(x){
+          MatchConstraint(pattern,_) -> {`TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);}
+        }        
         if (!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2){
             if (!freeVarList1.contains(term)){
