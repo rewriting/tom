@@ -144,7 +144,9 @@ matchSlot:  %match(slot,TomName name) {
   
   %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity() {
     visit Constraint {
-      MatchConstraint(v@VariableStar[AstName=name],p) -> {        
+      // we can have the same variable both as variablestar and as variable
+      // we know that this is ok, because the type checker authorized it
+      MatchConstraint(v@(Variable|VariableStar)[AstName=name],p) -> {        
         if(`name == varName) {                                  
           return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
         }                                 
