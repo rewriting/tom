@@ -93,116 +93,42 @@ public class GraphRuleExpander {
         %[
    %include {sl.tom }
 
-    %typeterm Position{
-        implement {Position}
-        is_sort(t)     { t instanceof Position }
-    }
-
-    private static @sortname@ Swap(Position p1, Position p2, @sortname@ subject) {
-        try {
-          @sortname@ updatedSubject =  (@sortname@) `TopDown(Sequence(UpdatePos(p1,p2),UpdatePos2(p1,p2))).visit(subject);
-          @sortname@ subterm_p1 = (@sortname@) p1.getSubterm().visit(updatedSubject);
-          @sortname@ subterm_p2 = (@sortname@) p2.getSubterm().visit(updatedSubject);
-          return (@sortname@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
-          } catch (VisitFailure e) { return null; }
-    }
-
-
-   %strategy Normalize() extends Identity(){
-        visit @sortname@ {
-          p@getArobase()@Path@sortname@(_*) -> {
-            Position current = getEnvironment().getPosition(); 
-            Position dest = (Position) current.add((Path)`p).getCanonicalPath();
-            if(current.compare(dest)== -1) {
-                getEnvironment().followPath((Path)`p);
-                Position realDest = getEnvironment().getPosition(); 
-            if(!realDest.equals(dest)) {
-                //the subterm pointed was a pos (in case of previous switch) 
-                //and we must only update the relative position
-                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
-                return Path@sortname@.make(realDest.sub(current));
-            }  else {
-                //switch the rel position and the pointed subterm
-
-                // 1. construct the new relative position
-                @sortname@ relref = Path@sortname@.make(current.sub(dest));
-
-                // 2. update the part to change 
-                `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
-
-                // 3. save the subterm updated 
-                @sortname@ subterm = (@sortname@) getEnvironment().getSubject(); 
-
-                // 4. replace at dest the subterm by the new relative pos
-                getEnvironment().setSubject(relref);
-                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
-                return subterm; 
-            }
-          }
-        }
-      }
-    }
-
-   %strategy UpdatePos(source:Position,target:Position) extends Identity() {
-          visit @sortname@ {
-            p@getArobase()@Path@sortname@(_*) -> {
-              Position current = getEnvironment().getPosition(); 
-              Position dest = (Position) current.add((Path)`p).getCanonicalPath();
-              if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){
-                //update this relative pos from the redex to the external
-                current = current.changePrefix(source,target);
-                return Path@sortname@.make(dest.sub(current));
-              }
-
-              if (dest.hasPrefix(source)  && !current.hasPrefix(target) && !current.hasPrefix(source)){
-                //update this relative pos from the external to the redex
-                dest = dest.changePrefix(source,target); 
-                return Path@sortname@.make(dest.sub(current));
-              }
-            }
-          }
-   }
-
-   %strategy UpdatePos2(p1:Position,p2:Position) extends Identity() {
-          visit @sortname@ {
-            p@getArobase()@Path@sortname@(_*) -> {
-              Position src = getEnvironment().getPosition(); 
-              Position dest = (Position) src.add((Path)`p).getCanonicalPath();
-              if(src.hasPrefix(p1) && dest.hasPrefix(p2)){
-                //update this relative pos from the subterm at p1 to the subterm at p2
-                Position newsrc = src.changePrefix(p1,p2);
-                Position newdest = dest.changePrefix(p2,p1);
-                return Path@sortname@.make(newdest.sub(newsrc));
-              }
-
-              if(src.hasPrefix(p2) && dest.hasPrefix(p1)){
-                //update this relative pos from the subterm at p2 to the subterm at p1
-                Position newsrc = src.changePrefix(p2,p1);
-                Position newdest = dest.changePrefix(p1,p2);
-                return Path@sortname@.make(newdest.sub(newsrc));
-              }
-            }
-          }
-   }
-
-
+ 
   private static @sortname@ computeRhsWithPath(@sortname@ lhs, @sortname@ rhs, Position posRedex) {
     try {
       return (@sortname@) `TopDown(FromVarToPath(lhs,posRedex)).visit(`rhs);
-    } catch(VisitFailure e) { return null; }
+    } catch(VisitFailure e) { 
+      throw new RuntimeException("Unexpected strategy failure!");
+    }
   }
 
+  %typeterm Position{
+      implement {Position}
+      is_sort(t)     { t instanceof Position }
+  }
+ 
   %strategy FromVarToPath(lhs:@sortname@,posRedex:Position) extends Identity() {
-    visit @sortname@ {
-      Var@sortname@(name) -> { 
+]%);
+
+  %match(moduleList) {
+      concModule(_*,Module[Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+    output.append(
+        %[
+    visit @`name@ {
+      Var@`name@(name) -> { 
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
         Position wwl = (Position) (new Position(new int[]{1})).add(posRedex).add(wl); 
         Position wwr = (Position) (new Position(new int[]{2})).add(wr); 
         Position res = (Position) wwl.sub(wwr);
-        return Path@sortname@.make(res);
+        return Path@`name@.make(res);
       }
     }
+]%);
+    }
+  }
+
+  output.append(%[
   }
 
   private static Position getVarPos(@sortname@ term, String varname) {
@@ -210,25 +136,46 @@ public class GraphRuleExpander {
     try {
       `OnceTopDown(GetVarPos(p,varname)).visit(term);
       return p;
-    } catch (VisitFailure e) { return null; }
+    } catch (VisitFailure e) {
+      throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+      }
   }
 
   %strategy GetVarPos(Position p, String varname) extends Fail() {
-    visit @sortname@ {
-      v@getArobase()@Var@sortname@(name) -> { 
+]%);
+
+ %match(moduleList) {
+      concModule(_*,Module[Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+ output.append(
+        %[
+    visit @`name@ {
+      v@getArobase()@Var@`name@(name) -> { 
         if (`name.equals(varname)) { 
           p.setValue(getEnvironment().getPosition().toArray()); 
           return `v; } 
       } 
     }
-  }
-
    ]%);
+   }
+ } 
+  
+  output.append(%[
+  }
+]%);
 
   String imports = %[
 import tom.library.sl.*;
 import java.util.*;
    ]%;
+
+  //import all the constructors Path<Sort> of the module
+  %match(moduleList) {
+concModule(_*,Module[MDecl=ModuleDecl(GomModuleName(modulename),pkg),Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+  imports += %[
+import @`pkg@.@`modulename.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name@; 
+  ]%;
+    }
+  }
 
    return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
   }
@@ -255,19 +202,22 @@ import java.util.*;
                 Position omega = getEnvironment().getPosition();
                 Position posRhs = new Position(new int[]{2});
                 Position posFinal = new Position(new int[]{1});
+                Position newomega = (Position) posFinal.add(omega);
 
-                /*  2. go to the root and get the global term-graph */
+                /* 2. go to the root and get the global term-graph */
                 getEnvironment().followPath(omega.inverse());
 
-                /*3. construct tt=SubstTerm(t,r) */
-                @sortname@ expandedLhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(null,0,`lhs)@);
-                @sortname@ expandedRhs = (@sortname@) @modulename@AbstractType.expand(`@genTermWithExplicitVar(null,0,`rhs)@);
+                /* 3. construct tt=SubstTerm(subject,r) */
+                @sortname@ expandedLhs = (@sortname@) `@genTermWithExplicitVar(`lhs,"root",0)@.expand();
+                @sortname@ expandedRhs = (@sortname@) `@genTermWithExplicitVar(`rhs,"root",0)@.expand();
                 @sortname@ r = computeRhsWithPath(expandedLhs,expandedRhs,omega);
-                @sortname@ tt = `Subst@sortname@((@sortname@)getEnvironment().getSubject(),r);
+                @sortname@ t = `Subst@sortname@((@sortname@) getEnvironment().getSubject(),r);
+                //all pointers to omega must be replaced by pointers to posRhs in the redex
+                @sortname@ tt = (@sortname@) newomega.getOmega(globalRedirection(newomega,posRhs)).visit(t);
                 
-                /* 4. set the global term to norm(swap(tt,1.w,2))|1 i */
-                @sortname@ ttt = Swap((Position) posFinal.add(omega),posRhs,tt); 
-                @sortname@ res = (@sortname@) `InnermostIdSeq(Normalize()).visit(ttt); 
+                /* 4. set the global term to norm(swap(tt,1.w,2))|1 */
+                @sortname@ ttt = (@sortname@) tt.swap(newomega,posRhs); 
+                @sortname@ res = (@sortname@) ttt.normalize();
                 getEnvironment().setSubject(posFinal.getSubterm().visit(res));
 
                 /* 5. go to the position w */
@@ -337,7 +287,7 @@ import java.util.*;
     return output.toString();
   }
 
-  private String genTermWithExplicitVar(String fathersymbol, int omega, Term term) {
+  private String genTermWithExplicitVar(Term term, String fathersymbol, int omega) {
     StringBuffer output = new StringBuffer();
     %match(term) {
       LabTerm(label,term) -> {
@@ -345,7 +295,7 @@ import java.util.*;
         output.append("(");
         output.append("\""+`label+"\"");
         output.append(",");
-        output.append(genTermWithExplicitVar(null,0,`term));
+        output.append(genTermWithExplicitVar(`term,fathersymbol,omega));
         output.append(")");
       }
       RefTerm(label) -> {
@@ -363,8 +313,14 @@ import java.util.*;
       Var(name) -> {
         //the variable must be replaced by a meta representation of the var
         //in the signature of the corresponding  sort
-        String sortvar = getSort(fathersymbol,omega); 
-        output.append("Var"+sortvar+"(\""+`name+"\")");
+        //test if the variable is not at the root position 
+        if(omega!=0) {
+          String sortvar = getSort(fathersymbol,omega);
+          output.append("Var"+sortvar+"(\""+`name+"\")");
+        } else {
+          //it is necessary of the sort declared for the strategy
+          output.append("Var"+sortname+"(\""+`name+"\")");
+        }
       }
       BuiltinInt(i) -> {
         output.append(`i);
@@ -382,7 +338,7 @@ import java.util.*;
     %match(list) {
       TermList() -> { return ""; }
       TermList(_*,h,t*) -> {
-        output.append(genTermWithExplicitVar(fathersymbol,omega,`h));
+        output.append(genTermWithExplicitVar(`h,fathersymbol,omega));
         omega++;
         if (!`t.isEmptyTermList()) {
           output.append(", ");
@@ -421,7 +377,7 @@ import java.util.*;
         if (label.equals(`label)) {
           //test if it is not a cycle
           if (!info.omegaRef.hasPrefix(current)) {
-           //return a ref
+            //return a ref
             info.sharedTerm = `subterm;
             return `RefTerm(label);
           }

@@ -216,7 +216,8 @@ public class GomReferenceExpander {
     import @packagePath+moduleName.toLowerCase()@.types.*;
     import @packagePath+moduleName.toLowerCase()@.*;
     import tom.library.sl.*;
-    import java.util.*;
+    import java.util.ArrayList;
+    import java.util.HashMap;
     ]%;
 
     String codeBlockCommon =%[
@@ -255,43 +256,188 @@ public class GomReferenceExpander {
 
     String codeBlockTermWithPointers =%[
 
-      public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
+      public @moduleName@AbstractType expand(){
         HashMap map = new HashMap();
         Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
         try {
-          return (@moduleName@AbstractType) `label2path.visit(t);
+          return (@moduleName@AbstractType) `label2path.visit(this);
         } catch (tom.library.sl.VisitFailure e) {
-          throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
-
+          throw new RuntimeException("Unexpected strategy failure!");
         }}
         ]%;
 
     String codeBlockTermGraph =%[
 
-      public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
-        Info info = new Info();
-        ArrayList marked = new ArrayList();
-        HashMap map = new HashMap();
-        @moduleName@AbstractType tt = null;
-        try {
-          tt = (@moduleName@AbstractType) `InnermostIdSeq(@NormalizeLabel@).visit(t);
-        } catch (tom.library.sl.VisitFailure e) {
-          throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
-        }
-        return label2path(tt);
-      }
+    public @moduleName@AbstractType expand(){
+       Info info = new Info();
+       ArrayList marked = new ArrayList();
+       HashMap map = new HashMap();
+       try {
+         return ((@moduleName@AbstractType)`InnermostIdSeq(@NormalizeLabel@).visit(this)).label2path();
+       } catch (tom.library.sl.VisitFailure e) {
+         throw new RuntimeException("Unexpected strategy failure!");
+       }
+     }
 
-    public static @moduleName@AbstractType label2path(@moduleName@AbstractType t){
+    protected @moduleName@AbstractType label2path(){
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
       try {
-        return (@moduleName@AbstractType) label2path.visit(t);
+        return (@moduleName@AbstractType) label2path.visit(this);
       } catch (tom.library.sl.VisitFailure e) {
-        throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
+        throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
+    public @moduleName@AbstractType normalize() {
+      try {
+         return (@moduleName@AbstractType)`InnermostIdSeq(Normalize()).visit(this); 
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+
+    public @moduleName@AbstractType applyGlobalRedirection(Position p1,Position p2) {
+      try {
+         return (@moduleName@AbstractType) globalRedirection(p1,p2).visit(this); 
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+  
+    public static Strategy globalRedirection(Position p1,Position p2) {
+        return `TopDown(GlobalRedirection(p1,p2)); 
+    }
+
+    public @moduleName@AbstractType swap(Position p1, Position p2) {
+      try {
+        @moduleName@AbstractType updatedSubject =  (@moduleName@AbstractType ) `TopDown(UpdatePos(p1,p2)).visit(this);
+        @moduleName@AbstractType subterm_p1 = (@moduleName@AbstractType) p1.getSubterm().visit(updatedSubject);
+        @moduleName@AbstractType subterm_p2 = (@moduleName@AbstractType) p2.getSubterm().visit(updatedSubject);
+        return (@moduleName@AbstractType) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
+      } catch (VisitFailure e) { 
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+
+   %strategy Normalize() extends Identity(){
+]%;
+
+  %match(sorts){
+      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+ codeBlockTermGraph += %[
+        visit @`sortname@ {
+          p@getArobase()@Path@`sortname@(_*) -> {
+            Position current = getEnvironment().getPosition(); 
+            Position dest = (Position) current.add((Path)`p).getCanonicalPath();
+            if(current.compare(dest)== -1) {
+                getEnvironment().followPath((Path)`p);
+                Position realDest = getEnvironment().getPosition(); 
+            if(!realDest.equals(dest)) {
+                //the subterm pointed was a pos (in case of previous switch) 
+                //and we must only update the relative position
+                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
+                return Path@`sortname@.make(realDest.sub(current));
+            }  else {
+                //switch the rel position and the pointed subterm
+
+                // 1. construct the new relative position
+                @`sortname@ relref = Path@`sortname@.make(current.sub(dest));
+
+                // 2. update the part to change 
+                `TopDown(UpdatePos(dest,current)).visit(getEnvironment());
+
+                // 3. save the subterm updated 
+                @`sortname@ subterm = (@`sortname@) getEnvironment().getSubject(); 
+
+                // 4. replace at dest the subterm by the new relative pos
+                getEnvironment().setSubject(relref);
+                getEnvironment().followPath(current.sub(getEnvironment().getPosition()));
+                return subterm; 
+            }
+          }
+        }
+      }
+]%;
+      }
+  }
+
+  codeBlockTermGraph += %[
+    }
+
+   %typeterm Position{
+        implement {Position}
+        is_sort(t)     { t instanceof Position }
+    }
+  
+   %strategy UpdatePos(source:Position,target:Position) extends Identity() {
+  ]%;
+
+
+   %match(sorts){
+      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+        codeBlockTermGraph += %[
+      visit @`sortname@ {
+            p@getArobase()@Path@`sortname@(_*) -> {
+              Position current = getEnvironment().getPosition(); 
+              Position dest = (Position) current.add((Path)`p).getCanonicalPath();
+              //relative pos from the source to the external
+              if(current.hasPrefix(source) && !dest.hasPrefix(target) && !dest.hasPrefix(source)){
+                current = current.changePrefix(source,target);
+                return Path@`sortname@.make(dest.sub(current));
+              }
+
+              //relative pos from the external to the source
+              if (dest.hasPrefix(source)  && !current.hasPrefix(target) && !current.hasPrefix(source)){
+                dest = dest.changePrefix(source,target); 
+                return Path@`sortname@.make(dest.sub(current));
+              }
+
+              //relative pos from the source to the target
+              if(current.hasPrefix(source) && dest.hasPrefix(target)){
+                current = current.changePrefix(source,target);
+                dest = dest.changePrefix(target,source);
+                return Path@`sortname@.make(dest.sub(current));
+              }
+
+              //relative pos from the target to the source
+              if(current.hasPrefix(target) && dest.hasPrefix(source)){
+                current = current.changePrefix(target,source);
+                dest = dest.changePrefix(source,target);
+                return Path@`sortname@.make(dest.sub(current));
+              }
+   
+            }
+          }
     ]%;
+      }
+   }
+
+   codeBlockTermGraph += %[
+   }
+
+   %strategy GlobalRedirection(source:Position,target:Position) extends Identity() {
+  ]%;
+
+   %match(sorts){
+      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+        codeBlockTermGraph += %[
+      visit @`sortname@ {
+            p@getArobase()@Path@`sortname@(_*) -> {
+              Position current = getEnvironment().getPosition(); 
+              Position dest = (Position) current.add((Path)`p).getCanonicalPath();
+              if(dest.equals(source)) {
+                return Path@`sortname@.make(target.sub(current));
+              }
+            }
+          }
+    ]%;
+      }
+   }
+
+   codeBlockTermGraph += %[
+   }
+   ]%;
 
     String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
 
