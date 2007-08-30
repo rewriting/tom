@@ -383,7 +383,7 @@ public class PatternAnalyser{
         wfg = bpelToWfg(`elt, conds);
         // graph expansion
         System.out.println("\nWfg with labels:\n" + wfg);
-        wfg = (Wfg) WfgAbstractType.expand(wfg);
+        wfg = (Wfg) wfg.expand();
         System.out.println("\nWfg after expansion:\n" + wfg);
         // substituting link names by node names in the explicit conditions
         conds.substitute();
