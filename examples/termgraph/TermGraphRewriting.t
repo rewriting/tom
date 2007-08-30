@@ -236,14 +236,14 @@ public class TermGraphRewriting {
       tt = `SubstTerm(tt,redex);
 
       /* normalization by point fix */
-      Term t1 = (Term) termAbstractType.expand(tt);
+      Term t1 = (Term) tt.expand();
       t1 = (Term) posFinal.getSubterm().visit(t1);
       System.out.println("Canonical term obtained by a point fix:\n"+t1);
 
       /* normalization by innermost strategy */
       map.clear();
       Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(tt);
-      t2 = (Term) termAbstractType.label2path(t2);
+      t2 = (Term) t2.expand();
       t2 = (Term) posFinal.getSubterm().visit(t2);
       System.out.println("Canonical term obtained by Innermost strategy + a map:\n"+t2);
 
