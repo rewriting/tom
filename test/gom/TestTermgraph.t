@@ -44,17 +44,24 @@ public class TestTermgraph extends TestCase {
       | b()
       | c()
       | f(arg1:Term)
+      | k(arg1:Term)
       | g(arg1:Term, arg2:Term)
       | h(arg:Term2)
       
       Term2 = d()
-
-      sort Term: graphrules(Test,Identity) {
-          g(l:a(),&l) -> f(b())
-          f(g(g(a(),&l),l:b())) -> f(c())
-          g(x,y) -> f(x)
-          h(x) -> f(h(x))
-      }
+      
+    sort Term: graphrules(rulek,Identity) {
+      k(x) -> x
+    }
+    sort Term: graphrules(rulef,Identity) {
+      f(x) -> x
+    }
+    sort Term: graphrules(Test,Identity) {
+      g(l:a(),&l) -> f(b())
+        f(g(g(a(),&l),l:b())) -> f(c())
+        g(x,y) -> f(x)
+        h(x) -> f(h(x))
+    }
   }
 
   public static void main(String[] args) {
@@ -64,17 +71,17 @@ public class TestTermgraph extends TestCase {
   public void testExpand() {
     Term subject = `g(g(g(LabTerm("a1",a()),LabTerm("g",g(RefTerm("a1"),RefTerm("a2")))),LabTerm("a2",a())),RefTerm("g"));
     Term expanded = `g(g(g(a(),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,2));
-    assertEquals(expanded,mAbstractType.expand(subject));
+    assertEquals(expanded,subject.expand());
   }
 
   public void testExpandCycle() {
     Term subject = `LabTerm("l",f(RefTerm("l")));
     Term expanded = `f(PathTerm(-1));
-    assertEquals(expanded,mAbstractType.expand(subject));
+    assertEquals(expanded,subject.expand());
   }
 
   public void testGraphRules1() {
-    Term t1 = (Term) mAbstractType.expand(`g(RefTerm("a"),LabTerm("a",a())));
+    Term t1 = (Term) `g(RefTerm("a"),LabTerm("a",a())).expand();
     try {
       assertEquals(
           `f(b()),
@@ -85,7 +92,7 @@ public class TestTermgraph extends TestCase {
   }
 
   public void testGraphRules2() {
-    Term t2 = (Term) mAbstractType.expand(`f(g(g(a(),RefTerm("b")),LabTerm("b",b()))));
+    Term t2 = (Term) `f(g(g(a(),RefTerm("b")),LabTerm("b",b()))).expand();
     try {
       assertEquals(
           `f(c()),
@@ -117,12 +124,19 @@ public class TestTermgraph extends TestCase {
     }
   }
 
-  public void testGraphRules5() {
-    Term t5 = `h(d());
+  public void testGraphRules51() {
+    Term fk = `f(k(PathTerm(-1,-1)));
     try {
-      assertEquals(
-          `f(h(d())),
-          Term.Test().visit(t5));
+      assertEquals(`k(PathTerm(-1)),Term.rulef().visit(fk));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void testGraphRules52() {
+    Term fk = `f(k(PathTerm(-1,-1)));
+    try {
+      assertEquals(`f(PathTerm(-1)),new Position(new int[]{1}).getOmega(Term.rulek()).visit(fk));
     } catch(VisitFailure e) {
       fail();
     }
