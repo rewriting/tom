@@ -192,7 +192,7 @@ public class AnalyserBasedOnRef{
     Ast subject = `concAst(cond,letz);
 
 
-    Cfg cfg = (Cfg) analysis.cfg.CfgAbstractType.expand(`ConcCfg(
+    Cfg cfg = (Cfg) `ConcCfg(
         BeginIf(cond,RefCfg("success"),RefCfg("failure")), 
         LabCfg("success",Nil(RefCfg("letz"))),
         LabCfg("failure",Affect(letrefx,RefCfg("letassignx"))),
@@ -203,7 +203,7 @@ public class AnalyserBasedOnRef{
         LabCfg("letz",Affect(letz,RefCfg("freez"))),
         LabCfg("freez",Free(var_z,RefCfg("end"))),
         LabCfg("end",End())
-        ));
+        ).expand();
 
     AnalyserBasedOnRef analyser = new AnalyserBasedOnRef();
     try{
