@@ -239,8 +239,10 @@ public class GomReferenceExpander {
     ]%;
 
     String codeStrategies = "";
-    String CollectLabels= "Fail()",Collect = "Fail()";
-    String Label2Path = "Identity()",NormalizeLabel = "Identity()";
+    String CollectLabels= "Fail()";
+    String CollectLabels2= "Fail()";
+    String CollectLabels3= "Fail()";
+    String Label2Path = "Identity()",NormalizeLabel = "Identity()", CollectRef = "Identity()", AddLabel = "Identity()";
 
     %match(sorts){
       concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
@@ -250,7 +252,11 @@ public class GomReferenceExpander {
         codeStrategies += getStrategies(`sDecl,moduleName);
         Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
         CollectLabels = "Choice(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
+        CollectLabels2 = "Choice(CollectLabels2"+`sortName+"(map),"+CollectLabels2+")";
+        CollectLabels3 = "Choice(CollectLabels3"+`sortName+"(map),"+CollectLabels3+")";
         NormalizeLabel = "Sequence(NormalizeLabel"+`sortName+"(map),"+NormalizeLabel+")";
+        CollectRef = "Sequence(CollectRef"+`sortName+"(map),"+CollectRef+")";
+        AddLabel = "Sequence(AddLabel"+`sortName+"(map),"+AddLabel+")";
       }
     }
 
@@ -268,22 +274,63 @@ public class GomReferenceExpander {
 
     String codeBlockTermGraph =%[
 
+    static int freshlabel =0; //to unexpand termgraphs
+  
     public @moduleName@AbstractType expand(){
        Info info = new Info();
        ArrayList marked = new ArrayList();
        HashMap map = new HashMap();
        try {
-         return ((@moduleName@AbstractType)`InnermostIdSeq(@NormalizeLabel@).visit(this)).label2path();
+         return ((@moduleName@AbstractType)`InnermostIdSeq(@NormalizeLabel@).visit(this.unexpand())).label2path();
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
      }
+
+    public @moduleName@AbstractType unexpand(){
+       HashMap map = getLabels3();
+       try {
+         return (@moduleName@AbstractType)`Sequence(TopDown(@CollectRef@),BottomUp(@AddLabel@)).visit(this);
+       } catch (tom.library.sl.VisitFailure e) {
+         throw new RuntimeException("Unexpected strategy failure!");
+       }
+    }
 
     protected @moduleName@AbstractType label2path(){
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
       try {
         return (@moduleName@AbstractType) label2path.visit(this);
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+    
+    protected HashMap getLabels(){
+      HashMap map = new HashMap();
+      try {
+      `TopDown(Try(@CollectLabels@)).visit(this);
+      return map;
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+
+    protected HashMap getLabels2(){
+      HashMap map = new HashMap();
+      try {
+      `TopDown(Try(@CollectLabels2@)).visit(this);
+      return map;
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+
+    protected HashMap getLabels3(){
+      HashMap map = new HashMap();
+      try {
+      `TopDown(Try(@CollectLabels3@)).visit(this);
+      return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -388,7 +435,7 @@ public class GomReferenceExpander {
               }
 
               //relative pos from the external to the source
-              if (dest.hasPrefix(source)  && !current.hasPrefix(target) && !current.hasPrefix(source)){
+              if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){
                 dest = dest.changePrefix(source,target); 
                 return Path@`sortname@.make(dest.sub(current));
               }
@@ -484,6 +531,24 @@ public class GomReferenceExpander {
       }
     }
 
+    %strategy CollectLabels2@sortName@(map:HashMap) extends Fail(){
+      visit @sortName@{
+        Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
+          map.put(`label,getEnvironment().getPosition());
+          return (@sortName@) getEnvironment().getSubject();
+        }
+      }
+    }
+
+    %strategy CollectLabels3@sortName@(map:HashMap) extends Fail(){
+      visit @sortName@{
+        Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
+          map.put(getEnvironment().getPosition().toString(),`label);
+          return (@sortName@) getEnvironment().getSubject();
+        }
+      }
+    }
+
     %strategy Label2Path@sortName@(map:HashMap) extends Identity() {
       visit @sortName@ {
         Ref@sortName@[label@sortName@=label] -> {
@@ -499,18 +564,51 @@ public class GomReferenceExpander {
     %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Fail(){
       visit @sortName@ {
         term@getArobase()@Lab@sortName@[label@sortName@=label,term@sortName@=subterm] -> {
-         Position current = getEnvironment().getPosition();
-        if (label.equals(`label)) {
-          //test if it is not a cycle
-          if (!info.omegaRef.hasPrefix(current)) {
-           //return a ref
-            info.sharedTerm = `subterm;
+          Position current = getEnvironment().getPosition();
+          if (label.equals(`label)) {
+            //test if it is not a cycle
+            if (!info.omegaRef.hasPrefix(current)) {
+              //return a ref
+              info.sharedTerm = `subterm;
+              return `Ref@sortName@(label);
+            }
+            else {
+              //do not return a ref and stop to collect
+              return `term;  
+            }
+          }
+        }
+      }
+    }
+
+ 
+    %strategy CollectRef@sortName@(map:HashMap) extends Identity(){
+      visit @sortName@ {
+        p@getArobase()@Path@sortName@(_*) -> {
+          //use String instead of Position because containskey method does
+          //not use the method equals to compare values
+          String target =
+            getEnvironment().getPosition().add((Path)`p).getCanonicalPath().toString();
+          if (map.containsKey(target)){
+            String label = (String) map.get(target);
             return `Ref@sortName@(label);
           }
-          else {
-            //do not return a ref and stop to collect
-            return `term;  
+          else{
+            freshlabel++;
+            String label = "tom_label"+freshlabel;
+            map.put(target,label);
+            return `Ref@sortName@(label);
           }
+        }
+      }
+    }
+    
+ %strategy AddLabel@sortName@(map:HashMap) extends Identity() {
+    visit @sortName@{
+      t@getArobase()@!Lab@sortName@[] -> {
+        if (map.containsKey(getEnvironment().getPosition().toString())) {
+          String label = (String) map.get(getEnvironment().getPosition().toString());
+          return `Lab@sortName@(label,t);
         }
       }
     }
@@ -527,14 +625,14 @@ public class GomReferenceExpander {
             getEnvironment().followPath(rootpos.sub(getEnvironment().getPosition()));           
             `OnceTopDown(CollectSubterm@sortName@(label,info)).visit(getEnvironment());            
             getEnvironment().followPath(old.sub(getEnvironment().getPosition()));
-          //test if it is not a ref to a cycle
-          if (info.sharedTerm!=null) {
-            map.put(`label,old);
-            return `Lab@sortName@(label,info.sharedTerm);
+            //test if it is not a ref to a cycle
+            if (info.sharedTerm!=null) {
+              map.put(`label,old);
+              return `Lab@sortName@(label,info.sharedTerm);
+            }
           }
         }
-      }
-      Lab@sortName@[label@sortName@=label] -> {
+        Lab@sortName@[label@sortName@=label] -> {
           map.put(`label,getEnvironment().getPosition());
         }
       }

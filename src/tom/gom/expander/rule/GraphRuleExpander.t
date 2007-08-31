@@ -91,23 +91,97 @@ public class GraphRuleExpander {
   StringBuffer output = new StringBuffer();
     output.append(
         %[
-   %include {sl.tom }
-
- 
-  private static @sortname@ computeRhsWithPath(@sortname@ lhs, @sortname@ rhs, Position posRedex) {
-    try {
-      return (@sortname@) `TopDown(FromVarToPath(lhs,posRedex)).visit(`rhs);
-    } catch(VisitFailure e) { 
-      throw new RuntimeException("Unexpected strategy failure!");
-    }
-  }
-
+  %include {sl.tom }
+  %include{java/util/ArrayList.tom}
+  
   %typeterm Position{
       implement {Position}
       is_sort(t)     { t instanceof Position }
   }
  
-  %strategy FromVarToPath(lhs:@sortname@,posRedex:Position) extends Identity() {
+  %typeterm SharedLabel{
+      implement {SharedLabel}
+      is_sort(t)     { t instanceof SharedLabel }
+  }
+
+  static class SharedLabel {
+    public Position posLhs;
+    public Position posRhs;
+    public String label;
+
+    public SharedLabel(String label, Position posLhs, Position posRhs) {
+      this.label = label;
+      this.posLhs = posLhs;
+      this.posRhs = posRhs;
+    }
+  }
+
+  static class Substitution {
+    public Position omega;
+    @modulename@AbstractType value;
+
+    public Substitution(Position omega, @modulename@AbstractType value) {
+      this.omega = omega;
+      this.value = value;
+    }
+  }
+
+  protected static Iterator getSubstitutions(@sortname@ labelledLhs, @sortname@ labelledRhs, Position omega) {
+    ArrayList sharedlabels = new ArrayList();
+    HashMap lhsLabels = labelledLhs.getLabels();
+    HashMap rhsLabels = labelledRhs.getLabels2();
+    Iterator itRhs = rhsLabels.keySet().iterator(); 
+    while(itRhs.hasNext()) {
+      String label = (String) itRhs.next();
+      if (lhsLabels.containsKey(label)) {
+        sharedlabels.add(label);
+      }
+    }
+
+    ArrayList result = new ArrayList();
+    Iterator iter = sharedlabels.iterator(); 
+    while(iter.hasNext()) {
+      String label = (String) iter.next();
+      Position posLhs = (Position)lhsLabels.get(label);
+      Position posRhs = (Position)rhsLabels.get(label);
+      Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel(label,posLhs,posRhs),sharedlabels,omega);
+      result.add(subst);
+    }
+    // add the substitution for the root position
+    Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel("",new Position(new int[]{}),new Position(new int[]{})),sharedlabels,omega);
+    result.add(subst);
+    return result.iterator();
+  }
+
+
+  %strategy ReplaceSharedLabelByVar(sharedlabels:ArrayList,sharedlabel:SharedLabel) extends Identity() {
+    visit @sortname@ {
+      Lab@sortname@[label@sortname@=label] -> {
+        if (`label.equals(sharedlabel.label)) {
+          throw new VisitFailure();
+        } else {
+          if(sharedlabels.contains(`label)) {
+            return `Var@sortname@(label);
+          }
+        }
+      }
+    }
+  }
+
+  private static Substitution computeSubstitution(@sortname@ labelledLhs, @sortname@ labelledRhs, SharedLabel sharedlabel, ArrayList sharedlabels, Position omega) {
+    try {
+      @sortname@ lhs = (@sortname@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledLhs);
+      @sortname@ rhs = (@sortname@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledRhs);
+      lhs = (@sortname@) lhs.expand();
+      rhs = (@sortname@) sharedlabel.posRhs.getSubterm().visit(rhs);
+      return new Substitution((Position) omega.add(sharedlabel.posLhs),(@sortname@) `TopDown(FromVarToPath(lhs,omega)).visit(rhs));
+    } catch(VisitFailure e) { 
+      throw new RuntimeException("Unexpected strategy failure!");
+    }
+  }
+
+
+  %strategy FromVarToPath(lhs:@sortname@,omega:Position) extends Identity() {
 ]%);
 
   %match(moduleList) {
@@ -115,15 +189,15 @@ public class GraphRuleExpander {
     output.append(
         %[
     visit @`name@ {
-      Var@`name@(name) -> { 
+      Var@`name@(name) -> {
         Position wl = getVarPos(lhs,`name);
         Position wr = getEnvironment().getPosition();
-        Position wwl = (Position) (new Position(new int[]{1})).add(posRedex).add(wl); 
+        Position wwl = (Position) (new Position(new int[]{1})).add(omega).add(wl); 
         Position wwr = (Position) (new Position(new int[]{2})).add(wr); 
         Position res = (Position) wwl.sub(wwr);
         return Path@`name@.make(res);
       }
-    }
+   }      
 ]%);
     }
   }
@@ -200,25 +274,44 @@ import @`pkg@.@`modulename.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
 
                 /* 1. save the current pos w */
                 Position omega = getEnvironment().getPosition();
-                Position posRhs = new Position(new int[]{2});
                 Position posFinal = new Position(new int[]{1});
-                Position newomega = (Position) posFinal.add(omega);
+                Position posRhs = new Position(new int[]{2});
 
                 /* 2. go to the root and get the global term-graph */
                 getEnvironment().followPath(omega.inverse());
 
-                /* 3. construct tt=SubstTerm(subject,r) */
-                @sortname@ expandedLhs = (@sortname@) `@genTermWithExplicitVar(`lhs,"root",0)@.expand();
-                @sortname@ expandedRhs = (@sortname@) `@genTermWithExplicitVar(`rhs,"root",0)@.expand();
-                @sortname@ r = computeRhsWithPath(expandedLhs,expandedRhs,omega);
-                @sortname@ t = `Subst@sortname@((@sortname@) getEnvironment().getSubject(),r);
-                //all pointers to omega must be replaced by pointers to posRhs in the redex
-                @sortname@ tt = (@sortname@) newomega.getOmega(globalRedirection(newomega,posRhs)).visit(t);
+                @sortname@ labelledLhs = (@sortname@) `@genTermWithExplicitVar(`lhs,"root",0)@;
+                @sortname@ labelledRhs = (@sortname@) `@genTermWithExplicitVar(`rhs,"root",0)@;
+                @sortname@ subject = (@sortname@) getEnvironment().getSubject();             
+                //compute all the different substitutions
+                //TODO: manage substitutions of different sort
+                Iterator substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
                 
-                /* 4. set the global term to norm(swap(tt,1.w,2))|1 */
-                @sortname@ ttt = (@sortname@) tt.swap(newomega,posRhs); 
+                /* 3. construct tt=SubstTerm(subject,r) */
+                while (substitutions.hasNext()) {
+                Substitution subst = (Substitution) substitutions.next();
+                @modulename@AbstractType r = subst.value;
+                //System.out.println("subst "+r);
+                Position posRedex = subst.omega;
+                //System.out.println("at the position "+posRedex);
+                //TODO: find the sort of r and deduce which Subst to use
+                @sortname@ t = `Subst@sortname@(subject,(@sortname@)r);
+                Position newomega = (Position) posFinal.add(posRedex);
+                
+                /* 4. set the global term to norm(swap(t,1.w,2))|1 */
+                @sortname@ tt = (@sortname@) t.swap(newomega,posRhs); 
+                //System.out.println("tt "+tt);
+                //all pointers to the root of the old redex at posRhs must be replaced by pointers to newomega
+                @sortname@ ttt = (@sortname@) `TopDown(globalRedirection(posRhs,newomega)).visit(tt);
+                //System.out.println("ttt "+ttt);
                 @sortname@ res = (@sortname@) ttt.normalize();
-                getEnvironment().setSubject(posFinal.getSubterm().visit(res));
+                //System.out.println("res "+res);
+                subject = (@sortname@) posFinal.getSubterm().visit(res);
+                //System.out.println("subject "+subject);
+               }
+
+                //expand the subject to remove labels from the rhs
+                getEnvironment().setSubject(subject.expand());
 
                 /* 5. go to the position w */
                 getEnvironment().followPath(omega);

@@ -62,6 +62,10 @@ public class TestTermgraph extends TestCase {
         g(x,y) -> f(x)
         h(x) -> f(h(x))
     }
+
+   sort Term: graphrules(TestSideEffect,Identity) {
+      f(l:a()) -> g(&l,l:b())
+   }
   }
 
   public static void main(String[] args) {
@@ -137,6 +141,15 @@ public class TestTermgraph extends TestCase {
     Term fk = `f(k(PathTerm(-1,-1)));
     try {
       assertEquals(`f(PathTerm(-1)),new Position(new int[]{1}).getOmega(Term.rulek()).visit(fk));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void testGraphRules6() {
+    Term t = `g(f(a()),PathTerm(-2,1,1));
+    try {
+      assertEquals(`g(g(b(),PathTerm(-2,1)),PathTerm(-2,1,1)),new Position(new int[]{1}).getOmega(Term.TestSideEffect()).visit(t));
     } catch(VisitFailure e) {
       fail();
     }

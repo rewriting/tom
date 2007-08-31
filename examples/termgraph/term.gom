@@ -14,6 +14,6 @@ sort Term: graphrules(GraphRule,Identity) {
 }
 
 sort List: graphrules(Insert,Identity) {
-  l:doublelinkedlist(previous,y,insert(x,doublelinkedlist(&l,z,next))) ->
-  l1:doublelinkedlist(previous,y,l2:doublelinkedlist(&l1,x,doublelinkedlist(&l2,z,next)))  
+  l:doublelinkedlist(previous,y,insert(x,v:doublelinkedlist(&l,z,next))) ->
+  l1:doublelinkedlist(previous,y,l2:doublelinkedlist(&l1,x,v:doublelinkedlist(&l2,z,next)))  
 }
