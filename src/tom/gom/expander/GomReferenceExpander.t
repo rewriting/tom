@@ -220,24 +220,6 @@ public class GomReferenceExpander {
     import java.util.HashMap;
     ]%;
 
-    String codeBlockCommon =%[
-    %include{java/util/HashMap.tom}
-    %include{java/util/ArrayList.tom}
-    %include{sl.tom}
-
-    %typeterm Info {
-      implement { Info }
-      is_sort(t) { t instanceof Info } 
-    }
-
-
-    public static class Info {
-      public String label;
-      public Path path;
-      public @moduleName@AbstractType term;
-    }
-    ]%;
-
     String codeStrategies = "";
     String CollectLabels= "Fail()";
     String CollectLabels2= "Fail()";
@@ -260,6 +242,47 @@ public class GomReferenceExpander {
       }
     }
 
+    String codeBlockCommon =%[
+    %include{java/util/HashMap.tom}
+    %include{java/util/ArrayList.tom}
+    %include{sl.tom}
+
+    static int freshlabel =0; //to unexpand termgraphs
+    
+    %typeterm Info {
+      implement { Info }
+      is_sort(t) { t instanceof Info } 
+    }
+
+
+    public static class Info {
+      public String label;
+      public Path path;
+      public @moduleName@AbstractType term;
+    }
+
+    public @moduleName@AbstractType unexpand(){
+       HashMap map = getLabels3();
+       try {
+         return (@moduleName@AbstractType)`Sequence(TopDown(@CollectRef@),BottomUp(@AddLabel@)).visit(this);
+       } catch (tom.library.sl.VisitFailure e) {
+         throw new RuntimeException("Unexpected strategy failure!");
+       }
+    }
+
+    protected HashMap getLabels3(){
+      HashMap map = new HashMap();
+      try {
+      `TopDown(Try(@CollectLabels3@)).visit(this);
+      return map;
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+
+    ]%;
+
+
     String codeBlockTermWithPointers =%[
 
       public @moduleName@AbstractType expand(){
@@ -274,9 +297,7 @@ public class GomReferenceExpander {
 
     String codeBlockTermGraph =%[
 
-    static int freshlabel =0; //to unexpand termgraphs
-  
-    public @moduleName@AbstractType expand(){
+   public @moduleName@AbstractType expand(){
        Info info = new Info();
        ArrayList marked = new ArrayList();
        HashMap map = new HashMap();
@@ -286,15 +307,6 @@ public class GomReferenceExpander {
          throw new RuntimeException("Unexpected strategy failure!");
        }
      }
-
-    public @moduleName@AbstractType unexpand(){
-       HashMap map = getLabels3();
-       try {
-         return (@moduleName@AbstractType)`Sequence(TopDown(@CollectRef@),BottomUp(@AddLabel@)).visit(this);
-       } catch (tom.library.sl.VisitFailure e) {
-         throw new RuntimeException("Unexpected strategy failure!");
-       }
-    }
 
     protected @moduleName@AbstractType label2path(){
       HashMap map = new HashMap();
@@ -320,16 +332,6 @@ public class GomReferenceExpander {
       HashMap map = new HashMap();
       try {
       `TopDown(Try(@CollectLabels2@)).visit(this);
-      return map;
-      } catch (tom.library.sl.VisitFailure e) {
-        throw new RuntimeException("Unexpected strategy failure!");
-      }
-    }
-
-    protected HashMap getLabels3(){
-      HashMap map = new HashMap();
-      try {
-      `TopDown(Try(@CollectLabels3@)).visit(this);
       return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
