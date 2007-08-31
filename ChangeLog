@@ -1,3 +1,8 @@
+2007-08-31  pem
+  * %strategy ... extends `...
+	  the term after extends can be anything
+		constructors, functions and variables can be used 
+
 2007-08-25  pem
 	* modified Gom such that generated sorts implement 
 	  the Collection interface
@@ -969,7 +974,7 @@
 
 2003-01-23    <pem@bach>
 
-        * release 1.1 under GPL license
+  * release 1.1 under GPL license
 
 2003-01-18    <pem@bach>
 
@@ -998,7 +1003,7 @@
 
 2002-12-21    <pem@escher>
 
-        * jtom uses the cvs-sop CVS server
+  * jtom uses the cvs-sop CVS server
 
 2002-12-21    <pem@bach>
 
@@ -1013,7 +1018,7 @@
 
 2002-12-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-        * bootinstall
+  * bootinstall
   * configure.in: added tutorial to the distribution
                   removed examples from the distribution
 
@@ -1165,7 +1170,7 @@
 
 2001-07-19  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-        * New package: jtom.tools
+  * New package: jtom.tools
   
   * src/jtom/tools/Flags.java: 
   - new 'supportedGoto' flag
@@ -1210,8 +1215,8 @@
   * src/jtom/parser/TomParser.jj: old syntax removed
   - new parser for terms
   - record syntax added: 
-      - typeterm term pair(first:term, second:term)
-      - pair[first=term]
+  - typeterm term pair(first:term, second:term)
+  - pair[first=term]
   - new syntax for aliases: x@term instead of x:term
   - cmp_fun_sym(t1,t2) added
 

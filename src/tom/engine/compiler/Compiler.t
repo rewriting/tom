@@ -213,6 +213,7 @@ matchBlock: {
 
     visit Declaration {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
+        //System.out.println("extendsTerm = " + `extendsTerm);
         DeclarationList l = `concDeclaration();//represents compiled Strategy
         TomVisitList jVisitList = `visitList;
         TomForwardType visitorFwd = null;

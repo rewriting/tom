@@ -324,17 +324,13 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
         )
     ;
 
+ 
 extendsBqTerm returns [TomTerm bqTerm] throws TomException
 {
   bqTerm = null;
 }
   :
-    EXTENDS //(BACKQUOTE)?
-    {
-    selector().push("bqlexer");
-    bqTerm = bqparser.beginBackquote();
-    //selector().pop();
-    }
+    EXTENDS { selector().push("bqlexer"); bqTerm = bqparser.beginBackquote(); }
 ;
 
 // The %strategy construct
@@ -342,7 +338,6 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 {
     result = null;
     TomTerm extendsTerm = null;
-    TomType codomainType = null;
     LinkedList visitList = new LinkedList();
     TomVisitList astVisitList = `concTomVisit();
     TomName orgText = null;
@@ -377,9 +372,11 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 TomName astName = `Name(stringSlotName);
                 slotNameList.add(astName); 
 
+                TomType strategyType = `TomTypeAlone("Strategy");
+
                 // Define get<slot> method.
                 Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
-                TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),TomTypeAlone("Strategy"),concConstraint());
+                TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),strategyType,concConstraint());
                 Instruction slotInst = `Return((TargetLanguageToTomTerm(ITL("((" + name.getText() + ")t).get" + stringSlotName + "()"))));
                 Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,slotInst,slotOption);
 
@@ -405,9 +402,10 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                     }
                     slotNameList.add(astName); 
 
+                TomType strategyType = `TomTypeAlone("Strategy");
                     // Define get<slot> method.
                     Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
-                    TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),TomTypeAlone("Strategy"),concConstraint());
+                    TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),strategyType,concConstraint());
                     Instruction slotInst = `Return((TargetLanguageToTomTerm(ITL("((" + name.getText() + ")t).get" + stringSlotName + "()"))));
                     Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,slotInst,slotOption);
 
@@ -418,23 +416,9 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
             )? RPAREN
         )
         extendsTerm = extendsBqTerm
-        {
-        matchBlock: {
-					%match(TomTerm extendsTerm) {
-						Composite(concTomTerm(BackQuoteAppl[AstName=astName],_*)) -> {
-							codomainType = `Codomain(astName);
-							break matchBlock;
-						}
-						_ -> {
-							throw new TomException(TomMessage.malformedStrategy,
-									new Object[]{currentFile(), new Integer(getLine()),
-									"strat","a composite",extendsTerm.toString()});
-						}
-					}
-                    }
-        }
+        //EXTENDS (BACKQUOTE)? extendsTerm = plainTerm[null,null,0]
         LBRACE
-        strategyVisitList[visitList]{astVisitList = ASTFactory.makeTomVisitList(visitList);}
+        strategyVisitList[visitList] { astVisitList = ASTFactory.makeTomVisitList(visitList); }
         t:RBRACE
        {
          //initialize arrayList with argument names
@@ -457,22 +441,29 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          }
 				 makeTlCode += ")";
 
+         // compute the type a of strategy
+         // assuming "Identity" is defined
+         //TomSymbol idSymbol = symbolTable.getSymbolFromName("Identity");
+         TomType strategyType = `TomTypeAlone("Strategy");
+         //if(idSymbol!=null) {
+         //  strategyType = idSymbol.getTypesToType().getCodomain();
+         //}
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
-				 Declaration makeDecl = `MakeDecl(Name(name.getText()), codomainType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
           options.add(makeDecl);
 
           // Define the is_fsym method.
           Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
-          TomTerm fsymVar = `Variable(concOption(fsymOption),Name("t"),TomTypeAlone("Strategy"),concConstraint());
+          TomTerm fsymVar = `Variable(concOption(fsymOption),Name("t"),strategyType,concConstraint());
           Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Return(TargetLanguageToTomTerm(ITL("(t instanceof " + name.getText() + ")"))),fsymOption);
           options.add(fsymDecl);
 
-          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), codomainType, types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), strategyType, types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
 
-          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()),extendsTerm,astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
+          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()),extendsTerm /*BuildReducedTerm(extendsTerm,strategyType)*/,astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
 
           // %strat finished: go back in target parser.
             selector().pop();
