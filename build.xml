@@ -927,12 +927,6 @@
   	<echo>Runs junit acceptance tests with optimization</echo>
   	<antcall target="src.junit.opt"/>
   	
-  	<echo>Test tom-source in examples</echo>
-  	<ant dir="${examples}" target="clean">
-      <property name="tom.home" location="${src.dist}"/>
-      <property name="tom.common.path" location="${src.lib}"/>
-  	</ant>
-  	
     <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
