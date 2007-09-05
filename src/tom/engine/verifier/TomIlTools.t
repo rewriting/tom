@@ -98,7 +98,7 @@ public class TomIlTools {
     Set unamedVarSet = new HashSet();
     try{
       ArrayList tmpList = new ArrayList();
-      `TopDown(CollectSubjects(list)).visitLight(constraint);
+      `TopDown(CollectSubjects(tmpList)).visitLight(constraint);
       for(Object o:tmpList){
         list.add(tomTermToZTerm((TomTerm)o,map,unamedVarSet));
       }
