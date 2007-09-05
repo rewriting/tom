@@ -14,6 +14,19 @@
 	* Note: feel free to improve the implementation!
 	* added a test
 
+2007-08-10 radu
+	* added numeric constraints
+
+2007-08-08 radu
+	* constraint ordering seems to work faster 
+	* compilation is a lot faster - at least on oana's example, it is 5 times faster
+
+2007-08-06 radu
+	* added <<
+	* added && 
+	* added ||
+	* added { }	
+
 2007-07-20  tonio <reilles@loria.fr>
   * bootinstall
   * add gomantlradapter, a tool to allow creating gom trees in antlr's rewrite
