@@ -27,7 +27,6 @@ package tom.engine.compiler;
 
 import java.util.*;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

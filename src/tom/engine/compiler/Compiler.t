@@ -42,6 +42,10 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
+import tom.engine.adt.tominstruction.types.constraintinstructionlist.concConstraintInstruction;
+import tom.engine.adt.tomslot.types.slotlist.concSlot;
+import tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit;
+
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.ASTFactory;
@@ -167,12 +171,12 @@ public class Compiler extends TomGenericPlugin {
         Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
         ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
         ConstraintList negativeConstraint = `concConstraint();        
-        while(!`constraintInstructionList.isEmptyconcConstraintInstruction()) {
+        for(ConstraintInstruction constraintInstruction:(concConstraintInstruction)`constraintInstructionList) {
           /*
            * the call to preProcessing performs the recursive expansion
            * of nested match constructs
            */
-          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `preProcessing(compiler).visitLight(`constraintInstructionList.getHeadconcConstraintInstruction());
+          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `preProcessing(compiler).visitLight(constraintInstruction);
 
 matchBlock: {
               %match(newConstraintInstruction) {
@@ -200,7 +204,6 @@ matchBlock: {
             } // end matchBlock
 
             newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
-            `constraintInstructionList = `constraintInstructionList.getTailconcConstraintInstruction();
         }
 
         Instruction newMatch = `Match(newConstraintInstructionList, matchOptionList);
@@ -213,11 +216,9 @@ matchBlock: {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
         //System.out.println("extendsTerm = " + `extendsTerm);
         DeclarationList l = `concDeclaration();//represents compiled Strategy
-        TomVisitList jVisitList = `visitList;
         TomForwardType visitorFwd = null;
-        while(!jVisitList.isEmptyconcTomVisit()) {
+        for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
-          TomVisit visit = jVisitList.getHeadconcTomVisit();
           %match(visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {
               if(visitorFwd == null) {//first time in loop
@@ -234,7 +235,6 @@ matchBlock: {
               l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
             }
           }
-          jVisitList = jVisitList.getTailconcTomVisit();
         }
         return (Declaration) `preProcessing(compiler).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
@@ -259,9 +259,7 @@ matchBlock: {
 
         SlotList newArgs = `concSlot();
         if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-          SlotList args = `arguments;
-          while(!args.isEmptyconcSlot()) {
-            Slot elt = args.getHeadconcSlot();
+          for(Slot elt:(concSlot)`arguments) {
             TomTerm newElt = elt.getAppl();
             %match(newElt) {
               appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
@@ -290,7 +288,6 @@ matchBlock: {
               }
             }
             newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
-            args = args.getTailconcSlot();
           }
         } else {
           newArgs = TomBase.mergeTomListWithSlotList(abstractPatternList(TomBase.slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
