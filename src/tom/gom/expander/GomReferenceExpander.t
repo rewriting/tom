@@ -229,7 +229,7 @@ public class GomReferenceExpander {
     %match(sorts){
       concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
         codeImport += %[
-          import @packagePath+moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.*;
+          import @packagePath+moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.Path@`sortName@;
         ]%;
         codeStrategies += getStrategies(`sDecl,moduleName);
         Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
