@@ -902,6 +902,7 @@
      </ant>
   </target>
 
+  <target name="src.junit.opt" depends="junit.opt"/>
   <target name="junit.opt"
           description="Runs junit acceptance tests with optimization"
           depends="clean.test, test.opt">
@@ -959,8 +960,10 @@
   <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
-    <antcall target="src.junit"/>
-
+    <antcall target="src.junit"/>  	
+  	<echo>Runs junit acceptance tests with optimization</echo>
+  	<antcall target="src.junit.opt"/>
+  	
     <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
