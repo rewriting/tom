@@ -110,7 +110,7 @@ public class TomVerifier extends TomGenericPlugin {
         Collection matchingCode = getMatchingCode();
 
         // Collection derivations = getDerivations(matchingCode);
-        // System.out.println("Derivations : " + derivations);
+        //System.out.println("Derivations : " + derivations);
 
         Map rawConstraints = getRawConstraints(matchingCode);
         //System.out.println(rawConstraints);
@@ -127,7 +127,7 @@ public class TomVerifier extends TomGenericPlugin {
         }
 
         ZenonBackend back = new ZenonBackend(verif);
-        //System.out.println(back.genZSpecCollection(zen));
+        //System.out.println("output: "+back.genZSpecCollection(zspecSet));
         String output = back.genZSpecCollection(zspecSet);
 
         // do not generate a file if there is no proof to do
@@ -166,7 +166,7 @@ public class TomVerifier extends TomGenericPlugin {
         Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
 
         Collection purified = purify(matchSet);
-        // System.out.println("Purified : " + purified);
+         //System.out.println("Purified : " + purified);
 
         // removes all associative patterns
         filterAssociative(purified);
@@ -216,6 +216,9 @@ public class TomVerifier extends TomGenericPlugin {
       Or(cond,FalseTL()) -> {
         return `cond;
       }
+      TomTermToExpression(ExpressionToTomTerm(expr)) -> {
+        return `expr;
+      }
     }
 
     visit Instruction {
@@ -262,9 +265,11 @@ public class TomVerifier extends TomGenericPlugin {
 
   %strategy associativeOperatorCollector(store:Collection) extends `Identity() {
     visit Instruction {
+      /** 
       subject@LetRef[]  -> {
         store.add(`subject);
       }
+       */
       subject@WhileDo[] -> {
         store.add(`subject);
       }
@@ -274,9 +279,11 @@ public class TomVerifier extends TomGenericPlugin {
     }
     visit Expression {
       /* we filter also patterns containing or() constructs */
+     /** 
       subject@Or(_,_) -> {
         store.add(`subject);
       }
+      */
     }
   }
 

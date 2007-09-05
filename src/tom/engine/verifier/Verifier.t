@@ -124,7 +124,15 @@ public class Verifier {
         Term term = termFromTomName(`name);
         return `slot(fsymbol(symbolName),term,slotName);
       }
+      GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=Ref(Variable[AstName=name])] -> {
+        Term term = termFromTomName(`name);
+        return `slot(fsymbol(symbolName),term,slotName);
+      }
       TomTermToExpression(Variable[AstName=name]) -> {
+        Term term = termFromTomName(`name);
+        return `term;
+      }
+      TomTermToExpression(Ref(Variable[AstName=name])) -> {
         Term term = termFromTomName(`name);
         return `term;
       }
@@ -140,6 +148,10 @@ public class Verifier {
     %match(Expression expression) {
       TrueTL()  -> { return `iltrue(subs(undefsubs())); }
       FalseTL() -> { return `ilfalse(); }
+      IsFsym[AstName=Name(symbolName),Variable=Ref[TomTerm=Variable[AstName=varName]]] -> {
+        Term term = termFromTomName(`varName);
+        return `isfsym(term,fsymbol(symbolName));
+      }
       IsFsym[AstName=Name(symbolName),Variable=Variable[AstName=varName]] -> {
         Term term = termFromTomName(`varName);
         return `isfsym(term,fsymbol(symbolName));
@@ -174,19 +186,13 @@ public class Verifier {
                     instrFromInstruction(ift),
                     instrFromInstruction(iff));
       }
-      Let(Variable[AstName=avar],expr,body) -> {
+      (Let|LetRef|LetAssign)(Variable[AstName=avar],expr,body) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
                       termFromExpresssion(expr),
                       instrFromInstruction(body));
       }
-      LetAssign(Variable[AstName=avar],expr,body) -> {
-        Variable thevar = variableFromTomName(`avar);
-        return `ILLet(thevar,
-                      termFromExpresssion(expr),
-                      instrFromInstruction(body));
-      }
-      (Let|LetAssign)(UnamedVariable[],_,body) -> {
+      (Let|LetAssign|LetRef)(UnamedVariable[],_,body) -> {
         return instrFromInstruction(`body);
       }
       CompiledPattern[AutomataInst=instr] -> {
