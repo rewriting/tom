@@ -73,7 +73,8 @@ package @getPackage()@;
 import @getPackage()@.@className().toLowerCase()@.*;
 import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 
-public abstract class @className()@ extends @fullClassName(abstractType)@ implements java.util.Collection@super.generateInterface()@ {
+//public abstract class @className()@ extends @fullClassName(abstractType)@ implements java.util.Collection@super.generateInterface()@ {
+public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 @generateBlock()@
 
@@ -155,7 +156,7 @@ writer.write(%[
   /**
    * Collection
    */
-
+  /*
   public boolean add(Object o) {
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
@@ -211,8 +212,9 @@ writer.write(%[
   public Object[] toArray(Object[] a) {
     throw new UnsupportedOperationException("Not yet implemented");
   }
+  */
   ]%);
-
+  /*
     // methods for each variadic operator
     consum = variadicOperatorList;
     while(!consum.isEmptyconcClassName()) {
@@ -233,9 +235,9 @@ matchblock: {
           }
         }
       }
-            }
+      }
     }
-
+  */
     if (!hooks.isEmptyconcHook()) {
       mapping.generate(writer); 
     }

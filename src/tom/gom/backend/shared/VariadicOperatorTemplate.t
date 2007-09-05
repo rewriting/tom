@@ -298,6 +298,10 @@ writer.write(%[
   /*
    * to get a Collection for an immutable list
    */
+  public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollection() {
+    return new Collection@className()@(this);
+  }
+
   public java.util.Collection<@primitiveToReferenceType(domainClassName)@> getCollection@className()@() {
     return new Collection@className()@(this);
   }
