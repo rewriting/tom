@@ -70,7 +70,7 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;
 @generateImport()@
-public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@{
+public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@ {
 @generateBlock()@
 ]%);
 generateBody(writer);
@@ -80,12 +80,10 @@ writer.write(%[
   }
 
   protected String generateInterface() {
-    String interfaces = super.generateInterface();
-    if (! interfaces.equals("")) {
-      return "implements "+interfaces.substring(1);
-    } else {
-      return interfaces;
-    }
+    String domainClassName = fullClassName(
+        cons.getSlots().getHeadconcSlotField().getDomain());
+    return 
+      %[implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> @super.generateInterface()@]%;
   }
 
 
@@ -129,11 +127,11 @@ writer.write(%[
     }
   }
 
-  public @fullClassName(sortName)@ add(@domainClassName@ element) {
+  public @fullClassName(sortName)@ append(@domainClassName@ element) {
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
       if (tl instanceof @className()@) {
-        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).add(element));
+        return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).append(element));
       } else {
 ]%);
     if(fullClassName(sortName)==domainClassName) {
@@ -245,7 +243,19 @@ writer.write(%[
 
   }
 
+  public boolean add(@primitiveToReferenceType(domainClassName)@ o) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public boolean addAll(java.util.Collection<? extends @primitiveToReferenceType(domainClassName)@> c) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
   public boolean remove(Object o) {
+    throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
+  }
+
+  public void clear() {
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
 
@@ -275,10 +285,10 @@ writer.write(%[
     return array;
   }
 
-  public Object[] toArray(Object[] array) {
+  public <T> T[] toArray(T[] array) {
     int size = this.length();
     if (array.length < size) {
-      array = (Object[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
+      array = (T[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
     } else if (array.length > size) {
       array[size] = null;
     }
@@ -287,7 +297,7 @@ writer.write(%[
       @fullClassName(sortName)@ cur = this;
       while(cur instanceof @fullClassName(cons.getClassName())@) {
         @primitiveToReferenceType(domainClassName)@ elem = ((@fullClassName(cons.getClassName())@)cur).getHead@className()@();
-        array[i] = elem;
+        array[i] = (T)elem;
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
         i++;
       }
@@ -306,9 +316,9 @@ writer.write(%[
     return new Collection@className()@(this);
   }
 
-  /*
+  /************************************************************
    * private static class
-   */
+   ************************************************************/
   private static class Collection@className()@ implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> {
     private @className()@ list;
 

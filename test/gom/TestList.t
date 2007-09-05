@@ -105,12 +105,12 @@ public class TestList extends TestCase {
 
   public void testZeroAdd() {
     List l = `conc();
-    assertEquals(`conc(a()),((conc)l).add(`a()));
+    assertEquals(`conc(a()),((conc)l).append(`a()));
   }
 
   public void testOneAdd() {
     List l = `conc(a());
-    assertEquals(`conc(a(),b()),((conc)l).add(`b()));
+    assertEquals(`conc(a(),b()),((conc)l).append(`b()));
   }
 
   public void testZeroReverse() {

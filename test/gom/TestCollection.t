@@ -3,6 +3,8 @@ package gom;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import gom.testcollection.m.types.*;
+import gom.testcollection.m.types.t.*;
+import gom.testcollection.m.types.l.*;
 import java.util.*;
 
 public class TestCollection extends TestCase {
@@ -22,21 +24,24 @@ public class TestCollection extends TestCase {
   }
 
   public void test1() {
-    T l = `f(a(),b());
+    f l = (f) `f(a(),b());
     assertTrue(l.contains(`a()));
     assertTrue(l.contains(`b()));
-    Iterator it = l.iterator();
+    Iterator<T> it = l.iterator();
     boolean a=false;
     boolean b=false;
     while(it.hasNext()) {
-      Object o = it.next();
+      T o = it.next();
       if(o==`a()) { a = true; }
       if(o==`b()) { b = true; }
     }
     assertTrue(a);
     assertTrue(b);
+    for(T x:l) {
+      assertTrue(l.contains(x));
+    }
 
-    Collection<T> col = l.getCollectionf();
+    Collection<T> col = l.getCollection();
     col.add(`c());
     Iterator<T> itc = col.iterator();
     boolean c = false;
@@ -52,21 +57,25 @@ public class TestCollection extends TestCase {
   }
 
   public void test2() {
-    L l = `cons(a(),b());
+    cons l = (cons)`cons(a(),b());
     assertTrue(l.contains(`a()));
     assertTrue(l.contains(`b()));
-    Iterator it = l.iterator();
+    Iterator<T> it = l.iterator();
     boolean a=false;
     boolean b=false;
     while(it.hasNext()) {
-      Object o = it.next();
+      T o = it.next();
       if(o==`a()) { a = true; }
       if(o==`b()) { b = true; }
     }
     assertTrue(a);
     assertTrue(b);
 
-    Collection<T> col = l.getCollectioncons();
+    for(T x:l) {
+      assertTrue(l.contains(x));
+    }
+
+    Collection<T> col = l.getCollection();
     col.add(`c());
     Iterator<T> itc = col.iterator();
     boolean c = false;
@@ -82,20 +91,24 @@ public class TestCollection extends TestCase {
   } 
   
   public void test3() {
-    L l = `consint(1,2);
+    consint l = (consint) `consint(1,2);
     assertTrue(l.contains(1));
     assertTrue(l.contains(2));
-    Iterator it = l.iterator();
+    Iterator<Integer> it = l.iterator();
     boolean a=false;
     boolean b=false;
     while(it.hasNext()) {
-      Object o = it.next();
-      if(o.equals(new Integer(1))) { a = true; }
-      if(o.equals(new Integer(2))) { b = true; }
+      Integer o = it.next();
+      if(o==1) { a = true; }
+      if(o==2) { b = true; }
     }
     assertTrue(a);
     assertTrue(b);
 
+    for(Integer x:l) {
+      assertTrue(l.contains(x));
+
+    }
     Collection<Integer> col = l.getCollectionconsint();
     col.add(3);
     Iterator<Integer> itc = col.iterator();
