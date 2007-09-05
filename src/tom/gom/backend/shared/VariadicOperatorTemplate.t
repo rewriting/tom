@@ -247,6 +247,7 @@ writer.write(%[
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
 
+
   public boolean addAll(java.util.Collection<? extends @primitiveToReferenceType(domainClassName)@> c) {
     throw new UnsupportedOperationException("This object "+this.getClass().getName()+" is not mutable");
   }
@@ -350,18 +351,31 @@ writer.write(%[
     return get@className(sortName)@().containsAll(c);
   }
 
-  public boolean equals(Object o) { return get@className(sortName)@().equals(o); }
+  public boolean equals(Object o) { 
+    return get@className(sortName)@().equals(o); 
+  }
 
-  public int hashCode() { return get@className(sortName)@().hashCode(); }
+  public int hashCode() {
+    return get@className(sortName)@().hashCode(); 
+  }
 
   public java.util.Iterator<@primitiveToReferenceType(domainClassName)@> iterator() {
     return get@className(sortName)@().iterator();
   }
 
-  public int size() { return get@className(sortName)@().size(); }
+  public int size() { 
+    return get@className(sortName)@().size(); 
+  }
 
-  public Object[] toArray() { return get@className(sortName)@().toArray(); }
+  public Object[] toArray() {
+    return get@className(sortName)@().toArray();
+  }
 
+  public <T> T[] toArray(T[] array) {
+    return get@className(sortName)@().toArray(array);
+  }
+
+/*
   public <T> T[] toArray(T[] array) {
     int size = get@className(sortName)@().length();
     if (array.length < size) {
@@ -375,7 +389,7 @@ writer.write(%[
     }
     return array;
   }
-
+*/
     /**
      * Collection
      */
@@ -392,7 +406,9 @@ writer.write(%[
       list = (@className()@) @fullClassName(empty.getClassName())@.make();
     }
 
-    public boolean isEmpty() { return list.isEmpty@className()@(); }
+    public boolean isEmpty() { 
+      return list.isEmpty@className()@(); 
+    }
 
     public boolean remove(Object o) {
       throw new UnsupportedOperationException("Not yet implemented");

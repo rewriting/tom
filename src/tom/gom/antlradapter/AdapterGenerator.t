@@ -442,7 +442,7 @@ public class @filename()@Tree extends CommonTree {
                 FullOperatorClass(op),
                 Code(") inAstTerm;\n"),
                 Code("        "),
-                Code("inAstTerm = list.add(elem);\n")
+                Code("inAstTerm = list.append(elem);\n")
                 );
           }
         }
