@@ -140,6 +140,17 @@ public class ASTFactory {
     }
     return list;
   }
+  
+  public static ConstraintInstructionList makeConstraintInstructionList(List argumentList) {
+    ConstraintInstructionList list = `concConstraintInstruction();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      Object elt = argumentList.get(i);
+      ConstraintInstruction term;
+      term = (ConstraintInstruction)elt;
+      list = `concConstraintInstruction(term,list*);
+    }
+    return list;
+  }
 
   public static TomNameList makeNameList(List argumentList) {
     TomNameList list = `concTomName();
@@ -167,17 +178,6 @@ public class ASTFactory {
       Object elt = argumentList.get(i);
       PairNameDecl term = (PairNameDecl) elt;
       list = `concPairNameDecl(term,list*);
-    }
-    return list;
-  }
-
-  public static PatternInstructionList makePatternInstructionList(List argumentList) {
-    PatternInstructionList list = `concPatternInstruction();
-    for(int i=argumentList.size()-1; i>=0 ; i--) {
-      Object elt = argumentList.get(i);
-      PatternInstruction term;
-      term = (PatternInstruction)elt;
-      list = `concPatternInstruction(term,list*);
     }
     return list;
   }

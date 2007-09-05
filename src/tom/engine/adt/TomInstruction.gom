@@ -30,23 +30,37 @@ Instruction =
   | AbstractBlock(InstList:InstructionList)
   | UnamedBlock(InstList:InstructionList)
   | NamedBlock(BlockName:String,InstList:InstructionList)
-  | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
+  /**
+   * <code>Match</code> a match instruction
+   *
+   * @param ConstraintInstructionList a list of (constraint and an action)
+   */
+  | Match(ConstraintInstructionList:ConstraintInstructionList, Option:OptionList)
   | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
-  | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
+  | CompiledPattern(Contraint:Constraint,AutomataInst:Instruction)
   /*
    * a RawAction is an action that comes from the original program 
    */
   | RawAction(AstInstruction:Instruction)
 
   /*
-   * a TypeAction knows the pattern to which it is attached (positivePattern),
-   * and also the list of previously tried patterns, which are called negativePattern
+   * a TypeAction knows the constraint to which it is attached (PositivePattern),
+   * and also the list of previously tried constraints, which are called negativePattern
    * This information is used to perform extra verification/certification
    */
 
-  | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
+  | TypedAction(AstInstruction:Instruction,PositivePattern:Constraint,NegativePatternList:ConstraintList)
   | AndInstruction(Instruction*)
   | OrInstruction(Instruction*)
+  
+/**
+ * <code>ConstraintInstruction</code> a line in a match instruction - a touple (Constraint,Action)
+ *
+ * @param Constraint a constraint (can be a OR or an AND)
+ * @param Action the action to execute if the constraints are evaluated to true
+ */  
+ConstraintInstruction = ConstraintInstruction(Constraint:Constraint, Action:Instruction, Option:OptionList)  
+ConstraintInstructionList = concConstraintInstruction(ConstraintInstruction*)    
   
 AndInstruction:AU() { }
 OrInstruction:AU() { }  

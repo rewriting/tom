@@ -119,9 +119,9 @@ public class TomTypeChecker extends TomChecker {
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
     visit Instruction {
-      Match(_, patternInstructionList, oplist) -> {  
+      Match(constraintInstructionList, oplist) -> {  
         ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
-        ttc.verifyMatchVariable(`patternInstructionList);
+        ttc.verifyMatchVariable(`constraintInstructionList);
         throw new tom.library.sl.VisitFailure();
       }
     }
@@ -152,19 +152,18 @@ public class TomTypeChecker extends TomChecker {
     } 
   }
 
-  private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
-    while(!patternInstructionList.isEmptyconcPatternInstruction()) {
-      PatternInstruction pa = patternInstructionList.getHeadconcPatternInstruction();
-      Pattern pattern = pa.getPattern();
-      // collect variables
-      ArrayList variableList = new ArrayList();
-      TomBase.collectVariable(variableList, pattern);
-      verifyVariableTypeListCoherence(variableList);
-      patternInstructionList = patternInstructionList.getTailconcPatternInstruction();
-    }
+  private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) throws VisitFailure{
+    %match(constraintInstructionList){
+      concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
+        // collect variables
+        ArrayList variableList = new ArrayList();
+        TomBase.collectVariable(variableList, `constraint);
+        verifyVariableTypeListCoherence(variableList);        
+      }
+    }    
   }
 
-  private void verifyStrategyVariable(TomVisitList list) {
+  private void verifyStrategyVariable(TomVisitList list) throws VisitFailure{
     TomForwardType visitorFwd = null;
     TomForwardType currentVisitorFwd = null;
     while(!list.isEmptyconcTomVisit()) {

@@ -48,7 +48,7 @@ public class SyntacticPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return  (Constraint)`InnermostId(SyntacticPatternMatching()).visit(constraint);
+    return  (Constraint)`TopDown(SyntacticPatternMatching()).visitLight(constraint);
   }	
 
   %strategy SyntacticPatternMatching() extends `Identity() {
@@ -98,7 +98,7 @@ public class SyntacticPropagator implements IBasePropagator {
             int counter = 0;          
             // for each slot
             %match(slots) {
-              concSlot(_*,PairSlotAppl[SlotName=slotName],_*) -> {                                          
+              concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
                 TomTerm freshVar = freshVarList.get(counter);          
                 andForName = `AndConstraint(andForName*,MatchConstraint(freshVar,Subterm(name,slotName,g)));
                 counter++;
@@ -109,17 +109,28 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
       }
+      
+      /**
+       * SwithAnti : here is just for efficiency reasons, and not for ordering, 
+       * because now the replace can be applied left-right; the ordering is done anyway in the pre-generator
+       *       
+       * AntiMatchConstraint[] /\ ... /\ MatchConstraint[] ->  MatchConstraint[] /\ ... /\ AntiMatchConstraint[] 
+       */
+      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
+      }
+
 
       /**
        * Replace
        * 
-       * Context1( z = v ) /\ z = t /\ Context2( z = u ) -> Context1( t = v ) /\ z = t /\ Context2( t = u ) 
+       * z = t /\ Context2( z = u ) ->  z = t /\ Context2( t = u ) 
        */
       AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {        
-        Constraint toApplyOn = `AndConstraint(X*,Y*);
-        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visit(toApplyOn);
+        Constraint toApplyOn = `AndConstraint(Y*);
+        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visitLight(toApplyOn);
         if(res != toApplyOn) {          
-          return `AndConstraint(eq,res);
+          return `AndConstraint(X*,eq,res);
         }
       }      
     }
@@ -134,6 +145,19 @@ public class SyntacticPropagator implements IBasePropagator {
           return value.isVariable() ? `MatchConstraint(TestVar(value),t) : `MatchConstraint(value,t); 
         }
       }
+      NumericConstraint(Variable[AstName=name],right,numericType) -> {
+        if(`name == varName) {          
+          return `NumericConstraint(value,right,numericType); 
+        }
+      }
+      // we can have the same variable both as variable and as variablestar
+      // we know that this is ok, because the type checker authorized it
+      MatchConstraint(v@VariableStar[AstName=name@!PositionName[],AstType=type],p) -> {        
+        if(`name == varName) {           
+          TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
+          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
+        }                                 
+      }      
     }
   }// end strategy
 }

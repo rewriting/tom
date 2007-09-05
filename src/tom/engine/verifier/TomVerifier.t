@@ -106,6 +106,7 @@ public class TomVerifier extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       try {
 
+        // collects all automata
         Collection matchingCode = getMatchingCode();
 
         // Collection derivations = getDerivations(matchingCode);
@@ -303,56 +304,63 @@ public class TomVerifier extends TomGenericPlugin {
     return rawConstraints;
   }
 
-  public String patternToString(ATerm patternList) {
-    return patternToString((PatternList) patternList);
+  public String constraintToString(ATerm patternList) {
+    return constraintToString((ConstraintList) patternList);
   }
 
-  public String patternToString(PatternList patternList) {
+  public String constraintToString(ConstraintList constraintList) {
     StringBuffer result = new StringBuffer();
-    Pattern h = null;
-    PatternList tail = patternList;
-    if(!tail.isEmptyconcPattern()) {
-      h = tail.getHeadconcPattern();
-      tail = tail.getTailconcPattern();
-      result.append(patternToString(h));
+    Constraint h = null;
+    ConstraintList tail = constraintList;
+    if(!tail.isEmptyconcConstraint()) {
+      h = tail.getHeadconcConstraint();
+      tail = tail.getTailconcConstraint();
+      result.append(constraintToString(h));
     }
 
-    while(!tail.isEmptyconcPattern()) {
-      h = tail.getHeadconcPattern();
-      result.append("," + patternToString(h));
-      tail = tail.getTailconcPattern();
+    while(!tail.isEmptyconcConstraint()) {
+      h = tail.getHeadconcConstraint();
+      result.append("," + constraintToString(h));
+      tail = tail.getTailconcConstraint();
     }
     return result.toString();
   }
 
-  public String patternToString(Pattern pattern) {
+  public String constraintToString(Constraint constraint) {
     String result = "";
-    %match(Pattern pattern) {
-      Pattern[TomList=tomList] -> {
-        return patternToString(`tomList);
+    %match(constraint){
+      AndConstraint(x,Y*) -> {
+        return constraintToString(`x) + " && " + constraintToString(`AndConstraint(Y*));
       }
-    }
+      OrConstraint(x,Y*) -> {
+        return constraintToString(`x) + " || " + constraintToString(`OrConstraint(Y*));
+      }
+      MatchConstraint(p,s) -> {
+        return constraintToString(`p) + " << " + constraintToString(`s);
+      }
+    }    
     return result;
   }
 
-  public String patternToString(TomList tomList) {
+  public String constraintToString(TomList tomList) {
     StringBuffer result = new StringBuffer();
     TomTerm h = null;
     TomList tail = tomList;
     if(!tail.isEmptyconcTomTerm()) {
       h = tail.getHeadconcTomTerm();
       tail = tail.getTailconcTomTerm();
-      result.append(patternToString(h));
+      result.append(constraintToString(h));
     }
 
     while(!tail.isEmptyconcTomTerm()) {
       h = tail.getHeadconcTomTerm();
-      result.append("," + patternToString(h));
+      result.append("," + constraintToString(h));
       tail = tail.getTailconcTomTerm();
     }
     return result.toString();
   }
-  public String patternToString(TomTerm tomTerm) {
+  
+  public String constraintToString(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {
       TermAppl[NameList=concTomName(Name(name),_*),Args=childrens] -> {
         if (`childrens.isEmptyconcTomTerm()) {
@@ -360,11 +368,11 @@ public class TomVerifier extends TomGenericPlugin {
         } else {
           `name = `name + "(";
           TomTerm head = `childrens.getHeadconcTomTerm();
-          `name += patternToString(head);
+          `name += constraintToString(head);
           TomList tail = `childrens.getTailconcTomTerm();
           while(!tail.isEmptyconcTomTerm()) {
             head = tail.getHeadconcTomTerm();
-            `name += "," + patternToString(head);
+            `name += "," + constraintToString(head);
             tail = tail.getTailconcTomTerm();
           }
           `name += ")";

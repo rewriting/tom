@@ -56,9 +56,8 @@ public class PreGenerator {
   %include { ../../library/mapping/java/sl.tom}
   // ------------------------------------------------------------
 
-  public static Expression performPreGenerationTreatment(Constraint constraint) 
-  throws VisitFailure{
-    constraint = (Constraint)`InnermostId(OrderConstraints()).visit(constraint);    
+  public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure{    
+    constraint = (Constraint)`InnermostId(OrderConstraints()).visitLight(constraint);    
     return constraintsToExpressions(constraint);
   }
 
@@ -147,6 +146,13 @@ public class PreGenerator {
           return `AndConstraint(X*,second,Y*,first,Z*);
         }
       }
+      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
+        try{
+          `TopDown(HasTerm(v)).visitLight(`rhs);
+        }catch(VisitFailure ex){
+          return `AndConstraint(X*,second,Y*,first,Z*);
+        }
+      }
 
       /*
        * p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
@@ -197,6 +203,16 @@ public class PreGenerator {
          return `AndConstraint(X*,second,Y*,first,Z*);                
       }
       
+      /*
+       * SwitchNumericConstraints
+       * 
+       * an numeric constraint should be always at the end, after the match constraints
+       * because the numeric constraints never instantiate variables
+       */
+      AndConstraint(X*,numeric@NumericConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        return `AndConstraint(X*,Y*,match,Z*,numeric);        
+      }
+      
     } // end visit
   }// end strategy
   
@@ -219,12 +235,16 @@ public class PreGenerator {
       AndConstraint(m,X*) -> {        
         return `And(constraintsToExpressions(m),
             constraintsToExpressions(AndConstraint(X*)));
-      }      
+      }
+      OrConstraint(m,X*) -> {        
+        return `OrConnector(constraintsToExpressions(m),
+            constraintsToExpressions(OrConstraint(X*)));
+      }
       OrConstraintDisjunction(m,X*) -> {        
         return `OrExpressionDisjunction(constraintsToExpressions(m),
             constraintsToExpressions(OrConstraintDisjunction(X*)));
       }
-      m@MatchConstraint[] -> {        
+      m@(MatchConstraint|NumericConstraint)[] -> {        
         return `ConstraintToExpression(m);
       }
       AntiMatchConstraint(constr) -> {
@@ -240,7 +260,7 @@ public class PreGenerator {
         return `IsEmptyArray(opName,variable,index);
       }
     }                   
-    throw new TomRuntimeException("ConstraintGenerator.prepareGeneration - strange constraint:" + constraint);
+    throw new TomRuntimeException("PreGenerator.constraintsToExpressions - strange constraint:" + constraint);
   }     
 }
 

@@ -50,7 +50,7 @@ TomTerm =
    * @param Variable the list from which to extract the head / tail
    */
 	| ListHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
-  | ListTail(Opname:TomName,Variable:TomTerm)  		   
+  	| ListTail(Opname:TomName,Variable:TomTerm)  		   
 
   /**
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
@@ -83,7 +83,7 @@ TomTerm =
     | SymbolOf(GroundTerm:TomTerm)
     | Ref(TomTerm:TomTerm)
 
-    | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
+    | Automata(Option:OptionList,Constraint:Constraint,NumberList:TomNumberList,Inst:Instruction)
 
     | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
   /**
@@ -101,25 +101,6 @@ TomTerm =
     | BuildEmptyArray(AstName:TomName,Size:int)
     | BuildConsArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
     | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-
-  /**
-   * <code>Pattern</code> a lhs of rule, composed by a list of terms with variables
-   *
-   * @param SubjectList the list of subjects against which the pattern is matched
-   * @param TomList the list of terms 
-   */
-Pattern = Pattern(SubjectList:TomList,TomList:TomList)
-  /**
-   * <code>PatternInstruction</code> a tuple (Pattern,Action)
-   *
-   * @param Pattern the lhs
-   * @param Action the instruction to be executed
-   * @param Option 
-   */
-PatternInstruction = PatternInstruction(Pattern:Pattern,Action:Instruction,Option:OptionList)
-
-PatternList = concPattern(Pattern*)
-PatternInstructionList = concPatternInstruction(PatternInstruction*)
 
 TomList = concTomTerm(TomTerm*)
 

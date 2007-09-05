@@ -150,7 +150,9 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("TomBackend: IOException occurs writting to file ''{0}'': {1} ");
   public static final TomMessage deprecatedDisjunction =
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
-
+  public static final TomMessage invalidConstraintType =
+      new TomMessage("Invalid Constraint type ");
+ 
   // checker.TomChecker
   public static final TomMessage findOTL               =
     new TomMessage("{0}: findOriginTrackingLine : not found (TomChecker)");
@@ -168,8 +170,10 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage unknownRuleRhsVariable=
       new TomMessage("Rule right hand side uses an undeclared variable ''{0}''");
   
-  public static final TomMessage illegalAnnotationInAntiPattern=
-      new TomMessage("It is forbidden to make annotations under an anti symbol");  
+  public static final TomMessage illegalAnnotationInAntiPattern =
+      new TomMessage("It is forbidden to make annotations under an anti symbol");
+  public static final TomMessage freeVarNotPresentInOr =
+    new TomMessage("In a disjunction, the (free) variables of all the patterns must be the same. Variable ''{0}'' not found in all disjunctions");
   
   // compiler
   public static final TomMessage errorMissingSlotDecl=
@@ -249,7 +253,18 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage badMakeDefinition       =
       new TomMessage("Bad number of arguments in ''make(...)'' macro-function: {0,number,integer} arguments found but {1,number,integer} expected in symbol definition");
   public static final TomMessage listSymbolDomainError   =
-      new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");
+      new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");  
+  public static final TomMessage invalidLeftSideNumericConstraint   =
+    new TomMessage("The symbol ''{0}'' has to be a named variable in order to be used in a numeric constraint");
+  public static final TomMessage numericTypeRequired   =
+    new TomMessage("The symbol ''{0}'' has to have a numeric type (ex: int,long,float,double) in order to be used in a numeric constraint");
+  public static final TomMessage inconsistentTypes   =
+    new TomMessage("The symbol ''{0}'' already had type ''{1}''. Type ''{2}'' is invalid");
+  public static final TomMessage forbiddenAntiTermInNumeric   =
+    new TomMessage("Anti-patterns are forbidden in numeric constraints");
+  public static final TomMessage forbiddenAnnotationsNumeric   =
+    new TomMessage("Annotations are forbidden in numeric constraints");
+   
   
   // Error messages linked to slot declaration during parsing
   public static final TomMessage badSlotName             =

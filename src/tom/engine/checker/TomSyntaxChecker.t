@@ -26,6 +26,7 @@
 
 package tom.engine.checker;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -36,6 +37,7 @@ import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -44,6 +46,7 @@ import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
@@ -62,6 +65,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
+  %include { ../../library/mapping/java/util/types/Collection.tom}
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
@@ -115,7 +119,7 @@ public class TomSyntaxChecker extends TomChecker {
     alreadyStudiedSymbols = new ArrayList();
   }
 
-  public void run() {
+  public void run() {       
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
       long startChrono = System.currentTimeMillis();
@@ -191,9 +195,9 @@ public class TomSyntaxChecker extends TomChecker {
     }
 
    visit Instruction {
-     Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
+     Match(constraintInstructionList, list) -> {
        /* TOM MATCH STRUCTURE */
-       tsc.verifyMatch(`matchArgsList, `patternInstructionList, `list);
+       tsc.verifyMatch(`constraintInstructionList, `list);
      }
    }
   }
@@ -478,156 +482,358 @@ public class TomSyntaxChecker extends TomChecker {
   // ////////////////////////////// /
   // MATCH VERIFICATION CONCERNS ///
   // ////////////////////////////////
-
-  /*
-   * Given a MatchConstruct's subject list and pattern-action list
+  /**
+   * Verifies the match construct
+   * 1. Verifies all MatchConstraints
+   * 2. Verifies all NumericConstraints (left side a variable, and the type of the right side numeric)
+   * 3. Verifies that in an OrConstraint, all the members have the same free variables
    */
-  private void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList option) {
+  private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure{
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
-    ArrayList typeMatchArgs = new ArrayList();
-    ArrayList subjectMatchArgs = new ArrayList();
-    int nbExpectedArgs = 0;
-    // From the subjects list(match definition), we test each used type and keep
-    // them in memory
-    while(!subjectList.isEmptyconcTomTerm()) {
-      TomTerm subject = subjectList.getHeadconcTomTerm();
-      // for each Match args
-      %match(TomTerm `subject) {
-        Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {
-	  nbExpectedArgs++;
-	  subjectMatchArgs.add(`name);
-          if(`type.equals("unknown type")) {
-            typeMatchArgs.add(null);
-          } else if(testTypeExistence(`type)) {
-            typeMatchArgs.add(`tomType);
-          } else {
+    ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+    `TopDown(CollectConstraints(constraints)).visitLight(constraintInstructionList);
+    TomType typeMatch = null;
+    for(Constraint constr: constraints){
+      %match(constr){
+        MatchConstraint(pattern,subject) -> {
+          %match(subject) {            
+            TomTypeToTomTerm(TomTypeAlone[]) -> {
+              // this is from %strategy construct and is already cheked in verifyStrategy
+              return;
+            }
+            _ ->{
+              typeMatch = getSubjectType(`subject,constraints);
+            }
+          }
+          if (typeMatch == null) {
+            Object messageContent = `subject;
+            %match(subject){
+              Variable[AstName=Name(stringName)] -> {
+                messageContent = `stringName;
+              }
+              TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
+                messageContent = `stringName;
+              }
+            }
             messageError(currentTomStructureOrgTrack.getFileName(),
                 currentTomStructureOrgTrack.getLine(),
-                TomMessage.unknownMatchArgumentTypeInSignature,
-                new Object[]{`name, `(type)});
-            typeMatchArgs.add(null);
+                TomMessage.cannotGuessMatchType,
+                new Object[]{`(messageContent)});
+
+            return;
+          }
+
+          // we now compare the pattern to its definition
+          verifyMatchPattern(`pattern, typeMatch);
+        }
+
+        NumericConstraint[Left=left,Right=right] -> {
+          // the left side should always be a variable
+          if (!`(left).isVariable()) {
+            Object messageContent = `left;
+            %match(left){            
+              TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
+                messageContent = `stringName;             
+              }
+              UnamedVariable[] -> {
+                messageContent = "_";             
+              }
+              UnamedVariableStar[] -> {
+                messageContent = "_*";             
+              }
+              AntiTerm[] -> {
+                messageError(currentTomStructureOrgTrack.getFileName(),
+                    currentTomStructureOrgTrack.getLine(),
+                    TomMessage.forbiddenAntiTermInNumeric,
+                    new Object[]{});
+                return;                
+              }
+            }
+          } 
+          if (`(left).getConstraints() != `concConstraint()){
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.forbiddenAnnotationsNumeric,
+                new Object[]{});
+            return;   
+          }
+          typeMatch = getSubjectType(`right,constraints);  
+          // the right side should have a numeric type
+          Object messageContent = `right;
+          %match(right){
+            Variable[AstName=Name(stringName)] -> {
+              messageContent = `stringName;
+            }
+            TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
+              messageContent = `stringName;
+            }
+          }
+          if (typeMatch == null) {          
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.cannotGuessMatchType,
+                new Object[]{messageContent});
+
+            return;
+          } else {            
+            if (!symbolTable().isNumericType(typeMatch)){
+              messageError(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.numericTypeRequired,
+                  new Object[]{messageContent});
+
+              return;
+            }
+          }
+          // we now compare the pattern to its definition
+          verifyMatchPattern(`left, typeMatch);
+        }
+        
+        oc@OrConstraint(_*) -> {
+          if (!verifyOrConstraint(`oc)){
+            return;
           }
         }
-
-        term@TermAppl[NameList=concTomName(Name(name))] -> {
-	  nbExpectedArgs++;
-	  subjectMatchArgs.add(`name);
-	  TomSymbol symbol = getSymbolFromName(`name);
-	  if(symbol!=null) {
-	    TomType type = TomBase.getSymbolCodomain(symbol);
-	    String typeName = TomBase.getTomType(`type);
-	    if(!testTypeExistence(typeName)) {
-	      messageError(currentTomStructureOrgTrack.getFileName(),
-		  currentTomStructureOrgTrack.getLine(),
-		  TomMessage.unknownMatchArgumentTypeInSignature,
-		  new Object[]{`name, typeName});
-	    }
-	    typeMatchArgs.add(type);
-            validateTerm(`term, type, false, true, true);
-	  } else {
-	    typeMatchArgs.add(null);
-	  }
-        }
       }
-      subjectList = subjectList.getTailconcTomTerm();
+    } // for
+  }
+  
+  /**
+   * Verifies that in an OrConstraint, all the members have the same free variables 
+   * (only the match constraints have free variables - because only this type
+   * of constraints can generate assignments)
+   */
+  private boolean verifyOrConstraint(Constraint orConstraint) throws VisitFailure{
+    ArrayList<TomTerm> freeVarList1 = new ArrayList<TomTerm>();
+    ArrayList<TomTerm> freeVarList2 = new ArrayList<TomTerm>();
+    %match(orConstraint){
+      OrConstraint(_*,x,_*) -> {
+        // we collect the free vars only from match constraints
+        // and we check these variables for numeric constraints also
+        // ex: 'y << a() && x > 3' should generate an error 
+        %match(x){
+          MatchConstraint(pattern,_) -> {`TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);}
+        }        
+        if (!freeVarList1.isEmpty()) {
+          for(TomTerm term:freeVarList2){
+            if (!freeVarList1.contains(term)){
+              String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+              messageError(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.freeVarNotPresentInOr,
+                  new Object[]{varName});
+              return false;
+            }
+          }
+          for(TomTerm term:freeVarList1){
+            if (!freeVarList2.contains(term)){
+              String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+              messageError(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.freeVarNotPresentInOr,
+                  new Object[]{varName});
+              return false;
+            }
+          }          
+        }
+        freeVarList1 = (ArrayList<TomTerm>)freeVarList2.clone();
+        freeVarList2.clear();
+      }
     }
-
-    /*
-     * if a type is not specified in the subjectList we look for a type in a
-     * column and we update typeMatchArgs
-     */
-    for(int i=0 ; i<typeMatchArgs.size() ; i++) {
-      // System.out.println("i = " + i);
-block: {
-	 if(typeMatchArgs.get(i) == null) {
-	   %match(PatternInstructionList patternInstructionList) {
-	     concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=concTomTerm(X*,tmpSubject,_*)]], _*) -> {
-	       TomTerm subject = `tmpSubject;
-	       %match(subject) {
-		 AntiTerm(p) -> { subject = `p; }
-	       }
-	       %match(subject) {
-		 (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {
-		   // System.out.println("X.length = " + `X*.length());
-		   if(`X*.length() == i) {
-		     TomSymbol symbol = null;
-		     if(`subject.isXMLAppl()) {
-		       symbol = getSymbolFromName(Constants.ELEMENT_NODE);
-		     } else {
-		       symbol = getSymbolFromName(`name);
-		     }
-		     // System.out.println("name = " + `name);
-		     if(symbol!=null) {
-		       TomType type = TomBase.getSymbolCodomain(symbol);
-		       // System.out.println("type = " + type);
-		       typeMatchArgs.set(i,type);
-		       String typeName = TomBase.getTomType(`type);
-		       if(!testTypeExistence(typeName)) {
-			 messageError(currentTomStructureOrgTrack.getFileName(),
-			     currentTomStructureOrgTrack.getLine(),
-			     TomMessage.unknownMatchArgumentTypeInSignature,
-			     new Object[]{`name, typeName});
-		       }
-
-		       break block;
-		     }
-		   }
-		 }
-	       }
-	     }
-	   }
-	 }
-       }
-       if(typeMatchArgs.get(i) == null) {
-	 messageError(currentTomStructureOrgTrack.getFileName(),
-	     currentTomStructureOrgTrack.getLine(),
-	     TomMessage.cannotGuessMatchType,
-	     new Object[]{subjectMatchArgs.get(i)});
-       }
-    }
-
-    // we now compare pattern to its definition
-    %match(PatternInstructionList patternInstructionList) {
-      concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms]], _*) -> {
-        // control each pattern vs the match definition
-        `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);        
+    return true;
+  }
+  
+  /**
+   * Collect the free variables in an constraint (do not inspect under a anti)  
+   */
+  %strategy CollectFreeVar(varList:Collection) extends Identity() {     
+    visit TomTerm {
+      v@(Variable|VariableStar)[] -> {
+        if (!varList.contains(`v)) { varList.add(`v); }     
+        throw new VisitFailure();
+      }
+      AntiTerm[] -> {        
+        throw new VisitFailure();
       }
     }
   }
 
-  // each patternList shall have the expected length and each term shall be
-  // valid
-  private  void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
-    int nbFoundArgs = termList.length();
-    if(nbFoundArgs != nbExpectedArgs) {
-      OptionList og = termList.getHeadconcTomTerm().getOption();
-      messageError(findOriginTrackingFileName(og),findOriginTrackingLine(og),
-                   TomMessage.badMatchNumberArgument,
-                   new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)});
-      // we cannot continue because we will use the fact that each element of
-      // the pattern
-      // has the expected type declared in the Match definition
-      return ;
-    }
-
-    TomType expectedType;
-    int counter = 0;
-    %match(TomList termList) {
-      concTomTerm(_*, term, _*) -> { // no term can be a Var* nor _*: not
-                                      // allowed as top leftmost symbol
-        TermDescription termDesc = analyseTerm(`term);
-        if(termDesc.getTermClass() == UNAMED_VARIABLE_STAR || termDesc.getTermClass() == VARIABLE_STAR) {
-          messageError(termDesc.getFileName(),termDesc.getLine(),
-                       TomMessage.incorrectVariableStarInMatch,
-                       new Object[]{termDesc.getName()});
-        } else {    // Analyse the term if expectedType != null
-          expectedType = (TomType)typeMatchArgs.get(counter);
-          if (expectedType != null) {
-            // the type is known and found in the match signature
-            validateTerm(`term, expectedType, false, true, false);
+  
+  /**
+   * tries to give the type of the tomTerm received as parameter
+   */
+  private TomType getSubjectType(TomTerm subject, ArrayList<Constraint> constraints){
+    %match(subject) {
+      Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {              
+        if(`type.equals("unknown type")) {
+          // try to guess
+          return guessSubjectType(`subject,constraints);
+        } else if(testTypeExistence(`type)) {
+          return `tomType;
+        } else {
+          messageError(currentTomStructureOrgTrack.getFileName(),
+              currentTomStructureOrgTrack.getLine(),
+              TomMessage.unknownMatchArgumentTypeInSignature,
+              new Object[]{`name, `(type)});                
+        }
+      }
+      term@TermAppl[NameList=concTomName(Name(name))] -> {
+        TomSymbol symbol = getSymbolFromName(`name);
+        if(symbol!=null) {
+          TomType type = TomBase.getSymbolCodomain(symbol);
+          String typeName = TomBase.getTomType(`type);
+          if(!testTypeExistence(typeName)) {
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.unknownMatchArgumentTypeInSignature,
+                new Object[]{`name, typeName});
+          }          
+          validateTerm(`term, type, false, true, true);
+          return type;
+        } else {
+          // try to guess
+          return guessSubjectType(`subject,constraints);
+        }
+      }
+      // the user specified the type
+      BuildReducedTerm(TermAppl[NameList=concTomName(Name(name))],userType) -> {
+        TomSymbol symbol = getSymbolFromName(`name);
+        if(symbol != null) { // check that the type provided by the user is consistent
+          TomType type = TomBase.getSymbolCodomain(symbol);
+          if (!`(userType).equals(type)){
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.inconsistentTypes,
+                new Object[]{`name, TomBase.getTomType(type), TomBase.getTomType(`userType)});
           }
         }
-        counter++;
+        // a function call 
+        return `userType;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * if a type is not specified 
+   * 1. we look for a type in all match constraints where we can find this subject
+   * 2. TODO: if the subject is in a constraint with a variable (the pattern is a variable for instance),
+   * try to see if a variable with the same name already exists and can be typed, and if yes, get that type
+   */
+  private TomType guessSubjectType(TomTerm subject,ArrayList<Constraint> constraints){    
+    for(Constraint constr:constraints){
+      %match(constr){        
+        MatchConstraint(patt,s) -> {
+          // we want two terms to be equal even if their option is different 
+          //( because of their possition for example )
+ matchL:  %match(subject,s){
+            Variable[AstName=astName,AstType=tomType],Variable[AstName=astName,AstType=tomType] -> {break matchL;}
+            TermAppl[NameList=tomNameList,Args=tomList],TermAppl[NameList=tomNameList,Args=tomList] -> {break matchL;}
+            RecordAppl[NameList=tomNameList,Slots=slotList],RecordAppl[NameList=tomNameList,Slots=slotList] -> {break matchL;}
+            XMLAppl[NameList=tomNameList,AttrList=tomList,ChildList=tomList],XMLAppl[NameList=tomNameList,AttrList=tomList,ChildList=tomList] -> { break matchL; }
+            BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type),BuildReducedTerm(TermAppl[NameList=tomNameList,Args=tomList],type) -> {break matchL;}
+            _,_ -> { continue; }
+          }
+          TomTerm pattern = `patt;
+          %match(pattern) {
+            AntiTerm(p) -> { pattern = `p; }
+          }
+          %match(pattern) {
+            (TermAppl|RecordAppl|XMLAppl)[NameList=concTomName(Name(name),_*)] -> {        
+                TomSymbol symbol = null;
+                if(`pattern.isXMLAppl()) {
+                  symbol = getSymbolFromName(Constants.ELEMENT_NODE);
+                } else {
+                  symbol = getSymbolFromName(`name);
+                }                
+                if(symbol!=null) {
+                  TomType type = TomBase.getSymbolCodomain(symbol);
+                  // System.out.println("type = " + type);            
+                  String typeName = TomBase.getTomType(`type);
+                  if(!testTypeExistence(typeName)) {
+                    messageError(currentTomStructureOrgTrack.getFileName(),
+                        currentTomStructureOrgTrack.getLine(),
+                        TomMessage.unknownMatchArgumentTypeInSignature,
+                        new Object[]{`name, typeName});
+                  }
+                  return type;
+                }
+             }
+// TOBE CONTINUED            
+//            var@Variable[] -> {
+//              TomType type = getVarTypeFromConstraints(var,constraints);
+//              if ( type != null ) {
+//                return type;
+//              }
+//            }
+          }         
+        }
+// TOBE CONTINUED        
+//        NumericConstraint[Left=left,Right=right] -> {
+//          // we want two terms to be equal even if their option is different 
+//          //( because of their possition for example )
+//          if ((`right.setOption(`concOption())) != (subject.setOption(`concOption()))) { continue; }
+//          if (`left.isVariable()) {
+//            TomType type = guessVarTypeFromConstraints(var,matchConstraints);
+//            if ( type != null ) {
+//              return type;
+//            }
+//          }
+//        }
+      }
+    }// for    
+    return null;
+  }
+  
+//  /**
+//   * trys to guess the type of the variable by looking into all constraints 
+//   * if it can find it somewhere where it is typed
+//   */
+//  private TomType guessVarTypeFromConstraints(TomTerm var, ArrayList<Constraint> constraints){
+//    
+//  }
+  
+  /**
+   * Collect the matchConstraints in a list of constraints   
+   */
+  %strategy CollectMatchConstraints(constrList:Collection) extends Identity(){
+    visit Constraint{
+      m@MatchConstraint[] -> {        
+        constrList.add(`m);         
+      }      
+    }// end visit
+  }// end strategy   
+ 
+  /**
+   * Collect the constraints (match and numeric)
+   */
+  %strategy CollectConstraints(constrList:Collection) extends Identity(){
+    visit Constraint{
+      c@(MatchConstraint|NumericConstraint)[] -> {        
+        constrList.add(`c);         
+      }      
+      oc@OrConstraint(_*) -> {
+        constrList.add(`oc);
+      }
+    }// end visit
+  }// end strategy   
+  
+  /**
+   * the term should be valid
+   */
+  private  void verifyMatchPattern(TomTerm term, TomType type) {      
+    // no term can be a Var* nor _*: not
+    // allowed as top leftmost symbol
+    TermDescription termDesc = analyseTerm(term);
+    if(termDesc.getTermClass() == UNAMED_VARIABLE_STAR || termDesc.getTermClass() == VARIABLE_STAR) {
+      messageError(termDesc.getFileName(),termDesc.getLine(),
+          TomMessage.incorrectVariableStarInMatch,
+          new Object[]{termDesc.getName()});
+    } else {    
+      // Analyse the term if type != null
+      if (type != null) {
+        // the type is known and found in the match signature
+        validateTerm(`term, type, false, true, false);
       }
     }
   }
@@ -635,7 +841,7 @@ block: {
   // ///////////////////////////////
   // STRATEGY VERIFICATION CONCERNS /
   // ///////////////////////////////
-  private  void verifyStrategy(TomVisitList visitList){
+  private  void verifyStrategy(TomVisitList visitList) throws VisitFailure {
     while(!visitList.isEmptyconcTomVisit()) {
       TomVisit visit = visitList.getHeadconcTomVisit();
       verifyVisit(visit);
@@ -644,19 +850,20 @@ block: {
     }
   }
 
-  private  void verifyVisit(TomVisit visit){
+  private  void verifyVisit(TomVisit visit) throws VisitFailure {
     %match(TomVisit visit) {
-      VisitTerm(type,patternInstructionList,_) -> {
-        ArrayList typeMatchArgs = new ArrayList();
-        typeMatchArgs.add(`type);
-        // we now compare pattern to its definition
-        %match(PatternInstructionList patternInstructionList) {
-          concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms]], _*) -> {
-            // control each pattern vs the match definition
-            // always 1 expected argument in visit
-            `verifyMatchPattern(terms, typeMatchArgs, 1);            
+      VisitTerm(type,constraintInstructionList,option) -> {        
+        %match(constraintInstructionList){
+          concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
+            ArrayList<MatchConstraint> matchConstraints = new ArrayList<MatchConstraint>();
+            `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraint);   
+            // for the first constraint, check that the type is conform to the type specified in visit
+            MatchConstraint matchConstr = (MatchConstraint)matchConstraints.get(0); 
+            `verifyMatchPattern(matchConstr.getpattern(), type);
           }
-        }
+        }    
+        // check the rest of the constraints
+        `verifyMatch(constraintInstructionList,option);
       }
     }
   }

@@ -50,7 +50,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return  (Constraint)`InnermostId(GeneralPropagations()).visit(constraint);
+    return  (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
   }	
 
   %strategy GeneralPropagations() extends `Identity() {
@@ -73,7 +73,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
       AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],_),Y*) -> {
         Constraint toApplyOn = `AndConstraint(Y*);        
         TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visit(toApplyOn);
+        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visitLight(toApplyOn);
         if(res != toApplyOn) {
           return `AndConstraint(X*,eq,res);
         }
@@ -113,15 +113,14 @@ public class GeneralPurposePropagator implements IBasePropagator {
       %match(slots) { 
         concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot,TomName name) {
-            // if we find a child with the same name, we abstract
-            ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=concTomName(childName)]],childName -> {
+            ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=(childName)]],childName -> {
               TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t));                
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
               break matchSlot;
             }
             // the child can be an antiTerm - in this case, do as above
-            ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=concTomName(childName)])],childName -> {
+            ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=(childName)])],childName -> {
               TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t)); 
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
@@ -144,7 +143,9 @@ matchSlot:  %match(slot,TomName name) {
   
   %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity() {
     visit Constraint {
-      MatchConstraint(v@VariableStar[AstName=name],p) -> {        
+      // we can have the same variable both as variablestar and as variable
+      // we know that this is ok, because the type checker authorized it
+      MatchConstraint(v@(Variable|VariableStar)[AstName=name],p) -> {        
         if(`name == varName) {                                  
           return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
         }                                 

@@ -43,6 +43,8 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.tools.ASTFactory;
+import tom.library.sl.*;
 
 import tom.engine.adt.zenon.types.*;
 
@@ -55,6 +57,9 @@ public class TomIlTools {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/zenon/Zenon.tom }
   %include { sl.tom }
+  %include { ../../library/mapping/java/util/types/Set.tom}
+  %include { ../../library/mapping/java/util/types/Map.tom}
+  %include { ../../library/mapping/java/util/types/List.tom}
   %typeterm Collection {
     implement { java.util.Collection }
     is_sort(t) { t instanceof java.util.Collection }
@@ -78,49 +83,68 @@ public class TomIlTools {
   /**
    * Methods used to translate a pattern and conditions in zenon signature
    */
-  public ZExpr patternToZExpr(PatternList patternList, Map map) {
+  public ZExpr constraintToZExpr(ConstraintList constraintList, Map map) {
     // do everything match the empty pattern ?
     ZExpr result = `zfalse();
-    while(!patternList.isEmptyconcPattern()) {
-      Pattern h = patternList.getHeadconcPattern();
-      result = `zor(result,patternToZExpr(h,map));
-      patternList = patternList.getTailconcPattern();
+    while(!constraintList.isEmptyconcConstraint()) {
+      Constraint h = constraintList.getHeadconcConstraint();
+      result = `zor(result,constraintToZExpr(h,map));
+      constraintList = constraintList.getTailconcConstraint();
     }
     return result;
   }
 
-  public void getZTermSubjectListFromPattern(Pattern pattern, List list, Map map) {
+  public void getZTermSubjectListFromConstraint(Constraint constraint, List list, Map map) {
     Set unamedVarSet = new HashSet();
-    %match(Pattern pattern) {
-      Pattern[SubjectList=subjectList] -> {
-        TomList sl = `subjectList;
-        while(!sl.isEmptyconcTomTerm()) {
-          TomTerm head = sl.getHeadconcTomTerm();
-          sl = sl.getTailconcTomTerm();
-          list.add(tomTermToZTerm(head,map,unamedVarSet));
-        }
+    try{
+      ArrayList tmpList = new ArrayList();
+      `TopDown(CollectSubjects(list)).visitLight(constraint);
+      for(Object o:tmpList){
+        list.add(tomTermToZTerm((TomTerm)o,map,unamedVarSet));
+      }
+    }catch(VisitFailure e){
+      throw new TomRuntimeException("VisiFailure in TomIlTools.getZTermSubjectListFromConstraint: " + e.getMessage());
+    }
+  }
+  
+  %strategy CollectSubjects(List list) extends Identity(){
+    visit Constraint {
+      MatchConstraint(_,s) -> {
+        list.add(`s);
       }
     }
   }
 
-  public ZExpr patternToZExpr(Pattern pattern, Map map) {
+  public ZExpr constraintToZExpr(Constraint constraint, Map map) {
     Set unamedVariableSet = new HashSet();
-    %match(Pattern pattern) {
-      Pattern[SubjectList=subjectList,TomList=tomList] -> {
-          ZExpr result = `patternToZExpr(subjectList, tomList, map, unamedVariableSet);
-          // insert existential quantifiers for the unamed variables
-          Iterator it = unamedVariableSet.iterator();
-          while (it.hasNext()) {
-            ZTerm var = (ZTerm) it.next();
-            result = `zexists(var,ztype("T"),result);
-          }
-          return result;
+    ArrayList subjectList = new ArrayList();
+    ArrayList patternList = new ArrayList();
+    try{
+      `TopDown(CollectSubjectsAndPatterns(subjectList,patternList)).visitLight(constraint);
+    }catch(VisitFailure e){
+      throw new TomRuntimeException("VisiFailure in TomIlTools.constraintToZExpr: " + e.getMessage());
+    }
+    ZExpr result = `constraintToZExpr(ASTFactory.makeList(subjectList), ASTFactory.makeList(patternList), map, unamedVariableSet);
+    // insert existential quantifiers for the unamed variables
+    Iterator it = unamedVariableSet.iterator();
+    while (it.hasNext()) {
+      ZTerm var = (ZTerm) it.next();
+      result = `zexists(var,ztype("T"),result);
+    }
+    return result;
+
+  }
+  
+  %strategy CollectSubjectsAndPatterns(List subjectlist, List patternList) extends Identity(){
+    visit Constraint {
+      MatchConstraint(p,s) -> {
+        subjectlist.add(`s);
+        patternList.add(`p);
       }
     }
-    throw new TomRuntimeException("patternToZExpr : strange pattern " + pattern);
   }
 
-  public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
+  public ZExpr constraintToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
     /* for each TomTerm: builds a zeq : pattern = subject */
     ZExpr res = `ztrue();
     while(!tomList.isEmptyconcTomTerm()) {

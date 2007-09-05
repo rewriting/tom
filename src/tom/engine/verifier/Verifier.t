@@ -44,10 +44,10 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.il.*;
 import tom.engine.adt.il.types.*;
+import tom.library.sl.Strategy;
+import tom.library.sl.VisitFailure;
 
 import tom.engine.exception.TomRuntimeException;
-
-import tom.library.sl.Strategy;
 
 public class Verifier {
 
@@ -55,6 +55,7 @@ public class Verifier {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/il/Il.tom }
   %include { ../../library/mapping/java/sl.tom }
+  %include { ../../library/mapping/java/util/types/List.tom}
   %typeterm Collection {
     implement { java.util.Collection }
     is_sort(t) { t instanceof java.util.Collection }
@@ -210,29 +211,36 @@ public class Verifier {
     SubstitutionList substitution = `subs();
     %match(Instr instr) {
       accept(positive,_) -> {
-        Pattern positivePattern = Pattern.fromTerm(`positive);
-        %match(Pattern positivePattern) {
-          Pattern[SubjectList=subjectList] -> {
-            TomList sl = `subjectList;
-            while(!sl.isEmptyconcTomTerm()) {
-              TomTerm subject = sl.getHeadconcTomTerm();
-              sl=sl.getTailconcTomTerm();
-              %match(TomTerm subject) {
-                Variable[AstName=name] -> {
-                  substitution = `subs(substitution*,
-                                       is(
-                                          variableFromTomName(name),
-                                          termFromTomTerm(subject)));
-                }
-              }
+        Constraint positivePattern = Constraint.fromTerm(`positive);
+        ArrayList<TomTerm> subjectList = new ArrayList<TomTerm>();
+        try{
+          `TopDown(CollectSubjects(subjectList)).visitLight(positivePattern);
+        }catch(VisitFailure e){
+          throw new TomRuntimeException("VisitFailure in Verifier.abstractSubstitutionFromAccept:" + e.getMessage()); 
+        }
+        for(TomTerm subject: subjectList){
+          %match(TomTerm subject) {
+            Variable[AstName=name] -> {
+              substitution = `subs(substitution*,
+                  is(
+                      variableFromTomName(name),
+                      termFromTomTerm(subject)));
             }
-          }
+          }          
         }
       }
     }
     return substitution;
   }
 
+  %strategy CollectSubjects(List list) extends Identity(){
+    visit Constraint {
+      MatchConstraint(_,s) -> {
+        list.add(`s);
+      }
+    }
+  }
+  
   public Collection build_tree(Instruction automata) {
     // System.out.println("Build derivation tree for: " + automata);
 

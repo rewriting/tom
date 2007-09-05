@@ -114,9 +114,25 @@ public class PluginPlatform extends PluginPlatformBase {
         }
 
         getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
+        
         // runs the plugins
         Iterator it = pluginsList.iterator();
         while(it.hasNext()) {
+          /*
+           * very strangely, the object pointed by statusHandler changes, and therefore 
+           * it is no longer associated to the logger; therefore, we add it again as a handler  
+           */
+          Handler[] handlers = Logger.getLogger(loggerRadical).getHandlers();
+          boolean foundHdl = false;
+          for (int k = 0; k < handlers.length ; k++){
+            if (handlers[k].equals(statusHandler)){
+              foundHdl = true;
+              break;
+            }
+          }
+          if (!foundHdl){
+            Logger.getLogger(loggerRadical).addHandler(this.statusHandler);  
+          }
           Plugin plugin = (Plugin)it.next();
           currentFileName = (String)input;
           plugin.setArgs(pluginArg);

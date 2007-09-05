@@ -49,7 +49,7 @@ public class VariadicPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`InnermostId(VariadicPatternMatching()).visit(constraint);		
+    return (Constraint)`TopDown(VariadicPatternMatching()).visitLight(constraint);		
   }	
 
   %strategy VariadicPatternMatching() extends `Identity() {

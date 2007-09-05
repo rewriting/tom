@@ -30,6 +30,7 @@ import java.util.Iterator;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -73,7 +74,7 @@ public class ConstraintGenerator {
       gen[i] = (IBaseGenerator)Class.forName(generatorsPackage + generatorsNames[i]).newInstance();
     }
     
-    // iterate until all propagators are applied and nothing was changed 
+    // iterate until all generators are applied and nothing was changed 
     mainLoop: while(true){		
       for(int i=0 ; i < genNb ; i++){        
         result = gen[i].generate(expression);
@@ -110,7 +111,10 @@ public class ConstraintGenerator {
       And(left,right) -> {
         Instruction subInstruction = generateAutomata(`right,action);
         return `generateAutomata(left,subInstruction);
-      } 
+      }
+      conn@OrConnector(_*) -> {        
+        return buildConstraintDisjunction(`conn,action);
+      }
       // variables' assignments
       ConstraintToExpression(MatchConstraint(v@(Variable|VariableStar)[],t)) -> {
         return `LetRef(v,TomTermToExpression(t),action);
@@ -118,6 +122,10 @@ public class ConstraintGenerator {
       // nothing for unamed ones
       ConstraintToExpression(MatchConstraint((UnamedVariableStar|UnamedVariable)[],_)) -> {       
         return action;      
+      }
+      // numeric constraints
+      ConstraintToExpression(n@NumericConstraint[]) -> {
+        return buildNumericCondition(`n,action);
       }
       // do while
       DoWhileExpression(expr,condition) -> {
@@ -158,7 +166,73 @@ public class ConstraintGenerator {
   }
   
   /*
+   * Takes the OrConnector and generates the tests
+   * (this is for the OrConstraint - the disjunction of constraints)
+   * 
+   * boolean flag = false;
+   * var1 = null; // all the free variables
+   * var2 = null;
+   * ....
+   * varm = null;
+   * int counter = 0;
+   * do{ // n is the number of 'or'
+   *    if (counter >= 0 && counter <=0 ) { //generated like this because if we use "counter == 0", we have to include "int.tom" 
+   *        if ( code_for_first_constraint_in_disjunction ){
+   *            flag = true;
+   *        }
+   *    }
+   *    ....
+   *    if (counter >= n-1 && counter <= n-1) {
+   *        if ( code_for_n_constraint_in_disjunction ){
+   *            flag = true;
+   *        }
+   *    }    
+   *    if (flag == true) ...
+   *    counter++;
+   * } while (counter < n)
+   *  
+   */
+  private static Instruction buildConstraintDisjunction(Expression orConnector, Instruction action) throws VisitFailure {    
+    TomTerm flag = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getBooleanType());
+    Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
+    TomType intType = ConstraintCompiler.getIntType();
+    TomTerm counter = ConstraintCompiler.getFreshVariable(intType);    
+    Instruction instruction = `Nop();
+    int cnt = 0;
+    %match(orConnector){
+      OrConnector(_*,x,_*) -> {
+        TomTerm counterValue = `Variable(concOption(),Name(cnt+""),intType,concConstraint());
+        instruction = `AbstractBlock(concInstruction(instruction,
+            If(And(GreaterOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue)),
+                  LessOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue))),
+                generateAutomata(x,assignFlagTrue),Nop())));
+        cnt++;
+      }
+    }
+    // add the final test
+    instruction = `AbstractBlock(concInstruction(instruction,
+          If(EqualTerm(ConstraintCompiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
+    // counter++ : expression at the end of the loop 
+    Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());    
+    instruction = `AbstractBlock(concInstruction(instruction,counterIncrement));
+    instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter),TomTermToExpression(Variable(concOption(),Name(cnt+""),intType,concConstraint()))));
+    
+    // add fresh variables' declarations
+    ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
+    // collect free variables    
+    `TopDownCollect(CollectFreeVar(freshVarList)).visitLight(orConnector);
+    for(TomTerm var:freshVarList){
+      instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
+    }
+    // stick the counter declaration
+    instruction = `LetRef(counter,TomTermToExpression(Variable(concOption(),Name(0+""),intType,concConstraint())),instruction);
+    // stick the flag declaration 
+    return `LetRef(flag,FalseTL(),instruction);
+  }
+  
+  /*
    * Takes the OrConstraintDisjunction and generates the tests
+   * (this is for the disjunction of symbols)
    * 
    * boolean flag = false;
    * var1 = null;
@@ -184,7 +258,7 @@ public class ConstraintGenerator {
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
     // collect variables    
-    `TopDown(CollectVar(freshVarList)).visit(orDisjunction);    
+    `TopDown(CollectVar(freshVarList)).visitLight(orDisjunction);    
     Instruction instruction = buildDisjunctionIfElse(orDisjunction,assignFlagTrue);
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
@@ -241,12 +315,27 @@ public class ConstraintGenerator {
    * Collect the variables in a term   
    */
   %strategy CollectVar(varList:Collection) extends Identity(){
-    visit Constraint{
+    visit Constraint {
       MatchConstraint(v@Variable[],_) ->{        
         if (!varList.contains(`v)) { varList.add(`v); }        
       }      
     }// end visit
   }// end strategy   
+  
+  /**
+   * Collect the free variables in an expression (do not inspect under a anti)  
+   */
+  %strategy CollectFreeVar(varList:Collection) extends Identity() {     
+    visit Expression {
+      ConstraintToExpression(MatchConstraint(v@Variable[],_)) -> {
+        if (!varList.contains(`v)) { varList.add(`v); }     
+        throw new VisitFailure();
+      }
+      AntiMatchExpression[] -> {        
+        throw new VisitFailure();
+      }
+    }
+  }
   
   /**
    * check that the list is empty
@@ -262,5 +351,25 @@ public class ConstraintGenerator {
       return `Or(IsEmptyList(opName, var), EqualTerm(codomain,var,BuildEmptyList(opName)));
     }
     return `IsEmptyList(opName, var);
+  }
+  
+  private static Instruction buildNumericCondition(Constraint c, Instruction action) {
+    %match(c){
+      NumericConstraint(left,right,type) -> {        
+        TomType tomType = ConstraintCompiler.getTermTypeFromTerm(`left);
+        Expression leftExpr = `TomTermToExpression(left);
+        Expression rightExpr = `TomTermToExpression(right);
+        %match(type){
+          NumLessThan()             -> { return `If(LessThan(leftExpr,rightExpr),action,Nop());} 
+          NumLessOrEqualThan()      -> { return `If(LessOrEqualThan(leftExpr,rightExpr),action,Nop());}
+          NumGreaterThan()          -> { return `If(GreaterThan(leftExpr,rightExpr),action,Nop());}
+          NumGreaterOrEqualThan()   -> { return `If(GreaterOrEqualThan(leftExpr,rightExpr),action,Nop());}
+          NumEqual()                -> { return `If(EqualTerm(tomType,right,left),action,Nop());}
+          NumDifferent()            -> { return `If(Negation(EqualTerm(tomType,right,left)),action,Nop());}                
+        }
+      }
+    }
+    // should never reach here
+    throw new TomRuntimeException("Untreated numeric constraint: " + `c);
   }
 }

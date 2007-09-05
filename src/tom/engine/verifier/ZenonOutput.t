@@ -92,18 +92,18 @@ public class ZenonOutput {
     // theorem to prove
     %match(Instr accept) {
         accept(positive,negative) -> {
-        Pattern positivePattern = Pattern.fromTerm(`positive);
-        PatternList negativePatternList = PatternList.fromTerm(`negative);
+        Constraint positivePattern = Constraint.fromTerm(`positive);
+        ConstraintList negativePatternList = ConstraintList.fromTerm(`negative);
         // we need the substitution to generate the pattern part of the theorem
         SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
         Map variableMap = ztermVariableMapFromSubstitutionList(subsList,
                                                                new HashMap());
-        tomiltools.getZTermSubjectListFromPattern(positivePattern,
+        tomiltools.getZTermSubjectListFromConstraint(positivePattern,
                                                   subjectList,
                                                   variableMap);
-        pattern = tomiltools.patternToZExpr(positivePattern,variableMap);
+        pattern = tomiltools.constraintToZExpr(positivePattern,variableMap);
         if (verifier.isCamlSemantics()) {
-          negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
+          negpattern = tomiltools.constraintToZExpr(negativePatternList,variableMap);
         }
       }
     }
