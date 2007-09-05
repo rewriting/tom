@@ -119,11 +119,11 @@ public class TomOptimizer extends TomGenericPlugin {
 
         if(getOptionBooleanValue("optimize2")) {          
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-          renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
+          renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visitLight(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else {
           if(getOptionBooleanValue("optimize")) {
-            renamedTerm = (TomTerm) `InnermostId(Inline(concTomTerm())).visitLight(renamedTerm);
+            renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visitLight(renamedTerm);
           }
         }
         setWorkingTerm(renamedTerm);
@@ -411,7 +411,7 @@ public class TomOptimizer extends TomGenericPlugin {
     return factory.remove(term1)==factory.remove(term2);
   }
 
-  %strategy Inline(context:TomList) extends `Identity() {
+  %strategy Inline(context:Constraint) extends `Identity() {
     visit TomTerm {
       ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
 
@@ -427,8 +427,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
 
     visit Instruction {
-      t@TypedAction[PositivePattern=Pattern[TomList=termList]] -> {
-        context = `termList;
+      t@TypedAction[PositivePattern=positivePattern] -> {
+        context = `positivePattern;
         //System.out.println("found context = " + context);
         return `t;
       }
