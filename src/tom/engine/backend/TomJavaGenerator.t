@@ -172,21 +172,23 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 
     output.write(deep, "public tom.library.sl.Visitable[] getChildren() {");
     output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    output.write(deep, "stratChilds[i]=getChildAt(i);}");
-    //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = ((Integer)stratChild.get(i)).intValue();
-    //  output.write(deep, "stratChilds[" + i + "] = get" + names.get(j) + "();");
-    //}
+    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    //output.write(deep, "stratChilds[i]=getChildAt(i);}");
+    output.write(deep, "stratChilds[0] = super.getChildAt(0);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = ((Integer)stratChild.get(i)).intValue();
+      output.write(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
+    }
     output.write(deep, "return stratChilds;}");
 
     output.write(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
-    output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    output.write(deep, "setChildAt(i,children[i]);}");
-    //for (int i = 0; i < stratChildCount; i++) {
-    //  int j = ((Integer)stratChild.get(i)).intValue();
-    //  output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + i + "];");
-    //}
+    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
+    //output.write(deep, "setChildAt(i,children[i]);}");
+    output.write(deep,"super.setChildAt(0, children[0]);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = ((Integer)stratChild.get(i)).intValue();
+      output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + (i+1) + "];");
+    }
     output.write(deep, "return this;}");
 
     output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");

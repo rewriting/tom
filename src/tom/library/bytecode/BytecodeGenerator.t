@@ -58,8 +58,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
       Class(ClassInfo(name,signature,access,superName,interfaces,innerClasses,outerClass), fields, methods) -> {
 
         // bytecode for the header
-
-        cw.visit(V1_1, buildAccessValue(`access), `name, buildSignature(`signature),`superName, ((StringList)`interfaces).toArray());
+        cw.visit(V1_1, buildAccessValue(`access), `name, buildSignature(`signature),`superName, ((StringList)`interfaces).toArray(new String[0]));
 
 
         //bytecode for the inner classes
@@ -108,7 +107,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
                     `methName,
                     buildDescriptor(`desc),
                     buildSignature(`methSignature),
-                    ((StringList)`exceptions).toArray());
+                    ((StringList)`exceptions).toArray(new String[0]));
 
                 mw.visitCode();
 
@@ -629,7 +628,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
       }
 
       Tableswitch(min, max, dflt, labels) -> {
-        TLabel[] tlabelTab = ((LabelList)`labels).toArray();
+        TLabel[] tlabelTab = ((LabelList)`labels).toArray(new TLabel[0]);
         Label[] labelTab = null;
         if(tlabelTab != null){
           labelTab = new Label[tlabelTab.length];
@@ -641,7 +640,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
       }
 
       Lookupswitch(dflt, keys, labels) -> {
-        TLabel[] tlabelTab = ((LabelList)`labels).toArray();
+        TLabel[] tlabelTab = ((LabelList)`labels).toArray(new TLabel[0]);
         Label[] labelTab = null;
         if(tlabelTab != null){
           labelTab = new Label[tlabelTab.length];
@@ -649,7 +648,12 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
             labelTab[i]=(Label)labelMap.get(tlabelTab[i]);
           }
         }
-        mw.visitLookupSwitchInsn((Label)labelMap.get(`dflt),((intList)`keys).toArray(),labelTab);
+        int[] array = new int[((intList)`keys).length()];
+        java.util.Iterator<Integer> it = ((intList)`keys).iterator();
+        for(int i=0 ; it.hasNext() ; i++) {
+          array[i] = it.next();
+        }
+        mw.visitLookupSwitchInsn((Label)labelMap.get(`dflt),array,labelTab);
       }
     }
   }

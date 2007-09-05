@@ -1170,8 +1170,13 @@
 
   <target name="bootinstall"
     description="Install src tree into stable tree"
-		depends="bootstrap"
-                if="bootstrap.ok">
+    depends="bootstrap"
+    if="bootstrap.ok">
+    <antcall target="manual.bootinstall"/>
+  </target>
+
+  <target name="manual.bootinstall"
+    description="Install src tree into stable tree">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
         <include name="**/*.java.in"/>
@@ -1308,9 +1313,15 @@
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
         <include name="tom/library/sl/**/*.java"/>
+        <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/xml/**/*.java"/>
+        <include name="tom/platform/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/library/sl/**/*.java"/>
+        <include name="tom/library/bytecode/**/*.java"/>
+        <include name="tom/library/xml/**/*.java"/>
+        <include name="tom/platform/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
       </fileset>
     </javadoc>

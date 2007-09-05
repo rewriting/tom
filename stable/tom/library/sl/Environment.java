@@ -230,7 +230,7 @@ public final class Environment implements Cloneable {
       normalizedPath = normalizedPath.getTail();
       if(head>0){
         down(head);
-        if (subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
+        if(subterm[current] instanceof Path && !(normalizedPath.length()==0)) {
           // we do not want to follow the last reference
           followPath((Path)subterm[current]);
         }
