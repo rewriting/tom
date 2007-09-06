@@ -398,13 +398,13 @@ matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws
       case MATCH_CONSTRAINT : {
         return `MatchConstraint(left,right);           
       }
-      case LESS_CONSTRAINT : {         
+      case /*LESS_CONSTRAINT*/XML_START : {         
         return `NumericConstraint(left,right, NumLessThan());           
       }
       case LESSOREQUAL_CONSTRAINT : {         
         return `NumericConstraint(left,right, NumLessOrEqualThan());           
       }
-      case GREATER_CONSTRAINT : {         
+      case /*GREATER_CONSTRAINT*/XML_CLOSE : {         
         return `NumericConstraint(left,right, NumGreaterThan());           
       }
       case GREATEROREQUAL_CONSTRAINT : {         
@@ -428,9 +428,9 @@ constraintType returns [int result]
 }
 :   (
       MATCH_CONSTRAINT              { result = MATCH_CONSTRAINT; }
-      | LESS_CONSTRAINT             { result = LESS_CONSTRAINT; }
+      | /*LESS_CONSTRAINT*/XML_START             { result = /*LESS_CONSTRAINT;*/XML_START; }
       | LESSOREQUAL_CONSTRAINT      { result = LESSOREQUAL_CONSTRAINT; }
-      | GREATER_CONSTRAINT          { result = GREATER_CONSTRAINT; }
+      | /*GREATER_CONSTRAINT*/XML_CLOSE          { result = /*GREATER_CONSTRAINT*/XML_CLOSE; }
       | GREATEROREQUAL_CONSTRAINT   { result = GREATEROREQUAL_CONSTRAINT; }
       | DOUBLEEQ                    { result = DOUBLEEQ; }
       | DIFFERENT_CONSTRAINT        { result = DIFFERENT_CONSTRAINT; }
@@ -691,7 +691,6 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
     if(astAnnotedName != null) {
       constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
     }
-
 }
     :  	(a:ANTI_SYM {anti = !anti;} )*    	
         ( // xml term
@@ -814,7 +813,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
   boolean implicit;
   TomNameList nameList, closingNameList;
   OptionList option = null;
-  ConstraintList constraint;
+  ConstraintList constraint;  
 }
     :
         (
@@ -2296,7 +2295,7 @@ ANTI_SYM  : '!';
 MATCH_CONSTRAINT  : "<<";
 LESS_CONSTRAINT  : "<:";
 LESSOREQUAL_CONSTRAINT  : "<=";  
-GREATER_CONSTRAINT  : ":>";
+//GREATER_CONSTRAINT  : ":>";
 GREATEROREQUAL_CONSTRAINT  : ">=";  
 DIFFERENT_CONSTRAINT  : "!=";
 //EQUAL_CONSTRAINT = DOUBLEEQ;
