@@ -32,7 +32,7 @@ package numeric;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import andor.testandor.m.types.*;
+import numeric.testnumericconditions.m.types.*;
 
 public class TestNumericConditions extends TestCase {
   %gom {
@@ -53,7 +53,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test1() {
     %match(f(a(),6)) {
-      f(x,y) && y :> 5 -> {        
+      f(x,y) && y > 5 -> {        
         return;
       }
     }
@@ -71,7 +71,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test3() {
     %match(f(a(),3)) {
-      f(x,y) && y <: 6 -> {        
+      f(x,y) && y < 6 -> {        
         return;
       }
     }
@@ -107,7 +107,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test7() {
     %match(f(a(),4)) {
-      f(x,y) && y :> 2 && y <: 5 -> {        
+      f(x,y) && y > 2 && y < 5 -> {        
         return;
       }
     }
@@ -116,7 +116,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test8() {
     %match(f(a(),6)) {
-      f(x,y) && y :> 2 && y <: 5 -> {        
+      f(x,y) && y > 2 && y < 5 -> {        
         fail();
       }
     }
@@ -125,7 +125,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test9() {
     %match(f(a(),6)) {
-      f(x,y) && { y :> 2 || y <: 5 } -> {        
+      f(x,y) && { y > 2 || y < 5 } -> {        
         return;
       }
     }
@@ -134,7 +134,7 @@ public class TestNumericConditions extends TestCase {
 
   public void test10() {
     %match(f(a(),6)) {
-      f(x,y) && { y !=6 || y <: 5 } -> {        
+      f(x,y) && { y !=6 || y < 5 } -> {        
         fail();
       }
     }
@@ -143,7 +143,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test11() {
     %match(f(a(),6)) {
-      f(x,y) && { y ==6 || y <: 5 } -> {        
+      f(x,y) && { y ==6 || y < 5 } -> {        
         return;
       }
     }
@@ -161,7 +161,7 @@ public class TestNumericConditions extends TestCase {
   
   public void test13() {
     %match(f(a(),6)) {
-      f(x,y) && y :> int getIntegerValue() -> {        
+      f(x,y) && y > int getIntegerValue() -> {        
         return;
       }
     }
