@@ -518,8 +518,8 @@ inputState.guessing--;
 		case ARROW:
 		case AND_CONNECTOR:
 		case OR_CONNECTOR:
-		case ANTI_SYM:
 		case XML_START:
+		case ANTI_SYM:
 		case XML_TEXT:
 		case XML_COMMENT:
 		case XML_PROC:
@@ -544,8 +544,8 @@ inputState.guessing--;
 		case NUM_DOUBLE:
 		case LPAREN:
 		case ALL_ID:
-		case ANTI_SYM:
 		case XML_START:
+		case ANTI_SYM:
 		case XML_TEXT:
 		case XML_COMMENT:
 		case XML_PROC:
@@ -623,7 +623,6 @@ inputState.guessing--;
 		if(astAnnotedName != null) {
 		constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
 		}
-		
 		
 		
 		{
@@ -1006,13 +1005,13 @@ inputState.guessing--;
 			case MATCH_CONSTRAINT : {
 			return tom_make_MatchConstraint(left,right);           
 			}
-			case LESS_CONSTRAINT : {         
+			case /*LESS_CONSTRAINT*/XML_START : {         
 			return tom_make_NumericConstraint(left,right,tom_make_NumLessThan());           
 			}
 			case LESSOREQUAL_CONSTRAINT : {         
 			return tom_make_NumericConstraint(left,right,tom_make_NumLessOrEqualThan());           
 			}
-			case GREATER_CONSTRAINT : {         
+			case /*GREATER_CONSTRAINT*/XML_CLOSE : {         
 			return tom_make_NumericConstraint(left,right,tom_make_NumGreaterThan());           
 			}
 			case GREATEROREQUAL_CONSTRAINT : {         
@@ -1049,11 +1048,11 @@ inputState.guessing--;
 			}
 			break;
 		}
-		case LESS_CONSTRAINT:
+		case XML_START:
 		{
-			match(LESS_CONSTRAINT);
+			match(XML_START);
 			if ( inputState.guessing==0 ) {
-				result = LESS_CONSTRAINT;
+				result = /*LESS_CONSTRAINT;*/XML_START;
 			}
 			break;
 		}
@@ -1065,11 +1064,11 @@ inputState.guessing--;
 			}
 			break;
 		}
-		case GREATER_CONSTRAINT:
+		case XML_CLOSE:
 		{
-			match(GREATER_CONSTRAINT);
+			match(XML_CLOSE);
 			if ( inputState.guessing==0 ) {
-				result = GREATER_CONSTRAINT;
+				result = /*GREATER_CONSTRAINT*/XML_CLOSE;
 			}
 			break;
 		}
@@ -1200,20 +1199,6 @@ inputState.guessing--;
 		return result;
 	}
 	
-	public final TomTerm  extendsBqTerm() throws RecognitionException, TokenStreamException, TomException {
-		TomTerm bqTerm;
-		
-		
-		bqTerm = null;
-		
-		
-		match(EXTENDS);
-		if ( inputState.guessing==0 ) {
-			selector().push("bqlexer"); bqTerm = bqparser.beginBackquote();
-		}
-		return bqTerm;
-	}
-	
 	public final Declaration  strategyConstruct(
 		Option orgTrack
 	) throws RecognitionException, TokenStreamException, TomException {
@@ -1308,7 +1293,7 @@ inputState.guessing--;
 				
 			}
 			{
-			_loop44:
+			_loop43:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -1364,7 +1349,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop44;
+					break _loop43;
 				}
 				
 			} while (true);
@@ -1383,7 +1368,39 @@ inputState.guessing--;
 		}
 		match(RPAREN);
 		}
-		extendsTerm=extendsBqTerm();
+		match(EXTENDS);
+		{
+		switch ( LA(1)) {
+		case BACKQUOTE:
+		{
+			match(BACKQUOTE);
+			break;
+		}
+		case NUM_INT:
+		case CHARACTER:
+		case STRING:
+		case NUM_FLOAT:
+		case NUM_LONG:
+		case NUM_DOUBLE:
+		case LPAREN:
+		case ALL_ID:
+		case XML_START:
+		case ANTI_SYM:
+		case XML_TEXT:
+		case XML_COMMENT:
+		case XML_PROC:
+		case LBRACKET:
+		case UNDERSCORE:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		extendsTerm=plainTerm(null,null,0);
 		match(LBRACE);
 		strategyVisitList(visitList);
 		if ( inputState.guessing==0 ) {
@@ -1435,7 +1452,7 @@ inputState.guessing--;
 			// update for new target block...
 			updatePosition(t.getLine(),t.getColumn());
 			
-			result = tom_make_AbstractDecl(tom_cons_list_concDeclaration(tom_make_Strategy(tom_make_Name(name.getText()),extendsTerm/*tom_make_BuildReducedTerm(extendsTerm,strategyType)*/,astVisitList,orgTrack),tom_cons_list_concDeclaration(tom_make_SymbolDecl(tom_make_Name(name.getText())),tom_empty_list_concDeclaration())));
+			result = tom_make_AbstractDecl(tom_cons_list_concDeclaration(tom_make_Strategy(tom_make_Name(name.getText()),tom_make_BuildReducedTerm(extendsTerm,strategyType),astVisitList,orgTrack),tom_cons_list_concDeclaration(tom_make_SymbolDecl(tom_make_Name(name.getText())),tom_empty_list_concDeclaration())));
 			
 			// %strat finished: go back in target parser.
 			selector().pop();
@@ -1539,7 +1556,7 @@ inputState.guessing--;
 		boolean implicit;
 		TomNameList nameList, closingNameList;
 		OptionList option = null;
-		ConstraintList constraint;
+		ConstraintList constraint;  
 		
 		
 		{
@@ -1927,8 +1944,8 @@ inputState.guessing--;
 			case NUM_DOUBLE:
 			case LPAREN:
 			case ALL_ID:
-			case ANTI_SYM:
 			case XML_START:
+			case ANTI_SYM:
 			case XML_TEXT:
 			case XML_COMMENT:
 			case XML_PROC:
@@ -2364,8 +2381,8 @@ inputState.guessing--;
 			break;
 		}
 		case ALL_ID:
-		case XML_CLOSE_SINGLETON:
 		case XML_CLOSE:
+		case XML_CLOSE_SINGLETON:
 		case UNDERSCORE:
 		{
 			{
@@ -2788,8 +2805,8 @@ inputState.guessing--;
 		case NUM_DOUBLE:
 		case LPAREN:
 		case ALL_ID:
-		case ANTI_SYM:
 		case XML_START:
+		case ANTI_SYM:
 		case XML_TEXT:
 		case XML_COMMENT:
 		case XML_PROC:
@@ -4328,9 +4345,9 @@ inputState.guessing--;
 		"AND_CONNECTOR",
 		"OR_CONNECTOR",
 		"MATCH_CONSTRAINT",
-		"LESS_CONSTRAINT",
+		"XML_START",
 		"LESSOREQUAL_CONSTRAINT",
-		"GREATER_CONSTRAINT",
+		"XML_CLOSE",
 		"GREATEROREQUAL_CONSTRAINT",
 		"DOUBLEEQ",
 		"DIFFERENT_CONSTRAINT",
@@ -4338,9 +4355,7 @@ inputState.guessing--;
 		"AT",
 		"ANTI_SYM",
 		"QMARK",
-		"XML_START",
 		"XML_CLOSE_SINGLETON",
-		"XML_CLOSE",
 		"XML_START_ENDING",
 		"XML_TEXT",
 		"XML_COMMENT",
@@ -4376,6 +4391,7 @@ inputState.guessing--;
 		"WS",
 		"SLCOMMENT",
 		"ML_COMMENT",
+		"LESS_CONSTRAINT",
 		"CONSTRAINT_GROUP_START",
 		"CONSTRAINT_GROUP_END",
 		"ESC",
@@ -4393,22 +4409,22 @@ inputState.guessing--;
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 5434207438832L, 0L};
+		long[] data = { 1358287669232L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
-		long[] data = { 485331304448L, 0L};
+		long[] data = { 120263278592L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	private static final long[] mk_tokenSet_2() {
-		long[] data = { 5468567177200L, 0L};
+		long[] data = { 1366877603824L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	private static final long[] mk_tokenSet_3() {
-		long[] data = { 4399120318528L, 0L};
+		long[] data = { 1100585435200L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());

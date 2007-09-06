@@ -38,7 +38,7 @@ public class Rewrite1 {
 
   %include { term/term.tom }
   %include { sl.tom }
-  
+
   public final static void main(String[] args) {
     Term subject = `f(g(g(a(),b()),g(a(),a())));
 

@@ -219,8 +219,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   //case where failure is used to cut branches
-  // FIXME: tom should accept "extends [variable]", replace "Sequence(defaultCase,Identity())" by "defaultCase" when possible
-  %strategy computeOccurencesLetRefSpecialCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariableLetRef) extends `Sequence(defaultCase,Identity()) {
+  %strategy computeOccurencesLetRefSpecialCase(goOnCase:Strategy,defaultCase:Strategy,variableName:TomName,info:InfoVariableLetRef) extends defaultCase {
     visit Instruction {
       TypedAction[] -> {
         /* recursive call of the current strategy on the first child */
@@ -273,8 +272,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  // FIXME: tom should accept "extends [variable]", replace "Sequence(defaultCase,Identity())" by "defaultCase" when possible
-  %strategy computeOccurencesLetRefBaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariableLetRef) extends Sequence(defaultCase,Identity()) {
+  %strategy computeOccurencesLetRefBaseCase(defaultCase:Strategy,variableName:TomName,info:InfoVariableLetRef) extends defaultCase {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
@@ -332,8 +330,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   }
 
-  // FIXME: tom should accept "extends [variable]", replace "Sequence(defaultCase,Identity())" by "defaultCase" when possible
-  %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariableLet) extends Sequence(defaultCase,Identity()) {
+  %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariableLet) extends defaultCase {
     visit Instruction {
       (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
         if (info.assignmentVariables.contains(`varname)) {
@@ -344,8 +341,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   } 
 
-  // FIXME: tom should accept "extends [variable]", replace "Sequence(cutCase,Identity())" by "cutCase" when possible
-  %strategy computeOccurencesLetSpecialCase2(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariableLet) extends Sequence(cutCase,Identity()) {
+  %strategy computeOccurencesLetSpecialCase2(goOnCase:Strategy,cutCase:Strategy,variableName:TomName,info:InfoVariableLet) extends cutCase {
     visit Instruction {
       TypedAction[] -> {
         /* recursive call of the current strategy on the first child */
@@ -365,8 +361,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  // FIXME: tom should accept "extends [variable]", replace "Sequence(cutCase,Identity())" by "cutCase" when possible
-  %strategy computeOccurencesLetBaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariableLet) extends Sequence(defaultCase,Identity()) {
+  %strategy computeOccurencesLetBaseCase(defaultCase:Strategy,variableName:TomName, info:InfoVariableLet) extends defaultCase {
     visit TomTerm { 
       (Variable|VariableStar)[AstName=name] -> { 
         if(variableName == `name) {
