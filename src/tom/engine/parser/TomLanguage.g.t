@@ -455,7 +455,7 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
         )
     ;
 
- 
+/* 
 extendsBqTerm returns [TomTerm bqTerm] throws TomException
 {
   bqTerm = null;
@@ -463,6 +463,7 @@ extendsBqTerm returns [TomTerm bqTerm] throws TomException
   :
     EXTENDS { selector().push("bqlexer"); bqTerm = bqparser.beginBackquote(); }
 ;
+*/
 
 // The %strategy construct
 strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException
@@ -546,8 +547,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
             )*
             )? RPAREN
         )
-        extendsTerm = extendsBqTerm
-        //EXTENDS (BACKQUOTE)? extendsTerm = plainTerm[null,null,0]
+        //extendsTerm = extendsBqTerm
+        EXTENDS (BACKQUOTE)? extendsTerm = plainTerm[null,null,0]
         LBRACE
         strategyVisitList[visitList] { astVisitList = ASTFactory.makeTomVisitList(visitList); }
         t:RBRACE
@@ -594,7 +595,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
 
-          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()),extendsTerm /*BuildReducedTerm(extendsTerm,strategyType)*/,astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
+          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()), BuildReducedTerm(extendsTerm,strategyType),astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
 
           // %strat finished: go back in target parser.
             selector().pop();
