@@ -89,24 +89,27 @@ private static ArrayList myAdd(Object e,ArrayList l) {
   }
 
   private void generate(File startPointFile, StringBuilder strBuilder, HashSet<Class> usedTypes,
-      HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {    
-    File[] files = startPointFile.listFiles();
-    for (File file : files) {
-      if (file.isDirectory()) {
+      HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {
+    if (startPointFile.isDirectory()) {
+      File[] files = startPointFile.listFiles();
+      for (File file : files) {
         generate(file, strBuilder, usedTypes, declaredTypes);
-      } else {
-        if (! file.getName().endsWith(".class")) {
-          continue;
-        }
-        System.out.println("Extracting mapping for:" + file.getName());        
-        String fileName = file.getName();
-        fileName = fileName.substring(0, fileName.lastIndexOf('.')); // cut the  .class
-        // put the package info
-        fileName = (new BytecodeReader(file.getCanonicalPath())).getTClass().getinfo().getsignature().getsig() + "." + fileName; 
-        extractMapping(fileName.substring(0, fileName.lastIndexOf('.')), strBuilder, usedTypes, declaredTypes);
       }
+    } else {
+      if (!startPointFile.getName().endsWith(".class")) {
+        return;
+      }
+      System.out.println("Extracting mapping for:" + startPointFile.getName());
+      String fileName = startPointFile.getName();
+      // cut the .class
+      fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+      // put the package info
+      fileName = (new BytecodeReader(startPointFile.getCanonicalPath())).getTClass().getinfo().getsignature().getsig() + "."
+          + fileName;
+      extractMapping(fileName.substring(0, fileName.lastIndexOf('.')), strBuilder, usedTypes, declaredTypes);
     }
   }
+
 
   private void extractMapping(String className, StringBuilder strBuilder, HashSet<Class> usedTypes,
       HashSet<Class> declaredTypes) throws ClassNotFoundException, IOException {
