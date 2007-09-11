@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
+import tom.library.bytecode.*;
 
 public class TomMappingGenerator {
 
@@ -11,12 +12,17 @@ public class TomMappingGenerator {
       System.exit(0);
     }
     TomMappingGenerator gen = new TomMappingGenerator();
-    gen.generate(args[0], args[1]);
+    gen.generateFromRelativePaths(args[0], args[1]);
   }
 
-  private void generate(String startPoint, String mappingsFileName) throws IOException {
-
-    File currentClassFile = new File(getPath());
+  /**
+  * Launches the generator from relative paths
+  *
+  * @param startPoint the relative (to this current class) name of the start point
+  * @param mappingsFileName the relative (to this current class) name of the mapping file to generate
+  */
+  public void generateFromRelativePaths(String startPoint, String mappingsFileName) throws IOException {
+    File currentClassFile = new File(getPath()); 
     String parentPath = currentClassFile.getParent();
     String startPointFullPath = null;
     if (parentPath != null) {
@@ -31,10 +37,17 @@ public class TomMappingGenerator {
     if (!startPointFile.exists()) {
       throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
     }
-    // if the user provided . (current folder) as the start point
-    if (startPointFile.getCanonicalPath().equals(currentClassFile.getParent())){
-      startPoint = "";
-    }
+
+    generate(startPointFile, mappingsFileName);
+  }
+
+  /**
+  * Launches the generator from full paths (it assumes that the paths received are correct)
+  *
+  * @param startPoint the File object for the start point (this method assumes that the file exists)
+  * @param mappingsFileName the full name of the mapping file to generate
+  */
+  public void generate(File startPoint, String mappingsFileName) throws IOException {
 
     Writer writer = null;    
     StringBuilder strBuilder = new StringBuilder("%include { Collection.tom }\n");
@@ -43,7 +56,7 @@ public class TomMappingGenerator {
       HashSet<Class> usedTypes = new HashSet<Class>();
       // the types declared
       HashSet<Class> declaredTypes = new HashSet<Class>();
-      generate(startPoint, startPointFile, strBuilder, usedTypes, declaredTypes);
+      generate(startPoint, strBuilder, usedTypes, declaredTypes);
       // generate a mapping for each used type that was not declared
       for(Class usedType: usedTypes){
         if (!declaredTypes.contains(usedType) && !Collection.class.equals(usedType)){
@@ -75,19 +88,21 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     }
   }
 
-  private void generate(String currentPackage, File startPointFile, StringBuilder strBuilder, HashSet<Class> usedTypes,
+  private void generate(File startPointFile, StringBuilder strBuilder, HashSet<Class> usedTypes,
       HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {    
     File[] files = startPointFile.listFiles();
     for (File file : files) {
-      String fileName = (currentPackage == null || "".equals(currentPackage)) ? file.getName() : currentPackage + "."
-          + file.getName();
       if (file.isDirectory()) {
-        generate(fileName, file, strBuilder, usedTypes, declaredTypes);
+        generate(file, strBuilder, usedTypes, declaredTypes);
       } else {
-        if (!fileName.endsWith(".class")) {
+        if (! file.getName().endsWith(".class")) {
           continue;
         }
         System.out.println("Extracting mapping for:" + file.getName());        
+        String fileName = file.getName();
+        fileName = fileName.substring(0, fileName.lastIndexOf('.')); // cut the  .class
+        // put the package info
+        fileName = (new BytecodeReader(file.getCanonicalPath())).getTClass().getinfo().getsignature().getsig() + "." + fileName; 
         extractMapping(fileName.substring(0, fileName.lastIndexOf('.')), strBuilder, usedTypes, declaredTypes);
       }
     }
@@ -208,7 +223,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
 ]%); 
   }
 
-  public String getPath() {
+  private String getPath() {
     String className = getClass().getName();
     return ClassLoader.getSystemResource(className + ".class").getPath();
   }
