@@ -215,6 +215,16 @@ To relax, take a look at quine example
     Library
   Concepts: mapping, complex mapping on builtin
 
+* lambdacalculi
+  Several implementations of betareduction, one per tom file
+   - LambdaUpsilon : 
+       The purely syntactic explicit substitution system 
+       with De Bruijn indices derived from Lambda-X.
+       Written only with the rules() construct of Gom.
+  - BarendregtConvention: 
+      One hook maintains Barendregt's convention.
+      Beta-reduction is then described in 2 lines.
+
 * list
   Introduction to list-matching
   Concepts: list-matching, mapping to the ATerm library
