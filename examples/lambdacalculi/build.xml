@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the lambdacalculi example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="lambdacalculi" value="lambdacalculi"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${lambdacalculi}"/>
+    <delete dir="${examples.build}/${lambdacalculi}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${lambdacalculi}"/>
+    <tomcompile example="${lambdacalculi}"/>
+    <javacompile example="${lambdacalculi}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
+</project>
