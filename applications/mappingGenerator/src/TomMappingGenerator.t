@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class TomMappingGenerator {
@@ -55,18 +56,19 @@ public class TomMappingGenerator {
     StringBuilder strBuilder = new StringBuilder("%include { Collection.tom }\n");
     try {
       // the types used in operator declaration
-      HashSet<Class> usedTypes = new HashSet<Class>();
+      HashMap<String, Class<?>> usedTypes = new HashMap<String, Class<?>>();
       // the types declared
-      HashSet<Class> declaredTypes = new HashSet<Class>();
+      HashMap<String, Class<?>> declaredTypes = new HashMap<String, Class<?>>();
       generate(startPoint, strBuilder, usedTypes, declaredTypes, includeInClasspath);
       // generate a mapping for each used type that was not declared
-      for(Class usedType: usedTypes){
-        if (!declaredTypes.contains(usedType) && !Collection.class.equals(usedType)){
-          if (usedType.isPrimitive()){
-            strBuilder.insert(0, "%include { " + usedType.getName() + ".tom }\n");
+      for(String usedTypeName: usedTypes.keySet()){
+        Class usedTypeClass = usedTypes.get(usedTypeName);
+        if (!declaredTypes.containsKey(usedTypeName) && !Collection.class.equals(usedTypeClass)){
+          if (usedTypeClass.isPrimitive()){
+            strBuilder.insert(0, "%include { " + usedTypeClass.getName() + ".tom }\n");
           } else {
             // generate %typeterm
-            generateTypeTerm(usedType, strBuilder, declaredTypes);
+            generateTypeTerm(usedTypeClass, strBuilder, declaredTypes);
           }
         }
       }  
@@ -90,8 +92,8 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     }
   }
 
-  private void generate(File startPointFile, StringBuilder strBuilder, HashSet<Class> usedTypes,
-      HashSet<Class> declaredTypes, String includeInClasspath) throws IOException, ClassNotFoundException {
+  private void generate(File startPointFile, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
+      HashMap<String, Class<?>> declaredTypes, String includeInClasspath) throws IOException, ClassNotFoundException {
     if (startPointFile.isDirectory()) {
       File[] files = startPointFile.listFiles();
       for (File file : files) {
@@ -107,8 +109,8 @@ private static ArrayList myAdd(Object e,ArrayList l) {
   }
 
 
-  private void extractMapping(Class classObj, StringBuilder strBuilder, HashSet<Class> usedTypes,
-      HashSet<Class> declaredTypes) throws ClassNotFoundException, IOException {    
+  private void extractMapping(Class classObj, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
+      HashMap<String, Class<?>> declaredTypes) throws ClassNotFoundException, IOException {    
     strBuilder.append("\n/*******************************************************************************/\n");
     // generate %typeterm
     generateTypeTerm(classObj, strBuilder, declaredTypes);
@@ -120,9 +122,10 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     }
   }
 
-  private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashSet<Class> declaredTypes){
+  private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> declaredTypes){
     String className = classFName.getCanonicalName().substring(classFName.getCanonicalName().lastIndexOf('.') + 1);
-    declaredTypes.add(classFName);
+    declaredTypes.put(classFName.getCanonicalName(),classFName);
+System.out.println("declared:" + classFName);
     strBuilder.append(%[
 %typeterm @className@ {
   implement     { @classFName.getCanonicalName()@ }
@@ -132,7 +135,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
 ]%);
   }
 
-  private void generateOperator(Class classFName, StringBuilder strBuilder, HashSet<Class> usedTypes){
+  private void generateOperator(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes){
     String fullClassName = classFName.getCanonicalName();
     String className = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
     Method[] methods = classFName.getMethods();    
@@ -146,10 +149,12 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     // if we have some super class
     if(superClass != null) {
       codomain = superClass.getCanonicalName().substring(superClass.getCanonicalName().lastIndexOf('.') + 1);
-      usedTypes.add(superClass);
+      usedTypes.put(superClass.getCanonicalName(),superClass);
+System.out.println("used:" + superClass);
     }else{
       codomain = className;
-      usedTypes.add(classFName);
+      usedTypes.put(classFName.getCanonicalName(),classFName);
+System.out.println("used:" + classFName);
     }
     strBuilder.append(%[
 %op @codomain@ @className@(@getFieldsDeclarations(methods,usedTypes)@) {
@@ -158,7 +163,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
 ]%);
   }
 
-  private String getFieldsDeclarations(Method[] methods, HashSet<Class> usedTypes) {
+  private String getFieldsDeclarations(Method[] methods, HashMap<String, Class<?>> usedTypes) {
     StringBuilder result = new StringBuilder();
     for (Method m : methods) {
       // not a 'get' or an 'is'
@@ -178,7 +183,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
         result.append(m.getReturnType().getCanonicalName().substring(
             m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
       }
-      usedTypes.add(m.getReturnType());
+      usedTypes.put(m.getReturnType().getCanonicalName(),m.getReturnType());
       result.append(",");
     }
     // remove the ","
