@@ -13,16 +13,11 @@ public class TomMappingGenerator {
 Usage: java TomMappingGenerator startPoint mappingsFileName [includeInClasspath]
 
 where:
-    - startPoint            a folder name (or a file name) for which the mappings are desired
-                            (can be full paths or relative to TomMappingGenerator). 
-                            If this is a folder, mappings are generated recursively for all 
-                            contained classes.
-    
-    - mappingsFileName      destination file name for the mappings (can be a full path or 
-                            relative to TomMappingGenerator).
-   
-    - includeInClasspath    a ; separated string that contains folders, jars or class names to 
-                            include in CLASSPATH if needed  
+  startPoint            = a folder name (or a file name) to generate the mappings for (can be full paths or relative to TomMappingGenerator). If this is a folder, mappings are generated recursively for all contained classes.
+
+  mappingsFileName      = destination file name for the mappings (can be a full path or relative to TomMappingGenerator).
+
+  includeInClasspath    = a ; separated string that contains full paths to folders, jars or class names to include in CLASSPATH if needed  
                             
 ]%);
       System.exit(0);
@@ -72,7 +67,7 @@ where:
         mappingsFileName = baseFolder + mappingsFileName;
       }
     }
-    generate(startPointFile, mappingsFileName, null);
+    generate(startPointFile, mappingsFileName, includeInClassPath);
   }
 
   /**
@@ -158,7 +153,6 @@ private static ArrayList myAdd(Object e,ArrayList l) {
   private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> declaredTypes){
     String className = classFName.getCanonicalName().substring(classFName.getCanonicalName().lastIndexOf('.') + 1);
     declaredTypes.put(classFName.getCanonicalName(),classFName);
-System.out.println("declared:" + classFName);
     strBuilder.append(%[
 %typeterm @className@ {
   implement     { @classFName.getCanonicalName()@ }
@@ -183,11 +177,9 @@ System.out.println("declared:" + classFName);
     if(superClass != null) {
       codomain = superClass.getCanonicalName().substring(superClass.getCanonicalName().lastIndexOf('.') + 1);
       usedTypes.put(superClass.getCanonicalName(),superClass);
-System.out.println("used:" + superClass);
     }else{
       codomain = className;
       usedTypes.put(classFName.getCanonicalName(),classFName);
-System.out.println("used:" + classFName);
     }
     strBuilder.append(%[
 %op @codomain@ @className@(@getFieldsDeclarations(methods,usedTypes)@) {
@@ -270,6 +262,7 @@ System.out.println("used:" + classFName);
   * @return an array of URLs obtained from the string received 
   */
   private URL[] getURLPathsFromString(String pathString){
+    if (pathString == null) { return new URL[0];}
     String[] paths = pathString.split(";");
     URL[] result = new URL[paths.length];
     int j = 0;
