@@ -13,9 +13,11 @@ public class MGClassLoader extends URLClassLoader {
   }
 
   public Class<?> getClassObj(File file) throws ClassNotFoundException, FileNotFoundException, IOException{
-    // TODO - check the cast ... 
+    if (file.length() > Integer.MAX_VALUE) {
+      throw new IOException("File too big:" + file);
+    }
     byte[] classBytes = new byte[(int)file.length()];
     new FileInputStream(file).read(classBytes);
-    return defineClass(null,classBytes,0,classBytes.length);
+    return defineClass(null,classBytes,0,classBytes.length);    
   }
 }
