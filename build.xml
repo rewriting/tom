@@ -617,9 +617,12 @@
 
     <!-- tom share -->
     <copy todir="${stable.dist.share}/tom">
-      <fileset dir="${stable.mapping}" includes="**/*.tom"/>
-      <fileset dir="${stable.adt}" includes="**/*.tom">
-        <exclude name="TomSignature.tom"/>
+      <fileset dir="${stable.mapping}">
+        <include name="adt/bytecode/**/*.tom"/>
+        <include name="adt/tnode/**/*.tom"/>
+        <include name="c/**/*.tom"/>
+        <include name="caml/**/*.tom"/>
+        <include name="java/**/*.tom"/>
       </fileset>
     </copy>
     <copy todir="${stable.dist.share}">
@@ -769,7 +772,13 @@
 
     <!-- tom share -->
     <copy todir="${src.dist.share}/tom">
-      <fileset dir="${src.mapping}" includes="**/*.tom"/>
+      <fileset dir="${src.mapping}">
+        <include name="adt/bytecode/**/*.tom"/>
+        <include name="adt/tnode/**/*.tom"/>
+        <include name="c/**/*.tom"/>
+        <include name="caml/**/*.tom"/>
+        <include name="java/**/*.tom"/>
+    </fileset>
     </copy>
     <copy todir="${src.dist.share}">
       <fileset dir="${share}">
