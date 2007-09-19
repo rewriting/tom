@@ -327,6 +327,12 @@ public class TomSyntaxChecker extends TomChecker {
           messageError(currentTomStructureOrgTrack.getFileName(),currentTomStructureOrgTrack.getLine(),
               TomMessage.symbolCodomainError,
               new Object[]{symbName, `(typeName)});
+          if(`typeName.equals("Strategy")) {
+          messageError(currentTomStructureOrgTrack.getFileName(),currentTomStructureOrgTrack.getLine(),
+              TomMessage.missingIncludeSL,
+              new Object[]{});
+
+          }
         }
         return;
       }
