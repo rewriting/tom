@@ -148,7 +148,7 @@ public class @className()@ implements tom.library.sl.Strategy {
 
   public int visit() {
 @computeSLNewChilds(slotList,"any")@
-    getEnvironment().setSubject((tom.library.sl.Visitable)@fullClassName(operator)@.make(@genMakeArguments(slotList)@));
+    getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList)@));
     return tom.library.sl.Environment.SUCCESS;
   }
 }
@@ -355,7 +355,7 @@ public class @className()@ implements tom.library.sl.Strategy {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += %[
-    ((tom.library.sl.Strategy)@fieldName(`fieldName)@).visit();
+    (@fieldName(`fieldName)@).visit();
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) getEnvironment().getSubject();
 ]%;
         }

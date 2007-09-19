@@ -103,7 +103,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public tom.library.sl.Visitable[] getChildren() {
-    return (tom.library.sl.Visitable[]) args.clone();
+    return args.clone();
   }
 
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {
@@ -179,7 +179,7 @@ public class @className()@ implements tom.library.sl.Strategy {
       tom.library.sl.Visitable[] childs = null;
       for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
         if(nonbuiltin[i]) {
-          tom.library.sl.Visitable oldChild = (tom.library.sl.Visitable)any.getChildAt(nbi);
+          tom.library.sl.Visitable oldChild = any.getChildAt(nbi);
           environment.down(nbi+1);
           int status = args[i].visit();
           if(status != tom.library.sl.Environment.SUCCESS) {
@@ -190,7 +190,7 @@ public class @className()@ implements tom.library.sl.Strategy {
           if(childs != null) {
             childs[nbi] = newChild;
           } else if(newChild != oldChild) {
-            childs = ((tom.library.sl.Visitable) any).getChildren();
+            childs = any.getChildren();
             childs[nbi] = newChild;
           } 
           environment.upLocal();
@@ -198,7 +198,7 @@ public class @className()@ implements tom.library.sl.Strategy {
         }
       }
       if(childs!=null) {
-        environment.setSubject((tom.library.sl.Visitable)any.setChildren(childs));
+        environment.setSubject(any.setChildren(childs));
       }
       return tom.library.sl.Environment.SUCCESS;
     } else {

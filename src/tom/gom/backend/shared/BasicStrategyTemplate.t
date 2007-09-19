@@ -80,7 +80,7 @@ import tom.library.sl.*;
     
   public Visitable getChildAt(int i) {
     switch (i) {
-      case 0: return (Visitable) any;
+      case 0: return any;
       default: throw new IndexOutOfBoundsException();
     }
   }
@@ -93,7 +93,7 @@ import tom.library.sl.*;
   }
 
   public Visitable[] getChildren() {
-    return new Visitable[]{(Visitable)any};
+    return new Visitable[]{any};
   }
 
   public Visitable setChildren(Visitable[] children) {
@@ -141,7 +141,7 @@ import tom.library.sl.*;
 
   public int visit() {
     try {
-      environment.setSubject((tom.library.sl.Visitable)this.visitLight(environment.getSubject()));
+      environment.setSubject(this.visitLight(environment.getSubject()));
       return tom.library.sl.Environment.SUCCESS;
     } catch(VisitFailure f) {
       return tom.library.sl.Environment.FAILURE;

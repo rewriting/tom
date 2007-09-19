@@ -77,7 +77,7 @@ package @getPackage()@;
 public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 @generateBlock()@
-
+  @at@Override
   public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure {
     return v.@visitMethod(className)@(this);
   }

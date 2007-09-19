@@ -92,6 +92,7 @@ writer.write(%[
     String domainClassName = fullClassName(
         cons.getSlots().getHeadconcSlotField().getDomain());
     writer.write(%[
+  @at@Override
   public int length() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
@@ -109,11 +110,12 @@ writer.write(%[
   public static @fullClassName(sortName)@ fromArray(@domainClassName@[] array) {
     @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
     for(int i = array.length; i>0;) {
-      res = @fullClassName(cons.getClassName())@.make((@domainClassName@)array[--i],res);
+      res = @fullClassName(cons.getClassName())@.make(array[--i],res);
     }
     return res;
   }
 
+  @at@Override
   public @fullClassName(sortName)@ reverse() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
@@ -151,6 +153,7 @@ writer.write(%[
     }
   }
 
+  @at@Override
   public void toStringBuffer(java.lang.StringBuffer buffer) {
     buffer.append("@className()@(");
     if(this instanceof @fullClassName(cons.getClassName())@) {
@@ -353,10 +356,12 @@ writer.write(%[
     return get@className(sortName)@().containsAll(c);
   }
 
+  @at@Override
   public boolean equals(Object o) { 
     return get@className(sortName)@().equals(o); 
   }
 
+  @at@Override
   public int hashCode() {
     return get@className(sortName)@().hashCode(); 
   }
@@ -397,15 +402,12 @@ writer.write(%[
      */
 
     public boolean add(@primitiveToReferenceType(domainClassName)@ o) {
-      if(o instanceof @primitiveToReferenceType(domainClassName)@) {
-        list = (@className()@) @fullClassName(cons.getClassName())@.make((@domainClassName@)o,list);
-        return true;
-      }
-      return false;
+      list = (@className()@)@fullClassName(cons.getClassName())@.make(o,list);
+      return true;
     }
 
     public void clear() {
-      list = (@className()@) @fullClassName(empty.getClassName())@.make();
+      list = (@className()@)@fullClassName(empty.getClassName())@.make();
     }
 
     public boolean isEmpty() { 

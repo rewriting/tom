@@ -123,6 +123,7 @@ writer.write(%[
   }
 
   /* name and arity */
+  @at@Override
   public String symbolName() {
     return "@className()@";
   }
@@ -142,6 +143,7 @@ writer.write(%[
     // case: constant
 writer.write(%[
   /* name and arity */
+  @at@Override
   public String symbolName() {
     return "@className()@";
   }
@@ -162,6 +164,7 @@ writer.write(%[
    */
   if (sortName == extendsType) {
 writer.write(%[
+  @at@Override
   public void toStringBuffer(java.lang.StringBuffer buffer) {
     buffer.append("@className()@(");
     @toStringChilds("buffer")@
@@ -175,6 +178,7 @@ writer.write(%[
   /**
     * This method implements a lexicographic order
     */
+  @at@Override
   public int compareToLPO(Object o) {
     /*
      * We do not want to compare with any object, only members of the module
@@ -194,6 +198,7 @@ writer.write(%[
     throw new RuntimeException("Unable to compare");
   }
 
+  @at@Override
   public int compareTo(Object o) {
     /*
      * We do not want to compare with any object, only members of the module
@@ -219,6 +224,7 @@ writer.write(%[
   }
 
   /* shared.SharedObject */
+  @at@Override
   public final int hashCode() {
     return hashCode;
   }
@@ -231,6 +237,7 @@ writer.write(%[
   }
 
   /* @className(sortName)@ interface */
+  @at@Override
   public boolean @isOperatorMethod(className)@() {
     return true;
   }
@@ -239,6 +246,7 @@ generateGetters(writer);
 
     writer.write(%[
   /* AbstractType */
+  @at@Override
   public aterm.ATerm toATerm() {
     return atermFactory.makeAppl(
       atermFactory.makeAFun(symbolName(),getArity(),false),
@@ -353,10 +361,12 @@ writer.write(%[
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       writer.write(%[
+  @at@Override
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getName())@;
   }
       
+  @at@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     return make(@generateMakeArgsFor(head,"set_arg")@);
   }]%);
