@@ -1,8 +1,8 @@
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.*;
 import java.util.Collection;
 import java.util.HashSet;
-import tom.library.bytecode.*;
 
 public class TomMappingGenerator {
 
@@ -25,7 +25,7 @@ public class TomMappingGenerator {
     File currentClassFile = new File(getPath()); 
     String parentPath = currentClassFile.getParent();
     String startPointFullPath = null;
-    if (parentPath != null) {
+    if (parentPath != null) { 
       String baseFolder = (new File(parentPath)).getCanonicalPath() + File.separator;
       startPointFullPath = baseFolder + startPoint;
       mappingsFileName = baseFolder + mappingsFileName;
@@ -38,7 +38,7 @@ public class TomMappingGenerator {
       throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
     }
 
-    generate(startPointFile, mappingsFileName);
+    generate(startPointFile, mappingsFileName, null);
   }
 
   /**
@@ -46,8 +46,10 @@ public class TomMappingGenerator {
   *
   * @param startPoint the File object for the start point (this method assumes that the file exists)
   * @param mappingsFileName the full name of the mapping file to generate
+  * @param includeInClasspath the path to include into classpath when searching for classes
+  *     
   */
-  public void generate(File startPoint, String mappingsFileName) throws IOException {
+  public void generate(File startPoint, String mappingsFileName, String includeInClasspath) throws IOException {
 
     Writer writer = null;    
     StringBuilder strBuilder = new StringBuilder("%include { Collection.tom }\n");
@@ -56,7 +58,7 @@ public class TomMappingGenerator {
       HashSet<Class> usedTypes = new HashSet<Class>();
       // the types declared
       HashSet<Class> declaredTypes = new HashSet<Class>();
-      generate(startPoint, strBuilder, usedTypes, declaredTypes);
+      generate(startPoint, strBuilder, usedTypes, declaredTypes, includeInClasspath);
       // generate a mapping for each used type that was not declared
       for(Class usedType: usedTypes){
         if (!declaredTypes.contains(usedType) && !Collection.class.equals(usedType)){
@@ -76,7 +78,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
 }
 ]%);      
       writer = new BufferedWriter(new FileWriter(mappingsFileName));
-      writer.write(strBuilder.toString());
+      writer.append(strBuilder.toString());
     } catch (Exception e) {
       System.out.println("An error occured. See the stack trace for more information.\n");
       e.printStackTrace();
@@ -89,39 +91,32 @@ private static ArrayList myAdd(Object e,ArrayList l) {
   }
 
   private void generate(File startPointFile, StringBuilder strBuilder, HashSet<Class> usedTypes,
-      HashSet<Class> declaredTypes) throws IOException, ClassNotFoundException {
+      HashSet<Class> declaredTypes, String includeInClasspath) throws IOException, ClassNotFoundException {
     if (startPointFile.isDirectory()) {
       File[] files = startPointFile.listFiles();
       for (File file : files) {
-        generate(file, strBuilder, usedTypes, declaredTypes);
+        generate(file, strBuilder, usedTypes, declaredTypes, includeInClasspath);
       }
     } else {
       if (!startPointFile.getName().endsWith(".class")) {
         return;
       }
-      System.out.println("Extracting mapping for:" + startPointFile.getName());
-      String fileName = startPointFile.getName();
-      // cut the .class
-      fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-      // put the package info
-      fileName = (new BytecodeReader(startPointFile.getCanonicalPath())).getTClass().getinfo().getsignature().getsig() + "."
-          + fileName;
-      extractMapping(fileName.substring(0, fileName.lastIndexOf('.')), strBuilder, usedTypes, declaredTypes);
+      System.out.println("Extracting mapping for:" + startPointFile.getName());      
+      extractMapping((new MGClassLoader(getURLPathsFromString(includeInClasspath))).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
     }
   }
 
 
-  private void extractMapping(String className, StringBuilder strBuilder, HashSet<Class> usedTypes,
-      HashSet<Class> declaredTypes) throws ClassNotFoundException, IOException {
-    Class classFName = Class.forName(className);
+  private void extractMapping(Class classObj, StringBuilder strBuilder, HashSet<Class> usedTypes,
+      HashSet<Class> declaredTypes) throws ClassNotFoundException, IOException {    
     strBuilder.append("\n/*******************************************************************************/\n");
     // generate %typeterm
-    generateTypeTerm(classFName, strBuilder, declaredTypes);
+    generateTypeTerm(classObj, strBuilder, declaredTypes);
     // generate %op
-    generateOperator(classFName, strBuilder, usedTypes);
+    generateOperator(classObj, strBuilder, usedTypes);
     // generate %oparray (only for base classes)
-    if (Object.class.equals(classFName.getSuperclass())) {
-      generateOpArray(className, strBuilder);
+    if (Object.class.equals(classObj.getSuperclass())) {
+      generateOpArray(classObj.getName(), strBuilder);
     }
   }
 
@@ -203,7 +198,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
       result.append(%[
   get_slot(@fieldName@, t)  { ((@className@)t).@methodName@() }]%);    
     }
-    return result.toString();
+    return result.toString(); 
   }
 
   private void generateOpArray(String className, StringBuilder strBuilder){
@@ -222,7 +217,7 @@ private static ArrayList myAdd(Object e,ArrayList l) {
   make_append(e,l)          { myAdd(e,(ArrayList)l)  }
   get_element(l,n)          { (@className@)l.get(n)        }
   get_size(l)               { l.size()                }
-}
+} 
 ]%); 
   }
 
@@ -230,4 +225,33 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     String className = getClass().getName();
     return ClassLoader.getSystemResource(className + ".class").getPath();
   }
+
+  /**
+  * 
+  * @param a string containing classpath entries separated by ; 
+  * @return an array of URLs obtained from the string received 
+  */
+  private URL[] getURLPathsFromString(String pathString){
+    String[] paths = pathString.split(";");
+    URL[] result = new URL[paths.length];
+    int j = 0;
+    for(String path:paths){
+      File file = new File(path);
+      if (!file.exists()){
+        System.out.println("Couldn't find location: " + path);
+      }else{
+        try{
+          result[j] = file.toURL();
+          j++;
+        } catch(MalformedURLException e){
+          System.out.println("Couldn't transform to url: " + path);
+          j--;
+        }
+      }
+    }
+    return result;
+  }
 }
+
+
+
