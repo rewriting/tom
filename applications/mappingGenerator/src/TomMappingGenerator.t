@@ -9,36 +9,69 @@ public class TomMappingGenerator {
 
   public static void main(String[] args) throws IOException {
     if (args.length < 2) {
-      System.out.println("Usage: java TomMappingGenerator start_point_package_name mapping_file_name");
+      System.out.println(%[
+Usage: java TomMappingGenerator startPoint mappingsFileName [includeInClasspath]
+
+where:
+    - startPoint            a folder name (or a file name) for which the mappings are desired
+                            (can be full paths or relative to TomMappingGenerator). 
+                            If this is a folder, mappings are generated recursively for all 
+                            contained classes.
+    
+    - mappingsFileName      destination file name for the mappings (can be a full path or 
+                            relative to TomMappingGenerator).
+   
+    - includeInClasspath    a ; separated string that contains folders, jars or class names to 
+                            include in CLASSPATH if needed  
+                            
+]%);
       System.exit(0);
     }
     TomMappingGenerator gen = new TomMappingGenerator();
-    gen.generateFromRelativePaths(args[0], args[1]);
+    if ( args.length > 2 ) {
+      gen.generateFromRelativePaths(args[0], args[1], args[2]);
+    }else{
+      gen.generateFromRelativePaths(args[0], args[1], null);
+    }
   }
 
   /**
   * Launches the generator from relative paths
   *
-  * @param startPoint the relative (to this current class) name of the start point
-  * @param mappingsFileName the relative (to this current class) name of the mapping file to generate
+  * @param startPoint full or relative (to this current class) name of the start point
+  * @param mappingsFileName full or relative (to this current class) name of the mapping file to generate
+  * @param includeInClasspath the path to include into classpath when searching for classes
   */
-  public void generateFromRelativePaths(String startPoint, String mappingsFileName) throws IOException {
-    File currentClassFile = new File(getPath()); 
-    String parentPath = currentClassFile.getParent();
-    String startPointFullPath = null;
-    if (parentPath != null) { 
-      String baseFolder = (new File(parentPath)).getCanonicalPath() + File.separator;
-      startPointFullPath = baseFolder + startPoint;
-      mappingsFileName = baseFolder + mappingsFileName;
-    } else {
-      startPointFullPath = startPoint;
-    }
+  public void generateFromRelativePaths(String startPoint, String mappingsFileName, String includeInClassPath) throws IOException {
 
-    File startPointFile = new File(startPointFullPath);
-    if (!startPointFile.exists()) {
-      throw new FileNotFoundException("Unable to find start path '" + startPointFullPath + "'.");
-    }
+    File startPointFile = new File(startPoint);
+    if (!startPointFile.exists()){
 
+      if (startPointFile.isAbsolute()){
+        throw new FileNotFoundException("Unable to resolve start path '" + startPoint + "'.");
+      }
+
+      File currentClassFile = new File(getPath());       
+      String parentPath = currentClassFile.getParent();
+      String startPointFullPath = null;
+      String baseFolder = null;
+      if (parentPath != null) { 
+        baseFolder = (new File(parentPath)).getCanonicalPath() + File.separator;
+        startPointFullPath = baseFolder + startPoint;        
+      } else {
+        startPointFullPath = startPoint;
+      }
+
+      startPointFile = new File(startPointFullPath);
+      if (!startPointFile.exists()) {
+        throw new FileNotFoundException("Unable to resolve start path '" + startPointFullPath + "').");
+      }  
+
+      File mappingsFile = new File(mappingsFileName);
+      if (!mappingsFile.isAbsolute()){
+        mappingsFileName = baseFolder + mappingsFileName;
+      }
+    }
     generate(startPointFile, mappingsFileName, null);
   }
 
