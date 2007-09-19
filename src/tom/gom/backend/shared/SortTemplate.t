@@ -39,7 +39,8 @@ public class SortTemplate extends TemplateHookedClass {
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
   SlotFieldList slotList;
- 
+  private static String at = "@"; 
+
   %include { ../../adt/objects/Objects.tom}
 
   public SortTemplate(File tomHomePath,
@@ -70,10 +71,9 @@ public class SortTemplate extends TemplateHookedClass {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
-import @getPackage()@.@className().toLowerCase()@.*;
-import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
+//import @getPackage()@.@className().toLowerCase()@.*;
+//import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
 
-//public abstract class @className()@ extends @fullClassName(abstractType)@ implements java.util.Collection@super.generateInterface()@ {
 public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 @generateBlock()@

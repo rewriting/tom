@@ -36,18 +36,20 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.adt.objects.types.ClassName;
 import tom.gom.tools.error.GomRuntimeException;
 
 public class GomReferenceExpander {
 
-  %include{../../library/mapping/java/util/HashMap.tom}
-  %include{../../library/mapping/java/util/ArrayList.tom}
-  %include{../../library/mapping/java/sl.tom}
-  %include{../../library/mapping/java/boolean.tom}
+  %include {../../library/mapping/java/util/HashMap.tom}
+  %include {../../library/mapping/java/util/ArrayList.tom}
+  %include {../../library/mapping/java/sl.tom}
+  %include {../../library/mapping/java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
   private static String packagePath;
-  private static SortDecl stringSortDecl,intSortDecl;
+  private static SortDecl stringSortDecl;
+  private static SortDecl intSortDecl;
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
   private boolean forTermgraph;
@@ -59,9 +61,6 @@ public class GomReferenceExpander {
   public GomReferenceExpander(String packagePath,boolean forTermgraph) {
     this.forTermgraph = forTermgraph;
     this.packagePath = packagePath;
-    if (!"".equals(this.packagePath)) {
-      this.packagePath = this.packagePath + ".";
-    }
     stringSortDecl = environment().builtinSort("String");
     intSortDecl = environment().builtinSort("int");
     //we mark them as used builtins:
@@ -69,6 +68,20 @@ public class GomReferenceExpander {
     environment().markUsedBuiltin("String");
     //int is used for defining paths
     environment().markUsedBuiltin("int");
+  }
+
+  private static String fullClassName(ClassName clsName) {
+    %match(ClassName clsName) {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
+        if(`pkgPrefix.length()==0) {
+          return `name;
+        } else {
+          return `pkgPrefix+"."+`name;
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "GomReferenceExpander:fullClassName got a strange ClassName "+clsName);
   }
 
   public Pair expand(ModuleList list, HookDeclList hooks) {
@@ -97,7 +110,7 @@ public class GomReferenceExpander {
   %strategy ExpandModule(
       packagePath:String,
       forTermgraph:boolean,
-      hookList:ArrayList) extends Identity(){
+      hookList:ArrayList) extends Identity() {
     visit Module {
       Module[
         MDecl=mdecl@ModuleDecl[ModuleName=modName],Sorts=sorts] -> {
@@ -106,7 +119,7 @@ public class GomReferenceExpander {
     }
   }
 
-  private static String getArobase(){
+  private static String getArobase() {
     return "@";
   }
 
@@ -134,7 +147,7 @@ public class GomReferenceExpander {
     String sortName = sort.getName();
 
     String codeImport =%[
-      import @packagePath+moduleName.toLowerCase()@.types.*;
+      import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
     ]%;
 
@@ -211,10 +224,11 @@ public class GomReferenceExpander {
       String packagePath,
       boolean forTermgraph) {
     String moduleName = gomModuleName.getName();
+    ClassName abstractType = `ClassName(packagePath+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
 
     String codeImport =%[
-    import @packagePath+moduleName.toLowerCase()@.types.*;
-    import @packagePath+moduleName.toLowerCase()@.*;
+    import @packagePath@.@moduleName.toLowerCase()@.types.*;
+    import @packagePath@.@moduleName.toLowerCase()@.*;
     import tom.library.sl.*;
     import java.util.ArrayList;
     import java.util.HashMap;
@@ -229,9 +243,9 @@ public class GomReferenceExpander {
     %match(sorts){
       concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
         codeImport += %[
-          import @packagePath+moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.Path@`sortName@;
+          import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.Path@`sortName@;
         ]%;
-        codeStrategies += getStrategies(`sDecl,moduleName);
+        codeStrategies += getStrategies(`sDecl);
         Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
         CollectLabels = "Choice(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
         CollectLabels2 = "Choice(CollectLabels2"+`sortName+"(map),"+CollectLabels2+")";
@@ -258,13 +272,13 @@ public class GomReferenceExpander {
     public static class Info {
       public String label;
       public Path path;
-      public @moduleName@AbstractType term;
+      public @fullClassName(abstractType)@ term;
     }
 
-    public @moduleName@AbstractType unexpand(){
+    public @fullClassName(abstractType)@ unexpand() {
        HashMap map = getLabels3();
        try {
-         return (@moduleName@AbstractType)`Sequence(TopDown(@CollectRef@),BottomUp(@AddLabel@)).visit(this);
+         return (@fullClassName(abstractType)@)`Sequence(TopDown(@CollectRef@),BottomUp(@AddLabel@)).visit(this);
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
@@ -285,11 +299,11 @@ public class GomReferenceExpander {
 
     String codeBlockTermWithPointers =%[
 
-      public @moduleName@AbstractType expand(){
+      public @fullClassName(abstractType)@ expand(){
         HashMap map = new HashMap();
         Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
         try {
-          return (@moduleName@AbstractType) `label2path.visit(this);
+          return (@fullClassName(abstractType)@) `label2path.visit(this);
         } catch (tom.library.sl.VisitFailure e) {
           throw new RuntimeException("Unexpected strategy failure!");
         }}
@@ -297,22 +311,22 @@ public class GomReferenceExpander {
 
     String codeBlockTermGraph =%[
 
-   public @moduleName@AbstractType expand(){
+   public @fullClassName(abstractType)@ expand(){
        Info info = new Info();
        ArrayList marked = new ArrayList();
        HashMap map = new HashMap();
        try {
-         return ((@moduleName@AbstractType)`InnermostIdSeq(@NormalizeLabel@).visit(this.unexpand())).label2path();
+         return ((@fullClassName(abstractType)@)`InnermostIdSeq(@NormalizeLabel@).visit(this.unexpand())).label2path();
        } catch (tom.library.sl.VisitFailure e) {
          throw new RuntimeException("Unexpected strategy failure!");
        }
      }
 
-    protected @moduleName@AbstractType label2path(){
+    protected @fullClassName(abstractType)@ label2path(){
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
       try {
-        return (@moduleName@AbstractType) label2path.visit(this);
+        return (@fullClassName(abstractType)@) label2path.visit(this);
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -338,17 +352,17 @@ public class GomReferenceExpander {
       }
     }
 
-    public @moduleName@AbstractType normalize() {
+    public @fullClassName(abstractType)@ normalize() {
       try {
-         return (@moduleName@AbstractType)`InnermostIdSeq(Normalize()).visit(this); 
+         return (@fullClassName(abstractType)@)`InnermostIdSeq(Normalize()).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
-    public @moduleName@AbstractType applyGlobalRedirection(Position p1,Position p2) {
+    public @fullClassName(abstractType)@ applyGlobalRedirection(Position p1,Position p2) {
       try {
-         return (@moduleName@AbstractType) globalRedirection(p1,p2).visit(this); 
+         return (@fullClassName(abstractType)@) globalRedirection(p1,p2).visit(this); 
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
@@ -358,18 +372,18 @@ public class GomReferenceExpander {
         return `TopDown(GlobalRedirection(p1,p2)); 
     }
 
-    public @moduleName@AbstractType swap(Position p1, Position p2) {
+    public @fullClassName(abstractType)@ swap(Position p1, Position p2) {
       try {
-        @moduleName@AbstractType updatedSubject =  (@moduleName@AbstractType ) `TopDown(UpdatePos(p1,p2)).visit(this);
-        @moduleName@AbstractType subterm_p1 = (@moduleName@AbstractType) p1.getSubterm().visit(updatedSubject);
-        @moduleName@AbstractType subterm_p2 = (@moduleName@AbstractType) p2.getSubterm().visit(updatedSubject);
-        return (@moduleName@AbstractType) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
+        @fullClassName(abstractType)@ updatedSubject =  (@fullClassName(abstractType)@ ) `TopDown(UpdatePos(p1,p2)).visit(this);
+        @fullClassName(abstractType)@ subterm_p1 = (@fullClassName(abstractType)@) p1.getSubterm().visit(updatedSubject);
+        @fullClassName(abstractType)@ subterm_p2 = (@fullClassName(abstractType)@) p2.getSubterm().visit(updatedSubject);
+        return (@fullClassName(abstractType)@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
       } catch (VisitFailure e) { 
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
-   %strategy Normalize() extends Identity(){
+   %strategy Normalize() extends Identity() {
 ]%;
 
   %match(sorts){
@@ -495,7 +509,7 @@ public class GomReferenceExpander {
         BlockHookDecl(CutModule(mDecl),Code(codeBlock)));
   }
 
-  private static String getStrategies(SortDecl sDecl, String moduleName){
+  private static String getStrategies(SortDecl sDecl) {
 
     String sortName = sDecl.getName();
     String strategies =%[
@@ -510,7 +524,7 @@ public class GomReferenceExpander {
       public @CodeGen.generateCode(`FullSortClass(sDecl))@ sharedTerm;
     }
  
-      %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail(){
+      %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail() {
         visit @sortName@{
           Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
             if(! marked.contains(`label)){
@@ -524,7 +538,7 @@ public class GomReferenceExpander {
         }
       }
 
-    %strategy CollectLabels@sortName@(map:HashMap) extends Fail(){
+    %strategy CollectLabels@sortName@(map:HashMap) extends Fail() {
       visit @sortName@{
         Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
           map.put(`label,getEnvironment().getPosition());
@@ -533,7 +547,7 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy CollectLabels2@sortName@(map:HashMap) extends Fail(){
+    %strategy CollectLabels2@sortName@(map:HashMap) extends Fail() {
       visit @sortName@{
         Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
           map.put(`label,getEnvironment().getPosition());
@@ -542,7 +556,7 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy CollectLabels3@sortName@(map:HashMap) extends Fail(){
+    %strategy CollectLabels3@sortName@(map:HashMap) extends Fail() {
       visit @sortName@{
         Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
           map.put(getEnvironment().getPosition().toString(),`label);
@@ -563,7 +577,7 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Fail(){
+    %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Fail() {
       visit @sortName@ {
         term@getArobase()@Lab@sortName@[label@sortName@=label,term@sortName@=subterm] -> {
           Position current = getEnvironment().getPosition();
@@ -584,7 +598,7 @@ public class GomReferenceExpander {
     }
 
  
-    %strategy CollectRef@sortName@(map:HashMap) extends Identity(){
+    %strategy CollectRef@sortName@(map:HashMap) extends Identity() {
       visit @sortName@ {
         p@getArobase()@Path@sortName@(_*) -> {
           //use String instead of Position because containskey method does
@@ -616,7 +630,7 @@ public class GomReferenceExpander {
     }
   }
 
-    %strategy NormalizeLabel@sortName@(map:HashMap) extends Identity(){
+    %strategy NormalizeLabel@sortName@(map:HashMap) extends Identity() {
       visit @sortName@ {
         Ref@sortName@[label@sortName@=label] -> {
           if (! map.containsKey(`label)){

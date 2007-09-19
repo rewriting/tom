@@ -88,6 +88,7 @@ writer.write(%[
 
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
+    String at = "@";
     String domainClassName = fullClassName(
         cons.getSlots().getHeadconcSlotField().getDomain());
     writer.write(%[
@@ -286,6 +287,7 @@ writer.write(%[
     return array;
   }
 
+  @at@SuppressWarnings("unchecked")
   public <T> T[] toArray(T[] array) {
     int size = this.length();
     if (array.length < size) {

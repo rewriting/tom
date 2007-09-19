@@ -41,6 +41,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
+  private static String at = "@"; 
 
   %include { ../../adt/objects/Objects.tom}
 

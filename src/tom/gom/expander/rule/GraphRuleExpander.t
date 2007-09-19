@@ -38,6 +38,7 @@ import tom.gom.adt.rule.RuleTree;
 import tom.gom.adt.rule.RuleAdaptor;
 import tom.gom.adt.rule.types.*;
 import tom.gom.adt.rule.types.term.*;
+import tom.gom.adt.objects.types.ClassName;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.library.sl.*;
 
@@ -46,19 +47,40 @@ public class GraphRuleExpander {
   %include { ../../adt/gom/Gom.tom}
   %include { ../../adt/rule/Rule.tom }
   %include { ../../../library/mapping/java/sl.tom}
-  %include{../../../library/mapping/java/util/HashMap.tom}
+  %include { ../../../library/mapping/java/util/HashMap.tom}
 
   private ModuleList moduleList;
   private String sortname;
-  private String modulename;
+  private String moduleName;
+  private String pkgName;
 
   public GraphRuleExpander(ModuleList data) {
     this.moduleList = data;
   }
 
+  private static String fullClassName(ClassName clsName) {
+    %match(ClassName clsName) {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
+        if(`pkgPrefix.length()==0) {
+          return `name;
+        } else {
+          return `pkgPrefix+"."+`name;
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "GomReferenceExpander:fullClassName got a strange ClassName "+clsName);
+  }
+
   public HookDeclList expandGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
     this.sortname = sortname; 
-    this.modulename = sdecl.getSort().getModuleDecl().getModuleName().getName();
+    %match(sdecl) {
+      CutSort[Sort=SortDecl[ModuleDecl=ModuleDecl(GomModuleName(moduleName),pkgName)]] -> {
+        this.moduleName = `moduleName;
+        this.pkgName = `pkgName;
+      }
+    }
+
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
@@ -88,6 +110,7 @@ public class GraphRuleExpander {
 
   //add the common methods, includes and imports for all graphrule strategies of a sort 
   protected HookDeclList expandFirst(Decl sdecl) {
+    ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
   StringBuffer output = new StringBuffer();
     output.append(
         %[
@@ -118,9 +141,9 @@ public class GraphRuleExpander {
 
   static class Substitution {
     public Position omega;
-    @modulename@AbstractType value;
+    @fullClassName(abstractType)@ value;
 
-    public Substitution(Position omega, @modulename@AbstractType value) {
+    public Substitution(Position omega, @fullClassName(abstractType)@ value) {
       this.omega = omega;
       this.value = value;
     }
@@ -244,9 +267,9 @@ import java.util.*;
 
   //import all the constructors Path<Sort> of the module
   %match(moduleList) {
-concModule(_*,Module[MDecl=ModuleDecl(GomModuleName(modulename),pkg),Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+concModule(_*,Module[MDecl=ModuleDecl(GomModuleName(moduleName),pkg),Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
   imports += %[
-import @`pkg@.@`modulename.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name@; 
+import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name@; 
   ]%;
     }
   }
@@ -255,9 +278,10 @@ import @`pkg@.@`modulename.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
   }
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
+    ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
     StringBuffer output = new StringBuffer();
     output.append(%[
-  public static Strategy @stratname@(){
+  public static Strategy @stratname@() {
     return `@stratname@();
   }
 
@@ -290,7 +314,7 @@ import @`pkg@.@`modulename.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
                 /* 3. construct tt=SubstTerm(subject,r) */
                 while (substitutions.hasNext()) {
                 Substitution subst = (Substitution) substitutions.next();
-                @modulename@AbstractType r = subst.value;
+                @fullClassName(abstractType)@ r = subst.value;
                 //System.out.println("subst "+r);
                 Position posRedex = subst.omega;
                 //System.out.println("at the position "+posRedex);
