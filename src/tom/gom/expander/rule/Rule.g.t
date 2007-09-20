@@ -53,6 +53,7 @@ condition :
   ;
 pattern :
   ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
+  | (varname=ID) AT (funname=ID) LPAR (term (COMA term)*)? RPAR -> ^(At $varname ^(Appl $funname ^(TermList term*)))
 ;
 term :
   pattern
@@ -85,6 +86,7 @@ constructor :
 
 ARROW : '->' ;
 AMPERCENT : '&' ;
+AT : '@' ;
 COLON : ':' ;
 LPAR : '(' ;
 RPAR : ')' ;

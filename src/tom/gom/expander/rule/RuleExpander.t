@@ -239,6 +239,11 @@ public class RuleExpander {
         genTermList(`args, output);
         output.append(")");
       }
+      At(name,term) -> {
+        output.append(`name);
+        output.append("@");
+        genTerm(`term,output);
+      }
       Var(name) -> {
         output.append(`name);
       }
