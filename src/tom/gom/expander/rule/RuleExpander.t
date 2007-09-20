@@ -244,6 +244,12 @@ public class RuleExpander {
         output.append("@");
         genTerm(`term,output);
       }
+      UnnamedVar() -> {
+        output.append("_");
+      }
+      UnnamedVarStar() -> {
+        output.append("_*");
+      }
       Var(name) -> {
         output.append(`name);
       }

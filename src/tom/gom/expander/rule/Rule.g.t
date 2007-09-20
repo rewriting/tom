@@ -54,11 +54,13 @@ condition :
 pattern :
   ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
   | (varname=ID) AT (funname=ID) LPAR (term (COMA term)*)? RPAR -> ^(At $varname ^(Appl $funname ^(TermList term*)))
+  | UNDERSCORE -> ^(UnnamedVar)
+  | UNDERSCORESTAR -> ^(UnnamedVarStar)
 ;
 term :
   pattern
-  | ID -> ^(Var ID)
-  | builtin
+ | ID -> ^(Var ID)
+ | builtin
 ;
 builtin :
   INT -> ^(BuiltinInt INT)
@@ -86,6 +88,8 @@ constructor :
 
 ARROW : '->' ;
 AMPERCENT : '&' ;
+UNDERSCORE : '_' ;
+UNDERSCORESTAR : '_*' ;
 AT : '@' ;
 COLON : ':' ;
 LPAR : '(' ;

@@ -178,8 +178,9 @@ public class HookTypeExpander {
                   MakeHookDecl(mdecl,typedArgs,Code(scode),kind));
             }
             HookKind("Free") -> {
-              /* Free prevents hooks to be automatically generated */
-              return `concHookDecl();
+              /* Even there is no code associated, we generate a MakeHook to prevent FL hooks to be automatically generated */
+              return `concHookDecl(
+                  MakeHookDecl(mdecl,concSlot(),Code(""),HookKind("Free")));
             }
             HookKind("FL") -> {
               /* FL: flattened list */
