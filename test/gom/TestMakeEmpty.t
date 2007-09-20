@@ -34,6 +34,7 @@ public class TestMakeEmpty extends TestCase {
     T = a()
       | b()
       | conc(T*)
+    conc:FL() {}
     conc:make_empty() {
       return `a();
     }
