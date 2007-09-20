@@ -79,4 +79,10 @@ public class TestRuleList extends TestCase {
     //tricky test: b() is the middle should really be there!
     assertEquals(`g(conc(b(),f(d()),b(),f(d()),b())),`g(conc(a(),f(a()),a(),f(a()),a())));
   }
+  
+  public void testUnderscore() {
+    assertEquals(`a(),`h(b()));
+    assertEquals(`a(),`k(b(),a(),b(),b()));
+  }
+
 }

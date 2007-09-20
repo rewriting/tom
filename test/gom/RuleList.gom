@@ -3,6 +3,8 @@ abstract syntax
 Term = a() | b() | c() | d()
      | f(x:Term)
      | g(l:List)
+     | h(x:Term)
+     | k(Term*)
 
 List = conc(Term*)
 
@@ -10,6 +12,7 @@ Bool = True()
      | False()
      | And(Bool*)
 
+k: Free() {}
 module RuleList:rules() {
   f(a()) -> f(b())
   conc(a()) -> conc(b())
@@ -19,4 +22,7 @@ module RuleList:rules() {
   //and thus the construction can loop (only when the optimizer is desactivated in Gom)
   conc(C1*,f(b()),C2*) -> conc(C1*,f(c()),C2*)
   g(conc(C1*,f(c()),C2*)) -> g(conc(C1*,f(d()),C2*))
+  g(conc(C1*,f(c()),C2*)) -> g(conc(C1*,f(d()),C2*))
+  h(_) -> a() 
+  k(_*,a(),_*) -> a() 
 }
