@@ -58,7 +58,7 @@ public class TestPeanoRule extends TestCase {
 
     module peano:rules() {
       Fib1(Zero())        -> Suc(Zero())
-      Fib1(Suc(Zero()))   -> Suc(Zero())
+      Fib1(res@Suc(Zero()))   -> res
       Fib1(Suc(Suc(x)))   -> Plus(Fib1(x),Fib1(Suc(x)))
     }
 
