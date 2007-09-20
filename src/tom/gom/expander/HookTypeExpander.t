@@ -58,27 +58,15 @@ public class HookTypeExpander {
     %match(gomModuleList) {
       concGomModule(_*,
           GomModule[ModuleName=GomModuleName[Name=moduleName],
-                    SectionList=concSection(_*,
-                      Public(concGrammar(_*,
-                          Grammar(prodList),
-                          _*)),
-                      _*)],
-                    _*) -> {
+          SectionList=concSection(_*,
+            Public(concGrammar(_*,
+                Grammar(prodList),
+                _*)),
+            _*)],
+          _*) -> {
         %match(prodList) {
           concProduction(_*, prod, _*) -> {
-            /* generate a FL hook for list-operators without other hook */
-            %match(prod, prodList) {
-              /* check domain and codomain are equals */
-              Production(opName,concField(StarredField(codomain)),codomain,option),
-              /* check there is no other hook attached to this operator */
-              !concProduction(_*, Hook[Name=opName], _*) -> {
-                String emptyCode = "{}";
-                Production hook = `Hook(KindOperator(),opName,HookKind("FL"),concArg(),emptyCode,OptionList());
-                OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
-                HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
-                hookList = `concHookDecl(newDeclList*,hookList*);
-              }
-            }
+
 
             /* Process hooks attached to a module */
             %match(prod) {
@@ -118,6 +106,37 @@ public class HookTypeExpander {
             }
           }
         }
+
+        %match(prodList) {
+          concProduction(_*, prod, _*) -> {
+            %match(prod, hookList) {
+              /* check domain and codomain are equals */
+              Production(opName,concField(StarredField(codomain)),codomain,option),
+                /* check there is no other MakeHook attached to this operator */
+                !concHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]]], _*) -> {
+                  /* generate a FL hook for list-operators without other hook */
+                  String emptyCode = "{}";
+                  Production hook = `Hook(KindOperator(),opName,HookKind("FL"),concArg(),emptyCode,OptionList());
+                  OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
+                  HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
+                  hookList = `concHookDecl(newDeclList*,hookList*);
+                }
+              /* check domain and codomain are equals */
+              Production(opName,concField(StarredField(codomain)),codomain,option),
+                /* check there is a make_insert or a rule hooks and no theory associated */
+                concHookDecl(_*,MakeHookDecl[HookType=HookKind[kind="make_insert"|"make_empty"|"rules"]],_*) -> {
+                  %match(hookList) {
+                    /* check there is no associtated theory */
+                    !concHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"ACU"]], _*) -> {
+                      /* generate an error to make users specify the theory */
+                      getLogger().log(Level.SEVERE,
+                          "If you use make_insert,make_empty or rules with a variadic operator, specify the associated theory.");
+                    }
+                  }
+                }
+            }
+          }
+        }
       }
     }
     return hookList;
@@ -126,88 +145,88 @@ public class HookTypeExpander {
   private HookDeclList makeHookDeclList(Production hook, Decl mdecl) {
     %match(hook) {
       Hook[HookType=hkind,
-           Name=hName,
-           Args=hookArgs,
-           StringCode=scode] -> {
-        HookDeclList newHookList = `concHookDecl();
-        %match(HookKind `hkind) {
-          HookKind("block") -> {
-            newHookList = `concHookDecl(
-                BlockHookDecl(mdecl,Code(trimBracket(scode))));
-          }
-          HookKind("interface") -> {
-            newHookList = `concHookDecl(
-                InterfaceHookDecl(mdecl,Code(trimBracket(scode))));
-          }
-          HookKind("import") -> {
-            newHookList = `concHookDecl(
-                ImportHookDecl(mdecl,Code(trimBracket(scode))));
-          }
-          HookKind("mapping") -> {
-            newHookList = `concHookDecl(
-                MappingHookDecl(mdecl,Code(trimBracket(scode))));
-          }
-          HookKind(("make"|"make_insert"|"make_empty")[]) -> {
-            SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
-            if (typedArgs == null) {
-              getLogger().log(Level.SEVERE,
-                  GomMessage.discardedHook.getMessage(),
-                  new Object[]{ `(hName) });
+        Name=hName,
+        Args=hookArgs,
+        StringCode=scode] -> {
+          HookDeclList newHookList = `concHookDecl();
+          %match(HookKind `hkind) {
+            HookKind("block") -> {
+              newHookList = `concHookDecl(
+                  BlockHookDecl(mdecl,Code(trimBracket(scode))));
+            }
+            HookKind("interface") -> {
+              newHookList = `concHookDecl(
+                  InterfaceHookDecl(mdecl,Code(trimBracket(scode))));
+            }
+            HookKind("import") -> {
+              newHookList = `concHookDecl(
+                  ImportHookDecl(mdecl,Code(trimBracket(scode))));
+            }
+            HookKind("mapping") -> {
+              newHookList = `concHookDecl(
+                  MappingHookDecl(mdecl,Code(trimBracket(scode))));
+            }
+            kind@HookKind(("make"|"make_insert"|"make_empty")[]) -> {
+              SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
+              if (typedArgs == null) {
+                getLogger().log(Level.SEVERE,
+                    GomMessage.discardedHook.getMessage(),
+                    new Object[]{ `(hName) });
+                return `concHookDecl();
+              }
+              newHookList = `concHookDecl(
+                  MakeHookDecl(mdecl,typedArgs,Code(scode),kind));
+            }
+            HookKind("Free") -> {
+              /* Free prevents hooks to be automatically generated */
               return `concHookDecl();
             }
-            newHookList = `concHookDecl(
-                MakeHookDecl(mdecl,typedArgs,Code(scode)));
-          }
-          HookKind("Free") -> {
-            /* Free prevents hooks to be automatically generated */
-            return `concHookDecl();
-          }
-          HookKind("FL") -> {
-            /* FL: flattened list */
-            return `makeFLHookList(hName,mdecl,scode);
-          }
-          HookKind("AU") -> {
-            return `makeAUHookList(hName,mdecl,scode);
-          }
-          HookKind("ACU") -> {
-            return `makeACUHookList(hName,mdecl,scode);
-          }
-          HookKind("rules") -> {
-            return `makeRulesHookList(hName,mdecl,scode);
-          }
-          HookKind("graphrules") -> {
-            //TODO: verify if the option termgraph is on
-            if(`hookArgs.length()!=2) {
-              throw new GomRuntimeException(
-                  "GomTypeExpander:graphrules hooks need two parameters: the name of the generated strategy and its default behaviour");
+            HookKind("FL") -> {
+              /* FL: flattened list */
+              return `makeFLHookList(hName,mdecl,scode);
             }
-            return `makeGraphRulesHookList(hName,hookArgs,mdecl,scode);
+            HookKind("AU") -> {
+              return `makeAUHookList(hName,mdecl,scode);
+            }
+            HookKind("ACU") -> {
+              return `makeACUHookList(hName,mdecl,scode);
+            }
+            HookKind("rules") -> {
+              return `makeRulesHookList(hName,mdecl,scode);
+            }
+            HookKind("graphrules") -> {
+              //TODO: verify if the option termgraph is on
+              if(`hookArgs.length()!=2) {
+                throw new GomRuntimeException(
+                    "GomTypeExpander:graphrules hooks need two parameters: the name of the generated strategy and its default behaviour");
+              }
+              return `makeGraphRulesHookList(hName,hookArgs,mdecl,scode);
+            }
           }
+          if (newHookList == `concHookDecl()) {
+            throw new GomRuntimeException(
+                "GomTypeExpander:typeModuleHook unknown HookKind: "+`hkind);
+          }
+          return newHookList;
         }
-        if (newHookList == `concHookDecl()) {
-          throw new GomRuntimeException(
-              "GomTypeExpander:typeModuleHook unknown HookKind: "+`hkind);
-        }
-        return newHookList;
-           }
     }
     throw new GomRuntimeException(
         "HookTypeExpander: this hook is not a hook: "+`hook);
   }
 
   /**
-    * Finds the ModuleDecl corresponding to a module name.
-    *
-    * @param mname the module name
-    * @param moduleList the queried ModuleList
-    * @return the ModuleDecl for mname
-    */
+   * Finds the ModuleDecl corresponding to a module name.
+   *
+   * @param mname the module name
+   * @param moduleList the queried ModuleList
+   * @return the ModuleDecl for mname
+   */
   private ModuleDecl getModuleDecl(String mname, ModuleList moduleList) {
     %match(moduleList) {
       concModule(_*,
-        Module[MDecl=mdecl@ModuleDecl[
+          Module[MDecl=mdecl@ModuleDecl[
           ModuleName=GomModuleName[Name=moduleName]]],
-        _*) -> {
+          _*) -> {
         if (`moduleName.equals(mname)) {
           return `mdecl;
         }
@@ -218,38 +237,38 @@ public class HookTypeExpander {
   }
 
   /**
-    * Finds the SortDecl corresponding to a sort name.
-    *
-    * @param sname the sort name
-    * @param modName the module name that should contain the sort
-    * @param moduleList the queried ModuleList
-    * @return the SortDecl for sname
-    */
+   * Finds the SortDecl corresponding to a sort name.
+   *
+   * @param sname the sort name
+   * @param modName the module name that should contain the sort
+   * @param moduleList the queried ModuleList
+   * @return the SortDecl for sname
+   */
   private SortDecl getSortDecl(String sname, String modName, ModuleList moduleList) {
     %match(String modName, moduleList) {
       mname,
-      concModule(_*,
-        Module[
-          MDecl=ModuleDecl[ModuleName=GomModuleName[Name=mname]],
-          Sorts=concSort(_*,Sort[Decl=sdecl@SortDecl[Name=sortName]],_*)],
-        _*) -> {
-        if (`sortName.equals(sname)) {
-          return `sdecl;
+        concModule(_*,
+            Module[
+            MDecl=ModuleDecl[ModuleName=GomModuleName[Name=mname]],
+            Sorts=concSort(_*,Sort[Decl=sdecl@SortDecl[Name=sortName]],_*)],
+            _*) -> {
+          if (`sortName.equals(sname)) {
+            return `sdecl;
+          }
         }
-      }
     }
     throw new GomRuntimeException(
         "HookTypeExpander: Sort not found: "+`sname);
   }
 
   /**
-    * Finds the OperatorDecl corresponding to an operator name.
-    *
-    * @param oname the sort name
-    * @param modName the module name that should contain the operator
-    * @param moduleList the queried ModuleList
-    * @return the OperatorDecl for sname
-    */
+   * Finds the OperatorDecl corresponding to an operator name.
+   *
+   * @param oname the sort name
+   * @param modName the module name that should contain the operator
+   * @param moduleList the queried ModuleList
+   * @return the OperatorDecl for sname
+   */
   private OperatorDecl getOperatorDecl(
       String oname,
       String modName,
@@ -257,12 +276,12 @@ public class HookTypeExpander {
     %match(String modName, moduleList) {
       mname,
       concModule(_*,
-        Module[
+          Module[
           MDecl=ModuleDecl[ModuleName=GomModuleName[Name=mname]],
           Sorts=concSort(_*,Sort[
             Operators=concOperator(_*,odecl@OperatorDecl[Name=operName],_*)
             ],_*)],
-        _*) -> {
+          _*) -> {
         if (`operName.equals(oname)) {
           return `odecl;
         }
@@ -311,19 +330,19 @@ public class HookTypeExpander {
         %match(decl) {
           CutOperator[
             ODecl=OperatorDecl[Sort=sort,Prod=Variadic(sortDecl)]] -> {
-            // for a make_insert hook, there are two arguments: head, tail
-            %match(ArgList args) {
-              concArg(Arg(head),Arg(tail)) -> {
-                return `concSlot(Slot(head,sortDecl),Slot(tail,sort));
-              }
-              _ -> {
-                getLogger().log(Level.SEVERE,
-                    GomMessage.badHookArguments.getMessage(),
-                    new Object[]{ `(hookName), new Integer(args.length())});
-                return null;
+              // for a make_insert hook, there are two arguments: head, tail
+              %match(ArgList args) {
+                concArg(Arg(head),Arg(tail)) -> {
+                  return `concSlot(Slot(head,sortDecl),Slot(tail,sort));
+                }
+                _ -> {
+                  getLogger().log(Level.SEVERE,
+                      GomMessage.badHookArguments.getMessage(),
+                      new Object[]{ `(hookName), new Integer(args.length())});
+                  return null;
+                }
               }
             }
-          }
           _ -> {
             getLogger().log(Level.SEVERE,
                 GomMessage.unsupportedHookVariadic.getMessage(),
@@ -340,17 +359,17 @@ public class HookTypeExpander {
         %match(decl) {
           CutOperator[
             ODecl=OperatorDecl[Prod=Variadic[]]] -> {
-            // for a make_empty hook, there is no argument
-            %match(ArgList args) {
-              concArg() -> { return `concSlot(); }
-              _ -> {
-                getLogger().log(Level.SEVERE,
-                    GomMessage.badHookArguments.getMessage(),
-                    new Object[]{ `(hookName), new Integer(args.length())});
-                return null;
+              // for a make_empty hook, there is no argument
+              %match(ArgList args) {
+                concArg() -> { return `concSlot(); }
+                _ -> {
+                  getLogger().log(Level.SEVERE,
+                      GomMessage.badHookArguments.getMessage(),
+                      new Object[]{ `(hookName), new Integer(args.length())});
+                  return null;
+                }
               }
             }
-          }
           _ -> {
             getLogger().log(Level.SEVERE,
                 GomMessage.unsupportedHookVariadic.getMessage(),
@@ -415,12 +434,12 @@ public class HookTypeExpander {
     %match(args) {
       concArg(Arg[Name=stratname],Arg[Name=defaultstrat]) -> {
         if (!`defaultstrat.equals("Fail") && !`defaultstrat.equals("Identity")) {
-        getLogger().log(Level.SEVERE,
-            "In graphrules hooks, the default strategies authorized are only Fail and Identity");
+          getLogger().log(Level.SEVERE,
+              "In graphrules hooks, the default strategies authorized are only Fail and Identity");
         }
         GraphRuleExpander rexpander = new GraphRuleExpander(moduleList);
         if (sortsWithGraphrules.contains(sdecl)) {
-        return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
+          return rexpander.expandGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
         } else {
           sortsWithGraphrules.add(sdecl);
           return rexpander.expandFirstGraphRules(sortname,`stratname,`defaultstrat,trimBracket(scode),sdecl);
@@ -482,7 +501,7 @@ public class HookTypeExpander {
             Code("    tail = tmpHd;\n"),
             Code("  }\n"),
             Code("}\n")
-            )),
+            ),HookKind("ACU")),
             acHooks*);
     return acHooks;
   }
@@ -502,7 +521,7 @@ public class HookTypeExpander {
     if(userNeutral.length() > 0) {
       /* The hook body is the name of the neutral element */
       auHooks = `concHookDecl(
-          MakeHookDecl(mdecl,concSlot(),Code("return "+userNeutral+";")),
+          MakeHookDecl(mdecl,concSlot(),Code("return "+userNeutral+";"),HookKind("AU")),
           auHooks*);
       /* 
        * Remove neutral:
@@ -516,7 +535,7 @@ public class HookTypeExpander {
             CodeList(
               Code("if (head == "+userNeutral+") { return tail; }\n"),
               Code("if (tail ==  "+userNeutral+") { return head; }\n")
-              )),
+              ),HookKind("AU")),
           auHooks*);
     }
     /* getODecl call is safe here, since mdecl was checked by getSortAndCheck */
@@ -540,7 +559,7 @@ public class HookTypeExpander {
             Code("if ("),
             IsCons("head",mdecl.getODecl()),
             Code(") { return make(head.getHead" + opName + "(),make(head.getTail" + opName + "(),tail)); }\n")
-            )),
+            ),HookKind("AU")),
         auHooks*);
 
     /* The mapping for AU operators has to be correct */
@@ -631,7 +650,7 @@ public class HookTypeExpander {
             Code(" && !"),
             IsEmpty("tail",mdecl.getODecl()),
             Code(") { return make(head,make(tail,Empty" + opName + ".make())); }\n")
-            )),
+            ),HookKind("FL")),
         hooks*);
 
     return hooks;
