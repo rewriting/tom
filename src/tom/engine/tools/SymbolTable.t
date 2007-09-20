@@ -25,10 +25,7 @@
 
 package tom.engine.tools;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -61,8 +58,9 @@ public class SymbolTable {
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
 
-  private Map mapSymbolName = null;
-  private Map mapTypeName = null;
+  private Map<String,TomSymbol> mapSymbolName = null;
+  private Map<String,TomTypeDefinition> mapTypeName = null;
+  private Set<KeyEntry> usedKeyEntry = null;
 
   private boolean cCode = false;
   private boolean jCode = false;
@@ -70,8 +68,9 @@ public class SymbolTable {
   private boolean pCode = false;
 
   public void init(OptionManager optionManager) {
-    mapSymbolName = new HashMap();
-    mapTypeName = new HashMap();
+    mapSymbolName = new HashMap<String,TomSymbol>();
+    mapTypeName = new HashMap<String,TomTypeDefinition>();
+    usedKeyEntry = new HashSet<KeyEntry>();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       cCode = true;
@@ -95,19 +94,19 @@ public class SymbolTable {
   }
 
   public void putSymbol(String name, TomSymbol astSymbol) {
-    TomSymbol result = (TomSymbol) mapSymbolName.put(name,astSymbol);
+    TomSymbol result = mapSymbolName.put(name,astSymbol);
   }
 
   public TomSymbol getSymbolFromName(String name) {
-    TomSymbol res = (TomSymbol)mapSymbolName.get(name);
+    TomSymbol res = mapSymbolName.get(name);
     return res;
   }
 
   public TomSymbolList getSymbolFromType(TomType type) {
     TomSymbolList res = `concTomSymbol();
-    Iterator it = mapSymbolName.values().iterator();
+    Iterator<TomSymbol> it = mapSymbolName.values().iterator();
     while(it.hasNext()) {
-      TomSymbol symbol = (TomSymbol)it.next();
+      TomSymbol symbol = it.next();
       if(symbol.getTypesToType().getCodomain() == type) {
         res = `concTomSymbol(symbol,res*);
       }
@@ -121,7 +120,7 @@ public class SymbolTable {
   }
 
   public TomTypeDefinition getTypeDefinition(String name) {
-    TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
+    TomTypeDefinition def = mapTypeName.get(name);
     return def;
   }
 
@@ -147,32 +146,32 @@ public class SymbolTable {
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {
     // System.out.println("con " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null));
-    return (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null);
+    return usedKeyEntry.contains(`UsedSymbolConstructor(symbol));
     //return true;
   }
 
   public boolean isUsedSymbolDestructor(TomSymbol symbol) {
     // System.out.println("des " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null));
-    return (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null);
+    return usedKeyEntry.contains(`UsedSymbolDestructor(symbol));
     //return true;
   }
 
   public boolean isUsedTypeDefinition(TomTypeDefinition type) {
-    return (mapTypeName.get(`UsedTypeDefinition(type)) != null);
+    return usedKeyEntry.contains(`UsedTypeDefinition(type));
     //return true;
   }
 
   public void setUsedSymbolConstructor(TomSymbol symbol) {
-    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolConstructor(symbol),symbol);
+    usedKeyEntry.add(`UsedSymbolConstructor(symbol));
   }
 
   public void setUsedSymbolDestructor(TomSymbol symbol) {
     //System.out.println("setUsedDestructor: " + symbol.getAstName());
-    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolDestructor(symbol),symbol);
+    usedKeyEntry.add(`UsedSymbolDestructor(symbol));
   }
 
   public void setUsedTypeDefinition(TomTypeDefinition type) {
-    TomTypeDefinition result = (TomTypeDefinition) mapTypeName.put(`UsedTypeDefinition(type),type);
+    usedKeyEntry.add(`UsedTypeDefinition(type));
   }
 
   public void setUsedSymbolConstructor(String name) {
@@ -348,8 +347,6 @@ public class SymbolTable {
     return false;    
   }
 
-
-
   public TomType getBuiltinType(String type) {
     if(isIntType(type)) {
       return getIntType();
@@ -368,9 +365,9 @@ public class SymbolTable {
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }
 
-  public Iterator keySymbolIterator() {
-    Set keys = mapSymbolName.keySet();
-    Iterator it = keys.iterator();
+  public Iterator<String> keySymbolIterator() {
+    Set<String> keys = mapSymbolName.keySet();
+    Iterator<String> it = keys.iterator();
     return it;
   }
 
@@ -385,15 +382,10 @@ public class SymbolTable {
 
   public TomSymbolTable toTerm() {
     TomEntryList list = `concTomEntry();
-    Iterator it = keySymbolIterator();
-    while(it.hasNext()) {
-      Object key = it.next();
-      if(key instanceof String) {
-        String name = (String)key;
-        TomSymbol symbol = getSymbolFromName(name);
-        TomEntry entry = `Entry(name,symbol);
-        list = `concTomEntry(entry,list*);
-      }
+    for(String name:mapSymbolName.keySet()) {
+      TomSymbol symbol = getSymbolFromName(name);
+      TomEntry entry = `Entry(name,symbol);
+      list = `concTomEntry(entry,list*);
     }
     return `Table(list);
   }

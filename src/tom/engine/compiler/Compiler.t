@@ -79,12 +79,14 @@ public class Compiler extends TomGenericPlugin {
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
 
   /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options><boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/></options>";
+  public static final String DECLARED_OPTIONS = "<options>" +
+    "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
+    "</options>";
 
-  /** unicity var counter*/
+  /** unicity var counter */
   private static int absVarNumber;
 
-  /** Constructor*/
+  /** Constructor */
   public Compiler() {
     super("Compiler");
   }

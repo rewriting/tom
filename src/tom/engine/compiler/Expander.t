@@ -143,11 +143,11 @@ public class Expander extends TomGenericPlugin {
    */
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
-    Iterator it = symbolTable.keySymbolIterator();
+    Iterator<String> it = symbolTable.keySymbolIterator();
     Strategy expandStrategy = `ChoiceTopDown(expandTermApplTomSyntax(this));
 
     while(it.hasNext()) {
-      String tomName = (String)it.next();
+      String tomName = it.next();
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       /*
        * add default IsFsymDecl and MakeDecl, unless it is a builtin type
@@ -226,12 +226,6 @@ public class Expander extends TomGenericPlugin {
    */
   %strategy expandTermApplTomSyntax(expander:Expander) extends `Identity() {
     visit TomTerm {
-      //backQuoteTerm@BackQuoteAppl[] -> {
-      //  TomTerm t = (TomTerm) `ChoiceTopDown(expandBackQuoteAppl(expander)).visit(`backQuoteTerm);
-      //System.out.println("t = " + t);
-      //  return t;
-      //}
-
       TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
         return expander.expandTermAppl(`option,`nameList,`args,`constraints);
       }

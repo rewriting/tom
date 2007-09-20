@@ -94,7 +94,6 @@ public abstract class TomGenericPlugin implements Plugin {
   public TomGenericPlugin(String name) {
     pluginName = name;
   }
-
   
   /**
    * From Plugin interface 
