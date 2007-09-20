@@ -14,6 +14,8 @@ Condition = and(c1:Condition,c2:Condition)
           | label(node:String)
           | noCond()
 
+WfgNode:FL() {}
+ConcWfg:FL() {}
 WfgNode:make_insert(node,wfg) {
   %match(Wfg node){
     ConsConcWfg(e,tail) -> {
