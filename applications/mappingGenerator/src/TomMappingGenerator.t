@@ -102,7 +102,7 @@ where:
       }  
       // add 'myAdd' method
       strBuilder.append(%[      
-private static ArrayList myAdd(Object e,ArrayList l) {
+private static ArrayList<?> myAdd(Object e,ArrayList l) {
   l.add(e);
   return l;
 }
@@ -236,16 +236,16 @@ private static ArrayList myAdd(Object e,ArrayList l) {
     String opName = Character.toLowerCase(className.charAt(0)) +  className.substring(1); 
     strBuilder.append(%[ 
 %typeterm @className@List {
-  implement                 { java.util.List }
-  is_sort(t)                { t instanceof java.util.List }
+  implement                 { java.util.List<@className@> }
+  is_sort(t)                { t instanceof java.util.List<@className@> }
   equals(t1,t2)             { t1.equals(t2) }
 }
 
 %oparray @className@List @opName@List(@className@*) {
-  is_fsym(t)                { t instanceof java.util.List  }
-  make_empty(n)             { new java.util.ArrayList(n) }
-  make_append(e,l)          { myAdd(e,(ArrayList)l)  }
-  get_element(l,n)          { (@className@)l.get(n)        }
+  is_fsym(t)                { t instanceof java.util.List<@className@>  }
+  make_empty(n)             { new java.util.ArrayList<@className@>(n) }
+  make_append(e,l)          { myAdd(e,(ArrayListt<@className@>)l)  }
+  get_element(l,n)          { l.get(n)        }
   get_size(l)               { l.size()                }
 } 
 ]%); 
