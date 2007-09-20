@@ -3,7 +3,6 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class TomMappingGenerator {
 
@@ -102,7 +101,7 @@ where:
       }  
       // add 'myAdd' method
       strBuilder.append(%[      
-private static ArrayList<?> myAdd(Object e,ArrayList l) {
+private static java.util.List myAdd(Object e,java.util.List l) {
   l.add(e);
   return l;
 }
@@ -237,14 +236,14 @@ private static ArrayList<?> myAdd(Object e,ArrayList l) {
     strBuilder.append(%[ 
 %typeterm @className@List {
   implement                 { java.util.List<@className@> }
-  is_sort(t)                { t instanceof java.util.List<@className@> }
+  is_sort(t)                { t instanceof java.util.List }
   equals(t1,t2)             { t1.equals(t2) }
 }
 
 %oparray @className@List @opName@List(@className@*) {
-  is_fsym(t)                { t instanceof java.util.List<@className@>  }
+  is_fsym(t)                { t instanceof java.util.List  }
   make_empty(n)             { new java.util.ArrayList<@className@>(n) }
-  make_append(e,l)          { myAdd(e,(ArrayListt<@className@>)l)  }
+  make_append(e,l)          { (java.util.ArrayList<@className@>)myAdd(e,l)  }
   get_element(l,n)          { l.get(n)        }
   get_size(l)               { l.size()                }
 } 
