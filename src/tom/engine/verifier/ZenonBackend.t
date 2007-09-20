@@ -36,7 +36,7 @@ import tom.engine.adt.zenon.types.*;
 public class ZenonBackend {
 
   // ------------------------------------------------------------
-  %include { adt/zenon/Zenon.tom }
+  %include { ../adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
   private Verifier verifier; // is it useful ?

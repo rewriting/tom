@@ -53,8 +53,8 @@ import tom.engine.exception.TomRuntimeException;
 public class ZenonOutput {
 
   // ------------------------------------------------------------
-  %include { adt/il/Il.tom }
-  %include { adt/zenon/Zenon.tom }
+  %include { ../adt/il/Il.tom }
+  %include { ../adt/zenon/Zenon.tom }
   
   %typeterm Map {
     implement { java.util.Map }

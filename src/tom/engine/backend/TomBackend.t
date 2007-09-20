@@ -67,7 +67,7 @@ import tom.library.sl.VisitFailure;
 public class TomBackend extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { ../adt/platformoption/PlatformOption.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
   %include { ../../library/mapping/java/sl.tom }
 
   /** the tabulation starting value */

@@ -42,7 +42,7 @@ public abstract class GomGenericPlugin implements Plugin {
     pluginName = name;
   }
 
-  %include { adt/platformoption/PlatformOption.tom }
+  %include { ../../platform/adt/platformoption/PlatformOption.tom }
 
   /** The name of the plugin. */
   private String pluginName;

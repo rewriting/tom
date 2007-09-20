@@ -79,7 +79,7 @@ import tom.platform.adt.platformoption.types.*;
 public class PluginFactory implements Plugin {
 
   %include{ adt/tnode/TNode.tom }
-  %include{ adt/platformoption/PlatformOption.tom }
+  %include{ ../../platform/adt/platformoption/PlatformOption.tom }
 
   private PlatformOptionList allDeclaredOptions;
   private PlatformOptionList allRequiredOptions;

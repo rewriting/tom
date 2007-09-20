@@ -61,6 +61,7 @@ public final class TomBase {
 
   %include { ./adt/tomsignature/TomSignature.tom }
   %include { sl.tom }
+  %include { ../platform/adt/platformoption/PlatformOption.tom }
   
 %typeterm Collection {
     implement { java.util.Collection }
@@ -70,8 +71,6 @@ public final class TomBase {
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
   /** shortcut */
-  
-  %include { ./adt/platformoption/PlatformOption.tom }
   
   public static TomNumberList appendNumber(int n, TomNumberList path) {
     /*

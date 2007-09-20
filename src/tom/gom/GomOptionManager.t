@@ -42,7 +42,7 @@ import aterm.ATermList;
 
 public class GomOptionManager implements OptionManager, OptionOwner {
 
-  %include{ adt/platformoption/PlatformOption.tom }
+  %include { ../platform/adt/platformoption/PlatformOption.tom }
 
   /** The global options */
   private PlatformOptionList globalOptions;
