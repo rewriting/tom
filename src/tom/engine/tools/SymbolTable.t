@@ -58,8 +58,11 @@ public class SymbolTable {
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
 
+  /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
+  /** associate a type to a name */
   private Map<String,TomTypeDefinition> mapTypeName = null;
+  /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
 
   private boolean cCode = false;
@@ -145,20 +148,15 @@ public class SymbolTable {
   }
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {
-    // System.out.println("con " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null));
     return usedKeyEntry.contains(`UsedSymbolConstructor(symbol));
-    //return true;
   }
 
   public boolean isUsedSymbolDestructor(TomSymbol symbol) {
-    // System.out.println("des " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null));
     return usedKeyEntry.contains(`UsedSymbolDestructor(symbol));
-    //return true;
   }
 
   public boolean isUsedTypeDefinition(TomTypeDefinition type) {
     return usedKeyEntry.contains(`UsedTypeDefinition(type));
-    //return true;
   }
 
   public void setUsedSymbolConstructor(TomSymbol symbol) {
@@ -166,7 +164,6 @@ public class SymbolTable {
   }
 
   public void setUsedSymbolDestructor(TomSymbol symbol) {
-    //System.out.println("setUsedDestructor: " + symbol.getAstName());
     usedKeyEntry.add(`UsedSymbolDestructor(symbol));
   }
 

@@ -36,7 +36,6 @@ import tom.platform.OptionManager;
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
   ClassNameList sortList;
-  private static String at = "@";
 
   %include { ../../adt/objects/Objects.tom }
 
@@ -84,7 +83,7 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
 
   public abstract String symbolName();
 
-  @at@Override
+  @@Override
   public String toString() {
     java.lang.StringBuffer buffer = new java.lang.StringBuffer();
     toStringBuffer(buffer);

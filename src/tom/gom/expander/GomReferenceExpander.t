@@ -119,10 +119,6 @@ public class GomReferenceExpander {
     }
   }
 
-  private static String getArobase() {
-    return "@";
-  }
-
   %strategy ExpandSort(hookList:ArrayList) extends Identity() {
     visit Sort {
       sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],Operators=ops] -> {
@@ -390,7 +386,7 @@ public class GomReferenceExpander {
       concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
  codeBlockTermGraph += %[
         visit @`sortname@ {
-          p@getArobase()@Path@`sortname@(_*) -> {
+          p@@Path@`sortname@(_*) -> {
             Position current = getEnvironment().getPosition(); 
             Position dest = (Position) current.add((Path)`p).getCanonicalPath();
             if(current.compare(dest)== -1) {
@@ -441,7 +437,7 @@ public class GomReferenceExpander {
       concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
         codeBlockTermGraph += %[
       visit @`sortname@ {
-            p@getArobase()@Path@`sortname@(_*) -> {
+            p@@Path@`sortname@(_*) -> {
               Position current = getEnvironment().getPosition(); 
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
               //relative pos from the source to the external
@@ -486,7 +482,7 @@ public class GomReferenceExpander {
       concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
         codeBlockTermGraph += %[
       visit @`sortname@ {
-            p@getArobase()@Path@`sortname@(_*) -> {
+            p@@Path@`sortname@(_*) -> {
               Position current = getEnvironment().getPosition(); 
               Position dest = (Position) current.add((Path)`p).getCanonicalPath();
               if(dest.equals(source)) {
@@ -579,7 +575,7 @@ public class GomReferenceExpander {
 
     %strategy CollectSubterm@sortName@(label:String,info:Info@sortName@) extends Fail() {
       visit @sortName@ {
-        term@getArobase()@Lab@sortName@[label@sortName@=label,term@sortName@=subterm] -> {
+        term@@Lab@sortName@[label@sortName@=label,term@sortName@=subterm] -> {
           Position current = getEnvironment().getPosition();
           if (label.equals(`label)) {
             //test if it is not a cycle
@@ -600,7 +596,7 @@ public class GomReferenceExpander {
  
     %strategy CollectRef@sortName@(map:HashMap) extends Identity() {
       visit @sortName@ {
-        p@getArobase()@Path@sortName@(_*) -> {
+        p@@Path@sortName@(_*) -> {
           //use String instead of Position because containskey method does
           //not use the method equals to compare values
           String target =
@@ -621,7 +617,7 @@ public class GomReferenceExpander {
     
  %strategy AddLabel@sortName@(map:HashMap) extends Identity() {
     visit @sortName@{
-      t@getArobase()@!Lab@sortName@[] -> {
+      t@@!Lab@sortName@[] -> {
         if (map.containsKey(getEnvironment().getPosition().toString())) {
           String label = (String) map.get(getEnvironment().getPosition().toString());
           return `Lab@sortName@(label,t);

@@ -88,11 +88,10 @@ writer.write(%[
 
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
-    String at = "@";
     String domainClassName = fullClassName(
         cons.getSlots().getHeadconcSlotField().getDomain());
     writer.write(%[
-  @at@Override
+  @@Override
   public int length() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
@@ -115,7 +114,7 @@ writer.write(%[
     return res;
   }
 
-  @at@Override
+  @@Override
   public @fullClassName(sortName)@ reverse() {
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
@@ -153,7 +152,7 @@ writer.write(%[
     }
   }
 
-  @at@Override
+  @@Override
   public void toStringBuffer(java.lang.StringBuffer buffer) {
     buffer.append("@className()@(");
     if(this instanceof @fullClassName(cons.getClassName())@) {
@@ -290,7 +289,7 @@ writer.write(%[
     return array;
   }
 
-  @at@SuppressWarnings("unchecked")
+  @@SuppressWarnings("unchecked")
   public <T> T[] toArray(T[] array) {
     int size = this.length();
     if (array.length < size) {
@@ -356,12 +355,12 @@ writer.write(%[
     return get@className(sortName)@().containsAll(c);
   }
 
-  @at@Override
+  @@Override
   public boolean equals(Object o) { 
     return get@className(sortName)@().equals(o); 
   }
 
-  @at@Override
+  @@Override
   public int hashCode() {
     return get@className(sortName)@().hashCode(); 
   }

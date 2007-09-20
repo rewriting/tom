@@ -39,7 +39,6 @@ public class SortTemplate extends TemplateHookedClass {
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
   SlotFieldList slotList;
-  private static String at = "@"; 
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -77,7 +76,7 @@ package @getPackage()@;
 public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 @generateBlock()@
-  @at@Override
+  @@Override
   public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure {
     return v.@visitMethod(className)@(this);
   }

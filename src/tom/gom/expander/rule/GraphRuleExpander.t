@@ -103,11 +103,6 @@ public class GraphRuleExpander {
     return `concHookDecl(commonpart*,expandedrules*);  
   }
 
-  private String getArobase(){
-    return "@";
-  }
-
-
   //add the common methods, includes and imports for all graphrule strategies of a sort 
   protected HookDeclList expandFirst(Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
@@ -246,7 +241,7 @@ public class GraphRuleExpander {
  output.append(
         %[
     visit @`name@ {
-      v@getArobase()@Var@`name@(name) -> { 
+      v@@Var@`name@(name) -> { 
         if (`name.equals(varname)) { 
           p.setValue(getEnvironment().getPosition().toArray()); 
           return `v; } 
