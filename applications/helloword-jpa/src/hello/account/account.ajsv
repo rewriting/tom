@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--AgileJ Ltd. (http://www.agilej.com)-->
+<ajsv>
+    <diagram style="standardDiagramStyles.diagramStyle.Standard Basic Style" version="1.4.5">
+        <switch switchID="standardDiagramStyles.styleEnumSwitch.Visibility" switchValue="public, protected, package, private"/>
+        <switch switchID="standardDiagramStyles.styleEnumSwitch.Signature Length" switchValue="short"/>
+        <switch switchID="standardDiagramStyles.styleEnumSwitch.Manhattan Lines" switchValue="dependence, fields, inheritance"/>
+        <switch switchID="standardDiagramStyles.styleEnumSwitch.Line Types" switchValue="dependence, field, inheritance"/>
+        <switch switchID="standardDiagramStyles.styleEnumSwitch.Members" switchValue="fields, inners"/>
+        <class className="hello.account.Account" project="helloworld-jpa" xLocation="-13" yLocation="-83"/>
+        <class className="hello.account.AccountOwner" project="helloworld-jpa" xLocation="320" yLocation="-111"/>
+        <class className="hello.account.BankAccount" project="helloworld-jpa" xLocation="-14" yLocation="268"/>
+        <class className="hello.account.BrokerageAccount" project="helloworld-jpa" xLocation="325" yLocation="267"/>
+        <class className="hello.account.CheckingAccount" project="helloworld-jpa" xLocation="-106" yLocation="408"/>
+        <class className="hello.account.CreditCardAccount" project="helloworld-jpa" xLocation="615" yLocation="267"/>
+        <class className="hello.account.MarginAccount" project="helloworld-jpa" xLocation="350" yLocation="409"/>
+        <class className="hello.account.SavingsAccount" project="helloworld-jpa" xLocation="118" yLocation="411"/>
+    </diagram>
+</ajsv>
