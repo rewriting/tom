@@ -52,11 +52,13 @@ public class Viewer {
       w.write("\n}");
     }
 
-  public static void toDot(tom.library.sl.Visitable v) throws IOException{
+  public static void toDot(tom.library.sl.Visitable v) {
+    try {
       Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
       toDot(v,w);
       w.write('\n');
       w.flush();
+    } catch(java.io.IOException e) {}
   }
 
   %typeterm Writer{
@@ -84,29 +86,29 @@ public class Viewer {
     public int visit() {
       Visitable v = getEnvironment().getSubject();
       try {
-      if (v instanceof Path) {
-        Position current = getEnvironment().getPosition();
-        Position father = current.up();
-        w.write(%[
-            @getNodeFromPos(current)@ [label=""];
-            @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
-        Position dest = (Position) current.add((Path)v).getCanonicalPath();
-        w.write(%[
-            @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
-      } else {
-        Position current = getEnvironment().getPosition();
-        String[] tab = `v.getClass().getName().split("\\.");
-        String name = tab[tab.length-1];
-        tab = name.split("\\$");
-        name = tab[tab.length-1];
-        w.write(%[
-            @getNodeFromPos(current)@ [label="@name@"]; ]%);
-        if(!current.equals(new Position(new int[]{}))) {
+        if (v instanceof Path) {
+          Position current = getEnvironment().getPosition();
           Position father = current.up();
           w.write(%[
+              @getNodeFromPos(current)@ [label=""];
               @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
+          Position dest = (Position) current.add((Path)v).getCanonicalPath();
+          w.write(%[
+              @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
+        } else {
+          Position current = getEnvironment().getPosition();
+          String[] tab = `v.getClass().getName().split("\\.");
+          String name = tab[tab.length-1];
+          tab = name.split("\\$");
+          name = tab[tab.length-1];
+          w.write(%[
+              @getNodeFromPos(current)@ [label="@name@"]; ]%);
+          if(!current.equals(new Position(new int[]{}))) {
+            Position father = current.up();
+            w.write(%[
+                @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
+          }
         }
-      }
       } catch(IOException e) {}
       return Environment.SUCCESS;
     }
@@ -140,11 +142,13 @@ public class Viewer {
   }
 
   /* -------- pstree-like part --------- */
-  public static void toTree(tom.library.sl.Visitable v) throws IOException {
+  public static void toTree(tom.library.sl.Visitable v) {
+    try {
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
     toTree(v,w);
     w.write('\n');
     w.flush();
+    } catch(java.io.IOException e) {}
   }
 
 
