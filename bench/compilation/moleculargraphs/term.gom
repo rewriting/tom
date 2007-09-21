@@ -1,0 +1,132 @@
+module term
+	imports String int
+	abstract syntax
+	
+	Structure = struct( Structure* )
+			| Nodes( n:NodeList )
+	// struct:AU() {}
+		
+	NodeList = concN( Node* )
+	Node = node( id:Uid, plist:PortList )
+		| labNode(lab:String, n:Node)
+		| refNode(lab:String)
+		
+	concN:make_insert(node, nodes) {
+		%match(Node node, NodeList nodes) {
+			n@labNode(i, node(uid(i,name), _)),
+			concN(x@labNode(i1, node(uid(i1,name1), _)), list*) -> {
+				if (`name.compareTo(`name1) < 0) {
+					return `realMake(n, realMake(x, list*));
+				}
+				else if (`name.compareTo(`name1) > 0) {
+					return `realMake(x, concN(n, list*)); 
+				}
+				else {
+					if (`i.compareTo(`i1) < 0) {
+						return `realMake(n, realMake(x, list*));
+					}
+					else {
+						return `realMake(x, realMake(n, list*));
+					}
+				}
+			}
+			n@node(uid(_,name), _),
+			concN(x@node(uid(_,name1), _), list*) -> {
+				if (`name.compareTo(`name1) <= 0) {
+					return `realMake(n, realMake(x, list*));
+				}
+				else {
+					return `realMake(x, concN(n, list*)); 
+				}
+			}
+		}
+	}
+		  
+
+	Uid = uid( uid:String, name:String )
+
+	NeighbourList = concNG( Neighbour* )
+	Neighbour = neighbour( node:Node, ports:PortList )
+	concNG:make_insert(elem, elems) {
+		%match(Neighbour elem, NeighbourList elems) {
+			neighbour(refNode(lab), _), concNG(x@neighbour(refNode(lab1),_), list*) -> {
+				if (`lab.compareTo(`lab1) <= 0) {
+					return `realMake(elem, elems);
+				}
+				else {
+					return `realMake(x, concNG(elem, list*));
+				}
+			}
+			
+		}
+	}
+	
+	State = b() | v() | h()
+	Port = port( name:String, neighlist:NeighbourList, state:State )
+		| labPort(lab:String, p:Port)
+		| refPort(lab:String)
+	PortList = concP( Port* )
+	        concP:make_insert(port, ports) {
+                %match(Port port, PortList ports) {
+                        labPort(_, port(name, _, _)),
+                        concP(x@labPort(_, port(name1,_,_)), list*) -> {
+                                if (`name.compareTo(`name1) <= 0) {
+                                        return `realMake(port, realMake(x, list*));
+                                }
+                                else {
+                                        return `realMake(x, concP(port, list*));
+                                }
+                         }
+                       	port(name, _,_),
+                        concP(x@port(name1,_,_), list*) -> {
+                                if (`name.compareTo(`name1) <= 0) {
+                                        return `realMake(port, realMake(x, list*));
+                                }
+                                else {
+                                        return `realMake(x, concP(port, list*));
+                                }
+                         }                         
+                        refPort(lab), concP(x@refPort(lab1), list*) -> {
+                                if (`lab.compareTo(`lab1) <= 0) {
+                                        return `realMake(port, realMake(x, list*));
+                                }
+                                else {
+                                        return `realMake(x, concP(port, list*));
+                                }
+                        }
+                }
+        }
+
+	
+	NodeSubstitution = nodeSubstitution( before:Node, after:NodeList)
+	NodeSubstitutionList = concNS( NodeSubstitution* )
+ 	 
+	PairPortList = pairPortList(first:PortList, second:PortList)
+	
+	 module term:rules() {
+	 	// Restructuring rules
+	 	
+	 	// merge the port lists of two identical nodes
+	 	concN(a*, labNode(id, node(uid(id, name), concP(sl1*))), b*, labNode(id, node(uid(id, name), concP(sl2*))), c*) -> 
+   		concN(a*, labNode(id, node(uid(id, name), concP(sl1*, sl2*))), b*, c*)
+   		
+   		// merge the neighbours of the same port 
+   		concP(a*, labPort(id, port(p, concNG(nl1*), s)), b*, labPort(id, port(p, concNG(nl2*), s))) -> 
+   		concP(a*, labPort(id, port(p, concNG(nl1*, nl2*), s)), b*)
+   		
+   		// eliminate the duplication of references to the same port   ????
+   		//concP(a*, refPort(p), b*, refPort(p), c*) -> 
+   		//concP(a*, refPort(p), b*, c*)
+	
+		// merge the references to ports of two identical neighbours
+		concNG(nl1*, neighbour(refNode(x), concP(sl1*)), nl2*, neighbour(refNode(x), concP(sl2*)), nl3*) -> 
+   		concNG(nl1*, neighbour(refNode(x), concP(sl1*, sl2*)), nl2*, nl3*)
+   		
+   		// and remove a neighbour with an empty list of ports
+   		concNG(nl1*, neighbour(refNode(x), concP()), nl2*) -> 
+   		concNG(nl1*, nl2*)
+   		
+		struct(a*, x, b*, x, c*) -> struct(a*, x, b*, c*)
+		
+   	}
+    	
