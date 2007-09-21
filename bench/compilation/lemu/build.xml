@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the lemu bench" default="build" basedir="../..">
+  <import file="../../common.xml"/>
+  <target name="clean" description="Cleans bench directory">
+    <delete dir="${bench.gen}/compilation/lemu"/>
+    <delete dir="${bench.build}/compilation/lemu"/>
+  </target>
+  <target name="build" depends="init">
+  	<gomcompile example="compilation/lemu"/>
+    <tomcompile example="compilation/lemu"/>
+    <javacompile example="compilation/lemu"/>
+  </target>
+</project>
