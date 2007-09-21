@@ -125,8 +125,11 @@ public class Viewer {
         Runtime rt = Runtime.getRuntime();
         Process pr = rt.exec("dot");
         Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-        Viewer.toDot(v);
-        Viewer.toDot(v, out);
+        if(v instanceof Strategy) {        
+          Viewer.toDot((Strategy)v, out); 
+        } else {
+          Viewer.toDot(v, out); 
+        }
         out.close();
         Parser parser = new Parser(pr.getInputStream());
         parser.parse();
@@ -136,7 +139,7 @@ public class Viewer {
         frame.pack();
         frame.setVisible(true);
         } catch (Exception e) {
-        e.printStackTrace();
+          e.printStackTrace();
         }
         }});
   }
@@ -144,10 +147,10 @@ public class Viewer {
   /* -------- pstree-like part --------- */
   public static void toTree(tom.library.sl.Visitable v) {
     try {
-    Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
-    toTree(v,w);
-    w.write('\n');
-    w.flush();
+      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+      toTree(v,w);
+      w.write('\n');
+      w.flush();
     } catch(java.io.IOException e) {}
   }
 
