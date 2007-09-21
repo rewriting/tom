@@ -205,9 +205,10 @@ writer.write(%[
 
   public boolean contains(Object o) {
     @fullClassName(sortName)@ cur = this;
+    if(o==null) { return false; }
     if(cur instanceof @fullClassName(cons.getClassName())@) {
       while(cur instanceof @fullClassName(cons.getClassName())@) {
-        if( ((@fullClassName(cons.getClassName())@)cur).getHead@className()@() == o ) {
+        if( o.equals(((@fullClassName(cons.getClassName())@)cur).getHead@className()@()) ) {
           return true;
         }
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();

@@ -256,6 +256,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, 
         new String[] { argType, varname }, instr,deep,moduleName);
+
+    //getSymbolTable(moduleName).putIsFsym(opname,instr);
+
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String varname,

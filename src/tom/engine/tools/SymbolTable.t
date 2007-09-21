@@ -65,6 +65,9 @@ public class SymbolTable {
   /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
 
+  /** associate an inliner to a name */
+  private Map<String,Inliner> mapInliner = null;
+
   private boolean cCode = false;
   private boolean jCode = false;
   private boolean camlCode = false;
@@ -74,6 +77,7 @@ public class SymbolTable {
     mapSymbolName = new HashMap<String,TomSymbol>();
     mapTypeName = new HashMap<String,TomTypeDefinition>();
     usedKeyEntry = new HashSet<KeyEntry>();
+    mapInliner = new HashMap<String,Inliner>();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       cCode = true;
@@ -412,6 +416,27 @@ public class SymbolTable {
       }
     }
     return symbol;
+  }
+
+
+  public void putSymbol(String opname, String code) {
+    Inliner inliner = mapInliner.get(opname);
+    if(inliner==null) {
+      inliner = new Inliner();
+    }
+    inliner.isfsym = code;
+  }
+
+  public String getIsFsym(String opname) {
+    Inliner inliner = mapInliner.get(opname);
+    if(inliner!=null) {
+      return inliner.isfsym;
+    }
+    return "";
+  }
+
+  private static class Inliner {
+    public String isfsym;
   }
 
 }
