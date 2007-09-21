@@ -73,6 +73,7 @@ public class Viewer {
     protected Writer w;
 
     public Print(Writer w) {
+      initSubterm();
       this.w=w;
     }
 
@@ -93,9 +94,13 @@ public class Viewer {
         w.write(%[
             @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
       } else {
-        Position current = getEnvironment().getPosition(); 
+        Position current = getEnvironment().getPosition();
+        String[] tab = `v.getClass().getName().split("\\.");
+        String name = tab[tab.length-1];
+        tab = name.split("\\$");
+        name = tab[tab.length-1];
         w.write(%[
-            @getNodeFromPos(current)@ [label="@`v.getClass().getName()@"]; ]%);
+            @getNodeFromPos(current)@ [label="@name@"]; ]%);
         if(!current.equals(new Position(new int[]{}))) {
           Position father = current.up();
           w.write(%[
@@ -107,24 +112,30 @@ public class Viewer {
     }
   }
 
-  public static void display(Visitable v) {
-    JFrame.setDefaultLookAndFeelDecorated(true);
-    JFrame frame = new JFrame("Viewer");
-    try {
-      Runtime rt = Runtime.getRuntime();
-      Process pr = rt.exec("dot");
-      Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      Viewer.toDot(v, out);
-      Parser parser = new Parser(pr.getInputStream());
-      Graph graph = parser.getGraph();
-      GrappaPanel panel = new GrappaPanel(graph);
-      frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
-      out.close();
-      frame.pack();
-      frame.setVisible(true);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  public static void display(Visitable vv) {
+    final Visitable v = vv;
+    javax.swing.SwingUtilities.invokeLater(
+        new Runnable() { public void run() { 
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JFrame frame = new JFrame("Viewer");
+        try {
+        Runtime rt = Runtime.getRuntime();
+        Process pr = rt.exec("dot");
+        Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
+        Viewer.toDot(v);
+        Viewer.toDot(v, out);
+        out.close();
+        Parser parser = new Parser(pr.getInputStream());
+        parser.parse();
+        Graph graph = parser.getGraph();
+        GrappaPanel panel = new GrappaPanel(graph);
+        frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
+        frame.pack();
+        frame.setVisible(true);
+        } catch (Exception e) {
+        e.printStackTrace();
+        }
+        }});
   }
 
   /* -------- pstree-like part --------- */
