@@ -118,6 +118,7 @@ public class Viewer {
         new Runnable() { public void run() { 
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame("Viewer");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
         Runtime rt = Runtime.getRuntime();
         Process pr = rt.exec("dot");
@@ -225,7 +226,7 @@ public class Viewer {
     toDot(Strategy subj, Writer w) throws IOException {
       w.write("digraph G { graph [ordering=out];");
       %match (Strategy subj) {
-        y@MuVar[] -> { return; }
+        MuVar[] -> { return; }
 
         x@Mu[] ->{  ((Mu)`x).muExpand(); } // to mu-expand
 
