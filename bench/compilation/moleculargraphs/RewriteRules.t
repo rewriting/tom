@@ -1,4 +1,4 @@
-package moleculargraphs;
+package compilation.moleculargraphs;
 
 public class RewriteRules {
 	%include{ term/term.tom }

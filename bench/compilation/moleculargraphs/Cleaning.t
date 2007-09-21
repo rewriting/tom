@@ -1,7 +1,7 @@
-package moleculargraphs;
+package compilation.moleculargraphs;
 
-import moleculargraphs.term.*;
-import moleculargraphs.term.types.*;	
+import compilation.moleculargraphs.term.*;
+import compilation.moleculargraphs.term.types.*;	
 
 import tom.library.sl.VisitFailure;
 

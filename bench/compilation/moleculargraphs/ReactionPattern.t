@@ -1,6 +1,6 @@
-package moleculargraphs;
+package compilation.moleculargraphs;
 
-import moleculargraphs.term.types.*;	
+import compilation.moleculargraphs.term.types.*;	
 
 
 //import tom.library.sl.Strategy; 

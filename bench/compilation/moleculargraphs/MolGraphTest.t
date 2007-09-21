@@ -4,16 +4,16 @@ In a list of nodes, the elements are ordered lexicographically by the node names
 EGFR > EGF > SHC > EGF.EGF
 */
 
-package moleculargraphs;
+package compilation.moleculargraphs;
 
 import tom.library.sl.Strategy;
 import tom.library.sl.Visitable;
 import tom.library.sl.VisitFailure;
 import java.util.*;
 
-import moleculargraphs.term.*;
-import moleculargraphs.term.types.*;
-import moleculargraphs.term.strategy.*;	
+import compilation.moleculargraphs.term.*;
+import compilation.moleculargraphs.term.types.*;
+import compilation.moleculargraphs.term.strategy.*;	
 
 public class MolGraphTest {
 
