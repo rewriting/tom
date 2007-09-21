@@ -32,6 +32,8 @@ import java.io.*;
 import tom.library.sl.*;
 import java.util.Stack;
 import aterm.pure.PureFactory;
+import att.grappa.*;
+import javax.swing.*;
 
 public class Viewer {
 
@@ -105,18 +107,38 @@ public class Viewer {
     }
   }
 
-  /* -------- pstree-like part --------- */
-  public static void toTree(tom.library.sl.Visitable v) throws IOException {
-      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
-      toTree(v,w);
-      w.write('\n');
-      w.flush();
+  public static void display(Visitable v) {
+    JFrame.setDefaultLookAndFeelDecorated(true);
+    JFrame frame = new JFrame("Viewer");
+    try {
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec("dot");
+      Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
+      Viewer.toDot(v, out);
+      Parser parser = new Parser(pr.getInputStream());
+      Graph graph = parser.getGraph();
+      GrappaPanel panel = new GrappaPanel(graph);
+      frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
+      out.close();
+      frame.pack();
+      frame.setVisible(true);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
-  private static aterm.ATermFactory atermFactory = new PureFactory();
+  /* -------- pstree-like part --------- */
+  public static void toTree(tom.library.sl.Visitable v) throws IOException {
+    Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+    toTree(v,w);
+    w.write('\n');
+    w.flush();
+  }
+
 
   public static void toTree(tom.library.sl.Visitable v, Writer w)
     throws java.io.IOException {
+      aterm.ATermFactory atermFactory = new PureFactory();
       aterm.ATerm at = atermFactory.parse(v.toString());
       ATermToTree(at, w, new Stack<Integer>(), 0);
     }
@@ -205,35 +227,35 @@ public class Viewer {
           name = tab[tab.length-1];
           String idNode = `clean(x.toString());
 
-            w.write(%[@idNode@ [label="@name@"];]%);
-            w.write("\n");  
+          w.write(%[@idNode@ [label="@name@"];]%);
+          w.write("\n");  
 
-            int n = `x.getChildCount();
-            for(int i=0; i<n; i++) {
-              Visitable s = `x.getChildAt(i);
-              %match(Strategy s) {
-                y@MuVar[var=varName] -> {
-                  Strategy pointer = (Strategy) `((MuVar)y).getInstance();
-                  if (pointer == null) return;
-                  String idMu = clean(pointer.toString());
-                  if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
-                    String idMuVar = idMu + "_" + (counter++);
-                    w.write(%[
-                        @idMuVar@ [label="@`varName@"]; 
-                        @idNode@ -> @idMuVar@;
-                        @idMuVar@ -> @idMu@;
-                        ]%);
-                  }
-                  continue;
+          int n = `x.getChildCount();
+          for(int i=0; i<n; i++) {
+            Visitable s = `x.getChildAt(i);
+            %match(Strategy s) {
+              y@MuVar[var=varName] -> {
+                Strategy pointer = (Strategy) `((MuVar)y).getInstance();
+                if (pointer == null) return;
+                String idMu = clean(pointer.toString());
+                if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
+                  String idMuVar = idMu + "_" + (counter++);
+                  w.write(%[
+                      @idMuVar@ [label="@`varName@"]; 
+                      @idNode@ -> @idMuVar@;
+                      @idMuVar@ -> @idMu@;
+                      ]%);
                 }
-                y -> {
-                  w.write(%[@idNode@ -> @clean(`y.toString())@;]%);
-                  w.write("\n");
-                  toDot(`y,w);
-                }
-              } // match
-            } // loop over the sons
-            w.flush();
+                continue;
+              }
+              y -> {
+                w.write(%[@idNode@ -> @clean(`y.toString())@;]%);
+                w.write("\n");
+                toDot(`y,w);
+              }
+            } // match
+          } // loop over the sons
+          w.flush();
         }
       }
       w.write("}\n");

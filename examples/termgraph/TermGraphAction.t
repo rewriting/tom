@@ -113,6 +113,7 @@ public class TermGraphAction {
     try {
       System.out.println(toDot((List)((List) `TopDown(Insertion()).visit(abcd)).expand(),"action"));
       System.out.println(toDot((List)(`TopDown(List.Insert()).visit(abcd.expand())),"tgrs"));
+      tom.library.utils.Viewer.display(`TopDown(List.Insert()).visit(abcd.expand()));
     } catch (VisitFailure e) {}
   }
 
