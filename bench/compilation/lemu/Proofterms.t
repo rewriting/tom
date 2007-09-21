@@ -1,10 +1,10 @@
 package compilation.lemu;
 
-import lemu.sequents.*;
-import lemu.sequents.types.*;
+import compilation.lemu.sequents.*;
+import compilation.lemu.sequents.types.*;
 
-import lemu.urban.*;
-import lemu.urban.types.*;
+import compilation.lemu.urban.*;
+import compilation.lemu.urban.types.*;
 
 import tom.library.sl.*;
 
