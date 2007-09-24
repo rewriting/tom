@@ -8,7 +8,7 @@ Constraint =
 		   *
 		   * @param Variable the variable to constrain
 		   */
-       | AssignTo(Variable:TomTerm)
+       	   | AssignTo(Variable:TomTerm)
 		   | AssignPositionTo(Variable:TomTerm)
  		   | TrueConstraint()
 		   | FalseConstraint()		   
@@ -20,17 +20,17 @@ Constraint =
 		   *
 		   * @param Constraint the list of AndConstraints that are linked by Or
 		   */		   
-  		  | OrConstraintDisjunction(Constraint*)
+  		   | OrConstraintDisjunction(Constraint*)
 		   | MatchConstraint(pattern:TomTerm, subject:TomTerm)
 		   | AntiMatchConstraint(Constraint:Constraint)
 		   | NumericConstraint(Left:TomTerm, Right:TomTerm, Type:NumericConstraintType)
-  		 | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
-  		 | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
+  		   | EmptyListConstraint(Opname:TomName,Variable:TomTerm)
+  		   | EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
   		   /**
   		   * Used in the parser to mark that we started an And or an Or
   		   */
-  		 | AndMarker(Constraint:Constraint)
-  		 | OrMarker(Constraint:Constraint)
+  		   | AndMarker(Constraint:Constraint)
+  		   | OrMarker(Constraint:Constraint)
 
 NumericConstraintType = NumLessThan() 
 					| NumLessOrEqualThan()
