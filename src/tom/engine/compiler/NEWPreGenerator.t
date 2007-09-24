@@ -52,7 +52,7 @@ import tom.library.sl.*;
  * 1. make sure that the constraints are in the good order
  * 2. translate constraints into expressions ...
  */
-public class PreGenerator {
+public class NEWPreGenerator {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
