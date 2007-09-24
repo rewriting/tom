@@ -419,12 +419,13 @@ public class SymbolTable {
   }
 
 
-  public void putSymbol(String opname, String code) {
+  public void putIsFsym(String opname, String code) {
     Inliner inliner = mapInliner.get(opname);
     if(inliner==null) {
       inliner = new Inliner();
     }
     inliner.isfsym = code;
+    mapInliner.put(opname,inliner);
   }
 
   public String getIsFsym(String opname) {
@@ -432,7 +433,7 @@ public class SymbolTable {
     if(inliner!=null) {
       return inliner.isfsym;
     }
-    return "";
+    return null;
   }
 
   private static class Inliner {

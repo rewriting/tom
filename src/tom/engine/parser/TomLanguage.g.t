@@ -587,7 +587,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           // Define the is_fsym method.
           Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
           TomTerm fsymVar = `Variable(concOption(fsymOption),Name("t"),strategyType,concConstraint());
-          Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Return(TargetLanguageToTomTerm(ITL("(t instanceof " + name.getText() + ")"))),fsymOption);
+          Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Code(ASTFactory.abstractCode("($t instanceof " + name.getText() + ")","t")),fsymOption);
           options.add(fsymDecl);
 
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), strategyType, types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
@@ -1958,7 +1958,7 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
 
             result = `IsFsymDecl(astName,
                 Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
-                Return(TargetLanguageToTomTerm(tlCode)),ot);
+                Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),ot);
         }
     ;
 

@@ -202,6 +202,11 @@ public abstract class TomAbstractGenerator {
 
   public void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
     %match(Expression subject) {
+      Code(t) -> {
+        output.write(`t);
+        return;
+      }
+
       Negation(exp) -> {
         buildExpNegation(deep, `exp, moduleName);
         return;
@@ -563,9 +568,9 @@ public abstract class TomAbstractGenerator {
       }
 
       IsFsymDecl(Name(tomName),
-       Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], instr, _) -> {
+       Variable[AstName=Name(varname), AstType=Type[TlType=tlType@TLType[]]], code, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
-          `buildIsFsymDecl(deep, tomName, varname, tlType, instr, moduleName);
+          `buildIsFsymDecl(deep, tomName, varname, tlType, code, moduleName);
         }
         return;
       }
@@ -845,7 +850,7 @@ public abstract class TomAbstractGenerator {
                                               TomType tlType, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
-                                          TomType tlType, Instruction instr, String moduleName) throws IOException;
+                                          TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
                                            TomType tlType, Instruction instr, TomName slotName, String moduleName) throws IOException;
   protected abstract void buildEqualTermDecl(int deep, String name1, String name2,

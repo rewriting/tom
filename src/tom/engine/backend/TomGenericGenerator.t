@@ -26,6 +26,7 @@
 package tom.engine.backend;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import tom.engine.TomBase;
@@ -52,6 +53,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected HashMap isFsymMap = new HashMap();
   protected boolean lazyMode;
   protected boolean nodeclMode;
+  protected boolean inline;
   protected String modifier = "";
 
   public TomGenericGenerator(OutputCode output, OptionManager optionManager,
@@ -59,6 +61,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     super(output, optionManager, symbolTable);
     lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
+    inline = ((Boolean)optionManager.getOptionValue("inline")).booleanValue();
   }
 
   // ------------------------------------------------------------
@@ -139,6 +142,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpIsFsym(int deep, String opname, TomTerm exp, String moduleName) throws IOException {
+    String template = getSymbolTable(moduleName).getIsFsym(opname);
+    if(inline && template != null) {
+      OutputCode oldOutput=output;
+      output = new OutputCode(new StringWriter(),optionManager);
+      generate(deep,exp,moduleName);
+      template = template.replaceAll("\\{0\\}",output.stringDump());
+      //System.out.println("template: " + template);
+      output=oldOutput;
+      output.write(template);
+      return;
+    }
+
     String s = (String)isFsymMap.get(opname);
     if(s == null) {
       s = "tom_is_fun_sym_" + opname + "(";
@@ -242,7 +257,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildIsFsymDecl(int deep, String tomName, String varname,
-                                 TomType tlType, Instruction instr, String moduleName) throws IOException {
+                                 TomType tlType, Expression code, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
 
@@ -253,11 +268,22 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     } else {
       argType = TomBase.getTLType(getUniversalType());
     }
+ 
+    if(code.isCode()) {
+      // perform the instantiation
+      String ocode = code.getCode();
+      String ncode = ocode.replaceAll("\\{0\\}",varname);
 
-    genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, 
-        new String[] { argType, varname }, instr,deep,moduleName);
-
-    //getSymbolTable(moduleName).putIsFsym(opname,instr);
+      if(!ncode.equals(ocode)) {
+        getSymbolTable(moduleName).putIsFsym(opname,ocode);
+        //System.out.println("inline: " + getSymbolTable(moduleName).getIsFsym(opname));
+        code = code.setCode(ncode);
+      }
+    }
+    if(!inline || !code.isCode()) {
+      genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, 
+          new String[] { argType, varname }, `Return(ExpressionToTomTerm(code)),deep,moduleName);
+    }
 
   }
 

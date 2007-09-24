@@ -3,7 +3,7 @@ imports TomSignature String
 abstract syntax
 
 Expression = TomTermToExpression(AstTerm:TomTerm)
-		   | TomInstructionToExpression(Instruction:Instruction)
+		       | TomInstructionToExpression(Instruction:Instruction)
            /**
             * We have different Bottom for different types
             * For instance, built-in types can't be null in Java
@@ -62,4 +62,9 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   * check that source is of sort astType, and then execute inst
 		   */
            | IsSort(AstType:TomType,Variable:TomTerm)
+       /*
+        * used to represent a piece of code
+        * similar to ITL, but preprocessed to perform macro-expansion
+        */
+           | Code(Code:String)
 

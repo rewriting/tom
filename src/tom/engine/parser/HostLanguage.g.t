@@ -939,6 +939,23 @@ STRING
         }
   ;
 
+  /*
+protected LETTER    :   ('a'..'z' | 'A'..'Z')   ;
+protected DIGIT     :   ('0'..'9')  ;
+ID
+options{testLiterals = true;}
+    :
+        ('_')? LETTER
+        ( 
+            options{greedy = true;}:
+            ( LETTER | DIGIT | '_' )
+        )* 
+        {
+            target.append($getText);
+        }
+    ;   
+*/
+
 protected
 ESC
   : '\\'

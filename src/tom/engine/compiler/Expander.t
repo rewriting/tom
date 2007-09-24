@@ -175,7 +175,7 @@ public class Expander extends TomGenericPlugin {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
-        Declaration isfsym = `IsFsymDecl(name,Variable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom,concConstraint()),Return(ExpressionToTomTerm(FalseTL())),OriginTracking(Name("is_fsym"),line,file));
+        Declaration isfsym = `IsFsymDecl(name,Variable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom,concConstraint()),FalseTL(),OriginTracking(Name("is_fsym"),line,file));
         return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(isfsym),X2*));
       }
     }

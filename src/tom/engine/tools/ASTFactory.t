@@ -25,9 +25,7 @@
 
 package tom.engine.tools;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.*;
@@ -647,6 +645,18 @@ public class ASTFactory {
 
     throw new TomRuntimeException("buildArray strange term: " + args);
      
+  }
+
+  /*
+   * transform a string "...$t...$u..." into "...{0}...{1}..."
+   */
+  public static String abstractCode(String code, String... vars) {
+    int index=0;
+    for(String var:vars) {
+      code = code.replaceAll("\\$"+var,"\\{"+index+"\\}");
+      index++;
+    }
+    return code;
   }
 
 }
