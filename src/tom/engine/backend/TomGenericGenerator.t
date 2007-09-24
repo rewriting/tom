@@ -59,6 +59,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   public TomGenericGenerator(OutputCode output, OptionManager optionManager,
                              SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
+
     lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
     inline = ((Boolean)optionManager.getOptionValue("inline")).booleanValue();
@@ -145,7 +146,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String template = getSymbolTable(moduleName).getIsFsym(opname);
     if(inline && template != null) {
       OutputCode oldOutput=output;
-      output = new OutputCode(new StringWriter(),optionManager);
+      output = new OutputCode(new StringWriter());
       generate(deep,exp,moduleName);
       template = template.replaceAll("\\{0\\}",output.stringDump());
       //System.out.println("template: " + template);
@@ -261,26 +262,26 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
 
-    TomType returnType = getSymbolTable(moduleName).getBooleanType();
-    String argType;
-    if(!lazyMode) {
-      argType = TomBase.getTLCode(tlType);
-    } else {
-      argType = TomBase.getTLType(getUniversalType());
-    }
- 
+    boolean inlined = false;
     if(code.isCode()) {
       // perform the instantiation
       String ocode = code.getCode();
       String ncode = ocode.replaceAll("\\{0\\}",varname);
-
       if(!ncode.equals(ocode)) {
+        inlined = true;
         getSymbolTable(moduleName).putIsFsym(opname,ocode);
-        //System.out.println("inline: " + getSymbolTable(moduleName).getIsFsym(opname));
         code = code.setCode(ncode);
       }
     }
-    if(!inline || !code.isCode()) {
+    if(!inline || !code.isCode() || !inlined) {
+      TomType returnType = getSymbolTable(moduleName).getBooleanType();
+      String argType;
+      if(!lazyMode) {
+        argType = TomBase.getTLCode(tlType);
+      } else {
+        argType = TomBase.getTLType(getUniversalType());
+      }
+
       genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, 
           new String[] { argType, varname }, `Return(ExpressionToTomTerm(code)),deep,moduleName);
     }

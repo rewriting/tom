@@ -563,50 +563,6 @@ public class HookTypeExpander {
             ),HookKind("AU")),
         auHooks*);
 
-    /* The mapping for AU operators has to be correct */
-    /*
-       %match(mdecl) {
-       CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
-       Prod=Variadic[]]) -> {
-       auHooks = `concHookDecl(
-       MappingHookDecl(
-       mdecl,
-       CodeList(
-       Code("%oplist " + sortName),
-    // generate a second %oplist mapping for opName'?'
-    Code(" " + opName + "?"),
-    Code("(" + sortName + "*) {\n"),
-    Code("is_fsym(t) { t instanceof "),
-    FullSortClass(domainsdecl),
-    Code("}\n"),
-    Code("make_empty() { "),
-    Empty(mdecl.getODecl()),
-    Code(".make() }\n"),
-    Code("make_insert(e,l) { "),
-    Cons(mdecl.getODecl()),
-    Code(".make(e,l) }\n"),
-    Code("get_head(l) { ("),
-    IsCons("l",mdecl.getODecl()),
-    Code(")?(l."),
-    Code("getHead" + opName + "()"),
-    Code("):(l) }\n"),
-    Code("get_tail(l) { ("),
-    IsCons("l",mdecl.getODecl()),
-    Code(")?(l."),
-    Code("getTail" + opName + "()"),
-    Code("):("),
-    Empty(mdecl.getODecl()),
-    Code(".make()) }\n"),
-    Code("is_empty(l) { "),
-    Code("l == "),
-    Empty(mdecl.getODecl()),
-    Code(".make() }\n"),
-    Code("}\n")
-    )),
-    auHooks*);
-    }
-    }
-     */
     return auHooks;
   }
 

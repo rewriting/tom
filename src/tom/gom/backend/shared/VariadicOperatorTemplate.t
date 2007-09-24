@@ -467,7 +467,7 @@ writer.write(%[
     ClassName consClass = cons.getClassName();
     writer.write(%[
 %oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
-  is_fsym(t) { t instanceof @fullClassName(consClass)@ || t instanceof @fullClassName(emptyClass)@ }
+  is_fsym(t) { (($t instanceof @fullClassName(consClass)@) || ($t instanceof @fullClassName(emptyClass)@)) }
   make_empty() { @fullClassName(emptyClass)@.make() }
   make_insert(e,l) { @fullClassName(consClass)@.make(e,l) }
   get_head(l) { l.@getMethod(`head)@() }

@@ -40,12 +40,18 @@ public class OutputCode {
 
   private boolean pretty = false;
   private boolean indent = false;
+  private boolean cCode  = false;
 
   public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
     this.optionManager = optionManager;
     this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
     this.indent = ((Boolean)optionManager.getOptionValue("pCode")).booleanValue();
+    this.cCode  = ((Boolean)optionManager.getOptionValue("cCode")).booleanValue();
+  }
+
+  public OutputCode(Writer file) {
+    this.file = file;
   }
 
   public void setSingleLine() {
@@ -142,7 +148,7 @@ public class OutputCode {
 
   public void write(int deep, String s, int line, int length) throws IOException {
     if(!pretty) {
-      if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
+      if(cCode) {
           String s1 = "\n#line "+line+"\n";
           s = s1+s;
           write(s);

@@ -232,7 +232,7 @@ public String generateMapping() {
 
   return %[
     %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
-      is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@)))}
       @genGetSlot(slotList.length(),"arg")@
         make(@genConstrArgs(slotList.length(),"arg")@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg")@) }
     }

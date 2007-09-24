@@ -852,7 +852,7 @@ writer.write(%[
         writer.write("%op "+className(sortName)+" "+className()+"(");
         slotDecl(writer,slotList);
         writer.write(") {\n");
-        writer.write("  is_fsym(t) { t instanceof "+fullClassName()+" }\n");
+        writer.write("  is_fsym(t) { ($t instanceof "+fullClassName()+") }\n");
         %match(slotList) {
           concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
             writer.write("  get_slot("+`slotName+", t) ");

@@ -158,7 +158,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   public String generateMapping() {
     return %[
 %op Strategy @className()@(@genStratArgs(slotList,"arg")@) {
-  is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@))) }
 @genGetSlot(slotList,"arg")@
   make(@genMakeArguments(slotList)@) { new @fullClassName()@(@genMakeArguments(slotList)@) }
 }
