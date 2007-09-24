@@ -49,7 +49,11 @@ public class GeneralPurposePropagator implements IBasePropagator {
   %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
 
+  // contains variables that were already replaced (for optimizing reasons)
+  private static ArrayList replacedVariables = null; 
+
   public Constraint propagate(Constraint constraint) throws VisitFailure {
+    replacedVariables = new ArrayList();
     return  (Constraint)`TopDown(GeneralPropagations()).visitLight(constraint);
   }	
 
@@ -71,11 +75,14 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* ) 
        */
       AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],_),Y*) -> {
-        Constraint toApplyOn = `AndConstraint(Y*);        
-        TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-        Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visitLight(toApplyOn);
-        if(res != toApplyOn) {
-          return `AndConstraint(X*,eq,res);
+        if (!replacedVariables.contains(`x)){
+          replacedVariables.add(`x);
+          Constraint toApplyOn = `AndConstraint(Y*);        
+          TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
+          Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visitLight(toApplyOn);
+          if(res != toApplyOn) {
+            return `AndConstraint(X*,eq,res);
+          }
         }
       }  
       /**

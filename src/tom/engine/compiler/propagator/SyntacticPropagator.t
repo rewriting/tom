@@ -46,8 +46,12 @@ public class SyntacticPropagator implements IBasePropagator {
   %include { ../../adt/tomsignature/TomSignature.tom }
   %include { ../../../library/mapping/java/sl.tom}	
 //--------------------------------------------------------
+  
+  // contains variables that were already replaced (for optimizing reasons)
+  private static ArrayList replacedVariables = null; 
 
-  public Constraint propagate(Constraint constraint) throws VisitFailure {
+  public Constraint propagate(Constraint constraint) throws VisitFailure {   
+    replacedVariables = new ArrayList(); 
     return  (Constraint)`TopDown(SyntacticPatternMatching()).visitLight(constraint);
   }	
 
@@ -108,8 +112,7 @@ public class SyntacticPropagator implements IBasePropagator {
           }
         }
         return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
-      }
-      
+      }      
       /**
        * SwithAnti : here is just for efficiency reasons, and not for ordering, 
        * because now the replace can be applied left-right; the ordering is done anyway in the pre-generator
@@ -119,18 +122,20 @@ public class SyntacticPropagator implements IBasePropagator {
       AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
         return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
       }
-
-
       /**
        * Replace
        * 
        * z = t /\ Context2( z = u ) ->  z = t /\ Context2( t = u ) 
        */
-      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {        
-        Constraint toApplyOn = `AndConstraint(Y*);
-        Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visitLight(toApplyOn);
-        if(res != toApplyOn) {          
-          return `AndConstraint(X*,eq,res);
+      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {     
+        // for optimizing reasons
+        if (!replacedVariables.contains(`z)){ 
+          replacedVariables.add(`z);
+          Constraint toApplyOn = `AndConstraint(Y*);
+          Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visitLight(toApplyOn);
+          if(res != toApplyOn) {
+            return `AndConstraint(X*,eq,res);
+          }
         }
       }      
     }
