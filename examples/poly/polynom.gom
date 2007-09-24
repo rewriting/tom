@@ -8,7 +8,7 @@ Poly = | Plus(Poly*)
        | Number(value:int)
        | Variable(name:String)
        | Parameter(name:String)
-
+Plus:FL(){}
 Plus:make_insert(e,l) {
   %match(Poly l) {
     Plus() -> { return e; }
@@ -20,6 +20,7 @@ Plus:make_insert(e,l) {
     Plus(X*) -> { return `Plus(X*,l); }
   }
 }
+Max:FL(){}
 Max:make_insert(e,l) {
   %match(Poly l) {
     Max() -> { return e; }
@@ -31,6 +32,7 @@ Max:make_insert(e,l) {
     Max(X*) -> { return `Max(X*,l*); }
   }
 }
+Mult:FL(){}
 Mult:make_insert(e,l) {
   %match(Poly l) {
     Mult() -> { return e; }
