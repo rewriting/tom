@@ -44,7 +44,7 @@
 
 %typeterm AFun {
   implement { aterm.AFun }
-  is_sort(t) { t instanceof Aterm.Fun }
+  is_sort(t) { t instanceof aterm.AFun }
   equals(t1, t2) { t1 == t2 }
 }
 
