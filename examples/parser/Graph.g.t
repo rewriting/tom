@@ -6,7 +6,7 @@ options {
 }
 
 tokens {
-  %include { term/termTokenList.txt }
+  %include { term/TermTokenList.txt }
 }
 
 @header {
