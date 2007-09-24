@@ -70,7 +70,7 @@ public class CommandArea extends JTextArea implements KeyListener, CaretListener
     //for(Font f: t) System.out.println(f); 
     //setFont(new Font("Courier new",Font.PLAIN,12));
     setFont(new Font("Monospaced",Font.PLAIN,12));
-    putClientProperty(com.sun.java.swing.SwingUtilities2.AA_TEXT_PROPERTY_KEY,Boolean.TRUE );
+    //putClientProperty(com.sun.java.swing.SwingUtilities2.AA_TEXT_PROPERTY_KEY,Boolean.TRUE );
   }
   
   // methode utilisee par le Gui pour passer les pipes communiquant vers le ProofBuilder

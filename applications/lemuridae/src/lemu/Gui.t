@@ -208,7 +208,7 @@ public final class Gui implements Observer {
     msgArea.setEditable(false);
     //msgArea.setFont(new Font("Courier new",Font.PLAIN,12));
     msgArea.setFont(new Font("Monospaced",Font.PLAIN,12));
-    msgArea.putClientProperty(com.sun.java.swing.SwingUtilities2.AA_TEXT_PROPERTY_KEY,Boolean.TRUE );
+    //msgArea.putClientProperty(com.sun.java.swing.SwingUtilities2.AA_TEXT_PROPERTY_KEY,Boolean.TRUE );
 
     // et de son scrollpane
     JScrollPane scrollPane2 = new JScrollPane(msgArea,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
