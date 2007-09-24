@@ -40,7 +40,7 @@ public class Preprocess {
     IdList res = `idlist();
     List<MatchResult> results = findAll(uses, code);
     for(MatchResult r : results)
-      res = `idlist(res*,genericId(r.group(1),r.group(2)));
+      res = `idlist(res*,genId(r.group(1),r.group(2)));
     return res;
   }
 
@@ -60,7 +60,7 @@ public class Preprocess {
     generateTypeterm(StringBuffer res, TTInstance tti) {
       %match(tti) {
         ttinstance(
-            typeterm(genericId(name,param),infos),
+            typeterm(genId(name,param),infos),
             value
         )-> {
           res.append("%typeterm " + `name + "_" + `value + " {\n");
@@ -73,7 +73,7 @@ public class Preprocess {
   private static void 
     generateArgs(StringBuffer res, IdList args, String param, String value) {
       %match(args) {
-        idlist(genericId(name,type),tail*) -> {
+        idlist(genId(name,type),tail*) -> {
           res.append(`name);
           res.append(" : ");
           res.append(`type.equals(param) ? value : param);
@@ -89,8 +89,8 @@ public class Preprocess {
     generateOperator(StringBuffer res, OpInstance opi) {
       %match(opi) {
         opinstance(
-            op(genericId(retname,param),
-               genericId(name,param),
+            op(genId(retname,param),
+               genId(name,param),
                args,
                infos),
             value
@@ -104,8 +104,8 @@ public class Preprocess {
         }
 
         opinstance(
-            oplist(genericId(retname,param),
-               genericId(name,param),
+            oplist(genId(retname,param),
+               genId(name,param),
                arg,
                infos),
             value
@@ -124,10 +124,21 @@ public class Preprocess {
   private static HashSet<TTInstance> getTTInstances(Sig sig, IdList uses) {
     HashSet<TTInstance> res = new HashSet<TTInstance>();
     %match(sig,uses) {
-      sig(ttlist(_*,tt@typeterm[name=genericId(id,_)],_*),_),
-      idlist(_*,genericId(id,value),_*) -> {
+      // generate %typeterm for each use in user code
+      sig(ttlist(_*,tt@typeterm[name=genId(id,_)],_*),_),
+      idlist(_*,genId(id,value),_*) -> {
         res.add(`ttinstance(tt,value));
       }
+
+      // generate %typeterm when it is the codomain of a 
+      // used %op or %oplist
+      sig(ttlist(_*,tt@typeterm[name=genId(ttid,_)],_*),
+          olist(_*,(op|oplist)[ret=genId(ttid,T),name=genId(opid,T)],_*)
+          ),
+      idlist(_*,genId(opid,value),_*) -> {
+        res.add(`ttinstance(tt,value));
+      }
+
     }
     return res;
   }
@@ -135,10 +146,20 @@ public class Preprocess {
   private static HashSet<OpInstance> getOpInstances(Sig sig, IdList uses) {
     HashSet<OpInstance> res = new HashSet<OpInstance>();
     %match(sig,uses) {
-      sig(_,olist(_*,o@(op|oplist)[name=genericId(id,_)],_*)),
-      idlist(_*,genericId(id,value),_*) -> {
+      // generate %op and %oplist for each use in the user code
+      sig(_,olist(_*,o@(op|oplist)[name=genId(id,_)],_*)),
+      idlist(_*,genId(id,value),_*) -> {
         res.add(`opinstance(o,value));
       }
+
+      // generate %oplist for each use of the codomain
+      sig(ttlist(_*,typeterm[name=genId(ttid,T)],_*),
+          olist(_*,o@oplist[ret=genId(ttid,T),name=genId(opid,T)],_*)
+          ),
+      idlist(_*,genId(ttid,value),_*) -> {
+        res.add(`opinstance(o,value));
+      }
+
     }
     return res;
   }
@@ -158,7 +179,7 @@ public class Preprocess {
       String res = code;
       for(TTInstance tti: ttis) {
         %match(tti) {
-          ttinstance(typeterm[name=genericId(id,_)],value) -> {
+          ttinstance(typeterm[name=genId(id,_)],value) -> {
             res = res.replaceAll("(\\W)" + `id + "<" + `value + ">",
                                  "$1" + `id + "_" + `value);
           }
@@ -166,7 +187,7 @@ public class Preprocess {
       }
       for(OpInstance opi: opis) {
         %match(opi) {
-          opinstance((op|oplist)[name=genericId(id,_)],value) -> {
+          opinstance((op|oplist)[name=genId(id,_)],value) -> {
             res = res.replaceAll("(\\W)" + `id + "<" + `value + ">",
                                  "$1" + `id + "_" + `value);
           }

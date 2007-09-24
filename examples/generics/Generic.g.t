@@ -26,12 +26,12 @@ typeterm returns [Typeterm t]:
 TYPETERM n=ID '<' ty=ID '>' '{'
   ( left=text '{' right=text '}' { l = `infolist(l*,info($left.text,$right.text)); }  )+
 '}' 
-{ t = `typeterm(genericId($n.text,$ty.text),l); }
+{ t = `typeterm(genId($n.text,$ty.text),l); }
 ;
 
 arglist returns [IdList l]:
 { l = `idlist(); }
-(i1=ID ':' t1=ID)? { l = `idlist(l*,genericId($i1.text,$t1.text));  } (',' i2=ID ':' t2=ID { l = `idlist(l*,genericId($i2.text,$t2.text));  }  )* 
+(i1=ID ':' t1=ID)? { l = `idlist(l*,genId($i1.text,$t1.text));  } (',' i2=ID ':' t2=ID { l = `idlist(l*,genId($i2.text,$t2.text));  }  )* 
 ;
 
 op returns [Operator o] :
@@ -39,7 +39,7 @@ op returns [Operator o] :
 OP n1=ID '<' ty1=ID '>' n2=ID '<' ty2=ID '>' '(' al=arglist  ')'  '{' 
    ( left=text '{' right=text '}' { il = `infolist(il*,info($left.text,$right.text)); }  )+ 
 '}' 
-{ o = `op(genericId($n1.text,$ty1.text),genericId($n2.text,$ty2.text),al,il); }
+{ o = `op(genId($n1.text,$ty1.text),genId($n2.text,$ty2.text),al,il); }
 ;
 
 oplist returns [Operator o]:
@@ -47,7 +47,7 @@ oplist returns [Operator o]:
 OPLIST n1=ID '<' ty1=ID '>' n2=ID '<' ty2=ID '>' '(' param=ID '*' ')'  '{' 
    ( left=text  '{' right=text '}' { il = `infolist(il*,info($left.text,$right.text)); } )+ 
 '}' 
-{ o = `oplist(genericId($n1.text,$ty1.text),genericId($n2.text,$ty2.text),$param.text,il); }
+{ o = `oplist(genId($n1.text,$ty1.text),genId($n2.text,$ty2.text),$param.text,il); }
 ;
 
 tom_file returns [Sig s]:

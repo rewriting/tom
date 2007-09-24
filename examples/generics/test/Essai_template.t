@@ -3,6 +3,8 @@ import java.util.LinkedList;
 
 class Essai {
 
+  %include { string.tom }
+
   %gom {
     module sig
     abstract syntax
@@ -46,8 +48,8 @@ class Essai {
   //generics
 
   public static void main(String[] args) {
-    LinkedList<T1> l1 = new LinkedList();
-    LinkedList<T2> l2 = new LinkedList();
+    LinkedList<T1> l1 = new LinkedList<T1>();
+    LinkedList<T2> l2 = new LinkedList<T2>();
 
     l1.add(`a());
     l1.add(`f(a()));
@@ -57,11 +59,11 @@ class Essai {
     l2.add(`g(b()));
     l2.add(`g(g(b())));
 
-    %match(LList<T1> l1) {
+    %match(l1) {
       list<T1>(_*,t@f(x),_*) -> { System.out.println("in l1 : " + `t); }
     }
     %match(LList<T2> l2) {
-      list<T2>(_*,t@g(x),_*) -> { System.out.println("in l2 : " + `t); }
+      (_*,t@g(x),_*) -> { System.out.println("in l2 : " + `t); }
     }
   }
 }

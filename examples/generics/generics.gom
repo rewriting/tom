@@ -4,7 +4,7 @@ abstract syntax
 
 Sig = sig(tl:TypetermList, op:OperatorList)
 
-GenericId = genericId(id:String,type:String)
+GenericId = genId(id:String,type:String)
 IdList = idlist(GenericId*)
 Typeterm = typeterm(name:GenericId,infos:InfoList)
 Operator = op(ret:GenericId,name:GenericId,params:IdList,infos:InfoList)
