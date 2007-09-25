@@ -36,7 +36,7 @@ proof a_simple_proof: WF(cons(nil(),e(nat,type()))) =>
 
 autoreduce.
 
-display a_simple_proof.
+//display a_simple_proof.
 
 rule NatListTheory(nat,z,succ,natList,nil,cons) ->
      WF(cons(cons(cons(cons(cons(cons(nil(),
@@ -48,43 +48,37 @@ rule NatListTheory(nat,z,succ,natList,nil,cons) ->
      e(cons, pitype(nat, pitype(subst(nat,shift()), (pitype(lappl(subst(natList,rond(shift(),shift())), one()), 
       	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))))).
 
-
-/*rule NatListTheory() ->
-     in(nat,type) /\ 
-     in(z,nat) /\ 
-     in(succ,pitype(nat,subst(nat,shift()))) /\
-     in(natList, pikind(nat, subst(type(),shift()))) /\ 
-     in(nil,lappl(natList,z)) /\ 
-     in(cons, pitype(nat, pitype(subst(nat,shift()), (pitype(lappl(subst(natList,rond(shift(),shift())), one()), 
-      	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))).
-*/
-
 proof singletonZ: NatListTheory(nat,z,succ,natList,nil,cons) =>
       in(lappl(lappl(lappl(cons, lappl(succ, z)), z), nil), lappl(natList,lappl(succ,z))).
 autoreduce.
+next.
+focus h6.
+rule. z.
+autoreduce.
+axiom.
+next.
 focus h7. rule. z.
 autoreduce.
+axiom.
+next.
+focus h6. rule. z1.
 autoreduce.
-focus h6. rule. z.
-autoreduce.
-autoreduce.
-focus h7. rule. lappl(succ, z1).
+axiom.
+next.
+focus h7. rule. lappl(succ,z1).
 autoreduce.
 focus h7. rule. z1.
 autoreduce.
+axiom.
+focus h7. rule. lappl(succ,z).
 autoreduce.
-focus h6. rule. z1.
+focus h2. rule. z.
 autoreduce.
+focus h2. rule. nil.
 autoreduce.
-focus h7. rule. lappl(succ, z).
-focus h5. rule. z.
-autoreduce.
-autoreduce.
-reduce. focus h2. rule. z.
-autoreduce.
-reduce. focus h2. rule. nil.
-autoreduce.
-autoreduce.
+axiom.
+axiom.
+focus h5. rule. z. autoreduce. autoreduce.
 
 rule SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) ->
        forall A,(forall B,(forall C,(forall D,( WF(cons(cons(cons(cons(cons(cons(cons(cons(nil(),
@@ -99,17 +93,6 @@ rule SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) ->
 				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift()))))))),
        e(lam, pitype(pitype(lappl(lterm, C), lappl(subst(lterm,shift()),subst(D,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(C,shift())),subst(D,shift()))))))))))).
 
-/*rule SimpleTypeTheory() ->
-       in(tp,type) /\
-       in(arrow, pitype(tp, pitype(subst(tp,shift()),subst(tp,rond(shift(),shift()))))) /\
-       in(nat, tp) /\
-       in(lterm, pikind(tp,subst(type(),shift()))) /\
-       in(z, lappl(lterm, nat)) /\
-       in(s, lappl(lterm, lappl(lappl(arrow,nat),nat))) /\
-       forall A, (forall B, (in(app, pitype(lappl(lterm, lappl(lappl(arrow,A),B)),
-	       			pitype(lappl(subst(lterm,shift()),subst(A,shift())),
-				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift())))))))) /\
-       forall A,(forall B, (in(lam, pitype(pitype(lappl(lterm, A), lappl(subst(lterm,shift()),subst(B,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(A,shift())),subst(B,shift()))))))).*/
 
 proof lambdaXsX: SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) =>
 	       in(lappl(lam, lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one()))),
