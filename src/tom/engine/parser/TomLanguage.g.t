@@ -268,9 +268,9 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
             }            
             ( 
                 (   
-                    {LA(2) != LBRACE}?
+                    {LA(2) != LPAREN}?
                     constr = matchConstraintCompositionNoPar[optionListLinked]
-                    | {LA(2) == LBRACE}? constr = matchConstraintCompositionPar[optionListLinked]
+                    | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
                 )
                 { 
                   if (result == null) {
@@ -347,13 +347,13 @@ matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint 
       AND_CONNECTOR { isAnd = true;} 
       | OR_CONNECTOR  { isAnd = false;} 
     ) 
-    LBRACE    
+    LPAREN    
       matchConstr = matchConstraint[optionListLinked]
        (    
           ( 
-              {LA(2) != LBRACE}?
+              {LA(2) != LPAREN}?
               constr = matchConstraintCompositionNoPar[optionListLinked]
-              | {LA(2) == LBRACE}? constr = matchConstraintCompositionPar[optionListLinked]
+              | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
           ) 
           {
             if (result == null) {
@@ -368,7 +368,7 @@ matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint 
             }         
           }        
        )*                                                                                
-       RBRACE                                                                                         
+       RPAREN                                                                                      
   {
     if ( result == null ) {
       result = isAnd ? `AndMarker(matchConstr) : `OrMarker(matchConstr);
@@ -389,7 +389,7 @@ matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws
   result = null;
   int consType = -1;
 }
-: option = matchPattern[matchPatternList] consType = constraintType matchArgument[matchSubjectList]
+: option = matchNonImplicitPattern[matchPatternList] consType = constraintType matchArgument[matchSubjectList]
   {
     optionListLinked.add(option);
     TomTerm left  = (TomTerm)matchPatternList.get(0);
@@ -443,17 +443,36 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
     TomTerm term = null;
 }
     :   (
-             term = annotedTerm 
+             term = annotedTerm[true] 
             {
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
             ( 
                 COMMA {text.append('\n');}  
-                term = annotedTerm {list.add(term);}
+                term = annotedTerm[true] {list.add(term);}
             )*
         )
     ;
+
+matchNonImplicitPattern [LinkedList list] returns [Option result] throws TomException
+{
+    result = null;
+    TomTerm term = null;
+}
+    :   (
+             term = annotedTerm[false] 
+            {
+                list.add(term);
+                result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
+            } 
+            ( 
+                COMMA {text.append('\n');}  
+                term = annotedTerm[false] {list.add(term);}
+            )*
+        )
+    ;
+
 
 /* 
 extendsBqTerm returns [TomTerm bqTerm] throws TomException
@@ -644,12 +663,13 @@ strategyVisit [LinkedList list] throws TomException
 ;
 
 // terms for %match
-annotedTerm returns [TomTerm result] throws TomException
+annotedTerm [boolean allowImplicit] returns [TomTerm result] throws TomException
 {
     result = null;
     TomName labeledName = null;
     TomName annotedName = null;
     int line = 0;
+    boolean anti = false;
 }
     :   (
             ( 
@@ -670,22 +690,25 @@ annotedTerm returns [TomTerm result] throws TomException
                     line = name.getLine();
                 }
             )? 
-            
+          (
+            {allowImplicit}?
             result = plainTerm[labeledName,annotedName,line] 
-        )
+            | {!allowImplicit}?
+              (a:ANTI_SYM {anti = !anti;} )* 
+              result = simplePlainTerm[labeledName,annotedName,line, new LinkedList(), new LinkedList(), new LinkedList(), new LinkedList(), anti]
+          )
+       )
     ;
 
-plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
+// a plainTerm that doesn't allow the notation (...)
+simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, LinkedList list, LinkedList secondOptionList, 
+                 LinkedList optionList, LinkedList constraintList, boolean anti] 
+                 returns [TomTerm result] throws TomException
 {
-    result = null;
-    LinkedList constraintList = new LinkedList();
-    LinkedList optionList = new LinkedList();
-    LinkedList secondOptionList = new LinkedList();
+    result = null;   
     TomNameList nameList = `concTomName();
-    TomName name = null;
-    LinkedList list = new LinkedList();
+    TomName name = null;    
     boolean implicit = false;
-    boolean anti = false;
 
     if(astLabeledName != null) {
       constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
@@ -693,8 +716,9 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
     if(astAnnotedName != null) {
       constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
     }
+
 }
-    :  	(a:ANTI_SYM {anti = !anti;} )*    	
+    :         
         ( // xml term
           result = xmlTerm[optionList, constraintList]
           {
@@ -721,12 +745,12 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
         | // for a single constant. 
           // ambiguous with the next rule so:
-       	  {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
+          {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
             nameList = headConstantList[optionList] 
           {
-	    //nameList = `concTomName(nameList*,name);
-	    optionList.add(`Constant());
-	    result = `TermAppl(
+        //nameList = `concTomName(nameList*,name);
+        optionList.add(`Constant());
+        result = `TermAppl(
                 ASTFactory.makeOptionList(optionList),
                 nameList,
                 ASTFactory.makeList(list),
@@ -736,14 +760,14 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
         | // f(...) or f[...] or !f(...) or !f[...]
           name = headSymbol[optionList] 
-	  (qm:QMARK)?
+      (qm:QMARK)?
           { 
-	    if(qm!=null) {
+        if(qm!=null) {
               //name = `Name(name.getString() + "__qm__"); 
               name = `Name(name.getString()); 
               optionList.add(`MatchingTheory(concElementaryTheory(TrueAU())));
             }
-	    nameList = `concTomName(nameList*,name);
+        nameList = `concTomName(nameList*,name);
           }
           implicit = args[list,secondOptionList]
           {
@@ -768,7 +792,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
         | // (f|g...) 
           // ambiguity with the last rule so use a lookahead
           // if ALTERNATIVE then parse headSymbolList
-       	  {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
+          {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
           implicit = args[list, secondOptionList] 
           {
             if(implicit) {
@@ -787,22 +811,59 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
                   );
             }
             if(anti) { result = `AntiTerm(result); }
-          }
-        | // (...)
-          implicit = args[list,secondOptionList]
-          {
-            nameList = `concTomName(Name(""));
-            optionList.addAll(secondOptionList);
-            result = `TermAppl(
-                ASTFactory.makeOptionList(optionList),
-                nameList,
-                ASTFactory.makeList(list),
-                ASTFactory.makeConstraintList(constraintList)
-                );
-            if(anti) { result = `AntiTerm(result); }
-          }
+          }      
         )
     ;
+
+
+plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
+{
+    LinkedList optionList = new LinkedList();
+    LinkedList secondOptionList = new LinkedList();
+    LinkedList list = new LinkedList();
+    LinkedList constraintList = new LinkedList(); 
+    result = null;
+    boolean anti = false;
+}
+    : 
+      (a:ANTI_SYM {anti = !anti;} )* 
+      ( {LA(1) != LPAREN  || ( LA(1) == LPAREN && ( LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE) ) }? 
+        result = simplePlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti]             
+        | result = implicitNotationPlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti] )
+      { return result; } 
+    ;
+
+// a plainTerm that allows the (...) notation
+implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int line, 
+                          LinkedList list, LinkedList secondOptionList, LinkedList optionList, LinkedList constraintList, boolean anti]
+                          returns [TomTerm result] throws TomException
+{
+    TomNameList nameList = null;
+    result = null;
+
+    if(astLabeledName != null) {
+      constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
+    }
+    if(astAnnotedName != null) {
+      constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
+    }
+
+}
+:
+ args[list,secondOptionList]
+{
+  nameList = `concTomName(Name(""));
+  optionList.addAll(secondOptionList);
+  result = `TermAppl(
+      ASTFactory.makeOptionList(optionList),
+      nameList,
+      ASTFactory.makeList(list),
+      ASTFactory.makeConstraintList(constraintList)
+  );
+  if(anti) { result = `AntiTerm(result); }
+}
+;
+
 
 xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm result] throws TomException
 {
@@ -879,7 +940,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
             }
 
         | // #TEXT(...)
-            XML_TEXT LPAREN arg1 = annotedTerm RPAREN
+            XML_TEXT LPAREN arg1 = annotedTerm[true] RPAREN
             {
                 keyword = Constants.TEXT_NODE;
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
@@ -1062,7 +1123,7 @@ xmlTermList [LinkedList list] returns [boolean result] throws TomException
 }
     :
         (
-            term = annotedTerm {list.add(term);}
+            term = annotedTerm[true] {list.add(term);}
         )*
         {result = true;}
     ;
@@ -1200,10 +1261,10 @@ implicitTermList [LinkedList list] returns [boolean result] throws TomException
             LBRACKET
             { text.append("["); }
             (
-                term = annotedTerm { list.add(term); }
+                term = annotedTerm[true] { list.add(term); }
                 (
                     COMMA { text.append(","); }
-                    term = annotedTerm { list.add(term); }
+                    term = annotedTerm[true] { list.add(term); }
                 )*
             )?
             RBRACKET
@@ -1277,8 +1338,8 @@ termList [LinkedList list] throws TomException
     TomTerm term = null;
 }
     :   (
-            term = annotedTerm {list.add(term);}
-            ( COMMA {text.append(',');} term = annotedTerm {list.add(term);})*
+            term = annotedTerm[true] {list.add(term);}
+            ( COMMA {text.append(',');} term = annotedTerm[true] {list.add(term);})*
         )
     ;
 
@@ -1292,7 +1353,7 @@ pairList [LinkedList list] throws TomException
                 text.append(name.getText());
                 text.append('=');
             } 
-            term = annotedTerm 
+            term = annotedTerm[true] 
             {list.add(`PairSlotAppl(Name(name.getText()),term));}
             ( COMMA {text.append(',');} 
                 name2:ALL_ID EQUAL 
@@ -1300,7 +1361,7 @@ pairList [LinkedList list] throws TomException
                     text.append(name2.getText());
                     text.append('=');
                 } 
-                term = annotedTerm 
+                term = annotedTerm[true] 
                 {list.add(`PairSlotAppl(Name(name2.getText()),term));}
             )*
         )

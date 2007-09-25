@@ -52,7 +52,7 @@ public class TestAndOr extends TestCase {
   
   public void test1() {
     %match(f(a(),b())) {
-      f(x,y) && { x << a() || x << b() } -> {        
+      f(x,y) && ( x << a() || x << b() ) -> {        
         return;
       }
     }
@@ -61,7 +61,7 @@ public class TestAndOr extends TestCase {
   
   public void test2() {
     %match(f(b(),b())) {
-      f(x,y) && { x << a() || x << b() } -> {        
+      f(x,y) && ( x << a() || x << b() ) -> {        
         return;
       }
     }
@@ -70,7 +70,7 @@ public class TestAndOr extends TestCase {
   
   public void test3() {
     %match(f(c(),b())) {
-      f(x,y) && { x << a() || x << b() } -> {
+      f(x,y) && ( x << a() || x << b() ) -> {
         fail();
       }
     }
@@ -78,7 +78,7 @@ public class TestAndOr extends TestCase {
   
   public void test4() {
     %match(f(c(),b())) {
-      f(x,y) && { x << g(a()) || x << b() } -> {
+      f(x,y) && ( x << g(a()) || x << b() ) -> {
         fail();
       }
     }
@@ -86,7 +86,7 @@ public class TestAndOr extends TestCase {
   
   public void test5() {
     %match(f(c(),b())) {
-      f(x,y) && { x << g(a()) || x << b() } -> {
+      f(x,y) && ( x << g(a()) || x << b() ) -> {
         fail();
       }
     }
@@ -94,7 +94,7 @@ public class TestAndOr extends TestCase {
   
   public void test6() {
     %match(f(g(a()),b())) {
-      f(x,y) && { x << g(a()) || x << b() } -> {
+      f(x,y) && ( x << g(a()) || x << b() ) -> {
         return;
       }
     }
@@ -139,7 +139,7 @@ public class TestAndOr extends TestCase {
     Term s = `f(g(a()),b());
     int counter = 0;
     %match(s) {
-      f(x,y) && { a() << a() || b() << b() } -> {        
+      f(x,y) && ( a() << a() || b() << b() ) -> {        
         counter++;
       }
     }
@@ -152,7 +152,7 @@ public class TestAndOr extends TestCase {
     Term s = `f(g(a()),b());
     int counter = 0;
     %match(s) {
-      f(x,y) && { g(x) << g(g(a())) || x << g(a()) } -> {
+      f(x,y) && ( g(x) << g(g(a())) || x << g(a()) ) -> {
         counter++;
       }
     }
@@ -192,7 +192,7 @@ public class TestAndOr extends TestCase {
     int counter = 0;
     %match(s) {
       // used to generate an error with the optimizer
-      f(_,_) && {z << a() || z << b()} -> {
+      f(_,_) && (z << a() || z << b()) -> {
         if (`z != `a() && `z != `b()){
           fail();
         }        
