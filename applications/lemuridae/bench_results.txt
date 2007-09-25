@@ -10,4 +10,9 @@ real    0m20.689s
 user    0m18.933s
 sys     0m1.064s
 
+- whith get_slot inlining
+
+real    0m19.830s
+user    0m18.309s
+sys     0m0.920s
 
