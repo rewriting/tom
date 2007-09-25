@@ -166,6 +166,17 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var, String moduleName) throws IOException {
+    String template = getSymbolTable(moduleName).getGetSlot(opname,slotName);
+    if(inline && template != null) {
+      OutputCode oldOutput=output;
+      output = new OutputCode(new StringWriter());
+      generate(deep,var,moduleName);
+      template = template.replaceAll("\\{0\\}",output.stringDump());
+      //System.out.println("template: " + template);
+      output=oldOutput;
+      output.write(template);
+      return;
+    }
     //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
     //generate(deep,var);
     //output.write(")");
@@ -289,28 +300,42 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String varname,
-                                  TomType tlType, Instruction instr, TomName slotName, String moduleName) throws IOException {
+      TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
 
-    int slotIndex = TomBase.getSlotIndex(tomSymbol,slotName);
-    TomTypeList l = typesList;
-    for(int index = 0; !l.isEmptyconcTomType() && index<slotIndex ; index++) {
-      l = l.getTailconcTomType();
+    boolean inlined = false;
+    if(code.isCode()) {
+      // perform the instantiation
+      String ocode = code.getCode();
+      String ncode = ocode.replaceAll("\\{0\\}",varname);
+      if(!ncode.equals(ocode)) {
+        inlined = true;
+        getSymbolTable(moduleName).putGetSlot(opname,slotName.getString(),ocode);
+        code = code.setCode(ncode);
+      }
     }
-    TomType returnType = l.getHeadconcTomType();
 
-    String argType;
-    if(!lazyMode) {
-      argType = TomBase.getTLCode(tlType);
-    } else {
-      argType = TomBase.getTLType(getUniversalType());
+    if(!inline || !code.isCode() || !inlined) {
+      int slotIndex = TomBase.getSlotIndex(tomSymbol,slotName);
+      TomTypeList l = typesList;
+      for(int index = 0; !l.isEmptyconcTomType() && index<slotIndex ; index++) {
+        l = l.getTailconcTomType();
+      }
+      TomType returnType = l.getHeadconcTomType();
+
+      String argType;
+      if(!lazyMode) {
+        argType = TomBase.getTLCode(tlType);
+      } else {
+        argType = TomBase.getTLType(getUniversalType());
+      }
+      genDeclInstr(TomBase.getTLType(returnType),
+          "tom_get_slot", opname  + "_" + slotName.getString(),
+          new String[] { argType, varname },
+          `Return(ExpressionToTomTerm(code)),deep,moduleName);
     }
-    genDeclInstr(TomBase.getTLType(returnType),
-            "tom_get_slot", opname  + "_" + slotName.getString(),
-            new String[] { argType, varname },
-            instr,deep,moduleName);
   }
 
   protected void  buildCompareFunctionSymbolDecl(int deep, String name1, String name2,

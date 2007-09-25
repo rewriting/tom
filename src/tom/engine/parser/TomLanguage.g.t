@@ -527,9 +527,11 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 
                 // Define get<slot> method.
                 Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
-                TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),strategyType,concConstraint());
-                Instruction slotInst = `Return((TargetLanguageToTomTerm(ITL("((" + name.getText() + ")t).get" + stringSlotName + "()"))));
-                Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,slotInst,slotOption);
+                String varname = "t";
+                TomTerm slotVar = `Variable(concOption(slotOption),Name(varname),strategyType,concConstraint());
+                Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,
+                  Code(ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname)),
+                  slotOption);
 
                 pairNameDeclList.add(`PairNameDecl(astName,slotDecl)); 
                 types = `concTomType(types*,TomTypeAlone(stringTypeArg));
@@ -556,9 +558,11 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 TomType strategyType = `TomTypeAlone("Strategy");
                     // Define get<slot> method.
                     Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
-                    TomTerm slotVar = `Variable(concOption(slotOption),Name("t"),strategyType,concConstraint());
-                    Instruction slotInst = `Return((TargetLanguageToTomTerm(ITL("((" + name.getText() + ")t).get" + stringSlotName + "()"))));
-                    Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,slotInst,slotOption);
+                    String varname = "t";
+                    TomTerm slotVar = `Variable(concOption(slotOption),Name(varname),strategyType,concConstraint());
+                    Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,
+                        Code(ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname)),
+                        slotOption);
 
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl)); 
                     types = `concTomType(types*,TomTypeAlone(stringTypeArg));
@@ -2069,7 +2073,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)), ot);
+                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())), ot);
             }
         )
     ;

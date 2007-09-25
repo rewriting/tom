@@ -856,7 +856,7 @@ writer.write(%[
         %match(slotList) {
           concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
             writer.write("  get_slot("+`slotName+", t) ");
-            writer.write("{ t."+getMethod(`slot)+"() }\n");
+            writer.write("{ $t."+getMethod(`slot)+"() }\n");
           }
         }
         writer.write("  make(");

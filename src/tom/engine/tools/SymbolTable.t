@@ -65,9 +65,6 @@ public class SymbolTable {
   /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
 
-  /** associate an inliner to a name */
-  private Map<String,Inliner> mapInliner = null;
-
   private boolean cCode = false;
   private boolean jCode = false;
   private boolean camlCode = false;
@@ -77,7 +74,7 @@ public class SymbolTable {
     mapSymbolName = new HashMap<String,TomSymbol>();
     mapTypeName = new HashMap<String,TomTypeDefinition>();
     usedKeyEntry = new HashSet<KeyEntry>();
-    mapInliner = new HashMap<String,Inliner>();
+    mapInliner = new HashMap<String,String>();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       cCode = true;
@@ -418,26 +415,59 @@ public class SymbolTable {
     return symbol;
   }
 
+  /*
+   * Inlining
+   */
 
-  public void putIsFsym(String opname, String code) {
-    Inliner inliner = mapInliner.get(opname);
+  /** associate an inliner to a name */
+  //private Map<String,Inliner> mapInliner = null;
+  private Map<String,String> mapInliner = null;
+
+  private static String isFsymPrefix = "is_fsym_";
+  private static String getSlotPrefix = "get_slot_";
+
+  private void putInliner(String prefix, String opname, String code) {
+    /*
+    Inliner inliner = mapInliner.get(prefix+opname);
     if(inliner==null) {
       inliner = new Inliner();
     }
     inliner.isfsym = code;
-    mapInliner.put(opname,inliner);
+    mapInliner.put(prefix+opname,inliner);
+    */
+    mapInliner.put(prefix+opname,code);
   }
 
-  public String getIsFsym(String opname) {
-    Inliner inliner = mapInliner.get(opname);
+  private String getInliner(String prefix, String opname) {
+    /*
+    Inliner inliner = mapInliner.get(prefix+opname);
     if(inliner!=null) {
       return inliner.isfsym;
     }
     return null;
+    */
+    return mapInliner.get(prefix+opname);
   }
 
+  public void putIsFsym(String opname, String code) {
+    putInliner(isFsymPrefix,opname,code);
+  }
+  public String getIsFsym(String opname) {
+    return getInliner(isFsymPrefix,opname);
+  }
+
+  public void putGetSlot(String opname, String slotname, String code) {
+    putInliner(getSlotPrefix,opname+slotname,code);
+  }
+  public String getGetSlot(String opname, String slotname) {
+    return getInliner(getSlotPrefix,opname+slotname);
+  }
+
+  /*
   private static class Inliner {
     public String isfsym;
+    public String getslot;
   }
+  */
 
 }

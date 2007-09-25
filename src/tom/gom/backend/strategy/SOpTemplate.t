@@ -244,7 +244,7 @@ private String genGetSlot(int count, String arg) {
   StringBuffer out = new StringBuffer();
   for (int i = 0; i < count; ++i) {
     out.append(%[
-        get_slot(@arg+i@, t) { t.getArgument(@i@) }]%);
+        get_slot(@arg+i@, t) { $t.getArgument(@i@) }]%);
   }
   return out.toString();
 }

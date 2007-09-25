@@ -578,9 +578,9 @@ public abstract class TomAbstractGenerator {
       GetSlotDecl[AstName=Name(tomName),
                   SlotName=slotName,
                   Variable=Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]],
-                  Instr=instr] -> {
+                  Expr=code] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
-          `buildGetSlotDecl(deep, tomName, name, tlType, instr, slotName, moduleName);
+          `buildGetSlotDecl(deep, tomName, name, tlType, code, slotName, moduleName);
         }
         return;
       }
@@ -852,7 +852,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
                                           TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
-                                           TomType tlType, Instruction instr, TomName slotName, String moduleName) throws IOException;
+                                           TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException;
   protected abstract void buildEqualTermDecl(int deep, String name1, String name2,
                                               String type1, String type2, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
