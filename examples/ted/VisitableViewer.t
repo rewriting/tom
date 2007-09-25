@@ -36,7 +36,7 @@ import java.util.Stack;
 
 public class VisitableViewer {
 
-  %include { atermmapping.tom }
+  %include { aterm.tom }
   %include { sl.tom }
 
   // for parsing
