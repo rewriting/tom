@@ -50,6 +50,7 @@ public class Viewer {
         `TopDown(print).visit(v);
       } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
       w.write("\n}");
+      w.flush();
     }
 
   public static void toDot(tom.library.sl.Visitable v) {
@@ -229,55 +230,85 @@ public class Viewer {
     return s;
   }
 
-  private static void 
+  public static void 
     toDot(Strategy subj, Writer w) throws IOException {
-      w.write("digraph G { graph [ordering=out];");
-      %match (Strategy subj) {
-        MuVar[] -> { return; }
+      w.write("digraph strategy {\nordering=out;");
+      try{
+        Strategy print = new PrintStrategy(w);
+        `TopDownCollect(print).visit(subj);
+      } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
+      w.write("\n}");
+      w.flush();
+    }
 
-        x@Mu[] ->{  ((Mu)`x).muExpand(); } // to mu-expand
+  public static void toDot(tom.library.sl.Strategy s) {
+    try {
+      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
+      toDot(s,w);
+      w.write('\n');
+      w.flush();
+    } catch(java.io.IOException e) {}
+  }
 
-        x -> { 
 
-          // get display string for the node
-          String[] tab = `x.getClass().getName().split("\\.");
+  static class PrintStrategy extends AbstractStrategy {
+
+    protected Writer w;
+
+    public PrintStrategy(Writer w) {
+      initSubterm();
+      this.w=w;
+    }
+
+    public Visitable visitLight(Visitable any) throws VisitFailure {
+      throw new VisitFailure();
+    } 
+
+    public int visit() {
+      Visitable v = getEnvironment().getSubject();
+      try {
+        if (v instanceof MuVar) {
+          String varname = ((MuVar)v).getName();
+          Position current = getEnvironment().getPosition();
+          Position father = current.up();
+          w.write(%[
+              @getNodeFromPos(current)@ [label=@varname@];
+              @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
+          //go up in the term until finding the position of the corresponding Mu
+          boolean find = false;
+          while(!find && getEnvironment().depth()!=1) {
+            getEnvironment().up();
+            Visitable tmp = getEnvironment().getSubject();
+            if (tmp instanceof Mu && ((MuVar)(tmp.getChildAt(Mu.VAR))).getName().equals(varname)) { 
+              find =true;
+              Position dest = getEnvironment().getPosition();
+              //test if it is not the first child of the Mu 
+              if (! ((Position)dest.clone()).down(1).equals(current)) {
+                w.write(%[
+                    @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
+              }
+              getEnvironment().followPath(current.sub(dest));
+            }
+          }
+          //use the failure to avoid looping
+          return Environment.FAILURE;
+        } else {
+          Position current = getEnvironment().getPosition();
+          String[] tab = `v.getClass().getName().split("\\.");
           String name = tab[tab.length-1];
           tab = name.split("\\$");
           name = tab[tab.length-1];
-          String idNode = `clean(x.toString());
-
-          w.write(%[@idNode@ [label="@name@"];]%);
-          w.write("\n");  
-
-          int n = `x.getChildCount();
-          for(int i=0; i<n; i++) {
-            Visitable s = `x.getChildAt(i);
-            %match(Strategy s) {
-              y@MuVar[var=varName] -> {
-                Strategy pointer = (Strategy) `((MuVar)y).getInstance();
-                if (pointer == null) return;
-                String idMu = clean(pointer.toString());
-                if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
-                  String idMuVar = idMu + "_" + (counter++);
-                  w.write(%[
-                      @idMuVar@ [label="@`varName@"]; 
-                      @idNode@ -> @idMuVar@;
-                      @idMuVar@ -> @idMu@;
-                      ]%);
-                }
-                continue;
-              }
-              y -> {
-                w.write(%[@idNode@ -> @clean(`y.toString())@;]%);
-                w.write("\n");
-                toDot(`y,w);
-              }
-            } // match
-          } // loop over the sons
-          w.flush();
+          w.write(%[
+              @getNodeFromPos(current)@ [label="@name@"]; ]%);
+          if(!current.equals(new Position(new int[]{}))) {
+            Position father = current.up();
+            w.write(%[
+                @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
+          }
         }
-      }
-      w.write("}\n");
+      } catch(IOException e) {}
+      return Environment.SUCCESS;
     }
+  }
 
 }
