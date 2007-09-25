@@ -96,7 +96,6 @@ public class TomStreamManager {
     importsToDiscard.add("int.tom");
     importsToDiscard.add("double.tom");
     importsToDiscard.add("aterm.tom");
-    importsToDiscard.add("atermlist.tom");
     clear();
   }
   

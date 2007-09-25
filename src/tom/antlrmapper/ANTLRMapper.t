@@ -162,7 +162,6 @@ matchBlock: {
 	%include{ int.tom }
 	%include{ string.tom }
 	%include{ aterm.tom }
-	%include{ atermlist.tom }
 
 	%oplist ATermList concATerm (ATerm*){
 	is_fsym(t) { t instanceof ATermList }

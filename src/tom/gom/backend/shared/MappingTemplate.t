@@ -100,7 +100,7 @@ public class MappingTemplate extends MappingTemplateClass {
     }
     if (GomEnvironment.getInstance().isBuiltinSort("ATermList")) {
       writer.write(%[
-%include { atermlist.tom }
+%include { aterm.tom }
 ]%);
     }
 

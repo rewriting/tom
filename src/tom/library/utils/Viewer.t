@@ -40,8 +40,6 @@ public class Viewer {
   %include { sl.tom }
   %include { ../mapping/java/sl/visitable.tom }
   %include { ../mapping/java/aterm.tom }
-  %include { ../mapping/java/atermlist.tom }
-  %include { ../mapping/java/atermops.tom }
 
   /* -------- dot part --------- */
   public static void toDot(tom.library.sl.Visitable v, Writer w) 

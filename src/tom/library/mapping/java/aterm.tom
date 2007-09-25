@@ -34,3 +34,76 @@
   equals(t1, t2)      { t1 == t2}
 }
 
+%typeterm ATermList {
+  implement { aterm.ATermList }
+  is_sort(t) { t instanceof aterm.ATermList }
+  equals(l1,l2)  { l1==l2 }
+}
+
+%typeterm AFun {
+  implement { aterm.AFun }
+  is_sort(t) { t instanceof aterm.AFun }
+  equals(t1, t2) { t1 == t2 }
+}
+
+
+/* ------ operators ----------- */
+
+
+/** ATermPlaceholder **/
+
+%op ATerm ATermPlaceholder(type: ATerm ) {
+  is_fsym(t) { t instanceof aterm.ATermPlaceholder }
+  make(type) { aterm.pure.SingletonFactory.getInstance().makePlaceholder(type) }
+  get_slot(type, t) { ((ATermPlaceholder)t).getPlaceholder() }
+}
+
+/** ATermList **/
+
+%oplist ATerm ATermList (ATerm*){
+  is_fsym(t) { t instanceof aterm.ATermList }
+  make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
+  make_insert(e,l) { ((ATermList)l).insert(e) }
+  get_head(t) { ((ATermList)t).getFirst() }
+  get_tail(t) { ((ATermList)t).getNext() }
+  is_empty(t) { ((ATermList)t).isEmpty() }
+}
+
+
+%oplist ATermList concATerm (ATerm*){
+  is_fsym(t) { t instanceof aterm.ATermList } 
+  make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
+  make_insert(e,l) { l.insert(e) }
+  get_head(t) { t.getFirst() }
+  get_tail(t) { t.getNext() }
+  is_empty(t) { t.isEmpty() } 
+}
+
+
+/** ATermInt  **/
+
+%op ATerm ATermInt(val: int) {
+  is_fsym(t) { t instanceof aterm.ATermInt }
+  make(i) { aterm.pure.SingletonFactory.getInstance().makeInt(i) }
+  get_slot(val, t) { ((ATermInt)t).getInt() }
+}
+
+/** ATermFun **/
+
+%op AFun AFun(name: String, arity: int, quoted: boolean)  {
+  is_fsym(t) { t instanceof aterm.AFun } 
+  make(f,a,q) { aterm.pure.SingletonFactory.getInstance().makeAFun(f,a,q) }
+  get_slot(name, t) { t.getName() }
+  get_slot(arity, t) { t.getArity() }
+  get_slot(quoted, t) { t.isQuoted() }
+}
+
+/** AtermAppl **/
+
+%op ATerm ATermAppl(fun: AFun, args: ATermList  ) {
+  is_fsym(t) { t instanceof aterm.ATermAppl }
+  make(f,args) { aterm.pure.SingletonFactory.getInstance().makeAppl(f,args) }
+  get_slot(fun, t) { ((aterm.ATermAppl)t).getAFun() }
+  get_slot(args, t) { ((aterm.ATermAppl)t).getArguments() }
+}
+
