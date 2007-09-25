@@ -163,15 +163,6 @@ matchBlock: {
 	%include{ string.tom }
 	%include{ aterm.tom }
 
-	%oplist ATermList concATerm (ATerm*){
-	is_fsym(t) { t instanceof ATermList }
-	make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
-	make_insert(e,l) { l.insert(e) }
-	get_head(t) { t.getFirst() }
-	get_tail(t) { t.getNext() }
-	is_empty(t) { t.isEmpty() }
-	}
-
 	%op ATerm NodeInfo(text:String,line:int,column:int) {
 	is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
 	get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
