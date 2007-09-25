@@ -1,0 +1,13 @@
+- Without inliner
+
+real    0m22.846s
+user    0m18.897s
+sys     0m1.092s
+
+- With is_fsym inlining
+
+real    0m20.689s
+user    0m18.933s
+sys     0m1.064s
+
+
