@@ -62,18 +62,18 @@ public class PreGenerator {
     return constraintsToExpressions(constraint);
   }
 
-  private static Constraint orderConstraints(Constraint constraint){
+  private static Constraint orderConstraints(Constraint constraint){    
     %match(constraint){
-      andC@!AndConstraint(X*,OrConstraint(XX*),Y*) && AndConstraint(_*) << constraint  -> {
+      andC@!AndConstraint(X*,OrConstraint(XX*),Y*) && AndConstraint(_*) << constraint  -> {        
         return repeatOrdering(constraint);
       }
-      andC@AndConstraint(X*,or@OrConstraint(XX*),Y*) -> {
+      andC@AndConstraint(X*,or@OrConstraint(XX*),Y*) -> {        
         return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
       }
-      or@OrConstraint(andC@AndConstraint(XX*)) -> {
+      or@OrConstraint(andC@AndConstraint(XX*)) -> {        
         return `OrConstraint(orderConstraints(andC));
       }
-      or@OrConstraint(!AndConstraint(XX*)) -> {
+      or@OrConstraint(!AndConstraint(XX*)) -> {     
         return `or;
       }
     }
@@ -81,8 +81,9 @@ public class PreGenerator {
   }
 
   private static Constraint repeatOrdering(Constraint constraint) {
-    Constraint result = null;
+    Constraint result = constraint;
     do{
+      constraint = result;
       result = orderAndConstraint(constraint);
     } while (result != constraint);
     return result;
