@@ -106,7 +106,7 @@ public class HookTypeExpander {
             }
           }
         }
-
+        ArrayList examinedOps = new ArrayList();
         %match(prodList) {
           concProduction(_*, prod, _*) -> {
             %match(prod, hookList) {
@@ -125,13 +125,16 @@ public class HookTypeExpander {
               Production(opName,concField(StarredField(codomain)),codomain,option),
                 /* check there is a make_insert or a rule hooks and no theory associated */
                 concHookDecl(_*,MakeHookDecl[HookType=HookKind[kind="make_insert"|"make_empty"|"rules"]],_*) -> {
-                  %match(hookList) {
-                    /* check there is no associtated theory */
-                    !concHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"ACU"]], _*) -> {
-                      /* generate an error to make users specify the theory */
-                      getLogger().log(Level.SEVERE,
-                          "If you use make_insert,make_empty or rules with a variadic operator, specify the associated theory.");
-                    }
+                  if(! examinedOps.contains(`opName)) {
+                    examinedOps.add(`opName);
+                      %match(hookList) {
+                        /* check there is no associtated theory */
+                        !concHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]],HookType=HookKind[kind="Free"|"FL"|"AU"|"ACU"]], _*) -> {
+                          /* generate an error to make users specify the theory */
+                          getLogger().log(Level.SEVERE,
+                              "As you use make_insert,make_empty or rules, specify the associated theory for the variadic operator "+`opName);
+                        }
+                      }
                   }
                 }
             }
