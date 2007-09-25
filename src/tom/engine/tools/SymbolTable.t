@@ -420,47 +420,55 @@ public class SymbolTable {
    */
 
   /** associate an inliner to a name */
-  //private Map<String,Inliner> mapInliner = null;
   private Map<String,String> mapInliner = null;
 
-  private static String isFsymPrefix = "is_fsym_";
-  private static String getSlotPrefix = "get_slot_";
+  private static String prefixIsFsym = "is_fsym_";
+  private static String prefixGetSlot = "get_slot_";
+  private static String prefixGetHead = "get_head_";
+  private static String prefixGetTail = "get_tail_";
+  private static String prefixIsEmpty = "is_empty_";
 
   private void putInliner(String prefix, String opname, String code) {
-    /*
-    Inliner inliner = mapInliner.get(prefix+opname);
-    if(inliner==null) {
-      inliner = new Inliner();
-    }
-    inliner.isfsym = code;
-    mapInliner.put(prefix+opname,inliner);
-    */
     mapInliner.put(prefix+opname,code);
   }
 
   private String getInliner(String prefix, String opname) {
-    /*
-    Inliner inliner = mapInliner.get(prefix+opname);
-    if(inliner!=null) {
-      return inliner.isfsym;
-    }
-    return null;
-    */
     return mapInliner.get(prefix+opname);
   }
 
   public void putIsFsym(String opname, String code) {
-    putInliner(isFsymPrefix,opname,code);
+    putInliner(prefixIsFsym,opname,code);
   }
   public String getIsFsym(String opname) {
-    return getInliner(isFsymPrefix,opname);
+    return getInliner(prefixIsFsym,opname);
   }
 
   public void putGetSlot(String opname, String slotname, String code) {
-    putInliner(getSlotPrefix,opname+slotname,code);
+    putInliner(prefixGetSlot,opname+slotname,code);
   }
   public String getGetSlot(String opname, String slotname) {
-    return getInliner(getSlotPrefix,opname+slotname);
+    return getInliner(prefixGetSlot,opname+slotname);
+  }
+
+  public void putGetHead(String opname, String code) {
+    putInliner(prefixGetHead,opname,code);
+  }
+  public String getGetHead(String opname) {
+    return getInliner(prefixGetHead,opname);
+  }
+
+  public void putGetTail(String opname, String code) {
+    putInliner(prefixGetTail,opname,code);
+  }
+  public String getGetTail(String opname) {
+    return getInliner(prefixGetTail,opname);
+  }
+
+  public void putIsEmpty(String opname, String code) {
+    putInliner(prefixIsEmpty,opname,code);
+  }
+  public String getIsEmpty(String opname) {
+    return getInliner(prefixIsEmpty,opname);
   }
 
   /*

@@ -604,30 +604,30 @@ public abstract class TomAbstractGenerator {
       GetHeadDecl[Opname=opNameAST@Name(opname),
                   Codomain=Type[TlType=codomain],
                   Variable=Variable[AstName=Name(varName), AstType=Type(ASTTomType(suffix),domain@TLType[])],
-                  Instr=instr] -> {
+                  Expr=expr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, instr, moduleName);
+          `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, expr, moduleName);
         }
         return;
       }
 
       GetTailDecl[Opname=opNameAST@Name(opname),
                   Variable=Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),tlType@TLType[])],
-                  Instr=instr] -> {
+                  Expr=expr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildGetTailDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
+          `buildGetTailDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
         }
         return;
       }
 
       IsEmptyDecl[Opname=opNameAST@Name(opname),
                   Variable=Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),tlType@TLType[])],
-                  Instr=instr] -> {
+                  Expr=expr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
+          `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, expr, moduleName);
         }
         return;
       }
@@ -857,10 +857,10 @@ public abstract class TomAbstractGenerator {
                                               String type1, String type2, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
                                               String type1, Instruction instr, String moduleName) throws IOException;
-  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr, String moduleName) throws IOException;
-  protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr, String moduleName) throws IOException;
+  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName) throws IOException;
+  protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-                                           TomType tlType, Instruction instr, String moduleName) throws IOException;
+                                           TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
                                               String type1, TomType tlType1, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,

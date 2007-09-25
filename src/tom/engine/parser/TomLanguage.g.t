@@ -1895,7 +1895,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
                 result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)),
+                    Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
         )
@@ -1921,7 +1921,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `GetTailDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)),
+                    Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot);
             }
         )
@@ -1947,7 +1947,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `IsEmptyDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)),
+                    Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),
                     ot); 
             }
         )

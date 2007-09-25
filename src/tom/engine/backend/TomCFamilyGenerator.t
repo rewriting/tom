@@ -278,18 +278,48 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   }
 
   private String getIsConc(String name,String subject,String moduleName) {
-    String is_conc = getSymbolTable(moduleName).getIsFsym(name);
-    if(is_conc != null) {
-      is_conc = is_conc.replaceAll("\\{0\\}",subject);
+    String res = getSymbolTable(moduleName).getIsFsym(name);
+    if(res != null) {
+      res = res.replaceAll("\\{0\\}",subject);
     } else {
-      is_conc = %[tom_is_fun_sym_@name@(@subject@)]%;
+      res = %[tom_is_fun_sym_@name@(@subject@)]%;
     }
-    return is_conc;
+    return res;
+  }
+
+  private String getGetHead(String name,String type,String subject,String moduleName) {
+    String res = getSymbolTable(moduleName).getGetHead(name);
+    if(res != null) {
+      res = res.replaceAll("\\{0\\}",subject);
+    } else {
+      res = %[tom_get_head_@name@_@type@(@subject@)]%;
+    }
+    return res;
+  }
+
+  private String getGetTail(String name,String type,String subject,String moduleName) {
+    String res = getSymbolTable(moduleName).getGetTail(name);
+    if(res != null) {
+      res = res.replaceAll("\\{0\\}",subject);
+    } else {
+      res = %[tom_get_tail_@name@_@type@(@subject@)]%;
+    }
+    return res;
+  }
+
+  private String getIsEmpty(String name,String type,String subject,String moduleName) {
+    String res = getSymbolTable(moduleName).getIsEmpty(name);
+    if(res != null) {
+      res = res.replaceAll("\\{0\\}",subject);
+    } else {
+      res = %[tom_is_empty_@name@_@type@(@subject@)]%;
+    }
+    return res;
   }
 
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
-    String get = %[tom_get_head_@name@_@tomType@(@subject@)]%;
+    String get = getGetHead(name,tomType,subject,moduleName);
     String is_conc = getIsConc(name,subject,moduleName);
     if(domain==codomain) { 
       return %[((@is_conc@)?@get@:@subject@)]%;
@@ -299,7 +329,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
-    String get= %[tom_get_tail_@name@_@tomType@(@subject@)]%;
+    String get= getGetTail(name,tomType,subject,moduleName);
     String is_conc = getIsConc(name,subject,moduleName);
     String empty = %[tom_empty_list_@name@()]%;
     if(domain==codomain) { 
@@ -325,7 +355,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     }
     
     String listCast = "(" + glType + ")";
-    String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String equal_term = "tom_equal_term_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_empty_list_" + name;
@@ -336,12 +365,12 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     if(listType == eltType) {
 s = %[
   @modifier@ @utype@ tom_append_list_@name@(@utype@l1, @utype@ l2) {
-    if(@is_empty@(l1)) {
+    if(@getIsEmpty(name,tomType,"l1",moduleName)@) {
       return l2;
-    } else if(@is_empty@(l2)) {
+    } else if(@getIsEmpty(name,tomType,"l2",moduleName)@) {
       return l1;
     } else if(@getIsConc(name,"l1",moduleName)@) {
-      if(@is_empty@(@genDeclGetTail(name,eltType,listType,"l1",moduleName)@)) {
+      if(@getIsEmpty(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
         return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,l2);
       } else {
         return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,tom_append_list_@name@(@genDeclGetTail(name,eltType,listType,"l1",moduleName)@,l2));
@@ -355,11 +384,11 @@ s = %[
 
 s = %[
   @modifier@ @utype@ tom_append_list_@name@(@utype@l1, @utype@ l2) {
-    if(@is_empty@(l1)) {
+    if(@getIsEmpty(name,tomType,"l1",moduleName)@) {
       return l2;
-    } else if(@is_empty@(l2)) {
+    } else if(@getIsEmpty(name,tomType,"l2",moduleName)@) {
       return l1;
-    } else if(@is_empty@(@genDeclGetTail(name,eltType,listType,"l1",moduleName)@)) {
+    } else if(@getIsEmpty(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
       return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,l2);
     } else {
       return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,tom_append_list_@name@(@genDeclGetTail(name,eltType,listType,"l1",moduleName)@,l2));
