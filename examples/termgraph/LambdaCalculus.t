@@ -65,7 +65,6 @@ public class LambdaCalculus {
             collectPosition(info),
             _abs2(Mu(MuVar("x"),Choice(substitute(info),All(MuVar("x")))))),Identity()),
         clean(info));
-    tom.library.utils.Viewer.display(beta);
 
     String s;
     LambdaTermLexer lexer = new LambdaTermLexer(System.in); // Create parser attached to lexer
