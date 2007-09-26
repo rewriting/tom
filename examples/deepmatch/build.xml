@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the deepmatch example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="deepmatch" value="deepmatch"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${deepmatch}"/>
+    <delete dir="${examples.build}/${deepmatch}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${deepmatch}"/>
+    <tomcompile example="${deepmatch}"/>
+    <javacompile example="${deepmatch}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
+</project>
