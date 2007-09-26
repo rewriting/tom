@@ -437,6 +437,7 @@ public class SymbolTable {
   }
 
   public void putIsFsym(String opname, String code) {
+    //System.out.println("putIsFsym: " + opname + " -> " + code);
     putInliner(prefixIsFsym,opname,code);
   }
   public String getIsFsym(String opname) {
@@ -444,6 +445,7 @@ public class SymbolTable {
   }
 
   public void putGetSlot(String opname, String slotname, String code) {
+    //System.out.println("putGetSlot: " + opname + "," + slotname + " -> " + code);
     putInliner(prefixGetSlot,opname+slotname,code);
   }
   public String getGetSlot(String opname, String slotname) {

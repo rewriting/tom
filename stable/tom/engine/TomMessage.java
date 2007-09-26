@@ -119,6 +119,8 @@ public class TomMessage implements PlatformMessage {
   // used with TomMessage to format exception messages
   public static final TomMessage missingIncludedFile   =
       new TomMessage("Missing file name in %include structure in file ''{0}'' at line {1,number,integer}");
+  public static final TomMessage missingIncludeSL   =
+      new TomMessage("Missing %include { sl.tom }");
   public static final TomMessage includedFileNotFound  =
       new TomMessage("Included file ''{0}'' not found in file {1} at line {2,number,integer}");
   public static final TomMessage includedFileCycle     =

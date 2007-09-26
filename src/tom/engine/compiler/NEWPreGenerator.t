@@ -164,7 +164,7 @@ forLoop:for(i = 0; i < elemInResult ; i++){
             *
             * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
             */
-            _ && { EmptyListConstraint[Variable=v] << resultI || Negate(EmptyListConstraint[Variable=v]) << resultI }
+            _ && ( EmptyListConstraint[Variable=v] << resultI || Negate(EmptyListConstraint[Variable=v]) << resultI )
                   && MatchConstraint(v,_) << x -> {                    
              foundBiggerValue = true;
              break forLoop;
@@ -176,7 +176,7 @@ forLoop:for(i = 0; i < elemInResult ; i++){
             *
             * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
             */
-           _ && { EmptyArrayConstraint[Index=idx] << resultI || Negate(EmptyArrayConstraint[Index=idx]) << resultI }
+           _ && ( EmptyArrayConstraint[Index=idx] << resultI || Negate(EmptyArrayConstraint[Index=idx]) << resultI )
                && MatchConstraint(idx,_) << x -> {
              foundBiggerValue = true;
              break forLoop;
@@ -208,7 +208,7 @@ forLoop:for(i = 0; i < elemInResult ; i++){
             *
             */
            _ && MatchConstraint(_,(ListHead|ListTail)[Variable=v]) << resultI
-                  && { Negate(EmptyListConstraint[Variable=v]) << x || EmptyListConstraint[Variable=v] << x  } -> {                    
+                  && ( Negate(EmptyListConstraint[Variable=v]) << x || EmptyListConstraint[Variable=v] << x  ) -> {
              foundBiggerValue = true;
              break forLoop;
            }
@@ -217,7 +217,7 @@ forLoop:for(i = 0; i < elemInResult ; i++){
             * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
             */
            _ && m@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid2=v])) << resultI
-                  && { EmptyArrayConstraint[Index=v] << x || Negate(EmptyArrayConstraint[Index=v]) << x } -> {
+                  && ( EmptyArrayConstraint[Index=v] << x || Negate(EmptyArrayConstraint[Index=v]) << x ) -> {
              foundBiggerValue = true;
              break forLoop;
            }
@@ -227,7 +227,7 @@ forLoop:for(i = 0; i < elemInResult ; i++){
             *
             */
            _ && MatchConstraint(_,v@VariableStar[]) << resultI
-                && { MatchConstraint(_,VariableHeadList[End=v]) << x || MatchConstraint(_,VariableHeadArray[EndIndex=v]) << x } -> {                  
+                && ( MatchConstraint(_,VariableHeadList[End=v]) << x || MatchConstraint(_,VariableHeadArray[EndIndex=v]) << x ) -> {
              foundBiggerValue = true;
              break forLoop;
            }

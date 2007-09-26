@@ -277,41 +277,44 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln();
   }
 
+  private String instantiateTemplate(String template, String subject) {
+    if(template != null) {
+      return template.replaceAll("\\{0\\}",subject);
+    }
+    return null;
+  }
+
   private String getIsConc(String name,String subject,String moduleName) {
-    String res = getSymbolTable(moduleName).getIsFsym(name);
-    if(res != null) {
-      res = res.replaceAll("\\{0\\}",subject);
-    } else {
+    String template = getSymbolTable(moduleName).getIsFsym(name);
+    String res = instantiateTemplate(template,subject);
+    if(res == template) {
       res = %[tom_is_fun_sym_@name@(@subject@)]%;
     }
     return res;
   }
 
   private String getGetHead(String name,String type,String subject,String moduleName) {
-    String res = getSymbolTable(moduleName).getGetHead(name);
-    if(res != null) {
-      res = res.replaceAll("\\{0\\}",subject);
-    } else {
+    String template = getSymbolTable(moduleName).getGetHead(name);
+    String res = instantiateTemplate(template,subject);
+    if(res == template) {
       res = %[tom_get_head_@name@_@type@(@subject@)]%;
     }
     return res;
   }
 
   private String getGetTail(String name,String type,String subject,String moduleName) {
-    String res = getSymbolTable(moduleName).getGetTail(name);
-    if(res != null) {
-      res = res.replaceAll("\\{0\\}",subject);
-    } else {
+    String template = getSymbolTable(moduleName).getGetTail(name);
+    String res = instantiateTemplate(template,subject);
+    if(res == template) {
       res = %[tom_get_tail_@name@_@type@(@subject@)]%;
     }
     return res;
   }
 
   private String getIsEmpty(String name,String type,String subject,String moduleName) {
-    String res = getSymbolTable(moduleName).getIsEmpty(name);
-    if(res != null) {
-      res = res.replaceAll("\\{0\\}",subject);
-    } else {
+    String template = getSymbolTable(moduleName).getIsEmpty(name);
+    String res = instantiateTemplate(template,subject);
+    if(res == template) {
       res = %[tom_is_empty_@name@_@type@(@subject@)]%;
     }
     return res;

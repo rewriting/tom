@@ -263,8 +263,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      IsEmptyList(opNameAST, expList) -> {
-        buildExpIsEmptyList(deep, `opNameAST, getTermType(`expList), `expList, moduleName);
+      IsEmptyList(Name(opName), expList) -> {
+        `buildExpIsEmptyList(deep, opName, getTermType(expList), expList, moduleName);
         return;
       }
 
@@ -302,13 +302,13 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      GetHead(opNameAST,codomain,exp) -> {
-        `buildExpGetHead(deep, opNameAST, getTermType(exp), codomain, exp, moduleName);
+      GetHead(Name(opName),codomain,exp) -> {
+        `buildExpGetHead(deep, opName, getTermType(exp), codomain, exp, moduleName);
         return;
       }
 
-      GetTail(opNameAST, exp) -> {
-        buildExpGetTail(deep, `opNameAST, getTermType(`exp), `exp, moduleName);
+      GetTail(Name(opName), exp) -> {
+        `buildExpGetTail(deep, opName, getTermType(exp), exp, moduleName);
         return;
       }
 
@@ -820,15 +820,15 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpBottom(int deep, TomType type, String moduleName) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
-  protected abstract void buildExpIsEmptyList(int deep, TomName opName, TomType type, TomTerm expList, String moduleName) throws IOException;
+  protected abstract void buildExpIsEmptyList(int deep, String opName, TomType type, TomTerm expList, String moduleName) throws IOException;
   protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException;
   protected abstract void buildExpIsSort(int deep, TomType type, TomTerm exp, String moduleName) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;
   protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp, String moduleName) throws IOException;
-  protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildExpGetTail(int deep, TomName opName, TomType type1, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpGetHead(int deep, String opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpGetTail(int deep, String opName, TomType type1, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, TomTerm tailSlice, String moduleName) throws IOException;

@@ -4,7 +4,7 @@
    */
 
     %op Strategy _EmptyconcZTerm() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist._EmptyconcZTerm)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztermlist._EmptyconcZTerm)))}
       
         make() { new tom.engine.adt.zenon.strategy.ztermlist._EmptyconcZTerm() }
     }
@@ -19,16 +19,16 @@
   }
   
 %op Strategy Make_EmptyconcZTerm() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist.Make_EmptyconcZTerm)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztermlist.Make_EmptyconcZTerm))) }
 
   make() { new tom.engine.adt.zenon.strategy.ztermlist.Make_EmptyconcZTerm() }
 }
 
     %op Strategy _ConsconcZTerm(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist._ConsconcZTerm)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztermlist._ConsconcZTerm)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.ztermlist._ConsconcZTerm(arg0, arg1) }
     }
   
@@ -42,7 +42,7 @@
   }
   
 %op Strategy Make_ConsconcZTerm(_HeadconcZTerm:Strategy, _TailconcZTerm:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist.Make_ConsconcZTerm)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztermlist.Make_ConsconcZTerm))) }
 
   get_slot(_HeadconcZTerm, t) { _HeadconcZTerm }
   get_slot(_TailconcZTerm, t) { _TailconcZTerm }
@@ -50,9 +50,9 @@
 }
 
     %op Strategy _ztype(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztype._ztype)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztype._ztype)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.engine.adt.zenon.strategy.ztype._ztype(arg0) }
     }
   
@@ -66,16 +66,16 @@
   }
   
 %op Strategy Make_ztype(_Tname:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztype.Make_ztype)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztype.Make_ztype))) }
 
   get_slot(_Tname, t) { _Tname }
   make( _Tname) { new tom.engine.adt.zenon.strategy.ztype.Make_ztype( _Tname) }
 }
 
     %op Strategy _zvar(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm._zvar)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm._zvar)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.engine.adt.zenon.strategy.zterm._zvar(arg0) }
     }
   
@@ -89,17 +89,17 @@
   }
   
 %op Strategy Make_zvar(_Varname:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zvar)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zvar))) }
 
   get_slot(_Varname, t) { _Varname }
   make( _Varname) { new tom.engine.adt.zenon.strategy.zterm.Make_zvar( _Varname) }
 }
 
     %op Strategy _zappl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm._zappl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm._zappl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zterm._zappl(arg0, arg1) }
     }
   
@@ -113,7 +113,7 @@
   }
   
 %op Strategy Make_zappl(_Zsymb:Strategy, _Termlist:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zappl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zappl))) }
 
   get_slot(_Zsymb, t) { _Zsymb }
   get_slot(_Termlist, t) { _Termlist }
@@ -121,10 +121,10 @@
 }
 
     %op Strategy _zst(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm._zst)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm._zst)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zterm._zst(arg0, arg1) }
     }
   
@@ -138,7 +138,7 @@
   }
   
 %op Strategy Make_zst(_Abst:Strategy, _Index:int) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zst)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zst))) }
 
   get_slot(_Abst, t) { _Abst }
   get_slot(_Index, t) { _Index }
@@ -146,10 +146,10 @@
 }
 
     %op Strategy _zsl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm._zsl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm._zsl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zterm._zsl(arg0, arg1) }
     }
   
@@ -163,7 +163,7 @@
   }
   
 %op Strategy Make_zsl(_Abst:Strategy, _Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zsl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zterm.Make_zsl))) }
 
   get_slot(_Abst, t) { _Abst }
   get_slot(_Name, t) { _Name }
@@ -171,10 +171,10 @@
 }
 
     %op Strategy _zaxiom(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiom._zaxiom)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zaxiom._zaxiom)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zaxiom._zaxiom(arg0, arg1) }
     }
   
@@ -188,7 +188,7 @@
   }
   
 %op Strategy Make_zaxiom(_Name:String, _Ax:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiom.Make_zaxiom)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zaxiom.Make_zaxiom))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_Ax, t) { _Ax }
@@ -196,10 +196,10 @@
 }
 
     %op Strategy _zthm(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zspec._zthm)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zspec._zthm)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zspec._zthm(arg0, arg1) }
     }
   
@@ -213,7 +213,7 @@
   }
   
 %op Strategy Make_zthm(_Thm:Strategy, _By:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zspec.Make_zthm)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zspec.Make_zthm))) }
 
   get_slot(_Thm, t) { _Thm }
   get_slot(_By, t) { _By }
@@ -221,9 +221,9 @@
 }
 
     %op Strategy _zsymbol(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zsymbol._zsymbol)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zsymbol._zsymbol)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.engine.adt.zenon.strategy.zsymbol._zsymbol(arg0) }
     }
   
@@ -237,14 +237,14 @@
   }
   
 %op Strategy Make_zsymbol(_Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zsymbol.Make_zsymbol)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zsymbol.Make_zsymbol))) }
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.engine.adt.zenon.strategy.zsymbol.Make_zsymbol( _Name) }
 }
 
     %op Strategy _ztrue() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._ztrue)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._ztrue)))}
       
         make() { new tom.engine.adt.zenon.strategy.zexpr._ztrue() }
     }
@@ -259,13 +259,13 @@
   }
   
 %op Strategy Make_ztrue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_ztrue)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_ztrue))) }
 
   make() { new tom.engine.adt.zenon.strategy.zexpr.Make_ztrue() }
 }
 
     %op Strategy _zfalse() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zfalse)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zfalse)))}
       
         make() { new tom.engine.adt.zenon.strategy.zexpr._zfalse() }
     }
@@ -280,16 +280,16 @@
   }
   
 %op Strategy Make_zfalse() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zfalse)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zfalse))) }
 
   make() { new tom.engine.adt.zenon.strategy.zexpr.Make_zfalse() }
 }
 
     %op Strategy _zisfsym(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zisfsym)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zisfsym)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zexpr._zisfsym(arg0, arg1) }
     }
   
@@ -303,7 +303,7 @@
   }
   
 %op Strategy Make_zisfsym(_T:Strategy, _Symbol:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zisfsym)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zisfsym))) }
 
   get_slot(_T, t) { _T }
   get_slot(_Symbol, t) { _Symbol }
@@ -311,10 +311,10 @@
 }
 
     %op Strategy _zeq(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zeq)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zeq)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zexpr._zeq(arg0, arg1) }
     }
   
@@ -328,7 +328,7 @@
   }
   
 %op Strategy Make_zeq(_Lt:Strategy, _Rt:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zeq)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zeq))) }
 
   get_slot(_Lt, t) { _Lt }
   get_slot(_Rt, t) { _Rt }
@@ -336,11 +336,11 @@
 }
 
     %op Strategy _zforall(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zforall)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zforall)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
         make(arg0, arg1, arg2) { new tom.engine.adt.zenon.strategy.zexpr._zforall(arg0, arg1, arg2) }
     }
   
@@ -354,7 +354,7 @@
   }
   
 %op Strategy Make_zforall(_Var:Strategy, _Aztype:Strategy, _Expr:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zforall)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zforall))) }
 
   get_slot(_Var, t) { _Var }
   get_slot(_Aztype, t) { _Aztype }
@@ -363,11 +363,11 @@
 }
 
     %op Strategy _zexists(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zexists)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zexists)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
         make(arg0, arg1, arg2) { new tom.engine.adt.zenon.strategy.zexpr._zexists(arg0, arg1, arg2) }
     }
   
@@ -381,7 +381,7 @@
   }
   
 %op Strategy Make_zexists(_Var:Strategy, _Aztype:Strategy, _Expr:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zexists)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zexists))) }
 
   get_slot(_Var, t) { _Var }
   get_slot(_Aztype, t) { _Aztype }
@@ -390,10 +390,10 @@
 }
 
     %op Strategy _zand(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zand)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zand)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zexpr._zand(arg0, arg1) }
     }
   
@@ -407,7 +407,7 @@
   }
   
 %op Strategy Make_zand(_Lte:Strategy, _Rte:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zand)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zand))) }
 
   get_slot(_Lte, t) { _Lte }
   get_slot(_Rte, t) { _Rte }
@@ -415,10 +415,10 @@
 }
 
     %op Strategy _zor(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zor)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zor)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zexpr._zor(arg0, arg1) }
     }
   
@@ -432,7 +432,7 @@
   }
   
 %op Strategy Make_zor(_Lte:Strategy, _Rte:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zor)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zor))) }
 
   get_slot(_Lte, t) { _Lte }
   get_slot(_Rte, t) { _Rte }
@@ -440,9 +440,9 @@
 }
 
     %op Strategy _znot(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._znot)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._znot)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.engine.adt.zenon.strategy.zexpr._znot(arg0) }
     }
   
@@ -456,17 +456,17 @@
   }
   
 %op Strategy Make_znot(_Nex:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_znot)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_znot))) }
 
   get_slot(_Nex, t) { _Nex }
   make( new_Nex) { new tom.engine.adt.zenon.strategy.zexpr.Make_znot( new_Nex) }
 }
 
     %op Strategy _zequiv(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr._zequiv)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr._zequiv)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zexpr._zequiv(arg0, arg1) }
     }
   
@@ -480,7 +480,7 @@
   }
   
 %op Strategy Make_zequiv(_Lte:Strategy, _Rte:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zequiv)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zexpr.Make_zequiv))) }
 
   get_slot(_Lte, t) { _Lte }
   get_slot(_Rte, t) { _Rte }
@@ -488,7 +488,7 @@
 }
 
     %op Strategy _Emptyzby() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist._Emptyzby)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist._Emptyzby)))}
       
         make() { new tom.engine.adt.zenon.strategy.zaxiomlist._Emptyzby() }
     }
@@ -503,16 +503,16 @@
   }
   
 %op Strategy Make_Emptyzby() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.Make_Emptyzby)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.Make_Emptyzby))) }
 
   make() { new tom.engine.adt.zenon.strategy.zaxiomlist.Make_Emptyzby() }
 }
 
     %op Strategy _Conszby(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist._Conszby)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist._Conszby)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.engine.adt.zenon.strategy.zaxiomlist._Conszby(arg0, arg1) }
     }
   
@@ -526,7 +526,7 @@
   }
   
 %op Strategy Make_Conszby(_Headzby:Strategy, _Tailzby:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.Make_Conszby)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.Make_Conszby))) }
 
   get_slot(_Headzby, t) { _Headzby }
   get_slot(_Tailzby, t) { _Tailzby }

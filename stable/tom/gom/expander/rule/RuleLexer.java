@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2007-09-05 15:40:59
+// $ANTLR 3.0 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2007-09-26 09:38:41
 
   package tom.gom.expander.rule;
   import tom.gom.adt.rule.RuleTree;
@@ -11,46 +11,52 @@ import java.util.ArrayList;
 
 public class RuleLexer extends Lexer {
     public static final int CondEquals=5;
-    public static final int RefTerm=9;
-    public static final int LPAR=33;
-    public static final int ARROW=23;
-    public static final int LEQ=27;
-    public static final int GEQ=29;
-    public static final int RuleList=19;
-    public static final int DOT=31;
+    public static final int RefTerm=10;
+    public static final int LPAR=36;
+    public static final int ARROW=26;
+    public static final int LEQ=30;
+    public static final int GEQ=32;
+    public static final int RuleList=20;
+    public static final int DOT=34;
     public static final int BuiltinInt=4;
     public static final int BuiltinString=6;
-    public static final int SLCOMMENT=42;
+    public static final int SLCOMMENT=48;
     public static final int CondLessEquals=8;
-    public static final int INT=36;
-    public static final int CondLessThan=18;
-    public static final int CondGreaterEquals=20;
-    public static final int Var=21;
-    public static final int ID=32;
-    public static final int NOTEQUALS=26;
-    public static final int CondMethod=7;
-    public static final int RPAR=34;
-    public static final int LabTerm=10;
-    public static final int WS=41;
-    public static final int STRING=37;
-    public static final int LT=28;
-    public static final int ConditionalRule=12;
-    public static final int GT=30;
-    public static final int Rule=13;
-    public static final int ESC=40;
-    public static final int Appl=22;
-    public static final int EQUALS=25;
-    public static final int AMPERCENT=39;
-    public static final int IF=24;
-    public static final int CondTerm=11;
+    public static final int INT=42;
+    public static final int CondLessThan=19;
+    public static final int UnnamedVar=21;
+    public static final int CondGreaterEquals=22;
+    public static final int Var=23;
+    public static final int AT=39;
+    public static final int At=25;
+    public static final int ID=35;
+    public static final int NOTEQUALS=29;
+    public static final int UnnamedVarStar=7;
+    public static final int CondMethod=9;
+    public static final int RPAR=37;
+    public static final int LabTerm=11;
+    public static final int WS=47;
+    public static final int STRING=43;
+    public static final int LT=31;
+    public static final int ConditionalRule=13;
+    public static final int GT=33;
+    public static final int Rule=14;
+    public static final int ESC=46;
+    public static final int Appl=24;
+    public static final int EQUALS=28;
+    public static final int AMPERCENT=45;
+    public static final int CondTerm=12;
+    public static final int IF=27;
     public static final int EOF=-1;
-    public static final int Tokens=43;
-    public static final int COLON=38;
-    public static final int TermList=14;
-    public static final int CondNotEquals=15;
-    public static final int COMA=35;
-    public static final int PathTerm=16;
-    public static final int CondGreaterThan=17;
+    public static final int Tokens=49;
+    public static final int COLON=44;
+    public static final int TermList=15;
+    public static final int CondNotEquals=16;
+    public static final int UNDERSCORESTAR=41;
+    public static final int COMA=38;
+    public static final int PathTerm=17;
+    public static final int CondGreaterThan=18;
+    public static final int UNDERSCORE=40;
     public RuleLexer() {;} 
     public RuleLexer(CharStream input) {
         super(input);
@@ -61,8 +67,8 @@ public class RuleLexer extends Lexer {
     public final void mARROW() throws RecognitionException {
         try {
             int _type = ARROW;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:9: ( '->' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:86:9: '->'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:9: ( '->' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:9: '->'
             {
             match("->"); 
 
@@ -80,8 +86,8 @@ public class RuleLexer extends Lexer {
     public final void mAMPERCENT() throws RecognitionException {
         try {
             int _type = AMPERCENT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:87:13: ( '&' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:87:13: '&'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:13: ( '&' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:13: '&'
             {
             match('&'); 
 
@@ -94,12 +100,67 @@ public class RuleLexer extends Lexer {
     }
     // $ANTLR end AMPERCENT
 
+    // $ANTLR start UNDERSCORE
+    public final void mUNDERSCORE() throws RecognitionException {
+        try {
+            int _type = UNDERSCORE;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:14: ( '_' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:14: '_'
+            {
+            match('_'); 
+
+            }
+
+            this.type = _type;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end UNDERSCORE
+
+    // $ANTLR start UNDERSCORESTAR
+    public final void mUNDERSCORESTAR() throws RecognitionException {
+        try {
+            int _type = UNDERSCORESTAR;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:18: ( '_*' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:18: '_*'
+            {
+            match("_*"); 
+
+
+            }
+
+            this.type = _type;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end UNDERSCORESTAR
+
+    // $ANTLR start AT
+    public final void mAT() throws RecognitionException {
+        try {
+            int _type = AT;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:6: ( '@' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:6: '@'
+            {
+            match('@'); 
+
+            }
+
+            this.type = _type;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end AT
+
     // $ANTLR start COLON
     public final void mCOLON() throws RecognitionException {
         try {
             int _type = COLON;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:9: ( ':' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:88:9: ':'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:9: ( ':' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:9: ':'
             {
             match(':'); 
 
@@ -116,8 +177,8 @@ public class RuleLexer extends Lexer {
     public final void mLPAR() throws RecognitionException {
         try {
             int _type = LPAR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:8: ( '(' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:8: '('
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:8: ( '(' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:8: '('
             {
             match('('); 
 
@@ -134,8 +195,8 @@ public class RuleLexer extends Lexer {
     public final void mRPAR() throws RecognitionException {
         try {
             int _type = RPAR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:8: ( ')' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:8: ')'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:8: ( ')' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:8: ')'
             {
             match(')'); 
 
@@ -152,8 +213,8 @@ public class RuleLexer extends Lexer {
     public final void mCOMA() throws RecognitionException {
         try {
             int _type = COMA;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:8: ( ',' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:8: ','
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:8: ( ',' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:8: ','
             {
             match(','); 
 
@@ -170,8 +231,8 @@ public class RuleLexer extends Lexer {
     public final void mEQUALS() throws RecognitionException {
         try {
             int _type = EQUALS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:10: ( '==' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:10: '=='
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:10: ( '==' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:10: '=='
             {
             match("=="); 
 
@@ -189,8 +250,8 @@ public class RuleLexer extends Lexer {
     public final void mNOTEQUALS() throws RecognitionException {
         try {
             int _type = NOTEQUALS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:13: ( '!=' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:13: '!='
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:13: ( '!=' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:13: '!='
             {
             match("!="); 
 
@@ -208,8 +269,8 @@ public class RuleLexer extends Lexer {
     public final void mDOT() throws RecognitionException {
         try {
             int _type = DOT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:7: ( '.' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:7: '.'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: ( '.' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: '.'
             {
             match('.'); 
 
@@ -226,8 +287,8 @@ public class RuleLexer extends Lexer {
     public final void mLEQ() throws RecognitionException {
         try {
             int _type = LEQ;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:7: ( '<=' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:7: '<='
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:7: ( '<=' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:7: '<='
             {
             match("<="); 
 
@@ -245,8 +306,8 @@ public class RuleLexer extends Lexer {
     public final void mLT() throws RecognitionException {
         try {
             int _type = LT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:6: ( '<' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:6: '<'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:6: ( '<' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:6: '<'
             {
             match('<'); 
 
@@ -263,8 +324,8 @@ public class RuleLexer extends Lexer {
     public final void mGEQ() throws RecognitionException {
         try {
             int _type = GEQ;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:7: ( '>=' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:7: '>='
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:7: ( '>=' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:7: '>='
             {
             match(">="); 
 
@@ -282,8 +343,8 @@ public class RuleLexer extends Lexer {
     public final void mGT() throws RecognitionException {
         try {
             int _type = GT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:6: ( '>' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:6: '>'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( '>' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: '>'
             {
             match('>'); 
 
@@ -300,8 +361,8 @@ public class RuleLexer extends Lexer {
     public final void mIF() throws RecognitionException {
         try {
             int _type = IF;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:6: ( 'if' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:6: 'if'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:6: ( 'if' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:6: 'if'
             {
             match("if"); 
 
@@ -319,10 +380,10 @@ public class RuleLexer extends Lexer {
     public final void mINT() throws RecognitionException {
         try {
             int _type = INT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: ( ( '0' .. '9' )+ )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: ( '0' .. '9' )+
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( ( '0' .. '9' )+ )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( '0' .. '9' )+
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: ( '0' .. '9' )+
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( '0' .. '9' )+
             int cnt1=0;
             loop1:
             do {
@@ -336,7 +397,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:8: '0' .. '9'
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:8: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -366,8 +427,8 @@ public class RuleLexer extends Lexer {
     public final void mESC() throws RecognitionException {
         try {
             int _type = ESC;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); 
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -394,11 +455,11 @@ public class RuleLexer extends Lexer {
     public final void mSTRING() throws RecognitionException {
         try {
             int _type = STRING;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:10: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:10: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop2:
             do {
                 int alt2=3;
@@ -414,14 +475,14 @@ public class RuleLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:15: ESC
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -457,8 +518,8 @@ public class RuleLexer extends Lexer {
     public final void mID() throws RecognitionException {
         try {
             int _type = ID;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:6: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )? )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )? )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )?
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -470,7 +531,7 @@ public class RuleLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -504,7 +565,7 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:64: ( '*' )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:64: ( '*' )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -513,7 +574,7 @@ public class RuleLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:65: '*'
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:65: '*'
                     {
                     match('*'); 
 
@@ -536,10 +597,10 @@ public class RuleLexer extends Lexer {
     public final void mWS() throws RecognitionException {
         try {
             int _type = WS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( ( ' ' | '\\t' | '\\n' )+ )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( ' ' | '\\t' | '\\n' )+
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ( ' ' | '\\t' | '\\n' )+ )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ' ' | '\\t' | '\\n' )+
             {
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( ' ' | '\\t' | '\\n' )+
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ' ' | '\\t' | '\\n' )+
             int cnt5=0;
             loop5:
             do {
@@ -593,12 +654,12 @@ public class RuleLexer extends Lexer {
     public final void mSLCOMMENT() throws RecognitionException {
         try {
             int _type = SLCOMMENT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:13: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:13: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:18: (~ ( '\\n' | '\\r' ) )*
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:18: (~ ( '\\n' | '\\r' ) )*
             loop6:
             do {
                 int alt6=2;
@@ -611,7 +672,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:19: ~ ( '\\n' | '\\r' )
+            	    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:19: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -632,7 +693,7 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:34: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:34: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt8=3;
             int LA8_0 = input.LA(1);
 
@@ -644,17 +705,17 @@ public class RuleLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:35: '\\n'
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:35: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:40: '\\r' ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:40: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:44: ( '\\n' )?
+                    // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:44: ( '\\n' )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -663,7 +724,7 @@ public class RuleLexer extends Lexer {
                     }
                     switch (alt7) {
                         case 1 :
-                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:45: '\\n'
+                            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:45: '\\n'
                             {
                             match('\n'); 
 
@@ -690,8 +751,8 @@ public class RuleLexer extends Lexer {
     // $ANTLR end SLCOMMENT
 
     public void mTokens() throws RecognitionException {
-        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | AMPERCENT | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
-        int alt9=20;
+        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | AMPERCENT | UNDERSCORE | UNDERSCORESTAR | AT | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
+        int alt9=23;
         switch ( input.LA(1) ) {
         case '-':
             {
@@ -703,78 +764,163 @@ public class RuleLexer extends Lexer {
             alt9=2;
             }
             break;
-        case ':':
+        case '_':
             {
-            alt9=3;
+            switch ( input.LA(2) ) {
+            case '*':
+                {
+                alt9=4;
+                }
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+            case 'G':
+            case 'H':
+            case 'I':
+            case 'J':
+            case 'K':
+            case 'L':
+            case 'M':
+            case 'N':
+            case 'O':
+            case 'P':
+            case 'Q':
+            case 'R':
+            case 'S':
+            case 'T':
+            case 'U':
+            case 'V':
+            case 'W':
+            case 'X':
+            case 'Y':
+            case 'Z':
+            case '_':
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 'g':
+            case 'h':
+            case 'i':
+            case 'j':
+            case 'k':
+            case 'l':
+            case 'm':
+            case 'n':
+            case 'o':
+            case 'p':
+            case 'q':
+            case 'r':
+            case 's':
+            case 't':
+            case 'u':
+            case 'v':
+            case 'w':
+            case 'x':
+            case 'y':
+            case 'z':
+                {
+                alt9=21;
+                }
+                break;
+            default:
+                alt9=3;}
+
             }
             break;
-        case '(':
-            {
-            alt9=4;
-            }
-            break;
-        case ')':
+        case '@':
             {
             alt9=5;
             }
             break;
-        case ',':
+        case ':':
             {
             alt9=6;
             }
             break;
-        case '=':
+        case '(':
             {
             alt9=7;
             }
             break;
-        case '!':
+        case ')':
             {
             alt9=8;
             }
             break;
-        case '.':
+        case ',':
             {
             alt9=9;
             }
             break;
+        case '=':
+            {
+            alt9=10;
+            }
+            break;
+        case '!':
+            {
+            alt9=11;
+            }
+            break;
+        case '.':
+            {
+            alt9=12;
+            }
+            break;
         case '<':
             {
-            int LA9_10 = input.LA(2);
+            int LA9_12 = input.LA(2);
 
-            if ( (LA9_10=='=') ) {
-                alt9=10;
+            if ( (LA9_12=='=') ) {
+                alt9=13;
             }
             else {
-                alt9=11;}
+                alt9=14;}
             }
             break;
         case '>':
             {
-            int LA9_11 = input.LA(2);
+            int LA9_13 = input.LA(2);
 
-            if ( (LA9_11=='=') ) {
-                alt9=12;
+            if ( (LA9_13=='=') ) {
+                alt9=15;
             }
             else {
-                alt9=13;}
+                alt9=16;}
             }
             break;
         case 'i':
             {
-            int LA9_12 = input.LA(2);
+            int LA9_14 = input.LA(2);
 
-            if ( (LA9_12=='f') ) {
-                int LA9_23 = input.LA(3);
+            if ( (LA9_14=='f') ) {
+                int LA9_27 = input.LA(3);
 
-                if ( (LA9_23=='*'||(LA9_23>='0' && LA9_23<='9')||(LA9_23>='A' && LA9_23<='Z')||LA9_23=='_'||(LA9_23>='a' && LA9_23<='z')) ) {
-                    alt9=18;
+                if ( (LA9_27=='*'||(LA9_27>='0' && LA9_27<='9')||(LA9_27>='A' && LA9_27<='Z')||LA9_27=='_'||(LA9_27>='a' && LA9_27<='z')) ) {
+                    alt9=21;
                 }
                 else {
-                    alt9=14;}
+                    alt9=17;}
             }
             else {
-                alt9=18;}
+                alt9=21;}
             }
             break;
         case '0':
@@ -788,17 +934,17 @@ public class RuleLexer extends Lexer {
         case '8':
         case '9':
             {
-            alt9=15;
+            alt9=18;
             }
             break;
         case '\\':
             {
-            alt9=16;
+            alt9=19;
             }
             break;
         case '\"':
             {
-            alt9=17;
+            alt9=20;
             }
             break;
         case 'A':
@@ -827,7 +973,6 @@ public class RuleLexer extends Lexer {
         case 'X':
         case 'Y':
         case 'Z':
-        case '_':
         case 'a':
         case 'b':
         case 'c':
@@ -854,24 +999,24 @@ public class RuleLexer extends Lexer {
         case 'y':
         case 'z':
             {
-            alt9=18;
+            alt9=21;
             }
             break;
         case '\t':
         case '\n':
         case ' ':
             {
-            alt9=19;
+            alt9=22;
             }
             break;
         case '/':
             {
-            alt9=20;
+            alt9=23;
             }
             break;
         default:
             NoViableAltException nvae =
-                new NoViableAltException("1:1: Tokens : ( ARROW | AMPERCENT | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );", 9, 0, input);
+                new NoViableAltException("1:1: Tokens : ( ARROW | AMPERCENT | UNDERSCORE | UNDERSCORESTAR | AT | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );", 9, 0, input);
 
             throw nvae;
         }
@@ -892,126 +1037,147 @@ public class RuleLexer extends Lexer {
                 }
                 break;
             case 3 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:26: COLON
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:26: UNDERSCORE
+                {
+                mUNDERSCORE(); 
+
+                }
+                break;
+            case 4 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:37: UNDERSCORESTAR
+                {
+                mUNDERSCORESTAR(); 
+
+                }
+                break;
+            case 5 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:52: AT
+                {
+                mAT(); 
+
+                }
+                break;
+            case 6 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:55: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
-            case 4 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:32: LPAR
+            case 7 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:61: LPAR
                 {
                 mLPAR(); 
 
                 }
                 break;
-            case 5 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:37: RPAR
+            case 8 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:66: RPAR
                 {
                 mRPAR(); 
 
                 }
                 break;
-            case 6 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:42: COMA
+            case 9 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:71: COMA
                 {
                 mCOMA(); 
 
                 }
                 break;
-            case 7 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:47: EQUALS
+            case 10 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:76: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
-            case 8 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:54: NOTEQUALS
+            case 11 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:83: NOTEQUALS
                 {
                 mNOTEQUALS(); 
 
                 }
                 break;
-            case 9 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:64: DOT
+            case 12 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:93: DOT
                 {
                 mDOT(); 
 
                 }
                 break;
-            case 10 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:68: LEQ
+            case 13 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:97: LEQ
                 {
                 mLEQ(); 
 
                 }
                 break;
-            case 11 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:72: LT
+            case 14 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:101: LT
                 {
                 mLT(); 
 
                 }
                 break;
-            case 12 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:75: GEQ
+            case 15 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:104: GEQ
                 {
                 mGEQ(); 
 
                 }
                 break;
-            case 13 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:79: GT
+            case 16 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:108: GT
                 {
                 mGT(); 
 
                 }
                 break;
-            case 14 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:82: IF
+            case 17 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:111: IF
                 {
                 mIF(); 
 
                 }
                 break;
-            case 15 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:85: INT
+            case 18 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:114: INT
                 {
                 mINT(); 
 
                 }
                 break;
-            case 16 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:89: ESC
+            case 19 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:118: ESC
                 {
                 mESC(); 
 
                 }
                 break;
-            case 17 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:93: STRING
+            case 20 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:122: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
-            case 18 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:100: ID
+            case 21 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:129: ID
                 {
                 mID(); 
 
                 }
                 break;
-            case 19 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:103: WS
+            case 22 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:132: WS
                 {
                 mWS(); 
 
                 }
                 break;
-            case 20 :
-                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:106: SLCOMMENT
+            case 23 :
+                // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:135: SLCOMMENT
                 {
                 mSLCOMMENT(); 
 

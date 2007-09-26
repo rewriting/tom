@@ -876,6 +876,7 @@
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="off"/>
        <property name="optimize2" value="off"/>
+       <property name="inline" value="off"/>
      </ant>
   </target>
 
@@ -885,6 +886,7 @@
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="on"/>
        <property name="optimize2" value="on"/>
+       <property name="inline" value="on"/>
      </ant>
   </target>
 
@@ -919,6 +921,7 @@
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="on"/>
        <property name="optimize2" value="on"/>
+       <property name="inline" value="on"/>
      </ant>
   </target>
 
@@ -951,6 +954,7 @@
       <property name="tom.common.path" location="${stable.lib}"/>
       <property name="optimize" value="off"/>
       <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
     </ant>
 
     <echo>Test tom-stable in examples with optimizer</echo>
@@ -963,6 +967,7 @@
       <property name="tom.common.path" location="${stable.lib}"/>
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
+      <property name="inline" value="on"/>
     </ant>
   </target>
 
@@ -983,6 +988,7 @@
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="off"/>
       <property name="optimize2" value="off"/>
+      <property name="inline" value="off"/>
     </ant>
 
     <echo>Test tom-source in examples with optimizer</echo>
@@ -995,6 +1001,7 @@
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
+      <property name="inline" value="on"/>
     </ant>
   </target>
 
@@ -1025,6 +1032,7 @@
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
+      <property name="inline" value="on"/>
     </ant>
   </target>
 

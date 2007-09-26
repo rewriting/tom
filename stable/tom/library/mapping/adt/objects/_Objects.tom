@@ -4,9 +4,9 @@
    */
 
     %op Strategy _Code(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._Code)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._Code)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.code.strategy.code._Code(arg0) }
     }
   
@@ -20,17 +20,17 @@
   }
   
 %op Strategy Make_Code(_prog:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Code)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_Code))) }
 
   get_slot(_prog, t) { _prog }
   make( _prog) { new tom.gom.adt.code.strategy.code.Make_Code( _prog) }
 }
 
     %op Strategy _IsEmpty(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._IsEmpty)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._IsEmpty)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.code.strategy.code._IsEmpty(arg0, arg1) }
     }
   
@@ -44,7 +44,7 @@
   }
   
 %op Strategy Make_IsEmpty(_Var:String, _Operator:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_IsEmpty)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_IsEmpty))) }
 
   get_slot(_Var, t) { _Var }
   get_slot(_Operator, t) { _Operator }
@@ -52,10 +52,10 @@
 }
 
     %op Strategy _IsCons(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._IsCons)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._IsCons)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.code.strategy.code._IsCons(arg0, arg1) }
     }
   
@@ -69,7 +69,7 @@
   }
   
 %op Strategy Make_IsCons(_Var:String, _Operator:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_IsCons)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_IsCons))) }
 
   get_slot(_Var, t) { _Var }
   get_slot(_Operator, t) { _Operator }
@@ -77,9 +77,9 @@
 }
 
     %op Strategy _Empty(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._Empty)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._Empty)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.code.strategy.code._Empty(arg0) }
     }
   
@@ -93,16 +93,16 @@
   }
   
 %op Strategy Make_Empty(_Operator:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Empty)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_Empty))) }
 
   get_slot(_Operator, t) { _Operator }
   make( new_Operator) { new tom.gom.adt.code.strategy.code.Make_Empty( new_Operator) }
 }
 
     %op Strategy _Cons(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._Cons)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._Cons)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.code.strategy.code._Cons(arg0) }
     }
   
@@ -116,16 +116,16 @@
   }
   
 %op Strategy Make_Cons(_Operator:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Cons)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_Cons))) }
 
   get_slot(_Operator, t) { _Operator }
   make( new_Operator) { new tom.gom.adt.code.strategy.code.Make_Cons( new_Operator) }
 }
 
     %op Strategy _FullSortClass(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._FullSortClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._FullSortClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.code.strategy.code._FullSortClass(arg0) }
     }
   
@@ -139,16 +139,16 @@
   }
   
 %op Strategy Make_FullSortClass(_Sort:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_FullSortClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_FullSortClass))) }
 
   get_slot(_Sort, t) { _Sort }
   make( new_Sort) { new tom.gom.adt.code.strategy.code.Make_FullSortClass( new_Sort) }
 }
 
     %op Strategy _FullOperatorClass(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._FullOperatorClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._FullOperatorClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.code.strategy.code._FullOperatorClass(arg0) }
     }
   
@@ -162,17 +162,17 @@
   }
   
 %op Strategy Make_FullOperatorClass(_Operator:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_FullOperatorClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_FullOperatorClass))) }
 
   get_slot(_Operator, t) { _Operator }
   make( new_Operator) { new tom.gom.adt.code.strategy.code.Make_FullOperatorClass( new_Operator) }
 }
 
     %op Strategy _Compare(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._Compare)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._Compare)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.code.strategy.code._Compare(arg0, arg1) }
     }
   
@@ -186,7 +186,7 @@
   }
   
 %op Strategy Make_Compare(_LCode:Strategy, _RCode:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_Compare)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_Compare))) }
 
   get_slot(_LCode, t) { _LCode }
   get_slot(_RCode, t) { _RCode }
@@ -194,7 +194,7 @@
 }
 
     %op Strategy _EmptyCodeList() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._EmptyCodeList)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._EmptyCodeList)))}
       
         make() { new tom.gom.adt.code.strategy.code._EmptyCodeList() }
     }
@@ -209,16 +209,16 @@
   }
   
 %op Strategy Make_EmptyCodeList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_EmptyCodeList)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_EmptyCodeList))) }
 
   make() { new tom.gom.adt.code.strategy.code.Make_EmptyCodeList() }
 }
 
     %op Strategy _ConsCodeList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code._ConsCodeList)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._ConsCodeList)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.code.strategy.code._ConsCodeList(arg0, arg1) }
     }
   
@@ -232,7 +232,7 @@
   }
   
 %op Strategy Make_ConsCodeList(_HeadCodeList:Strategy, _TailCodeList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.code.strategy.code.Make_ConsCodeList)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_ConsCodeList))) }
 
   get_slot(_HeadCodeList, t) { _HeadCodeList }
   get_slot(_TailCodeList, t) { _TailCodeList }
@@ -240,10 +240,10 @@
 }
 
     %op Strategy _MakeHook(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook._MakeHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._MakeHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.hook._MakeHook(arg0, arg1) }
     }
   
@@ -257,7 +257,7 @@
   }
   
 %op Strategy Make_MakeHook(_HookArguments:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_MakeHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook.Make_MakeHook))) }
 
   get_slot(_HookArguments, t) { _HookArguments }
   get_slot(_Code, t) { _Code }
@@ -265,10 +265,10 @@
 }
 
     %op Strategy _MakeBeforeHook(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook._MakeBeforeHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._MakeBeforeHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.hook._MakeBeforeHook(arg0, arg1) }
     }
   
@@ -282,7 +282,7 @@
   }
   
 %op Strategy Make_MakeBeforeHook(_HookArguments:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_MakeBeforeHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook.Make_MakeBeforeHook))) }
 
   get_slot(_HookArguments, t) { _HookArguments }
   get_slot(_Code, t) { _Code }
@@ -290,9 +290,9 @@
 }
 
     %op Strategy _BlockHook(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook._BlockHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._BlockHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.objects.strategy.hook._BlockHook(arg0) }
     }
   
@@ -306,16 +306,16 @@
   }
   
 %op Strategy Make_BlockHook(_Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_BlockHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook.Make_BlockHook))) }
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_BlockHook( new_Code) }
 }
 
     %op Strategy _InterfaceHook(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook._InterfaceHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._InterfaceHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.objects.strategy.hook._InterfaceHook(arg0) }
     }
   
@@ -329,16 +329,16 @@
   }
   
 %op Strategy Make_InterfaceHook(_Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_InterfaceHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook.Make_InterfaceHook))) }
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_InterfaceHook( new_Code) }
 }
 
     %op Strategy _ImportHook(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook._ImportHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._ImportHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.objects.strategy.hook._ImportHook(arg0) }
     }
   
@@ -352,16 +352,16 @@
   }
   
 %op Strategy Make_ImportHook(_Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_ImportHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook.Make_ImportHook))) }
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_ImportHook( new_Code) }
 }
 
     %op Strategy _MappingHook(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook._MappingHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._MappingHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.objects.strategy.hook._MappingHook(arg0) }
     }
   
@@ -375,17 +375,17 @@
   }
   
 %op Strategy Make_MappingHook(_Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hook.Make_MappingHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook.Make_MappingHook))) }
 
   get_slot(_Code, t) { _Code }
   make( new_Code) { new tom.gom.adt.objects.strategy.hook.Make_MappingHook( new_Code) }
 }
 
     %op Strategy _SlotField(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfield._SlotField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.slotfield._SlotField)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.slotfield._SlotField(arg0, arg1) }
     }
   
@@ -399,7 +399,7 @@
   }
   
 %op Strategy Make_SlotField(_Name:String, _Domain:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfield.Make_SlotField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.slotfield.Make_SlotField))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_Domain, t) { _Domain }
@@ -407,7 +407,7 @@
 }
 
     %op Strategy _EmptyconcSlotField() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist._EmptyconcSlotField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.slotfieldlist._EmptyconcSlotField)))}
       
         make() { new tom.gom.adt.objects.strategy.slotfieldlist._EmptyconcSlotField() }
     }
@@ -422,16 +422,16 @@
   }
   
 %op Strategy Make_EmptyconcSlotField() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.Make_EmptyconcSlotField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.Make_EmptyconcSlotField))) }
 
   make() { new tom.gom.adt.objects.strategy.slotfieldlist.Make_EmptyconcSlotField() }
 }
 
     %op Strategy _ConsconcSlotField(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist._ConsconcSlotField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.slotfieldlist._ConsconcSlotField)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.slotfieldlist._ConsconcSlotField(arg0, arg1) }
     }
   
@@ -445,7 +445,7 @@
   }
   
 %op Strategy Make_ConsconcSlotField(_HeadconcSlotField:Strategy, _TailconcSlotField:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.Make_ConsconcSlotField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.slotfieldlist.Make_ConsconcSlotField))) }
 
   get_slot(_HeadconcSlotField, t) { _HeadconcSlotField }
   get_slot(_TailconcSlotField, t) { _TailconcSlotField }
@@ -453,13 +453,13 @@
 }
 
     %op Strategy _AbstractTypeClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._AbstractTypeClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._AbstractTypeClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
-        get_slot(arg4, t) { t.getArgument(4) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
         make(arg0, arg1, arg2, arg3, arg4) { new tom.gom.adt.objects.strategy.gomclass._AbstractTypeClass(arg0, arg1, arg2, arg3, arg4) }
     }
   
@@ -473,7 +473,7 @@
   }
   
 %op Strategy Make_AbstractTypeClass(_ClassName:Strategy, _Mapping:Strategy, _Visitor:Strategy, _SortList:Strategy, _Hooks:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_AbstractTypeClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_AbstractTypeClass))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_Mapping, t) { _Mapping }
@@ -484,17 +484,17 @@
 }
 
     %op Strategy _SortClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy, arg7:Strategy, arg8:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._SortClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._SortClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
-        get_slot(arg4, t) { t.getArgument(4) }
-        get_slot(arg5, t) { t.getArgument(5) }
-        get_slot(arg6, t) { t.getArgument(6) }
-        get_slot(arg7, t) { t.getArgument(7) }
-        get_slot(arg8, t) { t.getArgument(8) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        get_slot(arg6, t) { $t.getArgument(6) }
+        get_slot(arg7, t) { $t.getArgument(7) }
+        get_slot(arg8, t) { $t.getArgument(8) }
         make(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) { new tom.gom.adt.objects.strategy.gomclass._SortClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) }
     }
   
@@ -508,7 +508,7 @@
   }
   
 %op Strategy Make_SortClass(_ClassName:Strategy, _AbstractType:Strategy, _Mapping:Strategy, _Visitor:Strategy, _Forward:Strategy, _Operators:Strategy, _VariadicOperators:Strategy, _Slots:Strategy, _Hooks:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_SortClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_SortClass))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_AbstractType, t) { _AbstractType }
@@ -523,16 +523,16 @@
 }
 
     %op Strategy _OperatorClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy, arg7:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._OperatorClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._OperatorClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
-        get_slot(arg4, t) { t.getArgument(4) }
-        get_slot(arg5, t) { t.getArgument(5) }
-        get_slot(arg6, t) { t.getArgument(6) }
-        get_slot(arg7, t) { t.getArgument(7) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        get_slot(arg6, t) { $t.getArgument(6) }
+        get_slot(arg7, t) { $t.getArgument(7) }
         make(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { new tom.gom.adt.objects.strategy.gomclass._OperatorClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) }
     }
   
@@ -546,7 +546,7 @@
   }
   
 %op Strategy Make_OperatorClass(_ClassName:Strategy, _AbstractType:Strategy, _ExtendsType:Strategy, _Mapping:Strategy, _SortName:Strategy, _Visitor:Strategy, _Slots:Strategy, _Hooks:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_OperatorClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_OperatorClass))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_AbstractType, t) { _AbstractType }
@@ -560,15 +560,15 @@
 }
 
     %op Strategy _VariadicOperatorClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._VariadicOperatorClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._VariadicOperatorClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
-        get_slot(arg4, t) { t.getArgument(4) }
-        get_slot(arg5, t) { t.getArgument(5) }
-        get_slot(arg6, t) { t.getArgument(6) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        get_slot(arg6, t) { $t.getArgument(6) }
         make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.gom.adt.objects.strategy.gomclass._VariadicOperatorClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6) }
     }
   
@@ -582,7 +582,7 @@
   }
   
 %op Strategy Make_VariadicOperatorClass(_ClassName:Strategy, _AbstractType:Strategy, _Mapping:Strategy, _SortName:Strategy, _Empty:Strategy, _Cons:Strategy, _Hooks:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VariadicOperatorClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VariadicOperatorClass))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_AbstractType, t) { _AbstractType }
@@ -595,11 +595,11 @@
 }
 
     %op Strategy _VisitorClass(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitorClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitorClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
         make(arg0, arg1, arg2) { new tom.gom.adt.objects.strategy.gomclass._VisitorClass(arg0, arg1, arg2) }
     }
   
@@ -613,7 +613,7 @@
   }
   
 %op Strategy Make_VisitorClass(_ClassName:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitorClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitorClass))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_SortClasses, t) { _SortClasses }
@@ -622,15 +622,15 @@
 }
 
     %op Strategy _VisitableFwdClass(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
-        get_slot(arg4, t) { t.getArgument(4) }
-        get_slot(arg5, t) { t.getArgument(5) }
-        get_slot(arg6, t) { t.getArgument(6) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        get_slot(arg6, t) { $t.getArgument(6) }
         make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.gom.adt.objects.strategy.gomclass._VisitableFwdClass(arg0, arg1, arg2, arg3, arg4, arg5, arg6) }
     }
   
@@ -644,7 +644,7 @@
   }
   
 %op Strategy Make_VisitableFwdClass(_ClassName:Strategy, _Visitor:Strategy, _ImportedVisitors:Strategy, _AbstractType:Strategy, _ImportedAbstractTypes:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_VisitableFwdClass))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_Visitor, t) { _Visitor }
@@ -657,12 +657,12 @@
 }
 
     %op Strategy _TomMapping(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass._TomMapping)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass._TomMapping)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
         make(arg0, arg1, arg2, arg3) { new tom.gom.adt.objects.strategy.gomclass._TomMapping(arg0, arg1, arg2, arg3) }
     }
   
@@ -676,7 +676,7 @@
   }
   
 %op Strategy Make_TomMapping(_ClassName:Strategy, _BasicStrategy:Strategy, _SortClasses:Strategy, _OperatorClasses:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_TomMapping)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclass.Make_TomMapping))) }
 
   get_slot(_ClassName, t) { _ClassName }
   get_slot(_BasicStrategy, t) { _BasicStrategy }
@@ -686,10 +686,10 @@
 }
 
     %op Strategy _ClassName(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classname._ClassName)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.classname._ClassName)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.classname._ClassName(arg0, arg1) }
     }
   
@@ -703,7 +703,7 @@
   }
   
 %op Strategy Make_ClassName(_Pkg:String, _Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classname.Make_ClassName)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.classname.Make_ClassName))) }
 
   get_slot(_Pkg, t) { _Pkg }
   get_slot(_Name, t) { _Name }
@@ -711,7 +711,7 @@
 }
 
     %op Strategy _EmptyconcGomClass() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist._EmptyconcGomClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclasslist._EmptyconcGomClass)))}
       
         make() { new tom.gom.adt.objects.strategy.gomclasslist._EmptyconcGomClass() }
     }
@@ -726,16 +726,16 @@
   }
   
 %op Strategy Make_EmptyconcGomClass() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist.Make_EmptyconcGomClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclasslist.Make_EmptyconcGomClass))) }
 
   make() { new tom.gom.adt.objects.strategy.gomclasslist.Make_EmptyconcGomClass() }
 }
 
     %op Strategy _ConsconcGomClass(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist._ConsconcGomClass)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclasslist._ConsconcGomClass)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.gomclasslist._ConsconcGomClass(arg0, arg1) }
     }
   
@@ -749,7 +749,7 @@
   }
   
 %op Strategy Make_ConsconcGomClass(_HeadconcGomClass:Strategy, _TailconcGomClass:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.gomclasslist.Make_ConsconcGomClass)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.gomclasslist.Make_ConsconcGomClass))) }
 
   get_slot(_HeadconcGomClass, t) { _HeadconcGomClass }
   get_slot(_TailconcGomClass, t) { _TailconcGomClass }
@@ -757,7 +757,7 @@
 }
 
     %op Strategy _EmptyconcClassName() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist._EmptyconcClassName)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.classnamelist._EmptyconcClassName)))}
       
         make() { new tom.gom.adt.objects.strategy.classnamelist._EmptyconcClassName() }
     }
@@ -772,16 +772,16 @@
   }
   
 %op Strategy Make_EmptyconcClassName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist.Make_EmptyconcClassName)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.classnamelist.Make_EmptyconcClassName))) }
 
   make() { new tom.gom.adt.objects.strategy.classnamelist.Make_EmptyconcClassName() }
 }
 
     %op Strategy _ConsconcClassName(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist._ConsconcClassName)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.classnamelist._ConsconcClassName)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.classnamelist._ConsconcClassName(arg0, arg1) }
     }
   
@@ -795,7 +795,7 @@
   }
   
 %op Strategy Make_ConsconcClassName(_HeadconcClassName:Strategy, _TailconcClassName:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.classnamelist.Make_ConsconcClassName)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.classnamelist.Make_ConsconcClassName))) }
 
   get_slot(_HeadconcClassName, t) { _HeadconcClassName }
   get_slot(_TailconcClassName, t) { _TailconcClassName }
@@ -803,7 +803,7 @@
 }
 
     %op Strategy _EmptyconcHook() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist._EmptyconcHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hooklist._EmptyconcHook)))}
       
         make() { new tom.gom.adt.objects.strategy.hooklist._EmptyconcHook() }
     }
@@ -818,16 +818,16 @@
   }
   
 %op Strategy Make_EmptyconcHook() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist.Make_EmptyconcHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hooklist.Make_EmptyconcHook))) }
 
   make() { new tom.gom.adt.objects.strategy.hooklist.Make_EmptyconcHook() }
 }
 
     %op Strategy _ConsconcHook(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist._ConsconcHook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hooklist._ConsconcHook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.objects.strategy.hooklist._ConsconcHook(arg0, arg1) }
     }
   
@@ -841,7 +841,7 @@
   }
   
 %op Strategy Make_ConsconcHook(_HeadconcHook:Strategy, _TailconcHook:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.objects.strategy.hooklist.Make_ConsconcHook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hooklist.Make_ConsconcHook))) }
 
   get_slot(_HeadconcHook, t) { _HeadconcHook }
   get_slot(_TailconcHook, t) { _TailconcHook }
@@ -849,10 +849,10 @@
 }
 
     %op Strategy _Slot(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slot._Slot)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.slot._Slot)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.slot._Slot(arg0, arg1) }
     }
   
@@ -866,7 +866,7 @@
   }
   
 %op Strategy Make_Slot(_Name:String, _Sort:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slot.Make_Slot)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.slot.Make_Slot))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_Sort, t) { _Sort }
@@ -874,7 +874,7 @@
 }
 
     %op Strategy _EmptyconcArg() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist._EmptyconcArg)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.arglist._EmptyconcArg)))}
       
         make() { new tom.gom.adt.gom.strategy.arglist._EmptyconcArg() }
     }
@@ -889,16 +889,16 @@
   }
   
 %op Strategy Make_EmptyconcArg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist.Make_EmptyconcArg)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.arglist.Make_EmptyconcArg))) }
 
   make() { new tom.gom.adt.gom.strategy.arglist.Make_EmptyconcArg() }
 }
 
     %op Strategy _ConsconcArg(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist._ConsconcArg)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.arglist._ConsconcArg)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.arglist._ConsconcArg(arg0, arg1) }
     }
   
@@ -912,7 +912,7 @@
   }
   
 %op Strategy Make_ConsconcArg(_HeadconcArg:Strategy, _TailconcArg:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arglist.Make_ConsconcArg)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.arglist.Make_ConsconcArg))) }
 
   get_slot(_HeadconcArg, t) { _HeadconcArg }
   get_slot(_TailconcArg, t) { _TailconcArg }
@@ -920,7 +920,7 @@
 }
 
     %op Strategy _KindModule() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind._KindModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.idkind._KindModule)))}
       
         make() { new tom.gom.adt.gom.strategy.idkind._KindModule() }
     }
@@ -935,13 +935,13 @@
   }
   
 %op Strategy Make_KindModule() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind.Make_KindModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.idkind.Make_KindModule))) }
 
   make() { new tom.gom.adt.gom.strategy.idkind.Make_KindModule() }
 }
 
     %op Strategy _KindSort() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind._KindSort)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.idkind._KindSort)))}
       
         make() { new tom.gom.adt.gom.strategy.idkind._KindSort() }
     }
@@ -956,13 +956,13 @@
   }
   
 %op Strategy Make_KindSort() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind.Make_KindSort)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.idkind.Make_KindSort))) }
 
   make() { new tom.gom.adt.gom.strategy.idkind.Make_KindSort() }
 }
 
     %op Strategy _KindOperator() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind._KindOperator)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.idkind._KindOperator)))}
       
         make() { new tom.gom.adt.gom.strategy.idkind._KindOperator() }
     }
@@ -977,13 +977,13 @@
   }
   
 %op Strategy Make_KindOperator() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.idkind.Make_KindOperator)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.idkind.Make_KindOperator))) }
 
   make() { new tom.gom.adt.gom.strategy.idkind.Make_KindOperator() }
 }
 
     %op Strategy _EmptyconcGomModule() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist._EmptyconcGomModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodulelist._EmptyconcGomModule)))}
       
         make() { new tom.gom.adt.gom.strategy.gommodulelist._EmptyconcGomModule() }
     }
@@ -998,16 +998,16 @@
   }
   
 %op Strategy Make_EmptyconcGomModule() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist.Make_EmptyconcGomModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodulelist.Make_EmptyconcGomModule))) }
 
   make() { new tom.gom.adt.gom.strategy.gommodulelist.Make_EmptyconcGomModule() }
 }
 
     %op Strategy _ConsconcGomModule(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist._ConsconcGomModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodulelist._ConsconcGomModule)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.gommodulelist._ConsconcGomModule(arg0, arg1) }
     }
   
@@ -1021,7 +1021,7 @@
   }
   
 %op Strategy Make_ConsconcGomModule(_HeadconcGomModule:Strategy, _TailconcGomModule:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulelist.Make_ConsconcGomModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodulelist.Make_ConsconcGomModule))) }
 
   get_slot(_HeadconcGomModule, t) { _HeadconcGomModule }
   get_slot(_TailconcGomModule, t) { _TailconcGomModule }
@@ -1029,7 +1029,7 @@
 }
 
     %op Strategy _EmptyconcGrammar() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist._EmptyconcGrammar)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammarlist._EmptyconcGrammar)))}
       
         make() { new tom.gom.adt.gom.strategy.grammarlist._EmptyconcGrammar() }
     }
@@ -1044,16 +1044,16 @@
   }
   
 %op Strategy Make_EmptyconcGrammar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist.Make_EmptyconcGrammar)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammarlist.Make_EmptyconcGrammar))) }
 
   make() { new tom.gom.adt.gom.strategy.grammarlist.Make_EmptyconcGrammar() }
 }
 
     %op Strategy _ConsconcGrammar(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist._ConsconcGrammar)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammarlist._ConsconcGrammar)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.grammarlist._ConsconcGrammar(arg0, arg1) }
     }
   
@@ -1067,7 +1067,7 @@
   }
   
 %op Strategy Make_ConsconcGrammar(_HeadconcGrammar:Strategy, _TailconcGrammar:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammarlist.Make_ConsconcGrammar)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammarlist.Make_ConsconcGrammar))) }
 
   get_slot(_HeadconcGrammar, t) { _HeadconcGrammar }
   get_slot(_TailconcGrammar, t) { _TailconcGrammar }
@@ -1075,9 +1075,9 @@
 }
 
     %op Strategy _Slots(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction._Slots)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.typedproduction._Slots)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.typedproduction._Slots(arg0) }
     }
   
@@ -1091,16 +1091,16 @@
   }
   
 %op Strategy Make_Slots(_Slots:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction.Make_Slots)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.typedproduction.Make_Slots))) }
 
   get_slot(_Slots, t) { _Slots }
   make( new_Slots) { new tom.gom.adt.gom.strategy.typedproduction.Make_Slots( new_Slots) }
 }
 
     %op Strategy _Variadic(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction._Variadic)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.typedproduction._Variadic)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.typedproduction._Variadic(arg0) }
     }
   
@@ -1114,14 +1114,14 @@
   }
   
 %op Strategy Make_Variadic(_Sort:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.typedproduction.Make_Variadic)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.typedproduction.Make_Variadic))) }
 
   get_slot(_Sort, t) { _Sort }
   make( new_Sort) { new tom.gom.adt.gom.strategy.typedproduction.Make_Variadic( new_Sort) }
 }
 
     %op Strategy _EmptyconcSection() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist._EmptyconcSection)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sectionlist._EmptyconcSection)))}
       
         make() { new tom.gom.adt.gom.strategy.sectionlist._EmptyconcSection() }
     }
@@ -1136,16 +1136,16 @@
   }
   
 %op Strategy Make_EmptyconcSection() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist.Make_EmptyconcSection)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sectionlist.Make_EmptyconcSection))) }
 
   make() { new tom.gom.adt.gom.strategy.sectionlist.Make_EmptyconcSection() }
 }
 
     %op Strategy _ConsconcSection(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist._ConsconcSection)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sectionlist._ConsconcSection)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.sectionlist._ConsconcSection(arg0, arg1) }
     }
   
@@ -1159,7 +1159,7 @@
   }
   
 %op Strategy Make_ConsconcSection(_HeadconcSection:Strategy, _TailconcSection:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sectionlist.Make_ConsconcSection)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sectionlist.Make_ConsconcSection))) }
 
   get_slot(_HeadconcSection, t) { _HeadconcSection }
   get_slot(_TailconcSection, t) { _TailconcSection }
@@ -1167,7 +1167,7 @@
 }
 
     %op Strategy _EmptyconcOperator() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist._EmptyconcOperator)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.operatordecllist._EmptyconcOperator)))}
       
         make() { new tom.gom.adt.gom.strategy.operatordecllist._EmptyconcOperator() }
     }
@@ -1182,16 +1182,16 @@
   }
   
 %op Strategy Make_EmptyconcOperator() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist.Make_EmptyconcOperator)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.operatordecllist.Make_EmptyconcOperator))) }
 
   make() { new tom.gom.adt.gom.strategy.operatordecllist.Make_EmptyconcOperator() }
 }
 
     %op Strategy _ConsconcOperator(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist._ConsconcOperator)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.operatordecllist._ConsconcOperator)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.operatordecllist._ConsconcOperator(arg0, arg1) }
     }
   
@@ -1205,7 +1205,7 @@
   }
   
 %op Strategy Make_ConsconcOperator(_HeadconcOperator:Strategy, _TailconcOperator:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecllist.Make_ConsconcOperator)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.operatordecllist.Make_ConsconcOperator))) }
 
   get_slot(_HeadconcOperator, t) { _HeadconcOperator }
   get_slot(_TailconcOperator, t) { _TailconcOperator }
@@ -1213,7 +1213,7 @@
 }
 
     %op Strategy _EmptyconcHookDecl() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist._EmptyconcHookDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecllist._EmptyconcHookDecl)))}
       
         make() { new tom.gom.adt.gom.strategy.hookdecllist._EmptyconcHookDecl() }
     }
@@ -1228,16 +1228,16 @@
   }
   
 %op Strategy Make_EmptyconcHookDecl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist.Make_EmptyconcHookDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecllist.Make_EmptyconcHookDecl))) }
 
   make() { new tom.gom.adt.gom.strategy.hookdecllist.Make_EmptyconcHookDecl() }
 }
 
     %op Strategy _ConsconcHookDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist._ConsconcHookDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecllist._ConsconcHookDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecllist._ConsconcHookDecl(arg0, arg1) }
     }
   
@@ -1251,7 +1251,7 @@
   }
   
 %op Strategy Make_ConsconcHookDecl(_HeadconcHookDecl:Strategy, _TailconcHookDecl:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecllist.Make_ConsconcHookDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecllist.Make_ConsconcHookDecl))) }
 
   get_slot(_HeadconcHookDecl, t) { _HeadconcHookDecl }
   get_slot(_TailconcHookDecl, t) { _TailconcHookDecl }
@@ -1259,7 +1259,7 @@
 }
 
     %op Strategy _EmptyconcSortDecl() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist._EmptyconcSortDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecllist._EmptyconcSortDecl)))}
       
         make() { new tom.gom.adt.gom.strategy.sortdecllist._EmptyconcSortDecl() }
     }
@@ -1274,16 +1274,16 @@
   }
   
 %op Strategy Make_EmptyconcSortDecl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist.Make_EmptyconcSortDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecllist.Make_EmptyconcSortDecl))) }
 
   make() { new tom.gom.adt.gom.strategy.sortdecllist.Make_EmptyconcSortDecl() }
 }
 
     %op Strategy _ConsconcSortDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist._ConsconcSortDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecllist._ConsconcSortDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.sortdecllist._ConsconcSortDecl(arg0, arg1) }
     }
   
@@ -1297,7 +1297,7 @@
   }
   
 %op Strategy Make_ConsconcSortDecl(_HeadconcSortDecl:Strategy, _TailconcSortDecl:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecllist.Make_ConsconcSortDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecllist.Make_ConsconcSortDecl))) }
 
   get_slot(_HeadconcSortDecl, t) { _HeadconcSortDecl }
   get_slot(_TailconcSortDecl, t) { _TailconcSortDecl }
@@ -1305,11 +1305,11 @@
 }
 
     %op Strategy _OperatorDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecl._OperatorDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.operatordecl._OperatorDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
         make(arg0, arg1, arg2) { new tom.gom.adt.gom.strategy.operatordecl._OperatorDecl(arg0, arg1, arg2) }
     }
   
@@ -1323,7 +1323,7 @@
   }
   
 %op Strategy Make_OperatorDecl(_Name:String, _Sort:Strategy, _Prod:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.operatordecl.Make_OperatorDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.operatordecl.Make_OperatorDecl))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_Sort, t) { _Sort }
@@ -1332,10 +1332,10 @@
 }
 
     %op Strategy _GomModule(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodule._GomModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodule._GomModule)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.gommodule._GomModule(arg0, arg1) }
     }
   
@@ -1349,7 +1349,7 @@
   }
   
 %op Strategy Make_GomModule(_ModuleName:Strategy, _SectionList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodule.Make_GomModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodule.Make_GomModule))) }
 
   get_slot(_ModuleName, t) { _ModuleName }
   get_slot(_SectionList, t) { _SectionList }
@@ -1357,10 +1357,10 @@
 }
 
     %op Strategy _ModHookPair(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.pair._ModHookPair)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.pair._ModHookPair)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.pair._ModHookPair(arg0, arg1) }
     }
   
@@ -1374,7 +1374,7 @@
   }
   
 %op Strategy Make_ModHookPair(_Modules:Strategy, _Hooks:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.pair.Make_ModHookPair)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.pair.Make_ModHookPair))) }
 
   get_slot(_Modules, t) { _Modules }
   get_slot(_Hooks, t) { _Hooks }
@@ -1382,9 +1382,9 @@
 }
 
     %op Strategy _Imports(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section._Imports)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.section._Imports)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.section._Imports(arg0) }
     }
   
@@ -1398,16 +1398,16 @@
   }
   
 %op Strategy Make_Imports(_ImportList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section.Make_Imports)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.section.Make_Imports))) }
 
   get_slot(_ImportList, t) { _ImportList }
   make( new_ImportList) { new tom.gom.adt.gom.strategy.section.Make_Imports( new_ImportList) }
 }
 
     %op Strategy _Public(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section._Public)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.section._Public)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.section._Public(arg0) }
     }
   
@@ -1421,14 +1421,14 @@
   }
   
 %op Strategy Make_Public(_GrammarList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.section.Make_Public)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.section.Make_Public))) }
 
   get_slot(_GrammarList, t) { _GrammarList }
   make( new_GrammarList) { new tom.gom.adt.gom.strategy.section.Make_Public( new_GrammarList) }
 }
 
     %op Strategy _EmptyconcGomType() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist._EmptyconcGomType)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gomtypelist._EmptyconcGomType)))}
       
         make() { new tom.gom.adt.gom.strategy.gomtypelist._EmptyconcGomType() }
     }
@@ -1443,16 +1443,16 @@
   }
   
 %op Strategy Make_EmptyconcGomType() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist.Make_EmptyconcGomType)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gomtypelist.Make_EmptyconcGomType))) }
 
   make() { new tom.gom.adt.gom.strategy.gomtypelist.Make_EmptyconcGomType() }
 }
 
     %op Strategy _ConsconcGomType(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist._ConsconcGomType)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gomtypelist._ConsconcGomType)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.gomtypelist._ConsconcGomType(arg0, arg1) }
     }
   
@@ -1466,7 +1466,7 @@
   }
   
 %op Strategy Make_ConsconcGomType(_HeadconcGomType:Strategy, _TailconcGomType:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtypelist.Make_ConsconcGomType)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gomtypelist.Make_ConsconcGomType))) }
 
   get_slot(_HeadconcGomType, t) { _HeadconcGomType }
   get_slot(_TailconcGomType, t) { _TailconcGomType }
@@ -1474,7 +1474,7 @@
 }
 
     %op Strategy _EmptyconcProduction() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist._EmptyconcProduction)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.productionlist._EmptyconcProduction)))}
       
         make() { new tom.gom.adt.gom.strategy.productionlist._EmptyconcProduction() }
     }
@@ -1489,16 +1489,16 @@
   }
   
 %op Strategy Make_EmptyconcProduction() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist.Make_EmptyconcProduction)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.productionlist.Make_EmptyconcProduction))) }
 
   make() { new tom.gom.adt.gom.strategy.productionlist.Make_EmptyconcProduction() }
 }
 
     %op Strategy _ConsconcProduction(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist._ConsconcProduction)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.productionlist._ConsconcProduction)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.productionlist._ConsconcProduction(arg0, arg1) }
     }
   
@@ -1512,7 +1512,7 @@
   }
   
 %op Strategy Make_ConsconcProduction(_HeadconcProduction:Strategy, _TailconcProduction:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.productionlist.Make_ConsconcProduction)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.productionlist.Make_ConsconcProduction))) }
 
   get_slot(_HeadconcProduction, t) { _HeadconcProduction }
   get_slot(_TailconcProduction, t) { _TailconcProduction }
@@ -1520,9 +1520,9 @@
 }
 
     %op Strategy _CutModule(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl._CutModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.decl._CutModule)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.decl._CutModule(arg0) }
     }
   
@@ -1536,16 +1536,16 @@
   }
   
 %op Strategy Make_CutModule(_MDecl:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutModule))) }
 
   get_slot(_MDecl, t) { _MDecl }
   make( new_MDecl) { new tom.gom.adt.gom.strategy.decl.Make_CutModule( new_MDecl) }
 }
 
     %op Strategy _CutSort(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl._CutSort)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.decl._CutSort)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.decl._CutSort(arg0) }
     }
   
@@ -1559,16 +1559,16 @@
   }
   
 %op Strategy Make_CutSort(_Sort:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutSort)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutSort))) }
 
   get_slot(_Sort, t) { _Sort }
   make( new_Sort) { new tom.gom.adt.gom.strategy.decl.Make_CutSort( new_Sort) }
 }
 
     %op Strategy _CutOperator(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl._CutOperator)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.decl._CutOperator)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.decl._CutOperator(arg0) }
     }
   
@@ -1582,14 +1582,14 @@
   }
   
 %op Strategy Make_CutOperator(_ODecl:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutOperator)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.decl.Make_CutOperator))) }
 
   get_slot(_ODecl, t) { _ODecl }
   make( new_ODecl) { new tom.gom.adt.gom.strategy.decl.Make_CutOperator( new_ODecl) }
 }
 
     %op Strategy _EmptyconcImportedModule() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist._EmptyconcImportedModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.importlist._EmptyconcImportedModule)))}
       
         make() { new tom.gom.adt.gom.strategy.importlist._EmptyconcImportedModule() }
     }
@@ -1604,16 +1604,16 @@
   }
   
 %op Strategy Make_EmptyconcImportedModule() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist.Make_EmptyconcImportedModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.importlist.Make_EmptyconcImportedModule))) }
 
   make() { new tom.gom.adt.gom.strategy.importlist.Make_EmptyconcImportedModule() }
 }
 
     %op Strategy _ConsconcImportedModule(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist._ConsconcImportedModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.importlist._ConsconcImportedModule)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.importlist._ConsconcImportedModule(arg0, arg1) }
     }
   
@@ -1627,7 +1627,7 @@
   }
   
 %op Strategy Make_ConsconcImportedModule(_HeadconcImportedModule:Strategy, _TailconcImportedModule:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importlist.Make_ConsconcImportedModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.importlist.Make_ConsconcImportedModule))) }
 
   get_slot(_HeadconcImportedModule, t) { _HeadconcImportedModule }
   get_slot(_TailconcImportedModule, t) { _TailconcImportedModule }
@@ -1635,10 +1635,10 @@
 }
 
     %op Strategy _Sort(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sort._Sort)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sort._Sort)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.sort._Sort(arg0, arg1) }
     }
   
@@ -1652,7 +1652,7 @@
   }
   
 %op Strategy Make_Sort(_Decl:Strategy, _Operators:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sort.Make_Sort)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sort.Make_Sort))) }
 
   get_slot(_Decl, t) { _Decl }
   get_slot(_Operators, t) { _Operators }
@@ -1660,10 +1660,10 @@
 }
 
     %op Strategy _SortDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl._SortDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecl._SortDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.sortdecl._SortDecl(arg0, arg1) }
     }
   
@@ -1677,7 +1677,7 @@
   }
   
 %op Strategy Make_SortDecl(_Name:String, _ModuleDecl:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl.Make_SortDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecl.Make_SortDecl))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_ModuleDecl, t) { _ModuleDecl }
@@ -1685,9 +1685,9 @@
 }
 
     %op Strategy _BuiltinSortDecl(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl._BuiltinSortDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecl._BuiltinSortDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.sortdecl._BuiltinSortDecl(arg0) }
     }
   
@@ -1701,19 +1701,20 @@
   }
   
 %op Strategy Make_BuiltinSortDecl(_Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortdecl.Make_BuiltinSortDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortdecl.Make_BuiltinSortDecl))) }
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.sortdecl.Make_BuiltinSortDecl( _Name) }
 }
 
-    %op Strategy _MakeHookDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl._MakeHookDecl)}
+    %op Strategy _MakeHookDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl._MakeHookDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.gom.adt.gom.strategy.hookdecl._MakeHookDecl(arg0, arg1, arg2) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        make(arg0, arg1, arg2, arg3) { new tom.gom.adt.gom.strategy.hookdecl._MakeHookDecl(arg0, arg1, arg2, arg3) }
     }
   
   
@@ -1725,20 +1726,21 @@
     make() { new tom.gom.adt.gom.strategy.hookdecl.Is_MakeHookDecl()}
   }
   
-%op Strategy Make_MakeHookDecl(_Pointcut:Strategy, _SlotArgs:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_MakeHookDecl)}
+%op Strategy Make_MakeHookDecl(_Pointcut:Strategy, _SlotArgs:Strategy, _Code:Strategy, _HookType:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_MakeHookDecl))) }
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_SlotArgs, t) { _SlotArgs }
   get_slot(_Code, t) { _Code }
-  make( new_Pointcut,  new_SlotArgs,  new_Code) { new tom.gom.adt.gom.strategy.hookdecl.Make_MakeHookDecl( new_Pointcut,  new_SlotArgs,  new_Code) }
+  get_slot(_HookType, t) { _HookType }
+  make( new_Pointcut,  new_SlotArgs,  new_Code,  new_HookType) { new tom.gom.adt.gom.strategy.hookdecl.Make_MakeHookDecl( new_Pointcut,  new_SlotArgs,  new_Code,  new_HookType) }
 }
 
     %op Strategy _BlockHookDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl._BlockHookDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl._BlockHookDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._BlockHookDecl(arg0, arg1) }
     }
   
@@ -1752,7 +1754,7 @@
   }
   
 %op Strategy Make_BlockHookDecl(_Pointcut:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_BlockHookDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_BlockHookDecl))) }
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
@@ -1760,10 +1762,10 @@
 }
 
     %op Strategy _InterfaceHookDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl._InterfaceHookDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl._InterfaceHookDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._InterfaceHookDecl(arg0, arg1) }
     }
   
@@ -1777,7 +1779,7 @@
   }
   
 %op Strategy Make_InterfaceHookDecl(_Pointcut:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_InterfaceHookDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_InterfaceHookDecl))) }
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
@@ -1785,10 +1787,10 @@
 }
 
     %op Strategy _ImportHookDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl._ImportHookDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl._ImportHookDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._ImportHookDecl(arg0, arg1) }
     }
   
@@ -1802,7 +1804,7 @@
   }
   
 %op Strategy Make_ImportHookDecl(_Pointcut:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_ImportHookDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_ImportHookDecl))) }
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
@@ -1810,10 +1812,10 @@
 }
 
     %op Strategy _MappingHookDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl._MappingHookDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl._MappingHookDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.hookdecl._MappingHookDecl(arg0, arg1) }
     }
   
@@ -1827,7 +1829,7 @@
   }
   
 %op Strategy Make_MappingHookDecl(_Pointcut:Strategy, _Code:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_MappingHookDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookdecl.Make_MappingHookDecl))) }
 
   get_slot(_Pointcut, t) { _Pointcut }
   get_slot(_Code, t) { _Code }
@@ -1835,7 +1837,7 @@
 }
 
     %op Strategy _EmptyconcModuleDecl() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist._EmptyconcModuleDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.moduledecllist._EmptyconcModuleDecl)))}
       
         make() { new tom.gom.adt.gom.strategy.moduledecllist._EmptyconcModuleDecl() }
     }
@@ -1850,16 +1852,16 @@
   }
   
 %op Strategy Make_EmptyconcModuleDecl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist.Make_EmptyconcModuleDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.moduledecllist.Make_EmptyconcModuleDecl))) }
 
   make() { new tom.gom.adt.gom.strategy.moduledecllist.Make_EmptyconcModuleDecl() }
 }
 
     %op Strategy _ConsconcModuleDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist._ConsconcModuleDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.moduledecllist._ConsconcModuleDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.moduledecllist._ConsconcModuleDecl(arg0, arg1) }
     }
   
@@ -1873,7 +1875,7 @@
   }
   
 %op Strategy Make_ConsconcModuleDecl(_HeadconcModuleDecl:Strategy, _TailconcModuleDecl:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecllist.Make_ConsconcModuleDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.moduledecllist.Make_ConsconcModuleDecl))) }
 
   get_slot(_HeadconcModuleDecl, t) { _HeadconcModuleDecl }
   get_slot(_TailconcModuleDecl, t) { _TailconcModuleDecl }
@@ -1881,10 +1883,10 @@
 }
 
     %op Strategy _Module(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.module._Module)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.module._Module)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.module._Module(arg0, arg1) }
     }
   
@@ -1898,7 +1900,7 @@
   }
   
 %op Strategy Make_Module(_MDecl:Strategy, _Sorts:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.module.Make_Module)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.module.Make_Module))) }
 
   get_slot(_MDecl, t) { _MDecl }
   get_slot(_Sorts, t) { _Sorts }
@@ -1906,7 +1908,7 @@
 }
 
     %op Strategy _EmptyconcField() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist._EmptyconcField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.fieldlist._EmptyconcField)))}
       
         make() { new tom.gom.adt.gom.strategy.fieldlist._EmptyconcField() }
     }
@@ -1921,16 +1923,16 @@
   }
   
 %op Strategy Make_EmptyconcField() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist.Make_EmptyconcField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.fieldlist.Make_EmptyconcField))) }
 
   make() { new tom.gom.adt.gom.strategy.fieldlist.Make_EmptyconcField() }
 }
 
     %op Strategy _ConsconcField(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist._ConsconcField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.fieldlist._ConsconcField)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.fieldlist._ConsconcField(arg0, arg1) }
     }
   
@@ -1944,7 +1946,7 @@
   }
   
 %op Strategy Make_ConsconcField(_HeadconcField:Strategy, _TailconcField:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.fieldlist.Make_ConsconcField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.fieldlist.Make_ConsconcField))) }
 
   get_slot(_HeadconcField, t) { _HeadconcField }
   get_slot(_TailconcField, t) { _TailconcField }
@@ -1952,9 +1954,9 @@
 }
 
     %op Strategy _Grammar(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar._Grammar)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammar._Grammar)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.grammar._Grammar(arg0) }
     }
   
@@ -1968,16 +1970,16 @@
   }
   
 %op Strategy Make_Grammar(_ProductionList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar.Make_Grammar)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammar.Make_Grammar))) }
 
   get_slot(_ProductionList, t) { _ProductionList }
   make( new_ProductionList) { new tom.gom.adt.gom.strategy.grammar.Make_Grammar( new_ProductionList) }
 }
 
     %op Strategy _Sorts(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar._Sorts)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammar._Sorts)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.grammar._Sorts(arg0) }
     }
   
@@ -1991,14 +1993,14 @@
   }
   
 %op Strategy Make_Sorts(_TypeList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.grammar.Make_Sorts)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.grammar.Make_Sorts))) }
 
   get_slot(_TypeList, t) { _TypeList }
   make( new_TypeList) { new tom.gom.adt.gom.strategy.grammar.Make_Sorts( new_TypeList) }
 }
 
     %op Strategy _EmptyconcSlot() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist._EmptyconcSlot)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.slotlist._EmptyconcSlot)))}
       
         make() { new tom.gom.adt.gom.strategy.slotlist._EmptyconcSlot() }
     }
@@ -2013,16 +2015,16 @@
   }
   
 %op Strategy Make_EmptyconcSlot() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist.Make_EmptyconcSlot)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.slotlist.Make_EmptyconcSlot))) }
 
   make() { new tom.gom.adt.gom.strategy.slotlist.Make_EmptyconcSlot() }
 }
 
     %op Strategy _ConsconcSlot(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist._ConsconcSlot)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.slotlist._ConsconcSlot)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.slotlist._ConsconcSlot(arg0, arg1) }
     }
   
@@ -2036,7 +2038,7 @@
   }
   
 %op Strategy Make_ConsconcSlot(_HeadconcSlot:Strategy, _TailconcSlot:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.slotlist.Make_ConsconcSlot)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.slotlist.Make_ConsconcSlot))) }
 
   get_slot(_HeadconcSlot, t) { _HeadconcSlot }
   get_slot(_TailconcSlot, t) { _TailconcSlot }
@@ -2044,7 +2046,7 @@
 }
 
     %op Strategy _EmptyconcSort() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist._EmptyconcSort)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortlist._EmptyconcSort)))}
       
         make() { new tom.gom.adt.gom.strategy.sortlist._EmptyconcSort() }
     }
@@ -2059,16 +2061,16 @@
   }
   
 %op Strategy Make_EmptyconcSort() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist.Make_EmptyconcSort)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortlist.Make_EmptyconcSort))) }
 
   make() { new tom.gom.adt.gom.strategy.sortlist.Make_EmptyconcSort() }
 }
 
     %op Strategy _ConsconcSort(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist._ConsconcSort)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortlist._ConsconcSort)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.sortlist._ConsconcSort(arg0, arg1) }
     }
   
@@ -2082,7 +2084,7 @@
   }
   
 %op Strategy Make_ConsconcSort(_HeadconcSort:Strategy, _TailconcSort:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.sortlist.Make_ConsconcSort)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.sortlist.Make_ConsconcSort))) }
 
   get_slot(_HeadconcSort, t) { _HeadconcSort }
   get_slot(_TailconcSort, t) { _TailconcSort }
@@ -2090,9 +2092,9 @@
 }
 
     %op Strategy _Arg(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arg._Arg)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.arg._Arg)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.arg._Arg(arg0) }
     }
   
@@ -2106,16 +2108,16 @@
   }
   
 %op Strategy Make_Arg(_Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.arg.Make_Arg)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.arg.Make_Arg))) }
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.arg.Make_Arg( _Name) }
 }
 
     %op Strategy _GomModuleName(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulename._GomModuleName)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodulename._GomModuleName)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.gommodulename._GomModuleName(arg0) }
     }
   
@@ -2129,16 +2131,16 @@
   }
   
 %op Strategy Make_GomModuleName(_Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gommodulename.Make_GomModuleName)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gommodulename.Make_GomModuleName))) }
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.gommodulename.Make_GomModuleName( _Name) }
 }
 
     %op Strategy _StarredField(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field._StarredField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.field._StarredField)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.field._StarredField(arg0) }
     }
   
@@ -2152,17 +2154,17 @@
   }
   
 %op Strategy Make_StarredField(_FieldType:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field.Make_StarredField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.field.Make_StarredField))) }
 
   get_slot(_FieldType, t) { _FieldType }
   make( new_FieldType) { new tom.gom.adt.gom.strategy.field.Make_StarredField( new_FieldType) }
 }
 
     %op Strategy _NamedField(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field._NamedField)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.field._NamedField)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.field._NamedField(arg0, arg1) }
     }
   
@@ -2176,7 +2178,7 @@
   }
   
 %op Strategy Make_NamedField(_Name:String, _FieldType:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.field.Make_NamedField)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.field.Make_NamedField))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_FieldType, t) { _FieldType }
@@ -2184,12 +2186,12 @@
 }
 
     %op Strategy _Production(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production._Production)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.production._Production)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
         make(arg0, arg1, arg2, arg3) { new tom.gom.adt.gom.strategy.production._Production(arg0, arg1, arg2, arg3) }
     }
   
@@ -2203,7 +2205,7 @@
   }
   
 %op Strategy Make_Production(_Name:String, _Domain:Strategy, _Codomain:Strategy, _Option:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.Make_Production)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.production.Make_Production))) }
 
   get_slot(_Name, t) { _Name }
   get_slot(_Domain, t) { _Domain }
@@ -2213,14 +2215,14 @@
 }
 
     %op Strategy _Hook(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production._Hook)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.production._Hook)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
-        get_slot(arg2, t) { t.getArgument(2) }
-        get_slot(arg3, t) { t.getArgument(3) }
-        get_slot(arg4, t) { t.getArgument(4) }
-        get_slot(arg5, t) { t.getArgument(5) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
         make(arg0, arg1, arg2, arg3, arg4, arg5) { new tom.gom.adt.gom.strategy.production._Hook(arg0, arg1, arg2, arg3, arg4, arg5) }
     }
   
@@ -2234,7 +2236,7 @@
   }
   
 %op Strategy Make_Hook(_NameType:Strategy, _Name:String, _HookType:Strategy, _Args:Strategy, _StringCode:String, _Option:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.production.Make_Hook)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.production.Make_Hook))) }
 
   get_slot(_NameType, t) { _NameType }
   get_slot(_Name, t) { _Name }
@@ -2246,10 +2248,10 @@
 }
 
     %op Strategy _ModuleDecl(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecl._ModuleDecl)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.moduledecl._ModuleDecl)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.moduledecl._ModuleDecl(arg0, arg1) }
     }
   
@@ -2263,7 +2265,7 @@
   }
   
 %op Strategy Make_ModuleDecl(_ModuleName:Strategy, _Pkg:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.moduledecl.Make_ModuleDecl)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.moduledecl.Make_ModuleDecl))) }
 
   get_slot(_ModuleName, t) { _ModuleName }
   get_slot(_Pkg, t) { _Pkg }
@@ -2271,7 +2273,7 @@
 }
 
     %op Strategy _EmptyconcModule() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist._EmptyconcModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.modulelist._EmptyconcModule)))}
       
         make() { new tom.gom.adt.gom.strategy.modulelist._EmptyconcModule() }
     }
@@ -2286,16 +2288,16 @@
   }
   
 %op Strategy Make_EmptyconcModule() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist.Make_EmptyconcModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.modulelist.Make_EmptyconcModule))) }
 
   make() { new tom.gom.adt.gom.strategy.modulelist.Make_EmptyconcModule() }
 }
 
     %op Strategy _ConsconcModule(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist._ConsconcModule)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.modulelist._ConsconcModule)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.modulelist._ConsconcModule(arg0, arg1) }
     }
   
@@ -2309,7 +2311,7 @@
   }
   
 %op Strategy Make_ConsconcModule(_HeadconcModule:Strategy, _TailconcModule:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.modulelist.Make_ConsconcModule)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.modulelist.Make_ConsconcModule))) }
 
   get_slot(_HeadconcModule, t) { _HeadconcModule }
   get_slot(_TailconcModule, t) { _TailconcModule }
@@ -2317,9 +2319,9 @@
 }
 
     %op Strategy _GomType(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtype._GomType)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gomtype._GomType)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.gomtype._GomType(arg0) }
     }
   
@@ -2333,16 +2335,16 @@
   }
   
 %op Strategy Make_GomType(_Name:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.gomtype.Make_GomType)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.gomtype.Make_GomType))) }
 
   get_slot(_Name, t) { _Name }
   make( _Name) { new tom.gom.adt.gom.strategy.gomtype.Make_GomType( _Name) }
 }
 
     %op Strategy _Import(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importedmodule._Import)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.importedmodule._Import)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.importedmodule._Import(arg0) }
     }
   
@@ -2356,16 +2358,16 @@
   }
   
 %op Strategy Make_Import(_ModuleName:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.importedmodule.Make_Import)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.importedmodule.Make_Import))) }
 
   get_slot(_ModuleName, t) { _ModuleName }
   make( new_ModuleName) { new tom.gom.adt.gom.strategy.importedmodule.Make_Import( new_ModuleName) }
 }
 
     %op Strategy _Origin(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option._Origin)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.option._Origin)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.option._Origin(arg0) }
     }
   
@@ -2379,14 +2381,14 @@
   }
   
 %op Strategy Make_Origin(_Line:int) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option.Make_Origin)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.option.Make_Origin))) }
 
   get_slot(_Line, t) { _Line }
   make( _Line) { new tom.gom.adt.gom.strategy.option.Make_Origin( _Line) }
 }
 
     %op Strategy _EmptyOptionList() {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option._EmptyOptionList)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.option._EmptyOptionList)))}
       
         make() { new tom.gom.adt.gom.strategy.option._EmptyOptionList() }
     }
@@ -2401,16 +2403,16 @@
   }
   
 %op Strategy Make_EmptyOptionList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option.Make_EmptyOptionList)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.option.Make_EmptyOptionList))) }
 
   make() { new tom.gom.adt.gom.strategy.option.Make_EmptyOptionList() }
 }
 
     %op Strategy _ConsOptionList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option._ConsOptionList)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.option._ConsOptionList)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
-        get_slot(arg1, t) { t.getArgument(1) }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
         make(arg0, arg1) { new tom.gom.adt.gom.strategy.option._ConsOptionList(arg0, arg1) }
     }
   
@@ -2424,7 +2426,7 @@
   }
   
 %op Strategy Make_ConsOptionList(_HeadOptionList:Strategy, _TailOptionList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.option.Make_ConsOptionList)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.option.Make_ConsOptionList))) }
 
   get_slot(_HeadOptionList, t) { _HeadOptionList }
   get_slot(_TailOptionList, t) { _TailOptionList }
@@ -2432,9 +2434,9 @@
 }
 
     %op Strategy _HookKind(arg0:Strategy) {
-      is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookkind._HookKind)}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookkind._HookKind)))}
       
-        get_slot(arg0, t) { t.getArgument(0) }
+        get_slot(arg0, t) { $t.getArgument(0) }
         make(arg0) { new tom.gom.adt.gom.strategy.hookkind._HookKind(arg0) }
     }
   
@@ -2448,7 +2450,7 @@
   }
   
 %op Strategy Make_HookKind(_kind:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.gom.adt.gom.strategy.hookkind.Make_HookKind)}
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.gom.strategy.hookkind.Make_HookKind))) }
 
   get_slot(_kind, t) { _kind }
   make( _kind) { new tom.gom.adt.gom.strategy.hookkind.Make_HookKind( _kind) }

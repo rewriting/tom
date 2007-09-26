@@ -254,6 +254,11 @@ public class TomBackend extends TomGenericPlugin {
     getSymbolTable(moduleName).setUsedTypeDefinition(tomTypeName);
   }
 
+  /*
+   * the strategy Collector is used collect the part of the mapping that is really used
+   * this strategy also collect the declarations (IsFsymDecl, GetSLotDecl, etc)
+   * to fill the mapInliner used by the backend to inline calls to IsFsym, GetSlot, etc.
+   */
   %strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
       CompiledMatch[AutomataInst=inst, Option=optionList] -> {
@@ -327,15 +332,6 @@ public class TomBackend extends TomGenericPlugin {
       }
     }
 
-    visit Declaration {
-      TypeTermDecl[] -> {
-        // should not search under a declaration
-        //System.out.println("skip: " + `x);
-        throw new tom.library.sl.VisitFailure();
-      }
-    }
-
-
     visit TomTerm {
       (TermAppl|RecordAppl)[NameList=nameList] -> {
         TomNameList l = `nameList;
@@ -387,5 +383,32 @@ public class TomBackend extends TomGenericPlugin {
       }
     }
 
+    visit Declaration {
+      TypeTermDecl[] -> {
+        // should not search under a declaration
+        throw new tom.library.sl.VisitFailure();
+      }
+
+      /*
+       * collect all declarations and add them in the mapInliner
+       */
+      IsFsymDecl[AstName=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putIsFsym(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+      GetSlotDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putGetSlot(`opname,`slotName,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+    }
   }
 } // class TomBackend

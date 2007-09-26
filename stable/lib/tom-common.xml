@@ -5,6 +5,7 @@
   <property name="nowarnings"  value="false"/>
   <property name="optimize"    value="on"/>
   <property name="optimize2"   value="off"/>
+  <property name="inline"      value="off"/>
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
@@ -62,6 +63,7 @@
            nowarn="${nowarnings}"
            optimize="${optimize}"
            optimize2="${optimize2}"
+           inline="${inline}"
            verbose="${verbose}"
            fork="${tomfork}"
            pretty="${pretty}">

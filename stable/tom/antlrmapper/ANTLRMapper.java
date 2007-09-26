@@ -85,12 +85,12 @@ matchBlock: {
 		  Integer val = Integer.valueOf(tomMatch1NameNumber_freshVar_17);
 		  tokenMap.put(val,tom_get_slice_concString(tomMatch1NameNumber_begin_11,tomMatch1NameNumber_end_12,tom_empty_list_concString()));
 		  break matchBlock;
-		}}}}}if (tom_is_empty_concString_String(tomMatch1NameNumber_end_16)) {tomMatch1NameNumber_end_16=tomMatch1NameNumber_begin_15;} else {tomMatch1NameNumber_end_16=tom_get_tail_concString_String(tomMatch1NameNumber_end_16);}}} while(!(tom_equal_term_String(tomMatch1NameNumber_end_16, tomMatch1NameNumber_begin_15)));}}}}}}if (tom_is_empty_concString_String(tomMatch1NameNumber_end_12)) {tomMatch1NameNumber_end_12=tomMatch1NameNumber_begin_11;} else {tomMatch1NameNumber_end_12=tom_get_tail_concString_String(tomMatch1NameNumber_end_12);}}} while(!(tom_equal_term_String(tomMatch1NameNumber_end_12, tomMatch1NameNumber_begin_11)));}}}}if (tom_is_fun_sym_concString(tomMatch1NameNumberfreshSubject_1)) {{  String  tomMatch1NameNumber_freshVar_61=tomMatch1NameNumberfreshSubject_1;{  String  tomMatch1NameNumber_begin_63=tomMatch1NameNumber_freshVar_61;{  String  tomMatch1NameNumber_end_64=tomMatch1NameNumber_freshVar_61;do {{{  String  tomMatch1NameNumber_freshVar_62=tomMatch1NameNumber_end_64;if (!(tom_is_empty_concString_String(tomMatch1NameNumber_freshVar_62))) {if (tom_equal_term_char('=', tom_get_head_concString_String(tomMatch1NameNumber_freshVar_62))) {{  String  tomMatch1NameNumber_freshVar_65=tom_get_tail_concString_String(tomMatch1NameNumber_freshVar_62);if ( true ) {
+		}}}}}if (tom_is_empty_concString_String(tomMatch1NameNumber_end_16)) {tomMatch1NameNumber_end_16=tomMatch1NameNumber_begin_15;} else {tomMatch1NameNumber_end_16=tom_get_tail_concString_String(tomMatch1NameNumber_end_16);}}} while(!(tom_equal_term_String(tomMatch1NameNumber_end_16, tomMatch1NameNumber_begin_15)));}}}}}}if (tom_is_empty_concString_String(tomMatch1NameNumber_end_12)) {tomMatch1NameNumber_end_12=tomMatch1NameNumber_begin_11;} else {tomMatch1NameNumber_end_12=tom_get_tail_concString_String(tomMatch1NameNumber_end_12);}}} while(!(tom_equal_term_String(tomMatch1NameNumber_end_12, tomMatch1NameNumber_begin_11)));}}}}if (tom_is_fun_sym_concString(tomMatch1NameNumberfreshSubject_1)) {{  String  tomMatch1NameNumber_freshVar_23=tomMatch1NameNumberfreshSubject_1;{  String  tomMatch1NameNumber_begin_25=tomMatch1NameNumber_freshVar_23;{  String  tomMatch1NameNumber_end_26=tomMatch1NameNumber_freshVar_23;do {{{  String  tomMatch1NameNumber_freshVar_24=tomMatch1NameNumber_end_26;if (!(tom_is_empty_concString_String(tomMatch1NameNumber_freshVar_24))) {if (tom_equal_term_char('=', tom_get_head_concString_String(tomMatch1NameNumber_freshVar_24))) {{  String  tomMatch1NameNumber_freshVar_27=tom_get_tail_concString_String(tomMatch1NameNumber_freshVar_24);if ( true ) {
 
-		  Integer val = Integer.valueOf(tomMatch1NameNumber_freshVar_65);
-		  tokenMap.put(val,tom_get_slice_concString(tomMatch1NameNumber_begin_63,tomMatch1NameNumber_end_64,tom_empty_list_concString()));
+		  Integer val = Integer.valueOf(tomMatch1NameNumber_freshVar_27);
+		  tokenMap.put(val,tom_get_slice_concString(tomMatch1NameNumber_begin_25,tomMatch1NameNumber_end_26,tom_empty_list_concString()));
 		  break matchBlock;
-		}}}}}if (tom_is_empty_concString_String(tomMatch1NameNumber_end_64)) {tomMatch1NameNumber_end_64=tomMatch1NameNumber_begin_63;} else {tomMatch1NameNumber_end_64=tom_get_tail_concString_String(tomMatch1NameNumber_end_64);}}} while(!(tom_equal_term_String(tomMatch1NameNumber_end_64, tomMatch1NameNumber_begin_63)));}}}}}}
+		}}}}}if (tom_is_empty_concString_String(tomMatch1NameNumber_end_26)) {tomMatch1NameNumber_end_26=tomMatch1NameNumber_begin_25;} else {tomMatch1NameNumber_end_26=tom_get_tail_concString_String(tomMatch1NameNumber_end_26);}}} while(!(tom_equal_term_String(tomMatch1NameNumber_end_26, tomMatch1NameNumber_begin_25)));}}}}}}
 
 	    }
       }
@@ -158,17 +158,7 @@ matchBlock: {
   void generateTomMapping(Map tokMap) {
     StringBuffer out = new StringBuffer();
 
-    out.append("\n\t%include{ int.tom }\n\t%include{ string.tom }\n\t%include{ aterm.tom }\n\t%include{ atermlist.tom }\n\n\t%oplist ATermList concATerm (ATerm*){\n\tis_fsym(t) { t instanceof ATermList }\n\tmake_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }\n\tmake_insert(e,l) { l.insert(e) }\n\tget_head(t) { t.getFirst() }\n\tget_tail(t) { t.getNext() }\n\tis_empty(t) { t.isEmpty() }\n\t}\n\n\t%op ATerm NodeInfo(text:String,line:int,column:int) {\n\tis_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun(\"NodeInfo\",3,false) }\n\tget_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }\n\tget_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }\n\tget_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }\n\tmake(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(\"NodeInfo\",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }\n\t}\n\n\t"
-
-
-
-
-
-
-
-
-
-
+    out.append("\n\t%include{ int.tom }\n\t%include{ string.tom }\n\t%include{ aterm.tom }\n\n\t%op ATerm NodeInfo(text:String,line:int,column:int) {\n\tis_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun(\"NodeInfo\",3,false) }\n\tget_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }\n\tget_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }\n\tget_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }\n\tmake(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(\"NodeInfo\",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }\n\t}\n\n\t"
 
 
 

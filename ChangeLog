@@ -1,3 +1,8 @@
+2007-09-26  pem
+  * improved the inliner such that src.all succeeds with --inline
+	* added the inline option to ant TomTask
+	* bootstrap
+
 2007-08-31  pem
   * %strategy ... extends `...
 	  the term after extends can be anything

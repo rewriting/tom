@@ -529,9 +529,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot1.getLine(),currentFile());
                 String varname = "t";
                 TomTerm slotVar = `Variable(concOption(slotOption),Name(varname),strategyType,concConstraint());
-                Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,
-                  Code(ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname)),
-                  slotOption);
+                String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
+                Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
                 pairNameDeclList.add(`PairNameDecl(astName,slotDecl)); 
                 types = `concTomType(types*,TomTypeAlone(stringTypeArg));
@@ -560,9 +559,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                     Option slotOption = `OriginTracking(Name(stringSlotName),firstSlot2.getLine(),currentFile());
                     String varname = "t";
                     TomTerm slotVar = `Variable(concOption(slotOption),Name(varname),strategyType,concConstraint());
-                    Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar,
-                        Code(ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname)),
-                        slotOption);
+                    String code = ASTFactory.abstractCode("((" + name.getText() + ")$"+varname+").get" + stringSlotName + "()",varname);
+                    Declaration slotDecl = `GetSlotDecl(Name(name.getText()),Name(stringSlotName),slotVar, Code(code), slotOption);
 
                     pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),slotDecl)); 
                     types = `concTomType(types*,TomTypeAlone(stringTypeArg));
@@ -611,8 +609,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
           Option fsymOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
           String varname = "t";
           TomTerm fsymVar = `Variable(concOption(fsymOption),Name(varname),strategyType,concConstraint());
-          Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,
-              Code(ASTFactory.abstractCode("($"+varname+" instanceof " + name.getText() + ")",varname)),fsymOption);
+          String code = ASTFactory.abstractCode("($"+varname+" instanceof " + name.getText() + ")",varname);
+          Declaration fsymDecl = `IsFsymDecl(Name(name.getText()),fsymVar,Code(code),fsymOption);
           options.add(fsymDecl);
 
           TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), strategyType, types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
@@ -2023,9 +2021,10 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             selector().pop();
 
+            String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
             result = `IsFsymDecl(astName,
                 Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
-                Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),ot);
+                Code(code),ot);
         }
     ;
 
@@ -2069,11 +2068,11 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop(); 
-
+                String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                     Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())), ot);
+                     Code(code), ot);
             }
         )
     ;
