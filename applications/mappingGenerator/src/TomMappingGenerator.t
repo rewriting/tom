@@ -130,8 +130,9 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       if (!startPointFile.getName().endsWith(".class")) {
         return;
       }
-      System.out.println("Extracting mapping for:" + startPointFile.getName());      
+      System.out.print("Extracting mapping for:" + startPointFile.getName() + " ... ");      
       extractMapping((new MGClassLoader(getURLPathsFromString(includeInClasspath))).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
+      System.out.println("Done !");
     }
   }
 
