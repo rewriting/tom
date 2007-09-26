@@ -7,7 +7,23 @@
     <delete dir="${examples.build}/${lambdacalculi}"/>
   </target>
   <target name="build" depends="init">
-    <gomcompile example="${lambdacalculi}"/>
+    <gom.preset srcdir="${examples.dir}"
+      package="${lambdacalculi}" 
+      termgraph="true" 
+      destdir="${examples.gen}">
+      <include name="${lambdacalculi}/lambdaterm.gom"/>
+    </gom.preset>
+    <tom.preset outputfile="${examples.gen}/${lambdacalculi}/LambdaTermParser.g"
+                options="-I ${examples.gen}/${lambdacalculi}"
+                srcdir="${examples.dir}"> 
+                <include name="${lambdacalculi}/**/LambdaTermParser.g.t"/>
+    </tom.preset>
+    <mkdir dir="${examples.gen}/${lambdacalculi}"/>
+    <tomantlr target="${examples.gen}/${lambdacalculi}/LambdaTermParser.g"
+      outputdirectory="${examples.gen}/${lambdacalculi}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+
     <tomcompile example="${lambdacalculi}"/>
     <javacompile example="${lambdacalculi}"/>
   </target>
