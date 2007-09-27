@@ -99,121 +99,94 @@ proof lambdaXsX: SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) =>
 	          lappl(lterm, lappl(lappl(arrow, nat), nat))).
 intro. focus h1. rule. nat. nat. nat. nat.
 autoreduce.
-focus h6. rule. nat.
+focus h9. showrules.
+rule. 
+lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one())).
 autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. lappl(lappl(arrow, nat), nat).
-autoreduce.
-focus h4. rule. nat.
-autoreduce.
-reduce. focus h2. rule. nat.
-
-autoreduce.
-autoreduce.
-focus h5. rule. lappl(lappl(arrow, nat), nat).
-autoreduce.
-focus h4. rule. nat.
-autoreduce.
-reduce. focus h2. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. lappl(lappl(arrow, nat), nat).
-autoreduce.
-focus h4. rule. nat.
-autoreduce.
-reduce. focus h2. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-focus h5. rule. nat.
-autoreduce.
-autoreduce.
-
-focus h9. rule. lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one())).
 autoreduce.
 focus h7. rule. nat.
-autoreduce.
-autoreduce.
-focus h6. rule. nat.
-autoreduce.
-autoreduce.
+autoreduce. autoreduce.
 focus h10. rule. s.
 autoreduce.
-reduce. focus h2. rule. z0.
+focus h2. showrules.
+rule. z0.
 autoreduce.
+axiom.
+axiom.
+reduce.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat).
 autoreduce.
+reduce.
+focus h4. rule. nat.
+reduce.
+focus h2. rule. nat.
 autoreduce.
+axiom.
+axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+autoreduce.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. nat. autoreduce. axiom.
+
+
+
+
+
+

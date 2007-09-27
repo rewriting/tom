@@ -904,8 +904,8 @@ b :{
       Tree tree = null;
 
       // printing open goals
-      writeToOutputln("Open goals : ");
       LinkedList<Position> og = env.openGoals;
+      writeToOutputln(og.size() + " open goals : ");
       %match(LinkedList og) {
         (_*,p,_*) -> {
           Position pos = (Position) `p;

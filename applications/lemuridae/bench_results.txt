@@ -1,18 +1,7 @@
-- Without inliner
+- without inliner
 
-real    0m22.846s
-user    0m18.897s
-sys     0m1.092s
+TODO
 
-- With is_fsym inlining
+- whith inliner
 
-real    0m20.689s
-user    0m18.933s
-sys     0m1.064s
-
-- whith get_slot inlining
-
-real    0m19.830s
-user    0m18.309s
-sys     0m0.920s
-
+TODO

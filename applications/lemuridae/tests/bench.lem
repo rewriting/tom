@@ -1,252 +1,193 @@
-termrule appl(t,nil()) -> t.
-termrule appl(one(),cons(t,l)) -> t.
-termrule appl(S(n),cons(t,l)) -> appl(n,l).
-termrule appl(succ(t),l) -> succ(appl(t,l)).
-termrule appl(pred(t),l) -> pred(appl(t,l)).
-termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
-termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+termrule lappl(lambda(a),b) -> subst(a,lcons(b,id())) .
+termrule subst(lappl(b,a),s) -> lappl(subst(b,s),subst(a,s)).
+termrule subst(one(),lcons(a,s)) -> a.
+termrule subst(a,id()) -> a.
+termrule subst(lambda(a),s) -> lambda(subst(a,lcons(one(),rond(s,shift())))).
+termrule subst(subst(a,s),t) -> subst(a,rond(s,t)).
+termrule rond(id(),s) -> s.
+termrule rond(shift(),lcons(a,s)) -> s.
+termrule rond(rond(s1,s2),s3) -> rond(s1,rond(s2,s3)).
+termrule rond(lcons(a,s),t) -> lcons(subst(a,t),rond(s,t)).
+termrule rond(s,id()) -> s.
+termrule lcons(one(),shift()) -> id().
+termrule lcons(subst(one(),s), rond(shift(), s)) -> s.
 
-termrule pred(0) -> 0.
-termrule pred(succ(x)) -> x.
-termrule 0 + y -> y.
-termrule 0 * y -> 0.
-termrule succ(x) + y -> succ(x+y).
-termrule succ(x) * y -> x * y + y.
+termrule subst(pitype(a,b),s) -> pitype(subst(a,s),subst(b,lcons(one(),rond(s,shift())))).
+termrule subst(pikind(a,b),s) -> pikind(subst(a,s),subst(b,lcons(one(),rond(s,shift())))).
 
-proprule in(l,fNull(t)) -> Null(appl(t,l)).
-proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
-proprule in(l,fN(t)) -> N(appl(t,l)).
-rule eq(x,y) -> forall A, in(cons(x,nil()),A) => in(cons(y,nil()),A).
-rule N(n) -> forall A, in(cons(0,nil()),A) => ( forall y,in(cons(y,nil()),A) => in(cons(succ(y),nil()),A) ) => in(cons(n,nil()),A) .
-hered.
-rule Null(0) -> True.
-rule Null(succ(x)) -> False.
-proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
-proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
-proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
-proprule in(l,emptyset()) -> \B.
-proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
-proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+rule in(type(),kind()) -> \T.
+rule in(pitype(a,b),type()) -> in(a,type()) /\ 
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), type())).
+rule in(pikind(a,b),kind()) -> in(a,type()) /\ 
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), kind())).
+rule in(a,pitype(b,c)) -> in(b,type()) /\ forall z, (in(z,b) =>
+	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),type()))).
+rule in(a,pikind(b,c)) -> in(b,type()) /\ forall z, (in(z,b) =>
+	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),kind()))).
+
+rule WF(cons(gamma,e(a,b))) ->
+    (WF(gamma)=>(in(b,type())\/in(b,kind()))) => (C(gamma) /\in(a,b)).
+
+rule C(cons(gamma,e(a,b))) -> 
+     C(gamma) /\ in(a,b).
+
+proof a_simple_proof: WF(cons(nil(),e(nat,type()))) => 
+      	 in(lambda(one()),pitype(nat,subst(nat,shift()))).
+
+autoreduce.
+
+//display a_simple_proof.
+
+rule NatListTheory(nat,z,succ,natList,nil,cons) ->
+     WF(cons(cons(cons(cons(cons(cons(nil(),
+     e(nat,type())),
+     e(z,nat)), 
+     e(succ,pitype(nat,subst(nat,shift())))),
+     e(natList, pikind(nat, subst(type(),shift())))),
+     e(nil,lappl(natList,z))),
+     e(cons, pitype(nat, pitype(subst(nat,shift()), (pitype(lappl(subst(natList,rond(shift(),shift())), one()), 
+      	 	  	    lappl(subst(natList,rond(shift(),rond(shift(),shift()))), lappl(subst(succ,rond(shift(),rond(shift(),shift()))),subst(one(),shift())))))))))).
+
+proof singletonZ: NatListTheory(nat,z,succ,natList,nil,cons) =>
+      in(lappl(lappl(lappl(cons, lappl(succ, z)), z), nil), lappl(natList,lappl(succ,z))).
+autoreduce.
+next.
+focus h6.
+rule. z.
+autoreduce.
+axiom.
+next.
+focus h7. rule. z.
+autoreduce.
+axiom.
+next.
+focus h6. rule. z1.
+autoreduce.
+axiom.
+next.
+focus h7. rule. lappl(succ,z1).
+autoreduce.
+focus h7. rule. z1.
+autoreduce.
+axiom.
+focus h7. rule. lappl(succ,z).
+autoreduce.
+focus h2. rule. z.
+autoreduce.
+focus h2. rule. nil.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. z. autoreduce. autoreduce.
+
+rule SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) ->
+       forall A,(forall B,(forall C,(forall D,( WF(cons(cons(cons(cons(cons(cons(cons(cons(nil(),
+       e(tp,type())),
+       e(arrow, pitype(tp, pitype(subst(tp,shift()),subst(tp,rond(shift(),shift())))))),
+       e(nat, tp)),
+       e(lterm, pikind(tp,subst(type(),shift())))),
+       e(z, lappl(lterm, nat))),
+       e(s, lappl(lterm, lappl(lappl(arrow,nat),nat)))),
+       e(app, pitype(lappl(lterm, lappl(lappl(arrow,A),B)),
+	       			pitype(lappl(subst(lterm,shift()),subst(A,shift())),
+				lappl(subst(lterm,rond(shift(),shift())),subst(B,rond(shift(),shift()))))))),
+       e(lam, pitype(pitype(lappl(lterm, C), lappl(subst(lterm,shift()),subst(D,shift()))), lappl(subst(lterm,shift()),lappl(lappl(subst(arrow,shift()),subst(C,shift())),subst(D,shift()))))))))))).
 
 
-rule Pair(0) -> True.
-rule Pair(succ(n)) -> Impair(n).
-rule Impair(succ(n)) -> Pair(n).
-
-proprule in(l,fPair(t)) -> Pair(appl(t,l)).
-proprule in(l,fImpair(t)) -> Impair(appl(t,l)).
-
-
-
-proof zisnat: N(0).
+proof lambdaXsX: SimpleTypeTheory(tp,arrow,nat,lterm,z,s,app,lam) =>
+	       in(lappl(lam, lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one()))),
+	          lappl(lterm, lappl(lappl(arrow, nat), nat))).
+intro. focus h1. rule. nat. nat. nat. nat.
+autoreduce.
+focus h9. showrules.
 rule. 
-axiom.
-
-proof oneisnat: N(1).
-rule.
-focus h2. rule. 0.
-axiom. axiom.
-
-proof ind: forall n, N(n) => N(succ(n)).
-auto.
-focus h3. rule. inter(fN(one()),A0).
-next.
-reduce.
-intro.
-axiom.
-theorem zisnat. axiom.
-reduce.
-intros.
-focus h4. rule. n0.
-axiom.
-axiom.
-rule. reduce.
-intros.
-focus h4. rule. y0.
-axiom.
-axiom.
-focus h4. rule. n0.
-axiom.
-focus h5. rule. A0.
-axiom.
-axiom.
-axiom.
-
-proof eqrefl: forall x,eq(x,x).
-auto.
-
-proof succisafun: forall x y, eq(x,y) => eq(succ(x),succ(y)).
-intros.
-focus h1. rule. fEq(S(succ(x0)),succ(one())).
-reduce.
-axiom.
-reduce.
-theorem eqrefl.
-focus h2. intro. succ(x0). axiom.
-
-proof natcase: forall n, N(n) => (Null(n) \/ (exists m, N(m) /\ eq(n,succ(m)))).
-intros.
-focus h1. rule. inter(fN(one()),union(fNull(one()),P(inter(fN(one()),fEq(S(one()),succ(one())))))).
-reduce.
-intros.
-focus c2. intro. n1. 
-intros.
-focus h1. remove. focus c2. remove. focus c2. remove.
-rule. reduce.
-intros.
-focus c2. intro. succ(n0).
-intros.
-theorem succisafun.
-focus h4. intro. y0. focus h4. intro. succ(n0).
-intros.
-theorem ind.
-focus h4. intro. n0.
-intros.
-focus c2. intro. y0.
-auto.
-theorem ind.
-focus h4. intro. y0.
-intros.
-theorem ind.
-focus h3. intro. y0.
-intros.
-reduce.
-intro. intro. 
-rule.
-theorem zisnat. axiom.
-
-proof predsucc: forall n, N(n) => ~Null(n) => eq(pred(succ(n)), succ(pred(n))).
-intros.
-focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
-reduce.
-intros.
+lambda(lappl(lappl(subst(app,shift()),subst(s,shift())),one())).
 autoreduce.
 autoreduce.
-
-proof discriminate: forall n, ~eq(0,succ(n)).
-intros.
-focus h1. rule. fNull(one()).
+focus h7. rule. nat.
+autoreduce. autoreduce.
+focus h10. rule. s.
 autoreduce.
+focus h2. showrules.
+rule. z0.
 autoreduce.
-
-
-proof pair2n : (forall x y, eq(x+y,y+x)) => forall n, N(n) => Pair(2*n).
+axiom.
+axiom.
 reduce.
-intros.
-focus h2. rule. fPair(one()+one()).
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat).
 autoreduce.
-rule.
+reduce.
+focus h4. rule. nat.
+reduce.
+focus h2. rule. nat.
 autoreduce.
-focus h2. intro. succ(y0).
-focus h2. intro. y0.
-focus h2. rule. fImpair(one()).
-reduce.
 axiom.
-reduce.
-rule.
 axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
 autoreduce.
-
-proof eqsym: forall x y, eq(x,y) => eq(y,x).
-intros.
-focus h1. rule. fEq(one(),S(x0)).
-reduce.
-axiom.
-reduce.
-theorem eqrefl.
-focus h2. intro. x0. axiom.
-
-proof eqtrans:  forall x y z, eq(x,y) => (eq(y,z) => eq(x,z)).
-auto.
-focus h2. rule. A0.
-focus h4. rule. A0.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
 axiom.
 axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
 axiom.
-
-
-proof nplus0:   forall n, N(n) => eq(n+0,n).
-intros.
-focus h1. rule. fEq(one()+S(0),one()).
-reduce. axiom.
-rule.
-reduce.
-theorem succisafun.
-focus h3. intro. (y0+0). focus h3. intro. (y0).
-intros.
-reduce.
-theorem eqrefl.
-focus h2. intro. 0.
 axiom.
-
-proof plusassoc:   forall x y z, N(x) => eq( x+(y+z) , (x+y)+z ).
-intros.
-focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
-reduce. axiom.
-rule.
-reduce.
-theorem succisafun.
-focus h3. intro. y1+(y0+z0). focus h3. intro. (y1+y0)+z0. 
-intros.
-reduce. 
-theorem eqrefl.
-focus h2. intro. y0+z0. axiom.
-
-
-proof plusnSm:  forall n m, N(n) => eq(succ(n+m),n+succ(m)).
-intros.
-focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
-reduce. axiom.
-rule.
-reduce.
-theorem succisafun.
-focus h3. intro. succ(y0+m0). focus h3. intro. y0+succ(m0).
-intros.
-reduce.
-theorem eqrefl.
-focus h2. intro. succ(m0). axiom.
-
-proof pluscommut:  forall n m, N(n)=>(N(m)=>eq(n+m,m+n)).
-intros.
-focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
-reduce. axiom.
-next.
-reduce.
-theorem nplus0.
-focus h3. intro. m0.
-intros.
-theorem eqsym.
-focus h4. intro. m0+0.
-focus h4. intro. m0.
-intros.
-rule. reduce.
-theorem plusnSm.
-focus h4. intro. m0.
-focus h4. intro. y0.
-intros.
-theorem succisafun.
-focus h5. intro. y0+m0. focus h5. intro. m0+y0. 
-intros.
-theorem eqtrans.
-focus h6. intro. succ(y0+m0).
-focus h6. intro. succ(m0+y0).
-focus h6. intro. m0+succ(y0).
-intros.
-
-proof multn0:  forall n, N(n) => eq(0,n*0).
-intros.
-focus h1. rule. fEq(S(0),one()*S(0)).
-reduce. axiom.
-rule. reduce.
-focus h1. rule. fEq(S(0),one()+S(0)).
-reduce. axiom.
-reduce.
-theorem eqrefl.
-focus h3. intro. 0. axiom.
-reduce.
-theorem eqrefl.
-focus h2. intro. 0. axiom.
-
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h6. rule. nat. autoreduce. axiom.
+focus h5. rule. nat. autoreduce. axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. lappl(lappl(arrow,nat),nat). autoreduce.
+focus h4. rule. nat. reduce.
+focus h2. rule. nat.
+autoreduce.
+axiom.
+axiom.
+focus h5. rule. nat. autoreduce. axiom.
 
 quit.
+
+
+
+
 
