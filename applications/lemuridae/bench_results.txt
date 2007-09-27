@@ -1,7 +1,12 @@
 - without inliner
 
-TODO
+real    1m28.841s
+user    1m42.227s
+sys     0m13.764s
 
 - whith inliner
 
-TODO
+real    1m27.703s
+user    1m41.580s
+sys     0m13.056s
+
