@@ -1,0 +1,113 @@
+module PolygraphicProgram
+	imports String
+	abstract syntax
+OnePath = OneId()
+		| OneCell (Name:String)
+		| OneC0 (OnePath*)
+	
+TwoPath = TwoId (onePath:OnePath)
+		| TwoCell (Name:String,Source:OnePath,Target:OnePath,Type:CellType)
+		| TwoC0 (TwoPath*)
+		| TwoC1 (TwoPath*)
+
+ThreePath = ThreeId (twoPath:TwoPath)
+		| ThreeCell (Name:String,Source:TwoPath,Target:TwoPath,Type:CellType)
+		| ThreeC0 (ThreePath*)
+		| ThreeC1 (ThreePath*)
+		| ThreeC2 (ThreePath*)
+		
+CellType = Constructor()
+		| Structure()
+		| Function()
+
+OneC0:AU() { `OneId() }
+
+TwoC0:Free() {}
+TwoC0:make_empty() { return `TwoId(OneId()); }
+TwoC0:make_insert(x,y) {
+%match(x,y){
+	TwoId(OneId()),tail -> {return `tail; }
+	head,TwoId(OneId())  -> {return `head; }
+	TwoC0(h,t),tail -> {return `TwoC0(h,TwoC0(t,tail)); }
+	TwoC1(),g -> { return `g; }
+	g,TwoC1() -> { return `g; }
+	}
+}
+
+TwoC1:Free() {}
+TwoC1:make_empty() { return `TwoId(OneId()); }
+TwoC1:make_insert(x,y) {
+	if(y!=`TwoId(OneId())&&polygraphicprogram.PolygraphicProgram.twoT1(x)!=(polygraphicprogram.PolygraphicProgram.twoS1(y)))
+	{
+		System.out.println(polygraphicprogram.PolygraphicProgram.twoT1(x).equals(polygraphicprogram.PolygraphicProgram.twoS1(y)));
+		throw new RuntimeException("composition of incompatible 2-Paths");
+	}
+%match(x,y){
+	//verifier la compatibilite de x et de y
+	TwoId(OneId()),tail -> {return `tail; }
+	head,TwoId(OneId())  -> {return `head; }
+	TwoC1(h,t),tail -> {return `TwoC1(h,TwoC1(t,tail)); }
+	TwoC0(),g -> { return `g; }
+	g,TwoC0() -> { return `g; }
+	}
+}
+
+ThreeC0:Free() {}
+ThreeC0:make_empty() { return `ThreeId(TwoId(OneId())); }
+ThreeC0:make_insert(x,y) {
+%match(x,y){
+	ThreeId(TwoId(OneId())),tail -> {return `tail; }
+	head,ThreeId(TwoId(OneId()))  -> {return `head; }
+	ThreeC0(h,t),tail -> {return `ThreeC0(h,ThreeC0(t,tail)); }
+	ThreeC1(),g -> { return `g; }
+	g,ThreeC1() -> { return `g; }
+	ThreeC2(),g -> { return `g; }
+	g,ThreeC2() -> { return `g; }
+	}
+}
+
+ThreeC1:Free() {}
+ThreeC1:make_empty() { return `ThreeId(TwoId(OneId())); }
+ThreeC1:make_insert(x,y) {
+	if(y!=`ThreeId(TwoId(OneId()))&&polygraphicprogram.PolygraphicProgram.twoT1(polygraphicprogram.PolygraphicProgram.threeS2(x))!=polygraphicprogram.PolygraphicProgram.twoS1(polygraphicprogram.PolygraphicProgram.threeS2(y)))
+	{
+		throw new RuntimeException("composition of incompatible 3-Paths");
+	}
+%match(x,y){
+	ThreeId(TwoId(OneId())),tail -> {return `tail; }
+	head,ThreeId(TwoId(OneId()))  -> {return `head; }
+	ThreeC1(h,t),tail -> {return `ThreeC1(h,ThreeC1(t,tail)); }
+	ThreeC0(),g -> { return `g; }
+	g,ThreeC0() -> { return `g; }
+	ThreeC2(),g -> { return `g; }
+	g,ThreeC2() -> { return `g; }
+	}
+}
+
+ThreeC2:Free() {}
+ThreeC2:make_empty() { return `ThreeId(TwoId(OneId())); }
+ThreeC2:make_insert(x,y) {
+	if(y!=`ThreeId(TwoId(OneId()))&&polygraphicprogram.PolygraphicProgram.threeT2(x)!=polygraphicprogram.PolygraphicProgram.threeS2(y))
+	{
+		throw new RuntimeException("composition of incompatible 3-Paths");
+	}
+%match(x,y){
+	ThreeId(TwoId(OneId())),tail -> {return `tail; }
+	head,ThreeId(TwoId(OneId()))  -> {return `head; }
+	ThreeC2(h,t),tail -> {return `ThreeC2(h,ThreeC2(t,tail)); }
+	ThreeC0(),g -> { return `g; }
+	g,ThreeC0() -> { return `g; }
+	ThreeC1(),g -> { return `g; }
+	g,ThreeC1() -> { return `g; }
+	}
+}
+
+ThreeCell:make(name,source,target,type) {
+	if(polygraphicprogram.PolygraphicProgram.twoS1(source)!=polygraphicprogram.PolygraphicProgram.twoS1(target)&&polygraphicprogram.PolygraphicProgram.twoT1(source)!=polygraphicprogram.PolygraphicProgram.twoT1(target))
+	{
+	throw new RuntimeException ("three-cell unvalid, the source two-path and the target two-path should have the same one-source and one-target");	
+	}
+	else{
+		realMake(name,source,target,type);
+		}
+}
