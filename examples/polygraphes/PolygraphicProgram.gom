@@ -1,0 +1,38 @@
+module PolygraphicProgram
+	imports String
+	abstract syntax
+OnePath = OneId()
+		| OneCell (Name:String)
+		| OneC0 (OnePath*)
+		
+TwoPath = TwoId (onePath:OnePath)
+		| TwoCell (Name:String,Source:OnePath,Target:OnePath,Type:CellType)
+		| TwoC0 (TwoPath*)
+		| TwoC1 (TwoPath*)
+
+ThreePath = ThreeId (twoPath:TwoPath)
+		| ThreeCell (Name:String,Source:TwoPath,Target:TwoPath,Type:CellType)
+		| ThreeC0 (ThreePath*)
+		| ThreeC1 (ThreePath*)
+		| ThreeC2 (ThreePath*)
+		
+CellType = Constructor()
+		| Structure()
+		| Function()
+		
+OneC0:AU() { `OneId() }
+//TwoC0:AU() {}
+//TwoC0:Free() {}
+TwoC0:make_insert (x,y) {
+	%match(x,y){
+		TwoId(OneId()),tail -> {return `tail}
+		head,TwoId(OneId())  -> {return `head}
+		TwoC0(h,t),tail -> {return `TwoC0(h,TwoC0(t,tail))}
+//		TwoC1(),g -> { return `g }
+//		g,TwoC1() -> { return `g }
+	}
+}
+
+//ThreeC0
+//ThreeC1
+//ThreeC2	
