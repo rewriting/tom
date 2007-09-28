@@ -436,6 +436,20 @@ public abstract class TemplateClass {
     }
   }
 
+  protected void slotArgsWithDollar(java.io.Writer writer, SlotFieldList slotList)
+                        throws java.io.IOException {
+    int index = 0;
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
+      if (index>0) { writer.write(", "); }
+      /* Warning: do not write the 'index' alone, this is not a valid variable
+         name */
+      writer.write("$t"+index);
+      index++;
+    }
+  }
+
   public void generateTomMapping(Writer writer, ClassName basicStrategy)
       throws java.io.IOException {
     return;

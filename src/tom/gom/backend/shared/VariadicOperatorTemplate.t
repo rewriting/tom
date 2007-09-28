@@ -469,7 +469,7 @@ writer.write(%[
 %oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
   is_fsym(t) { (($t instanceof @fullClassName(consClass)@) || ($t instanceof @fullClassName(emptyClass)@)) }
   make_empty() { @fullClassName(emptyClass)@.make() }
-  make_insert(e,l) { @fullClassName(consClass)@.make(e,l) }
+  make_insert(e,l) { @fullClassName(consClass)@.make($e,$l) }
   get_head(l) { $l.@getMethod(`head)@() }
   get_tail(l) { $l.@getMethod(`tail)@() }
   is_empty(l) { $l.@isOperatorMethod(emptyClass)@() }

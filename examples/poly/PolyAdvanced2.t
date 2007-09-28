@@ -55,8 +55,8 @@ public class PolyAdvanced2 extends TestCase {
   %include { sl.tom }
   
   // Simplified version of differentiate
-  public Term differentiate(Term poly, Term variable) {
-    %match(Term poly, Term variable) {
+  public Term differentiate(Term p, Term variable) {
+    %match(Term p, Term variable) {
       X(), X() -> { return `one(); }
       Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }

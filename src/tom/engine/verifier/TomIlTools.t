@@ -348,19 +348,19 @@ public class TomIlTools {
 
   public String replaceNumbersByString(String input) {
     String output = input;
-    output = output.replaceAll("0","zero");
-    output = output.replaceAll("1","one");
-    output = output.replaceAll("2","two");
-    output = output.replaceAll("3","three");
-    output = output.replaceAll("4","four");
-    output = output.replaceAll("5","five");
-    output = output.replaceAll("6","six");
-    output = output.replaceAll("7","seven");
-    output = output.replaceAll("8","eight");
-    output = output.replaceAll("9","nine");
-    output = output.replaceAll("\\\"","_sd_");
-    output = output.replaceAll("True","z_true");
-    output = output.replaceAll("False","z_false");
+    output = output.replace("0","zero");
+    output = output.replace("1","one");
+    output = output.replace("2","two");
+    output = output.replace("3","three");
+    output = output.replace("4","four");
+    output = output.replace("5","five");
+    output = output.replace("6","six");
+    output = output.replace("7","seven");
+    output = output.replace("8","eight");
+    output = output.replace("9","nine");
+    output = output.replace("\\\"","_sd_");
+    output = output.replace("True","z_true");
+    output = output.replace("False","z_false");
     return output;
   }
 

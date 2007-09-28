@@ -569,38 +569,6 @@ public class ASTFactory {
         return `BuildAppendArray(name,head,subList);
       }
 
-      /*
-      concTomTerm(head@Variable[AstType=varType],tail*) -> {
-	//System.out.println("topDomain = " + topDomain);
-	//System.out.println("topCodomain = " + topCodomain);
-	//System.out.println("varType = " + TomBase.getTomType(`varType));
-
-	TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
-	// a Variable is flattened if type and codomain are equals
-	if(topDomain != topCodomain) {
-	  if(TomBase.getTomType(`varType) == topCodomain) {
-	    return `BuildAppendArray(name,head,subList);
-	  }
-	}
-	return `BuildConsArray(name,head,subList);
-      }
-
-      concTomTerm(head@Composite(concTomTerm(Variable[AstType=varType],_*)),tail*) -> {
-	//System.out.println("topDomain = " + topDomain);
-	//System.out.println("topCodomain = " + topCodomain);
-	//System.out.println("varType = " + TomBase.getTomType(`varType));
-
-	TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
-	// a Variable is flattened if type and codomain are equals
-	if(topDomain != topCodomain) {
-	  if(TomBase.getTomType(`varType) == topCodomain) {
-	    return `BuildAppendArray(name,head,subList);
-	  }
-	}
-	return `BuildConsArray(name,head,subList);
-      }
-*/
-
       concTomTerm(head@Composite(concTomTerm(BuildConsArray[AstName=opName],_*)),tail*) -> {
         TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
@@ -653,7 +621,7 @@ public class ASTFactory {
   public static String abstractCode(String code, String... vars) {
     int index=0;
     for(String var:vars) {
-      code = code.replaceAll("\\$"+var,"\\{"+index+"\\}");
+      code = code.replace("$"+var,"{"+index+"}");
       index++;
     }
     return code;

@@ -864,7 +864,7 @@ writer.write(%[
         writer.write(") { ");
         writer.write(fullClassName());
         writer.write(".make(");
-        slotArgs(writer,slotList);
+        slotArgsWithDollar(writer,slotList);
         writer.write(") }\n");
         writer.write("}\n");
         writer.write("\n");

@@ -3,6 +3,7 @@ imports TomSignature
 abstract syntax
 Instruction = 
   | TomTermToInstruction(Tom:TomTerm)
+  | ExpressionToInstruction(Expr:Expression)
   | TargetLanguageToInstruction(Tl:TargetLanguage)
   | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
   | DoWhile(DoInst:Instruction,Condition:Expression)

@@ -67,7 +67,7 @@ public class Viewer {
   }
 
   private static String getNodeFromPos(Position p) {
-    String tmp = p.toString().replaceAll(", ",""); 
+    String tmp = p.toString().replace(", ",""); 
     return "p"+tmp.substring(1,tmp.length()-1); 
   }
 

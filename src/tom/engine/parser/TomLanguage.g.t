@@ -33,6 +33,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1865,9 +1866,10 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
                 
+                String code = ASTFactory.abstractCode(tlCode.getCode(),name.getText());
                 result = `IsSortDecl(
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)), ot);
+                    Code(code), ot);
             }
         )
     ;
@@ -2082,6 +2084,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
     result = null;
     Option ot = null;
     TomList args = `concTomTerm();
+    ArrayList<String> varnameList = new ArrayList<String>();
     int index = 0;
     TomType type;
     int nbTypes = types.length();
@@ -2092,38 +2095,40 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
                 (LPAREN 
                 ( 
-                    typeArg:ALL_ID
+                    nameArg:ALL_ID
                     {
                         if( !(nbTypes > 0) ) {
                             type = `EmptyType();
                         } else {
                             type = TomBase.elementAt(types,index++);
                         }
-                        Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),currentFile());  
+                        Option info1 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());  
                         OptionList option1 = `concOption(info1);
                         
                         args = `concTomTerm(args*,Variable(
                                 option1,
-                                Name(typeArg.getText()),
+                                Name(nameArg.getText()),
                                 type,concConstraint()
                             ));
+                        varnameList.add(nameArg.getText());
                     }
                     ( 
-                        COMMA nameArg:ALL_ID
+                        COMMA nameArg2:ALL_ID
                         {
                             if( index >= nbTypes ) {
                                 type = `EmptyType();
                             } else {
                               type = TomBase.elementAt(types,index++);
                             }
-                            Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());
+                            Option info2 = `OriginTracking(Name(nameArg2.getText()),nameArg2.getLine(),currentFile());
                             OptionList option2 = `concOption(info2);
                             
                             args = `concTomTerm(args*,Variable(
                                     option2,
-                                    Name(nameArg.getText()),
+                                    Name(nameArg2.getText()),
                                     type,concConstraint()
                                 ));
+                            varnameList.add(nameArg2.getText());
                         }
                     )*
                 )? 
@@ -2136,7 +2141,13 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 selector().pop();
                 blockList.add(tlCode);
-                result = `MakeDecl(Name(opname),returnType,args,AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+                if(blockList.size()==1) {
+                  String[] vars = new String[varnameList.size()];
+                  String code = ASTFactory.abstractCode(tlCode.getCode(),varnameList.toArray(vars));
+                  result = `MakeDecl(Name(opname),returnType,args,ExpressionToInstruction(Code(code)),ot);
+                } else {
+                  result = `MakeDecl(Name(opname),returnType,args,AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+                }
             }
         )
     ;
@@ -2183,10 +2194,18 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
+            if(blockList.size()==1) {
+            String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
             result = `MakeAddList(Name(name),
                 Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
-                AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+                ExpressionToInstruction(Code(code)),ot);
+            } else {
+              result = `MakeAddList(Name(name),
+                  Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
+                  Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
+                  AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            }
         }
     ;
 

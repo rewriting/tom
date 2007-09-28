@@ -283,13 +283,13 @@ public class TomCamlGenerator extends TomGenericGenerator {
     }
   }
 
-  protected void genDeclMake(String funName, TomType returnType, 
+  protected void genDeclMake(String prefix,String funName, TomType returnType, 
                              TomList argList, Instruction instr, String moduleName)  throws IOException {
     StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return;
     }
-    s.append("let " + funName + "(");
+    s.append("let " + prefix+funName + "(");
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {

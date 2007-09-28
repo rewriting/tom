@@ -29,15 +29,14 @@
 
 package poly;
 
-import poly.poly.*;
 import poly.poly.types.*;
 
 public class PolySimple1 {
 
 %include { poly/Poly.tom }
 
-  public Term differentiate(Term poly) {
-    %match(Term poly) {
+  public Term differentiate(Term p) {
+    %match(Term p) {
       a()             -> { return `zero(); }
       X()             -> { return `one(); }
       plus(arg1,arg2) -> { return `plus(differentiate(arg1),differentiate(arg2)); }
@@ -46,7 +45,7 @@ public class PolySimple1 {
         Term res2 = `mult(arg2, differentiate(arg1));
         return `plus(res1,res2);
       }
-      _ -> { System.out.println("No match for: "+poly); }
+      _ -> { System.out.println("No match for: "+p); }
 	    
     }
     return null;

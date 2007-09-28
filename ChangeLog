@@ -1,7 +1,10 @@
+2007-09-28  pem
+  * improved the inliner (make, make_insert)
+  
 2007-09-26  pem
   * improved the inliner such that src.all succeeds with --inline
-	* added the inline option to ant TomTask
-	* bootstrap
+  * added the inline option to ant TomTask
+  * bootstrap
 
 2007-08-31  pem
   * %strategy ... extends `...

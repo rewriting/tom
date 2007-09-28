@@ -279,7 +279,7 @@ public abstract class TomAbstractGenerator {
       }
 
       IsSort(Type[TomType=type@ASTTomType[]], exp) -> {
-        `buildExpIsSort(deep,type,exp,moduleName);
+        `buildExpIsSort(deep,TomBase.getTomType(type),exp,moduleName);
         return;
       }
 
@@ -358,6 +358,11 @@ public abstract class TomAbstractGenerator {
 
       TomTermToInstruction(t) -> {
         `generate(deep, t, moduleName);
+        return;
+      }
+
+      ExpressionToInstruction(t) -> {
+        `generateExpression(deep, t, moduleName);
         return;
       }
 
@@ -594,9 +599,9 @@ public abstract class TomAbstractGenerator {
         return;
       }
       
-      IsSortDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)], instr, _) -> {
-        if(getSymbolTable(moduleName).isUsedTypeDefinition(`type1)) {
-          `buildIsSortDecl(deep, name1, type1, instr, moduleName);
+      IsSortDecl(Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),_)], expr, _) -> {
+        if(getSymbolTable(moduleName).isUsedTypeDefinition(`type)) {
+          `buildIsSortDecl(deep, varName, type, expr, moduleName);
         }
         return;
       }
@@ -636,7 +641,7 @@ public abstract class TomAbstractGenerator {
         TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
         || getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr, moduleName);
+          `genDeclMake("tom_empty_list_", opname, returnType, concTomTerm(), instr, moduleName);
         }
         return;
       }
@@ -648,7 +653,7 @@ public abstract class TomAbstractGenerator {
         TomType returnType = `fullListType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr, moduleName);
+          `genDeclMake("tom_cons_list_", opname, returnType, concTomTerm(elt,list), instr, moduleName);
         }
         return;
       }
@@ -676,10 +681,10 @@ public abstract class TomAbstractGenerator {
       MakeEmptyArray(Name(opname),
                      Variable[Option=option,AstName=name,Constraints=constraints],
                      instr, _) -> {
-	TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
+        TomType returnType = TomBase.getSymbolCodomain(getSymbolFromName(`opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable(moduleName).getIntType(), constraints);
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
-          `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), instr, moduleName);
+          `genDeclMake("tom_empty_array_", opname, returnType, concTomTerm(newVar), instr, moduleName);
         }
         return;
       }
@@ -690,14 +695,14 @@ public abstract class TomAbstractGenerator {
                    instr, _) -> {
         TomType returnType = `fullArrayType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
-          `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr, moduleName);
+          `genDeclMake("tom_cons_array_", opname, returnType, concTomTerm(elt,list), instr, moduleName);
         }
         return;
       }
 
       MakeDecl(Name(opname), returnType, argList, instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
-          `genDeclMake("tom_make_" + opname, returnType, argList, instr, moduleName);
+          `genDeclMake("tom_make_", opname, returnType, argList, instr, moduleName);
         }
         return;
       }
@@ -780,7 +785,7 @@ public abstract class TomAbstractGenerator {
                                        int deep,
                                        String moduleName) throws IOException;
 
-  protected abstract void genDeclMake(String funName, TomType returnType,
+  protected abstract void genDeclMake(String prefix, String funName, TomType returnType,
                                       TomList argList, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
@@ -823,7 +828,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildExpIsEmptyList(int deep, String opName, TomType type, TomTerm expList, String moduleName) throws IOException;
   protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException;
-  protected abstract void buildExpIsSort(int deep, TomType type, TomTerm exp, String moduleName) throws IOException;
+  protected abstract void buildExpIsSort(int deep, String type, TomTerm exp, String moduleName) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;
   protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp, String moduleName) throws IOException;
@@ -856,7 +861,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildEqualTermDecl(int deep, String name1, String name2,
                                               String type1, String type2, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
-                                              String type1, Instruction instr, String moduleName) throws IOException;
+                                              String type1, Expression expr, String moduleName) throws IOException;
   protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,

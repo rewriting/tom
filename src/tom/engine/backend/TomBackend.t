@@ -384,10 +384,10 @@ public class TomBackend extends TomGenericPlugin {
     }
 
     visit Declaration {
-      TypeTermDecl[] -> {
+      //TypeTermDecl[] -> {
         // should not search under a declaration
-        throw new tom.library.sl.VisitFailure();
-      }
+        //throw new tom.library.sl.VisitFailure();
+      //}
 
       /*
        * collect all declarations and add them in the mapInliner
@@ -400,10 +400,47 @@ public class TomBackend extends TomGenericPlugin {
           System.out.println("No moduleName in stack");
         }
       }
+
+      IsSortDecl[TermArg=Variable[AstType=Type(ASTTomType(type),_)],Expr=Code(code)] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putIsSort(`type,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
       GetSlotDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
         try {
           String moduleName = (String) stack.peek();
           tb.getSymbolTable(moduleName).putGetSlot(`opname,`slotName,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      MakeDecl[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putMake("tom_make_" + `opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      MakeEmptyList[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putMake("tom_empty_list_" + `opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      MakeAddList[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putMake("tom_cons_list_" + `opname,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }

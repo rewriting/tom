@@ -427,6 +427,8 @@ public class SymbolTable {
   private static String prefixGetHead = "get_head_";
   private static String prefixGetTail = "get_tail_";
   private static String prefixIsEmpty = "is_empty_";
+  private static String prefixIsSort = "is_sort_";
+  private static String prefixMake = "make_";
 
   private void putInliner(String prefix, String opname, String code) {
     mapInliner.put(prefix+opname,code);
@@ -444,8 +446,15 @@ public class SymbolTable {
     return getInliner(prefixIsFsym,opname);
   }
 
+  public void putIsSort(String type, String code) {
+    //System.out.println("putIsSort: " + type + " -> " + code);
+    putInliner(prefixIsSort,type,code);
+  }
+  public String getIsSort(String type) {
+    return getInliner(prefixIsSort,type);
+  }
+
   public void putGetSlot(String opname, String slotname, String code) {
-    //System.out.println("putGetSlot: " + opname + "," + slotname + " -> " + code);
     putInliner(prefixGetSlot,opname+slotname,code);
   }
   public String getGetSlot(String opname, String slotname) {
@@ -471,6 +480,13 @@ public class SymbolTable {
   }
   public String getIsEmpty(String opname) {
     return getInliner(prefixIsEmpty,opname);
+  }
+
+  public void putMake(String opname, String code) {
+    putInliner(prefixMake,opname,code);
+  }
+  public String getMake(String opname) {
+    return getInliner(prefixMake,opname);
   }
 
   /*

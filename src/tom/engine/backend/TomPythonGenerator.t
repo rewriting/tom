@@ -256,7 +256,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     output.write(res);
   }
 
-  protected void genDeclMake(String funName, TomType returnType, 
+  protected void genDeclMake(String prefix,String funName, TomType returnType, 
       TomList argList, Instruction instr, String moduleName) throws IOException {
     StringBuffer s = new StringBuffer();
     StringBuffer check = new StringBuffer();
@@ -264,7 +264,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
       return;
     }
 
-    s.append("def " + funName + "(");
+    s.append("def " + prefix+funName + "(");
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {

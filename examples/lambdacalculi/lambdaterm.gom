@@ -9,6 +9,7 @@ LambdaTerm =
      | var(name:String)
 
 
+abs:import() { import tom.library.sl.Position; }
 abs:block() {
 %include { sl.tom }
  

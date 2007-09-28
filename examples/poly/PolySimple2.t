@@ -29,7 +29,6 @@
 
 package poly;
 
-import poly.poly.*;
 import poly.poly.types.*;
 
 import junit.framework.TestCase;
@@ -50,8 +49,8 @@ public class PolySimple2 extends TestCase {
       var2 = `Y();
     }
     
-  public Term differentiate(Term poly, Term variable) {
-    %match(Term poly, Term variable) {
+  public Term differentiate(Term p, Term variable) {
+    %match(Term p, Term variable) {
       X(), X() -> { return `one(); }
       Y(), Y() -> { return `one(); }
       plus(arg1,arg2), var  -> { return `plus(differentiate(arg1, var),differentiate(arg2, var)); }
@@ -66,7 +65,7 @@ public class PolySimple2 extends TestCase {
       a(), _ -> { return `zero(); }
       b(), _ -> { return `zero(); }
       c(), _ -> { return `zero(); }
-      _, _ -> { System.out.println("No match for: " + poly); }
+      _, _ -> { System.out.println("No match for: " + p); }
 	    
     }
     return null;

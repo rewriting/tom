@@ -279,7 +279,13 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
   private String instantiateTemplate(String template, String subject) {
     if(template != null) {
-      return template.replaceAll("\\{0\\}",subject);
+      return template.replace("{0}",subject);
+    }
+    return null;
+  }
+  private String instantiateTemplate(String template, String head, String tail) {
+    if(template != null) {
+      return template.replace("{0}",head).replace("{1}",tail);
     }
     return null;
   }
@@ -316,6 +322,16 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String res = instantiateTemplate(template,subject);
     if(res == template) {
       res = %[tom_is_empty_@name@_@type@(@subject@)]%;
+    }
+    return res;
+  }
+
+  private String getMakeInsert(String name,String head, String tail,String moduleName) {
+    String prefix = "tom_cons_list_";
+    String template = getSymbolTable(moduleName).getMake(prefix+name);
+    String res = instantiateTemplate(template,head,tail);
+    if(res == template) {
+      res = prefix+name+"("+head+","+tail+")";
     }
     return res;
   }
@@ -360,7 +376,6 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String listCast = "(" + glType + ")";
     String equal_term = "tom_equal_term_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
-    String make_empty = listCast + "tom_empty_list_" + name;
     String get_slice = listCast + "tom_get_slice_" + name;
     String get_index = "tom_get_index_" + name;
 
@@ -374,12 +389,13 @@ s = %[
       return l1;
     } else if(@getIsConc(name,"l1",moduleName)@) {
       if(@getIsEmpty(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
-        return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,l2);
+        return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),"l2",moduleName)@;
       } else {
-        return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,tom_append_list_@name@(@genDeclGetTail(name,eltType,listType,"l1",moduleName)@,l2));
+        return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),
+                              "tom_append_list_"+name+"("+genDeclGetTail(name,eltType,listType,"l1",moduleName)+",l2)",moduleName)@;
       }
     } else {
-      return @make_insert@(l1, l2);
+      return @getMakeInsert(name,"l1", "l2",moduleName)@;
     }
   }]%;
 
@@ -392,9 +408,10 @@ s = %[
     } else if(@getIsEmpty(name,tomType,"l2",moduleName)@) {
       return l1;
     } else if(@getIsEmpty(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
-      return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,l2);
+      return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),"l2",moduleName)@;
     } else {
-      return @make_insert@(@genDeclGetHead(name,eltType,listType,"l1",moduleName)@,tom_append_list_@name@(@genDeclGetTail(name,eltType,listType,"l1",moduleName)@,l2));
+      return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),
+                                 "tom_append_list_"+name+"("+genDeclGetTail(name,eltType,listType,"l1",moduleName)+",l2)",moduleName)@;
     }
   }]%;
 
@@ -405,7 +422,8 @@ s = %[
     if(@equal_term@(begin,end)) {
       return tail;
     } else {
-      return @make_insert@(@genDeclGetHead(name,eltType,listType,"begin",moduleName)@,@get_slice@(@genDeclGetTail(name,eltType,listType,"begin",moduleName)@,end,tail));
+      return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
+                                 get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
     }
   }
   ]%;
@@ -415,38 +433,61 @@ s = %[
     output.write(s);
   }
 
-  protected void genDeclMake(String funName, TomType returnType, 
+  protected void genDeclMake(String prefix, String funName, TomType returnType, 
                              TomList argList, Instruction instr, String moduleName) throws IOException {
     if(nodeclMode) {
       return;
     }
 
-    StringBuffer s = new StringBuffer();
-    s.append(modifier + TomBase.getTLType(returnType) + " " + funName + "(");
-    while(!argList.isEmptyconcTomTerm()) {
-      TomTerm arg = argList.getHeadconcTomTerm();
-      matchBlock: {
-        %match(TomTerm arg) {
-          Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
-            s.append(TomBase.getTLCode(`tlType) + " " + `name);
-            break matchBlock;
-          }
-            
-          _ -> {
-            System.out.println("genDeclMake: strange term: " + arg);
-            throw new TomRuntimeException("genDeclMake: strange term: " + arg);
+    boolean isInlined = false;
+    boolean isCode = false;
+    %match(instr) {
+      ExpressionToInstruction(Code(code)) -> {
+        isCode = true;
+        // perform the instantiation
+        String ncode = `code;
+        int index = 0;
+        %match(argList) {
+          concTomTerm(_*,Variable[AstName=Name(varname)],_*) -> {
+            ncode = ncode.replace("{"+index+"}",`varname); 
+            index++;
           }
         }
-      }
-      argList = argList.getTailconcTomTerm();
-      if(!argList.isEmptyconcTomTerm()) {
-        s.append(", ");
+
+        if(!ncode.equals(`code)) {
+          isInlined = true;
+          instr = `ExpressionToInstruction(Code(ncode));
+        }
       }
     }
-    s.append(") { ");
-    output.write(s);
-    output.write("return ");
-    generateInstruction(0,instr,moduleName);
-    output.write("; }");
+    if(!inline || !isCode || !isInlined) {
+      StringBuffer s = new StringBuffer();
+      s.append(modifier + TomBase.getTLType(returnType) + " " + prefix + funName + "(");
+      while(!argList.isEmptyconcTomTerm()) {
+        TomTerm arg = argList.getHeadconcTomTerm();
+matchBlock: {
+              %match(TomTerm arg) {
+                Variable[AstName=Name(name), AstType=Type[TlType=tlType@TLType[]]] -> {
+                  s.append(TomBase.getTLCode(`tlType) + " " + `name);
+                  break matchBlock;
+                }
+
+                _ -> {
+                  System.out.println("genDeclMake: strange term: " + arg);
+                  throw new TomRuntimeException("genDeclMake: strange term: " + arg);
+                }
+              }
+            }
+            argList = argList.getTailconcTomTerm();
+            if(!argList.isEmptyconcTomTerm()) {
+              s.append(", ");
+            }
+      }
+      s.append(") { ");
+      output.write(s);
+      output.write("return ");
+      generateInstruction(0,instr,moduleName);
+      output.write("; }");
+    }
   }
 }

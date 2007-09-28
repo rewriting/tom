@@ -128,15 +128,15 @@ public class PILFactory {
       }
 
       Let(variable,src,body) -> {
-	return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
+	return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       LetRef(variable,src,body) -> {
-	return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
+	return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       LetAssign(variable,src,body) -> {
-	return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
+	return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replace("\n","\n\t");
       }
 
       Assign(variable,src) -> {
@@ -145,20 +145,20 @@ public class PILFactory {
 
 
       DoWhile(doInst,condition) ->{
-	return "do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t") +"while "+ prettyPrint(`condition);
+	return "do\n\t " + prettyPrint(`doInst).replace("\n","\n\t") +"while "+ prettyPrint(`condition);
       }
 
       WhileDo(condition,doInst) ->{
-	return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t");
+	return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replace("\n","\n\t");
       }
 
 
       If(cond,success,Nop()) -> {
-	return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t"); 
+	return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t"); 
       }
 
       If(cond,success,failure) -> {
-	return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
+	return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replace("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replace("\n","\n\t")+"\n";
       }
 
       AbstractBlock(concInstruction(x*,Nop(),y*)) -> {

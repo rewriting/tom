@@ -6,7 +6,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
             | IsFsymDecl(AstName:TomName,Variable:TomTerm,Expr:Expression,OrgTrack:Option)
             | GetSlotDecl(AstName:TomName,SlotName:TomName,Variable:TomTerm,Expr:Expression,OrgTrack:Option)
             | EqualTermDecl(TermArg1:TomTerm,TermArg2:TomTerm,Instr:Instruction,OrgTrack:Option)
-            | IsSortDecl(TermArg:TomTerm,Instr:Instruction,OrgTrack:Option)
+            | IsSortDecl(TermArg:TomTerm,Expr:Expression,OrgTrack:Option)
             | GetHeadDecl(Opname:TomName, Codomain:TomType,Variable:TomTerm,Expr:Expression,OrgTrack:Option)
             | GetTailDecl(Opname:TomName, Variable:TomTerm,Expr:Expression,OrgTrack:Option)
             | IsEmptyDecl(Opname:TomName, Variable:TomTerm,Expr:Expression,OrgTrack:Option)

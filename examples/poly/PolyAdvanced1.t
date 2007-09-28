@@ -29,7 +29,6 @@
 
 package poly;
 
-import poly.poly.*;
 import poly.poly.types.*;
 
 import junit.framework.TestCase;
@@ -53,8 +52,8 @@ public class PolyAdvanced1 extends TestCase {
   %include { poly/Poly.tom }
   
     // Everything is now of type Term to avoid casting:
-  public Term differentiate(Term poly, Term variable) {
-    %match(Term poly, Term variable) {
+  public Term differentiate(Term p, Term variable) {
+    %match(Term p, Term variable) {
       X(), X() -> { return `one(); }
       Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
@@ -66,7 +65,7 @@ public class PolyAdvanced1 extends TestCase {
       }
       (X|Y|a|b|c)(), _ -> { return `zero(); }
 
-      _ , _ -> { System.out.println("No match for: " + poly +" , "+variable); }
+      _ , _ -> { System.out.println("No match for: " + p +" , "+variable); }
 	    
     }
     return null;

@@ -296,7 +296,7 @@ options{
     String escapeChar = "@";
 
     //System.out.println("initial subject: '" + subject + "'");
-    subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
+    subject = subject.replace(escapeChar+escapeChar,metaChar);
     //System.out.println("subject: '" + subject + "'");
     String split[] = subject.split(escapeChar);
     boolean metaMode = true;
@@ -304,7 +304,7 @@ options{
     for(int i=0 ; i<split.length ; i++) {
       if(metaMode) {
         // put back escapeChar instead of metaChar
-        String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
+        String code = metaEncodeCode(split[i].replace(metaChar,escapeChar));
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
         list.add(`ITL(code));
@@ -371,24 +371,6 @@ options{
 		sb.insert(0,'\"');
 		sb.append('\"');
 		return sb.toString();
-
-/*
-    code = code.replaceAll("\\\"","\\\\\"");
-    code = code.replaceAll("\\\\n","\\\\\\\\n");
-    code = code.replaceAll("\\\\t","\\\\\\\\t");
-    code = code.replaceAll("\\\\r","\\\\\\\\r");
-
-    code = code.replaceAll("\n","\\\\n");
-    code = code.replaceAll("\r","\\\\r");
-    code = code.replaceAll("\t","\\\\t");
-    code = code.replaceAll("\"","\\\"");
-    
-    System.out.println("after: '" + code + "'");
-
-    return "\"" + code + "\"";
-*/
-
-
   }
 
   private Logger getLogger() {
