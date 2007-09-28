@@ -1,0 +1,49 @@
+module PolygraphicProgram
+	imports int String
+	abstract syntax
+	//premiere possibilité
+OnePath = onecell(Type:String)
+	  	| empty()
+	  	| c ( OnePath* )
+	  
+TwoPath = twostructure(Name:String, Source:OnePath, Target:OnePath)
+		| constructor(Name:String, Source:OnePath, Target:OnePath)
+		| function(Name:String, Source:OnePath, Target:OnePath)
+		| onepath( o:OnePath )//doit y avoir moyen de faire plus joli que ça
+		| c0 ( TwoPath* )
+		| c1 ( TwoPath* )
+	  
+ThreePath = threestructure(Name:String, Source:TwoPath, Target:TwoPath)
+		| rule(Name:String, Source:TwoPath, Target:TwoPath)
+		| twopath(t:TwoPath)//idem
+		| C0 ( ThreePath* )
+		| C1 ( ThreePath* )
+		| C2 ( ThreePath* )
+		
+	//deuxieme possibilité->offre plus de possibilités que nécessaire et donc plus de vérifications !
+	//c'est aussi un peu pénible pour les cellules de faible dimensions : beaucoup plus de complexité que nécessaire
+Path = cellule (name:String, dimension:int, type:String, source:Path, target:Path)
+	| c0 (Path*)
+	| c1 (Path*)
+	| c2 (Path*)
+
+	//troisieme possibilité : un peu lourde, est-on bien autorisé à utiliser des noms identiques dans des modules différents?
+	//je suis moins sûr de l'exactitude de ce qui suit
+	module One
+		module Cell
+		 Cell = type(name:String)
+		module Path
+		 Path = empty()/*=path(zeropath:empty()*/ | cell(onecell:One.Cell) | c0 (Path*)
+	module Two
+		module Cell
+		 Cell = structure(name:String, source:One.Path, target:One.Path)
+		 	| constructor(name:String, source:One.Path, target:One.Path)
+		 	| function(name:String, source:One.Path, target:One.Path)
+		module Path
+		 Path = path(onepath:One.Path) | cell(twocell:Two.Cell) | c0 (Path*) | c1 (Path*)
+	module Three
+		module Cell
+		 Cell = structure(name:String, source:Two.Path, target:Two.Path)
+		 	| rule(name:String, source:Two.Path, target:Two.Path)
+		module Path
+		 Path = path(twopath:Two.Path) | cell(threecell:Three.Cell) | c0 (Path*) | c1 (Path*) | c2 (Path*)
