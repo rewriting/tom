@@ -22,7 +22,7 @@ CellType = Constructor()
 		
 OneC0:AU() { `OneId() }
 //TwoC0:AU() {}
-//TwoC0:Free() {}
+TwoC0:Free() {}
 TwoC0:make_insert (x,y) {
 	%match(x,y){
 		TwoId(OneId()),tail -> {return `tail}
