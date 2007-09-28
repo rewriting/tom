@@ -146,136 +146,6 @@ public class ProofBuilder extends Observable {
           expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
         }
 
-/*
-
-        // adding instanciation steps for the expanded form
-        // if it is a right rule
-        Position next = new Position();
-        if (rule.geths() == 1) {
-          %match (expanded) {
-            rule[c=sequent((),(phi))] -> {
-              // p. 22 paul master thesis
-              Tree newt = createOpenLeaf(`sequent(context(newconcl),context()));
-              // loop on forall left - instanciating the variables
-              for(int i=0; i<tds.size(); i++) {
-                Tree leaf = (Tree) next.getSubterm().apply(newt);
-                %match(leaf) { 
-                  rule[c=sequent(context(f@forall(var,_)),())] -> {
-                    Term newterm = tds.get(`var); 
-                    newt = (Tree) ((MuStrategy) next.getOmega(`ApplyForAllL(f,newterm))).apply(newt);
-                    next.down(2);
-                    next.down(1);
-                  }
-                }
-              }
-              Prop tmp = `and(implies(active,phi),implies(phi,active));
-              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyAndL(tmp))).apply(newt);
-              next.down(2); next.down(1);
-              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyImpliesL(implies(phi,active)))).apply(newt);
-              next.down(2); next.down(1);
-
-              // weakening until we obtain the concusion sequent of expanded
-              boolean done = false;
-              Position nextcopy = (Position) next.clone();
-              while(!done) {
-                b :{
-                   Sequent currentseq = ((Tree) ((MuStrategy) nextcopy.getSubterm()).apply(newt)).getc();
-                   Sequent wantedseq = expanded.getc();
-                   %match(currentseq,wantedseq) {
-                     x,x -> {
-                       done = true ;
-                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ReplaceTree(expanded))).apply(newt);
-                       break b;
-                     }
-                     sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
-                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakL(p))).apply(newt);
-                       nextcopy.down(2);
-                       nextcopy.down(1);
-                       break b;
-                     }
-                     sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
-                       if (`p != conclusion) {
-                         newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakR(p))).apply(newt);
-                         nextcopy.down(2);
-                         nextcopy.down(1);
-                         break b;
-                       }
-                     }
-                   }
-                 }
-              }
-              // going to axiom : cons(_,cons(here,_ ...  = pos(2,1)
-              next.up(); next.down(2); next.down(1);
-              expanded = newt;
-            }
-          }
-        // if it is a left rule
-        } else {
-          %match (expanded) {
-            rule[c=sequent((phi),())] -> {
-              // p. 22 paul master thesis
-              Tree newt = createOpenLeaf(`sequent(context(newconcl),context()));
-              // loop on forall left - instanciating the variables
-              for(int i=0; i<tds.size(); i++) {
-                Tree leaf = (Tree) next.getSubterm().apply(newt);
-                %match(leaf) { 
-                  rule[c=sequent(context(f@forall(var,_)),())] -> {
-                    Term newterm = tds.get(`var); 
-                    newt = (Tree) ((MuStrategy) next.getOmega(`ApplyForAllL(f,newterm))).apply(newt);
-                    next.down(2);
-                    next.down(1);
-                  }
-                }
-              }
-              Prop tmp = `and(implies(active,phi),implies(phi,active));
-              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyAndL(tmp))).apply(newt);
-              next.down(2); next.down(1);
-              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyImpliesL(implies(active,phi)))).apply(newt);
-              next.down(2);  
-              // going to cons(_,cons(here,_ ...  = pos(2,1)
-              next.down(2); next.down(1); 
-
-
-              // weakening until we obtain the concusion sequent of expanded
-              boolean done = false;
-              Position nextcopy = (Position) next.clone();
-              while(!done) {
-                b :{
-                   Sequent currentseq = ((Tree) ((MuStrategy) nextcopy.getSubterm()).apply(newt)).getc();
-                   Sequent wantedseq = expanded.getc();
-                   %match(currentseq,wantedseq) {
-                     x,x -> {
-                       done = true ;
-                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ReplaceTree(expanded))).apply(newt);
-                       break b;
-                     }
-                     sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
-                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakL(p))).apply(newt);
-                       nextcopy.down(2);
-                       nextcopy.down(1);
-                       break b;
-                     }
-                     sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
-                       if (`p != conclusion) {
-                         newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakR(p))).apply(newt);
-                         nextcopy.down(2);
-                         nextcopy.down(1);
-                         break b;
-                       }
-                     }
-                   }
-                 }
-              }
-
-              // going to axiom 
-              next.up(); next.up(); next.down(1);
-              expanded = newt;
-            }
-          }
-        }
-
-    */
-
         // ajout des contextes dans les premisses
 b: {
         %match (rule, seq, Prop active) {
@@ -804,7 +674,7 @@ b :{
     is_sort(t) { t instanceof ArrayList }
   }
 
-  %strategy ApplyReduce(newTermRules: TermRuleList, newPropRules: PropRuleList) extends `Identity() {
+  %strategy ApplyReduce(newTermRules: TermRuleList, newPropRules: PropRuleList) extends Identity() {
     visit Tree {
       rule[c=goal,active=a] -> {
         Sequent s = (Sequent) Unification.reduce(`goal,newTermRules,newPropRules);
@@ -816,7 +686,7 @@ b :{
     }
   }
 
-  %strategy ApplyAuto(newRules: RuleArrayList) extends `Fail() {
+  %strategy ApplyAuto(newRules: RuleArrayList) extends Fail() {
     visit Tree {
       // right hand side (+ axiom)
       t@rule[c=sequent(_,(_*,p,_*))] -> { 
@@ -845,15 +715,75 @@ b :{
       }
     }
   }
-	
-  // TODO: seems ok, check correctness again
+
+/* ---- LAMBDA PI -----*/
+
+  %strategy Brackets(s: Strategy) extends Identity() {
+    visit Tree {
+      t -> {
+        LinkedList<Position> open = new LinkedList<Position>();
+        getOpenPositions(`t,open);
+        Tree res = `t;
+        for(Position p: open) {
+          Tree at_p = (Tree) p.getOmega(s).visit(res);
+          res = (Tree) p.getReplace(at_p).visit(res);
+        }
+        return res;
+      }
+    }
+  }
+
+  private static Term isAppliedNestedTo(Term funsymb, Term t) {
+    %match(t) {
+      funAppl("lappl",(f,x)) -> {
+        if (`f==funsymb) return `x;
+        else return isAppliedNestedTo(funsymb,`f);
+      }
+    }
+    return null;
+  }
+
+
+  /*
+  private static int indexOf(Prop prop, Context c) {
+    int i = 0;
+    for(Prop p: (lemu.sequents.types.context.context) c) {
+      if (p == prop) return i;
+      i++;
+    }
+    throw new RuntimeException();
+  }
+  */
+
+  %strategy LamdaPiTypeCheck(pistarleft:Rule, auto: Strategy) extends Identity() {
+    visit Tree {
+      r@rule[type=openInfo(),
+             c=sequent(context(_*,h@relationAppl("in",(f,_)),_*),
+                       context(_*,relationAppl("in",(a@funAppl("lappl",_),_))))] -> {
+             Term appliedTo = `isAppliedNestedTo(f,a);
+             if(appliedTo != null) {
+               System.out.println("found " + PrettyPrinter.prettyPrint(`f) + 
+                   " applied to " + PrettyPrinter.prettyPrint(`appliedTo));
+
+               HashMap<Term,Term> termmap = new HashMap<Term,Term>();
+               termmap.put(`NewVar("z0","z"),appliedTo);
+               return (Tree) `Sequence(ApplyRule(pistarleft,h,termmap),Brackets(auto)).visit(`r);
+             }
+           }
+    }
+  }
+
+/* ---- LAMBDA PI -----*/
+  
   %op Strategy SafeTopDown(s:Strategy) {
     make(s) { 
       `mu(MuVar("y"),Try(Sequence(s,_rule(Identity(),_premisses(MuVar("y")),Identity(),Identity()))))
     }
-    //make(s) { `mu(MuVar("x"), Choice(Is_customRuleInfo(),Sequence(s,All(MuVar("x")))))  }
   }
 
+  private static Strategy AutoReduce(TermRuleList tr, PropRuleList pr, ArrayList<Rule> dr) {
+    return `SafeTopDown(Try(Choice(ApplyAuto(dr),ApplyReduce(tr,pr))));
+  }
 
   /* ------------------------------------------------------------------ */
 
@@ -998,9 +928,18 @@ b :{
             Strategy strat;
 
             if (env.focus_left)
-              strat = `Choice(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active, this), ApplyExistsL(active), ApplyBottom());
+              strat = `Choice(ApplyImpliesL(active),
+                  ApplyAndL(active),
+                  ApplyOrL(active),
+                  ApplyForAllLInteractive(active,this),
+                  ApplyExistsL(active),ApplyBottom());
             else
-              strat = `Choice(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active, this), ApplyTop());
+              strat = `Choice(ApplyImpliesR(active),
+                  ApplyAndR(active),
+                  ApplyOrR(active),
+                  ApplyForAllR(active),
+                  ApplyExistsRInteractive(active, this),
+                  ApplyTop());
 
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
@@ -1058,14 +997,25 @@ b :{
         /* experimental autoreduce case */
         proofCommand("autoreduce") -> {
           try {
-            Strategy strat = 
-              `SafeTopDown(Try(Choice(ApplyAuto(newRules),ApplyReduce(newTermRules,newPropRules))));
+            Strategy strat = AutoReduce(newTermRules,newPropRules,newRules);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply autoreduce : " + e + ", " + e.getMessage());
             e.printStackTrace();
           }
         }
+
+        /* experimental typecheck case */
+        proofCommand("typecheck") -> {
+          try {
+            Strategy strat = `LamdaPiTypeCheck(newRules.get(7),Identity());
+            tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
+          } catch (VisitFailure e) {
+            writeToOutputln("Can't apply typecheck : " + e + ", " + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
 
         /* Axiom case */
         proofCommand("axiom") -> {

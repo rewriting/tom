@@ -140,37 +140,21 @@ public class Utils {
       return replaceFreeVars(p, old_term, new_term, nonfresh);
     }
 
-  %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Identity() {
-    // FIXME : encore utile ?? surement pour l'expansion
-    visit RuleType {
-      forallRightInfo(t) -> {
-        if (`t==old_term) return `forallRightInfo(new_term);
-      }
-      forallLeftInfo(t) -> {
-        if (`t==old_term) return `forallLeftInfo(new_term);
-      }
-      existsRightInfo(t) -> {
-        if (`t==old_term) return `existsRightInfo(new_term);
-      }
-      existsLeftInfo(t) -> {
-        if (`t==old_term) return `existsLeftInfo(new_term);
-      }
-    }
-
+  %strategy ReplaceFreeVars(defaul:Strategy,old_term: Term, new_term: Term) extends defaul {
     visit Prop {
       p -> { return `replaceFreeVars(p,old_term,new_term); }
     }
   }
 
-  %strategy CollectFreeVars(StringCollection res) extends `Fail() {
+  %strategy CollectFreeVars(defaultcase:Strategy, res:StringCollection ) extends defaultcase {
     visit Prop {
-      p -> { res.addAll(`p.getFreeVars()); return `p; }
+      p -> { res.addAll(`p.getFreeVars()); }
     }
   }
 
   public static Set<String> getFreeVars(sequentsAbstractType t) {
     Set<String> res = new HashSet();
-    try { `mu(MuVar("x"),Choice(CollectFreeVars(res),All(MuVar("x")))).visit(t); }
+    try { `mu(MuVar("x"),CollectFreeVars(All(MuVar("x")),res)).visit(t); }
     catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return res;
   }
@@ -178,22 +162,21 @@ public class Utils {
   public static sequentsAbstractType 
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
     {
-      Strategy v = `TopDown(ReplaceFreeVars(old_term, new_term));
+      Strategy v = `mu(MuVar("x"),ReplaceFreeVars(All(MuVar("x")),old_term,new_term)); 
       try { p = (sequentsAbstractType) v.visit(`p); }
       catch (VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
-
       return  p; 
     }
 
-  %strategy VarCollector(vars:StringCollection) extends `Fail() {
+  %strategy VarCollector(defaultcase:Strategy, vars:StringCollection) extends defaultcase {
     visit Term {
-      t -> { vars.addAll(`t.getVars()); return `t; }
+      t -> { vars.addAll(`t.getVars()); }
     }
   }
 
   public static Set<String> collectVars(sequentsAbstractType t) {
     HashSet set = new HashSet();
-    Strategy v = `mu(MuVar("x"),Choice(VarCollector(set),All(MuVar("x"))));
+    Strategy v = `mu(MuVar("x"),VarCollector(All(MuVar("x")),set));
     try { v.visit(t); }
     catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
     return set;
