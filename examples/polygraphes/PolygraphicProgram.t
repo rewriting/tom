@@ -1,19 +1,18 @@
-package polygraphicprogram;
+package polygraphes;
 
-import polygraphicprogram.*;
-import polygraphicprogram.types.*;
+import polygraphes.polygraphicprogram.*;
+import polygraphes.polygraphicprogram.types.*;
 
 
-public class PolygraphicProgram{
+public class PolygraphicProgram {
 
 %include { polygraphicprogram/PolygraphicProgram.tom }
-
 
 public static void main(String[] args) {
 
 //jeu de cellules pour les tests : 
 
-//1-chemin reprsentant les entiers naturels
+//1-chemin reprÂsentant les entiers naturels
 	OnePath nat=`OneCell("nat");
 //constructeurs sur les entiers naturels
 	TwoPath zero=`TwoCell("zero",OneId(),nat,Constructor());
@@ -61,9 +60,9 @@ public static void main(String[] args) {
 
 }
 
-//pour chacune des fonctions suivantes, on suppose les chemins pralablement bien forms (pour l'instant)
-//il faudra vrifier ˆ un moment que c'est bien form mais les fonctions pour vrifier utilisent des fonctions qui fonctionnent si c'est djˆ bien form
-//donc il va falloir affiner tout a
+//pour chacune des fonctions suivantes, on suppose les chemins prÂalablement bien formÂs (pour l'instant)
+//il faudra vÂrifier Âˆ un moment que c'est bien formÂ mais les fonctions pour vÂrifier utilisent des fonctions qui fonctionnent si c'est dÂjÂˆ bien formÂ
+//donc il va falloir affiner tout Âa
 public static OnePath twoS1(TwoPath t){
 %match (t){
 			TwoId(X) -> { return `X; }

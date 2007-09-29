@@ -15,7 +15,6 @@
       <!-- stamp not yet ready for apigen list -->
       <include name="${polygraphes}/**/*.t"/>
       <exclude name="${polygraphes}/**/PolygraphesParser.g.t"/>
-      <!--      <exclude name="${polygraphes}/**/StructureCDT.t"/> -->
     </tom.preset>
     <!--
     <tom.preset outputfile="${examples.gen}/${polygraphes}/PolygraphesParser.g"

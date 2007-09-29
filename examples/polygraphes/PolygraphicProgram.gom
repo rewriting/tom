@@ -1,4 +1,4 @@
-module PolygraphicProgram
+module polygraphes.PolygraphicProgram
 	imports String
 	abstract syntax
 OnePath = OneId()
@@ -37,9 +37,9 @@ TwoC0:make_insert(x,y) {
 TwoC1:Free() {}
 TwoC1:make_empty() { return `TwoId(OneId()); }
 TwoC1:make_insert(x,y) {
-	if(y!=`TwoId(OneId())&&polygraphicprogram.PolygraphicProgram.twoT1(x)!=(polygraphicprogram.PolygraphicProgram.twoS1(y)))
+	if(y!=`TwoId(OneId())&&polygraphes.PolygraphicProgram.twoT1(x)!=(polygraphes.PolygraphicProgram.twoS1(y)))
 	{
-		System.out.println(polygraphicprogram.PolygraphicProgram.twoT1(x).equals(polygraphicprogram.PolygraphicProgram.twoS1(y)));
+		System.out.println(polygraphes.PolygraphicProgram.twoT1(x).equals(polygraphes.PolygraphicProgram.twoS1(y)));
 		throw new RuntimeException("composition of incompatible 2-Paths");
 	}
 %match(x,y){
@@ -69,7 +69,7 @@ ThreeC0:make_insert(x,y) {
 ThreeC1:Free() {}
 ThreeC1:make_empty() { return `ThreeId(TwoId(OneId())); }
 ThreeC1:make_insert(x,y) {
-	if(y!=`ThreeId(TwoId(OneId()))&&polygraphicprogram.PolygraphicProgram.twoT1(polygraphicprogram.PolygraphicProgram.threeS2(x))!=polygraphicprogram.PolygraphicProgram.twoS1(polygraphicprogram.PolygraphicProgram.threeS2(y)))
+	if(y!=`ThreeId(TwoId(OneId()))&&polygraphes.PolygraphicProgram.twoT1(polygraphes.PolygraphicProgram.threeS2(x))!=polygraphes.PolygraphicProgram.twoS1(polygraphes.PolygraphicProgram.threeS2(y)))
 	{
 		throw new RuntimeException("composition of incompatible 3-Paths");
 	}
@@ -87,7 +87,7 @@ ThreeC1:make_insert(x,y) {
 ThreeC2:Free() {}
 ThreeC2:make_empty() { return `ThreeId(TwoId(OneId())); }
 ThreeC2:make_insert(x,y) {
-	if(y!=`ThreeId(TwoId(OneId()))&&polygraphicprogram.PolygraphicProgram.threeT2(x)!=polygraphicprogram.PolygraphicProgram.threeS2(y))
+	if(y!=`ThreeId(TwoId(OneId()))&&polygraphes.PolygraphicProgram.threeT2(x)!=polygraphes.PolygraphicProgram.threeS2(y))
 	{
 		throw new RuntimeException("composition of incompatible 3-Paths");
 	}
@@ -103,7 +103,7 @@ ThreeC2:make_insert(x,y) {
 }
 
 ThreeCell:make(name,source,target,type) {
-	if(polygraphicprogram.PolygraphicProgram.twoS1(source)!=polygraphicprogram.PolygraphicProgram.twoS1(target)&&polygraphicprogram.PolygraphicProgram.twoT1(source)!=polygraphicprogram.PolygraphicProgram.twoT1(target))
+	if(polygraphes.PolygraphicProgram.twoS1(source)!=polygraphes.PolygraphicProgram.twoS1(target)&&polygraphes.PolygraphicProgram.twoT1(source)!=polygraphes.PolygraphicProgram.twoT1(target))
 	{
 	throw new RuntimeException ("three-cell unvalid, the source two-path and the target two-path should have the same one-source and one-target");	
 	}
