@@ -142,7 +142,21 @@ public class HookCompiler {
                         `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
                   return `obj.setEmpty(newEmpty);
                 }
-              } else {
+              } else if (hook.isImportHookDecl()) {
+                /* We will want to attach the hook directly to the 3 classes */
+                /* in case we use these imports for the corresponding Make hooks */
+                HookList oldConsHooks = `consClass.getHooks();
+                GomClass newCons =
+                  `consClass.setHooks(
+                      `concHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+                HookList oldEmptyHooks = `emptyClass.getHooks();
+                GomClass newEmpty =
+                  `emptyClass.setHooks(
+                      `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                GomClass newobj = `obj.setEmpty(newEmpty);
+                newobj = newobj.setCons(newCons);
+                return `newobj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+              } else {                
                 return
                   `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
               }

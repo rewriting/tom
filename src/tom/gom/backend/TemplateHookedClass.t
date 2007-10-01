@@ -137,8 +137,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       tomParams.add("-X");
       tomParams.add(xmlFile.getPath());
-      tomParams.add("--optimize");
-      tomParams.add("--optimize2");
+      //tomParams.add("--optimize");
+      //tomParams.add("--optimize2");
       if(optionManager.getOptionValue("wall")==Boolean.TRUE) {
         tomParams.add("--wall");
       }
