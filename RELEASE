@@ -18,6 +18,8 @@ How to prepare a release:
 
 - prepare the eclipse plugin
 
+- prepare installation kit for windows 
+
 - create distfiles:
 - ./build.sh dist.all
 - ./build.sh source.distribution
