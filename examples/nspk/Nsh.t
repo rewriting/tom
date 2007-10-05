@@ -152,7 +152,7 @@ public class Nsh {
 
   public static int compareMessage(Message m1, Message m2) {
       
-    %match(Message m1, Message m2) {
+    %match(m1, m2) {
       msg[src=sender[]],   msg[src=receiver[]] -> { return 1;  }
       msg[src=receiver[]], msg[src=sender[]] -> { return -1;  }
       msg[src=receiver[]], msg[src=devil()]  -> { return 1;  }
@@ -179,7 +179,7 @@ public class Nsh {
 
   public static int compareNonce(Nonce m1, Nonce m2) {
       
-    %match(Nonce m1, Nonce m2) {
+    %match(m1, m2) {
       N[id1=sender[]],   N[id1=receiver[]] -> { return 1;  }
       N[id1=receiver[]], N[id1=sender[]] -> { return -1;  }
       N[id1=receiver[]], N[id1=devil()]  -> { return 1;  }
@@ -220,7 +220,7 @@ public class Nsh {
     
   static ListNonce insertNonce(Nonce m,ListNonce l) {
     ListNonce res = null;
-   %match(Nonce m) {
+    %match(m) {
       N(dai(),dai()) -> { return l; }
     }
  
@@ -248,9 +248,9 @@ public class Nsh {
   }
 
   public static boolean existAgent(Agent agent, ListAgent list) {
-    %match(Agent agent, ListAgent list) {
-      x, concAgent()          -> { return false; }
-      x, concAgent(X1*,x,X2*) -> { return true; }
+    %match(list) {
+      concAgent() -> { return false; }
+      concAgent(X1*,x,X2*) && x<<Agent agent -> { return true; }
     }
     return false;
       /*
@@ -259,9 +259,9 @@ public class Nsh {
   }
 
   public static boolean existMessage(Message message, ListMessage list) {
-        %match(Message message, ListMessage list) {
-        x, concMessage()          -> { return false; }
-        x, concMessage(X1*,x,X2*) -> { return true; }
+        %match(list) {
+          concMessage() -> { return false; }
+          concMessage(X1*,x,X2*) && x<<Message message -> { return true; }
         }
         return false;
       /*

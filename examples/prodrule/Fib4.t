@@ -43,34 +43,33 @@ public class Fib4 {
    }
     
   %typeterm Space {
-    implement { ArrayList }
+    implement { ArrayList<Element> }
     is_sort(t) { t instanceof ArrayList }
-    equals(l1,l2)      { l1.equals(l2) }
+    equals(l1,l2) { l1.equals(l2) }
   }
 
   %oparray Space concElement( Element* ) {
     is_fsym(t) { t instanceof ArrayList }
-    make_empty(n)   { myEmpty(n) }
+    make_empty(n) { myEmpty(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
-    get_element(l,n)   { (Element)l.get(n) }
-    get_size(l)        { l.size() }
+    get_element(l,n) { l.get(n) }
+    get_size(l) { l.size() }
   }
-    
 
-  private static ArrayList myAdd(Object e,ArrayList l) {
+  private static ArrayList<Element> myAdd(Element e,ArrayList<Element> l) {
     l.add(e);
     return l;
   }
   
-  private static ArrayList myEmpty(int n) {
-    ArrayList res = new ArrayList(n);
+  private static ArrayList<Element> myEmpty(int n) {
+    ArrayList<Element> res = new ArrayList<Element>(n);
     return res;
   }
 
   private static boolean opt = true;
   private static int fire=0;
   public int run(int n) {
-    ArrayList WM = new ArrayList();
+    ArrayList<Element> WM = new ArrayList<Element>();
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
     WM.add(`Fib(0,Nat(1)));
@@ -82,7 +81,7 @@ public class Fib4 {
     return result(WM,n);
   } 
   
-  public void loop(ArrayList WM) {
+  public void loop(ArrayList<Element> WM) {
     boolean modified = true;
     while(modified) {
 	    modified = modified && (rec(WM) || compute(WM));
@@ -100,37 +99,39 @@ public class Fib4 {
     }
   }
 
-  public boolean rec(ArrayList WM) {
-    %match(Space WM) {
+  public boolean rec(ArrayList<Element> WM) {
+    %match(WM) {
 	    concElement(_*, Fib[arg=n,val=Undef()], _*) -> {
         if(`n>2 && !`occursFib(WM,n-1)) {
           WM.add(0,`Fib(n-1,Undef()));
           fire++;
-          return (true);
+          return true;
         }
 	    }
     }
     return false;
   }
 
-  public boolean compute(ArrayList WM) {
-    %match(Space WM) {
+  public boolean compute(ArrayList<Element> WM) {
+    %match(WM) {
 	    concElement(_*, f@Fib[arg=n,val=Undef()], _*) -> {
-        %match(Space WM) {
+        %match(WM) {
           concElement(_*, f1@Fib[arg=n1,val=Nat(v1)], _*, f2@Fib[arg=n2,val=Nat(v2)], _*) -> {
-            //if(`(f!=f1 && f!=f2)) {
             if(`(n1+1==n && n2+2==n) || `(n2+1==n && n1+2==n)) {
               int modulo = (`v1+`v2)%1000000;
+              /* WARNING
+               * we access to f1 or f2 before performing a modification on WM
+               * this prevents the optimizer to inline the access to f1 or f2
+               */
+              Element toBeRemoved = `(n2+2==n)?`f2:`f1;
               WM.remove(`f);
               WM.add(0,`Fib(n,Nat(modulo)));
               if(opt) {
-                WM.remove(`(n2+2==n)?`f2:`f1);
+                WM.remove(toBeRemoved);
               }
               fire++;
               return true;
             }
-            //}
-
           }
         }
 	    }
@@ -138,8 +139,8 @@ public class Fib4 {
     return false;
   }
 
-  public boolean occursFib(ArrayList WM, int value) {
-    %match(Space WM) {
+  public boolean occursFib(ArrayList<Element> WM, int value) {
+    %match(WM) {
 	    concElement(_*, Fib[arg=n], _*) -> {
         if(`n == value) {
           return true;
@@ -149,8 +150,8 @@ public class Fib4 {
     return false;
   }
 
-  public int result(ArrayList WM, int value) {
-    %match(Space WM) {
+  public int result(ArrayList<Element> WM, int value) {
+    %match(WM) {
 	    concElement(_*, Fib[arg=n, val=Nat(v)], _*) -> {
         if(`n == value) {
           return `v;
