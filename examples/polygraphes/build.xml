@@ -8,7 +8,7 @@
   </target>
   <target name="build" depends="init">
     <!-- build adt -->    
-    <gombuild example="${polygraphes}"/>
+    <gomcompile example="${polygraphes}"/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
@@ -35,7 +35,7 @@
     <javacompile example="${polygraphes}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${polygraphes}">
-      <fileset dir="${examples.dir}/${polygraphes}">
+      <fileset dir="${polygraphes}">
         <include name="examples"/>
       </fileset>
     </copy>
