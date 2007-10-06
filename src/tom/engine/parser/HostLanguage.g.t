@@ -546,6 +546,12 @@ gomsignature [LinkedList list] throws TomException
     if(getOptionManager().getOptionValue("intermediate")==Boolean.TRUE) {
       parameters.add("--intermediate");
     }
+    if(Boolean.TRUE == getOptionManager().getOptionValue("optimize")) {
+      parameters.add("--optimize");
+    }
+    if(Boolean.TRUE == getOptionManager().getOptionValue("optimize2")) {
+      parameters.add("--optimize2");
+    }
     parameters.add("--intermediateName");
     parameters.add(getStreamManager().getRawFileName()+".t.gom");
     if(getOptionManager().getOptionValue("verbose")==Boolean.TRUE) {

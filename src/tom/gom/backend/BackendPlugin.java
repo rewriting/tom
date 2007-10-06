@@ -55,6 +55,8 @@ public class BackendPlugin extends GomGenericPlugin {
   public static final String DECLARED_OPTIONS =
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator' value='shared' attrName='type' />" +
+    "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
+    "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='strategies-mapping' altName='sm' description='Enable strategy mapping support' value='false'/>" +
     "</options>";
 
