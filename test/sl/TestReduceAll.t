@@ -128,5 +128,24 @@ public class TestReduceAll extends TestCase {
     }
   }
 
+  %strategy G() extends `Fail() {
+    visit Term {
+      g(a()) -> { return `b(); }
+      g(f(c(),c())) -> { return `c(); }
+    }
+  }
+
+  public void testOutermost() {
+    Term subject = `g(f(a(),a()));
+    Strategy s = `Outermost(Choice(AB(),G()));
+    try {
+      Term res1 = (Term) s.visit(subject);
+      assertEquals(res1,`b());
+      Term res2 = (Term) s.visitLight(subject);
+      assertEquals(res2,`b());
+    } catch (tom.library.sl.VisitFailure e) {
+      fail("Fire should not fail");
+    }
+  }
 
 }
