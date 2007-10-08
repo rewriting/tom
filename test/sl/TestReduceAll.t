@@ -41,7 +41,10 @@ public class TestReduceAll extends TestCase {
     module reduce
     abstract syntax
     Term = f(lhs:Term,rhs:Term)
-         | a() | b() | c()
+         | g(arg:Term)
+         | a()
+         | b()
+         | c()
     f:make(x,y) {
       %match(x,y) {
         b(), b() -> { return `a(); }
@@ -130,6 +133,7 @@ public class TestReduceAll extends TestCase {
 
   %strategy G() extends `Fail() {
     visit Term {
+      a() -> { return `b(); }
       g(a()) -> { return `b(); }
       g(f(c(),c())) -> { return `c(); }
     }
@@ -137,7 +141,7 @@ public class TestReduceAll extends TestCase {
 
   public void testOutermost() {
     Term subject = `g(f(a(),a()));
-    Strategy s = `Outermost(Choice(AB(),G()));
+    Strategy s = `Outermost(G());
     try {
       Term res1 = (Term) s.visit(subject);
       assertEquals(res1,`b());
