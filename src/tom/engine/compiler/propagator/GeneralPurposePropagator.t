@@ -98,6 +98,12 @@ public class GeneralPurposePropagator implements IBasePropagator {
         }
         return result;
       }
+      /**
+       * a << a -> true 
+       */      
+      MatchConstraint(x,x) -> {
+        return `TrueConstraint();
+      }
 
     }
   }// end %strategy

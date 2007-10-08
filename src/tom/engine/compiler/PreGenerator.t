@@ -241,6 +241,15 @@ public class PreGenerator {
         return `AndConstraint(X*,Y*,match,Z*,numeric);
       }
 
+      /*
+       * SwitchIsSort
+       *
+       *  Match(_,subject) /\ IsSort(subject) -> IsSort(subject) /\ Match(_,subject)
+       * 
+       */
+      AndConstraint(X*,match@MatchConstraint[subject=ExpressionToTomTerm(Cast[Source=TomTermToExpression(sub)])],Y*,isSort@IsSortConstraint[TomTerm=sub],Z*) -> {
+        return `AndConstraint(X*,isSort,Y*,match,Z*);
+      }
     } // end visit
     return constraint;
   }// end strategy
@@ -287,6 +296,9 @@ public class PreGenerator {
       }
       EmptyArrayConstraint(opName,variable,index) ->{
         return `IsEmptyArray(opName,variable,index);
+      }
+      IsSortConstraint(type,tomTerm) ->{
+        return `IsSort(type,tomTerm);
       }
     }
     throw new TomRuntimeException("PreGenerator.constraintsToExpressions - strange constraint:" + constraint);

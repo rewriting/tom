@@ -11,8 +11,9 @@ Constraint =
 			| AssignTo(Variable:TomTerm)
 			| AssignPositionTo(Variable:TomTerm)
 			| TrueConstraint()
-			| FalseConstraint()		   
+			| FalseConstraint()				   
 			| Negate(c:Constraint)
+			| IsSortConstraint(AstType:TomType,TomTerm:TomTerm)
 			| AndConstraint(Constraint*)
 			| OrConstraint(Constraint*)
 		  /**
@@ -26,11 +27,16 @@ Constraint =
 			| NumericConstraint(Left:TomTerm, Right:TomTerm, Type:NumericConstraintType)
 			| EmptyListConstraint(Opname:TomName,Variable:TomTerm)
 			| EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
-  		   /**
+  		  /**
   		   * Used in the parser to mark that we started an And or an Or
   		   */
 			| AndMarker(Constraint:Constraint)
 			| OrMarker(Constraint:Constraint)
+		  /**
+  		   * A sequence of constraints
+  		   */
+			| SequenceConstraint(LeftConstraint:Constraint,RightConstraint:Constraint)
+			
 
 NumericConstraintType = NumLessThan() 
 					| NumLessOrEqualThan()

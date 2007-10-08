@@ -98,9 +98,9 @@ public class ConstraintCompiler {
           concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {                        
             try {
               actionNumber++;
-              // get the new names for subjects (for further casts if needed - especially for lists)
+              // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
-              // to go in the action and collect from there                      
+              // to go in the action and collect from there              
               `constraint = (Constraint)`TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
               
               Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);              
@@ -119,60 +119,49 @@ public class ConstraintCompiler {
         }// end %match				
         /*
          * return the compiled Match construction
-         */
+         */        
         InstructionList astAutomataList = ConstraintCompiler.automataListCompileMatchingList(automataList);
-        return `CompiledMatch(collectVariableFromSubjectList(ASTFactory.makeList(subjectList),ASTFactory.makeList(renamedSubjects),AbstractBlock(astAutomataList)), matchOptionList);
+        return `CompiledMatch(AbstractBlock(astAutomataList), matchOptionList);
       }
     }// end visit
-  }// end strategy
+  }// end strategy  
 
   /**
-   * collects match variables (from match(t1,...,tn)) and
-   * 1. checks their instance type 
-   * 2. create new renamed subjects with corresponding casts	 
-   */
-  private static Instruction collectVariableFromSubjectList(TomList subjectList, TomList renamedSubjects, Instruction body) {
-    %match(subjectList) { 
-      concTomTerm() -> { return body; }
-      concTomTerm(subjectVar@Variable[AstType=variableType],tail*) -> {
-        body = collectVariableFromSubjectList(`tail,renamedSubjects.getTailconcTomTerm(),body);		        
-        Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
-        Instruction let = `LetRef(renamedSubjects.getHeadconcTomTerm(),source,body);
-        // Check that the matched variable has the correct type
-        return `If(IsSort(variableType,subjectVar),let,Nop());
-      }			
-      // if we do not have a variable (we have a BuildTerm or FunctionCall or BuildConstant)
-      concTomTerm(subjectVar@!Variable[],tail*) -> {
-        body = collectVariableFromSubjectList(`tail,renamedSubjects.getTailconcTomTerm(),body);
-        Expression source = `Cast(((Variable)renamedSubjects.getHeadconcTomTerm()).getAstType(),TomTermToExpression(subjectVar));
-        return `LetRef(renamedSubjects.getHeadconcTomTerm(),source,body);
-      }
-    }
-    throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectList);
-  }
-
-  /**
-   * Takes all MatchConstraints and renames the subjects; collects the old and the new subjects in the received bags
+   * Takes all MatchConstraints and renames the subjects; 
+   * Match(p,s) -> IsSort(s) /\ Match(freshSubj,Cast(s)) /\ Match(p,freshVar) 
    * 
    * @param subjectList the list of old subjects
-   * @param renamedSubjects the list of renamed subjects
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity(){
     visit Constraint {
-visitL: constr -> {
+      constr@(MatchConstraint|NumericConstraint)[] -> {
         TomTerm subject = null;
         TomTerm pattern = null;
         NumericConstraintType numericType = null;
         boolean isMatchConstraint = false;
-matchL: %match(constr){
-          MatchConstraint(p, s) -> {pattern = `p;subject = `s;isMatchConstraint = true;break matchL;}
-          NumericConstraint(left, right, nt) -> {pattern = `left;subject = `right; numericType = `nt;break matchL;}
-          _ -> { break visitL; }
-        }
+        %match(constr){
+          MatchConstraint(p, s) -> { 
+            if (renamedSubjects.contains(`p) || renamedSubjects.contains(`s) ) {// make sure we don't process generated contraints
+              return `constr; 
+            }
+            pattern = `p;subject = `s;isMatchConstraint = true; 
+          }
+          NumericConstraint(left, right, nt) -> {
+            if (renamedSubjects.contains(`left) || renamedSubjects.contains(`right) ) {// make sure we don't process generated contraints
+              return `constr; 
+            }
+            pattern = `left;subject = `right; numericType = `nt; 
+          }          
+        }        
         // test if we already renamed this subject
-        if (subjectList.contains(`subject)) {
+        if (subjectList.contains(`subject)) {          
           TomTerm renamedSubj = (TomTerm)renamedSubjects.get(subjectList.indexOf(subject));
-          return isMatchConstraint ? `MatchConstraint(pattern,renamedSubj) : `NumericConstraint(pattern,renamedSubj,numericType); 
+          Constraint newConstraint = isMatchConstraint ? `MatchConstraint(pattern,renamedSubj) : `NumericConstraint(pattern,renamedSubj,numericType);
+          TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
+          return `AndConstraint(
+              IsSortConstraint(freshSubjectType,subject),
+              MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
+              newConstraint);
         }
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
@@ -192,7 +181,11 @@ matchL: %match(constr){
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
-        return isMatchConstraint ? `MatchConstraint(pattern,renamedVar) : `NumericConstraint(pattern,renamedVar,numericType);
+        Constraint newConstraint = isMatchConstraint ? `MatchConstraint(pattern,renamedVar) : `NumericConstraint(pattern,renamedVar,numericType);        
+        return `AndConstraint(
+            IsSortConstraint(freshSubjectType,subject),
+            MatchConstraint(renamedVar,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
+            newConstraint);
       }
     }
   }
