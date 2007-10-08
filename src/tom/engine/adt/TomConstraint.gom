@@ -32,11 +32,6 @@ Constraint =
   		   */
 			| AndMarker(Constraint:Constraint)
 			| OrMarker(Constraint:Constraint)
-		  /**
-  		   * A sequence of constraints
-  		   */
-			| SequenceConstraint(LeftConstraint:Constraint,RightConstraint:Constraint)
-			
 
 NumericConstraintType = NumLessThan() 
 					| NumLessOrEqualThan()
