@@ -80,7 +80,7 @@ public class GomCommonTask extends MatchingTask {
 
   protected String protectedFileSeparator = "\\"+File.separatorChar;
 
-  private Java javaRunner;
+  protected Java javaRunner;
 
   public void init() throws BuildException {
     javaRunner = new Java();
