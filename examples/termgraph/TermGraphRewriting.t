@@ -299,11 +299,11 @@ public class TermGraphRewriting {
       System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
 
       /* benchs */
+      Term subject = `g(a(),PathTerm(-1,1));
       long startChrono = System.currentTimeMillis();
-      Strategy s = (new Position(new int[]{1,1})).getOmega(Term.GraphRule());
       int k = 500;
       for(int i=0; i<k;i++) {
-        s.visit(t);
+        Term.GraphRule().visit(subject);
       }
       System.out.println(System.currentTimeMillis()-startChrono+"ms for "+k+" rules");
     } catch(VisitFailure e) {
