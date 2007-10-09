@@ -30,7 +30,7 @@
 package termgraph;
 
 import tom.library.sl.*;
-
+import tom.library.utils.Viewer;
 import termgraph.term.*;
 import termgraph.term.types.*;
 import termgraph.term.strategy.term.*;
@@ -108,81 +108,15 @@ public class TermGraphAction {
   }
 
   public static void main(String[] args) {
-   List abcd = `LabList("1", doublelinkedlist(nil(),a(),LabList("2",insert(b(),LabList("3",doublelinkedlist(RefList("1"),c(),doublelinkedlist(RefList("3"),d(),nil())))))));
-    System.out.println(toDot((List)abcd.expand(),"original"));
+    List abcd = `LabList("1", doublelinkedlist(nil(),a(),LabList("2",insert(b(),LabList("3",doublelinkedlist(RefList("1"),c(),doublelinkedlist(RefList("3"),d(),nil())))))));
+    System.out.println("Original subject");
+    Viewer.toDot((List)abcd.expand());
     try {
-      System.out.println(toDot((List)((List) `TopDown(Insertion()).visit(abcd)).expand(),"action"));
-      System.out.println(toDot((List)(`TopDown(List.Insert()).visit(abcd.expand())),"tgrs"));
-      tom.library.utils.Viewer.display(`TopDown(List.Insert()).visit(abcd.expand()));
+      System.out.println("Insertion with term-graph actions (Rachid Echahed's formalism)");
+      Viewer.toDot(((List)`TopDown(Insertion()).visit(abcd)).expand());
+      System.out.println("Insertion with term-graph rules from Gom");
+      Viewer.toDot((`TopDown(List.Insert()).visit(abcd.expand())));
     } catch (VisitFailure e) {}
-  }
-
-  public static String toDot(List l,String graphname) {
-    StringBuffer output = new StringBuffer();
-    output.append("digraph "+graphname+" {\nordering=out;");
-    try{
-      `TopDown(Print(output)).visit(l);
-    } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
-    output.append("\n}");
-    return output.toString();
-  }
-
-  %typeterm StringBuffer{
-    implement {StringBuffer}
-  }
-
-  private static String getNodeFromPos(Position p) {
-    String tmp = p.toString().replaceAll(", ",""); 
-    return "p"+tmp.substring(1,tmp.length()-1); 
-  }
-
-  %strategy Print(out:StringBuffer) extends Identity() {
-    visit List {
-      p@PathList(_*) -> {
-        Position current = getEnvironment().getPosition();
-        Position father = current.up();
-        out.append(%[
-@getNodeFromPos(current)@ [label=""];
-@getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
-        Position dest = (Position) current.add((Path)`p).getCanonicalPath();
-        out.append(%[
-@getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
-        return `p;
-      }
-      l -> {
-        Position current = getEnvironment().getPosition(); 
-        out.append(%[
-@getNodeFromPos(current)@ [label="@`l.symbolName()@"]; ]%);
-        if(!current.equals(new Position(new int[]{}))) {
-          Position father = current.up();
-          out.append(%[
-@getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
-        }
-      }
-    }
-    visit Term {
-      p@PathTerm(_*) -> {
-        Position current = getEnvironment().getPosition();
-        Position father = current.up();
-        out.append(%[
-@getNodeFromPos(current)@ [label=""];
-@getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
-        Position dest = (Position) current.add((Path)`p).getCanonicalPath();
-        out.append(%[
-@getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
-        return `p;
-      }
-      t -> {
-        Position current = getEnvironment().getPosition(); 
-        out.append(%[
-@getNodeFromPos(current)@ [label="@`t.symbolName()@"]; ]%);
-        if(!current.equals(new Position(new int[]{0}))) {
-          Position father = current.up();
-          out.append(%[
-@getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
-        }
-      }
-    }
   }
 
 }
