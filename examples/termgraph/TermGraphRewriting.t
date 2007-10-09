@@ -301,7 +301,7 @@ public class TermGraphRewriting {
       /* benchs */
       Term subject = `g(a(),PathTerm(-1,1));
       long startChrono = System.currentTimeMillis();
-      int k = 500;
+      int k = 10000;
       for(int i=0; i<k;i++) {
         Term.GraphRule().visit(subject);
       }
