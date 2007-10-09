@@ -297,8 +297,15 @@ public class TermGraphRewriting {
       t4 = (Term) posFinal.getSubterm().visit(t4);
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t4);
       System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
-      
 
+      /* benchs */
+      long startChrono = System.currentTimeMillis();
+      Strategy s = (new Position(new int[]{1,1})).getOmega(Term.GraphRule());
+      int k = 500;
+      for(int i=0; i<k;i++) {
+        s.visit(t);
+      }
+      System.out.println(System.currentTimeMillis()-startChrono+"ms for "+k+" rules");
     } catch(VisitFailure e) {
       System.out.println("Failure in main");
 
