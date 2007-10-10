@@ -767,7 +767,8 @@ b :{
 
                HashMap<Term,Term> termmap = new HashMap<Term,Term>();
                termmap.put(`NewVar("z0","z"),appliedTo);
-               return (Tree) `Sequence(ApplyRule(pistarleft,h,termmap),Brackets(auto)).visit(`r);
+               //return (Tree) `Sequence(ApplyRule(pistarleft,h,termmap),Brackets(auto)).visit(`r);
+               return (Tree) `ApplyRule(pistarleft,h,termmap).visit(`r);
              }
            }
     }
