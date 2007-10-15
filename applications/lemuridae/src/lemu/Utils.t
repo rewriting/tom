@@ -146,9 +146,9 @@ public class Utils {
     }
   }
 
-  %strategy CollectFreeVars(defaultcase:Strategy, res:StringCollection ) extends defaultcase {
+  %strategy CollectFreeVars(defaultcase:Strategy, res:StringCollection) extends defaultcase {
     visit Prop {
-      p -> { res.addAll(`p.getFreeVars()); }
+      p -> { res.addAll(`p.getFreeVars()); return `p; }
     }
   }
 

@@ -725,8 +725,7 @@ b :{
         getOpenPositions(`t,open);
         Tree res = `t;
         for(Position p: open) {
-          Tree at_p = (Tree) p.getOmega(s).visit(res);
-          res = (Tree) p.getReplace(at_p).visit(res);
+          res = (Tree) p.getOmega(s).visit(res);
         }
         return res;
       }
@@ -755,22 +754,30 @@ b :{
   }
   */
 
-  %strategy LamdaPiTypeCheck(pistarleft:Rule, auto: Strategy) extends Identity() {
+  %strategy LamdaPiTypeCheck(pistarleft:Rule, cont: Strategy) extends Identity() {
     visit Tree {
       r@rule[type=openInfo(),
-             c=sequent(context(_*,h@relationAppl("in",(f,_)),_*),
+             c=sequent(hyps@context(_*,h@relationAppl("in",(f,_)),_*),
                        context(_*,relationAppl("in",(a@funAppl("lappl",_),_))))] -> {
-             Term appliedTo = `isAppliedNestedTo(f,a);
-             if(appliedTo != null) {
-               System.out.println("found " + PrettyPrinter.prettyPrint(`f) + 
-                   " applied to " + PrettyPrinter.prettyPrint(`appliedTo));
+               Term appliedTo = `isAppliedNestedTo(f,a);
+               if(appliedTo != null) {
+                 System.out.println("found " + PrettyPrinter.prettyPrint(`f) + 
+                     " applied to " + PrettyPrinter.prettyPrint(`appliedTo));
 
-               HashMap<Term,Term> termmap = new HashMap<Term,Term>();
-               termmap.put(`NewVar("z0","z"),appliedTo);
-               //return (Tree) `Sequence(ApplyRule(pistarleft,h,termmap),Brackets(auto)).visit(`r);
-               return (Tree) `ApplyRule(pistarleft,h,termmap).visit(`r);
-             }
-           }
+                 // if not already done
+                 %match(hyps) {
+                   //!context(_*,relationAppl("in",(x,_)),_*) && x << funAppl("lappl",concTerm(f,appliedTo)) -> {
+                   context(_*,relationAppl("in",(x,_)),_*) -> {
+                     System.out.println(`x);
+                   }
+                 }
+                   {
+                     HashMap<Term,Term> termmap = new HashMap<Term,Term>();
+                     termmap.put(`NewVar("z0","z"),appliedTo);
+                     return (Tree) `Sequence(ApplyRule(pistarleft,h,termmap),cont).visit(`r);
+                   }
+                 }
+               }
     }
   }
 
@@ -1009,7 +1016,8 @@ b :{
         /* experimental typecheck case */
         proofCommand("typecheck") -> {
           try {
-            Strategy strat = `LamdaPiTypeCheck(newRules.get(7),Identity());
+            Strategy auto = AutoReduce(newTermRules,newPropRules,newRules);
+            Strategy strat = `mu(MuVar("x"),LamdaPiTypeCheck(newRules.get(7),Brackets(Sequence(auto,MuVar("x")))));
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply typecheck : " + e + ", " + e.getMessage());
@@ -1191,7 +1199,7 @@ b :{
         }
       }
     } catch (Exception e) {
-      writeToOutputln("Can't convert theorem :" + e.getMessage());
+      writeToOutputln("Can't convert theorem: " + e.getMessage());
     }
   }
 
