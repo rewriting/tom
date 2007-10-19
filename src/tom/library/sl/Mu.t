@@ -8,20 +8,26 @@ public class Mu extends AbstractStrategy {
   public final static int VAR = 0;
   public final static int V = 1;
 
-  private MuStrategyTopDown muStrategyTopDown;
   private boolean expanded = false;
+  private static MuStrategyTopDown muStrategyTopDown = new MuStrategyTopDown();
+  
   public Mu(Strategy var, Strategy v) {
     initSubterm(var, v);
-    muStrategyTopDown = new MuStrategyTopDown();
   }
 
   public final Visitable visitLight(Visitable any) throws VisitFailure {
-    if(!expanded) { muExpand(); }
+    if(!expanded) { 
+      expand(this); 
+      expanded = true;
+    }
     return visitors[V].visitLight(any);
   }
 
   public int visit() {
-    if(!expanded) { muExpand(); }
+    if(!expanded) { 
+      expand(this); 
+      expanded = true;
+    }
     return visitors[V].visit();
   }
 
@@ -29,11 +35,10 @@ public class Mu extends AbstractStrategy {
     return ((MuVar)visitors[VAR]).isExpanded();
   }
 
-  public void muExpand() {
+  public static void expand(Strategy s) {
     try {
       muStrategyTopDown.init();
-      muStrategyTopDown.visitLight(this);
-      expanded = true;
+      muStrategyTopDown.visitLight(s);
     } catch (VisitFailure e) {
       System.out.println("mu reduction failed");
     }

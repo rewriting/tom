@@ -30,6 +30,7 @@
  **/
 package tom.library.sl;
 import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * Object that represents an environment of a strategy
@@ -134,6 +135,17 @@ public final class Environment implements Cloneable {
    */
   public void setRoot(Visitable root) {
     this.subterm[0] = root;
+  }
+
+  /**
+   * get the current stack
+   */
+  public Vector<Visitable> getCurrentStack() {
+    Vector<Visitable> v = new Vector<Visitable>();
+    for (int i=0;i<depth();i++) {
+      v.add(subterm[i]);
+    }
+    return v;
   }
 
   /**
