@@ -118,9 +118,9 @@ public final class Environment implements Cloneable {
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
- public int getStatus() { return status; } 
- 
- public void setStatus(int s) { this.status = s; }
+  public int getStatus() { return status; } 
+
+  public void setStatus(int s) { this.status = s; }
 
   /**
    * get the current root
