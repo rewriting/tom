@@ -66,6 +66,7 @@ public class TomSyntaxChecker extends TomChecker {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
+  %include { ../../library/mapping/java/util/ArrayList.tom}
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
@@ -490,18 +491,28 @@ public class TomSyntaxChecker extends TomChecker {
   // ////////////////////////////////
   /**
    * Verifies the match construct
+   * 
+   * 0. checks that are not any circular dependencies
    * 1. Verifies all MatchConstraints
    * 2. Verifies all NumericConstraints (left side a variable, and the type of the right side numeric)
    * 3. Verifies that in an OrConstraint, all the members have the same free variables
    */
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure{
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
-    ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+    ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
+    HashMap varRelationsMap = new HashMap();
     `TopDown(CollectConstraints(constraints)).visitLight(constraintInstructionList);
     TomType typeMatch = null;
     for(Constraint constr: constraints){
       %match(constr){
         MatchConstraint(pattern,subject) -> {
+          ArrayList<TomTerm> patternVars = new ArrayList<TomTerm>();
+          ArrayList<TomTerm> subjectVars = new ArrayList<TomTerm>();
+          `TopDown(CollectVariables(patternVars)).visitLight(`pattern);
+          `TopDown(CollectVariables(subjectVars)).visitLight(`subject);
+          
+          computeDependencies(varRelationsMap,patternVars,subjectVars);
+          
           %match(subject) {            
             TomTypeToTomTerm(TomTypeAlone[]) -> {
               // this is from %strategy construct and is already cheked in verifyStrategy
@@ -602,6 +613,28 @@ public class TomSyntaxChecker extends TomChecker {
         }
       }
     } // for
+    
+    checkVarDependencies(varRelationsMap);
+  }
+  
+  /**
+   * Puts all the variables in the list patternVars in relation with all the variables in subjectVars
+   */
+  private void computeDependencies(HashMap varRelationsMap, List<TomTerm> patternVars, List<TomTerm> subjectVars){
+    %match(patternVars){
+      concArrayList(_*,x,_*) -> {
+        if (!patternVars.keys.contains(`x)){
+          varRelationsMap.addKey(`x);
+          varRelationsMap.put(`x,subjectVars);
+        }
+      }
+    }
+  }  
+  
+  private void checkVarDependencies(HashMap varRelationsMap) {
+    Logger.getLogger("PreGenerator").log(new PlatformLogRecord(Level.SEVERE, 
+        TomMessage.circularReferences, new Object[]{vName},`fileName, `line)); 
+
   }
   
   /**
@@ -663,6 +696,18 @@ public class TomSyntaxChecker extends TomChecker {
       }
     }
   }
+  
+  /**
+   * Collect the variables' names   
+   */
+  %strategy CollectVariables(varList:Collection) extends Identity() {     
+    visit TomTerm {
+      v@(Variable|VariableStar)[AstName=name] -> {
+        if (!varList.contains(`name)) { varList.add(`v); }
+      }
+    }
+  }
+
 
   
   /**
