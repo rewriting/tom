@@ -31,9 +31,11 @@ package tom.library.utils;
 import java.io.*;
 import tom.library.sl.*;
 import java.util.Stack;
+import java.util.Vector;
 import aterm.pure.PureFactory;
 import att.grappa.*;
 import javax.swing.*;
+import java.awt.event.*;
 
 public class Viewer {
 
@@ -124,33 +126,35 @@ public class Viewer {
 
   public static void display(Visitable vv) {
     final Visitable v = vv;
-    javax.swing.SwingUtilities.invokeLater(
-        new Runnable() { public void run() { 
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        JFrame frame = new JFrame("Viewer");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        try {
-        Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("dot");
-        Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-        if(v instanceof Strategy) {        
+    JFrame.setDefaultLookAndFeelDecorated(true);
+    JFrame frame = new JFrame("Viewer");
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+        synchronized(v){  v.notify(); }}});
+    try {
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec("dot");
+      Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
+      if(v instanceof Strategy) {        
         Viewer.toDot((Strategy)v, out); 
-        } else {
+      } else {
         Viewer.toDot(v, out); 
-        }
-        out.close();
-        Parser parser = new Parser(pr.getInputStream());
-        parser.parse();
-        Graph graph = parser.getGraph();
-        GrappaPanel panel = new GrappaPanel(graph);
-        panel.setScaleToFit(true);
-        frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
-        frame.pack();
-        frame.setVisible(true);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-        }});
+      }
+      out.close();
+      Parser parser = new Parser(pr.getInputStream());
+      parser.parse();
+      Graph graph = parser.getGraph();
+      GrappaPanel panel = new GrappaPanel(graph);
+      panel.setScaleToFit(true);
+      frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
+      frame.pack();
+      frame.setVisible(true);
+      synchronized(v){  
+        v.wait();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   /* -------- pstree-like part --------- */
@@ -240,14 +244,30 @@ public class Viewer {
 
   public static void 
     toDot(Strategy subj, Writer w) throws IOException {
-      w.write("digraph strategy {\nordering=out;");
+      Mu.expand(subj);
       try{
+        subj = (Strategy) `TopDownCollect(RemoveMu()).visit(subj);
+        w.write("digraph strategy {\nordering=out;");
         Strategy print = new PrintStrategy(w);
         `TopDownCollect(print).visit(subj);
       } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
       w.write("\n}");
       w.flush();
     }
+
+  %strategy RemoveMu() extends Identity() { 
+    visit Strategy {
+      Mu[s2=strat] -> {
+        return `strat;
+      }
+      _ -> {
+        if (getEnvironment().getCurrentStack().contains(getEnvironment().getSubject())) {
+          //corresponds to a pointer due to MuVar
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
 
   public static void toDot(tom.library.sl.Strategy s) {
     try {
@@ -274,49 +294,42 @@ public class Viewer {
 
     public int visit() {
       Visitable v = getEnvironment().getSubject();
+      Position current = getEnvironment().getPosition();
+      Vector<Visitable> stack = getEnvironment().getCurrentStack(); 
       try {
-        if (v instanceof MuVar) {
-          String varname = ((MuVar)v).getName();
-          Position current = getEnvironment().getPosition();
+        //test if it is a pointer due to an expanded MuVar
+        if (stack.contains(v)) {
+          int index = stack.indexOf(v);
+          Position dest = (Position) current.clone();
+          for(int i=current.length();i>index;i--) {
+            dest = dest.up();
+          } 
           Position father = current.up();
           w.write(%[
-              @getNodeFromPos(current)@ [label=@varname@];
-              @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
-          //go up in the term until finding the position of the corresponding Mu
-          boolean find = false;
-          while(!find && getEnvironment().depth()>0) {
-            getEnvironment().up();
-            Visitable tmp = getEnvironment().getSubject();
-            if (tmp instanceof Mu && ((MuVar)(tmp.getChildAt(Mu.VAR))).getName().equals(varname)) { 
-              find =true;
-              Position dest = getEnvironment().getPosition();
-              //test if it is not the first child of the Mu 
-              if (! dest.down(1).equals(current)) {
-                w.write(%[
-                    @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
-              }
-              getEnvironment().followPath(current.sub(dest));
-            }
-          }
-          //use the failure to avoid looping
+              @getNodeFromPos(father)@ -> @getNodeFromPos(dest)@; ]%);
+          //fails to prevent loops
           return Environment.FAILURE;
-        } else {
-          Position current = getEnvironment().getPosition();
+        }
+        else {
           String[] tab = `v.getClass().getName().split("\\.");
           String name = tab[tab.length-1];
           tab = name.split("\\$");
           name = tab[tab.length-1];
           w.write(%[
               @getNodeFromPos(current)@ [label="@name@"]; ]%);
-          if(!current.equals(new Position(new int[]{}))) {
+          if(stack.size()!=0) {
             Position father = current.up();
             w.write(%[
                 @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
           }
         }
-      } catch(IOException e) {}
+      } catch(java.io.IOException e) {
+        return Environment.FAILURE;
+      }
       return Environment.SUCCESS;
     }
+
   }
 
 }
+
