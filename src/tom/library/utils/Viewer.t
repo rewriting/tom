@@ -67,8 +67,15 @@ public class Viewer {
   }
 
   private static String getNodeFromPos(Position p) {
-    String tmp = p.toString().replace(", ",""); 
-    return "p"+tmp.substring(1,tmp.length()-1); 
+    int[] omega = p.toArray();
+    StringBuffer r = new StringBuffer("p");
+    for(int i=0 ; i<p.depth() ; i++) {
+      r.append(omega[i]);
+      if(i<p.depth()-1) {
+        r.append("_");
+      }
+    }
+    return r.toString();
   }
 
   static class Print extends AbstractStrategy {
@@ -127,15 +134,16 @@ public class Viewer {
         Process pr = rt.exec("dot");
         Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
         if(v instanceof Strategy) {        
-          Viewer.toDot((Strategy)v, out); 
+        Viewer.toDot((Strategy)v, out); 
         } else {
-          Viewer.toDot(v, out); 
+        Viewer.toDot(v, out); 
         }
         out.close();
         Parser parser = new Parser(pr.getInputStream());
         parser.parse();
         Graph graph = parser.getGraph();
         GrappaPanel panel = new GrappaPanel(graph);
+        panel.setScaleToFit(true);
         frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
         frame.pack();
         frame.setVisible(true);
@@ -276,14 +284,15 @@ public class Viewer {
               @getNodeFromPos(father)@ -> @getNodeFromPos(current)@; ]%);
           //go up in the term until finding the position of the corresponding Mu
           boolean find = false;
-          while(!find && getEnvironment().depth()!=1) {
+          while(!find && getEnvironment().depth()>0) {
             getEnvironment().up();
             Visitable tmp = getEnvironment().getSubject();
             if (tmp instanceof Mu && ((MuVar)(tmp.getChildAt(Mu.VAR))).getName().equals(varname)) { 
               find =true;
               Position dest = getEnvironment().getPosition();
               //test if it is not the first child of the Mu 
-              if (! ((Position)dest.clone()).down(1).equals(current)) {
+              //if (! dest.down(1).equals(current)) {
+              if (! dest.down(1).equals(current)) {
                 w.write(%[
                     @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
               }
