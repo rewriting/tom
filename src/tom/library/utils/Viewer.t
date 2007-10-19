@@ -291,7 +291,6 @@ public class Viewer {
               find =true;
               Position dest = getEnvironment().getPosition();
               //test if it is not the first child of the Mu 
-              //if (! dest.down(1).equals(current)) {
               if (! dest.down(1).equals(current)) {
                 w.write(%[
                     @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
