@@ -502,12 +502,12 @@ public class TomSyntaxChecker extends TomChecker {
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure{
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
     ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
-    HashMap varRelationsMap = new HashMap();
+    HashMap<TomName, List<TomName>> varRelationsMap = new HashMap();
     `TopDown(CollectConstraints(constraints)).visitLight(constraintInstructionList);
     TomType typeMatch = null;
     for(Constraint constr: constraints){
       %match(constr){
-        MatchConstraint(pattern,subject) -> {
+        MatchConstraint(pattern,subject) -> {          
           ArrayList<TomName> patternVars = new ArrayList<TomName>();
           ArrayList<TomName> subjectVars = new ArrayList<TomName>();
           `TopDown(CollectVariables(patternVars)).visitLight(`pattern);
@@ -622,12 +622,13 @@ public class TomSyntaxChecker extends TomChecker {
   /**
    * Puts all the variables in the list patternVars in relation with all the variables in subjectVars
    */
-  private void computeDependencies(HashMap<TomName, List<TomName>>  varRelationsMap, List<TomName> patternVars, List<TomName> subjectVars){
-    for(TomName x:patternVars) {
-      if (!varRelationsMap.keySet().contains(x)){          
+  private void computeDependencies(HashMap<TomName, List<TomName>>  varRelationsMap, List<TomName> patternVars, List<TomName> subjectVars){      
+    for(TomName x:patternVars) {      
+      if (!varRelationsMap.keySet().contains(x)){        
         varRelationsMap.put(x,subjectVars);
-      }else{ // add the rest of the variables
-        subjectVars.addAll(varRelationsMap.get(x));
+      }else{ // add the rest of the variables        
+        List<TomName> tmp = new ArrayList<TomName>(subjectVars);        
+        tmp.addAll(varRelationsMap.get(x));
         varRelationsMap.put(x,subjectVars);
       }
     }
