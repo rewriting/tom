@@ -562,7 +562,7 @@ public class StrategyCompiler {
       if(subject instanceof Mu) {
         // To be sure that the strategy has been mu-expanded.
         Mu m = (Mu)subject;
-        m.muExpand();
+        Mu.expand(m);
 
         String visitSuffix = cleanMethodName("_" + subject);
 
