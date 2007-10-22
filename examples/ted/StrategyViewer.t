@@ -50,9 +50,9 @@ public class StrategyViewer {
   private static void 
     toDot(Strategy subj, Writer out, Strategy hilight, String color) {
       %match (Strategy subj) {
-        y@MuVar[] -> { return; }
+        MuVar[] -> { return; }
 
-        x@Mu[] ->{  ((Mu)`x).muExpand(); } // to mu-expand
+        x@Mu[] ->{  Mu.expand(`x); } // to mu-expand
 
         x -> { 
           if((`x) instanceof ted.DebugStrategy) 
