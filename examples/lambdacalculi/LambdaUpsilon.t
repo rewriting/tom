@@ -115,6 +115,8 @@ class LambdaUpsilon {
       `lappl(lappl(lappl(swap,constant("f")),constant("a")),constant("b"));
 
     LTerm t3 = `lappl(swap,constant("f"));
+    tom.library.utils.Viewer.display(t3);
+    tom.library.utils.Viewer.toTree(t3);
 
     System.out.println("(\\x.(x x) a) = " + t1);
     System.out.println("swap = \\fxy.(f y x) = " + swap);
