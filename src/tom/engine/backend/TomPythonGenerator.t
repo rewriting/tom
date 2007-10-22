@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
+ 
  **/
 
 package tom.engine.backend;
@@ -59,11 +59,23 @@ public class TomPythonGenerator extends TomGenericGenerator {
     super(output, optionManager, symbolTable);
   }
 
+  /*
+  public void generateInstructionList(int deep, InstructionList subject, String moduleName)
+    throws IOException {
+    while(!subject.isEmptyconcInstruction()) {
+      generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
+      subject = subject.getTailconcInstruction();
+    }
+    output.writeln();
+  }
+  */
+
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generate(deep,var,moduleName);
     output.write("=");
     generateExpression(deep,exp,moduleName);
+    output.write(";\n");
   } 
 
   protected void buildComment(int deep, String text) throws IOException {
@@ -132,6 +144,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     generateExpression(deep,exp, moduleName); 
     output.writeln(":\n");
     generateInstruction(deep+1,succes, moduleName);
+    output.write(deep,"\n# end if\n"); 
   }
 
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
@@ -141,6 +154,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     generateInstruction(deep+1,succes,moduleName);
     output.writeln(deep,"else:\n");
     generateInstruction(deep+1,failure,moduleName);
+    output.write(deep,"\n# end if\n"); 
   }
 
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
@@ -178,6 +192,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     generateExpression(deep,exp,moduleName);
     output.writeln(":");
     generateInstruction(deep+1,succes,moduleName);
+    output.write(deep,"\n# end while\n"); 
   }
 
   protected void genDeclInstr(String returnType,
@@ -202,7 +217,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s.append("): ");
     output.write(deep,s);
     generateInstruction(deep+1,instr,moduleName);
-    output.writeln();
+    output.writeln("\n# end def " + declName + "_" + suffix + "\n");
   }
 
 
@@ -242,6 +257,8 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "     return " + make_insert + "(" + get_head + "(l1),l2)\n";
     s+= "   else:\n";  
     s+= "     return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
+    s+= "# end if";
+    s+= "# end def tom_append_list_" + name;
     s+= "\n";
     
     s+= "def tom_get_slice_" + name + "(begin, end,tail):\n"; 
@@ -250,10 +267,12 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "   else:\n";
     s+= "      return " +  make_insert + "(" + get_head + "(begin)," + 
       get_slice + "(" + get_tail + "(begin),end,tail));\n";
+    s+= "# end if";
+    s+= "# end def tom_get_slice_" + name;
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    String res  = ASTFactory.makeSingleLineCode(s, prettyMode);
-    output.write(res);
+    //String res  = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(s);
   }
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
@@ -291,6 +310,7 @@ matchBlock: {
     output.write(s);
     output.write("return ");
     generateInstruction(0,instr,moduleName);
+    output.write("\n # end def " + prefix+funName + "\n");
   }
 
   // FIXME
@@ -359,6 +379,7 @@ matchBlock: {
 
     output.writeln(": ");
     generateInstruction(deep+1,instruction,moduleName);
+    output.write(deep, "\n# end def " + tomName + "\n");
   }
 
   protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
@@ -385,20 +406,7 @@ matchBlock: {
     } 
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     s.append("):\n " + returnValue + "\n");
-
-    %match(TargetLanguage tlCode) {
-      TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
-        output.write(0,s, `startLine, `endLine - `startLine);
-        return;
-      }
-
-      ITL(_) -> {  // pas de \n donc pas besoin de reworkTL
-        output.write(s);
-        return;
-      }
-
-    }
+    s.append("\n # end def " + declName + "_" + suffix + "\n");
+    output.write(s);
   }
-
-
 }

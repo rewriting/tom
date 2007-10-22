@@ -411,8 +411,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomType argType2 = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type2)) {
       argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
+    }    
+    %match(instr) {
+      Return(TargetLanguageToTomTerm(TL(code,_,_))) -> { 
+        instr =  `Return(ExpressionToTomTerm(Code(code))); 
+      }
     }
-
     genDeclInstr(TomBase.getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_equal_term", type1,
             new String[] {
               TomBase.getTLType(argType1), name1,
