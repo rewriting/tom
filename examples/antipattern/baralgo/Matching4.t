@@ -70,7 +70,7 @@ public class Matching4 implements Matching {
        * `RepeatId(ChoiceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
        * ).visitLight(c);
        */			
-      return (Constraint)`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule))).visitLight(c);
+      return (Constraint)`RepeatId(SequenceId(OutermostId(simplifyRule),TopDown(negCleanRule))).visitLight(c);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       // e.printStackTrace();
