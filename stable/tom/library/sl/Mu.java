@@ -8,20 +8,26 @@ public class Mu extends AbstractStrategy {
   public final static int VAR = 0;
   public final static int V = 1;
 
-  private MuStrategyTopDown muStrategyTopDown;
   private boolean expanded = false;
+  private static MuStrategyTopDown muStrategyTopDown = new MuStrategyTopDown();
+  
   public Mu(Strategy var, Strategy v) {
     initSubterm(var, v);
-    muStrategyTopDown = new MuStrategyTopDown();
   }
 
   public final Visitable visitLight(Visitable any) throws VisitFailure {
-    if(!expanded) { muExpand(); }
+    if(!expanded) { 
+      expand(this); 
+      expanded = true;
+    }
     return visitors[V].visitLight(any);
   }
 
   public int visit() {
-    if(!expanded) { muExpand(); }
+    if(!expanded) { 
+      expand(this); 
+      expanded = true;
+    }
     return visitors[V].visit();
   }
 
@@ -29,11 +35,10 @@ public class Mu extends AbstractStrategy {
     return ((MuVar)visitors[VAR]).isExpanded();
   }
 
-  public void muExpand() {
+  public static void expand(Strategy s) {
     try {
       muStrategyTopDown.init();
-      muStrategyTopDown.visitLight(this);
-      expanded = true;
+      muStrategyTopDown.visitLight(s);
     } catch (VisitFailure e) {
       System.out.println("mu reduction failed");
     }
@@ -56,10 +61,7 @@ public class Mu extends AbstractStrategy {
  * current node.
  */
 class MuStrategyTopDown {
-  private static boolean tom_equal_term_MuStrategy(Object t1, Object t2) { return 
-
-
-t1.equals(t2);}private static boolean tom_is_sort_MuStrategy(Object t) { return  t instanceof tom.library.sl.Strategy ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strategy  t) { return  (t instanceof tom.library.sl.Mu) ;}private static  tom.library.sl.Strategy  tom_get_slot_Mu_s1( tom.library.sl.Strategy  t) { return  (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.VAR) ;}private static  tom.library.sl.Strategy  tom_get_slot_Mu_s2( tom.library.sl.Strategy  t) { return  (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.V) ;}private static boolean tom_equal_term_MuStrategyString(Object t1, Object t2) { return 
+  private static boolean tom_equal_term_MuStrategy(Object t1, Object t2) { return t1.equals(t2);}private static boolean tom_is_sort_MuStrategy(Object t) { return  t instanceof tom.library.sl.Strategy ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strategy  t) { return  (t instanceof tom.library.sl.Mu) ;}private static  tom.library.sl.Strategy  tom_get_slot_Mu_s1( tom.library.sl.Strategy  t) { return  (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.VAR) ;}private static  tom.library.sl.Strategy  tom_get_slot_Mu_s2( tom.library.sl.Strategy  t) { return  (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.V) ;}private static boolean tom_equal_term_MuStrategyString(Object t1, Object t2) { return t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { return  t instanceof String ;}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strategy  t) { return  (t instanceof tom.library.sl.MuVar) ;}private static  String  tom_get_slot_MuVar_var( tom.library.sl.Strategy  t) { return  ((tom.library.sl.MuVar)t).getName() ;}
 
 
 
@@ -73,7 +75,10 @@ t1.equals(t2);}private static boolean tom_is_sort_MuStrategy(Object t) { return 
 
 
 
-t1.equals(t2);}private static boolean tom_is_sort_MuStrategyString(Object t) { return  t instanceof String ;}private static boolean tom_is_fun_sym_MuVar( tom.library.sl.Strategy  t) { return  (t instanceof tom.library.sl.MuVar) ;}private static  String  tom_get_slot_MuVar_var( tom.library.sl.Strategy  t) { return  ((tom.library.sl.MuVar)t).getName() ;}
+
+
+
+
 
 
 

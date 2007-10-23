@@ -83,6 +83,7 @@ public class TomBackend extends TomGenericPlugin {
     "<boolean name='camlCode' altName=''  description='Generate Caml code' value='false'/>" + 
     "<boolean name='pCode'    altName=''  description='Generate Python code' value='false'/>" + 
     "<boolean name='inline'   altName=''  description='Inline mapping' value='false'/>" +
+    "<boolean name='inlineplus'   altName=''  description='Inline mapping' value='false'/>" +
     "</options>";
 
   /** the generated file name */
@@ -410,6 +411,15 @@ public class TomBackend extends TomGenericPlugin {
         }
       }
 
+      EqualTermDecl[TermArg1=Variable[AstType=Type(ASTTomType(type),_)],Expr=Code(code)] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putEqualTerm(`type,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
       GetSlotDecl[AstName=Name(opname),SlotName=Name(slotName),Expr=Code(code)] -> {
         try {
           String moduleName = (String) stack.peek();
@@ -422,7 +432,7 @@ public class TomBackend extends TomGenericPlugin {
       MakeDecl[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
         try {
           String moduleName = (String) stack.peek();
-          tb.getSymbolTable(moduleName).putMake("tom_make_" + `opname,`code);
+          tb.getSymbolTable(moduleName).putMake(`opname,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
@@ -431,7 +441,7 @@ public class TomBackend extends TomGenericPlugin {
       MakeEmptyList[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
         try {
           String moduleName = (String) stack.peek();
-          tb.getSymbolTable(moduleName).putMake("tom_empty_list_" + `opname,`code);
+          tb.getSymbolTable(moduleName).putMakeEmptyList(`opname,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }
@@ -440,7 +450,34 @@ public class TomBackend extends TomGenericPlugin {
       MakeAddList[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
         try {
           String moduleName = (String) stack.peek();
-          tb.getSymbolTable(moduleName).putMake("tom_cons_list_" + `opname,`code);
+          tb.getSymbolTable(moduleName).putMakeAddList(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      MakeEmptyArray[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putMakeEmptyArray(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      MakeAddArray[AstName=Name(opname),Instr=ExpressionToInstruction(Code(code))] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putMakeAddArray(`opname,`code);
+        } catch (EmptyStackException e) {
+          System.out.println("No moduleName in stack");
+        }
+      }
+
+      GetSizeDecl[Opname=Name(opname),Expr=Code(code)] -> {
+        try {
+          String moduleName = (String) stack.peek();
+          tb.getSymbolTable(moduleName).putGetSizeArray(`opname,`code);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }

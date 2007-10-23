@@ -38,7 +38,6 @@ public static org.w3c.dom.Node tom_mapping_buildAttribute(org.w3c.dom.Document d
 	return res;
 }
 
-
 public static org.w3c.dom.Node tom_mapping_buildElement(org.w3c.dom.Document dom,
 								String name, 
 								java.util.ArrayList attr, 
@@ -221,4 +220,3 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
   get_slot(Dom,t) { t.getOwnerDocument()}
   make(dom,t0) { ((org.w3c.dom.Document)dom).createTextNode(t0)}
 }
-

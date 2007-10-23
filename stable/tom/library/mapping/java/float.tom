@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 %typeterm float {
-  implement           { float }
+  implement { float }
   is_sort(t) { true } 
-  equals(t1,t2)       { (t1==t2) }
+  equals(t1,t2) { $t1==$t2 }
 }

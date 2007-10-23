@@ -28,21 +28,21 @@
  */
 
 %op Strategy AllSeq(s:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.sl.Re) }
-    make(s) { new tom.library.sl.AllSeq(s) }
-    get_slot(s,t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.DeRef.ARG) }
+    is_fsym(t) { ($t instanceof tom.library.sl.Re) }
+    make(s) { new tom.library.sl.AllSeq($s) }
+    get_slot(s,t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) }
   }
  
   %op Strategy DeRef(s:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)t).isRelative()==true && ((tom.library.sl.DeRef)t).isStrict()==false }
-    make(s) { tom.library.sl.DeRef.makeRelative(s) }
-    get_slot(s,t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.DeRef.ARG) }
+    is_fsym(t) { ($t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)$t).isRelative()==true && ((tom.library.sl.DeRef)$t).isStrict()==false }
+    make(s) { tom.library.sl.DeRef.makeRelative($s) }
+    get_slot(s,t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) }
   }
 
   %op Strategy StrictDeRef(s:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)t).isRelative()==true && ((tom.library.sl.DeRef)t).isStrict()==true }
-    make(s) { tom.library.sl.DeRef.makeRelativeStrict(s) }
-    get_slot(s, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.DeRef.ARG) }
+    is_fsym(t) { ($t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)$t).isRelative()==true && ((tom.library.sl.DeRef)$t).isStrict()==true }
+    make(s) { tom.library.sl.DeRef.makeRelativeStrict($s) }
+    get_slot(s, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) }
   }
 
 /**

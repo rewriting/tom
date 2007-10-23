@@ -426,9 +426,16 @@ public class SymbolTable {
   private static String prefixGetSlot = "get_slot_";
   private static String prefixGetHead = "get_head_";
   private static String prefixGetTail = "get_tail_";
-  private static String prefixIsEmpty = "is_empty_";
+  private static String prefixGetElementArray = "get_element_array_";
+  private static String prefixGetSizeArray = "get_size_array_";
+  private static String prefixIsEmptyList = "is_empty_list_";
   private static String prefixIsSort = "is_sort_";
   private static String prefixMake = "make_";
+  private static String prefixMakeEmptyArray = "make_empty_array_";
+  private static String prefixMakeEmptyList = "make_empty_list_";
+  private static String prefixMakeAddArray = "make_append_";
+  private static String prefixMakeAddList = "make_insert_";
+  private static String prefixEqualTerm = "equal_";
 
   private void putInliner(String prefix, String opname, String code) {
     mapInliner.put(prefix+opname,code);
@@ -475,11 +482,27 @@ public class SymbolTable {
     return getInliner(prefixGetTail,opname);
   }
 
-  public void putIsEmpty(String opname, String code) {
-    putInliner(prefixIsEmpty,opname,code);
+  public void putGetElementArray(String opname, String code) {
+    putInliner(prefixGetElementArray,opname,code);
   }
-  public String getIsEmpty(String opname) {
-    return getInliner(prefixIsEmpty,opname);
+  public String getGetElementArray(String opname) {
+    return getInliner(prefixGetElementArray,opname);
+  }
+
+  public void putGetSizeArray(String opname, String code) {
+    //System.out.println("put: " + opname + " -> " + code);
+    putInliner(prefixGetSizeArray,opname,code);
+  }
+  public String getGetSizeArray(String opname) {
+    //System.out.println("get: " + opname);
+    return getInliner(prefixGetSizeArray,opname);
+  }
+
+  public void putIsEmptyList(String opname, String code) {
+    putInliner(prefixIsEmptyList,opname,code);
+  }
+  public String getIsEmptyList(String opname) {
+    return getInliner(prefixIsEmptyList,opname);
   }
 
   public void putMake(String opname, String code) {
@@ -489,6 +512,40 @@ public class SymbolTable {
     return getInliner(prefixMake,opname);
   }
 
+  public void putMakeEmptyArray(String opname, String code) {
+    putInliner(prefixMakeEmptyArray,opname,code);
+  }
+  public String getMakeEmptyArray(String opname) {
+    return getInliner(prefixMakeEmptyArray,opname);
+  }
+
+  public void putMakeEmptyList(String opname, String code) {
+    putInliner(prefixMakeEmptyList,opname,code);
+  }
+  public String getMakeEmptyList(String opname) {
+    return getInliner(prefixMakeEmptyList,opname);
+  }
+
+  public void putMakeAddArray(String opname, String code) {
+    putInliner(prefixMakeAddArray,opname,code);
+  }
+  public String getMakeAddArray(String opname) {
+    return getInliner(prefixMakeAddArray,opname);
+  }
+
+  public void putMakeAddList(String opname, String code) {
+    putInliner(prefixMakeAddList,opname,code);
+  }
+  public String getMakeAddList(String opname) {
+    return getInliner(prefixMakeAddList,opname);
+  }
+
+  public void putEqualTerm(String type, String code) {
+    putInliner(prefixEqualTerm,type,code);
+  }
+  public String getEqualTerm(String type) {
+    return getInliner(prefixEqualTerm,type);
+  }
   /*
   private static class Inliner {
     public String isfsym;

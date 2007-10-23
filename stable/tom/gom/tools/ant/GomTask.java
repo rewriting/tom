@@ -48,6 +48,8 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>config</li>
  * <li>srcdir</li>
  * <li>destdir</li>
+ * <li>optimize</li>
+ * <li>optimize2</li>
  * <li>package</li>
  * <li>options</li>
  * <li>failonerror</li>
@@ -65,11 +67,47 @@ import org.apache.tools.ant.types.Environment.Variable;
 
 public class GomTask extends GomCommonTask {
 
+  private boolean optimize = false;
+  private boolean optimize2 = false;
+
   protected String toPattern() {
     return "\\1\\L\\3" + protectedFileSeparator + "\\3.tom";
   }
 
   protected String defaultConfigName() {
     return "Gom.xml";
+  }
+
+  /**
+   * If true, compiles with optimization enabled.
+   * @param optimize if true compile with optimization level-1 enabled
+   */
+  public void setOptimize(boolean optimize) {
+    this.optimize = optimize;
+  }
+
+  public boolean getOptimize() {
+    return optimize;
+  }
+
+  /**
+   * If true, compiles with optimization level-2 enabled.
+   * @param optimize if true compile with optimization level-2 enabled
+   */
+  public void setOptimize2(boolean optimize) {
+    this.optimize2 = optimize;
+  }
+
+  public boolean getOptimize2() {
+    return optimize2;
+  }
+
+  protected void processAdditionalOptions(Java runner) {
+    if(optimize == true) {
+      javaRunner.createArg().setValue("--optimize");
+    }
+    if(optimize2 == true) {
+      javaRunner.createArg().setValue("--optimize2");
+    }
   }
 }

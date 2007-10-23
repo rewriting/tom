@@ -39,7 +39,7 @@ import java.awt.event.*;
 
 public class Viewer {
 
-  %include { sl.tom }
+  %include { ../mapping/java/sl.tom }
   %include { ../mapping/java/sl/visitable.tom }
   %include { ../mapping/java/aterm.tom }
 

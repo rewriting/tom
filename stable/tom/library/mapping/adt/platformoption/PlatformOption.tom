@@ -5,29 +5,29 @@
 
 %typeterm PlatformOption {
   implement { tom.platform.adt.platformoption.types.PlatformOption }
-  is_sort(t) { t instanceof tom.platform.adt.platformoption.types.PlatformOption }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformOption }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
 %typeterm PlatformOptionList {
   implement { tom.platform.adt.platformoption.types.PlatformOptionList }
-  is_sort(t) { t instanceof tom.platform.adt.platformoption.types.PlatformOptionList }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformOptionList }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
 %typeterm PlatformBoolean {
   implement { tom.platform.adt.platformoption.types.PlatformBoolean }
-  is_sort(t) { t instanceof tom.platform.adt.platformoption.types.PlatformBoolean }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformBoolean }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
 %typeterm PlatformValue {
   implement { tom.platform.adt.platformoption.types.PlatformValue }
-  is_sort(t) { t instanceof tom.platform.adt.platformoption.types.PlatformValue }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformValue }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 %op PlatformOption PluginOption(Name:String, AltName:String, Description:String, Value:PlatformValue, AttrName:String) {
@@ -37,7 +37,7 @@
   get_slot(Description, t) { $t.getDescription() }
   get_slot(Value, t) { $t.getValue() }
   get_slot(AttrName, t) { $t.getAttrName() }
-  make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make(t0, t1, t2, t3, t4) }
+  make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make($t0, $t1, $t2, $t3, $t4) }
 }
 
 %op PlatformOptionList EmptyconcPlatformOption() {
@@ -49,7 +49,7 @@
   is_fsym(t) { ($t instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption) }
   get_slot(HeadconcPlatformOption, t) { $t.getHeadconcPlatformOption() }
   get_slot(TailconcPlatformOption, t) { $t.getTailconcPlatformOption() }
-  make(t0, t1) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(t0, t1) }
+  make(t0, t1) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make($t0, $t1) }
 }
 
 %op PlatformBoolean True() {
@@ -65,26 +65,26 @@
 %op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
   is_fsym(t) { ($t instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue) }
   get_slot(BooleanValue, t) { $t.getBooleanValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0) }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make($t0) }
 }
 
 %op PlatformValue StringValue(StringValue:String) {
   is_fsym(t) { ($t instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue) }
   get_slot(StringValue, t) { $t.getStringValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make(t0) }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make($t0) }
 }
 
 %op PlatformValue IntegerValue(IntegerValue:int) {
   is_fsym(t) { ($t instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue) }
   get_slot(IntegerValue, t) { $t.getIntegerValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0) }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make($t0) }
 }
 
 
 %oplist PlatformOptionList concPlatformOption(PlatformOption*) {
   is_fsym(t) { (($t instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption) || ($t instanceof tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption)) }
   make_empty() { tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() }
-  make_insert(e,l) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(e,l) }
+  make_insert(e,l) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make($e,$l) }
   get_head(l) { $l.getHeadconcPlatformOption() }
   get_tail(l) { $l.getTailconcPlatformOption() }
   is_empty(l) { $l.isEmptyconcPlatformOption() }

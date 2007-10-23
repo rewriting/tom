@@ -33,12 +33,12 @@
 %include { types/Object.tom }
 
 %oplist HashSet concHashSet(Object*) {
-  is_fsym(s)       { (s!= null) && (s instanceof java.util.HashSet) }
+  is_fsym(s)       { ($s!= null) && ($s instanceof java.util.HashSet) }
   make_empty()     { new java.util.HashSet() }
-  make_insert(o,s) { hashSetAppend(o,s) }
-  get_head(s)      { hashSetGetHead(s) }
-  get_tail(s)      { hashSetGetTail(s) }
-  is_empty(s)      { (s.size()==0) }
+  make_insert(o,s) { hashSetAppend($o,$s) }
+  get_head(s)      { hashSetGetHead($s) }
+  get_tail(s)      { hashSetGetTail($s) }
+  is_empty(s)      { ($s.size()==0) }
 }
 
 private static java.util.HashSet hashSetAppend(Object o, java.util.HashSet s) {

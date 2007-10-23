@@ -7,119 +7,119 @@
 
 %typeterm Deriv {
   implement { tom.engine.adt.il.types.Deriv }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Deriv }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Deriv }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Expr {
   implement { tom.engine.adt.il.types.Expr }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Expr }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Expr }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Variable {
   implement { tom.engine.adt.il.types.Variable }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Variable }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Variable }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Environment {
   implement { tom.engine.adt.il.types.Environment }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Environment }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Environment }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm InstrList {
   implement { tom.engine.adt.il.types.InstrList }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.InstrList }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.InstrList }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm ExprList {
   implement { tom.engine.adt.il.types.ExprList }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.ExprList }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.ExprList }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Substitution {
   implement { tom.engine.adt.il.types.Substitution }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Substitution }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Substitution }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Symbol {
   implement { tom.engine.adt.il.types.Symbol }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Symbol }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Symbol }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Seq {
   implement { tom.engine.adt.il.types.Seq }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Seq }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Seq }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm SubstitutionList {
   implement { tom.engine.adt.il.types.SubstitutionList }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.SubstitutionList }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.SubstitutionList }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Term {
   implement { tom.engine.adt.il.types.Term }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Term }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Term }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm TermList {
   implement { tom.engine.adt.il.types.TermList }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.TermList }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.TermList }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm Instr {
   implement { tom.engine.adt.il.types.Instr }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.Instr }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.Instr }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm AbsTerm {
   implement { tom.engine.adt.il.types.AbsTerm }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.AbsTerm }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.AbsTerm }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 
 %typeterm DerivTree {
   implement { tom.engine.adt.il.types.DerivTree }
-  is_sort(t) { t instanceof tom.engine.adt.il.types.DerivTree }
-  equals(t1,t2) { t1.equals(t2) }
+  is_sort(t) { $t instanceof tom.engine.adt.il.types.DerivTree }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
 }
 %op Deriv ebs(Lhs:Environment, Rhs:Environment) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.deriv.ebs) }
   get_slot(Lhs, t) { $t.getLhs() }
   get_slot(Rhs, t) { $t.getRhs() }
-  make(t0, t1) { tom.engine.adt.il.types.deriv.ebs.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.deriv.ebs.make($t0, $t1) }
 }
 
 %op Expr iltrue(Subst:SubstitutionList) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.iltrue) }
   get_slot(Subst, t) { $t.getSubst() }
-  make(t0) { tom.engine.adt.il.types.expr.iltrue.make(t0) }
+  make(t0) { tom.engine.adt.il.types.expr.iltrue.make($t0) }
 }
 
 %op Expr ilfalse() {
@@ -131,68 +131,68 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.isfsym) }
   get_slot(T, t) { $t.getT() }
   get_slot(Symbol, t) { $t.getSymbol() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.isfsym.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.isfsym.make($t0, $t1) }
 }
 
 %op Expr eq(Lt:Term, Rt:Term) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.eq) }
   get_slot(Lt, t) { $t.getLt() }
   get_slot(Rt, t) { $t.getRt() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.eq.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.eq.make($t0, $t1) }
 }
 
 %op Expr tisfsym(Abst:AbsTerm, Symbol:Symbol) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.tisfsym) }
   get_slot(Abst, t) { $t.getAbst() }
   get_slot(Symbol, t) { $t.getSymbol() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.tisfsym.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.tisfsym.make($t0, $t1) }
 }
 
 %op Expr teq(Labst:AbsTerm, Rabst:AbsTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.teq) }
   get_slot(Labst, t) { $t.getLabst() }
   get_slot(Rabst, t) { $t.getRabst() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.teq.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.teq.make($t0, $t1) }
 }
 
 %op Expr iland(Left:Expr, Right:Expr) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.iland) }
   get_slot(Left, t) { $t.getLeft() }
   get_slot(Right, t) { $t.getRight() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.iland.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.iland.make($t0, $t1) }
 }
 
 %op Expr ilor(Left:Expr, Right:Expr) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.ilor) }
   get_slot(Left, t) { $t.getLeft() }
   get_slot(Right, t) { $t.getRight() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.ilor.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.ilor.make($t0, $t1) }
 }
 
 %op Expr ilnot(Exp:Expr) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.ilnot) }
   get_slot(Exp, t) { $t.getExp() }
-  make(t0) { tom.engine.adt.il.types.expr.ilnot.make(t0) }
+  make(t0) { tom.engine.adt.il.types.expr.ilnot.make($t0) }
 }
 
 %op Expr appSubsE(Subs:SubstitutionList, E:Expr) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.expr.appSubsE) }
   get_slot(Subs, t) { $t.getSubs() }
   get_slot(E, t) { $t.getE() }
-  make(t0, t1) { tom.engine.adt.il.types.expr.appSubsE.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.expr.appSubsE.make($t0, $t1) }
 }
 
 %op Variable var(Name:String) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.variable.var) }
   get_slot(Name, t) { $t.getName() }
-  make(t0) { tom.engine.adt.il.types.variable.var.make(t0) }
+  make(t0) { tom.engine.adt.il.types.variable.var.make($t0) }
 }
 
 %op Environment env(Subs:SubstitutionList, I:Instr) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.environment.env) }
   get_slot(Subs, t) { $t.getSubs() }
   get_slot(I, t) { $t.getI() }
-  make(t0, t1) { tom.engine.adt.il.types.environment.env.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.environment.env.make($t0, $t1) }
 }
 
 %op InstrList Emptysemicolon() {
@@ -204,7 +204,7 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.instrlist.Conssemicolon) }
   get_slot(Headsemicolon, t) { $t.getHeadsemicolon() }
   get_slot(Tailsemicolon, t) { $t.getTailsemicolon() }
-  make(t0, t1) { tom.engine.adt.il.types.instrlist.Conssemicolon.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.instrlist.Conssemicolon.make($t0, $t1) }
 }
 
 %op ExprList EmptyconcExpr() {
@@ -216,7 +216,7 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.exprlist.ConsconcExpr) }
   get_slot(HeadconcExpr, t) { $t.getHeadconcExpr() }
   get_slot(TailconcExpr, t) { $t.getTailconcExpr() }
-  make(t0, t1) { tom.engine.adt.il.types.exprlist.ConsconcExpr.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.exprlist.ConsconcExpr.make($t0, $t1) }
 }
 
 %op Substitution undefsubs() {
@@ -228,13 +228,13 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.substitution.is) }
   get_slot(Var, t) { $t.getVar() }
   get_slot(Term, t) { $t.getTerm() }
-  make(t0, t1) { tom.engine.adt.il.types.substitution.is.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.substitution.is.make($t0, $t1) }
 }
 
 %op Symbol fsymbol(Name:String) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.symbol.fsymbol) }
   get_slot(Name, t) { $t.getName() }
-  make(t0) { tom.engine.adt.il.types.symbol.fsymbol.make(t0) }
+  make(t0) { tom.engine.adt.il.types.symbol.fsymbol.make($t0) }
 }
 
 %op Seq seq() {
@@ -245,13 +245,13 @@
 %op Seq dedexpr(Exprs:ExprList) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.seq.dedexpr) }
   get_slot(Exprs, t) { $t.getExprs() }
-  make(t0) { tom.engine.adt.il.types.seq.dedexpr.make(t0) }
+  make(t0) { tom.engine.adt.il.types.seq.dedexpr.make($t0) }
 }
 
 %op Seq dedterm(Terms:TermList) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.seq.dedterm) }
   get_slot(Terms, t) { $t.getTerms() }
-  make(t0) { tom.engine.adt.il.types.seq.dedterm.make(t0) }
+  make(t0) { tom.engine.adt.il.types.seq.dedterm.make($t0) }
 }
 
 %op SubstitutionList Emptysubs() {
@@ -263,19 +263,19 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.substitutionlist.Conssubs) }
   get_slot(Headsubs, t) { $t.getHeadsubs() }
   get_slot(Tailsubs, t) { $t.getTailsubs() }
-  make(t0, t1) { tom.engine.adt.il.types.substitutionlist.Conssubs.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.substitutionlist.Conssubs.make($t0, $t1) }
 }
 
 %op Term tau(Abst:AbsTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.term.tau) }
   get_slot(Abst, t) { $t.getAbst() }
-  make(t0) { tom.engine.adt.il.types.term.tau.make(t0) }
+  make(t0) { tom.engine.adt.il.types.term.tau.make($t0) }
 }
 
 %op Term repr(Term:String) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.term.repr) }
   get_slot(Term, t) { $t.getTerm() }
-  make(t0) { tom.engine.adt.il.types.term.repr.make(t0) }
+  make(t0) { tom.engine.adt.il.types.term.repr.make($t0) }
 }
 
 %op Term subterm(Symbol:Symbol, T:Term, Index:int) {
@@ -283,7 +283,7 @@
   get_slot(Symbol, t) { $t.getSymbol() }
   get_slot(T, t) { $t.getT() }
   get_slot(Index, t) { $t.getIndex() }
-  make(t0, t1, t2) { tom.engine.adt.il.types.term.subterm.make(t0, t1, t2) }
+  make(t0, t1, t2) { tom.engine.adt.il.types.term.subterm.make($t0, $t1, $t2) }
 }
 
 %op Term slot(Symbol:Symbol, T:Term, Name:String) {
@@ -291,14 +291,14 @@
   get_slot(Symbol, t) { $t.getSymbol() }
   get_slot(T, t) { $t.getT() }
   get_slot(Name, t) { $t.getName() }
-  make(t0, t1, t2) { tom.engine.adt.il.types.term.slot.make(t0, t1, t2) }
+  make(t0, t1, t2) { tom.engine.adt.il.types.term.slot.make($t0, $t1, $t2) }
 }
 
 %op Term appSubsT(Subs:SubstitutionList, T:Term) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.term.appSubsT) }
   get_slot(Subs, t) { $t.getSubs() }
   get_slot(T, t) { $t.getT() }
-  make(t0, t1) { tom.engine.adt.il.types.term.appSubsT.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.term.appSubsT.make($t0, $t1) }
 }
 
 %op TermList EmptyconcTerm() {
@@ -310,14 +310,14 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.termlist.ConsconcTerm) }
   get_slot(HeadconcTerm, t) { $t.getHeadconcTerm() }
   get_slot(TailconcTerm, t) { $t.getTailconcTerm() }
-  make(t0, t1) { tom.engine.adt.il.types.termlist.ConsconcTerm.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.termlist.ConsconcTerm.make($t0, $t1) }
 }
 
 %op Instr accept(Positive:ATerm, Negative:ATerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.instr.accept) }
   get_slot(Positive, t) { $t.getPositive() }
   get_slot(Negative, t) { $t.getNegative() }
-  make(t0, t1) { tom.engine.adt.il.types.instr.accept.make(t0, t1) }
+  make(t0, t1) { tom.engine.adt.il.types.instr.accept.make($t0, $t1) }
 }
 
 %op Instr refuse() {
@@ -330,7 +330,7 @@
   get_slot(E, t) { $t.getE() }
   get_slot(Ift, t) { $t.getIft() }
   get_slot(Iff, t) { $t.getIff() }
-  make(t0, t1, t2) { tom.engine.adt.il.types.instr.ITE.make(t0, t1, t2) }
+  make(t0, t1, t2) { tom.engine.adt.il.types.instr.ITE.make($t0, $t1, $t2) }
 }
 
 %op Instr ILLet(Var:Variable, T:Term, Body:Instr) {
@@ -338,19 +338,19 @@
   get_slot(Var, t) { $t.getVar() }
   get_slot(T, t) { $t.getT() }
   get_slot(Body, t) { $t.getBody() }
-  make(t0, t1, t2) { tom.engine.adt.il.types.instr.ILLet.make(t0, t1, t2) }
+  make(t0, t1, t2) { tom.engine.adt.il.types.instr.ILLet.make($t0, $t1, $t2) }
 }
 
 %op Instr sequence(Instrlist:InstrList) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.instr.sequence) }
   get_slot(Instrlist, t) { $t.getInstrlist() }
-  make(t0) { tom.engine.adt.il.types.instr.sequence.make(t0) }
+  make(t0) { tom.engine.adt.il.types.instr.sequence.make($t0) }
 }
 
 %op AbsTerm absvar(Varname:Variable) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.absterm.absvar) }
   get_slot(Varname, t) { $t.getVarname() }
-  make(t0) { tom.engine.adt.il.types.absterm.absvar.make(t0) }
+  make(t0) { tom.engine.adt.il.types.absterm.absvar.make($t0) }
 }
 
 %op AbsTerm st(Symbol:Symbol, Abst:AbsTerm, Index:int) {
@@ -358,7 +358,7 @@
   get_slot(Symbol, t) { $t.getSymbol() }
   get_slot(Abst, t) { $t.getAbst() }
   get_slot(Index, t) { $t.getIndex() }
-  make(t0, t1, t2) { tom.engine.adt.il.types.absterm.st.make(t0, t1, t2) }
+  make(t0, t1, t2) { tom.engine.adt.il.types.absterm.st.make($t0, $t1, $t2) }
 }
 
 %op AbsTerm sl(Symbol:Symbol, Abst:AbsTerm, Name:String) {
@@ -366,7 +366,7 @@
   get_slot(Symbol, t) { $t.getSymbol() }
   get_slot(Abst, t) { $t.getAbst() }
   get_slot(Name, t) { $t.getName() }
-  make(t0, t1, t2) { tom.engine.adt.il.types.absterm.sl.make(t0, t1, t2) }
+  make(t0, t1, t2) { tom.engine.adt.il.types.absterm.sl.make($t0, $t1, $t2) }
 }
 
 %op DerivTree endderiv() {
@@ -380,7 +380,7 @@
   get_slot(Post, t) { $t.getPost() }
   get_slot(Pre, t) { $t.getPre() }
   get_slot(Cond, t) { $t.getCond() }
-  make(t0, t1, t2, t3) { tom.engine.adt.il.types.derivtree.derivrule.make(t0, t1, t2, t3) }
+  make(t0, t1, t2, t3) { tom.engine.adt.il.types.derivtree.derivrule.make($t0, $t1, $t2, $t3) }
 }
 
 %op DerivTree derivrule2(Name:String, Post:Deriv, Pre:DerivTree, Pre2:DerivTree, Cond:Seq) {
@@ -390,14 +390,14 @@
   get_slot(Pre, t) { $t.getPre() }
   get_slot(Pre2, t) { $t.getPre2() }
   get_slot(Cond, t) { $t.getCond() }
-  make(t0, t1, t2, t3, t4) { tom.engine.adt.il.types.derivtree.derivrule2.make(t0, t1, t2, t3, t4) }
+  make(t0, t1, t2, t3, t4) { tom.engine.adt.il.types.derivtree.derivrule2.make($t0, $t1, $t2, $t3, $t4) }
 }
 
 
 %oplist InstrList semicolon(Instr*) {
   is_fsym(t) { (($t instanceof tom.engine.adt.il.types.instrlist.Conssemicolon) || ($t instanceof tom.engine.adt.il.types.instrlist.Emptysemicolon)) }
   make_empty() { tom.engine.adt.il.types.instrlist.Emptysemicolon.make() }
-  make_insert(e,l) { tom.engine.adt.il.types.instrlist.Conssemicolon.make(e,l) }
+  make_insert(e,l) { tom.engine.adt.il.types.instrlist.Conssemicolon.make($e,$l) }
   get_head(l) { $l.getHeadsemicolon() }
   get_tail(l) { $l.getTailsemicolon() }
   is_empty(l) { $l.isEmptysemicolon() }
@@ -406,7 +406,7 @@
 %oplist ExprList concExpr(Expr*) {
   is_fsym(t) { (($t instanceof tom.engine.adt.il.types.exprlist.ConsconcExpr) || ($t instanceof tom.engine.adt.il.types.exprlist.EmptyconcExpr)) }
   make_empty() { tom.engine.adt.il.types.exprlist.EmptyconcExpr.make() }
-  make_insert(e,l) { tom.engine.adt.il.types.exprlist.ConsconcExpr.make(e,l) }
+  make_insert(e,l) { tom.engine.adt.il.types.exprlist.ConsconcExpr.make($e,$l) }
   get_head(l) { $l.getHeadconcExpr() }
   get_tail(l) { $l.getTailconcExpr() }
   is_empty(l) { $l.isEmptyconcExpr() }
@@ -415,7 +415,7 @@
 %oplist SubstitutionList subs(Substitution*) {
   is_fsym(t) { (($t instanceof tom.engine.adt.il.types.substitutionlist.Conssubs) || ($t instanceof tom.engine.adt.il.types.substitutionlist.Emptysubs)) }
   make_empty() { tom.engine.adt.il.types.substitutionlist.Emptysubs.make() }
-  make_insert(e,l) { tom.engine.adt.il.types.substitutionlist.Conssubs.make(e,l) }
+  make_insert(e,l) { tom.engine.adt.il.types.substitutionlist.Conssubs.make($e,$l) }
   get_head(l) { $l.getHeadsubs() }
   get_tail(l) { $l.getTailsubs() }
   is_empty(l) { $l.isEmptysubs() }
@@ -424,7 +424,7 @@
 %oplist TermList concTerm(Term*) {
   is_fsym(t) { (($t instanceof tom.engine.adt.il.types.termlist.ConsconcTerm) || ($t instanceof tom.engine.adt.il.types.termlist.EmptyconcTerm)) }
   make_empty() { tom.engine.adt.il.types.termlist.EmptyconcTerm.make() }
-  make_insert(e,l) { tom.engine.adt.il.types.termlist.ConsconcTerm.make(e,l) }
+  make_insert(e,l) { tom.engine.adt.il.types.termlist.ConsconcTerm.make($e,$l) }
   get_head(l) { $l.getHeadconcTerm() }
   get_tail(l) { $l.getTailconcTerm() }
   is_empty(l) { $l.isEmptyconcTerm() }

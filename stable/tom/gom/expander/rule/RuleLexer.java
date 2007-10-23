@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2007-09-26 09:38:41
+// $ANTLR 3.0 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2007-10-23 06:44:50
 
   package tom.gom.expander.rule;
   import tom.gom.adt.rule.RuleTree;

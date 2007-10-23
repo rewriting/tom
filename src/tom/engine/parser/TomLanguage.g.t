@@ -1677,20 +1677,16 @@ operatorList returns [Declaration result] throws TomException
         (
             attribute = keywordMakeEmptyList[opName]
             { options.add(attribute); }
-
         |   attribute = keywordMakeAddList[opName,type.getText(),typeArg.getText()]
             { options.add(attribute); }
-
         |   attribute = keywordIsFsym[`Name(opName), type.getText()]
             { options.add(attribute); }
-
         |   attribute = keywordGetHead[`Name(opName), type.getText()]
             { options.add(attribute); }
         |   attribute = keywordGetTail[`Name(opName), type.getText()]
             { options.add(attribute); }
         |   attribute = keywordIsEmpty[`Name(opName), type.getText()]
             { options.add(attribute); }
-
         )*
         t:RBRACE
         { 
@@ -1726,13 +1722,10 @@ operatorArray returns [Declaration result] throws TomException
         (
             attribute = keywordMakeEmptyArray[opName,type.getText()]
             { options.add(attribute); }
-
         |   attribute = keywordMakeAddArray[opName,type.getText(),typeArg.getText()]
             { options.add(attribute); }
-
         |   attribute = keywordIsFsym[`Name(opName),type.getText()]
             { options.add(attribute); }
-
         |   attribute = keywordGetElement[`Name(opName), type.getText()]
             { options.add(attribute); }
         |   attribute = keywordGetSize[`Name(opName), type.getText()]
@@ -1839,11 +1832,11 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
-                
+                String code = ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText());
                 result = `EqualTermDecl(
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),concConstraint()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)), ot);
+                    Code(code), ot);
             }
         )
     ;
@@ -1976,7 +1969,7 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 result = `GetElementDecl(opname,
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),concConstraint()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone("int"),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)), ot);
+                    Code(ASTFactory.abstractCode(tlCode.getCode(),name1.getText(),name2.getText())), ot);
             }
         )
     ;
@@ -2001,12 +1994,12 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `GetSizeDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
-                    Return(TargetLanguageToTomTerm(tlCode)),ot);
+                    Code(ASTFactory.abstractCode(tlCode.getCode(),name.getText())),ot);
             }
         )
     ;
 
-keywordIsFsym [TomName astName, String typeString] returns [Declaration result] throws TomException
+keywordIsFsym[TomName astName, String typeString] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -2079,7 +2072,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
         )
     ;
 
-keywordMake [String opname, TomType returnType, TomTypeList types] returns [Declaration result] throws TomException
+keywordMake[String opname, TomType returnType, TomTypeList types] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -2227,9 +2220,15 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
-            result = `MakeEmptyArray(Name(name),
-                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
-                AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            if(blockList.size()==1) {
+              String code = ASTFactory.abstractCode(tlCode.getCode(),listName.getText());
+              result = `MakeEmptyArray(Name(name),
+                  Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()), ExpressionToInstruction(Code(code)),ot);
+            } else {
+              result = `MakeEmptyArray(Name(name),
+                  Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
+                  AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            }
         }
     ;   
 
@@ -2253,15 +2252,20 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
-            
-            result = `MakeAddArray(Name(name),
-                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
-                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
-                AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            if(blockList.size()==1) {
+              String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
+              result = `MakeAddArray(Name(name),
+                  Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
+                  Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
+                  ExpressionToInstruction(Code(code)),ot);
+            } else {
+              result = `MakeAddArray(Name(name),
+                  Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
+                  Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
+                  AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            }
         }
     ;
-
-
 
 class TomLexer extends Lexer;
 options {

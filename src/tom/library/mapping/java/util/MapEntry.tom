@@ -43,15 +43,15 @@ static class MapEntry {
 
 %typeterm MapEntry {
   implement      { MapEntry }
-  is_sort(t) { t instanceof MapEntry } 
-  equals(e1,e2)  { e1.equals(e2) }
+  is_sort(t) { $t instanceof MapEntry } 
+  equals(e1,e2)  { $e1.equals($e2) }
 }
 
 %include { types/Object.tom }
 
 %op MapEntry mapEntry(key:Object, val:Object) {
-    is_fsym(e)       { (e != null) && (e instanceof MapEntry) }
-    get_slot(key,e)  { e.getKey() }
-    get_slot(val,e)  { e.getVal() }
-    make(key,val)    { new MapEntry(key,val) }   
+    is_fsym(e)       { ($e != null) && ($e instanceof MapEntry) }
+    get_slot(key,e)  { $e.getKey() }
+    get_slot(val,e)  { $e.getVal() }
+    make(key,val)    { new MapEntry($key,$val) }   
 }

@@ -30,13 +30,13 @@
  **/
 %typeterm Strategy {
   implement { tom.library.strategy.mutraveler.MuStrategy }
-  is_sort(t) { t instanceof tom.library.strategy.mutraveler.MuStrategy }
-  equals(t1,t2) {t1.equals(t2)}
+  is_sort(t) { $t instanceof tom.library.strategy.mutraveler.MuStrategy }
+  equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
 }
 
 %op Strategy mu(s1:Strategy, s2:Strategy) {
-  make(var,v) { new tom.library.strategy.mutraveler.Mu(var,v) }
+  make(var,v) { new tom.library.strategy.mutraveler.Mu($var,$v) }
 }
 
 %include { strategy/basic.tom }

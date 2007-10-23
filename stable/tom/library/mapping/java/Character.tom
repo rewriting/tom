@@ -29,15 +29,15 @@
  * 
  **/
 
-%include {char.tom }
+%include { char.tom }
 %typeterm Character {
-  implement           { Character }
-  is_sort(t)           { t instanceof Character }
-  equals(t1,t2)       { (t1.equals(t2)) }
+  implement { Character }
+  is_sort(t) { $t instanceof Character }
+  equals(t1,t2) { $t1.equals($t2) }
 }
 
 %op Character Char(c:char) {
-  is_fsym(t) { (t!= null) && (t instanceof Character) }
-  get_slot(c,t) { t.charValue() }
-  make(c) { new Character(c) }
+  is_fsym(t) { ($t!= null) && ($t instanceof Character) }
+  get_slot(c,t) { $t.charValue() }
+  make(c) { new Character($c) }
 }

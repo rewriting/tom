@@ -26,6 +26,29 @@
   make( new_Tom) { new tom.engine.adt.tominstruction.strategy.instruction.Make_TomTermToInstruction( new_Tom) }
 }
 
+    %op Strategy _ExpressionToInstruction(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._ExpressionToInstruction)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.engine.adt.tominstruction.strategy.instruction._ExpressionToInstruction(arg0) }
+    }
+  
+  
+  %op Strategy When_ExpressionToInstruction(s:Strategy) {
+    make(s) { `Sequence(Is_ExpressionToInstruction(),s) }
+  }
+
+  %op Strategy Is_ExpressionToInstruction() {
+    make() { new tom.engine.adt.tominstruction.strategy.instruction.Is_ExpressionToInstruction()}
+  }
+  
+%op Strategy Make_ExpressionToInstruction(_Expr:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_ExpressionToInstruction))) }
+
+  get_slot(_Expr, t) { _Expr }
+  make( new_Expr) { new tom.engine.adt.tominstruction.strategy.instruction.Make_ExpressionToInstruction( new_Expr) }
+}
+
     %op Strategy _TargetLanguageToInstruction(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._TargetLanguageToInstruction)))}
       
@@ -2202,14 +2225,14 @@
     make() { new tom.engine.adt.tomdeclaration.strategy.declaration.Is_EqualTermDecl()}
   }
   
-%op Strategy Make_EqualTermDecl(_TermArg1:Strategy, _TermArg2:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
+%op Strategy Make_EqualTermDecl(_TermArg1:Strategy, _TermArg2:Strategy, _Expr:Strategy, _OrgTrack:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_EqualTermDecl))) }
 
   get_slot(_TermArg1, t) { _TermArg1 }
   get_slot(_TermArg2, t) { _TermArg2 }
-  get_slot(_Instr, t) { _Instr }
+  get_slot(_Expr, t) { _Expr }
   get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_TermArg1,  new_TermArg2,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_EqualTermDecl( new_TermArg1,  new_TermArg2,  new_Instr,  new_OrgTrack) }
+  make( new_TermArg1,  new_TermArg2,  new_Expr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_EqualTermDecl( new_TermArg1,  new_TermArg2,  new_Expr,  new_OrgTrack) }
 }
 
     %op Strategy _IsSortDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -2230,13 +2253,13 @@
     make() { new tom.engine.adt.tomdeclaration.strategy.declaration.Is_IsSortDecl()}
   }
   
-%op Strategy Make_IsSortDecl(_TermArg:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
+%op Strategy Make_IsSortDecl(_TermArg:Strategy, _Expr:Strategy, _OrgTrack:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_IsSortDecl))) }
 
   get_slot(_TermArg, t) { _TermArg }
-  get_slot(_Instr, t) { _Instr }
+  get_slot(_Expr, t) { _Expr }
   get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_TermArg,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_IsSortDecl( new_TermArg,  new_Instr,  new_OrgTrack) }
+  make( new_TermArg,  new_Expr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_IsSortDecl( new_TermArg,  new_Expr,  new_OrgTrack) }
 }
 
     %op Strategy _GetHeadDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
@@ -2406,15 +2429,15 @@
     make() { new tom.engine.adt.tomdeclaration.strategy.declaration.Is_GetElementDecl()}
   }
   
-%op Strategy Make_GetElementDecl(_Opname:Strategy, _Variable:Strategy, _Index:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
+%op Strategy Make_GetElementDecl(_Opname:Strategy, _Variable:Strategy, _Index:Strategy, _Expr:Strategy, _OrgTrack:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_GetElementDecl))) }
 
   get_slot(_Opname, t) { _Opname }
   get_slot(_Variable, t) { _Variable }
   get_slot(_Index, t) { _Index }
-  get_slot(_Instr, t) { _Instr }
+  get_slot(_Expr, t) { _Expr }
   get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_Opname,  new_Variable,  new_Index,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_GetElementDecl( new_Opname,  new_Variable,  new_Index,  new_Instr,  new_OrgTrack) }
+  make( new_Opname,  new_Variable,  new_Index,  new_Expr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_GetElementDecl( new_Opname,  new_Variable,  new_Index,  new_Expr,  new_OrgTrack) }
 }
 
     %op Strategy _GetSizeDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
@@ -2436,14 +2459,14 @@
     make() { new tom.engine.adt.tomdeclaration.strategy.declaration.Is_GetSizeDecl()}
   }
   
-%op Strategy Make_GetSizeDecl(_Opname:Strategy, _Variable:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
+%op Strategy Make_GetSizeDecl(_Opname:Strategy, _Variable:Strategy, _Expr:Strategy, _OrgTrack:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_GetSizeDecl))) }
 
   get_slot(_Opname, t) { _Opname }
   get_slot(_Variable, t) { _Variable }
-  get_slot(_Instr, t) { _Instr }
+  get_slot(_Expr, t) { _Expr }
   get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_Opname,  new_Variable,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_GetSizeDecl( new_Opname,  new_Variable,  new_Instr,  new_OrgTrack) }
+  make( new_Opname,  new_Variable,  new_Expr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_GetSizeDecl( new_Opname,  new_Variable,  new_Expr,  new_OrgTrack) }
 }
 
     %op Strategy _MakeEmptyArray(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
@@ -3194,6 +3217,29 @@
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_FalseTL))) }
 
   make() { new tom.engine.adt.tomexpression.strategy.expression.Make_FalseTL() }
+}
+
+    %op Strategy _Integer(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomexpression.strategy.expression._Integer)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.engine.adt.tomexpression.strategy.expression._Integer(arg0) }
+    }
+  
+  
+  %op Strategy When_Integer(s:Strategy) {
+    make(s) { `Sequence(Is_Integer(),s) }
+  }
+
+  %op Strategy Is_Integer() {
+    make() { new tom.engine.adt.tomexpression.strategy.expression.Is_Integer()}
+  }
+  
+%op Strategy Make_Integer(_value:int) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_Integer))) }
+
+  get_slot(_value, t) { _value }
+  make( _value) { new tom.engine.adt.tomexpression.strategy.expression.Make_Integer( _value) }
 }
 
     %op Strategy _EqualTerm(arg0:Strategy, arg1:Strategy, arg2:Strategy) {

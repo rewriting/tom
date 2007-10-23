@@ -31,6 +31,6 @@
 
 %typeterm AbstractList {
   implement      { java.util.AbstractList }
-  is_sort(t)      { t instanceof java.util.AbstractList }
-  equals(l1,l2)  { l1.equals(l2) }
+  is_sort(t)      { $t instanceof java.util.AbstractList }
+  equals(l1,l2)  { $l1.equals($l2) }
 }

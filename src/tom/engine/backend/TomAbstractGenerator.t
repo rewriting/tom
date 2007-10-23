@@ -207,6 +207,11 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
+      Integer(n) -> {
+        output.write(`n);
+        return;
+      }
+
       Negation(exp) -> {
         buildExpNegation(deep, `exp, moduleName);
         return;
@@ -592,9 +597,9 @@ public abstract class TomAbstractGenerator {
 
       EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)],
                      Variable[AstName=Name(name2), AstType=Type(ASTTomType(type2),_)],
-                     instr, _) -> {
+                     code, _) -> {
         if(getSymbolTable(moduleName).isUsedTypeDefinition(`type1)) {
-          `buildEqualTermDecl(deep, name1, name2, type1, type2, instr, moduleName);
+          `buildEqualTermDecl(deep, name1, name2, type1, type2, code, moduleName);
         }
         return;
       }
@@ -661,9 +666,9 @@ public abstract class TomAbstractGenerator {
       GetElementDecl[Opname=opNameAST@Name(opname),
                      Variable=Variable[AstName=Name(name1), AstType=Type[TomType=ASTTomType(type1),TlType=tlType1@TLType[]]],
                      Index=Variable[AstName=Name(name2)],
-                     Instr=instr] -> {
+                     Expr=code] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-          `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, instr, moduleName);
+          `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, code, moduleName);
         }
         return;
       }
@@ -671,9 +676,9 @@ public abstract class TomAbstractGenerator {
       GetSizeDecl[Opname=opNameAST@Name(opname),
 	Variable=Variable[AstName=Name(name),
 	AstType=Type(ASTTomType(type),tlType@TLType[])],
-	Instr=instr] -> {
+	Expr=code] -> {
 	  if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
-	    `buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
+	    `buildGetSizeDecl(deep, opNameAST, name, type, tlType, code, moduleName);
 	  }
 	  return;
 	}
@@ -858,17 +863,14 @@ public abstract class TomAbstractGenerator {
                                           TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
                                            TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException;
-  protected abstract void buildEqualTermDecl(int deep, String name1, String name2,
-                                              String type1, String type2, Instruction instr, String moduleName) throws IOException;
+  protected abstract void buildEqualTermDecl(int deep, String name1, String name2, String type1, String type2, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
                                               String type1, Expression expr, String moduleName) throws IOException;
   protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
                                            TomType tlType, Expression code, String moduleName) throws IOException;
-  protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
-                                              String type1, TomType tlType1, Instruction instr, String moduleName) throws IOException;
-  protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
-                                           TomType tlType, Instruction instr, String moduleName) throws IOException;
+  protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TomType tlType1, Expression code, String moduleName) throws IOException;
+  protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TomType tlType, Expression code, String moduleName) throws IOException;
 
 } // class TomAbstractGenerator

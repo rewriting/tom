@@ -28,17 +28,17 @@
  */
 
 %typeterm boolean {
-  implement           { boolean }
+  implement { boolean }
   is_sort(t) { true } 
-  equals(t1,t2)       { (t1==t2) }
+  equals(t1,t2) { $t1==$t2 }
 }
 
 %op boolean true() {
-  is_fsym(t) { t==true }
+  is_fsym(t) { $t==true }
   make { true }
 }
 
 %op boolean false() {
-  is_fsym(t) { t==false }
+  is_fsym(t) { $t==false }
   make { false }
 }

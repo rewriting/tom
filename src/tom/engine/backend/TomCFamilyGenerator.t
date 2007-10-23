@@ -55,11 +55,11 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
 
 
   public TomCFamilyGenerator(OutputCode output, OptionManager optionManager,
-                                SymbolTable symbolTable) {
+      SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
-  
-   protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
+
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     //output.indent(deep);
     generate(deep,var,moduleName);
     output.write("=");
@@ -80,19 +80,23 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(");");
   }
 
-  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBooleanType(TomBase.getTomType(`type))) {
-      output.write("(");
-      generate(deep,exp1,moduleName);
-      output.write(" == ");
-      generate(deep,exp2,moduleName);
-      output.write(")");
-    } else {
-      output.write("tom_equal_term_" + TomBase.getTomType(type) + "(");
-      generate(deep,exp1,moduleName);
-      output.write(", ");
-      generate(deep,exp2,moduleName);
-      output.write(")");
+  protected void buildExpEqualTerm(int deep, TomType type, TomTerm begin,TomTerm end, String moduleName) throws IOException {
+    String sType = TomBase.getTomType(type);
+    String template = getSymbolTable(moduleName).getEqualTerm(sType);
+    if(instantiateTemplate(deep,template,`concTomTerm(begin,end),moduleName) == false) {
+      if(getSymbolTable(moduleName).isBooleanType(sType)) {
+        output.write("(");
+        generate(deep,begin,moduleName);
+        output.write(" == ");
+        generate(deep,end,moduleName);
+        output.write(")");
+      } else {
+        output.write("tom_equal_term_" + sType + "(");
+        generate(deep,begin,moduleName);
+        output.write(", ");
+        generate(deep,end,moduleName);
+        output.write(")");
+      }
     }
   }
 
@@ -277,20 +281,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln();
   }
 
-  private String instantiateTemplate(String template, String subject) {
-    if(template != null) {
-      return template.replace("{0}",subject);
-    }
-    return null;
-  }
-  private String instantiateTemplate(String template, String head, String tail) {
-    if(template != null) {
-      return template.replace("{0}",head).replace("{1}",tail);
-    }
-    return null;
-  }
-
-  private String getIsConc(String name,String subject,String moduleName) {
+  private String getIsConcList(String name,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getIsFsym(name);
     String res = instantiateTemplate(template,subject);
     if(res == template) {
@@ -317,8 +308,8 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     return res;
   }
 
-  private String getIsEmpty(String name,String type,String subject,String moduleName) {
-    String template = getSymbolTable(moduleName).getIsEmpty(name);
+  private String getIsEmptyList(String name,String type,String subject,String moduleName) {
+    String template = getSymbolTable(moduleName).getIsEmptyList(name);
     String res = instantiateTemplate(template,subject);
     if(res == template) {
       res = %[tom_is_empty_@name@_@type@(@subject@)]%;
@@ -326,9 +317,9 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     return res;
   }
 
-  private String getMakeInsert(String name,String head, String tail,String moduleName) {
+  private String getMakeAddList(String name,String head, String tail,String moduleName) {
     String prefix = "tom_cons_list_";
-    String template = getSymbolTable(moduleName).getMake(prefix+name);
+    String template = getSymbolTable(moduleName).getMakeAddList(name);
     String res = instantiateTemplate(template,head,tail);
     if(res == template) {
       res = prefix+name+"("+head+","+tail+")";
@@ -339,7 +330,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
-    String is_conc = getIsConc(name,subject,moduleName);
+    String is_conc = getIsConcList(name,subject,moduleName);
     if(domain==codomain) { 
       return %[((@is_conc@)?@get@:@subject@)]%;
     }
@@ -349,12 +340,22 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String genDeclGetTail(String name, TomType domain, TomType codomain, String subject,String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
-    String is_conc = getIsConc(name,subject,moduleName);
+    String is_conc = getIsConcList(name,subject,moduleName);
     String empty = %[tom_empty_list_@name@()]%;
     if(domain==codomain) { 
       return %[((@is_conc@)?@get@:@empty@)]%;
     }
     return get;
+  }
+  
+  private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
+    String prefix = "tom_equal_term_";
+    String template = getSymbolTable(moduleName).getEqualTerm(type);
+    String res = instantiateTemplate(template,arg1,arg2);
+    if(res == template) {
+      res = prefix+type+"("+arg1+","+arg2+")";
+    }
+    return res;
   }
 
   protected void genDeclList(String name, String moduleName) throws IOException {
@@ -374,28 +375,25 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     }
     
     String listCast = "(" + glType + ")";
-    String equal_term = "tom_equal_term_" + tomType;
-    String make_insert = listCast + "tom_cons_list_" + name;
     String get_slice = listCast + "tom_get_slice_" + name;
-    String get_index = "tom_get_index_" + name;
 
     String s = "";
     if(listType == eltType) {
 s = %[
-  @modifier@ @utype@ tom_append_list_@name@(@utype@l1, @utype@ l2) {
-    if(@getIsEmpty(name,tomType,"l1",moduleName)@) {
+  @modifier@ @utype@ tom_append_list_@name@(@utype@ l1, @utype@ l2) {
+    if(@getIsEmptyList(name,tomType,"l1",moduleName)@) {
       return l2;
-    } else if(@getIsEmpty(name,tomType,"l2",moduleName)@) {
+    } else if(@getIsEmptyList(name,tomType,"l2",moduleName)@) {
       return l1;
-    } else if(@getIsConc(name,"l1",moduleName)@) {
-      if(@getIsEmpty(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
-        return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),"l2",moduleName)@;
+    } else if(@getIsConcList(name,"l1",moduleName)@) {
+      if(@getIsEmptyList(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
+        return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),"l2",moduleName)@;
       } else {
-        return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),
+        return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),
                               "tom_append_list_"+name+"("+genDeclGetTail(name,eltType,listType,"l1",moduleName)+",l2)",moduleName)@;
       }
     } else {
-      return @getMakeInsert(name,"l1", "l2",moduleName)@;
+      return @getMakeAddList(name,"l1", "l2",moduleName)@;
     }
   }]%;
 
@@ -403,26 +401,27 @@ s = %[
 
 s = %[
   @modifier@ @utype@ tom_append_list_@name@(@utype@l1, @utype@ l2) {
-    if(@getIsEmpty(name,tomType,"l1",moduleName)@) {
+    if(@getIsEmptyList(name,tomType,"l1",moduleName)@) {
       return l2;
-    } else if(@getIsEmpty(name,tomType,"l2",moduleName)@) {
+    } else if(@getIsEmptyList(name,tomType,"l2",moduleName)@) {
       return l1;
-    } else if(@getIsEmpty(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
-      return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),"l2",moduleName)@;
+    } else if(@getIsEmptyList(name,tomType,genDeclGetTail(name,eltType,listType,"l1",moduleName),moduleName)@) {
+      return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),"l2",moduleName)@;
     } else {
-      return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),
+      return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"l1",moduleName),
                                  "tom_append_list_"+name+"("+genDeclGetTail(name,eltType,listType,"l1",moduleName)+",l2)",moduleName)@;
     }
   }]%;
 
     }
 
+    int deep=0;
     s+= %[
   @modifier@ @utype@ tom_get_slice_@name@(@utype@ begin, @utype@ end,@utype@ tail) {
-    if(@equal_term@(begin,end)) {
+    if(@getEqualTerm(tomType,"begin","end",moduleName)@) {
       return tail;
     } else {
-      return @getMakeInsert(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
+      return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
                                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
     }
   }
@@ -439,7 +438,7 @@ s = %[
       return;
     }
 
-    boolean isInlined = false;
+    boolean inlined = inlineplus;
     boolean isCode = false;
     %match(instr) {
       ExpressionToInstruction(Code(code)) -> {
@@ -455,12 +454,12 @@ s = %[
         }
 
         if(!ncode.equals(`code)) {
-          isInlined = true;
+          inlined = true;
           instr = `ExpressionToInstruction(Code(ncode));
         }
       }
     }
-    if(!inline || !isCode || !isInlined) {
+    if(!inline || !isCode || !inlined) {
       StringBuffer s = new StringBuffer();
       s.append(modifier + TomBase.getTLType(returnType) + " " + prefix + funName + "(");
       while(!argList.isEmptyconcTomTerm()) {

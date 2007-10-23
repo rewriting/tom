@@ -37,11 +37,11 @@
  * effects
  */
 %oparray ArrayList concArrayList(Object*) {
-  is_fsym(l)       { (l!= null) && (l instanceof java.util.ArrayList) }
-  make_empty(n)    { new java.util.ArrayList(n) }
-  make_append(o,l) { concArrayListAppend(o,l) }
-  get_element(l,n) { l.get(n) }
-  get_size(l)      { l.size() }
+  is_fsym(l)       { ($l!= null) && ($l instanceof java.util.ArrayList) }
+  make_empty(n)    { new java.util.ArrayList($n) }
+  make_append(o,l) { concArrayListAppend($o,$l) }
+  get_element(l,n) { $l.get($n) }
+  get_size(l)      { $l.size() }
 }
 
 private static java.util.ArrayList concArrayListAppend(Object o, java.util.ArrayList l) {

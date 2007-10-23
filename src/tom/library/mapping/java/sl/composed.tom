@@ -61,6 +61,7 @@
 }
 
 %op Strategy Outermost(s1:Strategy) {
+  // the following optimized version is not correct
   //make(v) { `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) }
   make(v) { `Repeat(OnceTopDown(v)) }
 }
@@ -91,5 +92,4 @@
 
 %op Strategy OutermostId(s1:Strategy) {
   make(v) { `RepeatId(OnceTopDownId(v)) }
-  //make(v) { `mu(MuVar("_x"),Sequence(SequenceId(v,MuVar("_x")),All(MuVar("_x")))) }
 }
