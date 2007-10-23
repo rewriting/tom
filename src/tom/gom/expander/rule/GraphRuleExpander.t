@@ -255,6 +255,36 @@ public class GraphRuleExpander {
   }
 ]%);
 
+ output.append(
+        %[
+  %strategy InlinePath() extends Identity() {
+]%);
+
+  %match(moduleList) {
+      concModule(_*,Module[Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+    output.append(
+        %[
+    visit @`name@ {
+    //match non empty paths
+      p1@@Path@`name@(_,_*) -> {
+        getEnvironment().followPath((Path)`p1);
+        @`name@ pointedSubterm = (@`name@) getEnvironment().getSubject();
+        %match(pointedSubterm) {
+          p2@@Path@`name@(_,_*) -> {
+            getEnvironment().followPath(((Path)`p1).inverse());
+            return (@`name@) ((Path)`p1).add((Path)`p2).getCanonicalPath();
+          }
+        }
+      }
+   }      
+]%);
+    }
+  }
+
+  output.append(%[
+  }
+]%);
+
   String imports = %[
 import tom.library.sl.*;
 import java.util.*;
@@ -306,7 +336,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
                 //TODO: manage substitutions of different sort
                 Iterator substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
                 
-                /* 3. construct tt=SubstTerm(subject,r) */
+                /* 3. construct tt=SubstTerm(subject',r') */
                 while (substitutions.hasNext()) {
                 Substitution subst = (Substitution) substitutions.next();
                 @fullClassName(abstractType)@ r = subst.value;
@@ -316,14 +346,17 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
                 //TODO: find the sort of r and deduce which Subst to use
                 @sortname@ t = `Subst@sortname@(subject,(@sortname@)r);
                 Position newomega = (Position) posFinal.add(posRedex);
+                //replace in subject every pointer to the position newomega by
+                //a pointer to the position 2
+                t = (@sortname@) posFinal.getOmega(`TopDown(globalRedirection(newomega,posRhs))).visit(t);
+
+                //replace in r every pointer of pointer by a simple pointer (transitivity)
+                t = (@sortname@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
                 
                 /* 4. set the global term to norm(swap(t,1.w,2))|1 */
                 @sortname@ tt = (@sortname@) t.swap(newomega,posRhs); 
                 //System.out.println("tt "+tt);
-                //all pointers to the root of the old redex at posRhs must be replaced by pointers to newomega
-                @sortname@ ttt = (@sortname@) `TopDown(globalRedirection(posRhs,newomega)).visit(tt);
-                //System.out.println("ttt "+ttt);
-                @sortname@ res = (@sortname@) ttt.normalize();
+                @sortname@ res = (@sortname@) tt.normalize();
                 //System.out.println("res "+res);
                 subject = (@sortname@) posFinal.getSubterm().visit(res);
                 //System.out.println("subject "+subject);
