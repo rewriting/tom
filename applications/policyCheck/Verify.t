@@ -12,37 +12,39 @@ public class Verify{
       imports int
       abstract syntax
       
-      //Sort of security levels : TS Top Secret, S Secret, C Confidential.
+      //Security levels : TS Top Secret, S Secret, C Confidential.
       SecurityLevel = TS() | S() | C()
       
-      //Sort of subject who has an ID for identification and a security level SL.
+      //Subject who has an ID for identification and a security level SL.
       Subject = subject(ID:int,SL:SecurityLevel)
       
-      //Sort of object who has an ID for identification and a security level SL.
+      //Object who has an ID for identification and a security level SL.
       SecurityObject = securityObject(ID:int,SL:SecurityLevel)
       
-      //Sort of access mode, in this case could be read or write 
+      //Access mode, in this case could be read or write; others can be added
       AccessMode = read()|write()
       
-      //Sort of request type, could be add, to request the addition of an access, or delete, to
-      //request the deletion of an access
+      //Request type: 
+      // add - to request the addition of an access,  
+      // delete - to request the deletion of an access
       RequestType = add()|delete()
       
       // Sort of expression, explicit to specify that the access is explicit or conversely implicit
       // to specify that the access is implicit
-      Expression =explicit()|implicit()
+      AccessType =explicit()|implicit()
       
-      //Sort of access, composed of a "subject", a "security object", an "access mode" and a "type of expression"
-      //which stands for the access of the "security object" by the "subject" with the given "access mode" and being explicit or implicit 
-      Access = access(subject:Subject,securityObject:SecurityObject,A:AccessMode,E:Expression)
+      //An access is defined by the "subject" that accesses  the  "object" in "access mode" 
+      //It can be explicitly requested by the subjects or an implicit consequence of other accesses
+      Access = access(subject:Subject,securityObject:SecurityObject,A:AccessMode,E:AccessType)
       
-      //Sort of request, composed of a request type and an access
+      //Request, composed of a request type and an access
       Request = request(RT:RequestType, Ac:Access)
       
-      // list of accesses
+      //List of accesses
       ListOfAccesses =accesses(Access *)
       
-      //A state compose of a list of read accesses (Reads) and a list of write accesses(Write)
+      //State compose of a list of read accesses (Reads) and a list of write accesses(Write)
+      // !!!!!!!!!!!!!! The AccessMode flag is not really necessary then !!!!!!!!!!!!!!
       State = state(Reads: ListOfAccesses,Writes: ListOfAccesses)
       
       //Sort representing a request upon a state
@@ -56,7 +58,9 @@ public class Verify{
   int numberOfObjects;
   int numberOfSecurityLevels;
   int numberOfAccessModes;
-  verify.example.types.state.state stateToVerify;
+
+//   verify.example.types.state.state stateToVerify;
+  State stateToVerify;
   ArrayList<ArrayList<Integer>> subjectSets;
   ArrayList<ArrayList<Integer>> objectSets;
   ArrayList<ArrayList<Integer>> subjecSetsXobjectSetSets;
