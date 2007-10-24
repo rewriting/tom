@@ -12,7 +12,7 @@ public class Verify{
       imports int
       abstract syntax
       
-      //Security levels : TS Top Secret, S Secret, C Confidential.
+      //Security  levels : TS Top Secret, S Secret, C Confidential.
       SecurityLevel = TS() | S() | C()
       
       //Subject who has an ID for identification and a security level SL.
