@@ -81,13 +81,18 @@ public class GeneralPurposePropagator implements IBasePropagator {
       /**
        * Merge for variables (we only deal with the variables of the pattern, ignoring the introduced ones)
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
-       * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x ) 
+       * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x )
+       * 
+       * on rhs
+       *  
+       * X* = p1 /\ Context( p2 = X* ) -> X* = p1 /\ Context( p2 = p1 )
+       * x = p1 /\ Context( p2 = x ) -> x = p1 /\ Context( p2 = p1 )
        */
       AndConstraint(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[],AstType=type],value),Y*) -> {
         if (!replacedVariables.contains(`x)){
           replacedVariables.add(`x);
           Constraint toApplyOn = `AndConstraint(Y*);
-          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v)).visitLight(toApplyOn);
+          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v,value)).visitLight(toApplyOn);
           if(res != toApplyOn) {
             return `AndConstraint(X*,eq,res);
           }
@@ -158,11 +163,11 @@ matchSlot:  %match(slot,TomName name) {
     }
    }
     // never gets here
-    return null;
+    throw new TomRuntimeException("GeneralPurposePropagator:detachSublists - unexpected result");
   }
   
   
-  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm) extends `Identity() {
+  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm, value:TomTerm) extends `Identity() {
     visit Constraint {
       // we can have the same variable both as variablestar and as variable
       // we know that this is ok, because the type checker authorized it
@@ -170,6 +175,11 @@ matchSlot:  %match(slot,TomName name) {
         if(`name == varName) {        
           TomTerm freshVar = `v.isVariable() ? ConstraintCompiler.getFreshVariable(`type) : ConstraintCompiler.getFreshVariableStar(`type);
           return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
+        }                                 
+      }
+      MatchConstraint(p@!TestVar[],v@(Variable|VariableStar)[AstName=name]) -> {        
+        if(`name == varName) {
+          return `MatchConstraint(p,value);
         }                                 
       }
     }

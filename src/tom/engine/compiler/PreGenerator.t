@@ -245,10 +245,15 @@ public class PreGenerator {
        * SwitchIsSort
        *
        *  Match(_,subject) /\ IsSort(subject) -> IsSort(subject) /\ Match(_,subject)
+       *  
+       *  IsSort(var) /\ Match(var,_) -> Match(var,_) /\ IsSort(var)
        * 
        */
       AndConstraint(X*,match@MatchConstraint[subject=ExpressionToTomTerm(Cast[Source=TomTermToExpression(sub)])],Y*,isSort@IsSortConstraint[TomTerm=sub],Z*) -> {
         return `AndConstraint(X*,isSort,Y*,match,Z*);
+      }
+      AndConstraint(X*,isSort@IsSortConstraint[TomTerm=var@(Variable|VariableStar)[]],Y*,match@MatchConstraint(var,_),Z*) -> {
+        return `AndConstraint(X*,match,Y*,isSort,Z*);
       }
     } // end visit
     return constraint;
