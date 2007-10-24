@@ -1,6 +1,4 @@
-import java.util.LinkedList;
-import java.util.ArrayList;
-
+import java.util.*;
 
 import verify.example.*;
 import verify.example.types.*;
@@ -51,12 +49,12 @@ public class Verify{
       RequestUponState = rus(R:Request,S:State)
 
       sort SecurityLevel:block() {
-        public boolean compare(SecurityLevel sl){
+        public int compareTo(SecurityLevel sl){
           %match (this,sl){
-            TS(),S() -> { return false; }
-            TS(),C() -> { return false; }
-            S(),C() -> { return false; }
-            _,_ -> { return true; }
+            TS(),S() -> { return 1; }
+            TS(),C() -> { return 1; }
+            S(),C() -> { return 1; }
+            _,_ -> { return -2; }
           }
           throw new RuntimeException("should not be there");
         }
@@ -90,18 +88,18 @@ public class Verify{
   }
 
 
-
-
   public Response transition(RequestUponState req){
     %match (req){
 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),read(),_)),
           s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),write(),_),_*))  ) -> { 
-        if (!(compare(`l2,`l3))){
+//         if (!(compare(`l2,`l3))){
+        if (`l2.compareTo(`l3)==1){
           return new Response(false,`s0);
         } 
       }
 			rus(request(add(),access(subject(_,l1),securityObject(_,l2),read(),_)),s1) -> { 
-        if (!(compare(`l2,`l1))){
+//         if (!(compare(`l2,`l1))){
+        if (`l2.compareTo(`l1)==1){
           return new Response(false,`s1);
         } 
       }
@@ -110,7 +108,8 @@ public class Verify{
       }
 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),write(),_)),
           s2@state(accesses(_*,access(subject(i1,l1),securityObject(_,l3),read(),_),_*),_)) -> { 
-        if (!(compare(`l3,`l2))){
+//         if (!(compare(`l3,`l2))){
+        if (`l3.compareTo(`l2)==1){
           return new Response(false,`s2);
         } 
       }
@@ -127,42 +126,38 @@ public class Verify{
     throw new RuntimeException("should not be there");
   }
 
-
-
-  public Response transitionold(RequestUponState req){
-    %match (req){
-			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),read(),_)),s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),write(),_),_*)))-> { if (!(compare(`l2,`l3))){return new Response(false,`s0);} }
-			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),read(),_)),s1)-> { if (!(compare(`l2,`l1))){return new Response(false,`s1);} }
-			rus(request(add(),a@access(subject(i1,l1),securityObject(_,l2),read(),_)),state(e,i))-> { return new Response(true,`state(accesses(a,e),i)); }
-			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),write(),_)),
-          s2@state(accesses(_*,access(subject(i1,l1),securityObject(i3,l3),read(),_),_*),_))-> { if (!(compare(`l3,`l2))){return new Response(false,`s2);} }
-			rus(request(add(),a@access(subject(i1,l1),securityObject(_,l2),write(),_)),state(i,e))-> {return new Response(true,`state(i,accesses(a,e))); }
-			rus(request(delete(),access(subject(i1,l1),securityObject(_,l2),read(),_)),
-          state(accesses(X*,access(subject(i1,l1),securityObject(i2,l2),read(),_),Y*),i))-> { return new Response(true,`state(accesses(X*,Y*),i)); }
-      rus(request(delete(),access(subject(i1,l1),securityObject(_,l2),write(),_)),
-          state(i,accesses(X*,access(subject(i1,l1),securityObject(i2,l2),write(),_),Y*)))-> { return new Response(true,`state(i,accesses(X*,Y*))); }
+  // Fixed configuration for Subjects and Objects; PG generates all possible requests
+  public int[] checkAllPermutationsOfRequests(ArrayList<Subject> Subjects, ArrayList<SecurityObject> Objects, PermutationGenerator PG){
+    while (PG.hasMore ()) {
+      int[] currentPermutation=PG.getNext();
+      if(!check(Subjects,Objects,currentPermutation)){
+        return currentPermutation;
+      }
+      System.out.println("for permutation :"+toStringArray(currentPermutation));
     }
-    throw new RuntimeException("should not be there");
+    int[] rep={0};
+    return rep;
   }
 
-  // why not compareTo
-  public static boolean compare(SecurityLevel l1,SecurityLevel l2){
-    %match (l1,l2){
-// 			S(),TS() -> { return ????; }
-
-
-			TS(),S() -> { return false; }
-			TS(),C() -> { return false; }
-			S(),C() -> { return false; }
-			_,_ -> { return true; }
-			
+  public boolean check(ArrayList<Subject> Subjects, ArrayList<SecurityObject> Objects, int[] permutationOfRequests){
+    State M=`state(accesses(),accesses());
+    for (int i = 0; i < permutationOfRequests.length; i++) {
+      //System.out.println("permutationOfRequests :"+(i+1)+"/"+permutationOfRequests.length);
+      ArrayList<Integer> requestIndexes=allRequests.get(permutationOfRequests[i]);
+      Access a=`access(Subjects.get(requestIndexes.get(0)),Objects.get(requestIndexes.get(1)),((requestIndexes.get(2)==0)?(read()):(write())),explicit());
+      Request r=`request(add(),a);
+      RequestUponState rus=`rus(r,M);
+      Response response=transition(rus);
+      if (response.getGranted())M=response.getState();
+      if (Verification(M)==false){
+        System.out.println("Information leakage detected");
+        return false;}
     }
-    throw new RuntimeException("should not be there");
+    System.out.println("No information leakage detected");
+    return true;
   }
-
-
-
-
+  
+  
   //public void generateSets(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes){
   public void generateSets(){
     Combinatory CSubjectSets=new Combinatory(numberOfSubjects,numberOfSecurityLevels-1);
@@ -183,14 +178,14 @@ public class Verify{
     }
     objectSets=CObjectSets.combination;
 
-    LinkedList sizeOfsets=new LinkedList();
+    LinkedList<Integer> sizeOfsets=new LinkedList<Integer>(); 
     sizeOfsets.add(subjectSets.size());
     sizeOfsets.add(objectSets.size());
     DirectProduct DPsubjecSetsXobjectSetSets=new DirectProduct(sizeOfsets);
     DPsubjecSetsXobjectSetSets.compute();
     subjecSetsXobjectSetSets=DPsubjecSetsXobjectSetSets.ProductsList;
 
-    LinkedList sizeOfsets2=new LinkedList();
+    LinkedList<Integer> sizeOfsets2=new LinkedList<Integer>();
     sizeOfsets2.add(numberOfSubjects);
     sizeOfsets2.add(numberOfObjects);
     sizeOfsets2.add(numberOfAccessModes);
@@ -205,7 +200,7 @@ public class Verify{
     	state(reads@accesses(X1*,access(s1,o1,read(),_),X2*,access(s2,o2,read(),_),X3*),
             writes@accesses(X4*,access(s,o,write(),_),X5*))->{
         if (`((s==s1 && o==o2))){
-          verify.example.types.ListOfAccesses l=`accesses(X1*,X2*,X3*);
+          ListOfAccesses l=`accesses(X1*,X2*,X3*);
           boolean contains=false;
           %match(l){
             accesses(X*,access(s3,o3,read(),_),Y*) ->{
@@ -217,7 +212,7 @@ public class Verify{
           if (contains) return `state(reads,writes);
           else return `state(accesses(access(s2,o1,read(),implicit()),reads),writes);
         }else  if (`((s==s2 && o==o1))){
-          verify.example.types.ListOfAccesses l=`accesses(X1*,X2*,X3*);
+          ListOfAccesses l=`accesses(X1*,X2*,X3*);
           boolean contains=false;
           %match(l){
             accesses(X*,access(s3,o3,read(),_),Y*) ->{
@@ -236,12 +231,12 @@ public class Verify{
   public boolean Verification(State setOfAccesses){
     try {
       State res=(State)`RepeatId(makeExplicit()).visit(setOfAccesses);
-      implicitRequestsUponOriginalState=new ArrayList<verify.example.types.RequestUponState>();
+      implicitRequestsUponOriginalState=new ArrayList<RequestUponState>();
       %match(res){
         state(e,accesses(_*,a@access(_,_,_,implicit()),_*))->{implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));}
         state(accesses(_*,a@access(_,_,_,implicit()),_*),e)->{implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));}
       }
-      for(java.util.Iterator iterator=implicitRequestsUponOriginalState.iterator(); iterator.hasNext();){
+      for(Iterator<RequestUponState> iterator=implicitRequestsUponOriginalState.iterator(); iterator.hasNext();){
         RequestUponState iruos=(RequestUponState)iterator.next();
         if (!(transition(iruos).getGranted())){
           CurrentRequestOfScenario=iruos;
@@ -259,36 +254,6 @@ public class Verify{
 
   }
 
-  public boolean check(ArrayList<Subject> Subjects, ArrayList<SecurityObject> Objects, int[] permutationOfRequests){
-    State M=`state(accesses(),accesses());
-    for (int i = 0; i < permutationOfRequests.length; i++) {
-      //System.out.println("permutationOfRequests :"+(i+1)+"/"+permutationOfRequests.length);
-      ArrayList<Integer> requestIndexes=allRequests.get(permutationOfRequests[i]);
-      Access a=`access(Subjects.get(requestIndexes.get(0)),Objects.get(requestIndexes.get(1)),((requestIndexes.get(2)==0)?(read()):(write())),explicit());
-      Request r=`request(add(),a);
-      RequestUponState rus=`rus(r,M);
-      Response response=transition(rus);
-      if (response.getGranted())M=response.getState();
-      if (Verification(M)==false){
-        System.out.println("Information leakage detected");
-        return false;}
-    }
-    System.out.println("No information leakage detected");
-    return true;
-  }
-
-  public int[] checkAllPermutationsOfRequests(ArrayList<Subject> Subjects, ArrayList<SecurityObject> Objects, PermutationGenerator PG){
-    while (PG.hasMore ()) {
-      int[] currentPermutation=PG.getNext();
-      if(!check(Subjects,Objects,currentPermutation)){
-        return currentPermutation;
-      }
-      System.out.println("for permutation :"+toStringArray(currentPermutation));
-    }
-    int[] rep={0};
-    return rep;
-  }
-
   public void checkRandomSets(){
     //generateSets(numberOfSubjects,numberOfObjects,numberOfSecurityLevels,numberOfAccessModes);
     generateSets();
@@ -297,7 +262,7 @@ public class Verify{
     int indexSubjectSet=(int)(Math.random()*subjectSets.size());
     int indexObjectSet=(int)(Math.random()*objectSets.size());
     int i=0;
-    for (java.util.Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
+    for (Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
       Integer securityLevel = (Integer) iterator.next();
       switch (securityLevel) {
       case 0:
@@ -318,8 +283,8 @@ public class Verify{
     }
     System.out.println("Generated Subjects :"+Subjects);
     i=0;
-    for (java.util.Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
-      Integer securityLevel = (Integer) iterator.next();
+    for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
+      Integer securityLevel = iterator.next();
       switch (securityLevel) {
       case 0:
         Objects.add(`securityObject(i,C()));
@@ -360,8 +325,9 @@ public class Verify{
     ArrayList<Subject> Subjects=new ArrayList<Subject>();
     ArrayList<SecurityObject> Objects=new ArrayList<SecurityObject>();
     int i=0;
-    for (java.util.Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
-      Integer securityLevel = (Integer) iterator.next();
+//     for (Iterator<Integer> iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
+//       Integer securityLevel = iterator.next();
+    for (Integer securityLevel: subjectSets.get(indexSubjectSet)) {
       switch (securityLevel) {
       case 0:
         Subjects.add(`subject(i,C()));
@@ -379,7 +345,7 @@ public class Verify{
       i++;
     }
     i=0;
-    for (java.util.Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
+    for (Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
       Integer securityLevel = (Integer) iterator.next();
       switch (securityLevel) {
       case 0:
@@ -430,7 +396,7 @@ public class Verify{
         ArrayList<Subject> Subjects=new ArrayList<Subject>();
         ArrayList<SecurityObject> Objects=new ArrayList<SecurityObject>();
         int i=0;
-        for (java.util.Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
+        for (Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
           Integer securityLevel = (Integer) iterator.next();
           switch (securityLevel) {
           case 0:
@@ -449,7 +415,7 @@ public class Verify{
           i++;
         }
         i=0;
-        for (java.util.Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
+        for (Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
           Integer securityLevel = (Integer) iterator.next();
           switch (securityLevel) {
           case 0:
@@ -507,3 +473,37 @@ public class Verify{
 
 }
 
+
+
+
+//   public Response transitionold(RequestUponState req){
+//     %match (req){
+// 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),read(),_)),s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),write(),_),_*)))-> { if (!(compare(`l2,`l3))){return new Response(false,`s0);} }
+// 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),read(),_)),s1)-> { if (!(compare(`l2,`l1))){return new Response(false,`s1);} }
+// 			rus(request(add(),a@access(subject(i1,l1),securityObject(_,l2),read(),_)),state(e,i))-> { return new Response(true,`state(accesses(a,e),i)); }
+// 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),write(),_)),
+//           s2@state(accesses(_*,access(subject(i1,l1),securityObject(i3,l3),read(),_),_*),_))-> { if (!(compare(`l3,`l2))){return new Response(false,`s2);} }
+// 			rus(request(add(),a@access(subject(i1,l1),securityObject(_,l2),write(),_)),state(i,e))-> {return new Response(true,`state(i,accesses(a,e))); }
+// 			rus(request(delete(),access(subject(i1,l1),securityObject(_,l2),read(),_)),
+//           state(accesses(X*,access(subject(i1,l1),securityObject(i2,l2),read(),_),Y*),i))-> { return new Response(true,`state(accesses(X*,Y*),i)); }
+//       rus(request(delete(),access(subject(i1,l1),securityObject(_,l2),write(),_)),
+//           state(i,accesses(X*,access(subject(i1,l1),securityObject(i2,l2),write(),_),Y*)))-> { return new Response(true,`state(i,accesses(X*,Y*))); }
+//     }
+//     throw new RuntimeException("should not be there");
+//   }
+
+
+//   // why not compareTo
+//   public static boolean compare(SecurityLevel l1,SecurityLevel l2){
+//     %match (l1,l2){
+// // 			S(),TS() -> { return ????; }
+
+
+// 			TS(),S() -> { return false; }
+// 			TS(),C() -> { return false; }
+// 			S(),C() -> { return false; }
+// 			_,_ -> { return true; }
+			
+//     }
+//     throw new RuntimeException("should not be there");
+//   }
