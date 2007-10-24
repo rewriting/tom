@@ -237,7 +237,7 @@ public class TestReflectiveStrategy extends TestCase {
 
   %strategy S2(i:int, str:String, s:Strategy) extends `Identity() {
     visit Strategy {
-      Identity() -> { `Fail(); }
+      Identity() -> { return `Fail(); }
     }
   }
 
