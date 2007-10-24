@@ -68,18 +68,26 @@ public class GeneralPurposePropagator implements IBasePropagator {
       MatchConstraint(AntiTerm(term@(Variable|RecordAppl)[]),s) -> {        
         return `AndConstraint(AntiMatchConstraint(MatchConstraint(term,s)),
             ConstraintPropagator.performDetach(MatchConstraint(term,s)));
-      }
-      
+      }      
       /**
-       * Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
-       * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* ) 
+       * SwithAnti : here is just for efficiency reasons, and not for ordering, 
+       * because now the replace can be applied left-right; the ordering is done anyway in the pre-generator
+       *       
+       * AntiMatchConstraint[] /\ ... /\ MatchConstraint[] ->  MatchConstraint[] /\ ... /\ AntiMatchConstraint[] 
        */
-      AndConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[],AstType=type],_),Y*) -> {
+      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
+        return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
+      }      
+      /**
+       * Merge for variables (we only deal with the variables of the pattern, ignoring the introduced ones)
+       * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
+       * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x ) 
+       */
+      AndConstraint(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[],AstType=type],value),Y*) -> {
         if (!replacedVariables.contains(`x)){
           replacedVariables.add(`x);
-          Constraint toApplyOn = `AndConstraint(Y*);        
-          TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-          Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).visitLight(toApplyOn);
+          Constraint toApplyOn = `AndConstraint(Y*);
+          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v)).visitLight(toApplyOn);
           if(res != toApplyOn) {
             return `AndConstraint(X*,eq,res);
           }
@@ -154,13 +162,14 @@ matchSlot:  %match(slot,TomName name) {
   }
   
   
-  %strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity() {
+  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm) extends `Identity() {
     visit Constraint {
       // we can have the same variable both as variablestar and as variable
       // we know that this is ok, because the type checker authorized it
-      MatchConstraint(v@(Variable|VariableStar)[AstName=name],p) -> {        
-        if(`name == varName) {                                  
-          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
+      MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) -> {        
+        if(`name == varName) {        
+          TomTerm freshVar = `v.isVariable() ? ConstraintCompiler.getFreshVariable(`type) : ConstraintCompiler.getFreshVariableStar(`type);
+          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
         }                                 
       }
     }
