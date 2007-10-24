@@ -200,12 +200,69 @@ public class TestAndOr extends TestCase {
     }    
   }
 
-  public void Test15() {
-    %match(a()) {
-      x || x << b() || x << c()  -> {        
-        Term res = `x;
+  public void test15() {
+    Term t = `f(a(),b());
+    %match(t) {
+      f(x,y) && (a() << x || b() << x)  -> {        
+        if (`x != `a()){
+          fail();
+        }
+        return;
       }
     }
+    fail();
+  }
+  
+  public void test16() {
+    Term t = `f(g(a()),b());
+    %match(t) {
+      f(x,y) && g(z) << x  -> {        
+        if (`z != `a()){
+          fail();
+        }
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test17() {
+    Term t = `f(g(a()),b());
+    %match(t) {
+      _ && g(z) << x && f(x,y) << t  -> {        
+        if (`z != `a()){
+          fail();
+        }
+        return;
+      }
+    }
+    fail();
+  }
+
+  public void test18() {
+    Term l = `list(a(),b(),g(a()),c());
+    %match(l) {
+      list(X*,b(),Y*) && z << list(X*,Y*)  -> {        
+        if (`z != `list(a(),g(a()),c())){
+          fail();
+        }
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test19() {
+    Term l = `list(a(),b(),g(a()),c());
+    %match(l) {
+      list(X*,b(),Y*) && list(_*,g(z),_*) << list(X*,Y*)  -> {     
+        if (`z != `a()){
+          fail();
+        }
+        return;
+      }
+    }
+    fail();
   }
 
   public static void main(String[] args) {

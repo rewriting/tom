@@ -318,7 +318,7 @@ matchBlock: {
   %strategy findRenameVariable(context:Collection) extends `Identity() {
     visit TomTerm {
       var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
-        if(context.contains(`astName)) {
+        if(context.contains(`astName)) {          
           return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
         }
       }
@@ -326,11 +326,21 @@ matchBlock: {
 
     visit Instruction {
       CompiledPattern(patternList,instruction) -> {
-        Map map = TomBase.collectMultiplicity(`patternList);
-        Collection newContext = new HashSet(map.keySet());
+        // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
+        Collection newContext = new ArrayList();
+        `TopDown(CollectLHSVars(newContext)).visitLight(`patternList);        
         newContext.addAll(context);
-        //System.out.println("newContext = " + newContext);
         return (Instruction)`TopDown(findRenameVariable(newContext)).visitLight(`instruction);
+      }
+    }  
+  }  
+  
+  %strategy CollectLHSVars(Collection bag) extends Identity() {
+    visit Constraint {
+      MatchConstraint(p,_) -> {        
+        Map map = TomBase.collectMultiplicity(`p);
+        Collection newContext = new HashSet(map.keySet());
+        bag.addAll(newContext);
       }
     }
   }

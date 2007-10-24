@@ -29,6 +29,8 @@ package tom.engine.checker;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import tom.engine.TomBase;
@@ -66,6 +68,7 @@ public class TomSyntaxChecker extends TomChecker {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
+  %include { ../../library/mapping/java/util/ArrayList.tom}
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
@@ -490,18 +493,28 @@ public class TomSyntaxChecker extends TomChecker {
   // ////////////////////////////////
   /**
    * Verifies the match construct
+   * 
+   * 0. checks that are not any circular dependencies
    * 1. Verifies all MatchConstraints
    * 2. Verifies all NumericConstraints (left side a variable, and the type of the right side numeric)
    * 3. Verifies that in an OrConstraint, all the members have the same free variables
    */
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure{
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
-    ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+    ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
+    HashMap<TomName, List<TomName>> varRelationsMap = new HashMap();
     `TopDown(CollectConstraints(constraints)).visitLight(constraintInstructionList);
     TomType typeMatch = null;
     for(Constraint constr: constraints){
       %match(constr){
-        MatchConstraint(pattern,subject) -> {
+        MatchConstraint(pattern,subject) -> {          
+          ArrayList<TomName> patternVars = new ArrayList<TomName>();
+          ArrayList<TomName> subjectVars = new ArrayList<TomName>();
+          `TopDown(CollectVariables(patternVars)).visitLight(`pattern);
+          `TopDown(CollectVariables(subjectVars)).visitLight(`subject);
+          
+          computeDependencies(varRelationsMap,patternVars,subjectVars);
+          
           %match(subject) {            
             TomTypeToTomTerm(TomTypeAlone[]) -> {
               // this is from %strategy construct and is already cheked in verifyStrategy
@@ -602,7 +615,54 @@ public class TomSyntaxChecker extends TomChecker {
         }
       }
     } // for
+    
+    checkVarDependencies(varRelationsMap);
   }
+  
+  /**
+   * Puts all the variables in the list patternVars in relation with all the variables in subjectVars
+   */
+  private void computeDependencies(HashMap<TomName, List<TomName>>  varRelationsMap, List<TomName> patternVars, List<TomName> subjectVars){      
+    for(TomName x:patternVars) {      
+      if (!varRelationsMap.keySet().contains(x)){        
+        varRelationsMap.put(x,subjectVars);
+      }else{ // add the rest of the variables        
+        List<TomName> tmp = new ArrayList<TomName>(subjectVars);        
+        tmp.addAll(varRelationsMap.get(x));
+        varRelationsMap.put(x,subjectVars);
+      }
+    }
+  }
+  
+  
+  /**
+   * Checks that there is not a circular reference of a variable
+   */
+  private void checkVarDependencies(HashMap<TomName, List<TomName>> varRelationsMap) {
+    for (TomName var:varRelationsMap.keySet()) {
+      isVariablePresent(var, varRelationsMap.get(var), varRelationsMap, new ArrayList<TomName>());
+    }
+  }
+  
+  private void isVariablePresent(TomName var, List<TomName> associatedList, HashMap<TomName, List<TomName>> varRelationsMap, List<TomName> checked) {    
+    if (associatedList.contains(var)) {
+      messageError(currentTomStructureOrgTrack.getFileName(),
+          currentTomStructureOrgTrack.getLine(),
+          TomMessage.circularReferences,
+          new Object[]{((Name)var).getString()});       
+    }
+    else {
+      for (TomName tn: associatedList){
+        if (checked.contains(tn)) { return; }
+        checked.add(tn);
+        List<TomName> lst = varRelationsMap.get(tn);
+        if (lst != null) { 
+          isVariablePresent(var, lst, varRelationsMap, checked);
+        }
+      }
+    }    
+  }
+  
   
   /**
    * Verifies that in an OrConstraint, all the members have the same free variables 
@@ -663,6 +723,18 @@ public class TomSyntaxChecker extends TomChecker {
       }
     }
   }
+  
+  /**
+   * Collect the variables' names   
+   */
+  %strategy CollectVariables(Collection varList) extends Identity() {     
+    visit TomTerm {
+      (Variable|VariableStar)[AstName=name] -> {        
+        if (!varList.contains(`name)) { varList.add(`name); }
+      }
+    }
+  }
+
 
   
   /**

@@ -113,56 +113,6 @@ public class SyntacticPropagator implements IBasePropagator {
         }
         return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
       }      
-      /**
-       * SwithAnti : here is just for efficiency reasons, and not for ordering, 
-       * because now the replace can be applied left-right; the ordering is done anyway in the pre-generator
-       *       
-       * AntiMatchConstraint[] /\ ... /\ MatchConstraint[] ->  MatchConstraint[] /\ ... /\ AntiMatchConstraint[] 
-       */
-      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
-        return `AndConstraint(X*,Y*,match,antiMatch,Z*);        
-      }
-      /**
-       * Replace
-       * 
-       * z = t /\ Context2( z = u ) ->  z = t /\ Context2( t = u ) 
-       */
-      AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) -> {     
-        // for optimizing reasons
-        if (!replacedVariables.contains(`z)){ 
-          replacedVariables.add(`z);
-          Constraint toApplyOn = `AndConstraint(Y*);
-          Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).visitLight(toApplyOn);
-          if(res != toApplyOn) {
-            return `AndConstraint(X*,eq,res);
-          }
-        }
-      }      
     }
   }// end %strategy
-
-  %strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity() {
-    visit Constraint {
-      MatchConstraint(Variable[AstName=name],t) -> {
-        if(`name == varName) {
-          // if we propagate a variable, this should lead to en equality test
-          // otherwise, it is a just a match
-          return value.isVariable() ? `MatchConstraint(TestVar(value),t) : `MatchConstraint(value,t); 
-        }
-      }
-      NumericConstraint(Variable[AstName=name],right,numericType) -> {
-        if(`name == varName) {          
-          return `NumericConstraint(value,right,numericType); 
-        }
-      }
-      // we can have the same variable both as variable and as variablestar
-      // we know that this is ok, because the type checker authorized it
-      MatchConstraint(v@VariableStar[AstName=name@!PositionName[],AstType=type],p) -> {        
-        if(`name == varName) {           
-          TomTerm freshVar = ConstraintCompiler.getFreshVariableStar(`type);
-          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),v));
-        }                                 
-      }      
-    }
-  }// end strategy
 }

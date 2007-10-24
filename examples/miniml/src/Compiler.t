@@ -209,13 +209,13 @@ public class Compiler {
   // ugly : change for a parameter 
   private static boolean inbackquote = false;
   private static String 
-    toJava(mlsig.mlsigAbstractType e, String arg, Type argtype) {
+    toJava(mlsig.mlsigAbstractType ee, String arg, Type argtype) {
       String res = "";
-      %match(Type e) {
+      %match(Type ee) {
         abs[] -> { res += "Strategy"; }
         basetype(n) -> { res += `n; }
       }
-      %match(Expr e) {
+      %match(Expr ee) {
         typed[e=letlist(alist(affect(v,_,fun)),typed[e=skip()])] -> {
           res += "public static class " + `v + " extends AbstractStrategy {\n";
           res += "public " + `v + "() { initSubterm(); }\n";
@@ -322,17 +322,17 @@ public class Compiler {
           return "(("+`toJava(t)+") "+`toJava(e1)+".visit("+`toJava(e2)+"))";
         }
       }
-      %match (ExprList e) {
+      %match (ExprList ee) {
         (x) -> { return `toJava(x); }
         (h,tail*) -> { 
           return `toJava(h) + "," + `toJava(tail); 
         }
       }
-      %match(Pattern e) {
+      %match(Pattern ee) {
         pvar(n) -> { return `n; }
         pconstr(f,l) -> { return `f + "(" + `toJava(l) + ")"; } 
       }
-      %match (PatternList e) {
+      %match (PatternList ee) {
         (x) -> { return `toJava(x); }
         (h,tail*) -> { return `toJava(h) + "," + `toJava(tail); }
       }
