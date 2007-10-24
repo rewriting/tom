@@ -13,14 +13,6 @@ sort Term: graphrules(GraphRule,Identity) {
   g(x,y) -> f(x)
 }
 
-sort Term: graphrules(GraphRule2,Identity) {
-  g(x,y) -> f(y)
-}
-
-sort Term: graphrules(CollapseRule,Identity) {
-  f(x) -> x
-}
-
 sort List: graphrules(Insert,Identity) {
   l:doublelinkedlist(previous,y,insert(x,v:doublelinkedlist(&l,z,next))) ->
   l1:doublelinkedlist(previous,y,l2:doublelinkedlist(&l1,x,v:doublelinkedlist(&l2,z,next)))  

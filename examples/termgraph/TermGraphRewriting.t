@@ -298,4 +298,9 @@ public class TermGraphRewriting {
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t4);
       System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
 
-    }//class TermGraphRewriting
+    } catch(VisitFailure e) {
+      System.out.println("Unexcepted failure");
+    }
+  }
+
+}//class TermGraphRewriting
