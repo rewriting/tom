@@ -370,7 +370,7 @@ public class GomReferenceExpander {
 
     public @fullClassName(abstractType)@ swap(Position p1, Position p2) {
       try {
-        @fullClassName(abstractType)@ updatedSubject =  (@fullClassName(abstractType)@ ) `TopDown(UpdatePos(p1,p2)).visit(this);
+        @fullClassName(abstractType)@ updatedSubject =  (@fullClassName(abstractType)@ ) `TopDown(Sequence(UpdatePos(p1,p2))).visit(this);
         @fullClassName(abstractType)@ subterm_p1 = (@fullClassName(abstractType)@) p1.getSubterm().visit(updatedSubject);
         @fullClassName(abstractType)@ subterm_p2 = (@fullClassName(abstractType)@) p2.getSubterm().visit(updatedSubject);
         return (@fullClassName(abstractType)@) `Sequence(p2.getReplace(subterm_p1),p1.getReplace(subterm_p2)).visit(updatedSubject);
@@ -449,6 +449,18 @@ public class GomReferenceExpander {
               //relative pos from the external to the source
               if (dest.hasPrefix(source) && !current.hasPrefix(target) && !current.hasPrefix(source)){
                 dest = dest.changePrefix(source,target); 
+                return Path@`sortname@.make(dest.sub(current));
+              }
+
+              //relative pos from the target to the external
+              if(current.hasPrefix(target) && !dest.hasPrefix(source) && !dest.hasPrefix(target)){
+                current = current.changePrefix(target,source);
+                return Path@`sortname@.make(dest.sub(current));
+              }
+
+              //relative pos from the external to the target
+              if (dest.hasPrefix(target) && !current.hasPrefix(source) && !current.hasPrefix(target)){
+                dest = dest.changePrefix(target,source); 
                 return Path@`sortname@.make(dest.sub(current));
               }
 

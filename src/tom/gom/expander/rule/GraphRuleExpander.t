@@ -275,6 +275,7 @@ public class GraphRuleExpander {
             return (@`name@) ((Path)`p1).add((Path)`p2).getCanonicalPath();
           }
         }
+        getEnvironment().followPath(((Path)`p1).inverse());
       }
    }      
 ]%);
@@ -347,11 +348,14 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
                 @sortname@ t = `Subst@sortname@(subject,(@sortname@)r);
                 Position newomega = (Position) posFinal.add(posRedex);
                 //replace in subject every pointer to the position newomega by
-                //a pointer to the position 2
-                t = (@sortname@) posFinal.getOmega(`TopDown(globalRedirection(newomega,posRhs))).visit(t);
-
-                //replace in r every pointer of pointer by a simple pointer (transitivity)
+                //a pointer to the position 2  and if in position 2 there is also a
+                //pointer inline the paths.
+                //(corresponds to dot(t) in the paper)
+                t = (@sortname@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
+                //inline paths in the intermediate r
+                //(corresponds to dot(r) in the paper)
                 t = (@sortname@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
+                //System.out.println("t "+t);
                 
                 /* 4. set the global term to norm(swap(t,1.w,2))|1 */
                 @sortname@ tt = (@sortname@) t.swap(newomega,posRhs); 
