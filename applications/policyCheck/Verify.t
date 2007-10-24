@@ -55,7 +55,7 @@ public class Verify{
             TS(),C() -> { return 1; }
             S(),C() -> { return 1; }
             _,_ -> { return -2; }
-          }
+          } 
           throw new RuntimeException("should not be there");
         }
     }
@@ -68,7 +68,7 @@ public class Verify{
   int numberOfObjects;
   int numberOfSecurityLevels;
   int numberOfAccessModes;
-
+ 
   //   verify.example.types.state.state stateToVerify;
   State stateToVerify;
   ArrayList<ArrayList<Integer>> subjectSets;
@@ -262,8 +262,8 @@ public class Verify{
     int indexSubjectSet=(int)(Math.random()*subjectSets.size());
     int indexObjectSet=(int)(Math.random()*objectSets.size());
     int i=0;
-    for (Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
-      Integer securityLevel = (Integer) iterator.next();
+    for (Iterator<Integer> iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
+      Integer securityLevel = iterator.next();
       switch (securityLevel) {
       case 0:
         Subjects.add(`subject(i,C()));
@@ -345,8 +345,8 @@ public class Verify{
       i++;
     }
     i=0;
-    for (Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
-      Integer securityLevel = (Integer) iterator.next();
+    for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
+      Integer securityLevel =  iterator.next();
       switch (securityLevel) {
       case 0:
         Objects.add(`securityObject(i,C()));
@@ -396,8 +396,8 @@ public class Verify{
         ArrayList<Subject> Subjects=new ArrayList<Subject>();
         ArrayList<SecurityObject> Objects=new ArrayList<SecurityObject>();
         int i=0;
-        for (Iterator iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
-          Integer securityLevel = (Integer) iterator.next();
+        for (Iterator<Integer> iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
+          Integer securityLevel = iterator.next();
           switch (securityLevel) {
           case 0:
             Subjects.add(`subject(i,C()));
@@ -415,8 +415,8 @@ public class Verify{
           i++;
         }
         i=0;
-        for (Iterator iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
-          Integer securityLevel = (Integer) iterator.next();
+        for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
+          Integer securityLevel = iterator.next();
           switch (securityLevel) {
           case 0:
             Objects.add(`securityObject(i,C()));
