@@ -90,13 +90,15 @@ TwoPath test=`TwoC1(TwoC0(TwoC1(zero,TwoId(nat),succ,TwoId(nat),TwoC0(zero,dupli
 //<--OBJECTIF : obtenir un resultat bon pour test, la duplication ne passe pas dans cet exemple
 TwoPath test2=`TwoC1(TwoC0(TwoC1(TwoC0(zero,TwoId(nat)),TwoC0(TwoId(nat),succ),TwoC0(plus,zero),TwoC0(TwoId(nat),succ),TwoC0(division,zero),TwoC0(succ,TwoId(nat))),TwoC1(TwoId(nat),succ,succ,duplication,TwoC0(TwoId(nat),succ),TwoC0(succ,TwoId(nat))),TwoC1(zero,TwoId(nat),TwoId(nat)),TwoC1(TwoC1(zero,TwoId(nat),succ),succ)),TwoC0(TwoC1(TwoId(nat),succ,eraser),TwoC0(TwoC1(plus,succ),succ),TwoC1(minus,eraser)));
 //<--ne marche pas encore ˆ cause des chevauchementsˆ l'intersection des deux etages
-TwoPath test3 = `TwoC1(TwoC0(TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,succ),minus),TwoC0(TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,succ),TwoC0(succ,succ),minus),TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,succ),plus)),TwoC0(TwoC1(TwoC0(zero,zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,TwoId(nat)),plus),TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,TwoId(nat)),minus))),TwoC0(TwoId(nat),TwoId(nat),TwoId(nat),eraser,eraser));
+TwoPath test3 = `TwoC1(TwoC0(TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,succ),minus),TwoC0(TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,succ),TwoC0(succ,succ),minus),TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,succ),plus)),TwoC0(TwoC1(TwoC0(zero,zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,TwoId(nat)),plus),TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,TwoId(nat)),minus))),TwoC0(permutation,TwoId(nat),TwoId(nat),TwoId(nat)),TwoC0(TwoId(nat),TwoId(nat),TwoId(nat),eraser,eraser));
 //<--marche bien
+TwoPath test4 =`TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Structure())),TwoC0(TwoC1(TwoC0(TwoId(OneCell("nat")),TwoId(OneCell("nat"))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoId(OneCell("nat")),TwoId(OneCell("nat")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC1(TwoId(OneCell("nat")),TwoCell("eraser",OneCell("nat"),Id(),Structure()))));
 
+TwoPath test5 = `TwoC1(zero,succ,succ,succ,TwoC0(succ,zero),TwoC0(succ,succ),TwoC0(succ,succ),division);
 
+TwoPath test6 = `TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("zero",Id(),OneCell("nat"),Constructor())),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC0(TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()));
 
-
-Compile(test3);
+Compile(test6);
 
 }
 //-----------------------------------------------------------------------------
@@ -179,7 +181,7 @@ return `TwoId(Id());
 // STRATEGIES
 //-----------------------------------------------------------------------------
 
-%strategy Print() extends Identity(){ 
+%strategy Print() extends Identity(){ //ne sert a rien pour l'instant
   	visit TwoPath {
   	  x -> { System.out.println(`x); } 
  	 } 
@@ -214,7 +216,7 @@ return `TwoId(Id());
   		TwoC1(head*,f@TwoCell(_,_,_,Constructor()),TwoC0(head2*,g@TwoId(_),tail2*),tail*) -> { 
 
 			if(`f.target()==`g.source()){
-				//en fait, on n'a pas vraiment besoins de tester les tails si on teste les heads
+
 																											
 				if(`head*==`TwoId(Id())){
 					if(`tail*==`TwoId(Id())){return `TwoC0(head2*,f,tail2*);}
@@ -222,6 +224,17 @@ return `TwoId(Id());
 				}
 				if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head2*,f,tail2*));}
 				return `TwoC1(head*,TwoC0(head2*,f,tail2*),tail*);
+			}
+  	  }
+  		  TwoC1(head*,TwoC0(head1*,f@TwoCell(_,_,_,Constructor()),tail1*),g@TwoId(_),tail*) -> { 
+
+				if(`f.target()==`g.source()){
+				if(`head*==`TwoId(Id())){
+					if(`tail*==`TwoId(Id())){return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f);}
+					return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+				}
+				if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f);}
+				return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
 			}
   	  }
   	} 
@@ -233,6 +246,13 @@ return `TwoId(Id());
  	 TwoId(OneC0(head,tail*)) -> { return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
   	} 
 }
+
+%strategy RefactorSource() extends Identity(){ 
+  	visit TwoPath {
+  	 TwoId(OneC0(head,tail*)) -> { return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
+  	} 
+}
+
 
 // sorte de normalisation en stratifiant de faon verticale
 %strategy VerticalMerging() extends Identity(){ //ne prend pas en compte les croisement entre twoC1 de deux niveaux differents
@@ -251,9 +271,55 @@ return `TwoId(Id());
 }
 
 // strategie pour detecter les sources des 3-cellules
-%strategy ApplyRules() extends Identity(){//ca marche un peu mais pas trop, probleme avec les fils dans les sources des 3 cellules
+//attention : limite aux arguments de hauteur egale a un
+%strategy ApplyRules() extends Identity(){//il reste encore un certains des cas non couverts
   	visit TwoPath {
-  	  TwoC1(head*,args,f@TwoCell(_,_,_,_/*Function()*/),tail*) -> {TwoPath target=checkRules(`TwoC1(args,f));if(target!=null){
+  		TwoC1(head*,args,TwoC0(X*,f@TwoCell(_,_,_,_),Y*),tail*)->{//necessaire pour les cas similaires a la duplication
+  		if(`args.target()==`f.source()){//peut etre inutile a present avec le match suivant
+  		TwoPath target=checkRules(`TwoC1(args,f));if(target!=null){
+  		  %match(target){
+  		  TwoC1(A,B)->{
+  		    		  if(`head*==`TwoId(Id())){
+  		  return `TwoC1(A,TwoC0(X*,B,Y*),tail*);}
+  		  	return `TwoC1(head*,A,TwoC0(X*,B,Y*),tail*);
+  		  	}
+  		  TwoC0(A*)->{
+  			  if(`head*==`TwoId(Id())){
+  		  return `TwoC1(TwoC0(X,A*,Y*),tail*);}
+  		  	return `TwoC1(head*,TwoC0(X*,A*,Y*),tail*);
+  		  	}
+  		  }
+  		  }
+  		}//pas suffisant, d'ou la suite
+  		%match (args){//le * a args2 est important
+			TwoC0(H*,args2*,T*) -> { if(`args2*.target()==`f.source()){
+				TwoPath target=checkRules(`TwoC1(args2,f));if(target!=null){
+				TwoPath targetSource=`TwoId(target.source());
+				targetSource =(TwoPath) `RepeatId(RefactorSource()).visit(targetSource);
+  		  %match(target){
+  		  TwoC1(A,B)->{
+  		    		  if(`head*==`TwoId(Id())){
+  		  return `TwoC1(TwoC0(H*,A,T*),TwoC0(X*,B,Y*),tail*);}
+  		  	return `TwoC1(head*,TwoC0(H*,A,T*),TwoC0(X*,B,Y*),tail*);
+  		  	}
+  		  TwoC0(A*)->{
+  			  if(`head*==`TwoId(Id())){
+  		  return `TwoC1(TwoC0(H*,targetSource,T*),TwoC0(X*,A*,Y*),tail*);}
+  		  	return `TwoC1(head*,TwoC0(H*,targetSource,T*),TwoC0(X*,A*,Y*),tail*);
+  		  	}
+  		  A->{
+  			  if(`head*==`TwoId(Id())){
+  		  return `TwoC1(TwoC0(H*,targetSource,T*),TwoC0(X*,A,Y*),tail*);}
+  		  	return `TwoC1(head*,TwoC0(H*,targetSource,T*),TwoC0(X*,A,Y*),tail*);
+  		  	}
+  		  }
+  		  }
+			}
+			}
+  		}
+  		}
+  	  TwoC1(head*,args,f@TwoCell(_,_,_,_/*Function()*/),tail*) -> {
+  	  TwoPath target=checkRules(`TwoC1(args,f));if(target!=null){
   		  if(`head*==`TwoId(Id())){
   		  return `TwoC1(target,tail*);}
   		  	return `TwoC1(head*,target,tail*);}
@@ -263,23 +329,7 @@ return `TwoId(Id());
 }
 
 // fonction pour explorer les regles de reecriture
-private static TwoPath checkRules2(TwoPath source){
-
-for (Iterator<ThreePath> iterator = rewritingRules.iterator(); iterator.hasNext();) {
-	ThreePath rewritingRule = (ThreePath) iterator.next();
-	if(rewritingRule.getSource()==source){return rewritingRule.getTarget();}
-// en fait il faut etre plus fin ici quand il y a des fils dans les sources des
-// 3 cellules :
-// il faut "etirer" les fils de la cible en checkant la compatibilitŽ des
-// fils->%match
-// puis il faut retourner la target du 3-cellules en gardant au dessus de
-// celle-ci les 2-cellules non affectees
-}
-return null;
-} 
-
 private static TwoPath checkRules(TwoPath source){
-
 for (Iterator<ThreePath> iterator = rewritingRules.iterator(); iterator.hasNext();) {
 	ThreePath rewritingRule = (ThreePath) iterator.next();
 
@@ -320,8 +370,11 @@ return null;
 private static void Compile(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
 try{
 myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(ApplyRules())),RepeatId(TopDown(VerticalMerging())),RepeatId(TopDown(Gravity())))).visit(myPath);
+//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(ApplyRules())),RepeatId(TopDown(VerticalSplitting())),RepeatId(TopDown(VerticalMerging())),RepeatId(TopDown(Gravity())))).visit(myPath);
+
 System.out.println("RESULT");
 System.out.println(myPath);
+//tom.library.utils.Viewer.display(myPath);
 }
 catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
