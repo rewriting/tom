@@ -327,6 +327,15 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     return res;
   }
 
+  private String getMakeEmptyList(String name,String moduleName) {
+    String res = getSymbolTable(moduleName).getMakeEmptyList(name);
+    if(!inlineplus) {
+      String prefix = "tom_empty_list_";
+      res = prefix+name+"()";
+    }
+    return res;
+  }
+
   private String genDeclGetHead(String name, TomType domain, TomType codomain, String subject, String moduleName) {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
@@ -341,7 +350,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String tomType = TomBase.getTomType(codomain);
     String get= getGetTail(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
-    String empty = %[tom_empty_list_@name@()]%;
+    String empty = getMakeEmptyList(name,moduleName);
     if(domain==codomain) { 
       return %[((@is_conc@)?@get@:@empty@)]%;
     }

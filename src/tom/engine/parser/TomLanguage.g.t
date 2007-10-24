@@ -2161,7 +2161,11 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
-            result = `MakeEmptyList(Name(name),AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            if(blockList.size()==1) {
+              result = `MakeEmptyList(Name(name),ExpressionToInstruction(Code(tlCode.getCode())),ot);
+            } else {
+              result = `MakeEmptyList(Name(name),AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
+            }
         }
     ;
 

@@ -886,7 +886,7 @@
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="on"/>
        <property name="optimize2" value="on"/>
-       <property name="inline" value="on"/>
+       <property name="inlineplus" value="on"/>
      </ant>
   </target>
 
@@ -921,7 +921,7 @@
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="on"/>
        <property name="optimize2" value="on"/>
-       <property name="inline" value="on"/>
+       <property name="inlineplus" value="on"/>
      </ant>
   </target>
 
