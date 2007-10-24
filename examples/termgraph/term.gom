@@ -13,6 +13,10 @@ sort Term: graphrules(GraphRule,Identity) {
   g(x,y) -> f(x)
 }
 
+sort Term: graphrules(GraphRule2,Identity) {
+  g(x,y) -> f(y)
+}
+
 sort Term: graphrules(CollapseRule,Identity) {
   f(x) -> x
 }

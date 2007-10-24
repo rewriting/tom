@@ -20,7 +20,7 @@ module RuleList:rules() {
   //Warning for the following rule!!!
   //In the generated code C1 can be instanciated with the complete list,
   //and thus the construction can loop (only when the optimizer is desactivated in Gom)
-  conc(C1*,f(b()),C2*) -> conc(C1*,f(c()),C2*)
+  //conc(C1*,f(b()),C2*) -> conc(C1*,f(c()),C2*)
   g(conc(C1*,f(c()),C2*)) -> g(conc(C1*,f(d()),C2*))
   g(conc(C1*,f(c()),C2*)) -> g(conc(C1*,f(d()),C2*))
   h(_) -> a() 

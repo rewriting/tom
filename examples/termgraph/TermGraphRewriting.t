@@ -273,7 +273,7 @@ public class TermGraphRewriting {
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t3);
 
       System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
-      
+
       t = `g(g(g(f(a()),g(PathTerm(-1,-2,1),a())),PathTerm(-2,1,2,2)),PathTerm(-2,1,1,1,1));
       System.out.println("\nMore complex initial term :\n"+t);
       /* rule g(x,y) -> f(x) at pos 1.1*/
@@ -298,22 +298,4 @@ public class TermGraphRewriting {
       System.out.println("Canonical term obtained by Innermost strategy directly on positions:\n"+t4);
       System.out.println("Canonical term obtained using graphrules hooks in the Gom signature:\n"+(new Position(new int[]{1,1})).getOmega(Term.GraphRule()).visit(t));
 
-      /* collapse rule */
-      Term t5 = `f(PathTerm(-1));
-      System.out.println("application of the collapse rule f(x)->x on the subject "+t5);
-      System.out.println(Term.CollapseRule().visit(t5));
-
-      /* benchs */
-      Term t6 = `g(a(),PathTerm(-1,1));
-      long startChrono = System.currentTimeMillis();
-      int k = 10000;
-      for(int i=0; i<k;i++) {
-        Term.GraphRule().visit(t6);
-      }
-      System.out.println(System.currentTimeMillis()-startChrono+"ms for "+k+" rules");
-    } catch(VisitFailure e) {
-      System.out.println("Failure in main");
-    }
-  }
-
-}//class TermGraphRewriting
+    }//class TermGraphRewriting

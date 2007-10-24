@@ -53,17 +53,23 @@ public class TestTermgraph extends TestCase {
     sort Term: graphrules(rulek,Identity) {
       k(x) -> x
     }
+
     sort Term: graphrules(rulef,Identity) {
       f(x) -> x
     }
+
     sort Term: graphrules(Test,Identity) {
       g(l:a(),&l) -> f(b())
-        f(g(g(a(),&l),l:b())) -> f(c())
-        g(x,y) -> f(x)
-        h(x) -> f(h(x))
+      f(g(g(a(),&l),l:b())) -> f(c())
+      g(x,y) -> f(x)
+      h(x) -> f(h(x))
     }
 
-   sort Term: graphrules(TestSideEffect,Identity) {
+    sort Term: graphrules(Test2,Identity) {
+      g(x,y) -> f(y)
+    }
+   
+    sort Term: graphrules(TestSideEffect,Identity) {
       f(l:a()) -> g(&l,l:b())
    }
   }
@@ -150,6 +156,25 @@ public class TestTermgraph extends TestCase {
     Term t = `g(f(a()),PathTerm(-2,1,1));
     try {
       assertEquals(`g(g(b(),PathTerm(-2,1)),PathTerm(-2,1,1)),new Position(new int[]{1}).getOmega(Term.TestSideEffect()).visit(t));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  /* collapse rule */
+  public void testGraphRules7() {
+    Term t = `f(PathTerm(-1));
+    try {
+      assertEquals(`PathTerm(),Term.rulef().visit(t));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void testGraphRules8() {
+  Term t = `g(a(),PathTerm(-2,1));
+    try {
+      assertEquals(`f(a()),Term.Test2().visit(t));
     } catch(VisitFailure e) {
       fail();
     }
