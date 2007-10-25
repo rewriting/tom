@@ -399,7 +399,6 @@ class MuStrategyTopDown:
       childNumber: the n-th subtemr of parent
       set: set of already visited parent
       """
-      #print "visitlight :", any, parent, childNumber, set
 
       #check that the current element has not already been expanded
       if any in set:

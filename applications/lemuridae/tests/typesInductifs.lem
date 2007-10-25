@@ -143,7 +143,7 @@ intros.
 // on peut donc ajouter le raisonnement par cas : 
 rule natcase.
 
-proof strongind1: forall n, Nat(n) 
+proof recind1:    forall n, Nat(n) 
                   => forall p, in(cons(0,nil()),p) 
                   => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
                   => in(cons(n,nil()),p) .
@@ -165,7 +165,7 @@ axiom.
 axiom.
 axiom.
 
-proof strongind2: forall n, 
+proof recind2:   forall n, 
                   (forall p, in(cons(0,nil()),p) 
                    => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
                    => in(cons(n,nil()),p)
@@ -178,19 +178,20 @@ focus h2. rule. m0.
 axiom.
 axiom.
 
-proof strongind: forall n, Nat(n) <=> 
+proof recind:    forall n, Nat(n) <=> 
                  (forall p, in(cons(0,nil()),p) 
                   => (forall m, Nat(m) => in(cons(m,nil()),p) => in(cons(succ(m),nil()),p))
                   => in(cons(n,nil()),p)) .
-theorem strongind1.
-theorem strongind2.
+theorem recind1.
+theorem recind2.
 intro.
 focus h1. intro. n0.
 focus h2. intro. n0.
 intros.
 
-// on peut donc ajouter l'induction forte : 
-rule strongind.
-hered_strong_nat.
+// on peut donc ajouter l'induction avec recurseur : 
+rule recind.
+hered_rec_nat.
+
 
 

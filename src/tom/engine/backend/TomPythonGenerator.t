@@ -190,7 +190,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
   protected void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
     output.write(deep,"while ");
     generateExpression(deep,exp,moduleName);
-    output.writeln(":");
+    output.writeln(":\n");
     generateInstruction(deep+1,succes,moduleName);
     output.write(deep,"\n# end while\n"); 
   }
@@ -257,7 +257,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "     return " + make_insert + "(" + get_head + "(l1),l2)\n";
     s+= "   else:\n";  
     s+= "     return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
-    s+= "# end if";
+    s+= "# end if\n";
     s+= "# end def tom_append_list_" + name;
     s+= "\n";
     
@@ -267,7 +267,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "   else:\n";
     s+= "      return " +  make_insert + "(" + get_head + "(begin)," + 
       get_slice + "(" + get_tail + "(begin),end,tail));\n";
-    s+= "# end if";
+    s+= "# end if\n";
     s+= "# end def tom_get_slice_" + name;
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
