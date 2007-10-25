@@ -64,16 +64,16 @@ public class PreGenerator {
 
   private static Constraint orderConstraints(Constraint constraint){    
     %match(constraint){
-      andC@!AndConstraint(X*,OrConstraint(XX*),Y*) && AndConstraint(_*) << constraint  -> {        
+      !AndConstraint(_*,OrConstraint(_*),_*) && AndConstraint(_*) << constraint  -> {        
         return repeatOrdering(constraint);
       }
-      andC@AndConstraint(X*,or@OrConstraint(XX*),Y*) -> {        
+      AndConstraint(X*,or@OrConstraint(_*),Y*) -> {        
         return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
       }
-      or@OrConstraint(andC@AndConstraint(XX*)) -> {        
+      OrConstraint(andC@AndConstraint(_*)) -> {        
         return `OrConstraint(orderConstraints(andC));
       }
-      or@OrConstraint(!AndConstraint(XX*)) -> {     
+      or@OrConstraint(!AndConstraint(_*)) -> {     
         return `or;
       }
     }
