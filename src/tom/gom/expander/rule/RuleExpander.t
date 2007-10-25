@@ -231,8 +231,8 @@ public class RuleExpander {
     }
   }
 
-  private void genTerm(Term term, StringBuffer output) {
-    %match(term) {
+  private void genTerm(Term termArg, StringBuffer output) {
+    %match(termArg) {
       Appl(symbol,args) -> {
         output.append(`symbol);
         output.append("(");

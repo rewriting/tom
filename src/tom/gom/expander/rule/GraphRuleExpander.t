@@ -436,9 +436,9 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
     return output.toString();
   }
 
-  private String genTermWithExplicitVar(Term term, String fathersymbol, int omega) {
+  private String genTermWithExplicitVar(Term termArg, String fathersymbol, int omega) {
     StringBuffer output = new StringBuffer();
-    %match(term) {
+    %match(termArg) {
       LabTerm(label,term) -> {
         output.append("Lab"+sortname);
         output.append("(");
