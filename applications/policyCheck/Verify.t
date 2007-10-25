@@ -11,7 +11,7 @@ public class Verify{
       abstract syntax
       
       //Security levels : TS Top Secret, S Secret, C Confidential.
-      SecurityLevel = TS() | S() | C()
+      SecurityLevel = sL(l:int)
       
       //Subject who has an ID for identification and a security level SL.
       Subject = subject(ID:int,SL:SecurityLevel)
@@ -20,7 +20,7 @@ public class Verify{
       SecurityObject = securityObject(ID:int,SL:SecurityLevel)
       
       //Access mode, in this case could be read or write; others can be added
-      AccessMode = read()|write()
+      AccessMode = aM(m:int)//read()|write()
       
       //Request type: 
       // add - to request the addition of an access,  
@@ -48,15 +48,11 @@ public class Verify{
       //Sort representing a request upon a state
       RequestUponState = rus(R:Request,S:State)
 
+
+      sort SecurityLevel:interface() { Comparable }
       sort SecurityLevel:block() {
         public int compareTo(SecurityLevel sl){
-          %match (this,sl){
-            TS(),S() -> { return 1; }
-            TS(),C() -> { return 1; }
-            S(),C() -> { return 1; }
-            _,_ -> { return -2; }
-          } 
-          throw new RuntimeException("should not be there");
+          return this.getl()-sl.getl();
         }
     }
 
@@ -89,31 +85,31 @@ public class Verify{
 
 
   public Response transition(RequestUponState req){
-    %match (req){
-			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),read(),_)),
-          s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),write(),_),_*))  ) -> { 
+    %match (RequestUponState req){
+			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),aM(0),_)),
+          s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),aM(1),_),_*))  ) -> { 
 //         if (!(compare(`l2,`l3))){
-        if (`l2.compareTo(`l3)==1){
+        if (`l2.compareTo(`l3)>0){
           return new Response(false,`s0);
         } 
       }
-			rus(request(add(),access(subject(_,l1),securityObject(_,l2),read(),_)),s1) -> { 
+			rus(request(add(),access(subject(_,l1),securityObject(_,l2),aM(0),_)),s1) -> { 
 //         if (!(compare(`l2,`l1))){
-        if (`l2.compareTo(`l1)==1){
+        if (`l2.compareTo(`l1)>0){
           return new Response(false,`s1);
         } 
       }
-			rus(request(add(),a@access(_,_,read(),_)),state(e,i)) -> { 
+			rus(request(add(),a@access(_,_,aM(0),_)),state(e,i)) -> { 
         return new Response(true,`state(accesses(a,e),i)); 
       }
-			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),write(),_)),
-          s2@state(accesses(_*,access(subject(i1,l1),securityObject(_,l3),read(),_),_*),_)) -> { 
+			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),aM(1),_)),
+          s2@state(accesses(_*,access(subject(i1,l1),securityObject(_,l3),aM(0),_),_*),_)) -> { 
 //         if (!(compare(`l3,`l2))){
-        if (`l3.compareTo(`l2)==1){
+        if (`l3.compareTo(`l2)>0){
           return new Response(false,`s2);
         } 
       }
-			rus(request(add(),a@access(_,_,write(),_)),state(i,e))-> {
+			rus(request(add(),a@access(_,_,aM(1),_)),state(i,e))-> {
         return new Response(true,`state(i,accesses(a,e))); 
       }
 			rus(request(delete(),a),state(accesses(X*,a,Y*),i))-> { 
@@ -144,7 +140,7 @@ public class Verify{
     for (int i = 0; i < permutationOfRequests.length; i++) {
       //System.out.println("permutationOfRequests :"+(i+1)+"/"+permutationOfRequests.length);
       ArrayList<Integer> requestIndexes=allRequests.get(permutationOfRequests[i]);
-      Access a=`access(Subjects.get(requestIndexes.get(0)),Objects.get(requestIndexes.get(1)),((requestIndexes.get(2)==0)?(read()):(write())),explicit());
+      Access a=`access(Subjects.get(requestIndexes.get(0)),Objects.get(requestIndexes.get(1)),(aM(requestIndexes.get(2))),explicit());
       Request r=`request(add(),a);
       RequestUponState rus=`rus(r,M);
       Response response=transition(rus);
@@ -197,32 +193,32 @@ public class Verify{
 
   %strategy makeExplicit() extends `Identity() {
     visit State {
-    	state(reads@accesses(X1*,access(s1,o1,read(),_),X2*,access(s2,o2,read(),_),X3*),
-            writes@accesses(X4*,access(s,o,write(),_),X5*))->{
+    	state(reads@accesses(X1*,access(s1,o1,aM(0),_),X2*,access(s2,o2,aM(0),_),X3*),
+            writes@accesses(X4*,access(s,o,aM(1),_),X5*))->{
         if (`((s==s1 && o==o2))){
           ListOfAccesses l=`accesses(X1*,X2*,X3*);
           boolean contains=false;
           %match(l){
-            accesses(X*,access(s3,o3,read(),_),Y*) ->{
+            accesses(X*,access(s3,o3,aM(0),_),Y*) ->{
               if (`s2==`s3 && `o1==`o3){
                 contains=true;
               }
             }
           } 
           if (contains) return `state(reads,writes);
-          else return `state(accesses(access(s2,o1,read(),implicit()),reads),writes);
+          else return `state(accesses(access(s2,o1,aM(0),implicit()),reads),writes);
         }else  if (`((s==s2 && o==o1))){
           ListOfAccesses l=`accesses(X1*,X2*,X3*);
           boolean contains=false;
           %match(l){
-            accesses(X*,access(s3,o3,read(),_),Y*) ->{
+            accesses(X*,access(s3,o3,aM(0),_),Y*) ->{
               if (`s1==`s3 && `o2==`o3){
                 contains=true;
               }
             }
           } 
           if (contains) return `state(reads,writes);
-          else return `state(accesses(access(s1,o2,read(),implicit()),reads),writes);
+          else return `state(accesses(access(s1,o2,aM(0),implicit()),reads),writes);
         }
       }  
     }
@@ -264,20 +260,7 @@ public class Verify{
     int i=0;
     for (Iterator<Integer> iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
       Integer securityLevel = iterator.next();
-      switch (securityLevel) {
-      case 0:
-        Subjects.add(`subject(i,C()));
-        break;
-      case 1:
-        Subjects.add(`subject(i,S()));
-        break;
-      case 2:
-        Subjects.add(`subject(i,TS()));
-        break;
-      default:
-        System.out.println("An error occured while attributing security levels for subjects");
-        break;
-      }
+      Subjects.add(`subject(i,sL(securityLevel)));
 
       i++; 
     }
@@ -285,20 +268,7 @@ public class Verify{
     i=0;
     for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
       Integer securityLevel = iterator.next();
-      switch (securityLevel) {
-      case 0:
-        Objects.add(`securityObject(i,C()));
-        break;
-      case 1:
-        Objects.add(`securityObject(i,S()));
-        break;
-      case 2:
-        Objects.add(`securityObject(i,TS()));
-        break;
-      default:
-        System.out.println("An error occured while attributing security levels for objects");
-        break;
-      } 
+       Objects.add(`securityObject(i,sL(securityLevel)));
       i++;
     }
     System.out.println("Generated Objects :"+Objects);
@@ -328,39 +298,13 @@ public class Verify{
 //     for (Iterator<Integer> iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
 //       Integer securityLevel = iterator.next();
     for (Integer securityLevel: subjectSets.get(indexSubjectSet)) {
-      switch (securityLevel) {
-      case 0:
-        Subjects.add(`subject(i,C()));
-        break;
-      case 1:
-        Subjects.add(`subject(i,S()));
-        break;
-      case 2:
-        Subjects.add(`subject(i,TS()));
-        break;
-      default:
-        System.out.println("An error occured while attributing security levels for subjects");
-        break;
-      } 
+      Subjects.add(`subject(i,sL(securityLevel)));
       i++;
     }
     i=0;
     for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
       Integer securityLevel =  iterator.next();
-      switch (securityLevel) {
-      case 0:
-        Objects.add(`securityObject(i,C()));
-        break;
-      case 1:
-        Objects.add(`securityObject(i,S()));
-        break;
-      case 2:
-        Objects.add(`securityObject(i,TS()));
-        break;
-      default:
-        System.out.println("An error occured while attributing security levels for objects");
-        break;
-      } 
+      Objects.add(`securityObject(i,sL(securityLevel)));
       i++;
     }
 
@@ -398,39 +342,13 @@ public class Verify{
         int i=0;
         for (Iterator<Integer> iterator = (subjectSets.get(indexSubjectSet)).iterator(); iterator.hasNext();) {
           Integer securityLevel = iterator.next();
-          switch (securityLevel) {
-          case 0:
-            Subjects.add(`subject(i,C()));
-            break;
-          case 1:
-            Subjects.add(`subject(i,S()));
-            break;
-          case 2:
-            Subjects.add(`subject(i,TS()));
-            break;
-          default:
-            System.out.println("An error occured while attributing security levels for subjects");
-            break;
-          } 
+          Subjects.add(`subject(i,sL(securityLevel)));
           i++;
         }
         i=0;
         for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
           Integer securityLevel = iterator.next();
-          switch (securityLevel) {
-          case 0:
-            Objects.add(`securityObject(i,C()));
-            break;
-          case 1:
-            Objects.add(`securityObject(i,S()));
-            break;
-          case 2:
-            Objects.add(`securityObject(i,TS()));
-            break;
-          default:
-            System.out.println("An error occured while attributing security levels for objects");
-            break;
-          } 
+          Objects.add(`securityObject(i,sL(securityLevel)));
           i++;
         }
 
