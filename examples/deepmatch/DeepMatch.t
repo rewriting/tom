@@ -147,19 +147,28 @@ class DeepMatch {
     is_empty(l)      { l.finished() }
   }
 
+  %op Deep iter(t:Term) {
+    make(x) { new Iter(x) }
+  }
 
   public static void main(String [] argv) {
     Term t = `f(f(l("a"),l("b")),f(l("c"),l("a")));
+    System.out.println("- t = " + t);
+    
     Iter<Term> it = new Iter(t);
-
-    System.out.print("all labels in t :");
+    System.out.print("- all labels in t :");
     %match(it) {
       deep(_*,l(x),_*) -> { System.out.print(" " + `x); }
     }
 
-    System.out.print("\nall labels appearing at least twice in t :");
+    System.out.print("\n- all labels appearing at least twice in t :");
     %match(it) {
       deep(_*,l(x),_*,l(x),_*) -> { System.out.print(" " + `x); }
+    }
+
+    System.out.print("\n- future translation of f(z@{l(x)},_) -> { print(x) } :");
+    %match(t) {
+      f(z,_) && deep(_*,l(x),_*) << iter(z) -> { System.out.print(" " + `x); }
     }
 
     System.out.println();
