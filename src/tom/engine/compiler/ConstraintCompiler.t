@@ -107,7 +107,7 @@ public class ConstraintCompiler {
               Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
               Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
               Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
-                            
+              
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
               TomTerm automata = `Automata(optionList,constraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
@@ -121,7 +121,8 @@ public class ConstraintCompiler {
          * return the compiled Match construction
          */        
         InstructionList astAutomataList = ConstraintCompiler.automataListCompileMatchingList(automataList);
-        return `CompiledMatch(AbstractBlock(astAutomataList), matchOptionList);
+        // the block is useful in case we have a label on the %match: we would like it to be on the whole Match instruction 
+        return `UnamedBlock(concInstruction(CompiledMatch(AbstractBlock(astAutomataList), matchOptionList)));
       }
     }// end visit
   }// end strategy  
@@ -201,7 +202,7 @@ public class ConstraintCompiler {
         // if a label is assigned to a pattern (label:pattern ->
         // action) we generate corresponding labeled-block				 
         %match(optionList) {
-          concOption(_*,Label(Name(name)),_*) -> { 
+          concOption(_*,Label(Name(name)),_*) -> {            
             `instruction = `NamedBlock(name,concInstruction(instruction));
           }
         }				
