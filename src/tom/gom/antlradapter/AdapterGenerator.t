@@ -218,8 +218,8 @@ public class @filename()@Tree extends CommonTree {
 ]%);
     Iterator it = operatorset.iterator();
     while(it.hasNext()) {
-      OperatorDecl op = (OperatorDecl) it.next();
-      %match(op) {
+      OperatorDecl opDecl = (OperatorDecl) it.next();
+      %match(opDecl) {
         op@OperatorDecl[Name=opName,Prod=Variadic[]] -> {
           Code code =
             `CodeList(
@@ -374,8 +374,8 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-  protected void generateAddChildCase(OperatorDecl op, Writer writer) throws IOException {
-    %match(op) { 
+  protected void generateAddChildCase(OperatorDecl opDecl, Writer writer) throws IOException {
+    %match(opDecl) { 
       op@OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod] -> {
         Code code =
           `CodeList(
