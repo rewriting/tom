@@ -63,7 +63,7 @@ def toto(t):
 
 t = f(a(),g(a()))
 print "t = ", t
-print "t = ", toto(t)
+toto(t)
 
 l = [f(a(),b()), a(), f(b(),b()), g(a())]
 print map(str,l)
