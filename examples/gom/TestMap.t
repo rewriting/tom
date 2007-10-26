@@ -101,7 +101,7 @@ public class TestMap extends TestCase {
     /* cutbu is a custom bottomup, that do not go in the left part of an f */
     Strategy cutbu = `mu(MuVar("x"),
         Sequence(
-          Choice(_f(Identity(),Fail(),MuVar("x")),All(MuVar("x"))),
+          Choice(_f(Identity(),Identity(),MuVar("x")),All(MuVar("x"))),
           Log(abag,bbag,cbag)
           ));
     try {
@@ -116,7 +116,7 @@ public class TestMap extends TestCase {
 
   public void testMatch() {
     E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
-    Strategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_d()));
+    Strategy match = `_f(_f(_a(),Identity(),_b()),Identity(),_f(_c(),Identity(),_d()));
     boolean state = false;
     try {
       match.visitLight(subject);
