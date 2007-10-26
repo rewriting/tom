@@ -297,8 +297,7 @@ public class RuleCalc {
 
       forall(_,p1) -> {
         if(current*last >= 0) {
-          // string are not taken into account by omega
-          pos = pos.down(1);
+          pos = pos.down(2);
           return forallNeg(`p1,current,current,pos);
         }
         else return pos;
