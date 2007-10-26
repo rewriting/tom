@@ -131,7 +131,6 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
 
-  private static boolean[] nonbuiltin = new boolean[]{@genNonBuiltin()@};
   public @className()@(@genConstrArgs(slotList.length(),"tom.library.sl.Strategy arg")@) {
     args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg")@};
   }
@@ -151,7 +150,6 @@ public class @className()@ implements tom.library.sl.Strategy {
       tom.library.sl.Visitable result = any;
       tom.library.sl.Visitable[] childs = null;
       for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-        if(nonbuiltin[i]) {
           tom.library.sl.Visitable oldChild = any.getChildAt(nbi);
           tom.library.sl.Visitable newChild = args[i].visitLight(oldChild);
           if(childs != null) {
@@ -162,7 +160,6 @@ public class @className()@ implements tom.library.sl.Strategy {
             childs[nbi] = newChild;
           }
           nbi++;
-        }
       }
       if(childs!=null) {
         result = any.setChildren(childs);
@@ -178,7 +175,6 @@ public class @className()@ implements tom.library.sl.Strategy {
     if(any instanceof @fullClassName(operator)@) {
       tom.library.sl.Visitable[] childs = null;
       for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-        if(nonbuiltin[i]) {
           tom.library.sl.Visitable oldChild = any.getChildAt(nbi);
           environment.down(nbi+1);
           int status = args[i].visit();
@@ -195,7 +191,6 @@ public class @className()@ implements tom.library.sl.Strategy {
           } 
           environment.upLocal();
           nbi++;
-        }
       }
       if(childs!=null) {
         environment.setSubject(any.setChildren(childs));
@@ -258,36 +253,6 @@ private String genStratArgs(int count, String arg) {
     args.append(":Strategy");
   }
   return args.toString();
-}
-
-private String genNonBuiltin() {
-  String out = "";
-  %match(SlotFieldList slotList) {
-    concSlotField(_*,SlotField[Domain=domain],_*) -> {
-      if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-        out += "true, ";
-      } else {
-        out += "false, ";
-      }
-    }
-  }
-  if (out.length()!=0) {
-    return out.substring(0,out.length()-2);
-  } else {
-    return out;
-  }
-}
-
-private int nonBuiltinChildCount() {
-  int count = 0;
-  %match(SlotFieldList slotList) {
-    concSlotField(_*,SlotField[Domain=domain],_*) -> {
-      if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-        count++;
-      }
-    }
-  }
-  return count;
 }
 
 /** the class logger instance*/

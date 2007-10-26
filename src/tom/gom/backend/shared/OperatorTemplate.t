@@ -266,36 +266,37 @@ generateGetters(writer);
 
 ]%);
 
+
     writer.write(%[
   /* Visitable */
   public int getChildCount() {
-    return @nonBuiltinChildCount()@;
+    return @visitableCount()@;
   }
 
   public tom.library.sl.Visitable getChildAt(int index) {
     switch(index) {
-@nonBuiltinsGetCases()@
+@getCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
   public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable v) {
     switch(index) {
-@nonBuiltinMakeCases("v")@
+@makeCases("v")@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
   public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] childs) {
-    if (childs.length == @nonBuiltinChildCount()@) {
-      return @nonBuiltinArrayMake("childs")@;
+    if (childs.length == @slotList.length()@) {
+      return @arrayMake("childs")@;
     } else {
       throw new IndexOutOfBoundsException();
     }
   }
 
   public tom.library.sl.Visitable[] getChildren() {
-    return new tom.library.sl.Visitable[] { @nonBuiltinChildList(slotList)@ };
+    return new tom.library.sl.Visitable[] { @visitableList(slotList)@ };
   }
 ]%);
 
@@ -497,23 +498,8 @@ writer.write(%[
     res.append("true;"); // to handle the "no childs" case
     return res.toString();
   }
-  private int nonBuiltinChildCount() {
-    int count = 0;
-    //in case of reference, paths are considered as constants
-    //to avoid traversal inside a path
-    //TODO: in the future Gom replace this code by a hook
-    if(className().equals("ConsPath"+sortName.getName())) return count;
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
 
-  private String nonBuiltinsGetCases() {
+  private String getCases() {
     StringBuffer res = new StringBuffer();
     int index = 0;
     %match(SlotFieldList slotList) {
@@ -525,25 +511,40 @@ writer.write(%[
           res.append(fieldName(`fieldName));
           res.append(";\n");
           index++;
+        } else {
+          res.append("      case ");
+          res.append(index);
+          res.append(": return new tom.library.sl.VisitableBuiltin<");
+          res.append(primitiveToReferenceType(fullClassName(`domain)));
+          res.append(">(");
+          res.append(fieldName(`fieldName));
+          res.append(");\n");
+          index++;
         }
       }
     }
     return res.toString();
   }
 
-  private String nonBuiltinChildList(SlotFieldList slots) {
+  private String visitableList(SlotFieldList slots) {
     StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[Domain=domain,Name=name] -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           if (res.length()!=0) {
             res.append(", ");
           }
           res.append(" ");
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append(fieldName(`name));
+        } else {
+          res.append("new tom.library.sl.VisitableBuiltin<");
+          res.append(primitiveToReferenceType(fullClassName(`domain)));
+          res.append(">(");
+          res.append(fieldName(`name));
+          res.append(")");
         }
         }
       }
@@ -551,87 +552,96 @@ writer.write(%[
     return res.toString();
   }
 
-  private String nonBuiltinArrayMake(String arrayName) {
+
+  private String visitableCount() {
+    if(className().equals("ConsPath"+sortName.getName())) { 
+      return "0";
+    } else {
+      return ""+slotList.length();
+    }
+  }
+
+  private String arrayMake(String arrayName) {
     StringBuffer res = new StringBuffer("make(");
     int index = 0;
-    int fullindex = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[Domain=domain],_*) -> {
-        if(fullindex>0) { res.append(", "); }
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res.append("(");
-          res.append(fullClassName(`domain));
-          res.append(") ");
-          res.append(arrayName);
-          res.append("[");
-          res.append(index);
-          res.append("]");
-          index++;
-        } else {
-          res.append(getMethod(`slot));
-          res.append("()");
-        }
-        fullindex++;
+        if(index>0) { res.append(", "); }
+       if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+         res.append("(");
+         res.append(fullClassName(`domain));
+         res.append(") ");
+         res.append(arrayName);
+         res.append("[");
+         res.append(index);
+         res.append("]");
+       } else {
+         res.append("((tom.library.sl.VisitableBuiltin<");
+         res.append(primitiveToReferenceType(fullClassName(`domain)));
+         res.append(">)");
+         res.append(arrayName);
+         res.append("[");
+         res.append(index);
+         res.append("])");
+         res.append(".getBuiltin()");
+       }
+       index++;
       }
     }
     res.append(")");
     return res.toString();
   }
-  private String nonBuiltinMakeCases(String argName) {
-    StringBuffer res = new StringBuffer();
-    int index = 0;
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
-          index++;
-        }
-      }
+private String makeCases(String argName) {
+  StringBuffer res = new StringBuffer();
+  int index = 0;
+  %match(SlotFieldList slotList) {
+    concSlotField(_*,SlotField[Domain=domain],_*) -> {
+      res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
+      index++;
     }
-    return res.toString();
   }
-  private String generateMakeArgsFor(int argIndex, String argName) {
-    StringBuffer res = new StringBuffer();
-    int index = 0;
-    int fullindex = 0;
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
-        if(fullindex>0) { res.append(", "); }
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res.append(getMethod(`slot));
-          res.append("()");
-        } else {
-          if (index != argIndex) {
-            res.append(fieldName(`fieldName));
-          } else {
-            res.append("(");
-            res.append(fullClassName(`domain));
-            res.append(") ");
-            res.append(argName);
-          }
-          index++;
-        }
-        fullindex++;
-      }
-    }
-    return res.toString();
-  }
-  private String generateMakeArgsFor(SlotField slot, String argName) {
-    StringBuffer res = new StringBuffer();
-    int fullindex = 0;
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,itslot@SlotField[Name=fieldName],_*) -> {
-        if(fullindex>0) { res.append(", "); }
-        if (`itslot == slot) {
-          res.append(argName);
-        } else {
+  return res.toString();
+}
+private String generateMakeArgsFor(int argIndex, String argName) {
+  StringBuffer res = new StringBuffer();
+  int index = 0;
+  %match(SlotFieldList slotList) {
+    concSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
+      if(index>0) { res.append(", "); }
+      if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+        res.append(getMethod(`slot));
+        res.append("()");
+      } else {
+        if (index != argIndex) {
           res.append(fieldName(`fieldName));
+        } else {
+          res.append("(");
+          res.append(fullClassName(`domain));
+          res.append(") ");
+          res.append(argName);
         }
-        fullindex++;
       }
+      index++;
     }
-    return res.toString();
   }
+  return res.toString();
+}
+private String generateMakeArgsFor(SlotField slot, String argName) {
+  StringBuffer res = new StringBuffer();
+  int fullindex = 0;
+  %match(SlotFieldList slotList) {
+    concSlotField(_*,itslot@SlotField[Name=fieldName],_*) -> {
+      if(fullindex>0) { res.append(", "); }
+      if (`itslot == slot) {
+        res.append(argName);
+      } else {
+        res.append(fieldName(`fieldName));
+      }
+      fullindex++;
+    }
+  }
+  return res.toString();
+}
 
   private String toStringChilds(String buffer) {
     if (0 == slotList.length()) {

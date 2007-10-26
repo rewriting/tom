@@ -107,10 +107,11 @@ public class Viewer {
               @getNodeFromPos(current)@ -> @getNodeFromPos(dest)@; ]%);
         } else {
           Position current = getEnvironment().getPosition();
-          String[] tab = `v.getClass().getName().split("\\.");
-          String name = tab[tab.length-1];
-          tab = name.split("\\$");
-          name = tab[tab.length-1];
+          String term = `v.toString();
+          // in case of wrapped builtin return term in complete
+          // else return the name of the constructor
+          int end = term.indexOf("(");
+          String name = term.substring(0,(end==-1)?term.length():end);
           w.write(%[
               @getNodeFromPos(current)@ [label="@name@"]; ]%);
           if(!current.equals(new Position(new int[]{}))) {
