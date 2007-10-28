@@ -28,21 +28,21 @@
  */
 
 %op Strategy AllSeq(s:Strategy) {
-    is_fsym(t) { ($t instanceof tom.library.sl.Re) }
-    make(s) { new tom.library.sl.AllSeq($s) }
-    get_slot(s,t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) }
+    is_fsym(t) {( ($t instanceof tom.library.sl.Re) )}
+    make(s) {( new tom.library.sl.AllSeq($s) )}
+    get_slot(s,t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) )}
   }
  
   %op Strategy DeRef(s:Strategy) {
-    is_fsym(t) { ($t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)$t).isRelative()==true && ((tom.library.sl.DeRef)$t).isStrict()==false }
-    make(s) { tom.library.sl.DeRef.makeRelative($s) }
-    get_slot(s,t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) }
+    is_fsym(t) {( ($t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)$t).isRelative()==true && ((tom.library.sl.DeRef)$t).isStrict()==false )}
+    make(s) {( tom.library.sl.DeRef.makeRelative($s) )}
+    get_slot(s,t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) )}
   }
 
   %op Strategy StrictDeRef(s:Strategy) {
-    is_fsym(t) { ($t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)$t).isRelative()==true && ((tom.library.sl.DeRef)$t).isStrict()==true }
-    make(s) { tom.library.sl.DeRef.makeRelativeStrict($s) }
-    get_slot(s, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) }
+    is_fsym(t) {( ($t instanceof tom.library.sl.DeRef) && ((tom.library.sl.DeRef)$t).isRelative()==true && ((tom.library.sl.DeRef)$t).isStrict()==true )}
+    make(s) {( tom.library.sl.DeRef.makeRelativeStrict($s) )}
+    get_slot(s, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) )}
   }
 
 /**
@@ -53,11 +53,11 @@
  * @param s2 the second strategy.
  */
 %op Strategy AU(s1:Strategy, s2:Strategy) {
-  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,All(MuVar("x"))),One(Identity())))) }
+  make(s1,s2) {( `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,All(MuVar("x"))),One(Identity())))) )}
 }
 
 %op Strategy EU(s1:Strategy, s2:Strategy) {
-  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(s1,One(MuVar("x")))))}
+  make(s1,s2) {( `mu(MuVar("x"),Choice(s2,Sequence(s1,One(MuVar("x"))))))}
 }
 
 %op Strategy TrueCtl(){
@@ -85,9 +85,9 @@
 }
 
 %op Strategy AX(s:Strategy) {
-  make(s) { `All(s) }
+  make(s) {( `All(s) )}
 }
 
 %op Strategy EX(s:Strategy) {
-  make(s) {`One(s) }
+  make(s) {(`One(s) )}
 }

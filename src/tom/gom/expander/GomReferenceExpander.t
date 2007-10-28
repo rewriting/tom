@@ -261,7 +261,7 @@ public class GomReferenceExpander {
     
     %typeterm Info {
       implement { Info }
-      is_sort(t) { t instanceof Info } 
+      is_sort(t) { ($t instanceof Info) }
     }
 
 
@@ -426,7 +426,7 @@ public class GomReferenceExpander {
 
    %typeterm Position{
         implement {Position}
-        is_sort(t)     { t instanceof Position }
+        is_sort(t) { ($t instanceof Position) }
     }
   
    %strategy UpdatePos(source:Position,target:Position) extends Identity() {
@@ -524,7 +524,7 @@ public class GomReferenceExpander {
 
     %typeterm Info@sortName@ {
         implement { Info@sortName@ }
-        is_sort(t) { t instanceof Info@sortName@ } 
+        is_sort(t) { ($t instanceof Info@sortName@) }
     }
 
     static class Info@sortName@{

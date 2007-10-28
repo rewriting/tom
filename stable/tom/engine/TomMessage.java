@@ -178,11 +178,12 @@ public class TomMessage implements PlatformMessage {
     new TomMessage("In a disjunction, the (free) variables of all the patterns must be the same. Variable ''{0}'' not found in all disjunctions");
   
   // compiler
-  public static final TomMessage errorMissingSlotDecl=
+  public static final TomMessage errorMissingSlotDecl =
       new TomMessage("In symbol ''{0}'', get_slot for {1} is missing.");
-
-  public static final TomMessage noCodeGeneration=
+  public static final TomMessage noCodeGeneration =
       new TomMessage("The match with ''{0}'' is always unsuccessful. No code for the correspondent action will be generated");
+  public static final TomMessage circularReferences =
+      new TomMessage("A circular reference was detected for the variable ''{0}''. For instance x << Context[x] is a circular reference.");
 
   
   // optimizer.TomOptimizer

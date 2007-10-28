@@ -1761,6 +1761,13 @@
   make(t0) { tom.engine.adt.tomconstraint.types.constraint.Negate.make($t0) }
 }
 
+%op Constraint IsSortConstraint(AstType:TomType, TomTerm:TomTerm) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint) }
+  get_slot(AstType, t) { $t.getAstType() }
+  get_slot(TomTerm, t) { $t.getTomTerm() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.IsSortConstraint.make($t0, $t1) }
+}
+
 %op Constraint EmptyAndConstraint() {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint) }
   make() { tom.engine.adt.tomconstraint.types.constraint.EmptyAndConstraint.make() }

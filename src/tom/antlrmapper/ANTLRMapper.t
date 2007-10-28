@@ -164,11 +164,11 @@ matchBlock: {
 	%include{ aterm.tom }
 
 	%op ATerm NodeInfo(text:String,line:int,column:int) {
-	is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
-	get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
-	get_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }
-	get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
-	make(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }
+	is_fsym(t) { (($t != null) && ((ATermAppl)$t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false)) }
+	get_slot(text, t) { (((ATermAppl)((ATermAppl)$t).getArgument(0)).getAFun().getName()) }
+	get_slot(line, t) { (((ATermInt)((ATermAppl)$t).getArgument(1)).getInt()) }
+	get_slot(column, t) { (((ATermInt)((ATermAppl)$t).getArgument(2)).getInt()) }
+	make(t,l,c) { (SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun($t,0,true)),SingletonFactory.getInstance().makeInt($l),SingletonFactory.getInstance().makeInt($c))) }
 	}
 
 	]%);
@@ -179,10 +179,10 @@ matchBlock: {
 	  String value = (String)tokMap.get(key);
 	  out.append(%[
 	      %op ATerm @value@(info:ATerm,childs:ATermList) {
-	      is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("@value@",2,false) }
-	      get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
-	      get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
-	      make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("@value@",2,false),i,c) }
+	      is_fsym(t) { (($t != null) && ((ATermAppl)$t).getAFun() == SingletonFactory.getInstance().makeAFun("@value@",2,false)) }
+	      get_slot(info, t) { ((ATermAppl)$t).getArgument(0) }
+	      get_slot(childs, t) { (ATermList)((ATermAppl)$t).getArgument(1) }
+	      make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("@value@",2,false),$i,$c) }
 	      }]%);
 	}
 

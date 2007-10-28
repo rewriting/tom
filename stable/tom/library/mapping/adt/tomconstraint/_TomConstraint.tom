@@ -5417,6 +5417,31 @@
   make( new_c) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_Negate( new_c) }
 }
 
+    %op Strategy _IsSortConstraint(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._IsSortConstraint)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._IsSortConstraint(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_IsSortConstraint(s:Strategy) {
+    make(s) { `Sequence(Is_IsSortConstraint(),s) }
+  }
+
+  %op Strategy Is_IsSortConstraint() {
+    make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_IsSortConstraint()}
+  }
+  
+%op Strategy Make_IsSortConstraint(_AstType:Strategy, _TomTerm:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_IsSortConstraint))) }
+
+  get_slot(_AstType, t) { _AstType }
+  get_slot(_TomTerm, t) { _TomTerm }
+  make( new_AstType,  new_TomTerm) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_IsSortConstraint( new_AstType,  new_TomTerm) }
+}
+
     %op Strategy _EmptyAndConstraint() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndConstraint)))}
       

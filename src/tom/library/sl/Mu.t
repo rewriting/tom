@@ -63,28 +63,28 @@ public class Mu extends AbstractStrategy {
 class MuStrategyTopDown {
   %typeterm MuStrategy {
     implement { tom.library.sl.Strategy }
-    is_sort(t) { t instanceof tom.library.sl.Strategy }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
+    equals(t1,t2) { ($t1.equals($t2)) }
     visitor_fwd { tom.library.sl.reflective.StrategyFwd }
   }
 
   %op MuStrategy Mu(s1:MuStrategy, s2:MuStrategy) {
-    is_fsym(t) { (t instanceof tom.library.sl.Mu) }
-    make(var, v) { new tom.library.sl.Mu(var, v) }
-    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.VAR) }
-    get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Mu.V) }
+    is_fsym(t) { ($t instanceof tom.library.sl.Mu) }
+    make(var, v) { new tom.library.sl.Mu($var, $v) }
+    get_slot(s1, t) { ((tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.VAR)) }
+    get_slot(s2, t) { ((tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V)) }
   }
 
   %typeterm MuStrategyString {
     implement { String }
-    is_sort(t) { t instanceof String }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { ($t instanceof String) }
+    equals(t1,t2) { ($t1.equals($t2)) }
   }
 
   %op MuStrategy MuVar(var:MuStrategyString) {
-    is_fsym(t) { (t instanceof tom.library.sl.MuVar) }
+    is_fsym(t) { ($t instanceof tom.library.sl.MuVar) }
     make(name) { new tom.library.sl.MuVar(name) }
-    get_slot(var, t) { ((tom.library.sl.MuVar)t).getName() }
+    get_slot(var, t) { (((tom.library.sl.MuVar)$t).getName()) }
   }
 
   private LinkedList stack;

@@ -32,27 +32,27 @@
 %include { string.tom }
 
 %op Strategy mu(s1:Strategy, s2:Strategy) {
-  make(var,v) { new tom.library.sl.Mu($var,$v) }
+  make(var,v) {( new tom.library.sl.Mu($var,$v) )}
 }
 
 %op Strategy Mu(s1:Strategy, s2:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.Mu) }
-  make(var, v) { new tom.library.sl.Mu($var, $v) }
-  get_slot(s1, t) { (tom.library.sl.MuVar)$t.getChildAt(tom.library.sl.Mu.VAR) }
-  get_slot(s2, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Mu) )}
+  make(var, v) {( new tom.library.sl.Mu($var, $v) )}
+  get_slot(s1, t) {( (tom.library.sl.MuVar)$t.getChildAt(tom.library.sl.Mu.VAR) )}
+  get_slot(s2, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V) )}
 }
 
 %op Strategy MuVar(var:String) {
-  is_fsym(t) { ($t instanceof tom.library.sl.MuVar) }
-  make(name) { new tom.library.sl.MuVar($name) }
-  get_slot(var, t) { ((tom.library.sl.MuVar)$t).getName() }
+  is_fsym(t) {( ($t instanceof tom.library.sl.MuVar) )}
+  make(name) {( new tom.library.sl.MuVar($name) )}
+  get_slot(var, t) {( ((tom.library.sl.MuVar)$t).getName() )}
 }
 
 %op Strategy Omega(position:int, s1:Strategy) {
-  is_fsym(t) { (t instanceof tom.library.sl.Omega) }
-  make(pos,v) { new tom.library.sl.Omega($pos,$v) }
-  get_slot(position, t) { ((tom.library.sl.Omega)$t).getPos() }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Omega.ARG) }
+  is_fsym(t) {( (t instanceof tom.library.sl.Omega) )}
+  make(pos,v) {( new tom.library.sl.Omega($pos,$v) )}
+  get_slot(position, t) {( ((tom.library.sl.Omega)$t).getPos() )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Omega.ARG) )}
 }
 
 /*
@@ -60,82 +60,82 @@
  */
 
 %op Strategy Identity() {
-  is_fsym(t) { ($t instanceof tom.library.sl.Identity) }
-  make() { new tom.library.sl.Identity() }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Identity) )}
+  make() {( new tom.library.sl.Identity() )}
 }
 
 %op Strategy One(s1:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.One) }
-  make(v) { new tom.library.sl.One($v) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.One.ARG) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.One) )}
+  make(v) {( new tom.library.sl.One($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.One.ARG) )}
 }
 
 %op Strategy All(s1:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.All) }
-  make(v) { new tom.library.sl.All($v) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.All.ARG) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.All) )}
+  make(v) {( new tom.library.sl.All($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.All.ARG) )}
 }
 
 
 %op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.IfThenElse) }
-  make(condition,trueCase,falseCase) { new tom.library.sl.IfThenElse($condition,$trueCase,$falseCase) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.IfThenElse.CONDITION) }
-  get_slot(s2, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.IfThenElse.TRUE_CASE) }
-  get_slot(s3, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.IfThenElse.FALSE_CASE) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.IfThenElse) )}
+  make(condition,trueCase,falseCase) {( new tom.library.sl.IfThenElse($condition,$trueCase,$falseCase) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.IfThenElse.CONDITION) )}
+  get_slot(s2, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.IfThenElse.TRUE_CASE) )}
+  get_slot(s3, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.IfThenElse.FALSE_CASE) )}
 }
 
 %op Strategy Fail() {
-  is_fsym(t) { ($t instanceof tom.library.sl.Fail) }
-  make() { new tom.library.sl.Fail() }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Fail) )}
+  make() {( new tom.library.sl.Fail() )}
 }
 
 %op Strategy Not(s1:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.Not) }
-  make(v) { new tom.library.sl.Not($v) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Not.ARG) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Not) )}
+  make(v) {( new tom.library.sl.Not($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Not.ARG) )}
 }
 
 %oplist Strategy Sequence(Strategy*) {
-  is_fsym(t) { ($t instanceof tom.library.sl.Sequence) }
-  make_empty() { null }
-  make_insert(head,tail) { ($tail==null)?$head:new tom.library.sl.Sequence($head,$tail) }
-  get_head(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Sequence.FIRST) }
-  get_tail(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Sequence.THEN) }
-  is_empty(t) { $t == null }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Sequence) )}
+  make_empty() {( null )}
+  make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.Sequence($head,$tail) )}
+  get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Sequence.FIRST) )}
+  get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Sequence.THEN) )}
+  is_empty(t) {( $t == null )}
 }
 
 %oplist Strategy Choice(Strategy*) {
-  is_fsym(t) { ($t instanceof tom.library.sl.Choice) }
-  make_empty() { null }
-  make_insert(head,tail) { ($tail==null)?$head:new tom.library.sl.Choice($head,$tail) }
-  get_head(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Choice.FIRST) }
-  get_tail(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Choice.THEN) }
-  is_empty(t) { $t ==null }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Choice) )}
+  make_empty() {( null )}
+  make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.Choice($head,$tail) )}
+  get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Choice.FIRST) )}
+  get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Choice.THEN) )}
+  is_empty(t) {( $t ==null )}
 }
 
 %oplist Strategy SequenceId(Strategy*) {
-  is_fsym(t) { ($t instanceof tom.library.sl.SequenceId) }
-  make_empty() { null }
-  make_insert(head,tail) { ($tail==null)?$head:new tom.library.sl.SequenceId($head,$tail) }
-  get_head(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.SequenceId.FIRST) }
-  get_tail(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.SequenceId.THEN) }
-  is_empty(t) { $t == null }
+  is_fsym(t) {( ($t instanceof tom.library.sl.SequenceId) )}
+  make_empty() {( null )}
+  make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.SequenceId($head,$tail) )}
+  get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.SequenceId.FIRST) )}
+  get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.SequenceId.THEN) )}
+  is_empty(t) {( $t == null )}
 }
 
 %oplist Strategy ChoiceId(Strategy*) {
-  is_fsym(t) { ($t instanceof tom.library.sl.ChoiceId) }
-  make_empty() { null }
-  make_insert(head,tail) { ($tail==null)?$head:new tom.library.sl.ChoiceId($head,$tail) }
-  get_head(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.ChoiceId.FIRST) }
-  get_tail(t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.ChoiceId.THEN) }
-  is_empty(t) { $t ==null }
+  is_fsym(t) {( ($t instanceof tom.library.sl.ChoiceId) )}
+  make_empty() {( null )}
+  make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.ChoiceId($head,$tail) )}
+  get_head(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.ChoiceId.FIRST) )}
+  get_tail(t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.ChoiceId.THEN) )}
+  is_empty(t) {( $t ==null )}
 }
 
 %op Strategy OneId(s1:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.OneId }
-  make(v) { new tom.library.sl.OneId($v) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.OneId.ARG) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.OneId )}
+  make(v) {( new tom.library.sl.OneId($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.OneId.ARG) )}
 }
 
 /*
@@ -143,16 +143,16 @@
  */
 
 %op Strategy Pselect(p1:int, p2:int, s1:Strategy, s2:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.Pselect) }
-  make(p,q,first,then) { new tom.library.sl.Pselect($p,$q,$first,$then) }
-  get_slot(p1, t) { $t.getP() }
-  get_slot(p2, t) { $t.getQ() }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Pselect.FIRST) }
-  get_slot(s2, t) { (tom.library.strategy.sl)$t.getChildAt(tom.library.sl.Pselect.THEN) }
+  is_fsym(t) {( ($t instanceof tom.library.sl.Pselect) )}
+  make(p,q,first,then) {( new tom.library.sl.Pselect($p,$q,$first,$then) )}
+  get_slot(p1, t) {( $t.getP() )}
+  get_slot(p2, t) {( $t.getQ() )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Pselect.FIRST) )}
+  get_slot(s2, t) {( (tom.library.strategy.sl)$t.getChildAt(tom.library.sl.Pselect.THEN) )}
 }
 
 %op Strategy OmegaU(s1:Strategy) {
-  is_fsym(t) { ($t instanceof tom.library.sl.OmegaU) }
-  make(v) { new tom.library.sl.OmegaU($v) }
-  get_slot(s1, t) { (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.OmegaU.ARG) }
+  is_fsym(t) {( $t instanceof tom.library.sl.OmegaU )}
+  make(v) {( new tom.library.sl.OmegaU($v) )}
+  get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.OmegaU.ARG) )}
 }

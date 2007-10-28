@@ -51,6 +51,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>srcdir</li>
  * <li>destdir</li>
  * <li>inline</li>
+ * <li>inlineplus</li>
  * <li>outputfile</li>
  * <li>optimize</li>
  * <li>optimize2</li>
@@ -86,6 +87,7 @@ public class TomTask extends MatchingTask {
   private boolean optimize2 = false;
   private boolean pretty = false;
   private boolean inlining = false;
+  private boolean inliningplus = false;
   private boolean protectedFlag = false;
 
   private boolean failOnError = true;
@@ -315,6 +317,18 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * If true, compiles with inlining (no backward compatible) enabled.
+   * @param inlineplus if true compile with inlining enabled
+   */
+  public void setInlineplus(boolean inliningplus) {
+    this.inliningplus = inliningplus;
+  }
+
+  public boolean getInlineplus() {
+    return inliningplus;
+  }
+
+  /**
    * If true, generates  protected functions instead of private
    * @param flag if true generates  protected functions instead of private
    */
@@ -530,6 +544,9 @@ public class TomTask extends MatchingTask {
       }
       if(inlining == true) {
         javaRunner.createArg().setValue("--inline");
+      }
+      if(inliningplus == true) {
+        javaRunner.createArg().setValue("--inlineplus");
       }
       if(nowarn == false) {
         javaRunner.createArg().setValue("--wall");

@@ -367,7 +367,7 @@ public class RuleExpander {
   static class OpRef { OperatorDecl val; }
   %typeterm OpRef { 
     implement { OpRef }
-    is_sort(t) { t instanceof OpRef }
+    is_sort(t) { ($t instanceof OpRef) }
   }
   %strategy GetOperatorDecl(opref:OpRef,opName:String) extends Identity() {
     visit OperatorDecl {

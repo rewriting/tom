@@ -114,7 +114,7 @@ public class TomTypeChecker extends TomChecker {
    */
   %typeterm TomTypeChecker { 
     implement { TomTypeChecker }
-    is_sort(t) { t instanceof TomTypeChecker }
+    is_sort(t) { ($t instanceof TomTypeChecker) }
   }
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {

@@ -71,7 +71,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %typeterm TomOptimizer {
     implement { TomOptimizer }
-    is_sort(t) { t instanceof TomOptimizer }
+    is_sort(t) { ($t instanceof TomOptimizer) }
   }
 
   /** some output suffixes */
@@ -165,8 +165,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
   /* strategies for LetRef inlining */
   // comp = special( comp, basecase(comp,fail()) )
-  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariableLetRef) {
-    make(variableName, info) {
+  %op Strategy computeOccurencesLetRef(variableName:TomName, info:InfoVariableLetRef) { 
+    make(variableName, info) { (
       `Try(
           mu(MuVar("comp"),
             computeOccurencesLetRefSpecialCase( MuVar("comp"),
@@ -178,7 +178,7 @@ public class TomOptimizer extends TomGenericPlugin {
               info
               )
             ))
-    }
+      ) }
   }
 
   %typeterm InfoVariableLetRef { implement{ InfoVariableLetRef } }
@@ -286,8 +286,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
   /* strategies for Let inlining */
   // comp = special1(special2(all(comp),base(all(comp),fail())),fail())
-  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariableLet) {
-    make(variableName, info) {
+  %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariableLet) { 
+    make(variableName, info) { (
       `Try(
           mu(MuVar("comp"),
             computeOccurencesLetSpecialCase1( computeOccurencesLetSpecialCase2( MuVar("comp"),
@@ -300,7 +300,7 @@ public class TomOptimizer extends TomGenericPlugin {
                 ),
               info
               )
-            )) 
+            )) )
     }
   }
 
@@ -377,7 +377,7 @@ public class TomOptimizer extends TomGenericPlugin {
    * rename variable1 into variable2
    */
   %op Strategy renameVariable(variable1: TomName, variable2: TomName){
-    make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
+    make(variable1,variable2) { (`TopDown(renameVariableOnce(variable1,variable2)) )}
   }
 
   %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
@@ -391,7 +391,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   %op Strategy CleanAssign(varname: TomName){
-    make(varname) {`TopDown(CleanAssignOnce(varname))}
+    make(varname) { (`TopDown(CleanAssignOnce(varname))) }
   }
 
   %strategy CleanAssignOnce(varname:TomName) extends `Identity() {

@@ -73,7 +73,7 @@ public class AdapterGenerator {
   %include { ../../library/mapping/java/util/types/Collection.tom }
   %typeterm Writer {
     implement { Writer }
-    is_sort(t) { t instanceof Writer }
+    is_sort(t) { ($t instanceof Writer) }
   }
 
   private GomEnvironment environment() {

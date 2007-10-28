@@ -213,12 +213,12 @@ public class TomBackend extends TomGenericPlugin {
 
   %typeterm Stack {
     implement { Stack }
-    is_sort(t) { t instanceof Stack }
+    is_sort(t) { ($t instanceof Stack) }
   }
 
   %typeterm TomBackend {
     implement { TomBackend }
-    is_sort(t) { t instanceof TomBackend }
+    is_sort(t) { ($t instanceof TomBackend) }
   }
 
   private void markUsedConstructorDestructor(TomTerm pilCode) {

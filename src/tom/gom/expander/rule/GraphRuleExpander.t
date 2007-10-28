@@ -114,12 +114,12 @@ public class GraphRuleExpander {
   
   %typeterm Position{
       implement {Position}
-      is_sort(t)     { t instanceof Position }
+      is_sort(t) { ($t instanceof Position) }
   }
  
   %typeterm SharedLabel{
       implement {SharedLabel}
-      is_sort(t)     { t instanceof SharedLabel }
+      is_sort(t) { ($t instanceof SharedLabel) }
   }
 
   static class SharedLabel {
@@ -511,7 +511,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
 
   %typeterm Info {
     implement {Info}
-    is_sort(t) { t instanceof Info } 
+    is_sort(t) { ($t instanceof Info) }
   }
 
   static class Info {

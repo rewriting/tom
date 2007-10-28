@@ -65,7 +65,7 @@ public final class TomBase {
   
 %typeterm Collection {
     implement { java.util.Collection }
-    is_sort(t) { t instanceof java.util.Collection }
+    is_sort(t) { ($t instanceof java.util.Collection) }
   }
 
  public final static String DEFAULT_MODULE_NAME = "default"; 

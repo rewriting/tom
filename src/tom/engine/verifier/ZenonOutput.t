@@ -58,7 +58,7 @@ public class ZenonOutput {
   
   %typeterm Map {
     implement { java.util.Map }
-    is_sort(t) { t instanceof java.util.Map }
+    is_sort(t) { ($t instanceof java.util.Map) }
   }
   // ------------------------------------------------------------
 

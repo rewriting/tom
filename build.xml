@@ -277,7 +277,7 @@
     <tomcompile fork="no"
          srcdir="${src.src}"
          destdir="${gen.destination}"
-         options="--optimize">
+         options="--optimize --inlineplus">
       <include name="tom/engine/**/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/>
       <include name="tom/library/**/*.t"/>
@@ -397,7 +397,7 @@
     <!-- once mappings generated, compile AST2Gom.t -->
     <tomcompile srcdir="${src.src}"
          destdir="${gen.destination}"
-         options="--optimize">
+         options="--optimize --inlineplus">
       <include name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
   </target>
@@ -877,6 +877,7 @@
        <property name="optimize" value="off"/>
        <property name="optimize2" value="off"/>
        <property name="inline" value="off"/>
+       <property name="inlineplus" value="off"/>
      </ant>
   </target>
 
@@ -955,6 +956,7 @@
       <property name="optimize" value="off"/>
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
     </ant>
 
     <echo>Test tom-stable in examples with optimizer</echo>
@@ -967,7 +969,7 @@
       <property name="tom.common.path" location="${stable.lib}"/>
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
-      <property name="inline" value="on"/>
+      <property name="inlineplus" value="on"/>
     </ant>
   </target>
 
@@ -989,6 +991,7 @@
       <property name="optimize" value="off"/>
       <property name="optimize2" value="off"/>
       <property name="inline" value="off"/>
+      <property name="inlineplus" value="off"/>
     </ant>
 
     <echo>Test tom-source in examples with optimizer</echo>
@@ -1001,7 +1004,7 @@
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
-      <property name="inline" value="on"/>
+      <property name="inlineplus" value="on"/>
     </ant>
   </target>
 
@@ -1032,7 +1035,7 @@
       <property name="tom.common.path" location="${src.lib}"/>
       <property name="optimize" value="on"/>
       <property name="optimize2" value="on"/>
-      <property name="inline" value="on"/>
+      <property name="inlineplus" value="on"/>
     </ant>
   </target>
 

@@ -296,7 +296,7 @@ public class ToolBox {
 
   %typeterm StringBuffer { 
     implement { StringBuffer }
-    is_sort(t) { t instanceof StringBuffer }
+    is_sort(t) { ($t instanceof StringBuffer) }
   }
   %strategy BuildDescriptor(sb:StringBuffer) extends Identity() {
     visit TFieldDescriptor {

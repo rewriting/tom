@@ -68,11 +68,11 @@ public class Compiler extends TomGenericPlugin {
   
   %typeterm Compiler {
     implement { Compiler }
-    is_sort(t) { t instanceof Compiler }
+    is_sort(t) { ($t instanceof Compiler) }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
+    make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
   }
 
   /** some output suffixes */

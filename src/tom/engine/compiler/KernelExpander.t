@@ -57,15 +57,15 @@ public class KernelExpander {
 
   %typeterm KernelExpander {
     implement { KernelExpander }
-    is_sort(t) { t instanceof KernelExpander }
+    is_sort(t) { ($t instanceof KernelExpander) }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
+    make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
   }
 
   %op Strategy TopDownStop(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Choice(v,All(MuVar("x")))) }
+    make(v) { (`mu(MuVar("x"),Choice(v,All(MuVar("x"))))) }
   }
 
   private SymbolTable symbolTable;

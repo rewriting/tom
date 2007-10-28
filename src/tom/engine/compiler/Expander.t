@@ -70,11 +70,11 @@ public class Expander extends TomGenericPlugin {
 
   %typeterm Expander {
     implement { Expander }
-    is_sort(t) { t instanceof Expander }
+    is_sort(t) { ($t instanceof Expander) }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
+    make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
   }
 
   /** some output suffixes */

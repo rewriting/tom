@@ -54,7 +54,7 @@ public class CFGViewer {
 
   %typeterm Writer { 
     implement {java.io.Writer} 
-    is_sort(t) { t instanceof java.io.Writer }
+    is_sort(t) { ($t instanceof java.io.Writer) }
   }
 
   /**
@@ -312,7 +312,7 @@ public class CFGViewer {
   private static class InsWrapper { public TInstructionList ins; }
   %typeterm InsWrapper { 
     implement { InsWrapper }
-    is_sort(t) { t instanceof InsWrapper }
+    is_sort(t) { ($t instanceof InsWrapper) }
   }
 
   /**

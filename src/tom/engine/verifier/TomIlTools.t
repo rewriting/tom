@@ -62,7 +62,7 @@ public class TomIlTools {
   %include { ../../library/mapping/java/util/types/List.tom}
   %typeterm Collection {
     implement { java.util.Collection }
-    is_sort(t) { t instanceof java.util.Collection }
+    is_sort(t) { ($t instanceof java.util.Collection) }
   }
   // ------------------------------------------------------------
 

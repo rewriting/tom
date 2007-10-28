@@ -161,7 +161,7 @@ public class TomSyntaxChecker extends TomChecker {
    */
   %typeterm TomSyntaxChecker { 
     implement { TomSyntaxChecker }
-    is_sort(t) { t instanceof TomSyntaxChecker }
+    is_sort(t) { ($t instanceof TomSyntaxChecker) }
   }
   %strategy checkSyntax(tsc:TomSyntaxChecker) extends `Identity() {
     visit Declaration {
