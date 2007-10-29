@@ -1,12 +1,12 @@
-package polygraphicprogram;
+package polygraphes;
 
-import polygraphicprogram.*;
-import polygraphicprogram.types.*;
+import polygraphes.polygraphicprogram.*;
+import polygraphes.polygraphicprogram.types.*;
 import tom.library.sl.*;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class PolygraphicProgram{
+public class PolygraphicProgram {
 
 %include { polygraphicprogram/PolygraphicProgram.tom }
 %include { sl.tom }
@@ -78,7 +78,7 @@ rewritingRules.add(multSucc);
 // idee de methode pour le compilateur:
 // -explorer le xml et extraire tous les chemins comme ci-dessus
 // -regrouper tous les 3-cellules au sein d'une collection
-// alterner gravity-verticalmerging-applyRules jusuq'ˆ atteindre un point fixe
+// alterner gravity-verticalmerging-applyRules jusuq'Âˆ atteindre un point fixe
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ rewritingRules.add(multSucc);
 TwoPath test=`TwoC1(TwoC0(TwoC1(zero,TwoId(nat),succ,TwoId(nat),TwoC0(zero,duplication),TwoC0(TwoId(nat),TwoId(nat),succ),TwoC0(plus,TwoId(nat)),TwoC0(TwoId(nat),eraser)),TwoC1(zero,TwoId(nat),TwoId(nat),succ,TwoId(nat),eraser),TwoC0(TwoC1(zero,TwoId(nat),TwoId(nat)),TwoC1(succ,TwoId(nat),eraser))),TwoC0(TwoC1(succ,TwoId(nat),succ),TwoC1(TwoId(nat),eraser)));
 //<--OBJECTIF : obtenir un resultat bon pour test, la duplication ne passe pas dans cet exemple
 TwoPath test2=`TwoC1(TwoC0(TwoC1(TwoC0(zero,TwoId(nat)),TwoC0(TwoId(nat),succ),TwoC0(plus,zero),TwoC0(TwoId(nat),succ),TwoC0(division,zero),TwoC0(succ,TwoId(nat))),TwoC1(TwoId(nat),succ,succ,duplication,TwoC0(TwoId(nat),succ),TwoC0(succ,TwoId(nat))),TwoC1(zero,TwoId(nat),TwoId(nat)),TwoC1(TwoC1(zero,TwoId(nat),succ),succ)),TwoC0(TwoC1(TwoId(nat),succ,eraser),TwoC0(TwoC1(plus,succ),succ),TwoC1(minus,eraser)));
-//<--ne marche pas encore ˆ cause des chevauchementsˆ l'intersection des deux etages
+//<--ne marche pas encore Âˆ cause des chevauchementsÂˆ l'intersection des deux etages
 TwoPath test3 = `TwoC1(TwoC0(TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,succ),minus),TwoC0(TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,succ),TwoC0(succ,succ),minus),TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,succ),plus)),TwoC0(TwoC1(TwoC0(zero,zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,TwoId(nat)),plus),TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,TwoId(nat)),minus))),TwoC0(permutation,TwoId(nat),TwoId(nat),TwoId(nat)),TwoC0(TwoId(nat),TwoId(nat),TwoId(nat),eraser,eraser));
 //<--marche bien
 TwoPath test4 =`TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Structure())),TwoC0(TwoC1(TwoC0(TwoId(OneCell("nat")),TwoId(OneCell("nat"))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoId(OneCell("nat")),TwoId(OneCell("nat")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC1(TwoId(OneCell("nat")),TwoCell("eraser",OneCell("nat"),Id(),Structure()))));
@@ -126,7 +126,7 @@ public static void splitting2(TwoPath t){// splitting plus rapide : on fait
 // {System.out.println(`TwoC1(X*,TwoC0(TwoId(head.source()),f,TwoId(tail.source())),TwoC0(head,g,tail),Y*));}
 }
 public static void simplify(TwoPath t){// marche bien mais qu'une fois et il
-										// faut que le motif soit ˆ la racine
+										// faut que le motif soit Âˆ la racine
 %match (t){
 			TwoId(OneC0(head,tail*)) -> { System.out.println(`TwoC0(TwoId(head),TwoId(tail*))); }
 }
@@ -243,18 +243,18 @@ return `TwoId(Id());
 %strategy VerticalSplitting() extends Identity(){ 
   	visit TwoPath {
   	 TwoC0(head*,TwoC1(f@TwoCell(_,_,_,_),g@TwoCell(_,_,_,_)),tail*) -> {return `TwoC1(TwoC0(TwoId(head*.source()),f,TwoId(tail*.source())),TwoC0(head*,g,tail*));} 
- 	 TwoId(OneC0(head,tail*)) -> { return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
+ 	 TwoId(OneC0(head,tail*)) -> { return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mÂme temps
   	} 
 }
 
 %strategy RefactorSource() extends Identity(){ 
   	visit TwoPath {
-  	 TwoId(OneC0(head,tail*)) -> { return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
+  	 TwoId(OneC0(head,tail*)) -> { return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mÂme temps
   	} 
 }
 
 
-// sorte de normalisation en stratifiant de faon verticale
+// sorte de normalisation en stratifiant de faÂon verticale
 %strategy VerticalMerging() extends Identity(){ //ne prend pas en compte les croisement entre twoC1 de deux niveaux differents
   	visit TwoPath {
   	  //TwoC1(TwoC0(head1*,TwoC1(top*),tail1*),TwoC0(head2*,TwoC1(bottom*),tail2*)) -> { if(`head1*.target()==`head2*.source()&&`top*.target()==`bottom*.source()){return `TwoC0(TwoC1(head1*,head2*),TwoC1(top*,bottom*),TwoC1(tail1*,tail2*));}} 
@@ -264,7 +264,7 @@ return `TwoId(Id());
   	  	TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.println("4");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
   	  	TwoC1(TwoC0(head*,top@TwoCell(_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("5");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
   	  	TwoC1(TwoC0(head*,top@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("6");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
-  	  //un peu ˆ part, permet de remettre les choses bien apres application de regles, sinon on a des TwoC1 dans des TwoC1 parce que les
+  	  //un peu Âˆ part, permet de remettre les choses bien apres application de regles, sinon on a des TwoC1 dans des TwoC1 parce que les
   	  //reles on ete appliquees au milieu de l'arbre lors de son parcourt
   	  	TwoC1(head*,TwoC1(X*),tail*)->{if(`head*!=`TwoId(Id())) return `TwoC1(head*,X*,tail*);}
 } 
@@ -344,7 +344,7 @@ for (Iterator<ThreePath> iterator = rewritingRules.iterator(); iterator.hasNext(
 				System.out.println(`TwoC0(TwoId(head*.source()),X,TwoC0(TwoId(tail*.source()))));
 				//System.out.println(rewritingRule.getTarget());*/
 				TwoPath ruleTarget=rewritingRule.getTarget();
-				%match(ruleTarget){//on fait un peu de travail de simplification ˆ la volŽe-->ya moyen de faire mieux
+				%match(ruleTarget){//on fait un peu de travail de simplification Âˆ la volÂŽe-->ya moyen de faire mieux
 					TwoId(_)->{return `TwoC0(TwoId(head*.source()),X,TwoC0(TwoId(tail*.source())));}
 					TwoC1(A@_*,TwoId(_))->{return `TwoC1(TwoC0(TwoId(head*.source()),X,TwoC0(TwoId(tail*.source()))),A);}
 					TwoC1(A@_*)->{return `TwoC1(TwoC0(TwoId(head*.source()),X,TwoC0(TwoId(tail*.source()))),A);}
@@ -357,7 +357,7 @@ for (Iterator<ThreePath> iterator = rewritingRules.iterator(); iterator.hasNext(
 	if(rewritingRule.getSource()==source){//cas triviaux, cellules de structures
 		System.out.println(rewritingRule.getName());
 		TwoPath ruleTarget=rewritingRule.getTarget();
-		%match(ruleTarget){//on fait un peu de travail de simplification ˆ la volŽe
+		%match(ruleTarget){//on fait un peu de travail de simplification Âˆ la volÂŽe
 					TwoC1(TwoId(_),E)->{return `E;}//cas particulier des erasers
 				}
 		return ruleTarget;
