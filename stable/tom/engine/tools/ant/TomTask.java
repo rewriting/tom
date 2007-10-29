@@ -308,8 +308,8 @@ public class TomTask extends MatchingTask {
    * If true, compiles with inlining enabled.
    * @param inline if true compile with inlining enabled
    */
-  public void setInline(boolean inlining) {
-    this.inlining = inlining;
+  public void setInline(boolean flag) {
+    this.inlining = flag;
   }
 
   public boolean getInline() {
@@ -320,8 +320,8 @@ public class TomTask extends MatchingTask {
    * If true, compiles with inlining (no backward compatible) enabled.
    * @param inlineplus if true compile with inlining enabled
    */
-  public void setInlineplus(boolean inliningplus) {
-    this.inliningplus = inliningplus;
+  public void setInlineplus(boolean flag) {
+    this.inliningplus = flag;
   }
 
   public boolean getInlineplus() {

@@ -6,6 +6,7 @@
   <property name="optimize"    value="on"/>
   <property name="optimize2"   value="off"/>
   <property name="inline"      value="off"/>
+  <property name="inlineplus"  value="off"/>
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
@@ -64,6 +65,7 @@
            optimize="${optimize}"
            optimize2="${optimize2}"
            inline="${inline}"
+           inlineplus="${inlineplus}"
            verbose="${verbose}"
            fork="${tomfork}"
            pretty="${pretty}">
