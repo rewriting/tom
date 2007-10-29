@@ -105,10 +105,10 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
   
   protected void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException {
     output.write("((");
-    generateExpression(deep,cond,moduleName);
-    output.write(")?(");
     generateExpression(deep,exp1,moduleName);
-    output.write("):(");
+    output.write(") if (");
+    generateExpression(deep,cond,moduleName);
+    output.write(") else (");
     generateExpression(deep,exp2,moduleName);
     output.write("))");
   }
