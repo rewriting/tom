@@ -41,5 +41,6 @@ if not os.access(outfile,os.F_OK) or os.stat(outfile)[ST_MTIME] < os.stat(fn)[ST
     sys.stdout.write(out.read())
     sys.stderr.write(err.read())
     pindent.reformat_file(outfile)
+    os.remove(outfile + "~")
 
 os.execvp("python", ["python", outfile])
