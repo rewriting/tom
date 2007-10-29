@@ -171,16 +171,12 @@ matchSlot:  %match(slot,TomName name) {
     visit Constraint {
       // we can have the same variable both as variablestar and as variable
       // we know that this is ok, because the type checker authorized it
-      MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) -> {        
-        if(`name == varName) {        
-          TomTerm freshVar = `v.isVariable() ? ConstraintCompiler.getFreshVariable(`type) : ConstraintCompiler.getFreshVariableStar(`type);
-          return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
-        }                                 
+      MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) && name << TomName varName -> {        
+        TomTerm freshVar = `v.isVariable() ? ConstraintCompiler.getFreshVariable(`type) : ConstraintCompiler.getFreshVariableStar(`type);
+        return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
       }
-      MatchConstraint(p@!TestVar[],v@(Variable|VariableStar)[AstName=name]) -> {        
-        if(`name == varName) {
-          return `MatchConstraint(p,value);
-        }                                 
+      MatchConstraint(p@!TestVar[],v@(Variable|VariableStar)[AstName=name]) && name << TomName varName -> {        
+        return `MatchConstraint(p,value);
       }
     }
   }
