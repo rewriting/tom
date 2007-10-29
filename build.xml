@@ -667,6 +667,8 @@
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
+    <copy todir="${src.dist.bin}" file="${utils}/pytom"/>
+    <copy todir="${src.dist.bin}" file="${utils}/pindent.py"/>
     <replace file="${src.dist.bin}/tom">
 	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
