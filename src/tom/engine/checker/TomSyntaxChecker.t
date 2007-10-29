@@ -504,9 +504,9 @@ public class TomSyntaxChecker extends TomChecker {
     ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
     HashMap<TomName, List<TomName>> varRelationsMap = new HashMap();
     `TopDown(CollectConstraints(constraints)).visitLight(constraintInstructionList);
-    TomType typeMatch = null;
+    TomType typeMatch = null;    
     for(Constraint constr: constraints){
-      %match(constr){
+matchLbl: %match(constr){
         MatchConstraint(pattern,subject) -> {          
           ArrayList<TomName> patternVars = new ArrayList<TomName>();
           ArrayList<TomName> subjectVars = new ArrayList<TomName>();
@@ -514,11 +514,10 @@ public class TomSyntaxChecker extends TomChecker {
           `TopDown(CollectVariables(subjectVars)).visitLight(`subject);
           
           computeDependencies(varRelationsMap,patternVars,subjectVars);
-          
           %match(subject) {            
             TomTypeToTomTerm(TomTypeAlone[]) -> {
-              // this is from %strategy construct and is already cheked in verifyStrategy
-              return;
+              // this is from %strategy construct and is already cheked in verifyStrategy              
+              break matchLbl;
             }
             _ ->{
               typeMatch = getSubjectType(`subject,constraints);
@@ -742,7 +741,7 @@ public class TomSyntaxChecker extends TomChecker {
    */
   private TomType getSubjectType(TomTerm subject, ArrayList<Constraint> constraints){
     %match(subject) {
-      Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {              
+      Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {        
         if(`type.equals("unknown type")) {
           // try to guess
           return guessSubjectType(`subject,constraints);
