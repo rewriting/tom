@@ -8,7 +8,7 @@ f = Constructor('f',2)
 g = Constructor('g',1)
 
 %typeterm Term {
-    implement { isinstance(t,Term) }
+    implement { Term }
     is_sort(t) { isinstance(t,Term) }
     equals(t1,t2) { t1 == t2 }
 }
