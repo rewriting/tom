@@ -47,67 +47,65 @@ public class Analyser{
 
   %typeterm ControlFlowGraphList {
     implement { List }
-    is_sort(t) { t instanceof List } 
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof List } 
+    equals(t1,t2) { $t1.equals($t2) } 
     visitor_fwd { CFGVisitor }
   }
 
   %typeterm VariableList {
     implement { List }
-    is_sort(t) { t instanceof List } 
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof List } 
+    equals(t1,t2) { $t1.equals($t2) } 
     visitor_fwd { analysis.node.NodeBasicStrategy }
   }
 
   %typeterm ControlFlowGraph {
     implement {ControlFlowGraph}
-    is_sort(t) { t instanceof ControlFlowGraph } 
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof ControlFlowGraph } 
+    equals(t1,t2) { $t1.equals($t2) } 
     visitor_fwd { analysis.ControlFlowGraphBasicStrategy }
   }
 
 
   %typeterm Vertex {
     implement {Vertex}
-    is_sort(t) { t instanceof Vertex } 
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof Vertex } 
+    equals(t1,t2) { $t1.equals($t2) } 
     visitor_fwd { analysis.ast.AstBasicStrategy }
   }
   //Definition des constructeurs
 
   %op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
-    is_fsym(t)  { t instanceof ControlFlowGraph }
-    make(root,subterm) { new ControlFlowGraph(root, subterm) }
+    is_fsym(t)  { $t instanceof ControlFlowGraph }
+    make(root,subterm) { new ControlFlowGraph($root, $subterm) }
   }
 
 
   %op ControlFlowGraph graph(node:Vertex){
-    is_fsym(t)  { t instanceof ControlFlowGraph }
-    get_slot(node,t) { t.getRoot() }
-    make(node) { new ControlFlowGraph(node) }
+    is_fsym(t)  { $t instanceof ControlFlowGraph }
+    get_slot(node,t) { $t.getRoot() }
+    make(node) { new ControlFlowGraph($node) }
   }
 
 
   %oparray ControlFlowGraphList list( ControlFlowGraph* ) {
-    is_fsym(t)       { t instanceof List }
-    make_empty(n)    { new ArrayList(n)       }
-    make_append(e,l) { myAdd(e,(ArrayList)l)  }
-    get_element(l,n) { (ControlFlowGraph)(l.get(n))  }
-    get_size(l)      { l.size()               }
+    is_fsym(t)       { $t instanceof List }
+    make_empty(n)    { new ArrayList($n)       }
+    make_append(e,l) { myAdd($e,(ArrayList)$l)  }
+    get_element(l,n) { (ControlFlowGraph)($l.get($n))  }
+    get_size(l)      { $l.size()               }
   }
 
   %oparray VariableList varList( Variable* ) {
-    is_fsym(t)       { t instanceof List }
-    make_empty(n)    { new ArrayList(n)       }
-    make_append(e,l) { myAdd(e,(ArrayList)l)  }
-    get_element(l,n) { (Variable)(l.get(n))  }
-    get_size(l)      { l.size()               }
+    is_fsym(t)       { $t instanceof List }
+    make_empty(n)    { new ArrayList($n)       }
+    make_append(e,l) { myAdd($e,(ArrayList)$l)  }
+    get_element(l,n) { (Variable)($l.get($n))  }
+    get_size(l)      { $l.size()               }
   }
 
-
-
   %op Vertex Vertex(node:Node){
-    is_fsym(t)  { t instanceof Vertex }
+    is_fsym(t)  { $t instanceof Vertex }
     make(node) { new Vertex(node) }
   }
 
@@ -169,7 +167,7 @@ public class Analyser{
     make(v) { new ControlFlowGraphBasicStrategy(`InnerAffect(v))}
   }
 
-  //Construction du CFG à partir de l'Ast
+  //Construction du CFG Ã  partir de l'Ast
   public  ControlFlowGraph constructCFG(AstAbstractType arg) throws Exception{ 
     %match(Ast arg) {
       If(cond,succesInst,failureInst) -> { 

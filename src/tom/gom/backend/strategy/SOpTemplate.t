@@ -131,8 +131,8 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
 
-  public @className()@(@genConstrArgs(slotList.length(),"tom.library.sl.Strategy arg")@) {
-    args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg")@};
+  public @className()@(@genConstrArgs(slotList.length(),"tom.library.sl.Strategy arg",false)@) {
+    args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg",false)@};
   }
 
   public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
@@ -204,10 +204,13 @@ public class @className()@ implements tom.library.sl.Strategy {
 ]%);
 }
 
-private String genConstrArgs(int count, String arg) {
+private String genConstrArgs(int count, String arg, boolean withDollar) {
   StringBuffer args = new StringBuffer();
   for(int i = 0; i < count; ++i) {
     args.append((i==0?"":", "));
+    if(withDollar) {
+      args.append("$");
+    }
     args.append(arg);
     args.append(i);
   }
@@ -229,7 +232,7 @@ public String generateMapping() {
     %op Strategy @className()@(@genStratArgs(slotList.length(),"arg")@) {
       is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@)))}
       @genGetSlot(slotList.length(),"arg")@
-        make(@genConstrArgs(slotList.length(),"arg")@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg")@) }
+        make(@genConstrArgs(slotList.length(),"arg",false)@) { new @fullClassName()@(@genConstrArgs(slotList.length(),"arg",true)@) }
     }
   
   ]%;

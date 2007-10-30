@@ -34,23 +34,23 @@ struct term *suc(struct term *x) {
 }
 
 %op term zero() {
-  is_fsym(t) { (void*)t->fs == (void*)ZERO }
+  is_fsym(t) { (void*)$t->fs == (void*)ZERO }
 }
   
 %op term suc(s1:term) {
-  is_fsym(t) { (void*)t->fs == (void*)SUC }
-  get_slot(s1,t) { t->subt[0] }
+  is_fsym(t) { (void*)$t->fs == (void*)SUC }
+  get_slot(s1,t) { $t->subt[0] }
 }
 
 %op term plus(s1:term,s2:term) {
-  is_fsym(t) { (void*)t->fs == (void*)PLUS }
-  get_slot(s1,t) { t->subt[0] }
-  get_slot(s2,t) { t->subt[1] }
+  is_fsym(t) { (void*)$t->fs == (void*)PLUS }
+  get_slot(s1,t) { $t->subt[0] }
+  get_slot(s2,t) { $t->subt[1] }
 }
 
 %op term fib(s1:term) {
-  is_fsym(t) { (void*)t->fs == (void*)FIB }
-  get_slot(s1,t) { t->subt[0] }
+  is_fsym(t) { (void*)$t->fs == (void*)FIB }
+  get_slot(s1,t) { $t->subt[0] }
 }
 
 struct term *plus(struct term *t1, struct term *t2) {

@@ -10,21 +10,21 @@ public class TestArrayNonLinear extends TestCase {
 %include { util/ArrayList.tom }
   
 %op Object a() {
-  is_fsym(t) { t.equals("a") }
+  is_fsym(t) { $t.equals("a") }
   make() { "a" }
 }
 %op Object b() {
-  is_fsym(t) { t.equals("b") }
+  is_fsym(t) { $t.equals("b") }
   make() { "b" }
 }
 %op Object c() {
-  is_fsym(t) { t.equals("c") }
+  is_fsym(t) { $t.equals("c") }
   make() { "c" }
 }
 %op Object F(l:ArrayList) {
-  is_fsym(t) { (t instanceof F) }
-  get_slot(l,t) { ((F)t).l }
-  make(t) { new F(t) }
+  is_fsym(t) { ($t instanceof F) }
+  get_slot(l,t) { ((F)$t).l }
+  make(t) { new F($t) }
 }
 
   public void test1() {

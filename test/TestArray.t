@@ -21,16 +21,16 @@ public class TestArray extends TestCase {
 
   %typeterm L {
     implement { ArrayList }
-    is_sort(t) { t instanceof ArrayList }
-    equals(l1,l2)    { l1.equals(l2) }
+    is_sort(t) { $t instanceof ArrayList }
+    equals(l1,l2)    { $l1.equals($l2) }
   }
 
   %oparray L conc( E* ) {
-    is_fsym(t)       { t instanceof ArrayList }
-    get_element(l,n) { (ATerm)((ArrayList)l).get(n) }
-    get_size(l)      { ((ArrayList)l).size() }
-    make_empty(n)    { new ArrayList(n) }
-    make_append(e,l) { myAdd(e,(ArrayList)l) }
+    is_fsym(t)       { $t instanceof ArrayList }
+    get_element(l,n) { (ATerm)((ArrayList)$l).get($n) }
+    get_size(l)      { ((ArrayList)$l).size() }
+    make_empty(n)    { new ArrayList($n) }
+    make_append(e,l) { myAdd($e,(ArrayList)$l) }
   }
 
   private static ArrayList myAdd(Object e, ArrayList l) {
@@ -40,22 +40,22 @@ public class TestArray extends TestCase {
   
   %typeterm E {
     implement           { ATerm }
-    is_sort(t) { t instanceof ATerm }
-    equals(t1, t2)      { (t1.equals(t2)) }
+    is_sort(t) { $t instanceof ATerm }
+    equals(t1, t2)      { ($t1.equals($t2)) }
   }
 
   %op E a() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
   %op E b() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op E c() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
 

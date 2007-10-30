@@ -237,7 +237,7 @@ public class TestReflectiveStrategy extends TestCase {
 
   %strategy S2(i:int, str:String, s:Strategy) extends `Identity() {
     visit Strategy {
-      Identity() -> { `Fail(); }
+      Identity() -> { return `Fail(); }
     }
   }
 
@@ -264,7 +264,6 @@ public class TestReflectiveStrategy extends TestCase {
   private static  class Counter { public int count = 0; }
   %typeterm Counter {
     implement { Counter }
-    is_sort(t) { t instanceof Counter }
   }
   public int countAll(Strategy s) throws tom.library.sl.VisitFailure {
     Counter c = new Counter();

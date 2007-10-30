@@ -11,33 +11,33 @@ public class TestPeano extends TestCase {
 
   %typeterm term {
     implement { ATerm }
-    is_sort(t) { t instanceof ATerm }
-    equals(t1, t2)      { t1 == t2}
+    is_sort(t) { $t instanceof ATerm }
+    equals(t1, t2)      { $t1 == $t2}
   }
 
   %typeterm appl {
     implement { ATermAppl }
-    is_sort(t) { t instanceof ATermAppl }
-    equals(t1, t2)      { t1 == t2}
+    is_sort(t) { $t instanceof ATermAppl }
+    equals(t1, t2)      { $t1 == $t2}
   }
 
   %op term zero() {
-    is_fsym(t) { ((ATermAppl)t).getAFun() == fzero }
+    is_fsym(t) { ((ATermAppl)$t).getAFun() == fzero }
     make { factory.makeAppl(fzero) }
   }
 
   %op term suc(pred:term) {
-    is_fsym(t) { ((ATermAppl)t).getAFun() == fsuc }
-    get_slot(pred,t) { ((ATermAppl)t).getArgument(0)  }
-    make(t) { factory.makeAppl(fsuc,t) }
+    is_fsym(t) { ((ATermAppl)$t).getAFun() == fsuc }
+    get_slot(pred,t) { ((ATermAppl)$t).getArgument(0)  }
+    make(t) { factory.makeAppl(fsuc,$t) }
   }
 
   %op term plus1(s1:term,s2:term) {
-    make(t1,t2) { plus1(t1,t2) }
+    make(t1,t2) { plus1($t1,$t2) }
   }
 
   %op term plus2(s1:term,s2:term) {
-    make(t1,t2) { plus2(t1,t2) }
+    make(t1,t2) { plus2($t1,$t2) }
   }
 
   public static void main(String[] args) {

@@ -23,38 +23,38 @@ public class TestBuiltin extends TestCase {
 
   %typeterm E {
     implement { ATerm }
-    is_sort(t) { t instanceof ATerm }
-    equals(t1, t2)      { (t1.equals(t2)) }
+    is_sort(t) { $t instanceof ATerm }
+    equals(t1, t2)      { ($t1.equals($t2)) }
   }
 
   %op E string(stringSlot:String) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "string" }
-    get_slot(stringSlot,t) { getString(t) }
-    make(t) { makeString(t)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "string" }
+    get_slot(stringSlot,t) { getString($t) }
+    make(t) { makeString($t)  }
   }
 
   %op E char(charSlot:char) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "char" }
-    get_slot(charSlot,t) { getChar(t) }
-    make(t) { makeChar(t)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "char" }
+    get_slot(charSlot,t) { getChar($t) }
+    make(t) { makeChar($t)  }
   }
 
   %op E int(intSlot:int) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "int" }
-    get_slot(intSlot,t) { getInt(t) }
-    make(t) { makeInt(t) }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "int" }
+    get_slot(intSlot,t) { getInt($t) }
+    make(t) { makeInt($t) }
   }
 
   %op E long(longSlot:long) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "long" }
-    get_slot(longSlot,t) { getLong(t) }
-    make(t) { makeLong(t) }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "long" }
+    get_slot(longSlot,t) { getLong($t) }
+    make(t) { makeLong($t) }
   }
 
   %op E double(doubleSlot:double) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "double" }
-    get_slot(doubleSlot,t) { getDouble(t) }
-    make(t) { makeDouble(t) }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "double" }
+    get_slot(doubleSlot,t) { getDouble($t) }
+    make(t) { makeDouble($t) }
   }
 
   public static ATerm makeString(String t) {

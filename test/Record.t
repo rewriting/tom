@@ -70,67 +70,67 @@ public class Record {
   
   %typeterm TomObject {
     implement { Object }
-    is_sort(t) { t instanceof Object }
+    is_sort(t) { $t instanceof Object }
   }
 
   %typeterm TomExp {
     implement { Exp }
-    is_sort(t) { t instanceof Exp }
+    is_sort(t) { $t instanceof Exp }
   }
 
   %typeterm TomBinaryOperator {
     implement { BinaryOperator }
-    is_sort(t) { t instanceof BinaryOperator }
+    is_sort(t) { $t instanceof BinaryOperator }
   }
   
   %typeterm TomUnaryOperator {
     implement { UnaryOperator }
-    is_sort(t) { t instanceof UnaryOperator }
+    is_sort(t) { $t instanceof UnaryOperator }
   }
 
   %typeterm TomCstExp {
     implement { CstExp }
-    is_sort(t) { t instanceof CstExp }
+    is_sort(t) { $t instanceof CstExp }
   }
 
     // ------------------------------------------------------------
   
   %op TomBinaryOperator BinaryOperator(first:TomExp, second:TomExp) {
-    is_fsym(t) { t instanceof BinaryOperator }
-    get_slot(first,t) { ((BinaryOperator)t).first }
-    get_slot(second,t) { ((BinaryOperator)t).second }
+    is_fsym(t) { $t instanceof BinaryOperator }
+    get_slot(first,t) { ((BinaryOperator)$t).first }
+    get_slot(second,t) { ((BinaryOperator)$t).second }
   }
 
   %op TomUnaryOperator UnaryOperator(first:TomExp) {
-    is_fsym(t) { t instanceof UnaryOperator }
-    get_slot(first,t) { ((UnaryOperator)t).first }
+    is_fsym(t) { $t instanceof UnaryOperator }
+    get_slot(first,t) { ((UnaryOperator)$t).first }
   }
 
   %op TomBinaryOperator Plus(first:TomExp, second:TomExp) {
-    is_fsym(t) { t instanceof Plus }
-    get_slot(first,t) { ((Plus)t).first }
-    get_slot(second,t) { ((Plus)t).second }
+    is_fsym(t) { $t instanceof Plus }
+    get_slot(first,t) { ((Plus)$t).first }
+    get_slot(second,t) { ((Plus)$t).second }
   }
 
   %op TomBinaryOperator Mult(first:TomExp, second:TomExp) {
-    is_fsym(t) { t instanceof Mult }
-    get_slot(first,t) { ((Mult)t).first }
-    get_slot(second,t) { ((Mult)t).second }
+    is_fsym(t) { $t instanceof Mult }
+    get_slot(first,t) { ((Mult)$t).first }
+    get_slot(second,t) { ((Mult)$t).second }
   }
 
   %op TomUnaryOperator Uminus(first:TomExp) {
-    is_fsym(t) { t instanceof Uminus }
-    get_slot(first,t) { ((Uminus)t).first }
+    is_fsym(t) { $t instanceof Uminus }
+    get_slot(first,t) { ((Uminus)$t).first }
   }
 
   %op TomCstExp CstExp(value:TomObject) {
-    is_fsym(t) { t instanceof CstExp }
-    get_slot(value,t) { ((CstExp)t).value }
+    is_fsym(t) { $t instanceof CstExp }
+    get_slot(value,t) { ((CstExp)$t).value }
   }
 
   %op TomCstExp IntExp(value:TomInteger) {
-    is_fsym(t) { t instanceof IntExp }
-    get_slot(value,t) { (Integer)((IntExp)t).value }
+    is_fsym(t) { $t instanceof IntExp }
+    get_slot(value,t) { (Integer)((IntExp)$t).value }
   }
 
     // ------------------------------------------------------------
@@ -140,16 +140,16 @@ public class Record {
   
   %typeterm TomInteger {
     implement { Integer }
-    is_sort(t) { t instanceof Integer }
+    is_sort(t) { $t instanceof Integer }
   }
 
   %op TomInteger zero() {
-    is_fsym(t) { (((Integer)t).intValue()==0) }
+    is_fsym(t) { (((Integer)$t).intValue()==0) }
   }
 
   %op TomInteger suc(p:TomInteger) {
-    is_fsym(t) { (((Integer)t).intValue()!=0) }
-    get_slot(p,t) { new Integer(((Integer)t).intValue()-1) }
+    is_fsym(t) { (((Integer)$t).intValue()!=0) }
+    get_slot(p,t) { new Integer(((Integer)$t).intValue()-1) }
   }
 
     // ------------------------------------------------------------

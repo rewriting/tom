@@ -25,72 +25,72 @@ public class TestMatch extends TestCase {
 
   %typeterm L {
     implement { ATermList }
-    is_sort(t) { t instanceof ATermList }
-    equals(l1,l2)  { l1.equals(l2) }
+    is_sort(t) { $t instanceof ATermList }
+    equals(l1,l2)  { $l1.equals($l2) }
   }
 
   %oplist L conc( E* ) {
-    is_fsym(t)     { t instanceof ATermList }
+    is_fsym(t)     { $t instanceof ATermList }
     make_empty()   { factory.makeList() }
-    make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
-    get_head(l)    { ((ATermList)l).getFirst() }
-    get_tail(l)    { ((ATermList)l).getNext() }
-    is_empty(l)    { ((ATermList)l).isEmpty() }
+    make_insert(e,l) { ((ATermList)$l).insert((ATerm)$e) }
+    get_head(l)    { ((ATermList)$l).getFirst() }
+    get_tail(l)    { ((ATermList)$l).getNext() }
+    is_empty(l)    { ((ATermList)$l).isEmpty() }
   }
   
   %typeterm E {
     implement { ATerm }
-    is_sort(t) { t instanceof ATerm }
-    equals(t1, t2) { (t1.equals(t2)) }
+    is_sort(t) { $t instanceof ATerm }
+    equals(t1, t2) { ($t1.equals($t2)) }
   }
 
   %op E a() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "a" }
   }
   
   %op E b() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "b" }
   }
 
   %op E c() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "c" }
   }
 
   %op E d() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "d" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "d" }
   }
 
   %op E f(s1:E) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "f" }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "f" }
+    get_slot(s1,t) { ((ATermAppl)$t).getArgument(0)  }
   }
 
   %op E ff(s1:E) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "ff" }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "ff" }
+    get_slot(s1,t) { ((ATermAppl)$t).getArgument(0)  }
   }
 
   %op E g(s1:E, s2:E) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "g" }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
-    get_slot(s2,t) { ((ATermAppl)t).getArgument(1)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "g" }
+    get_slot(s1,t) { ((ATermAppl)$t).getArgument(0)  }
+    get_slot(s2,t) { ((ATermAppl)$t).getArgument(1)  }
   }
 
   %op E l(s1:L) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "l" }
-    get_slot(s1,t) { (ATermList) ((ATermAppl)t).getArgument(0)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "l" }
+    get_slot(s1,t) { (ATermList) ((ATermAppl)$t).getArgument(0)  }
   }
 
   %op E h(s1:E,s2:E) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "h" }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
-    get_slot(s2,t) { ((ATermAppl)t).getArgument(1)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "h" }
+    get_slot(s1,t) { ((ATermAppl)$t).getArgument(0)  }
+    get_slot(s2,t) { ((ATermAppl)$t).getArgument(1)  }
   }
 
   %op E k(s2:E,s1:E) {
-    is_fsym(t) { ((ATermAppl)t).getName() == "k" }
-    get_slot(s2,t) { ((ATermAppl)t).getArgument(0)  }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(1)  }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "k" }
+    get_slot(s2,t) { ((ATermAppl)$t).getArgument(0)  }
+    get_slot(s1,t) { ((ATermAppl)$t).getArgument(1)  }
   }
 
 	static class TestData {

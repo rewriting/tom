@@ -10,13 +10,13 @@
 }
 
 %op Nat zero() {
-  is_fsym(t) { t==0 }
+  is_fsym(t) { $t==0 }
 }
 
 %op Nat suc(p:Nat) {
-  is_fsym(t) { t>0 }
-  get_slot(p,t) { t-1 }
-  make(t) { t+1 }
+  is_fsym(t) { $t>0 }
+  get_slot(p,t) { $t-1 }
+  make(t) { $t+1 }
 }
 
 int plus(int t1, int t2) {

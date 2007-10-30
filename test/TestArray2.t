@@ -10,16 +10,16 @@ public class TestArray2 extends TestCase {
 
   %typeterm jtList {
     implement { List }
-    is_sort(t) { t instanceof List }
-    equals(l1,l2) { l1.equals(l2) }
+    is_sort(t) { $t instanceof List }
+    equals(l1,l2) { $l1.equals($l2) }
   }
 
-  %oparray jtList conc(jtElement*){
-    is_fsym(t) { t instanceof List }
-    make_empty(n)    { new ArrayList(n) }
-    make_append(e,l) { myAdd(e,(ArrayList)l) }
-    get_element(l,n) { (Element)((ArrayList)l).get(n) }
-    get_size(l)      { ((ArrayList)l).size() }
+  %oparray jtList conc(jtElement*) {
+    is_fsym(t) { $t instanceof List }
+    make_empty(n)    { new ArrayList($n) }
+    make_append(e,l) { myAdd($e,(ArrayList)$l) }
+    get_element(l,n) { ((Element)((ArrayList)$l).get($n)) }
+    get_size(l)      { ((ArrayList)$l).size() }
   }
 
   private static ArrayList myAdd(Object e, ArrayList l) {
@@ -28,24 +28,24 @@ public class TestArray2 extends TestCase {
   }
 
   %typeterm jtElement {
-    implement           { Element }
-    is_sort(t) { t instanceof Element }
-    equals(t1,t2)       { t1.equals(t2) }
+    implement { Element }
+    is_sort(t) { ($t instanceof Element) }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
   %op jtElement ListElement(v:jtList) {
-    is_fsym(t) { (t instanceof Element) && (t.getObject() instanceof List) }
-    get_slot(v,e)  { ((List)e.getObject()) }
-    make(v) { new Element(v) }
+    is_fsym(t) { ($t instanceof Element) && (((Element)$t).getObject() instanceof List) }
+    get_slot(v,e)  { (List)($e.getObject()) }
+    make(v) { new Element($v) }
   }
 
   %op jtElement a() {
-    is_fsym(t) { (t instanceof Element) && t.getObject().equals("a") }
+    is_fsym(t) { ($t instanceof Element) && $t.getObject().equals("a") }
     make() { new Element("a") }
   }
 
   %op jtElement b() {
-    is_fsym(t) { (t instanceof Element) && t.getObject().equals("b") }
+    is_fsym(t) { ($t instanceof Element) && $t.getObject().equals("b") }
     make() { new Element("b") }
   }
 
@@ -91,4 +91,3 @@ public class TestArray2 extends TestCase {
   }
 
 }
-

@@ -46,7 +46,7 @@ public class Tools {
 
   %include{ ../termaso/TermAso.tom }
   %include{ sl.tom }	
-  %include{ ../atermmapping.tom }
+  %include{ aterm.tom }
 
   public static void main(String[] args) {
     Tools tools = new Tools();

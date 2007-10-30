@@ -16,7 +16,6 @@ public class TestStrategy extends TestCase {
 
   %typeterm Hashtable {
     implement { Hashtable }
-    is_sort(t) { t instanceof Hashtable }
   }
   
 %gom{
@@ -35,7 +34,6 @@ public class TestStrategy extends TestCase {
 
   %typeterm Position {
     implement { tom.library.sl.Position }
-    is_sort(t) { t instanceof tom.library.sl.Position }
   }
 
   static boolean bool0 = true;

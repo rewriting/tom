@@ -143,12 +143,12 @@ public class @className()@ implements tom.library.sl.Strategy {
     */
   public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
 @computeNewChilds(slotList,"any")@
-    return @fullClassName(operator)@.make(@genMakeArguments(slotList)@);
+    return @fullClassName(operator)@.make(@genMakeArguments(slotList,false)@);
   }
 
   public int visit() {
 @computeSLNewChilds(slotList,"any")@
-    getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList)@));
+    getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList,false)@));
     return tom.library.sl.Environment.SUCCESS;
   }
 }
@@ -160,7 +160,7 @@ public class @className()@ implements tom.library.sl.Strategy {
 %op Strategy @className()@(@genStratArgs(slotList,"arg")@) {
   is_fsym(t) { (($t!=null) && ($t instanceof (@fullClassName()@))) }
 @genGetSlot(slotList,"arg")@
-  make(@genMakeArguments(slotList)@) { new @fullClassName()@(@genMakeArguments(slotList)@) }
+  make(@genMakeArguments(slotList,false)@) { new @fullClassName()@(@genMakeArguments(slotList,true)@) }
 }
 ]%;
   }
@@ -173,7 +173,7 @@ public class @className()@ implements tom.library.sl.Strategy {
       %match(SlotField head) {
         SlotField[Name=name] -> {
           out.append(%[
-  get_slot(@fieldName(`name)@, t) { @fieldName(`name)@ }]%);
+  get_slot(@fieldName(`name)@, t) { $t.@fieldName(`name)@ }]%);
         }
       }
     }
@@ -395,7 +395,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     * Generate the argument list for the operator construction, using the
     * values computed by computeNewChilds
     */
-  private String genMakeArguments(SlotFieldList slots) {
+  private String genMakeArguments(SlotFieldList slots, boolean withDollar) {
     StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
@@ -406,10 +406,17 @@ public class @className()@ implements tom.library.sl.Strategy {
             res.append(", ");
           }
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            res.append(" new");
+            res.append(" ");
+            if(withDollar) {
+              res.append("$");
+            }
+            res.append("new");
             res.append(fieldName(`name));
           } else {
             res.append(" ");
+            if(withDollar) {
+              res.append("$");
+            }
             res.append(fieldName(`name));
           }
         }

@@ -44,22 +44,22 @@ public class SimplifySystemRule {
 
   %op Constraint AreSymbolsEqual(s1:Term, s2:Term){
     is_fsym(t) { false }
-    make(t1,t2) { areSymbolsEqual(t1, t2) }
+    make(t1,t2) { areSymbolsEqual($t1, $t2) }
   }	
 
   %op Constraint DecomposeList(l1:TermList, l2:TermList){
     is_fsym(t) { false }
-    make(t1,t2) { decomposeList(t1, t2) }
+    make(t1,t2) { decomposeList($t1, $t2) }
   }
 
   %op Constraint ContainsVariable(v:Term, l:AConstraintList){
     is_fsym(t) { false }
-    make(t1,t2) { containsVariable(t1, t2) }
+    make(t1,t2) { containsVariable($t1, $t2) }
   }
 
   %op Constraint ApplyReplaceStrategy(var:Term,value:Term,l:AConstraintList){
     is_fsym(t) { false }
-    make(t1,t2,t3) { applyReplaceStrategy(t1,t2,t3) }
+    make(t1,t2,t3) { applyReplaceStrategy($t1,$t2,$t3) }
   }
 
   private Constraint decomposeList(TermList l1, TermList l2){		
