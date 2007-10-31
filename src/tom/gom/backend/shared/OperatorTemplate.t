@@ -83,6 +83,11 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
     writer.write(%[
   private int hashCode;
   private static @className()@ proto = new @className()@();
+  private static int protoNumber = 0;
+  private final static int MAX_PROTO = 5;
+  private static @className()@[] protoPool = new @className()@[] {
+    new @className()@(), new @className()@(), new @className()@(), new @className()@(), new @className()@()
+  };
 ]%);
   } else { 
     writer.write(%[
@@ -243,6 +248,11 @@ writer.write(%[
 ]%);
 generateGetters(writer);
 
+String protoName = "proto";
+if(slotList.length()>0) {
+  protoName = "protoPool[0]";
+}
+
     writer.write(%[
   /* AbstractType */
   @@Override
@@ -255,7 +265,7 @@ generateGetters(writer);
   public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if(proto.symbolName().equals(appl.getName())) {
+      if(@protoName@.symbolName().equals(appl.getName())) {
         return make(
 @generatefromATermChilds("appl")@
         );
@@ -758,8 +768,12 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         if(slotList.length()>0) {
         writer.write(%[
   public static @className()@ make(@childListWithType(slotList)@) {
-    proto.initHashCode(@childList(slotList)@);
-    return (@className()@) factory.build(proto);
+    @className()@ proto = protoPool[protoNumber];
+    protoNumber = (protoNumber+1)%MAX_PROTO;
+    synchronized(proto) {
+      proto.initHashCode(@childList(slotList)@);
+      return (@className()@) factory.build(proto);
+    }
   }
   ]%);
         } else {
@@ -776,8 +790,12 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         if(slotList.length()>0) {
         writer.write(%[
     private static @className()@ realMake(@childListWithType(slotList)@) {
-      proto.initHashCode(@childList(slotList)@);
-      return (@className()@) factory.build(proto);
+      @className()@ proto = protoPool[protoNumber];
+      protoNumber = (protoNumber+1)%MAX_PROTO;
+      synchronized(proto) {
+        proto.initHashCode(@childList(slotList)@);
+        return (@className()@) factory.build(proto);
+      }
     }
   ]%);
       } else {

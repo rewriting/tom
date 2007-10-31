@@ -392,6 +392,8 @@ public class TomBackend extends TomGenericPlugin {
 
       /*
        * collect all declarations and add them in the mapInliner
+       * this is needed because a %op or %typeterm may be defined
+       * after the usage of the sort or the operator
        */
       IsFsymDecl[AstName=Name(opname),Expr=Code(code)] -> {
         try {
