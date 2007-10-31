@@ -36,12 +36,12 @@ public class BenchCons {
   %include { list/List.tom }
 
   %oplist List conc( int* ) {
-    is_fsym(t) { (t!=null) && (t.isCons() || t.isNil()) }
+    is_fsym(t) { ($t!=null) && ($t.isCons() || $t.isNil()) }
     make_empty()  { gom.list.types.list.Nil.make() }
-    make_insert(e,l) { gom.list.types.list.Cons.make(e, l) }
-    get_head(l)   { l.gethead() }
-    get_tail(l)   { l.gettail() }
-    is_empty(l)   { (l!=null) && l.isNil() }
+    make_insert(e,l) { gom.list.types.list.Cons.make($e, $l) }
+    get_head(l)   { $l.gethead() }
+    get_tail(l)   { $l.gettail() }
+    is_empty(l)   { ($l!=null) && $l.isNil() }
   }
   
   public List genere(int n) {

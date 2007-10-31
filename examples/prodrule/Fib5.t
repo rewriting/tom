@@ -43,17 +43,17 @@ public class Fib5 {
     
   %typeterm Space {
     implement { MyList }
-    is_sort(t) { t instanceof MyList }
-    equals(l1,l2)      { l1.equals(l2) }
+    is_sort(t) { $t instanceof MyList }
+    equals(l1,l2) { $l1.equals($l2) }
   }
 
   %oplist Space concElement( Element* ) {
-    is_fsym(t) { t instanceof MyList }
-    make_empty()     { new MyList() }
-    make_insert(e,l) { new MyList(e,l) }
-    get_head(l)        { (Element)l.getHead() }
-    get_tail(l)        { (MyList)l.getTail() }
-    is_empty(l)        { l.isEmpty() }
+    is_fsym(t) { $t instanceof MyList }
+    make_empty() { new MyList() }
+    make_insert(e,l) { new MyList($e,$l) }
+    get_head(l) { ((Element)$l.getHead()) }
+    get_tail(l) { ((MyList)$l.getTail()) }
+    is_empty(l) { $l.isEmpty() }
   }
       
   

@@ -50,14 +50,14 @@ public class StratDebugger {
 
   %typeterm DebugStrategyObserver {
     implement { ted.DebugStrategyObserver }
-    is_sort(t)     { t instanceof ted.DebugStrategyObserver }
+    is_sort(t)     { $t instanceof ted.DebugStrategyObserver }
   }
 
   %op Strategy DebugStrategy(obs:DebugStrategyObserver, s:Strategy) {
-    is_fsym(t) { (t instanceof ted.DebugStrategy) }
-    make(obs,s) { new DebugStrategy(obs,s) }
-    get_slot(obs, t) { (DebugStrategyObserver) t.getObserver() }
-    get_slot(s, t) { (Strategy) t.getStrat() }
+    is_fsym(t) { ($t instanceof ted.DebugStrategy) }
+    make(obs,s) { new DebugStrategy($obs,$s) }
+    get_slot(obs, t) { (DebugStrategyObserver) $t.getObserver() }
+    get_slot(s, t) { (Strategy) $t.getStrat() }
   }
 
 

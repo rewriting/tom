@@ -82,7 +82,7 @@ class GraphicalObserver implements DebugStrategyObserver {
 
   %typeterm Visitable {
     implement { Visitable }
-    is_sort(t) { t instanceof Visitable }
+    is_sort(t) { $t instanceof Visitable }
     visitor_fwd { StrategyFwd }
   }
 

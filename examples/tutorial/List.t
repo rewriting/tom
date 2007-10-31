@@ -38,16 +38,16 @@ public class List {
 
   %typeterm TomList {
     implement { ArrayList }
-    is_sort(t) { t instanceof ArrayList }
-    equals(l1,l2)    { l1.equals(l2) }
+    is_sort(t) { $t instanceof ArrayList }
+    equals(l1,l2)    { $l1.equals($l2) }
   }
 
   %oparray TomList conc( Element* ) {
-    is_fsym(t)       { t instanceof ArrayList }
-    get_element(l,n) { (ATermAppl)l.get(n) }
-    get_size(l)      { l.size() }
-    make_empty(n)    { myEmpty(n) }
-    make_append(e,l) { myAdd(e,(ArrayList)l) }
+    is_fsym(t)       { $t instanceof ArrayList }
+    get_element(l,n) { ((ATermAppl)$l.get($n)) }
+    get_size(l)      { $l.size() }
+    make_empty(n)    { myEmpty($n) }
+    make_append(e,l) { myAdd($e,(ArrayList)$l) }
   }
 
   private static ArrayList myAdd(Object e,ArrayList l) {
@@ -62,22 +62,22 @@ public class List {
 
   %typeterm Element {
     implement { ATermAppl }
-    is_sort(t) { t instanceof ATermAppl }
-    equals(t1, t2)     { t1==t2 }
+    is_sort(t) { $t instanceof ATermAppl }
+    equals(t1, t2)     { $t1==$t2 }
   }
 
   %op Element a() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
 
   %op Element b() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op Element c() {
-    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
+    is_fsym(t) { ((ATermAppl)$t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
 

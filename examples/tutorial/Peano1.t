@@ -37,18 +37,18 @@ public class Peano1 {
 
   %typeterm Nat {
     implement { ATermAppl }
-    is_sort(t) { t instanceof ATermAppl }
+    is_sort(t) { $t instanceof ATermAppl }
   }
 
   %op Nat zero() {
-    is_fsym(t) { t.getName().equals("zero") }
-    make       { factory.makeAppl(factory.makeAFun("zero",0,false)) }
+    is_fsym(t) { $t.getName().equals("zero") }
+    make { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }
   
   %op Nat suc(pred:Nat) {
-    is_fsym(t)       { t.getName().equals("suc") }
-    get_slot(pred,t) { (ATermAppl)t.getArgument(0) }
-    make(t)          { factory.makeAppl(factory.makeAFun("suc",1,false),t) }
+    is_fsym(t) { $t.getName().equals("suc") }
+    get_slot(pred,t) { (ATermAppl)$t.getArgument(0) }
+    make(t) { factory.makeAppl(factory.makeAFun("suc",1,false),$t) }
   }
 
   public ATermAppl plus(ATermAppl t1, ATermAppl t2) {

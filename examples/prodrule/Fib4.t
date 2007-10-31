@@ -44,16 +44,16 @@ public class Fib4 {
     
   %typeterm Space {
     implement { ArrayList<Element> }
-    is_sort(t) { t instanceof ArrayList }
-    equals(l1,l2) { l1.equals(l2) }
+    is_sort(t) { $t instanceof ArrayList }
+    equals(l1,l2) { $l1.equals($l2) }
   }
 
   %oparray Space concElement( Element* ) {
-    is_fsym(t) { t instanceof ArrayList }
-    make_empty(n) { myEmpty(n) }
-    make_append(e,l) { myAdd(e,(ArrayList)l) }
-    get_element(l,n) { l.get(n) }
-    get_size(l) { l.size() }
+    is_fsym(t) { $t instanceof ArrayList }
+    make_empty(n) { myEmpty($n) }
+    make_append(e,l) { myAdd($e,(ArrayList)$l) }
+    get_element(l,n) { $l.get($n) }
+    get_size(l) { $l.size() }
   }
 
   private static ArrayList<Element> myAdd(Element e,ArrayList<Element> l) {

@@ -39,17 +39,17 @@ public class BenchCons {
 
   %typeterm TomList {
     implement { ATermAppl }
-    is_sort(t) { t instanceof ATermAppl }
-    equals(l1,l2) { l1==l2 }
+    is_sort(t) { $t instanceof ATermAppl }
+    equals(l1,l2) { $l1==$l2 }
   }
 
   %oplist TomList conc( int* ) {
-    is_fsym(t) { t instanceof ATermAppl }
+    is_fsym(t) { $t instanceof ATermAppl }
     make_empty()  { factory.makeAppl(factory.makeAFun("Empty", 0, false)) }
-    make_insert(e,l) { factory.makeAppl(factory.makeAFun("Cons", 2, false),factory.makeInt(e),l) }
-    get_head(l)   { ((ATermInt)l.getArgument(0)).getInt() }
-    get_tail(l)   { (ATermAppl)l.getArgument(1) }
-    is_empty(l)   { l==factory.makeAppl(factory.makeAFun("Empty", 0, false)) }
+    make_insert(e,l) { factory.makeAppl(factory.makeAFun("Cons", 2, false),factory.makeInt($e),$l) }
+    get_head(l)   { ((ATermInt)$l.getArgument(0)).getInt() }
+    get_tail(l)   { (ATermAppl)$l.getArgument(1) }
+    is_empty(l)   { $l==factory.makeAppl(factory.makeAFun("Empty", 0, false)) }
   }
   
   public ATermAppl genere(int n) {

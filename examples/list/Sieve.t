@@ -39,23 +39,23 @@ public class Sieve {
 
   %typeterm TomList {
     implement { ATermList }
-    is_sort(t) { t instanceof ATermList }
-    equals(l1,l2) { l1==l2 }
+    is_sort(t) { $t instanceof ATermList }
+    equals(l1,l2) { $l1==$l2 }
   }
 
   %oplist TomList conc( int* ) {
-    is_fsym(t) { t instanceof ATermList }
+    is_fsym(t) { $t instanceof ATermList }
     make_empty()  { factory.makeList() }
-    make_insert(e,l) { l.insert(factory.makeInt(e)) }
-    get_head(l)   { ((ATermInt)l.getFirst()).getInt() }
-    get_tail(l)   { l.getNext() }
-    is_empty(l)   { l.isEmpty() }
+    make_insert(e,l) { $l.insert(factory.makeInt($e)) }
+    get_head(l)   { ((ATermInt)$l.getFirst()).getInt() }
+    get_tail(l)   { $l.getNext() }
+    is_empty(l)   { $l.isEmpty() }
   }
   
   %typeterm TomTerm {
     implement { ATermAppl }
-    is_sort(t) { t instanceof ATermAppl }
-    equals(t1, t2)     { t1==t2 }
+    is_sort(t) { $t instanceof ATermAppl }
+    equals(t1, t2)     { $t1==$t2 }
   }
 
   public ATermList genere(int n) {

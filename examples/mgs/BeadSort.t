@@ -41,14 +41,14 @@ public class BeadSort {
   %include { term/term.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
-    is_fsym(t) { (t!=null) && t.isbead() }
-    make(n,s) { makeBead(n,s) }
-    get_slot(n,t) { getNorthBead(t) }
-    get_slot(s,t) { getSouthBead(t) }
+    is_fsym(t) { ($t!=null) && $t.isbead() }
+    make(n,s) { makeBead($n,$s) }
+    get_slot(n,t) { getNorthBead($t) }
+    get_slot(s,t) { getSouthBead($t) }
   }
 
   %op Bead empty() {
-    is_fsym(t) { t==null }
+    is_fsym(t) { $t==null }
     make { null }
   }
 

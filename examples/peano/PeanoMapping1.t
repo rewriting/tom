@@ -40,16 +40,16 @@ public class PeanoMapping1 {
 
   %typeterm term {
     implement { ATerm }
-    is_sort(t) { t instanceof ATerm }
+    is_sort(t) { $t instanceof ATerm }
   }
 
   %op term zero() {
-    is_fsym(t) { (((ATermAppl)t).getAFun())==fzero }
+    is_fsym(t) { (((ATermAppl)$t).getAFun())==fzero }
   }
   
   %op term suc(p:term) {
-    is_fsym(t) { (((ATermAppl)t).getAFun())==fsuc }
-    get_slot(p,t) { (((ATermAppl)t).getArgument(0)) }
+    is_fsym(t) { (((ATermAppl)$t).getAFun())==fsuc }
+    get_slot(p,t) { (((ATermAppl)$t).getArgument(0)) }
   }
 
   public static ATerm suc(ATerm t) {

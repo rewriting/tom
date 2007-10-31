@@ -38,19 +38,19 @@ public class PeanoMapping3 {
 
   %typeterm term {
     implement           { ATermAppl }
-    is_sort(t)           { t instanceof ATermAppl }
-    get_implementation(t) { t }
+    is_sort(t)           { $t instanceof ATermAppl }
+    get_implementation(t) { $t }
   }
 
   %op term zero() {
-    is_fsym(t) { t.getName() == "zero" }
+    is_fsym(t) { $t.getName() == "zero" }
     make { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("zero",0,false)) }
   }
   
   %op term suc(p:term) {
-    is_fsym(t) { t.getName() == "suc" }
-    get_slot(p,t) { (ATermAppl)t.getArgument(0) }
-    make(t) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("suc",1,false),t) }
+    is_fsym(t) { $t.getName() == "suc" }
+    get_slot(p,t) { (ATermAppl)$t.getArgument(0) }
+    make(t) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("suc",1,false),$t) }
   }
 
   public static ATermAppl plus(ATermAppl t1, ATermAppl t2) {

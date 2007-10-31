@@ -49,15 +49,15 @@ public class TestCarre extends TestCase {
 
   %typeterm Carre {
     implement { Carre }
-    is_sort(t) { t instanceof Carre }
-    equals(t1,t2) { t1.equals(t2) }
+    is_sort(t) { $t instanceof Carre }
+    equals(t1,t2) { $t1.equals($t2) }
     visitor_fwd { CarreBasicStrategy }
   }
   %op Carre Carre(r1:Rond, r2:Rond) {
-    is_fsym(t) { t instanceof Carre }
-    get_slot(r1, t) { t.r1 }
-    get_slot(r2, t) { t.r2 }
-    make(t0, t1) { new Carre(t0, t1)}
+    is_fsym(t) { $t instanceof Carre }
+    get_slot(r1, t) { $t.r1 }
+    get_slot(r2, t) { $t.r2 }
+    make(t0, t1) { new Carre($t0, $t1)}
   }
 
   public void testPrint() {

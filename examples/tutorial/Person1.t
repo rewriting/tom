@@ -43,14 +43,14 @@ public class Person1 {
   %include { string.tom }
   %typeterm Person {
     implement { Person }
-    is_sort(t) { t instanceof Person }
+    is_sort(t) { $t instanceof Person }
   }
 
   %op Person person(firstname:String, lastname:String) {
-    is_fsym(t) { t instanceof Person }
-    get_slot(firstname,t) { t.getFirstname() }
-    get_slot(lastname,t) { t.getLastname() }
-    make(t0, t1) {  new Person(t0, t1) } 
+    is_fsym(t) { $t instanceof Person }
+    get_slot(firstname,t) { $t.getFirstname() }
+    get_slot(lastname,t) { $t.getLastname() }
+    make(t0, t1) {  new Person($t0, $t1) } 
   }
 
   public void run() {
