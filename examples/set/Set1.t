@@ -515,13 +515,13 @@ public class Set1 {
     System.out.println("getTail from tree in: "+ (stopChrono-startChrono) + " ms");
     
       //Adding element to a java JGSet
-    TreeSet set = new TreeSet(comparator);
+    TreeSet treeset = new TreeSet(comparator);
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
-      set.add(array[i]);
+      treeset.add(array[i]);
     }    
     stopChrono = System.currentTimeMillis();
-    System.out.println("Java set  size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Java treeset  size = " + treeset.size() + " in " + (stopChrono-startChrono) + " ms");
     
       // Looking for elements in a JGSet
     startChrono = System.currentTimeMillis();
@@ -534,16 +534,16 @@ public class Set1 {
       // Looking for elements in a java JGSet
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
-      if( set.contains(array[i]) == false) System.out.println("Loose an element");
+      if( treeset.contains(array[i]) == false) System.out.println("Loose an element");
     }
     stopChrono = System.currentTimeMillis();
     System.out.println("Found each element of java JGSet size = " + size + " in " + (stopChrono-startChrono) + " ms");
     
       //Maximal sharing
-    TreeSet set2 = new TreeSet(comparator);
+    TreeSet treeset2 = new TreeSet(comparator);
     for(int i=3*n-1 ; i>=0 ; i--) {
       t2 = add(array[i], t2);
-      set2.add(array[i]);
+      treeset2.add(array[i]);
     }
     if (t1 == t2) System.out.println("Maximal sharing is OK");
     
@@ -555,7 +555,7 @@ public class Set1 {
     System.out.println("Simple union for JGSet in " + (stopChrono-startChrono) + " ms");
 
     startChrono = System.currentTimeMillis();
-    set.addAll(set2);
+    treeset.addAll(treeset2);
     stopChrono = System.currentTimeMillis();
     System.out.println("Simple union for java JGSet in " + (stopChrono-startChrono) + " ms");
 
@@ -567,27 +567,27 @@ public class Set1 {
     System.out.println("Simple intersection for JGSet in " + (stopChrono-startChrono) + " ms");
 
     startChrono = System.currentTimeMillis();
-    set.containsAll(set2);
+    treeset.containsAll(treeset2);
     stopChrono = System.currentTimeMillis();
     System.out.println("Simple intersection for java JGSet in " + (stopChrono-startChrono) + " ms");
     
     JGSet t5 = `emptyJGSet();
     JGSet t6 = `emptyJGSet();
     JGSet t7 = `emptyJGSet();
-    TreeSet set5 = new TreeSet(comparator);
-    TreeSet set6 = new TreeSet(comparator);
-    TreeSet set7 = new TreeSet(comparator);
+    TreeSet treeset5 = new TreeSet(comparator);
+    TreeSet treeset6 = new TreeSet(comparator);
+    TreeSet treeset7 = new TreeSet(comparator);
     for(int i=0 ; i<2*n ; i++) {
       t5 = add(array[i], t5);
-      set5.add(array[i]);
+      treeset5.add(array[i]);
     }
     for(int i=n ; i<3*n ; i++) {
       t6 = add(array[i], t6);
-      set6.add(array[i]);
+      treeset6.add(array[i]);
     }
     for(int i=n ; i<2*n ; i++) {
       t7 = add(array[i], t7);
-      set6.add(array[i]);
+      treeset6.add(array[i]);
     }
     
     startChrono = System.currentTimeMillis();
@@ -596,7 +596,7 @@ public class Set1 {
     if (t1 == t8) {System.out.println("Complex union for JGSet in " + (stopChrono-startChrono) + " ms");} else {System.out.println("Complex union failed with \n\tt5:"+t5+" \nand \tt6: "+t6+"\n\tres: "+t8+"\n\tbuilt: "+t1);}
 
     startChrono = System.currentTimeMillis();
-    set5.addAll(set6);
+    treeset5.addAll(treeset6);
     stopChrono = System.currentTimeMillis();
     System.out.println("Complex union for java JGSet in " + (stopChrono-startChrono) + " ms");
 
@@ -607,7 +607,7 @@ public class Set1 {
     if (t7 == t9) {System.out.println("Complex intersection for JGSet in " + (stopChrono-startChrono) + " ms");} else {System.out.println("Complex intersection");}// failed with t5:\t"+t5+"\nt6:\t"+t6+"\nres:\t"+t9+"\nbuilt:\t"+t7);}
 
     startChrono = System.currentTimeMillis();
-    set5.containsAll(set6);
+    treeset5.containsAll(treeset6);
     stopChrono = System.currentTimeMillis();
     System.out.println("Complex intersection for java JGSet in " + (stopChrono-startChrono) + " ms");
     
