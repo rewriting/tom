@@ -134,21 +134,21 @@ class DeepMatch {
 
   %typeterm Deep {
     implement { Iter<Term> }
-    is_sort(t) { t instanceof Iter }
-    equals(t1,t2) { t1.equals(t2) }
+    is_sort(t) { $t instanceof Iter }
+    equals(t1,t2) { $t1.equals($t2) }
   }
 
   %oplist Deep deep(Term*) {
-    is_fsym(l)       { l instanceof Iter }
+    is_fsym(l)       { $l instanceof Iter }
     make_empty()     { new Iter() }
     make_insert(o,l) { null }
-    get_head(l)      { l.getSubterm() }
-    get_tail(l)      { l.next() }
-    is_empty(l)      { l.finished() }
+    get_head(l)      { $l.getSubterm() }
+    get_tail(l)      { $l.next() }
+    is_empty(l)      { $l.finished() }
   }
 
   %op Deep iter(t:Term) {
-    make(x) { new Iter(x) }
+    make(x) { new Iter($x) }
   }
 
   public static void main(String [] argv) {

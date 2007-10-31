@@ -284,7 +284,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getIsConcList(String name,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getIsFsym(name);
     String res = instantiateTemplate(template,subject);
-    if(res == template) {
+    if(res==null || (!inlineplus && res == template)) {
       res = %[tom_is_fun_sym_@name@(@subject@)]%;
     }
     return res;
@@ -293,7 +293,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getGetHead(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getGetHead(name);
     String res = instantiateTemplate(template,subject);
-    if(res == template) {
+    if(res==null || (!inlineplus && res == template)) {
       res = %[tom_get_head_@name@_@type@(@subject@)]%;
     }
     return res;
@@ -302,7 +302,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getGetTail(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getGetTail(name);
     String res = instantiateTemplate(template,subject);
-    if(res == template) {
+    if(res==null || (!inlineplus && res == template)) {
       res = %[tom_get_tail_@name@_@type@(@subject@)]%;
     }
     return res;
@@ -311,18 +311,17 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getIsEmptyList(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getIsEmptyList(name);
     String res = instantiateTemplate(template,subject);
-    if(res == template) {
+    if(res==null || (!inlineplus && res == template)) {
       res = %[tom_is_empty_@name@_@type@(@subject@)]%;
     }
     return res;
   }
 
   private String getMakeAddList(String name,String head, String tail,String moduleName) {
-    String prefix = "tom_cons_list_";
     String template = getSymbolTable(moduleName).getMakeAddList(name);
     String res = instantiateTemplate(template,head,tail);
-    if(res == template) {
-      res = prefix+name+"("+head+","+tail+")";
+    if(res==null || (!inlineplus && res == template)) {
+      res = %[tom_cons_list_@name@(@head@,@tail@)]%;
     }
     return res;
   }
@@ -331,7 +330,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String res = getSymbolTable(moduleName).getMakeEmptyList(name);
     if(!inlineplus) {
       String prefix = "tom_empty_list_";
-      res = prefix+name+"()";
+      res = %[tom_empty_list_@name@()]%;
     }
     return res;
   }
@@ -358,11 +357,10 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   }
   
   private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
-    String prefix = "tom_equal_term_";
     String template = getSymbolTable(moduleName).getEqualTerm(type);
     String res = instantiateTemplate(template,arg1,arg2);
-    if(res == template) {
-      res = prefix+type+"("+arg1+","+arg2+")";
+    if(res==null || (!inlineplus && res == template)) {
+      res = %[tom_equal_term_@type@(@arg1@,@arg2@)]%;
     }
     return res;
   }

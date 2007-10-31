@@ -2192,11 +2192,11 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             selector().pop();
             blockList.add(tlCode);
             if(blockList.size()==1) {
-            String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
-            result = `MakeAddList(Name(name),
-                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
-                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
-                ExpressionToInstruction(Code(code)),ot);
+              String code = ASTFactory.abstractCode(tlCode.getCode(),elementName.getText(),listName.getText());
+              result = `MakeAddList(Name(name),
+                  Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
+                  Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
+                  ExpressionToInstruction(Code(code)),ot);
             } else {
               result = `MakeAddList(Name(name),
                   Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),

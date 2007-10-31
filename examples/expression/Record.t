@@ -36,67 +36,67 @@ public class Record {
 
   %typeterm Exp {
     implement { Exp }
-    is_sort(t) { t instanceof Exp }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof Exp }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
   %typeterm BinaryOperator {
     implement { BinaryOperator }
-    is_sort(t) { t instanceof BinaryOperator }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof BinaryOperator }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
   %typeterm UnaryOperator {
     implement { UnaryOperator }
-    is_sort(t) { t instanceof UnaryOperator }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof UnaryOperator }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
   %typeterm CstExp {
     implement { CstExp }
-    is_sort(t) { t instanceof CstExp }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof CstExp }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
     // ------------------------------------------------------------
   
   %op Exp BinaryOperator(first:Exp, second:Exp) {
-    is_fsym(t) { t instanceof BinaryOperator }
-    get_slot(first,t) { ((BinaryOperator)t).first }
-    get_slot(second,t) { ((BinaryOperator)t).second }
+    is_fsym(t) { $t instanceof BinaryOperator }
+    get_slot(first,t) { ((BinaryOperator)$t).first }
+    get_slot(second,t) { ((BinaryOperator)$t).second }
   }
 
   %op Exp UnaryOperator(first:Exp) {
-    is_fsym(t) { t instanceof UnaryOperator }
-    get_slot(first,t) { ((UnaryOperator)t).first }
+    is_fsym(t) { $t instanceof UnaryOperator }
+    get_slot(first,t) { ((UnaryOperator)$t).first }
   }
 
   %op BinaryOperator Plus(first:Exp, second:Exp) {
-    is_fsym(t) { t instanceof Plus }
-    get_slot(first,t) { ((Plus)t).first }
-    get_slot(second,t) { ((Plus)t).second }
+    is_fsym(t) { $t instanceof Plus }
+    get_slot(first,t) { ((Plus)$t).first }
+    get_slot(second,t) { ((Plus)$t).second }
   }
 
   %op BinaryOperator Mult(first:Exp, second:Exp) {
-    is_fsym(t) { t instanceof Mult }
-    get_slot(first,t) { ((Mult)t).first }
-    get_slot(second,t) { ((Mult)t).second }
+    is_fsym(t) { $t instanceof Mult }
+    get_slot(first,t) { ((Mult)$t).first }
+    get_slot(second,t) { ((Mult)$t).second }
   }
 
   %op UnaryOperator Uminus(first:Exp) {
-    is_fsym(t) { t instanceof Uminus }
-    get_slot(first,t) { ((Uminus)t).first }
+    is_fsym(t) { $t instanceof Uminus }
+    get_slot(first,t) { ((Uminus)$t).first }
   }
 
   %op CstExp StringExp(value:String) {
-    is_fsym(t) { t instanceof StringExp }
-    get_slot(value,t) { ((StringExp)t).value }
+    is_fsym(t) { $t instanceof StringExp }
+    get_slot(value,t) { ((StringExp)$t).value }
   }
 
 
   %op CstExp IntExp(value:int) {
-    is_fsym(t) { t instanceof IntExp }
-    get_slot(value,t) { ((IntExp)t).value }
+    is_fsym(t) { $t instanceof IntExp }
+    get_slot(value,t) { ((IntExp)$t).value }
   }
 
     // ------------------------------------------------------------

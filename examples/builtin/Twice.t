@@ -34,9 +34,9 @@ public class Twice {
   %include {int.tom}
 
   %op int Twice(n:int) {
-    is_fsym(t) { t%2==0 }
-    get_slot(n, t) { t/2 }
-    make(t) { t*2 }
+    is_fsym(t) { $t%2==0 }
+    get_slot(n, t) { $t/2 }
+    make(t) { $t*2 }
   }
 
   public final static void main(String[] args) {

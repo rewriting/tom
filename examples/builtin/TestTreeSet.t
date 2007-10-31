@@ -42,9 +42,9 @@ public class TestTreeSet extends TestCase {
   /* we have to do this to match a string as an object */
   %include { string.tom }
   %op Object string(s:String) {
-    is_fsym(s) { (s != null) && ( s instanceof String ) }
-    make(s) { s }
-    get_slot(s,o) { ((String) o) }
+    is_fsym(s) { ($s != null) && ( $s instanceof String ) }
+    make(s) { $s }
+    get_slot(s,o) { ((String) $o) }
   }
 
   public void testMake() {

@@ -39,6 +39,7 @@ public class Nsh {
 // ------------------------------------------------------------  
   %include { term/term.tom }
   %include { sl.tom }
+  %include { util/types/Collection.tom }
 // ------------------------------------------------------------  
  
   public void run(int nbAgent) {
@@ -253,30 +254,22 @@ public class Nsh {
       concAgent(X1*,x,X2*) && x<<Agent agent -> { return true; }
     }
     return false;
-      /*
-      return list.indexOf(agent,0) >= 0;
-      */
+    /* return list.indexOf(agent,0) >= 0; */
   }
 
   public static boolean existMessage(Message message, ListMessage list) {
-        %match(list) {
-          concMessage() -> { return false; }
-          concMessage(X1*,x,X2*) && x<<Message message -> { return true; }
-        }
-        return false;
-      /*
-      return list.indexOf(message,0) >= 0;
-      */
+    %match(list) {
+      concMessage() -> { return false; }
+      concMessage(X1*,x,X2*) && x<<Message message -> { return true; }
+    }
+    return false;
+    /* return list.indexOf(message,0) >= 0; */
   }
 
   public static int sizeMessage(ListMessage list) {
     return ((nspk.term.types.listmessage.concMessage)list).length();
   }
   
-  %typeterm Collection {
-    implement {java.util.Collection}
-    is_sort(t)     { t instanceof java.util.Collection }
-  }
   public void collectOneStep(State state, Collection col) {
     try {
       `OneStep(col).visitLight(state);
@@ -296,7 +289,7 @@ public class Nsh {
           dst@concAgent(_*,agent(y,_,_),_*),
           I,
           M) -> {
-        if(sizeMessage(`M) < maxMessagesInNetwork) {
+        if(`sizeMessage(M) < maxMessagesInNetwork) {
           State state = `state(
               concAgent(E1*,agent(x,WAIT(),N(x,y)),E2*),
               dst,I,
@@ -460,8 +453,9 @@ public class Nsh {
       state(
           E, D,
           intru@intruder(w,_,concMessage(_*,msg(_,_,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
-          M) -> {
-        if(sizeMessage(`M) < maxMessagesInNetwork) {
+          M) 
+        -> {
+          if(sizeMessage(`M) < maxMessagesInNetwork) {
           ListAgent subjectList = `concAgent(E*,D*);
           %match(ListAgent subjectList) {
             concAgent(_*,agent(t,_,_),_*) -> {

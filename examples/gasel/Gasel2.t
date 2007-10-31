@@ -73,30 +73,30 @@ public final class Gasel2 {
 
   %typeterm StateList {
     implement { List }
-    is_sort(t) { t instanceof List }
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof List }
+    equals(t1,t2) { $t1.equals($t2) } 
   }
 
   %typeterm State {
     implement { State }
-    is_sort(t) { t instanceof State }
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof State }
+    equals(t1,t2) { $t1.equals($t2) } 
   }
 
   %op State rad(bondtype:BondType,atom:Atom,subterm:StateList) {
-    is_fsym(t)  { t instanceof State }
-    get_slot(bondtype,t) { t.getBondType() }
-    get_slot(atom,t) { t.getAtom() }
-    get_slot(subterm,t)  { computeSuccessors(getGraph(), t) }
-    make(bondType,atom,subterm) { createState(getGraph(), bondType, atom, subterm) }
+    is_fsym(t)  { $t instanceof State }
+    get_slot(bondtype,t) { $t.getBondType() }
+    get_slot(atom,t) { $t.getAtom() }
+    get_slot(subterm,t)  { computeSuccessors(getGraph(), $t) }
+    make(bondType,atom,subterm) { createState(getGraph(), $bondType, $atom, $subterm) }
   }
  
   %oparray StateList conc( State* ) {
-    is_fsym(t)       { t instanceof List }
-    make_empty(n)    { new ArrayList(n)       }
-    make_append(e,l) { myAdd(e,(ArrayList)l)  }
-    get_element(l,n) { (State)l.get(n)        }
-    get_size(l)      { l.size()               }
+    is_fsym(t)       { $t instanceof List }
+    make_empty(n)    { new ArrayList($n)       }
+    make_append(e,l) { myAdd($e,(ArrayList)$l)  }
+    get_element(l,n) { ((State)($l.get($n)))        }
+    get_size(l)      { $l.size()               }
   }
 
   private static List myAdd(Object e,List l) {

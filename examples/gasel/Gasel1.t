@@ -62,40 +62,40 @@ public final class Gasel1 {
 
   %typeterm Radical {
     implement { Object }
-    is_sort(t) { t instanceof Object }
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof Object }
+    equals(t1,t2) { $t1.equals($t2) } 
   }
  
   %typeterm LinkRadicalList {
     implement { List }
-    is_sort(t) { t instanceof List }
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof List }
+    equals(t1,t2) { $t1.equals($t2) } 
   }
 
   %typeterm LinkRadical {
     implement { LinkRadical }
-    is_sort(t) { t instanceof LinkRadical }
-    equals(t1,t2) { t1.equals(t2) } 
+    is_sort(t) { $t instanceof LinkRadical }
+    equals(t1,t2) { $t1.equals($t2) } 
   }
  
   %op LinkRadical linkrad(link:Link,rad:Radical) {
-    is_fsym(t)  { t instanceof LinkRadical }
-    get_slot(link,t) { ((LinkRadical)t).getLink() }
-    get_slot(rad,t)  { ((LinkRadical)t).getRadical() }
+    is_fsym(t)  { $t instanceof LinkRadical }
+    get_slot(link,t) { ((LinkRadical)$t).getLink() }
+    get_slot(rad,t)  { ((LinkRadical)$t).getRadical() }
   }
 
   %op Radical rad(atom:Atom,subterm:LinkRadicalList) {
-    is_fsym(t)  { t instanceof Atom }
-    get_slot(atom,t) { (Atom)t }
-    get_slot(subterm,t)  { computeSuccessors(getGraph(), t) }
+    is_fsym(t)  { $t instanceof Atom }
+    get_slot(atom,t) { (Atom)$t }
+    get_slot(subterm,t)  { computeSuccessors(getGraph(), $t) }
   }
  
   %oparray LinkRadicalList conc( LinkRadical* ) {
-    is_fsym(t)       { t instanceof List }
-    make_empty(n)    { new ArrayList(n)       }
-    make_append(e,l) { myAdd(e,(ArrayList)l)   }
-    get_element(l,n) { (LinkRadical)l.get(n)        }
-    get_size(l)      { l.size()                }
+    is_fsym(t)       { $t instanceof List }
+    make_empty(n)    { new ArrayList($n)       }
+    make_append(e,l) { myAdd($e,(ArrayList)$l)   }
+    get_element(l,n) { (LinkRadical)$l.get($n)        }
+    get_size(l)      { $l.size()                }
   }
 
   private static List myAdd(Object e,List l) {
