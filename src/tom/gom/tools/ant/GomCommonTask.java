@@ -55,6 +55,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>fork</li>
  * <li>termgraph</li>
  * <li>pointer</li>
+ * <li>multithread</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -77,6 +78,7 @@ public class GomCommonTask extends MatchingTask {
   protected boolean fork = false;
   protected boolean pointer = false;
   protected boolean termgraph = false;
+  protected boolean multithread = false;
 
   protected String protectedFileSeparator = "\\"+File.separatorChar;
 
@@ -164,6 +166,22 @@ public class GomCommonTask extends MatchingTask {
    */
   public boolean getTermgraph() {
     return termgraph;
+  }
+
+  /**
+   * If true, Gom generate data-structure compatible with multi-threading
+   * @param flag if true, activate the option
+   */
+  public void setMultithread(boolean flag) {
+    this.multithread = flag;
+  }
+
+  /**
+   * Gets the multithread flag.
+   * @return the multithread flag
+   */
+  public boolean getMultithread() {
+    return multithread;
   }
 
   /**
@@ -317,6 +335,9 @@ public class GomCommonTask extends MatchingTask {
       }
       if(getTermgraph() == true) {
         javaRunner.createArg().setValue("--termgraph");
+      }
+      if(getMultithread() == true) {
+        javaRunner.createArg().setValue("--multithread");
       }
       if(getPointer() == true) {
         javaRunner.createArg().setValue("--pointer");
