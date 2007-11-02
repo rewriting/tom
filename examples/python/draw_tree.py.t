@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from term import *
 
 node = Constructor('node',2)
@@ -7,145 +8,7 @@ pair = Constructor('pair',2)
 enode = Constructor('enode',2)
 interval = Constructor('interval',2)
 
-%typeterm Interval {
-    implement { Term }
-    is_sort(t) { isinstance(t,Term) }
-    equals(t1,t2) { t1 == t2 }
-}
-
-%op Interval interval(x:float, y:float) {
-    is_fsym(t) { t.name == 'interval' }
-    get_slot(x,t) { t.children[0] }
-    get_slot(y,t) { t.children[1] }
-    make(x,y) { interval(x,y) }
-}
-
-%typeterm Extent {
-    implement { list }
-    is_sort(t) { isinstance(t,list) }
-    equals(l1,l2) { l1 == l2 }
-}
-
-%oplist Extent extent( Interval* ) {
-    is_fsym(t)       { isinstance(t,list) }
-    make_empty()     { [] }
-    make_insert(e,l) { [e] + l[:] }
-    get_head(l)      { l[0]  }  
-    get_tail(l)      { l[1:] }
-    is_empty(l)      { len(l) == 0 }
-}
-
-%typeterm String {
-    implement { string }
-    is_sort(s) { isinstance(s,string) }
-    equals(s1,s2) { s1 == s2 }
-}
-
-%typeterm float {
-    implement { float }
-    is_sort(d) { isinstance(s,float) }
-    equals(d1,d2) { d1 == d2 }
-}
-
-%typeterm Tree {
-    implement { Term }
-    is_sort(t) { isinstance(t,Term) }
-    equals(t1,t2) { t1 == t2 }
-}
-
-%op Tree node(label:String, tl:TreeList) {
-    is_fsym(t) { t.name == 'node' }
-    get_slot(label,t) { t.children[0] }
-    get_slot(tl,t) { t.children[1] }
-    make(l,t) { node(l,t) }
-}
-
-%typeterm TreeList {
-    implement { list }
-    is_sort(t) { isinstance(t,list) }
-    equals(l1,l2) { l1 == l2 }
-}
-
-%oplist TreeList treelist( Tree* ) {
-    is_fsym(t)       { isinstance(t,list) }
-    make_empty()     { [] }
-    make_insert(e,l) { [e] + l[:] }
-    get_head(l)      { l[0]  }  
-    get_tail(l)      { l[1:] }
-    is_empty(l)      { len(l) == 0 }
-}
-
-%typeterm Couple {
-    implement { Term }
-    is_sort(t) { isinstance(t,Term) }
-    equals(t1,t2) { t1 == t2 }
-}
-
-%op Couple pair(label:Tree, value:float) {
-    is_fsym(t) { t.name == 'pair' }
-    get_slot(label,t) { t.children[0] }
-    get_slot(value,t) { t.children[1] }
-    make(l,v) { pair(l,v) }
-}
-
-%typeterm ETree {
-    implement { Term }
-    is_sort(t) { isinstance(t,Term) }
-    equals(t1,t2) { t1 == t2 }
-}
-
-%op ETree enode(label:Couple, tl:ETreeList) {
-    is_fsym(t) { t.name == 'enode' }
-    get_slot(label,t) { t.children[0] }
-    get_slot(tl,t) { t.children[1] }
-    make(l,t) { enode(l,t) }
-}
-
-%typeterm ETreeList {
-    implement { list }
-    is_sort(t) { isinstance(t,list) }
-    equals(l1,l2) { l1 == l2 }
-}
-
-%oplist ETreeList etreelist( ETree* ) {
-    is_fsym(t)       { isinstance(t,list) }
-    make_empty()     { [] }
-    make_insert(e,l) { [e] + l[:] }
-    get_head(l)      { l[0]  }  
-    get_tail(l)      { l[1:] }
-    is_empty(l)      { len(l) == 0 }
-}
-
-%typeterm ExtentList {
-    implement { list }
-    is_sort(t) { isinstance(t,list) }
-    equals(l1,l2) { l1 == l2 }
-}
-
-%oplist ExtentList extentlist( Extent* ) {
-    is_fsym(t)       { isinstance(t,list) }
-    make_empty()     { [] }
-    make_insert(e,l) { [e] + l[:] }
-    get_head(l)      { l[0]  }  
-    get_tail(l)      { l[1:] }
-    is_empty(l)      { len(l) == 0 }
-}
-
-%typeterm FloatList {
-    implement { list }
-    is_sort(t) { isinstance(t,list) }
-    equals(l1,l2) { l1 == l2 }
-}
-
-%oplist FloatList floatlist( float* ) {
-    is_fsym(t)       { isinstance(t,list) }
-    make_empty()     { [] }
-    make_insert(e,l) { [e] + l[:] }
-    get_head(l)      { l[0]  }  
-    get_tail(l)      { l[1:] }
-    is_empty(l)      { len(l) == 0 }
-}
-
+%include { draw_tree.tom }
 
 def movetree(t,delta):
   %match(t) {
@@ -153,17 +16,14 @@ def movetree(t,delta):
   }
 
 def moveextent(e,x):
-  #print "moveextent ", map(str,e), x
   def f(i):
     %match(i) { interval(p,q) -> { return `interval(p+x,q+x) } }
-  #print "map(f,e) = " , map(str,map(f,e))
   return map(f,e)
 
 # to enable flattening in the last clause of merge's match
 %op Extent merge(e1:Extent, e2:Extent) { make(e1,e2) { merge(e1,e2) } }
 
 def merge(e1, e2):
-  #print "merge ", map(str,e1), map(str,e2)
   %match(e1, e2) {
     extent() , qs -> { return `qs; }
     ps, extent()  -> { return `ps; }
@@ -174,14 +34,12 @@ def mergelist(es):
   return reduce(merge,es,[])
 
 def fit(e1,e2):
-  #print "e1 = %s, e2 = %s" % (map(str,e1),map(str,e2))
   %match(e1,e2) {
     extent(interval(_,p),ps*), extent(interval(q,_),qs*)  -> { return max(`fit(ps,qs),`p-`q+1.0) }
     _                        , _                          -> { return 0.0 }
   }
 
 def fitlistl(es):
-  #print "es = ", map(lambda x: map(str,x),es)
   %op FloatList fitlistlaux(l1:Extent, l2:ExtentList) { make(l1,l2) { fitlistlaux(l1,l2) } }
   def fitlistlaux(acc,l):
     %match(ExtentList l) {
@@ -243,30 +101,136 @@ def next(counter,symbol):
     counter[symbol] += 1
   except:
     counter[symbol] = 0
-  return symbol + str(counter[symbol])
+  if symbol in ['x','y','z']:
+    return '_' + symbol + str(counter[symbol])
+  else:
+    return symbol + str(counter[symbol])
 
-
-def tomp(t,parent=None,counter={}):
+def tomp_aux(t,boxes,equations,draws,parent,counter):
   %match(t) {
       enode(pair(symbol,pos),subtrees) -> {
         s = `next(counter,symbol)
-        print "boxit.%s(btex $%s$ etex);" % (s,`symbol)
-        print "drawunboxed(%s);" % s
+        boxes.append("boxit.%s(btex $%s$ etex);" % (s,`symbol))
+        draws.append("drawunboxed(%s);" % s)
         if parent:
-          print "%s.c = %s.c + (%fu,-u);" % (s,parent,`pos)
-          print "draw %s.c -- %s.c cutbefore bpath %s cutafter bpath %s;" % (parent,s,parent,s)
+          equations.append("%s.c = %s.c + (%fu,-u);" % (s,parent,`pos))
+          draws.append("draw %s.c -- %s.c cutbefore bpath %s cutafter bpath %s;" % (parent,s,parent,s))
         else:
-          print "%s.c = (0.0,0.0);" % s
+          equations.append("%s.c = (0.0,0.0);" % s)
         for x in `subtrees:
-          tomp(x,s,counter)
+          tomp_aux(x,boxes,equations,draws,s,counter)
       }
   }
 
+def tomp(t,out=sys.stdout):
 
-t = `node('f',[node('g',[node('a',[]),node('b',[])]),node('g',[node('a',[])])])
-print pp(t)
-print pp(design(t))
-tomp(design(t))
+  def writeln(s=''):
+    out.write(s + '\n')
+
+  boxes = []
+  eqs = []
+  draws = []
+  tomp_aux(t,boxes,eqs,draws,None,{})
+  writeln(r"input boxes;")
+  writeln()
+  writeln(r"verbatimtex %&latex")
+  writeln(r"\documentclass{article}")
+  writeln(r"\usepackage{amsmath}")
+  writeln(r"\usepackage{amsfonts}")
+  writeln(r"\usepackage{amssymb}")
+  writeln(r"\begin{document}")
+  writeln(r"etex")
+  writeln()
+  writeln("u:= 1cm;")
+  writeln()
+  writeln(r"beginfig(0);")
+  writeln()
+
+  for l in boxes,eqs,draws:
+    for i in l:
+      writeln(i)
+    writeln()
+
+  writeln()
+  writeln(r"endfig;")
+  writeln(r"end")
+
+
+LPAR = 0
+RPAR = 1
+COMMA = 2
+STRING = 3
+
+def TermLexer(s):
+    i = 0
+    while i<len(s):
+        if s[i] == ',':
+            i += 1
+            yield (COMMA,'')
+        if s[i] == '(':
+            i += 1
+            yield (LPAR,'')
+        if s[i] == ')':
+            i += 1
+            yield (RPAR,'')
+        else:
+            res = ''
+            while s[i].isalpha():
+                res += s[i]
+                i += 1
+            yield (STRING,res)
+
+class TermParser:
+    def parse(self,s):
+        self.tokens = [t for t in TermLexer(s)]
+        self.i = 0
+        res = self.parse_fun()
+        if self.i != len(self.tokens):
+            raise "parse error"
+        else:
+            return res
+
+    def parse_fun(self):
+        t,name = self.tokens[self.i]
+        if not t == STRING: raise "expected string"
+        self.i += 1
+
+        t,_ = self.tokens[self.i]
+        if t == LPAR:
+            self.i += 1
+            children = self.parse_list()
+            children.reverse()
+            t,_ = self.tokens[self.i]
+            if not t == RPAR : raise "expected right parenthesis"
+            self.i += 1
+            return `node(name,children)
+
+        elif t == COMMA or t == RPAR:
+            return `node(name,[])
+
+        else:
+            raise "expected left or right parenthesis or comma"
+
+    def parse_list(self):
+        t,_ = self.tokens[self.i]
+        if t == STRING:
+            f = self.parse_fun()
+            t,_ = self.tokens[self.i]
+            if t == COMMA:
+                self.i += 1
+                tail = self.parse_list()
+                tail.append(f)
+                return tail
+            else:
+                return [f]
+        else:
+            return []
+
+
+if __name__ == '__main__':
+  p = TermParser()
+  t = p.parse(sys.argv[1])
+  tomp(design(t))
 
 
 
