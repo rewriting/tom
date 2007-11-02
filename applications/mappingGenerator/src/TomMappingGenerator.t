@@ -1,6 +1,7 @@
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -85,8 +86,8 @@ where:
       // the types used in operator declaration
       HashMap<String, Class<?>> usedTypes = new HashMap<String, Class<?>>();
       // the types declared
-      HashMap<String, Class<?>> declaredTypes = new HashMap<String, Class<?>>();
-      generate(startPoint, strBuilder, usedTypes, declaredTypes, includeInClasspath);
+      HashMap<String, Class<?>> declaredTypes = new HashMap<String, Class<?>>();      
+      generate(startPoint, strBuilder, usedTypes, declaredTypes, getURLPathsFromString(includeInClasspath));
       // generate a mapping for each used type that was not declared
       for(String usedTypeName: usedTypes.keySet()){
         Class usedTypeClass = usedTypes.get(usedTypeName);
@@ -120,7 +121,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
   }
 
   private void generate(File startPointFile, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
-      HashMap<String, Class<?>> declaredTypes, String includeInClasspath) throws IOException, ClassNotFoundException {
+      HashMap<String, Class<?>> declaredTypes, URL[] includeInClasspath) throws IOException, ClassNotFoundException {
     if (startPointFile.isDirectory()) {
       File[] files = startPointFile.listFiles();
       for (File file : files) {
@@ -131,7 +132,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
         return;
       }
       System.out.print("Extracting mapping for:" + startPointFile.getName() + " ... ");      
-      extractMapping((new MGClassLoader(getURLPathsFromString(includeInClasspath))).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
+      extractMapping((new MGClassLoader(includeInClasspath)).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
       System.out.println("Done !");
     }
   }
@@ -140,6 +141,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
   private void extractMapping(Class classObj, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
       HashMap<String, Class<?>> declaredTypes) throws ClassNotFoundException, IOException {    
     strBuilder.append("\n/*******************************************************************************/\n");
+    System.out.println("class obj:" + classObj);
     // generate %typeterm
     generateTypeTerm(classObj, strBuilder, declaredTypes);
     // generate %op
@@ -190,6 +192,8 @@ private static java.util.List myAdd(Object e,java.util.List l) {
 
   private String getFieldsDeclarations(Method[] methods, HashMap<String, Class<?>> usedTypes) {
     StringBuilder result = new StringBuilder();
+    // avoids declaring twice the same field (in case we have 2 getters for the same field)
+    ArrayList<String> declaredFields = new ArrayList<String>(); 
     for (Method m : methods) {
       // not a 'get' or an 'is'
       String methodName = m.getName();
@@ -198,9 +202,10 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       }
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
       fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
-      if ("class".equalsIgnoreCase(fieldName)) {
+      if ("class".equalsIgnoreCase(fieldName) || declaredFields.contains(fieldName)) {
         continue;
       }
+      declaredFields.add(fieldName);
       result.append(fieldName + ":");
       if (m.getReturnType().isPrimitive()) {
         result.append(m.getReturnType().getName());
@@ -218,13 +223,16 @@ private static java.util.List myAdd(Object e,java.util.List l) {
 
   private String getSlotDeclarations(Method[] methods, String className){
     StringBuilder result = new StringBuilder();
+    // avoids declaring twice the same slot (in case we have 2 getters for the same field)
+    ArrayList<String> declaredFields = new ArrayList<String>(); 
     for(Method m: methods){
       // not a 'get' or an 'is'
       String methodName = m.getName();
-      if (!methodName.startsWith("get") && !methodName.startsWith("is")) {continue;};
-      String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
+      if (!methodName.startsWith("get") && !methodName.startsWith("is")) { continue; };
+      String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);      
       fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
-      if ("class".equalsIgnoreCase(fieldName)) { continue; }
+      if ("class".equalsIgnoreCase(fieldName) || declaredFields.contains(fieldName)) { continue; }
+      declaredFields.add(fieldName);
       result.append(%[
   get_slot(@fieldName@, t)  { ((@className@)t).@methodName@() }]%);    
     }
