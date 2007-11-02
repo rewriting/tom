@@ -132,7 +132,11 @@ private static java.util.List myAdd(Object e,java.util.List l) {
         return;
       }
       System.out.print("Extracting mapping for:" + startPointFile.getName() + " ... ");      
-      extractMapping((new MGClassLoader(includeInClasspath)).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
+      try {
+        extractMapping((new MGClassLoader(includeInClasspath)).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
+      } catch (NullPointerException e) {
+        System.out.println("\n An error occured");
+      }
       System.out.println("Done !");
     }
   }
@@ -140,12 +144,15 @@ private static java.util.List myAdd(Object e,java.util.List l) {
 
   private void extractMapping(Class classObj, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes,
       HashMap<String, Class<?>> declaredTypes) throws ClassNotFoundException, IOException {    
-    strBuilder.append("\n/*******************************************************************************/\n");
-    System.out.println("class obj:" + classObj);
+    strBuilder.append("\n/*******************************************************************************/\n");    
     // generate %typeterm
     generateTypeTerm(classObj, strBuilder, declaredTypes);
-    // generate %op
-    generateOperator(classObj, strBuilder, usedTypes);
+    // generate %op    
+    try{ // sometimes getMethods throws a NullPointerException
+        generateOperator(classObj, strBuilder, usedTypes);    
+    } catch ( NullPointerException e ) {
+      System.out.println("\n An %op couldn't be generated");
+    } 
     // generate %oparray (only for base classes)
     if (Object.class.equals(classObj.getSuperclass())) {
       generateOpArray(classObj.getName(), strBuilder);
