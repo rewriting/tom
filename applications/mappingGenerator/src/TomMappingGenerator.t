@@ -153,19 +153,19 @@ private static java.util.List myAdd(Object e,java.util.List l) {
   }
 
   private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> declaredTypes){
-    String className = classFName.getCanonicalName().substring(classFName.getCanonicalName().lastIndexOf('.') + 1);
-    declaredTypes.put(classFName.getCanonicalName(),classFName);
+    String className = classFName.getName().substring(classFName.getName().lastIndexOf('.') + 1);
+    declaredTypes.put(classFName.getName(),classFName);
     strBuilder.append(%[
 %typeterm @className@ {
-  implement     { @classFName.getCanonicalName()@ }
-  is_sort(t)    { t instanceof @classFName.getCanonicalName()@ }
+  implement     { @classFName.getName()@ }
+  is_sort(t)    { t instanceof @classFName.getName()@ }
   equals(t1,t2) { t1.equals(t2) }      
 }
 ]%);
   }
 
   private void generateOperator(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> usedTypes){
-    String fullClassName = classFName.getCanonicalName();
+    String fullClassName = classFName.getName();
     String className = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
     Method[] methods = classFName.getMethods();    
     // find the class that is the highest in the hierarchy
@@ -177,11 +177,11 @@ private static java.util.List myAdd(Object e,java.util.List l) {
     String codomain = null;
     // if we have some super class
     if(superClass != null) {
-      codomain = superClass.getCanonicalName().substring(superClass.getCanonicalName().lastIndexOf('.') + 1);
-      usedTypes.put(superClass.getCanonicalName(),superClass);
+      codomain = superClass.getName().substring(superClass.getName().lastIndexOf('.') + 1);
+      usedTypes.put(superClass.getName(),superClass);
     }else{
       codomain = className;
-      usedTypes.put(classFName.getCanonicalName(),classFName);
+      usedTypes.put(classFName.getName(),classFName);
     }
     strBuilder.append(%[
 %op @codomain@ @className@(@getFieldsDeclarations(methods,usedTypes)@) {
@@ -210,10 +210,10 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       if (m.getReturnType().isPrimitive()) {
         result.append(m.getReturnType().getName());
       } else {
-        result.append(m.getReturnType().getCanonicalName().substring(
-            m.getReturnType().getCanonicalName().lastIndexOf('.') + 1));
+        result.append(m.getReturnType().getName().substring(
+            m.getReturnType().getName().lastIndexOf('.') + 1));
       }
-      usedTypes.put(m.getReturnType().getCanonicalName(),m.getReturnType());
+      usedTypes.put(m.getReturnType().getName(),m.getReturnType());
       result.append(",");
     }
     // remove the ","
