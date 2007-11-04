@@ -316,7 +316,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   public String constraintToString(ConstraintList constraintList) {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     Constraint h = null;
     ConstraintList tail = constraintList;
     if(!tail.isEmptyconcConstraint()) {
@@ -350,7 +350,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   public String constraintToString(TomList tomList) {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     TomTerm h = null;
     TomList tail = tomList;
     if(!tail.isEmptyconcTomTerm()) {

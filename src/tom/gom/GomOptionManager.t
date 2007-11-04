@@ -287,7 +287,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     String beginning = "usage :"
       + "\n\tgom [options] file [... file_n]"
       + "\noptions :";
-    StringBuffer buffer = new StringBuffer(beginning);
+    StringBuilder buffer = new StringBuilder(beginning);
 
     buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
 
@@ -368,7 +368,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    */
   private List processArguments(String[] argumentList) {
     List inputFiles = new ArrayList();
-    StringBuffer imports = new StringBuffer();
+    StringBuilder imports = new StringBuilder();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
     int i = 0;

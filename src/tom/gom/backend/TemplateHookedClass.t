@@ -55,7 +55,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   %include { ../adt/objects/Objects.tom}
 
   protected String generateBlock() {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
       concHook(_*,BlockHook(code),_*) -> {
@@ -67,7 +67,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   }
 
   protected String generateImport() {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
       concHook(_*,ImportHook(code),_*) -> {
@@ -79,7 +79,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
   }
 
   protected String generateInterface() {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
       concHook(_*,InterfaceHook(code),_*) -> {

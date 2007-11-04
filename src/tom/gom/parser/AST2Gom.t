@@ -109,7 +109,7 @@ public class AST2Gom {
   }
 
   private static void setPkgPath(ATermList l, GomStreamManager stream) {
-    StringBuffer pkgPrefix = new StringBuffer("");
+    StringBuilder pkgPrefix = new StringBuilder("");
     while (!l.isEmpty()) {
       ATerm t = l.getFirst();
       %match(t) {

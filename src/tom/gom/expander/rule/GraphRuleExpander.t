@@ -106,7 +106,7 @@ public class GraphRuleExpander {
   //add the common methods, includes and imports for all graphrule strategies of a sort 
   protected HookDeclList expandFirst(Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
-  StringBuffer output = new StringBuffer();
+  StringBuilder output = new StringBuilder();
     output.append(
         %[
   %include {sl.tom }
@@ -305,7 +305,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     output.append(%[
   public static Strategy @stratname@() {
     return `@stratname@();
@@ -387,7 +387,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
   }
 
   private String genTerm(Term term) {
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     term = expand(term);
     %match(term) {
       PathTerm(i,tail*) -> {
@@ -422,7 +422,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
   }
 
   private String genTermList(TermList list) {
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     %match(list) {
       TermList() -> { return ""; }
       TermList(h,t*) -> {
@@ -437,7 +437,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
   }
 
   private String genTermWithExplicitVar(Term termArg, String fathersymbol, int omega) {
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     %match(termArg) {
       LabTerm(label,term) -> {
         output.append("Lab"+sortname);
@@ -482,7 +482,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
   }
 
   private String genTermListWithExplicitVar(String fathersymbol, TermList list) {
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     int omega=1;
     %match(list) {
       TermList() -> { return ""; }

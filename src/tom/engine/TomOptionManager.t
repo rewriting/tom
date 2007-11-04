@@ -324,7 +324,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     String beginning = "\nTom usage :"
       + "\n\ttom [options] input[.t] [... input[.t]]"
       + "\noptions :";
-    StringBuffer buffer = new StringBuffer(beginning);
+    StringBuilder buffer = new StringBuilder(beginning);
     buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
 
     TreeMap treeMap = new TreeMap(mapNameToOption);
@@ -398,7 +398,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   private List processArguments(String[] argumentList) {
     List fileList = new ArrayList();
-    StringBuffer imports = new StringBuffer();
+    StringBuilder imports = new StringBuilder();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
     int i = 0;

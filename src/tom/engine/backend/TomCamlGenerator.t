@@ -255,7 +255,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
                          String args[],
                          TargetLanguage tlCode,
                          String moduleName)  throws IOException {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     if(nodeclMode) { 
       return; 
     }
@@ -285,7 +285,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
                              TomList argList, Instruction instr, String moduleName)  throws IOException {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     if(nodeclMode) { 
       return;
     }
@@ -396,7 +396,7 @@ public class TomCamlGenerator extends TomGenericGenerator {
                          Instruction instr,
                          int deep,
                          String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     if(nodeclMode) {
       return;
     }

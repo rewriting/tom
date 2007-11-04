@@ -196,7 +196,7 @@ writer.write(%[
   }
   
   private String importedVisitorList(ClassNameList list) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     while(!list.isEmptyconcClassName()) {
       out.append(", "+fullClassName(list.getHeadconcClassName()));
       list = list.getTailconcClassName();

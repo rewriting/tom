@@ -19,7 +19,7 @@ public class Preprocess {
 
   private static String readFile(String filename) throws Exception {
     BufferedReader in = new BufferedReader(new FileReader(filename));
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     String line = null;
     while( (line = in.readLine()) != null )
       buffer.append(line + "\n");
@@ -45,7 +45,7 @@ public class Preprocess {
   }
 
   private static void generateInfoList
-    (StringBuffer res, InfoList il, String param, String value) {
+    (StringBuilder res, InfoList il, String param, String value) {
       %match (il) {
         infolist(_*,info(l,r),_*) -> {
           res.append("\t" + `l);
@@ -57,7 +57,7 @@ public class Preprocess {
   }
 
   private static void 
-    generateTypeterm(StringBuffer res, TTInstance tti) {
+    generateTypeterm(StringBuilder res, TTInstance tti) {
       %match(tti) {
         ttinstance(
             typeterm(genId(name,param),infos),
@@ -71,7 +71,7 @@ public class Preprocess {
     }
 
   private static void 
-    generateArgs(StringBuffer res, IdList args, String param, String value) {
+    generateArgs(StringBuilder res, IdList args, String param, String value) {
       %match(args) {
         idlist(genId(name,type),tail*) -> {
           res.append(`name);
@@ -86,7 +86,7 @@ public class Preprocess {
     }
 
   private static void 
-    generateOperator(StringBuffer res, OpInstance opi) {
+    generateOperator(StringBuilder res, OpInstance opi) {
       %match(opi) {
         opinstance(
             op(genId(retname,param),
@@ -166,7 +166,7 @@ public class Preprocess {
 
   public static String instanciateTemplates
     (Collection<TTInstance> ttis, Collection<OpInstance> opis) {
-      StringBuffer res = new StringBuffer();
+      StringBuilder res = new StringBuilder();
       for(TTInstance tti: ttis) 
         `generateTypeterm(res,tti);
       for(OpInstance opi: opis) 

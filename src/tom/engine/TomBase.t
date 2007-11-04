@@ -132,7 +132,7 @@ public final class TomBase {
     String result = (String)tomNumberListToStringMap.get(numberList);
     if(result == null) {
       TomNumberList key = numberList;
-      StringBuffer buf = new StringBuffer(30);
+      StringBuilder buf = new StringBuilder(30);
       while(!numberList.isEmptyconcTomNumber()) {
 	TomNumber number = numberList.getHeadconcTomNumber();
 	numberList = numberList.getTailconcTomNumber();

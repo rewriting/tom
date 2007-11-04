@@ -213,7 +213,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
       return;
     }
 
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(modifier);
     s.append(returnType);
     s.append(" ");
@@ -257,7 +257,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
       return;
     }
 
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     s.append(modifier);
     s.append(returnType);
     s.append(" ");
@@ -467,7 +467,7 @@ s = %[
       }
     }
     if(!inline || !isCode || !inlined) {
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       s.append(modifier + TomBase.getTLType(returnType) + " " + prefix + funName + "(");
       while(!argList.isEmptyconcTomTerm()) {
         TomTerm arg = argList.getHeadconcTomTerm();

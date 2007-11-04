@@ -174,12 +174,12 @@ writer.write(%[
   }
 
   /*
-   * Generate a toStringBuffer method if the operator is not associative
+   * Generate a toStringBuilder method if the operator is not associative
    */
   if (sortName == extendsType) {
 writer.write(%[
   @@Override
-  public void toStringBuffer(java.lang.StringBuffer buffer) {
+  public void toStringBuilder(java.lang.StringBuilder buffer) {
     buffer.append("@className()@(");
     @toStringChilds("buffer")@
     buffer.append(")");
@@ -389,7 +389,7 @@ writer.write(%[
   }
 
   private String generateToATermChilds() {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     SlotFieldList slots = slotList;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
@@ -403,7 +403,7 @@ writer.write(%[
   }
 
   private String generatefromATermChilds(String appl) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     int index = 0;
     SlotFieldList slots = slotList;
     while(!slots.isEmptyconcSlotField()) {
@@ -423,7 +423,7 @@ writer.write(%[
   }
 
   private String childListWithType(SlotFieldList slots) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -441,7 +441,7 @@ writer.write(%[
     return res.toString();
   }
   private String unprotectedChildListWithType(SlotFieldList slots) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -459,7 +459,7 @@ writer.write(%[
     return res.toString();
   }
   private String childList(SlotFieldList slots) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -476,7 +476,7 @@ writer.write(%[
     return res.toString();
   }
   private String unprotectedChildList(SlotFieldList slots) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -493,7 +493,7 @@ writer.write(%[
     return res.toString();
   }
   private String generateMembersEqualityTest(String peer) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     if(!slotList.isEmptyconcSlotField()) {
       res.append(%[
       @className()@ peer = (@className()@) obj;]%);;
@@ -515,7 +515,7 @@ writer.write(%[
   }
 
   private String getCases() {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     int index = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
@@ -542,7 +542,7 @@ writer.write(%[
   }
 
   private String visitableList(SlotFieldList slots) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -577,7 +577,7 @@ writer.write(%[
   }
 
   private String arrayMake(String arrayName) {
-    StringBuffer res = new StringBuffer("make(");
+    StringBuilder res = new StringBuilder("make(");
     int index = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[Domain=domain],_*) -> {
@@ -607,7 +607,7 @@ writer.write(%[
     return res.toString();
   }
 private String makeCases(String argName) {
-  StringBuffer res = new StringBuffer();
+  StringBuilder res = new StringBuilder();
   int index = 0;
   %match(SlotFieldList slotList) {
     concSlotField(_*,SlotField[Domain=domain],_*) -> {
@@ -618,7 +618,7 @@ private String makeCases(String argName) {
   return res.toString();
 }
 private String generateMakeArgsFor(int argIndex, String argName) {
-  StringBuffer res = new StringBuffer();
+  StringBuilder res = new StringBuilder();
   int index = 0;
   %match(SlotFieldList slotList) {
     concSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
@@ -642,7 +642,7 @@ private String generateMakeArgsFor(int argIndex, String argName) {
   return res.toString();
 }
 private String generateMakeArgsFor(SlotField slot, String argName) {
-  StringBuffer res = new StringBuffer();
+  StringBuilder res = new StringBuilder();
   int fullindex = 0;
   %match(SlotFieldList slotList) {
     concSlotField(_*,itslot@SlotField[Name=fieldName],_*) -> {
@@ -662,7 +662,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     if (0 == slotList.length()) {
       return "";
     }
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     SlotFieldList slots = slotList;
 		while(!slots.isEmptyconcSlotField()) {
 			if(res.length()!=0) {
@@ -677,7 +677,7 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
   }
 
   private String genCompareChilds(String oldOther, String compareFun) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     String other = "tco";
     if(!slotList.isEmptyconcSlotField()) {
     res.append(%[@className()@ @other@ = (@className()@) @oldOther@;]%);

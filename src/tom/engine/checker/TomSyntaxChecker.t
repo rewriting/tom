@@ -477,7 +477,7 @@ public class TomSyntaxChecker extends TomChecker {
   } // verifySymbolPairNameDeclList
 
   private  void messageMissingMacroFunctions(String symbolType, ArrayList list) {
-    StringBuffer listOfMissingMacros = new StringBuffer();
+    StringBuilder listOfMissingMacros = new StringBuilder();
     for(int i=0;i<list.size();i++) {
       listOfMissingMacros.append(list.get(i) + ",  ");
     }
@@ -1250,7 +1250,7 @@ matchLbl: %match(constr){
                    new Object[]{expectedType.getString()});
       return null;
     } else if(!filteredList.getTailconcTomSymbol().isEmptyconcTomSymbol()) {
-      StringBuffer symbolsString = new StringBuffer();
+      StringBuilder symbolsString = new StringBuilder();
       while(!filteredList.isEmptyconcTomSymbol()) {
         symbolsString .append(" " + filteredList.getHeadconcTomSymbol().getAstName().getString());
         filteredList= filteredList.getTailconcTomSymbol();

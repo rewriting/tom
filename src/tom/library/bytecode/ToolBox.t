@@ -294,11 +294,11 @@ public class ToolBox {
     return `MethodDescriptor(fList, ret);
   }
 
-  %typeterm StringBuffer { 
-    implement { StringBuffer }
-    is_sort(t) { ($t instanceof StringBuffer) }
+  %typeterm StringBuilder { 
+    implement { StringBuilder }
+    is_sort(t) { ($t instanceof StringBuilder) }
   }
-  %strategy BuildDescriptor(sb:StringBuffer) extends Identity() {
+  %strategy BuildDescriptor(sb:StringBuilder) extends Identity() {
     visit TFieldDescriptor {
       ObjectType(className) -> { sb.append("L" + `className + ";"); }
       ArrayType[] -> { sb.append('['); }
@@ -323,14 +323,14 @@ public class ToolBox {
   }
 
   public static String buildDescriptor(TFieldDescriptor desc) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     try {
       `TopDown(BuildDescriptor(sb)).visitLight(desc);
     } catch(tom.library.sl.VisitFailure e) { }
     return sb.toString();
   }
   public static String buildDescriptor(TMethodDescriptor desc) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     try {
       `TopDown(BuildDescriptor(sb)).visitLight(desc);
     } catch(tom.library.sl.VisitFailure e) { }

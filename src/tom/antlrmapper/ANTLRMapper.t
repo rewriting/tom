@@ -105,7 +105,7 @@ matchBlock: {
   }
 
   private void generateTable(Map tokenMap) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     if(packagePrefix.length()>0) {
       out.append(%[package @packagePrefix@;
 	]%);
@@ -144,7 +144,7 @@ matchBlock: {
   }
 
   private String initMap(String mapName, Map tokMap) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     Iterator it = tokMap.keySet().iterator();
     while(it.hasNext()) {
       Integer key = (Integer)it.next();
@@ -156,7 +156,7 @@ matchBlock: {
   }
 
   void generateTomMapping(Map tokMap) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
 
     out.append(%[
 	%include{ int.tom }

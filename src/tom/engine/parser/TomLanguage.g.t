@@ -84,7 +84,7 @@ options{
     private TomLexer tomlexer;
 
     //store information for the OriginalText contained in the OptionList
-    private StringBuffer text = new StringBuffer();
+    private StringBuilder text = new StringBuilder();
     
     private int lastLine; 
 
@@ -905,8 +905,8 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 t:XML_CLOSE  {text.append(">");}
                 {
                     if(!nameList.equals(closingNameList)) {
-                        StringBuffer found = new StringBuffer();
-                        StringBuffer expected = new StringBuffer();
+                        StringBuilder found = new StringBuilder();
+                        StringBuilder expected = new StringBuilder();
                         while(!nameList.isEmptyconcTomName()) {
                             expected.append("|"+nameList.getHeadconcTomName().getString());
                             nameList = nameList.getTailconcTomName();
@@ -1134,7 +1134,7 @@ xmlTermList [LinkedList list] returns [boolean result] throws TomException
 xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
 {
     result = `concTomName();
-    StringBuffer XMLName = new StringBuffer("");
+    StringBuilder XMLName = new StringBuilder("");
     int decLine = 0;
     boolean anti = false;
 }

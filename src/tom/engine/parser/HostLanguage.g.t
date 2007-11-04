@@ -342,7 +342,7 @@ options{
 			 System.out.println();
 		 */
 		char bs = '\\';
-		StringBuffer sb = new StringBuffer((int)1.5*code.length());
+		StringBuilder sb = new StringBuilder((int)1.5*code.length());
 		for(int i=0 ; i<code.length() ; i++) {
 			char c = code.charAt(i);
 			switch(c) {
@@ -834,7 +834,7 @@ options {
 {
     // this buffer contains the target code
     // we append each read character by lexer
-    public StringBuffer target = new StringBuffer("");
+    public StringBuilder target = new StringBuilder("");
 
     // the target parser
     private HostParser parser = null;

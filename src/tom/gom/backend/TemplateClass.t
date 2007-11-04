@@ -153,12 +153,12 @@ public abstract class TemplateClass {
         "TemplateClass:classFieldName got a strange ClassName "+clsName);
   }
 
-  public void toStringSlotField(StringBuffer res, SlotField slot,
+  public void toStringSlotField(StringBuilder res, SlotField slot,
                                 String element, String buffer) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res.append(%[@element@.toStringBuffer(@buffer@);
+          res.append(%[@element@.toStringBuilder(@buffer@);
 ]%);
         } else {
           if (`domain.equals(`ClassName("","int"))
@@ -272,7 +272,7 @@ public abstract class TemplateClass {
     }
   }
 
-  public void toATermSlotField(StringBuffer res, SlotField slot) {
+  public void toATermSlotField(StringBuilder res, SlotField slot) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
@@ -319,7 +319,7 @@ public abstract class TemplateClass {
     }
   }
 
-  public void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl) {
+  public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {

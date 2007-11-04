@@ -153,7 +153,7 @@ writer.write(%[
   }
 
   @@Override
-  public void toStringBuffer(java.lang.StringBuffer buffer) {
+  public void toStringBuilder(java.lang.StringBuilder buffer) {
     buffer.append("@className()@(");
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
@@ -167,7 +167,7 @@ writer.write(%[
       }
       if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
         buffer.append(",");
-        cur.toStringBuffer(buffer);
+        cur.toStringBuilder(buffer);
       }
     }
     buffer.append(")");
@@ -437,14 +437,14 @@ writer.write(%[
 
   private String toStringChild(String buffer, String element) {
     SlotField head = cons.getSlots().getHeadconcSlotField();
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     toStringSlotField(res,head,element,buffer);
     return res.toString();
   }
 
   private String fromATermElement(String term, String element) {
     SlotField slot = cons.getSlots().getHeadconcSlotField();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     fromATermSlotField(buffer,slot,term);
     return buffer.toString();
   }

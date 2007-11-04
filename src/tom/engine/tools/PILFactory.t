@@ -110,7 +110,7 @@ public class PILFactory {
   }
 
   public String prettyPrintCompiledMatch(tom.library.sl.Visitable subject) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     Collection matches = collectMatch(subject);
     Iterator it = matches.iterator();
     while(it.hasNext()) {

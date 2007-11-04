@@ -201,7 +201,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
                          String args[],
                          Instruction instr,
                          int deep, String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     if(nodeclMode) {
       return;
     }
@@ -277,8 +277,8 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
 
   protected void genDeclMake(String prefix,String funName, TomType returnType, 
       TomList argList, Instruction instr, String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
-    StringBuffer check = new StringBuffer();
+    StringBuilder s = new StringBuilder();
+    StringBuilder check = new StringBuilder();
     if( nodeclMode) {
       return;
     }
@@ -392,7 +392,7 @@ matchBlock: {
       String args[],
       TargetLanguage tlCode,
       String moduleName) throws IOException {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     if(nodeclMode) {
       return;
     }

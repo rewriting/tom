@@ -269,7 +269,7 @@ public abstract class TomGenericPlugin implements Plugin {
   }
 
   public String getArgumentArrayString(Object[] arg) {
-    StringBuffer argString = new StringBuffer("[");
+    StringBuilder argString = new StringBuilder("[");
     for(int i=0;i<arg.length;i++) {
       argString.append(arg[i].getClass().getName());
       if (i < arg.length -1) {

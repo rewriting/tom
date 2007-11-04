@@ -85,12 +85,12 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
 
   @@Override
   public String toString() {
-    java.lang.StringBuffer buffer = new java.lang.StringBuffer();
-    toStringBuffer(buffer);
+    java.lang.StringBuilder buffer = new java.lang.StringBuilder();
+    toStringBuilder(buffer);
     return buffer.toString();
   }
 
-  public abstract void toStringBuffer(java.lang.StringBuffer buffer);
+  public abstract void toStringBuilder(java.lang.StringBuilder buffer);
 
   public abstract int compareTo(Object o);
 

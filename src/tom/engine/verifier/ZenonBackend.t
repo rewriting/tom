@@ -86,7 +86,7 @@ public class ZenonBackend {
   }
 
   public String genZTermList(ZTermList tl) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while (!tl.isEmptyconcZTerm()) {
       res.append(" "+genZTerm(tl.getHeadconcZTerm()));
       tl = tl.getTailconcZTerm();
@@ -148,7 +148,7 @@ public class ZenonBackend {
   }
 
   public String genZAxiomList(ZAxiomList axlist) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while (!axlist.isEmptyzby()) {
       res.append(genZAxiom(axlist.getHeadzby()));
       axlist = axlist.getTailzby();
@@ -169,7 +169,7 @@ public class ZenonBackend {
   }
 
   public String genFunctionSymbolDeclaration(String symbolName) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     res.append("Parameter ");
     res.append(tomiltools.replaceNumbersByString(symbolName)+" :");
     // take care of the arity
@@ -182,7 +182,7 @@ public class ZenonBackend {
   }
 
   public String genZSpecCollection(Collection collection) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
 
     out.append("\nRequire Import zenon.\n");
     out.append("\nParameter T S : Set.\n");

@@ -205,7 +205,7 @@ public class @className()@ implements tom.library.sl.Strategy {
 }
 
 private String genConstrArgs(int count, String arg, boolean withDollar) {
-  StringBuffer args = new StringBuffer();
+  StringBuilder args = new StringBuilder();
   for(int i = 0; i < count; ++i) {
     args.append((i==0?"":", "));
     if(withDollar) {
@@ -218,7 +218,7 @@ private String genConstrArgs(int count, String arg, boolean withDollar) {
 }
 
 private String genIdArgs(int count) {
-  StringBuffer args = new StringBuffer();
+  StringBuilder args = new StringBuilder();
   for(int i = 0; i < count; ++i) {
     args.append((i==0?"":", "));
     args.append("Identity()");
@@ -239,7 +239,7 @@ public String generateMapping() {
 }
 
 private String genGetSlot(int count, String arg) {
-  StringBuffer out = new StringBuffer();
+  StringBuilder out = new StringBuilder();
   for (int i = 0; i < count; ++i) {
     out.append(%[
         get_slot(@arg+i@, t) { $t.getArgument(@i@) }]%);
@@ -248,7 +248,7 @@ private String genGetSlot(int count, String arg) {
 }
 
 private String genStratArgs(int count, String arg) {
-  StringBuffer args = new StringBuffer();
+  StringBuilder args = new StringBuilder();
   for(int i = 0; i < count; ++i) {
     args.append((i==0?"":", "));
     args.append(arg);

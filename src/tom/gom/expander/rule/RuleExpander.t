@@ -142,7 +142,7 @@ public class RuleExpander {
   }
 
   private String generateHookCode(SlotList slotList, RuleList ruleList) {
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     if(slotList.isEmptyconcSlot()) {
       while(!ruleList.isEmptyRuleList()) {
         Rule rule = ruleList.getHeadRuleList();
@@ -193,7 +193,7 @@ public class RuleExpander {
   }
 
   private String generateVariadicHookCode(SlotList slotList, RuleList ruleList) {
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     output.append("    %match(realMake(head,tail)) {\n");
     while(!ruleList.isEmptyRuleList()) {
       Rule rule = ruleList.getHeadRuleList();
@@ -218,7 +218,7 @@ public class RuleExpander {
     output.append("    }\n");
     return output.toString();
   }
-  private void genTermList(TermList list, StringBuffer output) {
+  private void genTermList(TermList list, StringBuilder output) {
     %match(list) {
       TermList() -> { return; }
       TermList(h,t*) -> {
@@ -231,7 +231,7 @@ public class RuleExpander {
     }
   }
 
-  private void genTerm(Term termArg, StringBuffer output) {
+  private void genTerm(Term termArg, StringBuilder output) {
     %match(termArg) {
       Appl(symbol,args) -> {
         output.append(`symbol);
@@ -262,7 +262,7 @@ public class RuleExpander {
     }
   }
 
-  private void genCondition(Condition cond, StringBuffer output) {
+  private void genCondition(Condition cond, StringBuilder output) {
     %match(cond) {
       CondTerm[t=term] -> {
         genTerm(`term,output);
@@ -320,7 +320,7 @@ public class RuleExpander {
     }
   }
 
-  private void matchArgs(SlotList sl, StringBuffer output, int count) {
+  private void matchArgs(SlotList sl, StringBuilder output, int count) {
     %match(sl) {
       concSlot() -> { return; }
       concSlot(Slot[Sort=sort],t*) -> {

@@ -167,7 +167,7 @@ public class PatternAnalyser{
         }
       }
       node@<assign>list*</assign> -> {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         %match(TNodeList list){
           (_*,<copy>fromnode@<from /> <to variable=to /></copy>,_*) -> {

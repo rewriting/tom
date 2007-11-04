@@ -166,7 +166,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   private String genGetSlot(SlotFieldList slots, String arg) {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -180,7 +180,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     return out.toString();
   }
   private String genStratArgs(SlotFieldList slots,String arg) {
-    StringBuffer args = new StringBuffer();
+    StringBuilder args = new StringBuilder();
     int i = 0;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
@@ -204,7 +204,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   private String genNonBuiltin() {
-    StringBuffer out = new StringBuffer();
+    StringBuilder out = new StringBuilder();
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
@@ -306,7 +306,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     * Each non builtin child has type VisitableVisitor
     */
   private String childListWithType(SlotFieldList slots) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
@@ -396,7 +396,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     * values computed by computeNewChilds
     */
   private String genMakeArguments(SlotFieldList slots, boolean withDollar) {
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();

@@ -82,7 +82,7 @@ public class VisitableViewer {
 
   private static String posToId(Position p) {
     int[] a = p.toArray();
-    StringBuffer buf = new StringBuffer("pos_");
+    StringBuilder buf = new StringBuilder("pos_");
     for(int i=0; i<p.depth(); i++) {
       buf.append(a[i]);
     }
