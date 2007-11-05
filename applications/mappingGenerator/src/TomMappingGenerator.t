@@ -89,7 +89,11 @@ where:
       HashMap<String, Class<?>> declaredTypes = new HashMap<String, Class<?>>();      
       generate(startPoint, strBuilder, usedTypes, declaredTypes, getURLPathsFromString(includeInClasspath));
       // generate a mapping for each used type that was not declared
+      // make sure it is not declared twice
+      ArrayList<String> processed = new ArrayList<String>();
       for(String usedTypeName: usedTypes.keySet()){
+        if (processed.contains(usedTypeName)) { continue; }
+        processed.add(usedTypeName);
         Class usedTypeClass = usedTypes.get(usedTypeName);
         if (!declaredTypes.containsKey(usedTypeName) && !Collection.class.equals(usedTypeClass)){
           if (usedTypeClass.isPrimitive()){
@@ -110,7 +114,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       writer = new BufferedWriter(new FileWriter(mappingsFileName));
       writer.append(strBuilder.toString());
     } catch (Exception e) {
-      System.out.println("An error occured. See the stack trace for more information.\n");
+      System.out.println("An error occured:"  + e.getMessage());
       e.printStackTrace();
     } finally {
       if (writer != null){
@@ -134,8 +138,12 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       System.out.print("Extracting mapping for:" + startPointFile.getName() + " ... ");      
       try {
         extractMapping((new MGClassLoader(includeInClasspath)).getClassObj(startPointFile), strBuilder, usedTypes, declaredTypes);
-      } catch (NullPointerException e) {
-        System.out.println("\n An error occured");
+      } catch (NoClassDefFoundError e) {
+        System.out.println("\nThe following class couldn't be found: " + e.getMessage());
+        if (e.getCause() != null) {System.out.println("Cause: " + e.getCause().getMessage());}      
+      } catch (Throwable e) {
+        System.out.println("\nAn error occured while extracting the mapping: " + e.getMessage());
+        if (e.getCause() != null) {System.out.println("Cause: " + e.getCause().getMessage());}
       }
       System.out.println("Done !");
     }
