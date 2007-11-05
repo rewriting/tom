@@ -220,6 +220,9 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       if (!methodName.startsWith("get") && !methodName.startsWith("is")) {
         continue;
       }
+      // ignore arrays for the moment
+      if (m.getReturnType().isArray()) { continue; }
+      
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);
       fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
       if ("class".equalsIgnoreCase(fieldName) || declaredFields.contains(fieldName)) {
@@ -229,7 +232,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       result.append(fieldName + ":");
       if (m.getReturnType().isPrimitive()) {
         result.append(m.getReturnType().getName());
-      } else {
+      } else {        
         String tmp = m.getReturnType().getName().substring(m.getReturnType().getName().lastIndexOf('.') + 1);
         tmp = tmp.substring(tmp.indexOf('$') + 1); // for inner classes, eliminate the parent class name
         result.append(tmp);
@@ -253,6 +256,8 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       String fieldName = methodName.startsWith("get") ? methodName.substring(3) : methodName.substring(2);      
       fieldName = Character.toLowerCase(fieldName.charAt(0)) +  fieldName.substring(1);
       if ("class".equalsIgnoreCase(fieldName) || declaredFields.contains(fieldName)) { continue; }
+      // ignore arrays for the moment
+      if (m.getReturnType().isArray()) { continue; }
       declaredFields.add(fieldName);
       result.append(%[
   get_slot(@fieldName@, t)  { ((@className@)t).@methodName@() }]%);    
