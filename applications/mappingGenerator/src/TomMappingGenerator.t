@@ -132,7 +132,8 @@ private static java.util.List myAdd(Object e,java.util.List l) {
         generate(file, strBuilder, usedTypes, declaredTypes, includeInClasspath);
       }
     } else {
-      if (!startPointFile.getName().endsWith(".class")) {
+      // ignore everything that is not a class (including the inner classes)
+      if (!startPointFile.getName().endsWith(".class") || startPointFile.getName().contains("$")) {
         return;
       }
       System.out.print("Extracting mapping for:" + startPointFile.getName() + " ... ");      
@@ -169,11 +170,15 @@ private static java.util.List myAdd(Object e,java.util.List l) {
 
   private void generateTypeTerm(Class classFName, StringBuilder strBuilder, HashMap<String, Class<?>> declaredTypes){
     String className = classFName.getName().substring(classFName.getName().lastIndexOf('.') + 1);
-    declaredTypes.put(classFName.getName(),classFName);
+    // handle inner classes
+    if (className.contains("$")) { className = className.substring(className.indexOf("$")+1); }
+    String fullClassName = classFName.getName();
+    if (fullClassName.contains("$")) { fullClassName = fullClassName.replace("$", "."); }
+    declaredTypes.put(fullClassName,classFName);
     strBuilder.append(%[
 %typeterm @className@ {
-  implement     { @classFName.getName()@ }
-  is_sort(t)    { t instanceof @classFName.getName()@ }
+  implement     { @fullClassName@ }
+  is_sort(t)    { t instanceof @fullClassName@ }
   equals(t1,t2) { t1.equals(t2) }      
 }
 ]%);
@@ -225,8 +230,9 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       if (m.getReturnType().isPrimitive()) {
         result.append(m.getReturnType().getName());
       } else {
-        result.append(m.getReturnType().getName().substring(
-            m.getReturnType().getName().lastIndexOf('.') + 1));
+        String tmp = m.getReturnType().getName().substring(m.getReturnType().getName().lastIndexOf('.') + 1);
+        tmp = tmp.substring(tmp.indexOf('$') + 1); // for inner classes, eliminate the parent class name
+        result.append(tmp);
       }
       usedTypes.put(m.getReturnType().getName(),m.getReturnType());
       result.append(",");
