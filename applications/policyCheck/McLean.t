@@ -1,5 +1,6 @@
 import verify.example.types.*; 
 
+
 public class McLean implements Policy{  
 	%include { verify/example/Example.tom }
 
