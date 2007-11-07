@@ -1,15 +1,9 @@
-import mclean.example.*;
+import verify.example.types.*; 
 
-public class McLean{
+public class McLean implements Policy{  
 
-	%gom{ 
-		 module Example 
-		 imports int
-	 	 abstract syntax 
-	}
-
- public static Response transition(RequestUponState req){
-    %match (RequestUponState req){
+ public  Response transition(RequestUponState req){
+    %match ( req){
 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),aM(0),_)),
           s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),aM(1),_),_*))  ) -> { 
          if ((compareStrictMcLean(`l3,`l2))){
@@ -43,7 +37,7 @@ public class McLean{
     throw new RuntimeException("should not be there");
   }
 
-
+/*
   public static boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2){
      %match (SecurityLevel l1,SecurityLevel l2){
  			sL(1),sL(3) -> { return true; }
@@ -81,8 +75,5 @@ public class McLean{
      }
      throw new RuntimeException("should not be there");
    }
-
-
-
-
+*/
 }

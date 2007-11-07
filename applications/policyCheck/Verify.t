@@ -3,12 +3,13 @@ import java.util.*;
 import verify.example.*;
 import verify.example.types.*;
 
+
 public class Verify{
 	%include { sl.tom }
 	%gom{ 
     module Example 
       imports int
-      abstract syntax
+      abstract syntax 
       
       //Security levels : TS Top Secret, S Secret, C Confidential.
       SecurityLevel = sL(l:int)
@@ -332,7 +333,7 @@ public class Verify{
       return false;
     }
 
-
+ 
 
     return true;
   }
@@ -365,7 +366,7 @@ public class Verify{
         for (Iterator<Integer> iterator = (objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
           Integer securityLevel = iterator.next();
           Objects.add(`securityObject(i,sL(securityLevel)));
-          i++;
+           i++;
         }
         // Check all the permutations of requests upon the given configuration
         int[] o=checkAllPermutationsOfRequests(Subjects,Objects);
@@ -383,7 +384,7 @@ public class Verify{
       }}
     return true;
   }
-
+  
   public static void main(String[] args) {
     //Verify(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes);
 	  Policy p=new McLean();
@@ -422,6 +423,26 @@ public class Verify{
     result+="]";
     return result;
   }
+
+ public int[] checkAllPermutationsOfRequestsMcClean(ArrayList<Subject> Subjects, ArrayList<SecurityObject> Objects){
+	  PermutationGenerator PG= new PermutationGenerator (allRequests.size());
+      //foreach permutation
+	  while (PG.hasMore ()) {
+		  //get a permuation
+		  int[] currentPermutation=PG.getNext();
+		  //check this permutation of requests with the fixed configuration of Subjects and objects
+		  if(!check(Subjects,Objects,currentPermutation)){
+			  //return the current permutation if it generates a leakage 
+			  return currentPermutation;
+		  }
+      System.out.println("for permutation :"+toStringArray(currentPermutation));
+    }
+	
+    int[] rep={0};
+    //return the array rep if no leakage is detected  
+    return rep;
+  }
+
 /*
   // Rewrite rules implementing the Bell and LaPadula policy
   public Response transition(RequestUponState req){
