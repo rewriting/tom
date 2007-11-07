@@ -67,7 +67,9 @@ public class Verify{
 	int numberOfSecurityLevels;
 	//Number of access modes
 	int numberOfAccessModes;
- 
+	//Policy to check
+	Policy policy;
+	
 	//State stateToVerify;
 	
 	// Set of Subject Sets (a subject set is a set of binomials [a,b] where "a" is an integer subject identifier
@@ -88,11 +90,12 @@ public class Verify{
 	RequestUponState CurrentRequestOfScenario;
   
   // Constructor
-  public Verify(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes){
+  public Verify(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes, Policy p){
     this.numberOfSubjects=numberOfSubjects;
     this.numberOfObjects=numberOfObjects;
     this.numberOfSecurityLevels=numberOfSecurityLevels;
     this.numberOfAccessModes=numberOfAccessModes;
+    this.policy=p;
   }
 
   // Rewrite rules implementing the Bell and LaPadula policy
@@ -272,7 +275,7 @@ public class Verify{
       	  // create the binomial (request,state)  
       RequestUponState rus=`rus(r,M);
       	  // try to add the access to the state given the implementation of the policy
-      Response response=transition(rus);
+      Response response=policy.transition(rus);
       	  // if the request is granted, get the new state
       if (response.getGranted())M=response.getState();
       	  // if the request fails generate an error message an return false
@@ -402,7 +405,7 @@ public boolean checkMcClean(ArrayList<Subject> Subjects, ArrayList<SecurityObjec
       for(Iterator<RequestUponState> iterator=implicitRequestsUponOriginalState.iterator(); iterator.hasNext();){
         RequestUponState iruos=(RequestUponState)iterator.next();
         //test if the implicit access is accepted
-        if (!(transition(iruos).getGranted())){
+        if (!(policy.transition(iruos).getGranted())){
         	//behavior if the access is not granted which means that there is a leakage
           CurrentRequestOfScenario=iruos;
           System.out.println("Scenario detected :"+CurrentRequestOfScenario);
@@ -618,7 +621,8 @@ public boolean checkMcClean(ArrayList<Subject> Subjects, ArrayList<SecurityObjec
 
   public static void main(String[] args) {
     //Verify(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes);
-    Verify Verification=new Verify(2,3,5,2);
+	  Policy p=new McLean();
+	  Verify Verification=new Verify(2,3,5,2,p);
     //Verification.checkSpecificSets(0,1);
     //Verification.checkAllSetsMcClean();
     //Verification.checkAllSets();
