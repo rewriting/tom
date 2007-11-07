@@ -401,7 +401,7 @@ public class Verify{
     Objects.add(`securityObject(0,sL(1)));
     Objects.add(`securityObject(1,sL(2)));
     Objects.add(`securityObject(2,sL(3)));
-    int[] o=Verification.checkAllPermutationsOfRequestsMcClean(Subjects,Objects);
+    int[] o=Verification.checkAllPermutationsOfRequests(Subjects,Objects);
     System.out.println("For subjects :\n"+Subjects);
     System.out.println("and objects :\n"+Objects);
     if (o.length==1){
@@ -424,6 +424,9 @@ public class Verify{
     return result;
   }
 
+
+
+/*
  public int[] checkAllPermutationsOfRequestsMcClean(ArrayList<Subject> Subjects, ArrayList<SecurityObject> Objects){
 	  PermutationGenerator PG= new PermutationGenerator (allRequests.size());
       //foreach permutation
@@ -443,7 +446,7 @@ public class Verify{
     return rep;
   }
 
-/*
+
   // Rewrite rules implementing the Bell and LaPadula policy
   public Response transition(RequestUponState req){
     %match (RequestUponState req){
