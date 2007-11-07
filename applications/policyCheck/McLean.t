@@ -1,6 +1,7 @@
 import verify.example.types.*; 
 
 public class McLean implements Policy{  
+	%include { verify/example/Example.tom }
 
  public  Response transition(RequestUponState req){
     %match ( req){
@@ -37,7 +38,7 @@ public class McLean implements Policy{
     throw new RuntimeException("should not be there");
   }
 
-/*
+
   public static boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2){
      %match (SecurityLevel l1,SecurityLevel l2){
  			sL(1),sL(3) -> { return true; }
@@ -75,5 +76,4 @@ public class McLean implements Policy{
      }
      throw new RuntimeException("should not be there");
    }
-*/
 }
