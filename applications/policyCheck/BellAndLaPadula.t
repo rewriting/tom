@@ -2,14 +2,9 @@ import bellandlapadula.example.*;
 import verify.example.*;
 import verify.example.types.*;
 
-public class BellAndLaPadula{
-
-	%gom{ 
-		 module Example 
-		 imports int
-	 	 abstract syntax 
-	}
-
+public class BellAndLaPadula implements Policy{  
+	%include { verify/example/Example.tom }
+	
   // Rewrite rules implementing the Bell and LaPadula policy
   public static Response transition(RequestUponState req){
     %match (RequestUponState req){
@@ -49,7 +44,7 @@ public class BellAndLaPadula{
     throw new RuntimeException("should not be there");
   }
 
-public int compare(SecurityLevel sl,SecurityLevel sl2){
+public static int compare(SecurityLevel sl,SecurityLevel sl2){
           return (sl.getl()-sl2.getl()<=0);
 }
 
