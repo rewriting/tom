@@ -1,4 +1,5 @@
 import verify.example.types.*; 
+import verify.example.types.*; 
 
 
 public class McLean implements Policy{  
