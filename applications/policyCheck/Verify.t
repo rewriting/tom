@@ -161,22 +161,22 @@ public class Verify{
   
   //public void generateSets(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes){
   public void generateSets(){
-    Combinatory CSubjectSets=new Combinatory(numberOfSubjects,numberOfSecurityLevels-1);
-    CSubjectSets.start();
-    try {
-      CSubjectSets.join();
-    } catch (Exception e) {
-      System.out.println("join on combination");
-    }
+    Combinations CSubjectSets=new Combinations(numberOfSubjects,numberOfSecurityLevels-1);
+//     CSubjectSets.start();
+//     try {
+//       CSubjectSets.join();
+//     } catch (Exception e) {
+//       System.out.println("join on combination");
+//     }
     subjectSets=CSubjectSets.combination;
 
-    Combinatory CObjectSets=new Combinatory(numberOfObjects,numberOfSecurityLevels-1);
-    CObjectSets.start();
-    try {
-      CObjectSets.join();
-    } catch (Exception e) {
-      System.out.println("join on combination");
-    }
+    Combinations CObjectSets=new Combinations(numberOfObjects,numberOfSecurityLevels-1);
+//     CObjectSets.start();
+//     try {
+//       CObjectSets.join();
+//     } catch (Exception e) {
+//       System.out.println("join on combination");
+//     }
     objectSets=CObjectSets.combination;
 
     LinkedList<Integer> sizeOfsets=new LinkedList<Integer>(); 

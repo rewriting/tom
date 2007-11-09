@@ -10,6 +10,7 @@ public class Combinations {
 	Combinations( int n, int p) {
 		this.n = n;
 		this.p = p;
+    this.run();
 	}
 
 
@@ -38,7 +39,7 @@ public class Combinations {
         // Start recursive call
         for (int j = 0; j < n; j++) {
           Combinations siblings = new Combinations(j+1,p-1);	
-          siblings.run();
+          //           siblings.run();
 
           ArrayList<ArrayList<Integer>> subCombinations=siblings.combination;
           // size of combination
@@ -64,7 +65,7 @@ public class Combinations {
 	
 	public static void main(String[] args) {
 		Combinations toto=new Combinations(3,2);
-		toto.run();
+// 		toto.run();
 		System.out.println(toto.combination);
 
 	}
