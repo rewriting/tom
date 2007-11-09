@@ -98,6 +98,10 @@ public class PermutationGenerator {
     // Find index k such that a[k] is smallest integer
     // greater than a[j] to the right of a[j]
 
+    // C'est pas vraiment  ca --> c'est plutot
+    // Find biggest  index k such that a[k] is
+    // greater than a[j] to the right of a[j]
+
     int k = a.length - 1;
     while (a[j] > a[k]) {
       k--;
