@@ -63,14 +63,8 @@ public class Combinations {
 	
 	
 	public static void main(String[] args) {
-		Combinatory toto=new Combinatory(3,2);
-		toto.start();
-		try {
-			toto.join();
-		} catch (InterruptedException e) {
-			System.out.println("A join on Thread couldn't be done");
-			e.printStackTrace();
-		}
+		Combinations toto=new Combinations(3,2);
+		toto.run();
 		System.out.println(toto.combination);
 
 	}
