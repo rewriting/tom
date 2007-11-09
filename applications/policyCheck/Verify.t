@@ -168,7 +168,7 @@ public class Verify{
 //     } catch (Exception e) {
 //       System.out.println("join on combination");
 //     }
-    subjectSets=CSubjectSets.combination;
+    subjectSets=CSubjectSets.getCombination();
 
     Combinations CObjectSets=new Combinations(numberOfObjects,numberOfSecurityLevels-1);
 //     CObjectSets.start();
@@ -177,7 +177,7 @@ public class Verify{
 //     } catch (Exception e) {
 //       System.out.println("join on combination");
 //     }
-    objectSets=CObjectSets.combination;
+    objectSets=CObjectSets.getCombination();
 
     LinkedList<Integer> sizeOfsets=new LinkedList<Integer>(); 
     sizeOfsets.add(subjectSets.size());

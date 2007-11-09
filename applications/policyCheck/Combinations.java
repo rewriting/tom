@@ -2,19 +2,30 @@ import java.util.*;
 
 public class Combinations {
 
-	int n;
-	int p;
-	ArrayList<ArrayList<Integer>> combination = new ArrayList<ArrayList<Integer>>();
+	private int n;
+	private int p;
+	private ArrayList<ArrayList<Integer>> combination = new ArrayList<ArrayList<Integer>>();
 	
   // An n "super-Combinations" (not unique elements) of a p size set 
-	Combinations( int n, int p) {
+	public Combinations( int n, int p) {
 		this.n = n;
 		this.p = p;
     this.run();
 	}
 
+  public int getN(){
+    return n;
+  }
 
-	public void run(){
+  public int getP(){
+    return p;
+  }
+
+  public ArrayList<ArrayList<Integer>>  getCombination(){
+    return combination;
+  }
+
+	private void run(){
     //     System.out.println("RUN::  "+n+"-"+p);
 		if (p==0){     // one element set
 			ArrayList<Integer> cbn=new ArrayList<Integer>();
@@ -66,7 +77,7 @@ public class Combinations {
 	public static void main(String[] args) {
 		Combinations toto=new Combinations(3,2);
 // 		toto.run();
-		System.out.println(toto.combination);
+		System.out.println(toto.getCombination());
 
 	}
 	
