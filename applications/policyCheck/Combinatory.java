@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import java.util.*;
 
 public class Combinatory extends Thread{
 
@@ -9,6 +7,7 @@ public class Combinatory extends Thread{
 	ArrayList<ArrayList<Integer>> combination=new ArrayList<ArrayList<Integer>>();
 	ArrayList<Combinatory> siblings=new ArrayList<Combinatory>();
 	
+  // An n "super-Combinations" (not unique elements) of a p size set 
 	Combinatory( int n, int p) {
 		super();
 		this.n = n;
@@ -17,55 +16,58 @@ public class Combinatory extends Thread{
 
 
 	public void run(){
-		if (p==0){
+    //     System.out.println("RUN::  "+n+"-"+p);
+		if (p==0){     // one element set
 			ArrayList<Integer> cbn=new ArrayList<Integer>();
 			for (int j = 0; j < n; j++) {
 				cbn.add(p);
 			}
 			combination.add(cbn);
-			return;
-		}
-		if (n==1){
-			for (int i = 0; i <= p; i++) {
-				ArrayList<Integer> cbn=new ArrayList<Integer>();
-				cbn.add(i);
-				combination.add(cbn);	
-			} 
-			return;
-		}else{
-			
-			ArrayList<Integer> cbn=new ArrayList<Integer>();
-			for (int j = 0; j < n; j++) {
-				cbn.add(p);
-			}
-			combination.add(cbn);
-			for (int j = 0; j < n; j++) {
-			Combinatory sibling=new Combinatory(j+1,p-1);	
-			siblings.add(sibling);
-			sibling.start();
-			}
-			for (int i = 0; i < siblings.size(); i++) {
-				Combinatory element = (Combinatory) siblings.get(i);
-				try {
-					element.join();
-				} catch (InterruptedException e) {
-					System.out.println("A join on Thread couldn't be done");
-					e.printStackTrace();
-				}
-				ArrayList<ArrayList<Integer>> subCombinations=element.combination;
+		} else {     // more than one element set
+      if (n==1){     // one element set
+        for (int i = 0; i <= p; i++) {
+          ArrayList<Integer> cbn=new ArrayList<Integer>();
+          cbn.add(i);
+          combination.add(cbn);	
+        } 
+      }else{        
+        ArrayList<Integer> cbn=new ArrayList<Integer>();
+        for (int j = 0; j < n; j++) {
+          cbn.add(p);
+        }
+        combination.add(cbn);
+
+        // Start recursive call
+        for (int j = 0; j < n; j++) {
+          Combinatory sibling=new Combinatory(j+1,p-1);	
+          siblings.add(sibling);
+          sibling.start();
+        }
+
+        // Get results from recursive calls  
+        for (Combinatory element: siblings) {
+          try {
+            element.join();
+          } catch (InterruptedException e) {
+            System.out.println("A join on Thread couldn't be done");
+            e.printStackTrace();
+          }
+          ArrayList<ArrayList<Integer>> subCombinations=element.combination;
+          // size of combination
+          int size = subCombinations.get(0).size();
 				
-				for (Iterator iterator = subCombinations.iterator(); iterator.hasNext();) {
-					ArrayList<Integer> cbnAux=new ArrayList<Integer>();
-					for (int j = 0; j < n-(i+1); j++) {
-						cbnAux.add(p);
-					}
-					ArrayList<Integer> name = (ArrayList<Integer>) iterator.next();
-					cbnAux.addAll(name);
-					combination.add(cbnAux);
-				}
-			}
-		}
-		return;
+          for (ArrayList<Integer> name : subCombinations) {
+            ArrayList<Integer> cbnAux=new ArrayList<Integer>();
+            // fill to get to size "n" from size "size"
+            for (int j = 0; j < n-size; j++) {
+              cbnAux.add(p);
+            }
+            cbnAux.addAll(name);
+            combination.add(cbnAux);
+          }
+        }
+      }
+    }
 	}
 	
 	
@@ -73,7 +75,7 @@ public class Combinatory extends Thread{
 	
 	
 	public static void main(String[] args) {
-		Combinatory toto=new Combinatory(2,1);
+		Combinatory toto=new Combinatory(3,2);
 		toto.start();
 		try {
 			toto.join();
