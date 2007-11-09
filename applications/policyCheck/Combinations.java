@@ -70,18 +70,4 @@ public class Combinations {
     }
 	}
 	
-	
-
-	
-	
-	public static void main(String[] args) {
-		Combinations toto=new Combinations(3,2);
-// 		toto.run();
-		System.out.println(toto.getCombination());
-
-	}
-	
-	
-	
-
 }
