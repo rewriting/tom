@@ -49,11 +49,11 @@ public class MiscTests {
     a1.add(0);
     a1.add(1);
     ArrayList<Integer> a2 = new ArrayList<Integer>();
-    a2.add(0);
-    a2.add(1);
+    a2.add(4);
+    a2.add(5);
     ArrayList<Integer> a3 = new ArrayList<Integer>();
-    a3.add(0);
-    a3.add(1);
+    a3.add(2);
+    a3.add(3);
     ArrayList<ArrayList<Integer>> al = new ArrayList<ArrayList<Integer>>();
     al.add(a1);
     al.add(a2);

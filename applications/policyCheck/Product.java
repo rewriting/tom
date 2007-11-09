@@ -10,7 +10,15 @@ public class Product {
 
   public Product(ArrayList<ArrayList<Integer>> sets) {
     ind = 0;
-    this.sets = sets;
+    this.sets = new ArrayList<ArrayList<Integer>>();
+    for(ArrayList<Integer> s: sets){
+      ArrayList<Integer> al = new ArrayList<Integer>(); 
+      int size = s.size();
+      for(int i=0; i<size; i++){
+        al.add(i);
+      }
+      this.sets.add(al);
+    }
     this.compute();
   }
 
