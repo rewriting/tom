@@ -2,7 +2,7 @@ import java.util.*;
 
 import verify.example.*;
 import verify.example.types.*;
-
+import java.util.ArrayList;
 
 public class Verify{
 	%include { sl.tom }
@@ -70,6 +70,7 @@ public class Verify{
 	int numberOfAccessModes;
 	//Policy to check
 	Policy policy;
+	
 	
 	//State stateToVerify;
 	
@@ -385,10 +386,36 @@ public class Verify{
     return true;
   }
   
+
+public static ArrayList<ArrayList<Integer>> processString(String order){
+    ArrayList<ArrayList<Integer>> securityLevelsOrder=new ArrayList<ArrayList<Integer>>();
+    Scanner scanner = new Scanner(order);
+    scanner.useDelimiter(";");
+    while ( scanner.hasNext() ){
+      ArrayList<Integer> subSetWithTotalOrder=new ArrayList<Integer>();
+      String subSetWithTotalOrderString = scanner.next();
+      Scanner scanner2 = new Scanner(subSetWithTotalOrderString);
+      scanner2.useDelimiter(",");
+      while (scanner2.hasNext()){
+      String value = scanner2.next();
+      subSetWithTotalOrder.add(Integer.parseInt(value));
+      }
+      scanner2.close();
+      securityLevelsOrder.add(subSetWithTotalOrder);
+    }
+    scanner.close();
+    return securityLevelsOrder;
+  }
+  
+
+
+
+
   public static void main(String[] args) {
     //Verify(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes);
-	  Policy p=new McLean();
-	  Verify Verification=new Verify(2,3,5,2,p);
+	String order="1,3;0,1,4;0,2,4;0,3,4";
+	Policy p=new McLean(processString(order));
+	Verify Verification=new Verify(2,3,5,2,p);
     //Verification.checkSpecificSets(0,1);
     //Verification.checkAllSetsMcClean();
     //Verification.checkAllSets();
