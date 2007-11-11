@@ -1,10 +1,17 @@
 import verify.example.types.*; 
-import verify.example.types.*; 
-
+import verify.example.*; 
+import java.util.ArrayList;
 
 public class McLean implements Policy{  
 	%include { verify/example/Example.tom }
 
+	ArrayList<ArrayList<Integer>> securityLevelsorder;
+
+McLean(ArrayList<ArrayList<Integer>> s){
+	this.securityLevelsorder=s;
+}
+  
+	
  public  Response transition(RequestUponState req){
     %match ( req){
 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),aM(0),_)),
@@ -41,6 +48,27 @@ public class McLean implements Policy{
   }
 
 
+
+public boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2){
+	for(java.util.ArrayList<Integer> orderedSubSet: this.securityLevelsorder ){
+		if (orderedSubSet.contains(l1.getl()) && orderedSubSet.contains(l2.getl()))
+			return orderedSubSet.indexOf(l1.getl())-orderedSubSet.indexOf(l2.getl())<0;
+	}
+	return false;
+}
+
+
+public boolean compareMcLean(SecurityLevel l1,SecurityLevel l2){
+	for(java.util.ArrayList<Integer> orderedSubSet: this.securityLevelsorder ){
+		if (orderedSubSet.contains(l1.getl()) && orderedSubSet.contains(l2.getl()))
+			return orderedSubSet.indexOf(l1.getl())-orderedSubSet.indexOf(l2.getl())<=0;
+	}
+	return false;
+}
+
+   
+}
+/*
   public static boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2){
      %match (SecurityLevel l1,SecurityLevel l2){
  			sL(1),sL(3) -> { return true; }
@@ -78,4 +106,5 @@ public class McLean implements Policy{
      }
      throw new RuntimeException("should not be there");
    }
-}
+   
+*/
