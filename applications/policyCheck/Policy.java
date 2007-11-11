@@ -1,6 +1,8 @@
-import verify.example.types.RequestUponState;
+import verify.example.types.*;
+
+
 
 
 public interface Policy {
-	Response transition (RequestUponState rus);
+	public Response transition (RequestUponState rus);
 }
