@@ -8,10 +8,10 @@ public class Product {
   // the resulted product
   private ArrayList<ArrayList<Integer>> product = new ArrayList<ArrayList<Integer>>();
 
-  public Product(ArrayList<ArrayList<Integer>> sets) {
+  public Product(ArrayList<ArrayList<Integer>> sizeSets) {
     ind = 0;
     this.sets = new ArrayList<ArrayList<Integer>>();
-    for(ArrayList<Integer> s: sets){
+    for(ArrayList<Integer> s: sizeSets){
       ArrayList<Integer> al = new ArrayList<Integer>(); 
       int size = s.size();
       for(int i=0; i<size; i++){
