@@ -1,12 +1,20 @@
-import bellandlapadula.example.*;
 import verify.example.*;
 import verify.example.types.*;
+import java.util.ArrayList;
 
 public class BellAndLaPadula implements Policy{  
 	%include { verify/example/Example.tom }
 	
+
+ArrayList<ArrayList<Integer>> securityLevelsorder;
+
+BellAndLaPadula(ArrayList<ArrayList<Integer>> s){
+	this.securityLevelsorder=s;
+}
+
+
   // Rewrite rules implementing the Bell and LaPadula policy
-  public static Response transition(RequestUponState req){
+  public Response transition(RequestUponState req){
     %match (RequestUponState req){
 			rus(request(add(),access(subject(i1,l1),securityObject(_,l2),aM(0),_)),
           s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),aM(1),_),_*))  ) -> { 
@@ -44,9 +52,23 @@ public class BellAndLaPadula implements Policy{
     throw new RuntimeException("should not be there");
   }
 
+
+public boolean compare(SecurityLevel l1,SecurityLevel l2){
+	for(java.util.ArrayList<Integer> orderedSubSet: this.securityLevelsorder ){
+		if (orderedSubSet.contains(l1.getl()) && orderedSubSet.contains(l2.getl()))
+			return orderedSubSet.indexOf(l1.getl())-orderedSubSet.indexOf(l2.getl())<=0;
+	}
+	return false;
+}
+
+
+
+
+
+/*
 public static int compare(SecurityLevel sl,SecurityLevel sl2){
           return (sl.getl()-sl2.getl()<=0);
 }
-
+*/
 
 }
