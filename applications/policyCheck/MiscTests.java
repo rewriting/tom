@@ -45,23 +45,14 @@ public class MiscTests {
 
     //		DIRECTPRODUCT
     System.out.println("DIRECTPRODUCT ---------------------");
-    ArrayList<Integer> a1 = new ArrayList<Integer>();
-    a1.add(0);
-    a1.add(1);
-    ArrayList<Integer> a2 = new ArrayList<Integer>();
-    a2.add(4);
-    a2.add(5);
-    ArrayList<Integer> a3 = new ArrayList<Integer>();
-    a3.add(2);
-    a3.add(3);
-    ArrayList<ArrayList<Integer>> al = new ArrayList<ArrayList<Integer>>();
-    al.add(a1);
-    al.add(a2);
-    al.add(a3);
-    System.out.println("AL= "+al);
-    Product pp=new Product(al);
+    ArrayList<Integer> a = new ArrayList<Integer>();
+    a.add(2);
+    a.add(2);
+    a.add(2);
+    System.out.println("AL= "+a);
+    ArrayList<ArrayList<Integer>>  pp=Product.directProduct(a);
     //     pp.compute();
-    System.out.println(pp.getProduct().size() + " : " + pp.getProduct());
+    System.out.println(pp.size() + " : " + pp);
 
 
 	}
