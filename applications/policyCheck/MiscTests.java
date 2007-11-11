@@ -51,7 +51,13 @@ public class MiscTests {
     a.add(2);
     System.out.println("AL= "+a);
     ArrayList<ArrayList<Integer>>  pp=Product.directProduct(a);
-    //     pp.compute();
+    System.out.println(pp.size() + " : " + pp);
+    a.add(2);
+    a.add(2);
+    pp=Product.directProduct(a);
+    System.out.println(pp.size() + " : " + pp);
+    a.add(2);
+    pp=Product.directProduct(a);
     System.out.println(pp.size() + " : " + pp);
 
 
