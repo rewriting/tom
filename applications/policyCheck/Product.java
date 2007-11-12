@@ -4,7 +4,7 @@ public class Product {
 
   private static HashMap<String,ArrayList<ArrayList<Integer>>> products =  new HashMap<String,ArrayList<ArrayList<Integer>>>();
  
-  public static ArrayList<ArrayList<Integer>>  directProduct(ArrayList<Integer> sizeSet) {
+  public static ArrayList<ArrayList<Integer>>  getProduct(ArrayList<Integer> sizeSet) {
     // key    
     String key = sizeSet.toString();
     // the resulted product
@@ -19,7 +19,7 @@ public class Product {
         product.add(new ArrayList<Integer>());
       } else {
         int currentSize = sizeSet.remove(0);
-        ArrayList<ArrayList<Integer>> subProductsList = Product.directProduct(sizeSet);
+        ArrayList<ArrayList<Integer>> subProductsList = Product.getProduct(sizeSet);
         for (int i = 0; i < currentSize; i++) {
           for (int j = 0; j < subProductsList.size(); j++) {
             ArrayList<Integer> entry=new ArrayList<Integer>();
@@ -28,7 +28,7 @@ public class Product {
             product.add(entry);
           }
         }
-     }
+      }
       products.put(key,product);
     }
     

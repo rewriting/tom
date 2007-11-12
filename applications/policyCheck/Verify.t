@@ -162,30 +162,31 @@ public class Verify{
   
   //public void generateSets(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes){
   public void generateSets(){
-    Combinations CSubjectSets=new Combinations(numberOfSubjects,numberOfSecurityLevels-1);
+//     Combinations CSubjectSets=new Combinations(numberOfSubjects,numberOfSecurityLevels-1);
 //     CSubjectSets.start();
 //     try {
 //       CSubjectSets.join();
 //     } catch (Exception e) {
 //       System.out.println("join on combination");
 //     }
-    subjectSets=CSubjectSets.getCombination();
+    subjectSets=Combination.getCombination(numberOfSubjects,numberOfSecurityLevels-1);
 
-    Combinations CObjectSets=new Combinations(numberOfObjects,numberOfSecurityLevels-1);
+//     Combinations CObjectSets=new Combinations(numberOfObjects,numberOfSecurityLevels-1);
 //     CObjectSets.start();
 //     try {
 //       CObjectSets.join();
 //     } catch (Exception e) {
 //       System.out.println("join on combination");
 //     }
-    objectSets=CObjectSets.getCombination();
+    objectSets=Combination.getCombination(numberOfObjects,numberOfSecurityLevels-1);
 
     LinkedList<Integer> sizeOfsets=new LinkedList<Integer>(); 
     sizeOfsets.add(subjectSets.size());
     sizeOfsets.add(objectSets.size());
     DirectProduct DPsubjecSetsXobjectSetSets=new DirectProduct(sizeOfsets);
     DPsubjecSetsXobjectSetSets.compute();
-    subjecSetsXobjectSetSets=DPsubjecSetsXobjectSetSets.ProductsList;
+//     subjecSetsXobjectSetSets=DPsubjecSetsXobjectSetSets.ProductsList;
+    subjecSetsXobjectSetSets=null;
 
     LinkedList<Integer> sizeOfsets2=new LinkedList<Integer>();
     sizeOfsets2.add(numberOfSubjects);

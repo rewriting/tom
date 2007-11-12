@@ -6,8 +6,10 @@ public class MiscTests {
 
     //		Combinations 
 		System.out.println("COMBINATIONS ---------------------");
-		Combinations toto=new Combinations(3,2);
-		System.out.println(toto.getCombination());
+    int n=3, p=2;
+		Combinations toto=new Combinations(n,p);
+		System.out.println("Dynamic: "+toto.getCombination());
+    System.out.println("Static: "+Combination.getCombination(n,p));
 
     // PermutationGenerator
 		System.out.println("PermutationGenerator ---------------------");
@@ -50,14 +52,14 @@ public class MiscTests {
     a.add(2);
     a.add(2);
     System.out.println("AL= "+a);
-    ArrayList<ArrayList<Integer>>  pp=Product.directProduct(a);
+    ArrayList<ArrayList<Integer>>  pp=Product.getProduct(a);
     System.out.println(pp.size() + " : " + pp);
     a.add(2);
     a.add(2);
-    pp=Product.directProduct(a);
+    pp=Product.getProduct(a);
     System.out.println(pp.size() + " : " + pp);
     a.add(2);
-    pp=Product.directProduct(a);
+    pp=Product.getProduct(a);
     System.out.println(pp.size() + " : " + pp);
 
 
