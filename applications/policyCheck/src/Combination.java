@@ -3,7 +3,11 @@ import java.util.*;
 public class Combination {
 
   private static HashMap<String,ArrayList<ArrayList<Integer>>> combinations =  new HashMap<String,ArrayList<ArrayList<Integer>>>();
-	
+
+  /*
+   * builds n-element sets with elements in {0,...,p}
+   * ex C_2,2 = [[2, 2], [2, 1], [2, 0], [1, 1], [1, 0], [0, 0]]
+   */
   public static ArrayList<ArrayList<Integer>>  getCombination(int n, int p){
     // key    
     String key = n+"-"+p;;

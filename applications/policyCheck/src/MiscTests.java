@@ -6,7 +6,7 @@ public class MiscTests {
 
     //		Combinations 
 		System.out.println("COMBINATIONS ---------------------");
-    int n=3, p=2;
+    int n=2, p=2;
 //		Combinations toto=new Combinations(n,p);
 //		System.out.println("Dynamic: "+toto.getCombination());
     System.out.println("Static: "+Combination.getCombination(n,p));

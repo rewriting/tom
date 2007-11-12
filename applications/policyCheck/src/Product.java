@@ -4,7 +4,7 @@ public class Product {
 
   private static HashMap<String,ArrayList<ArrayList<Integer>>> products =  new HashMap<String,ArrayList<ArrayList<Integer>>>();
  
-  public static ArrayList<ArrayList<Integer>>  getProduct(List<Integer> sizeSet) {
+  public static ArrayList<ArrayList<Integer>> getProduct(List<Integer> sizeSet) {
     // key    
     String key = sizeSet.toString();
     // the resulted product
