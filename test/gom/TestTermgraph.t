@@ -36,6 +36,8 @@ import tom.library.sl.*;
 
 public class TestTermgraph extends TestCase {
 
+  %include{sl.tom}
+
   %gom(--termgraph) {
     module m
       imports String
@@ -49,6 +51,7 @@ public class TestTermgraph extends TestCase {
       | h(arg:Term2)
       
       Term2 = d()
+            | e()
       
     sort Term: graphrules(rulek,Identity) {
       k(x) -> x
@@ -72,6 +75,11 @@ public class TestTermgraph extends TestCase {
     sort Term: graphrules(TestSideEffect,Identity) {
       f(l:a()) -> g(&l,l:b())
    }
+
+    sort Term2: graphrules(TestMultiSort,Identity) {
+      d() -> e()
+    }
+
   }
 
   public static void main(String[] args) {
@@ -175,6 +183,16 @@ public class TestTermgraph extends TestCase {
   Term t = `g(a(),PathTerm(-2,1));
     try {
       assertEquals(`f(a()),Term.Test2().visit(t));
+    } catch(VisitFailure e) {
+      fail();
+    }
+  }
+
+  /* test for subsitution in multi-sort */
+  public void testGraphRules9() {
+  Term t = `g(h(d()),h(PathTerm2(-1,-2,1,1)));
+    try {
+      assertEquals(`g(h(e()),h(PathTerm2(-1,-2,1,1))),`TopDown(Term2.TestMultiSort()).visit(t));
     } catch(VisitFailure e) {
       fail();
     }
