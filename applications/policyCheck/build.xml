@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="policy" default="build" basedir=".">
+  <description>
+    Policy checker
+  </description>
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+  <property name="optimize"   value="off"/> 
+  <property name="optimize2"   value="off"/>
+  <property name="inline"   value="on"/>
+ 
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="policy.dir"      location="."/>
+  <property name="policy.src"      location="src"/>
+  <property name="policy.gen"      location="gen"/>
+  <property name="policy.build"    location="build"/>
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${policy.build}"/>
+    <mkdir dir="${policy.gen}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <gom config="${gomconfigfile}"
+      srcdir="${policy.src}"
+         destdir="${policy.gen}"
+         package="verify"
+         >
+         <include name="**/*.gom"/>
+    </gom>
+
+    <tom.preset srcdir="${policy.src}"
+      destdir="${policy.gen}">
+      <include name="**/*.t"/>
+    </tom.preset>
+
+    <javac.preset destdir="${policy.build}" fork="yes">
+      <src path="${policy.src}"/>
+      <src path="${policy.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${policy.gen}"/>
+    <delete dir="${policy.build}"/>
+  </target>
+</project>
