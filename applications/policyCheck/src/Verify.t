@@ -63,7 +63,7 @@ public class Verify{
 			  //return the current permutation if it generates a leakage 
 			  return currentPermutation;
 		  }
-      System.out.println("for permutation :"+toStringArray(currentPermutation));
+      System.out.println("for permutation :"+Arrays.deepToString(currentPermutation));
     }
 	
     int[] rep={0};
@@ -98,7 +98,8 @@ public class Verify{
       	  // if the request fails generate an error message an return false
       if (Verification(M)==false){
         System.out.println("Information leakage detected");
-        return false;}
+        return false;
+      }
 	  }
 	  	  //else generate a message and return true 
     System.out.println("No information leakage detected");
@@ -286,7 +287,7 @@ public class Verify{
       System.out.println("No leakage detected for all permutations");
     }else{
       LeakageDetected=true;
-      System.out.println("Leakage detected for permutations :\n"+toStringArray(o));
+      System.out.println("Leakage detected for permutations :\n"+Arrays.deepToString(o));
       return false;
     }
 
@@ -333,7 +334,7 @@ public class Verify{
           System.out.println("No leakage detected for all permutations");
         }else{
           LeakageDetected=true;
-          System.out.println("Leakage detected for permutations :\n"+toStringArray(o));
+          System.out.println("Leakage detected for permutations :\n"+Arrays.deepToString(o));
           return false;
         }
 
@@ -390,22 +391,9 @@ public static ArrayList<ArrayList<Integer>> processString(String order){
     if (o.length==1){
     System.out.println("No leakage detected for all permutations");
     }else{
-    System.out.println("Leakage detected for permutations :\n"+toStringArray(o));
+    System.out.println("Leakage detected for permutations :\n"+Arrays.deepToString(o));
     }
     //System.out.println(((Verification.LeakageDetected)?"a leakage is detected":"no leakage is detected"));
 }
-
-  public static String toStringArray(int[] t){
-    String result="[";
-    if (t.length>0){
-      result+=t[0];
-      for (int i = 1; i < t.length; i++) {
-        result+=", "+t[i];
-      }
-    }
-    result+="]";
-    return result;
-  }
-
 
 }
