@@ -92,7 +92,9 @@ public class Verify{
       	  // try to add the access to the state given the implementation of the policy
       Response response=policy.transition(rus);
       	  // if the request is granted, get the new state
-      if (response.getGranted())M=response.getState();
+      if(response.getGranted()) {
+        M=response.getState();
+      }
       	  // if the request fails generate an error message an return false
       if (Verification(M)==false){
         System.out.println("Information leakage detected");

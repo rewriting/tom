@@ -1,5 +1,5 @@
 module Example 
- imports int
+ imports int boolean
  abstract syntax 
  
  //Security levels : TS Top Secret, S Secret, C Confidential.
@@ -47,3 +47,6 @@ module Example
      return this.getl()-sl.getl();
    }
  }
+
+ Response = Response(Granted:boolean, State:State)
+
