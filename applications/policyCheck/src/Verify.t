@@ -63,7 +63,7 @@ public class Verify{
 			  //return the current permutation if it generates a leakage 
 			  return currentPermutation;
 		  }
-      System.out.println("for permutation :"+Arrays.deepToString(currentPermutation));
+      System.out.println("for permutation :"+Arrays.toString(currentPermutation));
     }
 	
     int[] rep={0};
@@ -195,8 +195,8 @@ public class Verify{
       implicitRequestsUponOriginalState=new ArrayList<RequestUponState>();
       	//add implicit accesses to "implicitRequestsUponOriginalState"
       %match(res){
-        state(e,accesses(_*,a@access(_,_,_,implicit()),_*))->{implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));}
-        state(accesses(_*,a@access(_,_,_,implicit()),_*),e)->{implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));}
+        state[Writes=accesses(_*,a@access[E=implicit()],_*)]->{implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));}
+        state[Reads=accesses(_*,a@access[E=implicit()],_*)]->{implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));}
       }
 
       //for each implicit access 
@@ -287,7 +287,7 @@ public class Verify{
       System.out.println("No leakage detected for all permutations");
     }else{
       LeakageDetected=true;
-      System.out.println("Leakage detected for permutations :\n"+Arrays.deepToString(o));
+      System.out.println("Leakage detected for permutations :\n"+Arrays.toString(o));
       return false;
     }
 
@@ -334,7 +334,7 @@ public class Verify{
           System.out.println("No leakage detected for all permutations");
         }else{
           LeakageDetected=true;
-          System.out.println("Leakage detected for permutations :\n"+Arrays.deepToString(o));
+          System.out.println("Leakage detected for permutations :\n"+Arrays.toString(o));
           return false;
         }
 
@@ -391,7 +391,7 @@ public static ArrayList<ArrayList<Integer>> processString(String order){
     if (o.length==1){
     System.out.println("No leakage detected for all permutations");
     }else{
-    System.out.println("Leakage detected for permutations :\n"+Arrays.deepToString(o));
+    System.out.println("Leakage detected for permutations :\n"+Arrays.toString(o));
     }
     //System.out.println(((Verification.LeakageDetected)?"a leakage is detected":"no leakage is detected"));
 }
