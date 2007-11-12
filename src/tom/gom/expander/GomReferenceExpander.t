@@ -123,15 +123,14 @@ public class GomReferenceExpander {
     visit Sort {
       sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],Operators=ops] -> {
          
-        //We add 5 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Subst<Sort>,Var<Sort>
-        //the two last ones are only used to implement the termgraph rewriting step
+        //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
+        //the last one is only used to implement the termgraph rewriting step
         OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(concSlot(Slot("label"+sortname,stringSortDecl),Slot("term"+sortname,sortdecl))));
         OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(concSlot(Slot("label"+sortname,stringSortDecl))));
         OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(intSortDecl));
-        OperatorDecl substOp = `OperatorDecl("Subst"+sortname,sortdecl,Slots(concSlot(Slot("global"+sortname,sortdecl),Slot("subst"+sortname,sortdecl))));
         OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(concSlot(Slot("label"+sortname,stringSortDecl))));
         hookList.add(pathHooks(pathOp,`sortdecl));
-        return `sort.setOperators(`concOperator(ops*,labOp,refOp,pathOp,substOp,varOp));
+        return `sort.setOperators(`concOperator(ops*,labOp,refOp,pathOp,varOp));
 
       }
     }
@@ -328,7 +327,7 @@ public class GomReferenceExpander {
       }
     }
     
-    protected HashMap getLabels(){
+    public HashMap getLabels(){
       HashMap map = new HashMap();
       try {
       `TopDown(Try(@CollectLabels@)).visit(this);
@@ -338,7 +337,7 @@ public class GomReferenceExpander {
       }
     }
 
-    protected HashMap getLabels2(){
+    public HashMap getLabels2(){
       HashMap map = new HashMap();
       try {
       `TopDown(Try(@CollectLabels2@)).visit(this);

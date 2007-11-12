@@ -106,7 +106,9 @@ public class GraphRuleExpander {
   //add the common methods, includes and imports for all graphrule strategies of a sort 
   protected HookDeclList expandFirst(Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
-  StringBuilder output = new StringBuilder();
+    ClassName visitor = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"Visitor");
+
+    StringBuilder output = new StringBuilder();
     output.append(
         %[
   %include {sl.tom }
@@ -122,6 +124,7 @@ public class GraphRuleExpander {
       is_sort(t) { ($t instanceof SharedLabel) }
   }
 
+
   static class SharedLabel {
     public Position posLhs;
     public Position posRhs;
@@ -134,6 +137,99 @@ public class GraphRuleExpander {
     }
   }
 
+%op @abstractType.getName()@ Subst(global:@abstractType.getName()@,subst:@abstractType.getName()@) {
+  is_fsym(t) {( $t instanceof Subst )}
+  make(t1,t2) {( new Subst($t1,$t2) )}
+}
+
+%typeterm @abstractType.getName()@ {
+  implement { @fullClassName(abstractType)@ }
+  is_sort(t) {( $t instanceof @fullClassName(abstractType)@ )}
+}
+
+static class Subst extends @fullClassName(abstractType)@ {
+    
+  @fullClassName(abstractType)@ substitution,globalterm;
+
+  public Subst(@fullClassName(abstractType)@ globalterm, @fullClassName(abstractType)@ substitution) {
+    this.substitution = substitution;
+    this.globalterm = globalterm;
+  }
+
+    //use the default implementation of visit in BasicStrategy
+  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure {
+    Strategy any = (Strategy)((Visitable)v).getChildAt(0);
+    return (@fullClassName(abstractType)@) any.visit(this);
+  }
+
+  //abstract methods from the abstractType which are trivially implemented
+  //they must never be used
+  
+  public aterm.ATerm toATerm() {
+    return null;
+  }
+
+  public String symbolName() { return "@@"; }
+
+  public void toStringBuilder(java.lang.StringBuilder buffer) {
+    buffer.append("@@(");
+    buffer.append(globalterm);
+    buffer.append(",");
+    buffer.append(substitution);
+    buffer.append(")");
+  }
+
+  public int compareTo(Object o) { return 0; }
+
+  public int compareToLPO(Object o) { return 0; }
+
+  public final int hashCode() {
+    return 0;
+  }
+
+  public final boolean equivalent(shared.SharedObject obj) {
+    return false;
+  }
+
+  public shared.SharedObject duplicate() {
+    return this;
+  }
+
+  //implementation of the Visitable interface
+  public Visitable setChildren(Visitable[] children) {
+    if (children.length == 2){
+      return new Subst((@fullClassName(abstractType)@)children[0],(@fullClassName(abstractType)@)children[1]);
+    } else {
+      throw new IndexOutOfBoundsException();
+    }
+  }
+
+  public Visitable[] getChildren() {
+    return new Visitable[]{globalterm,substitution};
+  }
+
+  public Visitable getChildAt(int i) {
+    switch(i) {
+      case 0: return globalterm;
+      case 1: return substitution;
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+  public Visitable setChildAt(int i, Visitable child) {
+    switch(i) {
+      case 0: return new Subst((@fullClassName(abstractType)@)child,substitution);
+      case 1: return new Subst(globalterm,(@fullClassName(abstractType)@)child);
+      default: throw new IndexOutOfBoundsException();
+    }
+  } 
+
+    public int getChildCount() { 
+      return 2; 
+    }
+
+}
+
   static class Substitution {
     public Position omega;
     @fullClassName(abstractType)@ value;
@@ -144,7 +240,7 @@ public class GraphRuleExpander {
     }
   }
 
-  protected static Iterator getSubstitutions(@sortname@ labelledLhs, @sortname@ labelledRhs, Position omega) {
+  protected static Iterator getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
     ArrayList sharedlabels = new ArrayList();
     HashMap lhsLabels = labelledLhs.getLabels();
     HashMap rhsLabels = labelledRhs.getLabels2();
@@ -186,20 +282,20 @@ public class GraphRuleExpander {
     }
   }
 
-  private static Substitution computeSubstitution(@sortname@ labelledLhs, @sortname@ labelledRhs, SharedLabel sharedlabel, ArrayList sharedlabels, Position omega) {
+  private static Substitution computeSubstitution(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, SharedLabel sharedlabel, ArrayList sharedlabels, Position omega) {
     try {
-      @sortname@ lhs = (@sortname@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledLhs);
-      @sortname@ rhs = (@sortname@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledRhs);
-      lhs = (@sortname@) lhs.expand();
-      rhs = (@sortname@) sharedlabel.posRhs.getSubterm().visit(rhs);
-      return new Substitution((Position) omega.add(sharedlabel.posLhs),(@sortname@) `TopDown(FromVarToPath(lhs,omega)).visit(rhs));
+      @fullClassName(abstractType)@ lhs = (@fullClassName(abstractType)@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledLhs);
+      @fullClassName(abstractType)@ rhs = (@fullClassName(abstractType)@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledRhs);
+      lhs = (@fullClassName(abstractType)@) lhs.expand();
+      rhs = (@fullClassName(abstractType)@) sharedlabel.posRhs.getSubterm().visit(rhs);
+      return new Substitution((Position) omega.add(sharedlabel.posLhs),(@fullClassName(abstractType)@) `TopDown(FromVarToPath(lhs,omega)).visit(rhs));
     } catch(VisitFailure e) { 
       throw new RuntimeException("Unexpected strategy failure!");
     }
   }
 
 
-  %strategy FromVarToPath(lhs:@sortname@,omega:Position) extends Identity() {
+  %strategy FromVarToPath(lhs:@abstractType.getName()@,omega:Position) extends Identity() {
 ]%);
 
   %match(moduleList) {
@@ -223,7 +319,7 @@ public class GraphRuleExpander {
   output.append(%[
   }
 
-  private static Position getVarPos(@sortname@ term, String varname) {
+  private static Position getVarPos(@fullClassName(abstractType)@ term, String varname) {
     Position p = new Position();
     try {
       `OnceTopDown(GetVarPos(p,varname)).visit(term);
@@ -305,6 +401,7 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
     ClassName abstractType = `ClassName(pkgName+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
+ 
     StringBuilder output = new StringBuilder();
     output.append(%[
   public static Strategy @stratname@() {
@@ -330,11 +427,11 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
                 /* 2. go to the root and get the global term-graph */
                 getEnvironment().followPath(omega.inverse());
 
-                @sortname@ labelledLhs = (@sortname@) `@genTermWithExplicitVar(`lhs,"root",0)@;
-                @sortname@ labelledRhs = (@sortname@) `@genTermWithExplicitVar(`rhs,"root",0)@;
-                @sortname@ subject = (@sortname@) getEnvironment().getSubject();             
+                @fullClassName(abstractType)@ labelledLhs = `@genTermWithExplicitVar(`lhs,"root",0)@;
+                @fullClassName(abstractType)@ labelledRhs = `@genTermWithExplicitVar(`rhs,"root",0)@;
+                @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();             
+                
                 //compute all the different substitutions
-                //TODO: manage substitutions of different sort
                 Iterator substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
                 
                 /* 3. construct tt=SubstTerm(subject',r') */
@@ -344,25 +441,26 @@ import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name
                 //System.out.println("subst "+r);
                 Position posRedex = subst.omega;
                 //System.out.println("at the position "+posRedex);
-                //TODO: find the sort of r and deduce which Subst to use
-                @sortname@ t = `Subst@sortname@(subject,(@sortname@)r);
+                @fullClassName(abstractType)@ t = `Subst(subject,r);
                 Position newomega = (Position) posFinal.add(posRedex);
+                //System.out.println("t "+t);
                 //replace in subject every pointer to the position newomega by
                 //a pointer to the position 2  and if in position 2 there is also a
                 //pointer inline the paths.
                 //(corresponds to dot(t) in the paper)
-                t = (@sortname@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
+                t = (@fullClassName(abstractType)@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
+                //System.out.println("t "+t);
                 //inline paths in the intermediate r
                 //(corresponds to dot(r) in the paper)
-                t = (@sortname@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
+                t = (@fullClassName(abstractType)@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
                 //System.out.println("t "+t);
                 
                 /* 4. set the global term to norm(swap(t,1.w,2))|1 */
-                @sortname@ tt = (@sortname@) t.swap(newomega,posRhs); 
+                @fullClassName(abstractType)@ tt = (@fullClassName(abstractType)@) t.swap(newomega,posRhs); 
                 //System.out.println("tt "+tt);
-                @sortname@ res = (@sortname@) tt.normalize();
+                @fullClassName(abstractType)@ res = (@fullClassName(abstractType)@) tt.normalize();
                 //System.out.println("res "+res);
-                subject = (@sortname@) posFinal.getSubterm().visit(res);
+                subject = (@fullClassName(abstractType)@) posFinal.getSubterm().visit(res);
                 //System.out.println("subject "+subject);
                }
 
