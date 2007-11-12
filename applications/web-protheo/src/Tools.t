@@ -3,16 +3,12 @@ import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Tools{
 
   %include{adt/tnode/TNode.tom}
-  %include{mutraveler.tom}
+  %include{sl.tom}
 
   public Tools(){
 }
@@ -22,8 +18,8 @@ public class Tools{
    */
   public TNode removeComments(TNode input) {
     try {
-      VisitableVisitor ruleId = `RmComments();
-      return (TNode)MuTraveler.init(`InnermostId(ruleId)).visit(input);
+      Strategy ruleId = `RmComments();
+      return (TNode)`InnermostId(ruleId).visit(input);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + input);
     }

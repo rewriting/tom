@@ -6,16 +6,14 @@ import aterm.*;
 import java.util.*;
 import java.io.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
 import java.lang.reflect.Array;
+import tom.library.adt.tnode.*;
+
+import tom.library.sl.*;
 
 public class Patch {
 
-  %include{mutraveler.tom}
+  %include{sl.tom}
   %include{adt/tnode/TNode.tom}
 
   private XmlTools xtools;
@@ -24,11 +22,11 @@ public class Patch {
   public Patch(TNode mbrs,TNode bib){
     xtools = new XmlTools();
     members= new ArrayList();
-    VisitableVisitor ruleId1 = `GetMembers();
-    VisitableVisitor ruleId2 = `ParseBib();
+    Strategy ruleId1 = `GetMembers();
+    Strategy ruleId2 = `ParseBib();
     try{
-      MuTraveler.init(`BottomUp(ruleId1)).visit(mbrs);
-      MuTraveler.init(`BottomUp(ruleId2)).visit(bib);
+      `BottomUp(ruleId1).visit(mbrs);
+      `BottomUp(ruleId2).visit(bib);
     } catch (VisitFailure e) {
       System.err.println("Visit failed");
     }

@@ -65,28 +65,22 @@
       </fileset>
     </path>
     <property name="tom-library.jar" refid="tom-library.path"/>
-    <path id="mutraveler.path"> <!-- ugly hack to find the TNode jar -->
-      <fileset dir="${tom.home}/lib">
-        <include name="mutraveler*.jar"/>
-      </fileset>
-    </path>
-    <property name="mutraveler.jar" refid="mutraveler.path"/>
     <!-- Put everything in ${build} into the web-protheo.jar file -->
     <jar jarfile="${web-protheo.dist}/web-protheo.jar">
-    <fileset dir="${web-protheo.build}">
-	    <include name="**/*.class"/>
-    </fileset>
-    <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
-    <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
-    <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
-    <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
-    <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/**/*"/>
-    <zipfileset src="${tnode.jar}"/>
-    <manifest>
-      <attribute name="Main-Class" value="Mk"/>
-     </manifest>
-   </jar>
- </target>
+      <fileset dir="${web-protheo.build}">
+        <include name="**/*.class"/>
+      </fileset> 
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/sl/**/*"/>  
+      <zipfileset src="${tnode.jar}"/>
+      <manifest>
+        <attribute name="Main-Class" value="Mk"/>
+      </manifest>
+    </jar>
+  </target>
   
   <target name="clean"
           description="clean up" >

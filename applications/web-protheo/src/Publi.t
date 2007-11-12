@@ -6,15 +6,11 @@ import java.util.*;
 import java.io.*;
 
 import java.lang.reflect.Array;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Publi {
 
-  %include{mutraveler.tom}
+  %include{sl.tom}
   %include{adt/tnode/TNode.tom}
 
   private final static int firstYearPubli = 1992;
@@ -33,11 +29,11 @@ public class Publi {
     alumni = new TreeMap();
     members = new TreeMap();
     // Put members in a java structure
-    VisitableVisitor getMembers = `GetMembers();
-    VisitableVisitor parseBib = `ParseBib();
+    Strategy getMembers = `GetMembers();
+    Strategy parseBib = `ParseBib();
     try{
-      MuTraveler.init(`InnermostId(getMembers)).visit(membersN);//put all members in members.xml to variable 'members'
-      MuTraveler.init(`InnermostId(parseBib)).visit(bibN);//parse bib
+      `InnermostId(getMembers).visit(membersN);//put all members in members.xml to variable 'members'
+      `InnermostId(parseBib).visit(bibN);//parse bib
     } catch (VisitFailure e) {
       System.err.println("Visit failed");
     }

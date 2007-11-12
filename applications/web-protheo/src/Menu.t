@@ -3,30 +3,17 @@ import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
 
+import tom.library.sl.*;
 
 public class Menu {
 
-  %include{mutraveler.tom}
+  %include{sl.tom}
   %include{adt/tnode/TNode.tom}
 
-  %typeterm Position {
-    implement {tom.library.strategy.mutraveler.Position}
-  }
-
-  %typeterm StringBuffer {
-    implement { StringBuffer }
-  }
-
-  %typeterm HashSet {
-    implement { HashSet }
-  }
+  %typeterm StringBuffer { implement { StringBuffer } }
+  %typeterm Position { implement { Position } }
+  %typeterm HashSet { implement { HashSet } }
 
   private TNode menu;
   private Hashtable menus;
@@ -38,15 +25,15 @@ public class Menu {
     //find all leaf nodes
     HashSet leaves = new HashSet();
 
-    VisitableVisitor duplicateLinks = `DuplicateLinks();
-    VisitableVisitor addSubsectionsTag = `AddSubsectionsTag();
-    VisitableVisitor findLeaves = `FindLeaves(leaves);
+    Strategy duplicateLinks = `DuplicateLinks();
+    Strategy addSubsectionsTag = `AddSubsectionsTag();
+    Strategy findLeaves = `FindLeaves(leaves);
 
     try {
-      menu = (TNode)MuTraveler.init(`BottomUp(RepeatId(duplicateLinks))).visit(menu);
-      menu = (TNode)MuTraveler.init(`BottomUp(addSubsectionsTag)).visit(menu);
+      menu = (TNode) `BottomUp(RepeatId(duplicateLinks)).visit(menu);
+      menu = (TNode) `BottomUp(addSubsectionsTag).visit(menu);
 
-      MuTraveler.init(`BottomUp(findLeaves)).visit(menu);
+      `BottomUp(findLeaves).visit(menu);
 
     } catch (VisitFailure e) {
       System.err.println("reduction failed: " + menu);
@@ -55,23 +42,23 @@ public class Menu {
     //this is a StringBuffer for local use in %strategy
     StringBuffer link = new StringBuffer();
 
-    VisitableVisitor s1 = `S1();
-    VisitableVisitor s2 = `S2(link);
+    Strategy s1 = `S1();
+    Strategy s2 = `S2(link);
 
     Iterator it = leaves.iterator();
     while(it.hasNext()) {
       Position p = (Position)it.next();
 
-      VisitableVisitor eqPos = `EqPos(p);
-      VisitableVisitor subPos = `SubPos(p);
+      Strategy eqPos = `EqPos(p);
+      Strategy subPos = `SubPos(p);
 
       //means: if eqPos on Position p then apply s2 else if not subPos apply s1 
-      VisitableVisitor xmastree = `mu(MuVar("x"),
+      Strategy xmastree = `mu(MuVar("x"),
           All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1))));
 
       try {
 
-        TNode output = (TNode)MuTraveler.init(xmastree).visit(menu);
+        TNode output = (TNode) xmastree.visit(menu);
         TNode tmp = switchLang(link);
         TNodeList outList = `concTNode(output,tmp);
 
@@ -93,8 +80,8 @@ public class Menu {
    * Build a menu given its language and its keyName, put it in the hastable
    */
   private void writeMenu(String lang, StringBuffer link, TNodeList outList) throws VisitFailure {
-    VisitableVisitor ruleId = `RewriteSystemId(lang);
-    TNodeList outList2 = (TNodeList)MuTraveler.init(`BottomUp(ruleId)).visit(outList);
+    Strategy ruleId = `RewriteSystemId(lang);
+    TNodeList outList2 = (TNodeList) `BottomUp(ruleId).visit(outList);
     menus.put(link+"_"+lang,outList2);
   }
 
@@ -221,16 +208,16 @@ public class Menu {
 
     visit TNode {
       <section>(t*,l@<anchor>#TEXT(ln)</anchor>,sub*)</section> -> {
-        VisitableVisitor s1 = `S1();
-        TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(`sub);
+        Strategy s1 = `S1();
+        TNodeList tList = (TNodeList) `BottomUp(s1).visit(`sub);
         //put `ln into link
         link.replace(0,link.length(),`ln);
         return `xml(<section>t* l tList*</section>);
       }
       <section>(t*,l@<link>#TEXT(ln)</link>,sub*)</section> -> {
         if(!hasAnchor(`t)) {
-          VisitableVisitor s1 = `S1();
-          TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(`sub);
+          Strategy s1 = `S1();
+          TNodeList tList = (TNodeList) `BottomUp(s1).visit(`sub);
           //put `ln into link
           link.replace(0,link.length(),`ln);
           return `xml(<section>t* l tList*</section>);
@@ -254,7 +241,7 @@ public class Menu {
   %strategy FindLeaves(leaves:HashSet) extends `Identity() { 
 
     visit TNode {
-      <section></section> -> { leaves.add(getPosition());}
+      <section></section> -> { leaves.add(getEnvironment().getPosition()); }
     }
   }
 
@@ -264,14 +251,14 @@ public class Menu {
 
     visit TNode {
       arg -> {
-        if (getPosition().equals(p)) {
+        if ( getEnvironment().getPosition().equals(p) ) {
           return `arg;
         }
       }
     }
     visit TNodeList {
       arg -> {
-        if (getPosition().equals(p)) {
+        if (getEnvironment().getPosition().equals(p)) {
           return `arg;
         } 
       }
@@ -282,14 +269,14 @@ public class Menu {
 
     visit TNode {
       arg -> {
-        if (getPosition().isPrefix(p)) {
+        if ( p.hasPrefix(getEnvironment().getPosition())) {
           return `arg;
         } 
       }
     }
     visit TNodeList {
       arg -> {
-        if (getPosition().isPrefix(p)) {
+        if (p.hasPrefix(getEnvironment().getPosition())) {
           return `arg;
         } 
       }

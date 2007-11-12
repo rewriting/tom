@@ -4,16 +4,11 @@ import tom.library.adt.tnode.types.*;
 import aterm.*;
 import java.io.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-
+import tom.library.sl.*;
 
 public class Members {
 
-  %include{mutraveler.tom}
+  %include{sl.tom}
   %include{adt/tnode/TNode.tom}
 
   private XmlTools xtools;
@@ -28,8 +23,10 @@ public class Members {
    * Generate members page body
    */
   public TNode getContent(String lang) throws Exception{
-    VisitableVisitor ruleId = `RewriteSystemId(lang);
-    TNode output = (TNode)MuTraveler.init(`BottomUp(ruleId)).visit(members);
+    Strategy ruleId = `RewriteSystemId(lang);
+    TNode output = null;
+    try { output = (TNode) `BottomUp(ruleId).visit(members); }
+    catch(VisitFailure e) { e.printStackTrace(); }
 
     TNodeList result = `concTNode(output);
     // Go reverse when doing concTNode, otherwise it will added at the end of file
@@ -52,7 +49,7 @@ public class Members {
   /**
    * Translate XML into xHTML
    */
-  %strategy RewriteSystemId(lang: String) extends `Identity(){
+  %strategy RewriteSystemId(lang: String) extends `Identity() {
 
     visit TNode {
       <members>(g*)</members> -> {

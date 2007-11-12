@@ -5,16 +5,12 @@ import aterm.*;
 import java.util.*;
 import java.io.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 
 public class Mk {
 
   %include{adt/tnode/TNode.tom}
-  %include{mutraveler.tom}
+  %include{sl.tom}
 
   public static String contentDir;
   public static String w3Dir;
@@ -88,10 +84,10 @@ public class Mk {
     publi = new Publi(mb,bib,tools,xtools);
     members = new Members(mb,xtools);
 
-    VisitableVisitor genHTML = `GenHTML();
+    Strategy genHTML = `GenHTML();
 
     try{
-      MuTraveler.init(`BottomUp(genHTML)).visit(`mn);
+      `BottomUp(genHTML).visit(`mn);
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -153,8 +149,8 @@ public class Mk {
         title = "The PROTHEO Project Home Page";
       }
       // Build HTML page
-      VisitableVisitor ruleId = `IncludeContent(content,menuHTML,link,title);
-      TNode p = (TNode)MuTraveler.init(`BottomUp(ruleId)).visit(skeleton);
+      Strategy ruleId = `IncludeContent(content,menuHTML,link,title);
+      TNode p = (TNode) `BottomUp(ruleId).visit(skeleton);
       // Write HTML page
       OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(w3Dir + link+ "_"+lang+".html"),"UTF-8");
       xtools.writeXMLFileFromTNode(writer,p);
