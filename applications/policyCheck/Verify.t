@@ -180,21 +180,26 @@ public class Verify{
 //     }
     objectSets=Combination.getCombination(numberOfObjects,numberOfSecurityLevels-1);
 
-    LinkedList<Integer> sizeOfsets=new LinkedList<Integer>(); 
-    sizeOfsets.add(subjectSets.size());
-    sizeOfsets.add(objectSets.size());
-    DirectProduct DPsubjecSetsXobjectSetSets=new DirectProduct(sizeOfsets);
-    DPsubjecSetsXobjectSetSets.compute();
+//     LinkedList<Integer> sizeOfsets=new LinkedList<Integer>(); 
+//     sizeOfsets.add(subjectSets.size());
+//     sizeOfsets.add(objectSets.size());
+//     DirectProduct DPsubjecSetsXobjectSetSets=new DirectProduct(sizeOfsets);
+//     DPsubjecSetsXobjectSetSets.compute();
 //     subjecSetsXobjectSetSets=DPsubjecSetsXobjectSetSets.ProductsList;
-    subjecSetsXobjectSetSets=null;
+//     subjecSetsXobjectSetSets=null;
 
-    LinkedList<Integer> sizeOfsets2=new LinkedList<Integer>();
-    sizeOfsets2.add(numberOfSubjects);
-    sizeOfsets2.add(numberOfObjects);
-    sizeOfsets2.add(numberOfAccessModes);
-    DirectProduct DPsubjecXobjectXaccessMode=new DirectProduct(sizeOfsets2);
-    DPsubjecXobjectXaccessMode.compute();
-    allRequests=DPsubjecXobjectXaccessMode.ProductsList;
+//     LinkedList<Integer> sizeOfsets2=new LinkedList<Integer>();
+//     sizeOfsets2.add(numberOfSubjects);
+//     sizeOfsets2.add(numberOfObjects);
+//     sizeOfsets2.add(numberOfAccessModes);
+//     DirectProduct DPsubjecXobjectXaccessMode=new DirectProduct(sizeOfsets2);
+//     DPsubjecXobjectXaccessMode.compute();
+
+    ArrayList<Integer> sizeOfsets=new ArrayList<Integer>();
+    sizeOfsets.add(numberOfSubjects);
+    sizeOfsets.add(numberOfObjects);
+    sizeOfsets.add(numberOfAccessModes);
+    allRequests=Product.getProduct(sizeOfsets);
   }
 
   // Make explicit implicit accesses
