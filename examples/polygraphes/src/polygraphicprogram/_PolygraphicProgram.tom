@@ -1,0 +1,501 @@
+
+   /*
+   %include { mustrategy.tom }
+   */
+
+    %op Strategy _ThreeId(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._ThreeId)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new polygraphicprogram.strategy.threepath._ThreeId(arg0) }
+    }
+  
+  
+  %op Strategy When_ThreeId(s:Strategy) {
+    make(s) { `Sequence(Is_ThreeId(),s) }
+  }
+
+  %op Strategy Is_ThreeId() {
+    make() { new polygraphicprogram.strategy.threepath.Is_ThreeId()}
+  }
+  
+%op Strategy Make_ThreeId(_twoPath:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_ThreeId))) }
+
+  get_slot(_twoPath, t) { _twoPath }
+  make( new_twoPath) { new polygraphicprogram.strategy.threepath.Make_ThreeId( new_twoPath) }
+}
+
+    %op Strategy _ThreeCell(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._ThreeCell)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        make(arg0, arg1, arg2, arg3) { new polygraphicprogram.strategy.threepath._ThreeCell(arg0, arg1, arg2, arg3) }
+    }
+  
+  
+  %op Strategy When_ThreeCell(s:Strategy) {
+    make(s) { `Sequence(Is_ThreeCell(),s) }
+  }
+
+  %op Strategy Is_ThreeCell() {
+    make() { new polygraphicprogram.strategy.threepath.Is_ThreeCell()}
+  }
+  
+%op Strategy Make_ThreeCell(_Name:String, _Source:Strategy, _Target:Strategy, _Type:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_ThreeCell))) }
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_Source, t) { _Source }
+  get_slot(_Target, t) { _Target }
+  get_slot(_Type, t) { _Type }
+  make( _Name,  new_Source,  new_Target,  new_Type) { new polygraphicprogram.strategy.threepath.Make_ThreeCell( _Name,  new_Source,  new_Target,  new_Type) }
+}
+
+    %op Strategy _EmptyThreeC0() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._EmptyThreeC0)))}
+      
+        make() { new polygraphicprogram.strategy.threepath._EmptyThreeC0() }
+    }
+  
+  
+  %op Strategy When_EmptyThreeC0(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyThreeC0(),s) }
+  }
+
+  %op Strategy Is_EmptyThreeC0() {
+    make() { new polygraphicprogram.strategy.threepath.Is_EmptyThreeC0()}
+  }
+  
+%op Strategy Make_EmptyThreeC0() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_EmptyThreeC0))) }
+
+  make() { new polygraphicprogram.strategy.threepath.Make_EmptyThreeC0() }
+}
+
+    %op Strategy _ConsThreeC0(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._ConsThreeC0)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new polygraphicprogram.strategy.threepath._ConsThreeC0(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsThreeC0(s:Strategy) {
+    make(s) { `Sequence(Is_ConsThreeC0(),s) }
+  }
+
+  %op Strategy Is_ConsThreeC0() {
+    make() { new polygraphicprogram.strategy.threepath.Is_ConsThreeC0()}
+  }
+  
+%op Strategy Make_ConsThreeC0(_HeadThreeC0:Strategy, _TailThreeC0:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_ConsThreeC0))) }
+
+  get_slot(_HeadThreeC0, t) { _HeadThreeC0 }
+  get_slot(_TailThreeC0, t) { _TailThreeC0 }
+  make( new_HeadThreeC0,  new_TailThreeC0) { new polygraphicprogram.strategy.threepath.Make_ConsThreeC0( new_HeadThreeC0,  new_TailThreeC0) }
+}
+
+    %op Strategy _EmptyThreeC1() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._EmptyThreeC1)))}
+      
+        make() { new polygraphicprogram.strategy.threepath._EmptyThreeC1() }
+    }
+  
+  
+  %op Strategy When_EmptyThreeC1(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyThreeC1(),s) }
+  }
+
+  %op Strategy Is_EmptyThreeC1() {
+    make() { new polygraphicprogram.strategy.threepath.Is_EmptyThreeC1()}
+  }
+  
+%op Strategy Make_EmptyThreeC1() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_EmptyThreeC1))) }
+
+  make() { new polygraphicprogram.strategy.threepath.Make_EmptyThreeC1() }
+}
+
+    %op Strategy _ConsThreeC1(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._ConsThreeC1)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new polygraphicprogram.strategy.threepath._ConsThreeC1(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsThreeC1(s:Strategy) {
+    make(s) { `Sequence(Is_ConsThreeC1(),s) }
+  }
+
+  %op Strategy Is_ConsThreeC1() {
+    make() { new polygraphicprogram.strategy.threepath.Is_ConsThreeC1()}
+  }
+  
+%op Strategy Make_ConsThreeC1(_HeadThreeC1:Strategy, _TailThreeC1:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_ConsThreeC1))) }
+
+  get_slot(_HeadThreeC1, t) { _HeadThreeC1 }
+  get_slot(_TailThreeC1, t) { _TailThreeC1 }
+  make( new_HeadThreeC1,  new_TailThreeC1) { new polygraphicprogram.strategy.threepath.Make_ConsThreeC1( new_HeadThreeC1,  new_TailThreeC1) }
+}
+
+    %op Strategy _EmptyThreeC2() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._EmptyThreeC2)))}
+      
+        make() { new polygraphicprogram.strategy.threepath._EmptyThreeC2() }
+    }
+  
+  
+  %op Strategy When_EmptyThreeC2(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyThreeC2(),s) }
+  }
+
+  %op Strategy Is_EmptyThreeC2() {
+    make() { new polygraphicprogram.strategy.threepath.Is_EmptyThreeC2()}
+  }
+  
+%op Strategy Make_EmptyThreeC2() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_EmptyThreeC2))) }
+
+  make() { new polygraphicprogram.strategy.threepath.Make_EmptyThreeC2() }
+}
+
+    %op Strategy _ConsThreeC2(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath._ConsThreeC2)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new polygraphicprogram.strategy.threepath._ConsThreeC2(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsThreeC2(s:Strategy) {
+    make(s) { `Sequence(Is_ConsThreeC2(),s) }
+  }
+
+  %op Strategy Is_ConsThreeC2() {
+    make() { new polygraphicprogram.strategy.threepath.Is_ConsThreeC2()}
+  }
+  
+%op Strategy Make_ConsThreeC2(_HeadThreeC2:Strategy, _TailThreeC2:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.threepath.Make_ConsThreeC2))) }
+
+  get_slot(_HeadThreeC2, t) { _HeadThreeC2 }
+  get_slot(_TailThreeC2, t) { _TailThreeC2 }
+  make( new_HeadThreeC2,  new_TailThreeC2) { new polygraphicprogram.strategy.threepath.Make_ConsThreeC2( new_HeadThreeC2,  new_TailThreeC2) }
+}
+
+    %op Strategy _Constructor() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.celltype._Constructor)))}
+      
+        make() { new polygraphicprogram.strategy.celltype._Constructor() }
+    }
+  
+  
+  %op Strategy When_Constructor(s:Strategy) {
+    make(s) { `Sequence(Is_Constructor(),s) }
+  }
+
+  %op Strategy Is_Constructor() {
+    make() { new polygraphicprogram.strategy.celltype.Is_Constructor()}
+  }
+  
+%op Strategy Make_Constructor() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.celltype.Make_Constructor))) }
+
+  make() { new polygraphicprogram.strategy.celltype.Make_Constructor() }
+}
+
+    %op Strategy _Function() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.celltype._Function)))}
+      
+        make() { new polygraphicprogram.strategy.celltype._Function() }
+    }
+  
+  
+  %op Strategy When_Function(s:Strategy) {
+    make(s) { `Sequence(Is_Function(),s) }
+  }
+
+  %op Strategy Is_Function() {
+    make() { new polygraphicprogram.strategy.celltype.Is_Function()}
+  }
+  
+%op Strategy Make_Function() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.celltype.Make_Function))) }
+
+  make() { new polygraphicprogram.strategy.celltype.Make_Function() }
+}
+
+    %op Strategy _TwoId(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath._TwoId)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new polygraphicprogram.strategy.twopath._TwoId(arg0) }
+    }
+  
+  
+  %op Strategy When_TwoId(s:Strategy) {
+    make(s) { `Sequence(Is_TwoId(),s) }
+  }
+
+  %op Strategy Is_TwoId() {
+    make() { new polygraphicprogram.strategy.twopath.Is_TwoId()}
+  }
+  
+%op Strategy Make_TwoId(_onePath:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath.Make_TwoId))) }
+
+  get_slot(_onePath, t) { _onePath }
+  make( new_onePath) { new polygraphicprogram.strategy.twopath.Make_TwoId( new_onePath) }
+}
+
+    %op Strategy _TwoCell(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath._TwoCell)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        make(arg0, arg1, arg2, arg3) { new polygraphicprogram.strategy.twopath._TwoCell(arg0, arg1, arg2, arg3) }
+    }
+  
+  
+  %op Strategy When_TwoCell(s:Strategy) {
+    make(s) { `Sequence(Is_TwoCell(),s) }
+  }
+
+  %op Strategy Is_TwoCell() {
+    make() { new polygraphicprogram.strategy.twopath.Is_TwoCell()}
+  }
+  
+%op Strategy Make_TwoCell(_Name:String, _Source:Strategy, _Target:Strategy, _Type:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath.Make_TwoCell))) }
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_Source, t) { _Source }
+  get_slot(_Target, t) { _Target }
+  get_slot(_Type, t) { _Type }
+  make( _Name,  new_Source,  new_Target,  new_Type) { new polygraphicprogram.strategy.twopath.Make_TwoCell( _Name,  new_Source,  new_Target,  new_Type) }
+}
+
+    %op Strategy _EmptyTwoC0() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath._EmptyTwoC0)))}
+      
+        make() { new polygraphicprogram.strategy.twopath._EmptyTwoC0() }
+    }
+  
+  
+  %op Strategy When_EmptyTwoC0(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyTwoC0(),s) }
+  }
+
+  %op Strategy Is_EmptyTwoC0() {
+    make() { new polygraphicprogram.strategy.twopath.Is_EmptyTwoC0()}
+  }
+  
+%op Strategy Make_EmptyTwoC0() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath.Make_EmptyTwoC0))) }
+
+  make() { new polygraphicprogram.strategy.twopath.Make_EmptyTwoC0() }
+}
+
+    %op Strategy _ConsTwoC0(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath._ConsTwoC0)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new polygraphicprogram.strategy.twopath._ConsTwoC0(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsTwoC0(s:Strategy) {
+    make(s) { `Sequence(Is_ConsTwoC0(),s) }
+  }
+
+  %op Strategy Is_ConsTwoC0() {
+    make() { new polygraphicprogram.strategy.twopath.Is_ConsTwoC0()}
+  }
+  
+%op Strategy Make_ConsTwoC0(_HeadTwoC0:Strategy, _TailTwoC0:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath.Make_ConsTwoC0))) }
+
+  get_slot(_HeadTwoC0, t) { _HeadTwoC0 }
+  get_slot(_TailTwoC0, t) { _TailTwoC0 }
+  make( new_HeadTwoC0,  new_TailTwoC0) { new polygraphicprogram.strategy.twopath.Make_ConsTwoC0( new_HeadTwoC0,  new_TailTwoC0) }
+}
+
+    %op Strategy _EmptyTwoC1() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath._EmptyTwoC1)))}
+      
+        make() { new polygraphicprogram.strategy.twopath._EmptyTwoC1() }
+    }
+  
+  
+  %op Strategy When_EmptyTwoC1(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyTwoC1(),s) }
+  }
+
+  %op Strategy Is_EmptyTwoC1() {
+    make() { new polygraphicprogram.strategy.twopath.Is_EmptyTwoC1()}
+  }
+  
+%op Strategy Make_EmptyTwoC1() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath.Make_EmptyTwoC1))) }
+
+  make() { new polygraphicprogram.strategy.twopath.Make_EmptyTwoC1() }
+}
+
+    %op Strategy _ConsTwoC1(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath._ConsTwoC1)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new polygraphicprogram.strategy.twopath._ConsTwoC1(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsTwoC1(s:Strategy) {
+    make(s) { `Sequence(Is_ConsTwoC1(),s) }
+  }
+
+  %op Strategy Is_ConsTwoC1() {
+    make() { new polygraphicprogram.strategy.twopath.Is_ConsTwoC1()}
+  }
+  
+%op Strategy Make_ConsTwoC1(_HeadTwoC1:Strategy, _TailTwoC1:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.twopath.Make_ConsTwoC1))) }
+
+  get_slot(_HeadTwoC1, t) { _HeadTwoC1 }
+  get_slot(_TailTwoC1, t) { _TailTwoC1 }
+  make( new_HeadTwoC1,  new_TailTwoC1) { new polygraphicprogram.strategy.twopath.Make_ConsTwoC1( new_HeadTwoC1,  new_TailTwoC1) }
+}
+
+    %op Strategy _Id() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath._Id)))}
+      
+        make() { new polygraphicprogram.strategy.onepath._Id() }
+    }
+  
+  
+  %op Strategy When_Id(s:Strategy) {
+    make(s) { `Sequence(Is_Id(),s) }
+  }
+
+  %op Strategy Is_Id() {
+    make() { new polygraphicprogram.strategy.onepath.Is_Id()}
+  }
+  
+%op Strategy Make_Id() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath.Make_Id))) }
+
+  make() { new polygraphicprogram.strategy.onepath.Make_Id() }
+}
+
+    %op Strategy _OneCell(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath._OneCell)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new polygraphicprogram.strategy.onepath._OneCell(arg0) }
+    }
+  
+  
+  %op Strategy When_OneCell(s:Strategy) {
+    make(s) { `Sequence(Is_OneCell(),s) }
+  }
+
+  %op Strategy Is_OneCell() {
+    make() { new polygraphicprogram.strategy.onepath.Is_OneCell()}
+  }
+  
+%op Strategy Make_OneCell(_Name:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath.Make_OneCell))) }
+
+  get_slot(_Name, t) { _Name }
+  make( _Name) { new polygraphicprogram.strategy.onepath.Make_OneCell( _Name) }
+}
+
+    %op Strategy _EmptyOneC0() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath._EmptyOneC0)))}
+      
+        make() { new polygraphicprogram.strategy.onepath._EmptyOneC0() }
+    }
+  
+  
+  %op Strategy When_EmptyOneC0(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyOneC0(),s) }
+  }
+
+  %op Strategy Is_EmptyOneC0() {
+    make() { new polygraphicprogram.strategy.onepath.Is_EmptyOneC0()}
+  }
+  
+%op Strategy Make_EmptyOneC0() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath.Make_EmptyOneC0))) }
+
+  make() { new polygraphicprogram.strategy.onepath.Make_EmptyOneC0() }
+}
+
+    %op Strategy _ConsOneC0(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath._ConsOneC0)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new polygraphicprogram.strategy.onepath._ConsOneC0(arg0, arg1) }
+    }
+  
+  
+  %op Strategy When_ConsOneC0(s:Strategy) {
+    make(s) { `Sequence(Is_ConsOneC0(),s) }
+  }
+
+  %op Strategy Is_ConsOneC0() {
+    make() { new polygraphicprogram.strategy.onepath.Is_ConsOneC0()}
+  }
+  
+%op Strategy Make_ConsOneC0(_HeadOneC0:Strategy, _TailOneC0:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (polygraphicprogram.strategy.onepath.Make_ConsOneC0))) }
+
+  get_slot(_HeadOneC0, t) { _HeadOneC0 }
+  get_slot(_TailOneC0, t) { _TailOneC0 }
+  make( new_HeadOneC0,  new_TailOneC0) { new polygraphicprogram.strategy.onepath.Make_ConsOneC0( new_HeadOneC0,  new_TailOneC0) }
+}
+
+            %op Strategy _ThreeC0(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_ThreeC0"),Choice(_ConsThreeC0(sub,MuVar("x_ThreeC0")),_EmptyThreeC0())) }
+            }
+            
+            %op Strategy _ThreeC1(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_ThreeC1"),Choice(_ConsThreeC1(sub,MuVar("x_ThreeC1")),_EmptyThreeC1())) }
+            }
+            
+            %op Strategy _ThreeC2(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_ThreeC2"),Choice(_ConsThreeC2(sub,MuVar("x_ThreeC2")),_EmptyThreeC2())) }
+            }
+            
+            %op Strategy _TwoC0(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_TwoC0"),Choice(_ConsTwoC0(sub,MuVar("x_TwoC0")),_EmptyTwoC0())) }
+            }
+            
+            %op Strategy _TwoC1(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_TwoC1"),Choice(_ConsTwoC1(sub,MuVar("x_TwoC1")),_EmptyTwoC1())) }
+            }
+            
+            %op Strategy _OneC0(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_OneC0"),Choice(_ConsOneC0(sub,MuVar("x_OneC0")),_EmptyOneC0())) }
+            }
+            

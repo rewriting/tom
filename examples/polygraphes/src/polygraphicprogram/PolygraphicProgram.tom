@@ -1,0 +1,207 @@
+
+%include { string.tom }
+
+%typeterm ThreePath {
+  implement { polygraphicprogram.types.ThreePath }
+  is_sort(t) { $t instanceof polygraphicprogram.types.ThreePath }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { polygraphicprogram.PolygraphicProgramBasicStrategy }
+}
+
+%typeterm CellType {
+  implement { polygraphicprogram.types.CellType }
+  is_sort(t) { $t instanceof polygraphicprogram.types.CellType }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { polygraphicprogram.PolygraphicProgramBasicStrategy }
+}
+
+%typeterm TwoPath {
+  implement { polygraphicprogram.types.TwoPath }
+  is_sort(t) { $t instanceof polygraphicprogram.types.TwoPath }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { polygraphicprogram.PolygraphicProgramBasicStrategy }
+}
+
+%typeterm OnePath {
+  implement { polygraphicprogram.types.OnePath }
+  is_sort(t) { $t instanceof polygraphicprogram.types.OnePath }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { polygraphicprogram.PolygraphicProgramBasicStrategy }
+}
+%op ThreePath ThreeId(twoPath:TwoPath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.ThreeId) }
+  get_slot(twoPath, t) { $t.gettwoPath() }
+  make(t0) { polygraphicprogram.types.threepath.ThreeId.make($t0) }
+}
+
+%op ThreePath ThreeCell(Name:String, Source:TwoPath, Target:TwoPath, Type:CellType) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.ThreeCell) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Source, t) { $t.getSource() }
+  get_slot(Target, t) { $t.getTarget() }
+  get_slot(Type, t) { $t.getType() }
+  make(t0, t1, t2, t3) { polygraphicprogram.types.threepath.ThreeCell.make($t0, $t1, $t2, $t3) }
+}
+
+%op ThreePath EmptyThreeC0() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.EmptyThreeC0) }
+  make() { polygraphicprogram.types.threepath.EmptyThreeC0.make() }
+}
+
+%op ThreePath ConsThreeC0(HeadThreeC0:ThreePath, TailThreeC0:ThreePath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.ConsThreeC0) }
+  get_slot(HeadThreeC0, t) { $t.getHeadThreeC0() }
+  get_slot(TailThreeC0, t) { $t.getTailThreeC0() }
+  make(t0, t1) { polygraphicprogram.types.threepath.ConsThreeC0.make($t0, $t1) }
+}
+
+%op ThreePath EmptyThreeC1() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.EmptyThreeC1) }
+  make() { polygraphicprogram.types.threepath.EmptyThreeC1.make() }
+}
+
+%op ThreePath ConsThreeC1(HeadThreeC1:ThreePath, TailThreeC1:ThreePath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.ConsThreeC1) }
+  get_slot(HeadThreeC1, t) { $t.getHeadThreeC1() }
+  get_slot(TailThreeC1, t) { $t.getTailThreeC1() }
+  make(t0, t1) { polygraphicprogram.types.threepath.ConsThreeC1.make($t0, $t1) }
+}
+
+%op ThreePath EmptyThreeC2() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.EmptyThreeC2) }
+  make() { polygraphicprogram.types.threepath.EmptyThreeC2.make() }
+}
+
+%op ThreePath ConsThreeC2(HeadThreeC2:ThreePath, TailThreeC2:ThreePath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.threepath.ConsThreeC2) }
+  get_slot(HeadThreeC2, t) { $t.getHeadThreeC2() }
+  get_slot(TailThreeC2, t) { $t.getTailThreeC2() }
+  make(t0, t1) { polygraphicprogram.types.threepath.ConsThreeC2.make($t0, $t1) }
+}
+
+%op CellType Constructor() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.celltype.Constructor) }
+  make() { polygraphicprogram.types.celltype.Constructor.make() }
+}
+
+%op CellType Function() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.celltype.Function) }
+  make() { polygraphicprogram.types.celltype.Function.make() }
+}
+
+%op TwoPath TwoId(onePath:OnePath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.twopath.TwoId) }
+  get_slot(onePath, t) { $t.getonePath() }
+  make(t0) { polygraphicprogram.types.twopath.TwoId.make($t0) }
+}
+
+%op TwoPath TwoCell(Name:String, Source:OnePath, Target:OnePath, Type:CellType) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.twopath.TwoCell) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Source, t) { $t.getSource() }
+  get_slot(Target, t) { $t.getTarget() }
+  get_slot(Type, t) { $t.getType() }
+  make(t0, t1, t2, t3) { polygraphicprogram.types.twopath.TwoCell.make($t0, $t1, $t2, $t3) }
+}
+
+%op TwoPath EmptyTwoC0() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.twopath.EmptyTwoC0) }
+  make() { polygraphicprogram.types.twopath.EmptyTwoC0.make() }
+}
+
+%op TwoPath ConsTwoC0(HeadTwoC0:TwoPath, TailTwoC0:TwoPath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.twopath.ConsTwoC0) }
+  get_slot(HeadTwoC0, t) { $t.getHeadTwoC0() }
+  get_slot(TailTwoC0, t) { $t.getTailTwoC0() }
+  make(t0, t1) { polygraphicprogram.types.twopath.ConsTwoC0.make($t0, $t1) }
+}
+
+%op TwoPath EmptyTwoC1() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.twopath.EmptyTwoC1) }
+  make() { polygraphicprogram.types.twopath.EmptyTwoC1.make() }
+}
+
+%op TwoPath ConsTwoC1(HeadTwoC1:TwoPath, TailTwoC1:TwoPath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.twopath.ConsTwoC1) }
+  get_slot(HeadTwoC1, t) { $t.getHeadTwoC1() }
+  get_slot(TailTwoC1, t) { $t.getTailTwoC1() }
+  make(t0, t1) { polygraphicprogram.types.twopath.ConsTwoC1.make($t0, $t1) }
+}
+
+%op OnePath Id() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.onepath.Id) }
+  make() { polygraphicprogram.types.onepath.Id.make() }
+}
+
+%op OnePath OneCell(Name:String) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.onepath.OneCell) }
+  get_slot(Name, t) { $t.getName() }
+  make(t0) { polygraphicprogram.types.onepath.OneCell.make($t0) }
+}
+
+%op OnePath EmptyOneC0() {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.onepath.EmptyOneC0) }
+  make() { polygraphicprogram.types.onepath.EmptyOneC0.make() }
+}
+
+%op OnePath ConsOneC0(HeadOneC0:OnePath, TailOneC0:OnePath) {
+  is_fsym(t) { ($t instanceof polygraphicprogram.types.onepath.ConsOneC0) }
+  get_slot(HeadOneC0, t) { $t.getHeadOneC0() }
+  get_slot(TailOneC0, t) { $t.getTailOneC0() }
+  make(t0, t1) { polygraphicprogram.types.onepath.ConsOneC0.make($t0, $t1) }
+}
+
+
+%oplist ThreePath ThreeC0(ThreePath*) {
+  is_fsym(t) { (($t instanceof polygraphicprogram.types.threepath.ConsThreeC0) || ($t instanceof polygraphicprogram.types.threepath.EmptyThreeC0)) }
+  make_empty() { polygraphicprogram.types.threepath.EmptyThreeC0.make() }
+  make_insert(e,l) { polygraphicprogram.types.threepath.ConsThreeC0.make($e,$l) }
+  get_head(l) { $l.getHeadThreeC0() }
+  get_tail(l) { $l.getTailThreeC0() }
+  is_empty(l) { $l.isEmptyThreeC0() }
+}
+
+%oplist ThreePath ThreeC1(ThreePath*) {
+  is_fsym(t) { (($t instanceof polygraphicprogram.types.threepath.ConsThreeC1) || ($t instanceof polygraphicprogram.types.threepath.EmptyThreeC1)) }
+  make_empty() { polygraphicprogram.types.threepath.EmptyThreeC1.make() }
+  make_insert(e,l) { polygraphicprogram.types.threepath.ConsThreeC1.make($e,$l) }
+  get_head(l) { $l.getHeadThreeC1() }
+  get_tail(l) { $l.getTailThreeC1() }
+  is_empty(l) { $l.isEmptyThreeC1() }
+}
+
+%oplist ThreePath ThreeC2(ThreePath*) {
+  is_fsym(t) { (($t instanceof polygraphicprogram.types.threepath.ConsThreeC2) || ($t instanceof polygraphicprogram.types.threepath.EmptyThreeC2)) }
+  make_empty() { polygraphicprogram.types.threepath.EmptyThreeC2.make() }
+  make_insert(e,l) { polygraphicprogram.types.threepath.ConsThreeC2.make($e,$l) }
+  get_head(l) { $l.getHeadThreeC2() }
+  get_tail(l) { $l.getTailThreeC2() }
+  is_empty(l) { $l.isEmptyThreeC2() }
+}
+
+%oplist TwoPath TwoC0(TwoPath*) {
+  is_fsym(t) { (($t instanceof polygraphicprogram.types.twopath.ConsTwoC0) || ($t instanceof polygraphicprogram.types.twopath.EmptyTwoC0)) }
+  make_empty() { polygraphicprogram.types.twopath.EmptyTwoC0.make() }
+  make_insert(e,l) { polygraphicprogram.types.twopath.ConsTwoC0.make($e,$l) }
+  get_head(l) { $l.getHeadTwoC0() }
+  get_tail(l) { $l.getTailTwoC0() }
+  is_empty(l) { $l.isEmptyTwoC0() }
+}
+
+%oplist TwoPath TwoC1(TwoPath*) {
+  is_fsym(t) { (($t instanceof polygraphicprogram.types.twopath.ConsTwoC1) || ($t instanceof polygraphicprogram.types.twopath.EmptyTwoC1)) }
+  make_empty() { polygraphicprogram.types.twopath.EmptyTwoC1.make() }
+  make_insert(e,l) { polygraphicprogram.types.twopath.ConsTwoC1.make($e,$l) }
+  get_head(l) { $l.getHeadTwoC1() }
+  get_tail(l) { $l.getTailTwoC1() }
+  is_empty(l) { $l.isEmptyTwoC1() }
+}
+
+%oplist OnePath OneC0(OnePath*) {
+  is_fsym(t) { (($t instanceof polygraphicprogram.types.onepath.ConsOneC0) || ($t instanceof polygraphicprogram.types.onepath.EmptyOneC0)) }
+  make_empty() { polygraphicprogram.types.onepath.EmptyOneC0.make() }
+  make_insert(e,l) { polygraphicprogram.types.onepath.ConsOneC0.make($e,$l) }
+  get_head(l) { $l.getHeadOneC0() }
+  get_tail(l) { $l.getTailOneC0() }
+  is_empty(l) { $l.isEmptyOneC0() }
+}

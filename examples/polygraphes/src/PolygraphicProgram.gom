@@ -1,0 +1,206 @@
+module PolygraphicProgram
+	imports String
+	abstract syntax
+OnePath = Id()
+		| OneCell (Name:String)
+		| OneC0 (OnePath*)
+	
+TwoPath = TwoId (onePath:OnePath)
+		| TwoCell (Name:String,Source:OnePath,Target:OnePath,Type:CellType)
+		| TwoC0 (TwoPath*)
+		| TwoC1 (TwoPath*)
+
+ThreePath = ThreeId (twoPath:TwoPath)
+		| ThreeCell (Name:String,Source:TwoPath,Target:TwoPath,Type:CellType)
+		| ThreeC0 (ThreePath*)
+		| ThreeC1 (ThreePath*)
+		| ThreeC2 (ThreePath*)
+		
+CellType = Constructor()
+		| Function()
+
+OneC0:AU() { `Id() }
+
+TwoC0:Free() {}
+TwoC0:make_empty() { return `TwoId(Id()); }
+TwoC0:make_insert(x,y) {
+%match(x,y){
+	TwoId(Id()),tail -> {return `tail; }
+	head,TwoId(Id())  -> {return `head; }
+	TwoC0(h,t),tail -> {return `TwoC0(h,TwoC0(t,tail)); }
+	TwoC1(),g -> { return `g; }
+	g,TwoC1() -> { return `g; }
+	}
+}
+
+TwoC1:Free() {}
+TwoC1:make_empty() { return `TwoId(Id()); }
+TwoC1:make_insert(x,y) {
+	if(y!=`TwoId(Id())&&x.target()!=y.source())
+	{	System.out.println(x);
+		System.out.println(y);
+		throw new RuntimeException("composition of incompatible 2-Paths");
+	}
+%match(x,y){
+	TwoId(Id()),tail -> {return `tail; }
+	head,TwoId(Id())  -> {return `head; }
+	TwoC1(h,t),tail -> {return `TwoC1(h,TwoC1(t,tail)); }
+	TwoC0(),g -> { return `g; }
+	g,TwoC0() -> { return `g; }
+	}
+}
+
+ThreeC0:Free() {}
+ThreeC0:make_empty() { return `ThreeId(TwoId(Id())); }
+ThreeC0:make_insert(x,y) {
+%match(x,y){
+	ThreeId(TwoId(Id())),tail -> {return `tail; }
+	head,ThreeId(TwoId(Id()))  -> {return `head; }
+	ThreeC0(h,t),tail -> {return `ThreeC0(h,ThreeC0(t,tail)); }
+	ThreeC1(),g -> { return `g; }
+	g,ThreeC1() -> { return `g; }
+	ThreeC2(),g -> { return `g; }
+	g,ThreeC2() -> { return `g; }
+	}
+}
+
+ThreeC1:Free() {}
+ThreeC1:make_empty() { return `ThreeId(TwoId(Id())); }
+ThreeC1:make_insert(x,y) {
+	if(y!=`ThreeId(TwoId(Id()))&&x.source().target()!=y.source().source())
+	{
+		throw new RuntimeException("composition of incompatible 3-Paths");
+	}
+%match(x,y){
+	ThreeId(TwoId(Id())),tail -> {return `tail; }
+	head,ThreeId(TwoId(Id()))  -> {return `head; }
+	ThreeC1(h,t),tail -> {return `ThreeC1(h,ThreeC1(t,tail)); }
+	ThreeC0(),g -> { return `g; }
+	g,ThreeC0() -> { return `g; }
+	ThreeC2(),g -> { return `g; }
+	g,ThreeC2() -> { return `g; }
+	}
+}
+
+ThreeC2:Free() {}
+ThreeC2:make_empty() { return `ThreeId(TwoId(Id())); }
+ThreeC2:make_insert(x,y) {
+	if(y!=`ThreeId(TwoId(Id()))&&x.target()!=y.source())
+	{
+		throw new RuntimeException("composition of incompatible 3-Paths");
+	}
+%match(x,y){
+	ThreeId(TwoId(Id())),tail -> {return `tail; }
+	head,ThreeId(TwoId(Id()))  -> {return `head; }
+	ThreeC2(h,t),tail -> {return `ThreeC2(h,ThreeC2(t,tail)); }
+	ThreeC0(),g -> { return `g; }
+	g,ThreeC0() -> { return `g; }
+	ThreeC1(),g -> { return `g; }
+	g,ThreeC1() -> { return `g; }
+	}
+}
+
+ThreeCell:make(name,source,target,type) {
+	if(source.source()!=target.source()||source.target()!=target.target())
+	{
+	throw new RuntimeException ("three-cell unvalid, the source two-path and the target two-path should have the same one-source and one-target");	
+	}
+	else{
+		realMake(name,source,target,type);
+		}
+}
+sort OnePath:block(){
+	public boolean defined(){return true;}
+}
+
+sort TwoPath:block(){
+	public OnePath source(){
+		%match (this){
+					TwoId(X) -> { return `X; }
+					TwoCell[Source=x] -> { return `x; }
+					TwoC0(head,tail*) -> { return `OneC0(head.source(),tail*.source()); }
+					TwoC1(head,tail*) -> { return `head.source(); }
+		}
+		//return `OneId();
+		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		}
+
+		public OnePath target(){
+		%match (this){
+					TwoId(X) -> { return `X; }
+					TwoCell[Target=x] -> { return `x; }
+					TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
+					TwoC1(head*,tail) -> { return `tail.target(); }
+		}
+		//return `OneId();
+		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		}
+		public boolean defined(){
+			%match (this){
+						TwoCell[] -> { return true; }
+						TwoC0(_*) -> { return true; }
+						TwoC1(head, tail*) -> { return `head.target()==`tail.source()&&`tail.defined();}
+				}
+			return false;
+			}
+}
+
+sort ThreePath:block(){
+	public OnePath oneSource(){
+		%match (this){	
+					ThreeId(X) -> { return `X.source(); }
+					ThreeCell[Source=x] -> { return `x.source(); }
+					ThreeC0(head,tail*) -> { return `OneC0(head.oneSource(),tail*.oneSource()); }
+					ThreeC1(head,tail*) -> { return `head.oneSource(); }
+					ThreeC2(head,tail*) -> { return `head.oneSource(); }
+		}
+		//return `OneId();
+		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		}
+
+		public OnePath oneTarget(){
+		%match (this){
+					ThreeId(X) -> { return `X.target(); }
+					ThreeCell[Target=x] -> { return `x.target(); }
+					ThreeC0(head,tail*) -> { return `OneC0(head.oneTarget(),tail*.oneTarget()); }
+					ThreeC1(head*,tail) -> { return `tail.oneTarget(); }
+					ThreeC2(head,tail*) -> { return `head.oneTarget(); }
+		}
+		//return `OneId();
+		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		}
+
+		public TwoPath source(){
+		%match (this){
+					ThreeId(X) -> { return `X; }
+					ThreeCell[Source=x] -> { return `x; }
+					ThreeC0(head,tail*) -> { return `TwoC0(head.source(),tail*.source()); }
+					ThreeC1(head,tail*) -> { return `TwoC1(head.source(),tail*.source()); }
+					ThreeC2(head,tail*) -> { return `head.source(); }
+		}
+		//return `TwoId(OneId());
+		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		}
+
+		public TwoPath target(){
+		%match (this){
+					ThreeId(X) -> { return `X; }
+					ThreeCell[Target=x] -> { return `x; }
+					ThreeC0(head,tail*) -> { return `TwoC0(head.target(),tail*.target()); }
+					ThreeC1(head,tail*) -> { return `TwoC1(head.target(),tail*.target()); }
+					ThreeC2(head*,tail) -> { return `tail.target(); }
+		}
+		//return `TwoId(OneId());
+		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
+		}
+		
+		public boolean defined(){
+			%match (this){
+						ThreeCell[] -> { return true; }
+						ThreeC0(_*) -> { return true; }
+						ThreeC1(ThreeCell[Source=source1],ThreeCell[Source=source2],tail*) -> { return `source1.target()==`source2.source()&&`tail.defined();}
+						ThreeC2(ThreeCell[Target=target1],ThreeCell[Source=source2],tail*) -> { return `target1==`source2&&`tail.defined();}
+				}
+			return false;
+			}
+}
