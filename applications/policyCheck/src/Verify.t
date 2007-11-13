@@ -343,7 +343,7 @@ public class Verify{
     return true;
   }
   
-
+/*
 public static ArrayList<ArrayList<Integer>> processString(String order){
     ArrayList<ArrayList<Integer>> securityLevelsOrder=new ArrayList<ArrayList<Integer>>();
     Scanner scanner = new Scanner(order);
@@ -363,11 +363,59 @@ public static ArrayList<ArrayList<Integer>> processString(String order){
     scanner.close();
     return securityLevelsOrder;
   }
+ */
+
+
+public static Object[] processString(String order){
+	Object[] result=new Object[2];
+    ArrayList<ArrayList<Integer>> securityLevelsOrder=new ArrayList<ArrayList<Integer>>();
+    TreeSet<Integer> allValues=new TreeSet<Integer>();
+    Scanner scanner = new Scanner(order);
+    scanner.useDelimiter(";");
+    while ( scanner.hasNext() ){
+      ArrayList<Integer> subSetWithTotalOrder=new ArrayList<Integer>();
+      String subSetWithTotalOrderString = scanner.next();
+      Scanner scanner2 = new Scanner(subSetWithTotalOrderString);
+      scanner2.useDelimiter(",");
+      while (scanner2.hasNext()){
+      String value = scanner2.next();
+      int valueInteger = Integer.parseInt(value);
+      allValues.add(valueInteger);
+      subSetWithTotalOrder.add(valueInteger);
+      }
+      scanner2.close();
+      securityLevelsOrder.add(subSetWithTotalOrder);
+    }
+    scanner.close();
+    result[0]=securityLevelsOrder;
+    result[1]=allValues.size();
+    return result;
+}
   
 
+public static void main(String[] args){
+	String order=args[0];
+	int numberOfSubjects=Integer.parseInt(args[2]);
+	int numberOfObjects=Integer.parseInt(args[3]);
+	int numberOfAccessMode=Integer.parseInt(args[4]);
+	Object[] processedString=processString(order);
+	ArrayList<ArrayList<Integer>> subsets= (ArrayList<ArrayList<Integer>>)processedString[0];
+    int numberOfSecurityLevels =(Integer)processedString[1];
+	Policy p;
+    if (args[1].equals("0")){
+		p=new BellAndLaPadula(subsets);
+	}else{
+		p=new McLean(subsets);
+	}
+	Verify Verification=new Verify(numberOfSubjects,numberOfObjects,numberOfSecurityLevels,numberOfAccessMode,p);
+	Verification.checkAllSets();
+	System.out.println(((Verification.LeakageDetected)?"leakages are detected":"no leakage is detected"));
+}
 
 
 
+
+/*
   public static void main(String[] args) {
     //Verify(int numberOfSubjects, int numberOfObjects, int numberOfSecurityLevels, int numberOfAccessModes);
 	String order="1,3;0,1,4;0,2,4;0,3,4";
@@ -395,5 +443,5 @@ public static ArrayList<ArrayList<Integer>> processString(String order){
     }
     //System.out.println(((Verification.LeakageDetected)?"a leakage is detected":"no leakage is detected"));
 }
-
+*/
 }
