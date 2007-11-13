@@ -14,7 +14,17 @@
       </fileset>
     </copy>
     <gombuild example="${strategy}"/>
-    <tomcompile example="${strategy}"/>
+    <tom.preset srcdir="${examples.dir}"
+	        options="--singleDispatchStrategy"
+                destdir="${examples.gen}">          
+       <include name="${strategy}/**/HandWrittenStrat.t"/>
+    </tom.preset>
+	<tom.preset srcdir="${examples.dir}"
+	                destdir="${examples.gen}">          
+	       <include name="${strategy}/**/*.t"/>
+	       <exclude name="${strategy}/**/*.g.t"/>
+		   <exclude name="${strategy}/**/HandWrittenStrat.t"/>
+	</tom.preset> 
     <javacompile example="${strategy}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
