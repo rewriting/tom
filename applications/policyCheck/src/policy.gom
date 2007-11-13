@@ -1,4 +1,4 @@
-module Example 
+module verify.Example 
  imports int boolean
  abstract syntax 
  
