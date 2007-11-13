@@ -52,6 +52,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>destdir</li>
  * <li>inline</li>
  * <li>inlineplus</li>
+ * <li>singleDispatchStrategy</li>
  * <li>outputfile</li>
  * <li>optimize</li>
  * <li>optimize2</li>
@@ -88,6 +89,7 @@ public class TomTask extends MatchingTask {
   private boolean pretty = false;
   private boolean inlining = false;
   private boolean inliningplus = false;
+  private boolean singleDispatchStrategy = false;
   private boolean protectedFlag = false;
 
   private boolean failOnError = true;
@@ -329,6 +331,19 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * If true, generates only one visit_ method for a %strategy
+   * @param inlineplus if true generated only one visit_
+   */
+  public void setSingleDispatchStrategy(boolean flag) {
+    this.singleDispatchStrategy = flag;
+  }
+
+  public boolean getSingleDispatchStrategy() {
+    return singleDispatchStrategy;
+  }
+
+  
+  /**
    * If true, generates  protected functions instead of private
    * @param flag if true generates  protected functions instead of private
    */
@@ -547,6 +562,9 @@ public class TomTask extends MatchingTask {
       }
       if(inliningplus == true) {
         javaRunner.createArg().setValue("--inlineplus");
+      }
+      if(singleDispatchStrategy == true) {
+        javaRunner.createArg().setValue("--singleDispatchStrategy");
       }
       if(nowarn == false) {
         javaRunner.createArg().setValue("--wall");

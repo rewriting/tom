@@ -81,7 +81,14 @@ public class Compiler extends TomGenericPlugin {
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options>" +
     "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
+    "<boolean name='singleDispatchStrategy' altName='sds' description='Removes the multiple dispatch generated in a %strategy' value='false'/>" +
     "</options>";
+  
+  private static final String genericForwardName = "tom.library.sl.GenericForward";
+  private static final String visitableName = "tom.library.sl.Visitable";
+  
+  /** if the flag is true, only one visit_ is generated from a %strategy, and not one for each 'visit Type'*/
+  private static boolean singleDispatch = false;
 
   /** unicity var counter */
   private static int absVarNumber;
@@ -93,10 +100,11 @@ public class Compiler extends TomGenericPlugin {
 
   public void run() {
     long startChrono = System.currentTimeMillis();
-    boolean intermediate = getOptionBooleanValue("intermediate");
+    boolean intermediate = getOptionBooleanValue("intermediate");    
     try {
       // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
+      singleDispatch = getOptionBooleanValue("singleDispatchStrategy");
       TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visitLight((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
@@ -212,35 +220,51 @@ matchBlock: {
         return newMatch;
       }
 
-    } // end match
+    } // end visit
 
     visit Declaration {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
         //System.out.println("extendsTerm = " + `extendsTerm);
         DeclarationList l = `concDeclaration();//represents compiled Strategy
         TomForwardType visitorFwd = null;
+        TomTerm arg = null;        
+        ConstraintInstructionList constrInstrList = `concConstraintInstruction();
         for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
           %match(visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {
-              if(visitorFwd == null) {//first time in loop
-                visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
+              if (compiler.singleDispatch) { // only collect the constraintInstrutions
+                constrInstrList = `concConstraintInstruction(constrInstrList*,constraintInstructionList);
+              } else {
+                if(visitorFwd == null) {//first time in loop
+                  visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
+                }
+                arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
+                subjectListAST = `concTomTerm(subjectListAST*,arg);
+                String funcName = "visit_" + `type;//function name
+                Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
+                //return default strategy.visitLight(arg)
+                // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
+                Instruction returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
+                InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+                l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
               }
-              TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
-              subjectListAST = `concTomTerm(subjectListAST*,arg);
-              String funcName = "visit_" + `type;//function name
-              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
-              //return default strategy.visitLight(arg)
-              // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-              Instruction returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
-              InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
-            }
+            }              
           }
         }
+        if ( compiler.singleDispatch ) {
+          TomType visitableType = `TomTypeAlone(visitableName);
+          visitorFwd = `TLForward(Compiler.genericForwardName);
+          arg = `Variable(concOption(),Name("tom__arg"),visitableType,concConstraint());//arg subjectList
+          Instruction matchStatement = `Match(constrInstrList, concOption(orgTrack));
+          //return default strategy.visitLight(arg)
+          Instruction returnStatement = `Return(FunctionCall(Name("super."+ "visit_generic"),visitableType,concTomTerm(arg)));
+          InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+          l = `concDeclaration(l*,MethodDef(Name("visit_generic"),concTomTerm(arg),visitableType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
+        }
         return (Declaration) `preProcessing(compiler).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
-      }
-    }//end match
+      }        
+    }//end visit Declaration
   } // end strategy
 
   %op Strategy preProcessing_makeTerm(compiler:Compiler){

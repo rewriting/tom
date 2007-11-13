@@ -11,6 +11,7 @@
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
   <property name="tomfork"     value="on"/>
+  <property name="singleDispatchStrategy"  value="off"/>		
   <property name="memoryInitSize" value="512m" />
   <property name="memoryMaxSize"  value="1024m" />
 
@@ -66,6 +67,7 @@
            optimize2="${optimize2}"
            inline="${inline}"
            inlineplus="${inlineplus}"
+           singleDispatchStrategy="${singleDispatchStrategy}"
            verbose="${verbose}"
            fork="${tomfork}"
            pretty="${pretty}">

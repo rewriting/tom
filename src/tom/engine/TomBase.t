@@ -98,6 +98,7 @@ public final class TomBase {
     %match(TomType type) {
       TLType[]  -> { return getTLCode(type); }
       Type[TlType=tlType] -> { return getTLCode(`tlType); }
+      TomTypeAlone[String=str] -> { return `str; }
     }
     throw new TomRuntimeException("getTLType error on term: " + type);
   }
