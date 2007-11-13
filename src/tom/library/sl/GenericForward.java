@@ -31,13 +31,8 @@
 package tom.library.sl;
 
 /**                                                                                                                
- * <p>                                                 
- *                                                  
- * <code></code>
- * <p> 
- * <p>
- * <p>
- * 
+ * Generic forward class, used when in %strategy only a method visit_generic is generated  
+ *
  */
 
 public class GenericForward extends AbstractStrategy {
