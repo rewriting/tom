@@ -113,10 +113,10 @@ public class GenericForward extends AbstractStrategy {
   }
 
   public Visitable visitLight(Visitable v) throws VisitFailure {
-    return this.visit_generic(v);
+    return this._visit_tom_generic(v);
   }
 
-  public Visitable visit_generic(Visitable arg) throws VisitFailure {
+  public Visitable _visit_tom_generic(Visitable arg) throws VisitFailure {
     if (environment != null) {
       return any.visit(environment);
     } else {

@@ -86,6 +86,7 @@ public class Compiler extends TomGenericPlugin {
   
   private static final String genericForwardName = "tom.library.sl.GenericForward";
   private static final String visitableName = "tom.library.sl.Visitable";
+  private static final String visitGenericMethod = "_visit_tom_generic";
   
   /** if the flag is true, only one visit_ is generated from a %strategy, and not one for each 'visit Type'*/
   private static boolean singleDispatch = false;
@@ -258,9 +259,9 @@ matchBlock: {
           arg = `Variable(concOption(),Name("tom__arg"),visitableType,concConstraint());//arg subjectList
           Instruction matchStatement = `Match(constrInstrList, concOption(orgTrack));
           //return default strategy.visitLight(arg)
-          Instruction returnStatement = `Return(FunctionCall(Name("super."+ "visit_generic"),visitableType,concTomTerm(arg)));
+          Instruction returnStatement = `Return(FunctionCall(Name("super."+ visitGenericMethod),visitableType,concTomTerm(arg)));
           InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-          l = `concDeclaration(l*,MethodDef(Name("visit_generic"),concTomTerm(arg),visitableType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
+          l = `concDeclaration(l*,MethodDef(Name(visitGenericMethod),concTomTerm(arg),visitableType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
         }
         return (Declaration) `preProcessing(compiler).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }        
