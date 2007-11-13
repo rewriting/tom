@@ -3,6 +3,7 @@ package polygraphicprogram;
 import polygraphicprogram.*;
 import polygraphicprogram.types.*;
 import tom.library.sl.*;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -73,7 +74,7 @@ rewritingRules.add(divSucc);
 rewritingRules.add(multZero);
 rewritingRules.add(multSucc);
 
-
+NormalizeRules();
 //-----------------------------------------------------------------------------
 // idee de methode pour le compilateur:
 // -explorer le xml et extraire tous les chemins comme ci-dessus
@@ -98,12 +99,8 @@ TwoPath test5=`TwoC1(TwoC0(TwoC1(zero,succ),TwoC1(zero,succ)),plus);
 TwoPath test6=`TwoC1(TwoC0(zero,zero),TwoC0(succ,succ),plus);
 TwoPath test7=`TwoC1(TwoC0(test6,test6),plus);
 TwoPath test8=`TwoC1(TwoC0(test5,test5),plus);
-//<-marche pas
-//Compile(test5);
-test(test7);
-test(test8);
 
-
+Compile(test);
 }
 //-----------------------------------------------------------------------------
 // fin du main
@@ -112,6 +109,11 @@ test(test8);
 //-----------------------------------------------------------------------------
 // STRATEGIES version 2 
 //-----------------------------------------------------------------------------
+
+public static void print (TwoPath path){
+System.out.println(path.prettyPrint());
+}
+
 %strategy Normalize() extends Identity(){ 
   	visit TwoPath {
   		TwoC1(TwoC0(head1*,TwoC1(top*),tail1*),TwoC0(head2*,bottom*,tail2*)) -> {if(`head1*.target()==`head2*.source()&&`top*.target()==`bottom*.source()){System.out.println("1");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top*,bottom*),TwoC1(tail1*,tail2*));}} 
@@ -135,6 +137,40 @@ test(test8);
  	 } 
 }
 
+public static void applyRule(ThreePath myRule){
+int sourcesize=myRule.getSource().sourcesize();
+
+}
+
+public static String formatPattern(TwoPath ruleSource){
+
+
+return ruleSource.toString();
+}
+
+
+
+public static void NormalizeRules(){
+HashSet<ThreePath> normalizedRewritingRules=new HashSet<ThreePath>();
+for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
+	ThreePath rule = (ThreePath) iterator.next();
+	try{
+	TwoPath normalizedSource=(TwoPath)`TopDown(NormalizeSource()).visit(rule.getSource());
+	ThreePath normalizedRule=`ThreeCell(rule.getName(),normalizedSource,rule.getTarget(),rule.getType());
+	normalizedRewritingRules.add(normalizedRule);
+	}
+	catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("strange term: "+rule);
+    }
+}
+rewritingRules=normalizedRewritingRules;
+}
+
+%strategy NormalizeSource() extends Identity(){ 
+  	visit TwoPath {
+  	  TwoC0(left*,X,right*) -> {if(`X.sourcesize()>0){ return `TwoC0(left*,TwoC1(TwoId(X.source()),X),right);} } 
+ 	 } 
+}
 
 
 private static void test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies

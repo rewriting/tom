@@ -111,6 +111,19 @@ ThreeCell:make(name,source,target,type) {
 }
 sort OnePath:block(){
 	public boolean defined(){return true;}
+	public String prettyPrint(){
+		%match (this){
+			OneC0(left,right*) -> { return "OneC0("+`left.prettyPrint()+","+`OneC0(right*).prettyPrint()+")";}
+		}
+		return this.toString();
+	}
+	public String prettyPrintBis(){
+		%match (this){
+			o@OneCell(_) -> { return `o.getName(); }
+			OneC0(left,right*) -> { return `left.prettyPrintBis()+","+`OneC0(right*).prettyPrintBis();}
+		}
+		return this.toString();
+	}
 }
 
 sort TwoPath:block(){
@@ -125,7 +138,7 @@ sort TwoPath:block(){
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
 		}
 
-		public OnePath target(){
+	public OnePath target(){
 		%match (this){
 					TwoId(X) -> { return `X; }
 					TwoCell[Target=x] -> { return `x; }
@@ -135,14 +148,39 @@ sort TwoPath:block(){
 		//return `OneId();
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
 		}
-		public boolean defined(){
-			%match (this){
-						TwoCell[] -> { return true; }
-						TwoC0(_*) -> { return true; }
-						TwoC1(head, tail*) -> { return `head.target()==`tail.source()&&`tail.defined();}
-				}
-			return false;
-			}
+	public boolean defined(){
+		%match (this){
+					TwoCell[] -> { return true; }
+					TwoC0(_*) -> { return true; }
+					TwoC1(head, tail*) -> { return `head.target()==`tail.source()&&`tail.defined();}
+		}
+		return false;
+		}
+	public int sourcesize(){
+		OnePath source=this.source();
+		%match(source){
+			Id() -> { return 0; }
+			OneCell(_) -> { return 1; }
+			o@OneC0(_*) -> { return `o.length(); }
+		}
+		return 0;
+	}
+	public  String prettyPrint (){
+		%match (this){
+					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
+					TwoC1(left,right*) -> { return "TwoC1("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
+		}
+		return this.prettyPrintBis();
+		}
+
+	public  String prettyPrintBis(){
+		%match (this){
+						t@TwoCell(_,_,_,_) -> { return `t.getName(); }
+						TwoId(o@OneCell(_)) -> { return `o.prettyPrintBis(); }
+						TwoC0(left,right*) -> { return `left.prettyPrintBis()+","+`TwoC0(right*).prettyPrintBis();}
+		}
+		return this.toString();
+		}
 }
 
 sort ThreePath:block(){
