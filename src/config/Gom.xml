@@ -54,8 +54,8 @@
       class='tom.gom.expander.ExpanderPlugin'/>
     <plugin name='TypeExpander'
       class='tom.gom.expander.TypeExpanderPlugin'/>
-    <plugin name='ReferenceExpander'
-      class='tom.gom.expander.GomReferenceExpanderPlugin'/>
+    <plugin name='GraphExpander'
+      class='tom.gom.expander.GraphExpanderPlugin'/>
     <plugin name='Compiler'
       class='tom.gom.compiler.CompilerPlugin'/>
     <plugin name='Backend'

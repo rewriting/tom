@@ -35,10 +35,10 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
 /**
- * The responsability of the GomReferenceExpander plugin is to 
+ * The responsability of the GraphExpander plugin is to 
  * produce an abstract view of the Gom input with type information
  */
-public class GomReferenceExpanderPlugin extends GomGenericPlugin {
+public class GraphExpanderPlugin extends GomGenericPlugin {
 
   public static final String TYPED_SUFFIX = ".tfix.gom.referenced";
 
@@ -54,8 +54,8 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
   private ModuleList referencedModuleList;
   private HookDeclList referencedHookList;
   /** The constructor*/
-  public GomReferenceExpanderPlugin() {
-    super("GomReferenceExpander");
+  public GraphExpanderPlugin() {
+    super("GraphExpander");
   }
 
   /**
@@ -70,7 +70,7 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomReferenceExpander", "[ModuleList,GomStreamManager]",
+          new Object[]{"GraphExpander", "[ModuleList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
@@ -85,14 +85,14 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
       getLogger().log(Level.INFO, "Extend the signature");
       String packagePrefix =
         streamManager.getPackagePath().replace(File.separatorChar,'.');
-      GomReferenceExpander referencer = new GomReferenceExpander(packagePrefix,getOptionBooleanValue("termgraph"));
-      Pair mpair = referencer.expand(typedModuleList,hookList);
+      GraphExpander expander = new GraphExpander(packagePrefix,getOptionBooleanValue("termgraph"));
+      Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
       referencedHookList = mpair.getHooks();
       if(referencedModuleList == null) {
         getLogger().log(Level.SEVERE, 
-          GomMessage.expansionIssue.getMessage(),
-          streamManager.getInputFileName());
+            GomMessage.expansionIssue.getMessage(),
+            streamManager.getInputFileName());
       } else {
         getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
         getLogger().log(Level.INFO, "Signature extension succeeds");

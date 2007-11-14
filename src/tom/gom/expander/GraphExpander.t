@@ -39,7 +39,7 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.adt.objects.types.ClassName;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class GomReferenceExpander {
+public class GraphExpander {
 
   %include {../../library/mapping/java/util/HashMap.tom}
   %include {../../library/mapping/java/util/ArrayList.tom}
@@ -58,7 +58,7 @@ public class GomReferenceExpander {
     return GomEnvironment.getInstance();
   }
 
-  public GomReferenceExpander(String packagePath,boolean forTermgraph) {
+  public GraphExpander(String packagePath,boolean forTermgraph) {
     this.forTermgraph = forTermgraph;
     this.packagePath = packagePath;
     stringSortDecl = environment().builtinSort("String");
@@ -81,7 +81,7 @@ public class GomReferenceExpander {
       }
     }
     throw new GomRuntimeException(
-        "GomReferenceExpander:fullClassName got a strange ClassName "+clsName);
+        "GraphExpander:fullClassName got a strange ClassName "+clsName);
   }
 
   public Pair expand(ModuleList list, HookDeclList hooks) {
