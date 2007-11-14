@@ -23,7 +23,7 @@ The source distribution of Tom consists of the following directory layout:
    |
    +--- examples // contains examples of Tom use
    |
-   +--- application // contains main applications written in Tom
+   +--- applications // contains main applications written in Tom
    |
    +--- test     // the test set (used by junit)
 
@@ -31,7 +31,7 @@ Prepare for the build
 ---------------------
   The Tom build process uses ant (http://ant.apache.org). This build process is
   specified by the build.xml file. You will need to install apache ant and java
-  1.4 in order to compile Tom.
+  1.5 in order to compile Tom.
 
   The next optional step is to copy the local.properties_template file, found
   at the root of jtom to local.properties, and edit it to reflect your local
