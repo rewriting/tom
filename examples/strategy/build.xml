@@ -15,7 +15,7 @@
     </copy>
     <gombuild example="${strategy}"/>
     <tom.preset srcdir="${examples.dir}"
-	        options="--singleDispatchStrategy"
+	        options="--autoDispatch"
                 destdir="${examples.gen}">          
        <include name="${strategy}/**/HandWrittenStrat.t"/>
     </tom.preset>
