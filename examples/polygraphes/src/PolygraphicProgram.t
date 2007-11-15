@@ -180,7 +180,7 @@ catch(VisitFailure e) {
 // STRATEGIES version 1 
 //-----------------------------------------------------------------------------
 
-%strategy Print() extends Identity(){ //ne sert a rien pour l'instant
+%strategy Print() extends Identity(){
   	visit TwoPath {
   	  x -> { System.out.println(`x); } 
  	 } 
