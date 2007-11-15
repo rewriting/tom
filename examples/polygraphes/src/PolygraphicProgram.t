@@ -137,16 +137,7 @@ System.out.println(path.prettyPrint());
  	 } 
 }
 
-public static void applyRule(ThreePath myRule){
-int sourcesize=myRule.getSource().sourcesize();
 
-}
-
-public static String formatPattern(TwoPath ruleSource){
-
-
-return ruleSource.toString();
-}
 
 
 
