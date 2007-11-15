@@ -81,15 +81,14 @@ public class Compiler extends TomGenericPlugin {
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options>" +
     "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
-    "<boolean name='singleDispatchStrategy' altName='sds' description='Removes the multiple dispatch generated in a %strategy' value='false'/>" +
+    "<boolean name='autoDispatch' altName='ad' description='The content of \"visitor_fwd\" is ignored, and a dispatch mechanism is automatically generated in %strategy ' value='false'/>" +
     "</options>";
   
-  private static final String genericForwardName = "tom.library.sl.GenericForward";
+  private static final String basicStratName = "tom.library.sl.BasicStrategy";
   private static final String visitableName = "tom.library.sl.Visitable";
-  private static final String visitGenericMethod = "_visit_tom_generic";
-  
-  /** if the flag is true, only one visit_ is generated from a %strategy, and not one for each 'visit Type'*/
-  private static boolean singleDispatch = false;
+    
+  /** if the flag is true, the class generated from %strategy inherits from BasicStrategy and handles the dispatch*/
+  private static boolean autoDispatch = false;
 
   /** unicity var counter */
   private static int absVarNumber;
@@ -105,7 +104,7 @@ public class Compiler extends TomGenericPlugin {
     try {
       // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
-      singleDispatch = getOptionBooleanValue("singleDispatchStrategy");
+      autoDispatch = getOptionBooleanValue("autoDispatch");
       TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visitLight((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
@@ -227,42 +226,99 @@ matchBlock: {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
         //System.out.println("extendsTerm = " + `extendsTerm);
         DeclarationList l = `concDeclaration();//represents compiled Strategy
-        TomForwardType visitorFwd = null;
-        TomTerm arg = null;        
-        ConstraintInstructionList constrInstrList = `concConstraintInstruction();
+        TomForwardType visitorFwd = null;             
+        HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
         for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
           %match(visit) {
-            VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {
-              if (compiler.singleDispatch) { // only collect the constraintInstrutions
-                constrInstrList = `concConstraintInstruction(constrInstrList*,constraintInstructionList);
+            VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
+              if(visitorFwd == null) {//first time in loop
+                visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
+              }
+              TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
+              subjectListAST = `concTomTerm(subjectListAST*,arg);
+              String funcName = "visit_" + `type;//function name
+              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
+              //return default strategy.visitLight(arg)
+              // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
+              Instruction returnStatement = null;
+              if (compiler.autoDispatch) {
+                returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
               } else {
-                if(visitorFwd == null) {//first time in loop
-                  visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
-                }
-                arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
-                subjectListAST = `concTomTerm(subjectListAST*,arg);
-                String funcName = "visit_" + `type;//function name
-                Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
-                //return default strategy.visitLight(arg)
-                // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-                Instruction returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
-                InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-                l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
+                returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
+              }
+              InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
+              if (compiler.autoDispatch) {
+                dispatchInfo.put(`vType,funcName);
               }
             }              
           }
         }
-        if ( compiler.singleDispatch ) {
-          TomType visitableType = `TomTypeAlone(visitableName);
-          visitorFwd = `TLForward(Compiler.genericForwardName);
-          arg = `Variable(concOption(),Name("tom__arg"),visitableType,concConstraint());//arg subjectList
-          Instruction matchStatement = `Match(constrInstrList, concOption(orgTrack));
-          //return default strategy.visitLight(arg)
-          Instruction returnStatement = `Return(FunctionCall(Name("super."+ visitGenericMethod),visitableType,concTomTerm(arg)));
-          InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-          l = `concDeclaration(l*,MethodDef(Name(visitGenericMethod),concTomTerm(arg),visitableType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
-        }
+        if ( compiler.autoDispatch ) { 
+         /*
+          * // Generates the following dispatch mechanism
+          *           
+          * public Visitable visitLight(Visitable v) throws VisitFailure {
+          *       if (is_sort(v, Term1))
+          *               return this.visit_Term1((Term1) v);
+          *       .....................        
+          *       if (is_sort(v, Termn))
+          *               return this.visit_Termn((Termn) v);               
+          *       return any.visitLight(v);
+          * }
+          *
+          * public Term1 _visit_Term1(Term1 arg) throws VisitFailure {
+          *        if (environment != null) {
+          *                return (Term1) any.visit(environment);
+          *        } else {
+          *                return (Term1) any.visitLight(arg);
+          *        }
+          * }
+          * ..............
+          * public Termn _visit_Termn(Termn arg) throws VisitFailure {
+          *        if (environment != null) {
+          *                return (Termn) any.visit(environment);
+          *        } else {
+          *                return (Termn) any.visitLight(arg);
+          *        }
+          * }
+          *
+          */        
+          visitorFwd = `TLForward(Compiler.basicStratName);         
+          TomTerm vVar = `Variable(concOption(),Name("v"),TomTypeAlone(visitableName),concConstraint());// v argument of visitLight
+          InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
+          // generate the visitLight
+          for(TomType type:dispatchInfo.keySet()){
+            TomList funcArg = `concTomTerm(ExpressionToTomTerm(Cast(type,TomTermToExpression(vVar))));            
+            Instruction returnStatement = `Return(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg));
+            Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
+            ifList = `concInstruction(ifList*,ifInstr);
+            // generate the _visit_Term
+            TomTerm arg = `Variable(concOption(),Name("arg"),type,concConstraint());
+            TomTerm environmentVar = `Variable(concOption(),Name("environment"),EmptyType(),concConstraint());
+            Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment)"))))));
+            Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg)"))))));
+            Instruction ifThenElse = `If(Negation(EqualTerm(compiler.getStreamManager().getSymbolTable().getBooleanType(),
+                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object"))))),
+                                              return1,return2);
+            l = `concDeclaration(l*,MethodDef(
+                                      Name("_" + dispatchInfo.get(type)),
+                                      concTomTerm(arg),
+                                      type,
+                                      TomTypeAlone("tom.library.sl.VisitFailure"),
+                                      ifThenElse));
+          }
+          ifList = `concInstruction(ifList*,
+              Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v)")))));
+          Declaration visitLightDeclaration = `MethodDef(
+                                      Name("visitLight"),
+                                      concTomTerm(vVar),
+                                      TomTypeAlone(visitableName),
+                                      TomTypeAlone("tom.library.sl.VisitFailure"),
+                                      AbstractBlock(ifList));
+          l = `concDeclaration(l*,visitLightDeclaration);
+        }// end if autoDispatch
         return (Declaration) `preProcessing(compiler).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }        
     }//end visit Declaration

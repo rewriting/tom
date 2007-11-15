@@ -346,6 +346,12 @@ public abstract class TomAbstractGenerator {
         generate(deep,`t, moduleName);
         return;
       }      
+      
+      TomInstructionToExpression(t) -> {
+        generateInstruction(deep, `t, moduleName);
+        return;
+      }
+      
       t -> {
         System.out.println("Cannot generate code for expression: " + `t);
         throw new TomRuntimeException("Cannot generate code for expression: " + `t);
