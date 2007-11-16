@@ -22,8 +22,8 @@ class PrettyPrinter {
 //  %include { sequents/sequents.tom }
   %include { urban/urban.tom }
   %include { sl.tom }
-  %typeterm Set {implement {Set} is_sort(t) {t instanceof Set} }
-  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
+  %typeterm Set {implement {Set} }
+  %typeterm Collection { implement {Collection} }
 
   private static String translate(RuleType rt) {
     %match(rt) {

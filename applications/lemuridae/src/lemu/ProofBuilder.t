@@ -56,15 +56,9 @@ public class ProofBuilder extends Observable {
     }
   }
 
-  %typeterm TermMap {
-    implement { Map<Term,Term> }
-    is_sort(t) { t instanceof Map }
-  }
+  %typeterm TermMap { implement { Map<Term,Term> } }
 
-  %typeterm ProofBuilder {
-    implement { ProofBuilder }
-    is_sort(t) { t instanceof ProofBuilder }
-  }
+  %typeterm ProofBuilder { implement { ProofBuilder } }
 
 
   %strategy ReplaceTree(t: Tree) extends Fail() {
@@ -669,10 +663,7 @@ b :{
     return res;
   }
 
-  %typeterm RuleArrayList {
-    implement { ArrayList<Rule> }
-    is_sort(t) { t instanceof ArrayList }
-  }
+  %typeterm RuleArrayList { implement { ArrayList<Rule> } }
 
   %strategy ApplyReduce(newTermRules: TermRuleList, newPropRules: PropRuleList) extends Identity() {
     visit Tree {

@@ -20,9 +20,8 @@ public class Proofterms {
   %include { sl.tom }
   %include { util/types/Collection.tom}
 
-    %typeterm VarGenerator {
+  %typeterm VarGenerator {
     implement { VarGenerator }
-    is_sort(t) { t instanceof VarGenerator }
   }
 
   public static ProofTerm getProofterm(Tree term) {

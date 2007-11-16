@@ -142,7 +142,7 @@ class Unification {
 
  /* ---------- to ensure fresh vars in rewrite/super rules ----------*/
 
-  %typeterm StringSet { implement { Set<String> } is_sort(t) { t instanceof Set} }
+  %typeterm StringSet { implement { Set<String> } }
 
   %strategy RenameIntoTemp(bounded : StringSet) extends `Fail() {
     visit Prop {

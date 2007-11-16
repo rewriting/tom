@@ -7,7 +7,7 @@
   <property name="javacTarget" value="1.5"/>
   <property name="optimize"   value="off"/> 
   <property name="optimize2"   value="off"/>
-  <property name="inline"   value="on"/>
+  <property name="inlineplus"   value="on"/>
  
   <property environment="env"/>
   <property name="tom.home" value="${env.TOM_HOME}"/>
@@ -45,7 +45,7 @@
       <exclude name="**/LJ2NJ.t"/>
     </tom.preset>
     <tom.preset outputfile="${lemu.gen}/lemu/SeqWalker.g"
-      options="-I ${lemu.gen}/lemu"
+      options="-I ${lemu.gen}/lemu" 
       srcdir="${lemu.src}/lemu"> 
       <include name="SeqWalker.g.t"/>
     </tom.preset>

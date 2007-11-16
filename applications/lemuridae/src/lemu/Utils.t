@@ -15,9 +15,9 @@ public class Utils {
 
   %include { sequents/sequents.tom }
   %include { sl.tom }
-  %typeterm StringCollection { implement {Collection<String>} is_sort(t) { t instanceof Collection} }
-  %typeterm Collection { implement {Collection} is_sort(t) { t instanceof Collection} }
-  %typeterm StringTermMap{ implement { Map<String,Term> } is_sort(t) { t instanceof Map} }
+  %typeterm StringCollection { implement {Collection<String>} }
+  %typeterm Collection { implement {Collection} }
+  %typeterm StringTermMap{ implement { Map<String,Term> } }
 
   /** 
    * for convenience 

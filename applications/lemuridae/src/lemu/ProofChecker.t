@@ -9,38 +9,15 @@ public class ProofChecker {
   %include { sequents/sequents.tom }
   %include { sl.tom }
 
-  %strategy ReplaceVar(var:Term, new_term:Term) extends `Fail() {
-    visit Term {
-      v@Var[] -> { if (`v == var) return new_term; }
-    }
-  }
-
-  %strategy ReplaceFreeVars(var: Term, new_term: Term) extends `Fail() {
-    visit Prop {
-      relationAppl(r, tl) -> {
-        TermList res = (TermList) `mu(MuVar("x"),Choice(ReplaceVar(var,new_term),All(MuVar("x")))).visit(`tl);
-        return `relationAppl(r, res);
-      }
-      r@(forall|exists)(x,_) -> { 
-        if  (`Var(x) == var)  return `r; 
-      }
-    }
-  }
-
-  %op Strategy replaceFreeVars(var:Term, new_term:Term) {
-    make(var,new_term) {
-      `mu(MuVar("x"),Choice(ReplaceFreeVars(var,new_term),All(MuVar("x"))))
-    }
-  }
-
   private static Visitable tryVisit(Strategy s, Visitable v) {
     Visitable res = null;
     try { res = s.visit(v); return res; }
     catch (VisitFailure e) { return v; }
   }
 
+
   public static boolean boundedInContext(Term var, Context ctxt) {
-    return tryVisit(`replaceFreeVars(var,Var("@notavar@")),ctxt) == ctxt; 
+    return Utils.replaceFreeVars(ctxt,var,`Var("@notavar@")) == ctxt; 
   }
 
   public static boolean proofcheck(Tree term) {
@@ -144,7 +121,7 @@ public class ProofChecker {
           a@forall(v,A)
           )
         -> {
-          if (`tryVisit(replaceFreeVars(Var(v),new_var),A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
+          if (Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
             return proofcheck(`p); 
         }
 
@@ -154,7 +131,7 @@ public class ProofChecker {
           sequent((g1*,a,g2*),d),
           a@forall(v,A)
           )
-        -> { if (`tryVisit(replaceFreeVars(Var(v),new_term),A) == `B) return proofcheck(`p); } 
+        -> { if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B) return proofcheck(`p); } 
 
       rule(
           existsRightInfo(new_term),
@@ -162,7 +139,7 @@ public class ProofChecker {
           sequent(g,(d1*,a,d2*)),
           a@exists(v,A)
           )
-        -> { if (`tryVisit(replaceFreeVars(Var(v),new_term),A) == `B) return proofcheck(`p); 
+        -> { if (Utils.replaceFreeVars(`A,`Var(v),`new_term) == `B) return proofcheck(`p); 
         } 
 
       rule(
@@ -172,7 +149,7 @@ public class ProofChecker {
           a@exists(v,A)
           )
         -> {
-          if (`tryVisit(replaceFreeVars(Var(v),new_var),A) == `B && boundedInContext(`new_var,`context(g1*,g2*,d*)))
+          if (Utils.replaceFreeVars(`A,`Var(v),`new_var) == `B && boundedInContext(`new_var,`context(g1*,g2*,d*)))
             return proofcheck(`p); 
         } 
 
