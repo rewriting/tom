@@ -32,7 +32,7 @@ package strategy;
 import tom.library.sl.*;
 
 /**
- * Shows how to hand-write strategies (make sure the option 'singleDispatchStrategy' was passed to Tom ) 
+ * Shows how to hand-write strategies (make sure the option 'autoDispatch' was passed to Tom ) 
  */
 
 public class HandWrittenStrat {
