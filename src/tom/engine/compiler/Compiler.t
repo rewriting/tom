@@ -288,6 +288,7 @@ matchBlock: {
           visitorFwd = `TLForward(Compiler.basicStratName);         
           TomTerm vVar = `Variable(concOption(),Name("v"),TomTypeAlone(visitableName),concConstraint());// v argument of visitLight
           InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
+          Expression testEnvNotNull = null;
           // generate the visitLight
           for(TomType type:dispatchInfo.keySet()){
             TomList funcArg = `concTomTerm(ExpressionToTomTerm(Cast(type,TomTermToExpression(vVar))));            
@@ -299,9 +300,9 @@ matchBlock: {
             TomTerm environmentVar = `Variable(concOption(),Name("environment"),EmptyType(),concConstraint());
             Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment)"))))));
             Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg)"))))));
-            Instruction ifThenElse = `If(Negation(EqualTerm(compiler.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object"))))),
-                                              return1,return2);
+            testEnvNotNull = `Negation(EqualTerm(compiler.getStreamManager().getSymbolTable().getBooleanType(),
+                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
+            Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
             l = `concDeclaration(l*,MethodDef(
                                       Name("_" + dispatchInfo.get(type)),
                                       concTomTerm(arg),
@@ -309,8 +310,10 @@ matchBlock: {
                                       TomTypeAlone("tom.library.sl.VisitFailure"),
                                       ifThenElse));
           }
-          ifList = `concInstruction(ifList*,
-              Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v)")))));
+          ifList = `concInstruction(ifList*,              
+                      If(testEnvNotNull,
+                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visit(environment)")))),
+                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v)"))))));
           Declaration visitLightDeclaration = `MethodDef(
                                       Name("visitLight"),
                                       concTomTerm(vVar),
