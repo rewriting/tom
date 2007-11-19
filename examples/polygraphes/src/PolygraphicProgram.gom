@@ -181,6 +181,7 @@ sort TwoPath:block(){
 		}
 		return this.toString();
 		}
+	public void print(){System.out.println(this.prettyPrint());}
 }
 
 sort ThreePath:block(){

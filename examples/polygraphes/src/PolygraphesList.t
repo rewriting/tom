@@ -51,7 +51,10 @@ private static	TwoPath merge = `TwoCell("merge",OneC0(list,list),list,Function()
 
 public static void main(String[] args) {
 
+TwoPath test = `TwoC1(TwoC0(TwoC1(TwoC0(un,TwoC1(TwoC0(deux,consList),add)),add),TwoC1(TwoC0(zero,TwoC1(TwoC0(cinq,consList),add)),add)),merge);
 
+test.print();
+test(test);
 }
 
 public static void print (TwoPath path){
@@ -150,8 +153,8 @@ System.out.println(path.prettyPrint());
   	 TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor()),X1),TwoCell("append",OneC0(OneCell("list"),OneCell("nat")),OneCell("list"),Constructor()),Y*) -> { System.out.println("appendToAdd"); return `TwoC1(TwoC0(X1,TwoCell("consList",Id(),OneCell("list"),Constructor())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),Y);}
   	 TwoC1(TwoC0(TwoC1(TwoC0(X1,X2),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor())),X3),TwoCell("append",OneC0(OneCell("list"),OneCell("nat")),OneCell("list"),Constructor()),Y*) -> { System.out.println("AddAppend"); return `TwoC1(TwoC0(X1,TwoC1(TwoC0(X2,X3),TwoCell("append",OneC0(OneCell("list"),OneCell("nat")),OneCell("list"),Constructor()))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),Y*);}
   	 //peuvent pas etre generees automatiquement faute d'avoir une modelisation tenant compte des conditions
-  	 TwoC1(TwoC0(TwoC1(TwoC0(TwoCell(i1,Id(),OneCell("nat"),Constructor()),X1),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor())),TwoC1(TwoC0(TwoCell(i2,Id(),OneCell("nat"),Constructor()),X2),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function()),Y*) -> {if(Integer.parseInt(`i1)<=Integer.parseInt(`i2)){System.out.println("merge1");return `TwoC1(TwoC0(TwoCell(i1,Id(),OneCell("nat"),Constructor()),TwoC1(TwoC0(X1,TwoC1(TwoC0(TwoCell(i2,Id(),OneCell("nat"),Constructor()),X2),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function()))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),Y*);}else{System.out.println("merge2");return `TwoC1(TwoC0(TwoCell(i1,Id(),OneCell("nat"),Constructor()),TwoC1(TwoC0(TwoC1(TwoC0(TwoCell(i2,Id(),OneCell("nat"),Constructor()),X1),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function())),X2),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),Y*);}}
-  	} 
+  	 TwoC1(TwoC0(TwoC1(TwoC0(TwoCell(i1,Id(),OneCell("nat"),Constructor()),X1),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor())),TwoC1(TwoC0(TwoCell(i2,Id(),OneCell("nat"),Constructor()),X2),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function()),Y*) -> {if(Integer.parseInt(`i1)<=Integer.parseInt(`i2)){System.out.println("merge1");return `TwoC1(TwoC0(TwoCell(i1,Id(),OneCell("nat"),Constructor()),TwoC1(TwoC0(TwoC1(TwoC0(TwoCell(i2,Id(),OneCell("nat"),Constructor()),X1),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor())),X2),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function()))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),Y*);}}
+}
 }
 
 

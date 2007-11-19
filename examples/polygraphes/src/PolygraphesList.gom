@@ -37,8 +37,8 @@ TwoC1:Free() {}
 TwoC1:make_empty() { return `TwoId(Id()); }
 TwoC1:make_insert(x,y) {
 	if(y!=`TwoId(Id())&&x.target()!=y.source())
-	{	System.out.println(x);//System.out.println(x.target());
-		System.out.println(y);//System.out.println(y.source());
+	{	System.out.println(x);System.out.println(x.target());
+		System.out.println(y);System.out.println(y.source());
 		throw new RuntimeException("composition of incompatible 2-Paths");
 	}
 %match(x,y){
@@ -181,6 +181,7 @@ sort TwoPath:block(){
 		}
 		return this.toString();
 		}
+	public void print(){System.out.println(this.prettyPrint());}
 	
 }
 
