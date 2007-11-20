@@ -213,6 +213,12 @@ writer.write(%[
         }
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
       }
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
+        if( o.equals(cur) ) {
+          return true;
+        }
+      }
+
     }
     return false;
   }
@@ -228,16 +234,24 @@ writer.write(%[
       @fullClassName(sortName)@ list = @className()@.this;
 
       public boolean hasNext() {
-        return list.isCons@className()@();
+        return list!=null && !list.isEmpty@className()@();
       }
 
       public @primitiveToReferenceType(domainClassName)@ next() {
         if(list.isEmpty@className()@()) {
           throw new java.util.NoSuchElementException();
         }
-        @primitiveToReferenceType(domainClassName)@ head = ((@fullClassName(cons.getClassName())@)list).getHead@className()@();
-        list = ((@fullClassName(cons.getClassName())@)list).getTail@className()@();
-        return head;
+        if(list.isCons@className()@()) {
+          @primitiveToReferenceType(domainClassName)@ head = ((@fullClassName(cons.getClassName())@)list).getHead@className()@();
+          list = ((@fullClassName(cons.getClassName())@)list).getTail@className()@();
+          return head;
+        } else {
+          // we are in this case only if domain=codomain
+          // thus, the cast is safe
+          Object res = list;
+          list = null;
+          return (@primitiveToReferenceType(domainClassName)@)res;
+        }
       }
 
       public void remove() {
@@ -286,6 +300,9 @@ writer.write(%[
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
         i++;
       }
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
+        array[i] = cur;
+      }
     }
     return array;
   }
@@ -306,6 +323,9 @@ writer.write(%[
         array[i] = (T)elem;
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
         i++;
+      }
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
+        array[i] = (T)cur;
       }
     }
     return array;
