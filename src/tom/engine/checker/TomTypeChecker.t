@@ -184,19 +184,21 @@ public class TomTypeChecker extends TomChecker {
               currentVisitorFwd = symbolTable().getForwardType(`ASTVisitType);
 
               //noVisitorFwd defined for visitType
-              if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
-                messageError(fileName,`TLVisitType.getStart().getLine(),
-                    TomMessage.noVisitorForward,
-                    new Object[]{`(ASTVisitType)});
-              } else if (visitorFwd == null) {
-                //first visit 
-                visitorFwd = currentVisitorFwd;
-              } else {
-                //check if current visitor equals to previous visitor
-                if (currentVisitorFwd != visitorFwd){ 
+              if (!getOptionBooleanValue("autoDispatch")) {
+                if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
                   messageError(fileName,`TLVisitType.getStart().getLine(),
-                      TomMessage.differentVisitorForward,
-                      new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+                      TomMessage.noVisitorForward,
+                      new Object[]{`(ASTVisitType)});
+                } else if (visitorFwd == null) {
+                  //first visit 
+                  visitorFwd = currentVisitorFwd;
+                } else {
+                  //check if current visitor equals to previous visitor
+                  if (currentVisitorFwd != visitorFwd){ 
+                    messageError(fileName,`TLVisitType.getStart().getLine(),
+                        TomMessage.differentVisitorForward,
+                        new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+                  }
                 }
               }
               verifyMatchVariable(`patternInstructionList);
