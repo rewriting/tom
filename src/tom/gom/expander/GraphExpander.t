@@ -47,7 +47,8 @@ public class GraphExpander {
   %include {../../library/mapping/java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
-  private static String packagePath;
+  %typeterm GomStreamManager { implement { GomStreamManager } }
+  private static GomStreamManager streamManager;
   private static SortDecl stringSortDecl;
   private static SortDecl intSortDecl;
   // indicates if the expand method must include normalization phase
@@ -58,9 +59,9 @@ public class GraphExpander {
     return GomEnvironment.getInstance();
   }
 
-  public GraphExpander(String packagePath,boolean forTermgraph) {
+  public GraphExpander(GomStreamManager streamManager,boolean forTermgraph) {
     this.forTermgraph = forTermgraph;
-    this.packagePath = packagePath;
+    this.streamManager = streamManager;
     stringSortDecl = environment().builtinSort("String");
     intSortDecl = environment().builtinSort("int");
     //we mark them as used builtins:
@@ -95,7 +96,7 @@ public class GraphExpander {
     //add a global expand method in every ModuleDecl contained in the SortList
     try {
       `TopDown(
-          ExpandModule(packagePath,forTermgraph,hookList)).visit(expandedList);
+          ExpandModule(streamManager,forTermgraph,hookList)).visit(expandedList);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }
@@ -108,13 +109,13 @@ public class GraphExpander {
   }
 
   %strategy ExpandModule(
-      packagePath:String,
+      streamManager:GomStreamManager,
       forTermgraph:boolean,
       hookList:ArrayList) extends Identity() {
     visit Module {
       Module[
-        MDecl=mdecl@ModuleDecl[ModuleName=modName],Sorts=sorts] -> {
-        hookList.add(expHooksModule(`modName,`sorts,`mdecl,packagePath,forTermgraph));
+        MDecl=mdecl@ModuleDecl[ModuleName=moduleName],Sorts=sorts] -> {
+        hookList.add(expHooksModule(`moduleName,`sorts,`mdecl,streamManager.getPackagePath(`moduleName.getName()),forTermgraph));
       }
     }
   }
@@ -141,8 +142,9 @@ public class GraphExpander {
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
 
+    String prefixPkg = streamManager.getPackagePath(moduleName);
     String codeImport =%[
-      import @packagePath@.@moduleName.toLowerCase()@.types.*;
+      import @((prefixPkg=="")?"":prefixPkg+".")+moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
     ]%;
 
@@ -221,9 +223,10 @@ public class GraphExpander {
     String moduleName = gomModuleName.getName();
     ClassName abstractType = `ClassName(packagePath+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
 
+    String prefix = ((packagePath=="")?"":packagePath+".")+moduleName.toLowerCase();
     String codeImport =%[
-    import @packagePath@.@moduleName.toLowerCase()@.types.*;
-    import @packagePath@.@moduleName.toLowerCase()@.*;
+    import @prefix@.types.*;
+    import @prefix@.*;
     import tom.library.sl.*;
     import java.util.ArrayList;
     import java.util.HashMap;

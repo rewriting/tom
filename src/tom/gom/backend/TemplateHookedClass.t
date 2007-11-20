@@ -143,6 +143,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
       if(Boolean.TRUE == optionManager.getOptionValue("optimize2")) {
         tomParams.add("--optimize2");
       }
+      if(Boolean.TRUE == optionManager.getOptionValue("inlineplus")) {
+        tomParams.add("--inlineplus");
+      }
       if(optionManager.getOptionValue("wall")==Boolean.TRUE) {
         tomParams.add("--wall");
       }

@@ -390,8 +390,10 @@ import java.util.*;
   //import all the constructors Path<Sort> of the module
   %match(moduleList) {
 concModule(_*,Module[MDecl=ModuleDecl(GomModuleName(moduleName),pkg),Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+
+  String prefix = ((`pkg=="")?"":`pkg+".")+moduleName.toLowerCase();
   imports += %[
-import @`pkg@.@`moduleName.toLowerCase()@.types.@`name.toLowerCase()@.Path@`name@; 
+import @prefix@.types.@`name.toLowerCase()@.Path@`name@; 
   ]%;
     }
   }

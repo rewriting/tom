@@ -98,29 +98,30 @@ public class AST2Gom {
 
   private static GomModuleName getGomModuleName(ATermList l, GomStreamManager stream) {
     %match(ATermList l) {
-      (prefix*,ID(NodeInfo[text=text],_)) -> {
+      (prefix*,ID(NodeInfo[text=moduleName],_)) -> {
         if (!`prefix.isEmpty()) {
-          setPkgPath(`prefix,stream);
+          setPackagePath(`moduleName,`prefix,stream);
         }
-        return `GomModuleName(text);
+        return `GomModuleName(moduleName);
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
   }
 
-  private static void setPkgPath(ATermList l, GomStreamManager stream) {
-    StringBuilder pkgPrefix = new StringBuilder("");
+  private static void setPackagePath(String moduleName,ATermList l, GomStreamManager stream) {
+
+    StringBuilder packagePrefix = new StringBuilder("");
     while (!l.isEmpty()) {
       ATerm t = l.getFirst();
       %match(t) {
-        ID(NodeInfo[text=text],_) -> { pkgPrefix.append(`text); }
-        DOT[] -> { pkgPrefix.append("."); }
+        ID(NodeInfo[text=moduleName],_) -> { packagePrefix.append(`moduleName); }
+        DOT[] -> { packagePrefix.append("."); }
       }
       l = l.getNext();
     }
     /* Take care to remove the last dot */
-    pkgPrefix.deleteCharAt(pkgPrefix.length()-1);
-    stream.appendToPackagePath(pkgPrefix.toString());
+    packagePrefix.deleteCharAt(packagePrefix.length()-1);
+    stream.associatePackagePath(moduleName,packagePrefix.toString());
   }
 
   private static Section getImports(ATerm t) {

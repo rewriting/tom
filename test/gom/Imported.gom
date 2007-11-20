@@ -1,4 +1,4 @@
-module Imported
+module gom.Imported
 imports Leaf
 abstract syntax
 Inner = Atom()

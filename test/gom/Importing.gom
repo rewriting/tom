@@ -1,4 +1,4 @@
-module Importing
+module gom.Importing
 imports Imported
 abstract syntax
 Out = Pack(i:Inner)

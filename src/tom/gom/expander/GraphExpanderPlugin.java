@@ -83,9 +83,7 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("pointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
       getLogger().log(Level.INFO, "Extend the signature");
-      String packagePrefix =
-        streamManager.getPackagePath().replace(File.separatorChar,'.');
-      GraphExpander expander = new GraphExpander(packagePrefix,getOptionBooleanValue("termgraph"));
+      GraphExpander expander = new GraphExpander(streamManager,getOptionBooleanValue("termgraph"));
       Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
       referencedHookList = mpair.getHooks();

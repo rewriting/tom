@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
+import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
@@ -46,25 +47,21 @@ public class AdapterGenerator {
 
   /* Attributes needed to call tom properly */
   private File tomHomePath;
-  private List importList = null;
+  private GomStreamManager streamManager;
   private String grammarPkg = "";
   private String grammarName = "";
 
-  AdapterGenerator(File tomHomePath, List importList, String grammar) {
+  AdapterGenerator(File tomHomePath, GomStreamManager streamManager, String grammar) {
     this.tomHomePath = tomHomePath;
-    this.importList = importList;
+    this.streamManager = streamManager;
     int lastDot = grammar.lastIndexOf('.');
     if (-1 != lastDot) {
       // the grammar is in a package different from the gom file
       this.grammarPkg = grammar.substring(0,lastDot);
       this.grammarName = grammar.substring(lastDot+1,grammar.length());
     } else {
-      String packagePrefix =
-        environment()
-        .getStreamManager()
-        .getPackagePath().replace(File.separatorChar,'.');
+      this.grammarPkg = streamManager.getDefaultPackagePath();
       this.grammarName = grammar;
-      this.grammarPkg = packagePrefix;
     }
   }
 
@@ -73,11 +70,6 @@ public class AdapterGenerator {
   %include { ../../library/mapping/java/util/types/Collection.tom }
   %typeterm Writer {
     implement { Writer }
-    is_sort(t) { ($t instanceof Writer) }
-  }
-
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
   }
 
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
@@ -144,12 +136,8 @@ public class AdapterGenerator {
   }
 
   private String adapterPkg() {
-    String packagePrefix =
-      environment()
-        .getStreamManager()
-          .getPackagePath().replace(File.separatorChar,'.');
-    return
-      (packagePrefix==""?filename():packagePrefix+"."+filename()).toLowerCase();
+    String packagePrefix = streamManager.getDefaultPackagePath();
+    return ((packagePrefix=="")?filename():packagePrefix+"."+filename()).toLowerCase();
   }
 
   public void generateAdapterFile(ModuleList moduleList, Writer writer)
@@ -493,13 +481,11 @@ public class @filename()@Tree extends CommonTree {
   }
 
   protected String fullFileName() {
-
     return (adapterPkg() + "." + filename()).replace('.',File.separatorChar);
   }
 
   protected String filename() {
-    String filename =
-      (new File(environment().getStreamManager().getOutputFileName())).getName();
+    String filename = (new File(streamManager.getOutputFileName())).getName();
     int dotidx = filename.indexOf('.');
     if(-1 != dotidx) {
       filename = filename.substring(0,dotidx);
@@ -509,21 +495,21 @@ public class @filename()@Tree extends CommonTree {
 
   protected File tokenFileToGenerate() {
     File output = new File(
-        environment().getStreamManager().getDestDir(),
+        streamManager.getDestDir(),
         fullFileName()+"TokenList.txt");
     return output;
   }
 
   protected File adaptorFileToGenerate() {
     File output = new File(
-        environment().getStreamManager().getDestDir(),
+        streamManager.getDestDir(),
         fullFileName()+"Adaptor.java");
     return output;
   }
 
   protected File treeFileToGenerate() {
     File output = new File(
-        environment().getStreamManager().getDestDir(),
+        streamManager.getDestDir(),
         fullFileName()+"Tree.java");
     return output;
   }

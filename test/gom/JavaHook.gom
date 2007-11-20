@@ -1,4 +1,4 @@
-module JavaHook
+module gom.JavaHook
 abstract syntax
 Term = EmptyTerm()
      | Unary(slot:Term)

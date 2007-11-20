@@ -19,12 +19,14 @@
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
+      package="${parser}"
       grammar="Rule">
       <include name="${parser}/**/Rule.gom"/>
     </gomantlradapter.preset>
     <gomantlradapter.preset
       srcdir="${examples.dir}"
       destdir="${examples.gen}"
+      package="${parser}"
       termgraph="true" 
       grammar="Graph">
       <include name="${parser}/**/Term.gom"/>

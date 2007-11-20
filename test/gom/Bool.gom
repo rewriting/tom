@@ -1,4 +1,4 @@
-module Bool
+module gom.Bool
 abstract syntax
 Bool = True()
      | False()

@@ -169,37 +169,37 @@ public class HandWrittenStrat {
 
   %typeterm Term1 {
     implement { HandWrittenStrat.Term1 }  
-    is_sort(t) { t instanceof HandWrittenStrat.Term1 } 
-    equals(t1,t2) { t1.equals(t2) }
+    is_sort(t) { $t instanceof HandWrittenStrat.Term1 } 
+    equals(t1,t2) { $t1.equals($t2) }
     visitor_fwd { tom.library.sl.GenericForward }
   }
 
   %op Term1 f1(x:Term1) {
-    is_fsym(t)        { t instanceof HandWrittenStrat.f1 }
-    get_slot(x,t)     { ((f1) t).getx() }
-    make(x)           { new f1(x) } 
+    is_fsym(t)        { $t instanceof HandWrittenStrat.f1 }
+    get_slot(x,t)     { ((f1) $t).getx() }
+    make(x)           { new f1($x) } 
   }
 
   %op Term1 a1() {
-    is_fsym(t)        { t instanceof HandWrittenStrat.a1 }
+    is_fsym(t)        { $t instanceof HandWrittenStrat.a1 }
     make()           { new a1() } 
   }
 
   %typeterm Term2 {
     implement { HandWrittenStrat.Term2 }  
-    is_sort(t) { t instanceof HandWrittenStrat.Term2 } 
-    equals(t1,t2) { t1.equals(t2) }
+    is_sort(t) { $t instanceof HandWrittenStrat.Term2 } 
+    equals(t1,t2) { $t1.equals($t2) }
     visitor_fwd { tom.library.sl.GenericForward }
   }
 
   %op Term2 f2(x:Term2) {
-    is_fsym(t)        { t instanceof HandWrittenStrat.f2 }
-    get_slot(x,t)     { ((f2) t).getx() }
-    make(x)           { new f2(x) } 
+    is_fsym(t)        { $t instanceof HandWrittenStrat.f2 }
+    get_slot(x,t)     { ((f2) $t).getx() }
+    make(x)           { new f2($x) } 
   }
 
   %op Term2 a2() {
-    is_fsym(t)        { t instanceof HandWrittenStrat.a2 }
+    is_fsym(t)        { $t instanceof HandWrittenStrat.a2 }
     make()            { new a2() } 
   }
 

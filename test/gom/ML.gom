@@ -1,4 +1,4 @@
-module ML
+module gom.ML
 imports String int
 abstract syntax
 

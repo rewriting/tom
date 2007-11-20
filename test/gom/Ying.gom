@@ -1,4 +1,4 @@
-module Ying
+module gom.Ying
 imports Yang
 abstract syntax
 Moon = ping(sl:Sun)

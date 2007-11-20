@@ -413,7 +413,7 @@ public class GomCommonTask extends MatchingTask {
    * @param pkgPrefix the package name
    */
   public void setPackage(String pkgPrefix) {
-    if (!pkgPrefix.equals("")) {
+    if(!pkgPrefix.equals("")) {
       this.packagePrefix = pkgPrefix;
     }
   }
@@ -423,8 +423,9 @@ public class GomCommonTask extends MatchingTask {
   }
 
   public String getPackagePath() {
-    if (getPackage() != null)
+    if(getPackage() != null) {
       return getPackage().replace('.',File.separatorChar);
+    }
     return "";
   }
 

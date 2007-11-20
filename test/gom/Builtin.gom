@@ -1,4 +1,4 @@
-module Builtin
+module gom.b.u.i.l.t.i.n.Builtin
 imports int boolean String ATerm ATermList long char float double
 
 abstract syntax

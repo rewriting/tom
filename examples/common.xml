@@ -81,10 +81,10 @@
     <macrodef name="gombuild">
       <attribute name="example"/>
       <sequential>
-        <gom.preset srcdir="${examples.dir}"
-                    destdir="${examples.gen}">
-          <include name="@{example}/**/*.gom"/>
-        </gom.preset>
+	<gom.preset srcdir="${examples.dir}"
+	  destdir="${examples.gen}">
+	  <include name="@{example}/**/*.gom"/>
+	</gom.preset>
       </sequential>
     </macrodef>
     <macrodef name="gomantlradapterbuild">
@@ -92,6 +92,7 @@
       <attribute name="grammar"/>
       <sequential>
         <gomantlradapter.preset srcdir="${examples.dir}"
+                                package="@{example}" 
                                 destdir="${examples.gen}"
                                 grammar="@{grammar}">
           <include name="@{example}/**/*.gom"/>

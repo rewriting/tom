@@ -1,4 +1,4 @@
-module Yang
+module gom.Yang
 imports Ying
 abstract syntax
 Sun = pong(st:Moon)

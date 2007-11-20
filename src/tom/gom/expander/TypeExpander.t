@@ -40,13 +40,13 @@ public class TypeExpander {
 
   %include { ../adt/gom/Gom.tom}
 
-  private String packagePath;
+  private GomStreamManager streamManager;
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
   }
 
-  public TypeExpander(String packagePath) {
-    this.packagePath = packagePath;
+  public TypeExpander(GomStreamManager streamManager) {
+    this.streamManager = streamManager;
   }
   /**
     * We try here to get full sort definitions for each constructs
@@ -101,7 +101,8 @@ public class TypeExpander {
         SortDecl decl = (SortDecl)it.next();
         declaredSorts = `concSortDecl(decl,declaredSorts*);
       }
-      ModuleDecl mdecl = `ModuleDecl(module.getModuleName(),packagePath);
+      GomModuleName moduleName = module.getModuleName();
+      ModuleDecl mdecl = `ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()));
       sortsForModule.put(mdecl,declaredSorts);
     }
 
@@ -118,7 +119,7 @@ public class TypeExpander {
         GomModule(_,concSection(_*,
               Public(concGrammar(_*,Grammar(concProduction(_*,prod@Production[],_*)),_*)),
               _*)) -> {
-          // we may want to pass modulename to help resolve ambiguities with modules
+          // we may want to pass moduleName to help resolve ambiguities with modules
           getOperatorDecl(`prod,sortDeclList,operatorsForSort);
 
         }
@@ -164,7 +165,7 @@ public class TypeExpander {
       Map operatorsForSort) {
 
     %match(Production prod) {
-      Production(name,domain,GomType(codomain),option) -> {
+      Production(name,domain,GomType(codomain),_) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
         OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts);
@@ -233,10 +234,10 @@ public class TypeExpander {
   private Collection getSortDeclarations(GomModule module) {
     Collection result = new HashSet();
     %match(GomModule module) {
-      GomModule(modulename,concSection(_*,
+      GomModule(moduleName,concSection(_*,
             Public(concGrammar(_*,Sorts(concGomType(_*,GomType(typeName),_*)),_*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath)));
+        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
       }
     }
     return result;
@@ -249,7 +250,7 @@ public class TypeExpander {
     Collection result = new HashSet();
     %match(GomModule module) {
       GomModule(
-          modulename,
+          moduleName,
           concSection(_*,
             Public(
               concGrammar(_*,
@@ -259,7 +260,7 @@ public class TypeExpander {
                     _*)),
                 _*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath)));
+        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
       }
     }
     return result;
@@ -323,17 +324,19 @@ public class TypeExpander {
 
   private void buildDependencyMap(GomModuleList moduleList) {
     %match(GomModuleList moduleList) {
-      concGomModule(_*,module@GomModule[ModuleName=name],_*) -> {
+      concGomModule(_*,module@GomModule[ModuleName=moduleName],_*) -> {
         ModuleDeclList importsModuleDeclList = `concModuleDecl();
         Iterator it = getTransitiveClosureImports(`module,moduleList).iterator();
         while(it.hasNext()) {
           GomModuleName importedModuleName = (GomModuleName) it.next();
+
+
           importsModuleDeclList = 
-            `concModuleDecl(ModuleDecl(importedModuleName,packagePath),
+            `concModuleDecl(ModuleDecl(importedModuleName,streamManager.getPackagePath(importedModuleName.getName())),
                 importsModuleDeclList*);
         }
         environment().addModuleDependency(
-            `ModuleDecl(name,packagePath),importsModuleDeclList);
+            `ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName())),importsModuleDeclList);
       }
     }
   }

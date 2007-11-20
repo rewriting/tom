@@ -496,7 +496,6 @@ gomsignature [LinkedList list] throws TomException
     tom.gom.parser.BlockParser blockparser = 
       tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
     gomCode = cleanCode(blockparser.block().trim());
-    String destDir = getStreamManager().getDestDir().getPath();
 
     File config_xml = null;
     ArrayList parameters = new ArrayList();
@@ -524,16 +523,16 @@ gomsignature [LinkedList list] throws TomException
           "Failed to get canonical path for "+config_xml.getPath());
     }
 
-    String packageName =
-      getStreamManager().getPackagePath().replace(File.separatorChar, '.');
-    String inputFileNameWithoutExtension =
-      getStreamManager().getRawFileName().toLowerCase();
+    String destDir = getStreamManager().getDestDir().getPath();
+    String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
+    String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
     String subPackageName = "";
     if(packageName.equals("")) {
       subPackageName = inputFileNameWithoutExtension;
     } else {
       subPackageName = packageName + "." + inputFileNameWithoutExtension;
-    }    
+    }
+
     parameters.add("-X");
     parameters.add(config_xml.getPath());
     parameters.add("--destdir");

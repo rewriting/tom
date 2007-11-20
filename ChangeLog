@@ -1,9 +1,12 @@
+2007-11-19 pem
+  * improve the package management of gom
+
 2007-11-13 radu
-	* dispatch generated in %strategy when autoDispatch option is passed 
+  * dispatch generated in %strategy when autoDispatch option is passed 
 
 2007-10-26 radu
-	* tom vars cand be used on the rhs
-	* faster compilation
+  * tom vars can be used on the rhs
+  * faster compilation
 
 2007-10-23  pem
   * extend --inline to arrays
