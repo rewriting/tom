@@ -61,7 +61,7 @@ TwoPath test5 =`TwoC1(TwoC0(test4,TwoC1(TwoC0(neuf,consList),add)),merge);
 TwoPath test6 = `TwoC1(TwoC0(deux,consList,cinq,consList),TwoC0(un,add,zero,add),TwoC0(add,add),merge);
 TwoPath test7 = `TwoC1(TwoC0(consList,un),TwoC0(deux,append),TwoC0(cinq,add),TwoC0(trois,add),add,sort);
 //TwoPath pb = `TwoC1(TwoC0(trois,TwoC1(TwoC0(cinq,TwoC1(TwoC0(deux,TwoC1(TwoC0(un,consList),add)),add)),add)),TwoC1(add,sort));
-test(test7);
+test(test5);
 
 
 }
@@ -179,9 +179,9 @@ System.out.println(path.prettyPrint());
 // pour gagner du temps et de l'espace, mais pas en rigueur, la seul mention des noms des fonctions serait suffisante quand on decrit les 2-cellules dans les regles suivantes
 %strategy ApplyRules() extends Identity(){ 
   	visit TwoPath {
-  	 TwoC1(TwoCell(name,Id(),_,Constructor()),TwoCell(_,_,Id(),Function()),Y*) -> {System.out.println("eraz "+`name);return `Y*;}
-  	 TwoC1(t@TwoCell(name,Id(),OneCell("nat"),Constructor()),TwoCell("duplicationNat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("dupplication nat "+`name);return `TwoC1(TwoC0(t,t),Y*);}
-  	 TwoC1(t@TwoCell("consList",Id(),OneCell("list"),Constructor()),TwoCell("duplicationList",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function()),Y*) -> {System.out.println("dupplication list ");return `TwoC1(TwoC0(t,t),Y*);}
+  	 TwoC1(X1*,TwoCell(name,Id(),_,Constructor()),TwoCell(_,_,Id(),Function()),Y*) -> {if(`X1!=`TwoId(Id())){System.out.println("eraz "+`name);return `Y*;}}
+  	 TwoC1(X1*,t@TwoCell(name,Id(),OneCell("nat"),Constructor()),TwoCell("duplicationNat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {if(`X1!=`TwoId(Id())){System.out.println("dupplication nat "+`name);return `TwoC1(TwoC0(t,t),Y*);}}
+  	 TwoC1(X1*,t@TwoCell("consList",Id(),OneCell("list"),Constructor()),TwoCell("duplicationList",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function()),Y*) -> {if(`X1!=`TwoId(Id())){System.out.println("dupplication list ");return `TwoC1(TwoC0(t,t),Y*);}}
   	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1*),TwoCell("permutationNat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("NatPerm1");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("nat"),Constructor())),Y); } 
   	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("nat"),Constructor())),TwoCell("permutationNat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("NatPerm2");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1),Y); } 
   	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1*),TwoCell("permutationList",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function()),Y*) -> {System.out.println("ListPerm1");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("list"),Constructor())),Y); } 
@@ -249,6 +249,7 @@ print(myPath);
 myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(TopDown(ApplyRules()),Print())))).visit(myPath);
 System.out.println("RESULT");
 print(myPath);
+System.out.println(result(myPath));
 //tom.library.utils.Viewer.display(myPath);
 }
 catch(VisitFailure e) {
@@ -330,6 +331,16 @@ public static TwoPath[] toArray(TwoC0 twoc0) {
     }
     return array;
   }
-
+public static String result(TwoPath resultat){
+%match (TwoPath resultat){
+			TwoId(Id()) -> { return "0"; }
+			TwoCell("zero",_,_,_) -> {return "0";}
+			TwoCell(i,_,_,Constructor()) -> {return `i;}
+			TwoC1(TwoC0(TwoCell(i,_,_,Constructor()),TwoCell("consList",_,_,Constructor())),TwoCell("add",_,_,_)) -> {return `i;}
+			TwoC1(TwoC0(TwoCell(i,_,_,Constructor()),X),TwoCell("add",_,_,_)) -> {return `i+","+result(`X);}
+			}
+System.out.println("RESULTAT NON CONFORME");resultat.print();
+return "Error";
+}
 
 }
