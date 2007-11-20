@@ -2,8 +2,10 @@ package polygrapheslist;
 
 import polygrapheslist.*;
 import polygrapheslist.types.*;
+import polygrapheslist.types.twopath.*;
 import tom.library.sl.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -56,8 +58,18 @@ TwoPath test2 =`TwoC1(TwoC0(test,TwoC1(TwoC0(quatre,consList),add)),merge);
 TwoPath test3 =`TwoC1(TwoC0(test2,TwoC1(TwoC0(sept,consList),add)),merge);
 TwoPath test4 =`TwoC1(TwoC0(test3,TwoC1(TwoC0(trois,consList),add)),merge);
 TwoPath test5 =`TwoC1(TwoC0(test4,TwoC1(TwoC0(neuf,consList),add)),merge);
-test.print();
-test(test5);
+TwoPath testbis = `TwoC1(TwoC0(deux,consList,cinq,consList),TwoC0(un,add,zero,add),TwoC0(add,add),merge);
+test(testbis);
+//System.out.println(testbis);
+/*TwoPath arraytest=`TwoC0(zero,un,deux,trois,quatre,cinq);
+arraytest.print();
+TwoPath[] array=toArray((TwoC0)arraytest);
+System.out.println("////////");
+for (int i = 0; i < array.length; i++) {
+				System.out.println(array[i]);
+}System.out.println("////////");
+*/
+
 }
 
 public static void print (TwoPath path){
@@ -75,7 +87,7 @@ System.out.println(path.prettyPrint());
   	  	TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
   	  		int length=`f.sourcesize();
   	  		TwoPath myNewPath=`TwoId(Id());
-  	  		for(int i=0;i<length;i++){
+  	  		for(int i=0;i<length;i++){//il ya moyen de faire plus elegant et simple avec la fonction fromArray()
   	  			if(`((TwoPath)top.getChildAt(i)).target()==`((TwoPath)down.getChildAt(i)).source()){
   	  			TwoPath newC1=`TwoC1((TwoPath)top.getChildAt(i),(TwoPath)down.getChildAt(i));
   	  			if(i==0){myNewPath=`newC1;}
@@ -109,6 +121,43 @@ System.out.println(path.prettyPrint());
   	  		System.out.println("9");
   	  		return myNewPath;}
   	  	}}
+  	  	TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//extension du cas 7
+  	  		int sourcelength=`f.sourcesize();
+  	  		TwoPath myNewPath=`TwoId(Id());
+  	  		int index=0;
+  	  		if(sourcelength!=`down.length()){break;}
+  	  		TwoPath[] array=toArray((TwoC0)`top);
+  	  		for(int i=0;i<sourcelength;i++){
+  	  			int downsourcelength=`((TwoPath)down.getChildAt(i)).sourcesize();
+  	  			
+   	  			TwoPath topPart=`TwoId(Id());
+  	  			for(int j=index;j<downsourcelength+index;j++){
+  	  				
+  	  				TwoPath newC0 = (TwoPath)array[j];
+  	  				
+  	  				if(j==index){topPart=newC0;}
+  	  			else if(j==index+1){topPart=`TwoC0(topPart,newC0);}
+  	  			else{topPart.setChildAt(j,newC0);}	
+  	  			}
+  	  			index=downsourcelength;
+  	  			if(topPart.target()==`((TwoPath)down.getChildAt(i)).source()){
+  	  			TwoPath newC1=`TwoC1(topPart,(TwoPath)down.getChildAt(i));
+  	  			if(i==0){myNewPath=`newC1;}
+  	  			else if(i==1){myNewPath=`TwoC0(myNewPath,newC1);}
+  	  			else{myNewPath.setChildAt(i,newC1);}
+  	  		}  	  			
+  	  		}
+
+  	  		System.out.println(myNewPath);
+  	  		
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		if(`head!=`TwoId(Id())){
+  	  		myNewPath=`TwoC1(head,myNewPath,f,tail);}
+  	  		else{myNewPath=`TwoC1(myNewPath,f,tail);}}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		System.out.println("10");
+  	  		return myNewPath;}
+  	  		}
  	 } 
 }
 
@@ -256,7 +305,23 @@ catch(VisitFailure e) {
   	  }
   	} 
 }
-
+public static TwoPath[] toArray(TwoC0 twoc0) {
+    int size = twoc0.length();
+    TwoPath[] array = new TwoPath[size];
+    int i=0;
+    if(twoc0 instanceof polygrapheslist.types.twopath.ConsTwoC0) {
+      polygrapheslist.types.TwoPath cur = twoc0;
+      while(cur instanceof polygrapheslist.types.twopath.ConsTwoC0) {
+        polygrapheslist.types.TwoPath elem = ((polygrapheslist.types.twopath.ConsTwoC0)cur).getHeadTwoC0();
+        array[i] = elem;
+        i++;
+        cur = ((polygrapheslist.types.twopath.ConsTwoC0)cur).getTailTwoC0();
+        
+      }
+      array[i] = cur;
+    }
+    return array;
+  }
 
 
 }
