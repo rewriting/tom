@@ -55,20 +55,14 @@ public static void main(String[] args) {
 
 TwoPath test = `TwoC1(TwoC0(TwoC1(TwoC0(un,TwoC1(TwoC0(deux,consList),add)),add),TwoC1(TwoC0(zero,TwoC1(TwoC0(cinq,consList),add)),add)),merge);
 TwoPath test2 =`TwoC1(TwoC0(test,TwoC1(TwoC0(quatre,consList),add)),merge);
-TwoPath test3 =`TwoC1(TwoC0(test2,TwoC1(TwoC0(sept,consList),add)),merge);
+TwoPath test3 =`TwoC1(TwoC0(test2,TwoC1(TwoC0(consList,sept),append)),merge);
 TwoPath test4 =`TwoC1(TwoC0(test3,TwoC1(TwoC0(trois,consList),add)),merge);
 TwoPath test5 =`TwoC1(TwoC0(test4,TwoC1(TwoC0(neuf,consList),add)),merge);
-TwoPath testbis = `TwoC1(TwoC0(deux,consList,cinq,consList),TwoC0(un,add,zero,add),TwoC0(add,add),merge);
-test(testbis);
-//System.out.println(testbis);
-/*TwoPath arraytest=`TwoC0(zero,un,deux,trois,quatre,cinq);
-arraytest.print();
-TwoPath[] array=toArray((TwoC0)arraytest);
-System.out.println("////////");
-for (int i = 0; i < array.length; i++) {
-				System.out.println(array[i]);
-}System.out.println("////////");
-*/
+TwoPath test6 = `TwoC1(TwoC0(deux,consList,cinq,consList),TwoC0(un,add,zero,add),TwoC0(add,add),merge);
+TwoPath test7 = `TwoC1(TwoC0(consList,un),TwoC0(deux,append),TwoC0(cinq,add),TwoC0(trois,add),add,sort);
+//TwoPath pb = `TwoC1(TwoC0(trois,TwoC1(TwoC0(cinq,TwoC1(TwoC0(deux,TwoC1(TwoC0(un,consList),add)),add)),add)),TwoC1(add,sort));
+test(test7);
+
 
 }
 
@@ -84,7 +78,7 @@ System.out.println(path.prettyPrint());
   	  	TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.println("4");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
   	  	TwoC1(TwoC0(head*,top@TwoCell(_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("5");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
   	  	TwoC1(TwoC0(head*,top@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("6");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
-  	  	TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
+  	  	/*TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
   	  		int length=`f.sourcesize();
   	  		TwoPath myNewPath=`TwoId(Id());
   	  		for(int i=0;i<length;i++){//il ya moyen de faire plus elegant et simple avec la fonction fromArray()
@@ -102,7 +96,7 @@ System.out.println(path.prettyPrint());
   	  		if(myNewPath!=`TwoId(Id())){
   	  		System.out.println("7");
   	  		return myNewPath;}
-  	  		}
+  	  		}*///couvert par le cas 10
   	  	TwoC1(head*,TwoC0(topleft*,top*,topright*),TwoC0(left*,f@TwoCell(_,_,_,Function()),right*),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
   	  		if(`topleft*.target()==`left*.source()&&`top.target()==`f.source()){
   	  			TwoPath myNewPath=`TwoId(Id());
@@ -110,6 +104,17 @@ System.out.println(path.prettyPrint());
   	  		else{myNewPath= `TwoC1(TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
   	  		if(myNewPath!=`TwoId(Id())){
   	  		System.out.println("8");
+  	  		return myNewPath;
+  	  		}
+  	  		}
+  	  		}
+  	  	TwoC1(head*,TwoC0(topleft*,top*,topright*),TwoC0(left*,f@TwoCell(_,_,_,_),right*),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
+  	  		if(`topleft*.target()==`left*.source()&&`top.target()==`f.source()){
+  	  			TwoPath myNewPath=`TwoId(Id());
+  	  		if(`head*!=`TwoId(Id())){myNewPath= `TwoC1(head*,TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
+  	  		else{myNewPath= `TwoC1(TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		System.out.println("8bis");
   	  		return myNewPath;
   	  		}
   	  		}
@@ -133,11 +138,14 @@ System.out.println(path.prettyPrint());
    	  			TwoPath topPart=`TwoId(Id());
   	  			for(int j=index;j<downsourcelength+index;j++){
   	  				
-  	  				TwoPath newC0 = (TwoPath)array[j];
+  	  				try{TwoPath newC0 = (TwoPath)array[j];
   	  				
   	  				if(j==index){topPart=newC0;}
   	  			else if(j==index+1){topPart=`TwoC0(topPart,newC0);}
-  	  			else{topPart.setChildAt(j,newC0);}	
+  	  			else{topPart.setChildAt(j,newC0);}
+
+  	  				}catch (ArrayIndexOutOfBoundsException e){//cas ou il n y a pas que des constructeurs au dessus, duplication par example
+  	  				}
   	  			}
   	  			index=downsourcelength;
   	  			if(topPart.target()==`((TwoPath)down.getChildAt(i)).source()){
@@ -147,9 +155,6 @@ System.out.println(path.prettyPrint());
   	  			else{myNewPath.setChildAt(i,newC1);}
   	  		}  	  			
   	  		}
-
-  	  		System.out.println(myNewPath);
-  	  		
   	  		if(myNewPath!=`TwoId(Id())){
   	  		if(`head!=`TwoId(Id())){
   	  		myNewPath=`TwoC1(head,myNewPath,f,tail);}
@@ -158,6 +163,9 @@ System.out.println(path.prettyPrint());
   	  		System.out.println("10");
   	  		return myNewPath;}
   	  		}
+  	  	//a part, retransforme les onec0 en twoC0
+  	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
+  	
  	 } 
 }
 
@@ -178,10 +186,10 @@ System.out.println(path.prettyPrint());
   	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("nat"),Constructor())),TwoCell("permutationNat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("NatPerm2");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1),Y); } 
   	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1*),TwoCell("permutationList",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function()),Y*) -> {System.out.println("ListPerm1");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("list"),Constructor())),Y); } 
   	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("list"),Constructor())),TwoCell("permutationList",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function()),Y*) -> {System.out.println("ListPerm2");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1),Y); } 
-  	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1*),TwoCell("permutationNL",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function()),Y*) -> {System.out.println("NatPerm1");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("nat"),Constructor())),Y); } 
-  	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("nat"),Constructor())),TwoCell("permutationLN",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function()),Y*) -> {System.out.println("NatPerm2");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1),Y); } 
-  	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1*),TwoCell("permutationLN",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function()),Y*) -> {System.out.println("ListPerm1");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("list"),Constructor())),Y); } 
-  	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("list"),Constructor())),TwoCell("permutationNL",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function()),Y*) -> {System.out.println("ListPerm2");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1),Y); } 
+  	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1*),TwoCell("permutationNL",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function()),Y*) -> {System.out.println("NatPermNL");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("nat"),Constructor())),Y); } 
+  	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("nat"),Constructor())),TwoCell("permutationLN",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function()),Y*) -> {System.out.println("NatPermLN");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("nat"),Constructor()),X1),Y); } 
+  	 TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1*),TwoCell("permutationLN",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function()),Y*) -> {System.out.println("ListPermLN");return `TwoC1(TwoC0(X1,TwoCell(name,Id(),OneCell("list"),Constructor())),Y); } 
+  	 TwoC1(TwoC0(X1*,TwoCell(name,Id(),OneCell("list"),Constructor())),TwoCell("permutationNL",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function()),Y*) -> {System.out.println("ListPermNL");return `TwoC1(TwoC0(TwoCell(name,Id(),OneCell("list"),Constructor()),X1),Y); } 
   	 TwoC1(TwoC0(X1*,X2),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),TwoCell("eraserList",OneCell("list"),Id(),Function()),Y*) -> {System.out.println("AddEraser");return `Y;}
   	 TwoC1(TwoC0(X1*,X2),TwoCell("append",OneC0(OneCell("list"),OneCell("nat")),OneCell("list"),Constructor()),TwoCell("eraserList",OneCell("list"),Id(),Function()),Y*) -> {System.out.println("AppendEraser");return `Y;}
   	 TwoC1(TwoC0(TwoC1(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor()),X1*),X2*),TwoCell("permutationList",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("AddPerm1"); return `TwoC1(TwoC0(X1,X2),TwoCell("permutationList",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function()),TwoC0(TwoId(OneCell("list")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor())),Y);} 
@@ -309,13 +317,13 @@ public static TwoPath[] toArray(TwoC0 twoc0) {
     int size = twoc0.length();
     TwoPath[] array = new TwoPath[size];
     int i=0;
-    if(twoc0 instanceof polygrapheslist.types.twopath.ConsTwoC0) {
-      polygrapheslist.types.TwoPath cur = twoc0;
-      while(cur instanceof polygrapheslist.types.twopath.ConsTwoC0) {
-        polygrapheslist.types.TwoPath elem = ((polygrapheslist.types.twopath.ConsTwoC0)cur).getHeadTwoC0();
+    if(twoc0 instanceof ConsTwoC0) {
+      TwoPath cur = twoc0;
+      while(cur instanceof ConsTwoC0) {
+        TwoPath elem = ((ConsTwoC0)cur).getHeadTwoC0();
         array[i] = elem;
         i++;
-        cur = ((polygrapheslist.types.twopath.ConsTwoC0)cur).getTailTwoC0();
+        cur = ((ConsTwoC0)cur).getTailTwoC0();
         
       }
       array[i] = cur;

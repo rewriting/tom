@@ -2,6 +2,7 @@ package polygraphesnat;
 
 import polygraphesnat.*;
 import polygraphesnat.types.*;
+import polygraphesnat.types.twopath.*;
 import tom.library.sl.*;
 
 import java.util.HashSet;
@@ -87,28 +88,16 @@ NormalizeRules();
 // TESTS
 //-----------------------------------------------------------------------------
 */
-// tom.library.utils.Viewer.display(testGravity);
-TwoPath test=`TwoC1(TwoC0(TwoC1(zero,TwoId(nat),succ,TwoId(nat),TwoC0(zero,duplication),TwoC0(TwoId(nat),TwoId(nat),succ),TwoC0(plus,TwoId(nat)),TwoC0(TwoId(nat),eraser)),TwoC1(zero,TwoId(nat),TwoId(nat),succ,TwoId(nat),eraser),TwoC0(TwoC1(zero,TwoId(nat),TwoId(nat)),TwoC1(succ,TwoId(nat),eraser))),TwoC0(TwoC1(succ,TwoId(nat),succ),TwoC1(TwoId(nat),eraser)));
-//<--marche
-TwoPath test2=`TwoC1(TwoC0(TwoC1(TwoC0(zero,TwoId(nat)),TwoC0(TwoId(nat),succ),TwoC0(plus,zero),TwoC0(TwoId(nat),succ),TwoC0(division,zero),TwoC0(succ,TwoId(nat))),TwoC1(TwoId(nat),succ,succ,duplication,TwoC0(TwoId(nat),succ),TwoC0(succ,TwoId(nat))),TwoC1(zero,TwoId(nat),TwoId(nat)),TwoC1(TwoC1(zero,TwoId(nat),succ),succ)),TwoC0(TwoC1(TwoId(nat),succ,eraser),TwoC0(TwoC1(plus,succ),succ),TwoC1(minus,eraser)));
-//<--ne marche pas encore ˆ cause des chevauchementsˆ l'intersection des deux etages
-TwoPath test3 = `TwoC1(TwoC0(TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,succ),minus),TwoC0(TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,succ),TwoC0(succ,succ),minus),TwoC1(zero,TwoC0(TwoId(nat),zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,succ),plus)),TwoC0(TwoC1(TwoC0(zero,zero),TwoC0(succ,TwoId(nat)),TwoC0(succ,TwoId(nat)),plus),TwoC1(zero,TwoC0(succ,zero),TwoC0(succ,TwoId(nat)),minus))),TwoC0(permutation,TwoId(nat),TwoId(nat),TwoId(nat)),TwoC0(TwoId(nat),TwoId(nat),TwoId(nat),eraser,eraser));
-//<--marche bien
-TwoPath test4 = `TwoC1(zero,succ,succ,succ,TwoC0(succ,zero),TwoC0(succ,succ),TwoC0(succ,succ),division);
-//<--resultat faux
-TwoPath test5=`TwoC1(TwoC0(TwoC1(zero,succ),TwoC1(zero,succ)),plus);
-TwoPath test6=`TwoC1(TwoC0(zero,zero),TwoC0(succ,succ),plus);
-TwoPath test7=`TwoC1(TwoC0(test6,test6),plus);
-TwoPath test8=`TwoC1(TwoC0(test5,test5),plus);
+
 
 TwoPath rule=`TwoC1(TwoC0(zero,zero),TwoC0(succ,succ),permutation,minus,eraser);
-TwoPath rule2=`TwoC1(zero,TwoC0(succ,zero),division,succ);
+TwoPath rule2=`TwoC1(zero,TwoC0(succ,zero),division);
 TwoPath rule3=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero,succ,succ)),multiplication);
 TwoPath rule4=`TwoC1(zero,succ,succ,TwoC0(succ,zero),TwoC0(succ,succ),TwoC0(succ,succ),division);
-TwoPath rule5=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero,succ,succ)),multiplication);
+TwoPath rule5=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero)),division);
 
 
-test(rule5);
+test(rule2);
 
 }
 
@@ -128,7 +117,7 @@ System.out.println(path.prettyPrint());
   	  	TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.println("4");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
   	  	TwoC1(TwoC0(head*,top@TwoCell(_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("5");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
   	  	TwoC1(TwoC0(head*,top@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("6");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
-  	  	TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
+  	  	/*TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
   	  		int length=`f.sourcesize();
   	  		TwoPath myNewPath=`TwoId(Id());
   	  		for(int i=0;i<length;i++){
@@ -146,7 +135,7 @@ System.out.println(path.prettyPrint());
   	  		if(myNewPath!=`TwoId(Id())){
   	  		System.out.println("7");
   	  		return myNewPath;}
-  	  		}
+  	  		}*///couvert par le cas 10
   	  	TwoC1(head*,TwoC0(topleft*,top*,topright*),TwoC0(left*,f@TwoCell(_,_,_,Function()),right*),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
   	  		if(`topleft*.target()==`left*.source()&&`top.target()==`f.source()){
   	  			TwoPath myNewPath=`TwoId(Id());
@@ -165,6 +154,46 @@ System.out.println(path.prettyPrint());
   	  		System.out.println("9");
   	  		return myNewPath;}
   	  	}}
+  	  	TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//extension du cas 7
+  	  		int sourcelength=`f.sourcesize();
+  	  		TwoPath myNewPath=`TwoId(Id());
+  	  		int index=0;
+  	  		if(sourcelength!=`down.length()){break;}
+  	  		TwoPath[] array=toArray((TwoC0)`top);
+  	  		for(int i=0;i<sourcelength;i++){
+  	  			int downsourcelength=`((TwoPath)down.getChildAt(i)).sourcesize();
+  	  			
+   	  			TwoPath topPart=`TwoId(Id());
+  	  			for(int j=index;j<downsourcelength+index;j++){
+  	  				
+  	  				try{TwoPath newC0 = (TwoPath)array[j];
+  	  				
+  	  				if(j==index){topPart=newC0;}
+  	  			else if(j==index+1){topPart=`TwoC0(topPart,newC0);}
+  	  			else{topPart.setChildAt(j,newC0);}
+
+  	  				}catch (ArrayIndexOutOfBoundsException e){//cas ou il n y a pas que des constructeurs au dessus, duplication par example
+  	  				}
+  	  			}
+  	  			index=downsourcelength;
+  	  			if(topPart.target()==`((TwoPath)down.getChildAt(i)).source()){
+  	  			TwoPath newC1=`TwoC1(topPart,(TwoPath)down.getChildAt(i));
+  	  			if(i==0){myNewPath=`newC1;}
+  	  			else if(i==1){myNewPath=`TwoC0(myNewPath,newC1);}
+  	  			else{myNewPath.setChildAt(i,newC1);}
+  	  		}  	  			
+  	  		}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		if(`head!=`TwoId(Id())){
+  	  		myNewPath=`TwoC1(head,myNewPath,f,tail);}
+  	  		else{myNewPath=`TwoC1(myNewPath,f,tail);}}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		System.out.println("10");
+  	  		return myNewPath;}
+  	  		}
+  	  		//a part, retransforme les onec0 en twoC0
+  	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
+  	
  	 } 
 }
 
@@ -192,9 +221,11 @@ System.out.println(path.prettyPrint());
   	  TwoC1(TwoC0(X1*,TwoCell("zero",Id(),OneCell("nat"),Constructor())),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("minusZero2"); return `TwoC1(X1,Y*);}
   	  TwoC1(TwoC0(TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC1(X2*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> {System.out.println("minusDoubleSucc");return `TwoC1(TwoC0(X1,X2),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*);}
   	  TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),X1*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("divZero"); return `TwoC1(X1,TwoCell("eraser",OneCell("nat"),Id(),Function()),TwoCell("zero",Id(),OneCell("nat"),Constructor()),Y*);}
-  	  TwoC1(TwoC0(TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),X2*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("divSucc"); return `TwoC1(TwoC0(TwoC1(X1,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC1(X2,TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function()))),TwoC0(TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoId(OneCell("nat"))),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),Y*);}
+  	  //TwoC1(TwoC0(X,TwoCell("zero",Id(),OneCell("nat"),Constructor())),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> {System.out.println("division by zero attempt,that's awfully wrong");return `TwoId(Id());}
+  	  TwoC1(TwoC0(TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),X2*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("divSucc"); return `TwoC1(TwoC0(X1,TwoC1(X2,TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function()))),TwoC0(TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoId(OneCell("nat"))),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),Y*);}
   	  TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),X1*),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("multZero"); return `TwoC1(X1,TwoCell("eraser",OneCell("nat"),Id(),Function()),TwoCell("zero",Id(),OneCell("nat"),Constructor()),Y*);}
   	  TwoC1(TwoC0(TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),X2*),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("multSucc"); return `TwoC1(X2,TwoC0(X1,TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function())),TwoC0(TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoId(OneCell("nat"))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*);}
+  	  
   	} 
 }
 
@@ -295,6 +326,22 @@ catch(VisitFailure e) {
   	} 
 }
 
-
+public static TwoPath[] toArray(TwoC0 twoc0) {
+    int size = twoc0.length();
+    TwoPath[] array = new TwoPath[size];
+    int i=0;
+    if(twoc0 instanceof ConsTwoC0) {
+      TwoPath cur = twoc0;
+      while(cur instanceof ConsTwoC0) {
+        TwoPath elem = ((ConsTwoC0)cur).getHeadTwoC0();
+        array[i] = elem;
+        i++;
+        cur = ((ConsTwoC0)cur).getTailTwoC0();
+        
+      }
+      array[i] = cur;
+    }
+    return array;
+  }
 
 }
