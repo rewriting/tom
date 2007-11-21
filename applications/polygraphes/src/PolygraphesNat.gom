@@ -10,11 +10,11 @@ TwoPath = TwoId (onePath:OnePath)
 		| TwoC0 (TwoPath*)
 		| TwoC1 (TwoPath*)
 
-ThreePath = ThreeId (twoPath:TwoPath)
+ThreePath = ThreeId (twoPath:TwoPath)//inutile
 		| ThreeCell (Name:String,Source:TwoPath,Target:TwoPath,Type:CellType)
-		| ThreeC0 (ThreePath*)
-		| ThreeC1 (ThreePath*)
-		| ThreeC2 (ThreePath*)
+		| ThreeC0 (ThreePath*)//idem
+		| ThreeC1 (ThreePath*)//idem
+		| ThreeC2 (ThreePath*)//idem
 		
 CellType = Constructor()
 		| Function()

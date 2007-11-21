@@ -50,9 +50,9 @@ String nodeName =node.getNodeName();
 				String name=attributes.getNamedItem("Name").getNodeValue();
 				return `OneCell(name);
 		}
-		/*if(nodeName.equals("Id")){
-			return `Id();
-		}*///useless
+		/*
+		 * if(nodeName.equals("Id")){ return `Id(); }
+		 */// useless
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
@@ -75,7 +75,7 @@ return `Id();
 
 public static TwoPath makeTwoPath(Node node){
 String nodeName =node.getNodeName();
-		if(nodeName.equals("TwoPath")){//en prevision des 3-cellules
+		if(nodeName.equals("TwoPath")){// en prevision des 3-cellules
 			NodeList nodeChilds=node.getChildNodes();
 			for (int i = 0; i < nodeChilds.getLength(); i++) {
 				Node nodeChild=nodeChilds.item(i);
@@ -106,11 +106,11 @@ String nodeName =node.getNodeName();
 			for (int j = 0; j < twoC0s.getLength(); j++) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
-					//System.out.println(twoC0Element.getNodeName());
+					// System.out.println(twoC0Element.getNodeName());
 					res=`TwoC0(res,makeTwoPath(twoC0Element));
 				}				
 			}
-			//System.out.println(res);
+			// System.out.println(res);
 			return res;
 		}
 		if(nodeName.equals("TwoC1")){
@@ -132,6 +132,26 @@ for (int i = 0; i < childs.getLength(); i++) {
 		}
 }
 return `TwoId(Id());
+}
+
+
+public static ThreePath makeThreeCell(Node node){
+		NamedNodeMap attributes=node.getAttributes();
+		String name=attributes.getNamedItem("Name").getNodeValue();
+		String type=attributes.getNamedItem("Type").getNodeValue();
+		CellType celltype=null;
+		if(type.equals("Function")){celltype=`Function();}
+		if(type.equals("Constructor")){celltype=`Constructor();}
+		NodeList io=node.getChildNodes();
+		TwoPath source=`TwoId(Id());
+		TwoPath target=`TwoId(Id());
+		for (int j = 0; j < io.getLength(); j++) {
+			Node ioChild=io.item(j);
+			String ioName =ioChild.getNodeName();
+			if(ioName.equals("Source")){source=makeTwoPath(ioChild);}
+			if(ioName.equals("Target")){target=makeTwoPath(ioChild);}
+		}
+		return `ThreeCell(name,source,target,celltype);
 }
 
 }
