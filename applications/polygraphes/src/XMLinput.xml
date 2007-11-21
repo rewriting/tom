@@ -1,0 +1,85 @@
+<TwoPath>
+	<TwoC1>
+		<TwoC0>
+			<TwoC1>
+				<TwoCell Name="zero" Type="Constructor">
+					<Source>
+						<OnePath>
+							<Id></Id>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+				<TwoCell Name="succ" Type="Constructor">
+					<Source>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+				<TwoCell Name="succ" Type="Constructor">
+					<Source>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+			</TwoC1>
+			<TwoC1>
+				<TwoCell Name="zero" Type="Constructor">
+					<Source>
+						<OnePath>
+							<Id></Id>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+				<TwoCell Name="succ" Type="Constructor">
+					<Source>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+			</TwoC1>
+		</TwoC0>
+		<TwoCell Name="plus" Type="Function">
+			<Source>
+				<OnePath>
+					<OneC0>
+						<OneCell Name="nat"></OneCell>
+						<OneCell Name="nat"></OneCell>
+					</OneC0>
+				</OnePath>
+			</Source>
+			<Target>
+				<OnePath>
+					<OneCell Name="nat"></OneCell>
+				</OnePath>
+			</Target>
+		</TwoCell>
+	</TwoC1>
+</TwoPath>

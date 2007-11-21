@@ -111,8 +111,8 @@ TwoPath add=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ,succ,succ),TwoC1(zero,succ,su
 TwoPath div=`TwoC1(TwoC0(add,TwoC1(zero,succ,succ,succ)),division);
 TwoPath total=`TwoC1(TwoC0(div,TwoC1(zero,succ,succ,succ,succ)),multiplication);
 TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(six,six),multiplication),trois),minus);
-test(nine);
-
+//test(nine);
+System.out.println(rule3);
 }
 
 //-----------------------------------------------------------------------------
@@ -268,7 +268,7 @@ rewritingRules=normalizedRewritingRules;
 }
 
 
-private static void test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
+public static void test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
 try{
 System.out.println("BEFORE");
 print(myPath);
