@@ -98,10 +98,6 @@ public class PILFactory {
       // removes TargetLanguage
       _ -> { return `noTL(); }
     }
-    visit TomType {
-      // removes Type
-      Type[] -> { return `EmptyType(); }
-    }
     visit Expression {
       // clean Expressions
       Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visitLight(`e); }
