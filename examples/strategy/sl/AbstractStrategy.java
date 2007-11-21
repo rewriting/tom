@@ -65,6 +65,11 @@ public abstract class AbstractStrategy implements Strategy {
     return visitors[i];
   }
 
+  public Strategy setChildAt(int i, Strategy s) {
+    visitors[i] = s;
+    return this;
+  }
+
   public Visitable visit(Environment envt) throws VisitFailure {
     return (Visitable) visit(envt,VisitableIntrospector.getInstance());
   }
@@ -139,7 +144,7 @@ public abstract class AbstractStrategy implements Strategy {
       return;
     }
     s.setEnvironment(env);
-      for(int i=0 ; i<s.getChildCount() ; i++) {
+    for(int i=0 ; i<s.getChildCount() ; i++) {
       Strategy child = s.getChildAt(i);
       if(child instanceof Strategy) {
         init(child,env);

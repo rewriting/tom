@@ -51,7 +51,14 @@ public abstract class BasicStrategy implements Strategy {
       default: throw new IndexOutOfBoundsException();
     }
   }
-    
+
+  public Strategy setChildAt(int i, Strategy child) {
+    switch (i) {
+      case 0: any = child; return this;
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+
   public strategy.sl.Environment getEnvironment() {
     if(environment!=null) {
       return environment;
@@ -63,7 +70,7 @@ public abstract class BasicStrategy implements Strategy {
   public void setEnvironment(strategy.sl.Environment env) {
     this.environment = env;
   }
- 
+
   public Object visit(Environment envt, Introspector m) throws VisitFailure {
     setEnvironment(envt);
     int status = visit(m);

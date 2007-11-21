@@ -40,6 +40,7 @@ public interface Strategy {
   //subpart of Visitable necessary for the initialization
   public int getChildCount();
   public Strategy getChildAt(int i);
+  public Strategy setChildAt(int i,Strategy s);
   
   /**
    *  Get a reference to the current environment.

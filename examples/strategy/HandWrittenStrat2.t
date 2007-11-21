@@ -79,6 +79,25 @@ public class HandWrittenStrat2 {
     make() {( new strategy.sl.Identity() )}
   }
 
+  %op Strategy Mu(s1:Strategy, s2:Strategy) {
+    is_fsym(t) {( ($t instanceof strategy.sl.Mu) )}
+    make(var, v) {( new strategy.sl.Mu($var, $v) )}
+    get_slot(s1, t) {( (strategy.sl.MuVar)$t.getChildAt(strategy.sl.Mu.VAR) )}
+    get_slot(s2, t) {( (strategy.sl.Strategy)$t.getChildAt(strategy.sl.Mu.V) )}
+  }
+
+  %op Strategy MuVar(var:String) {
+    is_fsym(t) {( ($t instanceof strategy.sl.MuVar) )}
+    make(name) {( new strategy.sl.MuVar($name) )}
+    get_slot(var, t) {( ((strategy.sl.MuVar)$t).getName() )}
+  }
+
+
+  %op Strategy TopDown(s1:Strategy) {
+    make(v) {( `Mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) )}
+  }
+
+
   private abstract static class Term1 { }
   private abstract static class Term2 { }
 
@@ -328,6 +347,8 @@ public class HandWrittenStrat2 {
     Term2 t2 = `f2(f2(f2(a2())));
     System.out.println( `All(R()).visit(t1,MyIntrospector.getInstance()) );
     System.out.println( `All(R()).visit(t2, MyIntrospector.getInstance()) );
+    System.out.println( `TopDown(R()).visit(t1, MyIntrospector.getInstance()) );
+    System.out.println( `TopDown(R()).visit(t2, MyIntrospector.getInstance()) );
   }
 
 }
