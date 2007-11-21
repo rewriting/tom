@@ -9,8 +9,7 @@ public class Mu extends AbstractStrategy {
   public final static int V = 1;
 
   private boolean expanded = false;
-  private static MuStrategyTopDown muStrategyTopDown = new MuStrategyTopDown();
-  
+
   public Mu(Strategy var, Strategy v) {
     initSubterm(var, v);
   }
@@ -36,69 +35,7 @@ public class Mu extends AbstractStrategy {
   }
 
   public static void expand(Strategy s) {
-    try {
-      muStrategyTopDown.init();
-      muStrategyTopDown.visitLight(s);
-    } catch (VisitFailure e) {
-      System.out.println("mu reduction failed");
-    }
-  }
-  
-}
-
-/**
- * Custom TopDown strategy which realizes the mu expansion.
- * The visit method seeks all Mu and MuVar nodes.
- *
- * When a Mu node is matched, it is pushed on a stack. Then child nodes are
- * visited and finally, the Mu node is popped.
- *
- * When a MuVar node is matched, then the stack is browsed to find the
- * corresponding Mu (the last pushed with the same variable name). The MuVar is
- * then expanded.
- *
- * When the current node is not a Mu or a MuVar, we visit all children of the
- * current node.
- */
-class MuStrategyTopDown {
-  %typeterm MuStrategy {
-    implement { tom.library.sl.Strategy }
-    is_sort(t) { ($t instanceof tom.library.sl.Strategy) }
-    equals(t1,t2) { ($t1.equals($t2)) }
-    visitor_fwd { tom.library.sl.reflective.StrategyFwd }
-  }
-
-  %op MuStrategy Mu(s1:MuStrategy, s2:MuStrategy) {
-    is_fsym(t) { ($t instanceof tom.library.sl.Mu) }
-    make(var, v) { new tom.library.sl.Mu($var, $v) }
-    get_slot(s1, t) { ((tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.VAR)) }
-    get_slot(s2, t) { ((tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V)) }
-  }
-
-  %typeterm MuStrategyString {
-    implement { String }
-    is_sort(t) { ($t instanceof String) }
-    equals(t1,t2) { ($t1.equals($t2)) }
-  }
-
-  %op MuStrategy MuVar(var:MuStrategyString) {
-    is_fsym(t) { ($t instanceof tom.library.sl.MuVar) }
-    make(name) { new tom.library.sl.MuVar(name) }
-    get_slot(var, t) { (((tom.library.sl.MuVar)$t).getName()) }
-  }
-
-  private LinkedList stack;
-
-  public MuStrategyTopDown() {
-    stack = new LinkedList();
-  }
-
-  public void init() {
-    stack.clear();
-  }
-
-  public void visitLight(Visitable any) throws VisitFailure {
-    visitLight(any,null,0,new HashSet());
+    expand(s,null,0,new HashSet(),new LinkedList());
   }
 
   /**
@@ -107,7 +44,7 @@ class MuStrategyTopDown {
    * @param childNumber the n-th subtemr of parent
    * @param set of already visited parent
    */
-  private void visitLight(Visitable any, Visitable parent, int childNumber, HashSet set) throws VisitFailure {
+  private static void expand(Visitable any, Visitable parent, int childNumber, HashSet set, LinkedList stack) {
     /* check that the current element has not already been expanded */
     if(set.contains(any)) {
       return;
@@ -115,23 +52,24 @@ class MuStrategyTopDown {
       set.add(parent);
     }
 
-    %match(any) {
-      m@Mu(var@MuVar[], v) -> {
-        stack.addFirst(`m);
-        visitLight(`v,`m,0,set);
-        visitLight(`var,null,0,set);
-        stack.removeFirst();
-        return;
-      }
-
-      var@MuVar(n) -> {
-        MuVar muvar = (MuVar)`var;
+    if (any instanceof Mu) {
+      MuVar var = (MuVar) any.getChildAt(VAR);
+      Strategy v = (Strategy) any.getChildAt(V);
+      stack.addFirst(any);
+      expand(v,(Mu)any,0,set,stack);
+      expand(var,null,0,set,stack);
+      stack.removeFirst();
+      return;
+    } else {
+      if (any instanceof MuVar) {
+        String n = ((MuVar)any).getName();
+        MuVar muvar = (MuVar) any;
         if(!muvar.isExpanded()) {
           Iterator it = stack.iterator();
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
-            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(`n)) {
-              //System.out.println("MuVar: setInstance " + `n );
+            if(((MuVar)m.visitors[Mu.VAR]).getName().equals(n)) {
+              //System.out.println("MuVar: setInstance " + n );
               muvar.setInstance(m);
               if(parent!=null) {
                 /* shortcut: the MuVar is replaced by a pointer 
@@ -143,20 +81,20 @@ class MuStrategyTopDown {
                 //System.out.println("V: " + m.visitors[Mu.V]);
                 parent.setChildAt(childNumber,m.visitors[Mu.V]);
               } else {
-                //System.out.println("strange: " + `var);
+                //System.out.println("strange: " + muvar);
               }
               return;
             }
           }
-          //System.out.println("MuVar: " + `n + " not found");
-          throw new VisitFailure();
+          //System.out.println("MuVar: " + n + " not found");
         }
       }
     }
 
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
-      visitLight(any.getChildAt(i),any,i,set);
+      expand(any.getChildAt(i),any,i,set,stack);
     }
   }
+
 }
