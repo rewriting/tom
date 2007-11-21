@@ -307,10 +307,10 @@ public class HandWrittenStrat2 {
     }
 
     public Object visitLight(Object v,Introspector m) throws strategy.sl.VisitFailure {
-      if (tom_is_sort_Term1(v)) {
+      if (v instanceof Term1) {
         return visit_Term1((( HandWrittenStrat2.Term1 )v),m);
       }
-      if (tom_is_sort_Term2(v)) {
+      if (v instanceof Term2) {
         return visit_Term2((( HandWrittenStrat2.Term2 )v),m);
       }if (!((environment ==  null ))) {
         return any.visit(environment,m);
@@ -319,9 +319,8 @@ public class HandWrittenStrat2 {
         return any.visitLight(v,m);
       } 
     }
-
-
   }
+
 
 
   public static void main(String[] args) throws VisitFailure {
