@@ -2,15 +2,9 @@ package polygraphesnat;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import polygraphesnat.*;
 import polygraphesnat.types.*;
-import polygraphesnat.types.onepath.*;
-import polygraphesnat.types.twopath.*;
-import tom.library.sl.*;
+import java.io.*;
 
 
 
@@ -22,12 +16,19 @@ public class polygraphicXML {
 
   public static void main (String args[]) {
  try {
-      dom = DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder().parse("polygraphes/src/XMLinput.xml");
+      /*dom = DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder().parse("polygraphes/src/XMLinput.xml");*/
+	 dom = DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml");
       Element e = dom.getDocumentElement();
-      System.out.println(makeTwoPath(e));      
-      makeTwoPath(e).print();
-      PolygraphesNat.test(makeTwoPath(e));
+     // System.out.println(makeThreeCell(e));      
+      //makeTwoPath(e).print();
+      //PolygraphesNat.test(makeTwoPath(e));
+      //System.out.println(onePath2XML(`OneC0(OneCell("bla"),Id(),OneCell("gna"))));
+      System.out.println(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))));
+      save(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
+      //System.out.println(twoPath2XML(`TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoId(OneCell("nat")))));
+
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -35,6 +36,8 @@ public class polygraphicXML {
 	
 
   }
+
+
 public static OnePath makeOnePath(Node node){
 String nodeName =node.getNodeName();
 		// System.out.println(nodeName);
@@ -153,5 +156,59 @@ public static ThreePath makeThreeCell(Node node){
 		}
 		return `ThreeCell(name,source,target,celltype);
 }
+
+public static String twoPath2XML(TwoPath path){
+%match (TwoPath path){
+			TwoId(onepath) -> {return "<TwoPath>\n<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n</TwoPath>\n";}
+			TwoCell(name,source,target,type) -> { return "<TwoPath>\n<TwoCell Name=\""+`name+"\" Type=\""+`type.toString().replace("()","")+"\">\n<Source>\n"+onePath2XML(`source)+"</Source>\n<Target>\n"+onePath2XML(`target)+"</Target>\n</TwoCell>\n</TwoPath>\n"; }
+			TwoC0(head,tail*) -> {return "<TwoPath>\n<TwoC0>\n"+twoC02XML(`head)+twoC02XML(`tail)+"</TwoC0>\n</TwoPath>\n";}
+			TwoC1(head,tail*) -> {return "<TwoPath>\n<TwoC1>\n"+twoC12XML(`head)+twoC12XML(`tail)+"</TwoC1>\n</TwoPath>\n";}
+}
+return "";
+}
+public static String twoC02XML(TwoPath path){
+%match (TwoPath path){
+			TwoId(onepath) -> {return "<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n";}
+			TwoCell(name,source,target,type) -> { return "<TwoCell Name=\""+`name+"\" Type=\""+`type.toString().replace("()","")+"\">\n<Source>\n"+onePath2XML(`source)+"</Source>\n<Target>\n"+onePath2XML(`target)+"</Target>\n</TwoCell>\n"; }
+			TwoC0(head,tail*) -> {return twoC02XML(`head)+twoC02XML(`tail);}
+			TwoC1(head,tail*) -> {return "<TwoC1>\n"+twoC12XML(`head)+twoC12XML(`tail)+"</TwoC1>\n";}
+}
+return "";
+}
+public static String twoC12XML(TwoPath path){
+%match (TwoPath path){
+			TwoId(onepath) -> {return "<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n";}
+			TwoCell(name,source,target,type) -> { return "<TwoCell Name=\""+`name+"\" Type=\""+`type.toString().replace("()","")+"\">\n<Source>\n"+onePath2XML(`source)+"</Source>\n<Target>\n"+onePath2XML(`target)+"</Target>\n</TwoCell>\n"; }
+			TwoC0(head,tail*) -> {return "<TwoC0>\n"+twoC02XML(`head)+twoC02XML(`tail)+"</TwoC0>\n";}
+			TwoC1(head,tail*) -> {return twoC12XML(`head)+twoC12XML(`tail);}
+}
+return "";
+}
+public static String onePath2XML(OnePath path){
+%match (OnePath path){
+			Id() -> {return "<OnePath>\n<Id></Id>\n</OnePath>\n";}
+			OneCell(name) -> { return "<OnePath>\n<OneCell Name=\""+`name+"\"></OneCell>\n</OnePath>\n"; }
+			OneC0(head,tail*)->{ return "<OnePath>\n<OneC0>\n"+oneC02XML(`head)+oneC02XML(`tail)+"</OneC0>\n</OnePath>\n";}
+}
+return "";
+}
+public static String oneC02XML(OnePath path){
+%match (OnePath path){
+			Id() -> {return "<Id></Id>\n";}
+			OneCell(name) -> { return "<OneCell Name=\""+`name+"\"></OneCell>\n"; }
+			OneC0(head,tail*)->{ return oneC02XML(`head)+oneC02XML(`tail);}
+}
+return "";
+}
+
+public static void save(String fileContent,File file) throws IOException {
+
+		PrintWriter printWriter = new PrintWriter(new FileOutputStream(
+				file));
+		printWriter.print(fileContent);
+		printWriter.flush();
+		printWriter.close();
+	}
+
 
 }

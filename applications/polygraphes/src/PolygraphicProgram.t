@@ -162,13 +162,16 @@ rewritingRules=normalizedRewritingRules;
   	  TwoC0(left*,X,right*) -> {if(`X.sourcesize()>0){ return `TwoC0(left*,TwoC1(TwoId(X.source()),X),right);} } 
  	 } 
 }
-
-
-private static void test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
+public static TwoPath test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
 try{
-System.out.println("BEFORE\n"+myPath);
-myPath=(TwoPath) `RepeatId(TopDown(Normalize())).visit(myPath);
-System.out.println("RESULT\n"+myPath);
+System.out.println("BEFORE");
+print(myPath);
+System.out.println("LOG");
+myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(TopDown(ApplyRules()),Print())))).visit(myPath);
+System.out.println("RESULT");
+print(myPath);
+//System.out.println(result(myPath));
+return myPath;
 //tom.library.utils.Viewer.display(myPath);
 }
 catch(VisitFailure e) {

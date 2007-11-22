@@ -242,14 +242,16 @@ rewritingRules=normalizedRewritingRules;
 }
 
 
-private static void test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
+public static TwoPath test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
 try{
 System.out.println("BEFORE");
 print(myPath);
+System.out.println("LOG");
 myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(TopDown(ApplyRules()),Print())))).visit(myPath);
 System.out.println("RESULT");
 print(myPath);
 System.out.println(result(myPath));
+return myPath;
 //tom.library.utils.Viewer.display(myPath);
 }
 catch(VisitFailure e) {

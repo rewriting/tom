@@ -228,7 +228,7 @@ System.out.println(path.prettyPrint());
   	  TwoC1(TwoC0(TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),X2*),TwoCell("permutation",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("SuccPerm1"); return `TwoC1(TwoC0(X1,X2),TwoCell("permutation",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),TwoC0(TwoId(OneCell("nat")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),Y*);}
   	  TwoC1(TwoC0(X1,TwoC1(X2*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()))),TwoCell("permutation",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {System.out.println("SuccPerm2"); return `TwoC1(TwoC0(X1,X2),TwoCell("permutation",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoId(OneCell("nat"))),Y*);}
   	  TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function()),Y*) -> {if(`X1!=`TwoId(Id())){System.out.println("SuccDup"); return `TwoC1(X1,TwoCell("duplication",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),Y*);}}
-  	  TwoC1(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("eraser",OneCell("nat"),Id(),Function()),Y*) -> { System.out.println("SuccEraz"); return `TwoC1(TwoCell("eraser",OneCell("nat"),Id(),Function()),Y*);}
+  	  TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("eraser",OneCell("nat"),Id(),Function()),Y*) -> { System.out.println("SuccEraz"); return `TwoC1(X1,TwoCell("eraser",OneCell("nat"),Id(),Function()),Y*);}
   	  TwoC1(TwoC0(TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),X2*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*)->{System.out.println("plusSucc");return `TwoC1(TwoC0(X1,X2),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),Y*);}
   	  TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),X1*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("plusZero"); return `TwoC1(X1,Y*);}
   	  TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),X1*),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()),Y*) -> { System.out.println("minusZero1"); return `TwoC1(X1,TwoCell("eraser",OneCell("nat"),Id(),Function()),TwoCell("zero",Id(),OneCell("nat"),Constructor()),Y*);}
@@ -268,20 +268,24 @@ rewritingRules=normalizedRewritingRules;
 }
 
 
-public static void test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
+public static TwoPath test(TwoPath myPath){//fonction pour tester la combinaison de toutes les strategies
 try{
 System.out.println("BEFORE");
 print(myPath);
+System.out.println("LOG");
 myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(TopDown(ApplyRules()),Print())))).visit(myPath);
 System.out.println("RESULT");
 print(myPath);
 System.out.println(result(myPath));
+return myPath;
 //tom.library.utils.Viewer.display(myPath);
 }
 catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
     }
 }
+
+
 
 // fait tomber les constructeurs
 %strategy Gravity() extends Identity(){ 

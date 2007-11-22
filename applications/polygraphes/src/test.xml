@@ -1,3 +1,5 @@
+<ThreeCell Name="gna" Type="Function">
+<Source>
 <TwoPath>
 	<TwoC0>
 	<TwoCell Name="plus" Type="Function">
@@ -32,3 +34,41 @@
 	</TwoCell>
 	</TwoC0>
 </TwoPath>
+</Source>
+<Target>
+<TwoPath>
+	<TwoC0>
+	<TwoCell Name="plus" Type="Function">
+		<Source>
+			<OnePath>
+				<OneC0>
+					<OneCell Name="nat"></OneCell>
+					<OneCell Name="nat"></OneCell>
+				</OneC0>
+			</OnePath>
+		</Source>
+		<Target>
+			<OnePath>
+				<OneCell Name="nat"></OneCell>
+			</OnePath>
+		</Target>
+	</TwoCell>
+		<TwoCell Name="plus" Type="Function">
+		<Source>
+			<OnePath>
+				<OneC0>
+					<OneCell Name="nat"></OneCell>
+					<OneCell Name="nat"></OneCell>
+				</OneC0>
+			</OnePath>
+		</Source>
+		<Target>
+			<OnePath>
+				<OneCell Name="nat"></OneCell>
+			</OnePath>
+		</Target>
+	</TwoCell>
+	</TwoC0>
+</TwoPath>
+</Target>
+</ThreeCell>
