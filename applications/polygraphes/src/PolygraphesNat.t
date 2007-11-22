@@ -207,7 +207,8 @@ System.out.println(path.prettyPrint());
   	  		}
   	  		//a part, retransforme les onec0 en twoC0
   	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
-  	
+  	  	
+  	  	TwoC1(head*,t@TwoId(_),TwoId(_),tail*) -> { if(`head!=`TwoId(Id())){return `TwoC1(head,t,tail);}else{return `TwoC1(t,tail);}}
  	 } 
 }
 
@@ -242,7 +243,14 @@ System.out.println(path.prettyPrint());
   	  
   	} 
 }
-
+public static TwoPath formatRule(TwoPath myPath){
+try{myPath=(TwoPath) `RepeatId(TopDown(Normalize())).visit(myPath);
+	}
+	catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("strange term: "+myPath);
+    }
+return myPath;
+}
 
 
 public static void NormalizeRules(){
@@ -263,7 +271,8 @@ rewritingRules=normalizedRewritingRules;
 
 %strategy NormalizeSource() extends Identity(){ 
   	visit TwoPath {
-  	  TwoC0(left*,X,right*) -> {if(`X.sourcesize()>0){ return `TwoC0(left*,TwoC1(TwoId(X.source()),X),right);} } 
+  	  TwoC0(left*,X,right*) -> {if(`X.sourcesize()>0){ return `TwoC0(left*,TwoC1(TwoId(X.source()),X),right);} }
+  	  TwoC1(head*,t@TwoId(!Id()),TwoId(!Id()),tail*) -> {return `TwoC1(head,t,tail);} 
  	 } 
 }
 

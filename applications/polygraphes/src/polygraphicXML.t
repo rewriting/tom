@@ -5,7 +5,7 @@ import javax.xml.parsers.*;
 import java.io.File;
 import polygraphesnat.types.*;
 import java.io.*;
-
+import tom.library.sl.*;
 
 
 public class polygraphicXML {
@@ -29,13 +29,11 @@ public class polygraphicXML {
 	 dom = DocumentBuilderFactory.newInstance()
         .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/test.xml");
       Element e = dom.getDocumentElement();
-	 makeThreeCell(e).print();
+	 System.out.println(makeRule(makeThreeCell(e)));
 
     } catch (Exception e) {
       e.printStackTrace();
     }
-	
-
   }
 
 
@@ -220,6 +218,31 @@ public static void save(String fileContent,File file) throws IOException {
 		printWriter.flush();
 		printWriter.close();
 	}
+/*%strategy NormalizeRule() extends Identity(){ 
+  	visit TwoPath {
+  	  TwoC0(left*,X,right*) -> {if(`X.sourcesize()>0){ return `TwoC0(left*,TwoC1(TwoId(X.source()),X),right);} }
+  	  TwoId(OneC0(head,tail*)) -> {return `TwoC0(TwoId(head),TwoId(tail*)); } 
+  	  TwoC1(head*,t@TwoId(_),TwoId(_),tail*) -> { if(`head!=`TwoId(Id())){return `TwoC1(head,t,tail);}else{return `TwoC1(t,tail);}}
+ 	 } 
+}*///useless
 
 
+public static String makeRule(ThreePath rule){
+TwoPath source=rule.getSource();
+TwoPath target=rule.getTarget();
+source=`TwoC1(TwoId(source.source()),source);
+source=PolygraphesNat.formatRule(source);
+target=`TwoC1(TwoId(target.source()),target);
+target=PolygraphesNat.formatRule(target);
+String sourceString=source.toString();
+String targetString=target.toString();
+int i=0;
+while(sourceString.contains("TwoId")){
+sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i);
+targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i);
+i++;}
+sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";
+targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";
+return sourceString+ "-> {return "+targetString+";}";
+}
 }
