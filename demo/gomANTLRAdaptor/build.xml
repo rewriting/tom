@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the parser example" default="build" basedir="..">
+  <import file="common.xml"/>
+  <property name="parser" value="parser"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${parser}"/>
+    <delete dir="${examples.build}/${parser}"/>
+  </target>
+  <target name="build" depends="init">
+	<gom.preset srcdir="${examples.dir}"
+	      destdir="${examples.gen}">
+	      <include name="${parser}/Expression.gom"/>
+   </gom.preset>	
+	<gomantlradapter.preset
+	      srcdir="${examples.dir}"
+	      destdir="${examples.gen}"
+	      package="${parser}"
+	      grammar="Expression">
+	      <include name="${parser}/**/Expression.gom"/>
+    </gomantlradapter.preset>  	
+    <!-- build parser -->
+    <tom.preset outputfile="${examples.gen}/${parser}/Expression.g"
+                options="-I ${examples.gen}/${parser}"
+                srcdir="${examples.dir}"> 
+      <include name="${parser}/Expression.g.t"/>
+    </tom.preset>
+  	<tom.preset srcdir="${examples.dir}"  		        
+  	                destdir="${examples.gen}">          
+  	       <include name="${parser}/**/ExpressionEx.t"/>  	
+  	</tom.preset>
+    <mkdir dir="${examples.gen}/${parser}"/>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${examples.gen}/${parser}/Expression.g"
+            outputdirectory="${examples.gen}/${parser}"
+            libdirectory="${examples.gen}/${parser}"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <javacompile example="${parser}"/>
+    <!-- copy resources -->
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${parser}/*.t"/>
+        <include name="${parser}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
