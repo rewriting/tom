@@ -1,0 +1,289 @@
+module sequents
+imports String int 
+
+abstract syntax
+
+Term = Var(name:String)
+     | funAppl(fun:String, p:TermList)
+     | NewVar(name:String, base_name: String) // asks for a new term 
+     | FreshVar(name:String, base_name: String) // asks for a fresh var
+
+TermList = concTerm(Term*)
+
+StringList = strlist(String*)
+
+Prop = relationAppl(r:String, t:TermList)
+     | and(p1:Prop, p2:Prop)
+     | or(p1:Prop, p2:Prop)
+     | implies(p1:Prop, p2:Prop)
+     | forall(var:String, p:Prop)
+     | exists(var:String, p:Prop)
+     | bottom()
+     | top()
+     | nullProp() // for open leaves
+
+
+/* -- alpha equivalence -- */
+
+and:block() {
+	public boolean equals(Object o) {
+		if (this==o) return true;
+		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+		%match(this,p) {
+			and(p11,p12),and(p21,p22) -> {
+				return `p11.equals(`p21) && `p12.equals(`p22);
+			}
+		}
+		return false;
+	}
+}
+
+or:block() {
+	public boolean equals(Object o) {
+		if (this==o) return true;
+		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+		%match(this,p) {
+			or(p11,p12),or(p21,p22) -> {
+				return `p11.equals(`p21) && `p12.equals(`p22);
+			}
+		}
+		return false;
+	}
+}
+
+implies:block() {
+	public boolean equals(Object o) {
+		if (this==o) return true;
+		lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+		%match(this,p) {
+			implies(p11,p12),implies(p21,p22) -> {
+				return `p11.equals(`p21) && `p12.equals(`p22);
+			}
+		}
+		return false;
+	}
+}
+
+forall:block() {
+	public boolean equals(Object o) { 
+		if  (this == o) return true;
+		else {
+			lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+			%match (this,p) {
+				forall(x,p1), forall(y,p2) -> {
+					lemu.sequents.types.Context couple = `context(p1,p2);
+					lemu.sequents.types.Term fvar = lemu.Utils.freshVar(`x,couple);
+					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,`Var(x),fvar); 
+					lemu.sequents.types.Prop np2 = lemu.Utils.replaceFreeVars(`p2,`Var(y),fvar);
+					return np1.equals(np2);	
+				}
+			}
+			return false;
+		}
+	}
+}
+
+exists:block() {
+	public boolean equals(Object o) { 
+		if  (this == o) return true;
+		else {
+			lemu.sequents.types.Prop p = (lemu.sequents.types.Prop) o;
+			%match (this,p) {
+				exists(x,p1), exists(y,p2) -> {
+					lemu.sequents.types.Context couple = `context(p1,p2);
+					lemu.sequents.types.Term fvar = lemu.Utils.freshVar(`x,couple);
+					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,`Var(x),fvar); 
+					lemu.sequents.types.Prop np2 = lemu.Utils.replaceFreeVars(`p2,`Var(y),fvar);
+					return np1.equals(np2);	
+				}
+			}
+			return false;
+		}
+	}
+}
+
+/* ---------------------- */
+
+Context = context(Prop*)
+
+Sequent = sequent(h:Context,c:Context)
+
+Premisses = premisses(Tree*)
+
+// st == symbol table
+Tree = rule(type:RuleType, p:Premisses, c:Sequent, active:Prop)
+     | nullTree() // for conveniance
+
+RuleType = axiomInfo()
+         | impliesLeftInfo()
+         | impliesRightInfo()
+         | andLeftInfo()
+         | andRightInfo()
+         | orLeftInfo()
+         | orRightInfo()
+         | forallRightInfo(freshvar:Term)
+         | forallLeftInfo(newterm:Term)
+         | existsRightInfo(newterm:Term)
+         | existsLeftInfo(freshvar:Term)
+         | bottomInfo()
+         | topInfo()
+         | cutInfo(p:Prop)
+         | contractionLeftInfo()
+         | contractionRightInfo()
+         | weakLeftInfo()
+         | weakRightInfo()
+         | openInfo() // open leaf
+         | reductionInfo() // reduction step
+         | customRuleInfo(name:String,expanded:Tree)
+
+//--- new rules ---
+SeqList = concSeq(Sequent*)
+
+VarList = varlist(String*)
+
+// hs == hand-side : 0 left, 1 right
+Rule = ruledesc(hs:int, concl:Prop, prem:SeqList, tree:Tree)
+
+TermRule = termrule(lhs:Term,rh:Term)
+TermRuleList = termrulelist(TermRule*)
+PropRule = proprule(lhs:Prop,rhs:Prop)
+PropRuleList = proprulelist(PropRule*)
+
+// --- for the new rules computation---
+RuleList = rlist(Rule*)
+
+
+// parsed in interactive mode
+Command = rewriteprop(l:Prop, r:Prop)
+        | rewritepropFromTheorem(th:String)
+        | rewritesuper(l:Prop, r:Prop)
+        | rewritesuperFromTheorem(th:String)
+        | rewriteterm(lt:Term, rt:Term)
+        | rewritetermFromTheorem(th:String)
+        | normalizeProp(p: Prop)
+        | normalizeTerm(t: Term)
+        | proof(name:String, p:Prop)
+        | display(name:String)
+        | proofterm(name:String)
+        | quit()
+        | reinit()
+        | proofcheck(name:String)
+        | print(name:String)
+        | resume(text:String)
+        | gibber()
+        | importfile(name:String)
+        | inductiver(s:Sig)
+        | inductive(s:Sig)
+        | endoffile()
+	
+ProofCommand = proofCommand(text:String)
+             | focusCommand(hyp:String)
+             | cutCommand(p:Prop)
+             | ruleCommand(n:int)
+             | askrulesCommand()
+             | theoremCommand(name:String)
+             | normalizeSequent()
+             | proofquit()
+             | proofreinit()
+             | abort()
+             | proofendoffile()
+
+/* --- stagiaires --- */
+Sig = sig(defined:String,l:Ctorlist)
+Ctorlist = clist(Ctor*)
+Ctor = ctor(s:String, tl:TypeList)
+TypeList = tlist(Type*)
+Type = type(label:String,name:String)
+/* ------------------ */
+
+// hooks maintaining free vars
+
+
+sort Term:block() {
+  private static java.util.WeakHashMap<Term,java.util.HashSet<String>> vars = new java.util.WeakHashMap();
+
+  public java.util.HashSet<String> getVars() {
+    if(vars.containsKey(this)) {
+      return (java.util.HashSet<String>) vars.get(this).clone();
+    } else {
+      java.util.HashSet<String> res = new java.util.HashSet();
+      res = getVars(this,res);
+      vars.put(this,res);
+      return (java.util.HashSet<String>) res.clone();
+    }
+  }
+
+  public static java.util.HashSet<String> getVars(Term t, java.util.HashSet<String> res) {
+    if(vars.containsKey(t)) {
+      res.addAll(vars.get(t));
+      return res;
+    } else {
+      %match(t) {
+        Var(n) -> { res.add(`n); return res; }
+        funAppl(fun, l) -> {
+          %match(TermList l) {
+            (_*,c,_*) -> { `getVars(c,res); }
+          }
+        }
+      }
+      return res;
+    }
+  }
+}
+
+
+sort Prop:block() {
+  private static java.util.WeakHashMap<Prop,java.util.HashSet<String>> freevars = new java.util.WeakHashMap();
+
+  public java.util.HashSet<String> getFreeVars() {
+    if(freevars.containsKey(this)) {
+      return (java.util.HashSet<String>) freevars.get(this).clone();
+    } else {
+      java.util.HashSet<String> res = new java.util.HashSet();
+      res = getFreeVars(this,res);
+      freevars.put(this,res);
+      return (java.util.HashSet<String>) res.clone();
+    }
+  }
+
+  public java.util.HashSet<String> getFreeVars(Prop p, java.util.HashSet<String> res) {
+    if(freevars.containsKey(p)) {
+      res.addAll(freevars.get(p));
+      return res;
+    } else {
+      %match(p) {
+        and(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        or(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        implies(p1,p2) -> { 
+          `getFreeVars(p1,res);
+          `getFreeVars(p2,res);  
+          return res; 
+        }
+        forall(var,sub) -> {
+          `getFreeVars(sub,res);
+          res.remove(`var);
+          return res;
+        }
+        exists(var,sub) -> {
+          `getFreeVars(sub,res);
+          res.remove(`var);
+          return res;
+        }
+        relationAppl(_,l) -> {
+          %match(TermList l) {
+            (_*,c,_*) -> { Term.getVars(`c,res); }
+          }
+        }
+      }
+      return res;
+    }
+  }
+}
