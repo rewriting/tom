@@ -16,19 +16,14 @@ public class polygraphicXML {
 
   public static void main (String args[]) {
  try {
-      /*dom = DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder().parse("polygraphes/src/XMLinput.xml");*/
+
 	 dom = DocumentBuilderFactory.newInstance()
         .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml");
       Element e = dom.getDocumentElement();
-     // System.out.println(makeThreeCell(e));      
-      //makeTwoPath(e).print();
-      //PolygraphesNat.test(makeTwoPath(e));
-      //System.out.println(onePath2XML(`OneC0(OneCell("bla"),Id(),OneCell("gna"))));
+
       System.out.println(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))));
       save(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
-      //System.out.println(twoPath2XML(`TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoId(OneCell("nat")))));
-
+      
 
     } catch (Exception e) {
       e.printStackTrace();
