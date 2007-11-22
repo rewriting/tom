@@ -17,13 +17,19 @@ public class polygraphicXML {
   public static void main (String args[]) {
  try {
 
-	 dom = DocumentBuilderFactory.newInstance()
+	/* dom = DocumentBuilderFactory.newInstance()
         .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml");
       Element e = dom.getDocumentElement();
-
-      System.out.println(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))));
-      save(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
-      
+      System.out.println(makeThreeCell(e));*/
+      //System.out.println(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))));
+      //save(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
+      /*save(twoPath2XML(PolygraphesNat.test(`TwoC1(TwoC0(TwoC1(TwoC0(TwoC1(TwoC1(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC1(TwoC1(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()))),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function())),TwoC1(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function()))
+      )),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
+	*/
+	 dom = DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/test.xml");
+      Element e = dom.getDocumentElement();
+	 System.out.println(makeThreeCell(e));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -80,6 +86,13 @@ String nodeName =node.getNodeName();
 				if(!nodeChild.getNodeName().equals("#text")){return makeTwoPath(nodeChild);}
 			}
 		}
+		if(nodeName.equals("TwoId")){
+			NodeList nodeChilds=node.getChildNodes();
+			for (int i = 0; i < nodeChilds.getLength(); i++) {
+				Node nodeChild=nodeChilds.item(i);
+				if(!nodeChild.getNodeName().equals("#text")){return `TwoId(makeOnePath(nodeChild));}
+			}
+		}
 		if(nodeName.equals("TwoCell")){
 				NamedNodeMap attributes=node.getAttributes();
 				String name=attributes.getNamedItem("Name").getNodeValue();
@@ -117,7 +130,10 @@ String nodeName =node.getNodeName();
 			for (int j = 0; j < twoC1s.getLength(); j++) {
 				Node twoC1Element = twoC1s.item(j);
 				if(!twoC1Element.getNodeName().contains("#text")){
+					if(res==`TwoId(Id())){res=`makeTwoPath(twoC1Element);}
+					else{
 					res=`TwoC1(res,makeTwoPath(twoC1Element));
+					}
 				}				
 			}		
 			return res;

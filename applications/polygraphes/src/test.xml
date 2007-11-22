@@ -1,74 +1,82 @@
-<ThreeCell Name="gna" Type="Function">
-<Source>
-<TwoPath>
-	<TwoC0>
-	<TwoCell Name="plus" Type="Function">
-		<Source>
-			<OnePath>
-				<OneC0>
-					<OneCell Name="nat"></OneCell>
-					<OneCell Name="nat"></OneCell>
-				</OneC0>
-			</OnePath>
-		</Source>
-		<Target>
-			<OnePath>
-				<OneCell Name="nat"></OneCell>
-			</OnePath>
-		</Target>
-	</TwoCell>
+<ThreeCell Name="plusSucc" Type="Function">
+	<Source>
+		<TwoPath>
+			<TwoC1>
+				<TwoC0>
+					<TwoC1>
+						<TwoId>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+						</TwoId>
+						<TwoCell Name="succ" Type="Constructor">
+							<Source>
+								<OnePath>
+									<OneCell Name="nat"></OneCell>
+								</OnePath>
+							</Source>
+							<Target>
+								<OnePath>
+									<OneCell Name="nat"></OneCell>
+								</OnePath>
+							</Target>
+						</TwoCell>
+					</TwoC1>
+					<TwoId>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</TwoId>
+				</TwoC0>
+				<TwoCell Name="plus" Type="Function">
+					<Source>
+						<OnePath>
+							<OneC0>
+								<OneCell Name="nat"></OneCell>
+								<OneCell Name="nat"></OneCell>
+							</OneC0>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+			</TwoC1>
+		</TwoPath>
+	</Source>
+	<Target>
+		<TwoPath>
+		<TwoC1>
 		<TwoCell Name="plus" Type="Function">
-		<Source>
-			<OnePath>
-				<OneC0>
-					<OneCell Name="nat"></OneCell>
-					<OneCell Name="nat"></OneCell>
-				</OneC0>
-			</OnePath>
-		</Source>
-		<Target>
-			<OnePath>
-				<OneCell Name="nat"></OneCell>
-			</OnePath>
-		</Target>
-	</TwoCell>
-	</TwoC0>
-</TwoPath>
-</Source>
-<Target>
-<TwoPath>
-	<TwoC0>
-	<TwoCell Name="plus" Type="Function">
-		<Source>
-			<OnePath>
-				<OneC0>
-					<OneCell Name="nat"></OneCell>
-					<OneCell Name="nat"></OneCell>
-				</OneC0>
-			</OnePath>
-		</Source>
-		<Target>
-			<OnePath>
-				<OneCell Name="nat"></OneCell>
-			</OnePath>
-		</Target>
-	</TwoCell>
-		<TwoCell Name="plus" Type="Function">
-		<Source>
-			<OnePath>
-				<OneC0>
-					<OneCell Name="nat"></OneCell>
-					<OneCell Name="nat"></OneCell>
-				</OneC0>
-			</OnePath>
-		</Source>
-		<Target>
-			<OnePath>
-				<OneCell Name="nat"></OneCell>
-			</OnePath>
-		</Target>
-	</TwoCell>
-	</TwoC0>
-</TwoPath>
-</Target>
+					<Source>
+						<OnePath>
+							<OneC0>
+								<OneCell Name="nat"></OneCell>
+								<OneCell Name="nat"></OneCell>
+							</OneC0>
+						</OnePath>
+					</Source>
+					<Target>
+						<OnePath>
+							<OneCell Name="nat"></OneCell>
+						</OnePath>
+					</Target>
+				</TwoCell>
+				<TwoCell Name="succ" Type="Constructor">
+							<Source>
+								<OnePath>
+									<OneCell Name="nat"></OneCell>
+								</OnePath>
+							</Source>
+							<Target>
+								<OnePath>
+									<OneCell Name="nat"></OneCell>
+								</OnePath>
+							</Target>
+						</TwoCell>
+		</TwoC1>
+		</TwoPath>
+	</Target>
 </ThreeCell>
