@@ -32,7 +32,7 @@ public class ExpressionEx {
   public static void main(String[] args) throws VisitFailure{    
     String exprCode = "a = 3; b=a+2-3;\n";
     try{
-      // parse tree
+      // Initialize parser
       ExpressionLexer lexer = new ExpressionLexer(new ANTLRInputStream(new ByteArrayInputStream(exprCode.getBytes("utf-8"))));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       ExpressionParser parser = new ExpressionParser(tokens);
@@ -42,8 +42,9 @@ public class ExpressionEx {
       
       // apply evaluate strategy from leafs to root
       HashMap vars = new HashMap();
-      System.out.println("Result = " + b.getTerm());
-      RuleBase rb = (RuleBase) `BottomUp(Evaluate(vars)).visitLight((Visitable)b.getTerm());
+      RuleBase rb = (RuleBase)b.getTerm();
+      System.out.println("Result = " + rb);
+      rb = (RuleBase) `BottomUp(Evaluate(vars)).visitLight(rb);
 
       // display results
       %match(RuleBase rb) {
