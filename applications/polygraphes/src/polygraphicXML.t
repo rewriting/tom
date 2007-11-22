@@ -29,7 +29,7 @@ public class polygraphicXML {
 	 dom = DocumentBuilderFactory.newInstance()
         .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/test.xml");
       Element e = dom.getDocumentElement();
-	 System.out.println(makeThreeCell(e));
+	 makeThreeCell(e).print();
 
     } catch (Exception e) {
       e.printStackTrace();

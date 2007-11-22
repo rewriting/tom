@@ -243,5 +243,5 @@ sort ThreePath:block(){
 				}
 			return false;
 			}
-		public void print(){System.out.println("ThreeCell("+this.getName())+","+this.getSource().print()+","+this.getTarget().print()+")";}
+		public void print(){System.out.println("ThreeCell("+this.getName()+","+this.getSource().prettyPrint()+","+this.getTarget().prettyPrint()+")");}
 		}
