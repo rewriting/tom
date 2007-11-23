@@ -13,6 +13,8 @@ shift
 goto setArgs
 :doneSetArgs
 
-echo %CMD_LINE_ARGS%
+if exist %CMD_LINE_ARGS% set CMD_LINE_ARGS=-Dexample=%CMD_LINE_ARGS: =%  build
+
+rem echo %CMD_LINE_ARGS%
 
 ant %CMD_LINE_ARGS%
