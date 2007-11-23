@@ -1,4 +1,5 @@
 @echo off
+setlocal
 
 set LOCALCLASSPATH=./lib/junit.jar
 set CLASSPATH=%LOCALCLASSPATH%
