@@ -59,5 +59,6 @@ public class StrategyFwd extends AbstractStrategy {
   public Strategy visit_Strategy(Strategy any) throws VisitFailure {
     return (Strategy) visitors[ARG].visitLight(any);
   }
+
 }
 

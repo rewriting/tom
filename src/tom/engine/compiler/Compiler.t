@@ -85,7 +85,10 @@ public class Compiler extends TomGenericPlugin {
     "</options>";
   
   private static final String basicStratName = "tom.library.sl.BasicStrategy";
-  private static final String visitableName = "tom.library.sl.Visitable";
+  private static final TomType objectType = `TomTypeAlone("Object");
+  private static final TomType introspectorType = `TomTypeAlone("tom.library.sl.Introspector");
+  // introspector argument of visitLight
+  private static final TomTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType,concConstraint());
     
   /** if the flag is true, the class generated from %strategy inherits from BasicStrategy and handles the dispatch*/
   private static boolean autoDispatch = false;
@@ -236,7 +239,7 @@ matchBlock: {
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
               }
               TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
-              subjectListAST = `concTomTerm(subjectListAST*,arg);
+              subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
               //return default strategy.visitLight(arg)
@@ -248,7 +251,7 @@ matchBlock: {
                 returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
               }
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
+              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg,introspectorVar),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
               if (compiler.autoDispatch) {
                 dispatchInfo.put(`vType,funcName);
               }
@@ -286,7 +289,7 @@ matchBlock: {
           *
           */        
           visitorFwd = `TLForward(Compiler.basicStratName);         
-          TomTerm vVar = `Variable(concOption(),Name("v"),TomTypeAlone(visitableName),concConstraint());// v argument of visitLight
+          TomTerm vVar = `Variable(concOption(),Name("v"),objectType,concConstraint());// v argument of visitLight
           InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
           Expression testEnvNotNull = null;
           // generate the visitLight
@@ -298,26 +301,26 @@ matchBlock: {
             // generate the _visit_Term
             TomTerm arg = `Variable(concOption(),Name("arg"),type,concConstraint());
             TomTerm environmentVar = `Variable(concOption(),Name("environment"),EmptyType(),concConstraint());
-            Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment)"))))));
-            Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg)"))))));
+            Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
+            Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))))));
             testEnvNotNull = `Negation(EqualTerm(compiler.getStreamManager().getSymbolTable().getBooleanType(),
                 environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
             Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
             l = `concDeclaration(l*,MethodDef(
                                       Name("_" + dispatchInfo.get(type)),
-                                      concTomTerm(arg),
+                                      concTomTerm(arg,introspectorVar),
                                       type,
                                       TomTypeAlone("tom.library.sl.VisitFailure"),
                                       ifThenElse));
           }
           ifList = `concInstruction(ifList*,              
                       If(testEnvNotNull,
-                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visit(environment)")))),
-                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v)"))))));
+                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)")))),
+                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v,introspector)"))))));
           Declaration visitLightDeclaration = `MethodDef(
                                       Name("visitLight"),
-                                      concTomTerm(vVar),
-                                      TomTypeAlone(visitableName),
+                                      concTomTerm(vVar,introspectorVar),
+                                      objectType,
                                       TomTypeAlone("tom.library.sl.VisitFailure"),
                                       AbstractBlock(ifList));
           l = `concDeclaration(l*,visitLightDeclaration);

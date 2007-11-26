@@ -77,8 +77,8 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 @generateBlock()@
   @@Override
-  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure {
-    return v.@visitMethod(className)@(this);
+  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v,tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
+    return v.@visitMethod(className)@(this,i);
   }
 ]%);
 generateBody(writer);

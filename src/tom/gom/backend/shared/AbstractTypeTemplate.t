@@ -104,7 +104,7 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
     this.uniqueID = uniqueID;
   }
 
-  abstract public @className()@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure;
+  abstract public @className()@ accept(@fullClassName(visitor)@ v, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure;
 }
 ]%);
  }
