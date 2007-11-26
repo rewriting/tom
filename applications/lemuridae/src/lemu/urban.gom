@@ -49,6 +49,10 @@ ProofTerm = ax(n:Name,cn:CoName)
           | existsL(x:NProp,varx:Term,m:ProofTerm,n:Name)
           | forallR(a:CNProp,varx:Term,m:ProofTerm,cn:CoName)
           | forallL(x:NProp,m:ProofTerm,t:Term,n:Name)
+          /* new hot stuff */
+          | foldR(a:CNProp,m:ProofTerm,cn:CoName,rulenum:int)
+          | foldL(x:NProp,m:ProofTerm,n:Name,rulenum:int)
+
 existsL:make(x,varx,m,y) {
   %match(Term varx) {
     !Var(varname) -> { throw new RuntimeException("Exists Left not on variable"); }

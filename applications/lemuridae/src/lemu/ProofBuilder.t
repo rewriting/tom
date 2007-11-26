@@ -2,6 +2,7 @@ package lemu;
 
 import lemu.sequents.*;
 import lemu.sequents.types.*;
+import lemu.sequents.types.proprulelist.*;
 
 import lemu.urban.*;
 import lemu.urban.types.*;
@@ -196,6 +197,50 @@ b: {
       }
     }
   }
+
+  %strategy ApplyFoldR(rulelist: PropRuleList, active: Prop) extends Fail() {
+    visit Tree {
+     rule[c=seq@sequent(left,(C1*,act,C2*))] -> {
+        if (`act==active) {
+          int i = 0;
+          PropRule rule = null;
+          for (PropRule r: (proprulelist) rulelist) {
+            HashMap<String,Term> tds = Unification.match(r.getlhs(), active);
+            if (tds != null) rule=r;
+            i++;
+          }
+ 
+          Prop newprop = Unification.reduceProp(active,rule);
+          Tree prem = createOpenLeaf(`sequent(left,context(C1*,newprop,C2*))); 
+          return `rule(foldRightInfo(i,newprop),premisses(prem),seq,active);
+        }
+      }
+    }
+  }
+
+  %strategy ApplyFoldL(rulelist: PropRuleList, active: Prop) extends Fail() {
+    visit Tree {
+     rule[c=seq@sequent((C1*,act,C2*),right)] -> {
+        if (`act==active) {
+          int i = 0;
+          PropRule rule = null;
+          for (PropRule r: (proprulelist) rulelist) {
+            HashMap<String,Term> tds = Unification.match(r.getlhs(), active);
+            if (tds != null) rule=r;
+            i++;
+          }
+ 
+          Prop newprop = Unification.reduceProp(active,rule);
+          Tree prem = createOpenLeaf(`sequent(context(C1*,newprop,C2*),right)); 
+          return `rule(foldLeftInfo(i,newprop),premisses(prem),seq,active);
+        }
+      }
+    }
+  }
+
+
+
+
 
   /**
    * classical rules
@@ -1047,6 +1092,18 @@ b :{
           }
         }
 
+        /* experimental fold case */
+        foldCommand() -> {
+          try {
+            Strategy strat =  env.focus_left ?  
+                                `Try(ApplyFoldL(newPropRules,active))
+                              : `Try(ApplyFoldR(newPropRules,active));
+            tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
+          } catch (VisitFailure e) {
+            writeToOutputln("Can't apply fold rule : " + e.getMessage());
+          }
+        }
+
         /* experimental reduce case */
         normalizeSequent() -> {
           try {
@@ -1359,10 +1416,10 @@ b :{
             //            Collection c = Proofterms.reduce(pt);
             Collection c = Proofterms.computeNormalForms(pt, nseq);
             writeToOutputln("Number of normal forms found : "+c.size());
-            //            for (Object o:c) {
-            //              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
-            //              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
-            //            }
+            for (Object o:c) {
+              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
+            }
           }
         }
 

@@ -48,6 +48,8 @@ class PrettyPrinter {
       weakLeftInfo() -> { return "weak_\\mathcal{L}"; }
       weakRightInfo() -> { return "weak_\\mathcal{R}"; }
       customRuleInfo[name=n] -> { return `n; }
+      foldRightInfo[num=n] -> { return "fold_\\mathcal{R}(" + `n + ")"; }
+      foldLeftInfo[num=n] -> { return "fold_\\mathcal{L}(" + `n + ")"; }
     }
     return rt.toString();
   }
@@ -377,6 +379,8 @@ class PrettyPrinter {
     }
 
     %match (ProofTerm term) { // INCOMPLET manque le 1er ordre
+      foldL(x,m,y,i) -> { return "{\\sf Fold}_L^"+`i +"(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m)+", "+toLatex(`y)+")"; }
+      foldR(a,m,b,i) -> { return "{\\sf Fold}_R^"+`i +"(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m)+", "+toLatex(`b)+")"; }
       ax(n,cn) -> {return "{\\sf Ax}("+toLatex(`n)+","+toLatex(`cn)+")";}
       cut(a,m1,x,m2) -> {return "{\\sf Cut}(\\langle "+toLatex(`a)+"\\rangle ,"+toLatex(`m1)+", \\langle "+toLatex(`x)+" \\rangle ,"+toLatex(`m2)+")";}
       falseL(n) -> {return "{\\sf False}_L("+toLatex(`n)+")";}
@@ -634,6 +638,8 @@ class PrettyPrinter {
     }
 
     %match(ProofTerm term) { 
+      foldL(x,m,y,i) -> { return "foldL_"+`i +"("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
+      foldR(a,m,b,i) -> { return "foldR_"+`i +"("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
       ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
       cut(a,m1,x,m2) -> {return "cut("+prettyPrint(`a)+" "+prettyPrint(`m1)+", "+prettyPrint(`x)+" "+prettyPrint(`m2)+")";}
       falseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
@@ -648,6 +654,10 @@ class PrettyPrinter {
       existsR(a,m,t,cn) -> {return "existsR("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
       forallL(x,m,t,n) -> {return "forallL("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
       forallR(a,varx,m,cn) -> {return "forallR("+prettyPrint(`a)+" <"+prettyPrint(`varx)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+    }
+
+    %match(NSequent term) {
+      nsequent(nctxt,cnctxt) -> { return prettyPrint(`nctxt) + " |- " + prettyPrint(`cnctxt); }
     }
 
     return term.toString();

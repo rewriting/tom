@@ -39,20 +39,21 @@
     </gom>
 
     <tom.preset srcdir="${lemu.src}"
-      destdir="${lemu.gen}">
+      destdir="${lemu.gen}"
+      options="--autoDispatch">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
       <exclude name="**/LJ2NJ.t"/>
     </tom.preset>
     <tom.preset outputfile="${lemu.gen}/lemu/SeqWalker.g"
-      options="-I ${lemu.gen}/lemu" 
+      options="-I ${lemu.gen}/lemu --autoDispatch" 
       srcdir="${lemu.src}/lemu"> 
       <include name="SeqWalker.g.t"/>
     </tom.preset>
 
     <!-- LAMBDA -->
     <tom.preset outputfile="${lemu.gen}/lambdapp/LambdaParser.g"
-      options="-I ${lemu.gen}/lambdapp"
+      options="-I ${lemu.gen}/lambdapp --autoDispatch"
       srcdir="${lemu.src}/lambdapp"> 
       <include name="LambdaParser.g.t"/>
     </tom.preset>

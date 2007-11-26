@@ -134,6 +134,8 @@ RuleType = axiomInfo()
          | weakRightInfo()
          | openInfo() // open leaf
          | reductionInfo() // reduction step
+         | foldRightInfo(num:int,newprop:Prop) // reduction step
+         | foldLeftInfo(num:int,newprop:Prop) // reduction step
          | customRuleInfo(name:String,expanded:Tree)
 
 //--- new rules ---
@@ -180,6 +182,7 @@ ProofCommand = proofCommand(text:String)
              | focusCommand(hyp:String)
              | cutCommand(p:Prop)
              | ruleCommand(n:int)
+             | foldCommand()
              | askrulesCommand()
              | theoremCommand(name:String)
              | normalizeSequent()
