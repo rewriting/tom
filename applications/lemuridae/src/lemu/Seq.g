@@ -90,6 +90,7 @@ command: PROOF^ ID COLUMN! pred DOT!
 proofcommand: FOCUS^ ID DOT!
             | RRULE^ NUMBER DOT!
             | FOLD^ DOT!
+            | ASSUME^ ID DOT!
             | RRULE DOT -> ^(RRULEALONE) 
             | CUT^ pred DOT!
             | THEOREM^ ID DOT!
@@ -183,6 +184,7 @@ GIBBER: 'gibber';
 IMPORT: 'import';
 NORMALIZE: 'reduce';
 FOLD: 'fold';
+ASSUME: 'assume';
 TERM: 'term';
 PROP: 'proposition';
 INDUCTIVER: 'recinductive';

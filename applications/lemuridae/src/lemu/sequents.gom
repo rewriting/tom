@@ -132,6 +132,7 @@ RuleType = axiomInfo()
          | contractionRightInfo()
          | weakLeftInfo()
          | weakRightInfo()
+         | metaVariableInfo(m:String)
          | openInfo() // open leaf
          | reductionInfo() // reduction step
          | foldRightInfo(num:int,newprop:Prop) // reduction step
@@ -183,6 +184,7 @@ ProofCommand = proofCommand(text:String)
              | cutCommand(p:Prop)
              | ruleCommand(n:int)
              | foldCommand()
+             | assumeCommand(m:String)
              | askrulesCommand()
              | theoremCommand(name:String)
              | normalizeSequent()

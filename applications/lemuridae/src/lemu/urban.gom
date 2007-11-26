@@ -52,6 +52,7 @@ ProofTerm = ax(n:Name,cn:CoName)
           /* new hot stuff */
           | foldR(a:CNProp,m:ProofTerm,cn:CoName,rulenum:int)
           | foldL(x:NProp,m:ProofTerm,n:Name,rulenum:int)
+          | metaVar(name:String)
 
 existsL:make(x,varx,m,y) {
   %match(Term varx) {

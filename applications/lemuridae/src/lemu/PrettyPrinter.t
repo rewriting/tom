@@ -50,6 +50,7 @@ class PrettyPrinter {
       customRuleInfo[name=n] -> { return `n; }
       foldRightInfo[num=n] -> { return "fold_\\mathcal{R}(" + `n + ")"; }
       foldLeftInfo[num=n] -> { return "fold_\\mathcal{L}(" + `n + ")"; }
+      metaVariableInfo[m=name] -> { return ""; }
     }
     return rt.toString();
   }
@@ -146,6 +147,7 @@ class PrettyPrinter {
 
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
+      rule(metaVariableInfo[m=name],(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`name+"}";}
       rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
       rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]\n{" + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
@@ -336,6 +338,7 @@ class PrettyPrinter {
   public static String toLatex(urbanAbstractType term) {
     
     %match(NTree term) {
+      nrule(metaVariableInfo[m=name],(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`name+"}";}
       nrule(n,(),c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd "+ toLatex(`c) +"}\n{}";}
       nrule(n,p,c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd " + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
@@ -379,6 +382,7 @@ class PrettyPrinter {
     }
 
     %match (ProofTerm term) { // INCOMPLET manque le 1er ordre
+      metaVar(l) -> { return `l; }
       foldL(x,m,y,i) -> { return "{\\sf Fold}_L^"+`i +"(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m)+", "+toLatex(`y)+")"; }
       foldR(a,m,b,i) -> { return "{\\sf Fold}_R^"+`i +"(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m)+", "+toLatex(`b)+")"; }
       ax(n,cn) -> {return "{\\sf Ax}("+toLatex(`n)+","+toLatex(`cn)+")";}
@@ -638,6 +642,7 @@ class PrettyPrinter {
     }
 
     %match(ProofTerm term) { 
+      metaVar(l) -> { return `l; }
       foldL(x,m,y,i) -> { return "foldL_"+`i +"("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
       foldR(a,m,b,i) -> { return "foldR_"+`i +"("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
       ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }

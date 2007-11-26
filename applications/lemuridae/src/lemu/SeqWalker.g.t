@@ -84,6 +84,7 @@ proofcommand returns [lemu.sequents.types.ProofCommand c]
   | ^(FOCUS v=ID) {c = `focusCommand($v.text); }
   | ^(RRULE n=NUMBER) {c = `ruleCommand(Integer.parseInt($n.text)); }
   | FOLD {c = `foldCommand(); }
+  | ^(ASSUME name=ID) { c = `assumeCommand($name.text); }
   | RRULEALONE { c = `ruleCommand(-1); }
   | ^(CUT p=pred) { c = `cutCommand(p); }
   | ^(THEOREM name=ID) { c = `theoremCommand($name.text); }

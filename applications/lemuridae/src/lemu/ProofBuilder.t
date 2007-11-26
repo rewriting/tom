@@ -238,7 +238,13 @@ b: {
     }
   }
 
-
+  %strategy ApplyAssume(n:String,active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=concl] -> { 
+        return `rule(metaVariableInfo(n),premisses(),concl,active);
+      }
+    }
+  }
 
 
 
@@ -1096,11 +1102,21 @@ b :{
         foldCommand() -> {
           try {
             Strategy strat =  env.focus_left ?  
-                                `Try(ApplyFoldL(newPropRules,active))
-                              : `Try(ApplyFoldR(newPropRules,active));
+                                `ApplyFoldL(newPropRules,active)
+                              : `ApplyFoldR(newPropRules,active);
             tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply fold rule : " + e.getMessage());
+          }
+        }
+
+        /* metavariables */
+        assumeCommand(s) -> {
+          try {
+            Strategy strat = `ApplyAssume(s,active);
+            tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
+          } catch (VisitFailure e) {
+            writeToOutputln("Can't apply assume rule : " + e.getMessage());
           }
         }
 

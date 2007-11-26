@@ -59,16 +59,20 @@ public class Proofterms {
     %match(Tree term,NSequent nseq) {
       /* rule(type, premisses, conclusion, focussed proposition) */
 
+      rule(metaVariableInfo[m=label],(),c,_),_ -> {
+        return `metaVar(label);
+      }
+
       // propositional fragment
       rule(axiomInfo[],_,sequent((_*,x,_*),(_*,x,_*)),_), nsequent((_*,nprop(name,x),_*),(_*,cnprop(coname,x),_*)) -> {
         return `ax(name,coname);
       }
 
-      rule(topInfo[],_,sequent(_,(_*,top(),_*)),_), nsequent((_*),(_*,cnprop(coname,top()),_*)) -> {
+      rule(topInfo[],_,sequent(_,(_*,top(),_*)),_), nsequent(_,(_*,cnprop(coname,top()),_*)) -> {
         return `trueR(coname);
       }
 
-      rule(bottomInfo[],_,sequent((_*,bottom(),_*),_),_),nsequent((_*,nprop(name,bottom()),_*),(_*)) -> {
+      rule(bottomInfo[],_,sequent((_*,bottom(),_*),_),_),nsequent((_*,nprop(name,bottom()),_*),_) -> {
         return `falseL(name);
       }
 
@@ -279,8 +283,8 @@ public class Proofterms {
   }
 
   public static NTree typeProofterm (ProofTerm pi, NSequent nseq) { // INCOMPLET
-    System.out.println(PrettyPrinter.prettyPrint(pi));
-    System.out.println(PrettyPrinter.prettyPrint(nseq));
+    //System.out.println(PrettyPrinter.prettyPrint(pi));
+    //System.out.println(PrettyPrinter.prettyPrint(nseq));
     if (isImplicitContraction(pi)) {
       %match (ProofTerm pi, NSequent nseq) {
         /* plusieurs liaison d'une meme variable...
@@ -292,11 +296,9 @@ public class Proofterms {
         }
         */
         pt@foldR(a@cnprop(cn1,Phi),m,cn,i),ns@nsequent(ng,(cnd1*,active@cnprop(cn,_),cnd2*)) -> {
-          System.out.println("ici");
           return `nrule(foldRightInfo(i,Phi),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,active,a,cnd2*)))),ns,pt);
         }
         pt@foldL(x@nprop(n1,Phi),m,n,i),ns@nsequent((ng1*, active@nprop(n,_),ng2*), cnd) -> {
-          System.out.println("la");
           return `nrule(foldLeftInfo(i,Phi),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,active,x,ng2*),cnd))),ns,pt);
         }
         pt@andR(a@cnprop(cn1,A),m1,b@cnprop(cn2,B),m2,cn), ns@nsequent(ng,(cnd1*,active@cnprop(cn, and(A,B)),cnd2*)) -> {
@@ -332,7 +334,7 @@ public class Proofterms {
       }
     }
     else {
-      System.out.println("no Implicit Contraction");
+//      System.out.println("no Implicit Contraction");
 //      System.out.println(pi);
       %match (ProofTerm pi, NSequent nseq) {
         /* plusieurs liaison d'une meme variable
@@ -344,12 +346,13 @@ public class Proofterms {
         }
         */
         pt@foldR(a@cnprop(cn1,Phi),m,cn,i),ns@nsequent(ng,(cnd1*,cnprop(cn,_),cnd2*)) -> {
-          System.out.println("ici");
           return `nrule(foldRightInfo(i,Phi),npremisses(typeProofterm(m,nsequent(ng,cncontext(cnd1*,a,cnd2*)))),ns,pt);
         }
         pt@foldL(x@nprop(n1,Phi),m,n,i),ns@nsequent((ng1*, nprop(n,_),ng2*), cnd) -> {
-          System.out.println("la");
           return `nrule(foldLeftInfo(i,Phi),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
+        }
+        pt@metaVar(label),ns -> {
+          return `nrule(metaVariableInfo(label),npremisses(),ns,pt);
         }
         pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
           return `nrule(axiomInfo(),npremisses(),ns,pt);
@@ -459,6 +462,7 @@ public class Proofterms {
     %match (ProofTerm term) { 
       foldR(a,m,cn,_) -> {return `nameAppearsFree(m,name) ; }
       foldL(x,m,n,_) -> {return `nameAppearsFree(n,name) || (`nameAppearsFree(m,name) && !`nameAppearsFree(x,name)) ;}
+      metaVar[] -> { return false; }
       ax(n,cn) -> {return `nameAppearsFree(n,name); }
       cut(a,m1,x,m2) -> {return (`nameAppearsFree(m1,name) || (`nameAppearsFree(m2,name) && (! `nameAppearsFree(x,name))));}
       falseL(n) -> {return `nameAppearsFree(n,name); }
@@ -482,6 +486,7 @@ public class Proofterms {
   public static boolean nameTopIntroduced(ProofTerm term, Name name) { 
     %match (ProofTerm term) {
       foldL(_,_,n,_) -> { return `nameAppearsFree(n,name); }
+      metaVar[] -> { return false; }
       ax(n,cn) -> {return `nameAppearsFree(n,name); }
       falseL(n) -> {return `nameAppearsFree(n,name); }
       andL(x,y,m,n) -> {return `nameAppearsFree(n,name) ;}
@@ -524,6 +529,7 @@ public class Proofterms {
     %match (ProofTerm term) { 
       foldL(x,m,cn,_) -> {return `conameAppearsFree(m,coname) ; }
       foldR(a,m,n,_) -> {return `conameAppearsFree(n,coname) || (`conameAppearsFree(m,coname) && !`conameAppearsFree(a,coname)) ;}
+      metaVar[] -> { return false; }
       ax(n,cn) -> {return `conameAppearsFree(cn,coname); }
       cut(a,m1,x,m2) -> {return (`conameAppearsFree(m2,coname) || (`conameAppearsFree(m1,coname) && (! `conameAppearsFree(a,coname))));}
       falseL(n) -> {return false;}
@@ -547,6 +553,7 @@ public class Proofterms {
   public static boolean conameTopIntroduced(ProofTerm term, CoName coname) { 
     %match (ProofTerm term) {
       foldR(_,_,cn,_) -> {return `conameAppearsFree(cn,coname); }
+      metaVar[] -> { return false; }
       ax(n,cn) -> {return `conameAppearsFree(cn,coname); }
       trueR(cn) -> {return `conameAppearsFree(cn,coname); }
       orR(a,b,m,cn) -> {return `conameAppearsFree(cn,coname) ;}
@@ -579,11 +586,26 @@ public class Proofterms {
   }
 
   public static boolean nameFreshlyIntroduced(ProofTerm t, Name n) {
+    //%match(t) { metaVar[] -> { System.out.println("ICI"); return true; } }
     return (nameTopIntroduced(t,n) && (! isImplicitContraction(t)));
   }
 
   public static boolean conameFreshlyIntroduced(ProofTerm t, CoName cn) {
+    //%match(t) { metaVar[] -> { System.out.println("LA");  return true; } }
     return (conameTopIntroduced(t,cn) && (! isImplicitContraction(t)));
+  }
+
+  // FIXE: ugly way of testing this
+  %strategy hasMetaVars() extends `Identity() {
+    visit ProofTerm { metaVar[] -> { throw new VisitFailure(); } }
+  }
+  private static boolean hasMetaVars(ProofTerm t) {
+    try { 
+      `TopDown(hasMetaVars()).visit(t); 
+      return false;
+    } catch (VisitFailure ex) {
+      return true;
+    }
   }
 
   // Reductions des termes
@@ -601,6 +623,7 @@ public class Proofterms {
         ProofTerm new_m = `ReName(m,name1,name2);
         return `foldR(a,new_m,cn,i);
       }
+      mv@metaVar[] -> { return `mv; }
       ax(n,cn) -> {
         if (name1 == `n) return `ax(name2,cn); else return pt;
       }
@@ -667,6 +690,7 @@ public class Proofterms {
         ProofTerm new_m = `ReCoName(m,coname1,coname2);
         return `foldL(x,new_m,n,i);
       }
+      mv@metaVar[] -> { return `mv; }
       ax(n,cn) -> {
         if (coname1 == `cn) return `ax(n,coname2); else return pt;
       }
@@ -722,6 +746,7 @@ public class Proofterms {
 
  private static ProofTerm CoNameSubstitution(ProofTerm subj, CoName cn, Name n, ProofTerm pt, Prop phi) {
     %match (ProofTerm subj) {
+      p@metaVar[] -> { return `p; }
       p@ax(n1,cn1) -> {
         if (cn == `cn1) {
           System.out.println("renommage "+n+" en "+`n1+" dans \n"+PrettyPrinter.prettyPrint(pt));
@@ -789,6 +814,7 @@ public class Proofterms {
 
    private static ProofTerm NameSubstitution(ProofTerm subj, Name n, CoName cn, ProofTerm pt, Prop phi) {
     %match (ProofTerm subj) {
+      p@metaVar[] -> { return `p; }
       p@ax(n1,cn1) -> {
         if (n == `n1) {
           System.out.println("renommage "+cn+" en "+`cn1+" dans \n"+PrettyPrinter.prettyPrint(pt));
@@ -871,7 +897,8 @@ public class Proofterms {
       
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
 //        if ((! `nameFreshlyIntroduced(m2,n)) && (`boundNamesAreNotFree(m2,m1)) && (`boundCoNamesAreNotFree(m2,m1))) {
-        if (! `nameFreshlyIntroduced(m2,n)) {
+        if (!`nameFreshlyIntroduced(m2,n) && !hasMetaVars(`m2)) {
+          //System.out.println(PrettyPrinter.prettyPrint(`n) + " not freshly introduced in " + PrettyPrinter.prettyPrint(`m2));
           ProofTerm new_m2 = refresher.refreshBoundVars(`m2);
           System.out.println("\n refreshing bound vars of");
           System.out.println(PrettyPrinter.prettyPrint(`m2));
@@ -883,7 +910,8 @@ public class Proofterms {
       }
 
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
-        if ((! `conameFreshlyIntroduced(m1,cn)) && (`boundNamesAreNotFree(m1,m2)) && (`boundCoNamesAreNotFree(m1,m2))) {
+        //if ((! `conameFreshlyIntroduced(m1,cn)) && (`boundNamesAreNotFree(m1,m2)) && (`boundCoNamesAreNotFree(m1,m2))) {
+        if (!`conameFreshlyIntroduced(m1,cn) && !hasMetaVars(`m1)) {
           ProofTerm new_m1 = refresher.refreshBoundVars(`m1);
           System.out.println("\n refreshing bound vars of");
           System.out.println(PrettyPrinter.prettyPrint(`m1));
@@ -983,9 +1011,7 @@ public class Proofterms {
 
   private static boolean boundCoNamesAreNotFree(ProofTerm m1, ProofTerm m2) {
     Collection c = new HashSet();
-    try {
-      getBoundCoNames(c).visit(m1);
-    }
+    try { getBoundCoNames(c).visit(m1); }
     catch (Exception e) { System.out.println(e);}
     boolean res = true;
     for (Object o : c) {
@@ -995,9 +1021,7 @@ public class Proofterms {
   }
 
   %strategy GetBoundNamesAux(c:Collection) extends Identity() {
-    visit NProp {
-      nprop(x,_) -> {c.add(`x); }
-    }
+    visit NProp { nprop(x,_) -> {c.add(`x); } }
   }
 
   private static Strategy getBoundNames(Collection c) {
@@ -1006,9 +1030,7 @@ public class Proofterms {
 
   private static boolean boundNamesAreNotFree(ProofTerm m1, ProofTerm m2) {
     Collection c = new HashSet();
-    try {
-      getBoundNames(c).visit(m1);
-    }
+    try { getBoundNames(c).visit(m1); }
     catch (Exception e) { System.out.println(e);}
     boolean res = true;
     for (Object o : c) {
@@ -1066,7 +1088,20 @@ public class Proofterms {
 
     public ProofTerm refreshBoundVars(ProofTerm pt) { // INCOMPLET MANQUE 1er ORDRE
       %match(ProofTerm pt) {
-        ax(_,_) -> {return pt; }
+        foldR(cnprop(cn1,phi1),m,cn,i) -> {
+          CoName new_cn1 = newCoName();
+          ProofTerm new_m = `ReCoName(m,cn1,new_cn1);
+          new_m = refreshBoundVars(new_m);
+          return `foldR(cnprop(new_cn1,phi1),new_m,cn,i);
+        }
+        foldL(nprop(n1,phi1),m,n,i) -> {
+          Name new_n1 = newName();
+          ProofTerm new_m = `ReName(m,n1,new_n1);
+          new_m = refreshBoundVars(new_m);
+          return `foldL(nprop(new_n1,phi1),new_m,n,i);
+        }
+        ax(_,_) -> { return pt; }
+        metaVar[] -> { return pt; }
         cut(cnprop(cn1,phi),m1,nprop(n1,phi),m2) -> {
           CoName new_cn1 = newCoName();
           ProofTerm new_m1 = `ReCoName(m1,cn1,new_cn1);
