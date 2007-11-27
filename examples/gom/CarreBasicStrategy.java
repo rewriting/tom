@@ -28,7 +28,7 @@
  */
 package gom;
 import tom.library.sl.Strategy;
-import tom.library.sl.Visitable;
+import tom.library.sl.Introspector;
 import tom.library.sl.VisitFailure;
 
 public class CarreBasicStrategy extends gom.rond.RondBasicStrategy {
@@ -37,16 +37,16 @@ public class CarreBasicStrategy extends gom.rond.RondBasicStrategy {
     super(v);
   }
 
-  public Visitable visitLight(Visitable v) throws VisitFailure {
+  public Object visitLight(Object v, Introspector i) throws VisitFailure {
     if (v instanceof Carre) {
-      return this.visit_Carre((Carre)v);
+      return this.visit_Carre((Carre)v,i);
     } else {
-      return super.visitLight(v);
+      return super.visitLight(v,i);
     }
   }
 
-  public Carre visit_Carre(Carre arg) throws VisitFailure {
-    return (Carre) any.visitLight(arg);
+  public Carre visit_Carre(Carre arg,Introspector i) throws VisitFailure {
+    return (Carre) any.visitLight(arg,i);
   }
 
 }

@@ -46,11 +46,11 @@
 	    <classpath refid="tom.classpath"/>
     </antlr3>
     
-    <javac.preset destdir="${miniml.build}">
+    <javac.newsl destdir="${miniml.build}">
       <src path="${miniml.gen}:${miniml.src}"/>
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
-    </javac.preset>
+    </javac.newsl>
 
     <copy todir="${miniml.build}/tests">
       <fileset dir="${miniml.dir}/tests" />
