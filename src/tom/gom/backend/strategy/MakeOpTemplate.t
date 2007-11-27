@@ -109,8 +109,20 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+    return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure{
+    return (tom.library.sl.Visitable) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
+    return (tom.library.sl.Visitable) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public Object visit(tom.library.sl.Environment envt, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     setEnvironment(envt);
-    int status = visit();
+    int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
@@ -118,10 +130,10 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
+  public Object visit(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     getEnvironment().setRoot(any);
-    int status = visit();
+    int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return getEnvironment().getRoot();
     } else {
@@ -130,7 +142,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this);
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
   public @className()@(@childListWithType(slotList)@) {
@@ -141,13 +153,13 @@ public class @className()@ implements tom.library.sl.Strategy {
     * Builds a new @className(operator)@
     * If one of the sub-strategies application fails, throw a VisitFailure
     */
-  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
-@computeNewChilds(slotList,"any")@
+  public Object visitLight(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
+@computeNewChilds(slotList,"any","i")@
     return @fullClassName(operator)@.make(@genMakeArguments(slotList,false)@);
   }
 
-  public int visit() {
-@computeSLNewChilds(slotList,"any")@
+  public int visit(tom.library.sl.Introspector i) {
+@computeSLNewChilds(slotList,"any","i")@
     getEnvironment().setSubject(@fullClassName(operator)@.make(@genMakeArguments(slotList,false)@));
     return tom.library.sl.Environment.SUCCESS;
   }
@@ -332,13 +344,13 @@ public class @className()@ implements tom.library.sl.Strategy {
   /**
    * Generate code to initialize all members of the strategy
    */
-  private String computeNewChilds(SlotFieldList slots, String argName) {
+  private String computeNewChilds(SlotFieldList slots, String argName, String introspectorName) {
     String res = "";
     %match(SlotFieldList slots) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += %[
-    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) @fieldName(`fieldName)@.visit(@argName@);
+    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) @fieldName(`fieldName)@.visit(@argName@,@introspectorName@);
 ]%;
         }
       }
@@ -349,13 +361,13 @@ public class @className()@ implements tom.library.sl.Strategy {
   /**
    * Generate code to initialize all members of the strategy with the sl scheme
    */
-  private String computeSLNewChilds(SlotFieldList slots, String argName) {
+  private String computeSLNewChilds(SlotFieldList slots, String argName, String introspectorName) {
     String res = "";
     %match(SlotFieldList slots) {
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += %[
-    (@fieldName(`fieldName)@).visit();
+    (@fieldName(`fieldName)@).visit(@introspectorName@);
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) getEnvironment().getSubject();
 ]%;
         }

@@ -157,9 +157,9 @@ static class Subst extends @fullClassName(abstractType)@ {
   }
 
     //use the default implementation of visit in BasicStrategy
-  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws tom.library.sl.VisitFailure {
+  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     Strategy any = (Strategy)((Visitable)v).getChildAt(0);
-    return (@fullClassName(abstractType)@) any.visit(this);
+    return (@fullClassName(abstractType)@) any.visit(this,i);
   }
 
   //abstract methods from the abstractType which are trivially implemented

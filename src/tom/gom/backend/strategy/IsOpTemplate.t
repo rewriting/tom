@@ -73,7 +73,20 @@ public class @className()@ extends tom.library.sl.AbstractStrategy {
     initSubterm();
   }
 
+  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+    return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure{
+    return (tom.library.sl.Visitable) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
   public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
+    return (tom.library.sl.Visitable) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+
+  public Object visitLight(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
      return any;
     } else {
@@ -81,8 +94,8 @@ public class @className()@ extends tom.library.sl.AbstractStrategy {
     }
   }
 
-  public int visit() {
-    tom.library.sl.Visitable any = environment.getSubject();
+  public int visit(tom.library.sl.Introspector i) {
+    Object any = environment.getSubject();
     if(any instanceof @fullClassName(operator)@) {
      return tom.library.sl.Environment.SUCCESS;
     } else {

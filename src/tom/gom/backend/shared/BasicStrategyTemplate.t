@@ -102,7 +102,7 @@ import tom.library.sl.*;
   }
 
   public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this);
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
   } 
 
   public tom.library.sl.Environment getEnvironment() {
