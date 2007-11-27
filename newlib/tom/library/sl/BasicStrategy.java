@@ -40,23 +40,31 @@ public abstract class BasicStrategy implements Strategy {
     this.any = v;
   }
  
-  //subpart of Visitable for the initialization
   public int getChildCount() {
     return 1;
   }
     
-  public Strategy getChildAt(int i) {
+  public Visitable getChildAt(int i) {
     switch (i) {
       case 0: return any;
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-  public Strategy setChildAt(int i, Strategy child) {
+  public Visitable setChildAt(int i, Visitable child) {
     switch (i) {
-      case 0: any = child; return this;
+      case 0: any = (Strategy) child; return this;
       default: throw new IndexOutOfBoundsException();
     }
+  }
+
+  public Visitable[] getChildren() {
+    return new Visitable[]{any};
+  }
+
+  public Visitable setChildren(Visitable[] children) {
+    any = (Strategy)children[0];
+    return this;
   }
 
   public tom.library.sl.Environment getEnvironment() {
@@ -115,5 +123,11 @@ public abstract class BasicStrategy implements Strategy {
   public Visitable visitLight(Visitable any) throws VisitFailure {
     return (Visitable) visitLight(any,VisitableIntrospector.getInstance());
   }
+
+  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+
 
 }

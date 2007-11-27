@@ -294,7 +294,7 @@ matchBlock: {
           Expression testEnvNotNull = null;
           // generate the visitLight
           for(TomType type:dispatchInfo.keySet()){
-            TomList funcArg = `concTomTerm(ExpressionToTomTerm(Cast(type,TomTermToExpression(vVar))));            
+            TomList funcArg = `concTomTerm(ExpressionToTomTerm(Cast(type,TomTermToExpression(vVar))),introspectorVar);            
             Instruction returnStatement = `Return(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg));
             Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
             ifList = `concInstruction(ifList*,ifInstr);
