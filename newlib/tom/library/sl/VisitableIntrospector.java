@@ -44,43 +44,23 @@ public class VisitableIntrospector implements Introspector {
   } 
 
   public Object setChildren(Object o, Object[] children) {
-    if (o instanceof Visitable) {
-      return ((Visitable)o).setChildren((Visitable[])children); }
-    else {
-      throw new RuntimeException();
-    }
+      return ((Visitable)o).setChildren((Visitable[])children); 
   }
 
   public Object[] getChildren(Object o){
-    if (o instanceof Visitable) {
       return ((Visitable)o).getChildren();
-    } else {
-      throw new RuntimeException();
-    }
   }
 
   public Object setChildAt(Object o, int i, Object child) {
-    if (o instanceof Visitable) {
       return ((Visitable)o).setChildAt(i,(Visitable)child);
-    } else {
-      throw new RuntimeException();
-    } 
   }
 
   public Object getChildAt(Object o, int i) {
-    if (o instanceof Visitable) {
       return ((Visitable)o).getChildAt(i);
-    } else {
-      throw new RuntimeException();
-    } 
   }
 
   public int getChildCount(Object o) {
-    if (o instanceof Visitable) {
       return ((Visitable)o).getChildCount();
-    } else {
-      throw new RuntimeException();
-    }
   }
 
 }
