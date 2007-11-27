@@ -408,8 +408,7 @@
       Please define the "example" to test
     </fail>
     <antcall target="build"/>
-    <tomjunit printsummary="on"
-              fork="on"
+    <tomjunit fork="on"
               haltonfailure="false"
               failureproperty="tests.failed"
               showoutput="true">
