@@ -56,6 +56,7 @@ public abstract class AbstractStrategy implements Strategy {
     visitors = v;
   }
 
+  //visitable
   public int getChildCount() {
     return visitors.length;
   }
@@ -83,12 +84,20 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
-    return v.visit_Strategy(this);
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
   public Visitable visit(Environment envt) throws VisitFailure {
+    return (Visitable) visit(envt,VisitableIntrospector.getInstance());
+  }
+
+  public Visitable visit(Visitable any) throws VisitFailure{
+    return (Visitable) visit(any,VisitableIntrospector.getInstance());
+  }
+
+  public Object visit(Environment envt, Introspector m) throws VisitFailure {
     AbstractStrategy.init(this,envt);
-    int status = visit();
+    int status = visit(m);
     if(status == Environment.SUCCESS) {
       return getSubject();
     } else {
@@ -96,10 +105,15 @@ public abstract class AbstractStrategy implements Strategy {
     }
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure{
+  public Visitable visitLight(Visitable any) throws VisitFailure {
+    return (Visitable) visitLight(any,VisitableIntrospector.getInstance());
+  }
+
+
+  public Object visit(Object any, Introspector m) throws VisitFailure{
     init();
     setRoot(any);
-    int status = visit();
+    int status = visit(m);
     if(status == Environment.SUCCESS) {
       return getRoot();
     } else {
@@ -119,19 +133,19 @@ public abstract class AbstractStrategy implements Strategy {
     this.environment = env;
   }
 
-  public Visitable getRoot() {
+  public Object getRoot() {
     return environment.getRoot();
   }
 
-  public void setRoot(Visitable any) {
+  public void setRoot(Object any) {
     environment.setRoot(any);
   }
 
-  public Visitable getSubject() {
+  public Object getSubject() {
     return environment.getSubject();
   }
 
-  public void setSubject(Visitable any) {
+  public void setSubject(Object any) {
     environment.setSubject(any);
   }
 
@@ -148,9 +162,9 @@ public abstract class AbstractStrategy implements Strategy {
     }
     s.setEnvironment(env);
     for(int i=0 ; i<s.getChildCount() ; i++) {
-      Visitable child = s.getChildAt(i);
+      Strategy child = (Strategy) s.getChildAt(i);
       if(child instanceof Strategy) {
-        init((Strategy)child,env);
+        init(child,env);
       }
     }
   }

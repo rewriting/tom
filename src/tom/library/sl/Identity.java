@@ -43,11 +43,11 @@ public class Identity extends AbstractStrategy {
     initSubterm();
   }
 
-  public Visitable visitLight(Visitable x) {
+  public Object visitLight(Object x, Introspector introspector) {
     return x;
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     return Environment.SUCCESS;
   }
 }

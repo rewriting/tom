@@ -60,28 +60,28 @@ public class DeRef extends AbstractStrategy {
   public boolean isRelative() { return relative; }
   public boolean isStrict() { return strict; }
 
-  public Visitable visitLight(Visitable x) throws VisitFailure {
+  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
     throw new RuntimeException("The strategy operator DeRef can be used only with the methods visit() and fire()");
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     if(environment.getSubject() instanceof Path) {
-      visitPath((Path)environment.getSubject());
+      visitPath((Path)environment.getSubject(),introspector);
     } else {
       if(strict) {
         // does nothing when it is not a Ref
       } else {
-        return visitors[ARG].visit();
+        return visitors[ARG].visit(introspector);
       }
     }
     return Environment.SUCCESS;
   }
 
-  private void visitPath(Path path) {
+  private void visitPath(Path path, Introspector introspector) {
     if(relative) {
       Position current = environment.getPosition();
       environment.followPath(path);
-      int status = visitors[ARG].visit();
+      int status = visitors[ARG].visit(introspector);
       if(status != Environment.SUCCESS) {
         environment.followPath(current.sub(environment.getPosition()));
         return;

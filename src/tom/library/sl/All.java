@@ -57,23 +57,23 @@ public class All extends AbstractStrategy {
   /** 
    *  Visits the subject any without managing any environment
    */ 
-  public final Visitable visitLight(Visitable any) throws VisitFailure {
-    int childCount = any.getChildCount();
-    Visitable result = any;
-    Visitable[] childs = null;
+  public final Object visitLight(Object any, Introspector m) throws VisitFailure {
+    int childCount = m.getChildCount(any);
+    Object result = any;
+    Object[] childs = null;
     for (int i = 0; i < childCount; i++) {
-      Visitable oldChild = any.getChildAt(i);
-      Visitable newChild = visitors[ARG].visitLight(oldChild);
+      Object oldChild = m.getChildAt(any,i);
+      Object newChild = visitors[ARG].visitLight(oldChild,m);
       if(childs != null) {
         childs[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = any.getChildren();
+        childs = m.getChildren(any);
         childs[i] = newChild;
       }
     }
     if(childs!=null) {
-      result = any.setChildren(childs);
+      result = m.setChildren(any,childs);
     }
     return result;
   }
@@ -83,32 +83,32 @@ public class All extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public int visit() {
-    Visitable any = environment.getSubject();
-    int childCount = any.getChildCount();
-    /* we relax Visitable into Visitable to use getChildren() */
-    Visitable[] childs = null;
+  public int visit(Introspector m) {
+    environment.setIntrospector(m);
+    Object any = environment.getSubject();
+    int childCount = m.getChildCount(any);
+    Object[] childs = null;
 
     for(int i = 0; i < childCount; i++) {
-      Visitable oldChild = any.getChildAt(i);
+      Object oldChild = m.getChildAt(any,i);
       environment.down(i+1);
-      int status = visitors[ARG].visit();
+      int status = visitors[ARG].visit(m);
       if(status != Environment.SUCCESS) {
         environment.upLocal();
         return status;
       }
-      Visitable newChild = environment.getSubject();
+      Object newChild = environment.getSubject();
       if(childs != null) {
         childs[i] = newChild;
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
-        childs = any.getChildren();
+        childs = m.getChildren(any);
         childs[i] = newChild;
       } 
       environment.upLocal();
     }
     if(childs!=null) {
-      environment.setSubject(any.setChildren(childs));
+      environment.setSubject(m.setChildren(any,childs));
     }
     return Environment.SUCCESS;
   }

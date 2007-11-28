@@ -49,12 +49,12 @@ public class OneId extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public Visitable visitLight(Visitable any) throws  VisitFailure {
-    int childCount = any.getChildCount();
+  public Object visitLight(Object any, Introspector introspector) throws  VisitFailure {
+    int childCount = introspector.getChildCount(any);
     for (int i = 0; i < childCount; i++) {
-      Visitable newSubterm = visitors[ARG].visitLight(any.getChildAt(i));
-      if (newSubterm != any.getChildAt(i)) {
-        return any.setChildAt(i,newSubterm);
+      Object newSubterm = visitors[ARG].visitLight(introspector.getChildAt(any,i),introspector);
+      if (newSubterm != introspector.getChildAt(any,i)) {
+        return introspector.setChildAt(any,i,newSubterm);
       } 
     } 
     return any;
@@ -65,14 +65,14 @@ public class OneId extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public int visit() {
-    int childCount = environment.getSubject().getChildCount();
-    //Visitable originalsubject = environment.getSubject();
+  public int visit(Introspector introspector) {
+    int childCount = introspector.getChildCount(environment.getSubject());
+    //Object originalsubject = environment.getSubject();
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      Visitable oldSubject = environment.getSubject();
-      int status = visitors[ARG].visit();
-      Visitable newSubject = environment.getSubject();
+      Object oldSubject = environment.getSubject();
+      int status = visitors[ARG].visit(introspector);
+      Object newSubject = environment.getSubject();
       if(status == Environment.SUCCESS && oldSubject!=newSubject) {
         environment.up();
         return Environment.SUCCESS;

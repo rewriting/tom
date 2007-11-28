@@ -41,19 +41,19 @@ public class Not extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public Visitable visitLight(Visitable x) throws VisitFailure {
+  public Object visitLight(Object x, Introspector introspector) throws VisitFailure {
     try {
-      visitors[ARG].visitLight(x);
+      visitors[ARG].visitLight(x, introspector);
     } catch (VisitFailure f) {
       return x;
     }
     throw new VisitFailure();
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     /* save the current subject */
-    Visitable subject = environment.getSubject();
-    int status = visitors[ARG].visit();
+    Object subject = environment.getSubject();
+    int status = visitors[ARG].visit(introspector);
     /* restore the subject */
     /* we are just interested in the status */
     environment.setSubject(subject);
