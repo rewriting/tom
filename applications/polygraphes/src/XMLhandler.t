@@ -15,33 +15,6 @@ public class XMLhandler {
   %include { polygraphicprogram/PolygraphicProgram.tom }
   %include { sl.tom }
 
-  public static void main (String args[]) {
- try {
-
-	 Document dom = DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml");
-      //Element e = dom.getDocumentElement();
-      
-      //System.out.println(makeThreeCell(e));
-      //System.out.println(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))));
-      
-//save(twoPath2XML(PolygraphesNat.test(makeTwoPath(e))),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
-
-      //save(twoPath2XML(PolygraphesNat.test(`TwoC1(TwoC0(TwoC1(TwoC0(TwoC1(TwoC1(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoC1(TwoC1(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()))),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function())),TwoC1(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function())))),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
-	
-	dom = DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/test.xml");
-      Element e = dom.getDocumentElement();
-	 System.out.println(makeRule(makeThreeCell(e)));
-
-      //ThreePath test=`ThreeCell("test",TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()),TwoCell("zero",OneCell("nat"),OneCell("nat"),Constructor()),Function());
-      //System.out.println(threePath2XML(test));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-
 public static OnePath makeOnePath(Node node){
 String nodeName =node.getNodeName();
 		// System.out.println(nodeName);
@@ -330,11 +303,15 @@ public static void save(String fileContent,File file) throws IOException {
 		String targetString=target.toString();
 		int i=0;
 		while(sourceString.contains("TwoId")){
-			sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i);
-			targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i);
+			sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
+			targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			i++;}
-		sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";
-		targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";
+		if(source.isTwoId()){sourceString="TwoC1("+sourceString+",Y*)";}
+		else{sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
+		if(target.isTwoId()){targetString="TwoC1("+targetString+",Y*)";}
+		else{
+		targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
+		
 		return sourceString+ "-> {return `"+targetString+";}";
 	}
 	public static TwoPath formatRule(TwoPath myPath){
