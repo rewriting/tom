@@ -254,7 +254,7 @@ public class Position implements Cloneable,Path {
    * @return a string representation of this position
    */
   public String toString() {
-    StringBuffer r = new StringBuffer("[");
+    StringBuilder r = new StringBuilder("[");
     for(int i=0 ; i<depth() ; i++) {
       r.append(omega[i]);
       if(i<depth()-1) {

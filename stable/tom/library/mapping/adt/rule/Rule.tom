@@ -5,35 +5,35 @@
 
 %typeterm Rule {
   implement { tom.gom.adt.rule.types.Rule }
-  is_sort(t) { $t instanceof tom.gom.adt.rule.types.Rule }
+  is_sort(t) { ($t instanceof tom.gom.adt.rule.types.Rule) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
 }
 
 %typeterm RuleList {
   implement { tom.gom.adt.rule.types.RuleList }
-  is_sort(t) { $t instanceof tom.gom.adt.rule.types.RuleList }
+  is_sort(t) { ($t instanceof tom.gom.adt.rule.types.RuleList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
 }
 
 %typeterm TermList {
   implement { tom.gom.adt.rule.types.TermList }
-  is_sort(t) { $t instanceof tom.gom.adt.rule.types.TermList }
+  is_sort(t) { ($t instanceof tom.gom.adt.rule.types.TermList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
 }
 
 %typeterm Condition {
   implement { tom.gom.adt.rule.types.Condition }
-  is_sort(t) { $t instanceof tom.gom.adt.rule.types.Condition }
+  is_sort(t) { ($t instanceof tom.gom.adt.rule.types.Condition) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
 }
 
 %typeterm Term {
   implement { tom.gom.adt.rule.types.Term }
-  is_sort(t) { $t instanceof tom.gom.adt.rule.types.Term }
+  is_sort(t) { ($t instanceof tom.gom.adt.rule.types.Term) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
 }

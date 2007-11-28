@@ -76,8 +76,7 @@ public class TypeExpanderPlugin extends GomGenericPlugin {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
     getLogger().log(Level.INFO, "Start typing");
-    String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
-    TypeExpander typer = new TypeExpander(packagePrefix);
+    TypeExpander typer = new TypeExpander(streamManager);
     typedModuleList = typer.expand(moduleList);
     if(typedModuleList == null) {
       getLogger().log(Level.SEVERE, 

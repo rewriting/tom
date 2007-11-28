@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.gom.GomMessage;
+import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
@@ -46,25 +47,21 @@ public class AdapterGenerator {
 
   /* Attributes needed to call tom properly */
   private File tomHomePath;
-  private List importList = null;
+  private GomStreamManager streamManager;
   private String grammarPkg = "";
   private String grammarName = "";
 
-  AdapterGenerator(File tomHomePath, List importList, String grammar) {
+  AdapterGenerator(File tomHomePath, GomStreamManager streamManager, String grammar) {
     this.tomHomePath = tomHomePath;
-    this.importList = importList;
+    this.streamManager = streamManager;
     int lastDot = grammar.lastIndexOf('.');
     if (-1 != lastDot) {
       // the grammar is in a package different from the gom file
       this.grammarPkg = grammar.substring(0,lastDot);
       this.grammarName = grammar.substring(lastDot+1,grammar.length());
     } else {
-      String packagePrefix =
-        environment()
-        .getStreamManager()
-        .getPackagePath().replace(File.separatorChar,'.');
+      this.grammarPkg = streamManager.getDefaultPackagePath();
       this.grammarName = grammar;
-      this.grammarPkg = packagePrefix;
     }
   }
 
@@ -74,11 +71,6 @@ public class AdapterGenerator {
 
 
 
-
-
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  }
 
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
     writeTokenFile(moduleList);
@@ -144,12 +136,8 @@ public class AdapterGenerator {
   }
 
   private String adapterPkg() {
-    String packagePrefix =
-      environment()
-        .getStreamManager()
-          .getPackagePath().replace(File.separatorChar,'.');
-    return
-      (packagePrefix==""?filename():packagePrefix+"."+filename()).toLowerCase();
+    String packagePrefix = streamManager.getDefaultPackagePath();
+    return ((packagePrefix=="")?filename():packagePrefix+"."+filename()).toLowerCase();
   }
 
   public void generateAdapterFile(ModuleList moduleList, Writer writer)
@@ -219,10 +207,10 @@ public class AdapterGenerator {
     Iterator it = operatorset.iterator();
     while(it.hasNext()) {
       OperatorDecl opDecl = (OperatorDecl) it.next();
-      {if ( opDecl instanceof tom.gom.adt.gom.types.OperatorDecl ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch60NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);if ( (tomMatch60NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch60NameNumber_freshVar_0= tomMatch60NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.TypedProduction  tomMatch60NameNumber_freshVar_1= tomMatch60NameNumberfreshSubject_1.getProd() ;if ( (tomMatch60NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( true ) {
+      {if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch334NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);if ( (tomMatch334NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch334NameNumber_freshVar_0= tomMatch334NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.TypedProduction  tomMatch334NameNumber_freshVar_1= tomMatch334NameNumberfreshSubject_1.getProd() ;if ( (tomMatch334NameNumber_freshVar_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {if ( true ) {
 
           Code code =
-             tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case "+grammarName+"Parser.") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch60NameNumber_freshVar_0) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        inAstTerm = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Empty.make(tomMatch60NameNumberfreshSubject_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) 
+             tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case "+grammarName+"Parser.") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch334NameNumber_freshVar_0) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        inAstTerm = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Empty.make(tomMatch334NameNumberfreshSubject_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) 
 
 
 
@@ -233,11 +221,11 @@ public class AdapterGenerator {
 
 ;
           CodeGen.generateCode(code,writer);
-        }}}}}}}if ( opDecl instanceof tom.gom.adt.gom.types.OperatorDecl ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch60NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);if ( (tomMatch60NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch60NameNumber_freshVar_2= tomMatch60NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.TypedProduction  tomMatch60NameNumber_freshVar_3= tomMatch60NameNumberfreshSubject_1.getProd() ;if ( (tomMatch60NameNumber_freshVar_3 instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) {{  tom.gom.adt.gom.types.SlotList  tomMatch60NameNumber_freshVar_4= tomMatch60NameNumber_freshVar_3.getSlots() ;if ( ((tomMatch60NameNumber_freshVar_4 instanceof tom.gom.adt.gom.types.slotlist.ConsconcSlot) || (tomMatch60NameNumber_freshVar_4 instanceof tom.gom.adt.gom.types.slotlist.EmptyconcSlot)) ) {{  tom.gom.adt.gom.types.SlotList  tomMatch60NameNumber_freshVar_5=tomMatch60NameNumber_freshVar_4;if ( tomMatch60NameNumber_freshVar_5.isEmptyconcSlot() ) {if ( true ) {
+        }}}}}}}if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch334NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);if ( (tomMatch334NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch334NameNumber_freshVar_2= tomMatch334NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.TypedProduction  tomMatch334NameNumber_freshVar_3= tomMatch334NameNumberfreshSubject_1.getProd() ;if ( (tomMatch334NameNumber_freshVar_3 instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) {{  tom.gom.adt.gom.types.SlotList  tomMatch334NameNumber_freshVar_4= tomMatch334NameNumber_freshVar_3.getSlots() ;if ( ((tomMatch334NameNumber_freshVar_4 instanceof tom.gom.adt.gom.types.slotlist.ConsconcSlot) || (tomMatch334NameNumber_freshVar_4 instanceof tom.gom.adt.gom.types.slotlist.EmptyconcSlot)) ) {{  tom.gom.adt.gom.types.SlotList  tomMatch334NameNumber_freshVar_5=tomMatch334NameNumber_freshVar_4;if ( tomMatch334NameNumber_freshVar_5.isEmptyconcSlot() ) {if ( true ) {
 
           /* Initialise constants */
           Code code =
-             tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case "+grammarName+"Parser.") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch60NameNumber_freshVar_2) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        inAstTerm = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tomMatch60NameNumberfreshSubject_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) 
+             tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case "+grammarName+"Parser.") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch334NameNumber_freshVar_2) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      {\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        inAstTerm = ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tomMatch334NameNumberfreshSubject_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(".make();\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        break;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        }\n") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) ) 
 
 
 
@@ -330,27 +318,27 @@ public class AdapterGenerator {
     }
   }
 
-  private static class CollectOperatorNames extends  tom.gom.adt.gom.GomBasicStrategy  {private  java.util.Collection  bag; public CollectOperatorNames( java.util.Collection  bag) { super(( new tom.library.sl.Identity() ));this.bag=bag;}public  java.util.Collection  getbag() { return bag;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg) throws tom.library.sl.VisitFailure {{if ( tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch61NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )tom__arg);if ( (tomMatch61NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch61NameNumber_freshVar_0= tomMatch61NameNumberfreshSubject_1.getName() ;if ( true ) {
+  private static class CollectOperatorNames extends  tom.gom.adt.gom.GomBasicStrategy  {private  java.util.Collection  bag; public CollectOperatorNames( java.util.Collection  bag) { super(( new tom.library.sl.Identity() ));this.bag=bag;}public  java.util.Collection  getbag() { return bag;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl) ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch335NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )tom__arg);if ( (tomMatch335NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch335NameNumber_freshVar_0= tomMatch335NameNumberfreshSubject_1.getName() ;if ( true ) {
 
 
-        bag.add(tomMatch61NameNumber_freshVar_0);
-      }}}}}}return super.visit_OperatorDecl(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_CollectOperatorNames( java.util.Collection  t0) { return new CollectOperatorNames(t0); }private static class CollectOperators extends  tom.gom.adt.gom.GomBasicStrategy  {private  java.util.Collection  bag; public CollectOperators( java.util.Collection  bag) { super(( new tom.library.sl.Identity() ));this.bag=bag;}public  java.util.Collection  getbag() { return bag;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg) throws tom.library.sl.VisitFailure {{if ( tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch62NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )tom__arg);if ( (tomMatch62NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {if ( true ) {
-
-
-
-
-
-
-        bag.add(tomMatch62NameNumberfreshSubject_1);
-      }}}}}return super.visit_OperatorDecl(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_CollectOperators( java.util.Collection  t0) { return new CollectOperators(t0); }private static class CollectSlots extends  tom.gom.adt.gom.GomBasicStrategy  {private  java.util.Collection  bag; public CollectSlots( java.util.Collection  bag) { super(( new tom.library.sl.Identity() ));this.bag=bag;}public  java.util.Collection  getbag() { return bag;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Slot  visit_Slot( tom.gom.adt.gom.types.Slot  tom__arg) throws tom.library.sl.VisitFailure {{if ( tom__arg instanceof tom.gom.adt.gom.types.Slot ) {{  tom.gom.adt.gom.types.Slot  tomMatch63NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Slot )tom__arg);if ( (tomMatch63NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.slot.Slot) ) {if ( true ) {
+        bag.add(tomMatch335NameNumber_freshVar_0);
+      }}}}}}return super.visit_OperatorDecl(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_CollectOperatorNames( java.util.Collection  t0) { return new CollectOperatorNames(t0); }private static class CollectOperators extends  tom.gom.adt.gom.GomBasicStrategy  {private  java.util.Collection  bag; public CollectOperators( java.util.Collection  bag) { super(( new tom.library.sl.Identity() ));this.bag=bag;}public  java.util.Collection  getbag() { return bag;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.OperatorDecl  visit_OperatorDecl( tom.gom.adt.gom.types.OperatorDecl  tom__arg) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.gom.adt.gom.types.OperatorDecl) ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch336NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )tom__arg);if ( (tomMatch336NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {if ( true ) {
 
 
 
 
 
 
-        bag.add(tomMatch63NameNumberfreshSubject_1);
-      }}}}}return super.visit_Slot(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_CollectSlots( java.util.Collection  t0) { return new CollectSlots(t0); }private static class GenerateSlots extends  tom.gom.adt.gom.GomBasicStrategy  {private  Writer  writer; public GenerateSlots( Writer  writer) { super(( new tom.library.sl.Identity() ));this.writer=writer;}public  Writer  getwriter() { return writer;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Slot  visit_Slot( tom.gom.adt.gom.types.Slot  tom__arg) throws tom.library.sl.VisitFailure {{if ( tom__arg instanceof tom.gom.adt.gom.types.Slot ) {{  tom.gom.adt.gom.types.Slot  tomMatch64NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Slot )tom__arg);if ( (tomMatch64NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.slot.Slot) ) {{  String  tomMatch64NameNumber_freshVar_0= tomMatch64NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.SortDecl  tomMatch64NameNumber_freshVar_1= tomMatch64NameNumberfreshSubject_1.getSort() ;if ( true ) {
+        bag.add(tomMatch336NameNumberfreshSubject_1);
+      }}}}}return super.visit_OperatorDecl(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_CollectOperators( java.util.Collection  t0) { return new CollectOperators(t0); }private static class CollectSlots extends  tom.gom.adt.gom.GomBasicStrategy  {private  java.util.Collection  bag; public CollectSlots( java.util.Collection  bag) { super(( new tom.library.sl.Identity() ));this.bag=bag;}public  java.util.Collection  getbag() { return bag;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Slot  visit_Slot( tom.gom.adt.gom.types.Slot  tom__arg) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.gom.adt.gom.types.Slot) ) {{  tom.gom.adt.gom.types.Slot  tomMatch337NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Slot )tom__arg);if ( (tomMatch337NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.slot.Slot) ) {if ( true ) {
+
+
+
+
+
+
+        bag.add(tomMatch337NameNumberfreshSubject_1);
+      }}}}}return super.visit_Slot(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_CollectSlots( java.util.Collection  t0) { return new CollectSlots(t0); }private static class GenerateSlots extends  tom.gom.adt.gom.GomBasicStrategy  {private  Writer  writer; public GenerateSlots( Writer  writer) { super(( new tom.library.sl.Identity() ));this.writer=writer;}public  Writer  getwriter() { return writer;}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.gom.adt.gom.types.Slot  visit_Slot( tom.gom.adt.gom.types.Slot  tom__arg) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.gom.adt.gom.types.Slot) ) {{  tom.gom.adt.gom.types.Slot  tomMatch338NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.Slot )tom__arg);if ( (tomMatch338NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.slot.Slot) ) {{  String  tomMatch338NameNumber_freshVar_0= tomMatch338NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.SortDecl  tomMatch338NameNumber_freshVar_1= tomMatch338NameNumberfreshSubject_1.getSort() ;if ( true ) {
 
 
 
@@ -358,7 +346,7 @@ public class AdapterGenerator {
 
 
         Code code =
-           tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("  ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch64NameNumber_freshVar_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" field") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch64NameNumber_freshVar_0) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(";\n") 
+           tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("  ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch338NameNumber_freshVar_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" field") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch338NameNumber_freshVar_0) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(";\n") 
            , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) 
 
 
@@ -376,19 +364,19 @@ public class AdapterGenerator {
 
 
   protected void generateAddChildCase(OperatorDecl opDecl, Writer writer) throws IOException {
-    {if ( opDecl instanceof tom.gom.adt.gom.types.OperatorDecl ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch65NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);if ( (tomMatch65NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch65NameNumber_freshVar_0= tomMatch65NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.SortDecl  tomMatch65NameNumber_freshVar_1= tomMatch65NameNumberfreshSubject_1.getSort() ;{  tom.gom.adt.gom.types.TypedProduction  tomMatch65NameNumber_freshVar_2= tomMatch65NameNumberfreshSubject_1.getProd() ;{  tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch65NameNumber_freshVar_2;{  tom.gom.adt.gom.types.OperatorDecl  tom_op=tomMatch65NameNumberfreshSubject_1;if ( true ) {
+    {if ( (opDecl instanceof tom.gom.adt.gom.types.OperatorDecl) ) {{  tom.gom.adt.gom.types.OperatorDecl  tomMatch339NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.OperatorDecl )opDecl);if ( (tomMatch339NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.operatordecl.OperatorDecl) ) {{  String  tomMatch339NameNumber_freshVar_0= tomMatch339NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.gom.types.SortDecl  tomMatch339NameNumber_freshVar_1= tomMatch339NameNumberfreshSubject_1.getSort() ;{  tom.gom.adt.gom.types.TypedProduction  tomMatch339NameNumber_freshVar_2= tomMatch339NameNumberfreshSubject_1.getProd() ;{  tom.gom.adt.gom.types.TypedProduction  tom_prod=tomMatch339NameNumber_freshVar_2;{  tom.gom.adt.gom.types.OperatorDecl  tom_op=tomMatch339NameNumberfreshSubject_1;if ( true ) {
 
         Code code =
-           tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case "+grammarName+"Parser.") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch65NameNumber_freshVar_0) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      {\n") 
+           tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      case "+grammarName+"Parser.") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(tomMatch339NameNumber_freshVar_0) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(":\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("      {\n") 
               , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) 
 
 
 
 
 ;
-        {if ( tom_prod instanceof tom.gom.adt.gom.types.TypedProduction ) {{  tom.gom.adt.gom.types.TypedProduction  tomMatch66NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.TypedProduction )tom_prod);if ( (tomMatch66NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) {{  tom.gom.adt.gom.types.SlotList  tomMatch66NameNumber_freshVar_0= tomMatch66NameNumberfreshSubject_1.getSlots() ;{  tom.gom.adt.gom.types.SlotList  tom_slotList=tomMatch66NameNumber_freshVar_0;if ( true ) {
+        {if ( (tom_prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {{  tom.gom.adt.gom.types.TypedProduction  tomMatch340NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.TypedProduction )tom_prod);if ( (tomMatch340NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.typedproduction.Slots) ) {{  tom.gom.adt.gom.types.SlotList  tomMatch340NameNumber_freshVar_0= tomMatch340NameNumberfreshSubject_1.getSlots() ;{  tom.gom.adt.gom.types.SlotList  tom_slotList=tomMatch340NameNumber_freshVar_0;if ( true ) {
 
-            code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch65NameNumber_freshVar_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" term = (") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") inAstTerm;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("switch(termIndex) {\n") 
+            code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tomMatch339NameNumber_freshVar_1) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" term = (") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") inAstTerm;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("switch(termIndex) {\n") 
                 , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) ) ) ) ) 
 
 
@@ -434,7 +422,7 @@ public class AdapterGenerator {
 
 
 ;
-          }}}}}}if ( tom_prod instanceof tom.gom.adt.gom.types.TypedProduction ) {{  tom.gom.adt.gom.types.TypedProduction  tomMatch66NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.TypedProduction )tom_prod);if ( (tomMatch66NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {{  tom.gom.adt.gom.types.SortDecl  tomMatch66NameNumber_freshVar_1= tomMatch66NameNumberfreshSubject_1.getSort() ;{  tom.gom.adt.gom.types.SortDecl  tom_domainSort=tomMatch66NameNumber_freshVar_1;if ( true ) {
+          }}}}}}if ( (tom_prod instanceof tom.gom.adt.gom.types.TypedProduction) ) {{  tom.gom.adt.gom.types.TypedProduction  tomMatch340NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.TypedProduction )tom_prod);if ( (tomMatch340NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.typedproduction.Variadic) ) {{  tom.gom.adt.gom.types.SortDecl  tomMatch340NameNumber_freshVar_1= tomMatch340NameNumberfreshSubject_1.getSort() ;{  tom.gom.adt.gom.types.SortDecl  tom_domainSort=tomMatch340NameNumber_freshVar_1;if ( true ) {
 
             Code cast = genGetSubterm(tom_domainSort);
             code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(tom_domainSort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" elem = ") ,tom_append_list_CodeList(cast, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(";\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(" list = (") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullOperatorClass.make(tom_op) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") inAstTerm;\n") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("        ") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("inAstTerm = list.append(elem);\n") 
@@ -464,13 +452,13 @@ public class AdapterGenerator {
 
   protected Code genGetSubterm(SortDecl sort) {
     Code code =  tom.gom.adt.code.types.code.EmptyCodeList.make() ;;
-    {if ( sort instanceof tom.gom.adt.gom.types.SortDecl ) {{  tom.gom.adt.gom.types.SortDecl  tomMatch67NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.SortDecl )sort);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {if ( true ) {
+    {if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {{  tom.gom.adt.gom.types.SortDecl  tomMatch341NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.SortDecl )sort);if ( (tomMatch341NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.sortdecl.SortDecl) ) {if ( true ) {
 
         code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("(") , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.FullSortClass.make(sort) , tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make(") tree.getTerm()") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) ) ) 
 
 
 ;
-      }}}}if ( sort instanceof tom.gom.adt.gom.types.SortDecl ) {{  tom.gom.adt.gom.types.SortDecl  tomMatch67NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.SortDecl )sort);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {{  String  tomMatch67NameNumber_freshVar_0= tomMatch67NameNumberfreshSubject_1.getName() ;{  String  tom_name=tomMatch67NameNumber_freshVar_0;if ( true ) {
+      }}}}if ( (sort instanceof tom.gom.adt.gom.types.SortDecl) ) {{  tom.gom.adt.gom.types.SortDecl  tomMatch341NameNumberfreshSubject_1=(( tom.gom.adt.gom.types.SortDecl )sort);if ( (tomMatch341NameNumberfreshSubject_1 instanceof tom.gom.adt.gom.types.sortdecl.BuiltinSortDecl) ) {{  String  tomMatch341NameNumber_freshVar_0= tomMatch341NameNumberfreshSubject_1.getName() ;{  String  tom_name=tomMatch341NameNumber_freshVar_0;if ( true ) {
 
         if("int".equals(tom_name)) {
           code =  tom.gom.adt.code.types.code.ConsCodeList.make(code, tom.gom.adt.code.types.code.ConsCodeList.make( tom.gom.adt.code.types.code.Code.make("Integer.parseInt(t.getText())") , tom.gom.adt.code.types.code.EmptyCodeList.make() ) ) 
@@ -501,13 +489,11 @@ public class AdapterGenerator {
   }
 
   protected String fullFileName() {
-
     return (adapterPkg() + "." + filename()).replace('.',File.separatorChar);
   }
 
   protected String filename() {
-    String filename =
-      (new File(environment().getStreamManager().getOutputFileName())).getName();
+    String filename = (new File(streamManager.getOutputFileName())).getName();
     int dotidx = filename.indexOf('.');
     if(-1 != dotidx) {
       filename = filename.substring(0,dotidx);
@@ -517,21 +503,21 @@ public class AdapterGenerator {
 
   protected File tokenFileToGenerate() {
     File output = new File(
-        environment().getStreamManager().getDestDir(),
+        streamManager.getDestDir(),
         fullFileName()+"TokenList.txt");
     return output;
   }
 
   protected File adaptorFileToGenerate() {
     File output = new File(
-        environment().getStreamManager().getDestDir(),
+        streamManager.getDestDir(),
         fullFileName()+"Adaptor.java");
     return output;
   }
 
   protected File treeFileToGenerate() {
     File output = new File(
-        environment().getStreamManager().getDestDir(),
+        streamManager.getDestDir(),
         fullFileName()+"Tree.java");
     return output;
   }

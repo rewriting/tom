@@ -5,28 +5,28 @@
 
 %typeterm PlatformOption {
   implement { tom.platform.adt.platformoption.types.PlatformOption }
-  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformOption }
+  is_sort(t) { ($t instanceof tom.platform.adt.platformoption.types.PlatformOption) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
 %typeterm PlatformOptionList {
   implement { tom.platform.adt.platformoption.types.PlatformOptionList }
-  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformOptionList }
+  is_sort(t) { ($t instanceof tom.platform.adt.platformoption.types.PlatformOptionList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
 %typeterm PlatformBoolean {
   implement { tom.platform.adt.platformoption.types.PlatformBoolean }
-  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformBoolean }
+  is_sort(t) { ($t instanceof tom.platform.adt.platformoption.types.PlatformBoolean) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
 %typeterm PlatformValue {
   implement { tom.platform.adt.platformoption.types.PlatformValue }
-  is_sort(t) { $t instanceof tom.platform.adt.platformoption.types.PlatformValue }
+  is_sort(t) { ($t instanceof tom.platform.adt.platformoption.types.PlatformValue) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }

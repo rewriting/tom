@@ -48,17 +48,17 @@ public class SortTemplate extends TemplateHookedClass {
                       GomClass gomClass,
                       TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    {if ( gomClass instanceof tom.gom.adt.objects.types.GomClass ) {{  tom.gom.adt.objects.types.GomClass  tomMatch68NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch68NameNumber_freshVar_0= tomMatch68NameNumberfreshSubject_1.getAbstractType() ;{  tom.gom.adt.objects.types.ClassName  tomMatch68NameNumber_freshVar_1= tomMatch68NameNumberfreshSubject_1.getVisitor() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch68NameNumber_freshVar_2= tomMatch68NameNumberfreshSubject_1.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch68NameNumber_freshVar_3= tomMatch68NameNumberfreshSubject_1.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch68NameNumber_freshVar_4= tomMatch68NameNumberfreshSubject_1.getSlots() ;if ( true ) {
+    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch394NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch394NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch394NameNumber_freshVar_0= tomMatch394NameNumberfreshSubject_1.getAbstractType() ;{  tom.gom.adt.objects.types.ClassName  tomMatch394NameNumber_freshVar_1= tomMatch394NameNumberfreshSubject_1.getVisitor() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch394NameNumber_freshVar_2= tomMatch394NameNumberfreshSubject_1.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch394NameNumber_freshVar_3= tomMatch394NameNumberfreshSubject_1.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch394NameNumber_freshVar_4= tomMatch394NameNumberfreshSubject_1.getSlots() ;if ( true ) {
 
 
 
 
 
-        this.abstractType = tomMatch68NameNumber_freshVar_0;
-        this.visitor = tomMatch68NameNumber_freshVar_1;
-        this.operatorList = tomMatch68NameNumber_freshVar_2;
-        this.variadicOperatorList = tomMatch68NameNumber_freshVar_3;
-        this.slotList = tomMatch68NameNumber_freshVar_4;
+        this.abstractType = tomMatch394NameNumber_freshVar_0;
+        this.visitor = tomMatch394NameNumber_freshVar_1;
+        this.operatorList = tomMatch394NameNumber_freshVar_2;
+        this.variadicOperatorList = tomMatch394NameNumber_freshVar_3;
+        this.slotList = tomMatch394NameNumber_freshVar_4;
         return;
       }}}}}}}}}}
 

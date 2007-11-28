@@ -84,7 +84,7 @@ public class StatusHandler extends Handler {
   public void flush() {/*No needs to flush any buffered output */}
 
   public String toString() {
-    StringBuffer buffy = new StringBuffer("Status handler :\n");
+    StringBuilder buffy = new StringBuilder("Status handler :\n");
     Iterator it = levelStats.keySet().iterator();
     while(it.hasNext()) {
       Object level = it.next();
