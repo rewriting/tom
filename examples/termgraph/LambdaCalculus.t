@@ -152,7 +152,7 @@ public class LambdaCalculus {
         int n = `x.getChildCount();
         for(int i = n; i>0; i--){
           getEnvironment().down(i);
-          int status = s.visit();
+          int status = s.visit(VisitableIntrospector.getInstance());
           if(status != Environment.SUCCESS){
             getEnvironment().up();
             return `x;
@@ -257,7 +257,7 @@ public class LambdaCalculus {
         else{
           Position source = getEnvironment().getPosition();
           Position target = (Position) source.add((Path)`p);
-          return (LambdaTerm) target.getSubterm().visit(getEnvironment().getRoot());
+          return (LambdaTerm) target.getSubterm().visit((Visitable) getEnvironment().getRoot());
         }
       }
 
