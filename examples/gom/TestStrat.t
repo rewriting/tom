@@ -88,7 +88,7 @@ public class TestStrat extends TestCase {
       super(`Fail());
     }
 
-    public VList visit_VList(VList arg) throws VisitFailure{
+    public VList visit_VList(VList arg, Introspector i) throws VisitFailure{
       %match(VList arg) {
         conc(h,t*) -> {
           int v = `h+1;

@@ -50,12 +50,12 @@ public class SolveSystemExtended extends antipattern.SolveSystem {
       super(c,vis);            
     }
    
-    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
+    public Constraint visit_Constraint(Constraint arg, Introspector i) throws VisitFailure {
     	
     	Constraint result = null;
     	
     	try{
-    		result = super.visit_Constraint(arg);
+    		result = super.visit_Constraint(arg,i);
     		
     		//if it didn't entered the match of the super.visit_Constraint
     		//than maybe it will enter the one of the extendedVisit

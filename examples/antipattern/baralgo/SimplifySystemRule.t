@@ -197,7 +197,7 @@ public class SimplifySystemRule {
       this.found = false;
     }
 
-    public Term visit_Term(Term arg) throws VisitFailure { 
+    public Term visit_Term(Term arg, Introspector i) throws VisitFailure { 
       if(arg == objToSearchFor) {
         found = true;
         System.out.println("!!FOUND!!");
