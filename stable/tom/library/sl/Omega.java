@@ -54,25 +54,25 @@ public class Omega extends AbstractStrategy {
     return indexPosition;
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
+  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
     if(indexPosition==0) {
-      return visitors[ARG].visitLight(any);
-    } else if(indexPosition>0 && indexPosition<=any.getChildCount()) {
+      return visitors[ARG].visitLight(any,introspector);
+    } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(any)) {
       int childNumber = indexPosition-1;
-      Visitable newChild = visitors[ARG].visitLight(any.getChildAt(childNumber));
-      return any.setChildAt(childNumber,newChild);
+      Object newChild = visitors[ARG].visitLight(introspector.getChildAt(any,childNumber),introspector);
+      return introspector.setChildAt(any,childNumber,newChild);
     } else {
       throw new VisitFailure();
     }
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     if(indexPosition==0) {
-      return visitors[ARG].visit();
-    } else if(indexPosition>0 && indexPosition<=environment.getSubject().getChildCount()) {
+      return visitors[ARG].visit(introspector);
+    } else if(indexPosition>0 && indexPosition<=introspector.getChildCount(environment.getSubject())) {
       int childNumber = indexPosition-1;
       environment.down(indexPosition);
-      int status = visitors[ARG].visit();
+      int status = visitors[ARG].visit(introspector);
       environment.up();
       return status;
     } else {

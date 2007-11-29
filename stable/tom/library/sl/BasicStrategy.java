@@ -39,7 +39,7 @@ public abstract class BasicStrategy implements Strategy {
   public BasicStrategy(Strategy v) {
     this.any = v;
   }
-    
+ 
   public int getChildCount() {
     return 1;
   }
@@ -50,7 +50,7 @@ public abstract class BasicStrategy implements Strategy {
       default: throw new IndexOutOfBoundsException();
     }
   }
-    
+
   public Visitable setChildAt(int i, Visitable child) {
     switch (i) {
       case 0: any = (Strategy) child; return this;
@@ -67,10 +67,6 @@ public abstract class BasicStrategy implements Strategy {
     return this;
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this);
-  } 
-
   public tom.library.sl.Environment getEnvironment() {
     if(environment!=null) {
       return environment;
@@ -82,10 +78,10 @@ public abstract class BasicStrategy implements Strategy {
   public void setEnvironment(tom.library.sl.Environment env) {
     this.environment = env;
   }
- 
-  public Visitable visit(Environment envt) throws VisitFailure {
+
+  public Object visit(Environment envt, Introspector introspector) throws VisitFailure {
     setEnvironment(envt);
-    int status = visit();
+    int status = visit(introspector);
     if(status == Environment.SUCCESS) {
       return environment.getSubject();
     } else {
@@ -94,10 +90,10 @@ public abstract class BasicStrategy implements Strategy {
   }
 
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
-    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+  public Object visit(Object any, Introspector introspector) throws VisitFailure {
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(introspector));
     environment.setRoot(any);
-    int status = visit();
+    int status = visit(introspector);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
@@ -105,14 +101,33 @@ public abstract class BasicStrategy implements Strategy {
     }
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     try {
-      environment.setSubject(this.visitLight(environment.getSubject()));
+      environment.setSubject(this.visitLight(environment.getSubject(),introspector));
       return tom.library.sl.Environment.SUCCESS;
     } catch(VisitFailure f) {
       return tom.library.sl.Environment.FAILURE;
     }
   }
 
-  public abstract Visitable visitLight(Visitable v) throws VisitFailure;
+  public abstract Object visitLight(Object v, Introspector introspector) throws VisitFailure;
+
+  public Visitable visit(Environment envt) throws VisitFailure {
+    return (Visitable) visit(envt,VisitableIntrospector.getInstance());
+  }
+
+  public Visitable visit(Visitable any) throws VisitFailure{
+    return (Visitable) visit(any,VisitableIntrospector.getInstance());
+  }
+
+  public Visitable visitLight(Visitable any) throws VisitFailure {
+    return (Visitable) visitLight(any,VisitableIntrospector.getInstance());
+  }
+
+  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+
+
 }

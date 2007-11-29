@@ -46,14 +46,14 @@ public class Sequence extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public Visitable visitLight(Visitable visitable) throws VisitFailure {
-    return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable));
+  public Object visitLight(Object visitable, Introspector introspector) throws VisitFailure {
+    return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable,introspector),introspector);
   }
 
-  public int visit() {
-    int status = visitors[FIRST].visit();
+  public int visit(Introspector introspector) {
+    int status = visitors[FIRST].visit(introspector);
     if(status == Environment.SUCCESS) {
-      return visitors[THEN].visit();
+      return visitors[THEN].visit(introspector);
     }
     return status;
   }

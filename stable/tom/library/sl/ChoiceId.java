@@ -47,18 +47,18 @@ public class ChoiceId extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public Visitable visitLight(Visitable visitable) throws VisitFailure {
-    Visitable v = visitors[FIRST].visitLight(visitable);
-    if (v == visitable) {
-      return visitors[THEN].visitLight(v);
+  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
+    Object v = visitors[FIRST].visitLight(subject, introspector);
+    if (v == subject) {
+      return visitors[THEN].visitLight(v, introspector);
     } else {
       return v;
     }
   }
 
-  public int visit() {
-    Visitable subject = environment.getSubject();
-    int status = visitors[FIRST].visit();
+  public int visit(Introspector introspector) {
+    Object subject = environment.getSubject();
+    int status = visitors[FIRST].visit(introspector);
     if(status == Environment.SUCCESS && environment.getSubject() != subject) {
       return status;
     } else {
@@ -66,7 +66,7 @@ public class ChoiceId extends AbstractStrategy {
       /* we are just interested in the status */
       environment.setSubject(subject);
       if(status == Environment.SUCCESS) {
-        return visitors[THEN].visit();
+        return visitors[THEN].visit(introspector);
       } else {
         return status;
       }

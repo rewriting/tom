@@ -51,25 +51,31 @@ public final class Environment implements Cloneable {
    * */
   protected int current;
   protected int[] omega;
-  protected Visitable[] subterm;
+  protected Object[] subterm;
+  protected Introspector mapping;
   protected int status = Environment.SUCCESS;
 
   public Environment() {
-    this(DEFAULT_LENGTH);
+    this(DEFAULT_LENGTH,VisitableIntrospector.getInstance());
   }
 
-  private Environment(int length) {
+  public Environment(Introspector mapping) {
+    this(DEFAULT_LENGTH,mapping);
+  }
+
+  private Environment(int length, Introspector mapping) {
     omega = new int[length+1];
-    subterm = new Visitable[length+1];
+    subterm = new Object[length+1];
     current = 0; // root is in subterm[0]
     omega[0]=0; // the first cell is not used
+    this.mapping = mapping;
   }
 
   private void ensureLength(int minLength) {
     if(minLength > omega.length) {
       int max = Math.max(omega.length * 2, minLength);
       int[] newOmega = new int[max];
-      Visitable[] newSubterm = new Visitable[max];
+      Object[] newSubterm = new Object[max];
       System.arraycopy(omega, 0, newOmega, 0, omega.length);
       System.arraycopy(subterm, 0, newSubterm, 0, omega.length);
       omega = newOmega;
@@ -80,7 +86,7 @@ public final class Environment implements Cloneable {
   public Object clone() throws CloneNotSupportedException {
     Environment clone = (Environment) super.clone();
     clone.omega = new int[omega.length];
-    clone.subterm = new Visitable[omega.length];
+    clone.subterm = new Object[omega.length];
     System.arraycopy(omega, 0, clone.omega, 0, omega.length);
     System.arraycopy(subterm, 0, clone.subterm, 0, omega.length);
     clone.current = current;
@@ -112,7 +118,7 @@ public final class Environment implements Cloneable {
   public int hashCode() {
     /* Hash only the interesting part of the array */
     int[] hashedOmega = new int[current+1];
-    Visitable[] hashedSubterm = new Visitable[current+1];
+    Object[] hashedSubterm = new Object[current+1];
     System.arraycopy(omega,0,hashedOmega,0,current+1);
     System.arraycopy(subterm,0,hashedSubterm,0,current+1);
     return (current+1) * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
@@ -126,22 +132,22 @@ public final class Environment implements Cloneable {
    * get the current root
    * @return the current root
    */
-  public Visitable getRoot() {
+  public Object getRoot() {
     return subterm[0];
   }
 
   /**
    * set the current root
    */
-  public void setRoot(Visitable root) {
+  public void setRoot(Object root) {
     this.subterm[0] = root;
   }
 
   /**
    * get the current stack
    */
-  public Vector<Visitable> getCurrentStack() {
-    Vector<Visitable> v = new Vector<Visitable>();
+  public Vector<Object> getCurrentStack() {
+    Vector<Object> v = new Vector<Object>();
     for (int i=0;i<depth();i++) {
       v.add(subterm[i]);
     }
@@ -152,17 +158,25 @@ public final class Environment implements Cloneable {
    * get the term that corresponds to the current position
    * @return the current term
    */
-  public Visitable getSubject() {
+  public Object getSubject() {
     return subterm[current];
   }
 
   /**
    * set the current term
    */
-  public void setSubject(Visitable root) {
+  public void setSubject(Object root) {
     //System.out.println("setsubject "+root);
     //System.out.println("in the env "+this);
     this.subterm[current] = root;
+  }
+
+  public Introspector getIntrospector() {
+    return mapping;
+  }
+
+  public void setIntrospector(Introspector m) {
+    mapping = m;
   }
 
   /**
@@ -201,9 +215,9 @@ public final class Environment implements Cloneable {
   public void up() {
     //System.out.println("before up: " + this);
     int childIndex = omega[current]-1;
-    Visitable child = subterm[current];
+    Object child = subterm[current];
     current--;
-    subterm[current] = subterm[current].setChildAt(childIndex,child);
+    subterm[current] = mapping.setChildAt(subterm[current],childIndex,child);
     //System.out.println("after up: " + this);
   }
 
@@ -223,13 +237,13 @@ public final class Environment implements Cloneable {
   public void down(int n) {
     //System.out.println("before down: " + this);
     if(n>0) {
-      Visitable child = subterm[current];
+      Object child = subterm[current];
       current++;
       if(current == omega.length) {
         ensureLength(current+1);
       }
       omega[current] = n;
-      subterm[current] = child.getChildAt(n-1);
+      subterm[current] = mapping.getChildAt(child,n-1);
     }
     //System.out.println("after down: " + this);
   }

@@ -8,7 +8,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.deriv._ebs(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.deriv._ebs($arg0, $arg1) }
     }
   
   
@@ -23,16 +23,16 @@
 %op Strategy Make_ebs(_Lhs:Strategy, _Rhs:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.deriv.Make_ebs))) }
 
-  get_slot(_Lhs, t) { _Lhs }
-  get_slot(_Rhs, t) { _Rhs }
-  make( new_Lhs,  new_Rhs) { new tom.engine.adt.il.strategy.deriv.Make_ebs( new_Lhs,  new_Rhs) }
+  get_slot(_Lhs, t) { $t._Lhs }
+  get_slot(_Rhs, t) { $t._Rhs }
+  make( new_Lhs,  new_Rhs) { new tom.engine.adt.il.strategy.deriv.Make_ebs( $new_Lhs,  $new_Rhs) }
 }
 
     %op Strategy _iltrue(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr._iltrue)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.expr._iltrue(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.expr._iltrue($arg0) }
     }
   
   
@@ -47,8 +47,8 @@
 %op Strategy Make_iltrue(_Subst:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_iltrue))) }
 
-  get_slot(_Subst, t) { _Subst }
-  make( new_Subst) { new tom.engine.adt.il.strategy.expr.Make_iltrue( new_Subst) }
+  get_slot(_Subst, t) { $t._Subst }
+  make( new_Subst) { new tom.engine.adt.il.strategy.expr.Make_iltrue( $new_Subst) }
 }
 
     %op Strategy _ilfalse() {
@@ -77,7 +77,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._isfsym(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._isfsym($arg0, $arg1) }
     }
   
   
@@ -92,9 +92,9 @@
 %op Strategy Make_isfsym(_T:Strategy, _Symbol:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_isfsym))) }
 
-  get_slot(_T, t) { _T }
-  get_slot(_Symbol, t) { _Symbol }
-  make( new_T,  new_Symbol) { new tom.engine.adt.il.strategy.expr.Make_isfsym( new_T,  new_Symbol) }
+  get_slot(_T, t) { $t._T }
+  get_slot(_Symbol, t) { $t._Symbol }
+  make( new_T,  new_Symbol) { new tom.engine.adt.il.strategy.expr.Make_isfsym( $new_T,  $new_Symbol) }
 }
 
     %op Strategy _eq(arg0:Strategy, arg1:Strategy) {
@@ -102,7 +102,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._eq(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._eq($arg0, $arg1) }
     }
   
   
@@ -117,9 +117,9 @@
 %op Strategy Make_eq(_Lt:Strategy, _Rt:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_eq))) }
 
-  get_slot(_Lt, t) { _Lt }
-  get_slot(_Rt, t) { _Rt }
-  make( new_Lt,  new_Rt) { new tom.engine.adt.il.strategy.expr.Make_eq( new_Lt,  new_Rt) }
+  get_slot(_Lt, t) { $t._Lt }
+  get_slot(_Rt, t) { $t._Rt }
+  make( new_Lt,  new_Rt) { new tom.engine.adt.il.strategy.expr.Make_eq( $new_Lt,  $new_Rt) }
 }
 
     %op Strategy _tisfsym(arg0:Strategy, arg1:Strategy) {
@@ -127,7 +127,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._tisfsym(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._tisfsym($arg0, $arg1) }
     }
   
   
@@ -142,9 +142,9 @@
 %op Strategy Make_tisfsym(_Abst:Strategy, _Symbol:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_tisfsym))) }
 
-  get_slot(_Abst, t) { _Abst }
-  get_slot(_Symbol, t) { _Symbol }
-  make( new_Abst,  new_Symbol) { new tom.engine.adt.il.strategy.expr.Make_tisfsym( new_Abst,  new_Symbol) }
+  get_slot(_Abst, t) { $t._Abst }
+  get_slot(_Symbol, t) { $t._Symbol }
+  make( new_Abst,  new_Symbol) { new tom.engine.adt.il.strategy.expr.Make_tisfsym( $new_Abst,  $new_Symbol) }
 }
 
     %op Strategy _teq(arg0:Strategy, arg1:Strategy) {
@@ -152,7 +152,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._teq(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._teq($arg0, $arg1) }
     }
   
   
@@ -167,9 +167,9 @@
 %op Strategy Make_teq(_Labst:Strategy, _Rabst:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_teq))) }
 
-  get_slot(_Labst, t) { _Labst }
-  get_slot(_Rabst, t) { _Rabst }
-  make( new_Labst,  new_Rabst) { new tom.engine.adt.il.strategy.expr.Make_teq( new_Labst,  new_Rabst) }
+  get_slot(_Labst, t) { $t._Labst }
+  get_slot(_Rabst, t) { $t._Rabst }
+  make( new_Labst,  new_Rabst) { new tom.engine.adt.il.strategy.expr.Make_teq( $new_Labst,  $new_Rabst) }
 }
 
     %op Strategy _iland(arg0:Strategy, arg1:Strategy) {
@@ -177,7 +177,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._iland(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._iland($arg0, $arg1) }
     }
   
   
@@ -192,9 +192,9 @@
 %op Strategy Make_iland(_Left:Strategy, _Right:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_iland))) }
 
-  get_slot(_Left, t) { _Left }
-  get_slot(_Right, t) { _Right }
-  make( new_Left,  new_Right) { new tom.engine.adt.il.strategy.expr.Make_iland( new_Left,  new_Right) }
+  get_slot(_Left, t) { $t._Left }
+  get_slot(_Right, t) { $t._Right }
+  make( new_Left,  new_Right) { new tom.engine.adt.il.strategy.expr.Make_iland( $new_Left,  $new_Right) }
 }
 
     %op Strategy _ilor(arg0:Strategy, arg1:Strategy) {
@@ -202,7 +202,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._ilor(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._ilor($arg0, $arg1) }
     }
   
   
@@ -217,16 +217,16 @@
 %op Strategy Make_ilor(_Left:Strategy, _Right:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_ilor))) }
 
-  get_slot(_Left, t) { _Left }
-  get_slot(_Right, t) { _Right }
-  make( new_Left,  new_Right) { new tom.engine.adt.il.strategy.expr.Make_ilor( new_Left,  new_Right) }
+  get_slot(_Left, t) { $t._Left }
+  get_slot(_Right, t) { $t._Right }
+  make( new_Left,  new_Right) { new tom.engine.adt.il.strategy.expr.Make_ilor( $new_Left,  $new_Right) }
 }
 
     %op Strategy _ilnot(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr._ilnot)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.expr._ilnot(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.expr._ilnot($arg0) }
     }
   
   
@@ -241,8 +241,8 @@
 %op Strategy Make_ilnot(_Exp:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_ilnot))) }
 
-  get_slot(_Exp, t) { _Exp }
-  make( new_Exp) { new tom.engine.adt.il.strategy.expr.Make_ilnot( new_Exp) }
+  get_slot(_Exp, t) { $t._Exp }
+  make( new_Exp) { new tom.engine.adt.il.strategy.expr.Make_ilnot( $new_Exp) }
 }
 
     %op Strategy _appSubsE(arg0:Strategy, arg1:Strategy) {
@@ -250,7 +250,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._appSubsE(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.expr._appSubsE($arg0, $arg1) }
     }
   
   
@@ -265,16 +265,16 @@
 %op Strategy Make_appSubsE(_Subs:Strategy, _E:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.expr.Make_appSubsE))) }
 
-  get_slot(_Subs, t) { _Subs }
-  get_slot(_E, t) { _E }
-  make( new_Subs,  new_E) { new tom.engine.adt.il.strategy.expr.Make_appSubsE( new_Subs,  new_E) }
+  get_slot(_Subs, t) { $t._Subs }
+  get_slot(_E, t) { $t._E }
+  make( new_Subs,  new_E) { new tom.engine.adt.il.strategy.expr.Make_appSubsE( $new_Subs,  $new_E) }
 }
 
     %op Strategy _var(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.variable._var)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.variable._var(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.variable._var($arg0) }
     }
   
   
@@ -289,8 +289,8 @@
 %op Strategy Make_var(_Name:String) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.variable.Make_var))) }
 
-  get_slot(_Name, t) { _Name }
-  make( _Name) { new tom.engine.adt.il.strategy.variable.Make_var( _Name) }
+  get_slot(_Name, t) { $t._Name }
+  make( _Name) { new tom.engine.adt.il.strategy.variable.Make_var( $_Name) }
 }
 
     %op Strategy _env(arg0:Strategy, arg1:Strategy) {
@@ -298,7 +298,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.environment._env(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.environment._env($arg0, $arg1) }
     }
   
   
@@ -313,9 +313,9 @@
 %op Strategy Make_env(_Subs:Strategy, _I:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.environment.Make_env))) }
 
-  get_slot(_Subs, t) { _Subs }
-  get_slot(_I, t) { _I }
-  make( new_Subs,  new_I) { new tom.engine.adt.il.strategy.environment.Make_env( new_Subs,  new_I) }
+  get_slot(_Subs, t) { $t._Subs }
+  get_slot(_I, t) { $t._I }
+  make( new_Subs,  new_I) { new tom.engine.adt.il.strategy.environment.Make_env( $new_Subs,  $new_I) }
 }
 
     %op Strategy _Emptysemicolon() {
@@ -344,7 +344,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.instrlist._Conssemicolon(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.instrlist._Conssemicolon($arg0, $arg1) }
     }
   
   
@@ -359,9 +359,9 @@
 %op Strategy Make_Conssemicolon(_Headsemicolon:Strategy, _Tailsemicolon:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon))) }
 
-  get_slot(_Headsemicolon, t) { _Headsemicolon }
-  get_slot(_Tailsemicolon, t) { _Tailsemicolon }
-  make( new_Headsemicolon,  new_Tailsemicolon) { new tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon( new_Headsemicolon,  new_Tailsemicolon) }
+  get_slot(_Headsemicolon, t) { $t._Headsemicolon }
+  get_slot(_Tailsemicolon, t) { $t._Tailsemicolon }
+  make( new_Headsemicolon,  new_Tailsemicolon) { new tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon( $new_Headsemicolon,  $new_Tailsemicolon) }
 }
 
     %op Strategy _EmptyconcExpr() {
@@ -390,7 +390,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.exprlist._ConsconcExpr(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.exprlist._ConsconcExpr($arg0, $arg1) }
     }
   
   
@@ -405,9 +405,9 @@
 %op Strategy Make_ConsconcExpr(_HeadconcExpr:Strategy, _TailconcExpr:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr))) }
 
-  get_slot(_HeadconcExpr, t) { _HeadconcExpr }
-  get_slot(_TailconcExpr, t) { _TailconcExpr }
-  make( new_HeadconcExpr,  new_TailconcExpr) { new tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr( new_HeadconcExpr,  new_TailconcExpr) }
+  get_slot(_HeadconcExpr, t) { $t._HeadconcExpr }
+  get_slot(_TailconcExpr, t) { $t._TailconcExpr }
+  make( new_HeadconcExpr,  new_TailconcExpr) { new tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr( $new_HeadconcExpr,  $new_TailconcExpr) }
 }
 
     %op Strategy _undefsubs() {
@@ -436,7 +436,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.substitution._is(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.substitution._is($arg0, $arg1) }
     }
   
   
@@ -451,16 +451,16 @@
 %op Strategy Make_is(_Var:Strategy, _Term:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitution.Make_is))) }
 
-  get_slot(_Var, t) { _Var }
-  get_slot(_Term, t) { _Term }
-  make( new_Var,  new_Term) { new tom.engine.adt.il.strategy.substitution.Make_is( new_Var,  new_Term) }
+  get_slot(_Var, t) { $t._Var }
+  get_slot(_Term, t) { $t._Term }
+  make( new_Var,  new_Term) { new tom.engine.adt.il.strategy.substitution.Make_is( $new_Var,  $new_Term) }
 }
 
     %op Strategy _fsymbol(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.symbol._fsymbol)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.symbol._fsymbol(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.symbol._fsymbol($arg0) }
     }
   
   
@@ -475,8 +475,8 @@
 %op Strategy Make_fsymbol(_Name:String) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.symbol.Make_fsymbol))) }
 
-  get_slot(_Name, t) { _Name }
-  make( _Name) { new tom.engine.adt.il.strategy.symbol.Make_fsymbol( _Name) }
+  get_slot(_Name, t) { $t._Name }
+  make( _Name) { new tom.engine.adt.il.strategy.symbol.Make_fsymbol( $_Name) }
 }
 
     %op Strategy _seq() {
@@ -504,7 +504,7 @@
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.seq._dedexpr)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.seq._dedexpr(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.seq._dedexpr($arg0) }
     }
   
   
@@ -519,15 +519,15 @@
 %op Strategy Make_dedexpr(_Exprs:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.seq.Make_dedexpr))) }
 
-  get_slot(_Exprs, t) { _Exprs }
-  make( new_Exprs) { new tom.engine.adt.il.strategy.seq.Make_dedexpr( new_Exprs) }
+  get_slot(_Exprs, t) { $t._Exprs }
+  make( new_Exprs) { new tom.engine.adt.il.strategy.seq.Make_dedexpr( $new_Exprs) }
 }
 
     %op Strategy _dedterm(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.seq._dedterm)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.seq._dedterm(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.seq._dedterm($arg0) }
     }
   
   
@@ -542,8 +542,8 @@
 %op Strategy Make_dedterm(_Terms:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.seq.Make_dedterm))) }
 
-  get_slot(_Terms, t) { _Terms }
-  make( new_Terms) { new tom.engine.adt.il.strategy.seq.Make_dedterm( new_Terms) }
+  get_slot(_Terms, t) { $t._Terms }
+  make( new_Terms) { new tom.engine.adt.il.strategy.seq.Make_dedterm( $new_Terms) }
 }
 
     %op Strategy _Emptysubs() {
@@ -572,7 +572,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.substitutionlist._Conssubs(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.substitutionlist._Conssubs($arg0, $arg1) }
     }
   
   
@@ -587,16 +587,16 @@
 %op Strategy Make_Conssubs(_Headsubs:Strategy, _Tailsubs:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs))) }
 
-  get_slot(_Headsubs, t) { _Headsubs }
-  get_slot(_Tailsubs, t) { _Tailsubs }
-  make( new_Headsubs,  new_Tailsubs) { new tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs( new_Headsubs,  new_Tailsubs) }
+  get_slot(_Headsubs, t) { $t._Headsubs }
+  get_slot(_Tailsubs, t) { $t._Tailsubs }
+  make( new_Headsubs,  new_Tailsubs) { new tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs( $new_Headsubs,  $new_Tailsubs) }
 }
 
     %op Strategy _tau(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term._tau)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.term._tau(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.term._tau($arg0) }
     }
   
   
@@ -611,15 +611,15 @@
 %op Strategy Make_tau(_Abst:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term.Make_tau))) }
 
-  get_slot(_Abst, t) { _Abst }
-  make( new_Abst) { new tom.engine.adt.il.strategy.term.Make_tau( new_Abst) }
+  get_slot(_Abst, t) { $t._Abst }
+  make( new_Abst) { new tom.engine.adt.il.strategy.term.Make_tau( $new_Abst) }
 }
 
     %op Strategy _repr(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term._repr)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.term._repr(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.term._repr($arg0) }
     }
   
   
@@ -634,8 +634,8 @@
 %op Strategy Make_repr(_Term:String) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term.Make_repr))) }
 
-  get_slot(_Term, t) { _Term }
-  make( _Term) { new tom.engine.adt.il.strategy.term.Make_repr( _Term) }
+  get_slot(_Term, t) { $t._Term }
+  make( _Term) { new tom.engine.adt.il.strategy.term.Make_repr( $_Term) }
 }
 
     %op Strategy _subterm(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -644,7 +644,7 @@
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.term._subterm(arg0, arg1, arg2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.term._subterm($arg0, $arg1, $arg2) }
     }
   
   
@@ -659,10 +659,10 @@
 %op Strategy Make_subterm(_Symbol:Strategy, _T:Strategy, _Index:int) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term.Make_subterm))) }
 
-  get_slot(_Symbol, t) { _Symbol }
-  get_slot(_T, t) { _T }
-  get_slot(_Index, t) { _Index }
-  make( new_Symbol,  new_T,  _Index) { new tom.engine.adt.il.strategy.term.Make_subterm( new_Symbol,  new_T,  _Index) }
+  get_slot(_Symbol, t) { $t._Symbol }
+  get_slot(_T, t) { $t._T }
+  get_slot(_Index, t) { $t._Index }
+  make( new_Symbol,  new_T,  _Index) { new tom.engine.adt.il.strategy.term.Make_subterm( $new_Symbol,  $new_T,  $_Index) }
 }
 
     %op Strategy _slot(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -671,7 +671,7 @@
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.term._slot(arg0, arg1, arg2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.term._slot($arg0, $arg1, $arg2) }
     }
   
   
@@ -686,10 +686,10 @@
 %op Strategy Make_slot(_Symbol:Strategy, _T:Strategy, _Name:String) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term.Make_slot))) }
 
-  get_slot(_Symbol, t) { _Symbol }
-  get_slot(_T, t) { _T }
-  get_slot(_Name, t) { _Name }
-  make( new_Symbol,  new_T,  _Name) { new tom.engine.adt.il.strategy.term.Make_slot( new_Symbol,  new_T,  _Name) }
+  get_slot(_Symbol, t) { $t._Symbol }
+  get_slot(_T, t) { $t._T }
+  get_slot(_Name, t) { $t._Name }
+  make( new_Symbol,  new_T,  _Name) { new tom.engine.adt.il.strategy.term.Make_slot( $new_Symbol,  $new_T,  $_Name) }
 }
 
     %op Strategy _appSubsT(arg0:Strategy, arg1:Strategy) {
@@ -697,7 +697,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.term._appSubsT(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.term._appSubsT($arg0, $arg1) }
     }
   
   
@@ -712,9 +712,9 @@
 %op Strategy Make_appSubsT(_Subs:Strategy, _T:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.term.Make_appSubsT))) }
 
-  get_slot(_Subs, t) { _Subs }
-  get_slot(_T, t) { _T }
-  make( new_Subs,  new_T) { new tom.engine.adt.il.strategy.term.Make_appSubsT( new_Subs,  new_T) }
+  get_slot(_Subs, t) { $t._Subs }
+  get_slot(_T, t) { $t._T }
+  make( new_Subs,  new_T) { new tom.engine.adt.il.strategy.term.Make_appSubsT( $new_Subs,  $new_T) }
 }
 
     %op Strategy _EmptyconcTerm() {
@@ -743,7 +743,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.termlist._ConsconcTerm(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.termlist._ConsconcTerm($arg0, $arg1) }
     }
   
   
@@ -758,9 +758,9 @@
 %op Strategy Make_ConsconcTerm(_HeadconcTerm:Strategy, _TailconcTerm:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm))) }
 
-  get_slot(_HeadconcTerm, t) { _HeadconcTerm }
-  get_slot(_TailconcTerm, t) { _TailconcTerm }
-  make( new_HeadconcTerm,  new_TailconcTerm) { new tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm( new_HeadconcTerm,  new_TailconcTerm) }
+  get_slot(_HeadconcTerm, t) { $t._HeadconcTerm }
+  get_slot(_TailconcTerm, t) { $t._TailconcTerm }
+  make( new_HeadconcTerm,  new_TailconcTerm) { new tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm( $new_HeadconcTerm,  $new_TailconcTerm) }
 }
 
     %op Strategy _accept(arg0:Strategy, arg1:Strategy) {
@@ -768,7 +768,7 @@
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.instr._accept(arg0, arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.instr._accept($arg0, $arg1) }
     }
   
   
@@ -783,9 +783,9 @@
 %op Strategy Make_accept(_Positive:aterm.ATerm, _Negative:aterm.ATerm) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instr.Make_accept))) }
 
-  get_slot(_Positive, t) { _Positive }
-  get_slot(_Negative, t) { _Negative }
-  make( _Positive,  _Negative) { new tom.engine.adt.il.strategy.instr.Make_accept( _Positive,  _Negative) }
+  get_slot(_Positive, t) { $t._Positive }
+  get_slot(_Negative, t) { $t._Negative }
+  make( _Positive,  _Negative) { new tom.engine.adt.il.strategy.instr.Make_accept( $_Positive,  $_Negative) }
 }
 
     %op Strategy _refuse() {
@@ -815,7 +815,7 @@
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.instr._ITE(arg0, arg1, arg2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.instr._ITE($arg0, $arg1, $arg2) }
     }
   
   
@@ -830,10 +830,10 @@
 %op Strategy Make_ITE(_E:Strategy, _Ift:Strategy, _Iff:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instr.Make_ITE))) }
 
-  get_slot(_E, t) { _E }
-  get_slot(_Ift, t) { _Ift }
-  get_slot(_Iff, t) { _Iff }
-  make( new_E,  new_Ift,  new_Iff) { new tom.engine.adt.il.strategy.instr.Make_ITE( new_E,  new_Ift,  new_Iff) }
+  get_slot(_E, t) { $t._E }
+  get_slot(_Ift, t) { $t._Ift }
+  get_slot(_Iff, t) { $t._Iff }
+  make( new_E,  new_Ift,  new_Iff) { new tom.engine.adt.il.strategy.instr.Make_ITE( $new_E,  $new_Ift,  $new_Iff) }
 }
 
     %op Strategy _ILLet(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -842,7 +842,7 @@
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.instr._ILLet(arg0, arg1, arg2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.instr._ILLet($arg0, $arg1, $arg2) }
     }
   
   
@@ -857,17 +857,17 @@
 %op Strategy Make_ILLet(_Var:Strategy, _T:Strategy, _Body:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instr.Make_ILLet))) }
 
-  get_slot(_Var, t) { _Var }
-  get_slot(_T, t) { _T }
-  get_slot(_Body, t) { _Body }
-  make( new_Var,  new_T,  new_Body) { new tom.engine.adt.il.strategy.instr.Make_ILLet( new_Var,  new_T,  new_Body) }
+  get_slot(_Var, t) { $t._Var }
+  get_slot(_T, t) { $t._T }
+  get_slot(_Body, t) { $t._Body }
+  make( new_Var,  new_T,  new_Body) { new tom.engine.adt.il.strategy.instr.Make_ILLet( $new_Var,  $new_T,  $new_Body) }
 }
 
     %op Strategy _sequence(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instr._sequence)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.instr._sequence(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.instr._sequence($arg0) }
     }
   
   
@@ -882,15 +882,15 @@
 %op Strategy Make_sequence(_Instrlist:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instr.Make_sequence))) }
 
-  get_slot(_Instrlist, t) { _Instrlist }
-  make( new_Instrlist) { new tom.engine.adt.il.strategy.instr.Make_sequence( new_Instrlist) }
+  get_slot(_Instrlist, t) { $t._Instrlist }
+  make( new_Instrlist) { new tom.engine.adt.il.strategy.instr.Make_sequence( $new_Instrlist) }
 }
 
     %op Strategy _absvar(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._absvar)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.absterm._absvar(arg0) }
+        make(arg0) { new tom.engine.adt.il.strategy.absterm._absvar($arg0) }
     }
   
   
@@ -905,8 +905,8 @@
 %op Strategy Make_absvar(_Varname:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_absvar))) }
 
-  get_slot(_Varname, t) { _Varname }
-  make( new_Varname) { new tom.engine.adt.il.strategy.absterm.Make_absvar( new_Varname) }
+  get_slot(_Varname, t) { $t._Varname }
+  make( new_Varname) { new tom.engine.adt.il.strategy.absterm.Make_absvar( $new_Varname) }
 }
 
     %op Strategy _st(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -915,7 +915,7 @@
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._st(arg0, arg1, arg2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._st($arg0, $arg1, $arg2) }
     }
   
   
@@ -930,10 +930,10 @@
 %op Strategy Make_st(_Symbol:Strategy, _Abst:Strategy, _Index:int) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_st))) }
 
-  get_slot(_Symbol, t) { _Symbol }
-  get_slot(_Abst, t) { _Abst }
-  get_slot(_Index, t) { _Index }
-  make( new_Symbol,  new_Abst,  _Index) { new tom.engine.adt.il.strategy.absterm.Make_st( new_Symbol,  new_Abst,  _Index) }
+  get_slot(_Symbol, t) { $t._Symbol }
+  get_slot(_Abst, t) { $t._Abst }
+  get_slot(_Index, t) { $t._Index }
+  make( new_Symbol,  new_Abst,  _Index) { new tom.engine.adt.il.strategy.absterm.Make_st( $new_Symbol,  $new_Abst,  $_Index) }
 }
 
     %op Strategy _sl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -942,7 +942,7 @@
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._sl(arg0, arg1, arg2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._sl($arg0, $arg1, $arg2) }
     }
   
   
@@ -957,10 +957,10 @@
 %op Strategy Make_sl(_Symbol:Strategy, _Abst:Strategy, _Name:String) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_sl))) }
 
-  get_slot(_Symbol, t) { _Symbol }
-  get_slot(_Abst, t) { _Abst }
-  get_slot(_Name, t) { _Name }
-  make( new_Symbol,  new_Abst,  _Name) { new tom.engine.adt.il.strategy.absterm.Make_sl( new_Symbol,  new_Abst,  _Name) }
+  get_slot(_Symbol, t) { $t._Symbol }
+  get_slot(_Abst, t) { $t._Abst }
+  get_slot(_Name, t) { $t._Name }
+  make( new_Symbol,  new_Abst,  _Name) { new tom.engine.adt.il.strategy.absterm.Make_sl( $new_Symbol,  $new_Abst,  $_Name) }
 }
 
     %op Strategy _endderiv() {
@@ -991,7 +991,7 @@
         get_slot(arg1, t) { $t.getArgument(1) }
         get_slot(arg2, t) { $t.getArgument(2) }
         get_slot(arg3, t) { $t.getArgument(3) }
-        make(arg0, arg1, arg2, arg3) { new tom.engine.adt.il.strategy.derivtree._derivrule(arg0, arg1, arg2, arg3) }
+        make(arg0, arg1, arg2, arg3) { new tom.engine.adt.il.strategy.derivtree._derivrule($arg0, $arg1, $arg2, $arg3) }
     }
   
   
@@ -1006,11 +1006,11 @@
 %op Strategy Make_derivrule(_Name:String, _Post:Strategy, _Pre:Strategy, _Cond:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.derivtree.Make_derivrule))) }
 
-  get_slot(_Name, t) { _Name }
-  get_slot(_Post, t) { _Post }
-  get_slot(_Pre, t) { _Pre }
-  get_slot(_Cond, t) { _Cond }
-  make( _Name,  new_Post,  new_Pre,  new_Cond) { new tom.engine.adt.il.strategy.derivtree.Make_derivrule( _Name,  new_Post,  new_Pre,  new_Cond) }
+  get_slot(_Name, t) { $t._Name }
+  get_slot(_Post, t) { $t._Post }
+  get_slot(_Pre, t) { $t._Pre }
+  get_slot(_Cond, t) { $t._Cond }
+  make( _Name,  new_Post,  new_Pre,  new_Cond) { new tom.engine.adt.il.strategy.derivtree.Make_derivrule( $_Name,  $new_Post,  $new_Pre,  $new_Cond) }
 }
 
     %op Strategy _derivrule2(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
@@ -1021,7 +1021,7 @@
         get_slot(arg2, t) { $t.getArgument(2) }
         get_slot(arg3, t) { $t.getArgument(3) }
         get_slot(arg4, t) { $t.getArgument(4) }
-        make(arg0, arg1, arg2, arg3, arg4) { new tom.engine.adt.il.strategy.derivtree._derivrule2(arg0, arg1, arg2, arg3, arg4) }
+        make(arg0, arg1, arg2, arg3, arg4) { new tom.engine.adt.il.strategy.derivtree._derivrule2($arg0, $arg1, $arg2, $arg3, $arg4) }
     }
   
   
@@ -1036,12 +1036,12 @@
 %op Strategy Make_derivrule2(_Name:String, _Post:Strategy, _Pre:Strategy, _Pre2:Strategy, _Cond:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.derivtree.Make_derivrule2))) }
 
-  get_slot(_Name, t) { _Name }
-  get_slot(_Post, t) { _Post }
-  get_slot(_Pre, t) { _Pre }
-  get_slot(_Pre2, t) { _Pre2 }
-  get_slot(_Cond, t) { _Cond }
-  make( _Name,  new_Post,  new_Pre,  new_Pre2,  new_Cond) { new tom.engine.adt.il.strategy.derivtree.Make_derivrule2( _Name,  new_Post,  new_Pre,  new_Pre2,  new_Cond) }
+  get_slot(_Name, t) { $t._Name }
+  get_slot(_Post, t) { $t._Post }
+  get_slot(_Pre, t) { $t._Pre }
+  get_slot(_Pre2, t) { $t._Pre2 }
+  get_slot(_Cond, t) { $t._Cond }
+  make( _Name,  new_Post,  new_Pre,  new_Pre2,  new_Cond) { new tom.engine.adt.il.strategy.derivtree.Make_derivrule2( $_Name,  $new_Post,  $new_Pre,  $new_Pre2,  $new_Cond) }
 }
 
             %op Strategy _semicolon(sub:Strategy) {

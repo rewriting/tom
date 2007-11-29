@@ -80,6 +80,7 @@ public class Viewer {
     return r.toString();
   }
 
+  //TODO: adapt to traverse any data-structure using newsl
   static class Print extends AbstractStrategy {
 
     protected Writer w;
@@ -89,12 +90,12 @@ public class Viewer {
       this.w=w;
     }
 
-    public Visitable visitLight(Visitable any) throws VisitFailure {
+    public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     } 
 
-    public int visit() {
-      Visitable v = getEnvironment().getSubject();
+    public int visit(Introspector introspector) {
+      Visitable v = (Visitable) getEnvironment().getSubject();
       try {
         if (v instanceof Path) {
           Position current = getEnvironment().getPosition();
@@ -256,7 +257,7 @@ public class Viewer {
       w.flush();
     }
 
-  private static class RemoveMu extends  tom.library.sl.reflective.StrategyFwd  {public RemoveMu() { super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch558NameNumberfreshSubject_1=(( tom.library.sl.Strategy )tom__arg);if (( (tomMatch558NameNumberfreshSubject_1 instanceof tom.library.sl.Mu) )) {{  tom.library.sl.Strategy  tomMatch558NameNumber_freshVar_0=( (tom.library.sl.Strategy)tomMatch558NameNumberfreshSubject_1.getChildAt(tom.library.sl.Mu.V) );if ( true ) {
+  private static class RemoveMu extends  tom.library.sl.reflective.StrategyFwd  {public RemoveMu() { super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch558NameNumberfreshSubject_1=(( tom.library.sl.Strategy )tom__arg);if (( (tomMatch558NameNumberfreshSubject_1 instanceof tom.library.sl.Mu) )) {{  tom.library.sl.Strategy  tomMatch558NameNumber_freshVar_0=( (tom.library.sl.Strategy)tomMatch558NameNumberfreshSubject_1.getChildAt(tom.library.sl.Mu.V) );if ( true ) {
 
 
         return tomMatch558NameNumber_freshVar_0;
@@ -266,7 +267,7 @@ public class Viewer {
           //corresponds to a pointer due to MuVar
           throw new VisitFailure();
         }
-      }}}}return super.visit_Strategy(tom__arg); }}private static  tom.library.sl.Strategy  tom_make_RemoveMu() { return new RemoveMu(); }
+      }}}}return super.visit_Strategy(tom__arg,introspector); }}private static  tom.library.sl.Strategy  tom_make_RemoveMu() { return new RemoveMu(); }
 
 
 
@@ -284,19 +285,20 @@ public class Viewer {
 
     protected Writer w;
 
+    //TODO: adapt with newsl to visit anu data-structures
     public PrintStrategy(Writer w) {
       initSubterm();
       this.w=w;
     }
-
-    public Visitable visitLight(Visitable any) throws VisitFailure {
+    
+    public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
-    } 
+    }
 
-    public int visit() {
-      Visitable v = getEnvironment().getSubject();
+    public int visit(Introspector introspector) {
+      Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
-      Vector<Visitable> stack = getEnvironment().getCurrentStack(); 
+      Vector<Object> stack = getEnvironment().getCurrentStack(); 
       try {
         //test if it is a pointer due to an expanded MuVar
         if (stack.contains(v)) {
