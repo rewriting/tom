@@ -39,15 +39,6 @@
         <include name="*.jar"/>
       </fileset>
     </path>
-    <path id="tom.classpathnewsl">
-      <path refid="external.classpath"/>
-      <pathelement path="/home/balland/workspace/newsl/newlib/build"/>
-      <fileset dir="${tom.home}/lib">
-        <include name="*.jar"/>
-        <exclude name="strategy*.jar"/>
-      </fileset>
-    </path>
-
 
     <taskdef name="tom"
              classname="tom.engine.tools.ant.TomTask"
@@ -104,17 +95,6 @@
              memoryInitialSize="${memoryInitSize}"
              memoryMaximumSize="${memoryMaxSize}">
         <classpath refid="tom.classpath"/>
-      </javac>
-    </presetdef>
- 
-    <presetdef name="javac.newsl">
-      <javac target="${javacTarget}"
-             source="${javacSource}"
-             nowarn="${nowarnings}"
-             fork="${tomfork}"
-             memoryInitialSize="${memoryInitSize}"
-             memoryMaximumSize="${memoryMaxSize}">
-        <classpath refid="tom.classpathnewsl"/>
       </javac>
     </presetdef>
   </target>
