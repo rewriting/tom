@@ -52,7 +52,13 @@ ProofTerm = ax(n:Name,cn:CoName)
           /* new hot stuff */
           | foldR(a:CNProp,m:ProofTerm,cn:CoName,rulenum:int)
           | foldL(x:NProp,m:ProofTerm,n:Name,rulenum:int)
-          | metaVar(name:String)
+          | metaVar(mv:Meta)
+
+Meta = mvar(name:String)
+     | rename(n1:Name,n2:Name,mv:Meta)
+     | reconame(cn1:CoName,cn2:CoName,mv:Meta)
+     | substconame(cn:CoName,n:Name,proofterm:ProofTerm,phi:Prop,mv:Meta)
+     | substname(n:Name,cn:CoName,proofterm:ProofTerm,phi:Prop,mv:Meta)
 
 existsL:make(x,varx,m,y) {
   %match(Term varx) {
@@ -71,3 +77,31 @@ NPremisses = npremisses(NTree*)
 NTree = nrule(type:RuleType, p:NPremisses, c:NSequent, pt:ProofTerm)
 
 TypableProofTerm = typablePT(pt:ProofTerm, c:NSequent)
+
+DBName = dbname(n:int)
+DBCoName = dbconame(n:int)
+
+DBProofTerm = DBax(n:DBName,cn:DBCoName)
+            | DBcut(a:Prop,m1:DBProofTerm,x:Prop,m2:DBProofTerm)
+            | DBfalseL(n:DBName)
+            | DBtrueR(cn:DBCoName)
+            | DBandR(a:Prop,m1:DBProofTerm,b:Prop,m2:DBProofTerm, cn:DBCoName)
+            | DBandL(x:Prop,y:Prop,m:DBProofTerm, n:DBName)
+            | DBorR(a:Prop,b:Prop,m:DBProofTerm, cn:DBCoName)
+            | DBorL(x:Prop,m1:DBProofTerm,y:Prop,m2:DBProofTerm, n:DBName)
+            | DBimplyR(x:Prop,a:Prop,m1:DBProofTerm, cn:DBCoName)
+            | DBimplyL(a:Prop,m1:DBProofTerm,x:Prop,m2:DBProofTerm, n:DBName)
+            | DBexistsR(a:Prop,m:DBProofTerm,t:Term,cn:DBCoName)
+            | DBexistsL(x:Prop,varx:Term,m:DBProofTerm,n:DBName)
+            | DBforallR(a:Prop,varx:Term,m:DBProofTerm,cn:DBCoName)
+            | DBforallL(x:Prop,m:DBProofTerm,t:Term,n:DBName)
+            | DBfoldR(a:Prop,m:DBProofTerm,cn:DBCoName,rulenum:int)
+            | DBfoldL(x:Prop,m:DBProofTerm,n:DBName,rulenum:int)
+            | DBmetaVar(mv:DBMeta)
+
+DBMeta = dbmvar(name:String)
+       | dbrename(n1:DBName,n2:DBName,mv:DBMeta)
+       | dbreconame(cn1:DBCoName,cn2:DBCoName,mv:DBMeta)
+       | dbsubstconame(cn:DBCoName,n:DBName,pt:DBProofTerm,phi:Prop,mv:DBMeta)
+       | dbsubstname(n:DBName,cn:DBCoName,pt:DBProofTerm,phi:Prop,mv:DBMeta)
+

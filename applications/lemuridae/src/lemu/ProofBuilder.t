@@ -9,10 +9,11 @@ import lemu.urban.types.*;
 
 import tom.library.sl.*;
 
-import java.util.HashMap;
 import java.util.WeakHashMap;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -241,7 +242,7 @@ b: {
   %strategy ApplyAssume(n:String,active:Prop) extends Fail() {
     visit Tree {
       rule[c=concl] -> { 
-        return `rule(metaVariableInfo(n),premisses(),concl,active);
+        return `rule(metaVariableInfo(mvar(n)),premisses(),concl,active);
       }
     }
   }
@@ -1428,10 +1429,21 @@ b :{
             ProofTerm pt = Proofterms.typableProofterm2Proofterm(tpt);
             NSequent nseq = Proofterms.typableProofterm2NSequent(tpt);
             writeToOutputln(PrettyPrinter.prettyPrint(pt));
-            PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
-            //            Collection c = Proofterms.reduce(pt);
+            //PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
             Collection c = Proofterms.computeNormalForms(pt, nseq);
             writeToOutputln("Number of normal forms found : "+c.size());
+
+            HashSet set = new HashSet();
+            set.addAll(c);
+            writeToOutputln("Number of different normal forms : "+set.size());
+            set = new HashSet();
+            // modulo alpha
+            for (Object o:c) {
+              ProofTerm prt = (ProofTerm) o;
+              set.add(DBProofterms.translate(prt));
+            }
+            writeToOutputln("Number of different normal forms modulo alpha : "+set.size());
+
             for (Object o:c) {
               writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
               PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));

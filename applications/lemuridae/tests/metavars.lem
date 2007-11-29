@@ -1,0 +1,41 @@
+proof th: False.
+cut A /\ B.
+intros.
+assume N.
+intros.
+assume M2.
+assume M1.
+
+// proofterm th.
+
+
+proprule P1 -> P2.
+
+proof th2: False.
+cut P2.
+assume M2.
+cut P1.
+focus h1. fold. axiom.
+assume M1.
+
+// proofterm th2.
+
+
+proprule P -> A /\ B.
+
+proof th3: False.
+cut A /\ B.
+intros.
+assume N.
+cut P.
+focus h1. fold.
+axiom.
+focus c2. remove.
+cut A /\ B.
+focus c2. fold. axiom.
+intros.
+assume M2.
+assume M1.
+//display th3.
+
+proofterm th3.

@@ -1,0 +1,42 @@
+
+
+proprule in(X,p1()) -> eq(K(X),X*X).
+proprule in(X,p2(y)) -> eq(succ(y+(y+X)),succ(y+(y+(y*y)))).
+
+
+
+termrule 0 + y -> y.
+termrule 0 * y -> 0.
+termrule succ(x) + y -> succ(x+y).
+termrule succ(x) * y -> y+ (y * x).
+
+rule eq(x,y) -> forall p, in(y,p) => in(x,p).
+rule N(n) -> forall p, in(0,p) => ( forall y, in(y,p) => in(succ(y),p) ) => in(n,p).
+hered.
+
+termrule K(0) -> 0.
+termrule K(succ(x)) -> succ(x+(x+K(x))).
+
+proof square: forall n, N(n) => eq(K(n),n*n).
+intros.
+focus h1.
+rule. p1().
+reduce.
+axiom.
+rule.
+reduce.
+next.
+autoreduce.
+reduce.
+focus h1.
+rule. p2(y0).
+reduce.
+axiom.
+reduce.
+rule.
+axiom.
+
+display square.
+
+
+

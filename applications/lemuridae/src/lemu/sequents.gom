@@ -1,5 +1,5 @@
 module sequents
-imports String int 
+imports String int urban
 
 abstract syntax
 
@@ -132,7 +132,7 @@ RuleType = axiomInfo()
          | contractionRightInfo()
          | weakLeftInfo()
          | weakRightInfo()
-         | metaVariableInfo(m:String)
+         | metaVariableInfo(mv:Meta)
          | openInfo() // open leaf
          | reductionInfo() // reduction step
          | foldRightInfo(num:int,newprop:Prop) // reduction step

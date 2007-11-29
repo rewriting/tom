@@ -1,0 +1,57 @@
+// --- trucs de Florent ---
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(p)) -> exists n, in(cons(n,l),p).
+proprule in(l,C(p)) -> forall n, in(cons(n,l),p).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+proprule in(l,fN(t)) -> N(appl(t,l)).
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+termrule appl(K(t),l) -> K(appl(t,l)).
+// --- trucs de Florent ---
+
+
+termrule 0 + y -> y.
+termrule 0 * y -> 0.
+termrule succ(x) + y -> succ(x+y).
+termrule succ(x) * y -> y+ (y * x).
+
+rule eq(x,y) -> forall p, in(cons(y,nil()),p) => in(cons(x,nil()),p).
+rule N(n) -> forall p, in(cons(0,nil()),p) => ( forall y, N(y) => in(cons(y,nil()),p) => in(cons(succ(y),nil()),p) ) => in(cons(n,nil()),p).
+hered.
+
+termrule K(0) -> 0.
+termrule K(succ(x)) -> succ(x+(x+K(x))).
+
+proof square: forall n, N(n) => eq(K(n),n*n).
+intros.
+focus h1.
+rule.
+/* codage de K(X) = X*X */
+fEq(K(one()),mult(one(),one())).
+reduce.
+axiom.
+rule.
+reduce.
+next.
+autoreduce.
+reduce.
+focus h2.
+/* codage de succ(y0+(y0+X)) = succ(y0+(y0+(y0*y0))) */
+rule. fEq(succ((S(y0)+(S(y0)+one()))) ,succ((S(y0)+(S(y0)+(S(y0)*S(y0)))))) .
+reduce.
+axiom.
+reduce.
+rule.
+axiom.
+
+display square.
+
+
+
