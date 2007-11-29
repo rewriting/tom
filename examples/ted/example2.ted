@@ -1,6 +1,0 @@
-tom.library.sl.BottomUp
-remove(g(<a>,b(1,2),<a>))
-
-tom.library.sl.TopDown
-replace(a,replaced)
-
