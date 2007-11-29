@@ -57,7 +57,7 @@ public class HostLexer extends antlr.CharScanner implements HostParserTokenTypes
 
     // this buffer contains the target code
     // we append each read character by lexer
-    public StringBuffer target = new StringBuffer("");
+    public StringBuilder target = new StringBuilder("");
 
     // the target parser
     private HostParser parser = null;

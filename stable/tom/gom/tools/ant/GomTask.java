@@ -50,6 +50,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>destdir</li>
  * <li>optimize</li>
  * <li>optimize2</li>
+ * <li>inlineplus</li>
  * <li>package</li>
  * <li>options</li>
  * <li>failonerror</li>
@@ -69,6 +70,7 @@ public class GomTask extends GomCommonTask {
 
   private boolean optimize = false;
   private boolean optimize2 = false;
+  private boolean inlineplus = false;
 
   protected String toPattern() {
     return "\\1\\L\\3" + protectedFileSeparator + "\\3.tom";
@@ -102,12 +104,26 @@ public class GomTask extends GomCommonTask {
     return optimize2;
   }
 
+  /**
+   * If true, compiles with inlining
+   * @param inlineplus if true compile with inlining
+   */
+  public void setInlineplus(boolean flag) {
+    this.inlineplus = flag;
+  }
+
+  public boolean getInlineplus() {
+    return inlineplus;
+  }
   protected void processAdditionalOptions(Java runner) {
     if(optimize == true) {
       javaRunner.createArg().setValue("--optimize");
     }
     if(optimize2 == true) {
       javaRunner.createArg().setValue("--optimize2");
+    }
+    if(inlineplus == true) {
+      javaRunner.createArg().setValue("--inlineplus");
     }
   }
 }

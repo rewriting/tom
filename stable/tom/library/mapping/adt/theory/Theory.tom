@@ -5,14 +5,14 @@
 
 %typeterm ElementaryTheory {
   implement { tom.engine.adt.theory.types.ElementaryTheory }
-  is_sort(t) { $t instanceof tom.engine.adt.theory.types.ElementaryTheory }
+  is_sort(t) { ($t instanceof tom.engine.adt.theory.types.ElementaryTheory) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.theory.TheoryBasicStrategy }
 }
 
 %typeterm Theory {
   implement { tom.engine.adt.theory.types.Theory }
-  is_sort(t) { $t instanceof tom.engine.adt.theory.types.Theory }
+  is_sort(t) { ($t instanceof tom.engine.adt.theory.types.Theory) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.theory.TheoryBasicStrategy }
 }

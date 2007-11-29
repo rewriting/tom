@@ -54,8 +54,8 @@
       class='tom.gom.expander.ExpanderPlugin'/>
     <plugin name='TypeExpander'
       class='tom.gom.expander.TypeExpanderPlugin'/>
-    <plugin name='ReferenceExpander'
-      class='tom.gom.expander.GomReferenceExpanderPlugin'/>
+    <plugin name='GraphExpander'
+      class='tom.gom.expander.GraphExpanderPlugin'/>
     <plugin name='Compiler'
       class='tom.gom.compiler.CompilerPlugin'/>
     <plugin name='Backend'
@@ -86,6 +86,10 @@
       <boolean name='debug'
         altName='vv'
         description='Display debugging info'
+        value='false'/>
+      <boolean name='multithread'
+        altName='mt'
+        description='Generate code compatible with multi-threading'
         value='false'/>
       <boolean name='verbosedebug'
         altName='vvv'

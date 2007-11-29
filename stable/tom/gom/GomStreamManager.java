@@ -32,6 +32,7 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -59,7 +60,8 @@ public class GomStreamManager {
    * Relative path which corresponds to the package where to generate the java
    * classes (empty by default).
    * */
-  private String packagePath = "";
+  private String defaultPackagePath = "";
+  private HashMap<String,String> packagePathMap = new HashMap<String,String>();
 
   /** Suffixes */
   private String inputSuffix;
@@ -74,8 +76,9 @@ public class GomStreamManager {
     destDirFile = null;
     inputFileName = "";
     inputReader = null;
-    packagePath = "";
+    defaultPackagePath = "";
     inputSuffix = ".gom";
+    packagePathMap.clear();
   }
 
   public void initializeFromOptionManager(OptionManager optionManager) {
@@ -96,7 +99,7 @@ public class GomStreamManager {
     // package and name for apigen
     String pack = (String)optionManager.getOptionValue("package");
     if(pack.length() > 0) {
-      setPackagePath(pack);
+      setDefaultPackagePath(pack);
     }
     // output file name for intermediate
     String intermediateName =
@@ -176,7 +179,7 @@ public class GomStreamManager {
     return inputFileName;
   }
 
-  public void setInputFile(String sInputFile) {
+  private void setInputFile(String sInputFile) {
     this.inputFileName = sInputFile;
   }
 
@@ -221,22 +224,33 @@ public class GomStreamManager {
     this.inputSuffix = inputSuffix;
   }
 
-  public String getPackagePath() {
-    return packagePath;
+  private void setDefaultPackagePath(String packagePath) {
+    this.defaultPackagePath = packagePath.replace('.',File.separatorChar);
   }
 
-  public void setPackagePath(String packagePath) {
-    this.packagePath = packagePath.replace('.',File.separatorChar);
+  public String getDefaultPackagePath() {
+    return defaultPackagePath.replace(File.separatorChar,'.');
   }
 
-  public void appendToPackagePath(String path) {
-    if(this.packagePath != "") {
-      this.packagePath = this.packagePath +
-                         File.separatorChar +
-                         path.replace('.',File.separatorChar);
-    } else {
-      this.packagePath = path.replace('.',File.separatorChar);
+  public String getPackagePath(String moduleName) {
+    if(getDefaultPackagePath().length() > 0) {
+      // if a default package exists, return it
+      // ignore the prefix of each module
+      return getDefaultPackagePath();
     }
+    String res = packagePathMap.get(moduleName);
+    if(res==null) {
+      res = getDefaultPackagePath();
+    }
+    return res.replace(File.separatorChar,'.');
+  }
+
+  public void associatePackagePath(String moduleName,String path) {
+    String pkg = path.replace('.',File.separatorChar);
+    if(!"".equals(defaultPackagePath)) {
+      pkg = this.defaultPackagePath + File.separatorChar + pkg;
+    }
+    packagePathMap.put(moduleName,pkg);
   }
 
   public File findModuleFile(String extendedModuleName) {
