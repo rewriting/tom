@@ -88,7 +88,14 @@ class DeepMatch {
         T st = null;
         while(true) {
           newpos = newpos.up();
-          try { st = (T) newpos.getSubterm().visit(term); }
+          try { 
+            Visitable v = newpos.getSubterm().visit(term); 
+            if( v instanceof VisitableBuiltin) {
+              st = (T) ((VisitableBuiltin)v).getBuiltin(); 
+            } else {
+              st = (T) v;
+            }
+          }
           catch (VisitFailure e) { throw new RuntimeException(); }
           int last = newlv.pop();
           if (last < st.getChildCount()) {
@@ -104,8 +111,14 @@ class DeepMatch {
     }
 
     public T getSubterm() {
-      try { return (T) pos.getSubterm().visit(term); }
-      catch (VisitFailure e) { throw new RuntimeException(); }
+      try {
+        Visitable v = pos.getSubterm().visit(term); 
+        if( v instanceof VisitableBuiltin) {
+          return (T) ((VisitableBuiltin)v).getBuiltin(); 
+        } else {
+          return (T) v;
+        }
+      } catch (VisitFailure e) { throw new RuntimeException(); }
     }
 
     public boolean equals(Object o) {
@@ -154,7 +167,7 @@ class DeepMatch {
   public static void main(String [] argv) {
     Term t = `f(f(l("a"),l("b")),f(l("c"),l("a")));
     System.out.println("- t = " + t);
-    
+
     Iter<Term> it = new Iter(t);
     System.out.print("- all labels in t :");
     %match(it) {
