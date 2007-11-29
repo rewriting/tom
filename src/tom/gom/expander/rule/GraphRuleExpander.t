@@ -683,17 +683,42 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
   %strategy PathForPattern() extends Identity(){
     visit Term {
-      PathTerm(X*,PathTerm(-1,sublist@!PathTerm(_*,!-2,_*),-1),Y*) -> {
-        int k = 1+`sublist.length();
-        PathTerm newX = (PathTerm) `PathForPattern().visit(`X);
-        PathTerm newY = (PathTerm) `PathForPattern().visit(`Y);
-        return `PathTerm(newX*,-k,newY*);
+      //treatment for the first rise
+      PathTerm(-1,tail*) -> {
+        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
+        return newtail;
       }
-      PathTerm(X*,PathTerm(1,sublist@!PathTerm(_*,!2,_*),1),Y*) -> {
-        int k = 1+`sublist.length();
-        PathTerm newX = (PathTerm) `PathForPattern().visit(`X);
-        PathTerm newY = (PathTerm) `PathForPattern().visit(`Y);
-        return `PathTerm(newX*,k,newY*);
+      
+      //detect rises into a TermList comb and remove it
+      PathTerm(sublist@!PathTerm(_*,!-2,_*),-1,tail*) && (!PathTerm()<<sublist)-> {
+        int upcount = `sublist.length();
+        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
+        return `PathTerm(-upcount,newtail*);
+      }
+
+      // special treatment for the last rise into a TermList to the root
+      //PathTerm()<<tail cooresponds to cycle
+      p@PathTerm(sublist@!PathTerm(_*,!-2,_*),tail*) && (PathTerm(1,_*)<<tail || PathTerm(2,_*)<<tail || PathTerm()<<tail) && (!PathTerm()<<sublist) -> {
+        int downcount = `sublist.length();
+        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail*);
+        return `PathTerm(-downcount,newtail*);
+      }
+      
+      //detect descents into a TermList comb and remove it
+      PathTerm(sublist@!PathTerm(_*,!2,_*),1,tail*) && (!PathTerm()<<sublist)-> {
+        int downcount = `sublist.length();
+        PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
+        return `PathTerm(downcount,newtail*);
+      }
+    }
+  }
+
+  %strategy Normalize() extends Identity(){
+    visit Term {
+      PathTerm(X*,x,y,Y*) -> {
+        if (`x==-`y) {
+          return `PathTerm(X*,Y*);
+        }
       }
     }
   }
@@ -703,8 +728,9 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       RefTerm[l=label] -> {
         if (map.containsKey(`label)) {
           Path target = (Path) map.get(`label);
-          Path ref = (target.sub(getEnvironment().getPosition()));
-          //transform the path to obtain the corresponding one in the pattern
+          Path ref = target.sub(getEnvironment().getPosition());
+          //warning: do not normalize ref because we need to transform paths that go to the root
+          //construct the PathTerm corresponding to the position ref
           Term path = `PathTerm();
           int head;
           while(ref.length()!=0) {
@@ -712,22 +738,12 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
             ref  = ref.getTail();
             path = `PathTerm(path*,head);
           }
-          Term newpath = normalize((Term)`PathForPattern().visitLight(path));
+          //transform the path to obtain the corresponding one in the pattern
+          Term newpath = (Term) `Sequence(PathForPattern(),RepeatId(Normalize())).visitLight(path);
           return newpath;
         }
       }
     }
-  }
-
-  public static Term normalize(Term path){
-    %match(path) {
-      PathTerm(X*,x,y,Y*) -> {
-        if (`x==-`y) {
-          return normalize(`PathTerm(X*,Y*));
-        }
-      }
-    }
-    return path;
   }
 
   private String getSort(String symbolOperator,int omega) {
