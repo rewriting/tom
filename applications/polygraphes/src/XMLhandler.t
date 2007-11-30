@@ -306,11 +306,11 @@ public static void save(String fileContent,File file) throws IOException {
 			sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			i++;}
-		if(source.isTwoId()){sourceString="TwoC1("+sourceString+",Y*)";}
-		else{sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
-		if(target.isTwoId()){targetString="TwoC1("+targetString+",Y*)";}
-		else{
-		targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
+		if(source.isConsTwoC1()){sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
+		else{sourceString="TwoC1("+sourceString+",Y*)";}
+		if(target.isConsTwoC1()){targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
+		else{targetString="TwoC1("+targetString+",Y*)";
+		}
 		
 		return sourceString+ "-> {return `"+targetString+";}";
 	}
@@ -323,8 +323,8 @@ public static void save(String fileContent,File file) throws IOException {
 	return myPath;
 }
 	public static String makeRuleStrategy(String filename){
-		//for sur les 3-cellules, rules+=makerule()\n
-		String rule="";
+		String strategy="";
+		int n=0;
 	try{	
 	Document dom = DocumentBuilderFactory.newInstance()
         .newDocumentBuilder().parse(filename);
@@ -333,19 +333,38 @@ public static void save(String fileContent,File file) throws IOException {
       for (int i = 0; i < childs.getLength(); i++) {
 	Node child = childs.item(i);
 	if(!child.getNodeName().equals("#text")){
-		rule+=makeRule(makeThreeCell(child))+"\n";
-		}
-      }
-      
-	}
-	catch(Exception e){ e.printStackTrace();}
-	 
-	 String strategy=%[%strategy ApplyRules() extends Identity(){ 
+		 String rule=makeRule(makeThreeCell(child))+"\n";
+			 strategy+=%[%strategy ApplyRules@n@() extends Identity(){ 
   	visit TwoPath {
 @rule@
   	}
 }
   	]%;
+		n++;
+		}
+
+      }
+      String evalStrategy="TopDown(ApplyRules0())";
+      for(int i=1;i<n;i++){
+    	  evalStrategy+=",TopDown(ApplyRules"+i+"())";
+      }
+      			 strategy+=%[public static TwoPath eval(TwoPath myPath){
+try{
+System.out.println("BEFORE");
+myPath.print();
+System.out.println("LOG");
+myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visit(myPath);
+System.out.println("RESULT");
+myPath.print();
+return myPath;
+}
+catch(VisitFailure e) {
+      throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
+    }
+}
+  	]%;
+	}
+	catch(Exception e){ e.printStackTrace();}
 	 return strategy;
 }
 	public static String getProgramName(String filename){

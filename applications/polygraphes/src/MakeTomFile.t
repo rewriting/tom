@@ -7,7 +7,7 @@ import java.io.File;
 public class MakeTomFile {
 
   public static void main (String args[]) {
-	 String filename="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/nat.xml";
+	 String filename="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogram.xml";
 	 try{XMLhandler.save(makeTomFile(filename),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/"+XMLhandler.getProgramName(filename)+".t"));}
 	 catch(Exception e){e.printStackTrace();}
 	 
@@ -371,20 +371,6 @@ sort ThreePath:block(){
     }
   }
 
-public static TwoPath eval(TwoPath myPath){
-try{
-System.out.println("BEFORE");
-myPath.print();
-System.out.println("LOG");
-myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(TopDown(ApplyRules()),Print())))).visit(myPath);
-System.out.println("RESULT");
-myPath.print();
-return myPath;
-}
-catch(VisitFailure e) {
-      throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
-    }
-}
 
 %strategy Gravity() extends Identity(){ 
   	visit TwoPath {

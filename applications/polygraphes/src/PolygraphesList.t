@@ -48,7 +48,7 @@ private static	TwoPath permutationNL = `TwoCell("permutationNL",OneC0(nat,list),
 private static	TwoPath permutationLN = `TwoCell("permutationLN",OneC0(list,nat),OneC0(nat,list),Function());
 // addition, soustraction et division
 private static	TwoPath sort = `TwoCell("sort",list,list,Function());
-private static	TwoPath split = `TwoCell("split",nat,OneC0(nat,nat),Function());
+private static	TwoPath split = `TwoCell("split",list,OneC0(list,list),Function());
 private static	TwoPath merge = `TwoCell("merge",OneC0(list,list),list,Function());
 
 public static void main(String[] args) {
