@@ -47,7 +47,7 @@ class DeepMatch {
 
   }
 
-  private static class Iter<T extends sigAbstractType> {
+  private static class Iter<T extends tom.library.sl.Visitable> {
     private Position pos;
     private Stack<Integer> lastvisited;
     private T term;
@@ -77,11 +77,12 @@ class DeepMatch {
     }
 
     public Iter<T> next() {
-      if (getSubterm().getChildCount() > 0) {
+      Iter<T> res = null;
+      if(getElement().getChildCount() > 0) {
         Position newpos = pos.down(1);
         Stack<Integer> newlv = ((Stack<Integer>) lastvisited.clone());
         newlv.push(1);
-        return new Iter(term, newpos, newlv);
+        res = new Iter(term, newpos, newlv);
       } else {
         Position newpos = pos;
         Stack<Integer> newlv = (Stack<Integer>) lastvisited.clone();
@@ -102,23 +103,32 @@ class DeepMatch {
             last++;
             newlv.push(last);
             newpos = newpos.down(last);
-            return new Iter(term, newpos, newlv);
+            res = new Iter(term, newpos, newlv);
           } else if (newpos.depth() == 0) {
-            return new Iter();
+            res = new Iter();
           }
         }
       }
+      //if(! res.getCurrent() instanceof T) {
+      //  res = res.next();
+      //}
+
+      return res;
     }
 
-    public T getSubterm() {
+    private Visitable getCurrent() {
       try {
-        Visitable v = pos.getSubterm().visit(term); 
-        if( v instanceof VisitableBuiltin) {
-          return (T) ((VisitableBuiltin)v).getBuiltin(); 
-        } else {
-          return (T) v;
+        if(pos==null || term==null) {
+          return null;
         }
-      } catch (VisitFailure e) { throw new RuntimeException(); }
+        return pos.getSubterm().visit(term); 
+      } catch (VisitFailure e) {
+        throw new RuntimeException();
+      }
+    }
+
+    public T getElement() {
+      return (T) getCurrent();
     }
 
     public boolean equals(Object o) {
@@ -155,7 +165,7 @@ class DeepMatch {
     is_fsym(l)       { $l instanceof Iter }
     make_empty()     { new Iter() }
     make_insert(o,l) { null }
-    get_head(l)      { $l.getSubterm() }
+    get_head(l)      { $l.getElement() }
     get_tail(l)      { $l.next() }
     is_empty(l)      { $l.finished() }
   }
@@ -167,15 +177,20 @@ class DeepMatch {
   public static void main(String [] argv) {
     Term t = `f(f(l("a"),l("b")),f(l("c"),l("a")));
     System.out.println("- t = " + t);
+<<<<<<< .mine
+
+    //Iter<Term> it = new Iter(t);
+=======
 
     Iter<Term> it = new Iter(t);
+>>>>>>> .r7361
     System.out.print("- all labels in t :");
-    %match(it) {
+    %match(iter(t)) {
       deep(_*,l(x),_*) -> { System.out.print(" " + `x); }
     }
 
     System.out.print("\n- all labels appearing at least twice in t :");
-    %match(it) {
+    %match(iter(t)) {
       deep(_*,l(x),_*,l(x),_*) -> { System.out.print(" " + `x); }
     }
 
