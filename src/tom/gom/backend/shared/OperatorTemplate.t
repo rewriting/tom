@@ -764,13 +764,12 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
     }
   }
 
-public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
-  String makeName = "make";
+  public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
+    boolean hasHooks = false;
     %match(hooks) {
       /* If there is at least one MakeHook */
 lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
-      makeName = "realMake";
-
+      hasHooks = true;
       writer.write(%[
     public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
@@ -783,32 +782,38 @@ lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
       }
     }
     
+    String makeName = "make";
+    String visibility = "public";
+    if (hasHooks) {
+      makeName = "realMake";
+      visibility = "private";
+    }
+    writer.write(%[
+  @visibility@ static @className()@ @makeName@(@childListWithType(slotList)@) {
+]%);
     if(slotList.length()>0) {
       if(multithread) {
         writer.write(%[
-  public static @className()@ @makeName@(@childListWithType(slotList)@) {
     // allocate and object and make duplicate equal identity
     @className()@ newProto = new @className()@();
-      newProto.initHashCode(@childList(slotList)@);
-      return (@className()@) factory.build(newProto);
-    }
-  ]%);
+    newProto.initHashCode(@childList(slotList)@);
+    return (@className()@) factory.build(newProto);
+]%);
       } else {
         writer.write(%[
-  public static @className()@ @makeName@(@childListWithType(slotList)@) {
     // use the proto as a model
     proto.initHashCode(@childList(slotList)@);
     return (@className()@) factory.build(proto);
-  }
-  ]%);
+]%);
       }
     } else {
         writer.write(%[
-  public static @className()@ @makeName@(@childListWithType(slotList)@) {
     return proto;
-  }
-  ]%);
+]%);
     }
+    writer.write(%[
+  }
+]%);
 }
 
   public SlotFieldList generateMakeHooks(
