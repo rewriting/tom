@@ -36,7 +36,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
-			for (int j = 0; j < oneC0s.getLength(); j++) {
+			for (int j = oneC0s.getLength()-1; j >0; j--) {
 				Node oneC0Element = oneC0s.item(j);
 				if(!oneC0Element.getNodeName().contains("#text")){
 					res=`OneC0(res,makeOnePath(oneC0Element));
@@ -90,7 +90,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC0")){
 			NodeList twoC0s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = 0; j < twoC0s.getLength(); j++) {
+			for (int j = twoC0s.getLength()-1; j >0; j--) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
 					// System.out.println(twoC0Element.getNodeName());
@@ -103,12 +103,12 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC1")){
 			NodeList twoC1s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = 0; j < twoC1s.getLength(); j++) {
+			for (int j = twoC1s.getLength()-1; j >0; j--) {
 				Node twoC1Element = twoC1s.item(j);
 				if(!twoC1Element.getNodeName().contains("#text")){
 					if(res==`TwoId(Id())){res=`makeTwoPath(twoC1Element);}
 					else{
-					res=`TwoC1(res,makeTwoPath(twoC1Element));
+					res=`TwoC1(makeTwoPath(twoC1Element),res);
 					}
 				}				
 			}		
@@ -123,6 +123,7 @@ for (int i = 0; i < childs.getLength(); i++) {
 }
 return `TwoId(Id());
 }
+
 
 
 public static ThreePath makeThreeCell(Node node){
@@ -302,7 +303,7 @@ public static void save(String fileContent,File file) throws IOException {
 		String sourceString=source.toString();
 		String targetString=target.toString();
 		int i=0;
-		while(sourceString.contains("TwoId")){
+		while(sourceString.contains("TwoId")){//A CHANGER ?? ajouter condition if xi!=TwoId(Id())
 			sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			i++;}
@@ -311,8 +312,9 @@ public static void save(String fileContent,File file) throws IOException {
 		if(target.isConsTwoC1()){targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
 		else{targetString="TwoC1("+targetString+",Y*)";
 		}
-		
-		return sourceString+ "-> {return `"+targetString+";}";
+		String condition="";
+		if(i==1){condition="if(`X0!=`TwoId(Id()))";}
+		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
 	}
 	public static TwoPath formatRule(TwoPath myPath){
 		try{myPath=(TwoPath) `RepeatId(TopDown(Normalize())).visit(myPath);
@@ -344,16 +346,16 @@ public static void save(String fileContent,File file) throws IOException {
 		}
 
       }
-      String evalStrategy="TopDown(ApplyRules0())";
+      String evalStrategy="ApplyRules0()";
       for(int i=1;i<n;i++){
-    	  evalStrategy+=",TopDown(ApplyRules"+i+"())";
+    	  evalStrategy+=",ApplyRules"+i+"()";
       }
       			 strategy+=%[public static TwoPath eval(TwoPath myPath){
 try{
 System.out.println("BEFORE");
 myPath.print();
 System.out.println("LOG");
-myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visit(myPath);
+myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(TopDown(Sequence(@evalStrategy@,Print()))))).visit(myPath);
 System.out.println("RESULT");
 myPath.print();
 return myPath;

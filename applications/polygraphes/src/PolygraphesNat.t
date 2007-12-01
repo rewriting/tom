@@ -111,8 +111,10 @@ TwoPath add=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ,succ,succ),TwoC1(zero,succ,su
 TwoPath div=`TwoC1(TwoC0(add,TwoC1(zero,succ,succ,succ)),division);
 TwoPath total=`TwoC1(TwoC0(div,TwoC1(zero,succ,succ,succ,succ)),multiplication);
 TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(six,six),multiplication),trois),minus);
-//test(nine);
-System.out.println(rule3);
+TwoPath test = `TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(TwoC1(zero,TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),TwoC1(succ,succ)),succ);
+
+test(test);
+//System.out.println(rule3);
 }
 
 //-----------------------------------------------------------------------------
@@ -286,8 +288,8 @@ myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDow
 System.out.println("RESULT");
 print(myPath);
 System.out.println(result(myPath));
+tom.library.utils.Viewer.display(myPath);
 return myPath;
-//tom.library.utils.Viewer.display(myPath);
 }
 catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
