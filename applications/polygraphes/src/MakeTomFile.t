@@ -449,6 +449,7 @@ public static TwoPath[] toArray(TwoC0 twoc0) {
 
 public static OnePath makeOnePath(Node node){
 String nodeName =node.getNodeName();
+		// System.out.println(nodeName);
 		if(nodeName.equals("OnePath")){
 			NodeList nodeChilds=node.getChildNodes();
 			for (int i = 0; i < nodeChilds.getLength(); i++) {
@@ -461,10 +462,13 @@ String nodeName =node.getNodeName();
 				String name=attributes.getNamedItem("Name").getNodeValue();
 				return `OneCell(name);
 		}
+		/*
+		 * if(nodeName.equals("Id")){ return `Id(); }
+		 */// useless
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
-			for (int j = 0; j < oneC0s.getLength(); j++) {
+			for (int j = oneC0s.getLength()-1; j >0; j--) {
 				Node oneC0Element = oneC0s.item(j);
 				if(!oneC0Element.getNodeName().contains("#text")){
 					res=`OneC0(res,makeOnePath(oneC0Element));
@@ -518,7 +522,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC0")){
 			NodeList twoC0s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = 0; j < twoC0s.getLength(); j++) {
+			for (int j = twoC0s.getLength()-1; j >0; j--) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
 					// System.out.println(twoC0Element.getNodeName());
@@ -531,12 +535,12 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC1")){
 			NodeList twoC1s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = 0; j < twoC1s.getLength(); j++) {
+			for (int j = twoC1s.getLength()-1; j >0; j--) {
 				Node twoC1Element = twoC1s.item(j);
 				if(!twoC1Element.getNodeName().contains("#text")){
 					if(res==`TwoId(Id())){res=`makeTwoPath(twoC1Element);}
 					else{
-					res=`TwoC1(res,makeTwoPath(twoC1Element));
+					res=`TwoC1(makeTwoPath(twoC1Element),res);
 					}
 				}				
 			}		
@@ -551,6 +555,7 @@ for (int i = 0; i < childs.getLength(); i++) {
 }
 return `TwoId(Id());
 }
+
 public static String twoPath2XML(TwoPath path){
 %match (TwoPath path){
 			TwoId(onepath) -> {return "<TwoPath>\n<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n</TwoPath>\n";}
