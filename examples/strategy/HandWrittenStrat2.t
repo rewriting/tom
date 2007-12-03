@@ -30,7 +30,7 @@
 package strategy;
 
 
-import strategy.sl.*;
+import tom.library.sl.*;
 
 public class HandWrittenStrat2 {
 
@@ -44,58 +44,8 @@ public class HandWrittenStrat2 {
    *        | a2()
    **/
 
-  //modified sl
-  %include{string.tom}
 
-  %typeterm Strategy {
-    implement { strategy.sl.Strategy }
-    is_sort(t) { ($t instanceof strategy.sl.Strategy) }
-    equals(t1,t2) { ($t1.equals($t2)) }
-    visitor_fwd { strategy.sl.reflective.StrategyFwd }
-  }
-
-  %oplist Strategy Sequence(Strategy*) {
-    is_fsym(t) {( ($t instanceof strategy.sl.Sequence) )}
-    make_empty() {( null )}
-    make_insert(head,tail) {( ($tail==null)?$head:new strategy.sl.Sequence($head,$tail) )}
-    get_head(t) {( (strategy.sl.Strategy)$t.getChildAt(strategy.sl.Sequence.FIRST) )}
-    get_tail(t) {( (strategy.sl.Strategy)$t.getChildAt(strategy.sl.Sequence.THEN) )}
-    is_empty(t) {( $t == null )}
-  }
-
-  %op Strategy Fail() {
-    is_fsym(t) {( ($t instanceof strategy.sl.Fail) )}
-    make() {( new strategy.sl.Fail() )}
-  }
-
-  %op Strategy All(s1:Strategy) {
-    is_fsym(t) {( ($t instanceof strategy.sl.All) )}
-    make(v) {( new strategy.sl.All($v) )}
-    get_slot(s1, t) {( (strategy.sl.Strategy)$t.getChildAt(strategy.sl.All.ARG) )}
-  }
-
-  %op Strategy Identity() {
-    is_fsym(t) {( ($t instanceof strategy.sl.Identity) )}
-    make() {( new strategy.sl.Identity() )}
-  }
-
-  %op Strategy Mu(s1:Strategy, s2:Strategy) {
-    is_fsym(t) {( ($t instanceof strategy.sl.Mu) )}
-    make(var, v) {( new strategy.sl.Mu($var, $v) )}
-    get_slot(s1, t) {( (strategy.sl.MuVar)$t.getChildAt(strategy.sl.Mu.VAR) )}
-    get_slot(s2, t) {( (strategy.sl.Strategy)$t.getChildAt(strategy.sl.Mu.V) )}
-  }
-
-  %op Strategy MuVar(var:String) {
-    is_fsym(t) {( ($t instanceof strategy.sl.MuVar) )}
-    make(name) {( new strategy.sl.MuVar($name) )}
-    get_slot(var, t) {( ((strategy.sl.MuVar)$t).getName() )}
-  }
-
-
-  %op Strategy TopDown(s1:Strategy) {
-    make(v) {( `Mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) )}
-  }
+  %include{sl.tom}
 
 
   private abstract static class Term1 { }
@@ -275,72 +225,14 @@ public class HandWrittenStrat2 {
 
 
   //modify the generated code for:
-  /**
-    %strategy R() extends Identity() {
+  %strategy R() extends Identity() {
     visit Term1 {
-    f1(x) -> { return `x; }
+      f1(x) -> { return `x; }
     }
     visit Term2 {
-    f2(f2(x)) -> { return `x; }
-    }
-    }
-   */
-
-  %op Strategy R() {
-    is_fsym(t) {( ($t instanceof R) )}
-    make() {( new R() )}
-  }
-
-  private static class R extends strategy.sl.BasicStrategy {
-
-    public R() { super(`Identity());}
-
-    public  HandWrittenStrat2.Term1  visit_Term1( HandWrittenStrat2.Term1  tom__arg, Introspector m) throws strategy.sl.VisitFailure {
-      %match(tom__arg) {
-        f1(x) -> { return `x; }
-      }
-      return _visit_Term1(tom__arg,m);
-    }
-
-    public  HandWrittenStrat2.Term2  visit_Term2( HandWrittenStrat2.Term2  tom__arg, Introspector m) throws strategy.sl.VisitFailure {
-      %match(tom__arg) {
-        f2(f2(x)) -> { return `x; }
-      }
-      return _visit_Term2(tom__arg,m);
-    }
-
-    public  HandWrittenStrat2.Term1  _visit_Term1( HandWrittenStrat2.Term1  arg, Introspector m) throws strategy.sl.VisitFailure {
-      if (!((environment ==  null ))) {
-        return (( HandWrittenStrat2.Term1 )any.visit(environment,m));
-      } else {
-        return (( HandWrittenStrat2.Term1 )any.visitLight(arg,m));
-      } 
-    }
-
-    public  HandWrittenStrat2.Term2  _visit_Term2( HandWrittenStrat2.Term2  arg, Introspector m) throws strategy.sl.VisitFailure {
-      if (!((environment ==  null ))) {
-        return (( HandWrittenStrat2.Term2 )any.visit(environment,m));
-      } else {
-        return (( HandWrittenStrat2.Term2 )any.visitLight(arg,m));
-      } 
-    }
-
-    public Object visitLight(Object v,Introspector m) throws strategy.sl.VisitFailure {
-      if (v instanceof Term1) {
-        return visit_Term1((( HandWrittenStrat2.Term1 )v),m);
-      }
-      if (v instanceof Term2) {
-        return visit_Term2((( HandWrittenStrat2.Term2 )v),m);
-      }if (!((environment ==  null ))) {
-        return any.visit(environment,m);
-      } 
-      else {
-        return any.visitLight(v,m);
-      } 
+      f2(f2(x)) -> { return `x; }
     }
   }
-
-
 
   public static void main(String[] args) throws VisitFailure {
     Term1 t1 = `f1(f1(f1(a1())));
