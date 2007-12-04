@@ -269,6 +269,9 @@ class PrettyPrinter {
       funAppl("inter",(t1,t2)) -> { 
         return "(" + toLatex(`t1) + ") \\cap (" + toLatex(`t2) + ")";
       }
+      funAppl("supset",(t1,t2)) -> { 
+	return "(" + toLatex(`t1) + ") \\supset (" + toLatex(`t2) + ")";
+      }
       funAppl("emptyset",()) -> { 
         return "\\emptyset";
       }
@@ -296,10 +299,10 @@ class PrettyPrinter {
        return ("\\square");
      }
      funAppl("pitype",(x,y)) -> {
-       return ("\\dot\\pi_*") + toLatex(`x) + " .~" +  toLatex(`y);
+       return ("\\dot\\pi_* ") + toLatex(`x) + " .~" +  toLatex(`y);
      }
      funAppl("pikind",(x,y)) -> {
-       return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
+       return ("\\dot\\pi_\\square ") + toLatex(`x) + " .~" +  toLatex(`y);
      }
 
      // lambda-sigma

@@ -82,6 +82,7 @@ command returns [lemu.sequents.types.Command c]
 proofcommand returns [lemu.sequents.types.ProofCommand c]
   : i=ID { c = `proofCommand($i.text); }
   | ^(FOCUS v=ID) {c = `focusCommand($v.text); }
+  | ^(APPLY v=ID) {c = `applyCommand($v.text); }
   | ^(RRULE n=NUMBER) {c = `ruleCommand(Integer.parseInt($n.text)); }
   | FOLD {c = `foldCommand(); }
   | ^(ASSUME name=ID) { c = `assumeCommand($name.text); }

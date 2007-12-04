@@ -88,6 +88,7 @@ command: PROOF^ ID COLUMN! pred DOT!
        ;
 
 proofcommand: FOCUS^ ID DOT!
+            | APPLY^ ID DOT!
             | RRULE^ NUMBER DOT!
             | FOLD^ DOT!
             | ASSUME^ ID DOT!
@@ -189,6 +190,7 @@ TERM: 'term';
 PROP: 'proposition';
 INDUCTIVER: 'recinductive';
 INDUCTIVE: 'inductive';
+APPLY: 'apply';
 
 ID : ('_'|'A'..'Z'|'a'..'z')('_'|'A'..'Z'|'a'..'z'|'0'..'9')*;
 NUMBER: ('0'..'9')+;

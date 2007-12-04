@@ -1,0 +1,110 @@
+termrule lappl(lambda(a),b) -> subst(a,lcons(b,id())) .
+termrule subst(lappl(b,a),s) -> lappl(subst(b,s),subst(a,s)).
+termrule subst(one(),lcons(a,s)) -> a.
+termrule subst(a,id()) -> a.
+termrule subst(lambda(a),s) -> lambda(subst(a,lcons(one(),rond(s,shift())))).
+termrule subst(subst(a,s),t) -> subst(a,rond(s,t)).
+termrule rond(id(),s) -> s.
+termrule rond(shift(),lcons(a,s)) -> s.
+termrule rond(rond(s1,s2),s3) -> rond(s1,rond(s2,s3)).
+termrule rond(lcons(a,s),t) -> lcons(subst(a,t),rond(s,t)).
+termrule rond(s,id()) -> s.
+termrule lcons(one(),shift()) -> id().
+termrule lcons(subst(one(),s), rond(shift(), s)) -> s.
+
+termrule subst(pitt(a,b),s) -> pitt(subst(a,s),subst(b,lcons(one(),rond(s,shift())))).
+termrule subst(pitk(a,b),s) -> pitk(subst(a,s),subst(b,lcons(one(),rond(s,shift())))).
+termrule subst(pikt(a,b),s) -> pikt(subst(a,s),subst(b,lcons(one(),rond(s,shift())))).
+termrule subst(pikk(a,b),s) -> pikk(subst(a,s),subst(b,lcons(one(),rond(s,shift())))).
+termrule subst(type(),s) -> type().
+termrule subst(kind(),s) -> kind().
+
+
+rule in(type(),kind()) -> \T.
+
+rule in(pitt(a,b),type()) -> in(a,type()) /\ 
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), type())).
+rule in(pitk(a,b),kind()) -> in(a,type()) /\ 
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), kind())).
+rule in(pikt(a,b),type()) -> in(a,kind()) /\ 
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), type())).
+rule in(pikk(a,b),kind()) -> in(a,kind()) /\ 
+		    forall z, (in(z,a) => in(subst(b,lcons(z,id())), kind())).
+rule in(a,pitt(b,c)) -> in(b,type()) /\ forall z, (in(z,b) =>
+	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),type()))).
+rule in(a,pitk(b,c)) -> in(b,type()) /\ forall z, (in(z,b) =>
+	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),kind()))).
+rule in(a,pikt(b,c)) -> in(b,kind()) /\ forall z, (in(z,b) =>
+	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),type()))).
+rule in(a,pikk(b,c)) -> in(b,kind()) /\ forall z, (in(z,b) =>
+	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),kind()))).
+
+
+termrule bottom() -> pikt(type(),one()).
+termrule imp(a,b) -> pitt(a, subst(b,shift())).
+termrule and(a,b) -> pikt(type(), 
+  imp(imp(subst(a,shift()),imp(subst(b,shift()),one())), one())).
+termrule or(a,b) -> pikt(type(), 
+  imp(imp(subst(a,shift()),one()), imp(imp(subst(b,shift()),one()), one()))).
+termrule not(a) -> imp(a,bottom()).
+termrule ex(a,b) -> pikt(type(),
+	imp(imp(
+		pitt(subst(a,shift()), 
+		     subst(b,lcons(one(),rond(shift(),shift())))),
+		one()),
+		one())).
+
+/* \E x. \A y. R x y => \A y. \E x. R x y */
+proof essai: (in(a, type())/\ in(b, type()) /\ in(r, pitk(a, pitk(subst(b,shift()),type())))) =>
+      in(
+lambda(lambda(lambda(lambda(lappl(lappl(subst(one(),rond(shift(),rond(shift(),shift()))),subst(one(),shift())),lambda(lappl(subst(one(),shift()),lambda(lappl(lappl(subst(one(),shift()),one()),subst(one(),rond(shift(),rond(shift(),rond(shift(),shift())))))))))))))
+,
+    imp(ex(a, pitt(subst(b,shift()), lappl(lappl(subst(r, rond(shift(),shift())),
+	      		     		 subst(one(),shift())),
+                                   one()))),
+        pitt(b, ex(subst(a,shift()), lappl(lappl(subst(r,rond(shift(),shift())),one()), subst(one(),shift())))))).
+autoreduce.
+apply h7.
+apply h2.
+apply h7.
+apply h2.
+apply h7.
+apply h2.
+apply h4.
+apply h2.
+autoreduce.
+apply h6.
+autoreduce.
+apply h14.
+apply h2.
+apply h4.
+apply h2.
+apply h13.
+apply h2.
+apply h7.
+apply h2.
+apply h6.
+apply h2.
+
+/* Excluded middle => (~~A => A) */
+proof class: in(em, pikt(type(), or(one(),not(one()))))
+ => in(lambda(lambda(lappl(lappl(lappl(lappl(
+	subst(em,rond(shift(),shift())), 
+	subst(one(), shift())),
+	subst(one(), shift())),		
+	lambda(one())),
+	lambda(lappl(lappl(
+		subst(one(), shift()),
+		one()),
+		subst(one(), rond(shift(),shift())))))))
+		 ,
+pikt(type(), imp(not(not(one())), one()))).
+autoreduce.
+apply h3.
+apply h2.
+apply h2.
+apply h2.
+autoreduce.
+apply h12.
+apply h2.
+autoreduce.
