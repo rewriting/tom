@@ -55,22 +55,45 @@ class DeepMatch2 {
     equals(t1,t2) { $t1.equals($t2) }
   }
 
-  %oplist Deep deepB(B*) {
+  %oplist DeepB deepB(B*) {
     is_fsym(l)       { $l instanceof Iter }
-    make_empty()     { new Iter() }
+    make_empty()     { new Iter<B>() }
     make_insert(o,l) { null }
     get_head(l)      { $l.getElement() }
     get_tail(l)      { $l.next() }
     is_empty(l)      { $l.finished() }
   }
 
-  %op Deep iterB(t:B) {
+  %op DeepB iterB(t:B) {
     make(x) { new Iter<B>($x) }
   }
 
+  %op DeepB iterA(t:A) {
+    make(x) { new Iter<A>($x) }
+  }
+
+
   public static void main(String [] argv) {
     A t = `f(f(B2A(l("a")),B2A(l("b"))),f(B2A(l("c")),B2A(l("a"))));
+    System.out.println("- t = " + t);
 
+    Iter<A> it = `iterA(t);
+    System.out.print("- all labels in t :");
+    %match(it) {
+      deepB(_*,l(x),_*) -> { System.out.print(" " + `x); }
+    }
+
+    System.out.print("\n- all labels appearing at least twice in t :");
+    %match(it) {
+      deepB(_*,l(x),_*,l(x),_*) -> { System.out.print(" " + `x); }
+    }
+
+    System.out.print("\n- future translation of f(z@{l(x)},_) -> { print(x) } :");
+    %match(t) {
+      f(z,_) && deepB(_*,l(x),_*) << iterA(z) -> { System.out.print(" " + `x); }
+    }
+
+    System.out.println();
   }
 
 
@@ -79,11 +102,14 @@ class DeepMatch2 {
       x -> { bag.add(getEnvironment().getPosition()); }
     }
   }
-  
+
   private static class Iter<T extends tom.library.sl.Visitable> {
     private ListIterator it;
     private T term;
     private Position next;
+
+    public Iter() {
+    }
 
     public Iter(T t) {
       term = t;
@@ -93,7 +119,7 @@ class DeepMatch2 {
         System.out.println("c  = " + c);
         it = c.listIterator();
         if(it.hasNext()) {
-          next = it.next();
+          next = (Position) it.next();
         }
       } catch(VisitFailure e) {
         System.out.println("failure");
@@ -105,16 +131,16 @@ class DeepMatch2 {
     }
 
     public Iter<T> next() {
-      Position p = it.next();
+      Position p = (Position) it.next();
 
     }
 
     public T getElement() {
       try {
-        if(pos==null || term==null) {
+        if(next==null || term==null) {
           return null;
         }
-        return next.getSubterm().visit(term);
+        return (T) next.getSubterm().visit(term);
       } catch (VisitFailure e) {
         throw new RuntimeException(); 
       }

@@ -177,13 +177,7 @@ class DeepMatch {
   public static void main(String [] argv) {
     Term t = `f(f(l("a"),l("b")),f(l("c"),l("a")));
     System.out.println("- t = " + t);
-<<<<<<< .mine
-
-    //Iter<Term> it = new Iter(t);
-=======
-
     Iter<Term> it = new Iter(t);
->>>>>>> .r7361
     System.out.print("- all labels in t :");
     %match(iter(t)) {
       deep(_*,l(x),_*) -> { System.out.print(" " + `x); }
