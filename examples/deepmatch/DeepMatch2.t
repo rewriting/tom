@@ -49,64 +49,60 @@ class DeepMatch2 {
       B = l(n:String)
   }
 
-  %typeterm DeepB {
-    implement { Iter<B> }
-    is_sort(t) { $t instanceof Iter }
-    equals(t1,t2) { $t1.equals($t2) }
+  %typeterm DeepAB {
+    implement { Iter<A,B> }
+    is_sort(t) { ($t instanceof Iter) }
+    equals(t1,t2) { ($t1.equals($t2)) }
   }
 
-  %oplist DeepB deepB(B*) {
-    is_fsym(l)       { $l instanceof Iter }
-    make_empty()     { new Iter<B>() }
+  %oplist DeepAB deepAB(B*) {
+    is_fsym(l)       { ($l instanceof Iter) }
+    make_empty()     { (new Iter<A,B>()) }
     make_insert(o,l) { null }
-    get_head(l)      { $l.getElement() }
-    get_tail(l)      { $l.next() }
-    is_empty(l)      { $l.finished() }
+    get_head(l)      { ($l.getElement()) }
+    get_tail(l)      { ($l.next()) }
+    is_empty(l)      { (!$l.hasNext()) }
   }
 
-  %op DeepB iterB(t:B) {
-    make(x) { new Iter<B>($x) }
+  %op DeepAB iterAB(t:A) {
+    make(x) { (new Iter<A,B>($x)) }
   }
-
-  %op DeepB iterA(t:A) {
-    make(x) { new Iter<A>($x) }
-  }
-
 
   public static void main(String [] argv) {
-    A t = `f(f(B2A(l("a")),B2A(l("b"))),f(B2A(l("c")),B2A(l("a"))));
-    System.out.println("- t = " + t);
+    A t = `f(f(B2A(l("a")),B2A(l("a"))),f(B2A(l("c")),B2A(l("a"))));
+    System.out.println("t = " + t);
 
-    Iter<A> it = `iterA(t);
-    System.out.print("- all labels in t :");
-    %match(it) {
-      deepB(_*,l(x),_*) -> { System.out.print(" " + `x); }
+/*
+    Iter iter = `iterAB(t);
+    while(iter.hasNext()) {
+      System.out.println("getElement: " + iter.getElement());
+      System.out.println("next");
+      iter.next();
+    }
+    
+    %match(iter) {
+      deepAB(_*,l(x),_*,l(x),_*) -> { System.out.println(" " + `x); }
+   }
+*/
+
+    %match(A t) {
+      //f(z,_) && deepAB(_*,l(x),_*) << iterAB(z) -> { System.out.println(" " + `x); }
+      //z && deepAB(_*,l(x),_*,l(x),_*) << iterAB(z) -> { System.out.println(" " + `x); }
+      z && deepAB(_*,l(x),_*,l(x),_*) << iterAB(z) -> { System.out.println(" " + `x); }
     }
 
-    System.out.print("\n- all labels appearing at least twice in t :");
-    %match(it) {
-      deepB(_*,l(x),_*,l(x),_*) -> { System.out.print(" " + `x); }
-    }
-
-    System.out.print("\n- future translation of f(z@{l(x)},_) -> { print(x) } :");
-    %match(t) {
-      f(z,_) && deepB(_*,l(x),_*) << iterA(z) -> { System.out.print(" " + `x); }
-    }
-
-    System.out.println();
   }
 
 
-  %strategy Collect(bag:Collection) extends Identity() {
+  %strategy CollectS(bag:Collection) extends Identity() {
     visit B {
       x -> { bag.add(getEnvironment().getPosition()); }
     }
   }
 
-  private static class Iter<T extends tom.library.sl.Visitable> {
-    private ListIterator it;
+  private static class Iter<T extends tom.library.sl.Visitable, S extends tom.library.sl.Visitable> {
+    private ArrayList<Position> list;
     private T term;
-    private Position next;
 
     public Iter() {
     }
@@ -114,33 +110,31 @@ class DeepMatch2 {
     public Iter(T t) {
       term = t;
       try {
-        List c = new ArrayList();
-        `BottomUp(Collect(c)).visit(t);
-        System.out.println("c  = " + c);
-        it = c.listIterator();
-        if(it.hasNext()) {
-          next = (Position) it.next();
-        }
+        list = new ArrayList<Position>();
+        `BottomUp(CollectS(list)).visit(t);
+        System.out.println("list  = " + list);
       } catch(VisitFailure e) {
         System.out.println("failure");
       }
     }
 
-    public boolean finished() {
-      return !it.hasNext();
+    public boolean hasNext() {
+      return !list.isEmpty();
     }
 
-    public Iter<T> next() {
-      Position p = (Position) it.next();
-
+    public Iter<T,S> next() {
+      Iter<T,S> res = new Iter<T,S>();
+      res.term = this.term;
+      res.list = (ArrayList<Position>)this.list.clone();
+      if(!res.list.isEmpty()) {
+        res.list.remove(0);
+      } 
+      return res;
     }
 
-    public T getElement() {
+    public S getElement() {
       try {
-        if(next==null || term==null) {
-          return null;
-        }
-        return (T) next.getSubterm().visit(term);
+        return (S) list.get(0).getSubterm().visit(term);
       } catch (VisitFailure e) {
         throw new RuntimeException(); 
       }
