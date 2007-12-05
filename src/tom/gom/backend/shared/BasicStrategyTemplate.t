@@ -129,7 +129,7 @@ import tom.library.sl.*;
 
 
   public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
-    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(null));
     environment.setRoot(any);
     int status = visit();
     if(status == tom.library.sl.Environment.SUCCESS) {
@@ -159,6 +159,19 @@ writer.write(%[
       return any.visitLight(v);
     }
   }
+
+  public void yield(tom.library.sl.Visitable subject) {
+    getEnvironment().getYieldGetter().ready();
+    tom.library.sl.Environment e = getEnvironment();
+    synchronized(e.lock2) {
+      e.lock2.notify();
+    }
+    synchronized(e.lock1) {
+    try { e.lock1.wait(); }
+    catch(java.lang.InterruptedException ex) { }
+    }
+  }
+
 ]%);
 generateVisitMethods(writer);
 writer.write(%[

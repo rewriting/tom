@@ -116,7 +116,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
-    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(null));
     environment.setRoot(any);
     int status = visit();
     if(status == tom.library.sl.Environment.SUCCESS) {
@@ -130,6 +130,17 @@ public class @className()@ implements tom.library.sl.Strategy {
     return v.visit_Strategy(this);
   }
 
+  public void yield(tom.library.sl.Visitable subject) {
+    getEnvironment().getYieldGetter().ready();
+    tom.library.sl.Environment e = getEnvironment();
+    synchronized(e.lock2) {
+      e.lock2.notify();
+    }
+    synchronized(e.lock1) {
+    try { e.lock1.wait(); }
+    catch(java.lang.InterruptedException ex) { }
+    }
+  }
 
   public @className()@(@genConstrArgs(slotList.length(),"tom.library.sl.Strategy arg",false)@) {
     args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg",false)@};

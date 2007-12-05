@@ -119,7 +119,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
-    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(null));
     getEnvironment().setRoot(any);
     int status = visit();
     if(status == tom.library.sl.Environment.SUCCESS) {
@@ -132,6 +132,20 @@ public class @className()@ implements tom.library.sl.Strategy {
   public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
     return v.visit_Strategy(this);
   }
+
+  public void yield(tom.library.sl.Visitable subject) {
+    getEnvironment().getYieldGetter().ready();
+    tom.library.sl.Environment e = getEnvironment();
+    synchronized(e.lock2) {
+      e.lock2.notify();
+    }
+    synchronized(e.lock1) {
+    try { e.lock1.wait(); }
+    catch(java.lang.InterruptedException ex) { }
+    }
+  }
+
+
 
   public @className()@(@childListWithType(slotList)@) {
 @generateMembersInit()@
