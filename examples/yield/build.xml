@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the yield example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="yield" value="yield"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${yield}"/>
+    <delete dir="${examples.build}/${yield}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${yield}"/>
+    <!--
+    "Wait for the static %rule problem to be resolved"
+    <tomcompile example="${antipattern}"/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+    optimize="no"
+    optimize2="no"
+                destdir="${examples.gen}">          
+       <include name="${yield}/**/*.t"/>
+    </tom.preset>
+    <javacompile example="${yield}"/>
+  	<copy todir="${examples.build}/${antipattern}">
+      <fileset dir="${yield}">
+        <include name="*.txt"/>
+    	<include name="${yield}/**/*.txt"/> 
+      </fileset>
+    </copy>
+	
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${yield}/**/*.t"/>
+        <include name="${yield}/**/*.txt"/>
+        <include name="${yield}/**/*.java"/>
+        <include name="${yield}/**/*.gom"/>
+        <include name="${yield}/**/*.tom"/>
+        <include name="${yield}/**/*.tom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
