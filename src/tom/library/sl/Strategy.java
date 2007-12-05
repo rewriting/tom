@@ -72,5 +72,7 @@ public interface Strategy extends Visitable {
   public int visit();
 
   public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure;
+
+  public void yield(Visitable subject);
 }
 

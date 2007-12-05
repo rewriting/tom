@@ -53,16 +53,31 @@ public final class Environment implements Cloneable {
   protected int[] omega;
   protected Visitable[] subterm;
   protected int status = Environment.SUCCESS;
+  protected YieldGetter yieldGetter;
 
-  public Environment() {
-    this(DEFAULT_LENGTH);
+  public Integer lock1 = new Integer(0);
+  public Integer lock2 = new Integer(0);
+  public Integer lock3 = new Integer(0);
+
+  public YieldGetter getYieldGetter() {
+    return yieldGetter;
   }
 
-  private Environment(int length) {
+  // for compatibility with stable
+  public Environment() {
+    this(DEFAULT_LENGTH,null);
+  }
+
+  public Environment(YieldGetter yg) {
+    this(DEFAULT_LENGTH,yg);
+  }
+
+  private Environment(int length, YieldGetter yg) {
     omega = new int[length+1];
     subterm = new Visitable[length+1];
     current = 0; // root is in subterm[0]
     omega[0]=0; // the first cell is not used
+    yieldGetter = yg;
   }
 
   private void ensureLength(int minLength) {
@@ -84,6 +99,7 @@ public final class Environment implements Cloneable {
     System.arraycopy(omega, 0, clone.omega, 0, omega.length);
     System.arraycopy(subterm, 0, clone.subterm, 0, omega.length);
     clone.current = current;
+    clone.yieldGetter = yieldGetter;
     return clone;
   }
 

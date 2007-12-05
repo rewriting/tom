@@ -95,7 +95,7 @@ public abstract class BasicStrategy implements Strategy {
 
 
   public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
-    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment(null));
     environment.setRoot(any);
     int status = visit();
     if(status == tom.library.sl.Environment.SUCCESS) {
@@ -115,4 +115,5 @@ public abstract class BasicStrategy implements Strategy {
   }
 
   public abstract Visitable visitLight(Visitable v) throws VisitFailure;
+
 }
