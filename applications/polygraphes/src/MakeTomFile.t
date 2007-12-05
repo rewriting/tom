@@ -302,7 +302,7 @@ sort ThreePath:block(){
   	  		}
   	  		}
   	  	TwoC1(head*,top,TwoC0(left*,X,right*),tail*) -> {if(`left*.source()==`Id()&&`right*.source()==`Id()&&`X.source()==`top.target()){	 
-  	  		TwoPath myNewPath=`TwoId(Id());//peut etre verifier compatibilite de top et X?
+  	  		TwoPath myNewPath=`TwoId(Id());//insuffisant, il pourrait yen avoir plusieurs : crenelage
   	  		if(`head*!=`TwoId(Id())){myNewPath=`TwoC1(head*,TwoC0(left*,TwoC1(top,X),right*),tail*);}else{myNewPath=`TwoC1(TwoC0(left*,TwoC1(top,X),right*),tail*);}
   	  			if(myNewPath!=`TwoId(Id())){
   	  		System.out.println("9");
@@ -346,9 +346,11 @@ sort ThreePath:block(){
   	  		return myNewPath;}
   	  		}
   	  		//a part, retransforme les onec0 en twoC0
-  	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
+  	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en meme temps
   	  	
   	  	TwoC1(head*,t@@TwoId(_),TwoId(_),tail*) -> { if(`head!=`TwoId(Id())){return `TwoC1(head,t,tail);}else{return `TwoC1(t,tail);}}
+  	  	//encore experimental, pour les split
+  	  	TwoC1(head*TwoC0(left*,right*),TwoC0(bottomleft*,bottomright*))->{if(`left!=`TwoId(Id())&&`right!=`TwoId(Id())&&`bottomleft!=`TwoId(Id())&&`bottomright!=`TwoId(Id())&&`left.target()==`bottomleft.source()){System.out.println("split paths");if(`head==TwoId(Id())){return `TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright));}else{return `TwoC1(head,TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright)));}}}
  	 } 
 }
 
@@ -468,7 +470,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
-			for (int j = oneC0s.getLength()-1; j >0; j--) {
+			for (int j = 0; j <oneC0s.getLength(); j++) {
 				Node oneC0Element = oneC0s.item(j);
 				if(!oneC0Element.getNodeName().contains("#text")){
 					res=`OneC0(res,makeOnePath(oneC0Element));
@@ -522,7 +524,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC0")){
 			NodeList twoC0s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = twoC0s.getLength()-1; j >0; j--) {
+			for (int j = 0; j <twoC0s.getLength(); j++) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
 					// System.out.println(twoC0Element.getNodeName());

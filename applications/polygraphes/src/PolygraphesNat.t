@@ -288,7 +288,7 @@ myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDow
 System.out.println("RESULT");
 print(myPath);
 System.out.println(result(myPath));
-tom.library.utils.Viewer.display(myPath);
+//tom.library.utils.Viewer.display(myPath);
 return myPath;
 }
 catch(VisitFailure e) {

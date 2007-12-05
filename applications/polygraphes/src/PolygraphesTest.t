@@ -7,7 +7,7 @@ import tom.library.sl.*;
 import java.io.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-
+import java.util.Vector;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -17,9 +17,8 @@ public class PolygraphesTest{
 %include { sl.tom }
 %include{ dom.tom }
 
-private static HashSet<ThreePath> rewritingRules=new HashSet<ThreePath>();
-
-
+private static Vector<ThreePath> rewritingRules=new Vector<ThreePath>();
+ 
 //-----------------------------------------------------------------------------
 // NAT
 //-----------------------------------------------------------------------------
@@ -157,7 +156,7 @@ private static 	ThreePath zeroLess= `ThreeCell("zeroLess",TwoC1(TwoC0(zero,TwoId
 private static 	ThreePath succZeroLess= `ThreeCell("succZeroLess",TwoC1(TwoC0(succ,zero),lessOrEqual),TwoC1(eraser,faux),Function());
 private static 	ThreePath doubleSuccLess= `ThreeCell("doubleSuccLess",TwoC1(TwoC0(succ,succ),lessOrEqual),lessOrEqual,Function());
 //merge
-private static ThreePath doubleSuccMerge = `ThreeCell("doubleSuccMerge",TwoC1(TwoC0(TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),TwoC0(add,add),merge),TwoC1(TwoC0(duplication,TwoId(list),duplication,TwoId(list)),TwoC0(TwoId(nat),TwoId(nat),permutationLN,TwoId(nat),TwoId(list)),TwoC0(TwoId(nat),permutation,TwoId(list),TwoId(nat),TwoId(list)),TwoC0(lessOrEqual,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),Function());
+private static ThreePath doubleAddMerge = `ThreeCell("doubleAddMerge",TwoC1(TwoC0(TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),TwoC0(add,add),merge),TwoC1(TwoC0(duplication,TwoId(list),duplication,TwoId(list)),TwoC0(TwoId(nat),TwoId(nat),permutationLN,TwoId(nat),TwoId(list)),TwoC0(TwoId(nat),permutation,TwoId(list),TwoId(nat),TwoId(list)),TwoC0(lessOrEqual,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),Function());
 private static ThreePath merge1 = `ThreeCell("merge1",TwoC1(TwoC0(vrai,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),TwoC1(TwoC0(TwoId(nat),TwoC1(TwoC0(TwoId(list),TwoC1(TwoC0(TwoId(nat),TwoId(list)),add)),merge)),add),Function());
 private static ThreePath merge2 = `ThreeCell("merge1",TwoC1(TwoC0(faux,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),TwoC1(TwoC0(add,TwoId(nat),TwoId(list)),TwoC0(permutationLN,TwoId(list)),TwoC0(TwoId(nat),merge),add),Function());
 
@@ -171,7 +170,7 @@ rewritingRules.add(succPerm1);
 rewritingRules.add(succPerm2);
 rewritingRules.add(succDup);
 rewritingRules.add(succEraz);
-rewritingRules.add(plusZero);
+/*rewritingRules.add(plusZero);
 rewritingRules.add(plusSucc);
 rewritingRules.add(minusZero1);
 rewritingRules.add(minusZero2);
@@ -179,8 +178,8 @@ rewritingRules.add(minusDoubleSucc);
 rewritingRules.add(divZero);
 rewritingRules.add(divSucc);
 rewritingRules.add(multZero);
-rewritingRules.add(multSucc);
-/*
+rewritingRules.add(multSucc);*/
+
 rewritingRules.add(erazList);
 rewritingRules.add(duppList);
 rewritingRules.add(permList1);
@@ -213,7 +212,7 @@ rewritingRules.add(addSplit);
 rewritingRules.add(doubleAddSplit);
 rewritingRules.add(consListMerge1);
 rewritingRules.add(consListMerge2);
-
+/*
 rewritingRules.add(trueEraz);
 rewritingRules.add(falseEraz);
 rewritingRules.add(falseDup);
@@ -236,10 +235,10 @@ rewritingRules.add(notFalse);
 rewritingRules.add(zeroLess);
 rewritingRules.add(succZeroLess);
 rewritingRules.add(doubleSuccLess);
-rewritingRules.add(doubleSuccMerge);
+rewritingRules.add(doubleAddMerge);
 rewritingRules.add(merge1);
-rewritingRules.add(merge2);
-*/
+rewritingRules.add(merge2);*/
+
 String testrules="<PolygraphicProgram Name=\"TestProgram\">\n";
 for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
 	ThreePath rule = (ThreePath) iterator.next();
@@ -270,18 +269,19 @@ TwoPath rule2=`TwoC1(zero,TwoC0(succ,zero),division);
 TwoPath rule3=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero,succ,succ)),multiplication);
 TwoPath rule4=`TwoC1(zero,succ,succ,TwoC0(succ,zero),TwoC0(succ,succ),TwoC0(succ,succ),division);
 TwoPath rule5=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero)),division);
-TwoPath add=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ,succ,succ),TwoC1(zero,succ,succ,succ)),plus);
-TwoPath div=`TwoC1(TwoC0(add,TwoC1(zero,succ,succ,succ)),division);
+TwoPath addit=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ,succ,succ),TwoC1(zero,succ,succ,succ)),plus);
+TwoPath div=`TwoC1(TwoC0(addit,TwoC1(zero,succ,succ,succ)),division);
 TwoPath total=`TwoC1(TwoC0(div,TwoC1(zero,succ,succ,succ,succ)),multiplication);
-TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(six,six),multiplication),trois),minus);
-//test(nine);
+TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(deux,six),multiplication),trois),division);
+TwoPath testnatlist = `TwoC1(TwoC0(six,TwoC1(TwoC0(consList,quatre),append)),add,split);
 //System.out.println(rule3);
-String input=twoPath2XML(nine);
+//String input=twoPath2XML(nine);
+String input=twoPath2XML(testnatlist);
 try{
 save(input,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml"));
 }catch(Exception e){e.printStackTrace();}
-System.out.println(resultNat("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
-
+//System.out.println(resultNat("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
+System.out.println(resultList("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLoutput.xml"));
 }
 public static void save(String fileContent,File file) throws IOException {
 
@@ -364,7 +364,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
-			for (int j = oneC0s.getLength()-1; j >0; j--) {
+			for (int j = 0; j <oneC0s.getLength(); j++) {
 				Node oneC0Element = oneC0s.item(j);
 				if(!oneC0Element.getNodeName().contains("#text")){
 					res=`OneC0(res,makeOnePath(oneC0Element));
@@ -418,7 +418,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC0")){
 			NodeList twoC0s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = twoC0s.getLength()-1; j >0; j--) {
+			for (int j = 0; j <twoC0s.getLength(); j++) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
 					// System.out.println(twoC0Element.getNodeName());
@@ -583,8 +583,34 @@ public static int resultNat(TwoPath resultat){
 			TwoC1(TwoCell("succ",_,_,_),X*) -> {return 1+resultNat(`X*);}
 			TwoC1(TwoCell("succ",_,_,_),TwoCell("succ",_,_,_)) -> {return 2; }
 			}
-System.out.println("RESULTAT NON CONFORME");resultat.print();
+System.out.println("RESULTAT NON CONFORME NAT");resultat.print();
 return 0;
+}
+
+public static String resultList(String filename){
+TwoPath resultpath=`TwoId(Id());
+try {
+
+	Document dom = DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder().parse(filename);
+      Element e = dom.getDocumentElement();
+resultpath=(TwoPath)`RepeatId(TopDown(Normalize())).visit(makeTwoPath(e));
+return resultList(resultpath);
+}catch(Exception e){e.printStackTrace();}
+return "Error-->non implemented yet";
+}
+
+public static String resultList(TwoPath resultat){
+%match (TwoPath resultat){
+			TwoId(Id()) -> { return "0"; }
+			TwoC1(TwoC0(TwoCell("consList",_,_,Constructor())),TwoCell("add",_,_,_),NAT*) -> {return ""+resultNat(`NAT);}
+			TwoC1(TwoC0(NAT*,LIST*),TwoCell("add",_,_,_)) -> {if(`NAT!=`TwoId(Id())){return resultNat(`NAT)+" "+resultList(`LIST);}}
+			TwoC0(LeftSplit*,RightSplit*) -> {if (`LeftSplit!=`TwoId(Id())){return resultList(`LeftSplit)+ "|| " + resultList(`RightSplit);}}
+			TwoCell("consList",_,_,Constructor()) -> {return "";}
+			}
+System.out.println("RESULTAT NON CONFORME LIST");resultat.print();
+//tom.library.utils.Viewer.display(resultat);
+return "Error";
 }
 
 public static TwoPath[] toArray(TwoC0 twoc0) {

@@ -15,6 +15,7 @@ public class XMLhandler {
   %include { polygraphicprogram/PolygraphicProgram.tom }
   %include { sl.tom }
 
+
 public static OnePath makeOnePath(Node node){
 String nodeName =node.getNodeName();
 		// System.out.println(nodeName);
@@ -36,7 +37,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
-			for (int j = oneC0s.getLength()-1; j >0; j--) {
+			for (int j = 0; j <oneC0s.getLength(); j++) {
 				Node oneC0Element = oneC0s.item(j);
 				if(!oneC0Element.getNodeName().contains("#text")){
 					res=`OneC0(res,makeOnePath(oneC0Element));
@@ -90,7 +91,7 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC0")){
 			NodeList twoC0s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = twoC0s.getLength()-1; j >0; j--) {
+			for (int j = 0; j <twoC0s.getLength(); j++) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
 					// System.out.println(twoC0Element.getNodeName());
@@ -123,8 +124,6 @@ for (int i = 0; i < childs.getLength(); i++) {
 }
 return `TwoId(Id());
 }
-
-
 
 public static ThreePath makeThreeCell(Node node){
 		NamedNodeMap attributes=node.getAttributes();
@@ -303,7 +302,7 @@ public static void save(String fileContent,File file) throws IOException {
 		String sourceString=source.toString();
 		String targetString=target.toString();
 		int i=0;
-		while(sourceString.contains("TwoId")){//A CHANGER ?? ajouter condition if xi!=TwoId(Id())
+		while(sourceString.contains("TwoId")){//A CHANGER !!!!
 			sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
 			i++;}
@@ -313,7 +312,7 @@ public static void save(String fileContent,File file) throws IOException {
 		else{targetString="TwoC1("+targetString+",Y*)";
 		}
 		String condition="";
-		if(i==1){condition="if(`X0!=`TwoId(Id()))";}
+		if(i==1){condition="if(`X0!=`TwoId(Id()))";}// a faire pour tous les Xi en fait
 		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
 	}
 	public static TwoPath formatRule(TwoPath myPath){
