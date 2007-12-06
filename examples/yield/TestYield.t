@@ -18,12 +18,12 @@ public class TestYield {
       | b()
   }
 
-  public class Getter implements YieldGetter {
+  public class Getter implements YieldGetter, java.util.Iterator<Visitable> {
 
     private final Environment e;
     private Visitable n = null;
     private Thread th;
-    private boolean done = false;
+    private boolean hasNext = true;
 
     public Getter(Strategy s, Visitable t) {
       e = new Environment(this);
@@ -32,15 +32,10 @@ public class TestYield {
       th = new Thread(new Runnable() {
           public void run() {
           e.setSubject(ft);
-          synchronized(e) {
-          e.notify();
-          try { e.wait(); }
-          catch(InterruptedException ex) {}
-          }
           try { fs.visit(e); }
           catch(VisitFailure e) {}
 
-          done = true;
+          hasNext = false;
           synchronized(e) {
           e.notify();
           }
@@ -52,7 +47,18 @@ public class TestYield {
       n = v;
     }
 
+    @Override
+    public boolean hasNext() {
+      return hasNext;
+    }
+
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Visitable next() {
+      if(!hasNext) throw new java.util.NoSuchElementException();
       if (th.getState() == Thread.State.NEW) {
         synchronized(e) {
           th.start();
@@ -60,13 +66,13 @@ public class TestYield {
           catch(InterruptedException ex) {}
         }
       }
+      Visitable res = n;
       synchronized(e) {
         e.notify(); 
         try{ e.wait(); }
         catch(InterruptedException ex) {}
       }
-      if(done) return null;
-      else return n;
+      return res;
     }
   }
 
@@ -80,11 +86,19 @@ public class TestYield {
     T t = `f(g(a()),f(b(),g(b())));
     Getter g = new Getter(`TopDown(YStrat()),t);
 
+    while(g.hasNext()) {
+      Visitable next = g.next();
+      System.out.println("next x in g(x) topdown: " + next);
+    }
+
+
+    /*
     Visitable next = null;
     do {
       next = g.next();
       System.out.println("next x in g(x) topdown: " + next);
     } while(next != null);
+    */
 
   }
 
