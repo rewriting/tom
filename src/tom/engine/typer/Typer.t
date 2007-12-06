@@ -23,7 +23,7 @@
  *
  **/
 
-package tom.engine.compiler;
+package tom.engine.typer;
 
 import java.util.logging.Level;
 import java.util.Iterator;
@@ -60,17 +60,17 @@ import aterm.ATerm;
 import tom.library.sl.*;
 
 /**
- * The Expander plugin.
+ * The Typer plugin.
  * Perform syntax expansion and more.
  */
-public class Expander extends TomGenericPlugin {
+public class Typer extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
-  %typeterm Expander {
-    implement { Expander }
-    is_sort(t) { ($t instanceof Expander) }
+  %typeterm Typer {
+    implement { Typer }
+    is_sort(t) { ($t instanceof Typer) }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
@@ -84,17 +84,17 @@ public class Expander extends TomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS =
     "<options>" +
-    "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
+    "<boolean name='expand' altName='' description='Typer (activated by default)' value='true'/>" +
     "</options>";
 
   /** the kernel expander acting at very low level */
-  private KernelExpander tomKernelExpander;
+  private KernelTyper tomKernelTyper;
   /** the tomfactory for creating intermediate terms */
 
   /** Constructor*/
-  public Expander() {
-    super("Expander");
-    tomKernelExpander = new KernelExpander();
+  public Typer() {
+    super("Typer");
+    tomKernelTyper = new KernelTyper();
   }
 
   /**
@@ -105,7 +105,7 @@ public class Expander extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm expandedTerm = null;
     try {
-      tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
+      tomKernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
       TomTerm syntaxExpandedTerm = (TomTerm) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
 
@@ -208,14 +208,14 @@ public class Expander extends TomGenericPlugin {
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(Expander.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(Typer.DECLARED_OPTIONS);
   }
 
   private TomTerm expandVariable(TomType contextType, TomTerm subject) {
-    return (TomTerm)tomKernelExpander.expandVariable(contextType,subject);
+    return (TomTerm)tomKernelTyper.expandVariable(contextType,subject);
   }
   private TomTerm expandType(TomTerm subject) {
-    return (TomTerm)tomKernelExpander.expandType(subject);
+    return (TomTerm)tomKernelTyper.expandType(subject);
   }
 
   /*
@@ -224,7 +224,7 @@ public class Expander extends TomGenericPlugin {
    *    placeholders are not removed
    *    slotName are attached to arguments
    */
-  %strategy expandTermApplTomSyntax(expander:Expander) extends `Identity() {
+  %strategy expandTermApplTomSyntax(expander:Typer) extends `Identity() {
     visit TomTerm {
       TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
         return expander.expandTermAppl(`option,`nameList,`args,`constraints);
@@ -241,7 +241,7 @@ public class Expander extends TomGenericPlugin {
      * this post-processing phase replaces untyped (universalType) codomain
      * by their precise type (according to the symbolTable)
      */
-    %strategy updateCodomain(expander:Expander) extends `Identity() {
+    %strategy updateCodomain(expander:Typer) extends `Identity() {
       visit Declaration {
         decl@GetHeadDecl[Opname=Name(opName)] -> {
           TomSymbol tomSymbol = expander.getSymbolFromName(`opName);
@@ -275,7 +275,7 @@ public class Expander extends TomGenericPlugin {
     /*
      * replace 'abc' by conc('a','b','c')
      */
-    %strategy expandString(expander:Expander) extends `Identity() {
+    %strategy expandString(expander:Typer) extends `Identity() {
       visit TomTerm {
         appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
           TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
@@ -410,7 +410,7 @@ public class Expander extends TomGenericPlugin {
       return `RecordAppl(option,nameList,slotList,constraints);
     }
 
-    %strategy expandBackQuoteAppl(expander:Expander) extends `Identity() {
+    %strategy expandBackQuoteAppl(expander:Typer) extends `Identity() {
       visit TomTerm {
         BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
           TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);

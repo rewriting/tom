@@ -23,7 +23,7 @@
  *
  **/
 
-package tom.engine.compiler;
+package tom.engine.typer;
 
 import java.util.*;
 import java.util.HashSet;
@@ -51,13 +51,13 @@ import tom.engine.tools.ASTFactory;
 
 import tom.library.sl.*;
 
-public class KernelExpander {
+public class KernelTyper {
   %include { ../../library/mapping/java/sl.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
 
-  %typeterm KernelExpander {
-    implement { KernelExpander }
-    is_sort(t) { ($t instanceof KernelExpander) }
+  %typeterm KernelTyper {
+    implement { KernelTyper }
+    is_sort(t) { ($t instanceof KernelTyper) }
   }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
@@ -70,7 +70,7 @@ public class KernelExpander {
 
   private SymbolTable symbolTable;
 
-  public KernelExpander() {
+  public KernelTyper() {
     super();
   }
 
@@ -110,7 +110,7 @@ public class KernelExpander {
       throw new TomRuntimeException("expandType: failure on " + subject);
     }
   }
-  %strategy expandType(expander:KernelExpander) extends `Identity() {
+  %strategy expandType(expander:KernelTyper) extends `Identity() {
     visit TomType {
       subject@TomTypeAlone(tomType) -> {
         TomType type = expander.getType(`tomType);
@@ -123,7 +123,7 @@ public class KernelExpander {
     }
   }
 
-  %strategy replace_expandVariable(contextType:TomType,expander:KernelExpander) extends `Fail() {
+  %strategy replace_expandVariable(contextType:TomType,expander:KernelTyper) extends `Fail() {
 
     visit Option {
       subject@OriginTracking[] -> { return `subject; }
@@ -252,7 +252,7 @@ public class KernelExpander {
     }
    }
   
-  private static Instruction expandAction(Instruction action, TomList newPatternList, KernelExpander expander) { 
+  private static Instruction expandAction(Instruction action, TomList newPatternList, KernelTyper expander) { 
     //  build the list of variables that occur in the lhs
     HashSet set = new HashSet();
     TomBase.collectVariable(set,newPatternList);
@@ -266,7 +266,7 @@ public class KernelExpander {
   /**
    * Try to guess the type for the subjects
    */
-  %strategy expandConstraint(TomType contextType, Collection newPatternList, Collection constraintList, KernelExpander expander) extends Identity(){
+  %strategy expandConstraint(TomType contextType, Collection newPatternList, Collection constraintList, KernelTyper expander) extends Identity(){
     visit Constraint {
  visitL:constr -> {
         TomTerm subject = null;
