@@ -13,13 +13,13 @@ public class TestYield {
       abstract syntax
 
       T = f(t1:T,t2:T)
-        | g(t:T)
-        | a()
-        | b()
+      | g(t:T)
+      | a()
+      | b()
   }
 
   public class Getter implements YieldGetter {
-  
+
     private final Environment e;
     private Visitable n = null;
     private Thread th;
@@ -31,8 +31,9 @@ public class TestYield {
       th = new Thread(new Runnable() {
           public void run() {
           e.setSubject(ft);
-          synchronized(e.lock1) {
-          try { e.lock1.wait(); }
+          synchronized(e) {
+          e.notify();
+          try { e.wait(); }
           catch(InterruptedException ex) {}
           }
           try { fs.visit(e); }
@@ -47,14 +48,17 @@ public class TestYield {
     }
 
     public Visitable next() {
-      if (th.getState() == Thread.State.NEW) th.start();
-      if (th.getState() == Thread.State.TERMINATED) return null;
-      while(th.getState() != Thread.State.WAITING) {}
-      synchronized(e.lock1) { 
-        e.lock1.notify(); 
+      if (th.getState() == Thread.State.NEW) {
+        synchronized(e) {
+          th.start();
+          try{ e.wait(); }
+          catch(InterruptedException ex) {}
+        }
       }
-      synchronized(e.lock2) {
-        try{ e.lock2.wait(); }
+      if (th.getState() == Thread.State.TERMINATED) return null;
+      synchronized(e) {
+        e.notify(); 
+        try{ e.wait(); }
         catch(InterruptedException ex) {}
       }
       while(th.getState() != Thread.State.WAITING) {  }
@@ -73,7 +77,6 @@ public class TestYield {
     Getter g = new Getter(`TopDown(YStrat()),t);
 
     Visitable next = null;
-
     do {
       next = g.next();
       System.out.println("next g(x) topdown: " + next);
