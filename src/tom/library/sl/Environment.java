@@ -55,12 +55,13 @@ public final class Environment implements Cloneable {
   protected int status = Environment.SUCCESS;
   protected YieldGetter yieldGetter;
 
-  public Integer lock1 = new Integer(0);
-  public Integer lock2 = new Integer(0);
-  public Integer lock3 = new Integer(0);
-
-  public YieldGetter getYieldGetter() {
-    return yieldGetter;
+  public void yield(tom.library.sl.Visitable subject) {
+    yieldGetter.set(subject);
+    synchronized(this) {
+      this.notify();
+      try { this.wait(); }
+      catch(java.lang.InterruptedException ex) { }
+    }
   }
 
   // for compatibility with stable

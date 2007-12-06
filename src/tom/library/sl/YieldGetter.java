@@ -26,5 +26,5 @@
 package tom.library.sl;
 
 public interface YieldGetter {
-  public void ready();
+  public void set(Visitable v);
 }

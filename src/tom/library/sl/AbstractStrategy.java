@@ -154,17 +154,4 @@ public abstract class AbstractStrategy implements Strategy {
       }
     }
   }
-
-  public void yield(tom.library.sl.Visitable subject) {
-    getEnvironment().getYieldGetter().ready();
-    tom.library.sl.Environment e = getEnvironment();
-    synchronized(e.lock2) {
-      e.lock2.notify();
-    }
-    synchronized(e.lock1) {
-    try { e.lock1.wait(); }
-    catch(java.lang.InterruptedException ex) { }
-    }
-  }
-
 }
