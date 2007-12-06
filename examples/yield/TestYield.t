@@ -42,9 +42,8 @@ public class TestYield {
           });
     }
 
-    public synchronized void ready() {
-      //System.out.println("ici");
-      n = e.getSubject();
+    public synchronized void set(Visitable v) {
+      n = v;
     }
 
     public Visitable next() {
@@ -55,7 +54,10 @@ public class TestYield {
           catch(InterruptedException ex) {}
         }
       }
-      if (th.getState() == Thread.State.TERMINATED) return null;
+      if (th.getState() == Thread.State.TERMINATED) {
+        System.out.println("ici");
+        return null;
+      }
       synchronized(e) {
         e.notify(); 
         try{ e.wait(); }
@@ -68,7 +70,7 @@ public class TestYield {
 
   %strategy YStrat() extends Identity() {
     visit T {
-      g(x) -> { yield(`x); }
+      g(x) -> { getEnvironment().yield(`x); }
     }
   }
 
@@ -79,7 +81,7 @@ public class TestYield {
     Visitable next = null;
     do {
       next = g.next();
-      System.out.println("next g(x) topdown: " + next);
+      System.out.println("next x in g(x) topdown: " + next);
     } while(next != null);
 
   }
