@@ -1522,9 +1522,12 @@ b :{
               set.add(DBProofterms.translate(prt));
             }
             writeToOutputln("Number of different normal forms modulo alpha : "+set.size());
+            for(Object o: set) {
+              writeToOutputln(PrettyPrinter.prettyPrint((DBProofTerm) o));
+            }
 
             for (Object o:c) {
-              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+              writeToOutputln(PrettyPrinter.prettyPrint((ProofTerm) o));
               PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
             }
           }
