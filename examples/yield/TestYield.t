@@ -23,6 +23,7 @@ public class TestYield {
     private final Environment e;
     private Visitable n = null;
     private Thread th;
+    private boolean done = false;
 
     public Getter(Strategy s, Visitable t) {
       e = new Environment(this);
@@ -38,6 +39,11 @@ public class TestYield {
           }
           try { fs.visit(e); }
           catch(VisitFailure e) {}
+
+          done = true;
+          synchronized(e) {
+          e.notify();
+          }
           }
           });
     }
@@ -54,17 +60,13 @@ public class TestYield {
           catch(InterruptedException ex) {}
         }
       }
-      if (th.getState() == Thread.State.TERMINATED) {
-        System.out.println("ici");
-        return null;
-      }
       synchronized(e) {
         e.notify(); 
         try{ e.wait(); }
         catch(InterruptedException ex) {}
       }
-      while(th.getState() != Thread.State.WAITING) {  }
-      return n;
+      if(done) return null;
+      else return n;
     }
   }
 
