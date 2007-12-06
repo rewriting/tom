@@ -83,23 +83,18 @@ public class TestYield {
   }
 
   public void go() {
-    T t = `f(g(a()),f(b(),g(b())));
-    Getter g = new Getter(`TopDown(YStrat()),t);
+    T t = `f(g(g(a())),f(b(),g(b())));
+    Getter g1 = new Getter(`TopDown(YStrat()),t);
+    Getter g2 = new Getter(`BottomUp(YStrat()),t);
 
-    while(g.hasNext()) {
-      Visitable next = g.next();
+    while(g1.hasNext()) {
+      Visitable next = g1.next();
       System.out.println("next x in g(x) topdown: " + next);
     }
-
-
-    /*
-    Visitable next = null;
-    do {
-      next = g.next();
-      System.out.println("next x in g(x) topdown: " + next);
-    } while(next != null);
-    */
-
+    while(g2.hasNext()) {
+      Visitable next = g2.next();
+      System.out.println("next x in g(x) bottomup: " + next);
+    }
   }
 
   public static void main(String[] args) {
