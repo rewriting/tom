@@ -237,6 +237,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     OptionList optionList = null;
     Option option = null;
     
+    TomTerm rhsTerm = null;
     int consType = -1; 
     
     clearText();
@@ -286,40 +287,46 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                   }         
                 }    
             )*
-            ARROW t:LBRACE
+            ARROW 
             {
-                %match(result){
-                  AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }
-                  OrMarker(x) -> { constraint = `OrConstraint(constraint,x); }
-                }  
-              
+              %match(result) {
+                AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }
+                OrMarker(x) -> { constraint = `OrConstraint(constraint,x); }
+              }  
+                optionList = `concOption();
+                for(Object op:optionListLinked) {
+                  optionList = `concOption(optionList*,(Option)op);
+                }
+                optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
+                if(label != null) {
+                    optionList = `concOption(Label(Name(label.getText())),optionList*);
+                }
+
+            }
+            (t:LBRACE 
+            {
                 // update for new target block
                 updatePosition(t.getLine(),t.getColumn());
-                
                 // actions in target language : call the target lexer and
                 // call the target parser
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
-
                 // target parser finished : pop the target lexer
                 selector().pop();
-
                 blockList.add(tlCode);                
-                
-                optionList = `concOption();
-                for(Object op:optionListLinked){
-                  optionList = `concOption(optionList*,(Option)op);
-                }
-                optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
-                if(label != null){
-                    optionList = `concOption(Label(Name(label.getText())),optionList*);
-                }
                 list.add(`ConstraintInstruction(
                     constraint,
                     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
                     optionList)
                 );
-            }
+            } 
+            | rhsTerm = plainTerm[null,null,0]
+              {
+              // case where the rhs of a rule is an algebraic term
+              // TODO
+              }
+            )
+            
         )
     ;
 
@@ -541,19 +548,19 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 firstSlot2:ALL_ID (colon2:COLON)? secondSlot2:ALL_ID
                 {
               if(colon != null) {
-                stringSlotName = firstSlot2.getText(); 
-                stringTypeArg = secondSlot2.getText(); 
-                } else {
-                stringSlotName = secondSlot2.getText(); 
-                stringTypeArg = firstSlot2.getText(); 
-                }
-                    TomName astName = ASTFactory.makeName(stringSlotName);
-                    if(slotNameList.indexOf(astName) != -1) {
-                      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
-                        new Object[]{stringSlotName},
-                        currentFile(), getLine()));
-                    }
-                    slotNameList.add(astName); 
+              stringSlotName = firstSlot2.getText(); 
+              stringTypeArg = secondSlot2.getText(); 
+              } else {
+              stringSlotName = secondSlot2.getText(); 
+              stringTypeArg = firstSlot2.getText(); 
+              }
+              TomName astName = ASTFactory.makeName(stringSlotName);
+              if(slotNameList.indexOf(astName) != -1) {
+              getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
+                  new Object[]{stringSlotName},
+                  currentFile(), getLine()));
+              }
+              slotNameList.add(astName); 
 
                 TomType strategyType = `TomTypeAlone("Strategy");
                     // Define get<slot> method.
@@ -595,13 +602,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          }
 				 makeTlCode += ")";
 
-         // compute the type a of strategy
-         // assuming "Identity" is defined
-         //TomSymbol idSymbol = symbolTable.getSymbolFromName("Identity");
          TomType strategyType = `TomTypeAlone("Strategy");
-         //if(idSymbol!=null) {
-         //  strategyType = idSymbol.getTypesToType().getCodomain();
-         //}
 				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), strategyType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
           options.add(makeDecl);
@@ -649,8 +650,8 @@ strategyVisit [LinkedList list] throws TomException
     }
     type:ALL_ID  LBRACE
     {
-    vType = `TomTypeAlone(type.getText());
-    subjectList = `concTomTerm(TomTypeToTomTerm(vType));
+      vType = `TomTypeAlone(type.getText());
+      subjectList = `concTomTerm(TomTypeToTomTerm(vType));
     }
     (  
       patternInstruction[subjectList,constraintInstructionList] 
