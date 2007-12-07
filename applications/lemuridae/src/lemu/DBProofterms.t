@@ -4,6 +4,7 @@ import tom.library.sl.*;
 import java.util.*;
 
 import lemu.urban.types.*;
+import lemu.sequents.types.*;
 
 public class DBProofterms {
   %include{ urban/urban.tom }
@@ -129,117 +130,125 @@ public class DBProofterms {
     }
   }
 
+  public static class ImmutableMap<K,V> extends HashMap<K,V> {
+    public ImmutableMap<K,V> myput(K key,V value) {
+      ImmutableMap<K,V> res = (ImmutableMap<K,V>) this.clone();
+      res.put(key,value);
+      return res;
+    }
+  }
+
   public static DBProofTerm translate(ProofTerm term) {
     SymbolTable<Name> nst = new SymbolTable<Name>();
     SymbolTable<CoName> cnst = new SymbolTable<CoName>();
     getFreeNames(term,nst,cnst);
 
-    HashMap<Name,Integer> nmap = new HashMap<Name,Integer>();
-    HashMap<CoName,Integer> cnmap = new HashMap<CoName,Integer>();
+    ImmutableMap<Name,Integer> nmap = new ImmutableMap<Name,Integer>();
+    ImmutableMap<CoName,Integer> cnmap = new ImmutableMap<CoName,Integer>();
     int i = 0; for(Name n: nst.getFreeVars()) { nmap.put(n,--i); }
     i = 0; for(CoName n: cnst.getFreeVars()) { cnmap.put(n,--i); }
-    return translate(term, nmap, cnmap, 0);
+    return translate(term, nmap, cnmap, 0, 0);
   }
 
   private static DBProofTerm 
-    translate(ProofTerm term, HashMap<Name,Integer> names, 
-        HashMap<CoName,Integer> conames, int deep) {
+    translate(ProofTerm term, ImmutableMap<Name,Integer> names, 
+        ImmutableMap<CoName,Integer> conames, int ndeep, int cndeep) {
       %match(term) {
         ax(n,cn) -> {
-          int dbn = deep - names.get(`n) -1;
-          int dbcn = deep - conames.get(`cn) -1;
+          int dbn = ndeep - names.get(`n) -1;
+          int dbcn = cndeep - conames.get(`cn) -1;
           return `DBax(dbname(dbn),dbconame(dbcn));
         }
         cut(cnprop(a,p1),m1,nprop(x,p2),m2) -> {
-          conames.put(`a,deep);
-          names.put(`x,deep);
-          return `DBcut(p1,translate(m1,names,conames,deep+1)
-              ,p2,translate(m2,names,conames,deep+1));
+          conames = conames.myput(`a,cndeep);
+          names = names.myput(`x,ndeep);
+          return `DBcut(p1,translate(m1,names,conames,ndeep,cndeep+1)
+              ,p2,translate(m2,names,conames,ndeep+1,cndeep));
         }
         falseL(n) -> { 
-          int dbn = deep - names.get(`n) -1;
+          int dbn = ndeep - names.get(`n) -1;
           return `DBfalseL(dbname(dbn));
         }
         trueR(cn) -> {
-          int dbcn = deep - conames.get(`cn) -1;
+          int dbcn = cndeep - conames.get(`cn) -1;
           return `DBtrueR(dbconame(dbcn));
         }
         andR(cnprop(a,p1),m1,cnprop(b,p2),m2,cn) -> {
-          int dbcn = deep - conames.get(`cn) -1;
-          conames.put(`a,deep);
-          conames.put(`b,deep);
-          return `DBandR(p1,translate(m1,names,conames,deep+1),
-              p2,translate(m2,names,conames,deep+1),dbconame(dbcn));
+          int dbcn = cndeep - conames.get(`cn) -1;
+          conames = conames.myput(`a,cndeep);
+          conames = conames.myput(`b,cndeep);
+          return `DBandR(p1,translate(m1,names,conames,ndeep,cndeep+1),
+              p2,translate(m2,names,conames,ndeep,cndeep+1),dbconame(dbcn));
         }
         andL(nprop(x,p1),nprop(y,p2),m,n) -> { 
-          int dbn = deep - names.get(`n) -1;
-          names.put(`x,deep);
-          names.put(`y,deep);
+          int dbn = ndeep - names.get(`n) -1;
+          names = names.myput(`x,ndeep);
+          names = names.myput(`y,ndeep+1);
           return `DBandL(p1,p2,
-              translate(m,names,conames,deep+1),dbname(dbn));
+              translate(m,names,conames,ndeep+2,cndeep),dbname(dbn));
         }
         orR(cnprop(a,p1),cnprop(b,p2),m,cn) -> { 
-          int dbcn = deep - conames.get(`cn) -1;
-          conames.put(`a,deep);
-          conames.put(`b,deep);
+          int dbcn = cndeep - conames.get(`cn) -1;
+          conames = conames.myput(`a,cndeep);
+          conames = conames.myput(`b,cndeep+1);
           return `DBorR(p1,p2,
-              translate(m,names,conames,deep+1),dbconame(dbcn));
+              translate(m,names,conames,ndeep,cndeep+2),dbconame(dbcn));
         }
         orL(nprop(x,p1),m1,nprop(y,p2),m2,n) -> { 
-          int dbn = deep - names.get(`n) -1;
-          names.put(`x,deep);
-          names.put(`y,deep);
-          return `DBorL(p1,translate(m1,names,conames,deep+1),
-              p2,translate(m2,names,conames,deep+1),dbname(dbn));
+          int dbn = ndeep - names.get(`n) -1;
+          names = names.myput(`x,ndeep);
+          names = names.myput(`y,ndeep);
+          return `DBorL(p1,translate(m1,names,conames,ndeep+1,cndeep),
+              p2,translate(m2,names,conames,ndeep+1,cndeep),dbname(dbn));
         }
         implyR(nprop(x,p1),cnprop(a,p2),m1,cn) -> { 
-          conames.put(`a,deep);
-          names.put(`x,deep);
-          int dbcn = deep - conames.get(`cn) -1;
+          conames = conames.myput(`a,cndeep);
+          names = names.myput(`x,ndeep);
+          int dbcn = cndeep - conames.get(`cn) -1;
           return `DBimplyR(p1,p2,
-              translate(m1,names,conames,deep+1),dbconame(dbcn));
+              translate(m1,names,conames,ndeep+1,cndeep+1),dbconame(dbcn));
         }
         implyL(cnprop(a,p1),m1,nprop(x,p2),m2,n) -> { 
-          conames.put(`a,deep);
-          names.put(`x,deep);
-          int dbn = deep - names.get(`n) -1;
-          return `DBimplyL(p1, translate(m1,names,conames,deep+1),
-              p2,translate(m2,names,conames,deep+1),dbname(dbn));
+          conames = conames.myput(`a,cndeep);
+          names = names.myput(`x,ndeep);
+          int dbn = ndeep - names.get(`n) -1;
+          return `DBimplyL(p1, translate(m1,names,conames,ndeep,cndeep+1),
+              p2,translate(m2,names,conames,ndeep+1,cndeep),dbname(dbn));
         }
         existsR(cnprop(a,p1),m,t,cn) -> { 
-          conames.put(`a,deep);
-          int dbcn = deep - conames.get(`cn) -1;
-          return `DBexistsR(p1, translate(m,names,conames,deep+1),
+          conames = conames.myput(`a,cndeep);
+          int dbcn = cndeep - conames.get(`cn) -1;
+          return `DBexistsR(p1, translate(m,names,conames,ndeep,cndeep+1),
               t,dbconame(dbcn));
         }
         existsL(nprop(x,p1),varx,m,n) -> { 
-          names.put(`x,deep);
-          int dbn = deep - names.get(`n) -1;
+          names = names.myput(`x,ndeep);
+          int dbn = ndeep - names.get(`n) -1;
           return `DBexistsL(p1,varx,
-              translate(m,names,conames,deep+1),dbname(dbn));
+              translate(m,names,conames,ndeep+1,cndeep),dbname(dbn));
         }
         forallR(cnprop(a,p1),varx,m,cn) -> { 
-          conames.put(`a,deep);
-          int dbcn = deep - conames.get(`cn) -1;
+          conames = conames.myput(`a,cndeep);
+          int dbcn = cndeep - conames.get(`cn) -1;
           return `DBforallR(p1,varx,
-              translate(m,names,conames,deep+1),dbconame(dbcn));
+              translate(m,names,conames,ndeep,cndeep+1),dbconame(dbcn));
         }
         forallL(nprop(x,p1),m,t,n) -> { 
-          names.put(`x,deep);
-          int dbn = deep - names.get(`n) -1;
-          return `DBforallL(p1,translate(m,names,conames,deep+1),
+          names = names.myput(`x,ndeep);
+          int dbn = ndeep - names.get(`n) -1;
+          return `DBforallL(p1,translate(m,names,conames,ndeep+1,cndeep),
               t,dbname(dbn));
         }
         foldR(cnprop(a,p1),m,cn,rulenum) -> { 
-          conames.put(`a,deep);
-          int dbcn = deep - conames.get(`cn) -1;
-          return `DBfoldR(p1,translate(m,names,conames,deep+1),
+          conames = conames.myput(`a,cndeep);
+          int dbcn = cndeep - conames.get(`cn) -1;
+          return `DBfoldR(p1,translate(m,names,conames,ndeep,cndeep+1),
               dbconame(dbcn),rulenum);
         }
         foldL(nprop(x,p1),m,n,rulenum) -> { 
-          names.put(`x,deep);
-          int dbn = deep - names.get(`n) -1;
-          return `DBfoldL(p1,translate(m,names,conames,deep+1),
+          names = names.myput(`x,ndeep);
+          int dbn = ndeep - names.get(`n) -1;
+          return `DBfoldL(p1,translate(m,names,conames,ndeep+1,cndeep),
               dbname(dbn),rulenum);
         }
         metaVar(mvar(name)) -> {
@@ -250,14 +259,14 @@ public class DBProofterms {
     }
 
   private static DBProofTerm
-    liftName(DBProofTerm term, int d, int c) {
+    shiftName(DBProofTerm term, int d, int c) {
       %match(term) {
         t@DBax(dbname(i),cn) -> { 
           if(`i<c) return `t;
           else return `DBax(dbname(i+d),cn);
         }
         DBcut(a,m1,x,m2) -> { 
-          return `DBcut(a,liftName(m1,d,c),x,liftName(m2,d,c+1));
+          return `DBcut(a,shiftName(m1,d,c),x,shiftName(m2,d,c+1));
         }
         t@DBfalseL(dbname(i)) -> { 
           if(`i<c) return `t;
@@ -267,46 +276,46 @@ public class DBProofterms {
           return `t;
         }
         DBandR(a,m1,b,m2,cn) -> { 
-          return `DBandR(a,liftName(m1,d,c),b,liftName(m2,d,c),cn);
+          return `DBandR(a,shiftName(m1,d,c),b,shiftName(m2,d,c),cn);
         }
         DBandL(x,y,m,n@dbname(i)) -> { 
-          if(`i<c) return `DBandL(x,y,liftName(m,d,c+1),n);
-          else return `DBandL(x,y,liftName(m,d,c+1),dbname(i+d));
+          if(`i<c) return `DBandL(x,y,shiftName(m,d,c+2),n);
+          else return `DBandL(x,y,shiftName(m,d,c+2),dbname(i+d));
         }
         DBorR(a,b,m,cn) -> { 
-          return `DBorR(a,b,liftName(m,d,c),cn);
+          return `DBorR(a,b,shiftName(m,d,c),cn);
         }
         DBorL(x,m1,y,m2,n@dbname(i)) -> { 
-          if(`i<c) return `DBorL(x,liftName(m1,d,c+1),y,liftName(m2,d,c+1),n);
-          else return `DBorL(x,liftName(m1,d,c+1),y,liftName(m2,d,c+1),dbname(i+d));
+          if(`i<c) return `DBorL(x,shiftName(m1,d,c+1),y,shiftName(m2,d,c+1),n);
+          else return `DBorL(x,shiftName(m1,d,c+1),y,shiftName(m2,d,c+1),dbname(i+d));
         }
         DBimplyR(x,a,m1,cn) -> {  
-          return `DBimplyR(x,a,liftName(m1,d,c+1),cn);
+          return `DBimplyR(x,a,shiftName(m1,d,c+1),cn);
         }
         DBimplyL(a,m1,x,m2,n@dbname(i)) -> { 
-          if(`i<c) return `DBimplyL(a,liftName(m1,d,c),x,liftName(m2,d,c+1),n);
-          else return `DBimplyL(a,liftName(m1,d,c),x,liftName(m2,d,c+1),dbname(i+d));
+          if(`i<c) return `DBimplyL(a,shiftName(m1,d,c),x,shiftName(m2,d,c+1),n);
+          else return `DBimplyL(a,shiftName(m1,d,c),x,shiftName(m2,d,c+1),dbname(i+d));
         }
         DBexistsR(a,m,t,cn) -> { 
-          return `DBexistsR(a,liftName(m,d,c),t,cn);
+          return `DBexistsR(a,shiftName(m,d,c),t,cn);
         }
         DBexistsL(x,varx,m,n@dbname(i)) -> { 
-          if(`i<c) return `DBexistsL(x,varx,liftName(m,d,c+1),n);
-          else return `DBexistsL(x,varx,liftName(m,d,c+1),dbname(i+d));
+          if(`i<c) return `DBexistsL(x,varx,shiftName(m,d,c+1),n);
+          else return `DBexistsL(x,varx,shiftName(m,d,c+1),dbname(i+d));
         }
         DBforallR(a,varx,m,cn) -> { 
-          return `DBforallR(a,varx,liftName(m,d,c),cn);
+          return `DBforallR(a,varx,shiftName(m,d,c),cn);
         }
         DBforallL(x,m,t,n@dbname(i)) -> { 
-          if(`i<c) return `DBforallL(x,liftName(m,d,c+1),t,n);
-          else return `DBforallL(x,liftName(m,d,c+1),t,dbname(i+d));
+          if(`i<c) return `DBforallL(x,shiftName(m,d,c+1),t,n);
+          else return `DBforallL(x,shiftName(m,d,c+1),t,dbname(i+d));
         }
         DBfoldR(a,m,cn,rulenum) -> { 
-          return `DBfoldR(a,liftName(m,d,c),cn,rulenum);
+          return `DBfoldR(a,shiftName(m,d,c),cn,rulenum);
         }
         DBfoldL(x,m,n@dbname(i),rulenum) -> { 
-          if(`i<c) return `DBfoldL(x,liftName(m,d,c+1),n,rulenum);
-          else return `DBfoldL(x,liftName(m,d,c+1),dbname(i+d),rulenum);
+          if(`i<c) return `DBfoldL(x,shiftName(m,d,c+1),n,rulenum);
+          else return `DBfoldL(x,shiftName(m,d,c+1),dbname(i+d),rulenum);
         }
         DBmetaVar(mv) -> { 
         }
@@ -315,14 +324,14 @@ public class DBProofterms {
     }
 
   public static DBProofTerm
-    liftCoName(DBProofTerm term, int d, int c) {
+    shiftCoName(DBProofTerm term, int d, int c) {
       %match(term) {
-        t@DBax(n,dbconame(i)) -> { 
+        t@DBax(n,dbconame(i)) -> {
           if(`i<c) return `t;
           else return `DBax(n,dbconame(i+d));
         }
         DBcut(a,m1,x,m2) -> { 
-          return `DBcut(a,liftCoName(m1,d,c+1),x,liftCoName(m2,d,c));
+          return `DBcut(a,shiftCoName(m1,d,c+1),x,shiftCoName(m2,d,c));
         }
         t@DBfalseL(n) -> { 
           return `t;
@@ -332,52 +341,58 @@ public class DBProofterms {
           else return `DBtrueR(dbconame(i+d));
         }
         DBandR(a,m1,b,m2,cn@dbconame(i)) -> { 
-          if(`i<c) return `DBandR(a,liftCoName(m1,d,c+1),b,liftCoName(m2,d,c+1),cn); 
-          return `DBandR(a,liftCoName(m1,d,c+1),b,liftCoName(m2,d,c+1),dbconame(i+d));
+          if(`i<c) return `DBandR(a,shiftCoName(m1,d,c+1),b,shiftCoName(m2,d,c+1),cn); 
+          return `DBandR(a,shiftCoName(m1,d,c+1),b,shiftCoName(m2,d,c+1),dbconame(i+d));
         }
         DBandL(x,y,m,n) -> { 
-          return `DBandL(x,y,liftCoName(m,d,c),n);
+          return `DBandL(x,y,shiftCoName(m,d,c),n);
         }
         DBorR(a,b,m,cn@dbconame(i)) -> { 
-          if(`i<c) return `DBorR(a,b,liftCoName(m,d,c+1),cn); 
-          return `DBorR(a,b,liftCoName(m,d,c+1),dbconame(i+d)); 
+          if(`i<c) return `DBorR(a,b,shiftCoName(m,d,c+2),cn); 
+          return `DBorR(a,b,shiftCoName(m,d,c+2),dbconame(i+d)); 
         }
         DBorL(x,m1,y,m2,n) -> { 
-          return `DBorL(x,liftCoName(m1,d,c),y,liftCoName(m2,d,c),n);
+          return `DBorL(x,shiftCoName(m1,d,c),y,shiftCoName(m2,d,c),n);
         }
         DBimplyR(x,a,m1,cn@dbconame(i)) -> {
-          if(`i<c) return `DBimplyR(x,a,liftCoName(m1,d,c+1),cn); 
-          return `DBorR(x,a,liftCoName(m1,d,c+1),dbconame(i+d)); 
+          if(`i<c) return `DBimplyR(x,a,shiftCoName(m1,d,c+1),cn); 
+          return `DBorR(x,a,shiftCoName(m1,d,c+1),dbconame(i+d)); 
         }
         DBimplyL(a,m1,x,m2,n) -> {
-          return `DBimplyL(a,liftCoName(m1,d,c+1),x,liftCoName(m2,d,c),n);
+          return `DBimplyL(a,shiftCoName(m1,d,c+1),x,shiftCoName(m2,d,c),n);
         }
         DBexistsR(a,m,t,cn@dbconame(i)) -> { 
-          if(`i<c)`DBexistsR(a,liftCoName(m,d,c+1),t,cn); 
-          return `DBexistsR(a,liftCoName(m,d,c+1),t,dbconame(i+d));
+          if(`i<c)`DBexistsR(a,shiftCoName(m,d,c+1),t,cn); 
+          return `DBexistsR(a,shiftCoName(m,d,c+1),t,dbconame(i+d));
         }
         DBexistsL(x,varx,m,n) -> { 
-          return `DBexistsL(x,varx,liftCoName(m,d,c),n);
+          return `DBexistsL(x,varx,shiftCoName(m,d,c),n);
         }
         DBforallR(a,varx,m,cn@dbconame(i)) -> { 
-          if(`i<c) `DBforallR(a,varx,liftCoName(m,d,c+1),cn);
-          else return `DBforallR(a,varx,liftCoName(m,d,c+1),dbconame(i+d));
+          if(`i<c) `DBforallR(a,varx,shiftCoName(m,d,c+1),cn);
+          else return `DBforallR(a,varx,shiftCoName(m,d,c+1),dbconame(i+d));
         }
         DBforallL(x,m,t,n) -> { 
-          return `DBforallL(x,liftCoName(m,d,c),t,n);
+          return `DBforallL(x,shiftCoName(m,d,c),t,n);
         }
         DBfoldR(a,m,cn@dbconame(i),rulenum) -> { 
-          if(`i<c) `DBfoldR(a,liftCoName(m,d,c+1),cn,rulenum);
-          return `DBfoldR(a,liftCoName(m,d,c+1),dbconame(i+d),rulenum);
+          if(`i<c) `DBfoldR(a,shiftCoName(m,d,c+1),cn,rulenum);
+          return `DBfoldR(a,shiftCoName(m,d,c+1),dbconame(i+d),rulenum);
         }
         DBfoldL(x,m,n,rulenum) -> { 
-          return `DBfoldL(x,liftName(m,d,c),n,rulenum);
+          return `DBfoldL(x,shiftName(m,d,c),n,rulenum);
         }
         DBmetaVar(mv) -> { 
         }
       }
       throw new RuntimeException("should not happen");
     }
+
+  private static DBProofTerm shift(DBProofTerm M, int cut, int ndeep, int cndeep) {
+    M = shiftName(M,ndeep,cut);
+    M = shiftCoName(M,cndeep,cut);
+    return M;
+  }
 
   private static DBProofTerm
     reName(DBProofTerm term, int n1, int n2) {
@@ -399,25 +414,99 @@ public class DBProofterms {
         DBandR(a,m1,b,m2,cn) -> { 
           return `DBandR(a,reName(m1,n1,n2),b,reName(m2,n1,n2),cn); 
         }
+        t@DBandL(x,y,m,n@dbname(i)) -> { 
+          if (`i==n1) return `DBandL(x,y,reName(m,n1+2,n2+2),dbname(n2));
+          else return `DBandL(x,y,reName(m,n1+2,n2+2),n);
+        }
+        t@DBorR(a,b,m,cn) -> { 
+          return `DBorR(a,b,reName(m,n1,n2),cn);
+        }
+        DBorL(x,m1,y,m2,n@dbname(i)) -> { 
+          if (`i==n1) return `DBorL(x,reName(m1,n1+1,n2+1),y,reName(m2,n1+1,n2+1),dbname(n2));
+          else return `DBorL(x,reName(m1,n1+1,n2+1),y,reName(m2,n1+1,n2+1),n);
+        }
+        DBimplyR(x,a,m1,cn) -> { 
+          return `DBimplyR(x,a,reName(m1,n1,n2),cn);
+        }
+        DBimplyL(a,m1,x,m2,n@dbname(i)) -> { 
+          if (`i==n1) return `DBimplyL(a,reName(m1,n1,n2),x,reName(m2,n1+1,n2+1),dbname(n2));
+          else return `DBimplyL(a,reName(m1,n1,n2),x,reName(m2,n1+1,n2+1),n);
+        }
+        DBexistsR(a,m,t,cn) -> { 
+          return `DBexistsR(a,reName(m,n1,n2),t,cn);
+        }
+        DBexistsL(x,varx,m,n@dbname(i)) -> { 
+          if (`i==n1) return `DBexistsL(x,varx,reName(m,n1+1,n2+1),dbname(n2));
+          else return `DBexistsL(x,varx,reName(m,n1+1,n2+1),n);
+        }
+        DBforallR(a,varx,m,cn) -> { 
+          return `DBforallR(a,varx,reName(m,n1,n2),cn);
+        }
+        DBforallL(x,m,t,n@dbname(i)) -> { 
+          if (`i==n1) return `DBforallL(x,reName(m,n1+1,n2+1),t,dbname(n2));
+          else return `DBforallL(x,reName(m,n1+1,n2+1),t,n);
+        }
+        DBfoldR(a,m,cn,rulenum) -> { 
+          return `DBfoldR(a,reName(m,n1,n2),cn,rulenum); 
+        }
+        DBfoldL(x,m,n@dbname(i),rulenum) -> { 
+          if (`i==n1) return `DBfoldL(x,reName(m,n1+1,n2+1),dbname(n2),rulenum);
+          else return `DBfoldL(x,reName(m,n1+1,n2+1),n,rulenum);
+        }
+        DBmetaVar(mv) -> { 
+        }
+      }
+      throw new RuntimeException("should not happen");
+    }
+
+  private static DBProofTerm
+    reCoName(DBProofTerm term, int cn1, int cn2) {
+      %match(term) {
+        t@DBax(n,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBax(n,dbconame(cn2));
+          else return `t;
+        }
+        DBcut(a,m1,x,m2) -> { 
+        }
+        DBfalseL(n) -> { 
+        }
+        DBtrueR(cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBtrueR(dbconame(cn2));
+          else return `DBtrueR(cn);
+        }
+        DBandR(a,m1,b,m2,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBandR(a,reCoName(m1,cn1+1,cn2+1),b, reCoName(m2,cn1+1,cn2+1),dbconame(cn2));
+          else return `DBandR(a,reCoName(m1,cn1+1,cn2+1),b, reCoName(m2,cn1+1,cn2+1),cn);
+        }
         DBandL(x,y,m,n) -> { 
         }
-        DBorR(a,b,m,cn) -> { 
+        DBorR(a,b,m,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBorR(a,b,reCoName(m,cn1+2,cn2+2),dbconame(cn2));
+          else return `DBorR(a,b,reCoName(m,cn1+2,cn2+2),cn);
         }
         DBorL(x,m1,y,m2,n) -> { 
         }
-        DBimplyR(x,a,m1,cn) -> { 
+        DBimplyR(x,a,m1,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBimplyR(x,a,reCoName(m1,cn1+1,cn2+1),dbconame(cn2));
+          else return `DBimplyR(x,a,reCoName(m1,cn1+1,cn2+1),cn);
         }
         DBimplyL(a,m1,x,m2,n) -> { 
         }
-        DBexistsR(a,m,t,cn) -> { 
+        DBexistsR(a,m,t,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBexistsR(a,reCoName(m,cn1+1,cn2+1),t,dbconame(cn2));
+          else return `DBexistsR(a,reCoName(m,cn1+1,cn2+1),t,cn);
         }
         DBexistsL(x,varx,m,n) -> { 
         }
-        DBforallR(a,varx,m,cn) -> { 
+        DBforallR(a,varx,m,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBforallR(a,varx,reCoName(m,cn1+1,cn2+1),dbconame(cn2));
+          else return `DBforallR(a,varx,reCoName(m,cn1+1,cn2+1),cn);
         }
         DBforallL(x,m,t,n) -> { 
         }
-        DBfoldR(a,m,cn,rulenum) -> { 
+        DBfoldR(a,m,cn@dbconame(i),rulenum) -> { 
+          if (`i==cn1) return `DBfoldR(a,reCoName(m,cn1+1,cn2+1),dbconame(cn2),rulenum);
+          else return `DBfoldR(a,reCoName(m,cn1+1,cn2+1),cn,rulenum);
         }
         DBfoldL(x,m,n,rulenum) -> { 
         }
@@ -427,38 +516,127 @@ public class DBProofterms {
       throw new RuntimeException("should not happen");
     }
 
-  private static DBProofTerm reCoNameFreeOccurences
-    (DBProofTerm term, DBName name1, DBName name2, int deep) {
+  private static DBProofTerm
+    substName(DBProofTerm term, int i, Prop a, DBProofTerm M, int ndeep, int cndeep) {
       %match(term) {
-        DBax(n,cn) -> { 
+        t@DBax(dbname(ni),dbconame(cni)) -> {
+          if (`ni==i+ndeep) return `reCoName(shift(M,0,ndeep,cndeep),0,cni);
+          else return `t;
+        }
+        DBcut(a,m1,x,m2) -> {
+          return `DBcut(a,substName(m1,i,a,M,ndeep,cndeep+1),x,substName(m2,i,a,M,ndeep+1,cndeep)); 
+        }
+        /*
+        t@DBfalseL(dbname(i)) -> { 
+          if (`i==n1) return `DBfalseL(dbname(n2));
+          else return `t;
+        }
+        t@DBtrueR(cn) -> { 
+          return `t;
+        }
+        DBandR(a,m1,b,m2,cn) -> { 
+          return `DBandR(a,reName(m1,n1,n2),b,reName(m2,n1,n2),cn); 
+        }
+        */
+        t@DBandL(x,y,m,n@dbname(ni)) -> { 
+          if (`ni==i+ndeep) {
+            DBProofTerm new_and = `DBandL(x,y,substName(m,i,a,M,ndeep+2,cndeep),dbname(0));
+            return `DBcut(a,shift(M,0,ndeep,cndeep),a,shift(new_and,0,ndeep+1,cndeep));
+          }
+          else return `DBandL(x,y,substName(m,i,a,M,ndeep+2,cndeep),n);
+        }
+        /*
+        t@DBorR(a,b,m,cn) -> { 
+          return `DBorR(a,b,reName(m,n1,n2),cn);
+        }
+        DBorL(x,m1,y,m2,n@dbname(i)) -> { 
+          if (`i==n1) return `DBorL(x,reName(m1,n1+1,n2+1),y,reName(m2,n1+1,n2+1),dbname(n2));
+          else return `DBorL(x,reName(m1,n1+1,n2+1),y,reName(m2,n1+1,n2+1),n);
+        }
+        DBimplyR(x,a,m1,cn) -> { 
+          return `DBimplyR(x,a,reName(m1,n1,n2),cn);
+        }
+        DBimplyL(a,m1,x,m2,n@dbname(i)) -> { 
+          if (`i==n1) return `DBimplyL(a,reName(m1,n1,n2),x,reName(m2,n1+1,n2+1),dbname(n2));
+          else return `DBimplyL(a,reName(m1,n1,n2),x,reName(m2,n1+1,n2+1),n);
+        }
+        DBexistsR(a,m,t,cn) -> { 
+          return `DBexistsR(a,reName(m,n1,n2),t,cn);
+        }
+        DBexistsL(x,varx,m,n@dbname(i)) -> { 
+          if (`i==n1) return `DBexistsL(x,varx,reName(m,n1+1,n2+1),dbname(n2));
+          else return `DBexistsL(x,varx,reName(m,n1+1,n2+1),n);
+        }
+        DBforallR(a,varx,m,cn) -> { 
+          return `DBforallR(a,varx,reName(m,n1,n2),cn);
+        }
+        DBforallL(x,m,t,n@dbname(i)) -> { 
+          if (`i==n1) return `DBforallL(x,reName(m,n1+1,n2+1),t,dbname(n2));
+          else return `DBforallL(x,reName(m,n1+1,n2+1),t,n);
+        }
+        DBfoldR(a,m,cn,rulenum) -> { 
+          return `DBfoldR(a,reName(m,n1,n2),cn,rulenum); 
+        }
+        DBfoldL(x,m,n@dbname(i),rulenum) -> { 
+          if (`i==n1) return `DBfoldL(x,reName(m,n1+1,n2+1),dbname(n2),rulenum);
+          else return `DBfoldL(x,reName(m,n1+1,n2+1),n,rulenum);
+        }
+        DBmetaVar(mv) -> { 
+        }
+        */
+      }
+      throw new RuntimeException("should not happen");
+    }
+
+  /*
+  private static DBProofTerm
+    substCoName(DBProofTerm term, int cn1, int cn2) {
+      %match(term) {
+        t@DBax(n,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBax(n,dbconame(cn2));
+          else return `t;
         }
         DBcut(a,m1,x,m2) -> { 
         }
         DBfalseL(n) -> { 
         }
-        DBtrueR(cn) -> { 
+        DBtrueR(cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBtrueR(dbconame(cn2));
+          else return `DBtrueR(cn);
         }
-        DBandR(a,m1,b,m2,cn) -> { 
+        DBandR(a,m1,b,m2,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBandR(a,reCoName(m1,cn1+1,cn2+1),b, reCoName(m2,cn1+1,cn2+1),dbconame(cn2));
+          else return `DBandR(a,reCoName(m1,cn1+1,cn2+1),b, reCoName(m2,cn1+1,cn2+1),cn);
         }
         DBandL(x,y,m,n) -> { 
         }
-        DBorR(a,b,m,cn) -> { 
+        DBorR(a,b,m,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBorR(a,b,reCoName(m,cn1+2,cn2+2),dbconame(cn2));
+          else return `DBorR(a,b,reCoName(m,cn1+2,cn2+2),cn);
         }
         DBorL(x,m1,y,m2,n) -> { 
         }
-        DBimplyR(x,a,m1,cn) -> { 
+        DBimplyR(x,a,m1,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBimplyR(x,a,reCoName(m1,cn1+1,cn2+1),dbconame(cn2));
+          else return `DBimplyR(x,a,reCoName(m1,cn1+1,cn2+1),cn);
         }
         DBimplyL(a,m1,x,m2,n) -> { 
         }
-        DBexistsR(a,m,t,cn) -> { 
+        DBexistsR(a,m,t,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBexistsR(a,reCoName(m,cn1+1,cn2+1),t,dbconame(cn2));
+          else return `DBexistsR(a,reCoName(m,cn1+1,cn2+1),t,cn);
         }
         DBexistsL(x,varx,m,n) -> { 
         }
-        DBforallR(a,varx,m,cn) -> { 
+        DBforallR(a,varx,m,cn@dbconame(i)) -> { 
+          if (`i==cn1) return `DBforallR(a,varx,reCoName(m,cn1+1,cn2+1),dbconame(cn2));
+          else return `DBforallR(a,varx,reCoName(m,cn1+1,cn2+1),cn);
         }
         DBforallL(x,m,t,n) -> { 
         }
-        DBfoldR(a,m,cn,rulenum) -> { 
+        DBfoldR(a,m,cn@dbconame(i),rulenum) -> { 
+          if (`i==cn1) return `DBfoldR(a,reCoName(m,cn1+1,cn2+1),dbconame(cn2),rulenum);
+          else return `DBfoldR(a,reCoName(m,cn1+1,cn2+1),cn,rulenum);
         }
         DBfoldL(x,m,n,rulenum) -> { 
         }
@@ -467,4 +645,46 @@ public class DBProofterms {
       }
       throw new RuntimeException("should not happen");
     }
+    */
+
+  public static void main(String[] args) {
+    Prop A = `relationAppl("A",concTerm());
+    Prop B = `relationAppl("B",concTerm());
+
+    DBProofTerm pt = `DBorL(A,DBax(dbname(0),dbconame(0)),B,DBax(dbname(1),dbconame(0)),dbname(0)); 
+    DBProofTerm ptbis = reName(pt,0,1);
+    System.out.println("pt             = " + PrettyPrinter.prettyPrint(pt));
+    System.out.println("pt[n(0)->n(1)] = " + PrettyPrinter.prettyPrint(ptbis));
+
+    System.out.println();
+    DBProofTerm pt2 = `DBandL(A,B,DBax(dbname(1),dbconame(0)),dbname(0)); 
+    DBProofTerm pt2bis = reName(pt2,0,1);
+    System.out.println("pt2             = " + PrettyPrinter.prettyPrint(pt2));
+    System.out.println("pt2[n(0)->n(1)] = " + PrettyPrinter.prettyPrint(pt2bis));
+
+    System.out.println();
+    DBProofTerm pt3 = `DBandL(A,B,DBax(dbname(2),dbconame(0)),dbname(0)); 
+    DBProofTerm pt3bis = reName(pt3,0,1);
+    System.out.println("pt3             = " + PrettyPrinter.prettyPrint(pt3));
+    System.out.println("pt3[n(0)->n(1)] = " + PrettyPrinter.prettyPrint(pt3bis));
+
+    System.out.println();
+    DBProofTerm pt4 = `DBandL(A,B,DBax(dbname(3),dbconame(0)),dbname(0)); 
+    DBProofTerm pt4bis = reName(pt4,1,2);
+    System.out.println("pt4             = " + PrettyPrinter.prettyPrint(pt4));
+    System.out.println("pt4[n(1)->n(2)] = " + PrettyPrinter.prettyPrint(pt4bis));
+
+    System.out.println();
+    DBProofTerm pt5 = `DBandL(A,B,DBax(dbname(3),dbconame(2)),dbname(0)); 
+    DBProofTerm M5 = `DBax(dbname(4),dbconame(0)); 
+    DBProofTerm pt5bis = substName(pt5,1,A,M5,0,0);
+    System.out.println("pt5                       = " + PrettyPrinter.prettyPrint(pt5));
+    System.out.println("pt5[n(1):=ax(n(4),cn(0))] = " + PrettyPrinter.prettyPrint(pt5bis));
+
+    System.out.println();
+    DBProofTerm pt6 = `DBax(dbname(0),dbconame(0)); 
+    DBProofTerm pt6bis = shift(pt6,0,1,0); 
+    System.out.println("pt6              = " + PrettyPrinter.prettyPrint(pt6));
+    System.out.println("shift(pt6,0,1,0) = " + PrettyPrinter.prettyPrint(pt6bis));
+  }
 }

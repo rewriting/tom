@@ -668,24 +668,32 @@ class PrettyPrinter {
       (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
+    %match(DBName term) {
+      dbname(i) -> { return "n("+`i+")";}
+    }
+
+    %match(DBCoName term) {
+      dbconame(i) -> { return "cn("+`i+")";}
+    }
+
     %match(DBProofTerm term) { 
       DBmetaVar(mv) -> { return `prettyPrint(mv); }
-      DBfoldL(x,m,y,i) -> { return "foldL_"+`i +"(<"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
-      DBfoldR(a,m,b,i) -> { return "foldR_"+`i +"(<"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
+      DBfoldL(x,m,y,i) -> { return "foldL_"+`i +"(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
+      DBfoldR(a,m,b,i) -> { return "foldR_"+`i +"(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
       DBax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
-      DBcut(a,m1,x,m2) -> {return "cut(<"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <"+prettyPrint(`x)+"> "+prettyPrint(`m2)+")";}
+      DBcut(a,m1,x,m2) -> {return "cut(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`x)+"> "+prettyPrint(`m2)+")";}
       DBfalseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
       DBtrueR(cn) -> {return "trueR("+prettyPrint(`cn)+")";}
-      DBandR(a,m1,b,m2,nc) -> {return "andR(<"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <"+prettyPrint(`b)+"> "+prettyPrint(`m2)+","+prettyPrint(`nc)+")" ;}
-      DBandL(x,y,m,n) -> {return "andL(<"+prettyPrint(`x)+"><"+prettyPrint(`y)+"> "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
-      DBorR(a,b,m,cn) -> {return "orR(<"+prettyPrint(`a)+"><"+prettyPrint(`b)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
-      DBorL(x,m1,y,m2,n) -> {return "orL(<"+prettyPrint(`x)+"> "+prettyPrint(`m1)+", <"+prettyPrint(`y)+"> "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
-      DBimplyR(x,a,m,cn) -> {return "implyR(<"+prettyPrint(`x)+"><"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
-      DBimplyL(a,m1,x,m2,n) -> {return "implyL(<"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <"+prettyPrint(`x)+"> "+prettyPrint(`m2)+","+prettyPrint(`n)+")" ;}
-      DBexistsL(x,varx,m,n) -> {return "existsL(<"+prettyPrint(`x)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
-      DBexistsR(a,m,t,cn) -> {return "existsR(<"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
-      DBforallL(x,m,t,n) -> {return "forallL(<"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
-      DBforallR(a,varx,m,cn) -> {return "forallR(<"+prettyPrint(`a)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBandR(a,m1,b,m2,nc) -> {return "andR(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <cn:"+prettyPrint(`b)+"> "+prettyPrint(`m2)+","+prettyPrint(`nc)+")" ;}
+      DBandL(x,y,m,n) -> {return "andL(<n:"+prettyPrint(`x)+"><n:"+prettyPrint(`y)+"> "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      DBorR(a,b,m,cn) -> {return "orR(<cn:"+prettyPrint(`a)+"><cn:"+prettyPrint(`b)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBorL(x,m1,y,m2,n) -> {return "orL(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`y)+"> "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      DBimplyR(x,a,m,cn) -> {return "implyR(<n:"+prettyPrint(`x)+"><cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBimplyL(a,m1,x,m2,n) -> {return "implyL(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`x)+"> "+prettyPrint(`m2)+","+prettyPrint(`n)+")" ;}
+      DBexistsL(x,varx,m,n) -> {return "existsL(<n:"+prettyPrint(`x)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      DBexistsR(a,m,t,cn) -> {return "existsR(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
+      DBforallL(x,m,t,n) -> {return "forallL(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
+      DBforallR(a,varx,m,cn) -> {return "forallR(<cn:"+prettyPrint(`a)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
     }
 
     %match(ProofTerm term) { 
