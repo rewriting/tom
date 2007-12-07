@@ -286,6 +286,62 @@ public static void save(String fileContent,File file) throws IOException {
  	 } 
 }
 
+%strategy Gravity() extends Identity(){ 
+  	visit TwoPath {
+  		TwoC1(head*,f@TwoCell(_,_,_,Constructor()),g@TwoId(_),tail*)->{
+				if(`f.target()==`g.source()){
+				if(`head*==`TwoId(Id())){
+				if(`tail*==`TwoId(Id())){return `TwoC1(TwoId(f.source()),f);}
+				return `TwoC1(TwoId(f.source()),f,tail*);
+				}
+				if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoId(f.source()),f);}
+				System.out.println("GravityA");
+				return `TwoC1(head*,TwoId(f.source()),f,tail*);
+				}
+}
+  		TwoC1(head*,TwoC0(head1*,f@TwoCell(_,_,_,Constructor()),tail1*),TwoC0(head2*,g@TwoId(_),tail2*),tail*) -> { 
+
+			if(`head1*.target()==`head2*.source()&&`tail1*.target()==`tail2*.source()&&`f.target()==`g.source()){
+																											
+				if(`head*==`TwoId(Id())){
+					if(`tail*==`TwoId(Id())){return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*));}
+					System.out.println("GravityB1");
+					return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*),tail*);
+				}
+				if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*));}
+				System.out.println("GravityB2");
+				return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*),tail*);
+			}
+  	  }
+  		TwoC1(head*,f@TwoCell(_,_,_,Constructor()),TwoC0(head2*,g@TwoId(_),tail2*),tail*) -> { 
+
+			if(`f.target()==`g.source()){
+
+																											
+				if(`head*==`TwoId(Id())){
+					if(`tail*==`TwoId(Id())){return `TwoC0(head2*,f,tail2*);}
+					System.out.println("GravityC1");
+					return `TwoC1(TwoC0(head2*,f,tail2*),tail*);
+				}
+				if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head2*,f,tail2*));}
+				System.out.println("GravityC2");
+				return `TwoC1(head*,TwoC0(head2*,f,tail2*),tail*);
+			}
+  	  }
+  		  TwoC1(head*,TwoC0(head1*,f@TwoCell(_,_,_,Constructor()),tail1*),g@TwoId(_),tail*) -> { 
+
+				if(`f.target()==`g.source()){
+				if(`head*==`TwoId(Id())){
+					if(`tail*==`TwoId(Id())){System.out.println("GravityD1");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f);}
+					System.out.println("GravityD2");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+				}
+				if(`tail*==`TwoId(Id())){System.out.println("GravityD3");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f);}
+				System.out.println("GravityD4");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+			}
+  	  }
+  	} 
+}
+
 	public static TwoPath[] toArray(TwoC0 twoc0) {
     int size = twoc0.length();
     TwoPath[] array = new TwoPath[size];
@@ -313,38 +369,44 @@ public static void save(String fileContent,File file) throws IOException {
 		String targetString=target.toString();
 		int i=0;
 		while(sourceString.contains("ruleAux")){//A CHANGER !!!!
-			sourceString=sourceString.replaceFirst("TwoCell\\(\"ruleAux\",[^,]+,[^,]+,[^\\)]+\\)\\)", "X"+i+"*");
-			targetString=targetString.replaceFirst("TwoCell\\(\"ruleAux\",[^,]+,[^,]+,[^\\)]+\\)\\)", "X"+i+"*");
+			char indexSource=sourceString.charAt(sourceString.indexOf("ruleAux")+7);
+			char indexTarget=targetString.charAt(targetString.indexOf("ruleAux")+7);
+			sourceString=sourceString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\)\\)", "X"+indexSource+"*");
+			targetString=targetString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\)\\)", "X"+indexTarget+"*");
 			i++;}
+		String condition="";
+		//String targetInput="";
+		if(i>0){
+		i--;
+		condition="if(`X"+i+"!=`TwoId(Id())";
+		//targetInput="X"+i+")";
+		while(i>0){
+		i--;
+		condition+="&&`X"+i+"!=`TwoId(Id())";
+		//targetInput="X"+i+","+targetInput;
+		}
+		condition+=")";
+		//targetInput="TwoC0("+targetInput;
+		//targetString="TwoC1("+targetInput+","+targetString+")";
+		}
 		if(source.isConsTwoC1()){sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
 		else{sourceString="TwoC1("+sourceString+",Y*)";}
 		if(target.isConsTwoC1()){targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
 		else{targetString="TwoC1("+targetString+",Y*)";}
-		String condition="";
-		//if(i==1){condition="if(`X0!=`TwoId(Id()))";}// a faire pour tous les Xi en fait
-		if(i>0){
-		i--;
-		condition="if(`X"+i+"!=`TwoId(Id())";
-		while(i>0){
-		i--;
-		condition+="&&`X"+i+"!=`TwoId(Id())";
-		}
-		condition+=")";
-		}
 		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
 	}
 	
-%strategy ruleAux() extends Identity(){ 
+%strategy ruleAux(int i) extends Identity(){ 
   	visit TwoPath {
   	  TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*));}
-  	  TwoId(OneCell(name)) -> {return `TwoCell("ruleAux",Id(),OneCell(name),Constructor());} 
+  	  TwoId(OneCell(name)) -> {return `TwoCell("ruleAux"+(i++),Id(),OneCell(name),Constructor());} 
  	 } 
 }
 public static TwoPath formatRule(TwoPath path){
 		try{TwoPath source=`TwoId(path.source());
-			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux())).visit(source);
+			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visit(source);
 			path=`TwoC1(ruleAux,path);
-			path=(TwoPath) `RepeatId(TopDown(Normalize())).visit(path);
+			path=(TwoPath) `RepeatId(TopDown(Sequence(Normalize(),Gravity()))).visit(path);
 	}
 	catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException("strange term: "+path);
