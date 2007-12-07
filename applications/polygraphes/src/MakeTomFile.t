@@ -350,8 +350,8 @@ sort ThreePath:block(){
   	  	
   	  	TwoC1(head*,t@@TwoId(_),TwoId(_),tail*) -> { if(`head!=`TwoId(Id())){return `TwoC1(head,t,tail);}else{return `TwoC1(t,tail);}}
   	  	//encore experimental, pour les split
-  	  	TwoC1(head*TwoC0(left*,right*),TwoC0(bottomleft*,bottomright*))->{if(`left!=`TwoId(Id())&&`right!=`TwoId(Id())&&`bottomleft!=`TwoId(Id())&&`bottomright!=`TwoId(Id())&&`left.target()==`bottomleft.source()){System.out.println("split paths");if(`head==TwoId(Id())){return `TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright));}else{return `TwoC1(head,TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright)));}}}
- 	 } 
+  	  	TwoC1(head*,TwoC0(left*,right*),TwoC0(bottomleft*,bottomright*))->{if(`left!=`TwoId(Id())&&`right!=`TwoId(Id())&&`bottomleft!=`TwoId(Id())&&`bottomright!=`TwoId(Id())&&`left.target()==`bottomleft.source()){System.out.println("split paths");if(`head==`TwoId(Id())){return `TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright));}else{return `TwoC1(head,TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright)));}}}
+  	} 
 }
 
 %strategy Print() extends Identity(){

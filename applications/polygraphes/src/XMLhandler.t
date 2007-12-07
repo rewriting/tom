@@ -224,6 +224,17 @@ public static void save(String fileContent,File file) throws IOException {
   	  		}
   	  		}
   	  		}
+ 	  	TwoC1(head*,TwoC0(topleft*,top*,topright*),TwoC0(left*,TwoC1(topf*,f@TwoCell(_,_,_,_),right*)),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
+ 	  		if(`topleft*.target()==`left*.source()&&`top.target()==`topf.source()){
+  	  			TwoPath myNewPath=`TwoId(Id());
+  	  		if(`head*!=`TwoId(Id())){myNewPath= `TwoC1(head*,TwoC0(TwoC1(topleft*,left*),TwoC1(top*,topf*,f),TwoC1(topright*,right*)),tail*);}
+  	  		else{myNewPath= `TwoC1(TwoC0(TwoC1(topleft*,left*),TwoC1(top*,topf*,f),TwoC1(topright*,right*)),tail*);}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		System.out.println("8bis");
+  	  		return myNewPath;
+  	  		}
+  	  		}
+  	  		}
   	  	TwoC1(head*,top,TwoC0(left*,X,right*),tail*) -> {if(`left*.source()==`Id()&&`right*.source()==`Id()&&`X.source()==`top.target()){	 
   	  		TwoPath myNewPath=`TwoId(Id());//peut etre verifier compatibilite de top et X?
   	  		if(`head*!=`TwoId(Id())){myNewPath=`TwoC1(head*,TwoC0(left*,TwoC1(top,X),right*),tail*);}else{myNewPath=`TwoC1(TwoC0(left*,TwoC1(top,X),right*),tail*);}
@@ -295,34 +306,54 @@ public static void save(String fileContent,File file) throws IOException {
 	public static String makeRule(ThreePath rule){
 		TwoPath source=rule.getSource();
 		TwoPath target=rule.getTarget();
-		source=`TwoC1(TwoId(source.source()),source);
 		source=formatRule(source);
-		target=`TwoC1(TwoId(target.source()),target);
 		target=formatRule(target);
+		//source.print();
 		String sourceString=source.toString();
 		String targetString=target.toString();
 		int i=0;
-		while(sourceString.contains("TwoId")){//A CHANGER !!!!
-			sourceString=sourceString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
-			targetString=targetString.replaceFirst("TwoId[^\\)]+\\)\\)", "X"+i+"*");
+		while(sourceString.contains("ruleAux")){//A CHANGER !!!!
+			sourceString=sourceString.replaceFirst("TwoCell\\(\"ruleAux\",[^,]+,[^,]+,[^\\)]+\\)\\)", "X"+i+"*");
+			targetString=targetString.replaceFirst("TwoCell\\(\"ruleAux\",[^,]+,[^,]+,[^\\)]+\\)\\)", "X"+i+"*");
 			i++;}
 		if(source.isConsTwoC1()){sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
 		else{sourceString="TwoC1("+sourceString+",Y*)";}
 		if(target.isConsTwoC1()){targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
-		else{targetString="TwoC1("+targetString+",Y*)";
-		}
+		else{targetString="TwoC1("+targetString+",Y*)";}
 		String condition="";
-		if(i==1){condition="if(`X0!=`TwoId(Id()))";}// a faire pour tous les Xi en fait
+		//if(i==1){condition="if(`X0!=`TwoId(Id()))";}// a faire pour tous les Xi en fait
+		if(i>0){
+		i--;
+		condition="if(`X"+i+"!=`TwoId(Id())";
+		while(i>0){
+		i--;
+		condition+="&&`X"+i+"!=`TwoId(Id())";
+		}
+		condition+=")";
+		}
 		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
 	}
-	public static TwoPath formatRule(TwoPath myPath){
-		try{myPath=(TwoPath) `RepeatId(TopDown(Normalize())).visit(myPath);
+	
+%strategy ruleAux() extends Identity(){ 
+  	visit TwoPath {
+  	  TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*));}
+  	  TwoId(OneCell(name)) -> {return `TwoCell("ruleAux",Id(),OneCell(name),Constructor());} 
+ 	 } 
+}
+public static TwoPath formatRule(TwoPath path){
+		try{TwoPath source=`TwoId(path.source());
+			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux())).visit(source);
+			path=`TwoC1(ruleAux,path);
+			path=(TwoPath) `RepeatId(TopDown(Normalize())).visit(path);
 	}
 	catch(VisitFailure e) {
-      throw new tom.engine.exception.TomRuntimeException("strange term: "+myPath);
+      throw new tom.engine.exception.TomRuntimeException("strange term: "+path);
     }
-	return myPath;
+	return path;
 }
+
+
+
 	public static String makeRuleStrategy(String filename){
 		String strategy="";
 		int n=0;
