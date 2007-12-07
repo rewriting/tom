@@ -37,6 +37,7 @@ import tom.engine.compiler.*;
 import tom.engine.TomBase;
 import tom.engine.exception.TomRuntimeException;
 import java.util.ArrayList;
+import tom.engine.compiler.Compiler;
 
 /**
  * Syntactic propagator
@@ -65,7 +66,7 @@ public class VariadicPropagator implements IBasePropagator {
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not a list, nothing to do
-        if(!TomBase.isListOperator(ConstraintCompiler.getSymbolTable().
+        if(!TomBase.isListOperator(Compiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
         Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
         if (detachedConstr != `m) { return detachedConstr; }
@@ -89,11 +90,11 @@ public class VariadicPropagator implements IBasePropagator {
        */
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this is not a list, nothing to do
-        if(!TomBase.isListOperator(ConstraintCompiler.getSymbolTable().
+        if(!TomBase.isListOperator(Compiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }        
         // declare fresh variable
-        TomType listType = ConstraintCompiler.getTermTypeFromTerm(`t);
-        TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(listType);				
+        TomType listType = Compiler.getTermTypeFromTerm(`t);
+        TomTerm freshVariable = Compiler.getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint l = `AndConstraint();        
 mSlots:  %match(slots) {
@@ -101,7 +102,7 @@ mSlots:  %match(slots) {
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
-            TomTerm newFreshVarList = ConstraintCompiler.getFreshVariableStar(listType);            
+            TomTerm newFreshVarList = Compiler.getFreshVariableStar(listType);            
       mAppl:%match(appl) {
               // if we have a variable star
               (VariableStar | UnamedVariableStar)[] -> {                
@@ -110,8 +111,8 @@ mSlots:  %match(slots) {
                   // we should only assign it, without generating a loop
                   l = `AndConstraint(l*,MatchConstraint(appl,freshVariable));
                 } else {
-                  TomTerm beginSublist = ConstraintCompiler.getBeginVariableStar(listType);
-                  TomTerm endSublist = ConstraintCompiler.getEndVariableStar(listType);              
+                  TomTerm beginSublist = Compiler.getBeginVariableStar(listType);
+                  TomTerm endSublist = Compiler.getEndVariableStar(listType);              
                   l = `AndConstraint(l*,
                       MatchConstraint(beginSublist,freshVariable),
                       MatchConstraint(endSublist,freshVariable),             
@@ -123,7 +124,7 @@ mSlots:  %match(slots) {
               _ -> {
                 l = `AndConstraint(l*,                      
                     Negate(EmptyListConstraint(name,freshVariable)),
-                    MatchConstraint(appl,ListHead(name,ConstraintCompiler.getTermTypeFromTerm(appl),freshVariable)),
+                    MatchConstraint(appl,ListHead(name,Compiler.getTermTypeFromTerm(appl),freshVariable)),
                     MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
                 if (`X.length() == 0) {                  

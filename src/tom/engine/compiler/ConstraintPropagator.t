@@ -104,7 +104,7 @@ public class ConstraintPropagator {
         }// end match   
       }      
       MatchConstraint(t@(VariableStar|UnamedVariableStar)[AstType=type,Constraints=constraints@!concConstraint()],g) -> {        
-        TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(`type);
+        TomTerm freshVariable = Compiler.getFreshVariableStar(`type);
         %match(constraints) {
           concConstraint(_*,AssignTo(var),_*) -> {
             result = `AndConstraint(MatchConstraint(var,freshVariable),result*);                                                                                                                       

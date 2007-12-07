@@ -38,8 +38,9 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-
 import tom.engine.compiler.*;
+import tom.engine.compiler.Compiler;
+
 /**
  * Variadic Generator
  */
@@ -108,7 +109,7 @@ public class VariadicGenerator implements IBaseGenerator {
    *   this occurs because the last element of a loop may not be a list
    */ 
   private static Expression genGetHead(TomName opName, TomType type, TomTerm var) {
-    TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
@@ -125,7 +126,7 @@ public class VariadicGenerator implements IBaseGenerator {
    *   this occurs because the last element of a loop may not be a list
    */ 
   private static Expression genGetTail(TomName opName, TomTerm var) {
-    TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
     TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
     TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
     if(domain==codomain) {
