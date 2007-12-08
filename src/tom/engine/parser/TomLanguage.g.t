@@ -159,12 +159,13 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     LinkedList argumentList = new LinkedList();
     LinkedList constraintInstructionList = new LinkedList();
     TomList subjectList = null;
+    TomType patternType = `TomTypeAlone("unknown");
 }
   : (
             LPAREN matchArguments[argumentList] RPAREN 
             LBRACE { subjectList = ASTFactory.makeList(argumentList); }
             ( 
-             patternInstruction[subjectList,constraintInstructionList] 
+             patternInstruction[subjectList,constraintInstructionList,patternType]
             )* 
             t:RBRACE 
             { 
@@ -225,7 +226,7 @@ matchArgument [LinkedList list] throws TomException
 }
 ;
 
-patternInstruction [TomList subjectList, LinkedList list] throws TomException
+patternInstruction [TomList subjectList, LinkedList list, TomType rhsType] throws TomException
 {    
     LinkedList optionListLinked = new LinkedList();
     LinkedList matchPatternList = new LinkedList();
@@ -238,7 +239,6 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
     Option option = null;
     
     TomTerm rhsTerm = null;
-    int consType = -1; 
     
     clearText();
 }
@@ -278,7 +278,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                   if (result == null) {
                     result = constr;
                   }else{
-                    %match(constr,result){
+                    %match(constr,result) {
                       AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
                       AndMarker(x),OrMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
                       OrMarker(x),AndMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
@@ -324,6 +324,12 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
               {
               // case where the rhs of a rule is an algebraic term
               // TODO
+                list.add(`ConstraintInstruction(
+                    constraint,
+                    Return(BuildReducedTerm(rhsTerm,rhsType)),
+                    optionList)
+                );
+
               }
             )
             
@@ -654,7 +660,7 @@ strategyVisit [LinkedList list] throws TomException
       subjectList = `concTomTerm(TomTypeToTomTerm(vType));
     }
     (  
-      patternInstruction[subjectList,constraintInstructionList] 
+      patternInstruction[subjectList,constraintInstructionList,vType] 
     )* 
     RBRACE
   )

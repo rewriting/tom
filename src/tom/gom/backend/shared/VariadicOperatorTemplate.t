@@ -123,6 +123,9 @@ writer.write(%[
         rev = @fullClassName(cons.getClassName())@.make(((@fullClassName(cons.getClassName())@)cur).getHead@className()@(),rev);
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
       }
+      //if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
+      //  rev = @fullClassName(cons.getClassName())@.make(cur,rev);
+      //}
       return rev;
     } else {
       return this;

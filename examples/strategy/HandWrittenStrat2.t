@@ -241,7 +241,7 @@ public class HandWrittenStrat2 {
 
   %typeterm Term1 {
     implement { HandWrittenStrat2.Term1 }  
-    is_sort(t) { ($t instanceof HandWrittenStrat2.Term1) } 
+    is_sort(t) { ($t instanceof HandWrittenStrat2.Term1) }
     equals(t1,t2) { $t1.equals($t2) }
   }
 
@@ -258,7 +258,7 @@ public class HandWrittenStrat2 {
 
   %typeterm Term2 {
     implement { HandWrittenStrat2.Term2 }  
-    is_sort(t) { $t instanceof HandWrittenStrat2.Term2 } 
+    is_sort(t) { ($t instanceof HandWrittenStrat2.Term2) }
     equals(t1,t2) { $t1.equals($t2) }
   }
 
