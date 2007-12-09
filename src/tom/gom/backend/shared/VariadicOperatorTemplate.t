@@ -123,9 +123,15 @@ writer.write(%[
         rev = @fullClassName(cons.getClassName())@.make(((@fullClassName(cons.getClassName())@)cur).getHead@className()@(),rev);
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
       }
-      //if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
-      //  rev = @fullClassName(cons.getClassName())@.make(cur,rev);
-      //}
+]%);
+    if(fullClassName(sortName).equals(domainClassName)) { /* domain = codomain */
+      writer.write(%[
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
+        rev = @fullClassName(cons.getClassName())@.make(cur,rev);
+      }
+]%);
+    }
+    writer.write(%[
       return rev;
     } else {
       return this;
@@ -139,7 +145,7 @@ writer.write(%[
         return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).append(element));
       } else {
 ]%);
-    if(fullClassName(sortName)==domainClassName) {
+    if(fullClassName(sortName).equals(domainClassName)) {
       writer.write(%[
         return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),@fullClassName(cons.getClassName())@.make(tl,element));
 ]%);
