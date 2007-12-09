@@ -149,7 +149,7 @@ public class TestXml extends TestCase {
 		%match(TNode node) {
 			<Configuration>
 				<Cellule>
-					a @ <Defaut R1=iR />
+					_a @ <Defaut R1=_iR />
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match R"+a);                  
@@ -157,7 +157,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut V1=iV />
+					_a @ <Defaut V1=_iV />
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match V"+a);                  
@@ -165,7 +165,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut B1=iB />
+					_a @ <Defaut B1=_iB />
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match B"+a);                  
@@ -173,7 +173,7 @@ public class TestXml extends TestCase {
 			} 
 			<Configuration>
 				<Cellule>
-					a @ <Defaut B1=iB R1=iR></Defaut>
+					_a @ <Defaut B1=_iB R1=_iR></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match BR"+a);                  
@@ -181,7 +181,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut R1=iR B1=iB></Defaut>
+					_a @ <Defaut R1=_iR B1=_iB></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match RB"+a);                  
@@ -189,7 +189,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut R1=iR V1=iV></Defaut>
+					_a @ <Defaut R1=_iR V1=_iV></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match RV"+a);                  
@@ -197,7 +197,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut V1=iV R1=iR></Defaut>
+					_a @ <Defaut V1=_iV R1=_iR></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match VR"+a);                  
@@ -205,7 +205,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut B1=iR V1=iV></Defaut>
+					_a @ <Defaut B1=_iR V1=_iV></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match BV"+a);                  
@@ -213,7 +213,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut V1=iV B1=iR></Defaut>
+					_a @ <Defaut V1=_iV B1=_iR></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match VB"+a);                  
@@ -221,7 +221,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut B1=iB R1=iR V1=iV></Defaut>
+					_a @ <Defaut B1=_iB R1=_iR V1=_iV></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match BRV"+a);                  
@@ -229,7 +229,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut B1=iB V1=iV R1=iR></Defaut>
+					_a @ <Defaut B1=_iB V1=_iV R1=_iR></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match BVR"+a);                  
@@ -237,7 +237,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut V1=iV R1=iR B1=iB></Defaut>
+					_a @ <Defaut V1=_iV R1=_iR B1=_iB></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match VRB"+a);                  
@@ -245,7 +245,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut V1=iV B1=iB R1=iR></Defaut>
+					_a @ <Defaut V1=_iV B1=_iB R1=_iR></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match VBR"+a);                  
@@ -253,7 +253,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-					a @ <Defaut R1=iR B1=iB V1=iV></Defaut>
+					_a @ <Defaut R1=_iR B1=_iB V1=_iV></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match RBV"+a);                  
@@ -261,7 +261,7 @@ public class TestXml extends TestCase {
 			}
 			<Configuration>
 				<Cellule>
-						a @ <Defaut R1=iR V1=iV B1=iB></Defaut>
+						_a @ <Defaut R1=_iR V1=_iV B1=_iB></Defaut>
 				</Cellule>
 			</Configuration> -> {
 				//System.out.println("Match RVB"+a);                  

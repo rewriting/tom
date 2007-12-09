@@ -13,8 +13,11 @@ public class TestOptimizer extends TestCase {
 		String s = "";
 		// used to make the optimizer fail
 		// with a stackoverflow exception
-		%match(String s){
-			a@x	->{
+		%match(String s) {
+			a@x	-> {
+				// nothing
+			}
+			_a@_x	-> {
 				// nothing
 			}
 		}

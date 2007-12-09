@@ -103,11 +103,11 @@ public class TestFL extends TestCase {
     T t = `conc(conc(conc(),b()),conc(conc()),conc(b(),conc()));
     int cnt = 0;
     %match(t) {
-      conc(b(),y*) -> { cnt++; }
-      conc(x*,b()) -> { cnt++; }
-      conc(b(),y) -> { cnt++; }
-      conc(x,b()) -> { cnt++; }
-      conc(x,y) -> { cnt++; }
+      conc(b(),_y*) -> { cnt++; }
+      conc(_x*,b()) -> { cnt++; }
+      conc(b(),_y) -> { cnt++; }
+      conc(_x,b()) -> { cnt++; }
+      conc(_x,_y) -> { cnt++; }
       conc(b(),x*,b()) -> { if(`x==`conc()) cnt++; }
     }
     assertEquals("Incomplete matching",cnt,6);
