@@ -24,6 +24,7 @@ Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack
 super is the parameter given to the function super. For Instance: super(`Identity());
 */
             | Class(AstName:TomName,ExtendsType:TomForwardType,SuperTerm:TomTerm,Declaration:Declaration)
+            | Introspector(AstName:TomName,Declaration:Declaration)
             | SymbolDecl(AstName:TomName)
             | ListSymbolDecl(AstName:TomName)
             | ArraySymbolDecl(AstName:TomName)

@@ -89,9 +89,11 @@ public class Expander extends TomGenericPlugin {
   private static final TomType introspectorType = `TomTypeAlone("tom.library.sl.Introspector");
   // introspector argument of visitLight
   private static final TomTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType,concConstraint());
-    
+  private static boolean generatedIntrospector = false;
+  
   /** if the flag is true, the class generated from %strategy inherits from BasicStrategy and handles the dispatch*/
   private static boolean autoDispatch = false;
+
 
   /** unicity var counter */
   private static int absVarNumber;
@@ -134,28 +136,28 @@ public class Expander extends TomGenericPlugin {
    * abstract list-matching patterns
    */
 
-  %op Strategy Expand(exapnder:Expander){
-    make(exapnder) { `ChoiceTopDown(Expand_once(exapnder)) }
+  %op Strategy Expand(expander:Expander){
+    make(expander) { `ChoiceTopDown(Expand_once(expander)) }
   }
 
-  %strategy Expand_once(exapnder:Expander) extends `Identity(){
+  %strategy Expand_once(expander:Expander) extends `Identity(){
     visit TomTerm {
       BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
         return `var;
       }
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
-        TomSymbol tomSymbol = exapnder.symbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = (SlotList) `Expand_makeTerm(exapnder).visitLight(`termArgs);
+        TomSymbol tomSymbol = expander.symbolTable().getSymbolFromName(`tomName);
+        SlotList newTermArgs = (SlotList) `Expand_makeTerm(expander).visitLight(`termArgs);
         TomList tomListArgs = TomBase.slotListToTomList(newTermArgs);
 
         if(TomBase.hasConstant(`optionList)) {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
           if(TomBase.isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs,exapnder.symbolTable());
+            return ASTFactory.buildList(`name,tomListArgs,expander.symbolTable());
           } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs,exapnder.symbolTable());
+            return ASTFactory.buildArray(`name,tomListArgs,expander.symbolTable());
           } else if(TomBase.isDefinedSymbol(tomSymbol)) {
             return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
           } else {
@@ -183,7 +185,7 @@ public class Expander extends TomGenericPlugin {
            * the call to Expand performs the recursive expansion
            * of nested match constructs
            */
-          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `Expand(exapnder).visitLight(constraintInstruction);
+          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `Expand(expander).visitLight(constraintInstruction);
 
 matchBlock: {
               %match(newConstraintInstruction) {
@@ -221,6 +223,15 @@ matchBlock: {
 
     visit Declaration {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
+        //Generate only one Intropector for a class if a %strategy is found
+        if(!generatedIntrospector) {
+          DeclarationList l = `concDeclaration();
+          //generate the code for every method of Instrospector interface
+
+
+
+          Introspector i = `Introspector(TomName("LocalIntrospector"),AbstractDecl(l));
+        }
         //System.out.println("extendsTerm = " + `extendsTerm);
         DeclarationList l = `concDeclaration();//represents compiled Strategy
         TomForwardType visitorFwd = null;             
@@ -230,7 +241,7 @@ matchBlock: {
           %match(visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
               if(visitorFwd == null) {//first time in loop
-                visitorFwd = exapnder.symbolTable().getForwardType(`type);//do the job only once
+                visitorFwd = expander.symbolTable().getForwardType(`type);//do the job only once
               }
               TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
@@ -239,20 +250,20 @@ matchBlock: {
               //return default strategy.visitLight(arg)
               // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
               Instruction returnStatement = null;
-              if (exapnder.autoDispatch) {
+              if (expander.autoDispatch) {
                 returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
               } else {
                 returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
               }
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);
               l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg,introspectorVar),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
-              if (exapnder.autoDispatch) {
+              if (expander.autoDispatch) {
                 dispatchInfo.put(`vType,funcName);
               }
             }              
           }
         }
-        if ( exapnder.autoDispatch ) { 
+        if ( expander.autoDispatch ) { 
          /*
           * // Generates the following dispatch mechanism
           *           
@@ -297,7 +308,7 @@ matchBlock: {
             TomTerm environmentVar = `Variable(concOption(),Name("environment"),EmptyType(),concConstraint());
             Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
             Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))))));
-            testEnvNotNull = `Negation(EqualTerm(exapnder.getStreamManager().getSymbolTable().getBooleanType(),
+            testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
                 environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
             Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
             l = `concDeclaration(l*,MethodDef(
@@ -319,18 +330,18 @@ matchBlock: {
                                       AbstractBlock(ifList));
           l = `concDeclaration(l*,visitLightDeclaration);
         }// end if autoDispatch
-        return (Declaration) `Expand(exapnder).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
+        return (Declaration) `Expand(expander).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }        
     }//end visit Declaration
   } // end strategy
 
-  %op Strategy Expand_makeTerm(exapnder:Expander){
-     make(exapnder) { `ChoiceTopDown(Expand_makeTerm_once(exapnder)) }
+  %op Strategy Expand_makeTerm(expander:Expander){
+     make(expander) { `ChoiceTopDown(Expand_makeTerm_once(expander)) }
   }
 
-  %strategy Expand_makeTerm_once(exapnder:Expander) extends `Identity()  {
+  %strategy Expand_makeTerm_once(expander:Expander) extends `Identity()  {
     visit TomTerm {
-      t -> {return (TomTerm) `Expand(exapnder).visitLight(`BuildReducedTerm(t,exapnder.getTermType(t)));}
+      t -> {return (TomTerm) `Expand(expander).visitLight(`BuildReducedTerm(t,expander.getTermType(t)));}
     }
   }
 
