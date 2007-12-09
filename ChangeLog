@@ -1,3 +1,6 @@
+2007-12-09 pem
+  * no more "unused variable" warning for variables that start with '_'
+
 2007-11-20 pem
   * fix PR-4434
 
