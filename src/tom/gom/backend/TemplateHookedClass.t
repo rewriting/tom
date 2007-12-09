@@ -56,9 +56,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateBlock() {
     StringBuilder res = new StringBuilder();
-    HookList h = `concHook(hooks*);   
+    HookList h = `ConcHook(hooks*);   
     %match(HookList h) {
-      concHook(_*,BlockHook(code),_*) -> {
+      ConcHook(_*,BlockHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
       }
@@ -68,9 +68,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateImport() {
     StringBuilder res = new StringBuilder();
-    HookList h = `concHook(hooks*);   
+    HookList h = `ConcHook(hooks*);   
     %match(HookList h) {
-      concHook(_*,ImportHook(code),_*) -> {
+      ConcHook(_*,ImportHook(code),_*) -> {
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
       }
@@ -80,9 +80,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateInterface() {
     StringBuilder res = new StringBuilder();
-    HookList h = `concHook(hooks*);   
+    HookList h = `ConcHook(hooks*);   
     %match(HookList h) {
-      concHook(_*,InterfaceHook(code),_*) -> {
+      ConcHook(_*,InterfaceHook(code),_*) -> {
         res.append(",");
         res.append(CodeGen.generateCode(`code));
         res.append("\n");
@@ -96,7 +96,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
    * necessary (i.e. if there are user defined hooks)
    */
   public int generateFile() {
-    if (hooks.isEmptyconcHook()) {
+    if (hooks.isEmptyConcHook()) {
       try {
         File output = fileToGenerate();
         // make sure the directory exists

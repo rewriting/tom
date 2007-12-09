@@ -169,7 +169,7 @@ writer.write(%[
   private void generateVisitMethods(java.io.Writer writer) throws java.io.IOException {
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
-      concGomClass(_*,SortClass[ClassName=sortName],_*) -> {
+      ConcGomClass(_*,SortClass[ClassName=sortName],_*) -> {
 
         writer.write(%[
   public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws VisitFailure {
@@ -187,19 +187,19 @@ writer.write(%[
   }
 
   private void generateDispatch(java.io.Writer writer, ClassNameList types) throws java.io.IOException {
-    while(!types.isEmptyconcClassName()) {
-      writer.write(%[    else if (v instanceof @fullClassName(types.getHeadconcClassName())@) {
-      return ((@fullClassName(types.getHeadconcClassName())@) v).accept(this);
+    while(!types.isEmptyConcClassName()) {
+      writer.write(%[    else if (v instanceof @fullClassName(types.getHeadConcClassName())@) {
+      return ((@fullClassName(types.getHeadConcClassName())@) v).accept(this);
     }]%);
-      types = types.getTailconcClassName();
+      types = types.getTailConcClassName();
     }
   }
   
   private String importedVisitorList(ClassNameList list) {
     StringBuilder out = new StringBuilder();
-    while(!list.isEmptyconcClassName()) {
-      out.append(", "+fullClassName(list.getHeadconcClassName()));
-      list = list.getTailconcClassName();
+    while(!list.isEmptyConcClassName()) {
+      out.append(", "+fullClassName(list.getHeadConcClassName()));
+      list = list.getTailConcClassName();
     }
     return out.toString();
   }

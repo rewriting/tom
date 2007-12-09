@@ -314,6 +314,11 @@
       options="-I ${src.gen}/tom/gom/adt">
       <include name="tom/gom/expander/rule/Rule.g.t"/>
     </tomcompile>
+    <tomcompile srcdir="${src.src}"
+      outputfile="${gen.destination}/tom/gom/parser/GomLanguage.g"
+      options="-I ${src.gen}/tom/gom/adt">
+      <include name="tom/gom/parser/GomLanguage.g.t"/>
+    </tomcompile>
   </target>
 
   <!-- compile tom files in src.src with tom.stable -->
@@ -366,11 +371,24 @@
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
+    <antlr3 target="${gen.destination}/tom/gom/parser/GomLanguage.g"
+            outputdirectory="${gen.destination}/tom/gom/parser"
+            libdirectory="${gen.destination}/tom/gom/parser"
+            multithreaded="true">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+    <antlr3 target="${src.src}/tom/gom/parser/SimpleBlock.g"
+            outputdirectory="${gen.destination}/tom/gom/parser"
+            libdirectory="${gen.destination}/tom/gom/parser"
+            multithreaded="true">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
+    <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
     <antlr3 target="${gen.destination}/tom/gom/expander/rule/Rule.g"
             outputdirectory="${gen.destination}/tom/gom/expander/rule"
             libdirectory="${gen.destination}/tom/gom/expander/rule"
@@ -452,6 +470,12 @@
                 destdir="${src.gen}">
      <include name="tom/gom/adt/*.gom"/>
     </gomcompile>
+    <gomantlradaptercompile srcdir="${src.src}"
+      package="tom.gom.adt"
+      grammar="tom.gom.parser.GomLanguage"
+      destdir="${src.gen}">
+      <include name="tom/gom/adt/Gom.gom"/>
+    </gomantlradaptercompile>
     <gomantlradaptercompile srcdir="${src.src}"
       package="tom.gom.adt"
       grammar="tom.gom.expander.rule.Rule"

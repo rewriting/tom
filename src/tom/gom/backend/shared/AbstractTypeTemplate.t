@@ -67,7 +67,7 @@ package @getPackage()@;
 public abstract class @className()@ implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable @generateInterface()@ {
 ]%);
 
-    if (! hooks.isEmptyconcHook()) {
+    if (! hooks.isEmptyConcHook()) {
       mapping.generate(writer); 
     }
     writer.write(

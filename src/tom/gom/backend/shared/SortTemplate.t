@@ -53,7 +53,7 @@ public class SortTemplate extends TemplateHookedClass {
                 Visitor=visitor,
                 Operators=ops,
                 VariadicOperators=variops,
-                Slots=slots] -> {
+                SlotFields=slots] -> {
         this.abstractType = `abstractType;
         this.visitor = `visitor;
         this.operatorList = `ops;
@@ -90,9 +90,9 @@ writer.write(%[
   public void generateBody(java.io.Writer writer) throws java.io.IOException {
     // methods for each operator
     ClassNameList consum = operatorList;
-    while (!consum.isEmptyconcClassName()) {
-      ClassName operatorName = consum.getHeadconcClassName();
-      consum = consum.getTailconcClassName();
+    while (!consum.isEmptyConcClassName()) {
+      ClassName operatorName = consum.getHeadConcClassName();
+      consum = consum.getTailConcClassName();
 
       writer.write(%[
   public boolean @isOperatorMethod(operatorName)@() {
@@ -103,9 +103,9 @@ writer.write(%[
     }
     // methods for each slot
     SlotFieldList sl = slotList;
-    while (!sl.isEmptyconcSlotField()) {
-      SlotField slot = sl.getHeadconcSlotField();
-      sl = sl.getTailconcSlotField();
+    while (!sl.isEmptyConcSlotField()) {
+      SlotField slot = sl.getHeadConcSlotField();
+      sl = sl.getTailConcSlotField();
 
       writer.write(%[
   public @slotDomain(slot)@ @getMethod(slot)@() {
@@ -216,13 +216,13 @@ writer.write(%[
   /*
     // methods for each variadic operator
     consum = variadicOperatorList;
-    while(!consum.isEmptyconcClassName()) {
-      ClassName operatorName = consum.getHeadconcClassName();
-      consum = consum.getTailconcClassName();
+    while(!consum.isEmptyConcClassName()) {
+      ClassName operatorName = consum.getHeadConcClassName();
+      consum = consum.getTailConcClassName();
       // look for the corresponding domain
 matchblock: {
       %match(slotList) {
-        concSlotField(_*,slot@SlotField[Name=opname,Domain=domain],_*) -> {
+        ConcSlotField(_*,slot@SlotField[Name=opname,Domain=domain],_*) -> {
           if(`opname.equals("Head"+operatorName.getName())) {
       writer.write(%[
   public java.util.Collection<@primitiveToReferenceType(slotDomain(`slot))@> @getCollectionMethod(operatorName)@() {
@@ -237,16 +237,16 @@ matchblock: {
       }
     }
   */
-    if (!hooks.isEmptyconcHook()) {
+    if (!hooks.isEmptyConcHook()) {
       mapping.generate(writer); 
     }
   }
 
   private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
-    ClassNameList consum = `concClassName(operatorList*,variadicOperatorList*);
-    while (!consum.isEmptyconcClassName()) {
-      ClassName operatorName = consum.getHeadconcClassName();
-      consum = consum.getTailconcClassName();
+    ClassNameList consum = `ConcClassName(operatorList*,variadicOperatorList*);
+    while (!consum.isEmptyConcClassName()) {
+      ClassName operatorName = consum.getHeadConcClassName();
+      consum = consum.getTailConcClassName();
       writer.write(%[
     @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@);
     if (@tmp@ != null) {

@@ -222,7 +222,7 @@ public class @filename()@Tree extends CommonTree {
                 Code("        }\n"));
           CodeGen.generateCode(code,writer);
         }
-        op@OperatorDecl[Name=opName,Prod=Slots[Slots=concSlot()]] -> {
+        op@OperatorDecl[Name=opName,Prod=Slots[Slots=ConcSlot()]] -> {
           /* Initialise constants */
           Code code =
             `CodeList(
@@ -385,9 +385,9 @@ public class @filename()@Tree extends CommonTree {
                 );
             int idx = 0;
             SlotList sList = `slotList;
-            while(sList.isConsconcSlot()) {
-              Slot slot = sList.getHeadconcSlot();
-              sList = sList.getTailconcSlot();
+            while(sList.isConsConcSlot()) {
+              Slot slot = sList.getHeadConcSlot();
+              sList = sList.getTailConcSlot();
               Code cast = genGetSubterm(slot.getSort());
               code = `CodeList(code,
                   Code("          "),
@@ -469,11 +469,11 @@ public class @filename()@Tree extends CommonTree {
   protected String genArgsList(SlotList slots) {
     String res = "";
     SlotList sList = slots;
-    while(sList.isConsconcSlot()) {
-      Slot slot = sList.getHeadconcSlot();
-      sList = sList.getTailconcSlot();
+    while(sList.isConsConcSlot()) {
+      Slot slot = sList.getHeadConcSlot();
+      sList = sList.getTailConcSlot();
       res += "field" + slot.getName();
-      if(sList.isConsconcSlot()) {
+      if(sList.isConsConcSlot()) {
         res += ", ";
       }
     }

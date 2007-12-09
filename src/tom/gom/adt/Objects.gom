@@ -15,7 +15,7 @@ GomClass = AbstractTypeClass(ClassName:ClassName,
                      Forward:ClassName,
                      Operators:ClassNameList,
                      VariadicOperators:ClassNameList,
-                     Slots:SlotFieldList,
+                     SlotFields:SlotFieldList,
                      Hooks:HookList)
          | OperatorClass(ClassName:ClassName,
                          AbstractType:ClassName,
@@ -23,7 +23,7 @@ GomClass = AbstractTypeClass(ClassName:ClassName,
                          Mapping:ClassName,
                          SortName:ClassName,
                          Visitor:ClassName,
-                         Slots:SlotFieldList,
+                         SlotFields:SlotFieldList,
                          Hooks:HookList)
          | VariadicOperatorClass(ClassName:ClassName,
                                  AbstractType:ClassName,
@@ -36,13 +36,13 @@ GomClass = AbstractTypeClass(ClassName:ClassName,
          | VisitableFwdClass(ClassName:ClassName,Visitor:ClassName,ImportedVisitors:ClassNameList,AbstractType:ClassName,ImportedAbstractTypes:ClassNameList,SortClasses:GomClassList,OperatorClasses:GomClassList)
          | TomMapping(ClassName:ClassName,BasicStrategy:ClassName,SortClasses:GomClassList,OperatorClasses:GomClassList)
 
-GomClassList = concGomClass(GomClass*)
+GomClassList = ConcGomClass(GomClass*)
 
 ClassName = ClassName(Pkg:String,Name:String)
-ClassNameList = concClassName(ClassName*)
+ClassNameList = ConcClassName(ClassName*)
 
 SlotField = SlotField(Name:String,Domain:ClassName)
-SlotFieldList = concSlotField(SlotField*)
+SlotFieldList = ConcSlotField(SlotField*)
 
 Hook = MakeHook(HookArguments:SlotFieldList,Code:Code)
      | MakeBeforeHook(HookArguments:SlotFieldList,Code:Code)
@@ -50,4 +50,4 @@ Hook = MakeHook(HookArguments:SlotFieldList,Code:Code)
      | InterfaceHook(Code:Code)
      | ImportHook(Code:Code)
      | MappingHook(Code:Code)
-HookList = concHook(Hook*)
+HookList = ConcHook(Hook*)

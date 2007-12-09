@@ -76,12 +76,12 @@ public class AST2Gom {
       (imports,section*) -> {
         %match(ATerm imports) {//checks that imports is a real import, not a section
           IMPORTS(_,_) -> {
-            return `GomModule(moduleName,concSection(getImports(imports),getSection(section*)));
+            return `GomModule(moduleName,ConcSection(getImports(imports),getSection(section*)));
           }
         }
       }
       (section*) -> {
-        return `GomModule(moduleName,concSection(getSection(section*)));
+        return `GomModule(moduleName,ConcSection(getSection(section*)));
       }
     }
     throw new GomRuntimeException("Unable to translate: " + t);
@@ -135,10 +135,10 @@ public class AST2Gom {
     %match(ATermList l) {
       (importM,tail*) -> {
         ImportList tmpL = getImportList(`tail);
-        return `concImportedModule(getImportedModule(importM),tmpL*);
+        return `ConcImportedModule(getImportedModule(importM),tmpL*);
       }
       concATerm() -> {
-        return `concImportedModule();
+        return `ConcImportedModule();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
@@ -169,12 +169,12 @@ public class AST2Gom {
       (g,tail*) -> {
         GrammarList tmpL = getGrammarList(`tail);
         %match (ATerm g) {
-          SORTS[]  -> { return `concGrammar(getGrammar(g),tmpL*); }
-          SYNTAX[] -> { return `concGrammar(getSorts(g),getGrammar(g),tmpL*); }
+          SORTS[]  -> { return `ConcGrammar(getGrammar(g),tmpL*); }
+          SYNTAX[] -> { return `ConcGrammar(getSorts(g),getGrammar(g),tmpL*); }
         }
       }
       concATerm() -> {
-        return `concGrammar();
+        return `ConcGrammar();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
@@ -201,13 +201,13 @@ public class AST2Gom {
       (g,tail*) -> {
         GomTypeList tmpL = getSortsList(`tail);
         %match(g) {
-          EQUALS(_,(type,_*)) -> { return `concGomType(getGomType(type),tmpL*); }
-          COLON[]             -> { return `concGomType(tmpL*); }
-          ARROW[]             -> { return `concGomType(tmpL*); }
+          EQUALS(_,(type,_*)) -> { return `ConcGomType(getGomType(type),tmpL*); }
+          COLON[]             -> { return `ConcGomType(tmpL*); }
+          ARROW[]             -> { return `ConcGomType(tmpL*); }
         }
       }
       concATerm() -> {
-        return `concGomType();
+        return `ConcGomType();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
@@ -238,20 +238,20 @@ public class AST2Gom {
         ProductionList tmpL = getProductionList(`tail);
         %match(ATerm g) {
           ARROW[] -> {
-            return `concProduction(getProduction(g),tmpL*);
+            return `ConcProduction(getProduction(g),tmpL*);
           }
           EQUALS(_,(type,alternatives*)) -> {
             ProductionList alter = getAlternatives(`type,`alternatives*);
-            return `concProduction(alter*,tmpL*);
+            return `ConcProduction(alter*,tmpL*);
           }
           //hook
           COLON[] -> {
-            return `concProduction(getProduction(g),tmpL*);
+            return `ConcProduction(getProduction(g),tmpL*);
           }
         }
       }
       concATerm() -> {
-        return `concProduction();
+        return `ConcProduction();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
@@ -261,17 +261,17 @@ public class AST2Gom {
     %match(ATermList altL) {
       (ALT(_,_),id,fieldlist*, ALT(_,_), tail*) -> {
         ProductionList tmpL = getAlternatives(type,`tail);
-        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)),tmpL*);
+        return `ConcProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)),tmpL*);
       }
       (id,fieldlist*, ALT(_,_), tail*) -> {
         ProductionList tmpL = getAlternatives(type,`tail);
-        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)),tmpL*);
+        return `ConcProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)),tmpL*);
       }
       (id,fieldlist*) -> {
-        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)));
+        return `ConcProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type),getIdLine(id)));
       }
       concATerm() -> {
-        return `concProduction();
+        return `ConcProduction();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + altL);
@@ -281,10 +281,10 @@ public class AST2Gom {
     %match(ATermList l) {
       (g,tail*) -> {
         GomTypeList tmpL = getGomTypeList(`tail);
-        return `concGomType(getGomType(g),tmpL*);
+        return `ConcGomType(getGomType(g),tmpL*);
       }
       concATerm() -> {
-        return `concGomType();
+        return `ConcGomType();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
@@ -332,13 +332,13 @@ public class AST2Gom {
     %match(ATermList l) {
       (a,COMMA(_,_),tail*) -> {
         ArgList tmpL = getArgList(`tail);
-        return `concArg(Arg(getId(a)),tmpL*);
+        return `ConcArg(Arg(getId(a)),tmpL*);
       }
       (a) -> {
-        return `concArg(Arg(getId(a)));
+        return `ConcArg(Arg(getId(a)));
       }
       concATerm() -> {
-        return `concArg();
+        return `ConcArg();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);
@@ -347,13 +347,13 @@ public class AST2Gom {
     %match(ATermList l) {
       (f,COMMA(_,_),tail*) -> {
         FieldList tmpL = getFieldList(`tail);
-        return `concField(getField(f),tmpL*);
+        return `ConcField(getField(f),tmpL*);
       }
       (f) -> {
-        return `concField(getField(f));
+        return `ConcField(getField(f));
       }
       concATerm() -> {
-        return `concField();
+        return `ConcField();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + l);

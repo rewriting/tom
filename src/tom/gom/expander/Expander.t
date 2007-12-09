@@ -64,7 +64,7 @@ public class Expander {
    * Compute the transitive closure of imported modules
    */
   public GomModuleList expand(GomModule module) {
-    GomModuleList result = `concGomModule(module);
+    GomModuleList result = `ConcGomModule(module);
     Set alreadyParsedModule = new HashSet();
     alreadyParsedModule.add(module.getModuleName());
     Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
@@ -85,7 +85,7 @@ public class Expander {
             if(importedModule == null) {
               return null;
             }
-            result = `concGomModule(result*, importedModule);
+            result = `ConcGomModule(result*, importedModule);
             alreadyParsedModule.add(moduleNameName);
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
 	  }
@@ -104,12 +104,12 @@ public class Expander {
   private Set generateModuleToAnalyseSet(GomModule module, Set alreadyParsedModule) {
     HashSet moduleToAnalyse = new HashSet();
     ImportList importedModules = getImportList(module);
-    while(!importedModules.isEmptyconcImportedModule()) {
-      GomModuleName name = importedModules.getHeadconcImportedModule().getModuleName();
+    while(!importedModules.isEmptyConcImportedModule()) {
+      GomModuleName name = importedModules.getHeadConcImportedModule().getModuleName();
       if(!alreadyParsedModule.contains(name)) {
         moduleToAnalyse.add(name);
       }
-      importedModules = importedModules.getTailconcImportedModule();
+      importedModules = importedModules.getTailConcImportedModule();
     }
     //System.out.println("*** generateModuleToAnalyseSet = " + moduleToAnalyse);
     return moduleToAnalyse;
@@ -175,10 +175,10 @@ public class Expander {
   }
 
   public ImportList getImportList(GomModule module) {
-    ImportList imports = `concImportedModule();
+    ImportList imports = `ConcImportedModule();
     %match(GomModule module) {
-      GomModule(_,concSection(_*,Imports(importList),_*)) -> {
-        imports = `concImportedModule(importList*,imports*);
+      GomModule(_,ConcSection(_*,Imports(importList),_*)) -> {
+        imports = `ConcImportedModule(importList*,imports*);
       }
     }
     return imports;
