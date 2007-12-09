@@ -87,7 +87,6 @@ public class Compiler extends TomGenericPlugin {
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options>" +
     "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
-    "<boolean name='autoDispatch' altName='ad' description='The content of \"visitor_fwd\" is ignored, and a dispatch mechanism is automatically generated in %strategy ' value='false'/>" +
     "</options>";
 
   /** Constructor */
