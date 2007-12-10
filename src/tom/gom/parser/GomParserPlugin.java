@@ -1,0 +1,155 @@
+/*
+ * Gom
+ * 
+ * Copyright (c) 2000-2007, INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
+ * 
+ **/
+
+package tom.gom.parser;
+
+import java.io.Reader;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.logging.Level;
+
+import tom.platform.PlatformLogRecord;
+import tom.engine.tools.Tools;
+import tom.gom.GomMessage;
+import tom.gom.GomStreamManager;
+import tom.gom.adt.gom.types.*;
+import tom.gom.tools.GomGenericPlugin;
+
+import org.antlr.runtime.*;
+import tom.gom.adt.gom.GomTree;
+import tom.gom.adt.gom.GomAdaptor;
+
+/**
+ * The responsability of the GomParser plugin is to parse the input Gom file
+ * Get the input file from GomStreamManager and parse
+ */
+public class GomParserPlugin extends GomGenericPlugin {
+
+  public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
+  public static final String PARSEDTERM_SUFFIX = ".tfix.aterm.parsed";
+  /** input stream */
+  private Reader inputReader;
+  private String inputFileName;
+
+  /** the parsed module */
+  private GomModule module;
+
+  /** The constructor*/
+  public GomParserPlugin() {
+    super("GomParser");
+  }
+
+  /**
+   * inherited from plugin interface
+   * arg[0] should contain the GomStreamManager to get the input file name
+   */
+  public void setArgs(Object arg[]) {
+    if (arg[0] instanceof GomStreamManager) {
+      setStreamManager((GomStreamManager)arg[0]);
+      inputReader = getStreamManager().getInputReader();
+      inputFileName = getStreamManager().getInputFileName();
+    } else {
+      getLogger().log(Level.SEVERE,
+          GomMessage.invalidPluginArgument.getMessage(),
+          new Object[]{"GomParser", "[GomStreamManager]",
+            getArgumentArrayString(arg)});
+    }
+  }
+
+  /**
+   * inherited from plugin interface
+   * Create the initial GomModule parsed from the input file
+   */
+  public void run() {
+    boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
+
+    if (inputReader == null)
+      return;
+    CharStream input = null;
+    try {
+      input = new ANTLRReaderStream(inputReader);
+    } catch (java.io.IOException e) {
+      getLogger().log(Level.INFO, GomMessage.unableToUseReaderMessage.getMessage(),
+          new Object[]{});
+      // Invalid input stream
+      return;
+    }
+		GomLanguageLexer lex = new GomLanguageLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lex);
+		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
+    parser.setTreeAdaptor(new GomAdaptor());
+
+    getLogger().log(Level.INFO, "Start parsing");
+    try {
+      // Parse the input expression
+      GomTree tree = (GomTree)parser.module().getTree();
+      module = (GomModule) tree.getTerm();
+      if (module == null) {
+        getLogger().log(new PlatformLogRecord(Level.SEVERE,
+              GomMessage.detailedParseException,
+              "", inputFileName, lex.getLine()));
+        return;
+      }
+    } catch (RecognitionException re) {
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
+            GomMessage.detailedParseException,
+            re.toString(), inputFileName, lex.getLine()));
+      return;
+    } catch (Exception e) {
+      StringWriter stringwriter = new StringWriter();
+      PrintWriter printwriter = new PrintWriter(stringwriter);
+      e.printStackTrace(printwriter);
+      getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(),
+          new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
+      return;
+    } finally {
+      if (inputReader != null){
+        try {
+          inputReader.close();
+        } catch(java.io.IOException ioExcep){
+          // nothing to do
+          getLogger().log(Level.INFO, GomMessage.unableToCloseReaderMessage.getMessage(),
+              new Object[]{});
+        }
+      }
+    }
+
+    getLogger().log(Level.INFO, "Parsing succeeds");
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileName()
+                           + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
+    }
+  }
+
+  /**
+   * inherited from plugin interface
+   * returns an array containing the parsed module and the streamManager
+   * got from setArgs phase
+   */
+  public Object[] getArgs() {
+    return new Object[]{module, getStreamManager()};
+  }
+
+}

@@ -33,13 +33,22 @@ tokens {
 }
 
 @header {
-  package tom.gom.parser;
-  import tom.gom.adt.gom.GomTree;
+package tom.gom.parser;
+import tom.gom.adt.gom.GomTree;
+import tom.gom.GomStreamManager;
 }
 
 @lexer::header {
-  package tom.gom.parser;
-  import tom.gom.adt.gom.GomTree;
+package tom.gom.parser;
+import tom.gom.adt.gom.GomTree;
+}
+
+@members {
+  private GomStreamManager streamManager;
+  public GomLanguageParser(TokenStream input, GomStreamManager streamManager) {
+    super(input);
+    this.streamManager = streamManager;
+  }
 }
 
 module :
@@ -48,9 +57,19 @@ module :
   -> ^(GomModule modulename ^(ConcSection section))
   ;
 
-modulename :
-  (mod=ID DOT)* moduleName=ID -> ^(GomModuleName $moduleName)
-  /* TODO: take care to give the prefix to GomStreaManager */
+modulename
+@init {
+  StringBuilder packagePrefix = new StringBuilder("");
+} :
+  (mod=ID DOT { packagePrefix.append($mod.text+"."); })*
+  moduleName=ID
+  {
+    packagePrefix.deleteCharAt(packagePrefix.length()-1);
+    if (null != streamManager) {
+      streamManager.associatePackagePath($moduleName.text,packagePrefix.toString());
+    }
+  }
+  -> ^(GomModuleName $moduleName)
   ;
 
 imports :
