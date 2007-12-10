@@ -228,7 +228,7 @@ public class TestAntiPatternAssociative extends TestCase {
 
 	private Result match9(TermList subject) {
 		%match(TermList subject) {
-			concTerm(_*,x,_*,!y,_*) -> {
+			concTerm(_*,_x,_*,!_y,_*) -> {
 				return `True();
 			}
 		}
@@ -349,7 +349,7 @@ public class TestAntiPatternAssociative extends TestCase {
 	
 	private Result match16(TermList subject) {
 		%match( subject ) {
-			concTerm(before*,lst(begin0*,f(col0,x@!a()),end0*),lst(begin1*,f(col0,a()),end1*),after*) -> {
+			concTerm(_before*,lst(_begin0*,f(_col0,_x@!a()),_end0*),lst(_begin1*,f(_col0,a()),_end1*),_after*) -> {
 				return `True();
 			}
 		}

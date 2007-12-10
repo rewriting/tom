@@ -59,7 +59,7 @@ public class TestSublists extends TestCase {
   public void test2() {
     Term res = `list(a(),b(),c());
     %match(res) {
-      list(_*,p@list(a(),b(),c()),_*) -> {
+      list(_*,_p@list(a(),b(),c()),_*) -> {
         return;
       }
     }
@@ -69,7 +69,7 @@ public class TestSublists extends TestCase {
   public void test2_1() {
     Term res = `list(a(),b(),c());
     %match(res) {
-      list(_*,p@(a(),b(),c()),_*) -> {
+      list(_*,_p@(a(),b(),c()),_*) -> {
         return;
       }
     }
@@ -94,7 +94,7 @@ public class TestSublists extends TestCase {
   public void test4() {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
-      list(X*,p@!list(_*,!b(),_*),Y*) -> {
+      list(_X*,p@!list(_*,!b(),_*),_Y*) -> {
         if (`p == `list(b(),b()) || `p == `list(b()) || `p == `list() ) {
           return;
         } else {
@@ -110,7 +110,7 @@ public class TestSublists extends TestCase {
   public void test5() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
-      termList(X*,p@list(_*,b(),_*),Y*) -> {
+      termList(_X*,_p@list(_*,b(),_*),_Y*) -> {
         fail();
       }
     }    
@@ -119,7 +119,7 @@ public class TestSublists extends TestCase {
   public void test6() {
     TermList res = `termList(a(),list(b(),b()),c());
     %match(res) {
-      termList(X*,list(_*,b(),_*),Y*) -> {
+      termList(_X*,list(_*,b(),_*),_Y*) -> {
         return;
       }
     }    
@@ -129,7 +129,7 @@ public class TestSublists extends TestCase {
   public void test7() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
-      termList(X*,termList(_*,b(),_*),Y*) -> {
+      termList(_X*,termList(_*,b(),_*),_Y*) -> {
         return;
       }
     }    
@@ -139,7 +139,7 @@ public class TestSublists extends TestCase {
   public void test8() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
-      termList(X*,p@!termList(_*,!b(),_*),Y*) -> {
+      termList(_X*,p@!termList(_*,!b(),_*),_Y*) -> {
         if( `p == `termList(b()) || `p == `termList(b(),b()) || `p == `termList()){
           return;
         }else{
@@ -153,7 +153,7 @@ public class TestSublists extends TestCase {
   public void test9() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
-      termList(X*,p@termList(b(),b()),Y*) -> {
+      termList(_X*,p@termList(b(),b()),_Y*) -> {
         if( `p == `termList(b(),b()) ) {
           return;
         }else{
@@ -167,7 +167,7 @@ public class TestSublists extends TestCase {
   public void test10() {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
-      termList(X*,p@(b(),!b()),Y*) -> {
+      termList(_X*,p@(b(),!b()),_Y*) -> {
         if( `p == `list(b(),b()) ) {
           fail();
         }
@@ -178,7 +178,7 @@ public class TestSublists extends TestCase {
   public void test11() {
     TermList t = `termList(termList(a(),b()));    
     %match(t) {      
-      z@termList(termList(a(),b())) -> {
+      _z@termList(termList(a(),b())) -> {
         return; 
       }
     }     

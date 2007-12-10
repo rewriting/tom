@@ -49,7 +49,7 @@ public class TestNonVarSubjects extends TestCase {
   
   public void test1() {    
     %match(list(a())) {
-      x -> { return; }
+      _x -> { return; }
     }
     fail();
   }  

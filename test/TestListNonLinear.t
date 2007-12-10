@@ -89,7 +89,7 @@ TermRuleList = termrulelist(TermRule*)
     IntList l2 = `intlist(1,2,3,4,5);
     IntList l3 = `intlist(1,2,6,4,5);
     %match(IntList l1, IntList l2, IntList l3) {
-      (x*,y*),(x*,a,y*),(x*,b,y*) -> {
+      (x*,y*),(x*,_a,y*),(x*,_b,y*) -> {
         return;
       }
     }

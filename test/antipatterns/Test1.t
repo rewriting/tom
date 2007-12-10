@@ -48,12 +48,10 @@ public class Test1 extends TestCase {
   public void test1() {
     TwoPath res = `c1(c0(g(),id()),c0(id(),g()));
     %match(res) {
-      c1(c0(M*,f@!id[],N*),
-	  c0(P*,g@!id[],Q*),
-	  tail*) -> {
-	if(`g.isid()) {
-	  //fail();
-	}
+      c1(c0(_M*,_f@!id[],_N*), c0(_P*,g@!id[],_Q*), _tail*) -> {
+        if(`g.isid()) {
+          //fail();
+        }
       }
     }
   }
@@ -70,10 +68,10 @@ public class Test1 extends TestCase {
     TwoPath p1 = `c0(g(),id());
     TwoPath p2 = `c0(id(),g());
     %match(p1,p2) {
-      c0(M*,f@!id[],N*), c0(P*,g@!id[],Q*) -> {
-	if(`g.isid()) {
-	  //fail();
-	}
+      c0(_M*,_f@!id[],_N*), c0(_P*,g@!id[],_Q*) -> {
+        if(`g.isid()) {
+          //fail();
+        }
       }
     }
   }

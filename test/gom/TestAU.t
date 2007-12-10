@@ -121,7 +121,7 @@ public class TestAU extends TestCase {
     NAU t = `m();
     int cnt = 0;
     %match(t) {
-      p(x*,y*) -> {
+      p(_x*,_y*) -> {
         cnt += 2;
       }
     }
@@ -132,11 +132,11 @@ public class TestAU extends TestCase {
     L l = `list(list(aa(),bb()),list(aa()),list(bb(),aa()));
     int cnt = 0;
     %match(l) {
-      list(bb(),y*) -> { cnt++; }
-      list(x*,bb()) -> { cnt++; }
-      list(bb(),y) -> { cnt++; }
-      list(x,bb()) -> { cnt++; }
-      list(x,y) -> { cnt++; }
+      list(bb(),_y*) -> { cnt++; }
+      list(_x*,bb()) -> { cnt++; }
+      list(bb(),_y) -> { cnt++; }
+      list(_x,bb()) -> { cnt++; }
+      list(_x,_y) -> { cnt++; }
       list(bb(),x*,bb()) -> { if(`x==`aa()) cnt++; }
     }
     assertEquals("Incomplete matching",cnt,6);

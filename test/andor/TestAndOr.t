@@ -52,7 +52,7 @@ public class TestAndOr extends TestCase {
   
   public void test1() {
     %match(f(a(),b())) {
-      f(x,y) && ( x << a() || x << b() ) -> {        
+      f(_x,_y) && ( _x << a() || _x << b() ) -> {        
         return;
       }
     }
@@ -61,7 +61,7 @@ public class TestAndOr extends TestCase {
   
   public void test2() {
     %match(f(b(),b())) {
-      f(x,y) && ( x << a() || x << b() ) -> {        
+      f(_x,_y) && ( _x << a() || _x << b() ) -> {        
         return;
       }
     }
@@ -70,7 +70,7 @@ public class TestAndOr extends TestCase {
   
   public void test3() {
     %match(f(c(),b())) {
-      f(x,y) && ( x << a() || x << b() ) -> {
+      f(_x,_y) && ( _x << a() || _x << b() ) -> {
         fail();
       }
     }
@@ -78,7 +78,7 @@ public class TestAndOr extends TestCase {
   
   public void test4() {
     %match(f(c(),b())) {
-      f(x,y) && ( x << g(a()) || x << b() ) -> {
+      f(_x,_y) && ( _x << g(a()) || _x << b() ) -> {
         fail();
       }
     }
@@ -86,7 +86,7 @@ public class TestAndOr extends TestCase {
   
   public void test5() {
     %match(f(c(),b())) {
-      f(x,y) && ( x << g(a()) || x << b() ) -> {
+      f(_x,_y) && ( _x << g(a()) || _x << b() ) -> {
         fail();
       }
     }
@@ -94,7 +94,7 @@ public class TestAndOr extends TestCase {
   
   public void test6() {
     %match(f(g(a()),b())) {
-      f(x,y) && ( x << g(a()) || x << b() ) -> {
+      f(_x,_y) && ( _x << g(a()) || _x << b() ) -> {
         return;
       }
     }
@@ -104,7 +104,7 @@ public class TestAndOr extends TestCase {
   public void test7() {
     Term s = `f(g(a()),b());
     %match(s) {
-      f(a(),y) || f(b(),y) << s -> {
+      f(a(),_y) || f(b(),_y) << s -> {
         fail();
       }
     }
@@ -114,7 +114,7 @@ public class TestAndOr extends TestCase {
   public void test8() {
     Term s = `f(g(a()),b());
     %match(s) {
-      f(g(a()),y) || f(b(),y) << s -> {
+      f(g(a()),_y) || f(b(),_y) << s -> {
         return;
       }
     }
@@ -124,7 +124,7 @@ public class TestAndOr extends TestCase {
   public void test9() {
     Term s = `f(g(a()),b());
     %match(s) {
-      f(b(),y) || f(g(a()),y) << s -> {
+      f(b(),_y) || f(g(a()),_y) << s -> {
         return;
       }
     }
@@ -139,7 +139,7 @@ public class TestAndOr extends TestCase {
     Term s = `f(g(a()),b());
     int counter = 0;
     %match(s) {
-      f(x,y) && ( a() << a() || b() << b() ) -> {        
+      f(_x,_y) && ( a() << a() || b() << b() ) -> {        
         counter++;
       }
     }
@@ -152,7 +152,7 @@ public class TestAndOr extends TestCase {
     Term s = `f(g(a()),b());
     int counter = 0;
     %match(s) {
-      f(x,y) && ( g(x) << g(g(a())) || x << g(a()) ) -> {
+      f(_x,_y) && ( g(_x) << g(g(a())) || _x << g(a()) ) -> {
         counter++;
       }
     }
@@ -203,7 +203,7 @@ public class TestAndOr extends TestCase {
   public void test15() {
     Term t = `f(a(),b());
     %match(t) {
-      f(x,y) && (a() << x || b() << x)  -> {        
+      f(x,_y) && (a() << x || b() << x)  -> {        
         if (`x != `a()){
           fail();
         }
@@ -216,7 +216,7 @@ public class TestAndOr extends TestCase {
   public void test16() {
     Term t = `f(g(a()),b());
     %match(t) {
-      f(x,y) && g(z) << x  -> {        
+      f(x,_y) && g(z) << x  -> {        
         if (`z != `a()){
           fail();
         }
@@ -229,7 +229,7 @@ public class TestAndOr extends TestCase {
   public void test17() {
     Term t = `f(g(a()),b());
     %match(t) {
-      _ && g(z) << x && f(x,y) << t  -> {        
+      _ && g(z) << x && f(x,_y) << t  -> {        
         if (`z != `a()){
           fail();
         }

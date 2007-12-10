@@ -126,7 +126,7 @@ public class TestACU extends TestCase {
     NAU t = `m();
     int cnt = 0;
     %match(t) {
-      p(x*,y*) -> {
+      p(_x*,_y*) -> {
         cnt += 2;
       }
     }
