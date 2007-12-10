@@ -25,6 +25,7 @@ grammar GomLanguage;
 
 options {
   output=AST;
+  ASTLabelType=GomTree;
 }
 
 tokens {
@@ -33,10 +34,12 @@ tokens {
 
 @header {
   package tom.gom.parser;
+  import tom.gom.adt.gom.GomTree;
 }
 
 @lexer::header {
   package tom.gom.parser;
+  import tom.gom.adt.gom.GomTree;
 }
 
 module :
@@ -62,11 +65,11 @@ section :
   ;
 
 adtgrammar :
-  (gr+=sortdef | gr+=syntax)+ -> ^(ConcGrammar ($gr)*)
+  (gr+=sortdef | gr+=syntax)+ -> $gr
   ;
 
 sortdef :
-  SORTS (type)* -> ^(Sorts (type)*)
+  SORTS (type)* -> ^(ConcGrammar ^(Sorts (type)*))
   ;
 
 type :
@@ -74,7 +77,7 @@ type :
 
 syntax :
   ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl)*
-  -> ^(ConcGrammar ($gr)*)
+  -> ^(ConcGrammar ^(Grammar ($gr)*))
   ;
 
 production
@@ -94,7 +97,9 @@ alternatives[Token typename] :
   ;
 
 opdecl[Token type] :
-  ID fieldlist -> ^(Production ID fieldlist ID[type] ^(Origin ID[""+input.LT(1).getLine()]))
+  ID fieldlist
+  -> ^(Production ID fieldlist ^(GomType ID[type])
+      ^(Origin ID[""+input.LT(1).getLine()]))
   ;
 
 fieldlist :
@@ -109,9 +114,9 @@ arg : ID -> ^(Arg ID);
 
 hookConstruct :
   (hscope=hookScope)? pointCut=ID COLON hookType=ID arglist LBRACE
-  -> {hscope!=null}? ^(Hook $hscope $pointCut $hookType arglist LBRACE
+  -> {hscope!=null}? ^(Hook $hscope $pointCut ^(HookKind $hookType) arglist LBRACE
                        ^(Origin ID[""+input.LT(1).getLine()]))
-  -> ^(Hook ^(KindOperator) $pointCut $hookType arglist LBRACE
+  -> ^(Hook ^(KindOperator) $pointCut ^(HookKind $hookType) arglist LBRACE
       ^(Origin ID[""+input.LT(1).getLine()]))
   /* The LBRACE should contain the code */
   ;
