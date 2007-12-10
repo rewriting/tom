@@ -39,22 +39,43 @@ tokens {
   package tom.gom.parser;
 }
 
-module: MODULE^ modulename (imports)? section ;
+module :
+  MODULE modulename (imps=imports)? section
+  -> {imps!=null}? ^(GomModule modulename ^(ConcSection imports section))
+  -> ^(GomModule modulename ^(ConcSection section))
+  ;
 
-modulename: (mod=ID DOT)* moduleName=ID ;
+modulename :
+  (mod=ID DOT)* moduleName=ID -> ^(GomModuleName $moduleName)
+  /* TODO: take care to give the prefix to GomStreaManager */
+  ;
 
-imports: IMPORTS^ (importedModuleName=ID)* ;
+imports :
+  IMPORTS (importedModuleName)* -> ^(Imports (importedModuleName)*)
+  ;
+importedModuleName :
+  ID -> ^(Import ^(GomModuleName ID))
+  ;
 
-section : (PUBLIC)? adtgrammar ;
+section :
+  (PUBLIC)? adtgrammar -> ^(Public adtgrammar)
+  ;
 
-adtgrammar : (sortdef | syntax)+ ;
+adtgrammar :
+  (gr+=sortdef | gr+=syntax)+ -> ^(ConcGrammar ($gr)*)
+  ;
 
-sortdef: SORTS^ (type)* ;
+sortdef :
+  SORTS (type)* -> ^(Sorts (type)*)
+  ;
 
 type :
   ID -> ^(GomType ID);
 
-syntax: ABSTRACT! SYNTAX^ (production | hookConstruct | typedecl)* ;
+syntax :
+  ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl)*
+  -> ^(ConcGrammar ($gr)*)
+  ;
 
 production
 @init {
@@ -63,21 +84,37 @@ String startLine = ""+input.LT(1).getLine();
   ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
   ;
 
-typedecl : id=ID EQUALS^ alternatives ;
+typedecl :
+  typename=ID EQUALS alts=alternatives[typename] -> $alts
+  ;
 
-alternatives : (ALT)? id=ID fieldlist (ALT altid=ID fieldlist)* (SEMI)? ;
+alternatives[Token typename] :
+  (ALT)? opdecl[typename] (ALT opdecl[typename])* (SEMI)?
+  -> ^(ConcProduction (opdecl)+)
+  ;
+
+opdecl[Token type] :
+  ID fieldlist -> ^(Production ID fieldlist ID[type] ^(Origin ID[""+input.LT(1).getLine()]))
+  ;
 
 fieldlist :
   LPAREN (field (COMMA field)* )? RPAREN -> ^(ConcField (field)*) ;
 
-arglist: (LPAREN! (arg=ID(COMMA supplarg=ID)* )? RPAREN!)? ;
-
-hookConstruct :
-  (hookScope)? pointCut=ID COLON^ hook LBRACE
-  /* The LBRACE should contain the code */
+arglist:
+  (LPAREN (arg (COMMA arg)* )? RPAREN)? 
+  -> ^(ConcArg (arg)*)
   ;
 
-hook: hookType=ID arglist;
+arg : ID -> ^(Arg ID);
+
+hookConstruct :
+  (hscope=hookScope)? pointCut=ID COLON hookType=ID arglist LBRACE
+  -> {hscope!=null}? ^(Hook $hscope $pointCut $hookType arglist LBRACE
+                       ^(Origin ID[""+input.LT(1).getLine()]))
+  -> ^(Hook ^(KindOperator) $pointCut $hookType arglist LBRACE
+      ^(Origin ID[""+input.LT(1).getLine()]))
+  /* The LBRACE should contain the code */
+  ;
 
 hookScope :
   SORT -> ^(KindSort)
