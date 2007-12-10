@@ -51,17 +51,24 @@ adtgrammar : (sortdef | syntax)+ ;
 
 sortdef: SORTS^ (type)* ;
 
-type: i=ID ;
+type :
+  ID -> ^(GomType ID);
 
-syntax: ABSTRACT! SYNTAX^ (production | hookConstruct |  typedecl)* ;
+syntax: ABSTRACT! SYNTAX^ (production | hookConstruct | typedecl)* ;
 
-production: id=ID fieldlist ARROW^ type ;
+production
+@init {
+String startLine = ""+input.LT(1).getLine();
+} :
+  ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
+  ;
 
 typedecl : id=ID EQUALS^ alternatives ;
 
 alternatives : (ALT)? id=ID fieldlist (ALT altid=ID fieldlist)* (SEMI)? ;
 
-fieldlist: LPAREN! (field (COMMA field)* )? RPAREN! ;
+fieldlist :
+  LPAREN (field (COMMA field)* )? RPAREN -> ^(ConcField (field)*) ;
 
 arglist: (LPAREN! (arg=ID(COMMA supplarg=ID)* )? RPAREN!)? ;
 
@@ -72,9 +79,16 @@ hookConstruct :
 
 hook: hookType=ID arglist;
 
-hookScope : SORT | MODULE | OPERATOR;
+hookScope :
+  SORT -> ^(KindSort)
+  | MODULE -> ^(KindModule)
+  | OPERATOR -> ^(KindOperator)
+  ;
 
-field: type STAR^ | id=ID COLON^ type ;
+field :
+  type STAR -> ^(StarredField type)
+  | ID COLON type -> ^(NamedField ID type)
+  ;
 
 MODULE   : 'module';
 IMPORTS  : 'imports';
