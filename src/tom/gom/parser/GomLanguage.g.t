@@ -64,16 +64,18 @@ modulename
   (mod=ID DOT { packagePrefix.append($mod.text+"."); })*
   moduleName=ID
   {
-    packagePrefix.deleteCharAt(packagePrefix.length()-1);
-    if (null != streamManager) {
-      streamManager.associatePackagePath($moduleName.text,packagePrefix.toString());
+    if (packagePrefix.length() > 0) {
+      packagePrefix.deleteCharAt(packagePrefix.length()-1);
+      if (null != streamManager) {
+        streamManager.associatePackagePath($moduleName.text,packagePrefix.toString());
+      }
     }
   }
   -> ^(GomModuleName $moduleName)
   ;
 
 imports :
-  IMPORTS (importedModuleName)* -> ^(Imports (importedModuleName)*)
+  IMPORTS (importedModuleName)* -> ^(Imports ^(ConcImportedModule (importedModuleName)*))
   ;
 importedModuleName :
   ID -> ^(Import ^(GomModuleName ID))
