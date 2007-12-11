@@ -20,6 +20,7 @@ Production = Production(Name:String, DomainList:FieldList,
                         Codomain:GomType, Option:Option)
            | Hook(NameType:IdKind, Name:String, HookType:HookKind,
                   Args:ArgList, StringCode:String,Option:Option)
+           | SortType(Type:GomType,ProductionList:ProductionList)
 ProductionList = ConcProduction(Production*)
 HookKind = HookKind(kind:String)
 IdKind = KindModule()

@@ -98,7 +98,7 @@ type :
 
 syntax :
   ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl)*
-  -> ^(ConcGrammar ^(Grammar ($gr)*))
+  -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr)*)))
   ;
 
 production
@@ -109,7 +109,8 @@ String startLine = ""+input.LT(1).getLine();
   ;
 
 typedecl :
-  typename=ID EQUALS alts=alternatives[typename] -> $alts
+  typename=ID EQUALS alts=alternatives[typename]
+    -> ^(SortType ^(GomType $typename) $alts)
   ;
 
 alternatives[Token typename] :

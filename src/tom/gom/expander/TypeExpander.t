@@ -124,6 +124,18 @@ public class TypeExpander {
 
         }
       }
+      %match(GomModule module) {
+        GomModule(_,ConcSection(_*,
+              Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
+                SortType[ProductionList=ConcProduction(_*,
+                prod@Production[],_*)],
+              _*)),_*)),
+              _*)) -> {
+          // we may want to pass moduleName to help resolve ambiguities with modules
+          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
+
+        }
+      }
     }
 
     /*
@@ -240,6 +252,15 @@ public class TypeExpander {
         result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
       }
     }
+    %match(GomModule module) {
+      GomModule(moduleName,ConcSection(_*,
+            Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
+                SortType[Type=GomType(typeName)],
+            _*)),_*)),
+            _*)) -> {
+        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+      }
+    }
     return result;
   }
 
@@ -256,8 +277,23 @@ public class TypeExpander {
               ConcGrammar(_*,
                 Grammar(
                   ConcProduction(_*,
-                    Production(_,_,GomType(typeName),option),
+                    Production(_,_,GomType(typeName),_option),
                     _*)),
+                _*)),
+            _*)) -> {
+        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+      }
+    }
+    %match(GomModule module) {
+      GomModule(
+          moduleName,
+          ConcSection(_*,
+            Public(
+              ConcGrammar(_*,
+                Grammar(ConcProduction(_*,
+                  SortType[ProductionList=ConcProduction(_*,
+                    Production(_,_,GomType(typeName),_option),
+                    _*)],_*)),
                 _*)),
             _*)) -> {
         result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
