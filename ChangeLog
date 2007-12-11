@@ -1,3 +1,7 @@
+2007-12-12 tonio
+  * New parser for Gom, using gomantlradapter and antlr v3
+  * remove the old antlrmapper+antlr v2 parser
+
 2007-12-09 pem
   * no more "unused variable" warning for variables that start with '_'
 

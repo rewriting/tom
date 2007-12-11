@@ -362,10 +362,6 @@
     </antlr>
 
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
-    <antlr target="${src.src}/tom/gom/parser/ANTLRMapperGomParser.g"
-           outputdirectory="${gen.destination}/tom/gom/parser">
-      <classpath refid="stable.classpath"/>
-    </antlr>
     <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
@@ -395,29 +391,6 @@
             multithreaded="true">
       <classpath refid="stable.classpath"/>
     </antlr3>
-  </target>
-
-  <target name="buildmappings">
-    <antcall target="buildmappings.common">
-      <param name="gen.destination" value="${src.gen}"/>
-      <param name="tom.home" value="${stable.dist}"/>
-    </antcall>
-  </target>
-  <!-- builds mappings -->
-  <target name="buildmappings.common"
-    if="gen.destination"
-    depends="init.task.stable,-withstable">
-    <antlrmappercompile
-      srcfile="${gen.destination}/tom/gom/parser/ANTLRMapperGomParserTokenTypes.txt"
-      destdir="${gen.destination}"
-      package="tom.gom.parser">
-    </antlrmappercompile>
-    <!-- once mappings generated, compile AST2Gom.t -->
-    <tomcompile srcdir="${src.src}"
-         destdir="${gen.destination}"
-         options="--optimize --inlineplus">
-      <include name="tom/gom/parser/AST2Gom.t"/>
-    </tomcompile>
   </target>
 
   <target name="touchgom"
@@ -495,7 +468,6 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
-    <antcall target="buildmappings"/>
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
     <copy file="${src.src}/tom/engine/Tom.java.in"
