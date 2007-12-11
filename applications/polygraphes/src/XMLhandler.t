@@ -37,10 +37,10 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("OneC0")){
 			NodeList oneC0s=node.getChildNodes();
 			OnePath res=`Id();
-			for (int j = 0; j <oneC0s.getLength(); j++) {
+			for (int j = oneC0s.getLength()-1; j > 0; j--) {
 				Node oneC0Element = oneC0s.item(j);
 				if(!oneC0Element.getNodeName().contains("#text")){
-					res=`OneC0(res,makeOnePath(oneC0Element));
+					res=`OneC0(makeOnePath(oneC0Element),res);
 				}				
 			}		
 			return res;
@@ -91,11 +91,11 @@ String nodeName =node.getNodeName();
 		if(nodeName.equals("TwoC0")){
 			NodeList twoC0s=node.getChildNodes();
 			TwoPath res=`TwoId(Id());
-			for (int j = 0; j <twoC0s.getLength(); j++) {
+			for (int j = twoC0s.getLength()-1; j >0; j--) {
 				Node twoC0Element = twoC0s.item(j);
 				if(!twoC0Element.getNodeName().contains("#text")){
 					// System.out.println(twoC0Element.getNodeName());
-					res=`TwoC0(res,makeTwoPath(twoC0Element));
+					res=`TwoC0(makeTwoPath(twoC0Element),res);
 				}				
 			}
 			// System.out.println(res);
@@ -242,7 +242,7 @@ public static void save(String fileContent,File file) throws IOException {
   	  		System.out.println("9");
   	  		return myNewPath;}
   	  	}}
-  	  	TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//extension du cas 7
+  	  	p@TwoC1(head*,top@TwoC0(X*),down@TwoC0(Y*),f@TwoCell(_,_,_,Function()),tail*) -> {//extension du cas 7
   	  		int sourcelength=`f.sourcesize();
   	  		TwoPath myNewPath=`TwoId(Id());
   	  		int index=0;
@@ -263,6 +263,7 @@ public static void save(String fileContent,File file) throws IOException {
 
 
   	  				}catch (Exception e){//cas ou il n y a pas que des constructeurs au dessus comme des cellules avec plusieurs sorties, duplication par exemple
+  	  				return `p;
   	  				}
   	  			}
   	  			
