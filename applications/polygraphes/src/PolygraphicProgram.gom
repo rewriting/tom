@@ -165,6 +165,15 @@ sort TwoPath:block(){
 		}
 		return 0;
 	}
+	public int targetsize(){
+		OnePath target=this.target();
+		%match(target){
+			Id() -> { return 0; }
+			OneCell(_) -> { return 1; }
+			o@OneC0(_*) -> { return `o.length(); }
+		}
+		return 0;
+	}
 	public  String prettyPrint (){
 		%match (this){
 					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}

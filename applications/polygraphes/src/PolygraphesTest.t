@@ -170,7 +170,7 @@ rewritingRules.add(succPerm1);
 rewritingRules.add(succPerm2);
 rewritingRules.add(succDup);
 rewritingRules.add(succEraz);
-/*rewritingRules.add(plusZero);
+rewritingRules.add(plusZero);
 rewritingRules.add(plusSucc);
 rewritingRules.add(minusZero1);
 rewritingRules.add(minusZero2);
@@ -178,7 +178,7 @@ rewritingRules.add(minusDoubleSucc);
 rewritingRules.add(divZero);
 rewritingRules.add(divSucc);
 rewritingRules.add(multZero);
-rewritingRules.add(multSucc);*/
+rewritingRules.add(multSucc);
 
 rewritingRules.add(erazList);
 rewritingRules.add(duppList);
@@ -212,7 +212,7 @@ rewritingRules.add(addSplit);
 rewritingRules.add(doubleAddSplit);
 rewritingRules.add(consListMerge1);
 rewritingRules.add(consListMerge2);
-/*
+
 rewritingRules.add(trueEraz);
 rewritingRules.add(falseEraz);
 rewritingRules.add(falseDup);
@@ -237,7 +237,7 @@ rewritingRules.add(succZeroLess);
 rewritingRules.add(doubleSuccLess);
 rewritingRules.add(doubleAddMerge);
 rewritingRules.add(merge1);
-rewritingRules.add(merge2);*/
+//rewritingRules.add(merge2);
 
 String testrules="<PolygraphicProgram Name=\"TestProgram\">\n";
 for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
@@ -276,7 +276,7 @@ TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(deux,six),multiplication),trois),division)
 TwoPath testnatlist = `TwoC1(TwoC0(six,TwoC1(TwoC0(consList,quatre),append)),add,split);
 //System.out.println(rule3);
 //String input=twoPath2XML(nine);
-String input=twoPath2XML(testnatlist);
+String input=twoPath2XML(nine);
 try{
 save(input,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml"));
 }catch(Exception e){e.printStackTrace();}
@@ -523,28 +523,32 @@ public static ThreePath makeThreeCell(Node node){
   	  		TwoPath myNewPath=`TwoId(Id());
   	  		int index=0;
   	  		if(sourcelength!=`down.length()){break;}
-  	  		TwoPath[] array=toArray((TwoC0)`top);
+  	  		TwoPath[] topArray=toArray((TwoC0)`top);
+  	  		TwoPath[] downArray=toArray((TwoC0)`down);
   	  		for(int i=0;i<sourcelength;i++){
-  	  			int downsourcelength=`((TwoPath)down.getChildAt(i)).sourcesize();
   	  			
+ 	  			int downsourcelength=downArray[i].sourcesize();//nouveau
+  	  				
    	  			TwoPath topPart=`TwoId(Id());
   	  			for(int j=index;j<downsourcelength+index;j++){
   	  				
-  	  				try{TwoPath newC0 = (TwoPath)array[j];
+  	  				try{TwoPath newC0 = (TwoPath)topArray[j];
   	  				
   	  				if(j==index){topPart=newC0;}
-  	  			else if(j==index+1){topPart=`TwoC0(topPart,newC0);}
-  	  			else{topPart.setChildAt(j,newC0);}
+  	  			else {topPart=`TwoC0(topPart,newC0);}
 
-  	  				}catch (ArrayIndexOutOfBoundsException e){//cas ou il n y a pas que des constructeurs au dessus, duplication par example
+
+  	  				}catch (Exception e){//cas ou il n y a pas que des constructeurs au dessus comme des cellules avec plusieurs sorties, duplication par exemple
   	  				}
   	  			}
-  	  			index=downsourcelength;
-  	  			if(topPart.target()==`((TwoPath)down.getChildAt(i)).source()){
-  	  			TwoPath newC1=`TwoC1(topPart,(TwoPath)down.getChildAt(i));
+  	  			
+  	  			index+=downsourcelength;
+  	  			if(topPart.target()==downArray[i].source()){
+  	  			TwoPath newC1=`TwoC1(topPart,downArray[i]);
+  	  		
   	  			if(i==0){myNewPath=`newC1;}
-  	  			else if(i==1){myNewPath=`TwoC0(myNewPath,newC1);}
-  	  			else{myNewPath.setChildAt(i,newC1);}
+  	  			else {myNewPath=`TwoC0(myNewPath,newC1);}
+  	  			
   	  		}  	  			
   	  		}
   	  		if(myNewPath!=`TwoId(Id())){
@@ -552,6 +556,7 @@ public static ThreePath makeThreeCell(Node node){
   	  		myNewPath=`TwoC1(head,myNewPath,f,tail);}
   	  		else{myNewPath=`TwoC1(myNewPath,f,tail);}}
   	  		if(myNewPath!=`TwoId(Id())){
+  	  		
   	  		System.out.println("10");
   	  		return myNewPath;}
   	  		}
@@ -608,6 +613,7 @@ public static String resultList(TwoPath resultat){
 			TwoC0(LeftSplit*,RightSplit*) -> {if (`LeftSplit!=`TwoId(Id())){return resultList(`LeftSplit)+ "|| " + resultList(`RightSplit);}}
 			TwoCell("consList",_,_,Constructor()) -> {return "";}
 			}
+if(resultat.target()==`OneCell("nat")){return " "+resultNat(resultat);}
 System.out.println("RESULTAT NON CONFORME LIST");resultat.print();
 //tom.library.utils.Viewer.display(resultat);
 return "Error";

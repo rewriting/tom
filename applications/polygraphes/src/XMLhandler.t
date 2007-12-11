@@ -247,28 +247,32 @@ public static void save(String fileContent,File file) throws IOException {
   	  		TwoPath myNewPath=`TwoId(Id());
   	  		int index=0;
   	  		if(sourcelength!=`down.length()){break;}
-  	  		TwoPath[] array=toArray((TwoC0)`top);
+  	  		TwoPath[] topArray=toArray((TwoC0)`top);
+  	  		TwoPath[] downArray=toArray((TwoC0)`down);
   	  		for(int i=0;i<sourcelength;i++){
-  	  			int downsourcelength=`((TwoPath)down.getChildAt(i)).sourcesize();
   	  			
+ 	  			int downsourcelength=downArray[i].sourcesize();//nouveau
+  	  				
    	  			TwoPath topPart=`TwoId(Id());
   	  			for(int j=index;j<downsourcelength+index;j++){
   	  				
-  	  				try{TwoPath newC0 = (TwoPath)array[j];
+  	  				try{TwoPath newC0 = (TwoPath)topArray[j];
   	  				
   	  				if(j==index){topPart=newC0;}
-  	  			else if(j==index+1){topPart=`TwoC0(topPart,newC0);}
-  	  			else{topPart.setChildAt(j,newC0);}
+  	  			else {topPart=`TwoC0(topPart,newC0);}
 
-  	  				}catch (ArrayIndexOutOfBoundsException e){//cas ou il n y a pas que des constructeurs au dessus, duplication par example
+
+  	  				}catch (Exception e){//cas ou il n y a pas que des constructeurs au dessus comme des cellules avec plusieurs sorties, duplication par exemple
   	  				}
   	  			}
-  	  			index=downsourcelength;
-  	  			if(topPart.target()==`((TwoPath)down.getChildAt(i)).source()){
-  	  			TwoPath newC1=`TwoC1(topPart,(TwoPath)down.getChildAt(i));
+  	  			
+  	  			index+=downsourcelength;
+  	  			if(topPart.target()==downArray[i].source()){
+  	  			TwoPath newC1=`TwoC1(topPart,downArray[i]);
+  	  		
   	  			if(i==0){myNewPath=`newC1;}
-  	  			else if(i==1){myNewPath=`TwoC0(myNewPath,newC1);}
-  	  			else{myNewPath.setChildAt(i,newC1);}
+  	  			else {myNewPath=`TwoC0(myNewPath,newC1);}
+  	  			
   	  		}  	  			
   	  		}
   	  		if(myNewPath!=`TwoId(Id())){
@@ -276,6 +280,7 @@ public static void save(String fileContent,File file) throws IOException {
   	  		myNewPath=`TwoC1(head,myNewPath,f,tail);}
   	  		else{myNewPath=`TwoC1(myNewPath,f,tail);}}
   	  		if(myNewPath!=`TwoId(Id())){
+  	  		
   	  		System.out.println("10");
   	  		return myNewPath;}
   	  		}
@@ -406,7 +411,9 @@ public static TwoPath formatRule(TwoPath path){
 		try{TwoPath source=`TwoId(path.source());
 			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visit(source);
 			path=`TwoC1(ruleAux,path);
-			path=(TwoPath) `RepeatId(TopDown(Sequence(Normalize(),Gravity()))).visit(path);
+			//path=(TwoPath) `RepeatId(TopDown(Sequence(Normalize(),Gravity()))).visit(path);
+			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visit(path);//erreur dans normalize 9
+			//path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),RepeatId(TopDown(Gravity())))).visit(path);//marche
 	}
 	catch(VisitFailure e) {
       throw new tom.engine.exception.TomRuntimeException("strange term: "+path);
