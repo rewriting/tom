@@ -53,35 +53,61 @@ public class TestRuleList extends TestCase {
     assertEquals(`conc(b()),`conc(a()));
    }
 
-   public void test1() {
+   public void testflat1() {
     assertEquals(`conc(a(),b()),`conc(a(),a()));
+   }
+   public void testflat2() {
     assertNotSame(`conc(b(),b()),`conc(a(),a()));
+   }
+   public void testflat3() {
     assertEquals(`conc(b(),b()),`conc(b(),a()));
+   }
+   public void testflat4() {
     assertEquals(`conc(f(c())),`conc(f(a())));
+   }
+   public void testflat5() {
     assertEquals(`conc(f(c()),b()),`conc(f(a()),a()));
   }
 
   public void test2() {
     assertEquals(`conc(f(c())),`conc(f(b())));
+  }
+  public void test3() {
     assertEquals(`conc(f(c()),f(c())),`conc(f(b()),f(b())));
+  }
+  public void test4() {
     assertEquals(`conc(f(c()),f(c())),`conc(f(a()),f(a())));
+  }
+  public void test5() {
     assertEquals(`conc(a(),f(c()),a(),f(c()),b()),`conc(a(),f(a()),a(),f(a()),a()));
+  }
+  public void test6() {
     assertEquals(`conc(a(),f(c())),`conc(a(),f(b())));
+  }
+  public void test7() {
     // tricky test: a() there because there is no reduction
     assertEquals(`conc(a(),f(c()),a(),f(c()),b()),`conc(a(),f(a()),a(),f(c()),a()));
   }
 
-  public void test3() {
+  public void test31() {
     assertEquals(`g(conc(f(d()))),`g(conc(f(a()))));
     // Note: we have a b() be because C1* can be reduced when rewriting f(b()) into f(c())
+  }
+  public void test32() {
     assertEquals(`g(conc(b(),f(d()))),`g(conc(a(),f(a()))));
+  }
+  public void test33() {
     assertEquals(`g(conc(f(d()),f(d()))),`g(conc(f(a()),f(a()))));
+  }
+  public void test34() {
     //tricky test: b() is the middle should really be there!
     assertEquals(`g(conc(b(),f(d()),b(),f(d()),b())),`g(conc(a(),f(a()),a(),f(a()),a())));
   }
   
-  public void testUnderscore() {
+  public void testUnderscore_1() {
     assertEquals(`a(),`h(b()));
+  }
+  public void testUnderscore_2() {
     assertEquals(`a(),`k(b(),a(),b(),b()));
   }
 
