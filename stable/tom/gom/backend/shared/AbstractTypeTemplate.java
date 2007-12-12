@@ -67,7 +67,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
 
 );
 
-    if (! hooks.isEmptyconcHook()) {
+    if (! hooks.isEmptyConcHook()) {
       mapping.generate(writer); 
     }
     writer.write(

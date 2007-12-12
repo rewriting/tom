@@ -49,7 +49,7 @@ public class IsOpTemplate extends TemplateClass {
         String newpkg = tomMatch400NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
         String newname = "Is_"+tomMatch400NameNumber_freshVar_1;
         this.className =  tom.gom.adt.objects.types.classname.ClassName.make(newpkg, newname) ;
-      }}}}}}}{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch401NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch401NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch401NameNumber_freshVar_0= tomMatch401NameNumberfreshSubject_1.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch401NameNumber_freshVar_1= tomMatch401NameNumberfreshSubject_1.getSlots() ;if ( true ) {
+      }}}}}}}{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch401NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch401NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch401NameNumber_freshVar_0= tomMatch401NameNumberfreshSubject_1.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch401NameNumber_freshVar_1= tomMatch401NameNumberfreshSubject_1.getSlotFields() ;if ( true ) {
 
 
 

@@ -407,9 +407,9 @@ public abstract class TemplateClass {
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
+    while(!slotList.isEmptyConcSlotField()) {
+      SlotField slot = slotList.getHeadConcSlotField();
+      slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
       {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch362NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch362NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch362NameNumber_freshVar_0= tomMatch362NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch362NameNumber_freshVar_1= tomMatch362NameNumberfreshSubject_1.getDomain() ;if ( (tomMatch362NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch362NameNumber_freshVar_2= tomMatch362NameNumber_freshVar_1.getName() ;if ( true ) {
 
@@ -425,9 +425,9 @@ public abstract class TemplateClass {
   protected void slotArgs(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
+    while(!slotList.isEmptyConcSlotField()) {
+      SlotField slot = slotList.getHeadConcSlotField();
+      slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
       /* Warning: do not write the 'index' alone, this is not a valid variable
          name */
@@ -439,9 +439,9 @@ public abstract class TemplateClass {
   protected void slotArgsWithDollar(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
+    while(!slotList.isEmptyConcSlotField()) {
+      SlotField slot = slotList.getHeadConcSlotField();
+      slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
       /* Warning: do not write the 'index' alone, this is not a valid variable
          name */

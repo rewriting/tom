@@ -9,16 +9,86 @@
 
 %include { float.tom }
 
-%typeterm TLocalVariable {
-  implement { tom.library.adt.bytecode.types.TLocalVariable }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLocalVariable) }
+%typeterm TInnerClassInfo {
+  implement { tom.library.adt.bytecode.types.TInnerClassInfo }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInnerClassInfo) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TMethodCode {
-  implement { tom.library.adt.bytecode.types.TMethodCode }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodCode) }
+%typeterm TTryCatchBlock {
+  implement { tom.library.adt.bytecode.types.TTryCatchBlock }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TTryCatchBlock) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TMethod {
+  implement { tom.library.adt.bytecode.types.TMethod }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethod) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TFieldDescriptor {
+  implement { tom.library.adt.bytecode.types.TFieldDescriptor }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldDescriptor) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TAccess {
+  implement { tom.library.adt.bytecode.types.TAccess }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TAccess) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TFieldDescriptorList {
+  implement { tom.library.adt.bytecode.types.TFieldDescriptorList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldDescriptorList) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm THandler {
+  implement { tom.library.adt.bytecode.types.THandler }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.THandler) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TField {
+  implement { tom.library.adt.bytecode.types.TField }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TField) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TLabel {
+  implement { tom.library.adt.bytecode.types.TLabel }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLabel) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TInstruction {
+  implement { tom.library.adt.bytecode.types.TInstruction }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInstruction) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TInnerClassInfoList {
+  implement { tom.library.adt.bytecode.types.TInnerClassInfoList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInnerClassInfoList) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+}
+
+%typeterm TLabelList {
+  implement { tom.library.adt.bytecode.types.TLabelList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLabelList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -37,65 +107,23 @@
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TInnerClassInfo {
-  implement { tom.library.adt.bytecode.types.TInnerClassInfo }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInnerClassInfo) }
+%typeterm TMethodCode {
+  implement { tom.library.adt.bytecode.types.TMethodCode }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodCode) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TAccess {
-  implement { tom.library.adt.bytecode.types.TAccess }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TAccess) }
+%typeterm TClassInfo {
+  implement { tom.library.adt.bytecode.types.TClassInfo }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TClassInfo) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TReturnDescriptor {
-  implement { tom.library.adt.bytecode.types.TReturnDescriptor }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TReturnDescriptor) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TStringList {
-  implement { tom.library.adt.bytecode.types.TStringList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TStringList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TMethod {
-  implement { tom.library.adt.bytecode.types.TMethod }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethod) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TLabelList {
-  implement { tom.library.adt.bytecode.types.TLabelList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLabelList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TInstruction {
-  implement { tom.library.adt.bytecode.types.TInstruction }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInstruction) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TClass {
-  implement { tom.library.adt.bytecode.types.TClass }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TClass) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TInnerClassInfoList {
-  implement { tom.library.adt.bytecode.types.TInnerClassInfoList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInnerClassInfoList) }
+%typeterm TOuterClassInfo {
+  implement { tom.library.adt.bytecode.types.TOuterClassInfo }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TOuterClassInfo) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -107,9 +135,9 @@
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TField {
-  implement { tom.library.adt.bytecode.types.TField }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TField) }
+%typeterm TLocalVariableList {
+  implement { tom.library.adt.bytecode.types.TLocalVariableList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLocalVariableList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -121,16 +149,9 @@
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TType {
-  implement { tom.library.adt.bytecode.types.TType }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TClassInfo {
-  implement { tom.library.adt.bytecode.types.TClassInfo }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TClassInfo) }
+%typeterm TintList {
+  implement { tom.library.adt.bytecode.types.TintList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TintList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -149,51 +170,9 @@
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TFieldList {
-  implement { tom.library.adt.bytecode.types.TFieldList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TOuterClassInfo {
-  implement { tom.library.adt.bytecode.types.TOuterClassInfo }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TOuterClassInfo) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TFieldDescriptor {
-  implement { tom.library.adt.bytecode.types.TFieldDescriptor }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldDescriptor) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TTryCatchBlock {
-  implement { tom.library.adt.bytecode.types.TTryCatchBlock }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TTryCatchBlock) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TintList {
-  implement { tom.library.adt.bytecode.types.TintList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TintList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm TMethodInfo {
-  implement { tom.library.adt.bytecode.types.TMethodInfo }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodInfo) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
-}
-
-%typeterm THandler {
-  implement { tom.library.adt.bytecode.types.THandler }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.THandler) }
+%typeterm TClass {
+  implement { tom.library.adt.bytecode.types.TClass }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TClass) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
@@ -205,73 +184,47 @@
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TFieldDescriptorList {
-  implement { tom.library.adt.bytecode.types.TFieldDescriptorList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldDescriptorList) }
+%typeterm TFieldList {
+  implement { tom.library.adt.bytecode.types.TFieldList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldList) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TLabel {
-  implement { tom.library.adt.bytecode.types.TLabel }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLabel) }
+%typeterm TLocalVariable {
+  implement { tom.library.adt.bytecode.types.TLocalVariable }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLocalVariable) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%typeterm TLocalVariableList {
-  implement { tom.library.adt.bytecode.types.TLocalVariableList }
-  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLocalVariableList) }
+%typeterm TType {
+  implement { tom.library.adt.bytecode.types.TType }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TType) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
-%op TLocalVariable LocalVariable(name:String, typeDesc:String, signature:TSignature, start:TLabel, end:TLabel, index:int) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariable.LocalVariable) }
-  get_slot(name, t) { $t.getname() }
-  get_slot(typeDesc, t) { $t.gettypeDesc() }
-  get_slot(signature, t) { $t.getsignature() }
-  get_slot(start, t) { $t.getstart() }
-  get_slot(end, t) { $t.getend() }
-  get_slot(index, t) { $t.getindex() }
-  make(t0, t1, t2, t3, t4, t5) { tom.library.adt.bytecode.types.tlocalvariable.LocalVariable.make($t0, $t1, $t2, $t3, $t4, $t5) }
+
+%typeterm TStringList {
+  implement { tom.library.adt.bytecode.types.TStringList }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TStringList) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TMethodCode MethodCode(instructions:TInstructionList, localVariables:TLocalVariableList, tryCatchBlocks:TTryCatchBlockList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodcode.MethodCode) }
-  get_slot(instructions, t) { $t.getinstructions() }
-  get_slot(localVariables, t) { $t.getlocalVariables() }
-  get_slot(tryCatchBlocks, t) { $t.gettryCatchBlocks() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.tmethodcode.MethodCode.make($t0, $t1, $t2) }
+%typeterm TReturnDescriptor {
+  implement { tom.library.adt.bytecode.types.TReturnDescriptor }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TReturnDescriptor) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
 
-%op TMethodCode EmptyCode() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodcode.EmptyCode) }
-  make() { tom.library.adt.bytecode.types.tmethodcode.EmptyCode.make() }
+%typeterm TMethodInfo {
+  implement { tom.library.adt.bytecode.types.TMethodInfo }
+  is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodInfo) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
 }
-
-%op TMethodList EmptyMethodList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList) }
-  make() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() }
-}
-
-%op TMethodList ConsMethodList(HeadMethodList:TMethod, TailMethodList:TMethodList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList) }
-  get_slot(HeadMethodList, t) { $t.getHeadMethodList() }
-  get_slot(TailMethodList, t) { $t.getTailMethodList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make($t0, $t1) }
-}
-
-%op TSignature Signature(sig:String) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tsignature.Signature) }
-  get_slot(sig, t) { $t.getsig() }
-  make(t0) { tom.library.adt.bytecode.types.tsignature.Signature.make($t0) }
-}
-
-%op TSignature EmptySignature() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tsignature.EmptySignature) }
-  make() { tom.library.adt.bytecode.types.tsignature.EmptySignature.make() }
-}
-
 %op TInnerClassInfo InnerClassInfo(name:String, outerName:String, innerName:String, access:TAccessList) {
   is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo) }
   get_slot(name, t) { $t.getname() }
@@ -279,6 +232,73 @@
   get_slot(innerName, t) { $t.getinnerName() }
   get_slot(access, t) { $t.getaccess() }
   make(t0, t1, t2, t3) { tom.library.adt.bytecode.types.tinnerclassinfo.InnerClassInfo.make($t0, $t1, $t2, $t3) }
+}
+
+%op TTryCatchBlock TryCatchBlock(start:TLabel, end:TLabel, handler:THandler) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock) }
+  get_slot(start, t) { $t.getstart() }
+  get_slot(end, t) { $t.getend() }
+  get_slot(handler, t) { $t.gethandler() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock.make($t0, $t1, $t2) }
+}
+
+%op TMethod Method(info:TMethodInfo, code:TMethodCode) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethod.Method) }
+  get_slot(info, t) { $t.getinfo() }
+  get_slot(code, t) { $t.getcode() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tmethod.Method.make($t0, $t1) }
+}
+
+%op TFieldDescriptor ObjectType(className:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ObjectType) }
+  get_slot(className, t) { $t.getclassName() }
+  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ObjectType.make($t0) }
+}
+
+%op TFieldDescriptor ArrayType(arrayType:TFieldDescriptor) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ArrayType) }
+  get_slot(arrayType, t) { $t.getarrayType() }
+  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ArrayType.make($t0) }
+}
+
+%op TFieldDescriptor B() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.B) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.B.make() }
+}
+
+%op TFieldDescriptor C() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.C) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.C.make() }
+}
+
+%op TFieldDescriptor D() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.D) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.D.make() }
+}
+
+%op TFieldDescriptor F() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.F) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.F.make() }
+}
+
+%op TFieldDescriptor I() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.I) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.I.make() }
+}
+
+%op TFieldDescriptor J() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.J) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.J.make() }
+}
+
+%op TFieldDescriptor S() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.S) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.S.make() }
+}
+
+%op TFieldDescriptor Z() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.Z) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptor.Z.make() }
 }
 
 %op TAccess ABSTRACT() {
@@ -376,46 +396,45 @@
   make() { tom.library.adt.bytecode.types.taccess.VOLATILE.make() }
 }
 
-%op TReturnDescriptor ReturnDescriptor(type:TFieldDescriptor) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor) }
+%op TFieldDescriptorList EmptyFieldDescriptorList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList) }
+  make() { tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() }
+}
+
+%op TFieldDescriptorList ConsFieldDescriptorList(HeadFieldDescriptorList:TFieldDescriptor, TailFieldDescriptorList:TFieldDescriptorList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList) }
+  get_slot(HeadFieldDescriptorList, t) { $t.getHeadFieldDescriptorList() }
+  get_slot(TailFieldDescriptorList, t) { $t.getTailFieldDescriptorList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make($t0, $t1) }
+}
+
+%op THandler CatchHandler(handler:TLabel, type:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.thandler.CatchHandler) }
+  get_slot(handler, t) { $t.gethandler() }
   get_slot(type, t) { $t.gettype() }
-  make(t0) { tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor.make($t0) }
+  make(t0, t1) { tom.library.adt.bytecode.types.thandler.CatchHandler.make($t0, $t1) }
 }
 
-%op TReturnDescriptor Void() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.treturndescriptor.Void) }
-  make() { tom.library.adt.bytecode.types.treturndescriptor.Void.make() }
+%op THandler FinallyHandler(handler:TLabel) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.thandler.FinallyHandler) }
+  get_slot(handler, t) { $t.gethandler() }
+  make(t0) { tom.library.adt.bytecode.types.thandler.FinallyHandler.make($t0) }
 }
 
-%op TStringList EmptyStringList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tstringlist.EmptyStringList) }
-  make() { tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() }
+%op TField Field(access:TAccessList, name:String, desc:TFieldDescriptor, signature:TSignature, value:TValue) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfield.Field) }
+  get_slot(access, t) { $t.getaccess() }
+  get_slot(name, t) { $t.getname() }
+  get_slot(desc, t) { $t.getdesc() }
+  get_slot(signature, t) { $t.getsignature() }
+  get_slot(value, t) { $t.getvalue() }
+  make(t0, t1, t2, t3, t4) { tom.library.adt.bytecode.types.tfield.Field.make($t0, $t1, $t2, $t3, $t4) }
 }
 
-%op TStringList ConsStringList(HeadStringList:String, TailStringList:TStringList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tstringlist.ConsStringList) }
-  get_slot(HeadStringList, t) { $t.getHeadStringList() }
-  get_slot(TailStringList, t) { $t.getTailStringList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make($t0, $t1) }
-}
-
-%op TMethod Method(info:TMethodInfo, code:TMethodCode) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethod.Method) }
-  get_slot(info, t) { $t.getinfo() }
-  get_slot(code, t) { $t.getcode() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tmethod.Method.make($t0, $t1) }
-}
-
-%op TLabelList EmptyLabelList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlabellist.EmptyLabelList) }
-  make() { tom.library.adt.bytecode.types.tlabellist.EmptyLabelList.make() }
-}
-
-%op TLabelList ConsLabelList(HeadLabelList:TLabel, TailLabelList:TLabelList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlabellist.ConsLabelList) }
-  get_slot(HeadLabelList, t) { $t.getHeadLabelList() }
-  get_slot(TailLabelList, t) { $t.getTailLabelList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make($t0, $t1) }
+%op TLabel Label(id:int) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlabel.Label) }
+  get_slot(id, t) { $t.getid() }
+  make(t0) { tom.library.adt.bytecode.types.tlabel.Label.make($t0) }
 }
 
 %op TInstruction Anchor(label:TLabel) {
@@ -1276,14 +1295,6 @@
   make(t0) { tom.library.adt.bytecode.types.tinstruction.Ifnonnull.make($t0) }
 }
 
-%op TClass Class(info:TClassInfo, fields:TFieldList, methods:TMethodList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tclass.Class) }
-  get_slot(info, t) { $t.getinfo() }
-  get_slot(fields, t) { $t.getfields() }
-  get_slot(methods, t) { $t.getmethods() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.tclass.Class.make($t0, $t1, $t2) }
-}
-
 %op TInnerClassInfoList EmptyInnerClassInfoList() {
   is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList) }
   make() { tom.library.adt.bytecode.types.tinnerclassinfolist.EmptyInnerClassInfoList.make() }
@@ -1294,6 +1305,79 @@
   get_slot(HeadInnerClassInfoList, t) { $t.getHeadInnerClassInfoList() }
   get_slot(TailInnerClassInfoList, t) { $t.getTailInnerClassInfoList() }
   make(t0, t1) { tom.library.adt.bytecode.types.tinnerclassinfolist.ConsInnerClassInfoList.make($t0, $t1) }
+}
+
+%op TLabelList EmptyLabelList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlabellist.EmptyLabelList) }
+  make() { tom.library.adt.bytecode.types.tlabellist.EmptyLabelList.make() }
+}
+
+%op TLabelList ConsLabelList(HeadLabelList:TLabel, TailLabelList:TLabelList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlabellist.ConsLabelList) }
+  get_slot(HeadLabelList, t) { $t.getHeadLabelList() }
+  get_slot(TailLabelList, t) { $t.getTailLabelList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make($t0, $t1) }
+}
+
+%op TMethodList EmptyMethodList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList) }
+  make() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() }
+}
+
+%op TMethodList ConsMethodList(HeadMethodList:TMethod, TailMethodList:TMethodList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList) }
+  get_slot(HeadMethodList, t) { $t.getHeadMethodList() }
+  get_slot(TailMethodList, t) { $t.getTailMethodList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make($t0, $t1) }
+}
+
+%op TSignature Signature(sig:String) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tsignature.Signature) }
+  get_slot(sig, t) { $t.getsig() }
+  make(t0) { tom.library.adt.bytecode.types.tsignature.Signature.make($t0) }
+}
+
+%op TSignature EmptySignature() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tsignature.EmptySignature) }
+  make() { tom.library.adt.bytecode.types.tsignature.EmptySignature.make() }
+}
+
+%op TMethodCode MethodCode(instructions:TInstructionList, localVariables:TLocalVariableList, tryCatchBlocks:TTryCatchBlockList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodcode.MethodCode) }
+  get_slot(instructions, t) { $t.getinstructions() }
+  get_slot(localVariables, t) { $t.getlocalVariables() }
+  get_slot(tryCatchBlocks, t) { $t.gettryCatchBlocks() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.tmethodcode.MethodCode.make($t0, $t1, $t2) }
+}
+
+%op TMethodCode EmptyCode() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethodcode.EmptyCode) }
+  make() { tom.library.adt.bytecode.types.tmethodcode.EmptyCode.make() }
+}
+
+%op TClassInfo ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClasses:TInnerClassInfoList, outerClass:TOuterClassInfo) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tclassinfo.ClassInfo) }
+  get_slot(name, t) { $t.getname() }
+  get_slot(signature, t) { $t.getsignature() }
+  get_slot(access, t) { $t.getaccess() }
+  get_slot(superName, t) { $t.getsuperName() }
+  get_slot(interfaces, t) { $t.getinterfaces() }
+  get_slot(innerClasses, t) { $t.getinnerClasses() }
+  get_slot(outerClass, t) { $t.getouterClass() }
+  make(t0, t1, t2, t3, t4, t5, t6) { tom.library.adt.bytecode.types.tclassinfo.ClassInfo.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
+}
+
+%op TOuterClassInfo OuterClassInfo(owner:String, name:String, desc:TMethodDescriptor) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo) }
+  get_slot(owner, t) { $t.getowner() }
+  get_slot(name, t) { $t.getname() }
+  get_slot(desc, t) { $t.getdesc() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo.make($t0, $t1, $t2) }
+}
+
+%op TOuterClassInfo EmptyOuterClassInfo() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo) }
+  make() { tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo.make() }
 }
 
 %op TValue StringValue(s:String) {
@@ -1331,14 +1415,16 @@
   make() { tom.library.adt.bytecode.types.tvalue.EmptyValue.make() }
 }
 
-%op TField Field(access:TAccessList, name:String, desc:TFieldDescriptor, signature:TSignature, value:TValue) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfield.Field) }
-  get_slot(access, t) { $t.getaccess() }
-  get_slot(name, t) { $t.getname() }
-  get_slot(desc, t) { $t.getdesc() }
-  get_slot(signature, t) { $t.getsignature() }
-  get_slot(value, t) { $t.getvalue() }
-  make(t0, t1, t2, t3, t4) { tom.library.adt.bytecode.types.tfield.Field.make($t0, $t1, $t2, $t3, $t4) }
+%op TLocalVariableList EmptyLocalVariableList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList) }
+  make() { tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make() }
+}
+
+%op TLocalVariableList ConsLocalVariableList(HeadLocalVariableList:TLocalVariable, TailLocalVariableList:TLocalVariableList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList) }
+  get_slot(HeadLocalVariableList, t) { $t.getHeadLocalVariableList() }
+  get_slot(TailLocalVariableList, t) { $t.getTailLocalVariableList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make($t0, $t1) }
 }
 
 %op TTryCatchBlockList EmptyTryCatchBlockList() {
@@ -1351,6 +1437,80 @@
   get_slot(HeadTryCatchBlockList, t) { $t.getHeadTryCatchBlockList() }
   get_slot(TailTryCatchBlockList, t) { $t.getTailTryCatchBlockList() }
   make(t0, t1) { tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList.make($t0, $t1) }
+}
+
+%op TintList EmptyintList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tintlist.EmptyintList) }
+  make() { tom.library.adt.bytecode.types.tintlist.EmptyintList.make() }
+}
+
+%op TintList ConsintList(HeadintList:int, TailintList:TintList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tintlist.ConsintList) }
+  get_slot(HeadintList, t) { $t.getHeadintList() }
+  get_slot(TailintList, t) { $t.getTailintList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tintlist.ConsintList.make($t0, $t1) }
+}
+
+%op TAccessList EmptyAccessList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList) }
+  make() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() }
+}
+
+%op TAccessList ConsAccessList(HeadAccessList:TAccess, TailAccessList:TAccessList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) }
+  get_slot(HeadAccessList, t) { $t.getHeadAccessList() }
+  get_slot(TailAccessList, t) { $t.getTailAccessList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make($t0, $t1) }
+}
+
+%op TMethodDescriptor MethodDescriptor(parameters:TFieldDescriptorList, return:TReturnDescriptor) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor) }
+  get_slot(parameters, t) { $t.getparameters() }
+  get_slot(return, t) { $t.getreturn() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor.make($t0, $t1) }
+}
+
+%op TClass Class(info:TClassInfo, fields:TFieldList, methods:TMethodList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tclass.Class) }
+  get_slot(info, t) { $t.getinfo() }
+  get_slot(fields, t) { $t.getfields() }
+  get_slot(methods, t) { $t.getmethods() }
+  make(t0, t1, t2) { tom.library.adt.bytecode.types.tclass.Class.make($t0, $t1, $t2) }
+}
+
+%op TInstructionList EmptyInstructionList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList) }
+  make() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make() }
+}
+
+%op TInstructionList ConsInstructionList(HeadInstructionList:TInstruction, TailInstructionList:TInstructionList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList) }
+  get_slot(HeadInstructionList, t) { $t.getHeadInstructionList() }
+  get_slot(TailInstructionList, t) { $t.getTailInstructionList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make($t0, $t1) }
+}
+
+%op TFieldList EmptyFieldList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList) }
+  make() { tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make() }
+}
+
+%op TFieldList ConsFieldList(HeadFieldList:TField, TailFieldList:TFieldList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList) }
+  get_slot(HeadFieldList, t) { $t.getHeadFieldList() }
+  get_slot(TailFieldList, t) { $t.getTailFieldList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make($t0, $t1) }
+}
+
+%op TLocalVariable LocalVariable(name:String, typeDesc:String, signature:TSignature, start:TLabel, end:TLabel, index:int) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariable.LocalVariable) }
+  get_slot(name, t) { $t.getname() }
+  get_slot(typeDesc, t) { $t.gettypeDesc() }
+  get_slot(signature, t) { $t.getsignature() }
+  get_slot(start, t) { $t.getstart() }
+  get_slot(end, t) { $t.getend() }
+  get_slot(index, t) { $t.getindex() }
+  make(t0, t1, t2, t3, t4, t5) { tom.library.adt.bytecode.types.tlocalvariable.LocalVariable.make($t0, $t1, $t2, $t3, $t4, $t5) }
 }
 
 %op TType ARRAY() {
@@ -1408,132 +1568,27 @@
   make() { tom.library.adt.bytecode.types.ttype.VOID.make() }
 }
 
-%op TClassInfo ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClasses:TInnerClassInfoList, outerClass:TOuterClassInfo) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tclassinfo.ClassInfo) }
-  get_slot(name, t) { $t.getname() }
-  get_slot(signature, t) { $t.getsignature() }
-  get_slot(access, t) { $t.getaccess() }
-  get_slot(superName, t) { $t.getsuperName() }
-  get_slot(interfaces, t) { $t.getinterfaces() }
-  get_slot(innerClasses, t) { $t.getinnerClasses() }
-  get_slot(outerClass, t) { $t.getouterClass() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.library.adt.bytecode.types.tclassinfo.ClassInfo.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
+%op TStringList EmptyStringList() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tstringlist.EmptyStringList) }
+  make() { tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() }
 }
 
-%op TAccessList EmptyAccessList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList) }
-  make() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() }
+%op TStringList ConsStringList(HeadStringList:String, TailStringList:TStringList) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tstringlist.ConsStringList) }
+  get_slot(HeadStringList, t) { $t.getHeadStringList() }
+  get_slot(TailStringList, t) { $t.getTailStringList() }
+  make(t0, t1) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make($t0, $t1) }
 }
 
-%op TAccessList ConsAccessList(HeadAccessList:TAccess, TailAccessList:TAccessList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) }
-  get_slot(HeadAccessList, t) { $t.getHeadAccessList() }
-  get_slot(TailAccessList, t) { $t.getTailAccessList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make($t0, $t1) }
+%op TReturnDescriptor ReturnDescriptor(type:TFieldDescriptor) {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor) }
+  get_slot(type, t) { $t.gettype() }
+  make(t0) { tom.library.adt.bytecode.types.treturndescriptor.ReturnDescriptor.make($t0) }
 }
 
-%op TMethodDescriptor MethodDescriptor(parameters:TFieldDescriptorList, return:TReturnDescriptor) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor) }
-  get_slot(parameters, t) { $t.getparameters() }
-  get_slot(return, t) { $t.getreturn() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tmethoddescriptor.MethodDescriptor.make($t0, $t1) }
-}
-
-%op TFieldList EmptyFieldList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList) }
-  make() { tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make() }
-}
-
-%op TFieldList ConsFieldList(HeadFieldList:TField, TailFieldList:TFieldList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList) }
-  get_slot(HeadFieldList, t) { $t.getHeadFieldList() }
-  get_slot(TailFieldList, t) { $t.getTailFieldList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make($t0, $t1) }
-}
-
-%op TOuterClassInfo OuterClassInfo(owner:String, name:String, desc:TMethodDescriptor) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo) }
-  get_slot(owner, t) { $t.getowner() }
-  get_slot(name, t) { $t.getname() }
-  get_slot(desc, t) { $t.getdesc() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.touterclassinfo.OuterClassInfo.make($t0, $t1, $t2) }
-}
-
-%op TOuterClassInfo EmptyOuterClassInfo() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo) }
-  make() { tom.library.adt.bytecode.types.touterclassinfo.EmptyOuterClassInfo.make() }
-}
-
-%op TFieldDescriptor ObjectType(className:String) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ObjectType) }
-  get_slot(className, t) { $t.getclassName() }
-  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ObjectType.make($t0) }
-}
-
-%op TFieldDescriptor ArrayType(arrayType:TFieldDescriptor) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.ArrayType) }
-  get_slot(arrayType, t) { $t.getarrayType() }
-  make(t0) { tom.library.adt.bytecode.types.tfielddescriptor.ArrayType.make($t0) }
-}
-
-%op TFieldDescriptor B() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.B) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.B.make() }
-}
-
-%op TFieldDescriptor C() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.C) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.C.make() }
-}
-
-%op TFieldDescriptor D() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.D) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.D.make() }
-}
-
-%op TFieldDescriptor F() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.F) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.F.make() }
-}
-
-%op TFieldDescriptor I() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.I) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.I.make() }
-}
-
-%op TFieldDescriptor J() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.J) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.J.make() }
-}
-
-%op TFieldDescriptor S() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.S) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.S.make() }
-}
-
-%op TFieldDescriptor Z() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptor.Z) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptor.Z.make() }
-}
-
-%op TTryCatchBlock TryCatchBlock(start:TLabel, end:TLabel, handler:THandler) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock) }
-  get_slot(start, t) { $t.getstart() }
-  get_slot(end, t) { $t.getend() }
-  get_slot(handler, t) { $t.gethandler() }
-  make(t0, t1, t2) { tom.library.adt.bytecode.types.ttrycatchblock.TryCatchBlock.make($t0, $t1, $t2) }
-}
-
-%op TintList EmptyintList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tintlist.EmptyintList) }
-  make() { tom.library.adt.bytecode.types.tintlist.EmptyintList.make() }
-}
-
-%op TintList ConsintList(HeadintList:int, TailintList:TintList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tintlist.ConsintList) }
-  get_slot(HeadintList, t) { $t.getHeadintList() }
-  get_slot(TailintList, t) { $t.getTailintList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tintlist.ConsintList.make($t0, $t1) }
+%op TReturnDescriptor Void() {
+  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.treturndescriptor.Void) }
+  make() { tom.library.adt.bytecode.types.treturndescriptor.Void.make() }
 }
 
 %op TMethodInfo MethodInfo(owner:String, access:TAccessList, name:String, desc:TMethodDescriptor, signature:TSignature, exceptions:TStringList) {
@@ -1547,87 +1602,14 @@
   make(t0, t1, t2, t3, t4, t5) { tom.library.adt.bytecode.types.tmethodinfo.MethodInfo.make($t0, $t1, $t2, $t3, $t4, $t5) }
 }
 
-%op THandler CatchHandler(handler:TLabel, type:String) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.thandler.CatchHandler) }
-  get_slot(handler, t) { $t.gethandler() }
-  get_slot(type, t) { $t.gettype() }
-  make(t0, t1) { tom.library.adt.bytecode.types.thandler.CatchHandler.make($t0, $t1) }
-}
 
-%op THandler FinallyHandler(handler:TLabel) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.thandler.FinallyHandler) }
-  get_slot(handler, t) { $t.gethandler() }
-  make(t0) { tom.library.adt.bytecode.types.thandler.FinallyHandler.make($t0) }
-}
-
-%op TInstructionList EmptyInstructionList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList) }
-  make() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make() }
-}
-
-%op TInstructionList ConsInstructionList(HeadInstructionList:TInstruction, TailInstructionList:TInstructionList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList) }
-  get_slot(HeadInstructionList, t) { $t.getHeadInstructionList() }
-  get_slot(TailInstructionList, t) { $t.getTailInstructionList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList.make($t0, $t1) }
-}
-
-%op TFieldDescriptorList EmptyFieldDescriptorList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList) }
-  make() { tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() }
-}
-
-%op TFieldDescriptorList ConsFieldDescriptorList(HeadFieldDescriptorList:TFieldDescriptor, TailFieldDescriptorList:TFieldDescriptorList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList) }
-  get_slot(HeadFieldDescriptorList, t) { $t.getHeadFieldDescriptorList() }
-  get_slot(TailFieldDescriptorList, t) { $t.getTailFieldDescriptorList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make($t0, $t1) }
-}
-
-%op TLabel Label(id:int) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlabel.Label) }
-  get_slot(id, t) { $t.getid() }
-  make(t0) { tom.library.adt.bytecode.types.tlabel.Label.make($t0) }
-}
-
-%op TLocalVariableList EmptyLocalVariableList() {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList) }
-  make() { tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make() }
-}
-
-%op TLocalVariableList ConsLocalVariableList(HeadLocalVariableList:TLocalVariable, TailLocalVariableList:TLocalVariableList) {
-  is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList) }
-  get_slot(HeadLocalVariableList, t) { $t.getHeadLocalVariableList() }
-  get_slot(TailLocalVariableList, t) { $t.getTailLocalVariableList() }
-  make(t0, t1) { tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make($t0, $t1) }
-}
-
-
-%oplist TMethodList MethodList(TMethod*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList) || ($t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList)) }
-  make_empty() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make($e,$l) }
-  get_head(l) { $l.getHeadMethodList() }
-  get_tail(l) { $l.getTailMethodList() }
-  is_empty(l) { $l.isEmptyMethodList() }
-}
-
-%oplist TStringList StringList(String*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tstringlist.ConsStringList) || ($t instanceof tom.library.adt.bytecode.types.tstringlist.EmptyStringList)) }
-  make_empty() { tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make($e,$l) }
-  get_head(l) { $l.getHeadStringList() }
-  get_tail(l) { $l.getTailStringList() }
-  is_empty(l) { $l.isEmptyStringList() }
-}
-
-%oplist TLabelList LabelList(TLabel*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tlabellist.ConsLabelList) || ($t instanceof tom.library.adt.bytecode.types.tlabellist.EmptyLabelList)) }
-  make_empty() { tom.library.adt.bytecode.types.tlabellist.EmptyLabelList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make($e,$l) }
-  get_head(l) { $l.getHeadLabelList() }
-  get_tail(l) { $l.getTailLabelList() }
-  is_empty(l) { $l.isEmptyLabelList() }
+%oplist TFieldDescriptorList FieldDescriptorList(TFieldDescriptor*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList) || ($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList)) }
+  make_empty() { tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make($e,$l) }
+  get_head(l) { $l.getHeadFieldDescriptorList() }
+  get_tail(l) { $l.getTailFieldDescriptorList() }
+  is_empty(l) { $l.isEmptyFieldDescriptorList() }
 }
 
 %oplist TInnerClassInfoList InnerClassInfoList(TInnerClassInfo*) {
@@ -1639,6 +1621,33 @@
   is_empty(l) { $l.isEmptyInnerClassInfoList() }
 }
 
+%oplist TLabelList LabelList(TLabel*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tlabellist.ConsLabelList) || ($t instanceof tom.library.adt.bytecode.types.tlabellist.EmptyLabelList)) }
+  make_empty() { tom.library.adt.bytecode.types.tlabellist.EmptyLabelList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tlabellist.ConsLabelList.make($e,$l) }
+  get_head(l) { $l.getHeadLabelList() }
+  get_tail(l) { $l.getTailLabelList() }
+  is_empty(l) { $l.isEmptyLabelList() }
+}
+
+%oplist TMethodList MethodList(TMethod*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tmethodlist.ConsMethodList) || ($t instanceof tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList)) }
+  make_empty() { tom.library.adt.bytecode.types.tmethodlist.EmptyMethodList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tmethodlist.ConsMethodList.make($e,$l) }
+  get_head(l) { $l.getHeadMethodList() }
+  get_tail(l) { $l.getTailMethodList() }
+  is_empty(l) { $l.isEmptyMethodList() }
+}
+
+%oplist TLocalVariableList LocalVariableList(TLocalVariable*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList) || ($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList)) }
+  make_empty() { tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make($e,$l) }
+  get_head(l) { $l.getHeadLocalVariableList() }
+  get_tail(l) { $l.getTailLocalVariableList() }
+  is_empty(l) { $l.isEmptyLocalVariableList() }
+}
+
 %oplist TTryCatchBlockList TryCatchBlockList(TTryCatchBlock*) {
   is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.ConsTryCatchBlockList) || ($t instanceof tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList)) }
   make_empty() { tom.library.adt.bytecode.types.ttrycatchblocklist.EmptyTryCatchBlockList.make() }
@@ -1646,24 +1655,6 @@
   get_head(l) { $l.getHeadTryCatchBlockList() }
   get_tail(l) { $l.getTailTryCatchBlockList() }
   is_empty(l) { $l.isEmptyTryCatchBlockList() }
-}
-
-%oplist TAccessList AccessList(TAccess*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) || ($t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList)) }
-  make_empty() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make($e,$l) }
-  get_head(l) { $l.getHeadAccessList() }
-  get_tail(l) { $l.getTailAccessList() }
-  is_empty(l) { $l.isEmptyAccessList() }
-}
-
-%oplist TFieldList FieldList(TField*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList) || ($t instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList)) }
-  make_empty() { tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make($e,$l) }
-  get_head(l) { $l.getHeadFieldList() }
-  get_tail(l) { $l.getTailFieldList() }
-  is_empty(l) { $l.isEmptyFieldList() }
 }
 
 %oplist TintList intList(int*) {
@@ -1675,6 +1666,15 @@
   is_empty(l) { $l.isEmptyintList() }
 }
 
+%oplist TAccessList AccessList(TAccess*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.taccesslist.ConsAccessList) || ($t instanceof tom.library.adt.bytecode.types.taccesslist.EmptyAccessList)) }
+  make_empty() { tom.library.adt.bytecode.types.taccesslist.EmptyAccessList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.taccesslist.ConsAccessList.make($e,$l) }
+  get_head(l) { $l.getHeadAccessList() }
+  get_tail(l) { $l.getTailAccessList() }
+  is_empty(l) { $l.isEmptyAccessList() }
+}
+
 %oplist TInstructionList InstructionList(TInstruction*) {
   is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tinstructionlist.ConsInstructionList) || ($t instanceof tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList)) }
   make_empty() { tom.library.adt.bytecode.types.tinstructionlist.EmptyInstructionList.make() }
@@ -1684,20 +1684,20 @@
   is_empty(l) { $l.isEmptyInstructionList() }
 }
 
-%oplist TFieldDescriptorList FieldDescriptorList(TFieldDescriptor*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList) || ($t instanceof tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList)) }
-  make_empty() { tom.library.adt.bytecode.types.tfielddescriptorlist.EmptyFieldDescriptorList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tfielddescriptorlist.ConsFieldDescriptorList.make($e,$l) }
-  get_head(l) { $l.getHeadFieldDescriptorList() }
-  get_tail(l) { $l.getTailFieldDescriptorList() }
-  is_empty(l) { $l.isEmptyFieldDescriptorList() }
+%oplist TFieldList FieldList(TField*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tfieldlist.ConsFieldList) || ($t instanceof tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList)) }
+  make_empty() { tom.library.adt.bytecode.types.tfieldlist.EmptyFieldList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tfieldlist.ConsFieldList.make($e,$l) }
+  get_head(l) { $l.getHeadFieldList() }
+  get_tail(l) { $l.getTailFieldList() }
+  is_empty(l) { $l.isEmptyFieldList() }
 }
 
-%oplist TLocalVariableList LocalVariableList(TLocalVariable*) {
-  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList) || ($t instanceof tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList)) }
-  make_empty() { tom.library.adt.bytecode.types.tlocalvariablelist.EmptyLocalVariableList.make() }
-  make_insert(e,l) { tom.library.adt.bytecode.types.tlocalvariablelist.ConsLocalVariableList.make($e,$l) }
-  get_head(l) { $l.getHeadLocalVariableList() }
-  get_tail(l) { $l.getTailLocalVariableList() }
-  is_empty(l) { $l.isEmptyLocalVariableList() }
+%oplist TStringList StringList(String*) {
+  is_fsym(t) { (($t instanceof tom.library.adt.bytecode.types.tstringlist.ConsStringList) || ($t instanceof tom.library.adt.bytecode.types.tstringlist.EmptyStringList)) }
+  make_empty() { tom.library.adt.bytecode.types.tstringlist.EmptyStringList.make() }
+  make_insert(e,l) { tom.library.adt.bytecode.types.tstringlist.ConsStringList.make($e,$l) }
+  get_head(l) { $l.getHeadStringList() }
+  get_tail(l) { $l.getTailStringList() }
+  is_empty(l) { $l.isEmptyStringList() }
 }

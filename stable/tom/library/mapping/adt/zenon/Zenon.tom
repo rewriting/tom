@@ -10,20 +10,6 @@
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
 
-%typeterm ZType {
-  implement { tom.engine.adt.zenon.types.ZType }
-  is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
-}
-
-%typeterm ZTerm {
-  implement { tom.engine.adt.zenon.types.ZTerm }
-  is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZTerm) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
-}
-
 %typeterm ZAxiom {
   implement { tom.engine.adt.zenon.types.ZAxiom }
   is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZAxiom) }
@@ -38,9 +24,16 @@
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
 
-%typeterm ZSymbol {
-  implement { tom.engine.adt.zenon.types.ZSymbol }
-  is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZSymbol) }
+%typeterm ZType {
+  implement { tom.engine.adt.zenon.types.ZType }
+  is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZType) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
+}
+
+%typeterm ZTerm {
+  implement { tom.engine.adt.zenon.types.ZTerm }
+  is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZTerm) }
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -58,6 +51,13 @@
   equals(t1,t2) { $t1.equals($t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
+
+%typeterm ZSymbol {
+  implement { tom.engine.adt.zenon.types.ZSymbol }
+  is_sort(t) { ($t instanceof tom.engine.adt.zenon.types.ZSymbol) }
+  equals(t1,t2) { $t1.equals($t2) }
+  visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
+}
 %op ZTermList EmptyconcZTerm() {
   is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm) }
   make() { tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make() }
@@ -68,6 +68,20 @@
   get_slot(HeadconcZTerm, t) { $t.getHeadconcZTerm() }
   get_slot(TailconcZTerm, t) { $t.getTailconcZTerm() }
   make(t0, t1) { tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make($t0, $t1) }
+}
+
+%op ZAxiom zaxiom(Name:String, Ax:ZExpr) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.zaxiom.zaxiom) }
+  get_slot(Name, t) { $t.getName() }
+  get_slot(Ax, t) { $t.getAx() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zaxiom.zaxiom.make($t0, $t1) }
+}
+
+%op ZSpec zthm(Thm:ZExpr, By:ZAxiomList) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.zspec.zthm) }
+  get_slot(Thm, t) { $t.getThm() }
+  get_slot(By, t) { $t.getBy() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zspec.zthm.make($t0, $t1) }
 }
 
 %op ZType ztype(Tname:String) {
@@ -101,26 +115,6 @@
   get_slot(Abst, t) { $t.getAbst() }
   get_slot(Name, t) { $t.getName() }
   make(t0, t1) { tom.engine.adt.zenon.types.zterm.zsl.make($t0, $t1) }
-}
-
-%op ZAxiom zaxiom(Name:String, Ax:ZExpr) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.zaxiom.zaxiom) }
-  get_slot(Name, t) { $t.getName() }
-  get_slot(Ax, t) { $t.getAx() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zaxiom.zaxiom.make($t0, $t1) }
-}
-
-%op ZSpec zthm(Thm:ZExpr, By:ZAxiomList) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.zspec.zthm) }
-  get_slot(Thm, t) { $t.getThm() }
-  get_slot(By, t) { $t.getBy() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zspec.zthm.make($t0, $t1) }
-}
-
-%op ZSymbol zsymbol(Name:String) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) }
-  get_slot(Name, t) { $t.getName() }
-  make(t0) { tom.engine.adt.zenon.types.zsymbol.zsymbol.make($t0) }
 }
 
 %op ZExpr ztrue() {
@@ -200,6 +194,12 @@
   get_slot(Headzby, t) { $t.getHeadzby() }
   get_slot(Tailzby, t) { $t.getTailzby() }
   make(t0, t1) { tom.engine.adt.zenon.types.zaxiomlist.Conszby.make($t0, $t1) }
+}
+
+%op ZSymbol zsymbol(Name:String) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) }
+  get_slot(Name, t) { $t.getName() }
+  make(t0) { tom.engine.adt.zenon.types.zsymbol.zsymbol.make($t0) }
 }
 
 

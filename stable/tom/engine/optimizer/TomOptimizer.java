@@ -449,7 +449,7 @@ public class TomOptimizer extends TomGenericPlugin {
          * we must check that X notin exp
          */
         String varName = "";
-        {if ( (tom_name instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch236NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )tom_name);if ( (tomMatch236NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch236NameNumber_freshVar_0= tomMatch236NameNumberfreshSubject_1.getString() ;if ( true ) { varName = tomMatch236NameNumber_freshVar_0; }}}}}}
+        {if ( (tom_name instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch236NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )tom_name);if ( (tomMatch236NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch236NameNumber_freshVar_0= tomMatch236NameNumberfreshSubject_1.getString() ;if ( true ) { varName = extractRealName(tomMatch236NameNumber_freshVar_0); }}}}}}
 
         //`findOccurencesUpTo(name,list,2).visitLight(`body);
         InfoVariableLetRef info = new InfoVariableLetRef(tomMatch235NameNumber_freshVar_2);
@@ -465,15 +465,15 @@ public class TomOptimizer extends TomGenericPlugin {
             // TODO: check variable occurence in TypedAction
             info = new InfoVariableLetRef();
             tom_make_computeOccurencesLetRef(tom_name,info).visit(context);
-            if(info.readCount<=1) {
+            if(info.readCount<=1 && !varName.startsWith("_")) {
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(tomMatch235NameNumber_freshVar_1.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,extractRealName(varName));
+                  TomMessage.unusedVariable,varName);
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
           //remove all the unused letassign in the letref body
@@ -486,7 +486,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
             //System.out.println("replace1: " + `var + "\nby: " + `exp);
             return (Instruction) ( (( (( null )==null)?tom_make_CleanAssign(tom_name):new tom.library.sl.Sequence(tom_make_CleanAssign(tom_name),( null )) )==null)?readPos.getReplace(value):new tom.library.sl.Sequence(readPos.getReplace(value),( (( null )==null)?tom_make_CleanAssign(tom_name):new tom.library.sl.Sequence(tom_make_CleanAssign(tom_name),( null )) )) ).visitLight(tom_body);
@@ -494,7 +494,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
         } else {
@@ -502,7 +502,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(varName.length() > 0) {
             logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), extractRealName(varName) });
+                new Object[]{ new Integer(mult), varName });
           }
         }
       }}}}}}}}}}}}}}if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch235NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if ( (tomMatch235NameNumberfreshSubject_1 instanceof tom.engine.adt.tominstruction.types.instruction.Let) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch235NameNumber_freshVar_7= tomMatch235NameNumberfreshSubject_1.getVariable() ;{  tom.engine.adt.tomexpression.types.Expression  tomMatch235NameNumber_freshVar_8= tomMatch235NameNumberfreshSubject_1.getSource() ;{  tom.engine.adt.tominstruction.types.Instruction  tomMatch235NameNumber_freshVar_9= tomMatch235NameNumberfreshSubject_1.getAstInstruction() ;{ boolean tomMatch235NameNumber_freshVar_12= false ;{  tom.engine.adt.tomname.types.TomName  tomMatch235NameNumber_freshVar_10= null ;if ( (tomMatch235NameNumber_freshVar_7 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{tomMatch235NameNumber_freshVar_12= true ;tomMatch235NameNumber_freshVar_10= tomMatch235NameNumber_freshVar_7.getAstName() ;}} else {if ( (tomMatch235NameNumber_freshVar_7 instanceof tom.engine.adt.tomterm.types.tomterm.VariableStar) ) {{tomMatch235NameNumber_freshVar_12= true ;tomMatch235NameNumber_freshVar_10= tomMatch235NameNumber_freshVar_7.getAstName() ;}}}if ((tomMatch235NameNumber_freshVar_12 ==  true )) {if ( (tomMatch235NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch235NameNumber_freshVar_11= tomMatch235NameNumber_freshVar_10.getString() ;{  tom.engine.adt.tomname.types.TomName  tom_name=tomMatch235NameNumber_freshVar_10;{  tom.engine.adt.tomexpression.types.Expression  tom_exp=tomMatch235NameNumber_freshVar_8;{  tom.engine.adt.tominstruction.types.Instruction  tom_body=tomMatch235NameNumber_freshVar_9;if ( true ) {
@@ -520,7 +520,7 @@ public class TomOptimizer extends TomGenericPlugin {
          */
         String varName = "";
         {if ( (tom_name instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch237NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )tom_name);if ( (tomMatch237NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch237NameNumber_freshVar_0= tomMatch237NameNumberfreshSubject_1.getString() ;if ( true ) {
- varName = tomMatch237NameNumber_freshVar_0; }}}}}}
+ varName = extractRealName(tomMatch237NameNumber_freshVar_0); }}}}}}
 
 
         //`findOccurencesUpTo(name,list,2).visitLight(`body);
@@ -536,15 +536,15 @@ public class TomOptimizer extends TomGenericPlugin {
             // TODO: check variable occurence in TypedAction
             info = new InfoVariableLet();
             tom_make_computeOccurencesLet(tom_name,info).visit(context);
-            if(info.readCount<=1) {
+            if(info.readCount<=1 && !varName.startsWith("_")) {
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(tomMatch235NameNumber_freshVar_7.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,extractRealName(varName));
+                  TomMessage.unusedVariable,varName);
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
           //remove all the unused letassign in the letref body
@@ -557,14 +557,14 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
             return (Instruction) readPos.getReplace( tom.engine.adt.tomterm.types.tomterm.ExpressionToTomTerm.make(tom_exp) ).visitLight(tom_body);
           } else {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
         } else {
@@ -572,7 +572,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(varName.length() > 0) {
             logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), extractRealName(varName) });
+                new Object[]{ new Integer(mult), varName });
           }
         }
       }}}}}}}}}}}}}}}if ( (tom__arg instanceof tom.engine.adt.tominstruction.types.Instruction) ) {{  tom.engine.adt.tominstruction.types.Instruction  tomMatch235NameNumberfreshSubject_1=(( tom.engine.adt.tominstruction.types.Instruction )tom__arg);if ( (tomMatch235NameNumberfreshSubject_1 instanceof tom.engine.adt.tominstruction.types.instruction.Let) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch235NameNumber_freshVar_13= tomMatch235NameNumberfreshSubject_1.getVariable() ;{  tom.engine.adt.tomexpression.types.Expression  tomMatch235NameNumber_freshVar_14= tomMatch235NameNumberfreshSubject_1.getSource() ;{  tom.engine.adt.tominstruction.types.Instruction  tomMatch235NameNumber_freshVar_15= tomMatch235NameNumberfreshSubject_1.getAstInstruction() ;{ boolean tomMatch235NameNumber_freshVar_16= false ;if ( (tomMatch235NameNumber_freshVar_13 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariable) ) {tomMatch235NameNumber_freshVar_16= true ;} else {if ( (tomMatch235NameNumber_freshVar_13 instanceof tom.engine.adt.tomterm.types.tomterm.UnamedVariableStar) ) {tomMatch235NameNumber_freshVar_16= true ;}}if ((tomMatch235NameNumber_freshVar_16 ==  true )) {if ( true ) {
