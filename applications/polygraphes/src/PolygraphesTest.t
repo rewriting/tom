@@ -276,9 +276,12 @@ TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(deux,six),multiplication),trois),division)
 TwoPath testnatlist = `TwoC1(TwoC0(deux,TwoC1(TwoC0(consList,un),append)),add,sort);
 TwoPath testBool = `TwoC1(TwoC0(quatre,six),lessOrEqual);
 TwoPath testsort = `TwoC1(TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(consList,TwoC0(TwoC1(zero,succ),TwoC1(zero,succ))))),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(TwoId(nat),permutationLN)),TwoId(nat)),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(permutation,TwoId(list))),TwoId(nat)),TwoC1(TwoC0(TwoC0(lessOrEqual,TwoC0(TwoId(nat),TwoId(list))),TwoC0(TwoId(nat),consList)),mergeSwitch))));
+int[] list1={4,6};
+int[] list2={2,5};
+TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),merge);//un truc marche pas
 //System.out.println(rule3);
 //String input=twoPath2XML(nine);
-String input=twoPath2XML(testnatlist);
+String input=twoPath2XML(testsortcomplex);
 try{
 save(input,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml"));
 }catch(Exception e){e.printStackTrace();}
@@ -564,6 +567,7 @@ public static ThreePath makeThreeCell(Node node){
   	  		System.out.println("10");
   	  		return myNewPath;}
   	  		}
+  	  	TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }
   	  		//a part, retransforme les onec0 en twoC0
   	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en mme temps
   	  	
@@ -635,7 +639,21 @@ System.out.println("RESULTAT NON CONFORME BOOL");resultat.print();
 return "Error";
 }
 
+public static TwoPath makeList(int[] array){
+TwoPath list=`TwoC1(TwoC0(makeNat(array[array.length-1]),TwoCell("consList",Id(),OneCell("list"),Constructor())),add);
+for (int i = array.length-2; i>=0 ;i--) {
+	list=`TwoC1(TwoC0(makeNat(array[i]),list),add);
+}
+return list;
+}
 
+public static TwoPath makeNat(int nat){
+TwoPath natPath=`TwoCell("zero",Id(),OneCell("nat"),Constructor());
+for (int i = nat; i >0; i--) {
+	natPath=`TwoC1(natPath,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor()));
+}
+return natPath;
+}
 
 public static TwoPath[] toArray(TwoC0 twoc0) {
     int size = twoc0.length();

@@ -351,6 +351,7 @@ sort ThreePath:block(){
   	  		System.out.println("10");
   	  		return myNewPath;}
   	  		}
+  	  	TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }
   	  		//a part, retransforme les onec0 en twoC0
   	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en meme temps
   	  	
