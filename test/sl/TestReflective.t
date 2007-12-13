@@ -132,7 +132,7 @@ public class TestReflective extends TestCase {
   public void testMatchS2() {
     Strategy s = `S2(0, "msg", Identity());
     %match(s) {
-      S2(i, str, s1) -> {
+      S2(i, str, _s1) -> {
         if (`i == 0) {
           if(`str.equals("msg")) {
             return;
@@ -169,16 +169,16 @@ public class TestReflective extends TestCase {
   public void testMatchAll1() {
     Strategy s = `Identity();
     %match(s) {
-      All(All(x)) -> { fail("no !"); }
-      All(x) -> { fail("no !"); }
+      All(All(_x)) -> { fail("no !"); }
+      All(_x) -> { fail("no !"); }
     }
   }
 
   public void testMatchAll2() {
     Strategy s = `All(Identity());
     %match(s) {
-      All(All(x)) -> { fail("no !"); }
-      All(x) -> { return; }
+      All(All(_x)) -> { fail("no !"); }
+      All(_x) -> { return; }
     }
     fail("no !");
   }
@@ -186,8 +186,8 @@ public class TestReflective extends TestCase {
   public void testMatchAll3() {
     Strategy s = `All(All(Identity()));
     %match(s) {
-      All(All(x)) -> { return; }
-      All(x) -> { fail("no !"); }
+      All(All(_x)) -> { return; }
+      All(_x) -> { fail("no !"); }
     }
     fail("no !");
   }

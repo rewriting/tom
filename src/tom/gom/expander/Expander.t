@@ -27,7 +27,7 @@ package tom.gom.expander;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.FileReader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,13 +39,13 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
-import tom.gom.parser.AST2Gom;
-import tom.gom.parser.ANTLRMapperGomLexer;
-import tom.gom.parser.ANTLRMapperGomParser;
-import tom.antlrmapper.ATermAST;
 import tom.platform.PlatformLogRecord;
-import antlr.RecognitionException;
-import antlr.TokenStreamException;
+
+import org.antlr.runtime.*;
+import tom.gom.parser.GomLanguageLexer;
+import tom.gom.parser.GomLanguageParser;
+import tom.gom.adt.gom.GomTree;
+import tom.gom.adt.gom.GomAdaptor;
 
 public class Expander {
   private GomStreamManager streamManager;
@@ -64,7 +64,7 @@ public class Expander {
    * Compute the transitive closure of imported modules
    */
   public GomModuleList expand(GomModule module) {
-    GomModuleList result = `concGomModule(module);
+    GomModuleList result = `ConcGomModule(module);
     Set alreadyParsedModule = new HashSet();
     alreadyParsedModule.add(module.getModuleName());
     Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
@@ -85,7 +85,7 @@ public class Expander {
             if(importedModule == null) {
               return null;
             }
-            result = `concGomModule(result*, importedModule);
+            result = `ConcGomModule(result*, importedModule);
             alreadyParsedModule.add(moduleNameName);
             newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
 	  }
@@ -104,12 +104,12 @@ public class Expander {
   private Set generateModuleToAnalyseSet(GomModule module, Set alreadyParsedModule) {
     HashSet moduleToAnalyse = new HashSet();
     ImportList importedModules = getImportList(module);
-    while(!importedModules.isEmptyconcImportedModule()) {
-      GomModuleName name = importedModules.getHeadconcImportedModule().getModuleName();
+    while(!importedModules.isEmptyConcImportedModule()) {
+      GomModuleName name = importedModules.getHeadConcImportedModule().getModuleName();
       if(!alreadyParsedModule.contains(name)) {
         moduleToAnalyse.add(name);
       }
-      importedModules = importedModules.getTailconcImportedModule();
+      importedModules = importedModules.getTailConcImportedModule();
     }
     //System.out.println("*** generateModuleToAnalyseSet = " + moduleToAnalyse);
     return moduleToAnalyse;
@@ -126,32 +126,31 @@ public class Expander {
           new Object[]{moduleName});
       return null;
     }
-    InputStream inputStream = null;
+    CharStream inputStream = null;
     try {
-      inputStream = new FileInputStream(importedModuleFile);
+      inputStream = new ANTLRReaderStream(new FileReader(importedModuleFile));
     } catch (FileNotFoundException e) {
       getLogger().log(Level.SEVERE,
           GomMessage.fileNotFound.getMessage(),
           new Object[]{moduleName+".gom"});
       return null;
+    } catch (java.io.IOException e) {
+      getLogger().log(Level.SEVERE,
+          GomMessage.fileNotFound.getMessage(),
+          new Object[]{moduleName+".gom"});
+      return null;
     }
-    ANTLRMapperGomLexer lexer = new ANTLRMapperGomLexer(inputStream);
-    ANTLRMapperGomParser parser = new ANTLRMapperGomParser(lexer,"GomIncludeParser");
+		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		GomLanguageParser parser = new GomLanguageParser(tokens,streamManager);
+    parser.setTreeAdaptor(new GomAdaptor());
     try {
-      parser.setASTNodeClass("tom.antlrmapper.ATermAST");
-      parser.module();
-      ATermAST t = (ATermAST)parser.getAST();
-      result = AST2Gom.getGomModule(t,streamManager);
-
+      GomTree tree = (GomTree)parser.module().getTree();
+      result = (GomModule) tree.getTerm();
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,
             re.getMessage(),moduleName+".gom", lexer.getLine()));
-      return null;
-    } catch(TokenStreamException tse) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.detailedParseException,
-            tse.getMessage(),moduleName+".gom", lexer.getLine()));
       return null;
     }
     return result;
@@ -175,10 +174,10 @@ public class Expander {
   }
 
   public ImportList getImportList(GomModule module) {
-    ImportList imports = `concImportedModule();
+    ImportList imports = `ConcImportedModule();
     %match(GomModule module) {
-      GomModule(_,concSection(_*,Imports(importList),_*)) -> {
-        imports = `concImportedModule(importList*,imports*);
+      GomModule(_,ConcSection(_*,Imports(importList),_*)) -> {
+        imports = `ConcImportedModule(importList*,imports*);
       }
     }
     return imports;

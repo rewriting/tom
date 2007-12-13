@@ -221,8 +221,8 @@ public class TestReflectiveStrategy extends TestCase {
   // match 1 or 2 All
   public int matchAll(Strategy s) {
     %match(Strategy s) {
-      All(All(x)) -> { return 2; }
-      All(x) -> { return 1; }
+      All(All(_x)) -> { return 2; }
+      All(_x) -> { return 1; }
     }
     return 0;
   }
@@ -284,7 +284,7 @@ public class TestReflectiveStrategy extends TestCase {
       throw new VisitFailure(); 
       }
 
-      x -> { c.count++; }
+      _x -> { c.count++; }
     }
   }
 }

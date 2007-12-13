@@ -67,7 +67,7 @@ public class Backend {
       new HashMap();
     // prepare stuff for the mappings
     %match(GomClassList classList) {
-      concGomClass(_*,
+      ConcGomClass(_*,
           gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
           _*) -> {
         ClassName smappingclass = `ClassName(pkg,"_"+name);
@@ -90,9 +90,9 @@ public class Backend {
       }
     }
     // generate a class for each element of the list
-    while (!classList.isEmptyconcGomClass()) {
-      GomClass gomclass = classList.getHeadconcGomClass();
-      classList = classList.getTailconcGomClass();
+    while (!classList.isEmptyConcGomClass()) {
+      GomClass gomclass = classList.getHeadConcGomClass();
+      classList = classList.getTailConcGomClass();
       errno += generateClass(gomclass,generators);
     }
     /* The mappings may need to access generators */

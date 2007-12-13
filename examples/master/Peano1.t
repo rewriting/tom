@@ -32,16 +32,22 @@ public class Peano1 {
 
   %gom {
     module Peano
+    imports int
     abstract syntax
     Nat = zero()
         | suc(pred:Nat)
         | plus(x1:Nat, x2:Nat)
         | mult(x1:Nat, x2:Nat)
+        | fib(n:Nat)
+
     module Peano:rules() {
       plus(x, zero())    -> x 
       plus(x, suc(y))    -> suc(plus(x,y))
       mult(x, zero())    -> zero() 
       mult(x, suc(y))    -> plus(x,mult(x,y))
+      fib(zero()) -> suc(zero())
+      fib(suc(zero())) -> suc(zero())
+      fib(suc(suc(x))) -> plus(fib(x),fib(suc(x)))
     } 
   }
   
@@ -55,6 +61,7 @@ public class Peano1 {
     //System.out.println("plus(one,two) = " + plus(one,two));
     System.out.println("plus(one,two) = " + `plus(suc(zero()),suc(suc(zero()))));
     System.out.println("mult(two,two) = " + `mult(suc(suc(zero())),suc(suc(zero()))));
+    System.out.println("fib(10) = " + `fib(suc(suc(suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))))))));
   }
   
   public final static void main(String[] args) {

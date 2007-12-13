@@ -32,7 +32,7 @@ public class TestArrayNonLinear extends TestCase {
     ArrayList l2 = `concArrayList(a(),b(),c());
     ArrayList subject = `concArrayList(F(l1),F(l2));
     %match(subject) {
-      concArrayList(F(concArrayList(x*,y*)),F(concArrayList(_,y*))) -> {
+      concArrayList(F(concArrayList(_x*,y*)),F(concArrayList(_,y*))) -> {
         return;
       }
     }

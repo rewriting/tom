@@ -63,13 +63,13 @@ public class RuleExpander {
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});
-      return `concHookDecl();
+      return `ConcHookDecl();
     }
     return expand(rulelist);
   }
 
   protected HookDeclList expand(RuleList rulelist) {
-    HookDeclList hookList = `concHookDecl();
+    HookDeclList hookList = `ConcHookDecl();
     /* collect all rules for a given symbol */
     Map rulesForOperator = new HashMap();
     %match(rulelist) {
@@ -100,7 +100,7 @@ public class RuleExpander {
           String hookCode =
             generateHookCode(args, (RuleList) rulesForOperator.get(opDecl));
           hookList =
-            `concHookDecl(hookList*,
+            `ConcHookDecl(hookList*,
                 MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules")));
         }
         /* Variadic operator */
@@ -116,10 +116,10 @@ public class RuleExpander {
               count++;
               nonEmptyRules = `RuleList(R1*,R2*);
               String hookCode =
-                generateHookCode(`concSlot(),`RuleList(rule));
+                generateHookCode(`ConcSlot(),`RuleList(rule));
               hookList =
-                `concHookDecl(hookList*,
-                    MakeHookDecl(CutOperator(opDecl),concSlot(),Code(hookCode),HookKind("rules")));
+                `ConcHookDecl(hookList*,
+                    MakeHookDecl(CutOperator(opDecl),ConcSlot(),Code(hookCode),HookKind("rules")));
             }
           }
           if (count>1) {
@@ -128,11 +128,11 @@ public class RuleExpander {
           }
           /* Then handle rules for insert */
           if (!nonEmptyRules.isEmptyRuleList()) {
-            SlotList args = `concSlot(Slot("head",sort),Slot("tail",opDecl.getSort()));
+            SlotList args = `ConcSlot(Slot("head",sort),Slot("tail",opDecl.getSort()));
             String hookCode =
               generateVariadicHookCode(args, nonEmptyRules);
             hookList =
-              `concHookDecl(hookList*,
+              `ConcHookDecl(hookList*,
                   MakeHookDecl(CutOperator(opDecl),args,Code(hookCode),HookKind("rules")));
           }
         }
@@ -143,7 +143,7 @@ public class RuleExpander {
 
   private String generateHookCode(SlotList slotList, RuleList ruleList) {
     StringBuilder output = new StringBuilder();
-    if(slotList.isEmptyconcSlot()) {
+    if(slotList.isEmptyConcSlot()) {
       while(!ruleList.isEmptyRuleList()) {
         Rule rule = ruleList.getHeadRuleList();
         ruleList = ruleList.getTailRuleList();
@@ -322,15 +322,15 @@ public class RuleExpander {
 
   private void matchArgs(SlotList sl, StringBuilder output, int count) {
     %match(sl) {
-      concSlot() -> { return; }
-      concSlot(Slot[Sort=sort],t*) -> {
+      ConcSlot() -> { return; }
+      ConcSlot(Slot[Sort=sort],t*) -> {
         %match(sort) {
           (SortDecl|BuiltinSortDecl)[Name=sName] -> {
             output.append(`sName);
             output.append(" arg_"+count);
           }
         }
-        if (!`t.isEmptyconcSlot()) {
+        if (!`t.isEmptyConcSlot()) {
           output.append(", ");
         }
         matchArgs(`t*,output,count+1);
@@ -340,12 +340,12 @@ public class RuleExpander {
 
   private SlotList opArgs(SlotList slots, int count) {
     %match(slots) {
-      concSlot() -> {
-        return `concSlot();
+      ConcSlot() -> {
+        return `ConcSlot();
       }
-      concSlot(Slot[Sort=slotSort],ts*) -> {
+      ConcSlot(Slot[Sort=slotSort],ts*) -> {
         SlotList tail = opArgs(`ts,count+1);
-        return `concSlot(Slot("arg_"+count,slotSort),tail*);
+        return `ConcSlot(Slot("arg_"+count,slotSort),tail*);
       }
     }
     throw new GomRuntimeException("RuleExpander:opArgs failed "+slots);

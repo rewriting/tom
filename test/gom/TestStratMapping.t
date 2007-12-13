@@ -12,7 +12,7 @@ public class TestStratMapping extends TestCase {
     module M
     abstract syntax
     S = f(h:S,t:S)
-       | a() | b()
+      | a() | b()
   }
 
   public static void main(String[] args) {
@@ -21,10 +21,9 @@ public class TestStratMapping extends TestCase {
 
   %strategy Strat() extends Identity() {
     visit S {
-      f(x,y)            -> { return `x; }
+      f(x,_y) -> { return `x; }
     }
   }
-
 
   public void testCongruenceConstant() {
     S t = `f(f(a(),b()),f(b(),a()));
@@ -35,25 +34,27 @@ public class TestStratMapping extends TestCase {
     try {
       t = (S) s1.visit(t);
       assertEquals(`f(a(),b()),t);
-         } catch (tom.library.sl.VisitFailure ee) {
+    } catch (tom.library.sl.VisitFailure ee) {
       fail("s1 failed"); 
     }
 
     try {
       t = (S) s2.visit(t);
       assertEquals(`a(),t);
-     } catch (tom.library.sl.VisitFailure ee) {
+    } catch (tom.library.sl.VisitFailure ee) {
       fail("s2 failed"); 
     }
+
     try {
       t = (S) s3.visit(t);
-     } catch (tom.library.sl.VisitFailure ee) {
+    } catch (tom.library.sl.VisitFailure ee) {
       fail("s3 failed"); 
     }
+
     try {
       t = (S) s4.visit(t);
       fail("_f() has not failed on a()"); 
-     } catch (tom.library.sl.VisitFailure ee) {
+    } catch (tom.library.sl.VisitFailure ee) {
     }
   }
 }

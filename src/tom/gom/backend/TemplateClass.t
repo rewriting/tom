@@ -407,9 +407,9 @@ public abstract class TemplateClass {
   protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
+    while(!slotList.isEmptyConcSlotField()) {
+      SlotField slot = slotList.getHeadConcSlotField();
+      slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
       %match(SlotField slot) {
         SlotField[Name=slotName,Domain=ClassName[Name=domainName]] -> {
@@ -425,9 +425,9 @@ public abstract class TemplateClass {
   protected void slotArgs(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
+    while(!slotList.isEmptyConcSlotField()) {
+      SlotField slot = slotList.getHeadConcSlotField();
+      slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
       /* Warning: do not write the 'index' alone, this is not a valid variable
          name */
@@ -439,9 +439,9 @@ public abstract class TemplateClass {
   protected void slotArgsWithDollar(java.io.Writer writer, SlotFieldList slotList)
                         throws java.io.IOException {
     int index = 0;
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
+    while(!slotList.isEmptyConcSlotField()) {
+      SlotField slot = slotList.getHeadConcSlotField();
+      slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
       /* Warning: do not write the 'index' alone, this is not a valid variable
          name */

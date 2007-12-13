@@ -439,7 +439,7 @@ public class TomOptimizer extends TomGenericPlugin {
          * we must check that X notin exp
          */
         String varName = "";
-        %match(name) { Name(tomName) -> { varName = `tomName; } }
+        %match(name) { Name(tomName) -> { varName = `extractRealName(tomName); } }
 
         //`findOccurencesUpTo(name,list,2).visitLight(`body);
         InfoVariableLetRef info = new InfoVariableLetRef(`exp);
@@ -455,15 +455,15 @@ public class TomOptimizer extends TomGenericPlugin {
             // TODO: check variable occurence in TypedAction
             info = new InfoVariableLetRef();
             `computeOccurencesLetRef(name,info).visit(`context);
-            if(info.readCount<=1) {
+            if(info.readCount<=1 && !varName.startsWith("_")) {
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,`extractRealName(varName));
+                  TomMessage.unusedVariable,varName);
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
           //remove all the unused letassign in the letref body
@@ -476,7 +476,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
             //System.out.println("replace1: " + `var + "\nby: " + `exp);
             return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
@@ -484,7 +484,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
         } else {
@@ -492,7 +492,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(varName.length() > 0) {
             logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(varName) });
+                new Object[]{ new Integer(mult), varName });
           }
         }
       }
@@ -510,7 +510,7 @@ public class TomOptimizer extends TomGenericPlugin {
          */
         String varName = "";
         %match(name) {
-          Name(tomName) -> { varName = `tomName; }
+          Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
         //`findOccurencesUpTo(name,list,2).visitLight(`body);
@@ -526,15 +526,15 @@ public class TomOptimizer extends TomGenericPlugin {
             // TODO: check variable occurence in TypedAction
             info = new InfoVariableLet();
             `computeOccurencesLet(name,info).visit(`context);
-            if(info.readCount<=1) {
+            if(info.readCount<=1 && !varName.startsWith("_")) {
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
-                  TomMessage.unusedVariable,`extractRealName(varName));
+                  TomMessage.unusedVariable,varName);
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
           //remove all the unused letassign in the letref body
@@ -547,14 +547,14 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
             return (Instruction) readPos.getReplace(`ExpressionToTomTerm(exp)).visitLight(`body);
           } else {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+                  new Object[]{ new Integer(mult), varName });
             }
           }
         } else {
@@ -562,7 +562,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(varName.length() > 0) {
             logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(varName) });
+                new Object[]{ new Integer(mult), varName });
           }
         }
       }

@@ -86,7 +86,7 @@ public class GraphExpander {
   }
 
   public Pair expand(ModuleList list, HookDeclList hooks) {
-    ModuleList expandedList = `concModule();
+    ModuleList expandedList = `ConcModule();
     ArrayList hookList = new ArrayList();
     try {
       expandedList = (ModuleList) `TopDown(ExpandSort(hookList)).visit(list);
@@ -103,7 +103,7 @@ public class GraphExpander {
     Iterator it = hookList.iterator();
     while(it.hasNext()) {
       HookDeclList hList = (HookDeclList) it.next();
-      hooks = `concHookDecl(hList*,hooks*);
+      hooks = `ConcHookDecl(hList*,hooks*);
     }
     return `ModHookPair(expandedList,hooks);
   }
@@ -122,16 +122,16 @@ public class GraphExpander {
 
   %strategy ExpandSort(hookList:ArrayList) extends Identity() {
     visit Sort {
-      sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],Operators=ops] -> {
+      sort@Sort[Decl=sortdecl@SortDecl[Name=sortname],OperatorDecls=ops] -> {
          
         //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
         //the last one is only used to implement the termgraph rewriting step
-        OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(concSlot(Slot("label"+sortname,stringSortDecl),Slot("term"+sortname,sortdecl))));
-        OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(concSlot(Slot("label"+sortname,stringSortDecl))));
+        OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl),Slot("term"+sortname,sortdecl))));
+        OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
         OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(intSortDecl));
-        OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(concSlot(Slot("label"+sortname,stringSortDecl))));
+        OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
         hookList.add(pathHooks(pathOp,`sortdecl));
-        return `sort.setOperators(`concOperator(ops*,labOp,refOp,pathOp,varOp));
+        return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));
 
       }
     }
@@ -208,7 +208,7 @@ public class GraphExpander {
     ]%;
 
     return 
-      `concHookDecl(
+      `ConcHookDecl(
           ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
           InterfaceHookDecl(CutOperator(opDecl),
             Code("tom.library.sl.Path")),
@@ -239,7 +239,7 @@ public class GraphExpander {
     String Label2Path = "Identity()",NormalizeLabel = "Identity()", CollectRef = "Identity()", AddLabel = "Identity()";
 
     %match(sorts){
-      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
+      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
         codeImport += %[
           import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.Path@`sortName@;
         ]%;
@@ -385,7 +385,7 @@ public class GraphExpander {
 ]%;
 
   %match(sorts){
-      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
  codeBlockTermGraph += %[
         visit @`sortname@ {
           p@@Path@`sortname@(_*) -> {
@@ -436,7 +436,7 @@ public class GraphExpander {
 
 
    %match(sorts){
-      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
         codeBlockTermGraph += %[
       visit @`sortname@ {
             p@@Path@`sortname@(_*) -> {
@@ -493,7 +493,7 @@ public class GraphExpander {
   ]%;
 
    %match(sorts){
-      concSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
         codeBlockTermGraph += %[
       visit @`sortname@ {
             p@@Path@`sortname@(_*) -> {
@@ -514,7 +514,7 @@ public class GraphExpander {
 
     String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
 
-    return `concHookDecl(
+    return `ConcHookDecl(
         ImportHookDecl(CutModule(mDecl),Code(codeImport)),
         BlockHookDecl(CutModule(mDecl),Code(codeBlock)));
   }

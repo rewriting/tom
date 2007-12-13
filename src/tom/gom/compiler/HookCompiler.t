@@ -61,7 +61,7 @@ public class HookCompiler {
       Map declToClassName) {
     /* for each hook, find the class, and attach the hook */
     %match(declList) {
-      concHookDecl(_*,hook,_*) -> {
+      ConcHookDecl(_*,hook,_*) -> {
         Decl decl = `hook.getPointcut();
         %match(decl) {
           CutModule(mdecl) -> {
@@ -103,7 +103,7 @@ public class HookCompiler {
         obj@AbstractTypeClass[ClassName=className,Hooks=oldHooks] -> {
           if (`className == `cName) {
             return
-              `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+              `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
@@ -115,7 +115,7 @@ public class HookCompiler {
         obj@SortClass[ClassName=className,Hooks=oldHooks] -> {
           if (`className == `cName) {
             return
-              `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+              `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
@@ -129,17 +129,17 @@ public class HookCompiler {
             if (`className == `cName) {
               /* We may want to attach the hook to the cons or empty */
               if (hook.isMakeHookDecl()) {
-                if (hook.getSlotArgs() != `concSlot()) {
+                if (hook.getSlotArgs() != `ConcSlot()) {
                   HookList oldConsHooks = `consClass.getHooks();
                   GomClass newCons =
                     `consClass.setHooks(
-                        `concHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+                        `ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
                   return `obj.setCons(newCons);
-                } else if (hook.getSlotArgs() == `concSlot()) {
+                } else if (hook.getSlotArgs() == `ConcSlot()) {
                   HookList oldEmptyHooks = `emptyClass.getHooks();
                   GomClass newEmpty =
                     `emptyClass.setHooks(
-                        `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                        `ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
                   return `obj.setEmpty(newEmpty);
                 }
               } else if (hook.isImportHookDecl()) {
@@ -148,24 +148,24 @@ public class HookCompiler {
                 HookList oldConsHooks = `consClass.getHooks();
                 GomClass newCons =
                   `consClass.setHooks(
-                      `concHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+                      `ConcHook(makeHooksFromHookDecl(hook),oldConsHooks*));
                 HookList oldEmptyHooks = `emptyClass.getHooks();
                 GomClass newEmpty =
                   `emptyClass.setHooks(
-                      `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+                      `ConcHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
                 GomClass newobj = `obj.setEmpty(newEmpty);
                 newobj = newobj.setCons(newCons);
-                return `newobj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+                return `newobj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
               } else {                
                 return
-                  `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+                  `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
               }
             }
           }
         obj@OperatorClass[ClassName=className,Hooks=oldHooks] -> {
           if (`className == `cName) {
             return
-              `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
+              `obj.setHooks(`ConcHook(makeHooksFromHookDecl(hook),oldHooks*));
           }
         }
       }
@@ -195,15 +195,15 @@ public class HookCompiler {
   }
 
   private static SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
-    SlotFieldList newArgs = `concSlotField();
-    while(!args.isEmptyconcSlot()) {
-      Slot arg = args.getHeadconcSlot();
-      args = args.getTailconcSlot();
+    SlotFieldList newArgs = `ConcSlotField();
+    while(!args.isEmptyConcSlot()) {
+      Slot arg = args.getHeadConcSlot();
+      args = args.getTailConcSlot();
       %match(Slot arg) {
         Slot[Name=slotName,Sort=sortDecl] -> {
           ClassName slotClassName = (ClassName)
             sortClassNameForSortDecl.get(`sortDecl);
-          newArgs = `concSlotField(newArgs*,SlotField(slotName,slotClassName));
+          newArgs = `ConcSlotField(newArgs*,SlotField(slotName,slotClassName));
         }
       }
     }

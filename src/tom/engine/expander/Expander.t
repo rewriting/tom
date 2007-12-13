@@ -45,9 +45,10 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.tominstruction.types.constraintinstructionlist.concConstraintInstruction;
 import tom.engine.adt.tomslot.types.slotlist.concSlot;
 import tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit;
-
+import tom.engine.adt.tomdeclaration.types.declaration.IntrospectorClass;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
+import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
@@ -225,12 +226,29 @@ matchBlock: {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
         //Generate only one Intropector for a class if a %strategy is found
         if(!generatedIntrospector) {
+          generatedIntrospector=true;
           DeclarationList l = `concDeclaration();
           //generate the code for every method of Instrospector interface
+          IntrospectorClass i = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
 
+          SymbolTable symbolTable = expander.symbolTable();
+          Collection<TomTypeDefinition> types = symbolTable.getUsedTypes();
+          for(TomTypeDefinition type:types) {
+            TomSymbolList list = symbolTable.getSymbolFromType(type.getTomType());
+            //System.out.println(list);
+          }
+          /**
+            public Object setChildren(Object o, Object[] children);
 
+            public Object[] getChildren(Object o);
 
-          Introspector i = `Introspector(TomName("LocalIntrospector"),AbstractDecl(l));
+            public Object setChildAt( Object o, int i, Object child);
+
+            public Object getChildAt(Object o, int i);
+
+            public int getChildCount(Object o);
+
+           */
         }
         //System.out.println("extendsTerm = " + `extendsTerm);
         DeclarationList l = `concDeclaration();//represents compiled Strategy
@@ -264,35 +282,35 @@ matchBlock: {
           }
         }
         if ( expander.autoDispatch ) { 
-         /*
-          * // Generates the following dispatch mechanism
-          *           
-          * public Visitable visitLight(Visitable v) throws VisitFailure {
-          *       if (is_sort(v, Term1))
-          *               return this.visit_Term1((Term1) v);
-          *       .....................        
-          *       if (is_sort(v, Termn))
-          *               return this.visit_Termn((Termn) v);               
-          *       return any.visitLight(v);
-          * }
-          *
-          * public Term1 _visit_Term1(Term1 arg) throws VisitFailure {
-          *        if (environment != null) {
-          *                return (Term1) any.visit(environment);
-          *        } else {
-          *                return (Term1) any.visitLight(arg);
-          *        }
-          * }
-          * ..............
-          * public Termn _visit_Termn(Termn arg) throws VisitFailure {
-          *        if (environment != null) {
-          *                return (Termn) any.visit(environment);
-          *        } else {
-          *                return (Termn) any.visitLight(arg);
-          *        }
-          * }
-          *
-          */        
+          /*
+           * // Generates the following dispatch mechanism
+           *           
+           * public Visitable visitLight(Visitable v) throws VisitFailure {
+           *       if (is_sort(v, Term1))
+           *               return this.visit_Term1((Term1) v);
+           *       .....................        
+           *       if (is_sort(v, Termn))
+           *               return this.visit_Termn((Termn) v);               
+           *       return any.visitLight(v);
+           * }
+           *
+           * public Term1 _visit_Term1(Term1 arg) throws VisitFailure {
+           *        if (environment != null) {
+           *                return (Term1) any.visit(environment);
+           *        } else {
+           *                return (Term1) any.visitLight(arg);
+           *        }
+           * }
+           * ..............
+           * public Termn _visit_Termn(Termn arg) throws VisitFailure {
+           *        if (environment != null) {
+           *                return (Termn) any.visit(environment);
+           *        } else {
+           *                return (Termn) any.visitLight(arg);
+           *        }
+           * }
+           *
+           */        
           visitorFwd = `TLForward(Expander.basicStratName);         
           TomTerm vVar = `Variable(concOption(),Name("v"),objectType,concConstraint());// v argument of visitLight
           InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
@@ -309,25 +327,25 @@ matchBlock: {
             Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
             Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))))));
             testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
+                  environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
             Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
             l = `concDeclaration(l*,MethodDef(
-                                      Name("_" + dispatchInfo.get(type)),
-                                      concTomTerm(arg,introspectorVar),
-                                      type,
-                                      TomTypeAlone("tom.library.sl.VisitFailure"),
-                                      ifThenElse));
+                  Name("_" + dispatchInfo.get(type)),
+                  concTomTerm(arg,introspectorVar),
+                  type,
+                  TomTypeAlone("tom.library.sl.VisitFailure"),
+                  ifThenElse));
           }
           ifList = `concInstruction(ifList*,              
-                      If(testEnvNotNull,
-                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)")))),
-                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v,introspector)"))))));
+              If(testEnvNotNull,
+                Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)")))),
+                Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v,introspector)"))))));
           Declaration visitLightDeclaration = `MethodDef(
-                                      Name("visitLight"),
-                                      concTomTerm(vVar,introspectorVar),
-                                      objectType,
-                                      TomTypeAlone("tom.library.sl.VisitFailure"),
-                                      AbstractBlock(ifList));
+              Name("visitLight"),
+              concTomTerm(vVar,introspectorVar),
+              objectType,
+              TomTypeAlone("tom.library.sl.VisitFailure"),
+              AbstractBlock(ifList));
           l = `concDeclaration(l*,visitLightDeclaration);
         }// end if autoDispatch
         return (Declaration) `Expand(expander).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
@@ -336,7 +354,7 @@ matchBlock: {
   } // end strategy
 
   %op Strategy Expand_makeTerm(expander:Expander){
-     make(expander) { `ChoiceTopDown(Expand_makeTerm_once(expander)) }
+    make(expander) { `ChoiceTopDown(Expand_makeTerm_once(expander)) }
   }
 
   %strategy Expand_makeTerm_once(expander:Expander) extends `Identity()  {
@@ -403,7 +421,7 @@ matchBlock: {
     }
     throw new TomRuntimeException("abstractPatternList: " + subjectList);
   }  
-  
+
   /*
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
@@ -426,7 +444,7 @@ matchBlock: {
       }
     }  
   }  
-  
+
   %strategy CollectLHSVars(Collection bag) extends Identity() {
     visit Constraint {
       MatchConstraint(p,_) -> {        

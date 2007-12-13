@@ -401,6 +401,44 @@
     </fail>
   </target>
 
+  <target name="example.junit"
+          description="Runs junit acceptance tests on a specific example"
+          depends="initjunit">
+    <fail unless="example">
+      Please define the "example" to test
+    </fail>
+    <antcall target="build"/>
+    <tomjunit fork="on"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <formatter type="brief" usefile="no"/>
+      <classpath>
+        <path refid="tom.classpath"/>
+        <fileset dir="${examples.dir}/${examples.lib}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${examples.gen}">
+          <include name="${example}/**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="${example}/**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+    </tomjunit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
   <target name="memorytest">
     <antcall target="clean"/>
     <antcall target="junit"/>

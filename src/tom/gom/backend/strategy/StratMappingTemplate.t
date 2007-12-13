@@ -61,7 +61,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
    */
 ]%);
     %match(GomClassList operatorClasses) {
-      concGomClass(_*,op@OperatorClass[],_*) -> {
+      ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(
             (new tom.gom.backend.strategy.SOpTemplate(`op)).generateMapping());
         writer.write(
@@ -69,7 +69,7 @@ public class StratMappingTemplate extends MappingTemplateClass {
         writer.write(
             (new tom.gom.backend.strategy.MakeOpTemplate(`op)).generateMapping());
       }
-      concGomClass(_*,
+      ConcGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,
           Empty=OperatorClass[ClassName=empty],
           Cons=OperatorClass[ClassName=cons]],

@@ -81,7 +81,7 @@ writer.write(%[
 
   protected String generateInterface() {
     String domainClassName = fullClassName(
-        cons.getSlots().getHeadconcSlotField().getDomain());
+        cons.getSlotFields().getHeadConcSlotField().getDomain());
     return 
       %[implements java.util.Collection<@primitiveToReferenceType(domainClassName)@> @super.generateInterface()@]%;
   }
@@ -89,7 +89,7 @@ writer.write(%[
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
     String domainClassName = fullClassName(
-        cons.getSlots().getHeadconcSlotField().getDomain());
+        cons.getSlotFields().getHeadConcSlotField().getDomain());
     writer.write(%[
   @@Override
   public int length() {
@@ -123,6 +123,15 @@ writer.write(%[
         rev = @fullClassName(cons.getClassName())@.make(((@fullClassName(cons.getClassName())@)cur).getHead@className()@(),rev);
         cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
       }
+]%);
+    if(fullClassName(sortName).equals(domainClassName)) { /* domain = codomain */
+      writer.write(%[
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) { 
+        rev = @fullClassName(cons.getClassName())@.make(cur,rev);
+      }
+]%);
+    }
+    writer.write(%[
       return rev;
     } else {
       return this;
@@ -136,7 +145,7 @@ writer.write(%[
         return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),((@className()@)tl).append(element));
       } else {
 ]%);
-    if(fullClassName(sortName)==domainClassName) {
+    if(fullClassName(sortName).equals(domainClassName)) {
       writer.write(%[
         return @fullClassName(cons.getClassName())@.make(this.getHead@className()@(),@fullClassName(cons.getClassName())@.make(tl,element));
 ]%);
@@ -449,21 +458,21 @@ writer.write(%[
   }
 
 ]%);
-    if (! hooks.isEmptyconcHook()) {
+    if (! hooks.isEmptyConcHook()) {
       mapping.generate(writer); 
     }
 
   }
 
   private String toStringChild(String buffer, String element) {
-    SlotField head = cons.getSlots().getHeadconcSlotField();
+    SlotField head = cons.getSlotFields().getHeadConcSlotField();
     StringBuilder res = new StringBuilder();
     toStringSlotField(res,head,element,buffer);
     return res.toString();
   }
 
   private String fromATermElement(String term, String element) {
-    SlotField slot = cons.getSlots().getHeadconcSlotField();
+    SlotField slot = cons.getSlotFields().getHeadConcSlotField();
     StringBuilder buffer = new StringBuilder();
     fromATermSlotField(buffer,slot,term);
     return buffer.toString();
@@ -473,7 +482,7 @@ writer.write(%[
       throws java.io.IOException {
     boolean hasHook = false;
     %match(HookList hooks) {
-      concHook(_*,MappingHook[Code=code],_*) -> {
+      ConcHook(_*,MappingHook[Code=code],_*) -> {
         CodeGen.generateCode(`code,writer);
         hasHook = true;
       }
@@ -481,7 +490,7 @@ writer.write(%[
 
     %match(cons) {
       OperatorClass[
-        Slots=concSlotField(head@SlotField[Domain=headDomain], tail)
+        SlotFields=ConcSlotField(head@SlotField[Domain=headDomain], tail)
       ] -> {
     ClassName emptyClass = empty.getClassName();
     ClassName consClass = cons.getClassName();

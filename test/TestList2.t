@@ -123,11 +123,11 @@ public class TestList2 extends GenericTest {
     ATermList l = (ATermList)t;
     %match(L l) {
       (f(a()))                        -> { return factory.parse("pattern1"); }
-      (X1*,f(a()))                    -> { return factory.parse("pattern2"); }
-      conc(X1*,f(a()),X2*,f(b()))     -> { return factory.parse("pattern3"); }
-      conc(X1*,f(a()),X2*,f(b()),X3*) -> { return factory.parse("pattern4"); }
-      conc(f(b()),X2*,f(b()),X3*)     -> { return factory.parse("pattern5"); }
-      conc(X1*,f(c()),f(x),X3*)       -> { return factory.parse("pattern6"); }
+      (_X1*,f(a()))                    -> { return factory.parse("pattern2"); }
+      conc(_X1*,f(a()),_X2*,f(b()))     -> { return factory.parse("pattern3"); }
+      conc(_X1*,f(a()),_X2*,f(b()),_X3*) -> { return factory.parse("pattern4"); }
+      conc(f(b()),_X2*,f(b()),_X3*)     -> { return factory.parse("pattern5"); }
+      conc(_X1*,f(c()),f(_x),_X3*)       -> { return factory.parse("pattern6"); }
       conc()                          -> { return factory.parse("pattern7"); }
     }
     return res;
@@ -139,10 +139,9 @@ public class TestList2 extends GenericTest {
     %match(E t) {
       h(a(),l(conc(f(a()))))                   -> { return factory.parse("pattern1"); }
       h(l(conc(f(a()))),a())                   -> { return factory.parse("pattern2"); }
-      h(l(conc(X1*,x,y,X2*)),z)                -> { if(`y==`z) return factory.parse("pattern3"); }
-      h(l(conc(X1*,x,X2*)),l(conc(Y1*,y,Y2*))) -> { if(`X2==`Y2 && !`X2.isEmpty())
-        return factory.parse("pattern4"); }
-      l(conc(X1*,Y1*,X2*,l(conc(Y2*)),X3*))    -> { if(`Y1==`Y2) return factory.parse("pattern5"); }
+      h(l(conc(_X1*,_x,y,_X2*)),z)                -> { if(`y==`z) return factory.parse("pattern3"); }
+      h(l(conc(_X1*,_x,X2*)),l(conc(_Y1*,_y,Y2*))) -> { if(`X2==`Y2 && !`X2.isEmpty()) return factory.parse("pattern4"); }
+      l(conc(_X1*,Y1*,_X2*,l(conc(Y2*)),_X3*))    -> { if(`Y1==`Y2) return factory.parse("pattern5"); }
     }
     return res;
   }
@@ -151,10 +150,10 @@ public class TestList2 extends GenericTest {
   public ATerm match3(ATerm t) {
     ATerm res = fail;
     %match(E t) {
-      l(vl@conc(x))                        -> { if(`vl==factory.parse("[f(a)]"))
+      l(vl@conc(_x))                        -> { if(`vl==factory.parse("[f(a)]"))
         return factory.parse("pattern1"); }
-      l(conc(X1*,vx@f(x),X2*,vy@f(y),X3*)) -> { if(`vx==`vy) return factory.parse("pattern2"); }
-      l(conc(X1*,g(vx@f(x)),X2*,g(vy@f(y)),X3*)) -> { if(`vx==`vy) return factory.parse("pattern3"); }
+      l(conc(_X1*,vx@f(_x),_X2*,vy@f(_y),_X3*)) -> { if(`vx==`vy) return factory.parse("pattern2"); }
+      l(conc(_X1*,g(vx@f(_x)),_X2*,g(vy@f(_y)),_X3*)) -> { if(`vx==`vy) return factory.parse("pattern3"); }
     }
     return res;
   }
@@ -163,7 +162,7 @@ public class TestList2 extends GenericTest {
   public int  match4(ATerm l) {
     int nbSol = 0;
     %match(L l) {
-      conc(X1*,X2*,X3*) -> {
+      conc(_X1*,_X2*,_X3*) -> {
         nbSol++;
       }
     }
@@ -174,7 +173,7 @@ public class TestList2 extends GenericTest {
   public int match5(ATerm l) {
     int nbSol = 0;
     %match(L l) {
-      conc(l(conc(R*,T*)),X1*,u,X2*) -> {
+      conc(l(conc(_R*,_T*)),_X1*,_u,_X2*) -> {
         nbSol++;
       }
     }

@@ -53,7 +53,7 @@ public class Compiler {
   Map sortClassNameForSortDecl = environment().builtinSortClassMap();
 
   public GomClassList compile(ModuleList moduleList, HookDeclList hookDecls) {
-    GomClassList classList = `concGomClass();
+    GomClassList classList = `ConcGomClass();
 
     /* ModuleDecl -> (AbstractType) ClassName */
     Map abstractTypeNameForModule = new HashMap();
@@ -66,7 +66,7 @@ public class Compiler {
     Map classForOperatorDecl = new HashMap();
     /* For each module */
     %match(moduleList) {
-      concModule(_*,Module[MDecl=moduleDecl],_*) -> {
+      ConcModule(_*,Module[MDecl=moduleDecl],_*) -> {
         String moduleName = `moduleDecl.getModuleName().getName();
 
         /* create an AbstractType class */
@@ -97,8 +97,8 @@ public class Compiler {
        (we don't need to do that per module, since each operator and sort knows
        to which module it belongs) */
     %match(moduleList) {
-      concModule(_*,
-          Module[Sorts=concSort(_*,
+      ConcModule(_*,
+          Module[Sorts=ConcSort(_*,
             Sort[Decl=decl@SortDecl[Name=sortname,ModuleDecl=moduleDecl]],
             _*)],
           _*) -> {
@@ -108,10 +108,10 @@ public class Compiler {
       }
     }
     %match(moduleList) {
-      concModule(_*,
-          Module[Sorts=concSort(_*,
+      ConcModule(_*,
+          Module[Sorts=ConcSort(_*,
             Sort[Decl=sortDecl@SortDecl[ModuleDecl=moduleDecl],
-            Operators=oplist],
+            OperatorDecls=oplist],
             _*)],
           _*) -> {
         // get the class name for the sort
@@ -123,10 +123,10 @@ public class Compiler {
         // create operator classes. Also, store a list of all operators for the sort class
         // use a Set to collect slots and avoid duplicates
         Set allSortSlots = new HashSet();
-        ClassNameList allOperators = `concClassName();
-        ClassNameList allVariadicOperators = `concClassName();
+        ClassNameList allOperators = `ConcClassName();
+        ClassNameList allVariadicOperators = `ConcClassName();
         %match(OperatorDeclList `oplist) {
-          concOperator(_*,
+          ConcOperator(_*,
               opdecl@OperatorDecl[Name=opname,
               Sort=SortDecl[Name=sortName],
               Prod=typedproduction],
@@ -134,7 +134,7 @@ public class Compiler {
             String sortNamePackage = `sortName.toLowerCase();
             ClassName operatorClassName =
               `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
-            SlotFieldList slots = `concSlotField();
+            SlotFieldList slots = `ConcSlotField();
             ClassName variadicOpClassName = null;
             ClassName empty = null;
             %match(TypedProduction typedproduction) {
@@ -144,27 +144,27 @@ public class Compiler {
                 SlotField slotTail = `SlotField("Tail"+opname,sortClassName);
                 allSortSlots.add(`slotHead);
                 allSortSlots.add(`slotTail);
-                slots = `concSlotField(slotHead,slotTail);
+                slots = `ConcSlotField(slotHead,slotTail);
                 // as the operator is variadic, add a Cons and an Empty
                 variadicOpClassName =
                   `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
-                allVariadicOperators = `concClassName(variadicOpClassName,allVariadicOperators*);
+                allVariadicOperators = `ConcClassName(variadicOpClassName,allVariadicOperators*);
                 empty =
                   `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
                 operatorClassName =
                   `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
 
-                allOperators = `concClassName(empty,allOperators*);
+                allOperators = `ConcClassName(empty,allOperators*);
               }
-              Slots(concSlot(_*,Slot[Name=slotname,Sort=domain],_*)) -> {
+              Slots(ConcSlot(_*,Slot[Name=slotname,Sort=domain],_*)) -> {
                 ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
                 SlotField slotfield = `SlotField(slotname,clsName);
                 allSortSlots.add(slotfield);
-                slots = `concSlotField(slots*,slotfield);
+                slots = `ConcSlotField(slots*,slotfield);
               }
             }
             GomClass operatorClass;
-            allOperators = `concClassName(operatorClassName,allOperators*);
+            allOperators = `ConcClassName(operatorClassName,allOperators*);
             if (variadicOpClassName != null) {
               /* We just processed a variadic operator */
               GomClass cons = `OperatorClass(operatorClassName,
@@ -173,7 +173,7 @@ public class Compiler {
                   mappingName,
                   sortClassName,
                   visitorName, slots,
-                  concHook());
+                  ConcHook());
 
               GomClass emptyClass = `OperatorClass(empty,
                                                    abstracttypeName,
@@ -181,8 +181,8 @@ public class Compiler {
                                                    mappingName,
                                                    sortClassName,
                                                    visitorName,
-                                                   concSlotField(),
-                                                   concHook());
+                                                   ConcSlotField(),
+                                                   ConcHook());
 
               operatorClass = `VariadicOperatorClass(variadicOpClassName ,
                                                      abstracttypeName,
@@ -190,7 +190,7 @@ public class Compiler {
                                                      sortClassName,
                                                      emptyClass,
                                                      cons,
-                                                     concHook());
+                                                     ConcHook());
             } else {
               operatorClass = `OperatorClass(operatorClassName,
                                              abstracttypeName,
@@ -198,10 +198,10 @@ public class Compiler {
                                              mappingName,
                                              sortClassName,
                                              visitorName,slots,
-                                             concHook());
+                                             ConcHook());
             }
             classForOperatorDecl.put(`opdecl,operatorClass);
-            classList = `concGomClass(operatorClass,classList*);
+            classList = `ConcGomClass(operatorClass,classList*);
           }
         }
         // create the sort class and add it to the list
@@ -213,42 +213,42 @@ public class Compiler {
                                         allOperators,
                                         allVariadicOperators,
                                         slotFieldListFromSet(allSortSlots),
-                                        concHook());
+                                        ConcHook());
         sortGomClassForSortDecl.put(`sortDecl,sortClass);
-        classList = `concGomClass(sortClass,classList*);
+        classList = `ConcGomClass(sortClass,classList*);
       }
     }
 
     %match(moduleList) {
-      concModule(_*,Module[MDecl=moduleDecl],_*) -> {
+      ConcModule(_*,Module[MDecl=moduleDecl],_*) -> {
         String moduleName = `moduleDecl.getModuleName().getName();
 
-        GomClassList allOperatorClasses = `concGomClass();
-        GomClassList allSortClasses = `concGomClass();
+        GomClassList allOperatorClasses = `ConcGomClass();
+        GomClassList allSortClasses = `ConcGomClass();
         /* TODO improve this part : just for test */
         ModuleDeclList modlist = environment().getModuleDependency(`moduleDecl);
-        while(!modlist.isEmptyconcModuleDecl()) {
-          ModuleDecl imported = modlist.getHeadconcModuleDecl();
-          modlist = modlist.getTailconcModuleDecl();
+        while(!modlist.isEmptyConcModuleDecl()) {
+          ModuleDecl imported = modlist.getHeadConcModuleDecl();
+          modlist = modlist.getTailConcModuleDecl();
           SortList moduleSorts = getSortsForModule(imported,moduleList);
           SortList sortconsum = moduleSorts;
-          while(!sortconsum.isEmptyconcSort()) {
-            Sort sort = sortconsum.getHeadconcSort();
-            sortconsum = sortconsum.getTailconcSort();
+          while(!sortconsum.isEmptyConcSort()) {
+            Sort sort = sortconsum.getHeadConcSort();
+            sortconsum = sortconsum.getTailConcSort();
             %match(sort) {
               Sort[Decl=sortDecl] -> {
                 GomClass sortClass = (GomClass) sortGomClassForSortDecl.get(`sortDecl);
-                allSortClasses = `concGomClass(sortClass,allSortClasses*);
+                allSortClasses = `ConcGomClass(sortClass,allSortClasses*);
               }
             }
           }
           %match(moduleSorts) {
-            concSort(_*,Sort[Operators=concOperator(_*,opDecl,_*)],_*) -> {
+            ConcSort(_*,Sort[OperatorDecls=ConcOperator(_*,opDecl,_*)],_*) -> {
               GomClass opClass = (GomClass) classForOperatorDecl.get(`opDecl);
-              allOperatorClasses = `concGomClass(opClass,allOperatorClasses*);
+              allOperatorClasses = `ConcGomClass(opClass,allOperatorClasses*);
               %match(GomClass opClass) {
                 VariadicOperatorClass[Empty=emptyClass,Cons=consClass] -> {
-                  allOperatorClasses = `concGomClass(emptyClass,consClass,allOperatorClasses*);
+                  allOperatorClasses = `ConcGomClass(emptyClass,consClass,allOperatorClasses*);
                 }
               }
             }
@@ -262,14 +262,14 @@ public class Compiler {
         ClassName visitorName = (ClassName)
           visitorNameForModule.get(`moduleDecl);
         GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
-        classList = `concGomClass(visitorclass,classList*);
+        classList = `ConcGomClass(visitorclass,classList*);
 
         /* create a VisitableFwd class */
         ClassNameList importedVisitors = allClassForImports(visitorNameForModule,`moduleDecl);
         ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"BasicStrategy");
         ClassNameList importedAbstractType = allClassForImports(abstractTypeNameForModule,`moduleDecl);
         GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
-        classList = `concGomClass(visitablefwdclass,classList*);
+        classList = `ConcGomClass(visitablefwdclass,classList*);
 
         /* create a TomMapping */
         ClassName tomMappingName = (ClassName)
@@ -278,7 +278,7 @@ public class Compiler {
                                                visitablefwdName,
                                                allSortClasses,
                                                allOperatorClasses);
-        classList = `concGomClass(tommappingclass,classList*);
+        classList = `ConcGomClass(tommappingclass,classList*);
 
         /* create the abstractType */
         ClassNameList classSortList = sortClassNames(`moduleList);
@@ -289,8 +289,8 @@ public class Compiler {
                              tomMappingName,
                              visitorName,
                              classSortList,
-                             concHook());
-        classList = `concGomClass(abstracttype,classList*);
+                             ConcHook());
+        classList = `ConcGomClass(abstracttype,classList*);
 
       }
     }
@@ -319,14 +319,14 @@ public class Compiler {
   }
 
   private ClassNameList sortClassNames(ModuleList moduleList) {
-    ClassNameList classNames = `concClassName();
+    ClassNameList classNames = `ConcClassName();
     %match(moduleList) {
-      concModule(_*,Module[
-          Sorts=concSort(_*,
+      ConcModule(_*,Module[
+          Sorts=ConcSort(_*,
                   Sort[Decl=SortDecl[Name=sortname,ModuleDecl=moduledecl]],
                 _*)
           ],_*) -> {
-        classNames = `concClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
+        classNames = `ConcClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
       }
     }
     return classNames;
@@ -338,7 +338,7 @@ public class Compiler {
   private SortList getSortsForModule(ModuleDecl module, ModuleList moduleList) {
     %match(module, moduleList) {
       decl@ModuleDecl[],
-      concModule(_*,Module[MDecl=decl,Sorts=sorts],_*) -> {
+      ConcModule(_*,Module[MDecl=decl,Sorts=sorts],_*) -> {
         return `sorts;
       }
     }
@@ -361,10 +361,10 @@ public class Compiler {
 
   private SlotFieldList slotFieldListFromSet(Set slotFieldSet) {
     Iterator it = slotFieldSet.iterator();
-    SlotFieldList list = `concSlotField();
+    SlotFieldList list = `ConcSlotField();
     while(it.hasNext()) {
       SlotField slot = (SlotField) it.next();
-      list = `concSlotField(list*,slot);
+      list = `ConcSlotField(list*,slot);
     }
     return list;
   }
@@ -372,14 +372,14 @@ public class Compiler {
   private ClassNameList allClassForImports(
       Map classMap,
       ModuleDecl moduleDecl) {
-    ClassNameList importedList = `concClassName();
+    ClassNameList importedList = `ConcClassName();
     ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
-    while(!importedModulelist.isEmptyconcModuleDecl()) {
-      ModuleDecl imported = importedModulelist.getHeadconcModuleDecl();
-      importedModulelist = importedModulelist.getTailconcModuleDecl();
+    while(!importedModulelist.isEmptyConcModuleDecl()) {
+      ModuleDecl imported = importedModulelist.getHeadConcModuleDecl();
+      importedModulelist = importedModulelist.getTailConcModuleDecl();
       if (!imported.equals(moduleDecl)) {
         ClassName importedclass = (ClassName)classMap.get(imported);
-        importedList = `concClassName(importedclass,importedList*);
+        importedList = `ConcClassName(importedclass,importedList*);
       }
     }
     return importedList;

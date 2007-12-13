@@ -39,7 +39,7 @@ public class TestMatchInference extends TestCase {
     %match(f(a()),ff(a())) {
       f(a()),a() -> { fail(); }
       a(),f(a()) -> { fail(); }
-      f(a()),f(x) -> { return; }
+      f(a()),f(_x) -> { return; }
     }
     fail("a,f(a) hould match");
   }

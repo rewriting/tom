@@ -52,7 +52,7 @@ public class IsOpTemplate extends TemplateClass {
       }
     }
     %match(gomClass) {
-      OperatorClass[ClassName=opclass,Slots=slots] -> {
+      OperatorClass[ClassName=opclass,SlotFields=slots] -> {
         this.operator = `opclass;
         this.slotList = `slots;
         return;

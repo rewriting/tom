@@ -92,7 +92,7 @@ public class GraphRuleExpander {
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});
-      return `concHookDecl();
+      return `ConcHookDecl();
     }
     return expand(rulelist,stratname,defaultstrat,sdecl);
   }
@@ -100,7 +100,7 @@ public class GraphRuleExpander {
   public HookDeclList expandFirstGraphRules(String sortname, String stratname, String defaultstrat, String ruleCode, Decl sdecl) {
     HookDeclList expandedrules = expandGraphRules(sortname,stratname,defaultstrat,ruleCode, sdecl);
     HookDeclList commonpart = expandFirst(sdecl);
-    return `concHookDecl(commonpart*,expandedrules*);  
+    return `ConcHookDecl(commonpart*,expandedrules*);  
   }
 
   //add the common methods, includes and imports for all graphrule strategies of a sort 
@@ -299,7 +299,7 @@ static class Subst extends @fullClassName(abstractType)@ {
 ]%);
 
   %match(moduleList) {
-      concModule(_*,Module[Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+      ConcModule(_*,Module[Sorts=ConcSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
     output.append(
         %[
     visit @`name@ {
@@ -333,7 +333,7 @@ static class Subst extends @fullClassName(abstractType)@ {
 ]%);
 
  %match(moduleList) {
-      concModule(_*,Module[Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+      ConcModule(_*,Module[Sorts=ConcSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
  output.append(
         %[
     visit @`name@ {
@@ -357,7 +357,7 @@ static class Subst extends @fullClassName(abstractType)@ {
 ]%);
 
   %match(moduleList) {
-      concModule(_*,Module[Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+      ConcModule(_*,Module[Sorts=ConcSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
     output.append(
         %[
     visit @`name@ {
@@ -389,7 +389,7 @@ import java.util.*;
 
   //import all the constructors Path<Sort> of the module
   %match(moduleList) {
-concModule(_*,Module[MDecl=ModuleDecl(GomModuleName(moduleName),pkg),Sorts=concSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
+ConcModule(_*,Module[MDecl=ModuleDecl(GomModuleName(moduleName),pkg),Sorts=ConcSort(_*,Sort[Decl=SortDecl[Name=name]],_*)],_*) -> {
 
   String prefix = ((`pkg=="")?"":`pkg+".")+moduleName.toLowerCase();
   imports += %[
@@ -398,7 +398,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     }
   }
 
-   return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
+   return `ConcHookDecl(BlockHookDecl(sdecl,Code(output.toString())),ImportHookDecl(sdecl,Code(imports)));
   }
 
   protected HookDeclList expand(RuleList rulelist, String stratname, String defaultstrat, Decl sdecl) {
@@ -483,7 +483,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   }
             ]%);
 
-          return `concHookDecl(BlockHookDecl(sdecl,Code(output.toString())));
+          return `ConcHookDecl(BlockHookDecl(sdecl,Code(output.toString())));
   }
 
   private String genTerm(Term term) {
@@ -748,14 +748,14 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
   private String getSort(String symbolOperator,int omega) {
     %match(moduleList) {
-      concModule(_*,Module[Sorts=concSort(_*,Sort[Operators=concOperator(_*,  OperatorDecl[Name=name,Prod=prod],_*)],_*)],_*) -> {
+      ConcModule(_*,Module[Sorts=ConcSort(_*,Sort[OperatorDecls=ConcOperator(_*,OperatorDecl[Name=name,Prod=prod],_*)],_*)],_*) -> {
         if(`name.equals(symbolOperator)) {
           int count=1;
           %match(prod) {
             Variadic(sortVar) -> {
               return `sortVar.getName();
             }
-            Slots(concSlot(_*,Slot[Sort=SortDecl[Name=type]],_*)) -> {
+            Slots(ConcSlot(_*,Slot[Sort=SortDecl[Name=type]],_*)) -> {
               if (count==omega) {
                 return `type;
               } else {

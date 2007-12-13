@@ -126,34 +126,46 @@ public class TestACU extends TestCase {
     NAU t = `m();
     int cnt = 0;
     %match(t) {
-      p(x*,y*) -> {
+      p(_x*,_y*) -> {
         cnt += 2;
       }
     }
     assertEquals("m() does not match p(x*,y*)",cnt,0);
   }
 
-  public void testOrder() {
+  public void testOrder1() {
     T t1 = `conc(a(), b(), c(), d());    
     T t2 = `conc(b(), d(), a(), c());    
-    T t3 = `conc(d(), b(), c(), a());    
     assertEquals(t1,t2);
+  }
+
+  public void testOrder2() {
+    T t2 = `conc(b(), d(), a(), c());    
+    T t3 = `conc(d(), b(), c(), a());    
     assertEquals(t2,t3);
   }
 
-  public void testOrderFlatten() {
+  public void testOrderFlatten1() {
     T t1 = `conc(a(), b(), conc(b(), a(), c()), c(), d());    
     T t2 = `conc(b(), conc(a(), b(), c()), d(), a(), c());    
-    T t3 = `conc(d(), b(), c(), a(), conc(c(), b(), a()));    
     assertEquals(t1,t2);
+  }
+
+  public void testOrderFlatten2() {
+    T t2 = `conc(b(), conc(a(), b(), c()), d(), a(), c());    
+    T t3 = `conc(d(), b(), c(), a(), conc(c(), b(), a()));    
     assertEquals(t2,t3);
   }
 
-  public void testOrderN() {
+  public void testOrderN1() {
     L t1 = `list(aa(), bb(), cc(), dd());    
     L t2 = `list(bb(), dd(), aa(), cc());    
-    L t3 = `list(dd(), bb(), cc(), aa());    
     assertEquals(t1,t2);
+  }
+
+  public void testOrderN2() {
+    L t2 = `list(bb(), dd(), aa(), cc());    
+    L t3 = `list(dd(), bb(), cc(), aa());    
     assertEquals(t2,t3);
   }
 }

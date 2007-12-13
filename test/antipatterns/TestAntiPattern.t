@@ -286,7 +286,7 @@ public class TestAntiPattern extends TestCase {
 
   private Result match9_1(Term subject){
     %match(Term subject){
-      !f(x,!g(y)) ->{
+      !f(_x,!g(_y)) ->{
         return `True();
       }
     }
@@ -359,7 +359,7 @@ public class TestAntiPattern extends TestCase {
 
   private Result match14(Term subject){
     %match(Term subject){
-      !!x ->{
+      !!_x ->{
         return `True();
       }
     }
@@ -368,7 +368,7 @@ public class TestAntiPattern extends TestCase {
 
   private Result match15(Term subject){
     %match(Term subject){
-      f(x,!y) ->{
+      f(_x,!_y) ->{
         return `True();
       }
     }

@@ -314,6 +314,11 @@
       options="-I ${src.gen}/tom/gom/adt">
       <include name="tom/gom/expander/rule/Rule.g.t"/>
     </tomcompile>
+    <tomcompile srcdir="${src.src}"
+      outputfile="${gen.destination}/tom/gom/parser/GomLanguage.g"
+      options="-I ${src.gen}/tom/gom/adt">
+      <include name="tom/gom/parser/GomLanguage.g.t"/>
+    </tomcompile>
   </target>
 
   <!-- compile tom files in src.src with tom.stable -->
@@ -357,49 +362,35 @@
     </antlr>
 
     <mkdir dir="${gen.destination}/tom/gom/parser"/>
-    <antlr target="${src.src}/tom/gom/parser/ANTLRMapperGomParser.g"
-           outputdirectory="${gen.destination}/tom/gom/parser">
-      <classpath refid="stable.classpath"/>
-    </antlr>
     <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
     <taskdef name="antlr3"
              classname="org.apache.tools.ant.antlr.ANTLR3">
       <classpath refid="stable.classpath"/>
     </taskdef>
+    <antlr3 target="${gen.destination}/tom/gom/parser/GomLanguage.g"
+            outputdirectory="${gen.destination}/tom/gom/parser"
+            libdirectory="${gen.destination}/tom/gom/parser"
+            multithreaded="true">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+    <antlr3 target="${src.src}/tom/gom/parser/SimpleBlock.g"
+            outputdirectory="${gen.destination}/tom/gom/parser"
+            libdirectory="${gen.destination}/tom/gom/parser"
+            multithreaded="true">
+      <classpath refid="stable.classpath"/>
+    </antlr3>
+
+    <mkdir dir="${gen.destination}/tom/gom/expander/rule"/>
     <antlr3 target="${gen.destination}/tom/gom/expander/rule/Rule.g"
             outputdirectory="${gen.destination}/tom/gom/expander/rule"
             libdirectory="${gen.destination}/tom/gom/expander/rule"
             multithreaded="true">
       <classpath refid="stable.classpath"/>
     </antlr3>
-  </target>
-
-  <target name="buildmappings">
-    <antcall target="buildmappings.common">
-      <param name="gen.destination" value="${src.gen}"/>
-      <param name="tom.home" value="${stable.dist}"/>
-    </antcall>
-  </target>
-  <!-- builds mappings -->
-  <target name="buildmappings.common"
-    if="gen.destination"
-    depends="init.task.stable,-withstable">
-    <antlrmappercompile
-      srcfile="${gen.destination}/tom/gom/parser/ANTLRMapperGomParserTokenTypes.txt"
-      destdir="${gen.destination}"
-      package="tom.gom.parser">
-    </antlrmappercompile>
-    <!-- once mappings generated, compile AST2Gom.t -->
-    <tomcompile srcdir="${src.src}"
-         destdir="${gen.destination}"
-         options="--optimize --inlineplus">
-      <include name="tom/gom/parser/AST2Gom.t"/>
-    </tomcompile>
   </target>
 
   <target name="touchgom"
@@ -454,6 +445,12 @@
     </gomcompile>
     <gomantlradaptercompile srcdir="${src.src}"
       package="tom.gom.adt"
+      grammar="tom.gom.parser.GomLanguage"
+      destdir="${src.gen}">
+      <include name="tom/gom/adt/Gom.gom"/>
+    </gomantlradaptercompile>
+    <gomantlradaptercompile srcdir="${src.src}"
+      package="tom.gom.adt"
       grammar="tom.gom.expander.rule.Rule"
       destdir="${src.gen}">
       <include name="tom/gom/adt/Rule.gom"/>
@@ -471,7 +468,6 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
-    <antcall target="buildmappings"/>
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
     <copy file="${src.src}/tom/engine/Tom.java.in"
