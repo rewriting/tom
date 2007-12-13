@@ -48,7 +48,7 @@ private static	TwoPath permutationNL = `TwoCell("permutationNL",OneC0(nat,list),
 private static	TwoPath permutationLN = `TwoCell("permutationLN",OneC0(list,nat),OneC0(nat,list),Function());
 // addition, soustraction et division
 private static	TwoPath sort = `TwoCell("sort",list,list,Function());
-private static	TwoPath split = `TwoCell("split",nat,OneC0(nat,nat),Function());
+private static	TwoPath split = `TwoCell("split",list,OneC0(list,list),Function());
 private static	TwoPath merge = `TwoCell("merge",OneC0(list,list),list,Function());
 
 public static void main(String[] args) {
@@ -61,7 +61,9 @@ TwoPath test5 =`TwoC1(TwoC0(test4,TwoC1(TwoC0(neuf,consList),add)),merge);
 TwoPath test6 = `TwoC1(TwoC0(deux,consList,cinq,consList),TwoC0(un,add,zero,add),TwoC0(add,add),merge);
 TwoPath test7 = `TwoC1(TwoC0(consList,un),TwoC0(deux,append),TwoC0(cinq,add),TwoC0(trois,add),add,sort);
 //TwoPath pb = `TwoC1(TwoC0(trois,TwoC1(TwoC0(cinq,TwoC1(TwoC0(deux,TwoC1(TwoC0(un,consList),add)),add)),add)),TwoC1(add,sort));
-test(test5);
+TwoPath testnatlist = `TwoC1(TwoC0(six,TwoC1(TwoC0(consList,quatre),append)),add,split);
+
+test(testnatlist);
 
 
 }
@@ -340,7 +342,9 @@ public static String result(TwoPath resultat){
 			TwoCell(i,_,_,Constructor()) -> {return `i;}
 			TwoC1(TwoC0(TwoCell(i,_,_,Constructor()),TwoCell("consList",_,_,Constructor())),TwoCell("add",_,_,_)) -> {return `i;}
 			TwoC1(TwoC0(TwoCell(i,_,_,Constructor()),X),TwoCell("add",_,_,_)) -> {return `i+","+result(`X);}
-			}
+			TwoC0(LeftSplit*,RightSplit*) -> {if (`LeftSplit!=`TwoId(Id())){return result(`LeftSplit)+ " || " + result(`RightSplit);}}
+			TwoCell("consList",_,_,Constructor()) -> {return "";}
+		}
 System.out.println("RESULTAT NON CONFORME");resultat.print();
 return "Error";
 }

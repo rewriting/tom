@@ -50,7 +50,7 @@ class PrettyPrinter {
       customRuleInfo[name=n] -> { return `n; }
       foldRightInfo[num=n] -> { return "fold_\\mathcal{R}(" + `n + ")"; }
       foldLeftInfo[num=n] -> { return "fold_\\mathcal{L}(" + `n + ")"; }
-      metaVariableInfo[m=name] -> { return ""; }
+      metaVariableInfo[] -> { return ""; }
     }
     return rt.toString();
   }
@@ -147,7 +147,7 @@ class PrettyPrinter {
 
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
-      rule(metaVariableInfo[m=name],(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`name+"}";}
+      rule(metaVariableInfo(mv),(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`toLatex(mv)+"}";}
       rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
       rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]\n{" + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
@@ -269,6 +269,9 @@ class PrettyPrinter {
       funAppl("inter",(t1,t2)) -> { 
         return "(" + toLatex(`t1) + ") \\cap (" + toLatex(`t2) + ")";
       }
+      funAppl("supset",(t1,t2)) -> { 
+	return "(" + toLatex(`t1) + ") \\supset (" + toLatex(`t2) + ")";
+      }
       funAppl("emptyset",()) -> { 
         return "\\emptyset";
       }
@@ -296,10 +299,10 @@ class PrettyPrinter {
        return ("\\square");
      }
      funAppl("pitype",(x,y)) -> {
-       return ("\\dot\\pi_*") + toLatex(`x) + " .~" +  toLatex(`y);
+       return ("\\dot\\pi_* ") + toLatex(`x) + " .~" +  toLatex(`y);
      }
      funAppl("pikind",(x,y)) -> {
-       return ("\\dot\\pi_\\square") + toLatex(`x) + " .~" +  toLatex(`y);
+       return ("\\dot\\pi_\\square ") + toLatex(`x) + " .~" +  toLatex(`y);
      }
 
      // lambda-sigma
@@ -336,9 +339,21 @@ class PrettyPrinter {
   }
 
   public static String toLatex(urbanAbstractType term) {
-    
+   
+    %match(Meta term) {
+      mvar(name) -> { return `name; }
+      rename(n1,n2,mv) -> {return %[@`toLatex(mv)@[@`toLatex(n1)@ \mapsto @`toLatex(n2)@]]%; }
+      reconame(cn1,cn2,mv) -> {return %[@`toLatex(mv)@[@`toLatex(cn1)@ \mapsto @`toLatex(cn2)@]]%;}
+      substconame(cn,n,pt,phi,mv) -> { 
+        return %[@`toLatex(mv)@[@`toLatex(cn)@ := \hat{@`toLatex(n)@}\langle @`toLatex(pt)@:@`toLatex(phi)@\rangle]]%; 
+      }
+      substname(n,cn,pt,phi,mv) -> {
+        return %[@`toLatex(mv)@[@`toLatex(n)@ := \hat{@`toLatex(cn)@}\langle @`toLatex(pt)@:@`toLatex(phi)@\rangle]]%; 
+      }
+    }
+
     %match(NTree term) {
-      nrule(metaVariableInfo[m=name],(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`name+"}";}
+      nrule(metaVariableInfo(mv),(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`toLatex(mv)+"}";}
       nrule(n,(),c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd "+ toLatex(`c) +"}\n{}";}
       nrule(n,p,c,pt) -> {return "\\infer["+ translate(`n) +"]\n{ "+toLatex(`pt)+" \\rhd " + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
@@ -374,19 +389,19 @@ class PrettyPrinter {
     }
 
     %match (Name term) {
-      name(n) -> {return "x_"+`n;}
+      name(n) -> {return "x_{"+`n+"}";}
     }
 
     %match (CoName term) {
-      coname(n) -> {return "a_"+`n; }
+      coname(n) -> {return "a_{"+`n+"}"; }
     }
 
     %match (ProofTerm term) { // INCOMPLET manque le 1er ordre
-      metaVar(l) -> { return `l; }
+      metaVar(mv) -> { return `toLatex(mv); }
       foldL(x,m,y,i) -> { return "{\\sf Fold}_L^"+`i +"(\\langle "+toLatex(`x)+"\\rangle "+toLatex(`m)+", "+toLatex(`y)+")"; }
       foldR(a,m,b,i) -> { return "{\\sf Fold}_R^"+`i +"(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m)+", "+toLatex(`b)+")"; }
       ax(n,cn) -> {return "{\\sf Ax}("+toLatex(`n)+","+toLatex(`cn)+")";}
-      cut(a,m1,x,m2) -> {return "{\\sf Cut}(\\langle "+toLatex(`a)+"\\rangle ,"+toLatex(`m1)+", \\langle "+toLatex(`x)+" \\rangle ,"+toLatex(`m2)+")";}
+      cut(a,m1,x,m2) -> {return "{\\sf Cut}(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+", \\langle "+toLatex(`x)+" \\rangle "+toLatex(`m2)+")";}
       falseL(n) -> {return "{\\sf False}_L("+toLatex(`n)+")";}
       trueR(cn) -> {return "{\\sf True}_R("+toLatex(`cn)+")";}
       andR(a,m1,b,m2,nc) -> {return "{\\sf And}_R(\\langle "+toLatex(`a)+"\\rangle "+toLatex(`m1)+",\\langle "+toLatex(`b)+"\\rangle "+toLatex(`m2)+","+toLatex(`nc)+")" ;}
@@ -613,6 +628,18 @@ class PrettyPrinter {
 
   public static String prettyPrint(urbanAbstractType term) {
 
+    %match(Meta term) {
+      mvar(name) -> { return `name; }
+      rename(n1,n2,mv) -> {return %[@`prettyPrint(mv)@[@`prettyPrint(n1)@ -> @`prettyPrint(n2)@]]%; }
+      reconame(cn1,cn2,mv) -> {return %[@`prettyPrint(mv)@[@`prettyPrint(cn1)@ -> @`prettyPrint(cn2)@]]%;}
+      substconame(cn,n,pt,phi,mv) -> { 
+        return %[@`prettyPrint(mv)@[@`prettyPrint(cn)@ := <@`prettyPrint(n)@><@`prettyPrint(pt)@:@`prettyPrint(phi)@>]]%; 
+      }
+      substname(n,cn,pt,phi,mv) -> {
+        return %[@`prettyPrint(mv)@[@`prettyPrint(n)@ := <@`prettyPrint(cn)@}><@`prettyPrint(pt)@:@`prettyPrint(phi)@>]]%; 
+      }
+    }
+
     %match(Name term) {
       name(n) -> {return "x"+`n; }
     }
@@ -641,8 +668,36 @@ class PrettyPrinter {
       (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
+    %match(DBName term) {
+      dbname(i) -> { return "n("+`i+")";}
+    }
+
+    %match(DBCoName term) {
+      dbconame(i) -> { return "cn("+`i+")";}
+    }
+
+    %match(DBProofTerm term) { 
+      DBmetaVar(mv) -> { return `prettyPrint(mv); }
+      DBfoldL(x,m,y,i) -> { return "foldL_"+`i +"(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
+      DBfoldR(a,m,b,i) -> { return "foldR_"+`i +"(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
+      DBax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }
+      DBcut(a,m1,x,m2) -> {return "cut(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`x)+"> "+prettyPrint(`m2)+")";}
+      DBfalseL(n) -> {return "falseL("+prettyPrint(`n)+")";}
+      DBtrueR(cn) -> {return "trueR("+prettyPrint(`cn)+")";}
+      DBandR(a,m1,b,m2,nc) -> {return "andR(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <cn:"+prettyPrint(`b)+"> "+prettyPrint(`m2)+","+prettyPrint(`nc)+")" ;}
+      DBandL(x,y,m,n) -> {return "andL(<n:"+prettyPrint(`x)+"><n:"+prettyPrint(`y)+"> "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      DBorR(a,b,m,cn) -> {return "orR(<cn:"+prettyPrint(`a)+"><cn:"+prettyPrint(`b)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBorL(x,m1,y,m2,n) -> {return "orL(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`y)+"> "+prettyPrint(`m2)+", "+prettyPrint(`n)+")" ;}
+      DBimplyR(x,a,m,cn) -> {return "implyR(<n:"+prettyPrint(`x)+"><cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+      DBimplyL(a,m1,x,m2,n) -> {return "implyL(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m1)+", <n:"+prettyPrint(`x)+"> "+prettyPrint(`m2)+","+prettyPrint(`n)+")" ;}
+      DBexistsL(x,varx,m,n) -> {return "existsL(<n:"+prettyPrint(`x)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`n)+")" ;}
+      DBexistsR(a,m,t,cn) -> {return "existsR(<cn:"+prettyPrint(`a)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`cn)+")";}
+      DBforallL(x,m,t,n) -> {return "forallL(<n:"+prettyPrint(`x)+"> "+prettyPrint(`m)+", "+prettyPrint(`t)+", "+prettyPrint(`n)+")";}
+      DBforallR(a,varx,m,cn) -> {return "forallR(<cn:"+prettyPrint(`a)+">{"+prettyPrint(`varx)+"} "+prettyPrint(`m)+", "+prettyPrint(`cn)+")" ;}
+    }
+
     %match(ProofTerm term) { 
-      metaVar(l) -> { return `l; }
+      metaVar(mv) -> { return `prettyPrint(mv); }
       foldL(x,m,y,i) -> { return "foldL_"+`i +"("+prettyPrint(`x)+" "+prettyPrint(`m)+", "+prettyPrint(`y)+")"; }
       foldR(a,m,b,i) -> { return "foldR_"+`i +"("+prettyPrint(`a)+" "+prettyPrint(`m)+", "+prettyPrint(`b)+")"; }
       ax(n,cn) -> {return "ax("+prettyPrint(`n)+", "+prettyPrint(`cn)+")"; }

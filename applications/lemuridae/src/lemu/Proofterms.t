@@ -59,8 +59,8 @@ public class Proofterms {
     %match(Tree term,NSequent nseq) {
       /* rule(type, premisses, conclusion, focussed proposition) */
 
-      rule(metaVariableInfo[m=label],(),c,_),_ -> {
-        return `metaVar(label);
+      rule(metaVariableInfo(mv),(),c,_),_ -> {
+        return `metaVar(mv);
       }
 
       // propositional fragment
@@ -351,8 +351,8 @@ public class Proofterms {
         pt@foldL(x@nprop(n1,Phi),m,n,i),ns@nsequent((ng1*, nprop(n,_),ng2*), cnd) -> {
           return `nrule(foldLeftInfo(i,Phi),npremisses(typeProofterm(m,nsequent(ncontext(ng1*,x,ng2*),cnd))),ns,pt);
         }
-        pt@metaVar(label),ns -> {
-          return `nrule(metaVariableInfo(label),npremisses(),ns,pt);
+        pt@metaVar(mv),ns -> {
+          return `nrule(metaVariableInfo(mv),npremisses(),ns,pt);
         }
         pt@ax(name,coname),ns@nsequent((_*,nprop(name,a),_*),(_*,cnprop(coname,a),_*)) -> {
           return `nrule(axiomInfo(),npremisses(),ns,pt);
@@ -586,26 +586,13 @@ public class Proofterms {
   }
 
   public static boolean nameFreshlyIntroduced(ProofTerm t, Name n) {
-    //%match(t) { metaVar[] -> { System.out.println("ICI"); return true; } }
+    %match(t) { metaVar[] -> { return true; } }
     return (nameTopIntroduced(t,n) && (! isImplicitContraction(t)));
   }
 
   public static boolean conameFreshlyIntroduced(ProofTerm t, CoName cn) {
-    //%match(t) { metaVar[] -> { System.out.println("LA");  return true; } }
+    %match(t) { metaVar[] -> { return true; } }
     return (conameTopIntroduced(t,cn) && (! isImplicitContraction(t)));
-  }
-
-  // FIXE: ugly way of testing this
-  %strategy hasMetaVars() extends `Identity() {
-    visit ProofTerm { metaVar[] -> { throw new VisitFailure(); } }
-  }
-  private static boolean hasMetaVars(ProofTerm t) {
-    try { 
-      `TopDown(hasMetaVars()).visit(t); 
-      return false;
-    } catch (VisitFailure ex) {
-      return true;
-    }
   }
 
   // Reductions des termes
@@ -623,7 +610,10 @@ public class Proofterms {
         ProofTerm new_m = `ReName(m,name1,name2);
         return `foldR(a,new_m,cn,i);
       }
-      mv@metaVar[] -> { return `mv; }
+      metaVar(mv) -> {
+        return pt;
+        //return `metaVar(rename(name1,name2,mv)); 
+      }
       ax(n,cn) -> {
         if (name1 == `n) return `ax(name2,cn); else return pt;
       }
@@ -690,7 +680,10 @@ public class Proofterms {
         ProofTerm new_m = `ReCoName(m,coname1,coname2);
         return `foldL(x,new_m,n,i);
       }
-      mv@metaVar[] -> { return `mv; }
+      metaVar(mv) -> { 
+        return pt;
+        //return `metaVar(reconame(coname1,coname2,mv));
+      }
       ax(n,cn) -> {
         if (coname1 == `cn) return `ax(n,coname2); else return pt;
       }
@@ -744,16 +737,20 @@ public class Proofterms {
     return null;
   }
 
- private static ProofTerm CoNameSubstitution(ProofTerm subj, CoName cn, Name n, ProofTerm pt, Prop phi) {
+  private static ProofTerm CoNameSubstitution(ProofTerm subj, CoName cn, Name n, ProofTerm pt, Prop phi) {
+    //System.out.println(subj);
     %match (ProofTerm subj) {
-      p@metaVar[] -> { return `p; }
+      metaVar(mv) -> { 
+        //return `metaVar(substconame(cn,n,pt,phi,mv)); 
+        return subj;
+      }
       p@ax(n1,cn1) -> {
         if (cn == `cn1) {
-          System.out.println("renommage "+n+" en "+`n1+" dans \n"+PrettyPrinter.prettyPrint(pt));
+          //System.out.println("renommage "+n+" en "+`n1+" dans \n"+PrettyPrinter.prettyPrint(pt));
           ProofTerm pt2 = null;
           try { pt2 = (ProofTerm) `ReName(pt,n,n1); }
           catch (Exception e) { System.out.println(e); }
-          System.out.println(PrettyPrinter.prettyPrint(pt2));
+          //System.out.println(PrettyPrinter.prettyPrint(pt2));
           return pt2;
         }
         else return `p;
@@ -773,6 +770,15 @@ public class Proofterms {
         if (! (`coname == cn)) new_m1 = CoNameSubstitution(`m1,cn,n,pt,phi);
         ProofTerm new_m2 = CoNameSubstitution(`m2,cn,n,pt,phi);
         return `cut(a,new_m1,x,new_m2);
+      }
+      foldR(a@cnprop(coname1,_),m,coname,i) -> {
+        ProofTerm new_m = `m;
+        if (`coname1 != cn) new_m = CoNameSubstitution(`m,cn,n,pt,phi);
+        return `foldR(a,new_m,coname,i);
+      }
+      foldL(x,m,name,i) -> {
+        ProofTerm new_m = CoNameSubstitution(`m,cn,n,pt,phi);
+        return `foldL(x,new_m,name,i);
       }
       orR(a@cnprop(coname1,_),b@cnprop(coname2,_),m,coname) -> {
         ProofTerm new_m = `m;
@@ -814,16 +820,19 @@ public class Proofterms {
 
    private static ProofTerm NameSubstitution(ProofTerm subj, Name n, CoName cn, ProofTerm pt, Prop phi) {
     %match (ProofTerm subj) {
-      p@metaVar[] -> { return `p; }
+      metaVar(mv) -> {
+        //return `metaVar(substname(n,cn,pt,phi,mv));
+        return subj;
+      }
       p@ax(n1,cn1) -> {
         if (n == `n1) {
-          System.out.println("renommage "+cn+" en "+`cn1+" dans \n"+PrettyPrinter.prettyPrint(pt));
+          //System.out.println("renommage "+cn+" en "+`cn1+" dans \n"+PrettyPrinter.prettyPrint(pt));
           ProofTerm pt2 = null;
           try {
             pt2 = (ProofTerm) `ReCoName(pt,cn,cn1);
           }
           catch (Exception e) { System.out.println(e); }
-          System.out.println(PrettyPrinter.prettyPrint(pt2));
+          //System.out.println(PrettyPrinter.prettyPrint(pt2));
           return pt2;
         }
         else return `p;
@@ -897,13 +906,13 @@ public class Proofterms {
       
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
 //        if ((! `nameFreshlyIntroduced(m2,n)) && (`boundNamesAreNotFree(m2,m1)) && (`boundCoNamesAreNotFree(m2,m1))) {
-        if (!`nameFreshlyIntroduced(m2,n) && !hasMetaVars(`m2)) {
+        if (!`nameFreshlyIntroduced(m2,n)) {
           //System.out.println(PrettyPrinter.prettyPrint(`n) + " not freshly introduced in " + PrettyPrinter.prettyPrint(`m2));
           ProofTerm new_m2 = refresher.refreshBoundVars(`m2);
-          System.out.println("\n refreshing bound vars of");
-          System.out.println(PrettyPrinter.prettyPrint(`m2));
-          System.out.println("into");
-          System.out.println(PrettyPrinter.prettyPrint(new_m2));
+          //System.out.println("\n refreshing bound vars of");
+          //System.out.println(PrettyPrinter.prettyPrint(`m2));
+          //System.out.println("into");
+          //System.out.println(PrettyPrinter.prettyPrint(new_m2));
           ProofTerm mm = (ProofTerm) `NameSubstitution(new_m2,n,cn,m1,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
@@ -911,12 +920,12 @@ public class Proofterms {
 
       cut(cnprop(cn,phi),m1,nprop(n,phi),m2) -> { // ATTENTION CAPTURE DE VARIABLE
         //if ((! `conameFreshlyIntroduced(m1,cn)) && (`boundNamesAreNotFree(m1,m2)) && (`boundCoNamesAreNotFree(m1,m2))) {
-        if (!`conameFreshlyIntroduced(m1,cn) && !hasMetaVars(`m1)) {
+        if (!`conameFreshlyIntroduced(m1,cn)) {
           ProofTerm new_m1 = refresher.refreshBoundVars(`m1);
-          System.out.println("\n refreshing bound vars of");
-          System.out.println(PrettyPrinter.prettyPrint(`m1));
-          System.out.println("into");
-          System.out.println(PrettyPrinter.prettyPrint(new_m1));
+          //System.out.println("\n refreshing bound vars of");
+          //System.out.println(PrettyPrinter.prettyPrint(`m1));
+          //System.out.println("into");
+          //System.out.println(PrettyPrinter.prettyPrint(new_m1));
           ProofTerm mm = (ProofTerm) `CoNameSubstitution(new_m1,cn,n,m2,phi);
           c.add(getEnvironment().getPosition().getReplace(mm).visit(subject));
         }
@@ -966,11 +975,18 @@ public class Proofterms {
     }
   }
 
+
+  // ne descend pas dans les metavariables
+  %strategy CutMeta(defaultstrat:Strategy) extends defaultstrat {
+    visit Meta { x -> { return `x; } }
+  }
+  %op Strategy SafeTopDown(s:Strategy) {
+    make(v) { `mu(MuVar("x"),Sequence(v,CutMeta(All(MuVar("x"))))) }
+  }
+
   public static Collection reduce(ProofTerm t, VarGenerator refresher) {
     Collection c = new ArrayList();
-    try {
-      `TopDown(OneStep(t,c, refresher)).visit(t);
-    }
+    try { `SafeTopDown(OneStep(t,c,refresher)).visit(t); }
     catch (VisitFailure e) { System.out.println(e); }
     return c;
   }
@@ -980,22 +996,33 @@ public class Proofterms {
     refresher.synchronize(t);
     Collection nf = new ArrayList();
     Collection c = new ArrayList();
+    //Collection c = new HashSet();
+    //Collection nf = new HashSet();
+
     c.add(t);
-    while (true) {
+    int i = 1;
+    while(true) {
+      System.out.print("\nstep "+i+": reducing "+c.size() +" terms ("+nf.size()+" normal forms found so far)");
       Collection buffer = new ArrayList();
       for (Object x : c) {
-        System.out.println("\n----\n"+PrettyPrinter.prettyPrint((ProofTerm) x));
+        //System.out.println("\n----\n"+PrettyPrinter.prettyPrint((ProofTerm) x));
         Collection d = reduce((ProofTerm) x, refresher);
-        for (Object y : d) { System.out.println("\nreduces to \n"+PrettyPrinter.prettyPrint((ProofTerm) y)); typeTypableProofterm(`typablePT((ProofTerm) y, nseq)); }
+        for (Object y : d) {
+          /* System.out.println("\nreduces to \n"+PrettyPrinter.prettyPrint((ProofTerm) y));*/ 
+          /*NTree tree = */ typeTypableProofterm(`typablePT((ProofTerm) y, nseq));
+          //try { PrettyPrinter.display(tree); } catch(Exception e) {}
+        }
         if (d.isEmpty()) {
           nf.add(x);
-          System.out.println(nf.size()+" normal forms found");
+          //System.out.println(nf.size()+" normal forms found");
         }
         else buffer.addAll(d);
       }
       if (buffer.isEmpty()) break;
       else c=buffer;
+      i++;
     }
+    System.out.println();
     return nf;
   }
 

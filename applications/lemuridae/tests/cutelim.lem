@@ -1,0 +1,12 @@
+proof l: A => B => ( (A /\ B) => C) => C.
+intro.
+intro.
+intro.
+cut (A /\ B).
+intros.
+display.
+intros.
+display l.
+
+
+proofterm l.

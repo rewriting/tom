@@ -9,10 +9,11 @@ import lemu.urban.types.*;
 
 import tom.library.sl.*;
 
-import java.util.HashMap;
 import java.util.WeakHashMap;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -241,7 +242,7 @@ b: {
   %strategy ApplyAssume(n:String,active:Prop) extends Fail() {
     visit Tree {
       rule[c=concl] -> { 
-        return `rule(metaVariableInfo(n),premisses(),concl,active);
+        return `rule(metaVariableInfo(mvar(n)),premisses(),concl,active);
       }
     }
   }
@@ -796,6 +797,54 @@ b :{
   }
   */
 
+    %strategy PTSApply(newRules: RuleArrayList, dest: Prop, active: Prop) extends Fail() {
+	visit Tree {
+	    r@rule[c=seq] -> { 
+		%match(seq, Prop dest, Prop active) {
+		    sequent(context(_*,d@relationAppl("in",(f,_)),_*),
+			    context(_*,a@relationAppl("in",(t1@funAppl("lappl",_),_))
+				    ,_*)), d, a -> { 
+			Term appliedTo = `isAppliedNestedTo(f,t1);
+			if(appliedTo != null) {
+			    
+		      int n = -1;
+		      for(int i=0; i<newRules.size(); i++) {
+			  Rule rule = newRules.get(i); 
+			  Prop conclusion = rule.getconcl();
+			  HashMap<String,Term> tds = Unification.match(conclusion, dest);
+			  if (tds != null &&  rule.geths() == 0) {
+			      if (n != -1)  throw new VisitFailure("more than one matching rule"); // more than one rule
+			      else n = i; 
+			  }
+		      }
+		      if (n == -1) throw new VisitFailure("No applicable rule.");
+		      Rule rule = newRules.get(n);
+		      // setting the new var
+		      HashMap<Term,Term> args = new HashMap<Term,Term>();
+		      Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+		      for (Term t : new_vars) {
+			  String varname = t.getname();
+			  args.put(t, appliedTo);
+		      };
+		      try {
+			  Tree res = (Tree) (`ApplyRule(rule,dest,args)).visit(`r);
+			  return res;
+		      } catch (Exception e) {
+			  throw new VisitFailure("cannot apply the rule ; "
+						 + e.getMessage());}
+			}
+			else throw new 
+			    VisitFailure(PrettyPrinter.prettyPrint(`f) +
+					 " is not applied in " +
+					 PrettyPrinter.prettyPrint(`t1));
+		    }
+		}
+	    }
+	 }
+    }
+
+
+
   %strategy LamdaPiTypeCheck(pistarleft:Rule, cont: Strategy) extends Identity() {
     visit Tree {
       r@rule[type=openInfo(),
@@ -825,9 +874,15 @@ b :{
 
 /* ---- LAMBDA PI -----*/
   
+    %op Strategy toPremisses(s: Strategy) {
+	make(s) {
+	    `_rule(Identity(),_premisses(s),Identity(),Identity())
+		}
+    }
+
   %op Strategy SafeTopDown(s:Strategy) {
     make(s) { 
-      `mu(MuVar("y"),Try(Sequence(s,_rule(Identity(),_premisses(MuVar("y")),Identity(),Identity()))))
+	`mu(MuVar("y"),Try(Sequence(s,toPremisses(MuVar("y")))))
     }
   }
 
@@ -1044,7 +1099,32 @@ b :{
           }
         }
 
-        /* experimental autoreduce case */
+	/* experimental apply in PTS case */
+	applyCommand(arg) -> {
+	    try {
+		int n;
+	      char hs = `arg.charAt(0);
+	      try { n = Integer.parseInt(`arg.substring(1)); }
+	      catch (NumberFormatException e) { 
+		  throw new VisitFailure("Apply needs a correct hypothesis as argument.");
+	      };
+	      if (hs == 'c')
+		  throw new VisitFailure("Apply works only for hypotheses");
+	      else if (hs == 'h' && n <= hyp.size()) {
+		  Strategy strat = 
+		      `Sequence(PTSApply(newRules,hyp.get(n-1),active),
+				toPremisses(Choice(Sequence(ApplyReduce(newTermRules, newPropRules),
+							    toPremisses(Try(ApplyAxiom()))),Try(ApplyAxiom()))));
+		  tree = (Tree) currentPos.getOmega(strat).visit(env.tree);
+	      }
+	      else throw new VisitFailure("Invalid hypothesis number");
+          } catch (VisitFailure e) {
+            writeToOutputln("Can't apply apply : " + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
+       /* experimental autoreduce case */
         proofCommand("autoreduce") -> {
           try {
             Strategy strat = AutoReduce(newTermRules,newPropRules,newRules);
@@ -1428,12 +1508,26 @@ b :{
             ProofTerm pt = Proofterms.typableProofterm2Proofterm(tpt);
             NSequent nseq = Proofterms.typableProofterm2NSequent(tpt);
             writeToOutputln(PrettyPrinter.prettyPrint(pt));
-            PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
-            //            Collection c = Proofterms.reduce(pt);
+            //PrettyPrinter.display(Proofterms.typeTypableProofterm(tpt));
             Collection c = Proofterms.computeNormalForms(pt, nseq);
             writeToOutputln("Number of normal forms found : "+c.size());
+
+            HashSet set = new HashSet();
+            set.addAll(c);
+            writeToOutputln("Number of different normal forms : "+set.size());
+            set = new HashSet();
+            // modulo alpha
             for (Object o:c) {
-              writeToOutputln(PrettyPrinter.prettyPrint((urbanAbstractType) o));
+              ProofTerm prt = (ProofTerm) o;
+              set.add(DBProofterms.translate(prt));
+            }
+            writeToOutputln("Number of different normal forms modulo alpha : "+set.size());
+            for(Object o: set) {
+              writeToOutputln(PrettyPrinter.prettyPrint((DBProofTerm) o));
+            }
+
+            for (Object o:c) {
+              writeToOutputln(PrettyPrinter.prettyPrint((ProofTerm) o));
               PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
             }
           }
