@@ -49,11 +49,18 @@ public class TestMakeEmpty extends TestCase {
   }
 
   public void testEmptySameDoCo() {
-    assertEquals(`a(),`conc());
+    assertSame(`a(),`conc());
   }
 
   public void testEmptyNotSameDoCo() {
-    assertEquals(`c(),`list());
+    assertSame(`c(),`list());
   }
 
+  //public void testOneElemSameDoCo() {
+  //  assertSame(`conc(b(),a()),`conc(b()));
+  //}
+
+  //public void testOneElemNotSameDoCo() {
+  //  assertSame(`list(b(),c()),`list(b()));
+  //}
 }
