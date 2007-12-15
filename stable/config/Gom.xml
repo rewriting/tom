@@ -87,6 +87,10 @@
         altName='vv'
         description='Display debugging info'
         value='false'/>
+      <boolean name='multithread'
+        altName='mt'
+        description='Generate code compatible with multi-threading'
+        value='false'/>
       <boolean name='verbosedebug'
         altName='vvv'
         description='Display even more debugging info'
