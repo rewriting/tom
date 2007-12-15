@@ -26,8 +26,6 @@ public class TestList extends TestCase {
       fail("length should raise an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       return;
-    } catch (Exception e) {
-      fail("wrong exception");
     }
   }
 
@@ -77,6 +75,11 @@ public class TestList extends TestCase {
     Element[] array = new Element[]{};
     List l = conc.fromArray(array);
     assertEquals(0,l.length());
+  }
+
+  public void testFromToZeroArray() {
+    Element[] array = new Element[]{};
+    List l = conc.fromArray(array);
     assertEquals(0,((conc)l).toArray().length);
   }
 

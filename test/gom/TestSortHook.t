@@ -45,6 +45,11 @@ public class TestSortHook extends TestCase {
       public String hookSort1() {
         return "1"+symbolName();
       }
+
+      /* Just to make sure the import did work */
+      public Map getEmptyMap() {
+        return new HashMap();
+      }
     }
 
     sort Sort1:import() {
@@ -89,6 +94,4 @@ public class TestSortHook extends TestCase {
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestSortHook.class));
   }
-
 }
-
