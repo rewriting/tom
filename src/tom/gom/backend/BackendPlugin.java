@@ -56,6 +56,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<options>" +
     "<string name='generator' altName='g' description='Select Generator' value='shared' attrName='type' />" +
     "<boolean name='strategies-mapping' altName='sm' description='Enable strategy mapping support' value='false'/>" +
+    "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "</options>";
 
   /**
@@ -102,9 +103,10 @@ public class BackendPlugin extends GomGenericPlugin {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
     boolean strategiesMapping = getOptionBooleanValue("strategies-mapping");
+    boolean multithread = getOptionBooleanValue("multithread");
     Backend backend =
       new Backend(TemplateFactory.getFactory(getOptionManager()),
-                  tomHomePath, strategiesMapping,
+                  tomHomePath, strategiesMapping, multithread,
                   streamManager.getImportList());
     backend.generate(classList);
     if(classList == null) {

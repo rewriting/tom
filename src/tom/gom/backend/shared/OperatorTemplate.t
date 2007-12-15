@@ -41,6 +41,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
+  boolean multithread;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -48,8 +49,10 @@ public class OperatorTemplate extends TemplateHookedClass {
                           OptionManager manager,
                           List importList, 	
                           GomClass gomClass,
-                          TemplateClass mapping) {
+                          TemplateClass mapping,
+                          boolean multithread) {
     super(gomClass,manager,tomHomePath,importList,mapping);
+    this.multithread = multithread;
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
@@ -80,7 +83,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
 @generateBlock()@
   private @className()@() {}
 ]%);
-  if(slotList.length()>0) {
+  if(slotList.length() > 0) {
     writer.write(%[
   private int hashCode;
   private static @className()@ proto = new @className()@();
@@ -89,7 +92,7 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
     writer.write(%[
   private static int hashCode = hashFunction();
   private static @className()@ proto = (@className()@) factory.build(new @className()@());
-]%);
+  ]%);
   }
   if (!hooks.isEmptyconcHook()) {
     mapping.generate(writer); 
@@ -130,15 +133,25 @@ writer.write(%[
   private int getArity() {
     return @slotList.length()@;
   }
+]%);
 
+if(multithread) {
+  writer.write(%[
+  public shared.SharedObject duplicate() {
+    // the proto is a fresh object: no need to clone it again
+    return this;
+  }
+  ]%);
+} else {
+  writer.write(%[
   public shared.SharedObject duplicate() {
     @className()@ clone = new @className()@();
     clone.init(@childList(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @hashCode);
     return clone;
   }
-
-]%);
-  } else {
+  ]%);
+ }
+} else {
     // case: constant
 writer.write(%[
   /* name and arity */
@@ -151,7 +164,9 @@ writer.write(%[
   }
 
   public shared.SharedObject duplicate() {
-    return new @className()@();
+    // the proto is a constant object: no need to clone it
+    return this;
+    //return new @className()@();
   }
 
 ]%);
@@ -730,45 +745,14 @@ writer.write(%[
     }
   }
 
-  public void generateConstructor(java.io.Writer writer)
-    throws java.io.IOException {
-
+public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
+  String makeName = "make";
     %match(hooks) {
-      /* If there is no MakeHook */
-      !concHook(_*,MakeHook[],_*) -> {
-        if(slotList.length()>0) {
-        writer.write(%[
-  public static @className()@ make(@childListWithType(slotList)@) {
-    proto.initHashCode(@childList(slotList)@);
-    return (@className()@) factory.build(proto);
-  }
-  ]%);
-        } else {
-        writer.write(%[
-  public static @className()@ make(@childListWithType(slotList)@) {
-    return proto;
-  }
-  ]%);
-        }
-      }
-   
       /* If there is at least one MakeHook */
-      lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
-        if(slotList.length()>0) {
-        writer.write(%[
-    private static @className()@ realMake(@childListWithType(slotList)@) {
-      proto.initHashCode(@childList(slotList)@);
-      return (@className()@) factory.build(proto);
-    }
-  ]%);
-      } else {
-        writer.write(%[
-    public static @className()@ realMake(@childListWithType(slotList)@) {
-      return proto;
-    }
-  ]%);
-      }
-        writer.write(%[
+lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
+      makeName = "realMake";
+
+      writer.write(%[
     public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
   ]%);
         SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
@@ -779,7 +763,34 @@ writer.write(%[
         break lbl;
       }
     }
+    
+    if(slotList.length()>0) {
+      if(multithread) {
+        writer.write(%[
+  public static @className()@ @makeName@(@childListWithType(slotList)@) {
+    // allocate and object and make duplicate equal identity
+    @className()@ newProto = new @className()@();
+      newProto.initHashCode(@childList(slotList)@);
+      return (@className()@) factory.build(newProto);
+    }
+  ]%);
+      } else {
+        writer.write(%[
+  public static @className()@ @makeName@(@childListWithType(slotList)@) {
+    // use the proto as a model
+    proto.initHashCode(@childList(slotList)@);
+    return (@className()@) factory.build(proto);
   }
+  ]%);
+      }
+    } else {
+        writer.write(%[
+  public static @className()@ @makeName@(@childListWithType(slotList)@) {
+    return proto;
+  }
+  ]%);
+    }
+}
 
   public SlotFieldList generateMakeHooks(
       HookList other,

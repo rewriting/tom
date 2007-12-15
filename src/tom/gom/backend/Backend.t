@@ -43,6 +43,7 @@ public class Backend {
   private File tomHomePath;
   private List importList = null;
   private boolean strategySupport = true;
+  private boolean multithread = false;
 
   %include { ../adt/objects/Objects.tom }
   %include { sl.tom }
@@ -50,10 +51,12 @@ public class Backend {
   Backend(TemplateFactory templatefactory,
           File tomHomePath,
           boolean strategySupport,
+          boolean multithread,
           List importList) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.strategySupport = strategySupport;
+    this.multithread = multithread;
     this.importList = importList;
   }
 
@@ -163,7 +166,8 @@ public class Backend {
             tomHomePath,
             importList,
             gomclass,
-            (TemplateClass)generators.get(`mapping));
+            (TemplateClass)generators.get(`mapping),
+            multithread);
         generators.put(`className,operator);
 
         TemplateClass sOpStrat =

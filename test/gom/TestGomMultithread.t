@@ -31,7 +31,7 @@ import gom.testgommultithread.term.types.*;
 
 public class TestGomMultithread extends TestCase {
 
-  %gom() {
+  %gom(--multithread) {
     module term
     abstract syntax
     T = a()
