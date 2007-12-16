@@ -30,7 +30,7 @@
   <target name="build" depends="init,prepare">
     <gom.preset srcdir="${test.src}"
                 package="sl"
-                pointer="true" 
+                pointer="true"
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
     </gom.preset>
@@ -63,7 +63,7 @@
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
                 options="--optimize">
-    	<include name="TestOptimizer.t"/>	    	         
+    	<include name="TestOptimizer.t"/>
     </tom.preset>
     <javac.preset destdir="${test.build}" fork="true">
       <src path="${test.src}"/>
@@ -109,6 +109,33 @@
       ****************************************************
       ****************************************************
     </fail>
+  </target>
+
+  <target name="regress"
+    description="Run regresssion tests"
+    depends="build">
+    <taskdef name="tomregress"
+             classname="regress.TomErrorTask">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+    </taskdef>
+    <tomregress config="${tomconfigfile}"
+           nowarn="${nowarnings}"
+           optimize="${optimize}"
+           optimize2="${optimize2}"
+           inline="${inline}"
+           inlineplus="${inlineplus}"
+      	   autoDispatch="${autoDispatch}"
+           verbose="${verbose}"
+           fork="${tomfork}"
+           pretty="${pretty}"
+           srcdir="${test.src}"
+           destdir="${test.gen}">
+        <classpath refid="tom.classpath"/>
+        <include name="regress/error/**/*.t"/>
+      </tomregress>
   </target>
 
   <target name="clean">
