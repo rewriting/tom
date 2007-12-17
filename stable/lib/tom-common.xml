@@ -53,9 +53,6 @@
     <taskdef name="gomantlradapter"
              classname="tom.gom.tools.ant.GomAntlrAdapterTask"
              classpathref="tom.classpath"/>
-    <taskdef name="antlrmapper"
-             classname="tom.antlrmapper.AntTask"
-             classpathref="tom.classpath"/>
     <taskdef name="tom.junit"
              classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
              classpathref="tom.classpath"/>

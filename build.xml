@@ -183,9 +183,6 @@
       </fileset>
     </path>
 
-    <taskdef name="antlrmapper"
-             classname="tom.antlrmapper.AntTask"
-             classpathref="tom.classpath"/>
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
@@ -206,9 +203,6 @@
       </fileset>
     </path>
 
-    <taskdef name="antlrmappersrc"
-             classname="tom.antlrmapper.AntTask"
-             classpathref="tomsrc.classpath"/>
     <taskdef name="gomsrc"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tomsrc.classpath"/>
@@ -240,11 +234,6 @@
         <classpath refid="tom.classpath"/>
       </gomantlradapter>
     </presetdef>
-    <presetdef name="antlrmappercompile">
-      <antlrmapper>
-        <classpath refid="tom.classpath"/>
-      </antlrmapper>
-    </presetdef>
   </target>
 
   <target name="-withsrc" if="withsource">
@@ -263,11 +252,6 @@
         <classpath refid="tomsrc.classpath"/>
       </gomsrc>
     </presetdef>
-    <presetdef name="antlrmappercompile">
-      <antlrmappersrc>
-        <classpath refid="tomsrc.classpath"/>
-      </antlrmappersrc>
-    </presetdef>
   </target>
 
   <target name="buildtom.common"
@@ -283,7 +267,6 @@
       <include name="tom/library/**/*.t"/>
       <include name="tom/platform/**/*.t"/>
       <include name="tom/gom/**/*.t"/>
-      <include name="tom/antlrmapper/**/*.t"/>
 
       <exclude name="tom/gom/**/*.g.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
@@ -598,11 +581,6 @@
 	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/antlrmapper.jar"
-         update="yes">
-	    <fileset dir="${stable.build}" includes="tom/antlrmapper/**/*.class"/>
-	    <fileset dir="${stable.src}" includes="tom/antlrmapper/**/*.properties"/>
-    </jar>
 
     <copy todir="${stable.dist.lib}">
       <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
@@ -758,11 +736,6 @@
 	      includes="tom/gom/**/*.class"
 	      excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/antlrmapper-${src.version}.jar">
-      <fileset dir="${src.build}"
-        includes="tom/antlrmapper/**/*.class"/>
-      <fileset dir="${src.src}" includes="antlrmapper/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
