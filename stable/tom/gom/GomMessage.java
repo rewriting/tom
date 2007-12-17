@@ -101,6 +101,8 @@ public class GomMessage implements PlatformMessage {
         "and should be converted to plain Gom syntax");
   public static final GomMessage unableToCloseReaderMessage =
     new GomMessage("An error occured when closing reader");  
+  public static final GomMessage unableToUseReaderMessage =
+    new GomMessage("An error occured when initializing reader");  
 
   // verbose messages
   public static final GomMessage gomParsingPhase =

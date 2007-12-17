@@ -432,16 +432,16 @@
   make(t0, t1) { tom.gom.adt.objects.types.slotfield.SlotField.make($t0, $t1) }
 }
 
-%op SlotFieldList EmptyconcSlotField() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyconcSlotField) }
-  make() { tom.gom.adt.objects.types.slotfieldlist.EmptyconcSlotField.make() }
+%op SlotFieldList EmptyConcSlotField() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField) }
+  make() { tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() }
 }
 
-%op SlotFieldList ConsconcSlotField(HeadconcSlotField:SlotField, TailconcSlotField:SlotFieldList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.slotfieldlist.ConsconcSlotField) }
-  get_slot(HeadconcSlotField, t) { $t.getHeadconcSlotField() }
-  get_slot(TailconcSlotField, t) { $t.getTailconcSlotField() }
-  make(t0, t1) { tom.gom.adt.objects.types.slotfieldlist.ConsconcSlotField.make($t0, $t1) }
+%op SlotFieldList ConsConcSlotField(HeadConcSlotField:SlotField, TailConcSlotField:SlotFieldList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) }
+  get_slot(HeadConcSlotField, t) { $t.getHeadConcSlotField() }
+  get_slot(TailConcSlotField, t) { $t.getTailConcSlotField() }
+  make(t0, t1) { tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make($t0, $t1) }
 }
 
 %op GomClass AbstractTypeClass(ClassName:ClassName, Mapping:ClassName, Visitor:ClassName, SortList:ClassNameList, Hooks:HookList) {
@@ -454,7 +454,7 @@
   make(t0, t1, t2, t3, t4) { tom.gom.adt.objects.types.gomclass.AbstractTypeClass.make($t0, $t1, $t2, $t3, $t4) }
 }
 
-%op GomClass SortClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, Visitor:ClassName, Forward:ClassName, Operators:ClassNameList, VariadicOperators:ClassNameList, Slots:SlotFieldList, Hooks:HookList) {
+%op GomClass SortClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, Visitor:ClassName, Forward:ClassName, Operators:ClassNameList, VariadicOperators:ClassNameList, SlotFields:SlotFieldList, Hooks:HookList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.SortClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
@@ -463,12 +463,12 @@
   get_slot(Forward, t) { $t.getForward() }
   get_slot(Operators, t) { $t.getOperators() }
   get_slot(VariadicOperators, t) { $t.getVariadicOperators() }
-  get_slot(Slots, t) { $t.getSlots() }
+  get_slot(SlotFields, t) { $t.getSlotFields() }
   get_slot(Hooks, t) { $t.getHooks() }
   make(t0, t1, t2, t3, t4, t5, t6, t7, t8) { tom.gom.adt.objects.types.gomclass.SortClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8) }
 }
 
-%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, Visitor:ClassName, Slots:SlotFieldList, Hooks:HookList) {
+%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, Visitor:ClassName, SlotFields:SlotFieldList, Hooks:HookList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
@@ -476,7 +476,7 @@
   get_slot(Mapping, t) { $t.getMapping() }
   get_slot(SortName, t) { $t.getSortName() }
   get_slot(Visitor, t) { $t.getVisitor() }
-  get_slot(Slots, t) { $t.getSlots() }
+  get_slot(SlotFields, t) { $t.getSlotFields() }
   get_slot(Hooks, t) { $t.getHooks() }
   make(t0, t1, t2, t3, t4, t5, t6, t7) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7) }
 }
@@ -529,40 +529,40 @@
   make(t0, t1) { tom.gom.adt.objects.types.classname.ClassName.make($t0, $t1) }
 }
 
-%op GomClassList EmptyconcGomClass() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclasslist.EmptyconcGomClass) }
-  make() { tom.gom.adt.objects.types.gomclasslist.EmptyconcGomClass.make() }
+%op GomClassList EmptyConcGomClass() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass) }
+  make() { tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() }
 }
 
-%op GomClassList ConsconcGomClass(HeadconcGomClass:GomClass, TailconcGomClass:GomClassList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclasslist.ConsconcGomClass) }
-  get_slot(HeadconcGomClass, t) { $t.getHeadconcGomClass() }
-  get_slot(TailconcGomClass, t) { $t.getTailconcGomClass() }
-  make(t0, t1) { tom.gom.adt.objects.types.gomclasslist.ConsconcGomClass.make($t0, $t1) }
+%op GomClassList ConsConcGomClass(HeadConcGomClass:GomClass, TailConcGomClass:GomClassList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) }
+  get_slot(HeadConcGomClass, t) { $t.getHeadConcGomClass() }
+  get_slot(TailConcGomClass, t) { $t.getTailConcGomClass() }
+  make(t0, t1) { tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make($t0, $t1) }
 }
 
-%op ClassNameList EmptyconcClassName() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.classnamelist.EmptyconcClassName) }
-  make() { tom.gom.adt.objects.types.classnamelist.EmptyconcClassName.make() }
+%op ClassNameList EmptyConcClassName() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.classnamelist.EmptyConcClassName) }
+  make() { tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() }
 }
 
-%op ClassNameList ConsconcClassName(HeadconcClassName:ClassName, TailconcClassName:ClassNameList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.classnamelist.ConsconcClassName) }
-  get_slot(HeadconcClassName, t) { $t.getHeadconcClassName() }
-  get_slot(TailconcClassName, t) { $t.getTailconcClassName() }
-  make(t0, t1) { tom.gom.adt.objects.types.classnamelist.ConsconcClassName.make($t0, $t1) }
+%op ClassNameList ConsConcClassName(HeadConcClassName:ClassName, TailConcClassName:ClassNameList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.classnamelist.ConsConcClassName) }
+  get_slot(HeadConcClassName, t) { $t.getHeadConcClassName() }
+  get_slot(TailConcClassName, t) { $t.getTailConcClassName() }
+  make(t0, t1) { tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make($t0, $t1) }
 }
 
-%op HookList EmptyconcHook() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hooklist.EmptyconcHook) }
-  make() { tom.gom.adt.objects.types.hooklist.EmptyconcHook.make() }
+%op HookList EmptyConcHook() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook) }
+  make() { tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() }
 }
 
-%op HookList ConsconcHook(HeadconcHook:Hook, TailconcHook:HookList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hooklist.ConsconcHook) }
-  get_slot(HeadconcHook, t) { $t.getHeadconcHook() }
-  get_slot(TailconcHook, t) { $t.getTailconcHook() }
-  make(t0, t1) { tom.gom.adt.objects.types.hooklist.ConsconcHook.make($t0, $t1) }
+%op HookList ConsConcHook(HeadConcHook:Hook, TailConcHook:HookList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) }
+  get_slot(HeadConcHook, t) { $t.getHeadConcHook() }
+  get_slot(TailConcHook, t) { $t.getTailConcHook() }
+  make(t0, t1) { tom.gom.adt.objects.types.hooklist.ConsConcHook.make($t0, $t1) }
 }
 
 %op Slot Slot(Name:String, Sort:SortDecl) {
@@ -572,16 +572,16 @@
   make(t0, t1) { tom.gom.adt.gom.types.slot.Slot.make($t0, $t1) }
 }
 
-%op ArgList EmptyconcArg() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.arglist.EmptyconcArg) }
-  make() { tom.gom.adt.gom.types.arglist.EmptyconcArg.make() }
+%op ArgList EmptyConcArg() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.arglist.EmptyConcArg) }
+  make() { tom.gom.adt.gom.types.arglist.EmptyConcArg.make() }
 }
 
-%op ArgList ConsconcArg(HeadconcArg:Arg, TailconcArg:ArgList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.arglist.ConsconcArg) }
-  get_slot(HeadconcArg, t) { $t.getHeadconcArg() }
-  get_slot(TailconcArg, t) { $t.getTailconcArg() }
-  make(t0, t1) { tom.gom.adt.gom.types.arglist.ConsconcArg.make($t0, $t1) }
+%op ArgList ConsConcArg(HeadConcArg:Arg, TailConcArg:ArgList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.arglist.ConsConcArg) }
+  get_slot(HeadConcArg, t) { $t.getHeadConcArg() }
+  get_slot(TailConcArg, t) { $t.getTailConcArg() }
+  make(t0, t1) { tom.gom.adt.gom.types.arglist.ConsConcArg.make($t0, $t1) }
 }
 
 %op IdKind KindModule() {
@@ -599,28 +599,28 @@
   make() { tom.gom.adt.gom.types.idkind.KindOperator.make() }
 }
 
-%op GomModuleList EmptyconcGomModule() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gommodulelist.EmptyconcGomModule) }
-  make() { tom.gom.adt.gom.types.gommodulelist.EmptyconcGomModule.make() }
+%op GomModuleList EmptyConcGomModule() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule) }
+  make() { tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule.make() }
 }
 
-%op GomModuleList ConsconcGomModule(HeadconcGomModule:GomModule, TailconcGomModule:GomModuleList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gommodulelist.ConsconcGomModule) }
-  get_slot(HeadconcGomModule, t) { $t.getHeadconcGomModule() }
-  get_slot(TailconcGomModule, t) { $t.getTailconcGomModule() }
-  make(t0, t1) { tom.gom.adt.gom.types.gommodulelist.ConsconcGomModule.make($t0, $t1) }
+%op GomModuleList ConsConcGomModule(HeadConcGomModule:GomModule, TailConcGomModule:GomModuleList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule) }
+  get_slot(HeadConcGomModule, t) { $t.getHeadConcGomModule() }
+  get_slot(TailConcGomModule, t) { $t.getTailConcGomModule() }
+  make(t0, t1) { tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make($t0, $t1) }
 }
 
-%op GrammarList EmptyconcGrammar() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.grammarlist.EmptyconcGrammar) }
-  make() { tom.gom.adt.gom.types.grammarlist.EmptyconcGrammar.make() }
+%op GrammarList EmptyConcGrammar() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.grammarlist.EmptyConcGrammar) }
+  make() { tom.gom.adt.gom.types.grammarlist.EmptyConcGrammar.make() }
 }
 
-%op GrammarList ConsconcGrammar(HeadconcGrammar:Grammar, TailconcGrammar:GrammarList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.grammarlist.ConsconcGrammar) }
-  get_slot(HeadconcGrammar, t) { $t.getHeadconcGrammar() }
-  get_slot(TailconcGrammar, t) { $t.getTailconcGrammar() }
-  make(t0, t1) { tom.gom.adt.gom.types.grammarlist.ConsconcGrammar.make($t0, $t1) }
+%op GrammarList ConsConcGrammar(HeadConcGrammar:Grammar, TailConcGrammar:GrammarList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.grammarlist.ConsConcGrammar) }
+  get_slot(HeadConcGrammar, t) { $t.getHeadConcGrammar() }
+  get_slot(TailConcGrammar, t) { $t.getTailConcGrammar() }
+  make(t0, t1) { tom.gom.adt.gom.types.grammarlist.ConsConcGrammar.make($t0, $t1) }
 }
 
 %op TypedProduction Slots(Slots:SlotList) {
@@ -635,52 +635,52 @@
   make(t0) { tom.gom.adt.gom.types.typedproduction.Variadic.make($t0) }
 }
 
-%op SectionList EmptyconcSection() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sectionlist.EmptyconcSection) }
-  make() { tom.gom.adt.gom.types.sectionlist.EmptyconcSection.make() }
+%op SectionList EmptyConcSection() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection) }
+  make() { tom.gom.adt.gom.types.sectionlist.EmptyConcSection.make() }
 }
 
-%op SectionList ConsconcSection(HeadconcSection:Section, TailconcSection:SectionList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sectionlist.ConsconcSection) }
-  get_slot(HeadconcSection, t) { $t.getHeadconcSection() }
-  get_slot(TailconcSection, t) { $t.getTailconcSection() }
-  make(t0, t1) { tom.gom.adt.gom.types.sectionlist.ConsconcSection.make($t0, $t1) }
+%op SectionList ConsConcSection(HeadConcSection:Section, TailConcSection:SectionList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) }
+  get_slot(HeadConcSection, t) { $t.getHeadConcSection() }
+  get_slot(TailConcSection, t) { $t.getTailConcSection() }
+  make(t0, t1) { tom.gom.adt.gom.types.sectionlist.ConsConcSection.make($t0, $t1) }
 }
 
-%op OperatorDeclList EmptyconcOperator() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.operatordecllist.EmptyconcOperator) }
-  make() { tom.gom.adt.gom.types.operatordecllist.EmptyconcOperator.make() }
+%op OperatorDeclList EmptyConcOperator() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator) }
+  make() { tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator.make() }
 }
 
-%op OperatorDeclList ConsconcOperator(HeadconcOperator:OperatorDecl, TailconcOperator:OperatorDeclList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.operatordecllist.ConsconcOperator) }
-  get_slot(HeadconcOperator, t) { $t.getHeadconcOperator() }
-  get_slot(TailconcOperator, t) { $t.getTailconcOperator() }
-  make(t0, t1) { tom.gom.adt.gom.types.operatordecllist.ConsconcOperator.make($t0, $t1) }
+%op OperatorDeclList ConsConcOperator(HeadConcOperator:OperatorDecl, TailConcOperator:OperatorDeclList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.operatordecllist.ConsConcOperator) }
+  get_slot(HeadConcOperator, t) { $t.getHeadConcOperator() }
+  get_slot(TailConcOperator, t) { $t.getTailConcOperator() }
+  make(t0, t1) { tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make($t0, $t1) }
 }
 
-%op HookDeclList EmptyconcHookDecl() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.hookdecllist.EmptyconcHookDecl) }
-  make() { tom.gom.adt.gom.types.hookdecllist.EmptyconcHookDecl.make() }
+%op HookDeclList EmptyConcHookDecl() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl) }
+  make() { tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl.make() }
 }
 
-%op HookDeclList ConsconcHookDecl(HeadconcHookDecl:HookDecl, TailconcHookDecl:HookDeclList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.hookdecllist.ConsconcHookDecl) }
-  get_slot(HeadconcHookDecl, t) { $t.getHeadconcHookDecl() }
-  get_slot(TailconcHookDecl, t) { $t.getTailconcHookDecl() }
-  make(t0, t1) { tom.gom.adt.gom.types.hookdecllist.ConsconcHookDecl.make($t0, $t1) }
+%op HookDeclList ConsConcHookDecl(HeadConcHookDecl:HookDecl, TailConcHookDecl:HookDeclList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) }
+  get_slot(HeadConcHookDecl, t) { $t.getHeadConcHookDecl() }
+  get_slot(TailConcHookDecl, t) { $t.getTailConcHookDecl() }
+  make(t0, t1) { tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl.make($t0, $t1) }
 }
 
-%op SortDeclList EmptyconcSortDecl() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortdecllist.EmptyconcSortDecl) }
-  make() { tom.gom.adt.gom.types.sortdecllist.EmptyconcSortDecl.make() }
+%op SortDeclList EmptyConcSortDecl() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortdecllist.EmptyConcSortDecl) }
+  make() { tom.gom.adt.gom.types.sortdecllist.EmptyConcSortDecl.make() }
 }
 
-%op SortDeclList ConsconcSortDecl(HeadconcSortDecl:SortDecl, TailconcSortDecl:SortDeclList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortdecllist.ConsconcSortDecl) }
-  get_slot(HeadconcSortDecl, t) { $t.getHeadconcSortDecl() }
-  get_slot(TailconcSortDecl, t) { $t.getTailconcSortDecl() }
-  make(t0, t1) { tom.gom.adt.gom.types.sortdecllist.ConsconcSortDecl.make($t0, $t1) }
+%op SortDeclList ConsConcSortDecl(HeadConcSortDecl:SortDecl, TailConcSortDecl:SortDeclList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortdecllist.ConsConcSortDecl) }
+  get_slot(HeadConcSortDecl, t) { $t.getHeadConcSortDecl() }
+  get_slot(TailConcSortDecl, t) { $t.getTailConcSortDecl() }
+  make(t0, t1) { tom.gom.adt.gom.types.sortdecllist.ConsConcSortDecl.make($t0, $t1) }
 }
 
 %op OperatorDecl OperatorDecl(Name:String, Sort:SortDecl, Prod:TypedProduction) {
@@ -698,10 +698,10 @@
   make(t0, t1) { tom.gom.adt.gom.types.gommodule.GomModule.make($t0, $t1) }
 }
 
-%op Pair ModHookPair(Modules:ModuleList, Hooks:HookDeclList) {
+%op Pair ModHookPair(Modules:ModuleList, HookDecls:HookDeclList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.pair.ModHookPair) }
   get_slot(Modules, t) { $t.getModules() }
-  get_slot(Hooks, t) { $t.getHooks() }
+  get_slot(HookDecls, t) { $t.getHookDecls() }
   make(t0, t1) { tom.gom.adt.gom.types.pair.ModHookPair.make($t0, $t1) }
 }
 
@@ -717,28 +717,28 @@
   make(t0) { tom.gom.adt.gom.types.section.Public.make($t0) }
 }
 
-%op GomTypeList EmptyconcGomType() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gomtypelist.EmptyconcGomType) }
-  make() { tom.gom.adt.gom.types.gomtypelist.EmptyconcGomType.make() }
+%op GomTypeList EmptyConcGomType() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gomtypelist.EmptyConcGomType) }
+  make() { tom.gom.adt.gom.types.gomtypelist.EmptyConcGomType.make() }
 }
 
-%op GomTypeList ConsconcGomType(HeadconcGomType:GomType, TailconcGomType:GomTypeList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gomtypelist.ConsconcGomType) }
-  get_slot(HeadconcGomType, t) { $t.getHeadconcGomType() }
-  get_slot(TailconcGomType, t) { $t.getTailconcGomType() }
-  make(t0, t1) { tom.gom.adt.gom.types.gomtypelist.ConsconcGomType.make($t0, $t1) }
+%op GomTypeList ConsConcGomType(HeadConcGomType:GomType, TailConcGomType:GomTypeList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.gomtypelist.ConsConcGomType) }
+  get_slot(HeadConcGomType, t) { $t.getHeadConcGomType() }
+  get_slot(TailConcGomType, t) { $t.getTailConcGomType() }
+  make(t0, t1) { tom.gom.adt.gom.types.gomtypelist.ConsConcGomType.make($t0, $t1) }
 }
 
-%op ProductionList EmptyconcProduction() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.productionlist.EmptyconcProduction) }
-  make() { tom.gom.adt.gom.types.productionlist.EmptyconcProduction.make() }
+%op ProductionList EmptyConcProduction() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction) }
+  make() { tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() }
 }
 
-%op ProductionList ConsconcProduction(HeadconcProduction:Production, TailconcProduction:ProductionList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.productionlist.ConsconcProduction) }
-  get_slot(HeadconcProduction, t) { $t.getHeadconcProduction() }
-  get_slot(TailconcProduction, t) { $t.getTailconcProduction() }
-  make(t0, t1) { tom.gom.adt.gom.types.productionlist.ConsconcProduction.make($t0, $t1) }
+%op ProductionList ConsConcProduction(HeadConcProduction:Production, TailConcProduction:ProductionList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) }
+  get_slot(HeadConcProduction, t) { $t.getHeadConcProduction() }
+  get_slot(TailConcProduction, t) { $t.getTailConcProduction() }
+  make(t0, t1) { tom.gom.adt.gom.types.productionlist.ConsConcProduction.make($t0, $t1) }
 }
 
 %op Decl CutModule(MDecl:ModuleDecl) {
@@ -759,22 +759,22 @@
   make(t0) { tom.gom.adt.gom.types.decl.CutOperator.make($t0) }
 }
 
-%op ImportList EmptyconcImportedModule() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.importlist.EmptyconcImportedModule) }
-  make() { tom.gom.adt.gom.types.importlist.EmptyconcImportedModule.make() }
+%op ImportList EmptyConcImportedModule() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.importlist.EmptyConcImportedModule) }
+  make() { tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() }
 }
 
-%op ImportList ConsconcImportedModule(HeadconcImportedModule:ImportedModule, TailconcImportedModule:ImportList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.importlist.ConsconcImportedModule) }
-  get_slot(HeadconcImportedModule, t) { $t.getHeadconcImportedModule() }
-  get_slot(TailconcImportedModule, t) { $t.getTailconcImportedModule() }
-  make(t0, t1) { tom.gom.adt.gom.types.importlist.ConsconcImportedModule.make($t0, $t1) }
+%op ImportList ConsConcImportedModule(HeadConcImportedModule:ImportedModule, TailConcImportedModule:ImportList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.importlist.ConsConcImportedModule) }
+  get_slot(HeadConcImportedModule, t) { $t.getHeadConcImportedModule() }
+  get_slot(TailConcImportedModule, t) { $t.getTailConcImportedModule() }
+  make(t0, t1) { tom.gom.adt.gom.types.importlist.ConsConcImportedModule.make($t0, $t1) }
 }
 
-%op Sort Sort(Decl:SortDecl, Operators:OperatorDeclList) {
+%op Sort Sort(Decl:SortDecl, OperatorDecls:OperatorDeclList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sort.Sort) }
   get_slot(Decl, t) { $t.getDecl() }
-  get_slot(Operators, t) { $t.getOperators() }
+  get_slot(OperatorDecls, t) { $t.getOperatorDecls() }
   make(t0, t1) { tom.gom.adt.gom.types.sort.Sort.make($t0, $t1) }
 }
 
@@ -828,16 +828,16 @@
   make(t0, t1) { tom.gom.adt.gom.types.hookdecl.MappingHookDecl.make($t0, $t1) }
 }
 
-%op ModuleDeclList EmptyconcModuleDecl() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.moduledecllist.EmptyconcModuleDecl) }
-  make() { tom.gom.adt.gom.types.moduledecllist.EmptyconcModuleDecl.make() }
+%op ModuleDeclList EmptyConcModuleDecl() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl) }
+  make() { tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl.make() }
 }
 
-%op ModuleDeclList ConsconcModuleDecl(HeadconcModuleDecl:ModuleDecl, TailconcModuleDecl:ModuleDeclList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.moduledecllist.ConsconcModuleDecl) }
-  get_slot(HeadconcModuleDecl, t) { $t.getHeadconcModuleDecl() }
-  get_slot(TailconcModuleDecl, t) { $t.getTailconcModuleDecl() }
-  make(t0, t1) { tom.gom.adt.gom.types.moduledecllist.ConsconcModuleDecl.make($t0, $t1) }
+%op ModuleDeclList ConsConcModuleDecl(HeadConcModuleDecl:ModuleDecl, TailConcModuleDecl:ModuleDeclList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.moduledecllist.ConsConcModuleDecl) }
+  get_slot(HeadConcModuleDecl, t) { $t.getHeadConcModuleDecl() }
+  get_slot(TailConcModuleDecl, t) { $t.getTailConcModuleDecl() }
+  make(t0, t1) { tom.gom.adt.gom.types.moduledecllist.ConsConcModuleDecl.make($t0, $t1) }
 }
 
 %op Module Module(MDecl:ModuleDecl, Sorts:SortList) {
@@ -847,16 +847,16 @@
   make(t0, t1) { tom.gom.adt.gom.types.module.Module.make($t0, $t1) }
 }
 
-%op FieldList EmptyconcField() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.fieldlist.EmptyconcField) }
-  make() { tom.gom.adt.gom.types.fieldlist.EmptyconcField.make() }
+%op FieldList EmptyConcField() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField) }
+  make() { tom.gom.adt.gom.types.fieldlist.EmptyConcField.make() }
 }
 
-%op FieldList ConsconcField(HeadconcField:Field, TailconcField:FieldList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.fieldlist.ConsconcField) }
-  get_slot(HeadconcField, t) { $t.getHeadconcField() }
-  get_slot(TailconcField, t) { $t.getTailconcField() }
-  make(t0, t1) { tom.gom.adt.gom.types.fieldlist.ConsconcField.make($t0, $t1) }
+%op FieldList ConsConcField(HeadConcField:Field, TailConcField:FieldList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) }
+  get_slot(HeadConcField, t) { $t.getHeadConcField() }
+  get_slot(TailConcField, t) { $t.getTailConcField() }
+  make(t0, t1) { tom.gom.adt.gom.types.fieldlist.ConsConcField.make($t0, $t1) }
 }
 
 %op Grammar Grammar(ProductionList:ProductionList) {
@@ -871,28 +871,28 @@
   make(t0) { tom.gom.adt.gom.types.grammar.Sorts.make($t0) }
 }
 
-%op SlotList EmptyconcSlot() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.slotlist.EmptyconcSlot) }
-  make() { tom.gom.adt.gom.types.slotlist.EmptyconcSlot.make() }
+%op SlotList EmptyConcSlot() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot) }
+  make() { tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() }
 }
 
-%op SlotList ConsconcSlot(HeadconcSlot:Slot, TailconcSlot:SlotList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.slotlist.ConsconcSlot) }
-  get_slot(HeadconcSlot, t) { $t.getHeadconcSlot() }
-  get_slot(TailconcSlot, t) { $t.getTailconcSlot() }
-  make(t0, t1) { tom.gom.adt.gom.types.slotlist.ConsconcSlot.make($t0, $t1) }
+%op SlotList ConsConcSlot(HeadConcSlot:Slot, TailConcSlot:SlotList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) }
+  get_slot(HeadConcSlot, t) { $t.getHeadConcSlot() }
+  get_slot(TailConcSlot, t) { $t.getTailConcSlot() }
+  make(t0, t1) { tom.gom.adt.gom.types.slotlist.ConsConcSlot.make($t0, $t1) }
 }
 
-%op SortList EmptyconcSort() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortlist.EmptyconcSort) }
-  make() { tom.gom.adt.gom.types.sortlist.EmptyconcSort.make() }
+%op SortList EmptyConcSort() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort) }
+  make() { tom.gom.adt.gom.types.sortlist.EmptyConcSort.make() }
 }
 
-%op SortList ConsconcSort(HeadconcSort:Sort, TailconcSort:SortList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortlist.ConsconcSort) }
-  get_slot(HeadconcSort, t) { $t.getHeadconcSort() }
-  get_slot(TailconcSort, t) { $t.getTailconcSort() }
-  make(t0, t1) { tom.gom.adt.gom.types.sortlist.ConsconcSort.make($t0, $t1) }
+%op SortList ConsConcSort(HeadConcSort:Sort, TailConcSort:SortList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) }
+  get_slot(HeadConcSort, t) { $t.getHeadConcSort() }
+  get_slot(TailConcSort, t) { $t.getTailConcSort() }
+  make(t0, t1) { tom.gom.adt.gom.types.sortlist.ConsConcSort.make($t0, $t1) }
 }
 
 %op Arg Arg(Name:String) {
@@ -920,10 +920,10 @@
   make(t0, t1) { tom.gom.adt.gom.types.field.NamedField.make($t0, $t1) }
 }
 
-%op Production Production(Name:String, Domain:FieldList, Codomain:GomType, Option:Option) {
+%op Production Production(Name:String, DomainList:FieldList, Codomain:GomType, Option:Option) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.production.Production) }
   get_slot(Name, t) { $t.getName() }
-  get_slot(Domain, t) { $t.getDomain() }
+  get_slot(DomainList, t) { $t.getDomainList() }
   get_slot(Codomain, t) { $t.getCodomain() }
   get_slot(Option, t) { $t.getOption() }
   make(t0, t1, t2, t3) { tom.gom.adt.gom.types.production.Production.make($t0, $t1, $t2, $t3) }
@@ -940,6 +940,13 @@
   make(t0, t1, t2, t3, t4, t5) { tom.gom.adt.gom.types.production.Hook.make($t0, $t1, $t2, $t3, $t4, $t5) }
 }
 
+%op Production SortType(Type:GomType, ProductionList:ProductionList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.production.SortType) }
+  get_slot(Type, t) { $t.getType() }
+  get_slot(ProductionList, t) { $t.getProductionList() }
+  make(t0, t1) { tom.gom.adt.gom.types.production.SortType.make($t0, $t1) }
+}
+
 %op ModuleDecl ModuleDecl(ModuleName:GomModuleName, Pkg:String) {
   is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.moduledecl.ModuleDecl) }
   get_slot(ModuleName, t) { $t.getModuleName() }
@@ -947,16 +954,16 @@
   make(t0, t1) { tom.gom.adt.gom.types.moduledecl.ModuleDecl.make($t0, $t1) }
 }
 
-%op ModuleList EmptyconcModule() {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.modulelist.EmptyconcModule) }
-  make() { tom.gom.adt.gom.types.modulelist.EmptyconcModule.make() }
+%op ModuleList EmptyConcModule() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule) }
+  make() { tom.gom.adt.gom.types.modulelist.EmptyConcModule.make() }
 }
 
-%op ModuleList ConsconcModule(HeadconcModule:Module, TailconcModule:ModuleList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.modulelist.ConsconcModule) }
-  get_slot(HeadconcModule, t) { $t.getHeadconcModule() }
-  get_slot(TailconcModule, t) { $t.getTailconcModule() }
-  make(t0, t1) { tom.gom.adt.gom.types.modulelist.ConsconcModule.make($t0, $t1) }
+%op ModuleList ConsConcModule(HeadConcModule:Module, TailConcModule:ModuleList) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) }
+  get_slot(HeadConcModule, t) { $t.getHeadConcModule() }
+  get_slot(TailConcModule, t) { $t.getTailConcModule() }
+  make(t0, t1) { tom.gom.adt.gom.types.modulelist.ConsConcModule.make($t0, $t1) }
 }
 
 %op GomType GomType(Name:String) {
@@ -1005,175 +1012,175 @@
   is_empty(l) { $l.isEmptyCodeList() }
 }
 
-%oplist SlotFieldList concSlotField(SlotField*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.slotfieldlist.ConsconcSlotField) || ($t instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyconcSlotField)) }
-  make_empty() { tom.gom.adt.objects.types.slotfieldlist.EmptyconcSlotField.make() }
-  make_insert(e,l) { tom.gom.adt.objects.types.slotfieldlist.ConsconcSlotField.make($e,$l) }
-  get_head(l) { $l.getHeadconcSlotField() }
-  get_tail(l) { $l.getTailconcSlotField() }
-  is_empty(l) { $l.isEmptyconcSlotField() }
+%oplist SlotFieldList ConcSlotField(SlotField*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField) || ($t instanceof tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField)) }
+  make_empty() { tom.gom.adt.objects.types.slotfieldlist.EmptyConcSlotField.make() }
+  make_insert(e,l) { tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make($e,$l) }
+  get_head(l) { $l.getHeadConcSlotField() }
+  get_tail(l) { $l.getTailConcSlotField() }
+  is_empty(l) { $l.isEmptyConcSlotField() }
 }
 
-%oplist GomClassList concGomClass(GomClass*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.gomclasslist.ConsconcGomClass) || ($t instanceof tom.gom.adt.objects.types.gomclasslist.EmptyconcGomClass)) }
-  make_empty() { tom.gom.adt.objects.types.gomclasslist.EmptyconcGomClass.make() }
-  make_insert(e,l) { tom.gom.adt.objects.types.gomclasslist.ConsconcGomClass.make($e,$l) }
-  get_head(l) { $l.getHeadconcGomClass() }
-  get_tail(l) { $l.getTailconcGomClass() }
-  is_empty(l) { $l.isEmptyconcGomClass() }
+%oplist GomClassList ConcGomClass(GomClass*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || ($t instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) }
+  make_empty() { tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass.make() }
+  make_insert(e,l) { tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass.make($e,$l) }
+  get_head(l) { $l.getHeadConcGomClass() }
+  get_tail(l) { $l.getTailConcGomClass() }
+  is_empty(l) { $l.isEmptyConcGomClass() }
 }
 
-%oplist ClassNameList concClassName(ClassName*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.classnamelist.ConsconcClassName) || ($t instanceof tom.gom.adt.objects.types.classnamelist.EmptyconcClassName)) }
-  make_empty() { tom.gom.adt.objects.types.classnamelist.EmptyconcClassName.make() }
-  make_insert(e,l) { tom.gom.adt.objects.types.classnamelist.ConsconcClassName.make($e,$l) }
-  get_head(l) { $l.getHeadconcClassName() }
-  get_tail(l) { $l.getTailconcClassName() }
-  is_empty(l) { $l.isEmptyconcClassName() }
+%oplist ClassNameList ConcClassName(ClassName*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.classnamelist.ConsConcClassName) || ($t instanceof tom.gom.adt.objects.types.classnamelist.EmptyConcClassName)) }
+  make_empty() { tom.gom.adt.objects.types.classnamelist.EmptyConcClassName.make() }
+  make_insert(e,l) { tom.gom.adt.objects.types.classnamelist.ConsConcClassName.make($e,$l) }
+  get_head(l) { $l.getHeadConcClassName() }
+  get_tail(l) { $l.getTailConcClassName() }
+  is_empty(l) { $l.isEmptyConcClassName() }
 }
 
-%oplist HookList concHook(Hook*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.hooklist.ConsconcHook) || ($t instanceof tom.gom.adt.objects.types.hooklist.EmptyconcHook)) }
-  make_empty() { tom.gom.adt.objects.types.hooklist.EmptyconcHook.make() }
-  make_insert(e,l) { tom.gom.adt.objects.types.hooklist.ConsconcHook.make($e,$l) }
-  get_head(l) { $l.getHeadconcHook() }
-  get_tail(l) { $l.getTailconcHook() }
-  is_empty(l) { $l.isEmptyconcHook() }
+%oplist HookList ConcHook(Hook*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.objects.types.hooklist.ConsConcHook) || ($t instanceof tom.gom.adt.objects.types.hooklist.EmptyConcHook)) }
+  make_empty() { tom.gom.adt.objects.types.hooklist.EmptyConcHook.make() }
+  make_insert(e,l) { tom.gom.adt.objects.types.hooklist.ConsConcHook.make($e,$l) }
+  get_head(l) { $l.getHeadConcHook() }
+  get_tail(l) { $l.getTailConcHook() }
+  is_empty(l) { $l.isEmptyConcHook() }
 }
 
-%oplist ArgList concArg(Arg*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.arglist.ConsconcArg) || ($t instanceof tom.gom.adt.gom.types.arglist.EmptyconcArg)) }
-  make_empty() { tom.gom.adt.gom.types.arglist.EmptyconcArg.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.arglist.ConsconcArg.make($e,$l) }
-  get_head(l) { $l.getHeadconcArg() }
-  get_tail(l) { $l.getTailconcArg() }
-  is_empty(l) { $l.isEmptyconcArg() }
+%oplist ArgList ConcArg(Arg*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.arglist.ConsConcArg) || ($t instanceof tom.gom.adt.gom.types.arglist.EmptyConcArg)) }
+  make_empty() { tom.gom.adt.gom.types.arglist.EmptyConcArg.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.arglist.ConsConcArg.make($e,$l) }
+  get_head(l) { $l.getHeadConcArg() }
+  get_tail(l) { $l.getTailConcArg() }
+  is_empty(l) { $l.isEmptyConcArg() }
 }
 
-%oplist GomModuleList concGomModule(GomModule*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.gommodulelist.ConsconcGomModule) || ($t instanceof tom.gom.adt.gom.types.gommodulelist.EmptyconcGomModule)) }
-  make_empty() { tom.gom.adt.gom.types.gommodulelist.EmptyconcGomModule.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.gommodulelist.ConsconcGomModule.make($e,$l) }
-  get_head(l) { $l.getHeadconcGomModule() }
-  get_tail(l) { $l.getTailconcGomModule() }
-  is_empty(l) { $l.isEmptyconcGomModule() }
+%oplist GomModuleList ConcGomModule(GomModule*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule) || ($t instanceof tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule)) }
+  make_empty() { tom.gom.adt.gom.types.gommodulelist.EmptyConcGomModule.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.gommodulelist.ConsConcGomModule.make($e,$l) }
+  get_head(l) { $l.getHeadConcGomModule() }
+  get_tail(l) { $l.getTailConcGomModule() }
+  is_empty(l) { $l.isEmptyConcGomModule() }
 }
 
-%oplist GrammarList concGrammar(Grammar*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.grammarlist.ConsconcGrammar) || ($t instanceof tom.gom.adt.gom.types.grammarlist.EmptyconcGrammar)) }
-  make_empty() { tom.gom.adt.gom.types.grammarlist.EmptyconcGrammar.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.grammarlist.ConsconcGrammar.make($e,$l) }
-  get_head(l) { $l.getHeadconcGrammar() }
-  get_tail(l) { $l.getTailconcGrammar() }
-  is_empty(l) { $l.isEmptyconcGrammar() }
+%oplist GrammarList ConcGrammar(Grammar*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.grammarlist.ConsConcGrammar) || ($t instanceof tom.gom.adt.gom.types.grammarlist.EmptyConcGrammar)) }
+  make_empty() { tom.gom.adt.gom.types.grammarlist.EmptyConcGrammar.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.grammarlist.ConsConcGrammar.make($e,$l) }
+  get_head(l) { $l.getHeadConcGrammar() }
+  get_tail(l) { $l.getTailConcGrammar() }
+  is_empty(l) { $l.isEmptyConcGrammar() }
 }
 
-%oplist SectionList concSection(Section*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.sectionlist.ConsconcSection) || ($t instanceof tom.gom.adt.gom.types.sectionlist.EmptyconcSection)) }
-  make_empty() { tom.gom.adt.gom.types.sectionlist.EmptyconcSection.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.sectionlist.ConsconcSection.make($e,$l) }
-  get_head(l) { $l.getHeadconcSection() }
-  get_tail(l) { $l.getTailconcSection() }
-  is_empty(l) { $l.isEmptyconcSection() }
+%oplist SectionList ConcSection(Section*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.sectionlist.ConsConcSection) || ($t instanceof tom.gom.adt.gom.types.sectionlist.EmptyConcSection)) }
+  make_empty() { tom.gom.adt.gom.types.sectionlist.EmptyConcSection.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.sectionlist.ConsConcSection.make($e,$l) }
+  get_head(l) { $l.getHeadConcSection() }
+  get_tail(l) { $l.getTailConcSection() }
+  is_empty(l) { $l.isEmptyConcSection() }
 }
 
-%oplist OperatorDeclList concOperator(OperatorDecl*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.operatordecllist.ConsconcOperator) || ($t instanceof tom.gom.adt.gom.types.operatordecllist.EmptyconcOperator)) }
-  make_empty() { tom.gom.adt.gom.types.operatordecllist.EmptyconcOperator.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.operatordecllist.ConsconcOperator.make($e,$l) }
-  get_head(l) { $l.getHeadconcOperator() }
-  get_tail(l) { $l.getTailconcOperator() }
-  is_empty(l) { $l.isEmptyconcOperator() }
+%oplist OperatorDeclList ConcOperator(OperatorDecl*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.operatordecllist.ConsConcOperator) || ($t instanceof tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator)) }
+  make_empty() { tom.gom.adt.gom.types.operatordecllist.EmptyConcOperator.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.operatordecllist.ConsConcOperator.make($e,$l) }
+  get_head(l) { $l.getHeadConcOperator() }
+  get_tail(l) { $l.getTailConcOperator() }
+  is_empty(l) { $l.isEmptyConcOperator() }
 }
 
-%oplist HookDeclList concHookDecl(HookDecl*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.hookdecllist.ConsconcHookDecl) || ($t instanceof tom.gom.adt.gom.types.hookdecllist.EmptyconcHookDecl)) }
-  make_empty() { tom.gom.adt.gom.types.hookdecllist.EmptyconcHookDecl.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.hookdecllist.ConsconcHookDecl.make($e,$l) }
-  get_head(l) { $l.getHeadconcHookDecl() }
-  get_tail(l) { $l.getTailconcHookDecl() }
-  is_empty(l) { $l.isEmptyconcHookDecl() }
+%oplist HookDeclList ConcHookDecl(HookDecl*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl) || ($t instanceof tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl)) }
+  make_empty() { tom.gom.adt.gom.types.hookdecllist.EmptyConcHookDecl.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.hookdecllist.ConsConcHookDecl.make($e,$l) }
+  get_head(l) { $l.getHeadConcHookDecl() }
+  get_tail(l) { $l.getTailConcHookDecl() }
+  is_empty(l) { $l.isEmptyConcHookDecl() }
 }
 
-%oplist SortDeclList concSortDecl(SortDecl*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.sortdecllist.ConsconcSortDecl) || ($t instanceof tom.gom.adt.gom.types.sortdecllist.EmptyconcSortDecl)) }
-  make_empty() { tom.gom.adt.gom.types.sortdecllist.EmptyconcSortDecl.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.sortdecllist.ConsconcSortDecl.make($e,$l) }
-  get_head(l) { $l.getHeadconcSortDecl() }
-  get_tail(l) { $l.getTailconcSortDecl() }
-  is_empty(l) { $l.isEmptyconcSortDecl() }
+%oplist SortDeclList ConcSortDecl(SortDecl*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.sortdecllist.ConsConcSortDecl) || ($t instanceof tom.gom.adt.gom.types.sortdecllist.EmptyConcSortDecl)) }
+  make_empty() { tom.gom.adt.gom.types.sortdecllist.EmptyConcSortDecl.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.sortdecllist.ConsConcSortDecl.make($e,$l) }
+  get_head(l) { $l.getHeadConcSortDecl() }
+  get_tail(l) { $l.getTailConcSortDecl() }
+  is_empty(l) { $l.isEmptyConcSortDecl() }
 }
 
-%oplist GomTypeList concGomType(GomType*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.gomtypelist.ConsconcGomType) || ($t instanceof tom.gom.adt.gom.types.gomtypelist.EmptyconcGomType)) }
-  make_empty() { tom.gom.adt.gom.types.gomtypelist.EmptyconcGomType.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.gomtypelist.ConsconcGomType.make($e,$l) }
-  get_head(l) { $l.getHeadconcGomType() }
-  get_tail(l) { $l.getTailconcGomType() }
-  is_empty(l) { $l.isEmptyconcGomType() }
+%oplist GomTypeList ConcGomType(GomType*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.gomtypelist.ConsConcGomType) || ($t instanceof tom.gom.adt.gom.types.gomtypelist.EmptyConcGomType)) }
+  make_empty() { tom.gom.adt.gom.types.gomtypelist.EmptyConcGomType.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.gomtypelist.ConsConcGomType.make($e,$l) }
+  get_head(l) { $l.getHeadConcGomType() }
+  get_tail(l) { $l.getTailConcGomType() }
+  is_empty(l) { $l.isEmptyConcGomType() }
 }
 
-%oplist ProductionList concProduction(Production*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.productionlist.ConsconcProduction) || ($t instanceof tom.gom.adt.gom.types.productionlist.EmptyconcProduction)) }
-  make_empty() { tom.gom.adt.gom.types.productionlist.EmptyconcProduction.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.productionlist.ConsconcProduction.make($e,$l) }
-  get_head(l) { $l.getHeadconcProduction() }
-  get_tail(l) { $l.getTailconcProduction() }
-  is_empty(l) { $l.isEmptyconcProduction() }
+%oplist ProductionList ConcProduction(Production*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.productionlist.ConsConcProduction) || ($t instanceof tom.gom.adt.gom.types.productionlist.EmptyConcProduction)) }
+  make_empty() { tom.gom.adt.gom.types.productionlist.EmptyConcProduction.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.productionlist.ConsConcProduction.make($e,$l) }
+  get_head(l) { $l.getHeadConcProduction() }
+  get_tail(l) { $l.getTailConcProduction() }
+  is_empty(l) { $l.isEmptyConcProduction() }
 }
 
-%oplist ImportList concImportedModule(ImportedModule*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.importlist.ConsconcImportedModule) || ($t instanceof tom.gom.adt.gom.types.importlist.EmptyconcImportedModule)) }
-  make_empty() { tom.gom.adt.gom.types.importlist.EmptyconcImportedModule.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.importlist.ConsconcImportedModule.make($e,$l) }
-  get_head(l) { $l.getHeadconcImportedModule() }
-  get_tail(l) { $l.getTailconcImportedModule() }
-  is_empty(l) { $l.isEmptyconcImportedModule() }
+%oplist ImportList ConcImportedModule(ImportedModule*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.importlist.ConsConcImportedModule) || ($t instanceof tom.gom.adt.gom.types.importlist.EmptyConcImportedModule)) }
+  make_empty() { tom.gom.adt.gom.types.importlist.EmptyConcImportedModule.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.importlist.ConsConcImportedModule.make($e,$l) }
+  get_head(l) { $l.getHeadConcImportedModule() }
+  get_tail(l) { $l.getTailConcImportedModule() }
+  is_empty(l) { $l.isEmptyConcImportedModule() }
 }
 
-%oplist ModuleDeclList concModuleDecl(ModuleDecl*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.moduledecllist.ConsconcModuleDecl) || ($t instanceof tom.gom.adt.gom.types.moduledecllist.EmptyconcModuleDecl)) }
-  make_empty() { tom.gom.adt.gom.types.moduledecllist.EmptyconcModuleDecl.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.moduledecllist.ConsconcModuleDecl.make($e,$l) }
-  get_head(l) { $l.getHeadconcModuleDecl() }
-  get_tail(l) { $l.getTailconcModuleDecl() }
-  is_empty(l) { $l.isEmptyconcModuleDecl() }
+%oplist ModuleDeclList ConcModuleDecl(ModuleDecl*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.moduledecllist.ConsConcModuleDecl) || ($t instanceof tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl)) }
+  make_empty() { tom.gom.adt.gom.types.moduledecllist.EmptyConcModuleDecl.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.moduledecllist.ConsConcModuleDecl.make($e,$l) }
+  get_head(l) { $l.getHeadConcModuleDecl() }
+  get_tail(l) { $l.getTailConcModuleDecl() }
+  is_empty(l) { $l.isEmptyConcModuleDecl() }
 }
 
-%oplist FieldList concField(Field*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.fieldlist.ConsconcField) || ($t instanceof tom.gom.adt.gom.types.fieldlist.EmptyconcField)) }
-  make_empty() { tom.gom.adt.gom.types.fieldlist.EmptyconcField.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.fieldlist.ConsconcField.make($e,$l) }
-  get_head(l) { $l.getHeadconcField() }
-  get_tail(l) { $l.getTailconcField() }
-  is_empty(l) { $l.isEmptyconcField() }
+%oplist FieldList ConcField(Field*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.fieldlist.ConsConcField) || ($t instanceof tom.gom.adt.gom.types.fieldlist.EmptyConcField)) }
+  make_empty() { tom.gom.adt.gom.types.fieldlist.EmptyConcField.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.fieldlist.ConsConcField.make($e,$l) }
+  get_head(l) { $l.getHeadConcField() }
+  get_tail(l) { $l.getTailConcField() }
+  is_empty(l) { $l.isEmptyConcField() }
 }
 
-%oplist SlotList concSlot(Slot*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.slotlist.ConsconcSlot) || ($t instanceof tom.gom.adt.gom.types.slotlist.EmptyconcSlot)) }
-  make_empty() { tom.gom.adt.gom.types.slotlist.EmptyconcSlot.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.slotlist.ConsconcSlot.make($e,$l) }
-  get_head(l) { $l.getHeadconcSlot() }
-  get_tail(l) { $l.getTailconcSlot() }
-  is_empty(l) { $l.isEmptyconcSlot() }
+%oplist SlotList ConcSlot(Slot*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.slotlist.ConsConcSlot) || ($t instanceof tom.gom.adt.gom.types.slotlist.EmptyConcSlot)) }
+  make_empty() { tom.gom.adt.gom.types.slotlist.EmptyConcSlot.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.slotlist.ConsConcSlot.make($e,$l) }
+  get_head(l) { $l.getHeadConcSlot() }
+  get_tail(l) { $l.getTailConcSlot() }
+  is_empty(l) { $l.isEmptyConcSlot() }
 }
 
-%oplist SortList concSort(Sort*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.sortlist.ConsconcSort) || ($t instanceof tom.gom.adt.gom.types.sortlist.EmptyconcSort)) }
-  make_empty() { tom.gom.adt.gom.types.sortlist.EmptyconcSort.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.sortlist.ConsconcSort.make($e,$l) }
-  get_head(l) { $l.getHeadconcSort() }
-  get_tail(l) { $l.getTailconcSort() }
-  is_empty(l) { $l.isEmptyconcSort() }
+%oplist SortList ConcSort(Sort*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.sortlist.ConsConcSort) || ($t instanceof tom.gom.adt.gom.types.sortlist.EmptyConcSort)) }
+  make_empty() { tom.gom.adt.gom.types.sortlist.EmptyConcSort.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.sortlist.ConsConcSort.make($e,$l) }
+  get_head(l) { $l.getHeadConcSort() }
+  get_tail(l) { $l.getTailConcSort() }
+  is_empty(l) { $l.isEmptyConcSort() }
 }
 
-%oplist ModuleList concModule(Module*) {
-  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.modulelist.ConsconcModule) || ($t instanceof tom.gom.adt.gom.types.modulelist.EmptyconcModule)) }
-  make_empty() { tom.gom.adt.gom.types.modulelist.EmptyconcModule.make() }
-  make_insert(e,l) { tom.gom.adt.gom.types.modulelist.ConsconcModule.make($e,$l) }
-  get_head(l) { $l.getHeadconcModule() }
-  get_tail(l) { $l.getTailconcModule() }
-  is_empty(l) { $l.isEmptyconcModule() }
+%oplist ModuleList ConcModule(Module*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.gom.types.modulelist.ConsConcModule) || ($t instanceof tom.gom.adt.gom.types.modulelist.EmptyConcModule)) }
+  make_empty() { tom.gom.adt.gom.types.modulelist.EmptyConcModule.make() }
+  make_insert(e,l) { tom.gom.adt.gom.types.modulelist.ConsConcModule.make($e,$l) }
+  get_head(l) { $l.getHeadConcModule() }
+  get_tail(l) { $l.getTailConcModule() }
+  is_empty(l) { $l.isEmptyConcModule() }
 }
 
 %oplist Option OptionList(Option*) {

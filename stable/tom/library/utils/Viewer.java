@@ -189,7 +189,7 @@ public class Viewer {
 
   private static void ATermToTree(aterm.ATerm term, Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
-      {if ( term instanceof aterm.ATerm ) {{  aterm.ATerm  tomMatch555NameNumberfreshSubject_1=(( aterm.ATerm )term);if ( tomMatch555NameNumberfreshSubject_1 instanceof aterm.ATermAppl ) {{  aterm.AFun  tomMatch555NameNumber_freshVar_0= ((aterm.ATermAppl)tomMatch555NameNumberfreshSubject_1).getAFun() ;{  aterm.ATermList  tomMatch555NameNumber_freshVar_1= ((aterm.ATermAppl)tomMatch555NameNumberfreshSubject_1).getArguments() ;if ( tomMatch555NameNumber_freshVar_0 instanceof aterm.AFun ) {{  String  tomMatch555NameNumber_freshVar_2= tomMatch555NameNumber_freshVar_0.getName() ;{  String  tom_name=tomMatch555NameNumber_freshVar_2;{  aterm.ATermList  tom_list=tomMatch555NameNumber_freshVar_1;if ( true ) {
+      {if ( term instanceof aterm.ATerm ) {{  aterm.ATerm  tomMatch562NameNumberfreshSubject_1=(( aterm.ATerm )term);if ( tomMatch562NameNumberfreshSubject_1 instanceof aterm.ATermAppl ) {{  aterm.AFun  tomMatch562NameNumber_freshVar_0= ((aterm.ATermAppl)tomMatch562NameNumberfreshSubject_1).getAFun() ;{  aterm.ATermList  tomMatch562NameNumber_freshVar_1= ((aterm.ATermAppl)tomMatch562NameNumberfreshSubject_1).getArguments() ;if ( tomMatch562NameNumber_freshVar_0 instanceof aterm.AFun ) {{  String  tomMatch562NameNumber_freshVar_2= tomMatch562NameNumber_freshVar_0.getName() ;{  String  tom_name=tomMatch562NameNumber_freshVar_2;{  aterm.ATermList  tom_list=tomMatch562NameNumber_freshVar_1;if ( true ) {
 
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (a.getArity() == 0) {  // no child
@@ -202,31 +202,31 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + tom_name.length() + 3;
-            {if ( tom_list instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch556NameNumberfreshSubject_1=(( aterm.ATermList )tom_list);if ( tomMatch556NameNumberfreshSubject_1 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch556NameNumber_freshVar_0=tomMatch556NameNumberfreshSubject_1;if (!( tomMatch556NameNumber_freshVar_0.isEmpty() )) {{  aterm.ATermList  tomMatch556NameNumber_freshVar_1= tomMatch556NameNumber_freshVar_0.getNext() ;{  aterm.ATermList  tomMatch556NameNumber_begin_3=tomMatch556NameNumber_freshVar_1;{  aterm.ATermList  tomMatch556NameNumber_end_4=tomMatch556NameNumber_freshVar_1;do {{{  aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch556NameNumber_begin_3,tomMatch556NameNumber_end_4, aterm.pure.SingletonFactory.getInstance().makeList() );{  aterm.ATermList  tomMatch556NameNumber_freshVar_2=tomMatch556NameNumber_end_4;if (!( tomMatch556NameNumber_freshVar_2.isEmpty() )) {{  aterm.ATermList  tomMatch556NameNumber_freshVar_5= tomMatch556NameNumber_freshVar_2.getNext() ;if ( tomMatch556NameNumber_freshVar_5.isEmpty() ) {if ( true ) {
+            {if ( tom_list instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch563NameNumberfreshSubject_1=(( aterm.ATermList )tom_list);if ( tomMatch563NameNumberfreshSubject_1 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch563NameNumber_freshVar_0=tomMatch563NameNumberfreshSubject_1;if (!( tomMatch563NameNumber_freshVar_0.isEmpty() )) {{  aterm.ATermList  tomMatch563NameNumber_freshVar_1= tomMatch563NameNumber_freshVar_0.getNext() ;{  aterm.ATermList  tomMatch563NameNumber_begin_3=tomMatch563NameNumber_freshVar_1;{  aterm.ATermList  tomMatch563NameNumber_end_4=tomMatch563NameNumber_freshVar_1;do {{{  aterm.ATermList  tom_l=tom_get_slice_concATerm(tomMatch563NameNumber_begin_3,tomMatch563NameNumber_end_4, aterm.pure.SingletonFactory.getInstance().makeList() );{  aterm.ATermList  tomMatch563NameNumber_freshVar_2=tomMatch563NameNumber_end_4;if (!( tomMatch563NameNumber_freshVar_2.isEmpty() )) {{  aterm.ATermList  tomMatch563NameNumber_freshVar_5= tomMatch563NameNumber_freshVar_2.getNext() ;if ( tomMatch563NameNumber_freshVar_5.isEmpty() ) {if ( true ) {
 
                 // first child
                 w.write('\u2500' + tom_name+ "\u2500\u252C");
                 context.push(ndeep-1); 
-                ATermToTree( tomMatch556NameNumber_freshVar_0.getFirst() ,w,context,ndeep);
+                ATermToTree( tomMatch563NameNumber_freshVar_0.getFirst() ,w,context,ndeep);
                 context.pop();
                 w.write('\n');
 
                 // 2 ... n-1
-                {if ( tom_l instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch557NameNumberfreshSubject_1=(( aterm.ATermList )tom_l);if ( tomMatch557NameNumberfreshSubject_1 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch557NameNumber_freshVar_0=tomMatch557NameNumberfreshSubject_1;{  aterm.ATermList  tomMatch557NameNumber_begin_2=tomMatch557NameNumber_freshVar_0;{  aterm.ATermList  tomMatch557NameNumber_end_3=tomMatch557NameNumber_freshVar_0;do {{{  aterm.ATermList  tomMatch557NameNumber_freshVar_1=tomMatch557NameNumber_end_3;if (!( tomMatch557NameNumber_freshVar_1.isEmpty() )) {{  aterm.ATermList  tomMatch557NameNumber_freshVar_4= tomMatch557NameNumber_freshVar_1.getNext() ;if ( true ) {
+                {if ( tom_l instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch564NameNumberfreshSubject_1=(( aterm.ATermList )tom_l);if ( tomMatch564NameNumberfreshSubject_1 instanceof aterm.ATermList ) {{  aterm.ATermList  tomMatch564NameNumber_freshVar_0=tomMatch564NameNumberfreshSubject_1;{  aterm.ATermList  tomMatch564NameNumber_begin_2=tomMatch564NameNumber_freshVar_0;{  aterm.ATermList  tomMatch564NameNumber_end_3=tomMatch564NameNumber_freshVar_0;do {{{  aterm.ATermList  tomMatch564NameNumber_freshVar_1=tomMatch564NameNumber_end_3;if (!( tomMatch564NameNumber_freshVar_1.isEmpty() )) {{  aterm.ATermList  tomMatch564NameNumber_freshVar_4= tomMatch564NameNumber_freshVar_1.getNext() ;if ( true ) {
 
                     writeContext(w,context,ndeep-1);
                     w.write("\u251C");
                     context.push(ndeep-1);
-                    ATermToTree( tomMatch557NameNumber_freshVar_1.getFirst() ,w,context,ndeep);
+                    ATermToTree( tomMatch564NameNumber_freshVar_1.getFirst() ,w,context,ndeep);
                     context.pop();
                     w.write('\n');
-                  }}}}if ( tomMatch557NameNumber_end_3.isEmpty() ) {tomMatch557NameNumber_end_3=tomMatch557NameNumber_begin_2;} else {tomMatch557NameNumber_end_3= tomMatch557NameNumber_end_3.getNext() ;}}} while(!( tomMatch557NameNumber_end_3==tomMatch557NameNumber_begin_2 ));}}}}}}}
+                  }}}}if ( tomMatch564NameNumber_end_3.isEmpty() ) {tomMatch564NameNumber_end_3=tomMatch564NameNumber_begin_2;} else {tomMatch564NameNumber_end_3= tomMatch564NameNumber_end_3.getNext() ;}}} while(!( tomMatch564NameNumber_end_3==tomMatch564NameNumber_begin_2 ));}}}}}}}
 
                 // last child
                 writeContext(w,context,ndeep-1);
                 w.write("\u2514");
-                ATermToTree( tomMatch556NameNumber_freshVar_2.getFirst() ,w,context,ndeep);
-              }}}}}}if ( tomMatch556NameNumber_end_4.isEmpty() ) {tomMatch556NameNumber_end_4=tomMatch556NameNumber_begin_3;} else {tomMatch556NameNumber_end_4= tomMatch556NameNumber_end_4.getNext() ;}}} while(!( tomMatch556NameNumber_end_4==tomMatch556NameNumber_begin_3 ));}}}}}}}}}
+                ATermToTree( tomMatch563NameNumber_freshVar_2.getFirst() ,w,context,ndeep);
+              }}}}}}if ( tomMatch563NameNumber_end_4.isEmpty() ) {tomMatch563NameNumber_end_4=tomMatch563NameNumber_begin_3;} else {tomMatch563NameNumber_end_4= tomMatch563NameNumber_end_4.getNext() ;}}} while(!( tomMatch563NameNumber_end_4==tomMatch563NameNumber_begin_3 ));}}}}}}}}}
 
           }
         }}}}}}}}}}}
@@ -257,11 +257,11 @@ public class Viewer {
       w.flush();
     }
 
-  private static class RemoveMu extends  tom.library.sl.reflective.StrategyFwd  {public RemoveMu() { super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch558NameNumberfreshSubject_1=(( tom.library.sl.Strategy )tom__arg);if (( (tomMatch558NameNumberfreshSubject_1 instanceof tom.library.sl.Mu) )) {{  tom.library.sl.Strategy  tomMatch558NameNumber_freshVar_0=( (tom.library.sl.Strategy)tomMatch558NameNumberfreshSubject_1.getChildAt(tom.library.sl.Mu.V) );if ( true ) {
+  private static class RemoveMu extends  tom.library.sl.reflective.StrategyFwd  {public RemoveMu() { super(( new tom.library.sl.Identity() ));}public tom.library.sl.Visitable[] getChildren() {tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];stratChilds[0] = super.getChildAt(0);return stratChilds;}public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {super.setChildAt(0, children[0]);return this;}public int getChildCount() { return 1; }public tom.library.sl.Visitable getChildAt(int index) {switch (index) {case 0: return super.getChildAt(0);default: throw new IndexOutOfBoundsException();}}public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {switch (index) {case 0: return super.setChildAt(0, child);default: throw new IndexOutOfBoundsException();}}public  tom.library.sl.Strategy  visit_Strategy( tom.library.sl.Strategy  tom__arg, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {{if ( (tom__arg instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch565NameNumberfreshSubject_1=(( tom.library.sl.Strategy )tom__arg);if (( (tomMatch565NameNumberfreshSubject_1 instanceof tom.library.sl.Mu) )) {{  tom.library.sl.Strategy  tomMatch565NameNumber_freshVar_0=( (tom.library.sl.Strategy)tomMatch565NameNumberfreshSubject_1.getChildAt(tom.library.sl.Mu.V) );if ( true ) {
 
 
-        return tomMatch558NameNumber_freshVar_0;
-      }}}}}if ( (tom__arg instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch558NameNumberfreshSubject_1=(( tom.library.sl.Strategy )tom__arg);if ( true ) {
+        return tomMatch565NameNumber_freshVar_0;
+      }}}}}if ( (tom__arg instanceof tom.library.sl.Strategy) ) {{  tom.library.sl.Strategy  tomMatch565NameNumberfreshSubject_1=(( tom.library.sl.Strategy )tom__arg);if ( true ) {
 
         if (getEnvironment().getCurrentStack().contains(getEnvironment().getSubject())) {
           //corresponds to a pointer due to MuVar

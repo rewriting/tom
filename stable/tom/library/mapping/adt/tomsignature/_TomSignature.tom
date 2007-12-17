@@ -2245,6 +2245,31 @@
   make( new_AstName,  new_ExtendsType,  new_SuperTerm,  new_Declaration) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_Class( $new_AstName,  $new_ExtendsType,  $new_SuperTerm,  $new_Declaration) }
 }
 
+    %op Strategy _IntrospectorClass(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._IntrospectorClass)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.tomdeclaration.strategy.declaration._IntrospectorClass($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_IntrospectorClass(s:Strategy) {
+    make(s) { `Sequence(Is_IntrospectorClass(),s) }
+  }
+
+  %op Strategy Is_IntrospectorClass() {
+    make() { new tom.engine.adt.tomdeclaration.strategy.declaration.Is_IntrospectorClass()}
+  }
+  
+%op Strategy Make_IntrospectorClass(_AstName:Strategy, _Declaration:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_IntrospectorClass))) }
+
+  get_slot(_AstName, t) { $t._AstName }
+  get_slot(_Declaration, t) { $t._Declaration }
+  make( new_AstName,  new_Declaration) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_IntrospectorClass( $new_AstName,  $new_Declaration) }
+}
+
     %op Strategy _SymbolDecl(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._SymbolDecl)))}
       

@@ -40,7 +40,6 @@ import org.apache.tools.ant.types.Environment.Variable;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MatchingTask;
-//import org.apache.tools.ant.taskdefs.Java;
 
 /**
  * Compiles Tom source files. This task can take the following

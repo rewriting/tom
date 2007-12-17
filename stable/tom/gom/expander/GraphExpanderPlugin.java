@@ -86,7 +86,7 @@ public class GraphExpanderPlugin extends GomGenericPlugin {
       GraphExpander expander = new GraphExpander(streamManager,getOptionBooleanValue("termgraph"));
       Pair mpair = expander.expand(typedModuleList,hookList);
       referencedModuleList = mpair.getModules();
-      referencedHookList = mpair.getHooks();
+      referencedHookList = mpair.getHookDecls();
       if(referencedModuleList == null) {
         getLogger().log(Level.SEVERE, 
             GomMessage.expansionIssue.getMessage(),

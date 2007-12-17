@@ -48,10 +48,10 @@ public class ZenonBackend {
   }
 
   public String genZSymbol(ZSymbol symbol) {
-    {if ( (symbol instanceof tom.engine.adt.zenon.types.ZSymbol) ) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch313NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSymbol )symbol);if ( (tomMatch313NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {{  String  tomMatch313NameNumber_freshVar_0= tomMatch313NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (symbol instanceof tom.engine.adt.zenon.types.ZSymbol) ) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSymbol )symbol);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {{  String  tomMatch316NameNumber_freshVar_0= tomMatch316NameNumberfreshSubject_1.getName() ;if ( true ) {
 
         // manage builtins
-        String symbolName = tomiltools.replaceNumbersByString(tomMatch313NameNumber_freshVar_0);
+        String symbolName = tomiltools.replaceNumbersByString(tomMatch316NameNumber_freshVar_0);
         return symbolName+ "_";
       }}}}}}
 
@@ -59,27 +59,27 @@ public class ZenonBackend {
   }
 
   public String genZType(ZType type) {
-    {if ( (type instanceof tom.engine.adt.zenon.types.ZType) ) {{  tom.engine.adt.zenon.types.ZType  tomMatch314NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZType )type);if ( (tomMatch314NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.ztype.ztype) ) {{  String  tomMatch314NameNumber_freshVar_0= tomMatch314NameNumberfreshSubject_1.getTname() ;if ( true ) {
+    {if ( (type instanceof tom.engine.adt.zenon.types.ZType) ) {{  tom.engine.adt.zenon.types.ZType  tomMatch317NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZType )type);if ( (tomMatch317NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.ztype.ztype) ) {{  String  tomMatch317NameNumber_freshVar_0= tomMatch317NameNumberfreshSubject_1.getTname() ;if ( true ) {
 
-        return tomMatch314NameNumber_freshVar_0;
+        return tomMatch317NameNumber_freshVar_0;
       }}}}}}
 
     return "errorZType";
   }
 
   public String genZTerm(ZTerm term) {
-    {if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch315NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch315NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zvar) ) {{  String  tomMatch315NameNumber_freshVar_0= tomMatch315NameNumberfreshSubject_1.getVarname() ;if ( true ) {
- return tomMatch315NameNumber_freshVar_0; }}}}}if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch315NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch315NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zappl) ) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch315NameNumber_freshVar_1= tomMatch315NameNumberfreshSubject_1.getZsymb() ;{  tom.engine.adt.zenon.types.ZTermList  tomMatch315NameNumber_freshVar_2= tomMatch315NameNumberfreshSubject_1.getTermlist() ;if ( (tomMatch315NameNumber_freshVar_1 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {{  String  tomMatch315NameNumber_freshVar_3= tomMatch315NameNumber_freshVar_1.getName() ;if ( true ) {
+    {if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch318NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch318NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zvar) ) {{  String  tomMatch318NameNumber_freshVar_0= tomMatch318NameNumberfreshSubject_1.getVarname() ;if ( true ) {
+ return tomMatch318NameNumber_freshVar_0; }}}}}if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch318NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch318NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zappl) ) {{  tom.engine.adt.zenon.types.ZSymbol  tomMatch318NameNumber_freshVar_1= tomMatch318NameNumberfreshSubject_1.getZsymb() ;{  tom.engine.adt.zenon.types.ZTermList  tomMatch318NameNumber_freshVar_2= tomMatch318NameNumberfreshSubject_1.getTermlist() ;if ( (tomMatch318NameNumber_freshVar_1 instanceof tom.engine.adt.zenon.types.zsymbol.zsymbol) ) {{  String  tomMatch318NameNumber_freshVar_3= tomMatch318NameNumber_freshVar_1.getName() ;if ( true ) {
  
         // manage builtins
-        String realName = tomiltools.replaceNumbersByString(tomMatch315NameNumber_freshVar_3);
-        return "(" + realName +" "+genZTermList(tomMatch315NameNumber_freshVar_2)+")"; 
-      }}}}}}}}if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch315NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch315NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zst) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch315NameNumber_freshVar_4= tomMatch315NameNumberfreshSubject_1.getAbst() ;{  int  tomMatch315NameNumber_freshVar_5= tomMatch315NameNumberfreshSubject_1.getIndex() ;if ( true ) {
+        String realName = tomiltools.replaceNumbersByString(tomMatch318NameNumber_freshVar_3);
+        return "(" + realName +" "+genZTermList(tomMatch318NameNumber_freshVar_2)+")"; 
+      }}}}}}}}if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch318NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch318NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zst) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch318NameNumber_freshVar_4= tomMatch318NameNumberfreshSubject_1.getAbst() ;{  int  tomMatch318NameNumber_freshVar_5= tomMatch318NameNumberfreshSubject_1.getIndex() ;if ( true ) {
  
-        return "(_"+tomMatch315NameNumber_freshVar_5+" "+genZTerm(tomMatch315NameNumber_freshVar_4)+")";
-      }}}}}}if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch315NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch315NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zsl) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch315NameNumber_freshVar_6= tomMatch315NameNumberfreshSubject_1.getAbst() ;{  String  tomMatch315NameNumber_freshVar_7= tomMatch315NameNumberfreshSubject_1.getName() ;if ( true ) {
+        return "(_"+tomMatch318NameNumber_freshVar_5+" "+genZTerm(tomMatch318NameNumber_freshVar_4)+")";
+      }}}}}}if ( (term instanceof tom.engine.adt.zenon.types.ZTerm) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch318NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZTerm )term);if ( (tomMatch318NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zterm.zsl) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch318NameNumber_freshVar_6= tomMatch318NameNumberfreshSubject_1.getAbst() ;{  String  tomMatch318NameNumber_freshVar_7= tomMatch318NameNumberfreshSubject_1.getName() ;if ( true ) {
  
-        return "(_"+tomMatch315NameNumber_freshVar_7+" "+genZTerm(tomMatch315NameNumber_freshVar_6)+")";
+        return "(_"+tomMatch318NameNumber_freshVar_7+" "+genZTerm(tomMatch318NameNumber_freshVar_6)+")";
       }}}}}}}
 
     return "errorZTerm";
@@ -95,21 +95,21 @@ public class ZenonBackend {
   }
 
   public String genZExpr(ZExpr expr) {
-    {if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.ztrue) ) {if ( true ) {
- return "True";}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zfalse) ) {if ( true ) {
- return "False";}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zisfsym) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch316NameNumber_freshVar_0= tomMatch316NameNumberfreshSubject_1.getT() ;{  tom.engine.adt.zenon.types.ZSymbol  tomMatch316NameNumber_freshVar_1= tomMatch316NameNumberfreshSubject_1.getSymbol() ;if ( true ) {
+    {if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.ztrue) ) {if ( true ) {
+ return "True";}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zfalse) ) {if ( true ) {
+ return "False";}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zisfsym) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch319NameNumber_freshVar_0= tomMatch319NameNumberfreshSubject_1.getT() ;{  tom.engine.adt.zenon.types.ZSymbol  tomMatch319NameNumber_freshVar_1= tomMatch319NameNumberfreshSubject_1.getSymbol() ;if ( true ) {
 
-        return "((symb "+genZTerm(tomMatch316NameNumber_freshVar_0)+") = "+genZSymbol(tomMatch316NameNumber_freshVar_1)+")";
-      }}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zeq) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch316NameNumber_freshVar_2= tomMatch316NameNumberfreshSubject_1.getLt() ;{  tom.engine.adt.zenon.types.ZTerm  tomMatch316NameNumber_freshVar_3= tomMatch316NameNumberfreshSubject_1.getRt() ;if ( true ) {
+        return "((symb "+genZTerm(tomMatch319NameNumber_freshVar_0)+") = "+genZSymbol(tomMatch319NameNumber_freshVar_1)+")";
+      }}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zeq) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch319NameNumber_freshVar_2= tomMatch319NameNumberfreshSubject_1.getLt() ;{  tom.engine.adt.zenon.types.ZTerm  tomMatch319NameNumber_freshVar_3= tomMatch319NameNumberfreshSubject_1.getRt() ;if ( true ) {
 
-        return "("+genZTerm(tomMatch316NameNumber_freshVar_2)+" = "+genZTerm(tomMatch316NameNumber_freshVar_3)+")";
-      }}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zforall) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch316NameNumber_freshVar_4= tomMatch316NameNumberfreshSubject_1.getVar() ;{  tom.engine.adt.zenon.types.ZType  tomMatch316NameNumber_freshVar_5= tomMatch316NameNumberfreshSubject_1.getAztype() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_6= tomMatch316NameNumberfreshSubject_1.getExpr() ;if ( true ) {
+        return "("+genZTerm(tomMatch319NameNumber_freshVar_2)+" = "+genZTerm(tomMatch319NameNumber_freshVar_3)+")";
+      }}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zforall) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch319NameNumber_freshVar_4= tomMatch319NameNumberfreshSubject_1.getVar() ;{  tom.engine.adt.zenon.types.ZType  tomMatch319NameNumber_freshVar_5= tomMatch319NameNumberfreshSubject_1.getAztype() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_6= tomMatch319NameNumberfreshSubject_1.getExpr() ;if ( true ) {
 
-        return "forall "+genZTerm(tomMatch316NameNumber_freshVar_4)+" : "+genZType(tomMatch316NameNumber_freshVar_5)+",\n "+genZExpr(tomMatch316NameNumber_freshVar_6);
-      }}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zexists) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch316NameNumber_freshVar_7= tomMatch316NameNumberfreshSubject_1.getVar() ;{  tom.engine.adt.zenon.types.ZType  tomMatch316NameNumber_freshVar_8= tomMatch316NameNumberfreshSubject_1.getAztype() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_9= tomMatch316NameNumberfreshSubject_1.getExpr() ;if ( true ) {
+        return "forall "+genZTerm(tomMatch319NameNumber_freshVar_4)+" : "+genZType(tomMatch319NameNumber_freshVar_5)+",\n "+genZExpr(tomMatch319NameNumber_freshVar_6);
+      }}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zexists) ) {{  tom.engine.adt.zenon.types.ZTerm  tomMatch319NameNumber_freshVar_7= tomMatch319NameNumberfreshSubject_1.getVar() ;{  tom.engine.adt.zenon.types.ZType  tomMatch319NameNumber_freshVar_8= tomMatch319NameNumberfreshSubject_1.getAztype() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_9= tomMatch319NameNumberfreshSubject_1.getExpr() ;if ( true ) {
 
-        return "exists "+genZTerm(tomMatch316NameNumber_freshVar_7)+" : "+genZType(tomMatch316NameNumber_freshVar_8)+", "+genZExpr(tomMatch316NameNumber_freshVar_9);
-      }}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zand) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_10= tomMatch316NameNumberfreshSubject_1.getLte() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_11= tomMatch316NameNumberfreshSubject_1.getRte() ;{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch316NameNumber_freshVar_10;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch316NameNumber_freshVar_11;if ( true ) {
+        return "exists "+genZTerm(tomMatch319NameNumber_freshVar_7)+" : "+genZType(tomMatch319NameNumber_freshVar_8)+", "+genZExpr(tomMatch319NameNumber_freshVar_9);
+      }}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zand) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_10= tomMatch319NameNumberfreshSubject_1.getLte() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_11= tomMatch319NameNumberfreshSubject_1.getRte() ;{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch319NameNumber_freshVar_10;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch319NameNumber_freshVar_11;if ( true ) {
 
         if(tom_l==  tom.engine.adt.zenon.types.zexpr.ztrue.make() ) {
           return "("+ genZExpr(tom_r) +")";
@@ -118,7 +118,7 @@ public class ZenonBackend {
           return "("+ genZExpr(tom_l) +")";
         }
         return "("+genZExpr(tom_l)+") /\\ ("+genZExpr(tom_r)+")";
-      }}}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zor) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_12= tomMatch316NameNumberfreshSubject_1.getLte() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_13= tomMatch316NameNumberfreshSubject_1.getRte() ;{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch316NameNumber_freshVar_12;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch316NameNumber_freshVar_13;if ( true ) {
+      }}}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zor) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_12= tomMatch319NameNumberfreshSubject_1.getLte() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_13= tomMatch319NameNumberfreshSubject_1.getRte() ;{  tom.engine.adt.zenon.types.ZExpr  tom_l=tomMatch319NameNumber_freshVar_12;{  tom.engine.adt.zenon.types.ZExpr  tom_r=tomMatch319NameNumber_freshVar_13;if ( true ) {
 
         if(tom_l==  tom.engine.adt.zenon.types.zexpr.zfalse.make() ) {
           return "("+ genZExpr(tom_r) +")";
@@ -127,21 +127,21 @@ public class ZenonBackend {
           return "("+ genZExpr(tom_l) +")";
         }
         return "("+genZExpr(tom_l)+") \\/ ("+genZExpr(tom_r)+")";
-      }}}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.znot) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_14= tomMatch316NameNumberfreshSubject_1.getNex() ;if ( true ) {
- return "~("+genZExpr(tomMatch316NameNumber_freshVar_14)+")"; }}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch316NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zequiv) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_15= tomMatch316NameNumberfreshSubject_1.getLte() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch316NameNumber_freshVar_16= tomMatch316NameNumberfreshSubject_1.getRte() ;if ( true ) {
+      }}}}}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.znot) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_14= tomMatch319NameNumberfreshSubject_1.getNex() ;if ( true ) {
+ return "~("+genZExpr(tomMatch319NameNumber_freshVar_14)+")"; }}}}}if ( (expr instanceof tom.engine.adt.zenon.types.ZExpr) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZExpr )expr);if ( (tomMatch319NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zexpr.zequiv) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_15= tomMatch319NameNumberfreshSubject_1.getLte() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch319NameNumber_freshVar_16= tomMatch319NameNumberfreshSubject_1.getRte() ;if ( true ) {
 
-        return "("+genZExpr(tomMatch316NameNumber_freshVar_15)+") <-> ("+genZExpr(tomMatch316NameNumber_freshVar_16)+")";
+        return "("+genZExpr(tomMatch319NameNumber_freshVar_15)+") <-> ("+genZExpr(tomMatch319NameNumber_freshVar_16)+")";
       }}}}}}}
 
     return "errorZExpr";
   }
 
   public String genZAxiom(ZAxiom axiom) {
-    {if ( (axiom instanceof tom.engine.adt.zenon.types.ZAxiom) ) {{  tom.engine.adt.zenon.types.ZAxiom  tomMatch317NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZAxiom )axiom);if ( (tomMatch317NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zaxiom.zaxiom) ) {{  String  tomMatch317NameNumber_freshVar_0= tomMatch317NameNumberfreshSubject_1.getName() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch317NameNumber_freshVar_1= tomMatch317NameNumberfreshSubject_1.getAx() ;if ( true ) {
+    {if ( (axiom instanceof tom.engine.adt.zenon.types.ZAxiom) ) {{  tom.engine.adt.zenon.types.ZAxiom  tomMatch320NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZAxiom )axiom);if ( (tomMatch320NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zaxiom.zaxiom) ) {{  String  tomMatch320NameNumber_freshVar_0= tomMatch320NameNumberfreshSubject_1.getName() ;{  tom.engine.adt.zenon.types.ZExpr  tomMatch320NameNumber_freshVar_1= tomMatch320NameNumberfreshSubject_1.getAx() ;if ( true ) {
 
         // manage builtins
-        String realName = tomiltools.replaceNumbersByString(tomMatch317NameNumber_freshVar_0);
-        return "Parameter " + realName +" :\n    " + genZExpr(tomMatch317NameNumber_freshVar_1) + ".\n";
+        String realName = tomiltools.replaceNumbersByString(tomMatch320NameNumber_freshVar_0);
+        return "Parameter " + realName +" :\n    " + genZExpr(tomMatch320NameNumber_freshVar_1) + ".\n";
       }}}}}}}
 
     return "errorZAxiom";
@@ -157,12 +157,12 @@ public class ZenonBackend {
   }
 
   public String genZSpec(ZSpec spec) {
-    {if ( (spec instanceof tom.engine.adt.zenon.types.ZSpec) ) {{  tom.engine.adt.zenon.types.ZSpec  tomMatch318NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSpec )spec);if ( (tomMatch318NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zspec.zthm) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch318NameNumber_freshVar_0= tomMatch318NameNumberfreshSubject_1.getThm() ;{  tom.engine.adt.zenon.types.ZAxiomList  tomMatch318NameNumber_freshVar_1= tomMatch318NameNumberfreshSubject_1.getBy() ;if ( true ) {
+    {if ( (spec instanceof tom.engine.adt.zenon.types.ZSpec) ) {{  tom.engine.adt.zenon.types.ZSpec  tomMatch321NameNumberfreshSubject_1=(( tom.engine.adt.zenon.types.ZSpec )spec);if ( (tomMatch321NameNumberfreshSubject_1 instanceof tom.engine.adt.zenon.types.zspec.zthm) ) {{  tom.engine.adt.zenon.types.ZExpr  tomMatch321NameNumber_freshVar_0= tomMatch321NameNumberfreshSubject_1.getThm() ;{  tom.engine.adt.zenon.types.ZAxiomList  tomMatch321NameNumber_freshVar_1= tomMatch321NameNumberfreshSubject_1.getBy() ;if ( true ) {
 
         return "\n" 
-          + genZExpr(tomMatch318NameNumber_freshVar_0) 
+          + genZExpr(tomMatch321NameNumber_freshVar_0) 
           + "\n" 
-          + genZAxiomList(tomMatch318NameNumber_freshVar_1)+"\n";
+          + genZAxiomList(tomMatch321NameNumber_freshVar_1)+"\n";
       }}}}}}}
 
     return "errorZSpec";

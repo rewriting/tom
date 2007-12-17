@@ -901,6 +901,13 @@
   make(t0, t1, t2, t3) { tom.engine.adt.tomdeclaration.types.declaration.Class.make($t0, $t1, $t2, $t3) }
 }
 
+%op Declaration IntrospectorClass(AstName:TomName, Declaration:Declaration) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomdeclaration.types.declaration.IntrospectorClass) }
+  get_slot(AstName, t) { $t.getAstName() }
+  get_slot(Declaration, t) { $t.getDeclaration() }
+  make(t0, t1) { tom.engine.adt.tomdeclaration.types.declaration.IntrospectorClass.make($t0, $t1) }
+}
+
 %op Declaration SymbolDecl(AstName:TomName) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomdeclaration.types.declaration.SymbolDecl) }
   get_slot(AstName, t) { $t.getAstName() }

@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g 2007-11-29 01:49:08
+// $ANTLR 3.0 /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g 2007-12-17 11:02:30
 
   package tom.gom.expander.rule;
   import tom.gom.adt.rule.RuleTree;
