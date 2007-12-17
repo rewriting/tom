@@ -144,7 +144,9 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage braceExpected         =
       new TomMessage("'')'' expected line {0,number,integer}: EOF encountered ");
   public static final TomMessage invalidBackQuoteTerm  =
-      new TomMessage("Invalid backquote term started line #{0,number,integer}: EOF encountered ");
+      new TomMessage("Invalid backquote term started line #{0,number,integer}: EOF encountered");
+  public static final TomMessage badNumberOfAt  =
+      new TomMessage("Bad number of '@' in %[...]%");
 
   public static final TomMessage backendInactivated    =
       new TomMessage("The TomBackend plugin is not activated and thus WILL NOT RUN:No output will be generated ");
