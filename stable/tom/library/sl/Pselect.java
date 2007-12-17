@@ -65,22 +65,22 @@ public class Pselect extends AbstractStrategy {
     return q;
   }
 
-  public Visitable visitLight(Visitable visitable) throws VisitFailure {
+  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
     int randomInt = random.nextInt(q);
     if(randomInt < p) {
-      return visitors[FIRST].visitLight(visitable);
+      return visitors[FIRST].visitLight(subject,introspector);
     } else {
-      return visitors[THEN].visitLight(visitable);
+      return visitors[THEN].visitLight(subject,introspector);
     }
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     int randomInt = random.nextInt(q);
-    Visitable subject = environment.getSubject();
+    Object subject = environment.getSubject();
     if(randomInt < p) {
-      return visitors[FIRST].visit();
+      return visitors[FIRST].visit(introspector);
     } else {
-      return visitors[THEN].visit();
+      return visitors[THEN].visit(introspector);
     }
   }
 }

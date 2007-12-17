@@ -3,96 +3,29 @@
    %include { mustrategy.tom }
    */
 
-    %op Strategy _EmptyconcTerm() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist._EmptyconcTerm)))}
-      
-        make() { new tom.engine.adt.il.strategy.termlist._EmptyconcTerm() }
-    }
-  
-  
-  %op Strategy When_EmptyconcTerm(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyconcTerm(),s) }
-  }
-
-  %op Strategy Is_EmptyconcTerm() {
-    make() { new tom.engine.adt.il.strategy.termlist.Is_EmptyconcTerm()}
-  }
-  
-%op Strategy Make_EmptyconcTerm() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist.Make_EmptyconcTerm))) }
-
-  make() { new tom.engine.adt.il.strategy.termlist.Make_EmptyconcTerm() }
-}
-
-    %op Strategy _ConsconcTerm(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist._ConsconcTerm)))}
+    %op Strategy _ebs(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.deriv._ebs)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.termlist._ConsconcTerm($arg0, $arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.deriv._ebs($arg0, $arg1) }
     }
   
   
-  %op Strategy When_ConsconcTerm(s:Strategy) {
-    make(s) { `Sequence(Is_ConsconcTerm(),s) }
+  %op Strategy When_ebs(s:Strategy) {
+    make(s) { `Sequence(Is_ebs(),s) }
   }
 
-  %op Strategy Is_ConsconcTerm() {
-    make() { new tom.engine.adt.il.strategy.termlist.Is_ConsconcTerm()}
+  %op Strategy Is_ebs() {
+    make() { new tom.engine.adt.il.strategy.deriv.Is_ebs()}
   }
   
-%op Strategy Make_ConsconcTerm(_HeadconcTerm:Strategy, _TailconcTerm:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm))) }
+%op Strategy Make_ebs(_Lhs:Strategy, _Rhs:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.deriv.Make_ebs))) }
 
-  get_slot(_HeadconcTerm, t) { $t._HeadconcTerm }
-  get_slot(_TailconcTerm, t) { $t._TailconcTerm }
-  make( new_HeadconcTerm,  new_TailconcTerm) { new tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm( $new_HeadconcTerm,  $new_TailconcTerm) }
-}
-
-    %op Strategy _Emptysemicolon() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist._Emptysemicolon)))}
-      
-        make() { new tom.engine.adt.il.strategy.instrlist._Emptysemicolon() }
-    }
-  
-  
-  %op Strategy When_Emptysemicolon(s:Strategy) {
-    make(s) { `Sequence(Is_Emptysemicolon(),s) }
-  }
-
-  %op Strategy Is_Emptysemicolon() {
-    make() { new tom.engine.adt.il.strategy.instrlist.Is_Emptysemicolon()}
-  }
-  
-%op Strategy Make_Emptysemicolon() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist.Make_Emptysemicolon))) }
-
-  make() { new tom.engine.adt.il.strategy.instrlist.Make_Emptysemicolon() }
-}
-
-    %op Strategy _Conssemicolon(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist._Conssemicolon)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.instrlist._Conssemicolon($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_Conssemicolon(s:Strategy) {
-    make(s) { `Sequence(Is_Conssemicolon(),s) }
-  }
-
-  %op Strategy Is_Conssemicolon() {
-    make() { new tom.engine.adt.il.strategy.instrlist.Is_Conssemicolon()}
-  }
-  
-%op Strategy Make_Conssemicolon(_Headsemicolon:Strategy, _Tailsemicolon:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon))) }
-
-  get_slot(_Headsemicolon, t) { $t._Headsemicolon }
-  get_slot(_Tailsemicolon, t) { $t._Tailsemicolon }
-  make( new_Headsemicolon,  new_Tailsemicolon) { new tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon( $new_Headsemicolon,  $new_Tailsemicolon) }
+  get_slot(_Lhs, t) { $t._Lhs }
+  get_slot(_Rhs, t) { $t._Rhs }
+  make( new_Lhs,  new_Rhs) { new tom.engine.adt.il.strategy.deriv.Make_ebs( $new_Lhs,  $new_Rhs) }
 }
 
     %op Strategy _iltrue(arg0:Strategy) {
@@ -337,29 +270,144 @@
   make( new_Subs,  new_E) { new tom.engine.adt.il.strategy.expr.Make_appSubsE( $new_Subs,  $new_E) }
 }
 
-    %op Strategy _ebs(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.deriv._ebs)))}
+    %op Strategy _var(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.variable._var)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.deriv._ebs($arg0, $arg1) }
+        make(arg0) { new tom.engine.adt.il.strategy.variable._var($arg0) }
     }
   
   
-  %op Strategy When_ebs(s:Strategy) {
-    make(s) { `Sequence(Is_ebs(),s) }
+  %op Strategy When_var(s:Strategy) {
+    make(s) { `Sequence(Is_var(),s) }
   }
 
-  %op Strategy Is_ebs() {
-    make() { new tom.engine.adt.il.strategy.deriv.Is_ebs()}
+  %op Strategy Is_var() {
+    make() { new tom.engine.adt.il.strategy.variable.Is_var()}
   }
   
-%op Strategy Make_ebs(_Lhs:Strategy, _Rhs:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.deriv.Make_ebs))) }
+%op Strategy Make_var(_Name:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.variable.Make_var))) }
 
-  get_slot(_Lhs, t) { $t._Lhs }
-  get_slot(_Rhs, t) { $t._Rhs }
-  make( new_Lhs,  new_Rhs) { new tom.engine.adt.il.strategy.deriv.Make_ebs( $new_Lhs,  $new_Rhs) }
+  get_slot(_Name, t) { $t._Name }
+  make( _Name) { new tom.engine.adt.il.strategy.variable.Make_var( $_Name) }
+}
+
+    %op Strategy _env(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.environment._env)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.environment._env($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_env(s:Strategy) {
+    make(s) { `Sequence(Is_env(),s) }
+  }
+
+  %op Strategy Is_env() {
+    make() { new tom.engine.adt.il.strategy.environment.Is_env()}
+  }
+  
+%op Strategy Make_env(_Subs:Strategy, _I:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.environment.Make_env))) }
+
+  get_slot(_Subs, t) { $t._Subs }
+  get_slot(_I, t) { $t._I }
+  make( new_Subs,  new_I) { new tom.engine.adt.il.strategy.environment.Make_env( $new_Subs,  $new_I) }
+}
+
+    %op Strategy _Emptysemicolon() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist._Emptysemicolon)))}
+      
+        make() { new tom.engine.adt.il.strategy.instrlist._Emptysemicolon() }
+    }
+  
+  
+  %op Strategy When_Emptysemicolon(s:Strategy) {
+    make(s) { `Sequence(Is_Emptysemicolon(),s) }
+  }
+
+  %op Strategy Is_Emptysemicolon() {
+    make() { new tom.engine.adt.il.strategy.instrlist.Is_Emptysemicolon()}
+  }
+  
+%op Strategy Make_Emptysemicolon() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist.Make_Emptysemicolon))) }
+
+  make() { new tom.engine.adt.il.strategy.instrlist.Make_Emptysemicolon() }
+}
+
+    %op Strategy _Conssemicolon(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist._Conssemicolon)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.instrlist._Conssemicolon($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_Conssemicolon(s:Strategy) {
+    make(s) { `Sequence(Is_Conssemicolon(),s) }
+  }
+
+  %op Strategy Is_Conssemicolon() {
+    make() { new tom.engine.adt.il.strategy.instrlist.Is_Conssemicolon()}
+  }
+  
+%op Strategy Make_Conssemicolon(_Headsemicolon:Strategy, _Tailsemicolon:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon))) }
+
+  get_slot(_Headsemicolon, t) { $t._Headsemicolon }
+  get_slot(_Tailsemicolon, t) { $t._Tailsemicolon }
+  make( new_Headsemicolon,  new_Tailsemicolon) { new tom.engine.adt.il.strategy.instrlist.Make_Conssemicolon( $new_Headsemicolon,  $new_Tailsemicolon) }
+}
+
+    %op Strategy _EmptyconcExpr() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist._EmptyconcExpr)))}
+      
+        make() { new tom.engine.adt.il.strategy.exprlist._EmptyconcExpr() }
+    }
+  
+  
+  %op Strategy When_EmptyconcExpr(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyconcExpr(),s) }
+  }
+
+  %op Strategy Is_EmptyconcExpr() {
+    make() { new tom.engine.adt.il.strategy.exprlist.Is_EmptyconcExpr()}
+  }
+  
+%op Strategy Make_EmptyconcExpr() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist.Make_EmptyconcExpr))) }
+
+  make() { new tom.engine.adt.il.strategy.exprlist.Make_EmptyconcExpr() }
+}
+
+    %op Strategy _ConsconcExpr(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist._ConsconcExpr)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.exprlist._ConsconcExpr($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsconcExpr(s:Strategy) {
+    make(s) { `Sequence(Is_ConsconcExpr(),s) }
+  }
+
+  %op Strategy Is_ConsconcExpr() {
+    make() { new tom.engine.adt.il.strategy.exprlist.Is_ConsconcExpr()}
+  }
+  
+%op Strategy Make_ConsconcExpr(_HeadconcExpr:Strategy, _TailconcExpr:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr))) }
+
+  get_slot(_HeadconcExpr, t) { $t._HeadconcExpr }
+  get_slot(_TailconcExpr, t) { $t._TailconcExpr }
+  make( new_HeadconcExpr,  new_TailconcExpr) { new tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr( $new_HeadconcExpr,  $new_TailconcExpr) }
 }
 
     %op Strategy _undefsubs() {
@@ -498,50 +546,50 @@
   make( new_Terms) { new tom.engine.adt.il.strategy.seq.Make_dedterm( $new_Terms) }
 }
 
-    %op Strategy _EmptyconcExpr() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist._EmptyconcExpr)))}
+    %op Strategy _Emptysubs() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist._Emptysubs)))}
       
-        make() { new tom.engine.adt.il.strategy.exprlist._EmptyconcExpr() }
+        make() { new tom.engine.adt.il.strategy.substitutionlist._Emptysubs() }
     }
   
   
-  %op Strategy When_EmptyconcExpr(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyconcExpr(),s) }
+  %op Strategy When_Emptysubs(s:Strategy) {
+    make(s) { `Sequence(Is_Emptysubs(),s) }
   }
 
-  %op Strategy Is_EmptyconcExpr() {
-    make() { new tom.engine.adt.il.strategy.exprlist.Is_EmptyconcExpr()}
+  %op Strategy Is_Emptysubs() {
+    make() { new tom.engine.adt.il.strategy.substitutionlist.Is_Emptysubs()}
   }
   
-%op Strategy Make_EmptyconcExpr() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist.Make_EmptyconcExpr))) }
+%op Strategy Make_Emptysubs() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist.Make_Emptysubs))) }
 
-  make() { new tom.engine.adt.il.strategy.exprlist.Make_EmptyconcExpr() }
+  make() { new tom.engine.adt.il.strategy.substitutionlist.Make_Emptysubs() }
 }
 
-    %op Strategy _ConsconcExpr(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist._ConsconcExpr)))}
+    %op Strategy _Conssubs(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist._Conssubs)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.exprlist._ConsconcExpr($arg0, $arg1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.substitutionlist._Conssubs($arg0, $arg1) }
     }
   
   
-  %op Strategy When_ConsconcExpr(s:Strategy) {
-    make(s) { `Sequence(Is_ConsconcExpr(),s) }
+  %op Strategy When_Conssubs(s:Strategy) {
+    make(s) { `Sequence(Is_Conssubs(),s) }
   }
 
-  %op Strategy Is_ConsconcExpr() {
-    make() { new tom.engine.adt.il.strategy.exprlist.Is_ConsconcExpr()}
+  %op Strategy Is_Conssubs() {
+    make() { new tom.engine.adt.il.strategy.substitutionlist.Is_Conssubs()}
   }
   
-%op Strategy Make_ConsconcExpr(_HeadconcExpr:Strategy, _TailconcExpr:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr))) }
+%op Strategy Make_Conssubs(_Headsubs:Strategy, _Tailsubs:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs))) }
 
-  get_slot(_HeadconcExpr, t) { $t._HeadconcExpr }
-  get_slot(_TailconcExpr, t) { $t._TailconcExpr }
-  make( new_HeadconcExpr,  new_TailconcExpr) { new tom.engine.adt.il.strategy.exprlist.Make_ConsconcExpr( $new_HeadconcExpr,  $new_TailconcExpr) }
+  get_slot(_Headsubs, t) { $t._Headsubs }
+  get_slot(_Tailsubs, t) { $t._Tailsubs }
+  make( new_Headsubs,  new_Tailsubs) { new tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs( $new_Headsubs,  $new_Tailsubs) }
 }
 
     %op Strategy _tau(arg0:Strategy) {
@@ -669,6 +717,52 @@
   make( new_Subs,  new_T) { new tom.engine.adt.il.strategy.term.Make_appSubsT( $new_Subs,  $new_T) }
 }
 
+    %op Strategy _EmptyconcTerm() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist._EmptyconcTerm)))}
+      
+        make() { new tom.engine.adt.il.strategy.termlist._EmptyconcTerm() }
+    }
+  
+  
+  %op Strategy When_EmptyconcTerm(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyconcTerm(),s) }
+  }
+
+  %op Strategy Is_EmptyconcTerm() {
+    make() { new tom.engine.adt.il.strategy.termlist.Is_EmptyconcTerm()}
+  }
+  
+%op Strategy Make_EmptyconcTerm() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist.Make_EmptyconcTerm))) }
+
+  make() { new tom.engine.adt.il.strategy.termlist.Make_EmptyconcTerm() }
+}
+
+    %op Strategy _ConsconcTerm(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist._ConsconcTerm)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.engine.adt.il.strategy.termlist._ConsconcTerm($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsconcTerm(s:Strategy) {
+    make(s) { `Sequence(Is_ConsconcTerm(),s) }
+  }
+
+  %op Strategy Is_ConsconcTerm() {
+    make() { new tom.engine.adt.il.strategy.termlist.Is_ConsconcTerm()}
+  }
+  
+%op Strategy Make_ConsconcTerm(_HeadconcTerm:Strategy, _TailconcTerm:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm))) }
+
+  get_slot(_HeadconcTerm, t) { $t._HeadconcTerm }
+  get_slot(_TailconcTerm, t) { $t._TailconcTerm }
+  make( new_HeadconcTerm,  new_TailconcTerm) { new tom.engine.adt.il.strategy.termlist.Make_ConsconcTerm( $new_HeadconcTerm,  $new_TailconcTerm) }
+}
+
     %op Strategy _accept(arg0:Strategy, arg1:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.instr._accept)))}
       
@@ -792,6 +886,83 @@
   make( new_Instrlist) { new tom.engine.adt.il.strategy.instr.Make_sequence( $new_Instrlist) }
 }
 
+    %op Strategy _absvar(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._absvar)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.engine.adt.il.strategy.absterm._absvar($arg0) }
+    }
+  
+  
+  %op Strategy When_absvar(s:Strategy) {
+    make(s) { `Sequence(Is_absvar(),s) }
+  }
+
+  %op Strategy Is_absvar() {
+    make() { new tom.engine.adt.il.strategy.absterm.Is_absvar()}
+  }
+  
+%op Strategy Make_absvar(_Varname:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_absvar))) }
+
+  get_slot(_Varname, t) { $t._Varname }
+  make( new_Varname) { new tom.engine.adt.il.strategy.absterm.Make_absvar( $new_Varname) }
+}
+
+    %op Strategy _st(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._st)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._st($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_st(s:Strategy) {
+    make(s) { `Sequence(Is_st(),s) }
+  }
+
+  %op Strategy Is_st() {
+    make() { new tom.engine.adt.il.strategy.absterm.Is_st()}
+  }
+  
+%op Strategy Make_st(_Symbol:Strategy, _Abst:Strategy, _Index:int) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_st))) }
+
+  get_slot(_Symbol, t) { $t._Symbol }
+  get_slot(_Abst, t) { $t._Abst }
+  get_slot(_Index, t) { $t._Index }
+  make( new_Symbol,  new_Abst,  _Index) { new tom.engine.adt.il.strategy.absterm.Make_st( $new_Symbol,  $new_Abst,  $_Index) }
+}
+
+    %op Strategy _sl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._sl)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._sl($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_sl(s:Strategy) {
+    make(s) { `Sequence(Is_sl(),s) }
+  }
+
+  %op Strategy Is_sl() {
+    make() { new tom.engine.adt.il.strategy.absterm.Is_sl()}
+  }
+  
+%op Strategy Make_sl(_Symbol:Strategy, _Abst:Strategy, _Name:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_sl))) }
+
+  get_slot(_Symbol, t) { $t._Symbol }
+  get_slot(_Abst, t) { $t._Abst }
+  get_slot(_Name, t) { $t._Name }
+  make( new_Symbol,  new_Abst,  _Name) { new tom.engine.adt.il.strategy.absterm.Make_sl( $new_Symbol,  $new_Abst,  $_Name) }
+}
+
     %op Strategy _endderiv() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.derivtree._endderiv)))}
       
@@ -873,182 +1044,6 @@
   make( _Name,  new_Post,  new_Pre,  new_Pre2,  new_Cond) { new tom.engine.adt.il.strategy.derivtree.Make_derivrule2( $_Name,  $new_Post,  $new_Pre,  $new_Pre2,  $new_Cond) }
 }
 
-    %op Strategy _env(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.environment._env)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.environment._env($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_env(s:Strategy) {
-    make(s) { `Sequence(Is_env(),s) }
-  }
-
-  %op Strategy Is_env() {
-    make() { new tom.engine.adt.il.strategy.environment.Is_env()}
-  }
-  
-%op Strategy Make_env(_Subs:Strategy, _I:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.environment.Make_env))) }
-
-  get_slot(_Subs, t) { $t._Subs }
-  get_slot(_I, t) { $t._I }
-  make( new_Subs,  new_I) { new tom.engine.adt.il.strategy.environment.Make_env( $new_Subs,  $new_I) }
-}
-
-    %op Strategy _absvar(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._absvar)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.absterm._absvar($arg0) }
-    }
-  
-  
-  %op Strategy When_absvar(s:Strategy) {
-    make(s) { `Sequence(Is_absvar(),s) }
-  }
-
-  %op Strategy Is_absvar() {
-    make() { new tom.engine.adt.il.strategy.absterm.Is_absvar()}
-  }
-  
-%op Strategy Make_absvar(_Varname:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_absvar))) }
-
-  get_slot(_Varname, t) { $t._Varname }
-  make( new_Varname) { new tom.engine.adt.il.strategy.absterm.Make_absvar( $new_Varname) }
-}
-
-    %op Strategy _st(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._st)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._st($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_st(s:Strategy) {
-    make(s) { `Sequence(Is_st(),s) }
-  }
-
-  %op Strategy Is_st() {
-    make() { new tom.engine.adt.il.strategy.absterm.Is_st()}
-  }
-  
-%op Strategy Make_st(_Symbol:Strategy, _Abst:Strategy, _Index:int) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_st))) }
-
-  get_slot(_Symbol, t) { $t._Symbol }
-  get_slot(_Abst, t) { $t._Abst }
-  get_slot(_Index, t) { $t._Index }
-  make( new_Symbol,  new_Abst,  _Index) { new tom.engine.adt.il.strategy.absterm.Make_st( $new_Symbol,  $new_Abst,  $_Index) }
-}
-
-    %op Strategy _sl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm._sl)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.engine.adt.il.strategy.absterm._sl($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_sl(s:Strategy) {
-    make(s) { `Sequence(Is_sl(),s) }
-  }
-
-  %op Strategy Is_sl() {
-    make() { new tom.engine.adt.il.strategy.absterm.Is_sl()}
-  }
-  
-%op Strategy Make_sl(_Symbol:Strategy, _Abst:Strategy, _Name:String) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.absterm.Make_sl))) }
-
-  get_slot(_Symbol, t) { $t._Symbol }
-  get_slot(_Abst, t) { $t._Abst }
-  get_slot(_Name, t) { $t._Name }
-  make( new_Symbol,  new_Abst,  _Name) { new tom.engine.adt.il.strategy.absterm.Make_sl( $new_Symbol,  $new_Abst,  $_Name) }
-}
-
-    %op Strategy _Emptysubs() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist._Emptysubs)))}
-      
-        make() { new tom.engine.adt.il.strategy.substitutionlist._Emptysubs() }
-    }
-  
-  
-  %op Strategy When_Emptysubs(s:Strategy) {
-    make(s) { `Sequence(Is_Emptysubs(),s) }
-  }
-
-  %op Strategy Is_Emptysubs() {
-    make() { new tom.engine.adt.il.strategy.substitutionlist.Is_Emptysubs()}
-  }
-  
-%op Strategy Make_Emptysubs() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist.Make_Emptysubs))) }
-
-  make() { new tom.engine.adt.il.strategy.substitutionlist.Make_Emptysubs() }
-}
-
-    %op Strategy _Conssubs(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist._Conssubs)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.il.strategy.substitutionlist._Conssubs($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_Conssubs(s:Strategy) {
-    make(s) { `Sequence(Is_Conssubs(),s) }
-  }
-
-  %op Strategy Is_Conssubs() {
-    make() { new tom.engine.adt.il.strategy.substitutionlist.Is_Conssubs()}
-  }
-  
-%op Strategy Make_Conssubs(_Headsubs:Strategy, _Tailsubs:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs))) }
-
-  get_slot(_Headsubs, t) { $t._Headsubs }
-  get_slot(_Tailsubs, t) { $t._Tailsubs }
-  make( new_Headsubs,  new_Tailsubs) { new tom.engine.adt.il.strategy.substitutionlist.Make_Conssubs( $new_Headsubs,  $new_Tailsubs) }
-}
-
-    %op Strategy _var(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.variable._var)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.il.strategy.variable._var($arg0) }
-    }
-  
-  
-  %op Strategy When_var(s:Strategy) {
-    make(s) { `Sequence(Is_var(),s) }
-  }
-
-  %op Strategy Is_var() {
-    make() { new tom.engine.adt.il.strategy.variable.Is_var()}
-  }
-  
-%op Strategy Make_var(_Name:String) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.il.strategy.variable.Make_var))) }
-
-  get_slot(_Name, t) { $t._Name }
-  make( _Name) { new tom.engine.adt.il.strategy.variable.Make_var( $_Name) }
-}
-
-            %op Strategy _concTerm(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_concTerm"),Choice(_ConsconcTerm(sub,MuVar("x_concTerm")),_EmptyconcTerm())) }
-            }
-            
             %op Strategy _semicolon(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_semicolon"),Choice(_Conssemicolon(sub,MuVar("x_semicolon")),_Emptysemicolon())) }
@@ -1062,5 +1057,10 @@
             %op Strategy _subs(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_subs"),Choice(_Conssubs(sub,MuVar("x_subs")),_Emptysubs())) }
+            }
+            
+            %op Strategy _concTerm(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_concTerm"),Choice(_ConsconcTerm(sub,MuVar("x_concTerm")),_EmptyconcTerm())) }
             }
             

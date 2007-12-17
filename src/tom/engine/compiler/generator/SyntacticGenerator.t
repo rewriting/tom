@@ -39,6 +39,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
 import tom.engine.compiler.*;
 import tom.engine.adt.theory.types.*;
+import tom.engine.compiler.Compiler;
 
 /**
  * Syntactic Generator
@@ -57,13 +58,13 @@ public class SyntacticGenerator implements IBaseGenerator {
     visit Expression {
       // generate is_fsym(t,f)
       ConstraintToExpression(MatchConstraint(currentTerm@RecordAppl[NameList=(name)],SymbolOf(subject))) -> {
-        TomType termType = ConstraintCompiler.getTermTypeFromName(`name);        
+        TomType termType = Compiler.getTermTypeFromName(`name);        
         Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));
         return check;
       }
       // generate equality
       ConstraintToExpression(MatchConstraint(t@Subterm[],u)) -> {
-        return `EqualTerm(ConstraintCompiler.getTermTypeFromTerm(t),t,u);
+        return `EqualTerm(Compiler.getTermTypeFromTerm(t),t,u);
       }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
@@ -73,8 +74,8 @@ public class SyntacticGenerator implements IBaseGenerator {
   } // end strategy	
   
   private static Expression buildEqualFunctionSymbol(TomType type, TomTerm subject,  TomName name, Theory theory) {    
-    TomSymbol tomSymbol = ConstraintCompiler.getSymbolTable().getSymbolFromName(name.getString());
-    if(ConstraintCompiler.getSymbolTable().isBuiltinType(TomBase.getTomType(`type))) {
+    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(name.getString());
+    if(Compiler.getSymbolTable().isBuiltinType(TomBase.getTomType(`type))) {
       if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.hasIsFsymDecl(tomSymbol)) {
         return `IsFsym(name,subject);
       } else {

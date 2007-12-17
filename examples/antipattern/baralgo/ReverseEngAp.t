@@ -53,7 +53,7 @@ public class ReverseEngAp extends antipattern.term.TermBasicStrategy {
         true : false );      
   }
 
-  public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
+  public Constraint visit_Constraint(Constraint arg, Introspector i) throws VisitFailure {
 
     %match(Constraint arg) {        
       Neg(Match(a,b)) -> {             

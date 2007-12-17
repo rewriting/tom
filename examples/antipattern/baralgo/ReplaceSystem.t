@@ -54,7 +54,7 @@ public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
     		  true : false );       
     }
    
-    public Term visit_Term(Term arg) throws VisitFailure { 
+    public Term visit_Term(Term arg, Introspector i) throws VisitFailure { 
       if(arg==variable) {
         return value;
       } 

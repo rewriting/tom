@@ -3,6 +3,177 @@
    %include { mustrategy.tom }
    */
 
+    %op Strategy _LocalVariable(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariable._LocalVariable)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        make(arg0, arg1, arg2, arg3, arg4, arg5) { new tom.library.adt.bytecode.strategy.tlocalvariable._LocalVariable($arg0, $arg1, $arg2, $arg3, $arg4, $arg5) }
+    }
+  
+  
+  %op Strategy When_LocalVariable(s:Strategy) {
+    make(s) { `Sequence(Is_LocalVariable(),s) }
+  }
+
+  %op Strategy Is_LocalVariable() {
+    make() { new tom.library.adt.bytecode.strategy.tlocalvariable.Is_LocalVariable()}
+  }
+  
+%op Strategy Make_LocalVariable(_name:String, _typeDesc:String, _signature:Strategy, _start:Strategy, _end:Strategy, _index:int) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariable.Make_LocalVariable))) }
+
+  get_slot(_name, t) { $t._name }
+  get_slot(_typeDesc, t) { $t._typeDesc }
+  get_slot(_signature, t) { $t._signature }
+  get_slot(_start, t) { $t._start }
+  get_slot(_end, t) { $t._end }
+  get_slot(_index, t) { $t._index }
+  make( _name,  _typeDesc,  new_signature,  new_start,  new_end,  _index) { new tom.library.adt.bytecode.strategy.tlocalvariable.Make_LocalVariable( $_name,  $_typeDesc,  $new_signature,  $new_start,  $new_end,  $_index) }
+}
+
+    %op Strategy _MethodCode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode._MethodCode)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.tmethodcode._MethodCode($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_MethodCode(s:Strategy) {
+    make(s) { `Sequence(Is_MethodCode(),s) }
+  }
+
+  %op Strategy Is_MethodCode() {
+    make() { new tom.library.adt.bytecode.strategy.tmethodcode.Is_MethodCode()}
+  }
+  
+%op Strategy Make_MethodCode(_instructions:Strategy, _localVariables:Strategy, _tryCatchBlocks:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.Make_MethodCode))) }
+
+  get_slot(_instructions, t) { $t._instructions }
+  get_slot(_localVariables, t) { $t._localVariables }
+  get_slot(_tryCatchBlocks, t) { $t._tryCatchBlocks }
+  make( new_instructions,  new_localVariables,  new_tryCatchBlocks) { new tom.library.adt.bytecode.strategy.tmethodcode.Make_MethodCode( $new_instructions,  $new_localVariables,  $new_tryCatchBlocks) }
+}
+
+    %op Strategy _EmptyCode() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode._EmptyCode)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tmethodcode._EmptyCode() }
+    }
+  
+  
+  %op Strategy When_EmptyCode(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyCode(),s) }
+  }
+
+  %op Strategy Is_EmptyCode() {
+    make() { new tom.library.adt.bytecode.strategy.tmethodcode.Is_EmptyCode()}
+  }
+  
+%op Strategy Make_EmptyCode() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.Make_EmptyCode))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tmethodcode.Make_EmptyCode() }
+}
+
+    %op Strategy _EmptyMethodList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist._EmptyMethodList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tmethodlist._EmptyMethodList() }
+    }
+  
+  
+  %op Strategy When_EmptyMethodList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyMethodList(),s) }
+  }
+
+  %op Strategy Is_EmptyMethodList() {
+    make() { new tom.library.adt.bytecode.strategy.tmethodlist.Is_EmptyMethodList()}
+  }
+  
+%op Strategy Make_EmptyMethodList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.Make_EmptyMethodList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tmethodlist.Make_EmptyMethodList() }
+}
+
+    %op Strategy _ConsMethodList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist._ConsMethodList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tmethodlist._ConsMethodList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsMethodList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsMethodList(),s) }
+  }
+
+  %op Strategy Is_ConsMethodList() {
+    make() { new tom.library.adt.bytecode.strategy.tmethodlist.Is_ConsMethodList()}
+  }
+  
+%op Strategy Make_ConsMethodList(_HeadMethodList:Strategy, _TailMethodList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.Make_ConsMethodList))) }
+
+  get_slot(_HeadMethodList, t) { $t._HeadMethodList }
+  get_slot(_TailMethodList, t) { $t._TailMethodList }
+  make( new_HeadMethodList,  new_TailMethodList) { new tom.library.adt.bytecode.strategy.tmethodlist.Make_ConsMethodList( $new_HeadMethodList,  $new_TailMethodList) }
+}
+
+    %op Strategy _Signature(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature._Signature)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.library.adt.bytecode.strategy.tsignature._Signature($arg0) }
+    }
+  
+  
+  %op Strategy When_Signature(s:Strategy) {
+    make(s) { `Sequence(Is_Signature(),s) }
+  }
+
+  %op Strategy Is_Signature() {
+    make() { new tom.library.adt.bytecode.strategy.tsignature.Is_Signature()}
+  }
+  
+%op Strategy Make_Signature(_sig:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature.Make_Signature))) }
+
+  get_slot(_sig, t) { $t._sig }
+  make( _sig) { new tom.library.adt.bytecode.strategy.tsignature.Make_Signature( $_sig) }
+}
+
+    %op Strategy _EmptySignature() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature._EmptySignature)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tsignature._EmptySignature() }
+    }
+  
+  
+  %op Strategy When_EmptySignature(s:Strategy) {
+    make(s) { `Sequence(Is_EmptySignature(),s) }
+  }
+
+  %op Strategy Is_EmptySignature() {
+    make() { new tom.library.adt.bytecode.strategy.tsignature.Is_EmptySignature()}
+  }
+  
+%op Strategy Make_EmptySignature() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature.Make_EmptySignature))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tsignature.Make_EmptySignature() }
+}
+
     %op Strategy _InnerClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfo._InnerClassInfo)))}
       
@@ -30,272 +201,6 @@
   get_slot(_innerName, t) { $t._innerName }
   get_slot(_access, t) { $t._access }
   make( _name,  _outerName,  _innerName,  new_access) { new tom.library.adt.bytecode.strategy.tinnerclassinfo.Make_InnerClassInfo( $_name,  $_outerName,  $_innerName,  $new_access) }
-}
-
-    %op Strategy _TryCatchBlock(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblock._TryCatchBlock)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.ttrycatchblock._TryCatchBlock($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_TryCatchBlock(s:Strategy) {
-    make(s) { `Sequence(Is_TryCatchBlock(),s) }
-  }
-
-  %op Strategy Is_TryCatchBlock() {
-    make() { new tom.library.adt.bytecode.strategy.ttrycatchblock.Is_TryCatchBlock()}
-  }
-  
-%op Strategy Make_TryCatchBlock(_start:Strategy, _end:Strategy, _handler:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblock.Make_TryCatchBlock))) }
-
-  get_slot(_start, t) { $t._start }
-  get_slot(_end, t) { $t._end }
-  get_slot(_handler, t) { $t._handler }
-  make( new_start,  new_end,  new_handler) { new tom.library.adt.bytecode.strategy.ttrycatchblock.Make_TryCatchBlock( $new_start,  $new_end,  $new_handler) }
-}
-
-    %op Strategy _Method(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethod._Method)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tmethod._Method($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_Method(s:Strategy) {
-    make(s) { `Sequence(Is_Method(),s) }
-  }
-
-  %op Strategy Is_Method() {
-    make() { new tom.library.adt.bytecode.strategy.tmethod.Is_Method()}
-  }
-  
-%op Strategy Make_Method(_info:Strategy, _code:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethod.Make_Method))) }
-
-  get_slot(_info, t) { $t._info }
-  get_slot(_code, t) { $t._code }
-  make( new_info,  new_code) { new tom.library.adt.bytecode.strategy.tmethod.Make_Method( $new_info,  $new_code) }
-}
-
-    %op Strategy _ObjectType(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._ObjectType)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.library.adt.bytecode.strategy.tfielddescriptor._ObjectType($arg0) }
-    }
-  
-  
-  %op Strategy When_ObjectType(s:Strategy) {
-    make(s) { `Sequence(Is_ObjectType(),s) }
-  }
-
-  %op Strategy Is_ObjectType() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ObjectType()}
-  }
-  
-%op Strategy Make_ObjectType(_className:String) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ObjectType))) }
-
-  get_slot(_className, t) { $t._className }
-  make( _className) { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ObjectType( $_className) }
-}
-
-    %op Strategy _ArrayType(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._ArrayType)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.library.adt.bytecode.strategy.tfielddescriptor._ArrayType($arg0) }
-    }
-  
-  
-  %op Strategy When_ArrayType(s:Strategy) {
-    make(s) { `Sequence(Is_ArrayType(),s) }
-  }
-
-  %op Strategy Is_ArrayType() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ArrayType()}
-  }
-  
-%op Strategy Make_ArrayType(_arrayType:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ArrayType))) }
-
-  get_slot(_arrayType, t) { $t._arrayType }
-  make( new_arrayType) { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ArrayType( $new_arrayType) }
-}
-
-    %op Strategy _B() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._B)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._B() }
-    }
-  
-  
-  %op Strategy When_B(s:Strategy) {
-    make(s) { `Sequence(Is_B(),s) }
-  }
-
-  %op Strategy Is_B() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_B()}
-  }
-  
-%op Strategy Make_B() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_B))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_B() }
-}
-
-    %op Strategy _C() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._C)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._C() }
-    }
-  
-  
-  %op Strategy When_C(s:Strategy) {
-    make(s) { `Sequence(Is_C(),s) }
-  }
-
-  %op Strategy Is_C() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_C()}
-  }
-  
-%op Strategy Make_C() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_C))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_C() }
-}
-
-    %op Strategy _D() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._D)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._D() }
-    }
-  
-  
-  %op Strategy When_D(s:Strategy) {
-    make(s) { `Sequence(Is_D(),s) }
-  }
-
-  %op Strategy Is_D() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_D()}
-  }
-  
-%op Strategy Make_D() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_D))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_D() }
-}
-
-    %op Strategy _F() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._F)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._F() }
-    }
-  
-  
-  %op Strategy When_F(s:Strategy) {
-    make(s) { `Sequence(Is_F(),s) }
-  }
-
-  %op Strategy Is_F() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_F()}
-  }
-  
-%op Strategy Make_F() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_F))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_F() }
-}
-
-    %op Strategy _I() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._I)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._I() }
-    }
-  
-  
-  %op Strategy When_I(s:Strategy) {
-    make(s) { `Sequence(Is_I(),s) }
-  }
-
-  %op Strategy Is_I() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_I()}
-  }
-  
-%op Strategy Make_I() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_I))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_I() }
-}
-
-    %op Strategy _J() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._J)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._J() }
-    }
-  
-  
-  %op Strategy When_J(s:Strategy) {
-    make(s) { `Sequence(Is_J(),s) }
-  }
-
-  %op Strategy Is_J() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_J()}
-  }
-  
-%op Strategy Make_J() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_J))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_J() }
-}
-
-    %op Strategy _S() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._S)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._S() }
-    }
-  
-  
-  %op Strategy When_S(s:Strategy) {
-    make(s) { `Sequence(Is_S(),s) }
-  }
-
-  %op Strategy Is_S() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_S()}
-  }
-  
-%op Strategy Make_S() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_S))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_S() }
-}
-
-    %op Strategy _Z() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._Z)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._Z() }
-    }
-  
-  
-  %op Strategy When_Z(s:Strategy) {
-    make(s) { `Sequence(Is_Z(),s) }
-  }
-
-  %op Strategy Is_Z() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_Z()}
-  }
-  
-%op Strategy Make_Z() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_Z))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_Z() }
 }
 
     %op Strategy _ABSTRACT() {
@@ -697,152 +602,165 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_VOLATILE() }
 }
 
-    %op Strategy _EmptyFieldDescriptorList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist._EmptyFieldDescriptorList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist._EmptyFieldDescriptorList() }
-    }
-  
-  
-  %op Strategy When_EmptyFieldDescriptorList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyFieldDescriptorList(),s) }
-  }
-
-  %op Strategy Is_EmptyFieldDescriptorList() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_EmptyFieldDescriptorList()}
-  }
-  
-%op Strategy Make_EmptyFieldDescriptorList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_EmptyFieldDescriptorList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_EmptyFieldDescriptorList() }
-}
-
-    %op Strategy _ConsFieldDescriptorList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist._ConsFieldDescriptorList)))}
+    %op Strategy _ReturnDescriptor(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor._ReturnDescriptor)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist._ConsFieldDescriptorList($arg0, $arg1) }
+        make(arg0) { new tom.library.adt.bytecode.strategy.treturndescriptor._ReturnDescriptor($arg0) }
     }
   
   
-  %op Strategy When_ConsFieldDescriptorList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsFieldDescriptorList(),s) }
+  %op Strategy When_ReturnDescriptor(s:Strategy) {
+    make(s) { `Sequence(Is_ReturnDescriptor(),s) }
   }
 
-  %op Strategy Is_ConsFieldDescriptorList() {
-    make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_ConsFieldDescriptorList()}
+  %op Strategy Is_ReturnDescriptor() {
+    make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Is_ReturnDescriptor()}
   }
   
-%op Strategy Make_ConsFieldDescriptorList(_HeadFieldDescriptorList:Strategy, _TailFieldDescriptorList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_ConsFieldDescriptorList))) }
+%op Strategy Make_ReturnDescriptor(_type:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.Make_ReturnDescriptor))) }
 
-  get_slot(_HeadFieldDescriptorList, t) { $t._HeadFieldDescriptorList }
-  get_slot(_TailFieldDescriptorList, t) { $t._TailFieldDescriptorList }
-  make( new_HeadFieldDescriptorList,  new_TailFieldDescriptorList) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_ConsFieldDescriptorList( $new_HeadFieldDescriptorList,  $new_TailFieldDescriptorList) }
-}
-
-    %op Strategy _CatchHandler(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler._CatchHandler)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.thandler._CatchHandler($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_CatchHandler(s:Strategy) {
-    make(s) { `Sequence(Is_CatchHandler(),s) }
-  }
-
-  %op Strategy Is_CatchHandler() {
-    make() { new tom.library.adt.bytecode.strategy.thandler.Is_CatchHandler()}
-  }
-  
-%op Strategy Make_CatchHandler(_handler:Strategy, _type:String) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler.Make_CatchHandler))) }
-
-  get_slot(_handler, t) { $t._handler }
   get_slot(_type, t) { $t._type }
-  make( new_handler,  _type) { new tom.library.adt.bytecode.strategy.thandler.Make_CatchHandler( $new_handler,  $_type) }
+  make( new_type) { new tom.library.adt.bytecode.strategy.treturndescriptor.Make_ReturnDescriptor( $new_type) }
 }
 
-    %op Strategy _FinallyHandler(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler._FinallyHandler)))}
+    %op Strategy _Void() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor._Void)))}
       
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.library.adt.bytecode.strategy.thandler._FinallyHandler($arg0) }
+        make() { new tom.library.adt.bytecode.strategy.treturndescriptor._Void() }
     }
   
   
-  %op Strategy When_FinallyHandler(s:Strategy) {
-    make(s) { `Sequence(Is_FinallyHandler(),s) }
+  %op Strategy When_Void(s:Strategy) {
+    make(s) { `Sequence(Is_Void(),s) }
   }
 
-  %op Strategy Is_FinallyHandler() {
-    make() { new tom.library.adt.bytecode.strategy.thandler.Is_FinallyHandler()}
+  %op Strategy Is_Void() {
+    make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Is_Void()}
   }
   
-%op Strategy Make_FinallyHandler(_handler:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler.Make_FinallyHandler))) }
+%op Strategy Make_Void() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.Make_Void))) }
 
-  get_slot(_handler, t) { $t._handler }
-  make( new_handler) { new tom.library.adt.bytecode.strategy.thandler.Make_FinallyHandler( $new_handler) }
+  make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Make_Void() }
 }
 
-    %op Strategy _Field(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfield._Field)))}
+    %op Strategy _EmptyStringList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist._EmptyStringList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tstringlist._EmptyStringList() }
+    }
+  
+  
+  %op Strategy When_EmptyStringList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyStringList(),s) }
+  }
+
+  %op Strategy Is_EmptyStringList() {
+    make() { new tom.library.adt.bytecode.strategy.tstringlist.Is_EmptyStringList()}
+  }
+  
+%op Strategy Make_EmptyStringList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist.Make_EmptyStringList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tstringlist.Make_EmptyStringList() }
+}
+
+    %op Strategy _ConsStringList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist._ConsStringList)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        get_slot(arg3, t) { $t.getArgument(3) }
-        get_slot(arg4, t) { $t.getArgument(4) }
-        make(arg0, arg1, arg2, arg3, arg4) { new tom.library.adt.bytecode.strategy.tfield._Field($arg0, $arg1, $arg2, $arg3, $arg4) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tstringlist._ConsStringList($arg0, $arg1) }
     }
   
   
-  %op Strategy When_Field(s:Strategy) {
-    make(s) { `Sequence(Is_Field(),s) }
+  %op Strategy When_ConsStringList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsStringList(),s) }
   }
 
-  %op Strategy Is_Field() {
-    make() { new tom.library.adt.bytecode.strategy.tfield.Is_Field()}
+  %op Strategy Is_ConsStringList() {
+    make() { new tom.library.adt.bytecode.strategy.tstringlist.Is_ConsStringList()}
   }
   
-%op Strategy Make_Field(_access:Strategy, _name:String, _desc:Strategy, _signature:Strategy, _value:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfield.Make_Field))) }
+%op Strategy Make_ConsStringList(_HeadStringList:String, _TailStringList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist.Make_ConsStringList))) }
 
-  get_slot(_access, t) { $t._access }
-  get_slot(_name, t) { $t._name }
-  get_slot(_desc, t) { $t._desc }
-  get_slot(_signature, t) { $t._signature }
-  get_slot(_value, t) { $t._value }
-  make( new_access,  _name,  new_desc,  new_signature,  new_value) { new tom.library.adt.bytecode.strategy.tfield.Make_Field( $new_access,  $_name,  $new_desc,  $new_signature,  $new_value) }
+  get_slot(_HeadStringList, t) { $t._HeadStringList }
+  get_slot(_TailStringList, t) { $t._TailStringList }
+  make( _HeadStringList,  new_TailStringList) { new tom.library.adt.bytecode.strategy.tstringlist.Make_ConsStringList( $_HeadStringList,  $new_TailStringList) }
 }
 
-    %op Strategy _Label(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabel._Label)))}
+    %op Strategy _Method(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethod._Method)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.library.adt.bytecode.strategy.tlabel._Label($arg0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tmethod._Method($arg0, $arg1) }
     }
   
   
-  %op Strategy When_Label(s:Strategy) {
-    make(s) { `Sequence(Is_Label(),s) }
+  %op Strategy When_Method(s:Strategy) {
+    make(s) { `Sequence(Is_Method(),s) }
   }
 
-  %op Strategy Is_Label() {
-    make() { new tom.library.adt.bytecode.strategy.tlabel.Is_Label()}
+  %op Strategy Is_Method() {
+    make() { new tom.library.adt.bytecode.strategy.tmethod.Is_Method()}
   }
   
-%op Strategy Make_Label(_id:int) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabel.Make_Label))) }
+%op Strategy Make_Method(_info:Strategy, _code:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethod.Make_Method))) }
 
-  get_slot(_id, t) { $t._id }
-  make( _id) { new tom.library.adt.bytecode.strategy.tlabel.Make_Label( $_id) }
+  get_slot(_info, t) { $t._info }
+  get_slot(_code, t) { $t._code }
+  make( new_info,  new_code) { new tom.library.adt.bytecode.strategy.tmethod.Make_Method( $new_info,  $new_code) }
+}
+
+    %op Strategy _EmptyLabelList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist._EmptyLabelList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tlabellist._EmptyLabelList() }
+    }
+  
+  
+  %op Strategy When_EmptyLabelList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyLabelList(),s) }
+  }
+
+  %op Strategy Is_EmptyLabelList() {
+    make() { new tom.library.adt.bytecode.strategy.tlabellist.Is_EmptyLabelList()}
+  }
+  
+%op Strategy Make_EmptyLabelList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist.Make_EmptyLabelList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tlabellist.Make_EmptyLabelList() }
+}
+
+    %op Strategy _ConsLabelList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist._ConsLabelList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tlabellist._ConsLabelList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsLabelList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsLabelList(),s) }
+  }
+
+  %op Strategy Is_ConsLabelList() {
+    make() { new tom.library.adt.bytecode.strategy.tlabellist.Is_ConsLabelList()}
+  }
+  
+%op Strategy Make_ConsLabelList(_HeadLabelList:Strategy, _TailLabelList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist.Make_ConsLabelList))) }
+
+  get_slot(_HeadLabelList, t) { $t._HeadLabelList }
+  get_slot(_TailLabelList, t) { $t._TailLabelList }
+  make( new_HeadLabelList,  new_TailLabelList) { new tom.library.adt.bytecode.strategy.tlabellist.Make_ConsLabelList( $new_HeadLabelList,  $new_TailLabelList) }
 }
 
     %op Strategy _Anchor(arg0:Strategy) {
@@ -4288,6 +4206,33 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifnonnull( $new_label) }
 }
 
+    %op Strategy _Class(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclass._Class)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.tclass._Class($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_Class(s:Strategy) {
+    make(s) { `Sequence(Is_Class(),s) }
+  }
+
+  %op Strategy Is_Class() {
+    make() { new tom.library.adt.bytecode.strategy.tclass.Is_Class()}
+  }
+  
+%op Strategy Make_Class(_info:Strategy, _fields:Strategy, _methods:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclass.Make_Class))) }
+
+  get_slot(_info, t) { $t._info }
+  get_slot(_fields, t) { $t._fields }
+  get_slot(_methods, t) { $t._methods }
+  make( new_info,  new_fields,  new_methods) { new tom.library.adt.bytecode.strategy.tclass.Make_Class( $new_info,  $new_fields,  $new_methods) }
+}
+
     %op Strategy _EmptyInnerClassInfoList() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfolist._EmptyInnerClassInfoList)))}
       
@@ -4332,273 +4277,6 @@
   get_slot(_HeadInnerClassInfoList, t) { $t._HeadInnerClassInfoList }
   get_slot(_TailInnerClassInfoList, t) { $t._TailInnerClassInfoList }
   make( new_HeadInnerClassInfoList,  new_TailInnerClassInfoList) { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.Make_ConsInnerClassInfoList( $new_HeadInnerClassInfoList,  $new_TailInnerClassInfoList) }
-}
-
-    %op Strategy _EmptyLabelList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist._EmptyLabelList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tlabellist._EmptyLabelList() }
-    }
-  
-  
-  %op Strategy When_EmptyLabelList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyLabelList(),s) }
-  }
-
-  %op Strategy Is_EmptyLabelList() {
-    make() { new tom.library.adt.bytecode.strategy.tlabellist.Is_EmptyLabelList()}
-  }
-  
-%op Strategy Make_EmptyLabelList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist.Make_EmptyLabelList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tlabellist.Make_EmptyLabelList() }
-}
-
-    %op Strategy _ConsLabelList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist._ConsLabelList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tlabellist._ConsLabelList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsLabelList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsLabelList(),s) }
-  }
-
-  %op Strategy Is_ConsLabelList() {
-    make() { new tom.library.adt.bytecode.strategy.tlabellist.Is_ConsLabelList()}
-  }
-  
-%op Strategy Make_ConsLabelList(_HeadLabelList:Strategy, _TailLabelList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabellist.Make_ConsLabelList))) }
-
-  get_slot(_HeadLabelList, t) { $t._HeadLabelList }
-  get_slot(_TailLabelList, t) { $t._TailLabelList }
-  make( new_HeadLabelList,  new_TailLabelList) { new tom.library.adt.bytecode.strategy.tlabellist.Make_ConsLabelList( $new_HeadLabelList,  $new_TailLabelList) }
-}
-
-    %op Strategy _EmptyMethodList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist._EmptyMethodList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tmethodlist._EmptyMethodList() }
-    }
-  
-  
-  %op Strategy When_EmptyMethodList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyMethodList(),s) }
-  }
-
-  %op Strategy Is_EmptyMethodList() {
-    make() { new tom.library.adt.bytecode.strategy.tmethodlist.Is_EmptyMethodList()}
-  }
-  
-%op Strategy Make_EmptyMethodList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.Make_EmptyMethodList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tmethodlist.Make_EmptyMethodList() }
-}
-
-    %op Strategy _ConsMethodList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist._ConsMethodList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tmethodlist._ConsMethodList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsMethodList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsMethodList(),s) }
-  }
-
-  %op Strategy Is_ConsMethodList() {
-    make() { new tom.library.adt.bytecode.strategy.tmethodlist.Is_ConsMethodList()}
-  }
-  
-%op Strategy Make_ConsMethodList(_HeadMethodList:Strategy, _TailMethodList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.Make_ConsMethodList))) }
-
-  get_slot(_HeadMethodList, t) { $t._HeadMethodList }
-  get_slot(_TailMethodList, t) { $t._TailMethodList }
-  make( new_HeadMethodList,  new_TailMethodList) { new tom.library.adt.bytecode.strategy.tmethodlist.Make_ConsMethodList( $new_HeadMethodList,  $new_TailMethodList) }
-}
-
-    %op Strategy _Signature(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature._Signature)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.library.adt.bytecode.strategy.tsignature._Signature($arg0) }
-    }
-  
-  
-  %op Strategy When_Signature(s:Strategy) {
-    make(s) { `Sequence(Is_Signature(),s) }
-  }
-
-  %op Strategy Is_Signature() {
-    make() { new tom.library.adt.bytecode.strategy.tsignature.Is_Signature()}
-  }
-  
-%op Strategy Make_Signature(_sig:String) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature.Make_Signature))) }
-
-  get_slot(_sig, t) { $t._sig }
-  make( _sig) { new tom.library.adt.bytecode.strategy.tsignature.Make_Signature( $_sig) }
-}
-
-    %op Strategy _EmptySignature() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature._EmptySignature)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tsignature._EmptySignature() }
-    }
-  
-  
-  %op Strategy When_EmptySignature(s:Strategy) {
-    make(s) { `Sequence(Is_EmptySignature(),s) }
-  }
-
-  %op Strategy Is_EmptySignature() {
-    make() { new tom.library.adt.bytecode.strategy.tsignature.Is_EmptySignature()}
-  }
-  
-%op Strategy Make_EmptySignature() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tsignature.Make_EmptySignature))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tsignature.Make_EmptySignature() }
-}
-
-    %op Strategy _MethodCode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode._MethodCode)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.tmethodcode._MethodCode($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_MethodCode(s:Strategy) {
-    make(s) { `Sequence(Is_MethodCode(),s) }
-  }
-
-  %op Strategy Is_MethodCode() {
-    make() { new tom.library.adt.bytecode.strategy.tmethodcode.Is_MethodCode()}
-  }
-  
-%op Strategy Make_MethodCode(_instructions:Strategy, _localVariables:Strategy, _tryCatchBlocks:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.Make_MethodCode))) }
-
-  get_slot(_instructions, t) { $t._instructions }
-  get_slot(_localVariables, t) { $t._localVariables }
-  get_slot(_tryCatchBlocks, t) { $t._tryCatchBlocks }
-  make( new_instructions,  new_localVariables,  new_tryCatchBlocks) { new tom.library.adt.bytecode.strategy.tmethodcode.Make_MethodCode( $new_instructions,  $new_localVariables,  $new_tryCatchBlocks) }
-}
-
-    %op Strategy _EmptyCode() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode._EmptyCode)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tmethodcode._EmptyCode() }
-    }
-  
-  
-  %op Strategy When_EmptyCode(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyCode(),s) }
-  }
-
-  %op Strategy Is_EmptyCode() {
-    make() { new tom.library.adt.bytecode.strategy.tmethodcode.Is_EmptyCode()}
-  }
-  
-%op Strategy Make_EmptyCode() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.Make_EmptyCode))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tmethodcode.Make_EmptyCode() }
-}
-
-    %op Strategy _ClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclassinfo._ClassInfo)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        get_slot(arg3, t) { $t.getArgument(3) }
-        get_slot(arg4, t) { $t.getArgument(4) }
-        get_slot(arg5, t) { $t.getArgument(5) }
-        get_slot(arg6, t) { $t.getArgument(6) }
-        make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.library.adt.bytecode.strategy.tclassinfo._ClassInfo($arg0, $arg1, $arg2, $arg3, $arg4, $arg5, $arg6) }
-    }
-  
-  
-  %op Strategy When_ClassInfo(s:Strategy) {
-    make(s) { `Sequence(Is_ClassInfo(),s) }
-  }
-
-  %op Strategy Is_ClassInfo() {
-    make() { new tom.library.adt.bytecode.strategy.tclassinfo.Is_ClassInfo()}
-  }
-  
-%op Strategy Make_ClassInfo(_name:String, _signature:Strategy, _access:Strategy, _superName:String, _interfaces:Strategy, _innerClasses:Strategy, _outerClass:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclassinfo.Make_ClassInfo))) }
-
-  get_slot(_name, t) { $t._name }
-  get_slot(_signature, t) { $t._signature }
-  get_slot(_access, t) { $t._access }
-  get_slot(_superName, t) { $t._superName }
-  get_slot(_interfaces, t) { $t._interfaces }
-  get_slot(_innerClasses, t) { $t._innerClasses }
-  get_slot(_outerClass, t) { $t._outerClass }
-  make( _name,  new_signature,  new_access,  _superName,  new_interfaces,  new_innerClasses,  new_outerClass) { new tom.library.adt.bytecode.strategy.tclassinfo.Make_ClassInfo( $_name,  $new_signature,  $new_access,  $_superName,  $new_interfaces,  $new_innerClasses,  $new_outerClass) }
-}
-
-    %op Strategy _OuterClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo._OuterClassInfo)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.touterclassinfo._OuterClassInfo($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_OuterClassInfo(s:Strategy) {
-    make(s) { `Sequence(Is_OuterClassInfo(),s) }
-  }
-
-  %op Strategy Is_OuterClassInfo() {
-    make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Is_OuterClassInfo()}
-  }
-  
-%op Strategy Make_OuterClassInfo(_owner:String, _name:String, _desc:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.Make_OuterClassInfo))) }
-
-  get_slot(_owner, t) { $t._owner }
-  get_slot(_name, t) { $t._name }
-  get_slot(_desc, t) { $t._desc }
-  make( _owner,  _name,  new_desc) { new tom.library.adt.bytecode.strategy.touterclassinfo.Make_OuterClassInfo( $_owner,  $_name,  $new_desc) }
-}
-
-    %op Strategy _EmptyOuterClassInfo() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo._EmptyOuterClassInfo)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.touterclassinfo._EmptyOuterClassInfo() }
-    }
-  
-  
-  %op Strategy When_EmptyOuterClassInfo(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyOuterClassInfo(),s) }
-  }
-
-  %op Strategy Is_EmptyOuterClassInfo() {
-    make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Is_EmptyOuterClassInfo()}
-  }
-  
-%op Strategy Make_EmptyOuterClassInfo() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.Make_EmptyOuterClassInfo))) }
-
-  make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Make_EmptyOuterClassInfo() }
 }
 
     %op Strategy _StringValue(arg0:Strategy) {
@@ -4737,50 +4415,35 @@
   make() { new tom.library.adt.bytecode.strategy.tvalue.Make_EmptyValue() }
 }
 
-    %op Strategy _EmptyLocalVariableList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist._EmptyLocalVariableList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist._EmptyLocalVariableList() }
-    }
-  
-  
-  %op Strategy When_EmptyLocalVariableList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyLocalVariableList(),s) }
-  }
-
-  %op Strategy Is_EmptyLocalVariableList() {
-    make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_EmptyLocalVariableList()}
-  }
-  
-%op Strategy Make_EmptyLocalVariableList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_EmptyLocalVariableList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_EmptyLocalVariableList() }
-}
-
-    %op Strategy _ConsLocalVariableList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist._ConsLocalVariableList)))}
+    %op Strategy _Field(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfield._Field)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tlocalvariablelist._ConsLocalVariableList($arg0, $arg1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        make(arg0, arg1, arg2, arg3, arg4) { new tom.library.adt.bytecode.strategy.tfield._Field($arg0, $arg1, $arg2, $arg3, $arg4) }
     }
   
   
-  %op Strategy When_ConsLocalVariableList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsLocalVariableList(),s) }
+  %op Strategy When_Field(s:Strategy) {
+    make(s) { `Sequence(Is_Field(),s) }
   }
 
-  %op Strategy Is_ConsLocalVariableList() {
-    make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_ConsLocalVariableList()}
+  %op Strategy Is_Field() {
+    make() { new tom.library.adt.bytecode.strategy.tfield.Is_Field()}
   }
   
-%op Strategy Make_ConsLocalVariableList(_HeadLocalVariableList:Strategy, _TailLocalVariableList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_ConsLocalVariableList))) }
+%op Strategy Make_Field(_access:Strategy, _name:String, _desc:Strategy, _signature:Strategy, _value:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfield.Make_Field))) }
 
-  get_slot(_HeadLocalVariableList, t) { $t._HeadLocalVariableList }
-  get_slot(_TailLocalVariableList, t) { $t._TailLocalVariableList }
-  make( new_HeadLocalVariableList,  new_TailLocalVariableList) { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_ConsLocalVariableList( $new_HeadLocalVariableList,  $new_TailLocalVariableList) }
+  get_slot(_access, t) { $t._access }
+  get_slot(_name, t) { $t._name }
+  get_slot(_desc, t) { $t._desc }
+  get_slot(_signature, t) { $t._signature }
+  get_slot(_value, t) { $t._value }
+  make( new_access,  _name,  new_desc,  new_signature,  new_value) { new tom.library.adt.bytecode.strategy.tfield.Make_Field( $new_access,  $_name,  $new_desc,  $new_signature,  $new_value) }
 }
 
     %op Strategy _EmptyTryCatchBlockList() {
@@ -4827,275 +4490,6 @@
   get_slot(_HeadTryCatchBlockList, t) { $t._HeadTryCatchBlockList }
   get_slot(_TailTryCatchBlockList, t) { $t._TailTryCatchBlockList }
   make( new_HeadTryCatchBlockList,  new_TailTryCatchBlockList) { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.Make_ConsTryCatchBlockList( $new_HeadTryCatchBlockList,  $new_TailTryCatchBlockList) }
-}
-
-    %op Strategy _EmptyintList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist._EmptyintList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tintlist._EmptyintList() }
-    }
-  
-  
-  %op Strategy When_EmptyintList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyintList(),s) }
-  }
-
-  %op Strategy Is_EmptyintList() {
-    make() { new tom.library.adt.bytecode.strategy.tintlist.Is_EmptyintList()}
-  }
-  
-%op Strategy Make_EmptyintList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist.Make_EmptyintList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tintlist.Make_EmptyintList() }
-}
-
-    %op Strategy _ConsintList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist._ConsintList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tintlist._ConsintList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsintList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsintList(),s) }
-  }
-
-  %op Strategy Is_ConsintList() {
-    make() { new tom.library.adt.bytecode.strategy.tintlist.Is_ConsintList()}
-  }
-  
-%op Strategy Make_ConsintList(_HeadintList:int, _TailintList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist.Make_ConsintList))) }
-
-  get_slot(_HeadintList, t) { $t._HeadintList }
-  get_slot(_TailintList, t) { $t._TailintList }
-  make( _HeadintList,  new_TailintList) { new tom.library.adt.bytecode.strategy.tintlist.Make_ConsintList( $_HeadintList,  $new_TailintList) }
-}
-
-    %op Strategy _EmptyAccessList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist._EmptyAccessList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.taccesslist._EmptyAccessList() }
-    }
-  
-  
-  %op Strategy When_EmptyAccessList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyAccessList(),s) }
-  }
-
-  %op Strategy Is_EmptyAccessList() {
-    make() { new tom.library.adt.bytecode.strategy.taccesslist.Is_EmptyAccessList()}
-  }
-  
-%op Strategy Make_EmptyAccessList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist.Make_EmptyAccessList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.taccesslist.Make_EmptyAccessList() }
-}
-
-    %op Strategy _ConsAccessList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist._ConsAccessList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.taccesslist._ConsAccessList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsAccessList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsAccessList(),s) }
-  }
-
-  %op Strategy Is_ConsAccessList() {
-    make() { new tom.library.adt.bytecode.strategy.taccesslist.Is_ConsAccessList()}
-  }
-  
-%op Strategy Make_ConsAccessList(_HeadAccessList:Strategy, _TailAccessList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist.Make_ConsAccessList))) }
-
-  get_slot(_HeadAccessList, t) { $t._HeadAccessList }
-  get_slot(_TailAccessList, t) { $t._TailAccessList }
-  make( new_HeadAccessList,  new_TailAccessList) { new tom.library.adt.bytecode.strategy.taccesslist.Make_ConsAccessList( $new_HeadAccessList,  $new_TailAccessList) }
-}
-
-    %op Strategy _MethodDescriptor(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethoddescriptor._MethodDescriptor)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tmethoddescriptor._MethodDescriptor($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_MethodDescriptor(s:Strategy) {
-    make(s) { `Sequence(Is_MethodDescriptor(),s) }
-  }
-
-  %op Strategy Is_MethodDescriptor() {
-    make() { new tom.library.adt.bytecode.strategy.tmethoddescriptor.Is_MethodDescriptor()}
-  }
-  
-%op Strategy Make_MethodDescriptor(_parameters:Strategy, _return:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethoddescriptor.Make_MethodDescriptor))) }
-
-  get_slot(_parameters, t) { $t._parameters }
-  get_slot(_return, t) { $t._return }
-  make( new_parameters,  new_return) { new tom.library.adt.bytecode.strategy.tmethoddescriptor.Make_MethodDescriptor( $new_parameters,  $new_return) }
-}
-
-    %op Strategy _Class(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclass._Class)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.tclass._Class($arg0, $arg1, $arg2) }
-    }
-  
-  
-  %op Strategy When_Class(s:Strategy) {
-    make(s) { `Sequence(Is_Class(),s) }
-  }
-
-  %op Strategy Is_Class() {
-    make() { new tom.library.adt.bytecode.strategy.tclass.Is_Class()}
-  }
-  
-%op Strategy Make_Class(_info:Strategy, _fields:Strategy, _methods:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclass.Make_Class))) }
-
-  get_slot(_info, t) { $t._info }
-  get_slot(_fields, t) { $t._fields }
-  get_slot(_methods, t) { $t._methods }
-  make( new_info,  new_fields,  new_methods) { new tom.library.adt.bytecode.strategy.tclass.Make_Class( $new_info,  $new_fields,  $new_methods) }
-}
-
-    %op Strategy _EmptyInstructionList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist._EmptyInstructionList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tinstructionlist._EmptyInstructionList() }
-    }
-  
-  
-  %op Strategy When_EmptyInstructionList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyInstructionList(),s) }
-  }
-
-  %op Strategy Is_EmptyInstructionList() {
-    make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Is_EmptyInstructionList()}
-  }
-  
-%op Strategy Make_EmptyInstructionList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.Make_EmptyInstructionList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Make_EmptyInstructionList() }
-}
-
-    %op Strategy _ConsInstructionList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist._ConsInstructionList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tinstructionlist._ConsInstructionList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsInstructionList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsInstructionList(),s) }
-  }
-
-  %op Strategy Is_ConsInstructionList() {
-    make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Is_ConsInstructionList()}
-  }
-  
-%op Strategy Make_ConsInstructionList(_HeadInstructionList:Strategy, _TailInstructionList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.Make_ConsInstructionList))) }
-
-  get_slot(_HeadInstructionList, t) { $t._HeadInstructionList }
-  get_slot(_TailInstructionList, t) { $t._TailInstructionList }
-  make( new_HeadInstructionList,  new_TailInstructionList) { new tom.library.adt.bytecode.strategy.tinstructionlist.Make_ConsInstructionList( $new_HeadInstructionList,  $new_TailInstructionList) }
-}
-
-    %op Strategy _EmptyFieldList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist._EmptyFieldList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tfieldlist._EmptyFieldList() }
-    }
-  
-  
-  %op Strategy When_EmptyFieldList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyFieldList(),s) }
-  }
-
-  %op Strategy Is_EmptyFieldList() {
-    make() { new tom.library.adt.bytecode.strategy.tfieldlist.Is_EmptyFieldList()}
-  }
-  
-%op Strategy Make_EmptyFieldList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.Make_EmptyFieldList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tfieldlist.Make_EmptyFieldList() }
-}
-
-    %op Strategy _ConsFieldList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist._ConsFieldList)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tfieldlist._ConsFieldList($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_ConsFieldList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsFieldList(),s) }
-  }
-
-  %op Strategy Is_ConsFieldList() {
-    make() { new tom.library.adt.bytecode.strategy.tfieldlist.Is_ConsFieldList()}
-  }
-  
-%op Strategy Make_ConsFieldList(_HeadFieldList:Strategy, _TailFieldList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.Make_ConsFieldList))) }
-
-  get_slot(_HeadFieldList, t) { $t._HeadFieldList }
-  get_slot(_TailFieldList, t) { $t._TailFieldList }
-  make( new_HeadFieldList,  new_TailFieldList) { new tom.library.adt.bytecode.strategy.tfieldlist.Make_ConsFieldList( $new_HeadFieldList,  $new_TailFieldList) }
-}
-
-    %op Strategy _LocalVariable(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariable._LocalVariable)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        get_slot(arg2, t) { $t.getArgument(2) }
-        get_slot(arg3, t) { $t.getArgument(3) }
-        get_slot(arg4, t) { $t.getArgument(4) }
-        get_slot(arg5, t) { $t.getArgument(5) }
-        make(arg0, arg1, arg2, arg3, arg4, arg5) { new tom.library.adt.bytecode.strategy.tlocalvariable._LocalVariable($arg0, $arg1, $arg2, $arg3, $arg4, $arg5) }
-    }
-  
-  
-  %op Strategy When_LocalVariable(s:Strategy) {
-    make(s) { `Sequence(Is_LocalVariable(),s) }
-  }
-
-  %op Strategy Is_LocalVariable() {
-    make() { new tom.library.adt.bytecode.strategy.tlocalvariable.Is_LocalVariable()}
-  }
-  
-%op Strategy Make_LocalVariable(_name:String, _typeDesc:String, _signature:Strategy, _start:Strategy, _end:Strategy, _index:int) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariable.Make_LocalVariable))) }
-
-  get_slot(_name, t) { $t._name }
-  get_slot(_typeDesc, t) { $t._typeDesc }
-  get_slot(_signature, t) { $t._signature }
-  get_slot(_start, t) { $t._start }
-  get_slot(_end, t) { $t._end }
-  get_slot(_index, t) { $t._index }
-  make( _name,  _typeDesc,  new_signature,  new_start,  new_end,  _index) { new tom.library.adt.bytecode.strategy.tlocalvariable.Make_LocalVariable( $_name,  $_typeDesc,  $new_signature,  $new_start,  $new_end,  $_index) }
 }
 
     %op Strategy _ARRAY() {
@@ -5329,94 +4723,491 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_VOID() }
 }
 
-    %op Strategy _EmptyStringList() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist._EmptyStringList)))}
-      
-        make() { new tom.library.adt.bytecode.strategy.tstringlist._EmptyStringList() }
-    }
-  
-  
-  %op Strategy When_EmptyStringList(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyStringList(),s) }
-  }
-
-  %op Strategy Is_EmptyStringList() {
-    make() { new tom.library.adt.bytecode.strategy.tstringlist.Is_EmptyStringList()}
-  }
-  
-%op Strategy Make_EmptyStringList() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist.Make_EmptyStringList))) }
-
-  make() { new tom.library.adt.bytecode.strategy.tstringlist.Make_EmptyStringList() }
-}
-
-    %op Strategy _ConsStringList(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist._ConsStringList)))}
+    %op Strategy _ClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclassinfo._ClassInfo)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tstringlist._ConsStringList($arg0, $arg1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        get_slot(arg3, t) { $t.getArgument(3) }
+        get_slot(arg4, t) { $t.getArgument(4) }
+        get_slot(arg5, t) { $t.getArgument(5) }
+        get_slot(arg6, t) { $t.getArgument(6) }
+        make(arg0, arg1, arg2, arg3, arg4, arg5, arg6) { new tom.library.adt.bytecode.strategy.tclassinfo._ClassInfo($arg0, $arg1, $arg2, $arg3, $arg4, $arg5, $arg6) }
     }
   
   
-  %op Strategy When_ConsStringList(s:Strategy) {
-    make(s) { `Sequence(Is_ConsStringList(),s) }
+  %op Strategy When_ClassInfo(s:Strategy) {
+    make(s) { `Sequence(Is_ClassInfo(),s) }
   }
 
-  %op Strategy Is_ConsStringList() {
-    make() { new tom.library.adt.bytecode.strategy.tstringlist.Is_ConsStringList()}
+  %op Strategy Is_ClassInfo() {
+    make() { new tom.library.adt.bytecode.strategy.tclassinfo.Is_ClassInfo()}
   }
   
-%op Strategy Make_ConsStringList(_HeadStringList:String, _TailStringList:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tstringlist.Make_ConsStringList))) }
+%op Strategy Make_ClassInfo(_name:String, _signature:Strategy, _access:Strategy, _superName:String, _interfaces:Strategy, _innerClasses:Strategy, _outerClass:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tclassinfo.Make_ClassInfo))) }
 
-  get_slot(_HeadStringList, t) { $t._HeadStringList }
-  get_slot(_TailStringList, t) { $t._TailStringList }
-  make( _HeadStringList,  new_TailStringList) { new tom.library.adt.bytecode.strategy.tstringlist.Make_ConsStringList( $_HeadStringList,  $new_TailStringList) }
+  get_slot(_name, t) { $t._name }
+  get_slot(_signature, t) { $t._signature }
+  get_slot(_access, t) { $t._access }
+  get_slot(_superName, t) { $t._superName }
+  get_slot(_interfaces, t) { $t._interfaces }
+  get_slot(_innerClasses, t) { $t._innerClasses }
+  get_slot(_outerClass, t) { $t._outerClass }
+  make( _name,  new_signature,  new_access,  _superName,  new_interfaces,  new_innerClasses,  new_outerClass) { new tom.library.adt.bytecode.strategy.tclassinfo.Make_ClassInfo( $_name,  $new_signature,  $new_access,  $_superName,  $new_interfaces,  $new_innerClasses,  $new_outerClass) }
 }
 
-    %op Strategy _ReturnDescriptor(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor._ReturnDescriptor)))}
+    %op Strategy _EmptyAccessList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist._EmptyAccessList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.taccesslist._EmptyAccessList() }
+    }
+  
+  
+  %op Strategy When_EmptyAccessList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyAccessList(),s) }
+  }
+
+  %op Strategy Is_EmptyAccessList() {
+    make() { new tom.library.adt.bytecode.strategy.taccesslist.Is_EmptyAccessList()}
+  }
+  
+%op Strategy Make_EmptyAccessList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist.Make_EmptyAccessList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.taccesslist.Make_EmptyAccessList() }
+}
+
+    %op Strategy _ConsAccessList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist._ConsAccessList)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.library.adt.bytecode.strategy.treturndescriptor._ReturnDescriptor($arg0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.taccesslist._ConsAccessList($arg0, $arg1) }
     }
   
   
-  %op Strategy When_ReturnDescriptor(s:Strategy) {
-    make(s) { `Sequence(Is_ReturnDescriptor(),s) }
+  %op Strategy When_ConsAccessList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsAccessList(),s) }
   }
 
-  %op Strategy Is_ReturnDescriptor() {
-    make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Is_ReturnDescriptor()}
+  %op Strategy Is_ConsAccessList() {
+    make() { new tom.library.adt.bytecode.strategy.taccesslist.Is_ConsAccessList()}
   }
   
-%op Strategy Make_ReturnDescriptor(_type:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.Make_ReturnDescriptor))) }
+%op Strategy Make_ConsAccessList(_HeadAccessList:Strategy, _TailAccessList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.taccesslist.Make_ConsAccessList))) }
 
-  get_slot(_type, t) { $t._type }
-  make( new_type) { new tom.library.adt.bytecode.strategy.treturndescriptor.Make_ReturnDescriptor( $new_type) }
+  get_slot(_HeadAccessList, t) { $t._HeadAccessList }
+  get_slot(_TailAccessList, t) { $t._TailAccessList }
+  make( new_HeadAccessList,  new_TailAccessList) { new tom.library.adt.bytecode.strategy.taccesslist.Make_ConsAccessList( $new_HeadAccessList,  $new_TailAccessList) }
 }
 
-    %op Strategy _Void() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor._Void)))}
+    %op Strategy _MethodDescriptor(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethoddescriptor._MethodDescriptor)))}
       
-        make() { new tom.library.adt.bytecode.strategy.treturndescriptor._Void() }
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tmethoddescriptor._MethodDescriptor($arg0, $arg1) }
     }
   
   
-  %op Strategy When_Void(s:Strategy) {
-    make(s) { `Sequence(Is_Void(),s) }
+  %op Strategy When_MethodDescriptor(s:Strategy) {
+    make(s) { `Sequence(Is_MethodDescriptor(),s) }
   }
 
-  %op Strategy Is_Void() {
-    make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Is_Void()}
+  %op Strategy Is_MethodDescriptor() {
+    make() { new tom.library.adt.bytecode.strategy.tmethoddescriptor.Is_MethodDescriptor()}
   }
   
-%op Strategy Make_Void() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.Make_Void))) }
+%op Strategy Make_MethodDescriptor(_parameters:Strategy, _return:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tmethoddescriptor.Make_MethodDescriptor))) }
 
-  make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Make_Void() }
+  get_slot(_parameters, t) { $t._parameters }
+  get_slot(_return, t) { $t._return }
+  make( new_parameters,  new_return) { new tom.library.adt.bytecode.strategy.tmethoddescriptor.Make_MethodDescriptor( $new_parameters,  $new_return) }
+}
+
+    %op Strategy _EmptyFieldList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist._EmptyFieldList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfieldlist._EmptyFieldList() }
+    }
+  
+  
+  %op Strategy When_EmptyFieldList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyFieldList(),s) }
+  }
+
+  %op Strategy Is_EmptyFieldList() {
+    make() { new tom.library.adt.bytecode.strategy.tfieldlist.Is_EmptyFieldList()}
+  }
+  
+%op Strategy Make_EmptyFieldList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.Make_EmptyFieldList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfieldlist.Make_EmptyFieldList() }
+}
+
+    %op Strategy _ConsFieldList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist._ConsFieldList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tfieldlist._ConsFieldList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsFieldList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsFieldList(),s) }
+  }
+
+  %op Strategy Is_ConsFieldList() {
+    make() { new tom.library.adt.bytecode.strategy.tfieldlist.Is_ConsFieldList()}
+  }
+  
+%op Strategy Make_ConsFieldList(_HeadFieldList:Strategy, _TailFieldList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.Make_ConsFieldList))) }
+
+  get_slot(_HeadFieldList, t) { $t._HeadFieldList }
+  get_slot(_TailFieldList, t) { $t._TailFieldList }
+  make( new_HeadFieldList,  new_TailFieldList) { new tom.library.adt.bytecode.strategy.tfieldlist.Make_ConsFieldList( $new_HeadFieldList,  $new_TailFieldList) }
+}
+
+    %op Strategy _OuterClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo._OuterClassInfo)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.touterclassinfo._OuterClassInfo($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_OuterClassInfo(s:Strategy) {
+    make(s) { `Sequence(Is_OuterClassInfo(),s) }
+  }
+
+  %op Strategy Is_OuterClassInfo() {
+    make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Is_OuterClassInfo()}
+  }
+  
+%op Strategy Make_OuterClassInfo(_owner:String, _name:String, _desc:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.Make_OuterClassInfo))) }
+
+  get_slot(_owner, t) { $t._owner }
+  get_slot(_name, t) { $t._name }
+  get_slot(_desc, t) { $t._desc }
+  make( _owner,  _name,  new_desc) { new tom.library.adt.bytecode.strategy.touterclassinfo.Make_OuterClassInfo( $_owner,  $_name,  $new_desc) }
+}
+
+    %op Strategy _EmptyOuterClassInfo() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo._EmptyOuterClassInfo)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.touterclassinfo._EmptyOuterClassInfo() }
+    }
+  
+  
+  %op Strategy When_EmptyOuterClassInfo(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyOuterClassInfo(),s) }
+  }
+
+  %op Strategy Is_EmptyOuterClassInfo() {
+    make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Is_EmptyOuterClassInfo()}
+  }
+  
+%op Strategy Make_EmptyOuterClassInfo() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.Make_EmptyOuterClassInfo))) }
+
+  make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Make_EmptyOuterClassInfo() }
+}
+
+    %op Strategy _ObjectType(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._ObjectType)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.library.adt.bytecode.strategy.tfielddescriptor._ObjectType($arg0) }
+    }
+  
+  
+  %op Strategy When_ObjectType(s:Strategy) {
+    make(s) { `Sequence(Is_ObjectType(),s) }
+  }
+
+  %op Strategy Is_ObjectType() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ObjectType()}
+  }
+  
+%op Strategy Make_ObjectType(_className:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ObjectType))) }
+
+  get_slot(_className, t) { $t._className }
+  make( _className) { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ObjectType( $_className) }
+}
+
+    %op Strategy _ArrayType(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._ArrayType)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.library.adt.bytecode.strategy.tfielddescriptor._ArrayType($arg0) }
+    }
+  
+  
+  %op Strategy When_ArrayType(s:Strategy) {
+    make(s) { `Sequence(Is_ArrayType(),s) }
+  }
+
+  %op Strategy Is_ArrayType() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ArrayType()}
+  }
+  
+%op Strategy Make_ArrayType(_arrayType:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ArrayType))) }
+
+  get_slot(_arrayType, t) { $t._arrayType }
+  make( new_arrayType) { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ArrayType( $new_arrayType) }
+}
+
+    %op Strategy _B() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._B)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._B() }
+    }
+  
+  
+  %op Strategy When_B(s:Strategy) {
+    make(s) { `Sequence(Is_B(),s) }
+  }
+
+  %op Strategy Is_B() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_B()}
+  }
+  
+%op Strategy Make_B() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_B))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_B() }
+}
+
+    %op Strategy _C() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._C)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._C() }
+    }
+  
+  
+  %op Strategy When_C(s:Strategy) {
+    make(s) { `Sequence(Is_C(),s) }
+  }
+
+  %op Strategy Is_C() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_C()}
+  }
+  
+%op Strategy Make_C() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_C))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_C() }
+}
+
+    %op Strategy _D() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._D)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._D() }
+    }
+  
+  
+  %op Strategy When_D(s:Strategy) {
+    make(s) { `Sequence(Is_D(),s) }
+  }
+
+  %op Strategy Is_D() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_D()}
+  }
+  
+%op Strategy Make_D() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_D))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_D() }
+}
+
+    %op Strategy _F() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._F)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._F() }
+    }
+  
+  
+  %op Strategy When_F(s:Strategy) {
+    make(s) { `Sequence(Is_F(),s) }
+  }
+
+  %op Strategy Is_F() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_F()}
+  }
+  
+%op Strategy Make_F() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_F))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_F() }
+}
+
+    %op Strategy _I() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._I)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._I() }
+    }
+  
+  
+  %op Strategy When_I(s:Strategy) {
+    make(s) { `Sequence(Is_I(),s) }
+  }
+
+  %op Strategy Is_I() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_I()}
+  }
+  
+%op Strategy Make_I() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_I))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_I() }
+}
+
+    %op Strategy _J() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._J)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._J() }
+    }
+  
+  
+  %op Strategy When_J(s:Strategy) {
+    make(s) { `Sequence(Is_J(),s) }
+  }
+
+  %op Strategy Is_J() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_J()}
+  }
+  
+%op Strategy Make_J() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_J))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_J() }
+}
+
+    %op Strategy _S() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._S)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._S() }
+    }
+  
+  
+  %op Strategy When_S(s:Strategy) {
+    make(s) { `Sequence(Is_S(),s) }
+  }
+
+  %op Strategy Is_S() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_S()}
+  }
+  
+%op Strategy Make_S() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_S))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_S() }
+}
+
+    %op Strategy _Z() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor._Z)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptor._Z() }
+    }
+  
+  
+  %op Strategy When_Z(s:Strategy) {
+    make(s) { `Sequence(Is_Z(),s) }
+  }
+
+  %op Strategy Is_Z() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_Z()}
+  }
+  
+%op Strategy Make_Z() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Make_Z))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_Z() }
+}
+
+    %op Strategy _TryCatchBlock(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblock._TryCatchBlock)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.library.adt.bytecode.strategy.ttrycatchblock._TryCatchBlock($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_TryCatchBlock(s:Strategy) {
+    make(s) { `Sequence(Is_TryCatchBlock(),s) }
+  }
+
+  %op Strategy Is_TryCatchBlock() {
+    make() { new tom.library.adt.bytecode.strategy.ttrycatchblock.Is_TryCatchBlock()}
+  }
+  
+%op Strategy Make_TryCatchBlock(_start:Strategy, _end:Strategy, _handler:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblock.Make_TryCatchBlock))) }
+
+  get_slot(_start, t) { $t._start }
+  get_slot(_end, t) { $t._end }
+  get_slot(_handler, t) { $t._handler }
+  make( new_start,  new_end,  new_handler) { new tom.library.adt.bytecode.strategy.ttrycatchblock.Make_TryCatchBlock( $new_start,  $new_end,  $new_handler) }
+}
+
+    %op Strategy _EmptyintList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist._EmptyintList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tintlist._EmptyintList() }
+    }
+  
+  
+  %op Strategy When_EmptyintList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyintList(),s) }
+  }
+
+  %op Strategy Is_EmptyintList() {
+    make() { new tom.library.adt.bytecode.strategy.tintlist.Is_EmptyintList()}
+  }
+  
+%op Strategy Make_EmptyintList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist.Make_EmptyintList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tintlist.Make_EmptyintList() }
+}
+
+    %op Strategy _ConsintList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist._ConsintList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tintlist._ConsintList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsintList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsintList(),s) }
+  }
+
+  %op Strategy Is_ConsintList() {
+    make() { new tom.library.adt.bytecode.strategy.tintlist.Is_ConsintList()}
+  }
+  
+%op Strategy Make_ConsintList(_HeadintList:int, _TailintList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tintlist.Make_ConsintList))) }
+
+  get_slot(_HeadintList, t) { $t._HeadintList }
+  get_slot(_TailintList, t) { $t._TailintList }
+  make( _HeadintList,  new_TailintList) { new tom.library.adt.bytecode.strategy.tintlist.Make_ConsintList( $_HeadintList,  $new_TailintList) }
 }
 
     %op Strategy _MethodInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
@@ -5452,14 +5243,223 @@
   make( _owner,  new_access,  _name,  new_desc,  new_signature,  new_exceptions) { new tom.library.adt.bytecode.strategy.tmethodinfo.Make_MethodInfo( $_owner,  $new_access,  $_name,  $new_desc,  $new_signature,  $new_exceptions) }
 }
 
-            %op Strategy _FieldDescriptorList(sub:Strategy) {
+    %op Strategy _CatchHandler(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler._CatchHandler)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.thandler._CatchHandler($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_CatchHandler(s:Strategy) {
+    make(s) { `Sequence(Is_CatchHandler(),s) }
+  }
+
+  %op Strategy Is_CatchHandler() {
+    make() { new tom.library.adt.bytecode.strategy.thandler.Is_CatchHandler()}
+  }
+  
+%op Strategy Make_CatchHandler(_handler:Strategy, _type:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler.Make_CatchHandler))) }
+
+  get_slot(_handler, t) { $t._handler }
+  get_slot(_type, t) { $t._type }
+  make( new_handler,  _type) { new tom.library.adt.bytecode.strategy.thandler.Make_CatchHandler( $new_handler,  $_type) }
+}
+
+    %op Strategy _FinallyHandler(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler._FinallyHandler)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.library.adt.bytecode.strategy.thandler._FinallyHandler($arg0) }
+    }
+  
+  
+  %op Strategy When_FinallyHandler(s:Strategy) {
+    make(s) { `Sequence(Is_FinallyHandler(),s) }
+  }
+
+  %op Strategy Is_FinallyHandler() {
+    make() { new tom.library.adt.bytecode.strategy.thandler.Is_FinallyHandler()}
+  }
+  
+%op Strategy Make_FinallyHandler(_handler:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.thandler.Make_FinallyHandler))) }
+
+  get_slot(_handler, t) { $t._handler }
+  make( new_handler) { new tom.library.adt.bytecode.strategy.thandler.Make_FinallyHandler( $new_handler) }
+}
+
+    %op Strategy _EmptyInstructionList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist._EmptyInstructionList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tinstructionlist._EmptyInstructionList() }
+    }
+  
+  
+  %op Strategy When_EmptyInstructionList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyInstructionList(),s) }
+  }
+
+  %op Strategy Is_EmptyInstructionList() {
+    make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Is_EmptyInstructionList()}
+  }
+  
+%op Strategy Make_EmptyInstructionList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.Make_EmptyInstructionList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Make_EmptyInstructionList() }
+}
+
+    %op Strategy _ConsInstructionList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist._ConsInstructionList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tinstructionlist._ConsInstructionList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsInstructionList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsInstructionList(),s) }
+  }
+
+  %op Strategy Is_ConsInstructionList() {
+    make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Is_ConsInstructionList()}
+  }
+  
+%op Strategy Make_ConsInstructionList(_HeadInstructionList:Strategy, _TailInstructionList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.Make_ConsInstructionList))) }
+
+  get_slot(_HeadInstructionList, t) { $t._HeadInstructionList }
+  get_slot(_TailInstructionList, t) { $t._TailInstructionList }
+  make( new_HeadInstructionList,  new_TailInstructionList) { new tom.library.adt.bytecode.strategy.tinstructionlist.Make_ConsInstructionList( $new_HeadInstructionList,  $new_TailInstructionList) }
+}
+
+    %op Strategy _EmptyFieldDescriptorList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist._EmptyFieldDescriptorList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist._EmptyFieldDescriptorList() }
+    }
+  
+  
+  %op Strategy When_EmptyFieldDescriptorList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyFieldDescriptorList(),s) }
+  }
+
+  %op Strategy Is_EmptyFieldDescriptorList() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_EmptyFieldDescriptorList()}
+  }
+  
+%op Strategy Make_EmptyFieldDescriptorList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_EmptyFieldDescriptorList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_EmptyFieldDescriptorList() }
+}
+
+    %op Strategy _ConsFieldDescriptorList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist._ConsFieldDescriptorList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist._ConsFieldDescriptorList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsFieldDescriptorList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsFieldDescriptorList(),s) }
+  }
+
+  %op Strategy Is_ConsFieldDescriptorList() {
+    make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_ConsFieldDescriptorList()}
+  }
+  
+%op Strategy Make_ConsFieldDescriptorList(_HeadFieldDescriptorList:Strategy, _TailFieldDescriptorList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_ConsFieldDescriptorList))) }
+
+  get_slot(_HeadFieldDescriptorList, t) { $t._HeadFieldDescriptorList }
+  get_slot(_TailFieldDescriptorList, t) { $t._TailFieldDescriptorList }
+  make( new_HeadFieldDescriptorList,  new_TailFieldDescriptorList) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_ConsFieldDescriptorList( $new_HeadFieldDescriptorList,  $new_TailFieldDescriptorList) }
+}
+
+    %op Strategy _Label(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabel._Label)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.library.adt.bytecode.strategy.tlabel._Label($arg0) }
+    }
+  
+  
+  %op Strategy When_Label(s:Strategy) {
+    make(s) { `Sequence(Is_Label(),s) }
+  }
+
+  %op Strategy Is_Label() {
+    make() { new tom.library.adt.bytecode.strategy.tlabel.Is_Label()}
+  }
+  
+%op Strategy Make_Label(_id:int) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlabel.Make_Label))) }
+
+  get_slot(_id, t) { $t._id }
+  make( _id) { new tom.library.adt.bytecode.strategy.tlabel.Make_Label( $_id) }
+}
+
+    %op Strategy _EmptyLocalVariableList() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist._EmptyLocalVariableList)))}
+      
+        make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist._EmptyLocalVariableList() }
+    }
+  
+  
+  %op Strategy When_EmptyLocalVariableList(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyLocalVariableList(),s) }
+  }
+
+  %op Strategy Is_EmptyLocalVariableList() {
+    make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_EmptyLocalVariableList()}
+  }
+  
+%op Strategy Make_EmptyLocalVariableList() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_EmptyLocalVariableList))) }
+
+  make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_EmptyLocalVariableList() }
+}
+
+    %op Strategy _ConsLocalVariableList(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist._ConsLocalVariableList)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.library.adt.bytecode.strategy.tlocalvariablelist._ConsLocalVariableList($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsLocalVariableList(s:Strategy) {
+    make(s) { `Sequence(Is_ConsLocalVariableList(),s) }
+  }
+
+  %op Strategy Is_ConsLocalVariableList() {
+    make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_ConsLocalVariableList()}
+  }
+  
+%op Strategy Make_ConsLocalVariableList(_HeadLocalVariableList:Strategy, _TailLocalVariableList:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_ConsLocalVariableList))) }
+
+  get_slot(_HeadLocalVariableList, t) { $t._HeadLocalVariableList }
+  get_slot(_TailLocalVariableList, t) { $t._TailLocalVariableList }
+  make( new_HeadLocalVariableList,  new_TailLocalVariableList) { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_ConsLocalVariableList( $new_HeadLocalVariableList,  $new_TailLocalVariableList) }
+}
+
+            %op Strategy _MethodList(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_FieldDescriptorList"),Choice(_ConsFieldDescriptorList(sub,MuVar("x_FieldDescriptorList")),_EmptyFieldDescriptorList())) }
+            make(sub)  { `mu(MuVar("x_MethodList"),Choice(_ConsMethodList(sub,MuVar("x_MethodList")),_EmptyMethodList())) }
             }
             
-            %op Strategy _InnerClassInfoList(sub:Strategy) {
+            %op Strategy _StringList(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_InnerClassInfoList"),Choice(_ConsInnerClassInfoList(sub,MuVar("x_InnerClassInfoList")),_EmptyInnerClassInfoList())) }
+            make(sub)  { `mu(MuVar("x_StringList"),Choice(_ConsStringList(sub,MuVar("x_StringList")),_EmptyStringList())) }
             }
             
             %op Strategy _LabelList(sub:Strategy) {
@@ -5467,14 +5467,9 @@
             make(sub)  { `mu(MuVar("x_LabelList"),Choice(_ConsLabelList(sub,MuVar("x_LabelList")),_EmptyLabelList())) }
             }
             
-            %op Strategy _MethodList(sub:Strategy) {
+            %op Strategy _InnerClassInfoList(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_MethodList"),Choice(_ConsMethodList(sub,MuVar("x_MethodList")),_EmptyMethodList())) }
-            }
-            
-            %op Strategy _LocalVariableList(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_LocalVariableList"),Choice(_ConsLocalVariableList(sub,MuVar("x_LocalVariableList")),_EmptyLocalVariableList())) }
+            make(sub)  { `mu(MuVar("x_InnerClassInfoList"),Choice(_ConsInnerClassInfoList(sub,MuVar("x_InnerClassInfoList")),_EmptyInnerClassInfoList())) }
             }
             
             %op Strategy _TryCatchBlockList(sub:Strategy) {
@@ -5482,19 +5477,9 @@
             make(sub)  { `mu(MuVar("x_TryCatchBlockList"),Choice(_ConsTryCatchBlockList(sub,MuVar("x_TryCatchBlockList")),_EmptyTryCatchBlockList())) }
             }
             
-            %op Strategy _intList(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_intList"),Choice(_ConsintList(sub,MuVar("x_intList")),_EmptyintList())) }
-            }
-            
             %op Strategy _AccessList(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_AccessList"),Choice(_ConsAccessList(sub,MuVar("x_AccessList")),_EmptyAccessList())) }
-            }
-            
-            %op Strategy _InstructionList(sub:Strategy) {
-            is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_InstructionList"),Choice(_ConsInstructionList(sub,MuVar("x_InstructionList")),_EmptyInstructionList())) }
             }
             
             %op Strategy _FieldList(sub:Strategy) {
@@ -5502,8 +5487,23 @@
             make(sub)  { `mu(MuVar("x_FieldList"),Choice(_ConsFieldList(sub,MuVar("x_FieldList")),_EmptyFieldList())) }
             }
             
-            %op Strategy _StringList(sub:Strategy) {
+            %op Strategy _intList(sub:Strategy) {
             is_fsym(t) { false }
-            make(sub)  { `mu(MuVar("x_StringList"),Choice(_ConsStringList(sub,MuVar("x_StringList")),_EmptyStringList())) }
+            make(sub)  { `mu(MuVar("x_intList"),Choice(_ConsintList(sub,MuVar("x_intList")),_EmptyintList())) }
+            }
+            
+            %op Strategy _InstructionList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_InstructionList"),Choice(_ConsInstructionList(sub,MuVar("x_InstructionList")),_EmptyInstructionList())) }
+            }
+            
+            %op Strategy _FieldDescriptorList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_FieldDescriptorList"),Choice(_ConsFieldDescriptorList(sub,MuVar("x_FieldDescriptorList")),_EmptyFieldDescriptorList())) }
+            }
+            
+            %op Strategy _LocalVariableList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_LocalVariableList"),Choice(_ConsLocalVariableList(sub,MuVar("x_LocalVariableList")),_EmptyLocalVariableList())) }
             }
             

@@ -97,12 +97,12 @@ import tom.library.sl.*;
   }
 
   public Visitable setChildren(Visitable[] children) {
-    any = (Strategy)children[0];
+    any = (Strategy) children[0];
     return this;
   }
 
   public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this);
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
   } 
 
   public tom.library.sl.Environment getEnvironment() {
@@ -117,21 +117,33 @@ import tom.library.sl.*;
     this.environment = env;
   }
  
+  public Visitable visitLight(Visitable any) throws VisitFailure {
+    return (Visitable) visitLight(any,VisitableIntrospector.getInstance());
+  }
+
   public Visitable visit(Environment envt) throws VisitFailure {
+    return (Visitable) visit(envt,VisitableIntrospector.getInstance());
+  }
+
+  public Visitable visit(Visitable any) throws VisitFailure{
+    return (Visitable) visit(any,VisitableIntrospector.getInstance());
+  }
+ 
+  public Visitable visit(Environment envt, Introspector i) throws VisitFailure {
     setEnvironment(envt);
-    int status = visit();
+    int status = visit(i);
     if(status == Environment.SUCCESS) {
-      return environment.getSubject();
+      return (Visitable) environment.getSubject();
     } else {
       throw new VisitFailure();
     }
   }
 
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws VisitFailure {
+  public Object visit(Object any, Introspector i) throws VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     environment.setRoot(any);
-    int status = visit();
+    int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
@@ -139,24 +151,24 @@ import tom.library.sl.*;
     }
   }
 
-  public int visit() {
+  public int visit(Introspector i) {
     try {
-      environment.setSubject(this.visitLight(environment.getSubject()));
+      environment.setSubject(this.visitLight(environment.getSubject(),i));
       return tom.library.sl.Environment.SUCCESS;
     } catch(VisitFailure f) {
       return tom.library.sl.Environment.FAILURE;
     }
   }
 
-  public Visitable visitLight(Visitable v) throws VisitFailure {
+  public Object visitLight(Object v, Introspector i) throws VisitFailure {
     if (v instanceof @fullClassName(abstractType)@) {
-      return ((@fullClassName(abstractType)@) v).accept(this);
+      return ((@fullClassName(abstractType)@) v).accept(this,i);
     }
 ]%);
 generateDispatch(writer,importedAbstractTypes);
 writer.write(%[
     else {
-      return any.visitLight(v);
+      return any.visitLight(v,i);
     }
   }
 ]%);
@@ -172,13 +184,13 @@ writer.write(%[
       ConcGomClass(_*,SortClass[ClassName=sortName],_*) -> {
 
         writer.write(%[
-  public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws VisitFailure {
+  public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg, Introspector i) throws VisitFailure {
    if(environment!=null) {
       //TODO: must be removed
       assert(arg.equals(environment.getSubject()));
-   return (@fullClassName(`sortName)@) any.visit(environment);
+   return (@fullClassName(`sortName)@) any.visit(environment,i);
    } else {
-    return (@fullClassName(`sortName)@) any.visitLight(arg);
+    return (@fullClassName(`sortName)@) any.visitLight(arg,i);
    }
  }
 ]%);

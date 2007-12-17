@@ -80,6 +80,7 @@ public class Viewer {
     return r.toString();
   }
 
+  //TODO: adapt to traverse any data-structure using newsl
   static class Print extends AbstractStrategy {
 
     protected Writer w;
@@ -89,12 +90,12 @@ public class Viewer {
       this.w=w;
     }
 
-    public Visitable visitLight(Visitable any) throws VisitFailure {
+    public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     } 
 
-    public int visit() {
-      Visitable v = getEnvironment().getSubject();
+    public int visit(Introspector introspector) {
+      Visitable v = (Visitable) getEnvironment().getSubject();
       try {
         if (v instanceof Path) {
           Position current = getEnvironment().getPosition();
@@ -284,19 +285,20 @@ public class Viewer {
 
     protected Writer w;
 
+    //TODO: adapt with newsl to visit anu data-structures
     public PrintStrategy(Writer w) {
       initSubterm();
       this.w=w;
     }
-
-    public Visitable visitLight(Visitable any) throws VisitFailure {
+    
+    public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
-    } 
+    }
 
-    public int visit() {
-      Visitable v = getEnvironment().getSubject();
+    public int visit(Introspector introspector) {
+      Visitable v = (Visitable) getEnvironment().getSubject();
       Position current = getEnvironment().getPosition();
-      Vector<Visitable> stack = getEnvironment().getCurrentStack(); 
+      Vector<Object> stack = getEnvironment().getCurrentStack(); 
       try {
         //test if it is a pointer due to an expanded MuVar
         if (stack.contains(v)) {

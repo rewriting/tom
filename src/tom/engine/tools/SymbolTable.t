@@ -123,6 +123,10 @@ public class SymbolTable {
     mapTypeName.put(name,typeDef);
   }
 
+  public Collection<TomTypeDefinition> getUsedTypes() {
+    return mapTypeName.values();
+  }
+
   public TomTypeDefinition getTypeDefinition(String name) {
     TomTypeDefinition def = mapTypeName.get(name);
     return def;

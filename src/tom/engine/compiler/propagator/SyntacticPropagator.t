@@ -36,6 +36,7 @@ import tom.engine.compiler.*;
 import tom.engine.TomBase;
 import java.util.*;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.compiler.Compiler;
 
 /**
  * Syntactic propagator
@@ -77,14 +78,14 @@ public class SyntacticPropagator implements IBasePropagator {
       m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
-            ConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
+            Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
         
         Constraint lastPart = `AndConstraint();
         ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
         // we build the last part only once, and we store the fresh variables we generate
         %match(slots) {
           concSlot(_*,PairSlotAppl(slotName,appl),_*) -> {
-            TomTerm freshVar = ConstraintCompiler.getFreshVariable(ConstraintCompiler.getSlotType(`firstName,`slotName));
+            TomTerm freshVar = Compiler.getFreshVariable(Compiler.getSlotType(`firstName,`slotName));
             // store the fresh variable
             freshVarList.add(freshVar);
             // build the last part

@@ -28,35 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **/
-package strategy.sl;
+package tom.library.sl;
 
-/**
- * <code>Sequence(v1,v2)[t] = v2[v1[t]]</code> if v1 succeeds
- * <p>
- * <code>fails</code> otherwise
- * <p>
- * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition).
- */
+public interface Introspector {
 
-public class Sequence extends AbstractStrategy {
-  public final static int FIRST = 0;
-  public final static int THEN = 1;
-  public Sequence(Strategy first, Strategy then) {
-    initSubterm(first,then);
-  }
+  public Object setChildren(Object o, Object[] children);
 
-  public Object visitLight(Object visitable, Introspector m) throws VisitFailure {
-    environment.setIntrospector(m);
-    return visitors[THEN].visitLight(visitors[FIRST].visitLight(visitable,m),m);
-  }
+  public Object[] getChildren(Object o);
 
-  public int visit(Introspector m) {
-    environment.setIntrospector(m);
-    int status = visitors[FIRST].visit(m);
-    if(status == Environment.SUCCESS) {
-      return visitors[THEN].visit(m);
-    }
-    return status;
-  }
+  public Object setChildAt( Object o, int i, Object child);
+
+  public Object getChildAt(Object o, int i);
+
+  public int getChildCount(Object o);
+
 }

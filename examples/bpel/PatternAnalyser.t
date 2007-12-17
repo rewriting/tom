@@ -259,7 +259,7 @@ public class PatternAnalyser{
   %strategy FindRef(node:Info) extends `Identity() {
     visit Wfg {
       RefWfg(s) -> {
-        Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
+        Activity act = (Activity) node.pos.getSubterm().visit((Visitable) getEnvironment().getRoot());
         if (`s.equals(act.getname())){
           throw new VisitFailure();
         }
@@ -270,7 +270,7 @@ public class PatternAnalyser{
   %strategy DefaultCond(node:Info) extends `Identity() {
     visit Wfg {
       a@Activity(name,incond,outcond) -> {
-        Activity act = (Activity) node.pos.getSubterm().visit(getEnvironment().getRoot());
+        Activity act = (Activity) node.pos.getSubterm().visit( (Visitable) getEnvironment().getRoot());
         String root_name = act.getname();
         if (root_name.equals("")) return `a;
         return `Activity(name,and(cond(RefWfg(root_name)),incond),outcond);

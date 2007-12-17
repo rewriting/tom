@@ -171,7 +171,6 @@ public class HandWrittenStrat {
     implement { HandWrittenStrat.Term1 }  
     is_sort(t) { $t instanceof HandWrittenStrat.Term1 } 
     equals(t1,t2) { $t1.equals($t2) }
-    visitor_fwd { tom.library.sl.GenericForward }
   }
 
   %op Term1 f1(x:Term1) {
@@ -189,7 +188,6 @@ public class HandWrittenStrat {
     implement { HandWrittenStrat.Term2 }  
     is_sort(t) { $t instanceof HandWrittenStrat.Term2 } 
     equals(t1,t2) { $t1.equals($t2) }
-    visitor_fwd { tom.library.sl.GenericForward }
   }
 
   %op Term2 f2(x:Term2) {

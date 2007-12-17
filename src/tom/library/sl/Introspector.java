@@ -28,28 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **/
-package strategy.sl;
+package tom.library.sl;
 
-/**
- * <code>x.accept(Identity) = x</code>
- * <p>
- * Basic visitor combinator without arguments that does nothing.
- * <p>
- * See also <a href="IdentityTest.java">IdentityTest</a>.
- */
+public interface Introspector {
 
-public class Identity extends AbstractStrategy {
-  public Identity() {
-    initSubterm();
-  }
+  public Object setChildren(Object o, Object[] children);
 
-  public Object visitLight(Object x, Introspector m) {
-    environment.setIntrospector(m);
-    return x;
-  }
+  public Object[] getChildren(Object o);
 
-  public int visit(Introspector m) {
-    environment.setIntrospector(m);
-    return Environment.SUCCESS;
-  }
+  public Object setChildAt( Object o, int i, Object child);
+
+  public Object getChildAt(Object o, int i);
+
+  public int getChildCount(Object o);
+
 }

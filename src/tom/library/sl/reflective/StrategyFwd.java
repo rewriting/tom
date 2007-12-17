@@ -39,25 +39,26 @@ public class StrategyFwd extends AbstractStrategy {
     initSubterm(v);
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
-    if (any instanceof Strategy) {
+  public Strategy visit_Strategy(Strategy any, Introspector introspector) throws VisitFailure {
+    return (Strategy) visitors[ARG].visitLight(any,introspector);
+  }
+
+  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+      if (any instanceof Strategy) {
       return ((Strategy) any).accept(this);
     } else {
-      return visitors[ARG].visitLight(any);
+      return visitors[ARG].visitLight(any,introspector);
     }
   }
 
-  public int visit() {
+  public int visit(Introspector introspector) {
     try {
-      setSubject((Visitable)this.visitLight(getSubject()));
+      setSubject((Object)this.visitLight(getSubject(),introspector));
       return tom.library.sl.Environment.SUCCESS;
     } catch(VisitFailure f) {
       return tom.library.sl.Environment.FAILURE;
     }
   }
 
-  public Strategy visit_Strategy(Strategy any) throws VisitFailure {
-    return (Strategy) visitors[ARG].visitLight(any);
-  }
 }
 

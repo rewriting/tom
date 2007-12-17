@@ -38,6 +38,7 @@ import tom.engine.tools.SymbolTable;
 import java.util.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.compiler.Compiler;
 
 /**
  * A propagator that contains rules that don't depend on the theory (or that are applicable for more than one)
@@ -140,14 +141,14 @@ public class GeneralPurposePropagator implements IBasePropagator {
         concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot,TomName name) {
             ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=(childName)]],childName -> {
-              TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t));                
+              TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t));                
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
               break matchSlot;
             }
             // the child can be an antiTerm - in this case, do as above
             ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=(childName)])],childName -> {
-              TomTerm freshVariable = ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getTermTypeFromTerm(`t)); 
+              TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t)); 
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
               break matchSlot;
@@ -172,7 +173,7 @@ matchSlot:  %match(slot,TomName name) {
       // we can have the same variable both as variablestar and as variable
       // we know that this is ok, because the type checker authorized it
       MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) && name << TomName varName -> {        
-        TomTerm freshVar = `v.isVariable() ? ConstraintCompiler.getFreshVariable(`type) : ConstraintCompiler.getFreshVariableStar(`type);
+        TomTerm freshVar = `v.isVariable() ? Compiler.getFreshVariable(`type) : Compiler.getFreshVariableStar(`type);
         return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
       }
       MatchConstraint(p@!TestVar[],v@(Variable|VariableStar)[AstName=name]) && name << TomName varName -> {        

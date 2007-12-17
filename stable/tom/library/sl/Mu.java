@@ -14,20 +14,20 @@ public class Mu extends AbstractStrategy {
     initSubterm(var, v);
   }
 
-  public final Visitable visitLight(Visitable any) throws VisitFailure {
+  public final Object visitLight(Object any, Introspector i) throws VisitFailure {
     if(!expanded) { 
       expand(this); 
       expanded = true;
     }
-    return visitors[V].visitLight(any);
+    return visitors[V].visitLight(any,i);
   }
 
-  public int visit() {
+  public int visit(Introspector i) {
     if(!expanded) { 
       expand(this); 
       expanded = true;
     }
-    return visitors[V].visit();
+    return visitors[V].visit(i);
   }
 
   private boolean isExpanded() {
@@ -44,7 +44,7 @@ public class Mu extends AbstractStrategy {
    * @param childNumber the n-th subtemr of parent
    * @param set of already visited parent
    */
-  private static void expand(Visitable any, Visitable parent, int childNumber, HashSet set, LinkedList stack) {
+  private static void expand(Strategy any, Strategy parent, int childNumber, HashSet set, LinkedList stack) {
     /* check that the current element has not already been expanded */
     if(set.contains(any)) {
       return;
@@ -93,7 +93,7 @@ public class Mu extends AbstractStrategy {
 
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
-      expand(any.getChildAt(i),any,i,set,stack);
+      expand((Strategy)any.getChildAt(i),any,i,set,stack);
     }
   }
 

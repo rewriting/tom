@@ -102,11 +102,11 @@
     <macrodef name="javacompile">
       <attribute name="example"/>
       <sequential>
-        <javac.preset destdir="${examples.build}">
+        <javac.preset destdir="${examples.build}" >
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
-          <classpath refid="tom.examples.classpath"/>
           <include name="@{example}/**/*.java"/>
+          <classpath refid="tom.examples.classpath"/>
         </javac.preset>
       </sequential>
     </macrodef>

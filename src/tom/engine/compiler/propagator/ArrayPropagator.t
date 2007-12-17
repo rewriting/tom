@@ -36,6 +36,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
+import tom.engine.compiler.Compiler;
 
 /**
  * Syntactic propagator
@@ -64,7 +65,7 @@ public class ArrayPropagator implements IBasePropagator {
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not an array, nothing to do
-        if(!TomBase.isArrayOperator(ConstraintCompiler.getSymbolTable().
+        if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
             getSymbolFromName(`tomName))) { return `m; }
         Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
         // if something changed
@@ -78,9 +79,9 @@ public class ArrayPropagator implements IBasePropagator {
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
-            if(!TomBase.isArrayOperator(ConstraintCompiler.getSymbolTable().
+            if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        
-            TomType termType = ConstraintCompiler.getTermTypeFromTerm(`t);
+            TomType termType = Compiler.getTermTypeFromTerm(`t);
             // declare fresh index = 0            
             TomTerm freshIndex = getFreshIndex();				
             Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
@@ -134,14 +135,14 @@ public class ArrayPropagator implements IBasePropagator {
   }// end %strategy
 
   private static TomTerm getBeginIndex() {
-    return ConstraintCompiler.getBeginVariableStar(ConstraintCompiler.getIntType());
+    return Compiler.getBeginVariableStar(Compiler.getIntType());
   }
 
   private static TomTerm getEndIndex() {
-    return ConstraintCompiler.getEndVariableStar(ConstraintCompiler.getIntType());
+    return Compiler.getEndVariableStar(Compiler.getIntType());
   }
 
   private static TomTerm getFreshIndex() {
-    return ConstraintCompiler.getFreshVariableStar(ConstraintCompiler.getIntType());    
+    return Compiler.getFreshVariableStar(Compiler.getIntType());    
   }
 }

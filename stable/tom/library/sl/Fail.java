@@ -57,12 +57,12 @@ public class Fail extends AbstractStrategy {
     this.message = message;
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
+  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
     throw new VisitFailure(message);
   }
 
-  public int visit() {
-    //setStatus(Environment.FAILURE);
+  public int visit(Introspector introspector) {
     return Environment.FAILURE;
   }
+
 }

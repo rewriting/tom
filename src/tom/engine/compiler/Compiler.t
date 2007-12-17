@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
  * 
  * Copyright (c) 2000-2007, INRIA
@@ -19,61 +19,67 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
+ * Radu Kopetz e-mail: Radu.Kopetz@loria.fr
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
-
 package tom.engine.compiler;
 
-import java.util.*;
-import java.util.logging.Level;
-
-import tom.engine.exception.TomRuntimeException;
-
-import tom.engine.adt.tomsignature.*;
-import tom.engine.adt.tomconstraint.types.*;
-import tom.engine.adt.tomdeclaration.types.*;
-import tom.engine.adt.tomexpression.types.*;
-import tom.engine.adt.tominstruction.types.*;
-import tom.engine.adt.tomname.types.*;
-import tom.engine.adt.tomoption.types.*;
-import tom.engine.adt.tomsignature.types.*;
-import tom.engine.adt.tomterm.types.*;
-import tom.engine.adt.tomslot.types.*;
-import tom.engine.adt.tomtype.types.*;
-
-import tom.engine.adt.tominstruction.types.constraintinstructionlist.concConstraintInstruction;
-import tom.engine.adt.tomslot.types.slotlist.concSlot;
-import tom.engine.adt.tomsignature.types.tomvisitlist.concTomVisit;
-
-import tom.engine.TomBase;
-import tom.engine.TomMessage;
-import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
-import tom.engine.tools.Tools;
-import tom.platform.OptionParser;
-import tom.platform.adt.platformoption.types.PlatformOptionList;
-
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
+import tom.engine.tools.SymbolTable;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.TomBase;
+import tom.engine.adt.tomconstraint.types.*;
+import java.util.*;
+import tom.engine.tools.ASTFactory;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import tom.platform.OptionParser;
+import tom.engine.tools.Tools;
+import java.util.logging.Level;
+import tom.engine.TomMessage;
 
 /**
- * The Compiler plugin.
+ * Tom compiler based on constraints.
+ * 
+ * It controls different phases of compilation:
+ * - propagation of constraints
+ * - instruction generation from constraints
+ * - ...   
  */
 public class Compiler extends TomGenericPlugin {
 
   %include { ../adt/tomsignature/TomSignature.tom }
-  %include { ../../library/mapping/java/sl.tom }
+  %include { ../../library/mapping/java/sl.tom}
+  %include { ../../library/mapping/java/util/types/ArrayList.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
-  %include { ../../library/mapping/java/util/types/Map.tom}
-  
+
   %typeterm Compiler {
     implement { Compiler }
     is_sort(t) { ($t instanceof Compiler) }
   }
 
-  %op Strategy ChoiceTopDown(s1:Strategy) {
-    make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
-  }
+
+  private static SymbolTable symbolTable = null;
+  private static TomNumberList rootpath = null;
+  // keeps track of the match number to insure distinct variables' 
+  // names for distinct match constructs
+  private static int matchNumber = 0;
+  // keeps track of the subject number to insure distinct variables' 
+  // names when renaming subjects
+  private static int freshSubjectCounter = 0;	
+  private static int freshVarCounter = 0;
+  private static final String freshVarPrefix = "_freshVar_";
+  private static final String freshBeginPrefix = "_begin_";
+  private static final String freshEndPrefix = "_end_";
 
   /** some output suffixes */
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
@@ -81,17 +87,7 @@ public class Compiler extends TomGenericPlugin {
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options>" +
     "<boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/>" +
-    "<boolean name='autoDispatch' altName='ad' description='The content of \"visitor_fwd\" is ignored, and a dispatch mechanism is automatically generated in %strategy ' value='false'/>" +
     "</options>";
-  
-  private static final String basicStratName = "tom.library.sl.BasicStrategy";
-  private static final String visitableName = "tom.library.sl.Visitable";
-    
-  /** if the flag is true, the class generated from %strategy inherits from BasicStrategy and handles the dispatch*/
-  private static boolean autoDispatch = false;
-
-  /** unicity var counter */
-  private static int absVarNumber;
 
   /** Constructor */
   public Compiler() {
@@ -102,12 +98,7 @@ public class Compiler extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
     try {
-      // reinit absVarNumber to generate reproducible output
-      absVarNumber = 0;
-      autoDispatch = getOptionBooleanValue("autoDispatch");
-      TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visitLight((TomTerm)getWorkingTerm());
-      //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-      TomTerm compiledTerm = ConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
+      TomTerm compiledTerm = Compiler.compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visitLight(compiledTerm);
@@ -130,272 +121,215 @@ public class Compiler extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(Compiler.DECLARED_OPTIONS);
   }
 
-  /*
-   * preProcessing:
-   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
-   *
-   * abstract list-matching patterns
+  public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
+    Compiler.symbolTable = symbolTable;
+    return  (TomTerm)`TopDown(CompileMatch()).visitLight(termToCompile);		
+  }
+
+  // looks for a 'Match' instruction:
+  // 1. transforms each sequence of patterns into a conjuction of MatchConstraint
+  // 2. launch PropagationManager
+  // 3. launch PreGenerator
+  // 4. launch GenerationManager
+  // 5. launch PostGenerator  
+  // 6. transforms resulted expression into a CompiledMatch
+  %strategy CompileMatch() extends Identity(){
+    visit Instruction {			
+      Match(constraintInstructionList, matchOptionList)  -> {        
+        matchNumber++;
+        rootpath = `concTomNumber(MatchNumber(matchNumber));
+        freshSubjectCounter = 0;
+        freshVarCounter = 0;
+        int actionNumber = 0;
+        TomList automataList = `concTomTerm();	
+        ArrayList subjectList = new ArrayList();
+        ArrayList renamedSubjects = new ArrayList();
+        // for each pattern action <term>,...,<term> -> { action }
+        // build a matching automata
+        %match(constraintInstructionList) {
+          concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {                        
+            try {
+              actionNumber++;
+              // get the new names for subjects and generates casts -- needed especially for lists
+              // this is performed here, and not above, because in the case of nested matches, we do not want 
+              // to go in the action and collect from there              
+              `constraint = (Constraint)`TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
+
+              Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);              
+              Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
+              Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
+              Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
+
+              TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
+              TomTerm automata = `Automata(optionList,constraint,numberList,postGenerationAutomata);
+              automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
+            } catch(Exception e) {
+              e.printStackTrace();
+              throw new TomRuntimeException("Propagation or generation exception:" + e);
+            }																	    						
+          }
+        }// end %match				
+        /*
+         * return the compiled Match construction
+         */        
+        InstructionList astAutomataList = Compiler.automataListCompileMatchingList(automataList);
+        // the block is useful in case we have a label on the %match: we would like it to be on the whole Match instruction 
+        return `UnamedBlock(concInstruction(CompiledMatch(AbstractBlock(astAutomataList), matchOptionList)));
+      }
+    }// end visit
+  }// end strategy  
+
+  /**
+   * Takes all MatchConstraints and renames the subjects; 
+   * Match(p,s) -> IsSort(s) /\ Match(freshSubj,Cast(s)) /\ Match(p,freshVar) 
+   * 
+   * @param subjectList the list of old subjects
+   */
+  %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity(){
+    visit Constraint {
+      constr@(MatchConstraint|NumericConstraint)[] -> {
+        TomTerm subject = null;
+        TomTerm pattern = null;
+        NumericConstraintType numericType = null;
+        boolean isMatchConstraint = false;
+        %match(constr){
+          MatchConstraint(p, s) -> { 
+            if (renamedSubjects.contains(`p) || renamedSubjects.contains(`s) ) {// make sure we don't process generated contraints
+              return `constr; 
+            }
+            pattern = `p;subject = `s;isMatchConstraint = true; 
+          }
+          NumericConstraint(left, right, nt) -> {
+            if (renamedSubjects.contains(`left) || renamedSubjects.contains(`right) ) {// make sure we don't process generated contraints
+              return `constr; 
+            }
+            pattern = `left;subject = `right; numericType = `nt; 
+          }          
+        }        
+        // test if we already renamed this subject
+        if (subjectList.contains(`subject)) {          
+          TomTerm renamedSubj = (TomTerm)renamedSubjects.get(subjectList.indexOf(subject));
+          Constraint newConstraint = isMatchConstraint ? `MatchConstraint(pattern,renamedSubj) : `NumericConstraint(pattern,renamedSubj,numericType);
+          TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
+          return `AndConstraint(
+              IsSortConstraint(freshSubjectType,subject),
+              MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
+              newConstraint);
+        }
+        TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
+        TomType freshSubjectType = `EmptyType();
+        %match(subject) {
+          (Variable|VariableStar)[AstType=variableType] -> { 
+            freshSubjectType = `variableType;
+          }          
+          sv@(BuildTerm|FunctionCall|BuildConstant|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[AstName=Name(tomName)] -> {
+            TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);                      
+            if(tomSymbol != null) {
+              freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
+            } else if(`sv.isFunctionCall()) {
+              freshSubjectType =`sv.getAstType();
+            }
+          }
+        }// end match
+        TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
+        subjectList.add(`subject);
+        renamedSubjects.add(renamedVar);
+        Constraint newConstraint = isMatchConstraint ? `MatchConstraint(pattern,renamedVar) : `NumericConstraint(pattern,renamedVar,numericType);        
+        return `AndConstraint(
+            IsSortConstraint(freshSubjectType,subject),
+            MatchConstraint(renamedVar,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
+            newConstraint);
+      }
+    }
+  }
+
+  /**
+   * builds a list of instructions from a list of automata
+   */
+  private static InstructionList automataListCompileMatchingList(TomList automataList) {
+    %match(automataList) {
+      concTomTerm() -> { return `concInstruction(); }
+      concTomTerm(Automata(optionList,constraint,_,instruction),l*)  -> {
+        InstructionList newList = automataListCompileMatchingList(`l);				
+        // if a label is assigned to a pattern (label:pattern ->
+        // action) we generate corresponding labeled-block				 
+        %match(optionList) {
+          concOption(_*,Label(Name(name)),_*) -> {            
+            `instruction = `NamedBlock(name,concInstruction(instruction));
+          }
+        }				
+        return `concInstruction(CompiledPattern(constraint,instruction), newList*);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * helper functions - mostly related to free var generation
    */
 
-  %op Strategy preProcessing(compiler:Compiler){
-    make(compiler) { `ChoiceTopDown(preProcessing_once(compiler)) }
+  public static TomNumberList getRootpath() {
+    return rootpath;
   }
 
-  %strategy preProcessing_once(compiler:Compiler) extends `Identity(){
-    visit TomTerm {
-      BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
-        return `var;
-      }
-
-      BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
-        TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = (SlotList) `preProcessing_makeTerm(compiler).visitLight(`termArgs);
-        TomList tomListArgs = TomBase.slotListToTomList(newTermArgs);
-
-        if(TomBase.hasConstant(`optionList)) {
-          return `BuildConstant(name);
-        } else if(tomSymbol != null) {
-          if(TomBase.isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs,compiler.symbolTable());
-          } else if(TomBase.isArrayOperator(tomSymbol)) {
-            return ASTFactory.buildArray(`name,tomListArgs,compiler.symbolTable());
-          } else if(TomBase.isDefinedSymbol(tomSymbol)) {
-            return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),tomListArgs);
-          } else {
-            String moduleName = TomBase.getModuleName(`optionList);
-            if(moduleName==null) {
-              moduleName = TomBase.DEFAULT_MODULE_NAME;
-            }
-            return `BuildTerm(name,tomListArgs,moduleName);
-          }
-        } else {
-          return `FunctionCall(name,astType,tomListArgs);
-        }
-
-      }
-
-    } // end match
-
-    visit Instruction {
-      Match(constraintInstructionList, matchOptionList)  -> {
-        Option orgTrack = TomBase.findOriginTracking(`matchOptionList);
-        ConstraintInstructionList newConstraintInstructionList = `concConstraintInstruction();
-        ConstraintList negativeConstraint = `concConstraint();        
-        for(ConstraintInstruction constraintInstruction:(concConstraintInstruction)`constraintInstructionList) {
-          /*
-           * the call to preProcessing performs the recursive expansion
-           * of nested match constructs
-           */
-          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `preProcessing(compiler).visitLight(constraintInstruction);
-
-matchBlock: {
-              %match(newConstraintInstruction) {
-                ConstraintInstruction(constraint,actionInst, option) -> {
-                  Instruction newAction = `actionInst;
-                  /* expansion of RawAction into TypedAction */
-                  %match(actionInst) {
-                    RawAction(x) -> {
-                      newAction=`TypedAction(If(TrueTL(),x,Nop()),constraint,negativeConstraint);
-                    }
-                  }
-                  negativeConstraint = `concConstraint(negativeConstraint*,constraint);
-
-                  /* generate equality checks */
-                  newConstraintInstruction = `ConstraintInstruction(constraint,newAction, option);
-                  /* do nothing */
-                  break matchBlock;
-                }
-
-                _ -> {
-                  System.out.println("Compiler.preProcessing: strange ConstraintInstruction: " + `newConstraintInstruction);
-                  throw new TomRuntimeException("Compiler.preProcessing: strange ConstraintInstruction: " + `newConstraintInstruction);
-                }
-              }
-            } // end matchBlock
-
-            newConstraintInstructionList = `concConstraintInstruction(newConstraintInstructionList*,newConstraintInstruction);
-        }
-
-        Instruction newMatch = `Match(newConstraintInstructionList, matchOptionList);
-        return newMatch;
-      }
-
-    } // end visit
-
-    visit Declaration {
-      Strategy(name,extendsTerm,visitList,orgTrack) -> {
-        //System.out.println("extendsTerm = " + `extendsTerm);
-        DeclarationList l = `concDeclaration();//represents compiled Strategy
-        TomForwardType visitorFwd = null;             
-        HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
-        for(TomVisit visit:(concTomVisit)`visitList) {
-          TomList subjectListAST = `concTomTerm();
-          %match(visit) {
-            VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
-              if(visitorFwd == null) {//first time in loop
-                visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
-              }
-              TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
-              subjectListAST = `concTomTerm(subjectListAST*,arg);
-              String funcName = "visit_" + `type;//function name
-              Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
-              //return default strategy.visitLight(arg)
-              // FIXME: put superclass keyword in backend, in c# 'super' is 'base'
-              Instruction returnStatement = null;
-              if (compiler.autoDispatch) {
-                returnStatement = `Return(FunctionCall(Name("_" + funcName),vType,subjectListAST));
-              } else {
-                returnStatement = `Return(FunctionCall(Name("super."+ funcName),vType,subjectListAST));
-              }
-              InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-              l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("tom.library.sl.VisitFailure"),AbstractBlock(instructions)));
-              if (compiler.autoDispatch) {
-                dispatchInfo.put(`vType,funcName);
-              }
-            }              
-          }
-        }
-        if ( compiler.autoDispatch ) { 
-         /*
-          * // Generates the following dispatch mechanism
-          *           
-          * public Visitable visitLight(Visitable v) throws VisitFailure {
-          *       if (is_sort(v, Term1))
-          *               return this.visit_Term1((Term1) v);
-          *       .....................        
-          *       if (is_sort(v, Termn))
-          *               return this.visit_Termn((Termn) v);               
-          *       return any.visitLight(v);
-          * }
-          *
-          * public Term1 _visit_Term1(Term1 arg) throws VisitFailure {
-          *        if (environment != null) {
-          *                return (Term1) any.visit(environment);
-          *        } else {
-          *                return (Term1) any.visitLight(arg);
-          *        }
-          * }
-          * ..............
-          * public Termn _visit_Termn(Termn arg) throws VisitFailure {
-          *        if (environment != null) {
-          *                return (Termn) any.visit(environment);
-          *        } else {
-          *                return (Termn) any.visitLight(arg);
-          *        }
-          * }
-          *
-          */        
-          visitorFwd = `TLForward(Compiler.basicStratName);         
-          TomTerm vVar = `Variable(concOption(),Name("v"),TomTypeAlone(visitableName),concConstraint());// v argument of visitLight
-          InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
-          Expression testEnvNotNull = null;
-          // generate the visitLight
-          for(TomType type:dispatchInfo.keySet()){
-            TomList funcArg = `concTomTerm(ExpressionToTomTerm(Cast(type,TomTermToExpression(vVar))));            
-            Instruction returnStatement = `Return(FunctionCall(Name(dispatchInfo.get(type)),type,funcArg));
-            Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
-            ifList = `concInstruction(ifList*,ifInstr);
-            // generate the _visit_Term
-            TomTerm arg = `Variable(concOption(),Name("arg"),type,concConstraint());
-            TomTerm environmentVar = `Variable(concOption(),Name("environment"),EmptyType(),concConstraint());
-            Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment)"))))));
-            Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg)"))))));
-            testEnvNotNull = `Negation(EqualTerm(compiler.getStreamManager().getSymbolTable().getBooleanType(),
-                environmentVar,ExpressionToTomTerm(Bottom(TomTypeAlone("Object")))));
-            Instruction ifThenElse = `If(testEnvNotNull,return1,return2);
-            l = `concDeclaration(l*,MethodDef(
-                                      Name("_" + dispatchInfo.get(type)),
-                                      concTomTerm(arg),
-                                      type,
-                                      TomTypeAlone("tom.library.sl.VisitFailure"),
-                                      ifThenElse));
-          }
-          ifList = `concInstruction(ifList*,              
-                      If(testEnvNotNull,
-                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visit(environment)")))),
-                          Return(InstructionToTomTerm(TargetLanguageToInstruction(ITL("any.visitLight(v)"))))));
-          Declaration visitLightDeclaration = `MethodDef(
-                                      Name("visitLight"),
-                                      concTomTerm(vVar),
-                                      TomTypeAlone(visitableName),
-                                      TomTypeAlone("tom.library.sl.VisitFailure"),
-                                      AbstractBlock(ifList));
-          l = `concDeclaration(l*,visitLightDeclaration);
-        }// end if autoDispatch
-        return (Declaration) `preProcessing(compiler).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
-      }        
-    }//end visit Declaration
-  } // end strategy
-
-  %op Strategy preProcessing_makeTerm(compiler:Compiler){
-     make(compiler) { `ChoiceTopDown(preProcessing_makeTerm_once(compiler)) }
+  public static SymbolTable getSymbolTable(){
+    return symbolTable;
   }
 
-  %strategy preProcessing_makeTerm_once(compiler:Compiler) extends `Identity()  {
-    visit TomTerm {
-      t -> {return (TomTerm) `preProcessing(compiler).visitLight(`BuildReducedTerm(t,compiler.getTermType(t)));}
-    }
+  public static TomType getTermTypeFromName(TomName tomName) {
+    String stringName = ((Name)tomName).getString();
+    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);    
+    return tomSymbol.getTypesToType().getCodomain();
   }
 
-  private TomTerm abstractPattern(TomTerm subject, ArrayList abstractedPattern, ArrayList introducedVariable)  {
-    TomTerm abstractedTerm = subject;
-    %match(subject) {
-      RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
-        TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
+  public static TomType getSlotType(TomName tomName, TomName slotName) {
+    String stringName = ((Name)tomName).getString();
+    TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
+    return TomBase.getSlotType(tomSymbol,slotName);    
+  } 
 
-        SlotList newArgs = `concSlot();
-        if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-          for(Slot elt:(concSlot)`arguments) {
-            TomTerm newElt = elt.getAppl();
-            %match(newElt) {
-              appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
-                /*
-                 * we no longer abstract syntactic subterm
-                 * they are compiled by the KernelCompiler
-                 */
-
-                //System.out.println("Abstract: " + appl);
-                TomSymbol tomSymbol2 = symbolTable().getSymbolFromName(`tomName2);
-                if(TomBase.isListOperator(tomSymbol2) || TomBase.isArrayOperator(tomSymbol2)) {
-                  TomType type2 = tomSymbol2.getTypesToType().getCodomain();
-                  abstractedPattern.add(`appl);
-
-                  TomNumberList path = `concTomNumber();
-                  absVarNumber++;
-                  path = `concTomNumber(path*,AbsVar(absVarNumber));
-
-                  TomTerm newVariable = `Variable(concOption(),PositionName(path),type2,concConstraint());
-
-                  //System.out.println("newVariable = " + newVariable);
-
-                  introducedVariable.add(newVariable);
-                  newElt = newVariable;
-                }
-              }
-            }
-            newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
-          }
-        } else {
-          newArgs = TomBase.mergeTomListWithSlotList(abstractPatternList(TomBase.slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
-        }
-        abstractedTerm = subject.setSlots(newArgs);
-      }
-    } // end match
-    return abstractedTerm;
+  // [pem] really useful ?
+  public static TomType getIntType() {
+    return symbolTable.getIntType();
   }
 
-  private TomList abstractPatternList(TomList subjectList, ArrayList abstractedPattern, ArrayList introducedVariable)  {
-    %match(subjectList) {
-      concTomTerm() -> { return subjectList; }
-      concTomTerm(head,tail*) -> {
-        TomTerm newElt = abstractPattern(`head,abstractedPattern,introducedVariable);
-        TomList tl = abstractPatternList(`tail,abstractedPattern,introducedVariable);
-        return `concTomTerm(newElt,tl*);
-      }
-    }
-    throw new TomRuntimeException("abstractPatternList: " + subjectList);
-  }  
-  
+  // [pem] really useful ?
+  public static TomType getBooleanType() {
+    return symbolTable.getBooleanType();
+  }
+
+  public static TomType getTermTypeFromTerm(TomTerm tomTerm) {    
+    return TomBase.getTermType(tomTerm,symbolTable);    
+  }
+
+  public static TomTerm getFreshVariable(TomType type) {
+    return getFreshVariable(freshVarPrefix + (freshVarCounter++), type);    
+  }
+
+  public static TomTerm getFreshVariable(String name, TomType type) {
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `Variable(concOption(),freshVarName,type,concConstraint());
+  }
+
+  public static TomTerm getFreshVariableStar(TomType type) {
+    return getFreshVariableStar(freshVarPrefix + (freshVarCounter++), type);
+  }
+
+  public static TomTerm getFreshVariableStar(String name, TomType type) {
+    TomNumberList path = getRootpath();
+    TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
+    return `VariableStar(concOption(),freshVarName,type,concConstraint());
+  }
+
+  public static TomTerm getBeginVariableStar(TomType type) {
+    return getFreshVariableStar(freshBeginPrefix + (freshVarCounter++),type);
+  }
+
+  public static TomTerm getEndVariableStar(TomType type) {
+    return Compiler.getFreshVariableStar(freshEndPrefix + (freshVarCounter++),type);
+  }
+
   /*
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
@@ -418,7 +352,7 @@ matchBlock: {
       }
     }  
   }  
-  
+
   %strategy CollectLHSVars(Collection bag) extends Identity() {
     visit Constraint {
       MatchConstraint(p,_) -> {        
@@ -428,4 +362,6 @@ matchBlock: {
       }
     }
   }
+
+
 }

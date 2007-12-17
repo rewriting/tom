@@ -50,25 +50,25 @@ public class OmegaU extends AbstractStrategy {
     }
   }
 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
-    int arity = any.getChildCount();
+  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+    int arity = introspector.getChildCount(any);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visitLight(any);
+      return visitors[ARG].visitLight(any,introspector);
     } else {
-      return new Omega(selectedSubterm+1,visitors[ARG]).visitLight(any);
+      return new Omega(selectedSubterm+1,visitors[ARG]).visitLight(any,introspector);
     }
   }
 
-  public int visit() {
-    Visitable subject = environment.getSubject();
-    int arity = subject.getChildCount();
+  public int visit(Introspector introspector) {
+    Object subject = environment.getSubject();
+    int arity = introspector.getChildCount(subject);
     int selectedSubterm = Math.abs(random.nextInt(arity));
     if(arity==0) {
-      return visitors[ARG].visit();
+      return visitors[ARG].visit(introspector);
     } else {
       environment.down(selectedSubterm+1);
-      int status = visitors[ARG].visit();
+      int status = visitors[ARG].visit(introspector);
       environment.up();
       return status;
     }

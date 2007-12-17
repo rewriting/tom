@@ -49,24 +49,24 @@ public class Choice extends AbstractStrategy {
     initSubterm(first,then);
   }
 
-  public Visitable visitLight(Visitable visitable) throws VisitFailure {
+  public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
     try {
-      return visitors[FIRST].visitLight(visitable);
+      return visitors[FIRST].visitLight(subject, introspector);
     } catch (VisitFailure f) {
-      return visitors[THEN].visitLight(visitable);
+      return visitors[THEN].visitLight(subject, introspector);
     }
   }
 
-  public int visit() {
-    Visitable subject = environment.getSubject();
-    int status = visitors[FIRST].visit();
+  public int visit(Introspector introspector) {
+    Object subject = environment.getSubject();
+    int status = visitors[FIRST].visit(introspector);
     if(status == Environment.SUCCESS) {
       return status;
     } else {
       //setStatus(Environment.SUCCESS);
       /* reset the modifications from FIRST */
       environment.setSubject(subject);
-      return visitors[THEN].visit();
+      return visitors[THEN].visit(introspector);
     }
   }
 }

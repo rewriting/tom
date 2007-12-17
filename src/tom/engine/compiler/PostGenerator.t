@@ -150,7 +150,7 @@ public class PostGenerator {
   %strategy ChangeVarDeclarations() extends Identity() {
     visit Instruction {
       LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) -> {
-        Visitable root = getEnvironment().getRoot();
+        Visitable root = (Visitable) getEnvironment().getRoot();
         if (root != getEnvironment().getSubject()) {
           try {
             getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name)).visit(root); 

@@ -18,12 +18,14 @@
 	              options="--autoDispatch"
                 destdir="${examples.gen}">          
        <include name="${strategy}/**/HandWrittenStrat.t"/>
+       <include name="${strategy}/**/HandWrittenStrat2.t"/>
     </tom.preset>
 	<tom.preset srcdir="${examples.dir}"
 	                destdir="${examples.gen}">          
 	       <include name="${strategy}/**/*.t"/>
 	       <exclude name="${strategy}/**/*.g.t"/>
 		   <exclude name="${strategy}/**/HandWrittenStrat.t"/>
+		   <exclude name="${strategy}/**/HandWrittenStrat2.t"/>
 	</tom.preset> 
     <javacompile example="${strategy}"/>
   </target>

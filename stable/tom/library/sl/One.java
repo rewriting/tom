@@ -57,12 +57,12 @@ public class One extends AbstractStrategy {
   /** Method herited from the apply() method of mutraveler library
    * @deprecated use fire() instead
    */ 
-  public Visitable visitLight(Visitable any) throws VisitFailure {
-    int childCount = any.getChildCount();
+  public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
+    int childCount = introspector.getChildCount(any);
     for(int i = 0; i < childCount; i++) {
       try {
-        Visitable newChild = visitors[ARG].visitLight(any.getChildAt(i));
-        return any.setChildAt(i,newChild);
+        Object newChild = visitors[ARG].visitLight(introspector.getChildAt(any,i),introspector);
+        return introspector.setChildAt(any,i,newChild);
       } catch(VisitFailure f) { }
     }
     throw new VisitFailure();
@@ -73,11 +73,11 @@ public class One extends AbstractStrategy {
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
-  public int visit() {
-    int childCount = environment.getSubject().getChildCount();
+  public int visit(Introspector introspector) {
+    int childCount = introspector.getChildCount(environment.getSubject());
     for(int i = 0; i < childCount; i++) {
       environment.down(i+1);
-      int status = visitors[ARG].visit();
+      int status = visitors[ARG].visit(introspector);
       if(status == Environment.SUCCESS) {
         environment.up();
         return Environment.SUCCESS;

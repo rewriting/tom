@@ -115,10 +115,22 @@ public class @className()@ implements tom.library.sl.Strategy {
     return this;
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
+  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+    return (tom.library.sl.Visitable) visit(envt,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public tom.library.sl.Visitable visit(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure{
+    return (tom.library.sl.Visitable) visit(any,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
+    return (tom.library.sl.Visitable) visitLight(any,tom.library.sl.VisitableIntrospector.getInstance());
+  }
+
+  public Object visit(Object any, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     environment.setRoot(any);
-    int status = visit();
+    int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
@@ -127,7 +139,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this);
+    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
   }
 
 
@@ -135,9 +147,9 @@ public class @className()@ implements tom.library.sl.Strategy {
     args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg",false)@};
   }
 
-  public tom.library.sl.Visitable visit(tom.library.sl.Environment envt) throws tom.library.sl.VisitFailure {
+  public Object visit(tom.library.sl.Environment envt, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
     setEnvironment(envt);
-    int status = visit();
+    int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
     } else {
@@ -145,24 +157,24 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public tom.library.sl.Visitable visitLight(tom.library.sl.Visitable any) throws tom.library.sl.VisitFailure {
+  public Object visitLight(Object any, tom.library.sl.Introspector introspector) throws tom.library.sl.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
-      tom.library.sl.Visitable result = any;
-      tom.library.sl.Visitable[] childs = null;
+      Object result = any;
+      Object[] childs = null;
       for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-          tom.library.sl.Visitable oldChild = any.getChildAt(nbi);
-          tom.library.sl.Visitable newChild = args[i].visitLight(oldChild);
+          Object oldChild = introspector.getChildAt(any,nbi);
+          Object newChild = args[i].visitLight(oldChild,introspector);
           if(childs != null) {
             childs[nbi] = newChild;
           } else if(newChild != oldChild) {
             // allocate the array, and fill it
-            childs = any.getChildren();
+            childs = introspector.getChildren(any);
             childs[nbi] = newChild;
           }
           nbi++;
       }
       if(childs!=null) {
-        result = any.setChildren(childs);
+        result = introspector.setChildren(any,childs);
       }
       return result;
     } else {
@@ -170,30 +182,30 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public int visit() {
-    tom.library.sl.Visitable any = environment.getSubject();
+  public int visit(tom.library.sl.Introspector introspector) {
+    Object any = environment.getSubject();
     if(any instanceof @fullClassName(operator)@) {
-      tom.library.sl.Visitable[] childs = null;
+      Object[] childs = null;
       for(int i = 0, nbi = 0; i < @slotList.length()@; i++) {
-          tom.library.sl.Visitable oldChild = any.getChildAt(nbi);
+          Object oldChild = introspector.getChildAt(any,nbi);
           environment.down(nbi+1);
-          int status = args[i].visit();
+          int status = args[i].visit(introspector);
           if(status != tom.library.sl.Environment.SUCCESS) {
             environment.upLocal();
             return status;
           }
-          tom.library.sl.Visitable newChild = environment.getSubject();
+          Object newChild = environment.getSubject();
           if(childs != null) {
             childs[nbi] = newChild;
           } else if(newChild != oldChild) {
-            childs = any.getChildren();
+            childs = introspector.getChildren(any);
             childs[nbi] = newChild;
           } 
           environment.upLocal();
           nbi++;
       }
       if(childs!=null) {
-        environment.setSubject(any.setChildren(childs));
+        environment.setSubject(introspector.setChildren(any,childs));
       }
       return tom.library.sl.Environment.SUCCESS;
     } else {

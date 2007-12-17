@@ -151,7 +151,7 @@ public class FreshGom {
         int n = `x.getChildCount();
         for(int i = n; i>0; i--){
           getEnvironment().down(i);
-          int status = s.visit();
+          int status = s.visit(getEnvironment().getIntrospector());
           if(status != Environment.SUCCESS){
             getEnvironment().up();
             return `x;
@@ -256,7 +256,7 @@ public class FreshGom {
         else{
           Position source = getEnvironment().getPosition();
           Position target = (Position) source.add((Path)`p);
-          return (LambdaTerm) target.getSubterm().visit(getEnvironment().getRoot());
+          return (LambdaTerm) target.getSubterm().visit((Visitable)getEnvironment().getRoot());
         }
       }
 

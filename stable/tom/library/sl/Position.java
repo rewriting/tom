@@ -48,7 +48,7 @@ public class Position implements Cloneable,Path {
   public Position(){
     omega = new int[0];
   }
-  
+
   public Position(int[] omega){
     setValue(omega);
   }
@@ -130,123 +130,21 @@ public class Position implements Cloneable,Path {
    * Compares two positions
    */
   public int compare(Path path) {
-      Position p = Position.make(path);
-      /* we need to check only the meaningful part of the omega array */
-      for(int i=0; i<depth(); i++) {
-        if(i == p.depth() || omega[i]>p.omega[i]) {
-          return 1;
-        }
-        else{
-          if ( omega[i]<p.omega[i]) {
-            return -1;
-          }
+    Position p = Position.make(path);
+    /* we need to check only the meaningful part of the omega array */
+    for(int i=0; i<depth(); i++) {
+      if(i == p.depth() || omega[i]>p.omega[i]) {
+        return 1;
+      }
+      else{
+        if ( omega[i]<p.omega[i]) {
+          return -1;
         }
       }
-      return depth()==p.depth()?0:-1;
-  }
-
-  /**
-   * create s=omega(v)
-   * such that s[subject] returns subject[ s[subject|omega] ]|omega
-   *
-   * @param v strategy subterm of the omega strategy
-   * @return the omega strategy corresponding to the position
-   */
-  public Strategy getOmega(Strategy v) {
-    Strategy res = v;
-    for(int i = depth()-1 ; i>=0 ; i--) {
-      res = new Omega(omega[i],res);
     }
-    return res;
+    return depth()==p.depth()?0:-1;
   }
 
-  /**
-   * create s=omegaPath(v)
-   * such that s[subject] applies s to all nodes in the path of omega
-   * in a bottom-up way
-   *
-   * @param v strategy subterm of the omega strategy
-   * @return the omegaPath strategy corresponding to the position
-   */
-  public Strategy getOmegaPath(Strategy v) {
-    return getOmegaPathAux(v,0);
-  }
-
-  private Strategy getOmegaPathAux(Strategy v, int i) {
-    if(i >= depth()-1) {
-      return v;
-    } else {
-      return new Sequence(new Omega(omega[i],getOmegaPathAux(v,i+1)),v);
-    }
-  }
-
-  /**
-   * create s=omega(x->t)
-   * such that s[subject] returns subject[t]|omega
-   *
-   * @param t the constant term that should replace the subterm
-   * @return the omega strategy the performs the replacement
-   */
-  public Strategy getReplace(final Visitable t) {
-    return getOmega(
-        new Identity() {
-          public int visit() {
-            environment.setSubject(t);
-            return Environment.SUCCESS;
-          }
-          public Visitable visitLight(Visitable x) {
-            return t;
-          }
-        });
-  }
-
-  /**
-   * create s=x->t|omega
-   * such that s[subject] returns subject|omega
-   *
-   * @return the omega strategy that retrieves the corresponding subterm
-   */
-  public Strategy getSubterm() {
-    return new AbstractStrategy() {
-      { initSubterm(); }
-      public Visitable visitLight(Visitable subject) throws VisitFailure {
-        final Visitable[] ref = new Visitable[1];
-        getOmega(
-            new Identity() {
-              public int visit() {
-                ref[0]=environment.getSubject();
-                return Environment.SUCCESS;
-              }
-              public Visitable visitLight(Visitable v) {
-                ref[0] = v;
-                return v;
-              }
-            }).visitLight(subject);
-        return ref[0];
-      }
-      public int visit() {
-        final Visitable[] ref = new Visitable[1];
-        Strategy s=getOmega(
-            new Identity() {
-              public int visit() {
-                ref[0]=environment.getSubject();
-                return Environment.SUCCESS;
-              }
-              public Visitable visitLight(Visitable v) {
-                ref[0] = v;
-                return v;
-              }
-            });
-        try {
-          s.visit(environment.getRoot());
-          environment.setSubject(ref[0]);
-          return Environment.SUCCESS;
-        } catch(VisitFailure e) { 
-          return Environment.FAILURE;
-        }
-      }
-    };
-  }
   /**
    * Returns a <code>String</code> object representing the position.
    * The string representation consists of a list of elementary positions
@@ -381,6 +279,109 @@ public class Position implements Cloneable,Path {
     if(! hasPrefix(oldprefix)) return null;
     Position suffix = getSuffix(oldprefix);
     return new Position(newprefix,suffix);
+  }
+
+  /**
+   * create s=omega(v)
+   * such that s[subject] returns subject[ s[subject|omega] ]|omega
+   *
+   * @param v strategy subterm of the omega strategy
+   * @return the omega strategy corresponding to the position
+   */
+  public Strategy getOmega(Strategy v) {
+    Strategy res = v;
+    for(int i = depth()-1 ; i>=0 ; i--) {
+      res = new Omega(omega[i],res);
+    }
+    return res;
+  }
+
+  /**
+   * create s=omegaPath(v)
+   * such that s[subject] applies s to all nodes in the path of omega
+   * in a bottom-up way
+   *
+   * @param v strategy subterm of the omega strategy
+   * @return the omegaPath strategy corresponding to the position
+   */
+  public Strategy getOmegaPath(Strategy v) {
+    return getOmegaPathAux(v,0);
+  }
+
+  private Strategy getOmegaPathAux(Strategy v, int i) {
+    if(i >= depth()-1) {
+      return v;
+    } else {
+      return new Sequence(new Omega(omega[i],getOmegaPathAux(v,i+1)),v);
+    }
+  }
+
+  /**
+   * create s=omega(x->t)
+   * such that s[subject] returns subject[t]|omega
+   *
+   * @param t the constant term that should replace the subterm
+   * @return the omega strategy the performs the replacement
+   */
+  public Strategy getReplace(final Object t) {
+    return getOmega(
+        new Identity() {
+          public int visit(Introspector i) {
+            environment.setSubject(t);
+            return Environment.SUCCESS;
+          }
+          public Object visitLight(Object x, Introspector i) {
+            return t;
+          }
+        });
+  }
+
+  /**
+   * create s=x->t|omega
+   * such that s[subject] returns subject|omega
+   *
+   * @return the omega strategy that retrieves the corresponding subterm
+   */
+  public Strategy getSubterm() {
+    return new AbstractStrategy() {
+      { initSubterm(); }
+      public Object visitLight(Object subject, Introspector i) throws VisitFailure {
+        final Object[] ref = new Object[1];
+        getOmega(
+            new Identity() {
+              public int visit(Introspector i) {
+                ref[0]=environment.getSubject();
+                return Environment.SUCCESS;
+              }
+              public Object visitLight(Object v, Introspector i) {
+                ref[0] = v;
+                return v;
+              }
+            }).visitLight(subject,i);
+        return ref[0];
+      }
+      public int visit(Introspector i) {
+        final Object[] ref = new Object[1];
+        Strategy s=getOmega(
+            new Identity() {
+              public int visit(Introspector i) {
+                ref[0]=environment.getSubject();
+                return Environment.SUCCESS;
+              }
+              public Object visitLight(Object v, Introspector i) {
+                ref[0] = v;
+                return v;
+              }
+            });
+        try {
+          s.visit(environment.getRoot(),i);
+          environment.setSubject(ref[0]);
+          return Environment.SUCCESS;
+        } catch(VisitFailure e) { 
+          return Environment.FAILURE;
+        }
+      }
+    };
   }
 
 }

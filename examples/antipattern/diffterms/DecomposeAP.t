@@ -52,7 +52,7 @@ public class DecomposeAP extends antipattern.term.TermBasicStrategy {
         true : false ); 
   }
 
-  public Term visit_Term(Term arg) throws VisitFailure {		
+  public Term visit_Term(Term arg, Introspector i) throws VisitFailure {		
 
     %match(Term arg){			
       // first rule
