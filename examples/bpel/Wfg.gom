@@ -7,12 +7,12 @@ Wfg = WfgNode(Wfg*)
     | ConcWfg(Wfg*)
     | EmptyWfg()
 
-Condition = and(c1:Condition,c2:Condition) 
-          | or(c1:Condition,c2:Condition)
-          | xor(c1:Condition,c2:Condition)
-          | cond(wfg:Wfg)
-          | label(node:String)
-          | noCond()
+Condition = And(Condition*) 
+          | Or(Condition*)
+          | Xor(c1:Condition,c2:Condition)
+          | Cond(wfg:Wfg)
+          | Label(node:String)
+          | NoCond()
 
 WfgNode:FL() {}
 ConcWfg:FL() {}

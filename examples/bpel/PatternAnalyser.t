@@ -79,8 +79,8 @@ public class PatternAnalyser{
 
     %strategy Substitute(sourceToName:HashMap) extends `Identity() {
       visit Condition {
-        label(n) -> {
-          return `cond(RefWfg( (String) sourceToName.get(n) ));
+        Label(n) -> {
+          return `Cond(RefWfg( (String) sourceToName.get(n) ));
         }
       }
     }
@@ -127,10 +127,10 @@ public class PatternAnalyser{
         }
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
-        wfg = `WfgNode(Activity(operation,noCond(),noCond())); 
+        wfg = `WfgNode(Activity(operation,NoCond(),NoCond())); 
         %match(TNodeList linklist){
           (_*,<joincondition>cond</joincondition>,_*) -> {
-            explicitCond.putCondition(`operation,ConditionParser.parse(`cond.getData())); 
+            explicitCond.putCondition(`operation,CondParser.parse(`cond.getData())); 
           }
           (_*,<source linkName=linkName/>,_*) -> {
             explicitCond.putLinkName(`linkName,`operation);
@@ -145,8 +145,8 @@ public class PatternAnalyser{
         whileCounter++;
         String label = "loop" + whileCounter;
         Wfg middle = bpelToWfg(`activity,explicitCond);
-        Wfg begin = `LabWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
-        Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), RefWfg(label));
+        Wfg begin = `LabWfg(label,WfgNode(Activity("begin "+node.getName(),NoCond(),NoCond()), middle ));
+        Wfg end = `WfgNode(Activity("end "+node.getName(),NoCond(),NoCond()), RefWfg(label));
         try {
           wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).visit(begin);
         } catch(VisitFailure e) {
@@ -181,7 +181,7 @@ public class PatternAnalyser{
             buffer.append(%[ @from@ -> @`to@\n ]%);
           }
           (_*) -> {        
-            wfg = `WfgNode(Activity(buffer.toString(),noCond(),noCond())); 
+            wfg = `WfgNode(Activity(buffer.toString(),NoCond(),NoCond())); 
           }
           (_*,<source linkName=linkName/>,_*) -> {
             wfg = `WfgNode(wfg*,RefWfg(linkName));
@@ -273,7 +273,7 @@ public class PatternAnalyser{
         Activity act = (Activity) node.pos.getSubterm().visit( (Visitable) getEnvironment().getRoot());
         String root_name = act.getname();
         if (root_name.equals("")) return `a;
-        return `Activity(name,and(cond(RefWfg(root_name)),incond),outcond);
+        return `Activity(name,And(Cond(RefWfg(root_name)),incond),outcond);
       }
     }
   }

@@ -25,16 +25,24 @@
       </fileset>
     </copy>
     <mkdir dir="${examples.gen}/${bpel}"/>
-    <tomantlr target="${bpel}/CondParser.g"
-      outputdirectory="${examples.gen}/${bpel}">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
-    <antlrmapper srcfile="${examples.gen}/${bpel}/CondParserTokenTypes.txt"
-      destdir="${examples.gen}"
-      package="${bpel}">
-      <classpath refid="tom.classpath"/>
-    </antlrmapper>
     <gomtermgraphcompile example="${bpel}"/>
+    <gomantlradapter.preset
+      srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      package="${bpel}"
+      grammar="Cond">
+      <include name="${bpel}/**/Wfg.gom"/>
+    </gomantlradapter.preset>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <antlr3 target="${bpel}/Cond.g"
+            outputdirectory="${examples.gen}/${bpel}"
+            libdirectory="${examples.gen}/${bpel}"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
     <tomcompile example="${bpel}"/>
     <javacompile example="${bpel}"/>
   </target>
