@@ -210,7 +210,7 @@ public class ConfigurationManager {
         }
 
         TNode optionX = `xml(<string name="config" altName="X"
-                       description="Tom XML file"
+                       description="Defines an alternate XML configuration file"
                        value=xmlConfigurationFileName
                        attrName="file"/>);
         TNode opt = `xml(<options>optionX globalOptions*</options>);

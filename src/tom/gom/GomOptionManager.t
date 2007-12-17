@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -284,14 +285,12 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * Self-explanatory. Displays an help message indicating how to use the compiler.
    */
   private void displayHelp() {
-    String beginning = "usage :"
-      + "\n\tgom [options] file [... file_n]"
-      + "\noptions :";
+    String beginning = "usage: gom [options] file [... file_n]"
+      + "\noptions:\n";
     StringBuilder buffer = new StringBuilder(beginning);
-
-    buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
-
-    for(Iterator it = mapNameToOption.values().iterator(); it.hasNext() ; ) {
+    TreeMap treeMap = new TreeMap(mapNameToOption);
+    Iterator it = treeMap.values().iterator();
+    while(it.hasNext()) {
       PlatformOption h = (PlatformOption)it.next();
       %match(PlatformOption h) {
         PluginOption[Name=name, AltName=altName, Description=description, AttrName=attrName] -> {

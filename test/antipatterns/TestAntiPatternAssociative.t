@@ -344,7 +344,9 @@ public class TestAntiPatternAssociative extends TestCase {
 	}
 	
 	public void testAp15() {
-		assertTrue(match15(`lst(lst(f(a(),a()),f(a(),b()),f(a(),a())),lst(f(a(),a()),f(a(),b()),f(a(),a())))) == `True());
+    Term s = `lst(lst(f(a(),a()),f(a(),b()),f(a(),a())),lst(f(a(),a()),f(a(),b()),f(a(),a())));
+    System.err.println("s = " + s);
+		assertTrue(match15(s) == `True());
 	}
 	
 	private Result match16(TermList subject) {

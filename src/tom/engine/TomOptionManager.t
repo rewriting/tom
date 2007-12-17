@@ -321,12 +321,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * Displays an help message indicating how to use the compiler.
    */
   private void displayHelp() {
-    String beginning = "\nTom usage :"
-      + "\n\ttom [options] input[.t] [... input[.t]]"
-      + "\noptions :";
+    String beginning = "usage: tom [options] input[.t] [... input[.t]]"
+      + "\noptions:\n";
     StringBuilder buffer = new StringBuilder(beginning);
-    buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
-
     TreeMap treeMap = new TreeMap(mapNameToOption);
     Iterator it = treeMap.values().iterator();
     while(it.hasNext()) {
