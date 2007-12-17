@@ -548,7 +548,6 @@
     <copy todir="${stable.dist.lib}">
       <fileset dir="${stable.lib}">
         <include name="*.jar"/>
-        <exclude name="ant.jar"/>
       </fileset>
     </copy>
 
@@ -688,7 +687,6 @@
 	    by tom, but is needed by the applications -->
       <fileset dir="${src.lib}">
         <include name="*.jar"/>
-        <exclude name="ant.jar"/>
       </fileset>
     </copy>
 
