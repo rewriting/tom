@@ -197,6 +197,15 @@ sort TwoPath:block(){
 		}
 		return 0;
 	}
+	public int targetsize(){
+		OnePath target=this.target();
+		%match(target){
+			Id() -> { return 0; }
+			OneCell(_) -> { return 1; }
+			o@@OneC0(_*) -> { return `o.length(); }
+		}
+		return 0;
+	}
 	public  String prettyPrint (){
 		%match (this){
 					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
@@ -351,6 +360,52 @@ sort ThreePath:block(){
   	  		System.out.println("10");
   	  		return myNewPath;}
   	  		}
+  	  	 p@@TwoC1(head*,top@@TwoC0(X*),down@@TwoC0(Y*),tail*) -> {//extension du cas 10
+  	  		int sourcelength=`down.targetsize();
+  	  		TwoPath myNewPath=`TwoId(Id());
+  	  		int index=0;
+  	  		if(sourcelength!=`down.length()){break;}
+  	  		TwoPath[] topArray=toArray((TwoC0)`top);
+  	  		TwoPath[] downArray=toArray((TwoC0)`down);
+  	  		for(int i=0;i<sourcelength;i++){
+  	  			
+ 	  			int downsourcelength=downArray[i].sourcesize();//nouveau
+  	  				
+   	  			TwoPath topPart=`TwoId(Id());
+  	  			for(int j=index;j<downsourcelength+index;j++){
+  	  				
+  	  				try{TwoPath newC0 = (TwoPath)topArray[j];
+  	  				
+  	  				if(j==index){topPart=newC0;}
+  	  			else {topPart=`TwoC0(topPart,newC0);}
+
+
+  	  				}catch (Exception e){//cas ou il n y a pas que des constructeurs au dessus comme des cellules avec plusieurs sorties, duplication par exemple
+  	  				return `p;
+  	  				}
+  	  			}
+  	  			
+  	  			index+=downsourcelength;
+  	  			if(topPart.target()==downArray[i].source()){
+  	  			TwoPath newC1=`TwoC1(topPart,downArray[i]);
+  	  		
+  	  			if(i==0){myNewPath=`newC1;}
+  	  			else {myNewPath=`TwoC0(myNewPath,newC1);}
+  	  			
+  	  		}  	  			
+  	  		}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		if(`head!=`TwoId(Id())){
+  	  		myNewPath=`TwoC1(head,myNewPath,tail);}
+  	  		else{myNewPath=`TwoC1(myNewPath,tail);}}
+  	  		if(myNewPath!=`TwoId(Id())){
+  	  		
+  	  		System.out.println("11");
+  	  		return myNewPath;}
+  	  		}
+  	  	TwoC1(head*,X@@TwoC0(_*),tail*)->{if(isTwoC0Id(`X)){System.out.println("supprTwoIds");if(`head==`TwoId(Id())){return `tail;}return `TwoC1(head,tail);}
+  	  	}
+  	  	
   	  	TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }
   	  		//a part, retransforme les onec0 en twoC0
   	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en meme temps
@@ -359,6 +414,14 @@ sort ThreePath:block(){
   	  	//encore experimental, pour les split
   	  	TwoC1(head*,TwoC0(left*,right*),TwoC0(bottomleft*,bottomright*))->{if(`left!=`TwoId(Id())&&`right!=`TwoId(Id())&&`bottomleft!=`TwoId(Id())&&`bottomright!=`TwoId(Id())&&`left.target()==`bottomleft.source()){System.out.println("split paths");if(`head==`TwoId(Id())){return `TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright));}else{return `TwoC1(head,TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright)));}}}
   	} 
+}
+
+public static boolean isTwoC0Id(TwoPath path){
+%match (TwoPath path){
+			TwoC0(TwoId(_),tail*) -> { return  isTwoC0Id(`tail);}
+			TwoId(_)->{return true;}
+}
+return false;
 }
 
 %strategy Print() extends Identity(){

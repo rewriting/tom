@@ -29,8 +29,23 @@ public class TestTomHook extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestTomHook.class));
   }
 
-  public void testNotHook() {
+  public void testTrue() {
+    Bool test = `Not(True());
+    assertEquals(test,`False());
+  }
+
+  public void testFalse() {
+    Bool test = `Not(False());
+    assertEquals(test,`True());
+  }
+
+  public void testNotAndHook() {
     Bool test = `Not(And(True(),True()));
     assertEquals(test,`Or(False(),False()));
+  }
+
+  public void testNotOrHook() {
+    Bool test = `Not(Or(True(),True()));
+    assertEquals(test,`And(False(),False()));
   }
 }

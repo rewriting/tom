@@ -47,3 +47,8 @@ Path = cellule (name:String, dimension:int, type:String, source:Path, target:Pat
 		 	| rule(name:String, source:Two.Path, target:Two.Path)
 		module Path
 		 Path = path(twopath:Two.Path) | cell(threecell:Three.Cell) | c0 (Path*) | c1 (Path*) | c2 (Path*)
+		 
+		 
+		 
+		 
+TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }

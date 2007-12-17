@@ -276,9 +276,9 @@ TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(deux,six),multiplication),trois),division)
 TwoPath testnatlist = `TwoC1(TwoC0(deux,TwoC1(TwoC0(consList,un),append)),add,sort);
 TwoPath testBool = `TwoC1(TwoC0(quatre,six),lessOrEqual);
 TwoPath testsort = `TwoC1(TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(consList,TwoC0(TwoC1(zero,succ),TwoC1(zero,succ))))),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(TwoId(nat),permutationLN)),TwoId(nat)),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(permutation,TwoId(list))),TwoId(nat)),TwoC1(TwoC0(TwoC0(lessOrEqual,TwoC0(TwoId(nat),TwoId(list))),TwoC0(TwoId(nat),consList)),mergeSwitch))));
-int[] list1={4,6};
+int[] list1={4,6,3};
 int[] list2={2,5};
-TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),merge);//un truc marche pas
+TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),merge,sort);//un truc marche pas
 //System.out.println(rule3);
 //String input=twoPath2XML(nine);
 String input=twoPath2XML(testsortcomplex);

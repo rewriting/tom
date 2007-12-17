@@ -22,45 +22,50 @@
 
 package gom;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import gom.testmakeempty.l.types.*;
+import junit.extensions.ActiveTestSuite;
+import junit.extensions.RepeatedTest;
+import gom.testgommultithread.term.types.*;
 
-public class TestMakeEmpty extends TestCase {
+public class TestGomMultithread extends TestCase {
 
-  %gom {
-    module l
+  %gom(--multithread) {
+    module term
     abstract syntax
     T = a()
       | b()
-      | conc(T*)
-    conc:FL() {}
-    conc:make_empty() {
-      return `a();
-    }
-    L = list(T*)
       | c()
-    list:make_empty() {
-      return `c();
-    }
+      | f(One:T,Two:T,Three:T,Four:T)
   }
+
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestMakeEmpty.class));
+    junit.textui.TestRunner.run(suite());
   }
 
-  public void testEmptySameDoCo() {
-    assertSame(`a(),`conc());
+  public TestGomMultithread(String name) {
+    super(name);
   }
 
-  public void testEmptyNotSameDoCo() {
-    assertSame(`c(),`list());
+  public static Test suite() {
+    TestSuite suite = new ActiveTestSuite();
+    for (int i = 0; i<10; ++i) {
+      suite.addTest(new  RepeatedTest(new TestGomMultithread("testBuild"),10));
+    }
+    return suite;
   }
 
-  //public void testOneElemSameDoCo() {
-  //  assertSame(`conc(b(),a()),`conc(b()));
-  //}
-
-  //public void testOneElemNotSameDoCo() {
-  //  assertSame(`list(b(),c()),`list(b()));
-  //}
+  private static int DEPTH = 4;
+  public void testBuild() {
+    T res = `a();
+    for(int i = 0; i < DEPTH; ++i) {
+      res = `f(res, b(), c(), res);
+    }
+    T res2 = `a();
+    for(int i = 0; i < DEPTH; ++i) {
+      res2 = `f(res2, b(), c(), res2);
+    }
+    assertSame("Should be equal", res,res2);
+  }
 }
