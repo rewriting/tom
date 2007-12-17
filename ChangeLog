@@ -1,5 +1,8 @@
 2007-12-17 pem
+  * fix PR-3602
+  * fix PR-3605
   * removed antlrmapper
+
 2007-12-12 tonio
   * New parser for Gom, using gomantlradapter and antlr v3
   * remove the old antlrmapper+antlr v2 parser
