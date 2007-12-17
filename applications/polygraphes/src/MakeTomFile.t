@@ -18,8 +18,7 @@ public static String makeTomFile(String filename){
 	 String ruleStrategy=XMLhandler.makeRuleStrategy(filename);
 	 String lowerProgramName=programName.toLowerCase();
 	 System.out.println(ruleStrategy);
-	 String tomFile=%[
-import @lowerProgramName@.nat.types.*;
+	 String tomFile=%[import @lowerProgramName@.nat.types.*;
 import @lowerProgramName@.nat.types.twopath.*;
 import tom.library.sl.*;
 import org.w3c.dom.*;

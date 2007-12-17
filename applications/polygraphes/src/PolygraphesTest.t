@@ -159,6 +159,27 @@ private static 	ThreePath doubleSuccLess= `ThreeCell("doubleSuccLess",TwoC1(TwoC
 private static ThreePath doubleAddMerge = `ThreeCell("doubleAddMerge",TwoC1(TwoC0(TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),TwoC0(add,add),merge),TwoC1(TwoC0(duplication,TwoId(list),duplication,TwoId(list)),TwoC0(TwoId(nat),TwoId(nat),permutationLN,TwoId(nat),TwoId(list)),TwoC0(TwoId(nat),permutation,TwoId(list),TwoId(nat),TwoId(list)),TwoC0(lessOrEqual,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),Function());
 private static ThreePath merge1 = `ThreeCell("merge1",TwoC1(TwoC0(vrai,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),TwoC1(TwoC0(TwoId(nat),TwoC1(TwoC0(TwoId(list),TwoC1(TwoC0(TwoId(nat),TwoId(list)),add)),merge)),add),Function());
 private static ThreePath merge2 = `ThreeCell("merge1",TwoC1(TwoC0(faux,TwoId(nat),TwoId(list),TwoId(nat),TwoId(list)),mergeSwitch),TwoC1(TwoC0(add,TwoId(nat),TwoId(list)),TwoC0(permutationLN,TwoId(list)),TwoC0(TwoId(nat),merge),add),Function());
+//carre et cube
+private static TwoPath carre = `TwoCell("carre",nat,nat,Function());
+private static ThreePath zeroCarre = `ThreeCell("zeroCarre",TwoC1(zero,carre),zero,Function());
+private static ThreePath succCarre = `ThreeCell("succCarre",TwoC1(succ,carre),TwoC1(TwoC0(TwoC1(duplication,TwoC0(TwoC1(TwoC0(TwoC1(zero,succ,succ),succ),multiplication),carre),plus),TwoC1(zero,succ)),minus),Function());
+//private static ThreePath succCarre = `ThreeCell("succCarre",TwoC1(succ,carre),TwoC1(succ,duplication,multiplication),Function());
+private static TwoPath cube = `TwoCell("cube",nat,nat,Function());
+private static ThreePath zeroCube = `ThreeCell("zeroCube",TwoC1(zero,cube),zero,Function());
+private static ThreePath succCube = `ThreeCell("succCube",TwoC1(succ,cube),TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),duplication),TwoC0(TwoC1(TwoC0(TwoC1(zero,succ),multiplication),plus),TwoC1(duplication,TwoC0(TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),carre),multiplication),cube),plus)),plus),Function());
+//egalité nat
+private static TwoPath equal=`TwoCell("equal",OneC0(nat,nat),bool,Function());
+private static ThreePath zeroEqualZero = `ThreeCell("zeroEqualZero",TwoC1(TwoC0(zero,zero),equal),vrai,Function());
+private static ThreePath succEqualSucc = `ThreeCell("succEqualSucc",TwoC1(TwoC0(succ,succ),equal),equal,Function());
+private static ThreePath zeroEqualSucc = `ThreeCell("zeroEqualSucc",TwoC1(TwoC0(zero,succ),equal),TwoC1(eraser,faux),Function());
+private static ThreePath succEqualZero = `ThreeCell("succEqualZero",TwoC1(TwoC0(succ,zero),equal),TwoC1(eraser,faux),Function());
+//egalite list
+private static TwoPath lEqual=`TwoCell("lEqual",OneC0(list,list),bool,Function());
+private static ThreePath consListEqualconsList = `ThreeCell("consListEqualconsList",TwoC1(TwoC0(consList,consList),lEqual),vrai,Function());
+private static ThreePath addEqualconsList = `ThreeCell("addEqualconsList",TwoC1(TwoC0(add,consList),lEqual),TwoC1(TwoC0(eraser,eraserList),faux),Function());
+private static ThreePath addEqualAdd = `ThreeCell("addEqualAdd",TwoC1(TwoC0(add,add),lEqual),TwoC1(TwoC0(TwoId(nat),permutationLN,TwoId(list)),TwoC0(equal,lEqual),and),Function());
+private static ThreePath consListEqualAdd = `ThreeCell("consListEqualAdd",TwoC1(TwoC0(add,consList),lEqual),TwoC1(TwoC0(eraser,eraserList),faux),Function());
+
 
 
 public static void main(String[] args) {
@@ -239,6 +260,21 @@ rewritingRules.add(doubleAddMerge);
 rewritingRules.add(merge1);
 rewritingRules.add(merge2);
 
+rewritingRules.add(zeroCarre);
+rewritingRules.add(succCarre);
+rewritingRules.add(zeroCube);
+rewritingRules.add(succCube);
+
+rewritingRules.add(zeroEqualZero);
+rewritingRules.add(succEqualSucc);
+rewritingRules.add(succEqualZero);
+rewritingRules.add(zeroEqualSucc);
+
+rewritingRules.add(consListEqualconsList);
+rewritingRules.add(addEqualconsList);
+rewritingRules.add(consListEqualAdd);
+rewritingRules.add(addEqualAdd);
+
 String testrules="<PolygraphicProgram Name=\"TestProgram\">\n";
 for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
 	ThreePath rule = (ThreePath) iterator.next();
@@ -275,13 +311,17 @@ TwoPath total=`TwoC1(TwoC0(div,TwoC1(zero,succ,succ,succ,succ)),multiplication);
 TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(deux,six),multiplication),trois),division);
 TwoPath testnatlist = `TwoC1(TwoC0(deux,TwoC1(TwoC0(consList,un),append)),add,sort);
 TwoPath testBool = `TwoC1(TwoC0(quatre,six),lessOrEqual);
+TwoPath testCarre = `TwoC1(six,carre);
+TwoPath testCube = `TwoC1(quatre,cube);
+TwoPath testEqual = `TwoC1(TwoC0(TwoC1(TwoC0(trois,huit),multiplication),TwoC1(TwoC0(six,quatre),multiplication)),equal);
 TwoPath testsort = `TwoC1(TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(consList,TwoC0(TwoC1(zero,succ),TwoC1(zero,succ))))),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(TwoId(nat),permutationLN)),TwoId(nat)),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(permutation,TwoId(list))),TwoId(nat)),TwoC1(TwoC0(TwoC0(lessOrEqual,TwoC0(TwoId(nat),TwoId(list))),TwoC0(TwoId(nat),consList)),mergeSwitch))));
-int[] list1={4,6,3};
-int[] list2={2,5};
-TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),merge,sort);//un truc marche pas
+int[] list1={7,5,3};
+int[] list2={3,5,7};
+TwoPath testEqualList = `TwoC1(TwoC0(TwoC1(makeList(list1),sort),TwoC1(makeList(list2),sort)),lEqual);
+TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),merge,sort);
 //System.out.println(rule3);
 //String input=twoPath2XML(nine);
-String input=twoPath2XML(testsortcomplex);
+String input=twoPath2XML(testEqualList);
 try{
 save(input,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml"));
 }catch(Exception e){e.printStackTrace();}
