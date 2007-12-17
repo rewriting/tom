@@ -201,7 +201,7 @@ writer.write(%[
   private void generateDispatch(java.io.Writer writer, ClassNameList types) throws java.io.IOException {
     while(!types.isEmptyConcClassName()) {
       writer.write(%[    else if (v instanceof @fullClassName(types.getHeadConcClassName())@) {
-      return ((@fullClassName(types.getHeadConcClassName())@) v).accept(this);
+      return ((@fullClassName(types.getHeadConcClassName())@) v).accept(this,i);
     }]%);
       types = types.getTailConcClassName();
     }
