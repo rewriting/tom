@@ -299,11 +299,12 @@ options{
     subject = subject.replace(escapeChar+escapeChar,metaChar);
     //System.out.println("subject: '" + subject + "'");
     String split[] = subject.split(escapeChar);
-    if(split.length%2==0) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badNumberOfAt,
-            new Object[]{},
-            currentFile, getLine()));
-
+    boolean last = subject.endsWith(escapeChar);
+    int numSeparator = split.length + 1 + (last ? 1 : 0);
+    if (numSeparator%2==1) {
+        getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badNumberOfAt,
+              new Object[]{},
+              currentFile, getLine()));
     }
     //System.out.println("split.length: " + split.length);
     boolean metaMode = true;
