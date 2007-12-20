@@ -63,26 +63,18 @@ public final class TomBase {
   %include { sl.tom }
   %include { ../platform/adt/platformoption/PlatformOption.tom }
   
-%typeterm Collection {
+  %typeterm Collection {
     implement { java.util.Collection }
     is_sort(t) { ($t instanceof java.util.Collection) }
   }
 
- public final static String DEFAULT_MODULE_NAME = "default"; 
+  public final static String DEFAULT_MODULE_NAME = "default"; 
   
   /** shortcut */
-  
-  public static TomNumberList appendNumber(int n, TomNumberList path) {
-    /*
-     * concTomNumber(path*,Position(n))
-     * can be used instead of 
-     * concTomNumber(path*,NameNumber(PositionName(concTomNumber(Position(n)))))
-     * thanks to hooks defined in TomName.gom
-     */
-    return `concTomNumber(path*,Position(n));
-    //return `concTomNumber(path*,NameNumber(PositionName(concTomNumber(Position(n)))));
-  }
-    
+ 
+  /**
+   * Return the name of a <code>TomType</code>
+   */
   public static String getTomType(TomType type) {
     %match(TomType type) {
       ASTTomType(s) -> {return `s;}
@@ -94,6 +86,9 @@ public final class TomBase {
     throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
+  /**
+   * Return the implementation-type of a <code>TomType</code>
+   */
   public static String getTLType(TomType type) {
     %match(TomType type) {
       TLType[]  -> { return getTLCode(type); }
@@ -103,6 +98,9 @@ public final class TomBase {
     throw new TomRuntimeException("getTLType error on term: " + type);
   }
 
+  /**
+   * Return the implementation-type of a <code>TLType</code>
+   */
   public static String getTLCode(TomType type) {
     %match(TomType type) {
       TLType(TL[Code=tlType])  -> { return `tlType; }
@@ -112,6 +110,9 @@ public final class TomBase {
     throw new TomRuntimeException("getTLCode error on term: " + type);
   }
 
+  /**
+   * Return the codomain of a given symbol
+   */
   public static TomType getSymbolCodomain(TomSymbol symbol) {
     if(symbol!=null) {
       return symbol.getTypesToType().getCodomain();
@@ -120,6 +121,9 @@ public final class TomBase {
     }
   }   
 
+  /**
+   * Return the domain of a given symbol
+   */
   public static TomTypeList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
       return symbol.getTypesToType().getDomain();
@@ -135,72 +139,72 @@ public final class TomBase {
       TomNumberList key = numberList;
       StringBuilder buf = new StringBuilder(30);
       while(!numberList.isEmptyconcTomNumber()) {
-	TomNumber number = numberList.getHeadconcTomNumber();
-	numberList = numberList.getTailconcTomNumber();
-	%match(number) {
-	  Position(n) -> {
-	    buf.append("Position");
-	    buf.append(Integer.toString(`n));
-	  }
-	  MatchNumber(n) -> {
-	    buf.append("Match");
-	    buf.append(Integer.toString(`n));
-	  }
-	  PatternNumber(n) -> {
-	    buf.append("Pattern");
-	    buf.append(Integer.toString(`n));
-	  }
-	  ListNumber(n) -> {
-	    buf.append("List");
-	    buf.append(Integer.toString(`n));
-	  }
-	  IndexNumber(n) -> {
-	    buf.append("Index");
-	    buf.append(Integer.toString(`n));
-	  }
-	  Begin(n) -> {
-	    buf.append("Begin");
-	    buf.append(Integer.toString(`n));
-	  }
-	  End(n) -> {
-	    buf.append("End");
-	    buf.append(Integer.toString(`n));
-	  }
-	  Save(n) -> {
-	    buf.append("Save");
-	    buf.append(Integer.toString(`n));
-	  }
-	  AbsVar(n) -> {
-	    buf.append("AbsVar");
-	    buf.append(Integer.toString(`n));
-	  }
-	  RenamedVar(tomName) -> {
-	    String identifier = "Empty";
-	    %match(TomName tomName) {
-	      Name(name) -> {
-		identifier = `name;
-	      }
-	      PositionName(localNumberList) -> {
-		identifier = tomNumberListToString(`localNumberList);
-	      }
-	    }
-	    buf.append("RenamedVar");
-	    buf.append(identifier);
-	  }
-	  NameNumber(tomName) -> {
-	    String identifier = "Empty";
-	    %match(TomName tomName) {
-	      Name(name) -> {
-		identifier = `name;
-	      }
-	      PositionName(localNumberList) -> {
-		identifier = tomNumberListToString(`localNumberList);
-	      }
-	    }
-	    buf.append("NameNumber");
-	    buf.append(identifier);
-	  }
-	}
+        TomNumber number = numberList.getHeadconcTomNumber();
+        numberList = numberList.getTailconcTomNumber();
+        %match(number) {
+          Position(n) -> {
+            buf.append("Position");
+            buf.append(Integer.toString(`n));
+          }
+          MatchNumber(n) -> {
+            buf.append("Match");
+            buf.append(Integer.toString(`n));
+          }
+          PatternNumber(n) -> {
+            buf.append("Pattern");
+            buf.append(Integer.toString(`n));
+          }
+          ListNumber(n) -> {
+            buf.append("List");
+            buf.append(Integer.toString(`n));
+          }
+          IndexNumber(n) -> {
+            buf.append("Index");
+            buf.append(Integer.toString(`n));
+          }
+          Begin(n) -> {
+            buf.append("Begin");
+            buf.append(Integer.toString(`n));
+          }
+          End(n) -> {
+            buf.append("End");
+            buf.append(Integer.toString(`n));
+          }
+          Save(n) -> {
+            buf.append("Save");
+            buf.append(Integer.toString(`n));
+          }
+          AbsVar(n) -> {
+            buf.append("AbsVar");
+            buf.append(Integer.toString(`n));
+          }
+          RenamedVar(tomName) -> {
+            String identifier = "Empty";
+            %match(TomName tomName) {
+              Name(name) -> {
+                identifier = `name;
+              }
+              PositionName(localNumberList) -> {
+                identifier = tomNumberListToString(`localNumberList);
+              }
+            }
+            buf.append("RenamedVar");
+            buf.append(identifier);
+          }
+          NameNumber(tomName) -> {
+            String identifier = "Empty";
+            %match(TomName tomName) {
+              Name(name) -> {
+                identifier = `name;
+              }
+              PositionName(localNumberList) -> {
+                identifier = tomNumberListToString(`localNumberList);
+              }
+            }
+            buf.append("NameNumber");
+            buf.append(identifier);
+          }
+        }
       }
       result = buf.toString();
       tomNumberListToStringMap.put(key,result);
@@ -208,11 +212,14 @@ public final class TomBase {
     return result;
   }
 
-  public static boolean isListOperator(TomSymbol subject) {
-    if(subject==null) {
+  /**
+    * Return <code>true</code> if the symbol corresponds to a %oplist
+    */
+  public static boolean isListOperator(TomSymbol symbol) {
+    if(symbol==null) {
       return false;
     }
-    %match(TomSymbol subject) {
+    %match(TomSymbol symbol) {
       Symbol[Option=l] -> {
         OptionList optionList = `l;
         while(!optionList.isEmptyconcOption()) {
@@ -226,15 +233,17 @@ public final class TomBase {
         return false;
       }
     }
-    System.out.println("isListOperator: strange case: '" + subject + "'");
-    throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
+    throw new TomRuntimeException("isListOperator -- strange case: '" + symbol + "'");
   }
 
-  public static boolean isArrayOperator(TomSymbol subject) {
-    if(subject==null) {
+  /**
+    * Return <code>true</code> if the symbol corresponds to a %oparray
+    */
+  public static boolean isArrayOperator(TomSymbol symbol) {
+    if(symbol==null) {
       return false;
     }
-    %match(TomSymbol subject) {
+    %match(TomSymbol symbol) {
       Symbol[Option=l] -> {
         OptionList optionList = `l;
         while(!optionList.isEmptyconcOption()) {
@@ -248,17 +257,25 @@ public final class TomBase {
         return false;
       }
     }
-    System.out.println("isArrayOperator: strange case: '" + subject + "'");
-    throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
+    throw new TomRuntimeException("isArrayOperator -- strange case: '" + symbol + "'");
   }
   
+  /**
+    * Return <code>true</code> if the symbol corresponds to a %op
+    */
   public static boolean isSyntacticOperator(TomSymbol subject) {
     return (!(isListOperator(subject) || isArrayOperator(subject)));
   }
 
   // ------------------------------------------------------------
-  public static void collectVariable(Collection collection, tom.library.sl.Visitable subject) {
+  /**
+    * Collect the variables athat appears in a term
+    * @param collection the bag which collect the results
+    * @param subject the term to traverse
+    */
+  public static void collectVariable(Collection<TomTerm> collection, tom.library.sl.Visitable subject) {
     try {
+      //TODO: replace TopDownCollect by continuations
     `TopDownCollect(collectVariable(collection)).visitLight(`subject);
     } catch(VisitFailure e) { }
   }
@@ -295,28 +312,29 @@ public final class TomBase {
     }
   }
 
-  public static Map collectMultiplicity(tom.library.sl.Visitable subject) {
+  /**
+    * Return a Map which associates an interger to each variable name
+    */
+  public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
-    ArrayList variableList = new ArrayList();
+    ArrayList<TomTerm> variableList = new ArrayList<TomTerm>();
     collectVariable(variableList,`subject);
     // compute multiplicities
-    HashMap multiplicityMap = new HashMap();
-    Iterator it = variableList.iterator();
-    while(it.hasNext()) {
-      TomTerm variable = (TomTerm)it.next();
+    HashMap<TomName,Integer> multiplicityMap = new HashMap<TomName,Integer>();
+    for(TomTerm variable:variableList) {
       TomName name = variable.getAstName();
       if(multiplicityMap.containsKey(name)) {
-        Integer value = (Integer)multiplicityMap.get(name);
-        multiplicityMap.put(name, new Integer(1+value.intValue()));
+        int value = multiplicityMap.get(name);
+        multiplicityMap.put(name, 1+value);
       } else {
-        multiplicityMap.put(name, new Integer(1));
+        multiplicityMap.put(name, 1);
       }
     }
     return multiplicityMap;
   }
 
-  public static TomTerm getAssignToVariable(ConstraintList constraintList) {
-    %match(ConstraintList constraintList) {
+  private static TomTerm getAssignToVariable(ConstraintList constraintList) {
+    %match(constraintList) {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
@@ -335,6 +353,7 @@ public final class TomBase {
     }
     return `concElementaryTheory(Syntactic());
   }
+
   public static Theory getTheory(OptionList optionList) {
     %match(optionList) {
       concOption(_*,MatchingTheory(theory),_*) -> { return `theory; }
@@ -357,7 +376,6 @@ public final class TomBase {
     }
     return false;
   }
-  
   
   public static String getModuleName(OptionList optionList) {
     %match(OptionList optionList) {
@@ -477,7 +495,9 @@ public final class TomBase {
   }
 
 
-  // findOriginTracking(_) return the option containing OriginTracking information
+  /**
+    * Return the option containing OriginTracking information
+    */
   public static Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmptyconcOption()) {
       return `noOption();

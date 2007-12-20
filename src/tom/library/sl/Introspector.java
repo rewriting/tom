@@ -32,14 +32,38 @@ package tom.library.sl;
 
 public interface Introspector {
 
+  /**
+   * Replace all children of a given object, and return the new object
+   * @param o the object whose children are replace
+   * @param children the new subterm of the object
+   */
   public Object setChildren(Object o, Object[] children);
 
+  /**
+   * Return the children of a given object
+   * @param o the subject
+   */
   public Object[] getChildren(Object o);
 
+  /**
+   * Replace the i-th subterm of the object o by child
+   * @param o the subject
+   * @param i the index of the subterm
+   * @param child the new subterm 
+   */
   public Object setChildAt( Object o, int i, Object child);
 
+  /**
+   * Return the i-th subterm of the object o
+   * @param o the subject
+   * @param i the index of the subterm (0<=i<=childCount)
+   */
   public Object getChildAt(Object o, int i);
 
+  /**
+   * Return the number of subterms of the object o
+   * @param o the subject
+   */
   public int getChildCount(Object o);
 
 }

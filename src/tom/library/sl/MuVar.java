@@ -1,9 +1,12 @@
 package tom.library.sl;
 
 /**
- * <code>MuVar(v)</code> always raises a VisitFailure exception. 
  * <p>
- * Basic visitor combinator used to build recursive visitors
+ * Basic strategy combinator with one argument <code>name</code> 
+ * which denotes the name of the mu-variable
+ * This basic visitor combinator used to build recursive visitors
+ * After the mu-expansion, the private variable <code>instance</code>
+ * is a pointer to the strategy to execute
  * <p>
  */
 

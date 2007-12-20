@@ -29,8 +29,8 @@
  *
  **/
 package tom.library.sl;
-/**                                                                                                                
- * <p>                                                 
+/**
+ * <p>
  * Basic strategy combinator with one strategy argument <code>s</code>, that
  * applies this strategy <code>s</code> to all children. If there exists one
  * child for which the strategy <code>s</code> fails, <code>All(s)</code>
