@@ -427,10 +427,12 @@ s = %[
   @modifier@ @utype@ tom_get_slice_@name@(@utype@ begin, @utype@ end,@utype@ tail) {
     if(@getEqualTerm(tomType,"begin","end",moduleName)@) {
       return tail;
-    } else {
-      return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
-                                 get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
+    } else if(@getEqualTerm(tomType,"end","tail",moduleName)@ && (@getIsEmptyList(name,tomType,"end",moduleName)@ || @getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)@)) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
     }
+    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
+                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
   }
   ]%;
    

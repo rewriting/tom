@@ -1,3 +1,6 @@
+2007-12-20 pem
+  * fix PR-3942 by modifying get_slice [please check]
+
 2007-12-17 pem
   * fix PR-3602
   * fix PR-3605
