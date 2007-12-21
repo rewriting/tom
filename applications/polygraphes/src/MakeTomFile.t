@@ -7,7 +7,8 @@ import java.io.File;
 public class MakeTomFile {
 
   public static void main (String args[]) {
-	 String filename="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogram.xml";
+	 //String filename="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogram.xml";
+	 String filename="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/qbfprogram.xml";
 	 try{XMLhandler.save(makeTomFile(filename),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/"+XMLhandler.getProgramName(filename)+".t"));}
 	 catch(Exception e){e.printStackTrace();}
 	 

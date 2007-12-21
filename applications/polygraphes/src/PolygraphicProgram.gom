@@ -15,7 +15,7 @@ ThreePath = ThreeId (twoPath:TwoPath)//inutile
 		| ThreeC0 (ThreePath*)//idem
 		| ThreeC1 (ThreePath*)//idem
 		| ThreeC2 (ThreePath*)//idem
-		
+
 CellType = Constructor()
 		| Function()
 

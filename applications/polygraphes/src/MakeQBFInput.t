@@ -1,5 +1,3 @@
-package compiler;
-
 import polygraphicprogram.*;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.twopath.*;
@@ -9,7 +7,7 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.util.regex.*;
 
-public class MakeInput{
+public class MakeQBFInput{
 
 %include { polygraphicprogram/PolygraphicProgram.tom }
 %include { sl.tom }
@@ -79,7 +77,12 @@ private static TwoPath cube = `TwoCell("cube",nat,nat,Function());
 private static TwoPath equal=`TwoCell("equal",OneC0(nat,nat),bool,Function());
 // egalite list
 private static TwoPath lEqual=`TwoCell("lEqual",OneC0(list,list),bool,Function());
-
+//qbf
+private static TwoPath var=`TwoCell("var",nat,bool,Constructor());
+private static TwoPath exists=`TwoCell("exists",OneC0(nat,bool),bool,Constructor());
+private static TwoPath isIn=`TwoCell("isIn",OneC0(nat,list),bool,Function());
+private static TwoPath verify=`TwoCell("verify",OneC0(bool,list),bool,Function());
+private static TwoPath isInTest=`TwoCell("isInTest",OneC0(bool,nat,list),bool,Function());
 
 
 public static void main(String[] args) {
@@ -94,31 +97,11 @@ TwoPath sept=`TwoC1(six,succ);
 TwoPath huit=`TwoC1(sept,succ);
 TwoPath neuf=`TwoC1(huit,succ);
 TwoPath dix=`TwoC1(neuf,succ);
+int[] list1={8,9};
+TwoPath qbftest=`TwoC1(TwoC0(TwoC1(TwoC0(deux,TwoC1(deux,var)),exists),makeList(list1)),verify);
 
-TwoPath rule=`TwoC1(TwoC0(zero,zero),TwoC0(succ,succ),permutation,minus,eraser);
-TwoPath rule2=`TwoC1(zero,TwoC0(succ,zero),division);
-TwoPath rule3=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero,succ,succ)),multiplication);
-TwoPath rule4=`TwoC1(zero,succ,succ,TwoC0(succ,zero),TwoC0(succ,succ),TwoC0(succ,succ),division);
-TwoPath rule5=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ),TwoC1(zero)),division);
-TwoPath addit=`TwoC1(TwoC0(TwoC1(zero,succ,succ,succ,succ,succ),TwoC1(zero,succ,succ,succ)),plus);
-TwoPath div=`TwoC1(TwoC0(addit,TwoC1(zero,succ,succ,succ)),division);
-TwoPath total=`TwoC1(TwoC0(div,TwoC1(zero,succ,succ,succ,succ)),multiplication);
-TwoPath nine=`TwoC1(TwoC0(TwoC1(TwoC0(deux,six),multiplication),trois),division);
-TwoPath testnatlist = `TwoC1(TwoC0(deux,TwoC1(TwoC0(consList,un),append)),add,sort);
-TwoPath testBool = `TwoC1(TwoC0(quatre,six),lessOrEqual);
-TwoPath testCarre = `TwoC1(makeNat(12),carre);
-TwoPath comparatifCarre=`TwoC1(TwoC0(makeNat(12),makeNat(12)),multiplication);
-TwoPath testCube = `TwoC1(quatre,cube);
-TwoPath testEqual = `TwoC1(TwoC0(TwoC1(TwoC0(trois,huit),multiplication),TwoC1(TwoC0(six,quatre),multiplication)),equal);
-TwoPath testsort = `TwoC1(TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(TwoC1(zero,TwoC1(succ,succ)),TwoC0(consList,TwoC0(TwoC1(zero,succ),TwoC1(zero,succ))))),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(TwoId(nat),permutationLN)),TwoId(nat)),TwoC1(TwoC0(TwoC0(TwoId(nat),TwoC0(permutation,TwoId(list))),TwoId(nat)),TwoC1(TwoC0(TwoC0(lessOrEqual,TwoC0(TwoId(nat),TwoId(list))),TwoC0(TwoId(nat),consList)),mergeSwitch))));
+String input=twoPath2XML(qbftest);
 
-int[] list1={7,8,3,2,6};
-int[] list2={9,5,7,4,1};
-TwoPath testEqualList = `TwoC1(TwoC0(TwoC1(makeList(list1),sort),TwoC1(makeList(list2),sort)),lEqual);
-TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),merge,sort);
-// System.out.println(rule3);
-String input=twoPath2XML(comparatifCarre);
-//String input=menu();
 if(!input.equals("")){
 try{
 save(input,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/XMLinput.xml"));
