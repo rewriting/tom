@@ -41,8 +41,8 @@ public class TestHandler extends Handler {
   public TestHandler(String fileName) {
     records = new Vector();
     mess_attempted = new Vector();
-    index=0;
-    try{
+    index = 0;
+    try {
       BufferedReader reader = new BufferedReader(new FileReader(new File(fileName+".nrt")));
       String line = reader.readLine();
       while (line != null) {

@@ -108,7 +108,7 @@ public class PluginPlatform extends PluginPlatformBase {
         if(input instanceof String) {
           String inputString = (String)input;
           testHandler = new TestHandler(inputString);
-          if(!testHandler.hasError()){
+          if(!testHandler.hasError()) {
             Logger.getLogger(loggerRadical).addHandler(this.testHandler);
           }
         }
@@ -124,8 +124,8 @@ public class PluginPlatform extends PluginPlatformBase {
            */
           Handler[] handlers = Logger.getLogger(loggerRadical).getHandlers();
           boolean foundHdl = false;
-          for (int k = 0; k < handlers.length ; k++){
-            if (handlers[k].equals(statusHandler)){
+          for (int k = 0; k < handlers.length ; k++) {
+            if (handlers[k].equals(statusHandler)) {
               foundHdl = true;
               break;
             }
