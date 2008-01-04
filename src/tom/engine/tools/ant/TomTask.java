@@ -51,7 +51,7 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
  * <li>destdir</li>
  * <li>inline</li>
  * <li>inlineplus</li>
- * <li>autoDispatch</li>
+ * <li>genIntrospector</li>
  * <li>outputfile</li>
  * <li>optimize</li>
  * <li>optimize2</li>
@@ -88,7 +88,7 @@ public class TomTask extends MatchingTask {
   private boolean pretty = false;
   private boolean inlining = false;
   private boolean inliningplus = false;
-  private boolean autoDispatch = false;
+  private boolean genIntrospector = false;
   private boolean protectedFlag = false;
 
   private boolean failOnError = true;
@@ -330,15 +330,15 @@ public class TomTask extends MatchingTask {
   }
 
   /**
-   * If true, generates the dispatch inside %strategy
-   * @param flag if true generates the dispatch in %strategy 
+   * If true, generates the intropsector if %strategy
+   * @param flag if true generates the intropsector if %strategy
    */
-  public void setAutoDispatch(boolean flag) {
-    this.autoDispatch = flag;
+  public void setGenIntrospector(boolean flag) {
+    this.genIntrospector = flag;
   }
 
-  public boolean getAutoDispatch() {
-    return autoDispatch;
+  public boolean getGenIntrospector() {
+    return genIntrospector;
   }
 
   
@@ -562,8 +562,8 @@ public class TomTask extends MatchingTask {
       if(inliningplus == true) {
         javaRunner.createArg().setValue("--inlineplus");
       }
-      if(autoDispatch == true) {
-        javaRunner.createArg().setValue("--autoDispatch");
+      if(genIntrospector == true) {
+        javaRunner.createArg().setValue("--genIntrospector");
       }
       if(nowarn == false) {
         javaRunner.createArg().setValue("--wall");
