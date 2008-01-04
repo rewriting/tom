@@ -496,8 +496,8 @@ public final class TomBase {
 
 
   /**
-    * Return the option containing OriginTracking information
-    */
+   * Return the option containing OriginTracking information
+   */
   public static Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmptyconcOption()) {
       return `noOption();
@@ -518,7 +518,7 @@ public final class TomBase {
   public static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
     return symbolTable.getSymbolFromName(tomName);
   }
-  
+
   public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
     TomSymbolList list = symbolTable.getSymbolFromType(tomType);
     TomSymbolList filteredList = `concTomSymbol();
@@ -561,9 +561,9 @@ public final class TomBase {
       FunctionCall[AstType=type] -> { return `type; }
 
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
-      
+
       ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
-      
+
       Subterm(Name(name), slotName, _) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
@@ -573,7 +573,7 @@ public final class TomBase {
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return `EmptyType();
   }
-  
+
   public static TomType getTermType(Expression t, SymbolTable symbolTable){
     %match(Expression t) {
       (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
@@ -626,5 +626,13 @@ public final class TomBase {
     }
     throw new TomRuntimeException("slotListToTomList: " + tomList);
   }
+
+  public static int getArity(TomSymbol symbol) {
+    if (isListOperator(symbol) || isArrayOperator(symbol)) {
+      return 2;
+    } else {
+      return ((Collection) symbol.getPairNameDeclList()).size();
+    }
+  } 
 
 } // class TomBase

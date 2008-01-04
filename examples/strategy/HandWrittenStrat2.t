@@ -93,100 +93,6 @@ public class HandWrittenStrat2 {
 
   }
 
-  //mapping for Visitable (will be generated)
-  public static class MyIntrospector implements Introspector {
-
-    //singleton
-    private static MyIntrospector mapping = new MyIntrospector();
-
-    private MyIntrospector() {
-    }
-
-    public static MyIntrospector getInstance() {
-      return mapping;
-    } 
-
-    public Object setChildren(Object o, Object[] children) {
-      %match(o) {
-        f1[] -> { 
-          if (children.length == 1) return new f1((Term1) children[0]);
-        }
-        a1[] -> { 
-          if (children.length == 0) return o;       
-        }
-      }
-      %match(o) {
-        f2[] -> {
-          if (children.length == 1) return new f2((Term2) children[0]);
-        }
-        a2[] -> { 
-          if (children.length == 0) return  o;       
-        }
-      }
-      throw new RuntimeException();
-    }
-
-    public Object[] getChildren(Object o) {
-      %match(o) {
-        f1[] -> { 
-          return new Object[] { ((HandWrittenStrat2.f1)o).getx() } ;
-        }
-        a1[] -> { 
-          return new Object[] {};
-        }
-      }
-      %match(o) {
-        f2[] -> {
-          return new Object[] { ((HandWrittenStrat2.f2)o).getx() } ;
-        }
-        a2[] -> { 
-          return new Object[] {};
-        }
-      }
-      throw new RuntimeException();
-    }
-
-    public Object getChildAt(Object o, int i) {
-      %match(o) {
-        f1[] -> { 
-          if(i==0) return (((HandWrittenStrat2.f1)o).getx());
-        }
-      }
-      %match(o) {
-        f2[] -> {
-          if(i==0) return ((HandWrittenStrat2.f2)o).getx();
-        }
-      }
-      throw new RuntimeException();
-    }
-
-    public Object setChildAt(Object o, int i, Object child) {
-      %match(o) {
-        f1[] -> { 
-          if(i==0) return new f1((Term1) child);
-        }
-      }
-      %match(o) {
-        f2[] -> { if(i==0) return new f1((Term1) child);
-        }
-      }
-      throw new RuntimeException();
-    }
-
-    public int getChildCount(Object o) { 
-      %match(o) {
-        f1[] -> { return 1;}
-        a1[] -> { return 0;}
-      }
-      %match(o) {
-        f2[] -> { return 1;}
-        a2[] -> { return 0;}
-      }
-      throw new RuntimeException(); 
-    }
-
-  }
-
   // mappings
 
   %typeterm Term1 {
@@ -237,10 +143,10 @@ public class HandWrittenStrat2 {
   public static void main(String[] args) throws VisitFailure {
     Term1 t1 = `f1(f1(f1(a1())));
     Term2 t2 = `f2(f2(f2(a2())));
-    System.out.println( `All(R()).visit(t1,MyIntrospector.getInstance()) );
-    System.out.println( `All(R()).visit(t2, MyIntrospector.getInstance()) );
-    System.out.println( `TopDown(R()).visit(t1, MyIntrospector.getInstance()) );
-    System.out.println( `TopDown(R()).visit(t2, MyIntrospector.getInstance()) );
+    System.out.println( `All(R()).visit(t1,new LocalIntrospector()) );
+    System.out.println( `All(R()).visit(t2, new LocalIntrospector()) );
+    System.out.println( `TopDown(R()).visit(t1, new LocalIntrospector()) );
+    System.out.println( `TopDown(R()).visit(t2, new LocalIntrospector()) );
   }
 
 }

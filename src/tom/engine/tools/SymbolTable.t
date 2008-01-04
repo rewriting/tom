@@ -325,15 +325,29 @@ public class SymbolTable {
     return type.equals(TYPE_VOID);
   }
 
+  public String builtinToWrapper(String type) {
+    %match(type) {
+      "byte" -> { return "java.lang.Byte"; }
+      "short" -> { return "java.lang.Short"; }
+      "int" -> { return "java.lang.Integer"; }
+      "long" -> { return "java.lang.Long"; }
+      "float" -> { return "java.lang.Float"; }
+      "double" -> { return "java.lang.Double"; }
+      "boolean" -> { return "java.lang.Boolean"; }
+      "char" -> { return "java.lang.Character"; }
+    }
+    return type;
+  }
+
   public boolean isBuiltinType(String type) {
     return isIntType(type) || isLongType(type) || isCharType(type) ||
       isStringType(type) || isBooleanType(type) || isDoubleType(type);
   }
-  
+
   public boolean isNumericType(String type) {
     return isIntType(type) || isLongType(type) || isDoubleType(type) || isFloatType(type);
   }
-  
+
   public boolean isNumericType(TomType type) {    
     %match(type){
       TomTypeAlone(str) -> {
@@ -551,10 +565,10 @@ public class SymbolTable {
     return getInliner(prefixEqualTerm,type);
   }
   /*
-  private static class Inliner {
-    public String isfsym;
-    public String getslot;
-  }
-  */
+     private static class Inliner {
+     public String isfsym;
+     public String getslot;
+     }
+   */
 
 }

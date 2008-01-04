@@ -38,6 +38,7 @@ import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomsignature.types.tomsymbollist.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
@@ -66,7 +67,7 @@ public class Expander extends TomGenericPlugin {
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
-  
+
   %typeterm Expander {
     implement { Expander }
     is_sort(t) { ($t instanceof Expander) }
@@ -84,17 +85,22 @@ public class Expander extends TomGenericPlugin {
     "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
     "<boolean name='autoDispatch' altName='ad' description='The content of \"visitor_fwd\" is ignored, and a dispatch mechanism is automatically generated in %strategy ' value='false'/>" +
     "</options>";
-  
+
   private static final String basicStratName = "tom.library.sl.BasicStrategy";
   private static final TomType objectType = `TomTypeAlone("Object");
+  private static final TomType objectArrayType = `TomTypeAlone("Object[]");
+  private static final TomType intType = `TomTypeAlone("int");
   private static final TomType introspectorType = `TomTypeAlone("tom.library.sl.Introspector");
   // introspector argument of visitLight
   private static final TomTerm introspectorVar = `Variable(concOption(),Name("introspector"),introspectorType,concConstraint());
+  private static final TomTerm objectVar = `Variable(concOption(),Name("o"),objectType,concConstraint());
+  private static final TomTerm childVar = `Variable(concOption(),Name("child"),objectType,concConstraint());
+  private static final TomTerm intVar = `Variable(concOption(),Name("i"),intType,concConstraint());
+  private static final TomTerm objectArrayVar = `Variable(concOption(),Name("children"),objectArrayType,concConstraint());
   private static boolean generatedIntrospector = false;
-  
+
   /** if the flag is true, the class generated from %strategy inherits from BasicStrategy and handles the dispatch*/
   private static boolean autoDispatch = false;
-
 
   /** unicity var counter */
   private static int absVarNumber;
@@ -110,9 +116,11 @@ public class Expander extends TomGenericPlugin {
     try {
       // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
+      generatedIntrospector = false;
+      //reinit the variable for intropsector generation
       autoDispatch = getOptionBooleanValue("autoDispatch");
       TomTerm expandedTerm = (TomTerm) `Expand(this).visitLight((TomTerm)getWorkingTerm());
-     // verbose
+      // verbose
       getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(expandedTerm);
@@ -224,33 +232,210 @@ matchBlock: {
 
     visit Declaration {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
-        //Generate only one Intropector for a class if a %strategy is found
-        if(!generatedIntrospector) {
+        //Generate only one Intropector for a class if at least one  %strategy is found
+        Declaration introspectorClass = `EmptyDeclaration();
+        if(expander.autoDispatch && !generatedIntrospector) {
           generatedIntrospector=true;
           DeclarationList l = `concDeclaration();
           //generate the code for every method of Instrospector interface
-          IntrospectorClass i = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
 
           SymbolTable symbolTable = expander.symbolTable();
           Collection<TomTypeDefinition> types = symbolTable.getUsedTypes();
-          for(TomTypeDefinition type:types) {
-            TomSymbolList list = symbolTable.getSymbolFromType(type.getTomType());
-            //System.out.println(list);
+
+          /**
+            public int getChildCount(Object o);
+           */
+          String funcName = "getChildCount";//function name
+          InstructionList instructions = `concInstruction();
+          for (TomTypeDefinition type:types) {
+            InstructionList instructionsForSort = `concInstruction();
+            //cast in concTomSymbol to use the for statement
+            TomType tomtype = type.getTomType();
+            %match(tomtype) {
+              Type[TomType=ASTTomType(typeName)] -> {
+                //TODO: manage builtin types
+                if (! symbolTable.isBuiltinType(`typeName)) {
+                  TomTerm var = `Variable(concOption(),Name("v_"+typeName),tomtype,concConstraint());
+                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
+                  for (TomSymbol symbol:list) {
+                    %match(symbol) {
+                      Symbol[AstName=name] -> {
+                        //TODO: manage empty lists and arrays
+                        Instruction inst = `If(IsFsym(name,var),Return(TargetLanguageToTomTerm(ITL(""+TomBase.getArity(symbol)))),Nop());
+                        instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                      }
+                    }
+                  }
+                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Let(var,Cast(tomtype,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                }
+              }
+            }
           }
+          //default case: return 0
+          instructions = `concInstruction(instructions*,Return(TargetLanguageToTomTerm(ITL("0"))));
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)));
+          /**
+            public Object[] getChildren(Object o);
+           */
+          funcName = "getChildren";//function name
+          instructions = `concInstruction();
+          for (TomTypeDefinition type:types) {
+            InstructionList instructionsForSort = `concInstruction();
+            //cast in concTomSymbol to use the for statement
+            TomType tomtype = type.getTomType();
+            %match(tomtype) {
+              Type[TomType=ASTTomType(typeName)] -> {
+                if (! symbolTable.isBuiltinType(`typeName)) {
+                  TomTerm var = `Variable(concOption(),Name("v_"+typeName),tomtype,concConstraint());
+                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
+                  for (TomSymbol symbol:list) {
+                    %match(symbol) {
+                      Symbol[AstName=symbolName,TypesToType=TypesToType] -> {
+                        if (TomBase.isListOperator(symbol)) {
+                          %match(TypesToType) {
+                            TypesToType[Domain=concTomType(domain)] -> {
+                              TomList array = `concTomTerm(TargetLanguageToTomTerm(ITL("new Object[]{")),ExpressionToTomTerm(GetHead(symbolName,domain,var)),TargetLanguageToTomTerm(ITL(",")),ExpressionToTomTerm(GetTail(symbolName,var)),TargetLanguageToTomTerm(ITL("}")));
+                              TomTerm emptyArray = `TargetLanguageToTomTerm(ITL("new Object[]{}"));
+                              Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
+                              instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                            }
+                          } 
+                        } else {
+                         if (TomBase.isArrayOperator(symbol)) {
+                           //TODO 
+                         } else {
+                           int arity = TomBase.getArity(symbol);
+                           TomList slotArray = `concTomTerm(TargetLanguageToTomTerm(ITL(" new Object[]{")));
+                           PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
+                           for(int i=0; i< arity; i++) {
+                             PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
+                             Declaration decl = pairNameDecl.getSlotDecl();
+                             %match (decl) {
+                               EmptyDeclaration() -> {
+                                 // case of undefined getSlot
+                                 // return null (to be improved)
+                                 if (i< arity-1) {
+                                   slotArray =  `concTomTerm(slotArray*,TargetLanguageToTomTerm(ITL("null,")));
+                                 } else {
+                                   slotArray =  `concTomTerm(slotArray*,TargetLanguageToTomTerm(ITL("null")));
+                                 }
+                               }
+                               GetSlotDecl[AstName=AstName,SlotName=SlotName] -> {
+                                 slotArray =  `concTomTerm(slotArray*,ExpressionToTomTerm(GetSlot(TomBase.getSlotType(symbol,SlotName),AstName,SlotName.getString(),var)));
+                                 if (i < arity-1) {
+                                   slotArray =  `concTomTerm(slotArray*,TargetLanguageToTomTerm(ITL(",")));
+                                 }
+                               }
+                             }
+                             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+                           }
+                           slotArray = `concTomTerm(slotArray*,TargetLanguageToTomTerm(ITL("}")));
+                           Instruction inst = `If(IsFsym(symbolName,var),Return(Tom(slotArray)),Nop());
+                           instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                         }
+                       }
+                      } 
+                    }
+                  }
+                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Let(var,Cast(tomtype,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                } 
+              }
+            }
+          }
+          //default case: return null
+          instructions = `concInstruction(instructions*,Return(TargetLanguageToTomTerm(ITL("null"))));
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar),objectArrayType,EmptyType(),AbstractBlock(instructions)));
+
           /**
             public Object setChildren(Object o, Object[] children);
+           */
+          funcName = "setChildren";//function name
+          instructions = `concInstruction();
+          for (TomTypeDefinition type:types) {
+            InstructionList instructionsForSort = `concInstruction();
+            //cast in concTomSymbol to use the for statement
+            TomType tomtype = type.getTomType();
+            %match(tomtype) {
+              Type[TomType=ASTTomType(typeName)] -> {
+                if (! symbolTable.isBuiltinType(`typeName)) {
+                  TomTerm var = `Variable(concOption(),Name("v_"+typeName),tomtype,concConstraint());
+                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
+                  for (TomSymbol symbol:list) {
+                    %match(symbol) {
+                      Symbol[AstName=symbolName,TypesToType=TypesToType] -> {
+                        if (TomBase.isListOperator(symbol)) {
+                          %match(TypesToType) {
+                            TypesToType[Domain=concTomType(domain)] -> {
+                              Instruction inst = 
+                                `If(IsFsym(symbolName,var),
+                                    If(TomTermToExpression(TargetLanguageToTomTerm(ITL("children.length==0"))),
+                                      Return(BuildEmptyList(symbolName)),
+                                      Return(BuildConsList(symbolName,ExpressionToTomTerm(Cast(domain,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[0]"))))),ExpressionToTomTerm(Cast(tomtype,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[1]")))))))
+                                      )
+                                    ,Nop());
+                              instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                            }
+                          }
+                        } else {
+                          if (TomBase.isArrayOperator(symbol)) {
+                            //TODO 
+                          } else {
+                            int arity = TomBase.getArity(symbol);
+                            TomList slots = `concTomTerm();
+                            PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
+                            for(int i=0; i< arity; i++) {
+                              PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
+                              Declaration decl = pairNameDecl.getSlotDecl();
+                              TomType slotType = TomBase.getSlotType(symbol,TomBase.getSlotName(symbol,i));
+                              String slotTypeName = slotType.getTomType().getString();
+                              // manage builtin slots
+                              if (symbolTable.isBuiltinType(slotTypeName)) {
+                                slots =  `concTomTerm(slots*,TargetLanguageToTomTerm(ITL("("+symbolTable.builtinToWrapper(slotTypeName)+")children["+i+"]")));
+                              } else {
+                                slots =  `concTomTerm(slots*,ExpressionToTomTerm(Cast(slotType,TomTermToExpression(TargetLanguageToTomTerm(ITL("children["+i+"]"))))));
+                              }
+                              pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
+                            }
+                            Instruction inst = `If(IsFsym(symbolName,var),Return(BuildTerm(symbolName,slots,"default")),Nop());
+                            instructionsForSort = `concInstruction(instructionsForSort*,inst);
+                          }
+                        }
+                      }
+                    }
+                  } 
 
-            public Object[] getChildren(Object o);
+                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Let(var,Cast(tomtype,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                }
+              }
+            }
+          }
+          //default case: return o
+          instructions = `concInstruction(instructions*,Return(objectVar));
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar,objectArrayVar),objectType,EmptyType(),AbstractBlock(instructions)));
 
-            public Object setChildAt( Object o, int i, Object child);
-
+          /**
             public Object getChildAt(Object o, int i);
 
-            public int getChildCount(Object o);
-
            */
+          funcName = "getChildAt";//function name
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar,intVar),objectType,EmptyType(),Return(TargetLanguageToTomTerm(ITL("getChildren(o)[i]")))));
+ 
+          /**
+            public Object setChildAt( Object o, int i, Object child);
+           */
+          funcName = "setChildAt";//function name
+          String code = %[
+            Object[] newChildren = getChildren(o);
+            newChildren[i] = child;
+            return newChildren;
+            ]%;
+          l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar,intVar,childVar),objectType,EmptyType(),TargetLanguageToInstruction(ITL(code))));
+
+         
+
+          introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
         }
-        //System.out.println("extendsTerm = " + `extendsTerm);
+
         DeclarationList l = `concDeclaration();//represents compiled Strategy
         TomForwardType visitorFwd = null;             
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
@@ -348,7 +533,7 @@ matchBlock: {
               AbstractBlock(ifList));
           l = `concDeclaration(l*,visitLightDeclaration);
         }// end if autoDispatch
-        return (Declaration) `Expand(expander).visitLight(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
+        return (Declaration) `Expand(expander).visitLight(`AbstractDecl(concDeclaration(introspectorClass,Class(name,visitorFwd,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration
   } // end strategy

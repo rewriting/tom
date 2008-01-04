@@ -35,7 +35,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | Integer(value:int)
            // Exp1 - the subject
            // Exp2 - the pattern
-  		   | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
+           | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
            | Cast(AstType:TomType,Source:Expression)
            // AstName - the name of the function symbol from whom to extract the slot
            // Variable - from what to extract the slot 
@@ -48,7 +48,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | AddOne(Variable:TomTerm)
            | GetSize(Opname:TomName,Variable:TomTerm)
            | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
-  		   | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
+           | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm, Tail:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | ConstraintToExpression(cons:Constraint)
            /**

@@ -49,7 +49,7 @@ TomTerm =
    * @param Codomain the type of the operator
    * @param Variable the list from which to extract the head / tail
    */
-	| ListHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
+	  | ListHead(Opname:TomName,Codomain:TomType,Variable:TomTerm)
   	| ListTail(Opname:TomName,Variable:TomTerm)  		   
 
   /**

@@ -551,6 +551,12 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
+      
+      IntrospectorClass(Name(tomName),declaration) -> {
+        `buildIntrospectorClass(deep, tomName, declaration, moduleName);
+        return;
+      }
+
       SymbolDecl(Name(tomName)) -> {
         `buildSymbolDecl(deep, tomName, moduleName);
         return ;
@@ -824,6 +830,13 @@ public abstract class TomAbstractGenerator {
     throw new TomRuntimeException("Backend does not support Class");
   }
 
+  /*buildIntrospectorClass is not abstract since only Java backend supports class
+    only backends that supports Class should overload buildIntrospectorClass
+   */
+  protected void buildIntrospectorClass(int deep, String tomName, Declaration declaration, String moduleName) throws IOException {
+    throw new TomRuntimeException("Backend does not support Class");
+  }
+
   protected abstract void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException;
 
   protected abstract void buildExpConditional(int deep, Expression cond,Expression exp1, Expression exp2, String moduleName) throws IOException;
@@ -863,19 +876,19 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,
-                                              TomType tlType, Instruction instr, String moduleName) throws IOException;
+      TomType tlType, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
-                                          TomType tlType, Expression code, String moduleName) throws IOException;
+      TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
-                                           TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException;
+      TomType tlType, Expression code, TomName slotName, String moduleName) throws IOException;
   protected abstract void buildEqualTermDecl(int deep, String name1, String name2, String type1, String type2, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsSortDecl(int deep, String name1, 
-                                              String type1, Expression expr, String moduleName) throws IOException;
+      String type1, Expression expr, String moduleName) throws IOException;
   protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-                                           TomType tlType, Expression code, String moduleName) throws IOException;
+      TomType tlType, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TomType tlType1, Expression code, String moduleName) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TomType tlType, Expression code, String moduleName) throws IOException;
 

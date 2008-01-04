@@ -100,6 +100,12 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     generateInstructionList(deep+1,instList,moduleName);
     output.writeln("}");
   }
+  
+  protected void buildIntrospectorClass(int deep, String tomName, Declaration declaration, String moduleName) throws IOException {
+    output.write("public static class " + tomName+ " implements tom.library.sl.Introspector {");
+    generateDeclaration(deep,`declaration,moduleName);
+    output.write(deep,"}");
+  }
 
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
