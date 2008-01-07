@@ -49,7 +49,7 @@
 }
 
 %op Strategy Omega(position:int, s1:Strategy) {
-  is_fsym(t) {( (t instanceof tom.library.sl.Omega) )}
+  is_fsym(t) {( ($t instanceof tom.library.sl.Omega) )}
   make(pos,v) {( new tom.library.sl.Omega($pos,$v) )}
   get_slot(position, t) {( ((tom.library.sl.Omega)$t).getPos() )}
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Omega.ARG) )}
