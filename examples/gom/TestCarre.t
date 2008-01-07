@@ -51,8 +51,8 @@ public class TestCarre extends TestCase {
     implement { Carre }
     is_sort(t) { $t instanceof Carre }
     equals(t1,t2) { $t1.equals($t2) }
-    visitor_fwd { CarreBasicStrategy }
   }
+  
   %op Carre Carre(r1:Rond, r2:Rond) {
     is_fsym(t) { $t instanceof Carre }
     get_slot(r1, t) { $t.r1 }
@@ -64,7 +64,7 @@ public class TestCarre extends TestCase {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
     try {
-      `BottomUp(Print(list)).visitLight(subject);
+      `BottomUp(Print(list)).visitLight(subject, new LocalIntrospector());
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
@@ -85,7 +85,7 @@ public class TestCarre extends TestCase {
     Carre subject = `Carre(Cercle(Point(1,0),Point(3,7),Point(4,9)),Cercle(Point(9,10),Point(11,12),Point(13,14)));
     ArrayList list = new ArrayList();
     try {
-      `BottomUp(ShowCarre(list)).visitLight(subject);
+      `BottomUp(ShowCarre(list)).visitLight(subject, new LocalIntrospector());
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
@@ -107,8 +107,8 @@ public class TestCarre extends TestCase {
     Strategy comb = `ChoiceId(Print(list),ShowCarre(list));
 
     try {
-      `BottomUp(comb).visitLight(subject);
-      `TopDown(comb).visitLight(subject);
+      `BottomUp(comb).visitLight(subject, new LocalIntrospector());
+      `TopDown(comb).visitLight(subject, new LocalIntrospector());
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }

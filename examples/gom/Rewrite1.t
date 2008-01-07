@@ -67,43 +67,50 @@ public class Rewrite1 {
     }
 
   }
-  
-  class RewriteSystem extends gom.term.termBasicStrategy {
+
+  class RewriteSystem extends tom.library.sl.BasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }
-    
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      %match(Term arg) {
-        //a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
-        a() -> { 
-          Position pos = getEnvironment().getPosition();
-          System.out.println("a -> b at " + pos);
-          System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
-          System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
 
-          return `b();
+    public Object visitLight(Object o, Introspector i) throws VisitFailure {
+      if (o instanceof Term) {
+        Term arg = (Term) o;
+        %match(Term arg) {
+          //a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
+          a() -> { 
+            Position pos = getEnvironment().getPosition();
+            System.out.println("a -> b at " + pos);
+            System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
+            System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
+
+            return `b();
+          }
+          b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
+          g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
         }
-        b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
       }
       throw new VisitFailure();
     }
   }
 
-  class RewriteSystemId extends gom.term.termBasicStrategy {
+  class RewriteSystemId extends tom.library.sl.BasicStrategy {
     public RewriteSystemId() {
       super(`Identity());
     }
-    
-    public Term visit_Term(Term arg) {
-      %match(Term arg) {
-        a() -> { System.out.println("a -> b at " + getEnvironment().getPosition()); return `b(); }
-        b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
+
+    public Object visitLight(Object v, Introspector i) {
+      if (v instanceof Term) {
+        Term arg = (Term) v;
+        %match(Term arg) {
+          a() -> { System.out.println("a -> b at " + getEnvironment().getPosition()); return `b(); }
+          b() -> { System.out.println("b -> c at " + getEnvironment().getPosition()); return `c(); }
+          g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getEnvironment().getPosition()); return `c(); }
+        }
       }
-      return arg;
+      return v;
     }
+
   }
 
 }

@@ -83,16 +83,19 @@ public class TestStrat extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestStrat.class));
   }
 
-  class RewriteSystem extends gom.vlist.VListBasicStrategy {
+  class RewriteSystem extends tom.library.sl.BasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }
 
-    public VList visit_VList(VList arg, Introspector i) throws VisitFailure{
-      %match(VList arg) {
-        conc(h,t*) -> {
-          int v = `h+1;
-          return `conc(v,t*);
+    public Object visitLight(Object v, Introspector i) throws VisitFailure{
+      if (v instanceof VList) {
+        VList arg = (VList) v;
+        %match(VList arg) {
+          conc(h,t*) -> {
+            int indice = `h+1;
+            return `conc(indice,t*);
+          }
         }
       }
       //fail
