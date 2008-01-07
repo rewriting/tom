@@ -44,20 +44,21 @@ public interface Strategy extends Visitable {
   public Environment getEnvironment();
 
   /**
-   *  Visits the subject any by providing the environment
+   *  Visit the subject any by providing the environment
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
   public Visitable visit(Visitable any) throws VisitFailure;
 
   /**
-   *  Visits the subject any in a light way (without environment)
+   *  Visit the subject any in a light way (without environment)
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
   public Visitable visitLight(Visitable any) throws VisitFailure;
 
-  /** execute the strategy in the given environment (on its current subject).
+  /**
+   * Execute the strategy in the given environment (on its current subject).
    * This method can only be used inside user strategies to execute another
    * strategy but with the current environment of the user strategy.
    * @param envt the environment where execute the strategy.
@@ -65,7 +66,7 @@ public interface Strategy extends Visitable {
   public Visitable visit(Environment envt) throws VisitFailure;
 
   /**
-   *  Visits the subject any by providing the environment
+   *  Visit the subject any by providing the environment
    *  @throws VisitFailure in case of failure.
    *  @param any the subject to visit.
    */
@@ -78,7 +79,8 @@ public interface Strategy extends Visitable {
    */
   public Object visitLight(Object any, Introspector m) throws VisitFailure;
 
-  /** execute the strategy in the given environment (on its current subject).
+  /**
+   * Execute the strategy in the given environment (on its current subject).
    * This method can only be used inside user strategies to execute another
    * strategy but with the current environment of the user strategy.
    * @param envt the environment where execute the strategy.
@@ -86,7 +88,7 @@ public interface Strategy extends Visitable {
   public Object visit(Environment envt, Introspector m) throws VisitFailure;
 
   /**
-   *  Visits the current subject (found in the environment)
+   *  Visit the current subject (found in the environment)
    *  and place its result in the environment.
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */

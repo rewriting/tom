@@ -270,11 +270,11 @@ public class TomCamlGenerator extends TomGenericGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-    {if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch57NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if ( (tomMatch57NameNumberfreshSubject_1 instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {{  String  tomMatch57NameNumber_freshVar_0= tomMatch57NameNumberfreshSubject_1.getCode() ;{  tom.engine.adt.tomsignature.types.Position  tomMatch57NameNumber_freshVar_1= tomMatch57NameNumberfreshSubject_1.getStart() ;{  tom.engine.adt.tomsignature.types.Position  tomMatch57NameNumber_freshVar_2= tomMatch57NameNumberfreshSubject_1.getEnd() ;if ( (tomMatch57NameNumber_freshVar_1 instanceof tom.engine.adt.tomsignature.types.position.TextPosition) ) {{  int  tomMatch57NameNumber_freshVar_3= tomMatch57NameNumber_freshVar_1.getLine() ;{  int  tom_startLine=tomMatch57NameNumber_freshVar_3;if ( (tomMatch57NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.position.TextPosition) ) {{  int  tomMatch57NameNumber_freshVar_4= tomMatch57NameNumber_freshVar_2.getLine() ;if ( true ) {
+    {if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch56NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if ( (tomMatch56NameNumberfreshSubject_1 instanceof tom.engine.adt.tomsignature.types.targetlanguage.TL) ) {{  String  tomMatch56NameNumber_freshVar_0= tomMatch56NameNumberfreshSubject_1.getCode() ;{  tom.engine.adt.tomsignature.types.Position  tomMatch56NameNumber_freshVar_1= tomMatch56NameNumberfreshSubject_1.getStart() ;{  tom.engine.adt.tomsignature.types.Position  tomMatch56NameNumber_freshVar_2= tomMatch56NameNumberfreshSubject_1.getEnd() ;if ( (tomMatch56NameNumber_freshVar_1 instanceof tom.engine.adt.tomsignature.types.position.TextPosition) ) {{  int  tomMatch56NameNumber_freshVar_3= tomMatch56NameNumber_freshVar_1.getLine() ;{  int  tom_startLine=tomMatch56NameNumber_freshVar_3;if ( (tomMatch56NameNumber_freshVar_2 instanceof tom.engine.adt.tomsignature.types.position.TextPosition) ) {{  int  tomMatch56NameNumber_freshVar_4= tomMatch56NameNumber_freshVar_2.getLine() ;if ( true ) {
 
-        output.write(0,s, tom_startLine, tomMatch57NameNumber_freshVar_4- tom_startLine);
+        output.write(0,s, tom_startLine, tomMatch56NameNumber_freshVar_4- tom_startLine);
         return;
-      }}}}}}}}}}}}if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch57NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if ( (tomMatch57NameNumberfreshSubject_1 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {{  String  tomMatch57NameNumber_freshVar_5= tomMatch57NameNumberfreshSubject_1.getCode() ;if ( true ) {
+      }}}}}}}}}}}}if ( (tlCode instanceof tom.engine.adt.tomsignature.types.TargetLanguage) ) {{  tom.engine.adt.tomsignature.types.TargetLanguage  tomMatch56NameNumberfreshSubject_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode);if ( (tomMatch56NameNumberfreshSubject_1 instanceof tom.engine.adt.tomsignature.types.targetlanguage.ITL) ) {{  String  tomMatch56NameNumber_freshVar_5= tomMatch56NameNumberfreshSubject_1.getCode() ;if ( true ) {
 
 
         output.write(s);
@@ -293,12 +293,12 @@ public class TomCamlGenerator extends TomGenericGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-        {if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch58NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if ( (tomMatch58NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch58NameNumber_freshVar_0= tomMatch58NameNumberfreshSubject_1.getAstName() ;if ( (tomMatch58NameNumber_freshVar_0 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch58NameNumber_freshVar_1= tomMatch58NameNumber_freshVar_0.getString() ;if ( true ) {
+        {if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch57NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if ( (tomMatch57NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch57NameNumber_freshVar_0= tomMatch57NameNumberfreshSubject_1.getAstName() ;if ( (tomMatch57NameNumber_freshVar_0 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch57NameNumber_freshVar_1= tomMatch57NameNumber_freshVar_0.getString() ;if ( true ) {
 
 
-            s.append(tomMatch58NameNumber_freshVar_1);
+            s.append(tomMatch57NameNumber_freshVar_1);
             break matchBlock;
-          }}}}}}}if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch58NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if ( true ) {
+          }}}}}}}if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch57NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if ( true ) {
 
 
             System.out.println("genDeclMake: strange term: " + arg);

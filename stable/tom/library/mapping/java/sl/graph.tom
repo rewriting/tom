@@ -28,7 +28,7 @@
  */
 
 %op Strategy AllSeq(s:Strategy) {
-    is_fsym(t) {( ($t instanceof tom.library.sl.Re) )}
+    is_fsym(t) {( ($t instanceof tom.library.sl.AllSeq) )}
     make(s) {( new tom.library.sl.AllSeq($s) )}
     get_slot(s,t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.DeRef.ARG) )}
   }

@@ -126,7 +126,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException {
     generate(deep,expIndex,moduleName);
     output.write(" >= ");
-    {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch59NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch59NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+    {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch58NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch58NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
  
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
       }}}}}
@@ -151,14 +151,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       OutputCode oldOutput=output;
       String instance = template;
       int index = 0;
-      {if ( (termList instanceof tom.engine.adt.tomterm.types.TomList) ) {{  tom.engine.adt.tomterm.types.TomList  tomMatch60NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomList )termList);if ( ((tomMatch60NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || (tomMatch60NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {{  tom.engine.adt.tomterm.types.TomList  tomMatch60NameNumber_freshVar_0=tomMatch60NameNumberfreshSubject_1;{  tom.engine.adt.tomterm.types.TomList  tomMatch60NameNumber_begin_2=tomMatch60NameNumber_freshVar_0;{  tom.engine.adt.tomterm.types.TomList  tomMatch60NameNumber_end_3=tomMatch60NameNumber_freshVar_0;do {{{  tom.engine.adt.tomterm.types.TomList  tomMatch60NameNumber_freshVar_1=tomMatch60NameNumber_end_3;if (!( tomMatch60NameNumber_freshVar_1.isEmptyconcTomTerm() )) {{  tom.engine.adt.tomterm.types.TomList  tomMatch60NameNumber_freshVar_4= tomMatch60NameNumber_freshVar_1.getTailconcTomTerm() ;if ( true ) {
+      {if ( (termList instanceof tom.engine.adt.tomterm.types.TomList) ) {{  tom.engine.adt.tomterm.types.TomList  tomMatch59NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomList )termList);if ( ((tomMatch59NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm) || (tomMatch59NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm)) ) {{  tom.engine.adt.tomterm.types.TomList  tomMatch59NameNumber_freshVar_0=tomMatch59NameNumberfreshSubject_1;{  tom.engine.adt.tomterm.types.TomList  tomMatch59NameNumber_begin_2=tomMatch59NameNumber_freshVar_0;{  tom.engine.adt.tomterm.types.TomList  tomMatch59NameNumber_end_3=tomMatch59NameNumber_freshVar_0;do {{{  tom.engine.adt.tomterm.types.TomList  tomMatch59NameNumber_freshVar_1=tomMatch59NameNumber_end_3;if (!( tomMatch59NameNumber_freshVar_1.isEmptyconcTomTerm() )) {{  tom.engine.adt.tomterm.types.TomList  tomMatch59NameNumber_freshVar_4= tomMatch59NameNumber_freshVar_1.getTailconcTomTerm() ;if ( true ) {
 
           output = new OutputCode(new StringWriter());
-          generate(deep, tomMatch60NameNumber_freshVar_1.getHeadconcTomTerm() ,moduleName);
+          generate(deep, tomMatch59NameNumber_freshVar_1.getHeadconcTomTerm() ,moduleName);
           String dump = output.stringDump();
           instance = instance.replace("{"+index+"}",dump);
           index++;
-        }}}}if ( tomMatch60NameNumber_end_3.isEmptyconcTomTerm() ) {tomMatch60NameNumber_end_3=tomMatch60NameNumber_begin_2;} else {tomMatch60NameNumber_end_3= tomMatch60NameNumber_end_3.getTailconcTomTerm() ;}}} while(!( tomMatch60NameNumber_end_3.equals(tomMatch60NameNumber_begin_2) ));}}}}}}}
+        }}}}if ( tomMatch59NameNumber_end_3.isEmptyconcTomTerm() ) {tomMatch59NameNumber_end_3=tomMatch59NameNumber_begin_2;} else {tomMatch59NameNumber_end_3= tomMatch59NameNumber_end_3.getTailconcTomTerm() ;}}} while(!( tomMatch59NameNumber_end_3.equals(tomMatch59NameNumber_begin_2) ));}}}}}}}
 
       //System.out.println("template: " + template);
       //System.out.println("instance: " + instance);
@@ -257,7 +257,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
-    {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch61NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch61NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+    {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch60NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch60NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
  
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
       }}}}}
@@ -506,15 +506,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           returnType = TomBase.getTLType(getUniversalType());
           argType = TomBase.getTLType(getUniversalType());
         } else {
-          {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch62NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch62NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+          {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch61NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch61NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
 
               returnType = TomBase.getTLCode(codomain);
               argType = TomBase.getTLCode(domain);
               throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
-            }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch62NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch62NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch62NameNumber_freshVar_0= tomMatch62NameNumberfreshSubject_1.getString() ;if ( true ) {
+            }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch61NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch61NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch61NameNumber_freshVar_0= tomMatch61NameNumberfreshSubject_1.getString() ;if ( true ) {
 
 
-              TomSymbol tomSymbol = getSymbolFromName(tomMatch62NameNumber_freshVar_0);
+              TomSymbol tomSymbol = getSymbolFromName(tomMatch61NameNumber_freshVar_0);
               argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
               returnType = TomBase.getTLType(TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType());
             }}}}}}
@@ -550,15 +550,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               returnType = TomBase.getTLType(getUniversalType());
               argType = TomBase.getTLType(getUniversalType());
             } else {
-              {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch63NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch63NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+              {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch62NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch62NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
 
                   returnType = TomBase.getTLCode(tlType);
                   argType = returnType;
                   throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
-                }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch63NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch63NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch63NameNumber_freshVar_0= tomMatch63NameNumberfreshSubject_1.getString() ;if ( true ) {
+                }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch62NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch62NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch62NameNumber_freshVar_0= tomMatch62NameNumberfreshSubject_1.getString() ;if ( true ) {
 
 
-                  TomSymbol tomSymbol = getSymbolFromName(tomMatch63NameNumber_freshVar_0);
+                  TomSymbol tomSymbol = getSymbolFromName(tomMatch62NameNumber_freshVar_0);
                   returnType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
                   argType = returnType;
                 }}}}}}
@@ -592,14 +592,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           if(lazyMode) {
             argType = TomBase.getTLType(getUniversalType());
           } else {
-            {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch64NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch64NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+            {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch63NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch63NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
 
                 argType = TomBase.getTLCode(tlType);
                 throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
-              }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch64NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch64NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch64NameNumber_freshVar_0= tomMatch64NameNumberfreshSubject_1.getString() ;if ( true ) {
+              }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch63NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch63NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch63NameNumber_freshVar_0= tomMatch63NameNumberfreshSubject_1.getString() ;if ( true ) {
 
 
-                TomSymbol tomSymbol = getSymbolFromName(tomMatch64NameNumber_freshVar_0);
+                TomSymbol tomSymbol = getSymbolFromName(tomMatch63NameNumber_freshVar_0);
                 argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
               }}}}}}
 
@@ -635,7 +635,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             returnType = TomBase.getTLType(getUniversalType());
             argType = TomBase.getTLType(getUniversalType());
           } else {
-            {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch65NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch65NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+            {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch64NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch64NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
 
                 throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
               }}}}}
@@ -676,13 +676,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           if(lazyMode) {
             argType = TomBase.getTLType(getUniversalType());
           } else {
-            {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch66NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch66NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+            {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch65NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch65NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
 
                 throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
-              }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch66NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch66NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch66NameNumber_freshVar_0= tomMatch66NameNumberfreshSubject_1.getString() ;if ( true ) {
+              }}}}if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch65NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch65NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch65NameNumber_freshVar_0= tomMatch65NameNumberfreshSubject_1.getString() ;if ( true ) {
 
 
-                TomSymbol tomSymbol = getSymbolFromName(tomMatch66NameNumber_freshVar_0);
+                TomSymbol tomSymbol = getSymbolFromName(tomMatch65NameNumber_freshVar_0);
                 argType = TomBase.getTLType(TomBase.getSymbolCodomain(tomSymbol));
               }}}}}}
 
@@ -700,7 +700,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
        */
 
       protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
-        {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
+        {if ( (opNameAST instanceof tom.engine.adt.tomname.types.TomName) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch66NameNumberfreshSubject_1=(( tom.engine.adt.tomname.types.TomName )opNameAST);if ( (tomMatch66NameNumberfreshSubject_1 instanceof tom.engine.adt.tomname.types.tomname.EmptyName) ) {if ( true ) {
  
             throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
           }}}}}
@@ -719,7 +719,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       protected void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException {
-        {if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyList) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch68NameNumber_freshVar_0= tomMatch68NameNumberfreshSubject_1.getAstName() ;if ( (tomMatch68NameNumber_freshVar_0 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch68NameNumber_freshVar_1= tomMatch68NameNumber_freshVar_0.getString() ;{  String  tom_name=tomMatch68NameNumber_freshVar_1;if ( true ) {
+        {if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyList) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumber_freshVar_0= tomMatch67NameNumberfreshSubject_1.getAstName() ;if ( (tomMatch67NameNumber_freshVar_0 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch67NameNumber_freshVar_1= tomMatch67NameNumber_freshVar_0.getString() ;{  String  tom_name=tomMatch67NameNumber_freshVar_1;if ( true ) {
 
             String prefix = "tom_empty_list_";
             String template = getSymbolTable(moduleName).getMakeEmptyList(tom_name);
@@ -727,7 +727,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(prefix + tom_name+ "()");
             }
             return;
-          }}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsList) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch68NameNumber_freshVar_2= tomMatch68NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_3= tomMatch68NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_4= tomMatch68NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch68NameNumber_freshVar_2 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch68NameNumber_freshVar_5= tomMatch68NameNumber_freshVar_2.getString() ;{  String  tom_name=tomMatch68NameNumber_freshVar_5;{  tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tomMatch68NameNumber_freshVar_3;{  tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tomMatch68NameNumber_freshVar_4;if ( true ) {
+          }}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsList) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumber_freshVar_2= tomMatch67NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_3= tomMatch67NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_4= tomMatch67NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch67NameNumber_freshVar_2 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch67NameNumber_freshVar_5= tomMatch67NameNumber_freshVar_2.getString() ;{  String  tom_name=tomMatch67NameNumber_freshVar_5;{  tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tomMatch67NameNumber_freshVar_3;{  tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tomMatch67NameNumber_freshVar_4;if ( true ) {
 
 
             String prefix = "tom_cons_list_";
@@ -740,16 +740,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendList) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch68NameNumber_freshVar_6= tomMatch68NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_7= tomMatch68NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_8= tomMatch68NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch68NameNumber_freshVar_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch68NameNumber_freshVar_9= tomMatch68NameNumber_freshVar_6.getString() ;if ( true ) {
+          }}}}}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendList) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumber_freshVar_6= tomMatch67NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_7= tomMatch67NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_8= tomMatch67NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch67NameNumber_freshVar_6 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch67NameNumber_freshVar_9= tomMatch67NameNumber_freshVar_6.getString() ;if ( true ) {
 
 
-            output.write("tom_append_list_" + tomMatch68NameNumber_freshVar_9+ "(");
-            generate(deep,tomMatch68NameNumber_freshVar_7,moduleName);
+            output.write("tom_append_list_" + tomMatch67NameNumber_freshVar_9+ "(");
+            generate(deep,tomMatch67NameNumber_freshVar_7,moduleName);
             output.write(",");
-            generate(deep,tomMatch68NameNumber_freshVar_8,moduleName);
+            generate(deep,tomMatch67NameNumber_freshVar_8,moduleName);
             output.write(")");
             return;
-          }}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyArray) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch68NameNumber_freshVar_10= tomMatch68NameNumberfreshSubject_1.getAstName() ;{  int  tomMatch68NameNumber_freshVar_11= tomMatch68NameNumberfreshSubject_1.getSize() ;if ( (tomMatch68NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch68NameNumber_freshVar_12= tomMatch68NameNumber_freshVar_10.getString() ;{  String  tom_name=tomMatch68NameNumber_freshVar_12;{  int  tom_size=tomMatch68NameNumber_freshVar_11;if ( true ) {
+          }}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildEmptyArray) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumber_freshVar_10= tomMatch67NameNumberfreshSubject_1.getAstName() ;{  int  tomMatch67NameNumber_freshVar_11= tomMatch67NameNumberfreshSubject_1.getSize() ;if ( (tomMatch67NameNumber_freshVar_10 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch67NameNumber_freshVar_12= tomMatch67NameNumber_freshVar_10.getString() ;{  String  tom_name=tomMatch67NameNumber_freshVar_12;{  int  tom_size=tomMatch67NameNumber_freshVar_11;if ( true ) {
 
 
             String prefix = "tom_empty_array_";
@@ -758,7 +758,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(prefix + tom_name+ "(" + tom_size+ ")");
             }
             return;
-          }}}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsArray) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch68NameNumber_freshVar_13= tomMatch68NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_14= tomMatch68NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_15= tomMatch68NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch68NameNumber_freshVar_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch68NameNumber_freshVar_16= tomMatch68NameNumber_freshVar_13.getString() ;{  String  tom_name=tomMatch68NameNumber_freshVar_16;{  tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tomMatch68NameNumber_freshVar_14;{  tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tomMatch68NameNumber_freshVar_15;if ( true ) {
+          }}}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildConsArray) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumber_freshVar_13= tomMatch67NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_14= tomMatch67NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_15= tomMatch67NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch67NameNumber_freshVar_13 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch67NameNumber_freshVar_16= tomMatch67NameNumber_freshVar_13.getString() ;{  String  tom_name=tomMatch67NameNumber_freshVar_16;{  tom.engine.adt.tomterm.types.TomTerm  tom_headTerm=tomMatch67NameNumber_freshVar_14;{  tom.engine.adt.tomterm.types.TomTerm  tom_tailTerm=tomMatch67NameNumber_freshVar_15;if ( true ) {
 
 
             String template = getSymbolTable(moduleName).getMakeAddArray(tom_name);
@@ -771,13 +771,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
               output.write(")");
             }
             return;
-          }}}}}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendArray) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch68NameNumber_freshVar_17= tomMatch68NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_18= tomMatch68NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch68NameNumber_freshVar_19= tomMatch68NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch68NameNumber_freshVar_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch68NameNumber_freshVar_20= tomMatch68NameNumber_freshVar_17.getString() ;if ( true ) {
+          }}}}}}}}}}}}if ( (list instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )list);if ( (tomMatch67NameNumberfreshSubject_1 instanceof tom.engine.adt.tomterm.types.tomterm.BuildAppendArray) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch67NameNumber_freshVar_17= tomMatch67NameNumberfreshSubject_1.getAstName() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_18= tomMatch67NameNumberfreshSubject_1.getHeadTerm() ;{  tom.engine.adt.tomterm.types.TomTerm  tomMatch67NameNumber_freshVar_19= tomMatch67NameNumberfreshSubject_1.getTailTerm() ;if ( (tomMatch67NameNumber_freshVar_17 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch67NameNumber_freshVar_20= tomMatch67NameNumber_freshVar_17.getString() ;if ( true ) {
 
 
-            output.write("tom_append_array_" + tomMatch68NameNumber_freshVar_20+ "(");
-            generate(deep,tomMatch68NameNumber_freshVar_18,moduleName);
+            output.write("tom_append_array_" + tomMatch67NameNumber_freshVar_20+ "(");
+            generate(deep,tomMatch67NameNumber_freshVar_18,moduleName);
             output.write(",");
-            generate(deep,tomMatch68NameNumber_freshVar_19,moduleName);
+            generate(deep,tomMatch67NameNumber_freshVar_19,moduleName);
             output.write(")");
             return;
           }}}}}}}}}}

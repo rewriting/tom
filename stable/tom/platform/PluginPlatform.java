@@ -99,16 +99,16 @@ public class PluginPlatform extends PluginPlatformBase {
       // for each input we call the sequence of plug-ins
       for(int i=0; i < inputToCompileList.size(); i++) {
         Object input = inputToCompileList.get(i);
-        Object[] pluginArg = new Object[]{input};
+        Object[] pluginArg = new Object[]{ input };
         Object initArgument = input;
         boolean success = true;
         statusHandler.clear();
 
         if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
-        if(input instanceof String && ((String)input).endsWith(".t")) {
-          String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
-          testHandler = new TestHandler(inputWithoutSuffix);
-          if(!testHandler.hasError()){
+        if(input instanceof String) {
+          String inputString = (String)input;
+          testHandler = new TestHandler(inputString);
+          if(!testHandler.hasError()) {
             Logger.getLogger(loggerRadical).addHandler(this.testHandler);
           }
         }
@@ -124,8 +124,8 @@ public class PluginPlatform extends PluginPlatformBase {
            */
           Handler[] handlers = Logger.getLogger(loggerRadical).getHandlers();
           boolean foundHdl = false;
-          for (int k = 0; k < handlers.length ; k++){
-            if (handlers[k].equals(statusHandler)){
+          for (int k = 0; k < handlers.length ; k++) {
+            if (handlers[k].equals(statusHandler)) {
               foundHdl = true;
               break;
             }

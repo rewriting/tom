@@ -381,41 +381,37 @@
   make(t0, t1) { tom.gom.adt.objects.types.slotfieldlist.ConsConcSlotField.make($t0, $t1) }
 }
 
-%op GomClass AbstractTypeClass(ClassName:ClassName, Mapping:ClassName, Visitor:ClassName, SortList:ClassNameList, Hooks:HookList) {
+%op GomClass AbstractTypeClass(ClassName:ClassName, Mapping:ClassName, SortList:ClassNameList, Hooks:HookList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(Mapping, t) { $t.getMapping() }
-  get_slot(Visitor, t) { $t.getVisitor() }
   get_slot(SortList, t) { $t.getSortList() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4) { tom.gom.adt.objects.types.gomclass.AbstractTypeClass.make($t0, $t1, $t2, $t3, $t4) }
+  make(t0, t1, t2, t3) { tom.gom.adt.objects.types.gomclass.AbstractTypeClass.make($t0, $t1, $t2, $t3) }
 }
 
-%op GomClass SortClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, Visitor:ClassName, Forward:ClassName, Operators:ClassNameList, VariadicOperators:ClassNameList, SlotFields:SlotFieldList, Hooks:HookList) {
+%op GomClass SortClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, Operators:ClassNameList, VariadicOperators:ClassNameList, SlotFields:SlotFieldList, Hooks:HookList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.SortClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
   get_slot(Mapping, t) { $t.getMapping() }
-  get_slot(Visitor, t) { $t.getVisitor() }
-  get_slot(Forward, t) { $t.getForward() }
   get_slot(Operators, t) { $t.getOperators() }
   get_slot(VariadicOperators, t) { $t.getVariadicOperators() }
   get_slot(SlotFields, t) { $t.getSlotFields() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4, t5, t6, t7, t8) { tom.gom.adt.objects.types.gomclass.SortClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8) }
+  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.SortClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
 }
 
-%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, Visitor:ClassName, SlotFields:SlotFieldList, Hooks:HookList) {
+%op GomClass OperatorClass(ClassName:ClassName, AbstractType:ClassName, ExtendsType:ClassName, Mapping:ClassName, SortName:ClassName, SlotFields:SlotFieldList, Hooks:HookList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) }
   get_slot(ClassName, t) { $t.getClassName() }
   get_slot(AbstractType, t) { $t.getAbstractType() }
   get_slot(ExtendsType, t) { $t.getExtendsType() }
   get_slot(Mapping, t) { $t.getMapping() }
   get_slot(SortName, t) { $t.getSortName() }
-  get_slot(Visitor, t) { $t.getVisitor() }
   get_slot(SlotFields, t) { $t.getSlotFields() }
   get_slot(Hooks, t) { $t.getHooks() }
-  make(t0, t1, t2, t3, t4, t5, t6, t7) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7) }
+  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.OperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
 }
 
 %op GomClass VariadicOperatorClass(ClassName:ClassName, AbstractType:ClassName, Mapping:ClassName, SortName:ClassName, Empty:GomClass, Cons:GomClass, Hooks:HookList) {
@@ -430,33 +426,12 @@
   make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.VariadicOperatorClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
 }
 
-%op GomClass VisitorClass(ClassName:ClassName, SortClasses:GomClassList, OperatorClasses:GomClassList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.VisitorClass) }
-  get_slot(ClassName, t) { $t.getClassName() }
-  get_slot(SortClasses, t) { $t.getSortClasses() }
-  get_slot(OperatorClasses, t) { $t.getOperatorClasses() }
-  make(t0, t1, t2) { tom.gom.adt.objects.types.gomclass.VisitorClass.make($t0, $t1, $t2) }
-}
-
-%op GomClass VisitableFwdClass(ClassName:ClassName, Visitor:ClassName, ImportedVisitors:ClassNameList, AbstractType:ClassName, ImportedAbstractTypes:ClassNameList, SortClasses:GomClassList, OperatorClasses:GomClassList) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.VisitableFwdClass) }
-  get_slot(ClassName, t) { $t.getClassName() }
-  get_slot(Visitor, t) { $t.getVisitor() }
-  get_slot(ImportedVisitors, t) { $t.getImportedVisitors() }
-  get_slot(AbstractType, t) { $t.getAbstractType() }
-  get_slot(ImportedAbstractTypes, t) { $t.getImportedAbstractTypes() }
-  get_slot(SortClasses, t) { $t.getSortClasses() }
-  get_slot(OperatorClasses, t) { $t.getOperatorClasses() }
-  make(t0, t1, t2, t3, t4, t5, t6) { tom.gom.adt.objects.types.gomclass.VisitableFwdClass.make($t0, $t1, $t2, $t3, $t4, $t5, $t6) }
-}
-
-%op GomClass TomMapping(ClassName:ClassName, BasicStrategy:ClassName, SortClasses:GomClassList, OperatorClasses:GomClassList) {
+%op GomClass TomMapping(ClassName:ClassName, SortClasses:GomClassList, OperatorClasses:GomClassList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.gomclass.TomMapping) }
   get_slot(ClassName, t) { $t.getClassName() }
-  get_slot(BasicStrategy, t) { $t.getBasicStrategy() }
   get_slot(SortClasses, t) { $t.getSortClasses() }
   get_slot(OperatorClasses, t) { $t.getOperatorClasses() }
-  make(t0, t1, t2, t3) { tom.gom.adt.objects.types.gomclass.TomMapping.make($t0, $t1, $t2, $t3) }
+  make(t0, t1, t2) { tom.gom.adt.objects.types.gomclass.TomMapping.make($t0, $t1, $t2) }
 }
 
 %op ClassName ClassName(Pkg:String, Name:String) {

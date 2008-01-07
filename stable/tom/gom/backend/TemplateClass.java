@@ -48,9 +48,9 @@ public abstract class TemplateClass {
   }
 
   public String className(ClassName clsName) {
-    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch352NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch352NameNumber_freshVar_0= tomMatch352NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch361NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch361NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch361NameNumber_freshVar_0= tomMatch361NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        return tomMatch352NameNumber_freshVar_0;
+        return tomMatch361NameNumber_freshVar_0;
       }}}}}}
 
     throw new GomRuntimeException(
@@ -62,7 +62,7 @@ public abstract class TemplateClass {
   }
 
   public static String fullClassName(ClassName clsName) {
-    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch353NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch353NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch353NameNumber_freshVar_0= tomMatch353NameNumberfreshSubject_1.getPkg() ;{  String  tomMatch353NameNumber_freshVar_1= tomMatch353NameNumberfreshSubject_1.getName() ;{  String  tom_pkgPrefix=tomMatch353NameNumber_freshVar_0;{  String  tom_name=tomMatch353NameNumber_freshVar_1;if ( true ) {
+    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch362NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch362NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch362NameNumber_freshVar_0= tomMatch362NameNumberfreshSubject_1.getPkg() ;{  String  tomMatch362NameNumber_freshVar_1= tomMatch362NameNumberfreshSubject_1.getName() ;{  String  tom_pkgPrefix=tomMatch362NameNumber_freshVar_0;{  String  tom_name=tomMatch362NameNumber_freshVar_1;if ( true ) {
 
         if(tom_pkgPrefix.length()==0) {
           return tom_name;
@@ -80,9 +80,9 @@ public abstract class TemplateClass {
   }
 
   public String getPackage(ClassName clsName) {
-    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch354NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch354NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch354NameNumber_freshVar_0= tomMatch354NameNumberfreshSubject_1.getPkg() ;if ( true ) {
+    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch363NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch363NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch363NameNumber_freshVar_0= tomMatch363NameNumberfreshSubject_1.getPkg() ;if ( true ) {
 
-        return tomMatch354NameNumber_freshVar_0;
+        return tomMatch363NameNumber_freshVar_0;
       }}}}}}
 
     throw new GomRuntimeException(
@@ -90,9 +90,9 @@ public abstract class TemplateClass {
   }
 
   public String hasMethod(SlotField slot) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch355NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch355NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch355NameNumber_freshVar_0= tomMatch355NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch364NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch364NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch364NameNumber_freshVar_0= tomMatch364NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        return "has"+tomMatch355NameNumber_freshVar_0;
+        return "has"+tomMatch364NameNumber_freshVar_0;
       }}}}}}
 
     throw new GomRuntimeException(
@@ -100,9 +100,9 @@ public abstract class TemplateClass {
   }
 
   public String getMethod(SlotField slot) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch356NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch356NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch356NameNumber_freshVar_0= tomMatch356NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch365NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch365NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch365NameNumber_freshVar_0= tomMatch365NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        return "get"+tomMatch356NameNumber_freshVar_0;
+        return "get"+tomMatch365NameNumber_freshVar_0;
       }}}}}}
 
     throw new GomRuntimeException(
@@ -110,9 +110,9 @@ public abstract class TemplateClass {
   }
 
   public String setMethod(SlotField slot) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch357NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch357NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch357NameNumber_freshVar_0= tomMatch357NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch366NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch366NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch366NameNumber_freshVar_0= tomMatch366NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        return "set"+tomMatch357NameNumber_freshVar_0;
+        return "set"+tomMatch366NameNumber_freshVar_0;
       }}}}}}
 
     throw new GomRuntimeException(
@@ -120,9 +120,9 @@ public abstract class TemplateClass {
   }
 
   public String index(SlotField slot) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch358NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch358NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch358NameNumber_freshVar_0= tomMatch358NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch367NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch367NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch367NameNumber_freshVar_0= tomMatch367NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        return "index_"+tomMatch358NameNumber_freshVar_0;
+        return "index_"+tomMatch367NameNumber_freshVar_0;
       }}}}}}
 
     throw new GomRuntimeException(
@@ -130,9 +130,9 @@ public abstract class TemplateClass {
   }
 
   public String slotDomain(SlotField slot) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch359NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch359NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch359NameNumber_freshVar_0= tomMatch359NameNumberfreshSubject_1.getDomain() ;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch368NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch368NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch368NameNumber_freshVar_0= tomMatch368NameNumberfreshSubject_1.getDomain() ;if ( true ) {
 
-        return fullClassName(tomMatch359NameNumber_freshVar_0);
+        return fullClassName(tomMatch368NameNumber_freshVar_0);
       }}}}}}
 
     throw new GomRuntimeException(
@@ -144,9 +144,9 @@ public abstract class TemplateClass {
   }
 
   public String classFieldName(ClassName clsName) {
-    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch360NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch360NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch360NameNumber_freshVar_0= tomMatch360NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch369NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch369NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch369NameNumber_freshVar_0= tomMatch369NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        return tomMatch360NameNumber_freshVar_0.toLowerCase();
+        return tomMatch369NameNumber_freshVar_0.toLowerCase();
       }}}}}}
 
     throw new GomRuntimeException(
@@ -155,7 +155,7 @@ public abstract class TemplateClass {
 
   public void toStringSlotField(StringBuilder res, SlotField slot,
                                 String element, String buffer) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch361NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch361NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch361NameNumber_freshVar_0= tomMatch361NameNumberfreshSubject_1.getDomain() ;{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch361NameNumber_freshVar_0;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch370NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch370NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch370NameNumber_freshVar_0= tomMatch370NameNumberfreshSubject_1.getDomain() ;{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch370NameNumber_freshVar_0;if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           res.append(""/* Generated by TOM (version 2.6alpha): Do not edit this file */+element+".toStringBuilder("/* Generated by TOM (version 2.6alpha): Do not edit this file */+buffer+");\n"
@@ -273,7 +273,7 @@ public abstract class TemplateClass {
   }
 
   public void toATermSlotField(StringBuilder res, SlotField slot) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch362NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch362NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch362NameNumber_freshVar_0= tomMatch362NameNumberfreshSubject_1.getDomain() ;{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch362NameNumber_freshVar_0;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch371NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch371NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch371NameNumber_freshVar_0= tomMatch371NameNumberfreshSubject_1.getDomain() ;{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch371NameNumber_freshVar_0;if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           res.append(getMethod(slot));
@@ -320,7 +320,7 @@ public abstract class TemplateClass {
   }
 
   public void fromATermSlotField(StringBuilder buffer, SlotField slot, String appl) {
-    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch363NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch363NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch363NameNumber_freshVar_0= tomMatch363NameNumberfreshSubject_1.getDomain() ;{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch363NameNumber_freshVar_0;if ( true ) {
+    {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch372NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch372NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch372NameNumber_freshVar_0= tomMatch372NameNumberfreshSubject_1.getDomain() ;{  tom.gom.adt.objects.types.ClassName  tom_domain=tomMatch372NameNumber_freshVar_0;if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           buffer.append(fullClassName(tom_domain));
@@ -353,14 +353,14 @@ public abstract class TemplateClass {
   }
 
   protected String primitiveToReferenceType(String classname) {
-    {if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "byte".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Byte"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "short".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Short"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "int".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Integer"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "long".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Long"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "float".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Float"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "double".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Double"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "boolean".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
- return "java.lang.Boolean"; }}}}if ( true ) {{  String  tomMatch364NameNumberfreshSubject_1=(( String )classname);if ( "char".equals(tomMatch364NameNumberfreshSubject_1) ) {if ( true ) {
+    {if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "byte".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Byte"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "short".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Short"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "int".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Integer"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "long".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Long"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "float".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Float"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "double".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Double"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "boolean".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
+ return "java.lang.Boolean"; }}}}if ( true ) {{  String  tomMatch373NameNumberfreshSubject_1=(( String )classname);if ( "char".equals(tomMatch373NameNumberfreshSubject_1) ) {if ( true ) {
  return "java.lang.Character"; }}}}}
 
     return classname;
@@ -411,11 +411,11 @@ public abstract class TemplateClass {
       SlotField slot = slotList.getHeadConcSlotField();
       slotList = slotList.getTailConcSlotField();
       if (index>0) { writer.write(", "); }
-      {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch365NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch365NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch365NameNumber_freshVar_0= tomMatch365NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch365NameNumber_freshVar_1= tomMatch365NameNumberfreshSubject_1.getDomain() ;if ( (tomMatch365NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch365NameNumber_freshVar_2= tomMatch365NameNumber_freshVar_1.getName() ;if ( true ) {
+      {if ( (slot instanceof tom.gom.adt.objects.types.SlotField) ) {{  tom.gom.adt.objects.types.SlotField  tomMatch374NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.SlotField )slot);if ( (tomMatch374NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.slotfield.SlotField) ) {{  String  tomMatch374NameNumber_freshVar_0= tomMatch374NameNumberfreshSubject_1.getName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch374NameNumber_freshVar_1= tomMatch374NameNumberfreshSubject_1.getDomain() ;if ( (tomMatch374NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch374NameNumber_freshVar_2= tomMatch374NameNumber_freshVar_1.getName() ;if ( true ) {
 
-          writer.write(tomMatch365NameNumber_freshVar_0);
+          writer.write(tomMatch374NameNumber_freshVar_0);
           writer.write(":");
-          writer.write(tomMatch365NameNumber_freshVar_2);
+          writer.write(tomMatch374NameNumber_freshVar_2);
           index++;
         }}}}}}}}}
 
@@ -450,7 +450,7 @@ public abstract class TemplateClass {
     }
   }
 
-  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+  public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     return;
   }

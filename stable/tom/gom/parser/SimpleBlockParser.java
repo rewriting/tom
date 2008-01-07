@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g 2007-12-17 11:02:28
+// $ANTLR 3.0 /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2008-01-07 21:26:21
 
   package tom.gom.parser;
 
@@ -40,7 +40,7 @@ public class SimpleBlockParser extends Parser {
     }
 
     public String[] getTokenNames() { return tokenNames; }
-    public String getGrammarFileName() { return "/home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g"; }
+    public String getGrammarFileName() { return "/home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g"; }
 
 
     public static class block_return extends ParserRuleReturnScope {
@@ -49,7 +49,7 @@ public class SimpleBlockParser extends Parser {
     };
 
     // $ANTLR start block
-    // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:42:1: block : rawblocklist ;
+    // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:42:1: block : rawblocklist ;
     public final block_return block() throws RecognitionException {
         block_return retval = new block_return();
         retval.start = input.LT(1);
@@ -61,8 +61,8 @@ public class SimpleBlockParser extends Parser {
 
 
         try {
-            // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:43:3: ( rawblocklist )
-            // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:43:3: rawblocklist
+            // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:43:3: ( rawblocklist )
+            // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:43:3: rawblocklist
             {
             root_0 = (Object)adaptor.nil();
 
@@ -96,7 +96,7 @@ public class SimpleBlockParser extends Parser {
     };
 
     // $ANTLR start rawblocklist
-    // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:46:1: rawblocklist : ( STRING | LBRACE rawblocklist RBRACE )* ;
+    // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:46:1: rawblocklist : ( STRING | LBRACE rawblocklist RBRACE )* ;
     public final rawblocklist_return rawblocklist() throws RecognitionException {
         rawblocklist_return retval = new rawblocklist_return();
         retval.start = input.LT(1);
@@ -114,12 +114,12 @@ public class SimpleBlockParser extends Parser {
         Object RBRACE5_tree=null;
 
         try {
-            // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:47:3: ( ( STRING | LBRACE rawblocklist RBRACE )* )
-            // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
+            // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:3: ( ( STRING | LBRACE rawblocklist RBRACE )* )
+            // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
             {
             root_0 = (Object)adaptor.nil();
 
-            // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
+            // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
             loop1:
             do {
                 int alt1=3;
@@ -135,7 +135,7 @@ public class SimpleBlockParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:47:4: STRING
+            	    // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:4: STRING
             	    {
             	    STRING2=(Token)input.LT(1);
             	    match(input,STRING,FOLLOW_STRING_in_rawblocklist64); 
@@ -146,7 +146,7 @@ public class SimpleBlockParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /home/balland/workspace/newsl/src/tom/gom/parser/SimpleBlock.g:47:13: LBRACE rawblocklist RBRACE
+            	    // /home/balland/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:13: LBRACE rawblocklist RBRACE
             	    {
             	    LBRACE3=(Token)input.LT(1);
             	    match(input,LBRACE,FOLLOW_LBRACE_in_rawblocklist68); 

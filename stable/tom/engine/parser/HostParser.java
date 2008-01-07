@@ -307,6 +307,14 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     subject = subject.replace(escapeChar+escapeChar,metaChar);
     //System.out.println("subject: '" + subject + "'");
     String split[] = subject.split(escapeChar);
+    boolean last = subject.endsWith(escapeChar);
+    int numSeparator = split.length + 1 + (last ? 1 : 0);
+    if (numSeparator%2==1) {
+        getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badNumberOfAt,
+              new Object[]{},
+              currentFile, getLine()));
+    }
+    //System.out.println("split.length: " + split.length);
     boolean metaMode = true;
     String res = "";
     for(int i=0 ; i<split.length ; i++) {

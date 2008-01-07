@@ -41,35 +41,43 @@ public class TestHandler extends Handler {
   public TestHandler(String fileName) {
     records = new Vector();
     mess_attempted = new Vector();
-    index=0;
-    try{
+    index = 0;
+    try {
       BufferedReader reader = new BufferedReader(new FileReader(new File(fileName+".nrt")));
       String line = reader.readLine();
-      while(line != null){
+      while (line != null) {
         // On specifie sur chaque ligne les erreurs attendues
         // par le nom de la classe de messages (TomMessage,PluginPlatformMessage,...) suivi de " : ",
-        // puis par le nom du champs correspondant au message attendu.
-        String className = line.substring(0,line.indexOf(" : "));
-        String fieldName = line.substring(line.indexOf(" : ")+3);
-        mess_attempted.add( (Class.forName(className)).getField(fieldName).get(null));
+        // puis par le nom du champ correspondant au message attendu.
+        String className = null;
+        String fieldName = null;
+        try {
+          className = line.substring(0,line.indexOf(" : "));
+          fieldName = line.substring(line.indexOf(" : ")+3);
+          mess_attempted.add( (Class.forName(className)).getField(fieldName).get(null));
+        } catch (java.lang.StringIndexOutOfBoundsException e) {
+          publish(new LogRecord(Level.SEVERE, "Illformed .nrt line: "+line));
+        }
         line  = reader.readLine();
       }
-    } catch(java.io.IOException e) {
+    } catch (java.io.IOException e) {
       publish(new LogRecord(Level.SEVERE, "No Non Regression Test file : <file-name>+\".nrt\""));
-    } catch(java.lang.NoSuchFieldException e) {
+    } catch (java.lang.NoSuchFieldException e) {
       publish(new LogRecord(Level.SEVERE, e.getMessage()));
-    } catch(java.lang.ClassNotFoundException e) {
+    } catch (java.lang.ClassNotFoundException e) {
       publish(new LogRecord(Level.SEVERE, e.getMessage()));
-    } catch(java.lang.IllegalAccessException e) {
+    } catch (java.lang.IllegalAccessException e) {
       publish(new LogRecord(Level.SEVERE, e.getMessage()));
     }
   }
 
   public boolean hasLog(Level level) {
     Enumeration enumeration = records.elements();
-    while(enumeration.hasMoreElements()){
+    while (enumeration.hasMoreElements()) {
       LogRecord record = (LogRecord) enumeration.nextElement();
-      if(record.getLevel().equals(level)) return true;
+      if (record.getLevel().equals(level)) {
+        return true;
+      }
     }
     return false;
   }
@@ -112,7 +120,7 @@ public class TestHandler extends Handler {
   public void close() {/*No resources to free */}
   public void flush() {/*No needs to flush any buffered output */}
 
-  public void clear(){
+  public void clear() {
     index=0;
     mess_attempted = new Vector();
     records = new Vector();
@@ -145,7 +153,7 @@ public class TestHandler extends Handler {
    * @return true if the message was attempted by the non regression test file
    */
 
-  public void nonRegressionTest(PlatformLogRecord record){
+  public void nonRegressionTest(PlatformLogRecord record) {
     //The nonRegressionTest method verify that all structured log messages (of type PlatformLogRecord) were attempted in the same order and with the same parameters. The attempted messages are contained in a file with suffix .nrt. Currently, only the type of messages are compared.
     PlatformMessage message = record.getPlatformMessage();
     //TODO : comparing this elements

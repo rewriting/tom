@@ -46,6 +46,8 @@ import tom.engine.adt.il.*;
 import tom.engine.adt.il.types.*;
 import tom.library.sl.Strategy;
 import tom.library.sl.VisitFailure;
+import tom.library.sl.Introspector;
+import tom.library.sl.BasicStrategy;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -183,14 +185,14 @@ public class Verifier {
 
       If(cond,ift,iff) -> {
         return `ITE(exprFromExpression(cond),
-                    instrFromInstruction(ift),
-                    instrFromInstruction(iff));
+            instrFromInstruction(ift),
+            instrFromInstruction(iff));
       }
       (Let|LetRef|LetAssign)(Variable[AstName=avar],expr,body) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
-                      termFromExpresssion(expr),
-                      instrFromInstruction(body));
+            termFromExpresssion(expr),
+            instrFromInstruction(body));
       }
       (Let|LetAssign|LetRef)(UnamedVariable[],_,body) -> {
         return instrFromInstruction(`body);
@@ -229,8 +231,8 @@ public class Verifier {
             Variable[AstName=name] -> {
               substitution = `subs(substitution*,
                   is(
-                      variableFromTomName(name),
-                      termFromTomTerm(subject)));
+                    variableFromTomName(name),
+                    termFromTomTerm(subject)));
             }
           }          
         }
@@ -246,7 +248,7 @@ public class Verifier {
       }
     }
   }
-  
+
   public Collection build_tree(Instruction automata) {
     // System.out.println("Build derivation tree for: " + automata);
 
@@ -256,25 +258,25 @@ public class Verifier {
     Iterator iter = localAccepts.iterator();
     Collection treeList = new HashSet();
     while(iter.hasNext()) {
-        Instr localAccept = (Instr) iter.next();
+      Instr localAccept = (Instr) iter.next();
 
-        // builds the initial abstract substitution
-        SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
-        Environment startingenv = `env(initialsubstitution,
-                                       instrFromInstruction(automata));
+      // builds the initial abstract substitution
+      SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
+      Environment startingenv = `env(initialsubstitution,
+          instrFromInstruction(automata));
 
-        Deriv startingderiv = `ebs(startingenv,
-                                   env(subs(undefsubs()),localAccept));
+      Deriv startingderiv = `ebs(startingenv,
+          env(subs(undefsubs()),localAccept));
 
-        Collection treeListPre = applySemanticsRules(startingderiv);
-        // replace substitutions in trees
-        Iterator it = treeListPre.iterator();
-        while(it.hasNext()) {
-            DerivTree tree = (DerivTree) it.next();
-            SubstitutionList outputsubst = getOutputSubstitution(tree);
-            tree = replaceUndefinedSubstitution(tree,outputsubst);
-            treeList.add(tree);
-        }
+      Collection treeListPre = applySemanticsRules(startingderiv);
+      // replace substitutions in trees
+      Iterator it = treeListPre.iterator();
+      while(it.hasNext()) {
+        DerivTree tree = (DerivTree) it.next();
+        SubstitutionList outputsubst = getOutputSubstitution(tree);
+        tree = replaceUndefinedSubstitution(tree,outputsubst);
+        treeList.add(tree);
+      }
     }
 
     return treeList;
@@ -287,14 +289,14 @@ public class Verifier {
     Iterator iter = localAccepts.iterator();
     Map constraintList = new HashMap();
     while(iter.hasNext()) {
-        Instr localAccept = (Instr) iter.next();
+      Instr localAccept = (Instr) iter.next();
 
-        // builds the initial abstract substitution
-        SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
-        Expr constraints = buildConstraint(initialsubstitution,
-                                           instrFromInstruction(automata),
-                                           localAccept);
-        constraintList.put(localAccept,constraints);
+      // builds the initial abstract substitution
+      SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
+      Expr constraints = buildConstraint(initialsubstitution,
+          instrFromInstruction(automata),
+          localAccept);
+      constraintList.put(localAccept,constraints);
     }
     return constraintList;
   }
@@ -666,9 +668,9 @@ public class Verifier {
         Term t = null;
         %match(Seq cond) {
           dedterm(concTerm(_*,r)) -> { t = `r; }
-            _ -> { if (t == null) {
-              System.out.println("seqFromTerm has a problem with " + cond);
-            }
+          _ -> { if (t == null) {
+            System.out.println("seqFromTerm has a problem with " + cond);
+          }
           }
         }
         Deriv up = `ebs(
@@ -716,7 +718,7 @@ public class Verifier {
       }
       _ -> {
         if (c.isEmpty()) {
-            //System.out.println("Error " + post);
+          //System.out.println("Error " + post);
         }
       }
     }
@@ -743,10 +745,10 @@ public class Verifier {
     return !collect.isEmpty();
   }
 
-/**
- * To replace undefsubst in tree by the computed value
- * which leads to axiom
- */
+  /**
+   * To replace undefsubst in tree by the computed value
+   * which leads to axiom
+   */
   %strategy replaceUndefsubs(arg:SubstitutionList) extends `Identity() {
     visit SubstitutionList {
       (undefsubs()) -> {
@@ -756,7 +758,7 @@ public class Verifier {
   }
 
   private DerivTree replaceUndefinedSubstitution(DerivTree subject,
-                                      SubstitutionList subs) {
+      SubstitutionList subs) {
     try {
       subject = (DerivTree) `TopDown(replaceUndefsubs(subs)).visitLight(subject);
     } catch (tom.library.sl.VisitFailure e) {
@@ -869,39 +871,42 @@ public class Verifier {
     return res;
   }
 
-  public class BooleanSimplifier extends IlBasicStrategy {
+  public class BooleanSimplifier extends BasicStrategy {
     public BooleanSimplifier() {
       super(`Identity());
     }
 
-    public Expr visit_Expr(Expr arg) throws tom.library.sl.VisitFailure {
-      %match(Expr arg) {
-        iland(ilfalse(),_) -> {
-          return `ilfalse();
-        }
-        iland(_,ilfalse()) -> {
-          return `ilfalse();
-        }
-        ilor(lt@iltrue[],_) -> {
-          return `lt;
-        }
-        ilor(_,lt@iltrue[]) -> {
-          return `lt;
-        }
-        ilor(ilfalse(),right) -> {
-          return `right;
-        }
-        ilor(left,ilfalse()) -> {
-          return `left;
-        }
-        ilnot(iltrue[]) -> {
-          return `ilfalse();
-        }
-        ilnot(ilfalse[]) -> {
-          return `iltrue(subs());
+    public Object visitLight(Object o, Introspector i) throws tom.library.sl.VisitFailure {
+      if (o instanceof Expr) {
+        Expr arg = (Expr) o;
+        %match(Expr arg) {
+          iland(ilfalse(),_) -> {
+            return `ilfalse();
+          }
+          iland(_,ilfalse()) -> {
+            return `ilfalse();
+          }
+          ilor(lt@iltrue[],_) -> {
+            return `lt;
+          }
+          ilor(_,lt@iltrue[]) -> {
+            return `lt;
+          }
+          ilor(ilfalse(),right) -> {
+            return `right;
+          }
+          ilor(left,ilfalse()) -> {
+            return `left;
+          }
+          ilnot(iltrue[]) -> {
+            return `ilfalse();
+          }
+          ilnot(ilfalse[]) -> {
+            return `iltrue(subs());
+          }
         }
       }
-      return (Expr) any.visitLight(arg);
+      return any.visitLight(o,i);
     }
   }
 

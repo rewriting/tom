@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g 2007-12-17 11:02:30
+// $ANTLR 3.0 /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2008-01-07 21:26:24
 
   package tom.gom.expander.rule;
   import tom.gom.adt.rule.RuleTree;
@@ -61,14 +61,14 @@ public class RuleLexer extends Lexer {
     public RuleLexer(CharStream input) {
         super(input);
     }
-    public String getGrammarFileName() { return "/home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g"; }
+    public String getGrammarFileName() { return "/home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g"; }
 
     // $ANTLR start ARROW
     public final void mARROW() throws RecognitionException {
         try {
             int _type = ARROW;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:89:9: ( '->' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:89:9: '->'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:9: ( '->' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:89:9: '->'
             {
             match("->"); 
 
@@ -86,8 +86,8 @@ public class RuleLexer extends Lexer {
     public final void mAMPERCENT() throws RecognitionException {
         try {
             int _type = AMPERCENT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:90:13: ( '&' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:90:13: '&'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:13: ( '&' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:90:13: '&'
             {
             match('&'); 
 
@@ -104,8 +104,8 @@ public class RuleLexer extends Lexer {
     public final void mUNDERSCORE() throws RecognitionException {
         try {
             int _type = UNDERSCORE;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:91:14: ( '_' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:91:14: '_'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:14: ( '_' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:91:14: '_'
             {
             match('_'); 
 
@@ -122,8 +122,8 @@ public class RuleLexer extends Lexer {
     public final void mUNDERSCORESTAR() throws RecognitionException {
         try {
             int _type = UNDERSCORESTAR;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:92:18: ( '_*' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:92:18: '_*'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:18: ( '_*' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:92:18: '_*'
             {
             match("_*"); 
 
@@ -141,8 +141,8 @@ public class RuleLexer extends Lexer {
     public final void mAT() throws RecognitionException {
         try {
             int _type = AT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:93:6: ( '@' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:93:6: '@'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:6: ( '@' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:93:6: '@'
             {
             match('@'); 
 
@@ -159,8 +159,8 @@ public class RuleLexer extends Lexer {
     public final void mCOLON() throws RecognitionException {
         try {
             int _type = COLON;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:94:9: ( ':' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:94:9: ':'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:9: ( ':' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:94:9: ':'
             {
             match(':'); 
 
@@ -177,8 +177,8 @@ public class RuleLexer extends Lexer {
     public final void mLPAR() throws RecognitionException {
         try {
             int _type = LPAR;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:95:8: ( '(' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:95:8: '('
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:8: ( '(' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:95:8: '('
             {
             match('('); 
 
@@ -195,8 +195,8 @@ public class RuleLexer extends Lexer {
     public final void mRPAR() throws RecognitionException {
         try {
             int _type = RPAR;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:96:8: ( ')' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:96:8: ')'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:8: ( ')' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:96:8: ')'
             {
             match(')'); 
 
@@ -213,8 +213,8 @@ public class RuleLexer extends Lexer {
     public final void mCOMA() throws RecognitionException {
         try {
             int _type = COMA;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:97:8: ( ',' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:97:8: ','
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:8: ( ',' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:97:8: ','
             {
             match(','); 
 
@@ -231,8 +231,8 @@ public class RuleLexer extends Lexer {
     public final void mEQUALS() throws RecognitionException {
         try {
             int _type = EQUALS;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:98:10: ( '==' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:98:10: '=='
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:10: ( '==' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:98:10: '=='
             {
             match("=="); 
 
@@ -250,8 +250,8 @@ public class RuleLexer extends Lexer {
     public final void mNOTEQUALS() throws RecognitionException {
         try {
             int _type = NOTEQUALS;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:99:13: ( '!=' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:99:13: '!='
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:13: ( '!=' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:99:13: '!='
             {
             match("!="); 
 
@@ -269,8 +269,8 @@ public class RuleLexer extends Lexer {
     public final void mDOT() throws RecognitionException {
         try {
             int _type = DOT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:100:7: ( '.' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:100:7: '.'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: ( '.' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:100:7: '.'
             {
             match('.'); 
 
@@ -287,8 +287,8 @@ public class RuleLexer extends Lexer {
     public final void mLEQ() throws RecognitionException {
         try {
             int _type = LEQ;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:101:7: ( '<=' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:101:7: '<='
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:7: ( '<=' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:101:7: '<='
             {
             match("<="); 
 
@@ -306,8 +306,8 @@ public class RuleLexer extends Lexer {
     public final void mLT() throws RecognitionException {
         try {
             int _type = LT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:102:6: ( '<' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:102:6: '<'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:6: ( '<' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:102:6: '<'
             {
             match('<'); 
 
@@ -324,8 +324,8 @@ public class RuleLexer extends Lexer {
     public final void mGEQ() throws RecognitionException {
         try {
             int _type = GEQ;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:103:7: ( '>=' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:103:7: '>='
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:7: ( '>=' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:7: '>='
             {
             match(">="); 
 
@@ -343,8 +343,8 @@ public class RuleLexer extends Lexer {
     public final void mGT() throws RecognitionException {
         try {
             int _type = GT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( '>' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:104:6: '>'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: ( '>' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:6: '>'
             {
             match('>'); 
 
@@ -361,8 +361,8 @@ public class RuleLexer extends Lexer {
     public final void mIF() throws RecognitionException {
         try {
             int _type = IF;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:105:6: ( 'if' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:105:6: 'if'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:6: ( 'if' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:6: 'if'
             {
             match("if"); 
 
@@ -380,10 +380,10 @@ public class RuleLexer extends Lexer {
     public final void mINT() throws RecognitionException {
         try {
             int _type = INT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( ( '0' .. '9' )+ )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( '0' .. '9' )+
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( ( '0' .. '9' )+ )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( '0' .. '9' )+
             {
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( '0' .. '9' )+
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:7: ( '0' .. '9' )+
             int cnt1=0;
             loop1:
             do {
@@ -397,7 +397,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:106:8: '0' .. '9'
+            	    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:8: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -427,8 +427,8 @@ public class RuleLexer extends Lexer {
     public final void mESC() throws RecognitionException {
         try {
             int _type = ESC;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:107:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:107:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); 
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -455,11 +455,11 @@ public class RuleLexer extends Lexer {
     public final void mSTRING() throws RecognitionException {
         try {
             int _type = STRING;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:108:10: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:108:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:10: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:108:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:14: ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )*
             loop2:
             do {
                 int alt2=3;
@@ -475,14 +475,14 @@ public class RuleLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:108:15: ESC
+            	    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:15: ESC
             	    {
             	    mESC(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:108:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
+            	    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:19: ~ ( '\"' | '\\\\' | '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -518,8 +518,8 @@ public class RuleLexer extends Lexer {
     public final void mID() throws RecognitionException {
         try {
             int _type = ID;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )? )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )?
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )? )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* ( '*' )?
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -531,7 +531,7 @@ public class RuleLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:109:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -544,7 +544,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:
+            	    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -565,7 +565,7 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:109:64: ( '*' )?
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:64: ( '*' )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -574,7 +574,7 @@ public class RuleLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:109:65: '*'
+                    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:65: '*'
                     {
                     match('*'); 
 
@@ -597,10 +597,10 @@ public class RuleLexer extends Lexer {
     public final void mWS() throws RecognitionException {
         try {
             int _type = WS;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ( ' ' | '\\t' | '\\n' )+ )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ' ' | '\\t' | '\\n' )+
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ( ' ' | '\\t' | '\\n' )+ )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ' ' | '\\t' | '\\n' )+
             {
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ' ' | '\\t' | '\\n' )+
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ' ' | '\\t' | '\\n' )+
             int cnt5=0;
             loop5:
             do {
@@ -614,7 +614,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:
+            	    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)==' ' ) {
             	        input.consume();
@@ -654,12 +654,12 @@ public class RuleLexer extends Lexer {
     public final void mSLCOMMENT() throws RecognitionException {
         try {
             int _type = SLCOMMENT;
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:13: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:13: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
 
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:18: (~ ( '\\n' | '\\r' ) )*
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:18: (~ ( '\\n' | '\\r' ) )*
             loop6:
             do {
                 int alt6=2;
@@ -672,7 +672,7 @@ public class RuleLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:19: ~ ( '\\n' | '\\r' )
+            	    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:19: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -693,7 +693,7 @@ public class RuleLexer extends Lexer {
                 }
             } while (true);
 
-            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:34: ( '\\n' | '\\r' ( '\\n' )? )?
+            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:34: ( '\\n' | '\\r' ( '\\n' )? )?
             int alt8=3;
             int LA8_0 = input.LA(1);
 
@@ -705,17 +705,17 @@ public class RuleLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:35: '\\n'
+                    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:35: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 2 :
-                    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:40: '\\r' ( '\\n' )?
+                    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:40: '\\r' ( '\\n' )?
                     {
                     match('\r'); 
-                    // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:44: ( '\\n' )?
+                    // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:44: ( '\\n' )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -724,7 +724,7 @@ public class RuleLexer extends Lexer {
                     }
                     switch (alt7) {
                         case 1 :
-                            // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:112:45: '\\n'
+                            // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:45: '\\n'
                             {
                             match('\n'); 
 
@@ -751,7 +751,7 @@ public class RuleLexer extends Lexer {
     // $ANTLR end SLCOMMENT
 
     public void mTokens() throws RecognitionException {
-        // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | AMPERCENT | UNDERSCORE | UNDERSCORESTAR | AT | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
+        // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | AMPERCENT | UNDERSCORE | UNDERSCORESTAR | AT | COLON | LPAR | RPAR | COMA | EQUALS | NOTEQUALS | DOT | LEQ | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
         int alt9=23;
         switch ( input.LA(1) ) {
         case '-':
@@ -1023,161 +1023,161 @@ public class RuleLexer extends Lexer {
 
         switch (alt9) {
             case 1 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:10: ARROW
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:10: ARROW
                 {
                 mARROW(); 
 
                 }
                 break;
             case 2 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:16: AMPERCENT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:16: AMPERCENT
                 {
                 mAMPERCENT(); 
 
                 }
                 break;
             case 3 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:26: UNDERSCORE
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:26: UNDERSCORE
                 {
                 mUNDERSCORE(); 
 
                 }
                 break;
             case 4 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:37: UNDERSCORESTAR
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:37: UNDERSCORESTAR
                 {
                 mUNDERSCORESTAR(); 
 
                 }
                 break;
             case 5 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:52: AT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:52: AT
                 {
                 mAT(); 
 
                 }
                 break;
             case 6 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:55: COLON
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:55: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
             case 7 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:61: LPAR
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:61: LPAR
                 {
                 mLPAR(); 
 
                 }
                 break;
             case 8 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:66: RPAR
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:66: RPAR
                 {
                 mRPAR(); 
 
                 }
                 break;
             case 9 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:71: COMA
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:71: COMA
                 {
                 mCOMA(); 
 
                 }
                 break;
             case 10 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:76: EQUALS
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:76: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
             case 11 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:83: NOTEQUALS
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:83: NOTEQUALS
                 {
                 mNOTEQUALS(); 
 
                 }
                 break;
             case 12 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:93: DOT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:93: DOT
                 {
                 mDOT(); 
 
                 }
                 break;
             case 13 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:97: LEQ
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:97: LEQ
                 {
                 mLEQ(); 
 
                 }
                 break;
             case 14 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:101: LT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:101: LT
                 {
                 mLT(); 
 
                 }
                 break;
             case 15 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:104: GEQ
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:104: GEQ
                 {
                 mGEQ(); 
 
                 }
                 break;
             case 16 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:108: GT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:108: GT
                 {
                 mGT(); 
 
                 }
                 break;
             case 17 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:111: IF
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:111: IF
                 {
                 mIF(); 
 
                 }
                 break;
             case 18 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:114: INT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:114: INT
                 {
                 mINT(); 
 
                 }
                 break;
             case 19 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:118: ESC
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:118: ESC
                 {
                 mESC(); 
 
                 }
                 break;
             case 20 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:122: STRING
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:122: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
             case 21 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:129: ID
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:129: ID
                 {
                 mID(); 
 
                 }
                 break;
             case 22 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:132: WS
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:132: WS
                 {
                 mWS(); 
 
                 }
                 break;
             case 23 :
-                // /home/balland/workspace/newsl/src/gen/tom/gom/expander/rule/Rule.g:1:135: SLCOMMENT
+                // /home/balland/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:135: SLCOMMENT
                 {
                 mSLCOMMENT(); 
 
