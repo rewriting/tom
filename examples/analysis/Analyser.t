@@ -205,7 +205,7 @@ public class Analyser{
         LabCfg("end",End())
         ).expand();
 
-    Analyseranalyser = new Analyser();
+    Analyser analyser = new Analyser();
     try{
       VariableRef var= new VariableRef();
       System.out.println("\nCfg with positions:\n" + cfg);
