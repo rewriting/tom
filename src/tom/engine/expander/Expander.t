@@ -255,7 +255,7 @@ matchBlock: {
               Type[TomType=ASTTomType(typeName)] -> {
                 //TODO: manage builtin types
                 if (! symbolTable.isBuiltinType(`typeName)) {
-                  TomTerm var = `Variable(concOption(),Name("v_"+typeName),tomtype,concConstraint());
+                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
@@ -286,7 +286,7 @@ matchBlock: {
             %match(tomtype) {
               Type[TomType=ASTTomType(typeName)] -> {
                 if (! symbolTable.isBuiltinType(`typeName)) {
-                  TomTerm var = `Variable(concOption(),Name("v_"+typeName),tomtype,concConstraint());
+                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
@@ -358,7 +358,7 @@ matchBlock: {
             %match(tomtype) {
               Type[TomType=ASTTomType(typeName)] -> {
                 if (! symbolTable.isBuiltinType(`typeName)) {
-                  TomTerm var = `Variable(concOption(),Name("v_"+typeName),tomtype,concConstraint());
+                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
@@ -446,7 +446,7 @@ matchBlock: {
               if(visitorFwd == null) {//first time in loop
                 visitorFwd = expander.symbolTable().getForwardType(`type);//do the job only once
               }
-              TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
+              TomTerm arg = `Variable(concOption(orgTrack),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
@@ -490,7 +490,7 @@ matchBlock: {
          *
          */        
         visitorFwd = `TLForward(Expander.basicStratName);         
-        TomTerm vVar = `Variable(concOption(),Name("v"),objectType,concConstraint());// v argument of visitLight
+        TomTerm vVar = `Variable(concOption(orgTrack),Name("v"),objectType,concConstraint());// v argument of visitLight
         InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
         Expression testEnvNotNull = null;
         // generate the visitLight
@@ -500,8 +500,8 @@ matchBlock: {
           Instruction ifInstr = `If(IsSort(type,vVar),returnStatement,Nop());
           ifList = `concInstruction(ifList*,ifInstr);
           // generate the _visit_Term
-          TomTerm arg = `Variable(concOption(),Name("arg"),type,concConstraint());
-          TomTerm environmentVar = `Variable(concOption(),Name("environment"),EmptyType(),concConstraint());
+          TomTerm arg = `Variable(concOption(orgTrack),Name("arg"),type,concConstraint());
+          TomTerm environmentVar = `Variable(concOption(orgTrack),Name("environment"),EmptyType(),concConstraint());
           Instruction return1 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visit(environment,introspector)"))))));
           Instruction return2 = `Return(ExpressionToTomTerm(Cast(type,TomInstructionToExpression(TargetLanguageToInstruction(ITL("any.visitLight(arg,introspector)"))))));
           testEnvNotNull = `Negation(EqualTerm(expander.getStreamManager().getSymbolTable().getBooleanType(),

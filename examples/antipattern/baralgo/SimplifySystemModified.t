@@ -37,7 +37,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
+public class SimplifySystemModified extends BasicStrategy {
 
   %include{ term/Term.tom }
   %include{ sl.tom }
@@ -50,82 +50,84 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
         true : false ); 
   }
 
-  public Constraint visit_Constraint(Constraint arg, Introspector i) throws VisitFailure {
+  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+    if (o instanceof Constraint) {
+      Constraint arg = (Constraint) o;
+      %match(Constraint arg) {
 
-    %match(Constraint arg) {
-
-      // NegDef
-      Match(Anti(p),s) -> {
-        return `Neg(Match(p,s));
-      }
-
-      // Decompose
-      Match(Appl(name,a1),Appl(name,a2)) -> {
-        AConstraintList l = `concAnd();
-        TermList args1 = `a1;
-        TermList args2 = `a2;
-        while(!args1.isEmptyconcTerm()) {
-          l = `concAnd(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
-          args1 = args1.getTailconcTerm();
-          args2 = args2.getTailconcTerm();					
+        // NegDef
+        Match(Anti(p),s) -> {
+          return `Neg(Match(p,s));
         }
-        return `And(l/* .reverseConstraintList() */);
-      }
 
-      // SymbolClash
-      Match(Appl(name1,args1),Appl(name2,args2)) -> {
-        if(`name1 != `name2) {
+        // Decompose
+        Match(Appl(name,a1),Appl(name,a2)) -> {
+          AConstraintList l = `concAnd();
+          TermList args1 = `a1;
+          TermList args2 = `a2;
+          while(!args1.isEmptyconcTerm()) {
+            l = `concAnd(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+            args1 = args1.getTailconcTerm();
+            args2 = args2.getTailconcTerm();					
+          }
+          return `And(l/* .reverseConstraintList() */);
+        }
+
+        // SymbolClash
+        Match(Appl(name1,args1),Appl(name2,args2)) -> {
+          if(`name1 != `name2) {
+            return `False();
+          }
+        }
+
+        // Replace
+        input@And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> {	            
+          Strategy rule,ruleStrategy;            
+          if (isIdentity){
+            rule = new ReplaceSystem(`var,`s, `Identity());
+            ruleStrategy = `InnermostId(rule);          
+          }else{
+            rule = new ReplaceSystem(`var,`s, `Fail());
+            ruleStrategy = `Innermost(rule);          
+          }  
+          Constraint res = null;
+
+          res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
+
+          if (res != `And(concAnd(X*,Y*))){
+            return `And(concAnd(match,res));
+          }
+        }
+
+        // Delete
+        Match(Appl(name,concTerm()),Appl(name,concTerm())) -> {
+          return `True();
+        }
+
+        // PropagateClash
+        And(concAnd(_*,False(),_*)) -> {
           return `False();
         }
-      }
 
-      // Replace
-      input@And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> {	            
-        Strategy rule,ruleStrategy;            
-        if (isIdentity){
-          rule = new ReplaceSystem(`var,`s, `Identity());
-          ruleStrategy = `InnermostId(rule);          
-        }else{
-          rule = new ReplaceSystem(`var,`s, `Fail());
-          ruleStrategy = `Innermost(rule);          
-        }  
-        Constraint res = null;
-        
-        res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
-        
-        if (res != `And(concAnd(X*,Y*))){
-          return `And(concAnd(match,res));
+        // PropagateSuccess
+        And(concAnd()) -> {
+          return `True();
         }
-      }
+        And(concAnd(x)) -> {
+          return `x;
+        }
 
-      // Delete
-      Match(Appl(name,concTerm()),Appl(name,concTerm())) -> {
-        return `True();
-      }
+        And(concAnd(X*,True(),Y*)) -> {
+          return `And(concAnd(X*,Y*));
+        }
 
-      // PropagateClash
-      And(concAnd(_*,False(),_*)) -> {
-        return `False();
-      }
+        // BooleanSimplification
+        Neg(Neg(x)) -> { return `x; }
+        Neg(True()) -> { return `False(); }
+        Neg(False()) -> { return `True(); }
 
-      // PropagateSuccess
-      And(concAnd()) -> {
-        return `True();
       }
-      And(concAnd(x)) -> {
-        return `x;
-      }
-
-      And(concAnd(X*,True(),Y*)) -> {
-        return `And(concAnd(X*,Y*));
-      }
-
-      // BooleanSimplification
-      Neg(Neg(x)) -> { return `x; }
-      Neg(True()) -> { return `False(); }
-      Neg(False()) -> { return `True(); }
-
     }
-    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
+    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
   }
 }

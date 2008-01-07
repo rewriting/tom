@@ -123,17 +123,6 @@ public class Backend {
         }
         return 1;
       }
-      VisitableFwdClass[ClassName=className] -> {
-        TemplateClass visitablefwd =
-          templatefactory.makeVisitableForwardTemplate(gomclass);
-        generators.put(`className,visitablefwd);
-        return 1;
-      }
-      VisitorClass[ClassName=className] -> {
-        TemplateClass visitor = templatefactory.makeVisitorTemplate(gomclass);
-        generators.put(`className,visitor);
-        return 1;
-      }
       AbstractTypeClass[ClassName=className,Mapping=mapping] -> {
         TemplateClass abstracttype =
           templatefactory.makeAbstractTypeTemplate(

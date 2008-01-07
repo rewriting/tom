@@ -42,70 +42,66 @@ import java.util.Collection;
 import tom.library.sl.*;
 
 public class SolveSystemExtended extends antipattern.SolveSystem {    
-	
-	%include{ term/Term.tom }
-	%include{ sl.tom }
-	
-    public SolveSystemExtended(Collection c,Strategy vis) {
-      super(c,vis);            
-    }
-   
-    public Constraint visit_Constraint(Constraint arg, Introspector i) throws VisitFailure {
-    	
-    	Constraint result = null;
-    	
-    	try{
-    		result = super.visit_Constraint(arg,i);
-    		
-    		//if it didn't entered the match of the super.visit_Constraint
-    		//than maybe it will enter the one of the extendedVisit
-    		if (isIdentity && arg == result){
-    			return extendedVisit(arg);
-    		}
-    		
-    		return result;
-    		
-    	}catch(VisitFailure vf){ //can only happen when the visit failed
-    		return extendedVisit(arg);
-    	}    	
-    }
-    
-    private Constraint extendedVisit(Constraint arg) throws VisitFailure {
-    	
-      %match(Constraint arg) {   	  
-    	      	        
+
+  %include{ term/Term.tom }
+  %include{ sl.tom }
+
+  public SolveSystemExtended(Collection c,Strategy vis) {
+    super(c,vis);            
+  }
+
+  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+    Object result = null;
+    try{
+      result = super.visitLight(o,i);
+      //if it didn't entered the match of the super.visit_Constraint
+      //than maybe it will enter the one of the extendedVisit
+      if (isIdentity && o == result){
+        return extendedVisit(o,i);
+      }
+      return result;
+    }catch(VisitFailure vf){ //can only happen when the visit failed
+      return extendedVisit(o,i);
+    }    	
+  }
+
+  private Object extendedVisit(Object o, Introspector i) throws VisitFailure {
+    if (o instanceof Constraint) {
+      Constraint arg = (Constraint) o;
+      %match(Constraint arg) { 
+
         GreaterThan(Appl(var1,_),Appl(var2,_)) ->{
-        	if (Integer.parseInt(`var1) > Integer.parseInt(`var2)){
-        		return `True();
-        	}
-        	
-        	return `False();
+          if (Integer.parseInt(`var1) > Integer.parseInt(`var2)){
+            return `True();
+          }
+
+          return `False();
         }
         Neg(GreaterThan(Appl(var1,_),Appl(var2,_))) ->{
-        	if (Integer.parseInt(`var1) > Integer.parseInt(`var2)){
-        		return `False();
-        	}
-        	
-        	return `True();
+          if (Integer.parseInt(`var1) > Integer.parseInt(`var2)){
+            return `False();
+          }
+
+          return `True();
         }
         LessThan(Appl(var1,_),Appl(var2,_)) ->{
-        	if (Integer.parseInt(`var1) < Integer.parseInt(`var2)){
-        		return `True();
-        	}
-        	
-        	return `False();
+          if (Integer.parseInt(`var1) < Integer.parseInt(`var2)){
+            return `True();
+          }
+
+          return `False();
         }        
         Neg(LessThan(Appl(var1,_),Appl(var2,_))) ->{
-        	if (Integer.parseInt(`var1) < Integer.parseInt(`var2)){
-        		return `False();
-        	}
-        	
-        	return `True();
+          if (Integer.parseInt(`var1) < Integer.parseInt(`var2)){
+            return `False();
+          }
+
+          return `True();
         }
-        
+
       }
-      
-      return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
-    }  
-    
-  }
+    }
+    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+  }  
+
+}

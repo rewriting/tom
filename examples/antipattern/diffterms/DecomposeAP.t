@@ -37,7 +37,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class DecomposeAP extends antipattern.term.TermBasicStrategy {
+public class DecomposeAP extends BasicStrategy {
 
   %include{ term/Term.tom }
   %include{ sl.tom }
@@ -52,19 +52,21 @@ public class DecomposeAP extends antipattern.term.TermBasicStrategy {
         true : false ); 
   }
 
-  public Term visit_Term(Term arg, Introspector i) throws VisitFailure {		
-
-    %match(Term arg){			
-      // first rule
-      Anti(p) ->{
-        return `TermDiff(Variable("x_" + varCounter++),p);
+  public Object visitLight(Object o, Introspector i) throws VisitFailure {		
+    if (o instanceof Term) {
+      Term arg = (Term) o;
+      %match(Term arg){
+        // first rule
+        Anti(p) ->{
+          return `TermDiff(Variable("x_" + varCounter++),p);
+        }
+        // second one
+        Appl(name, concTerm(X*,TermDiff(firstTerm,secondTerm),Y*)) -> {
+          return `TermDiff(Appl(name, concTerm(X*,firstTerm,Y*)),
+              Appl(name, concTerm(X*,secondTerm,Y*)));
+        }			
       }
-      // second one
-      Appl(name, concTerm(X*,TermDiff(firstTerm,secondTerm),Y*)) -> {
-        return `TermDiff(Appl(name, concTerm(X*,firstTerm,Y*)),
-            Appl(name, concTerm(X*,secondTerm,Y*)));
-      }			
     }
-    return  (isIdentity ? arg : (Term)`Fail().visitLight(arg));
+    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
   }		
 }

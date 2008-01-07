@@ -34,7 +34,6 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.platform.OptionManager;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
-  ClassName visitor;
   ClassNameList sortList;
 
   %include { ../../adt/objects/Objects.tom }
@@ -46,9 +45,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
     %match(gomClass) {
-      AbstractTypeClass[Visitor=visitorName,
-                        SortList=sortList] -> {
-        this.visitor = `visitorName;
+      AbstractTypeClass[SortList=sortList] -> {
         this.sortList = `sortList;
         return;
       }
@@ -104,7 +101,6 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
     this.uniqueID = uniqueID;
   }
 
-  abstract public @className()@ accept(@fullClassName(visitor)@ v, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure;
 }
 ]%);
  }

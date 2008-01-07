@@ -57,8 +57,6 @@ public class Compiler {
 
     /* ModuleDecl -> (AbstractType) ClassName */
     Map abstractTypeNameForModule = new HashMap();
-    Map visitorNameForModule = new HashMap();
-    Map visitableForwardNameForModule = new HashMap();
     Map tomMappingNameForModule = new HashMap();
     /* SortDecl -> SortClass */
     Map sortGomClassForSortDecl = new HashMap();
@@ -73,16 +71,6 @@ public class Compiler {
         ClassName abstractTypeName = `ClassName(
             packagePrefix(moduleDecl),
             moduleName+"AbstractType");
-
-        ClassName visitorName = `ClassName(
-            packagePrefix(moduleDecl),
-            moduleName+"Visitor");
-        visitorNameForModule.put(`moduleDecl,visitorName);
-
-        ClassName visitablefwdName = `ClassName(
-            packagePrefix(moduleDecl),
-            moduleName+"BasicStrategy");
-        visitableForwardNameForModule.put(`moduleDecl,visitablefwdName);
 
         ClassName tomMappingName = `ClassName(
             packagePrefix(moduleDecl),
@@ -117,8 +105,6 @@ public class Compiler {
         // get the class name for the sort
         ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
         ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
-        ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
-        ClassName visitableforwardName = (ClassName)visitableForwardNameForModule.get(`moduleDecl);
         ClassName mappingName = (ClassName)tomMappingNameForModule.get(`moduleDecl);
         // create operator classes. Also, store a list of all operators for the sort class
         // use a Set to collect slots and avoid duplicates
@@ -172,7 +158,7 @@ public class Compiler {
                   variadicOpClassName,
                   mappingName,
                   sortClassName,
-                  visitorName, slots,
+                  slots,
                   ConcHook());
 
               GomClass emptyClass = `OperatorClass(empty,
@@ -180,11 +166,10 @@ public class Compiler {
                                                    variadicOpClassName,
                                                    mappingName,
                                                    sortClassName,
-                                                   visitorName,
                                                    ConcSlotField(),
                                                    ConcHook());
 
-              operatorClass = `VariadicOperatorClass(variadicOpClassName ,
+              operatorClass = `VariadicOperatorClass(variadicOpClassName,
                                                      abstracttypeName,
                                                      mappingName,
                                                      sortClassName,
@@ -197,7 +182,7 @@ public class Compiler {
                                              sortClassName,
                                              mappingName,
                                              sortClassName,
-                                             visitorName,slots,
+                                             slots,
                                              ConcHook());
             }
             classForOperatorDecl.put(`opdecl,operatorClass);
@@ -208,8 +193,6 @@ public class Compiler {
         GomClass sortClass = `SortClass(sortClassName,
                                         abstracttypeName,
                                         mappingName,
-                                        visitorName,
-                                        visitableforwardName,
                                         allOperators,
                                         allVariadicOperators,
                                         slotFieldListFromSet(allSortSlots),
@@ -258,24 +241,10 @@ public class Compiler {
         ClassName abstractTypeClassName = (ClassName)
           abstractTypeNameForModule.get(`moduleDecl);
 
-        // late creation of the visitors, since it has to know all operators
-        ClassName visitorName = (ClassName)
-          visitorNameForModule.get(`moduleDecl);
-        GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
-        classList = `ConcGomClass(visitorclass,classList*);
-
-        /* create a VisitableFwd class */
-        ClassNameList importedVisitors = allClassForImports(visitorNameForModule,`moduleDecl);
-        ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"BasicStrategy");
-        ClassNameList importedAbstractType = allClassForImports(abstractTypeNameForModule,`moduleDecl);
-        GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
-        classList = `ConcGomClass(visitablefwdclass,classList*);
-
         /* create a TomMapping */
         ClassName tomMappingName = (ClassName)
           tomMappingNameForModule.get(`moduleDecl);
         GomClass tommappingclass = `TomMapping(tomMappingName,
-                                               visitablefwdName,
                                                allSortClasses,
                                                allOperatorClasses);
         classList = `ConcGomClass(tommappingclass,classList*);
@@ -287,7 +256,6 @@ public class Compiler {
         GomClass abstracttype =
           `AbstractTypeClass(abstractTypeName,
                              tomMappingName,
-                             visitorName,
                              classSortList,
                              ConcHook());
         classList = `ConcGomClass(abstracttype,classList*);

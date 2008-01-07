@@ -478,7 +478,7 @@ writer.write(%[
     return buffer.toString();
   }
 
-  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+  public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     boolean hasHook = false;
     %match(HookList hooks) {

@@ -47,14 +47,12 @@ public class StratMappingTemplate extends MappingTemplateClass {
     throw new GomRuntimeException(
         "Wrong argument for MappingTemplate: " + gomClass);
   }
-
-  public void generate(java.io.Writer writer) throws java.io.IOException {
-    generateTomMapping(writer, null);
+  
+  public void generateTomMapping(java.io.Writer writer) throws java.io.IOException {
+    generate(writer);
   }
 
-  public void generateTomMapping(Writer writer, ClassName basicStrategy)
-      throws java.io.IOException {
-
+  public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
    /*
    %include { mustrategy.tom }

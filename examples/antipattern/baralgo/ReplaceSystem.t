@@ -37,7 +37,7 @@ import antipattern.term.types.*;
 
 import tom.library.sl.*;
 
-public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
+public class ReplaceSystem extends BasicStrategy {
 	
 	%include{ term/Term.tom }
 	%include{ sl.tom }
@@ -54,10 +54,10 @@ public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
     		  true : false );       
     }
    
-    public Term visit_Term(Term arg, Introspector i) throws VisitFailure { 
-      if(arg==variable) {
+    public Object visitLight(Object o, Introspector i) throws VisitFailure { 
+      if(o==variable) {
         return value;
       } 
-      return (isIdentity ? arg : (Term)`Fail().visitLight(arg));
+      return (isIdentity ? o : (Term)`Fail().visitLight(o,i));
     }
   }  

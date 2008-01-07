@@ -39,67 +39,68 @@ import tom.library.sl.*;
 
 import java.util.Collection;
 
-public class SolveSystem extends antipattern.term.TermBasicStrategy {
-    
-	%include{ term/Term.tom }
-	%include{ sl.tom }
+public class SolveSystem extends BasicStrategy {
 
-	protected Collection solution; 
-	protected boolean isIdentity;
-	
-    public SolveSystem(Collection c,Strategy vis) {
-      super(vis);
-      this.solution = c;
-      this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
-  		  true : false );      
-    }
-   
-    public Constraint visit_Constraint(Constraint arg, Introspector i) throws VisitFailure {
-    	
+  %include{ term/Term.tom }
+  %include{ sl.tom }
+
+  protected Collection solution; 
+  protected boolean isIdentity;
+
+  public SolveSystem(Collection c,Strategy vis) {
+    super(vis);
+    this.solution = c;
+    this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
+        true : false );      
+  }
+
+  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+    if (o instanceof Constraint) {
+      Constraint arg = (Constraint) o;
       %match(Constraint arg) {
         match@Match(var@Variable(name),s) -> {
-            solution.add(`match); 
-            Constraint res = `True();
-            /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
-            return res;
+          solution.add(`match); 
+          Constraint res = `True();
+          /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
+          return res;
         }
         Neg(match@Match(var@Variable(name),s)) -> {
-            solution.add(`match); 
-            Constraint res = `False();
-            /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
-            return res;
+          solution.add(`match); 
+          Constraint res = `False();
+          /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
+          return res;
         }
         And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> {
-            solution.add(`match);
-            Strategy rule,ruleStrategy;            
-            if (isIdentity){
-            	rule = new ReplaceSystem(`var,`s, `Identity());
-            	ruleStrategy = `InnermostId(rule);
-            }else{
-            	rule = new ReplaceSystem(`var,`s, `Fail());
-            	ruleStrategy = `Innermost(rule);
-            }            
-            Constraint res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
-            /* System.out.println("[solve3] -> [" + match + "," + res + "]"); */
-            return res;
+          solution.add(`match);
+          Strategy rule,ruleStrategy;            
+          if (isIdentity){
+            rule = new ReplaceSystem(`var,`s, `Identity());
+            ruleStrategy = `InnermostId(rule);
+          }else{
+            rule = new ReplaceSystem(`var,`s, `Fail());
+            ruleStrategy = `Innermost(rule);
+          }            
+          Constraint res = (Constraint) ruleStrategy.visitLight(`And(concAnd(X*,Y*)));
+          /* System.out.println("[solve3] -> [" + match + "," + res + "]"); */
+          return res;
         }
         Neg(And(concAnd(X*,match@Match(var@Variable(name),s),Y*))) -> {
-            solution.add(`match);
-            Strategy rule,ruleStrategy;            
-            if (isIdentity){
-            	rule = new ReplaceSystem(`var,`s, `Identity());
-            	ruleStrategy = `InnermostId(rule);
-            }else{
-            	rule = new ReplaceSystem(`var,`s, `Fail());
-            	ruleStrategy = `Innermost(rule);
-            }
-            Constraint res = (Constraint) ruleStrategy.visitLight(`Neg(And(concAnd(X*,Y*))));
-            /* System.out.println("[solve4] -> [" + match + "," + res + "]"); */
-            return res;
+          solution.add(`match);
+          Strategy rule,ruleStrategy;            
+          if (isIdentity){
+            rule = new ReplaceSystem(`var,`s, `Identity());
+            ruleStrategy = `InnermostId(rule);
+          }else{
+            rule = new ReplaceSystem(`var,`s, `Fail());
+            ruleStrategy = `Innermost(rule);
+          }
+          Constraint res = (Constraint) ruleStrategy.visitLight(`Neg(And(concAnd(X*,Y*))));
+          /* System.out.println("[solve4] -> [" + match + "," + res + "]"); */
+          return res;
         }
       }
-      
-      return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
     }
-  
+    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
+  }
+
 }

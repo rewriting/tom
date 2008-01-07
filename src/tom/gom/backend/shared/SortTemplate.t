@@ -35,7 +35,6 @@ import tom.platform.OptionManager;
 
 public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
-  ClassName visitor;
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
   SlotFieldList slotList;
@@ -50,12 +49,10 @@ public class SortTemplate extends TemplateHookedClass {
     super(gomClass,manager,tomHomePath,importList,mapping);
     %match(gomClass) {
       SortClass[AbstractType=abstractType,
-                Visitor=visitor,
                 Operators=ops,
                 VariadicOperators=variops,
                 SlotFields=slots] -> {
         this.abstractType = `abstractType;
-        this.visitor = `visitor;
         this.operatorList = `ops;
         this.variadicOperatorList = `variops;
         this.slotList = `slots;
@@ -76,10 +73,6 @@ package @getPackage()@;
 public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 @generateBlock()@
-  @@Override
-  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v,tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
-    return v.@visitMethod(className)@(this,i);
-  }
 ]%);
 generateBody(writer);
 writer.write(%[
@@ -256,7 +249,7 @@ matchblock: {
     }
   }
 
-  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+  public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     writer.write(%[
 %typeterm @className()@ {
@@ -264,7 +257,6 @@ matchblock: {
   is_sort(t) { ($t instanceof @fullClassName()@) }
   //equals(t1,t2) { $t1.equals($t2) }
   equals(t1,t2) { ($t1==$t2) }
-  visitor_fwd { @fullClassName(basicStrategy)@ }
 }
 ]%);
     return;

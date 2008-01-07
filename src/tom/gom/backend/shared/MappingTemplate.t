@@ -33,7 +33,6 @@ import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
 public class MappingTemplate extends MappingTemplateClass {
-  ClassName basicStrategy;
   GomClassList sortClasses;
   GomClassList operatorClasses;
   TemplateClass strategyMapping;
@@ -43,10 +42,8 @@ public class MappingTemplate extends MappingTemplateClass {
   public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping) {
     super(gomClass);
     %match(gomClass) {
-      TomMapping[BasicStrategy=basicStrategy,
-                 SortClasses=sortClasses,
+      TomMapping[SortClasses=sortClasses,
                  OperatorClasses=ops] -> {
-        this.basicStrategy = `basicStrategy;
         this.sortClasses = `sortClasses;
         this.operatorClasses = `ops;
         this.strategyMapping = strategyMapping;
@@ -110,7 +107,7 @@ public class MappingTemplate extends MappingTemplateClass {
           SortClass[ClassName=sortName],
           _*) -> {
         ((TemplateClass) templates.get(`sortName))
-          .generateTomMapping(writer,basicStrategy);
+          .generateTomMapping(writer);
       }
     }
 
@@ -120,7 +117,7 @@ public class MappingTemplate extends MappingTemplateClass {
           OperatorClass[ClassName=opName],
           _*) -> {
         ((TemplateClass) templates.get(`opName))
-          .generateTomMapping(writer,basicStrategy);
+          .generateTomMapping(writer);
       }
     }
 
@@ -130,12 +127,12 @@ public class MappingTemplate extends MappingTemplateClass {
           VariadicOperatorClass[ClassName=opName],
           _*) -> {
         ((TemplateClass) templates.get(`opName))
-          .generateTomMapping(writer,basicStrategy);
+          .generateTomMapping(writer);
       }
     }
     /* Include the strategy mapping if needed */
     if (strategyMapping != null) {
-      strategyMapping.generateTomMapping(writer,basicStrategy);
+      strategyMapping.generateTomMapping(writer);
     }
   }
 

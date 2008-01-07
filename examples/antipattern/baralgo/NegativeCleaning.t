@@ -34,12 +34,10 @@ import aterm.pure.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
-
-
 import java.util.Collection;
 import tom.library.sl.*;
 
-public class NegativeCleaning extends antipattern.term.TermBasicStrategy {
+public class NegativeCleaning extends BasicStrategy {
 
   %include{ term/Term.tom }
   %include{ sl.tom }
@@ -52,23 +50,24 @@ public class NegativeCleaning extends antipattern.term.TermBasicStrategy {
         true : false );
   }
 
-  public Constraint visit_Constraint(Constraint arg, Introspector i) throws VisitFailure {
-
-    %match(Constraint arg) {        
-      Neg(Match(Variable(name),s)) -> {             
-        return `False();
-      }
-      // if the conjunction contains negative
-      // then it shoudn't be replaced by false
-      Neg(And(concAnd(X*,Neg(a),Y*))) -> {
-        return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
-      }
-      Neg(And(concAnd(X*))) -> {
-        return `False();
+  public Object visitLight(Object o, Introspector i) throws VisitFailure {
+    if (o instanceof Constraint) {
+      Constraint arg = (Constraint) o;
+      %match(Constraint arg) {  
+        Neg(Match(Variable(name),s)) -> {             
+          return `False();
+        }
+        // if the conjunction contains negative
+        // then it shoudn't be replaced by false
+        Neg(And(concAnd(X*,Neg(a),Y*))) -> {
+          return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
+        }
+        Neg(And(concAnd(X*))) -> {
+          return `False();
+        }
       }
     }
-
-    return (isIdentity ? arg : (Constraint)`Fail().visitLight(arg));
+    return (isIdentity ? o : (Constraint)`Fail().visitLight(o,i));
   }
 
 }

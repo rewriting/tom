@@ -450,7 +450,7 @@ public abstract class TemplateClass {
     }
   }
 
-  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+  public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     return;
   }

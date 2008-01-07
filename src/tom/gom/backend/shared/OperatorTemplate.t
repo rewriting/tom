@@ -39,7 +39,6 @@ public class OperatorTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassName extendsType;
   ClassName sortName;
-  ClassName visitor;
   SlotFieldList slotList;
   boolean multithread;
 
@@ -57,12 +56,10 @@ public class OperatorTemplate extends TemplateHookedClass {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
                     SortName=sortName,
-                    Visitor=visitorName,
                     SlotFields=slots] -> {
         this.abstractType = `abstractType;
         this.extendsType = `extendsType;;
         this.sortName = `sortName;
-        this.visitor = `visitorName;
         this.slotList = `slots;
         return;
       }
@@ -871,7 +868,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         "OperatorTemplate:recVarNameRemap failed " + oargs + " " + nargs);
   }
 
-  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+  public void generateTomMapping(Writer writer)
       throws java.io.IOException {
     %match(hooks) {
       !ConcHook(_*,MappingHook[],_*) -> {

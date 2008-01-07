@@ -186,7 +186,7 @@ public class SimplifySystemRule {
     }
   }
 
-  class ContainsTerm extends antipattern.term.TermBasicStrategy {
+  class ContainsTerm extends BasicStrategy {
 
     private boolean found = false;
     private Term objToSearchFor = null;
@@ -197,12 +197,12 @@ public class SimplifySystemRule {
       this.found = false;
     }
 
-    public Term visit_Term(Term arg, Introspector i) throws VisitFailure { 
-      if(arg == objToSearchFor) {
+    public Object visitLight(Object o, Introspector i) throws VisitFailure { 
+      if(o == objToSearchFor) {
         found = true;
         System.out.println("!!FOUND!!");
       } 
-      return arg;
+      return o;
     }
 
     public boolean getFound(){
