@@ -1,3 +1,8 @@
+2008-01-07 balland
+  * remove autodispatch option (default behaviour)
+  * simplify Gom consequently (remove the generation of BasicStrategy and VisitorFwd classes)
+  * bootstrap
+
 2007-12-20 pem
   * fix PR-3942 by modifying get_slice [please check]
 
