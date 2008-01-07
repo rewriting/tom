@@ -40,7 +40,7 @@ import tom.library.sl.*;
 import java.util.*;
 
 
-public class AnalyserBasedOnRef{
+public class Analyser{
   
   %include {sl.tom }
   %include {util/HashMap.tom}
@@ -205,7 +205,7 @@ public class AnalyserBasedOnRef{
         LabCfg("end",End())
         ).expand();
 
-    AnalyserBasedOnRef analyser = new AnalyserBasedOnRef();
+    Analyseranalyser = new Analyser();
     try{
       VariableRef var= new VariableRef();
       System.out.println("\nCfg with positions:\n" + cfg);
@@ -228,7 +228,7 @@ public class AnalyserBasedOnRef{
       e.printStackTrace();
     }
   }
-}//class AnalyserBasedOnRef
+}//class Analyser
 
 class VariableRef{
 
