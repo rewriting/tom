@@ -61,4 +61,4 @@ TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }
 verifier au make des TwoCell la target des constructeurs
 redŽfinir le makeTomFile : demander liste des 1-cellules, des 2-cellules et des 3 cellules pour les fonctions en generant les 3-cellules de structure
 
-types->constructor->rules
+ty

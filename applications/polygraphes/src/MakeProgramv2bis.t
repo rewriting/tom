@@ -19,6 +19,7 @@ public class MakeProgramv2bis{
 private static Vector<ThreePath> rewritingRules=new Vector<ThreePath>();
 private static Vector<OneCell> types=new Vector<OneCell>();
 private static Vector<TwoPath> constructors=new Vector<TwoPath>();
+private static Vector<TwoPath> functions=new Vector<TwoPath>();
 //-----------------------------------------------------------------------------
 // NAT
 //-----------------------------------------------------------------------------
@@ -28,23 +29,14 @@ private static	OnePath nat=`OneCell("nat");
 private static	TwoPath zero=`TwoCell("zero",Id(),nat,Constructor());
 private static	TwoPath succ =`TwoCell("succ",nat,nat,Constructor());
 // 2-cellules de structure
-private static	TwoPath eraser= `TwoCell("eraser",nat,Id(),Function());
-private static	TwoPath duplication= `TwoCell("duplication",nat,OneC0(nat,nat),Function());
-private static	TwoPath permutation = `TwoCell("permutation",OneC0(nat,nat),OneC0(nat,nat),Function());
+private static	TwoPath eraser= makeEraser("nat");
+private static	TwoPath duplication= makeDuplication("nat");
+private static	TwoPath permutation = makePermutation((OneCell)nat,(OneCell)nat);
 // addition, soustraction et division
 private static	TwoPath plus = `TwoCell("plus",OneC0(nat,nat),nat,Function());
 private static	TwoPath minus = `TwoCell("minus",OneC0(nat,nat),nat,Function());
 private static	TwoPath division = `TwoCell("division",OneC0(nat,nat),nat,Function());
 private static	TwoPath multiplication = `TwoCell("multiplication",OneC0(nat,nat),nat,Function());
-// 3-cellules de structure
-private static	ThreePath zeroPerm1 = `ThreeCell("zeroPerm1",TwoC1(TwoC0(zero,TwoId(nat)),permutation),TwoC0(TwoId(nat),zero),Function());
-private static	ThreePath zeroPerm2 = `ThreeCell("zeroPerm2",TwoC1(TwoC0(TwoId(nat),zero),permutation),TwoC0(zero,TwoId(nat)),Function());
-private static	ThreePath zeroDup = `ThreeCell("zeroDup",TwoC1(zero,duplication),TwoC0(zero,zero),Function());
-private static	ThreePath zeroEraz = `ThreeCell("zeroEraz",TwoC1(zero,eraser),TwoId(Id()),Function());
-private static	ThreePath succPerm1 = `ThreeCell("succPerm1",TwoC1(TwoC0(succ,TwoId(nat)),permutation),TwoC1(permutation,TwoC0(TwoId(nat),succ)),Function());
-private static	ThreePath succPerm2 = `ThreeCell("succPerm2",TwoC1(TwoC0(TwoId(nat),succ),permutation),TwoC1(permutation,TwoC0(succ,TwoId(nat))),Function());
-private static	ThreePath succDup = `ThreeCell("succDup",TwoC1(succ,duplication),TwoC1(duplication,TwoC0(succ,succ)),Function());
-private static	ThreePath succEraz = `ThreeCell("succEraz",TwoC1(succ,eraser),TwoC1(TwoId(nat),eraser),Function());
 // regles
 private static	ThreePath plusZero = `ThreeCell("plusZero",TwoC1(TwoC0(zero,TwoId(nat)),plus),TwoId(nat),Function());
 private static	ThreePath plusSucc = `ThreeCell("plusSucc",TwoC1(TwoC0(succ,TwoId(nat)),plus),TwoC1(plus,succ),Function());
@@ -65,43 +57,21 @@ private static	TwoPath consList=`TwoCell("consList",Id(),list,Constructor());
 private static	TwoPath add =`TwoCell("add",OneC0(nat,list),list,Constructor());
 private static  TwoPath append=`TwoCell("append",OneC0(list,nat),list,Constructor());
 // 2-cellules de structure
-private static	TwoPath eraserList= `TwoCell("eraserList",list,Id(),Function());
-private static	TwoPath duplicationList= `TwoCell("duplicationList",list,OneC0(list,list),Function());
-private static	TwoPath permutationList = `TwoCell("permutationList",OneC0(list,list),OneC0(list,list),Function());
-private static	TwoPath permutationNL = `TwoCell("permutationNL",OneC0(nat,list),OneC0(list,nat),Function());
-private static	TwoPath permutationLN = `TwoCell("permutationLN",OneC0(list,nat),OneC0(nat,list),Function());
+private static	TwoPath eraserList= makeEraser("list");
+private static	TwoPath duplicationList= makeDuplication("list");
+private static	TwoPath permutationList = makePermutation((OneCell)list,(OneCell)list);
+private static	TwoPath permutationNL = makePermutation((OneCell)nat,(OneCell)list);
+private static	TwoPath permutationLN = makePermutation((OneCell)list,(OneCell)nat);
 // addition, soustraction et division
 private static	TwoPath sort = `TwoCell("sort",list,list,Function());
 private static	TwoPath split = `TwoCell("split",list,OneC0(list,list),Function());
 private static	TwoPath merge = `TwoCell("merge",OneC0(list,list),list,Function());
 //regles
-private static ThreePath erazList = `ThreeCell("erazList",TwoC1(consList,eraserList),TwoId(Id()),Function());
-private static ThreePath duppList = `ThreeCell ("duppList",TwoC1(consList,duplicationList),TwoC0(consList,consList),Function());
-private static ThreePath permList1 = `ThreeCell ("permList1",TwoC1(TwoC0(TwoId(list),consList),permutationList),TwoC0(consList,TwoId(list)),Function());
-private static ThreePath permList2 = `ThreeCell ("permList2",TwoC1(TwoC0(consList,TwoId(list)),permutationList),TwoC0(TwoId(list),consList),Function());
-private static ThreePath permNLList = `ThreeCell ("permNLList",TwoC1(TwoC0(TwoId(nat),consList),permutationNL),TwoC0(consList,TwoId(nat)),Function());
-private static ThreePath permLNList = `ThreeCell ("permLNList",TwoC1(TwoC0(consList,TwoId(nat)),permutationLN),TwoC0(TwoId(nat),consList),Function());
-private static ThreePath permNLzero = `ThreeCell ("permNLzero",TwoC1(TwoC0(zero,TwoId(list)),permutationNL),TwoC0(TwoId(list),zero),Function());
-private static ThreePath permLNzero = `ThreeCell ("permLNzero",TwoC1(TwoC0(TwoId(list),zero),permutationLN),TwoC0(zero,TwoId(list)),Function());
-private static ThreePath permNLsucc = `ThreeCell ("permNLsucc",TwoC1(TwoC0(succ,TwoId(list)),permutationNL),TwoC1(permutationNL,TwoC0(TwoId(list),succ)),Function());
-private static ThreePath permLNsucc = `ThreeCell ("permLNsucc",TwoC1(TwoC0(TwoId(list),succ),permutationLN),TwoC1(permutationLN,TwoC0(succ,TwoId(list))),Function());
 //section append-----------------------
 //private static ThreePath appendToAdd= `ThreeCell("appendToAdd",append,TwoC1(permutationLN,add),Function());
 private static ThreePath appendToAdd= `ThreeCell("appendToAdd",TwoC1(TwoC0(consList,TwoId(nat)),append),TwoC1(TwoC0(TwoId(nat),consList),add),Function());
 private static ThreePath addAppend = `ThreeCell("addAppend",TwoC1(TwoC0(TwoC1(TwoC0(TwoId(nat),TwoId(list)),add),TwoId(nat)),append),TwoC1(TwoC0(TwoId(nat),TwoC1(TwoC0(TwoId(list),TwoId(nat)),append)),add),Function());
-private static ThreePath appendEraser =`ThreeCell("appendEraser",TwoC1(append,eraserList),TwoC0(eraserList,eraser),Function());
-private static ThreePath appendDup = `ThreeCell("appendDup",TwoC1(append,duplicationList),TwoC1(TwoC0(duplicationList,duplication),TwoC0(TwoId(list),permutationLN,TwoId(nat)),TwoC0(append,append)),Function());
-private static ThreePath permAppend1 = `ThreeCell ("permAppend1",TwoC1(TwoC0(TwoId(list),append),permutationList),TwoC1(TwoC0(permutationList,TwoId(nat)),TwoC0(TwoId(list),permutationLN),TwoC0(append,TwoId(list))),Function());
-private static ThreePath permAppend2 = `ThreeCell ("permAppend2",TwoC1(TwoC0(append,TwoId(list)),permutationList),TwoC1(TwoC0(TwoId(list),permutationNL),TwoC0(permutationList,TwoId(nat)),TwoC0(TwoId(list),append)),Function());
-private static ThreePath permNLAppend = `ThreeCell ("permNLAppend",TwoC1(TwoC0(TwoId(nat),append),permutationNL),TwoC1(TwoC0(permutationNL,TwoId(nat)),TwoC0(TwoId(list),permutation),TwoC0(append,TwoId(nat))),Function());
-private static ThreePath permLNAppend = `ThreeCell ("permLNAppend",TwoC1(TwoC0(append,TwoId(nat)),permutationLN),TwoC1(TwoC0(TwoId(list),permutation),TwoC0(permutationLN,TwoId(nat)),TwoC0(TwoId(nat),append)),Function());
 //-------------------------------------
-private static ThreePath addEraser = `ThreeCell("addEraser",TwoC1(add,eraserList),TwoC0(eraser,eraserList),Function());
-private static ThreePath addDup = `ThreeCell("addDup",TwoC1(add,duplicationList),TwoC1(TwoC0(duplication,duplicationList),TwoC0(TwoId(nat),permutationNL,TwoId(list)),TwoC0(add,add)),Function());
-private static ThreePath permAdd1 = `ThreeCell ("permAdd1",TwoC1(TwoC0(TwoId(list),add),permutationList),TwoC1(TwoC0(permutationLN,TwoId(list)),TwoC0(TwoId(nat),permutationList),TwoC0(add,TwoId(list))),Function());
-private static ThreePath permAdd2 = `ThreeCell ("permAdd2",TwoC1(TwoC0(add,TwoId(list)),permutationList),TwoC1(TwoC0(TwoId(nat),permutationList),TwoC0(permutationNL,TwoId(list)),TwoC0(TwoId(list),add)),Function());
-private static ThreePath permNLAdd = `ThreeCell ("permNLAdd",TwoC1(TwoC0(TwoId(nat),add),permutationNL),TwoC1(TwoC0(permutation,TwoId(list)),TwoC0(TwoId(nat),permutationNL),TwoC0(add,TwoId(nat))),Function());
-private static ThreePath permLNAdd = `ThreeCell ("permLNAdd",TwoC1(TwoC0(add,TwoId(nat)),permutationLN),TwoC1(TwoC0(TwoId(nat),permutationLN),TwoC0(permutation,TwoId(list)),TwoC0(TwoId(nat),add)),Function());
 //regles liees aux fonctions
 private static ThreePath consListSort = `ThreeCell("consListSort",TwoC1(consList,sort),consList,Function());
 private static ThreePath addSort = `ThreeCell("addSort",TwoC1(TwoC0(TwoId(nat),consList),add,sort),TwoC1(TwoC0(TwoId(nat),consList),add),Function());
@@ -122,9 +92,9 @@ private static 	OnePath bool=`OneCell("boolean");
 private static	TwoPath vrai=`TwoCell("true",Id(),bool,Constructor());
 private static	TwoPath faux =`TwoCell("false",Id(),bool,Constructor());
 // 2-cellules de structure
-private static	TwoPath eraserBool= `TwoCell("eraserBool",bool,Id(),Function());
-private static	TwoPath duplicationBool= `TwoCell("duplicationBool",bool,OneC0(bool,bool),Function());
-private static	TwoPath permutationBool = `TwoCell("permutationBool",OneC0(bool,bool),OneC0(bool,bool),Function());
+private static	TwoPath eraserBool= makeEraser("boolean");
+private static	TwoPath duplicationBool= makeDuplication("boolean");
+private static	TwoPath permutationBool = makePermutation((OneCell)bool,(OneCell)bool);
 //Et il faudrait mettre toutes les permutations possibles ici
 // addition, soustraction et division
 private static	TwoPath not = `TwoCell("not",bool,bool,Function());
@@ -132,34 +102,12 @@ private static	TwoPath and = `TwoCell("and",OneC0(bool,bool),bool,Function());
 private static	TwoPath or = `TwoCell("or",OneC0(bool,bool),bool,Function());
 private static	TwoPath mergeSwitch = `TwoCell("mergeSwitch",OneC0(bool,nat,list,nat,list),list,Function());
 //permutation bool et list
-private static TwoPath permutationBL= `TwoCell("permutationBL",OneC0(bool,list),OneC0(list,bool),Function());
-private static TwoPath permutationLB= `TwoCell("permutationBL",OneC0(list,bool),OneC0(bool,list),Function());
-private static ThreePath permBLList = `ThreeCell ("permBLList",TwoC1(TwoC0(TwoId(bool),consList),permutationBL),TwoC0(consList,TwoId(bool)),Function());
-private static ThreePath permLBList = `ThreeCell ("permLBList",TwoC1(TwoC0(consList,TwoId(bool)),permutationLB),TwoC0(TwoId(bool),consList),Function());
-private static ThreePath permBLtrue = `ThreeCell ("permBLtrue",TwoC1(TwoC0(vrai,TwoId(list)),permutationBL),TwoC0(TwoId(list),vrai),Function());
-private static ThreePath permLBtrue = `ThreeCell ("permLBtrue",TwoC1(TwoC0(TwoId(list),vrai),permutationLB),TwoC0(vrai,TwoId(list)),Function());
-private static ThreePath permBLfalse = `ThreeCell ("permBLfalse",TwoC1(TwoC0(faux,TwoId(list)),permutationBL),TwoC0(TwoId(list),faux),Function());
-private static ThreePath permLBfalse = `ThreeCell ("permLBfalse",TwoC1(TwoC0(TwoId(list),faux),permutationLB),TwoC0(faux,TwoId(list)),Function());
+private static TwoPath permutationBL= makePermutation((OneCell)bool,(OneCell)list);
+private static TwoPath permutationLB= makePermutation((OneCell)list,(OneCell)bool);
 //permutation nat et bool
-private static TwoPath permutationBN= `TwoCell("permutationBN",OneC0(bool,nat),OneC0(nat,bool),Function());
-private static TwoPath permutationNB= `TwoCell("permutationNB",OneC0(nat,bool),OneC0(bool,nat),Function());
-private static ThreePath permBNtrue = `ThreeCell ("permBNtrue",TwoC1(TwoC0(vrai,TwoId(nat)),permutationBN),TwoC0(TwoId(nat),vrai),Function());
-private static ThreePath permNBtrue = `ThreeCell ("permNBtrue",TwoC1(TwoC0(TwoId(nat),vrai),permutationNB),TwoC0(vrai,TwoId(nat)),Function());
-private static ThreePath permBNfalse = `ThreeCell ("permBNfalse",TwoC1(TwoC0(faux,TwoId(nat)),permutationBN),TwoC0(TwoId(nat),faux),Function());
-private static ThreePath permNBfalse = `ThreeCell ("permNBfalse",TwoC1(TwoC0(TwoId(nat),faux),permutationNB),TwoC0(faux,TwoId(nat)),Function());
-private static ThreePath permNBzero = `ThreeCell ("permNBzero",TwoC1(TwoC0(zero,TwoId(bool)),permutationNB),TwoC0(TwoId(bool),zero),Function());
-private static ThreePath permBNzero = `ThreeCell ("permBNzero",TwoC1(TwoC0(TwoId(bool),zero),permutationBN),TwoC0(zero,TwoId(bool)),Function());
-private static ThreePath permNBsucc = `ThreeCell ("permNBsucc",TwoC1(TwoC0(succ,TwoId(bool)),permutationNB),TwoC1(permutationNB,TwoC0(TwoId(bool),succ)),Function());
-private static ThreePath permBNsucc = `ThreeCell ("permBNsucc",TwoC1(TwoC0(TwoId(bool),succ),permutationBN),TwoC1(permutationBN,TwoC0(succ,TwoId(bool))),Function());
+private static TwoPath permutationBN= makePermutation((OneCell)bool,(OneCell)nat);
+private static TwoPath permutationNB= makePermutation((OneCell)nat,(OneCell)bool);
 //regles
-private static 	ThreePath trueEraz= `ThreeCell("trueEraz",TwoC1(vrai,eraserBool),TwoId(Id()),Function());
-private static 	ThreePath falseEraz= `ThreeCell("falseEraz",TwoC1(faux,eraserBool),TwoId(Id()),Function());
-private static 	ThreePath falseDup= `ThreeCell("falseDup",TwoC1(faux,duplicationBool),TwoC0(faux,faux),Function());
-private static 	ThreePath trueDup= `ThreeCell("trueDup",TwoC1(vrai,duplicationBool),TwoC0(vrai,vrai),Function());
-private static 	ThreePath truePerm1= `ThreeCell("truePerm1",TwoC1(TwoC0(vrai,TwoId(bool)),permutationBool),TwoC0(TwoId(bool),vrai),Function());
-private static 	ThreePath truePerm2= `ThreeCell("truePerm2",TwoC1(TwoC0(TwoId(bool),vrai),permutationBool),TwoC0(vrai,TwoId(bool)),Function());
-private static 	ThreePath falsePerm1= `ThreeCell("falsePerm1",TwoC1(TwoC0(faux,TwoId(bool)),permutationBool),TwoC0(TwoId(bool),faux),Function());
-private static 	ThreePath falsePerm2= `ThreeCell("falsePerm2",TwoC1(TwoC0(TwoId(bool),faux),permutationBool),TwoC0(faux,TwoId(bool)),Function());
 private static 	ThreePath trueAndTrue= `ThreeCell("trueAndTrue",TwoC1(TwoC0(vrai,vrai),and),vrai,Function());
 private static 	ThreePath trueAndFalse= `ThreeCell("trueAndFalse",TwoC1(TwoC0(vrai,faux),and),faux,Function());
 private static 	ThreePath FalseAndTrue= `ThreeCell("FalseAndTrue",TwoC1(TwoC0(faux,vrai),and),faux,Function());
@@ -216,6 +164,23 @@ constructors.add(append);
 constructors.add(vrai);
 constructors.add(faux);
 
+functions.add(plus);
+functions.add(minus);
+functions.add(multiplication);
+functions.add(division);
+functions.add(carre);
+functions.add(cube);
+functions.add(equal);
+functions.add(sort);
+functions.add(split);
+functions.add(merge);
+functions.add(lEqual);
+functions.add(not);
+functions.add(or);
+functions.add(and);
+functions.add(mergeSwitch);
+functions.add(lessOrEqual);
+
 rewritingRules.add(plusZero);
 rewritingRules.add(plusSucc);
 rewritingRules.add(minusZero1);
@@ -269,41 +234,35 @@ rewritingRules.add(consListEqualconsList);
 rewritingRules.add(addEqualconsList);
 rewritingRules.add(consListEqualAdd);
 rewritingRules.add(addEqualAdd);
-/*
+
+String program="<PolygraphicProgram Name=\"TestProgramv2\">\n";
+program+="<Types>\n";
+for (Iterator iterator = types.iterator(); iterator.hasNext();) {
+	OnePath type = (OnePath) iterator.next();
+	program+=onePath2XML(type);
+}
+program+="</Types>\n";
+program+="<Constructors>\n";
 for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
 	TwoPath constructor = (TwoPath) iterator.next();
-	Vector<ThreePath> constructorRules=makeStructureRules(constructor,types);
-	for (Iterator iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
-		ThreePath rule = (ThreePath) iterator2.next();
-		rewritingRules.add(rule);
-	}
+	program+=twoPath2XML(constructor);
 }
-
-System.out.println(rewritingRules.size());
-*/
-
-String testrules="<PolygraphicProgram Name=\"TestProgramv2\">\n";
-testrules+="<Types>\n";
-for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-	OnePath rule = (OnePath) iterator.next();
-	testrules+=onePath2XML(rule);
+program+="</Constructors>\n";
+program+="<Functions>\n";
+for (Iterator iterator = functions.iterator(); iterator.hasNext();) {
+	TwoPath function = (TwoPath) iterator.next();
+	program+=twoPath2XML(function);
 }
-testrules+="</Types>\n";
-testrules+="<Constructors>\n";
-for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
-	TwoPath rule = (TwoPath) iterator.next();
-	testrules+=twoPath2XML(rule);
-}
-testrules+="</Constructors>\n";
-testrules+="<Rules>\n";
+program+="</Functions>\n";
+program+="<Rules>\n";
 for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
 	ThreePath rule = (ThreePath) iterator.next();
-	testrules+=threePath2XML(rule);
+	program+=threePath2XML(rule);
 }
-testrules+="</Rules>\n";
-testrules+="</PolygraphicProgram>";
+program+="</Rules>\n";
+program+="</PolygraphicProgram>";
 try{
-save(testrules,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogramv2.xml"));
+save(program,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogramv2.xml"));
 }catch(Exception e){e.printStackTrace();}
 }
 

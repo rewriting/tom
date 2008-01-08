@@ -368,7 +368,7 @@ public static void save(String fileContent,File file) throws IOException {
     }
     return array;
   }
-	public static String makeRule(ThreePath rule, boolean isStructureRule){
+	public static String makeRule(ThreePath rule){
 		TwoPath source=rule.getSource();
 		TwoPath target=rule.getTarget();
 		source=formatRule(source);
@@ -402,7 +402,6 @@ public static void save(String fileContent,File file) throws IOException {
 		else{sourceString="TwoC1("+sourceString+",Y*)";}
 		if(target.isConsTwoC1()){targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
 		else{targetString="TwoC1("+targetString+",Y*)";}
-		if(isStructureRule){sourceString=sourceString.replaceAll("\"[^\"]*\"", "_");}
 		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
 	}
 	
@@ -467,7 +466,7 @@ NodeList rules=child.getChildNodes();
  for (int j = 0; j < rules.getLength(); j++) {
 	Node ruleNode = rules.item(j);
 if(!ruleNode.getNodeName().equals("#text")){
-		 String rule=makeRule(makeThreeCell(ruleNode),false)+"\n";
+		 String rule=makeRule(makeThreeCell(ruleNode))+"\n";
 			 strategy+=%[%strategy ApplyRules@n@() extends Identity(){ 
   	visit TwoPath {
 @rule@
@@ -493,7 +492,7 @@ for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
 //ajout des regles de structure
 for (Iterator iterator = structureRules.iterator(); iterator.hasNext();) {
 	ThreePath rulePath = (ThreePath) iterator.next();
-	String rule=makeRule(rulePath,true)+"\n";
+	String rule=makeRule(rulePath)+"\n";
 //on enleve les noms dans la strategie
 
 			 strategy+=%[%strategy ApplyRules@n@() extends Identity(){ 
