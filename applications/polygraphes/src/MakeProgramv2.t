@@ -3,6 +3,8 @@ package compiler;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.twopath.*;
 import polygraphicprogram.types.onepath.*;
+import sun.reflect.generics.scope.ConstructorScope;
+
 import java.io.*;
 import org.w3c.dom.*;
 
@@ -11,14 +13,15 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import java.util.Vector;
 import java.util.Iterator;
 
-public class MakeProgram{
+public class MakeProgramv2{
 
 %include { polygraphicprogram/PolygraphicProgram.tom }
 %include { sl.tom }
 %include{ dom.tom }
 
 private static Vector<ThreePath> rewritingRules=new Vector<ThreePath>();
-
+private static Vector<OneCell> types=new Vector<OneCell>();
+private static Vector<TwoPath> constructors=new Vector<TwoPath>();
 //-----------------------------------------------------------------------------
 // NAT
 //-----------------------------------------------------------------------------
@@ -203,14 +206,19 @@ private static ThreePath consListEqualAdd = `ThreeCell("consListEqualAdd",TwoC1(
 
 
 public static void main(String[] args) {
-rewritingRules.add(zeroPerm1);
-rewritingRules.add(zeroPerm2);
-rewritingRules.add(zeroDup);
-rewritingRules.add(zeroEraz);
-rewritingRules.add(succPerm1);
-rewritingRules.add(succPerm2);
-rewritingRules.add(succDup);
-rewritingRules.add(succEraz);
+
+types.add((OneCell)nat);
+types.add((OneCell)list);
+types.add((OneCell)bool);
+
+constructors.add(zero);
+constructors.add(succ);
+constructors.add(consList);
+constructors.add(add);
+constructors.add(append);
+constructors.add(vrai);
+constructors.add(faux);
+
 rewritingRules.add(plusZero);
 rewritingRules.add(plusSucc);
 rewritingRules.add(minusZero1);
@@ -221,30 +229,8 @@ rewritingRules.add(divSucc);
 rewritingRules.add(multZero);
 rewritingRules.add(multSucc);
 
-rewritingRules.add(erazList);
-rewritingRules.add(duppList);
-rewritingRules.add(permList1);
-rewritingRules.add(permList2);
-rewritingRules.add(permNLList);
-rewritingRules.add(permLNList);
-rewritingRules.add(permNLzero);
-rewritingRules.add(permLNzero);
-rewritingRules.add(permNLsucc);
-rewritingRules.add(permLNsucc);
 rewritingRules.add(appendToAdd);
 rewritingRules.add(addAppend);
-rewritingRules.add(appendEraser);
-rewritingRules.add(appendDup);
-rewritingRules.add(permAppend1);
-rewritingRules.add(permAppend2);
-rewritingRules.add(permNLAppend);
-rewritingRules.add(permLNAppend);
-rewritingRules.add(addEraser);
-rewritingRules.add(addDup);
-rewritingRules.add(permAdd1);
-rewritingRules.add(permAdd2);
-rewritingRules.add(permNLAdd);
-rewritingRules.add(permLNAdd);
 rewritingRules.add(consListSort);
 rewritingRules.add(addSort);
 rewritingRules.add(doubleAddSort);
@@ -254,30 +240,7 @@ rewritingRules.add(doubleAddSplit);
 rewritingRules.add(consListMerge1);
 rewritingRules.add(consListMerge2);
 
-rewritingRules.add(permBLList);
-rewritingRules.add(permLBList);
-rewritingRules.add(permBLtrue);
-rewritingRules.add(permLBtrue);
-rewritingRules.add(permBLfalse);
-rewritingRules.add(permLBfalse);
-rewritingRules.add(permNBzero);
-rewritingRules.add(permBNzero);
-rewritingRules.add(permNBsucc);
-rewritingRules.add(permBNsucc);
-rewritingRules.add(permBNtrue);
-rewritingRules.add(permNBtrue);
-rewritingRules.add(permBNfalse);
-rewritingRules.add(permNBfalse);
 
-rewritingRules.add(trueEraz);
-rewritingRules.add(falseEraz);
-rewritingRules.add(falseDup);
-rewritingRules.add(zeroEraz);
-rewritingRules.add(trueDup);
-rewritingRules.add(truePerm1);
-rewritingRules.add(truePerm2);
-rewritingRules.add(falsePerm1);
-rewritingRules.add(falsePerm2);
 rewritingRules.add(trueAndTrue);
 rewritingRules.add(trueAndFalse);
 rewritingRules.add(FalseAndTrue);
@@ -310,22 +273,25 @@ rewritingRules.add(addEqualconsList);
 rewritingRules.add(consListEqualAdd);
 rewritingRules.add(addEqualAdd);
 
-TwoPath test=`TwoCell("test",OneC0(bool,nat,list,bool,nat,list),bool,Constructor());
+for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
+	TwoPath constructor = (TwoPath) iterator.next();
+	Vector<ThreePath> constructorRules=makeStructureRules(constructor,types);
+	for (Iterator iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
+		ThreePath rule = (ThreePath) iterator2.next();
+		rewritingRules.add(rule);
+	}
+}
+System.out.println(rewritingRules.size());
 
-Vector<OneCell> types=new Vector<OneCell>();
-types.add((OneCell)nat);
-types.add((OneCell)list);
-types.add((OneCell)bool);
-makeStructureRules(test,types);
 
-String testrules="<PolygraphicProgram Name=\"TestProgram\">\n";
+String testrules="<PolygraphicProgram Name=\"TestProgramv2\">\n";
 for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
 	ThreePath rule = (ThreePath) iterator.next();
 	testrules+=threePath2XML(rule);
 }
 testrules+="</PolygraphicProgram>";
 try{
-save(testrules,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogram.xml"));
+save(testrules,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogramv2.xml"));
 }catch(Exception e){e.printStackTrace();}
 }
 
@@ -534,16 +500,18 @@ for (Iterator iterator = types.iterator(); iterator.hasNext();) {
 	OneCell type = (OneCell) iterator.next();
 	TwoPath leftPermutationCell=makePermutation((OneCell)constructor.getTarget(),type);
 	TwoPath leftPermutationRuleTarget=`TwoC0(TwoId(type),constructor);
-	if(!source.isConsOneC0()){leftPermutationRuleTarget=`TwoC1(leftPermutationCell,leftPermutationRuleTarget);}
+	if(!source.isId()&&!source.isConsOneC0()){leftPermutationRuleTarget=`TwoC1(leftPermutationCell,leftPermutationRuleTarget);}
 	if(source.isConsOneC0()){leftPermutationRuleTarget=`TwoC1(makeLeftPermutationRuleTarget(source,type),leftPermutationRuleTarget);}
 	ThreePath leftPermutationRule=`ThreeCell(constructor.getName()+"leftpermutation"+constructor.getTarget().getName()+type.getName(),TwoC1(TwoC0(constructor,TwoId(type)),leftPermutationCell),leftPermutationRuleTarget,Function());
 	System.out.println(leftPermutationRule);
+	rules.add(leftPermutationRule);
 	TwoPath rightPermutationCell=makePermutation(type,(OneCell)constructor.getTarget());
 	TwoPath rightPermutationRuleTarget=`TwoC0(constructor,TwoId(type));
 	if(!source.isId()&&!source.isConsOneC0()){rightPermutationRuleTarget=`TwoC1(rightPermutationCell,rightPermutationRuleTarget);}
 	if(source.isConsOneC0()){rightPermutationRuleTarget=`TwoC1(makeRightPermutationRuleTarget(source,type),rightPermutationRuleTarget);}
 	ThreePath rightPermutationRule=`ThreeCell(constructor.getName()+"rightpermutation"+type.getName()+constructor.getTarget().getName(),TwoC1(TwoC0(TwoId(type),constructor),rightPermutationCell),rightPermutationRuleTarget,Function());
 	System.out.println(rightPermutationRule);
+	rules.add(rightPermutationRule);
 	}
 //duplication
 TwoPath duplicationRuleTarget=`TwoC0(constructor,constructor);

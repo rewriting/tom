@@ -412,7 +412,6 @@ public static TwoPath formatRule(TwoPath path){
 		try{TwoPath source=`TwoId(path.source());
 			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visit(source);
 			path=`TwoC1(ruleAux,path);
-			//path=(TwoPath) `RepeatId(TopDown(Sequence(Normalize(),Gravity()))).visit(path);
 			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visit(path);//erreur dans normalize 9
 			//path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),RepeatId(TopDown(Gravity())))).visit(path);//marche
 	}

@@ -52,3 +52,11 @@ Path = cellule (name:String, dimension:int, type:String, source:Path, target:Pat
 		 
 		 
 TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }
+
+		//pour ne pas faire gaffe aux noms pour la generation automatique des trois cellules de structure!!
+		//sourceString=sourceString.replaceAll("\"[^\"]*\"", "_");mais seulement pour les 2-cellules de structure (a reimplementer, attention aux regles de normalisation)
+		//pose probleme pour les fonctions de meme syntaxe mais de semantique differentes
+		
+
+verifier au make des TwoCell la target des constructeurs
+redéfinir le makeTomFile : demander liste des 1-cellules, des 2-cellules et des 3 cellules pour les fonctions en generant les 3-cellules de structure
