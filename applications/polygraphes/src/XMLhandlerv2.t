@@ -147,58 +147,6 @@ public static ThreePath makeThreeCell(Node node){
 		return `ThreeCell(name,source,target,celltype);
 }
 
-public static String twoPath2XML(TwoPath path){
-%match (TwoPath path){
-			TwoId(onepath) -> {return "<TwoPath>\n<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n</TwoPath>\n";}
-			TwoCell(name,source,target,type) -> { return "<TwoPath>\n<TwoCell Name=\""+`name+"\" Type=\""+`type.toString().replace("()","")+"\">\n<Source>\n"+onePath2XML(`source)+"</Source>\n<Target>\n"+onePath2XML(`target)+"</Target>\n</TwoCell>\n</TwoPath>\n"; }
-			TwoC0(head,tail*) -> {return "<TwoPath>\n<TwoC0>\n"+twoC02XML(`head)+twoC02XML(`tail)+"</TwoC0>\n</TwoPath>\n";}
-			TwoC1(head,tail*) -> {return "<TwoPath>\n<TwoC1>\n"+twoC12XML(`head)+twoC12XML(`tail)+"</TwoC1>\n</TwoPath>\n";}
-}
-return "";
-}
-public static String twoC02XML(TwoPath path){
-%match (TwoPath path){
-			TwoId(onepath) -> {return "<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n";}
-			TwoCell(name,source,target,type) -> { return "<TwoCell Name=\""+`name+"\" Type=\""+`type.toString().replace("()","")+"\">\n<Source>\n"+onePath2XML(`source)+"</Source>\n<Target>\n"+onePath2XML(`target)+"</Target>\n</TwoCell>\n"; }
-			TwoC0(head,tail*) -> {return twoC02XML(`head)+twoC02XML(`tail);}
-			TwoC1(head,tail*) -> {return "<TwoC1>\n"+twoC12XML(`head)+twoC12XML(`tail)+"</TwoC1>\n";}
-}
-return "";
-}
-public static String twoC12XML(TwoPath path){
-%match (TwoPath path){
-			TwoId(onepath) -> {return "<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n";}
-			TwoCell(name,source,target,type) -> { return "<TwoCell Name=\""+`name+"\" Type=\""+`type.toString().replace("()","")+"\">\n<Source>\n"+onePath2XML(`source)+"</Source>\n<Target>\n"+onePath2XML(`target)+"</Target>\n</TwoCell>\n"; }
-			TwoC0(head,tail*) -> {return "<TwoC0>\n"+twoC02XML(`head)+twoC02XML(`tail)+"</TwoC0>\n";}
-			TwoC1(head,tail*) -> {return twoC12XML(`head)+twoC12XML(`tail);}
-}
-return "";
-}
-public static String onePath2XML(OnePath path){
-%match (OnePath path){
-			Id() -> {return "<OnePath>\n<Id></Id>\n</OnePath>\n";}
-			OneCell(name) -> { return "<OnePath>\n<OneCell Name=\""+`name+"\"></OneCell>\n</OnePath>\n"; }
-			OneC0(head,tail*)->{ return "<OnePath>\n<OneC0>\n"+oneC02XML(`head)+oneC02XML(`tail)+"</OneC0>\n</OnePath>\n";}
-}
-return "";
-}
-public static String oneC02XML(OnePath path){
-%match (OnePath path){
-			Id() -> {return "<Id></Id>\n";}
-			OneCell(name) -> { return "<OneCell Name=\""+`name+"\"></OneCell>\n"; }
-			OneC0(head,tail*)->{ return oneC02XML(`head)+oneC02XML(`tail);}
-}
-return "";
-}
-
-public static String threePath2XML(ThreePath path){
-if(path instanceof ThreePath){
-return "<ThreeCell Name=\""+path.getName()+"\" Type=\""+path.getType().toString().replace("()","")+"\">\n<Source>\n"+twoPath2XML(path.getSource())+"</Source>\n<Target>\n"+twoPath2XML(path.getTarget())+"</Target>\n</ThreeCell>\n";
-}
-else {System.out.println("this is not a ThreeCell !"+path);return null;} 
-}
-
-
 public static void save(String fileContent,File file) throws IOException {
 
 		PrintWriter printWriter = new PrintWriter(new FileOutputStream(
@@ -440,7 +388,7 @@ public static TwoPath formatRule(TwoPath path){
       for (int i = 0; i < childs.getLength(); i++) {
 	Node child = childs.item(i);
 //recuperation des types
-if(child.getNodeName().equals("Types")){
+if(child.getNodeName().equals("Type")){
 NodeList typeNodes=child.getChildNodes();
  for (int j = 0; j < typeNodes.getLength(); j++) {
 	Node type = typeNodes.item(j);
@@ -450,7 +398,7 @@ types.add((OneCell)makeOnePath(type));
 }
 }
 //recuperation des constructeurs
-if(child.getNodeName().equals("Constructors")){
+if(child.getNodeName().equals("Constructor")){
 NodeList constructorNodes=child.getChildNodes();
  for (int j = 0; j < constructorNodes.getLength(); j++) {
 	Node constructor = constructorNodes.item(j);
@@ -461,10 +409,15 @@ constructors.add(makeTwoPath(constructor));
 }
 
 //ajout des regles
-if(child.getNodeName().equals("Rules")){
-NodeList rules=child.getChildNodes();
- for (int j = 0; j < rules.getLength(); j++) {
-	Node ruleNode = rules.item(j);
+
+if(child.getNodeName().equals("Function")){
+NodeList functionNodes=child.getChildNodes();
+ for (int j = 0; j < functionNodes.getLength(); j++) {
+	Node functionNode = functionNodes.item(j);
+if(functionNode.getNodeName().equals("Rule")){
+NodeList rules=functionNode.getChildNodes();
+ for (int k = 0; k < rules.getLength(); k++) {
+	Node ruleNode = rules.item(k);
 if(!ruleNode.getNodeName().equals("#text")){
 		 String rule=makeRule(makeThreeCell(ruleNode))+"\n";
 			 strategy+=%[%strategy ApplyRules@n@() extends Identity(){ 
@@ -475,6 +428,8 @@ if(!ruleNode.getNodeName().equals("#text")){
   	]%;
 		n++;
 		}
+}
+}
 }
 }
 

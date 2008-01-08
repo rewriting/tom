@@ -19,7 +19,6 @@ public class MakeProgramv2bis{
 private static Vector<ThreePath> rewritingRules=new Vector<ThreePath>();
 private static Vector<OneCell> types=new Vector<OneCell>();
 private static Vector<TwoPath> constructors=new Vector<TwoPath>();
-private static Vector<TwoPath> functions=new Vector<TwoPath>();
 //-----------------------------------------------------------------------------
 // NAT
 //-----------------------------------------------------------------------------
@@ -55,7 +54,6 @@ private static 	OnePath list=`OneCell("list");
 // constructeurs sur les entiers naturels
 private static	TwoPath consList=`TwoCell("consList",Id(),list,Constructor());
 private static	TwoPath add =`TwoCell("add",OneC0(nat,list),list,Constructor());
-private static  TwoPath append=`TwoCell("append",OneC0(list,nat),list,Constructor());
 // 2-cellules de structure
 private static	TwoPath eraserList= makeEraser("list");
 private static	TwoPath duplicationList= makeDuplication("list");
@@ -68,6 +66,7 @@ private static	TwoPath split = `TwoCell("split",list,OneC0(list,list),Function()
 private static	TwoPath merge = `TwoCell("merge",OneC0(list,list),list,Function());
 //regles
 //section append-----------------------
+private static  TwoPath append=`TwoCell("append",OneC0(list,nat),list,Function());
 //private static ThreePath appendToAdd= `ThreeCell("appendToAdd",append,TwoC1(permutationLN,add),Function());
 private static ThreePath appendToAdd= `ThreeCell("appendToAdd",TwoC1(TwoC0(consList,TwoId(nat)),append),TwoC1(TwoC0(TwoId(nat),consList),add),Function());
 private static ThreePath addAppend = `ThreeCell("addAppend",TwoC1(TwoC0(TwoC1(TwoC0(TwoId(nat),TwoId(list)),add),TwoId(nat)),append),TwoC1(TwoC0(TwoId(nat),TwoC1(TwoC0(TwoId(list),TwoId(nat)),append)),add),Function());
@@ -160,110 +159,140 @@ constructors.add(zero);
 constructors.add(succ);
 constructors.add(consList);
 constructors.add(add);
-constructors.add(append);
 constructors.add(vrai);
 constructors.add(faux);
 
-functions.add(plus);
-functions.add(minus);
-functions.add(multiplication);
-functions.add(division);
-functions.add(carre);
-functions.add(cube);
-functions.add(equal);
-functions.add(sort);
-functions.add(split);
-functions.add(merge);
-functions.add(lEqual);
-functions.add(not);
-functions.add(or);
-functions.add(and);
-functions.add(mergeSwitch);
-functions.add(lessOrEqual);
+//plus
+Vector<ThreePath> plusRules=new Vector<ThreePath>();
+plusRules.add(plusZero);
+plusRules.add(plusSucc);
+//minus
+Vector<ThreePath> minusRules=new Vector<ThreePath>();
+minusRules.add(minusZero1);
+minusRules.add(minusZero2);
+minusRules.add(minusDoubleSucc);
+//multiplication
+Vector<ThreePath> multiplicationRules=new Vector<ThreePath>();
+multiplicationRules.add(multZero);
+multiplicationRules.add(multSucc);
+//division
+Vector<ThreePath> divisionRules=new Vector<ThreePath>();
+divisionRules.add(divZero);
+divisionRules.add(divSucc);
+//carre
+Vector<ThreePath> carreRules=new Vector<ThreePath>();
+carreRules.add(zeroCarre);
+carreRules.add(succCarre);
+//cube
+Vector<ThreePath> cubeRules=new Vector<ThreePath>();
+cubeRules.add(zeroCube);
+cubeRules.add(succCube);
+//equal
+Vector<ThreePath> equalRules=new Vector<ThreePath>();
+equalRules.add(zeroEqualZero);
+equalRules.add(succEqualSucc);
+equalRules.add(succEqualZero);
+equalRules.add(zeroEqualSucc);
+//append
+Vector<ThreePath> appendRules=new Vector<ThreePath>();
+appendRules.add(appendToAdd);
+//split
+Vector<ThreePath> splitRules=new Vector<ThreePath>();
+splitRules.add(consListSplit);
+splitRules.add(addSplit);
+splitRules.add(doubleAddSplit);
+//sort
+Vector<ThreePath> sortRules=new Vector<ThreePath>();
+sortRules.add(consListSort);
+sortRules.add(addSort);
+sortRules.add(doubleAddSort);
+//merge
+Vector<ThreePath> mergeRules=new Vector<ThreePath>();
+mergeRules.add(consListMerge1);
+mergeRules.add(consListMerge2);
+mergeRules.add(doubleAddMerge);
+//lessOrEqual
+Vector<ThreePath> lessOrEqualRules=new Vector<ThreePath>();
+lessOrEqualRules.add(zeroLess);
+lessOrEqualRules.add(succZeroLess);
+lessOrEqualRules.add(doubleSuccLess);
+//lEqual
+Vector<ThreePath> lEqualRules=new Vector<ThreePath>();
+lEqualRules.add(consListEqualconsList);
+lEqualRules.add(addEqualconsList);
+lEqualRules.add(consListEqualAdd);
+lEqualRules.add(addEqualAdd);
+//mergeSwitch
+Vector<ThreePath> mergeSwitchRules=new Vector<ThreePath>();
+mergeSwitchRules.add(merge1);
+mergeSwitchRules.add(merge2);
+//not
+Vector<ThreePath> notRules=new Vector<ThreePath>();
+notRules.add(notTrue);
+notRules.add(notFalse);
+//or
+Vector<ThreePath> orRules=new Vector<ThreePath>();
+orRules.add(trueOrTrue);
+orRules.add(trueOrFalse);
+orRules.add(FalseOrTrue);
+orRules.add(FalseOrFalse);
+//and
+Vector<ThreePath> andRules=new Vector<ThreePath>();
+andRules.add(trueAndTrue);
+andRules.add(trueAndFalse);
+andRules.add(FalseAndTrue);
+andRules.add(FalseAndFalse);
 
-rewritingRules.add(plusZero);
-rewritingRules.add(plusSucc);
-rewritingRules.add(minusZero1);
-rewritingRules.add(minusZero2);
-rewritingRules.add(minusDoubleSucc);
-rewritingRules.add(divZero);
-rewritingRules.add(divSucc);
-rewritingRules.add(multZero);
-rewritingRules.add(multSucc);
-
-rewritingRules.add(appendToAdd);
-rewritingRules.add(addAppend);
-rewritingRules.add(consListSort);
-rewritingRules.add(addSort);
-rewritingRules.add(doubleAddSort);
-rewritingRules.add(consListSplit);
-rewritingRules.add(addSplit);
-rewritingRules.add(doubleAddSplit);
-rewritingRules.add(consListMerge1);
-rewritingRules.add(consListMerge2);
-
-
-rewritingRules.add(trueAndTrue);
-rewritingRules.add(trueAndFalse);
-rewritingRules.add(FalseAndTrue);
-rewritingRules.add(FalseAndFalse);
-rewritingRules.add(trueOrTrue);
-rewritingRules.add(trueOrFalse);
-rewritingRules.add(FalseOrTrue);
-rewritingRules.add(FalseOrFalse);
-rewritingRules.add(notTrue);
-rewritingRules.add(notFalse);
-rewritingRules.add(zeroLess);
-rewritingRules.add(succZeroLess);
-rewritingRules.add(doubleSuccLess);
-rewritingRules.add(doubleAddMerge);
-rewritingRules.add(merge1);
-rewritingRules.add(merge2);
-
-rewritingRules.add(zeroCarre);
-rewritingRules.add(succCarre);
-rewritingRules.add(zeroCube);
-rewritingRules.add(succCube);
-
-rewritingRules.add(zeroEqualZero);
-rewritingRules.add(succEqualSucc);
-rewritingRules.add(succEqualZero);
-rewritingRules.add(zeroEqualSucc);
-
-rewritingRules.add(consListEqualconsList);
-rewritingRules.add(addEqualconsList);
-rewritingRules.add(consListEqualAdd);
-rewritingRules.add(addEqualAdd);
 
 String program="<PolygraphicProgram Name=\"TestProgramv2\">\n";
-program+="<Types>\n";
 for (Iterator iterator = types.iterator(); iterator.hasNext();) {
 	OnePath type = (OnePath) iterator.next();
+	program+="<Type>\n";
 	program+=onePath2XML(type);
+	program+="</Type>\n";
 }
-program+="</Types>\n";
-program+="<Constructors>\n";
 for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
 	TwoPath constructor = (TwoPath) iterator.next();
+	program+="<Constructor>\n";
 	program+=twoPath2XML(constructor);
+	program+="</Constructor>\n";
 }
-program+="</Constructors>\n";
-program+="<Functions>\n";
-for (Iterator iterator = functions.iterator(); iterator.hasNext();) {
-	TwoPath function = (TwoPath) iterator.next();
-	program+=twoPath2XML(function);
-}
-program+="</Functions>\n";
-program+="<Rules>\n";
-for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
-	ThreePath rule = (ThreePath) iterator.next();
-	program+=threePath2XML(rule);
-}
-program+="</Rules>\n";
+program+=makeFunctionXML(plus,plusRules);
+program+=makeFunctionXML(minus,minusRules);
+program+=makeFunctionXML(multiplication,multiplicationRules);
+program+=makeFunctionXML(division,divisionRules);
+program+=makeFunctionXML(carre,carreRules);
+program+=makeFunctionXML(cube,cubeRules);
+program+=makeFunctionXML(equal,equalRules);
+program+=makeFunctionXML(split,splitRules);
+program+=makeFunctionXML(sort,sortRules);
+program+=makeFunctionXML(merge,mergeRules);
+program+=makeFunctionXML(lEqual,lEqualRules);
+program+=makeFunctionXML(mergeSwitch,mergeSwitchRules);
+program+=makeFunctionXML(lessOrEqual,lessOrEqualRules);
+program+=makeFunctionXML(append,appendRules);
+program+=makeFunctionXML(not,notRules);
+program+=makeFunctionXML(or,orRules);
+program+=makeFunctionXML(and,andRules);
+
 program+="</PolygraphicProgram>";
 try{
 save(program,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogramv2.xml"));
 }catch(Exception e){e.printStackTrace();}
+}
+
+public static String makeFunctionXML(TwoPath function, Vector<ThreePath> functionRules){
+String xml="";
+xml+="<Function>\n";
+xml+=twoPath2XML(function);
+for (Iterator iterator = functionRules.iterator(); iterator.hasNext();) {
+	ThreePath rule = (ThreePath) iterator.next();
+	xml+="<Rule>\n";
+	xml+=threePath2XML(rule);
+	xml+="</Rule>\n";
+}
+xml+="</Function>\n";
+return xml;
 }
 
 public static void save(String fileContent,File file) throws IOException {
