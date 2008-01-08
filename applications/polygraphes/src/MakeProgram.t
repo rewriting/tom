@@ -6,8 +6,6 @@ import polygraphicprogram.types.onepath.*;
 import java.io.*;
 import org.w3c.dom.*;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
-
 import java.util.Vector;
 import java.util.Iterator;
 

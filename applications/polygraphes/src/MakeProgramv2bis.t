@@ -3,12 +3,9 @@ package compiler;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.twopath.*;
 import polygraphicprogram.types.onepath.*;
-import sun.reflect.generics.scope.ConstructorScope;
 
 import java.io.*;
 import org.w3c.dom.*;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 import java.util.Vector;
 import java.util.Iterator;
