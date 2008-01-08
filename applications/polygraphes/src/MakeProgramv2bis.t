@@ -13,7 +13,7 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import java.util.Vector;
 import java.util.Iterator;
 
-public class MakeProgramv2{
+public class MakeProgramv2bis{
 
 %include { polygraphicprogram/PolygraphicProgram.tom }
 %include { sl.tom }
@@ -272,7 +272,7 @@ rewritingRules.add(consListEqualconsList);
 rewritingRules.add(addEqualconsList);
 rewritingRules.add(consListEqualAdd);
 rewritingRules.add(addEqualAdd);
-
+/*
 for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
 	TwoPath constructor = (TwoPath) iterator.next();
 	Vector<ThreePath> constructorRules=makeStructureRules(constructor,types);
@@ -281,14 +281,29 @@ for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
 		rewritingRules.add(rule);
 	}
 }
-System.out.println(rewritingRules.size());
 
+System.out.println(rewritingRules.size());
+*/
 
 String testrules="<PolygraphicProgram Name=\"TestProgramv2\">\n";
+testrules+="<Types>\n";
+for (Iterator iterator = types.iterator(); iterator.hasNext();) {
+	OnePath rule = (OnePath) iterator.next();
+	testrules+=onePath2XML(rule);
+}
+testrules+="</Types>\n";
+testrules+="<Constructors>\n";
+for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
+	TwoPath rule = (TwoPath) iterator.next();
+	testrules+=twoPath2XML(rule);
+}
+testrules+="</Constructors>\n";
+testrules+="<Rules>\n";
 for (Iterator iterator = rewritingRules.iterator(); iterator.hasNext();) {
 	ThreePath rule = (ThreePath) iterator.next();
 	testrules+=threePath2XML(rule);
 }
+testrules+="</Rules>\n";
 testrules+="</PolygraphicProgram>";
 try{
 save(testrules,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogramv2.xml"));
@@ -313,6 +328,7 @@ public static String twoPath2XML(TwoPath path){
 }
 return "";
 }
+
 public static String twoC02XML(TwoPath path){
 %match (TwoPath path){
 			TwoId(onepath) -> {return "<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n";}
@@ -322,6 +338,7 @@ public static String twoC02XML(TwoPath path){
 }
 return "";
 }
+
 public static String twoC12XML(TwoPath path){
 %match (TwoPath path){
 			TwoId(onepath) -> {return "<TwoId>\n"+onePath2XML(`onepath)+"</TwoId>\n";}
@@ -331,6 +348,7 @@ public static String twoC12XML(TwoPath path){
 }
 return "";
 }
+
 public static String onePath2XML(OnePath path){
 %match (OnePath path){
 			Id() -> {return "<OnePath>\n<Id></Id>\n</OnePath>\n";}
@@ -339,6 +357,7 @@ public static String onePath2XML(OnePath path){
 }
 return "";
 }
+
 public static String oneC02XML(OnePath path){
 %match (OnePath path){
 			Id() -> {return "<Id></Id>\n";}
