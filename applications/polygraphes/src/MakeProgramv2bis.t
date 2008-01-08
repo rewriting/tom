@@ -16,9 +16,6 @@ public class MakeProgramv2bis{
 %include { sl.tom }
 %include{ dom.tom }
 
-private static Vector<ThreePath> rewritingRules=new Vector<ThreePath>();
-private static Vector<OneCell> types=new Vector<OneCell>();
-private static Vector<TwoPath> constructors=new Vector<TwoPath>();
 //-----------------------------------------------------------------------------
 // NAT
 //-----------------------------------------------------------------------------
@@ -151,17 +148,21 @@ private static ThreePath consListEqualAdd = `ThreeCell("consListEqualAdd",TwoC1(
 
 public static void main(String[] args) {
 
-types.add((OneCell)nat);
-types.add((OneCell)list);
-types.add((OneCell)bool);
+//TYPES
+//nat
+Vector<TwoPath> natConstructors=new Vector<TwoPath>();
+natConstructors.add(zero);
+natConstructors.add(succ);
+//list
+Vector<TwoPath> listConstructors=new Vector<TwoPath>();
+listConstructors.add(consList);
+listConstructors.add(add);
+//boolean
+Vector<TwoPath> booleanConstructors=new Vector<TwoPath>();
+booleanConstructors.add(vrai);
+booleanConstructors.add(faux);
 
-constructors.add(zero);
-constructors.add(succ);
-constructors.add(consList);
-constructors.add(add);
-constructors.add(vrai);
-constructors.add(faux);
-
+//FUNCTIONS
 //plus
 Vector<ThreePath> plusRules=new Vector<ThreePath>();
 plusRules.add(plusZero);
@@ -245,18 +246,11 @@ andRules.add(FalseAndFalse);
 
 
 String program="<PolygraphicProgram Name=\"TestProgramv2\">\n";
-for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-	OnePath type = (OnePath) iterator.next();
-	program+="<Type>\n";
-	program+=onePath2XML(type);
-	program+="</Type>\n";
-}
-for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
-	TwoPath constructor = (TwoPath) iterator.next();
-	program+="<Constructor>\n";
-	program+=twoPath2XML(constructor);
-	program+="</Constructor>\n";
-}
+
+program+=makeTypeXML(nat,natConstructors);
+program+=makeTypeXML(list,listConstructors);
+program+=makeTypeXML(bool,booleanConstructors);
+
 program+=makeFunctionXML(plus,plusRules);
 program+=makeFunctionXML(minus,minusRules);
 program+=makeFunctionXML(multiplication,multiplicationRules);
@@ -292,6 +286,20 @@ for (Iterator iterator = functionRules.iterator(); iterator.hasNext();) {
 	xml+="</Rule>\n";
 }
 xml+="</Function>\n";
+return xml;
+}
+
+public static String makeTypeXML(OnePath type, Vector<TwoPath> constructors){
+String xml="";
+xml+="<Type>\n";
+xml+=onePath2XML(type);
+for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
+	TwoPath constructor = (TwoPath) iterator.next();
+	xml+="<Constructor>\n";
+	xml+=twoPath2XML(constructor);
+	xml+="</Constructor>\n";
+}
+xml+="</Type>\n";
 return xml;
 }
 

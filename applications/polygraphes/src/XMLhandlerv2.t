@@ -387,37 +387,35 @@ public static TwoPath formatRule(TwoPath path){
       NodeList childs=e.getChildNodes();
       for (int i = 0; i < childs.getLength(); i++) {
 	Node child = childs.item(i);
-//recuperation des types
+//recuperation des types et des constructeurs associes
 if(child.getNodeName().equals("Type")){
 NodeList typeNodes=child.getChildNodes();
  for (int j = 0; j < typeNodes.getLength(); j++) {
-	Node type = typeNodes.item(j);
-if(!type.getNodeName().equals("#text")){
-types.add((OneCell)makeOnePath(type));
+	Node typeNode = typeNodes.item(j);
+if(typeNode.getNodeName().equals("OnePath")){
+types.add((OneCell)makeOnePath(typeNode));
 }
+if(typeNode.getNodeName().equals("Constructor")){
+NodeList constructorNodes=typeNode.getChildNodes();
+ for (int k = 0; k < constructorNodes.getLength(); k++) {
+	Node constructorNode = constructorNodes.item(k);
+if(!constructorNode.getNodeName().equals("#text")){
+constructors.add(makeTwoPath(constructorNode));
+		}
 }
-}
-//recuperation des constructeurs
-if(child.getNodeName().equals("Constructor")){
-NodeList constructorNodes=child.getChildNodes();
- for (int j = 0; j < constructorNodes.getLength(); j++) {
-	Node constructor = constructorNodes.item(j);
-if(!constructor.getNodeName().equals("#text")){
-constructors.add(makeTwoPath(constructor));
 }
 }
 }
 
 //ajout des regles
-
 if(child.getNodeName().equals("Function")){
 NodeList functionNodes=child.getChildNodes();
  for (int j = 0; j < functionNodes.getLength(); j++) {
 	Node functionNode = functionNodes.item(j);
 if(functionNode.getNodeName().equals("Rule")){
-NodeList rules=functionNode.getChildNodes();
- for (int k = 0; k < rules.getLength(); k++) {
-	Node ruleNode = rules.item(k);
+NodeList ruleNodes=functionNode.getChildNodes();
+ for (int k = 0; k < ruleNodes.getLength(); k++) {
+	Node ruleNode = ruleNodes.item(k);
 if(!ruleNode.getNodeName().equals("#text")){
 		 String rule=makeRule(makeThreeCell(ruleNode))+"\n";
 			 strategy+=%[%strategy ApplyRules@n@() extends Identity(){ 
