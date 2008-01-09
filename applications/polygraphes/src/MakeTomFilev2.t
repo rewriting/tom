@@ -19,8 +19,8 @@ public static String makeTomFile(String filename){
 	 String ruleStrategy=XMLhandlerv2.makeRuleStrategy(filename);
 	 String lowerProgramName=programName.toLowerCase();
 	 System.out.println(ruleStrategy);
-	 String tomFile=%[import @lowerProgramName@.nat.types.*;
-import @lowerProgramName@.nat.types.twopath.*;
+	 String tomFile=%[import @lowerProgramName@.polygraph.types.*;
+import @lowerProgramName@.polygraph.types.twopath.*;
 import tom.library.sl.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
@@ -30,7 +30,7 @@ import java.io.*;
 public class @programName@{
 	%include { sl.tom }
 	%gom{ 
-	module Nat
+	module Polygraph
 	imports String
 	abstract syntax
 OnePath = Id()
