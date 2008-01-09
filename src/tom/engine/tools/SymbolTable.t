@@ -341,7 +341,8 @@ public class SymbolTable {
 
   public boolean isBuiltinType(String type) {
     return isIntType(type) || isLongType(type) || isCharType(type) ||
-      isStringType(type) || isBooleanType(type) || isDoubleType(type);
+      isStringType(type) || isBooleanType(type) || isDoubleType(type) ||
+      isFloatType(type);
   }
 
   public boolean isNumericType(String type) {
@@ -376,7 +377,9 @@ public class SymbolTable {
       return getBooleanType();
     } else if(isDoubleType(type)) {
       return getDoubleType();
-    } 
+    } else if(isFloatType(type)) {
+      return getFloatType();
+    }
     System.out.println("Not a builtin type: " + type);
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }

@@ -254,7 +254,9 @@ matchBlock: {
             %match(tomtype) {
               Type[TomType=ASTTomType(typeName)] -> {
                 //TODO: manage builtin types
-                if (! symbolTable.isBuiltinType(`typeName)) {
+                if (symbolTable.isBuiltinType(`typeName)) {
+                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Return(TargetLanguageToTomTerm(ITL("0"))),Nop()));
+                } else {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
@@ -285,7 +287,9 @@ matchBlock: {
             TomType tomtype = type.getTomType();
             %match(tomtype) {
               Type[TomType=ASTTomType(typeName)] -> {
-                if (! symbolTable.isBuiltinType(`typeName)) {
+                if (symbolTable.isBuiltinType(`typeName)) {
+                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Return(TargetLanguageToTomTerm(ITL("new Object[]{}"))),Nop()));
+                } else {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
