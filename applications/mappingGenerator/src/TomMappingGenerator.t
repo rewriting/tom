@@ -81,7 +81,7 @@ where:
   public void generate(File startPoint, String mappingsFileName, String includeInClasspath) throws IOException {
 
     Writer writer = null;    
-    StringBuilder strBuilder = new StringBuilder("%include { Collection.tom }\n");
+    StringBuilder strBuilder = new StringBuilder("%include { util/types/Collection.tom }\n");
     try {
       // the types used in operator declaration
       HashMap<String, Class<?>> usedTypes = new HashMap<String, Class<?>>();
