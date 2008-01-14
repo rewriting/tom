@@ -2,7 +2,6 @@ import java.util.*;
 import verify.example.*;
 import verify.example.types.*;
 import java.util.ArrayList;
-import policy.*;
 import mathsEnumeration.Product;
 import mathsEnumeration.PermutationGenerator;
 

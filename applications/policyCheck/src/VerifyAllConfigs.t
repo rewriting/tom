@@ -3,7 +3,6 @@ import java.util.*;
 import verify.example.*;
 import verify.example.types.*;
 import java.util.ArrayList;
-import policy.*;
 import mathsEnumeration.PermutationGenerator;
 
 public class VerifyAllConfigs{

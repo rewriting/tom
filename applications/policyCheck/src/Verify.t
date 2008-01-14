@@ -4,6 +4,9 @@ import verify.example.*;
 import verify.example.types.*;
 import java.util.ArrayList;
 
+import mathsEnumeration.*;
+
+
 public class Verify{
 	%include { sl.tom }
 	%include { verify/example/Example.tom }
