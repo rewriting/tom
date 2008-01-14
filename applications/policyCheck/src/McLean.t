@@ -3,12 +3,17 @@ import verify.example.*;
 import java.util.ArrayList;
 
 public class McLean implements Policy{  
-  %include { verify/example/Example.tom }
+  %include {verify/example/Example.tom }
 
   ArrayList<ArrayList<Integer>> securityLevelsorder;
+  PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved;
 
-  McLean(ArrayList<ArrayList<Integer>> s){
+  public McLean(ArrayList<ArrayList<Integer>> s){
     this.securityLevelsorder=s;
+  }
+
+  public McLean(PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved){
+    this.securityLevelsOrderImproved=securityLevelsOrderImproved;
   }
 
 
@@ -47,7 +52,7 @@ public class McLean implements Policy{
     throw new RuntimeException("should not be there");
   }
 
-
+/*
 
   public boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2){
     for(java.util.ArrayList<Integer> orderedSubSet: this.securityLevelsorder ){
@@ -65,6 +70,23 @@ public class McLean implements Policy{
     }
     return false;
   }
+
+*/
+   public boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2){
+	   %match (securityLevelsOrderImproved){
+		   Sets(_*,CL(_*,a,_*,b,_*),_*)->{if (l1.equals(`a) && l2.equals(`b) ){return true;}}
+	   }
+	   return false;
+  }
+
+
+  public boolean compareMcLean(SecurityLevel l1,SecurityLevel l2){
+    %match (securityLevelsOrderImproved){
+		   Sets(_*,CL(_*,a,_*,b,_*),_*)->{if ((l1.equals(`a) && l2.equals(`b)) || l1.equals(l1) ){return true;}}
+	   }
+	   return false;
+  }
+
 
 
 }

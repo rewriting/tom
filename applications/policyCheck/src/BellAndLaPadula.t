@@ -3,14 +3,19 @@ import verify.example.types.*;
 import java.util.ArrayList;
 
 public class BellAndLaPadula implements Policy{  
-	%include { verify/example/Example.tom }
+	%include {verify/example/Example.tom }
 	
 
-ArrayList<ArrayList<Integer>> securityLevelsorder;
+ ArrayList<ArrayList<Integer>> securityLevelsorder;
+  PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved;
 
-BellAndLaPadula(ArrayList<ArrayList<Integer>> s){
-	this.securityLevelsorder=s;
-}
+  public BellAndLaPadula(ArrayList<ArrayList<Integer>> s){
+    this.securityLevelsorder=s;
+  }
+
+  public BellAndLaPadula(PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved){
+    this.securityLevelsOrderImproved=securityLevelsOrderImproved;
+  }
 
 
   // Rewrite rules implementing the Bell and LaPadula policy
@@ -53,13 +58,12 @@ BellAndLaPadula(ArrayList<ArrayList<Integer>> s){
   }
 
 
-public boolean compare(SecurityLevel l1,SecurityLevel l2){
-	for(java.util.ArrayList<Integer> orderedSubSet: this.securityLevelsorder ){
-		if (orderedSubSet.contains(l1.getl()) && orderedSubSet.contains(l2.getl()))
-			return orderedSubSet.indexOf(l1.getl())-orderedSubSet.indexOf(l2.getl())<=0;
-	}
-	return false;
-}
+  public boolean compare(SecurityLevel l1,SecurityLevel l2){
+    %match (securityLevelsOrderImproved){
+		   Sets(_*,CL(_*,a,_*,b,_*),_*)->{if ((l1.equals(`a) && l2.equals(`b)) || l1.equals(l2) ){return true;}}
+	   }
+	   return false;
+  }
 
 
 
