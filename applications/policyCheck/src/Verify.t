@@ -1,15 +1,11 @@
 import java.util.*;
-
+import mathsEnumeration.*;
 import accesscontrol.*;
 import accesscontrol.types.*;
-import java.util.ArrayList;
-
-import mathsEnumeration.*;
-
 
 public class Verify{
 	%include { sl.tom }
-	%include { accesscontrol/Accesscontrol.Tom }
+	%include { accesscontrol/accesscontrol.tom }
   
 	//Number of subjects within each of the Subject sets generated 
 	int numberOfSubjects;

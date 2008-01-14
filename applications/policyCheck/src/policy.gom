@@ -47,7 +47,7 @@ module accesscontrol
     public int compareTo(SecurityLevel sl){
       return this.getl()-sl.getl();
     }
-}
-
-Response = Response(Granted:boolean, State:State)
+  }
+  
+  Response = Response(Granted:boolean, State:State)
 
