@@ -281,7 +281,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage invalidMatchSubject=
       new TomMessage("Type ''{0}'' and Subject ''{1}'' are not correct");
   public static final TomMessage cannotGuessMatchType=
-      new TomMessage("Cannot guess the type of ''{0}'', use at least one constructor");
+      new TomMessage("Cannot guess the type of ''{0}'', use at least one constructor or specify the type");
   public static final TomMessage badMatchNumberArgument  =
       new TomMessage("Bad number of arguments: {0,number,integer} argument(s) required by match signature but {1,number,integer} found");
   public static final TomMessage incorrectVariableStarInMatch=
