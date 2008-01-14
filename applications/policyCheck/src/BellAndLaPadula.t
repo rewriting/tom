@@ -1,9 +1,9 @@
-import verify.example.*;
-import verify.example.types.*;
+import accesscontrol.*;
+import accesscontrol.types.*;
 import java.util.ArrayList;
 
 public class BellAndLaPadula implements Policy{  
-	%include {verify/example/Example.tom }
+	%include {accesscontrol/Accesscontrol.Tom }
 	
 
  ArrayList<ArrayList<Integer>> securityLevelsorder;

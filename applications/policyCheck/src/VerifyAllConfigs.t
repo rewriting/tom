@@ -1,13 +1,13 @@
 import java.util.*;
 
-import verify.example.*;
-import verify.example.types.*;
+import accesscontrol.*;
+import accesscontrol.types.*;
 import java.util.ArrayList;
 import mathsEnumeration.PermutationGenerator;
 
 public class VerifyAllConfigs{
 	%include { sl.tom }
-	%include { verify/example/Example.tom }
+	%include { accesscontrol/Accesscontrol.Tom }
 	//Policy to check
 	Policy policy;
 	//Generated sets

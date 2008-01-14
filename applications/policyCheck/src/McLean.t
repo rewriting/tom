@@ -1,9 +1,9 @@
-import verify.example.types.*; 
-import verify.example.*; 
+import accesscontrol.types.*; 
+import accesscontrol.*; 
 import java.util.ArrayList;
 
 public class McLean implements Policy{  
-  %include {verify/example/Example.tom }
+  %include {accesscontrol/Accesscontrol.Tom }
 
   ArrayList<ArrayList<Integer>> securityLevelsorder;
   PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved;

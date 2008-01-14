@@ -1,4 +1,4 @@
-import verify.example.types.*;
+import accesscontrol.types.*;
 
 public interface Policy {
   public Response transition(RequestUponState rus);

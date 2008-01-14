@@ -1,56 +1,53 @@
- module verify.Example
- imports int boolean
- abstract syntax 
+module accesscontrol
+  imports int boolean
+  abstract syntax 
+  
+//Security levels : TS Top Secret, S Secret, C Confidential.
+  SecurityLevel = sL(l:int)
+  OrderedSubSetOfSecurityLevels=CL(SecurityLevel *)
+  PartiallyOrderdedSetOfSecurityLevels = Sets(OrderedSubSetOfSecurityLevels *)
+//Subject who has an ID for identification and a security level SL.
+  Subject = subject(ID:int,SL:SecurityLevel)
  
+//Object who has an ID for identification and a security level SL.
+  SecurityObject = securityObject(ID:int,SL:SecurityLevel)
  
+//Access mode, in this case could be read or write; others can be added
+  AccessMode = aM(m:int)//read()|write()
+ 
+//Request type: 
+// add - to request the addition of an access,  
+// delete - to request the deletion of an access
+  RequestType = add()|delete()
+ 
+// Sort of expression, explicit to specify that the access is explicit or conversely implicit
+// to specify that the access is implicit
+  AccessType =explicit()|implicit()
+ 
+//An access is defined by the "subject" that accesses  the  "object" in "access mode" 
+//It can be explicitly requested by the subjects or an implicit consequence of other accesses
+  Access = access(subject:Subject,securityObject:SecurityObject,A:AccessMode,E:AccessType)
+ 
+//Request, composed of a request type and an access
+  Request = request(RT:RequestType, Ac:Access)
+ 
+//List of accesses
+  ListOfAccesses =accesses(Access *)
+ 
+//State compose of a list of read accesses (Reads) and a list of write accesses(Write)
+// !!!!!!!!!!!!!! The AccessMode flag is not really necessary then !!!!!!!!!!!!!!
+  State = state(Reads: ListOfAccesses,Writes: ListOfAccesses)
+ 
+//Sort representing a request upon a state
+  RequestUponState = rus(R:Request,S:State)
 
- 
- //Security levels : TS Top Secret, S Secret, C Confidential.
- SecurityLevel = sL(l:int)
- OrderedSubSetOfSecurityLevels=CL(SecurityLevel *)
- PartiallyOrderdedSetOfSecurityLevels = Sets(OrderedSubSetOfSecurityLevels *)
- //Subject who has an ID for identification and a security level SL.
- Subject = subject(ID:int,SL:SecurityLevel)
- 
- //Object who has an ID for identification and a security level SL.
- SecurityObject = securityObject(ID:int,SL:SecurityLevel)
- 
- //Access mode, in this case could be read or write; others can be added
- AccessMode = aM(m:int)//read()|write()
- 
- //Request type: 
- // add - to request the addition of an access,  
- // delete - to request the deletion of an access
- RequestType = add()|delete()
- 
- // Sort of expression, explicit to specify that the access is explicit or conversely implicit
- // to specify that the access is implicit
- AccessType =explicit()|implicit()
- 
- //An access is defined by the "subject" that accesses  the  "object" in "access mode" 
- //It can be explicitly requested by the subjects or an implicit consequence of other accesses
- Access = access(subject:Subject,securityObject:SecurityObject,A:AccessMode,E:AccessType)
- 
- //Request, composed of a request type and an access
- Request = request(RT:RequestType, Ac:Access)
- 
- //List of accesses
- ListOfAccesses =accesses(Access *)
- 
- //State compose of a list of read accesses (Reads) and a list of write accesses(Write)
- // !!!!!!!!!!!!!! The AccessMode flag is not really necessary then !!!!!!!!!!!!!!
- State = state(Reads: ListOfAccesses,Writes: ListOfAccesses)
- 
- //Sort representing a request upon a state
- RequestUponState = rus(R:Request,S:State)
+//Implementation of the interface Comparable for the sort SecurityLevel
+  sort SecurityLevel:interface() { Comparable }
+  sort SecurityLevel:block() {
+    public int compareTo(SecurityLevel sl){
+      return this.getl()-sl.getl();
+    }
+}
 
- //Implementation of the interface Comparable for the sort SecurityLevel
- sort SecurityLevel:interface() { Comparable }
- sort SecurityLevel:block() {
-   public int compareTo(SecurityLevel sl){
-     return this.getl()-sl.getl();
-   }
- }
-
- Response = Response(Granted:boolean, State:State)
+Response = Response(Granted:boolean, State:State)
 

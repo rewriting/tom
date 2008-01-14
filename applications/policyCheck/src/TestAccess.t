@@ -1,12 +1,12 @@
 import java.util.*;
 
-import verify.example.*;
-import verify.example.types.*;
+import accesscontrol.*;
+import accesscontrol.types.*;
 import java.util.ArrayList;
 
 public class TestAccess{
 	%include { sl.tom }
-	%include { verify/example/Example.tom }
+	%include { accesscontrol/Accesscontrol.Tom }
 
 
 
