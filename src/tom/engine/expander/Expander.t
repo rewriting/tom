@@ -253,10 +253,7 @@ matchBlock: {
             TomType tomtype = type.getTomType();
             %match(tomtype) {
               Type[TomType=ASTTomType(typeName)] -> {
-                //TODO: manage builtin types
-                if (symbolTable.isBuiltinType(`typeName)) {
-                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Return(TargetLanguageToTomTerm(ITL("0"))),Nop()));
-                } else {
+                if (! (symbolTable.isBuiltinType(`typeName))) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
@@ -273,7 +270,7 @@ matchBlock: {
               }
             }
           }
-          //default case: return 0
+          //default case (for builtins too): return 0
           instructions = `concInstruction(instructions*,Return(TargetLanguageToTomTerm(ITL("0"))));
           l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar),intType,EmptyType(),AbstractBlock(instructions)));
           /**
@@ -287,9 +284,7 @@ matchBlock: {
             TomType tomtype = type.getTomType();
             %match(tomtype) {
               Type[TomType=ASTTomType(typeName)] -> {
-                if (symbolTable.isBuiltinType(`typeName)) {
-                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Return(TargetLanguageToTomTerm(ITL("new Object[]{}"))),Nop()));
-                } else {
+                if (! symbolTable.isBuiltinType(`typeName)) {
                   TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
                   concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
                   for (TomSymbol symbol:list) {
@@ -299,6 +294,7 @@ matchBlock: {
                           %match(TypesToType) {
                             TypesToType[Domain=concTomType(domain)] -> {
                               TomList array = `concTomTerm(TargetLanguageToTomTerm(ITL("new Object[]{")),ExpressionToTomTerm(GetHead(symbolName,domain,var)),TargetLanguageToTomTerm(ITL(",")),ExpressionToTomTerm(GetTail(symbolName,var)),TargetLanguageToTomTerm(ITL("}")));
+                              //default case (used for builtins too)                     
                               TomTerm emptyArray = `TargetLanguageToTomTerm(ITL("new Object[]{}"));
                               Instruction inst = `If(IsFsym(symbolName,var),If(IsEmptyList(symbolName,var),Return(emptyArray),Return(Tom(array))),Nop());
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);
