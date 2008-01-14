@@ -80,8 +80,26 @@ public class ArrayGenerator implements IBaseGenerator{
       ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetElement[Codomain=termType]),t)) -> {
         return `EqualTerm(termType,e,t);
       }
+      // handle AU case
+     // ge@GetElement[Opname=opName,Variable=var] -> { return `genGetElement(opName,var,ge); }
     } // end visit
-
-// [pem] GetElement should be modified to handle AU theory, like in VariadicGenerator
-  } // end strategy	
+    
+  } // end strategy
+  
+  /**
+   * return an element of the list
+   * when domain=codomain, the test is extended to:
+   *   is_fsym_f(t)?get_element(t):t 
+   *   the element itself is returned when it is not an array operator operator
+   *   this occurs because the last element of an array may not be an array
+   */ 
+  private static Expression genGetElement(TomName opName, TomTerm var, Expression getElem) {
+    TomSymbol tomSymbol = tom.engine.compiler.Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
+    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
+    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
+    if(domain==codomain) {
+      return `Conditional(IsFsym(opName,var),getElem,TomTermToExpression(var));
+    }
+    return getElem;
+  }
 }

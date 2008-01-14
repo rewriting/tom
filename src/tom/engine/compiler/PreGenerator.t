@@ -203,7 +203,7 @@ public class PreGenerator {
       /*
        * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
        */
-      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid1=v])),Y*,second@Negate(EmptyArrayConstraint[Index=v]),Z*) -> {
+      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),Y*,second@Negate(EmptyArrayConstraint[Index=v]),Z*) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
 
@@ -211,7 +211,7 @@ public class PreGenerator {
        * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
        *
        */
-      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Kid1=v])),Y*,second@EmptyArrayConstraint[Index=v],Z*) -> {
+      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),Y*,second@EmptyArrayConstraint[Index=v],Z*) -> {
          return `AndConstraint(X*,second,Y*,first,Z*);
       }
 
