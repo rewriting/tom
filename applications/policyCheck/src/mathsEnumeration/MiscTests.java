@@ -1,4 +1,6 @@
 import java.util.*;
+import mathsEnumeration.*;
+
 
 public class MiscTests {
 	
