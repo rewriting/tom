@@ -357,7 +357,14 @@ public class ConstraintGenerator {
     %match(c){
       NumericConstraint(left,right,type) -> {        
         TomType tomType = Compiler.getTermTypeFromTerm(`left);
-        Expression leftExpr = `TomTermToExpression(left);
+        Expression leftExpr = null;
+      m:%match(left){
+          RecordAppl[Option=concOption(_*,Constant(),_*),NameList=concTomName(name)] -> {
+            leftExpr = `TomTermToExpression(BuildConstant(name));            
+            break m;
+          }
+          _ -> { leftExpr = `TomTermToExpression(left); } 
+        }
         Expression rightExpr = `TomTermToExpression(right);
         %match(type){
           NumLessThan()             -> { return `If(LessThan(leftExpr,rightExpr),action,Nop());} 
