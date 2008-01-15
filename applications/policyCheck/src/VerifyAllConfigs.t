@@ -27,8 +27,8 @@ public class VerifyAllConfigs{
 
   // check all possibilities
   public boolean checkAllSets(){
-    boolean result=true;
-    //    generateSets();
+	 boolean result=true;
+//    generateSets();
     //for each subject set
     for(int indexSubjectSet=0; indexSubjectSet<generatedSets.subjectSets.size();indexSubjectSet++){
     	//for each object set
@@ -50,22 +50,21 @@ public class VerifyAllConfigs{
         for (Iterator<Integer> iterator = (generatedSets.objectSets.get(indexObjectSet)).iterator(); iterator.hasNext();) {
           Integer securityLevel = iterator.next();
           Objects.add(`securityObject(i,sL(securityLevel)));
-          i++;
+           i++;
         }
         // Check all the permutations of requests upon the given configuration
         CheckAllPermutationsOfRequests CAPOR=new CheckAllPermutationsOfRequests(Subjects,Objects,policy,generatedSets.allRequests);
-        int[] o=CAPOR.checkConfiguration();
+        boolean o=CAPOR.checkConfiguration();
         System.out.println("For subjects :\n"+Subjects);
         System.out.println("and objects :\n"+Objects);
-        if (o.length==1){
+        if (!o){
           System.out.println("No leakage detected for all permutations");
         }else{
           LeakageDetected=true;
-          System.out.println("Leakage detected for permutations :\n"+Arrays.toString(o));
+          //System.out.println("Leakage detected for permutations :\n"+Arrays.toString(o));
+          System.out.println("Leakage detected");
           result=false;
         }
-
-
       }}
     return result;
   }
