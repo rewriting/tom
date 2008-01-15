@@ -5,7 +5,7 @@ import accesscontrol.types.*;
 
 public class VerifyAllConfigs{
 	%include { sl.tom }
-	%include { accesscontrol/Accesscontrol.Tom }
+	%include { accesscontrol/accesscontrol.tom }
 	//Policy to check
 	Policy policy;
 	//Generated sets
