@@ -1,16 +1,11 @@
 import java.util.*;
-
-import verify.example.*;
-import verify.example.types.*;
-import java.util.ArrayList;
-import policy.BellAndLaPadula;
-import policy.McLean;
-import policy.Policy;
+import accesscontrol.*;
+import accesscontrol.types.*;
 import mathsEnumeration.PermutationGenerator;
 
 public class VerifyAState{
 	%include { sl.tom }
-	%include { verify/example/Example.tom }
+	%include { accesscontrol/accesscontrol.tom }
 	// Flag for detecting a leakage
 	boolean LeakageDetected=false;
 

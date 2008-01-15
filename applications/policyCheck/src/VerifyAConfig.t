@@ -1,16 +1,11 @@
 import java.util.*;
-
-import verify.example.*;
-import verify.example.types.*;
-import java.util.ArrayList;
-import policy.BellAndLaPadula;
-import policy.McLean;
-import policy.Policy;
+import accesscontrol.*;
+import accesscontrol.types.*;
 import mathsEnumeration.PermutationGenerator;
 
 public class VerifyAConfig{
 	%include { sl.tom }
-	%include { verify/example/Example.tom }
+	%include { accesscontrol/accesscontrol.tom }
 	//Object checking all permutation of requests for the given subjects and objects and policy
 	CheckAllPermutationsOfRequests CAPOR;
 	// Flag for detecting a leakage
