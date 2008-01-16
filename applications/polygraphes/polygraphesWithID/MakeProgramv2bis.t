@@ -16,6 +16,8 @@ public class MakeProgramv2bis{
 %include { sl.tom }
 %include{ dom.tom }
 
+public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
+
 //-----------------------------------------------------------------------------
 // NAT
 //-----------------------------------------------------------------------------
@@ -271,7 +273,7 @@ program+=makeFunctionXML(and,andRules);
 
 program+="</PolygraphicProgram>";
 try{
-save(program,new File("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/testprogramv2.xml"));
+save(program,new File(path+"testprogramv2.xml"));
 }catch(Exception e){e.printStackTrace();}
 }
 

@@ -17,9 +17,11 @@ public class ReadOutput{
 %include { sl.tom }
 %include{ dom.tom }
 
+public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
+
 public static void main(String[] args) {
 System.out.println("RESULT:\n----------------------------");
-System.out.println(resultList("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/XMLoutput.xml"));
+System.out.println(resultList(path+"XMLoutput.xml"));
 System.out.println("----------------------------");
 }
 

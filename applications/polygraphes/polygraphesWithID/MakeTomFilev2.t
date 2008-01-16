@@ -6,10 +6,12 @@ import java.io.File;
 
 public class MakeTomFilev2 {
 
+public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
+
   public static void main (String args[]) {
 	 //String filename="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/src/testprogram.xml";
-	 String filename="/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/testprogramv2.xml";
-	 try{XMLhandlerv2.save(makeTomFile(filename),new File("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/"+XMLhandlerv2.getProgramName(filename)+".t"));}
+	 String filename=path+"testprogramv2.xml";
+	 try{XMLhandlerv2.save(makeTomFile(filename),new File(path+XMLhandlerv2.getProgramName(filename)+".t"));}
 	 catch(Exception e){e.printStackTrace();}
 	 
 

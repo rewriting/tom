@@ -15,7 +15,8 @@ public class MakeInput{
 %include { sl.tom }
 %include{ dom.tom }
 
- 
+public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
+
 // -----------------------------------------------------------------------------
 // NAT
 // -----------------------------------------------------------------------------
@@ -122,7 +123,7 @@ String input=twoPath2XML(testSimple);
 //String input=menu();
 if(!input.equals("")){
 try{
-save(input,new File("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/XMLinput.xml"));
+save(input,new File(path+"XMLinput.xml"));
 }catch(Exception e){e.printStackTrace();}
 }
 }
