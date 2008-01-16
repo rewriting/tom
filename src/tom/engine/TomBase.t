@@ -81,6 +81,7 @@ public final class TomBase {
       TomTypeAlone(s) -> {return `s;}
       Type(ASTTomType(s),_) -> {return `s;}
       EmptyType() -> {return null;}
+      TypeWithSymbol[TomType=ASTTomType(s)] -> { return `s; }
     }
     System.out.println("getTomType error on term: " + type);
     throw new TomRuntimeException("getTomType error on term: " + type);

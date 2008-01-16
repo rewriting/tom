@@ -99,7 +99,7 @@ public class Expander extends TomGenericPlugin {
   private static final TomTerm objectArrayVar = `Variable(concOption(),Name("children"),objectArrayType,concConstraint());
   private static boolean generatedIntrospector = false;
 
-  /** if the flag is true, a class that implements Intropsector is generated */
+  /** if the flag is true, a class that implements Introspector is generated */
   private static boolean genIntrospector = false;
 
   /** unicity var counter */
@@ -232,7 +232,7 @@ matchBlock: {
 
     visit Declaration {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
-        //Generate only one Intropector for a class if at least one  %strategy is found
+        //Generate only one Introspector for a class if at least one  %strategy is found
         Declaration introspectorClass = `EmptyDeclaration();
         if(expander.genIntrospector && !generatedIntrospector) {
           generatedIntrospector=true;
@@ -243,7 +243,7 @@ matchBlock: {
           Collection<TomTypeDefinition> types = symbolTable.getUsedTypes();
 
           /**
-            public int getChildCount(Object o);
+           * public int getChildCount(Object o);
            */
           String funcName = "getChildCount";//function name
           InstructionList instructions = `concInstruction();
@@ -540,95 +540,5 @@ matchBlock: {
     }
   }
 
-  private TomTerm abstractPattern(TomTerm subject, ArrayList abstractedPattern, ArrayList introducedVariable)  {
-    TomTerm abstractedTerm = subject;
-    %match(subject) {
-      RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
-        TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 
-        SlotList newArgs = `concSlot();
-        if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
-          for(Slot elt:(concSlot)`arguments) {
-            TomTerm newElt = elt.getAppl();
-            %match(newElt) {
-              appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
-                /*
-                 * we no longer abstract syntactic subterm
-                 * they are compiled by the KernelExpander
-                 */
-
-                //System.out.println("Abstract: " + appl);
-                TomSymbol tomSymbol2 = symbolTable().getSymbolFromName(`tomName2);
-                if(TomBase.isListOperator(tomSymbol2) || TomBase.isArrayOperator(tomSymbol2)) {
-                  TomType type2 = tomSymbol2.getTypesToType().getCodomain();
-                  abstractedPattern.add(`appl);
-
-                  TomNumberList path = `concTomNumber();
-                  absVarNumber++;
-                  path = `concTomNumber(path*,AbsVar(absVarNumber));
-
-                  TomTerm newVariable = `Variable(concOption(),PositionName(path),type2,concConstraint());
-
-                  //System.out.println("newVariable = " + newVariable);
-
-                  introducedVariable.add(newVariable);
-                  newElt = newVariable;
-                }
-              }
-            }
-            newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
-          }
-        } else {
-          newArgs = TomBase.mergeTomListWithSlotList(abstractPatternList(TomBase.slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
-        }
-        abstractedTerm = subject.setSlots(newArgs);
-      }
-    } // end match
-    return abstractedTerm;
-  }
-
-  private TomList abstractPatternList(TomList subjectList, ArrayList abstractedPattern, ArrayList introducedVariable)  {
-    %match(subjectList) {
-      concTomTerm() -> { return subjectList; }
-      concTomTerm(head,tail*) -> {
-        TomTerm newElt = abstractPattern(`head,abstractedPattern,introducedVariable);
-        TomList tl = abstractPatternList(`tail,abstractedPattern,introducedVariable);
-        return `concTomTerm(newElt,tl*);
-      }
-    }
-    throw new TomRuntimeException("abstractPatternList: " + subjectList);
-  }  
-
-  /*
-   * add a prefix (tom_) to back-quoted variables which comes from the lhs
-   */
-  %strategy findRenameVariable(context:Collection) extends `Identity() {
-    visit TomTerm {
-      var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
-        if(context.contains(`astName)) {          
-          return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
-        }
-      }
-    }
-
-    visit Instruction {
-      CompiledPattern(patternList,instruction) -> {
-        // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
-        Collection newContext = new ArrayList();
-        `TopDown(CollectLHSVars(newContext)).visitLight(`patternList);        
-        newContext.addAll(context);
-        return (Instruction)`TopDown(findRenameVariable(newContext)).visitLight(`instruction);
-      }
-    }  
-  }  
-
-  %strategy CollectLHSVars(Collection bag) extends Identity() {
-    visit Constraint {
-      MatchConstraint(p,_) -> {        
-        Map map = TomBase.collectMultiplicity(`p);
-        Collection newContext = new HashSet(map.keySet());
-        bag.addAll(newContext);
-      }
-    }
-  }
 }

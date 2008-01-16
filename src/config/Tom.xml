@@ -52,9 +52,11 @@
     <plugin name="Syntax checker"
             class="tom.engine.checker.TomSyntaxCheckerAp"/>
    <plugin name="Typer"
-            class="tom.engine.typer.Typer"/>
-     <plugin name="Expander"
-            class="tom.engine.expander.Expander"/>
+     class="tom.engine.typer.Typer"/>
+   <plugin name="Type checker"
+     class="tom.engine.checker.TomTypeChecker"/>
+   <plugin name="Expander"
+     class="tom.engine.expander.Expander"/>
           <plugin name="Compiler"
             class="tom.engine.compiler.Compiler"/>
     <plugin name="Optimizer"

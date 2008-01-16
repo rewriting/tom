@@ -1,3 +1,8 @@
+2008-01-15 pem
+  * re-activated the TypeChecker
+  * introduce a new TypeWithSymbol
+  * prepare to improve the TypeChecker
+  
 2008-01-07 balland
   * remove autodispatch option (default behaviour)
   * simplify Gom consequently (remove the generation of BasicStrategy and VisitorFwd classes)

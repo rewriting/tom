@@ -273,7 +273,7 @@ public class KernelTyper {
         TomTerm pattern = null;
         NumericConstraintType numericType = null;
         boolean isMatchConstraint = false;
- matchL:%match(constr){
+ matchL:%match(constr) {
           MatchConstraint(p, s) -> {pattern = `p;subject = `s;isMatchConstraint = true;break matchL;}
           NumericConstraint(left, right, nt) -> {pattern = `left;subject = `right;numericType = `nt;break matchL;}
           _ -> { break visitL; }
@@ -289,7 +289,7 @@ public class KernelTyper {
             if(typeer.getType(`type) == null) {
               /* the subject is a variable with an unknown type */
               newSubjectType = typeer.guessSubjectType(`subject,constraintList);
-              if( newSubjectType != null ) {
+              if(newSubjectType != null) {
                 newVariable = `Variable(variableOption,astName,newSubjectType,constraints);
               } else {
                 throw new TomRuntimeException("No symbol found for name '" + `name + "'");
@@ -327,7 +327,7 @@ public class KernelTyper {
             newSubjectType = `type;
           }
           
-          // the user specified the type (already cheked for consistence in SyntaxChecker)
+          // the user specified the type (already checked for consistence in SyntaxChecker)
           term@BuildReducedTerm[AstType=userType] -> {            
             newSubjectType = `userType;
             newSubject = `term;
@@ -408,16 +408,16 @@ matchL:  %match(subject,s){
 
       //System.out.println("symbol = " + symbol.getastname());
       %match(symbol, subtermList) {
-        emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
+        symb@emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           /*
            * if the top symbol is unknown, the subterms
            * are typed in an empty context
            */
-          SlotList sl = typeVariableList(symbol,`tail);
+          SlotList sl = typeVariableList(`symb,`tail);
           return `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(EmptyType(),slotAppl)),sl*);
         }
 
-        symb@Symbol[TypesToType=TypesToType(typelist,codomain)],
+        symb@Symbol[AstName=symbolName,TypesToType=TypesToType(typelist,codomain@Type(tomCodomain,tlCodomain))],
           concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
             //System.out.println("codomain = " + `codomain);
             // process a list of subterms and a list of types
@@ -440,19 +440,19 @@ matchL:  %match(subject,s){
               %match(slotAppl) {
                 VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
                   ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
-                  SlotList sl = typeVariableList(symbol,`tail);
-                  return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)),sl*);
+                  SlotList sl = typeVariableList(`symb,`tail);
+                  return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,TypeWithSymbol(tomCodomain,tlCodomain,symbolName),newconstraints)),sl*);
                 }
 
                 UnamedVariableStar[Option=option,Constraints=constraints] -> {
                   ConstraintList newconstraints = (ConstraintList)typeVariable(`codomain,`constraints);
-                  SlotList sl = typeVariableList(symbol,`tail);
+                  SlotList sl = typeVariableList(`symb,`tail);
                   return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
                 }
 
                 _ -> {
                   TomType domaintype = `typelist.getHeadconcTomType();
-                  SlotList sl = typeVariableList(symbol,`tail);
+                  SlotList sl = typeVariableList(`symb,`tail);
                   SlotList res = `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(domaintype, slotAppl)),sl*);
                   //System.out.println("domaintype = " + domaintype);
                   //System.out.println("res = " + res);
@@ -461,7 +461,7 @@ matchL:  %match(subject,s){
                 }
               }
             } else {
-              SlotList sl = typeVariableList(symbol,`tail);
+              SlotList sl = typeVariableList(`symb,`tail);
               return `concSlot(PairSlotAppl(slotName,(TomTerm)typeVariable(TomBase.getSlotType(symb,slotName), slotAppl)),sl*);
             }
           }

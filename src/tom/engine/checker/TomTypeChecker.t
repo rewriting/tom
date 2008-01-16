@@ -63,7 +63,10 @@ public class TomTypeChecker extends TomChecker {
   %include { ../../library/mapping/java/sl.tom }
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = "<options><boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/>" +
+    "</options>";
 
   /**
    * inherited from OptionOwner interface (plugin) 
@@ -86,16 +89,17 @@ public class TomTypeChecker extends TomChecker {
         reinit();
         // perform analyse
         try {
-          `mu(MuVar("x"),Try(Sequence(checkTypeInference(this),All(MuVar("x"))))).visitLight((TomTerm)getWorkingTerm());
+          TomTerm subject = (TomTerm) getWorkingTerm();
+          //System.out.println("type checking: ");
+          //System.out.println(subject);
+          `TopDownCollect(checkTypeInference(this)).visitLight(subject);
         } catch(tom.library.sl.VisitFailure e) {
           System.out.println("strategy failed");
         }
         // verbose
-        getLogger().log( Level.INFO, TomMessage.tomTypeCheckingPhase.getMessage(),
-            new Integer((int)(System.currentTimeMillis()-startChrono)) );
+        getLogger().log( Level.INFO, TomMessage.tomTypeCheckingPhase.getMessage(), new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-            new Object[]{getClass().getName(), getStreamManager().getInputFileName(),e.getMessage()} );
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(), new Object[]{getClass().getName(), getStreamManager().getInputFileName(),e.getMessage()} );
         e.printStackTrace();
       }
     } else {
@@ -117,7 +121,7 @@ public class TomTypeChecker extends TomChecker {
     is_sort(t) { ($t instanceof TomTypeChecker) }
   }
 
-  %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
+  %strategy checkTypeInference(ttc:TomTypeChecker) extends Identity() {
     visit Instruction {
       Match(constraintInstructionList, oplist) -> {  
         ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
@@ -125,6 +129,7 @@ public class TomTypeChecker extends TomChecker {
         throw new tom.library.sl.VisitFailure();
       }
     }
+
     visit Declaration {
       Strategy(_,_,visitList,orgTrack) -> {
         ttc.currentTomStructureOrgTrack = `orgTrack;
@@ -132,12 +137,12 @@ public class TomTypeChecker extends TomChecker {
         throw new tom.library.sl.VisitFailure();
       }
     }
-  } //checkTypeInference
+  }
 
   /* 
    * Collect unknown (not in symbol table) appls without ()
    */
-  %strategy collectUnknownAppls(ttc:TomTypeChecker) extends `Identity() {
+  %strategy collectUnknownAppls(ttc:TomTypeChecker) extends Identity() {
     visit TomTerm {
       app@TermAppl[] -> {
         if(ttc.symbolTable().getSymbolFromName(ttc.getName(`app))==null) {
@@ -152,89 +157,56 @@ public class TomTypeChecker extends TomChecker {
     } 
   }
 
-  private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) throws VisitFailure{
-    %match(constraintInstructionList){
-      concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
+  private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) throws VisitFailure {
+    %match(constraintInstructionList) {
+      concConstraintInstruction(_*,ci@ConstraintInstruction[Constraint=constraint,Action=action],_*) -> {
+
         // collect variables
-        ArrayList variableList = new ArrayList();
+        ArrayList<TomTerm> variableList = new ArrayList<TomTerm>();
         TomBase.collectVariable(variableList, `constraint);
         verifyVariableTypeListCoherence(variableList);        
+
+        // TODO: check in the action that a VariableStar is under the right symbol
+        //System.out.println(`action);
       }
     }    
   }
 
-  private void verifyStrategyVariable(TomVisitList list) throws VisitFailure{
-    TomForwardType visitorFwd = null;
-    TomForwardType currentVisitorFwd = null;
-    while(!list.isEmptyconcTomVisit()) {
-      TomVisit visit = list.getHeadconcTomVisit();
-      %match(TomVisit visit) {
-        VisitTerm(visitType,patternInstructionList,options) -> {
-          String fileName =findOriginTrackingFileName(`options);
-          %match(TomType visitType) {
-            TomTypeAlone(strVisitType) -> {
-              messageError(fileName,
-                  findOriginTrackingLine(`options),
-                  TomMessage.unknownVisitedType,
-                  new Object[]{`(strVisitType)});
-            }
-            Type(ASTTomType(ASTVisitType),TLType(TLVisitType)) -> {
-              //check that all visitType have same visitorFwd
-
-              currentVisitorFwd = symbolTable().getForwardType(`ASTVisitType);
-
-              //noVisitorFwd defined for visitType
-              if (!getOptionBooleanValue("autoDispatch")) {
-                if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
-                  messageError(fileName,`TLVisitType.getStart().getLine(),
-                      TomMessage.noVisitorForward,
-                      new Object[]{`(ASTVisitType)});
-                } else if (visitorFwd == null) {
-                  //first visit 
-                  visitorFwd = currentVisitorFwd;
-                } else {
-                  //check if current visitor equals to previous visitor
-                  if (currentVisitorFwd != visitorFwd){ 
-                    messageError(fileName,`TLVisitType.getStart().getLine(),
-                        TomMessage.differentVisitorForward,
-                        new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
-                  }
-                }
-              }
-              verifyMatchVariable(`patternInstructionList);
-            } 
-          }
-        }
-      }
-      // next visit
-      list = list.getTailconcTomVisit();
-    }
-  }
-
-  private void verifyVariableTypeListCoherence(ArrayList list) {
+  private void verifyVariableTypeListCoherence(ArrayList<TomTerm> list) {
     // compute multiplicities
     //System.out.println("list = " + list);
-    HashMap map = new HashMap();
-    Iterator it = list.iterator();
-    while(it.hasNext()) {
-      TomTerm variable = (TomTerm)it.next();
+    HashMap<TomName,TomTerm> map = new HashMap<TomName,TomTerm>();
+    for(TomTerm variable:list) {
       TomName name = variable.getAstName();
       if(map.containsKey(name)) {
-        TomTerm var = (TomTerm)map.get(name);
+        TomTerm var = map.get(name);
         //System.out.println("variable = " + variable);
         //System.out.println("var = " + var);
         TomType type1 = var.getAstType();
         TomType type2 = variable.getAstType();
-        if(!(type1==type2)) {
+        // we use getTomType because type1 may be a TypeWithSymbol and type2 a TomType
+        if(!TomBase.getTomType(type1).equals(TomBase.getTomType(type2))) {
           messageError(findOriginTrackingFileName(variable.getOption()),
               findOriginTrackingLine(variable.getOption()),
               TomMessage.incoherentVariable,
               new Object[]{name.getString(), TomBase.getTomType(type1), TomBase.getTomType(type2)});
         }
       } else {
-        map.put(name, variable);
+        map.put(name,variable);
       }
     }
   }
 
-} // class TomTypeChecker
+  private void verifyStrategyVariable(TomVisitList list) {
+    %match(list) {
+      concTomVisit(_*,VisitTerm(TomTypeAlone(strVisitType),_,options),_*) -> {
+        String fileName = findOriginTrackingFileName(`options);
+        messageError(fileName,
+            findOriginTrackingLine(`options),
+            TomMessage.unknownVisitedType,
+            new Object[]{`(strVisitType)});
+      }
+    }
+  }
+
+}

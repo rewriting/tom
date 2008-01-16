@@ -10,6 +10,7 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | TLType(Tl:TargetLanguage)
         | EmptyType()
         | TypeList(TypeList:TomTypeList)
+        | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)
 
 TomForwardType = TLForward(String:String)
                | EmptyForward()
