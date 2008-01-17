@@ -323,6 +323,12 @@ public class RuleExpander {
         genCondition(`rhc,output);
         output.append(")");
       }
+      CondOr[c1=lhc,c2=rhc] -> {
+        genCondition(`lhc,output);
+        output.append(" || (");
+        genCondition(`rhc,output);
+        output.append(")");
+      }
     }
   }
 

@@ -47,6 +47,7 @@ public class TestRuleCond extends TestCase {
    module Term:rules() {
     g(x,y) -> a() if x == a() && y == b()
     g(x,y) -> c() if x == a() && y != b() && y != c()
+    f(x) -> a() if x == a() || x == b()
    }
   }
   public static void main(String[] args) {
@@ -61,6 +62,21 @@ public class TestRuleCond extends TestCase {
   public void testRuleAnd() {
     Term test = `g(a(),b());
     assertEquals(test,`a());
+  }
+
+  public void testRuleOra() {
+    Term test = `f(a());
+    assertEquals(test,`a());
+  }
+
+  public void testRuleOrb() {
+    Term test = `f(b());
+    assertEquals(test,`a());
+  }
+
+  public void testRuleOrc() {
+    Term test = `f(c());
+    assertEquals(test,`f(c()));
   }
 
   public void testRuleAndAnd() {

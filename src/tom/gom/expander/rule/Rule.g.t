@@ -34,9 +34,13 @@ graphrule :
     -> ^(ConditionalRule $lhs $rhs $cond)
   ;
 condition :
-  simplecondition (AND cond=condition)?
-  -> { cond == null }? ^(simplecondition)
-  -> ^(CondAnd simplecondition $cond)
+  simplecondition
+  (AND condand=condition
+   | OR condor=condition
+  )?
+  -> {condand!=null}? ^(CondAnd simplecondition $condand)
+  -> {condor!=null}?  ^(CondOr simplecondition $condor)
+  -> ^(simplecondition)
   ;
 simplecondition :
   p1=term (EQUALS p2=term
@@ -101,6 +105,7 @@ LPAR : '(' ;
 RPAR : ')' ;
 COMA : ',' ;
 AND : '&&' ;
+OR : '||' ;
 EQUALS : '==';
 NOTEQUALS : '!=';
 DOT : '.';
