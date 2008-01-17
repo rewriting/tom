@@ -26,5 +26,6 @@ Condition = CondTerm(t:Term)
           | CondGreaterEquals(t1:Term,t2:Term)
           | CondGreaterThan(t1:Term,t2:Term)
           | CondMethod(t1:Term,name:String,t2:Term)
+          | CondAnd(c1:Condition,c2:Condition)
 
 RuleList = RuleList(Rule*)

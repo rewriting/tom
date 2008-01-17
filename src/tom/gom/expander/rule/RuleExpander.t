@@ -317,6 +317,12 @@ public class RuleExpander {
         genTerm(`term2,output);
         output.append(")");
       }
+      CondAnd[c1=lhc,c2=rhc] -> {
+        genCondition(`lhc,output);
+        output.append(" && (");
+        genCondition(`rhc,output);
+        output.append(")");
+      }
     }
   }
 
