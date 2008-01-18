@@ -34,13 +34,13 @@ graphrule :
     -> ^(ConditionalRule $lhs $rhs $cond)
   ;
 condition :
-  simplecondition
+  scond=simplecondition
   (AND condand=condition
    | OR condor=condition
   )?
-  -> {condand!=null}? ^(CondAnd simplecondition $condand)
-  -> {condor!=null}?  ^(CondOr simplecondition $condor)
-  -> ^(simplecondition)
+  -> {condand!=null}? ^(CondAnd $scond $condand)
+  -> {condor!=null}?  ^(CondOr $scond $condor)
+  -> $scond
   ;
 simplecondition :
   p1=term (EQUALS p2=term
