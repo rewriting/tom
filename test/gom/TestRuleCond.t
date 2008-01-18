@@ -44,10 +44,12 @@ public class TestRuleCond extends TestCase {
          | c()
          | f(t:Term)
          | g(t1:Term,t2:Term)
+         | h(t1:Term,t2:Term,t3:Term)
    module Term:rules() {
     g(x,y) -> a() if x == a() && y == b()
     g(x,y) -> c() if x == a() && y != b() && y != c()
     f(x) -> a() if x == a() || x == b()
+    h(x,y,z) -> a() if ((x == a() && y != b()) || (y != c() && z == a()))
    }
   }
   public static void main(String[] args) {
@@ -82,5 +84,26 @@ public class TestRuleCond extends TestCase {
   public void testRuleAndAnd() {
     Term test = `g(a(),a());
     assertEquals(test,`c());
+  }
+
+  public void testRuleParena() {
+    Term test = `h(a(),a(),a());
+    assertSame(test,`a());
+  }
+  public void testRuleParenb() {
+    Term test = `h(a(),c(),c());
+    assertSame(test,`a());
+  }
+  public void testRuleParenc() {
+    Term test = `h(b(),b(),a());
+    assertSame(test,`a());
+  }
+  public void testRuleParend() {
+    Term test = `h(b(),b(),b());
+    assertNotSame(test,`a());
+  }
+  public void testRuleParene() {
+    Term test = `h(b(),a(),c());
+    assertNotSame(test,`a());
   }
 }

@@ -317,16 +317,27 @@ public class RuleExpander {
         genTerm(`term2,output);
         output.append(")");
       }
-      CondAnd[c1=lhc,c2=rhc] -> {
-        genCondition(`lhc,output);
-        output.append(" && (");
-        genCondition(`rhc,output);
+      CondAnd(head,tail*) -> {
+        output.append("(");
+        genCondition(`head,output);
+        if(`tail* != `CondAnd()) {
+           output.append(" && ");
+           genCondition(`tail*,output);
+        }
         output.append(")");
       }
-      CondOr[c1=lhc,c2=rhc] -> {
-        genCondition(`lhc,output);
-        output.append(" || (");
-        genCondition(`rhc,output);
+      CondOr(head,tail*) -> {
+        output.append("(");
+        genCondition(`head,output);
+        if(`tail* != `CondOr()) {
+          output.append(" || ");
+          genCondition(`tail*,output);
+        }
+        output.append(")");
+      }
+      CondNot[c=negcond] -> {
+        output.append("!(");
+        genCondition(`negcond,output);
         output.append(")");
       }
     }

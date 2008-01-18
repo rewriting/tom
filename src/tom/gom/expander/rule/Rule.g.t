@@ -34,13 +34,19 @@ graphrule:
     -> ^(ConditionalRule $lhs $rhs $cond)
 ;
 condition:
-  scond=simplecondition
-  (AND condand=condition
-  | OR condor=condition
-  )?
-  -> {condand!=null}? ^(CondAnd $scond $condand)
-  -> {condor!=null}?  ^(CondOr $scond $condor)
-  -> $scond
+  cond=andcondition (or=OR andcondition)*
+  -> {or!=null}? ^(CondOr andcondition*)
+  -> $cond
+;
+andcondition:
+  cond=notcondition (and=AND notcondition)*
+  -> {and!=null}? ^(CondAnd notcondition*)
+  -> $cond
+;
+notcondition:
+  not=NOT? cond=simplecondition
+  -> {not!=null}? ^(CondNot $cond)
+  -> $cond
 ;
 simplecondition:
   p1=term (EQUALS p2=term
@@ -59,6 +65,8 @@ simplecondition:
     -> {p7!=null}? ^(CondGreaterThan $p1 $p7)
     -> {p8!=null}? ^(CondMethod $p1 ID $p8)
     -> ^(CondTerm $p1)
+  | LPAR cond=condition RPAR
+  -> $cond
 ;
 pattern:
   ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
@@ -106,6 +114,7 @@ RPAR : ')';
 COMA : ',';
 AND : '&&';
 OR : '||';
+NOT : '!';
 EQUALS : '==';
 NOTEQUALS : '!=';
 DOT : '.';
