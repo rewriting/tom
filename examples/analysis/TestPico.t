@@ -38,7 +38,7 @@ public class TestPico extends TestCase {
 
   %include { sl.tom }
 
-  %gom(--pointer) {
+  %gom(--termpointer) {
     module Term
       imports int String
 

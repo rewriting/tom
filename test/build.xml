@@ -30,7 +30,7 @@
   <target name="build" depends="init,prepare">
     <gom.preset srcdir="${test.src}"
                 package="sl"
-                pointer="true"
+                termpointer="true"
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
     </gom.preset>

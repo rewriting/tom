@@ -6,7 +6,7 @@
     <sequential>
       <gom.preset srcdir="${examples.dir}"
         package="@{example}" 
-        pointer="true" 
+        termpointer="true" 
         destdir="${examples.gen}">
         <include name="@{example}/**/*.gom"/>
       </gom.preset>

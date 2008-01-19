@@ -54,7 +54,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>failonerror</li>
  * <li>fork</li>
  * <li>termgraph</li>
- * <li>pointer</li>
+ * <li>termpointer</li>
  * <li>multithread</li>
  * <li></li>
  * </ul>
@@ -76,7 +76,7 @@ public class GomCommonTask extends MatchingTask {
   protected boolean verbose = false;
   protected boolean failOnError = true;
   protected boolean fork = false;
-  protected boolean pointer = false;
+  protected boolean termpointer = false;
   protected boolean termgraph = false;
   protected boolean multithread = false;
 
@@ -137,19 +137,19 @@ public class GomCommonTask extends MatchingTask {
   }
 
   /**
-   * If true, asks the compiler for Gom signature with pointers.
-   * @param pointer if true, asks the compiler for Gom signature with pointers
+   * If true, asks the compiler for Gom signature with term pointers.
+   * @param termpointer if true, asks the compiler for Gom signature with term pointers
    */
-  public void setPointer(boolean pointer) {
-    this.pointer = pointer;
+  public void setTermpointer(boolean termpointer) {
+    this.termpointer = termpointer;
   }
 
   /**
-   * Gets the pointer flag.
-   * @return the pointer flag
+   * Gets the termpointer flag.
+   * @return the termpointer flag
    */
-  public boolean getPointer() {
-    return pointer;
+  public boolean getTermpointer() {
+    return termpointer;
   }
 
   /**
@@ -339,8 +339,8 @@ public class GomCommonTask extends MatchingTask {
       if(getMultithread() == true) {
         javaRunner.createArg().setValue("--multithread");
       }
-      if(getPointer() == true) {
-        javaRunner.createArg().setValue("--pointer");
+      if(getTermpointer() == true) {
+        javaRunner.createArg().setValue("--termpointer");
       }
       processAdditionalOptions(javaRunner);
 
