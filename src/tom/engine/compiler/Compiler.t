@@ -285,6 +285,8 @@ public class Compiler extends TomGenericPlugin {
   public static TomType getSlotType(TomName tomName, TomName slotName) {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
+    //System.out.println("tomName = " + tomName);
+    //System.out.println("stringName = " + stringName);
     return TomBase.getSlotType(tomSymbol,slotName);    
   } 
 

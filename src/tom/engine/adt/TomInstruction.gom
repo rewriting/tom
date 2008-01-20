@@ -55,7 +55,7 @@ Instruction =
   | OrInstruction(Instruction*)
   
 /**
- * <code>ConstraintInstruction</code> a line in a match instruction - a touple (Constraint,Action)
+ * <code>ConstraintInstruction</code> a line in a match instruction - a tuple (Constraint,Action)
  *
  * @param Constraint a constraint (can be a OR or an AND)
  * @param Action the action to execute if the constraints are evaluated to true

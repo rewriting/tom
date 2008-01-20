@@ -283,7 +283,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      IsSort(Type[TomType=type@ASTTomType[]], exp) -> {
+      IsSort((Type|TypeWithSymbol)[TomType=type@ASTTomType[]], exp) -> {
         `buildExpIsSort(deep,TomBase.getTomType(type),exp,moduleName);
         return;
       }
@@ -293,7 +293,7 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      Cast(Type(_,tlType@TLType[]),exp) -> {
+      Cast((Type|TypeWithSymbol)[TlType=tlType@TLType[]],exp) -> {
         buildExpCast(deep, `tlType, `exp, moduleName);
         return;
       }
