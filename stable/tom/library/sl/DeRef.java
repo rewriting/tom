@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2007, Pierre-Etienne Moreau All rights reserved.
+ * Copyright (c) 2000-2008, INRIA All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

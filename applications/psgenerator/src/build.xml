@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- ======================================================================= -->
-<!-- ANT-Makefile for PSGenerator (C) 2004 Mr. Soft                                -->
+<!-- ANT-Makefile for PSGenerator (c) 2004 Mr. Soft                                -->
 <!-- ======================================================================= -->
 
 <project name="Production System Generator" default="main" basedir="..">

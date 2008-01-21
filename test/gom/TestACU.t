@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007, INRIA
+ * Copyright (c) 2006-2008, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify

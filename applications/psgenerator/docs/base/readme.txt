@@ -2,7 +2,7 @@
 PSGEN - v@VERSION@.@BUILD@ - @MODIFIED@ - Readme File  - 
 =======================================================================
 
-(C)2004 Protheo Team - LORIA
+(c) 2004, INRIA
 Released under GNU Lesser General Public License (see license.html)
 psgen@loria.fr
 	http://protheo.loria.fr/psgen
