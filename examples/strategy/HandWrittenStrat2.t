@@ -140,6 +140,12 @@ public class HandWrittenStrat2 {
     }
   }
 
+  %strategy R2() extends Identity() {
+    visit Term1 {
+      a1() -> f1(a1())
+    }
+  }
+
   public static void main(String[] args) throws VisitFailure {
     Term1 t1 = `f1(f1(f1(a1())));
     Term2 t2 = `f2(f2(f2(a2())));
@@ -147,6 +153,8 @@ public class HandWrittenStrat2 {
     System.out.println( `All(R()).visit(t2, new LocalIntrospector()) );
     System.out.println( `TopDown(R()).visit(t1, new LocalIntrospector()) );
     System.out.println( `TopDown(R()).visit(t2, new LocalIntrospector()) );
+    Term1 t3 = `f1(f1(f1(null)));
+    System.out.println( `TopDown(R2()).visit(t3, new LocalIntrospector()) );
   }
 
 }

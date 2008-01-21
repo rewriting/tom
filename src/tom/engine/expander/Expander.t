@@ -246,7 +246,8 @@ matchBlock: {
            * public int getChildCount(Object o);
            */
           String funcName = "getChildCount";//function name
-          InstructionList instructions = `concInstruction();
+            //manage null children: return 0
+            InstructionList instructions = `concInstruction(If(TomTermToExpression(TargetLanguageToTomTerm(ITL("o==null"))),Return(TargetLanguageToTomTerm(ITL("0"))),Nop()));
           for (TomTypeDefinition type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
