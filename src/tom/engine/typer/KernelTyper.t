@@ -86,8 +86,13 @@ public class KernelTyper {
     return TomBase.getSymbolFromName(tomName, getSymbolTable());
   }
 
-  protected TomSymbol getSymbolFromType(TomType tomType) {
-    return TomBase.getSymbolFromType(tomType, getSymbolTable());
+  protected TomSymbol getSymbolFromType(TomType type) {
+    %match(type) {
+      TypeWithSymbol[TomType=tomType, TlType=tlType] -> {
+        return TomBase.getSymbolFromType(`Type(tomType,tlType), getSymbolTable()); 
+      }
+    }
+    return TomBase.getSymbolFromType(type, getSymbolTable()); 
   }
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
@@ -209,14 +214,16 @@ public class KernelTyper {
         } else {
           tomSymbol = typeer.getSymbolFromName(`tomName);
         }
-
+        
         if(tomSymbol != null) {
           SlotList subterm = typeer.typeVariableList(tomSymbol, `slotList);
           ConstraintList newConstraints = (ConstraintList)typeer.typeVariable(TomBase.getSymbolCodomain(tomSymbol),`constraints);
           return `RecordAppl(option,nameList,subterm,newConstraints);
         } else {
+          //System.out.println("contextType = " + contextType);
+
           %match(contextType) {
-            type@Type[] -> {
+            type@(Type|TypeWithSymbol)[] -> {
               SlotList subterm = typeer.typeVariableList(`emptySymbol(), `slotList);
               ConstraintList newConstraints = (ConstraintList)typeer.typeVariable(`type,`constraints);
               return `RecordAppl(option,nameList,subterm,newConstraints);
@@ -241,9 +248,10 @@ public class KernelTyper {
 
         //System.out.println("contextType = " + contextType);
         %match(contextType) {
-          ctype@Type[] -> {
-            ConstraintList newConstraints = (ConstraintList)typeer.typeVariable(`ctype,`constraints);
-            TomTerm newVar = `var.setAstType(`ctype);
+          (Type|TypeWithSymbol)[TomType=tomType,TlType=tlType] -> {
+            TomType ctype = `Type(tomType,tlType);
+            ConstraintList newConstraints = (ConstraintList)typeer.typeVariable(ctype,`constraints);
+            TomTerm newVar = `var.setAstType(ctype);
             //System.out.println("newVar = " + newVar);
             return newVar.setConstraints(newConstraints);
           }

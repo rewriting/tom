@@ -30,8 +30,10 @@ class Matching2 {
      // PropagateClash
      And(_*,False(),_*) -> False()
      // PropagateSuccess
-     And(X*,True(),Y*) -> And(X*,Y*)
-     And(X*,c,Y*,c,Z*) -> And(X*,c,Y*,Z*)
+     And(True(),Y*) -> Y*
+     And(c,Y*,c,Z*) -> And(c,Y*,Z*)
+     //And(X*,True(),Y*) -> And(X*,Y*)
+     //And(X*,c,Y*,c,Z*) -> And(X*,c,Y*,Z*)
      And(x) -> x
      //And() -> True()
 
@@ -50,7 +52,7 @@ class Matching2 {
     Term s2 = `Appl("f",conc(Appl("a",conc()),Appl("g",conc(Appl("b",conc())))));
 
     Term p3 = `Appl("f",conc(Appl("a",conc()),Appl("g",conc(Variable("y")))));
-    Term s3 = `Appl("f",conc(Appl("b",conc()),Appl("g",conc(Appl("b",conc())))));
+    Term s3 = `Appl("f",conc(Appl("a",conc()),Appl("g",conc(Appl("b",conc())))));
 
     System.out.println("running...");
     System.out.println("p1 = " + p1);
@@ -63,3 +65,4 @@ class Matching2 {
   }
 
 }
+

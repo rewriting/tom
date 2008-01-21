@@ -79,7 +79,8 @@ public class SyntacticPropagator implements IBasePropagator {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
             Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
-        
+       
+        //System.out.println("m = " + `m);
         Constraint lastPart = `AndConstraint();
         ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
         // we build the last part only once, and we store the fresh variables we generate
