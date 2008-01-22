@@ -14,26 +14,17 @@ public class Verify {
 
   // 	Convert state from input to computation sort (StateForPrint) -> (State) 
   public static State fromForPrintToMain_State(ListOfSubjectsForPrint lsfp, ListOfObjectsForPrint lofp, StateForPrint sfp) {
+    ListOfAccesses readAccesses = `accesses();
+    ListOfAccesses writeAccesses = `accesses();
     State statetotest=`state(accesses(),accesses());
     ListOfSubjects ls = fromForPrintToMain_ListOfSubjects(lsfp);
     ListOfObjects lo = fromForPrintToMain_ListOfObjects(lofp);
     %match (ListOfSubjects ls,ListOfObjects lo,StateForPrint sfp) {
       subjects(_*,s@subject(x,_),_*),objects(_*,o@securityObject(y,_),_*),la(_*,a(s(x),o(y),m),_*) -> {
-        Access newAccess;
-        if (`m==`r()) {
-          newAccess=`access(s,o,am(0),explicit());
-          %match (statetotest) {
-            state(accesses(r*),w) -> {
-              statetotest=`state(accesses(r*,newAccess),w);
-            }
-          }
+        if(`m==`r()) {
+          readAccesses = `accesses(readAccesses*,access(s,o,am(0),explicit()));
         } else {
-          newAccess=`access(s,o,am(1),explicit());
-          %match (statetotest) {
-            state(r,accesses(w*)) -> {
-              statetotest=`state(r,accesses(w*,newAccess));
-            }
-          }
+          writeAccesses = `accesses(writeAccesses*,access(s,o,am(1),explicit()));
         }
       }
     }
@@ -42,20 +33,16 @@ public class Verify {
       BufferedReader waiter = new BufferedReader(new InputStreamReader(System.in));
       waiter.readLine();
     } catch (Exception e) {}
-    return statetotest;
+    return `state(readAccesses,writeAccesses);
   }
 
   // 	Convert list of subjects from input to computation sort (ListOfSubjectsForPrint) -> (ListOfSubjects) 
   public static ListOfSubjects fromForPrintToMain_ListOfSubjects(ListOfSubjectsForPrint lsfp) {
     ListOfSubjects los=`subjects();  
-    %match (ListOfSubjectsForPrint lsfp) {
+    %match(lsfp) {
       ls(_*,sd(id,sl),_*) -> {
         Subject newSubject=`subject(id,sl(sl));
-        %match	(los)	{	
-          subjects(X*) -> {
-            los=`subjects(X*,newSubject);
-          }
-        }
+        los=`subjects(los*,newSubject);
       }
     }
     try {
@@ -69,14 +56,10 @@ public class Verify {
   // 	Convert list of objects from input to computation sort (ListOfObjectsForPrint) -> (ListOfObjects) 
   public static ListOfObjects fromForPrintToMain_ListOfObjects(ListOfObjectsForPrint lofp) {
     ListOfObjects loo=`objects();  
-    %match (ListOfObjectsForPrint lofp) {
+    %match(lofp) {
       lo(_*,od(id,sl),_*) -> {
         SecurityObject newObject=`securityObject(id,sl(sl));
-        %match (loo) {
-          objects(X*) -> {
-            loo=`objects(X*,newObject);
-          }
-        }
+        loo=`objects(loo*,newObject);
       }
     }
     try {
