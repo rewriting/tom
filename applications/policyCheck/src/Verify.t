@@ -16,7 +16,6 @@ public class Verify {
   public static State fromForPrintToMain_State(ListOfSubjectsForPrint lsfp, ListOfObjectsForPrint lofp, StateForPrint sfp) {
     ListOfAccesses readAccesses = `accesses();
     ListOfAccesses writeAccesses = `accesses();
-    State statetotest=`state(accesses(),accesses());
     ListOfSubjects ls = fromForPrintToMain_ListOfSubjects(lsfp);
     ListOfObjects lo = fromForPrintToMain_ListOfObjects(lofp);
     %match (ListOfSubjects ls,ListOfObjects lo,StateForPrint sfp) {
@@ -29,7 +28,7 @@ public class Verify {
       }
     }
     try {
-      System.out.print("State:"+statetotest);
+      System.out.print("State:"+`state(readAccesses,writeAccesses));
       BufferedReader waiter = new BufferedReader(new InputStreamReader(System.in));
       waiter.readLine();
     } catch (Exception e) {}
