@@ -4,19 +4,42 @@
  
  
  SecurityLevelForPrint = l(sl:int)
+
  OrderedSubSetOfSecurityLevelsForPrint = ll(SecurityLevelForPrint *)
+
  PartiallyOrderdedSetOfSecurityLevelsForPrint = lll(OrderedSubSetOfSecurityLevelsForPrint *)
+
  SubjectDefinitionForPrint = sd(id:int,sl:int)
+
  SubjectPointerForPrint = s(id:int)
+
  ObjectDefinitionForPrint = od(id:int,sl:int)
+
  ObjectPointerForPrint = o(id:int)
+
  AccessModeForPrint = r()|w()
+
  AccessForPrint = a(s:SubjectPointerForPrint,o:ObjectPointerForPrint,a:AccessModeForPrint)
+
  StateForPrint = la(AccessForPrint *)
+
  ListOfSubjectsForPrint = ls(SubjectDefinitionForPrint *)
+
  ListOfObjectsForPrint = lo(ObjectDefinitionForPrint *)
+
  DocPolicy = b()|m()
- InputVerify = verifyState( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,subjects:ListOfSubjectsForPrint,objects:ListOfObjectsForPrint,state:StateForPrint,policy:DocPolicy)
- 			 | verifyConfig( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,subjects:ListOfSubjectsForPrint,objects:ListOfObjectsForPrint,policy:DocPolicy)
- 			 | verifyAll( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,numberOfSubjects:int,numberOfObjects:int,policy:DocPolicy)
+
+ InputVerify = verifyState( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
+                            subjects:ListOfSubjectsForPrint,
+                            objects:ListOfObjectsForPrint,
+                            state:StateForPrint,
+                            policy:DocPolicy)
+   | verifyConfig( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
+                   subjects:ListOfSubjectsForPrint,
+                   objects:ListOfObjectsForPrint,
+                   policy:DocPolicy)
+   | verifyAll( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
+                numberOfSubjects:int,
+                numberOfObjects:int,
+                policy:DocPolicy)
  
