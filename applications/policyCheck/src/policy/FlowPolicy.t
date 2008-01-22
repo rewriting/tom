@@ -11,55 +11,63 @@ public abstract class FlowPolicy implements Policy {
   %include { sl.tom }
   %include { ../accesscontrol/Accesscontrol.Tom }
 
-
   public PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved;
 
   %strategy makeExplicit() extends `Identity() {
     visit State {
-      state(reads@accesses(x1*,access(s1,o1,am(0),_),x2*,access(s2,o2,am(0),_),x3*),
-          writes@accesses(x4*,access(s,o,am(1),_),x5*))->{
-        %match(accesses(x1*,x2*,x3*)) {
-          accesses(x*,access(s3,o3,am(0),_),y*) -> {
-            if( (`s2==`s3 && `o1==`o3) || (`s1==`s3 && `o2==`o3)) {
-              return `state(reads,writes);
-            }
-          }
-        }
-        return `state(accesses(access(s1,o2,am(0),implicit()),reads),writes);
+      state(reads@accesses(_*,access(s1,o1,am(0),_),_*,access(s2,o2,am(0),_),_*),
+            writes@accesses(_*,access(s1,o2,am(1),_),_*)) &&
+          !accesses(_*,access(s2,o1,am(0),_),_*) << reads -> {
+        return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
+      }
+      state(reads@accesses(_*,access(s2,o2,am(0),_),_*,access(s1,o1,am(0),_),_*),
+            writes@accesses(_*,access(s1,o2,am(1),_),_*)) &&
+          !accesses(_*,access(s2,o1,am(0),_),_*) << reads -> {
+        return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
       }
     }
   }
 
-  /*
-     if (`((s==s1 && o==o2))){
-     ListOfAccesses l=`accesses(x1*,x2*,x3*);
-     boolean contains=false;
-     %match(l){
-     accesses(x*,access(s3,o3,am(0),_),y*) ->{
-     if (`s2==`s3 && `o1==`o3){
-     contains=true;
-     }
-     }
-     } 
-     if (contains) return `state(reads,writes);
-     else return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
-     }else  if (`((s==s2 && o==o1))){
-     ListOfAccesses l=`accesses(x1*,x2*,x3*);
-     boolean contains=false;
-     %match(l){
-     accesses(x*,access(s3,o3,am(0),_),y*) ->{
-     if (`s1==`s3 && `o2==`o3){
-     contains=true;
-     }
-     }
-     } 
-     if (contains) return `state(reads,writes);
-     else return `state(accesses(access(s1,o2,am(0),implicit()),reads),writes);
-     }
-     }  
-    }
-  }
-*/
+//   %strategy makeExplicit() extends `Identity() {
+//     visit State {
+//       state(reads@accesses(x1*,access(s1,o1,am(0),_),x2*,access(s2,o2,am(0),_),x3*),
+//           writes@accesses(x4*,access(s,o,am(1),_),x5*))->{
+//         if (`((s==s1 && o==o2))){
+//           ListOfAccesses l=`accesses(x1*,x2*,x3*);
+//           boolean contains=false;
+//           %match(l){
+//             accesses(x*,access(s3,o3,am(0),_),y*) ->{
+//               if (`s2==`s3 && `o1==`o3){
+//                 contains=true;
+//               }
+//             }
+//           } 
+//           if (contains) {
+//             return `state(reads,writes);
+//           }else{
+//             return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
+//           }
+//         }else{
+//           if (`((s==s2 && o==o1))){
+//             ListOfAccesses l=`accesses(x1*,x2*,x3*);
+//             boolean contains=false;
+//             %match(l){
+//               accesses(x*,access(s3,o3,am(0),_),y*) ->{
+//                 if (`s1==`s3 && `o2==`o3){
+//                   contains=true;
+//                 }
+//               }
+//             } 
+//             if (contains) {
+//               return `state(reads,writes);
+//             } else  {
+//               return `state(accesses(access(s1,o2,am(0),implicit()),reads),writes);
+//             }
+//           }
+//         }  
+//       }
+//     }
+
   //Verification of state
   public boolean valid(State setOfAccesses){
 	 RequestUponState currentRequestOfScenario;
