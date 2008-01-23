@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="PolygraphicProgram"
+    nsURI="fr.loria.polygraphicprogramming" nsPrefix="Polygraph">
+  <eClassifiers xsi:type="ecore:EEnum" name="CellType">
+    <eLiterals name="Constructor"/>
+    <eLiterals name="Function"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PolygraphicProgram">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasType" upperBound="-1"
+        eType="#//Type" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasConstructor" upperBound="-1"
+        eType="#//Constructor" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasFunction" upperBound="-1"
+        eType="#//Function" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasStructureCell" upperBound="-1"
+        eType="#//StructureCell" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasFunctionRule" upperBound="-1"
+        eType="#//FunctionRule" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasStructureRule" upperBound="-1"
+        eType="#//StructureRule" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OneCell" eSuperTypes="#//OnePath">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OnePath"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TwoCell" eSuperTypes="#//TwoPath">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Type" eType="#//CellType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasSource" lowerBound="1"
+        eType="#//OnePath"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasTarget" lowerBound="1"
+        eType="#//OnePath"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TwoPath"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ThreeCell">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Type" eType="#//CellType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasSource" lowerBound="1"
+        eType="#//TwoPath"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasTarget" lowerBound="1"
+        eType="#//TwoPath"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OneC0" eSuperTypes="#//OnePath">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="oneC0ComposedWith" upperBound="-1"
+        eType="#//OnePath" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Id" eSuperTypes="#//OnePath"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TwoId" eSuperTypes="#//TwoPath">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="isComposedWith" lowerBound="1"
+        eType="#//OnePath"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TwoC0" eSuperTypes="#//TwoPath">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="twoC0ComposedWith" upperBound="-1"
+        eType="#//TwoPath" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TwoC1" eSuperTypes="#//TwoPath">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="twoC1ComposedWith" upperBound="-1"
+        eType="#//TwoPath" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Type" eSuperTypes="#//OneCell"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Constructor" eSuperTypes="#//TwoCell"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//TwoCell">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hasRule" upperBound="-1"
+        eType="#//FunctionRule"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FunctionRule" eSuperTypes="#//ThreeCell"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StructureRule" eSuperTypes="#//ThreeCell">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="isAssociatedToConstructor"
+        lowerBound="1" eType="#//Constructor"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="isAssociatedToStructureCell"
+        lowerBound="1" eType="#//StructureCell"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StructureCell" eSuperTypes="#//TwoCell">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="isAssociatedTo" lowerBound="1"
+        upperBound="2" eType="#//Type"/>
+  </eClassifiers>
+</ecore:EPackage>
