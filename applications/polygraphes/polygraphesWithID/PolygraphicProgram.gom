@@ -258,6 +258,7 @@ sort TwoPath:block(){
 sort ThreePath:block(){
 	
 	//returns the source 1-Path of any 3-Path (same 1-source and 1-target for the source and the target of a 3-Cell) 
+	public OnePath oneSource(){
 		%match (this){	
 					ThreeId(X) -> { return `X.source(); }
 					ThreeCell[Source=x] -> { return `x.source(); }
@@ -281,7 +282,7 @@ sort ThreePath:block(){
 		//return `OneId();
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
 	}
-
+	
 	//returns the source 2-Path of any 3-Path
 	public TwoPath source(){
 		%match (this){
