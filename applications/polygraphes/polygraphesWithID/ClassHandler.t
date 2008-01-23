@@ -466,32 +466,37 @@ public static String getTargetAction(ThreeCell rule)
 {
 //to connect the cells of top and bottom parts
 TwoPath target=rule.getTarget();
-target=formatPath(target);
+target=formatPath(target); 
 %match (TwoPath target){
 		TwoId(!Id()) -> {return "{"+"connect_down(coargs[0], 0);"+"}";}
 		t@TwoCell(_,_,_,_,_) -> {
-			String targetAction= cellAction((TwoCell)`t,"args",0)+"cell.getName()";
+			String targetAction= cellAction((TwoCell)`t,"TODO",0)+"cell.getName()";
 			for(int i=0;i<`t.targetsize();i++){
 			 targetAction+=`t.getName()+0+".connectDown(coargs,"+i+")";}			
 			return targetAction;
 		} 
 		TwoC1(top@TwoCell(_,_,_,_,_),middle*,bottom@TwoCell(_,_,_,_,_)) -> {
 		String targetAction ="";
-		targetAction+=cellAction((TwoCell)`top,"args",0);
+		targetAction+="Port[] ports"+0+"= new Port["+`top.sourcesize()+"]\n";
+		for(int i=0;i<`top.sourcesize();i++){
+		targetAction+="ports"+0+"["+i+"]";//= a completer
+		}
+		targetAction+=cellAction((TwoCell)`top,"ports0",0);
 		String bottomPorts="";
-		//if(`middle.length()==0){bottomPorts=`top.getName()+0+".coargs";}//marche pas
-		/*else{
+		if(`middle==`TwoId(Id())){bottomPorts=`top.getName()+0+".coargs";}
+		else{
 			//TODO a partir de 2 comme compteur
 			//et changer bottomports
-		}*/
+		}
 		targetAction+=cellAction((TwoCell)`bottom,bottomPorts,1);//pb if it not a cell...
 		for(int i=0;i<`bottom.targetsize();i++){
 			 targetAction+=`bottom.getName()+1+".connectDown(coargs,"+i+")";}	
 		return targetAction;
 		}
+
 		TwoC1(t0@TwoC0(),c@TwoCell(_,_,_,_,_)) -> {
 		String actionTarget="";
-		actionTarget+=cellAction((TwoCell)`c,"args",0);
+		actionTarget+=cellAction((TwoCell)`c,"TODO2",0);
 		for(int i=0;i<`c.targetsize();i++){
 			 actionTarget+=`c.getName()+0+".connectDown(coargs,"+i+")";}	
 		}

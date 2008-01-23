@@ -1,0 +1,48 @@
+
+<!ELEMENT PolygraphicProgram  ( Type | Function )*>
+<!ATTLIST PolygraphicProgram
+Name CDATA #REQUIRED
+>
+
+<!ELEMENT Type  ( OnePath | Constructor )*>
+
+<!ELEMENT OnePath  ( OneCell | Id | OneC0 )*>
+
+<!ELEMENT OneCell  EMPTY>
+<!ATTLIST OneCell
+Name CDATA #REQUIRED
+>
+
+<!ELEMENT Constructor  ( TwoPath )*>
+
+<!ELEMENT TwoPath  ( TwoCell | TwoC1 | TwoId | TwoC0 )*>
+
+<!ELEMENT TwoCell  ( Source | Target )*>
+<!ATTLIST TwoCell
+Name CDATA #REQUIRED
+Type CDATA #REQUIRED
+>
+
+<!ELEMENT Source  ( OnePath | TwoPath )*>
+
+<!ELEMENT Id  EMPTY>
+
+<!ELEMENT Target  ( OnePath | TwoPath )*>
+
+<!ELEMENT OneC0  ( OneCell | Id | OneC0 )*>
+
+<!ELEMENT Function  ( TwoPath | Rule )*>
+
+<!ELEMENT Rule  ( ThreeCell )*>
+
+<!ELEMENT ThreeCell  ( Source | Target )*>
+<!ATTLIST ThreeCell
+Name CDATA #REQUIRED
+Type CDATA #REQUIRED
+>
+
+<!ELEMENT TwoC1  ( TwoCell | TwoId | TwoC1 | TwoC0 )*>
+
+<!ELEMENT TwoC0  ( TwoCell | TwoId | TwoC1 | TwoC0 )*>
+
+<!ELEMENT TwoId  ( OnePath )*>
