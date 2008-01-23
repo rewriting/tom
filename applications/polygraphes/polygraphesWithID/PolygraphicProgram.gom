@@ -1,28 +1,46 @@
+//Gom File for all polygraphic programs
+//Caution : this is a quite complete grammar for polygraphic programs though most of the things concerning 3-paths are actually never used
+
 module PolygraphicProgram
 	imports int String
 	abstract syntax
-OnePath = Id()
+	
+OnePath = Id() //means null, empty
 		| OneCell (Name:String)
 		| OneC0 (OnePath*)
 	
-TwoPath = TwoId (onePath:OnePath)
+TwoPath = TwoId (onePath:OnePath) //to be able to cast wires as cells when needed
 		| TwoCell (Name:String,Source:OnePath,Target:OnePath,Type:CellType,ID:int)
 		| TwoC0 (TwoPath*)
 		| TwoC1 (TwoPath*)
 
-ThreePath = ThreeId (twoPath:TwoPath)//inutile
+ThreePath = ThreeId (twoPath:TwoPath)//useless for the moment
 		| ThreeCell (Name:String,Source:TwoPath,Target:TwoPath,Type:CellType)
-		| ThreeC0 (ThreePath*)//idem
-		| ThreeC1 (ThreePath*)//idem
-		| ThreeC2 (ThreePath*)//idem
+		| ThreeC0 (ThreePath*)//useless
+		| ThreeC1 (ThreePath*)//useless
+		| ThreeC2 (ThreePath*)//useless
 
 CellType = Constructor()
 		| Function()
 
+		
+//HOOKS on variadic operators		
+
+//ONEC0
+
+//defines variadic operator OneC0 as associative and unitary with neutral element Id() 
 OneC0:AU() { `Id() }
 
+
+//TWOC0
+
+//desactivates the default hook
 TwoC0:Free() {}
+
+//defines how to create an empty TwoC0
 TwoC0:make_empty() { return `TwoId(Id()); }
+
+//defines variadic operator TwoC0 as associative and unitary with neutral element TwoId(Id()) 
 TwoC0:make_insert(x,y) {
 %match(x,y){
 	TwoId(Id()),tail -> {return `tail; }
@@ -33,12 +51,20 @@ TwoC0:make_insert(x,y) {
 	}
 }
 
+//TWOC1
+
+//desactivates the default hook
 TwoC1:Free() {}
+
+//defines how to create an empty TwoC0
 TwoC1:make_empty() { return `TwoId(Id()); }
+
+//defines variadic operator TwoC0 as associative and unitary with neutral element TwoId(Id()) 
 TwoC1:make_insert(x,y) {
+	//first we test if x and y are compatible for the *1 association
 	if(y!=`TwoId(Id())&&x.target()!=y.source())
-	{	System.out.println(x);System.out.println(x.target());
-		System.out.println(y);System.out.println(y.source());
+	{	//System.out.println(x);System.out.println(x.target());
+		//System.out.println(y);System.out.println(y.source());
 		throw new RuntimeException("composition of incompatible 2-Paths");
 	}
 %match(x,y){
@@ -49,6 +75,9 @@ TwoC1:make_insert(x,y) {
 	g,TwoC0() -> { return `g; }
 	}
 }
+
+//the same for variadic operators for 3-paths which we never use
+//useless for the use we have of them now
 
 ThreeC0:Free() {}
 ThreeC0:make_empty() { return `ThreeId(TwoId(Id())); }
@@ -100,6 +129,7 @@ ThreeC2:make_insert(x,y) {
 	}
 }
 
+//verifies if a three-cell is valid before creating it
 ThreeCell:make(name,source,target,type) {
 	if(source.source()!=target.source()||source.target()!=target.target())
 	{
@@ -109,14 +139,27 @@ ThreeCell:make(name,source,target,type) {
 		realMake(name,source,target,type);
 		}
 }
+
+
+
+//METHODS for polygraphic terms
+
+//set of methods for 1-paths
 sort OnePath:block(){
+	
+	//returns true if the path is valid (=well-constructed) (always true for a 1-path)
+	//actually useless with our custom make methods
 	public boolean defined(){return true;}
+	
+	//methods to print 1-path in a more "readable" way
+	//top level
 	public String prettyPrint(){
 		%match (this){
 			OneC0(left,right*) -> { return "OneC0("+`left.prettyPrint()+","+`OneC0(right*).prettyPrint()+")";}
 		}
 		return this.toString();
 	}
+	//other levels
 	public String prettyPrintBis(){
 		%match (this){
 			o@OneCell(_) -> { return `o.getName(); }
@@ -124,9 +167,14 @@ sort OnePath:block(){
 		}
 		return this.toString();
 	}
+	//called method
+	public void print(){System.out.println(this.prettyPrint());}
 }
 
+//set of methods for 2-paths
 sort TwoPath:block(){
+	
+	//returns the source 1-Path of any 2-Path
 	public OnePath source(){
 		%match (this){
 					TwoId(X) -> { return `X; }
@@ -134,10 +182,11 @@ sort TwoPath:block(){
 					TwoC0(head,tail*) -> { return `OneC0(head.source(),tail*.source()); }
 					TwoC1(head,tail*) -> { return `head.source(); }
 		}
-		//return `OneId();
+		//return `OneId();//actually useless
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
 		}
 
+	//returns the target 1-Path of any 2-Path
 	public OnePath target(){
 		%match (this){
 					TwoId(X) -> { return `X; }
@@ -145,9 +194,12 @@ sort TwoPath:block(){
 					TwoC0(head,tail*) -> { return `OneC0(head.target(),tail*.target()); }
 					TwoC1(head*,tail) -> { return `tail.target(); }
 		}
-		//return `OneId();
+		//return `OneId();//actually useless
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
 		}
+	
+	//returns true if the path is valid (=well-constructed)
+	//actually useless with our custom make methods
 	public boolean defined(){
 		%match (this){
 					TwoCell[] -> { return true; }
@@ -156,6 +208,8 @@ sort TwoPath:block(){
 		}
 		return false;
 		}
+	
+	//return the size of the source defined as the number of 1-Cells in the input
 	public int sourcesize(){
 		OnePath source=this.source();
 		%match(source){
@@ -165,6 +219,8 @@ sort TwoPath:block(){
 		}
 		return 0;
 	}
+	
+	//return the size of the target defined as the number of 1-Cells in the output
 	public int targetsize(){
 		OnePath target=this.target();
 		%match(target){
@@ -174,6 +230,9 @@ sort TwoPath:block(){
 		}
 		return 0;
 	}
+	
+	//methods to print 2-path in a more "readable" way
+	//top level
 	public  String prettyPrint (){
 		%match (this){
 					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
@@ -181,7 +240,7 @@ sort TwoPath:block(){
 		}
 		return this.prettyPrintBis();
 		}
-
+	//other levels
 	public  String prettyPrintBis(){
 		%match (this){
 						t@TwoCell(_,_,_,_,_) -> { return `t.getName(); }
@@ -190,11 +249,15 @@ sort TwoPath:block(){
 		}
 		return this.toString();
 		}
+	//called method
 	public void print(){System.out.println(this.prettyPrint());}
 }
 
+
+//set of methods for 3-paths (never used in this project except for the print method)
 sort ThreePath:block(){
-	public OnePath oneSource(){
+	
+	//returns the source 1-Path of any 3-Path (same 1-source and 1-target for the source and the target of a 3-Cell) 
 		%match (this){	
 					ThreeId(X) -> { return `X.source(); }
 					ThreeCell[Source=x] -> { return `x.source(); }
@@ -204,9 +267,10 @@ sort ThreePath:block(){
 		}
 		//return `OneId();
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
-		}
+	}
 
-		public OnePath oneTarget(){
+	//returns the source 1-Path of any 3-Path (same 1-source and 1-target for the source and the target of a 3-Cell) 
+	public OnePath oneTarget(){
 		%match (this){
 					ThreeId(X) -> { return `X.target(); }
 					ThreeCell[Target=x] -> { return `x.target(); }
@@ -216,9 +280,10 @@ sort ThreePath:block(){
 		}
 		//return `OneId();
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
-		}
+	}
 
-		public TwoPath source(){
+	//returns the source 2-Path of any 3-Path
+	public TwoPath source(){
 		%match (this){
 					ThreeId(X) -> { return `X; }
 					ThreeCell[Source=x] -> { return `x; }
@@ -228,9 +293,10 @@ sort ThreePath:block(){
 		}
 		//return `TwoId(OneId());
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
-		}
+	}
 
-		public TwoPath target(){
+	//returns the target 2-Path of any 3-Path
+	public TwoPath target(){
 		%match (this){
 					ThreeId(X) -> { return `X; }
 					ThreeCell[Target=x] -> { return `x; }
@@ -240,9 +306,11 @@ sort ThreePath:block(){
 		}
 		//return `TwoId(OneId());
 		throw new tom.engine.exception.TomRuntimeException("strange term: "+this);
-		}
-		
-		public boolean defined(){
+	}
+	
+	//returns true if the path is valid (=well-constructed)
+	//actually useless with our custom make methods
+	public boolean defined(){
 			%match (this){
 						ThreeCell[] -> { return true; }
 						ThreeC0(_*) -> { return true; }
@@ -250,7 +318,8 @@ sort ThreePath:block(){
 						ThreeC2(ThreeCell[Target=target1],ThreeCell[Source=source2],tail*) -> { return `target1==`source2&&`tail.defined();}
 				}
 			return false;
-			}
-		public void print(){System.out.println("ThreeCell("+this.getName()+","+this.getSource().prettyPrint()+","+this.getTarget().prettyPrint()+")");}
+		}
+	//print method
+	public void print(){System.out.println("ThreeCell("+this.getName()+","+this.getSource().prettyPrint()+","+this.getTarget().prettyPrint()+")");}
 		
 }
