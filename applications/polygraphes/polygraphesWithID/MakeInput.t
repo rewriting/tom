@@ -1,4 +1,4 @@
-package compiler;
+package tools;
 
 import polygraphicprogram.*;
 import polygraphicprogram.types.*;
