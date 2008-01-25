@@ -458,12 +458,12 @@ return false;
  try {
 
 	 Document dom = DocumentBuilderFactory.newInstance()
-        .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/XMLinput.xml");
+        .newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/XMLinput.xml");
       Element e = dom.getDocumentElement();
       TwoPath input=makeTwoPath(e);
       updateLogPath(input);
-      save(twoPath2XML(eval(input)),new File("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/XMLoutput.xml"));
-      save(log+"</Log>",new File("/Users/aurelien/polygraphWorkspace/PolygraphesWithID/src/log.xml"));
+      save(twoPath2XML(eval(input)),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/XMLoutput.xml"));
+      save(log+"</Log>",new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/log.xml"));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -707,587 +707,587 @@ public static void save(String fileContent,File file) throws IOException {
 		printWriter.close();
 	}
 //-----------------------------------------------------------------------------
-// partie specifique
+// specific part of each programs with all the rule strategies
 //-----------------------------------------------------------------------------
-%strategy ApplyRules0() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
-
-  	}
-}
-  	%strategy ApplyRules1() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules2() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules3() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
-
-  	}
-}
-  	%strategy ApplyRules4() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules5() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules6() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoId(OneCell("nat"))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules7() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules8() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoId(OneCell("nat"))),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules9() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("carre",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules10() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("carre",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoCell("carre",OneCell("nat"),OneCell("nat"),Function(),setID())),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules11() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("cube",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules12() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("cube",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoC1(TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("carre",OneCell("nat"),OneCell("nat"),Function(),setID())),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoCell("cube",OneCell("nat"),OneCell("nat"),Function(),setID())),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules13() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("zero",Id(),OneCell("nat"),Constructor(),id1)),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules14() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules15() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoCell("zero",Id(),OneCell("nat"),Constructor(),id1)),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules16() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules17() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules18() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules19() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id2),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X1*,TwoC1(X2*,TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(X0*,TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules20() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules21() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules22() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),id2),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X1*,TwoC1(X2*,TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(X0*,TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoC1(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),setID())),TwoC1(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),setID()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules23() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
-
-  	}
-}
-  	%strategy ApplyRules24() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
-
-  	}
-}
-  	%strategy ApplyRules25() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoC1(TwoC0(X2*,X3*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),id2),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID())),X1*,TwoC1(X2*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoId(OneCell("nat")),TwoId(OneCell("nat")),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID()),TwoId(OneCell("nat"))),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list")),TwoId(OneCell("nat"))),TwoC0(TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),TwoId(OneCell("nat")),TwoId(OneCell("list")),TwoId(OneCell("nat")),X3*),TwoCell("mergeSwitch",OneC0(OneCell("boolean"),OneCell("nat"),OneCell("list"),OneCell("nat"),OneCell("list")),OneCell("list"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules26() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("consList",Id(),OneCell("list"),Constructor(),id1)),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules27() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoCell("consList",Id(),OneCell("list"),Constructor(),id1)),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),TwoC1(X1*,TwoCell("listeraser",OneCell("list"),Id(),Function(),setID()))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules28() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoCell("consList",Id(),OneCell("list"),Constructor(),id1)),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),TwoC1(X1*,TwoCell("listeraser",OneCell("list"),Id(),Function(),setID()))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules29() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoC1(TwoC0(X2*,X3*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1))),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID())),X3*),TwoC0(TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),setID())),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules30() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*,X1*),X2*,X3*),TwoCell("mergeSwitch",OneC0(OneCell("boolean"),OneCell("nat"),OneCell("list"),OneCell("nat"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,TwoC1(TwoC0(X2*,X3*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),setID()))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules31() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*,X1*),X2*,X3*),TwoCell("mergeSwitch",OneC0(OneCell("boolean"),OneCell("nat"),OneCell("list"),OneCell("nat"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID())),X3*),TwoC0(TwoId(OneCell("nat")),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules32() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules33() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoCell("zero",Id(),OneCell("nat"),Constructor(),id1)),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules34() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules35() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("append",OneC0(OneCell("list"),OneCell("nat")),OneCell("list"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules36() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("not",OneCell("boolean"),OneCell("boolean"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules37() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("not",OneCell("boolean"),OneCell("boolean"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules38() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules39() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules40() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules41() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules42() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules43() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules44() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules45() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules46() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("nateraser",OneCell("nat"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules47() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules48() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules49() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules50() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules51() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules52() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules53() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules54() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("nateraser",OneCell("nat"),Id(),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules55() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoId(OneCell("nat")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules56() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0))),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoId(OneCell("nat"))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules57() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoC0(TwoId(OneCell("list")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules58() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0))),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoId(OneCell("list"))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules59() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),setID()),TwoC0(TwoId(OneCell("boolean")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules60() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0))),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoId(OneCell("boolean"))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules61() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules62() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("listeraser",OneCell("list"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules63() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules64() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules65() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules66() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules67() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules68() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules69() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("duplicationlist",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules70() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0),TwoCell("listeraser",OneCell("list"),Id(),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID())),TwoC1(X1*,TwoCell("listeraser",OneCell("list"),Id(),Function(),setID()))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules71() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID()))),TwoC0(TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoId(OneCell("nat")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules72() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID())),X2*),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID())),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoId(OneCell("nat"))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules73() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),X2*),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoId(OneCell("list")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules74() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID())),X2*),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),setID())),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoId(OneCell("list"))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules75() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),X2*),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),setID()))),TwoC0(TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoId(OneCell("boolean")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules76() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),setID())),X2*),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),setID())),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoId(OneCell("boolean"))),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules77() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0),TwoCell("duplicationlist",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID())),TwoC1(X1*,TwoCell("duplicationlist",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules78() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("booleaneraser",OneCell("boolean"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules79() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules80() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules81() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules82() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules83() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules84() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules85() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("duplicationboolean",OneCell("boolean"),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules86() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("booleaneraser",OneCell("boolean"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules87() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules88() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules89() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules90() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules91() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules92() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
-
-  	}
-}
-  	%strategy ApplyRules93() extends Identity(){ 
-  	visit TwoPath {
-TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("duplicationboolean",OneCell("boolean"),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
-
-  	}
-}
-  	public static TwoPath eval(TwoPath myPath){
-try{
-System.out.println("BEFORE");
-myPath.print();
-System.out.println("LOG");//revoir l ordre encore une fois
-myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(RepeatId(TopDown(ApplyRules0())),MakeLog(),TopDown(ApplyRules1()),MakeLog(),TopDown(ApplyRules2()),MakeLog(),TopDown(ApplyRules3()),MakeLog(),TopDown(ApplyRules4()),MakeLog(),TopDown(ApplyRules5()),MakeLog(),TopDown(ApplyRules6()),MakeLog(),TopDown(ApplyRules7()),MakeLog(),TopDown(ApplyRules8()),MakeLog(),TopDown(ApplyRules9()),MakeLog(),TopDown(ApplyRules10()),MakeLog(),TopDown(ApplyRules11()),MakeLog(),TopDown(ApplyRules12()),MakeLog(),TopDown(ApplyRules13()),MakeLog(),TopDown(ApplyRules14()),MakeLog(),TopDown(ApplyRules15()),MakeLog(),TopDown(ApplyRules16()),MakeLog(),TopDown(ApplyRules17()),MakeLog(),TopDown(ApplyRules18()),MakeLog(),TopDown(ApplyRules19()),MakeLog(),TopDown(ApplyRules20()),MakeLog(),TopDown(ApplyRules21()),MakeLog(),TopDown(ApplyRules22()),MakeLog(),TopDown(ApplyRules23()),MakeLog(),TopDown(ApplyRules24()),MakeLog(),TopDown(ApplyRules25()),MakeLog(),TopDown(ApplyRules26()),MakeLog(),TopDown(ApplyRules27()),MakeLog(),TopDown(ApplyRules28()),MakeLog(),TopDown(ApplyRules29()),MakeLog(),TopDown(ApplyRules30()),MakeLog(),TopDown(ApplyRules31()),MakeLog(),TopDown(ApplyRules32()),MakeLog(),TopDown(ApplyRules33()),MakeLog(),TopDown(ApplyRules34()),MakeLog(),TopDown(ApplyRules35()),MakeLog(),TopDown(ApplyRules36()),MakeLog(),TopDown(ApplyRules37()),MakeLog(),TopDown(ApplyRules38()),MakeLog(),TopDown(ApplyRules39()),MakeLog(),TopDown(ApplyRules40()),MakeLog(),TopDown(ApplyRules41()),MakeLog(),TopDown(ApplyRules42()),MakeLog(),TopDown(ApplyRules43()),MakeLog(),TopDown(ApplyRules44()),MakeLog(),TopDown(ApplyRules45()),MakeLog(),TopDown(ApplyRules46()),MakeLog(),TopDown(ApplyRules47()),MakeLog(),TopDown(ApplyRules48()),MakeLog(),TopDown(ApplyRules49()),MakeLog(),TopDown(ApplyRules50()),MakeLog(),TopDown(ApplyRules51()),MakeLog(),TopDown(ApplyRules52()),MakeLog(),TopDown(ApplyRules53()),MakeLog(),TopDown(ApplyRules54()),MakeLog(),TopDown(ApplyRules55()),MakeLog(),TopDown(ApplyRules56()),MakeLog(),TopDown(ApplyRules57()),MakeLog(),TopDown(ApplyRules58()),MakeLog(),TopDown(ApplyRules59()),MakeLog(),TopDown(ApplyRules60()),MakeLog(),TopDown(ApplyRules61()),MakeLog(),TopDown(ApplyRules62()),MakeLog(),TopDown(ApplyRules63()),MakeLog(),TopDown(ApplyRules64()),MakeLog(),TopDown(ApplyRules65()),MakeLog(),TopDown(ApplyRules66()),MakeLog(),TopDown(ApplyRules67()),MakeLog(),TopDown(ApplyRules68()),MakeLog(),TopDown(ApplyRules69()),MakeLog(),TopDown(ApplyRules70()),MakeLog(),TopDown(ApplyRules71()),MakeLog(),TopDown(ApplyRules72()),MakeLog(),TopDown(ApplyRules73()),MakeLog(),TopDown(ApplyRules74()),MakeLog(),TopDown(ApplyRules75()),MakeLog(),TopDown(ApplyRules76()),MakeLog(),TopDown(ApplyRules77()),MakeLog(),TopDown(ApplyRules78()),MakeLog(),TopDown(ApplyRules79()),MakeLog(),TopDown(ApplyRules80()),MakeLog(),TopDown(ApplyRules81()),MakeLog(),TopDown(ApplyRules82()),MakeLog(),TopDown(ApplyRules83()),MakeLog(),TopDown(ApplyRules84()),MakeLog(),TopDown(ApplyRules85()),MakeLog(),TopDown(ApplyRules86()),MakeLog(),TopDown(ApplyRules87()),MakeLog(),TopDown(ApplyRules88()),MakeLog(),TopDown(ApplyRules89()),MakeLog(),TopDown(ApplyRules90()),MakeLog(),TopDown(ApplyRules91()),MakeLog(),TopDown(ApplyRules92()),MakeLog(),TopDown(ApplyRules93()),MakeLog(),Print())))).visit(myPath);
-//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(RepeatId(TopDown(ApplyRules0())),MakeLog(),TopDown(ApplyRules1()),MakeLog(),TopDown(ApplyRules2()),MakeLog(),TopDown(ApplyRules3()),MakeLog(),TopDown(ApplyRules4()),MakeLog(),TopDown(ApplyRules5()),MakeLog(),TopDown(ApplyRules6()),MakeLog(),TopDown(ApplyRules7()),MakeLog(),TopDown(ApplyRules8()),MakeLog(),TopDown(ApplyRules9()),MakeLog(),TopDown(ApplyRules10()),MakeLog(),TopDown(ApplyRules11()),MakeLog(),TopDown(ApplyRules12()),MakeLog(),TopDown(ApplyRules13()),MakeLog(),TopDown(ApplyRules14()),MakeLog(),TopDown(ApplyRules15()),MakeLog(),TopDown(ApplyRules16()),MakeLog(),TopDown(ApplyRules17()),MakeLog(),TopDown(ApplyRules18()),MakeLog(),TopDown(ApplyRules19()),MakeLog(),TopDown(ApplyRules20()),MakeLog(),TopDown(ApplyRules21()),MakeLog(),TopDown(ApplyRules22()),MakeLog(),TopDown(ApplyRules23()),MakeLog(),TopDown(ApplyRules24()),MakeLog(),TopDown(ApplyRules25()),MakeLog(),TopDown(ApplyRules26()),MakeLog(),TopDown(ApplyRules27()),MakeLog(),TopDown(ApplyRules28()),MakeLog(),TopDown(ApplyRules29()),MakeLog(),TopDown(ApplyRules30()),MakeLog(),TopDown(ApplyRules31()),MakeLog(),TopDown(ApplyRules32()),MakeLog(),TopDown(ApplyRules33()),MakeLog(),TopDown(ApplyRules34()),MakeLog(),TopDown(ApplyRules35()),MakeLog(),TopDown(ApplyRules36()),MakeLog(),TopDown(ApplyRules37()),MakeLog(),TopDown(ApplyRules38()),MakeLog(),TopDown(ApplyRules39()),MakeLog(),TopDown(ApplyRules40()),MakeLog(),TopDown(ApplyRules41()),MakeLog(),TopDown(ApplyRules42()),MakeLog(),TopDown(ApplyRules43()),MakeLog(),TopDown(ApplyRules44()),MakeLog(),TopDown(ApplyRules45()),MakeLog(),TopDown(ApplyRules46()),MakeLog(),TopDown(ApplyRules47()),MakeLog(),TopDown(ApplyRules48()),MakeLog(),TopDown(ApplyRules49()),MakeLog(),TopDown(ApplyRules50()),MakeLog(),TopDown(ApplyRules51()),MakeLog(),TopDown(ApplyRules52()),MakeLog(),TopDown(ApplyRules53()),MakeLog(),TopDown(ApplyRules54()),MakeLog(),TopDown(ApplyRules55()),MakeLog(),TopDown(ApplyRules56()),MakeLog(),TopDown(ApplyRules57()),MakeLog(),TopDown(ApplyRules58()),MakeLog(),TopDown(ApplyRules59()),MakeLog(),TopDown(ApplyRules60()),MakeLog(),TopDown(ApplyRules61()),MakeLog(),TopDown(ApplyRules62()),MakeLog(),TopDown(ApplyRules63()),MakeLog(),TopDown(ApplyRules64()),MakeLog(),TopDown(ApplyRules65()),MakeLog(),TopDown(ApplyRules66()),MakeLog(),TopDown(ApplyRules67()),MakeLog(),TopDown(ApplyRules68()),MakeLog(),TopDown(ApplyRules69()),MakeLog(),TopDown(ApplyRules70()),MakeLog(),TopDown(ApplyRules71()),MakeLog(),TopDown(ApplyRules72()),MakeLog(),TopDown(ApplyRules73()),MakeLog(),TopDown(ApplyRules74()),MakeLog(),TopDown(ApplyRules75()),MakeLog(),TopDown(ApplyRules76()),MakeLog(),TopDown(ApplyRules77()),MakeLog(),TopDown(ApplyRules78()),MakeLog(),TopDown(ApplyRules79()),MakeLog(),TopDown(ApplyRules80()),MakeLog(),TopDown(ApplyRules81()),MakeLog(),TopDown(ApplyRules82()),MakeLog(),TopDown(ApplyRules83()),MakeLog(),TopDown(ApplyRules84()),MakeLog(),TopDown(ApplyRules85()),MakeLog(),TopDown(ApplyRules86()),MakeLog(),TopDown(ApplyRules87()),MakeLog(),TopDown(ApplyRules88()),MakeLog(),TopDown(ApplyRules89()),MakeLog(),TopDown(ApplyRules90()),MakeLog(),TopDown(ApplyRules91()),MakeLog(),TopDown(ApplyRules92()),MakeLog(),TopDown(ApplyRules93()),MakeLog())))).visit(myPath);
-System.out.println("RESULT");
-myPath.print();
-return myPath;
-}
-catch(VisitFailure e) {
-      throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
-    }
-}
-  	
+	%strategy ApplyRules0() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
+
+		}
+	}
+  		%strategy ApplyRules1() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules2() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules3() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
+
+		}
+	}
+  		%strategy ApplyRules4() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules5() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules6() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoId(OneCell("nat"))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules7() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules8() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoId(OneCell("nat"))),TwoCell("division",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules9() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("square",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules10() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("square",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoCell("square",OneCell("nat"),OneCell("nat"),Function(),setID())),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()))),TwoCell("minus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules11() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("cube",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules12() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("cube",OneCell("nat"),OneCell("nat"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoC1(TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoC1(TwoC0(TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),TwoCell("square",OneCell("nat"),OneCell("nat"),Function(),setID())),TwoCell("multiplication",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID())),TwoCell("cube",OneCell("nat"),OneCell("nat"),Function(),setID())),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()))),TwoCell("plus",OneC0(OneCell("nat"),OneCell("nat")),OneCell("nat"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules13() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("zero",Id(),OneCell("nat"),Constructor(),id1)),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules14() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules15() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoCell("zero",Id(),OneCell("nat"),Constructor(),id1)),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules16() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules17() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules18() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules19() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id2),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X1*,TwoC1(X2*,TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(X0*,TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules20() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules21() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules22() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),id2),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X1*,TwoC1(X2*,TwoCell("split",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(X0*,TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoC1(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),setID())),TwoC1(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("sort",OneCell("list"),OneCell("list"),Function(),setID()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules23() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
+
+		}
+	}
+  		%strategy ApplyRules24() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,Y*);}
+
+		}
+	}
+  		%strategy ApplyRules25() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoC1(TwoC0(X2*,X3*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),id2),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID())),X1*,TwoC1(X2*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()))),TwoC0(TwoId(OneCell("nat")),TwoId(OneCell("nat")),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID()),TwoId(OneCell("nat"))),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list")),TwoId(OneCell("nat"))),TwoC0(TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),TwoId(OneCell("nat")),TwoId(OneCell("list")),TwoId(OneCell("nat")),X3*),TwoCell("mergeSwitch",OneC0(OneCell("boolean"),OneCell("nat"),OneCell("list"),OneCell("nat"),OneCell("list")),OneCell("list"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules26() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("consList",Id(),OneCell("list"),Constructor(),id1)),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules27() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoCell("consList",Id(),OneCell("list"),Constructor(),id1)),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),TwoC1(X1*,TwoCell("listeraser",OneCell("list"),Id(),Function(),setID()))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules28() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoCell("consList",Id(),OneCell("list"),Constructor(),id1)),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),TwoC1(X1*,TwoCell("listeraser",OneCell("list"),Id(),Function(),setID()))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules29() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),TwoC1(TwoC0(X2*,X3*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id1))),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID())),X3*),TwoC0(TwoCell("equal",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),TwoCell("lEqual",OneC0(OneCell("list"),OneCell("list")),OneCell("boolean"),Function(),setID())),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules30() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*,X1*),X2*,X3*),TwoCell("mergeSwitch",OneC0(OneCell("boolean"),OneCell("nat"),OneCell("list"),OneCell("nat"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,TwoC1(TwoC0(X2*,X3*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()))),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),setID()))),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules31() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*,X1*),X2*,X3*),TwoCell("mergeSwitch",OneC0(OneCell("boolean"),OneCell("nat"),OneCell("list"),OneCell("nat"),OneCell("list")),OneCell("list"),Function(),id1),Y*)-> {if(`X3!=`TwoId(Id())&&`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID())),X3*),TwoC0(TwoId(OneCell("nat")),TwoCell("merge",OneC0(OneCell("list"),OneCell("list")),OneCell("list"),Function(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules32() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules33() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoCell("zero",Id(),OneCell("nat"),Constructor(),id1)),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules34() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id1))),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),id2),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("lessOrEqual",OneC0(OneCell("nat"),OneCell("nat")),OneCell("boolean"),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules35() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("append",OneC0(OneCell("list"),OneCell("nat")),OneCell("list"),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules36() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("not",OneCell("boolean"),OneCell("boolean"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules37() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("not",OneCell("boolean"),OneCell("boolean"),Function(),id1),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules38() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules39() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules40() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules41() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("or",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules42() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules43() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules44() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("true",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules45() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("false",Id(),OneCell("boolean"),Constructor(),id1)),TwoCell("and",OneC0(OneCell("boolean"),OneCell("boolean")),OneCell("boolean"),Function(),id2),Y*)-> {return `TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules46() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("nateraser",OneCell("nat"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules47() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules48() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules49() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules50() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules51() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),X0*),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules52() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0)),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules53() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("zero",Id(),OneCell("nat"),Constructor(),id0),TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID()),TwoCell("zero",Id(),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules54() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("nateraser",OneCell("nat"),Id(),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules55() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoId(OneCell("nat")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules56() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0))),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoId(OneCell("nat"))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules57() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoC0(TwoId(OneCell("list")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules58() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0))),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoId(OneCell("list"))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules59() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0)),X1*),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),setID()),TwoC0(TwoId(OneCell("boolean")),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules60() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(X1*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0))),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,X1*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoId(OneCell("boolean"))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules61() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(X0*,TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),id0),TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoC0(TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID()),TwoCell("succ",OneCell("nat"),OneCell("nat"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules62() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("listeraser",OneCell("list"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules63() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules64() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules65() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules66() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules67() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),X0*),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules68() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("consList",Id(),OneCell("list"),Constructor(),id0)),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules69() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("consList",Id(),OneCell("list"),Constructor(),id0),TwoCell("duplicationlist",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("consList",Id(),OneCell("list"),Constructor(),setID()),TwoCell("consList",Id(),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules70() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0),TwoCell("listeraser",OneCell("list"),Id(),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("nateraser",OneCell("nat"),Id(),Function(),setID())),TwoC1(X1*,TwoCell("listeraser",OneCell("list"),Id(),Function(),setID()))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules71() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID()))),TwoC0(TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoId(OneCell("nat")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules72() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("permutationnatnat",OneC0(OneCell("nat"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID())),X2*),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID())),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoId(OneCell("nat"))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules73() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),X2*),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoId(OneCell("list")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules74() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("permutationlistnat",OneC0(OneCell("list"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("list")),Function(),setID())),X2*),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationlistlist",OneC0(OneCell("list"),OneCell("list")),OneC0(OneCell("list"),OneCell("list")),Function(),setID())),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoId(OneCell("list"))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules75() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0)),X2*),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),setID()))),TwoC0(TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoId(OneCell("boolean")),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules76() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoC1(TwoC0(X1*,X2*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0))),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X2!=`TwoId(Id())&&`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(TwoC0(X0*,X1*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),setID())),X2*),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),setID())),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoId(OneCell("boolean"))),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules77() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,X1*),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),id0),TwoCell("duplicationlist",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),id1),Y*)-> {if(`X1!=`TwoId(Id())&&`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoC1(X0*,TwoCell("duplicationnat",OneCell("nat"),OneC0(OneCell("nat"),OneCell("nat")),Function(),setID())),TwoC1(X1*,TwoCell("duplicationlist",OneCell("list"),OneC0(OneCell("list"),OneCell("list")),Function(),setID()))),TwoC0(TwoId(OneCell("nat")),TwoCell("permutationnatlist",OneC0(OneCell("nat"),OneCell("list")),OneC0(OneCell("list"),OneCell("nat")),Function(),setID()),TwoId(OneCell("list"))),TwoC0(TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID()),TwoCell("add",OneC0(OneCell("nat"),OneCell("list")),OneCell("list"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules78() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("booleaneraser",OneCell("boolean"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules79() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules80() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules81() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules82() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules83() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules84() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules85() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("true",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("duplicationboolean",OneCell("boolean"),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID()),TwoCell("true",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules86() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("booleaneraser",OneCell("boolean"),Id(),Function(),id1),Y*)-> {return `TwoC1(TwoId(Id()),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules87() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleannat",OneC0(OneCell("boolean"),OneCell("nat")),OneC0(OneCell("nat"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules88() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationnatboolean",OneC0(OneCell("nat"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("nat")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules89() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanlist",OneC0(OneCell("boolean"),OneCell("list")),OneC0(OneCell("list"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules90() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationlistboolean",OneC0(OneCell("list"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("list")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules91() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),X0*),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules92() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoC0(X0*,TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0)),TwoCell("permutationbooleanboolean",OneC0(OneCell("boolean"),OneCell("boolean")),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {if(`X0!=`TwoId(Id()))return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),X0*),Y*);}
+
+		}
+	}
+  		%strategy ApplyRules93() extends Identity(){ 
+		visit TwoPath {
+			TwoC1(TwoCell("false",Id(),OneCell("boolean"),Constructor(),id0),TwoCell("duplicationboolean",OneCell("boolean"),OneC0(OneCell("boolean"),OneCell("boolean")),Function(),id1),Y*)-> {return `TwoC1(TwoC0(TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID()),TwoCell("false",Id(),OneCell("boolean"),Constructor(),setID())),Y*);}
+
+		}
+	}
+  		public static TwoPath eval(TwoPath myPath){
+		try{
+			System.out.println("BEFORE");
+			myPath.print();
+			System.out.println("LOG");
+			myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(RepeatId(TopDown(ApplyRules0())),MakeLog(),TopDown(ApplyRules1()),MakeLog(),TopDown(ApplyRules2()),MakeLog(),TopDown(ApplyRules3()),MakeLog(),TopDown(ApplyRules4()),MakeLog(),TopDown(ApplyRules5()),MakeLog(),TopDown(ApplyRules6()),MakeLog(),TopDown(ApplyRules7()),MakeLog(),TopDown(ApplyRules8()),MakeLog(),TopDown(ApplyRules9()),MakeLog(),TopDown(ApplyRules10()),MakeLog(),TopDown(ApplyRules11()),MakeLog(),TopDown(ApplyRules12()),MakeLog(),TopDown(ApplyRules13()),MakeLog(),TopDown(ApplyRules14()),MakeLog(),TopDown(ApplyRules15()),MakeLog(),TopDown(ApplyRules16()),MakeLog(),TopDown(ApplyRules17()),MakeLog(),TopDown(ApplyRules18()),MakeLog(),TopDown(ApplyRules19()),MakeLog(),TopDown(ApplyRules20()),MakeLog(),TopDown(ApplyRules21()),MakeLog(),TopDown(ApplyRules22()),MakeLog(),TopDown(ApplyRules23()),MakeLog(),TopDown(ApplyRules24()),MakeLog(),TopDown(ApplyRules25()),MakeLog(),TopDown(ApplyRules26()),MakeLog(),TopDown(ApplyRules27()),MakeLog(),TopDown(ApplyRules28()),MakeLog(),TopDown(ApplyRules29()),MakeLog(),TopDown(ApplyRules30()),MakeLog(),TopDown(ApplyRules31()),MakeLog(),TopDown(ApplyRules32()),MakeLog(),TopDown(ApplyRules33()),MakeLog(),TopDown(ApplyRules34()),MakeLog(),TopDown(ApplyRules35()),MakeLog(),TopDown(ApplyRules36()),MakeLog(),TopDown(ApplyRules37()),MakeLog(),TopDown(ApplyRules38()),MakeLog(),TopDown(ApplyRules39()),MakeLog(),TopDown(ApplyRules40()),MakeLog(),TopDown(ApplyRules41()),MakeLog(),TopDown(ApplyRules42()),MakeLog(),TopDown(ApplyRules43()),MakeLog(),TopDown(ApplyRules44()),MakeLog(),TopDown(ApplyRules45()),MakeLog(),TopDown(ApplyRules46()),MakeLog(),TopDown(ApplyRules47()),MakeLog(),TopDown(ApplyRules48()),MakeLog(),TopDown(ApplyRules49()),MakeLog(),TopDown(ApplyRules50()),MakeLog(),TopDown(ApplyRules51()),MakeLog(),TopDown(ApplyRules52()),MakeLog(),TopDown(ApplyRules53()),MakeLog(),TopDown(ApplyRules54()),MakeLog(),TopDown(ApplyRules55()),MakeLog(),TopDown(ApplyRules56()),MakeLog(),TopDown(ApplyRules57()),MakeLog(),TopDown(ApplyRules58()),MakeLog(),TopDown(ApplyRules59()),MakeLog(),TopDown(ApplyRules60()),MakeLog(),TopDown(ApplyRules61()),MakeLog(),TopDown(ApplyRules62()),MakeLog(),TopDown(ApplyRules63()),MakeLog(),TopDown(ApplyRules64()),MakeLog(),TopDown(ApplyRules65()),MakeLog(),TopDown(ApplyRules66()),MakeLog(),TopDown(ApplyRules67()),MakeLog(),TopDown(ApplyRules68()),MakeLog(),TopDown(ApplyRules69()),MakeLog(),TopDown(ApplyRules70()),MakeLog(),TopDown(ApplyRules71()),MakeLog(),TopDown(ApplyRules72()),MakeLog(),TopDown(ApplyRules73()),MakeLog(),TopDown(ApplyRules74()),MakeLog(),TopDown(ApplyRules75()),MakeLog(),TopDown(ApplyRules76()),MakeLog(),TopDown(ApplyRules77()),MakeLog(),TopDown(ApplyRules78()),MakeLog(),TopDown(ApplyRules79()),MakeLog(),TopDown(ApplyRules80()),MakeLog(),TopDown(ApplyRules81()),MakeLog(),TopDown(ApplyRules82()),MakeLog(),TopDown(ApplyRules83()),MakeLog(),TopDown(ApplyRules84()),MakeLog(),TopDown(ApplyRules85()),MakeLog(),TopDown(ApplyRules86()),MakeLog(),TopDown(ApplyRules87()),MakeLog(),TopDown(ApplyRules88()),MakeLog(),TopDown(ApplyRules89()),MakeLog(),TopDown(ApplyRules90()),MakeLog(),TopDown(ApplyRules91()),MakeLog(),TopDown(ApplyRules92()),MakeLog(),TopDown(ApplyRules93()),MakeLog(),Print())))).visit(myPath);
+			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(RepeatId(TopDown(ApplyRules0())),MakeLog(),TopDown(ApplyRules1()),MakeLog(),TopDown(ApplyRules2()),MakeLog(),TopDown(ApplyRules3()),MakeLog(),TopDown(ApplyRules4()),MakeLog(),TopDown(ApplyRules5()),MakeLog(),TopDown(ApplyRules6()),MakeLog(),TopDown(ApplyRules7()),MakeLog(),TopDown(ApplyRules8()),MakeLog(),TopDown(ApplyRules9()),MakeLog(),TopDown(ApplyRules10()),MakeLog(),TopDown(ApplyRules11()),MakeLog(),TopDown(ApplyRules12()),MakeLog(),TopDown(ApplyRules13()),MakeLog(),TopDown(ApplyRules14()),MakeLog(),TopDown(ApplyRules15()),MakeLog(),TopDown(ApplyRules16()),MakeLog(),TopDown(ApplyRules17()),MakeLog(),TopDown(ApplyRules18()),MakeLog(),TopDown(ApplyRules19()),MakeLog(),TopDown(ApplyRules20()),MakeLog(),TopDown(ApplyRules21()),MakeLog(),TopDown(ApplyRules22()),MakeLog(),TopDown(ApplyRules23()),MakeLog(),TopDown(ApplyRules24()),MakeLog(),TopDown(ApplyRules25()),MakeLog(),TopDown(ApplyRules26()),MakeLog(),TopDown(ApplyRules27()),MakeLog(),TopDown(ApplyRules28()),MakeLog(),TopDown(ApplyRules29()),MakeLog(),TopDown(ApplyRules30()),MakeLog(),TopDown(ApplyRules31()),MakeLog(),TopDown(ApplyRules32()),MakeLog(),TopDown(ApplyRules33()),MakeLog(),TopDown(ApplyRules34()),MakeLog(),TopDown(ApplyRules35()),MakeLog(),TopDown(ApplyRules36()),MakeLog(),TopDown(ApplyRules37()),MakeLog(),TopDown(ApplyRules38()),MakeLog(),TopDown(ApplyRules39()),MakeLog(),TopDown(ApplyRules40()),MakeLog(),TopDown(ApplyRules41()),MakeLog(),TopDown(ApplyRules42()),MakeLog(),TopDown(ApplyRules43()),MakeLog(),TopDown(ApplyRules44()),MakeLog(),TopDown(ApplyRules45()),MakeLog(),TopDown(ApplyRules46()),MakeLog(),TopDown(ApplyRules47()),MakeLog(),TopDown(ApplyRules48()),MakeLog(),TopDown(ApplyRules49()),MakeLog(),TopDown(ApplyRules50()),MakeLog(),TopDown(ApplyRules51()),MakeLog(),TopDown(ApplyRules52()),MakeLog(),TopDown(ApplyRules53()),MakeLog(),TopDown(ApplyRules54()),MakeLog(),TopDown(ApplyRules55()),MakeLog(),TopDown(ApplyRules56()),MakeLog(),TopDown(ApplyRules57()),MakeLog(),TopDown(ApplyRules58()),MakeLog(),TopDown(ApplyRules59()),MakeLog(),TopDown(ApplyRules60()),MakeLog(),TopDown(ApplyRules61()),MakeLog(),TopDown(ApplyRules62()),MakeLog(),TopDown(ApplyRules63()),MakeLog(),TopDown(ApplyRules64()),MakeLog(),TopDown(ApplyRules65()),MakeLog(),TopDown(ApplyRules66()),MakeLog(),TopDown(ApplyRules67()),MakeLog(),TopDown(ApplyRules68()),MakeLog(),TopDown(ApplyRules69()),MakeLog(),TopDown(ApplyRules70()),MakeLog(),TopDown(ApplyRules71()),MakeLog(),TopDown(ApplyRules72()),MakeLog(),TopDown(ApplyRules73()),MakeLog(),TopDown(ApplyRules74()),MakeLog(),TopDown(ApplyRules75()),MakeLog(),TopDown(ApplyRules76()),MakeLog(),TopDown(ApplyRules77()),MakeLog(),TopDown(ApplyRules78()),MakeLog(),TopDown(ApplyRules79()),MakeLog(),TopDown(ApplyRules80()),MakeLog(),TopDown(ApplyRules81()),MakeLog(),TopDown(ApplyRules82()),MakeLog(),TopDown(ApplyRules83()),MakeLog(),TopDown(ApplyRules84()),MakeLog(),TopDown(ApplyRules85()),MakeLog(),TopDown(ApplyRules86()),MakeLog(),TopDown(ApplyRules87()),MakeLog(),TopDown(ApplyRules88()),MakeLog(),TopDown(ApplyRules89()),MakeLog(),TopDown(ApplyRules90()),MakeLog(),TopDown(ApplyRules91()),MakeLog(),TopDown(ApplyRules92()),MakeLog(),TopDown(ApplyRules93()),MakeLog())))).visit(myPath);
+			System.out.println("RESULT");
+			myPath.print();
+			return myPath;
+		}
+		catch(VisitFailure e) {
+			throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
+			}
+			}
+			
 
 }

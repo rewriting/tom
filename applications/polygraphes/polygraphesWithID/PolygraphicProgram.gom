@@ -8,7 +8,8 @@ module PolygraphicProgram
 OnePath = Id() //means null, empty
 		| OneCell (Name:String)
 		| OneC0 (OnePath*)
-	
+
+	//IDs were added for a future purpose though they are not necessary to do the calculations : 
 TwoPath = TwoId (onePath:OnePath) //to be able to cast wires as cells when needed
 		| TwoCell (Name:String,Source:OnePath,Target:OnePath,Type:CellType,ID:int)
 		| TwoC0 (TwoPath*)
