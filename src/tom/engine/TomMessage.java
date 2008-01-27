@@ -351,6 +351,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Variable ''{0}'' has type ''{1}'' instead of type ''{2}''");
   public static final TomMessage incoherentVariable      =
       new TomMessage("Bad variable type for ''{0}'': it has both type ''{1}'' and ''{2}''");
+  public static final TomMessage incoherentVariableStar =
+      new TomMessage("Variable ''{0}*'' is rooted by ''{1}'' and cannot be put under a ''{2}''");
   public static final TomMessage multipleRuleDefinition  =
       new TomMessage("Rule ''{0}'' is repeated");
 

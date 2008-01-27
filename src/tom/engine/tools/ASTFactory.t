@@ -51,15 +51,6 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {}
 
-  public static TomList reverse(TomList l) {
-    TomList reverse = `concTomTerm();
-    while(!l.isEmptyconcTomTerm()){
-      reverse = `concTomTerm(l.getHeadconcTomTerm(),reverse*);
-      l = l.getTailconcTomTerm();
-    }
-    return reverse;
-  }
-
   public static TomList makeList(Collection c) {
     Object array[] = c.toArray();
     TomList list = `concTomTerm();
@@ -311,7 +302,7 @@ public class ASTFactory {
     if(term.isTermAppl() || term.isRecordAppl()) {
       String key = term.getNameList().getHeadconcTomName().getString();
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
-      if (symbol != null) {
+      if(symbol != null) {
         OptionList optionList = symbol.getOption();
         optionList = `concOption(optionList*,DefinedSymbol());
         symbolTable.putSymbol(key,symbol.setOption(optionList));
@@ -331,10 +322,11 @@ public class ASTFactory {
   }
 
   public static TomName makeName(String slotName) {
-    if(slotName.length()>0)
+    if(slotName.length()>0) {
       return `Name(slotName);
-    else
+    } else {
       return `EmptyName();
+    }
   }
 
   public static String encodeXMLString(SymbolTable symbolTable, String name) {
@@ -400,15 +392,11 @@ public class ASTFactory {
     return term;
   }
 
-  public static boolean isExplicitTermList(LinkedList childs) {
+  public static boolean isExplicitTermList(List childs) {
     if(childs.size() == 1) {
-      TomTerm term = (TomTerm) childs.getFirst();
-      //System.out.println("isExplicitTermList: " + term);
+      TomTerm term = (TomTerm) childs.get(0);
       %match(TomTerm term) {
-        RecordAppl[NameList=(Name(""))] -> { 
-          return true;
-        }
-        TermAppl[NameList=(Name(""))] -> { 
+        (RecordAppl|TermAppl)[NameList=(Name(""))] -> { 
           return true;
         }
       }
@@ -416,7 +404,7 @@ public class ASTFactory {
     return false;
   }
   
-  public static LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+  public static List metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
       RecordAppl[NameList=(Name("")),Slots=args] -> {
@@ -440,18 +428,10 @@ public class ASTFactory {
     return list;
   }
 
-  //private TomList buildEmpty(TomName name) {
-  //}
-
   public static TomTerm buildList(TomName name,TomList args, SymbolTable symbolTable) {
-    //if(!args.isEmptyconcTomTerm()) System.out.println("buildList: " + args.getHeadconcTomTerm());
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
-
-    //System.out.println("topDomain = " + topDomain);
-    //System.out.println("topCodomain = " + topCodomain);
-
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
@@ -466,7 +446,7 @@ public class ASTFactory {
       concTomTerm(head@Composite(concTomTerm(VariableStar[],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         /* a VariableStar is always flattened */
-          return `BuildAppendList(name,head,subList);
+        return `BuildAppendList(name,head,subList);
       }
 
       concTomTerm(head@Variable[AstType=varType],tail*) -> {
@@ -475,7 +455,7 @@ public class ASTFactory {
         //System.out.println("varType = " + TomBase.getTomType(`varType));
 
         TomTerm subList = buildList(name,`tail,symbolTable);
-        // a Variable is flattened if type and codomain are equals
+        /* a Variable is flattened if type and codomain are equals */
         if(topDomain != topCodomain) {
           if(TomBase.getTomType(`varType) == topCodomain) {
             return `BuildAppendList(name,head,subList);
@@ -490,7 +470,7 @@ public class ASTFactory {
         //System.out.println("varType = " + TomBase.getTomType(`varType));
 
         TomTerm subList = buildList(name,`tail,symbolTable);
-        // a Variable is flattened if type and codomain are equals
+        /* a Variable is flattened if type and codomain are equals */
         if(topDomain != topCodomain) {
           if(TomBase.getTomType(`varType) == topCodomain) {
             return `BuildAppendList(name,head,subList);
@@ -538,16 +518,14 @@ public class ASTFactory {
       }
 
     }
-
     throw new TomRuntimeException("buildList strange term: " + args);
   }
 
   public static TomTerm buildArray(TomName name,TomList args, SymbolTable symbolTable) {
-    return buildArray(name,reverse(args),0, symbolTable);
+    return buildArray(name,args.reverse(),0, symbolTable);
   }
 
   private static TomTerm buildArray(TomName name,TomList args, int size, SymbolTable symbolTable) {
-    //if(!args.isEmptyconcTomTerm()) System.out.println("buildArray: " + args.getHeadconcTomTerm());
     TomSymbol topListSymbol = symbolTable.getSymbolFromName(name.getString());
     String topDomain = TomBase.getTomType(TomBase.getSymbolDomain(topListSymbol).getHeadconcTomType());
     String topCodomain = TomBase.getTomType(TomBase.getSymbolCodomain(topListSymbol));
@@ -577,7 +555,6 @@ public class ASTFactory {
             return `BuildAppendArray(name,head,subList);
           }
         }
-        //System.out.println("cons1: " +`head);
         return `BuildConsArray(name,head,subList);
       }
 
@@ -595,12 +572,10 @@ public class ASTFactory {
             return `BuildAppendArray(name,head,subList);
           } 
         }
-        //System.out.println("cons2: " +`head);
         return `BuildConsArray(name,head,subList);
       }
       concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
         TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
-        //System.out.println("cons3: " +`head);
         return `BuildConsArray(name,head,subList);
       }
 

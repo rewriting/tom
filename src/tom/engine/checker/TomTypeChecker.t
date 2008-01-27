@@ -116,10 +116,7 @@ public class TomTypeChecker extends TomChecker {
    * Main type checking entry point:
    * We check all Match
    */
-  %typeterm TomTypeChecker { 
-    implement { TomTypeChecker }
-    is_sort(t) { ($t instanceof TomTypeChecker) }
-  }
+  %typeterm TomTypeChecker { implement { TomTypeChecker } }
 
   %strategy checkTypeInference(ttc:TomTypeChecker) extends Identity() {
     visit Instruction {
@@ -137,6 +134,7 @@ public class TomTypeChecker extends TomChecker {
         throw new tom.library.sl.VisitFailure();
       }
     }
+
   }
 
   /* 
@@ -159,7 +157,7 @@ public class TomTypeChecker extends TomChecker {
 
   private void verifyMatchVariable(ConstraintInstructionList constraintInstructionList) throws VisitFailure {
     %match(constraintInstructionList) {
-      concConstraintInstruction(_*,ci@ConstraintInstruction[Constraint=constraint,Action=action],_*) -> {
+      concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint,Action=action],_*) -> {
 
         // collect variables
         ArrayList<TomTerm> variableList = new ArrayList<TomTerm>();
@@ -167,6 +165,7 @@ public class TomTypeChecker extends TomChecker {
         verifyVariableTypeListCoherence(variableList);        
 
         // TODO: check in the action that a VariableStar is under the right symbol
+        verifyListVariableInAction(`action);
         //System.out.println(`action);
       }
     }    
@@ -209,4 +208,26 @@ public class TomTypeChecker extends TomChecker {
     }
   }
 
+  private void verifyListVariableInAction(Instruction action) {
+    //System.out.println("Action = " + action);
+    try {
+      `TopDown(checkVariableStar(this)).visitLight(`action);
+    } catch(VisitFailure e) {
+      System.out.println("strategy failed");
+    }
+  }
+ 
+  %strategy checkVariableStar(ttc:TomTypeChecker) extends Identity() {
+    visit TomTerm {
+      (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=Composite(concTomTerm(VariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]))] -> {
+        if(`listName != `rootName) {
+          //System.out.println("l = " + `l);
+          ttc.messageError(findOriginTrackingFileName(`options),
+              findOriginTrackingLine(`options),
+              TomMessage.incoherentVariableStar,
+              new Object[]{ (`variableName),(`rootName),(`listName) });
+        }
+      }
+    }
+  }
 }

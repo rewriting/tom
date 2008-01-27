@@ -49,7 +49,6 @@ import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.xml.Constants;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
-import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 
 import tom.library.sl.*;
@@ -68,19 +67,18 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
   public  TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
     %match(TomTerm term) {
       // validate that after the anti symbol we have a valid term  
-      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[Option=options]) ->{
+      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[Option=options]) -> {
         checkForAnnotations(`t,`options);
         return super.validateTerm(`t, expectedType, listSymbol, topLevel, permissive);
       }
     }
-
     return super.validateTerm(term, expectedType, listSymbol, topLevel, permissive);
   }
 
-  public  TermDescription analyseTerm(TomTerm term) {
+  public TermDescription analyseTerm(TomTerm term) {
     %match(TomTerm term) {
       // for the moment, the anti only on termappl and on named variables
-      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[])  -> {
+      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[]) -> {
     	  return super.analyseTerm(`t);
       }
     }
@@ -92,30 +90,30 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
    * 
    * @param t the term to search
    */
-  private void checkForAnnotations(TomTerm t, OptionList options){	  
+  private void checkForAnnotations(TomTerm t, OptionList options) {	  
     String fileName = findOriginTrackingFileName(options);
     int decLine = findOriginTrackingLine(options);
     try {
       `TopDown(CheckForAnnotations(fileName,decLine,t)).visitLight(t);
-    } catch(VisitFailure e) { }
+    } catch(VisitFailure e) {
+      throw new TomRuntimeException("Cannot be there");
+    }
   }
-
 
   /**
    * Given a term, it checks if it contains annotations
    * - if the annotations are on head, allow them
    * - error otherwise 
    */  
-  %strategy CheckForAnnotations(fileName:String, decLine:int, headTerm: TomTerm) extends `Identity(){
+  %strategy CheckForAnnotations(fileName:String, decLine:int, headTerm: TomTerm) extends Identity() {
     visit TomTerm {
-      t@(TermAppl|Variable|RecordAppl|UnamedVariable)[Constraints=concConstraint(_*,AssignTo[],_*)] ->{
-    	if (`t != headTerm){  
-    		TomChecker.messageError(getClass().getName(),fileName,decLine,
-    				TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
-    	}	
-        //throw new TomRuntimeException("Illegal use of annotations in " + `t);
+      t@(TermAppl|Variable|RecordAppl|UnamedVariable)[Constraints=concConstraint(_*,AssignTo[],_*)] -> {
+        if(`t != headTerm) {
+          TomChecker.messageError(getClass().getName(),fileName,decLine,
+              TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
+        }	
       }
-    }// end visit
+    }
   }
 
 }

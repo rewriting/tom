@@ -532,8 +532,8 @@ public class Verifier {
       }
       eq(lt,rt) -> {
         // first reduce the argument
-        Term reducedl = reverseTermList((TermList)applyMappingRules(`lt)).getHeadconcTerm();
-        Term reducedr = reverseTermList((TermList)applyMappingRules(`rt)).getHeadconcTerm();
+        Term reducedl = applyMappingRules(`lt).reverse().getHeadconcTerm();
+        Term reducedr = applyMappingRules(`rt).reverse().getHeadconcTerm();
 
         ExprList taill = `applyExprRules(eq(reducedl,reducedr));
         ExprList res = `concExpr(ex,taill*);
@@ -908,16 +908,6 @@ public class Verifier {
       }
       return any.visitLight(o,i);
     }
-  }
-
-  TermList reverseTermList(TermList l) {
-    %match(TermList l) {
-      concTerm(h,t*) -> {
-        TermList nt = reverseTermList(`t*);
-        return `concTerm(nt*,h);
-      }
-    }
-    return l;
   }
 
 }

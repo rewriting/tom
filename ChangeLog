@@ -1,3 +1,7 @@
+2008-01-29 pem
+  * improved the typer
+	* fixed PR-3979
+
 2008-01-15 pem
   * re-activated the TypeChecker
   * introduce a new TypeWithSymbol

@@ -22,9 +22,9 @@ Constraint =
 		   * @param Constraint the list of AndConstraints that are linked by Or
 		   */		   
 			| OrConstraintDisjunction(Constraint*)
-			| MatchConstraint(pattern:TomTerm, subject:TomTerm)
+			| MatchConstraint(Pattern:TomTerm, Subject:TomTerm)
 			| AntiMatchConstraint(Constraint:Constraint)
-			| NumericConstraint(Left:TomTerm, Right:TomTerm, Type:NumericConstraintType)
+			| NumericConstraint(Pattern:TomTerm, Subject:TomTerm, Type:NumericConstraintType)
 			| EmptyListConstraint(Opname:TomName,Variable:TomTerm)
 			| EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
   		  /**

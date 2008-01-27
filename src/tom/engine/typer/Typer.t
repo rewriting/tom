@@ -68,10 +68,7 @@ public class Typer extends TomGenericPlugin {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom }
 
-  %typeterm Typer {
-    implement { Typer }
-    is_sort(t) { ($t instanceof Typer) }
-  }
+  %typeterm Typer { implement { Typer } }
 
   %op Strategy ChoiceTopDown(s1:Strategy) {
     make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
@@ -87,14 +84,13 @@ public class Typer extends TomGenericPlugin {
     "<boolean name='type' altName='' description='Typer (activated by default)' value='true'/>" +
     "</options>";
 
-  /** the kernel typeer acting at very low level */
-  private KernelTyper tomKernelTyper;
-  /** the tomfactory for creating intermediate terms */
+  /** the kernel typer acting at very low level */
+  private KernelTyper kernelTyper;
 
   /** Constructor*/
   public Typer() {
     super("Typer");
-    tomKernelTyper = new KernelTyper();
+    kernelTyper = new KernelTyper();
   }
 
   /**
@@ -105,13 +101,13 @@ public class Typer extends TomGenericPlugin {
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm typedTerm = null;
     try {
-      tomKernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
+      kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
       TomTerm syntaxExpandedTerm = (TomTerm) `ChoiceTopDown(typeTermApplTomSyntax(this)).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
 
-      syntaxExpandedTerm = typeType(syntaxExpandedTerm);
-      TomTerm variableExpandedTerm = typeVariable(`EmptyType(), syntaxExpandedTerm);
-      /* type each BackQuoteTerm into its compiled form */
+      syntaxExpandedTerm = expandType(syntaxExpandedTerm);
+      TomTerm variableExpandedTerm = (TomTerm) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedTerm);
+      /* transform each BackQuoteTerm into its compiled form */
       TomTerm backQuoteExpandedTerm = (TomTerm) `ChoiceTopDown(typeBackQuoteAppl(this)).visit(`variableExpandedTerm);
       TomTerm stringExpandedTerm = (TomTerm) `ChoiceTopDown(typeString(this)).visit(backQuoteExpandedTerm);
       typedTerm = (TomTerm) `ChoiceTopDown(updateCodomain(this)).visit(stringExpandedTerm);
@@ -130,6 +126,30 @@ public class Typer extends TomGenericPlugin {
           + TYPED_SUFFIX, typedTerm);
       Tools.generateOutput(getStreamManager().getOutputFileName()
           + TYPED_TABLE_SUFFIX, symbolTable().toTerm());
+    }
+  }
+
+  /*
+   * Replace a TomTypeAlone by its expanded form (TomType)
+   */
+  private TomTerm expandType(TomTerm subject) {
+    try {
+      return (TomTerm) `TopDown(expandType(this)).visit(subject);
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("typeType: failure on " + subject);
+    }
+  }
+
+  %strategy expandType(typer:Typer) extends Identity() {
+    visit TomType {
+      subject@TomTypeAlone(tomType) -> {
+        TomType type = typer.symbolTable().getType(`tomType);
+        if(type != null) {
+          return type;
+        } else {
+          return `subject; // useful for TomTypeAlone("unknown type")
+        }
+      }
     }
   }
 
@@ -158,8 +178,8 @@ public class Typer extends TomGenericPlugin {
       }
       try {
         tomSymbol = (TomSymbol) `ChoiceTopDown(typeTermApplTomSyntax(this)).visit(tomSymbol);
-        tomSymbol = typeType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-        tomSymbol = typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+        tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+        tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
         tomSymbol = (TomSymbol) `ChoiceTopDown(typeBackQuoteAppl(this)).visit(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
@@ -211,28 +231,21 @@ public class Typer extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(Typer.DECLARED_OPTIONS);
   }
 
-  private TomTerm typeVariable(TomType contextType, TomTerm subject) {
-    return (TomTerm)tomKernelTyper.typeVariable(contextType,subject);
-  }
-  private TomTerm typeType(TomTerm subject) {
-    return (TomTerm)tomKernelTyper.typeType(subject);
-  }
-
   /*
    * The 'typeTermApplTomSyntax' phase replaces:
    * - each 'TermAppl' by its typed record form:
    *    placeholders are not removed
    *    slotName are attached to arguments
    */
-  %strategy typeTermApplTomSyntax(typeer:Typer) extends `Identity() {
+  %strategy typeTermApplTomSyntax(typer:Typer) extends `Identity() {
     visit TomTerm {
       TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
-        return typeer.typeTermAppl(`option,`nameList,`args,`constraints);
+        return typer.typeTermAppl(`option,`nameList,`args,`constraints);
       }
 
       XMLAppl[Option=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
         //System.out.println("typeXML in:\n" + subject);
-        return typeer.typeXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
+        return typer.typeXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
       }
     }
   }
@@ -241,10 +254,10 @@ public class Typer extends TomGenericPlugin {
      * this post-processing phase replaces untyped (universalType) codomain
      * by their precise type (according to the symbolTable)
      */
-    %strategy updateCodomain(typeer:Typer) extends `Identity() {
+    %strategy updateCodomain(typer:Typer) extends `Identity() {
       visit Declaration {
         decl@GetHeadDecl[Opname=Name(opName)] -> {
-          TomSymbol tomSymbol = typeer.getSymbolFromName(`opName);
+          TomSymbol tomSymbol = typer.getSymbolFromName(`opName);
           TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
           if(codomain.length()==1) {
             Declaration t = (Declaration)`decl;
@@ -256,7 +269,7 @@ public class Typer extends TomGenericPlugin {
         }
 
         decl@GetHeadDecl[Variable=Variable[AstType=domain]] -> {
-          TomSymbol tomSymbol = typeer.getSymbolFromType(`domain);
+          TomSymbol tomSymbol = typer.getSymbolFromType(`domain);
           if(tomSymbol != null) {
             TomTypeList codomain = TomBase.getSymbolDomain(tomSymbol);
 
@@ -275,15 +288,15 @@ public class Typer extends TomGenericPlugin {
     /*
      * replace 'abc' by conc('a','b','c')
      */
-    %strategy typeString(typeer:Typer) extends `Identity() {
+    %strategy typeString(typer:Typer) extends `Identity() {
       visit TomTerm {
         appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
-          TomSymbol tomSymbol = typeer.getSymbolFromName(`tomName);
+          TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
           //System.out.println("appl = " + subject);
           if(tomSymbol != null) {
             if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
               //System.out.println("appl = " + subject);
-              SlotList newArgs = typeer.typeChar(tomSymbol,`args);
+              SlotList newArgs = typer.typeChar(tomSymbol,`args);
               if(newArgs!=`args) {
                 return `appl.setSlots(newArgs);
               }
@@ -410,11 +423,14 @@ public class Typer extends TomGenericPlugin {
       return `RecordAppl(option,nameList,slotList,constraints);
     }
 
-    %strategy typeBackQuoteAppl(typeer:Typer) extends `Identity() {
+    /*
+     * transform a BackQuoteAppl into its compiled form
+     */
+    %strategy typeBackQuoteAppl(typer:Typer) extends Identity() {
       visit TomTerm {
         BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
-          TomSymbol tomSymbol = typeer.getSymbolFromName(`tomName);
-          TomList args  = (TomList) (`ChoiceTopDown(typeBackQuoteAppl(typeer))).visit(`l);
+          TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
+          TomList args  = (TomList) `ChoiceTopDown(typeBackQuoteAppl(typer)).visit(`l);
 
           //System.out.println("BackQuoteTerm: " + `tomName);
           //System.out.println("tomSymbol: " + tomSymbol);
@@ -422,9 +438,9 @@ public class Typer extends TomGenericPlugin {
             return `BuildConstant(name);
           } else if(tomSymbol != null) {
             if(TomBase.isListOperator(tomSymbol)) {
-              return ASTFactory.buildList(`name,args,typeer.symbolTable());
+              return ASTFactory.buildList(`name,args,typer.symbolTable());
             } else if(TomBase.isArrayOperator(tomSymbol)) {
-              return ASTFactory.buildArray(`name,args,typeer.symbolTable());
+              return ASTFactory.buildArray(`name,args,typer.symbolTable());
             } else if(TomBase.isDefinedSymbol(tomSymbol)) {
               return `FunctionCall(name,TomBase.getSymbolCodomain(tomSymbol),args);
             } else {
@@ -438,7 +454,7 @@ public class Typer extends TomGenericPlugin {
             return `FunctionCall(name,EmptyType(),args);
           }
         }
-      } // end match
+      }
     }
 
     private static TomList sortAttributeList(TomList attrList) {
@@ -544,7 +560,7 @@ public class Typer extends TomGenericPlugin {
           }
         } catch(tom.library.sl.VisitFailure e) {}
       }
-      newAttrList = ASTFactory.reverse(newAttrList);
+      newAttrList = newAttrList.reverse();
 
       /*
        * Childs: go from implicit notation to explicit notation
@@ -569,7 +585,7 @@ public class Typer extends TomGenericPlugin {
           }
         } catch(tom.library.sl.VisitFailure e) {}
       }
-      newChildList = ASTFactory.reverse(newChildList);
+      newChildList = newChildList.reverse();
 
       /*
        * encode the name and put it into the table of symbols
@@ -600,7 +616,6 @@ matchBlock:
         xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
       }
       try {
-        //VisitableVisitor typeStrategy = (ChoiceTopDown(typeTermApplTomSyntax(this)));
         SlotList newArgs = `concSlot(
             PairSlotAppl(Name(Constants.SLOT_NAME),
               (TomTerm) typeStrategy.visit(xmlHead)),

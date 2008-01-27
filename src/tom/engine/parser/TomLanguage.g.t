@@ -30,11 +30,7 @@ package tom.engine.parser;
 
 {
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -156,8 +152,8 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
     OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
-    LinkedList argumentList = new LinkedList();
-    LinkedList constraintInstructionList = new LinkedList();
+    List argumentList = new LinkedList();
+    List constraintInstructionList = new LinkedList();
     TomList subjectList = null;
     TomType patternType = `TomTypeAlone("unknown");
 }
@@ -181,12 +177,12 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
         )
   ;
 
-matchArguments [LinkedList list] throws TomException
+matchArguments [List list] throws TomException
     :   
         ( matchArgument[list] ( COMMA matchArgument[list] )*)
     ;
 
-matchArgument [LinkedList list] throws TomException
+matchArgument [List list] throws TomException
 {
   TomTerm subject1 = null;
   TomTerm subject2 = null;
@@ -226,11 +222,11 @@ matchArgument [LinkedList list] throws TomException
 }
 ;
 
-patternInstruction [TomList subjectList, LinkedList list, TomType rhsType] throws TomException
+patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomException
 {    
-    LinkedList optionListLinked = new LinkedList();
-    LinkedList matchPatternList = new LinkedList();
-    LinkedList blockList = new LinkedList();
+    List optionListLinked = new LinkedList();
+    List matchPatternList = new LinkedList();
+    List blockList = new LinkedList();
     
     Constraint constraint = `TrueConstraint();
     Constraint result = null;
@@ -336,7 +332,7 @@ patternInstruction [TomList subjectList, LinkedList list, TomType rhsType] throw
         )
     ;
 
-matchConstraintCompositionNoPar [LinkedList optionListLinked] returns [Constraint result] throws TomException
+matchConstraintCompositionNoPar [List optionListLinked] returns [Constraint result] throws TomException
 { 
   boolean isAnd = false;
   Constraint matchConstr = null;
@@ -351,7 +347,7 @@ matchConstraintCompositionNoPar [LinkedList optionListLinked] returns [Constrain
   }
 ;
 
-matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint result] throws TomException
+matchConstraintCompositionPar [List optionListLinked] returns [Constraint result] throws TomException
 {
   boolean isAnd = false;
   Constraint matchConstr = null;
@@ -395,10 +391,10 @@ matchConstraintCompositionPar [LinkedList optionListLinked] returns [Constraint 
   }
 ;
 
-matchConstraint [LinkedList optionListLinked] returns [Constraint result] throws TomException
+matchConstraint [List optionListLinked] returns [Constraint result] throws TomException
 {
-  LinkedList matchPatternList = new LinkedList();
-  LinkedList matchSubjectList = new LinkedList();
+  List matchPatternList = new LinkedList();
+  List matchSubjectList = new LinkedList();
   Option option = null;
   result = null;
   int consType = -1;
@@ -451,7 +447,7 @@ constraintType returns [int result]
     )      
 ;
 
-matchPattern [LinkedList list] returns [Option result] throws TomException
+matchPattern [List list] returns [Option result] throws TomException
 {
     result = null;
     TomTerm term = null;
@@ -469,7 +465,7 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
         )
     ;
 
-matchNonImplicitPattern [LinkedList list] returns [Option result] throws TomException
+matchNonImplicitPattern [List list] returns [Option result] throws TomException
 {
     result = null;
     TomTerm term = null;
@@ -503,13 +499,13 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 {
     result = null;
     TomTerm extendsTerm = null;
-    LinkedList visitList = new LinkedList();
+    List visitList = new LinkedList();
     TomVisitList astVisitList = `concTomVisit();
     TomName orgText = null;
     TomTypeList types = `concTomType();
-    LinkedList options = new LinkedList();
-    LinkedList slotNameList = new LinkedList();
-    LinkedList pairNameDeclList = new LinkedList();
+    List options = new LinkedList();
+    List slotNameList = new LinkedList();
+    List pairNameDeclList = new LinkedList();
     String stringSlotName = null;
     String stringTypeArg = null;
 
@@ -634,12 +630,12 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
      )
     ;
 
-strategyVisitList [LinkedList list] throws TomException
+strategyVisitList [List list] throws TomException
     :   ( strategyVisit[list] )* ;
 
-strategyVisit [LinkedList list] throws TomException
+strategyVisit [List list] throws TomException
 {
-  LinkedList constraintInstructionList = new LinkedList();
+  List constraintInstructionList = new LinkedList();
   TomType vType = null;
   TomList subjectList = `concTomTerm();
 
@@ -665,7 +661,7 @@ strategyVisit [LinkedList list] throws TomException
     RBRACE
   )
   {
-    LinkedList optionList = new LinkedList();
+    List optionList = new LinkedList();
     optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
     list.add(`VisitTerm(vType,ASTFactory.makeConstraintInstructionList(constraintInstructionList),options));
@@ -711,8 +707,8 @@ annotedTerm [boolean allowImplicit] returns [TomTerm result] throws TomException
     ;
 
 // a plainTerm that doesn't allow the notation (...)
-simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, LinkedList list, LinkedList secondOptionList, 
-                 LinkedList optionList, LinkedList constraintList, boolean anti] 
+simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List list, List secondOptionList, 
+                 List optionList, List constraintList, boolean anti] 
                  returns [TomTerm result] throws TomException
 {
     result = null;   
@@ -828,10 +824,10 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, Linke
 
 plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
-    LinkedList optionList = new LinkedList();
-    LinkedList secondOptionList = new LinkedList();
-    LinkedList list = new LinkedList();
-    LinkedList constraintList = new LinkedList(); 
+    List optionList = new LinkedList();
+    List secondOptionList = new LinkedList();
+    List list = new LinkedList();
+    List constraintList = new LinkedList(); 
     result = null;
     boolean anti = false;
 }
@@ -845,7 +841,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
 // a plainTerm that allows the (...) notation
 implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int line, 
-                          LinkedList list, LinkedList secondOptionList, LinkedList optionList, LinkedList constraintList, boolean anti]
+                          List list, List secondOptionList, List optionList, List constraintList, boolean anti]
                           returns [TomTerm result] throws TomException
 {
     TomNameList nameList = null;
@@ -875,13 +871,13 @@ implicitNotationPlainTerm[TomName astLabeledName, TomName astAnnotedName, int li
 ;
 
 
-xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm result] throws TomException
+xmlTerm [List optionList, List constraintList] returns [TomTerm result] throws TomException
 {
   result = null;
   TomTerm arg1, arg2;
-  LinkedList pairSlotList = new LinkedList();
-  LinkedList attributeList = new LinkedList();
-  LinkedList childs = new LinkedList();
+  List pairSlotList = new LinkedList();
+  List attributeList = new LinkedList();
+  List childs = new LinkedList();
   String keyword = "";
   boolean implicit;
   TomNameList nameList, closingNameList;
@@ -932,7 +928,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                         // when XMLChilds() is reduced to a singleton
                         // Appl(...,Name(""),args)
                         if(ASTFactory.isExplicitTermList(childs)) {
-                            childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
+                            childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.get(0));
                         } else {
                             optionList.add(`ImplicitXMLChild());
                         }
@@ -1001,7 +997,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
     ;
 
 
-xmlAttributeList [LinkedList list] returns [boolean result] throws TomException
+xmlAttributeList [List list] returns [boolean result] throws TomException
 {
     result = false;
     TomTerm term;
@@ -1046,15 +1042,15 @@ xmlAttributeList [LinkedList list] returns [boolean result] throws TomException
 xmlAttribute returns [TomTerm result] throws TomException
 {
     result = null;
-    LinkedList slotList = new LinkedList();
+    List slotList = new LinkedList();
     TomTerm term = null;
     TomTerm termName = null;
     String name;
     OptionList option = null;
     ConstraintList constraint;
-    LinkedList optionList = new LinkedList();
-    LinkedList constraintList = new LinkedList();
-    LinkedList optionListAnno2 = new LinkedList();
+    List optionList = new LinkedList();
+    List constraintList = new LinkedList();
+    List optionListAnno2 = new LinkedList();
     TomNameList nameList;
     boolean varStar = false;
     boolean anti = false;
@@ -1126,7 +1122,7 @@ xmlAttribute returns [TomTerm result] throws TomException
     ;
 
 // This corresponds to the implicit notation
-xmlTermList [LinkedList list] returns [boolean result] throws TomException
+xmlTermList [List list] returns [boolean result] throws TomException
 {
     result = false;
     TomTerm term;
@@ -1138,7 +1134,7 @@ xmlTermList [LinkedList list] returns [boolean result] throws TomException
         {result = true;}
     ;
 
-xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
+xmlNameList [List optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
 {
     result = `concTomName();
     StringBuilder XMLName = new StringBuilder("");
@@ -1199,10 +1195,10 @@ xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [TomNameList r
         }
     ;
 
-termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomException
+termStringIdentifier [List options] returns [TomTerm result] throws TomException
 {
   result = null;
-  LinkedList optionList = (options==null)?new LinkedList():options;
+  List optionList = (options==null)?new LinkedList():options;
   OptionList option = null;
   TomNameList nameList = null;
 }
@@ -1229,10 +1225,10 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
     ;
 
 
-unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm result] throws TomException
+unamedVariableOrTermStringIdentifier [List options] returns [TomTerm result] throws TomException
 {
   result = null;
-  LinkedList optionList = (options==null)?new LinkedList():options;
+  List optionList = (options==null)?new LinkedList():options;
   OptionList option = null;
   TomNameList nameList = null;
 }
@@ -1261,7 +1257,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
     ;
 
 // return true for implicit mode
-implicitTermList [LinkedList list] returns [boolean result] throws TomException
+implicitTermList [List list] returns [boolean result] throws TomException
 {
     result = false;
     TomTerm term;
@@ -1286,10 +1282,10 @@ implicitTermList [LinkedList list] returns [boolean result] throws TomException
     ;
 
 
-xmlChilds [LinkedList list] returns [boolean result] throws TomException
+xmlChilds [List list] returns [boolean result] throws TomException
 {
   result = false;
-  LinkedList childs = new LinkedList();
+  List childs = new LinkedList();
   Iterator it;
 }
     :
@@ -1307,7 +1303,7 @@ xmlChilds [LinkedList list] returns [boolean result] throws TomException
     ;
 
 
-args [LinkedList list, LinkedList optionList] returns [boolean result] throws TomException
+args [List list, List optionList] returns [boolean result] throws TomException
 {
     result = false;
 }
@@ -1343,7 +1339,7 @@ args [LinkedList list, LinkedList optionList] returns [boolean result] throws To
         )
     ;
 
-termList [LinkedList list] throws TomException
+termList [List list] throws TomException
 {
     TomTerm term = null;
 }
@@ -1353,7 +1349,7 @@ termList [LinkedList list] throws TomException
         )
     ;
 
-pairList [LinkedList list] throws TomException
+pairList [List list] throws TomException
 {
     TomTerm term = null;
 }
@@ -1378,7 +1374,7 @@ pairList [LinkedList list] throws TomException
 ;
    
 // _* or var*       
-variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
+variableStar [List optionList, List constraintList] returns [TomTerm result]
 { 
     result = null; 
     String name = null;
@@ -1430,7 +1426,7 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
     ;
 
 // _
-unamedVariable [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
+unamedVariable [List optionList, List constraintList] returns [TomTerm result]
 { 
     result = null;
     OptionList options = null;
@@ -1451,7 +1447,7 @@ unamedVariable [LinkedList optionList, LinkedList constraintList] returns [TomTe
     ;
 
 // ( id | id | ...)
-headSymbolList [LinkedList optionList] returns [TomNameList result]
+headSymbolList [List optionList] returns [TomNameList result]
 { 
     result = `concTomName();
     TomName name = null;
@@ -1485,14 +1481,14 @@ headSymbolList [LinkedList optionList] returns [TomNameList result]
         )
     ;
 
-headSymbolOrConstant [LinkedList optionList] returns [TomName result]
+headSymbolOrConstant [List optionList] returns [TomName result]
 {
   result = null;
 } : ( result = headSymbol[optionList]
     | result = headConstant[optionList]
     );
 
-headSymbol [LinkedList optionList] returns [TomName result]
+headSymbol [List optionList] returns [TomName result]
 { 
     result = null; 
 }
@@ -1509,7 +1505,7 @@ headSymbol [LinkedList optionList] returns [TomName result]
 	)
 ;
 
-headConstantList [LinkedList optionList] returns [TomNameList result]
+headConstantList [List optionList] returns [TomNameList result]
 {
     result = `concTomName();
     TomName name = null;
@@ -1521,7 +1517,7 @@ headConstantList [LinkedList optionList] returns [TomNameList result]
   )*
 ;
 
-headConstant [LinkedList optionList] returns [TomName result]
+headConstant [List optionList] returns [TomName result]
 { 
     result = null;
     Token t;
@@ -1562,9 +1558,9 @@ operator returns [Declaration result] throws TomException
     result=null;
     Option ot = null;
     TomTypeList types = `concTomType();
-    LinkedList options = new LinkedList();
-    LinkedList slotNameList = new LinkedList();
-    LinkedList pairNameDeclList = new LinkedList();
+    List options = new LinkedList();
+    List slotNameList = new LinkedList();
+    List pairNameDeclList = new LinkedList();
     TomName astName = null;
     String stringSlotName = null;
     Declaration attribute;
@@ -1665,7 +1661,7 @@ operatorList returns [Declaration result] throws TomException
 {
     result = null;
     TomTypeList types = `concTomType();
-    LinkedList options = new LinkedList();
+    List options = new LinkedList();
     Declaration attribute = null;
     String opName = "";
 }
@@ -1710,7 +1706,7 @@ operatorArray returns [Declaration result] throws TomException
 {
     result = null;
     TomTypeList types = `concTomType();
-    LinkedList options = new LinkedList();
+    List options = new LinkedList();
     Declaration attribute = null;
     String opName = "";
 }
@@ -2137,7 +2133,7 @@ keywordMake[String opname, TomType returnType, TomTypeList types] returns [Decla
             {
                 updatePosition(t.getLine(),t.getColumn());
                 selector().push("targetlexer");
-                LinkedList blockList = new LinkedList();
+                List blockList = new LinkedList();
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 selector().pop();
                 blockList.add(tlCode);
@@ -2164,7 +2160,7 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
         LBRACE
         {   
             selector().push("targetlexer");
-            LinkedList blockList = new LinkedList();
+            List blockList = new LinkedList();
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
@@ -2194,7 +2190,7 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             OptionList elementOption = `concOption(elementInfo);
 
             selector().push("targetlexer");
-            LinkedList blockList = new LinkedList();
+            List blockList = new LinkedList();
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
@@ -2227,7 +2223,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
             OptionList listOption = `concOption(listInfo);
 
             selector().push("targetlexer");
-            LinkedList blockList = new LinkedList();
+            List blockList = new LinkedList();
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
@@ -2254,7 +2250,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
           LBRACE
         {
             selector().push("targetlexer");
-            LinkedList blockList = new LinkedList();
+            List blockList = new LinkedList();
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
