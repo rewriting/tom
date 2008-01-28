@@ -107,7 +107,7 @@ public class KernelTyper {
     try {
       //System.out.println("typeVariable: " + contextType);
       //System.out.println("typeVariable subject: " + subject);
-      tom.library.sl.Visitable res = `TopDownStopOnFailure(replace_typeVariable(contextType,this)).visitLight(subject);
+      tom.library.sl.Visitable res = `TopDownStopOnSuccess(replace_typeVariable(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
     } catch(tom.library.sl.VisitFailure e) {
@@ -142,7 +142,7 @@ public class KernelTyper {
       VisitTerm(type,constraintInstructionList,options) -> {
         TomType newType = (TomType)`kernelTyper.typeVariable(contextType,`type);
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
-        `TopDown(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
         return `VisitTerm(newType, kernelTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
       }
     }
@@ -156,7 +156,7 @@ public class KernelTyper {
       Match(constraintInstructionList, options) -> {
         TomType newType = contextType;
         HashSet<Constraint> matchAndNumericConstraints = new HashSet<Constraint>();
-        `TopDown(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
+        `TopDownCollect(CollectMatchAndNumericConstraints(matchAndNumericConstraints)).visitLight(`constraintInstructionList);
         return `Match(kernelTyper.typeConstraintInstructionList(newType,constraintInstructionList,matchAndNumericConstraints),options);
       }
     }
@@ -239,7 +239,7 @@ public class KernelTyper {
       concConstraintInstruction(ConstraintInstruction(constraint,action,optionConstraint),tail*) -> { 
         try {
           Collection<TomTerm> lhsVariable = new HashSet<TomTerm>();
-          Constraint newConstraint = (Constraint)`TopDown(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
+          Constraint newConstraint = (Constraint)`TopDownStopOnSuccess(typeConstraint(contextType,lhsVariable,matchAndNumericConstraints,this)).visitLight(`constraint);
           TomList varList = ASTFactory.makeList(lhsVariable);
           Instruction newAction = (Instruction) replaceInstantiatedVariable(`varList,`action);
           newAction = (Instruction) typeVariable(`EmptyType(),`newAction);
@@ -258,7 +258,7 @@ public class KernelTyper {
    * @param matchAndNumericConstraints a collection of MatchConstraint and NumericConstraint
    * @param kernelTyper the current class
    */
-  %strategy typeConstraint(TomType contextType, Collection lhsVariable, Collection matchAndNumericConstraints, KernelTyper kernelTyper) extends Identity() {
+  %strategy typeConstraint(TomType contextType, Collection lhsVariable, Collection matchAndNumericConstraints, KernelTyper kernelTyper) extends Fail() {
     visit Constraint {
       constraint@(MatchConstraint|NumericConstraint)[Pattern=pattern,Subject=subject] -> {
         TomTerm newSubject = null;
@@ -458,7 +458,7 @@ matchL:  %match(subject,s){
     try {
       //System.out.println("varlist = " + instantiatedVariable);
       //System.out.println("subject = " + subject);
-      return `TopDownStopOnFailure(replace_replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
+      return `TopDownStopOnSuccess(replace_replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
     }
@@ -475,7 +475,8 @@ matchL:  %match(subject,s){
   %strategy CollectMatchAndNumericConstraints(constrList:Collection) extends Identity() {
     visit Constraint {
       c@(MatchConstraint|NumericConstraint)[] -> {        
-        constrList.add(`c);         
+        constrList.add(`c);
+        throw new VisitFailure();// to stop the top-down
       }      
     }
   }

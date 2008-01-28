@@ -97,7 +97,7 @@ public class ConstraintGenerator {
   private static Instruction buildInstructionFromExpression(Expression expression, Instruction action)
       throws VisitFailure {		
     // it is done innermost because the expression is also simplified		
-    expression = (Expression)`InnermostId(ReplaceSubterms()).visit(expression);
+    expression = (Expression)`TopDown(ReplaceSubterms()).visitLight(expression);
     // generate automata
     Instruction automata = generateAutomata(expression,action);    
     return automata;
@@ -155,9 +155,9 @@ public class ConstraintGenerator {
   /**
    * Converts 'Subterm' to 'GetSlot'
    */
-  %strategy ReplaceSubterms() extends Identity(){
-    visit TomTerm{
-      Subterm(constructorName@Name(name), slotName, term) ->{
+  %strategy ReplaceSubterms() extends Identity() {
+    visit TomTerm {
+      Subterm(constructorName@Name(name), slotName, term) -> {
         TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(`name);
         TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	
         return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));

@@ -99,18 +99,19 @@ public class Typer extends TomGenericPlugin {
     TomTerm typedTerm = null;
     try {
       kernelTyper.setSymbolTable(getStreamManager().getSymbolTable());
-      TomTerm syntaxExpandedTerm = (TomTerm) `TopDownStopOnId(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
+      TomTerm syntaxExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight((TomTerm)getWorkingTerm());
+
       updateSymbolTable();
 
       syntaxExpandedTerm = expandType(syntaxExpandedTerm);
       TomTerm variableExpandedTerm = (TomTerm) kernelTyper.typeVariable(`EmptyType(), syntaxExpandedTerm);
       /* transform each BackQuoteTerm into its compiled form */
-      TomTerm backQuoteExpandedTerm = (TomTerm) `TopDownStopOnId(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
-      TomTerm stringExpandedTerm = (TomTerm) `TopDownStopOnId(typeString(this)).visitLight(backQuoteExpandedTerm);
-      typedTerm = (TomTerm) `TopDownStopOnId(updateCodomain(this)).visitLight(stringExpandedTerm);
+      TomTerm backQuoteExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
+      TomTerm stringExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
+      typedTerm = (TomTerm) `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedTerm);
       setWorkingTerm(typedTerm);
       // verbose
-      getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
+      getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)));
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
@@ -131,7 +132,7 @@ public class Typer extends TomGenericPlugin {
    */
   private TomTerm expandType(TomTerm subject) {
     try {
-      return (TomTerm) `TopDownStopOnId(expandType(this)).visitLight(subject);
+      return (TomTerm) `TopDownIdStopOnSuccess(expandType(this)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("typeType: failure on " + subject);
     }
@@ -161,7 +162,7 @@ public class Typer extends TomGenericPlugin {
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
     Iterator<String> it = symbolTable.keySymbolIterator();
-    Strategy typeStrategy = `TopDownStopOnId(typeTermApplTomSyntax(this));
+    Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
 
     while(it.hasNext()) {
       String tomName = it.next();
@@ -174,10 +175,10 @@ public class Typer extends TomGenericPlugin {
         tomSymbol = addDefaultMake(tomSymbol);
       }
       try {
-        tomSymbol = (TomSymbol) `TopDownStopOnId(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
+        tomSymbol = (TomSymbol) `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
         tomSymbol = expandType(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         tomSymbol = ((TomTerm) kernelTyper.typeVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
-        tomSymbol = (TomSymbol) `TopDownStopOnId(typeBackQuoteAppl(this)).visitLight(`tomSymbol);
+        tomSymbol = (TomSymbol) `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`tomSymbol);
       } catch(tom.library.sl.VisitFailure e) {
         System.out.println("should not be there");
       }
@@ -388,7 +389,7 @@ public class Typer extends TomGenericPlugin {
        */
 
       SlotList slotList = `concSlot();
-      Strategy typeStrategy = `TopDownStopOnId(typeTermApplTomSyntax(this));
+      Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
       if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
         for(TomTerm arg:(concTomTerm)args) {
           try {
@@ -399,7 +400,9 @@ public class Typer extends TomGenericPlugin {
              * since it can be constrained
              */	  
             slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-          } catch(tom.library.sl.VisitFailure e) {}
+          } catch(tom.library.sl.VisitFailure e) {
+            System.out.println("should not be there");
+          }
         }
       } else {
         PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
@@ -413,7 +416,9 @@ public class Typer extends TomGenericPlugin {
              */	  
             slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
             pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
-          }catch(tom.library.sl.VisitFailure e){}
+          } catch(tom.library.sl.VisitFailure e) {
+            System.out.println("should not be there");
+          }
         }
       }
 
@@ -427,7 +432,7 @@ public class Typer extends TomGenericPlugin {
       visit TomTerm {
         BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
-          TomList args  = (TomList) `TopDownStopOnId(typeBackQuoteAppl(typer)).visitLight(`l);
+          TomList args  = (TomList) `TopDownIdStopOnSuccess(typeBackQuoteAppl(typer)).visitLight(`l);
 
           //System.out.println("BackQuoteTerm: " + `tomName);
           //System.out.println("tomSymbol: " + tomSymbol);
@@ -547,7 +552,7 @@ public class Typer extends TomGenericPlugin {
       /*
        * Attributes: go from implicit notation to explicit notation
        */
-      Strategy typeStrategy = `TopDownStopOnId(typeTermApplTomSyntax(this));
+      Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
       for(TomTerm attr:(concTomTerm)attrList) {
         try {
           TomTerm newPattern = (TomTerm) typeStrategy.visitLight(attr);
@@ -555,7 +560,9 @@ public class Typer extends TomGenericPlugin {
           if(implicitAttribute) {
             newAttrList = `concTomTerm(star,newAttrList*);
           }
-        } catch(tom.library.sl.VisitFailure e) {}
+        } catch(tom.library.sl.VisitFailure e) {
+          System.out.println("should not be there");
+        }
       }
       newAttrList = newAttrList.reverse();
 
@@ -580,7 +587,9 @@ public class Typer extends TomGenericPlugin {
               newChildList = `concTomTerm(star,newChildList*);
             }
           }
-        } catch(tom.library.sl.VisitFailure e) {}
+        } catch(tom.library.sl.VisitFailure e) {
+          System.out.println("should not be there");
+        }
       }
       newChildList = newChildList.reverse();
 

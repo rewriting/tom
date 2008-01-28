@@ -49,12 +49,12 @@ public class ArrayGenerator implements IBaseGenerator{
   %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) throws VisitFailure {
-    return (Expression)`InnermostId(Generator()).visit(expression);		
+    return (Expression)`TopDown(Generator()).visitLight(expression);		
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	
   %strategy Generator() extends Identity() {
-    visit Expression{
+    visit Expression {
       // generate pre-loop for X* = or _* = 
       /*
        * do {
@@ -69,7 +69,7 @@ public class ArrayGenerator implements IBaseGenerator{
         // expression at the end of the loop 
         Expression endExpression = `ConstraintToExpression(MatchConstraint(end,ExpressionToTomTerm(AddOne(end))));        
         // if we have a varStar, then add its declaration also
-        if (`v.isVariableStar()) {
+        if(`v.isVariableStar()) {
           Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(
                 GetSliceArray(opName,subject,begin,end))));
           return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);

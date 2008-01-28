@@ -117,7 +117,7 @@ public class Expander extends TomGenericPlugin {
       genIntrospector = getOptionBooleanValue("genIntrospector");
       TomTerm expandedTerm = (TomTerm) `Expand(this).visitLight((TomTerm)getWorkingTerm());
       // verbose
-      getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
+      getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(expandedTerm);
       if(intermediate) {
@@ -142,7 +142,7 @@ public class Expander extends TomGenericPlugin {
    */
 
   %op Strategy Expand(expander:Expander){
-    make(expander) { `TopDownStopOnId(Expand_once(expander)) }
+    make(expander) { `TopDownIdStopOnSuccess(Expand_once(expander)) }
   }
 
   %strategy Expand_once(expander:Expander) extends `Identity(){
@@ -528,7 +528,7 @@ matchBlock: {
   } // end strategy
 
   %op Strategy Expand_makeTerm(expander:Expander){
-    make(expander) { `TopDownStopOnId(Expand_makeTerm_once(expander)) }
+    make(expander) { `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)) }
   }
 
   %strategy Expand_makeTerm_once(expander:Expander) extends `Identity()  {

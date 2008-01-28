@@ -50,7 +50,7 @@ public class SyntacticGenerator implements IBaseGenerator {
   %include { ../../../library/mapping/java/sl.tom}	
 
   public Expression generate(Expression expression) throws VisitFailure {
-    return  (Expression)`TopDown(Generator()).visit(expression);
+    return  (Expression)`TopDown(Generator()).visitLight(expression);
   }
 
   // If we find ConstraintToExpression it means that this constraint was not processed	

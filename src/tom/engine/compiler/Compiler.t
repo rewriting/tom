@@ -62,11 +62,7 @@ public class Compiler extends TomGenericPlugin {
   %include { ../../library/mapping/java/util/types/ArrayList.tom}
   %include { ../../library/mapping/java/util/types/Collection.tom}
 
-  %typeterm Compiler {
-    implement { Compiler }
-    is_sort(t) { ($t instanceof Compiler) }
-  }
-
+  %typeterm Compiler { implement { Compiler } }
 
   private static SymbolTable symbolTable = null;
   private static TomNumberList rootpath = null;
@@ -101,15 +97,13 @@ public class Compiler extends TomGenericPlugin {
       TomTerm compiledTerm = Compiler.compile((TomTerm)getWorkingTerm(),getStreamManager().getSymbolTable());
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visitLight(compiledTerm);
-      //System.out.println("renamedTerm = \n" + renamedTerm);
-      // verbose
-      getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
-          new Integer((int)(System.currentTimeMillis()-startChrono)) );
+      TomTerm renamedTerm = (TomTerm) `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
       setWorkingTerm(renamedTerm);
       if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, (TomTerm)getWorkingTerm());
+        Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
       }
+      getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
+          new Integer((int)(System.currentTimeMillis()-startChrono)) );
     } catch (Exception e) {
       getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
           new Object[]{getStreamManager().getInputFileName(), "Compiler", e.getMessage()} );
@@ -123,7 +117,8 @@ public class Compiler extends TomGenericPlugin {
 
   public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable) throws VisitFailure {
     Compiler.symbolTable = symbolTable;
-    return  (TomTerm)`TopDown(CompileMatch()).visitLight(termToCompile);		
+    // we use TopDown  and not TopDownIdStopOnSuccess to compile nested-match
+    return (TomTerm) `TopDown(CompileMatch()).visitLight(termToCompile);		
   }
 
   // looks for a 'Match' instruction:
@@ -133,7 +128,7 @@ public class Compiler extends TomGenericPlugin {
   // 4. launch GenerationManager
   // 5. launch PostGenerator  
   // 6. transforms resulted expression into a CompiledMatch
-  %strategy CompileMatch() extends Identity(){
+  %strategy CompileMatch() extends Identity() {
     visit Instruction {			
       Match(constraintInstructionList, matchOptionList)  -> {        
         matchNumber++;
@@ -142,26 +137,25 @@ public class Compiler extends TomGenericPlugin {
         freshVarCounter = 0;
         int actionNumber = 0;
         TomList automataList = `concTomTerm();	
-        ArrayList subjectList = new ArrayList();
-        ArrayList renamedSubjects = new ArrayList();
+        ArrayList<TomTerm> subjectList = new ArrayList<TomTerm>();
+        ArrayList<TomTerm> renamedSubjects = new ArrayList<TomTerm>();
         // for each pattern action <term>,...,<term> -> { action }
         // build a matching automata
         %match(constraintInstructionList) {
-          concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {                        
+          concConstraintInstruction(_*,ConstraintInstruction(constraint,action,optionList),_*) -> {
+            actionNumber++;
             try {
-              actionNumber++;
               // get the new names for subjects and generates casts -- needed especially for lists
               // this is performed here, and not above, because in the case of nested matches, we do not want 
               // to go in the action and collect from there              
-              `constraint = (Constraint)`TopDown(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
+              Constraint newConstraint = (Constraint) `TopDownIdStopOnSuccess(renameSubjects(subjectList,renamedSubjects)).visitLight(`constraint);
 
-              Constraint propagationResult = ConstraintPropagator.performPropagations(`constraint);              
+              Constraint propagationResult = ConstraintPropagator.performPropagations(newConstraint);
               Expression preGeneratedExpr = PreGenerator.performPreGenerationTreatment(propagationResult);
               Instruction matchingAutomata = ConstraintGenerator.performGenerations(preGeneratedExpr, `action);
-              Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);              
-
+              Instruction postGenerationAutomata = PostGenerator.performPostGenerationTreatment(matchingAutomata);
               TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(actionNumber));
-              TomTerm automata = `Automata(optionList,constraint,numberList,postGenerationAutomata);
+              TomTerm automata = `Automata(optionList,newConstraint,numberList,postGenerationAutomata);
               automataList = `concTomTerm(automataList*,automata); //append(automata,automataList);
             } catch(Exception e) {
               e.printStackTrace();
@@ -185,37 +179,24 @@ public class Compiler extends TomGenericPlugin {
    * 
    * @param subjectList the list of old subjects
    */
-  %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity(){
+  %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity() {
     visit Constraint {
-      constr@(MatchConstraint|NumericConstraint)[] -> {
-        TomTerm subject = null;
-        TomTerm pattern = null;
-        NumericConstraintType numericType = null;
-        boolean isMatchConstraint = false;
-        %match(constr){
-          MatchConstraint(p, s) -> { 
-            if (renamedSubjects.contains(`p) || renamedSubjects.contains(`s) ) {// make sure we don't process generated contraints
-              return `constr; 
-            }
-            pattern = `p;subject = `s;isMatchConstraint = true; 
-          }
-          NumericConstraint(left, right, nt) -> {
-            if (renamedSubjects.contains(`left) || renamedSubjects.contains(`right) ) {// make sure we don't process generated contraints
-              return `constr; 
-            }
-            pattern = `left;subject = `right; numericType = `nt; 
-          }          
-        }        
+      constr@(MatchConstraint|NumericConstraint)[Pattern=pattern, Subject=subject] -> {
+        if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(`subject) ) {
+          // make sure we don't process generated contraints
+          return `constr; 
+        }
         // test if we already renamed this subject
-        if (subjectList.contains(`subject)) {          
-          TomTerm renamedSubj = (TomTerm)renamedSubjects.get(subjectList.indexOf(subject));
-          Constraint newConstraint = isMatchConstraint ? `MatchConstraint(pattern,renamedSubj) : `NumericConstraint(pattern,renamedSubj,numericType);
+        if(subjectList.contains(`subject)) {          
+          TomTerm renamedSubj = (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
+          Constraint newConstraint = `constr.setSubject(renamedSubj);
           TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
           return `AndConstraint(
               IsSortConstraint(freshSubjectType,subject),
               MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
               newConstraint);
         }
+
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
@@ -230,11 +211,12 @@ public class Compiler extends TomGenericPlugin {
               freshSubjectType =`sv.getAstType();
             }
           }
-        }// end match
+        }
+
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
-        Constraint newConstraint = isMatchConstraint ? `MatchConstraint(pattern,renamedVar) : `NumericConstraint(pattern,renamedVar,numericType);        
+        Constraint newConstraint = `constr.setSubject(renamedVar);
         return `AndConstraint(
             IsSortConstraint(freshSubjectType,subject),
             MatchConstraint(renamedVar,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
@@ -255,9 +237,9 @@ public class Compiler extends TomGenericPlugin {
         // action) we generate corresponding labeled-block				 
         %match(optionList) {
           concOption(_*,Label(Name(name)),_*) -> {            
-            `instruction = `NamedBlock(name,concInstruction(instruction));
+            return `concInstruction(CompiledPattern(constraint,NamedBlock(name,concInstruction(instruction))), newList*);
           }
-        }				
+        }
         return `concInstruction(CompiledPattern(constraint,instruction), newList*);
       }
     }
@@ -272,7 +254,7 @@ public class Compiler extends TomGenericPlugin {
     return rootpath;
   }
 
-  public static SymbolTable getSymbolTable(){
+  public static SymbolTable getSymbolTable() {
     return symbolTable;
   }
 
@@ -335,7 +317,7 @@ public class Compiler extends TomGenericPlugin {
   /*
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
-  %strategy findRenameVariable(context:Collection) extends `Identity() {
+  %strategy findRenameVariable(context:Collection) extends Identity() {
     visit TomTerm {
       var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
         if(context.contains(`astName)) {          
@@ -348,9 +330,9 @@ public class Compiler extends TomGenericPlugin {
       CompiledPattern(patternList,instruction) -> {
         // only variables found in LHS have to be renamed (this avoids that the JAVA ones are renamed)
         Collection newContext = new ArrayList();
-        `TopDown(CollectLHSVars(newContext)).visitLight(`patternList);        
+        `TopDownCollect(CollectLHSVars(newContext)).visitLight(`patternList);        
         newContext.addAll(context);
-        return (Instruction)`TopDown(findRenameVariable(newContext)).visitLight(`instruction);
+        return (Instruction)`TopDownIdStopOnSuccess(findRenameVariable(newContext)).visitLight(`instruction);
       }
     }  
   }  
@@ -361,6 +343,7 @@ public class Compiler extends TomGenericPlugin {
         Map map = TomBase.collectMultiplicity(`p);
         Collection newContext = new HashSet(map.keySet());
         bag.addAll(newContext);
+        throw new VisitFailure();// to stop the top-down
       }
     }
   }

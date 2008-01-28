@@ -213,6 +213,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("TOM parsing phase ({0,number,integer} ms)");
   public static final TomMessage tomSyntaxCheckingPhase=
       new TomMessage("TOM syntax checking phase ({0,number,integer} ms)");
+  public static final TomMessage tomTypingPhase     =
+      new TomMessage("TOM typing phase ({0,number,integer} ms)");
   public static final TomMessage tomExpandingPhase     =
       new TomMessage("TOM expanding phase ({0,number,integer} ms)");
   public static final TomMessage tomTypeCheckingPhase  =

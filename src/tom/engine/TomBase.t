@@ -318,7 +318,7 @@ public final class TomBase {
     */
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
-    ArrayList<TomTerm> variableList = new ArrayList<TomTerm>();
+    Collection<TomTerm> variableList = new HashSet<TomTerm>();
     collectVariable(variableList,`subject);
     // compute multiplicities
     HashMap<TomName,Integer> multiplicityMap = new HashMap<TomName,Integer>();

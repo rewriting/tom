@@ -1,6 +1,9 @@
-2008-01-29 pem
+2008-01-28 pem
+  * improved the efficiency of the compiler
+
+2008-01-27 pem
   * improved the typer
-	* fixed PR-3979
+  * fixed PR-3979
 
 2008-01-15 pem
   * re-activated the TypeChecker

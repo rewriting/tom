@@ -57,15 +57,12 @@ public class PostGenerator {
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
  
-  public static Instruction performPostGenerationTreatment(Instruction instruction) 
-       throws VisitFailure{
+  public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
     instruction = (Instruction)`TopDown(ChangeVarDeclarations()).visit(instruction);
-    return (Instruction)`InnermostId(AddRef()).visit(instruction);
-    //return term;
+    return (Instruction) `TopDown(AddRef()).visitLight(instruction);
   }
-
   
-  %strategy AddRef() extends Identity(){    
+  %strategy AddRef() extends Identity() {
     visit Expression { 
       EqualTerm(type,var@(Variable|VariableStar)[],t) -> {        
         return `EqualTerm(type,Ref(var),t);
@@ -151,7 +148,7 @@ public class PostGenerator {
     visit Instruction {
       LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) -> {
         Visitable root = (Visitable) getEnvironment().getRoot();
-        if (root != getEnvironment().getSubject()) {
+        if(root != getEnvironment().getSubject()) {
           try {
             getEnvironment().getPosition().getOmegaPath(`CheckVarExistence(name)).visit(root); 
           } catch (VisitFailure e) {
@@ -159,17 +156,17 @@ public class PostGenerator {
           }
         }
       }
-    }// end visit
-  }// end strategy
+    }
+  }
 
-  %strategy CheckVarExistence(varName:TomName) extends Identity(){
+  %strategy CheckVarExistence(varName:TomName) extends Identity() {
     visit Instruction {
       LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(varName == (`name) ) {
           throw new VisitFailure();
         }
       }
-    } // end visit
-  }// end strategy
+    }
+  }
   
 }
