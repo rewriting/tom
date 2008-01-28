@@ -168,21 +168,21 @@ public class ConstraintGenerator {
   /*
    * Takes the OrConnector and generates the tests
    * (this is for the OrConstraint - the disjunction of constraints)
-   * 
-   * boolean flag = false;
+   *
    * var1 = null; // all the free variables
    * var2 = null;
    * ....
    * varm = null;
    * int counter = 0;
    * do{ // n is the number of 'or'
-   *    if (counter >= 0 && counter <=0 ) { //generated like this because if we use "counter == 0", we have to include "int.tom" 
+   *    boolean flag = false;
+   *    if (counter >= 0 && counter <=0 ) { // generated like this because if we use "counter == 0", we have to include "int.tom" 
    *        if ( code_for_first_constraint_in_disjunction ){
    *            flag = true;
    *        }
-   *    }
+   *    }else if (counter >= 1 && counter <= 1 ) {
    *    ....
-   *    if (counter >= n-1 && counter <= n-1) {
+   *    else if (counter >= n-1 && counter <= n-1) {
    *        if ( code_for_n_constraint_in_disjunction ){
    *            flag = true;
    *        }
@@ -197,37 +197,41 @@ public class ConstraintGenerator {
     Instruction assignFlagTrue = `LetAssign(flag,TrueTL(),Nop());
     TomType intType = Compiler.getIntType();
     TomTerm counter = Compiler.getFreshVariable(intType);    
-    Instruction instruction = `Nop();
-    int cnt = 0;
-    %match(orConnector){
-      OrConnector(_*,x,_*) -> {
-        TomTerm counterValue = `Variable(concOption(),Name(cnt+""),intType,concConstraint());
-        instruction = `AbstractBlock(concInstruction(instruction,
-            If(And(GreaterOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue)),
-                  LessOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue))),
-                generateAutomata(x,assignFlagTrue),Nop())));
-        cnt++;
-      }
-    }
+    // build the ifs
+    Instruction instruction = `buildTestsInConstraintDisjuction(0,assignFlagTrue,counter,intType,orConnector);    
     // add the final test
     instruction = `AbstractBlock(concInstruction(instruction,
           If(EqualTerm(Compiler.getBooleanType(),flag,ExpressionToTomTerm(TrueTL())),action,Nop())));
     // counter++ : expression at the end of the loop 
-    Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());    
-    instruction = `AbstractBlock(concInstruction(instruction,counterIncrement));
-    instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter),TomTermToExpression(Variable(concOption(),Name(cnt+""),intType,concConstraint()))));
-    
+    Instruction counterIncrement = `LetRef(counter,AddOne(counter),Nop());
+    //  stick the flag declaration and the counterIncrement   
+    instruction = `LetRef(flag,FalseTL(),AbstractBlock(concInstruction(instruction,counterIncrement)));      
+    instruction = `DoWhile(instruction,LessThan(TomTermToExpression(counter),
+        TomTermToExpression(Variable(concOption(),Name(orConnector.length()+""),intType,concConstraint()))));    
     // add fresh variables' declarations
     ArrayList<TomTerm> freshVarList = new ArrayList<TomTerm>();
     // collect free variables    
     `TopDownCollect(CollectFreeVar(freshVarList)).visitLight(orConnector);
-    for(TomTerm var:freshVarList){
+    for(TomTerm var:freshVarList) {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
     }
     // stick the counter declaration
-    instruction = `LetRef(counter,TomTermToExpression(Variable(concOption(),Name(0+""),intType,concConstraint())),instruction);
-    // stick the flag declaration 
-    return `LetRef(flag,FalseTL(),instruction);
+    return `LetRef(counter,TomTermToExpression(Variable(concOption(),Name(0+""),intType,concConstraint())),instruction);
+  }
+  /**
+   * builds the ifs in a constraint disjunction (see buildConstraintDisjunction above for details)
+   */
+  private static Instruction buildTestsInConstraintDisjuction(int cnt, Instruction assignFlagTrue, 
+      TomTerm counter, TomType intType, Expression orConnector) throws VisitFailure {
+    %match(orConnector){
+      OrConnector(x,Y*) -> {        
+        TomTerm counterValue = `Variable(concOption(),Name(cnt+""),intType,concConstraint());
+        return `If(And(GreaterOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue)),
+                  LessOrEqualThan(TomTermToExpression(counter),TomTermToExpression(counterValue))),
+                    generateAutomata(x,assignFlagTrue),buildTestsInConstraintDisjuction(++cnt,assignFlagTrue,counter,intType,OrConnector(Y*)));        
+      }       
+    }
+    return `Nop();
   }
   
   /*

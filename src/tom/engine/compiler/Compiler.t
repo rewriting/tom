@@ -175,7 +175,7 @@ public class Compiler extends TomGenericPlugin {
 
   /**
    * Takes all MatchConstraints and renames the subjects; 
-   * Match(p,s) -> IsSort(s) /\ Match(freshSubj,Cast(s)) /\ Match(p,freshVar) 
+   * Match(p,s) -> IsSort(s) /\ Match(freshSubj,Cast(s)) /\ Match(p,freshSubj) 
    * 
    * @param subjectList the list of old subjects
    */
@@ -186,8 +186,8 @@ public class Compiler extends TomGenericPlugin {
           // make sure we don't process generated contraints
           return `constr; 
         }
-        // test if we already renamed this subject
-        if(subjectList.contains(`subject)) {          
+        // test if we already renamed this subject 
+        if(subjectList.contains(`subject)) {
           TomTerm renamedSubj = (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
           Constraint newConstraint = `constr.setSubject(renamedSubj);
           TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
@@ -196,7 +196,6 @@ public class Compiler extends TomGenericPlugin {
               MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
               newConstraint);
         }
-
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
@@ -212,7 +211,6 @@ public class Compiler extends TomGenericPlugin {
             }
           }
         }
-
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
@@ -267,8 +265,6 @@ public class Compiler extends TomGenericPlugin {
   public static TomType getSlotType(TomName tomName, TomName slotName) {
     String stringName = ((Name)tomName).getString();
     TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
-    //System.out.println("tomName = " + tomName);
-    //System.out.println("stringName = " + stringName);
     return TomBase.getSlotType(tomSymbol,slotName);    
   } 
 
