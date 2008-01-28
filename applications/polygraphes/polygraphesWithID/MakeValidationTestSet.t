@@ -47,7 +47,7 @@ public class MakeValidationTestSet{
 		testxml+=makeTest("multiplication test",multiplicationSource,multiplicationTarget);
 		//division test
 		TwoPath divisionSource=`TwoC1(TwoC0(MakeInput.makeNat(7),MakeInput.makeNat(2)),TestCellSet.division);
-		TwoPath divisionTarget=MakeInput.makeNat(2);
+		TwoPath divisionTarget=MakeInput.makeNat(3);
 		testxml+=makeTest("division test",divisionSource,divisionTarget);
 		//combined test
 		TwoPath combinedSource=``TwoC1(TwoC0(TwoC1(TwoC0(MakeInput.makeNat(2),MakeInput.makeNat(6)),TestCellSet.multiplication),MakeInput.makeNat(3)),TestCellSet.division);
@@ -80,7 +80,7 @@ public class MakeValidationTestSet{
 		//sort test
 		int[] list1={7,8,3,2,6};
 		int[] list2={9,5,7,4,1};
-		int[] list3={1,2,3,4,5,6,7,8,9};
+		int[] list3={1,2,3,4,5,6,7,7,8,9};
 		TwoPath sortSource=`TwoC1(TwoC0(MakeInput.makeList(list1),MakeInput.makeList(list2)),TestCellSet.merge,TestCellSet.sort);
 		TwoPath sortTarget=MakeInput.makeList(list3);
 		testxml+=makeTest("sort test",sortSource,sortTarget);

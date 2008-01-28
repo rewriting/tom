@@ -12,11 +12,203 @@ import java.util.Vector;
 import java.util.Iterator;
 import tools.XMLhandler;
 
+//constructs the specific part of each program with strategies corresponding to rule and the function that tries them all
 
 public class XMLProgramHandler {
   %include{ dom.tom }
   %include { polygraphicprogram/PolygraphicProgram.tom }
   %include { sl.tom }
+
+  	//quite long but core of this part
+	public static String makeRuleStrategy(String filename){
+		String strategy="";
+		int n=0;
+		Vector<OneCell> types=new Vector<OneCell>();
+		Vector<TwoPath> constructors=new Vector<TwoPath>();
+		Vector<ThreePath> structureRules=new Vector<ThreePath>();
+		try{
+			//we load the xml file
+			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
+			Element e = dom.getDocumentElement();
+			NodeList childs=e.getChildNodes();
+			for (int i = 0; i < childs.getLength(); i++) {
+				Node child = childs.item(i);
+				//first we get the types and the corresponding constructors and store them in the collections we instantiated in the beginning
+				if(child.getNodeName().equals("Type")){
+					NodeList typeNodes=child.getChildNodes();
+					for (int j = 0; j < typeNodes.getLength(); j++) {
+						Node typeNode = typeNodes.item(j);
+						if(typeNode.getNodeName().equals("OnePath")){
+							types.add((OneCell)XMLhandler.makeOnePath(typeNode));
+						}
+						if(typeNode.getNodeName().equals("Constructor")){
+							NodeList constructorNodes=typeNode.getChildNodes();
+							for (int k = 0; k < constructorNodes.getLength(); k++) {
+								Node constructorNode = constructorNodes.item(k);
+								if(!constructorNode.getNodeName().equals("#text")){
+									constructors.add(XMLhandler.makeTwoPath(constructorNode));
+								}
+							}
+						}
+					}
+				}
+				//then we get the rules and construct the corresponding strategies
+				if(child.getNodeName().equals("Function")){
+					NodeList functionNodes=child.getChildNodes();
+					for (int j = 0; j < functionNodes.getLength(); j++) {
+						Node functionNode = functionNodes.item(j);
+						if(functionNode.getNodeName().equals("Rule")){
+							NodeList ruleNodes=functionNode.getChildNodes();
+							for (int k = 0; k < ruleNodes.getLength(); k++) {
+								Node ruleNode = ruleNodes.item(k);
+								if(!ruleNode.getNodeName().equals("#text")){
+									String rule=makeRule(XMLhandler.makeThreeCell(ruleNode))+"\n";
+			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
+		visit TwoPath {
+			@rule@
+		}
+	}
+  	]%;
+			 n++;
+								}
+							}
+						}
+					}
+				}
+			}
+			// generation of the structure rules
+			for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
+				TwoPath constructor = (TwoPath) iterator.next();
+				Vector<ThreePath> constructorRules=StructureRuleHandler.makeStructureRules(constructor,types);
+				for (Iterator iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
+					ThreePath rule = (ThreePath) iterator2.next();
+					structureRules.add(rule);
+				}
+			}
+			//construction of the strategies corresponding to the strategy rules
+			for (Iterator iterator = structureRules.iterator(); iterator.hasNext();) {
+				ThreePath rulePath = (ThreePath) iterator.next();
+				String rule=makeRule(rulePath)+"\n";
+			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
+		visit TwoPath {
+			@rule@
+		}
+	}
+  	]%;
+			 n++;
+			}
+			
+			//construction of the function that applies all the strategies on a 2-Path
+			//String evalStrategy="ApplyRules0()";
+			String evalStrategy="RepeatId(TopDown(ApplyRules0())),MakeLog()";
+			for(int i=1;i<n;i++){
+				//adds each rule strategy in the global visit
+				// evalStrategy+=",ApplyRules"+i+"()";
+				evalStrategy+=",TopDown(ApplyRules"+i+"()),MakeLog()";
+			}
+			strategy+=%[	public static TwoPath eval(TwoPath myPath){
+		try{
+			System.out.println("BEFORE");
+			myPath.print();
+			System.out.println("LOG");
+			myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visit(myPath);
+			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@)))).visit(myPath);
+			System.out.println("RESULT");
+			myPath.print();
+			return myPath;
+		}
+		catch(VisitFailure e) {
+			throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
+			}
+			}
+			]%;
+		}
+		catch(Exception e){ e.printStackTrace();}
+		//we return all the rule strategies and also the computation functon "eval(TwoPath)"
+		return strategy;
+	}
+	
+
+	//transforms the rule source in a pattern and its target as the resulting action
+	public static String makeRule(ThreePath rule){
+		TwoPath source=rule.getSource();
+		TwoPath target=rule.getTarget();
+		source=formatRule(source);
+		target=formatRule(target);
+		String sourceString=source.toString();
+		String targetString=target.toString();
+		int i=0;
+		//we replace the ruleAux Cells by "Xi" in the patterns and actions
+		while(sourceString.contains("ruleAux")){//cautious, infinite loop risk there
+			char indexSource=sourceString.charAt(sourceString.indexOf("ruleAux")+7);
+			char indexTarget=targetString.charAt(targetString.indexOf("ruleAux")+7);
+			sourceString=sourceString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\),0\\)", "X"+indexSource+"*");
+			targetString=targetString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\),0\\)", "X"+indexTarget+"*");
+			i++;}
+		int j=0;
+		//we replace id=0 in the constructors of the action part by a call to a function that will return a new different id to each new TwoCell
+		while(sourceString.contains("(),0")){
+			sourceString=sourceString.replaceFirst("\\(\\),0", "(),id"+j++);}
+		targetString=targetString.replaceAll("\\(\\),0", "(),setID()");
+		//we add a condition to verify that each connection Xi is not empty
+		String condition="";
+		if(i>0){
+			i--;
+			condition="if(`X"+i+"!=`TwoId(Id())";
+			while(i>0){
+				i--;
+				condition+="&&`X"+i+"!=`TwoId(Id())";
+			}
+			condition+=")";
+		}
+		//we add Y* at the tail of the patterns, otherwise we dont capture every pattern
+		if(source.isConsTwoC1()){
+			sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
+		else{
+			sourceString="TwoC1("+sourceString+",Y*)";}
+		if(target.isConsTwoC1()){
+			targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
+		else{
+			targetString="TwoC1("+targetString+",Y*)";}
+		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
+	}
+	
+	
+	//Adds a "ruleAux" cell on each incoming wire, allows to know the input connection structure for the rule pattern and actions
+	public static TwoPath formatRule(TwoPath path){
+		try{
+			TwoPath source=`TwoId(path.source());
+			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visit(source);
+			path=`TwoC1(ruleAux,path);
+			//we normalize the rule also
+			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visit(path);
+		}
+		catch(VisitFailure e) {
+			throw new tom.engine.exception.TomRuntimeException("strange term: "+path);
+		}
+		return path;
+	}
+
+	//adds the ruleAux cells
+	%strategy ruleAux(int i) extends Identity(){ 
+		visit TwoPath {
+			TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*));}
+			TwoId(OneCell(name)) -> {return `TwoCell("ruleAux"+(i++),Id(),OneCell(name),Constructor(),0);} 
+		} 
+	}
+
+
+	//returns the program name from the xml file root tag name field
+	public static String getProgramName(String filename){
+		String name="polygraphicprogram";
+		try{		
+			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
+			Element e = dom.getDocumentElement();
+			name=e.getAttribute("Name");
+		}
+		catch(Exception e){ e.printStackTrace();}
+		return name;
+	}	
 
   //this normalize strategy is slightly different from the one we use in the rest of the project
   %strategy Normalize() extends Identity(){ 
@@ -174,181 +366,5 @@ public class XMLProgramHandler {
     }
     return array;
   }
-	//transforms the rule source in a pattern and its target as the resulting action
-	public static String makeRule(ThreePath rule){
-		TwoPath source=rule.getSource();
-		TwoPath target=rule.getTarget();
-		source=formatRule(source);
-		target=formatRule(target);
-		String sourceString=source.toString();
-		String targetString=target.toString();
-		int i=0;
-		while(sourceString.contains("ruleAux")){//cautious, infinite loop risk there
-			char indexSource=sourceString.charAt(sourceString.indexOf("ruleAux")+7);
-			char indexTarget=targetString.charAt(targetString.indexOf("ruleAux")+7);
-			sourceString=sourceString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\),0\\)", "X"+indexSource+"*");
-			targetString=targetString.replaceFirst("TwoCell\\(\"ruleAux[^\"]\",[^,]+,[^,]+,[^\\)]+\\),0\\)", "X"+indexTarget+"*");
-			i++;}
-		int j=0;
-		while(sourceString.contains("(),0")){
-			sourceString=sourceString.replaceFirst("\\(\\),0", "(),id"+j++);}
-		targetString=targetString.replaceAll("\\(\\),0", "(),setID()");
-		String condition="";
-		if(i>0){
-			i--;
-			condition="if(`X"+i+"!=`TwoId(Id())";
-			while(i>0){
-				i--;
-				condition+="&&`X"+i+"!=`TwoId(Id())";
-			}
-			condition+=")";
-		}
-		if(source.isConsTwoC1()){
-			sourceString=sourceString.subSequence(0, sourceString.length()-1)+",Y*)";}
-		else{
-			sourceString="TwoC1("+sourceString+",Y*)";}
-		if(target.isConsTwoC1()){
-			targetString=targetString.subSequence(0, targetString.length()-1)+",Y*)";}
-		else{
-			targetString="TwoC1("+targetString+",Y*)";}
-		return sourceString+ "-> {"+condition+"return `"+targetString+";}";
-	}
-
-	%strategy ruleAux(int i) extends Identity(){ 
-		visit TwoPath {
-			TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*));}
-			TwoId(OneCell(name)) -> {return `TwoCell("ruleAux"+(i++),Id(),OneCell(name),Constructor(),0);} 
-		} 
-	}
-
-	public static TwoPath formatRule(TwoPath path){
-		try{
-			TwoPath source=`TwoId(path.source());
-			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visit(source);
-			path=`TwoC1(ruleAux,path);
-			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visit(path);
-		}
-		catch(VisitFailure e) {
-			throw new tom.engine.exception.TomRuntimeException("strange term: "+path);
-		}
-		return path;
-	}
-
-
-	public static String makeRuleStrategy(String filename){
-		String strategy="";
-		int n=0;
-		Vector<OneCell> types=new Vector<OneCell>();
-		Vector<TwoPath> constructors=new Vector<TwoPath>();
-		Vector<ThreePath> structureRules=new Vector<ThreePath>();
-		try{	
-			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
-			Element e = dom.getDocumentElement();
-			NodeList childs=e.getChildNodes();
-			for (int i = 0; i < childs.getLength(); i++) {
-				Node child = childs.item(i);
-				//first we get the types and the corresponding constructors
-				if(child.getNodeName().equals("Type")){
-					NodeList typeNodes=child.getChildNodes();
-					for (int j = 0; j < typeNodes.getLength(); j++) {
-						Node typeNode = typeNodes.item(j);
-						if(typeNode.getNodeName().equals("OnePath")){
-							types.add((OneCell)XMLhandler.makeOnePath(typeNode));
-						}
-						if(typeNode.getNodeName().equals("Constructor")){
-							NodeList constructorNodes=typeNode.getChildNodes();
-							for (int k = 0; k < constructorNodes.getLength(); k++) {
-								Node constructorNode = constructorNodes.item(k);
-								if(!constructorNode.getNodeName().equals("#text")){
-									constructors.add(XMLhandler.makeTwoPath(constructorNode));
-								}
-							}
-						}
-					}
-				}
-				//then we get the rules
-				if(child.getNodeName().equals("Function")){
-					NodeList functionNodes=child.getChildNodes();
-					for (int j = 0; j < functionNodes.getLength(); j++) {
-						Node functionNode = functionNodes.item(j);
-						if(functionNode.getNodeName().equals("Rule")){
-							NodeList ruleNodes=functionNode.getChildNodes();
-							for (int k = 0; k < ruleNodes.getLength(); k++) {
-								Node ruleNode = ruleNodes.item(k);
-								if(!ruleNode.getNodeName().equals("#text")){
-									String rule=makeRule(XMLhandler.makeThreeCell(ruleNode))+"\n";
-			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
-		visit TwoPath {
-			@rule@
-		}
-	}
-  	]%;
-			 n++;
-								}
-							}
-						}
-					}
-				}
-			}
-			// generation of the structure rules
-			for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
-				TwoPath constructor = (TwoPath) iterator.next();
-				Vector<ThreePath> constructorRules=StructureRuleHandler.makeStructureRules(constructor,types);
-				for (Iterator iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
-					ThreePath rule = (ThreePath) iterator2.next();
-					structureRules.add(rule);
-				}
-			}
-			//than we add them in the program
-			for (Iterator iterator = structureRules.iterator(); iterator.hasNext();) {
-				ThreePath rulePath = (ThreePath) iterator.next();
-				String rule=makeRule(rulePath)+"\n";
-			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
-		visit TwoPath {
-			@rule@
-		}
-	}
-  	]%;
-			 n++;
-			}
-			//String evalStrategy="ApplyRules0()";
-			String evalStrategy="RepeatId(TopDown(ApplyRules0())),MakeLog()";
-			for(int i=1;i<n;i++){
-				// evalStrategy+=",ApplyRules"+i+"()";
-				// evalStrategy+=",RepeatId(TopDown(ApplyRules"+i+"())),MakeLog()";
-				evalStrategy+=",TopDown(ApplyRules"+i+"()),MakeLog()";
-			}
-			strategy+=%[	public static TwoPath eval(TwoPath myPath){
-		try{
-			System.out.println("BEFORE");
-			myPath.print();
-			System.out.println("LOG");
-			myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visit(myPath);
-			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@)))).visit(myPath);
-			System.out.println("RESULT");
-			myPath.print();
-			return myPath;
-		}
-		catch(VisitFailure e) {
-			throw new tom.engine.exception.TomRuntimeException("strange term: " + myPath);
-			}
-			}
-			]%;
-		}
-		catch(Exception e){ e.printStackTrace();}
-		return strategy;
-	}
-
-	//returns the program name from the xml file root tag name field
-	public static String getProgramName(String filename){
-		String name="polygraphicprogram";
-		try{		
-			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
-			Element e = dom.getDocumentElement();
-			name=e.getAttribute("Name");
-		}
-		catch(Exception e){ e.printStackTrace();}
-		return name;
-	}
-
+	
 }

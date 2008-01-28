@@ -321,6 +321,7 @@ sort ThreePath:block(){
 				}
 			return false;
 		}
+	
 	//print method
 	public void print(){System.out.println("ThreeCell("+this.getName()+","+this.getSource().prettyPrint()+","+this.getTarget().prettyPrint()+")");}
 		
