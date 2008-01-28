@@ -73,10 +73,6 @@ public class Expander extends TomGenericPlugin {
     is_sort(t) { ($t instanceof Expander) }
   }
 
-  %op Strategy ChoiceTopDown(s1:Strategy) {
-    make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
-  }
-
   /** some output suffixes */
   public static final String EXPANDED_SUFFIX = ".tfix.expanded";
 
@@ -146,7 +142,7 @@ public class Expander extends TomGenericPlugin {
    */
 
   %op Strategy Expand(expander:Expander){
-    make(expander) { `ChoiceTopDown(Expand_once(expander)) }
+    make(expander) { `TopDownStopOnId(Expand_once(expander)) }
   }
 
   %strategy Expand_once(expander:Expander) extends `Identity(){
@@ -532,7 +528,7 @@ matchBlock: {
   } // end strategy
 
   %op Strategy Expand_makeTerm(expander:Expander){
-    make(expander) { `ChoiceTopDown(Expand_makeTerm_once(expander)) }
+    make(expander) { `TopDownStopOnId(Expand_makeTerm_once(expander)) }
   }
 
   %strategy Expand_makeTerm_once(expander:Expander) extends `Identity()  {

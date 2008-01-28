@@ -123,7 +123,7 @@ public class TomTypeChecker extends TomChecker {
       Match(constraintInstructionList, oplist) -> {  
         ttc.currentTomStructureOrgTrack = TomBase.findOriginTracking(`oplist);
         ttc.verifyMatchVariable(`constraintInstructionList);
-        throw new tom.library.sl.VisitFailure();
+        throw new tom.library.sl.VisitFailure();// to stop the top-downd
       }
     }
 
@@ -131,7 +131,7 @@ public class TomTypeChecker extends TomChecker {
       Strategy(_,_,visitList,orgTrack) -> {
         ttc.currentTomStructureOrgTrack = `orgTrack;
         ttc.verifyStrategyVariable(`visitList);
-        throw new tom.library.sl.VisitFailure();
+        throw new tom.library.sl.VisitFailure();// to stop the top-downd
       }
     }
 
@@ -208,6 +208,10 @@ public class TomTypeChecker extends TomChecker {
     }
   }
 
+  /*
+   * forbid to use a X* under the wrong symbol
+   * like in f(X*) -> g(X*)
+   */
   private void verifyListVariableInAction(Instruction action) {
     //System.out.println("Action = " + action);
     try {

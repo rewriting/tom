@@ -181,6 +181,7 @@ public class TomSyntaxChecker extends TomChecker {
         }
         /* STRATEGY MATCH STRUCTURE */
         tsc.verifyStrategy(`list);
+        throw new tom.library.sl.VisitFailure();// stop the top-down
       }
 
       /*
@@ -188,20 +189,20 @@ public class TomSyntaxChecker extends TomChecker {
        */
       TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
         tsc.verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, `tomName, `declarationList, `orgTrack);
-        throw new tom.library.sl.VisitFailure();
+        throw new tom.library.sl.VisitFailure();// stop the top-down
       }
       // Symbols
       SymbolDecl(Name(tomName)) -> {
         tsc.verifySymbol(TomSyntaxChecker.CONSTRUCTOR, tsc.getSymbolFromName(`tomName));
-        throw new tom.library.sl.VisitFailure();
+        throw new tom.library.sl.VisitFailure();// stop the top-down
       }
       ArraySymbolDecl(Name(tomName)) -> {
         tsc.verifySymbol(TomSyntaxChecker.OP_ARRAY, tsc.getSymbolFromName(`tomName));
-        throw new tom.library.sl.VisitFailure();
+        throw new tom.library.sl.VisitFailure();// stop the top-down
       }
       ListSymbolDecl(Name(tomName))  -> {
         tsc.verifySymbol(TomSyntaxChecker.OP_LIST, tsc.getSymbolFromName(`tomName));
-        throw new tom.library.sl.VisitFailure();
+        throw new tom.library.sl.VisitFailure();// stop the top-down
       }
     }
 
@@ -511,15 +512,15 @@ public class TomSyntaxChecker extends TomChecker {
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
     ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
     HashMap<TomName, List<TomName>> varRelationsMap = new HashMap();
-    `TopDown(CollectConstraints(constraints)).visitLight(constraintInstructionList);
+    `TopDownCollect(CollectConstraints(constraints)).visitLight(constraintInstructionList);
     TomType typeMatch = null;    
     for(Constraint constr: constraints) {
 matchLbl: %match(constr) {
         MatchConstraint(pattern,subject) -> {          
           ArrayList<TomName> patternVars = new ArrayList<TomName>();
           ArrayList<TomName> subjectVars = new ArrayList<TomName>();
-          `TopDown(CollectVariables(patternVars)).visitLight(`pattern);
-          `TopDown(CollectVariables(subjectVars)).visitLight(`subject);
+          `TopDownCollect(CollectVariables(patternVars)).visitLight(`pattern);
+          `TopDownCollect(CollectVariables(subjectVars)).visitLight(`subject);
           
           computeDependencies(varRelationsMap,patternVars,subjectVars);
           %match(subject) {            
@@ -684,7 +685,9 @@ matchLbl: %match(constr) {
         // and we check these variables for numeric constraints also
         // ex: 'y << a() || x > 3' should generate an error 
         %match(x){
-          MatchConstraint(pattern,_) -> {`TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);}
+          MatchConstraint(pattern,_) -> {
+            `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+          }
         }        
         if(!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2) {
@@ -721,11 +724,13 @@ matchLbl: %match(constr) {
   %strategy CollectFreeVar(varList:Collection) extends Identity() {     
     visit TomTerm {
       v@(Variable|VariableStar)[] -> {
-        if (!varList.contains(`v)) { varList.add(`v); }     
-        throw new VisitFailure();
+        if(!varList.contains(`v)) { 
+          varList.add(`v); 
+        }
+        throw new VisitFailure();// to stop the top-down
       }
       AntiTerm[] -> {        
-        throw new VisitFailure();
+        throw new VisitFailure();// to stop the top-down
       }
     }
   }
@@ -736,7 +741,10 @@ matchLbl: %match(constr) {
   %strategy CollectVariables(Collection varList) extends Identity() {     
     visit TomTerm {
       (Variable|VariableStar)[AstName=name] -> {        
-        if(!varList.contains(`name)) { varList.add(`name); }
+        if(!varList.contains(`name)) {
+          varList.add(`name); 
+        }
+        throw new VisitFailure();// to stop the top-down
       }
     }
   }
@@ -878,27 +886,30 @@ matchLbl: %match(constr) {
   /**
    * Collect the matchConstraints in a list of constraints   
    */
-  %strategy CollectMatchConstraints(constrList:Collection) extends Identity(){
-    visit Constraint{
+  %strategy CollectMatchConstraints(constrList:Collection) extends Identity() {
+    visit Constraint {
       m@MatchConstraint[] -> {        
         constrList.add(`m);         
+        throw new VisitFailure();// to stop the top-down
       }      
-    }// end visit
-  }// end strategy   
+    }
+  }
  
   /**
    * Collect the constraints (match and numeric)
    */
-  %strategy CollectConstraints(constrList:Collection) extends Identity(){
-    visit Constraint{
+  %strategy CollectConstraints(constrList:Collection) extends Identity() {
+    visit Constraint {
       c@(MatchConstraint|NumericConstraint)[] -> {        
         constrList.add(`c);         
+        throw new VisitFailure();// to stop the top-down
       }      
       oc@OrConstraint(_*) -> {
         constrList.add(`oc);
+        throw new VisitFailure();// to stop the top-down
       }
-    }// end visit
-  }// end strategy   
+    }
+  }
   
   /**
    * check the lhs of a rule
@@ -933,7 +944,7 @@ matchLbl: %match(constr) {
         %match(constraintInstructionList){
           concConstraintInstruction(_*,ConstraintInstruction[Constraint=constraint],_*) -> {
             matchConstraints.clear();
-            `TopDown(CollectMatchConstraints(matchConstraints)).visitLight(`constraint);   
+            `TopDownCollect(CollectMatchConstraints(matchConstraints)).visitLight(`constraint);   
             // for the first constraint, check that the type is conform to the type specified in visit
             MatchConstraint firstMatchConstr = matchConstraints.get(0); 
             verifyMatchPattern(firstMatchConstr.getPattern(), `type);

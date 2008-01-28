@@ -40,8 +40,29 @@
   make(v) {( `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) )}
 }
 
+/*
+ * TopDownCollect: apply s1 in a top-down way
+ * @param s1 should extends the identity
+ * a failure stops the top-down proces under this current node
+ */
 %op Strategy TopDownCollect(s1:Strategy) {
   make(v) {( `mu(MuVar("_x"),Try(Sequence(v,All(MuVar("_x"))))) )}
+}
+
+/*
+ * TopDownStopOnFailure: perform a top-down and do not go under a node when a transformation is performed
+ * @param s1 a strategy that extends Fail
+ */
+%op Strategy TopDownStopOnFailure(s1:Strategy) {
+  make(v) { (`mu(MuVar("x"),Choice(v,All(MuVar("x"))))) }
+}
+
+/*
+ * TopDownStopOnId: perform a top-down and do not go under a node when a transformation is performed
+ * @param s1 a strategy that extends identity
+ */
+%op Strategy TopDownStopOnId(s1:Strategy) {
+  make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
 }
 
 %op Strategy BottomUp(s1:Strategy) {

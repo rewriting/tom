@@ -61,4 +61,17 @@
     <delete dir="${miniml.gen}"/>
     <delete dir="${miniml.build}"/>
   </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${miniml}/**/*.t"/>
+        <include name="${miniml}/**/*.g"/>
+        <include name="${miniml}/**/*.gom"/>
+        <include name="${miniml}/**/*.ml"/>
+        <include name="${miniml}/**/Makefile"/>
+        <include name="${miniml}/README"/>
+      </zipfileset>
+    </zip>
+  </target>
 </project>

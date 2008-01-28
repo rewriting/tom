@@ -60,14 +60,6 @@ public class KernelTyper {
     is_sort(t) { ($t instanceof KernelTyper) }
   }
 
-  %op Strategy ChoiceTopDown(s1:Strategy) {
-    make(v) { (`mu(MuVar("x"),ChoiceId(v,All(MuVar("x"))))) }
-  }
-
-  %op Strategy TopDownStop(s1:Strategy) {
-    make(v) { (`mu(MuVar("x"),Choice(v,All(MuVar("x"))))) }
-  }
-
   private SymbolTable symbolTable;
 
   public KernelTyper() {
@@ -115,7 +107,7 @@ public class KernelTyper {
     try {
       //System.out.println("typeVariable: " + contextType);
       //System.out.println("typeVariable subject: " + subject);
-      tom.library.sl.Visitable res = `TopDownStop(replace_typeVariable(contextType,this)).visit(subject);
+      tom.library.sl.Visitable res = `TopDownStopOnFailure(replace_typeVariable(contextType,this)).visitLight(subject);
       //System.out.println("res: " + res);
       return res;
     } catch(tom.library.sl.VisitFailure e) {
@@ -444,7 +436,7 @@ matchL:  %match(subject,s){
     throw new TomRuntimeException("typeVariableList: strange case: '" + symbol + "'");
   }
 
-  %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Fail() {
+  %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends Fail() {
     visit TomTerm {
       subject -> {
         %match(subject, instantiatedVariable) {
@@ -466,7 +458,7 @@ matchL:  %match(subject,s){
     try {
       //System.out.println("varlist = " + instantiatedVariable);
       //System.out.println("subject = " + subject);
-      return `TopDownStop(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
+      return `TopDownStopOnFailure(replace_replaceInstantiatedVariable(instantiatedVariable)).visitLight(subject);
     } catch(tom.library.sl.VisitFailure e) {
       throw new TomRuntimeException("replaceInstantiatedVariable: failure on " + instantiatedVariable);
     }

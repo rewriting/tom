@@ -71,7 +71,7 @@ public class GeneralPurposePropagator implements IBasePropagator {
             ConstraintPropagator.performDetach(MatchConstraint(term,s)));
       }      
       /**
-       * SwithAnti : here is just for efficiency reasons, and not for ordering, 
+       * SwitchAnti : here is just for efficiency reasons, and not for ordering, 
        * because now the replace can be applied left-right; the ordering is done anyway in the pre-generator
        *       
        * AntiMatchConstraint[] /\ ... /\ MatchConstraint[] ->  MatchConstraint[] /\ ... /\ AntiMatchConstraint[] 
