@@ -264,6 +264,49 @@ public class TestAndOr extends TestCase {
     }
     fail();
   }
+  
+  public void test20() {
+    Term s = `a();
+    int cnt = 0;
+    %match(s) {
+      a() || b() << s  -> { cnt++; }
+    }  
+    if (cnt > 1) {
+      fail();
+    }
+  }
+  
+  public void test21() {    
+    Term s = `a();   
+    int cnt = 0;
+    %match(Term s) {
+      x || x << Term s  -> { 
+        if (`x != `a()) {
+          fail();
+        }
+        cnt++;        
+      }
+    }
+    if (cnt != 2) {
+      fail();
+    }
+  }
+  
+  public static void test22() {
+    Term s = `g(a());
+    int cnt = 0;
+    %match(s) {
+      g(x) || g(x) << s -> { 
+        if (`x != `a()) {
+          fail();
+        }
+        cnt++;
+      }      
+    }
+    if (cnt != 2) {
+      fail();
+    }
+  }
 
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
