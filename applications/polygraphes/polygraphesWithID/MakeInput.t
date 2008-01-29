@@ -12,25 +12,32 @@ public class MakeInput{
 
 	%include { polygraphicprogram/PolygraphicProgram.tom }
 	
-	public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
-
 	//main : creates a xml file ("input.xml") describing a 2-Path 
 	public static void main(String[] args) {
-
-		TwoPath testNat=`TwoC1(TwoC0(TwoC1(TwoC0(makeNat(2),makeNat(6)),TestCellSet.multiplication),makeNat(3)),TestCellSet.division);
-		TwoPath testFibo=`TwoC1(makeNat(10),TestCellSet.fibonacci);
-		int[] list1={7,8,3,2,6};
-		int[] list2={9,5,7,4,1};
-		TwoPath testEqualList = `TwoC1(TwoC0(TwoC1(makeList(list1),TestCellSet.sort),TwoC1(makeList(list2),TestCellSet.sort)),TestCellSet.lEqual);
-		TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),TestCellSet.merge,TestCellSet.sort);
-
-		//defines the input
-		String input=XMLhandler.twoPath2XML(testFibo);
-		//saves it
-		if(!input.equals("")){
-			try{
-				save(input,new File(path+"XMLinput.xml"));
-			}catch(Exception e){e.printStackTrace();}
+		String inputPath="";
+		if(args.length!=1){
+			System.out.println("you must indicate the desired path of the xml input");
+			}
+		else{
+			if(args[0].substring(args[0].length()-1, args[0].length()).equals("/")){
+				inputPath=args[0];
+				TwoPath testNat=`TwoC1(TwoC0(TwoC1(TwoC0(makeNat(2),makeNat(6)),TestCellSet.multiplication),makeNat(3)),TestCellSet.division);
+				TwoPath testFibo=`TwoC1(makeNat(10),TestCellSet.fibonacci);
+				int[] list1={7,8,3,2,6};
+				int[] list2={9,5,7,4,1};
+				TwoPath testEqualList = `TwoC1(TwoC0(TwoC1(makeList(list1),TestCellSet.sort),TwoC1(makeList(list2),TestCellSet.sort)),TestCellSet.lEqual);
+				TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),TestCellSet.merge,TestCellSet.sort);
+				//defines the input
+				String input=XMLhandler.twoPath2XML(testFibo);
+				//saves it
+				if(!input.equals("")){
+					try{
+						save(input,new File(inputPath));
+					}catch(Exception e){e.printStackTrace();}
+				}
+			}
+			else{
+			System.out.println("the first and only argument must be an xml file i.e. with the extension .xml");}
 		}
 	}
 

@@ -12,11 +12,16 @@ public class MakeProgram{
 
 	%include { polygraphicprogram/PolygraphicProgram.tom }
 
-	public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
-
 
 	public static void main(String[] args) {
-
+		
+		String programPath="";
+		if(args.length!=1){
+			System.out.println("you must indicate the desired path of the xml program");
+			}
+		else{
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
+				programPath=args[0];
 	//first we prepare and associate all types and their constructors and also all functions and their rules
 
 	//TYPES & associated CONSTRUCTORS
@@ -151,8 +156,12 @@ public class MakeProgram{
 		program+="</PolygraphicProgram>";
 		//and we save the string in a file
 		try{
-			XMLhandler.save(program,new File(path+"testprogramv2.xml"));
+			XMLhandler.save(program,new File(programPath));
 		}catch(Exception e){e.printStackTrace();}
+			}
+		else{
+		System.out.println("the first and only argument must be an xml file i.e. with the extension .xml");}
+		}
 	}
 
 	//constructs a xml description of a function with its rules

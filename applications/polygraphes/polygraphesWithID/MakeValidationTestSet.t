@@ -13,11 +13,16 @@ public class MakeValidationTestSet{
 
 	%include { polygraphicprogram/PolygraphicProgram.tom }
 
-	public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
-
 	//main : creates a xml file ("input.xml") describing a 2-Path 
 	public static void main(String[] args) {
-	//tests	
+				String testSetPath="";
+		if(args.length!=1){
+			System.out.println("you must indicate the desired path of the xml test-set file");
+			}
+		else{
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
+				testSetPath=args[0];
+				//tests	
 		//xml initialization
 		String testxml="<ValidationTest>\n";
 		//TEST SET
@@ -95,9 +100,12 @@ public class MakeValidationTestSet{
 		//saves it
 		testxml+="\n</ValidationTest>";
 		try{
-			XMLhandler.save(testxml,new File(path+"testset.xml"));
+			XMLhandler.save(testxml,new File(testSetPath));
 		}catch(Exception e){e.printStackTrace();}
-
+			}
+		else{
+		System.out.println("the first and only argument must be an xml file i.e. with the extension .xml");}
+		}
 	}
 	
 	public static String makeTest(String description,TwoPath source,TwoPath target) {

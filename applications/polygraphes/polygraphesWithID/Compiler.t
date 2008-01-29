@@ -13,36 +13,52 @@ public class Compiler {
 
 	//entry point, get the whole program and saves it into a .t file
 	public static void main (String args[]) {
-		/*if(args[0]==null||args[1]==null){
+		if(args.length!=2){
 			System.out.println("you must indicate the path of the xml program and the path of the destination folder of the program");
 			}
 		else{
-			programPath=args[0];
-			outputFolderPath=args[1];
-			String programName=XMLProgramHandler.getProgramName(programPath);
-			try{
-				XMLhandler.save(makeTomFile(programPath),new File(outputFolderPath+programName+".t"));
-				//create gom file
-				String test=(new Compiler()).getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-				System.out.println("test");
-				XMLhandler.save(XMLhandler.load(""),new File(outputFolderPath+programName+".gom"));
-				//create xmlhandler file
-				XMLhandler.save(XMLhandler.load(""),new File(outputFolderPath+programName+"Tools.t"));
-				//create script file
-				XMLhandler.save(makeScript(programName),new File("Make"+outputFolderPath+programName+".sh"));
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
+				programPath=args[0];
+				if(args[1].substring(args[1].length()-1, args[1].length()).equals("/")){
+					outputFolderPath=args[1];
+					String programName=XMLProgramHandler.getProgramName(programPath);
+					try{
+						(new File(outputFolderPath)).mkdir();
+						XMLhandler.save(makeTomFile(programPath),new File(outputFolderPath+programName+".t"));
+						//create gom file
+						String path=(new Compiler()).getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+						String gomFileContent=XMLhandler.load(path+"PolygraphicProgram.gom");
+						gomFileContent=gomFileContent.replace("PolygraphicProgram", programName);
+						XMLhandler.save(gomFileContent,new File(outputFolderPath+programName+".gom"));
+						//create xmlhandler file
+						String XmlhandlerFileContent=XMLhandler.load(path+"XMLhandler.t");
+						XmlhandlerFileContent=XmlhandlerFileContent.replace("XMLhandler",programName+"Tools");
+						XmlhandlerFileContent=XmlhandlerFileContent.replace("package compiler;","");
+						XmlhandlerFileContent=XmlhandlerFileContent.replace("polygraphicprogram.types",programName.toLowerCase()+".types");
+						XmlhandlerFileContent=XmlhandlerFileContent.replace("polygraphicprogram/PolygraphicProgram.tom",programName.toLowerCase()+"/"+programName+".tom");
+						XMLhandler.save(XmlhandlerFileContent,new File(outputFolderPath+programName+"Tools.t"));
+						//create script file
+						XMLhandler.save(makeScript(programName),new File(outputFolderPath+"Make"+programName+".sh"));
+					}			
+					catch(Exception e){e.printStackTrace();}	
+					}
+				else{
+				System.out.println("the second argument must be a folder (ends with /)");
+				}
 			}
-			
-			catch(Exception e){e.printStackTrace();}
-		}*/
-		String test=(new Compiler()).getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-				System.out.println("test");
-	 }
+			else{
+				System.out.println("the first argument must be an xml file i.e. with the extension .xml");
+			}
+		}
+	}
 	
 	public static String makeScript(String programName){
 		return %[#!/bin/tcsh
 gom @programName@.gom
-tom @programName@Tools.t && javac @programName@Tools.java
-tom @programName@.t && javac @programName@.java
+tom @programName@Tools.t 
+tom @programName@.t
+javac @programName@Tools.java
+javac @programName@.java
 ]%;
 		}
 
@@ -51,12 +67,12 @@ tom @programName@.t && javac @programName@.java
 		String programName=XMLProgramHandler.getProgramName(filePath);
 		String ruleStrategy=XMLProgramHandler.makeRuleStrategy(filePath);//key point, gets the specific part of the file
 		String lowerProgramName=programName.toLowerCase();
-		String tomPath="";//make tom path
+		String tomPath=lowerProgramName+"/"+programName+".tom";//make tom path
 		//here lies the part that each program has in common : 
 		String tomFile=%[
 
-import @lowerProgramName@.polygraph.types.*;
-import @lowerProgramName@.polygraph.types.twopath.*;
+import @lowerProgramName@.types.*;
+import @lowerProgramName@.types.twopath.*;
 import tom.library.sl.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
@@ -69,18 +85,39 @@ public class @programName@{
 	//include .tom
 	%include { @tomPath@}
 	
+
 	public static void main (String args[]) {
-		try {
-			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/XMLinput.xml");
-			Element e = dom.getDocumentElement();
-			TwoPath input=makeTwoPathWithID(e);
-			updateLogPath(input);
-			//saves the new twopath in another xml file
-			@programName@Tools.save(@programName@Tools.twoPath2XML(eval(input)),new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/XMLoutput.xml"));
-			//saves the history
-			@programName@Tools.save(log+"</Log>",new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/log.xml"));
-		} catch (Exception e) {
-			e.printStackTrace();
+		String inputPath="";
+		String outputFolderPath="";
+		if(args.length<1){
+			System.out.println("you must indicate the path of the xml input and the path of the destination folder of the output");
+			}
+		else{
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
+				inputPath=args[0];
+				if(args[1].substring(args[1].length()-1, args[1].length()).equals("/")){
+					outputFolderPath=args[1];
+					try {
+						(new File(outputFolderPath)).mkdir();
+						Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputPath);
+						Element e = dom.getDocumentElement();
+						TwoPath input=makeTwoPathWithID(e);
+						updateLogPath(input);
+						//saves the new twopath in another xml file
+						@programName@Tools.save(@programName@Tools.twoPath2XML(eval(input)),new File(outputFolderPath+"output.xml"));
+						//saves the history
+						@programName@Tools.save(log+"</Log>",new File(outputFolderPath+"log.xml"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				else{
+				System.out.println("the second argument must be a folder (ends with /)");
+				}
+			}
+			else{
+				System.out.println("the first argument must be an xml file i.e. with the extension .xml");
+			}
 		}
 	}
 
@@ -333,14 +370,14 @@ public class @programName@{
 		  NodeList nodeChilds=node.getChildNodes();
 		  for (int i = 0; i < nodeChilds.getLength(); i++) {
 			  Node nodeChild=nodeChilds.item(i);
-			  if(!nodeChild.getNodeName().equals("#text")){return makeTwoPath(nodeChild);}
+			  if(!nodeChild.getNodeName().equals("#text")){return makeTwoPathWithID(nodeChild);}
 		  }
 	  }
 	  if(nodeName.equals("TwoId")){
 		  NodeList nodeChilds=node.getChildNodes();
 		  for (int i = 0; i < nodeChilds.getLength(); i++) {
 			  Node nodeChild=nodeChilds.item(i);
-			  if(!nodeChild.getNodeName().equals("#text")){return `TwoId(makeOnePath(nodeChild));}
+			  if(!nodeChild.getNodeName().equals("#text")){return `TwoId(@programName@Tools.makeOnePath(nodeChild));}
 		  }
 	  }
 	  if(nodeName.equals("TwoCell")){
@@ -356,8 +393,8 @@ public class @programName@{
 		  for (int j = 0; j < io.getLength(); j++) {
 			  Node ioChild=io.item(j);
 			  String ioName =ioChild.getNodeName();
-			  if(ioName.equals("Source")){source=makeOnePath(ioChild);}
-			  if(ioName.equals("Target")){target=makeOnePath(ioChild);}
+			  if(ioName.equals("Source")){source=@programName@Tools.makeOnePath(ioChild);}
+			  if(ioName.equals("Target")){target=@programName@Tools.makeOnePath(ioChild);}
 		  }
 		  return `TwoCell(name,source,target,celltype,setID());
 	  }
@@ -367,7 +404,7 @@ public class @programName@{
 		  for (int j = twoC0s.getLength()-1; j >0; j--) {
 			  Node twoC0Element = twoC0s.item(j);
 			  if(!twoC0Element.getNodeName().contains("#text")){
-				  res=`TwoC0(makeTwoPath(twoC0Element),res);
+				  res=`TwoC0(makeTwoPathWithID(twoC0Element),res);
 			  }				
 		  }
 		  return res;
@@ -378,9 +415,9 @@ public class @programName@{
 		  for (int j = twoC1s.getLength()-1; j >0; j--) {
 			  Node twoC1Element = twoC1s.item(j);
 			  if(!twoC1Element.getNodeName().contains("#text")){
-				  if(res==`TwoId(Id())){res=`makeTwoPath(twoC1Element);}
+				  if(res==`TwoId(Id())){res=`makeTwoPathWithID(twoC1Element);}
 				  else{
-					  res=`TwoC1(makeTwoPath(twoC1Element),res);
+					  res=`TwoC1(makeTwoPathWithID(twoC1Element),res);
 				  }
 			  }				
 		  }		
@@ -390,7 +427,7 @@ public class @programName@{
 	  for (int i = 0; i < childs.getLength(); i++) {
 		  Node child = childs.item(i);
 		  if(!child.getNodeName().equals("#text")){
-			  return makeTwoPath(child);
+			  return makeTwoPathWithID(child);
 		  }	
 	  }
 	  return `TwoId(Id());

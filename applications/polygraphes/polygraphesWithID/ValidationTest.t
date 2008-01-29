@@ -13,23 +13,27 @@ import java.io.IOException;
 public class ValidationTest{
 
 	%include { myprogram/testprogramv2/polygraph/Polygraph.tom }
-
-	public static String testSetPath="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/testset.xml";
 		
 	public static void main(String[] args) {
+		String testSetPath="";
+		if(args.length!=1){
+			System.out.println("you must indicate the path of the test set xml file");
+			}
+		else{
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
+				testSetPath=args[0];
 		//runs the test
-		String log=runValidationTest();
-		//save the test log into a file
-		try{
-		XMLhandler.save(log,new File("/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/test.log"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
+		String log=runValidationTest(testSetPath);
+		//print the log
+		System.out.println(log);
+			}
+			else{
+			System.out.println("the first and only argument must be an xml file i.e. with the extension .xml");}
 		}
 	}
 	
 	
-	public static String runValidationTest(){
+	public static String runValidationTest(String testSetPath){
 		boolean successfulTest=true;
 		int counter=1;
 		String log="";

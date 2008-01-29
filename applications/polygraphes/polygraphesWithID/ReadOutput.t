@@ -12,13 +12,22 @@ public class ReadOutput{
 	%include { polygraphicprogram/PolygraphicProgram.tom }
 	%include{ dom.tom }
 
-	public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
 
-	
 	public static void main(String[] args) {
-		System.out.println("RESULT:\n----------------------------");
-		System.out.println(result(path+"XMLoutput.xml"));
-		System.out.println("----------------------------");
+		String outputPath="";
+		if(args.length!=1){
+			System.out.println("you must indicate the path of the xml output");
+			}
+		else{
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
+				outputPath=args[0];
+				System.out.println("RESULT:\n----------------------------");
+				System.out.println(result(outputPath));
+				System.out.println("----------------------------");
+			}
+		else{
+		System.out.println("the first and only argument must be an xml file i.e. with the extension .xml");}
+		}
 	}
 
 	//called in main, return the result
