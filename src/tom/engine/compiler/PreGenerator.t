@@ -111,17 +111,10 @@ public class PreGenerator {
        * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
        *
        */
-      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(v,_),Z*) -> {
-        boolean varFound = false;
-        match:%match(rhs,TomTerm v) {
-          var@(Variable|VariableStar)[],var  -> { varFound = true;break match; }
-          ListHead[Variable=var],var -> { varFound = true;break match; }
-          ListTail[Variable=var],var -> { varFound = true;break match; }
-          ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]), var -> { varFound = true;break match; }
-        }
-        if (varFound) { return `AndConstraint(X*,second,Y*,first,Z*); }
+      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(var,_),Z*) 
+         && ( var@(Variable|VariableStar)[] << rhs || ListHead[Variable=var] << rhs || ListTail[Variable=var] << rhs || ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) << rhs ) -> {          
+        return `AndConstraint(X*,second,Y*,first,Z*); 
       }
-
       /*
        * SwitchAnti
        *
@@ -158,23 +151,23 @@ public class PreGenerator {
 
       /*
        * SwitchVar
-       *
+       * TODO : replace with constraints when the or bugs in the optimizer are solved
        * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
        */
-      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
-        try{
-          `TopDown(HasTerm(v)).visitLight(`rhs);
-        }catch(VisitFailure ex){
-          return `AndConstraint(X*,second,Y*,first,Z*);
-        }
-      }
-      AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
-        try{
-          `TopDown(HasTerm(v)).visitLight(`rhs);
-        }catch(VisitFailure ex){
-          return `AndConstraint(X*,second,Y*,first,Z*);
-        }
-      }
+       AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
+         try{
+           `TopDown(HasTerm(v)).visitLight(`rhs);
+         }catch(VisitFailure ex){
+           return `AndConstraint(X*,second,Y*,first,Z*);
+         }
+       }
+       AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
+         try{
+           `TopDown(HasTerm(v)).visitLight(`rhs);
+         }catch(VisitFailure ex){
+           return `AndConstraint(X*,second,Y*,first,Z*);
+         }
+       } 
 
       /*
        * p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
@@ -200,20 +193,13 @@ public class PreGenerator {
               
       /*
        * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
-       *
-       */
-      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadList[End=v]),Z*) -> {
-         return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-
-      /*
        * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
-       *
        */
-      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,VariableHeadArray[EndIndex=v]),Z*) -> {
+      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,subjectSecond),Z*) 
+        && (VariableHeadList[End=v] << subjectSecond || VariableHeadArray[EndIndex=v] << subjectSecond ) -> {
          return `AndConstraint(X*,second,Y*,first,Z*);
       }
-
+        
       /*
        * SwitchNumericConstraints
        *
