@@ -1,11 +1,11 @@
-package tools;
+package compiler;
 
 import org.w3c.dom.*;
 import java.io.File;
 import polygraphicprogram.types.*;
 import java.io.*;
-
-
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 //provides all the functions to transform terms in xml and vice-versa
 
@@ -22,6 +22,19 @@ public class XMLhandler {
 		printWriter.flush();
 		printWriter.close();
 	}
+
+  //get the text from a text file
+  public static String load(String filepath) throws IOException {
+		FileChannel channel = new FileInputStream(new File(filepath)).getChannel();
+		try {
+			ByteBuffer b = ByteBuffer.allocate((int) channel.size());
+			channel.read(b);
+			return new String(b.array());
+		} finally {
+			channel.close();
+		}
+	}
+
 
   // make a 1-path term from its xml description
   public static OnePath makeOnePath(Node node){

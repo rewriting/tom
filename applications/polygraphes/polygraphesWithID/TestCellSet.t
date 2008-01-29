@@ -1,6 +1,5 @@
 package tools;
 
-import polygraphicprogram.*;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.onepath.*;
 import compiler.StructureRuleHandler;
@@ -130,5 +129,10 @@ public class TestCellSet{
 	public static ThreePath addEqualconsList = `ThreeCell("addEqualconsList",TwoC1(TwoC0(add,consList),lEqual),TwoC1(TwoC0(eraser,eraserList),faux),Function());
 	public static ThreePath addEqualAdd = `ThreeCell("addEqualAdd",TwoC1(TwoC0(add,add),lEqual),TwoC1(TwoC0(TwoId(nat),permutationLN,TwoId(list)),TwoC0(equal,lEqual),and),Function());
 	public static ThreePath consListEqualAdd = `ThreeCell("consListEqualAdd",TwoC1(TwoC0(add,consList),lEqual),TwoC1(TwoC0(eraser,eraserList),faux),Function());
+	// fibonacci
+	public static TwoPath fibonacci = `TwoCell("fibonacci",nat,nat,Function(),0);
+	public static ThreePath fibZero = `ThreeCell("fibZero",TwoC1(zero,fibonacci),TwoC1(zero,succ),Function());
+	public static ThreePath fibSuccZero = `ThreeCell("fibSuccZero",TwoC1(zero,succ,fibonacci),TwoC1(zero,succ),Function());
+	public static ThreePath fibDoubleSucc = `ThreeCell("fibDoubleSucc",TwoC1(succ,succ,fibonacci),TwoC1(duplication,TwoC0(TwoC1(succ,fibonacci),fibonacci),plus),Function());
 
 }

@@ -5,7 +5,7 @@ import myprogram.testprogramv2.polygraph.types.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import myprogram.TestProgramv2;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 import java.io.File;
 import java.io.IOException;
 
@@ -78,9 +78,9 @@ public class ValidationTest{
 
 	//test the equality but dont take ids into account
 	public static boolean isEqual(TwoPath t1, TwoPath t2){
+		if(t1==t2){return true;}
 		%match (t1,t2){
 			TwoCell(name,target,source,type,_),TwoCell(name,target,source,type,_) -> { return true; }
-			TwoId(t),TwoId(t) -> { return true;}
 			TwoC0(left1,right1*),TwoC0(left2,right2*) -> { return isEqual(`left1,`left2)&isEqual(`right1,`right2);}
 			TwoC1(up1,down1*),TwoC1(up2,down2*) -> { return isEqual(`up1,`up2)&isEqual(`down1,`down2);}
 		}

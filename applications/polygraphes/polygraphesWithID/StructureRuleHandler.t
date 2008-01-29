@@ -3,7 +3,7 @@ package compiler;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.twopath.*;
 import polygraphicprogram.types.onepath.*;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -11,11 +11,10 @@ import java.util.Iterator;
 public class StructureRuleHandler{
 
 	%include { polygraphicprogram/PolygraphicProgram.tom }
-	%include { sl.tom }
 
 	//provided a constructor and a set of types, returns the corresponding structure rules
-	public static Vector<ThreePath> makeStructureRules(TwoPath constructor,Vector<OneCell> types) {
-		Vector<ThreePath> rules =new Vector<ThreePath>();
+	public static ArrayList<ThreePath> makeStructureRules(TwoPath constructor,ArrayList<OneCell> types) {
+		ArrayList<ThreePath> rules =new ArrayList<ThreePath>();
 		if(constructor.getType().isConstructor()) {
 			OnePath source= constructor.getSource();
 			//first the eraser
@@ -23,8 +22,8 @@ public class StructureRuleHandler{
 			System.out.println(eraserRule);
 			rules.add(eraserRule);
 			//permutation, for each type of the set of type we have to do it with the constructor at each side (left and right) of the corresponding permutation cell
-			for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-				OneCell type = (OneCell) iterator.next();
+			for (Iterator<OneCell> iterator = types.iterator(); iterator.hasNext();) {
+				OneCell type = iterator.next();
 				TwoPath leftPermutationCell=makePermutation((OneCell)constructor.getTarget(),type);
 				TwoPath leftPermutationRuleTarget=`TwoC0(TwoId(type),constructor);
 				if(!source.isId()&&!source.isConsOneC0()){leftPermutationRuleTarget=`TwoC1(leftPermutationCell,leftPermutationRuleTarget);}
@@ -52,7 +51,6 @@ public class StructureRuleHandler{
 		constructor.print();
 		return null;
 	}
-
 
 	//generates an eraser cell for a given type
 	public static TwoCell makeEraser(String typename){

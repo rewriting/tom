@@ -1,17 +1,16 @@
 package tools;
 
 import polygraphicprogram.types.*;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 import tools.TestCellSet;
 import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 //generates a test program in xml
 public class MakeProgram{
 
 	%include { polygraphicprogram/PolygraphicProgram.tom }
-
 
 	public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
 
@@ -22,100 +21,105 @@ public class MakeProgram{
 
 	//TYPES & associated CONSTRUCTORS
 		//nat
-		Vector<TwoPath> natConstructors=new Vector<TwoPath>();
+		ArrayList<TwoPath> natConstructors=new ArrayList<TwoPath>();
 		natConstructors.add(TestCellSet.zero);
 		natConstructors.add(TestCellSet.succ);
 		//list
-		Vector<TwoPath> listConstructors=new Vector<TwoPath>();
+		ArrayList<TwoPath> listConstructors=new ArrayList<TwoPath>();
 		listConstructors.add(TestCellSet.consList);
 		listConstructors.add(TestCellSet.add);
 		//boolean
-		Vector<TwoPath> booleanConstructors=new Vector<TwoPath>();
+		ArrayList<TwoPath> booleanConstructors=new ArrayList<TwoPath>();
 		booleanConstructors.add(TestCellSet.vrai);
 		booleanConstructors.add(TestCellSet.faux);
 
 	//FUNCTIONS & associated RULES
 		//plus
-		Vector<ThreePath> plusRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> plusRules=new ArrayList<ThreePath>();
 		plusRules.add(TestCellSet.plusZero);
 		plusRules.add(TestCellSet.plusSucc);
 		//minus
-		Vector<ThreePath> minusRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> minusRules=new ArrayList<ThreePath>();
 		minusRules.add(TestCellSet.minusZero1);
 		minusRules.add(TestCellSet.minusZero2);
 		minusRules.add(TestCellSet.minusDoubleSucc);
 		//multiplication
-		Vector<ThreePath> multiplicationRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> multiplicationRules=new ArrayList<ThreePath>();
 		multiplicationRules.add(TestCellSet.multZero);
 		multiplicationRules.add(TestCellSet.multSucc);
 		//division
-		Vector<ThreePath> divisionRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> divisionRules=new ArrayList<ThreePath>();
 		divisionRules.add(TestCellSet.divZero);
 		divisionRules.add(TestCellSet.divSucc);
 		//carre
-		Vector<ThreePath> carreRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> carreRules=new ArrayList<ThreePath>();
 		carreRules.add(TestCellSet.zeroCarre);
 		carreRules.add(TestCellSet.succCarre);
 		//cube
-		Vector<ThreePath> cubeRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> cubeRules=new ArrayList<ThreePath>();
 		cubeRules.add(TestCellSet.zeroCube);
 		cubeRules.add(TestCellSet.succCube);
 		//equal
-		Vector<ThreePath> equalRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> equalRules=new ArrayList<ThreePath>();
 		equalRules.add(TestCellSet.zeroEqualZero);
 		equalRules.add(TestCellSet.succEqualSucc);
 		equalRules.add(TestCellSet.succEqualZero);
 		equalRules.add(TestCellSet.zeroEqualSucc);
 		//append
-		Vector<ThreePath> appendRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> appendRules=new ArrayList<ThreePath>();
 		appendRules.add(TestCellSet.appendToAdd);
 		//split
-		Vector<ThreePath> splitRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> splitRules=new ArrayList<ThreePath>();
 		splitRules.add(TestCellSet.consListSplit);
 		splitRules.add(TestCellSet.addSplit);
 		splitRules.add(TestCellSet.doubleAddSplit);
 		//sort
-		Vector<ThreePath> sortRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> sortRules=new ArrayList<ThreePath>();
 		sortRules.add(TestCellSet.consListSort);
 		sortRules.add(TestCellSet.addSort);
 		sortRules.add(TestCellSet.doubleAddSort);
 		//merge
-		Vector<ThreePath> mergeRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> mergeRules=new ArrayList<ThreePath>();
 		mergeRules.add(TestCellSet.consListMerge1);
 		mergeRules.add(TestCellSet.consListMerge2);
 		mergeRules.add(TestCellSet.doubleAddMerge);
 		//lessOrEqual
-		Vector<ThreePath> lessOrEqualRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> lessOrEqualRules=new ArrayList<ThreePath>();
 		lessOrEqualRules.add(TestCellSet.zeroLess);
 		lessOrEqualRules.add(TestCellSet.succZeroLess);
 		lessOrEqualRules.add(TestCellSet.doubleSuccLess);
 		//lEqual
-		Vector<ThreePath> lEqualRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> lEqualRules=new ArrayList<ThreePath>();
 		lEqualRules.add(TestCellSet.consListEqualconsList);
 		lEqualRules.add(TestCellSet.addEqualconsList);
 		lEqualRules.add(TestCellSet.consListEqualAdd);
 		lEqualRules.add(TestCellSet.addEqualAdd);
 		//mergeSwitch
-		Vector<ThreePath> mergeSwitchRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> mergeSwitchRules=new ArrayList<ThreePath>();
 		mergeSwitchRules.add(TestCellSet.merge1);
 		mergeSwitchRules.add(TestCellSet.merge2);
 		//not
-		Vector<ThreePath> notRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> notRules=new ArrayList<ThreePath>();
 		notRules.add(TestCellSet.notTrue);
 		notRules.add(TestCellSet.notFalse);
 		//or
-		Vector<ThreePath> orRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> orRules=new ArrayList<ThreePath>();
 		orRules.add(TestCellSet.trueOrTrue);
 		orRules.add(TestCellSet.trueOrFalse);
 		orRules.add(TestCellSet.FalseOrTrue);
 		orRules.add(TestCellSet.FalseOrFalse);
 		//and
-		Vector<ThreePath> andRules=new Vector<ThreePath>();
+		ArrayList<ThreePath> andRules=new ArrayList<ThreePath>();
 		andRules.add(TestCellSet.trueAndTrue);
 		andRules.add(TestCellSet.trueAndFalse);
 		andRules.add(TestCellSet.FalseAndTrue);
 		andRules.add(TestCellSet.FalseAndFalse);
-
+		//Fibonacci
+		ArrayList<ThreePath> fiboRules=new ArrayList<ThreePath>();
+		fiboRules.add(TestCellSet.fibZero);
+		fiboRules.add(TestCellSet.fibSuccZero);
+		fiboRules.add(TestCellSet.fibDoubleSucc);
+		
 		//then we prepare the string for the xml program file
 		
 		//root
@@ -142,6 +146,7 @@ public class MakeProgram{
 		program+=makeFunctionXML(TestCellSet.not,notRules);
 		program+=makeFunctionXML(TestCellSet.or,orRules);
 		program+=makeFunctionXML(TestCellSet.and,andRules);
+		program+=makeFunctionXML(TestCellSet.fibonacci,fiboRules);
 		//we close the root tag
 		program+="</PolygraphicProgram>";
 		//and we save the string in a file
@@ -151,12 +156,12 @@ public class MakeProgram{
 	}
 
 	//constructs a xml description of a function with its rules
-	public static String makeFunctionXML(TwoPath function, Vector<ThreePath> functionRules){
+	public static String makeFunctionXML(TwoPath function, ArrayList<ThreePath> functionRules){
 		String xml="";
 		xml+="<Function>\n";
 		xml+=XMLhandler.twoPath2XML(function);
-		for (Iterator iterator = functionRules.iterator(); iterator.hasNext();) {
-			ThreePath rule = (ThreePath) iterator.next();
+		for (Iterator<ThreePath> iterator = functionRules.iterator(); iterator.hasNext();) {
+			ThreePath rule = iterator.next();
 			xml+="<Rule>\n";
 			xml+=XMLhandler.threePath2XML(rule);
 			xml+="</Rule>\n";
@@ -166,12 +171,12 @@ public class MakeProgram{
 	}
 
 	//constructs a xml description of a type with its constructors
-	public static String makeTypeXML(OnePath type, Vector<TwoPath> constructors){
+	public static String makeTypeXML(OnePath type, ArrayList<TwoPath> constructors){
 		String xml="";
 		xml+="<Type>\n";
 		xml+=XMLhandler.onePath2XML(type);
-		for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
-			TwoPath constructor = (TwoPath) iterator.next();
+		for (Iterator<TwoPath> iterator = constructors.iterator(); iterator.hasNext();) {
+			TwoPath constructor = iterator.next();
 			xml+="<Constructor>\n";
 			xml+=XMLhandler.twoPath2XML(constructor);
 			xml+="</Constructor>\n";

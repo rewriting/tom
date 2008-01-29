@@ -1,7 +1,7 @@
 package compiler;
 
 import compiler.XMLProgramHandler;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 import java.io.File;
 
 //contains the entry point for the compiler
@@ -11,9 +11,11 @@ public class MakeTomFile {
 	
 	//entry point, get the whole program and saves it into a .t file
 	public static void main (String args[]) {
+		path=args[0];
 		String filename=path+"testprogramv2.xml";
 		try{XMLhandler.save(makeTomFile(filename),new File(path+XMLProgramHandler.getProgramName(filename)+".t"));}
 		catch(Exception e){e.printStackTrace();}
+		
 	 }
 	
 	//constructs the program and particularly the common part of each program

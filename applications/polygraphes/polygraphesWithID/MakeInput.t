@@ -5,7 +5,7 @@ import polygraphicprogram.types.*;
 import java.io.*;
 import javax.xml.parsers.*;
 import java.util.regex.*;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 import tools.TestCellSet;
 
 public class MakeInput{
@@ -18,14 +18,14 @@ public class MakeInput{
 	public static void main(String[] args) {
 
 		TwoPath testNat=`TwoC1(TwoC0(TwoC1(TwoC0(makeNat(2),makeNat(6)),TestCellSet.multiplication),makeNat(3)),TestCellSet.division);
-
+		TwoPath testFibo=`TwoC1(makeNat(10),TestCellSet.fibonacci);
 		int[] list1={7,8,3,2,6};
 		int[] list2={9,5,7,4,1};
 		TwoPath testEqualList = `TwoC1(TwoC0(TwoC1(makeList(list1),TestCellSet.sort),TwoC1(makeList(list2),TestCellSet.sort)),TestCellSet.lEqual);
 		TwoPath testsortcomplex= `TwoC1(TwoC0(makeList(list1),makeList(list2)),TestCellSet.merge,TestCellSet.sort);
 
 		//defines the input
-		String input=XMLhandler.twoPath2XML(testNat);
+		String input=XMLhandler.twoPath2XML(testFibo);
 		//saves it
 		if(!input.equals("")){
 			try{

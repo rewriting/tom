@@ -4,7 +4,7 @@ import polygraphicprogram.*;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.onepath.*;
 import java.io.*;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 import compiler.StructureRuleHandler;
 import tools.TestCellSet;
 

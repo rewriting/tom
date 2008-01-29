@@ -2,20 +2,17 @@ package compiler;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import java.io.File;
 import polygraphicprogram.types.*;
 import polygraphicprogram.types.onepath.*;
 import polygraphicprogram.types.twopath.*;
 import tom.library.sl.*;
-import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Iterator;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 
 //constructs the specific part of each program with strategies corresponding to rule and the function that tries them all
 
 public class XMLProgramHandler {
-  %include{ dom.tom }
   %include { polygraphicprogram/PolygraphicProgram.tom }
   %include { sl.tom }
 
@@ -23,9 +20,9 @@ public class XMLProgramHandler {
 	public static String makeRuleStrategy(String filename){
 		String strategy="";
 		int n=0;
-		Vector<OneCell> types=new Vector<OneCell>();
-		Vector<TwoPath> constructors=new Vector<TwoPath>();
-		Vector<ThreePath> structureRules=new Vector<ThreePath>();
+		ArrayList<OneCell> types=new ArrayList<OneCell>();
+		ArrayList<TwoPath> constructors=new ArrayList<TwoPath>();
+		ArrayList<ThreePath> structureRules=new ArrayList<ThreePath>();
 		try{
 			//we load the xml file
 			Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
@@ -77,17 +74,17 @@ public class XMLProgramHandler {
 				}
 			}
 			// generation of the structure rules
-			for (Iterator iterator = constructors.iterator(); iterator.hasNext();) {
-				TwoPath constructor = (TwoPath) iterator.next();
-				Vector<ThreePath> constructorRules=StructureRuleHandler.makeStructureRules(constructor,types);
-				for (Iterator iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
-					ThreePath rule = (ThreePath) iterator2.next();
+			for (Iterator<TwoPath> iterator = constructors.iterator(); iterator.hasNext();) {
+				TwoPath constructor =  iterator.next();
+				ArrayList<ThreePath> constructorRules=StructureRuleHandler.makeStructureRules(constructor,types);
+				for (Iterator<ThreePath> iterator2 = constructorRules.iterator(); iterator2.hasNext();) {
+					ThreePath rule = iterator2.next();
 					structureRules.add(rule);
 				}
 			}
 			//construction of the strategies corresponding to the strategy rules
-			for (Iterator iterator = structureRules.iterator(); iterator.hasNext();) {
-				ThreePath rulePath = (ThreePath) iterator.next();
+			for (Iterator<ThreePath> iterator = structureRules.iterator(); iterator.hasNext();) {
+				ThreePath rulePath =  iterator.next();
 				String rule=makeRule(rulePath)+"\n";
 			 strategy+=%[	%strategy ApplyRules@n@() extends Identity(){ 
 		visit TwoPath {
@@ -99,19 +96,20 @@ public class XMLProgramHandler {
 			}
 			
 			//construction of the function that applies all the strategies on a 2-Path
-			//String evalStrategy="ApplyRules0()";
-			String evalStrategy="RepeatId(TopDown(ApplyRules0())),MakeLog()";
+			String evalStrategy="ApplyRules0()";
+			//String evalStrategy="RepeatId(TopDown(ApplyRules0())),MakeLog()";
 			for(int i=1;i<n;i++){
 				//adds each rule strategy in the global visit
-				// evalStrategy+=",ApplyRules"+i+"()";
-				evalStrategy+=",TopDown(ApplyRules"+i+"()),MakeLog()";
+				evalStrategy+=",ApplyRules"+i+"()";
+				//evalStrategy+=",TopDown(ApplyRules"+i+"()),MakeLog()";
 			}
 			strategy+=%[	public static TwoPath eval(TwoPath myPath){
 		try{
 			System.out.println("BEFORE");
 			myPath.print();
 			System.out.println("LOG");
-			myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visit(myPath);
+			myPath=(TwoPath) `InnermostId(ChoiceId(Gravity(),Normalize(),@evalStrategy@)).visitLight(myPath);
+			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@)))).visit(myPath);
 			System.out.println("RESULT");
 			myPath.print();
@@ -178,10 +176,10 @@ public class XMLProgramHandler {
 	public static TwoPath formatRule(TwoPath path){
 		try{
 			TwoPath source=`TwoId(path.source());
-			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visit(source);
+			TwoPath ruleAux=(TwoPath) `RepeatId(TopDown(ruleAux(0))).visitLight(source);
 			path=`TwoC1(ruleAux,path);
 			//we normalize the rule also
-			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visit(path);
+			path=(TwoPath) `RepeatId(Sequence(TopDown(Normalize()),TopDown(Gravity()))).visitLight(path);
 		}
 		catch(VisitFailure e) {
 			throw new tom.engine.exception.TomRuntimeException("strange term: "+path);

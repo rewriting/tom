@@ -3,14 +3,13 @@ package tools;
 import polygraphicprogram.types.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import tools.XMLhandler;
+import compiler.XMLhandler;
 
 //print an understandable output provided the original output is composed with nat, list or booleans and that they are only composed with constructors
 
 public class ReadOutput{
 
 	%include { polygraphicprogram/PolygraphicProgram.tom }
-	%include { sl.tom }
 	%include{ dom.tom }
 
 	public static String path="/Users/aurelien/polygraphWorkspace/PolygraphesApp/polygraphes/polygraphesWithID/";
