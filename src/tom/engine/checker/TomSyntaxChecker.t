@@ -724,6 +724,7 @@ matchLbl: %match(constr) {
   %strategy CollectFreeVar(varList:Collection) extends Identity() {     
     visit TomTerm {
       v@(Variable|VariableStar)[] -> {
+        `v = `v.setOption(`concOption()); // to avoid problems related to line numbers
         if(!varList.contains(`v)) { 
           varList.add(`v); 
         }
