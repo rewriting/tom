@@ -62,18 +62,18 @@ public class PreGenerator {
     return constraintsToExpressions(constraint);
   }
 
-  private static Constraint orderConstraints(Constraint constraint){    
+  private static Constraint orderConstraints(Constraint constraint){
     %match(constraint){
-      !AndConstraint(_*,OrConstraint(_*),_*) && AndConstraint(_*) << constraint  -> {        
+      !AndConstraint(_*,OrConstraint(_*),_*) && AndConstraint(_*) << constraint  -> {
         return repeatOrdering(constraint);
       }
-      AndConstraint(X*,or@OrConstraint(_*),Y*) -> {        
+      AndConstraint(X*,or@OrConstraint(_*),Y*) -> {
         return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
       }
-      OrConstraint(andC@AndConstraint(_*)) -> {        
+      OrConstraint(andC@AndConstraint(_*)) -> {
         return `OrConstraint(orderConstraints(andC));
       }
-      or@OrConstraint(!AndConstraint(_*)) -> {     
+      or@OrConstraint(!AndConstraint(_*)) -> {
         return `or;
       }
     }
@@ -111,9 +111,9 @@ public class PreGenerator {
        * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
        *
        */
-      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(var,_),Z*) 
-         && ( var@(Variable|VariableStar)[] << rhs || ListHead[Variable=var] << rhs || ListTail[Variable=var] << rhs || ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) << rhs ) -> {          
-        return `AndConstraint(X*,second,Y*,first,Z*); 
+      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(var,_),Z*)
+         && ( var@(Variable|VariableStar)[] << rhs || ListHead[Variable=var] << rhs || ListTail[Variable=var] << rhs || ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) << rhs ) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
       }
       /*
        * SwitchAnti
@@ -133,18 +133,18 @@ public class PreGenerator {
        * EmptyList(z) /\ S /\ z << t -> z << t /\ S /\ EmptyList(z)
        * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
        */
-      AndConstraint(X*,first,Y*,second@MatchConstraint(v,_),Z*) 
+      AndConstraint(X*,first,Y*,second@MatchConstraint(v,_),Z*)
          && ( EmptyListConstraint[Variable=v] << first || Negate(EmptyListConstraint[Variable=v]) << first ) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
-         
+
       /*
        * SwitchEmpty - arrays
        *
        * EmptyArray(z) /\ S /\ z << t -> z << t /\ S /\ EmptyArray(z)
        * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
        */
-      AndConstraint(X*,first,Y*,second@MatchConstraint(idx,_),Z*) 
+      AndConstraint(X*,first,Y*,second@MatchConstraint(idx,_),Z*)
          && ( EmptyArrayConstraint[Index=idx] << first || Negate(EmptyArrayConstraint[Index=idx]) << first ) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
@@ -167,63 +167,72 @@ public class PreGenerator {
          }catch(VisitFailure ex){
            return `AndConstraint(X*,second,Y*,first,Z*);
          }
-       } 
+       }
 
       /*
        * p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
        * p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
-       * 
+       *
        * p << ListHead(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListHead(z)
        * p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
        *
        */
-      AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second,Z*) 
+      AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second,Z*)
           && ( Negate(EmptyListConstraint[Variable=v]) << second || EmptyListConstraint[Variable=v] << second ) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
 
       /*
        * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
-       * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)       
+       * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
        */
-      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),Y*,second,Z*) 
+      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),Y*,second,Z*)
               && ( Negate(EmptyArrayConstraint[Index=v]) << second || EmptyArrayConstraint[Index=v] << second ) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
-              
+
       /*
        * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
        * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
        */
-      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,subjectSecond),Z*) 
+      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,subjectSecond),Z*)
         && (VariableHeadList[End=v] << subjectSecond || VariableHeadArray[EndIndex=v] << subjectSecond ) -> {
          return `AndConstraint(X*,second,Y*,first,Z*);
       }
-        
+
       /*
        * SwitchNumericConstraints
        *
-       * an numeric constraint on a variable x should be always imediately after the  
+       * an numeric constraint on a variable x should be always imediately after the
        * instantiation of the variable x, as it may improve the efficiency by abandoning the tests earlier
        */
-      AndConstraint(X*,numeric@NumericConstraint[Pattern=x,Subject=y],Y*,match@MatchConstraint[Pattern=matchP],Z*) 
+      AndConstraint(X*,numeric@NumericConstraint[Pattern=x,Subject=y],Y*,match@MatchConstraint[Pattern=matchP],Z*)
                       && (matchP << TomTerm x || matchP << TomTerm y) -> {
         return `AndConstraint(X*,Y*,match,numeric,Z*);
       }
-      
+
       /*
        * SwitchIsSort
        *
        *  Match(_,subject) /\ IsSort(subject) -> IsSort(subject) /\ Match(_,subject)
-       *  
+       *
        *  IsSort(var) /\ Match(var,_) -> Match(var,_) /\ IsSort(var)
-       * 
+       *
        */
       AndConstraint(X*,match@MatchConstraint[Subject=ExpressionToTomTerm(Cast[Source=TomTermToExpression(sub)])],Y*,isSort@IsSortConstraint[TomTerm=sub],Z*) -> {
         return `AndConstraint(X*,isSort,Y*,match,Z*);
       }
       AndConstraint(X*,isSort@IsSortConstraint[TomTerm=var@(Variable|VariableStar)[]],Y*,match@MatchConstraint(var,_),Z*) -> {
         return `AndConstraint(X*,match,Y*,isSort,Z*);
+      }
+
+      /*
+       * SwitchTestVars
+       *
+       * tests generated by replace shoud be after the variable has been instanciated
+       */
+      AndConstraint(X*,first@MatchConstraint(TestVar(x),_),Y*,second@MatchConstraint(x,_),Z*) -> {
+        return `AndConstraint(X*,second,Y*,first,Z*);
       }
     } // end visit
     return constraint;
