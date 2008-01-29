@@ -102,11 +102,11 @@ public class @programName@{
 						Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputPath);
 						Element e = dom.getDocumentElement();
 						TwoPath input=makeTwoPathWithID(e);
-						updateLogPath(input);
+						//updateLogPath(input);
 						//saves the new twopath in another xml file
 						@programName@Tools.save(@programName@Tools.twoPath2XML(eval(input)),new File(outputFolderPath+"output.xml"));
 						//saves the history
-						@programName@Tools.save(log+"</Log>",new File(outputFolderPath+"log.xml"));
+						//@programName@Tools.save(log+"</Log>",new File(outputFolderPath+"log.xml"));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
