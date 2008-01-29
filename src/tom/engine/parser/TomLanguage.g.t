@@ -165,14 +165,14 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
             )* 
             t:RBRACE 
             { 
-                result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
-                //System.out.println("Parsed cl: " + constraintInstructionList);
-                // update for new target block...
-                updatePosition(t.getLine(),t.getColumn());
-                
-                // Match is finished : pop the tomlexer and return in
-                // the target parser.  
-                selector().pop(); 
+               result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
+               //System.out.println("Parsed cl: " + constraintInstructionList);
+               // update for new target block...
+               updatePosition(t.getLine(),t.getColumn());
+
+               // Match is finished : pop the tomlexer and return in
+               // the target parser.  
+               selector().pop(); 
             }
         )
   ;
@@ -228,8 +228,7 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
     List matchPatternList = new LinkedList();
     List blockList = new LinkedList();
     
-    Constraint constraint = `TrueConstraint();
-    Constraint result = null;
+    Constraint constraint = `TrueConstraint();    
     Constraint constr = null;
     OptionList optionList = null;
     Option option = null;
@@ -262,7 +261,7 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
               );
               
               matchPatternList.clear();
-              clearText();              
+              clearText();
             }            
             ( 
                 (   
@@ -271,24 +270,14 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
                     | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
                 )
                 { 
-                  if (result == null) {
-                    result = constr;
-                  }else{
-                    %match(constr,result) {
-                      AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
-                      AndMarker(x),OrMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
-                      OrMarker(x),AndMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
-                      OrMarker(x),OrMarker(y) -> { result = `OrMarker(OrConstraint(y,x)); }
-                    }
-                  }         
+                  %match(constr) {                    
+                    AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }                    
+                    OrMarker(x)  -> { constraint = `OrConstraint(constraint,x); }
+                  }
                 }    
             )*
             ARROW 
             {
-              %match(result) {
-                AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }
-                OrMarker(x) -> { constraint = `OrConstraint(constraint,x); }
-              }  
                 optionList = `concOption();
                 for(Object op:optionListLinked) {
                   optionList = `concOption(optionList*,(Option)op);
@@ -297,7 +286,6 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
                 if(label != null) {
                     optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
-
             }
             (t:LBRACE 
             {
@@ -309,7 +297,7 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 // target parser finished : pop the target lexer
                 selector().pop();
-                blockList.add(tlCode);                
+                blockList.add(tlCode);
                 list.add(`ConstraintInstruction(
                     constraint,
                     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
@@ -336,7 +324,7 @@ matchConstraintCompositionNoPar [List optionListLinked] returns [Constraint resu
 { 
   boolean isAnd = false;
   Constraint matchConstr = null;
-  result = null;
+  result = null;  
 } :   ( 
         AND_CONNECTOR { isAnd = true;} 
         | OR_CONNECTOR  { isAnd = false;} 
@@ -352,13 +340,14 @@ matchConstraintCompositionPar [List optionListLinked] returns [Constraint result
   boolean isAnd = false;
   Constraint matchConstr = null;
   Constraint constr = null;
-  result = null;
+  result = null;  
 } : ( 
       AND_CONNECTOR { isAnd = true;} 
       | OR_CONNECTOR  { isAnd = false;} 
     ) 
     LPAREN    
       matchConstr = matchConstraint[optionListLinked]
+      { result = `AndConstraint(matchConstr); }                                    
        (    
           ( 
               {LA(2) != LPAREN}?
@@ -366,29 +355,16 @@ matchConstraintCompositionPar [List optionListLinked] returns [Constraint result
               | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
           ) 
           {
-            if (result == null) {
-              result = constr;
-            }else{
-              %match(constr,result){
-                AndMarker(x),AndMarker(y) -> { result = `AndMarker(AndConstraint(y,x)); }
-                AndMarker(x),OrMarker(y) -> { result = `AndMarker(OrConstraint(y,x)); }
-                OrMarker(x),AndMarker(y) -> { result = `OrMarker(AndConstraint(y,x)); }
-                OrMarker(x),OrMarker(y) -> { result = `OrMarker(OrConstraint(y,x)); }
-              }
-            }         
+     match: %match(constr) {
+              AndMarker(x) -> { result = `AndConstraint(result,x);break match; }                    
+              OrMarker(x)  -> { result = `OrConstraint(result,x); }
+            }             
           }        
        )*                                                                                
        RPAREN                                                                                      
-  {
-    if ( result == null ) {
-      result = isAnd ? `AndMarker(matchConstr) : `OrMarker(matchConstr);
-    }else{
-      %match(result){
-        AndMarker(x) -> { result = isAnd ? `AndMarker(AndConstraint(matchConstr,x)) : `OrMarker(AndConstraint(matchConstr,x)); }
-        OrMarker(x) -> { result = isAnd ? `AndMarker(OrConstraint(matchConstr,x)) : `OrMarker(OrConstraint(matchConstr,x)); }
+      {
+        result = isAnd ? `AndMarker(result) : `OrMarker(result);
       }
-    }    
-  }
 ;
 
 matchConstraint [List optionListLinked] returns [Constraint result] throws TomException
