@@ -3,10 +3,15 @@
  abstract syntax 
  
  
-
+ // Sort representing a security level identified by an int
  SecurityLevel = sl(l:int)
+ 
+ //	Sort representing a set of comparable security levels where the first element is the lowest
  OrderedSubSetOfSecurityLevels = cl(SecurityLevel *)
+ 
+ // Sort representing partially ordered set of security levels
  PartiallyOrderdedSetOfSecurityLevels = setsl(OrderedSubSetOfSecurityLevels *)
+ 
  //Subject who has an ID for identification and a security level SL.
  Subject = subject(id:int,sl:SecurityLevel)
  
@@ -48,6 +53,7 @@ ListOfObjects = objects(SecurityObject *)
  //Sort representing a request upon a state
  RequestUponState = rus(r:Request,s:State)
 
+ //Response given after a request composed of the new obtained state and a boolean specifying whether the request is granted or not
  Response = response(granted:boolean, state:State)
 
 

@@ -2,6 +2,7 @@
  imports int boolean
  abstract syntax 
  
+ // These are the equivalent sorts used for defining a query
  
  SecurityLevelForPrint = l(sl:int)
 
@@ -27,19 +28,23 @@
 
  ListOfObjectsForPrint = lo(ObjectDefinitionForPrint *)
 
- DocPolicy = b()|m()
+ // b for Bell and La Padula and m for McLean
+ FlowPolicy = b()|m()
 
+ //Three different types of queries : verifyState to check a state (a set of accesses)
+ //									  verifyConfig to check a config (tests all permutations of requests)
+ //									  verifyAll to check all possible configs given a number of objects and subjects
  InputVerify = verifyState( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
                             subjects:ListOfSubjectsForPrint,
                             objects:ListOfObjectsForPrint,
                             state:StateForPrint,
-                            policy:DocPolicy)
+                            policy:FlowPolicy)
    | verifyConfig( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
                    subjects:ListOfSubjectsForPrint,
                    objects:ListOfObjectsForPrint,
-                   policy:DocPolicy)
+                   policy:FlowPolicy)
    | verifyAll( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
                 numberOfSubjects:int,
                 numberOfObjects:int,
-                policy:DocPolicy)
+                policy:FlowPolicy)
  

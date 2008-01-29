@@ -10,10 +10,17 @@ import java.io.*;
 public class CheckAllPermutationsOfRequests{
 %include { sl.tom }
 	%include { accesscontrol/accesscontrol.tom }
+
+
+//The list of subjects of the configuration
 ArrayList<Subject> Subjects;
+//The list of objects of the configuration
 ArrayList<SecurityObject> Objects;
+//The type of policy to verify with
 Policy policy;
+//All permutations of requests
 ArrayList<ArrayList<Integer>> allRequests;
+
 
 CheckAllPermutationsOfRequests(ListOfSubjects ListOfSubjects, ListOfObjects ListOfObjects,Policy policy){
 int numberOfAccessModes=2;
