@@ -80,6 +80,7 @@ public class ProofBuilder extends Observable {
         HashMap<String,Term> tds = Unification.match(conclusion, active);
         if (tds == null)  throw new VisitFailure("active formula and rule conclusion don't match");
 
+        /*
         //  -- building the original axiom with quantifiers --
 
         // building p => phi /\ phi => p
@@ -106,6 +107,7 @@ public class ProofBuilder extends Observable {
         }
 
         // -- 
+        */
 
         // renommage des variables
         Set<Map.Entry<String,Term>> entries= tds.entrySet();
@@ -154,6 +156,7 @@ b: {
             expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
             */
             Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
+            //Context gamma = `context(u*,v*);
             try {
               res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res); 
               res = (SeqList) `TopDown(PutInConclusion(c)).visit(res); 
@@ -169,6 +172,7 @@ b: {
             expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
             */
             Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
+            //Context delta = `context(u*,v*);
             try {
               res = (SeqList) `TopDown(AddInContexts(ctxt)).visit(res);
               res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res); 
@@ -1516,7 +1520,7 @@ b :{
             set.addAll(c);
             writeToOutputln("Number of different normal forms : "+set.size());
             set = new HashSet();
-            // modulo alpha
+            /* modulo alpha
             for (Object o:c) {
               ProofTerm prt = (ProofTerm) o;
               set.add(DBProofterms.translate(prt));
@@ -1525,10 +1529,11 @@ b :{
             for(Object o: set) {
               writeToOutputln(PrettyPrinter.prettyPrint((DBProofTerm) o));
             }
+            */
 
             for (Object o:c) {
               writeToOutputln(PrettyPrinter.prettyPrint((ProofTerm) o));
-              PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
+              //PrettyPrinter.display(Proofterms.typeTypableProofterm(`typablePT((ProofTerm) o, nseq)));
             }
           }
         }

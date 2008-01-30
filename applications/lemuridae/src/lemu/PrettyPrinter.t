@@ -148,6 +148,8 @@ class PrettyPrinter {
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
       rule(metaVariableInfo(mv),(),c,_) -> {return "\\infer{"+ toLatex(`c) +"}\n{"+`toLatex(mv)+"}";}
+      rule(reductionInfo[],(p),c,_) -> { return toLatex(`p); }
+      rule((weakRightInfo|weakLeftInfo)[],p,c,_) -> { return toLatex(`p); }
       rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
       rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]\n{" + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
@@ -203,6 +205,15 @@ class PrettyPrinter {
         else
           return ("\\mathsf{WF}\\left(") + toLatex(`x) + "\\right)";
       }
+
+      // Hoare Triples
+      relationAppl("Hoare",(P,S,Q)) -> {
+        return "\\{" + `toLatex(P) + "\\}" + `toLatex(S)  + "\\{" + `toLatex(Q) + "\\}";
+      }
+      relationAppl("eps",(x)) -> {
+        return "\\varepsilon(" + `toLatex(x) + ")";
+      }
+
       
       relationAppl(n, ()) -> { return `n;}
       relationAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
@@ -330,6 +341,44 @@ class PrettyPrinter {
      funAppl("lappl",(p,x*)) -> {
        return "(" + toLatex(`p) + "~" + toLatex(`x*) + ")";
      }
+
+      // Hoare triples
+      funAppl("substitute",(P,x,e))  -> {
+        return `toLatex(P) + "[" 
+          + `toLatex(e) + "/" + `toLatex(x) + "]";
+      }
+      funAppl("var",(funAppl(x,())))  -> {
+        return "\\overline{" + `x + "}"; 
+      }
+      funAppl("seq",(x,y))  -> {
+        return `toLatex(x) + ";" + `toLatex(y); 
+      }
+      funAppl("and",(a,b)) -> {
+        return `toLatex(a) + "\\dot{\\land}" + `toLatex(b);
+      }
+      funAppl("impl",(a,b)) -> {
+        return `toLatex(a) + "\\dot{\\rightArrow}" + `toLatex(b);
+      }
+      funAppl("if_then_else",(a,b,c)) -> {
+        return "if (" + `toLatex(a) + ") then (" + `toLatex(b) + ") else (" + `toLatex(c) + ")";
+      }
+      funAppl("pred_args_cons",(h,t)) -> {
+        return `toLatex(h) + "\\!::\\!" + `toLatex(t);
+      }
+      funAppl("pred_args_nil",()) -> {
+        return "[]";
+      }
+      funAppl("predappl",(funAppl("eq_enc",()), funAppl("pred_args_cons",(x,funAppl("pred_args_cons",(y,funAppl("pred_args_nil",()))))) )) -> {
+        return `toLatex(x) + "\\dot{=}" + `toLatex(y);
+      }
+      funAppl("predappl",(p,l)) -> {
+        return "@(" + `toLatex(p) + "," + `toLatex(l) + ")";
+      }
+      funAppl("affect",(x,e)) -> {
+        return `toLatex(x) + ":=" + `toLatex(e);
+      }
+
+
 
      funAppl(n, ()) -> { return `n + "()";}
      funAppl(n, tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
@@ -521,6 +570,13 @@ class PrettyPrinter {
         return prettyPrint(`x) + " \u2208 " + prettyPrint(`y);
       }
 
+      // Hoare triples
+      relationAppl("Hoare",(P,S,Q)) -> {
+        return "{" + `prettyPrint(P) + "}" 
+          + `prettyPrint(S)  + "{" + `prettyPrint(Q) + "}";
+      }
+ 
+
       relationAppl(r,x) -> {
         return `r + "(" + prettyPrint(`x) + ")";
       }
@@ -595,24 +651,56 @@ class PrettyPrinter {
       funAppl("type",()) -> {
         return ("*");  
       }
-
       funAppl("kind",()) -> {
         return ("□");   
       }
-
       funAppl("pitype",(x,y))  -> {
         return "π⁎" + prettyPrint(`x) + ". " + prettyPrint(`y);
       }
-
       funAppl("pikind",(x,y))  -> {
         return "π◽" + prettyPrint(`x) + ". " + prettyPrint(`y);  
       }
 
+      // Hoare triples
+      funAppl("substitute",(P,x,e))  -> {
+        return `prettyPrint(P) + "[" 
+          + `prettyPrint(e) + "/" + `prettyPrint(x) + "]";
+      }
+      funAppl("var",(funAppl(x,())))  -> {
+        return "\"" + `x + "\""; 
+      }
+      funAppl("seq",(x,y))  -> {
+        return `prettyPrint(x) + ";" + `prettyPrint(y); 
+      }
+      funAppl("and",(a,b)) -> {
+        return `prettyPrint(a) + "&&" + `prettyPrint(b);
+      }
+      funAppl("impl",(a,b)) -> {
+        return `prettyPrint(a) + "~>" + `prettyPrint(b);
+      }
+      funAppl("if_then_else",(a,b,c)) -> {
+        return "if (" + `prettyPrint(a) + ") then (" + `prettyPrint(b) + ") else (" + `prettyPrint(c) + ")";
+      }
+      funAppl("pred_args_cons",(h,t)) -> {
+        return `prettyPrint(h) + "::" + `prettyPrint(t);
+      }
+      funAppl("pred_args_nil",()) -> {
+        return "[]";
+      }
+      funAppl("predappl",(p,l)) -> {
+        return `prettyPrint(p) + "(" + `prettyPrint(l) + ")";
+      }
+      funAppl("affect",(x,e)) -> {
+        return `prettyPrint(x) + ":=" + `prettyPrint(e);
+      }
+
+
+
+      // normal case
 
       funAppl(name,x) -> {
         return `name + "(" + prettyPrint(`x) + ")";
       }
-
       FreshVar(n,_) -> { return `n; }
       NewVar(n,_) -> { return `n; }
     }
@@ -790,7 +878,8 @@ class PrettyPrinter {
   }
 
   public static void display(Tree tree, TermRuleList tl, PropRuleList pl) throws java.io.IOException, java.lang.InterruptedException {
-    //tree = cleanTree(tree, tl, pl);
+    tree = cleanTree(tree, tl, pl);
+    tree = (Tree) Unification.reduce(tree,tl,pl);
     display(tree);
   }
 
