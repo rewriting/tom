@@ -57,13 +57,13 @@ public class PreGenerator {
   %include { ../../library/mapping/java/sl.tom}
   // ------------------------------------------------------------
 
-  public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure{
+  public static Expression performPreGenerationTreatment(Constraint constraint) throws VisitFailure {
     constraint = orderConstraints(constraint);
     return constraintsToExpressions(constraint);
   }
 
-  private static Constraint orderConstraints(Constraint constraint){
-    %match(constraint){
+  private static Constraint orderConstraints(Constraint constraint) {
+    %match(constraint) {
       !AndConstraint(_*,OrConstraint(_*),_*) && AndConstraint(_*) << constraint  -> {
         return repeatOrdering(constraint);
       }
@@ -155,14 +155,14 @@ public class PreGenerator {
        * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
        */
        AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
-         try{
+         try {
            `TopDown(HasTerm(v)).visitLight(`rhs);
          }catch(VisitFailure ex){
            return `AndConstraint(X*,second,Y*,first,Z*);
          }
        }
        AndConstraint(X*,first@MatchConstraint(_,rhs),Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
-         try{
+         try {
            `TopDown(HasTerm(v)).visitLight(`rhs);
          }catch(VisitFailure ex){
            return `AndConstraint(X*,second,Y*,first,Z*);
