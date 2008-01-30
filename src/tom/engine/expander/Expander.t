@@ -68,16 +68,14 @@ public class Expander extends TomGenericPlugin {
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/types/Map.tom}
 
-  %typeterm Expander {
-    implement { Expander }
-    is_sort(t) { ($t instanceof Expander) }
-  }
+  %typeterm Expander { implement { Expander } }
 
   /** some output suffixes */
   public static final String EXPANDED_SUFFIX = ".tfix.expanded";
 
-  /** the declared options string*/
-  public static final String DECLARED_OPTIONS = "<options>" +
+  /** the declared options string */
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
     "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
     "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
@@ -93,13 +91,10 @@ public class Expander extends TomGenericPlugin {
   private static final TomTerm childVar = `Variable(concOption(),Name("child"),objectType,concConstraint());
   private static final TomTerm intVar = `Variable(concOption(),Name("i"),intType,concConstraint());
   private static final TomTerm objectArrayVar = `Variable(concOption(),Name("children"),objectArrayType,concConstraint());
-  private static boolean generatedIntrospector = false;
 
   /** if the flag is true, a class that implements Introspector is generated */
   private static boolean genIntrospector = false;
-
-  /** unicity var counter */
-  private static int absVarNumber;
+  private static boolean generatedIntrospector = false;
 
   /** Constructor */
   public Expander() {
@@ -109,13 +104,11 @@ public class Expander extends TomGenericPlugin {
   public void run() {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");    
+    genIntrospector = getOptionBooleanValue("genIntrospector");
     try {
-      // reinit absVarNumber to generate reproducible output
-      absVarNumber = 0;
       //reinit the variable for intropsector generation
       generatedIntrospector = false;
-      genIntrospector = getOptionBooleanValue("genIntrospector");
-      TomTerm expandedTerm = (TomTerm) `Expand(this).visitLight((TomTerm)getWorkingTerm());
+      TomTerm expandedTerm = (TomTerm) `this.expand((TomTerm)getWorkingTerm());
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)) );
@@ -141,11 +134,23 @@ public class Expander extends TomGenericPlugin {
    * abstract list-matching patterns
    */
 
-  %op Strategy Expand(expander:Expander){
-    make(expander) { `TopDownIdStopOnSuccess(Expand_once(expander)) }
+  private tom.library.sl.Visitable expand(tom.library.sl.Visitable subject) {
+    try {
+      return `TopDownIdStopOnSuccess(Expand_once(this)).visitLight(subject);
+    } catch(VisitFailure e) {
+      throw new TomRuntimeException("Expander.expand: fail on " + subject);
+    }
   }
 
-  %strategy Expand_once(expander:Expander) extends `Identity(){
+  %strategy Expand_makeTerm_once(expander:Expander) extends Identity() {
+    visit TomTerm {
+      t@(Variable|VariableStar|RecordAppl)[] -> {
+        return (TomTerm) `Expand_once(expander).visitLight(`BuildReducedTerm(t,expander.getTermType(t)));
+      }
+    }
+  }
+
+  %strategy Expand_once(expander:Expander) extends Identity() {
     visit TomTerm {
       BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
         return `var;
@@ -153,9 +158,9 @@ public class Expander extends TomGenericPlugin {
 
       BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
         TomSymbol tomSymbol = expander.symbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = (SlotList) `Expand_makeTerm(expander).visitLight(`termArgs);
+        SlotList newTermArgs = (SlotList) `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)).visitLight(`termArgs);
         TomList tomListArgs = TomBase.slotListToTomList(newTermArgs);
-
+        
         if(TomBase.hasConstant(`optionList)) {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
@@ -190,7 +195,7 @@ public class Expander extends TomGenericPlugin {
            * the call to Expand performs the recursive expansion
            * of nested match constructs
            */
-          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) `Expand(expander).visitLight(constraintInstruction);
+          ConstraintInstruction newConstraintInstruction = (ConstraintInstruction) expander.expand(constraintInstruction);
 
 matchBlock: {
               %match(newConstraintInstruction) {
@@ -522,20 +527,9 @@ matchBlock: {
             TomTypeAlone("tom.library.sl.VisitFailure"),
             AbstractBlock(ifList));
         l = `concDeclaration(l*,visitLightDeclaration);
-        return (Declaration) `Expand(expander).visitLight(`AbstractDecl(concDeclaration(introspectorClass,Class(name,visitorFwd,extendsTerm,AbstractDecl(l)))));
+        return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,visitorFwd,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration
   } // end strategy
-
-  %op Strategy Expand_makeTerm(expander:Expander){
-    make(expander) { `TopDownIdStopOnSuccess(Expand_makeTerm_once(expander)) }
-  }
-
-  %strategy Expand_makeTerm_once(expander:Expander) extends `Identity()  {
-    visit TomTerm {
-      t -> {return (TomTerm) `Expand(expander).visitLight(`BuildReducedTerm(t,expander.getTermType(t)));}
-    }
-  }
-
 
 }

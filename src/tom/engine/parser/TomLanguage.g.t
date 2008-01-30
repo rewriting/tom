@@ -225,7 +225,7 @@ matchArgument [List list] throws TomException
 patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomException
 {    
     List optionListLinked = new LinkedList();
-    List matchPatternList = new LinkedList();
+    List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
     List blockList = new LinkedList();
     
     Constraint constraint = `TrueConstraint();    
@@ -251,7 +251,7 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
               int counter = 0;
               %match(subjectList){
                 concTomTerm(_*,subjectAtIndex,_*) -> {
-                  constraint = `AndConstraint(constraint,MatchConstraint((TomTerm)matchPatternList.get(counter),subjectAtIndex));
+                  constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
                   counter++;
                 }
               }
