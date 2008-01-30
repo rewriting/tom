@@ -111,7 +111,7 @@ public class XMLProgramHandler {
 			myPath=(TwoPath) `InnermostId(ChoiceId(Gravity(),Normalize(),@evalStrategy@)).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@)))).visit(myPath);
-			System.out.println("RESULT");
+			System.out.println("\nRESULT");
 			myPath.print();
 			return myPath;
 		}
@@ -122,6 +122,7 @@ public class XMLProgramHandler {
 			]%;
 		}
 		catch(Exception e){ e.printStackTrace();}
+		System.out.println("");
 		//we return all the rule strategies and also the computation functon "eval(TwoPath)"
 		return strategy;
 	}
@@ -211,19 +212,19 @@ public class XMLProgramHandler {
   //this normalize strategy is slightly different from the one we use in the rest of the project
   %strategy Normalize() extends Identity(){ 
 	  visit TwoPath {
-  		TwoC1(TwoC0(head1*,TwoC1(top*),tail1*),TwoC0(head2*,bottom*,tail2*)) -> {if(`head1*.target()==`head2*.source()&&`top*.target()==`bottom*.source()){System.out.println("1");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top*,bottom*),TwoC1(tail1*,tail2*));}} 
-  		TwoC1(TwoC0(head1*,top@TwoCell(_,_,_,_,_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.println("2");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
-  	  	TwoC1(TwoC0(head1*,top@TwoId(_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.println("3");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
-  	  	TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.println("4");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
-  	  	TwoC1(TwoC0(head*,top@TwoCell(_,_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("5");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
-  	  	TwoC1(TwoC0(head*,top@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("6");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
+  		TwoC1(TwoC0(head1*,TwoC1(top*),tail1*),TwoC0(head2*,bottom*,tail2*)) -> {if(`head1*.target()==`head2*.source()&&`top*.target()==`bottom*.source()){System.out.print(".");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top*,bottom*),TwoC1(tail1*,tail2*));}} 
+  		TwoC1(TwoC0(head1*,top@TwoCell(_,_,_,_,_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
+  	  	TwoC1(TwoC0(head1*,top@TwoId(_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.print(".")return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
+  	  	TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.print(".");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
+  	  	TwoC1(TwoC0(head*,top@TwoCell(_,_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
+  	  	TwoC1(TwoC0(head*,top@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
   	  	TwoC1(head*,TwoC0(topleft*,top*,topright*),TwoC0(left*,f@TwoCell(_,_,_,Function(),_),right*),tail*) -> {
   	  		if(`topleft*.target()==`left*.source()&&`top.target()==`f.source()){
   	  			TwoPath myNewPath=`TwoId(Id());
   	  			if(`head*!=`TwoId(Id())){myNewPath= `TwoC1(head*,TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
   	  			else{myNewPath= `TwoC1(TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
   	  			if(myNewPath!=`TwoId(Id())){
-  	  				System.out.println("8");
+  	  				System.out.print(".");
   	  				return myNewPath;
   	  			}
   	  		}
@@ -235,7 +236,7 @@ public class XMLProgramHandler {
   	  			if(`head*!=`TwoId(Id())){myNewPath= `TwoC1(head*,TwoC0(TwoC1(topleft*,left*),TwoC1(top*,topf*,f),TwoC1(topright*,right*)),tail*);}
   	  			else{myNewPath= `TwoC1(TwoC0(TwoC1(topleft*,left*),TwoC1(top*,topf*,f),TwoC1(topright*,right*)),tail*);}
   	  			if(myNewPath!=`TwoId(Id())){
-  	  				System.out.println("8bis");
+  	  				System.out.print(".");
   	  				return myNewPath;
   	  			}
   	  		}
@@ -244,7 +245,7 @@ public class XMLProgramHandler {
   	  		TwoPath myNewPath=`TwoId(Id());
   	  		if(`head*!=`TwoId(Id())){myNewPath=`TwoC1(head*,TwoC0(left*,TwoC1(top,X),right*),tail*);}else{myNewPath=`TwoC1(TwoC0(left*,TwoC1(top,X),right*),tail*);}
   	  			if(myNewPath!=`TwoId(Id())){
-  	  				System.out.println("9");
+  	  				System.out.print(".");
   	  				return myNewPath;}
   	  		}
   	  	}
@@ -278,12 +279,12 @@ public class XMLProgramHandler {
   	  						myNewPath=`TwoC1(head,myNewPath,f,tail);}
   	  					else{myNewPath=`TwoC1(myNewPath,f,tail);}}
   	  				if(myNewPath!=`TwoId(Id())){
-  	  					System.out.println("10");
+  	  					System.out.print(".");
   	  					return myNewPath;}
   	  	}
   	  
   	  	//different things, transform TwoId of OneC0 in TwoC0 of TwoId
-  	  	TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } 
+  	  	TwoId(OneC0(head,tail*)) -> { System.out.print(".");return `TwoC0(TwoId(head),TwoId(tail*)); } 
   	  	//absorbs the twoIds
   	  	TwoC1(head*,t@TwoId(_),TwoId(_),tail*) -> { if(`head!=`TwoId(Id())){return `TwoC1(head,t,tail);}else{return `TwoC1(t,tail);}}
  	 } 
@@ -299,7 +300,7 @@ public class XMLProgramHandler {
   						return `TwoC1(TwoId(f.source()),f,tail*);
   					}
   					if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoId(f.source()),f);}
-  					System.out.println("GravityA");
+  					System.out.print(".");
   					return `TwoC1(head*,TwoId(f.source()),f,tail*);
   				}
   			}
@@ -307,11 +308,11 @@ public class XMLProgramHandler {
   				if(`head1*.target()==`head2*.source()&&`tail1*.target()==`tail2*.source()&&`f.target()==`g.source()){																								
   					if(`head*==`TwoId(Id())){
   						if(`tail*==`TwoId(Id())){return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*));}
-  						System.out.println("GravityB1");
+  						System.out.print(".");
   						return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*),tail*);
   					}
   					if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*));}
-  					System.out.println("GravityB2");
+  					System.out.print(".");
   					return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*),tail*);
   				}
   			}
@@ -319,11 +320,11 @@ public class XMLProgramHandler {
   				if(`f.target()==`g.source()){
   					if(`head*==`TwoId(Id())){
   						if(`tail*==`TwoId(Id())){return `TwoC0(head2*,f,tail2*);}
-  						System.out.println("GravityC1");
+  						System.out.print(".");
   						return `TwoC1(TwoC0(head2*,f,tail2*),tail*);
   					}
   					if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head2*,f,tail2*));}
-  					System.out.println("GravityC2");
+  					System.out.print(".");
   					return `TwoC1(head*,TwoC0(head2*,f,tail2*),tail*);
   				}
   			}
@@ -331,16 +332,16 @@ public class XMLProgramHandler {
   				if(`f.target()==`g.source()){
   					if(`head*==`TwoId(Id())){
   						if(`tail*==`TwoId(Id())){
-  							System.out.println("GravityD1");
+  							System.out.print(".");
   							return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f);
   						}
-  						System.out.println("GravityD2");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+  						System.out.print(".");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
   					}
   					if(`tail*==`TwoId(Id())){
-  						System.out.println("GravityD3");
+  						System.out.print(".");
   						return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f);
   					}
-  					System.out.println("GravityD4");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+  					System.out.print(".");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
   				}
   			}
   		} 

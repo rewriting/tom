@@ -173,19 +173,19 @@ public class @programName@{
 
 	%strategy Normalize() extends Identity(){ 
 		visit TwoPath {
-			TwoC1(TwoC0(head1*,TwoC1(top*),tail1*),TwoC0(head2*,bottom*,tail2*)) -> {if(`head1*.target()==`head2*.source()&&`top*.target()==`bottom*.source()){System.out.println("1");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top*,bottom*),TwoC1(tail1*,tail2*));}} 
-			TwoC1(TwoC0(head1*,top@@TwoCell(_,_,_,_,_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.println("2");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
-  	  		TwoC1(TwoC0(head1*,top@@TwoId(_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.println("3");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
-  	  		TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.println("4");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
-  	  		TwoC1(TwoC0(head*,top@@TwoCell(_,_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("5");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
-  	  		TwoC1(TwoC0(head*,top@@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.println("6");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
+			TwoC1(TwoC0(head1*,TwoC1(top*),tail1*),TwoC0(head2*,bottom*,tail2*)) -> {if(`head1*.target()==`head2*.source()&&`top*.target()==`bottom*.source()){System.out.print(".");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top*,bottom*),TwoC1(tail1*,tail2*));}} 
+			TwoC1(TwoC0(head1*,top@@TwoCell(_,_,_,_,_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
+  	  		TwoC1(TwoC0(head1*,top@@TwoId(_),tail1*),TwoC0(head2*,bottom*,tail2*))-> {if(`head1*.target()==`head2*.source()&&`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(TwoC1(head1*,head2*),TwoC1(top,bottom*),TwoC1(tail1*,tail2*));}} 
+  	  		TwoC1(TwoC0(head*,TwoC1(top*),tail*),bottom*) -> {if(`top*.target()==`bottom*.source()){System.out.print(".");return `TwoC0(head*,TwoC1(top*,bottom*),tail*);}} 
+  	  		TwoC1(TwoC0(head*,top@@TwoCell(_,_,_,_,_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
+  	  		TwoC1(TwoC0(head*,top@@TwoId(_),tail*),bottom*) -> {if(`top.target()==`bottom*.source()){System.out.print(".");return `TwoC0(head*,TwoC1(top,bottom*),tail*);}} 
   	  		TwoC1(head*,TwoC0(topleft*,top*,topright*),TwoC0(left*,f@@TwoCell(_,_,_,Function(),_),right*),tail*) -> {//marche pas vraiment quand ya une fonction a plusieurs entrees dans y
   	  			if(`topleft*.target()==`left*.source()&&`top.target()==`f.source()){
   	  				TwoPath myNewPath=`TwoId(Id());
   	  				if(`head*!=`TwoId(Id())){myNewPath= `TwoC1(head*,TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
   	  				else{myNewPath= `TwoC1(TwoC0(TwoC1(topleft*,left*),TwoC1(top*,f),TwoC1(topright*,right*)),tail*);}
   	  				if(myNewPath!=`TwoId(Id())){
-  	  					System.out.println("8");
+  	  					System.out.print(".");
   	  					return myNewPath;
   	  				}
   	  			}
@@ -195,7 +195,7 @@ public class @programName@{
   	  				TwoPath myNewPath=`TwoId(Id());//insuffisant, il pourrait yen avoir plusieurs : crenelage
   	  				if(`head*!=`TwoId(Id())){myNewPath=`TwoC1(head*,TwoC0(left*,TwoC1(top,X),right*),tail*);}else{myNewPath=`TwoC1(TwoC0(left*,TwoC1(top,X),right*),tail*);}
   	  				if(myNewPath!=`TwoId(Id())){
-  	  					System.out.println("9");
+  	  					System.out.print(".");
   	  					return myNewPath;}
   	  			}
   	  		}
@@ -229,7 +229,7 @@ public class @programName@{
   	  					myNewPath=`TwoC1(head,myNewPath,f,tail);}
   	  				else{myNewPath=`TwoC1(myNewPath,f,tail);}}
   	  			if(myNewPath!=`TwoId(Id())){
-  	  				System.out.println("10");
+  	  				System.out.print(".");
   	  				return myNewPath;}
   	  		}
   	  		p@@TwoC1(head*,top@@TwoC0(X*),down@@TwoC0(Y*),tail*) -> {//extension du cas 10
@@ -263,19 +263,19 @@ public class @programName@{
   	  					myNewPath=`TwoC1(head,myNewPath,tail);}
   	  				else{myNewPath=`TwoC1(myNewPath,tail);}}
   	  			if(myNewPath!=`TwoId(Id())){	
-  	  				System.out.println("11");
+  	  				System.out.print(".");
   	  				return myNewPath;}
   	  		}
   	  		TwoC1(head*,X@@TwoC0(_*),tail*)->{if(isTwoC0Id(`X)){System.out.println("supprTwoIds");if(`head==`TwoId(Id())){return `tail;}return `TwoC1(head,tail);}
   	  		}
   	  	
-  	  		TwoC1(TwoC1(X*),Y*) -> {System.out.println("doubleC1");return `TwoC1(X*,Y*); }
+  	  		TwoC1(TwoC1(X*),Y*) -> {System.out.print(".");return `TwoC1(X*,Y*); }
   	  		//a part, retransforme les onec0 en twoC0
-  	  		TwoId(OneC0(head,tail*)) -> { System.out.println("onetotwo");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en meme temps
+  	  		TwoId(OneC0(head,tail*)) -> { System.out.print(".");return `TwoC0(TwoId(head),TwoId(tail*)); } //correction en meme temps
   	  	
   	  		TwoC1(head*,t@@TwoId(_),TwoId(_),tail*) -> { if(`head!=`TwoId(Id())){return `TwoC1(head,t,tail);}else{return `TwoC1(t,tail);}}
   	  		//encore experimental, pour les split
-  	  		TwoC1(head*,TwoC0(left*,right*),TwoC0(bottomleft*,bottomright*))->{if(`left!=`TwoId(Id())&&`right!=`TwoId(Id())&&`bottomleft!=`TwoId(Id())&&`bottomright!=`TwoId(Id())&&`left.target()==`bottomleft.source()){System.out.println("split paths");if(`head==`TwoId(Id())){return `TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright));}else{return `TwoC1(head,TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright)));}}}
+  	  		TwoC1(head*,TwoC0(left*,right*),TwoC0(bottomleft*,bottomright*))->{if(`left!=`TwoId(Id())&&`right!=`TwoId(Id())&&`bottomleft!=`TwoId(Id())&&`bottomright!=`TwoId(Id())&&`left.target()==`bottomleft.source()){System.out.print(".");if(`head==`TwoId(Id())){return `TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright));}else{return `TwoC1(head,TwoC0(TwoC1(left,bottomleft),TwoC1(right,bottomright)));}}}
 		} 
 	}
 
@@ -305,7 +305,7 @@ public class @programName@{
 				return `TwoC1(TwoId(f.source()),f,tail*);
 				}
 				if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoId(f.source()),f);}
-				System.out.println("GravityA");
+				System.out.print(".");
 				return `TwoC1(head*,TwoId(f.source()),f,tail*);
 				}
 			}
@@ -313,11 +313,11 @@ public class @programName@{
 				if(`head1*.target()==`head2*.source()&&`tail1*.target()==`tail2*.source()&&`f.target()==`g.source()){																								
 					if(`head*==`TwoId(Id())){
 						if(`tail*==`TwoId(Id())){return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*));}
-						System.out.println("GravityB1");
+						System.out.print(".");
 						return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*),tail*);
 					}
 					if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*));}
-					System.out.println("GravityB2");
+					System.out.print(".");
 					return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),TwoC0(head2*,f,tail2*),tail*);
 				}
 			}
@@ -325,22 +325,22 @@ public class @programName@{
 				if(`f.target()==`g.source()){																			
 					if(`head*==`TwoId(Id())){
 						if(`tail*==`TwoId(Id())){return `TwoC0(head2*,f,tail2*);}
-						System.out.println("GravityC1");
+						System.out.print(".");
 						return `TwoC1(TwoC0(head2*,f,tail2*),tail*);
 					}
 					if(`tail*==`TwoId(Id())){return `TwoC1(head*,TwoC0(head2*,f,tail2*));}
-					System.out.println("GravityC2");
+					System.out.print(".");
 					return `TwoC1(head*,TwoC0(head2*,f,tail2*),tail*);
 				}
 			}
 			TwoC1(head*,TwoC0(head1*,f@@TwoCell(_,_,_,Constructor(),_),tail1*),g@@TwoId(_),tail*) -> { 
 				if(`f.target()==`g.source()){
 				if(`head*==`TwoId(Id())){
-					if(`tail*==`TwoId(Id())){System.out.println("GravityD1");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f);}
-					System.out.println("GravityD2");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+					if(`tail*==`TwoId(Id())){System.out.print(".");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f);}
+					System.out.print(".");return `TwoC1(TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
 				}
-				if(`tail*==`TwoId(Id())){System.out.println("GravityD3");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f);}
-				System.out.println("GravityD4");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
+				if(`tail*==`TwoId(Id())){System.out.print(".");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f);}
+				System.out.print(".");return `TwoC1(head*,TwoC0(head1*,TwoId(f.source()),tail1*),f,tail*);
 				}
 			}
 		} 
