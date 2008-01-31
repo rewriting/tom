@@ -685,9 +685,8 @@ matchLbl: %match(constr) {
         // and we check these variables for numeric constraints also
         // ex: 'y << a() || x > 3' should generate an error 
         %match(x){
-          MatchConstraint(pattern,_) -> {
-            `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
-          }
+          MatchConstraint(pattern,_) -> { `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern); }
+          AndConstraint(_*,MatchConstraint(pattern,_),_*) -> { `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern); }
         }        
         if(!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2) {
