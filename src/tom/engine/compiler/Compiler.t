@@ -181,7 +181,7 @@ public class Compiler extends TomGenericPlugin {
    */
   %strategy renameSubjects(ArrayList subjectList,ArrayList renamedSubjects) extends Identity() {
     visit Constraint {
-      constr@(MatchConstraint|NumericConstraint)[Pattern=pattern, Subject=subject] -> {
+      constr@MatchConstraint[Pattern=pattern, Subject=subject] -> {
         if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(`subject) ) {
           // make sure we don't process generated contraints
           return `constr; 
