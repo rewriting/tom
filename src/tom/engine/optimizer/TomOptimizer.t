@@ -69,16 +69,14 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ ../../library/mapping/java/util/ArrayList.tom }
   %include{ ../../library/mapping/java/util/HashSet.tom }
 
-  %typeterm TomOptimizer {
-    implement { TomOptimizer }
-    is_sort(t) { ($t instanceof TomOptimizer) }
-  }
+  %typeterm TomOptimizer { implement { TomOptimizer } }
 
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
   /** the declared options string*/
-  private static final String DECLARED_OPTIONS = "<options>" + 
+  private static final String DECLARED_OPTIONS = 
+    "<options>" + 
     "<boolean name='optimize' altName='O' description='Optimized generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimized generated code' value='false'/>" +
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
@@ -208,9 +206,9 @@ public class TomOptimizer extends TomGenericPlugin {
 
   }
 
-  %strategy findRefVariable(set: HashSet) extends `Identity(){
+  %strategy findRefVariable(set: HashSet) extends Identity() {
     visit TomTerm {
-      Ref((Variable|VariableStar)[AstName=name])  -> {
+      Ref((Variable|VariableStar)[AstName=name]) -> {
         set.add(`name);
         //stop to visit this branch (like "return false" with traversal) 
         throw new tom.library.sl.VisitFailure();
@@ -231,11 +229,10 @@ public class TomOptimizer extends TomGenericPlugin {
       }
 
       LetAssign(Variable[AstName=varname],src,_) -> {
-        if (`varname.equals(variableName)) {
+        if(`varname.equals(variableName)) {
           info.setlastvalue(`src);
-        }
-        else {
-          if (info.lastAssignmentVariables.contains(`varname)) {
+        } else {
+          if(info.lastAssignmentVariables.contains(`varname)) {
             info.lastAssignment = null;
             info.lastAssignmentVariables.clear();
           }
@@ -253,10 +250,10 @@ public class TomOptimizer extends TomGenericPlugin {
       }
       // same code as for LetAssign with only one recursive call
       Assign(Variable[AstName=varname],src) -> {
-        if (`varname.equals(variableName)) {
+        if(`varname.equals(variableName)) {
           info.setlastvalue(`src);
         } else {
-          if (info.lastAssignmentVariables.contains(`varname)) {
+          if(info.lastAssignmentVariables.contains(`varname)) {
             info.lastAssignment = null;
             info.lastAssignmentVariables.clear();
           }
@@ -333,7 +330,7 @@ public class TomOptimizer extends TomGenericPlugin {
   %strategy computeOccurencesLetSpecialCase1(defaultCase:Strategy,info:InfoVariableLet) extends defaultCase {
     visit Instruction {
       (Assign|LetAssign)[Variable=Variable[AstName=varname]] -> {
-        if (info.assignmentVariables.contains(`varname)) {
+        if(info.assignmentVariables.contains(`varname)) {
           info.modifiedAssignmentVariables=true;
           throw new tom.library.sl.VisitFailure();
         }

@@ -277,7 +277,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage badSlotName             =
       new TomMessage("Slot Name ''{0}'' is not correct for symbol ''{1}''. Possible slot names are : {2}");
   public static final TomMessage unknownMatchArgumentTypeInSignature=
-      new TomMessage("Variable ''{0}'' has an unknown type: ''{1}''");
+      new TomMessage("''{0}'' has an unknown type: ''{1}''");
   public static final TomMessage repeatedMatchArgumentName=
       new TomMessage("Repeated variable ''{0}'' in ''match'' declaration");
   public static final TomMessage invalidMatchSubject=

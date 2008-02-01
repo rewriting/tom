@@ -1,3 +1,6 @@
+2008-02-01 pem
+  * fix PR-4960
+
 2008-01-28 pem
   * improved the efficiency of the compiler
 

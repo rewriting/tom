@@ -108,7 +108,7 @@ public class Expander extends TomGenericPlugin {
     try {
       //reinit the variable for intropsector generation
       generatedIntrospector = false;
-      TomTerm expandedTerm = (TomTerm) `this.expand((TomTerm)getWorkingTerm());
+      TomTerm expandedTerm = (TomTerm) this.expand((TomTerm)getWorkingTerm());
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)) );

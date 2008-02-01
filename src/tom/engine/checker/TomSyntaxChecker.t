@@ -788,9 +788,16 @@ matchLbl: %match(constr) {
       // the user specified the type
       BuildReducedTerm(TermAppl[NameList=concTomName(Name(name))],userType) -> {
         TomSymbol symbol = getSymbolFromName(`name);
+        String typeName = TomBase.getTomType(`userType);
+        if(!testTypeExistence(typeName)) {// check that the type exists
+          messageError(currentTomStructureOrgTrack.getFileName(),
+              currentTomStructureOrgTrack.getLine(),
+              TomMessage.unknownMatchArgumentTypeInSignature,
+              new Object[]{`name, typeName });
+        }          
         if(symbol != null) { // check that the type provided by the user is consistent
           TomType type = TomBase.getSymbolCodomain(symbol);
-          if (!`(userType).equals(type)){
+          if(!`(userType).equals(type)) {
             messageError(currentTomStructureOrgTrack.getFileName(),
                 currentTomStructureOrgTrack.getLine(),
                 TomMessage.inconsistentTypes,
