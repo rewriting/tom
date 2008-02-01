@@ -82,6 +82,12 @@ proprule le(succ(x),0) -> False.
 proprule le(succ(x),succ(y)) -> le(x,y).
 
 /* --- induction sur les entiers et egalite de leibniz --- */
+rule eq(x,y) -> forall P, in(cons(y,nil()),P) => in(cons(x,nil()),P).
+rule nat(n) -> forall P, in(cons(0,nil()),P) => (forall y, nat(y) => in(cons(y,nil()),P) => in(cons(succ(y),nil()),P) ) => in(cons(n,nil()),P) .
+nat_rec.
+rule Null(0) -> True.
+rule Null(succ(x)) -> False.
+
 termrule appl(t,nil()) -> t.
 termrule appl(one(),cons(t,l)) -> t.
 termrule appl(S(n),cons(t,l)) -> appl(n,l).
@@ -95,11 +101,7 @@ proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 proprule in(l,fLt(t1,t2)) -> lt( appl(t1,l), appl(t2,l) ).
 proprule in(l,fLe(t1,t2)) -> le( appl(t1,l), appl(t2,l) ).
 proprule in(l,fnat(t)) -> nat(appl(t,l)).
-rule eq(x,y) -> forall P, in(cons(y,nil()),P) => in(cons(x,nil()),P).
-rule nat(n) -> forall P, in(cons(0,nil()),P) => (forall y, nat(y) => in(cons(y,nil()),P) => in(cons(succ(y),nil()),P) ) => in(cons(n,nil()),P) .
-nat_rec.
-rule Null(0) -> True.
-rule Null(succ(x)) -> False.
+
 proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
@@ -217,7 +219,7 @@ rule.
 reduce.
 intro. intro.
 focus h5.
-rule. supset(fLe(S(succ(y1)),one()), union(fLt(S(succ(y1)),one()),fEq(S(succ(y1)),one())))).
+rule. supset(fLe(S(succ(y1)),one()), union(fLt(S(succ(y1)),one()),fEq(S(succ(y1)),one()))).
 reduce.
 axiom.
 next.
@@ -242,7 +244,7 @@ axiom.
 
 /* ----- lemme 2 :  {x=1} while x != 3 do x := 1+x done {x=3}  ----- */
 
-termrule p_1(x,y) -> predappl(ple(),arg_cons(x,arg_cons(y,arg_nil())).
+termrule p_1(x,y) -> predappl(ple(),arg_cons(x,arg_cons(y,arg_nil()))).
 
 
 proof lemm2 : nat(X()) => Hoare(myeq(X(),1),while(blt(X(),3),affect(X(),1+X())),myeq(X(),3)).
