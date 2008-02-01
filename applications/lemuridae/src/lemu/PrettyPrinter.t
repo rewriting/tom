@@ -362,22 +362,28 @@ class PrettyPrinter {
       funAppl("if_then_else",(a,b,c)) -> {
         return "if (" + `toLatex(a) + ") then (" + `toLatex(b) + ") else (" + `toLatex(c) + ")";
       }
-      funAppl("pred_args_cons",(h,t)) -> {
-        return `toLatex(h) + "\\!::\\!" + `toLatex(t);
+      l@funAppl("arg_cons",(x,y)) -> {
+        if(endedByArgNil(`l)) return argListToLatex(`l) ; 
+        else return toLatex(`x) + ":" + toLatex(`y);
       }
-      funAppl("pred_args_nil",()) -> {
+      funAppl("arg_nil",()) -> {
         return "[]";
       }
-      funAppl("predappl",(funAppl("eq_enc",()), funAppl("pred_args_cons",(x,funAppl("pred_args_cons",(y,funAppl("pred_args_nil",()))))) )) -> {
-        return `toLatex(x) + "\\dot{=}" + `toLatex(y);
-      }
-      funAppl("predappl",(p,l)) -> {
-        return "@(" + `toLatex(p) + "," + `toLatex(l) + ")";
+      funAppl("predappl",(funAppl(p,()),l)) -> {
+        return  "\\overline{" + `p + "}(" + `toLatex(l) + ")";
       }
       funAppl("affect",(x,e)) -> {
         return `toLatex(x) + ":=" + `toLatex(e);
       }
-
+      funAppl("while",(b,e)) -> {
+        return %[while\ @`toLatex(b)@\ do\ @`toLatex(e)@\ done]%;
+      }
+      funAppl("beq",(x,y)) -> {
+        return "(" + `toLatex(x) + " = " + `toLatex(y) + ")";
+      }
+      funAppl("bnot",(x)) -> {
+        return "!(" + `toLatex(x) + ")";
+      }
 
 
      funAppl(n, ()) -> { return `n + "()";}
@@ -469,6 +475,39 @@ class PrettyPrinter {
     
   }
 
+  // Hoare pretty-print
+  private static boolean endedByArgNil(Term l) {
+    %match(Term l) {
+      funAppl("arg_cons",(_,funAppl("arg_nil",()))) -> { return true; }
+      funAppl("arg_cons",(_,y)) -> { return endedByArgNil(`y); }
+    }
+    return false;
+  }
+
+  public static String prettyArgList(Term t) {
+    %match(Term t) {
+      funAppl("arg_cons",(x,funAppl("arg_nil",()))) -> { 
+        return prettyPrint(`x); 
+      }
+      funAppl("arg_cons",(x,y)) -> {
+        return prettyPrint(`x) + "," + prettyArgList(`y); 
+      }
+    }
+    return null;
+  }
+
+  public static String argListToLatex(Term t) {
+    %match(Term t) {
+      funAppl("arg_cons",(x,funAppl("arg_nil",()))) -> { 
+        return toLatex(`x); 
+      }
+      funAppl("arg_cons",(x,y)) -> {
+        return toLatex(`x) + "," + argListToLatex(`y); 
+      }
+    }
+    return null;
+  }
+
 
   // finite 1st order theory of classes list pretty print
   private static boolean endedByNil(Term l) {
@@ -477,6 +516,16 @@ class PrettyPrinter {
       funAppl("cons",(_,y)) -> { return endedByNil(`y); }
     }
     return false;
+  }
+
+  public static String prettyList(Term t) {
+    %match(Term t) {
+      funAppl("cons",(x,funAppl("nil",()))) -> { return prettyPrint(`x); }
+      funAppl("cons",(x,y)) -> {
+        return prettyPrint(`x) + "," + prettyList(`y); 
+      }
+    }
+    return null;
   }
 
   public static String listToLatex(Term t) {
@@ -572,8 +621,8 @@ class PrettyPrinter {
 
       // Hoare triples
       relationAppl("Hoare",(P,S,Q)) -> {
-        return "{" + `prettyPrint(P) + "}" 
-          + `prettyPrint(S)  + "{" + `prettyPrint(Q) + "}";
+        return "{" + `prettyPrint(P) + "} " 
+          + `prettyPrint(S)  + " {" + `prettyPrint(Q) + "}";
       }
  
 
@@ -673,22 +722,26 @@ class PrettyPrinter {
         return `prettyPrint(x) + ";" + `prettyPrint(y); 
       }
       funAppl("and",(a,b)) -> {
-        return `prettyPrint(a) + "&&" + `prettyPrint(b);
+        return `prettyPrint(a) + " && " + `prettyPrint(b);
+      }
+      funAppl("not",(b)) -> {
+        return "!(" + `prettyPrint(b) + ")";
       }
       funAppl("impl",(a,b)) -> {
-        return `prettyPrint(a) + "~>" + `prettyPrint(b);
+        return `prettyPrint(a) + " ~> " + `prettyPrint(b);
       }
       funAppl("if_then_else",(a,b,c)) -> {
         return "if (" + `prettyPrint(a) + ") then (" + `prettyPrint(b) + ") else (" + `prettyPrint(c) + ")";
       }
-      funAppl("pred_args_cons",(h,t)) -> {
-        return `prettyPrint(h) + "::" + `prettyPrint(t);
+      l@funAppl("arg_cons",(x,y)) -> {
+        if(endedByArgNil(`l)) return "[" + prettyArgList(`l) + "]"; 
+        else return prettyPrint(`x) + ":" + prettyPrint(`y);
       }
-      funAppl("pred_args_nil",()) -> {
+      funAppl("arg_nil",()) -> {
         return "[]";
       }
-      funAppl("predappl",(p,l)) -> {
-        return `prettyPrint(p) + "(" + `prettyPrint(l) + ")";
+      funAppl("predappl",(funAppl(p,()),l)) -> {
+        return "@(" +`p + "," + `prettyPrint(l) + ")";
       }
       funAppl("affect",(x,e)) -> {
         return `prettyPrint(x) + ":=" + `prettyPrint(e);
@@ -811,16 +864,6 @@ class PrettyPrinter {
     return term.toString();
   }
 
-  // finite 1st order theory of classes list pretty print
-  public static String prettyList(Term t) {
-    %match(Term t) {
-      funAppl("cons",(x,funAppl("nil",()))) -> { return prettyPrint(`x); }
-      funAppl("cons",(x,y)) -> {
-        return prettyPrint(`x) + "," + prettyList(`y); 
-      }
-    }
-    return null;
-  }
 
   private static String getPrettySideConstraints(SeqList list) {
 

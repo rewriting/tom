@@ -198,7 +198,7 @@ b: {
 
         //try { PrettyPrinter.display(expanded); } catch (Exception e) {}
 
-        return `rule(customRuleInfo("customrule",expanded),newprems,seq,active);
+        return `rule(customRuleInfo("{\\sc super}",expanded),newprems,seq,active);
       }
     }
   }
