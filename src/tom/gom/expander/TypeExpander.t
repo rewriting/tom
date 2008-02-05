@@ -249,7 +249,13 @@ public class TypeExpander {
       GomModule(moduleName,ConcSection(_*,
             Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(typeName),_*)),_*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        if (environment().isBuiltinSort(`typeName)) {
+          getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
+            new Object[]{(`typeName)});
+          result.add(environment().builtinSort(`typeName));
+        } else {
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        }
       }
     }
     %match(GomModule module) {
@@ -258,7 +264,13 @@ public class TypeExpander {
                 SortType[Type=GomType(typeName)],
             _*)),_*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        if (environment().isBuiltinSort(`typeName)) {
+          getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
+            new Object[]{(`typeName)});
+          result.add(environment().builtinSort(`typeName));
+        } else {
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        }
       }
     }
     return result;
@@ -281,7 +293,11 @@ public class TypeExpander {
                     _*)),
                 _*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        if (environment().isBuiltinSort(`typeName)) {
+          result.add(environment().builtinSort(`typeName));
+        } else {
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        }
       }
     }
     %match(GomModule module) {
@@ -296,7 +312,11 @@ public class TypeExpander {
                     _*)],_*)),
                 _*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        if (environment().isBuiltinSort(`typeName)) {
+          result.add(environment().builtinSort(`typeName));
+        } else {
+          result.add(`SortDecl(typeName,ModuleDecl(moduleName,streamManager.getPackagePath(moduleName.getName()))));
+        }
       }
     }
     return result;

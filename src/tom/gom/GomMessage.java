@@ -126,6 +126,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Problems encountered expanding hooks for module {0}");
 
   // GomTypeExpander
+  public static final GomMessage operatorOnBuiltin =
+    new GomMessage("Builtin type {0} cannot have operators");
   public static final GomMessage orphanedHook =
     new GomMessage("The operator {0} is not declared, but used for a hook");
   public static final GomMessage mismatchedMakeArguments =
