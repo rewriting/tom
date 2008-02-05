@@ -154,7 +154,11 @@ public class TestHandler extends Handler {
    */
 
   public void nonRegressionTest(PlatformLogRecord record) {
-    //The nonRegressionTest method verify that all structured log messages (of type PlatformLogRecord) were attempted in the same order and with the same parameters. The attempted messages are contained in a file with suffix .nrt. Currently, only the type of messages are compared.
+    /* The nonRegressionTest method verify that all structured log messages (of
+     * type PlatformLogRecord) were attempted in the same order and with the
+     * same parameters. The attempted messages are contained in a file with
+     * suffix .nrt. Currently, only the type of messages are compared.
+     */
     PlatformMessage message = record.getPlatformMessage();
     //TODO : comparing this elements
     int line = record.getLine();

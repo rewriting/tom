@@ -278,6 +278,10 @@ public class GomCommonTask extends MatchingTask {
   }
 
   public void execute() throws BuildException {
+    compile();
+  }
+
+  protected void compile() throws BuildException {
     try {
       checkParameters();
       resetFileLists();
@@ -309,7 +313,7 @@ public class GomCommonTask extends MatchingTask {
         DirectoryScanner ds = this.getDirectoryScanner(srcDir);
         String[] files = ds.getIncludedFiles();
 
-        scanDir(srcDir,getDestdir().getCanonicalFile(),files);
+        scanDir(srcDir,(getDestdir()!=null?getDestdir().getCanonicalFile():null),files);
       }
       printCompileList(compileList);
       if(getConfig() != null) {

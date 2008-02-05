@@ -33,10 +33,12 @@
                 termpointer="true"
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
+         <exclude name="**/error/**"/>
     </gom.preset>
     <gom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
          <include name="**/*.gom"/>
+         <exclude name="**/error/**"/>
     </gom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
@@ -114,6 +116,13 @@
   <target name="regress"
     description="Run regresssion tests"
     depends="build">
+    <taskdef name="gomregress"
+             classname="regress.GomErrorTask">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${test.build}"/>
+      </classpath>
+    </taskdef>
     <taskdef name="tomregress"
              classname="regress.TomErrorTask">
       <classpath>
@@ -121,13 +130,18 @@
         <pathelement location="${test.build}"/>
       </classpath>
     </taskdef>
+      <gomregress config="${gomconfigfile}"
+                  srcdir="${test.src}">
+        <classpath refid="tom.classpath"/>
+        <include name="regress/error/**/*.gom"/>
+      </gomregress>
     <tomregress config="${tomconfigfile}"
            nowarn="${nowarnings}"
            optimize="${optimize}"
            optimize2="${optimize2}"
            inline="${inline}"
            inlineplus="${inlineplus}"
-      	   autoDispatch="${autoDispatch}"
+      	   genIntrospector="${genIntrospector}"
            verbose="${verbose}"
            fork="${tomfork}"
            pretty="${pretty}"

@@ -22,13 +22,13 @@
  **/
 
 package regress;
-import tom.engine.tools.ant.TomTask;
+import tom.gom.tools.ant.GomTask;
 
 import org.apache.tools.ant.BuildException;
 
-public class TomErrorTask extends TomTask {
+public class GomErrorTask extends GomTask {
 
-  protected void compile() {
+  public void execute() {
     try {
       super.compile();
     } catch(BuildException e) {
