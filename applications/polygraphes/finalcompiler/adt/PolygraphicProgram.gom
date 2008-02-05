@@ -237,7 +237,7 @@ sort TwoPath:block(){
 	public  String prettyPrint (){
 		%match (this){
 					TwoC0(left,right*) -> { return "TwoC0("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
-					TwoC1(left,right*) -> { return "TwoC1("+`left.prettyPrint()+","+`TwoC0(right*).prettyPrint()+")";}
+					TwoC1(left,right*) -> { return "TwoC1("+`left.prettyPrint()+","+`TwoC1(right*).prettyPrint()+")";}
 		}
 		return this.prettyPrintBis();
 		}
