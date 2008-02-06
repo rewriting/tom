@@ -30,62 +30,56 @@ public abstract class FlowPolicy implements Policy {
 
   //Verification of state
   public boolean valid(State setOfAccesses){
-    ArrayList<RequestUponState> implicitRequestsUponOriginalState = new ArrayList<RequestUponState>();
-
-    try {
-    	//make explicit implicit accesses
-      State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
-      	//add implicit accesses to "implicitRequestsUponOriginalState"
-      %match(res){
-        state[writes=accesses(_*,a@access[e=implicit()],_*)]->{
-          implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));
-        }
-        state[reads=accesses(_*,a@access[e=implicit()],_*)]->{
-          implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));
-        }
-      }
-
-      //for each implicit access 
-      for(RequestUponState iruos:implicitRequestsUponOriginalState){
-        //test if the implicit access is accepted
-        if (!(transition(iruos).getgranted())){
-        	//behavior if the access is not granted which means that there is a leakage
-          System.out.print("Scenario detected :"+iruos);
-          return false;
-        }
-      }
-
-
+	  ArrayList<RequestUponState> implicitRequestsUponOriginalState = new ArrayList<RequestUponState>();
+	  try {
+		  //	make explicit implicit accesses
+		  State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
+		  //add implicit accesses to "implicitRequestsUponOriginalState"
+		  %match(res){
+			  state[writes=accesses(_*,a@access[e=implicit()],_*)]->{
+				  implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));
+			  }
+			  state[reads=accesses(_*,a@access[e=implicit()],_*)]->{
+				  implicitRequestsUponOriginalState.add(`rus(request(add(),a),setOfAccesses));
+			  }
+		  }
+		  //for each implicit access 
+		  for(RequestUponState iruos:implicitRequestsUponOriginalState){
+			  //test if the implicit access is accepted
+			  if (!(transition(iruos).getgranted())){
+				  //behavior if the access is not granted which means that there is a leakage
+				  System.out.print("Scenario detected :"+iruos);
+				  return false;
+			  }
+		  }
     } catch (Exception e) {
-      System.out.println("A problem occured while applying strategy");
+    	System.out.println("A problem occured while applying strategy");
     }
     // behavior if the access is granted
     return true;
-
   }
 
   // For a fixed configuration of subjects and objects and a given permutation for requests  
   public Object[] check(RequestUponState rus){
 	  Object[] result=new Object[2];
 	  result[1]=true;
-      	  // try to add the access to the state given the implementation of the policy
-      Response response=transition(rus);
-      	  // get the new state whether it has changed or not
+	  // try to add the access to the state given the implementation of the policy
+	  Response response=transition(rus);
+	  // get the new state whether it has changed or not
       result[0]=response.getstate();
-      	  // if the request is granted
+      // if the request is granted
       if(response.getgranted()) {
-    	  	// Verify the new state, if the verification fails generate an error message and return false
-        if (valid((State)result[0])==false){
-        	//System.out.println("Information leakage detected");
-        	result[1]=false;
-        }
-      }else{
+    	  // Verify the new state, if the verification fails generate an error message and return false
+    	  if (valid((State)result[0])==false) {
+    		  //System.out.println("Information leakage detected");
+    		  result[1]=false;
+    	  }
+      } else {
     	  result[1]=true;
       }
-      
-	  	  //else generate a message and return the result 
-    //System.out.println("No information leakage detected");
-    return result;
+ 	  //else generate a message and return the result 
+      //System.out.println("No information leakage detected");
+      return result;
   }
 
 }
