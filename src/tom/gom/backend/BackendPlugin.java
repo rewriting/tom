@@ -58,7 +58,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='optimize' altName='O' description='Optimize generated code' value='false'/>" +
     "<boolean name='optimize2' altName='O2' description='Optimize generated code' value='false'/>" +
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
-    "<boolean name='strategies-mapping' altName='sm' description='Enable strategy mapping support' value='false'/>" +
+    "<boolean name='strategies-mapping' altName='sm' description='Generate tom mapping for strategies' value='false'/>" +
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
     "</options>";
 
