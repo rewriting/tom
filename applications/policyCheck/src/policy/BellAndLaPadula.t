@@ -4,8 +4,9 @@ import accesscontrol.types.*;
 import java.util.ArrayList;
 import policy.Policy;
 
-public class BellAndLaPadula extends FlowPolicy{  
-	%include { ../accesscontrol/accesscontrol.tom }
+public class BellAndLaPadula extends FlowPolicy{
+	%include { sl.tom }
+  	%include { ../accesscontrol/accesscontrol.tom }
 
 	//Constructor
 	public BellAndLaPadula(PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved){
@@ -45,6 +46,69 @@ public class BellAndLaPadula extends FlowPolicy{
 		}
 		throw new RuntimeException("should not be there");
 	}
+
+
+	 %strategy makeExplicit() extends `Identity() {
+    visit State {
+      state(reads@accesses(_*,access(s1,o1,am(0),_),_*,access(s2,o2,am(0),_),_*),
+            writes@accesses(_*,access(s1,o2,am(1),_),_*)) &&
+          !accesses(_*,access(s2,o1,am(0),_),_*) << reads -> {
+        return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
+      }
+      state(reads@accesses(_*,access(s2,o2,am(0),_),_*,access(s1,o1,am(0),_),_*),
+            writes@accesses(_*,access(s1,o2,am(1),_),_*)) &&
+          !accesses(_*,access(s2,o1,am(0),_),_*) << reads -> {
+        return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
+      }
+    }
+  }
+
+
+	   //Verification of state by the predicate
+  public boolean verifyPredicate(State setOfAccesses){
+	  boolean result=true;
+	  try {
+		  //	make explicit implicit accesses
+		  State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
+		  //test property 1 of the predicate
+		  result=result && property1(res);
+		  //test property 2 of the predicate
+		  result=result && property2(res);
+    } catch (Exception e) {
+    	System.out.println("A problem occured while applying strategy");
+    }
+    // behavior if the access is granted
+    return result;
+  }
+
+  //Verify property 1 with implicit accesses included
+  public boolean property1(State res){
+	  ListOfAccesses explicitAndImplicitReads=res.getreads();
+	  %match(explicitAndImplicitReads){
+		  accesses(_*,read@access(s,o,_,_),_*)->{
+			  if (!compare(`s.getsl(),`o.getsl())){
+				  System.out.print("Scenario detected :"+`read);
+				  return false;
+			  }
+		  }
+	  }
+	  return true;
+  }
+
+  //Verify property 2
+  public boolean property2(State res){
+	  %match(res){
+		state(accesses(_*,a@access(s,o1,_,_),_*),accesses(_*,b@access(s,o2,_,_),_*))-> { 
+			if (!compare(`o1.getsl(),`o2.getsl())){
+				  System.out.print("Scenario detected :"+`a+","+`b);
+				  return false;
+			  }
+		}
+	  }
+	  return true;
+  }
+
+
 
 	//Compare two levels of security
 	public boolean compare(SecurityLevel l1,SecurityLevel l2){
