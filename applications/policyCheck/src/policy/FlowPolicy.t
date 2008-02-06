@@ -59,6 +59,58 @@ public abstract class FlowPolicy implements Policy {
     return true;
   }
 
+    //Verification of state
+  public boolean verifyPredicate(State setOfAccesses){
+	  boolean result=true;
+	  try {
+		  //	make explicit implicit accesses
+		  State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
+		  result=result && property1(res);
+		  result=result && property2(res);
+    } catch (Exception e) {
+    	System.out.println("A problem occured while applying strategy");
+    }
+    // behavior if the access is granted
+    return result;
+  }
+
+  //Verify property 1 with implicit accesses included
+  public boolean property1(State res){
+	  ListOfAccesses explicitAndImplicitReads=res.getreads();
+	  %match(explicitAndImplicitReads){
+		  accesses(_*,read@access(s,o,_,_),_*)->{
+			  if (!compare(`s.getsl(),`o.getsl())){
+				  System.out.print("Scenario detected :"+`read);
+				  return false;
+			  }
+		  }
+	  }
+	  return true;
+  }
+
+  //Verify property 2
+  public boolean property2(State res){
+	  %match(res){
+		state(accesses(_*,a@access(s,o1,_,_),_*),accesses(_*,b@access(s,o2,_,_),_*))-> { 
+			if (!compare(`o1.getsl(),`o2.getsl())){
+				  System.out.print("Scenario detected :"+`a+","+`b);
+				  return false;
+			  }
+		}
+	  }
+	  return true;
+  }
+
+
+  //Compare two levels of security
+	public boolean compare(SecurityLevel l1,SecurityLevel l2){
+		%match (PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved){
+			setsl(_*,cl(_*,a,_*,b,_*),_*)->{if ((l1.equals(`a) && l2.equals(`b)) || l1.equals(l2) ){return true;}}
+		}
+		return false;
+	}
+
+  
   // For a fixed configuration of subjects and objects and a given permutation for requests  
   public Object[] check(RequestUponState rus){
 	  Object[] result=new Object[2];
