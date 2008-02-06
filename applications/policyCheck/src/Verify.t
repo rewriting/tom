@@ -106,11 +106,11 @@ public class Verify {
     %match (iv) {
       verifyState(order,subjects,objects,state,b()) -> {
         Policy policy=new BellAndLaPadula(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
-        b=policy.valid(fromForPrintToMain_State(`subjects,`objects,`state));
+        b=policy.verifyPredicate(fromForPrintToMain_State(`subjects,`objects,`state));
       }
       verifyState(order,subjects,objects,state,m()) -> {
         Policy policy=new McLean(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
-        b=policy.valid(fromForPrintToMain_State(`subjects,`objects,`state));
+        b=policy.verifyPredicate(fromForPrintToMain_State(`subjects,`objects,`state));
       }
       verifyConfig(order,subjects,objects,b()) -> {
         Policy policy=new BellAndLaPadula(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
