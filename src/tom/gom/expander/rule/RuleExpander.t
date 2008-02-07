@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import tom.gom.GomMessage;
 import tom.gom.adt.gom.types.*;
 import tom.gom.adt.rule.types.*;
 import tom.gom.tools.error.GomRuntimeException;
@@ -199,6 +200,16 @@ public class RuleExpander {
       Rule rule = ruleList.getHeadRuleList();
       ruleList = ruleList.getTailRuleList();
       %match(rule) {
+        (Rule|ConditionalRule)[lhs=Appl[symbol=listOp,args=TermList(var@(UnnamedVarStar|VarStar)[],_*)]] -> {
+            String varname = "_";
+            %match(var) {
+                VarStar(name) -> { varname = `name; }
+            } 
+            getLogger().log(Level.WARNING, GomMessage.variadicRuleStartingWithStar.getMessage(),
+                    new Object[]{`(listOp),varname});
+        }
+      }
+      %match(rule) {
         Rule(lhs,rhs) -> {
           genTerm(`lhs,output);
           output.append(" -> { return `");
@@ -252,6 +263,10 @@ public class RuleExpander {
       }
       Var(name) -> {
         output.append(`name);
+      }
+      VarStar(name) -> {
+        output.append(`name);
+        output.append("*");
       }
       BuiltinInt(i) -> {
         output.append(`i);

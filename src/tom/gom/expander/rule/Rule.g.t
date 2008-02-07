@@ -72,11 +72,12 @@ pattern:
   ID LPAR (term (COMA term)*)? RPAR -> ^(Appl ID ^(TermList term*))
   | (varname=ID) AT (funname=ID) LPAR (term (COMA term)*)? RPAR -> ^(At $varname ^(Appl $funname ^(TermList term*)))
   | UNDERSCORE -> ^(UnnamedVar)
-  | UNDERSCORESTAR -> ^(UnnamedVarStar)
+  | UNDERSCORE STAR -> ^(UnnamedVarStar)
 ;
 term:
   pattern
-  | ID -> ^(Var ID)
+/*  | ID -> ^(Var ID)*/
+  | ID (s=STAR)? -> {null==s}? ^(Var ID) ->^(VarStar ID)
   | builtin
 ;
 builtin:
@@ -91,7 +92,8 @@ labelledpattern:
 ;
 graphpattern:
   constructor
-  | ID -> ^(Var ID)
+/*  | ID -> ^(Var ID)*/
+  | ID (s=STAR)? -> {null==s}? ^(Var ID) ->^(VarStar ID)
   | builtin
   | ref
 ;
@@ -106,7 +108,7 @@ constructor:
 ARROW : '->';
 AMPERCENT : '&';
 UNDERSCORE : '_';
-UNDERSCORESTAR : '_*';
+STAR : '*';
 AT : '@';
 COLON : ':';
 LPAR : '(';
@@ -126,7 +128,7 @@ IF : 'if' ;
 INT : ('0'..'9')+;
 ESC : '\\' ( 'n'| 'r'| 't'| 'b'| 'f'| '"'| '\''| '\\');
 STRING : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"';
-ID : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ('*')?;
+ID : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 WS : (' '|'\t'|'\n')+ { $channel=HIDDEN; };
 
 SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; };

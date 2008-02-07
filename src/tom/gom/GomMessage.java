@@ -151,6 +151,9 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage slotIncompatibleTypes =
     new GomMessage("Incompatible types for slot {0}: {1}, {2}. Two slots with the same name in the same sort should have same type");
 
+  // RuleExpander
+  public static final GomMessage variadicRuleStartingWithStar =
+    new GomMessage("Rule for variadic operator {0} should not have list variable {1} in head position");
   // GomCompiler
   public static final GomMessage compilationIssue =
     new GomMessage("Problems encountered compiling module {0}");
