@@ -359,7 +359,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
     String template = getSymbolTable(moduleName).getEqualTerm(type);
     String res = instantiateTemplate(template,arg1,arg2);
-    if(res==null || (!inlineplus && res == template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_equal_term_@type@(@arg1@,@arg2@)]%;
     }
     return res;

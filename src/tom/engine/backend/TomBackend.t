@@ -226,7 +226,7 @@ public class TomBackend extends TomGenericPlugin {
     stack.push(TomBase.DEFAULT_MODULE_NAME);
     try {
       `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).visitLight(pilCode);
-    } catch(VisitFailure e) { }
+    } catch(VisitFailure e) { /* Ignored */ }
   }
 
   private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {
@@ -234,9 +234,7 @@ public class TomBackend extends TomGenericPlugin {
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
       try {
         markStrategy.visitLight(tomSymbol);
-      } catch(VisitFailure e) { }
-
-
+      } catch(VisitFailure e) { /* Ignored */ }
     }
     getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
   }
@@ -246,7 +244,7 @@ public class TomBackend extends TomGenericPlugin {
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
       try {
         markStrategy.visitLight(tomSymbol);
-      } catch(VisitFailure e) { }
+      } catch(VisitFailure e) { /* Ignored */ }
     }
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
   }

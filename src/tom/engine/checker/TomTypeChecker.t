@@ -224,8 +224,7 @@ public class TomTypeChecker extends TomChecker {
   %strategy checkVariableStar(ttc:TomTypeChecker) extends Identity() {
     visit TomTerm {
       (BuildAppendList|BuildAppendArray)[AstName=Name(listName),HeadTerm=Composite(concTomTerm(VariableStar[Option=options,AstName=Name(variableName),AstType=TypeWithSymbol[RootSymbolName=Name(rootName)]]))] -> {
-        if(`listName != `rootName) {
-          //System.out.println("l = " + `l);
+        if(!`listName.equals(`rootName)) {
           ttc.messageError(findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),
               TomMessage.incoherentVariableStar,
