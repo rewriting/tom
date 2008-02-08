@@ -140,7 +140,7 @@ public class TomSyntaxChecker extends TomChecker {
         }
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomSyntaxCheckingPhase.getMessage(),
-            new Integer((int)(System.currentTimeMillis()-startChrono)));
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
       } catch (Exception e) {
         getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                         new Object[]{getClass().getName(),
@@ -368,7 +368,7 @@ public class TomSyntaxChecker extends TomChecker {
             messageError(currentTomStructureOrgTrack.getFileName(),
                 currentTomStructureOrgTrack.getLine(),
                 TomMessage.symbolDomainError,
-                new Object[]{new Integer(position), symbName, `(typeName)});
+                new Object[]{Integer.valueOf(position), symbName, `(typeName)});
           }
           position++;
         }
@@ -466,7 +466,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(nbArgs != domainLength) {
       messageError(orgTrack.getFileName(),orgTrack.getLine(),
                    TomMessage.badMakeDefinition,
-                   new Object[]{new Integer(nbArgs), new Integer(domainLength)});
+                   new Object[]{Integer.valueOf(nbArgs), Integer.valueOf(domainLength)});
     }
   } // verifyMakeDeclArgs
 
@@ -1040,7 +1040,7 @@ matchLbl: %match(constr) {
             int nbExpectedArgs = types.length();
             if(nbArgs != nbExpectedArgs) {
               messageError(fileName,decLine, TomMessage.symbolNumberArgument,
-                  new Object[]{termName, new Integer(nbExpectedArgs), new Integer(nbArgs)});
+                  new Object[]{termName, Integer.valueOf(nbExpectedArgs), Integer.valueOf(nbArgs)});
               break matchblock;
             }
             while(!args.isEmptyconcTomTerm()) {
@@ -1498,7 +1498,7 @@ matchLbl: %match(constr) {
                      new Object[]{pairSlotName.getString(), methodName, listOfPossibleSlot.toString()});
         return; // break analyses
       } else { // then check for repeated good slot name
-        Integer integerIndex = new Integer(index);
+        Integer integerIndex = Integer.valueOf(index);
         if(studiedSlotIndexList.contains(integerIndex)) {
             // Error: repeated slot
           messageError(fileName,decLine,

@@ -128,7 +128,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
         // verbose
         logger.log(Level.INFO, TomMessage.tomOptimizationPhase.getMessage(),
-            new Integer((int)(System.currentTimeMillis()-startChrono)) );
+            Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
         logger.log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
             new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
@@ -460,7 +460,7 @@ public class TomOptimizer extends TomGenericPlugin {
                   TomMessage.unusedVariable,varName);
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), varName });
+                  new Object[]{ Integer.valueOf(mult), varName });
             }
           }
           //remove all the unused letassign in the letref body
@@ -473,7 +473,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), varName });
+                  new Object[]{ Integer.valueOf(mult), varName });
             }
             //System.out.println("replace1: " + `var + "\nby: " + `exp);
             return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
@@ -481,7 +481,7 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), varName });
+                  new Object[]{ Integer.valueOf(mult), varName });
             }
           }
         } else {
@@ -489,7 +489,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(varName.length() > 0) {
             logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), varName });
+                new Object[]{ Integer.valueOf(mult), varName });
           }
         }
       }
@@ -531,7 +531,7 @@ public class TomOptimizer extends TomGenericPlugin {
                   TomMessage.unusedVariable,varName);
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
-                  new Object[]{ new Integer(mult), varName });
+                  new Object[]{ Integer.valueOf(mult), varName });
             }
           }
           //remove all the unused letassign in the letref body
@@ -544,14 +544,14 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), varName });
+                  new Object[]{ Integer.valueOf(mult), varName });
             }
             return (Instruction) readPos.getReplace(`ExpressionToTomTerm(exp)).visitLight(`body);
           } else {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), varName });
+                  new Object[]{ Integer.valueOf(mult), varName });
             }
           }
         } else {
@@ -559,7 +559,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(varName.length() > 0) {
             logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), varName });
+                new Object[]{ Integer.valueOf(mult), varName });
           }
         }
       }

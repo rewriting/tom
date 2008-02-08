@@ -120,7 +120,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
       // test if the argument is a Strategy
       %match(TomType type) {
         Type(ASTTomType("Strategy"), _) -> {
-          stratChild.add(new Integer(index));
+          stratChild.add(Integer.valueOf(index));
         }
       }
 

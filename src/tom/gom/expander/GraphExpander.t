@@ -223,7 +223,7 @@ public class GraphExpander {
     String moduleName = gomModuleName.getName();
     ClassName abstractType = `ClassName(packagePath+"."+moduleName.toLowerCase(),moduleName+"AbstractType");
 
-    String prefix = ((packagePath=="")?"":packagePath+".")+moduleName.toLowerCase();
+    String prefix = (("".equals(packagePath))?"":packagePath+".")+moduleName.toLowerCase();
     String codeImport =%[
     import @prefix@.types.*;
     import @prefix@.*;

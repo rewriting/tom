@@ -111,7 +111,7 @@ public class Expander extends TomGenericPlugin {
       TomTerm expandedTerm = (TomTerm) this.expand((TomTerm)getWorkingTerm());
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
-          new Integer((int)(System.currentTimeMillis()-startChrono)) );
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
       setWorkingTerm(expandedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + EXPANDED_SUFFIX, (TomTerm)getWorkingTerm());

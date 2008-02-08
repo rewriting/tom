@@ -97,7 +97,7 @@ public class TomTypeChecker extends TomChecker {
           System.out.println("strategy failed");
         }
         // verbose
-        getLogger().log( Level.INFO, TomMessage.tomTypeCheckingPhase.getMessage(), new Integer((int)(System.currentTimeMillis()-startChrono)) );
+        getLogger().log( Level.INFO, TomMessage.tomTypeCheckingPhase.getMessage(), Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(), new Object[]{getClass().getName(), getStreamManager().getInputFileName(),e.getMessage()} );
         e.printStackTrace();

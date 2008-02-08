@@ -131,7 +131,7 @@ public class TomBackend extends TomGenericPlugin {
           // verbose
           getLogger().log(Level.INFO,
               TomMessage.tomGenerationPhase.getMessage(),
-              new Integer((int)(System.currentTimeMillis()-startChrono)));
+              Integer.valueOf((int)(System.currentTimeMillis()-startChrono)));
           output.close();
         } catch (IOException e) {
           getLogger().log(Level.SEVERE,

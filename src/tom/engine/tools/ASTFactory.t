@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2008, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -129,7 +129,7 @@ public class ASTFactory {
     }
     return list;
   }
-  
+
   public static ConstraintInstructionList makeConstraintInstructionList(List argumentList) {
     ConstraintInstructionList list = `concConstraintInstruction();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
@@ -181,7 +181,7 @@ public class ASTFactory {
     }
     return list;
   }
-   
+
   public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList,
       PairNameDeclList pairNameDeclList, List optionList) {
     return `Symbol(Name(symbolName),TypesToType(typeList,resultType),pairNameDeclList,makeOptionList(optionList));
@@ -209,7 +209,7 @@ public class ASTFactory {
           TomTypeAlone("unknown type"),
           concConstraint()));
   }
-  
+
   public static Constraint makeStorePosition(TomName name,int line, String fileName) {
     return `AssignPositionTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
@@ -226,21 +226,19 @@ public class ASTFactory {
     return list;
   }
 
-  
   private static Option makeOriginTracking(String name, int line , String fileName) {
     return `OriginTracking(Name(name), line, fileName);
   }
 
-  
   protected static TomType makeType(String typeNameTom, String typeNametGL) {
     TomType typeTom = `ASTTomType(typeNameTom);
     TomType sortTL  = `TLType(ITL(typeNametGL));
     return `Type(typeTom,sortTL);
   }
-  
+
     /*
      * create an <sort> symbol
-     * where <sort> could be int. double or String  
+     * where <sort> could be int. double or String
      */
   private static void makeSortSymbol(SymbolTable symbolTable,
                              String sort,
@@ -250,7 +248,7 @@ public class ASTFactory {
     TomSymbol astSymbol = makeSymbol(value,`TomTypeAlone(sort),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
-  
+
     /*
      * create an integer symbol
      */
@@ -293,8 +291,8 @@ public class ASTFactory {
                                String value, List optionList) {
     String sort = "String";
     makeSortSymbol(symbolTable, sort, value, optionList);
-  } 
-  
+  }
+
     /*
      * update the root of lhs: it becomes a defined symbol
      */
@@ -396,14 +394,14 @@ public class ASTFactory {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.get(0);
       %match(TomTerm term) {
-        (RecordAppl|TermAppl)[NameList=(Name(""))] -> { 
+        (RecordAppl|TermAppl)[NameList=(Name(""))] -> {
           return true;
         }
       }
     }
     return false;
   }
-  
+
   public static List metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
@@ -483,7 +481,7 @@ public class ASTFactory {
         TomTerm subList = buildList(name,`tail,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
-          if(name==`opName) {
+          if(name.equals(`opName)) {
             return `BuildAppendList(name,head,subList);
           }
         }
@@ -496,13 +494,13 @@ public class ASTFactory {
         /*
          * compare the codomain of tomName with topDomain
          * if the codomain of the inserted element is equal to the codomain
-         * of the list operator, a BuildAppendList is performed 
+         * of the list operator, a BuildAppendList is performed
          */
           TomSymbol symbol = symbolTable.getSymbolFromName(`tomName);
           String codomain = TomBase.getTomType(TomBase.getSymbolCodomain(symbol));
           if(codomain == topCodomain) {
             return `BuildAppendList(name,head,subList);
-          } 
+          }
         }
         return `BuildConsList(name,head,subList);
       }
@@ -551,7 +549,7 @@ public class ASTFactory {
         TomTerm subList = buildArray(name,`tail,size+1,symbolTable);
         /* Flatten nested lists, unless domain and codomain are equals */
         if(topDomain != topCodomain) {
-          if(name==`opName) {
+          if(name.equals(`opName)) {
             return `BuildAppendArray(name,head,subList);
           }
         }
@@ -564,13 +562,13 @@ public class ASTFactory {
         /*
          * compare the codomain of tomName with topDomain
          * if the codomain of the inserted element is equal to the codomain
-         * of the list operator, a BuildAppendArray is performed 
+         * of the list operator, a BuildAppendArray is performed
          */
           TomSymbol symbol = symbolTable.getSymbolFromName(`tomName);
           String codomain = TomBase.getTomType(TomBase.getSymbolCodomain(symbol));
           if(codomain == topCodomain) {
             return `BuildAppendArray(name,head,subList);
-          } 
+          }
         }
         return `BuildConsArray(name,head,subList);
       }
@@ -587,7 +585,6 @@ public class ASTFactory {
     }
 
     throw new TomRuntimeException("buildArray strange term: " + args);
-     
   }
 
   /*

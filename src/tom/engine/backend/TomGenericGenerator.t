@@ -104,19 +104,19 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(" > ");
     generateExpression(deep,exp2,moduleName);
   }
-  
+
   protected void buildExpGreaterOrEqualThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
     generateExpression(deep,exp1,moduleName);
     output.write(" >= ");
     generateExpression(deep,exp2,moduleName);
   }
-  
+
   protected void buildExpLessThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
     generateExpression(deep,exp1,moduleName);
     output.write(" < ");
     generateExpression(deep,exp2,moduleName);
   }
-  
+
   protected void buildExpLessOrEqualThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
     generateExpression(deep,exp1,moduleName);
     output.write(" <= ");
@@ -127,7 +127,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generate(deep,expIndex,moduleName);
     output.write(" >= ");
     %match(TomName opNameAST) {
-      EmptyName() -> { 
+      EmptyName() -> {
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
       }
     }
@@ -142,7 +142,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   /*
-   * given a template, computes its instance 
+   * given a template, computes its instance
    * write the result and returns true if a substitution has been done
    * does nothing and returns false otherwise
    */
@@ -241,7 +241,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpGetTail(int deep, String opName, TomType type, TomTerm var, String moduleName) throws IOException {
     String template = getSymbolTable(moduleName).getGetTail(opName);
     if(instantiateTemplate(deep,template,`concTomTerm(var),moduleName) == false) {
-      output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "("); 
+      output.write("tom_get_tail_" + opName + "_" + TomBase.getTomType(type) + "(");
       generate(deep,var,moduleName);
       output.write(")");
     }
@@ -258,7 +258,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {
-      EmptyName() -> { 
+      EmptyName() -> {
         throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
       }
     }
@@ -281,7 +281,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generate(deep,tail,moduleName);
     output.write(")");
   }
-  
+
   protected void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
     generate(deep,varArray,moduleName);
@@ -360,7 +360,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         argType = TomBase.getTLType(getUniversalType());
       }
 
-      genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname, 
+      genDeclInstr(TomBase.getTLType(returnType), "tom_is_fun_sym", opname,
           new String[] { argType, varname }, `Return(ExpressionToTomTerm(code)),deep,moduleName);
     }
 
@@ -438,7 +438,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomType argType2 = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type2)) {
       argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
-    }    
+    }
     boolean inlined = inlineplus;
     if(code.isCode()) {
       // perform the instantiation
@@ -485,7 +485,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Expression code, String moduleName)
     throws IOException {
-      String opname = opNameAST.getString(); 
+      String opname = opNameAST.getString();
       boolean inlined = inlineplus;
       if(code.isCode()) {
         // perform the instantiation
@@ -528,7 +528,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Expression code, String moduleName)
         throws IOException {
-          String opname = opNameAST.getString(); 
+          String opname = opNameAST.getString();
           boolean inlined = inlineplus;
           if(code.isCode()) {
             // perform the instantiation
@@ -573,7 +573,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
       protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
           TomType tlType, Expression code, String moduleName) throws IOException {
-        String opname = opNameAST.getString(); 
+        String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
           // perform the instantiation
@@ -614,7 +614,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
       protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2, String type1, TomType domain, Expression code, String moduleName) throws IOException {
 
-        String opname = opNameAST.getString(); 
+        String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
           // perform the instantiation
@@ -657,7 +657,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
 
       protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type, TomType domain, Expression code, String moduleName) throws IOException {
-        String opname = opNameAST.getString(); 
+        String opname = opNameAST.getString();
         boolean inlined = inlineplus;
         if(code.isCode()) {
           // perform the instantiation
@@ -701,7 +701,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
       protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
         %match(TomName opNameAST) {
-          EmptyName() -> { 
+          EmptyName() -> {
             throw new TomRuntimeException("TomGenericGenerator: bad case: " + opNameAST);
           }
         }
@@ -861,7 +861,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String prefix = "tom_empty_array_";
     String template = getSymbolTable(moduleName).getMakeEmptyArray(name);
     String res = instantiateTemplate(template,size);
-    if(res == template) {
+    if (res.equals(template)) {
       res = prefix+name+"("+size+")";
     }
     return res;
@@ -870,7 +870,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   private String getMakeAddArray(String name, String elt, String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getMakeAddArray(name);
     String res = instantiateTemplate(template,elt,subject);
-    if(res == template) {
+    if (res.equals(template)) {
       res = %[tom_cons_array_@name@(@elt@,@subject@)]%;
     }
     return res;
@@ -879,7 +879,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   private String getGetElementArray(String name,String type,String subject,String index,String moduleName) {
     String template = getSymbolTable(moduleName).getGetElementArray(name);
     String res = instantiateTemplate(template,subject,index);
-    if(res == template) {
+    if (res.equals(template)) {
       res = %[tom_get_element_@name@_@type@(@subject@,@index@)]%;
     }
     return res;
@@ -888,10 +888,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   private String getGetSizeArray(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getGetSizeArray(name);
     String res = instantiateTemplate(template,subject);
-    if(res == template) {
+    if (res.equals(template)) {
       res = %[tom_get_size_@name@_@type@(@subject@)]%;
     }
     return res;
   }
 
-} // class TomGenericGenerator
+}

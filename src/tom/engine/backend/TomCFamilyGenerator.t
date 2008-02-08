@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2008, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -65,7 +65,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.write("=");
     generateExpression(deep,exp,moduleName);
     output.writeln(";");
-  } 
+  }
 
   protected void buildComment(int deep, String text) throws IOException {
     output.writeln("/* " + text + " */");
@@ -119,19 +119,19 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   }
 
   protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
-	output.write(" ( ");  
+	output.write(" ( ");
     generateExpression(deep,exp1,moduleName);
     output.write(" || ");
     generateExpression(deep,exp2,moduleName);
     output.write(" ) ");
   }
- 
+
   protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
     output.write("((" + TomBase.getTLCode(tlType) + ")");
     generateExpression(deep,exp,moduleName);
     output.write(")");
   }
- 
+
   protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
     output.write("!(");
     generateExpression(deep,exp,moduleName);
@@ -139,16 +139,16 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
-    output.write(deep,"if ("); 
-    generateExpression(deep,exp, moduleName); 
+    output.write(deep,"if (");
+    generateExpression(deep,exp, moduleName);
     output.writeln(") {");
     generateInstruction(deep+1,succes, moduleName);
     output.writeln(deep,"}");
   }
-  
+
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
-    output.write(deep,"if ("); 
-    generateExpression(deep,exp,moduleName); 
+    output.write(deep,"if (");
+    generateExpression(deep,exp,moduleName);
     output.writeln(") {");
     generateInstruction(deep+1,succes,moduleName);
     output.writeln(deep,"} else {");
@@ -161,19 +161,19 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     return;
   }
 
-  protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
+  protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType,
                           Expression exp, Instruction body, String moduleName) throws IOException {
     output.write(deep,"{ " + TomBase.getTLCode(tlType) + " ");
     buildAssignVar(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
     output.writeln(deep,"}");
   }
-  
-  protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
+
+  protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType,
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
- 
+
   protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssignVar(deep, var, list, exp, moduleName);
     generateInstruction(deep,body, moduleName);
@@ -194,7 +194,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     generateInstructionList(deep+1,instList, moduleName);
     output.writeln(deep, "}");
   }
- 
+
   protected void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
     output.write(deep,"while (");
     generateExpression(deep,exp,moduleName);
@@ -229,7 +229,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
       if(i<args.length) {
         s.append(", ");
       }
-    } 
+    }
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     s.append(") { " + returnValue + "; }");
 
@@ -273,7 +273,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
       if(i<args.length) {
         s.append(", ");
       }
-    } 
+    }
     s.append(") { ");
     output.write(s);
     generateInstruction(deep,instr,moduleName);
@@ -284,7 +284,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getIsConcList(String name,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getIsFsym(name);
     String res = instantiateTemplate(template,subject);
-    if(res==null || (!inlineplus && res == template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_is_fun_sym_@name@(@subject@)]%;
     }
     return res;
@@ -293,7 +293,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getGetHead(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getGetHead(name);
     String res = instantiateTemplate(template,subject);
-    if(res==null || (!inlineplus && res == template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_get_head_@name@_@type@(@subject@)]%;
     }
     return res;
@@ -302,7 +302,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getGetTail(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getGetTail(name);
     String res = instantiateTemplate(template,subject);
-    if(res==null || (!inlineplus && res == template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_get_tail_@name@_@type@(@subject@)]%;
     }
     return res;
@@ -311,7 +311,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getIsEmptyList(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getIsEmptyList(name);
     String res = instantiateTemplate(template,subject);
-    if(res==null || (!inlineplus && res == template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_is_empty_@name@_@type@(@subject@)]%;
     }
     return res;
@@ -320,7 +320,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   private String getMakeAddList(String name,String head, String tail,String moduleName) {
     String template = getSymbolTable(moduleName).getMakeAddList(name);
     String res = instantiateTemplate(template,head,tail);
-    if(res==null || (!inlineplus && res == template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_cons_list_@name@(@head@,@tail@)]%;
     }
     return res;
@@ -339,7 +339,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String tomType = TomBase.getTomType(codomain);
     String get = getGetHead(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
-    if(domain==codomain) { 
+    if(domain==codomain) {
       return %[((@is_conc@)?@get@:@subject@)]%;
     }
     return get;
@@ -350,12 +350,12 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     String get= getGetTail(name,tomType,subject,moduleName);
     String is_conc = getIsConcList(name,subject,moduleName);
     String empty = getMakeEmptyList(name,moduleName);
-    if(domain==codomain) { 
+    if(domain==codomain) {
       return %[((@is_conc@)?@get@:@empty@)]%;
     }
     return get;
   }
-  
+
   private String getEqualTerm(String type,String arg1, String arg2,String moduleName) {
     String template = getSymbolTable(moduleName).getEqualTerm(type);
     String res = instantiateTemplate(template,arg1,arg2);
@@ -380,7 +380,7 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     if(lazyMode) {
       utype = TomBase.getTLType(getUniversalType());
     }
-    
+
     String listCast = "(" + glType + ")";
     String get_slice = listCast + "tom_get_slice_" + name;
 
@@ -435,13 +435,13 @@ s = %[
                   get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
   }
   ]%;
-   
+
     //If necessary we remove \n code depending on pretty option
     s = ASTFactory.makeSingleLineCode(s, prettyMode);
     output.write(s);
   }
 
-  protected void genDeclMake(String prefix, String funName, TomType returnType, 
+  protected void genDeclMake(String prefix, String funName, TomType returnType,
                              TomList argList, Instruction instr, String moduleName) throws IOException {
     if(nodeclMode) {
       return;
@@ -457,7 +457,7 @@ s = %[
         int index = 0;
         %match(argList) {
           concTomTerm(_*,Variable[AstName=Name(varname)],_*) -> {
-            ncode = ncode.replace("{"+index+"}",`varname); 
+            ncode = ncode.replace("{"+index+"}",`varname);
             index++;
           }
         }

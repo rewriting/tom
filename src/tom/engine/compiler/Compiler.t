@@ -103,7 +103,7 @@ public class Compiler extends TomGenericPlugin {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
       }
       getLogger().log(Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
-          new Integer((int)(System.currentTimeMillis()-startChrono)) );
+          Integer.valueOf((int)(System.currentTimeMillis()-startChrono)) );
     } catch (Exception e) {
       getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
           new Object[]{getStreamManager().getInputFileName(), "Compiler", e.getMessage()} );

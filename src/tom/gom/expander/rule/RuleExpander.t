@@ -410,7 +410,7 @@ public class RuleExpander {
   %strategy GetOperatorDecl(opref:OpRef,opName:String) extends Identity() {
     visit OperatorDecl {
       op@OperatorDecl[Name=name] -> {
-        if (`name == opName) {
+        if (`name.equals(opName)) {
           opref.val = `op;
         }
       }
