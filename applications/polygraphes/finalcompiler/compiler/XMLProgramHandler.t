@@ -108,13 +108,13 @@ public class XMLProgramHandler {
 			System.out.println("BEFORE");
 			myPath.print();
 			//System.out.println("LOG");
-			//long initTime= System.currentTimeMillis();
+			//double initTime= System.currentTimeMillis();
 			myPath=(TwoPath) `InnermostId(ChoiceId(Gravity(),Normalize(),@evalStrategy@)).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@)))).visit(myPath);
 			System.out.println("\nRESULT");
 			myPath.print();
-			//System.out.println("Time : " +(System.currentTimeMillis()-initTime));
+			//System.out.println("Time : " +(System.currentTimeMillis()-initTime)/1000+" s");
 			return myPath;
 		}
 		catch(VisitFailure e) {
