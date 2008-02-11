@@ -47,4 +47,14 @@
                 numberOfSubjects:int,
                 numberOfObjects:int,
                 policy:FlowPolicy)
+   | verifyStateWithPredicateOnly( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
+           subjects:ListOfSubjectsForPrint,
+           objects:ListOfObjectsForPrint,
+           state:StateForPrint,
+           policy:FlowPolicy)
+   | verifyStateWithPredicateAndImplicitAccesses( order:PartiallyOrderdedSetOfSecurityLevelsForPrint,
+           subjects:ListOfSubjectsForPrint,
+           objects:ListOfObjectsForPrint,
+           state:StateForPrint,
+           policy:FlowPolicy)
  
