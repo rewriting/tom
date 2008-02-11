@@ -9,4 +9,6 @@ public interface Policy {
 	public boolean valid(State setOfAccesses);
 	
 	public boolean verifyPredicate(State setOfAccesses);
+	
+	public boolean verifyPredicateW(State setOfAccesses);
 }
