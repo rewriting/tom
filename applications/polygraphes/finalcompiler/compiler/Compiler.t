@@ -115,7 +115,7 @@ public class @programName@{
 						TwoPath input=makeTwoPathWithID(e);
 						//updateLogPath(input);
 						//saves the new twopath in another xml file
-						@programName@Tools.save(@programName@Tools.twoPath2XML(eval(input)),new File(outputFolderPath+"output.xml"));
+						@programName@Tools.save(@programName@Tools.twoPath2XML(eval(input)),new File(outputFolderPath+"result.xml"));
 						//saves the history
 						//@programName@Tools.save(log+"</Log>",new File(outputFolderPath+"log.xml"));
 					} catch (Exception e) {
@@ -277,7 +277,7 @@ public class @programName@{
   	  				System.out.print(".");
   	  				return myNewPath;}
   	  		}
-  	  		TwoC1(head*,X@@TwoC0(_*),tail*)->{if(isTwoC0Id(`X)){System.out.println("supprTwoIds");if(`head==`TwoId(Id())){return `tail;}return `TwoC1(head,tail);}
+  	  		TwoC1(head*,X@@TwoC0(_*),tail*)->{if(isTwoC0Id(`X)){if(`head==`TwoId(Id())){return `tail;}return `TwoC1(head,tail);}
   	  		}
   	  	
   	  		TwoC1(TwoC1(X*),Y*) -> {System.out.print(".");return `TwoC1(X*,Y*); }

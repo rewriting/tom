@@ -19,7 +19,7 @@ public class MakeInput{
 			System.out.println("you must indicate the desired path of the xml input");
 			}
 		else{
-			if(args[0].substring(args[0].length()-1, args[0].length()).equals("/")){
+			if(args[0].substring(args[0].length()-4, args[0].length()).equals(".xml")){
 				inputPath=args[0];
 				TwoPath testNat=`TwoC1(TwoC0(TwoC1(TwoC0(makeNat(2),makeNat(6)),TestCellSet.multiplication),makeNat(3)),TestCellSet.division);
 				TwoPath testFibo=`TwoC1(makeNat(10),TestCellSet.fibonacci);
@@ -32,6 +32,8 @@ public class MakeInput{
 				//saves it
 				if(!input.equals("")){
 					try{
+						String[] folderPath=inputPath.split("[^/]+\\.xml");
+						(new File(folderPath[0])).mkdir();
 						save(input,new File(inputPath));
 					}catch(Exception e){e.printStackTrace();}
 				}

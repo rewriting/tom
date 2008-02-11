@@ -156,6 +156,8 @@ public class MakeProgram{
 		program+="</PolygraphicProgram>";
 		//and we save the string in a file
 		try{
+			String[] folderPath=programPath.split("[^/]+\\.xml");
+			(new File(folderPath[0])).mkdir();
 			XMLhandler.save(program,new File(programPath));
 		}catch(Exception e){e.printStackTrace();}
 			}

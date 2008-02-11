@@ -107,7 +107,7 @@ public class XMLProgramHandler {
 		try{
 			System.out.println("BEFORE");
 			myPath.print();
-			System.out.println("LOG");
+			//System.out.println("LOG");
 			myPath=(TwoPath) `InnermostId(ChoiceId(Gravity(),Normalize(),@evalStrategy@)).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@,Print())))).visitLight(myPath);
 			//myPath=(TwoPath) `RepeatId(Sequence(RepeatId(TopDown(Gravity())),RepeatId(TopDown(Normalize())),RepeatId(Sequence(@evalStrategy@)))).visit(myPath);

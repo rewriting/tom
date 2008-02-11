@@ -16,14 +16,14 @@ public class MakeValidationTestFile{
 				programFile=new File(args[0]);
 				String programName=programFile.getName().replace(".t", "");
 				String programFolder=programFile.getParentFile().getPath()+"/";
-				String tomPath=programName.toLowerCase()+"/"+programName+".tom";
+				String[] programFolderPath=(args[0].split("[^/]+\\.t"))[0].split("/");
+				String pack=programFolderPath[programFolderPath.length-1];
+				String tomPath="../adt/"+programName.toLowerCase()+"/"+programName+".tom";
 				String validationTestTomFile=%[
-package tools;
-import @programName.toLowerCase()@.types.*;
+package @pack@;
+import adt.@programName.toLowerCase()@.types.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import @programName@;
-import compiler.XMLhandler;
 import java.io.File;
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ import java.io.IOException;
 //CAUTION : it is tested program specific
 public class ValidationTest{
 
-program specific
+//program specific
 	%include { @tomPath@ }
 		
 	public static void main(String[] args) {
@@ -75,11 +75,11 @@ program specific
 						Node testNode = testNodes.item(j);
 						if(testNode.getNodeName().equals("Source")){
 							//gets the source
-							source=TestProgramv2.makeTwoPath(testNode);
+							source=@programName@.makeTwoPathWithID(testNode);
 						}
 						if(testNode.getNodeName().equals("Target")){
 							//gets the expected target
-							target=@programName@.makeTwoPath(testNode);
+							target=@programName@.makeTwoPathWithID(testNode);
 						}
 					}
 					//runs the program on the source and gets the result
