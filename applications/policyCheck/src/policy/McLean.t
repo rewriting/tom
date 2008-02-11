@@ -63,6 +63,24 @@ public class McLean extends FlowPolicy{
   }
 
 
+	   //Verification of state by the predicate without making implicit accesses explicit
+  public boolean verifyPredicateW(State setOfAccesses){
+	  boolean result=true;
+	  try {
+		  //	make explicit implicit accesses
+		  //State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
+		  //test property 1 of the predicate
+		  result=result && property1(setOfAccesses);
+		  //test property 2 of the predicate
+		  result=result && property2(setOfAccesses);
+    } catch (Exception e) {
+    	System.out.println("A problem occured while applying strategy");
+    }
+    // behavior if the access is granted
+    return result;
+  }
+
+
 	   //Verification of state by the predicate
   public boolean verifyPredicate(State setOfAccesses){
 	  boolean result=true;
