@@ -104,13 +104,29 @@ public class Verify {
   public static void fromForPrintToMain_Verify(InputVerify iv) {
     boolean b=true;
     %match (iv) {
-      verifyState(order,subjects,objects,state,b()) -> {
+      verifyStateWithPredicateOnly(order,subjects,objects,state,b()) -> {
+        Policy policy=new BellAndLaPadula(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
+        b=policy.verifyPredicateW(fromForPrintToMain_State(`subjects,`objects,`state));
+      }
+      verifyStateWithPredicateOnly(order,subjects,objects,state,m()) -> {
+        Policy policy=new McLean(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
+        b=policy.verifyPredicateW(fromForPrintToMain_State(`subjects,`objects,`state));
+      }
+       verifyStateWithPredicateAndImplicitAccesses(order,subjects,objects,state,b()) -> {
         Policy policy=new BellAndLaPadula(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
         b=policy.verifyPredicate(fromForPrintToMain_State(`subjects,`objects,`state));
       }
-      verifyState(order,subjects,objects,state,m()) -> {
+      verifyStateWithPredicateAndImplicitAccesses(order,subjects,objects,state,m()) -> {
         Policy policy=new McLean(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
         b=policy.verifyPredicate(fromForPrintToMain_State(`subjects,`objects,`state));
+      }
+      verifyState(order,subjects,objects,state,b()) -> {
+        Policy policy=new BellAndLaPadula(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
+        b=policy.valid(fromForPrintToMain_State(`subjects,`objects,`state));
+      }
+      verifyState(order,subjects,objects,state,m()) -> {
+        Policy policy=new McLean(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
+        b=policy.valid(fromForPrintToMain_State(`subjects,`objects,`state));
       }
       verifyConfig(order,subjects,objects,b()) -> {
         Policy policy=new BellAndLaPadula(fromForPrintToMain_PartiallyOrderdedSetOfSecurityLevels(`order));
