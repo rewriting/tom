@@ -154,8 +154,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Putfield(owner, name, ToolBox.buildTFieldDescriptor(desc));
         break;
       default:
-        System.err.println("Unsupported OpCode :" + opcode);
-        System.exit(-1);
+        throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);
@@ -490,8 +489,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Monitorexit();
         break;
       default:
-        System.err.println("Unsupported OpCode :" + opcode);
-        System.exit(-1);
+        throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);
@@ -511,8 +509,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Newarray(operand);
         break;
       default:
-        System.err.println("Unsupported OpCode :" + opcode);
-        System.exit(-1);
+        throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);
@@ -580,8 +577,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Ifnonnull(l);
         break;
       default:
-          System.err.println("Unsupported OpCode :" + opcode);
-          System.exit(-1);
+          throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);
@@ -639,8 +635,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Invokeinterface(owner, name, ToolBox.buildTMethodDescriptor(desc));
         break;
       default:
-        System.err.println("Unsupported OpCode :" + opcode);
-        System.exit(-1);
+        throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);
@@ -691,8 +686,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Instanceof(desc);
         break;
       default:
-        System.err.println("Unsupported OpCode :" + opcode);
-        System.exit(-1);
+        throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);
@@ -736,8 +730,7 @@ public class TMethodGenerator implements MethodVisitor {
         ins = `Ret(var);
         break;
       default:
-        System.err.println("Unsupported OpCode :" + opcode);
-        System.exit(-1);
+        throw new RuntimeException("Unsupported OpCode :" + opcode);
     }
 
     appendInstruction(ins);

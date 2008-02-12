@@ -64,7 +64,7 @@ import tom.library.sl.*;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ ../adt/tomsignature/TomSignature.tom }
-  //%include{ ../adt/tomsignature/_TomSignature.tom }
+  %include{ ../adt/tomsignature/_TomSignature.tom }
   %include{ ../../library/mapping/java/sl.tom }
   %include{ ../../library/mapping/java/util/ArrayList.tom }
   %include{ ../../library/mapping/java/util/HashSet.tom }
@@ -117,11 +117,11 @@ public class TomOptimizer extends TomGenericPlugin {
 
         if(getOptionBooleanValue("optimize2")) {          
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
-          renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visitLight(renamedTerm);
+          renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visit(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else {
           if(getOptionBooleanValue("optimize")) {
-            renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visitLight(renamedTerm);
+            renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visit(renamedTerm);
           }
         }
         setWorkingTerm(renamedTerm);
@@ -185,11 +185,13 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public tom.library.sl.Position lastRead;
     public Expression lastAssignment;
+    public tom.library.sl.Position lastAssignmentPosition;
     public HashSet<TomName> lastAssignmentVariables= new HashSet();
     public int readCount=0;
 
-    public void setlastvalue(Expression newassignment) {
+    public void setlastvalue(Expression newassignment,tom.library.sl.Position newassignmentpos) {
       lastAssignment=newassignment;
+      lastAssignmentPosition=newassignmentpos;
       lastAssignmentVariables.clear();
       try {
         `TopDownCollect(findRefVariable(lastAssignmentVariables)).visitLight(newassignment);
@@ -200,8 +202,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public InfoVariableLetRef() {}
 
-    public InfoVariableLetRef(Expression lastAssignment) {
-      setlastvalue(lastAssignment);
+    public InfoVariableLetRef(Expression lastAssignment, tom.library.sl.Position lastAssignmentPosition) {
+      setlastvalue(lastAssignment,lastAssignmentPosition);
     } 
 
   }
@@ -230,10 +232,11 @@ public class TomOptimizer extends TomGenericPlugin {
 
       LetAssign(Variable[AstName=varname],src,_) -> {
         if(`varname.equals(variableName)) {
-          info.setlastvalue(`src);
+          info.setlastvalue(`src,getEnvironment().getPosition());
         } else {
           if(info.lastAssignmentVariables.contains(`varname)) {
             info.lastAssignment = null;
+            info.lastAssignmentPosition = null;
             info.lastAssignmentVariables.clear();
           }
         }
@@ -251,10 +254,11 @@ public class TomOptimizer extends TomGenericPlugin {
       // same code as for LetAssign with only one recursive call
       Assign(Variable[AstName=varname],src) -> {
         if(`varname.equals(variableName)) {
-          info.setlastvalue(`src);
+          info.setlastvalue(`src,getEnvironment().getPosition());
         } else {
           if(info.lastAssignmentVariables.contains(`varname)) {
             info.lastAssignment = null;
+            info.lastAssignmentPosition = null;
             info.lastAssignmentVariables.clear();
           }
         }
@@ -439,7 +443,7 @@ public class TomOptimizer extends TomGenericPlugin {
         %match(name) { Name(tomName) -> { varName = `extractRealName(tomName); } }
 
         //`findOccurencesUpTo(name,list,2).visitLight(`body);
-        InfoVariableLetRef info = new InfoVariableLetRef(`exp);
+        InfoVariableLetRef info = new InfoVariableLetRef(`exp,getEnvironment().getPosition());
         `computeOccurencesLetRef(name,info).visit(`body);
         int mult = info.readCount;
         tom.library.sl.Position readPos = info.lastRead;
@@ -470,13 +474,35 @@ public class TomOptimizer extends TomGenericPlugin {
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
           if(info.lastAssignment!=null) {
-            if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.inline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+            //test if the last assignment is not in a conditional sub-block
+            //relatively to the variable use
+            tom.library.sl.Position src = info.lastRead;
+            tom.library.sl.Position dest = info.lastAssignmentPosition;
+            // find the positive part of src-dest
+            tom.library.sl.Position positivePart = (tom.library.sl.Position) dest.sub(src).getCanonicalPath();
+            while(positivePart.getHead()<0) {
+              positivePart = (tom.library.sl.Position) positivePart.getTail();
             }
-            //System.out.println("replace1: " + `var + "\nby: " + `exp);
-            return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
+            // find the common ancestor of src and dest
+            tom.library.sl.Position commonAncestor = (tom.library.sl.Position) dest.add(positivePart.inverse()).getCanonicalPath();
+            try {
+              //this strategy fails if  from common ancestor and along the path positivePart 
+              //there is an instruction If, WhileDo or DoWhile
+              commonAncestor.getOmega(positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo())))).visit(`body);
+              if(varName.length() > 0) {
+                logger.log( Level.INFO,
+                    TomMessage.inline.getMessage(),
+                    new Object[]{ Integer.valueOf(mult), varName });
+              }
+              //System.out.println("replace1: " + `var + "\nby: " + `exp);
+              return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
+            }catch(VisitFailure e) {
+              if(varName.length() > 0) {
+                logger.log( Level.INFO,
+                    TomMessage.noInline.getMessage(),
+                    new Object[]{ Integer.valueOf(mult), varName });
+              }
+            }
           } else {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
@@ -596,6 +622,19 @@ public class TomOptimizer extends TomGenericPlugin {
             "abstractblock-elim2");     
         return `i;
       }
+
+      If[Condition=TrueTL(),SuccesInst=i] -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+            "iftrue-elim");     
+        return `i;
+      }
+
+      If[Condition=FalseTL(),FailureInst=i] -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+            "iffalse-elim");     
+        return `i;
+      }
+
     }      
 
   }
