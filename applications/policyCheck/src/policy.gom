@@ -1,63 +1,67 @@
- module accesscontrol
- imports int boolean
- abstract syntax 
- 
- 
- // Sort representing a security level identified by an int
- SecurityLevel = sl(l:int)
- 
- //	Sort representing a set of comparable security levels where the first element is the lowest
- OrderedSubSetOfSecurityLevels = cl(SecurityLevel *)
- 
- // Sort representing partially ordered set of security levels
- PartiallyOrderdedSetOfSecurityLevels = setsl(OrderedSubSetOfSecurityLevels *)
- 
- //Subject who has an ID for identification and a security level SL.
- Subject = subject(id:int,sl:SecurityLevel)
- 
- //Object who has an ID for identification and a security level SL.
- SecurityObject = securityObject(id:int,sl:SecurityLevel)
- 
- //Access mode, in this case could be read or write; others can be added
- AccessMode = am(m:int)//0 for read, 1 for write
- 
- //Request type: 
- // add - to request the addition of an access,  
- // delete - to request the deletion of an access
- RequestType = add()|delete()
- 
- // Sort of expression, explicit to specify that the access is explicit or conversely implicit
- // to specify that the access is implicit
- AccessType =explicit()|implicit()
- 
- //An access is defined by the "subject" that accesses  the  "object" in "access mode" 
- //It can be explicitly requested by the subjects or an implicit consequence of other accesses
- Access = access(subject:Subject,securityObject:SecurityObject,a:AccessMode,e:AccessType)
- 
- //Request, composed of a request type and an access
- Request = request(rt:RequestType, ac:Access)
- 
- //List of accesses
- ListOfAccesses = accesses(Access *)
- 
- //List of subjects
-ListOfSubjects = subjects(Subject *)
+module accesscontrol
+  imports int boolean
+  abstract syntax 
+  
+  
+// Sort representing a security level identified by an int
+  SecurityLevel = sl(l:int)
+//	Sort representing a set of comparable security levels where the first element is the lowest
+  OrderedSubSetOfSecurityLevels = cl(SecurityLevel *)
+// Sort representing partially ordered set of security levels
+  PartiallyOrderdedSetOfSecurityLevels = setsl(OrderedSubSetOfSecurityLevels *)
+  
+//Subject which has an ID for identification and a security level SL.
+  Subject = subject(id:int,sl:SecurityLevel)
+  ListOfSubjects = subjects(Subject *)
+   
+//Resource which has an ID for identification and a security level SL.
+  Resource  = resource(id:int,sl:SecurityLevel)
+  ListOfResources = resources(Resource *)
+  
+//Access mode, in this case could be read or write; others can be added
+//0 for read, 1 for write
+  AccessMode = am(m:int)
+              |read()
+              |write()
 
- //List of objects
-ListOfObjects = objects(SecurityObject *)
- 
- //State compose of a list of read accesses (Reads) and a list of write accesses(Write)
- // !!!!!!!!!!!!!! The AccessMode flag is not really necessary then !!!!!!!!!!!!!!
+// Explicit access or implicit consequence of explicit accesses
+  AccessType =explicit()
+             |implicit()
+   
+//An access is defined by the "subject" that accesses  the  "resource" in "access mode" 
+//It can be explicitly requested by the subjects or an implicit consequence of other accesses 
+//at is not really necessary
+  Access = access(subject:Subject,resource:Resource,am:AccessMode,at:AccessType)
+  ListOfAccesses = accesses(Access *)
+
+//State compose of a list of read accesses (Reads) and a list of write accesses(Write)
+// splitted just for efficiency reasons 
  State = state(reads: ListOfAccesses,writes: ListOfAccesses)
+
+
+//Request type: 
+// add - to request the addition of an access,  
+// delete - to request the deletion of an access
+  RequestType = add()
+               |delete()
+
+//Request, composed of a request type and an access
+  Request = request(rt:RequestType, ac:Access)
  
- //Sort representing a request upon a state
+//Request done wrt to a given state
  RequestUponState = rus(r:Request,s:State)
 
- //Response given after a request composed of the new obtained state and a boolean specifying whether the request is granted or not
- Response = response(granted:boolean, state:State)
 
 
+//Response given after a request composed of the new obtained state
+//   and a boolean specifying whether the request is granted or not
+  Response = response(granted:boolean, state:State)
 
+
+  module accesscontrol:rules() {
+      read() -> am(0)
+      write() -> am(1)
+  }
  
 
 
