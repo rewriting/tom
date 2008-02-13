@@ -6,9 +6,9 @@ module accesscontrol
 // Sort representing a security level identified by an int
   SecurityLevel = sl(l:int)
 //	Sort representing a set of comparable security levels where the first element is the lowest
-  OrderedSubSetOfSecurityLevels = cl(SecurityLevel *)
+  SecurityLevelsSet = slSet(SecurityLevel *)
 // Sort representing partially ordered set of security levels
-  PartiallyOrderdedSetOfSecurityLevels = setsl(OrderedSubSetOfSecurityLevels *)
+  SecurityLevelsLattice = slLattice(SecurityLevelsSet *)
   
 //Subject which has an ID for identification and a security level SL.
   Subject = subject(id:int,sl:SecurityLevel)
@@ -34,9 +34,12 @@ module accesscontrol
   Access = access(subject:Subject,resource:Resource,am:AccessMode,at:AccessType)
   ListOfAccesses = accesses(Access *)
 
-//State compose of a list of read accesses (Reads) and a list of write accesses(Write)
+//State composed of a list of read accesses (Reads) and a list of write accesses(Write)
+// can add  the lattice of levels - maybe interesting when dynamic
 // splitted just for efficiency reasons 
- State = state(reads: ListOfAccesses,writes: ListOfAccesses)
+  State = state(reads: ListOfAccesses,writes: ListOfAccesses
+//                 , sl:SecurityLevelsLattice
+                )
 
 
 //Request type: 
@@ -51,7 +54,9 @@ module accesscontrol
 //Request done wrt to a given state
  RequestUponState = rus(r:Request,s:State)
 
-
+//Decision for an access request: (not) granted, not applicable, ...
+  Decision = granted(yn:boolean)
+             | na()
 
 //Response given after a request composed of the new obtained state
 //   and a boolean specifying whether the request is granted or not
