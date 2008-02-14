@@ -23,15 +23,7 @@ public abstract class FlowPolicy implements Policy {
 
   private State currentState;
 
-  public PartiallyOrderdedSetOfSecurityLevels  securityLevelsOrderImproved;
 
-
-	/**
-	 * Stra
-	 * 
-	 * @param r the access request 
-	 * @return the decision for the demanded request
-	 */
   %strategy makeExplicit() extends `Identity() {
     visit State {
       state(reads@accesses(_*,access(s1,o1,am(0),_),_*,access(s2,o2,am(0),_),_*),
@@ -62,8 +54,8 @@ public abstract class FlowPolicy implements Policy {
     //add implicit accesses to "implicitRequestsUponOriginalState"
     %match(res){
 
-      state(reads@accesses(_*,access(subject(sid,sl(sl)),resource(rid,sl(rl)),read(),_),_*),_) -> {
-        if() {
+      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
+        if(`) {
           return false;
         }
       }

@@ -5,25 +5,6 @@ module accesscontrol
   
 // Sort representing a security level identified by an int
   SecurityLevel = sl(l:int)
- 
-//   sort SecurityLevel:interface() { Comparable<SecurityLevel> }
-//   sort SecurityLevel:block() {
-//     int compareTo(SecurityLevel s){
-//       %match(this,s){
-//         sl(l1),sl(l2) -> {return `l1-`l2;}
-//       } 
-//       return -100;
-//     }
-//   }
-  sort SecurityLevel:block() {
-  public int compare2(SecurityLevel s){
-      %match(this,s){
-        sl(l1),sl(l2) -> {return `l1-`l2;}
-      } 
-      return -100;
-    }
-  }
-
 //	Sort representing a set of comparable security levels where the first element is the lowest
   SecurityLevelsSet = slSet(SecurityLevel *)
 // Sort representing partially ordered set of security levels
