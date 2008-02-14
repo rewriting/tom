@@ -25,6 +25,13 @@ public abstract class FlowPolicy implements Policy {
 
   public PartiallyOrderdedSetOfSecurityLevels  securityLevelsOrderImproved;
 
+
+	/**
+	 * Stra
+	 * 
+	 * @param r the access request 
+	 * @return the decision for the demanded request
+	 */
   %strategy makeExplicit() extends `Identity() {
     visit State {
       state(reads@accesses(_*,access(s1,o1,am(0),_),_*,access(s2,o2,am(0),_),_*),
@@ -40,7 +47,12 @@ public abstract class FlowPolicy implements Policy {
     }
   }
 
-  //Verification of state
+
+	/**
+	 * The predicate that should be verified by  the policy
+	 * 
+	 * @return true if the current state respects the predicate, false otherwise
+	 */
   public boolean valid(){
 
     // make explicit implicit accesses
@@ -51,23 +63,14 @@ public abstract class FlowPolicy implements Policy {
     %match(res){
 
       state(reads@accesses(_*,access(subject(sid,sl(sl)),resource(rid,sl(rl)),read(),_),_*),_) -> {
+        if() {
+          return false;
+        }
       }
       
     }
 
-		  //for each implicit access 
-		  for(RequestUponState iruos:implicitRequestsUponOriginalState){
-			  //test if the implicit access is accepted
-			  if (!(transition(iruos).getgranted())){
-				  //behavior if the access is not granted which means that there is a leakage
-				  System.out.print("Scenario detected :"+iruos);
-				  return false;
-			  }
-		  }
-    } catch (Exception e) {
-    	System.out.println("A problem occured while applying strategy");
-    }
-    // behavior if the access is granted
+    // if no leakage than OK
     return true;
   }
 
