@@ -5,6 +5,25 @@ module accesscontrol
   
 // Sort representing a security level identified by an int
   SecurityLevel = sl(l:int)
+ 
+//   sort SecurityLevel:interface() { Comparable<SecurityLevel> }
+//   sort SecurityLevel:block() {
+//     int compareTo(SecurityLevel s){
+//       %match(this,s){
+//         sl(l1),sl(l2) -> {return `l1-`l2;}
+//       } 
+//       return -100;
+//     }
+//   }
+  sort SecurityLevel:block() {
+  public int compare2(SecurityLevel s){
+      %match(this,s){
+        sl(l1),sl(l2) -> {return `l1-`l2;}
+      } 
+      return -100;
+    }
+  }
+
 //	Sort representing a set of comparable security levels where the first element is the lowest
   SecurityLevelsSet = slSet(SecurityLevel *)
 // Sort representing partially ordered set of security levels
@@ -20,13 +39,18 @@ module accesscontrol
   
 //Access mode, in this case could be read or write; others can be added
 //0 for read, 1 for write
-  AccessMode = am(m:int)
-              |read()
-              |write()
+  AccessMode = read()
+             | write()
+             | am(m:int)
+
+  module accesscontrol:rules() {
+      am(0) -> read()
+      am(1) -> write()
+  }
 
 // Explicit access or implicit consequence of explicit accesses
-  AccessType =explicit()
-             |implicit()
+  AccessType = explicit()
+             | implicit()
    
 //An access is defined by the "subject" that accesses  the  "resource" in "access mode" 
 //It can be explicitly requested by the subjects or an implicit consequence of other accesses 
@@ -55,19 +79,10 @@ module accesscontrol
  RequestUponState = rus(r:Request,s:State)
 
 //Decision for an access request: (not) granted, not applicable, ...
-  Decision = granted(yn:boolean)
-             | na()
-
+  Decision = grant()
+           | deny()
+           | na()
+           | granted(yn:boolean)
 //Response given after a request composed of the new obtained state
 //   and a boolean specifying whether the request is granted or not
   Response = response(granted:boolean, state:State)
-
-
-  module accesscontrol:rules() {
-      read() -> am(0)
-      write() -> am(1)
-  }
- 
-
-
- 
