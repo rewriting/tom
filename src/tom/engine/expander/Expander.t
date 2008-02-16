@@ -432,9 +432,6 @@ matchBlock: {
           return newChildren;
           ]%;
           l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(objectVar,intVar,childVar),objectType,EmptyType(),TargetLanguageToInstruction(ITL(code))));
-
-
-
           introspectorClass = `IntrospectorClass(Name("LocalIntrospector"),AbstractDecl(l));
         }
 
