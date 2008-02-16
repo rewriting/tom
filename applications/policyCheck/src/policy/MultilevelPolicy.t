@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
  * @version
  * 
  */
-public abstract class FlowPolicy implements Policy {
+public abstract class MultilevelPolicy implements Policy {
   %include { sl.tom }
   %include { ../accesscontrol/Accesscontrol.Tom }
 
@@ -23,7 +23,12 @@ public abstract class FlowPolicy implements Policy {
 
   private State currentState;
 
-
+	/**
+	 * Checks if an implicit state can be deduced from the set of explcit states 
+   * -->  can be used with a repeat to build the closure for the set of accesses
+	 * 
+	 * @return the new state containing the implcit access
+	 */
   %strategy makeExplicit() extends `Identity() {
     visit State {
       state(reads@accesses(_*,access(s1,o1,am(0),_),_*,access(s2,o2,am(0),_),_*),
@@ -51,16 +56,18 @@ public abstract class FlowPolicy implements Policy {
     // can we do it less often ??
     State res = (State)`RepeatId(makeExplicit()).visit(this.currentState);
 
-    //add implicit accesses to "implicitRequestsUponOriginalState"
-    %match(res){
+    //read only lower level resources
 
+    %match(res){
       state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
-        if(`) {
+        if(`slL.compare(ssl,rsl)<0) {
           return false;
         }
       }
       
     }
+
+    //*-security property
 
     // if no leakage than OK
     return true;

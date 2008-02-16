@@ -128,14 +128,6 @@ public class BellAndLaPadula extends FlowPolicy{
 
 
 
-	//Compare two levels of security
-	public boolean compare(SecurityLevel l1,SecurityLevel l2){
-		%match (PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved){
-			setsl(_*,cl(_*,a,_*,b,_*),_*)->{if ((l1.equals(`a) && l2.equals(`b)) || l1.equals(l2) ){return true;}}
-		}
-		return false;
-	}
-
 	public boolean valid(State setOfAccesses){
 		return super.valid(setOfAccesses);
 	}

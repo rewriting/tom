@@ -3,12 +3,38 @@ module accesscontrol
   abstract syntax 
   
   
-// Sort representing a security level identified by an int
+// Security level identified by an int
   SecurityLevel = sl(l:int)
-//	Sort representing a set of comparable security levels where the first element is the lowest
+// List of comparable security levels where the first element is the lowest
   SecurityLevelsSet = slSet(SecurityLevel *)
-// Sort representing partially ordered set of security levels
+// List of partially ordered lists of security levels
   SecurityLevelsLattice = slLattice(SecurityLevelsSet *)
+
+
+	/**
+	 * Compare two levels of security wrt a security lelev lattice 
+	 * 
+	 * @param l1,l2 the two security levels
+	 * @return 0 if equal
+   *         1 if l1 > l2
+   *        -1 if l1 < l2
+   *       100 if not comparable
+	 */
+ sort SecurityLevelsLattice:block() {
+	public int compare(SecurityLevel l1,SecurityLevel l2){
+    if(l1.equals(l2)){
+      return 0;
+    }
+
+    %match (this){ 
+      slLattice(_*,a@slSet(_*,m,_*,n,_*),_*) -> {
+        if(l1.equals(`m) && l2.equals(`n)) {return -1;}
+        if(l2.equals(`m) && l1.equals(`n)) {return 1;}
+      }
+    }
+    return 100;
+  }
+}
   
 //Subject which has an ID for identification and a security level SL.
   Subject = subject(id:int,sl:SecurityLevel)
