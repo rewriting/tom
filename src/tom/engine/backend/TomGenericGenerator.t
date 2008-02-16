@@ -185,6 +185,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     return null;
   }
+
   protected void buildExpIsSort(int deep, String type, TomTerm exp, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       generateExpression(deep,`TrueTL(),moduleName);
@@ -861,7 +862,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String prefix = "tom_empty_array_";
     String template = getSymbolTable(moduleName).getMakeEmptyArray(name);
     String res = instantiateTemplate(template,size);
-    if (res.equals(template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = prefix+name+"("+size+")";
     }
     return res;
@@ -870,7 +871,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   private String getMakeAddArray(String name, String elt, String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getMakeAddArray(name);
     String res = instantiateTemplate(template,elt,subject);
-    if (res.equals(template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_cons_array_@name@(@elt@,@subject@)]%;
     }
     return res;
@@ -879,7 +880,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   private String getGetElementArray(String name,String type,String subject,String index,String moduleName) {
     String template = getSymbolTable(moduleName).getGetElementArray(name);
     String res = instantiateTemplate(template,subject,index);
-    if (res.equals(template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_get_element_@name@_@type@(@subject@,@index@)]%;
     }
     return res;
@@ -888,7 +889,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   private String getGetSizeArray(String name,String type,String subject,String moduleName) {
     String template = getSymbolTable(moduleName).getGetSizeArray(name);
     String res = instantiateTemplate(template,subject);
-    if (res.equals(template)) {
+    if(res==null || (!inlineplus && res.equals(template))) {
       res = %[tom_get_size_@name@_@type@(@subject@)]%;
     }
     return res;

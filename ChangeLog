@@ -1,3 +1,7 @@
+2008-02-16 pem
+  * fix a problem with the recent introduction of equals instead of ==
+	* improved the layout with --prettyprint option
+
 2008-02-12 balland
   * fix PR-4932
   * fix PR-5053 

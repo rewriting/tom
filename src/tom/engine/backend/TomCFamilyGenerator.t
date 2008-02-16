@@ -230,21 +230,24 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
         s.append(", ");
       }
     }
+    s.append(") {");
+    output.writeln(s);
+    
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    s.append(") { " + returnValue + "; }");
-
     %match(TargetLanguage tlCode) {
       TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
-        output.write(0,s, `startLine, `endLine - `startLine);
+        output.write(0,returnValue, `startLine, `endLine - `startLine);
         return;
       }
 
       ITL(_) -> {
-        output.write(s);
+        output.write(returnValue);
         return;
       }
 
     }
+    output.write("}");
+    output.writeln();
   }
 
   protected void genDeclInstr(String returnType,
@@ -274,8 +277,8 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
         s.append(", ");
       }
     }
-    s.append(") { ");
-    output.write(s);
+    s.append(") {");
+    output.writeln(s);
     generateInstruction(deep,instr,moduleName);
     output.write("}");
     output.writeln();
@@ -492,10 +495,11 @@ matchBlock: {
             }
       }
       s.append(") { ");
-      output.write(s);
+      output.writeln(s);
       output.write("return ");
       generateInstruction(0,instr,moduleName);
-      output.write("; }");
+      output.writeln(";");
+      output.writeln("}");
     }
   }
 }
