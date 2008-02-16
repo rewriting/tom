@@ -26,20 +26,19 @@
                 destdir="${jparse.gen}">
       <include name="*.gom"/>
     </gom.preset>
-    <tom.preset outputfile="${jparse.gen}/Gomantlr_Java.g"
-                options="-I ${jparse.gen}"
-                srcdir="${jparse.src}">
-      <include name="Gomantlr_Java.g.t"/>
-    </tom.preset>
-
+    <gomantlradapter.preset
+      srcdir="${jparse.src}"
+      destdir="${jparse.gen}"
+      grammar="Java">
+      <include name="${jparse.src}/**/JavaAst.gom"/>
+    </gomantlradapter.preset>
     <tom.preset srcdir="${jparse.src}"
                 destdir="${jparse.gen}">
       <include name="*.t"/>
-      <exclude name="Gomantlr_Java.g.t"/>
     </tom.preset>
 
     <antlr:antlr3 xmlns:antlr="antlib:org/apache/tools/ant/antlr"
-                  target="${jparse.gen}/Gomantlr_Java.g"
+                  target="${jparse.src}/Java.g"
                   outputdirectory="${jparse.gen}"
                   libdirectory="${jparse.src}"
                   multithreaded="true">

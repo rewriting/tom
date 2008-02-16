@@ -1,13 +1,13 @@
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
 
-import gomantlr_java.types.*;
-
 import java.io.*;
+
+//import javaast.types.*;
 
 public class Main {
 
-  //%include { ./gomantlr_java/Gomantlr_Java.tom }
+  //%include { ./javaast/JavaAst.tom }
 
   public static void main(String args[]) {
     try {
@@ -21,13 +21,12 @@ public class Main {
       }
 
       // parse tree
-      Gomantlr_JavaLexer lexer = new Gomantlr_JavaLexer(new ANTLRInputStream(input));
+      JavaLexer lexer = new JavaLexer(new ANTLRInputStream(input));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      Gomantlr_JavaParser parser = new Gomantlr_JavaParser(tokens);
+      JavaParser parser = new JavaParser(tokens);
 
-      Java_compilationUnit cu = parser.compilationUnit();
+      parser.compilationUnit();
 
-      System.out.println(cu);
     } catch (Exception e) {
       System.err.println("exception: " + e);
       e.printStackTrace();
