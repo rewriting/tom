@@ -78,8 +78,16 @@
  *	--a[i].foo didn't work. Fixed unaryExpression
  */
 grammar Java;
-options {k=2; backtrack=true; memoize=true;}
+options {
+  k=2; 
+  backtrack=true; 
+  memoize=true;
+  output=AST;
+}
 
+tokens {
+  %include { javaast/JavaAstTokenList.txt }
+}
 @lexer::members {
 protected boolean enumIsKeyword = true;
 }
@@ -90,6 +98,7 @@ compilationUnit
 		packageDeclaration?
         importDeclaration*
         typeDeclaration*
+  -> EmptyCompilationUnit
 	;
 
 packageDeclaration

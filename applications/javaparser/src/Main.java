@@ -25,7 +25,8 @@ public class Main {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       JavaParser parser = new JavaParser(tokens);
 
-      parser.compilationUnit();
+      JavaAst ast = parser.compilationUnit();
+      System.out.println(ast);
 
     } catch (Exception e) {
       System.err.println("exception: " + e);

@@ -30,20 +30,25 @@
       srcdir="${jparse.src}"
       destdir="${jparse.gen}"
       grammar="Java">
-      <include name="${jparse.src}/**/JavaAst.gom"/>
+      <include name="JavaAst.gom"/>
     </gomantlradapter.preset>
-    <tom.preset srcdir="${jparse.src}"
-                destdir="${jparse.gen}">
-      <include name="*.t"/>
+    <!-- build parser -->
+    <tom.preset outputfile="${jparse.gen}/Java.g"
+                options="-I ${jparse.gen}"
+                srcdir="${jparse.src}"> 
+      <include name="Java.g.t"/>
     </tom.preset>
-
     <antlr:antlr3 xmlns:antlr="antlib:org/apache/tools/ant/antlr"
-                  target="${jparse.src}/Java.g"
+                  target="${jparse.gen}/Java.g"
                   outputdirectory="${jparse.gen}"
                   libdirectory="${jparse.src}"
                   multithreaded="true">
     </antlr:antlr3>
-
+    <tom.preset srcdir="${jparse.src}"
+                destdir="${jparse.gen}">
+                <include name="**/*.t"/>
+      <exclude name="Java.g.t"/>
+    </tom.preset>
     <javac.preset destdir="${jparse.build}">
       <src path="${jparse.gen}"/>
       <src path="${jparse.src}"/>

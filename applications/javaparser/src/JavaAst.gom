@@ -2,4 +2,5 @@ module JavaAst
 imports int
 abstract syntax
 
-JavaAst = nil()
+JavaAst = 
+ | EmptyCompilationUnit()
