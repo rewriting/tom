@@ -23,6 +23,39 @@ public abstract class MultilevelPolicy implements Policy {
 
   private State currentState;
 
+  public MultilevelPolicy(SecurityLevelsLattice slL){
+    this.slL = slL;
+    this.currentState =  `state(accesses(),accesses());
+  }
+
+	/**
+	 * Get the security lattice
+	 * 
+	 * @return the security lattice
+	 */
+  public SecurityLevelsLattice getSecurityLevelsLattice(){
+    return slL;
+  }
+
+	/**
+	 * Get the current state
+	 * 
+	 * @return the current state
+	 */
+  public State getCurrentState(){
+    return currentState;
+  }
+
+	/**
+	 * Get the current state expanded with all implicit accesses
+   * -- implicit accesses are explicitly put in the state but they are marked with the "implicit" flag
+	 * 
+	 * @return the expanded current state
+	 */
+  public State getExpandedCurrentState() throws tom.library.sl.VisitFailure{
+    return (State)`RepeatId(makeExplicit()).visit(currentState);
+  }
+
 	/**
 	 * Checks if an implicit state can be deduced from the set of explcit states 
    * -->  can be used with a repeat to build the closure for the set of accesses
@@ -42,35 +75,6 @@ public abstract class MultilevelPolicy implements Policy {
         return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
       }
     }
-  }
-
-
-	/**
-	 * The predicate that should be verified by  the policy
-	 * 
-	 * @return true if the current state respects the predicate, false otherwise
-	 */
-  public boolean valid(){
-
-    // make explicit implicit accesses
-    // can we do it less often ??
-    State res = (State)`RepeatId(makeExplicit()).visit(this.currentState);
-
-    //read only lower level resources
-
-    %match(res){
-      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
-        if(`slL.compare(ssl,rsl)<0) {
-          return false;
-        }
-      }
-      
-    }
-
-    //*-security property
-
-    // if no leakage than OK
-    return true;
   }
 
 }

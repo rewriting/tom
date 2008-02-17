@@ -22,10 +22,8 @@ public class Tests {
     c = `sls.compare(`sl(10),`sl(0));
 		System.out.println("C ="+c);
 
-
-//     SecurityLevel l1 = `sl(11);
-//     SecurityLevel l2 = `sl(2);
-// 		System.out.println("l1 < l2: "+`l1.compare2(l2));
+    State s = `state(accesses(),accesses());
+		System.out.println("State: "+`s);
 	}
 	
 	
