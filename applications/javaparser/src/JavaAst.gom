@@ -1,6 +1,0 @@
-module JavaAst
-imports int
-abstract syntax
-
-JavaAst = 
- | EmptyCompilationUnit()
