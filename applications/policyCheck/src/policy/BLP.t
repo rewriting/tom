@@ -60,7 +60,16 @@ public class BLP extends MultilevelPolicy{
         if(`slL.compare(`ssl,`rsl)<0) {
           return `deny();
         }
-
+      }
+			request(add(),access(subject(sid,ssl),resource(rid,rsl),read(),_))  -> { 
+        match(cs) {
+          state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*),_) -> {
+            if(`ssl.equals(`sslS) && )
+          }
+        }
+        if(`slL.compare(`ssl,`rsl)<0) {
+          return `deny();
+        }
       }
     }
 
