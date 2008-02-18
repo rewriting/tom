@@ -1,5 +1,6 @@
 import accesscontrol.*;
 import accesscontrol.types.*;
+import policy.*;
 
 public class Tests {
 
@@ -13,17 +14,23 @@ public class Tests {
 		System.out.println("AM: "+am);
 
     SecurityLevelsLattice sls = `slLattice(slSet(sl(0),sl(1)),slSet(sl(0),sl(1)));
-    int c = `sls.compare(`sl(0),`sl(1));
+    boolean c = `sls.smaller(`sl(0),`sl(1));
 		System.out.println("C ="+c);
-    c = `sls.compare(`sl(1),`sl(0));
+    c = `sls.smaller(`sl(1),`sl(0));
 		System.out.println("C ="+c);
-    c = `sls.compare(`sl(1),`sl(1));
+    c = `sls.smaller(`sl(1),`sl(1));
 		System.out.println("C ="+c);
-    c = `sls.compare(`sl(10),`sl(0));
+    c = `sls.smaller(`sl(10),`sl(0));
 		System.out.println("C ="+c);
 
     State s = `state(accesses(),accesses());
 		System.out.println("State: "+`s);
+
+    BLP blp = new BLP(sls);
+		System.out.println("BLP: "+`blp);
+    Decision result = blp.transition(`request(add(),access(subject(5,sl(0)),resource(1,sl(0)),write(),explicit())));
+		System.out.println("Access granted: "+`result);
+		System.out.println("BLP: "+`blp);
 	}
 	
 	

@@ -57,6 +57,8 @@ public class BLP extends MultilevelPolicy{
     State cs = getCurrentState();
     State ns = cs;
 
+    // TODO: access that alreasy exists
+
 		%match (req) {
       // READ access  (if a WRITE already exists it should be comparable and bigger)
 			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),read(),_))  -> { 
@@ -99,7 +101,7 @@ public class BLP extends MultilevelPolicy{
         }
         // no  existing read that is not bigger
         %match(cs) {
-          state(reads@accesses(_*),accesses(la)) -> {
+          state(reads@accesses(_*),accesses(la*)) -> {
             // add the new access
             setCurrentState(`state(reads,accesses(newAccess,la)));
           }
@@ -134,5 +136,19 @@ public class BLP extends MultilevelPolicy{
     return `na();
 	}
 
+  public String toString(){
+    String s = "ACCESSES : ";
+    State cs = getCurrentState();
+
+    %match(cs) {
+      state(_,accesses(_*,a@access(_,_,_,_),_*)) -> {
+        s += "\n " + `a;
+      }
+      state(accesses(_*,a@access(_,_,_,_),_*),_) -> {
+        s += "\n " + `a;
+      }
+    }
+    return s;
+  }
 
 }
