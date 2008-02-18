@@ -47,6 +47,14 @@ public abstract class MultilevelPolicy implements Policy {
   }
 
 	/**
+	 * Set the current state
+	 * 
+	 */
+  public void setCurrentState(State newState){
+    this.currentState = newState;
+  }
+
+	/**
 	 * Get the current state expanded with all implicit accesses
    * -- implicit accesses are explicitly put in the state but they are marked with the "implicit" flag
 	 * 

@@ -10,9 +10,29 @@ module accesscontrol
 // List of partially ordered lists of security levels
   SecurityLevelsLattice = slLattice(SecurityLevelsSet *)
 
-
+ sort SecurityLevelsLattice:block() {
 	/**
-	 * Compare two levels of security wrt a security lelev lattice 
+	 * Checks if a security level is smaller than another one
+	 * 
+	 * @param l1,l2 the two security levels
+	 * @return true if l1 >= l2
+   *         false otherwise (smaller or  not comparable)
+	 */
+	public boolean smaller(SecurityLevel l1,SecurityLevel l2){
+    if(l1.equals(l2)){
+      return true;
+    }
+    
+    %match (this){ 
+      slLattice(_*,a@slSet(_*,m,_*,n,_*),_*) -> {
+        if(l1.equals(`m) && l2.equals(`n)) {return true;}
+      }
+    }
+    return false;
+  }
+  
+	/**
+	 * Compare two levels of security wrt a security levels lattice 
 	 * 
 	 * @param l1,l2 the two security levels
 	 * @return 0 if equal
@@ -20,7 +40,6 @@ module accesscontrol
    *        -1 if l1 < l2
    *       100 if not comparable
 	 */
- sort SecurityLevelsLattice:block() {
 	public int compare(SecurityLevel l1,SecurityLevel l2){
     if(l1.equals(l2)){
       return 0;

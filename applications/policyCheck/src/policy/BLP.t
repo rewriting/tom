@@ -50,39 +50,89 @@ public class BLP extends MultilevelPolicy{
   }
 
 	// Rewrite rules implementing the Bell and LaPadula policy
+  // done with two level match for add cases
+  // ==> should be more clear (but less efficient?) with one level and non-linear matching
 	public Decision transition(Request req) {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
     State cs = getCurrentState();
     State ns = cs;
 
 		%match (req) {
-			request(add(),access(subject(sid,ssl),resource(rid,rsl),read(),_))  -> { 
-        if(`slL.compare(`ssl,`rsl)<0) {
+      // READ access  (if a WRITE already exists it should be comparable and bigger)
+			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),read(),_))  -> { 
+        // not enough privileges to read
+        if(! `slL.smaller(`rsl,`ssl)) {
           return `deny();
         }
-      }
-			request(add(),access(subject(sid,ssl),resource(rid,rsl),read(),_))  -> { 
-        match(cs) {
-          state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*),_) -> {
-            if(`ssl.equals(`sslS) && )
+        // existing write access with lower level
+        %match(cs) {
+          state(_,writes@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)) -> {
+            if(`sid==`sidS && 
+               // `ssl.equals(`sslS) && 
+               ! `slL.smaller(`rsl,`rslS)){
+              return `deny();
+            }
           }
         }
-        if(`slL.compare(`ssl,`rsl)<0) {
-          return `deny();
+        // none of the previous ones is satisfied
+        // ==> good privileges and no existing write that is not smaller
+        %match(cs) {
+          state(accesses(la),writes@accesses(_*)) -> {
+            // add the new access
+            setCurrentState(`state(accesses(newAccess,la),writes));
+          }
         }
+        return `grant();
+      }
+
+      // WRITE access (if a READ already exists it should be comparable and smaller)
+			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),write(),_))  -> { 
+        // existing write access with lower level
+        %match(cs) {
+          state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*),_) -> {
+            if( `sid==`sidS && 
+                // `ssl.equals(`sslS) &&
+               ! `slL.smaller(`rslS,`rsl)){
+              return `deny();
+            }
+          }
+        }
+        // no  existing read that is not bigger
+        %match(cs) {
+          state(reads@accesses(_*),accesses(la)) -> {
+            // add the new access
+            setCurrentState(`state(reads,accesses(newAccess,la)));
+          }
+        } 
+        return `grant();
       }
     }
 
+    // remove a READ or WRITE access 
+    // ==> granted if the access exists
+    // Q: it looks like forgetting the history - is this OK?
+    %match(req,cs) {
+      request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
+        state(reads@accesses(la,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra),writes) -> {  
+        // remove the access
+        setCurrentState(`state(accesses(la,ra),writes));
+        return `grant();
+      }
+      request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
+        state(reads,accesses(la,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra)) -> {  
+        // remove the access
+        setCurrentState(`state(reads,accesses(la,ra)));
+        return `grant();
+      }
+      request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
+        state(reads,accesses(la,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra)) -> {  
+        return `deny();
+      }
+    }
+
+    // all the other cases
     return `na();
-// 		%match (req, cs) {
-// 			request(add(),access(subject(i1,l1),ressource(_,l2),am(0),_)),
-//         s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),am(1),_),_*))  )  -> { 
-//     }
-//   }
-// 		throw new RuntimeException("should not be there");
 	}
-
-
 
 
 }
