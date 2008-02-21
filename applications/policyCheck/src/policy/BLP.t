@@ -13,8 +13,6 @@ public class BLP extends MultilevelPolicy{
     super(slL);
 	}
  
-
-
 	/**
 	 * The predicate that should be verified by  the policy
 	 * 
@@ -30,13 +28,13 @@ public class BLP extends MultilevelPolicy{
     try{
       res = getExpandedCurrentState();
     } catch(tom.library.sl.VisitFailure vfe){
+      System.out.println("VERIFICATION PROBLEM !!!");
     }
 
-    //read only lower level resources
- 
-    %match(res){
+    //read only (comparable and) lower level resources
+     %match(res){
       state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
-        if(`slL.compare(`ssl,`rsl)<0) {
+        if(`slL.smaller(`ssl,`rsl)<0) {
           return false;
         }
       }
@@ -49,9 +47,16 @@ public class BLP extends MultilevelPolicy{
     return true;
   }
 
-	// Rewrite rules implementing the Bell and LaPadula policy
-  // done with two level match for add cases
-  // ==> should be more clear (but less efficient?) with one level and non-linear matching
+ 
+	/**
+   * Rewrite rules implementing the Bell and LaPadula policy
+   * done with two level match for add cases
+   * ==> should be more clear (but less efficient?) with one level and non-linear matching
+	 * 
+	 * @pram the request to be performed
+   *
+	 * @return the decision for the given request - accept/deny/n(ot)a(pplicable)
+	 */
 	public Decision transition(Request req) {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
     State cs = getCurrentState();

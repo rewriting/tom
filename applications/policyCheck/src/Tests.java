@@ -43,6 +43,9 @@ public class Tests {
     result = blp.transition(tom_make_request(tom_make_add(),tom_make_access(tom_make_subject(5,tom_make_sl(3)),tom_make_resource(1,tom_make_sl(3)),tom_make_read(),tom_make_explicit())));
 		System.out.println("Access granted: "+result+"------------------------------------");
 		System.out.println(""+blp);
+    result = blp.transition(tom_make_request(tom_make_add(),tom_make_access(tom_make_subject(5,tom_make_sl(3)),tom_make_resource(2,tom_make_sl(4)),tom_make_read(),tom_make_explicit())));
+		System.out.println("Access granted: "+result+"------------------------------------");
+		System.out.println(""+blp);
 	}
 	
 	
