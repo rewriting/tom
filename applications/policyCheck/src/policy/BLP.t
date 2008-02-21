@@ -55,9 +55,8 @@ public class BLP extends MultilevelPolicy{
 	public Decision transition(Request req) {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
     State cs = getCurrentState();
-    State ns = cs;
 
-    // TODO: access that alreasy exists
+    // TODO: access that already exists
 
 		%match (req) {
       // READ access  (if a WRITE already exists it should be comparable and bigger)
@@ -79,7 +78,7 @@ public class BLP extends MultilevelPolicy{
         // none of the previous ones is satisfied
         // ==> good privileges and no existing write that is not smaller
         %match(cs) {
-          state(accesses(la),writes@accesses(_*)) -> {
+          state(accesses(la*),writes@accesses(_*)) -> {
             // add the new access
             setCurrentState(`state(accesses(newAccess,la),writes));
           }
@@ -115,19 +114,21 @@ public class BLP extends MultilevelPolicy{
     // Q: it looks like forgetting the history - is this OK?
     %match(req,cs) {
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
-        state(reads@accesses(la,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra),writes) -> {  
+        state(reads@accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*),writes) -> {  
         // remove the access
         setCurrentState(`state(accesses(la,ra),writes));
         return `grant();
       }
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
-        state(reads,accesses(la,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra)) -> {  
+        state(reads,accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
         // remove the access
         setCurrentState(`state(reads,accesses(la,ra)));
         return `grant();
       }
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
-        state(reads,accesses(la,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra)) -> {  
+        // state(reads,writes) -> {  //the previous two don't match
+        state(reads,! accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
+        // doens't exist
         return `deny();
       }
     }

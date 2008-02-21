@@ -28,9 +28,21 @@ public class Tests {
 
     BLP blp = new BLP(sls);
 		System.out.println("BLP: "+`blp);
-    Decision result = blp.transition(`request(add(),access(subject(5,sl(0)),resource(1,sl(0)),write(),explicit())));
-		System.out.println("Access granted: "+`result);
-		System.out.println("BLP: "+`blp);
+    Decision result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(1,sl(3)),write(),explicit())));
+		System.out.println("Access granted: "+`result+"------------------------------------");
+		System.out.println(""+`blp);
+    result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(1,sl(3)),write(),explicit())));
+		System.out.println("Access granted: "+`result+"------------------------------------");
+		System.out.println(""+`blp); 
+    result = blp.transition(`request(delete(),access(subject(5,sl(3)),resource(1,sl(3)),write(),explicit())));
+		System.out.println("Access granted: "+`result+"------------------------------------");
+		System.out.println(""+`blp);
+    result = blp.transition(`request(delete(),access(subject(3,sl(3)),resource(1,sl(3)),write(),explicit())));
+		System.out.println("Access granted: "+`result+"------------------------------------");
+		System.out.println(""+`blp);
+    result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(1,sl(3)),read(),explicit())));
+		System.out.println("Access granted: "+`result+"------------------------------------");
+		System.out.println(""+`blp);
 	}
 	
 	
