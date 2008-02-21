@@ -46,6 +46,9 @@ public class Tests {
     result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(2,sl(4)),read(),explicit())));
 		System.out.println("Access granted: "+`result+"------------------------------------");
 		System.out.println(""+`blp);
+
+
+		System.out.println("VALID STATUS: "+ blp.valid());
 	}
 	
 	

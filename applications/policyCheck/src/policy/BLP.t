@@ -30,18 +30,25 @@ public class BLP extends MultilevelPolicy{
     } catch(tom.library.sl.VisitFailure vfe){
       System.out.println("VERIFICATION PROBLEM !!!");
     }
-
-    //read only (comparable and) lower level resources
-     %match(res){
+    
+    //read only (comparable and) lower level resources 
+    %match(res){
       state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
-        if(`slL.smaller(`ssl,`rsl)<0) {
+        if(! `slL.smaller(`rsl,`ssl)) {
+          return false;
+        }
+      } 
+    }
+    
+    //*-security property
+    %match(res){
+      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid1,rsl1),read(),_),_*),
+            writes@accesses(_*,access(subject(sid,ssl),resource(rid2,rsl2),write(),_),_*)) -> {
+        if(! `slL.smaller(`rsl1,`rsl2)) {
           return false;
         }
       }
-      
     }
-
-    //*-security property
 
     // if no leakage than OK
     return true;
