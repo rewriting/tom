@@ -82,10 +82,14 @@ public class ConstraintPropagator {
     } // end while    
     return result;
   }
-    
+  
+  
+  //[radu] TODO: looks a little bit too complicated: I think we can treat the both cases
+  // uniformly
+  
   /**
    * Detaches the annotations
-   * 
+   *  
    * a@...b@g(y) << t -> g(y) << t /\ a << t /\ ... /\ b << t
    * 
    * For variableStars: a@...b@X* << t -> Z* << t /\ X* << Z* /\ a << Z* /\ ... /\ b << Z*  
