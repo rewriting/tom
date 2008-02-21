@@ -13,7 +13,7 @@ public class Tests {
     AccessMode am = `am(0);
 		System.out.println("AM: "+am);
 
-    SecurityLevelsLattice sls = `slLattice(slSet(sl(0),sl(1)),slSet(sl(0),sl(1)));
+    SecurityLevelsLattice sls = `slLattice(slSet(sl(0),sl(1)),slSet(sl(3),sl(4),sl(5)));
     boolean c = `sls.smaller(`sl(0),`sl(1));
 		System.out.println("C ="+c);
     c = `sls.smaller(`sl(1),`sl(0));
@@ -48,7 +48,20 @@ public class Tests {
 		System.out.println(""+`blp);
 
 
-		System.out.println("VALID STATUS: "+ blp.valid());
+		System.out.println("\nVALID STATUS: "+ blp.valid()+"\n");
+
+
+    BLP blptest = new BLP(sls,`state(accesses(access(subject(5,sl(3)),resource(2,sl(4)),read(),explicit())),
+                                     accesses()));
+		System.out.println("BLP: "+`blptest);
+    System.out.println("\nVALID STATUS: "+ blptest.valid()+"\n");
+
+    blptest = new BLP(sls,`state(accesses(access(subject(5,sl(5)),resource(2,sl(4)),read(),explicit())),
+                                     accesses()));
+		System.out.println("BLP: "+`blptest);
+    System.out.println("\nVALID STATUS: "+ blptest.valid()+"\n");
+
+
 	}
 	
 	

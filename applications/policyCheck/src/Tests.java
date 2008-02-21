@@ -13,7 +13,7 @@ public class Tests {
     AccessMode am = tom_make_am(0);
 		System.out.println("AM: "+am);
 
-    SecurityLevelsLattice sls = tom_cons_list_slLattice(tom_cons_list_slSet(tom_make_sl(0),tom_cons_list_slSet(tom_make_sl(1),tom_empty_list_slSet())),tom_cons_list_slLattice(tom_cons_list_slSet(tom_make_sl(0),tom_cons_list_slSet(tom_make_sl(1),tom_empty_list_slSet())),tom_empty_list_slLattice()));
+    SecurityLevelsLattice sls = tom_cons_list_slLattice(tom_cons_list_slSet(tom_make_sl(0),tom_cons_list_slSet(tom_make_sl(1),tom_empty_list_slSet())),tom_cons_list_slLattice(tom_cons_list_slSet(tom_make_sl(3),tom_cons_list_slSet(tom_make_sl(4),tom_cons_list_slSet(tom_make_sl(5),tom_empty_list_slSet()))),tom_empty_list_slLattice()));
     boolean c = sls.smaller(tom_make_sl(0),tom_make_sl(1));
 		System.out.println("C ="+c);
     c = sls.smaller(tom_make_sl(1),tom_make_sl(0));
@@ -48,7 +48,20 @@ public class Tests {
 		System.out.println(""+blp);
 
 
-		System.out.println("VALID STATUS: "+ blp.valid());
+		System.out.println("\nVALID STATUS: "+ blp.valid()+"\n");
+
+
+    BLP blptest = new BLP(sls,tom_make_state(tom_cons_list_accesses(tom_make_access(tom_make_subject(5,tom_make_sl(3)),tom_make_resource(2,tom_make_sl(4)),tom_make_read(),tom_make_explicit()),tom_empty_list_accesses()),tom_empty_list_accesses())
+);
+		System.out.println("BLP: "+blptest);
+    System.out.println("\nVALID STATUS: "+ blptest.valid()+"\n");
+
+    blptest = new BLP(sls,tom_make_state(tom_cons_list_accesses(tom_make_access(tom_make_subject(5,tom_make_sl(5)),tom_make_resource(2,tom_make_sl(4)),tom_make_read(),tom_make_explicit()),tom_empty_list_accesses()),tom_empty_list_accesses())
+);
+		System.out.println("BLP: "+blptest);
+    System.out.println("\nVALID STATUS: "+ blptest.valid()+"\n");
+
+
 	}
 	
 	

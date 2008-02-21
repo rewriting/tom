@@ -25,7 +25,9 @@ module accesscontrol
     
     %match (this){ 
       slLattice(_*,a@slSet(_*,m,_*,n,_*),_*) -> {
-        if(l1.equals(`m) && l2.equals(`n)) {return true;}
+        if(l1.equals(`m) && l2.equals(`n)) {
+          return true;
+        }
       }
     }
     return false;

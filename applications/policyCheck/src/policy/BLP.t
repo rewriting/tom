@@ -8,9 +8,25 @@ public class BLP extends MultilevelPolicy{
 	%include { sl.tom }
   %include { ../accesscontrol/accesscontrol.tom }
 
-	//Constructor
-	public BLP(SecurityLevelsLattice slL){
+	/**
+	 * Starts with an empty current state 
+	 * 
+	 * @param the security levels lattice 
+	 */
+ 	public BLP(SecurityLevelsLattice slL){
     super(slL);
+	}
+
+	/**
+	 * Start with a given current state 
+   * ==> used to test the valid predicate
+	 * 
+	 * @param the security levels lattice 
+	 * @param the current state
+	 */
+ 	public BLP(SecurityLevelsLattice slL, State state){
+    this(slL);
+    setCurrentState(state);
 	}
  
 	/**
@@ -60,7 +76,7 @@ public class BLP extends MultilevelPolicy{
    * done with two level match for add cases
    * ==> should be more clear (but less efficient?) with one level and non-linear matching
 	 * 
-	 * @pram the request to be performed
+	 * @param the request to be performed
    *
 	 * @return the decision for the given request - accept/deny/n(ot)a(pplicable)
 	 */
