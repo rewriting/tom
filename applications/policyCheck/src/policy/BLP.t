@@ -1,7 +1,6 @@
 package policy;
 import accesscontrol.*;
 import accesscontrol.types.*;
-import java.util.ArrayList;
 import policy.Policy;
 
 public class BLP extends MultilevelPolicy{

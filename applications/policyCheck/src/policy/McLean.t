@@ -1,151 +1,182 @@
 package policy;
 import accesscontrol.*;
 import accesscontrol.types.*;
-import java.util.ArrayList;
 import policy.Policy;
 
-public class McLean extends FlowPolicy{  
+public class McLean extends MultilevelPolicy{
 	%include { sl.tom }
-	%include { ../accesscontrol/accesscontrol.tom }
+  %include { ../accesscontrol/accesscontrol.tom }
 
-   public McLean(PartiallyOrderdedSetOfSecurityLevels securityLevelsOrderImproved) {
-    this.securityLevelsOrderImproved=securityLevelsOrderImproved;
+	/**
+	 * Starts with an empty current state 
+	 * 
+	 * @param the security levels lattice 
+	 */
+ 	public McLean(SecurityLevelsLattice slL){
+    super(slL);
+	}
+
+	/**
+	 * Start with a given current state 
+   * ==> used to test the valid predicate
+	 * 
+	 * @param the security levels lattice 
+	 * @param the current state
+	 */
+ 	public McLean(SecurityLevelsLattice slL, State state){
+    this(slL);
+    setCurrentState(state);
+	}
+ 
+	/**
+	 * The predicate that should be verified by  the policy
+	 * 
+	 * @return true if the current state respects the predicate, false otherwise
+	 */
+  public boolean valid() {
+    SecurityLevelsLattice slL = getSecurityLevelsLattice();
+    State cs = getCurrentState();
+    State res = cs;
+
+    // make explicit implicit accesses
+    // can we do it less often ??
+    try{
+      res = getExpandedCurrentState();
+    } catch(tom.library.sl.VisitFailure vfe){
+      System.out.println("VERIFICATION PROBLEM !!!");
+    }
+    
+    //read only (comparable and) lower level resources 
+    %match(res){
+      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
+        if(! `slL.smaller(`rsl,`ssl)) {
+          return false;
+        }
+      } 
+    }
+    
+    //*-security property
+    %match(res){
+      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid1,rsl1),read(),_),_*),
+            writes@accesses(_*,access(subject(sid,ssl),resource(rid2,rsl2),write(),_),_*)) -> {
+        if(! `slL.smaller(`rsl1,`rsl2)) {
+          return false;
+        }
+      }
+    }
+
+    // if no leakage than OK
+    return true;
   }
 
+ 
+	/**
+   * Rewrite rules implementing the Bell and LaPadula policy
+   * done with two level match for add cases
+   * ==> should be more clear (but less efficient?) with one level and non-linear matching
+	 * 
+	 * @param the request to be performed
+   *
+	 * @return the decision for the given request - accept/deny/n(ot)a(pplicable)
+	 */
+	public Decision transition(Request req) {
+    SecurityLevelsLattice slL = getSecurityLevelsLattice();
+    State cs = getCurrentState();
 
-  public  Response transition(RequestUponState req) {
-    %match ( req) {
-      rus(request(add(),access(subject(i1,l1),securityObject(_,l2),am(0),_)),
-          s0@state(_,accesses(_*,access(subject(i1,l1),securityObject(i3,l3),am(1),_),_*))  ) -> { 
-        if ((compareStrictMcLean(`l3,`l2))) {
-          return `response(false,s0);
+    // TODO: access that already exists
+
+		%match (req) {
+      // READ access  (if a WRITE already exists it should be comparable and bigger)
+			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),read(),_))  -> { 
+        // not enough privileges to read
+        if(! `slL.smaller(`rsl,`ssl)) {
+          return `deny();
+        }
+        // existing write access with lower level
+        %match(cs) {
+          state(_,writes@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)) -> {
+            if(`sid==`sidS && 
+               // `ssl.equals(`sslS) && 
+               ! `slL.smaller(`rsl,`rslS)){
+              return `deny();
+            }
+          }
+        }
+        // none of the previous ones is satisfied
+        // ==> good privileges and no existing write that is not smaller
+        %match(cs) {
+          state(accesses(la*),writes@accesses(_*)) -> {
+            // add the new access
+            setCurrentState(`state(accesses(newAccess,la),writes));
+          }
+        }
+        return `grant();
+      }
+
+      // WRITE access (if a READ already exists it should be comparable and smaller)
+			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),write(),_))  -> { 
+        // existing write access with lower level
+        %match(cs) {
+          state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*),_) -> {
+            if( `sid==`sidS && 
+                // `ssl.equals(`sslS) &&
+               ! `slL.smaller(`rslS,`rsl)){
+              return `deny();
+            }
+          }
+        }
+        // no  existing read that is not bigger
+        %match(cs) {
+          state(reads@accesses(_*),accesses(la*)) -> {
+            // add the new access
+            setCurrentState(`state(reads,accesses(newAccess,la)));
+          }
         } 
-      }
-      rus(request(add(),access(subject(_,l1),securityObject(_,l2),am(0),_)),s1) -> { 
-        if (!(compareMcLean(`l2,`l1))) {
-          return `response(false,s1);
-        } 
-      }
-      rus(request(add(),a@access(_,_,am(0),_)),state(e,i)) -> { 
-        return `response(true,state(accesses(a,e),i)); 
-      }
-      rus(request(add(),access(subject(i1,l1),securityObject(_,l2),am(1),_)),
-          s2@state(accesses(_*,access(subject(i1,l1),securityObject(_,l3),am(0),_),_*),_)) -> { 
-        if ((compareStrictMcLean(`l2,`l3))) {
-          return `response(false,s2);
-        } 
-      }
-      rus(request(add(),a@access(_,_,am(1),_)),state(i,e))-> {
-        return `response(true,state(i,accesses(a,e))); 
-      }
-      rus(request(delete(),a),state(accesses(x*,a,y*),i))-> { 
-        return `response(true,state(accesses(x*,y*),i)); 
-      }
-      rus(request(delete(),a),state(i,accesses(x*,a,y*)))-> { 
-        return `response(true,state(i,accesses(x*,y*))); 
+        return `grant();
       }
     }
-    throw new RuntimeException("should not be there");
-  }
- %strategy makeExplicit() extends `Identity() {
-    visit State {
-      state(reads@accesses(_*,access(s1,o1,am(0),_),_*,access(s2,o2,am(0),_),_*),
-            writes@accesses(_*,access(s1,o2,am(1),_),_*)) &&
-          !accesses(_*,access(s2,o1,am(0),_),_*) << reads -> {
-        return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
+
+    // remove a READ or WRITE access 
+    // ==> granted if the access exists
+    // Q: it looks like forgetting the history - is this OK?
+    %match(req,cs) {
+      request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
+        state(reads@accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*),writes) -> {  
+        // remove the access
+        setCurrentState(`state(accesses(la,ra),writes));
+        return `grant();
       }
-      state(reads@accesses(_*,access(s2,o2,am(0),_),_*,access(s1,o1,am(0),_),_*),
-            writes@accesses(_*,access(s1,o2,am(1),_),_*)) &&
-          !accesses(_*,access(s2,o1,am(0),_),_*) << reads -> {
-        return `state(accesses(access(s2,o1,am(0),implicit()),reads),writes);
+      request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
+        state(reads,accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
+        // remove the access
+        setCurrentState(`state(reads,accesses(la,ra)));
+        return `grant();
+      }
+      request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
+        // state(reads,writes) -> {  //the previous two don't match
+        state(reads,! accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
+        // doens't exist
+        return `deny();
       }
     }
-  }
 
+    // all the other cases
+    return `na();
+	}
 
-	   //Verification of state by the predicate without making implicit accesses explicit
-  public boolean verifyPredicateW(State setOfAccesses){
-	  boolean result=true;
-	  try {
-		  //	make explicit implicit accesses
-		  //State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
-		  //test property 1 of the predicate
-		  result=result && property1(setOfAccesses);
-		  //test property 2 of the predicate
-		  result=result && property2(setOfAccesses);
-    } catch (Exception e) {
-    	System.out.println("A problem occured while applying strategy");
+  public String toString(){
+    String s = "ACCESSES : ";
+    State cs = getCurrentState();
+
+    %match(cs) {
+      state(_,accesses(_*,a@access(_,_,_,_),_*)) -> {
+        s += "\n " + `a;
+      }
+      state(accesses(_*,a@access(_,_,_,_),_*),_) -> {
+        s += "\n " + `a;
+      }
     }
-    // behavior if the access is granted
-    return result;
-  }
-
-
-	   //Verification of state by the predicate
-  public boolean verifyPredicate(State setOfAccesses){
-	  boolean result=true;
-	  try {
-		  //	make explicit implicit accesses
-		  State res = (State)`RepeatId(makeExplicit()).visit(setOfAccesses);
-		  //test property 1 of the predicate
-		  result=result && property1(res);
-		  //test property 2 of the predicate
-		  result=result && property2(res);
-    } catch (Exception e) {
-    	System.out.println("A problem occured while applying strategy");
-    }
-    // behavior if the access is granted
-    return result;
-  }
-
-  //Verify property 1 with implicit accesses included
-  public boolean property1(State res){
-	  ListOfAccesses explicitAndImplicitReads=res.getreads();
-	  %match(explicitAndImplicitReads){
-		  accesses(_*,read@access(s,o,_,_),_*)->{
-			  if (!compareMcLean(`s.getsl(),`o.getsl())){
-				  System.out.print("Scenario detected :"+`read);
-				  return false;
-			  }
-		  }
-	  }
-	  return true;
-  }
-
-  //Verify property 2
-  public boolean property2(State res){
-	  %match(res){
-		state(accesses(_*,a@access(s,o1,_,_),_*),accesses(_*,b@access(s,o2,_,_),_*))-> { 
-			if (compareStrictMcLean(`o2.getsl(),`o1.getsl())){
-				  System.out.print("Scenario detected :"+`a+","+`b);
-				  return false;
-			  }
-		}
-	  }
-	  return true;
-  }
-
-
-
-
-   public boolean compareStrictMcLean(SecurityLevel l1,SecurityLevel l2) {
-	   %match (securityLevelsOrderImproved) {
-		   setsl(_*,cl(_*,a,_*,b,_*),_*)->{if (l1.equals(`a) && l2.equals(`b) ){return true;}}
-	   }
-	   return false;
-  }
-
-
-  public boolean compareMcLean(SecurityLevel l1,SecurityLevel l2) {
-    %match (securityLevelsOrderImproved) {
-		   setsl(_*,cl(_*,a,_*,b,_*),_*)->{if ((l1.equals(`a) && l2.equals(`b)) || l1.equals(l1) ){return true;}}
-	   }
-	   return false;
-  }
-
-
-  public boolean valid(State setOfAccesses){
-	  return super.valid(setOfAccesses);
+    return s;
   }
 
 }
