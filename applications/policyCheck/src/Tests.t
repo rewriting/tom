@@ -7,60 +7,67 @@ public class Tests {
   %include { accesscontrol/accesscontrol.tom }
 
 	public static void main(String[] args) {
+    //     SecurityLevelsLattice sls = `slLattice(slSet(sl(0),sl(1)),slSet(sl(3),sl(4),sl(5)));
+    SecurityLevelsLattice sls = `slLattice(slSet(sl(1),sl(3)));
+    //     boolean c = `sls.smaller(`sl(1),`sl(3));
+    // 		System.out.println("C ="+c);
 
-		System.out.println("START ---------------------");
-
-    AccessMode am = `am(0);
-		System.out.println("AM: "+am);
-
-    SecurityLevelsLattice sls = `slLattice(slSet(sl(0),sl(1)),slSet(sl(3),sl(4),sl(5)));
-    boolean c = `sls.smaller(`sl(0),`sl(1));
-		System.out.println("C ="+c);
-    c = `sls.smaller(`sl(1),`sl(0));
-		System.out.println("C ="+c);
-    c = `sls.smaller(`sl(1),`sl(1));
-		System.out.println("C ="+c);
-    c = `sls.smaller(`sl(10),`sl(0));
-		System.out.println("C ="+c);
-
-    State s = `state(accesses(),accesses());
-		System.out.println("State: "+`s);
+		System.out.println("START  BLP---------------------");
 
     BLP blp = new BLP(sls);
-		System.out.println("BLP: "+`blp);
-    Decision result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(1,sl(3)),write(),explicit())));
-		System.out.println("Access granted: "+`result+"------------------------------------");
-		System.out.println(""+`blp);
-    result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(1,sl(3)),write(),explicit())));
-		System.out.println("Access granted: "+`result+"------------------------------------");
-		System.out.println(""+`blp); 
-    result = blp.transition(`request(delete(),access(subject(5,sl(3)),resource(1,sl(3)),write(),explicit())));
-		System.out.println("Access granted: "+`result+"------------------------------------");
-		System.out.println(""+`blp);
-    result = blp.transition(`request(delete(),access(subject(3,sl(3)),resource(1,sl(3)),write(),explicit())));
-		System.out.println("Access granted: "+`result+"------------------------------------");
-		System.out.println(""+`blp);
-    result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(1,sl(3)),read(),explicit())));
-		System.out.println("Access granted: "+`result+"------------------------------------");
-		System.out.println(""+`blp);
-    result = blp.transition(`request(add(),access(subject(5,sl(3)),resource(2,sl(4)),read(),explicit())));
-		System.out.println("Access granted: "+`result+"------------------------------------");
+    Resource r1 = `resource(1,sl(1));
+    Resource r2 = `resource(2,sl(2));
+    Resource r3 = `resource(3,sl(3));
+    Subject s1 = `subject(1,sl(3));
+    Subject s2 = `subject(2,sl(2));
+    Request req = `request(add(),access(s1,r3,read(),explicit()));
+    Decision result = blp.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
 		System.out.println(""+`blp);
 
+    req = `request(add(),access(s1,r2,write(),explicit()));
+    result = blp.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`blp); 
+
+    req = `request(add(),access(s2,r2,read(),explicit()));
+    result = blp.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`blp);
+
+    req = `request(add(),access(s2,r1,write(),explicit()));
+    result = blp.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`blp);
 
 		System.out.println("\nVALID STATUS: "+ blp.valid()+"\n");
 
 
-    BLP blptest = new BLP(sls,`state(accesses(access(subject(5,sl(3)),resource(2,sl(4)),read(),explicit())),
-                                     accesses()));
-		System.out.println("BLP: "+`blptest);
-    System.out.println("\nVALID STATUS: "+ blptest.valid()+"\n");
+		System.out.println("START  McLean ---------------------");
 
-    blptest = new BLP(sls,`state(accesses(access(subject(5,sl(5)),resource(2,sl(4)),read(),explicit())),
-                                     accesses()));
-		System.out.println("BLP: "+`blptest);
-    System.out.println("\nVALID STATUS: "+ blptest.valid()+"\n");
+    McLean mcl = new McLean(sls);
 
+    req = `request(add(),access(s1,r3,read(),explicit()));
+    result = mcl.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`mcl);
+
+    req = `request(add(),access(s1,r2,write(),explicit()));
+    result = mcl.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`mcl); 
+
+    req = `request(add(),access(s2,r2,read(),explicit()));
+    result = mcl.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`mcl);
+
+    req = `request(add(),access(s2,r1,write(),explicit()));
+    result = mcl.transition(req);
+		System.out.println("Request: "+`req+"------------------------------------>"+`result);
+		System.out.println(""+`mcl);
+
+		System.out.println("\nVALID STATUS: "+ blp.valid()+"\n");
 
 	}
 	

@@ -59,7 +59,7 @@ public class McLean extends MultilevelPolicy{
     %match(res){
       state(reads@accesses(_*,access(subject(sid,ssl),resource(rid1,rsl1),read(),_),_*),
             writes@accesses(_*,access(subject(sid,ssl),resource(rid2,rsl2),write(),_),_*)) -> {
-        if(! `slL.smaller(`rsl1,`rsl2)) {
+        if(`slL.smaller(`rsl2,`rsl1)) {
           return false;
         }
       }
@@ -71,7 +71,7 @@ public class McLean extends MultilevelPolicy{
 
  
 	/**
-   * Rewrite rules implementing the Bell and LaPadula policy
+   * Rewrite rules implementing the McLean policy
    * done with two level match for add cases
    * ==> should be more clear (but less efficient?) with one level and non-linear matching
 	 * 
@@ -97,7 +97,7 @@ public class McLean extends MultilevelPolicy{
           state(_,writes@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)) -> {
             if(`sid==`sidS && 
                // `ssl.equals(`sslS) && 
-               ! `slL.smaller(`rsl,`rslS)){
+               `slL.smaller(`rslS,`rsl)){
               return `deny();
             }
           }
@@ -120,7 +120,7 @@ public class McLean extends MultilevelPolicy{
           state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*),_) -> {
             if( `sid==`sidS && 
                 // `ssl.equals(`sslS) &&
-               ! `slL.smaller(`rslS,`rsl)){
+               `slL.smaller(`rsl,`rslS)){
               return `deny();
             }
           }
