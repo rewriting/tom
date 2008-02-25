@@ -71,6 +71,10 @@ public class ArrayPropagator implements IBasePropagator {
         // if something changed
         if (detachedConstr != `m) { return detachedConstr; }
       }      
+      
+      // [radu] TODO - hasElement shouldn't be generated here (same for Variadic propagator)
+      // (we should generate the has-element test in the generators before generating the code for a GetElement )      
+       
       // Decompose - only if 'g' != SymbolOf 
       // array[t1,X*,t2,Y*] = g -> array=SymbolOf(g) /\ fresh_index = 0 
       // /\ HasElement(fresh_index,g)  /\ t1=GetElement(fresh_index,g) /\ fresh_index1 = fresh_index + 1 
