@@ -151,7 +151,7 @@ public class PreGenerator {
 
       /*
        * SwitchVar
-       * TODO : replace with constraints when the or bugs in the optimizer are solved
+       * TODO : replace with constraints when the or bugs in the optimizer are solved + the or is correctly handled for lists, i.e. with the duplication of the action
        * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
        */
        AndConstraint(X*,first@(MatchConstraint|NumericConstraint)[Subject=rhs],Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
