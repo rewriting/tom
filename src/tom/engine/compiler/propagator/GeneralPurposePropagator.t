@@ -136,15 +136,9 @@ public class GeneralPurposePropagator implements IBasePropagator {
       %match(slots) { 
         concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot,TomName name) {
-            ps@PairSlotAppl[Appl=appl@RecordAppl[NameList=(childName)]],childName -> {
+            ps@PairSlotAppl[Appl=appl],childName &&  
+              (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
               TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t));                
-              constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
-              newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
-              break matchSlot;
-            }
-            // the child can be an antiTerm - in this case, do as above
-            ps@PairSlotAppl[Appl=appl@AntiTerm(RecordAppl[NameList=(childName)])],childName -> {
-              TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t)); 
               constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
               newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
               break matchSlot;
