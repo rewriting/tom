@@ -81,13 +81,9 @@ public class GeneralPurposePropagator implements IBasePropagator {
       }      
       /**
        * Merge for variables (we only deal with the variables of the pattern, ignoring the introduced ones)
+       * 
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
        * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x )
-       * 
-       * on rhs
-       *  
-       * X* = p1 /\ Context( p2 = X* ) -> X* = p1 /\ Context( p2 = p1 )
-       * x = p1 /\ Context( p2 = x ) -> x = p1 /\ Context( p2 = p1 )
        */
       AndConstraint(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[],AstType=type],value),Y*) -> {
         if (!replacedVariables.contains(`x)){
@@ -175,9 +171,6 @@ matchSlot:  %match(slot,TomName name) {
       MatchConstraint(v@(Variable|VariableStar)[AstName=name,AstType=type],p) && name << TomName varName -> {        
         TomTerm freshVar = `v.isVariable() ? Compiler.getFreshVariable(`type) : Compiler.getFreshVariableStar(`type);
         return `AndConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVar(freshVar),var));
-      }
-      MatchConstraint(p@!TestVar[],v@(Variable|VariableStar)[AstName=name]) && name << TomName varName -> {        
-        return `MatchConstraint(p,value);
       }
     }
   }
