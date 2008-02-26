@@ -314,7 +314,7 @@ generateGetters(writer);
 
     writer.write(%[
     /* internal use */
-  protected @((slotList.length()==0)?"static":"")@ int hashFunction() {
+  protected@((slotList.length()==0)?" static":"")@ int hashFunction() {
     int a, b, c;
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
@@ -738,7 +738,6 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
         } else {
           if (`domain.equals(`ClassName("","int"))
               || `domain.equals(`ClassName("","long"))
-              || `domain.equals(`ClassName("","double"))
               || `domain.equals(`ClassName("","float"))
               || `domain.equals(`ClassName("","char"))) {
             writer.write(fieldName(`slotName));
@@ -747,6 +746,13 @@ private String generateMakeArgsFor(SlotField slot, String argName) {
           } else if (`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
             writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
+          } else if (`domain.equals(`ClassName("","double"))) {
+            writer.write("(int)(java.lang.Double.doubleToLongBits(");
+            writer.write(fieldName(`slotName));
+            writer.write(")^(java.lang.Double.doubleToLongBits(");
+            writer.write(fieldName(`slotName));
+            writer.write(")>>>32");
+            writer.write("))");
           } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
             // Use the string hashFunction for Strings, and pass index as arity
             writer.write(fieldName(`slotName)+".hashCode()");
