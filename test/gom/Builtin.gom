@@ -23,4 +23,5 @@ Wrapper = | Int(i:int)
           | RealBis(r:float)
           | Double(d:double)
           | DoubleBis(d:double)
+          | MultipleDouble(d1:double,d2:double,d3:double)
 
