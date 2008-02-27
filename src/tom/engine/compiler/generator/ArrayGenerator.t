@@ -76,12 +76,6 @@ public class ArrayGenerator implements IBaseGenerator{
         }
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }			
-      // generate equal - this can come from variable's propagations
-      ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetElement[Codomain=termType]),t)) -> {
-        return `EqualTerm(termType,e,t);
-      }
-      // handle AU case
-     // ge@GetElement[Opname=opName,Variable=var] -> { return `genGetElement(opName,var,ge); }
     } // end visit
     
   } // end strategy

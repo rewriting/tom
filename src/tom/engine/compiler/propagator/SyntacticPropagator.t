@@ -62,20 +62,19 @@ public class SyntacticPropagator implements IBasePropagator {
        * Decompose
        * 
        * f1(t1,...,tn) = g 
-       * -> f1 = SymbolOf(g) /\ freshVar1=subterm1_f(g) /\ ... /\ freshVarn=subterm1_f(g) 
+       * -> freshSubject = g /\ f1 = SymbolOf(freshSubject) /\ freshVar1=subterm1_f(freshSubject) /\ ... /\ freshVarn=subterm1_f(freshSubject) 
        *                /\ t1=freshVar1 /\ ... /\ tn=freshVarn
        * 
        * if f has multiple names (from f1|f2): 
        * (f1|f2)(t1,...,tn) = g 
-       * -> ( (f1 = SymbolOf(g) /\ freshVar1=subterm1_f1(g) /\ ... /\ freshVarn=subtermn_f1(g)) 
-       *       \/ (f2 = SymbolOf(g) /\ freshVar1=subterm1_f2(g) /\ ... /\ freshVarn=subtermn_f2(g)) ) 
+       * -> freshSubject = g /\ ( (f1 = SymbolOf(freshSubject) /\ freshVar1=subterm1_f1(freshSubject) /\ ... /\ freshVarn=subtermn_f1(freshSubject)) 
+       *       \/ (f2 = SymbolOf(freshSubject) /\ freshVar1=subterm1_f2(freshSubject) /\ ... /\ freshVarn=subtermn_f2(freshSubject)) ) 
        *  /\ t1=freshVar1 /\ ... /\ tn=freshVarn
        * 
-       * we can decompose only if 'g' != SymbolOf
        * if the symbol was annotated, annotations are detached:
        *        a@...b@f(...) << t -> f(...) << t /\ a << t /\ ... /\ b << t
        */
-      m@MatchConstraint(RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
+      m@MatchConstraint(rappl@RecordAppl(options,nameList@(firstName@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this a list or array, nothing to do
         if(!TomBase.isSyntacticOperator(
             Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `m; }
@@ -93,6 +92,7 @@ public class SyntacticPropagator implements IBasePropagator {
             lastPart = `AndConstraint(lastPart*,MatchConstraint(appl,freshVar));              
           }
         }
+        TomTerm freshSubject = Compiler.getFreshVariable(Compiler.getTermTypeFromTerm(`g));
         // take each symbol and build the disjunction
         Constraint l = `OrConstraintDisjunction();
         %match(nameList) {
@@ -100,20 +100,20 @@ public class SyntacticPropagator implements IBasePropagator {
             // the 'and' conjunction for each name
             Constraint andForName = `AndConstraint();
             // add condition for symbolOf
-            andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(g)));
+            andForName = `AndConstraint(MatchConstraint(RecordAppl(options,concTomName(name),concSlot(),concConstraint()),SymbolOf(freshSubject)));
             int counter = 0;          
             // for each slot
             %match(slots) {
               concSlot(_*,PairSlotAppl(slotName,_),_*) -> {                                          
                 TomTerm freshVar = freshVarList.get(counter);          
-                andForName = `AndConstraint(andForName*,MatchConstraint(freshVar,Subterm(name,slotName,g)));
+                andForName = `AndConstraint(andForName*,MatchConstraint(freshVar,Subterm(name,slotName,freshSubject)));
                 counter++;
               }
             }// match slots
             l = `OrConstraintDisjunction(l*,andForName);
           }
         }
-        return `AndConstraint(l*,lastPart*,ConstraintPropagator.performDetach(m));
+        return `AndConstraint(MatchConstraint(freshSubject,g),l*,lastPart*,ConstraintPropagator.performDetach(m));
       }      
     }
   }// end %strategy

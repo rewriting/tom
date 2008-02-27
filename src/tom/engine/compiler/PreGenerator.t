@@ -111,8 +111,7 @@ public class PreGenerator {
        * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
        *
        */
-      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(rhs)),Y*,second@MatchConstraint(var,_),Z*)
-         && ( var@(Variable|VariableStar)[] << rhs || ListHead[Variable=var] << rhs || ListTail[Variable=var] << rhs || ExpressionToTomTerm(GetSliceArray[VariableBeginAST=var]) << rhs ) -> {
+      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(var@(Variable|VariableStar)[])),Y*,second@MatchConstraint(var,_),Z*) -> {
         return `AndConstraint(X*,second,Y*,first,Z*);
       }
       /*

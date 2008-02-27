@@ -74,25 +74,28 @@ public class ArrayPropagator implements IBasePropagator {
       
       // [radu] TODO - hasElement shouldn't be generated here (same for Variadic propagator)
       // (we should generate the has-element test in the generators before generating the code for a GetElement )      
-       
-      // Decompose - only if 'g' != SymbolOf 
-      // array[t1,X*,t2,Y*] = g -> array=SymbolOf(g) /\ fresh_index = 0 
-      // /\ HasElement(fresh_index,g)  /\ t1=GetElement(fresh_index,g) /\ fresh_index1 = fresh_index + 1 
+ 
+      // array[t1,X*,t2,Y*] = g -> freshSubj = g /\ array=SymbolOf(freshSubj) /\ fresh_index = 0 
+      // /\ HasElement(fresh_index,freshSubj)  /\ t1=GetElement(fresh_index,freshSubj) /\ fresh_index1 = fresh_index + 1 
       // /\ begin1 = fresh_index1  /\ end1 = fresh_index1 /\ X* = VariableHeadArray(begin1,end1) /\ fresh_index2 = end1
-      // /\ HasElement(fresh_index2,g) /\ t2=GetElement(fresh_index2,g)/\ fresh_index3 = fresh_index2 + 1  
+      // /\ HasElement(fresh_index2,freshSubj) /\ t2=GetElement(fresh_index2,freshSubj)/\ fresh_index3 = fresh_index2 + 1  
       // /\ begin2 = fresh_index3  /\ end2 = fresh_index3 /\ Y* = VariableHeadArray(begin2,end2) /\ fresh_index4 = end2
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {      
             // if this is not an array, nothing to do
             if(!TomBase.isArrayOperator(Compiler.getSymbolTable().
                 getSymbolFromName(`tomName))) {return `m;}        
-            TomType termType = Compiler.getTermTypeFromTerm(`t);
+            // declare fresh variable            
+            TomType termType = Compiler.getTermTypeFromTerm(`g);            
+            TomTerm freshVariable = Compiler.getFreshVariableStar(termType);
+            Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
+            
             // declare fresh index = 0            
             TomTerm freshIndex = getFreshIndex();				
             Constraint freshIndexDeclaration = `MatchConstraint(freshIndex,TargetLanguageToTomTerm(ITL("0")));
             Constraint l = `AndConstraint();
     match:  %match(slots) {
               concSlot() -> {
-                l = `AndConstraint(l*,EmptyArrayConstraint(name,g,freshIndex));
+                l = `AndConstraint(l*,EmptyArrayConstraint(name,freshVariable,freshIndex));
               }
               concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
                 TomTerm newFreshIndex = getFreshIndex();                
@@ -104,26 +107,26 @@ public class ArrayPropagator implements IBasePropagator {
                     if(`X.length() == 0) {
                       // we should only assign it, without generating a loop
                       l = `AndConstraint(l*,MatchConstraint(appl,ExpressionToTomTerm(
-                            GetSliceArray(name,g,freshIndex,ExpressionToTomTerm(GetSize(name,g))))));
+                            GetSliceArray(name,freshVariable,freshIndex,ExpressionToTomTerm(GetSize(name,freshVariable))))));
                     } else {
                       TomTerm beginIndex = getBeginIndex();
                       TomTerm endIndex = getEndIndex();
                       l = `AndConstraint(l*,
                           MatchConstraint(beginIndex,freshIndex),
                           MatchConstraint(endIndex,freshIndex),
-                          MatchConstraint(appl,VariableHeadArray(name,g,beginIndex,endIndex)),
+                          MatchConstraint(appl,VariableHeadArray(name,freshVariable,beginIndex,endIndex)),
                           MatchConstraint(newFreshIndex,endIndex));     
                     }
                     break mAppl;
                   }
                   _ -> {                    
                     l = `AndConstraint(l*,                      
-                        Negate(EmptyArrayConstraint(name,g,freshIndex)),                      
-                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,termType,g,freshIndex))),
+                        Negate(EmptyArrayConstraint(name,freshVariable,freshIndex)),                      
+                        MatchConstraint(appl,ExpressionToTomTerm(GetElement(name,Compiler.getTermTypeFromTerm(appl),freshVariable,freshIndex))),
                         MatchConstraint(newFreshIndex,ExpressionToTomTerm(AddOne(freshIndex))));
                     // for the last element, we should also check that the list ends
                     if(`X.length() == 0) {                  
-                      l = `AndConstraint(l*, EmptyArrayConstraint(name,g,newFreshIndex));
+                      l = `AndConstraint(l*, EmptyArrayConstraint(name,freshVariable,newFreshIndex));
                     }
                   }
                 }// end match
@@ -131,7 +134,7 @@ public class ArrayPropagator implements IBasePropagator {
               }
             }// end match                        
             // add head equality condition + fresh var declaration + detached constraints
-            l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(g)),
+            l = `AndConstraint(freshVarDeclaration,MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable)),
                 freshIndexDeclaration,ConstraintPropagator.performDetach(m),l*);
             return l;
         }

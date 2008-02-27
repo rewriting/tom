@@ -62,10 +62,6 @@ public class SyntacticGenerator implements IBaseGenerator {
         Expression check = `buildEqualFunctionSymbol(termType, subject, name, TomBase.getTheory(currentTerm));
         return check;
       }
-      // generate equality
-      ConstraintToExpression(MatchConstraint(t@Subterm[],u)) -> {
-        return `EqualTerm(Compiler.getTermTypeFromTerm(t),t,u);
-      }
       // generate equality test
       ConstraintToExpression(MatchConstraint(TestVar(v@(Variable|VariableStar)[AstType=type]),t)) -> {
         return `EqualTerm(type,v,t);

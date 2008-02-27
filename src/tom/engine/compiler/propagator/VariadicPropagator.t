@@ -76,9 +76,8 @@ public class VariadicPropagator implements IBasePropagator {
        * 
        * [pem] I need some explanations to deeply understand the rules
        *    //TODO    	
-       * Decompose - only if 'g' != SymbolOf
        *  
-       * conc(t1,X*,t2,Y*) = g -> conc=SymbolOf(g) /\ fresh_var = g 
+       * conc(t1,X*,t2,Y*) = g -> fresh_var = g /\ conc=SymbolOf(fresh_var)  
        * /\ NotEmpty(fresh_Var)  /\ t1=ListHead(fresh_var) /\ fresh_var1 = ListTail(fresh_var) 
        * /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\ X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1
        * /\ NotEmpty(fresh_Var2) /\ t2=ListHead(fresh_var2) /\ fresh_var3 = ListTail(fresh_var2)  
@@ -96,6 +95,7 @@ public class VariadicPropagator implements IBasePropagator {
         TomType listType = Compiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = Compiler.getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
+        Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
         Constraint l = `AndConstraint();        
 mSlots:  %match(slots) {
           concSlot() -> {
@@ -135,9 +135,8 @@ mSlots:  %match(slots) {
             freshVariable = newFreshVarList;
           }          
         }// end match
-        // add head equality condition + fresh var declaration + detached constraints        
-        l = `AndConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(g)),
-            freshVarDeclaration,ConstraintPropagator.performDetach(m),l*);
+        // fresh var declaration + add head equality condition + detached constraints
+        l = `AndConstraint(freshVarDeclaration, isSymbolConstr, ConstraintPropagator.performDetach(m),l*);
         return l;
       }					
     }
