@@ -563,8 +563,11 @@ public final class TomBase {
 
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
 
-      ExpressionToTomTerm(GetSlot[Codomain=type]) -> { return `type; } 
-
+      ExpressionToTomTerm(expr) -> { return getTermType(`expr,symbolTable); }
+      
+      ListHead[Codomain=type] -> { return `type; }
+      ListTail[Variable=term] -> { return getTermType(`term, symbolTable); }
+      
       Subterm(Name(name), slotName, _) -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`name);
         return getSlotType(tomSymbol, `slotName);
