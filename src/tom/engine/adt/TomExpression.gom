@@ -69,3 +69,8 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
         */
            | Code(Code:String)
 
+TomTermToExpression:make(t) {
+	%match(t) {
+		ExpressionToTomTerm(expr) -> { return `expr; }
+	}	
+}
