@@ -1,0 +1,150 @@
+module accesscontrol
+  imports int boolean String
+  abstract syntax 
+  
+// Security level identified by an int
+  SecurityLevel = sl(l:String)
+// List of comparable security levels where the first element is the lowest
+  SecurityLevelsSet = slSet(SecurityLevel*)
+// List of partially ordered lists of security levels
+  SecurityLevelsLattice = slLattice(SecurityLevelsSet*)
+
+  sort SecurityLevelsLattice:block() {
+    /**
+     * Checks if a security level is smaller than another one
+     * 
+     * @param l1,l2 the two security levels
+     * @return true if l1 <= l2
+     * false otherwise (smaller or  not comparable)
+     */
+   // Q: why not using compare to implement smaller ?
+   public boolean smaller(SecurityLevel l1,SecurityLevel l2) {
+    if(l1.equals(l2)) {
+      return true;
+    }
+    
+    %match (this) { 
+      slLattice(_*,slSet(_*,m,_*,n,_*),_*) -> {
+        if(l1.equals(`m) && l2.equals(`n)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Compare two levels of security wrt a security levels lattice 
+   * 
+   * @param l1,l2 the two security levels
+   * @return 0 if equal
+   *         1 if l1 > l2
+   *        -1 if l1 < l2
+   *       100 if not comparable
+   */
+   public int compare(SecurityLevel l1,SecurityLevel l2) {
+    if(l1.equals(l2)) {
+      return 0;
+    }
+
+    %match (this) { 
+      slLattice(_*,slSet(_*,m,_*,n,_*),_*) -> {
+        if(l1.equals(`m) && l2.equals(`n)) { return -1; }
+        if(l2.equals(`m) && l1.equals(`n)) { return 1; }
+      }
+    }
+    return 100;
+  }
+}
+  
+//Subject which has an ID for identification and a security level SL.
+  Subject = subject(id:int,sl:SecurityLevel)
+  ListOfSubjects = subjects(Subject*)
+   
+//Resource which has an ID for identification and a security level SL.
+  Resource  = resource(id:int,sl:SecurityLevel)
+  ListOfResources = resources(Resource*)
+  
+//An access is defined by the "subject" that accesses  the  "resource" in "access mode" 
+//It can be explicitly requested by the subjects or an implicit consequence of other accesses 
+//0 for read, 1 for write
+  Access = read(subject:Subject,resource:Resource)
+         | write(subject:Subject,resource:Resource)
+         | access(mode:int,subject:Subject,resource:Resource)
+
+  module accesscontrol:rules() {
+      access(0,s,r) -> read(s,r)
+      access(1,s,r) -> write(s,r)
+  }
+   
+  ListOfAccesses = accesses(Access*)
+  // we use sorted list to identify equivalent states
+  accesses:make_insert(e,l) {
+    accesscontrol.types.listofaccesses.accesses l1 = (accesscontrol.types.listofaccesses.accesses) l;
+   
+    // do not add an access already there 
+    if(l1.contains(e)) { return l; }
+
+	 // checks if an implicit state can be deduced from the set of explcit states 
+   // can we cut by adding only ONE element ? it seems to be complete
+    java.util.Collection<accesscontrol.types.Access> toBeAdded = new java.util.HashSet<accesscontrol.types.Access>();
+    matchblock:{
+    %match(e) {
+      read(s1,o1) &&
+      accesses(_*,read(s2,o2),_*,write(s1,o2),_*) << l1 -> {
+        toBeAdded.add(`read(s2,o1));
+        break matchblock;// add onlye one element
+      }
+
+      read(s2,o2) &&
+      accesses(_*,read(s1,o1),_*,write(s1,o2),_*) << l1 -> {
+        toBeAdded.add(`read(s2,o1));
+        break matchblock;// add onlye one element
+      }
+
+      write(s1,o2) &&
+      ( accesses(_*,read(s1,o1),_*,read(s2,o2),_*) << l1 ||
+        accesses(_*,read(s2,o2),_*,read(s1,o1),_*) << l1) -> {
+        toBeAdded.add(`read(s2,o1));
+        break matchblock;// add onlye one element
+      }
+    }}
+
+    // build the sorted list (e,l)
+    accesscontrol.types.ListOfAccesses l2 = null;
+    %match(l) {
+      accesses() -> {
+        l2 = `realMake(e,accesses());
+      }
+
+      accesses(head,tail*) -> {
+        if(e.compareToLPO(`head) > 0) {
+          l2 = `realMake(head,accesses(e,tail*)); 
+        } else {
+          l2 = `realMake(e,l);
+        }
+      }
+    }
+
+    //System.out.println("size: " + toBeAdded.size());
+    for(accesscontrol.types.Access elt:toBeAdded) {
+      l2 = `accesses(elt,l2*);
+    }
+    return l2;
+  }
+
+//State composed of a list of accesses 
+// can add the lattice of levels - maybe interesting when dynamic
+  State = state(accesses:ListOfAccesses)
+
+//Request, composed of a request type and an access
+// add - to request the addition of an access,  
+// delete - to request the deletion of an access
+  Request = add(access:Access)
+          | delete(access:Access)
+  ListOfRequests = requests(Request*)
+ 
+//Decision for an access request: (not) granted, not applicable, ...
+  Decision = grant(state:State)
+           | deny(state:State)
+           | na(state:State)
