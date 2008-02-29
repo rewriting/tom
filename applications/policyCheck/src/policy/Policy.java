@@ -18,13 +18,13 @@ public interface Policy {
 	 * @param r the access request 
 	 * @return the decision for the demanded request
 	 */
-	public  Decision transition(Request r);
+	public Decision transition(Request r);
 
 	/**
-	 * The predicate that should be verified by  the policy
+	 * The predicate that should be verified by the policy
 	 * 
 	 * @return true if the current state respects the predicate, false otherwise
 	 */
-	public  boolean valid();
+	public boolean valid();
 	
 }

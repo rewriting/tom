@@ -21,8 +21,7 @@ public class Product {
 				product.add(new ArrayList<Integer>());
 			} else {
 				int currentSize = sizeSet.remove(0);
-				ArrayList<ArrayList<Integer>> subProductsList = Product
-						.getProduct(sizeSet);
+				ArrayList<ArrayList<Integer>> subProductsList = Product.getProduct(sizeSet);
 				for (int i = 0; i < currentSize; i++) {
 					for (int j = 0; j < subProductsList.size(); j++) {
 						ArrayList<Integer> entry = new ArrayList<Integer>();

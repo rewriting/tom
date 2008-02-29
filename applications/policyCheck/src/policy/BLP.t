@@ -3,7 +3,7 @@ import accesscontrol.*;
 import accesscontrol.types.*;
 import policy.Policy;
 
-public class BLP extends MultilevelPolicy{
+public class BLP extends MultilevelPolicy implements Cloneable {
 	%include { sl.tom }
   %include { ../accesscontrol/accesscontrol.tom }
 
@@ -12,7 +12,7 @@ public class BLP extends MultilevelPolicy{
 	 * 
 	 * @param the security levels lattice 
 	 */
- 	public BLP(SecurityLevelsLattice slL){
+ 	public BLP(SecurityLevelsLattice slL) {
     super(slL);
 	}
 
@@ -23,49 +23,47 @@ public class BLP extends MultilevelPolicy{
 	 * @param the security levels lattice 
 	 * @param the current state
 	 */
- 	public BLP(SecurityLevelsLattice slL, State state){
+ 	public BLP(SecurityLevelsLattice slL, State state) {
     this(slL);
     setCurrentState(state);
 	}
- 
-	/**
-	 * The predicate that should be verified by  the policy
+
+  public Object clone() {
+    BLP theClone = new BLP(getSecurityLevelsLattice(),getCurrentState());
+    return theClone;
+  }
+
+/**
+	 * The predicate that should be verified by the policy
 	 * 
 	 * @return true if the current state respects the predicate, false otherwise
 	 */
   public boolean valid() {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
-    State cs = getCurrentState();
-    State res = cs;
 
     // make explicit implicit accesses
     // can we do it less often ??
-    try{
-      res = getExpandedCurrentState();
-    } catch(tom.library.sl.VisitFailure vfe){
-      System.out.println("VERIFICATION PROBLEM !!!");
-    }
+    State ecs = getExpandedCurrentState();
     
-    //read only (comparable and) lower level resources 
-    %match(res){
+    %match(ecs) {
+      //read only (comparable and) lower level resources 
       state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
         if(! `slL.smaller(`rsl,`ssl)) {
           return false;
         }
       } 
-    }
-    
-    //*-security property
-    %match(res){
+
+      //*-security property
       state(reads@accesses(_*,access(subject(sid,ssl),resource(rid1,rsl1),read(),_),_*),
             writes@accesses(_*,access(subject(sid,ssl),resource(rid2,rsl2),write(),_),_*)) -> {
         if(! `slL.smaller(`rsl1,`rsl2)) {
           return false;
         }
       }
-    }
 
-    // if no leakage than OK
+    }
+    
+    // if no leakage then OK
     return true;
   }
 
@@ -94,7 +92,7 @@ public class BLP extends MultilevelPolicy{
         }
         // existing write access with lower level
         %match(cs) {
-          state(_,writes@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)) -> {
+          state[writes=accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)] -> {
             if(`sid==`sidS && 
                // `ssl.equals(`sslS) && 
                ! `slL.smaller(`rsl,`rslS)){
@@ -105,9 +103,9 @@ public class BLP extends MultilevelPolicy{
         // none of the previous ones is satisfied
         // ==> good privileges and no existing write that is not smaller
         %match(cs) {
-          state(accesses(la*),writes@accesses(_*)) -> {
+          state(reads,writes) -> {
             // add the new access
-            setCurrentState(`state(accesses(newAccess,la),writes));
+            setCurrentState(`state(accesses(newAccess,reads),writes));
           }
         }
         return `grant();
@@ -117,7 +115,7 @@ public class BLP extends MultilevelPolicy{
 			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),write(),_))  -> { 
         // existing write access with lower level
         %match(cs) {
-          state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*),_) -> {
+          state[reads=accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*)] -> {
             if( `sid==`sidS && 
                 // `ssl.equals(`sslS) &&
                ! `slL.smaller(`rslS,`rsl)){
@@ -125,11 +123,11 @@ public class BLP extends MultilevelPolicy{
             }
           }
         }
-        // no  existing read that is not bigger
+        // no existing read that is not bigger
         %match(cs) {
-          state(reads@accesses(_*),accesses(la*)) -> {
+          state(reads,writes) -> {
             // add the new access
-            setCurrentState(`state(reads,accesses(newAccess,la)));
+            setCurrentState(`state(reads,accesses(newAccess,writes)));
           }
         } 
         return `grant();
@@ -143,19 +141,20 @@ public class BLP extends MultilevelPolicy{
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
         state(reads@accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*),writes) -> {  
         // remove the access
-        setCurrentState(`state(accesses(la,ra),writes));
+        setCurrentState(`state(accesses(la*,ra*),writes));
         return `grant();
       }
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
         state(reads,accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
         // remove the access
-        setCurrentState(`state(reads,accesses(la,ra)));
+        setCurrentState(`state(reads,accesses(la*,ra*)));
         return `grant();
       }
+      // Q: why only in writes?
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
         // state(reads,writes) -> {  //the previous two don't match
         state(reads,! accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
-        // doens't exist
+        // doesn't exist
         return `deny();
       }
     }
@@ -164,15 +163,15 @@ public class BLP extends MultilevelPolicy{
     return `na();
 	}
 
-  public String toString(){
+  public String toString() {
     String s = "ACCESSES : ";
     State cs = getCurrentState();
 
     %match(cs) {
-      state(_,accesses(_*,a@access(_,_,_,_),_*)) -> {
+      state[writes=accesses(_*,a@access[],_*)] -> {
         s += "\n " + `a;
       }
-      state(accesses(_*,a@access(_,_,_,_),_*),_) -> {
+      state[reads=accesses(_*,a@access[],_*)] -> {
         s += "\n " + `a;
       }
     }

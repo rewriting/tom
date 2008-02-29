@@ -3,7 +3,7 @@ import accesscontrol.*;
 import accesscontrol.types.*;
 import policy.Policy;
 
-public class McLean extends MultilevelPolicy{
+public class McLean extends MultilevelPolicy implements Cloneable {
 	%include { sl.tom }
   %include { ../accesscontrol/accesscontrol.tom }
 
@@ -12,7 +12,7 @@ public class McLean extends MultilevelPolicy{
 	 * 
 	 * @param the security levels lattice 
 	 */
- 	public McLean(SecurityLevelsLattice slL){
+ 	public McLean(SecurityLevelsLattice slL) {
     super(slL);
 	}
 
@@ -23,11 +23,15 @@ public class McLean extends MultilevelPolicy{
 	 * @param the security levels lattice 
 	 * @param the current state
 	 */
- 	public McLean(SecurityLevelsLattice slL, State state){
+ 	public McLean(SecurityLevelsLattice slL, State state) {
     this(slL);
     setCurrentState(state);
 	}
  
+  public Object clone() {
+    McLean theClone = new McLean(getSecurityLevelsLattice(),getCurrentState());
+    return theClone;
+  }
 	/**
 	 * The predicate that should be verified by  the policy
 	 * 
@@ -35,37 +39,29 @@ public class McLean extends MultilevelPolicy{
 	 */
   public boolean valid() {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
-    State cs = getCurrentState();
-    State res = cs;
-
+    
     // make explicit implicit accesses
     // can we do it less often ??
-    try{
-      res = getExpandedCurrentState();
-    } catch(tom.library.sl.VisitFailure vfe){
-      System.out.println("VERIFICATION PROBLEM !!!");
-    }
-    
-    //read only (comparable and) lower level resources 
-    %match(res){
-      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*),_) -> {
+    State ecs = getExpandedCurrentState();
+
+    %match(ecs) {
+      //read only (comparable and) lower level resources 
+      state[reads=accesses(_*,access(subject(sid,ssl),resource(rid,rsl),read(),_),_*)] -> {
         if(! `slL.smaller(`rsl,`ssl)) {
           return false;
         }
       } 
-    }
-    
+
     //*-security property
-    %match(res){
-      state(reads@accesses(_*,access(subject(sid,ssl),resource(rid1,rsl1),read(),_),_*),
-            writes@accesses(_*,access(subject(sid,ssl),resource(rid2,rsl2),write(),_),_*)) -> {
+      state[reads=accesses(_*,access(subject(sid,ssl),resource(rid1,rsl1),read(),_),_*),
+            writes=accesses(_*,access(subject(sid,ssl),resource(rid2,rsl2),write(),_),_*)] -> {
         if(`slL.smaller(`rsl2,`rsl1)) {
           return false;
         }
       }
     }
-
-    // if no leakage than OK
+    
+    // if no leakage then OK
     return true;
   }
 
@@ -94,10 +90,10 @@ public class McLean extends MultilevelPolicy{
         }
         // existing write access with lower level
         %match(cs) {
-          state(_,writes@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)) -> {
+          state[writes=accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),write(),_),_*)] -> {
             if(`sid==`sidS && 
                // `ssl.equals(`sslS) && 
-               `slL.smaller(`rslS,`rsl)){
+               `slL.smaller(`rslS,`rsl)) {
               return `deny();
             }
           }
@@ -105,9 +101,9 @@ public class McLean extends MultilevelPolicy{
         // none of the previous ones is satisfied
         // ==> good privileges and no existing write that is not smaller
         %match(cs) {
-          state(accesses(la*),writes@accesses(_*)) -> {
+          state(reads,writes) -> {
             // add the new access
-            setCurrentState(`state(accesses(newAccess,la),writes));
+            setCurrentState(`state(accesses(newAccess,reads),writes));
           }
         }
         return `grant();
@@ -117,7 +113,7 @@ public class McLean extends MultilevelPolicy{
 			request(add(),newAccess@access(subject(sid,ssl),resource(rid,rsl),write(),_))  -> { 
         // existing write access with lower level
         %match(cs) {
-          state(reads@accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*),_) -> {
+          state[reads=accesses(_*,access(subject(sidS,sslS),resource(ridS,rslS),read(),_),_*)] -> {
             if( `sid==`sidS && 
                 // `ssl.equals(`sslS) &&
                `slL.smaller(`rsl,`rslS)){
@@ -127,9 +123,9 @@ public class McLean extends MultilevelPolicy{
         }
         // no  existing read that is not bigger
         %match(cs) {
-          state(reads@accesses(_*),accesses(la*)) -> {
+          state(reads,writes) -> {
             // add the new access
-            setCurrentState(`state(reads,accesses(newAccess,la)));
+            setCurrentState(`state(reads,accesses(newAccess,writes)));
           }
         } 
         return `grant();
@@ -143,13 +139,13 @@ public class McLean extends MultilevelPolicy{
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
         state(reads@accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*),writes) -> {  
         // remove the access
-        setCurrentState(`state(accesses(la,ra),writes));
+        setCurrentState(`state(accesses(la*,ra*),writes));
         return `grant();
       }
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
         state(reads,accesses(la*,access(subject(sid,ssl),resource(rid,rsl),rw,_),ra*)) -> {  
         // remove the access
-        setCurrentState(`state(reads,accesses(la,ra)));
+        setCurrentState(`state(reads,accesses(la*,ra*)));
         return `grant();
       }
       request(delete(),access(subject(sid,ssl),resource(rid,rsl),rw,_)),
@@ -169,10 +165,10 @@ public class McLean extends MultilevelPolicy{
     State cs = getCurrentState();
 
     %match(cs) {
-      state(_,accesses(_*,a@access(_,_,_,_),_*)) -> {
+      state[writes=accesses(_*,a@access[],_*)] -> {
         s += "\n " + `a;
       }
-      state(accesses(_*,a@access(_,_,_,_),_*),_) -> {
+      state[reads=accesses(_*,a@access[],_*)] -> {
         s += "\n " + `a;
       }
     }
