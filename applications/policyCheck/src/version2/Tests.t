@@ -122,6 +122,9 @@ public class Tests {
     return res;
   }
 
+
+
+
   private static void checker(State s, Policy p, ListOfRequests lor, HashSet<State> space) {
     %match(lor) {
       // sol1: be naive and generate all possible permutations
@@ -133,7 +136,15 @@ public class Tests {
         // needed with sol2:
         Decision decision2 = p.transition(`r.setaccess(`write(subject,resource)), cs);
         cs = decision2.getstate();
+
+        // Shouldn't we remove the write(subject,resource) from
+        // requests(R1*,r@(add|delete)(read(subject,resource)),R2*) ??
+
+        // We can also match to find the corresponding write ?
        
+        // Maybe for the general case we should just take the accesses
+        // one by one - not read,write,read,write,...
+
         if(space.contains(cs)) {
           // CUT the search space
           // the current state has already be visited
@@ -142,6 +153,9 @@ public class Tests {
           // En fait c'est surement faux : a-t-on le droit de couper l'espace de recherche
           // independamment des request R1*,R2* ?
           // l'ensemble space est commun a toutes les branches de l'exploration
+
+          //           Il faut peut-etre iterer sur un autre type de STATE - searchSTATE(state,accesses)
+
         } else {
           //space.add(cs);// the optimisation can be removed to be complete
           checker(cs,p,`requests(R1*,R2*),space);
