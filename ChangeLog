@@ -1,6 +1,9 @@
+2008-03-02 pem
+  * fix PR-5086: use the orphanedHook error message when an undeclared
+    operator is used in a hook
 2008-02-16 pem
   * fix a problem with the recent introduction of equals instead of ==
-	* improved the layout with --prettyprint option
+  * improved the layout with --prettyprint option
 
 2008-02-12 balland
   * fix PR-4932

@@ -100,8 +100,10 @@ public class HookTypeExpander {
 
                 }
                 OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
-                HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
-                hookList = `ConcHookDecl(newDeclList*,hookList*);
+                if(odecl!=null) {
+                  HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
+                  hookList = `ConcHookDecl(newDeclList*,hookList*);
+                }
               }
             }
           }
@@ -135,8 +137,10 @@ public class HookTypeExpander {
         String emptyCode = "{}";
         Production hook = `Hook(KindOperator(),opName,HookKind("FL"),ConcArg(),emptyCode,OptionList());
         OperatorDecl odecl = getOperatorDecl(`opName,`moduleName,moduleList);
-        HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
-        hookList = `ConcHookDecl(newDeclList*,hookList*);
+        if(odecl!=null) {
+          HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
+          hookList = `ConcHookDecl(newDeclList*,hookList*);
+        }
       }
       /* check domain and codomain are equals */
       Production(opName,ConcField(StarredField(codomain)),codomain,option),
@@ -304,8 +308,11 @@ public class HookTypeExpander {
         }
       }
     }
-    throw new GomRuntimeException(
-        "HookTypeExpander: Operator not found: "+`oname);
+    getLogger().log(Level.SEVERE,
+        GomMessage.orphanedHook.getMessage(),
+        new Object[]{oname});
+    return null;
+    //throw new GomRuntimeException("HookTypeExpander: Operator not found: "+`oname);
   }
 
   private SlotList typeArguments(
