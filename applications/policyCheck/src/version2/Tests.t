@@ -1,3 +1,4 @@
+// gom accesscontrol.gom; tom *.t; javac *.java; tom policy/*.t; javac policy/*.java
 import accesscontrol.*;
 import accesscontrol.types.*;
 import policy.*;
@@ -72,6 +73,42 @@ public class Tests {
     cs = result.getstate();
 
 		System.out.println("\nVALID STATUS: "+ mcl.valid(cs)+"\n");
+
+		System.out.println("START  McLean ---------------------");
+
+    mcl = new McLean(sls);
+    cs = `state(accesses());
+
+    req = `add(read(s1,r3));
+    result = mcl.transition(req,cs);
+		System.out.println();
+		System.out.println("Request: "+req);
+		System.out.println("Result:  "+result);
+    cs = result.getstate();
+
+    req = `add(write(s1,r2));
+    result = mcl.transition(req,cs);
+		System.out.println();
+		System.out.println("Request: "+req);
+		System.out.println("Result:  "+result);
+    cs = result.getstate();
+
+    req = `add(read(s2,r2));
+    result = mcl.transition(req,cs);
+		System.out.println();
+		System.out.println("Request: "+req);
+		System.out.println("Result:  "+result);
+    cs = result.getstate();
+
+    req = `add(write(s2,r1));
+    result = mcl.transition(req,cs);
+		System.out.println();
+		System.out.println("Request: "+req);
+		System.out.println("Result:  "+result);
+    cs = result.getstate();
+
+		System.out.println("\nVALID STATUS: "+ mcl.valid(cs)+"\n");
+
  
     /*
      * check a configuration
