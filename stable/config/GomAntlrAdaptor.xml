@@ -73,9 +73,9 @@
         altName='v'
         description='Display compilation information'
         value='false'/>
-      <boolean name='pointer' 
+      <boolean name='termpointer' 
         altName='tp' 
-        description='Extend the signature for pointers' 
+        description='Extend the signature for term pointers' 
         value='false'/> 
       <boolean name='termgraph' 
         altName='tg'

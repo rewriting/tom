@@ -125,7 +125,7 @@ public class Tests {
     //checker(cs,new BLP(sls),lor, new HashSet<State>(), `traces());
 
     System.out.println("check McLean");
-    checker(cs,new McLean(sls),lor, new HashSet<State>(), `traces());
+    checker(cs,new McLean(sls),`requests(),lor, new HashSet<State>(), `traces());
 
 	}
 	
@@ -148,30 +148,42 @@ public class Tests {
 
 
 
-  private static void checker(State s, Policy p, ListOfRequests lor, HashSet<State> space, ListOfTrace traces) {
+  private static void checker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, HashSet<State> space, ListOfTrace traces) {
     System.out.print(lor.length());
     System.out.print(" ");
+    ListOfRequests nextLor;
+    ListOfRequests nextPrevious;
     %match(lor) {
       // sol1: be naive and generate all possible permutations
-      //requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
+      requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
       // sol2: look for read() and add the write() by hand
-      requests(R1*,r@(add|delete)(read(subject,resource)),R2*) -> {
+      //requests(R1*,r@(add|delete)(read(subject,resource)),R2*) -> {
         Decision decision1 = p.transition(`r,s);
         if(decision1.isgrant()) {
           State oldState = s;
           s = decision1.getstate();
-          System.out.print(".");
+          System.out.print("+");
           traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
+          nextPrevious = `requests();
+          nextLor = `requests(previous*,R1*,R2*);
+        } else {
+          System.out.print(".");
+          nextPrevious = `requests(previous*,R1*);
+          nextLor = `requests(R2*);
         }
 
         // needed with sol2:
+        /*
         Decision decision2 = p.transition(`r.setaccess(`write(subject,resource)), s);
         if(decision2.isgrant()) {
           State oldState = s;
           s = decision2.getstate();
-          System.out.print(".");
+          System.out.print("+");
           traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
+        } else {
+          System.out.print(".");
         }
+         */
 
         // Shouldn't we remove the write(subject,resource) from
         // requests(R1*,r@(add|delete)(read(subject,resource)),R2*) ??
@@ -181,7 +193,7 @@ public class Tests {
         // Maybe for the general case we should just take the accesses
         // one by one - not read,write,read,write,...
 
-        if(space.contains(s)) {
+        //if(space.contains(s)) {
           // CUT the search space
           // the current state has already be visited
           // note: do not perform a return, otherwise, the enumeration is stopped
@@ -192,11 +204,11 @@ public class Tests {
 
           //           Il faut peut-etre iterer sur un autre type de STATE - searchSTATE(state,accesses)
 
-        } else {
+        //} else {
           //space.add(cs);// the optimisation can be removed to be complete
-          checker(s,p,`requests(R1*,R2*),space,traces);
+          checker(s,p,nextPrevious, nextLor,space,traces);
           // note: do not perform a return, otherwise, the enumeration is stopped
-        }
+        //}
       
         //System.out.println("request  = " + `r);
         //System.out.println("decision = " + decision);

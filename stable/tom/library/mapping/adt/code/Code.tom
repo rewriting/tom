@@ -6,323 +6,323 @@
 %typeterm Hook {
   implement { tom.gom.adt.objects.types.Hook }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.Hook) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SlotField {
   implement { tom.gom.adt.objects.types.SlotField }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.SlotField) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SlotFieldList {
   implement { tom.gom.adt.objects.types.SlotFieldList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.SlotFieldList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomClass {
   implement { tom.gom.adt.objects.types.GomClass }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.GomClass) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ClassName {
   implement { tom.gom.adt.objects.types.ClassName }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.ClassName) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomClassList {
   implement { tom.gom.adt.objects.types.GomClassList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.GomClassList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ClassNameList {
   implement { tom.gom.adt.objects.types.ClassNameList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.ClassNameList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm HookList {
   implement { tom.gom.adt.objects.types.HookList }
   is_sort(t) { ($t instanceof tom.gom.adt.objects.types.HookList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Code {
   implement { tom.gom.adt.code.types.Code }
   is_sort(t) { ($t instanceof tom.gom.adt.code.types.Code) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Slot {
   implement { tom.gom.adt.gom.types.Slot }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Slot) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ArgList {
   implement { tom.gom.adt.gom.types.ArgList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ArgList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm IdKind {
   implement { tom.gom.adt.gom.types.IdKind }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.IdKind) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomModuleList {
   implement { tom.gom.adt.gom.types.GomModuleList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomModuleList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GrammarList {
   implement { tom.gom.adt.gom.types.GrammarList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GrammarList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TypedProduction {
   implement { tom.gom.adt.gom.types.TypedProduction }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.TypedProduction) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SectionList {
   implement { tom.gom.adt.gom.types.SectionList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SectionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm OperatorDeclList {
   implement { tom.gom.adt.gom.types.OperatorDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.OperatorDeclList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm HookDeclList {
   implement { tom.gom.adt.gom.types.HookDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.HookDeclList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SortDeclList {
   implement { tom.gom.adt.gom.types.SortDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SortDeclList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm OperatorDecl {
   implement { tom.gom.adt.gom.types.OperatorDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.OperatorDecl) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomModule {
   implement { tom.gom.adt.gom.types.GomModule }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomModule) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Pair {
   implement { tom.gom.adt.gom.types.Pair }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Pair) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Section {
   implement { tom.gom.adt.gom.types.Section }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Section) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomTypeList {
   implement { tom.gom.adt.gom.types.GomTypeList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomTypeList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ProductionList {
   implement { tom.gom.adt.gom.types.ProductionList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ProductionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Decl {
   implement { tom.gom.adt.gom.types.Decl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Decl) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ImportList {
   implement { tom.gom.adt.gom.types.ImportList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ImportList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Sort {
   implement { tom.gom.adt.gom.types.Sort }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Sort) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SortDecl {
   implement { tom.gom.adt.gom.types.SortDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SortDecl) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm HookDecl {
   implement { tom.gom.adt.gom.types.HookDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.HookDecl) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ModuleDeclList {
   implement { tom.gom.adt.gom.types.ModuleDeclList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleDeclList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Module {
   implement { tom.gom.adt.gom.types.Module }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Module) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm FieldList {
   implement { tom.gom.adt.gom.types.FieldList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.FieldList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Grammar {
   implement { tom.gom.adt.gom.types.Grammar }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Grammar) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SlotList {
   implement { tom.gom.adt.gom.types.SlotList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SlotList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SortList {
   implement { tom.gom.adt.gom.types.SortList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.SortList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Arg {
   implement { tom.gom.adt.gom.types.Arg }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Arg) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomModuleName {
   implement { tom.gom.adt.gom.types.GomModuleName }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomModuleName) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Field {
   implement { tom.gom.adt.gom.types.Field }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Field) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Production {
   implement { tom.gom.adt.gom.types.Production }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Production) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ModuleDecl {
   implement { tom.gom.adt.gom.types.ModuleDecl }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleDecl) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ModuleList {
   implement { tom.gom.adt.gom.types.ModuleList }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ModuleList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm GomType {
   implement { tom.gom.adt.gom.types.GomType }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.GomType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ImportedModule {
   implement { tom.gom.adt.gom.types.ImportedModule }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.ImportedModule) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Option {
   implement { tom.gom.adt.gom.types.Option }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.Option) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm HookKind {
   implement { tom.gom.adt.gom.types.HookKind }
   is_sort(t) { ($t instanceof tom.gom.adt.gom.types.HookKind) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.code.CodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 %op Hook MakeHook(HookArguments:SlotFieldList, Code:Code) {
   is_fsym(t) { ($t instanceof tom.gom.adt.objects.types.hook.MakeHook) }

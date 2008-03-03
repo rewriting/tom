@@ -44,17 +44,17 @@ public class SOpTemplate extends TemplateClass {
   public SOpTemplate(GomClass gomClass) {
     super(gomClass);
     ClassName clsName = this.className;
-    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch426NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch426NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch426NameNumber_freshVar_0= tomMatch426NameNumberfreshSubject_1.getPkg() ;{  String  tomMatch426NameNumber_freshVar_1= tomMatch426NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch414NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch414NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch414NameNumber_freshVar_0= tomMatch414NameNumberfreshSubject_1.getPkg() ;{  String  tomMatch414NameNumber_freshVar_1= tomMatch414NameNumberfreshSubject_1.getName() ;if ( true ) {
 
-        String newpkg = tomMatch426NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
-        String newname = "_"+tomMatch426NameNumber_freshVar_1;
+        String newpkg = tomMatch414NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
+        String newname = "_"+tomMatch414NameNumber_freshVar_1;
         this.className =  tom.gom.adt.objects.types.classname.ClassName.make(newpkg, newname) ;
-      }}}}}}}{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch427NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch427NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch427NameNumber_freshVar_0= tomMatch427NameNumberfreshSubject_1.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch427NameNumber_freshVar_1= tomMatch427NameNumberfreshSubject_1.getSlotFields() ;if ( true ) {
+      }}}}}}}{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch415NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch415NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch415NameNumber_freshVar_0= tomMatch415NameNumberfreshSubject_1.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch415NameNumber_freshVar_1= tomMatch415NameNumberfreshSubject_1.getSlotFields() ;if ( true ) {
 
 
 
-        this.operator = tomMatch427NameNumber_freshVar_0;
-        this.slotList = tomMatch427NameNumber_freshVar_1;
+        this.operator = tomMatch415NameNumber_freshVar_0;
+        this.slotList = tomMatch415NameNumber_freshVar_1;
         return;
       }}}}}}}
 

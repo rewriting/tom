@@ -12,218 +12,218 @@
 %typeterm TLocalVariable {
   implement { tom.library.adt.bytecode.types.TLocalVariable }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLocalVariable) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TMethodCode {
   implement { tom.library.adt.bytecode.types.TMethodCode }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodCode) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TMethodList {
   implement { tom.library.adt.bytecode.types.TMethodList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TSignature {
   implement { tom.library.adt.bytecode.types.TSignature }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TSignature) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TInnerClassInfo {
   implement { tom.library.adt.bytecode.types.TInnerClassInfo }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInnerClassInfo) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TAccess {
   implement { tom.library.adt.bytecode.types.TAccess }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TAccess) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TReturnDescriptor {
   implement { tom.library.adt.bytecode.types.TReturnDescriptor }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TReturnDescriptor) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TStringList {
   implement { tom.library.adt.bytecode.types.TStringList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TStringList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TMethod {
   implement { tom.library.adt.bytecode.types.TMethod }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethod) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TLabelList {
   implement { tom.library.adt.bytecode.types.TLabelList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLabelList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TInstruction {
   implement { tom.library.adt.bytecode.types.TInstruction }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInstruction) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TClass {
   implement { tom.library.adt.bytecode.types.TClass }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TClass) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TInnerClassInfoList {
   implement { tom.library.adt.bytecode.types.TInnerClassInfoList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInnerClassInfoList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TValue {
   implement { tom.library.adt.bytecode.types.TValue }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TValue) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TField {
   implement { tom.library.adt.bytecode.types.TField }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TField) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TTryCatchBlockList {
   implement { tom.library.adt.bytecode.types.TTryCatchBlockList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TTryCatchBlockList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TType {
   implement { tom.library.adt.bytecode.types.TType }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TClassInfo {
   implement { tom.library.adt.bytecode.types.TClassInfo }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TClassInfo) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TAccessList {
   implement { tom.library.adt.bytecode.types.TAccessList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TAccessList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TMethodDescriptor {
   implement { tom.library.adt.bytecode.types.TMethodDescriptor }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodDescriptor) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TFieldList {
   implement { tom.library.adt.bytecode.types.TFieldList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TOuterClassInfo {
   implement { tom.library.adt.bytecode.types.TOuterClassInfo }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TOuterClassInfo) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TFieldDescriptor {
   implement { tom.library.adt.bytecode.types.TFieldDescriptor }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldDescriptor) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TTryCatchBlock {
   implement { tom.library.adt.bytecode.types.TTryCatchBlock }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TTryCatchBlock) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TintList {
   implement { tom.library.adt.bytecode.types.TintList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TintList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TMethodInfo {
   implement { tom.library.adt.bytecode.types.TMethodInfo }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TMethodInfo) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm THandler {
   implement { tom.library.adt.bytecode.types.THandler }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.THandler) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TInstructionList {
   implement { tom.library.adt.bytecode.types.TInstructionList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TInstructionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TFieldDescriptorList {
   implement { tom.library.adt.bytecode.types.TFieldDescriptorList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TFieldDescriptorList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TLabel {
   implement { tom.library.adt.bytecode.types.TLabel }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLabel) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TLocalVariableList {
   implement { tom.library.adt.bytecode.types.TLocalVariableList }
   is_sort(t) { ($t instanceof tom.library.adt.bytecode.types.TLocalVariableList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.library.adt.bytecode.BytecodeBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 %op TLocalVariable LocalVariable(name:String, typeDesc:String, signature:TSignature, start:TLabel, end:TLabel, index:int) {
   is_fsym(t) { ($t instanceof tom.library.adt.bytecode.types.tlocalvariable.LocalVariable) }

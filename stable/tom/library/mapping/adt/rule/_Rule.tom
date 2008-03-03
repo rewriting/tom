@@ -347,6 +347,121 @@
   make( new_t1,  _name,  new_t2) { new tom.gom.adt.rule.strategy.condition.Make_CondMethod( $new_t1,  $_name,  $new_t2) }
 }
 
+    %op Strategy _EmptyCondAnd() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition._EmptyCondAnd)))}
+      
+        make() { new tom.gom.adt.rule.strategy.condition._EmptyCondAnd() }
+    }
+  
+  
+  %op Strategy When_EmptyCondAnd(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyCondAnd(),s) }
+  }
+
+  %op Strategy Is_EmptyCondAnd() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_EmptyCondAnd()}
+  }
+  
+%op Strategy Make_EmptyCondAnd() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition.Make_EmptyCondAnd))) }
+
+  make() { new tom.gom.adt.rule.strategy.condition.Make_EmptyCondAnd() }
+}
+
+    %op Strategy _ConsCondAnd(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition._ConsCondAnd)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._ConsCondAnd($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsCondAnd(s:Strategy) {
+    make(s) { `Sequence(Is_ConsCondAnd(),s) }
+  }
+
+  %op Strategy Is_ConsCondAnd() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_ConsCondAnd()}
+  }
+  
+%op Strategy Make_ConsCondAnd(_HeadCondAnd:Strategy, _TailCondAnd:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition.Make_ConsCondAnd))) }
+
+  get_slot(_HeadCondAnd, t) { $t._HeadCondAnd }
+  get_slot(_TailCondAnd, t) { $t._TailCondAnd }
+  make( new_HeadCondAnd,  new_TailCondAnd) { new tom.gom.adt.rule.strategy.condition.Make_ConsCondAnd( $new_HeadCondAnd,  $new_TailCondAnd) }
+}
+
+    %op Strategy _EmptyCondOr() {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition._EmptyCondOr)))}
+      
+        make() { new tom.gom.adt.rule.strategy.condition._EmptyCondOr() }
+    }
+  
+  
+  %op Strategy When_EmptyCondOr(s:Strategy) {
+    make(s) { `Sequence(Is_EmptyCondOr(),s) }
+  }
+
+  %op Strategy Is_EmptyCondOr() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_EmptyCondOr()}
+  }
+  
+%op Strategy Make_EmptyCondOr() {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition.Make_EmptyCondOr))) }
+
+  make() { new tom.gom.adt.rule.strategy.condition.Make_EmptyCondOr() }
+}
+
+    %op Strategy _ConsCondOr(arg0:Strategy, arg1:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition._ConsCondOr)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        make(arg0, arg1) { new tom.gom.adt.rule.strategy.condition._ConsCondOr($arg0, $arg1) }
+    }
+  
+  
+  %op Strategy When_ConsCondOr(s:Strategy) {
+    make(s) { `Sequence(Is_ConsCondOr(),s) }
+  }
+
+  %op Strategy Is_ConsCondOr() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_ConsCondOr()}
+  }
+  
+%op Strategy Make_ConsCondOr(_HeadCondOr:Strategy, _TailCondOr:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition.Make_ConsCondOr))) }
+
+  get_slot(_HeadCondOr, t) { $t._HeadCondOr }
+  get_slot(_TailCondOr, t) { $t._TailCondOr }
+  make( new_HeadCondOr,  new_TailCondOr) { new tom.gom.adt.rule.strategy.condition.Make_ConsCondOr( $new_HeadCondOr,  $new_TailCondOr) }
+}
+
+    %op Strategy _CondNot(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition._CondNot)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.condition._CondNot($arg0) }
+    }
+  
+  
+  %op Strategy When_CondNot(s:Strategy) {
+    make(s) { `Sequence(Is_CondNot(),s) }
+  }
+
+  %op Strategy Is_CondNot() {
+    make() { new tom.gom.adt.rule.strategy.condition.Is_CondNot()}
+  }
+  
+%op Strategy Make_CondNot(_c:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.condition.Make_CondNot))) }
+
+  get_slot(_c, t) { $t._c }
+  make( new_c) { new tom.gom.adt.rule.strategy.condition.Make_CondNot( $new_c) }
+}
+
     %op Strategy _Appl(arg0:Strategy, arg1:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.term._Appl)))}
       
@@ -393,6 +508,29 @@
 
   get_slot(_name, t) { $t._name }
   make( _name) { new tom.gom.adt.rule.strategy.term.Make_Var( $_name) }
+}
+
+    %op Strategy _VarStar(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.term._VarStar)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.rule.strategy.term._VarStar($arg0) }
+    }
+  
+  
+  %op Strategy When_VarStar(s:Strategy) {
+    make(s) { `Sequence(Is_VarStar(),s) }
+  }
+
+  %op Strategy Is_VarStar() {
+    make() { new tom.gom.adt.rule.strategy.term.Is_VarStar()}
+  }
+  
+%op Strategy Make_VarStar(_name:String) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.rule.strategy.term.Make_VarStar))) }
+
+  get_slot(_name, t) { $t._name }
+  make( _name) { new tom.gom.adt.rule.strategy.term.Make_VarStar( $_name) }
 }
 
     %op Strategy _UnnamedVar() {
@@ -610,6 +748,16 @@
             %op Strategy _TermList(sub:Strategy) {
             is_fsym(t) { false }
             make(sub)  { `mu(MuVar("x_TermList"),Choice(_ConsTermList(sub,MuVar("x_TermList")),_EmptyTermList())) }
+            }
+            
+            %op Strategy _CondAnd(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_CondAnd"),Choice(_ConsCondAnd(sub,MuVar("x_CondAnd")),_EmptyCondAnd())) }
+            }
+            
+            %op Strategy _CondOr(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x_CondOr"),Choice(_ConsCondOr(sub,MuVar("x_CondOr")),_EmptyCondOr())) }
             }
             
             %op Strategy _PathTerm(sub:Strategy) {

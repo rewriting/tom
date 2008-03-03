@@ -44,9 +44,9 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               GomClass gomClass,
                               TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch378NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch378NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch378NameNumber_freshVar_0= tomMatch378NameNumberfreshSubject_1.getSortList() ;if ( true ) {
+    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch366NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch366NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch366NameNumber_freshVar_0= tomMatch366NameNumberfreshSubject_1.getSortList() ;if ( true ) {
 
-        this.sortList = tomMatch378NameNumber_freshVar_0;
+        this.sortList = tomMatch366NameNumber_freshVar_0;
         return;
       }}}}}}
 

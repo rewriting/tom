@@ -6,274 +6,274 @@
 %typeterm Instruction {
   implement { tom.engine.adt.tominstruction.types.Instruction }
   is_sort(t) { ($t instanceof tom.engine.adt.tominstruction.types.Instruction) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm InstructionList {
   implement { tom.engine.adt.tominstruction.types.InstructionList }
   is_sort(t) { ($t instanceof tom.engine.adt.tominstruction.types.InstructionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ConstraintInstruction {
   implement { tom.engine.adt.tominstruction.types.ConstraintInstruction }
   is_sort(t) { ($t instanceof tom.engine.adt.tominstruction.types.ConstraintInstruction) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ConstraintInstructionList {
   implement { tom.engine.adt.tominstruction.types.ConstraintInstructionList }
   is_sort(t) { ($t instanceof tom.engine.adt.tominstruction.types.ConstraintInstructionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomTypeList {
   implement { tom.engine.adt.tomtype.types.TomTypeList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomtype.types.TomTypeList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomType {
   implement { tom.engine.adt.tomtype.types.TomType }
   is_sort(t) { ($t instanceof tom.engine.adt.tomtype.types.TomType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomTypeDefinition {
   implement { tom.engine.adt.tomtype.types.TomTypeDefinition }
   is_sort(t) { ($t instanceof tom.engine.adt.tomtype.types.TomTypeDefinition) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomForwardType {
   implement { tom.engine.adt.tomtype.types.TomForwardType }
   is_sort(t) { ($t instanceof tom.engine.adt.tomtype.types.TomForwardType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomSymbolList {
   implement { tom.engine.adt.tomsignature.types.TomSymbolList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomSymbolList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomVisit {
   implement { tom.engine.adt.tomsignature.types.TomVisit }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomVisit) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomStructureTable {
   implement { tom.engine.adt.tomsignature.types.TomStructureTable }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomStructureTable) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Position {
   implement { tom.engine.adt.tomsignature.types.Position }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.Position) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomEntry {
   implement { tom.engine.adt.tomsignature.types.TomEntry }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomEntry) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomEntryList {
   implement { tom.engine.adt.tomsignature.types.TomEntryList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomEntryList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomVisitList {
   implement { tom.engine.adt.tomsignature.types.TomVisitList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomVisitList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TargetLanguage {
   implement { tom.engine.adt.tomsignature.types.TargetLanguage }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TargetLanguage) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomSymbolTable {
   implement { tom.engine.adt.tomsignature.types.TomSymbolTable }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomSymbolTable) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomSymbol {
   implement { tom.engine.adt.tomsignature.types.TomSymbol }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomSymbol) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm KeyEntry {
   implement { tom.engine.adt.tomsignature.types.KeyEntry }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.KeyEntry) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ElementaryTheory {
   implement { tom.engine.adt.theory.types.ElementaryTheory }
   is_sort(t) { ($t instanceof tom.engine.adt.theory.types.ElementaryTheory) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Theory {
   implement { tom.engine.adt.theory.types.Theory }
   is_sort(t) { ($t instanceof tom.engine.adt.theory.types.Theory) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomNumber {
   implement { tom.engine.adt.tomname.types.TomNumber }
   is_sort(t) { ($t instanceof tom.engine.adt.tomname.types.TomNumber) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomNumberList {
   implement { tom.engine.adt.tomname.types.TomNumberList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomname.types.TomNumberList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomNameList {
   implement { tom.engine.adt.tomname.types.TomNameList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomname.types.TomNameList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomName {
   implement { tom.engine.adt.tomname.types.TomName }
   is_sort(t) { ($t instanceof tom.engine.adt.tomname.types.TomName) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm DeclarationList {
   implement { tom.engine.adt.tomdeclaration.types.DeclarationList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomdeclaration.types.DeclarationList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Declaration {
   implement { tom.engine.adt.tomdeclaration.types.Declaration }
   is_sort(t) { ($t instanceof tom.engine.adt.tomdeclaration.types.Declaration) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Expression {
   implement { tom.engine.adt.tomexpression.types.Expression }
   is_sort(t) { ($t instanceof tom.engine.adt.tomexpression.types.Expression) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm NumericConstraintType {
   implement { tom.engine.adt.tomconstraint.types.NumericConstraintType }
   is_sort(t) { ($t instanceof tom.engine.adt.tomconstraint.types.NumericConstraintType) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Constraint {
   implement { tom.engine.adt.tomconstraint.types.Constraint }
   is_sort(t) { ($t instanceof tom.engine.adt.tomconstraint.types.Constraint) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ConstraintList {
   implement { tom.engine.adt.tomconstraint.types.ConstraintList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomconstraint.types.ConstraintList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Option {
   implement { tom.engine.adt.tomoption.types.Option }
   is_sort(t) { ($t instanceof tom.engine.adt.tomoption.types.Option) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm OptionList {
   implement { tom.engine.adt.tomoption.types.OptionList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomoption.types.OptionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomList {
   implement { tom.engine.adt.tomterm.types.TomList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomterm.types.TomList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TomTerm {
   implement { tom.engine.adt.tomterm.types.TomTerm }
   is_sort(t) { ($t instanceof tom.engine.adt.tomterm.types.TomTerm) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm PairNameDecl {
   implement { tom.engine.adt.tomslot.types.PairNameDecl }
   is_sort(t) { ($t instanceof tom.engine.adt.tomslot.types.PairNameDecl) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm PairNameDeclList {
   implement { tom.engine.adt.tomslot.types.PairNameDeclList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomslot.types.PairNameDeclList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SlotList {
   implement { tom.engine.adt.tomslot.types.SlotList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomslot.types.SlotList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Slot {
   implement { tom.engine.adt.tomslot.types.Slot }
   is_sort(t) { ($t instanceof tom.engine.adt.tomslot.types.Slot) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.tominstruction.TomInstructionBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 %op Instruction TomTermToInstruction(Tom:TomTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tominstruction.types.instruction.TomTermToInstruction) }
@@ -526,6 +526,14 @@
   is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.TypeList) }
   get_slot(TypeList, t) { $t.getTypeList() }
   make(t0) { tom.engine.adt.tomtype.types.tomtype.TypeList.make($t0) }
+}
+
+%op TomType TypeWithSymbol(TomType:TomType, TlType:TomType, RootSymbolName:TomName) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol) }
+  get_slot(TomType, t) { $t.getTomType() }
+  get_slot(TlType, t) { $t.getTlType() }
+  get_slot(RootSymbolName, t) { $t.getRootSymbolName() }
+  make(t0, t1, t2) { tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol.make($t0, $t1, $t2) }
 }
 
 %op TomTypeDefinition TypeDefinition(TomType:TomType, Forward:TomForwardType) {
@@ -1244,12 +1252,12 @@
   make(t0, t1) { tom.engine.adt.tomexpression.types.expression.GetSize.make($t0, $t1) }
 }
 
-%op Expression GetElement(Opname:TomName, Codomain:TomType, Kid1:TomTerm, Kid2:TomTerm) {
+%op Expression GetElement(Opname:TomName, Codomain:TomType, Variable:TomTerm, Index:TomTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomexpression.types.expression.GetElement) }
   get_slot(Opname, t) { $t.getOpname() }
   get_slot(Codomain, t) { $t.getCodomain() }
-  get_slot(Kid1, t) { $t.getKid1() }
-  get_slot(Kid2, t) { $t.getKid2() }
+  get_slot(Variable, t) { $t.getVariable() }
+  get_slot(Index, t) { $t.getIndex() }
   make(t0, t1, t2, t3) { tom.engine.adt.tomexpression.types.expression.GetElement.make($t0, $t1, $t2, $t3) }
 }
 
@@ -1406,10 +1414,10 @@
   make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.ConsOrConstraintDisjunction.make($t0, $t1) }
 }
 
-%op Constraint MatchConstraint(pattern:TomTerm, subject:TomTerm) {
+%op Constraint MatchConstraint(Pattern:TomTerm, Subject:TomTerm) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraint.MatchConstraint) }
-  get_slot(pattern, t) { $t.getpattern() }
-  get_slot(subject, t) { $t.getsubject() }
+  get_slot(Pattern, t) { $t.getPattern() }
+  get_slot(Subject, t) { $t.getSubject() }
   make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.MatchConstraint.make($t0, $t1) }
 }
 
@@ -1419,10 +1427,10 @@
   make(t0) { tom.engine.adt.tomconstraint.types.constraint.AntiMatchConstraint.make($t0) }
 }
 
-%op Constraint NumericConstraint(Left:TomTerm, Right:TomTerm, Type:NumericConstraintType) {
+%op Constraint NumericConstraint(Pattern:TomTerm, Subject:TomTerm, Type:NumericConstraintType) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraint.NumericConstraint) }
-  get_slot(Left, t) { $t.getLeft() }
-  get_slot(Right, t) { $t.getRight() }
+  get_slot(Pattern, t) { $t.getPattern() }
+  get_slot(Subject, t) { $t.getSubject() }
   get_slot(Type, t) { $t.getType() }
   make(t0, t1, t2) { tom.engine.adt.tomconstraint.types.constraint.NumericConstraint.make($t0, $t1, $t2) }
 }

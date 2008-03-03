@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2008, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
@@ -95,14 +95,14 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage unknownHookKind =
     new GomMessage("Unknown hook kind \"{0}\"");
   public static final GomMessage noSlotDeclaration =
-    new GomMessage("no slot declaration");
+    new GomMessage("No slot declaration");
   public static final GomMessage deprecatedSyntax =
     new GomMessage("The Vas compatibility syntax is deprecated, "+
         "and should be converted to plain Gom syntax");
   public static final GomMessage unableToCloseReaderMessage =
-    new GomMessage("An error occured when closing reader");  
+    new GomMessage("An error occured when closing reader");
   public static final GomMessage unableToUseReaderMessage =
-    new GomMessage("An error occured when initializing reader");  
+    new GomMessage("An error occured when initializing reader");
 
   // verbose messages
   public static final GomMessage gomParsingPhase =
@@ -126,6 +126,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Problems encountered expanding hooks for module {0}");
 
   // GomTypeExpander
+  public static final GomMessage operatorOnBuiltin =
+    new GomMessage("Builtin type {0} cannot have operators");
   public static final GomMessage orphanedHook =
     new GomMessage("The operator {0} is not declared, but used for a hook");
   public static final GomMessage mismatchedMakeArguments =
@@ -149,6 +151,9 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage slotIncompatibleTypes =
     new GomMessage("Incompatible types for slot {0}: {1}, {2}. Two slots with the same name in the same sort should have same type");
 
+  // RuleExpander
+  public static final GomMessage variadicRuleStartingWithStar =
+    new GomMessage("Rule for variadic operator {0} should not have list variable {1} in head position");
   // GomCompiler
   public static final GomMessage compilationIssue =
     new GomMessage("Problems encountered compiling module {0}");

@@ -125,7 +125,7 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
       // test if the argument is a Strategy
       {if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch68NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )type);if ( (tomMatch68NameNumberfreshSubject_1 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch68NameNumber_freshVar_0= tomMatch68NameNumberfreshSubject_1.getTomType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch68NameNumber_freshVar_1= tomMatch68NameNumberfreshSubject_1.getTlType() ;if ( (tomMatch68NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {{  String  tomMatch68NameNumber_freshVar_2= tomMatch68NameNumber_freshVar_0.getString() ;if ( "Strategy".equals(tomMatch68NameNumber_freshVar_2) ) {if ( true ) {
 
-          stratChild.add(new Integer(index));
+          stratChild.add(Integer.valueOf(index));
         }}}}}}}}}}
 
 
@@ -139,90 +139,94 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 				output.write(deep," extends " + tomMatch69NameNumber_freshVar_0);
 			}}}}}}
 
-    output.write(deep," {");
+    output.writeln(deep," {");
     int args = names.size();
     //write Declarations
-    for (int i = 0 ; i < args ; i++) {
-	    output.write(deep, "private " + types.get(i) + " " + names.get(i) + "; ");
+    for(int i = 0 ; i < args ; i++) {
+	    output.writeln(deep, "private " + types.get(i) + " " + names.get(i) + ";");
     }
 
     //write constructor
     output.write(deep, "public " + tomName + "(");
     //write constructor parameters
-    for (int i = 0 ; i < args ; i++){
+    for(int i = 0 ; i < args ; i++) {
 	    output.write(deep,types.get(i) + " " + names.get(i));
-	    if (i+1<args) {//if many parameters
+	    if(i+1<args) {//if many parameters
 		    output.write(deep,", ");
 	    }
     }
 
     //write constructor initialization
-    output.write(deep,") { super(");
+    output.writeln(deep,") {");
+    output.write(deep+1,"super(");
     generate(deep,superTerm,moduleName);
-    output.write(deep,");");
+    output.writeln(");");
 
     //here index represents the parameter number
-    for (int i = 0 ; i < args ; i++) {
+    for(int i = 0 ; i < args ; i++) {
 	    String param = (String)names.get(i);
-	    output.write(deep, "this." + param + "=" + param + ";");
+	    output.writeln(deep+1, "this." + param + "=" + param + ";");
     }
-    output.write(deep,"}");
+    output.writeln(deep,"}");
 
     // write getters
-    for (int i = 0 ; i < args ; i++) {
-      output.write(deep, "public " + types.get(i) + " get" + names.get(i) + "() { return " + names.get(i) + ";}");
+    for(int i = 0 ; i < args ; i++) {
+      output.writeln(deep, "public " + types.get(i) + " get" + names.get(i) + "() {");
+      output.writeln(deep+1,"return " + names.get(i) + ";");
+      output.writeln(deep,"}");
     }
 
     // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
     int stratChildCount = stratChild.size();
 
-    output.write(deep, "public tom.library.sl.Visitable[] getChildren() {");
-    output.write(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
-    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    //output.write(deep, "stratChilds[i]=getChildAt(i);}");
-    output.write(deep, "stratChilds[0] = super.getChildAt(0);");
-    for (int i = 0; i < stratChildCount; i++) {
+    output.writeln(deep, "public tom.library.sl.Visitable[] getChildren() {");
+    output.writeln(deep, "tom.library.sl.Visitable[] stratChilds = new tom.library.sl.Visitable[getChildCount()];");
+    output.writeln(deep, "stratChilds[0] = super.getChildAt(0);");
+    for(int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();
-      output.write(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
+      output.writeln(deep, "stratChilds[" + (i+1) + "] = get" + names.get(j) + "();");
     }
-    output.write(deep, "return stratChilds;}");
+    output.writeln(deep, "return stratChilds;}");
 
-    output.write(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
-    //output.write(deep, "for (int i = 0; i < getChildCount(); i++) {");
-    //output.write(deep, "setChildAt(i,children[i]);}");
-    output.write(deep,"super.setChildAt(0, children[0]);");
-    for (int i = 0; i < stratChildCount; i++) {
+    output.writeln(deep, "public tom.library.sl.Visitable setChildren(tom.library.sl.Visitable[] children) {");
+    output.writeln(deep,"super.setChildAt(0, children[0]);");
+    for(int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();
-      output.write(deep, names.get(j) + " = (" + types.get(j) + ") children[" + (i+1) + "];");
+      output.writeln(deep, names.get(j) + " = (" + types.get(j) + ") children[" + (i+1) + "];");
     }
-    output.write(deep, "return this;}");
+    output.writeln(deep, "return this;");
+    output.writeln(deep, "}");
 
-    output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");
+    output.writeln(deep, "public int getChildCount() {");
+    output.writeln(deep, "return " + (stratChildCount + 1) + ";");
+    output.writeln(deep, "}");
 
     // write getChildAt
-    output.write(deep, "public tom.library.sl.Visitable getChildAt(int index) {");
-    output.write(deep, "switch (index) {");
-    output.write(deep, "case 0: return super.getChildAt(0);");
+    output.writeln(deep, "public tom.library.sl.Visitable getChildAt(int index) {");
+    output.writeln(deep, "switch (index) {");
+    output.writeln(deep, "case 0: return super.getChildAt(0);");
     for (int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();
-      output.write(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
+      output.writeln(deep, "case " + (i+1) + ": return get" + names.get(j) + "();");
     }
-    output.write(deep, "default: throw new IndexOutOfBoundsException();");
-    output.write(deep, "}}");
+    output.writeln(deep, "default: throw new IndexOutOfBoundsException();");
+    output.writeln(deep, "}");
+    output.writeln(deep, "}");
 
     // write setChildAt
-    output.write(deep, "public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
-    output.write(deep, "switch (index) {");
-    output.write(deep, "case 0: return super.setChildAt(0, child);");
+    output.writeln(deep, "public tom.library.sl.Visitable setChildAt(int index, tom.library.sl.Visitable child) {");
+    output.writeln(deep, "switch (index) {");
+    output.writeln(deep, "case 0: return super.setChildAt(0, child);");
     for (int i = 0; i < stratChildCount; i++) {
       int j = ((Integer)stratChild.get(i)).intValue();
-      output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
+      output.writeln(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
     }
-    output.write(deep, "default: throw new IndexOutOfBoundsException();");
-    output.write(deep, "}}");
+    output.writeln(deep, "default: throw new IndexOutOfBoundsException();");
+    output.writeln(deep, "}");
+    output.writeln(deep, "}");
 
     generateDeclaration(deep,declaration,moduleName);
-    output.write(deep,"}");
+    output.writeln(deep,"}");
   }
 
   protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {

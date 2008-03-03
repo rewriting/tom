@@ -6,36 +6,36 @@
 %typeterm Rule {
   implement { tom.gom.adt.rule.types.Rule }
   is_sort(t) { ($t instanceof tom.gom.adt.rule.types.Rule) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm RuleList {
   implement { tom.gom.adt.rule.types.RuleList }
   is_sort(t) { ($t instanceof tom.gom.adt.rule.types.RuleList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TermList {
   implement { tom.gom.adt.rule.types.TermList }
   is_sort(t) { ($t instanceof tom.gom.adt.rule.types.TermList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Condition {
   implement { tom.gom.adt.rule.types.Condition }
   is_sort(t) { ($t instanceof tom.gom.adt.rule.types.Condition) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Term {
   implement { tom.gom.adt.rule.types.Term }
   is_sort(t) { ($t instanceof tom.gom.adt.rule.types.Term) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.gom.adt.rule.RuleBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 %op Rule Rule(lhs:Term, rhs:Term) {
   is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.rule.Rule) }
@@ -132,6 +132,36 @@
   make(t0, t1, t2) { tom.gom.adt.rule.types.condition.CondMethod.make($t0, $t1, $t2) }
 }
 
+%op Condition EmptyCondAnd() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd) }
+  make() { tom.gom.adt.rule.types.condition.EmptyCondAnd.make() }
+}
+
+%op Condition ConsCondAnd(HeadCondAnd:Condition, TailCondAnd:Condition) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) }
+  get_slot(HeadCondAnd, t) { $t.getHeadCondAnd() }
+  get_slot(TailCondAnd, t) { $t.getTailCondAnd() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.ConsCondAnd.make($t0, $t1) }
+}
+
+%op Condition EmptyCondOr() {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.EmptyCondOr) }
+  make() { tom.gom.adt.rule.types.condition.EmptyCondOr.make() }
+}
+
+%op Condition ConsCondOr(HeadCondOr:Condition, TailCondOr:Condition) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.ConsCondOr) }
+  get_slot(HeadCondOr, t) { $t.getHeadCondOr() }
+  get_slot(TailCondOr, t) { $t.getTailCondOr() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.ConsCondOr.make($t0, $t1) }
+}
+
+%op Condition CondNot(c:Condition) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.CondNot) }
+  get_slot(c, t) { $t.getc() }
+  make(t0) { tom.gom.adt.rule.types.condition.CondNot.make($t0) }
+}
+
 %op Term Appl(symbol:String, args:TermList) {
   is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.term.Appl) }
   get_slot(symbol, t) { $t.getsymbol() }
@@ -143,6 +173,12 @@
   is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.term.Var) }
   get_slot(name, t) { $t.getname() }
   make(t0) { tom.gom.adt.rule.types.term.Var.make($t0) }
+}
+
+%op Term VarStar(name:String) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.term.VarStar) }
+  get_slot(name, t) { $t.getname() }
+  make(t0) { tom.gom.adt.rule.types.term.VarStar.make($t0) }
 }
 
 %op Term UnnamedVar() {
@@ -216,6 +252,24 @@
   get_head(l) { $l.getHeadTermList() }
   get_tail(l) { $l.getTailTermList() }
   is_empty(l) { $l.isEmptyTermList() }
+}
+
+%oplist Condition CondAnd(Condition*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.rule.types.condition.ConsCondAnd) || ($t instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd)) }
+  make_empty() { tom.gom.adt.rule.types.condition.EmptyCondAnd.make() }
+  make_insert(e,l) { tom.gom.adt.rule.types.condition.ConsCondAnd.make($e,$l) }
+  get_head(l) { $l.getHeadCondAnd() }
+  get_tail(l) { $l.getTailCondAnd() }
+  is_empty(l) { $l.isEmptyCondAnd() }
+}
+
+%oplist Condition CondOr(Condition*) {
+  is_fsym(t) { (($t instanceof tom.gom.adt.rule.types.condition.ConsCondOr) || ($t instanceof tom.gom.adt.rule.types.condition.EmptyCondOr)) }
+  make_empty() { tom.gom.adt.rule.types.condition.EmptyCondOr.make() }
+  make_insert(e,l) { tom.gom.adt.rule.types.condition.ConsCondOr.make($e,$l) }
+  get_head(l) { $l.getHeadCondOr() }
+  get_tail(l) { $l.getTailCondOr() }
+  is_empty(l) { $l.isEmptyCondOr() }
 }
 
 %oplist Term PathTerm(int*) {

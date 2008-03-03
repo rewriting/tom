@@ -8,106 +8,106 @@
 %typeterm Deriv {
   implement { tom.engine.adt.il.types.Deriv }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Deriv) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Expr {
   implement { tom.engine.adt.il.types.Expr }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Expr) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Variable {
   implement { tom.engine.adt.il.types.Variable }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Variable) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Environment {
   implement { tom.engine.adt.il.types.Environment }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Environment) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm InstrList {
   implement { tom.engine.adt.il.types.InstrList }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.InstrList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm ExprList {
   implement { tom.engine.adt.il.types.ExprList }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.ExprList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Substitution {
   implement { tom.engine.adt.il.types.Substitution }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Substitution) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Symbol {
   implement { tom.engine.adt.il.types.Symbol }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Symbol) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Seq {
   implement { tom.engine.adt.il.types.Seq }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Seq) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm SubstitutionList {
   implement { tom.engine.adt.il.types.SubstitutionList }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.SubstitutionList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Term {
   implement { tom.engine.adt.il.types.Term }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Term) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm TermList {
   implement { tom.engine.adt.il.types.TermList }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.TermList) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm Instr {
   implement { tom.engine.adt.il.types.Instr }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.Instr) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm AbsTerm {
   implement { tom.engine.adt.il.types.AbsTerm }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.AbsTerm) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 
 %typeterm DerivTree {
   implement { tom.engine.adt.il.types.DerivTree }
   is_sort(t) { ($t instanceof tom.engine.adt.il.types.DerivTree) }
-  equals(t1,t2) { $t1.equals($t2) }
-  visitor_fwd { tom.engine.adt.il.IlBasicStrategy }
+  //equals(t1,t2) { $t1.equals($t2) }
+  equals(t1,t2) { ($t1==$t2) }
 }
 %op Deriv ebs(Lhs:Environment, Rhs:Environment) {
   is_fsym(t) { ($t instanceof tom.engine.adt.il.types.deriv.ebs) }

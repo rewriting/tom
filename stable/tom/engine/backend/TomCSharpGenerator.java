@@ -120,7 +120,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
       // test if the argument is a Strategy
       {if ( (type instanceof tom.engine.adt.tomtype.types.TomType) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch53NameNumberfreshSubject_1=(( tom.engine.adt.tomtype.types.TomType )type);if ( (tomMatch53NameNumberfreshSubject_1 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch53NameNumber_freshVar_0= tomMatch53NameNumberfreshSubject_1.getTomType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch53NameNumber_freshVar_1= tomMatch53NameNumberfreshSubject_1.getTlType() ;if ( (tomMatch53NameNumber_freshVar_0 instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType) ) {{  String  tomMatch53NameNumber_freshVar_2= tomMatch53NameNumber_freshVar_0.getString() ;if ( "Strategy".equals(tomMatch53NameNumber_freshVar_2) ) {if ( true ) {
 
-          stratChild.add(new Integer(index));
+          stratChild.add(Integer.valueOf(index));
         }}}}}}}}}}
 
 

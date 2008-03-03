@@ -938,6 +938,33 @@
   make( new_TypeList) { new tom.engine.adt.tomtype.strategy.tomtype.Make_TypeList( $new_TypeList) }
 }
 
+    %op Strategy _TypeWithSymbol(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomtype._TypeWithSymbol)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        get_slot(arg1, t) { $t.getArgument(1) }
+        get_slot(arg2, t) { $t.getArgument(2) }
+        make(arg0, arg1, arg2) { new tom.engine.adt.tomtype.strategy.tomtype._TypeWithSymbol($arg0, $arg1, $arg2) }
+    }
+  
+  
+  %op Strategy When_TypeWithSymbol(s:Strategy) {
+    make(s) { `Sequence(Is_TypeWithSymbol(),s) }
+  }
+
+  %op Strategy Is_TypeWithSymbol() {
+    make() { new tom.engine.adt.tomtype.strategy.tomtype.Is_TypeWithSymbol()}
+  }
+  
+%op Strategy Make_TypeWithSymbol(_TomType:Strategy, _TlType:Strategy, _RootSymbolName:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomtype.Make_TypeWithSymbol))) }
+
+  get_slot(_TomType, t) { $t._TomType }
+  get_slot(_TlType, t) { $t._TlType }
+  get_slot(_RootSymbolName, t) { $t._RootSymbolName }
+  make( new_TomType,  new_TlType,  new_RootSymbolName) { new tom.engine.adt.tomtype.strategy.tomtype.Make_TypeWithSymbol( $new_TomType,  $new_TlType,  $new_RootSymbolName) }
+}
+
     %op Strategy _TypeDefinition(arg0:Strategy, arg1:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomtypedefinition._TypeDefinition)))}
       
@@ -3544,14 +3571,14 @@
     make() { new tom.engine.adt.tomexpression.strategy.expression.Is_GetElement()}
   }
   
-%op Strategy Make_GetElement(_Opname:Strategy, _Codomain:Strategy, _Kid1:Strategy, _Kid2:Strategy) {
+%op Strategy Make_GetElement(_Opname:Strategy, _Codomain:Strategy, _Variable:Strategy, _Index:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_GetElement))) }
 
   get_slot(_Opname, t) { $t._Opname }
   get_slot(_Codomain, t) { $t._Codomain }
-  get_slot(_Kid1, t) { $t._Kid1 }
-  get_slot(_Kid2, t) { $t._Kid2 }
-  make( new_Opname,  new_Codomain,  new_Kid1,  new_Kid2) { new tom.engine.adt.tomexpression.strategy.expression.Make_GetElement( $new_Opname,  $new_Codomain,  $new_Kid1,  $new_Kid2) }
+  get_slot(_Variable, t) { $t._Variable }
+  get_slot(_Index, t) { $t._Index }
+  make( new_Opname,  new_Codomain,  new_Variable,  new_Index) { new tom.engine.adt.tomexpression.strategy.expression.Make_GetElement( $new_Opname,  $new_Codomain,  $new_Variable,  $new_Index) }
 }
 
     %op Strategy _GetSliceList(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
@@ -4152,12 +4179,12 @@
     make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_MatchConstraint()}
   }
   
-%op Strategy Make_MatchConstraint(_pattern:Strategy, _subject:Strategy) {
+%op Strategy Make_MatchConstraint(_Pattern:Strategy, _Subject:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_MatchConstraint))) }
 
-  get_slot(_pattern, t) { $t._pattern }
-  get_slot(_subject, t) { $t._subject }
-  make( new_pattern,  new_subject) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_MatchConstraint( $new_pattern,  $new_subject) }
+  get_slot(_Pattern, t) { $t._Pattern }
+  get_slot(_Subject, t) { $t._Subject }
+  make( new_Pattern,  new_Subject) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_MatchConstraint( $new_Pattern,  $new_Subject) }
 }
 
     %op Strategy _AntiMatchConstraint(arg0:Strategy) {
@@ -4201,13 +4228,13 @@
     make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_NumericConstraint()}
   }
   
-%op Strategy Make_NumericConstraint(_Left:Strategy, _Right:Strategy, _Type:Strategy) {
+%op Strategy Make_NumericConstraint(_Pattern:Strategy, _Subject:Strategy, _Type:Strategy) {
   is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_NumericConstraint))) }
 
-  get_slot(_Left, t) { $t._Left }
-  get_slot(_Right, t) { $t._Right }
+  get_slot(_Pattern, t) { $t._Pattern }
+  get_slot(_Subject, t) { $t._Subject }
   get_slot(_Type, t) { $t._Type }
-  make( new_Left,  new_Right,  new_Type) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_NumericConstraint( $new_Left,  $new_Right,  $new_Type) }
+  make( new_Pattern,  new_Subject,  new_Type) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_NumericConstraint( $new_Pattern,  $new_Subject,  $new_Type) }
 }
 
     %op Strategy _EmptyListConstraint(arg0:Strategy, arg1:Strategy) {
