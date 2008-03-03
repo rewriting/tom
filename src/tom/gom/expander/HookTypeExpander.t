@@ -225,13 +225,12 @@ public class HookTypeExpander {
             }
           }
           if (newHookList == `ConcHookDecl()) {
-            getLogger().log(Level.SEVERE, GomMessage.unknownHookKind.getMessage(), new Object[]{hkind});
+            getLogger().log(Level.SEVERE, GomMessage.unknownHookKind.getMessage(), new Object[]{ `(hkind) });
           }
           return newHookList;
         }
     }
-    throw new GomRuntimeException(
-        "HookTypeExpander: this hook is not a hook: "+`hook);
+    throw new GomRuntimeException("HookTypeExpander: this hook is not a hook: "+ `hook );
   }
 
   /**
