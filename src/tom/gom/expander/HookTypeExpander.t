@@ -225,8 +225,7 @@ public class HookTypeExpander {
             }
           }
           if (newHookList == `ConcHookDecl()) {
-            throw new GomRuntimeException(
-                "GomTypeExpander:typeModuleHook unknown HookKind: "+`hkind);
+            getLogger().log(Level.SEVERE, GomMessage.unknownHookKind.getMessage(), new Object[]{hkind});
           }
           return newHookList;
         }
@@ -312,7 +311,6 @@ public class HookTypeExpander {
         GomMessage.orphanedHook.getMessage(),
         new Object[]{oname});
     return null;
-    //throw new GomRuntimeException("HookTypeExpander: Operator not found: "+`oname);
   }
 
   private SlotList typeArguments(

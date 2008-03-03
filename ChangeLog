@@ -1,4 +1,5 @@
 2008-03-02 pem
+  * bootstrap
   * fix PR-5086: use the orphanedHook error message when an undeclared
     operator is used in a hook
 2008-02-16 pem
