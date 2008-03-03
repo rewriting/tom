@@ -136,7 +136,6 @@ module accesscontrol
     for(accesscontrol.types.Access elt:toBeAdded) {
       l2 = `accesses(elt,l2*);
     }
-    System.out.print(".");
     return l2;
   }
 

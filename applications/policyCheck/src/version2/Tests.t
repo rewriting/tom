@@ -160,7 +160,8 @@ public class Tests {
         if(decision1.isgrant()) {
           State oldState = s;
           s = decision1.getstate();
-          //traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
+          System.out.print(".");
+          traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
         }
 
         // needed with sol2:
@@ -168,7 +169,8 @@ public class Tests {
         if(decision2.isgrant()) {
           State oldState = s;
           s = decision2.getstate();
-          //traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
+          System.out.print(".");
+          traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
         }
 
         // Shouldn't we remove the write(subject,resource) from
