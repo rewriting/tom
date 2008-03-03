@@ -88,25 +88,31 @@ module accesscontrol
 	 // checks if an implicit state can be deduced from the set of explcit states 
    // can we cut by adding only ONE element ? it seems to be complete
     java.util.Collection<accesscontrol.types.Access> toBeAdded = new java.util.HashSet<accesscontrol.types.Access>();
+   
     matchblock:{
     %match(e) {
-      read(s1,o1) &&
-      accesses(_*,read(s2,o2),_*,write(s1,o2),_*) << l1 -> {
+      x@read(s1,o1) &&
+      accesses(_*,y@read(s2,o2),_*,write(s1,o2),_*) << l1 -> { //&& !x<<Access y -> {
         toBeAdded.add(`read(s2,o1));
-        break matchblock;// add onlye one element
+        break matchblock;// add only one element
       }
 
-      read(s2,o2) &&
-      accesses(_*,read(s1,o1),_*,write(s1,o2),_*) << l1 -> {
+      x@read(s2,o2) &&
+      accesses(_*,y@read(s1,o1),_*,write(s1,o2),_*) << l1 -> { // && !x<<Access y -> {
         toBeAdded.add(`read(s2,o1));
-        break matchblock;// add onlye one element
+        break matchblock;// add only one element
       }
 
       write(s1,o2) &&
-      ( accesses(_*,read(s1,o1),_*,read(s2,o2),_*) << l1 ||
-        accesses(_*,read(s2,o2),_*,read(s1,o1),_*) << l1) -> {
+      accesses(_*,read(s1,o1),_*,read(s2,o2),_*) << l1 -> {
         toBeAdded.add(`read(s2,o1));
-        break matchblock;// add onlye one element
+        break matchblock;// add only one element
+      }
+
+      write(s1,o2) &&
+        accesses(_*,read(s2,o2),_*,read(s1,o1),_*) << l1 -> {
+        toBeAdded.add(`read(s2,o1));
+        break matchblock;// add only one element
       }
     }}
 
@@ -130,12 +136,14 @@ module accesscontrol
     for(accesscontrol.types.Access elt:toBeAdded) {
       l2 = `accesses(elt,l2*);
     }
+    System.out.print(".");
     return l2;
   }
 
 //State composed of a list of accesses 
 // can add the lattice of levels - maybe interesting when dynamic
   State = state(accesses:ListOfAccesses)
+  ListOfStates = states(State*)
 
 //Request, composed of a request type and an access
 // add - to request the addition of an access,  
@@ -148,3 +156,8 @@ module accesscontrol
   Decision = grant(state:State)
            | deny(state:State)
            | na(state:State)
+
+  Trace = RequestToTrace(r:Request)
+        | StateToTrace(s:State)
+
+  ListOfTrace = traces(Trace*)

@@ -39,6 +39,7 @@ public class McLean implements Policy {
       //read only (comparable and) lower level resources 
       state(accesses(_*,read(subject[sl=ssl],resource[sl=rsl]),_*)) -> {
         if(! `slL.smaller(`rsl,`ssl)) {
+          System.out.println("read: " + `rsl + " by " + `ssl);
           return false;
         }
       } 
@@ -47,6 +48,8 @@ public class McLean implements Policy {
       state(accesses(_*,read(s,resource[sl=rsl1]),_*,
                         write(s,resource[sl=rsl2]),_*)) -> {
         if(`slL.smaller(`rsl2,`rsl1)) {
+          System.out.println("write: " + `rsl2 + " by " + `s);
+          System.out.println("read:  " + `rsl1 + " by " + `s);
           return false;
         }
       }
