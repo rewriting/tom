@@ -153,9 +153,9 @@ public class Tests {
     System.out.print(" ");
     %match(lor) {
       // sol1: be naive and generate all possible permutations
-      requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
+      //requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
       // sol2: look for read() and add the write() by hand
-      //requests(R1*,r@(add|delete)(read(subject,resource)),R2*) -> {
+      requests(R1*,r@(add|delete)(read(subject,resource)),R2*) -> {
         Decision decision1 = p.transition(`r,s);
         if(decision1.isgrant()) {
           State oldState = s;
@@ -164,8 +164,12 @@ public class Tests {
         }
 
         // needed with sol2:
-        //Decision decision2 = p.transition(`r.setaccess(`write(subject,resource)), cs);
-        //cs = decision2.getstate();
+        Decision decision2 = p.transition(`r.setaccess(`write(subject,resource)), s);
+        if(decision2.isgrant()) {
+          State oldState = s;
+          s = decision2.getstate();
+          //traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
+        }
 
         // Shouldn't we remove the write(subject,resource) from
         // requests(R1*,r@(add|delete)(read(subject,resource)),R2*) ??
