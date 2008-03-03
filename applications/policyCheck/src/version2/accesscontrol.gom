@@ -159,4 +159,4 @@ module accesscontrol
   Trace = RequestToTrace(r:Request)
         | StateToTrace(s:State)
 
-  ListOfTrace = traces(Trace*)
+  ListOfTraces = traces(Trace*)
