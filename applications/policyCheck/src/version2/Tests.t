@@ -12,16 +12,18 @@ public class Tests {
     //     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low")),slSet(sl("high"),sl(4),sl(5)));
     SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
 
-
-    BLP blp = new BLP(sls);
-    State cs = `state(accesses());
-
     Subject s1 = `subject(1,sl("high"));
     Subject s2 = `subject(2,sl("medium"));
     Subject s3 = `subject(3,sl("low"));
     Resource r1 = `resource(1,sl("low"));
     Resource r2 = `resource(2,sl("medium"));
     Resource r3 = `resource(3,sl("high"));
+
+    /*
+    BLP blp = new BLP(sls);
+    McLean mcl = new McLean(sls);
+    State cs = `state(accesses());
+
 		System.out.println("START  BLP---------------------");
     Request req = `add(read(s1,r3));
     Decision result = blp.transition(req,cs);
@@ -55,7 +57,6 @@ public class Tests {
    
 		System.out.println("START  McLean ---------------------");
 
-    McLean mcl = new McLean(sls);
     cs = `state(accesses());
 
     req = `add(write(s2,r2));
@@ -76,7 +77,6 @@ public class Tests {
 
 		System.out.println("START  McLean ---------------------");
 
-    mcl = new McLean(sls);
     cs = `state(accesses());
 
     req = `add(read(s1,r3));
@@ -108,29 +108,28 @@ public class Tests {
     cs = result.getstate();
 
 		System.out.println("\nVALID STATUS: "+ mcl.valid(cs)+"\n");
-
+*/
  
     /*
      * check a configuration
      */
-    ListOfSubjects slist = `subjects(s1,s2);
-    ListOfResources rlist = `resources(r3,r2);
     //ListOfSubjects slist = `subjects(s1,s2);
-    //ListOfResources rlist = `resources(r3,r2,r1);
+    //ListOfResources rlist = `resources(r3,r2);
+    ListOfSubjects slist = `subjects(s1,s2);
+    ListOfResources rlist = `resources(r3,r2,r1);
     int numberOfAccessMode = 2;
-    cs = `state(accesses());
-   
+    
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
 
-    //System.out.println("check BLP");
-    //checker(cs,new BLP(sls),lor, `traces());
+    System.out.println("check BLP");
+    runChecker(new BLP(sls),lor);
 
     //System.out.println("check enum");
     //simplechecker(lor,lor,`requests());
 
     System.out.println("check McLean");
-    checker(cs,new McLean(sls),`requests(),lor, `traces());
+    runChecker(new McLean(sls),lor);
 
     System.out.println("END");
 	}
@@ -138,6 +137,29 @@ public class Tests {
   /*
    * a naive checker
    */
+
+  /**
+	 * look for an information leakage
+	 * 
+	 * @param p the policy
+	 * @param lor the list of requests to check
+	 * print LEAKAGE with a trace in an information leakage is found 
+	 */
+  private static void runChecker(Policy p, ListOfRequests lor) {
+    cacheValid.clear();
+    cachePair.clear();
+    checker(`state(accesses()),p,`requests(),lor,`traces());
+  }
+
+
+  /**
+	 * generate a list of requests
+	 * 
+	 * @param subjects the list of subjects
+	 * @param resources the list of resources
+	 * @param numberOfAccessMode the number of different access mode
+	 * @return a list of all requests that combines all possible accesses
+	 */
   private static ListOfRequests genListOfRequests(ListOfSubjects subjects, ListOfResources resources, int numberOfAccessMode) {
     ListOfRequests res = `requests();
     %match(subjects, resources) {
@@ -153,12 +175,33 @@ public class Tests {
     return res;
   }
 
+    /**
+     * cacheValid: a global cache that stores valid states
+     *            used to avoid call to the valid() predicate
+     * cachePair: a global cache that stores pairs <state,lor>
+     *            used to cut the search space and avoid doing a same work twice
+     */
+  private static HashSet<State> cacheValid = new HashSet<State>();
+  private static HashSet<Pair> cachePair = new HashSet<Pair>();
 
-  private static HashSet<State> cache = new HashSet<State>();
-
+  /**
+	 * look for an information leakage
+	 * 
+	 * @param s the current state (initially empty)
+	 * @param p the policy
+	 * @param previous the list of requests tthat have to be checked after the next grant (initially empty)
+	 * @param lor the list of requests to check
+	 * @param traces the trace that explain how the leakage has been found (initially empty)
+	 * print LEAKAGE with a trace in an information leakage is found 
+	 */
   private static void checker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, ListOfTraces traces) {
-    //System.out.print(lor.length());
-    //System.out.print(" ");
+    if(cachePair.contains(`pair(s,lor))) {
+      //System.out.println("CUT");
+      return;
+    } else {
+      cachePair.add(`pair(s,lor));
+    }
+
     %match(lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
@@ -171,7 +214,7 @@ public class Tests {
         ListOfTraces newTraces = traces;
         if(decision1.isgrant()) {
           //System.out.print("+");
-          newTraces = `traces(traces*,StateToTrace(s),RequestToTrace(r),StateToTrace(newState));
+          newTraces = `traces(traces*,RequestToTrace(r),StateToTrace(newState));
           nextPrevious = `requests();
           nextLor = `requests(previous*,R1*,R2*);
         } else {
@@ -180,55 +223,15 @@ public class Tests {
           nextLor = `requests(R2*);
         }
 
-        // needed with sol2:
-        /*
-           Decision decision2 = p.transition(`r.setaccess(`write(subject,resource)), s);
-           if(decision2.isgrant()) {
-           State oldState = s;
-           s = decision2.getstate();
-           System.out.print("+");
-           traces = `traces(traces*,StateToTrace(oldState),RequestToTrace(r),StateToTrace(s));
-           } else {
-           System.out.print(".");
-           }
-         */
-
         checker(newState,p,nextPrevious,nextLor,newTraces);
-
-        // Shouldn't we remove the write(subject,resource) from
-        // requests(R1*,r@(add|delete)(read(subject,resource)),R2*) ??
-
-        // We can also match to find the corresponding write ?
-
-        // Maybe for the general case we should just take the accesses
-        // one by one - not read,write,read,write,...
-
-        //if(space.contains(s)) {
-        // CUT the search space
-        // the current state has already be visited
         // note: do not perform a return, otherwise, the enumeration is stopped
-
-        // En fait c'est surement faux : a-t-on le droit de couper l'espace de recherche
-        // independamment des request R1*,R2* ?
-        // l'ensemble space est commun a toutes les branches de l'exploration
-
-        //           Il faut peut-etre iterer sur un autre type de STATE - searchSTATE(state,accesses)
-
-        //} else {
-        //space.add(cs);// the optimisation can be removed to be complete
-        //checker(s,p,nextPrevious, nextLor,space,traces);
-        // note: do not perform a return, otherwise, the enumeration is stopped
-        //}
-
-        //System.out.println("request  = " + `r);
-        //System.out.println("decision = " + decision);
       }
 
       //_ -> { // _ instead of requests() to allow sol2
       requests() -> { // with sol1 only
         // this part is executed after the previous match
         // do the validation when no more request matches
-        if(!cache.contains(s)) {
+        if(!cacheValid.contains(s)) {
           if(p.valid(s) == false) {
             System.out.println("LEAKAGE DETECTED");
             while(!traces.isEmptytraces()) {
@@ -236,10 +239,10 @@ public class Tests {
               traces = traces.getTailtraces();
             }
             System.out.println("final state = " + s);
-            System.exit(0);
+            //System.exit(0);
           } else {
-            cache.add(s);
-            System.out.println("valid state cache size = " + cache.size());
+            cacheValid.add(s);
+            //System.out.println("valid state cache size = " + cacheValid.size());
           }
         }
       }

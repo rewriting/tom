@@ -160,3 +160,5 @@ module accesscontrol
         | StateToTrace(s:State)
 
   ListOfTraces = traces(Trace*)
+
+  Pair = pair(s:State,lor:ListOfRequests)
