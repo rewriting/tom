@@ -36,7 +36,8 @@ public class BLP implements Policy {
     %match(cs) {
       //read only (comparable and) lower level resources 
       state(accesses(_*,read(subject[sl=ssl],resource[sl=rsl]),_*)) -> {
-        if(! `slL.smaller(`rsl,`ssl)) {
+        if(! `slL.leq(`rsl,`ssl)) {
+          System.out.println("read: " + `rsl + " by " + `ssl);
           return false;
         }
       } 
@@ -44,7 +45,9 @@ public class BLP implements Policy {
       //*-security property
       state(accesses(_*,read(s,resource[sl=rsl1]),_*,
                         write(s,resource[sl=rsl2]),_*)) -> {
-        if(! `slL.smaller(`rsl1,`rsl2)) {
+        if(! `slL.leq(`rsl1,`rsl2)) {
+          System.out.println("write: " + `rsl2 + " by " + `s);
+          System.out.println("read:  " + `rsl1 + " by " + `s);
           return false;
         }
       }
@@ -75,13 +78,13 @@ public class BLP implements Policy {
       // READ access  (if a WRITE already exists it should be comparable and bigger)
 			add(newAccess@read(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> { 
         // not enough privileges to read
-        if(! `slL.smaller(`rsl1,`ssl1)) {
+        if(! `slL.leq(`rsl1,`ssl1)) {
           return `deny(cs);
         }
         // existing write access with lower level
         %match(cs) {
           state(accesses(_*,write(s2,resource[sl=rsl2]),_*)) -> {
-            if(`s1==`s2 && ! `slL.smaller(`rsl1,`rsl2)) {
+            if(`s1==`s2 && ! `slL.leq(`rsl1,`rsl2)) {
               return `deny(cs);
             }
           }
@@ -97,7 +100,7 @@ public class BLP implements Policy {
         // existing write access with lower level
         %match(cs) {
           state(accesses(_*,read(s2,resource[sl=rsl2]),_*)) -> {
-            if( `s1==`s2 && ! `slL.smaller(`rsl2,`rsl1)) {
+            if( `s1==`s2 && ! `slL.leq(`rsl2,`rsl1)) {
               return `deny(cs);
             }
           }

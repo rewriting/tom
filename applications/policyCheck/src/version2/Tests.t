@@ -113,10 +113,10 @@ public class Tests {
     /*
      * check a configuration
      */
-    //ListOfSubjects slist = `subjects(s1,s2);
-    //ListOfResources rlist = `resources(r3,r2);
     ListOfSubjects slist = `subjects(s1,s2);
-    ListOfResources rlist = `resources(r3,r2,r1);
+    ListOfResources rlist = `resources(r3,r2);
+    //ListOfSubjects slist = `subjects(s1,s2);
+    //ListOfResources rlist = `resources(r3,r2,r1);
     int numberOfAccessMode = 2;
     
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
