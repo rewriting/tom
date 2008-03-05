@@ -9,24 +9,33 @@ public class Tests {
   %include { accesscontrol/accesscontrol.tom }
 
 	public static void main(String[] args) {
-    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),slSet(sl("high"))));
+    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high"),sl("very high")));
+    //     SecurityLevelsLattice sls = `slLattice(slSet(sl("medium"),sl("high")));
+    //     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("high")));
     //SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
 
+    Subject s0 = `subject(0,sl("very high"));
     Subject s1 = `subject(1,sl("high"));
     Subject s2 = `subject(2,sl("medium"));
     Subject s3 = `subject(3,sl("low"));
     Subject s4 = `subject(4,sl("very low"));
-    Subject s5 = `subject(5,sl("very high"));
-    Resource r1 = `resource(1,sl("low"));
-    Resource r2 = `resource(2,sl("medium"));
-    Resource r3 = `resource(3,sl("high"));
+
     Resource r4 = `resource(4,sl("very low"));
-    Resource r5 = `resource(5,sl("very high"));
+    Resource r3 = `resource(1,sl("low"));
+    Resource r2 = `resource(2,sl("medium"));
+    Resource r1 = `resource(3,sl("high"));
+    Resource r0= `resource(5,sl("very high"));
+
+    ListOfSubjects slist = `subjects(s1,s2,s3);
+    ListOfResources rlist = `resources(r1,r2,r3);
+
 
     /*
-    BLP blp = new BLP(sls);
+
     McLean mcl = new McLean(sls);
     State cs = `state(accesses());
+    Decision result = null;
+    Request req = null;
 
 		System.out.println("START  BLP---------------------");
     Request req = `add(read(s1,r3));
@@ -117,17 +126,17 @@ public class Tests {
     /*
      * check a configuration
      */
-    ListOfSubjects slist = `subjects(s1,s2,s3,s4);
-    ListOfResources rlist = `resources(r1,r2,r3,r4);
-    //ListOfSubjects slist = `subjects(s1,s2);
-    //ListOfResources rlist = `resources(r3,r2,r1);
+//     ListOfSubjects slist = `subjects(s1,s2,s3,s4);
+//     ListOfResources rlist = `resources(r1,r2,r3,r4);
+//     ListOfSubjects slist = `subjects(s1,s2);
+//     ListOfResources rlist = `resources(r3,r2,r1);
     int numberOfAccessMode = 2;
     
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
 
-    //System.out.println("check BLP");
-    //runChecker(new BLP(sls),lor);
+    System.out.println("check BLP");
+    runChecker(new BLP(sls),lor);
 
     //System.out.println("check enum");
     //simplechecker(lor,lor,`requests());
@@ -186,9 +195,9 @@ public class Tests {
      *            used to cut the search space and avoid doing a same work twice
      */
   private static Collection<State> cacheValid = new HashSet<State>();
-  private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(100000);
+  private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(300000);
   //private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
-
+  private static int nbAccesses = 100;
   /**
 	 * look for an information leakage
 	 * 
@@ -223,8 +232,6 @@ public class Tests {
     %match(lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
-        // sol2: look for read() and add the write() by hand
-        //requests(R1*,r@(add|delete)(read(subject,resource)),R2*)
         Decision decision1 = p.transition(`r,s);
         State newState = decision1.getstate();
         ListOfRequests nextLor;
@@ -251,13 +258,16 @@ public class Tests {
         // do the validation when no more request matches
         if(!cacheValid.contains(s)) {
           if(p.valid(s) == false) {
-            System.out.println("LEAKAGE DETECTED");
-            while(!traces.isEmptytraces()) {
-              System.out.println(traces.getHeadtraces());
-              traces = traces.getTailtraces();
+            if(traces.length()<nbAccesses){
+              nbAccesses = traces.length();
+              System.out.println("LEAKAGE DETECTED ("+nbAccesses+")");
+              while(!traces.isEmptytraces()) {
+                System.out.println(traces.getHeadtraces());
+                traces = traces.getTailtraces();
+              }
+              System.out.println("final state = " + s);
+              //System.exit(0);
             }
-            System.out.println("final state = " + s);
-            //System.exit(0);
           } else {
             cacheValid.add(s);
             if(cacheValid.size() % 1000 == 0) {

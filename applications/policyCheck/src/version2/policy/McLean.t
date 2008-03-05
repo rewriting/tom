@@ -44,7 +44,15 @@ public class McLean implements Policy {
         }
       } 
 
-    //*-security property
+      //weaker -> read only  lower level resources or uncomparable
+//       state(accesses(_*,read(subject[sl=ssl],resource[sl=rsl]),_*)) -> {
+//         if(`slL.ge(`rsl,`ssl)) {
+//           System.out.println("read: " + `rsl + " by " + `ssl);
+//           return false;
+//         }
+//       } 
+
+      //*-security property
       state(accesses(_*,read(s,resource[sl=rsl1]),_*,
                         write(s,resource[sl=rsl2]),_*)) -> {
         if(`slL.leq(`rsl2,`rsl1)) {
@@ -53,6 +61,7 @@ public class McLean implements Policy {
           return false;
         }
       }
+
     }
     
     // if no leakage then OK
@@ -85,7 +94,7 @@ public class McLean implements Policy {
         // existing write access with lower level
         %match(cs) {
           state(accesses(_*,write(s2,resource[sl=rsl2]),_*)) -> {
-            if(`s1==`s2 && `slL.leq(`rsl2,`rsl1)) {
+            if(`s1==`s2 && `slL.ge(`rsl1,`rsl2)) {
               return `deny(cs);
             }
           }
@@ -101,7 +110,7 @@ public class McLean implements Policy {
         // existing write access with lower level
         %match(cs) {
           state(accesses(_*,read(s2,resource[sl=rsl2]),_*)) -> {
-            if( `s1==`s2 && `slL.leq(`rsl1,`rsl2)) {
+            if( `s1==`s2 && `slL.ge(`rsl2,`rsl1)) {
               return `deny(cs);
             }
           }
