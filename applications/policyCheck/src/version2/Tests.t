@@ -117,8 +117,8 @@ public class Tests {
     /*
      * check a configuration
      */
-    ListOfSubjects slist = `subjects(s1,s2,s3);
-    ListOfResources rlist = `resources(r1,r2,r3);
+    ListOfSubjects slist = `subjects(s1,s2,s3,s4);
+    ListOfResources rlist = `resources(r1,r2,r3,r4);
     //ListOfSubjects slist = `subjects(s1,s2);
     //ListOfResources rlist = `resources(r3,r2,r1);
     int numberOfAccessMode = 2;
@@ -126,8 +126,8 @@ public class Tests {
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
 
-    System.out.println("check BLP");
-    runChecker(new BLP(sls),lor);
+    //System.out.println("check BLP");
+    //runChecker(new BLP(sls),lor);
 
     //System.out.println("check enum");
     //simplechecker(lor,lor,`requests());
@@ -186,8 +186,8 @@ public class Tests {
      *            used to cut the search space and avoid doing a same work twice
      */
   private static Collection<State> cacheValid = new HashSet<State>();
-  //private static WeakHashMap<Pair,Boolean> cachePair = new WeakHashMap<Pair,Boolean>();
-  private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
+  private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(100000);
+  //private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
 
   /**
 	 * look for an information leakage
@@ -203,15 +203,15 @@ public class Tests {
   private static int nbAdd = 0;
   private static void checker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, ListOfTraces traces) {
     Pair key = `pair(s,lor);
-    if(cachePair.containsKey(key)) {
-      nbCut = (nbCut+1) % 100000;
+    if(cachePair.get(key) != null) {
+      nbCut = (nbCut+1) % 10000;
       if(nbCut==0) {
         System.out.print(".");
       }
       return;
     } else {
       cachePair.put(key,Boolean.TRUE);
-      nbAdd = (nbAdd+1) % 100000;
+      nbAdd = (nbAdd+1) % 10000;
       if(nbAdd==0) {
         System.out.print("+");
       }
@@ -260,7 +260,7 @@ public class Tests {
             //System.exit(0);
           } else {
             cacheValid.add(s);
-            if(cacheValid.size() % 100 == 0) {
+            if(cacheValid.size() % 1000 == 0) {
               System.out.println("#cacheValid = " + cacheValid.size());
             }
           }
