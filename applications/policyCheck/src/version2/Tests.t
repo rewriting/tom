@@ -9,15 +9,19 @@ public class Tests {
   %include { accesscontrol/accesscontrol.tom }
 
 	public static void main(String[] args) {
-    //     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low")),slSet(sl("high"),sl(4),sl(5)));
-    SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
+    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),slSet(sl("high"))));
+    //SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
 
     Subject s1 = `subject(1,sl("high"));
     Subject s2 = `subject(2,sl("medium"));
     Subject s3 = `subject(3,sl("low"));
+    Subject s4 = `subject(4,sl("very low"));
+    Subject s5 = `subject(5,sl("very high"));
     Resource r1 = `resource(1,sl("low"));
     Resource r2 = `resource(2,sl("medium"));
     Resource r3 = `resource(3,sl("high"));
+    Resource r4 = `resource(4,sl("very low"));
+    Resource r5 = `resource(5,sl("very high"));
 
     /*
     BLP blp = new BLP(sls);
@@ -113,8 +117,8 @@ public class Tests {
     /*
      * check a configuration
      */
-    ListOfSubjects slist = `subjects(s1,s2);
-    ListOfResources rlist = `resources(r3,r2);
+    ListOfSubjects slist = `subjects(s1,s2,s3);
+    ListOfResources rlist = `resources(r1,r2,r3);
     //ListOfSubjects slist = `subjects(s1,s2);
     //ListOfResources rlist = `resources(r3,r2,r1);
     int numberOfAccessMode = 2;
@@ -181,8 +185,9 @@ public class Tests {
      * cachePair: a global cache that stores pairs <state,lor>
      *            used to cut the search space and avoid doing a same work twice
      */
-  private static HashSet<State> cacheValid = new HashSet<State>();
-  private static HashSet<Pair> cachePair = new HashSet<Pair>();
+  private static Collection<State> cacheValid = new HashSet<State>();
+  //private static WeakHashMap<Pair,Boolean> cachePair = new WeakHashMap<Pair,Boolean>();
+  private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
 
   /**
 	 * look for an information leakage
@@ -194,12 +199,25 @@ public class Tests {
 	 * @param traces the trace that explain how the leakage has been found (initially empty)
 	 * print LEAKAGE with a trace in an information leakage is found 
 	 */
+  private static int nbCut = 0;
+  private static int nbAdd = 0;
   private static void checker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, ListOfTraces traces) {
-    if(cachePair.contains(`pair(s,lor))) {
-      //System.out.println("CUT");
+    Pair key = `pair(s,lor);
+    if(cachePair.containsKey(key)) {
+      nbCut = (nbCut+1) % 100000;
+      if(nbCut==0) {
+        System.out.print(".");
+      }
       return;
     } else {
-      cachePair.add(`pair(s,lor));
+      cachePair.put(key,Boolean.TRUE);
+      nbAdd = (nbAdd+1) % 100000;
+      if(nbAdd==0) {
+        System.out.print("+");
+      }
+      //if(cachePair.size() % 1000 == 0) {
+      //  System.out.println("cachePair size = " + cachePair.size());
+      //}
     }
 
     %match(lor) {
@@ -242,7 +260,9 @@ public class Tests {
             //System.exit(0);
           } else {
             cacheValid.add(s);
-            //System.out.println("valid state cache size = " + cacheValid.size());
+            if(cacheValid.size() % 100 == 0) {
+              System.out.println("#cacheValid = " + cacheValid.size());
+            }
           }
         }
       }
