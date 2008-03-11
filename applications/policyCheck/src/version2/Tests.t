@@ -141,17 +141,22 @@ public class Tests {
     //simplechecker(lor,lor,`requests());
 
     System.out.println("check McLean");
-    runChecker(new McLean(sls),lor);
+//     runChecker(new McLean(sls),lor);
+    runNaiveChecker(new McLean(sls),lor);
 
-    System.out.println("check BLP");
-    runChecker(new BLP(sls),lor);
+//     System.out.println("check BLP");
+//     runChecker(new BLP(sls),lor);
 
     System.out.println("END");
 	}
 	
-  /*
+
+  /**
    * a naive checker
    */
+  private static void runNaiveChecker(Policy p, ListOfRequests lor) {
+    naiveChecker(`state(accesses()),p,lor,`traces());
+  }
 
   /**
 	 * look for an information leakage
@@ -281,6 +286,46 @@ public class Tests {
     }
   }
  
+
+  private static void naiveChecker(State s, Policy p, ListOfRequests lor, ListOfTraces traces) {
+
+    %match(lor) {
+      // sol1: be naive and generate all possible permutations
+      requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
+        Decision decision1 = p.transition(`r,s);
+        State newState = decision1.getstate();
+
+        ListOfRequests nextLor;
+        ListOfTraces newTraces = traces;
+        newTraces = `traces(traces*,RequestToTrace(r),StateToTrace(newState));
+        nextLor = `requests(R1*,R2*);
+
+        naiveChecker(newState,p,nextLor,newTraces);
+        // note: do not perform a return, otherwise, the enumeration is stopped
+      }
+
+      //_ -> { // _ instead of requests() to allow sol2
+      requests() -> { // with sol1 only
+        // this part is executed after the previous match
+        // do the validation when no more request matches
+        if(p.valid(s) == false) {
+          if(traces.length()<nbAccesses){
+            nbAccesses = traces.length();
+            System.out.println("LEAKAGE DETECTED ("+nbAccesses+")");
+            while(!traces.isEmptytraces()) {
+              System.out.println(traces.getHeadtraces());
+              traces = traces.getTailtraces();
+            }
+            System.out.println("final state = " + s);
+            //System.exit(0);
+          }
+        } 
+      }
+    }
+  }
+
+ 
+
     // just to check that the enumeration is correct
   private static void simplechecker(ListOfRequests goal, ListOfRequests lor, ListOfRequests trace) {
     //System.out.println("enter trace = " + trace);
