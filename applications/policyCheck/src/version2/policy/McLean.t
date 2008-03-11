@@ -55,7 +55,7 @@ public class McLean implements Policy {
       //*-security property
       state(accesses(_*,read(s,resource[sl=rsl1]),_*,
                         write(s,resource[sl=rsl2]),_*)) -> {
-        if(`slL.leq(`rsl2,`rsl1)) {
+        if(`slL.le(`rsl2,`rsl1)) {
           System.out.println("write: " + `rsl2 + " by " + `s);
           System.out.println("read:  " + `rsl1 + " by " + `s);
           return false;

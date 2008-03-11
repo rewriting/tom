@@ -21,10 +21,10 @@ public class Tests {
     Subject s4 = `subject(4,sl("very low"));
 
     Resource r4 = `resource(4,sl("very low"));
-    Resource r3 = `resource(1,sl("low"));
+    Resource r3 = `resource(3,sl("low"));
     Resource r2 = `resource(2,sl("medium"));
-    Resource r1 = `resource(3,sl("high"));
-    Resource r0= `resource(5,sl("very high"));
+    Resource r1 = `resource(1,sl("high"));
+    Resource r0= `resource(0,sl("very high"));
 
     ListOfSubjects slist = `subjects(s1,s2,s3);
     ListOfResources rlist = `resources(r1,r2,r3);
@@ -128,21 +128,23 @@ public class Tests {
      */
 //     ListOfSubjects slist = `subjects(s1,s2,s3,s4);
 //     ListOfResources rlist = `resources(r1,r2,r3,r4);
-//     ListOfSubjects slist = `subjects(s1,s2);
-//     ListOfResources rlist = `resources(r3,r2,r1);
     int numberOfAccessMode = 2;
     
+    sls = `slLattice(slSet(sl("low"),sl("high")));
+    slist = `subjects(s1,s2);
+    rlist = `resources(r1,r2,r3);
+
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
-
-    System.out.println("check BLP");
-    runChecker(new BLP(sls),lor);
 
     //System.out.println("check enum");
     //simplechecker(lor,lor,`requests());
 
     System.out.println("check McLean");
     runChecker(new McLean(sls),lor);
+
+    System.out.println("check BLP");
+    runChecker(new BLP(sls),lor);
 
     System.out.println("END");
 	}
