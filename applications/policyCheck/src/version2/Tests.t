@@ -141,8 +141,8 @@ public class Tests {
     //simplechecker(lor,lor,`requests());
 
     System.out.println("check McLean");
-//     runChecker(new McLean(sls),lor);
-    runNaiveChecker(new McLean(sls),lor);
+    runChecker(new McLean(sls),lor);
+//     runNaiveChecker(new McLean(sls),lor);
 
 //     System.out.println("check BLP");
 //     runChecker(new BLP(sls),lor);
@@ -304,7 +304,7 @@ public class Tests {
         // note: do not perform a return, otherwise, the enumeration is stopped
       }
 
-      //_ -> { // _ instead of requests() to allow sol2
+      //_ -> { // _ Instead of requests() to allow sol2
       requests() -> { // with sol1 only
         // this part is executed after the previous match
         // do the validation when no more request matches
@@ -318,7 +318,10 @@ public class Tests {
             }
             System.out.println("final state = " + s);
             //System.exit(0);
-          }
+          } 
+//           else {
+//             System.out.println("LEAKAGE ----------------------  "+nbAccesses);
+//           }
         } 
       }
     }
