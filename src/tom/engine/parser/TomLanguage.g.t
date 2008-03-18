@@ -250,7 +250,7 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
 }
     :   (
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
-             option = matchPattern[matchPatternList] 
+             option = matchPattern[matchPatternList,true] 
             {
               if(matchPatternList.size() != subjectList.length()) {                       
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
@@ -451,12 +451,14 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
   result = null;
   int consType = -1;
 }
-: option = matchNonImplicitPattern[matchPatternList] consType = constraintType matchArgument[matchSubjectList]
+: option = matchPattern[matchPatternList,false] 
+  consType = constraintType 
+  matchArgument[matchSubjectList]
   {
     optionListLinked.add(option);
     TomTerm left  = (TomTerm)matchPatternList.get(0);
     TomTerm right = (TomTerm)matchSubjectList.get(0);
-    switch(consType){
+    switch(consType) {
       case MATCH_CONSTRAINT : {
         return `MatchConstraint(left,right);           
       }
@@ -499,42 +501,23 @@ constraintType returns [int result]
     )      
 ;
 
-matchPattern [List list] returns [Option result] throws TomException
+matchPattern [List list,boolean allowImplicit] returns [Option result] throws TomException
 {
     result = null;
     TomTerm term = null;
 }
     :   (
-             term = annotedTerm[true] 
+             term = annotedTerm[allowImplicit] 
             {
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
             ( 
                 COMMA {text.append('\n');}  
-                term = annotedTerm[true] {list.add(term);}
+                term = annotedTerm[allowImplicit] {list.add(term);}
             )*
         )
     ;
-
-matchNonImplicitPattern [List list] returns [Option result] throws TomException
-{
-    result = null;
-    TomTerm term = null;
-}
-    :   (
-             term = annotedTerm[false] 
-            {
-                list.add(term);
-                result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
-            } 
-            ( 
-                COMMA {text.append('\n');}  
-                term = annotedTerm[false] {list.add(term);}
-            )*
-        )
-    ;
-
 
 /* 
 extendsBqTerm returns [TomTerm bqTerm] throws TomException
