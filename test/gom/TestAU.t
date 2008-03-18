@@ -38,52 +38,61 @@ public class TestAU extends TestCase {
     /* conc is AU, with the default neutral */
     T = a()
       | b()
+      | concAU(T*)
       | conc(T*)
-    conc:AU() {}
+    concAU:AU() {}
+    conc:Free() {}
     /* list is AU, with aa() as neutral */
     L = aa()
       | bb()
+      | listAU(L*)
       | list(L*)
-    list:AU() { `aa() }
+    listAU:AU() { `aa() }
+    list:Free() { }
+
+//    module l:rules() {
+//      conc(conc(),x) -> x 
+//      conc(x,conc()) -> x 
+//   }
   }
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestAU.class));
   }
 
   public void testFlatten1() {
-    assertEquals(`conc(a(),b(),a()),`conc(a(),conc(b()),a()));
+    assertEquals(`concAU(a(),b(),a()),`concAU(a(),concAU(b()),a()));
   }
 
   public void testFlatten2() {
-    L l1 = `list(bb(),bb());
-    L l2 = `list(bb(),bb());
-    assertEquals(`list(l1,l2),`list(bb(),bb(),bb(),bb()));
+    L l1 = `listAU(bb(),bb());
+    L l2 = `listAU(bb(),bb());
+    assertEquals(`listAU(l1,l2),`listAU(bb(),bb(),bb(),bb()));
   }
 
   public void testFlatten3() {
-    L l1 = `list(bb(),bb());
-    L l2 = `list(bb(),bb());
-    assertEquals(`list(l1,l2),`list(l1*,l2*));
+    L l1 = `listAU(bb(),bb());
+    L l2 = `listAU(bb(),bb());
+    assertEquals(`listAU(l1,l2),`listAU(l1*,l2*));
   }
 
   public void testFlatten4() {
-    L l1 = `list(bb(),bb());
-    assertEquals(`Conslist(l1,bb()),`list(l1*,bb()));
+    L l1 = `listAU(bb(),bb());
+    assertEquals(`ConslistAU(l1,bb()),`listAU(l1*,bb()));
   }
 
   public void testNeutral1() {
-    assertEquals(`list(),`aa());
+    assertEquals(`listAU(),`aa());
   }
 
   public void testNeutral2() {
-    assertEquals(`list(aa(),aa()),`aa());
+    assertEquals(`listAU(aa(),aa()),`aa());
   }
 
   public void testNeutral3() {
     L l = `bb();
     int cnt = 0;
     %match(l) {
-      list?(x*,y*) -> {
+      listAU?(x*,y*) -> {
         if(`x == `bb() && `y == `aa()) {
           cnt += 2;
         }
@@ -93,7 +102,7 @@ public class TestAU extends TestCase {
       }
     }
     if (0 == cnt) {
-      fail("list(x,y) should match bb()");
+      fail("listAU(x,y) should match bb()");
     }
     assertEquals("Incomplete matching",cnt,5);
   }
@@ -102,17 +111,17 @@ public class TestAU extends TestCase {
     T t = `b();
     int cnt = 0;
     %match(t) {
-      conc?(x*,y*) -> {
-        if (`x == `b() && `y == `conc()) {
+      concAU?(x*,y*) -> {
+        if (`x == `b() && `y == `concAU()) {
           cnt += 2;
         }
-        if (`x == `conc() && `y == `b()) {
+        if (`x == `concAU() && `y == `b()) {
           cnt += 3;
         }
       }
     }
     if (0 == cnt) {
-      fail(" conc(x,y) should match b()");
+      fail(" concAU(x,y) should match b()");
     }
     assertEquals("Incomplete matching",cnt,5);
   }
@@ -129,15 +138,15 @@ public class TestAU extends TestCase {
   }
 
   public void testMatch1() {
-    L l = `list(list(aa(),bb()),list(aa()),list(bb(),aa()));
+    L l = `listAU(listAU(aa(),bb()),listAU(aa()),listAU(bb(),aa()));
     int cnt = 0;
     %match(l) {
-      list(bb(),_y*) -> { cnt++; }
-      list(_x*,bb()) -> { cnt++; }
-      list(bb(),_y) -> { cnt++; }
-      list(_x,bb()) -> { cnt++; }
-      list(_x,_y) -> { cnt++; }
-      list(bb(),x*,bb()) -> { if(`x==`aa()) cnt++; }
+      listAU(bb(),_y*) -> { cnt++; }
+      listAU(_x*,bb()) -> { cnt++; }
+      listAU(bb(),_y) -> { cnt++; }
+      listAU(_x,bb()) -> { cnt++; }
+      listAU(_x,_y) -> { cnt++; }
+      listAU(bb(),x*,bb()) -> { if(`x==`aa()) cnt++; }
     }
     assertEquals("Incomplete matching",cnt,6);
   }
@@ -146,14 +155,14 @@ public class TestAU extends TestCase {
      * I am not sure we want this to be correct
 
   public void testMatch1() {
-    L l = `list(bb(),bb());
+    L l = `listAU(bb(),bb());
     int cnt = 0;
     %match(l) {
-      list(aa(),y*) -> { cnt++; }
-      list(x*,aa()) -> { cnt++; }
+      listAU(aa(),y*) -> { cnt++; }
+      listAU(x*,aa()) -> { cnt++; }
     }
     if (0 == cnt) {
-      fail("list(aa,y) should match list(bb(),bb())");
+      fail("listAU(aa,y) should match listAU(bb(),bb())");
     }
     assertEquals("Incomplete matching",cnt,2);
   }
@@ -162,11 +171,11 @@ public class TestAU extends TestCase {
     L l = `bb();
     int cnt = 0;
     %match(l) {
-      list?(aa(),y*) -> { cnt++; }
-      list?(x*,aa()) -> { cnt++; }
+      listAU?(aa(),y*) -> { cnt++; }
+      listAU?(x*,aa()) -> { cnt++; }
     }
     if (0 == cnt) {
-      fail("list?(aa,y) should match list(bb())");
+      fail("listAU?(aa,y) should match listAU(bb())");
     }
     assertEquals("Incomplete matching",cnt,2);
   }

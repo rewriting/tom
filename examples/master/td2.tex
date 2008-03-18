@@ -15,15 +15,15 @@
 %% UNCOMMENT IF YOU WANT THE SHORT VERSION
 \excludecomment{versionProf}
 
-\title{Termes, réécriture, filtrage syntaxique}
-\date{2006-2007}
+\title{Termes, rÃ©Ã©criture, filtrage syntaxique}
+\date{2007-2008}
 \author{M1}
 
 
 \begin{document}
 
 %% \thispagestyle{empty}
-%% \centerline{\LARGE\textbf{Termes, réécriture, filtrage syntaxique}}
+%% \centerline{\LARGE\textbf{Termes, rÃ©Ã©criture, filtrage syntaxique}}
 %% \bigskip
 %% \bigskip
 \maketitle
@@ -31,13 +31,13 @@
 Ce TD a pour but de vous familiariser avec le langage de programmation Tom.
 Nous abordons dans ce TD l'utilisation de \verb|%gom|, \verb|%rule|, \verb|%match| et '\verb|`|'.
 
-L'objectif est d'implanter un interpréteur ainsi qu'un optimiseur pour un pico-langage.
+L'objectif est d'implanter un interprÃ©teur ainsi qu'un optimiseur pour un pico-langage.
 
-\section{Expression booléennes}
-Dans un premier temps, on veut pouvoir construire et évaluer des expressions de la forme \verb|Not(True())|, \verb|And(Or(True(),False()),True())|, etc.
+\section{Expression boolÃ©ennes}
+Dans un premier temps, on veut pouvoir construire et Ã©valuer des expressions de la forme \verb|Not(True())|, \verb|And(Or(True(),False()),True())|, etc.
 
 \begin{enumerate}
-\item proposer une grammaire ainsi qu'un système de simplification.
+\item proposer une grammaire ainsi qu'un systÃ¨me de simplification.
 \item simplifier \texttt{And(Or(Not(False),False),And(True,False))}
 \end{enumerate}
 
@@ -81,7 +81,7 @@ Dans un premier temps, on veut pouvoir construire et évaluer des expressions de 
 \end{versionProf}
 
 \section{Mini pico langage}
-On considère un premier langage permettant de mémoriser des valeurs dans des variables. Sa grammaire est la suivante :
+On considÃ¨re un premier langage permettant de mÃ©moriser des valeurs dans des variables. Sa grammaire est la suivante :
 \begin{verbatim}
   <Inst> ::= Skip
            | Assign(<String>,<int>)
@@ -90,11 +90,11 @@ On considère un premier langage permettant de mémoriser des valeurs dans des var
 \end{verbatim}
 
 \begin{enumerate}
-\item proposer une signature ainsi qu'une fonction permettant d'évaluer de tels programmes.
+\item proposer une signature ainsi qu'une fonction permettant d'Ã©valuer de tels programmes.
 \end{enumerate}
 
 \section{Pico langage}
-On considère maintenant une extension de ce langage dont la grammaire est la suivante :
+On considÃ¨re maintenant une extension de ce langage dont la grammaire est la suivante :
 
 \begin{verbatim}
   <Inst> ::= Skip
@@ -116,19 +116,19 @@ On considère maintenant une extension de ce langage dont la grammaire est la sui
 \end{verbatim}
 
 \begin{enumerate}
-\item écrire le programme \texttt{a:=1 ; b:=a+2 ; Print(b)} dans la syntaxe de Pico
-\item écrire un programme qui affiche les entiers de 0 à 9.
-\item donner la signature et les fonctions d'évaluation d'un tel langage
+\item Ã©crire le programme \texttt{a:=1 ; b:=a+2 ; Print(b)} dans la syntaxe de Pico
+\item Ã©crire un programme qui affiche les entiers de 0 Ã  9.
+\item donner la signature et les fonctions d'Ã©valuation d'un tel langage
 \end{enumerate}
 
 \section{Optimisation}
-On désire maintenant décrire une fonction qui élimine les instructions inutiles
+On dÃ©sire maintenant dÃ©crire une fonction qui Ã©limine les instructions inutiles
 (\texttt{Skip}) et optimise les tests de la forme \texttt{If(Not(...),...)} 
 
 \section{Programmation}
 \begin{enumerate}
-\item écrire un programme qui calcule les nombres premiers jusqu'à 100
-\item que faut-il ajouter comme instruction à Pico pour que cela soit plus facile
+\item Ã©crire un programme qui calcule les nombres premiers jusqu'Ã  100
+\item que faut-il ajouter comme instruction Ã  Pico pour que cela soit plus facile
 \end{enumerate}
 
 \end{document}

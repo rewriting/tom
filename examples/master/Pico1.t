@@ -34,8 +34,7 @@ import java.util.*;
 class Pico1 {
   %gom {
     module Term
-    imports
-        int String
+    imports int String
       
     abstract syntax
 		Bool = True() 

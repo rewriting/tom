@@ -499,7 +499,7 @@
     <copy todir="${dest}" file="LICENCE"/>
   </target>
 
-  <target name="stable" depends="stable.dist"/>
+  <target name="stable" description="build and install the boot" depends="stable.dist"/>
   <target name="stable.dist"
           description="Prepare a distribution ready stable package"
           depends="clean.stable.dist, prepare.stable.dist, build.stable">

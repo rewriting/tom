@@ -1,3 +1,10 @@
+2008-03-18 pem
+  * new %match, without subject.
+    syntax:
+    %match {
+      constraints -> ...
+    }
+
 2008-03-02 pem
   * bootstrap
   * fix PR-5086: use the orphanedHook error message when an undeclared

@@ -158,22 +158,33 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     TomType patternType = `TomTypeAlone("unknown");
 }
   : (
-            LPAREN matchArguments[argumentList] RPAREN 
+            LPAREN matchArguments[argumentList] RPAREN
             LBRACE { subjectList = ASTFactory.makeList(argumentList); }
             ( 
              patternInstruction[subjectList,constraintInstructionList,patternType]
             )* 
-            t:RBRACE 
+            t1:RBRACE 
             { 
                result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
-               //System.out.println("Parsed cl: " + constraintInstructionList);
                // update for new target block...
-               updatePosition(t.getLine(),t.getColumn());
-
-               // Match is finished : pop the tomlexer and return in
-               // the target parser.  
+               updatePosition(t1.getLine(),t1.getColumn());
+               // Match is finished : pop the tomlexer and return in the target parser.  
                selector().pop(); 
             }
+            |
+            LBRACE { subjectList = ASTFactory.makeList(argumentList); }
+            ( 
+             constraintInstruction[constraintInstructionList,patternType]
+            )* 
+            t2:RBRACE 
+            { 
+               result = `Match(ASTFactory.makeConstraintInstructionList(constraintInstructionList),optionList);
+               // update for new target block...
+               updatePosition(t2.getLine(),t2.getColumn());
+               // Match is finished : pop the tomlexer and return in the target parser.  
+               selector().pop(); 
+            }
+
         )
   ;
 
@@ -224,7 +235,7 @@ matchArgument [List list] throws TomException
 
 patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomException
 {    
-    List optionListLinked = new LinkedList();
+    List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
     List blockList = new LinkedList();
     
@@ -249,25 +260,22 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
               }
               
               int counter = 0;
-              %match(subjectList){
+              %match(subjectList) {
                 concTomTerm(_*,subjectAtIndex,_*) -> {
                   constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
                   counter++;
                 }
               }
               
-              optionList = `concOption(option,
-                  OriginalText(Name(text.toString()))
-              );
+              optionList = `concOption(option, OriginalText(Name(text.toString())));
               
               matchPatternList.clear();
               clearText();
             }            
             ( 
                 (   
-                    {LA(2) != LPAREN}?
-                    constr = matchConstraintCompositionNoPar[optionListLinked]
-                    | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
+                  {LA(2) != LPAREN}? constr = matchConstraintCompositionNoPar[optionListLinked]
+                | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
                 )
                 { 
                   %match(constr) {                    
@@ -279,12 +287,12 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
             ARROW 
             {
                 optionList = `concOption();
-                for(Object op:optionListLinked) {
-                  optionList = `concOption(optionList*,(Option)op);
+                for(Option op:optionListLinked) {
+                  optionList = `concOption(optionList*,op);
                 }
                 optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
                 if(label != null) {
-                    optionList = `concOption(Label(Name(label.getText())),optionList*);
+                  optionList = `concOption(Label(Name(label.getText())),optionList*);
                 }
             }
             (t:LBRACE 
@@ -320,7 +328,75 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
         )
     ;
 
-matchConstraintCompositionNoPar [List optionListLinked] returns [Constraint result] throws TomException
+constraintInstruction [List list, TomType rhsType] throws TomException
+{    
+    List<Option> optionListLinked = new LinkedList<Option>();
+    List blockList = new LinkedList();
+    
+    Constraint constraint = `TrueConstraint();    
+    Constraint constr = null;
+    OptionList optionList = null;
+    Option option = null;
+    
+    TomTerm rhsTerm = null;
+    
+    clearText();
+}
+    :   ( 
+            constraint = matchConstraint[optionListLinked]
+            ( 
+                (   
+                  {LA(2) != LPAREN}? constr = matchConstraintCompositionNoPar[optionListLinked]
+                | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
+                )
+                { 
+                  %match(constr) {                    
+                    AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }                    
+                    OrMarker(x)  -> { constraint = `OrConstraint(constraint,x); }
+                  }
+                }    
+            )*
+            ARROW 
+            {
+                optionList = `concOption();
+                for(Option op:optionListLinked) {
+                  optionList = `concOption(optionList*,op);
+                }
+                optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
+            }
+            (t:LBRACE 
+            {
+                // update for new target block
+                updatePosition(t.getLine(),t.getColumn());
+                // actions in target language : call the target lexer and
+                // call the target parser
+                selector().push("targetlexer");
+                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+                // target parser finished : pop the target lexer
+                selector().pop();
+                blockList.add(tlCode);
+                list.add(`ConstraintInstruction(
+                    constraint,
+                    RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
+                    optionList)
+                );
+            } 
+            | rhsTerm = plainTerm[null,null,0]
+              {
+              // case where the rhs of a rule is an algebraic term
+              // TODO
+                list.add(`ConstraintInstruction(
+                    constraint,
+                    Return(BuildReducedTerm(rhsTerm,rhsType)),
+                    optionList)
+                );
+
+              }
+            )
+        )
+    ;
+
+matchConstraintCompositionNoPar [List<Option> optionListLinked] returns [Constraint result] throws TomException
 { 
   boolean isAnd = false;
   Constraint matchConstr = null;
@@ -335,7 +411,7 @@ matchConstraintCompositionNoPar [List optionListLinked] returns [Constraint resu
   }
 ;
 
-matchConstraintCompositionPar [List optionListLinked] returns [Constraint result] throws TomException
+matchConstraintCompositionPar [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
   boolean isAnd = false;
   Constraint matchConstr = null;
@@ -367,7 +443,7 @@ matchConstraintCompositionPar [List optionListLinked] returns [Constraint result
       }
 ;
 
-matchConstraint [List optionListLinked] returns [Constraint result] throws TomException
+matchConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
   List matchPatternList = new LinkedList();
   List matchSubjectList = new LinkedList();
