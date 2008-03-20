@@ -36,6 +36,7 @@ import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -88,7 +89,48 @@ public class KernelTyper {
   }
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../../library/mapping/java/util/types/HashMap.tom}
   // ------------------------------------------------------------
+
+  /**
+   * If a variable with a type X is found, then all the variables that have the same name and 
+   * with type 'unknown' get this type
+   *  - apply this for each rhs
+   */
+  protected TomTerm propagateVariablesTypes(TomTerm subject){
+    try{
+      return (TomTerm)`TopDown(ProcessRhsForVarTypePropagation()).visitLight(subject);  
+    } catch(tom.library.sl.VisitFailure e) {
+      throw new TomRuntimeException("propagateVariablesTypes: failure on " + subject);
+    }
+  }
+  %strategy ProcessRhsForVarTypePropagation() extends Identity() {
+    visit ConstraintInstruction {
+      ConstraintInstruction(constr,action,option) -> {
+        HashMap<String,TomType> varTypes = new HashMap<String,TomType>();
+        `TopDown(CollectAllVariablesTypes(varTypes)).visitLight(`constr);        
+        Constraint c = (Constraint)`TopDown(PropagateVariablesTypes(varTypes)).visitLight(`constr);        
+        return `ConstraintInstruction(c,action,option);
+      }
+    }
+  }  
+  %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
+    visit TomTerm {       
+      Variable[AstName=Name(name),AstType=type@!TomTypeAlone("unknown type")] && !EmptyType[] << type  -> {
+        map.put(`name,`type);
+      }
+    }
+  }
+  %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
+    visit TomTerm {
+      v@Variable[AstName=Name(name),AstType=type] && (TomTypeAlone("unknown type") << type || EmptyType[] << type )  -> {
+        if (map.containsKey(`name)) {
+          return `v.setAstType((TomType)map.get(`name)); 
+        }
+      }
+    }
+  }
+  
 
   /*
    * The "typeVariable" phase types RecordAppl into Variable
@@ -261,6 +303,7 @@ public class KernelTyper {
   %strategy typeConstraint(TomType contextType, Collection lhsVariable, Collection matchAndNumericConstraints, KernelTyper kernelTyper) extends Fail() {
     visit Constraint {
       constraint@(MatchConstraint|NumericConstraint)[Pattern=pattern,Subject=subject] -> {
+        boolean isNumeric = `(constraint) instanceof NumericConstraint ? true:false;
         TomTerm newSubject = null;
         TomType newSubjectType = null;        
         %match(subject) {
@@ -275,13 +318,17 @@ public class KernelTyper {
               if(newSubjectType != null) {
                 newVariable = `Variable(variableOption,astName,newSubjectType,constraints);
               } else {
-                throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+                if (!isNumeric) {
+                  throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+                }
               }
             } else {
               newVariable = `subject;
             }
             if(newVariable == null) {
-              throw new TomRuntimeException("Type cannot be guessed for '" + `subject + "'");
+              if (!isNumeric) { 
+                throw new TomRuntimeException("Type cannot be guessed for '" + `subject + "'");
+              }
             } else {
               newSubject = newVariable;
               newSubjectType = newVariable.getAstType();
@@ -300,7 +347,9 @@ public class KernelTyper {
             if(type != null) {
               newSubject = `BuildReducedTerm(t,type);
             } else {
-              throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+              if (!isNumeric) {
+                throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+              }
             }
             newSubjectType = type;                    
           }
@@ -316,12 +365,22 @@ public class KernelTyper {
             newSubject = `term;
           }
 
-        } // end match subject        
-        newSubjectType = (TomType)kernelTyper.typeVariable(contextType,newSubjectType);
-        newSubject = (TomTerm)kernelTyper.typeVariable(newSubjectType, newSubject);
+        } // end match subject     
+        // if it is numeric, we do not care about the type
+        // we transform the lhs and rhs into buildTerms with empty type
+        if (isNumeric) {
+          newSubjectType = `EmptyType();
+          newSubject = `BuildReducedTerm(subject,newSubjectType);    
+          %match(pattern){
+            RecordAppl[] -> { `pattern = `BuildReducedTerm(pattern, newSubjectType); }
+          }
+        } else {
+          newSubjectType = (TomType)kernelTyper.typeVariable(contextType,newSubjectType);
+          newSubject = (TomTerm)kernelTyper.typeVariable(newSubjectType, newSubject);                  
+        }
         TomTerm newPattern = (TomTerm)kernelTyper.typeVariable(newSubjectType, `pattern);
         TomBase.collectVariable(lhsVariable,newPattern);
-        return `constraint.setPattern(newPattern).setSubject(newSubject);
+        return `constraint.setPattern(newPattern).setSubject(newSubject);               
       }
     } 
   }

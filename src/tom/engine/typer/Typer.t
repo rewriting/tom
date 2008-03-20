@@ -109,7 +109,8 @@ public class Typer extends TomGenericPlugin {
       TomTerm backQuoteExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeBackQuoteAppl(this)).visitLight(`variableExpandedTerm);
       TomTerm stringExpandedTerm = (TomTerm) `TopDownIdStopOnSuccess(typeString(this)).visitLight(backQuoteExpandedTerm);
       typedTerm = (TomTerm) `TopDownIdStopOnSuccess(updateCodomain(this)).visitLight(stringExpandedTerm);
-      setWorkingTerm(typedTerm);
+      typedTerm = kernelTyper.propagateVariablesTypes(typedTerm);
+      setWorkingTerm(typedTerm);      
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomTypingPhase.getMessage(),
           new Integer((int)(System.currentTimeMillis()-startChrono)));

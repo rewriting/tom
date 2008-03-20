@@ -239,7 +239,7 @@ public class TomBackend extends TomGenericPlugin {
     getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
   }
 
-  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {
+  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, Strategy markStrategy) {    
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
       try {
@@ -342,7 +342,8 @@ public class TomBackend extends TomGenericPlugin {
             //System.out.println("moduleName: " + moduleName);
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
             //System.out.println("mark: " + tomSymbol);
-            tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
+            // if it comes from java
+            if (tomSymbol != null) { tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);}
           } catch (EmptyStackException e) {
             System.out.println("No moduleName in stack");
           }

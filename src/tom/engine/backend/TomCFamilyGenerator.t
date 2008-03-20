@@ -81,10 +81,11 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
   }
 
   protected void buildExpEqualTerm(int deep, TomType type, TomTerm begin,TomTerm end, String moduleName) throws IOException {
-    String sType = TomBase.getTomType(type);
+    String sType = TomBase.getTomType(type);    
     String template = getSymbolTable(moduleName).getEqualTerm(sType);
     if(instantiateTemplate(deep,template,`concTomTerm(begin,end),moduleName) == false) {
-      if(getSymbolTable(moduleName).isBooleanType(sType)) {
+      // if the type is null, it means that this is from Java
+      if(sType == null || "unknown type".equals(sType) || getSymbolTable(moduleName).isBooleanType(sType)) {
         output.write("(");
         generate(deep,begin,moduleName);
         output.write(" == ");

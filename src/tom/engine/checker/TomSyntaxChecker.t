@@ -505,7 +505,7 @@ public class TomSyntaxChecker extends TomChecker {
    * 
    * 0. checks that are not any circular dependencies
    * 1. Verifies all MatchConstraints
-   * 2. Verifies all NumericConstraints (left side a variable, and the type of the right side numeric)
+   * 2. Verifies all NumericConstraints 
    * 3. Verifies that in an OrConstraint, all the members have the same free variables
    */
   private void verifyMatch(ConstraintInstructionList constraintInstructionList, OptionList option) throws VisitFailure {
@@ -553,67 +553,49 @@ matchLbl: %match(constr) {
           // we now compare the pattern to its definition
           verifyMatchPattern(`pattern, typeMatch);
         }
-
+        
+        // The lhs or rhs can only be TermAppl or Variable
+        // (if we have the type, check that it is the same)
+        // 1. no annotations
+        // 2. no annonymous vars
+        // 3. no anti-patterns
+        // 4. no implicit notation
         NumericConstraint[Pattern=left,Subject=right] -> {
-          // the left side should always be a variable
-          if(!`(left).isVariable()) {
-            Object messageContent = `left; // check with Radu
-            %match(left) {
-              TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
-                messageContent = `stringName;             
-              }
-              UnamedVariable[] -> {
-                messageContent = "_";             
-              }
-              UnamedVariableStar[] -> {
-                messageContent = "_*";             
-              }
-              AntiTerm[] -> {
-                messageError(currentTomStructureOrgTrack.getFileName(),
-                    currentTomStructureOrgTrack.getLine(),
-                    TomMessage.forbiddenAntiTermInNumeric,
-                    new Object[]{});
-                return;                
-              }
-            }
-          } 
-          if(`(left).getConstraints() != `concConstraint()) {
-            messageError(currentTomStructureOrgTrack.getFileName(),
-                currentTomStructureOrgTrack.getLine(),
-                TomMessage.forbiddenAnnotationsNumeric,
-                new Object[]{});
-            return;   
-          }
-          typeMatch = getSubjectType(`right,constraints);  
-          // the right side should have a numeric type
-          Object messageContent = `right;
-          %match(right) {
-            Variable[AstName=Name(stringName)] -> {
-              messageContent = `stringName;
-            }
-            TermAppl[NameList=concTomName(Name(stringName),_*)] -> {
-              messageContent = `stringName;
-            }
-          }
-          if(typeMatch == null) {          
-            messageError(currentTomStructureOrgTrack.getFileName(),
-                currentTomStructureOrgTrack.getLine(),
-                TomMessage.cannotGuessMatchType,
-                new Object[]{messageContent});
-
-            return;
-          } else {            
-            if(!symbolTable().isNumericType(typeMatch)){
+          // the lhs and rhs can only be TermAppl or Variable
+          %match(left){            
+            !(Variable|TermAppl|BuildReducedTerm)[] -> {              
               messageError(currentTomStructureOrgTrack.getFileName(),
                   currentTomStructureOrgTrack.getLine(),
-                  TomMessage.numericTypeRequired,
-                  new Object[]{messageContent});
-
+                  TomMessage.termOrVariableNumericLeft,
+                  new Object[]{getName(`(left))});
+              return;
+            }
+          }        
+          // the rhs can only be TermAppl or Variable
+          %match(right){
+            !(Variable|TermAppl|BuildReducedTerm)[] -> {
+              messageError(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.termOrVariableNumericRight,
+                  new Object[]{getName(`(right))});
               return;
             }
           }
-          // we now compare the pattern to its definition
-          verifyMatchPattern(`left, typeMatch);
+          `TopDown(CheckNumeric(left)).visitLight(`left);
+          `TopDown(CheckNumeric(right)).visitLight(`right);
+          // if we have the type, check that it is the same
+          TomType leftType = TomBase.getTermType(`left,symbolTable());
+          TomType rightType = TomBase.getTermType(`right,symbolTable());
+          // if the types are not available, leave the error to be raised by java
+          if (leftType != null && leftType != `TomTypeAlone("unknown type") && leftType != `EmptyType() 
+              && rightType != null && rightType != `TomTypeAlone("unknown type") && rightType != `EmptyType() 
+              && (leftType != rightType)){            
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.invalidTypesNumeric,
+                new Object[]{`(leftType),getName(`(left)),`(rightType),getName(`(right))}); 
+            return;
+          }
         }
         
         oc@OrConstraint(_*) -> {
@@ -734,6 +716,35 @@ matchLbl: %match(constr) {
       }
     }
   }
+  
+  /**
+   * Check numeric constraint 
+   *     1. no annotations
+   *     2. no annonymous vars
+   *     3. no anti-patterns
+   *     4. implicit notation forbidden  
+   */
+  %strategy CheckNumeric(TomTerm toCheck) extends Identity() {     
+    visit TomTerm {      
+      RecordAppl[] -> {
+        raiseError(toCheck,TomMessage.forbiddenImplicitNumeric);        
+      }
+      AntiTerm[] -> {
+        raiseError(toCheck,TomMessage.forbiddenAntiTermInNumeric);        
+      }
+      (UnamedVariable|UnamedVariableStar)[] -> {
+        raiseError(toCheck,TomMessage.forbiddenAnonymousInNumeric);        
+      }      
+      (Variable|TermAppl)[Constraints=!concConstraint()] -> {  
+        raiseError(toCheck,TomMessage.forbiddenAnnotationsNumeric);        
+      }      
+    }
+  }
+  private static void raiseError(TomTerm arg, TomMessage msg){    
+    messageError("tom.engine.checker.TomSyntaxChecker",currentTomStructureOrgTrack.getFileName(),
+        currentTomStructureOrgTrack.getLine(),        
+        msg,new Object[]{getName(arg)});
+  }  
   
   /**
    * Collect the variables' names   

@@ -69,7 +69,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected final static int VARIABLE                = 9;
   
   protected boolean strictType = false;
-  protected Option currentTomStructureOrgTrack;
+  protected static Option currentTomStructureOrgTrack;
     
   public TomChecker(String name) {
     super(name);
@@ -95,7 +95,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     throw new TomRuntimeException("Invalid Term");
   }
   
-  public String getName(TomTerm term) {
+  public static String getName(TomTerm term) {
     String dijunctionName = "";
     %match(TomTerm term) {
       TermAppl[NameList=(Name(name))] -> { return `name;}

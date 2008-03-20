@@ -152,7 +152,7 @@ public class SymbolTable {
     } 
   }
 
-  public boolean isUsedSymbolConstructor(TomSymbol symbol) {
+  public boolean isUsedSymbolConstructor(TomSymbol symbol) {    
     return usedKeyEntry.contains(`UsedSymbolConstructor(symbol));
   }
 
