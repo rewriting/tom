@@ -370,7 +370,10 @@ public class KernelTyper {
         // we transform the lhs and rhs into buildTerms with empty type
         if (isNumeric) {
           newSubjectType = `EmptyType();
-          newSubject = `BuildReducedTerm(subject,newSubjectType);    
+          newSubject = `subject;
+          %match(subject){
+            RecordAppl[] -> { newSubject = `BuildReducedTerm(subject,newSubjectType);} 
+          }              
           %match(pattern){
             RecordAppl[] -> { `pattern = `BuildReducedTerm(pattern, newSubjectType); }
           }
