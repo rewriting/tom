@@ -27,11 +27,6 @@ Constraint =
 			| NumericConstraint(Pattern:TomTerm, Subject:TomTerm, Type:NumericConstraintType)
 			| EmptyListConstraint(Opname:TomName,Variable:TomTerm)
 			| EmptyArrayConstraint(Opname:TomName,Variable:TomTerm,Index:TomTerm)
-  		  /**
-  		   * Used in the parser to mark that we started an And or an Or
-  		   */
-			| AndMarker(Constraint:Constraint)
-			| OrMarker(Constraint:Constraint)
 
 NumericConstraintType = NumLessThan() 
 					| NumLessOrEqualThan()
