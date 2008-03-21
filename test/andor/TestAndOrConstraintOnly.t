@@ -325,6 +325,15 @@ public class TestAndOrConstraintOnly extends TestCase {
       }
     }    
   }
+  
+  public void test25() {
+    %match {
+      (a() << a() && a() << b()) || (a() << a() && b()<<b())   -> {        
+        return;
+      }
+    }
+    fail();
+  }
 
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOrConstraintOnly.class));
