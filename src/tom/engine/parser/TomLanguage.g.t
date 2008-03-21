@@ -378,9 +378,10 @@ matchAndConstraint [List<Option> optionListLinked] returns [Constraint result] t
 
 matchParanthesedConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
     {     
-      result = null;      
+      result = null; 
+      List matchPatternList = new LinkedList();
     } :  
-     {LA(1) != LPAREN}? result = matchConstraint[optionListLinked]
+      (matchPattern[matchPatternList,true]) => result = matchConstraint[optionListLinked]
       | LPAREN result = matchOrConstraint[optionListLinked] RPAREN
     ;    
        
@@ -395,7 +396,7 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
 }
 :   
   (
-    option = matchPattern[matchPatternList,false] 
+    option = matchPattern[matchPatternList,true] 
     consType = constraintType 
     matchArgument[matchSubjectList]
     {
