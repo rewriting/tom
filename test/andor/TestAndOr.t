@@ -355,25 +355,6 @@ public class TestAndOr extends TestCase {
     fail();
   }
   
-  // operators' priority
-  public void test28() {
-    %match {
-      a() << a() || a() << a() && a() << b()  -> {        
-        return;
-      }
-    }
-    fail();
-  }
-
-  public void test29() {
-    %match {
-      (a() << a() || a() << a()) && a() << b()  -> {        
-        fail();
-      }
-    }    
-  }
-
-
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
   }
