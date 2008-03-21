@@ -237,14 +237,13 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
 {    
     List<Option> optionListLinked = new LinkedList<Option>();
     List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
-    List blockList = new LinkedList();
-    
+        
     Constraint constraint = `TrueConstraint();    
     Constraint constr = null;
     OptionList optionList = null;
     Option option = null;
-    
-    TomTerm rhsTerm = null;
+        
+    boolean isAnd = false;
     
     clearText();
 }
@@ -271,190 +270,120 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
               
               matchPatternList.clear();
               clearText();
-            }            
-            ( 
-                (   
-                  {LA(2) != LPAREN}? constr = matchConstraintCompositionNoPar[optionListLinked]
-                | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
-                )
-                { 
-                  %match(constr) {                    
-                    AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }                    
-                    OrMarker(x)  -> { constraint = `OrConstraint(constraint,x); }
-                  }
-                }    
-            )*
-            ARROW 
-            {
-                optionList = `concOption();
-                for(Option op:optionListLinked) {
-                  optionList = `concOption(optionList*,op);
-                }
-                optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
-                if(label != null) {
-                  optionList = `concOption(Label(Name(label.getText())),optionList*);
-                }
-            }
-            (t:LBRACE 
-            {
-                // update for new target block
-                updatePosition(t.getLine(),t.getColumn());
-                // actions in target language : call the target lexer and
-                // call the target parser
-                selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
-                // target parser finished : pop the target lexer
-                selector().pop();
-                blockList.add(tlCode);
-                list.add(`ConstraintInstruction(
-                    constraint,
-                    RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
-                    optionList)
-                );
             } 
-            | rhsTerm = plainTerm[null,null,0]
-              {
-              // case where the rhs of a rule is an algebraic term
-              // TODO
-                list.add(`ConstraintInstruction(
-                    constraint,
-                    Return(BuildReducedTerm(rhsTerm,rhsType)),
-                    optionList)
-                );
-
-              }
-            )
-            
+            (
+              ( 
+               AND_CONNECTOR { isAnd = true;} 
+               | OR_CONNECTOR  { isAnd = false;} 
+              )
+//              constr = matchConstraintComposition[optionListLinked]
+              constr = matchOrConstraint[optionListLinked]
+              { 
+                constraint = isAnd ? `AndConstraint(constraint,constr) : `OrConstraint(constraint,constr);
+              }                                         
+            )?
+            arrowAndAction[list,optionList,optionListLinked,label,rhsType,constraint]
         )
     ;
+
+arrowAndAction[List list, OptionList optionList, List<Option> optionListLinked, Token label, TomType rhsType, Constraint constraint] throws TomException
+{
+  List blockList = new LinkedList();
+  TomTerm rhsTerm = null;
+} :
+   ARROW 
+   {
+       optionList = `concOption();
+       for(Option op:optionListLinked) {
+         optionList = `concOption(optionList*,op);
+       }
+       optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
+       if(label != null) {
+         optionList = `concOption(Label(Name(label.getText())),optionList*);
+       }
+   }
+   (t:LBRACE 
+   {
+       // update for new target block
+       updatePosition(t.getLine(),t.getColumn());
+       // actions in target language : call the target lexer and
+       // call the target parser
+       selector().push("targetlexer");
+       TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+       // target parser finished : pop the target lexer
+       selector().pop();
+       blockList.add(tlCode);
+       list.add(`ConstraintInstruction(
+           constraint,
+           RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
+           optionList)
+       );
+   } 
+   | rhsTerm = plainTerm[null,null,0]
+     {
+     // case where the rhs of a rule is an algebraic term
+     // TODO
+       list.add(`ConstraintInstruction(
+           constraint,
+           Return(BuildReducedTerm(rhsTerm,rhsType)),
+           optionList)
+       );
+
+     }
+   ) 
+  ;
 
 constraintInstruction [List list, TomType rhsType] throws TomException
 {    
     List<Option> optionListLinked = new LinkedList<Option>();
-    List blockList = new LinkedList();
-    
-    Constraint constraint = `TrueConstraint();    
-    Constraint constr = null;
-    OptionList optionList = null;
-    Option option = null;
-    
-    TomTerm rhsTerm = null;
-    
+    Constraint constraint = `TrueConstraint();
     clearText();
 }
     :   ( 
-            constraint = matchConstraint[optionListLinked]
-            ( 
-                (   
-                  {LA(2) != LPAREN}? constr = matchConstraintCompositionNoPar[optionListLinked]
-                | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
-                )
-                { 
-                  %match(constr) {                    
-                    AndMarker(x) -> { constraint = `AndConstraint(constraint,x); }                    
-                    OrMarker(x)  -> { constraint = `OrConstraint(constraint,x); }
-                  }
-                }    
-            )*
-            ARROW 
-            {
-                optionList = `concOption();
-                for(Option op:optionListLinked) {
-                  optionList = `concOption(optionList*,op);
-                }
-                optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
-            }
-            (t:LBRACE 
-            {
-                // update for new target block
-                updatePosition(t.getLine(),t.getColumn());
-                // actions in target language : call the target lexer and
-                // call the target parser
-                selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
-                // target parser finished : pop the target lexer
-                selector().pop();
-                blockList.add(tlCode);
-                list.add(`ConstraintInstruction(
-                    constraint,
-                    RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
-                    optionList)
-                );
-            } 
-            | rhsTerm = plainTerm[null,null,0]
-              {
-              // case where the rhs of a rule is an algebraic term
-              // TODO
-                list.add(`ConstraintInstruction(
-                    constraint,
-                    Return(BuildReducedTerm(rhsTerm,rhsType)),
-                    optionList)
-                );
-
-              }
-            )
+            //constraint = matchConstraintComposition[optionListLinked]
+            constraint = matchOrConstraint[optionListLinked]
+            arrowAndAction[list,null,optionListLinked,null,rhsType,constraint]                                 
         )
     ;
 
-matchConstraintCompositionNoPar [List<Option> optionListLinked] returns [Constraint result] throws TomException
-{ 
-  boolean isAnd = false;
-  Constraint matchConstr = null;
-  result = null;  
-} :   ( 
-        AND_CONNECTOR { isAnd = true;} 
-        | OR_CONNECTOR  { isAnd = false;} 
-      ) 
-      matchConstr = matchConstraint[optionListLinked]
-  {
-    result = isAnd ? `AndMarker(matchConstr) : `OrMarker(matchConstr);
-  }
-;
-
-matchConstraintCompositionPar [List<Option> optionListLinked] returns [Constraint result] throws TomException
-{
-  boolean isAnd = false;
-  result = null;  
-} : ( 
-      AND_CONNECTOR { isAnd = true;} 
-      | OR_CONNECTOR  { isAnd = false;} 
-    ) 
-    result = matchConstraintCompositionParBody[optionListLinked,isAnd]
-;
-
-
-matchConstraintCompositionParBody [List<Option> optionListLinked, boolean isAnd] returns [Constraint result] throws TomException
-{  
-  Constraint matchConstr = null;
-  Constraint constr = null;
-  result = null;  
-} : 
-    {LA(2) != LPAREN}? 
-    (
-       LPAREN     
-        matchConstr = matchConstraint[optionListLinked]
-        { result = `AndConstraint(matchConstr); }                                    
-         (    
-            ( 
-                {LA(2) != LPAREN}?
-                constr = matchConstraintCompositionNoPar[optionListLinked]
-                | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
-            ) 
-            {
-       match: %match(constr) {
-                AndMarker(x) -> { result = `AndConstraint(result,x);break match; }                    
-                OrMarker(x)  -> { result = `OrConstraint(result,x); }
-              }             
-            }        
-         )*                                                                                
-      RPAREN                                                                                       
+matchOrConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
+  {     
+    result = null;  
+    Constraint constr = null;
+  } :  
+    result = matchAndConstraint[optionListLinked] 
+    ( 
+        OR_CONNECTOR 
+        constr = matchAndConstraint[optionListLinked]
         {
-          result = isAnd ? `AndMarker(result) : `OrMarker(result);
+          result = `OrConstraint(result,constr);
         }
-    )   
-    |  LPAREN result = matchConstraintCompositionParBody[optionListLinked,isAnd] RPAREN          
-;
+    )*
+  ;
 
+matchAndConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
+  {     
+    result = null;  
+    Constraint constr = null;
+  } :  
+    result = matchParanthesedConstraint[optionListLinked]
+    ( 
+        AND_CONNECTOR 
+        constr = matchParanthesedConstraint[optionListLinked]
+        {
+          result = `AndConstraint(result,constr);
+        }
+    )*
+  ;
+
+matchParanthesedConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
+    {     
+      result = null;      
+    } :  
+     {LA(1) != LPAREN}? result = matchConstraint[optionListLinked]
+      | LPAREN result = matchOrConstraint[optionListLinked] RPAREN
+    ;    
+       
 
 matchConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
