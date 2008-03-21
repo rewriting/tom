@@ -45,7 +45,7 @@ public class TestAndOrConstraintOnly extends TestCase {
       | list( Term* )
       | f(t1:Term,t2:Term)
       | h( l:TermList)
-      | g(t:Term)
+      | g(t1:Term)
 
       TermList = termList(Term*)
   }
@@ -333,6 +333,31 @@ public class TestAndOrConstraintOnly extends TestCase {
       }
     }
     fail();
+  }
+
+  public void test26() {
+    int cpt = 0;
+    %match {
+      (a|b)() << a() -> { cpt++; }
+      (f|g)[t1=a] << g(a()) -> { cpt++; }
+      ((a|b)() << a()) -> { cpt++; }
+      ((f|g)[t1=a] << g(a())) -> { cpt++; }
+    }
+    if(cpt!=4) {
+      fail();
+    }
+  }
+
+  public void test27() {
+    int cpt = 0;
+    %match {
+      (_*,a(),_*) << termList(a(),b()) -> { cpt++; }
+      ((_*,a(),_*) << termList(a(),b())) -> { cpt++; }
+      (((_*,a(),_*) << termList(a(),b()))) -> { cpt++; }
+    }
+    if(cpt!=3) {
+      fail();
+    }
   }
 
   public static void main(String[] args) {
