@@ -326,6 +326,53 @@ public class TestAndOr extends TestCase {
     }
     fail();
   }
+  
+  public void test25() {
+    %match(f(a(),b())) {
+      f(_x,_y) && (( (_x << a()) || ((_x << b())) )) -> {        
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test26() {
+    %match(f(a(),b())) {
+      f(_x,_y) && ( (_x << a() && _x << a()) || ( _x << b() && _x << b() ) ) -> {        
+        return;
+      }
+    }
+    fail();
+  }
+
+  
+  public void test27() {
+    %match(f(a(),b())) {
+      f(_x,_y) && ( (((_x << a())) && _x << a()) || ( _x << b() && _x << b() ) ) -> {        
+        return;
+      }
+    }
+    fail();
+  }
+  
+  // operators' priority
+  public void test28() {
+    %match {
+      a() << a() || a() << a() && a() << b()  -> {        
+        return;
+      }
+    }
+    fail();
+  }
+
+  public void test29() {
+    %match {
+      (a() << a() || a() << a()) && a() << b()  -> {        
+        fail();
+      }
+    }    
+  }
+
 
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
