@@ -414,34 +414,47 @@ matchConstraintCompositionNoPar [List<Option> optionListLinked] returns [Constra
 matchConstraintCompositionPar [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
   boolean isAnd = false;
-  Constraint matchConstr = null;
-  Constraint constr = null;
   result = null;  
 } : ( 
       AND_CONNECTOR { isAnd = true;} 
       | OR_CONNECTOR  { isAnd = false;} 
     ) 
-    LPAREN    
-      matchConstr = matchConstraint[optionListLinked]
-      { result = `AndConstraint(matchConstr); }                                    
-       (    
-          ( 
-              {LA(2) != LPAREN}?
-              constr = matchConstraintCompositionNoPar[optionListLinked]
-              | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
-          ) 
-          {
-     match: %match(constr) {
-              AndMarker(x) -> { result = `AndConstraint(result,x);break match; }                    
-              OrMarker(x)  -> { result = `OrConstraint(result,x); }
-            }             
-          }        
-       )*                                                                                
-       RPAREN                                                                                      
-      {
-        result = isAnd ? `AndMarker(result) : `OrMarker(result);
-      }
+    result = matchConstraintCompositionParBody[optionListLinked,isAnd]
 ;
+
+
+matchConstraintCompositionParBody [List<Option> optionListLinked, boolean isAnd] returns [Constraint result] throws TomException
+{  
+  Constraint matchConstr = null;
+  Constraint constr = null;
+  result = null;  
+} : 
+    {LA(2) != LPAREN}? 
+    (
+       LPAREN     
+        matchConstr = matchConstraint[optionListLinked]
+        { result = `AndConstraint(matchConstr); }                                    
+         (    
+            ( 
+                {LA(2) != LPAREN}?
+                constr = matchConstraintCompositionNoPar[optionListLinked]
+                | {LA(2) == LPAREN}? constr = matchConstraintCompositionPar[optionListLinked]
+            ) 
+            {
+       match: %match(constr) {
+                AndMarker(x) -> { result = `AndConstraint(result,x);break match; }                    
+                OrMarker(x)  -> { result = `OrConstraint(result,x); }
+              }             
+            }        
+         )*                                                                                
+      RPAREN                                                                                       
+        {
+          result = isAnd ? `AndMarker(result) : `OrMarker(result);
+        }
+    )   
+    |  LPAREN result = matchConstraintCompositionParBody[optionListLinked,isAnd] RPAREN          
+;
+
 
 matchConstraint [List<Option> optionListLinked] returns [Constraint result] throws TomException
 {
@@ -451,39 +464,43 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
   result = null;
   int consType = -1;
 }
-: option = matchPattern[matchPatternList,false] 
-  consType = constraintType 
-  matchArgument[matchSubjectList]
-  {
-    optionListLinked.add(option);
-    TomTerm left  = (TomTerm)matchPatternList.get(0);
-    TomTerm right = (TomTerm)matchSubjectList.get(0);
-    switch(consType) {
-      case MATCH_CONSTRAINT : {
-        return `MatchConstraint(left,right);           
-      }
-      case /*LESS_CONSTRAINT*/XML_START : {         
-        return `NumericConstraint(left,right, NumLessThan());           
-      }
-      case LESSOREQUAL_CONSTRAINT : {         
-        return `NumericConstraint(left,right, NumLessOrEqualThan());           
-      }
-      case /*GREATER_CONSTRAINT*/XML_CLOSE : {         
-        return `NumericConstraint(left,right, NumGreaterThan());           
-      }
-      case GREATEROREQUAL_CONSTRAINT : {         
-        return `NumericConstraint(left,right, NumGreaterOrEqualThan());           
-      }
-      case DIFFERENT_CONSTRAINT : {         
-        return `NumericConstraint(left,right, NumDifferent());           
-      }
-      case DOUBLEEQ : {         
-        return `NumericConstraint(left,right, NumEqual());           
-      }      
-    } 
-    // should never reach this statement because of the parsing error that should occur before
-    throw new TomException(TomMessage.invalidConstraintType);
-  }
+: {LA(1) != LPAREN}?  
+  (
+    option = matchPattern[matchPatternList,false] 
+    consType = constraintType 
+    matchArgument[matchSubjectList]
+    {
+      optionListLinked.add(option);
+      TomTerm left  = (TomTerm)matchPatternList.get(0);
+      TomTerm right = (TomTerm)matchSubjectList.get(0);
+      switch(consType) {
+        case MATCH_CONSTRAINT : {
+          return `MatchConstraint(left,right);           
+        }
+        case /*LESS_CONSTRAINT*/XML_START : {         
+          return `NumericConstraint(left,right, NumLessThan());           
+        }
+        case LESSOREQUAL_CONSTRAINT : {         
+          return `NumericConstraint(left,right, NumLessOrEqualThan());           
+        }
+        case /*GREATER_CONSTRAINT*/XML_CLOSE : {         
+          return `NumericConstraint(left,right, NumGreaterThan());           
+        }
+        case GREATEROREQUAL_CONSTRAINT : {         
+          return `NumericConstraint(left,right, NumGreaterOrEqualThan());           
+        }
+        case DIFFERENT_CONSTRAINT : {         
+          return `NumericConstraint(left,right, NumDifferent());           
+        }
+        case DOUBLEEQ : {         
+          return `NumericConstraint(left,right, NumEqual());           
+        }      
+      } 
+      // should never reach this statement because of the parsing error that should occur before
+      throw new TomException(TomMessage.invalidConstraintType);
+    }
+  ) 
+  | LPAREN result=matchConstraint[optionListLinked] RPAREN
 ;
 
 constraintType returns [int result]
@@ -756,8 +773,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
     }
     if(astAnnotedName != null) {
       constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
-    }
-
+    }    
 }
     :         
         ( // xml term
@@ -778,7 +794,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
           // ambiguous with the next rule so:
           {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
           name = headSymbol[optionList] 
-          {
+          {            
             result = `Variable(ASTFactory.makeOptionList(optionList),name,
               TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
             if(anti) { result = `AntiTerm(result); }
@@ -871,7 +887,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
       ( {LA(1) != LPAREN  || ( LA(1) == LPAREN && ( LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE) ) }? 
         result = simplePlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti]             
         | result = implicitNotationPlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti] )
-      { return result; } 
+      {  return result; } 
     ;
 
 // a plainTerm that allows the (...) notation
@@ -1530,7 +1546,7 @@ headSymbol [List optionList] returns [TomName result]
 : 
   (i:ALL_ID
   {
-		String name = i.getText();
+		String name = i.getText();                
 		int line = i.getLine();
 		text.append(name);
 		setLastLine(line);
@@ -1558,8 +1574,8 @@ headConstant [List optionList] returns [TomName result]
     Token t;
 } : 
         t=constant // add to symbol table
-{
-	String name = t.getText();
+{  
+	String name = t.getText();        
 	int line = t.getLine();
 	text.append(name);
 	setLastLine(line);
