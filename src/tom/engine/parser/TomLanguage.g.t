@@ -464,7 +464,7 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
   result = null;
   int consType = -1;
 }
-: {LA(1) != LPAREN}?  
+:   
   (
     option = matchPattern[matchPatternList,false] 
     consType = constraintType 
@@ -499,8 +499,7 @@ matchConstraint [List<Option> optionListLinked] returns [Constraint result] thro
       // should never reach this statement because of the parsing error that should occur before
       throw new TomException(TomMessage.invalidConstraintType);
     }
-  ) 
-  | LPAREN result=matchConstraint[optionListLinked] RPAREN
+  )  
 ;
 
 constraintType returns [int result]
