@@ -307,6 +307,25 @@ public class TestAndOr extends TestCase {
       fail();
     }
   }
+  
+  // allow any number of parantheses
+  public void test23() {
+    %match(f(a(),b())) {
+      f(_x,_y) && ((((( _x << a() || _x << b() ))))) -> {        
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test24() {
+    %match(f(a(),b())) {
+      f(_x,_y) && (( _x << a() || _x << b() )) -> {        
+        return;
+      }
+    }
+    fail();
+  }
 
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOr.class));
