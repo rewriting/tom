@@ -26,9 +26,9 @@
 
 package tom.engine.checker;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -69,6 +69,7 @@ public class TomSyntaxChecker extends TomChecker {
   %include { ../../library/mapping/java/sl.tom }
   %include { ../../library/mapping/java/util/types/Collection.tom}
   %include { ../../library/mapping/java/util/ArrayList.tom}
+  %include { ../../library/mapping/java/util/HashMap.tom}
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = 
@@ -512,7 +513,9 @@ public class TomSyntaxChecker extends TomChecker {
     currentTomStructureOrgTrack = TomBase.findOriginTracking(option);
     ArrayList<Constraint> constraints = new ArrayList<Constraint>();    
     HashMap<TomName, List<TomName>> varRelationsMap = new HashMap();
-    `TopDownCollect(CollectConstraints(constraints)).visitLight(constraintInstructionList);
+    HashMap<Constraint, Instruction> orActionMap = new HashMap();
+    ArrayList tmp = new ArrayList();
+    `TopDownCollect(CollectConstraints(constraints, tmp, orActionMap)).visitLight(constraintInstructionList);
     TomType typeMatch = null;    
     for(Constraint constr: constraints) {
 matchLbl: %match(constr) {
@@ -599,7 +602,7 @@ matchLbl: %match(constr) {
         }
         
         oc@OrConstraint(_*) -> {
-          if(!verifyOrConstraint(`oc)) {
+          if(!verifyOrConstraint(`oc,orActionMap.get(`oc))) {
             return;
           }
         }
@@ -658,7 +661,7 @@ matchLbl: %match(constr) {
    * (only the match constraints have free variables - because only this type
    * of constraint can generate assignments)
    */
-  private boolean verifyOrConstraint(Constraint orConstraint) throws VisitFailure{
+  private boolean verifyOrConstraint(Constraint orConstraint, Instruction action) throws VisitFailure{
     ArrayList<TomTerm> freeVarList1 = new ArrayList<TomTerm>();
     ArrayList<TomTerm> freeVarList2 = new ArrayList<TomTerm>();
     %match(orConstraint){
@@ -673,22 +676,26 @@ matchLbl: %match(constr) {
         if(!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2) {
             if (!freeVarList1.contains(term)) {
-              String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
-              messageError(currentTomStructureOrgTrack.getFileName(),
-                  currentTomStructureOrgTrack.getLine(),
-                  TomMessage.freeVarNotPresentInOr,
-                  new Object[]{varName});
-              return false;
+              if(containsVariable(term, action)) {              
+                String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+                messageError(currentTomStructureOrgTrack.getFileName(),
+                    currentTomStructureOrgTrack.getLine(),
+                    TomMessage.freeVarNotPresentInOr,
+                    new Object[]{varName});
+                return false;
+              }
             }
           }
           for(TomTerm term:freeVarList1) {
             if (!freeVarList2.contains(term)) {
-              String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
-              messageError(currentTomStructureOrgTrack.getFileName(),
-                  currentTomStructureOrgTrack.getLine(),
-                  TomMessage.freeVarNotPresentInOr,
-                  new Object[]{varName});
-              return false;
+              if(containsVariable(term, action))  {
+                String varName = (term instanceof Variable) ? ((Variable)term).getAstName().getString() : ((VariableStar)term).getAstName().getString();  
+                messageError(currentTomStructureOrgTrack.getFileName(),
+                    currentTomStructureOrgTrack.getLine(),
+                    TomMessage.freeVarNotPresentInOr,
+                    new Object[]{varName});
+                return false;
+              }
             }
           }          
         }
@@ -697,6 +704,25 @@ matchLbl: %match(constr) {
       }
     }
     return true;
+  }
+  
+  private boolean containsVariable(TomTerm var, Instruction action){
+    try{
+      `TopDown(ContainsVariable(var)).visitLight(action);
+    } catch(VisitFailure e) {
+      return true;
+    }
+    return false;
+  }
+  %strategy ContainsVariable(TomTerm var) extends Identity() {     
+    visit TomTerm {
+      v@(Variable|VariableStar)[] -> {
+        `v = `v.setOption(`concOption()); // to avoid problems related to line numbers
+        if (`v==var) {
+          throw new VisitFailure();
+        }
+      }
+    }
   }
   
   /**
@@ -915,8 +941,15 @@ matchLbl: %match(constr) {
  
   /**
    * Collect the constraints (match and numeric)
+   * For Or constraints, collect also the associated action
    */
-  %strategy CollectConstraints(constrList:Collection) extends Identity() {
+  %strategy CollectConstraints(Collection constrList, Collection lastAction, HashMap orActionMap) extends Identity() {
+    visit ConstraintInstruction {
+      ConstraintInstruction[Action=action] -> {
+        lastAction.clear();
+        lastAction.add(`action);
+      }
+    }
     visit Constraint {
       c@(MatchConstraint|NumericConstraint)[] -> {        
         constrList.add(`c);         
@@ -924,7 +957,8 @@ matchLbl: %match(constr) {
       }      
       oc@OrConstraint(_*) -> {
         constrList.add(`oc);
-        throw new VisitFailure();// to stop the top-down
+        Iterator it = lastAction.iterator();
+        orActionMap.put(`oc,it.next());
       }
     }
   }
