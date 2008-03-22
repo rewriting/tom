@@ -421,7 +421,6 @@ public class TomOptimizer extends TomGenericPlugin {
       TomTermToExpression(ExpressionToTomTerm(t)) -> { return `t; }
     }
 
-
     visit Instruction {
       t@TypedAction[PositivePattern=positivePattern] -> {
         context = `positivePattern;
@@ -480,7 +479,7 @@ public class TomOptimizer extends TomGenericPlugin {
             tom.library.sl.Position dest = info.lastAssignmentPosition;
             // find the positive part of src-dest
             tom.library.sl.Position positivePart = (tom.library.sl.Position) dest.sub(src).getCanonicalPath();
-            while(positivePart.getHead()<0) {
+            while(positivePart.length()>0 && positivePart.getHead()<0) {
               positivePart = (tom.library.sl.Position) positivePart.getTail();
             }
             // find the common ancestor of src and dest

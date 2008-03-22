@@ -44,19 +44,19 @@ public class IsOpTemplate extends TemplateClass {
   public IsOpTemplate(GomClass gomClass) {
     super(gomClass);
     ClassName clsName = this.className;
-    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch396NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);if ( (tomMatch396NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch396NameNumber_freshVar_0= tomMatch396NameNumberfreshSubject_1.getPkg() ;{  String  tomMatch396NameNumber_freshVar_1= tomMatch396NameNumberfreshSubject_1.getName() ;if ( true ) {
+    {if ( (clsName instanceof tom.gom.adt.objects.types.ClassName) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch404NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.ClassName )clsName);{  tom.gom.adt.objects.types.ClassName  tomMatch404NameNumber_freshVar_2=tomMatch404NameNumberfreshSubject_1;if ( (tomMatch404NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch404NameNumber_freshVar_0= tomMatch404NameNumber_freshVar_2.getPkg() ;{  String  tomMatch404NameNumber_freshVar_1= tomMatch404NameNumber_freshVar_2.getName() ;if ( true ) {
 
-        String newpkg = tomMatch396NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
-        String newname = "Is_"+tomMatch396NameNumber_freshVar_1;
+        String newpkg = tomMatch404NameNumber_freshVar_0.replaceFirst(".types.",".strategy.");
+        String newname = "Is_"+tomMatch404NameNumber_freshVar_1;
         this.className =  tom.gom.adt.objects.types.classname.ClassName.make(newpkg, newname) ;
-      }}}}}}}{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch397NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch397NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch397NameNumber_freshVar_0= tomMatch397NameNumberfreshSubject_1.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch397NameNumber_freshVar_1= tomMatch397NameNumberfreshSubject_1.getSlotFields() ;if ( true ) {
+      }}}}}}}}{if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch405NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);{  tom.gom.adt.objects.types.GomClass  tomMatch405NameNumber_freshVar_2=tomMatch405NameNumberfreshSubject_1;if ( (tomMatch405NameNumber_freshVar_2 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch405NameNumber_freshVar_0= tomMatch405NameNumber_freshVar_2.getClassName() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch405NameNumber_freshVar_1= tomMatch405NameNumber_freshVar_2.getSlotFields() ;if ( true ) {
 
 
 
-        this.operator = tomMatch397NameNumber_freshVar_0;
-        this.slotList = tomMatch397NameNumber_freshVar_1;
+        this.operator = tomMatch405NameNumber_freshVar_0;
+        this.slotList = tomMatch405NameNumber_freshVar_1;
         return;
-      }}}}}}}
+      }}}}}}}}
 
     throw new GomRuntimeException(
         "Wrong argument for IsOpTemplate: " + gomClass);

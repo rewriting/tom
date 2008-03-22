@@ -206,14 +206,14 @@ public class ASTFactory {
   public static Constraint makeAssignTo(TomName name,int line, String fileName) {
     return `AssignTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
-          TomTypeAlone("unknown type"),
+          SymbolTable.TYPE_UNKNOWN,
           concConstraint()));
   }
 
   public static Constraint makeStorePosition(TomName name,int line, String fileName) {
     return `AssignPositionTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
-          TomTypeAlone("unknown type"),
+          SymbolTable.TYPE_UNKNOWN,
           concConstraint()));
   }
 

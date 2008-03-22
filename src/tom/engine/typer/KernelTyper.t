@@ -116,16 +116,20 @@ public class KernelTyper {
   }  
   %strategy CollectAllVariablesTypes(HashMap map) extends Identity() {
     visit TomTerm {       
-      Variable[AstName=Name(name),AstType=type@!TomTypeAlone("unknown type")] && !EmptyType[] << type  -> {
-        map.put(`name,`type);
+      Variable[AstName=Name(name),AstType=type] && !EmptyType[] << type  -> {
+        if(`type!=SymbolTable.TYPE_UNKNOWN) {
+          map.put(`name,`type);
+        }
       }
     }
   }
   %strategy PropagateVariablesTypes(HashMap map) extends Identity() {
     visit TomTerm {
-      v@Variable[AstName=Name(name),AstType=type] && (TomTypeAlone("unknown type") << type || EmptyType[] << type )  -> {
-        if (map.containsKey(`name)) {
-          return `v.setAstType((TomType)map.get(`name)); 
+      v@Variable[AstName=Name(name),AstType=type] -> {
+        if(`type==SymbolTable.TYPE_UNKNOWN || `type.isEmptyType()) {
+          if (map.containsKey(`name)) {
+            return `v.setAstType((TomType)map.get(`name)); 
+          }
         }
       }
     }
@@ -175,7 +179,7 @@ public class KernelTyper {
         if(type != null) {
           return type;
         } else {
-          return `subject; // useful for TomTypeAlone("unknown type")
+          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
         }
       }
     }

@@ -46,6 +46,7 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
 import tom.engine.tools.ASTFactory;
+import tom.engine.tools.SymbolTable;
 import antlr.TokenStreamSelector;
 import aterm.*;
 }
@@ -101,7 +102,7 @@ options{
 			 TomList list = ASTFactory.makeList(blockList);
 			 return `Composite(concTomTerm(BackQuoteAppl(option,Name(id.getText()),list),target*));
      } else {
-			 return `Composite(concTomTerm(Variable(option,Name(id.getText()),TomTypeAlone("unknown type"),concConstraint()),target*));
+			 return `Composite(concTomTerm(Variable(option,Name(id.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint()),target*));
 		 }
 
    }
@@ -208,7 +209,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
            {   
              String name = id.getText();
              Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
-             result = `VariableStar(concOption(ot),Name(name),TomTypeAlone("unknown type"),concConstraint());  
+             result = `VariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());  
            }
                 
            | ws /*ws*/ 
@@ -226,7 +227,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
                    String name = id.getText();
                    OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
                    //result = `BackQuoteAppl(ol,Name(name),concTomTerm());
-                   result = `Variable(ol,Name(name),TomTypeAlone("unknown type"),concConstraint());
+                   result = `Variable(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
                  }
                 )
             )
@@ -253,7 +254,7 @@ bqTerm [TomList context] returns [TomTerm result]
             {   
               String name = id.getText();
               Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
-              result = `VariableStar(concOption(ot),Name(name),TomTypeAlone("unknown type"),concConstraint());      
+              result = `VariableStar(concOption(ot),Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());      
             }
             
             |  ws /*ws*/ 
@@ -337,7 +338,7 @@ xmlAttributeStringOrVariable returns [TomTerm result]
 		 {
        String name = id.getText();
        OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
-       result = `Variable(ol,Name(name),TomTypeAlone("unknown type"),concConstraint());
+       result = `Variable(ol,Name(name),SymbolTable.TYPE_UNKNOWN,concConstraint());
 		   //result = `TargetLanguageToTomTerm(ITL(id.getText())); 
 		 }
    | string:BQ_STRING
@@ -427,7 +428,7 @@ xmlAttribute [TomList context] returns [TomTerm result]
 		result = `VariableStar(
 		    concOption(),
 		    Name(id.getText()),
-		    TomTypeAlone("unknown type"),
+		    SymbolTable.TYPE_UNKNOWN,
 		    concConstraint());
               }
             )

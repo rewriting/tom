@@ -47,17 +47,17 @@ public class SortTemplate extends TemplateHookedClass {
                       GomClass gomClass,
                       TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch392NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch392NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch392NameNumber_freshVar_0= tomMatch392NameNumberfreshSubject_1.getAbstractType() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch392NameNumber_freshVar_1= tomMatch392NameNumberfreshSubject_1.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch392NameNumber_freshVar_2= tomMatch392NameNumberfreshSubject_1.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch392NameNumber_freshVar_3= tomMatch392NameNumberfreshSubject_1.getSlotFields() ;if ( true ) {
+    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch400NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);{  tom.gom.adt.objects.types.GomClass  tomMatch400NameNumber_freshVar_4=tomMatch400NameNumberfreshSubject_1;if ( (tomMatch400NameNumber_freshVar_4 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch400NameNumber_freshVar_0= tomMatch400NameNumber_freshVar_4.getAbstractType() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch400NameNumber_freshVar_1= tomMatch400NameNumber_freshVar_4.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch400NameNumber_freshVar_2= tomMatch400NameNumber_freshVar_4.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch400NameNumber_freshVar_3= tomMatch400NameNumber_freshVar_4.getSlotFields() ;if ( true ) {
 
 
 
 
-        this.abstractType = tomMatch392NameNumber_freshVar_0;
-        this.operatorList = tomMatch392NameNumber_freshVar_1;
-        this.variadicOperatorList = tomMatch392NameNumber_freshVar_2;
-        this.slotList = tomMatch392NameNumber_freshVar_3;
+        this.abstractType = tomMatch400NameNumber_freshVar_0;
+        this.operatorList = tomMatch400NameNumber_freshVar_1;
+        this.variadicOperatorList = tomMatch400NameNumber_freshVar_2;
+        this.slotList = tomMatch400NameNumber_freshVar_3;
         return;
-      }}}}}}}}}
+      }}}}}}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for SortTemplate: " + gomClass);

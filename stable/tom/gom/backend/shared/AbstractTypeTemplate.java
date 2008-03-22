@@ -44,11 +44,11 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
                               GomClass gomClass,
                               TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch366NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);if ( (tomMatch366NameNumberfreshSubject_1 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch366NameNumber_freshVar_0= tomMatch366NameNumberfreshSubject_1.getSortList() ;if ( true ) {
+    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch374NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);{  tom.gom.adt.objects.types.GomClass  tomMatch374NameNumber_freshVar_1=tomMatch374NameNumberfreshSubject_1;if ( (tomMatch374NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassNameList  tomMatch374NameNumber_freshVar_0= tomMatch374NameNumber_freshVar_1.getSortList() ;if ( true ) {
 
-        this.sortList = tomMatch366NameNumber_freshVar_0;
+        this.sortList = tomMatch374NameNumber_freshVar_0;
         return;
-      }}}}}}
+      }}}}}}}
 
     throw new GomRuntimeException(
         "Bad argument for AbstractTypeTemplate: " + gomClass);

@@ -1450,18 +1450,6 @@
   make(t0, t1, t2) { tom.engine.adt.tomconstraint.types.constraint.EmptyArrayConstraint.make($t0, $t1, $t2) }
 }
 
-%op Constraint AndMarker(Constraint:Constraint) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraint.AndMarker) }
-  get_slot(Constraint, t) { $t.getConstraint() }
-  make(t0) { tom.engine.adt.tomconstraint.types.constraint.AndMarker.make($t0) }
-}
-
-%op Constraint OrMarker(Constraint:Constraint) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraint.OrMarker) }
-  get_slot(Constraint, t) { $t.getConstraint() }
-  make(t0) { tom.engine.adt.tomconstraint.types.constraint.OrMarker.make($t0) }
-}
-
 %op ConstraintList EmptyconcConstraint() {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint) }
   make() { tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make() }

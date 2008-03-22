@@ -261,16 +261,22 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Bad number of arguments in ''make(...)'' macro-function: {0,number,integer} arguments found but {1,number,integer} expected in symbol definition");
   public static final TomMessage listSymbolDomainError   =
       new TomMessage("List symbol ''{0}'' has an unknown parameter type: ''{1}''");  
-  public static final TomMessage invalidLeftSideNumericConstraint   =
-    new TomMessage("The symbol ''{0}'' has to be a named variable in order to be used in a numeric constraint");
-  public static final TomMessage numericTypeRequired   =
-    new TomMessage("The symbol ''{0}'' has to have a numeric type (ex: int,long,float,double) in order to be used in a numeric constraint");
+  public static final TomMessage termOrVariableNumericLeft   =
+    new TomMessage("The left hand side of a boolean constraint should be a variable or a term (implicit notation with ''[]'' is forbidden): ''{0}''");
+  public static final TomMessage termOrVariableNumericRight   =
+    new TomMessage("The right hand side of a boolean constraint should be a variable or a term (implicit notation with ''[]'' is forbidden): ''{0}''");  
+  public static final TomMessage invalidTypesNumeric   =
+    new TomMessage("Found type ''{0}'' for symbol ''{1}'' and ''{2}'' for symbol ''{3}''. The two symbols should have the same type.");
   public static final TomMessage inconsistentTypes   =
     new TomMessage("The symbol ''{0}'' already had type ''{1}''. Type ''{2}'' is invalid");
   public static final TomMessage forbiddenAntiTermInNumeric   =
-    new TomMessage("Anti-patterns are forbidden in numeric constraints");
+    new TomMessage("Anti-patterns are forbidden in boolean constraints: ''{0}''");
+  public static final TomMessage forbiddenAnonymousInNumeric   =
+    new TomMessage("Anonymous symbols are forbidden in boolean constraints: ''{0}''");
+  public static final TomMessage forbiddenImplicitNumeric   =
+    new TomMessage("Implicit notation with ''[]'' is forbidden in boolean constraints: ''{0}''");  
   public static final TomMessage forbiddenAnnotationsNumeric   =
-    new TomMessage("Annotations are forbidden in numeric constraints");
+    new TomMessage("Annotations are forbidden in boolean constraints: ''{0}''");
    
   
   // Error messages linked to slot declaration during parsing

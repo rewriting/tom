@@ -57,7 +57,8 @@ public class SymbolTable {
   private final static String TYPE_BOOLEAN   = "boolean";
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
-  private final static String TYPE_UNKNOWN   = "unknown type";
+
+  public final static TomType TYPE_UNKNOWN   = `TomTypeAlone("unknown type");
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
@@ -294,9 +295,9 @@ public class SymbolTable {
     return `ASTFactory.makeType(TYPE_VOID,type);
   }
 
-  public TomType getUnknownType() {
-    return `TomTypeAlone(TYPE_UNKNOWN);
-  }
+  //public TomType getUnknownType() {
+  //  return `TomTypeAlone(TYPE_UNKNOWN);
+  //}
 
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
@@ -328,6 +329,10 @@ public class SymbolTable {
 
   public boolean isVoidType(String type) {
     return type.equals(TYPE_VOID);
+  }
+  
+  public boolean isUnknownType(String type) {
+    return `TomTypeAlone(type).equals(TYPE_UNKNOWN);
   }
 
   public String builtinToWrapper(String type) {

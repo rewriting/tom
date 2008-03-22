@@ -146,7 +146,7 @@ public class Typer extends TomGenericPlugin {
         if(type != null) {
           return type;
         } else {
-          return `subject; // useful for TomTypeAlone("unknown type")
+          return `subject; // useful for SymbolTable.TYPE_UNKNOWN
         }
       }
     }
@@ -380,15 +380,6 @@ public class Typer extends TomGenericPlugin {
         return `RecordAppl(option,nameList,concSlot(),constraints);
       }
 
-      /*
-         if(tomSymbol==null && !args.isEmpty() && !opName.equals("")) {
-         System.out.println("typeTermAppl: " + tomSymbol);
-         System.out.println("  opName = " + opName);
-         System.out.println("  args = " + args);
-         throw new TomRuntimeException("typeTermAppl: unknown symbol");
-         }
-       */
-
       SlotList slotList = `concSlot();
       Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
       if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
@@ -537,7 +528,7 @@ public class Typer extends TomGenericPlugin {
 
       TomList newAttrList  = `concTomTerm();
       TomList newChildList = `concTomTerm();
-      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),symbolTable().getUnknownType(),concConstraint());
+      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),symbolTable().TYPE_UNKNOWN,concConstraint());
       if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
       if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
@@ -618,7 +609,7 @@ matchBlock:
       TomTerm xmlHead;
 
       if(newNameList.isEmptyconcTomName()) {
-        xmlHead = `UnamedVariable(concOption(),symbolTable().getUnknownType(),concConstraint(),concConstraint());
+        xmlHead = `UnamedVariable(concOption(),symbolTable().TYPE_UNKNOWN,concConstraint(),concConstraint());
       } else {
         xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
       }

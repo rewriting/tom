@@ -5759,52 +5759,6 @@
   make( new_Opname,  new_Variable,  new_Index) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyArrayConstraint( $new_Opname,  $new_Variable,  $new_Index) }
 }
 
-    %op Strategy _AndMarker(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._AndMarker)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._AndMarker($arg0) }
-    }
-  
-  
-  %op Strategy When_AndMarker(s:Strategy) {
-    make(s) { `Sequence(Is_AndMarker(),s) }
-  }
-
-  %op Strategy Is_AndMarker() {
-    make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_AndMarker()}
-  }
-  
-%op Strategy Make_AndMarker(_Constraint:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_AndMarker))) }
-
-  get_slot(_Constraint, t) { $t._Constraint }
-  make( new_Constraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_AndMarker( $new_Constraint) }
-}
-
-    %op Strategy _OrMarker(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._OrMarker)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._OrMarker($arg0) }
-    }
-  
-  
-  %op Strategy When_OrMarker(s:Strategy) {
-    make(s) { `Sequence(Is_OrMarker(),s) }
-  }
-
-  %op Strategy Is_OrMarker() {
-    make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_OrMarker()}
-  }
-  
-%op Strategy Make_OrMarker(_Constraint:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_OrMarker))) }
-
-  get_slot(_Constraint, t) { $t._Constraint }
-  make( new_Constraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_OrMarker( $new_Constraint) }
-}
-
     %op Strategy _EmptyconcConstraint() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomconstraint.strategy.constraintlist._EmptyconcConstraint)))}
       

@@ -45,9 +45,9 @@ public interface TomParserTokenTypes {
 	int BACKQUOTE = 15;
 	int ALL_ID = 16;
 	int COLON = 17;
-	int ARROW = 18;
-	int AND_CONNECTOR = 19;
-	int OR_CONNECTOR = 20;
+	int AND_CONNECTOR = 18;
+	int OR_CONNECTOR = 19;
+	int ARROW = 20;
 	int MATCH_CONSTRAINT = 21;
 	int XML_START = 22;
 	int LESSOREQUAL_CONSTRAINT = 23;

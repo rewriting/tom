@@ -155,7 +155,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     List argumentList = new LinkedList();
     List constraintInstructionList = new LinkedList();
     TomList subjectList = null;
-    TomType patternType = `TomTypeAlone("unknown");
+    TomType patternType = SymbolTable.TYPE_UNKNOWN;
 }
   : (
             LPAREN matchArguments[argumentList] RPAREN
@@ -725,7 +725,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
           name = headSymbol[optionList] 
           {            
             result = `Variable(ASTFactory.makeOptionList(optionList),name,
-              TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
+              SymbolTable.TYPE_UNKNOWN,ASTFactory.makeConstraintList(constraintList));
             if(anti) { result = `AntiTerm(result); }
           }
 
@@ -1085,7 +1085,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             	
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(concOption(),TomTypeAlone("unknown type"),concConstraint())));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(concOption(),SymbolTable.TYPE_UNKNOWN,concConstraint())));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
@@ -1189,7 +1189,7 @@ termStringIdentifier [List options] returns [TomTerm result] throws TomException
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
-                result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
+                result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint());
             }
         |
             nameString:STRING
@@ -1221,7 +1221,7 @@ unamedVariableOrTermStringIdentifier [List options] returns [TomTerm result] thr
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
-                result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
+                result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint());
             }
         |
             nameString:STRING 
@@ -1390,14 +1390,14 @@ variableStar [List optionList, List constraintList] returns [TomTerm result]
                 if(name1 == null) {
                     result = `UnamedVariableStar(
                         options,
-                        TomTypeAlone("unknown type"),
+                        SymbolTable.TYPE_UNKNOWN,
                         constraints
                     );
                 } else {
                     result = `VariableStar(
                         options,
                         Name(name),
-                        TomTypeAlone("unknown type"),
+                        SymbolTable.TYPE_UNKNOWN,
                         constraints
                     );
                 }
@@ -1421,7 +1421,7 @@ unamedVariable [List optionList, List constraintList] returns [TomTerm result]
                 optionList.add(`OriginTracking(Name(t.getText()),t.getLine(),currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
-                result = `UnamedVariable(options,TomTypeAlone("unknown type"),constraints);
+                result = `UnamedVariable(options,SymbolTable.TYPE_UNKNOWN,constraints);
             } 
         )
     ;

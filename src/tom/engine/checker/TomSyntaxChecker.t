@@ -57,6 +57,7 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
+import tom.engine.tools.SymbolTable;
 
 import tom.library.sl.*;
 
@@ -590,8 +591,8 @@ matchLbl: %match(constr) {
           TomType leftType = TomBase.getTermType(`left,symbolTable());
           TomType rightType = TomBase.getTermType(`right,symbolTable());
           // if the types are not available, leave the error to be raised by java
-          if (leftType != null && leftType != `TomTypeAlone("unknown type") && leftType != `EmptyType() 
-              && rightType != null && rightType != `TomTypeAlone("unknown type") && rightType != `EmptyType() 
+          if (leftType != null && leftType != SymbolTable.TYPE_UNKNOWN && leftType != `EmptyType() 
+              && rightType != null && rightType != SymbolTable.TYPE_UNKNOWN && rightType != `EmptyType() 
               && (leftType != rightType)){            
             messageError(currentTomStructureOrgTrack.getFileName(),
                 currentTomStructureOrgTrack.getLine(),
@@ -789,10 +790,10 @@ matchLbl: %match(constr) {
   /**
    * tries to give the type of the tomTerm received as parameter
    */
-  private TomType getSubjectType(TomTerm subject, ArrayList<Constraint> constraints){
+  private TomType getSubjectType(TomTerm subject, ArrayList<Constraint> constraints) {
     %match(subject) {
       Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {        
-        if(`type.equals("unknown type")) {
+        if(`tomType==SymbolTable.TYPE_UNKNOWN) {
           // try to guess
           return guessSubjectType(`subject,constraints);
         } else if(testTypeExistence(`type)) {
