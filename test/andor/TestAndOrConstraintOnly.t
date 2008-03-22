@@ -365,7 +365,7 @@ public class TestAndOrConstraintOnly extends TestCase {
   public void test28() {
     %match {
       f(x,y) << f(a(),b()) || x << a()  -> {
-        System.out.println(`x);
+        Object tmp = `x;
         return;
       }
     }
@@ -375,7 +375,7 @@ public class TestAndOrConstraintOnly extends TestCase {
   public void test29() {
     %match {
       ( f(x,y) << f(a(),b()) && y << b() ) || x << a()  -> {
-        System.out.println(`x);
+        Object tmp = `x;
         return;
       }
     }
@@ -385,14 +385,14 @@ public class TestAndOrConstraintOnly extends TestCase {
   public void test30() {
     %match {
       ( f(x,y) << f(a(),b()) && y << b() ) || x << a()  -> {
-        System.out.println(`x);
+        Object tmp = `x;
         return;
       }
       ( f(x,y) << f(a(),b()) && y << b() ) || a() << a()  -> {        
         return;
       }
       ( f(x,y) << f(a(),b()) && y << b() ) || y << a()  -> {
-        System.out.println(`y);
+        Object tmp = `y;
         return;
       }
     }
