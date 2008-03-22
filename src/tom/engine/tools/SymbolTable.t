@@ -57,6 +57,7 @@ public class SymbolTable {
   private final static String TYPE_BOOLEAN   = "boolean";
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
+  private final static String TYPE_UNKNOWN   = "unknown type";
 
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
@@ -291,6 +292,10 @@ public class SymbolTable {
       type = "function";
     }
     return `ASTFactory.makeType(TYPE_VOID,type);
+  }
+
+  public TomType getUnknownType() {
+    return `TomTypeAlone(TYPE_UNKNOWN);
   }
 
   public boolean isIntType(String type) {

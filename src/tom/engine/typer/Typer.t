@@ -537,7 +537,7 @@ public class Typer extends TomGenericPlugin {
 
       TomList newAttrList  = `concTomTerm();
       TomList newChildList = `concTomTerm();
-      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),TomTypeAlone("unknown type"),concConstraint());
+      TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),symbolTable().getUnknownType(),concConstraint());
       if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
       if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
@@ -618,7 +618,7 @@ matchBlock:
       TomTerm xmlHead;
 
       if(newNameList.isEmptyconcTomName()) {
-        xmlHead = `UnamedVariable(concOption(),TomTypeAlone("unknown type"),concConstraint());
+        xmlHead = `UnamedVariable(concOption(),symbolTable().getUnknownType(),concConstraint(),concConstraint());
       } else {
         xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
       }
