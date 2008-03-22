@@ -520,6 +520,9 @@ public final class TomBase {
   }
 
   public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
+    
+    if ( SymbolTable.TYPE_UNKNOWN == tomType) { return null; }
+    
     TomSymbolList list = symbolTable.getSymbolFromType(tomType);
     TomSymbolList filteredList = `concTomSymbol();
     // Not necessary since checker ensure the uniqueness of the symbol
@@ -541,7 +544,7 @@ public final class TomBase {
           tomName = ((AntiName)`headName).getName().getString(); 
         } else {
           tomName = ((TomName)`headName).getString();
-        }
+        }        
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         if(tomSymbol!=null) {
           return tomSymbol.getTypesToType().getCodomain();
@@ -576,6 +579,32 @@ public final class TomBase {
     //throw new TomRuntimeException("getTermType error on term: " + t);
     return `EmptyType();
   }
+  
+  public static TomSymbol getSymbolFromTerm(TomTerm t, SymbolTable symbolTable) {
+    %match(TomTerm t) {
+      (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
+        String tomName = null;
+        if(`(headName) instanceof AntiName) {
+          tomName = ((AntiName)`headName).getName().getString(); 
+        } else {
+          tomName = ((TomName)`headName).getString();
+        }        
+        return symbolTable.getSymbolFromName(tomName);
+      }
+
+      (Variable|VariableStar)[AstName=Name(tomName)] -> { 
+        return symbolTable.getSymbolFromName(`tomName); 
+      }
+
+      Ref(term) -> { return getSymbolFromTerm(`term, symbolTable); }
+
+      FunctionCall[AstName=Name(tomName)] -> { return symbolTable.getSymbolFromName(`tomName); }
+
+      AntiTerm(term) -> { return getSymbolFromTerm(`term,symbolTable);}
+    }
+    return null;
+  }
+
 
   public static TomType getTermType(Expression t, SymbolTable symbolTable){
     %match(Expression t) {

@@ -51,6 +51,7 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.theory.types.*;
 
 import tom.engine.xml.Constants;
 import tom.platform.OptionParser;
@@ -671,8 +672,28 @@ matchLbl: %match(constr) {
         // and we check these variables for numeric constraints also
         // ex: 'y << a() || x > 3' should generate an error 
         %match(x){
-          MatchConstraint(pattern,_) -> { `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern); }
-          AndConstraint(_*,MatchConstraint(pattern,_),_*) -> { `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern); }
+          MatchConstraint(pattern,_) -> { 
+            `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+            // not fully supported for the moment
+            TomSymbol symb = TomBase.getSymbolFromTerm(`pattern,symbolTable());
+            if(symb != null && !TomBase.isSyntacticOperator(symb)) {
+              messageWarning(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.notSyntacticInOr,
+                  new Object[]{});
+            }      
+          }
+          AndConstraint(_*,MatchConstraint(pattern,_),_*) -> { 
+            `TopDownCollect(CollectFreeVar(freeVarList2)).visitLight(`pattern);
+            // not fully supported for the moment
+            TomSymbol symb = TomBase.getSymbolFromTerm(`pattern,symbolTable());
+            if(symb != null && !TomBase.isSyntacticOperator(symb)) {
+              messageWarning(currentTomStructureOrgTrack.getFileName(),
+                  currentTomStructureOrgTrack.getLine(),
+                  TomMessage.notSyntacticInOr,
+                  new Object[]{});
+            }      
+          }
         }        
         if(!freeVarList1.isEmpty()) {
           for(TomTerm term:freeVarList2) {
