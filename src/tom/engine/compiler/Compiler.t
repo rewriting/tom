@@ -174,8 +174,9 @@ public class Compiler extends TomGenericPlugin {
   }// end strategy  
 
   /**
-   * Takes all MatchConstraints and renames the subjects; 
-   * Match(p,s) -> IsSort(s) /\ Match(freshSubj,Cast(s)) /\ Match(p,freshSubj) 
+   * Takes all MatchConstraints and renames the subjects;
+   * (this ensures that the subject is not constructed more than once) 
+   * Match(p,s) -> Match(object,s) /\ IsSort(object) /\ Match(freshSubj,Cast(object)) /\ Match(p,freshSubj) 
    * 
    * @param subjectList the list of old subjects
    */
@@ -185,15 +186,17 @@ public class Compiler extends TomGenericPlugin {
         if(renamedSubjects.contains(`pattern) || renamedSubjects.contains(`subject) ) {
           // make sure we don't process generated contraints
           return `constr; 
-        }
+        }        
         // test if we already renamed this subject 
         if(subjectList.contains(`subject)) {
           TomTerm renamedSubj = (TomTerm) renamedSubjects.get(subjectList.indexOf(`subject));
           Constraint newConstraint = `constr.setSubject(renamedSubj);
           TomType freshSubjectType = ((Variable)renamedSubj).getAstType();
+          TomTerm freshVar = getUniversalObjectForSubject(freshSubjectType);
           return `AndConstraint(
-              IsSortConstraint(freshSubjectType,subject),
-              MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
+              MatchConstraint(freshVar,subject),
+              IsSortConstraint(freshSubjectType,freshVar),
+              MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(freshVar)))),
               newConstraint);
         }
         TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
@@ -214,12 +217,21 @@ public class Compiler extends TomGenericPlugin {
         TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());
         subjectList.add(`subject);
         renamedSubjects.add(renamedVar);
-        Constraint newConstraint = `constr.setSubject(renamedVar);
+        Constraint newConstraint = `constr.setSubject(renamedVar);   
+        TomTerm freshVar = getUniversalObjectForSubject(freshSubjectType);
         return `AndConstraint(
-            IsSortConstraint(freshSubjectType,subject),
-            MatchConstraint(renamedVar,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(subject)))),
+            MatchConstraint(freshVar,subject),
+            IsSortConstraint(freshSubjectType,freshVar),
+            MatchConstraint(renamedVar,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(freshVar)))),
             newConstraint);
       }
+    }
+  }
+  private static TomTerm getUniversalObjectForSubject(TomType subjectType){    
+    if (symbolTable.isBuiltinType(TomBase.getTomType(subjectType))) {
+      return getFreshVariable(subjectType);
+    } else {
+      return getFreshVariable(symbolTable.getUniversalType());
     }
   }
 
