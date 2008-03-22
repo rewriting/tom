@@ -54,7 +54,6 @@ import tom.library.sl.VisitFailure;
 
 
 /**
- * Base class for most tom files in the compiler.
  * Provides access to the TomSignatureFactory and helper methods.
  */
 public final class TomBase {
@@ -73,7 +72,7 @@ public final class TomBase {
   /** shortcut */
  
   /**
-   * Return the name of a <code>TomType</code>
+   * Returns the name of a <code>TomType</code>
    */
   public static String getTomType(TomType type) {
     %match(TomType type) {
@@ -88,7 +87,7 @@ public final class TomBase {
   }
 
   /**
-   * Return the implementation-type of a <code>TomType</code>
+   * Returns the implementation-type of a <code>TomType</code>
    */
   public static String getTLType(TomType type) {
     %match(TomType type) {
@@ -100,7 +99,7 @@ public final class TomBase {
   }
 
   /**
-   * Return the implementation-type of a <code>TLType</code>
+   * Returns the implementation-type of a <code>TLType</code>
    */
   public static String getTLCode(TomType type) {
     %match(TomType type) {
@@ -112,7 +111,7 @@ public final class TomBase {
   }
 
   /**
-   * Return the codomain of a given symbol
+   * Returns the codomain of a given symbol
    */
   public static TomType getSymbolCodomain(TomSymbol symbol) {
     if(symbol!=null) {
@@ -123,7 +122,7 @@ public final class TomBase {
   }   
 
   /**
-   * Return the domain of a given symbol
+   * Returns the domain of a given symbol
    */
   public static TomTypeList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
@@ -214,7 +213,7 @@ public final class TomBase {
   }
 
   /**
-    * Return <code>true</code> if the symbol corresponds to a %oplist
+    * Returns <code>true</code> if the symbol corresponds to a %oplist
     */
   public static boolean isListOperator(TomSymbol symbol) {
     if(symbol==null) {
@@ -238,7 +237,7 @@ public final class TomBase {
   }
 
   /**
-    * Return <code>true</code> if the symbol corresponds to a %oparray
+    * Returns <code>true</code> if the symbol corresponds to a %oparray
     */
   public static boolean isArrayOperator(TomSymbol symbol) {
     if(symbol==null) {
@@ -262,7 +261,7 @@ public final class TomBase {
   }
   
   /**
-    * Return <code>true</code> if the symbol corresponds to a %op
+    * Returns <code>true</code> if the symbol corresponds to a %op
     */
   public static boolean isSyntacticOperator(TomSymbol subject) {
     return (!(isListOperator(subject) || isArrayOperator(subject)));
@@ -270,7 +269,7 @@ public final class TomBase {
 
   // ------------------------------------------------------------
   /**
-    * Collect the variables athat appears in a term
+    * Collects the variables athat appears in a term
     * @param collection the bag which collect the results
     * @param subject the term to traverse
     */
@@ -314,7 +313,7 @@ public final class TomBase {
   }
 
   /**
-    * Return a Map which associates an interger to each variable name
+    * Returns a Map which associates an interger to each variable name
     */
   public static Map<TomName,Integer> collectMultiplicity(tom.library.sl.Visitable subject) {
     // collect variables
