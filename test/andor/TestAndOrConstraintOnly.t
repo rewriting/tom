@@ -359,6 +359,45 @@ public class TestAndOrConstraintOnly extends TestCase {
       fail();
     }
   }
+  
+//tests for free vars in disjunctions
+
+  public void test28() {
+    %match {
+      f(x,y) << f(a(),b()) || x << a()  -> {
+        System.out.println(`x);
+        return;
+      }
+    }
+    fail();
+  }
+
+  public void test29() {
+    %match {
+      ( f(x,y) << f(a(),b()) && y << b() ) || x << a()  -> {
+        System.out.println(`x);
+        return;
+      }
+    }
+    fail();
+  }
+  
+  public void test30() {
+    %match {
+      ( f(x,y) << f(a(),b()) && y << b() ) || x << a()  -> {
+        System.out.println(`x);
+        return;
+      }
+      ( f(x,y) << f(a(),b()) && y << b() ) || a() << a()  -> {        
+        return;
+      }
+      ( f(x,y) << f(a(),b()) && y << b() ) || y << a()  -> {
+        System.out.println(`y);
+        return;
+      }
+    }
+    fail();
+  }
 
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOrConstraintOnly.class));
