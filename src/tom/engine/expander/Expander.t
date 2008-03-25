@@ -252,12 +252,11 @@ matchBlock: {
             InstructionList instructions = `concInstruction(If(TomTermToExpression(TargetLanguageToTomTerm(ITL("o==null"))),Return(TargetLanguageToTomTerm(ITL("0"))),Nop()));
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
-            TomType tomtype = type.getTomType();
-            %match(tomtype) {
+            %match(type) {
               Type[TomType=ASTTomType(typeName)] -> {
                 if(!(symbolTable.isBuiltinType(`typeName))) {
-                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
-                  TomSymbolList list = symbolTable.getSymbolFromType(tomtype);
+                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
+                  TomSymbolList list = symbolTable.getSymbolFromType(type);
                   %match(list) {
                     concTomSymbol(_*, symbol@Symbol[AstName=name], _*) -> {
                       //TODO: manage empty lists and arrays
@@ -265,7 +264,7 @@ matchBlock: {
                       instructionsForSort = `concInstruction(instructionsForSort*,inst);
                     }
                   }
-                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Let(var,Cast(tomtype,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 }
               }
             }
@@ -282,12 +281,11 @@ matchBlock: {
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
-            TomType tomtype = type.getTomType();
-            %match(tomtype) {
+            %match(type) {
               Type[TomType=ASTTomType(typeName)] -> {
                 if (! symbolTable.isBuiltinType(`typeName)) {
-                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
-                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
+                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
+                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType[Domain=domain]] -> {
@@ -332,7 +330,7 @@ matchBlock: {
                       } 
                     }
                   }
-                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Let(var,Cast(tomtype,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 } 
               }
             }
@@ -350,12 +348,11 @@ matchBlock: {
           for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
-            TomType tomtype = type.getTomType();
-            %match(tomtype) {
+            %match(type) {
               Type[TomType=ASTTomType(typeName)] -> {
                 if(! symbolTable.isBuiltinType(`typeName)) {
-                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),tomtype,concConstraint());
-                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(tomtype);
+                  TomTerm var = `Variable(concOption(orgTrack),Name("v_"+typeName),type,concConstraint());
+                  concTomSymbol list = (concTomSymbol) symbolTable.getSymbolFromType(type);
                   for (TomSymbol symbol:list) {
                     %match(symbol) {
                       Symbol[AstName=symbolName,TypesToType=TypesToType] -> {
@@ -366,7 +363,7 @@ matchBlock: {
                                 `If(IsFsym(symbolName,var),
                                     If(TomTermToExpression(TargetLanguageToTomTerm(ITL("children.length==0"))),
                                       Return(BuildEmptyList(symbolName)),
-                                      Return(BuildConsList(symbolName,ExpressionToTomTerm(Cast(domain,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[0]"))))),ExpressionToTomTerm(Cast(tomtype,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[1]")))))))
+                                      Return(BuildConsList(symbolName,ExpressionToTomTerm(Cast(domain,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[0]"))))),ExpressionToTomTerm(Cast(type,TomTermToExpression(TargetLanguageToTomTerm(ITL("children[1]")))))))
                                       )
                                     ,Nop());
                               instructionsForSort = `concInstruction(instructionsForSort*,inst);
@@ -398,7 +395,7 @@ matchBlock: {
                     }
                   } 
 
-                  instructions = `concInstruction(instructions*,If(IsSort(tomtype,objectVar),Let(var,Cast(tomtype,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
+                  instructions = `concInstruction(instructions*,If(IsSort(type,objectVar),Let(var,Cast(type,TomTermToExpression(objectVar)),AbstractBlock(instructionsForSort)),Nop()));
                 }
               }
             }
