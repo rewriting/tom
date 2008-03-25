@@ -23,12 +23,16 @@ public class TestRuleSortList extends TestCase {
         MinMax(x,X1*,y,X2*) -> MinMax(y,X1*,x,X2*) if x > y
         MaxMin(x,X1*,y,X2*) -> MaxMin(y,X1*,x,X2*) if x < y
         NoDup(x,X1*,y,X2*) -> NoDup(X1*,x,X2*) if x == y
-        Mix(x,X1*,y,X2*) -> Mix(y,X1*,x,X2*) if x.greaterThan(y)
+        Mix(x,X1*,y,X2*) -> Mix(y,X1*,x,X2*) if greaterThan(x,y)==true
       }
 
-      sort Element:block() {
-        public boolean greaterThan(Element o) {
-          if (this.compareToLPO(o)>0)
+      Mix:import() {
+        import gom.testrulesortlist.sorted.types.*;
+      }
+
+      Mix:block() {
+        public static boolean greaterThan(Element o1, Element o2) {
+          if (o1.compareToLPO(o2)>0)
             return true;
           return false;
         }

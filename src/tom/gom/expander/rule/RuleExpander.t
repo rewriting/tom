@@ -155,11 +155,12 @@ public class RuleExpander {
             output.append(";\n");
           }
           ConditionalRule(Appl[],rhs,cond) -> {
-            output.append("    if `(");
+            output.append("    %match{\n");
             genCondition(`cond,output);
-            output.append(") { return `");
+            output.append(" -> { return `");
             genTerm(`rhs,output);
             output.append("; }\n");
+            output.append("}\n");
           }
         }
       }
@@ -180,11 +181,12 @@ public class RuleExpander {
           }
           ConditionalRule(Appl[args=argList],rhs,cond) -> {
             genTermList(`argList,output);
-            output.append(" -> { if `(");
+            output.append(" && ");
             genCondition(`cond,output);
-            output.append(") { return `");
+            System.out.println(output);
+            output.append(" -> { return `");
             genTerm(`rhs,output);
-            output.append("; } }\n");
+            output.append("; }\n");
           }
         }
       }
@@ -218,11 +220,12 @@ public class RuleExpander {
         }
         ConditionalRule(lhs,rhs,cond) -> {
           genTerm(`lhs,output);
-          output.append(" -> { if `(");
+          output.append(" && ");
           genCondition(`cond,output);
-          output.append(") { return `");
+          System.out.println(output);
+          output.append(" -> { return `");
           genTerm(`rhs,output);
-          output.append("; } }\n");
+          output.append("; }\n");
         }
       }
     }
@@ -255,6 +258,10 @@ public class RuleExpander {
         output.append("@");
         genTerm(`term,output);
       }
+      Anti(term) -> {
+        output.append("!");
+        genTerm(`term,output);
+      }
       UnnamedVar() -> {
         output.append("_");
       }
@@ -279,81 +286,62 @@ public class RuleExpander {
 
   private void genCondition(Condition cond, StringBuilder output) {
     %match(cond) {
-      CondTerm[t=term] -> {
-        genTerm(`term,output);
-      }
       CondEquals[t1=term1,t2=term2] -> {
-        output.append("(");
         genTerm(`term1,output);
         output.append(" == ");
         genTerm(`term2,output);
-        output.append(")");
       }
       CondNotEquals[t1=term1,t2=term2] -> {
-        output.append("(");
         genTerm(`term1,output);
         output.append(" != ");
         genTerm(`term2,output);
-        output.append(")");
       }
       CondLessEquals[t1=term1,t2=term2] -> {
-        output.append("(");
         genTerm(`term1,output);
         output.append(" <= ");
         genTerm(`term2,output);
-        output.append(")");
       }
       CondLessThan[t1=term1,t2=term2] -> {
-        output.append("(");
         genTerm(`term1,output);
         output.append(" < ");
         genTerm(`term2,output);
-        output.append(")");
       }
       CondGreaterEquals[t1=term1,t2=term2] -> {
-        output.append("(");
         genTerm(`term1,output);
         output.append(" >= ");
         genTerm(`term2,output);
-        output.append(")");
       }
       CondGreaterThan[t1=term1,t2=term2] -> {
-        output.append("(");
         genTerm(`term1,output);
         output.append(" > ");
         genTerm(`term2,output);
-        output.append(")");
       }
-      CondMethod[t1=term1,name=name,t2=term2] -> {
+      CondMatch[t1=term1,t2=term2] -> {
         genTerm(`term1,output);
-        output.append(".");
-        output.append(`name);
-        output.append("(");
+        output.append(" << ");
         genTerm(`term2,output);
-        output.append(")");
       }
       CondAnd(head,tail*) -> {
-        output.append("(");
-        genCondition(`head,output);
         if(`tail* != `CondAnd()) {
-           output.append(" && ");
-           genCondition(`tail*,output);
+          output.append("(");
+          genCondition(`head,output);
+          output.append(" && ");
+          genCondition(`tail*,output);
+          output.append(")");
+        } else {
+          genCondition(`head,output);
         }
-        output.append(")");
       }
       CondOr(head,tail*) -> {
-        output.append("(");
-        genCondition(`head,output);
         if(`tail* != `CondOr()) {
+          output.append("(");
+          genCondition(`head,output);
           output.append(" || ");
           genCondition(`tail*,output);
+          output.append(")");
+        } else {
+          genCondition(`head,output);
         }
-        output.append(")");
-      }
-      CondNot[c=negcond] -> {
-        output.append("!(");
-        genCondition(`negcond,output);
-        output.append(")");
       }
     }
   }
