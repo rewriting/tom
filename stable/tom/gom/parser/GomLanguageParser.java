@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /home/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2008-03-25 14:44:54
+// $ANTLR 3.0 /home/balland/workspace/jtom/src/gen/tom/gom/parser/GomLanguage.g 2008-03-25 23:12:06
 
 package tom.gom.parser;
 import tom.gom.adt.gom.GomTree;
@@ -1240,7 +1240,7 @@ public class GomLanguageParser extends Parser {
             stream_type.add(type18.getTree());
 
             // AST REWRITE
-            // elements: ID, type, ID, fieldlist
+            // elements: type, fieldlist, ID, ID
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1336,7 +1336,7 @@ public class GomLanguageParser extends Parser {
             stream_alternatives.add(alts.getTree());
 
             // AST REWRITE
-            // elements: typename, alts
+            // elements: alts, typename
             // token labels: typename
             // rule labels: alts, retval
             // token list labels: 

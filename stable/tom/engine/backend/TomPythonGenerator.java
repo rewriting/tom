@@ -287,16 +287,16 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-              {if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumber_freshVar_2=tomMatch73NameNumberfreshSubject_1;if ( (tomMatch73NameNumber_freshVar_2 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch73NameNumber_freshVar_0= tomMatch73NameNumber_freshVar_2.getAstName() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_1= tomMatch73NameNumber_freshVar_2.getAstType() ;{  tom.engine.adt.tomname.types.TomName  tomMatch73NameNumber_freshVar_4=tomMatch73NameNumber_freshVar_0;if ( (tomMatch73NameNumber_freshVar_4 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch73NameNumber_freshVar_3= tomMatch73NameNumber_freshVar_4.getString() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_6=tomMatch73NameNumber_freshVar_1;if ( (tomMatch73NameNumber_freshVar_6 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_5= tomMatch73NameNumber_freshVar_6.getTlType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_7=tomMatch73NameNumber_freshVar_5;if ( (tomMatch73NameNumber_freshVar_7 instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {if ( true ) {
+              {{ Object tomMatch73NameNumber_freshVar_0=arg;if ( (tomMatch73NameNumber_freshVar_0 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch73NameNumber_freshVar_0);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumber_freshVar_3=tomMatch73NameNumberfreshSubject_1;if ( (tomMatch73NameNumber_freshVar_3 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {{  tom.engine.adt.tomname.types.TomName  tomMatch73NameNumber_freshVar_1= tomMatch73NameNumber_freshVar_3.getAstName() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_2= tomMatch73NameNumber_freshVar_3.getAstType() ;{  tom.engine.adt.tomname.types.TomName  tomMatch73NameNumber_freshVar_5=tomMatch73NameNumber_freshVar_1;if ( (tomMatch73NameNumber_freshVar_5 instanceof tom.engine.adt.tomname.types.tomname.Name) ) {{  String  tomMatch73NameNumber_freshVar_4= tomMatch73NameNumber_freshVar_5.getString() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_7=tomMatch73NameNumber_freshVar_2;if ( (tomMatch73NameNumber_freshVar_7 instanceof tom.engine.adt.tomtype.types.tomtype.Type) ) {{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_6= tomMatch73NameNumber_freshVar_7.getTlType() ;{  tom.engine.adt.tomtype.types.TomType  tomMatch73NameNumber_freshVar_8=tomMatch73NameNumber_freshVar_6;if ( (tomMatch73NameNumber_freshVar_8 instanceof tom.engine.adt.tomtype.types.tomtype.TLType) ) {if ( true ) {
 
-                  s.append(tomMatch73NameNumber_freshVar_3);
+                  s.append(tomMatch73NameNumber_freshVar_4);
                   break matchBlock;
-                }}}}}}}}}}}}}}}if ( (arg instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )arg);if ( true ) {
+                }}}}}}}}}}}}}}}}{ Object tomMatch73NameNumber_freshVar_9=arg;if ( (tomMatch73NameNumber_freshVar_9 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch73NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch73NameNumber_freshVar_9);if ( true ) {
 
 
                   System.out.println("genDeclMake: strange term: " + arg);
                   throw new TomRuntimeException("genDeclMake: strange term: " + arg);
-                }}}}
+                }}}}}
 
             }
             argList = argList.getTailconcTomTerm();
@@ -357,16 +357,16 @@ matchBlock: {
     while(!varList.isEmptyconcTomTerm()) {
       TomTerm localVar = varList.getHeadconcTomTerm();
 matchBlock: {
-              {if ( (localVar instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch74NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch74NameNumber_freshVar_0=tomMatch74NameNumberfreshSubject_1;if ( (tomMatch74NameNumber_freshVar_0 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {if ( true ) {
+              {{ Object tomMatch74NameNumber_freshVar_0=localVar;if ( (tomMatch74NameNumber_freshVar_0 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch74NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch74NameNumber_freshVar_0);{  tom.engine.adt.tomterm.types.TomTerm  tomMatch74NameNumber_freshVar_1=tomMatch74NameNumberfreshSubject_1;if ( (tomMatch74NameNumber_freshVar_1 instanceof tom.engine.adt.tomterm.types.tomterm.Variable) ) {if ( true ) {
 
                   //output.write(deep,getTLType(`type2) + " ");
                   generate(deep,tomMatch74NameNumberfreshSubject_1,moduleName);
                   break matchBlock;
-                }}}}}if ( (localVar instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch74NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )localVar);if ( true ) {
+                }}}}}}{ Object tomMatch74NameNumber_freshVar_2=localVar;if ( (tomMatch74NameNumber_freshVar_2 instanceof tom.engine.adt.tomterm.types.TomTerm) ) {{  tom.engine.adt.tomterm.types.TomTerm  tomMatch74NameNumberfreshSubject_1=(( tom.engine.adt.tomterm.types.TomTerm )tomMatch74NameNumber_freshVar_2);if ( true ) {
 
                   System.out.println("MakeFunction: strange term: " + localVar);
                   throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
-                }}}}
+                }}}}}
 
             }
             varList = varList.getTailconcTomTerm();

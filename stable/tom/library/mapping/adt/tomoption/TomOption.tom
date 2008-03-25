@@ -45,20 +45,6 @@
   equals(t1,t2) { ($t1==$t2) }
 }
 
-%typeterm TomTypeDefinition {
-  implement { tom.engine.adt.tomtype.types.TomTypeDefinition }
-  is_sort(t) { ($t instanceof tom.engine.adt.tomtype.types.TomTypeDefinition) }
-  //equals(t1,t2) { $t1.equals($t2) }
-  equals(t1,t2) { ($t1==$t2) }
-}
-
-%typeterm TomForwardType {
-  implement { tom.engine.adt.tomtype.types.TomForwardType }
-  is_sort(t) { ($t instanceof tom.engine.adt.tomtype.types.TomForwardType) }
-  //equals(t1,t2) { $t1.equals($t2) }
-  equals(t1,t2) { ($t1==$t2) }
-}
-
 %typeterm TomSymbolList {
   implement { tom.engine.adt.tomsignature.types.TomSymbolList }
   is_sort(t) { ($t instanceof tom.engine.adt.tomsignature.types.TomSymbolList) }
@@ -536,24 +522,6 @@
   make(t0, t1, t2) { tom.engine.adt.tomtype.types.tomtype.TypeWithSymbol.make($t0, $t1, $t2) }
 }
 
-%op TomTypeDefinition TypeDefinition(TomType:TomType, Forward:TomForwardType) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomtypedefinition.TypeDefinition) }
-  get_slot(TomType, t) { $t.getTomType() }
-  get_slot(Forward, t) { $t.getForward() }
-  make(t0, t1) { tom.engine.adt.tomtype.types.tomtypedefinition.TypeDefinition.make($t0, $t1) }
-}
-
-%op TomForwardType TLForward(String:String) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomforwardtype.TLForward) }
-  get_slot(String, t) { $t.getString() }
-  make(t0) { tom.engine.adt.tomtype.types.tomforwardtype.TLForward.make($t0) }
-}
-
-%op TomForwardType EmptyForward() {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomtype.types.tomforwardtype.EmptyForward) }
-  make() { tom.engine.adt.tomtype.types.tomforwardtype.EmptyForward.make() }
-}
-
 %op TomSymbolList EmptyconcTomSymbol() {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol) }
   make() { tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol.make() }
@@ -675,10 +643,10 @@
   make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor.make($t0) }
 }
 
-%op KeyEntry UsedTypeDefinition(Typedef:TomTypeDefinition) {
-  is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedTypeDefinition) }
+%op KeyEntry UsedType(Typedef:TomType) {
+  is_fsym(t) { ($t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedType) }
   get_slot(Typedef, t) { $t.getTypedef() }
-  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedTypeDefinition.make($t0) }
+  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedType.make($t0) }
 }
 
 %op ElementaryTheory Syntactic() {
@@ -1013,7 +981,7 @@
   make(t0, t1, t2, t3, t4) { tom.engine.adt.tomdeclaration.types.declaration.MethodDef.make($t0, $t1, $t2, $t3, $t4) }
 }
 
-%op Declaration Class(AstName:TomName, ExtendsType:TomForwardType, SuperTerm:TomTerm, Declaration:Declaration) {
+%op Declaration Class(AstName:TomName, ExtendsType:TomType, SuperTerm:TomTerm, Declaration:Declaration) {
   is_fsym(t) { ($t instanceof tom.engine.adt.tomdeclaration.types.declaration.Class) }
   get_slot(AstName, t) { $t.getAstName() }
   get_slot(ExtendsType, t) { $t.getExtendsType() }

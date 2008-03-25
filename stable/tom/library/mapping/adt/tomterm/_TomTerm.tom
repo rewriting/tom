@@ -965,75 +965,6 @@
   make( new_TomType,  new_TlType,  new_RootSymbolName) { new tom.engine.adt.tomtype.strategy.tomtype.Make_TypeWithSymbol( $new_TomType,  $new_TlType,  $new_RootSymbolName) }
 }
 
-    %op Strategy _TypeDefinition(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomtypedefinition._TypeDefinition)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.tomtype.strategy.tomtypedefinition._TypeDefinition($arg0, $arg1) }
-    }
-  
-  
-  %op Strategy When_TypeDefinition(s:Strategy) {
-    make(s) { `Sequence(Is_TypeDefinition(),s) }
-  }
-
-  %op Strategy Is_TypeDefinition() {
-    make() { new tom.engine.adt.tomtype.strategy.tomtypedefinition.Is_TypeDefinition()}
-  }
-  
-%op Strategy Make_TypeDefinition(_TomType:Strategy, _Forward:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomtypedefinition.Make_TypeDefinition))) }
-
-  get_slot(_TomType, t) { $t._TomType }
-  get_slot(_Forward, t) { $t._Forward }
-  make( new_TomType,  new_Forward) { new tom.engine.adt.tomtype.strategy.tomtypedefinition.Make_TypeDefinition( $new_TomType,  $new_Forward) }
-}
-
-    %op Strategy _TLForward(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomforwardtype._TLForward)))}
-      
-        get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.tomtype.strategy.tomforwardtype._TLForward($arg0) }
-    }
-  
-  
-  %op Strategy When_TLForward(s:Strategy) {
-    make(s) { `Sequence(Is_TLForward(),s) }
-  }
-
-  %op Strategy Is_TLForward() {
-    make() { new tom.engine.adt.tomtype.strategy.tomforwardtype.Is_TLForward()}
-  }
-  
-%op Strategy Make_TLForward(_String:String) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomforwardtype.Make_TLForward))) }
-
-  get_slot(_String, t) { $t._String }
-  make( _String) { new tom.engine.adt.tomtype.strategy.tomforwardtype.Make_TLForward( $_String) }
-}
-
-    %op Strategy _EmptyForward() {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomforwardtype._EmptyForward)))}
-      
-        make() { new tom.engine.adt.tomtype.strategy.tomforwardtype._EmptyForward() }
-    }
-  
-  
-  %op Strategy When_EmptyForward(s:Strategy) {
-    make(s) { `Sequence(Is_EmptyForward(),s) }
-  }
-
-  %op Strategy Is_EmptyForward() {
-    make() { new tom.engine.adt.tomtype.strategy.tomforwardtype.Is_EmptyForward()}
-  }
-  
-%op Strategy Make_EmptyForward() {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomtype.strategy.tomforwardtype.Make_EmptyForward))) }
-
-  make() { new tom.engine.adt.tomtype.strategy.tomforwardtype.Make_EmptyForward() }
-}
-
     %op Strategy _EmptyconcTomSymbol() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.tomsymbollist._EmptyconcTomSymbol)))}
       
@@ -1485,27 +1416,27 @@
   make( new_Symbol) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedSymbolDestructor( $new_Symbol) }
 }
 
-    %op Strategy _UsedTypeDefinition(arg0:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedTypeDefinition)))}
+    %op Strategy _UsedType(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.keyentry._UsedType)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
-        make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedTypeDefinition($arg0) }
+        make(arg0) { new tom.engine.adt.tomsignature.strategy.keyentry._UsedType($arg0) }
     }
   
   
-  %op Strategy When_UsedTypeDefinition(s:Strategy) {
-    make(s) { `Sequence(Is_UsedTypeDefinition(),s) }
+  %op Strategy When_UsedType(s:Strategy) {
+    make(s) { `Sequence(Is_UsedType(),s) }
   }
 
-  %op Strategy Is_UsedTypeDefinition() {
-    make() { new tom.engine.adt.tomsignature.strategy.keyentry.Is_UsedTypeDefinition()}
+  %op Strategy Is_UsedType() {
+    make() { new tom.engine.adt.tomsignature.strategy.keyentry.Is_UsedType()}
   }
   
-%op Strategy Make_UsedTypeDefinition(_Typedef:Strategy) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedTypeDefinition))) }
+%op Strategy Make_UsedType(_Typedef:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedType))) }
 
   get_slot(_Typedef, t) { $t._Typedef }
-  make( new_Typedef) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedTypeDefinition( $new_Typedef) }
+  make( new_Typedef) { new tom.engine.adt.tomsignature.strategy.keyentry.Make_UsedType( $new_Typedef) }
 }
 
     %op Strategy _Syntactic() {
