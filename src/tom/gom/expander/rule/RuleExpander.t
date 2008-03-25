@@ -183,7 +183,6 @@ public class RuleExpander {
             genTermList(`argList,output);
             output.append(" && ");
             genCondition(`cond,output);
-            System.out.println(output);
             output.append(" -> { return `");
             genTerm(`rhs,output);
             output.append("; }\n");
@@ -222,7 +221,6 @@ public class RuleExpander {
           genTerm(`lhs,output);
           output.append(" && ");
           genCondition(`cond,output);
-          System.out.println(output);
           output.append(" -> { return `");
           genTerm(`rhs,output);
           output.append("; }\n");
