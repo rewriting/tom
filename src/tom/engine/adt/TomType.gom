@@ -12,10 +12,4 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | TypeList(TypeList:TomTypeList)
         | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)
 
-TomForwardType = TLForward(String:String)
-               | EmptyForward()
-
-//slot 1 must be different from "type" otherwise it will overload method "int getType()" in aterm.pure.ATerm
-TomTypeDefinition = TypeDefinition(TomType:TomType, Forward:TomForwardType)
-
 TomTypeList = concTomType(TomType*)

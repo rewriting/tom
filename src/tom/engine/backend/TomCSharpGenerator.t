@@ -102,7 +102,7 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     TomTypeList tomTypes = TomBase.getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
@@ -129,8 +129,8 @@ public class TomCSharpGenerator extends TomCFamilyGenerator {
     }
     output.write(deep, /*modifier +*/ "class " + tomName);
     //write extends
-		%match(TomForwardType extendsFwdType) {
-			TLForward(code) -> {
+		%match(extendsType) {
+			TomTypeAlone(code) -> {
 				output.write(deep," : " + `code);
 			}
     }

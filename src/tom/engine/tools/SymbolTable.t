@@ -63,7 +63,7 @@ public class SymbolTable {
   /** associate a symbol to a name */
   private Map<String,TomSymbol> mapSymbolName = null;
   /** associate a type to a name */
-  private Map<String,TomTypeDefinition> mapTypeName = null;
+  private Map<String,TomType> mapTypeName = null;
   /** store symbols and types that are used */ 
   private Set<KeyEntry> usedKeyEntry = null;
 
@@ -74,7 +74,7 @@ public class SymbolTable {
 
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap<String,TomSymbol>();
-    mapTypeName = new HashMap<String,TomTypeDefinition>();
+    mapTypeName = new HashMap<String,TomType>();
     usedKeyEntry = new HashSet<KeyEntry>();
     mapInliner = new HashMap<String,String>();
 
@@ -120,38 +120,16 @@ public class SymbolTable {
     return res;
   }
 
-  public void putTypeDefinition(String name, TomType astType, TomForwardType fwdType) {
-    TomTypeDefinition typeDef = `TypeDefinition(astType,fwdType);
-    mapTypeName.put(name,typeDef);
+  public void putType(String name, TomType astType) {
+    mapTypeName.put(name,astType);
   }
 
-  public Collection<TomTypeDefinition> getUsedTypes() {
+  public Collection<TomType> getUsedTypes() {
     return mapTypeName.values();
   }
 
-  public TomTypeDefinition getTypeDefinition(String name) {
-    TomTypeDefinition def = mapTypeName.get(name);
-    return def;
-  }
-
   public TomType getType(String name) {
-    TomTypeDefinition def = getTypeDefinition(name);
-    if (def != null) {
-      TomType result = def.getTomType();
-      return result;
-    } else {
-      return null;
-    } 
-  }
-
-  public TomForwardType getForwardType(String name) {
-    TomTypeDefinition def = getTypeDefinition(name);
-    if (def != null) {
-      TomForwardType result = def.getForward();
-      return result;
-    } else { 
-      return null;
-    } 
+    return mapTypeName.get(name);
   }
 
   public boolean isUsedSymbolConstructor(TomSymbol symbol) {    
@@ -162,8 +140,8 @@ public class SymbolTable {
     return usedKeyEntry.contains(`UsedSymbolDestructor(symbol));
   }
 
-  public boolean isUsedTypeDefinition(TomTypeDefinition type) {
-    return usedKeyEntry.contains(`UsedTypeDefinition(type));
+  public boolean isUsedType(TomType type) {
+    return usedKeyEntry.contains(`UsedType(type));
   }
 
   public void setUsedSymbolConstructor(TomSymbol symbol) {
@@ -174,8 +152,8 @@ public class SymbolTable {
     usedKeyEntry.add(`UsedSymbolDestructor(symbol));
   }
 
-  public void setUsedTypeDefinition(TomTypeDefinition type) {
-    usedKeyEntry.add(`UsedTypeDefinition(type));
+  public void setUsedType(TomType type) {
+    usedKeyEntry.add(`UsedType(type));
   }
 
   public void setUsedSymbolConstructor(String name) {
@@ -192,10 +170,10 @@ public class SymbolTable {
     }
   }
 
-  public void setUsedTypeDefinition(String name) {
-    TomTypeDefinition type = getTypeDefinition(name);
+  public void setUsedType(String name) {
+    TomType type = getType(name);
     if(type!=null) {
-      setUsedTypeDefinition(type);
+      setUsedType(type);
     }
   }
 
@@ -215,10 +193,10 @@ public class SymbolTable {
     return false;
   }
 
-  public boolean isUsedTypeDefinition(String name) {
-    TomTypeDefinition type = getTypeDefinition(name);
+  public boolean isUsedType(String name) {
+    TomType type = getType(name);
     if(type!=null) {
-      return isUsedTypeDefinition(type);
+      return isUsedType(type);
     }
     return false;
   }

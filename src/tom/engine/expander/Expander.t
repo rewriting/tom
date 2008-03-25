@@ -80,7 +80,7 @@ public class Expander extends TomGenericPlugin {
     "<boolean name='genIntrospector' altName='gi' description=' Generate a class that implements Introspector to apply strategies on non visitable terms' value='false'/>" +
     "</options>";
 
-  private static final String basicStratName = "tom.library.sl.BasicStrategy";
+  private static final TomType basicStratType = `TomTypeAlone("tom.library.sl.BasicStrategy");
   private static final TomType objectType = `TomTypeAlone("Object");
   private static final TomType objectArrayType = `TomTypeAlone("Object[]");
   private static final TomType intType = `TomTypeAlone("int");
@@ -241,7 +241,7 @@ matchBlock: {
           //generate the code for every method of Instrospector interface
 
           SymbolTable symbolTable = expander.symbolTable();
-          Collection<TomTypeDefinition> types = symbolTable.getUsedTypes();
+          Collection<TomType> types = symbolTable.getUsedTypes();
 
           /**
            * generate code for:
@@ -250,7 +250,7 @@ matchBlock: {
           String funcName = "getChildCount";//function name
             //manage null children: return 0
             InstructionList instructions = `concInstruction(If(TomTermToExpression(TargetLanguageToTomTerm(ITL("o==null"))),Return(TargetLanguageToTomTerm(ITL("0"))),Nop()));
-          for (TomTypeDefinition type:types) {
+          for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             TomType tomtype = type.getTomType();
             %match(tomtype) {
@@ -279,7 +279,7 @@ matchBlock: {
            */
           funcName = "getChildren";//function name
           instructions = `concInstruction();
-          for (TomTypeDefinition type:types) {
+          for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             TomType tomtype = type.getTomType();
@@ -347,7 +347,7 @@ matchBlock: {
            */
           funcName = "setChildren";//function name
           instructions = `concInstruction();
-          for (TomTypeDefinition type:types) {
+          for (TomType type:types) {
             InstructionList instructionsForSort = `concInstruction();
             //cast in concTomSymbol to use the for statement
             TomType tomtype = type.getTomType();
@@ -433,15 +433,11 @@ matchBlock: {
          *
          */
         DeclarationList l = `concDeclaration();//represents compiled Strategy
-        TomForwardType visitorFwd = null;             
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
         for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
           %match(visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
-              if(visitorFwd == null) {//first time in loop
-                visitorFwd = expander.symbolTable().getForwardType(`type);//do the job only once
-              }
               TomTerm arg = `Variable(concOption(orgTrack),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
               String funcName = "visit_" + `type;//function name
@@ -486,7 +482,6 @@ matchBlock: {
          * }
          *
          */        
-        visitorFwd = `TLForward(Expander.basicStratName);         
         TomTerm vVar = `Variable(concOption(orgTrack),Name("v"),objectType,concConstraint());// v argument of visitLight
         InstructionList ifList = `concInstruction(); // the list of ifs in visitLight
         Expression testEnvNotNull = null;
@@ -522,7 +517,7 @@ matchBlock: {
             TomTypeAlone("tom.library.sl.VisitFailure"),
             AbstractBlock(ifList));
         l = `concDeclaration(l*,visitLightDeclaration);
-        return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,visitorFwd,extendsTerm,AbstractDecl(l)))));
+        return (Declaration) expander.expand(`AbstractDecl(concDeclaration(introspectorClass,Class(name,basicStratType,extendsTerm,AbstractDecl(l)))));
       }        
     }//end visit Declaration
   } // end strategy

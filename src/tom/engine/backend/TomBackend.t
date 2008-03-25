@@ -249,8 +249,8 @@ public class TomBackend extends TomGenericPlugin {
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
   }
 
-  private void setUsedTypeDefinition(String moduleName, String tomTypeName, Strategy markStrategy) {
-    getSymbolTable(moduleName).setUsedTypeDefinition(tomTypeName);
+  private void setUsedType(String moduleName, String tomTypeName, Strategy markStrategy) {
+    getSymbolTable(moduleName).setUsedType(tomTypeName);
   }
 
   /*
@@ -324,7 +324,7 @@ public class TomBackend extends TomGenericPlugin {
       Type(ASTTomType(type),_) -> {
         try {
           String moduleName = (String) stack.peek();
-          tb.setUsedTypeDefinition(moduleName,`type,markStrategy);
+          tb.setUsedType(moduleName,`type,markStrategy);
         } catch (EmptyStackException e) {
           System.out.println("No moduleName in stack");
         }

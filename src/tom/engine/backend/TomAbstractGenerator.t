@@ -546,8 +546,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      Class(Name(tomName),extendsFwdType,superTerm,declaration) -> {
-        `buildClass(deep, tomName, extendsFwdType, superTerm, declaration, moduleName);
+      Class(Name(tomName),extendsType,superTerm,declaration) -> {
+        `buildClass(deep, tomName, extendsType, superTerm, declaration, moduleName);
         return;
       }
 
@@ -610,14 +610,14 @@ public abstract class TomAbstractGenerator {
       EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)],
                      Variable[AstName=Name(name2), AstType=Type(ASTTomType(type2),_)],
                      code, _) -> {
-        if(getSymbolTable(moduleName).isUsedTypeDefinition(`type1)) {
+        if(getSymbolTable(moduleName).isUsedType(`type1)) {
           `buildEqualTermDecl(deep, name1, name2, type1, type2, code, moduleName);
         }
         return;
       }
       
       IsSortDecl(Variable[AstName=Name(varName), AstType=Type(ASTTomType(type),_)], expr, _) -> {
-        if(getSymbolTable(moduleName).isUsedTypeDefinition(`type)) {
+        if(getSymbolTable(moduleName).isUsedType(`type)) {
           `buildIsSortDecl(deep, varName, type, expr, moduleName);
         }
         return;
@@ -826,7 +826,7 @@ public abstract class TomAbstractGenerator {
   /*buildClass is not abstract since only Java backend supports class
     only backends that supports Class should overload buildClass
    */
-  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     throw new TomRuntimeException("Backend does not support Class");
   }
 

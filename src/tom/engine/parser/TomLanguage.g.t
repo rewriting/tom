@@ -95,8 +95,8 @@ options{
         this.symbolTable = target.getSymbolTable();
     }
     
-    private void putTypeDefinition(String name, TomType type, TomForwardType forward) {
-        symbolTable.putTypeDefinition(name,type,forward);
+    private void putType(String name, TomType type) {
+        symbolTable.putType(name,type);
     }
 
     private void putSymbol(String name, TomSymbol symbol) {
@@ -1734,7 +1734,6 @@ typeTerm returns [Declaration result] throws TomException
     Option ot = null;
     Declaration attribute = null;
     TargetLanguage implement = null;
-    TomForwardType tomFwdType = `EmptyForward();
     DeclarationList declarationList = `concDeclaration();
     String s;
 }
@@ -1757,7 +1756,7 @@ typeTerm returns [Declaration result] throws TomException
         )
 {
   TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
-          putTypeDefinition(type.getText(), astType, tomFwdType); 
+          putType(type.getText(), astType); 
           result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
