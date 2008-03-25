@@ -156,6 +156,9 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Disjunction of patterns is deprecated and may be removed in a future version. Try to use disjunction of symbols instead ");
   public static final TomMessage invalidConstraintType =
       new TomMessage("Invalid Constraint type ");
+  public static final TomMessage notSyntacticInOr =
+      new TomMessage("The use of symbols with a theory associated (like lists or arrays) is not fully supported in disjunctions");
+    
  
   // checker.TomChecker
   public static final TomMessage findOTL               =
@@ -177,7 +180,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage illegalAnnotationInAntiPattern =
       new TomMessage("It is forbidden to make annotations under an anti symbol");
   public static final TomMessage freeVarNotPresentInOr =
-    new TomMessage("In a disjunction, the (free) variables of all the patterns must be the same. Variable ''{0}'' not found in all disjunctions");
+    new TomMessage("Any variable used in the action should be found in all the members of a disjunction. Variable ''{0}'' not found in all disjunctions");
   
   // compiler
   public static final TomMessage errorMissingSlotDecl =

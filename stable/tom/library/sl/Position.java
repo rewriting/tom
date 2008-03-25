@@ -199,11 +199,11 @@ public class Position implements Cloneable,Path {
     return omega.length;
   }
 
-  public int getHead(){
+  public int getHead() {
     return omega[0];
   }
 
-  public Path getTail(){
+  public Path getTail() {
     if (length()==0) {
       return null;
     }

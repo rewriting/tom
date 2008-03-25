@@ -47,15 +47,15 @@ public class SortTemplate extends TemplateHookedClass {
                       GomClass gomClass,
                       TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
-    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch400NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);{  tom.gom.adt.objects.types.GomClass  tomMatch400NameNumber_freshVar_4=tomMatch400NameNumberfreshSubject_1;if ( (tomMatch400NameNumber_freshVar_4 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch400NameNumber_freshVar_0= tomMatch400NameNumber_freshVar_4.getAbstractType() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch400NameNumber_freshVar_1= tomMatch400NameNumber_freshVar_4.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch400NameNumber_freshVar_2= tomMatch400NameNumber_freshVar_4.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch400NameNumber_freshVar_3= tomMatch400NameNumber_freshVar_4.getSlotFields() ;if ( true ) {
+    {if ( (gomClass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch401NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomClass);{  tom.gom.adt.objects.types.GomClass  tomMatch401NameNumber_freshVar_4=tomMatch401NameNumberfreshSubject_1;if ( (tomMatch401NameNumber_freshVar_4 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch401NameNumber_freshVar_0= tomMatch401NameNumber_freshVar_4.getAbstractType() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch401NameNumber_freshVar_1= tomMatch401NameNumber_freshVar_4.getOperators() ;{  tom.gom.adt.objects.types.ClassNameList  tomMatch401NameNumber_freshVar_2= tomMatch401NameNumber_freshVar_4.getVariadicOperators() ;{  tom.gom.adt.objects.types.SlotFieldList  tomMatch401NameNumber_freshVar_3= tomMatch401NameNumber_freshVar_4.getSlotFields() ;if ( true ) {
 
 
 
 
-        this.abstractType = tomMatch400NameNumber_freshVar_0;
-        this.operatorList = tomMatch400NameNumber_freshVar_1;
-        this.variadicOperatorList = tomMatch400NameNumber_freshVar_2;
-        this.slotList = tomMatch400NameNumber_freshVar_3;
+        this.abstractType = tomMatch401NameNumber_freshVar_0;
+        this.operatorList = tomMatch401NameNumber_freshVar_1;
+        this.variadicOperatorList = tomMatch401NameNumber_freshVar_2;
+        this.slotList = tomMatch401NameNumber_freshVar_3;
         return;
       }}}}}}}}}}
 

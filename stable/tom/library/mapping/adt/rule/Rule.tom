@@ -76,12 +76,6 @@
   make(t0, t1) { tom.gom.adt.rule.types.termlist.ConsTermList.make($t0, $t1) }
 }
 
-%op Condition CondTerm(t:Term) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.CondTerm) }
-  get_slot(t, t) { $t.gett() }
-  make(t0) { tom.gom.adt.rule.types.condition.CondTerm.make($t0) }
-}
-
 %op Condition CondEquals(t1:Term, t2:Term) {
   is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.CondEquals) }
   get_slot(t1, t) { $t.gett1() }
@@ -124,14 +118,6 @@
   make(t0, t1) { tom.gom.adt.rule.types.condition.CondGreaterThan.make($t0, $t1) }
 }
 
-%op Condition CondMethod(t1:Term, name:String, t2:Term) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.CondMethod) }
-  get_slot(t1, t) { $t.gett1() }
-  get_slot(name, t) { $t.getname() }
-  get_slot(t2, t) { $t.gett2() }
-  make(t0, t1, t2) { tom.gom.adt.rule.types.condition.CondMethod.make($t0, $t1, $t2) }
-}
-
 %op Condition EmptyCondAnd() {
   is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.EmptyCondAnd) }
   make() { tom.gom.adt.rule.types.condition.EmptyCondAnd.make() }
@@ -156,10 +142,11 @@
   make(t0, t1) { tom.gom.adt.rule.types.condition.ConsCondOr.make($t0, $t1) }
 }
 
-%op Condition CondNot(c:Condition) {
-  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.CondNot) }
-  get_slot(c, t) { $t.getc() }
-  make(t0) { tom.gom.adt.rule.types.condition.CondNot.make($t0) }
+%op Condition CondMatch(t1:Term, t2:Term) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.condition.CondMatch) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { tom.gom.adt.rule.types.condition.CondMatch.make($t0, $t1) }
 }
 
 %op Term Appl(symbol:String, args:TermList) {
@@ -196,6 +183,12 @@
   get_slot(name, t) { $t.getname() }
   get_slot(term, t) { $t.getterm() }
   make(t0, t1) { tom.gom.adt.rule.types.term.At.make($t0, $t1) }
+}
+
+%op Term Anti(term:Term) {
+  is_fsym(t) { ($t instanceof tom.gom.adt.rule.types.term.Anti) }
+  get_slot(term, t) { $t.getterm() }
+  make(t0) { tom.gom.adt.rule.types.term.Anti.make($t0) }
 }
 
 %op Term BuiltinInt(i:int) {

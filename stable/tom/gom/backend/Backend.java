@@ -66,11 +66,11 @@ public class Backend {
     Map generators =
       new HashMap();
     // prepare stuff for the mappings
-    {if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {{  tom.gom.adt.objects.types.GomClassList  tomMatch350NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )classList);{  tom.gom.adt.objects.types.GomClassList  tomMatch350NameNumber_freshVar_0=tomMatch350NameNumberfreshSubject_1;if ( ((tomMatch350NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || (tomMatch350NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {{  tom.gom.adt.objects.types.GomClassList  tomMatch350NameNumber_begin_2=tomMatch350NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch350NameNumber_end_3=tomMatch350NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch350NameNumber_freshVar_1=tomMatch350NameNumber_end_3;if (!( tomMatch350NameNumber_freshVar_1.isEmptyConcGomClass() )) {{  tom.gom.adt.objects.types.GomClass  tomMatch350NameNumber_freshVar_7= tomMatch350NameNumber_freshVar_1.getHeadConcGomClass() ;if ( (tomMatch350NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch350NameNumber_freshVar_6= tomMatch350NameNumber_freshVar_7.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch350NameNumber_freshVar_10=tomMatch350NameNumber_freshVar_6;if ( (tomMatch350NameNumber_freshVar_10 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch350NameNumber_freshVar_8= tomMatch350NameNumber_freshVar_10.getPkg() ;{  String  tomMatch350NameNumber_freshVar_9= tomMatch350NameNumber_freshVar_10.getName() ;{  tom.gom.adt.objects.types.GomClass  tom_gomclass= tomMatch350NameNumber_freshVar_1.getHeadConcGomClass() ;{  tom.gom.adt.objects.types.GomClassList  tomMatch350NameNumber_freshVar_4= tomMatch350NameNumber_freshVar_1.getTailConcGomClass() ;if ( true ) {
+    {if ( (classList instanceof tom.gom.adt.objects.types.GomClassList) ) {{  tom.gom.adt.objects.types.GomClassList  tomMatch351NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClassList )classList);{  tom.gom.adt.objects.types.GomClassList  tomMatch351NameNumber_freshVar_0=tomMatch351NameNumberfreshSubject_1;if ( ((tomMatch351NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.gomclasslist.ConsConcGomClass) || (tomMatch351NameNumber_freshVar_0 instanceof tom.gom.adt.objects.types.gomclasslist.EmptyConcGomClass)) ) {{  tom.gom.adt.objects.types.GomClassList  tomMatch351NameNumber_begin_2=tomMatch351NameNumber_freshVar_0;{  tom.gom.adt.objects.types.GomClassList  tomMatch351NameNumber_end_3=tomMatch351NameNumber_freshVar_0;do {{{  tom.gom.adt.objects.types.GomClassList  tomMatch351NameNumber_freshVar_1=tomMatch351NameNumber_end_3;if (!( tomMatch351NameNumber_freshVar_1.isEmptyConcGomClass() )) {{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_7= tomMatch351NameNumber_freshVar_1.getHeadConcGomClass() ;if ( (tomMatch351NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_6= tomMatch351NameNumber_freshVar_7.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_10=tomMatch351NameNumber_freshVar_6;if ( (tomMatch351NameNumber_freshVar_10 instanceof tom.gom.adt.objects.types.classname.ClassName) ) {{  String  tomMatch351NameNumber_freshVar_8= tomMatch351NameNumber_freshVar_10.getPkg() ;{  String  tomMatch351NameNumber_freshVar_9= tomMatch351NameNumber_freshVar_10.getName() ;{  tom.gom.adt.objects.types.GomClass  tom_gomclass= tomMatch351NameNumber_freshVar_1.getHeadConcGomClass() ;{  tom.gom.adt.objects.types.GomClassList  tomMatch351NameNumber_freshVar_4= tomMatch351NameNumber_freshVar_1.getTailConcGomClass() ;if ( true ) {
 
 
 
-        ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make(tomMatch350NameNumber_freshVar_8, "_"+tomMatch350NameNumber_freshVar_9) ;
+        ClassName smappingclass =  tom.gom.adt.objects.types.classname.ClassName.make(tomMatch351NameNumber_freshVar_8, "_"+tomMatch351NameNumber_freshVar_9) ;
         GomClass nGomClass =
           tom_gomclass.setClassName(smappingclass);
         TemplateClass stratMapping =
@@ -86,8 +86,8 @@ public class Backend {
             templatefactory.makeTomMappingTemplate(tom_gomclass,null);
         }
         mappingSet.add(mapping);
-        generators.put(tomMatch350NameNumber_freshVar_6,mapping);
-      }}}}}}}}}}}}if ( tomMatch350NameNumber_end_3.isEmptyConcGomClass() ) {tomMatch350NameNumber_end_3=tomMatch350NameNumber_begin_2;} else {tomMatch350NameNumber_end_3= tomMatch350NameNumber_end_3.getTailConcGomClass() ;}}} while(!( (tomMatch350NameNumber_end_3==tomMatch350NameNumber_begin_2) ));}}}}}}}
+        generators.put(tomMatch351NameNumber_freshVar_6,mapping);
+      }}}}}}}}}}}}if ( tomMatch351NameNumber_end_3.isEmptyConcGomClass() ) {tomMatch351NameNumber_end_3=tomMatch351NameNumber_begin_2;} else {tomMatch351NameNumber_end_3= tomMatch351NameNumber_end_3.getTailConcGomClass() ;}}} while(!( (tomMatch351NameNumber_end_3==tomMatch351NameNumber_begin_2) ));}}}}}}}
 
     // generate a class for each element of the list
     while (!classList.isEmptyConcGomClass()) {
@@ -114,43 +114,43 @@ public class Backend {
   public int generateClass(
       GomClass gomclass,
       Map generators) {
-    {if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_1=tomMatch351NameNumberfreshSubject_1;if ( (tomMatch351NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_0= tomMatch351NameNumber_freshVar_1.getClassName() ;if ( true ) {
+    {if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_1=tomMatch352NameNumberfreshSubject_1;if ( (tomMatch352NameNumber_freshVar_1 instanceof tom.gom.adt.objects.types.gomclass.TomMapping) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_0= tomMatch352NameNumber_freshVar_1.getClassName() ;if ( true ) {
 
         /* It was processed by the caller: check it is already in generators */
-        if (!generators.containsKey(tomMatch351NameNumber_freshVar_0)) {
+        if (!generators.containsKey(tomMatch352NameNumber_freshVar_0)) {
           throw new GomRuntimeException(
               "Mapping should be processed before generateClass is called");
         }
         return 1;
-      }}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_4=tomMatch351NameNumberfreshSubject_1;if ( (tomMatch351NameNumber_freshVar_4 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_2= tomMatch351NameNumber_freshVar_4.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_3= tomMatch351NameNumber_freshVar_4.getMapping() ;if ( true ) {
+      }}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_4=tomMatch352NameNumberfreshSubject_1;if ( (tomMatch352NameNumber_freshVar_4 instanceof tom.gom.adt.objects.types.gomclass.AbstractTypeClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_2= tomMatch352NameNumber_freshVar_4.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_3= tomMatch352NameNumber_freshVar_4.getMapping() ;if ( true ) {
 
         TemplateClass abstracttype =
           templatefactory.makeAbstractTypeTemplate(
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(tomMatch351NameNumber_freshVar_3));
-        generators.put(tomMatch351NameNumber_freshVar_2,abstracttype);
+              (TemplateClass)generators.get(tomMatch352NameNumber_freshVar_3));
+        generators.put(tomMatch352NameNumber_freshVar_2,abstracttype);
         return 1;
-      }}}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_7=tomMatch351NameNumberfreshSubject_1;if ( (tomMatch351NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_5= tomMatch351NameNumber_freshVar_7.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_6= tomMatch351NameNumber_freshVar_7.getMapping() ;if ( true ) {
+      }}}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_7=tomMatch352NameNumberfreshSubject_1;if ( (tomMatch352NameNumber_freshVar_7 instanceof tom.gom.adt.objects.types.gomclass.SortClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_5= tomMatch352NameNumber_freshVar_7.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_6= tomMatch352NameNumber_freshVar_7.getMapping() ;if ( true ) {
 
         TemplateClass sort =
           templatefactory.makeSortTemplate(
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(tomMatch351NameNumber_freshVar_6));
-        generators.put(tomMatch351NameNumber_freshVar_5,sort);
+              (TemplateClass)generators.get(tomMatch352NameNumber_freshVar_6));
+        generators.put(tomMatch352NameNumber_freshVar_5,sort);
         return 1;
-      }}}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_10=tomMatch351NameNumberfreshSubject_1;if ( (tomMatch351NameNumber_freshVar_10 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_8= tomMatch351NameNumber_freshVar_10.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_9= tomMatch351NameNumber_freshVar_10.getMapping() ;if ( true ) {
+      }}}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_10=tomMatch352NameNumberfreshSubject_1;if ( (tomMatch352NameNumber_freshVar_10 instanceof tom.gom.adt.objects.types.gomclass.OperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_8= tomMatch352NameNumber_freshVar_10.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_9= tomMatch352NameNumber_freshVar_10.getMapping() ;if ( true ) {
 
         TemplateClass operator = templatefactory.makeOperatorTemplate(
             tomHomePath,
             importList,
             gomclass,
-            (TemplateClass)generators.get(tomMatch351NameNumber_freshVar_9),
+            (TemplateClass)generators.get(tomMatch352NameNumber_freshVar_9),
             multithread);
-        generators.put(tomMatch351NameNumber_freshVar_8,operator);
+        generators.put(tomMatch352NameNumber_freshVar_8,operator);
 
         TemplateClass sOpStrat =
           new tom.gom.backend.strategy.SOpTemplate(gomclass);
@@ -164,7 +164,7 @@ public class Backend {
         TemplateClass makeOpStrat = new tom.gom.backend.strategy.MakeOpTemplate(gomclass);
         makeOpStrat.generateFile();
        return 1;
-      }}}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_15=tomMatch351NameNumberfreshSubject_1;if ( (tomMatch351NameNumber_freshVar_15 instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_11= tomMatch351NameNumber_freshVar_15.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch351NameNumber_freshVar_12= tomMatch351NameNumber_freshVar_15.getMapping() ;{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_13= tomMatch351NameNumber_freshVar_15.getEmpty() ;{  tom.gom.adt.objects.types.GomClass  tomMatch351NameNumber_freshVar_14= tomMatch351NameNumber_freshVar_15.getCons() ;if ( true ) {
+      }}}}}}}if ( (gomclass instanceof tom.gom.adt.objects.types.GomClass) ) {{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumberfreshSubject_1=(( tom.gom.adt.objects.types.GomClass )gomclass);{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_15=tomMatch352NameNumberfreshSubject_1;if ( (tomMatch352NameNumber_freshVar_15 instanceof tom.gom.adt.objects.types.gomclass.VariadicOperatorClass) ) {{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_11= tomMatch352NameNumber_freshVar_15.getClassName() ;{  tom.gom.adt.objects.types.ClassName  tomMatch352NameNumber_freshVar_12= tomMatch352NameNumber_freshVar_15.getMapping() ;{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_13= tomMatch352NameNumber_freshVar_15.getEmpty() ;{  tom.gom.adt.objects.types.GomClass  tomMatch352NameNumber_freshVar_14= tomMatch352NameNumber_freshVar_15.getCons() ;if ( true ) {
 
 
 
@@ -174,12 +174,12 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(tomMatch351NameNumber_freshVar_12));
-        generators.put(tomMatch351NameNumber_freshVar_11,operator);
+              (TemplateClass)generators.get(tomMatch352NameNumber_freshVar_12));
+        generators.put(tomMatch352NameNumber_freshVar_11,operator);
         /* Generate files for cons and empty */
         int ret = 1;
-        ret+=generateClass(tomMatch351NameNumber_freshVar_13,generators);
-        ret+=generateClass(tomMatch351NameNumber_freshVar_14,generators);
+        ret+=generateClass(tomMatch352NameNumber_freshVar_13,generators);
+        ret+=generateClass(tomMatch352NameNumber_freshVar_14,generators);
 
         return ret;
       }}}}}}}}}}
