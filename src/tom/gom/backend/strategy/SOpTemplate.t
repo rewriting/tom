@@ -138,11 +138,6 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
-  }
-
-
   public @className()@(@genConstrArgs(slotList.length(),"tom.library.sl.Strategy arg",false)@) {
     args = new tom.library.sl.Strategy[] {@genConstrArgs(slotList.length(),"arg",false)@};
   }

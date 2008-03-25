@@ -94,6 +94,5 @@ public interface Strategy extends Visitable {
    */
   public int visit(Introspector m);
 
-  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure;
 }
 

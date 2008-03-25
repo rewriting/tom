@@ -124,10 +124,4 @@ public abstract class BasicStrategy implements Strategy {
     return (Visitable) visitLight(any,VisitableIntrospector.getInstance());
   }
 
-  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
-    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
-  }
-
-
-
 }

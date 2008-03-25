@@ -141,10 +141,6 @@ public class @className()@ implements tom.library.sl.Strategy {
     }
   }
 
-  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws tom.library.sl.VisitFailure {
-    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
-  }
-
   public @className()@(@childListWithType(slotList)@) {
 @generateMembersInit()@
   }

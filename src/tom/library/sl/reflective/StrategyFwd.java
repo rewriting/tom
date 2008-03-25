@@ -44,11 +44,7 @@ public class StrategyFwd extends AbstractStrategy {
   }
 
   public Object visitLight(Object any, Introspector introspector) throws VisitFailure {
-      if (any instanceof Strategy) {
-      return ((Strategy) any).accept(this);
-    } else {
       return visitors[ARG].visitLight(any,introspector);
-    }
   }
 
   public int visit(Introspector introspector) {

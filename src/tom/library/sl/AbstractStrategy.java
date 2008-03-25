@@ -83,10 +83,6 @@ public abstract class AbstractStrategy implements Strategy {
     return this;
   }
 
-  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws VisitFailure {
-    return v.visit_Strategy(this,tom.library.sl.VisitableIntrospector.getInstance());
-  }
-
   public Visitable visit(Environment envt) throws VisitFailure {
     return (Visitable) visit(envt,VisitableIntrospector.getInstance());
   }

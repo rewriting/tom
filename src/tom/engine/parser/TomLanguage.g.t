@@ -1746,9 +1746,7 @@ typeTerm returns [Declaration result] throws TomException
             LBRACE
 
             implement = keywordImplement
-            (   s = keywordVisitorFwd
-                { tomFwdType = `TLForward(s); }
-            |   attribute = keywordEquals[type.getText()]
+            (  attribute = keywordEquals[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
             |   attribute = keywordIsSort[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
@@ -1781,21 +1779,7 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
         )
     ;
 
-keywordVisitorFwd returns [String code] throws TomException
-{
-  code = "";
-}
-    :
-        (
-           VISITOR_FWD 
-            {
-                selector().push("targetlexer");
-                code = targetparser.goalLanguage(new LinkedList()).getCode();
-                selector().pop();
-            }
-        )
-    ;
-  
+ 
 keywordEquals[String type] returns [Declaration result] throws TomException
 {
     result = null;
@@ -2278,7 +2262,6 @@ tokens {
     GET_TAIL = "get_tail";
     IS_EMPTY = "is_empty";
     IMPLEMENT = "implement";
-    VISITOR_FWD = "visitor_fwd";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
     WHEN = "when";
