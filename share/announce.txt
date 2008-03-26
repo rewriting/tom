@@ -33,7 +33,7 @@ programming and debugging support.
 
 This new release contains many improvements and new features:
 
-	- new alternative syntax for '%match' based on atomic constraints,
+	- new alternative syntax for '%match', based on atomic constraints
       that can be combined with '&&' and '||' operators. This gives a 
       higher expressiveness and conciseness. Works also in '%strategy'   
 
