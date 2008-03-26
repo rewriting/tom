@@ -33,8 +33,25 @@ programming and debugging support.
 
 This new release contains many improvements and new features:
 
-  
+	- new alternative syntax for '%match' based on atomic constraints,
+      that can be combined with '&&' and '||' operators. This gives a 
+      higher expressiveness and conciseness. Works also in '%strategy'   
 
+    - hand-written strategies became easier to write. No more Forward
+      class is needed. 
+        
+	- new tool based on ANTLR 3 for implementing parsers that 
+	  output GOM terms: GOMAntlrAdapter.
+  
+	- strategies can now extend any term built on constructors, functions 
+	  and variables.	
+
+	- GOM's lists now implement the interface Collection. Consequently, 
+	  Java's classic iteration techniques can be employed.
+
+	- several speed-ups of the compilation process as well as for the
+      generated code. 
+	   
 Tom is available, in open source (GPL/BSD License), from the web page:
 
   http://tom.loria.fr/
