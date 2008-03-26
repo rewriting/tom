@@ -37,7 +37,7 @@ This new release contains many improvements and new features:
       that can be combined with '&&' and '||' operators. This gives a 
       higher expressiveness and conciseness. Works also in '%strategy'   
 
-    - hand-written strategies became easier to write. No more Forward
+    - hand-written strategies became easier to write. No more 'Forward'
       class is needed. 
         
 	- new tool based on ANTLR 3 for implementing parsers that 
