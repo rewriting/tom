@@ -46,13 +46,26 @@ public class Viewer {
   /* -------- dot part --------- */
   public static void toDot(tom.library.sl.Visitable v, Writer w) 
     throws java.io.IOException {
-      w.write("digraph visitable {\nordering=out;");
-      try{
-        Strategy print = new Print(w);
-        `TopDown(print).visit(v);
-      } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
-      w.write("\n}");
-      w.flush();
+      if ( v instanceof tom.library.sl.Strategy ) {
+        Strategy subj = (tom.library.sl.Strategy) v;
+        Mu.expand(subj);
+        try{
+          subj = (Strategy) `TopDownCollect(RemoveMu()).visit(subj);
+          w.write("digraph strategy {\nordering=out;");
+          Strategy print = new PrintStrategy(w);
+          `TopDownCollect(print).visit(subj);
+        } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
+        w.write("\n}");
+        w.flush();
+      } else {
+        w.write("digraph visitable {\nordering=out;");
+        try{
+          Strategy print = new Print(w);
+          `TopDown(print).visit(v);
+        } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
+        w.write("\n}");
+        w.flush();
+      }
     }
 
   public static void toDot(tom.library.sl.Visitable v) {
@@ -137,11 +150,7 @@ public class Viewer {
       Runtime rt = Runtime.getRuntime();
       Process pr = rt.exec("dot");
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      if(v instanceof Strategy) {        
-        Viewer.toDot((Strategy)v, out); 
-      } else {
-        Viewer.toDot(v, out); 
-      }
+      Viewer.toDot(v, out); 
       out.close();
       Parser parser = new Parser(pr.getInputStream());
       parser.parse();
@@ -244,19 +253,6 @@ public class Viewer {
     return s;
   }
 
-  public static void 
-    toDot(Strategy subj, Writer w) throws IOException {
-      Mu.expand(subj);
-      try{
-        subj = (Strategy) `TopDownCollect(RemoveMu()).visit(subj);
-        w.write("digraph strategy {\nordering=out;");
-        Strategy print = new PrintStrategy(w);
-        `TopDownCollect(print).visit(subj);
-      } catch (VisitFailure e) {throw new RuntimeException("unexcepted visit failure");}
-      w.write("\n}");
-      w.flush();
-    }
-
   %strategy RemoveMu() extends Identity() { 
     visit Strategy {
       Mu[s2=strat] -> {
@@ -271,16 +267,6 @@ public class Viewer {
     }
   }
 
-  public static void toDot(tom.library.sl.Strategy s) {
-    try {
-      Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
-      toDot(s,w);
-      w.write('\n');
-      w.flush();
-    } catch(java.io.IOException e) {}
-  }
-
-
   static class PrintStrategy extends AbstractStrategy {
 
     protected Writer w;
@@ -290,7 +276,7 @@ public class Viewer {
       initSubterm();
       this.w=w;
     }
-    
+
     public Object visitLight(Object any, Introspector i) throws VisitFailure {
       throw new VisitFailure();
     }
