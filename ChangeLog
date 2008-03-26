@@ -1,3 +1,6 @@
+2008-03-26 pem
+  * bumped to 2.6-rc1
+
 2008-03-22 pem
   * bootinstall
   * fix 5280: make the string unknown type a constant
