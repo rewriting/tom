@@ -37,16 +37,17 @@ This new release contains many improvements and new features:
       that can be combined with '&&' and '||' operators. This gives a 
       higher expressiveness and conciseness. Works also in '%strategy'   
 
-    - hand-written strategies became easier to write. No more 'Forward'
-      class is needed. 
+  - hand-written strategies became easier to write. No more 'Forward'
+      class is needed.
+
+  - strategy support for hand-written mappings 
         
 	- new tool based on ANTLR 3 for implementing parsers that 
-	  output GOM terms: GOMAntlrAdapter.
+	  directly output Gom terms: GOMAntlrAdapter.
   
-	- strategies can now extend any term built on constructors, functions 
-	  and variables.	
+  - term-graph rewriting support in Gom 
 
-	- GOM's lists now implement the interface Collection. Consequently, 
+	- Gom's lists now implement the interface Collection. Consequently, 
 	  Java's classic iteration techniques can be employed.
 
 	- several speed-ups of the compilation process as well as for the
