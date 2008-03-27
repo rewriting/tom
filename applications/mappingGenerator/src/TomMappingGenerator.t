@@ -178,8 +178,8 @@ private static java.util.List myAdd(Object e,java.util.List l) {
     strBuilder.append(%[
 %typeterm @className@ {
   implement     { @fullClassName@ }
-  is_sort(t)    { t instanceof @fullClassName@ }
-  equals(t1,t2) { t1.equals(t2) }      
+  is_sort(t)    { $t instanceof @fullClassName@ }
+  equals(t1,t2) { $t1.equals($t2) }      
 }
 ]%);
   }
@@ -205,7 +205,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
     }
     strBuilder.append(%[
 %op @codomain@ @className@(@getFieldsDeclarations(methods,usedTypes)@) {
-  is_fsym(t)                { t instanceof @fullClassName@ } @getSlotDeclarations(methods,className)@     
+  is_fsym(t)                { $t instanceof @fullClassName@ } @getSlotDeclarations(methods,className)@     
 }
 ]%);
   }
@@ -260,7 +260,7 @@ private static java.util.List myAdd(Object e,java.util.List l) {
       if (m.getReturnType().isArray()) { continue; }
       declaredFields.add(fieldName);
       result.append(%[
-  get_slot(@fieldName@, t)  { ((@className@)t).@methodName@() }]%);    
+  get_slot(@fieldName@, t)  { ((@className@)$t).@methodName@() }]%);    
     }
     return result.toString(); 
   }
