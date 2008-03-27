@@ -169,11 +169,14 @@ public class Typer extends TomGenericPlugin {
       String tomName = it.next();
       TomSymbol tomSymbol = getSymbolFromName(tomName);
       /*
-       * add default IsFsymDecl and MakeDecl, unless it is a builtin type
+       * add default IsFsymDecl unless it is a builtin type
+       * add default IsFsymDecl and MakeDecl unless:
+       *  - it is a builtin type
+       *  - another option (if_sfsym, get_slot, etc) is already defined for this operator
        */
       if(!getStreamManager().getSymbolTable().isBuiltinType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
-        tomSymbol = addDefaultIsFsym(tomSymbol);
         tomSymbol = addDefaultMake(tomSymbol);
+        tomSymbol = addDefaultIsFsym(tomSymbol);
       }
       try {
         tomSymbol = (TomSymbol) `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this)).visitLight(tomSymbol);
@@ -203,7 +206,7 @@ public class Typer extends TomGenericPlugin {
 
   private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
     %match(tomSymbol) {
-      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray)[]),_*)] -> {
+      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray|MakeAddList|MakeAddArray|IsFsymDecl|GetImplementationDecl|GetSlotDecl|GetHeadDecl|GetTailDecl|IsEmptyDecl|GetElementDecl|GetSizeDecl)[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
