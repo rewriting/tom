@@ -286,6 +286,96 @@ patternInstruction [TomList subjectList, List list, TomType rhsType] throws TomE
         )
     ;
 
+visitInstruction [TomList subjectList, List list, TomType rhsType] throws TomException
+{
+    List<Option> optionListLinked = new LinkedList<Option>();
+    List<TomTerm> matchPatternList = new LinkedList<TomTerm>();
+        
+    Constraint constraint = `TrueConstraint();    
+    Constraint constr = null;
+    OptionList optionList = null;
+    Option option = null;
+        
+    boolean isAnd = false;
+ 
+    List blockList = new LinkedList();
+    TomTerm rhsTerm = null;
+   
+    clearText();
+}
+    :   (
+            ( (ALL_ID COLON) => label:ALL_ID COLON )?
+             option = matchPattern[matchPatternList,true] 
+            {
+              if(matchPatternList.size() != subjectList.length()) {                       
+                getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.badMatchNumberArgument,
+                    new Object[]{new Integer(subjectList.length()), new Integer(matchPatternList.size())},
+                    currentFile(), getLine()));
+                return;
+              }
+              
+              int counter = 0;
+              %match(subjectList) {
+                concTomTerm(_*,subjectAtIndex,_*) -> {
+                  constraint = `AndConstraint(constraint,MatchConstraint(matchPatternList.get(counter),subjectAtIndex));
+                  counter++;
+                }
+              }
+              
+              optionList = `concOption(option, OriginalText(Name(text.toString())));
+              
+              matchPatternList.clear();
+              clearText();
+            } 
+            (
+              ( 
+               AND_CONNECTOR { isAnd = true;} 
+               | OR_CONNECTOR  { isAnd = false;} 
+              )
+              constr = matchOrConstraint[optionListLinked]
+              { 
+                constraint = isAnd ? `AndConstraint(constraint,constr) : `OrConstraint(constraint,constr);
+              }                                         
+            )?
+   ARROW 
+   {
+       optionList = `concOption();
+       for(Option op:optionListLinked) {
+         optionList = `concOption(optionList*,op);
+       }
+       optionList = `concOption(optionList*,OriginalText(Name(text.toString())));
+   }
+(t:LBRACE 
+ {
+ // update for new target block
+ updatePosition(t.getLine(),t.getColumn());
+ // actions in target language : call the target lexer and
+ // call the target parser
+ selector().push("targetlexer");
+ TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+ // target parser finished : pop the target lexer
+ selector().pop();
+ blockList.add(tlCode);
+ list.add(`ConstraintInstruction(
+     constraint,
+     RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
+     optionList)
+   );
+ }
+ | rhsTerm = plainTerm[null,null,0]
+ {
+ // case where the rhs of a rule is an algebraic term
+ list.add(`ConstraintInstruction(
+     constraint,
+     Return(BuildReducedTerm(rhsTerm,rhsType)),
+     optionList)
+   );
+
+     }
+)
+)
+;
+
 arrowAndAction[List list, OptionList optionList, List<Option> optionListLinked, Token label, TomType rhsType, Constraint constraint] throws TomException
 {
   List blockList = new LinkedList();
@@ -302,7 +392,7 @@ arrowAndAction[List list, OptionList optionList, List<Option> optionListLinked, 
          optionList = `concOption(Label(Name(label.getText())),optionList*);
        }
    }
-   (t:LBRACE 
+   t:LBRACE 
    {
        // update for new target block
        updatePosition(t.getLine(),t.getColumn());
@@ -319,19 +409,8 @@ arrowAndAction[List list, OptionList optionList, List<Option> optionListLinked, 
            optionList)
        );
    } 
-   | rhsTerm = plainTerm[null,null,0]
-     {
-     // case where the rhs of a rule is an algebraic term
-     // TODO
-       list.add(`ConstraintInstruction(
-           constraint,
-           Return(BuildReducedTerm(rhsTerm,rhsType)),
-           optionList)
-       );
-
-     }
-   ) 
   ;
+
 
 constraintInstruction [List list, TomType rhsType] throws TomException
 {    
@@ -453,14 +532,14 @@ matchPattern [List list,boolean allowImplicit] returns [Option result] throws To
     TomTerm term = null;
 }
     :   (
-             term = annotedTerm[allowImplicit] 
+             term = annotatedTerm[allowImplicit] 
             {
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
             ( 
                 COMMA {text.append('\n');}  
-                term = annotedTerm[allowImplicit] {list.add(term);}
+                term = annotatedTerm[allowImplicit] {list.add(term);}
             )*
         )
     ;
@@ -637,7 +716,7 @@ strategyVisit [List list] throws TomException
       subjectList = `concTomTerm(TomTypeToTomTerm(vType));
     }
     (  
-      patternInstruction[subjectList,constraintInstructionList,vType] 
+      visitInstruction[subjectList,constraintInstructionList,vType] 
     )* 
     RBRACE
   )
@@ -650,11 +729,11 @@ strategyVisit [List list] throws TomException
 ;
 
 // terms for %match
-annotedTerm [boolean allowImplicit] returns [TomTerm result] throws TomException
+annotatedTerm [boolean allowImplicit] returns [TomTerm result] throws TomException
 {
     result = null;
     TomName labeledName = null;
-    TomName annotedName = null;
+    TomName annotatedName = null;
     int line = 0;
     boolean anti = false;
 }
@@ -673,16 +752,16 @@ annotedTerm [boolean allowImplicit] returns [TomTerm result] throws TomException
                 {
                     text.append(name.getText());
                     text.append('@');
-                    annotedName = `Name(name.getText());
+                    annotatedName = `Name(name.getText());
                     line = name.getLine();
                 }
             )? 
           (
             {allowImplicit}?
-            result = plainTerm[labeledName,annotedName,line] 
+            result = plainTerm[labeledName,annotatedName,line] 
             | {!allowImplicit}?
               (a:ANTI_SYM {anti = !anti;} )* 
-              result = simplePlainTerm[labeledName,annotedName,line, new LinkedList(), new LinkedList(), new LinkedList(), new LinkedList(), anti]
+              result = simplePlainTerm[labeledName,annotatedName,line, new LinkedList(), new LinkedList(), new LinkedList(), new LinkedList(), anti]
           )
        )
     ;
@@ -926,7 +1005,7 @@ xmlTerm [List optionList, List constraintList] returns [TomTerm result] throws T
             }
 
         | // #TEXT(...)
-            XML_TEXT LPAREN arg1 = annotedTerm[true] RPAREN
+            XML_TEXT LPAREN arg1 = annotatedTerm[true] RPAREN
             {
                 keyword = Constants.TEXT_NODE;
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
@@ -1109,7 +1188,7 @@ xmlTermList [List list] returns [boolean result] throws TomException
 }
     :
         (
-            term = annotedTerm[true] {list.add(term);}
+            term = annotatedTerm[true] {list.add(term);}
         )*
         {result = true;}
     ;
@@ -1247,10 +1326,10 @@ implicitTermList [List list] returns [boolean result] throws TomException
             LBRACKET
             { text.append("["); }
             (
-                term = annotedTerm[true] { list.add(term); }
+                term = annotatedTerm[true] { list.add(term); }
                 (
                     COMMA { text.append(","); }
-                    term = annotedTerm[true] { list.add(term); }
+                    term = annotatedTerm[true] { list.add(term); }
                 )*
             )?
             RBRACKET
@@ -1324,8 +1403,8 @@ termList [List list] throws TomException
     TomTerm term = null;
 }
     :   (
-            term = annotedTerm[true] {list.add(term);}
-            ( COMMA {text.append(',');} term = annotedTerm[true] {list.add(term);})*
+            term = annotatedTerm[true] {list.add(term);}
+            ( COMMA {text.append(',');} term = annotatedTerm[true] {list.add(term);})*
         )
     ;
 
@@ -1339,7 +1418,7 @@ pairList [List list] throws TomException
                 text.append(name.getText());
                 text.append('=');
             } 
-            term = annotedTerm[true] 
+            term = annotatedTerm[true] 
             {list.add(`PairSlotAppl(Name(name.getText()),term));}
             ( COMMA {text.append(',');} 
                 name2:ALL_ID EQUAL 
@@ -1347,7 +1426,7 @@ pairList [List list] throws TomException
                     text.append(name2.getText());
                     text.append('=');
                 } 
-                term = annotedTerm[true] 
+                term = annotatedTerm[true] 
                 {list.add(`PairSlotAppl(Name(name2.getText()),term));}
             )*
         )

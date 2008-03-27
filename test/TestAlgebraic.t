@@ -39,24 +39,4 @@ public class TestAlgebraic extends TestCase {
     fail("should not be there");
   }
   
-  private static T1 eval1(T1 t) {
-    %match(t) { 
-      a() -> b()
-    }
-    return t;
-  }
-
-  private static T2 eval2(T1 t) {
-    %match(t) { 
-      b() -> d()
-    }
-    return null;
-  }
-
-  public void test2() {
-    T1 res = `a();
-    assertEquals(eval1(res),`b());
-    assertEquals(eval2(eval1(res)),`d());
-  }
-
 }
