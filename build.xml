@@ -600,6 +600,7 @@
     </copy>
     <copy todir="${stable.dist.share}">
       <fileset dir="${share}">
+        <include name="LICENCE"/>
         <include name="man/**/*"/>
       </fileset>
     </copy>
@@ -751,6 +752,7 @@
     </copy>
     <copy todir="${src.dist.share}">
       <fileset dir="${share}">
+        <include name="LICENCE"/>
         <include name="man/**/*"/>
       </fileset>
     </copy>
