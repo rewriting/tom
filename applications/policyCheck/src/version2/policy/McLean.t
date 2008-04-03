@@ -3,28 +3,18 @@ import accesscontrol.*;
 import accesscontrol.types.*;
 import policy.Policy;
 
-public class McLean implements Policy {
+public class McLean extends Policy {
 	%include { sl.tom }
   %include { ../accesscontrol/accesscontrol.tom }
 
-  private SecurityLevelsLattice slL;
 	/**
 	 * Starts with an empty current state 
 	 * 
 	 * @param the security levels lattice 
 	 */
  	public McLean(SecurityLevelsLattice slL) {
-    this.slL = slL;
+    super(slL);
 	}
-
-	/**
-	 * Get the security lattice
-	 * 
-	 * @return the security lattice
-	 */
-  public SecurityLevelsLattice getSecurityLevelsLattice() {
-    return slL;
-  }
 
 	/**
 	 * The predicate that should be verified by  the policy

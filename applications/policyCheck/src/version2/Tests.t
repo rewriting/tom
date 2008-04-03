@@ -9,11 +9,6 @@ public class Tests {
   %include { accesscontrol/accesscontrol.tom }
 
 	public static void main(String[] args) {
-    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high"),sl("very high")));
-    //     SecurityLevelsLattice sls = `slLattice(slSet(sl("medium"),sl("high")));
-    //     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("high")));
-    //SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
-
     Subject s0 = `subject(0,sl("very high"));
     Subject s1 = `subject(1,sl("high"));
     Subject s2 = `subject(2,sl("medium"));
@@ -25,139 +20,32 @@ public class Tests {
     Resource r2 = `resource(2,sl("medium"));
     Resource r1 = `resource(1,sl("high"));
     Resource r0= `resource(0,sl("very high"));
-
-    ListOfSubjects slist = `subjects(s1,s2,s3);
-    ListOfResources rlist = `resources(r1,r2,r3);
-
-
-    /*
-
-    McLean mcl = new McLean(sls);
-    State cs = `state(accesses());
-    Decision result = null;
-    Request req = null;
-
-		System.out.println("START  BLP---------------------");
-    Request req = `add(read(s1,r3));
-    Decision result = blp.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(write(s1,r2));
-    result = blp.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(read(s2,r2));
-    result = blp.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(write(s2,r1));
-    result = blp.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-		System.out.println("\nVALID STATUS: "+ blp.valid(cs)+"\n");
-   
-		System.out.println("START  McLean ---------------------");
-
-    cs = `state(accesses());
-
-    req = `add(write(s2,r2));
-    result = mcl.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(read(s2,r2));
-    result = mcl.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-		System.out.println("\nVALID STATUS: "+ mcl.valid(cs)+"\n");
-
-		System.out.println("START  McLean ---------------------");
-
-    cs = `state(accesses());
-
-    req = `add(read(s1,r3));
-    result = mcl.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(write(s1,r2));
-    result = mcl.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(read(s2,r2));
-    result = mcl.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-    req = `add(write(s2,r1));
-    result = mcl.transition(req,cs);
-		System.out.println();
-		System.out.println("Request: "+req);
-		System.out.println("Result:  "+result);
-    cs = result.getstate();
-
-		System.out.println("\nVALID STATUS: "+ mcl.valid(cs)+"\n");
-*/
  
     /*
      * check a configuration
      */
-//     ListOfSubjects slist = `subjects(s1,s2,s3,s4);
-//     ListOfResources rlist = `resources(r1,r2,r3,r4);
     int numberOfAccessMode = 2;
-    
-    sls = `slLattice(slSet(sl("low"),sl("high")));
-    slist = `subjects(s1,s2);
-    rlist = `resources(r1,r2,r3);
+    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
+//     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("high")));
+
+    ListOfSubjects slist = `subjects(s1,s2,s3,s4);
+    ListOfResources rlist = `resources(r1,r2,r3,r4);
 
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
 
-    //System.out.println("check enum");
-    //simplechecker(lor,lor,`requests());
+    System.out.println("\nDELETE = " + `clearRequests(sls,add(read(s1,r1)),lor));
+
 
     System.out.println("check McLean");
     runChecker(new McLean(sls),lor);
-//     runNaiveChecker(new McLean(sls),lor);
 
-//     System.out.println("check BLP");
-//     runChecker(new BLP(sls),lor);
+    System.out.println("check BLP");
+    runChecker(new BLP(sls),lor);
 
     System.out.println("END");
 	}
 	
-
-  /**
-   * a naive checker
-   */
-  private static void runNaiveChecker(Policy p, ListOfRequests lor) {
-    naiveChecker(`state(accesses()),p,lor,`traces());
-  }
-
   /**
 	 * look for an information leakage
 	 * 
@@ -168,7 +56,7 @@ public class Tests {
   private static void runChecker(Policy p, ListOfRequests lor) {
     cacheValid.clear();
     cachePair.clear();
-    checker(`state(accesses()),p,`requests(),lor,`traces());
+    otherChecker(`state(accesses()),p,`requests(),lor,`traces());
   }
 
 
@@ -201,10 +89,13 @@ public class Tests {
      * cachePair: a global cache that stores pairs <state,lor>
      *            used to cut the search space and avoid doing a same work twice
      */
+  private static Collection<State> cacheLeak = new HashSet<State>();
   private static Collection<State> cacheValid = new HashSet<State>();
-  private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(300000);
+  private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(100000);
   //private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
   private static int nbAccesses = 100;
+
+
   /**
 	 * look for an information leakage
 	 * 
@@ -285,49 +176,75 @@ public class Tests {
       }
     }
   }
- 
 
-  private static void naiveChecker(State s, Policy p, ListOfRequests lor, ListOfTraces traces) {
+  /**
+	 * look for an information leakage
+	 * 
+	 * @param s the current state (initially empty)
+	 * @param p the policy
+	 * @param previous the list of requests tthat have to be checked after the next grant (initially empty)
+	 * @param lor the list of requests to check
+	 * @param traces the trace that explain how the leakage has been found (initially empty)
+	 * print LEAKAGE with a trace in an information leakage is found 
+	 */
+  private static void otherChecker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, ListOfTraces traces) {
+    Pair key = `pair(s,lor);
+    if(cachePair.get(key) != null) {
+      nbCut = (nbCut+1) % 10000;
+      if(nbCut==0) {
+        System.out.print(".");
+      }
+      return;
+    } else {
+      cachePair.put(key,Boolean.TRUE);
+      nbAdd = (nbAdd+1) % 10000;
+      if(nbAdd==0) {
+        System.out.print("+");
+      }
+    }
+
+    if( ! p.valid(s) ) {
+      if(traces.length()<nbAccesses){
+        nbAccesses = traces.length();
+        System.out.println("LEAKAGE DETECTED ("+nbAccesses+")");
+        while(!traces.isEmptytraces()) {
+          System.out.println(traces.getHeadtraces());
+          traces = traces.getTailtraces();
+        }
+        System.out.println("final state = " + s);
+      }
+      return;
+    }
+
 
     %match(lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
         Decision decision1 = p.transition(`r,s);
         State newState = decision1.getstate();
-
         ListOfRequests nextLor;
+        ListOfRequests nextPrevious;
         ListOfTraces newTraces = traces;
-        newTraces = `traces(traces*,RequestToTrace(r),StateToTrace(newState));
-        nextLor = `requests(R1*,R2*);
-
-        naiveChecker(newState,p,nextLor,newTraces);
-        // note: do not perform a return, otherwise, the enumeration is stopped
-      }
-
-      //_ -> { // _ Instead of requests() to allow sol2
-      requests() -> { // with sol1 only
-        // this part is executed after the previous match
-        // do the validation when no more request matches
-        if(p.valid(s) == false) {
-          if(traces.length()<nbAccesses){
-            nbAccesses = traces.length();
-            System.out.println("LEAKAGE DETECTED ("+nbAccesses+")");
-            while(!traces.isEmptytraces()) {
-              System.out.println(traces.getHeadtraces());
-              traces = traces.getTailtraces();
-            }
-            System.out.println("final state = " + s);
-            //System.exit(0);
-          } 
-//           else {
-//             System.out.println("LEAKAGE ----------------------  "+nbAccesses);
-//           }
+        if(decision1.isgrant()) {
+          //System.out.print("+");
+          newTraces = `traces();//`traces(traces*,RequestToTrace(r),StateToTrace(newState));
+          nextPrevious = `requests();
+          nextLor = `requests(previous*,R1*,R2*);
+          // nextLor = `clearRequests(p.getSecurityLevelsLattice(),r,nextLor);
+          checker(newState,p,nextPrevious,nextLor,newTraces);
         } 
+// else {
+//           //System.out.print(".");
+//           nextPrevious = `requests(previous*,R1*);
+//           nextLor = `requests(R2*);
+//         }
+//                 checker(newState,p,nextPrevious,nextLor,newTraces);
+         // note: do not perform a return, otherwise, the enumeration is stopped
       }
     }
   }
-
  
+
 
     // just to check that the enumeration is correct
   private static void simplechecker(ListOfRequests goal, ListOfRequests lor, ListOfRequests trace) {
@@ -347,5 +264,43 @@ public class Tests {
         }
       }
     }
+  }
+
+
+  private static ListOfRequests clearRequests(SecurityLevelsLattice slL, Request r, ListOfRequests lor) {
+    if(lor.isEmptyrequests()){
+      return `requests();
+    }
+
+    %match(r) {
+			add(read(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
+        %match(lor) {
+          requests(R1*,a@add(read(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
+            if(`s1==`s2 && `slL.ge(`rsl1,`rsl2)) {
+              return `clearRequests(slL,r,requests(R1*,R2*));
+            } 
+          }
+          _ -> {
+            return lor;
+          }
+//               ListOfRequests lr =  `clearRequests(slL,r,requests(R1*,R2*));
+//               return `requests(a,lr*);
+        }
+      }
+			add(write(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
+        %match(lor) {
+          requests(R1*,a@add(write(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
+            if(`s1==`s2 && `slL.ge(`rsl2,`rsl1)) {
+              return `clearRequests(slL,r,requests(R1,R2));
+            }
+          } 
+          _ -> {
+            return lor;
+          }
+        }
+      }
+    }
+    //ERROR
+    return `requests();
   }
 }

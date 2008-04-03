@@ -3,26 +3,16 @@ import accesscontrol.*;
 import accesscontrol.types.*;
 import policy.Policy;
 
-public class BLP implements Policy {
+public class BLP extends Policy {
 	%include { sl.tom }
   %include { ../accesscontrol/accesscontrol.tom }
 
-  private SecurityLevelsLattice slL;
 	/**
 	 * @param the security levels lattice 
 	 */
  	public BLP(SecurityLevelsLattice slL) {
-    this.slL = slL;
+    super(slL);
 	}
-
-	/**
-	 * Get the security lattice
-	 * 
-	 * @return the security lattice
-	 */
-  public SecurityLevelsLattice getSecurityLevelsLattice() {
-    return slL;
-  }
 
   /**
 	 * The predicate that should be verified by the policy

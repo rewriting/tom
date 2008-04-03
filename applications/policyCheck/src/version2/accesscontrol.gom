@@ -86,6 +86,10 @@ module accesscontrol
   }
    
   ListOfAccesses = accesses(Access*)
+
+  accesses:block(){
+  static int max = 0;
+  }
   // we use sorted list to identify equivalent states
   accesses:make_insert(e,l) {
     accesscontrol.types.listofaccesses.accesses l1 = (accesscontrol.types.listofaccesses.accesses) l;
@@ -144,6 +148,12 @@ module accesscontrol
     for(accesscontrol.types.Access elt:toBeAdded) {
       l2 = `accesses(elt,l2*);
     }
+
+//     int ll =  l2.length();
+//     if(max<ll){
+//       max=ll;
+//       System.out.println("Max="+max);
+//     }
     return l2;
   }
 
