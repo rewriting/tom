@@ -61,7 +61,15 @@ fi
 # set TOM_LIB location
 TOM_LIB="${@TOM_HOME@}/lib"
 TOM_JAR=""
-for i in "${TOM_LIB}"/*.jar
+for i in "${TOM_LIB}"/tom/*.jar
+do
+	TOM_JAR="$TOM_JAR:$i"
+done
+for i in "${TOM_LIB}"/tools/*.jar
+do
+	TOM_JAR="$TOM_JAR:$i"
+done
+for i in "${TOM_LIB}"/runtime/*.jar
 do
 	TOM_JAR="$TOM_JAR:$i"
 done

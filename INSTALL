@@ -68,16 +68,16 @@ to do:
   - To run the examples, we also suggest you to define a TOM_LIB variable
     and update your CLASSPATH:
 (bash)
-  for i in "${TOM_HOME}"/lib/*.jar
+  for i in "${TOM_HOME}"/lib/runtime/*.jar
   do
     TOM_LIB="$TOM_LIB:$i"
   done
   export CLASSPATH=${TOM_LIB}:${CLASSPATH}
 
 (csh)
-  set TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
+  set TOM_LIB=`echo ${TOM_HOME}/lib/runtime/*.jar | tr ' ' ':'`
   setenv CLASSPATH ${TOM_LIB}:${CLASSPATH}
 
 (windows)
   The TOM_LIB variable is automatically set by the script "tom.bat" to contain
-  all the jars in the "%TOM_HOME%\lib" folder.
+  all the jars in the "%TOM_HOME%\lib%\runtime" folder.

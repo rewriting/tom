@@ -1,3 +1,6 @@
+2008-04-03 pem
+  * split the library into tom, tools and runtime
+
 2008-03-25 pem
   * a default "make" is added only if no other mapping is defined
 

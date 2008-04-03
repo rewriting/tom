@@ -6,7 +6,6 @@ Current developers:
     Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
 
 Main contributors:
-    Eric Deplagne             ANTLR plugin
     Julien Guyon              Eclipse plugin
     Bertrand Tavernier        CRIL Technology
 
@@ -14,6 +13,7 @@ Other contributors:
     Gregory Andrien           Plugin-Platform
     Mark van den Brand        Discussions
     Guillaume Darmont         XML extension
+    Eric Deplagne             first ANTLR plugin
     Stephane Hrvatin          ANTLR based parser
     Anne-Claire Lonchamp      Constraint extension
     Christophe Ringeissen     Initial design of Tom

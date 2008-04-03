@@ -94,13 +94,9 @@
 
   <path id="stable.classpath">
     <path refid="external.classpath"/>
-    <!-- ADT jar files from tom -->
-    <fileset dir="${stable.src}">
-      <include name="**/adt/*.jar"/>
-    </fileset>
-    <!-- and stable lib jar files -->
+    <!-- stable lib jar files -->
     <fileset dir="${stable.lib}">
-      <include name="*.jar"/>
+      <include name="**/*.jar"/>
     </fileset>
   </path>
 
@@ -108,7 +104,7 @@
     <path refid="external.classpath"/>
     <!-- Src lib jar files -->
     <fileset dir="${src.lib}">
-      <include name="*.jar"/>
+      <include name="**/*.jar"/>
     </fileset>
     <pathelement location="${src.build}"/>
     <pathelement location="${src.src}"/>
@@ -155,6 +151,9 @@
     <mkdir dir="${stable.dist}"/>
     <mkdir dir="${stable.dist.bin}"/>
     <mkdir dir="${stable.dist.lib}"/>
+    <mkdir dir="${stable.dist.lib}/tom"/>
+    <mkdir dir="${stable.dist.lib}/tools"/>
+    <mkdir dir="${stable.dist.lib}/runtime"/>
     <mkdir dir="${stable.dist.share}"/>
     <mkdir dir="${stable.dist.share}/contrib"/>
   </target>
@@ -164,6 +163,9 @@
     <mkdir dir="${src.dist}"/>
     <mkdir dir="${src.dist.bin}"/>
     <mkdir dir="${src.dist.lib}"/>
+    <mkdir dir="${src.dist.lib}/tom"/>
+    <mkdir dir="${src.dist.lib}/tools"/>
+    <mkdir dir="${src.dist.lib}/runtime"/>
     <mkdir dir="${src.dist.share}"/>
     <mkdir dir="${src.dist.share}/contrib"/>
   </target>
@@ -179,7 +181,7 @@
     <path id="tom.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${stable.dist.lib}">
-        <include name="*.jar"/>
+        <include name="**/*.jar"/>
       </fileset>
     </path>
 
@@ -199,7 +201,7 @@
     <path id="tomsrc.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${src.dist.lib}">
-        <include name="*.jar"/>
+        <include name="**/*.jar"/>
       </fileset>
     </path>
 
@@ -543,45 +545,46 @@
       <exclude name="*.bat"/>
     </chmod>
     <copy todir="${stable.dist.lib}" file="${stable.lib}/tom-common.xml"/>
+    <copy todir="${stable.dist.lib}/runtime" file="${share}/LICENCE"/>
 
     <!-- some libraries -->
     <copy todir="${stable.dist.lib}">
       <fileset dir="${stable.lib}">
-        <include name="*.jar"/>
+        <include name="**/*.jar"/>
       </fileset>
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${stable.dist.lib}/strategy.jar"
+    <jar jarfile="${stable.dist.lib}/runtime/strategy.jar"
          update="yes">
       <fileset dir="${stable.build}"
                includes="tom/library/strategy/**/*.class"/>
       <fileset dir="${stable.build}"
                includes="tom/library/sl/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/tom-library.jar"
+    <jar jarfile="${stable.dist.lib}/runtime/tom-library.jar"
          update="yes">
       <fileset dir="${stable.build}"
                includes="tom/library/**/*.class"
                excludes="tom/library/strategy/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/plugin-platform.jar"
+    <jar jarfile="${stable.dist.lib}/tom/plugin-platform.jar"
          update="yes">
       <fileset dir="${stable.build}" includes="tom/platform/**/*.class"/>
       <fileset dir="${stable.src}" includes="tom/platform/**/*.properties"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/jtom.jar"
+    <jar jarfile="${stable.dist.lib}/tom/tom.jar"
          update="yes">
 	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class,tom/engine/**/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/gom.jar"
+    <jar jarfile="${stable.dist.lib}/tom/gom.jar"
          update="yes">
 	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
 
-    <copy todir="${stable.dist.lib}">
+    <copy todir="${stable.dist.lib}/tom">
       <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
       <fileset dir="${stable.src}/tom/library/adt" includes="*.jar"/>
       <fileset dir="${stable.src}/tom/platform/adt" includes="*.jar"/>
@@ -681,62 +684,63 @@
       <exclude name="*.bat"/>
     </chmod>
     <copy todir="${src.dist.lib}" file="${src.lib}/tom-common.xml"/>
+    <copy todir="${src.dist.lib}/runtime" file="${share}/LICENCE"/>
 
     <!-- some libraries -->
     <copy todir="${src.dist.lib}">
 	    <!-- we also copy the junit jar which is not really needed
 	    by tom, but is needed by the applications -->
       <fileset dir="${src.lib}">
-        <include name="*.jar"/>
+        <include name="**/*.jar"/>
       </fileset>
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${src.dist.lib}/TomSignature-${src.version}.jar">
-	    <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/TNode-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/Bytecode-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/PlatformOption-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/PlatformAlert-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/strategy-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/runtime/strategy-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/strategy/**/*.class"/>
       <fileset dir="${src.build}" includes="tom/library/sl/**/*.class"/>
     </jar>
-
-    <jar jarfile="${src.dist.lib}/tom-library-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/runtime/tom-library-${src.version}.jar">
       <fileset dir="${src.build}"
                includes="tom/library/**/*.class"
                excludes="tom/library/**/adt/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/plugin-platform-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/runtime/TNode-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/runtime/Bytecode-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
+    </jar>
+
+    <jar jarfile="${src.dist.lib}/tom/TomSignature-${src.version}.jar">
+	    <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/tom/PlatformOption-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/tom/PlatformAlert-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/tom/plugin-platform-${src.version}.jar">
       <fileset dir="${src.build}"
                includes="tom/platform/**/*.class"
                excludes="tom/platform/**/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/platform/**/*.properties"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/tom-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/tom/tom-${src.version}.jar">
       <fileset dir="${src.build}"
 	      includes="tom/engine/**/*.class,tom/engine/**/**/*.class"
 	      excludes="tom/engine/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/engine/**/*.properties"/>
     </jar>
     <!-- gom jar (follow tom's version)-->
-    <jar jarfile="${src.dist.lib}/gom-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/tom/gom-${src.version}.jar">
       <fileset dir="${src.build}"
 	      includes="tom/gom/**/*.class"
 	      excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/GomADT-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/tom/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
     </jar>
 
@@ -1198,23 +1202,23 @@
     <mkdir dir="${stable.src}/tom/platform/adt"/>
     <mkdir dir="${stable.src}/tom/gom/adt"/>
 
-    <jar jarfile="${stable.src}/tom/engine/adt/TomSignature.jar">
+    <jar jarfile="${stable.lib}/tom/TomSignature.jar">
       <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.src}/tom/library/adt/TNode.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.src}/tom/library/adt/Bytecode.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
+    <jar jarfile="${stable.lib}/tom/PlatformOption.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.src}/tom/platform/adt/PlatformAlert.jar">
+    <jar jarfile="${stable.lib}/tom/PlatformAlert.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.src}/tom/gom/adt/GomADT.jar">
+    <jar jarfile="${stable.lib}/tom/GomADT.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable.lib}/runtime/TNode.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable.lib}/runtime/Bytecode.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/bytecode/**/*.class"/>
     </jar>
     <antcall target="clean.bootstrap"/>
   </target>
@@ -1225,7 +1229,7 @@
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${src.dist.lib}">
-        <filename name="*.jar"/>
+        <filename name="**/*.jar"/>
       </fileset>
     </unjar>
     <delete dir="${bundle.temp.dir}/META-INF"/>
@@ -1274,7 +1278,7 @@
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${stable.dist.lib}">
-        <filename name="*.jar"/>
+        <filename name="**/*.jar"/>
       </fileset>
     </unjar>
     <delete dir="${bundle.temp.dir}/META-INF"/>
@@ -1433,7 +1437,7 @@ ${user.home}/.ant/lib
   <target name="findbugs" depends="src.dist, init.task.findbugs">
     <path id="src.dist.classpath">
       <fileset dir="${src.dist.lib}">
-        <include name="*.jar"/>
+        <include name="**/*.jar"/>
       </fileset>
     </path>
     <findbugs home="${findbugs.home}"
@@ -1442,11 +1446,11 @@ ${user.home}/.ant/lib
       <auxClasspath refid="src.dist.classpath" />
       <sourcePath path="${src.src}" />
       <sourcePath path="${src.gen}" />
-      <class location="${src.dist.lib}/tom-${src.version}.jar" />
-      <class location="${src.dist.lib}/gom-${src.version}.jar" />
-      <class location="${src.dist.lib}/tom-library-${src.version}.jar" />
-      <class location="${src.dist.lib}/strategy-${src.version}.jar" />
-      <class location="${src.dist.lib}/plugin-platform-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/tom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/tom-library-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/strategy-${src.version}.jar" />
     </findbugs>
   </target>
 

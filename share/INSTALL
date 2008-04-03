@@ -7,7 +7,12 @@ The binary distribution of Tom consists of the following directory layout:
    +--- bin  // contains launcher scripts
    |
    +--- lib  // contains Tom jars plus necessary dependencies
-   |
+   |     +--- runtime (BSD Licence)
+   |     |
+   |     +--- tom (LGPL Licence)
+   |     |
+   |     +--- tools
+   |     |
    +--- share
          +--- contrib
          |
@@ -65,9 +70,9 @@ environment:
 We also suggest you to define a TOM_LIB variable and update your CLASSPATH:
 
 (bash)
-  TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
+  TOM_LIB=`echo ${TOM_HOME}/lib/runtime/*.jar | tr ' ' ':'`
   export CLASSPATH=${TOM_LIB}:${CLASSPATH}
 
 (csh)
-  set TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
+  set TOM_LIB=`echo ${TOM_HOME}/lib/runtime/*.jar | tr ' ' ':'`
   setenv CLASSPATH $TOM_LIB:$CLASSPATH

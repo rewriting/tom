@@ -36,7 +36,7 @@
     <path id="tom.classpath">
       <path refid="external.classpath"/>
       <fileset dir="${tom.home}/lib">
-        <include name="*.jar"/>
+	<include name="**/*.jar"/>
       </fileset>
     </path>
 
