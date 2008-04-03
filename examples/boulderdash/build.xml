@@ -27,7 +27,7 @@
     <!-- Create a jar for the applet -->
     <path id="strategy.path"> <!-- ugly hack to find the jar -->
       <fileset dir="${tom.home}/lib">
-        <include name="strategy*.jar"/>
+        <include name="**/strategy*.jar"/>
       </fileset>
     </path>
     <property name="strategy.jar" refid="strategy.path"/>
@@ -36,10 +36,10 @@
         <include name="${boulderdash}/**/*.class"/>
         <include name="${boulderdash}/**/*.gif"/>
       </fileset>
-      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
+      <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar"/>
       <zipfileset src="${strategy.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
-      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/*"/>
+      <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/*"/>
     </jar>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
