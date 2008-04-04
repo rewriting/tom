@@ -59,8 +59,12 @@ public class Fakir {
         printResults(`l);
         printResults(`r);
       }
-      Bag(i) -> {
-        System.out.println(`i);
+      Bag(count) -> {
+        String row = "";
+        for (int i = 0; i < `count; i++) {
+            row += "#";
+        } 
+        System.out.println(row);
       }
     }
   }
@@ -74,12 +78,9 @@ public class Fakir {
     ));
 
     try {
-      System.out.println("subject = " + table);
-      for(int i=0 ; i<1500 ; i++) {
+      for(int i=0 ; i<500 ; i++) {
         table = (Element) balldrop.visitLight(table);
       }
-      System.out.println("got = " + table);
-      System.out.println("results:");
       printResults(table);
     } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + table);
