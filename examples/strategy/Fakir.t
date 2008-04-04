@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2008, INRIA
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: 
+ * 	- Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.  
+ * 	- Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * 	- Neither the name of the INRIA nor the names of its
+ * 	contributors may be used to endorse or promote products derived from
+ * 	this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package strategy;
+
+import strategy.fakir.table.*;
+import strategy.fakir.table.types.*;
+import tom.library.sl.*;
+
+public class Fakir {
+
+  %gom(--strategies-mapping) {
+    module Table
+    imports int   
+    abstract syntax
+    Element = Nail(left:Element,right:Element)
+            | Bag(count:int)
+   }
+
+  %include { sl.tom }
+
+  public final static Element buildTable(int level) {
+    if (0 == level) {
+      return `Bag(0);
+    } else {
+      return `Nail(buildTable(level-1),buildTable(level-1));
+    }
+  }
+
+  public final static void printResults(Element elem) {
+    %match(elem) {
+      Nail(l,r) -> {
+        printResults(`l);
+        printResults(`r);
+      }
+      Bag(i) -> {
+        System.out.println(`i);
+      }
+    }
+  }
+
+  public final static void main(String[] args) {
+    Element table = buildTable(6);
+
+    Strategy balldrop = `mu(MuVar("x"),Choice(
+        When_Nail(Pselect(1,2,_Nail(MuVar("x"),Identity()),_Nail(Identity(),MuVar("x")))),
+        Ball()
+    ));
+
+    try {
+      System.out.println("subject = " + table);
+      for(int i=0 ; i<1500 ; i++) {
+        table = (Element) balldrop.visitLight(table);
+      }
+      System.out.println("got = " + table);
+      System.out.println("results:");
+      printResults(table);
+    } catch(VisitFailure e) {
+      System.out.println("reduction failed on: " + table);
+    }
+  }
+  
+  %strategy Ball() extends `Identity() { 
+    visit Element {
+      Bag(i) -> { return `Bag(i+1); }
+    }
+  }
+}
