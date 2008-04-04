@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set LOCALCLASSPATH=./stable/lib/junit.jar
+set LOCALCLASSPATH=./stable/lib/tools/junit.jar
 set CLASSPATH=%LOCALCLASSPATH%
 
 rem Get command line arguments and save them in
