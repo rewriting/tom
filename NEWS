@@ -1,15 +1,16 @@
 version 2.6:
-  - the left-handside of a rule supports the matching-constraint notation (p << t),
-    as well as any combination of conjunction (&&) and disjunction (||)
+  - the left-handside of a rule supports the matching-constraint
+    notation (p << t), as well as any combination of conjunction (&&) and
+    disjunction (||)
   - algebraic rules (lhs -> rhs) can now have any conjunction or disjunction of
     conditions
   - %match and %strategy offer a new notation for simple rules (pattern -> term
     instead of pattern -> { return `term; })
-  - the double-dispathing mechanism of the strategy library has been replaced by
-    a simpler dispatching approach, making the use of strategies simpler when
-    Gom is not used
+  - the double-dispathing mechanism of the strategy library has been replaced
+    by a simpler dispatching approach, making the use of strategies simpler
+    when Gom is not used
   - a new tool (GomAntlrAdapter) makes simpler the connection between AST
-    produced by Antlr and Gom, making the use of pattern matching and 
+    produced by Antlr and Gom, making the use of pattern matching and
     strategies directly available on these trees
   - Tom can inline the mapping defined using %typeterm and %op, making the
     generated code smaller and faster
@@ -24,28 +25,29 @@ version 2.5:
     associative-commutative (AC) or AC with neutral element (ACU).
   - Gom supports terms with pointers to manipulate graph structures.
   - Tom has a new compiler based on constraint solving.
-  - Tom supports matching for list-operators whose domain is equal to the codomain.
+  - Tom supports matching for list-operators whose domain is equal to the
+    codomain.
     This corresponds to associative matching with neutral element (AU).
-    An interesting variant for flattened lists (FL) has also been developed. 
+    An interesting variant for flattened lists (FL) has also been developed.
   - Tom supports any combination of patterns, anti-patterns, and list-operators,
     even with anti-patterns.
   - The new strategy library sl allows access to more context information, such
     as the root of the term to which the strategy is applied
- 
+
 version 2.4:
   - the eclipse plugin is back, for eclipse version 3.2
- 
+
   - in the %match construct, the sort of the subject is now optional. Its is
     automatically inferred from the patterns when possible. In addition, a
     subject is no longer restricted to a variable. Constructors and function
     calls can be used.
- 
+
   - Gom generates congruence strategies and offers new functionalities, such as
     the length of a list.
- 
+
   - !: a new construct that can be used to denote anti-patterns. Tom support
     anti-patterns under syntactic and list-operators, but not yet in XML.
- 
+
   - the strategy library has been extended such that strategy expressions can be
     matched, like any other term. A strategy can now take another strategy in
     argument. The mu-expansion is performed on strategies defined using

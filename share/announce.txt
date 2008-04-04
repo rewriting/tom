@@ -12,7 +12,7 @@ particularly well-suited for programming various transformations on
 trees/terms and XML based documents. Its design follows our research on
 the semantics and the efficient compilation of rule based languages.
 
-Many applications have been developed in Tom, both in academia and 
+Many applications have been developed in Tom, both in academia and
 industry. Among them, let us mention:
  - the Tom compiler itself
  - languages semantics, interpreters and program transformation tools
@@ -28,31 +28,31 @@ matching with neutral element (a.k.a. list-matching), XML based pattern
 matching, string matching, and equational rewriting.
 This offers the possibility to analyze and transform any kind of
 data-structure. Tom can be used for large scale developments and
-applications. It comes with a detailed documentation, as well as with 
+applications. It comes with a detailed documentation, as well as with
 programming and debugging support.
 
 This new release contains many improvements and new features:
 
 	- new alternative syntax for '%match', based on atomic constraints
-      that can be combined with '&&' and '||' operators. This gives a 
-      higher expressiveness and conciseness. Works also in '%strategy'   
+      that can be combined with '&&' and '||' operators. This gives a
+      higher expressiveness and conciseness. Works also in '%strategy'
 
   - hand-written strategies became easier to write. No more 'Forward'
       class is needed.
 
-  - strategy support for hand-written mappings 
-        
-	- new tool based on ANTLR 3 for implementing parsers that 
-	  directly output Gom terms: GOMAntlrAdapter.
-  
-  - term-graph rewriting support in Gom 
+  - strategy support for hand-written mappings
 
-	- Gom's lists now implement the interface Collection. Consequently, 
+	- new tool based on ANTLR 3 for implementing parsers that
+	  directly output Gom terms: GOMAntlrAdapter.
+
+  - term-graph rewriting support in Gom
+
+	- Gom's lists now implement the interface Collection. Consequently,
 	  Java's classic iteration techniques can be employed.
 
 	- several speed-ups of the compilation process as well as for the
-      generated code. 
-	   
+      generated code.
+
 Tom is available, in open source (GPL/BSD License), from the web page:
 
   http://tom.loria.fr/
