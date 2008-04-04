@@ -40,37 +40,48 @@ public class Fakir {
     imports int   
     abstract syntax
     Element = Nail(left:Element,right:Element)
-            | Bag(count:int)
+            | Bag(position:int, count:int)
    }
 
   %include { sl.tom }
 
-  public final static Element buildTable(int level) {
+  public final static Element buildTable(int level, int position) {
     if (0 == level) {
-      return `Bag(0);
+      return `Bag(position, 0);
     } else {
-      return `Nail(buildTable(level-1),buildTable(level-1));
+      return `Nail(buildTable(level-1, position-1),buildTable(level-1, position+1));
     }
   }
 
   public final static void printResults(Element elem) {
-    %match(elem) {
-      Nail(l,r) -> {
-        printResults(`l);
-        printResults(`r);
-      }
-      Bag(count) -> {
+    int[] table = new int[TBLREC*2+1];
+    collectResults(elem,table);
+    for (int i = 0; i < table.length; i++) {
         String row = "";
-        for (int i = 0; i < `count; i++) {
+        for (int j = 0; j < table[i]; j++) {
             row += "#";
         } 
         System.out.println(row);
+    }
+  }
+
+  public final static void collectResults(Element elem, int[] table) {
+    %match(elem) {
+      Nail(l,r) -> {
+        collectResults(`l, table);
+        collectResults(`r, table);
+      }
+      Bag(pos, count) -> {
+        table[`pos+TBLREC]+=`count;
       }
     }
   }
 
+  private final static int TBLREC = 10;
+  private final static int BALLCNT = 200;
+
   public final static void main(String[] args) {
-    Element table = buildTable(6);
+    Element table = buildTable(TBLREC,0);
 
     Strategy balldrop = `mu(MuVar("x"),Choice(
         When_Nail(Pselect(1,2,_Nail(MuVar("x"),Identity()),_Nail(Identity(),MuVar("x")))),
@@ -78,7 +89,7 @@ public class Fakir {
     ));
 
     try {
-      for(int i=0 ; i<1500 ; i++) {
+      for(int i=0 ; i<BALLCNT ; i++) {
         table = (Element) balldrop.visitLight(table);
       }
       printResults(table);
@@ -89,7 +100,7 @@ public class Fakir {
   
   %strategy Ball() extends `Identity() { 
     visit Element {
-      Bag(i) -> { return `Bag(i+1); }
+      Bag(pos,i) -> { return `Bag(pos,i+1); }
     }
   }
 }
