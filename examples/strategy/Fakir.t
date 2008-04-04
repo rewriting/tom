@@ -78,7 +78,7 @@ public class Fakir {
     ));
 
     try {
-      for(int i=0 ; i<500 ; i++) {
+      for(int i=0 ; i<1500 ; i++) {
         table = (Element) balldrop.visitLight(table);
       }
       printResults(table);
