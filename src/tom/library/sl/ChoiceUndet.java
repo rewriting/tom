@@ -54,6 +54,40 @@ public class ChoiceUndet extends AbstractStrategy {
     }
   }
 
+  public ChoiceUndet(Strategy head, Strategy tail) {
+    if (tail instanceof ChoiceUndet) {
+      Strategy[] tailstrategies = ((ChoiceUndet)tail).getVisitors();
+      Strategy[] strategies = new Strategy[tailstrategies.length+1];
+      strategies[0] = head;
+      for (int i=0; i<tailstrategies.length;i++) {
+        strategies[i+1] = tailstrategies[i];
+      }
+      initSubterm(strategies);
+      this.size = strategies.length;
+    } else {
+      initSubterm(new Strategy[] {head,tail});
+      this.size = 2;
+    }
+    if(random == null) {
+      random = new java.util.Random();
+    }
+  }
+
+  public Strategy getHead() {
+    return visitors[0];
+  }
+
+  public Strategy getTail() {
+    if (size<=1) {
+      return null;
+    } else {
+      Strategy[] tail = new Strategy[size-1];
+      for (int i=0; i<size-1; i++) {
+        tail[i] = visitors[size-1];
+      }
+      return new ChoiceUndet(tail);
+    }
+  }
 
   public Object visitLight(Object subject, Introspector introspector) throws VisitFailure {
     int randomInt = random.nextInt(size);

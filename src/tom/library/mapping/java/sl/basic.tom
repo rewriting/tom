@@ -114,6 +114,16 @@
   is_empty(t) {( $t ==null )}
 }
 
+%oplist Strategy ChoiceUndet(Strategy*) {
+  is_fsym(t) {( ($t instanceof tom.library.sl.ChoiceUndet) )}
+  make_empty() {( null )}
+  make_insert(head,tail) {( ($tail==null)?$head:new tom.library.sl.ChoiceUndet($head,$tail) )}
+  get_head(t) {( ((tom.library.sl.ChoiceUndet) $t).getHead() )}
+  get_tail(t) {( ((tom.library.sl.ChoiceUndet) $t).getTail() )}
+  is_empty(t) {( $t ==null )}
+}
+
+
 %oplist Strategy SequenceId(Strategy*) {
   is_fsym(t) {( ($t instanceof tom.library.sl.SequenceId) )}
   make_empty() {( null )}
