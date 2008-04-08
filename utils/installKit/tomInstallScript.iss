@@ -17,16 +17,19 @@ ChangesEnvironment=yes
 PrivilegesRequired=none
 
 [Files]
-Source: "AUTHORS";      DestDir: "{app}"
-Source: "Gom.xml";      DestDir: "{app}"
-Source: "INSTALL";      DestDir: "{app}"
-Source: "LICENCE";      DestDir: "{app}"
-Source: "NEWS";         DestDir: "{app}"
-Source: "README";       DestDir: "{app}"; DestName: "README.wri"; Flags: isreadme
-Source: "Tom.xml";      DestDir: "{app}"
-Source: "bin\*";        DestDir: "{app}\bin"
-Source: "lib\*";        DestDir: "{app}\lib"
-Source: "share\*";      DestDir: "{app}\share"; Flags: recursesubdirs createallsubdirs
+Source: "AUTHORS";            DestDir: "{app}"
+Source: "Gom.xml";            DestDir: "{app}"
+Source: "INSTALL";            DestDir: "{app}"
+Source: "LICENCE";            DestDir: "{app}"
+Source: "NEWS";               DestDir: "{app}"
+Source: "README";             DestDir: "{app}"; DestName: "README.wri"; Flags: isreadme
+Source: "Tom.xml";            DestDir: "{app}"
+Source: "bin\*";              DestDir: "{app}\bin"
+Source: "lib\runtime\*";      DestDir: "{app}\lib\runtime"
+Source: "lib\tools\*";        DestDir: "{app}\lib\tools"
+Source: "lib\tom\*";          DestDir: "{app}\lib\tom"
+Source: "lib\tom-common.xml"; DestDir: "{app}\lib"
+Source: "share\*";            DestDir: "{app}\share"; Flags: recursesubdirs createallsubdirs
 
 [Registry]
 ; add TOM_HOME to environmental variables
@@ -177,11 +180,21 @@ var
 begin
   Log('Updating classpath...');
   TomLib := '';
-  if FindFirst(ExpandConstant('{app}\lib\*.jar'), FindRec) then begin
+  if FindFirst(ExpandConstant('{app}\lib\runtime\*.jar'), FindRec) then begin
     try
       repeat
-        TomLib := '%TOM_HOME%\lib\' + FindRec.Name + ';' + TomLib + ';';
+        TomLib := '%TOM_HOME%\lib\runtime\' + FindRec.Name + ';' + TomLib + ';';
       until not FindNext(FindRec);
+      if FindFirst(ExpandConstant('{app}\lib\tools\*.jar'), FindRec) then begin
+        repeat
+          TomLib := '%TOM_HOME%\lib\tools\' + FindRec.Name + ';' + TomLib + ';';
+        until not FindNext(FindRec);
+      end
+      if FindFirst(ExpandConstant('{app}\lib\tom\*.jar'), FindRec) then begin
+        repeat
+          TomLib := '%TOM_HOME%\lib\tom\' + FindRec.Name + ';' + TomLib + ';';
+        until not FindNext(FindRec);
+      end
       RegWriteExpandStringValue(RegistryRoot, RegistryEnvPath, 'TOM_LIB', TomLib + '.;');
       // if we can get the old classpath
       if RegQueryStringValue(RegistryRoot, RegistryEnvPath, 'CLASSPATH', OldClasspath) then
