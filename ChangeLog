@@ -1,7 +1,6 @@
+2008-04-08 balland
+  * add a new variadic strategy combinator ChoiceUndet corresponding to undeterministic choice 
 2008-04-03 pem
-  * split the library into tom, tools and runtime
-    (see INSTALL to update your environment, in particular the TOM_LIB
-     variable)
 
 2008-03-25 pem
   * a default "make" is added only if no other mapping is defined

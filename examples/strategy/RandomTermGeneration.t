@@ -50,8 +50,7 @@ public class RandomTermGeneration {
 
 public static void  main(String[] args) {
 try {
-  Strategy randomgenerator = new ChoiceUndet(new Strategy[]{`Make_a(),`Make_b(),`Make_f(MuVar("x")),`Make_g(MuVar("x"))});
-  Term t = (Term) `Mu(MuVar("x"),randomgenerator).visit(`a());
+  Term t = (Term) `Mu(MuVar("x"),ChoiceUndet(Make_a(),Make_b(),Make_f(MuVar("x")),Make_g(MuVar("x")))).visit(`a());
   System.out.println(t);
 } catch ( VisitFailure e) {}
   }
