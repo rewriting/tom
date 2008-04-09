@@ -53,11 +53,6 @@ public class StratMappingTemplate extends MappingTemplateClass {
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    writer.write(%[
-   /*
-   %include { mustrategy.tom }
-   */
-]%);
     %match(GomClassList operatorClasses) {
       ConcGomClass(_*,op@OperatorClass[],_*) -> {
         writer.write(

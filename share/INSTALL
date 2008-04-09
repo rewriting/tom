@@ -4,28 +4,50 @@ Installing TOM
 The binary distribution of Tom consists of the following directory layout:
 
   tom
-   +--- bin  // contains launcher scripts
+   +--- bin (BSD Licence)
    |
-   +--- lib  // contains Tom jars plus necessary dependencies
+   +--- lib 
    |     +--- runtime (BSD Licence)
+   |     |     +--- shared-objects     // Factory of shared objects
+   |     |     +--- jjtraveler         // Visitable interface
+   |     |     +--- aterm              // ATerm library
+   |     |     +--- sl                 // Strategy library
+   |     |     +--- tom-library        // support for bytecode, viewer, and xml 
+   |     |     +--- Bytecode           // ADT for ASM
+   |     |     +--- TNode              // ADT for XML
    |     |
-   |     +--- tom (LGPL Licence)
+   |     +--- tom (GPL Licence)                                                                                  
+   |     |     +--- tom                // Tom compiler
+   |     |     +--- gom                // Gom compiler
+   |     |     +--- GomAdt             // ADT for Gom 
+   |     |     +--- TomSignature       // ADT for Tom
+   |     |     +--- plugin-platform    // plugin platform
+   |     |     +--- PlatformAlert      // platform error messages
+   |     |     +--- PlatformOption     // platform options
    |     |
-   |     +--- tools
-   |     |
-   +--- share
+   |     +--- tools (not needed by the runtime, unless you use bytecode, term viewer, or xml supports)
+   |     |     +--- ant                // to compile the project
+   |     |     +--- antlr-2.7.7        // to compile the Tom parser
+   |     |     +--- antlr-3.0          // to compile the Gom parser
+   |     |     +--- antlr3             // ant plugin 
+   |     |     +--- asm-3.0            // to manipulate bytecode
+   |     |     +--- grappa1_2          // to visualize terms
+   |     |     +--- junit              // to test the system
+   |     |     +--- stringtemplate-3.0 // need by antlr
+   |     |     +--- xercesImpl         // for XML
+   |     |     +--- xml-apis           // for XML
+   |     
+   +--- share (BSD Licence)
          +--- contrib
          |
-         +--- tom    // contains predefined mapping
+         +--- tom 
          |     +--- adt
-         |     |
          |     +--- c
-         |     |
          |     +--- caml
-         |     |
          |     +--- java
          |
          +--- man
+
 
  Only the bin/ and lib/ directories are required to run Tom.
  To install Tom, choose a directory and copy the distribution file there. 
@@ -38,7 +60,7 @@ to do:
   - Add the bin directory to your path.
   - Set the TOM_HOME environment variable to the directory where you
     installed Tom.
-  - JDK 1.4.2 or newer is needed.
+  - JDK 1.5 or newer is needed.
     Optionally, set the JAVA_HOME environment variable.
     This should be set to the directory where your JDK is installed.
 

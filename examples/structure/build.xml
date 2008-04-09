@@ -39,10 +39,10 @@
     <!-- Create a jar for the applet -->
     <path id="strategy.path"> <!-- ugly hack to find the jar -->
       <fileset dir="${tom.home}/lib">
-        <include name="**/strategy*.jar"/>
+        <include name="**/sl*.jar"/>
       </fileset>
     </path>
-    <property name="strategy.jar" refid="strategy.path"/>
+    <property name="sl.jar" refid="strategy.path"/>
     <jar jarfile="${examples.build}/${structure}/structure.jar">
       <fileset dir="${examples.build}">
         <include name="${structure}/**/*.class"/>
@@ -51,7 +51,6 @@
       <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar"/>
       <zipfileset src="${tom.home}/lib/tools/antlr-2.7.7.jar"/>
-      <zipfileset src="${strategy.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
       <zipfileset src="${tom.home}/lib/runtime/aterm.jar"/>
     </jar>
   </target>

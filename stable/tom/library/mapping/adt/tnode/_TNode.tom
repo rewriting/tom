@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _EmptyconcTNode() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode)))}
       

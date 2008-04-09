@@ -555,18 +555,14 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${stable.dist.lib}/runtime/strategy.jar"
-         update="yes">
-      <fileset dir="${stable.build}"
-               includes="tom/library/strategy/**/*.class"/>
-      <fileset dir="${stable.build}"
-               includes="tom/library/sl/**/*.class"/>
+    <jar jarfile="${stable.dist.lib}/runtime/sl.jar" update="yes">
+      <fileset dir="${stable.build}" includes="tom/library/sl/**/*.class"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/runtime/tom-library.jar"
          update="yes">
       <fileset dir="${stable.build}"
                includes="tom/library/**/*.class"
-               excludes="tom/library/strategy/**/*.class"/>
+               excludes="tom/library/sl/**/*.class"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/tom/plugin-platform.jar"
          update="yes">
@@ -696,8 +692,7 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${src.dist.lib}/runtime/strategy-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/strategy/**/*.class"/>
+    <jar jarfile="${src.dist.lib}/runtime/sl-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/sl/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/runtime/tom-library-${src.version}.jar">
@@ -1450,7 +1445,7 @@ ${user.home}/.ant/lib
       <class location="${src.dist.lib}/tom/gom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom/plugin-platform-${src.version}.jar" />
       <class location="${src.dist.lib}/runtime/tom-library-${src.version}.jar" />
-      <class location="${src.dist.lib}/runtime/strategy-${src.version}.jar" />
+      <class location="${src.dist.lib}/runtime/sl-${src.version}.jar" />
     </findbugs>
   </target>
 

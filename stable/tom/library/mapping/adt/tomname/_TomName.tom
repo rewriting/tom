@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _MatchNumber(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomname.strategy.tomnumber._MatchNumber)))}
       

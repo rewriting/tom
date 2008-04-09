@@ -24,10 +24,10 @@
     </path>
     <path id="strategy.path">
       <fileset dir="${tom.home}/lib">
-        <include name="**/strategy*.jar"/>
+        <include name="**/sl*.jar"/>
       </fileset>
     </path>
-    <property name="strategy.jar" refid="strategy.path"/>
+    <property name="sl.jar" refid="strategy.path"/>
     <property name="tom-library.jar" refid="tom-library.path"/>
     <jar jarfile="${examples.build}/${appletxml}/xmlconverter.jar">
       <fileset dir="${examples.build}">
@@ -36,7 +36,6 @@
       <zipfileset src="${tom.home}/lib/runtime/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/runtime/aterm.jar" includes="aterm/**/*"/>
       <zipfileset src="${tom.home}/lib/runtime/jjtraveler.jar" includes="jjtraveler/Visit*"/>
-      <zipfileset src="${strategy.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
       <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
       <zipfileset src="${tnode.jar}"/>
     </jar>

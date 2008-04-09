@@ -17,8 +17,6 @@ industry. Among them, let us mention:
  - the Tom compiler itself
  - languages semantics, interpreters and program transformation tools
  - a generator of canonical abstract syntax trees (Gom)
- - a Just In Time strategy compiler using dynamic Java bytecode
-   transformation
  - a proof assistant for supernatural deduction
  - a compiler algorithm for anti-pattern matching and disunification
 
@@ -33,25 +31,25 @@ programming and debugging support.
 
 This new release contains many improvements and new features:
 
-	- new alternative syntax for '%match', based on atomic constraints
-      that can be combined with '&&' and '||' operators. This gives a
-      higher expressiveness and conciseness. Works also in '%strategy'
+  - new alternative syntax for '%match', based on atomic constraints
+    that can be combined with '&&' and '||' operators. This gives a
+    higher expressiveness and conciseness. Works also in '%strategy'
 
   - hand-written strategies became easier to write. No more 'Forward'
-      class is needed.
+    class is needed.
 
   - strategy support for hand-written mappings
 
-	- new tool based on ANTLR 3 for implementing parsers that
-	  directly output Gom terms: GOMAntlrAdapter.
+  - new tool based on ANTLR 3 for implementing parsers that
+    directly output Gom terms: GomAntlrAdapter.
 
   - term-graph rewriting support in Gom
 
-	- Gom's lists now implement the interface Collection. Consequently,
-	  Java's classic iteration techniques can be employed.
+  - Gom's lists now implement the interface Collection. Consequently,
+    Java's classic iteration techniques can be employed.
 
-	- several speed-ups of the compilation process as well as for the
-      generated code.
+  - several speed-ups of the compilation process as well as for the
+    generated code.
 
 Tom is available, in open source (GPL/BSD License), from the web page:
 

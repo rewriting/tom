@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _TomTermToInstruction(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tominstruction.strategy.instruction._TomTermToInstruction)))}
       

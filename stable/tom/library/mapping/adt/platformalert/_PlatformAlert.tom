@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _EmptyconcAlert() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.platform.adt.platformalert.strategy.alertlist._EmptyconcAlert)))}
       

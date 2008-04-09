@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _EmptyconcZTerm() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.zenon.strategy.ztermlist._EmptyconcZTerm)))}
       

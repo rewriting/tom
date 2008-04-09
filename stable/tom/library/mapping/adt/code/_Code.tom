@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _MakeHook(arg0:Strategy, arg1:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.objects.strategy.hook._MakeHook)))}
       

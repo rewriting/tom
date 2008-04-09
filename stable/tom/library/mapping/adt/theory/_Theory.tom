@@ -1,8 +1,4 @@
 
-   /*
-   %include { mustrategy.tom }
-   */
-
     %op Strategy _Syntactic() {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.theory.strategy.elementarytheory._Syntactic)))}
       
