@@ -31,25 +31,31 @@ programming and debugging support.
 
 This new release contains many improvements and new features:
 
-  - new alternative syntax for '%match', based on atomic constraints
+	- new alternative syntax for '%match', based on atomic constraints
     that can be combined with '&&' and '||' operators. This gives a
     higher expressiveness and conciseness. Works also in '%strategy'
 
-  - hand-written strategies became easier to write. No more 'Forward'
+	- hand-written strategies became easier to write. No more 'Forward'
     class is needed.
 
-  - strategy support for hand-written mappings
+	- strategy support for hand-written mappings
 
-  - new tool based on ANTLR 3 for implementing parsers that
+	- new tool based on ANTLR 3 for implementing parsers that
     directly output Gom terms: GomAntlrAdapter.
 
-  - term-graph rewriting support in Gom
+	- term-graph rewriting support in Gom
 
-  - Gom's lists now implement the interface Collection. Consequently,
+	- Gom's lists now implement the interface Collection. Consequently,
     Java's classic iteration techniques can be employed.
 
-  - several speed-ups of the compilation process as well as for the
+	- several speed-ups of the compilation process as well as for the
     generated code.
+      
+	- a lot of new features for the Eclipse plug-in, including the 
+	availability of all the functionalities of the Java editor for 
+	".t" files ( a complete list is available on the plug-in page:
+	http://tom.loria.fr/plugin.php )
+	      
 
 Tom is available, in open source (GPL/BSD License), from the web page:
 
