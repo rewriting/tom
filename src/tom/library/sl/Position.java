@@ -53,6 +53,10 @@ public class Position implements Cloneable,Path {
     setValue(omega);
   }
 
+  public Position(Position p) {
+    setValue(p);
+  }
+
   public Position(Position prefix, Position suffix){
     int[] prefixArray = prefix.toArray();
     int[] suffixArray = suffix.toArray();
@@ -74,6 +78,15 @@ public class Position implements Cloneable,Path {
   public void setValue(int[] omega){
     this.omega = new int[omega.length];
     System.arraycopy(omega, 0, this.omega, 0, omega.length);
+  }
+
+  public void setValue(Position p) {
+    int size = p.length();
+    omega = new int[size];
+    for(int i=0;i<size;i++){
+      omega[i]= p.getHead();
+      p = (Position) p.getTail();
+    }
   }
 
   public Object clone() {
@@ -219,18 +232,12 @@ public class Position implements Cloneable,Path {
     return new Position(result);
   }
 
-  /**
-   * For compatibility with mutraveler positions
-   **/
   public Position up() {
     int [] result = new int[length()-1];
     System.arraycopy(omega,0,result,0,length()-1);
     return new Position(result);
   }
 
-  /**
-   * For compatibility with mutraveler positions
-   **/
   public Position down(int i){
     int[] result = new int[length()+1];
     System.arraycopy(omega,0,result,0,length());
