@@ -1,0 +1,27 @@
+module testgen.TinyJava
+imports String 
+abstract syntax
+
+Prog = Prog(CompUnit*)
+
+CompUnit = CompUnit(packageName:Name,classes:ClassDeclList)
+
+ClassDeclList = ConcClassDecl(ClassDecl*)
+
+ClassDecl = ClassDecl(name:Name,super:ComposedName,bodyDecl:BodyDeclList)
+
+BodyDeclList = ConcBodyDecl(BodyDecl*)
+
+BodyDecl = FieldDecl(FieldType:ComposedName,name:Name,expr:ComposedName)
+         | MemberClassDecl(innerClass:ClassDecl)
+         | Initializer(body:Stmt)
+
+Stmt = Block(Stmt*)
+     | LocalVariableDecl(varType:ComposedName,name:Name,expr:ComposedName)
+
+ComposedName = Dot(Name*)
+             | Undefined()
+
+Name = Name(name:String)
+
+Dot = FL()
