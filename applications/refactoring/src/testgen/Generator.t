@@ -60,9 +60,10 @@ public class Generator {
   public void generateClasses() throws java.io.IOException {
     StringWriter writer = new StringWriter();
     try {
-      Prog p = (Prog) `Sequence(generateProg,InnermostId(RemoveDuplicates())).visit(`Prog());
-      System.out.println("Generation of prog "+p);
+      Prog p = (Prog) `generateProg.visit(`Prog());
       Renaming renaming = new Renaming();
+      System.out.println(renaming.collectTypes(p));
+      p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
       System.out.println(renaming.collectTypes(p));
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {
@@ -84,7 +85,7 @@ public class Generator {
     }      
   }
 
-  %strategy RemoveDuplicates() extends Identity() {
+  %strategy RemoveConflicts() extends Identity() {
     visit BodyDeclList {
       ConcBodyDecl(X*,i1@Initializer[],Y*,i2@Initializer[],Z*) -> ConcBodyDecl(X*,i1,Y*,Z*)
         ConcBodyDecl(X*,c1@MemberClassDecl(ClassDecl[name=n]),Y*,c2@MemberClassDecl(ClassDecl[name=n]),Z*) -> ConcBodyDecl(X*,c2,Y*,Z*)
@@ -94,6 +95,23 @@ public class Generator {
     }
     visit ClassDeclList {
       ConcClassDecl(X*,c1@ClassDecl[name=n],Y*,c2@ClassDecl[name=n],Z*) -> ConcClassDecl(X*,c1,Y*,Z*)
+    }
+    visit ClassDecl {
+      c@ClassDecl[name=n] -> {
+        //remove inner classes with the same name 
+        return (ClassDecl) `InnermostId(RemoveConflictedInnerClasses(n)).visit(`c);
+      }
+    }
+  }
+
+  %strategy RemoveConflictedInnerClasses(name:Name) extends Identity() {
+    visit BodyDeclList {
+      ConcBodyDecl(X*,MemberClassDecl[innerClass=ClassDecl[name=n]],Y*) -> {
+        if (name.equals(`n)) {
+          System.out.println("find a conflict between inner class names");
+          return `ConcBodyDecl(X*,Y*);
+        } 
+      }
     }
   }
 
