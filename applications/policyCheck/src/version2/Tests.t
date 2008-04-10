@@ -9,6 +9,9 @@ public class Tests {
   %include { accesscontrol/accesscontrol.tom }
 
 	public static void main(String[] args) {
+    Scanner scan = new Scanner(System.in);
+    scan.useDelimiter("");
+
     Subject s0 = `subject(0,sl("very high"));
     Subject s1 = `subject(1,sl("high"));
     Subject s2 = `subject(2,sl("medium"));
@@ -25,20 +28,28 @@ public class Tests {
      * check a configuration
      */
     int numberOfAccessMode = 2;
-    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
+//     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
 //     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("high")));
+    SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
 
-    ListOfSubjects slist = `subjects(s1,s2,s3,s4);
-    ListOfResources rlist = `resources(r1,r2,r3,r4);
+//     ListOfSubjects slist = `subjects(s1,s2,s3);
+//     ListOfResources rlist = `resources(r1,r2,r3);
+    ListOfSubjects slist = `subjects(s4,s3,s2,s1);
+    ListOfResources rlist = `resources(r4,r3,r2,r1);
 
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
 
-    System.out.println("\nDELETE = " + `clearRequests(sls,add(read(s1,r1)),lor));
+//     System.out.println("\nDELETE = " + `clearRequests(sls,add(read(s1,r1)),lor));
+//     System.out.println("\nDELETE = " + `simplifyRequests(sls,lor));
+    lor = `simplifyRequests(sls,lor);
+    System.out.println("start with lor = " + lor);
 
+    Policy mcl = new McLean(sls);
 
     System.out.println("check McLean");
-    runChecker(new McLean(sls),lor);
+    runChecker(mcl,lor);
+    System.out.println("END McLean"+nbStates);
 
     System.out.println("check BLP");
     runChecker(new BLP(sls),lor);
@@ -57,6 +68,7 @@ public class Tests {
     cacheValid.clear();
     cachePair.clear();
     otherChecker(`state(accesses()),p,`requests(),lor,`traces());
+//     checker(`state(accesses()),p,`requests(),lor,`traces());
   }
 
 
@@ -80,6 +92,7 @@ public class Tests {
         }
       }
     }
+
     return res;
   }
 
@@ -94,6 +107,7 @@ public class Tests {
   private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(100000);
   //private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
   private static int nbAccesses = 100;
+  private static int nbStates = 0;
 
 
   /**
@@ -109,6 +123,7 @@ public class Tests {
   private static int nbCut = 0;
   private static int nbAdd = 0;
   private static void checker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, ListOfTraces traces) {
+    nbStates++;
     Pair key = `pair(s,lor);
     if(cachePair.get(key) != null) {
       nbCut = (nbCut+1) % 10000;
@@ -137,7 +152,8 @@ public class Tests {
         ListOfTraces newTraces = traces;
         if(decision1.isgrant()) {
           //System.out.print("+");
-          newTraces = `traces(traces*,RequestToTrace(r),StateToTrace(newState));
+          //           newTraces = `traces(traces*,RequestToTrace(r),StateToTrace(newState));
+          newTraces = `traces(RequestToTrace(r),StateToTrace(newState),traces*);
           nextPrevious = `requests();
           nextLor = `requests(previous*,R1*,R2*);
         } else {
@@ -158,7 +174,7 @@ public class Tests {
           if(p.valid(s) == false) {
             if(traces.length()<nbAccesses){
               nbAccesses = traces.length();
-              System.out.println("LEAKAGE DETECTED ("+nbAccesses+")");
+              System.out.println("\nLEAKAGE DETECTED ("+nbAccesses+")");
               while(!traces.isEmptytraces()) {
                 System.out.println(traces.getHeadtraces());
                 traces = traces.getTailtraces();
@@ -206,10 +222,11 @@ public class Tests {
     if( ! p.valid(s) ) {
       if(traces.length()<nbAccesses){
         nbAccesses = traces.length();
-        System.out.println("LEAKAGE DETECTED ("+nbAccesses+")");
-        while(!traces.isEmptytraces()) {
-          System.out.println(traces.getHeadtraces());
-          traces = traces.getTailtraces();
+        System.out.println("***LEAKAGE DETECTED ("+nbAccesses+")");
+        ListOfTraces t = traces.reverse();
+        while(!t.isEmptytraces()) { 
+          System.out.println(t.getHeadtraces());
+          t = t.getTailtraces();
         }
         System.out.println("final state = " + s);
       }
@@ -227,18 +244,21 @@ public class Tests {
         ListOfTraces newTraces = traces;
         if(decision1.isgrant()) {
           //System.out.print("+");
-          newTraces = `traces();//`traces(traces*,RequestToTrace(r),StateToTrace(newState));
+          //           newTraces = `traces();
+          newTraces = `traces(RequestToTrace(r),StateToTrace(newState),traces*);
           nextPrevious = `requests();
           nextLor = `requests(previous*,R1*,R2*);
-          // nextLor = `clearRequests(p.getSecurityLevelsLattice(),r,nextLor);
-          checker(newState,p,nextPrevious,nextLor,newTraces);
+          otherChecker(newState,p,nextPrevious,nextLor,newTraces);
         } 
-// else {
+//           If the access is not granted then it will be never granted
+//           independently of the accesses that would be added to the access list
+//           --> this is not true if we can have not only ADD(access) but also REMOVE(access)
+//         else {
 //           //System.out.print(".");
 //           nextPrevious = `requests(previous*,R1*);
 //           nextLor = `requests(R2*);
 //         }
-//                 checker(newState,p,nextPrevious,nextLor,newTraces);
+//         otherChecker(newState,p,nextPrevious,nextLor,newTraces);
          // note: do not perform a return, otherwise, the enumeration is stopped
       }
     }
@@ -275,7 +295,7 @@ public class Tests {
     %match(r) {
 			add(read(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
         %match(lor) {
-          requests(R1*,a@add(read(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
+          requests(R1*,add(read(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
             if(`s1==`s2 && `slL.ge(`rsl1,`rsl2)) {
               return `clearRequests(slL,r,requests(R1*,R2*));
             } 
@@ -289,7 +309,7 @@ public class Tests {
       }
 			add(write(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
         %match(lor) {
-          requests(R1*,a@add(write(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
+          requests(R1*,add(write(s2@subject[sl=ssl2],resource[sl=rsl2])),R2*) -> {
             if(`s1==`s2 && `slL.ge(`rsl2,`rsl1)) {
               return `clearRequests(slL,r,requests(R1,R2));
             }
@@ -303,4 +323,41 @@ public class Tests {
     //ERROR
     return `requests();
   }
+
+
+  private static ListOfRequests simplifyRequests(SecurityLevelsLattice slL, ListOfRequests lor) {
+    if(lor.isEmptyrequests()){
+      return `requests();
+    }
+
+    %match(lor) {
+      requests(R1*,a@add(read(s1,resource[sl=rsl1])),R0*,add(read(s1,resource[sl=rsl2])),R2*) -> {
+        if(`slL.ge(`rsl1,`rsl2)) {
+          return `simplifyRequests(slL,requests(R1*,a,R0*,R2*));
+        } 
+      }
+      requests(R1*,add(read(s1,resource[sl=rsl2])),R0*,a@add(read(s1,resource[sl=rsl1])),R2*) -> {
+        if(`slL.ge(`rsl1,`rsl2)) {
+          return `simplifyRequests(slL,requests(R1*,R0*,a,R2*));
+        } 
+      }
+
+      requests(R1*,a@add(write(s1,resource[sl=rsl1])),R0*,add(write(s1,resource[sl=rsl2])),R2*) -> {
+            if(`slL.ge(`rsl2,`rsl1)) {
+              return `simplifyRequests(slL,requests(R1*,a,R0*,R2*));
+            }
+      } 
+      requests(R1*,add(write(s1,resource[sl=rsl2])),R0*,a@add(write(s1,resource[sl=rsl1])),R2*) -> {
+            if(`slL.ge(`rsl2,`rsl1)) {
+              return `simplifyRequests(slL,requests(R1*,R0*,a,R2*));
+            }
+      } 
+      _ -> {
+        return lor;
+      }
+    }
+    //ERROR
+    return `requests();
+  }
+
 }
