@@ -46,9 +46,9 @@ public class Renaming {
   %include {tinyjava/_TinyJava.tom}
 
   %op Strategy Up(s1:Strategy) {
-    is_fsym(t) {( ($t instanceof tom.library.sl.Up) )}
-    make(v) {( new tom.library.sl.Up($v) )}
-    get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Up.ARG) )}
+    is_fsym(t) {( ($t instanceof testgen.Up) )}
+    make(v) {( new testgen.Up($v) )}
+    get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
   }
 
   public Set collectTypes(Prog p) {
@@ -131,6 +131,34 @@ public class Renaming {
         context.packagename = `packageName.getname();
       }
     }
+ }
+
+  %typeterm Position {
+    implement { Position }
+    is_sort(t) { ($t instanceof Position) }
   }
-  
+
+  %op Strategy Lookup(name:Name, position:Position, muvar:Strategy) {
+    make(name,position,muvar) { (`Mu(MuVar("x"),LookupLocal(name,position,MuVar("x")))) }
+  }
+
+  %strategy LookupLocal(name:Name, position:Position, muvar:Strategy) extends Up(muvar) {
+    visit ClassDecl {
+      ClassDecl[bodyDecl=bodyDecl] -> {
+        // search in local fields and unherited ones
+      }
+    }
+
+    visit Stmt {
+      b@Block(_*,LocalVariableDecl[name=n],_*) -> {
+        if (name.equals(`n)) {
+          position.setValue(getEnvironment().getPosition());
+          return `b; 
+        }
+      }
+    }
+
+  }
+
+
 }
