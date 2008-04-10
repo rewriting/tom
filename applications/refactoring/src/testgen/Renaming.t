@@ -45,6 +45,12 @@ public class Renaming {
   %include {tinyjava/TinyJava.tom}
   %include {tinyjava/_TinyJava.tom}
 
+  %op Strategy Up(s1:Strategy) {
+    is_fsym(t) {( ($t instanceof tom.library.sl.Up) )}
+    make(v) {( new tom.library.sl.Up($v) )}
+    get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Up.ARG) )}
+  }
+
   public Set collectTypes(Prog p) {
     Context context = new Context();
     context.types = new HashSet();
@@ -112,6 +118,7 @@ public class Renaming {
         Type upperupperclass = context.upperclass;
         context.upperclass = `newtype;
         Position current = getEnvironment().getPosition();
+        //down into the body
         getEnvironment().down(3);
         this.visit(getEnvironment());
         getEnvironment().up();
@@ -125,5 +132,5 @@ public class Renaming {
       }
     }
   }
-
+  
 }

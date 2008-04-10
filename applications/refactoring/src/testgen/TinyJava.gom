@@ -23,5 +23,3 @@ ComposedName = Dot(Name*)
              | Undefined()
 
 Name = Name(name:String)
-
-Dot = FL()
