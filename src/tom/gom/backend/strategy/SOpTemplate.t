@@ -146,7 +146,7 @@ public class @className()@ implements tom.library.sl.Strategy {
     tom.library.sl.AbstractStrategy.init(this,envt);
     int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
-      return environment.getRoot();
+      return environment.getSubject();
     } else {
       throw new tom.library.sl.VisitFailure();
     }
