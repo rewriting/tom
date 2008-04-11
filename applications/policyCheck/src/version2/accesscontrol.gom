@@ -97,7 +97,7 @@ module accesscontrol
     // do not add an access already there 
     if(l1.contains(e)) { return l; }
 
-	 // checks if an implicit state can be deduced from the set of explcit states 
+   // checks if an implicit state can be deduced from the set of explcit states 
    // can we cut by adding only ONE element ? it seems to be complete
     java.util.Collection<accesscontrol.types.Access> toBeAdded = new java.util.HashSet<accesscontrol.types.Access>();
    

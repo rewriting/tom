@@ -28,11 +28,8 @@ How to prepare a release:
 - upload manual
 
 
-
-
 - update Changelog, commit, tag the release with
-  cvs -d $GFORGE rtag -R tom-2.5 jtom
-  svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.5 -m "tag tree"
+  svn copy $GFORGE/jtom/trunk $GFORGE/jtom/tags/tom-2.6 -m "tag tree"
 
 - add news entry in jtom-doc/www/{index.php,news.php}
 

@@ -267,6 +267,10 @@ public final class Environment implements Cloneable {
     }
   }
 
+  public void goToPosition(Position p) {
+    followPath(p.sub(getPosition()));
+  }
+
   public void followPathLocal(Path path) {
     Path normalizedPath = path.getCanonicalPath();
     int length = normalizedPath.length();

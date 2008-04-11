@@ -26,14 +26,14 @@
   <target name="build" depends="init">
     <gom config="${gomconfigfile}"
       srcdir="${policy.src}"
-      destdir="${policy.gen}"
-         >
+      destdir="${policy.gen}">
          <include name="**/*.gom"/>
     </gom>
 
     <tom.preset srcdir="${policy.src}"
       destdir="${policy.gen}">
       <include name="**/*.t"/>
+      <exclude name="version1/**/*.t"/>
     </tom.preset>
 
     <javac.preset destdir="${policy.build}" fork="yes">
@@ -41,6 +41,7 @@
       <src path="${policy.gen}"/>
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
+      <exclude name="version1/**/*.java"/>
     </javac.preset>
   </target>
 
