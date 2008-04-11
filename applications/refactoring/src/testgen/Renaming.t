@@ -51,15 +51,68 @@ public class Renaming {
     get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
   }
 
-  public Set collectTypes(Prog p) {
+  public Set<Type> collectTypes(Prog p) {
     Context context = new Context();
-    context.types = new HashSet();
+    context.types = new HashSet<Type>();
     try {
       `Mu(MuVar("x"),CollectTypes(context,MuVar("x"))).visit(p);
     } catch (VisitFailure e) {
       System.out.println(" Unexpected strategy failrure");
     }
     return context.types;
+  }
+
+  public void printDeclClass(Prog p) {
+    for (Type t : collectTypes(p)) {
+      try {
+        System.out.println("ast for the type "+t);
+        `ApplyAt(t,Print()).visit(p);
+      } catch (VisitFailure e) {
+        System.out.println(" Unexpected strategy failrure");
+      }
+    }
+  }
+
+  %strategy Print() extends Identity() {
+    visit ClassDecl {
+      decl -> {
+        System.out.println(`decl);
+      }
+    }
+  }
+
+
+  %strategy ApplyAt(t:Type,s:Strategy) extends Identity() {
+    visit Prog {
+      Prog(_*) -> {
+        return (Prog) `_Prog(ApplyAt(t,s)).visit(getEnvironment());
+      }
+    }
+    visit CompUnit {
+      CompUnit[packageName=name] -> {
+        if (t.packagename.equals(`name.getname())) {
+          if (t.upperclass != null) {
+            //find the upper class recursively and then try to use ApplyAt on all its inner classes
+            Strategy ApplyOnInnerClasses = `_ClassDecl(Identity(),Identity(),_ConcBodyDecl(Try(_MemberClassDecl(ApplyAt(t,s)))));
+            return (CompUnit) `_CompUnit(Identity(),_ConcClassDecl(ApplyAt(t.upperclass,ApplyOnInnerClasses))).visit(getEnvironment());
+          } else {
+            return (CompUnit) `_CompUnit(Identity(),_ConcClassDecl(ApplyAt(t,s))).visit(getEnvironment());
+          }
+        }
+      }
+    }
+    visit ClassDecl {
+      ClassDecl[name=n] -> {
+        if (t.name.equals(`n.getname())) {
+          return (ClassDecl) s.visit(getEnvironment());
+        }
+      }
+    }
+  }
+
+  %typeterm Type {
+    implement { Type }
+    is_sort(t) { ($t instanceof Type) }
   }
 
 
@@ -71,7 +124,7 @@ public class Renaming {
   public static class Context {
     public String packagename;
     public Type upperclass;
-    public Set types; 
+    public Set<Type> types; 
   }
 
   public static class Type {
@@ -131,7 +184,8 @@ public class Renaming {
         context.packagename = `packageName.getname();
       }
     }
- }
+  }
+
 
   %typeterm Position {
     implement { Position }
@@ -144,8 +198,9 @@ public class Renaming {
 
   %strategy LookupLocal(name:Name, position:Position, muvar:Strategy) extends Up(muvar) {
     visit ClassDecl {
-      ClassDecl[bodyDecl=bodyDecl] -> {
-        // search in local fields and unherited ones
+      c@ClassDecl[bodyDecl=bodyDecl] -> {
+        // search in local fields and inherited ones
+        `MemberField(name,position).visit(getEnvironment());
       }
     }
 
@@ -160,5 +215,35 @@ public class Renaming {
 
   }
 
+  %strategy MemberField(name:Name, position:Position) extends Identity() {
+    visit ClassDecl {
+      c@ClassDecl[super=supername, bodyDecl=ConcBodyDecl(_*,FieldDecl[name=n],_*)] -> {
+        if (name.equals(`n)) {
+          position.setValue(getEnvironment().getPosition());
+          return `c; 
+        }
+        //search in super classes
+        %match (supername) {
+          Dot(_*,typename) -> {
+            Position superdefposition = new Position();
+            `LookupType(typename.getname(),superdefposition).visit(getEnvironment());
+            getEnvironment().goToPosition(superdefposition);
+            this.visit(getEnvironment());
+          }
+        }
+      }
+    } 
+  }
+
+
+  %strategy LookupType(name:String,position:Position) extends Identity() {
+    visit CompUnit {
+      CompUnit[classes=ConcClassDecl(_*,ClassDecl[name=n],_*)] -> {
+        if (`n.equals(name)) {
+          position.setValue(getEnvironment().getPosition());
+        }
+      }
+    }
+  }
 
 }

@@ -65,6 +65,8 @@ public class Generator {
       System.out.println(renaming.collectTypes(p));
       p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
       System.out.println(renaming.collectTypes(p));
+      System.out.println("Print class declarations");
+      renaming.printDeclClass(p);
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {
           new File("./"+`packageName.getname()).mkdir();
