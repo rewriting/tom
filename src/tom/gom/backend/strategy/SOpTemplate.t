@@ -143,7 +143,7 @@ public class @className()@ implements tom.library.sl.Strategy {
   }
 
   public Object visit(tom.library.sl.Environment envt, tom.library.sl.Introspector i) throws tom.library.sl.VisitFailure {
-    setEnvironment(envt);
+    tom.library.sl.AbstractStrategy.init(this,envt);
     int status = visit(i);
     if(status == tom.library.sl.Environment.SUCCESS) {
       return environment.getRoot();
