@@ -62,10 +62,13 @@ public class Generator {
     try {
       Prog p = (Prog) generateProg.visit(`Prog());
       Renaming renaming = new Renaming();
+      System.out.println("Random class hierarchy generation...");
       System.out.println(renaming.collectTypes(p));
+      System.out.println("Remove name conflicts...");
       p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
       System.out.println(renaming.collectTypes(p));
-      System.out.println("Print class declarations");
+      System.out.println("Generation of inheritance hierarchy...");
+      p = renaming.generateInheritanceHierarchy(p);
       renaming.printDeclClass(p);
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {

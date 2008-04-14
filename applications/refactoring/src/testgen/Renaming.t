@@ -42,18 +42,21 @@ import java.util.*;
 public class Renaming {
 
   %include {sl.tom }
+  %include {util/types/List.tom}
   %include {tinyjava/TinyJava.tom}
   %include {tinyjava/_TinyJava.tom}
 
+  static Random random = new java.util.Random();
+  
   %op Strategy Up(s1:Strategy) {
     is_fsym(t) {( ($t instanceof testgen.Up) )}
     make(v) {( new testgen.Up($v) )}
     get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
   }
 
-  public Set<Type> collectTypes(Prog p) {
+  public List<Type> collectTypes(Prog p) {
     Context context = new Context();
-    context.types = new HashSet<Type>();
+    context.types = new ArrayList<Type>();
     try {
       `Mu(MuVar("x"),CollectTypes(context,MuVar("x"))).visit(p);
     } catch (VisitFailure e) {
@@ -73,6 +76,53 @@ public class Renaming {
     }
   }
 
+  public Prog generateInheritanceHierarchy(Prog p) {
+    List<Type> alltypes = collectTypes(p);
+    List<Type> availabletypes = new ArrayList<Type>();
+    availabletypes.addAll(alltypes);
+    List<Type> undefinedtypes = new ArrayList<Type>();
+    undefinedtypes.addAll(alltypes);
+    Type t = undefinedtypes.get(0); 
+    try {
+      return (Prog) `Mu(MuVar("x"),ApplyAt(t,RenameSuperClass(availabletypes,alltypes,undefinedtypes,t,MuVar("x")))).visit(p);
+    } catch (VisitFailure e) {
+      e.printStackTrace();
+      throw new RuntimeException(" Unexpected strategy failure");
+    }
+  }
+
+
+  %strategy RenameSuperClass(availabletypes:List,alltypes:List,undefinedtypes:List,current:Type,next:Strategy) extends next {
+    visit ClassDecl {
+      c@ClassDecl[]  -> {
+        undefinedtypes.remove(current);
+        if (availabletypes.isEmpty() || undefinedtypes.isEmpty()) {
+          // the hierarchy is now complete
+          return `c.setsuper(`Dot(Name("Object")));
+        } else {
+          availabletypes.remove(current);
+          int index = random.nextInt(availabletypes.size()+1);
+          if (index == availabletypes.size()) {
+            // this index corresponds to the case where there is no super-class
+            availabletypes.addAll(alltypes);
+            System.out.println("type 1:"+(Type)undefinedtypes.get(0));
+            System.out.println("current :"+current);
+            current.setType((Type)undefinedtypes.get(0));
+            getEnvironment().setSubject(`c.setsuper(`Dot(Name("Object"))));
+          } else {
+            Type t = (Type) availabletypes.get(index);
+            System.out.println("type 2:"+t);
+            System.out.println("current :"+current);
+            current.setType(t);
+            // construct the ComposedName
+            getEnvironment().setSubject(`c.setsuper(t.getComposedName()));
+          }
+        }
+      }
+    }
+  }
+
+
   %strategy Print() extends Identity() {
     visit ClassDecl {
       decl -> {
@@ -88,17 +138,17 @@ public class Renaming {
   %strategy ApplyAtLocal(t:Type,s:Strategy) extends Identity() {
     visit CompUnit {
       CompUnit[packageName=name] -> {
-        if (t.packagename.equals(`name.getname())) {
+        if (t.getpackagename().equals(`name.getname())) {
           return (CompUnit) `_CompUnit(Identity(),_ConcClassDecl(this)).visit(getEnvironment());
         }
       }
     }
     visit ClassDecl {
       ClassDecl[name=n] -> {
-        if (t.name.equals(`n.getname())) {
+        if (t.getname().equals(`n.getname())) {
           return (ClassDecl) s.visit(getEnvironment());
         } else {
-          if (t.upperclass != null) {
+          if (t.getupperclass() != null) {
             //find the upper class recursively and then try to use ApplyAt on all its inner classes
             return (ClassDecl) `_ClassDecl(Identity(),Identity(),_ConcBodyDecl(Try(_MemberClassDecl(this)))).visit(getEnvironment());
 
@@ -108,139 +158,108 @@ public class Renaming {
     }
   }
 
-    %typeterm Type {
-      implement { Type }
-      is_sort(t) { ($t instanceof Type) }
-    }
+  %typeterm Type {
+    implement { Type }
+    is_sort(t) { ($t instanceof Type) }
+  }
 
 
-    %typeterm Context {
-      implement { Context }
-      is_sort(t) { ($t instanceof Context) }
-    }
+  %typeterm Context {
+    implement { Context }
+    is_sort(t) { ($t instanceof Context) }
+  }
 
-    public static class Context {
-      public String packagename;
-      public Type upperclass;
-      public Set<Type> types; 
-    }
+  public static class Context {
+    public String packagename;
+    public Type upperclass;
+    public List<Type> types; 
+  }
 
-    public static class Type {
-
-      String packagename;
-      String name;
-      Type upperclass;
-
-      public Type(String packagename, Type upperclass, String name) {
-        this.packagename = packagename;
-        this.upperclass = upperclass;
-        this.name = name;
-      }
-
-      public Type(String packagename, String name) {
-        this.packagename = packagename;
-        this.name = name;
-      }
-
-      public String getName() {
-        if (upperclass != null ) {
-          return upperclass.getName()+"."+name;
+  %strategy CollectTypes(context:Context,s:Strategy) extends All(s) {
+    visit ClassDecl {
+      c@ClassDecl[name=name] -> {
+        Type newtype;
+        if (context.upperclass != null) {
+          newtype = new Type(context.packagename,context.upperclass,`name.getname());
         } else {
-          return name;
+          newtype = new Type(context.packagename,`name.getname());
         }
-      }
-
-      public String toString() {
-        return packagename+"."+this.getName();
-      }
-
-    }
-
-    %strategy CollectTypes(context:Context,s:Strategy) extends All(s) {
-      visit ClassDecl {
-        c@ClassDecl[name=name] -> {
-          Type newtype;
-          if (context.upperclass != null) {
-            newtype = new Type(context.packagename,context.upperclass,`name.getname());
-          } else {
-            newtype = new Type(context.packagename,`name.getname());
-          }
-          context.types.add(newtype);
-          Type upperupperclass = context.upperclass;
-          context.upperclass = `newtype;
-          //visit the body
-          getEnvironment().down(3);
-          this.visit(getEnvironment());
-          getEnvironment().up();
-          context.upperclass = upperupperclass;
-          return `c;
-        }
-      }
-      visit CompUnit {
-        CompUnit[packageName=packageName] -> {
-          context.packagename = `packageName.getname();
-        }
+        context.types.add(newtype);
+        Type upperupperclass = context.upperclass;
+        context.upperclass = `newtype;
+        //visit the body
+        getEnvironment().down(3);
+        this.visit(getEnvironment());
+        getEnvironment().up();
+        context.upperclass = upperupperclass;
+        return `c;
       }
     }
-
-
-    %typeterm Position {
-      implement { Position }
-      is_sort(t) { ($t instanceof Position) }
-    }
-
-    %op Strategy Lookup(name:Name, position:Position, muvar:Strategy) {
-      make(name,position,muvar) { (`Mu(MuVar("x"),LookupLocal(name,position,MuVar("x")))) }
-    }
-
-    %strategy LookupLocal(name:Name, position:Position, muvar:Strategy) extends Up(muvar) {
-      visit ClassDecl {
-        c@ClassDecl[bodyDecl=bodyDecl] -> {
-          // search in local fields and inherited ones
-          `MemberField(name,position).visit(getEnvironment());
-        }
+    visit CompUnit {
+      CompUnit[packageName=packageName] -> {
+        context.packagename = `packageName.getname();
       }
+    }
+  }
 
-      visit Stmt {
-        b@Block(_*,LocalVariableDecl[name=n],_*) -> {
-          if (name.equals(`n)) {
-            position.setValue(getEnvironment().getPosition());
-            return `b; 
-          }
-        }
+
+  %typeterm Position {
+    implement { Position }
+    is_sort(t) { ($t instanceof Position) }
+  }
+
+  %op Strategy Lookup(name:Name, position:Position, muvar:Strategy) {
+    make(name,position,muvar) { (`Mu(MuVar("x"),LookupLocal(name,position,MuVar("x")))) }
+  }
+
+  %strategy LookupLocal(name:Name, position:Position, muvar:Strategy) extends Up(muvar) {
+    visit ClassDecl {
+      c@ClassDecl[bodyDecl=bodyDecl] -> {
+        // search in local fields and inherited ones
+        `MemberField(name,position).visit(getEnvironment());
       }
-
     }
 
-    %strategy MemberField(name:Name, position:Position) extends Identity() {
-      visit ClassDecl {
-        c@ClassDecl[super=supername, bodyDecl=ConcBodyDecl(_*,FieldDecl[name=n],_*)] -> {
-          if (name.equals(`n)) {
-            position.setValue(getEnvironment().getPosition());
-            return `c; 
-          }
-          //search in super classes
-          %match (supername) {
-            Dot(_*,typename) -> {
-              Position superdefposition = new Position();
-              `LookupType(typename.getname(),superdefposition).visit(getEnvironment());
-              getEnvironment().goToPosition(superdefposition);
-              this.visit(getEnvironment());
-            }
-          }
-        }
-      } 
-    }
-
-
-    %strategy LookupType(name:String,position:Position) extends Identity() {
-      visit CompUnit {
-        CompUnit[classes=ConcClassDecl(_*,ClassDecl[name=n],_*)] -> {
-          if (`n.equals(name)) {
-            position.setValue(getEnvironment().getPosition());
-          }
+    visit Stmt {
+      b@Block(_*,LocalVariableDecl[name=n],_*) -> {
+        if (name.equals(`n)) {
+          position.setValue(getEnvironment().getPosition());
+          return `b; 
         }
       }
     }
 
   }
+
+  %strategy MemberField(name:Name, position:Position) extends Identity() {
+    visit ClassDecl {
+      c@ClassDecl[super=supername, bodyDecl=ConcBodyDecl(_*,FieldDecl[name=n],_*)] -> {
+        if (name.equals(`n)) {
+          position.setValue(getEnvironment().getPosition());
+          return `c; 
+        }
+        //search in super classes
+        %match (supername) {
+          Dot(_*,typename) -> {
+            Position superdefposition = new Position();
+            `LookupType(typename.getname(),superdefposition).visit(getEnvironment());
+            getEnvironment().goToPosition(superdefposition);
+            this.visit(getEnvironment());
+          }
+        }
+      }
+    } 
+  }
+
+
+  %strategy LookupType(name:String,position:Position) extends Identity() {
+    visit CompUnit {
+      CompUnit[classes=ConcClassDecl(_*,ClassDecl[name=n],_*)] -> {
+        if (`n.equals(name)) {
+          position.setValue(getEnvironment().getPosition());
+        }
+      }
+    }
+  }
+
+}
