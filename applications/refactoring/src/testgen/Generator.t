@@ -60,7 +60,7 @@ public class Generator {
   public void generateClasses() throws java.io.IOException {
     StringWriter writer = new StringWriter();
     try {
-      Prog p = (Prog) `generateProg.visit(`Prog());
+      Prog p = (Prog) generateProg.visit(`Prog());
       Renaming renaming = new Renaming();
       System.out.println(renaming.collectTypes(p));
       p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
