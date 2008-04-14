@@ -69,59 +69,88 @@ public class Renaming {
     for (Type t : collectTypes(p)) {
       try {
         System.out.println("ast for the type "+t);
-        `ApplyAt(t,Print()).visit(p);
+        TypeWrapper tt = new TypeWrapper(t);
+        `ApplyAt(tt,Print()).visit(p);
       } catch (VisitFailure e) {
         System.out.println(" Unexpected strategy failure");
       }
     }
   }
 
+  public static List<Type> getTopLevelTypes(List<Type> types) {
+    List<Type> topleveltypes = new ArrayList<Type>();
+    for (Type t:types) {
+      if(t.getupperclass()==null) {
+        topleveltypes.add(t);
+      }
+    }
+    return topleveltypes;
+  }
+
   public Prog generateInheritanceHierarchy(Prog p) {
-    List<Type> alltypes = collectTypes(p);
+    List<Type> undefinedtypes = collectTypes(p);
+    List<Type> alltopleveltypes = getTopLevelTypes(undefinedtypes);
     List<Type> availabletypes = new ArrayList<Type>();
-    availabletypes.addAll(alltypes);
-    List<Type> undefinedtypes = new ArrayList<Type>();
-    undefinedtypes.addAll(alltypes);
-    Type t = undefinedtypes.get(0); 
+    availabletypes.addAll(alltopleveltypes);
+    TypeWrapper current = new TypeWrapper((Type)undefinedtypes.get(0)); 
     try {
-      return (Prog) `Mu(MuVar("x"),ApplyAt(t,RenameSuperClass(availabletypes,alltypes,undefinedtypes,t,MuVar("x")))).visit(p);
+      return (Prog) `Mu(MuVar("x"),IfThenElse(IsComplete(undefinedtypes), Identity(), Sequence(ApplyAt(current,RenameSuperClass(availabletypes,alltopleveltypes,undefinedtypes,current)),MuVar("x")))).visit(p);
     } catch (VisitFailure e) {
-      e.printStackTrace();
       throw new RuntimeException(" Unexpected strategy failure");
     }
   }
 
 
-  %strategy RenameSuperClass(availabletypes:List,alltypes:List,undefinedtypes:List,current:Type,next:Strategy) extends next {
+  %strategy RenameSuperClass(availabletypes:List,alltopleveltypes:List,undefinedtypes:List,current:TypeWrapper) extends Identity() {
     visit ClassDecl {
       c@ClassDecl[]  -> {
-        undefinedtypes.remove(current);
-        if (availabletypes.isEmpty() || undefinedtypes.isEmpty()) {
+        undefinedtypes.remove(current.type);
+        if (availabletypes.isEmpty()) {
           // the hierarchy is now complete
           return `c.setsuper(`Dot(Name("Object")));
         } else {
-          availabletypes.remove(current);
+          availabletypes.remove(current.type);
           int index = random.nextInt(availabletypes.size()+1);
           if (index == availabletypes.size()) {
             // this index corresponds to the case where there is no super-class
-            availabletypes.addAll(alltypes);
-            System.out.println("type 1:"+(Type)undefinedtypes.get(0));
-            System.out.println("current :"+current);
-            current.setType((Type)undefinedtypes.get(0));
-            getEnvironment().setSubject(`c.setsuper(`Dot(Name("Object"))));
+            availabletypes.addAll(alltopleveltypes);
+            if(! undefinedtypes.isEmpty()) {
+              current.type = (Type) undefinedtypes.get(0);
+            }
+            return `c.setsuper(`Dot(Name("Object")));
           } else {
-            Type t = (Type) availabletypes.get(index);
-            System.out.println("type 2:"+t);
-            System.out.println("current :"+current);
-            current.setType(t);
+            current.type = (Type) availabletypes.get(index);
             // construct the ComposedName
-            getEnvironment().setSubject(`c.setsuper(t.getComposedName()));
+            return `c.setsuper(current.type.getComposedName());
           }
         }
       }
     }
   }
 
+  %typeterm TypeWrapper {
+    implement {TypeWrapper}
+  }
+
+  static class TypeWrapper {
+
+    public Type type;
+
+    public TypeWrapper(Type t) {
+      this.type = t;
+    }
+  }
+
+  %strategy IsComplete(undefinedtypes:List) extends Fail() {
+    visit Prog {
+      p -> {
+        if (undefinedtypes.isEmpty()) {
+          // the hierarchy is now complete
+          return `p;
+        }
+      }
+    }
+  }
 
   %strategy Print() extends Identity() {
     visit ClassDecl {
@@ -131,24 +160,24 @@ public class Renaming {
     }
   }
 
-  %op Strategy ApplyAt(t:Type,s:Strategy) {
+  %op Strategy ApplyAt(t:TypeWrapper,s:Strategy) {
     make(t,s) { (`_Prog(ApplyAtLocal(t,s))) }
   }
 
-  %strategy ApplyAtLocal(t:Type,s:Strategy) extends Identity() {
+  %strategy ApplyAtLocal(t:TypeWrapper,s:Strategy) extends Identity() {
     visit CompUnit {
       CompUnit[packageName=name] -> {
-        if (t.getpackagename().equals(`name.getname())) {
+        if (t.type.getpackagename().equals(`name.getname())) {
           return (CompUnit) `_CompUnit(Identity(),_ConcClassDecl(this)).visit(getEnvironment());
         }
       }
     }
     visit ClassDecl {
       ClassDecl[name=n] -> {
-        if (t.getname().equals(`n.getname())) {
+        if (t.type.getname().equals(`n.getname())) {
           return (ClassDecl) s.visit(getEnvironment());
         } else {
-          if (t.getupperclass() != null) {
+          if (t.type.getupperclass() != null) {
             //find the upper class recursively and then try to use ApplyAt on all its inner classes
             return (ClassDecl) `_ClassDecl(Identity(),Identity(),_ConcBodyDecl(Try(_MemberClassDecl(this)))).visit(getEnvironment());
 
@@ -156,11 +185,6 @@ public class Renaming {
         }
       }
     }
-  }
-
-  %typeterm Type {
-    implement { Type }
-    is_sort(t) { ($t instanceof Type) }
   }
 
 
