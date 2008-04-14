@@ -1,0 +1,142 @@
+%include {sl.tom }
+%include {util/types/List.tom}
+%include {tinyjava/TinyJava.tom}
+%include {tinyjava/_TinyJava.tom}
+
+
+%typeterm Context {
+  implement { Context }
+  is_sort(t) { ($t instanceof Context) }
+}
+
+public static class Context {
+  public String packagename;
+  public Type upperclass;
+  public List<Type> types; 
+}
+
+%strategy CollectTypes(context:Context,s:Strategy) extends All(s) {
+  visit ClassDecl {
+    c@ClassDecl[name=name] -> {
+      Type newtype;
+      if (context.upperclass != null) {
+        newtype = new Type(context.packagename,context.upperclass,`name.getname());
+      } else {
+        newtype = new Type(context.packagename,`name.getname());
+      }
+      context.types.add(newtype);
+      Type upperupperclass = context.upperclass;
+      context.upperclass = `newtype;
+      //visit the body
+      getEnvironment().down(3);
+      this.visit(getEnvironment());
+      getEnvironment().up();
+      context.upperclass = upperupperclass;
+      return `c;
+    }
+  }
+  visit CompUnit {
+    CompUnit[packageName=packageName] -> {
+      context.packagename = `packageName.getname();
+    }
+  }
+}
+
+public static List<Type> collectAllTypes(Prog p) {
+  Context context = new Context();
+  context.types = new ArrayList<Type>();
+  try {
+    `Mu(MuVar("x"),CollectTypes(context,MuVar("x"))).visit(p);
+  } catch (VisitFailure e) {
+    System.out.println(" Unexpected strategy failure");
+  }
+  return context.types;
+}
+
+public static List<Type> getTopLevelTypes(List<Type> types) {
+  List<Type> topleveltypes = new ArrayList<Type>();
+  for (Type t:types) {
+    if(t.getupperclass()==null) {
+      topleveltypes.add(t);
+    }
+  }
+  return topleveltypes;
+}
+
+
+%typeterm TypeWrapper {
+  implement {TypeWrapper}
+}
+
+static class TypeWrapper {
+
+  public Type type;
+
+  public TypeWrapper(Type t) {
+    this.type = t;
+  }
+}
+
+%op Strategy ApplyAt(t:TypeWrapper,s:Strategy) {
+  make(t,s) { (`_Prog(ApplyAtLocal(t,s))) }
+}
+
+%strategy ApplyAtLocal(t:TypeWrapper,s:Strategy) extends Identity() {
+  visit CompUnit {
+    CompUnit[packageName=name] -> {
+      if (t.type.getpackagename().equals(`name.getname())) {
+        return (CompUnit) `_CompUnit(Identity(),_ConcClassDecl(this)).visit(getEnvironment());
+      }
+    }
+  }
+  visit ClassDecl {
+    ClassDecl[name=n] -> {
+      if (t.type.getname().equals(`n.getname())) {
+        return (ClassDecl) s.visit(getEnvironment());
+      } else {
+        if (t.type.getupperclass() != null) {
+          //find the upper class recursively and then try to use ApplyAt on all its inner classes
+          return (ClassDecl) `_ClassDecl(Identity(),Identity(),_ConcBodyDecl(Try(_MemberClassDecl(this)))).visit(getEnvironment());
+
+        }
+      }
+    }
+  }
+}
+
+%strategy Print() extends Identity() {
+  visit ClassDecl {
+    decl -> {
+      System.out.println(`decl);
+    }
+  }
+}
+
+public void printDeclClass(Prog p) {
+  for (Type t : collectAllTypes(p)) {
+    try {
+      System.out.println("ast for the type "+t);
+      TypeWrapper tt = new TypeWrapper(t);
+      `ApplyAt(tt,Print()).visit(p);
+    } catch (VisitFailure e) {
+      System.out.println(" Unexpected strategy failure");
+    }
+  }
+}
+
+public String getComposedName(ComposedName n) {
+  %match(n) {
+    ConsDot(head,tail@!EmptyDot()) -> {
+      return `head.getname()+"."+getComposedName(`tail);
+    }
+    ConsDot(head,EmptyDot()) -> {
+      return `head.getname();
+    }
+    Undefined() -> {
+      return "testgen.notype";
+    }
+  }
+  return "";
+}
+
+

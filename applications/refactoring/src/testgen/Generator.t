@@ -41,9 +41,7 @@ import java.util.*;
 
 public class Generator {
 
-  %include {sl.tom }
-  %include {tinyjava/TinyJava.tom}
-  %include {tinyjava/_TinyJava.tom}
+  %include { util.tom }
 
   static Random random = new java.util.Random();
 
@@ -61,15 +59,14 @@ public class Generator {
     StringWriter writer = new StringWriter();
     try {
       Prog p = (Prog) generateProg.visit(`Prog());
-      Renaming renaming = new Renaming();
       System.out.println("Random class hierarchy generation...");
-      System.out.println(renaming.collectTypes(p));
+      System.out.println(collectAllTypes(p));
       System.out.println("Remove name conflicts...");
       p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
-      System.out.println(renaming.collectTypes(p));
+      System.out.println(collectAllTypes(p));
       System.out.println("Generation of inheritance hierarchy...");
-      p = renaming.generateInheritanceHierarchy(p);
-      renaming.printDeclClass(p);
+      p = generateInheritanceHierarchy(p);
+      printDeclClass(p);
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {
           new File("./"+`packageName.getname()).mkdir();
@@ -163,21 +160,6 @@ public class Generator {
     }
   }
 
-  public String getComposedName(ComposedName n) {
-    %match(n) {
-      ConsDot(head,tail@!EmptyDot()) -> {
-        return `head.getname()+"."+getComposedName(`tail);
-      }
-      ConsDot(head,EmptyDot()) -> {
-        return `head.getname();
-      }
-      Undefined() -> {
-        return "testgen.notype";
-      }
-    }
-    return "";
-  }
-
   public static class GenerateName extends BasicStrategy {
     public GenerateName() {
       super(`Identity());
@@ -185,6 +167,58 @@ public class Generator {
 
     public Object visitLight(Object v, Introspector introspector) throws VisitFailure {
       return `Name(""+((char)('a'+(random.nextInt('z'-'a'+ 1)))));
+    }
+  }
+
+  public Prog generateInheritanceHierarchy(Prog p) {
+    List<Type> undefinedtypes = collectAllTypes(p);
+    List<Type> alltopleveltypes = getTopLevelTypes(undefinedtypes);
+    List<Type> availabletypes = new ArrayList<Type>();
+    availabletypes.addAll(alltopleveltypes);
+    TypeWrapper current = new TypeWrapper((Type)undefinedtypes.get(0)); 
+    try {
+      return (Prog) `Mu(MuVar("x"),IfThenElse(IsComplete(undefinedtypes), Identity(), Sequence(ApplyAt(current,RenameSuperClass(availabletypes,alltopleveltypes,undefinedtypes,current)),MuVar("x")))).visit(p);
+    } catch (VisitFailure e) {
+      throw new RuntimeException(" Unexpected strategy failure");
+    }
+  }
+
+
+  %strategy RenameSuperClass(availabletypes:List,alltopleveltypes:List,undefinedtypes:List,current:TypeWrapper) extends Identity() {
+    visit ClassDecl {
+      c@ClassDecl[]  -> {
+        undefinedtypes.remove(current.type);
+        if (availabletypes.isEmpty()) {
+          // the hierarchy is now complete
+          return `c.setsuper(`Dot(Name("Object")));
+        } else {
+          availabletypes.remove(current.type);
+          int index = random.nextInt(availabletypes.size()+1);
+          if (index == availabletypes.size()) {
+            // this index corresponds to the case where there is no super-class
+            availabletypes.addAll(alltopleveltypes);
+            if(! undefinedtypes.isEmpty()) {
+              current.type = (Type) undefinedtypes.get(0);
+            }
+            return `c.setsuper(`Dot(Name("Object")));
+          } else {
+            current.type = (Type) availabletypes.get(index);
+            // construct the ComposedName
+            return `c.setsuper(current.type.getComposedName());
+          }
+        }
+      }
+    }
+  }
+
+  %strategy IsComplete(undefinedtypes:List) extends Fail() {
+    visit Prog {
+      p -> {
+        if (undefinedtypes.isEmpty()) {
+          // the hierarchy is now complete
+          return `p;
+        }
+      }
     }
   }
 
@@ -196,5 +230,6 @@ public class Generator {
       e.printStackTrace();
     }
   }
+
 
 } 
