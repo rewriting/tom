@@ -28,9 +28,9 @@ public class Tests {
      * check a configuration
      */
     int numberOfAccessMode = 2;
-    SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
+//     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
 //     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("high")));
-//     SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
+    SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
 
 //     ListOfSubjects slist = `subjects(s1,s2,s3);
 //     ListOfResources rlist = `resources(r1,r2,r3);

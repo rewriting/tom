@@ -62,18 +62,15 @@ public class BLP extends Policy {
 	public Decision transition(Request req, State cs) {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
 
-
-		%match(req) {
-			add(read(subject[sl=ssl1],resource[sl=rsl1]))  -> { 
+		%match(req,cs) {
+			add(read(subject[sl=ssl1],resource[sl=rsl1])),
+        _  -> { 
         // not enough privileges to read
         if(! `slL.leq(`rsl1,`ssl1)) {
           return `deny(cs);
         }
       }
-    }
 
-
-		%match(req,cs) {
       // READ access  (if a WRITE already exists it should be comparable and bigger)
 			add(newAccess@read(s,resource[sl=rsl1])),
         state(accesses(_*,write(s,resource[sl=rsl2]),_*)) -> {
