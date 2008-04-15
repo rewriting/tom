@@ -83,6 +83,7 @@ public class BinaryNumberValue {
   %strategy scale(context:Context) extends Identity() {
     visit Bit {
       x -> {
+        Integer index = getEnvironment().getSubOmega();
         getEnvironment().up();
         if (getEnvironment().getSubject() instanceof SingularBitList) {      
           //eq SingularBitList.getBit().scale() = scale();
@@ -96,7 +97,7 @@ public class BinaryNumberValue {
             getEnvironment().down(2);
             context.scales.put(getPosition(),i);
           } else {
-            getEnvironment().down(1);
+            getEnvironment().down(index);
           }
         }
       }
