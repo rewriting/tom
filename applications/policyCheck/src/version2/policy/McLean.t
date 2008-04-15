@@ -72,60 +72,50 @@ public class McLean extends Policy {
 	public Decision transition(Request req, State cs) {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
 
-    // TODO: access that already exists
-
-		%match (req) {
-      // READ access  (if a WRITE already exists it should be comparable and bigger)
-			add(newAccess@read(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> {
+		%match(req,cs) {
+			add(read(subject[sl=ssl1],resource[sl=rsl1])),
+        _  -> { 
         // not enough privileges to read
         if(! `slL.leq(`rsl1,`ssl1)) {
           return `deny(cs);
         }
-        // existing write access with lower level
-        %match(cs) {
-          state(accesses(_*,write(s2,resource[sl=rsl2]),_*)) -> {
-            if(`s1==`s2 && `slL.ge(`rsl1,`rsl2)) {
+      }
+
+      // READ access  (if a WRITE already exists it should be comparable and bigger)
+			add(read(s,resource[sl=rsl1])),
+        state(accesses(_*,write(s,resource[sl=rsl2]),_*)) -> {
+            if(`slL.ge(`rsl1,`rsl2)) {
               return `deny(cs);
             }
-          }
-        }
-        // none of the previous ones is satisfied
-        // ==> good privileges and no existing write that is not smaller
-        ListOfAccesses accesses = cs.getaccesses();
-        return `grant(state(accesses(newAccess,accesses*)));
       }
 
       // WRITE access (if a READ already exists it should be comparable and smaller)
-			add(newAccess@write(s1,resource[sl=rsl1]))  -> { 
-        // existing write access with lower level
-        %match(cs) {
-          state(accesses(_*,read(s2,resource[sl=rsl2]),_*)) -> {
-            if( `s1==`s2 && `slL.ge(`rsl2,`rsl1)) {
+			add(write(s,resource[sl=rsl1])), 
+          state(accesses(_*,read(s,resource[sl=rsl2]),_*)) -> {
+            if(`slL.ge(`rsl2,`rsl1)) {
               return `deny(cs);
             }
-          }
-        }
+      }
+
+			add(newAccess), 
+        state(accesses) -> {
         // no existing read that is not bigger
-        ListOfAccesses accesses = cs.getaccesses();
         return `grant(state(accesses(newAccess,accesses*)));
       }
-    }
 
-    // remove a READ or WRITE access 
-    // ==> granted if the access exists
-    // Q: it looks like forgetting the history - is this OK?
-    %match(req,cs) {
+      // remove a READ or WRITE access 
+      // ==> granted if the access exists
+      // Q: it looks like forgetting the history - is this OK?
       delete(access), state(accesses(la*,access,ra*)) -> {
         // remove the access
         return `grant(state(accesses(la*,ra*)));
       }
-
+      
       delete(access), state(!accesses(la*,access,ra*)) -> {
         // doesn't exist
         return `deny(cs);
       }
     }
-
     // all the other cases
     return `na(cs);
 	}

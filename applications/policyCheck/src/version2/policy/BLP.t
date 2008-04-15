@@ -72,7 +72,7 @@ public class BLP extends Policy {
       }
 
       // READ access  (if a WRITE already exists it should be comparable and bigger)
-			add(newAccess@read(s,resource[sl=rsl1])),
+			add(read(s,resource[sl=rsl1])),
         state(accesses(_*,write(s,resource[sl=rsl2]),_*)) -> {
         // existing write access with lower level
             if(! `slL.leq(`rsl1,`rsl2)) {
@@ -81,7 +81,7 @@ public class BLP extends Policy {
         }
     
       // WRITE access (if a READ already exists it should be comparable and smaller)
-			add(newAccess@write(s,resource[sl=rsl1])), 
+			add(write(s,resource[sl=rsl1])), 
         state(accesses(_*,read(s,resource[sl=rsl2]),_*)) -> {
         // existing write access with lower level
             if( ! `slL.leq(`rsl2,`rsl1)) {
