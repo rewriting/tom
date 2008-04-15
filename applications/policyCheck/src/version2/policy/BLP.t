@@ -97,17 +97,15 @@ public class BLP extends Policy {
         // no existing read that is not bigger
         return `grant(state(accesses(newAccess,accesses*)));
       }
-    }
 
-    // remove a READ or WRITE access 
-    // ==> granted if the access exists
-    // Q: it looks like forgetting the history - is this OK?
-    %match(req,cs) {
+      // remove a READ or WRITE access 
+      // ==> granted if the access exists
+      // Q: it looks like forgetting the history - is this OK?
       delete(access), state(accesses(la*,access,ra*)) -> {
         // remove the access
         return `grant(state(accesses(la*,ra*)));
       }
-
+      
       delete(access), state(!accesses(la*,access,ra*)) -> {
         // doesn't exist
         return `deny(cs);
