@@ -102,7 +102,14 @@ public class Position implements Cloneable,Path {
   }
 
   public int hashCode() {
+    int hashCode = 0;
+    for(int i = 0; i < depth(); i++) {
+      hashCode = hashCode * 31 + omega[i];
+    }
+    return hashCode;
+
     /* Hash only the interesting part of the array */
+    /*
     if (depth()==0) {
       return 0;
     } else {
@@ -114,6 +121,7 @@ public class Position implements Cloneable,Path {
       }
       return Integer.parseInt(r.toString());
     }
+    */
   }
 
   /**
