@@ -103,9 +103,17 @@ public class Position implements Cloneable,Path {
 
   public int hashCode() {
     /* Hash only the interesting part of the array */
-    int[] hashedData = new int[depth()];
-    System.arraycopy(omega,0,hashedData,0,depth());
-    return depth() * hashedData.hashCode();
+    if (depth()==0) {
+      return 0;
+    } else {
+      int[] hashedData = new int[depth()];
+      System.arraycopy(omega,0,hashedData,0,depth());
+      StringBuilder r = new StringBuilder();
+      for(int i=0 ; i<depth() ; i++) {
+        r.append(omega[i]);
+      }
+      return Integer.parseInt(r.toString());
+    }
   }
 
   /**
