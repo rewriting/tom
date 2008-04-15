@@ -62,41 +62,39 @@ public class BLP extends Policy {
 	public Decision transition(Request req, State cs) {
     SecurityLevelsLattice slL = getSecurityLevelsLattice();
 
-    // TODO: access that already exists
 
 		%match(req) {
-      // READ access  (if a WRITE already exists it should be comparable and bigger)
-			add(newAccess@read(s1@subject[sl=ssl1],resource[sl=rsl1]))  -> { 
+			add(read(subject[sl=ssl1],resource[sl=rsl1]))  -> { 
         // not enough privileges to read
         if(! `slL.leq(`rsl1,`ssl1)) {
           return `deny(cs);
         }
+      }
+    }
+
+
+		%match(req,cs) {
+      // READ access  (if a WRITE already exists it should be comparable and bigger)
+			add(newAccess@read(s1@subject[sl=ssl1],resource[sl=rsl1])),
+        state(accesses(_*,write(s2,resource[sl=rsl2]),_*)) -> {
         // existing write access with lower level
-        %match(cs) {
-          state(accesses(_*,write(s2,resource[sl=rsl2]),_*)) -> {
             if(`s1==`s2 && ! `slL.leq(`rsl1,`rsl2)) {
               return `deny(cs);
             }
-          }
         }
-        // none of the previous ones is satisfied
-        // ==> good privileges and no existing write that is not smaller
-        ListOfAccesses accesses = cs.getaccesses();
-        return `grant(state(accesses(newAccess,accesses*)));
-      }
-
+    
       // WRITE access (if a READ already exists it should be comparable and smaller)
-			add(newAccess@write(s1,resource[sl=rsl1]))  -> { 
+			add(newAccess@write(s1,resource[sl=rsl1])), 
+        state(accesses(_*,read(s2,resource[sl=rsl2]),_*)) -> {
         // existing write access with lower level
-        %match(cs) {
-          state(accesses(_*,read(s2,resource[sl=rsl2]),_*)) -> {
             if( `s1==`s2 && ! `slL.leq(`rsl2,`rsl1)) {
               return `deny(cs);
             }
-          }
         }
+
+			add(newAccess), 
+        state(accesses) -> {
         // no existing read that is not bigger
-        ListOfAccesses accesses = cs.getaccesses();
         return `grant(state(accesses(newAccess,accesses*)));
       }
     }
