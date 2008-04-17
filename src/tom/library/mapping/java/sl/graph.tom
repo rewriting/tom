@@ -80,6 +80,11 @@
   make(s) {`AU(Identity(),s) }
 }
 
+%op Strategy AG(s:Strategy) {
+  make(s) {`TopDown(s) }
+}
+
+
 %op Strategy EF(s:Strategy) {
   make(s) {`EU(Identity(),s) }
 }
