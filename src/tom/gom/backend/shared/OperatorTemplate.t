@@ -41,6 +41,7 @@ public class OperatorTemplate extends TemplateHookedClass {
   ClassName sortName;
   SlotFieldList slotList;
   boolean multithread;
+  boolean maximalsharing;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -49,9 +50,11 @@ public class OperatorTemplate extends TemplateHookedClass {
                           List importList, 	
                           GomClass gomClass,
                           TemplateClass mapping,
-                          boolean multithread) {
+                          boolean multithread,
+                          boolean maximalsharing) {
     super(gomClass,manager,tomHomePath,importList,mapping);
     this.multithread = multithread;
+    this.maximalsharing = maximalsharing;
     %match(gomClass) {
       OperatorClass[AbstractType=abstractType,
                     ExtendsType=extendsType,
@@ -76,20 +79,38 @@ package @getPackage()@;
 @generateImport()@
 
 public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
-@generateBlock()@
-  private @className()@() {}
+  @generateBlock()@
+  private static String symbolName = "@className()@";
 ]%);
+
+if (maximalsharing) {
   if(slotList.length() > 0) {
     writer.write(%[
+
+  private @className()@() {}
   private int hashCode;
   private static @className()@ proto = new @className()@();
   ]%);
   } else {
     writer.write(%[
+
+  private @className()@() {}
   private static int hashCode = hashFunction();
   private static @className()@ proto = (@className()@) factory.build(new @className()@());
   ]%);
   }
+} else {
+// generate a private constructor that takes as arguments the operator arguments
+  writer.write(%[
+
+  private @className()@(@childListWithType(slotList)@) {
+  ]%);
+  generateMembersInit(writer);
+  writer.write(%[
+  }
+  ]%);
+}
+
   if (!hooks.isEmptyConcHook()) {
     mapping.generate(writer); 
   }
@@ -105,7 +126,10 @@ public final class @className()@ extends @fullClassName(extendsType)@ implements
     /* static constructor */
 ]%);
 generateConstructor(writer);
+
 if(slotList.length()>0) {
+
+if (maximalsharing) {
 writer.write(%[
   private void init(@childListWithType(slotList) + (slotList.isEmptyConcSlotField()?"":", ") @int hashCode) {
 ]%);
@@ -120,7 +144,10 @@ generateMembersInit(writer);
 writer.write(%[
   this.hashCode = hashFunction();
   }
+]%);
+}
 
+writer.write(%[
   /* name and arity */
   @@Override
   public String symbolName() {
@@ -132,6 +159,8 @@ writer.write(%[
   }
 ]%);
 
+
+if (maximalsharing) {
 if(multithread) {
   writer.write(%[
   public shared.SharedObject duplicate() {
@@ -148,6 +177,8 @@ if(multithread) {
   }
   ]%);
  }
+}
+
 } else {
     // case: constant
 writer.write(%[
@@ -161,13 +192,18 @@ writer.write(%[
     return 0;
   }
 
+]%);
+
+if (maximalsharing) {
+writer.write(%[
   public shared.SharedObject duplicate() {
     // the proto is a constant object: no need to clone it
     return this;
     //return new @className()@();
   }
-
 ]%);
+}
+
   }
 
   /*
@@ -208,7 +244,10 @@ writer.write(%[
     @genCompareChilds("ao","compareToLPO")@
     throw new RuntimeException("Unable to compare");
   }
+]%);
 
+if (maximalsharing) {
+writer.write(%[
   @@Override
   public int compareTo(Object o) {
     /*
@@ -234,7 +273,7 @@ writer.write(%[
     throw new RuntimeException("Unable to compare");
   }
 
-  /* shared.SharedObject */
+ //shared.SharedObject
   @@Override
   public final int hashCode() {
     return hashCode;
@@ -247,12 +286,25 @@ writer.write(%[
     return false;
   }
 
-  /* @className(sortName)@ interface */
+]%);
+} else {
+  //XXX: to implement
+writer.write(%[
+  @@Override
+  public int compareTo(Object o) {
+    return 0;
+  }
+  ]%);
+}
+
+writer.write(%[
+   //@className(sortName)@ interface
   @@Override
   public boolean @isOperatorMethod(className)@() {
     return true;
   }
-]%);
+  ]%);
+
 generateGetters(writer);
 
     writer.write(%[
@@ -267,7 +319,7 @@ generateGetters(writer);
   public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if(proto.symbolName().equals(appl.getName())) {
+      if(symbolName.equals(appl.getName())) {
         return make(
 @generatefromATermChilds("appl")@
         );
@@ -312,6 +364,7 @@ generateGetters(writer);
   }
 ]%);
 
+if (maximalsharing) {
     writer.write(%[
     /* internal use */
   protected@((slotList.length()==0)?" static":"")@ int hashFunction() {
@@ -338,7 +391,9 @@ writer.write(%[
     return c;
   }
 ]%);
-  }
+}
+
+}
 
   private void generateMembers(java.io.Writer writer) throws java.io.IOException {
     %match(SlotFieldList slotList) {
@@ -794,6 +849,12 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
     writer.write(%[
   @visibility@ static @className()@ @makeName@(@childListWithType(slotList)@) {
 ]%);
+    
+    if (! maximalsharing) {
+        writer.write(%[
+    return new @className()@(@childList(slotList)@);
+    ]%);
+    } else {
     if(slotList.length()>0) {
       if(multithread) {
         writer.write(%[
@@ -813,6 +874,7 @@ lbl:ConcHook(_*,MakeHook[HookArguments=args],_*) -> {
         writer.write(%[
     return proto;
 ]%);
+    }
     }
     writer.write(%[
   }

@@ -37,13 +37,16 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassNameList sortList;
 
   %include { ../../adt/objects/Objects.tom }
+  boolean maximalsharing;
 
   public AbstractTypeTemplate(File tomHomePath,
                               OptionManager manager,
                               List importList,
                               GomClass gomClass,
-                              TemplateClass mapping) {
+                              TemplateClass mapping,
+                              boolean maximalsharing){
     super(gomClass,manager,tomHomePath,importList,mapping);
+    this.maximalsharing = maximalsharing;
     %match(gomClass) {
       AbstractTypeClass[SortList=sortList] -> {
         this.sortList = `sortList;
@@ -60,9 +63,19 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
 %[
 package @getPackage()@;
 @generateImport()@
+]%);
 
+    if (maximalsharing) {
+    writer.write(
+%[
 public abstract class @className()@ implements shared.SharedObjectWithID, tom.library.sl.Visitable, Comparable @generateInterface()@ {
 ]%);
+} else {
+    writer.write(
+%[
+public abstract class @className()@ implements tom.library.sl.Visitable, Comparable @generateInterface()@ {
+]%);
+}
 
     if (! hooks.isEmptyConcHook()) {
       mapping.generate(writer); 
@@ -70,10 +83,19 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
     writer.write(
 %[
 @generateBlock()@
+]%);
 
+    if (maximalsharing) {
+    writer.write(
+%[
   private int uniqueID;
 
   protected static final shared.SharedObjectFactory factory = shared.SingletonSharedObjectFactory.getInstance();
+]%);
+    }
+
+writer.write(
+%[
   protected static final aterm.ATermFactory atermFactory = aterm.pure.SingletonFactory.getInstance();
 
   public abstract aterm.ATerm toATerm();
@@ -93,6 +115,11 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
 
   public abstract int compareToLPO(Object o);
 
+]%);
+
+if (maximalsharing) {
+ writer.write(
+%[
   public int getUniqueIdentifier() {
     return uniqueID;
   }
@@ -103,6 +130,12 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
 
 }
 ]%);
+} else {
+ writer.write(
+%[
+}
+]%);
+}
  }
 
 }
