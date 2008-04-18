@@ -294,6 +294,52 @@ writer.write(%[
   public int compareTo(Object o) {
     return 0;
   }
+
+  @@Override
+  public boolean equals(Object o) {
+    if (o instanceof @className()@) {
+      @className()@ typed_o = (@className()@) o;
+]%);
+
+SlotFieldList slots = slotList;
+if(slots.isEmptyConcSlotField()) {
+  writer.write(%[
+      return true;
+      ]%);
+} else {
+SlotField head = slots.getHeadConcSlotField();
+slots = slots.getTailConcSlotField();
+if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+  writer.write(%[
+      return @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
+      ]%);
+
+} else {
+  writer.write(%[
+      return @fieldName(head.getName())@.equals(typed_o.@getMethod(head)@())
+      ]%);
+}
+
+while(!slots.isEmptyConcSlotField()) {
+  head = slots.getHeadConcSlotField();
+  slots = slots.getTailConcSlotField();
+  if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+    writer.write(%[
+        && @fieldName(head.getName())@ == typed_o.@getMethod(head)@()
+        ]%);
+
+  } else {
+    writer.write(%[
+      && @fieldName(head.getName())@.equals(typed_o.@getMethod(head)@())
+      ]%);
+  }
+}
+writer.write(";");
+}
+writer.write(%[
+    }
+    return false;
+    }
   ]%);
 }
 

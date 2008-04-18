@@ -255,8 +255,8 @@ matchblock: {
 %typeterm @className()@ {
   implement { @fullClassName()@ }
   is_sort(t) { ($t instanceof @fullClassName()@) }
-  //equals(t1,t2) { $t1.equals($t2) }
-  equals(t1,t2) { ($t1==$t2) }
+  equals(t1,t2) { $t1.equals($t2) }
+  //equals(t1,t2) { ($t1==$t2) }
 }
 ]%);
     return;
