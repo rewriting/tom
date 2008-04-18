@@ -126,7 +126,7 @@ public class TestMatch extends TestCase {
 		};
 
 		for (int i=0; i<TEST.length;i++) {
-			assertSame(
+			assertEquals(
 				"TestMatch1 expected "+TEST[i].answer+" for match1("+TEST[i].question+")",
 				match1(factory.parse(TEST[i].question)),
 				factory.parse(TEST[i].answer)
@@ -154,7 +154,7 @@ public class TestMatch extends TestCase {
 		};
 
 		for (int i=0; i<TEST.length;i++) {
-			assertSame(
+			assertEquals(
 				"TestMatch2 expected "+TEST[i].answer+" for match2("+TEST[i].question1+","+TEST[i].question2+")",
 				match2(factory.parse(TEST[i].question1),factory.parse(TEST[i].question2)),
 				factory.parse(TEST[i].answer)
@@ -183,7 +183,7 @@ public class TestMatch extends TestCase {
 		};
 
 		for (int i=0; i<TEST.length;i++) {
-			assertSame(
+			assertEquals(
 				"TestMatch3 expected "+TEST[i].answer+" for match3("+TEST[i].question+")",
 				match3(factory.parse(TEST[i].question)),
 				factory.parse(TEST[i].answer)
@@ -214,7 +214,7 @@ public class TestMatch extends TestCase {
 		};
 
 		for (int i=0; i<TEST.length;i++) {
-			assertSame(
+			assertEquals(
 				"TestMatch4 expected "+TEST[i].answer+" for match4("+TEST[i].question+")",
 				match4(factory.parse(TEST[i].question)),
 				factory.parse(TEST[i].answer)

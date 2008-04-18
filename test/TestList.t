@@ -111,7 +111,7 @@ public class TestList extends TestCase {
 
 	public void testMatch1() {
 		TestData td = TESTS1[this.testNumber];
-		assertSame(
+		assertEquals(
                "TestMatch1 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
                match1(factory.parse(td.question)), 
                factory.parse(td.answer));
@@ -153,7 +153,7 @@ public class TestList extends TestCase {
 
 	public void testMatch2() {
 		TestData td = TESTS2[this.testNumber];
-		assertSame(
+		assertEquals(
                "TestMatch2 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
                match2(factory.parse(td.question)), 
                factory.parse(td.answer));
@@ -186,7 +186,7 @@ public class TestList extends TestCase {
 
 	public void testMatch3() {
 		TestData td = TESTS3[this.testNumber];
-		assertSame(
+		assertEquals(
                "TestMatch3 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
                match3(factory.parse(td.question)), 
                factory.parse(td.answer));
@@ -242,7 +242,7 @@ public class TestList extends TestCase {
 
 	public void testMatch6() {
 		TestData td = TESTS6[this.testNumber];
-		assertSame(
+		assertEquals(
                "TestMatch6 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
                match6(factory.parse(td.question)), 
                factory.parse(td.answer));

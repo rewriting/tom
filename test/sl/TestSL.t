@@ -48,64 +48,64 @@ public class TestSL extends TestCase {
   }
 
   public void testSL1() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test1() == nb.test1() );
+    assertTrue( ob.test1().equals(nb.test1()) );
   }
   public void testSL2() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test2() == nb.test2() );
+    assertTrue( ob.test2().equals(nb.test2()) );
   }
   public void testSL3() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test3() == nb.test3() );
+    assertTrue( ob.test3().equals(nb.test3()) );
   }
   public void testSL4() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test4() == nb.test4() );
+    assertTrue( ob.test4().equals(nb.test4()) );
   }
   public void testSL5() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test5() == nb.test5() );
+    assertTrue( ob.test5().equals(nb.test5()) );
   }
   public void testSLChoice() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testChoice() == nb.testChoice() );
+    assertTrue( ob.testChoice().equals(nb.testChoice()) );
   }
   public void testSLChoiceSideEffect() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testChoiceSideEffect() == nb.testChoiceSideEffect() );
+    assertTrue( ob.testChoiceSideEffect().equals(nb.testChoiceSideEffect()) );
   } 
   public void testSLNot() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testNot() == nb.testNot() );
+    assertTrue( ob.testNot().equals(nb.testNot()) );
   }
   public void testSLNotSideEffect() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testNotSideEffect() == nb.testNotSideEffect() );
+    assertTrue( ob.testNotSideEffect().equals(nb.testNotSideEffect()) );
   }
   public void testSL6() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test6() == nb.test6() );
+    assertTrue( ob.test6().equals(nb.test6()) );
   }
   public void testSL7() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test7() == nb.test7() );
+    assertTrue( ob.test7().equals(nb.test7()) );
   }
   public void testSL8() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test8() == nb.test8() );
+    assertTrue( ob.test8().equals(nb.test8()) );
   }
   public void testSL9() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test9() == nb.test9() );
+    assertTrue( ob.test9().equals(nb.test9()) );
   }
   public void testITESideEffect() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testITESideEffect() == nb.testITESideEffect() );
+    assertTrue( ob.testITESideEffect().equals(nb.testITESideEffect()) );
   }
   public void testSL10() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test10() == nb.test10() );
+    assertTrue( ob.test10().equals(nb.test10()) );
   }
   public void testSL11() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test11() == nb.test11() );
+    assertTrue( ob.test11().equals(nb.test11()) );
   }
   public void testSL12() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test12() == nb.test12() );
+    assertTrue( ob.test12().equals(nb.test12()) );
   }
   public void testSL13() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.test13() == nb.test13() );
+    assertTrue( ob.test13().equals(nb.test13()) );
   }
   public void testSLWhen1() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testWhen1() == nb.testWhen1() );
+    assertTrue( ob.testWhen1().equals(nb.testWhen1()) );
   }
   public void testSLCongruence1() throws tom.library.sl.VisitFailure {		
-    assertTrue( ob.testCongruence1() == nb.testCongruence1() );
+    assertTrue( ob.testCongruence1().equals(nb.testCongruence1()) );
   }
   public void testSLCongruence2() throws tom.library.sl.VisitFailure {	
     try {
@@ -119,7 +119,7 @@ public class TestSL extends TestCase {
     }
   }
   public void testSLCongruenceList() throws tom.library.sl.VisitFailure {
-    assertTrue( ob.testCongruenceList() == nb.testCongruenceList() );
+    assertTrue( ob.testCongruenceList().equals(nb.testCongruenceList()) );
   }
 
 }
