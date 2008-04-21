@@ -44,7 +44,7 @@ public class Backend {
   private List importList = null;
   private boolean strategySupport = true;
   private boolean multithread = false;
-  private boolean maximalsharing = false;
+  private boolean maximalsharing = true;
 
   %include { ../adt/objects/Objects.tom }
   %include { sl.tom }
@@ -53,11 +53,13 @@ public class Backend {
           File tomHomePath,
           boolean strategySupport,
           boolean multithread,
+          boolean nosharing,
           List importList) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.strategySupport = strategySupport;
     this.multithread = multithread;
+    this.maximalsharing = ! nosharing;
     this.importList = importList;
   }
 
