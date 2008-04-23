@@ -66,16 +66,16 @@ public class TestStrategy extends TestCase {
     Strategy rule9 = `S9(i);
    
     try{
-      assertEquals("g(a,a) return a", `rule0.visitLight(`g(a(),a())), `a());
-      assertEquals("a return b", `rule1.visitLight(`a()), `b());
-      assertEquals("g(a,a) return a", `rule2.visitLight(`g(a(),a())), `a());
-      assertEquals("g(a,a) return a", `rule3.visitLight(`g(a(),a())), `a());
-      assertEquals("g(a,b) return g(b,a)", `rule4.visitLight(`g(a(),b())), `g(b(),a()));
-      assertEquals("g(a,a) return a", `rule5.visitLight(`g(a(),a())), `a());
-      assertEquals("g(a,a) return a", `rule6.visitLight(`g(a(),a())), `a());
-      assertEquals("g(a,a) return a", `rule7.visitLight(`g(a(),a())), `a());
-      assertEquals("g(a,a) return a", `rule8.visitLight(`g(a(),a())), `a());
-      assertEquals("g(a,a) return a", `rule9.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule0.visitLight(`g(a(),a())), `a());
+      assertSame("a return b", `rule1.visitLight(`a()), `b());
+      assertSame("g(a,a) return a", `rule2.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule3.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,b) return g(b,a)", `rule4.visitLight(`g(a(),b())), `g(b(),a()));
+      assertSame("g(a,a) return a", `rule5.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule6.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule7.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule8.visitLight(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", `rule9.visitLight(`g(a(),a())), `a());
     } catch (tom.library.sl.VisitFailure e){
       System.out.println("tom.library.sl.VisitFailure()");
     }

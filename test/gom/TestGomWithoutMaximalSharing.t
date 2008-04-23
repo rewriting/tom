@@ -85,4 +85,15 @@ public class TestGomWithoutMaximalSharing extends TestCase {
     }
   }
 
+
+  public void testIdentity() {
+    T t = `f(g(a()),g(b()));
+    try {
+      assertSame("Should be equal", `TopDown(Identity()).visit(t), t);
+      assertSame("Should be equal", `TopDown(Identity()).visitLight(t), t); 
+    } catch (VisitFailure e) {
+      fail();
+    }
+  }
+
 }

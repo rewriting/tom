@@ -5,14 +5,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met: 
- * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
- * 	- Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * 	- Neither the name of the INRIA nor the names of its
- * 	contributors may be used to endorse or promote products derived from
- * 	this software without specific prior written permission.
+ *   - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.  
+ *   - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -80,7 +80,7 @@ public class TestSublists extends TestCase {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
       list(X*,p@list(b(),b()),Y*) -> {        
-        if (`p.equals(`list(b(),b())) && `X.equals(`list(a())) && `Y.equals(`list(c()))){
+        if (`p == `list(b(),b()) && `X == `list(a()) && `Y == `list(c())){
           return;
         } else {
           fail();
@@ -95,7 +95,7 @@ public class TestSublists extends TestCase {
     Term res = `list(a(),b(),b(),c());
     %match(res) {
       list(_X*,p@!list(_*,!b(),_*),_Y*) -> {
-        if (`p.equals(`list(b(),b())) || `p.equals(`list(b())) || `p.equals(`list()) ) {
+        if (`p == `list(b(),b()) || `p == `list(b()) || `p == `list() ) {
           return;
         } else {
           fail();
@@ -140,7 +140,7 @@ public class TestSublists extends TestCase {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
       termList(_X*,p@!termList(_*,!b(),_*),_Y*) -> {
-        if( `p.equals(`termList(b())) || `p.equals(`termList(b(),b())) || `p.equals(`termList())){
+        if( `p == `termList(b()) || `p == `termList(b(),b()) || `p == `termList()){
           return;
         }else{
           fail();
@@ -154,7 +154,7 @@ public class TestSublists extends TestCase {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
       termList(_X*,p@termList(b(),b()),_Y*) -> {
-        if( `p.equals(`termList(b(),b())) ) {
+        if( `p == `termList(b(),b()) ) {
           return;
         }else{
           fail();
@@ -168,7 +168,7 @@ public class TestSublists extends TestCase {
     TermList res = `termList(a(),b(),b(),c());
     %match(res) {
       termList(_X*,p@(b(),!b()),_Y*) -> {
-        if( `p.equals(`list(b(),b())) ) {
+        if( `p == `list(b(),b()) ) {
           fail();
         }
       }
