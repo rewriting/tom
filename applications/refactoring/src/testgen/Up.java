@@ -57,10 +57,11 @@ public class Up extends AbstractStrategy {
       return Environment.SUCCESS;
     }
     environment.setIntrospector(m);
+    int index = environment.getSubOmega();
     environment.up();
     int status = visitors[ARG].visit(m);
+    environment.down(index);
     if(status != Environment.SUCCESS) {
-      environment.upLocal();
       return status;
     }
     return Environment.SUCCESS;

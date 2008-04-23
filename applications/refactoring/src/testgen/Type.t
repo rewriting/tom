@@ -103,6 +103,15 @@ public class Type {
     return packagename+"."+toStringName();
   }
 
+  public boolean equals(Object o) {
+    if ( o instanceof Type) {
+      Type t = (Type) o;
+      return 
+        name.equals(t.getname()) && 
+        (packagename!=null?packagename.equals(t.getpackagename()):true) && 
+        (upperclass!=null?upperclass.equals(t.getupperclass()):true);
+    }
+    return false;
+  }
+
 }
-
-

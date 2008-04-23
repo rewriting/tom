@@ -3,6 +3,9 @@
 %include {tinyjava/TinyJava.tom}
 %include {tinyjava/_TinyJava.tom}
 
+%op Strategy Up(s:Strategy) {
+  make(s) { (new Up($s)) }
+}
 
 %typeterm Context {
   implement { Context }
@@ -53,9 +56,10 @@ public static List<Type> collectAllTypes(Prog p) {
   return context.types;
 }
 
-public static List<Type> getTopLevelTypes(List<Type> types) {
+public static List<Type> collectTopLevelTypes(Prog p) {
+  List<Type> allTypes =  collectAllTypes(p);
   List<Type> topleveltypes = new ArrayList<Type>();
-  for (Type t:types) {
+  for (Type t:allTypes) {
     if(t.getupperclass()==null) {
       topleveltypes.add(t);
     }
@@ -63,6 +67,16 @@ public static List<Type> getTopLevelTypes(List<Type> types) {
   return topleveltypes;
 }
 
+public static List<Type> collectMemberTypes(Prog p) {
+  List<Type> allTypes =  collectAllTypes(p);
+  List<Type> membertypes = new ArrayList<Type>();
+  for (Type t:allTypes) {
+    if(t.getupperclass()!=null) {
+      membertypes.add(t);
+    }
+  }
+  return membertypes;
+}
 
 %typeterm TypeWrapper {
   implement {TypeWrapper}
