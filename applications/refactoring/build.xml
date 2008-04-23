@@ -8,7 +8,7 @@
   <property name="optimize"   value="off"/> 
   <property name="optimize2"   value="off"/>
   <property name="inline"   value="on"/>
- 
+
   <property environment="env"/>
   <property name="tom.home" value="${env.TOM_HOME}"/>
   <import file="${tom.home}/lib/tom-common.xml"/>
@@ -17,6 +17,17 @@
   <property name="refactoring.src"      location="src"/>
   <property name="refactoring.gen"      location="gen"/>
   <property name="refactoring.build"    location="build"/>
+
+  <macrodef name="gomwithoutmaxsharing">
+    <attribute name="gomfile"/>
+    <sequential>
+      <gom.preset srcdir="${refactoring.src}"
+        nosharing="true"
+        destdir="${refactoring.gen}">
+        <include name = "@{gomfile}"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
 
   <target name="init" depends="tom.init">
     <mkdir dir="${refactoring.build}"/>
@@ -27,9 +38,12 @@
     <gom config="${gomconfigfile}"
       srcdir="${refactoring.src}"
       destdir="${refactoring.gen}"
-         >
-         <include name="**/*.gom"/>
+      >
+      <include name="**/*.gom"/>
+      <exclude name="binarynumber/BinaryNumber.gom"/>
     </gom>
+
+    <gomwithoutmaxsharing gomfile="binarynumber/BinaryNumber.gom"/>
 
     <tom.preset srcdir="${refactoring.src}"
       destdir="${refactoring.gen}">
