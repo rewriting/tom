@@ -65,7 +65,8 @@ public class Generator {
       p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
       System.out.println(collectAllTypes(p));
       System.out.println("Generation of inheritance hierarchy...");
-      p = generateInheritanceHierarchy(p);
+      p = generateInheritanceHierarchyForTopLevelClasses(p);
+      p = generateInheritanceHierarchyForMemberClasses(p);
       printDeclClass(p);
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {
@@ -82,7 +83,6 @@ public class Generator {
           }
         }
       }
-      printAccessibleClassesForMemberClasses(p);
     } catch ( VisitFailure e) {
       throw new RuntimeException("Unexpected strategy failure");
     }      
@@ -133,7 +133,7 @@ public class Generator {
             printClass(w,`innerClass);
           }
           Initializer(body) -> {
-            w.write(classname+"() {\n");
+            w.write("public "+classname+"() {\n");
             printStmt(w,`body);
             w.write("}\n");
           }
@@ -171,7 +171,7 @@ public class Generator {
     }
   }
 
-  public Prog generateInheritanceHierarchy(Prog p) {
+  public Prog generateInheritanceHierarchyForTopLevelClasses(Prog p) {
     // generate inheritance hierarchy for top level classes
     Set<Type> alltopleveltypes = collectTopLevelTypes(p);
     Set<Type> undefinedtypes = new HashSet<Type>();
@@ -181,30 +181,76 @@ public class Generator {
     Iterator iter = undefinedtypes.iterator();
     TypeWrapper current = new TypeWrapper((Type)iter.next()); 
     try {
-      return (Prog) `Mu(MuVar("x"),IfThenElse(IsComplete(undefinedtypes), Identity(), Sequence(ApplyAt(current,RenameSuperClass(availabletypes,alltopleveltypes,undefinedtypes,current)),MuVar("x")))).visit(p);
+      return (Prog) `Mu(MuVar("x"),IfThenElse(IsComplete(undefinedtypes), Identity(), Sequence(ApplyAt(current,RenameSuperClassForTopLevel(availabletypes,alltopleveltypes,undefinedtypes,current)),MuVar("x")))).visit(p);
     } catch (VisitFailure e) {
       throw new RuntimeException(" Unexpected strategy failure");
     }
   }
 
+  public Prog generateInheritanceHierarchyForMemberClasses(Prog p) {
+    Prog newp = p;
+    Set<Type> alltopleveltypes = collectTopLevelTypes(p); 
+    Set<Type> allMemberTypes = collectMemberTypes(p);
+    for (Type current: allMemberTypes) {
+      TypeWrapper wrapper = new TypeWrapper(current);
+      Set<ComposedName> allAccessibleTypes = new HashSet();
+      for (Type toplevel: alltopleveltypes) {
+        if (toplevel.getpackagename().equals(current.getpackagename())) {
+          allAccessibleTypes.add(`Dot(Name(toplevel.getname())));
+          allAccessibleTypes.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
+        } else {
+          allAccessibleTypes.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
+        }
+      }
+      Strategy collectAllAccessibleMemberClasses =  `ApplyAt(wrapper,UpToEnclosingClass(
+            Mu(MuVar("begin"),Sequence(Collect(allAccessibleTypes),_ClassDecl(
+                  Identity(),
+                  ApplyAtSuperClass(MuVar("begin")),
+                  _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(allAccessibleTypes)), Identity())) 
+                  ),IfThenElse(Up(Is_MemberClassDecl()),
+                    UpToEnclosingClass(MuVar("begin")),
+                    Identity())))));
+      try {
+        collectAllAccessibleMemberClasses.visit(newp);
+        //choose randomly a super class between the top level types and the accessible member types
+        int index = random.nextInt(allAccessibleTypes.size()+1);
+        if (index == allAccessibleTypes.size()) {
+          // inherits from Object
+          newp = (Prog) `ApplyAt(wrapper,RenameSuperClass(Dot(Name("Object")))).visit(newp);
+        } else {
+          Iterator iter = allAccessibleTypes.iterator();
+          for (int i=0;i<index;i++) { iter.next(); }
+          ComposedName supername = (ComposedName) iter.next();
+          newp = (Prog) `ApplyAt(wrapper,RenameSuperClass(supername)).visit(newp);
+        }
+      } catch (VisitFailure e) {
+        throw new RuntimeException(" Unexpected strategy failure");
+      }
+    }
+    return newp;
+  }
+
+  %strategy Collect(allAccessibleTypes:Set) extends Identity() {
+    visit ClassDecl {
+      ClassDecl[name=name] -> {
+        allAccessibleTypes.add(`Dot(name));
+      }
+    }
+  }
+
   public void printAccessibleClassesForMemberClasses(Prog p) {
     Set<Type> allMemberTypes = collectMemberTypes(p);
-
     for (Type current:allMemberTypes) {
       System.out.println("accessible classes for "+current);
       TypeWrapper wrapper = new TypeWrapper(current);
       Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,UpToEnclosingClass(
-              Mu(MuVar("begin"),Sequence(Print(),_ClassDecl(
-                    Identity(),
-                    // recursive call on its super class
-                    ApplyAtSuperClass(MuVar("begin")),
-                     // print all its member classes
-                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Print()), Identity())) 
-                    ),IfThenElse(Up(Is_MemberClassDecl()),
-                                //recurive call on its enclosing class if it is a member class
-                                 UpToEnclosingClass(MuVar("begin")),
-                                 // stop if it is a top level class 
-                                 Identity())))));
+            Mu(MuVar("begin"),Sequence(Print(),_ClassDecl(
+                  Identity(),
+                  ApplyAtSuperClass(MuVar("begin")),
+                  _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Print()), Identity())) 
+                  ),IfThenElse(Up(Is_MemberClassDecl()),
+                    UpToEnclosingClass(MuVar("begin")),
+                    Identity())))));
       try {
         printAllAccessibleClasses.visit(p);
       } catch (VisitFailure e) {
@@ -221,17 +267,23 @@ public class Generator {
     visit ComposedName {
       composedName@Dot(packagename,classname) -> {
         TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
-        System.out.println(`composedName);
         Position current = getPosition();
         getEnvironment().followPath(current.inverse());
-        System.out.println(getPosition());
         `ApplyAt(type,s).visit(getEnvironment());
         getEnvironment().followPath(current);
       }
     } 
   }
 
-  %strategy RenameSuperClass(availabletypes:Set,alltopleveltypes:Set,undefinedtypes:Set,current:TypeWrapper) extends Identity() {
+  %strategy RenameSuperClass(name:ComposedName) extends Identity() {
+    visit ClassDecl {
+      decl -> {
+        return `decl.setsuper(name);
+      }
+    }
+  }
+
+  %strategy RenameSuperClassForTopLevel(availabletypes:Set,alltopleveltypes:Set,undefinedtypes:Set,current:TypeWrapper) extends Identity() {
     visit ClassDecl {
       c@ClassDecl[super=Undefined()]  -> {
         undefinedtypes.remove(current.type);
@@ -280,22 +332,22 @@ public class Generator {
   public static void main(String[] args) {
     Generator generator = new Generator();
     /**
-    Prog p = `Prog(
-        CompUnit(Name("p1"),ConcClassDecl(ClassDecl(Name("A1"),Undefined(),ConcBodyDecl()))),
-        CompUnit(Name("p2"),ConcClassDecl(ClassDecl(Name("A2"),Undefined(),ConcBodyDecl()))),
-        CompUnit(Name("p3"),ConcClassDecl(ClassDecl(Name("A3"),Undefined(),ConcBodyDecl()))),
-        CompUnit(Name("p4"),ConcClassDecl(ClassDecl(Name("A4"),Undefined(),ConcBodyDecl()))),
-        CompUnit(Name("p5"),ConcClassDecl(ClassDecl(Name("A5"),Undefined(),ConcBodyDecl())))
-        );
-    generator.printDeclClass(p);
-    p = generator.generateInheritanceHierarchy(p);
-    generator.printDeclClass(p);
+      Prog p = `Prog(
+      CompUnit(Name("p1"),ConcClassDecl(ClassDecl(Name("A1"),Undefined(),ConcBodyDecl()))),
+      CompUnit(Name("p2"),ConcClassDecl(ClassDecl(Name("A2"),Undefined(),ConcBodyDecl()))),
+      CompUnit(Name("p3"),ConcClassDecl(ClassDecl(Name("A3"),Undefined(),ConcBodyDecl()))),
+      CompUnit(Name("p4"),ConcClassDecl(ClassDecl(Name("A4"),Undefined(),ConcBodyDecl()))),
+      CompUnit(Name("p5"),ConcClassDecl(ClassDecl(Name("A5"),Undefined(),ConcBodyDecl())))
+      );
+      generator.printDeclClass(p);
+      p = generator.generateInheritanceHierarchyForTopLevelClasses(p);
+      generator.printDeclClass(p);
      */
-      try {
+    try {
       generator.generateClasses();
-      } catch (java.io.IOException e) {
+    } catch (java.io.IOException e) {
       e.printStackTrace();
-      }
+    }
   }
 
 
