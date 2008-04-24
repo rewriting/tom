@@ -43,12 +43,6 @@ public class Lookup {
 
   %include {util.tom}
 
-  %op Strategy Up(s1:Strategy) {
-    is_fsym(t) {( ($t instanceof testgen.Up) )}
-    make(v) {( new testgen.Up($v) )}
-    get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
-  }
-
   %typeterm Position {
     implement { Position }
     is_sort(t) { ($t instanceof Position) }

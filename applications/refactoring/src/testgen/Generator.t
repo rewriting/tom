@@ -82,7 +82,7 @@ public class Generator {
           }
         }
       }
-      printAccessibleClassesForInnerClasses(p);
+      printAccessibleClassesForMemberClasses(p);
     } catch ( VisitFailure e) {
       throw new RuntimeException("Unexpected strategy failure");
     }      
@@ -102,12 +102,12 @@ public class Generator {
     visit ClassDecl {
       c@ClassDecl[name=n] -> {
         //remove inner classes with the same name 
-        return (ClassDecl) `InnermostId(RemoveConflictedInnerClasses(n)).visit(`c);
+        return (ClassDecl) `InnermostId(RemoveConflictedMemberClasses(n)).visit(`c);
       }
     }
   }
 
-  %strategy RemoveConflictedInnerClasses(name:Name) extends Identity() {
+  %strategy RemoveConflictedMemberClasses(name:Name) extends Identity() {
     visit BodyDeclList {
       ConcBodyDecl(X*,MemberClassDecl[innerClass=ClassDecl[name=n]],Y*) -> {
         if (name.equals(`n)) {
@@ -187,18 +187,24 @@ public class Generator {
     }
   }
 
-  public void printAccessibleClassesForInnerClasses(Prog p) {
+  public void printAccessibleClassesForMemberClasses(Prog p) {
     Set<Type> allMemberTypes = collectMemberTypes(p);
-    System.out.println(allMemberTypes);
+
     for (Type current:allMemberTypes) {
       System.out.println("accessible classes for "+current);
       TypeWrapper wrapper = new TypeWrapper(current);
-      Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,UpToOuterClass(
+      Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,UpToEnclosingClass(
               Mu(MuVar("begin"),Sequence(Print(),_ClassDecl(
                     Identity(),
+                    // recursive call on its super class
                     ApplyAtSuperClass(MuVar("begin")),
-                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), Print(), Identity())) 
-                    ),IfThenElse(Up(Is_MemberClassDecl()), UpToOuterClass(MuVar("begin")), Identity())))));
+                     // print all its member classes
+                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Print()), Identity())) 
+                    ),IfThenElse(Up(Is_MemberClassDecl()),
+                                //recurive call on its enclosing class if it is a member class
+                                 UpToEnclosingClass(MuVar("begin")),
+                                 // stop if it is a top level class 
+                                 Identity())))));
       try {
         printAllAccessibleClasses.visit(p);
       } catch (VisitFailure e) {
@@ -207,7 +213,7 @@ public class Generator {
     }
   }
 
-  %op Strategy UpToOuterClass(s:Strategy) {
+  %op Strategy UpToEnclosingClass(s:Strategy) {
     make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
   }
 
