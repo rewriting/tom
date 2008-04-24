@@ -143,7 +143,8 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(`mapping));
+              (TemplateClass)generators.get(`mapping),
+              maximalsharing);
         generators.put(`className,sort);
         return 1;
       }

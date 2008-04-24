@@ -38,15 +38,18 @@ public class SortTemplate extends TemplateHookedClass {
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
   SlotFieldList slotList;
+  boolean maximalsharing;
 
   %include { ../../adt/objects/Objects.tom}
 
   public SortTemplate(File tomHomePath,
                       OptionManager manager,
+                      boolean maximalsharing,
                       List importList, 	
                       GomClass gomClass,
                       TemplateClass mapping) {
     super(gomClass,manager,tomHomePath,importList,mapping);
+    this.maximalsharing = maximalsharing;
     %match(gomClass) {
       SortClass[AbstractType=abstractType,
                 Operators=ops,
@@ -132,6 +135,14 @@ writer.write(%[
   }
 
 ]%);
+    
+    /* abstract method to compare two terms represented by objects without maximal sharing */
+    /* used in the mapping */
+    if (! maximalsharing) {
+      writer.write(%[
+  public abstract boolean tom_equals(Object o);
+  ]%);
+    } 
 
     /* length and reverse prototypes, only usable on lists */
     writer.write(%[
@@ -255,10 +266,19 @@ matchblock: {
 %typeterm @className()@ {
   implement { @fullClassName()@ }
   is_sort(t) { ($t instanceof @fullClassName()@) }
-  equals(t1,t2) { $t1.equals($t2) }
-  //equals(t1,t2) { ($t1==$t2) }
+]%);
+if (maximalsharing) {
+    writer.write(%[
+  equals(t1,t2) { ($t1==$t2) }
+]%);
+} else {
+writer.write(%[
+  equals(t1,t2) { (((@fullClassName()@)$t1).tom_equals($t2)) }
+]%);
+  }
+writer.write(%[
 }
 ]%);
-    return;
-  }
+}
+
 }

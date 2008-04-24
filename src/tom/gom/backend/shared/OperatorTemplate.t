@@ -288,15 +288,15 @@ writer.write(%[
 
 ]%);
 } else {
-  //XXX: to implement
+  //XXX: compareTo must be correctly implemented
 writer.write(%[
   @@Override
   public int compareTo(Object o) {
-    return 0;
+    throw new UnsupportedOperationException("Unable to compare"); 
   }
-
+  
   @@Override
-  public boolean equals(Object o) {
+  public final boolean tom_equals(Object o) {
     if (o instanceof @className()@) {
       @className()@ typed_o = (@className()@) o;
 ]%);
@@ -316,7 +316,7 @@ if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
 
 } else {
   writer.write(%[
-      return @fieldName(head.getName())@.equals(typed_o.@getMethod(head)@())
+      return @fieldName(head.getName())@.tom_equals(typed_o.@getMethod(head)@())
       ]%);
 }
 
@@ -330,7 +330,7 @@ while(!slots.isEmptyConcSlotField()) {
 
   } else {
     writer.write(%[
-      && @fieldName(head.getName())@.equals(typed_o.@getMethod(head)@())
+      && @fieldName(head.getName())@.tom_equals(typed_o.@getMethod(head)@())
       ]%);
   }
 }
