@@ -32,4 +32,5 @@ while [ $i -lt $1 ] ; do
   i=$((i+1))
 done
 echo "Success rate : $j/$i"
-mv $outputdir $currentdir/$2
+cd $currentdir
+mv $outputdir $2
