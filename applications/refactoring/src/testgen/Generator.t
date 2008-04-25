@@ -193,47 +193,92 @@ public class Generator {
     Set<Type> allMemberTypes = collectMemberTypes(p);
     for (Type current: allMemberTypes) {
       TypeWrapper wrapper = new TypeWrapper(current);
-      Set<ComposedName> allAccessibleTypes = new HashSet();
+      Set<ComposedName> allAccessibleNames = new HashSet();
       for (Type toplevel: alltopleveltypes) {
         if (toplevel.getpackagename().equals(current.getpackagename())) {
-          allAccessibleTypes.add(`Dot(Name(toplevel.getname())));
-          allAccessibleTypes.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
+          allAccessibleNames.add(`Dot(Name(toplevel.getname())));
+          allAccessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
         } else {
-          allAccessibleTypes.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
+          allAccessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
         }
       }
       Strategy collectAllAccessibleMemberClasses =  `ApplyAt(wrapper,UpToEnclosingClass(
-            Mu(MuVar("begin"),Sequence(Collect(allAccessibleTypes),_ClassDecl(
+            Mu(MuVar("begin"),Sequence(Collect(allAccessibleNames),_ClassDecl(
                   Identity(),
                   ApplyAtSuperClass(MuVar("begin")),
-                  _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(allAccessibleTypes)), Identity())) 
+                  _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(allAccessibleNames)), Identity())) 
                   ),IfThenElse(Up(Is_MemberClassDecl()),
                     UpToEnclosingClass(MuVar("begin")),
                     Identity())))));
       try {
         collectAllAccessibleMemberClasses.visit(newp);
+
+        //remove hidden toplevel classes
+        Set<ComposedName> hiddenNames = new HashSet();
+        for (ComposedName composed_name: allAccessibleNames) {
+        for (ComposedName simple_name: allAccessibleNames) {
+            %match(composed_name,simple_name) {
+              toplevel@Dot(c,_),Dot(c) -> {
+                hiddenNames.add(`toplevel);
+              }
+            }
+          }
+        }
+        allAccessibleNames.removeAll(hiddenNames);
+
         //choose randomly a super class between the top level types and the accessible member types
-        int index = random.nextInt(allAccessibleTypes.size()+1);
-        if (index == allAccessibleTypes.size()) {
+        int index = random.nextInt(allAccessibleNames.size()+1);
+        if (index == allAccessibleNames.size()) {
           // inherits from Object
           newp = (Prog) `ApplyAt(wrapper,RenameSuperClass(Dot(Name("Object")))).visit(newp);
         } else {
-          Iterator iter = allAccessibleTypes.iterator();
+          Iterator iter = allAccessibleNames.iterator();
           for (int i=0;i<index;i++) { iter.next(); }
           ComposedName supername = (ComposedName) iter.next();
           newp = (Prog) `ApplyAt(wrapper,RenameSuperClass(supername)).visit(newp);
         }
+
       } catch (VisitFailure e) {
         throw new RuntimeException(" Unexpected strategy failure");
       }
     }
+    newp = removeCycle(newp);
     return newp;
   }
 
-  %strategy Collect(allAccessibleTypes:Set) extends Identity() {
+
+  public Prog removeCycle(Prog p) {
+    Set<Type> allMemberTypes = collectMemberTypes(p);
+    Prog newp = p;
+    for (Type current: allMemberTypes) {
+      Set<Position> inheritance_path = new HashSet();
+      TypeWrapper wrapper = new TypeWrapper(current);
+      Strategy removeCycle =  `ApplyAt(wrapper,Mu(MuVar("x"),Choice(FindCycle(inheritance_path),_ClassDecl(Identity(),ApplyAtSuperClass(MuVar("x")),Identity()))));
+      try {
+        newp = (Prog) removeCycle.visit(newp);
+      } catch (VisitFailure e) {
+        throw new RuntimeException(" Unexpected strategy failure");
+      }
+    } 
+    return newp;
+  }
+
+  %strategy FindCycle(inheritance_path:Set) extends Fail() {
+    visit ClassDecl {
+      decl -> {
+        if (inheritance_path.contains(getPosition())) {
+          return `decl.setsuper(`Dot(Name("Object")));
+        } else {
+          inheritance_path.add(getPosition());
+        }
+      }
+    }
+  }
+
+  %strategy Collect(allAccessibleNames:Set) extends Identity() {
     visit ClassDecl {
       ClassDecl[name=name] -> {
-        allAccessibleTypes.add(`Dot(name));
+        allAccessibleNames.add(`Dot(name));
       }
     }
   }
@@ -266,6 +311,15 @@ public class Generator {
   %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
     visit ComposedName {
       composedName@Dot(packagename,classname) -> {
+        /* case of top level classes with complete full names */
+        TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
+        Position current = getPosition();
+        getEnvironment().followPath(current.inverse());
+        `ApplyAt(type,s).visit(getEnvironment());
+        getEnvironment().followPath(current);
+      }
+      composedName@Dot(classname@!Name("Object")) -> {
+        /* case of member classes or top level classes in the same package */
         TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
         Position current = getPosition();
         getEnvironment().followPath(current.inverse());
