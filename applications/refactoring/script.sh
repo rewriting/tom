@@ -1,4 +1,8 @@
 #!/bin/sh
+if [ $# != 2 ] ; then 
+  echo "usage: $0 <nb_hierarchies> <output_dir>" 
+  return 1
+fi
 testgendir=`mktemp -d /tmp/testgen.XXXXX`
 outputdir=`mktemp -d /tmp/testoutput.XXXXX`
 failuredir=$outputdir/failure
@@ -28,4 +32,4 @@ while [ $i -lt $1 ] ; do
   i=$((i+1))
 done
 echo "Success rate : $j/$i"
-mv $outputdir $currentdir/
+mv $outputdir $currentdir/$2
