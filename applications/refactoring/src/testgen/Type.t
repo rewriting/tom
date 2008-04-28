@@ -40,6 +40,7 @@ public class Type {
   private String packagename;
   private String name;
   private Type upperclass;
+  private Type superclass;
 
   public Type() {
   }
@@ -98,6 +99,15 @@ public class Type {
   public  Type getupperclass() {
     return upperclass;
   }
+
+  public  Type getsuperclass() {
+    return upperclass;
+  }
+
+  public void setsuperclass(Type superclass) {
+    this.superclass = superclass;
+  }
+
 
   public String toString() {
     return packagename+"."+toStringName();
