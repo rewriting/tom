@@ -122,20 +122,20 @@ public class Lookup {
   %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
     make(pos,s) { 
       `Mu(MuVar("x"),
-          Choice(
-            When_ClassDecl(Sequence(
-                _ClassDecl(s,Identity(),Identity()),
-                LookupAllMembers(pos,s),
-                ApplyAtEnclosingClass(MuVar("x")))),
-            When_CompUnit(Up(_Prog(MuVar("x"))))
-            ))
+          IfThenElse(Is_ClassDecl(),
+            Sequence(
+              _ClassDecl(s,Identity(),Identity()),
+              LookupAllMembers(pos,s),
+              ApplyAtEnclosingClass(MuVar("x"))),
+            IfThenElse(Is_CompUnit(),
+              Up(_Prog(MuVar("x"))), Identity()
+              )))
     }
   }
 
   %op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
     make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
   }
-
 
   %strategy FindSuperClass() extends Identity() {
     visit ClassDecl {
@@ -167,9 +167,9 @@ public class Lookup {
      */
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
-          ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl()))),
+            ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl()))),
         CompUnit(Name("b"),ConcClassDecl(
-          ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
+            ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
 
     System.out.println(p);
