@@ -81,6 +81,15 @@ public static Set<Type> collectMemberTypes(Prog p) {
   return membertypes;
 }
 
+
+%typeterm PositionWrapper {
+  implement { PositionWrapper }
+}
+
+%op Strategy ApplyAtPosition(p:PositionWrapper,s:Strategy) {
+  make(p,s) { new ApplyAtPosition(p,s) }
+}
+
 %typeterm TypeWrapper {
   implement {TypeWrapper}
 }
@@ -155,5 +164,10 @@ public String getComposedName(ComposedName n) {
   }
   return "";
 }
+
+%op Strategy ApplyAtEnclosingClass(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
+}
+
 
 

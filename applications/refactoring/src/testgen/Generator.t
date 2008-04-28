@@ -66,7 +66,7 @@ public class Generator {
       System.out.println(collectAllTypes(p));
       System.out.println("Generation of inheritance hierarchy...");
       p = generateInheritanceHierarchyForTopLevelClasses(p);
-      //p = generateInheritanceHierarchyForMemberClasses(p);
+      p = generateInheritanceHierarchyForMemberClasses(p);
       printDeclClass(p);
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {
@@ -232,6 +232,7 @@ public class Generator {
     Set<Type> alltopleveltypes = collectTopLevelTypes(p); 
     Set<Type> allMemberTypes = collectMemberTypes(p);
     for (Type current: allMemberTypes) {
+      System.out.println("calculate super class for "+current);
       TypeWrapper wrapper = new TypeWrapper(current);
       Set<ComposedName> allAccessibleNames = new HashSet();
       for (Type toplevel: alltopleveltypes) {
@@ -242,13 +243,13 @@ public class Generator {
           allAccessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
         }
       }
-      Strategy collectAllAccessibleMemberClasses =  `ApplyAt(wrapper,UpToEnclosingClass(
+      Strategy collectAllAccessibleMemberClasses =  `ApplyAt(wrapper,ApplyAtEnclosingClass(
             Mu(MuVar("begin"),Sequence(Collect(allAccessibleNames),_ClassDecl(
                   Identity(),
                   ApplyAtSuperClass(MuVar("begin")),
                   _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(allAccessibleNames)), Identity())) 
                   ),IfThenElse(Up(Is_MemberClassDecl()),
-                    UpToEnclosingClass(MuVar("begin")),
+                    ApplyAtEnclosingClass(MuVar("begin")),
                     Identity())))));
       try {
         collectAllAccessibleMemberClasses.visit(newp);
@@ -267,6 +268,7 @@ public class Generator {
         allAccessibleNames.removeAll(hiddenNames);
 
         //choose randomly a super class between the top level types and the accessible member types
+        System.out.println("allAccessibleNames "+allAccessibleNames);
         int index = random.nextInt(allAccessibleNames.size()+1);
         if (index == allAccessibleNames.size()) {
           // inherits from Object
@@ -292,12 +294,14 @@ public Prog removeCycle(Prog p) {
   for (Type current: allMemberTypes) {
     Set<Position> inheritance_path = new HashSet();
     TypeWrapper wrapper = new TypeWrapper(current);
-    Strategy removeCycle =  `ApplyAt(wrapper,Mu(MuVar("x"),Choice(FindCycle(inheritance_path),_ClassDecl(Identity(),ApplyAtSuperClass(MuVar("x")),Identity()))));
+    System.out.println("before remove cycles for "+current);
+    Strategy removeCycle =  `ApplyAt(wrapper,Mu(MuVar("x"),Choice(Sequence(Print(),FindCycle(inheritance_path)),_ClassDecl(Identity(),ApplyAtSuperClass(MuVar("x")),Identity()))));
     try {
       newp = (Prog) removeCycle.visit(newp);
     } catch (VisitFailure e) {
       throw new RuntimeException(" Unexpected strategy failure");
     }
+    System.out.println("end remove cycles for "+current);
   } 
   return newp;
 }
@@ -327,13 +331,13 @@ public void printAccessibleClassesForMemberClasses(Prog p) {
   for (Type current:allMemberTypes) {
     System.out.println("accessible classes for "+current);
     TypeWrapper wrapper = new TypeWrapper(current);
-    Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,UpToEnclosingClass(
+    Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,ApplyAtEnclosingClass(
           Mu(MuVar("begin"),Sequence(Print(),_ClassDecl(
                 Identity(),
                 ApplyAtSuperClass(MuVar("begin")),
                 _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Print()), Identity())) 
                 ),IfThenElse(Up(Is_MemberClassDecl()),
-                  UpToEnclosingClass(MuVar("begin")),
+                  ApplyAtEnclosingClass(MuVar("begin")),
                   Identity())))));
     try {
       printAllAccessibleClasses.visit(p);
@@ -341,10 +345,6 @@ public void printAccessibleClassesForMemberClasses(Prog p) {
       throw new RuntimeException(" Unexpected strategy failure");
     }
   }
-}
-
-%op Strategy UpToEnclosingClass(s:Strategy) {
-  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
 }
 
 %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
