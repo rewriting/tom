@@ -296,7 +296,7 @@ writer.write(%[
   }
   
   @@Override
-  public final boolean tom_equals(Object o) {
+  public final boolean deepEquals(Object o) {
     if (o instanceof @className()@) {
       @className()@ typed_o = (@className()@) o;
 ]%);
@@ -316,7 +316,7 @@ if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
 
 } else {
   writer.write(%[
-      return @fieldName(head.getName())@.tom_equals(typed_o.@getMethod(head)@())
+      return @fieldName(head.getName())@.deepEquals(typed_o.@getMethod(head)@())
       ]%);
 }
 
@@ -330,7 +330,7 @@ while(!slots.isEmptyConcSlotField()) {
 
   } else {
     writer.write(%[
-      && @fieldName(head.getName())@.tom_equals(typed_o.@getMethod(head)@())
+      && @fieldName(head.getName())@.deepEquals(typed_o.@getMethod(head)@())
       ]%);
   }
 }

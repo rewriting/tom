@@ -52,7 +52,7 @@ public class TestGomWithoutMaximalSharing extends TestCase {
     T t1 = `f(g(a()),g(b()));
     T t2 = `f(g(a()),g(b()));
     assertNotSame("Should be not the same", t1, t2);
-    assertTrue("Should be equivalent", t1.tom_equals(t2));
+    assertTrue("Should be equivalent", t1.deepEquals(t2));
   }
 
 
@@ -60,8 +60,8 @@ public class TestGomWithoutMaximalSharing extends TestCase {
     T t = `f(g(a()),g(b()));
     %match (t) {
       f(x,y) -> {
-        assertTrue("Should be equivalent", `x.tom_equals(`g(a())));
-        assertTrue("Should be equivalent", `y.tom_equals(`g(b())));
+        assertTrue("Should be equivalent", `x.deepEquals(`g(a())));
+        assertTrue("Should be equivalent", `y.deepEquals(`g(b())));
       }
     }
   }
@@ -78,8 +78,8 @@ public class TestGomWithoutMaximalSharing extends TestCase {
   public void testStrategy() {
     T t = `f(g(a()),g(b()));
     try {
-    assertTrue("Should be equivalent", `f(g(c()),g(c())).tom_equals(`TopDown(Transform()).visit(t)));
-    assertTrue("Should be equivalent", `f(g(c()),g(c())).tom_equals(`TopDown(Transform()).visitLight(t)));
+    assertTrue("Should be equivalent", `f(g(c()),g(c())).deepEquals(`TopDown(Transform()).visit(t)));
+    assertTrue("Should be equivalent", `f(g(c()),g(c())).deepEquals(`TopDown(Transform()).visitLight(t)));
     } catch (VisitFailure e) {
       fail();
     }

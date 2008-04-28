@@ -140,7 +140,7 @@ writer.write(%[
     /* used in the mapping */
     if (! maximalsharing) {
       writer.write(%[
-  public abstract boolean tom_equals(Object o);
+  public abstract boolean deepEquals(Object o);
   ]%);
     } 
 
@@ -273,7 +273,7 @@ if (maximalsharing) {
 ]%);
 } else {
 writer.write(%[
-  equals(t1,t2) { (((@fullClassName()@)$t1).tom_equals($t2)) }
+  equals(t1,t2) { (((@fullClassName()@)$t1).deepEquals($t2)) }
 ]%);
   }
 writer.write(%[
