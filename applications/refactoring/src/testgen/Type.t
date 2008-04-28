@@ -74,9 +74,9 @@ public class Type {
   }
 
 
-  public ComposedName getComposedName() {
+  public Name getComposedName() {
     if (upperclass != null ) {
-      ComposedName uppercomposedname =  upperclass.getComposedName();
+      Name uppercomposedname =  upperclass.getComposedName();
       %match(uppercomposedname) {
         Dot(X*) -> {
           return `Dot(X,Name(name));

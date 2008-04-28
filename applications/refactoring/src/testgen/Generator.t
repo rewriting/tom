@@ -55,6 +55,23 @@ public class Generator {
 
   static Strategy generateProg = `Make_ConsProg(Make_CompUnit(generateName,generateClassDeclList),Mu(MuVar("x"),ChoiceUndet(Make_ConsProg(Make_CompUnit(generateName,generateClassDeclList),MuVar("x")),Make_EmptyProg())));
 
+  public Prog generateProg() {
+    try {
+      return (Prog) generateProg.visit(`Prog());
+    } catch ( VisitFailure e) {
+      throw new RuntimeException("Unexpected strategy failure");
+    }
+  }
+
+  public Prog removeConflicts(Prog p) {
+    try {
+      return (Prog) `InnermostId(RemoveConflicts()).visit(p);
+    } catch ( VisitFailure e) {
+      throw new RuntimeException("Unexpected strategy failure");
+    }
+  }
+
+
   public void generateClasses() throws java.io.IOException {
     StringWriter writer = new StringWriter();
     try {
@@ -91,8 +108,8 @@ public class Generator {
   %strategy RemoveConflicts() extends Identity() {
     visit BodyDeclList {
       ConcBodyDecl(X*,i1@Initializer[],Y*,i2@Initializer[],Z*) -> ConcBodyDecl(X*,i1,Y*,Z*)
-      ConcBodyDecl(X*,c1@MemberClassDecl(ClassDecl[name=n]),Y*,c2@MemberClassDecl(ClassDecl[name=n]),Z*) -> ConcBodyDecl(X*,c2,Y*,Z*)
-      ConcBodyDecl(X*,d1@FieldDecl[name=n],Y*,d2@FieldDecl[name=n],Z*) -> ConcBodyDecl(X*,d2,Y*,Z*)
+        ConcBodyDecl(X*,c1@MemberClassDecl(ClassDecl[name=n]),Y*,c2@MemberClassDecl(ClassDecl[name=n]),Z*) -> ConcBodyDecl(X*,c2,Y*,Z*)
+        ConcBodyDecl(X*,d1@FieldDecl[name=n],Y*,d2@FieldDecl[name=n],Z*) -> ConcBodyDecl(X*,d2,Y*,Z*)
     }
     visit Prog {
       Prog(X*,cu1@CompUnit[packageName=n],Y*,cu2@CompUnit[packageName=n],Z*) -> Prog(X*,cu1,Y*,Z*)
@@ -174,7 +191,7 @@ public class Generator {
       return `Name(""+((char)('a'+(random.nextInt('z'-'a'+ 1)))));
     }
   }
-  
+
 
   public Prog generateInheritanceHierarchyForTopLevelClasses(Prog p) {
     List<Type> alltopleveltypes = new ArrayList();
@@ -213,7 +230,7 @@ public class Generator {
     for (Type type: alltopleveltypes) {
       TypeWrapper current = new TypeWrapper(type);
       Type superclass = type.getsuperclass();
-      ComposedName superclassname = `Dot(Name("Object"));
+      Name superclassname = `Dot(Name("Object"));
       if (superclass != null) {
         superclassname = superclass.getComposedName();
       }
@@ -234,7 +251,7 @@ public class Generator {
     for (Type current: allMemberTypes) {
       System.out.println("calculate super class for "+current);
       TypeWrapper wrapper = new TypeWrapper(current);
-      Set<ComposedName> allAccessibleNames = new HashSet();
+      Set<Name> allAccessibleNames = new HashSet();
       for (Type toplevel: alltopleveltypes) {
         if (toplevel.getpackagename().equals(current.getpackagename())) {
           allAccessibleNames.add(`Dot(Name(toplevel.getname())));
@@ -255,9 +272,9 @@ public class Generator {
         collectAllAccessibleMemberClasses.visit(newp);
 
         //remove hidden toplevel classes
-        Set<ComposedName> hiddenNames = new HashSet();
-        for (ComposedName composed_name: allAccessibleNames) {
-          for (ComposedName simple_name: allAccessibleNames) {
+        Set<Name> hiddenNames = new HashSet();
+        for (Name composed_name: allAccessibleNames) {
+          for (Name simple_name: allAccessibleNames) {
             %match(composed_name,simple_name) {
               toplevel@Dot(c,_),Dot(c) -> {
                 hiddenNames.add(`toplevel);
@@ -276,7 +293,7 @@ public class Generator {
         } else {
           Iterator iter = allAccessibleNames.iterator();
           for (int i=0;i<index;i++) { iter.next(); }
-          ComposedName supername = (ComposedName) iter.next();
+          Name supername = (Name) iter.next();
           newp = (Prog) `ApplyAt(wrapper,RenameSuperClass(supername)).visit(newp);
         }
 
@@ -288,97 +305,97 @@ public class Generator {
     return newp;
   }
 
-public Prog removeCycle(Prog p) {
-  Set<Type> allMemberTypes = collectMemberTypes(p);
-  Prog newp = p;
-  for (Type current: allMemberTypes) {
-    Set<Position> inheritance_path = new HashSet();
-    TypeWrapper wrapper = new TypeWrapper(current);
-    System.out.println("before remove cycles for "+current);
-    Strategy removeCycle =  `ApplyAt(wrapper,Mu(MuVar("x"),Choice(Sequence(Print(),FindCycle(inheritance_path)),_ClassDecl(Identity(),ApplyAtSuperClass(MuVar("x")),Identity()))));
-    try {
-      newp = (Prog) removeCycle.visit(newp);
-    } catch (VisitFailure e) {
-      throw new RuntimeException(" Unexpected strategy failure");
-    }
-    System.out.println("end remove cycles for "+current);
-  } 
-  return newp;
-}
+  public Prog removeCycle(Prog p) {
+    Set<Type> allMemberTypes = collectMemberTypes(p);
+    Prog newp = p;
+    for (Type current: allMemberTypes) {
+      Set<Position> inheritance_path = new HashSet();
+      TypeWrapper wrapper = new TypeWrapper(current);
+      System.out.println("before remove cycles for "+current);
+      Strategy removeCycle =  `ApplyAt(wrapper,Mu(MuVar("x"),Choice(Sequence(Print(),FindCycle(inheritance_path)),_ClassDecl(Identity(),ApplyAtSuperClass(MuVar("x")),Identity()))));
+      try {
+        newp = (Prog) removeCycle.visit(newp);
+      } catch (VisitFailure e) {
+        throw new RuntimeException(" Unexpected strategy failure");
+      }
+      System.out.println("end remove cycles for "+current);
+    } 
+    return newp;
+  }
 
-%strategy FindCycle(inheritance_path:Set) extends Fail() {
-  visit ClassDecl {
-    decl -> {
-      if (inheritance_path.contains(getPosition())) {
-        return `decl.setsuper(`Dot(Name("Object")));
-      } else {
-        inheritance_path.add(getPosition());
+  %strategy FindCycle(inheritance_path:Set) extends Fail() {
+    visit ClassDecl {
+      decl -> {
+        if (inheritance_path.contains(getPosition())) {
+          return `decl.setsuper(`Dot(Name("Object")));
+        } else {
+          inheritance_path.add(getPosition());
+        }
       }
     }
   }
-}
 
-%strategy Collect(allAccessibleNames:Set) extends Identity() {
-  visit ClassDecl {
-    ClassDecl[name=name] -> {
-      allAccessibleNames.add(`Dot(name));
+  %strategy Collect(allAccessibleNames:Set) extends Identity() {
+    visit ClassDecl {
+      ClassDecl[name=name] -> {
+        allAccessibleNames.add(`Dot(name));
+      }
     }
   }
-}
 
-public void printAccessibleClassesForMemberClasses(Prog p) {
-  Set<Type> allMemberTypes = collectMemberTypes(p);
-  for (Type current:allMemberTypes) {
-    System.out.println("accessible classes for "+current);
-    TypeWrapper wrapper = new TypeWrapper(current);
-    Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,ApplyAtEnclosingClass(
-          Mu(MuVar("begin"),Sequence(Print(),_ClassDecl(
-                Identity(),
-                ApplyAtSuperClass(MuVar("begin")),
-                _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Print()), Identity())) 
-                ),IfThenElse(Up(Is_MemberClassDecl()),
-                  ApplyAtEnclosingClass(MuVar("begin")),
-                  Identity())))));
+  public void printAccessibleClassesForMemberClasses(Prog p) {
+    Set<Type> allMemberTypes = collectMemberTypes(p);
+    for (Type current:allMemberTypes) {
+      System.out.println("accessible classes for "+current);
+      TypeWrapper wrapper = new TypeWrapper(current);
+      Strategy printAllAccessibleClasses =  `ApplyAt(wrapper,ApplyAtEnclosingClass(
+            Mu(MuVar("begin"),Sequence(Print(),_ClassDecl(
+                  Identity(),
+                  ApplyAtSuperClass(MuVar("begin")),
+                  _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Print()), Identity())) 
+                  ),IfThenElse(Up(Is_MemberClassDecl()),
+                    ApplyAtEnclosingClass(MuVar("begin")),
+                    Identity())))));
+      try {
+        printAllAccessibleClasses.visit(p);
+      } catch (VisitFailure e) {
+        throw new RuntimeException(" Unexpected strategy failure");
+      }
+    }
+  }
+
+  %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
+    visit Name {
+      composedName@Dot(packagename,classname) -> {
+        /* case of top level classes with complete full names */
+        TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
+        Position current = getPosition();
+        getEnvironment().followPath(current.inverse());
+        `ApplyAt(type,s).visit(getEnvironment());
+        getEnvironment().followPath(current);
+      }
+      composedName@Dot(classname@!Name("Object")) -> {
+        /* case of member classes or top level classes in the same package */
+      }
+    } 
+  }
+
+  %strategy RenameSuperClass(name:Name) extends Identity() {
+    visit ClassDecl {
+      decl -> {
+        return `decl.setsuper(name);
+      }
+    }
+  }
+
+  public static void main(String[] args) {
+    Generator generator = new Generator();
     try {
-      printAllAccessibleClasses.visit(p);
-    } catch (VisitFailure e) {
-      throw new RuntimeException(" Unexpected strategy failure");
+      generator.generateClasses();
+    } catch (java.io.IOException e) {
+      e.printStackTrace();
     }
   }
-}
-
-%strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
-  visit ComposedName {
-    composedName@Dot(packagename,classname) -> {
-      /* case of top level classes with complete full names */
-      TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
-      Position current = getPosition();
-      getEnvironment().followPath(current.inverse());
-      `ApplyAt(type,s).visit(getEnvironment());
-      getEnvironment().followPath(current);
-    }
-    composedName@Dot(classname@!Name("Object")) -> {
-      /* case of member classes or top level classes in the same package */
-    }
-  } 
-}
-
-%strategy RenameSuperClass(name:ComposedName) extends Identity() {
-  visit ClassDecl {
-    decl -> {
-      return `decl.setsuper(name);
-    }
-  }
-}
-
-public static void main(String[] args) {
-  Generator generator = new Generator();
- try {
-    generator.generateClasses();
-  } catch (java.io.IOException e) {
-    e.printStackTrace();
-  }
-}
 
 
 } 

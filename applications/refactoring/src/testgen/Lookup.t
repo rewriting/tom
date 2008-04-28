@@ -66,12 +66,18 @@ public class Lookup {
   }
 
   %op Strategy TypeLookup(res:PositionWrapper) {
-    make(res) { `Sequence(Lookup(res),ApplyAtPosition(res,Choice(_FieldDecl(Lookup(res),Identity(),Identity()),Identity()))) }
+    make(res) { `Sequence(
+        Lookup(res),
+        ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity()))) 
+    }
   }
 
 
   %op Strategy LookupAll(res:PositionWrapper,pos:PositionWrapper,name:String) {
-    make(res,pos,name) { `IfThenElse(Sequence(GetPosition(pos),onTheRightOfDot(pos)),Up(_ConsDot(TypeLookup(res),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name))))),Choice(LookupAllDecls(res,FindName(res,name)),LookupAllPackages(res,FindName(res,name)))) }
+    make(res,pos,name) { `IfThenElse(
+        Sequence(GetPosition(pos),onTheRightOfDot(pos)),
+        Sequence(Up(_ConsDot(TypeLookup(res),Identity())),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+        Sequence(LookupAllDecls(res,FindName(res,name)),LookupAllPackages(res,FindName(res,name)))) }
   }
 
 
@@ -96,7 +102,7 @@ public class Lookup {
     }
   }
 
-  %strategy IsPosition(pos:PositionWrapper) extends Identity() {
+  %strategy IsPosition(pos:PositionWrapper) extends Fail() {
     visit Name {
       n -> { 
         if (pos.value.equals(getPosition())) {
@@ -107,9 +113,9 @@ public class Lookup {
   }
 
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
-    make(pos,s) { `Mu(MuVar("x"),Choice(
-          _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
-          _CompUnit(s)))
+    make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ClassDecl(),
+          _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),_FieldDecl(Identity(),s,Identity()),IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(_ClassDecl(s,Identity(),Identity())),Identity())))),
+          IfThenElse(Is_CompUnit(),_CompUnit(s,Identity()),Identity())))
     }
   }
 
@@ -129,5 +135,51 @@ public class Lookup {
   %op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
     make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
   }
+
+
+  %strategy FindSuperClass() extends Identity() {
+    visit ClassDecl {
+      decl@ClassDecl[super=name] -> {
+        System.out.println("In the class "+`decl.getname());
+        System.out.println("Try to find the super-class "+`name);
+        getEnvironment().down(2);
+        PositionWrapper pos = new PositionWrapper(new Position());
+        try {
+          `Lookup(pos).visit(getEnvironment());
+          System.out.println("success with pos="+pos.value);
+        } catch (VisitFailure e) {
+          System.out.println("failure with pos="+pos.value);
+        }
+        getEnvironment().up();
+      }
+    }
+  }
+
+
+  public static void main(String[] args) {
+    /**
+      Generator generator = new Generator();
+      Prog p = generator.generateProg();
+      p = generator.removeConflicts(p);
+      p = generator.generateInheritanceHierarchyForTopLevelClasses(p);
+      System.out.println("Generated classes ");
+      generator.printDeclClass(p);
+     */
+    Prog p = `Prog(
+        CompUnit(Name("a"),ConcClassDecl(
+          ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl()))),
+        CompUnit(Name("b"),ConcClassDecl(
+          ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
+        );
+
+    System.out.println(p);
+
+    try {
+      `TopDown(FindSuperClass()).visit(p);
+    } catch ( VisitFailure e) {
+      throw new RuntimeException("Unexpected strategy failure");
+    }
+  }
+
 
 }

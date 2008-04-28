@@ -150,7 +150,7 @@ public void printDeclClass(Prog p) {
   }
 }
 
-public String getComposedName(ComposedName n) {
+public String getComposedName(Name n) {
   %match(n) {
     ConsDot(head,tail@!EmptyDot()) -> {
       return `head.getname()+"."+getComposedName(`tail);
