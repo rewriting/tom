@@ -120,14 +120,12 @@ public class Lookup {
   }
 
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
-    make(pos,s) { `Mu(MuVar("x"),
-        IfThenElse(ModifiedEnvironment(),
+    make(pos,s) { `MuFixPoint(MuVar("x"),
           IfThenElse(Is_ClassDecl(),
             Sequence(
               _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
               Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
-            IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())),
-          Identity()))
+            IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
     }
   }
 
