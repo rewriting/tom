@@ -67,7 +67,8 @@ public class Lookup {
   %op Strategy TypeLookup(res:PositionWrapper) {
     make(res) { `Sequence(
         Lookup(res),
-        ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity()))) 
+        ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity())),
+        Debug("type lookup"))
     }
   }
 
@@ -75,8 +76,8 @@ public class Lookup {
   %op Strategy LookupAll(res:PositionWrapper,name:String) {
     make(res,name) { `IfThenElse(
         onTheRightOfDot(),
-        Sequence(Debug("On the right of dot"),Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name))))),
-        Sequence(Debug("Not on the right of dot"),LookupAllDecls(res,FindName(res,name)),LookupAllPackages(res,FindName(res,name)))) }
+        Sequence(Debug("On the right of dot"),Choice(Sequence(Up(Up(_ConsDot(TypeLookup(res),Identity()))),Debug("not fail")),Sequence(Debug("Fail"),ApplyAtPosition(res,Sequence(Debug("Try to find B"),LookupAllMembers(res,FindName(res,name))))))),
+        Sequence(Debug("Not on the right of dot"),LookupAllPackages(res,FindName(res,name)))) }
   }
 
 
@@ -100,7 +101,7 @@ public class Lookup {
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
     make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ClassDecl(),
           _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),_FieldDecl(Identity(),s,Identity()),IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(_ClassDecl(s,Identity(),Identity())),Identity())))),
-          IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
+          IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(_ClassDecl(s,Identity(),Identity()))),Identity())))
     }
   }
 
