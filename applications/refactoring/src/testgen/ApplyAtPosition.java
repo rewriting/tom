@@ -32,11 +32,13 @@ package testgen;
 import tom.library.sl.*;
 
 
-public class Up extends AbstractStrategy {
+public class ApplyAtPosition extends AbstractStrategy {
   public final static int ARG = 0;
+  private PositionWrapper pos;
 
-  public Up(Strategy v) {
+  public ApplyAtPosition(PositionWrapper pos, Strategy v) {
     initSubterm(v);
+    this.pos = pos;
   }
 
   /** 
@@ -52,15 +54,11 @@ public class Up extends AbstractStrategy {
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public int visit(Introspector m) {
-    //succeeds if it is th root
-    if (environment.depth()==0) {
-      return Environment.SUCCESS;
-    }
-    environment.setIntrospector(m);
-    int index = environment.getSubOmega();
-    environment.up();
+    Path relativePathToGo = pos.value.sub(environment.getPosition());
+    Path relativePathToReturn = environment.getPosition().sub(pos.value);
+    environment.followPath(relativePathToGo);
     int status = visitors[ARG].visit(m);
-    environment.down(index);
+    environment.followPath(relativePathToReturn);
     if(status != Environment.SUCCESS) {
       return status;
     }

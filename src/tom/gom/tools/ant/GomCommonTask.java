@@ -56,6 +56,7 @@ import org.apache.tools.ant.types.Environment.Variable;
  * <li>termgraph</li>
  * <li>termpointer</li>
  * <li>multithread</li>
+ * <li>nosharing</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -79,6 +80,7 @@ public class GomCommonTask extends MatchingTask {
   protected boolean termpointer = false;
   protected boolean termgraph = false;
   protected boolean multithread = false;
+  protected boolean nosharing = false;
 
   protected String protectedFileSeparator = "\\"+File.separatorChar;
 
@@ -185,6 +187,22 @@ public class GomCommonTask extends MatchingTask {
   }
 
   /**
+   * If true, Gom generate data-structure compatible with no sharing 
+   * @param flag if true, activate the option
+   */
+  public void setNosharing(boolean flag) {
+    this.nosharing = flag;
+  }
+
+  /**
+   * Gets the nosharing flag.
+   * @return the nosharing flag
+   */
+  public boolean getNosharing() {
+    return nosharing;
+  }
+
+  /**
    * If true, asks the compiler for verbose output.
    * @param verbose if true, asks the compiler for verbose output
    */
@@ -245,9 +263,9 @@ public class GomCommonTask extends MatchingTask {
     }
     if(getDestdir() != null && !getDestdir().isDirectory()) {
       throw new BuildException("destination directory \""
-                               + getDestdir().getAbsolutePath()
-                               + "\" does not exist "
-                               + "or is not a directory", getLocation());
+          + getDestdir().getAbsolutePath()
+          + "\" does not exist "
+          + "or is not a directory", getLocation());
     }
   }
 
@@ -270,9 +288,9 @@ public class GomCommonTask extends MatchingTask {
       File[] newCompileList
         = new File[compileList.length + newFiles.length];
       System.arraycopy(compileList, 0, newCompileList, 0,
-                       compileList.length);
+          compileList.length);
       System.arraycopy(newFiles, 0, newCompileList,
-                       compileList.length, newFiles.length);
+          compileList.length, newFiles.length);
       compileList = newCompileList;
     }
   }
@@ -306,8 +324,8 @@ public class GomCommonTask extends MatchingTask {
 
         if (!srcDir.exists()) {
           throw new BuildException("srcdir \""
-                                   + srcDir.getPath()
-                                   + "\" does not exist!", getLocation());
+              + srcDir.getPath()
+              + "\" does not exist!", getLocation());
         }
 
         DirectoryScanner ds = this.getDirectoryScanner(srcDir);
@@ -342,6 +360,9 @@ public class GomCommonTask extends MatchingTask {
       }
       if(getMultithread() == true) {
         javaRunner.createArg().setValue("--multithread");
+      }
+      if(getNosharing() == true) {
+        javaRunner.createArg().setValue("--nosharing");
       }
       if(getTermpointer() == true) {
         javaRunner.createArg().setValue("--termpointer");

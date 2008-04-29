@@ -29,42 +29,16 @@
  *
  **/
 package testgen;
-import tom.library.sl.*;
+import tom.library.sl.Position;
 
+public class PositionWrapper {
 
-public class Up extends AbstractStrategy {
-  public final static int ARG = 0;
+  public Position value;
 
-  public Up(Strategy v) {
-    initSubterm(v);
-  }
-
-  /** 
-   *  Visits the subject any without managing any environment
-   */ 
-  public final Object visitLight(Object any, Introspector m) throws VisitFailure {
-    throw new RuntimeException("The Strategy Up cannot be used with visitLight");
-  }
-
-  /**
-   *  Visits the current subject (found in the environment)
-   *  and place its result in the environment.
-   *  Sets the environment flag to Environment.FAILURE in case of failure
-   */
-  public int visit(Introspector m) {
-    //succeeds if it is th root
-    if (environment.depth()==0) {
-      return Environment.SUCCESS;
-    }
-    environment.setIntrospector(m);
-    int index = environment.getSubOmega();
-    environment.up();
-    int status = visitors[ARG].visit(m);
-    environment.down(index);
-    if(status != Environment.SUCCESS) {
-      return status;
-    }
-    return Environment.SUCCESS;
+  public PositionWrapper(Position pos) {
+    this.value = pos;
   }
 
 }
+
+

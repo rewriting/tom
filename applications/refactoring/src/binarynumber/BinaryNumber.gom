@@ -10,3 +10,12 @@ BitList = SingularBitList(Bit:Bit)
 
 Bit = Zero()
     | OneB()
+
+module BinaryNumber : block() {
+
+  public double value;
+  public int scale;
+  public int length;
+
+
+}

@@ -8,18 +8,19 @@ CompUnit = CompUnit(packageName:Name,classes:ClassDeclList)
 
 ClassDeclList = ConcClassDecl(ClassDecl*)
 
-ClassDecl = ClassDecl(name:Name,super:ComposedName,bodyDecl:BodyDeclList)
+ClassDecl = ClassDecl(name:Name,super:Name,bodyDecl:BodyDeclList)
 
 BodyDeclList = ConcBodyDecl(BodyDecl*)
 
-BodyDecl = FieldDecl(FieldType:ComposedName,name:Name,expr:ComposedName)
+BodyDecl = FieldDecl(FieldType:Name,name:Name,expr:Name)
          | MemberClassDecl(innerClass:ClassDecl)
          | Initializer(body:Stmt)
 
 Stmt = Block(Stmt*)
-     | LocalVariableDecl(varType:ComposedName,name:Name,expr:ComposedName)
-
-ComposedName = Dot(Name*)
-             | Undefined()
+     | LocalVariableDecl(varType:Name,name:Name,expr:Name)
 
 Name = Name(name:String)
+     | Dot(Name*)
+     | Undefined()
+
+Dot : FL() {}

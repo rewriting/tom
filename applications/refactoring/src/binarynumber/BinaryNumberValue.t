@@ -1,4 +1,5 @@
 package binarynumber;
+
 import binarynumber.binarynumber.*;
 import binarynumber.binarynumber.types.*;
 import binarynumber.binarynumber.types.bit.*;
@@ -12,108 +13,90 @@ public class BinaryNumberValue {
   %include{ sl.tom }
   %include{ binarynumber/BinaryNumber.tom }
 
-  static class Context {
-    public HashMap<Position,Double> values = new HashMap();
-    public HashMap<Position,Integer> scales = new HashMap();
-    public HashMap<Position,Integer> lengths = new HashMap();
-    public Context() {}
-  }
 
-  %typeterm Context {
-    implement { Context }
-  }
-
-  public static Double value(BinaryNumber n) {
-    Context context = new Context();
+  public static double value(BinaryNumber n) {
     try {
-      `value(context).visit(n);
-      return context.values.get(new Position());
+      `value().visit(n);
+      return n.value;
     } catch (VisitFailure v) {
       throw new RuntimeException("Unexpected VisitFailure");
     }
   }
 
-  %strategy value(context:Context) extends Identity() {
+  %strategy value() extends Identity() {
     visit Bit {
       // eq Zero.value() = 0;
-      Zero() -> {
-        context.values.put(getPosition(),new Double(0));
+      zero@Zero() -> {
+        `zero.value = 0;
       }
       //eq OneB.value() = java.lang.Math.pow(2.0, scale());
-      OneB() -> {
-        `scale(context).visit(getEnvironment());  
-        Double d = new Double(context.scales.get(getPosition()));
-        context.values.put(getPosition(),java.lang.Math.pow(2.0, d));
+      one@OneB() -> {
+        `scale().visit(getEnvironment());  
+        `one.value = java.lang.Math.pow(2.0, `one.scale);
       }
     }
 
     visit BitList {
       //eq SingularBitList.value() = getBit().value();
-      SingularBitList(bit) -> {
+      singularbitlist@SingularBitList(bit) -> {
         getEnvironment().down(1);
-        `value(context).visit(getEnvironment());
-        Double d = context.values.get(getPosition());
+        `value().visit(getEnvironment());
         getEnvironment().up();
-        context.values.put(getPosition(),d);
+        `singularbitlist.value = `bit.value;
       }
       //eq PluralBitList.value() = getBit().value() + getBitList().value();
-      PluralBitList(bitList,bit) -> {
+      pluralbitlist@PluralBitList(bitlist,bit) -> {
         getEnvironment().down(1);
-        `value(context).visit(getEnvironment());
-        Double d1 = context.values.get(getPosition());
+        `value().visit(getEnvironment());
         getEnvironment().up();
         getEnvironment().down(2);
-        `value(context).visit(getEnvironment());
-        Double d2 = context.values.get(getPosition());
+        `value().visit(getEnvironment());
         getEnvironment().up();
-        context.values.put(getPosition(),d1+d2);
+        `pluralbitlist.value = `bitlist.value + `bit.value;
       }
     }
 
     visit BinaryNumber {
       //eq IntegralNumber.value() = getIntegralPart().value();
-      IntegralNumber(IntegralPart) -> {
+      integralnumber@IntegralNumber(integralpart) -> {
         getEnvironment().down(1);
-        `value(context).visit(getEnvironment());
-        Double d = context.values.get(getPosition());
+        `value().visit(getEnvironment());
         getEnvironment().up();
-        context.values.put(getPosition(),d);
+        `integralnumber.value = `integralpart.value;
       }
 
       //eq RationalNumber.value() = getIntegralPart().value() + getFractionalPart().value();
-      RationalNumber(IntegralPart,FractionalPart) -> {
+      rationalnumber@RationalNumber(integralpart,fractionalpart) -> {
         getEnvironment().down(1);
-        `value(context).visit(getEnvironment());
-        Double d1 = context.values.get(getPosition());
+        `value().visit(getEnvironment());
         getEnvironment().up();
         getEnvironment().down(2);
-        `value(context).visit(getEnvironment());
-        Double d2 = context.values.get(getPosition());
+        `value().visit(getEnvironment());
         getEnvironment().up();
-        context.values.put(getPosition(),d1+d2);
+        `rationalnumber.value = `integralpart.value + `fractionalpart.value;
       }
     }
   }
 
 
-  %strategy scale(context:Context) extends Identity() {
+  %strategy scale() extends Identity() {
     visit Bit {
-      x -> {
+      bit -> {
         Integer index = getEnvironment().getSubOmega();
         getEnvironment().up();
         if (getEnvironment().getSubject() instanceof SingularBitList) {      
           //eq SingularBitList.getBit().scale() = scale();
-          `scale(context).visit(getEnvironment());
-          Integer i = context.scales.get(getPosition());
+          SingularBitList singularbitlist = (SingularBitList) getEnvironment().getSubject();
+          `scale().visit(getEnvironment());
+          `bit.scale = singularbitlist.scale;
           getEnvironment().down(1);
-          context.scales.put(getPosition(),i);
         } else {
           //eq PluralBitList.getBit().scale() = scale();
           if (getEnvironment().getSubject() instanceof PluralBitList) {      
-            `scale(context).visit(getEnvironment());
-            Integer i = context.scales.get(getPosition());
+            PluralBitList pluralbitlist = (PluralBitList) getEnvironment().getSubject();
+            `scale().visit(getEnvironment());
+            `bit.scale = pluralbitlist.scale;
             getEnvironment().down(2);
-            context.scales.put(getPosition(),i);
           } else {
             getEnvironment().down(index);
           }
@@ -122,32 +105,31 @@ public class BinaryNumberValue {
     }
 
     visit BitList {
-      x  -> {
+      bitlist  -> {
         Integer index = getEnvironment().getSubOmega();
         getEnvironment().up();
         if (getEnvironment().getSubject() instanceof PluralBitList) {      
           //eq PluralBitList.getBitList().scale() = scale() + 1;
-          `scale(context).visit(getEnvironment());
-          Integer i = context.scales.get(getPosition());
+          PluralBitList pluralbitlist = (PluralBitList) getEnvironment().getSubject();
+          `scale().visit(getEnvironment());
+          `bitlist.scale = pluralbitlist.scale + 1;
           getEnvironment().down(1);
-          context.scales.put(getPosition(),i+1);
         } else {
           //eq IntegralNumber.getIntegralPart().scale() = 0;
           if (getEnvironment().getSubject() instanceof IntegralNumber) {      
             getEnvironment().down(1);
-            context.scales.put(getPosition(),0);
+            `bitlist.scale = 0 ;
           } else {
             if (getEnvironment().getSubject() instanceof RationalNumber) {      
               if (index == 1) {
                 //eq RationalNumber.getIntegralPart().scale() = 0;
                 getEnvironment().down(1);
-                context.scales.put(getPosition(),0);
+                `bitlist.scale = 0 ;
               } else {
                 //eq RationalNumber.getFractionalPart().scale() = -getFractionalPart().length();
                 getEnvironment().down(2);
-                `length(context).visit(getEnvironment());
-                Integer i = context.lengths.get(getPosition());
-                context.scales.put(getPosition(),-i);
+                `length().visit(getEnvironment());
+                `bitlist.scale = - `bitlist.length;
               } 
             } else {
               getEnvironment().down(index);
@@ -156,23 +138,21 @@ public class BinaryNumberValue {
         }
       }
     }
-
   }
 
 
-  %strategy length(context:Context) extends Identity() {
+  %strategy length() extends Identity() {
     visit BitList {
       //eq SingularBitList.length() = 1;
-      SingularBitList[] -> {
-        context.lengths.put(getPosition(),1);
+      singularbitlist@SingularBitList[] -> {
+        `singularbitlist.length = 1;
       }
       //eq PluralBitList.length() = getBitList().length() + 1;
-      PluralBitList(bitList,bit) -> {
+      pluralbitlist@PluralBitList(bitlist,_) -> {
         getEnvironment().down(1);
-        `length(context).visit(getEnvironment());
-        Integer i = context.lengths.get(getPosition());
+        `length().visit(getEnvironment());
         getEnvironment().up();
-        context.lengths.put(getPosition(),i+1);
+        `pluralbitlist.length = `bitlist.length + 1;
       }
     }
   }

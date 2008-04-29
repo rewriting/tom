@@ -46,9 +46,7 @@ public class TestBackQuote extends TestCase {
   }
 
   public void test2() {
-    assertTrue(
-        "function of sort list",
-        `conc(a(),b(),c()) == `conc(abc()));
+    assertEquals(`conc(a(),b(),c()),`conc(abc()));
   }
 
 }

@@ -44,6 +44,7 @@ public class Backend {
   private List importList = null;
   private boolean strategySupport = true;
   private boolean multithread = false;
+  private boolean maximalsharing = true;
 
   %include { ../adt/objects/Objects.tom }
   %include { sl.tom }
@@ -52,11 +53,13 @@ public class Backend {
           File tomHomePath,
           boolean strategySupport,
           boolean multithread,
+          boolean nosharing,
           List importList) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.strategySupport = strategySupport;
     this.multithread = multithread;
+    this.maximalsharing = ! nosharing;
     this.importList = importList;
   }
 
@@ -129,7 +132,8 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(`mapping));
+              (TemplateClass)generators.get(`mapping),
+              maximalsharing);
         generators.put(`className,abstracttype);
         return 1;
       }
@@ -139,7 +143,8 @@ public class Backend {
               tomHomePath,
               importList,
               gomclass,
-              (TemplateClass)generators.get(`mapping));
+              (TemplateClass)generators.get(`mapping),
+              maximalsharing);
         generators.put(`className,sort);
         return 1;
       }
@@ -149,7 +154,8 @@ public class Backend {
             importList,
             gomclass,
             (TemplateClass)generators.get(`mapping),
-            multithread);
+            multithread,
+            maximalsharing);
         generators.put(`className,operator);
 
         TemplateClass sOpStrat =

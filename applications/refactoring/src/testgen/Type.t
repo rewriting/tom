@@ -40,6 +40,7 @@ public class Type {
   private String packagename;
   private String name;
   private Type upperclass;
+  private Type superclass;
 
   public Type() {
   }
@@ -73,9 +74,9 @@ public class Type {
   }
 
 
-  public ComposedName getComposedName() {
+  public Name getComposedName() {
     if (upperclass != null ) {
-      ComposedName uppercomposedname =  upperclass.getComposedName();
+      Name uppercomposedname =  upperclass.getComposedName();
       %match(uppercomposedname) {
         Dot(X*) -> {
           return `Dot(X,Name(name));
@@ -99,10 +100,28 @@ public class Type {
     return upperclass;
   }
 
+  public  Type getsuperclass() {
+    return upperclass;
+  }
+
+  public void setsuperclass(Type superclass) {
+    this.superclass = superclass;
+  }
+
+
   public String toString() {
     return packagename+"."+toStringName();
   }
 
+  public boolean equals(Object o) {
+    if ( o instanceof Type) {
+      Type t = (Type) o;
+      return 
+        name.equals(t.getname()) && 
+        (packagename!=null?packagename.equals(t.getpackagename()):true) && 
+        (upperclass!=null?upperclass.equals(t.getupperclass()):true);
+    }
+    return false;
+  }
+
 }
-
-
