@@ -167,23 +167,24 @@ public class Lookup {
 
 
   public static void main(String[] args) {
+    /**
       Generator generator = new Generator();
       Prog p = generator.generateProg();
       p = generator.removeConflicts(p);
       p = generator.generateInheritanceHierarchyForTopLevelClasses(p);
       System.out.println("Generated classes ");
       generator.printDeclClass(p);
-
-    /**
+     */
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
-            ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl()))),
+            ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl(
+                MemberClassDecl(ClassDecl(Name("C"),Dot(Name("b"),Name("B")),ConcBodyDecl())),
+                MemberClassDecl(ClassDecl(Name("D"),Name("C"),ConcBodyDecl())))))),
         CompUnit(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
 
     System.out.println(p);
-     */
 
     try {
       `TopDown(FindSuperClass()).visit(p);
