@@ -67,8 +67,7 @@ public class Lookup {
   %op Strategy TypeLookup(res:PositionWrapper) {
     make(res) { `Sequence(
         Lookup(res),
-        ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity())),
-        Debug("type lookup"))
+        ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity())))
     }
   }
 
@@ -76,18 +75,40 @@ public class Lookup {
   %op Strategy LookupAll(res:PositionWrapper,name:String) {
     make(res,name) { `IfThenElse(
         onTheRightOfDot(),
-        Sequence(Debug("On the right of dot"),Choice(Sequence(Up(Up(_ConsDot(TypeLookup(res),Identity()))),Debug("not fail")),Sequence(Debug("Fail"),ApplyAtPosition(res,Sequence(Debug("Try to find B"),LookupAllMembers(res,FindName(res,name))))))),
-        Sequence(Debug("Not on the right of dot"),LookupAllPackages(res,FindName(res,name)))) }
+        Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+        LookupAllPackages(res,FindName(res,name))) }
   }
 
 
   %strategy FindName(res:PositionWrapper, n:String) extends Identity() {
-    visit Name {
-      Name[name=name] -> {
+    visit ClassDecl {
+      ClassDecl[name=Name[name=name]] -> {
         if (`name.equals(`n)) {
           res.value = getPosition();
-          System.out.println("Find a name "+`name);
-          System.out.println("At Position "+res.value);
+          throw new VisitFailure();
+        }
+      }
+    }
+    visit CompUnit {
+      CompUnit[packageName=Name[name=name]] -> {
+        if (`name.equals(`n)) {
+          res.value = getPosition();
+          throw new VisitFailure();
+        }
+      }
+    }
+    visit Stmt {
+      LocalVariableDecl[name=Name[name=name]] -> {
+        if (`name.equals(`n)) {
+          res.value = getPosition();
+          throw new VisitFailure();
+        }
+      }
+    }
+    visit BodyDecl {
+      FieldDecl[name=Name[name=name]] -> {
+        if (`name.equals(`n)) {
+          res.value = getPosition();
           throw new VisitFailure();
         }
       }
@@ -100,8 +121,8 @@ public class Lookup {
 
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
     make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ClassDecl(),
-          _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),_FieldDecl(Identity(),s,Identity()),IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(_ClassDecl(s,Identity(),Identity())),Identity())))),
-          IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(_ClassDecl(s,Identity(),Identity()))),Identity())))
+          _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
+          IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
     }
   }
 
@@ -116,14 +137,14 @@ public class Lookup {
             IfThenElse(Is_CompUnit(),
               LookupAllMembers(pos,s),
               Sequence(
-                ApplyAtEnclosingStmt(ApplyToPredecessors(_LocalVariableDecl(Identity(),s,Identity()))),
+                ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
                 ApplyAtEnclosingScope(MuVar("x")))
               )))
     }
   }
 
   %op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
-    make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(_CompUnit(s,Identity())),Up(MuVar("x")))) }
+    make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
   }
 
   %strategy FindSuperClass() extends Identity() {
@@ -135,9 +156,9 @@ public class Lookup {
         PositionWrapper pos = new PositionWrapper(new Position());
         try {
           `Lookup(pos).visit(getEnvironment());
-          System.out.println("success with pos="+pos.value);
+          System.out.println("not found");
         } catch (VisitFailure e) {
-          System.out.println("failure with pos="+pos.value);
+          System.out.println("found at position="+pos.value);
         }
         getEnvironment().up();
       }
@@ -146,14 +167,14 @@ public class Lookup {
 
 
   public static void main(String[] args) {
-    /**
       Generator generator = new Generator();
       Prog p = generator.generateProg();
       p = generator.removeConflicts(p);
       p = generator.generateInheritanceHierarchyForTopLevelClasses(p);
       System.out.println("Generated classes ");
       generator.printDeclClass(p);
-     */
+
+    /**
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
             ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl()))),
@@ -162,6 +183,7 @@ public class Lookup {
         );
 
     System.out.println(p);
+     */
 
     try {
       `TopDown(FindSuperClass()).visit(p);
