@@ -60,6 +60,10 @@ public abstract class AbstractStrategy implements Strategy {
     return visitors;
   }
 
+  public Strategy getVisitor(int i) {
+    return visitors[i];
+  }
+
   //visitable
   public int getChildCount() {
     return visitors.length;
