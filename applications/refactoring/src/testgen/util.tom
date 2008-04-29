@@ -138,6 +138,21 @@ static class TypeWrapper {
   }
 }
 
+%strategy Debug(statement:String) extends Identity() {
+  visit Name {
+    _ -> {
+      System.out.println(statement);
+      System.out.println(getPosition());
+    }
+  }
+  visit ClassDecl {
+    _ -> {
+      System.out.println(statement);
+      System.out.println(getPosition());
+    }
+  }
+}
+
 public void printDeclClass(Prog p) {
   for (Type t : collectAllTypes(p)) {
     try {
@@ -169,5 +184,18 @@ public String getComposedName(Name n) {
   make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
 }
 
+%op Strategy ApplyAtEnclosingCompUnit(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_CompUnit(),s,MuVar("y")))) }
+}
 
+%op Strategy ApplyAtEnclosingStmt(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),s,MuVar("y")))) }
+}
 
+%op Strategy ApplyToPredecessors(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Try(Up(Sequence(_ConsBlock(s,Identity()),MuVar("y"))))) }
+}
+
+%op Strategy ApplyAtEnclosingScope(s:Strategy) {
+  make(s) { `Sequence(ApplyAtEnclosingClass(s),ApplyAtEnclosingCompUnit(s)) }
+}

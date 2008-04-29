@@ -53,8 +53,7 @@ public class Lookup {
   %strategy LookupName(res:PositionWrapper) extends Identity() {
     visit Name {
       Name[name=name] -> {
-        PositionWrapper pos = new PositionWrapper(new Position());
-        `LookupAll(res,pos,name).visit(getEnvironment());
+        `LookupAll(res,name).visit(getEnvironment());
       }
     }
   }
@@ -73,11 +72,11 @@ public class Lookup {
   }
 
 
-  %op Strategy LookupAll(res:PositionWrapper,pos:PositionWrapper,name:String) {
-    make(res,pos,name) { `IfThenElse(
-        Sequence(GetPosition(pos),onTheRightOfDot(pos)),
-        Sequence(Up(_ConsDot(TypeLookup(res),Identity())),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-        Sequence(LookupAllDecls(res,FindName(res,name)),LookupAllPackages(res,FindName(res,name)))) }
+  %op Strategy LookupAll(res:PositionWrapper,name:String) {
+    make(res,name) { `IfThenElse(
+        onTheRightOfDot(),
+        Sequence(Debug("On the right of dot"),Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name))))),
+        Sequence(Debug("Not on the right of dot"),LookupAllDecls(res,FindName(res,name)),LookupAllPackages(res,FindName(res,name)))) }
   }
 
 
@@ -86,55 +85,44 @@ public class Lookup {
       Name[name=name] -> {
         if (`name.equals(`n)) {
           res.value = getPosition();
+          System.out.println("Find a name "+`name);
+          System.out.println("At Position "+res.value);
           throw new VisitFailure();
         }
       }
     }
   }
 
-  %op Strategy onTheRightOfDot(pos: PositionWrapper) {
-    make(pos) { `Up(_ConsDot(Identity(),IsPosition(pos))) }
-  }
-
-  %strategy GetPosition(pos:PositionWrapper) extends Identity() {
-    visit Name {
-      _ -> { pos.value = getPosition(); }
-    }
-  }
-
-  %strategy IsPosition(pos:PositionWrapper) extends Fail() {
-    visit Name {
-      n -> { 
-        if (pos.value.equals(getPosition())) {
-          return `n; 
-        }
-      }
-    }
+  %op Strategy onTheRightOfDot() {
+    make() { `Up(Sequence(Is_ConsDot(),Up(Is_ConsDot()))) }
   }
 
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
     make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ClassDecl(),
           _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),_FieldDecl(Identity(),s,Identity()),IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(_ClassDecl(s,Identity(),Identity())),Identity())))),
-          IfThenElse(Is_CompUnit(),_CompUnit(s,Identity()),Identity())))
+          IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
     }
   }
 
   %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
     make(pos,s) { 
-      `Mu(MuVar("x"),
+      `Mu(MuVar("x"),          
           IfThenElse(Is_ClassDecl(),
             Sequence(
               _ClassDecl(s,Identity(),Identity()),
               LookupAllMembers(pos,s),
               ApplyAtEnclosingClass(MuVar("x"))),
             IfThenElse(Is_CompUnit(),
-              Up(_Prog(MuVar("x"))), Identity()
+              LookupAllMembers(pos,s),
+              Sequence(
+                ApplyAtEnclosingStmt(ApplyToPredecessors(_LocalVariableDecl(Identity(),s,Identity()))),
+                ApplyAtEnclosingScope(MuVar("x")))
               )))
     }
   }
 
   %op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
-    make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
+    make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(_CompUnit(s,Identity())),Up(MuVar("x")))) }
   }
 
   %strategy FindSuperClass() extends Identity() {
