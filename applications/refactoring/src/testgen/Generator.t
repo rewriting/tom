@@ -42,6 +42,7 @@ import java.util.*;
 public class Generator {
 
   %include { util.tom }
+  %include { lookup.tom }
 
   static Random random = new java.util.Random();
 
@@ -366,36 +367,68 @@ public class Generator {
 
   %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
     visit Name {
-      composedName@Dot(packagename,classname) -> {
-        /* case of top level classes with complete full names */
-        TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
-        Position current = getPosition();
-        getEnvironment().followPath(current.inverse());
-        `ApplyAt(type,s).visit(getEnvironment());
-        getEnvironment().followPath(current);
-      }
-      composedName@Dot(classname@!Name("Object")) -> {
-        /* case of member classes or top level classes in the same package */
-      }
-    } 
-  }
-
-  %strategy RenameSuperClass(name:Name) extends Identity() {
-    visit ClassDecl {
-      decl -> {
-        return `decl.setsuper(name);
+      _ -> {
+        PositionWrapper res = new PositionWrapper(new Position());
+        `Lookup(res).visit(getEnvironment());
+        `ApplyAtPosition(res,s).visit(getEnvironment());
       }
     }
   }
 
-  public static void main(String[] args) {
-    Generator generator = new Generator();
-    try {
-      generator.generateClasses();
-    } catch (java.io.IOException e) {
-      e.printStackTrace();
+%strategy RenameSuperClass(name:Name) extends Identity() {
+  visit ClassDecl {
+    decl -> {
+      return `decl.setsuper(name);
     }
   }
+}
 
+public static void main(String[] args) {
+  Generator generator = new Generator();
+  try {
+    generator.generateClasses();
+  } catch (java.io.IOException e) {
+    e.printStackTrace();
+  }
+}
+
+%strategy FindSuperClass() extends Identity() {
+  visit ClassDecl {
+    decl@ClassDecl[super=name] -> {
+      System.out.println("In the class "+`decl.getname());
+      System.out.println("Try to find the super-class "+`name);
+      getEnvironment().down(2);
+      PositionWrapper pos = new PositionWrapper(new Position());
+      try {
+        `Lookup(pos).visit(getEnvironment());
+        System.out.println("not found");
+      } catch (VisitFailure e) {
+        System.out.println("found at position="+pos.value);
+        `ApplyAtPosition(pos,Print()).visit(getEnvironment());
+      }
+      getEnvironment().up();
+    }
+  }
+}
+
+
+
+public static void testLookup() {
+  Prog p = `Prog(
+      CompUnit(Name("a"),ConcClassDecl(
+          ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl(
+              MemberClassDecl(ClassDecl(Name("C"),Dot(Name("b"),Name("B")),ConcBodyDecl())),
+              MemberClassDecl(ClassDecl(Name("D"),Name("C"),ConcBodyDecl())))))),
+      CompUnit(Name("b"),ConcClassDecl(
+          ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
+      );
+
+  System.out.println(p);
+  try {
+    `TopDown(FindSuperClass()).visit(p);
+  } catch ( VisitFailure e) {
+    throw new RuntimeException("Unexpected strategy failure");
+  }
+}
 
 } 

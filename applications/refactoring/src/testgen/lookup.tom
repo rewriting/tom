@@ -1,0 +1,109 @@
+%op Strategy Lookup(res:PositionWrapper) {
+  make(res) {
+    `IfThenElse(Is_Name(),LookupName(res),LookupComposedName(res))
+  }
+}
+
+
+%op Strategy LookupComposedName(res:PositionWrapper) {
+  make(res) { `Mu(MuVar("x"),IfThenElse(_ConsDot(Identity(),_EmptyDot()),
+        _ConsDot(LookupName(res),Identity()),
+        _ConsDot(Identity(),MuVar("x"))))  }
+}
+
+
+%strategy LookupName(res:PositionWrapper) extends Identity() {
+  visit Name {
+    Name[name=name] -> {
+      `LookupAll(res,name).visit(getEnvironment());
+    }
+  }
+}
+
+%op Strategy TypeLookup(res:PositionWrapper) {
+  make(res) { `Sequence(
+      Lookup(res),
+      ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity())))
+  }
+}
+
+
+%op Strategy LookupAll(res:PositionWrapper,name:String) {
+  make(res,name) { `IfThenElse(
+      onTheRightOfDot(),
+      Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+      Sequence(LookupAllPackages(res,FindName(res,name)),LookupAllDecls(res,FindName(res,name)))) }
+}
+
+
+%strategy FindName(res:PositionWrapper, n:String) extends Identity() {
+  visit ClassDecl {
+    ClassDecl[name=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+  visit CompUnit {
+    CompUnit[packageName=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+  visit Stmt {
+    LocalVariableDecl[name=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+  visit BodyDecl {
+    FieldDecl[name=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+}
+
+%op Strategy onTheRightOfDot() {
+  make() { `Up(Sequence(Is_ConsDot(),Up(Is_ConsDot()))) }
+}
+
+%op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
+  make(pos,s) { `MuFixPoint("lookupAllMembers",MuVar("x"),
+      IfThenElse(Is_ClassDecl(),
+        Sequence(
+          _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
+          Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
+        IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
+  }
+}
+
+%op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
+  make(pos,s) { 
+    `Mu(MuVar("x"), 
+        IfThenElse(Is_ClassDecl(),
+          Sequence(
+            _ClassDecl(s,Identity(),Identity()),
+            LookupAllMembers(pos,s),
+            ApplyAtEnclosingScope(MuVar("x"))),
+          IfThenElse(Is_CompUnit(),
+            LookupAllMembers(pos,s),
+            Sequence(
+              ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
+              ApplyAtEnclosingScope(MuVar("x")))
+            )))
+  }
+}
+
+%op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
+  make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
+}
+
+
