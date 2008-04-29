@@ -11,9 +11,9 @@
  */
 
 %op Strategy Try(s1:Strategy) {
-//  is_fsym(t) { debugger.Lib.simulates($t,"Try") }
+  is_fsym(t) { debugger.Lib.simulates($t,"Try") }
   make(v) { debugger.Factory.makeTry($v) }
-//  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
+  get_slot(s1,t) { ((Decorator)$t).getSlot(1) }
 }
 
 %op Strategy TopDown(s1:Strategy) {
