@@ -76,7 +76,7 @@ public class Lookup {
     make(res,name) { `IfThenElse(
         onTheRightOfDot(),
         Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-        LookupAllPackages(res,FindName(res,name))) }
+        Sequence(LookupAllPackages(res,FindName(res,name)),LookupAllDecls(res,FindName(res,name)))) }
   }
 
 
@@ -121,7 +121,9 @@ public class Lookup {
 
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
     make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ClassDecl(),
-          _ClassDecl(Identity(),Sequence(Lookup(pos),ApplyAtPosition(pos,MuVar("x"))),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
+          Sequence(
+            _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
+            Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
           IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
     }
   }
@@ -133,7 +135,7 @@ public class Lookup {
             Sequence(
               _ClassDecl(s,Identity(),Identity()),
               LookupAllMembers(pos,s),
-              ApplyAtEnclosingClass(MuVar("x"))),
+              ApplyAtEnclosingScope(MuVar("x"))),
             IfThenElse(Is_CompUnit(),
               LookupAllMembers(pos,s),
               Sequence(
