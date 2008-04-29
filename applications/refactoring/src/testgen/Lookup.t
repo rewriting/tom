@@ -120,30 +120,12 @@ public class Lookup {
   }
 
   %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
-    make(pos,s) { `MuFixPoint(MuVar("x"),
+    make(pos,s) { `MuFixPoint("lookupAllMembers",MuVar("x"),
           IfThenElse(Is_ClassDecl(),
             Sequence(
               _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
               Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
             IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
-    }
-  }
-
-  static Environment current = new Environment();
-
-  %strategy ModifiedEnvironment() extends Identity() {
-    visit ClassDecl {
-      _ -> {
-        if(getEnvironment().equals(current)) {
-          throw new VisitFailure();
-        } else {
-          try {
-            current = (Environment) getEnvironment().clone();
-          } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("Unexpected CloneNotSupportedException");
-          }
-        }
-      }
     }
   }
 

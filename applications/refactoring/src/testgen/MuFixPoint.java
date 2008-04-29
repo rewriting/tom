@@ -30,9 +30,7 @@
  **/
 package testgen;
 
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.HashSet;
+import java.util.*;
 import tom.library.sl.*;
 
 /**
@@ -50,12 +48,16 @@ public class MuFixPoint extends AbstractStrategy {
   public final static int V = 1;
 
   private boolean expanded = false;
+  private String identifier;
   
-  // this information is shared by all the instances of FixPoint
-  private static Environment lastEnvironment;
+  // the last environment is shared by all the instances of FixPoint with the same name
+  // if the MuFixPoint is used in a %op, even if this strategy is constructed several times,
+  // the last environment information is not lost
+  private static Map<String,Environment> lastEnvironments = new HashMap();
 
-  public MuFixPoint(Strategy var, Strategy v) {
+  public MuFixPoint(String identifier, Strategy var, Strategy v) {
     initSubterm(var, v);
+    this.identifier = identifier;
   }
 
   public final Object visitLight(Object any, Introspector i) throws VisitFailure {
@@ -67,11 +69,11 @@ public class MuFixPoint extends AbstractStrategy {
   }
 
   public int visit(Introspector i) {
-    if(environment.equals(lastEnvironment)) {
+    if(environment.equals(lastEnvironments.get(identifier))) {
       return Environment.SUCCESS;
     } else {
       try {
-        lastEnvironment = (Environment) environment.clone();
+        lastEnvironments.put(identifier,(Environment) environment.clone());
       } catch (CloneNotSupportedException e) {
         throw new RuntimeException("Unexpected CloneNotSupportedException");
       }

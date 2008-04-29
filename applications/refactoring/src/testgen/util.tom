@@ -9,9 +9,9 @@
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
 }
 
-%op Strategy MuFixPoint(s1:Strategy, s2:Strategy) {
+%op Strategy MuFixPoint(id:String, s1:Strategy, s2:Strategy) {
   is_fsym(t) {( ($t instanceof testgen.MuFixPoint) )}
-  make(var, v) {( new testgen.MuFixPoint($var, $v) )}
+  make(id, var, v) {( new testgen.MuFixPoint($id, $var, $v) )}
   get_slot(s1, t) {( (tom.library.sl.MuVar)$t.getChildAt(tom.library.sl.Mu.VAR) )}
   get_slot(s2, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V) )}
 }
