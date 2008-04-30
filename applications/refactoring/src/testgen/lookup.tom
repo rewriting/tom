@@ -102,6 +102,8 @@
   }
 }
 
+static PositionWrapper root = new PositionWrapper(new Position());
+
 %op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
-  make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
+  make(pos,s) { `ApplyAtPosition(root,_Prog(s)) }
 }

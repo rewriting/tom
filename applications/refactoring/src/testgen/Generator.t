@@ -508,7 +508,7 @@ public class Generator {
   public static void main(String[] args) {
     Generator generator = new Generator();
     try {
-      generator.testLookup();
+      //generator.testLookup();
       generator.generateClasses();
     } catch (java.io.IOException e) {
       e.printStackTrace();
@@ -537,6 +537,8 @@ public class Generator {
 
 
   public static void testLookup() {
+    Prog p = ` Prog(CompUnit(Name("s"),ConcClassDecl(ClassDecl(Name("t"),Undefined(),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("u"),Undefined()))))),ClassDecl(Name("k"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("k"),Undefined()))),ClassDecl(Name("j"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("t"),Dot(Name("s"),Name("o")),ConcBodyDecl())))),ClassDecl(Name("o"),Dot(Name("t"),Name("n")),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("j"),Undefined()),LocalVariableDecl(Undefined(),Name("y"),Undefined()),LocalVariableDecl(Undefined(),Name("b"),Undefined()),LocalVariableDecl(Undefined(),Name("k"),Undefined()),LocalVariableDecl(Undefined(),Name("m"),Undefined()))),MemberClassDecl(ClassDecl(Name("p"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("l"),Undefined())),MemberClassDecl(ClassDecl(Name("f"),Undefined(),ConcBodyDecl()))))),MemberClassDecl(ClassDecl(Name("c"),Undefined(),ConcBodyDecl())))))),CompUnit(Name("w"),ConcClassDecl(ClassDecl(Name("k"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("h"),Undefined())))))),CompUnit(Name("t"),ConcClassDecl(ClassDecl(Name("n"),Dot(Name("w"),Name("k")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("d"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("v"),Undefined()))))),Initializer(Block()))),ClassDecl(Name("c"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("h"),Undefined(),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("w"),Undefined())))))),MemberClassDecl(ClassDecl(Name("u"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("g"),Undefined())))),Initializer(Block(LocalVariableDecl(Undefined(),Name("b"),Undefined()),LocalVariableDecl(Undefined(),Name("u"),Undefined()),LocalVariableDecl(Undefined(),Name("m"),Undefined()))))))));
+/**
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
             ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl(
@@ -545,7 +547,7 @@ public class Generator {
         CompUnit(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
-
+*/
     System.out.println(p);
     try {
       `TopDown(FindSuperClass()).visit(p);
