@@ -1,4 +1,4 @@
-%include { ../debugger/sl_debug.tom }
+%include {sl.tom }
 %include {util/types/Set.tom}
 %include {tinyjava/TinyJava.tom}
 %include {tinyjava/_TinyJava.tom}
@@ -9,6 +9,12 @@
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen2.Up.ARG) )}
 }
 
+%op Strategy MuFixPoint(id:String, s1:Strategy, s2:Strategy) {
+  is_fsym(t) {( ($t instanceof testgen2.MuFixPoint) )}
+  make(id, var, v) {( new testgen2.MuFixPoint($id, $var, $v) )}
+  get_slot(s1, t) {( (tom.library.sl.MuVar)$t.getChildAt(tom.library.sl.Mu.VAR) )}
+  get_slot(s2, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V) )}
+}
 
 %typeterm Context {
   implement { Context }
@@ -81,19 +87,61 @@ public static Set<Type> collectMemberTypes(Prog p) {
   return membertypes;
 }
 
+public static Set<Position> collectMemberClassesPosition(Prog p) {
+  Set<Position> positions =  new HashSet();
+  try {
+    `TopDown(CollectMemberPosition(positions)).visit(p);
+  } catch (VisitFailure e) {
+    throw new RuntimeException("Unexpected failure");
+  }
+  return positions;
+}
+
+%strategy CollectMemberPosition(positions:Set) extends Identity() {
+  visit BodyDecl {
+    MemberClassDecl[] -> {
+      positions.add(getPosition().down(1));
+    }
+  }
+}
+
+%strategy GetName(name:NameWrapper) extends Identity() {
+  visit ClassDecl {
+    ClassDecl[name=name] -> {
+      try {
+        // for member classes just return the name
+        `Up(Is_MemberClassDecl()).visit(getEnvironment());
+        name.value = `Dot(name);
+      } catch (VisitFailure e) {
+        // for top level classes return the package+name
+        NameWrapper packageName = new NameWrapper();
+        `ApplyAtEnclosingCompUnit(GetPackage(packageName)).visit(getEnvironment());
+          name.value = `Dot(packageName.value,name);
+      }
+    }
+  }
+}
+
+%strategy GetPackage(name:NameWrapper) extends Identity() {
+  visit CompUnit {
+    CompUnit[packageName=packageName] -> {
+      name.value = `packageName;
+    }
+  }
+}
+
+%typeterm NameWrapper {
+  implement { NameWrapper }
+}
+
+static class NameWrapper { public Name value; }
 
 %typeterm PositionWrapper {
   implement { PositionWrapper }
 }
 
-
-  public static Strategy makeApplyAtPosition(Strategy s, final PositionWrapper p) {
-    return new debugger.Decorator("ApplyAtPosition", new debugger.Maker() { public Strategy build(Strategy[] a) { return new ApplyAtPosition(p,a[0]); } }, new Strategy[] {s});
-  }
-
-
 %op Strategy ApplyAtPosition(p:PositionWrapper,s:Strategy) {
-  make(p,s) { makeApplyAtPosition(s,p) }
+  make(p,s) { new ApplyAtPosition(p,s) }
 }
 
 %typeterm TypeWrapper {
@@ -111,8 +159,14 @@ static class TypeWrapper {
 
 
   public static Strategy makeApplyAt(final TypeWrapper t, Strategy s) {
-    return new debugger.Decorator("ApplyAt", new debugger.Maker() { public Strategy build(Strategy[] a) { return `_Prog(ApplyAtLocal(t,a[0])); } }, new Strategy[] {s});
+    return new debugger.Decorator("ApplyAt", new debugger.Maker() {
+        public Strategy build(Strategy[] a) {
+        return 
+        `_Prog(ApplyAtLocal(t,a[0]));
+        } }, new Strategy[] {s});
   }
+
+
 
 %op Strategy ApplyAt(t:TypeWrapper,s:Strategy) {
   make(t,s) { makeApplyAt(t,s) }
@@ -144,7 +198,7 @@ static class TypeWrapper {
 %strategy Print() extends Identity() {
   visit ClassDecl {
     decl -> {
-//      System.out.println(`decl);
+      //System.out.println(`decl);
     }
   }
 }
@@ -191,7 +245,6 @@ public String getComposedName(Name n) {
   return "";
 }
 
-
   public static Strategy makeApplyAtEnclosingClass(final Strategy s) {
     return new debugger.Decorator("ApplyAtEnclosingClass", new debugger.Maker() { public Strategy build(Strategy[] a) { 
         return `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),a[0],MuVar("y"))));
@@ -203,41 +256,43 @@ public String getComposedName(Name n) {
   make(s) { makeApplyAtEnclosingClass(s) }
 }
 
-  public static Strategy makeApplyAtEnclosingCompUnit(final Strategy s) {
+public static Strategy makeApplyAtEnclosingCompUnit(final Strategy s) {
     return new debugger.Decorator("ApplyAtEnclosingCompUnit", new debugger.Maker() { public Strategy build(Strategy[] a) { 
- return `Mu(MuVar("y"),Up(IfThenElse(Is_CompUnit(),a[0],MuVar("y")))); 
-        } }, new Strategy[] {s});
+ return 
+ `Mu(MuVar("y"),Up(IfThenElse(Is_CompUnit(),a[0],MuVar("y")))); 
+    } }, new Strategy[] {s});
   }
+
 
 %op Strategy ApplyAtEnclosingCompUnit(s:Strategy) {
   make(s) { makeApplyAtEnclosingCompUnit(s) }
 }
-
   public static Strategy makeApplyAtEnclosingStmt(final Strategy s) {
     return new debugger.Decorator("ApplyAtEnclosingStmt", new debugger.Maker() { public Strategy build(Strategy[] a) { 
 return `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),a[0],MuVar("y")))) ;
         } }, new Strategy[] {s});
   }
 
+
 %op Strategy ApplyAtEnclosingStmt(s:Strategy) {
   make(s) { makeApplyAtEnclosingStmt(s) }
 }
 
-  public static Strategy makeApplyToPredecessors(final Strategy s) {
+public static Strategy makeApplyToPredecessors(final Strategy s) {
     return new debugger.Decorator("ApplyToPredecessors", new debugger.Maker() { public Strategy build(Strategy[] a) { 
         return `Mu(MuVar("y"),Try(Up(Sequence(_ConsBlock(a[0],Identity()),MuVar("y"))))) ;
         } }, new Strategy[] {s});
   }
 
 
-
 %op Strategy ApplyToPredecessors(s:Strategy) {
   make(s) { makeApplyToPredecessors(s) }
 }
 
-  public static Strategy makeApplyAtEnclosingScope(final Strategy s) {
+public static Strategy makeApplyAtEnclosingScope(final Strategy s) {
     return new debugger.Decorator("ApplyAtEnclosingScope", new debugger.Maker() { public Strategy build(Strategy[] a) { 
-return `Sequence(ApplyAtEnclosingClass(a[0]),ApplyAtEnclosingCompUnit(a[0])) ;
+return 
+`Sequence(ApplyAtEnclosingClass(a[0]),ApplyAtEnclosingCompUnit(a[0])) ;
         } }, new Strategy[] {s});
   }
 

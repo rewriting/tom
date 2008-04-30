@@ -42,6 +42,7 @@ import java.util.*;
 public class Generator {
 
   %include { util.tom }
+  %include { lookup.tom }
 
   static Random random = new java.util.Random();
 
@@ -243,8 +244,7 @@ public class Generator {
     return newp;
   }
 
-
-  public Prog generateInheritanceHierarchyForMemberClasses(Prog p) {
+  public Prog generateInheritanceHierarchyForMemberClasses_Old(Prog p) {
     Prog newp = p;
     Set<Type> alltopleveltypes = collectTopLevelTypes(p); 
     Set<Type> allMemberTypes = collectMemberTypes(p);
@@ -303,6 +303,127 @@ public class Generator {
     }
     newp = removeCycle(newp);
     return newp;
+  }
+
+  public Prog generateInheritanceHierarchyForMemberClasses(Prog p) {
+    Set<Position> undefinedtypes = collectMemberClassesPosition(p);
+    if (! undefinedtypes.isEmpty()) {
+      Iterator iter = undefinedtypes.iterator();
+      PositionWrapper current = new PositionWrapper((Position)iter.next()); 
+      Set<Name> inheritancePath = new HashSet();
+      Set<Name> accessibleNames = new HashSet();
+      try {
+        return (Prog) `Mu(MuVar("x"),IfThenElse(IsComplete(undefinedtypes), Identity(), Sequence(PrintContext(current,accessibleNames,inheritancePath,undefinedtypes),CollectAllAccessibleNames(current,accessibleNames,inheritancePath),ApplyAtPosition(current,RenameSuperClassAndUpdate(current,accessibleNames,inheritancePath,undefinedtypes)),MuVar("x")))).visit(p);
+      } catch (VisitFailure e) {
+        throw new RuntimeException(" Unexpected strategy failure");
+      }
+    } else {
+      return p;
+    }
+  }
+
+  %strategy PrintContext(current:PositionWrapper,accessibleNames:Set,inheritancePath:Set,undefinedtypes:Set) extends Identity() {
+    visit Prog {
+      p -> {
+        System.out.println("current");
+        System.out.println(current.value);
+        System.out.println("inheritancePath");
+        System.out.println(inheritancePath);
+        System.out.println("accessibleNames");
+        System.out.println(accessibleNames);
+        System.out.println("undefinedtypes");
+        System.out.println(undefinedtypes);
+        System.out.println("prog");
+        System.out.println(`p);
+      }
+    }
+  }
+
+
+  %strategy IsComplete(undefinedtypes:Set) extends Fail() {
+    visit Prog {
+      p -> {
+        if (undefinedtypes.isEmpty()) {
+          // the hierarchy is now complete
+          return `p;
+        }
+      }
+    }
+  }
+
+  %strategy RenameSuperClassAndUpdate(current:PositionWrapper, accessibleNames:Set, inheritancePath:Set, undefinedtypes:Set) extends Identity() {
+    visit ClassDecl {
+      c@ClassDecl[super=Undefined()] -> {
+        undefinedtypes.remove(current.value);
+        if (accessibleNames.isEmpty()) {
+          // the hierarchy is now complete
+          return `c.setsuper(`Dot(Name("Object")));
+        } else {
+          NameWrapper currentname = new NameWrapper();
+          `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+          System.out.println("currentname "+currentname.value);
+          inheritancePath.add(currentname.value);
+          int index = random.nextInt(accessibleNames.size()+1);
+          if (index == accessibleNames.size()) {
+            // this index corresponds to the case where there is no super-class
+            inheritancePath.clear();
+            if(! undefinedtypes.isEmpty()) {
+              current.value = (Position) undefinedtypes.iterator().next();
+            }
+            return `c.setsuper(`Dot(Name("Object")));
+          } else {
+            Iterator iter = accessibleNames.iterator();
+            for (int i=0;i<index;i++) { iter.next(); }
+            Name superclassname = (Name) iter.next();
+            getEnvironment().setSubject(`c.setsuper(superclassname));
+            PositionWrapper res = new PositionWrapper(new Position());
+            getEnvironment().down(2);
+            System.out.println("try to lookup "+getEnvironment().getSubject());
+            try {
+              `Lookup(res).visit(getEnvironment());
+              System.out.println("the lookup fails in RenameSuperClassAndChange");
+              throw new RuntimeException("the lookup fails in RenameSuperClassAndChange");
+            } catch (VisitFailure e) {
+              getEnvironment().up();
+              current.value = res.value;
+              return (ClassDecl) getEnvironment().getSubject();
+            }
+          }
+        }
+      }
+      c@ClassDecl[super=!Undefined()] -> {
+        inheritancePath.clear();
+        if (! undefinedtypes.isEmpty()) {
+          current.value = (Position) undefinedtypes.iterator().next();
+        }
+      }
+    }
+  }
+
+  %strategy CollectAllAccessibleNames(current:PositionWrapper, accessibleNames:Set, inheritancePath:Set) extends Identity() {
+    visit Prog {
+      p -> {
+        Set<Type> alltopleveltypes = collectTopLevelTypes(`p); 
+        for (Type toplevel: alltopleveltypes) {
+          accessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
+        }
+        System.out.println("current position");
+        System.out.println(current.value);
+        System.out.println("current class decl");
+        `ApplyAtPosition(current,Print()).visit(getEnvironment());
+        System.out.println("begin to collect the accessible names");
+        `ApplyAtPosition(current,ApplyAtEnclosingClass(
+              Mu(MuVar("begin"),Sequence(Print(),Collect(accessibleNames),_ClassDecl(
+                    Identity(),
+                    ApplyAtSuperClass(MuVar("begin")),
+                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
+                    ),Print(),IfThenElse(Up(Is_MemberClassDecl()),
+                      ApplyAtEnclosingClass(MuVar("begin")),
+                      Identity()))))).visit(getEnvironment());
+        accessibleNames.removeAll(inheritancePath);
+        System.out.println("finish to collect the accessible names");
+      }
+    }
   }
 
   public Prog removeCycle(Prog p) {
@@ -366,18 +487,14 @@ public class Generator {
 
   %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
     visit Name {
-      composedName@Dot(packagename,classname) -> {
-        /* case of top level classes with complete full names */
-        TypeWrapper type = new TypeWrapper(new Type(`packagename.getname(),`classname.getname()));
-        Position current = getPosition();
-        getEnvironment().followPath(current.inverse());
-        `ApplyAt(type,s).visit(getEnvironment());
-        getEnvironment().followPath(current);
+      n -> {
+        PositionWrapper res = new PositionWrapper(new Position());
+        System.out.println("try to find the super-class "+`n);
+        `Try(Lookup(res)).visit(getEnvironment());
+        System.out.println(`ApplyAtPosition(res,Print()).visit(getEnvironment()));
+        `Choice(Lookup(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,s),Debug("end to apply at the super class"))).visit(getEnvironment());
       }
-      composedName@Dot(classname@!Name("Object")) -> {
-        /* case of member classes or top level classes in the same package */
-      }
-    } 
+    }
   }
 
   %strategy RenameSuperClass(name:Name) extends Identity() {
@@ -390,12 +507,44 @@ public class Generator {
 
   public static void main(String[] args) {
     Generator generator = new Generator();
-    try {
-      generator.generateClasses();
-    } catch (java.io.IOException e) {
-      e.printStackTrace();
+    //try {
+      generator.testLookup();
+      //generator.generateClasses();
+    //} catch (java.io.IOException e) {
+    //  e.printStackTrace();
+    //}
+  }
+
+  %strategy FindSuperClass() extends Identity() {
+    visit ClassDecl {
+      decl@ClassDecl[super=name] -> {
+        System.out.println("In the class "+`decl.getname());
+        System.out.println("Try to find the super-class "+`name);
+        getEnvironment().down(2);
+        PositionWrapper pos = new PositionWrapper(new Position());
+        try {
+          `Lookup(pos).visit(getEnvironment());
+          System.out.println("not found");
+        } catch (VisitFailure e) {
+          System.out.println("found at position="+pos.value);
+          `ApplyAtPosition(pos,Print()).visit(getEnvironment());
+        }
+        getEnvironment().up();
+      }
     }
   }
 
+
+
+  public static void testLookup() {
+    Prog p = `Prog(CompUnit(Name("c"),ConcClassDecl(ClassDecl(Name("n"),Undefined(),ConcBodyDecl()),ClassDecl(Name("w"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("b"),Undefined()))),ClassDecl(Name("p"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name( "v"),Undefined()),Initializer(LocalVariableDecl(Undefined(),Name("n"),Undefined())),MemberClassDecl(ClassDecl(Name("c"),Dot(Name("Object")),ConcBodyDecl(FieldDecl(Undefined(),Name("p"),Undefined()),FieldDecl(Undefined(),Name("f"),Undefined())))))),ClassDecl(Name("j"),Undefined(),ConcBodyDecl()))),CompUnit(Name("h"),ConcClassDecl(ClassDecl(Name("f"),Undefined(),ConcBodyDecl()))),CompUnit(Name("p"),ConcClassDecl(ClassDecl(Name("g"),Undefined(),ConcBodyDecl(Initializer(Block()),FieldDecl(Undefined(),Name("i"),Undefined()),MemberClassDecl(ClassDecl(Name("t"),Undefined(),ConcBodyDecl()))))))); 
+
+    System.out.println(p);
+    try {
+      `TopDown(FindSuperClass()).visit(p);
+    } catch ( VisitFailure e) {
+      throw new RuntimeException("Unexpected strategy failure");
+    }
+  }
 
 } 

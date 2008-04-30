@@ -56,6 +56,26 @@ public class Type {
     this.name = name;
   }
 
+  public Type(Name fullqualifiedname) {
+    %match(fullqualifiedname) {
+      Dot(packagename,name) -> {
+        //top-level type
+        this.packagename = `packagename.getname();
+        this.name = `name.getname();
+      }
+      Dot(upperclass*,name) -> {
+        //member type
+        %match(upperclass) {
+          Dot(packagename,_*) -> {
+            this.packagename = `packagename.getname();
+          }
+        }
+        this.upperclass = new Type(`upperclass);
+        this.name =`name.getname();
+      }
+    }
+  }
+
   public String toStringName() {
     if (upperclass != null ) {
       return upperclass.toStringName()+"."+name;
