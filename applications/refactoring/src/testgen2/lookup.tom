@@ -1,0 +1,219 @@
+public static Strategy makeLookup(final PositionWrapper res) {
+  return new debugger.Decorator(
+      "Lookup", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return 
+    `IfThenElse(Is_Name(),LookupName(res),IfThenElse(Is_ConsDot(),LookupComposedName(res),Identity()));
+        } 
+      }, 
+      new Strategy[] {}
+  );
+}
+
+%op Strategy Lookup(res:PositionWrapper) {
+  make(res) {
+    makeLookup(res)
+  }
+}
+
+public static Strategy makeLookupComposedName(final PositionWrapper res) {
+  return new debugger.Decorator(
+      "LookupComposedName", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return `Mu(MuVar("x"),IfThenElse(_ConsDot(Identity(),_EmptyDot()),
+        _ConsDot(LookupName(res),Identity()),
+        _ConsDot(Identity(),MuVar("x")))); 
+        } 
+      }, 
+      new Strategy[] {}
+  );
+}
+
+%op Strategy LookupComposedName(res:PositionWrapper) {
+  make(res) { makeLookupComposedName(res) }
+}
+
+%strategy LookupName(res:PositionWrapper) extends Identity() {
+  visit Name {
+    Name[name=name] -> {
+      `LookupAll(res,name).visit(getEnvironment());
+    }
+  }
+}
+
+public static Strategy makeTypeLookup(final PositionWrapper res) {
+  return new debugger.Decorator(
+      "TypeLookup", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return 
+`Sequence(
+      Lookup(res),
+      ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity())));
+
+        } 
+      }, 
+      new Strategy[] {}
+  );
+}
+
+%op Strategy TypeLookup(res:PositionWrapper) {
+  make(res) { makeTypeLookup(res)  }
+}
+
+public static Strategy makeLookupAll(final PositionWrapper res, final String name) {
+  return new debugger.Decorator(
+      "LookupAll", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return 
+ `IfThenElse(
+      onTheRightOfDot(),
+      Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+      Sequence(LookupAllPackages(res,FindName(res,name)),LookupAllDecls(res,FindName(res,name)))) ;
+        } 
+      }, 
+      new Strategy[] {}
+  );
+}
+
+
+
+%op Strategy LookupAll(res:PositionWrapper,name:String) {
+  make(res,name) { makeLookupAll(res,name) }
+}
+
+
+%strategy FindName(res:PositionWrapper, n:String) extends Identity() {
+  visit ClassDecl {
+    ClassDecl[name=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+  visit CompUnit {
+    CompUnit[packageName=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+  visit Stmt {
+    LocalVariableDecl[name=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+  visit BodyDecl {
+    FieldDecl[name=Name[name=name]] -> {
+      if (`name.equals(`n)) {
+        res.value = getPosition();
+        throw new VisitFailure();
+      }
+    }
+  }
+}
+
+
+public static Strategy makeOnTheRightOfDot() {
+  return new debugger.Decorator(
+      "onTheRightOfDot", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return 
+ `Up(Sequence(Is_ConsDot(),Up(Is_ConsDot()))) ;
+        } 
+      }, 
+      new Strategy[] {}
+  );
+}
+
+
+
+
+%op Strategy onTheRightOfDot() {
+  make() { makeOnTheRightOfDot() }
+}
+
+
+public static Strategy makeLookupAllMembers(final PositionWrapper pos, Strategy s) {
+  return new debugger.Decorator(
+      "LookupAllMembers", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return 
+ `MuFixPoint("lookupAllMembers",MuVar("x"),
+      IfThenElse(Is_ClassDecl(),
+        Sequence(
+          _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),a[0],IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(a[0]),Identity())))),
+          Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
+        IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(a[0])),Identity())));
+
+        } 
+      }, 
+      new Strategy[] {s}
+  );
+}
+
+
+
+%op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
+  make(pos,s) { makeLookupAllMembers(pos,s) }
+}
+
+
+public static Strategy makeLookupAllDecls(final PositionWrapper pos, Strategy s) {
+  return new debugger.Decorator(
+      "LookupAllDecls", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return 
+  `Mu(MuVar("x"), 
+        IfThenElse(Is_ClassDecl(),
+          Sequence(
+            _ClassDecl(a[0],Identity(),Identity()),
+            LookupAllMembers(pos,a[0]),
+            ApplyAtEnclosingScope(MuVar("x"))),
+          IfThenElse(Is_CompUnit(),
+            LookupAllMembers(pos,a[0]),
+            Sequence(
+              ApplyAtEnclosingStmt(ApplyToPredecessors(a[0])),
+              ApplyAtEnclosingScope(MuVar("x")))
+            )));
+
+        } 
+      }, 
+      new Strategy[] {s}
+  );
+}
+
+%op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
+  make(pos,s) { makeLookupAllDecls(pos,s)  }
+}
+
+
+static PositionWrapper root = new PositionWrapper(new Position());
+
+public static Strategy makeLookupAllPackages(final PositionWrapper pos, Strategy s) {
+  return new debugger.Decorator(
+      "LookupAllPackages", 
+      new debugger.Maker() {
+        public Strategy build(Strategy[] a) { 
+          return `ApplyAtPosition(root,_Prog(a[0]));
+        } 
+      }, 
+      new Strategy[] {s}
+  );
+}
+
+
+%op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
+  make(pos,s) { makeLookupAllPackages(pos,s) }
+}
