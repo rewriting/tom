@@ -1,6 +1,6 @@
 %op Strategy Lookup(res:PositionWrapper) {
   make(res) {
-    `IfThenElse(Is_Name(),LookupName(res),LookupComposedName(res))
+    `IfThenElse(Is_Name(),LookupName(res),IfThenElse(Is_ConsDot(),LookupComposedName(res),Identity()))
   }
 }
 
@@ -105,5 +105,3 @@
 %op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `Mu(MuVar("x"),IfThenElse(Is_ConsProg(),_Prog(s),Up(MuVar("x")))) }
 }
-
-

@@ -87,6 +87,54 @@ public static Set<Type> collectMemberTypes(Prog p) {
   return membertypes;
 }
 
+public static Set<Position> collectMemberClassesPosition(Prog p) {
+  Set<Position> positions =  new HashSet();
+  try {
+    `TopDown(CollectMemberPosition(positions)).visit(p);
+  } catch (VisitFailure e) {
+    throw new RuntimeException("Unexpected failure");
+  }
+  return positions;
+}
+
+%strategy CollectMemberPosition(positions:Set) extends Identity() {
+  visit BodyDecl {
+    MemberClassDecl[] -> {
+      positions.add(getPosition().down(1));
+    }
+  }
+}
+
+%strategy GetName(name:NameWrapper) extends Identity() {
+  visit ClassDecl {
+    ClassDecl[name=name] -> {
+      try {
+        // for member classes just return the name
+        `Up(Is_MemberClassDecl()).visit(getEnvironment());
+        name.value = `Dot(name);
+      } catch (VisitFailure e) {
+        // for top level classes return the package+name
+        NameWrapper packageName = new NameWrapper();
+        `ApplyAtEnclosingCompUnit(GetPackage(packageName)).visit(getEnvironment());
+          name.value = `Dot(packageName.value,name);
+      }
+    }
+  }
+}
+
+%strategy GetPackage(name:NameWrapper) extends Identity() {
+  visit CompUnit {
+    CompUnit[packageName=packageName] -> {
+      name.value = `packageName;
+    }
+  }
+}
+
+%typeterm NameWrapper {
+  implement { NameWrapper }
+}
+
+static class NameWrapper { public Name value; }
 
 %typeterm PositionWrapper {
   implement { PositionWrapper }
