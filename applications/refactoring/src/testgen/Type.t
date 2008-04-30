@@ -121,7 +121,7 @@ public class Type {
   }
 
   public  Type getsuperclass() {
-    return upperclass;
+    return superclass;
   }
 
   public void setsuperclass(Type superclass) {

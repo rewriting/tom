@@ -67,12 +67,14 @@ public static Set<Type> collectAllTypes(Prog p) {
 
 public static Set<Type> collectTopLevelTypes(Prog p) {
   Set<Type> allTypes =  collectAllTypes(p);
+  System.out.println(allTypes);
   Set<Type> topleveltypes = new HashSet<Type>();
   for (Type t:allTypes) {
     if(t.getupperclass()==null) {
       topleveltypes.add(t);
     }
   }
+  System.out.println(topleveltypes);
   return topleveltypes;
 }
 
