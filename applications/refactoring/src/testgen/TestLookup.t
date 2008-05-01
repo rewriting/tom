@@ -49,25 +49,27 @@ public class TestLookup extends TestCase {
 
   %strategy FindSuperClass() extends Identity() {
     visit ClassDecl {
-      decl@ClassDecl[super=name] -> {
-        //System.out.println("In the class "+`decl.getname());
-        //System.out.println("Try to find the super-class "+`name);
+      decl@ClassDecl[super=name@!Undefined()] -> {
+        System.out.println("In the class "+`decl.getname());
+        System.out.println("Try to find the super-class "+`name);
         getEnvironment().down(2);
         PositionWrapper pos = new PositionWrapper(new Position());
+        boolean found = false;
         try {
           MuFixPoint.lastEnvironments.clear();
           `Lookup(pos).visit(getEnvironment());
-          //System.out.println("not found");
-          throw new VisitFailure();
+          System.out.println("not found");
         } catch (VisitFailure e) {
-          //System.out.println("found at position="+pos.value);
-          //`ApplyAtPosition(pos,Print()).visit(getEnvironment());
+          found = true;
+          System.out.println("found at position="+pos.value);
+          `ApplyAtPosition(pos,Print()).visit(getEnvironment());
         }
         getEnvironment().up();
+        if (!found) throw new VisitFailure();
       }
     }
   }
-/**
+
   public void test1() {
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
@@ -92,7 +94,7 @@ public class TestLookup extends TestCase {
       fail();
     }
   }
-*/
+
   public static void test3() {
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
@@ -102,6 +104,15 @@ public class TestLookup extends TestCase {
     } catch ( VisitFailure e) {
       fail();
     }
+  }
+
+  public void test4() {
+    Prog p = `Prog(CompUnit(Name("w"),ConcClassDecl(ClassDecl(Name("f"),Dot(Name("Object")),ConcBodyDecl(Initializer(Block()),MemberClassDecl(ClassDecl(Name("m"),Undefined(),ConcBodyDecl(Initializer(Block())))))))));
+      try {
+        `TopDown(FindSuperClass()).visit(p);
+      } catch ( VisitFailure e) {
+        fail();
+      }
   }
 
 }

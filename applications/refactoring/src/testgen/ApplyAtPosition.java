@@ -54,15 +54,25 @@ public class ApplyAtPosition extends AbstractStrategy {
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public int visit(Introspector m) {
+    //System.out.println("begin applyAtPosition");
+    //System.out.println(environment.getPosition());
+    //System.out.println(environment.getSubject());
     Path relativePathToGo = pos.value.sub(environment.getPosition());
     Path relativePathToReturn = environment.getPosition().sub(pos.value);
     environment.followPath(relativePathToGo);
+    //System.out.println("after down");
+    //System.out.println(environment.getPosition());
+    //System.out.println(environment.getSubject());
     int status = visitors[ARG].visit(m);
+    //System.out.println("after apply the strat");
+    //System.out.println(environment.getPosition());
+    //System.out.println(environment.getSubject());
     environment.followPath(relativePathToReturn);
-    if(status != Environment.SUCCESS) {
-      return status;
-    }
-    return Environment.SUCCESS;
+    //System.out.println("after up");
+    //System.out.println(environment.getPosition());
+    //System.out.println(environment.getSubject());
+    //System.out.println("status "+status);
+    return status;
   }
 
 }
