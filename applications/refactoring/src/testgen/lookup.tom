@@ -32,7 +32,7 @@
   make(res,name) { `IfThenElse(
       onTheRightOfDot(),
       Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-      Sequence(LookupAllDecls(res,FindName(res,name))),LookupAllPackages(res,FindName(res,name))) }
+      Sequence(LookupAllPackages(res,FindName(res,name)),LookupAllDecls(res,FindName(res,name)))) }
 }
 
 

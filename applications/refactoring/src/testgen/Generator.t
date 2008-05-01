@@ -442,12 +442,14 @@ public class Generator {
 
   public static void main(String[] args) {
     Generator generator = new Generator();
-    try {
-      //generator.testLookup();
+    //try {
+      generator.testLookup();
+/**
       generator.generateClasses();
     } catch (java.io.IOException e) {
       e.printStackTrace();
     }
+*/
   }
 
   %strategy FindSuperClass() extends Identity() {
