@@ -249,7 +249,7 @@ public String getComposedName(Name n) {
 }
 
 %op Strategy ApplyToPredecessors(s:Strategy) {
-  make(s) { `Mu(MuVar("y"),Try(Up(Sequence(_ConsBlock(s,Identity()),MuVar("y"))))) }
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),Sequence(_ConsBlock(s,Identity()),MuVar("y")),Identity()))) }
 }
 
 %op Strategy ApplyAtEnclosingScope(s:Strategy) {

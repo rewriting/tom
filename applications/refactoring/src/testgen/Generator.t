@@ -262,11 +262,17 @@ public class Generator {
   public Prog generateInheritanceHierarchyForMemberClasses(Prog p) {
     Set<Position> undefinedtypes = collectMemberClassesPosition(p);
     if (! undefinedtypes.isEmpty()) {
-      Iterator iter = undefinedtypes.iterator();
-      PositionWrapper current = new PositionWrapper((Position)iter.next()); 
-      Set<Name> inheritancePath = new HashSet();
-      Set<Name> accessibleNames = new HashSet();
       try {
+        Iterator iter = undefinedtypes.iterator();
+        Set<Name> inheritancePath = new HashSet();
+        //find the corresponding name
+        PositionWrapper current = new PositionWrapper((Position)iter.next());
+        NameWrapper currentname = new NameWrapper();
+        `ApplyAtPosition(current,GetName(currentname)).visit(p);
+        System.out.println("currentname "+currentname.value);
+        //add it to the inheritance path
+        inheritancePath.add(currentname.value);
+        Set<Name> accessibleNames = new HashSet();
         return (Prog) `Mu(MuVar("x"),IfThenElse(IsComplete(undefinedtypes), Identity(), Sequence(PrintContext(current,accessibleNames,inheritancePath,undefinedtypes),CollectAllAccessibleNames(current,accessibleNames,inheritancePath),ApplyAtPosition(current,RenameSuperClassAndUpdate(current,accessibleNames,inheritancePath,undefinedtypes)),MuVar("x")))).visit(p);
       } catch (VisitFailure e) {
         throw new RuntimeException(" Unexpected strategy failure");
@@ -313,16 +319,16 @@ public class Generator {
           // the hierarchy is now complete
           return `c.setsuper(`Dot(Name("Object")));
         } else {
-          NameWrapper currentname = new NameWrapper();
-          `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
-          System.out.println("currentname "+currentname.value);
-          inheritancePath.add(currentname.value);
           int index = random.nextInt(accessibleNames.size()+1);
           if (index == accessibleNames.size()) {
             // this index corresponds to the case where there is no super-class
             inheritancePath.clear();
             if(! undefinedtypes.isEmpty()) {
               current.value = (Position) undefinedtypes.iterator().next();
+              NameWrapper currentname = new NameWrapper();
+              `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+              System.out.println("currentname "+currentname.value);
+              inheritancePath.add(currentname.value);
             }
             return `c.setsuper(`Dot(Name("Object")));
           } else {
@@ -339,6 +345,10 @@ public class Generator {
             } catch (VisitFailure e) {
               getEnvironment().up();
               current.value = res.value;
+              NameWrapper currentname = new NameWrapper();
+              `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+              System.out.println("currentname "+currentname.value);
+              inheritancePath.add(currentname.value);
               return (ClassDecl) getEnvironment().getSubject();
             }
           }
