@@ -90,6 +90,7 @@ public static Strategy makeLookupAll(final PositionWrapper res, final String nam
   visit ClassDecl {
     ClassDecl[name=Name[name=name]] -> {
       if (`name.equals(`n)) {
+        System.out.println("FindName for "+`name);
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -98,6 +99,7 @@ public static Strategy makeLookupAll(final PositionWrapper res, final String nam
   visit CompUnit {
     CompUnit[packageName=Name[name=name]] -> {
       if (`name.equals(`n)) {
+        System.out.println("FindName for "+`name);
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -106,6 +108,7 @@ public static Strategy makeLookupAll(final PositionWrapper res, final String nam
   visit Stmt {
     LocalVariableDecl[name=Name[name=name]] -> {
       if (`name.equals(`n)) {
+        System.out.println("FindName for "+`name);
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -114,6 +117,7 @@ public static Strategy makeLookupAll(final PositionWrapper res, final String nam
   visit BodyDecl {
     FieldDecl[name=Name[name=name]] -> {
       if (`name.equals(`n)) {
+        System.out.println("FindName for "+`name);
         res.value = getPosition();
         throw new VisitFailure();
       }

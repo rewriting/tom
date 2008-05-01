@@ -59,6 +59,11 @@ public abstract class ADecorator extends AbstractStrategy {
   public int visit(Introspector m) {
     printState();
     AbstractStrategy.init(realCalee,getEnvironment());
-    return realCalee.visit(m);
+    int state =  realCalee.visit(m);
+    if (state == Environment.FAILURE) {
+      System.out.println("Failure");
+    }
+    return state;
   }
+
 }

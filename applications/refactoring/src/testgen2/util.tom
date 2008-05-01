@@ -277,13 +277,18 @@ return `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),a[0],MuVar("y")))) ;
 %op Strategy ApplyAtEnclosingStmt(s:Strategy) {
   make(s) { makeApplyAtEnclosingStmt(s) }
 }
-
+/**
 public static Strategy makeApplyToPredecessors(final Strategy s) {
     return new debugger.Decorator("ApplyToPredecessors", new debugger.Maker() { public Strategy build(Strategy[] a) { 
         return `Mu(MuVar("y"),Try(Up(Sequence(_ConsBlock(a[0],Identity()),MuVar("y"))))) ;
         } }, new Strategy[] {s});
   }
-
+*/
+public static Strategy makeApplyToPredecessors(final Strategy s) {
+    return new debugger.Decorator("ApplyToPredecessors", new debugger.Maker() { public Strategy build(Strategy[] a) { 
+        return `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),Sequence(_ConsBlock(a[0],Identity()),MuVar("y")),Identity()))) ;
+        } }, new Strategy[] {s});
+  }
 
 %op Strategy ApplyToPredecessors(s:Strategy) {
   make(s) { makeApplyToPredecessors(s) }

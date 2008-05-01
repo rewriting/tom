@@ -49,7 +49,7 @@ public class MuFixPoint extends AbstractStrategy {
 
   private boolean expanded = false;
   private String identifier;
-  
+
   // the last environment is shared by all the instances of FixPoint with the same name
   // if the MuFixPoint is used in a %op, even if this strategy is constructed several times,
   // the last environment information is not lost
@@ -69,8 +69,12 @@ public class MuFixPoint extends AbstractStrategy {
   }
 
   public int visit(Introspector i) {
+    System.out.println("Visit with the fix point");
+    System.out.println("Current envt");
+    System.out.println(environment);
     if(environment.equals(lastEnvironments.get(identifier))) {
-      return Environment.SUCCESS;
+      System.out.println("fixpoint reached");
+      return environment.getStatus();
     } else {
       try {
         lastEnvironments.put(identifier,(Environment) environment.clone());

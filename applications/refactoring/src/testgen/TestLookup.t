@@ -67,7 +67,7 @@ public class TestLookup extends TestCase {
       }
     }
   }
-
+/**
   public void test1() {
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(
@@ -92,7 +92,7 @@ public class TestLookup extends TestCase {
       fail();
     }
   }
-
+*/
   public static void test3() {
     Prog p = `Prog(
         CompUnit(Name("a"),ConcClassDecl(

@@ -87,7 +87,7 @@
 
 %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
   make(pos,s) { 
-    `Mu(MuVar("x"), 
+    `MuFixPoint("lookupAllDecls",MuVar("x"), 
         IfThenElse(Is_ClassDecl(),
           Sequence(
             _ClassDecl(s,Identity(),Identity()),

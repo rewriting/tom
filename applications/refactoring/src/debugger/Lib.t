@@ -1,6 +1,7 @@
 package debugger;
 
 import tom.library.sl.*;
+import testgen2.*;
 
 public class Lib {
 
@@ -20,6 +21,7 @@ public class Lib {
     }
     e.up();
     Object parent = e.getSubject();
+    if (parent instanceof MuFixPoint) return false;
     if (parent instanceof Mu) return false;
     if (parent instanceof MuVarDecorator) return false;
     return true;
