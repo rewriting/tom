@@ -69,11 +69,7 @@ public class MuFixPoint extends AbstractStrategy {
   }
 
   public int visit(Introspector i) {
-    System.out.println("Visit with the fix point");
-    System.out.println("Current envt");
-    System.out.println(environment);
     if(environment.equals(lastEnvironments.get(identifier))) {
-      System.out.println("fixpoint reached");
       return environment.getStatus();
     } else {
       try {

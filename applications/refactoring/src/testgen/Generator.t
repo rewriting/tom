@@ -428,6 +428,7 @@ public class Generator {
         System.out.println("try to find the super-class "+`n);
         MuFixPoint.lastEnvironments.clear();
         `Try(Lookup(res)).visit(getEnvironment());
+        MuFixPoint.lastEnvironments.clear();
         System.out.println(`ApplyAtPosition(res,Print()).visit(getEnvironment()));
         MuFixPoint.lastEnvironments.clear();
         `Choice(Lookup(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,s),Debug("end to apply at the super class"))).visit(getEnvironment());
