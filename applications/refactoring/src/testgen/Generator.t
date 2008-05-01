@@ -83,9 +83,15 @@ public class Generator {
       p = (Prog) `InnermostId(RemoveConflicts()).visit(p);
       System.out.println(collectAllTypes(p));
       System.out.println("Generation of inheritance hierarchy...");
+      System.out.println("For top-level classes");
       p = generateInheritanceHierarchyForTopLevelClasses(p);
-      `_Prog(_ClassDecl(Identity(),CheckSuperClassDefined(),Identity())).visit(p);
+      printDeclClass(p);
+      System.out.println(p);
+      System.out.println("Checking");
+      `_Prog(_CompUnit(Identity(),_ConcClassDecl(_ClassDecl(Identity(),CheckSuperClassDefined(),Identity())))).visit(p);
+      System.out.println("For member classes");
       p = generateInheritanceHierarchyForMemberClasses(p);
+      System.out.println("Print classes");
       printDeclClass(p);
       %match ( p ) {
         Prog(_*,CompUnit(packageName,classes),_*) -> {
@@ -215,19 +221,21 @@ public class Generator {
       }
       int size = undefinedtypes.size();
       if (size>0) {
-        int nb_subclasses = random.nextInt(size+1);
-        Set<Integer> set = new HashSet();
-        while (set.size() != nb_subclasses) {
-          int index = random.nextInt(size);
-          Type t = alltopleveltypes.get(index);
-          if (undefinedtypes.contains(t)) {
-            set.add(index);
+        int nb_subclasses = random.nextInt(size);
+        if (nb_subclasses > 0) {
+          Set<Integer> set = new HashSet();
+          while (set.size() != nb_subclasses) {
+            int index = random.nextInt(alltopleveltypes.size());
+            Type t = alltopleveltypes.get(index);
+            if (undefinedtypes.contains(t) & !set.contains(index)) {
+              set.add(index);
+            }
           }
-        }
-        for (int index:set) {
-          Type t = alltopleveltypes.get(index);
-          undefinedtypes.remove(t);
-          t.setsuperclass(type);
+          for (int index:set) {
+            Type t = alltopleveltypes.get(index);
+            undefinedtypes.remove(t);
+            t.setsuperclass(type);
+          }
         }
       }
       if (isUndefined) {
