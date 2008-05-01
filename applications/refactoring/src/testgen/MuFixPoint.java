@@ -53,7 +53,7 @@ public class MuFixPoint extends AbstractStrategy {
   // the last environment is shared by all the instances of FixPoint with the same name
   // if the MuFixPoint is used in a %op, even if this strategy is constructed several times,
   // the last environment information is not lost
-  private static Map<String,Environment> lastEnvironments = new HashMap();
+  public static Map<String,Environment> lastEnvironments = new HashMap();
 
   public MuFixPoint(String identifier, Strategy var, Strategy v) {
     initSubterm(var, v);
