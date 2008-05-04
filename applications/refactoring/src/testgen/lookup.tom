@@ -32,22 +32,25 @@
   make(res,name) { `IfThenElse(
       onTheRightOfDot(),
       Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-      Sequence(LookupAllPackages(res,FindName(res,name)),LookupAllDecls(res,FindName(res,name)))) }
+      Sequence(LookupAllDecls(res,FindName(res,name)),LookupAllPackageNodes(res,FindName(res,name)))) }
 }
 
 
 %strategy FindName(res:PositionWrapper, n:String) extends Identity() {
   visit ClassDecl {
     ClassDecl[name=Name[name=name]] -> {
-      if (`name.equals(`n)) {
+      //System.out.println("try to compare the name "+n);
+      //System.out.println("with "+`name);
+      if (`name.equals(n)) {
+        //System.out.println("must fail");
         res.value = getPosition();
         throw new VisitFailure();
       }
     }
   }
-  visit CompUnit {
-    CompUnit[packageName=Name[name=name]] -> {
-      if (`name.equals(`n)) {
+  visit PackageNode {
+    PackageNode[packageName=Name[name=name]] -> {
+      if (`name.equals(n)) {
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -55,7 +58,7 @@
   }
   visit Stmt {
     LocalVariableDecl[name=Name[name=name]] -> {
-      if (`name.equals(`n)) {
+      if (`name.equals(n)) {
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -63,7 +66,7 @@
   }
   visit BodyDecl {
     FieldDecl[name=Name[name=name]] -> {
-      if (`name.equals(`n)) {
+      if (`name.equals(n)) {
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -81,19 +84,45 @@
         Sequence(
           _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
           Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
-        IfThenElse(Is_CompUnit(),_CompUnit(Identity(),_ConcClassDecl(s)),Identity())))
+        IfThenElse(Is_PackageNode(),_PackageNode(Identity(),_ConcClassDecl(s)),Identity())))
   }
 }
 
+/**
 %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
   make(pos,s) { 
-    `MuFixPoint("lookupAllDecls",MuVar("x"), 
+    `Mu(MuVar("x"),
+        Sequence(Debug("start LookupAllDecls"), 
+          IfThenElse(Is_ClassDecl(),
+            Sequence(
+              Debug("_ClassDecl: test with this class"),
+              s,
+              Debug("_ClassDecl: lookup all members"),
+              LookupAllMembers(pos,s),
+              Debug("_ClassDecl: lookup at enclosing scope"),
+              ApplyAtEnclosingScope(MuVar("x"))),
+            IfThenElse(Is_PackageNode(),
+              Sequence(Debug("_PackageNode: lookup all members"),
+                LookupAllMembers(pos,s)),
+              Sequence(
+                Debug("Default case: apply at predecessors"),
+                ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
+                Debug("Default case: apply at enclosing scope"),
+                ApplyAtEnclosingScope(MuVar("x")))
+              ))))
+  }
+}
+*/
+
+%op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
+  make(pos,s) { 
+    `Mu(MuVar("x"),
         IfThenElse(Is_ClassDecl(),
           Sequence(
-            _ClassDecl(s,Identity(),Identity()),
+            s,
             LookupAllMembers(pos,s),
             ApplyAtEnclosingScope(MuVar("x"))),
-          IfThenElse(Is_CompUnit(),
+          IfThenElse(Is_PackageNode(),
             LookupAllMembers(pos,s),
             Sequence(
               ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
@@ -104,6 +133,6 @@
 
 static PositionWrapper root = new PositionWrapper(new Position());
 
-%op Strategy LookupAllPackages(pos:PositionWrapper,s:Strategy) {
+%op Strategy LookupAllPackageNodes(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `ApplyAtPosition(root,_Prog(s)) }
 }

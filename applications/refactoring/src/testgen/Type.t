@@ -84,6 +84,12 @@ public class Type {
     }
   }
 
+  public boolean inherits(Type t) {
+    if (superclass == null) return false;
+    if (superclass.equals(t)) return true;
+    return superclass.inherits(t);
+  }
+
   public void setType(Type t) {
     packagename = t.getpackagename();
     name = t.getname();

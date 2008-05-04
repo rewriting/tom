@@ -54,7 +54,7 @@ public class Generator {
 
   static Strategy generateClassDeclList = `Make_ConsConcClassDecl(generateClassDecl,Mu(MuVar("x"),ChoiceUndet(Make_ConsConcClassDecl(generateClassDecl,MuVar("x")),Make_EmptyConcClassDecl())));
 
-  static Strategy generateProg = `Make_ConsProg(Make_CompUnit(generateName,generateClassDeclList),Mu(MuVar("x"),ChoiceUndet(Make_ConsProg(Make_CompUnit(generateName,generateClassDeclList),MuVar("x")),Make_EmptyProg())));
+  static Strategy generateProg = `Make_ConsProg(Make_PackageNode(generateName,generateClassDeclList),Mu(MuVar("x"),ChoiceUndet(Make_ConsProg(Make_PackageNode(generateName,generateClassDeclList),MuVar("x")),Make_EmptyProg())));
 
   public Prog generateProg() {
     try {
@@ -88,16 +88,17 @@ public class Generator {
       printDeclClass(p);
       System.out.println(p);
       System.out.println("Checking");
-      `_Prog(_CompUnit(Identity(),_ConcClassDecl(_ClassDecl(Identity(),CheckSuperClassDefined(),Identity())))).visit(p);
+      `_Prog(_PackageNode(Identity(),_ConcClassDecl(_ClassDecl(Identity(),CheckSuperClassDefined(),Identity())))).visit(p);
       System.out.println("For member classes");
       p = generateInheritanceHierarchyForMemberClasses(p);
       System.out.println("Print classes");
       printDeclClass(p);
       %match ( p ) {
-        Prog(_*,CompUnit(packageName,classes),_*) -> {
-          new File("./"+`packageName.getname()).mkdir();
+        Prog(_*,PackageNode(packageName,classes),_*) -> {
+          File packagedir = new File("./"+`packageName.getname());
+          if (! packagedir.exists() ) packagedir.mkdir();
           %match ( classes ) {
-            ConcClassDecl(_*,c@ClassDecl[name=name],_*) -> {
+            ConcClassDecl(_*,c@ClassDecl[name=name],tail*) -> {
               File classfile = new File("./"+`packageName.getname()+"/"+`name.getname()+".java");
               classfile.createNewFile();
               FileWriter cwt = new FileWriter(classfile);
@@ -126,7 +127,7 @@ public class Generator {
         ConcBodyDecl(X*,d1@FieldDecl[name=n],Y*,d2@FieldDecl[name=n],Z*) -> ConcBodyDecl(X*,d2,Y*,Z*)
     }
     visit Prog {
-      Prog(X*,cu1@CompUnit[packageName=n],Y*,cu2@CompUnit[packageName=n],Z*) -> Prog(X*,cu1,Y*,Z*)
+      Prog(X*,cu1@PackageNode[packageName=n],Y*,cu2@PackageNode[packageName=n],Z*) -> Prog(X*,cu1,Y*,Z*)
     }
     visit ClassDeclList {
       ConcClassDecl(X*,c1@ClassDecl[name=n],Y*,c2@ClassDecl[name=n],Z*) -> ConcClassDecl(X*,c1,Y*,Z*)
@@ -218,7 +219,7 @@ public class Generator {
       if (undefinedtypes.contains(type)) {
         isUndefined = true;
         undefinedtypes.remove(type);
-      }
+      }      
       int size = undefinedtypes.size();
       if (size>0) {
         int nb_subclasses = random.nextInt(size);
@@ -228,7 +229,26 @@ public class Generator {
             int index = random.nextInt(alltopleveltypes.size());
             Type t = alltopleveltypes.get(index);
             if (undefinedtypes.contains(t) & !set.contains(index)) {
-              set.add(index);
+              Name superclassname = type.getComposedName();
+              try {
+                PositionWrapper res = new PositionWrapper(new Position());
+                TypeWrapper wrapper_t = new TypeWrapper(t);
+                System.out.println("begin of try to access "+superclassname+" from "+t);
+                `ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),Lookup(res),Identity()),RenameSuperClass(Undefined()))).visit(p);
+                // to avoid loops due to too much inaccessible types
+                nb_subclasses--;
+                System.out.println("end of try to access "+superclassname+" from "+t+" : failure");
+              } catch (VisitFailure e) {
+                System.out.println("end of try to access "+superclassname+" from "+t+" : success");
+                //type is correctly accessible from t
+                //test if it does not create a cycle
+                if (!type.inherits(t)) {
+                  set.add(index);
+                } else {
+                  // to avoid loops due to too much inaccessible types
+                  nb_subclasses--;
+                }
+              }
             }
           }
           for (int index:set) {
@@ -319,38 +339,42 @@ public class Generator {
           // the hierarchy is now complete
           return `c.setsuper(`Dot(Name("Object")));
         } else {
-          int index = random.nextInt(accessibleNames.size()+1);
-          if (index == accessibleNames.size()) {
-            // this index corresponds to the case where there is no super-class
-            inheritancePath.clear();
-            if(! undefinedtypes.isEmpty()) {
-              current.value = (Position) undefinedtypes.iterator().next();
-              NameWrapper currentname = new NameWrapper();
-              `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
-              System.out.println("currentname "+currentname.value);
-              inheritancePath.add(currentname.value);
-            }
-            return `c.setsuper(`Dot(Name("Object")));
-          } else {
-            Iterator iter = accessibleNames.iterator();
-            for (int i=0;i<index;i++) { iter.next(); }
-            Name superclassname = (Name) iter.next();
-            getEnvironment().setSubject(`c.setsuper(superclassname));
-            PositionWrapper res = new PositionWrapper(new Position());
-            getEnvironment().down(2);
-            System.out.println("try to lookup "+getEnvironment().getSubject());
-            try {
-              MuFixPoint.lastEnvironments.clear();
-              `Lookup(res).visit(getEnvironment());
-              throw new RuntimeException("the lookup fails in RenameSuperClassAndChange");
-            } catch (VisitFailure e) {
-              getEnvironment().up();
-              current.value = res.value;
-              NameWrapper currentname = new NameWrapper();
-              `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
-              System.out.println("currentname "+currentname.value);
-              inheritancePath.add(currentname.value);
-              return (ClassDecl) getEnvironment().getSubject();
+          while ( true ) {
+            int index = random.nextInt(accessibleNames.size()+1);
+            if (index == accessibleNames.size()) {
+              // this index corresponds to the case where there is no super-class
+              inheritancePath.clear();
+              if(! undefinedtypes.isEmpty()) {
+                current.value = (Position) undefinedtypes.iterator().next();
+                NameWrapper currentname = new NameWrapper();
+                `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+                System.out.println("currentname "+currentname.value);
+                inheritancePath.add(currentname.value);
+              }
+              return `c.setsuper(`Dot(Name("Object")));
+            } else {
+              Iterator iter = accessibleNames.iterator();
+              for (int i=0;i<index;i++) { iter.next(); }
+              Name superclassname = (Name) iter.next();
+              getEnvironment().setSubject(`c.setsuper(superclassname));
+              PositionWrapper res = new PositionWrapper(new Position());
+              getEnvironment().down(2);
+              System.out.println("try to lookup "+getEnvironment().getSubject());
+              try {
+                MuFixPoint.lastEnvironments.clear();
+                `Lookup(res).visit(getEnvironment());
+                getEnvironment().up();
+                //try to find an other super class
+                accessibleNames.remove(superclassname);
+              } catch (VisitFailure e) {
+                getEnvironment().up();
+                current.value = res.value;
+                NameWrapper currentname = new NameWrapper();
+                `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+                System.out.println("currentname "+currentname.value);
+                inheritancePath.add(currentname.value);
+                return (ClassDecl) getEnvironment().getSubject();
+              }
             }
           }
         }
@@ -371,18 +395,17 @@ public class Generator {
         for (Type toplevel: alltopleveltypes) {
           accessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
         }
-        `ApplyAtPosition(current,Print()).visit(getEnvironment());
         Strategy superclass_case = `Mu(MuVar("begin"),_ClassDecl(
               Identity(),
               ApplyAtSuperClass(MuVar("begin")),
               _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity()))));
 
         Strategy main = `ApplyAtPosition(current,ApplyAtEnclosingClass(
-              Mu(MuVar("begin"),Sequence(Print(),Collect(accessibleNames),_ClassDecl(
+              Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
                     Identity(),
                     ApplyAtSuperClass(superclass_case),
                     _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
-                    ),Print(),IfThenElse(Up(Is_MemberClassDecl()),
+                    ),IfThenElse(Up(Is_MemberClassDecl()),
                       ApplyAtEnclosingClass(MuVar("begin")),
                       Identity())))));
         main.visit(getEnvironment());
@@ -427,7 +450,8 @@ public class Generator {
         PositionWrapper res = new PositionWrapper(new Position());
         System.out.println("try to find the super-class "+`n);
         MuFixPoint.lastEnvironments.clear();
-        `Choice(Lookup(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),Print(),s)),Debug("end to apply at the super class"))).visit(getEnvironment());
+        System.out.println("begin the strategy");
+        `Choice(Lookup(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),Debug("end to apply at the super class"))).visit(getEnvironment());
       }
     }
   }

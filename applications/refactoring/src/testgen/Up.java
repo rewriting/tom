@@ -61,10 +61,7 @@ public class Up extends AbstractStrategy {
     environment.up();
     int status = visitors[ARG].visit(m);
     environment.down(index);
-    if(status != Environment.SUCCESS) {
-      return status;
-    }
-    return Environment.SUCCESS;
+    return status;
   }
 
 }

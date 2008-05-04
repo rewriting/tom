@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package testgen;
+package testgen2;
 
-import testgen.tinyjava.*;
-import testgen.tinyjava.types.*;
+import testgen2.tinyjava.*;
+import testgen2.tinyjava.types.*;
 import tom.library.sl.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -49,18 +49,17 @@ public class TestLookup extends TestCase {
 
   %strategy FindSuperClass() extends Identity() {
     visit ClassDecl {
-      decl@ClassDecl[super=name@!Undefined()] -> {
+      decl@ClassDecl[super=name] -> {
         System.out.println("In the class "+`decl.getname());
         System.out.println("Try to find the super-class "+`name);
         getEnvironment().down(2);
         PositionWrapper pos = new PositionWrapper(new Position());
-        boolean found = false;
         try {
           MuFixPoint.lastEnvironments.clear();
           `Lookup(pos).visit(getEnvironment());
           System.out.println("not found");
+          throw new VisitFailure();
         } catch (VisitFailure e) {
-          found = true;
           System.out.println("found at position="+pos.value);
           `ApplyAtPosition(pos,Print()).visit(getEnvironment());
         }
@@ -69,13 +68,14 @@ public class TestLookup extends TestCase {
     }
   }
 
+  /**
   public void test1() {
     Prog p = `Prog(
-        PackageNode(Name("a"),ConcClassDecl(
+        CompUnit(Name("a"),ConcClassDecl(
             ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl(
                 MemberClassDecl(ClassDecl(Name("C"),Dot(Name("b"),Name("B")),ConcBodyDecl())),
                 MemberClassDecl(ClassDecl(Name("D"),Name("C"),ConcBodyDecl())))))),
-        PackageNode(Name("b"),ConcClassDecl(
+        CompUnit(Name("b"),ConcClassDecl(
             ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
         );
     try {
@@ -86,18 +86,18 @@ public class TestLookup extends TestCase {
   }
 
   public static void test2() {
-    Prog p = ` Prog(PackageNode(Name("s"),ConcClassDecl(ClassDecl(Name("t"),Undefined(),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("u"),Undefined()))))),ClassDecl(Name("k"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("k"),Undefined()))),ClassDecl(Name("j"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("t"),Dot(Name("s"),Name("o")),ConcBodyDecl())))),ClassDecl(Name("o"),Dot(Name("t"),Name("n")),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("j"),Undefined()),LocalVariableDecl(Undefined(),Name("y"),Undefined()),LocalVariableDecl(Undefined(),Name("b"),Undefined()),LocalVariableDecl(Undefined(),Name("k"),Undefined()),LocalVariableDecl(Undefined(),Name("m"),Undefined()))),MemberClassDecl(ClassDecl(Name("p"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("l"),Undefined())),MemberClassDecl(ClassDecl(Name("f"),Undefined(),ConcBodyDecl()))))),MemberClassDecl(ClassDecl(Name("c"),Undefined(),ConcBodyDecl())))))),PackageNode(Name("w"),ConcClassDecl(ClassDecl(Name("k"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("h"),Undefined())))))),PackageNode(Name("t"),ConcClassDecl(ClassDecl(Name("n"),Dot(Name("w"),Name("k")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("d"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("v"),Undefined()))))),Initializer(Block()))),ClassDecl(Name("c"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("h"),Undefined(),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("w"),Undefined())))))),MemberClassDecl(ClassDecl(Name("u"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("g"),Undefined())))),Initializer(Block(LocalVariableDecl(Undefined(),Name("b"),Undefined()),LocalVariableDecl(Undefined(),Name("u"),Undefined()),LocalVariableDecl(Undefined(),Name("m"),Undefined()))))))));
+    Prog p = ` Prog(CompUnit(Name("s"),ConcClassDecl(ClassDecl(Name("t"),Undefined(),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("u"),Undefined()))))),ClassDecl(Name("k"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("k"),Undefined()))),ClassDecl(Name("j"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("t"),Dot(Name("s"),Name("o")),ConcBodyDecl())))),ClassDecl(Name("o"),Dot(Name("t"),Name("n")),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("j"),Undefined()),LocalVariableDecl(Undefined(),Name("y"),Undefined()),LocalVariableDecl(Undefined(),Name("b"),Undefined()),LocalVariableDecl(Undefined(),Name("k"),Undefined()),LocalVariableDecl(Undefined(),Name("m"),Undefined()))),MemberClassDecl(ClassDecl(Name("p"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("l"),Undefined())),MemberClassDecl(ClassDecl(Name("f"),Undefined(),ConcBodyDecl()))))),MemberClassDecl(ClassDecl(Name("c"),Undefined(),ConcBodyDecl())))))),CompUnit(Name("w"),ConcClassDecl(ClassDecl(Name("k"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("h"),Undefined())))))),CompUnit(Name("t"),ConcClassDecl(ClassDecl(Name("n"),Dot(Name("w"),Name("k")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("d"),Undefined(),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("v"),Undefined()))))),Initializer(Block()))),ClassDecl(Name("c"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("h"),Undefined(),ConcBodyDecl(Initializer(Block(LocalVariableDecl(Undefined(),Name("w"),Undefined())))))),MemberClassDecl(ClassDecl(Name("u"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("g"),Undefined())))),Initializer(Block(LocalVariableDecl(Undefined(),Name("b"),Undefined()),LocalVariableDecl(Undefined(),Name("u"),Undefined()),LocalVariableDecl(Undefined(),Name("m"),Undefined()))))))));
     try {
       `TopDown(FindSuperClass()).visit(p);
     } catch ( VisitFailure e) {
       fail();
     }
   }
-
+  */
 
   public static void test3() {
     Prog p = `Prog(
-        PackageNode(Name("a"),ConcClassDecl(
+        CompUnit(Name("a"),ConcClassDecl(
             ClassDecl(Name("A"),Dot(Name("A")),ConcBodyDecl()))));
     try {
       `TopDown(FindSuperClass()).visit(p);
@@ -105,31 +105,5 @@ public class TestLookup extends TestCase {
       fail();
     }
   }
-
-  public void test4() {
-    Prog p = `Prog(PackageNode(Name("w"),ConcClassDecl(ClassDecl(Name("f"),Dot(Name("Object")),ConcBodyDecl(Initializer(Block()),MemberClassDecl(ClassDecl(Name("m"),Undefined(),ConcBodyDecl(Initializer(Block())))))))));
-      try {
-        `TopDown(FindSuperClass()).visit(p);
-      } catch ( VisitFailure e) {
-        fail();
-      }
-  }
-
-  public void test5() {
-    Prog p = `Prog(
-        PackageNode(Name("a"),ConcClassDecl(
-            ClassDecl(Name("A"),Dot(Name("b"),Name("B")),ConcBodyDecl()),
-            ClassDecl(Name("b"),Undefined(),ConcBodyDecl(
-                MemberClassDecl(ClassDecl(Name("C"),Undefined(),ConcBodyDecl())))))),
-        PackageNode(Name("b"),ConcClassDecl(
-            ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl())))
-        );
-    try {
-      `TopDown(FindSuperClass()).visit(p);
-    } catch ( VisitFailure e) {
-      fail();
-    }
-  }
-
 
 }

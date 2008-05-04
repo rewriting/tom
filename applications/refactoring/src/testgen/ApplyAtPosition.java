@@ -54,6 +54,7 @@ public class ApplyAtPosition extends AbstractStrategy {
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public int visit(Introspector m) {
+    environment.setIntrospector(m);
     //System.out.println("begin applyAtPosition");
     //System.out.println(environment.getPosition());
     //System.out.println(environment.getSubject());

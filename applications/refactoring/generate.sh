@@ -12,6 +12,7 @@ cd $testgendir
 i=0 ;
 j=0 ;
 while [ $i -lt $1 ] ; do
+  echo "Step $i"
   java testgen/Generator > log 2>&1
   if [ $? = 0 ] ; then
     find . -name '*.java' | xargs javac >> log 2>&1

@@ -47,8 +47,8 @@ public static class Context {
       return `c;
     }
   }
-  visit CompUnit {
-    CompUnit[packageName=packageName] -> {
+  visit PackageNode {
+    PackageNode[packageName=packageName] -> {
       context.packagename = `packageName.getname();
     }
   }
@@ -117,16 +117,16 @@ public static Set<Position> collectMemberClassesPosition(Prog p) {
       } catch (VisitFailure e) {
         // for top level classes return the package+name
         NameWrapper packageName = new NameWrapper();
-        `ApplyAtEnclosingCompUnit(GetPackage(packageName)).visit(getEnvironment());
-          name.value = `Dot(packageName.value,name);
+        `ApplyAtEnclosingPackageNode(GetPackageNode(packageName)).visit(getEnvironment());
+        name.value = `Dot(packageName.value,name);
       }
     }
   }
 }
 
-%strategy GetPackage(name:NameWrapper) extends Identity() {
-  visit CompUnit {
-    CompUnit[packageName=packageName] -> {
+%strategy GetPackageNode(name:NameWrapper) extends Identity() {
+  visit PackageNode {
+    PackageNode[packageName=packageName] -> {
       name.value = `packageName;
     }
   }
@@ -164,10 +164,10 @@ static class TypeWrapper {
 }
 
 %strategy ApplyAtLocal(t:TypeWrapper,s:Strategy) extends Identity() {
-  visit CompUnit {
-    CompUnit[packageName=name] -> {
+  visit PackageNode {
+    PackageNode[packageName=name] -> {
       if (t.type.getpackagename().equals(`name.getname())) {
-        return (CompUnit) `_CompUnit(Identity(),_ConcClassDecl(this)).visit(getEnvironment());
+        return (PackageNode) `_PackageNode(Identity(),_ConcClassDecl(this)).visit(getEnvironment());
       }
     }
   }
@@ -198,13 +198,13 @@ static class TypeWrapper {
   visit Name {
     _ -> {
       System.out.println(statement);
-      System.out.println(getPosition());
+      System.out.println(getEnvironment().getSubject());
     }
   }
   visit ClassDecl {
     _ -> {
       System.out.println(statement);
-      System.out.println(getPosition());
+      System.out.println(getEnvironment().getSubject());
     }
   }
 }
@@ -240,8 +240,8 @@ public String getComposedName(Name n) {
   make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
 }
 
-%op Strategy ApplyAtEnclosingCompUnit(s:Strategy) {
-  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_CompUnit(),s,MuVar("y")))) }
+%op Strategy ApplyAtEnclosingPackageNode(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_PackageNode(),s,MuVar("y")))) }
 }
 
 %op Strategy ApplyAtEnclosingStmt(s:Strategy) {
@@ -253,5 +253,5 @@ public String getComposedName(Name n) {
 }
 
 %op Strategy ApplyAtEnclosingScope(s:Strategy) {
-  make(s) { `Sequence(ApplyAtEnclosingClass(s),ApplyAtEnclosingCompUnit(s)) }
+  make(s) { `Sequence(ApplyAtEnclosingClass(s),ApplyAtEnclosingPackageNode(s)) }
 }
