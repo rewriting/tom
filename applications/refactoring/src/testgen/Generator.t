@@ -410,6 +410,19 @@ public class Generator {
                       ApplyAtEnclosingClass(MuVar("begin")),
                       Identity())))));
         main.visit(getEnvironment());
+        //remove full qualified names p.c where p is the name of the current class
+        NameWrapper currentname = new NameWrapper();
+        `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+        Set hiddenNames = new HashSet();
+        for(Name name: (Set<Name>) accessibleNames) {
+          %match (name) {
+            Dot(packagename,classname) -> {
+              if (`packagename.equals(currentname.value)) {
+                hiddenNames.add(name);
+              }
+            }
+          }
+        }
         accessibleNames.removeAll(inheritancePath);
       }
     }
