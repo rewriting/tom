@@ -1,4 +1,10 @@
-%op Strategy Lookup(res:PositionWrapper) {
+%op Strategy LookupClassDecl(res:PositionWrapper) {
+  make(res) {
+    `IfThenElse(LookupByFail(res),Fail(),ApplyAtPosition(res,IfThenElse(Is_ClassDecl(),Identity(),Fail())))
+  }
+}
+
+%op Strategy LookupByFail(res:PositionWrapper) {
   make(res) {
     `IfThenElse(Is_Name(),LookupName(res),IfThenElse(Is_ConsDot(),LookupComposedName(res),Identity()))
   }
@@ -20,21 +26,22 @@
   }
 }
 
-%op Strategy TypeLookup(res:PositionWrapper) {
+%op Strategy TypeLookupByFail(res:PositionWrapper) {
   make(res) { `Sequence(
-      Lookup(res),
-      ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(Lookup(res),Identity(),Identity()),Identity())))
+      LookupByFail(res),
+      ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(LookupByFail(res),Identity(),Identity()),Identity())))
   }
 }
-
 
 %op Strategy LookupAll(res:PositionWrapper,name:String) {
   make(res,name) { `IfThenElse(
       onTheRightOfDot(),
-      Choice(Up(Up(_ConsDot(TypeLookup(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-      Sequence(LookupAllDecls(res,FindName(res,name)),LookupAllPackageNodes(res,FindName(res,name)))) }
+      Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+      Sequence(
+        LookupAllDecls(res,FindName(res,name)),
+        LookupAllPackageNodes(res,FindName(res,name)))) 
+  }
 }
-
 
 %strategy FindName(res:PositionWrapper, n:String) extends Identity() {
   visit ClassDecl {
@@ -80,15 +87,16 @@
 
 %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `MuFixPoint("lookupAllMembers",MuVar("x"),
-      IfThenElse(Is_ClassDecl(),
-        Sequence(
-          _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
-          Choice(_ClassDecl(Identity(),Lookup(pos),Identity()),ApplyAtPosition(pos,MuVar("x")))),
-        IfThenElse(Is_PackageNode(),_PackageNode(Identity(),_ConcClassDecl(s)),Identity())))
+      Sequence(Debug("start of lookupAllMembers"),
+        IfThenElse(Is_ClassDecl(),
+          Sequence(
+            _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
+            Choice(_ClassDecl(Identity(),LookupByFail(pos),Identity()),ApplyAtPosition(pos,MuVar("x"))),
+            Debug("end of lookupAllMembers")),
+          IfThenElse(Is_PackageNode(),_PackageNode(Identity(),_ConcClassDecl(s)),Identity()))))
   }
 }
 
-/**
 %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
   make(pos,s) { 
     `Mu(MuVar("x"),
@@ -100,39 +108,43 @@
               Debug("_ClassDecl: lookup all members"),
               LookupAllMembers(pos,s),
               Debug("_ClassDecl: lookup at enclosing scope"),
-              ApplyAtEnclosingScope(MuVar("x"))),
+              ApplyAtEnclosingScope(MuVar("x")),
+              Debug("_ClassDecl: end of lookupAllDecls")),
             IfThenElse(Is_PackageNode(),
               Sequence(Debug("_PackageNode: lookup all members"),
-                LookupAllMembers(pos,s)),
+                LookupAllMembers(pos,s),
+                Debug("_ClassDecl: end of lookupAllDecls")),
               Sequence(
                 Debug("Default case: apply at predecessors"),
                 ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
                 Debug("Default case: apply at enclosing scope"),
-                ApplyAtEnclosingScope(MuVar("x")))
+                ApplyAtEnclosingScope(MuVar("x")),
+                Debug("_ClassDecl: end of lookupAllDecls"))
               ))))
   }
 }
-*/
 
-%op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
+/**
+  %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
   make(pos,s) { 
-    `Mu(MuVar("x"),
-        IfThenElse(Is_ClassDecl(),
-          Sequence(
-            s,
-            LookupAllMembers(pos,s),
-            ApplyAtEnclosingScope(MuVar("x"))),
-          IfThenElse(Is_PackageNode(),
-            LookupAllMembers(pos,s),
-            Sequence(
-              ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
-              ApplyAtEnclosingScope(MuVar("x")))
-            )))
+  `Mu(MuVar("x"),
+  IfThenElse(Is_ClassDecl(),
+  Sequence(
+  s,
+  LookupAllMembers(pos,s),
+  ApplyAtEnclosingScope(MuVar("x"))),
+  IfThenElse(Is_PackageNode(),
+  LookupAllMembers(pos,s),
+  Sequence(
+  ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
+  ApplyAtEnclosingScope(MuVar("x")))
+  )))
   }
-}
+  }
+ */
 
 static PositionWrapper root = new PositionWrapper(new Position());
 
 %op Strategy LookupAllPackageNodes(pos:PositionWrapper,s:Strategy) {
-  make(pos,s) { `ApplyAtPosition(root,_Prog(s)) }
+  make(pos,s) { `ApplyAtPosition(root,_Prog(Sequence(Debug("lookup Package Node"),s))) }
 }

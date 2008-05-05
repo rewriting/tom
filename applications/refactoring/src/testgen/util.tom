@@ -252,6 +252,12 @@ public String getComposedName(Name n) {
   make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ConsBlock(),Sequence(_ConsBlock(s,Identity()),MuVar("y")),Identity()))) }
 }
 
+%op Strategy ApplyAtEnclosingDot(s:Strategy) {
+  make(s) { `Mu(MuVar("y"),IfThenElse(Up(Is_ConsDot()),Up(MuVar("y")),s)) }
+}
+
 %op Strategy ApplyAtEnclosingScope(s:Strategy) {
-  make(s) { `Sequence(ApplyAtEnclosingClass(s),ApplyAtEnclosingPackageNode(s)) }
+  make(s) { `Sequence(
+      IfThenElse(ApplyAtEnclosingDot(Up(Choice(Is_MemberClassDecl(),Is_FieldDecl(),Is_LocalVariableDecl()))),ApplyAtEnclosingClass(s),ApplyAtEnclosingDot(Up(ApplyAtEnclosingClass(s)))),
+      ApplyAtEnclosingPackageNode(s)) }
 }

@@ -57,17 +57,20 @@ public class TestLookup extends TestCase {
         boolean found = false;
         try {
           MuFixPoint.lastEnvironments.clear();
-          `Lookup(pos).visit(getEnvironment());
-          System.out.println("not found");
-        } catch (VisitFailure e) {
+          `LookupClassDecl(pos).visit(getEnvironment());
           found = true;
           System.out.println("found at position="+pos.value);
           `ApplyAtPosition(pos,Print()).visit(getEnvironment());
+
+          System.out.println("not found");
+        } catch (VisitFailure e) {
+          System.out.println("not found");
         }
         getEnvironment().up();
       }
     }
   }
+
 
   public void test1() {
     Prog p = `Prog(
@@ -108,11 +111,11 @@ public class TestLookup extends TestCase {
 
   public void test4() {
     Prog p = `Prog(PackageNode(Name("w"),ConcClassDecl(ClassDecl(Name("f"),Dot(Name("Object")),ConcBodyDecl(Initializer(Block()),MemberClassDecl(ClassDecl(Name("m"),Undefined(),ConcBodyDecl(Initializer(Block())))))))));
-      try {
-        `TopDown(FindSuperClass()).visit(p);
-      } catch ( VisitFailure e) {
-        fail();
-      }
+    try {
+      `TopDown(FindSuperClass()).visit(p);
+    } catch ( VisitFailure e) {
+      fail();
+    }
   }
 
   public void test5() {
@@ -126,6 +129,16 @@ public class TestLookup extends TestCase {
         );
     try {
       `TopDown(FindSuperClass()).visit(p);
+    } catch ( VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void test6() {
+    Prog p = `Prog(PackageNode(Name("p"),ConcClassDecl(ClassDecl(Name("c"),Dot(Name("k"),Name("b")),ConcBodyDecl()),ClassDecl(Name("p"),Dot(Name("k"),Name("b")),ConcBodyDecl(Initializer(Block()),FieldDecl(Undefined(),Name("a"),Undefined()))))),PackageNode(Name("c"),ConcClassDecl(ClassDecl(Name("w"),Dot(Name("y"),Name("b")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("q"),Undefined(),ConcBodyDecl())))),ClassDecl(Name("r"),Dot(Name("k"),Name("i")),ConcBodyDecl()),ClassDecl(Name("q"),Dot(Name("k"),Name("f")),ConcBodyDecl()),ClassDecl(Name("j"),Dot(Name("k"),Name("e")),ConcBodyDecl(Initializer(Block()))),ClassDecl(Name("n"),Dot(Name("y"),Name("b")),ConcBodyDecl(FieldDecl(Undefined(),Name("z"),Undefined()),Initializer(LocalVariableDecl(Undefined(),Name("l"),Undefined())))),ClassDecl(Name("f"),Dot(Name("k"),Name("r")),ConcBodyDecl()),ClassDecl(Name("i"),Dot(Name("k"),Name("f")),ConcBodyDecl()))),PackageNode(Name("y"),ConcClassDecl(ClassDecl(Name("b"),Dot(Name("k"),Name("i")),ConcBodyDecl()))),PackageNode(Name("u"),ConcClassDecl(ClassDecl(Name("n"),Dot(Name("c"),Name("i")),ConcBodyDecl(FieldDecl(Undefined(),Name("x"),Undefined()))))),PackageNode(Name("k"),ConcClassDecl(ClassDecl(Name("i"),Dot(Name("Object")),ConcBodyDecl()),ClassDecl(Name("a"),Dot(Name("u"),Name("n")),ConcBodyDecl()),ClassDecl(Name("s"),Dot(Name("c"),Name("i")),ConcBodyDecl()),ClassDecl(Name("m"),Dot(Name("c"),Name("n")),ConcBodyDecl(Initializer(LocalVariableDecl(Undefined(),Name("n"),Undefined())))),ClassDecl(Name("f"),Dot(Name("c"),Name("f")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("z"),Dot(Name("p")),ConcBodyDecl())),Initializer(LocalVariableDecl(Undefined(),Name("i"),Undefined())))),ClassDecl(Name("e"),Dot(Name("u"),Name("n")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("p"),Undefined(),ConcBodyDecl())))),ClassDecl(Name("r"),Dot(Name("y"),Name("b")),ConcBodyDecl(FieldDecl(Undefined(),Name("h"),Undefined()),Initializer(Block()))),ClassDecl(Name("b"),Dot(Name("c"),Name("j")),ConcBodyDecl()))),PackageNode(Name("e"),ConcClassDecl(ClassDecl(Name("x"),Dot(Name("k"),Name("r")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("g"),Undefined(),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("i"),Undefined(),ConcBodyDecl(FieldDecl(Undefined(),Name("g"),Undefined()))))))))),ClassDecl(Name("o"),Dot(Name("k"),Name("i")),ConcBodyDecl()))));
+    try {
+      PositionWrapper pos = new PositionWrapper(new Position(new int[]{2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 3, 1, 1}));
+      `ApplyAtPosition(pos,FindSuperClass()).visit(p);
     } catch ( VisitFailure e) {
       fail();
     }

@@ -234,11 +234,7 @@ public class Generator {
                 PositionWrapper res = new PositionWrapper(new Position());
                 TypeWrapper wrapper_t = new TypeWrapper(t);
                 System.out.println("begin of try to access "+superclassname+" from "+t);
-                `ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),Lookup(res),Identity()),RenameSuperClass(Undefined()))).visit(p);
-                // to avoid loops due to too much inaccessible types
-                nb_subclasses--;
-                System.out.println("end of try to access "+superclassname+" from "+t+" : failure");
-              } catch (VisitFailure e) {
+                `ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),LookupClassDecl(res),Identity()))).visit(p);
                 System.out.println("end of try to access "+superclassname+" from "+t+" : success");
                 //type is correctly accessible from t
                 //test if it does not create a cycle
@@ -248,6 +244,10 @@ public class Generator {
                   // to avoid loops due to too much inaccessible types
                   nb_subclasses--;
                 }
+             } catch (VisitFailure e) {
+               // to avoid loops due to too much inaccessible types
+                nb_subclasses--;
+                System.out.println("end of try to access "+superclassname+" from "+t+" : failure");
               }
             }
           }
@@ -362,11 +362,7 @@ public class Generator {
               System.out.println("try to lookup "+getEnvironment().getSubject());
               try {
                 MuFixPoint.lastEnvironments.clear();
-                `Lookup(res).visit(getEnvironment());
-                getEnvironment().up();
-                //try to find an other super class
-                accessibleNames.remove(superclassname);
-              } catch (VisitFailure e) {
+                `LookupClassDecl(res).visit(getEnvironment());
                 getEnvironment().up();
                 current.value = res.value;
                 NameWrapper currentname = new NameWrapper();
@@ -374,6 +370,11 @@ public class Generator {
                 System.out.println("currentname "+currentname.value);
                 inheritancePath.add(currentname.value);
                 return (ClassDecl) getEnvironment().getSubject();
+
+              } catch (VisitFailure e) {
+                //try to find an other super class
+                getEnvironment().up();
+                accessibleNames.remove(superclassname);
               }
             }
           }
@@ -451,7 +452,7 @@ public class Generator {
         System.out.println("try to find the super-class "+`n);
         MuFixPoint.lastEnvironments.clear();
         System.out.println("begin the strategy");
-        `Choice(Lookup(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),Debug("end to apply at the super class"))).visit(getEnvironment());
+        `IfThenElse(LookupClassDecl(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),Debug("end to apply at the super class")),Identity()).visit(getEnvironment());
       }
     }
   }
