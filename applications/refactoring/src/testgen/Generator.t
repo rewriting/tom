@@ -423,6 +423,7 @@ public class Generator {
             }
           }
         }
+        accessibleNames.removeAll(hiddenNames);
         accessibleNames.removeAll(inheritancePath);
       }
     }
