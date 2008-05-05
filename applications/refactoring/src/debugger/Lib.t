@@ -21,7 +21,7 @@ public class Lib {
     }
     e.up();
     Object parent = e.getSubject();
-    if (parent instanceof MuFixPoint) return false;
+    if (parent instanceof testgen2.MuFixPoint) return false;
     if (parent instanceof Mu) return false;
     if (parent instanceof MuVarDecorator) return false;
     return true;

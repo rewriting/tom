@@ -228,8 +228,8 @@ public class Generator {
           while (set.size() != nb_subclasses) {
             int index = random.nextInt(alltopleveltypes.size());
             Type t = alltopleveltypes.get(index);
-            if (undefinedtypes.contains(t) & !set.contains(index)) {
-              Name superclassname = type.getComposedName();
+            Name superclassname = type.getComposedName();
+            if (undefinedtypes.contains(t) & !set.contains(index) & ! isHiddenBy(superclassname,t.getComposedName())) {
               try {
                 PositionWrapper res = new PositionWrapper(new Position());
                 TypeWrapper wrapper_t = new TypeWrapper(t);
@@ -415,18 +415,35 @@ public class Generator {
         `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
         Set hiddenNames = new HashSet();
         for(Name name: (Set<Name>) accessibleNames) {
-          %match (name) {
-            Dot(packagename,classname) -> {
-              if (`packagename.equals(currentname.value)) {
-                hiddenNames.add(name);
-              }
-            }
-          }
+          if (isHiddenBy(name,currentname.value))  {
+            hiddenNames.add(name);
+          }      
         }
         accessibleNames.removeAll(hiddenNames);
         accessibleNames.removeAll(inheritancePath);
       }
     }
+  }
+
+  public static boolean isHiddenBy(Name hiddenname, Name name) {
+    %match (hiddenname) {
+      Dot(packagename,_) -> {
+        //TODO: no more generating dot(name) but just name
+        %match(name) {
+          Dot(classname) -> {
+            if (`packagename.equals(`classname)) {
+              return true;
+            }
+          }
+          Dot(_,classname) -> {
+            if (`packagename.equals(`classname)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
   }
 
 
