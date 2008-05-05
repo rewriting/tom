@@ -161,7 +161,7 @@ public abstract class AbstractStrategy implements Strategy {
     /* to avoid infinite loop during initialization
      * TODO: use static typing
      */
-    if((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) {
+    if (((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) || ((s instanceof BasicStrategy) && ((BasicStrategy)s).environment==env)) {
       return;
     }
     s.setEnvironment(env);
