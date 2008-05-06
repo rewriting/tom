@@ -384,6 +384,10 @@ public class Generator {
         inheritancePath.clear();
         if (! undefinedtypes.isEmpty()) {
           current.value = (Position) undefinedtypes.iterator().next();
+          NameWrapper currentname = new NameWrapper();
+          `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+          System.out.println("currentname "+currentname.value);
+          inheritancePath.add(currentname.value);
         }
       }
     }
