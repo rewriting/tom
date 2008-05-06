@@ -147,7 +147,6 @@ public class Generator {
     visit BodyDeclList {
       ConcBodyDecl(X*,MemberClassDecl[innerClass=ClassDecl[name=n]],Y*) -> {
         if (name.equals(`n)) {
-          System.out.println("find a conflict between inner class names");
           return `ConcBodyDecl(X*,Y*);
         } 
       }
@@ -289,7 +288,6 @@ public class Generator {
         PositionWrapper current = new PositionWrapper((Position)iter.next());
         NameWrapper currentname = new NameWrapper();
         `ApplyAtPosition(current,GetName(currentname)).visit(p);
-        System.out.println("currentname "+currentname.value);
         //add it to the inheritance path
         inheritancePath.add(currentname.value);
         Set<Name> accessibleNames = new HashSet();
@@ -486,7 +484,6 @@ public class Generator {
         PositionWrapper res = new PositionWrapper(new Position());
         System.out.println("try to find the super-class "+`n);
         MuFixPoint.lastEnvironments.clear();
-        System.out.println("begin the strategy");
         `IfThenElse(LookupClassDecl(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),Debug("end to apply at the super class")),Identity()).visit(getEnvironment());
       }
     }

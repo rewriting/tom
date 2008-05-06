@@ -54,15 +54,11 @@ public class TestLookup extends TestCase {
         System.out.println("Try to find the super-class "+`name);
         getEnvironment().down(2);
         PositionWrapper pos = new PositionWrapper(new Position());
-        boolean found = false;
         try {
           MuFixPoint.lastEnvironments.clear();
           `LookupClassDecl(pos).visit(getEnvironment());
-          found = true;
           System.out.println("found at position="+pos.value);
           `ApplyAtPosition(pos,Print()).visit(getEnvironment());
-
-          System.out.println("not found");
         } catch (VisitFailure e) {
           System.out.println("not found");
         }
@@ -70,7 +66,6 @@ public class TestLookup extends TestCase {
       }
     }
   }
-
 
   public void test1() {
     Prog p = `Prog(
@@ -139,6 +134,15 @@ public class TestLookup extends TestCase {
     try {
       PositionWrapper pos = new PositionWrapper(new Position(new int[]{2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 3, 1, 1}));
       `ApplyAtPosition(pos,FindSuperClass()).visit(p);
+    } catch ( VisitFailure e) {
+      fail();
+    }
+  }
+
+  public void test7() {
+    Prog p = `Prog(PackageNode(Name("l"),ConcClassDecl(ClassDecl(Name("i"),Dot(Name("Object")),ConcBodyDecl()))),PackageNode(Name("e"),ConcClassDecl(ClassDecl(Name("z"),Dot(Name("j"),Name("p")),ConcBodyDecl()))),PackageNode(Name("j"),ConcClassDecl(ClassDecl(Name("p"),Dot(Name("l"),Name("i")),ConcBodyDecl()),ClassDecl(Name("r"),Dot(Name("Object")),ConcBodyDecl(FieldDecl(Undefined(),Name("e"),Undefined()),MemberClassDecl(ClassDecl(Name("u"),Dot(Name("l"),Name("i")),ConcBodyDecl(FieldDecl(Undefined(),Name("i"),Undefined())))),Initializer(Block()),FieldDecl(Undefined(),Name("m"),Undefined()))))),PackageNode(Name("a"),ConcClassDecl(ClassDecl(Name("k"),Dot(Name("j"),Name("p")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("s"),Dot(Name("r")),ConcBodyDecl())))))),PackageNode(Name("v"),ConcClassDecl(ClassDecl(Name("o"),Dot(Name("a"),Name("k")),ConcBodyDecl()))));
+    try {
+      `TopDown(FindSuperClass()).visit(p);
     } catch ( VisitFailure e) {
       fail();
     }

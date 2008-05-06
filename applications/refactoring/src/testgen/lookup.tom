@@ -86,12 +86,12 @@
 }
 
 %op Strategy LookupAllMembers(pos:PositionWrapper,s:Strategy) {
-  make(pos,s) { `MuFixPoint("lookupAllMembers",MuVar("x"),
+  make(pos,s) { `Mu(MuVar("lookupallmembers"),
       Sequence(Debug("start of lookupAllMembers"),
         IfThenElse(Is_ClassDecl(),
           Sequence(
             _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_FieldDecl(),s,IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity())))),
-            Choice(_ClassDecl(Identity(),LookupByFail(pos),Identity()),ApplyAtPosition(pos,MuVar("x"))),
+            IfThenElse(_ClassDecl(Identity(),LookupByFail(pos),Identity()),Identity(),ApplyAtPosition(pos,MuVar("lookupallmembers"))),
             Debug("end of lookupAllMembers")),
           IfThenElse(Is_PackageNode(),_PackageNode(Identity(),_ConcClassDecl(s)),Identity()))))
   }
