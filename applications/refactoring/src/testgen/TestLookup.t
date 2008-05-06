@@ -55,7 +55,6 @@ public class TestLookup extends TestCase {
         getEnvironment().down(2);
         PositionWrapper pos = new PositionWrapper(new Position());
         try {
-          MuFixPoint.lastEnvironments.clear();
           `LookupClassDecl(pos).visit(getEnvironment());
           System.out.println("found at position="+pos.value);
           `ApplyAtPosition(pos,Print()).visit(getEnvironment());

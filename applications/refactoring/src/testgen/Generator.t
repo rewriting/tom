@@ -359,7 +359,6 @@ public class Generator {
               getEnvironment().down(2);
               System.out.println("try to lookup "+getEnvironment().getSubject());
               try {
-                MuFixPoint.lastEnvironments.clear();
                 `LookupClassDecl(res).visit(getEnvironment());
                 getEnvironment().up();
                 current.value = res.value;
@@ -483,7 +482,6 @@ public class Generator {
       n -> {
         PositionWrapper res = new PositionWrapper(new Position());
         System.out.println("try to find the super-class "+`n);
-        MuFixPoint.lastEnvironments.clear();
         `IfThenElse(LookupClassDecl(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),Debug("end to apply at the super class")),Identity()).visit(getEnvironment());
       }
     }

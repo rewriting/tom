@@ -230,7 +230,7 @@ public String getComposedName(Name n) {
       return `head.getname();
     }
     Undefined() -> {
-      return "testgen.notype";
+      return "Object";
     }
   }
   return "";

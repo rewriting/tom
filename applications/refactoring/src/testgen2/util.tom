@@ -239,7 +239,7 @@ public String getComposedName(Name n) {
       return `head.getname();
     }
     Undefined() -> {
-      return "testgen2.notype";
+      return "Object";
     }
   }
   return "";
