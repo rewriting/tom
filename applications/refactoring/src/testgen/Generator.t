@@ -91,6 +91,8 @@ public class Generator {
       `_Prog(_PackageNode(Identity(),_ConcClassDecl(_ClassDecl(Identity(),CheckSuperClassDefined(),Identity())))).visit(p);
       System.out.println("For member classes");
       p = generateInheritanceHierarchyForMemberClasses(p);
+      System.out.println("Generation of types for fields and variables...");
+      p = generateTypeForFieldsAndLocalVariables(p);
       System.out.println("Print classes");
       printDeclClass(p);
       %match ( p ) {
@@ -233,8 +235,10 @@ public class Generator {
                 PositionWrapper res = new PositionWrapper(new Position());
                 TypeWrapper wrapper_t = new TypeWrapper(t);
                 System.out.println("begin of try to access "+superclassname+" from "+t);
-                //`ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),LookupClassDecl(res),Identity()))).visit(p);
-                `ApplyAt(wrapper_t,IsAccessibleFromClassDecl(superclassname,res)).visit(p);
+                //check if the superclassname can be found with lookup and then that the found declaration is a top-level class (not an inner class that hides this top-level class)
+                `Sequence(ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),LookupClassDecl(res),Identity()))),ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
+                // `Sequence(ApplyAt(wrapper_t,IsAccessibleFromClassDecl(superclassname,res)),ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
+                // the strategy IsAccessibleFromClassDecl does not seem to work correctly for the moment
                 System.out.println("end of try to access "+superclassname+" from "+t+" : success");
                 //type is correctly accessible from t
                 //test if it does not create a cycle
@@ -319,21 +323,20 @@ public class Generator {
 
   %strategy CollectAccessibleNamesForFieldAndVar(accessibleNames:Set) extends Identity() {
     visit ClassDecl {
-      _ -> {
+      decl -> {
         Strategy superclass_case = `Mu(MuVar("begin"),_ClassDecl(
               Identity(),
               ApplyAtSuperClass(MuVar("begin")),
               _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity()))));
 
-        Strategy main = `ApplyAtEnclosingClass(
-              Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
+        Strategy main = `Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
                     Identity(),
                     ApplyAtSuperClass(superclass_case),
                     _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
                     ),IfThenElse(Up(Is_MemberClassDecl()),
                       ApplyAtEnclosingClass(MuVar("begin")),
-                      ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames))))))));
-        //TODO ajouter les noms de classes d'autres packages
+                      ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames)))))));
+        //TODO add classes in other packages
         main.visit(getEnvironment());
         //remove full qualified names p.c where p is the name of the current class
         NameWrapper currentname = new NameWrapper();
@@ -345,6 +348,8 @@ public class Generator {
           }      
         }
         accessibleNames.removeAll(hiddenNames);
+        System.out.println("accessibleNames from the class "+`decl);
+        System.out.println(accessibleNames);
       }
     }
   }
@@ -353,20 +358,28 @@ public class Generator {
   %strategy RenameType(accessibleNames:Set) extends Identity() {
     visit BodyDecl {
       field@FieldDecl[] -> {
-        int index = random.nextInt(accessibleNames.size());
-        Iterator iter = accessibleNames.iterator();
-        for (int i=0;i<index;i++) { iter.next(); }
-        Name type = (Name) iter.next();
-        return `field.setFieldType(type);
+        int index = random.nextInt(accessibleNames.size()+1);
+        if (index == accessibleNames.size()) {
+          return `field.setFieldType(`Dot(Name("Object")));
+        } else {
+          Iterator iter = accessibleNames.iterator();
+          for (int i=0;i<index;i++) { iter.next(); }
+          Name type = (Name) iter.next();
+          return `field.setFieldType(type);
+        }
       }
     }
     visit Stmt {
       var@LocalVariableDecl[] -> {
-        int index = random.nextInt(accessibleNames.size());
-        Iterator iter = accessibleNames.iterator();
-        for (int i=0;i<index;i++) { iter.next(); }
-        Name type = (Name) iter.next();
-        return `var.setVarType(type);
+        int index = random.nextInt(accessibleNames.size()+1);
+        if (index == accessibleNames.size()) {
+          return `var.setVarType(`Dot(Name("Object")));
+        } else {
+          Iterator iter = accessibleNames.iterator();
+          for (int i=0;i<index;i++) { iter.next(); }
+          Name type = (Name) iter.next();
+          return `var.setVarType(type);
+        }
       }
     }
   }
@@ -500,7 +513,7 @@ public class Generator {
   public static boolean isHiddenBy(Name hiddenname, Name name) {
     %match (hiddenname) {
       Dot(packagename,_) -> {
-        //TODO: no more generating dot(name) but just name
+        //TODO no more generating dot(name) but just name
         %match(name) {
           Dot(classname) -> {
             if (`packagename.equals(`classname)) {
