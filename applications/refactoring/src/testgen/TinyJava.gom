@@ -17,7 +17,7 @@ BodyDecl = FieldDecl(FieldType:Name,name:Name,expr:Name)
          | Initializer(body:Stmt)
 
 Stmt = Block(Stmt*)
-     | LocalVariableDecl(varType:Name,name:Name,expr:Name)
+     | LocalVariableDecl(VarType:Name,name:Name,expr:Name)
 
 Name = Name(name:String)
      | Dot(Name*)

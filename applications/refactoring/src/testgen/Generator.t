@@ -301,6 +301,76 @@ public class Generator {
     }
   }
 
+
+  public Prog generateTypeForFieldsAndLocalVariables(Prog p) {
+    Set<Name> accessibleNames = new HashSet();
+    try {
+      return (Prog) `TopDown(
+          IfThenElse(Choice(Is_FieldDecl(),Is_LocalVariableDecl()),
+            Sequence(ApplyAtEnclosingClass(CollectAccessibleNamesForFieldAndVar(accessibleNames)),RenameType(accessibleNames)),
+            Identity()
+            )
+          ).visit(p);
+    } catch (VisitFailure e) {
+      throw new RuntimeException(" Unexpected strategy failure");
+    }
+  }
+
+
+  %strategy CollectAccessibleNamesForFieldAndVar(accessibleNames:Set) extends Identity() {
+    visit ClassDecl {
+      _ -> {
+        Strategy superclass_case = `Mu(MuVar("begin"),_ClassDecl(
+              Identity(),
+              ApplyAtSuperClass(MuVar("begin")),
+              _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity()))));
+
+        Strategy main = `ApplyAtEnclosingClass(
+              Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
+                    Identity(),
+                    ApplyAtSuperClass(superclass_case),
+                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
+                    ),IfThenElse(Up(Is_MemberClassDecl()),
+                      ApplyAtEnclosingClass(MuVar("begin")),
+                      ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames))))))));
+        //TODO ajouter les noms de classes d'autres packages
+        main.visit(getEnvironment());
+        //remove full qualified names p.c where p is the name of the current class
+        NameWrapper currentname = new NameWrapper();
+        `GetName(currentname).visit(getEnvironment());
+        Set hiddenNames = new HashSet();
+        for(Name name: (Set<Name>) accessibleNames) {
+          if (isHiddenBy(name,currentname.value))  {
+            hiddenNames.add(name);
+          }      
+        }
+        accessibleNames.removeAll(hiddenNames);
+      }
+    }
+  }
+
+
+  %strategy RenameType(accessibleNames:Set) extends Identity() {
+    visit BodyDecl {
+      field@FieldDecl[] -> {
+        int index = random.nextInt(accessibleNames.size());
+        Iterator iter = accessibleNames.iterator();
+        for (int i=0;i<index;i++) { iter.next(); }
+        Name type = (Name) iter.next();
+        return `field.setFieldType(type);
+      }
+    }
+    visit Stmt {
+      var@LocalVariableDecl[] -> {
+        int index = random.nextInt(accessibleNames.size());
+        Iterator iter = accessibleNames.iterator();
+        for (int i=0;i<index;i++) { iter.next(); }
+        Name type = (Name) iter.next();
+        return `var.setVarType(type);
+      }
+    }
+  }
+
   %strategy PrintContext(current:PositionWrapper,accessibleNames:Set,inheritancePath:Set,undefinedtypes:Set) extends Identity() {
     visit Prog {
       p -> {
