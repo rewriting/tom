@@ -233,7 +233,8 @@ public class Generator {
                 PositionWrapper res = new PositionWrapper(new Position());
                 TypeWrapper wrapper_t = new TypeWrapper(t);
                 System.out.println("begin of try to access "+superclassname+" from "+t);
-                `ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),LookupClassDecl(res),Identity()))).visit(p);
+                //`ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),LookupClassDecl(res),Identity()))).visit(p);
+                `ApplyAt(wrapper_t,IsAccessibleFromClassDecl(superclassname,res)).visit(p);
                 System.out.println("end of try to access "+superclassname+" from "+t+" : success");
                 //type is correctly accessible from t
                 //test if it does not create a cycle

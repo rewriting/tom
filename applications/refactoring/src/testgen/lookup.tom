@@ -1,3 +1,21 @@
+// test if name given in parameter is accessible as a superclassname for the current ClasssDecl
+%strategy IsAccessibleFromClassDecl(name:Name,res:PositionWrapper) extends Identity() {
+  visit ClassDecl {
+    _ -> {
+      %match (name) {
+        Dot(rightpart*,Name(n)) -> {
+          `IfThenElse(IsAccessibleFromClassDecl(rightpart,res),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n))),Fail()).visit(getEnvironment());
+       }
+        Name(n) -> {
+              `Sequence(
+                LookupAllDecls(res,FindName(res,n)),
+                LookupAllPackageNodes(res,FindName(res,n))).visit(getEnvironment());
+        }
+      }
+    }
+  }
+}
+
 %op Strategy LookupClassDecl(res:PositionWrapper) {
   make(res) {
     `IfThenElse(LookupByFail(res),Fail(),ApplyAtPosition(res,IfThenElse(Is_ClassDecl(),Identity(),Fail())))
@@ -123,25 +141,6 @@
               ))))
   }
 }
-
-/**
-  %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
-  make(pos,s) { 
-  `Mu(MuVar("x"),
-  IfThenElse(Is_ClassDecl(),
-  Sequence(
-  s,
-  LookupAllMembers(pos,s),
-  ApplyAtEnclosingScope(MuVar("x"))),
-  IfThenElse(Is_PackageNode(),
-  LookupAllMembers(pos,s),
-  Sequence(
-  ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
-  ApplyAtEnclosingScope(MuVar("x")))
-  )))
-  }
-  }
- */
 
 static PositionWrapper root = new PositionWrapper(new Position());
 
