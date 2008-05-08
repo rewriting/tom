@@ -93,6 +93,8 @@ public class Generator {
       p = generateInheritanceHierarchyForMemberClasses(p);
       System.out.println("Generation of types for fields and variables...");
       p = generateTypeForFieldsAndLocalVariables(p);
+      System.out.println("Generation of assignments for fields and variables...");
+      p = generateAssignmentForFieldsAndLocalVariables(p);
       System.out.println("Print classes");
       printDeclClass(p);
       %match ( p ) {
@@ -248,8 +250,8 @@ public class Generator {
                   // to avoid loops due to too much inaccessible types
                   nb_subclasses--;
                 }
-             } catch (VisitFailure e) {
-               // to avoid loops due to too much inaccessible types
+              } catch (VisitFailure e) {
+                // to avoid loops due to too much inaccessible types
                 nb_subclasses--;
                 System.out.println("end of try to access "+superclassname+" from "+t+" : failure");
               }
@@ -311,7 +313,7 @@ public class Generator {
     try {
       return (Prog) `TopDown(
           IfThenElse(Choice(Is_FieldDecl(),Is_LocalVariableDecl()),
-            Sequence(ApplyAtEnclosingClass(CollectAccessibleNamesForFieldAndVar(accessibleNames)),RenameType(accessibleNames)),
+            Sequence(ApplyAtEnclosingClass(CollectAccessibleTypes(accessibleNames)),RenameType(accessibleNames)),
             Identity()
             )
           ).visit(p);
@@ -321,22 +323,22 @@ public class Generator {
   }
 
 
-  %strategy CollectAccessibleNamesForFieldAndVar(accessibleNames:Set) extends Identity() {
+  %strategy CollectAccessibleTypes(accessibleNames:Set) extends Identity() {
     visit ClassDecl {
       decl -> {
         accessibleNames.clear();
         Strategy superclass_case = `Mu(MuVar("begin_specialcase"),Sequence(Debug("collect accessible names: begin special case"),_ClassDecl(
-              Identity(),
-              ApplyAtSuperClass(MuVar("begin_specialcase")),
-              _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())))),Debug("collect accessible names: end special case"));
+                Identity(),
+                ApplyAtSuperClass(MuVar("begin_specialcase")),
+                _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())))),Debug("collect accessible names: end special case"));
 
         Strategy main = `Mu(MuVar("begin_main"),Sequence(Debug("collect accessible names: begin main"),Collect(accessibleNames),_ClassDecl(
-                    Identity(),
-                    Sequence(Debug("apply at super class"),ApplyAtSuperClass(superclass_case)),
-                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
-                    ),IfThenElse(Up(Is_MemberClassDecl()),
-                      Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(MuVar("begin_main"))),
-                      Sequence(Debug("apply at enclosing package"),ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames))))))));
+                Identity(),
+                Sequence(Debug("apply at super class"),ApplyAtSuperClass(superclass_case)),
+                _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
+                ),IfThenElse(Up(Is_MemberClassDecl()),
+                  Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(MuVar("begin_main"))),
+                  Sequence(Debug("apply at enclosing package"),ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames))))))));
         //TODO add classes in other packages
         main.visit(getEnvironment());
         //remove full qualified names p.c where p is the name of the current class
@@ -355,6 +357,96 @@ public class Generator {
     }
   }
 
+  public Prog generateAssignmentForFieldsAndLocalVariables(Prog p) {
+    Set<Name> accessibleNames = new HashSet();
+    NameWrapper currenttype = new NameWrapper();
+    try {
+      return (Prog) `TopDown(
+          IfThenElse(Choice(Is_FieldDecl(),Is_LocalVariableDecl()),
+            Sequence(SetCurrentType(currenttype),ApplyAtEnclosingClass(CollectAccessibleFieldsAndVars(currenttype,accessibleNames)),SetAssignment(accessibleNames)),
+            Identity()
+            )
+          ).visit(p);
+    } catch (VisitFailure e) {
+      throw new RuntimeException(" Unexpected strategy failure");
+    }
+  }
+
+  %strategy SetCurrentType(currenttype:NameWrapper) extends Identity() {
+    visit BodyDecl {
+      field@FieldDecl[FieldType=type] -> {
+        currenttype.value = `type;
+      }
+    }
+    visit Stmt {
+      var@LocalVariableDecl[VarType=type] -> {
+        currenttype.value = `type;
+      }
+    }
+  }
+
+  %strategy CollectAccessibleFieldsAndVars(currenttype:NameWrapper,accessibleFields:Set) extends Identity() {
+    visit ClassDecl {
+      decl -> {
+        accessibleFields.clear();
+        Strategy superclass_case = `Mu(MuVar("begin_specialcase"),Sequence(Debug("collect accessible fields: begin special case"),_ClassDecl(
+                Identity(),
+                ApplyAtSuperClass(MuVar("begin_specialcase")),
+                _ConcBodyDecl( IfThenElse(Is_FieldDecl(), CollectField(currenttype,accessibleFields), Identity())))),Debug("collect accessible fields: end special case"));
+
+        Strategy main = `Mu(MuVar("begin_main"),Sequence(Debug("collect accessible fields: begin main"),_ClassDecl(
+                Identity(),
+                Sequence(Debug("apply at super class"),ApplyAtSuperClass(superclass_case)),
+                _ConcBodyDecl( IfThenElse(Is_FieldDecl(), CollectField(currenttype,accessibleFields), Identity())) 
+                ),IfThenElse(Up(Is_MemberClassDecl()),
+                  Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(MuVar("begin_main"))),
+                  Identity())));
+
+        main.visit(getEnvironment());
+        //remove full qualified names p.c where p is the name of the current class
+        NameWrapper currentname = new NameWrapper();
+        `GetName(currentname).visit(getEnvironment());
+        Set hiddenNames = new HashSet();
+        for(Name name: (Set<Name>) accessibleFields) {
+          if (isHiddenBy(name,currentname.value))  {
+            hiddenNames.add(name);
+          }      
+        }
+        accessibleFields.removeAll(hiddenNames);
+        System.out.println("accessibleFields from the class "+`decl);
+        System.out.println(accessibleFields);
+      }
+    }
+  }
+
+  %strategy SetAssignment(accessibleFields:Set) extends Identity() {
+    visit BodyDecl {
+      field@FieldDecl[] -> {
+        int index = random.nextInt(accessibleFields.size()+1);
+        if (index == accessibleFields.size()) {
+          return `field.setexpr(`Dot(Name("Object")));
+        } else {
+          Iterator iter = accessibleFields.iterator();
+          for (int i=0;i<index;i++) { iter.next(); }
+          Name type = (Name) iter.next();
+          return `field.setexpr(type);
+        }
+      }
+    }
+    visit Stmt {
+      var@LocalVariableDecl[] -> {
+        int index = random.nextInt(accessibleFields.size()+1);
+        if (index == accessibleFields.size()) {
+          return `var.setexpr(`Dot(Name("Object")));
+        } else {
+          Iterator iter = accessibleFields.iterator();
+          for (int i=0;i<index;i++) { iter.next(); }
+          Name type = (Name) iter.next();
+          return `var.setexpr(type);
+        }
+      }
+    }
+  }
 
   %strategy RenameType(accessibleNames:Set) extends Identity() {
     visit BodyDecl {
@@ -540,6 +632,17 @@ public class Generator {
       }
     }
   }
+
+  %strategy CollectField(type:NameWrapper,accessibleFields:Set) extends Identity() {
+    visit BodyDecl {
+      FieldDecl[FieldType=fieldtype,name=name] -> {
+        if (`fieldtype.equals(type.value)) {
+          accessibleFields.add(`Dot(name));
+        }
+      }
+    }
+  }
+
 
   public void printAccessibleClassesForMemberClasses(Prog p) {
     Set<Type> allMemberTypes = collectMemberTypes(p);
