@@ -229,6 +229,9 @@ public String getComposedName(Name n) {
     ConsDot(head,EmptyDot()) -> {
       return `head.getname();
     }
+    Name(name) -> {
+      return `name;
+    }
     Undefined() -> {
       return "Object";
     }

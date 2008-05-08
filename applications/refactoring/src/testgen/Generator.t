@@ -165,7 +165,7 @@ public class Generator {
       ConcBodyDecl(_*,bodyDecl,_*) -> {
         %match ( bodyDecl ) {
           FieldDecl(fieldType,name,expr) -> {
-            w.write(getComposedName(`fieldType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
+            w.write("public "+getComposedName(`fieldType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
             //w.write(getComposedName(`fieldType)+" "+`name.getname()+";\n");
           }
           MemberClassDecl(innerClass) -> {
@@ -360,10 +360,11 @@ public class Generator {
   public Prog generateAssignmentForFieldsAndLocalVariables(Prog p) {
     Set<Name> accessibleNames = new HashSet();
     NameWrapper currenttype = new NameWrapper();
+    NameWrapper currentname = new NameWrapper();
     try {
       return (Prog) `TopDown(
           IfThenElse(Choice(Is_FieldDecl(),Is_LocalVariableDecl()),
-            Sequence(SetCurrentType(currenttype),ApplyAtEnclosingClass(CollectAccessibleFieldsAndVars(currenttype,accessibleNames)),SetAssignment(accessibleNames)),
+            Sequence(SetCurrentType(currentname,currenttype),ApplyAtEnclosingClass(CollectAccessibleFieldsAndVars(currentname,currenttype,accessibleNames)),SetAssignment(accessibleNames)),
             Identity()
             )
           ).visit(p);
@@ -372,20 +373,22 @@ public class Generator {
     }
   }
 
-  %strategy SetCurrentType(currenttype:NameWrapper) extends Identity() {
+  %strategy SetCurrentType(currentname:NameWrapper,currenttype:NameWrapper) extends Identity() {
     visit BodyDecl {
-      field@FieldDecl[FieldType=type] -> {
+      field@FieldDecl[FieldType=type,name=name] -> {
         currenttype.value = `type;
+        currentname.value = `name;
       }
     }
     visit Stmt {
-      var@LocalVariableDecl[VarType=type] -> {
+      var@LocalVariableDecl[VarType=type,name=name] -> {
         currenttype.value = `type;
+        currentname.value = `name;
       }
     }
   }
 
-  %strategy CollectAccessibleFieldsAndVars(currenttype:NameWrapper,accessibleFields:Set) extends Identity() {
+  %strategy CollectAccessibleFieldsAndVars(currentname:NameWrapper,currenttype:NameWrapper,accessibleFields:Set) extends Identity() {
     visit ClassDecl {
       decl -> {
         accessibleFields.clear();
@@ -403,16 +406,8 @@ public class Generator {
                   Identity())));
 
         main.visit(getEnvironment());
-        //remove full qualified names p.c where p is the name of the current class
-        NameWrapper currentname = new NameWrapper();
-        `GetName(currentname).visit(getEnvironment());
-        Set hiddenNames = new HashSet();
-        for(Name name: (Set<Name>) accessibleFields) {
-          if (isHiddenBy(name,currentname.value))  {
-            hiddenNames.add(name);
-          }      
-        }
-        accessibleFields.removeAll(hiddenNames);
+        //remove itself to avoid forward reference 
+        accessibleFields.remove(currentname.value);
         System.out.println("accessibleFields from the class "+`decl);
         System.out.println(accessibleFields);
       }
