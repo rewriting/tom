@@ -324,18 +324,19 @@ public class Generator {
   %strategy CollectAccessibleNamesForFieldAndVar(accessibleNames:Set) extends Identity() {
     visit ClassDecl {
       decl -> {
-        Strategy superclass_case = `Mu(MuVar("begin"),_ClassDecl(
+        accessibleNames.clear();
+        Strategy superclass_case = `Mu(MuVar("begin_specialcase"),Sequence(Debug("collect accessible names: begin special case"),_ClassDecl(
               Identity(),
-              ApplyAtSuperClass(MuVar("begin")),
-              _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity()))));
+              ApplyAtSuperClass(MuVar("begin_specialcase")),
+              _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())))),Debug("collect accessible names: end special case"));
 
-        Strategy main = `Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
+        Strategy main = `Mu(MuVar("begin_main"),Sequence(Debug("collect accessible names: begin main"),Collect(accessibleNames),_ClassDecl(
                     Identity(),
-                    ApplyAtSuperClass(superclass_case),
+                    Sequence(Debug("apply at super class"),ApplyAtSuperClass(superclass_case)),
                     _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
                     ),IfThenElse(Up(Is_MemberClassDecl()),
-                      ApplyAtEnclosingClass(MuVar("begin")),
-                      ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames)))))));
+                      Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(MuVar("begin_main"))),
+                      Sequence(Debug("apply at enclosing package"),ApplyAtEnclosingPackageNode(_PackageNode(Identity(),_ConcClassDecl(Collect(accessibleNames))))))));
         //TODO add classes in other packages
         main.visit(getEnvironment());
         //remove full qualified names p.c where p is the name of the current class
