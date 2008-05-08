@@ -165,8 +165,8 @@ public class Generator {
       ConcBodyDecl(_*,bodyDecl,_*) -> {
         %match ( bodyDecl ) {
           FieldDecl(fieldType,name,expr) -> {
-            //w.write(getComposedName(`fieldType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
-            w.write(getComposedName(`fieldType)+" "+`name.getname()+";\n");
+            w.write(getComposedName(`fieldType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
+            //w.write(getComposedName(`fieldType)+" "+`name.getname()+";\n");
           }
           MemberClassDecl(innerClass) -> {
             printClass(w,`innerClass);
@@ -194,8 +194,8 @@ public class Generator {
         w.write("}\n");
       }
       LocalVariableDecl(varType,name,expr) -> {
-        //w.write(getComposedName(`varType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
-        w.write(getComposedName(`varType)+" "+`name.getname()+";\n");
+        w.write(getComposedName(`varType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
+        //w.write(getComposedName(`varType)+" "+`name.getname()+";\n");
       }
     }
   }
@@ -424,7 +424,7 @@ public class Generator {
       field@FieldDecl[] -> {
         int index = random.nextInt(accessibleFields.size()+1);
         if (index == accessibleFields.size()) {
-          return `field.setexpr(`Dot(Name("Object")));
+          return `field.setexpr(`Name("null"));
         } else {
           Iterator iter = accessibleFields.iterator();
           for (int i=0;i<index;i++) { iter.next(); }
@@ -437,7 +437,7 @@ public class Generator {
       var@LocalVariableDecl[] -> {
         int index = random.nextInt(accessibleFields.size()+1);
         if (index == accessibleFields.size()) {
-          return `var.setexpr(`Dot(Name("Object")));
+          return `var.setexpr(`Name("null"));
         } else {
           Iterator iter = accessibleFields.iterator();
           for (int i=0;i<index;i++) { iter.next(); }
