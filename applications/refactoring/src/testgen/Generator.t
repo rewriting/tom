@@ -402,8 +402,10 @@ public class Generator {
                 IfThenElse(Up(Is_MemberClassDecl()),
                   Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(enclosingclass_case)),
                   Identity()))));
-
         main.visit(getEnvironment());
+        //remove any accessible field or variable named name
+        accessibleFieldsOrVariables.remove(`name);
+
         System.out.println("accessibleFieldsOrVariables from the field "+`name);
         System.out.println(accessibleFieldsOrVariables);
       }
@@ -422,7 +424,7 @@ public class Generator {
 
         //collect all the local variables defined before the current variable in the current class
         //then collect the accessible fields from the enclosing class
-        //TODO collect vraibles out the current block
+        //TODO collect variables out the current block
         Strategy main = `Sequence(Debug("collect accessible fields: begin main"),
             Up(Mu(MuVar("bodydecl")),
               Up(IfThenElse(Is_ConsBlock(),
@@ -438,6 +440,9 @@ public class Generator {
                       Identity())))));
 
         main.visit(getEnvironment());
+        //remove any accessible field or variable named name
+        accessibleFieldsOrVariables.remove(`name);
+
         System.out.println("accessibleFieldsOrVariables from the field "+`name);
         System.out.println(accessibleFieldsOrVariables);
       }
