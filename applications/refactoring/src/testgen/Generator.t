@@ -359,12 +359,10 @@ public class Generator {
 
   public Prog generateAssignmentForFieldsAndLocalVariables(Prog p) {
     Set<Name> accessibleNames = new HashSet();
-    NameWrapper currenttype = new NameWrapper();
-    NameWrapper currentname = new NameWrapper();
-    try {
+   try {
       return (Prog) `TopDown(
           IfThenElse(Choice(Is_FieldDecl(),Is_LocalVariableDecl()),
-            Sequence(SetCurrentType(currentname,currenttype),ApplyAtEnclosingClass(CollectAccessibleFieldsAndVars(currentname,currenttype,accessibleNames)),SetAssignment(accessibleNames)),
+            Sequence(CollectAccessibleFieldsAndVars(accessibleNames),SetAssignment(accessibleNames)),
             Identity()
             )
           ).visit(p);
@@ -373,43 +371,47 @@ public class Generator {
     }
   }
 
-  %strategy SetCurrentType(currentname:NameWrapper,currenttype:NameWrapper) extends Identity() {
+  %strategy CollectAccessibleFieldsAndVars(accessibleFields:Set) extends Identity() {
     visit BodyDecl {
       field@FieldDecl[FieldType=type,name=name] -> {
+        NameWrapper currenttype = new NameWrapper();
         currenttype.value = `type;
-        currentname.value = `name;
-      }
-    }
-    visit Stmt {
-      var@LocalVariableDecl[VarType=type,name=name] -> {
-        currenttype.value = `type;
-        currentname.value = `name;
-      }
-    }
-  }
-
-  %strategy CollectAccessibleFieldsAndVars(currentname:NameWrapper,currenttype:NameWrapper,accessibleFields:Set) extends Identity() {
-    visit ClassDecl {
-      decl -> {
         accessibleFields.clear();
-        Strategy superclass_case = `Mu(MuVar("begin_specialcase"),Sequence(Debug("collect accessible fields: begin special case"),_ClassDecl(
+        Strategy superclass_case = `Mu(MuVar("begin"),Sequence(Debug("collect accessible fields: begin special case for super classes"),_ClassDecl(
                 Identity(),
-                ApplyAtSuperClass(MuVar("begin_specialcase")),
-                _ConcBodyDecl( IfThenElse(Is_FieldDecl(), CollectField(currenttype,accessibleFields), Identity())))),Debug("collect accessible fields: end special case"));
+                ApplyAtSuperClass(MuVar("begin")),
+                _ConcBodyDecl( IfThenElse(Is_FieldDecl(), CollectField(currenttype,accessibleFields), Identity())))),Debug("collect accessible fields: end special case for super classes"));
 
-        Strategy main = `Mu(MuVar("begin_main"),Sequence(Debug("collect accessible fields: begin main"),_ClassDecl(
+        Strategy enclosingclass_case = `Mu(MuVar("begin"),Sequence(Debug("collect accessible fields: begin special case for enclosing classes"),_ClassDecl(
                 Identity(),
                 Sequence(Debug("apply at super class"),ApplyAtSuperClass(superclass_case)),
                 _ConcBodyDecl( IfThenElse(Is_FieldDecl(), CollectField(currenttype,accessibleFields), Identity())) 
                 ),IfThenElse(Up(Is_MemberClassDecl()),
-                  Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(MuVar("begin_main"))),
+                  Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(MuVar("begin"))),
                   Identity())));
 
+        //collect all the fields defined before the current field in the current class
+        //then collect the accessible fields from super-classes and enclosing classes
+        Strategy main = `Sequence(Debug("collect accessible fields: begin main"),
+            Up(Mu(MuVar("bodydecl")),
+              Up(IfThenElse(Is_ConsConcBodyDecl(),
+                  Sequence(_ConsConcBodyDecl(IfThenElse(Is_FieldDecl(),CollectField(currenttype,accessibleFields),Identity()),Identity()),MuVar("bodydecl")),
+                  Identity()))),
+            ApplyAtEnclosingClass(Sequence(
+                _ClassDecl(Identity(),ApplyAtSuperClass(superclass_case),Identity()),
+                IfThenElse(Up(Is_MemberClassDecl()),
+                  Sequence(Debug("apply at enclosing class"),ApplyAtEnclosingClass(enclosingclass_case)),
+                  Identity()))));
+
         main.visit(getEnvironment());
-        //remove itself to avoid forward reference 
-        accessibleFields.remove(currentname.value);
-        System.out.println("accessibleFields from the class "+`decl);
+        System.out.println("accessibleFields from the field "+`name);
         System.out.println(accessibleFields);
+      }
+    }
+    visit Stmt {
+      var@LocalVariableDecl[VarType=type,name=name] -> {
+        //TODO collect all accessible local variables and fields 
+        accessibleFields.clear();
       }
     }
   }
@@ -632,7 +634,7 @@ public class Generator {
     visit BodyDecl {
       FieldDecl[FieldType=fieldtype,name=name] -> {
         if (`fieldtype.equals(type.value)) {
-          accessibleFields.add(`Dot(name));
+          accessibleFields.add(`name);
         }
       }
     }
