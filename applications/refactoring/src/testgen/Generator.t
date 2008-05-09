@@ -208,7 +208,7 @@ public class Generator {
         //w.write(getComposedName(`varType)+" "+`name.getname()+";\n");
       }
       SuperCall(name) -> {
-        w.write(getSimpleName(`name)+".super();\n");
+        w.write(getComposedName(`name)+".super();\n");
 
       }
     }
@@ -587,7 +587,7 @@ public class Generator {
                 `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
                 NameWrapper enclosingclass = new NameWrapper();
                 `IfThenElse(ApplyAtPosition(current,Up(Is_MemberClassDecl())),
-                    Sequence(ApplyAtPosition(current,ApplyAtEnclosingClass(GetName(enclosingclass))),
+                    Sequence(Mu(MuVar("x"),ApplyAtEnclosingClass(IfThenElse(HasMember(currentname),GetName(enclosingclass),MuVar("x")))),
                       AdaptConstructor(enclosingclass)),
                     Identity()).visit(getEnvironment());
                 System.out.println("currentname "+currentname.value);
@@ -617,14 +617,33 @@ public class Generator {
   }
 
 
+  %strategy HasMember(name:NameWrapper) extends Fail() {
+    visit ClassDecl {
+      _ -> {
+        // for now, just available for simple names
+        Name searchedname = name.value;
+        %match(searchedname) {
+          Dot(Name(name)) -> {
+            PositionWrapper pos = new PositionWrapper(new Position());
+            return (ClassDecl) `IfThenElse(LookupAllMembers(pos,FindName(pos,name)),Fail(),Identity()).visit(getEnvironment());
+          }
+        }
+      }
+    }
+  }
+
   //strategy that creates explicit super call in constructor 
   %strategy AdaptConstructor(enclosingclass:NameWrapper) extends Identity() {
     visit ClassDecl {
       c@ClassDecl[bodyDecl=ConcBodyDecl(X*,i@Initializer[body=body],Y*)] -> {
-        return `c.setbodyDecl(`ConcBodyDecl(X*,Initializer(Block(SuperCall(Dot(enclosingclass.value,Name("this"))),body)),Y*));
+        if (enclosingclass.value != null) {
+          return `c.setbodyDecl(`ConcBodyDecl(X*,Initializer(Block(SuperCall(Dot(Name(getSimpleName(enclosingclass.value)),Name("this"))),body)),Y*));
+        }
       }
-      c@ClassDecl[bodyDecl=ConcBodyDecl(X*,!Initializer[],Y*)] -> {
-        return `c.setbodyDecl(`ConcBodyDecl(X*,Initializer(SuperCall(Dot(enclosingclass.value,Name("this")))),Y*));
+      c@ClassDecl[bodyDecl=bodydecl] -> {
+        if (enclosingclass.value != null) {
+          return `c.setbodyDecl(`ConcBodyDecl(Initializer(SuperCall(Dot(Name(getSimpleName(enclosingclass.value)),Name("this")))),bodydecl*));
+        }
       }
     }
   }
