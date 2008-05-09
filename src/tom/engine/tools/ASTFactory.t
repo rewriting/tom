@@ -505,7 +505,7 @@ public class ASTFactory {
         return `BuildConsList(name,head,subList);
       }
 
-      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable)[],tail*) -> {
+      concTomTerm(head@(BuildTerm|BuildConstant|Composite|Variable|BuildAppendList)[],tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
       }
