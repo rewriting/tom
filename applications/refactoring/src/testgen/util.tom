@@ -239,6 +239,21 @@ public String getComposedName(Name n) {
   return "";
 }
 
+public String getSimpleName(Name n) {
+    %match(n) {
+          Dot(_*,name) -> {
+                  return `name.getname();
+                      }
+              Name(name) -> {
+                      return `name;
+                          }
+                  Undefined() -> {
+                          return "Object";
+                              }
+                    }
+      return "";
+}
+
 %op Strategy ApplyAtEnclosingClass(s:Strategy) {
   make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_ClassDecl(),s,MuVar("y")))) }
 }
