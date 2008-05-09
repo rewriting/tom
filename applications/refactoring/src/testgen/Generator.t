@@ -162,17 +162,6 @@ public class Generator {
     w.write("\n public class "+classname+" extends "+getComposedName(c.getsuper())+" {\n\n");
     BodyDeclList bodyDeclSet = c.getbodyDecl();
     %match ( bodyDeclSet ) {
-      ConcBodyDecl(_*,!Initializer[],_*) -> {
-        Name superclass = c.getsuper();
-        //TODO do it only when the superclass is also a member class
-        %match(superclass) {
-          Dot(name@!Name("Object")) -> {
-            w.write("public "+classname+"() {\n");
-            w.write(`name.getname()+".this.super();");
-            w.write("}\n");
-          }
-        }
-      }
       ConcBodyDecl(_*,bodyDecl,_*) -> {
         %match ( bodyDecl ) {
           FieldDecl(fieldType,name,expr) -> {
@@ -184,13 +173,6 @@ public class Generator {
           }
           Initializer(body) -> {
             w.write("public "+classname+"() {\n");
-            Name superclass = c.getsuper();
-            //TODO do it only when the superclass is also a member class
-            %match(superclass) {
-              Dot(name@!Name("Object")) -> {
-                w.write(`name.getname()+".this.super();");
-              }
-            }
             printStmt(w,`body);
             w.write("}\n");
           }
@@ -214,6 +196,10 @@ public class Generator {
       LocalVariableDecl(varType,name,expr) -> {
         w.write(getComposedName(`varType)+" "+`name.getname()+" = "+getComposedName(`expr)+";\n");
         //w.write(getComposedName(`varType)+" "+`name.getname()+";\n");
+      }
+      SuperCall(name) -> {
+        w.write(getComposedName(`name)+".super();\n");
+
       }
     }
   }
@@ -589,6 +575,7 @@ public class Generator {
                 current.value = res.value;
                 NameWrapper currentname = new NameWrapper();
                 `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+                `ApplyAtPosition(current,IfThenElse(Up(Is_MemberClassDecl()),AdaptConstructor(),Identity())).visit(getEnvironment());
                 System.out.println("currentname "+currentname.value);
                 inheritancePath.add(currentname.value);
                 return (ClassDecl) getEnvironment().getSubject();
@@ -611,6 +598,19 @@ public class Generator {
           System.out.println("currentname "+currentname.value);
           inheritancePath.add(currentname.value);
         }
+      }
+    }
+  }
+
+
+  //strategy that creates explicit super call in constructor 
+  %strategy AdaptConstructor() extends Identity() {
+    visit ClassDecl {
+      c@ClassDecl[super=superclass,bodyDecl=ConcBodyDecl(X*,i@Initializer[body=body],Y*)] -> {
+        return `c.setbodyDecl(`ConcBodyDecl(X*,Initializer(Block(SuperCall(Dot(superclass,Name("this"))),body)),Y*));
+      }
+      c@ClassDecl[super=superclass,bodyDecl=ConcBodyDecl(X*,!Initializer[],Y*)] -> {
+        return `c.setbodyDecl(`ConcBodyDecl(X*,Initializer(SuperCall(Dot(superclass,Name("this")))),Y*));
       }
     }
   }

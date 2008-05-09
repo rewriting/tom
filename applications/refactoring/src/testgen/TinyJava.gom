@@ -18,6 +18,7 @@ BodyDecl = FieldDecl(FieldType:Name,name:Name,expr:Name)
 
 Stmt = Block(Stmt*)
      | LocalVariableDecl(VarType:Name,name:Name,expr:Name)
+     | SuperCall(ref:Name) // for call of type ref.super()
 
 Name = Name(name:String)
      | Dot(Name*)
