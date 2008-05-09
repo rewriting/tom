@@ -162,6 +162,17 @@ public class Generator {
     w.write("\n public class "+classname+" extends "+getComposedName(c.getsuper())+" {\n\n");
     BodyDeclList bodyDeclSet = c.getbodyDecl();
     %match ( bodyDeclSet ) {
+      ConcBodyDecl(_*,!Initializer[],_*) -> {
+        Name superclass = c.getsuper();
+        //TODO do it only when the superclass is also a member class
+        %match(superclass) {
+          Dot(name@!Name("Object")) -> {
+            w.write("public "+classname+"() {\n");
+            w.write(`name.getname()+".this.super();");
+            w.write("}\n");
+          }
+        }
+      }
       ConcBodyDecl(_*,bodyDecl,_*) -> {
         %match ( bodyDecl ) {
           FieldDecl(fieldType,name,expr) -> {
@@ -173,6 +184,13 @@ public class Generator {
           }
           Initializer(body) -> {
             w.write("public "+classname+"() {\n");
+            Name superclass = c.getsuper();
+            //TODO do it only when the superclass is also a member class
+            %match(superclass) {
+              Dot(name@!Name("Object")) -> {
+                w.write(`name.getname()+".this.super();");
+              }
+            }
             printStmt(w,`body);
             w.write("}\n");
           }
@@ -359,7 +377,7 @@ public class Generator {
 
   public Prog generateAssignmentForFieldsAndLocalVariables(Prog p) {
     Set<Name> accessibleNames = new HashSet();
-   try {
+    try {
       return (Prog) `TopDown(
           IfThenElse(Choice(Is_FieldDecl(),Is_LocalVariableDecl()),
             Sequence(CollectAccessibleFieldsAndVars(accessibleNames),SetAssignment(accessibleNames)),
