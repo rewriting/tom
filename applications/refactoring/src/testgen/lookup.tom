@@ -1,15 +1,18 @@
 // test if name given in parameter is accessible as a superclassname for the current ClasssDecl
+// we start at the enclosing scope
+// as it is for the super class, we vsit only class declarations
 %strategy IsAccessibleFromClassDecl(name:Name,res:PositionWrapper) extends Identity() {
   visit ClassDecl {
     _ -> {
       %match (name) {
-        Dot(rightpart*,Name(n)) -> {
-          `IfThenElse(IsAccessibleFromClassDecl(rightpart,res),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n))),Fail()).visit(getEnvironment());
-       }
+        Dot(rightpart*,n) -> {
+          `IfThenElse(ApplyAtEnclosingScope(IsAccessibleFromClassDecl(rightpart,res)),ApplyAtPosition(res,IsAccessibleFromClassDecl(name,res)),Fail()).visit(getEnvironment());
+        }
         Name(n) -> {
-              `Sequence(
-                LookupAllDecls(res,FindName(res,n)),
-                LookupAllPackageNodes(res,FindName(res,n))).visit(getEnvironment());
+          `Not(ApplyAtEnclosingScope(LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
+        }
+        Dot(Name(n)) -> {
+          `Not(ApplyAtEnclosingScope(LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
         }
       }
     }
