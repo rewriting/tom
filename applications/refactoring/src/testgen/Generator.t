@@ -575,7 +575,7 @@ public class Generator {
                 current.value = res.value;
                 NameWrapper currentname = new NameWrapper();
                 `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
-                `ApplyAtPosition(current,IfThenElse(Up(Is_MemberClassDecl()),AdaptConstructor(),Identity())).visit(getEnvironment());
+                `IfThenElse(ApplyAtPosition(current,Up(Is_MemberClassDecl())),AdaptConstructor(),Identity()).visit(getEnvironment());
                 System.out.println("currentname "+currentname.value);
                 inheritancePath.add(currentname.value);
                 return (ClassDecl) getEnvironment().getSubject();
