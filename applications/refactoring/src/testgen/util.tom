@@ -9,11 +9,8 @@
   get_slot(s1, t) {( (tom.library.sl.Strategy)$t.getChildAt(testgen.Up.ARG) )}
 }
 
-%op Strategy MuFixPoint(id:String, s1:Strategy, s2:Strategy) {
-  is_fsym(t) {( ($t instanceof testgen.MuFixPoint) )}
-  make(id, var, v) {( new testgen.MuFixPoint($id, $var, $v) )}
-  get_slot(s1, t) {( (tom.library.sl.MuVar)$t.getChildAt(tom.library.sl.Mu.VAR) )}
-  get_slot(s2, t) {( (tom.library.sl.Strategy)$t.getChildAt(tom.library.sl.Mu.V) )}
+%op Strategy Debug(label:String) {
+  make(label) {( new testgen.Debug($label) )}
 }
 
 %typeterm Context {
@@ -194,21 +191,6 @@ static class TypeWrapper {
   }
 }
 
-%strategy Debug(statement:String) extends Identity() {
-  visit Name {
-    _ -> {
-      System.out.println(statement);
-      System.out.println(getEnvironment().getSubject());
-    }
-  }
-  visit ClassDecl {
-    _ -> {
-      System.out.println(statement);
-      System.out.println(getEnvironment().getSubject());
-    }
-  }
-}
-
 public void printDeclClass(Prog p) {
   for (Type t : collectAllTypes(p)) {
     try {
@@ -259,7 +241,7 @@ public static String getSimpleName(Name n) {
 }
 
 %op Strategy ApplyAtEnclosingPackageNode(s:Strategy) {
-  make(s) { `Mu(MuVar("y"),Up(IfThenElse(Is_PackageNode(),s,MuVar("y")))) }
+  make(s) { `Mu(MuVar("y"),Up(Sequence(Debug("try to find the enclosing package"),IfThenElse(Is_PackageNode(),Sequence(Debug("apply at enclosing package"),s),MuVar("y"))))) }
 }
 
 %op Strategy ApplyAtEnclosingStmt(s:Strategy) {
@@ -277,5 +259,6 @@ public static String getSimpleName(Name n) {
 %op Strategy ApplyAtEnclosingScope(s:Strategy) {
   make(s) { `Sequence(
       IfThenElse(ApplyAtEnclosingDot(Up(Choice(Is_MemberClassDecl(),Is_FieldDecl(),Is_LocalVariableDecl()))),ApplyAtEnclosingClass(s),ApplyAtEnclosingDot(Up(ApplyAtEnclosingClass(s)))),
+      Debug("Apply at enclosing scope: package node"),
       ApplyAtEnclosingPackageNode(s)) }
 }

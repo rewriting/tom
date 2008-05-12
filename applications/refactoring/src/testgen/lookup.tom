@@ -1,23 +1,33 @@
 // test if name given in parameter is accessible as a superclassname for the current ClasssDecl
 // we start at the enclosing scope
-// as it is for the super class, we vsit only class declarations
+// as it is for the super class, we visit only class declarations
+
 %strategy IsAccessibleFromClassDecl(name:Name,res:PositionWrapper) extends Identity() {
   visit ClassDecl {
     _ -> {
       %match (name) {
-        Dot(rightpart*,n) -> {
-          `IfThenElse(ApplyAtEnclosingScope(IsAccessibleFromClassDecl(rightpart,res)),ApplyAtPosition(res,IsAccessibleFromClassDecl(name,res)),Fail()).visit(getEnvironment());
+        Dot(rightpart*,Name(n)) -> {
+          `IsAccessibleFromClassDecl(rightpart,res).visit(getEnvironment());
+          // call lookupAllTypeMembers at first call
+          try {
+            `ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n))).visit(getEnvironment());
+            `ApplyAtEnclosingScope(Sequence(
+                  ApplyAtEnclosingScope(LookupAllDecls(res,FindName(res,n))),
+                  LookupAllPackageNodes(res,FindName(res,n)))).visit(getEnvironment());
+            throw new VisitFailure();
+          } catch (VisitFailure e) {}
         }
         Name(n) -> {
-          `Not(ApplyAtEnclosingScope(LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
+          `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
         }
         Dot(Name(n)) -> {
-          `Not(ApplyAtEnclosingScope(LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
+          `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
         }
       }
     }
   }
 }
+
 
 %op Strategy LookupClassDecl(res:PositionWrapper) {
   make(res) {
@@ -56,21 +66,36 @@
 
 %op Strategy LookupAll(res:PositionWrapper,name:String) {
   make(res,name) { `IfThenElse(
-      onTheRightOfDot(),
-      Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-      Sequence(
-        LookupAllDecls(res,FindName(res,name)),
-        LookupAllPackageNodes(res,FindName(res,name)))) 
+      isSimpleName(),
+      LookupAllTypeDecls(res,FindName(res,name)),
+      IfThenElse(
+        onTheRightOfDot(),
+        Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),
+          IfThenElse(IsMostLeftName(),
+            ApplyAtPosition(res,LookupAllTypeMembers(res,FindName(res,name))),
+            ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name))))),
+        Sequence(
+          LookupAllDecls(res,FindName(res,name)),
+          LookupAllPackageNodes(res,FindName(res,name))))) 
   }
+}
+
+/* return true if inside a composed name of type Name(_) or Dot(Name(_)) */
+%op Strategy isSimpleName() {
+  make() { `Choice(Sequence(Up(_ConsDot(Is_Name(),Is_EmptyDot())),Up(Up(Not(Is_ConsDot())))),Is_Name()) }
+}
+
+%op Strategy IsMostLeftName() {
+  make() { `Up(_ConsDot(Is_Name(),Is_EmptyDot())) }
 }
 
 %strategy FindName(res:PositionWrapper, n:String) extends Identity() {
   visit ClassDecl {
     ClassDecl[name=Name[name=name]] -> {
-      //System.out.println("try to compare the name "+n);
-      //System.out.println("with "+`name);
+      System.out.println("try to compare the name "+n);
+      System.out.println("with "+`name);
       if (`name.equals(n)) {
-        //System.out.println("must fail");
+        System.out.println("must fail");
         res.value = getPosition();
         throw new VisitFailure();
       }
@@ -118,10 +143,23 @@
   }
 }
 
+%op Strategy LookupAllTypeMembers(pos:PositionWrapper,s:Strategy) {
+  make(pos,s) { `Mu(MuVar("lookupallmembers"),
+      Sequence(Debug("start of lookupAllMembers"),
+        IfThenElse(Is_ClassDecl(),
+          Sequence(
+            _ClassDecl(Identity(),Identity(),_ConcBodyDecl(IfThenElse(Is_MemberClassDecl(),_MemberClassDecl(s),Identity()))),
+            IfThenElse(_ClassDecl(Identity(),LookupByFail(pos),Identity()),Identity(),ApplyAtPosition(pos,MuVar("lookupallmembers"))),
+            Debug("end of lookupAllMembers")),
+          IfThenElse(Is_PackageNode(),_PackageNode(Identity(),_ConcClassDecl(s)),Identity()))))
+  }
+}
+
+
 %op Strategy LookupAllDecls(pos:PositionWrapper, s:Strategy) {
   make(pos,s) { 
     `Mu(MuVar("x"),
-        Sequence(Debug("start LookupAllDecls"), 
+        Sequence(Debug("start LookupAllDecls"),
           IfThenElse(Is_ClassDecl(),
             Sequence(
               Debug("_ClassDecl: test with this class"),
@@ -145,8 +183,62 @@
   }
 }
 
+%op Strategy LookupAllTypeDecls(pos:PositionWrapper, s:Strategy) {
+  make(pos,s) { 
+    `Mu(MuVar("x"),
+        Sequence(Debug("start LookupAllDecls"),
+          IfThenElse(Is_ClassDecl(),
+            Sequence(
+              Debug("_ClassDecl: test with this class"),
+              s,
+              Debug("_ClassDecl: lookup all members"),
+              LookupAllTypeMembers(pos,s),
+              Debug("_ClassDecl: lookup at enclosing scope"),
+              ApplyAtEnclosingScope(MuVar("x")),
+              Debug("_ClassDecl: end of lookupAllDecls")),
+            IfThenElse(Is_PackageNode(),
+              Sequence(Debug("_PackageNode: lookup all members"),
+                LookupAllTypeMembers(pos,s),
+                Debug("_ClassDecl: end of lookupAllDecls")),
+              Sequence(
+                Debug("Default case: apply at predecessors"),
+                ApplyAtEnclosingStmt(ApplyToPredecessors(s)),
+                Debug("Default case: apply at enclosing scope"),
+                ApplyAtEnclosingScope(MuVar("x")),
+                Debug("_ClassDecl: end of lookupAllDecls"))
+              ))))
+  }
+}
+
+
 static PositionWrapper root = new PositionWrapper(new Position());
 
 %op Strategy LookupAllPackageNodes(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `ApplyAtPosition(root,_Prog(Sequence(Debug("lookup Package Node"),s))) }
 }
+
+/**
+  %op Strategy PrintSearchName(s:Strategy) {
+  make(s) {( new PrintSearchName($s) )}
+  }
+
+  static class PrintSearchName extends BasicStrategy {
+  private String label;
+
+  public PrintSearchName(Strategy s) {
+  super(new Identity());
+  if (s instanceof FindName) {
+  label = ((FindName) s).n;
+  }
+  }
+
+  public final Object visitLight(Object any, Introspector m) throws VisitFailure {
+  throw new RuntimeException("The Strategy Up cannot be used with visitLight");
+  }
+
+  public int visit(Introspector m) {
+  System.out.println("current name to lookup: "+label);
+  return Environment.SUCCESS;
+  }
+  }
+ */

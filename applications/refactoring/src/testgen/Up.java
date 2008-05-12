@@ -52,8 +52,9 @@ public class Up extends AbstractStrategy {
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public int visit(Introspector m) {
-    //succeeds if it is th root
+    //succeeds if it is the root
     if (environment.depth()==0) {
+      System.out.println("Up at the root: always succeed");
       return Environment.SUCCESS;
     }
     environment.setIntrospector(m);

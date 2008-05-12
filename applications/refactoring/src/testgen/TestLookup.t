@@ -139,9 +139,12 @@ public class TestLookup extends TestCase {
   }
 
   public void test7() {
-    Prog p = `Prog(PackageNode(Name("l"),ConcClassDecl(ClassDecl(Name("i"),Dot(Name("Object")),ConcBodyDecl()))),PackageNode(Name("e"),ConcClassDecl(ClassDecl(Name("z"),Dot(Name("j"),Name("p")),ConcBodyDecl()))),PackageNode(Name("j"),ConcClassDecl(ClassDecl(Name("p"),Dot(Name("l"),Name("i")),ConcBodyDecl()),ClassDecl(Name("r"),Dot(Name("Object")),ConcBodyDecl(FieldDecl(Undefined(),Name("e"),Undefined()),MemberClassDecl(ClassDecl(Name("u"),Dot(Name("l"),Name("i")),ConcBodyDecl(FieldDecl(Undefined(),Name("i"),Undefined())))),Initializer(Block()),FieldDecl(Undefined(),Name("m"),Undefined()))))),PackageNode(Name("a"),ConcClassDecl(ClassDecl(Name("k"),Dot(Name("j"),Name("p")),ConcBodyDecl(MemberClassDecl(ClassDecl(Name("s"),Dot(Name("r")),ConcBodyDecl())))))),PackageNode(Name("v"),ConcClassDecl(ClassDecl(Name("o"),Dot(Name("a"),Name("k")),ConcBodyDecl()))));
+    Prog p = `Prog(PackageNode(Name("a"),ConcClassDecl(ClassDecl(Name("A"),Dot(Name("b"),Name("C")),ConcBodyDecl(FieldDecl(Name("Object"),Name("B"),Undefined()),MemberClassDecl(ClassDecl(Name("AA"),Dot(Name("Object")),ConcBodyDecl(FieldDecl(Dot(Name("B")),Name("x"),Undefined())))))),ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl()))),PackageNode(Name("b"),ConcClassDecl(ClassDecl(Name("C"),Dot(Name("Object")),ConcBodyDecl()))));
+    Position pos_x = new Position(new int[]{1, 2, 1, 3, 2, 1, 1, 3, 1});
     try {
-      `TopDown(FindSuperClass()).visit(p);
+      PositionWrapper pos = new PositionWrapper(new Position());
+      `pos_x.getOmega(`_FieldDecl(LookupClassDecl(pos),Identity(),Identity())).visit(p);
+      assertEquals(pos.value.getSubterm().visit(p),`ClassDecl(Name("B"),Dot(Name("Object")),ConcBodyDecl()));
     } catch ( VisitFailure e) {
       fail();
     }

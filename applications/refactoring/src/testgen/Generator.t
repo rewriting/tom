@@ -392,7 +392,9 @@ public class Generator {
         currenttype.value = `type;
         accessibleFieldsOrVariables.clear();
         PositionWrapper currenttypedecl = new PositionWrapper(new Position());
-        `_FieldDecl(LookupClassDecl(currenttypedecl),Identity(),Identity()).visit(getEnvironment());
+        if (! `type.equals(`Dot(Name("Object")))) {
+          `_FieldDecl(LookupClassDecl(currenttypedecl),Identity(),Identity()).visit(getEnvironment());
+        }
         Strategy superclass_case = `Mu(MuVar("begin"),Sequence(Debug("collect accessible fields: begin special case for super classes"),_ClassDecl(
                 Identity(),
                 ApplyAtSuperClass(MuVar("begin")),
@@ -433,8 +435,10 @@ public class Generator {
         NameWrapper currenttype = new NameWrapper();
         currenttype.value = `type;
         accessibleFieldsOrVariables.clear();
-         PositionWrapper currenttypedecl = new PositionWrapper(new Position());
-        `_FieldDecl(LookupClassDecl(currenttypedecl),Identity(),Identity()).visit(getEnvironment());
+        PositionWrapper currenttypedecl = new PositionWrapper(new Position());
+        if (! `type.equals(`Dot(Name("Object")))) {
+          `_LocalVariableDecl(LookupClassDecl(currenttypedecl),Identity(),Identity()).visit(getEnvironment());
+        }       
         Strategy superclass_case = `Mu(MuVar("begin"),Sequence(Debug("collect accessible fields: begin special case for super classes"),_ClassDecl(
                 Identity(),
                 ApplyAtSuperClass(MuVar("begin")),
@@ -582,6 +586,8 @@ public class Generator {
               PositionWrapper res = new PositionWrapper(new Position());
               System.out.println("try to lookup "+getEnvironment().getSubject());
               try {
+                //getEnvironment().setSubject(`c.setsuper(superclassname));
+                //`LookupClassDecl(res).visit(getEnvironment());
                 `IsAccessibleFromClassDecl(superclassname,res).visit(getEnvironment());
                 getEnvironment().setSubject(`c.setsuper(superclassname));
                 current.value = res.value;
@@ -721,20 +727,28 @@ public class Generator {
         if (`fieldtype.equals(typename.value)) {
           //verify that the type declaration is the same
           PositionWrapper res = new PositionWrapper(new Position());
-          `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
-          if(res.value.equals(typedecl.value)) {
+          if(! `fieldtype.equals(`Dot(Name("Object")))) {
+            `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
+            if(res.value.equals(typedecl.value)) {
+              accessibleFieldsOrVariables.add(`name);
+            }
+          } else {
             accessibleFieldsOrVariables.add(`name);
           }
         }
       }
     }
     visit Stmt {
-      LocalVariableDecl[VarType=varType,name=name] -> {
-        if (`varType.equals(typename.value)) {
-          //verify that the type declaration is the same
-          PositionWrapper res = new PositionWrapper(new Position());
-          `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
-          if(res.value.equals(typedecl.value)) {
+      LocalVariableDecl[VarType=vartype,name=name] -> {
+        if (`vartype.equals(typename.value)) {
+          if(! `vartype.equals(`Dot(Name("Object")))) {
+            //verify that the type declaration is the same
+            PositionWrapper res = new PositionWrapper(new Position());
+            `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
+            if(res.value.equals(typedecl.value)) {
+              accessibleFieldsOrVariables.add(`name);
+            }
+          } else {
             accessibleFieldsOrVariables.add(`name);
           }
         }
