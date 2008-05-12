@@ -216,29 +216,3 @@ static PositionWrapper root = new PositionWrapper(new Position());
 %op Strategy LookupAllPackageNodes(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `ApplyAtPosition(root,_Prog(Sequence(Debug("lookup Package Node"),s))) }
 }
-
-/**
-  %op Strategy PrintSearchName(s:Strategy) {
-  make(s) {( new PrintSearchName($s) )}
-  }
-
-  static class PrintSearchName extends BasicStrategy {
-  private String label;
-
-  public PrintSearchName(Strategy s) {
-  super(new Identity());
-  if (s instanceof FindName) {
-  label = ((FindName) s).n;
-  }
-  }
-
-  public final Object visitLight(Object any, Introspector m) throws VisitFailure {
-  throw new RuntimeException("The Strategy Up cannot be used with visitLight");
-  }
-
-  public int visit(Introspector m) {
-  System.out.println("current name to lookup: "+label);
-  return Environment.SUCCESS;
-  }
-  }
- */
