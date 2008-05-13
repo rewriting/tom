@@ -252,7 +252,13 @@ public class Generator {
                 TypeWrapper wrapper_t = new TypeWrapper(t);
                 System.out.println("begin of try to access "+superclassname+" from "+t);
                 //check if the superclassname can be found with lookup and then that the found declaration is a top-level class (not an inner class that hides this top-level class)
-                //`Sequence(ApplyAt(wrapper_t,Sequence(RenameSuperClass(superclassname),_ClassDecl(Identity(),LookupClassDecl(res),Identity()))),ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
+                /**
+                `Sequence(
+                    ApplyAt(wrapper_t,Sequence(
+                        RenameSuperClass(superclassname),
+                        _ClassDecl(Identity(),LookupClassDecl(res),Identity()))),
+                    ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
+                 */
                 `Sequence(ApplyAt(wrapper_t,IsAccessibleFromClassDecl(superclassname,res)),ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
                 // the strategy IsAccessibleFromClassDecl does not seem to work correctly for the moment
                 System.out.println("end of try to access "+superclassname+" from "+t+" : success");

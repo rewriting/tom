@@ -18,10 +18,18 @@
           } catch (VisitFailure e) {}
         }
         Name(n) -> {
-          `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
+          try {
+            `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
+            throw new VisitFailure();
+          } catch (VisitFailure e) {}
+
         }
         Dot(Name(n)) -> {
-          `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
+          try {
+            `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
+            throw new VisitFailure();
+          } catch (VisitFailure e) {}
+
         }
       }
     }
@@ -63,6 +71,18 @@
       ApplyAtPosition(res,IfThenElse(Is_FieldDecl(),_FieldDecl(LookupByFail(res),Identity(),Identity()),Identity())))
   }
 }
+
+/**
+%op Strategy LookupAll(res:PositionWrapper,name:String) {
+  make(res,name) { `IfThenElse(
+      onTheRightOfDot(),
+      Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+      Sequence(
+        LookupAllDecls(res,FindName(res,name)),
+        LookupAllPackageNodes(res,FindName(res,name)))) 
+  }
+}
+*/
 
 %op Strategy LookupAll(res:PositionWrapper,name:String) {
   make(res,name) { `IfThenElse(
