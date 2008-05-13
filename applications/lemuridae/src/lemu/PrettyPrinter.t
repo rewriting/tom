@@ -764,6 +764,16 @@ class PrettyPrinter {
       (h,t*) -> { return prettyPrint(`h) + ", " + prettyPrint(`t); }
     }
 
+    %match(TermRule term) {
+       termrule(lhs, rhs) -> 
+	 { return prettyPrint(`lhs) + " -> " + prettyPrint(`rhs); }
+     }
+
+    %match(PropRule term) {
+       proprule(lhs, rhs) -> 
+	 { return prettyPrint(`lhs) + " -> " + prettyPrint(`rhs); }
+     }
+
     return term.toString();
   }
 

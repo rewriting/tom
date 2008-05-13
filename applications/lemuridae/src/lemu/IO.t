@@ -1,6 +1,7 @@
 package lemu;
 
 import java.io.*;
+import java.util.*;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import lemu.sequents.types.*;
@@ -136,5 +137,16 @@ public class IO {
     SeqWalker walker = new SeqWalker(nodes);
     return walker.rule1();
   }
+
+  public static int getInt() throws RecognitionException, IOException {
+    InputRes input = getInput();
+    try {
+      String s = new String(input.buf, 0, input.size-1);
+      Scanner i = new Scanner(s);
+      return i.nextInt();
+    } 
+    catch (InputMismatchException e) { throw new RecognitionException(); }
+  }
+
 }
 

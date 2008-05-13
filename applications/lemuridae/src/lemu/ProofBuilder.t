@@ -10,6 +10,7 @@ import lemu.urban.types.*;
 import tom.library.sl.*;
 
 import java.util.WeakHashMap;
+import java.util.Vector;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +61,9 @@ public class ProofBuilder extends Observable {
 
   %typeterm TermMap { implement { Map<Term,Term> } }
 
+  %typeterm Substitution { implement { HashMap<String,Term> } }
+
+
   %typeterm ProofBuilder { implement { ProofBuilder } }
 
 
@@ -68,6 +72,107 @@ public class ProofBuilder extends Observable {
       _ -> { return t; }
     }
   }
+
+  public static class InfoNarrow {
+    private Position pos;
+    private sequentsAbstractType rule;
+    private HashMap<String,Term> tds;
+    private int numRule;
+
+    private static int ruleIndex = 0;
+    
+    public InfoNarrow(Position pos, TermRule rule, 
+		      HashMap<String, Term> tds) {
+      this.pos = pos;
+      this.rule = rule;
+      this.numRule = ruleIndex++;
+      this.tds = tds;
+    }
+    
+    public InfoNarrow(Position pos, PropRule rule, 
+		      HashMap<String, Term> tds) {
+      this.pos = pos;
+      this.rule = rule;
+      this.numRule = ruleIndex++;
+      this.tds = tds;
+    }
+
+    public static void initNumRules() { ruleIndex = 0; }
+
+    public Position getPos() { return pos; }
+    public sequentsAbstractType getRule() { return rule; }
+    public int getNumRule() { return numRule; }
+    public HashMap<String,Term> getTds() { return tds; }
+
+    public boolean equals(Object o) {
+      if (o == this) return true;
+      else if (o instanceof InfoNarrow) {
+	InfoNarrow i = (InfoNarrow) o;
+	return i.getPos().equals(getPos()) &&
+	  i.getRule().equals(getRule());
+      }
+      else return false;
+    }
+  }
+
+  %typeterm InfoNarrowVector { implement { java.util.Vector<InfoNarrow> } }
+    
+  %strategy CollectNarrow(l: InfoNarrowVector, tl:TermRuleList, pl:PropRuleList)
+    extends `Identity() {
+    visit Term {
+      t@!Var[] -> { 
+	%match (TermRuleList tl) {
+	  (_*, tr@termrule[], _*) -> {
+	    TermRule tr = (TermRule) Utils.refresh(`tr, `t.getVars());
+	    HashMap<String,Term> tds = Unification.unify(`t, tr.getlhs());
+	    if (tds != null) {
+	      InfoNarrow in = new InfoNarrow(getEnvironment().getPosition(),
+					     tr, tds);
+	      l.add(in);
+	    };
+	  }
+	}
+      }
+    }
+
+    visit Prop {
+      forall[] -> { throw new VisitFailure("do not collect under quantifier"); }
+
+      exists[] -> { throw new VisitFailure("do not collect under quantifier"); }
+
+      t -> {
+ 	%match (PropRuleList pl) {
+	  (_*, tr@proprule[], _*) -> {
+	    PropRule tr = (PropRule) Utils.refresh(`tr, `t.getFreeVars());
+	    HashMap<String,Term> tds = Unification.unify(`t, tr.getlhs());
+	    if (tds != null) {
+	      InfoNarrow in = new InfoNarrow(getEnvironment().getPosition(),
+					     tr, tds);
+	      l.add(in);
+	    };
+	  }
+	}
+      }
+    }
+  }
+
+  public static Tree applyNarrow(InfoNarrow i, Tree t) throws VisitFailure{
+    sequentsAbstractType rule = i.getRule();
+    %match (TermRule rule) {
+      termrule(_,rhs) -> {
+	t = (Tree) i.getPos().getReplace(`rhs).visit(t);
+	return (Tree) Unification.substitute(i.getTds(), t);
+      }
+    }
+    %match (PropRule rule) {
+      proprule(_,rhs) -> {
+	t = (Tree) i.getPos().getReplace(`rhs).visit(t);
+	return (Tree) Unification.substitute(i.getTds(), t);
+      }
+    }
+    return t;
+  }
+
 
   %strategy ApplyRule(rule: Rule, active: Prop, args: TermMap) extends Fail() {
     visit Tree {
@@ -123,7 +228,7 @@ public class ProofBuilder extends Observable {
         Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
         for (Term fvar : fresh) {
           String bname = fvar.getbase_name();
-          Term new_var = Utils.freshVar(bname, `seq);
+          Term new_var = Utils.freshEigenVar(bname, `seq);
           res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
           // also replacing in the expanded tree
           expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var); 
@@ -203,6 +308,104 @@ b: {
     }
   }
 
+    %strategy NarrowApplyRule(rule: Rule, active: Prop, args: TermMap, tds: Substitution) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        SeqList res = rule.getprem();
+        Tree expanded = rule.gettree();
+
+        // recuperage de la table des symboles
+        if (tds == null)  throw new VisitFailure("active formula and rule conclusion don't match");
+
+        // renommage des variables
+        Set<Map.Entry<String,Term>> entries= tds.entrySet();
+        for (Map.Entry<String,Term> ent: entries) {
+          Term old_term = `Var(ent.getKey());
+          Term new_term = ent.getValue();
+          res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
+          // also replacing in the expanded tree
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
+        }
+
+        // creation des variables fraiches (forall right et exists left)
+        Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
+        for (Term fvar : fresh) {
+          String bname = fvar.getbase_name();
+          Term new_var = Utils.freshEigenVar(bname, `seq);
+          res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
+          // also replacing in the expanded tree
+          expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var); 
+        }
+
+        // remplacement des nouvelles variables (forall left et exists right)
+        Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+        if (new_vars.size() != args.size())
+          throw new VisitFailure("Wrong variables number");
+        Set<Map.Entry<Term,Term>> entries2 = args.entrySet();
+        for (Map.Entry<Term,Term> ent: entries2) {
+          Term old_term = ent.getKey();
+          if (! new_vars.contains(old_term))
+            throw new VisitFailure("Variable " + old_term.getname() +" not present in the rule");
+          Term new_term = ent.getValue();
+          res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
+          // also replacing in the expanded tree
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
+        }
+
+        // ajout des contextes dans les premisses
+b: {
+        %match (rule, seq, Prop active) {
+
+          // si c'est une regle gauche
+          ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+            // also in expanded tree
+            /*
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded); 
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            */
+            Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
+            //Context gamma = `context(u*,v*);
+            try {
+              res = (SeqList) `TopDown(AddInContexts(gamma)).visit(res); 
+              res = (SeqList) `TopDown(PutInConclusion(c)).visit(res); 
+            } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+            break b;
+          }
+
+          // si c'est une regle droite
+          ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
+            // also in expanded tree
+            /*
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).fire(expanded);
+            expanded = (Tree) `TopDown(PutInConclusion(c)).fire(expanded); 
+            */
+            Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
+            //Context delta = `context(u*,v*);
+            try {
+              res = (SeqList) `TopDown(AddInContexts(ctxt)).visit(res);
+              res = (SeqList) `TopDown(PutInConclusion(delta)).visit(res); 
+            } catch(VisitFailure e) { e.printStackTrace(); throw new RuntimeException(); }
+            break b;
+          }
+
+          // probleme
+          _,_,_ -> { throw new VisitFailure("wrong hand side rule application");  }
+        }
+   }
+
+        // creating open leaves
+        Premisses newprems = `premisses();
+        %match(SeqList res) {
+          (_*,x,_*) -> {
+            newprems = `premisses(newprems*,createOpenLeaf(x));    
+          }
+        }
+
+        return `rule(customRuleInfo("{\\sc super}",expanded),newprems,seq,active);
+      }
+    }
+  }
+
   %strategy ApplyFoldR(rulelist: PropRuleList, active: Prop) extends Fail() {
     visit Tree {
      rule[c=seq@sequent(left,(C1*,act,C2*))] -> {
@@ -263,9 +466,8 @@ b: {
 
   %strategy ApplyAxiom() extends Fail() {
     visit Tree {
-      rule[c=seq@sequent((_*,act,_*),(_*,act,_*))] -> {
-        return `rule(axiomInfo(),premisses(),seq,act);
-      }
+	rule[c=seq@sequent((_*,act,_*),(_*,act,_*))] -> 
+	    rule(axiomInfo(),premisses(),seq,act)
     }
   }
 
@@ -433,7 +635,7 @@ b: {
       rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent(d,(X*,act@forall(n,p),Y*)), act -> {
-            Term nvar = Utils.freshVar(`n,`seq);
+            Term nvar = Utils.freshEigenVar(`n,`seq);
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
             return `rule(forallRightInfo(nvar),premisses(t1),seq,act);
@@ -506,7 +708,7 @@ b: {
       rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent((X*,act@exists(n,p),Y*),g), act -> {
-            Term nvar = Utils.freshVar(`n,`seq);
+            Term nvar = Utils.freshEigenVar(`n,`seq);
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
             Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
             return `rule(existsLeftInfo(nvar),premisses(t1),seq,act);
@@ -591,7 +793,7 @@ b: {
 
   /* ----------- auxiliary functions for buildProofTree ---------------*/
 
-  private Tree ruleCommand(Tree tree, Position pos,
+    private Tree ruleCommand(Tree tree, Position pos,
       Prop active, boolean focus_left, int n) throws Exception {
     HashMap<Term,Term> args = new HashMap<Term,Term>();
 
@@ -626,6 +828,49 @@ b: {
 
     else throw new Exception("rule " + n + " doesn't exist.");
   }
+
+    private Tree narrowRuleCommand(Tree tree, Position pos,
+      Prop active, boolean focus_left, int n) throws Exception {
+    HashMap<Term,Term> args = new HashMap<Term,Term>();
+    HashMap<String,Term> tds = null;
+    
+    if (n == -1) { // trying to apply one unique rule
+      for(int i=0; i<newRules.size(); i++) {
+        Rule rule = newRules.get(i); 
+	rule = (Rule) Utils.refresh(rule, active.getFreeVars());
+	Prop conclusion = rule.getconcl();
+        tds = Unification.unify(conclusion, active);
+        if (tds != null && ((focus_left && rule.geths() == 0) || (!focus_left && rule.geths() == 1))) {
+          if (n != -1)  throw new Exception("more than one matching rule, give a number"); // more than one rule
+          else n = i; 
+        }
+      }
+      if (n == -1) throw new Exception("No applicable rule.");
+    }
+
+    if (n < newRules.size()) {
+      // TODO verify hand side
+      Rule rule = newRules.get(n);
+
+      // asking for new vars
+      Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+      for (Term t : new_vars) {
+        String varname = t.getname();
+        writeToOutput("new term for variable " + varname + " in rule " + n + " > ");
+        Term new_var = IO.getTerm();
+        args.put(t, new_var);
+      }
+
+      rule = (Rule) Utils.refresh(rule, active.getFreeVars());
+      Prop conclusion = rule.getconcl();
+      tds = Unification.unify(conclusion, active);
+            
+      tree = (Tree) pos.getOmega(`NarrowApplyRule(rule,active,args,tds)).visit(tree);
+      return (Tree) Unification.substitute(tds, tree);
+    }
+
+    else throw new Exception("rule " + n + " doesn't exist.");
+    }
 
   // FIXME uses positions ... may be easily broken
   private Tree theoremCommand(Tree tree, Position pos, String name) throws Exception {
@@ -936,6 +1181,7 @@ b :{
   private Stack<ProofEnv> buildProofTreeFromStack(Stack<ProofEnv> envStack)  throws ReInitException {
 
 	  ProofEnv env = envStack.pop(); 
+	  ProofEnv orig = env;
 	  Sequent goal = null;
 	    
     // main loop
@@ -1006,16 +1252,22 @@ b :{
         askrulesCommand()-> {
           for(int i=0; i<newRules.size(); i++) {
             Rule rule = newRules.get(i);
+	    rule = (Rule) Utils.refresh(rule, active.getFreeVars());
             Prop conclusion = rule.getconcl();
-            HashMap<String,Term> tds = Unification.match(conclusion, active);
-            int rule_hs = rule.geths();
+            HashMap<String,Term> utds = Unification.unify(conclusion, active);
+            if (utds != null) {
+		HashMap<String,Term> tds = Unification.match(conclusion, active);
+		int rule_hs = rule.geths();
 
-            // same side condition
-            if (tds != null && ((rule_hs==0 && env.focus_left) || (rule_hs==1 && !env.focus_left))) 
-            {
-              writeToOutputln("\n- rule " + i + " :\n");
-              writeToOutputln(PrettyPrinter.prettyRule(rule));
-            }
+		// same side condition
+		if (((rule_hs==0 && env.focus_left) || (rule_hs==1 && !env.focus_left))) 
+		    {
+			writeToOutput("\n- rule " + i);
+			if (tds == null) writeToOutput(" (narrow)");
+			writeToOutputln(" :\n");
+			writeToOutputln(PrettyPrinter.prettyRule(rule));
+		    }
+	    }
           } // for
           writeToOutputln("");
         }
@@ -1024,9 +1276,19 @@ b :{
         /* applying one of the custom rules */
         ruleCommand(n) -> {
           try {
-            tree = ruleCommand(env.tree, currentPos, active, env.focus_left, `n);
+	      tree = ruleCommand(env.tree, currentPos, active, env.focus_left, `n);
           } catch (Exception e) {
             writeToOutputln("Can't apply custom rule "+ `n + ": " + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
+        /* applying one of the custom rules with narrowing*/
+        narrowRuleCommand(n) -> {
+          try {
+	      tree = narrowRuleCommand(env.tree, currentPos, active, env.focus_left, `n);
+          } catch (Exception e) {
+            writeToOutputln("Can't narrow with custom rule "+ `n + ": " + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -1160,6 +1422,52 @@ b :{
           } catch (VisitFailure e) {
             writeToOutputln("Can't apply rule axiom " + e.getMessage());
           }
+        }
+
+        /* reduce with narrowing case */
+        proofCommand("narrowreduce") -> {
+          try {
+	    Vector<InfoNarrow> c = new Vector();
+	    InfoNarrow.initNumRules();
+            Strategy strat = `mu(MuVar("x"), Try(Sequence(CollectNarrow(c, 
+							    newTermRules, 
+							    newPropRules),
+						     All(MuVar("x")))));
+	    strat = `_rule(Identity(), Identity(), strat, Identity()); 
+	    currentPos.getOmega(strat).visit(env.tree);
+
+	    if (c.size() == 0) 
+	      { throw new VisitFailure("no possible choices");};
+	    InfoNarrow i;
+	    if (c.size() == 1) {
+	      i = c.firstElement();
+	    } else {
+	      writeToOutputln("Possible choices:");
+	      HashMap h = new HashMap();
+	      int n = 0;
+	      for (InfoNarrow in: c) {
+		h.put(in.getNumRule(), n);
+		writeToOutputln( in.getNumRule() + ":");
+		writeToOutputln("  " + 
+				PrettyPrinter.prettyPrint((sequentsAbstractType)in.getPos().getSubterm().visit(env.tree)) +
+				" by " + PrettyPrinter.prettyPrint(in.getRule())
+				+"\n");
+		n++;
+	      }
+	      n = -1;
+	      while (!h.containsKey(n)) {
+		writeToOutput("your choice > ");
+		n = IO.getInt();
+	      }
+	      i = (InfoNarrow) c.get(((Integer)h.get(n)).intValue());
+	    }
+	    tree = applyNarrow(i, env.tree);
+          } catch (VisitFailure e) {
+            writeToOutputln("Can't apply narrowing: " + e.getMessage());
+          } catch (Exception e) {
+	    writeToOutputln("Incorrect input: " + e.getMessage());
+	  }
+	  
         }
 
         /* cut case */

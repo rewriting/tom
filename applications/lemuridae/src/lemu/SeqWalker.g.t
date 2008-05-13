@@ -84,9 +84,11 @@ proofcommand returns [lemu.sequents.types.ProofCommand c]
   | ^(FOCUS v=ID) {c = `focusCommand($v.text); }
   | ^(APPLY v=ID) {c = `applyCommand($v.text); }
   | ^(RRULE n=NUMBER) {c = `ruleCommand(Integer.parseInt($n.text)); }
+  | ^(NRULE n=NUMBER) {c = `narrowRuleCommand(Integer.parseInt($n.text)); }
   | FOLD {c = `foldCommand(); }
   | ^(ASSUME name=ID) { c = `assumeCommand($name.text); }
   | RRULEALONE { c = `ruleCommand(-1); }
+  | NRULEALONE { c = `narrowRuleCommand(-1); }
   | ^(CUT p=pred) { c = `cutCommand(p); }
   | ^(THEOREM name=ID) { c = `theoremCommand($name.text); }
   | NORMALIZE { c = `normalizeSequent(); }

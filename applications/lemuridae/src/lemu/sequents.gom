@@ -72,7 +72,7 @@ forall:block() {
 			%match (this,p) {
 				forall(x,p1), forall(y,p2) -> {
 					lemu.sequents.types.Context couple = `context(p1,p2);
-					lemu.sequents.types.Term fvar = lemu.Utils.freshVar(`x,couple);
+					lemu.sequents.types.Term fvar = lemu.Utils.freshEigenVar(`x,couple);
 					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,`Var(x),fvar); 
 					lemu.sequents.types.Prop np2 = lemu.Utils.replaceFreeVars(`p2,`Var(y),fvar);
 					return np1.equals(np2);	
@@ -91,7 +91,7 @@ exists:block() {
 			%match (this,p) {
 				exists(x,p1), exists(y,p2) -> {
 					lemu.sequents.types.Context couple = `context(p1,p2);
-					lemu.sequents.types.Term fvar = lemu.Utils.freshVar(`x,couple);
+					lemu.sequents.types.Term fvar = lemu.Utils.freshEigenVar(`x,couple);
 					lemu.sequents.types.Prop np1 = lemu.Utils.replaceFreeVars(`p1,`Var(x),fvar); 
 					lemu.sequents.types.Prop np2 = lemu.Utils.replaceFreeVars(`p2,`Var(y),fvar);
 					return np1.equals(np2);	
@@ -147,7 +147,7 @@ VarList = varlist(String*)
 // hs == hand-side : 0 left, 1 right
 Rule = ruledesc(hs:int, concl:Prop, prem:SeqList, tree:Tree)
 
-TermRule = termrule(lhs:Term,rh:Term)
+TermRule = termrule(lhs:Term,rhs:Term)
 TermRuleList = termrulelist(TermRule*)
 PropRule = proprule(lhs:Prop,rhs:Prop)
 PropRuleList = proprulelist(PropRule*)
@@ -183,6 +183,7 @@ ProofCommand = proofCommand(text:String)
              | focusCommand(hyp:String)
              | cutCommand(p:Prop)
              | ruleCommand(n:int)
+             | narrowRuleCommand(n:int)
              | foldCommand()
 	     | applyCommand(hyp:String)
              | assumeCommand(m:String)

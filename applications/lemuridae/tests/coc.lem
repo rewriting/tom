@@ -39,6 +39,34 @@ rule in(a,pikt(b,c)) -> in(b,kind()) /\ forall z, (in(z,b) =>
 rule in(a,pikk(b,c)) -> in(b,kind()) /\ forall z, (in(z,b) =>
 	       	  (in(lappl(a,z),subst(c,lcons(z,id()))) /\ in(subst(c,lcons(z,id())),kind()))).
 
+termrule sh(x) -> subst(x,shift()).
+termrule imp(a,b) -> pitt(a, sh(b)).
+proprule natcontext() -> in(nat(),type()) /\ 
+    in(zero(),nat()) /\ 
+    in(s(),imp(nat(),nat())) /\ 
+    in(natind(), pikt(pitk(nat(),type()), imp(lappl(one(),sh(zero())),
+        imp(pitt(sh(nat()), imp(lappl(sh(one()), one()), lappl(sh(one()), 
+	lappl(sh(sh(s())),one())))), pitt(sh(nat()), lappl(sh(one()), one())))))).
+termrule lappl(natind(), q, zero(), fz, fs) -> fz.
+termrule lappl(lappl(lappl(lappl(natind(), q), lappl(s(),n)), fz), fs) ->
+    lappl(lappl(fs, n), lappl(lappl(lappl(lappl(natind(), q), n), fz), fs)).
+
+proof narr: exists p, in(a(),type()) => in(p, imp(a(),a())).
+intro. p.
+autoreduce.
+narrowreduce. 0.
+narrowreduce. 1.
+axiom.
+
+display narr.
+
+
+proof plus: natcontext() => in(lambda(lappl(lappl(lappl(lappl(sh(natind()), 
+      lambda(sh(sh(imp(nat(),nat()))))),
+      lambda(one())),
+      lambda(lambda(lambda(lappl(sh(sh(sh(sh(s())))),lappl(sh(one()),one())))))),
+      one())),
+      imp(nat(), imp(nat(), nat()))).
 
 termrule bottom() -> pikt(type(),one()).
 termrule imp(a,b) -> pitt(a, subst(b,shift())).
@@ -53,6 +81,13 @@ termrule ex(a,b) -> pikt(type(),
 		     subst(b,lcons(one(),rond(shift(),shift())))),
 		one()),
 		one())).
+
+
+proof machin: (in(a,type())/\ in(b,type()) /\ in(c,type())) =>
+in(lambda(lambda(lambda(lambda(lambda(lambda(lappl(lappl(subst(one(),rond(shift(),shift())),one()),lappl(subst(one(),shift()),one())))))))),
+	imp(imp(a,imp(b,c)),imp(imp(a,b),imp(a,c)))).
+
+
 
 /* \E x. \A y. R x y => \A y. \E x. R x y */
 proof essai: (in(a, type())/\ in(b, type()) /\ in(r, pitk(a, pitk(subst(b,shift()),type())))) =>

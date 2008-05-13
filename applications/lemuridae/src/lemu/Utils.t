@@ -4,6 +4,7 @@ import lemu.sequents.*;
 import lemu.sequents.types.*;
 
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Map;
@@ -183,19 +184,72 @@ public class Utils {
   }
 
 
-  public static Term freshVar(String x, sequentsAbstractType term) {
-    Set<String> set = collectVars(term);
-    return freshVar(x,set);
+    %strategy isFreshIn(term: Term) extends `Identity() {
+	visit Term {
+	    t -> {
+		%match (Term term, Term t) {
+		    s, s -> { throw new VisitFailure("is not fresh"); }
+		}
+	    }
+	}
+    }
+
+
+  public static Term freshEigenVar(String x, sequentsAbstractType term) {
+      int i = 0;
+      String var = x;
+      while (true) {
+	  try {
+	      Term res = `funAppl(var,concTerm());
+	      Strategy v = `TopDown(isFreshIn(res));
+	      v.visit(term);
+	      return res;
+	  } catch (VisitFailure e) {
+	      var = x + (i++);
+	  }
+      }
   }
+
 
   public static Term freshVar(String x, Set<String> set) {
     int i = 0;
     while(true) {
       String s = x + i;
       if (!set.contains(s))
-        return `Var(s);
+	  return `Var(s);
       else
         i++;
+    }
+    }
+
+  %typeterm StringSet { implement { Set<String> } }
+
+  %strategy Refresh(tds:StringTermMap, nonfresh: StringSet)
+    extends `Identity() {
+    visit Term {
+      Var(n) -> {
+	if (tds.containsKey(`n)) 
+	  return tds.get(`n);
+	else if (nonfresh.contains(`n)) {
+	  Term t = freshVar(`n, nonfresh);
+	  tds.put(`n, t);
+	  %match (Term t) {
+	    Var(m) -> { nonfresh.add(`m); }
+	  }
+	  return t;
+	}
+      }
+    } 
+  }
+
+  public static sequentsAbstractType refresh(sequentsAbstractType term, 
+					     Set<String> nonfresh) {
+    HashMap<String,Term> tds = new HashMap();
+    Strategy v = `TopDown(Refresh(tds, nonfresh));
+    try {
+      return (sequentsAbstractType) v.visit(term);
+    } catch (Exception e) {
+      return term;
     }
   }
 

@@ -6,8 +6,8 @@ options {
     ASTLabelType=CommonTree; 
 }
 
-tokens { FAPPL; APPL; VARLIST; RRULEALONE; RULEINDUCT; RULECTOR; TYPELIST; 
-         RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; LABELLEDTYPE; }
+tokens { FAPPL; APPL; VARLIST; RRULEALONE; NRULEALONE; RULEINDUCT; RULECTOR; 
+    TYPELIST; RULECTORARITYZERO; VOIDRULEINDUCT; CTORLIST; LABELLEDTYPE; }
 
 @parser::header {
   package lemu;
@@ -90,9 +90,11 @@ command: PROOF^ ID COLUMN! pred DOT!
 proofcommand: FOCUS^ ID DOT!
             | APPLY^ ID DOT!
             | RRULE^ NUMBER DOT!
+            | NRULE^ NUMBER DOT!
             | FOLD^ DOT!
             | ASSUME^ ID DOT!
             | RRULE DOT -> ^(RRULEALONE) 
+            | NRULE DOT -> ^(NRULEALONE) 
             | CUT^ pred DOT!
             | THEOREM^ ID DOT!
             | NORMALIZE^ DOT!
@@ -167,6 +169,7 @@ LT: '<';
 
 PROOF: 'proof';
 RRULE: 'rule';
+NRULE: 'narrow';
 TRULE: 'termrule';
 PRULE: 'proprule';
 FOCUS: 'focus';
