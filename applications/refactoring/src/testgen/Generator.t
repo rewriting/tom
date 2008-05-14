@@ -144,7 +144,21 @@ public class Generator {
     }
     visit Stmt {
       Block(X*,l1@LocalVariableDecl[name=name],Y*,l2@LocalVariableDecl[name=name],Z*) -> Block(X*,l1,Y*,Z*)
-      Block(X*,l1@LocalVariableDecl[name=name],Y*,subblock,Z*) && Block(W1*,l2@LocalVariableDecl[name=name],W2*)<<subblock -> Block(X*,l1,Y*,Block(W1*,W2*),Z*)
+      Block(X*,l1@LocalVariableDecl[name=name],Y*,subblock@Block(_*),Z*) -> {
+        //try to find a local variable with the same name in a subblock 
+        Stmt newsubblock = (Stmt) `TopDown(RemoveAllLocalVarNamed(name)).visit(`subblock);
+        return `Block(X*,l1,Y*,newsubblock,Z*);
+      }
+    }
+  }
+
+  %strategy RemoveAllLocalVarNamed(name:Name) extends Identity() {
+    visit Stmt {
+      Block(X*,l@LocalVariableDecl[name=lname],Y*) -> {
+        if (`lname.equals(name)) {
+          return `Block(X*,Y*);
+        }
+      }
     }
   }
 
