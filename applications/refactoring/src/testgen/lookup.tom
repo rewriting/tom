@@ -1,45 +1,3 @@
-// test if name given in parameter is accessible as a superclassname for the current ClasssDecl
-// we start at the enclosing scope
-// as it is for the super class, we visit only class declarations
-
-%strategy IsAccessibleFromClassDecl(name:Name,res:PositionWrapper) extends Identity() {
-  visit ClassDecl {
-    _ -> {
-      %match (name) {
-        Dot(rightpart*,Name(n)) -> {
-          `IsAccessibleFromClassDeclWithDotContext(rightpart,res).visit(getEnvironment());
-          // call lookupAllTypeMembers at first call
-          `Not(ApplyAtPosition(res,LookupAllTypeMembers(res,FindName(res,n)))).visit(getEnvironment());
-        }
-        Name(n) -> {
-          `Not(ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n)))).visit(getEnvironment());
-        }
-        Dot(Name(n)) -> {
-          `Not(ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n)))).visit(getEnvironment());
-        }
-      }
-    }
-  }
-}
-
-%strategy IsAccessibleFromClassDeclWithDotContext(name:Name,res:PositionWrapper) extends Identity() {
-  visit ClassDecl {
-    _ -> {
-      %match (name) {
-        Dot(rightpart*,Name(n)) -> {
-          `IsAccessibleFromClassDeclWithDotContext(rightpart,res).visit(getEnvironment());
-          `Not(ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
-        }
-        Dot(Name(n)) -> {
-          `Not(ApplyAtEnclosingScope(Sequence(
-                LookupAllDecls(res,FindName(res,n)),
-                LookupAllPackageNodes(res,FindName(res,n))))).visit(getEnvironment());
-        }
-      }
-    }
-  }
-}
-
 %op Strategy LookupClassDecl(res:PositionWrapper) {
   make(res) {
     `IfThenElse(LookupByFail(res),Fail(),ApplyAtPosition(res,IfThenElse(Is_ClassDecl(),Identity(),Fail())))
@@ -75,20 +33,6 @@
   }
 }
 
-/**
-  %op Strategy LookupAll(res:PositionWrapper,name:String) {
-  make(res,name) { `IfThenElse(
-  onTheRightOfDot(),
-  Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-  Sequence(
-  LookupAllDecls(res,FindName(res,name)),
-  LookupAllPackageNodes(res,FindName(res,name)))) 
-  }
-  }
- */
-
-
-//TODO: fix this strategy
 %op Strategy LookupAll(res:PositionWrapper,name:String) {
   make(res,name) { `IfThenElse(
       isSimpleName(),
@@ -236,8 +180,55 @@
 }
 
 
-static PositionWrapper root = new PositionWrapper(new Position());
+static final PositionWrapper root = new PositionWrapper(new Position());
 
 %op Strategy LookupAllPackageNodes(pos:PositionWrapper,s:Strategy) {
   make(pos,s) { `ApplyAtPosition(root,_Prog(Sequence(Debug("lookup Package Node"),s))) }
 }
+
+// test if name given in parameter is accessible as a superclassname for the current ClasssDecl
+// we start at the enclosing scope
+// as it is for the super class, we visit only class declarations
+
+%strategy IsAccessibleFromClassDecl(name:Name,res:PositionWrapper) extends Identity() {
+  visit ClassDecl {
+    _ -> {
+      %match (name) {
+        Dot(Name(n)) -> {
+          `Not(ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n)))).visit(getEnvironment());
+          // to avoid applying the second rule
+          return (ClassDecl) getEnvironment().getSubject();
+        }
+        Dot(rightpart*,Name(n)) -> {
+          `IsAccessibleFromClassDeclWithDotContext(rightpart,res).visit(getEnvironment());
+          `Not(ApplyAtPosition(res,LookupAllTypeMembers(res,FindName(res,n)))).visit(getEnvironment());
+        }
+        Name(n) -> {
+          `Not(ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n)))).visit(getEnvironment());
+        }
+      }
+    }
+  }
+}
+
+%strategy IsAccessibleFromClassDeclWithDotContext(name:Name,res:PositionWrapper) extends Identity() {
+  visit ClassDecl {
+    _ -> {
+      %match (name) {
+        Dot(Name(n)) -> {
+          `Not(ApplyAtEnclosingScope(Sequence(
+                  LookupAllDecls(res,FindName(res,n)),
+                  LookupAllPackageNodes(res,FindName(res,n))))).visit(getEnvironment());
+          // to avoid applying the second rule
+          return (ClassDecl) getEnvironment().getSubject();
+        }
+        Dot(rightpart*,Name(n)) -> {
+          `IsAccessibleFromClassDeclWithDotContext(rightpart,res).visit(getEnvironment());
+          `Not(ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
+        }
+      }
+    }
+  }
+}
+
+

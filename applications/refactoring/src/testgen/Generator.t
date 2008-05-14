@@ -253,11 +253,11 @@ public class Generator {
                 System.out.println("begin of try to access "+superclassname+" from "+t);
                 //check if the superclassname can be found with lookup and then that the found declaration is a top-level class (not an inner class that hides this top-level class)
                 /**
-                `Sequence(
-                    ApplyAt(wrapper_t,Sequence(
-                        RenameSuperClass(superclassname),
-                        _ClassDecl(Identity(),LookupClassDecl(res),Identity()))),
-                    ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
+                  `Sequence(
+                  ApplyAt(wrapper_t,Sequence(
+                  RenameSuperClass(superclassname),
+                  _ClassDecl(Identity(),LookupClassDecl(res),Identity()))),
+                  ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
                  */
                 `Sequence(ApplyAt(wrapper_t,IsAccessibleFromClassDecl(superclassname,res)),ApplyAtPosition(res,Up(Is_ConsConcClassDecl()))).visit(p);
                 // the strategy IsAccessibleFromClassDecl does not seem to work correctly for the moment
@@ -452,12 +452,12 @@ public class Generator {
 
         //collect all the local variables defined before the current variable in the current class
         //then collect the accessible fields from the enclosing class
-        //TODO collect variables out the current block
+        //TODO collect also local variables out the current block
         Strategy main = `Sequence(Debug("collect accessible fields: begin main"),
-            Up(Mu(MuVar("bodydecl")),
-              Up(IfThenElse(Is_ConsBlock(),
-                  Sequence(_ConsBlock(IfThenElse(Is_LocalVariableDecl(),CollectFieldOrVariable(currenttype,currenttypedecl,accessibleFieldsOrVariables),Identity()),Identity()),MuVar("bodydecl")),
-                  Identity()))),
+            Sequence(Debug("start to collect local vars in the current block"),Up(Mu(MuVar("bodydecl")),
+                Up(IfThenElse(Is_ConsBlock(),
+                    Sequence(_ConsBlock(IfThenElse(Is_LocalVariableDecl(),Sequence(Debug("test with this local variable"),CollectFieldOrVariable(currenttype,currenttypedecl,accessibleFieldsOrVariables)),Identity()),Identity()),MuVar("bodydecl")),
+                    Identity()))),Debug("end to collect local vars in the current block")),
             ApplyAtEnclosingClass(
               Mu(MuVar("begin"),Sequence(Debug("collect accessible fields: begin special case for enclosing classes"),_ClassDecl(
                     Identity(),
@@ -610,6 +610,7 @@ public class Generator {
 
               } catch (VisitFailure e) {
                 //try to find an other super class
+                getEnvironment().setSubject(`c.setsuper(`Undefined()));
                 accessibleNames.remove(superclassname);
               }
             }
@@ -750,7 +751,7 @@ public class Generator {
           if(! `vartype.equals(`Dot(Name("Object")))) {
             //verify that the type declaration is the same
             PositionWrapper res = new PositionWrapper(new Position());
-            `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
+            `_LocalVariableDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
             if(res.value.equals(typedecl.value)) {
               accessibleFieldsOrVariables.add(`name);
             }
