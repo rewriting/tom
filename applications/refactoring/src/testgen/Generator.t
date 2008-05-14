@@ -144,7 +144,7 @@ public class Generator {
     }
     visit Stmt {
       Block(X*,l1@LocalVariableDecl[name=name],Y*,l2@LocalVariableDecl[name=name],Z*) -> Block(X*,l1,Y*,Z*)
-      Block(X*,l1@LocalVariableDecl[name=name],Y*,subblock@Block(_*),Z*) -> {
+      Block(X*,l1@LocalVariableDecl[name=name],Y*,subblock,Z*) && Block(_,_*) << subblock -> {
         //try to find a local variable with the same name in a subblock 
         Stmt newsubblock = (Stmt) `TopDown(RemoveAllLocalVarNamed(name)).visit(`subblock);
         return `Block(X*,l1,Y*,newsubblock,Z*);
