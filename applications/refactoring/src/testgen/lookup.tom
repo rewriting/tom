@@ -7,35 +7,38 @@
     _ -> {
       %match (name) {
         Dot(rightpart*,Name(n)) -> {
-          `IsAccessibleFromClassDecl(rightpart,res).visit(getEnvironment());
+          `IsAccessibleFromClassDeclWithDotContext(rightpart,res).visit(getEnvironment());
           // call lookupAllTypeMembers at first call
-          try {
-            `ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n))).visit(getEnvironment());
-            `ApplyAtEnclosingScope(Sequence(
-                  ApplyAtEnclosingScope(LookupAllDecls(res,FindName(res,n))),
-                  LookupAllPackageNodes(res,FindName(res,n)))).visit(getEnvironment());
-            throw new VisitFailure();
-          } catch (VisitFailure e) {}
+          `Not(ApplyAtPosition(res,LookupAllTypeMembers(res,FindName(res,n)))).visit(getEnvironment());
         }
         Name(n) -> {
-          try {
-            `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
-            throw new VisitFailure();
-          } catch (VisitFailure e) {}
-
+          `Not(ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n)))).visit(getEnvironment());
         }
         Dot(Name(n)) -> {
-          try {
-            `ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n))).visit(getEnvironment());
-            throw new VisitFailure();
-          } catch (VisitFailure e) {}
-
+          `Not(ApplyAtEnclosingScope(LookupAllTypeDecls(res,FindName(res,n)))).visit(getEnvironment());
         }
       }
     }
   }
 }
 
+%strategy IsAccessibleFromClassDeclWithDotContext(name:Name,res:PositionWrapper) extends Identity() {
+  visit ClassDecl {
+    _ -> {
+      %match (name) {
+        Dot(rightpart*,Name(n)) -> {
+          `IsAccessibleFromClassDeclWithDotContext(rightpart,res).visit(getEnvironment());
+          `Not(ApplyAtPosition(res,LookupAllMembers(res,FindName(res,n)))).visit(getEnvironment());
+        }
+        Dot(Name(n)) -> {
+          `Not(ApplyAtEnclosingScope(Sequence(
+                LookupAllDecls(res,FindName(res,n)),
+                LookupAllPackageNodes(res,FindName(res,n))))).visit(getEnvironment());
+        }
+      }
+    }
+  }
+}
 
 %op Strategy LookupClassDecl(res:PositionWrapper) {
   make(res) {
@@ -73,17 +76,19 @@
 }
 
 /**
-%op Strategy LookupAll(res:PositionWrapper,name:String) {
+  %op Strategy LookupAll(res:PositionWrapper,name:String) {
   make(res,name) { `IfThenElse(
-      onTheRightOfDot(),
-      Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
-      Sequence(
-        LookupAllDecls(res,FindName(res,name)),
-        LookupAllPackageNodes(res,FindName(res,name)))) 
+  onTheRightOfDot(),
+  Choice(Up(Up(_ConsDot(TypeLookupByFail(res),Identity()))),ApplyAtPosition(res,LookupAllMembers(res,FindName(res,name)))),
+  Sequence(
+  LookupAllDecls(res,FindName(res,name)),
+  LookupAllPackageNodes(res,FindName(res,name)))) 
   }
-}
-*/
+  }
+ */
 
+
+//TODO: fix this strategy
 %op Strategy LookupAll(res:PositionWrapper,name:String) {
   make(res,name) { `IfThenElse(
       isSimpleName(),
@@ -102,7 +107,7 @@
 
 /* return true if inside a composed name of type Name(_) or Dot(Name(_)) */
 %op Strategy isSimpleName() {
-  make() { `Choice(Sequence(Up(_ConsDot(Is_Name(),Is_EmptyDot())),Up(Up(Not(Is_ConsDot())))),Is_Name()) }
+  make() { `Choice(Sequence(Up(_ConsDot(Is_Name(),Is_EmptyDot())),Up(Up(Not(Is_ConsDot())))),Sequence(Is_Name(),Not(Up(Is_ConsDot())))) }
 }
 
 %op Strategy IsMostLeftName() {
