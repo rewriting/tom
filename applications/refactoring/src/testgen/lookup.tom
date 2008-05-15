@@ -61,10 +61,7 @@
 %strategy FindName(res:PositionWrapper, n:String) extends Identity() {
   visit ClassDecl {
     ClassDecl[name=Name[name=name]] -> {
-      System.out.println("try to compare the name "+n);
-      System.out.println("with "+`name);
       if (`name.equals(n)) {
-        System.out.println("must fail");
         res.value = getPosition();
         throw new VisitFailure();
       }

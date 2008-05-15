@@ -34,6 +34,7 @@ import tom.library.sl.*;
 
 public class Debug extends BasicStrategy {
   public final static int ARG = 0;
+  public static boolean isActivated = false;
   private String label;
 
   public Debug(String s) {
@@ -54,8 +55,10 @@ public class Debug extends BasicStrategy {
    *  Sets the environment flag to Environment.FAILURE in case of failure
    */
   public int visit(Introspector m) {
-    System.out.println(label);
-    System.out.println(environment.getSubject());
+    if (isActivated) {
+      System.out.println(label);
+      System.out.println(environment.getSubject());
+    }
     return Environment.SUCCESS;
   }
 
