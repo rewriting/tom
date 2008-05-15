@@ -6,7 +6,6 @@ BodyDecl class_body_declaration =
         IDENTIFIER,
         new Opt(),
         new List(),
-        new List(),
         t
       )
     );
@@ -67,7 +66,7 @@ Expr expression =
   ;
 
 Stmt statement =
-  MATCH LPAREN expression RPAREN LBRACE rule_list RBRACE {: return new MatchStmt(expression, rule_list); :}
+  MATCH LPAREN simple_name.t? expression RPAREN LBRACE rule_list RBRACE {: return new MatchStmt(t, expression, rule_list); :}
   ;
 
 List rule_list =

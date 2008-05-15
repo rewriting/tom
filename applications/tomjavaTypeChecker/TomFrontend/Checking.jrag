@@ -1,5 +1,6 @@
 aspect Checking {
   eq TomTypeAlias.getConcreteTypeAccess().nameType() = NameType.TYPE_NAME;
+  eq MatchStmt.getTypeAccess().nameType() = NameType.TYPE_NAME;
 
   public boolean TomTypeAlias.hasSuperclass() {
     return true;
@@ -80,9 +81,9 @@ aspect Checking {
     return MethodSignature.MethodAccess.decls();
   }
 
-  refine LookupVariable eq MethodAccess.getArg(int i).lookupVariable(String name) {
-    if(decl() instanceof MethodMapping) {
-      TypeDecl type = i < decl().getNumParameter() ? decl().getParameter(i).type() : unknownType();
+  refine LookupVariable eq MethodAccess.getArg().lookupVariable(String name) {
+    if(inMatchStmt() && decl() instanceof MethodMapping) {
+      TypeDecl type = childIndex < decl().getNumParameter() ? decl().getParameter(childIndex).type() : unknownType();
       return lookupImplicitVariable(name, type);
     }
     return LookupVariable.MethodAccess.getArg().lookupVariable(name);
@@ -94,48 +95,84 @@ aspect Checking {
     return SimpleSet.emptySet;
   }
 
-  eq  Rule.getExpr().lookupImplicitVariable(String name, TypeDecl type) {
-    // create implicit variable named #name
-    SimpleSet newSet = SimpleSet.emptySet;
-    String typename = type.getID();
-    FieldDeclaration f =  new FieldDeclaration(new Modifiers(new List()), new TypeAccess(typename),"#"+name);
-    newSet.add(f);
-    return newSet;
+  syn nta VariableDeclaration Rule.buildVariableDeclaration(String name, TypeDecl type) {
+    return new VariableDeclaration(new Modifiers(new List()), new TypeAccess(type.name()), "#" + name, new Opt(new NullLiteral()));
   }
 
-/**
+  inh boolean MethodAccess.inMatchStmt();
+  eq Rule.getExpr().inMatchStmt() = true;
+  eq Program.getChild().inMatchStmt() = false;
+
+  eq  Rule.getExpr().lookupImplicitVariable(String name, TypeDecl type) =
+    SimpleSet.emptySet.add(buildVariableDeclaration(name, type));
+
+  syn lazy HashSet Rule.implicitVariables() {
+    HashSet set = new HashSet();
+    getExpr().collectImplicitVariables(set);
+    return set;
+  }
+  public void ASTNode.collectImplicitVariables(HashSet set) {
+    for(int i = 0; i < getNumChild(); i++)
+      getChild(i).collectImplicitVariables(set);
+  }
+  public void VarAccess.collectImplicitVariables(HashSet set) {
+    if(decl() instanceof VariableDeclaration && decl().name().startsWith("#"))
+      set.add(decl());
+    super.collectImplicitVariables(set);
+  }
+
   eq Rule.getStmt().lookupVariable(String name) {
     // if implicit variable named name exists
     // then return implicit
     // otherwise delegate to enclosing context
-    if (Rule.getExpr().lookupVariable(name)) {
+    for(Iterator iter = implicitVariables().iterator(); iter.hasNext(); ) {
+      VariableDeclaration d = (VariableDeclaration)iter.next();
+      if(d.name().equals(name))
+        return SimpleSet.emptySet.add(d);
+    }
+    return lookupVariable(name);
+  }
 
+  eq Rule.getChild().isDAbefore(Variable v) = 
+    v.name().startsWith("#") || isDAbefore(v);
+  inh boolean Rule.isDAbefore(Variable v);
 
-    }  
-}
+  eq BackQuoteExpr.getExpr().lookupVariable(String name) {
+    SimpleSet set = lookupVariable("#" + name);
+    if(!set.isEmpty())
+      return set;
+    return lookupVariable(name);
+  }
+  inh SimpleSet Rule.lookupVariable(String name);
 
-  eq Rule.getExpr().lookupVariable(String name) {
-    // type = 
-    //   if there is another rule with a node constructor
-    //     that is the type of v
-    //   else 
-    //     explicit type for the subject required
-    // lookupImplicitVVariable(name, type);
-    // create a variable named name
-    // if there is a single variable v
-    //   if there is another rule with a node constructor
-    //     that is the type of v
-    //   else 
-    //     explicit type for the subject required
-    // else
-    //   type of the constructor argument
-    // 
- }
+  eq MatchStmt.getTypeAccess().lookupType(String name) =
+    lookupType("#" + name);
 
-*/
+  syn TypeDecl MatchStmt.inferredExprType() {
+    if(hasTypeAccess())
+      return getTypeAccess().type();
+    for(int i = 0; i < getNumRule(); i++) {
+      Rule r = getRule(i);
+      if(r.getExpr() instanceof MethodAccess)
+        return r.getExpr().type();
+    }
+    return unknownType();
+  }
+  inh TypeDecl MatchStmt.unknownType();
 
+  public void MatchStmt.typeCheck() {
+    super.typeCheck();
+    if(inferredExprType().isUnknown()) {
+      error("type of subject must be explicitly specified");
+    }
+    else if(!getExpr().type().subtype(inferredExprType()))
+      error("expected type for the subject is " + inferredExprType().typeName());
+  }
 
-eq BackQuoteExpr.type() = getExpr().type();
+  inh TypeDecl Rule.expectedType();
+  eq MatchStmt.getRule().expectedType() = inferredExprType();
+
+  eq BackQuoteExpr.type() = getExpr().type();
 
   inh boolean BackQuoteExpr.nestedInQuote();
   eq BackQuoteExpr.getExpr().nestedInQuote() = true;
@@ -183,6 +220,8 @@ eq BackQuoteExpr.type() = getExpr().type();
     Expr e = getExpr().nonTomConstruct();
     if(e != null)
       e.error("only tom constructs allowed in pattern");
+    if(getExpr() instanceof MethodAccess && getExpr().type() != expectedType())
+      error("node constructor of type " + expectedType().typeName() + " required");
   }
 
   syn Expr ASTNode.nonTomConstruct() {
@@ -206,6 +245,39 @@ eq BackQuoteExpr.type() = getExpr().type();
     else
       return this;
   }
+  eq VarAccess.nonTomConstruct() = null;
 
+  syn lazy List TomTypeAlias.getBodyDeclList() {
+    List list = new List();
+    if(!superclass().isObject()) {
+      ConstructorDecl c = (ConstructorDecl)superclass().constructors().iterator().next();
+
+      ConstructorDecl constructor = new ConstructorDecl();
+      constructor.setModifiers(new Modifiers(new List()));
+      constructor.setID("<init>");
+      List parameterList = new List();
+      for(int i = 0; i < c.getNumParameter(); i++) {
+        parameterList.add(
+          new ParameterDeclaration(
+            c.getParameter(i).type().createQualifiedAccess(),
+            c.getParameter(i).name()
+          )
+        );
+      }
+      constructor.setParameterList(parameterList);
+      
+      List argList = new List();
+      for(int i = 0; i < c.getNumParameter(); i++)
+        argList.add(new VarAccess(c.getParameter(i).name()));
+      constructor.setConstructorInvocation(
+        new ExprStmt(
+          new SuperConstructorAccess("super", argList)
+        )
+      );
+      constructor.setBlock(new Block());
+      list.add(constructor);
+    }
+    return list;
+  }
 
 }
