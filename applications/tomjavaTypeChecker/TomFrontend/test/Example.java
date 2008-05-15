@@ -18,11 +18,14 @@ public class Example {
 
   public static void main(String[] args) {
     System.out.println("Hello");
-    JavaType2 c = new C();
+    JavaType2 c = `C();
     JavaType a = `A(c);
-    JavaType b = `B();
+    JavaType x = `B();
     %match(a) {
-      A(C()) -> { }
+      A(x) -> {
+         JavaType tmp1 = x;
+         JavaType2 tmp2 = `x;
+      }
     }
   }
 
