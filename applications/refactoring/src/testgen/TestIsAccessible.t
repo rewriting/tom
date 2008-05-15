@@ -60,7 +60,7 @@ public class TestIsAccessible extends TestCase {
     Position pos_B = new Position(new int[]{2, 2, 1});
     Position pos_C = new Position(new int[]{1, 2, 1, 3, 1, 1});
     Position pos_D = new Position(new int[]{1, 2, 1, 3, 2, 1, 1});
-    
+
     try {
       PositionWrapper pos = new PositionWrapper(new Position());
       pos_A.getOmega(`IsAccessibleFromClassDecl(Dot(Name("b"),Name("B")),pos)).visit(p);
@@ -96,6 +96,35 @@ public class TestIsAccessible extends TestCase {
       pos_A.getOmega(`IsAccessibleFromClassDecl(Dot(Name("b"),Name("B")),pos)).visit(p);
       fail();
     } catch ( VisitFailure e) {}
+  }
+
+  public void test3() {
+    Prog p = `Prog(
+        PackageNode(Name("s"),ConcClassDecl(
+            ClassDecl(Name("z"),Dot(Name("Object")),ConcBodyDecl()),
+            ClassDecl(Name("q"),Dot(Name("Object")),ConcBodyDecl(
+                FieldDecl(Undefined(),Name("j"),Undefined()),
+                FieldDecl(Undefined(),Name("o"),Undefined()),
+                MemberClassDecl( ClassDecl(Name("p"),Undefined(),ConcBodyDecl())),
+                Initializer(LocalVariableDecl(Undefined(),Name("f"),Undefined())))),
+            ClassDecl(Name("f"),Dot(Name("j"),Name("v")),ConcBodyDecl()))),
+        PackageNode(Name("j"),ConcClassDecl(
+            ClassDecl(Name("d"),Dot(Name("j"),Name("v")),ConcBodyDecl()),
+            ClassDecl(Name("v"),Dot(Name("s"),Name("z")),ConcBodyDecl(
+                MemberClassDecl(ClassDecl(Name("a"),Dot(Name("r")),ConcBodyDecl(
+                      Initializer(SuperCall(Dot(Name("v"),Name("this")))),
+                      MemberClassDecl(ClassDecl(Name("o"),Undefined(),ConcBodyDecl(
+                            MemberClassDecl(ClassDecl(Name("l"),Undefined(),ConcBodyDecl(Initializer(Block())))))))))),
+                MemberClassDecl(ClassDecl(Name("r"),Dot(Name("v")),ConcBodyDecl(
+                      FieldDecl(Undefined(),Name("e"),Undefined())))),
+                Initializer(Block(Block(LocalVariableDecl(Undefined(),Name("v"),Undefined())))))))));
+    Position pos_v = new Position(new int[]{2, 1, 2, 2, 1});
+    try {
+      PositionWrapper pos = new PositionWrapper(new Position());
+      pos_v.getOmega(`IsAccessibleFromClassDecl(Dot(Name("s"),Name("z")),pos)).visit(p);
+    } catch ( VisitFailure e) {
+      fail();
+    }
   }
 
 }
