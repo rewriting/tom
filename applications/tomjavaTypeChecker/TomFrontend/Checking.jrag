@@ -80,24 +80,39 @@ aspect Checking {
     return MethodSignature.MethodAccess.decls();
   }
 
-/*
-  refine LookupVariable eq MethodAccess.getArg(int index).lookupVariable(String name) {
+  refine LookupVariable eq MethodAccess.getArg(int i).lookupVariable(String name) {
     if(decl() instanceof MethodMapping) {
-      TypeDecl type = index < decl().getNumParameter() ? decl().getParameter(index).type() : unknownType();
+      TypeDecl type = i < decl().getNumParameter() ? decl().getParameter(i).type() : unknownType();
       return lookupImplicitVariable(name, type);
     }
     return LookupVariable.MethodAccess.getArg().lookupVariable(name);
   }
 
   inh SimpleSet MethodAccess.lookupImplicitVariable(String name, TypeDecl type);
+
+  eq Program.getChild().lookupImplicitVariable(String name, TypeDecl type) {
+    return SimpleSet.emptySet;
+  }
+
   eq  Rule.getExpr().lookupImplicitVariable(String name, TypeDecl type) {
     // create implicit variable named #name
+    SimpleSet newSet = SimpleSet.emptySet;
+    String typename = type.getID();
+    FieldDeclaration f =  new FieldDeclaration(new Modifiers(new List()), new TypeAccess(typename),"#"+name);
+    newSet.add(f);
+    return newSet;
   }
+
+/**
   eq Rule.getStmt().lookupVariable(String name) {
     // if implicit variable named name exists
     // then return implicit
     // otherwise delegate to enclosing context
-  }
+    if (Rule.getExpr().lookupVariable(name)) {
+
+
+    }  
+}
 
   eq Rule.getExpr().lookupVariable(String name) {
     // type = 
@@ -107,19 +122,20 @@ aspect Checking {
     //     explicit type for the subject required
     // lookupImplicitVVariable(name, type);
     // create a variable named name
-  }
-  // if there is a single variable v
-  //   if there is another rule with a node constructor
-  //     that is the type of v
-  //   else 
-  //     explicit type for the subject required
-  // else
-  //   type of the constructor argument
-  // 
+    // if there is a single variable v
+    //   if there is another rule with a node constructor
+    //     that is the type of v
+    //   else 
+    //     explicit type for the subject required
+    // else
+    //   type of the constructor argument
+    // 
+ }
 
 */
 
-  eq BackQuoteExpr.type() = getExpr().type();
+
+eq BackQuoteExpr.type() = getExpr().type();
 
   inh boolean BackQuoteExpr.nestedInQuote();
   eq BackQuoteExpr.getExpr().nestedInQuote() = true;
