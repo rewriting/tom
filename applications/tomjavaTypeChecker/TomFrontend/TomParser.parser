@@ -1,0 +1,81 @@
+BodyDecl class_body_declaration =
+  TYPEMAPPING IDENTIFIER LBRACE IMPLEMENTS LBRACE type.t RBRACE RBRACE {:
+    return new MemberClassDecl(
+      new TomTypeAlias(
+        new Modifiers(new List()),
+        IDENTIFIER,
+        new Opt(),
+        new List(),
+        new List(),
+        t
+      )
+    );
+  :}
+  ;
+  
+BodyDecl class_body_declaration =
+  OPMAPPING IDENTIFIER.returnType IDENTIFIER.opName LPAREN tom_typed_parameter_list.l? RPAREN LBRACE 
+    method_mapping.m
+  RBRACE {:
+    m.setTomTypedParameterList((List)l.fullCopy());
+    m.setTypeAccess(new TypeAccess("#" + returnType));
+    m.setID(m.getID() + "#" + opName);
+    return m;
+  :}
+  ;
+
+List tom_typed_parameter_list =
+  tom_typed_parameter {: return new List().add(tom_typed_parameter); :}
+  | tom_typed_parameter_list COMMA tom_typed_parameter {: return tom_typed_parameter_list.add(tom_typed_parameter); :}
+  ;
+
+ParameterDeclaration tom_typed_parameter =
+  IDENTIFIER.name COLON IDENTIFIER.type {: return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("#" + type), name); :}
+  ;
+
+MethodMapping method_mapping =
+  IDENTIFIER.make LPAREN tom_parameter_list.l? RPAREN LBRACE expression RBRACE {: 
+    return new MethodMapping(
+      new Modifiers(new List().add(new Modifier("static"))),
+      new TypeAccess("java.lang", "Object"),
+      make,
+      l,
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      ),
+      new List()
+    );
+  :}
+  ;
+
+List tom_parameter_list =
+  tom_parameter {: return new List().add(tom_parameter); :}
+  | tom_parameter_list COMMA tom_parameter {: return tom_parameter_list.add(tom_parameter); :}
+  ;
+
+ParameterDeclaration tom_parameter =
+  IDENTIFIER.name {: return new TomParameter(new Modifiers(new List()), new TypeAccess("java.lang", "Object"), name); :}
+  ;
+
+Expr expression =
+  BACKQUOTE expression {: return new BackQuoteExpr(expression); :}
+  ;
+
+Stmt statement =
+  MATCH LPAREN expression RPAREN LBRACE rule_list RBRACE {: return new MatchStmt(expression, rule_list); :}
+  ;
+
+List rule_list =
+    rule {: return new List().add(rule); :}
+  | rule_list rule {: return rule_list.add(rule); :}
+  ;
+
+Rule rule =
+  expression ARROW block {: return new Rule(expression, block); :}
+  ;
+

@@ -1,0 +1,12 @@
+BodyDecl class_body_declaration =
+    error SEMICOLON {: return new InstanceInitializer(new Block()); :}
+  | error LBRACE {: return new InstanceInitializer(new Block()); :}
+  ;
+
+Block block =
+    error RBRACE {: return new Block(new List()); :}
+  ;
+
+Stmt statement =
+    error SEMICOLON {: return new EmptyStmt(); :}
+  ;

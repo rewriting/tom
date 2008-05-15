@@ -1,0 +1,195 @@
+aspect Checking {
+  eq TomTypeAlias.getConcreteTypeAccess().nameType() = NameType.TYPE_NAME;
+
+  public boolean TomTypeAlias.hasSuperclass() {
+    return true;
+  }
+
+  public ClassDecl TomTypeAlias.superclass() {
+    return (ClassDecl)(getConcreteTypeAccess().type().isClassDecl() ? 
+    getConcreteTypeAccess().type() : typeObject());
+  }
+
+  public Iterator TomTypeAlias.interfacesIterator() {
+   return new Iterator() {
+      boolean visit = false;
+      public boolean hasNext() {
+        return !visit && getConcreteTypeAccess().type().isInterfaceDecl();
+      }
+      public Object next() {
+        visit = true;
+        return getConcreteTypeAccess().type();
+      }
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  eq TomTypeAlias.instanceOf(TypeDecl type) = getConcreteTypeAccess().type().instanceOf(type);
+  eq TomTypeAlias.supertypeClassDecl(ClassDecl type) =
+    getConcreteTypeAccess().type().supertypeClassDecl(type);
+  eq TomTypeAlias.supertypeInterfaceDecl(InterfaceDecl type) =
+    getConcreteTypeAccess().type().supertypeInterfaceDecl(type);
+
+  eq TomTypeAlias.isAbstract() = getConcreteTypeAccess().type().isAbstract() ||
+    getConcreteTypeAccess().type().isInterfaceDecl();
+  eq TomTypeAlias.isPrivate() = true;
+  eq TomTypeAlias.isStatic() = true;
+
+  eq TomTypeAlias.name() = "#" + super.name(); 
+
+  eq BackQuoteExpr.getExpr().lookupMethod(String name) {
+    Collection c = lookupMethod("make#" + name);
+    if(c.isEmpty())
+      c = lookupMethod(name);
+    return c;
+  }
+  
+  refine MethodSignature eq MethodAccess.potentiallyApplicable(MethodDecl m) {
+    if(!m.accessibleFrom(hostType()))
+      return false;
+    if(m.isVariableArity() && !(arity() >= m.arity()-1))
+      return false;
+    if(!m.isVariableArity() && !(m.arity() == arity()))
+      return false;
+    if(m instanceof GenericMethodDecl) {
+      GenericMethodDecl gm = (GenericMethodDecl)m;
+      ArrayList list = typeArguments(m);
+      if(list.size() != 0) {
+        if(gm.getNumTypeParameter() != list.size())
+          return false;
+        for(int i = 0; i < gm.getNumTypeParameter(); i++)
+          if(!((TypeDecl)list.get(i)).subtype(gm.original().getTypeParameter(i)))
+            return false;
+      }
+    }
+    return true;
+  }
+  refine MethodSignature eq MethodAccess.decls() {
+    SimpleSet potentiallyApplicable = SimpleSet.emptySet;
+    // select potentially applicable methods
+    for(Iterator iter = lookupMethod(name()).iterator(); iter.hasNext(); ) {
+      MethodDecl decl = (MethodDecl)iter.next();
+      if(decl instanceof MethodMapping) {
+        potentiallyApplicable = potentiallyApplicable.add(decl);
+      }
+    }
+    if(!potentiallyApplicable.isEmpty())
+      return potentiallyApplicable;
+    return MethodSignature.MethodAccess.decls();
+  }
+
+/*
+  refine LookupVariable eq MethodAccess.getArg(int index).lookupVariable(String name) {
+    if(decl() instanceof MethodMapping) {
+      TypeDecl type = index < decl().getNumParameter() ? decl().getParameter(index).type() : unknownType();
+      return lookupImplicitVariable(name, type);
+    }
+    return LookupVariable.MethodAccess.getArg().lookupVariable(name);
+  }
+
+  inh SimpleSet MethodAccess.lookupImplicitVariable(String name, TypeDecl type);
+  eq  Rule.getExpr().lookupImplicitVariable(String name, TypeDecl type) {
+    // create implicit variable named #name
+  }
+  eq Rule.getStmt().lookupVariable(String name) {
+    // if implicit variable named name exists
+    // then return implicit
+    // otherwise delegate to enclosing context
+  }
+
+  eq Rule.getExpr().lookupVariable(String name) {
+    // type = 
+    //   if there is another rule with a node constructor
+    //     that is the type of v
+    //   else 
+    //     explicit type for the subject required
+    // lookupImplicitVVariable(name, type);
+    // create a variable named name
+  }
+  // if there is a single variable v
+  //   if there is another rule with a node constructor
+  //     that is the type of v
+  //   else 
+  //     explicit type for the subject required
+  // else
+  //   type of the constructor argument
+  // 
+
+*/
+
+  eq BackQuoteExpr.type() = getExpr().type();
+
+  inh boolean BackQuoteExpr.nestedInQuote();
+  eq BackQuoteExpr.getExpr().nestedInQuote() = true;
+  eq Program.getChild().nestedInQuote() = false;
+
+  public void BackQuoteExpr.nameCheck() {
+    super.nameCheck();
+    if(nestedInQuote())
+      error("nested quotes not allowed");
+  }
+   
+  inh TypeDecl TomParameter.type();
+  eq MethodMapping.getParameter(int index).type() {
+    if(index < getNumTomTypedParameter())
+      return getTomTypedParameter(index).type();
+    return unknownType();
+  }
+  inh TypeDecl MethodMapping.unknownType();
+
+  eq Program.getChild().type() = null;
+
+  eq MethodMapping.getTomTypedParameter(int index).lookupVariable(String name) {
+    for(int i = 0; i < getNumTomTypedParameter(); i++)
+      if(getTomTypedParameter(i).name().equals(name))
+        return SimpleSet.emptySet.add(getTomTypedParameter(i));
+    return SimpleSet.emptySet;
+  }
+
+  public void MethodMapping.nameCheck() {
+    super.nameCheck();
+    if(getNumTomTypedParameter() != getNumParameter())
+      error("requires " + getNumTomTypedParameter() + " parameters");
+  }
+
+  eq Rule.getExpr().lookupMethod(String name) {
+    Collection c = lookupMethod("make#" + name);
+    if(c.isEmpty())
+      c = lookupMethod(name);
+    return c;
+  }
+  inh Collection Rule.lookupMethod(String name);
+
+  public void Rule.typeCheck() {
+    super.typeCheck();
+    Expr e = getExpr().nonTomConstruct();
+    if(e != null)
+      e.error("only tom constructs allowed in pattern");
+  }
+
+  syn Expr ASTNode.nonTomConstruct() {
+    Expr e = null;
+    for(int i = 0; i < getNumChild(); i++) {
+      e = getChild(i).nonTomConstruct();
+      if(e != null) return e;
+    }
+    return e;
+  }
+  eq Expr.nonTomConstruct() = this;
+  eq MethodAccess.nonTomConstruct() {
+    if(decl() instanceof MethodMapping) {
+      Expr e = null;
+      for(int i = 0; i < getNumChild(); i++) {
+        e = getChild(i).nonTomConstruct();
+        if(e != null) return e;
+      }
+      return e;
+    }
+    else
+      return this;
+  }
+
+
+}
