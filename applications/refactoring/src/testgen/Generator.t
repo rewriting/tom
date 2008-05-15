@@ -606,7 +606,11 @@ public class Generator {
                   NameWrapper enclosingclass = new NameWrapper();
                   //adapt the constructor in case of member classes
                   `IfThenElse(ApplyAtPosition(current,Up(Is_MemberClassDecl())),
-                      Sequence(Mu(MuVar("x"),ApplyAtEnclosingClass(IfThenElse(HasMember(currentname),GetName(enclosingclass),MuVar("x")))),
+                      Sequence(
+                        Mu(MuVar("x"), ApplyAtEnclosingClass(
+                            IfThenElse(HasMember(currentname),
+                              GetName(enclosingclass),
+                              MuVar("x")))),
                         AdaptConstructor(enclosingclass)),
                       Identity()).visit(getEnvironment());
                   inheritancePath.add(current.value);
@@ -616,25 +620,25 @@ public class Generator {
                   getEnvironment().setSubject(`c.setsuper(`Undefined()));
                   accessibleNames.remove(superclassname);
 
-}
-} catch (VisitFailure e) {
-  //try to find an other super class
-  getEnvironment().setSubject(`c.setsuper(`Undefined()));
-  accessibleNames.remove(superclassname);
-}
-}
-}
-}
-}
-c@ClassDecl[super=!Undefined()] -> {
-  inheritancePath.clear();
-  if (! undefinedtypes.isEmpty()) {
-    current.value = (Position) undefinedtypes.iterator().next();
-   inheritancePath.add(current.value);
+                }
+              } catch (VisitFailure e) {
+                //try to find an other super class
+                getEnvironment().setSubject(`c.setsuper(`Undefined()));
+                accessibleNames.remove(superclassname);
+              }
+            }
+          }
+        }
+      }
+      c@ClassDecl[super=!Undefined()] -> {
+        inheritancePath.clear();
+        if (! undefinedtypes.isEmpty()) {
+          current.value = (Position) undefinedtypes.iterator().next();
+          inheritancePath.add(current.value);
+        }
+      }
+    }
   }
-}
-}
-}
 
 
   %strategy HasMember(name:NameWrapper) extends Fail() {
@@ -668,132 +672,137 @@ c@ClassDecl[super=!Undefined()] -> {
     }
   }
 
-%strategy CollectAllAccessibleNames(current:PositionWrapper, accessibleNames:Set, inheritancePath:Set) extends Identity() {
-  visit Prog {
-    p -> {
-      Set<Type> alltopleveltypes = collectTopLevelTypes(`p); 
-      for (Type toplevel: alltopleveltypes) {
-        accessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
-      }
-      Strategy superclass_case = `Mu(MuVar("begin"),_ClassDecl(
-            Identity(),
-            ApplyAtSuperClass(MuVar("begin")),
-            _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity()))));
+  %strategy CollectAllAccessibleNames(current:PositionWrapper, accessibleNames:Set, inheritancePath:Set) extends Identity() {
+    visit Prog {
+      p -> {
+        Set<Type> alltopleveltypes = collectTopLevelTypes(`p); 
+        for (Type toplevel: alltopleveltypes) {
+          accessibleNames.add(`Dot(Name(toplevel.getpackagename()),Name(toplevel.getname())));
+        }
+        Strategy superclass_case = `Mu(MuVar("begin"),_ClassDecl(
+              Identity(),
+              ApplyAtSuperClass(MuVar("begin")),
+              _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity()))));
 
-      Strategy main = `ApplyAtPosition(current,ApplyAtEnclosingClass(
-            Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
-                  Identity(),
-                  ApplyAtSuperClass(superclass_case),
-                  _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
-                  ),IfThenElse(Up(Is_MemberClassDecl()),
-                    ApplyAtEnclosingClass(MuVar("begin")),
-                    Identity())))));
-      main.visit(getEnvironment());
-      //remove full qualified names p.c where p is the name of the current class
-      NameWrapper currentname = new NameWrapper();
-      `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
-      Set hiddenNames = new HashSet();
-      for(Name name: (Set<Name>) accessibleNames) {
-        if (isHiddenBy(name,currentname.value))  {
-          hiddenNames.add(name);
-        }      
+        Strategy main = `ApplyAtPosition(current,ApplyAtEnclosingClass(
+              Mu(MuVar("begin"),Sequence(Collect(accessibleNames),_ClassDecl(
+                    Identity(),
+                    ApplyAtSuperClass(superclass_case),
+                    _ConcBodyDecl( IfThenElse(Is_MemberClassDecl(), _MemberClassDecl(Collect(accessibleNames)), Identity())) 
+                    ),IfThenElse(Up(Is_MemberClassDecl()),
+                      ApplyAtEnclosingClass(MuVar("begin")),
+                      Identity())))));
+        main.visit(getEnvironment());
+        //remove full qualified names p.c where p is the name of the current class
+        NameWrapper currentname = new NameWrapper();
+        `ApplyAtPosition(current,GetName(currentname)).visit(getEnvironment());
+        Set hiddenNames = new HashSet();
+        for(Name name: (Set<Name>) accessibleNames) {
+          if (isHiddenBy(name,currentname.value))  {
+            hiddenNames.add(name);
+          }      
+        }
+        accessibleNames.removeAll(hiddenNames);
       }
-      accessibleNames.removeAll(hiddenNames);
     }
   }
-}
 
-public static boolean isHiddenBy(Name hiddenname, Name name) {
-  %match (hiddenname) {
-    Dot(packagename,_) -> {
-      //TODO no more generating dot(name) but just name
-      %match(name) {
-        Dot(classname) -> {
-          if (`packagename.equals(`classname)) {
-            return true;
+  public static boolean isHiddenBy(Name hiddenname, Name name) {
+    %match (hiddenname) {
+      Dot(packagename,_) -> {
+        //TODO no more generating dot(name) but just name
+        %match(name) {
+          Dot(classname) -> {
+            if (`packagename.equals(`classname)) {
+              return true;
+            }
+          }
+          Dot(_,classname) -> {
+            if (`packagename.equals(`classname)) {
+              return true;
+            }
           }
         }
-        Dot(_,classname) -> {
-          if (`packagename.equals(`classname)) {
-            return true;
-          }
-        }
+      }
+    }
+    return false;
+  }
+
+
+  %strategy Collect(allAccessibleNames:Set) extends Identity() {
+    visit ClassDecl {
+      ClassDecl[name=name] -> {
+        allAccessibleNames.add(`Dot(name));
       }
     }
   }
-  return false;
-}
 
-
-%strategy Collect(allAccessibleNames:Set) extends Identity() {
-  visit ClassDecl {
-    ClassDecl[name=name] -> {
-      allAccessibleNames.add(`Dot(name));
-    }
-  }
-}
-
-%strategy CollectFieldOrVariable(typename:NameWrapper,typedecl:PositionWrapper,accessibleFieldsOrVariables:Set) extends Identity() {
-  visit BodyDecl {
-    FieldDecl[FieldType=fieldtype,name=name] -> {
-      if (`fieldtype.equals(typename.value)) {
-        //verify that the type declaration is the same
-        PositionWrapper res = new PositionWrapper(new Position());
-        if(! `fieldtype.equals(`Dot(Name("Object")))) {
-          `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
-          if(res.value.equals(typedecl.value)) {
-            accessibleFieldsOrVariables.add(`name);
-          }
-        } else {
-          accessibleFieldsOrVariables.add(`name);
-        }
-      }
-    }
-  }
-  visit Stmt {
-    LocalVariableDecl[VarType=vartype,name=name] -> {
-      if (`vartype.equals(typename.value)) {
-        if(! `vartype.equals(`Dot(Name("Object")))) {
+  %strategy CollectFieldOrVariable(typename:NameWrapper,typedecl:PositionWrapper,accessibleFieldsOrVariables:Set) extends Identity() {
+    visit BodyDecl {
+      FieldDecl[FieldType=fieldtype,name=name] -> {
+        if (`fieldtype.equals(typename.value)) {
           //verify that the type declaration is the same
           PositionWrapper res = new PositionWrapper(new Position());
-          `_LocalVariableDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
-          if(res.value.equals(typedecl.value)) {
+          if(! `fieldtype.equals(`Dot(Name("Object")))) {
+            `_FieldDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
+            if(res.value.equals(typedecl.value)) {
+              accessibleFieldsOrVariables.add(`name);
+            }
+          } else {
             accessibleFieldsOrVariables.add(`name);
           }
-        } else {
-          accessibleFieldsOrVariables.add(`name);
+        }
+      }
+    }
+    visit Stmt {
+      LocalVariableDecl[VarType=vartype,name=name] -> {
+        if (`vartype.equals(typename.value)) {
+          if(! `vartype.equals(`Dot(Name("Object")))) {
+            //verify that the type declaration is the same
+            PositionWrapper res = new PositionWrapper(new Position());
+            `_LocalVariableDecl(LookupClassDecl(res),Identity(),Identity()).visit(getEnvironment());
+            if(res.value.equals(typedecl.value)) {
+              accessibleFieldsOrVariables.add(`name);
+            }
+          } else {
+            accessibleFieldsOrVariables.add(`name);
+          }
         }
       }
     }
   }
-}
 
 
-%strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
-  visit Name {
-    n -> {
-      PositionWrapper res = new PositionWrapper(new Position());
-      System.out.println("try to find the super-class "+`n);
-      `IfThenElse(LookupClassDecl(res),Sequence(Debug("start to apply at the super class"),ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),Debug("end to apply at the super class")),Identity()).visit(getEnvironment());
+  %strategy ApplyAtSuperClass(s:Strategy) extends Identity() {
+    visit Name {
+      n -> {
+        PositionWrapper res = new PositionWrapper(new Position());
+        System.out.println("try to find the super-class "+`n);
+        `IfThenElse(LookupClassDecl(res),
+            Sequence(
+              Debug("start to apply at the super class"),
+              ApplyAtPosition(res,Sequence(Debug("at pos res"),s)),
+              Debug("end to apply at the super class")),
+            Identity()).visit(getEnvironment());
+      }
     }
   }
-}
 
-%strategy RenameSuperClass(name:Name) extends Identity() {
-  visit ClassDecl {
-    decl -> {
-      return `decl.setsuper(name);
+  %strategy RenameSuperClass(name:Name) extends Identity() {
+    visit ClassDecl {
+      decl -> {
+        return `decl.setsuper(name);
+      }
     }
   }
-}
 
-public static void main(String[] args) {
-  Generator generator = new Generator();
-  try {
-    generator.generateClasses();
-  } catch (java.io.IOException e) {
-    e.printStackTrace();
+  public static void main(String[] args) {
+    Generator generator = new Generator();
+    try {
+      generator.generateClasses();
+    } catch (java.io.IOException e) {
+      e.printStackTrace();
+    }
   }
-}
 
 } 
