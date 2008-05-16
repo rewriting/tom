@@ -1,5 +1,5 @@
 BodyDecl class_body_declaration =
-  TYPEMAPPING IDENTIFIER LBRACE IMPLEMENT LBRACE type.t RBRACE mapping_issort.m RBRACE {:
+  TYPEMAPPING IDENTIFIER LBRACE mapping_implement.t mapping_issort.m RBRACE {:
     return new MemberClassDecl(
       new TomTypeAlias(
         new Modifiers(new List()),
@@ -10,6 +10,12 @@ BodyDecl class_body_declaration =
         new List().add(m)
       )
     );
+  :}
+;
+
+Access mapping_implement =
+IMPLEMENT LBRACE type.t RBRACE {:
+  return t;
   :}
 ;
 
@@ -34,12 +40,12 @@ BodyDecl mapping_issort =
  
 BodyDecl class_body_declaration =
   OPMAPPING IDENTIFIER.returnType IDENTIFIER.opName LPAREN tom_typed_parameter_list.l? RPAREN LBRACE 
-    method_mapping.m
+    mapping_make.make mapping_isfsym.isfsym (mapping_get_slot)*
   RBRACE {:
-    m.setTomTypedParameterList((List)l.fullCopy());
-    m.setTypeAccess(new TypeAccess("#" + returnType));
-    m.setID(m.getID() + "#" + opName);
-    return m;
+    make.setTomTypedParameterList((List)l.fullCopy());
+    make.setTypeAccess(new TypeAccess("#" + returnType));
+    make.setID(make.getID() + "#" + opName);
+    return make;
   :}
   ;
 
@@ -52,12 +58,32 @@ ParameterDeclaration tom_typed_parameter =
   IDENTIFIER.name COLON IDENTIFIER.type {: return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("#" + type), name); :}
   ;
 
-MethodMapping method_mapping =
-  IDENTIFIER.make LPAREN tom_parameter_list.l? RPAREN LBRACE expression RBRACE {: 
+MethodMapping mapping_isfsym =
+  ISFSYM LPAREN IDENTIFIER.name RPAREN LBRACE expression RBRACE {: 
+    return new MethodMapping(
+      new Modifiers(new List()),
+      new TypeAccess("boolean"),
+      "is_fsym",
+      new List().add(new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("java.lang","Object"), name)),
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      ),
+      new List()
+   );
+:}
+;
+    
+MethodMapping mapping_make =
+  MAKE LPAREN tom_parameter_list.l? RPAREN LBRACE expression RBRACE {: 
     return new MethodMapping(
       new Modifiers(new List().add(new Modifier("static"))),
       new TypeAccess("java.lang", "Object"),
-      make,
+      MAKE,
       l,
       new List(),
       new Opt(
@@ -71,6 +97,28 @@ MethodMapping method_mapping =
     );
   :}
   ;
+
+  
+  MethodMapping mapping_get_slot =
+  GETSLOT LPAREN IDENTIFIER.slotname COMMA IDENTIFIER.subjectname RPAREN LBRACE expression RBRACE {: 
+    return new MethodMapping(
+      new Modifiers(new List().add(new Modifier("static"))),
+      new TypeAccess("java.lang", "Object"),
+      GETSLOT+"_"+slotname,
+      new List().add(new TomParameter(new Modifiers(new List()), new TypeAccess("java.lang", "Object"), subjectname)),
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      ),
+      new List()
+    );
+  :}
+  ;
+
 
 List tom_parameter_list =
   tom_parameter {: return new List().add(tom_parameter); :}
