@@ -1,11 +1,23 @@
 package test;
 
 public class Example {
+
   static abstract class JavaType {}
+  
   static abstract class JavaType2 {}
 
   static class A extends JavaType {
-    A(JavaType2 e) {}
+    
+    JavaType2 name;
+
+    A(JavaType2 name) {
+    this.name = name;
+    }
+
+    JavaType2 getName() {
+      return name;
+    }
+  
   }
 
   static class B extends JavaType {
@@ -29,21 +41,30 @@ public class Example {
     }
   }
 
-  %typeterm TomType { implements { JavaType } }
-  %typeterm TomType2 { implements { JavaType2 } }
+  %typeterm TomType { 
+    implement { JavaType }
+    is_sort(t) { (t instanceof JavaType) }
+  }
+
+  %typeterm TomType2 { 
+    implement { JavaType2 } 
+    is_sort(t) { (t instanceof JavaType) }
+  }
 
   %op TomType A(name : TomType2) {
     make(x) { new A(x) }
+    is_fsym(t) { t instanceof A }
+    get_slot(name,t) { t.getName() }
   }
 
   %op TomType B() {
     make() { new B() }
+    is_fsym(t) { t instanceof B }
   }
 
   %op TomType2 C() {
     make() { new C() }
+    is_fsym(t) { t instanceof C }
   }
-
-  
 
 }
