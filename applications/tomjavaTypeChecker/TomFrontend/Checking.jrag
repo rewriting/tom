@@ -277,6 +277,9 @@ aspect Checking {
       constructor.setBlock(new Block());
       list.add(constructor);
     }
+    for (int i=0 ; i < getNumTomTypeAliasBody(); i++) {
+      list.add(getTomTypeAliasBody(i));
+    }
     return list;
   }
 

@@ -1,4 +1,4 @@
-TomTypeAlias : ClassDecl ::= ConcreteTypeAccess:Access /BodyDecl*/;
+TomTypeAlias : ClassDecl ::= ConcreteTypeAccess:Access TomTypeAliasBody:BodyDecl* /BodyDecl*/;
 BackQuoteExpr : Expr ::= Expr;
 
 MethodMapping : MethodDecl ::= TomTypedParameter:ParameterDeclaration*;

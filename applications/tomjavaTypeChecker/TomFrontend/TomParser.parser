@@ -1,17 +1,37 @@
 BodyDecl class_body_declaration =
-  TYPEMAPPING IDENTIFIER LBRACE IMPLEMENTS LBRACE type.t RBRACE RBRACE {:
+  TYPEMAPPING IDENTIFIER LBRACE IMPLEMENT LBRACE type.t RBRACE mapping_issort.m RBRACE {:
     return new MemberClassDecl(
       new TomTypeAlias(
         new Modifiers(new List()),
         IDENTIFIER,
         new Opt(),
         new List(),
-        t
+        t,
+        new List().add(m)
       )
     );
   :}
-  ;
-  
+;
+
+BodyDecl mapping_issort =
+  ISSORT LPAREN IDENTIFIER.name RPAREN LBRACE expression RBRACE {:
+    return new MethodDecl(
+      new Modifiers(new List()),
+      new TypeAccess("boolean"),
+      "is_sort",
+      new List().add(new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("java.lang","Object"), name)),
+      new List(),
+      new Opt(
+        new Block(
+          new List().add(
+            new ReturnStmt(new Opt(expression))
+          )
+        )
+      )
+   );
+:}
+;
+ 
 BodyDecl class_body_declaration =
   OPMAPPING IDENTIFIER.returnType IDENTIFIER.opName LPAREN tom_typed_parameter_list.l? RPAREN LBRACE 
     method_mapping.m
