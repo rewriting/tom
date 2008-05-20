@@ -1,0 +1,15 @@
+import jrag.AST.ASTExpression;
+
+aspect Circular {
+	ASTExpression AttrDecl.bottomValue;
+	
+	syn boolean AttrDecl.isCircular() = hasBottomValue();
+	
+	syn boolean AttrDecl.hasBottomValue() = bottomValue != null;
+	
+	syn ASTExpression AttrDecl.getBottomValue() = bottomValue;
+	
+	public void AttrDecl.setBottomValue(ASTExpression v) {
+		bottomValue = v;
+	}
+}

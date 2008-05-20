@@ -1,0 +1,61 @@
+Grammar ::= TypeDecl*;
+
+abstract TypeDecl ::= IdDecl ClassBodyDecl* SynDecl* SynEq* InhDecl* InhEq* Components*
+  <FileName> <StartLine:int> <EndLine:int> <Comment:String>;
+
+ClassDecl : TypeDecl ::= ;
+InterfaceDecl : TypeDecl ::= ;
+
+ASTDecl : TypeDecl ::= [Abstract] IdDecl [SuperClass:IdUse] Components*
+  SynDecl* SynEq* InhDecl* InhEq* ClassBodyDecl* Rewrite* CollDecl* CollEq*
+  <FileName> <StartLine:int> <EndLine:int> <Comment:String>;
+
+Abstract ;
+
+abstract AttrDecl ::= Parameter* <Name> <Type> <Lazy:boolean> <FileName> <StartLine:int> <EndLine:int> <Final:boolean> <NTA:boolean> <Comment:String>;
+SynDecl : AttrDecl;
+
+InhDecl : AttrDecl;
+
+CollDecl : AttrDecl;
+
+Parameter ::= <Type:String> <Name:String>;
+
+abstract AttrEq ::= Parameter* <Name> <FileName> <StartLine:int> <EndLine:int> <Comment:String>;
+SynEq : AttrEq ::= Parameter* <Name> <FileName> <StartLine:int> <EndLine:int> <Comment:String>; // RightHandSide?
+InhEq : AttrEq ::= Parameter* <Name> <FileName> <StartLine:int> <EndLine:int> <Comment:String> <SonName> [Index:Parameter]; // RightHandSide?
+CollEq : AttrEq ::= Parameter* <Name> <FileName> <StartLine:int> <EndLine:int> <Comment:String> Contribution* <TargetName:String> <TargetAttributeName:String> <RefSet:boolean> <Reference:String>;
+Contribution ::= <Value:String> <Condition:String>;
+
+ClassBodyDecl ::= <Name> <FileName> <StartLine:int> <EndLine:int>;
+
+Rewrite ::= <FileName> <StartLine:int> <EndLine:int>;
+RewriteList : Rewrite;
+
+abstract Components;
+
+ListComponents : Components ::= Id;
+
+ListComponentsNTA : ListComponents;
+
+OptionalComponent : Components ::= Id;
+
+OptionalComponentNTA : OptionalComponent;
+
+TokenComponent : Components ::= TokenId;
+
+TokenComponentNTA : TokenComponent;
+
+AggregateComponents : Components ::= Id;
+
+AggregateComponentsNTA : AggregateComponents;
+
+Id ::= [NameNode] IdUse;
+
+NameNode ::= <ID:String>;
+
+IdUse ::= <ID:String>;
+
+IdDecl ::= <ID:String>;
+
+TokenId ::= <ID:String> <TYPE:String>;

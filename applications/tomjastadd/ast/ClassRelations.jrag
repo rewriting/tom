@@ -1,0 +1,121 @@
+import ast.AST.*;
+import java.util.*;
+
+aspect Superclass {
+  rewrite ASTDecl {
+    when(!hasSuperClass() && !name().equals("ASTNode"))
+    to ASTDecl {
+      setSuperClass(new IdUse("ASTNode"));
+      return this;
+    }
+  }
+ 
+  syn boolean ASTDecl.testCircular(String name) {
+    if(!hasSuperClass())
+      return false;
+    if(getSuperClassName().equals(name))
+      return true;
+    ASTDecl superClass = (ASTDecl)env().lookup(getSuperClassName());
+    return superClass != null ? superClass.testCircular(name) : false;
+  }
+  syn boolean ASTDecl.isCircular() = testCircular(name());
+ 
+  syn lazy ASTDecl ASTDecl.superClass() = hasSuperClass() && !isCircular() ?
+    (ASTDecl)env().lookup(getSuperClassName()) : null;
+  
+  
+  syn lazy String ASTDecl.getSuperClassName() = hasSuperClass() ?
+    getSuperClass().name() : null;
+
+
+  eq ASTDecl.getSuperClass().env() = env();
+}
+
+aspect InstanceOf {
+  syn boolean TypeDecl.instanceOf(TypeDecl c) = c == this;
+
+  eq ASTDecl.instanceOf(TypeDecl c) {
+    if(c == this) {
+      return true;
+    }
+    TypeDecl superClass = superClass();
+    return superClass != null ? superClass.instanceOf(c) : false;
+  }
+}
+
+aspect Subclasses {
+  syn lazy HashMap Grammar.subclassMap() {
+    HashMap map = new HashMap();
+    for(int j = 0; j < getNumTypeDecl(); j++) {
+      if(getTypeDecl(j) instanceof ASTDecl) {
+        ASTDecl decl = (ASTDecl)getTypeDecl(j);
+        map.put(decl, new ArrayList());
+      }
+    }
+    for(int j = 0; j < getNumTypeDecl(); j++) {
+      if(getTypeDecl(j) instanceof ASTDecl) {
+        ASTDecl decl = (ASTDecl)getTypeDecl(j);
+        if(decl.superClass() != null) {
+          ((ArrayList)map.get(decl.superClass())).add(decl);
+        }
+      }
+    }
+    return map;
+  }
+  
+  inh lazy Collection TypeDecl.findSubclasses(ASTDecl target);
+  syn lazy Collection ASTDecl.subclasses() = findSubclasses(this);
+
+  eq Grammar.getTypeDecl().findSubclasses(ASTDecl target) {
+    return (Collection)subclassMap().get(target);
+    /*
+    ArrayList list = new ArrayList();
+    for(int j = 0; j < getNumTypeDecl(); j++) {
+      if(getTypeDecl(j) instanceof ASTDecl) {
+        ASTDecl decl = (ASTDecl)getTypeDecl(j);
+        if(target.equals(decl.superClass())) {
+          list.add(decl);
+        }
+      }
+    }
+    return list;*/
+  }
+}
+
+aspect Fathers {
+  syn lazy HashMap Grammar.fatherMap() {
+    HashMap map = new HashMap();
+    for(int j = 0; j < getNumTypeDecl(); j++) {
+      if(getTypeDecl(j) instanceof ASTDecl) {
+        ASTDecl decl = (ASTDecl)getTypeDecl(j);
+        map.put(decl, new HashSet());
+      }
+    }
+        
+    for(int j = 0; j < getNumTypeDecl(); j++) {
+      if(getTypeDecl(j) instanceof ASTDecl) {
+        ASTDecl decl = (ASTDecl)getTypeDecl(j);
+        for(Iterator iter = decl.getComponents(); iter.hasNext(); ) {
+          Components c = (Components)iter.next();
+          TypeDecl t = lookup(c.type());
+          if(t != null) {
+            ((HashSet)map.get(t)).add(decl);
+          }
+        }
+      }
+    }
+    return map;
+  }
+  
+  eq Grammar.getTypeDecl().findFathers(ASTDecl node) {
+    HashSet set = new HashSet();
+    set.addAll((HashSet)fatherMap().get(node));
+    if(node.superClass() != null)
+      set.addAll(node.superClass().fathers());
+    return set;
+  }
+  
+  inh Collection TypeDecl.findFathers(ASTDecl node);
+  syn lazy Collection ASTDecl.fathers() = findFathers(this);
+
+}

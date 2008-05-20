@@ -1,0 +1,254 @@
+package jrag;
+
+import ast.AST.*;
+
+import java.util.*;
+
+import jrag.*;
+
+aspect ErrorCollector {
+  syn String Grammar.errors() {
+    return collectErrors();
+  }
+
+  syn String Grammar.collectErrors() {
+    StringBuffer result = new StringBuffer();
+    //result.append(collectAstErrors());
+    for(int i = 0; i < getNumTypeDecl(); i++) {
+      result.append(getTypeDecl(i).collectErrors());
+    }
+    return result.toString();
+  }
+  
+  syn String TypeDecl.collectErrors() {
+    StringBuffer result = new StringBuffer();
+    return result.toString();
+  }
+
+  syn String ASTDecl.collectErrors() {
+    StringBuffer result = new StringBuffer();
+    
+    for(int i = 0; i < getNumSynDecl(); i++) {
+      AttrDecl decl = getSynDecl(i);
+      result.append(decl.error());
+    }
+    
+    for(int i = 0; i < getNumSynEq(); i++) {
+      AttrEq equ = getSynEq(i);
+      result.append(equ.error());
+    }
+    
+    
+    for(int i = 0; i < getNumInhDecl(); i++) {
+      AttrDecl decl = getInhDecl(i);
+      result.append(decl.error());
+    }
+    
+    
+    for(int i = 0; i < getNumInhEq(); i++) {
+      AttrEq equ = getInhEq(i);
+      result.append(equ.error());
+    }
+    
+    for(int i = 0; i < getNumCollDecl(); i++) {
+    	  CollDecl decl  = getCollDecl(i);
+    	  result.append(decl.error());
+    	}
+    	
+    	for(int i = 0; i < getNumCollEq(); i++) {
+    	  CollEq equ = getCollEq(i);
+    	  result.append(equ.error());
+    	}
+    	
+
+    checkInhEquations(result);
+    
+    return result.toString();
+  }
+}
+
+aspect Errorcheck {
+
+  syn String AttrEq.error();
+  syn String AttrDecl.error();
+
+  syn String SynEq.error() {
+    StringBuffer result = new StringBuffer();
+    if(hostClass().lookupSynDecl(signature()) == null) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append("Synthesized attribute " + name() + 
+          " assigned in class " + hostClass().name() + " is not declared\n");
+    }
+    else {
+      SynEq equation = hostClass().lookupSynEq(signature());
+      if(equation != null && equation != this) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("Multiple equations for synthesized attribute " + name() +
+          " in class " + hostClass().name());
+        result.append(" and " + equation.name() + " in class " + equation.hostClass().name() +
+           " in " + equation.getFileName() + ":" + equation.getStartLine()
+          + "\n");
+      }
+      SynDecl decl = hostClass().lookupSynDecl(signature());
+      if(!decl.parametersDecl().equals(parametersDecl())) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("Equation must have the same parameter names as attribute declaration in ");
+        result.append(decl.getFileName() + ":" + decl.getStartLine() + "\n");
+      }
+    }
+    return result.toString();
+  }
+
+  public void ASTDecl.checkInhEquations(StringBuffer result) {
+    for(Iterator idIter = inhAttrSet(); idIter.hasNext(); ) {
+      String attrId = (String)idIter.next();
+      for(Iterator iter = inhAttrEqs(attrId); iter.hasNext(); ) {
+        InhEq equ = (InhEq)iter.next();
+        InhDecl decl = (InhDecl)equ.decl();
+        if(decl != null && !decl.parametersDecl().equals(equ.parametersDecl())) {
+          result.append(equ.getFileName() + ":" + equ.getStartLine() + " ");
+          result.append("Equation must have the same parameter names as attribute declaration in ");
+          result.append(decl.getFileName() + ":" + decl.getStartLine() + "\n");
+        }
+      }
+    }
+  }
+
+  syn String SynDecl.error() {
+    StringBuffer result = new StringBuffer();
+    SynDecl decl = hostClass().lookupSynDecl(signature());
+    if(decl != null && decl != this) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append("Multiple declaration of attribute " + name() +
+          " in class " + hostClass().name());
+      result.append(" and " + decl.name() + " in class " + decl.hostClass().name() +
+           " in " + decl.getFileName() + ":" + decl.getStartLine()
+      + "\n");
+    }
+    else {
+      StringBuffer r = new StringBuffer();
+      hostClass().checkSynEqs(signature(), r);
+      if(r.length() != 0) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("Syn eq for " + name() + " missing in the following classes:");
+	result.append(r.toString());
+	result.append("\n");
+      }
+    }
+    String[] types = type().split("<");
+    if(getNTA() && !(hostClass().env().lookup(types[0]) instanceof ASTDecl)) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append("Return type for NTA must be an AST node");
+    }
+    return result.toString();
+  }
+
+  public boolean TypeDecl.checkSynEqs(String signature, StringBuffer result) {
+    if(lookupSynEq(signature) != null) {
+      return true;
+    }
+    return false;
+  }
+  public boolean ASTDecl.checkSynEqs(String signature, StringBuffer result) {
+    if(lookupSynEq(signature) != null) {
+      return true;
+    }
+    boolean success = false;
+    if(hasAbstract() && !subclasses().isEmpty()) {
+      boolean found = true;
+      for(Iterator iter = subclasses().iterator(); iter.hasNext(); ) {
+        ASTDecl decl = (ASTDecl)iter.next();
+        if(!decl.checkSynEqs(signature, result)) {
+          found = false;
+	}
+      }
+      success = found;
+    }
+    if(!success && !hasAbstract()) {
+      result.append(" " + name());
+      return false;
+    }
+    return success;
+  }
+
+  syn String InhEq.error() {
+    StringBuffer result = new StringBuffer();
+    if(getComponents() == null && getSonName().startsWith("get") && !getSonName().equals("getChild")) {
+      result.append(getFileName() + ":" + getStartLine() + " ");
+      result.append("Inherited equation for unknown son " + sonName() 
+          + " in class " + hostClass().name() + "\n");
+      for(Iterator iter = hostClass().getComponents(); iter.hasNext(); ) {
+        Components c = (Components)iter.next();
+        result.append(c.type() + " " + c.name() + "\n");
+      }
+    }
+    else if(getComponents() == null && !getSonName().equals("getChild")) {
+      AttrDecl decl = getSonAttrDecl();
+      if(decl == null) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("Inherited equation for unknown NTA " + sonName()
+             + " in class " + hostClass().name() + "\n");
+      }
+      else if(!decl.getNTA()) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("Inherited equation for attribute " + sonName() + " which is not a NTA");
+      }
+    }
+    else {
+      InhEq equation = hostClass().lookupInhEq(signature(), sonName());
+      if(equation != null && equation != this) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+          result.append("Multiple equation for inherited attribute " +
+              sonName() + "." + name() + " in class " + hostClass().name());
+          result.append(" and " + equation.name() + " in class " + equation.hostClass().name() +
+             " in " + equation.getFileName() + ":" + equation.getStartLine()
+          + "\n");
+      }
+      //else if(!((ASTDecl)hostClass().env().lookup(getComponents().type())).hasInhDeclFor(signature(), new HashSet())) {
+        /*
+      else if(!((ASTDecl)hostClass().env().lookup(getComponents().type())).hasInhDeclFor(signature())) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("Missing declaration for equation " + getComponents().name() + "." + name() +
+          " in class " + hostClass().name() + "\n");
+      }*/
+      else if(hasIndex() && !(getComponents() instanceof ListComponents) && !getSonName().equals("getChild")) {
+        result.append(getFileName() + ":" + getStartLine() + " ");
+        result.append("May not supply index for non list child " + sonName() + 
+          " in class " + hostClass().name() + "\n");
+      }
+    }
+    return result.toString();
+  }
+
+  syn String InhDecl.error() {
+    StringBuffer result = new StringBuffer();
+    if(!ASTNode.noInhEqCheck) {
+     if(hostClass().lookupInhDecl(signature()) != this) {
+       result.append(getFileName() + ":" + getStartLine() + " ");
+       result.append("Multiple declaration of attribute " + name() +
+           " in class " + hostClass().name() + "\n");
+     }
+     else {
+        //System.out.println("Processing " + name() + " in " + hostClass().name());
+        HashSet set = new HashSet();
+        //LinkedList set = new LinkedList();
+        if(hostClass() instanceof ASTDecl) {
+          for(Iterator iter = ((ASTDecl)hostClass()).fathers().iterator(); iter.hasNext(); ) {
+            ASTDecl father = (ASTDecl)iter.next();
+            if(!father.hasInhEqFor((ASTDecl)hostClass(), signature(), set)) {
+              result.append(getFileName() + ":" + getStartLine() + " ");
+              result.append("Missing inherited equation for attribute " + name() + 
+                  " in class " + hostClass().name() + " when being child of " + father.name() + "\n");
+              System.out.println(father.name() + "->" + hostClass().name());
+              System.out.print(getFileName() + ":" + getStartLine() + " ");
+              System.out.print("Missing inherited equation for attribute " + name() + 
+                  " in class " + hostClass().name() + " when being child of " + father.name() + "\n");
+            }
+          }
+        }
+      }
+    }
+    return result.toString();
+  }
+
+}

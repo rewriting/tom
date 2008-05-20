@@ -1,0 +1,435 @@
+import ast.AST.*;
+import java.util.*;
+
+aspect AttributeHostClass {
+  eq TypeDecl.getChild().hostClass() = this;
+  inh TypeDecl AttrDecl.hostClass();
+  inh TypeDecl AttrEq.hostClass();
+}
+
+aspect AttributeNamesAndTypes {
+  syn String AttrDecl.name() = getName();
+  syn String AttrDecl.type() = getType();
+
+  syn String AttrDecl.getTypeInSignature() {
+    String s = type().replace('.', '_');
+    s = s.replace('<', '_');
+    s = s.replace('>', '_');
+    s = s.replace('[', '_');
+    s = s.replace(']', 'a');
+    return s;
+  }
+  syn String Parameter.getTypeInSignature() {
+    String s = getType().replace('.', '_');
+    s = s.replace('<', '_');
+    s = s.replace('>', '_');
+    s = s.replace('[', '_');
+    s = s.replace(']', 'a');
+    return s;
+  }
+  syn String AttrEq.getTypeInSignature() {
+    if(decl() != null) return decl().getTypeInSignature();
+    throw new Error(getFileName() + ":" + getStartLine() + " could not find decl for AttrEq " + signature() + " in " + hostClass().name());
+  }
+
+  syn String AttrEq.name() = getName();
+  syn String AttrEq.type() {
+    if(decl() != null) return decl().type();
+    throw new Error(getFileName() + ":" + getStartLine() + " could not find decl for AttrEq " + signature() + " in " + hostClass().name());
+  }
+
+  syn String AttrDecl.signature() {
+    if(getNumParameter() == 0)
+      return getName();
+    StringBuffer s = new StringBuffer();
+    s.append(getName());
+    for(int i = 0; i < getNumParameter(); i++) {
+      s.append("_" + getParameter(i).getTypeInSignature());
+    }
+    return s.toString();
+  }
+  syn String AttrEq.signature() {
+    if(getNumParameter() == 0)
+      return getName();
+    StringBuffer s = new StringBuffer();
+    s.append(getName());
+    for(int i = 0; i < getNumParameter(); i++) {
+      s.append("_" + getParameter(i).getTypeInSignature());
+    }
+    return s.toString();
+  }
+}
+
+aspect AllEquations {
+  syn lazy Set TypeDecl.synEquations() {
+		Set set = new HashSet();
+		for(int i = 0; i < getNumSynEq(); i++) {
+			set.add(getSynEq(i));
+		}
+    return set;
+  }
+	eq ASTDecl.synEquations() {
+		Set set = super.synEquations();
+		if(superClass() != null)
+			set.addAll(superClass().synEquations());
+		return set;
+	}
+	syn lazy Set TypeDecl.synDeclarations() {
+		Set set = new HashSet();
+		for(int i = 0; i < getNumSynDecl(); i++) {
+			set.add(getSynDecl(i));
+		}
+		return set;
+  }
+	eq ASTDecl.synDeclarations() {
+		Set set = super.synDeclarations();
+		if(superClass() != null)
+			set.addAll(superClass().synDeclarations());
+		return set;
+	}
+	syn lazy Set TypeDecl.inhEquations() {
+		Set set = new HashSet();
+		for(int i = 0; i < getNumInhEq(); i++) {
+			set.add(getInhEq(i));
+		}
+		return set;
+  }
+	eq ASTDecl.inhEquations() {
+		Set set = super.inhEquations();
+		if(superClass() != null)
+			set.addAll(superClass().inhEquations());
+		return set;
+	}
+	syn lazy Set TypeDecl.inhDeclarations() {
+		Set set = new HashSet();
+		for(int i = 0; i < getNumInhDecl(); i++) {
+			set.add(getInhDecl(i));
+		}
+		return set;
+	}
+	eq ASTDecl.inhDeclarations() {
+		Set set = super.inhDeclarations();
+		if(superClass() != null)
+			set.addAll(superClass().inhDeclarations());
+		return set;
+	}
+}
+
+aspect BindSynEquations {
+  syn lazy SynDecl TypeDecl.lookupSynDecl(String signature) {
+    for(int i = 0; i < getNumSynDecl(); i++)
+      if(getSynDecl(i).signature().equals(signature))
+        return getSynDecl(i);
+    return null;
+  }
+  eq ASTDecl.lookupSynDecl(String signature) {
+    SynDecl decl = super.lookupSynDecl(signature);
+    if(decl != null || superClass() == null)
+      return decl;
+    return superClass().lookupSynDecl(signature);
+  }
+
+  syn lazy SynEq TypeDecl.lookupSynEq(String signature) {
+    for(int i = 0; i < getNumSynEq(); i++)
+      if(getSynEq(i).signature().equals(signature))
+        return getSynEq(i);
+    return null;
+  }
+  eq ASTDecl.lookupSynEq(String signature) {
+    SynEq equations = super.lookupSynEq(signature);
+    if(equations != null || superClass() == null)
+      return equations;
+    return superClass().lookupSynEq(signature);
+  }
+  
+  syn lazy InhDecl TypeDecl.lookupInhDecl(String signature) {
+    for(int i = 0; i < getNumInhDecl(); i++)
+      if(getInhDecl(i).signature().equals(signature))
+        return getInhDecl(i);
+    return null;
+  }
+  eq ASTDecl.lookupInhDecl(String signature) {
+    InhDecl decl = super.lookupInhDecl(signature);
+    if(decl != null || superClass() == null)
+      return decl;
+    return superClass().lookupInhDecl(signature);
+  }
+  
+  syn lazy InhDecl TypeDecl.lookupInhDeclSubclasses(String signature) =
+    lookupInhDecl(signature);
+  eq ASTDecl.lookupInhDeclSubclasses(String signature) {
+    InhDecl decl = lookupInhDecl(signature);
+    if(decl != null) return decl;
+    for(Iterator iter = subclasses().iterator(); iter.hasNext(); ) {
+      ASTDecl subclass = (ASTDecl)iter.next();
+      decl = subclass.lookupInhDeclSubclasses(signature);
+      if(decl != null) return decl;
+    }
+    return null;
+  }
+
+  syn lazy InhEq TypeDecl.lookupInhEq(String signature, String childName) {
+    for(int i = 0; i < getNumInhEq(); i++)
+      if(getInhEq(i).signature().equals(signature) && getInhEq(i).sonName().equals(childName))
+        return getInhEq(i);
+    for(int i = 0; i < getNumInhEq(); i++)
+      if(getInhEq(i).signature().equals(signature) && getInhEq(i).sonName().equals("Child"))
+        return getInhEq(i);
+    return null;
+  }
+  eq ASTDecl.lookupInhEq(String signature, String childName) {
+    InhEq equation = super.lookupInhEq(signature, childName);
+    if(equation != null || superClass() == null)
+      return equation;
+    return superClass().lookupInhEq(signature, childName);
+  }
+  
+}
+
+aspect FindInheritedEquations {
+  syn boolean TypeDecl.hasInhEqFor(ASTDecl child, String signature, Collection visited)  = false;
+  eq ASTDecl.hasInhEqFor(ASTDecl child, String signature, Collection visited) {
+    //System.out.println("  Has " + signature() + " InhEqFor " + child.signature() + "." + signature + ", " + visited.size());
+    visited.add(this);
+    int numChild = 0;
+    int numSuccess = 0;
+    for(Iterator children = getComponents(); children.hasNext(); ) {
+      Components c = (Components)children.next();
+      if(child.instanceOf(env().lookup(c.type()))) {
+        numChild++;
+        //System.out.println("    Candidate " + c.name());
+        InhEq inhEq = lookupInhEq(signature, c.name());
+        if(inhEq == null) {
+          int numFather = 0;
+          int numFatherSuccess = 0;
+          //System.out.println("Begin process fathers");
+          for(Iterator iter = fathers().iterator(); iter.hasNext(); ) {
+            numFather++;
+            ASTDecl father = (ASTDecl)iter.next();
+            /*
+               LinkedList list = (LinkedList)visited;
+               boolean add = true;
+               boolean vis = true;
+               for(int f = 0; f < list.size() && vis; ) {
+               ASTDecl element = (ASTDecl)list.get(f);
+               if(father == element || this == element) {
+               vis = false;
+               add = false;
+               }
+               else {
+               if(father.instanceOf(element)) {
+               add = false;
+               vis = false;
+               }
+               if(element.instanceOf(father))
+               list.remove(element);
+               else
+               f++;
+               }
+               }
+               if(add) {
+               list.add(father);
+               }
+
+               if(!vis) {
+             */
+            if(visited.contains(father)) {
+              numFatherSuccess++;
+            }
+            else {
+              if(father.hasInhEqFor(this, signature, visited)) {
+                numFatherSuccess++;
+              }
+              else {
+                System.out.print(father.name() + "->"/* + "[" + c.name() + "]"*/);
+                //for(Iterator i2 = father.fathers().iterator(); i2.hasNext(); )
+                //  System.out.println(father.name() + " son of " + ((ASTDecl)i2.next()).name());
+              }
+            }
+          }
+          //System.out.println("End process fathers");
+          if(numFather > 0 && numFather == numFatherSuccess) {
+            numSuccess++;
+          }
+          if(numFather == 0)
+            System.out.println();
+          }
+          else {
+            numSuccess++;
+          }
+        }
+      }
+      //if(numChild > 0 && numSuccess == numChild)
+      //  System.out.println(signature() + " hasInhEqFor " + child.name() + "." + signature);
+    return numChild > 0 && numSuccess == numChild;
+  }
+
+
+  syn lazy boolean TypeDecl.hasInhDeclFor(String signature) circular [false] =
+    lookupInhDecl(signature) != null;
+  eq ASTDecl.hasInhDeclFor(String signature) {
+    if(lookupInhDecl(signature) != null)
+      return true;
+    for(Iterator iter = subclassesLeafNodes().iterator(); iter.hasNext(); ) {
+      ASTDecl subclass = (ASTDecl)iter.next();
+      if(subclass.lookupInhDecl(signature) != null)
+        return true;
+    }
+    for(Iterator iter = allTreeChildren().iterator(); iter.hasNext(); ) {
+      ASTDecl decl = (ASTDecl)iter.next();
+      if(decl.hasInhDeclFor(signature))
+        return true;
+    }
+    return false;
+  }
+  
+  syn lazy HashSet ASTDecl.subclassesLeafNodes() {
+    HashSet set = new HashSet();
+    if(subclasses().isEmpty())
+      set.add(this);
+    for(Iterator iter = subclasses().iterator(); iter.hasNext(); ) {
+      ASTDecl subclass = (ASTDecl)iter.next();
+      set.addAll(subclass.subclassesLeafNodes());
+    }
+    return set;
+  }
+
+  syn lazy HashSet ASTDecl.allTreeChildren() {
+    HashSet set = new HashSet();
+    for(Iterator i1 = subclassesLeafNodes().iterator(); i1.hasNext(); ) {
+      ASTDecl decl = (ASTDecl)i1.next();
+      for(Iterator i2 = decl.getComponents(); i2.hasNext(); ) {
+        Components c = (Components)i2.next();
+        if(!(c instanceof TokenComponent)) {
+          ASTDecl child = (ASTDecl)env().lookup(c.type());
+          if(child != null)
+            set.add(child);
+        }
+      }
+    }
+    return set;
+  }
+  
+  /*
+  syn lazy InhDecl ASTDecl.getInhDeclFor(String signature) circular [null] {
+    InhDecl inhDecl = lookupInhDecl(signature);
+    if(inhDecl != null)
+      return inhDecl;
+    for(Iterator iter = subclassesLeafNodes().iterator(); iter.hasNext(); ) {
+      ASTDecl subclass = (ASTDecl)iter.next();
+      inhDecl = subclass.lookupInhDecl(signature);
+      if(inhDecl != null)
+        return inhDecl;
+    }
+    for(Iterator iter = allTreeChildren().iterator(); iter.hasNext(); ) {
+      ASTDecl decl = (ASTDecl)iter.next();
+      inhDecl = decl.getInhDeclFor(signature);
+      if(inhDecl != null)
+        return inhDecl;
+    }
+    return null;
+  }
+  */
+    
+  syn InhDecl TypeDecl.getInhDeclFor(String signature, Collection visited) {
+    visited.add(this);
+    InhDecl inhDecl = lookupInhDecl(signature);
+    if(inhDecl != null) {
+      return inhDecl;
+    }
+    for(Iterator children = getComponents(); children.hasNext(); ) {
+      Components c = (Components)children.next();
+      if(!(c instanceof TokenComponent)) {
+        TypeDecl decl = (ASTDecl)env().lookup(c.type());
+        if(decl != null && !visited.contains(decl)) {
+          InhDecl d = decl.getInhDeclFor(signature, visited);
+          if(d != null) return d;
+        }
+      }
+    }
+    return null;
+  }
+
+  eq ASTDecl.getInhDeclFor(String signature, Collection visited) {
+    visited.add(this);
+    InhDecl inhDecl = lookupInhDecl(signature);
+    if(inhDecl != null) {
+      return inhDecl;
+    }
+    for(Iterator children = getComponents(); children.hasNext(); ) {
+      Components c = (Components)children.next();
+      if(!(c instanceof TokenComponent)) {
+        TypeDecl decl = (ASTDecl)env().lookup(c.type());
+        if(decl != null && !visited.contains(decl)) {
+          InhDecl d = decl.getInhDeclFor(signature, visited);
+          if(d != null) return d;
+        }
+      }
+    }
+
+  /*
+	  for(Iterator iter = synDeclarations().iterator(); iter.hasNext(); ) {
+      SynDecl synDecl = (SynDecl)iter.next();
+      if(synDecl.declaredNTA()) {
+        ASTDecl decl = (ASTDecl)env().lookup(synDecl.type());
+        if(decl != null && !visited.contains(decl)) {
+          InhDecl d = decl.getInhDeclFor(signature, visited);
+          if(d != null) return d;
+        }
+      }
+    }*/
+    
+    for(Iterator iter = subclasses().iterator(); iter.hasNext(); ) {
+      ASTDecl subclass = (ASTDecl)iter.next();
+      if(!visited.contains(subclass)) {
+        InhDecl d = subclass.getInhDeclFor(signature, visited);
+        if(d != null) return d;
+      }
+    }
+    return null;
+  }
+}
+
+
+aspect LookupDecls {
+
+  syn lazy AttrDecl AttrEq.decl();
+  eq InhEq.decl() = hostClass().getInhDeclFor(signature(), new HashSet());
+  //eq InhEq.decl() = hostClass().getInhDeclFor(signature());
+  eq SynEq.decl() = hostClass().lookupSynDecl(signature());
+  
+}
+
+aspect ASTDecl {
+  syn lazy HashMap TypeDecl.inhEqMap() {
+    HashMap map = new HashMap();
+    for(int i = 0; i < getNumInhEq(); i++) {
+      InhEq equ = getInhEq(i);
+      String id = equ.type() + "_" + equ.attributeSignature();
+      LinkedList list = (LinkedList)map.get(id);
+      if(list == null) {
+        list = new LinkedList();
+        map.put(id, list);
+      }
+      if(equ.getSonName().equals("getChild")) {
+        list.add(equ); // insert last
+      }
+      else if(equ.getComponents() != null && equ.getComponents().isNTA()) {
+        list.add(0, equ); // insert first
+      }
+      else {
+        list.add(0, equ); // insert first
+      }
+    }
+    return map;
+  }
+
+  public Iterator TypeDecl.inhAttrSet() {
+    return inhEqMap().keySet().iterator();
+  }
+
+  public Iterator TypeDecl.inhAttrEqs(String id) {
+    LinkedList list = (LinkedList)inhEqMap().get(id);
+    return list != null ? list.iterator() : null;
+  }
+}
