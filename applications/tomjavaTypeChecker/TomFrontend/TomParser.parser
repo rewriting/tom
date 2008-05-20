@@ -89,8 +89,16 @@ List tom_typed_parameter_list =
   ;
 
 ParameterDeclaration tom_typed_parameter =
-  IDENTIFIER.name COLON IDENTIFIER.type {: return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("#" + type), name); :}
-  ;
+  IDENTIFIER.name COLON IDENTIFIER.type {:
+    if (type.equals("String")) {
+      return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess(type), name);
+    } else {
+      return new ParameterDeclaration(new Modifiers(new List()), new TypeAccess("#" + type), name);
+    }
+    :}
+    | IDENTIFIER.name COLON primitive_type.typeaccess {:
+      return new ParameterDeclaration(new Modifiers(new List()), typeaccess, name);
+ :};
 
 MethodMapping mapping_isfsym =
   ISFSYM LPAREN IDENTIFIER.name RPAREN LBRACE expression RBRACE {: 
