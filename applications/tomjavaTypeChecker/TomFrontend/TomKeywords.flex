@@ -1,6 +1,5 @@
 <YYINITIAL> {
   "%typeterm"                    { return sym(Terminals.TYPEMAPPING); }
-  "is_sort"                    { return sym(Terminals.ISSORT); }
   "implement"                    { return sym(Terminals.IMPLEMENT); }
   "make"                    { return sym(Terminals.MAKE); }
   "is_fsym"                    { return sym(Terminals.ISFSYM); }

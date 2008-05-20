@@ -1,29 +1,30 @@
 aspect PrettyPrint {
 
+
   public void BackQuoteExpr.toString(StringBuffer s) {
-    s.append("`");
     getExpr().toString(s);
   }
 
   public void MatchStmt.toString(StringBuffer s) {
-    s.append("%match (");
+    s.append("Match (");
     getExpr().toString(s);
     s.append(") {");
-    indent++;
     for(int i = 0; i < getNumRule(); i++) {
       s.append("\n");
       getRule(i).toString(s);
     }
-    indent--;
-    s.append(indent() + "}\n");
+    s.append("}\n");
   }
 
 
   public void Rule.toString(StringBuffer s) {
-    s.append(indent());
     getExpr().toString(s);
     s.append(" -> ");
     getStmt().toString(s);
+  }
+
+  public void OperatorMapping.toString(StringBuffer s) {
+    
   }
 
 }
