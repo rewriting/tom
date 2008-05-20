@@ -54,7 +54,7 @@ public class Example {
   %op TomType A(name : TomType2) {
     make(x) { new A(x) }
     is_fsym(t) { t instanceof A }
-    get_slot(name,t) { t.getName() }
+    get_slot(name,t) { ((A)t).getName() }
   }
 
   %op TomType B() {
