@@ -74,16 +74,24 @@ public class JastAdd {
            }
             
 
+           StringBuilder builder = new StringBuilder();
+           // include for primitive types
+           builder.append(%[
+%include{ int.tom }
+%include{ boolean.tom }
+%include{ string.tom }
+               ]%);
+           generateTypes(builder);
            for(int i = 0; i < root.getNumTypeDecl(); i++) {
              if(root.getTypeDecl(i) instanceof ASTDecl) {
                ASTDecl decl = (ASTDecl)root.getTypeDecl(i);
-               System.out.println(decl.name());
-               StringBuilder builder = new StringBuilder();
                generateOperator(decl,builder);
-               System.out.println(builder);
              }
            }
-
+           System.out.println(builder);
+           Writer writer = new BufferedWriter(new FileWriter("mapping.tom"));
+           writer.append(builder.toString());
+           writer.close();
       }
       catch(NullPointerException e) {
         e.printStackTrace();
@@ -98,10 +106,31 @@ public class JastAdd {
         System.exit(1);
       }
     }
+    
+    private void generateTypes(StringBuilder strBuilder) {
+      strBuilder.append(%[
+%typeterm ASTNode {
+  implement { ASTNode }
+  is_sort(t) { $t instanceof ASTNode }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+ 
+%typeterm Opt {
+  implement { Opt }
+  is_sort(t) { $t instanceof Opt }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+
+%typeterm List {
+  implement { java.util.List }
+  is_sort(t) { $t instanceof List }
+  equals(t1, t2) { $t1.equals($t2) }
+}
+]%);
+    }
 
     private void generateOperator(ASTDecl decl, StringBuilder strBuilder) {
       String className = decl.name();
-      //TODO: generate make
       strBuilder.append(%[
 %op ASTNode @className@(@getTypedParameters(decl.getComponents())@) {
   make(@getParameters(decl.getComponents())@) { new @className@(@getParametersWithDollar(decl.getComponents())@) }
@@ -146,19 +175,21 @@ private String getTypedParameters(Iterator components) {
       if(c instanceof TokenComponent) {
         TokenComponent m = (TokenComponent) c;
         result.append(m.name()+":"+m.type()+", ");
-      }
-    } else {
-      if(c instanceof ListComponents) {
-        ListComponents m = (ListComponents) c;
-        result.append(m.name()+":List, ");
       } else {
-        if(c instanceof AggregateComponents) {
-          AggregateComponents m = (AggregateComponents) c;
-          result.append(m.name()+":AstNode, ");
+        if(c instanceof ListComponents) {
+          ListComponents m = (ListComponents) c;
+          result.append(m.name()+":List, ");
         } else {
-          if(c instanceof OptionalComponent) {
-            OptionalComponent m = (OptionalComponent) c;
-            result.append(m.name()+":Opt, ");
+          if(c instanceof AggregateComponents) {
+            AggregateComponents m = (AggregateComponents) c;
+            result.append(m.name()+":ASTNode, ");
+          } else {
+            if(c instanceof OptionalComponent) {
+              OptionalComponent m = (OptionalComponent) c;
+              result.append(m.name()+":Opt, ");
+            } else {
+              throw new RuntimeException("Unexpected class "+c.getClass());
+            }
           }
         }
       }
@@ -177,23 +208,23 @@ private String getSlotDeclarations(String className, Iterator components) {
       if(c instanceof TokenComponent) {
         TokenComponent m = (TokenComponent) c;
         result.append(%[
-  get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@() }]%);    
-      }
-    } else {
-      if(c instanceof ListComponents) {
-        ListComponents m = (ListComponents) c;
-        result.append(%[
-          get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@List() }]%);    
+            get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@() }]%);    
       } else {
-        if(c instanceof AggregateComponents) {
-          AggregateComponents m = (AggregateComponents) c;
+        if(c instanceof ListComponents) {
+          ListComponents m = (ListComponents) c;
           result.append(%[
-              get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@() }]%);    
+              get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@List() }]%);    
         } else {
-          if(c instanceof OptionalComponent) {
-            OptionalComponent m = (OptionalComponent) c;
+          if(c instanceof AggregateComponents) {
+            AggregateComponents m = (AggregateComponents) c;
             result.append(%[
-                get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@Opt() }]%);    
+                get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@() }]%);    
+          } else {
+            if(c instanceof OptionalComponent) {
+              OptionalComponent m = (OptionalComponent) c;
+              result.append(%[
+                  get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@Opt() }]%);    
+            }
           }
         }
       }
