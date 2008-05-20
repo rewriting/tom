@@ -166,7 +166,21 @@ private String getParameters(Iterator components) {
   while (components.hasNext()) {
     Components c = (Components)components.next();
     if(! c.isNTA()) {
-      result.append(c.name()+", ");
+      if(c instanceof TokenComponent) {
+        result.append(c.name()+", ");
+      } else {
+        if(c instanceof ListComponents) {
+          result.append(c.name()+"List, ");
+        } else {
+          if(c instanceof AggregateComponents) {
+            result.append(c.name()+", ");
+          } else {
+            if(c instanceof OptionalComponent) {
+              result.append(c.name()+"Opt, ");
+            } 
+          }
+        }
+      }
     }
   }
   // remove the ","
@@ -179,7 +193,21 @@ private String getParametersWithDollar(Iterator components) {
   while (components.hasNext()) {
     Components c = (Components)components.next();
     if(! c.isNTA()) {
-      result.append("$"+c.name()+", ");
+      if(c instanceof TokenComponent) {
+        result.append("("+c.type()+") $"+c.name()+", ");
+      } else {
+        if(c instanceof ListComponents) {
+          result.append("(List)"+c.name()+"List, ");
+        } else {
+          if(c instanceof AggregateComponents) {
+            result.append("("+c.type()+") $"+c.name()+", ");
+          } else {
+            if(c instanceof OptionalComponent) {
+              result.append("(Opt)"+c.name()+"Opt, ");
+            } 
+          }
+        }
+      }
     }
   }
   // remove the ","
@@ -198,7 +226,7 @@ private String getTypedParameters(Iterator components) {
       } else {
         if(c instanceof ListComponents) {
           ListComponents m = (ListComponents) c;
-          result.append(m.name()+":List, ");
+          result.append(m.name()+"List:List, ");
         } else {
           if(c instanceof AggregateComponents) {
             AggregateComponents m = (AggregateComponents) c;
@@ -207,7 +235,7 @@ private String getTypedParameters(Iterator components) {
             if(c instanceof OptionalComponent) {
               OptionalComponent m = (OptionalComponent) c;
               //Opt is a subclass of ASTNode
-              result.append(m.name()+":ASTNode, ");
+              result.append(m.name()+"Opt:ASTNode, ");
             } else {
               throw new RuntimeException("Unexpected class "+c.getClass());
             }
@@ -234,7 +262,7 @@ private String getSlotDeclarations(String className, Iterator components) {
         if(c instanceof ListComponents) {
           ListComponents m = (ListComponents) c;
           result.append(%[
-  get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@List() }]%);    
+  get_slot(@m.name()@List, t)  { ((@className@)$t).get@m.name()@List() }]%);    
         } else {
           if(c instanceof AggregateComponents) {
             AggregateComponents m = (AggregateComponents) c;
@@ -244,7 +272,7 @@ private String getSlotDeclarations(String className, Iterator components) {
             if(c instanceof OptionalComponent) {
               OptionalComponent m = (OptionalComponent) c;
               result.append(%[
-  get_slot(@m.name()@, t)  { ((@className@)$t).get@m.name()@Opt() }]%);    
+  get_slot(@m.name()@Opt, t)  { ((@className@)$t).get@m.name()@Opt() }]%);    
             }
           }
         }
