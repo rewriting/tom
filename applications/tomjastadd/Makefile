@@ -3,12 +3,16 @@ ASPECTJ=java -classpath tools/aspectj-1.5.3/aspectjlib.jar:tools/aspectj-1.5.3/a
 JAVACC=java -classpath tools/JavaCC.jar org.javacc.parser.Main -JDK_VERSION=1.4
 JJTREE=java -classpath tools/JavaCC.jar org.javacc.jjtree.Main -JDK_VERSION=1.4
 JASTADD=java -jar tools/jastadd2.jar
+TOM=tom
 
 JRAGFILES=ast/ClassRelations.jrag ast/ComponentsUtil.jrag ast/Errorcheck.jrag ast/JaddCodeGen.jrag ast/NameBinding.jrag \
  jrag/Attributes.jrag jrag/Circular.jrag jrag/CollectionAttributes.jrag jrag/Errorcheck.jrag jrag/JragCodeGen.jrag jrag/NameBinding.jrag
 
 all : ast/AST/Grammar.java ast/AST/Ast.java jrag/AST/JragParser.java jastadd/JastAdd.java
 	$(ASPECTJ) `find ast jastadd jrag -name "*.java"`
+
+jastadd/JastAdd.java : jastadd/JastAdd.t
+	$(TOM) jastadd/JastAdd.t
 
 ast/AST/Ast.java : ast/AST/Ast.jj
 	$(JAVACC) -OUTPUT_DIRECTORY=ast/AST ast/AST/Ast.jj
