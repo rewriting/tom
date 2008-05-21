@@ -222,7 +222,12 @@ private String getTypedParameters(Iterator components) {
     if(! c.isNTA()) {
       if(c instanceof TokenComponent) {
         TokenComponent m = (TokenComponent) c;
-        result.append(m.name()+":"+m.type()+", ");
+        //remove the package name
+        if (m.type().equals("java.lang.String")) {
+          result.append(m.name()+":String, ");
+        } else {
+          result.append(m.name()+":"+m.type()+", ");
+        }
       } else {
         if(c instanceof ListComponents) {
           ListComponents m = (ListComponents) c;
