@@ -10,14 +10,14 @@
   <property file="../local.properties"/>
 
   <!-- some used directory location -->
-  <property name="examples.dir"   location="demoGomAntlrMapper/."/>
+  <property name="examples.dir"   location="gomANTLRAdaptor/."/>
   <property name="examples.dist"  location="dist"/>
 
   <property name="examples.lib"   value="lib"/>
 
   <!-- where the examples a build: javac destDir -->
-  <property name="examples.gen"   location="demoGomAntlrMapper/gen"/>
-  <property name="examples.build" location="demoGomAntlrMapper/build"/>
+  <property name="examples.gen"   location="gomANTLRAdaptor/gen"/>
+  <property name="examples.build" location="gomANTLRAdaptor/build"/>
 
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
