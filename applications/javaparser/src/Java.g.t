@@ -164,10 +164,25 @@
  *      Character.isJavaIdentifierPart(int) returns true."
  */
 grammar Java;
-options {backtrack=true; memoize=true;}
+options {
+  backtrack=true;
+  memoize=true;
+  output=AST;
+  ASTLabelType=JavaTree;
+}
 
 tokens {
-  %include { javaast/JavaAstTokenList.txt }
+  %include { javaparser/JavaParserTokenList.txt }
+}
+
+@header {
+package javaparser;
+import javaparser.types.JavaTree;
+}
+
+@lexer::header {
+package javaparser;
+import javaparser.types.JavaTree;
 }
 
 @lexer::members {
@@ -178,12 +193,13 @@ tokens {
 // starting point for parsing a java file
 /* The annotations are separated out to make parsing faster, but must be associated with
    a packageDeclaration or a typeDeclaration (and not an empty one). */
-compilationUnit
-    :   annotations
+compilationUnit:
+    (annotations
         (   packageDeclaration importDeclaration* typeDeclaration*
         |   classOrInterfaceDeclaration typeDeclaration*
         )
     |   packageDeclaration? importDeclaration* typeDeclaration*
+    ) -> EmptyCompilationUnit
     ;
 
 packageDeclaration

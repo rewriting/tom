@@ -1,4 +1,4 @@
-module adt.JavaAst
+module JavaParser
 imports int
 abstract syntax
 
