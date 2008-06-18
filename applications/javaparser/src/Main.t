@@ -3,12 +3,12 @@ import org.antlr.runtime.ANTLRInputStream;
 
 import java.io.*;
 
-import javaparser.*;
-import javaparser.types.*;
+import parser.*;
+import parser.ast.*;
 
 public class Main {
 
-  // %include { ./javaparser/JavaParser.tom }
+  // %include { ../gen/parser/ast/Ast.tom }
 
   public static void main(String args[]) {
     try {
@@ -25,8 +25,9 @@ public class Main {
       JavaLexer lexer = new JavaLexer(new ANTLRInputStream(input));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       JavaParser parser = new JavaParser(tokens);
+      parser.setTreeAdaptor(new AstAdaptor());
 
-      JavaTree ast = (JavaTree) parser.compilationUnit().getTree();
+      AstTree ast = (AstTree) parser.compilationUnit().getTree();
       System.out.println(ast);
 
     } catch (Exception e) {

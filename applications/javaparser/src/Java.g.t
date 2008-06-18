@@ -168,21 +168,21 @@ options {
   backtrack=true;
   memoize=true;
   output=AST;
-  ASTLabelType=JavaTree;
+  ASTLabelType=AstTree;
 }
 
 tokens {
-  %include { javaparser/JavaParserTokenList.txt }
+  %include { parser/ast/AstTokenList.txt }
 }
 
 @header {
-package javaparser;
-import javaparser.types.JavaTree;
+package parser;
+import parser.ast.AstTree;
 }
 
 @lexer::header {
-package javaparser;
-import javaparser.types.JavaTree;
+package parser;
+import parser.ast.AstTree;
 }
 
 @lexer::members {
