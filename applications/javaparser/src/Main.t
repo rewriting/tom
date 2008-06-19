@@ -8,7 +8,7 @@ import parser.ast.*;
 
 public class Main {
 
-  // %include { ../gen/parser/ast/Ast.tom }
+   // %include { parser/ast/Ast.tom }
 
   public static void main(String args[]) {
     try {

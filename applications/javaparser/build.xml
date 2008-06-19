@@ -25,18 +25,18 @@
   </target>
   
   <target name="tom" depends="gom">
-    <tom.preset options="-I ${jparse.gen}"
-                srcdir="${jparse.src}"
-                destdir="${jparse.gen}"> 
+    <tom.preset srcdir="${jparse.src}"
+                destdir="${jparse.gen}"
+                options="-I ${jparse.gen}"> 
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
     </tom.preset>
   </target>
   
   <target name="antlrtom" depends="gomantlradapter">
-    <tom.preset outputfile="${jparse.gen}/${jparse.grammar}.g"
-                options="-I ${jparse.gen}"
-                srcdir="${jparse.src}"> 
+    <tom.preset srcdir="${jparse.src}"
+                outputfile="${jparse.gen}/${jparse.grammar}.g"
+                options="-I ${jparse.gen}"> 
       <include name="${jparse.grammar}.g.t"/>
     </tom.preset>
   </target>
@@ -70,6 +70,17 @@
       <include name="**/*.java"/>
       <classpath refid="tom.classpath"/>
     </javac.preset>
+  </target>
+  
+  <target name="test" depends="javac">
+    <java classname="Main"
+          fork="true">
+      <arg value="${jparse.gen}/Main.java"/>
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${jparse.build}"/>
+      </classpath>
+    </java>
   </target>
   
   <target name="clean">
