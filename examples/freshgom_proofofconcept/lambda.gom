@@ -16,18 +16,19 @@ LTerm =
 
 sort LTerm:block() {
   public abstract void rename(int i,int j);
+  private static int counter = 0;
+  private public freshgom_proofofconcept.lambda.types.Atom 
+   freshAtom(String hint) { return `Atom(++counter,hint); }
 }
 
 abs:block() {
   private static int counter = 0;
-  private static boolean flag = true;
 
   private void refresh() {
     int old = getx().getn();
-    counter++;
-    freshgom_proofofconcept.lambda.types.Atom fresh = `atom(counter,getx().gethint());
+    freshgom_proofofconcept.lambda.types.Atom fresh = freshAtom(getx().gethint());
     this._x = fresh;
-    this._t.rename(old,counter);
+    this._t.rename(old,fresh.getn());
   }
 
   public freshgom_proofofconcept.lambda.types.Atom safe_getx() {
