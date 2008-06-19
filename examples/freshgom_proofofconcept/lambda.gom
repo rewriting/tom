@@ -1,0 +1,60 @@
+module lambda
+imports int String
+abstract syntax
+
+RLTerm =
+  | rapp(t1:LTerm,t2:LTerm)
+  | rabs(x:String,t:LTerm)
+  | rvar(x:String)
+
+Atom = atom(n:int,hint:String)
+
+LTerm =
+  | app(t1:LTerm,t2:LTerm)
+  | abs(x:Atom,t:LTerm)
+  | var(x:Atom)
+
+sort LTerm:block() {
+  public abstract void rename(int i,int j);
+}
+
+abs:block() {
+  private static int counter = 0;
+  private static boolean flag = true;
+
+  private void refresh() {
+    int old = getx().getn();
+    counter++;
+    freshgom_proofofconcept.lambda.types.Atom fresh = `atom(counter,getx().gethint());
+    this._x = fresh;
+    this._t.rename(old,counter);
+  }
+
+  public freshgom_proofofconcept.lambda.types.Atom safe_getx() {
+    refresh();
+    return getx();
+  }
+
+  public freshgom_proofofconcept.lambda.types.LTerm safe_gett() {
+    refresh();
+    return gett();
+  }
+
+  public void rename(int i, int j) {
+    if(getx().getn() == i) throw new RuntimeException("should not happen");
+    else gett().rename(i,j);
+  }
+}
+
+app:block() {
+  public void rename(int i, int j) {
+    gett1().rename(i,j);
+    gett2().rename(i,j);
+  }
+}
+
+var:block() {
+  public void rename(int i, int j) {
+    if(getx().getn() == i) this._x = `atom(j,getx().gethint());
+  }
+}

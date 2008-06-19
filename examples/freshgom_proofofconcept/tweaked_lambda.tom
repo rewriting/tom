@@ -1,0 +1,75 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm RLTerm {
+  implement { freshgom_proofofconcept.lambda.types.RLTerm }
+  is_sort(t) { ($t instanceof freshgom_proofofconcept.lambda.types.RLTerm) }
+  equals(t1,t2) { ($t1.equals($t2)) }
+
+}
+
+%op RLTerm rapp(t1:LTerm, t2:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rapp) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.rapp.make($t0, $t1) }
+}
+
+%op RLTerm rabs(x:String, t:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rabs) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.rabs.make($t0, $t1) }
+}
+
+%op RLTerm rvar(x:String) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rvar) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { freshgom_proofofconcept.lambda.types.rlterm.rvar.make($t0) }
+}
+
+
+
+%typeterm Atom {
+  implement { freshgom_proofofconcept.lambda.types.Atom }
+  is_sort(t) { ($t instanceof freshgom_proofofconcept.lambda.types.Atom) }
+  equals(t1,t2) { ($t1.equals($t2)) }
+}
+
+%typeterm LTerm {
+  implement { freshgom_proofofconcept.lambda.types.LTerm }
+  is_sort(t) { ($t instanceof freshgom_proofofconcept.lambda.types.LTerm) }
+  equals(t1,t2) { ($t1.equals($t2)) }
+}
+
+%op Atom atom(n:int, hint:String) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.atom.atom) }
+  get_slot(n, t) { $t.getn() }
+  get_slot(hint, t) { $t.gethint() }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.atom.atom.make($t0, $t1) }
+}
+
+%op LTerm app(t1:LTerm, t2:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.app) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.lterm.app.make($t0, $t1) }
+}
+
+%op LTerm abs(x:Atom, t:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.abs) }
+  // modified here
+  get_slot(x, t) { ((freshgom_proofofconcept.lambda.types.lterm.abs)$t).safe_getx() }
+  // modified here
+  get_slot(t, t) { ((freshgom_proofofconcept.lambda.types.lterm.abs)$t).safe_gett() }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.lterm.abs.make($t0, $t1) }
+}
+
+%op LTerm var(x:Atom) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.var) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { freshgom_proofofconcept.lambda.types.lterm.var.make($t0) }
+}
+

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the lambdacalculi example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="freshgom" value="freshgom_proofofconcept"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${freshgom}"/>
+    <delete dir="${examples.build}/${freshgom}"/>
+  </target>
+  <target name="build" depends="init">
+    <gom.preset srcdir="${examples.dir}"
+      package="${freshgom}" 
+      destdir="${examples.gen}">
+      <include name="${freshgom}/lambda.gom"/>
+    </gom.preset>
+
+    <tomcompile example="${freshgom}"/>
+    <javacompile example="${freshgom}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <!-- not in the distribution -->
+  </target>
+</project>
