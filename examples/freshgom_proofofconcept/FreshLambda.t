@@ -29,15 +29,15 @@ public class FreshLambda {
     }
   }
 
-  public static LTerm RLTermToLTerm(RLTerm t, Context ctx) {
+  public static LTerm importRLTerm(RLTerm t, Context ctx) {
     %match(t) {
       rapp(t1,t2) -> { 
-        return `app(RLTermToLTerm(t1,ctx),RLTermToLTerm(t2,ctx)); 
+        return `app(importRLTerm(t1,ctx),importRLTerm(t2,ctx)); 
       }
       rabs(x,t1) -> {
         Atom fresh = LTerm.freshAtom(`x);
         ctx.push(`x,fresh);
-        LTerm nt1 = RLTermToLTerm(`t1,ctx);
+        LTerm nt1 = importRLTerm(`t1,ctx);
         ctx.pop();
         return `abs(fresh,nt1);
       }
@@ -46,9 +46,54 @@ public class FreshLambda {
     return null;
   }
 
+  private static class Context2 {
+    private class Pair { 
+      public Atom a;
+      public int i;
+      public Pair(Atom a, int i) {
+        this.a = a;
+        this.i = i;
+      } 
+    }
+    private LinkedList<Pair> ctx = new LinkedList<Pair>();
+    public int push(Atom a) {
+      int i = 0;
+      for (Pair p: ctx) {
+        if (p.a.gethint().equals(a.gethint())) { 
+          i = p.i+1;
+          break;
+        }
+      }
+      ctx.addFirst(new Pair(a,i)); 
+      return i;
+    }
+    public void pop() { ctx.removeFirst(); }
+    public int get(Atom a) { 
+      for (Pair p: ctx) {
+        if (p.a.equals(a)) return p.i;
+      }
+      throw new RuntimeException();
+    }
+  }
+
+  public static RLTerm exportLTerm(LTerm t, Context2 ctx) {
+    %match(t) {
+      app(t1,t2) -> { 
+        return `rapp(exportLTerm(t1,ctx),exportLTerm(t2,ctx)); 
+      }
+      abs(x,t1) -> {
+        int i = ctx.push(`x);
+        RLTerm nt1 = exportLTerm(`t1,ctx);
+        ctx.pop();
+        return `rabs(x.gethint()+i,nt1);
+      }
+      var(x) -> { return `rvar(x.gethint()+ctx.get(x)); }
+    }
+    return null;
+  }
+
   // return t[u/x]
   public static LTerm substitute(LTerm t, Atom x, LTerm u) {
-    System.out.println(t + "[" + u + "/" + x + "]");
     %match(t) {
       abs(y,t1) -> { return `abs(y,substitute(t1,x,u)); }
       app(t1,t2) -> { return `app(substitute(t1,x,u),substitute(t2,x,u)); }
@@ -69,10 +114,13 @@ public class FreshLambda {
   }
 
   public static void main(String[] args) {
-    RLTerm rt = `rabs("y",rapp(rabs("x",rvar("x")),rvar("y")));
-    LTerm t = RLTermToLTerm(rt,new Context());
-    System.out.println(t);
+    RLTerm rt = `rabs("y",rapp(rabs("x",rabs("y",rapp(rvar("x"),rvar("y")))),rvar("y")));
+    System.out.println(rt);
+
+    LTerm t = importRLTerm(rt,new Context());
     t = beta(t);
-    System.out.println(t);
+
+    rt = exportLTerm(t,new Context2());
+    System.out.println(rt);
   }
 }
