@@ -193,13 +193,12 @@ import parser.ast.AstTree;
 // starting point for parsing a java file
 /* The annotations are separated out to make parsing faster, but must be associated with
    a packageDeclaration or a typeDeclaration (and not an empty one). */
-compilationUnit:
-    (annotations
+compilationUnit
+    :   annotations
         (   packageDeclaration importDeclaration* typeDeclaration*
         |   classOrInterfaceDeclaration typeDeclaration*
-        )
-    |   packageDeclaration? importDeclaration* typeDeclaration*
-    ) -> EmptyCompilationUnit
+        ) -> EmptyCompilationUnit
+    |   packageDeclaration? importDeclaration* typeDeclaration* -> ^(ClassOrInterfaceDeclarationList typeDeclaration*)
     ;
 
 packageDeclaration
@@ -211,12 +210,15 @@ importDeclaration
     ;
     
 typeDeclaration
-    :   classOrInterfaceDeclaration
+    :   classOrInterfaceDeclaration -> classOrInterfaceDeclaration
     |   ';'
     ;
     
 classOrInterfaceDeclaration
-    :   classOrInterfaceModifiers (classDeclaration | interfaceDeclaration)
+    :   classOrInterfaceModifiers
+        (    classDeclaration -> ^(ClassDeclaration classDeclaration)
+        |    interfaceDeclaration -> ^(InterfaceDeclaration interfaceDeclaration)
+        )
     ;
     
 classOrInterfaceModifiers
@@ -239,15 +241,15 @@ modifiers
     ;
 
 classDeclaration
-    :   normalClassDeclaration
-    |   enumDeclaration
+    :   normalClassDeclaration -> normalClassDeclaration
+    |   enumDeclaration -> enumDeclaration
     ;
     
 normalClassDeclaration
     :   'class' Identifier typeParameters?
         ('extends' type)?
         ('implements' typeList)?
-        classBody
+        classBody -> ^(NormalClassDeclaration classBody )
     ;
     
 typeParameters
@@ -263,11 +265,11 @@ typeBound
     ;
 
 enumDeclaration
-    :   ENUM Identifier ('implements' typeList)? enumBody
+    :   ENUM Identifier ('implements' typeList)? enumBody -> ^(EnumClassDeclaration enumBody )
     ;
 
 enumBody
-    :   '{' enumConstants? ','? enumBodyDeclarations? '}'
+    :   '{' enumConstants? ','? enumBodyDeclarations? '}' -> EmptyClassBody
     ;
 
 enumConstants
@@ -283,12 +285,12 @@ enumBodyDeclarations
     ;
     
 interfaceDeclaration
-    :   normalInterfaceDeclaration
-    |   annotationTypeDeclaration
+    :   normalInterfaceDeclaration -> normalInterfaceDeclaration
+    |   annotationTypeDeclaration -> ^(AnnotationTypeDeclaration annotationTypeDeclaration)
     ;
     
 normalInterfaceDeclaration
-    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody
+    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(NormalInterfaceDeclaration interfaceBody )
     ;
     
 typeList
@@ -296,11 +298,11 @@ typeList
     ;
     
 classBody
-    :   '{' classBodyDeclaration* '}'
+    :   '{' classBodyDeclaration* '}' -> EmptyClassBody
     ;
     
 interfaceBody
-    :   '{' interfaceBodyDeclaration* '}'
+    :   '{' interfaceBodyDeclaration* '}' -> EmptyInterfaceBody
     ;
 
 classBodyDeclaration
@@ -575,7 +577,7 @@ elementValueArrayInitializer
     ;
     
 annotationTypeDeclaration
-    :   '@' 'interface' Identifier annotationTypeBody
+    :   '@' 'interface' Identifier annotationTypeBody -> EmptyAnnotationTypeDeclaration
     ;
     
 annotationTypeBody

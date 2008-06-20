@@ -33,7 +33,7 @@
     </tom.preset>
   </target>
   
-  <target name="antlrtom" depends="gomantlradapter">
+  <target name="antlrtom" depends="init"><!-- depends="gomantlradapter"-->
     <tom.preset srcdir="${jparse.src}"
                 outputfile="${jparse.gen}/${jparse.grammar}.g"
                 options="-I ${jparse.gen}"> 

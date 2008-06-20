@@ -5,6 +5,7 @@ import java.io.*;
 
 import parser.*;
 import parser.ast.*;
+import parser.ast.types.*;
 
 public class Main {
 
@@ -27,8 +28,9 @@ public class Main {
       JavaParser parser = new JavaParser(tokens);
       parser.setTreeAdaptor(new AstAdaptor());
 
-      AstTree ast = (AstTree) parser.compilationUnit().getTree();
-      System.out.println(ast);
+      AstTree tree = (AstTree) parser.compilationUnit().getTree();
+      CompilationUnit term = (CompilationUnit) tree.getTerm();
+      System.out.println(term);
 
     } catch (Exception e) {
       System.err.println("exception: " + e);
