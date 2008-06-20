@@ -478,11 +478,21 @@ writer.write(%[
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getName())@;
   }
-      
+  ]%);
+      if (maximalsharing) {
+      writer.write(%[
   @@Override
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     return make(@generateMakeArgsFor(head,"set_arg")@);
   }]%);
+      } else {
+      writer.write(%[
+  @@Override
+  public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
+    @fieldName(head.getName())@ = set_arg; 
+    return this;
+  }]%);
+      }
     }
   }
 
