@@ -53,6 +53,33 @@ sort LTerm:block() {
   public static freshgom_proofofconcept.lambda.types.Atom 
    freshAtom(String hint) { return `atom(++counter,hint); }
 
+  /* stack for alphaequivalence */
+  protected static class AlphaMap {
+    private class Pair { 
+      public freshgom_proofofconcept.lambda.types.Atom a1;
+      public freshgom_proofofconcept.lambda.types.Atom a2;
+      public Pair(freshgom_proofofconcept.lambda.types.Atom a1, 
+                  freshgom_proofofconcept.lambda.types.Atom a2) {
+        this.a1 = a1;
+        this.a2 = a2;
+      } 
+    }
+    private java.util.LinkedList<Pair> ctx = 
+      new java.util.LinkedList<Pair>();
+    public void push(freshgom_proofofconcept.lambda.types.Atom a1,
+                     freshgom_proofofconcept.lambda.types.Atom a2) {
+      ctx.addFirst(new Pair(a1,a2)); 
+    }
+    public void pop() { ctx.removeFirst(); }
+    public freshgom_proofofconcept.lambda.types.Atom get
+      (freshgom_proofofconcept.lambda.types.Atom a) { 
+      for (Pair p: ctx) {
+        if (p.a1.equals(a)) return p.a2;
+      }
+      throw new RuntimeException();
+    }
+  }
+
   /* stack for exportation (term -> raw term) */
   protected static class Context {
     private class Pair { 
@@ -84,6 +111,14 @@ sort LTerm:block() {
       throw new RuntimeException();
     }
   }
+
+  /* alpha equivalence */
+  public boolean equals(freshgom_proofofconcept.lambda.types.LTerm o) {
+    return alpha(o,new AlphaMap());
+  }
+
+  public abstract boolean alpha
+    (freshgom_proofofconcept.lambda.types.LTerm o, AlphaMap map);
 
   /* exportation (term -> raw term) */
   public freshgom_proofofconcept.lambda.types.RLTerm export() {
@@ -156,6 +191,15 @@ abs:block() {
     else gett().rename(i,j);
   }
 
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_proofofconcept.lambda.types.LTerm o, AlphaMap map) {
+    map.push(getx(),o.getx());
+    boolean res = gett().alpha(o.gett(),map);
+    map.pop();
+    return res;
+  }
+
   /* exportation (term -> raw term) */
   public freshgom_proofofconcept.lambda.types.RLTerm export(Context ctx) {
     freshgom_proofofconcept.lambda.types.Atom x = getx();
@@ -173,6 +217,12 @@ app:block() {
     gett2().rename(i,j);
   }
 
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_proofofconcept.lambda.types.LTerm o, AlphaMap map) {
+    return gett1().alpha(o.gett1(),map) && gett2().alpha(o.gett2(),map);
+  }
+
   /* exportation (term -> raw term) */
   public freshgom_proofofconcept.lambda.types.RLTerm export(Context ctx) {
     freshgom_proofofconcept.lambda.types.LTerm t1 = gett1();
@@ -184,6 +234,12 @@ app:block() {
 var:block() {
   public void rename(int i, int j) {
     if(getx().getn() == i) setx(`atom(j,getx().gethint()));
+  }
+
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_proofofconcept.lambda.types.LTerm o, AlphaMap map) {
+    return o.getx().equals(map.get(getx()));
   }
 
   /* exportation (term -> raw term) */

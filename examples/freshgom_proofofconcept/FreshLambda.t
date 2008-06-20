@@ -46,7 +46,10 @@ public class FreshLambda {
 
   public static void main(String[] args) {
     RLTerm rt = `rabs("y",rapp(rabs("x",rabs("y",rapp(rvar("x"),rvar("y")))),rvar("y")));
+    RLTerm expected = `rabs("x",rabs("y",rapp(rvar("x"),rvar("y"))));
     System.out.println(rt);
-    System.out.println(beta(rt.convert()).export());
+    LTerm t = beta(rt.convert());
+    System.out.println(t.export());
+    System.out.println(t.equals(expected.convert()));
   }
 }
