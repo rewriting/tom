@@ -7,9 +7,11 @@
     <delete dir="${examples.build}/${freshgom}"/>
   </target>
   <target name="build" depends="init">
+
     <gom.preset srcdir="${examples.dir}"
       package="${freshgom}" 
-      destdir="${examples.gen}">
+      destdir="${examples.gen}"
+      nosharing="true">
       <include name="${freshgom}/lambda.gom"/>
     </gom.preset>
 
