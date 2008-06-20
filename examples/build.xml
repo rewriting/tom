@@ -40,10 +40,7 @@
       <attribute name="example"/>
       <sequential>
         <tom.preset srcdir="${examples.dir}"
-          destdir="${examples.gen}"
-          noshare="true"
-          optimize2="true"
-          pretty="true">
+          destdir="${examples.gen}">
           <include name="@{example}/**/*.t"/>
           <exclude name="@{example}/**/*.g.t"/>
         </tom.preset>

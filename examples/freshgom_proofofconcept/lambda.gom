@@ -27,8 +27,8 @@ abs:block() {
   private void refresh() {
     int old = getx().getn();
     freshgom_proofofconcept.lambda.types.Atom fresh = freshAtom(getx().gethint());
-    this._x = fresh;
-    this._t.rename(old,fresh.getn());
+    setx(fresh);
+    gett().rename(old,fresh.getn());
   }
 
   public freshgom_proofofconcept.lambda.types.Atom safe_getx() {
@@ -56,6 +56,6 @@ app:block() {
 
 var:block() {
   public void rename(int i, int j) {
-    if(getx().getn() == i) this._x = `atom(j,getx().gethint());
+    if(getx().getn() == i) setx(`atom(j,getx().gethint()));
   }
 }
