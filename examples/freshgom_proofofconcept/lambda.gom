@@ -21,6 +21,12 @@ sort LTerm:block() {
    freshAtom(String hint) { return `atom(++counter,hint); }
 }
 
+sort Atom:block() {
+  public boolean equals(freshgom_proofofconcept.lambda.types.Atom o) {
+    return this.getn() == o.getn();
+  }
+}
+
 abs:block() {
   private static int counter = 0;
 

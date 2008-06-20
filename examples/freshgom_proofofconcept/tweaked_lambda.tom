@@ -44,12 +44,15 @@
   equals(t1,t2) { ($t1.equals($t2)) }
 }
 
+/* the details of how atom is implemented should be hidden
+
 %op Atom atom(n:int, hint:String) {
   is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.atom.atom) }
   get_slot(n, t) { $t.getn() }
   get_slot(hint, t) { $t.gethint() }
   make(t0, t1) { freshgom_proofofconcept.lambda.types.atom.atom.make($t0, $t1) }
 }
+*/
 
 %op LTerm app(t1:LTerm, t2:LTerm) {
   is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.app) }

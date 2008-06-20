@@ -1,14 +1,15 @@
 package freshgom_proofofconcept;
 
+import tom.library.sl.*;
 import freshgom_proofofconcept.lambda.types.*;
-
 import java.util.*;
 
 public class FreshLambda {
 
+  %include { sl.tom }
   %include { tweaked_lambda.tom }
 
-  private class Context {
+  private static class Context {
     private class Pair { 
       public String x;
       public Atom a;
@@ -30,7 +31,9 @@ public class FreshLambda {
 
   public static LTerm RLTermToLTerm(RLTerm t, Context ctx) {
     %match(t) {
-      rapp(t1,t2) -> { return `app(RLTermToLTerm(t1,ctx),RLTermToLTerm(t2,ctx)); }
+      rapp(t1,t2) -> { 
+        return `app(RLTermToLTerm(t1,ctx),RLTermToLTerm(t2,ctx)); 
+      }
       rabs(x,t1) -> {
         Atom fresh = LTerm.freshAtom(`x);
         ctx.push(`x,fresh);
@@ -38,27 +41,38 @@ public class FreshLambda {
         ctx.pop();
         return `abs(fresh,nt1);
       }
+      rvar(x) -> { return `var(ctx.get(x)); }
     }
     return null;
   }
 
-    // return t[u/x]
-    public static LTerm substitute(LTerm t, Atom x, LTerm u) {
-      %match(t) {
-        abs(y,t1) -> { return `abs(y,substitute(t1,y,u)); }
-        app(t1,t2) -> { return `app(t1,t2); }
-        var(y) -> { if (x.equals(`y)) return u; else return t; }
-      }
-      throw new RuntimeException();
+  // return t[u/x]
+  public static LTerm substitute(LTerm t, Atom x, LTerm u) {
+    System.out.println(t + "[" + u + "/" + x + "]");
+    %match(t) {
+      abs(y,t1) -> { return `abs(y,substitute(t1,x,u)); }
+      app(t1,t2) -> { return `app(substitute(t1,x,u),substitute(t2,x,u)); }
+      var(y) -> { if (`y.equals(x)) return u; else return t; }
     }
+    throw new RuntimeException();
+  }
 
-    public static void main(String[] args) {
-      LTerm t = `abs(atom(1,"x"),app(var(atom(1,"x")),var(atom(1,"x"))));
-      System.out.println(t);
-      for(int i=0;i<10;i++) {
-        %match(t) {
-          abs(x,t1) -> { System.out.println("la " + `x + "." + `t1); }
-        }
-      }
+  %strategy HeadBeta() extends Fail() {
+    visit LTerm {
+      app(abs(x,t),u) -> { return `substitute(t,x,u); }
     }
   }
+
+  public static LTerm beta(LTerm t) {
+    try { return (LTerm) `Innermost(HeadBeta()).visit(t); }
+    catch (VisitFailure e) { return t; }
+  }
+
+  public static void main(String[] args) {
+    RLTerm rt = `rabs("y",rapp(rabs("x",rvar("x")),rvar("y")));
+    LTerm t = RLTermToLTerm(rt,new Context());
+    System.out.println(t);
+    t = beta(t);
+    System.out.println(t);
+  }
+}
