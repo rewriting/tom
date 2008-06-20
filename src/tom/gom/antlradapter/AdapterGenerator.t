@@ -351,6 +351,7 @@ public class @filename()@Tree extends CommonTree {
               FullSortClass(sortDecl),
               Code(" field"),
               Code(name),
+              ShortSortClass(sortDecl),
               Code(";\n")
            );
         try {
@@ -393,7 +394,9 @@ public class @filename()@Tree extends CommonTree {
                   Code("          "),
                   Code("case "+idx+":\n"),
                   Code("            field"),
-                  Code(slot.getName() + " = "),
+                  Code(slot.getName()),
+                  ShortSortClass(slot.getSort()),
+                  Code(" = "),
                   cast*,
                   Code(";\n")
                   );
@@ -472,7 +475,7 @@ public class @filename()@Tree extends CommonTree {
     while(sList.isConsConcSlot()) {
       Slot slot = sList.getHeadConcSlot();
       sList = sList.getTailConcSlot();
-      res += "field" + slot.getName();
+      res += "field" + slot.getName() + slot.getSort().getName();
       if(sList.isConsConcSlot()) {
         res += ", ";
       }

@@ -139,7 +139,11 @@ public class CodeGen {
         writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));        
         return;
       }
-      FullSortClass(BuiltinSortDecl[Name=sortName]) -> {
+      ShortSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
+        writer.write(`sortName);        
+        return;
+      }
+      (FullSortClass|ShortSortClass)(BuiltinSortDecl[Name=sortName]) -> {
         writer.write(`sortName);        
         return;
       }

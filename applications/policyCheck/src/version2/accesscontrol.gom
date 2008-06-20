@@ -149,11 +149,6 @@ module accesscontrol
       l2 = `accesses(elt,l2*);
     }
 
-//     int ll =  l2.length();
-//     if(max<ll){
-//       max=ll;
-//       System.out.println("Max="+max);
-//     }
     return l2;
   }
 

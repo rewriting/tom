@@ -18,32 +18,39 @@ public class Tests {
     Subject s3 = `subject(3,sl("low"));
     Subject s4 = `subject(4,sl("very low"));
 
-    Resource r4 = `resource(4,sl("very low"));
-    Resource r3 = `resource(3,sl("low"));
-    Resource r2 = `resource(2,sl("medium"));
+    Resource r0 = `resource(0,sl("very high"));
     Resource r1 = `resource(1,sl("high"));
-    Resource r0= `resource(0,sl("very high"));
+    Resource r2 = `resource(2,sl("medium"));
+    Resource r3 = `resource(3,sl("low"));
+    Resource r4 = `resource(4,sl("very low"));
+    Resource r5 = `resource(5,sl("5"));
+    Resource r6 = `resource(6,sl("6"));
+    Resource r7 = `resource(7,sl("7"));
+    Resource r8 = `resource(8,sl("8"));
  
     /*
      * check a configuration
      */
     int numberOfAccessMode = 2;
-//     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
-//     SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("high")));
-    SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
+    SecurityLevelsLattice sls = `slLattice();
+    //SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("high")));
+    //SecurityLevelsLattice sls = `slLattice(slSet(sl("low"),sl("medium"),sl("high")));
+    //SecurityLevelsLattice sls = `slLattice(slSet(sl("very low"),sl("low"),sl("medium"),sl("high")));
 
-//     ListOfSubjects slist = `subjects(s1,s2,s3);
-//     ListOfResources rlist = `resources(r1,r2,r3);
+    //ListOfSubjects slist = `subjects(s3,s1);
+    //ListOfResources rlist = `resources(r3,r1);
+    //ListOfSubjects slist = `subjects(s3,s2,s1);
+    //ListOfResources rlist = `resources(r3,r2,r1);
     ListOfSubjects slist = `subjects(s4,s3,s2,s1);
     ListOfResources rlist = `resources(r4,r3,r2,r1);
+    //ListOfSubjects slist = `subjects(s4,s3,s2,s1,s0);
+    //ListOfResources rlist = `resources(r4,r3,r2,r1,r0);
 
     ListOfRequests lor = genListOfRequests(slist,rlist,numberOfAccessMode);
     System.out.println("start with lor = " + lor);
 
-//     System.out.println("\nDELETE = " + `clearRequests(sls,add(read(s1,r1)),lor));
-//     System.out.println("\nDELETE = " + `simplifyRequests(sls,lor));
-    lor = `simplifyRequests(sls,lor);
-    System.out.println("start with lor = " + lor);
+    //lor = `simplifyRequests(sls,lor);
+    //System.out.println("start with lor = " + lor);
 
     Policy mcl = new McLean(sls);
 
@@ -67,8 +74,8 @@ public class Tests {
   private static void runChecker(Policy p, ListOfRequests lor) {
     cacheValid.clear();
     cachePair.clear();
-    otherChecker(`state(accesses()),p,`requests(),lor,`traces());
-//     checker(`state(accesses()),p,`requests(),lor,`traces());
+    otherChecker(`state(accesses()),p,lor,`traces());
+    //checker(`state(accesses()),p,`requests(),lor,`traces());
   }
 
 
@@ -102,10 +109,8 @@ public class Tests {
      * cachePair: a global cache that stores pairs <state,lor>
      *            used to cut the search space and avoid doing a same work twice
      */
-  private static Collection<State> cacheLeak = new HashSet<State>();
-  private static Collection<State> cacheValid = new HashSet<State>();
+  private static LRUCache<State,Boolean> cacheValid = new LRUCache<State,Boolean>(100000);
   private static LRUCache<Pair,Boolean> cachePair = new LRUCache<Pair,Boolean>(100000);
-  //private static HashMap<Pair,Boolean> cachePair = new HashMap<Pair,Boolean>();
   private static int nbAccesses = 100;
   private static int nbStates = 0;
 
@@ -137,11 +142,8 @@ public class Tests {
       if(nbAdd==0) {
         System.out.print("+");
       }
-      //if(cachePair.size() % 1000 == 0) {
-      //  System.out.println("cachePair size = " + cachePair.size());
-      //}
     }
-
+    
     %match(lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
@@ -152,8 +154,7 @@ public class Tests {
         ListOfTraces newTraces = traces;
         if(decision1.isgrant()) {
           //System.out.print("+");
-          //           newTraces = `traces(traces*,RequestToTrace(r),StateToTrace(newState));
-          newTraces = `traces(RequestToTrace(r),StateToTrace(newState),traces*);
+          //newTraces = `traces(RequestToTrace(r),StateToTrace(newState),traces*);
           nextPrevious = `requests();
           nextLor = `requests(previous*,R1*,R2*);
         } else {
@@ -170,23 +171,20 @@ public class Tests {
       requests() -> { // with sol1 only
         // this part is executed after the previous match
         // do the validation when no more request matches
-        if(!cacheValid.contains(s)) {
+        if(cacheValid.get(s) != null) {
           if(p.valid(s) == false) {
             if(traces.length()<nbAccesses){
               nbAccesses = traces.length();
               System.out.println("\nLEAKAGE DETECTED ("+nbAccesses+")");
-              while(!traces.isEmptytraces()) {
+              ListOfTraces t = traces.reverse();
+              while(!t.isEmptytraces()) {
                 System.out.println(traces.getHeadtraces());
-                traces = traces.getTailtraces();
+                t = t.getTailtraces();
               }
               System.out.println("final state = " + s);
-              //System.exit(0);
             }
           } else {
-            cacheValid.add(s);
-            if(cacheValid.size() % 1000 == 0) {
-              System.out.println("#cacheValid = " + cacheValid.size());
-            }
+            cacheValid.put(s,Boolean.TRUE);
           }
         }
       }
@@ -198,12 +196,11 @@ public class Tests {
 	 * 
 	 * @param s the current state (initially empty)
 	 * @param p the policy
-	 * @param previous the list of requests tthat have to be checked after the next grant (initially empty)
 	 * @param lor the list of requests to check
 	 * @param traces the trace that explain how the leakage has been found (initially empty)
 	 * print LEAKAGE with a trace in an information leakage is found 
 	 */
-  private static void otherChecker(State s, Policy p, ListOfRequests previous, ListOfRequests lor, ListOfTraces traces) {
+  private static void otherChecker(State s, Policy p, ListOfRequests lor, ListOfTraces traces) {
     Pair key = `pair(s,lor);
     if(cachePair.get(key) != null) {
       nbCut = (nbCut+1) % 10000;
@@ -219,8 +216,8 @@ public class Tests {
       }
     }
 
-    if( ! p.valid(s) ) {
-      if(traces.length()<nbAccesses){
+    if(p.valid(s) == false) {
+      if(traces.length()<nbAccesses) {
         nbAccesses = traces.length();
         System.out.println("***LEAKAGE DETECTED ("+nbAccesses+")");
         ListOfTraces t = traces.reverse();
@@ -233,22 +230,18 @@ public class Tests {
       return;
     }
 
-
     %match(lor) {
       // sol1: be naive and generate all possible permutations
       requests(R1*,r@(add|delete)((read|write)(subject,resource)),R2*) -> {
         Decision decision1 = p.transition(`r,s);
         State newState = decision1.getstate();
         ListOfRequests nextLor;
-        ListOfRequests nextPrevious;
         ListOfTraces newTraces = traces;
         if(decision1.isgrant()) {
           //System.out.print("+");
-          //           newTraces = `traces();
-          newTraces = `traces(RequestToTrace(r),StateToTrace(newState),traces*);
-          nextPrevious = `requests();
-          nextLor = `requests(previous*,R1*,R2*);
-          otherChecker(newState,p,nextPrevious,nextLor,newTraces);
+          //newTraces = `traces(RequestToTrace(r),StateToTrace(newState),traces*);
+          nextLor = `requests(R1*,R2*);
+          otherChecker(newState,p,nextLor,newTraces);
         } 
 //           If the access is not granted then it will be never granted
 //           independently of the accesses that would be added to the access list
@@ -264,29 +257,6 @@ public class Tests {
     }
   }
  
-
-
-    // just to check that the enumeration is correct
-  private static void simplechecker(ListOfRequests goal, ListOfRequests lor, ListOfRequests trace) {
-    //System.out.println("enter trace = " + trace);
-    %match(lor) {
-      requests(R1*,r,R2*) -> {
-        ListOfRequests nextLor = `requests(R1*,R2*);
-        // should be ntrace, and trace = ... should not be used
-        ListOfRequests ntrace = `requests(trace*,r);
-        simplechecker(goal, nextLor, ntrace);
-      }
-
-      _ -> { 
-        //System.out.println("trace = " + trace);
-        if(trace==goal) {
-          System.out.println("GOAL");
-        }
-      }
-    }
-  }
-
-
   private static ListOfRequests clearRequests(SecurityLevelsLattice slL, Request r, ListOfRequests lor) {
     if(lor.isEmptyrequests()){
       return `requests();
