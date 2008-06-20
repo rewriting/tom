@@ -9,7 +9,21 @@ public class FreshLambda {
   %include { sl.tom }
   %include { tweaked_lambda.tom }
 
-  // return t[u/x]
+  /* how the gom module would look like *
+
+     module lambda
+     imports int String
+     abstract syntax
+     
+     atom Atom
+     
+     LTerm =
+       | app(t1:LTerm,t2:LTerm)
+       | abs(x:Atom, inner t:LTerm) binds Atom
+       | var(x:Atom)
+  */
+
+  // returns t[u/x]
   public static LTerm substitute(LTerm t, Atom x, LTerm u) {
     %match(t) {
       abs(y,t1) -> { return `abs(y,substitute(t1,x,u)); }
