@@ -10,14 +10,14 @@
 
 }
 
-%op RLTerm rapp(t1:LTerm, t2:LTerm) {
+%op RLTerm rapp(t1:RLTerm, t2:RLTerm) {
   is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rapp) }
   get_slot(t1, t) { $t.gett1() }
   get_slot(t2, t) { $t.gett2() }
   make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.rapp.make($t0, $t1) }
 }
 
-%op RLTerm rabs(x:String, t:LTerm) {
+%op RLTerm rabs(x:String, t:RLTerm) {
   is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rabs) }
   get_slot(x, t) { $t.getx() }
   get_slot(t, t) { $t.gett() }

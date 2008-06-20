@@ -14,7 +14,7 @@ public class FreshLambda {
       public Atom a;
       public Pair(String x, Atom a) {
         this.x = x;
-        thsi.a = a;
+        this.a = a;
       } 
     }
     private LinkedList<Pair> ctx = new LinkedList<Pair>();
@@ -30,11 +30,11 @@ public class FreshLambda {
 
   public static LTerm RLTermToLTerm(RLTerm t, Context ctx) {
     %match(t) {
-      rapp(t1,t2) -> { return `app(RLTermToLTerm(t1,map),RLTermToLTerm(t2,map)); }
+      rapp(t1,t2) -> { return `app(RLTermToLTerm(t1,ctx),RLTermToLTerm(t2,ctx)); }
       rabs(x,t1) -> {
-        Atom fresh = LTerm.freshAtom();
-        ctx.push(x,fresh);
-        nt1 = RLTermToLTerm(t1,ctx);
+        Atom fresh = LTerm.freshAtom(`x);
+        ctx.push(`x,fresh);
+        LTerm nt1 = RLTermToLTerm(`t1,ctx);
         ctx.pop();
         return `abs(fresh,nt1);
       }

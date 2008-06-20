@@ -3,8 +3,8 @@ imports int String
 abstract syntax
 
 RLTerm =
-  | rapp(t1:LTerm,t2:LTerm)
-  | rabs(x:String,t:LTerm)
+  | rapp(t1:RLTerm,t2:RLTerm)
+  | rabs(x:String,t:RLTerm)
   | rvar(x:String)
 
 Atom = atom(n:int,hint:String)
@@ -17,8 +17,8 @@ LTerm =
 sort LTerm:block() {
   public abstract void rename(int i,int j);
   private static int counter = 0;
-  private public freshgom_proofofconcept.lambda.types.Atom 
-   freshAtom(String hint) { return `Atom(++counter,hint); }
+  public static freshgom_proofofconcept.lambda.types.Atom 
+   freshAtom(String hint) { return `atom(++counter,hint); }
 }
 
 abs:block() {
