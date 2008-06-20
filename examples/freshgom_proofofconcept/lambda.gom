@@ -33,7 +33,7 @@ abs:block() {
   private void refresh() {
     int old = getx().getn();
     freshgom_proofofconcept.lambda.types.Atom fresh = freshAtom(getx().gethint());
-    setx(fresh);
+    getx().setn(fresh.getn());
     gett().rename(old,fresh.getn());
   }
 
