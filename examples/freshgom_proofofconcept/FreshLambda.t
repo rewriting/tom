@@ -54,9 +54,9 @@ public class FreshLambda {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LambdaParser parser = new LambdaParser(tokens);
       RLTerm rt =  parser.lterm();
-      System.out.println("\n" + Printer.pretty(rt));
+      System.out.println("\nafter parsing: " + Printer.pretty(rt));
       LTerm t = beta(rt.convert());
-      System.out.println("\n" + Printer.pretty(t.export()));
+      System.out.println("\nafter evaluation: " + Printer.pretty(t.export()));
     } catch(Exception e) {
       System.out.println(e);
     }
