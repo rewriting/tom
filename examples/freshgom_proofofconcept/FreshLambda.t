@@ -2,6 +2,7 @@ package freshgom_proofofconcept;
 
 import tom.library.sl.*;
 import freshgom_proofofconcept.lambda.types.*;
+import org.antlr.runtime.*;
 import java.util.*;
 
 public class FreshLambda {
@@ -15,27 +16,30 @@ public class FreshLambda {
      imports int String
      abstract syntax
      
-     atom Atom
+     atom LVar 
      
      LTerm =
-       | app(t1:LTerm,t2:LTerm)
-       | abs(x:Atom, inner t:LTerm) binds Atom
-       | var(x:Atom)
+       | App(t1:LTerm,t2:LTerm)
+       | Abs(x:LVar, inner t:LTerm) binds LVar
+       | Let(x:LVar, outer t:LTerm, inner t:Lterm) binds LVar
+       | Var(x:LVar)
   */
 
   // returns t[u/x]
-  public static LTerm substitute(LTerm t, Atom x, LTerm u) {
+  public static LTerm substitute(LTerm t, LVar x, LTerm u) {
     %match(t) {
-      abs(y,t1) -> { return `abs(y,substitute(t1,x,u)); }
-      app(t1,t2) -> { return `app(substitute(t1,x,u),substitute(t2,x,u)); }
-      var(y) -> { if (`y.equals(x)) return u; else return t; }
+      Abs(y,t1) -> { return `Abs(y,substitute(t1,x,u)); }
+      Let(y,t1,t2) -> { return `Let(y,substitute(t1,x,u),substitute(t2,x,u)); }
+      App(t1,t2) -> { return `App(substitute(t1,x,u),substitute(t2,x,u)); }
+      Var(y) -> { if (`y.equals(x)) return u; else return t; }
     }
     throw new RuntimeException();
   }
 
   %strategy HeadBeta() extends Fail() {
     visit LTerm {
-      app(abs(x,t),u) -> { return `substitute(t,x,u); }
+      App(Abs(x,t),u) -> { return `substitute(t,x,u); }
+      Let(x,u,t) -> { return `substitute(t,x,u); }
     }
   }
 
@@ -45,11 +49,16 @@ public class FreshLambda {
   }
 
   public static void main(String[] args) {
-    RLTerm rt = `rabs("y",rapp(rabs("x",rabs("y",rapp(rvar("x"),rvar("y")))),rvar("y")));
-    RLTerm expected = `rabs("x",rabs("y",rapp(rvar("x"),rvar("y"))));
-    System.out.println(rt);
-    LTerm t = beta(rt.convert());
-    System.out.println(t.export());
-    System.out.println(t.equals(expected.convert()));
+    try{
+      LambdaLexer lexer = new LambdaLexer(new ANTLRInputStream(System.in));
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      LambdaParser parser = new LambdaParser(tokens);
+      RLTerm rt =  parser.lterm();
+      System.out.println("\n" + Printer.pretty(rt));
+      LTerm t = beta(rt.convert());
+      System.out.println("\n" + Printer.pretty(t.export()));
+    } catch(Exception e) {
+      System.out.println(e);
+    }
   }
 }

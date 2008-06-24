@@ -1,6 +1,4 @@
-
 %include { string.tom }
-
 %include { int.tom }
 
 %typeterm RLTerm {
@@ -10,31 +8,39 @@
 
 }
 
-%op RLTerm rapp(t1:RLTerm, t2:RLTerm) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rapp) }
+%op RLTerm RawApp(t1:RLTerm, t2:RLTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.RawApp) }
   get_slot(t1, t) { $t.gett1() }
   get_slot(t2, t) { $t.gett2() }
-  make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.rapp.make($t0, $t1) }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.RawApp.make($t0, $t1) }
 }
 
-%op RLTerm rabs(x:String, t:RLTerm) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rabs) }
+%op RLTerm RawAbs(x:String, t:RLTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.RawAbs) }
   get_slot(x, t) { $t.getx() }
   get_slot(t, t) { $t.gett() }
-  make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.rabs.make($t0, $t1) }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.rlterm.RawAbs.make($t0, $t1) }
 }
 
-%op RLTerm rvar(x:String) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.rvar) }
+%op RLTerm RawLet(x:String, t:RLTerm, u:RLTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.RawLet) }
   get_slot(x, t) { $t.getx() }
-  make(t0) { freshgom_proofofconcept.lambda.types.rlterm.rvar.make($t0) }
+  get_slot(t, t) { $t.gett() }
+  get_slot(u, t) { $t.getu() }
+  make(t0, t1, t2) { freshgom_proofofconcept.lambda.types.rlterm.RawLet.make($t0, $t1, $t2) }
+}
+
+%op RLTerm RawVar(x:String) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.rlterm.RawVar) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { freshgom_proofofconcept.lambda.types.rlterm.RawVar.make($t0) }
 }
 
 
 
-%typeterm Atom {
-  implement { freshgom_proofofconcept.lambda.types.Atom }
-  is_sort(t) { ($t instanceof freshgom_proofofconcept.lambda.types.Atom) }
+%typeterm LVar {
+  implement { freshgom_proofofconcept.lambda.types.LVar }
+  is_sort(t) { ($t instanceof freshgom_proofofconcept.lambda.types.LVar) }
   equals(t1,t2) { ($t1.equals($t2)) }
 }
 
@@ -44,35 +50,43 @@
   equals(t1,t2) { ($t1.equals($t2)) }
 }
 
-/* the details of how atom is implemented should be hidden
+/* the details of how LVar is implemented should be hidden
 
-%op Atom atom(n:int, hint:String) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.atom.atom) }
+%op LVar LVar(n:int, hint:String) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.LVar.LVar) }
   get_slot(n, t) { $t.getn() }
   get_slot(hint, t) { $t.gethint() }
-  make(t0, t1) { freshgom_proofofconcept.lambda.types.atom.atom.make($t0, $t1) }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.LVar.LVar.make($t0, $t1) }
 }
 */
 
-%op LTerm app(t1:LTerm, t2:LTerm) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.app) }
+%op LTerm App(t1:LTerm, t2:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.App) }
   get_slot(t1, t) { $t.gett1() }
   get_slot(t2, t) { $t.gett2() }
-  make(t0, t1) { freshgom_proofofconcept.lambda.types.lterm.app.make($t0, $t1) }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.lterm.App.make($t0, $t1) }
 }
 
-%op LTerm abs(x:Atom, t:LTerm) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.abs) }
+%op LTerm Abs(x:LVar, t:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.Abs) }
   // modified here
-  get_slot(x, t) { ((freshgom_proofofconcept.lambda.types.lterm.abs)$t).safe_getx() }
+  get_slot(x, t) { ((freshgom_proofofconcept.lambda.types.lterm.Abs)$t).safe_getx() }
   // modified here
-  get_slot(t, t) { ((freshgom_proofofconcept.lambda.types.lterm.abs)$t).safe_gett() }
-  make(t0, t1) { freshgom_proofofconcept.lambda.types.lterm.abs.make($t0, $t1) }
+  get_slot(t, t) { ((freshgom_proofofconcept.lambda.types.lterm.Abs)$t).safe_gett() }
+  make(t0, t1) { freshgom_proofofconcept.lambda.types.lterm.Abs.make($t0, $t1) }
 }
 
-%op LTerm var(x:Atom) {
-  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.var) }
+%op LTerm Let(x:LVar, t:LTerm, u:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.Let) }
+  get_slot(x, t) { ((freshgom_proofofconcept.lambda.types.lterm.Let)$t).safe_getx() }
+  get_slot(t, t) {((freshgom_proofofconcept.lambda.types.lterm.Let)$t).safe_gett() }
+  get_slot(u, t) { ((freshgom_proofofconcept.lambda.types.lterm.Let)$t).safe_getu() }
+  make(t0, t1, t2) { freshgom_proofofconcept.lambda.types.lterm.Let.make($t0, $t1, $t2) }
+}
+
+%op LTerm Var(x:LVar) {
+  is_fsym(t) { ($t instanceof freshgom_proofofconcept.lambda.types.lterm.Var) }
   get_slot(x, t) { $t.getx() }
-  make(t0) { freshgom_proofofconcept.lambda.types.lterm.var.make($t0) }
+  make(t0) { freshgom_proofofconcept.lambda.types.lterm.Var.make($t0) }
 }
 

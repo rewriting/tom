@@ -2,11 +2,14 @@
 <project name="Build the lambdacalculi example" default="build" basedir="..">
   <import file="../common.xml"/>
   <property name="freshgom" value="freshgom_proofofconcept"/>
+
   <target name="clean" description="Cleans examples directory">
     <delete dir="${examples.gen}/${freshgom}"/>
     <delete dir="${examples.build}/${freshgom}"/>
   </target>
+
   <target name="build" depends="init">
+
 
     <gom.preset srcdir="${examples.dir}"
       package="${freshgom}" 
@@ -15,10 +18,36 @@
       <include name="${freshgom}/lambda.gom"/>
     </gom.preset>
 
+    <!--
+    <gomantlradapter.preset 
+      srcdir="${examples.dir}"
+      destdir="${examples.gen}"
+      grammar="Lambda"
+      package="${freshgom}">
+      <include name="${freshgom}/lambda.gom"/>
+    </gomantlradapter.preset>
+    -->
+
+    <tom.preset srcdir="${examples.dir}"
+      outputfile="${examples.gen}/${freshgom}/Lambda.g"> 
+      <include name="${freshgom}/Lambda.g.t"/>
+    </tom.preset>
+
+    <taskdef name="antlr3"
+      classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+
+    <antlr3 target="${examples.gen}/${freshgom}/Lambda.g"
+      outputdirectory="${examples.gen}/${freshgom}"
+      />
+
     <tomcompile example="${freshgom}"/>
     <javacompile example="${freshgom}"/>
   </target>
+
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <!-- not in the distribution -->
   </target>
+
 </project>
