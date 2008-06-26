@@ -31,7 +31,7 @@ public class FreshLambda {
       Abs(y,t1) -> { return `Abs(y,substitute(t1,x,u)); }
       Let(y,t1,t2) -> { return `Let(y,substitute(t1,x,u),substitute(t2,x,u)); }
       App(t1,t2) -> { return `App(substitute(t1,x,u),substitute(t2,x,u)); }
-      Var(y) -> { if (`y.equals(x)) return u; else return t; }
+      Var(y) -> { if (`y.equals(x)) return ((LTerm) u.clone()); else return t; }
     }
     throw new RuntimeException();
   }
@@ -43,8 +43,14 @@ public class FreshLambda {
     }
   }
 
+  %strategy Debug() extends Identity() {
+    visit LTerm {
+      t -> { System.out.println(`t + "\n"); }
+    }
+  }
+
   public static LTerm beta(LTerm t) {
-    try { return (LTerm) `Innermost(HeadBeta()).visit(t); }
+    try { return (LTerm) `Repeat(Sequence(OnceTopDown(HeadBeta()),Debug())).visit(t); }
     catch (VisitFailure e) { return t; }
   }
 
@@ -57,6 +63,7 @@ public class FreshLambda {
       System.out.println("\nafter parsing: " + Printer.pretty(rt));
       LTerm t = beta(rt.convert());
       System.out.println("\nafter evaluation: " + Printer.pretty(t.export()));
+
     } catch(Exception e) {
       System.out.println(e);
     }

@@ -51,11 +51,6 @@ sort RLTerm:block() {
 
 sort LTerm:block() {
   public abstract void rename(int i,int j);
-  private static int counter = 0;
-  public static freshgom_proofofconcept.lambda.types.LVar 
-   freshLVar(String hint) { 
-     return `LVar(++counter,hint.split("[0-9]")[0]); 
-   }
 
   /* stack for alphaequivalence */
   protected static class AlphaMap {
@@ -134,6 +129,12 @@ sort LTerm:block() {
 }
 
 sort LVar:block() {
+  private static int counter = 0;
+
+  public static freshgom_proofofconcept.lambda.types.LVar 
+   freshLVar(String hint) { 
+     return `LVar(++counter,hint.split("[0-9]")[0]); 
+  }
   public boolean equals(freshgom_proofofconcept.lambda.types.LVar o) {
     return this.getn() == o.getn();
   }
@@ -148,7 +149,7 @@ RawAbs:block() {
     String x = getx();
     freshgom_proofofconcept.lambda.types.RLTerm t = gett();
     freshgom_proofofconcept.lambda.types.LVar fresh = 
-      freshgom_proofofconcept.lambda.types.LTerm.freshLVar(`x);
+      freshgom_proofofconcept.lambda.types.LVar.freshLVar(`x);
     ctx.push(`x,fresh);
     freshgom_proofofconcept.lambda.types.LTerm nt = `t.convert(ctx);
     ctx.pop();
@@ -163,7 +164,7 @@ RawLet:block() {
     freshgom_proofofconcept.lambda.types.RLTerm t = gett();
     freshgom_proofofconcept.lambda.types.RLTerm u = getu();
     freshgom_proofofconcept.lambda.types.LVar fresh = 
-      freshgom_proofofconcept.lambda.types.LTerm.freshLVar(`x);
+      freshgom_proofofconcept.lambda.types.LVar.freshLVar(`x);
     freshgom_proofofconcept.lambda.types.LTerm nt = `t.convert(ctx);
     ctx.push(`x,fresh);
     freshgom_proofofconcept.lambda.types.LTerm nu = `u.convert(ctx);
@@ -192,7 +193,8 @@ RawVar:block() {
 Abs:block() {
   private void refresh() {
     int old = getx().getn();
-    freshgom_proofofconcept.lambda.types.LVar fresh = freshLVar(getx().gethint());
+    freshgom_proofofconcept.lambda.types.LVar fresh = 
+      freshgom_proofofconcept.lambda.types.LVar.freshLVar(getx().gethint());
     getx().setn(fresh.getn());
     gett().rename(old,fresh.getn());
   }
@@ -236,7 +238,8 @@ Abs:block() {
 Let:block() {
   private void refresh() {
     int old = getx().getn();
-    freshgom_proofofconcept.lambda.types.LVar fresh = freshLVar(getx().gethint());
+    freshgom_proofofconcept.lambda.types.LVar fresh = 
+      freshgom_proofofconcept.lambda.types.LVar.freshLVar(getx().gethint());
     getx().setn(fresh.getn());
     gett().rename(old,fresh.getn());
     getu().rename(old,fresh.getn());
@@ -284,7 +287,7 @@ Let:block() {
     int i = ctx.push(`x);
     freshgom_proofofconcept.lambda.types.RLTerm nu = `u.export(ctx);
     ctx.pop();
-    return `RawLet(x.gethint()+i,nt,nu);
+    return `RawLet(x.getRepresentation(i),nt,nu);
   }
 }
 
