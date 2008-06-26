@@ -24,9 +24,13 @@ public class Decorator extends ADecorator {
 
   // mimics AbstractStrategy
   public Visitable setChildAt(int i, Visitable child) {
-    Strategy[] copy = Arrays.copyOf(visitors,visitors.length);
+    Strategy[] copy = new Strategy[visitors.length];
+    for (int k=0; k<visitors.length; k++) {
+      copy[k] = visitors[k];
+    }
     copy[i] = (Strategy) child;
     realCalee = maker.buildDecorated(copy);
     return supersetChildAt(i,child);
   }
+
 }
