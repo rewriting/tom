@@ -3,7 +3,7 @@ imports String
 abstract syntax
 
 CompilationUnit = 
- | ClassOrInterfaceDeclarationList( ClassOrInterfaceDeclaration* )
+ | TypeDeclList( TypeDecl* )
  | EmptyCompilationUnit()
 
 /*
@@ -29,9 +29,11 @@ typeDeclaration
     ;
 */
 
-ClassOrInterfaceDeclaration =
- | ClassDeclaration( cdecl:ClassDeclaration )
- | InterfaceDeclaration( idecl:InterfaceDeclaration )
+TypeDecl =
+ | NormalClassDecl( classbody:ClassBody )
+ | EnumClassDecl( enumbody:ClassBody )
+ | NormalInterfaceDecl( interfacebody:InterfaceBody )
+ | AnnotationTypeDecl( x:AnnotationTypeDecl )
 
 /* 
 classOrInterfaceDeclaration
@@ -56,13 +58,7 @@ classOrInterfaceModifier
 modifiers
     :   modifier*
     ;
-*/
 
-ClassDeclaration =
- | NormalClassDeclaration( body:ClassBody )
- | EnumClassDeclaration( enumbody:ClassBody )
-
-/*
 classDeclaration
     :   normalClassDeclaration
     |   enumDeclaration
@@ -106,13 +102,7 @@ enumConstant
 enumBodyDeclarations
     :   ';' (classBodyDeclaration)*
     ;
-*/
 
-InterfaceDeclaration =
- | NormalInterfaceDeclaration( body:InterfaceBody )
- | AnnotationTypeDeclaration( x:AnnotationTypeDeclaration )
-
-/*
 interfaceDeclaration
     :   normalInterfaceDeclaration
     |   annotationTypeDeclaration
@@ -127,26 +117,28 @@ typeList
     ;
 */
 
-//ClassBody = DeclarationList( ClassBodyDeclaration* )
-ClassBody = EmptyClassBody()
+ClassBody = ClassBodyDeclList( ClassBodyDecl* )
+//ClassBody = EmptyClassBody()
+
 /*
 classBody
     :   '{' classBodyDeclaration* '}'
     ;
 */
 
-//InterfaceBody = DeclarationList( InterfaceBodyDeclaration* )
-InterfaceBody = EmptyInterfaceBody()
+InterfaceBody = InterfaceBodyDeclList( InterfaceBodyDecl* )
+//InterfaceBody = EmptyInterfaceBody()
+
 /*
 interfaceBody
     :   '{' interfaceBodyDeclaration* '}'
     ;
 */
 
-/*ClassBodyDeclaration =
+ClassBodyDecl =
  | Block ( block:Block )
  | Decl ( decl:MemberDecl )
-*/
+
 /*
 classBodyDeclaration
     :   ';'
@@ -154,14 +146,13 @@ classBodyDeclaration
     |   modifiers memberDecl
     ;
 */
-/*
+
 MemberDecl =
- | FieldDeclarator ( id:String )
- | MethodDeclarator ( id:String )
- | ConstructorDeclarator( id:String )
- | InterfaceDeclaration( idecl:InterfaceDeclaration )
- | ClassDeclaration( cdecl:ClassDeclaration )
-*/
+ | EmptyFieldDecl()
+ | MethodDecl( id:String )
+ | ConstructorDecl( id:String )
+ | ClassTypeDecl( decl:TypeDecl )
+
 /*
 memberDecl
     :   genericMethodOrConstructorDecl
@@ -193,23 +184,22 @@ fieldDeclaration
     :   variableDeclarators ';'
     ;
 */
-/*
-InterfaceBodyDeclaration =
+
+InterfaceBodyDecl =
  | InterfaceMemberDecl( x:InterfaceMemberDecl )
-*/
+
 /*
 interfaceBodyDeclaration
     :   modifiers interfaceMemberDecl
     |   ';'
     ;
 */
-/*
+
 InterfaceMemberDecl =
- | ConstantDeclarator (id:String )
- | InterfaceMethodDeclarator (id:String )
- | InterfaceDeclaration( idecl:InterfaceDeclaration )
- | ClassDeclaration( cdecl:ClassDeclaration )
-*/
+ | ConstantDecl ( id:String )
+ | InterfaceMethodDecl ( id:String )
+ | InterfaceTypeDecl( decl:TypeDecl )
+
 /*
 interfaceMemberDecl
     :   interfaceMethodOrFieldDecl
@@ -444,8 +434,7 @@ elementValueArrayInitializer
     ;
 */
 
-AnnotationTypeDeclaration =
- | EmptyAnnotationTypeDeclaration()
+AnnotationTypeDecl = EmptyAnnotationTypeDecl()
 
 /*
 annotationTypeDeclaration
@@ -487,9 +476,9 @@ defaultValue
 */
 
 // STATEMENTS / BLOCKS
-/*
+
 Block = EmptyBlock()
-*/
+
 /*
 block
     :   '{' blockStatement* '}'
@@ -802,9 +791,11 @@ superSuffix
 arguments
     :   '(' expressionList? ')'
     ;
+*/
 
 // LEXER
 
+/*
 HexLiteral : '0' ('x'|'X') HexDigit+ IntegerTypeSuffix? ;
 
 DecimalLiteral : ('0' | '1'..'9' '0'..'9'*) IntegerTypeSuffix? ;
@@ -863,7 +854,11 @@ ENUM:   'enum' {if (!enumIsKeyword) $type=Identifier;}
 ASSERT
     :   'assert' {if (!assertIsKeyword) $type=Identifier;}
     ;
+*/
 
+//Identifier = Id()
+
+/*
 Identifier 
     :   Letter (Letter|JavaIDDigit)*
     ;

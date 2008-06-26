@@ -198,7 +198,7 @@ compilationUnit
         (   packageDeclaration importDeclaration* typeDeclaration*
         |   classOrInterfaceDeclaration typeDeclaration*
         ) -> EmptyCompilationUnit
-    |   packageDeclaration? importDeclaration* typeDeclaration* -> ^(ClassOrInterfaceDeclarationList typeDeclaration*)
+    |   packageDeclaration? importDeclaration* typeDeclaration* -> ^(TypeDeclList typeDeclaration*)
     ;
 
 packageDeclaration
@@ -216,8 +216,8 @@ typeDeclaration
     
 classOrInterfaceDeclaration
     :   classOrInterfaceModifiers
-        (    classDeclaration -> ^(ClassDeclaration classDeclaration)
-        |    interfaceDeclaration -> ^(InterfaceDeclaration interfaceDeclaration)
+        (    classDeclaration -> classDeclaration
+        |    interfaceDeclaration -> interfaceDeclaration
         )
     ;
     
@@ -249,7 +249,7 @@ normalClassDeclaration
     :   'class' Identifier typeParameters?
         ('extends' type)?
         ('implements' typeList)?
-        classBody -> ^(NormalClassDeclaration classBody )
+        classBody -> ^(NormalClassDecl classBody )
     ;
     
 typeParameters
@@ -265,11 +265,11 @@ typeBound
     ;
 
 enumDeclaration
-    :   ENUM Identifier ('implements' typeList)? enumBody -> ^(EnumClassDeclaration enumBody )
+    :   ENUM Identifier ('implements' typeList)? enumBody -> ^(EnumClassDecl enumBody )
     ;
 
 enumBody
-    :   '{' enumConstants? ','? enumBodyDeclarations? '}' -> EmptyClassBody
+    :   '{' enumConstants? ','? enumBodyDeclarations? '}' -> enumBodyDeclarations
     ;
 
 enumConstants
@@ -281,16 +281,16 @@ enumConstant
     ;
     
 enumBodyDeclarations
-    :   ';' (classBodyDeclaration)*
+    :   ';' (classBodyDeclaration)* -> ^(ClassBodyDeclList classBodyDeclaration*)
     ;
     
 interfaceDeclaration
     :   normalInterfaceDeclaration -> normalInterfaceDeclaration
-    |   annotationTypeDeclaration -> ^(AnnotationTypeDeclaration annotationTypeDeclaration)
+    |   annotationTypeDeclaration -> annotationTypeDeclaration
     ;
     
 normalInterfaceDeclaration
-    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(NormalInterfaceDeclaration interfaceBody )
+    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(NormalInterfaceDecl interfaceBody )
     ;
     
 typeList
@@ -298,64 +298,67 @@ typeList
     ;
     
 classBody
-    :   '{' classBodyDeclaration* '}' -> EmptyClassBody
+    :   '{' classBodyDeclaration* '}' -> ^(ClassBodyDeclList classBodyDeclaration*)
     ;
     
 interfaceBody
-    :   '{' interfaceBodyDeclaration* '}' -> EmptyInterfaceBody
+    :   '{' interfaceBodyDeclaration* '}' -> ^(InterfaceBodyDeclList interfaceBodyDeclaration*)
     ;
 
 classBodyDeclaration
     :   ';'
-    |   'static'? block
-    |   modifiers memberDecl
+    |   'static'? block -> ^(Block block)
+    |   modifiers memberDecl -> ^(Decl memberDecl)
     ;
     
 memberDecl
-    :   genericMethodOrConstructorDecl
-    |   memberDeclaration
-    |   'void' Identifier voidMethodDeclaratorRest
-    |   Identifier constructorDeclaratorRest
-    |   interfaceDeclaration
-    |   classDeclaration
+    :   genericMethodOrConstructorDecl -> genericMethodOrConstructorDecl
+    |   memberDeclaration -> memberDeclaration
+    |   'void' Identifier voidMethodDeclaratorRest -> ^(MethodDecl Identifier)
+    |   Identifier constructorDeclaratorRest -> ^(ConstructorDecl Identifier)
+    |   interfaceDeclaration -> ^(ClassTypeDecl interfaceDeclaration)
+    |   classDeclaration -> ^(ClassTypeDecl classDeclaration)
     ;
     
 memberDeclaration
-    :   type (methodDeclaration | fieldDeclaration)
+    :   type
+        (   methodDeclaration -> methodDeclaration
+        |   fieldDeclaration -> fieldDeclaration
+        )
     ;
 
 genericMethodOrConstructorDecl
-    :   typeParameters genericMethodOrConstructorRest
+    :   typeParameters genericMethodOrConstructorRest -> genericMethodOrConstructorRest
     ;
     
 genericMethodOrConstructorRest
-    :   (type | 'void') Identifier methodDeclaratorRest
-    |   Identifier constructorDeclaratorRest
+    :   (type | 'void') Identifier methodDeclaratorRest -> ^(MethodDecl Identifier)
+    |   Identifier constructorDeclaratorRest -> ^(ConstructorDecl Identifier)
     ;
 
 methodDeclaration
-    :   Identifier methodDeclaratorRest
+    :   Identifier methodDeclaratorRest -> ^(MethodDecl Identifier)
     ;
 
 fieldDeclaration
-    :   variableDeclarators ';'
+    :   variableDeclarators ';' -> EmptyFieldDecl
     ;
         
 interfaceBodyDeclaration
-    :   modifiers interfaceMemberDecl
+    :   modifiers interfaceMemberDecl -> ^(InterfaceMemberDecl interfaceMemberDecl)
     |   ';'
     ;
 
 interfaceMemberDecl
-    :   interfaceMethodOrFieldDecl
-    |   interfaceGenericMethodDecl
-    |   'void' Identifier voidInterfaceMethodDeclaratorRest
-    |   interfaceDeclaration
-    |   classDeclaration
+    :   interfaceMethodOrFieldDecl -> interfaceMethodOrFieldDecl
+    |   interfaceGenericMethodDecl -> interfaceGenericMethodDecl
+    |   'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(InterfaceMethodDecl Identifier)
+    |   interfaceDeclaration -> ^(InterfaceTypeDecl interfaceDeclaration)
+    |   classDeclaration -> ^(InterfaceTypeDecl classDeclaration)
     ;
     
 interfaceMethodOrFieldDecl
-    :   type Identifier interfaceMethodOrFieldRest
+    :   type Identifier interfaceMethodOrFieldRest -> ^(ConstantDecl Identifier)
     ;
     
 interfaceMethodOrFieldRest
@@ -384,7 +387,7 @@ interfaceMethodDeclaratorRest
     
 interfaceGenericMethodDecl
     :   typeParameters (type | 'void') Identifier
-        interfaceMethodDeclaratorRest
+        interfaceMethodDeclaratorRest -> ^(InterfaceMethodDecl Identifier)
     ;
     
 voidInterfaceMethodDeclaratorRest
@@ -577,7 +580,7 @@ elementValueArrayInitializer
     ;
     
 annotationTypeDeclaration
-    :   '@' 'interface' Identifier annotationTypeBody -> EmptyAnnotationTypeDeclaration
+    :   '@' 'interface' Identifier annotationTypeBody -> ^(AnnotationTypeDecl EmptyAnnotationTypeDecl)
     ;
     
 annotationTypeBody
@@ -616,7 +619,7 @@ defaultValue
 // STATEMENTS / BLOCKS
 
 block
-    :   '{' blockStatement* '}'
+    :   '{' blockStatement* '}' -> EmptyBlock
     ;
     
 blockStatement
