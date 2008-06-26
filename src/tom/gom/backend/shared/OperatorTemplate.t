@@ -77,13 +77,17 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
+]%);
 
+if (maximalsharing) {
+  writer.write(
+%[
 public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.sl.Visitable @generateInterface()@ {
   @generateBlock()@
   private static String symbolName = "@className()@";
 ]%);
 
-if (maximalsharing) {
+
   if(slotList.length() > 0) {
     writer.write(%[
 
@@ -100,6 +104,14 @@ if (maximalsharing) {
   ]%);
   }
 } else {
+  writer.write(
+%[
+public final class @className()@ extends @fullClassName(extendsType)@ implements Cloneable, tom.library.sl.Visitable @generateInterface()@ {
+  @generateBlock()@
+  private static String symbolName = "@className()@";
+]%);
+
+
 // generate a private constructor that takes as arguments the operator arguments
   writer.write(%[
 
@@ -294,14 +306,51 @@ writer.write(%[
   public int compareTo(Object o) {
     throw new UnsupportedOperationException("Unable to compare"); 
   }
-  
+
+  @@Override
+  public Object clone() {
+]%);
+
+SlotFieldList slots = slotList;
+if(slots.isEmptyConcSlotField()) {
+  writer.write(%[
+      return new @className()@();
+  }
+      ]%);
+} else {
+
+SlotField head = slots.getHeadConcSlotField();
+slots = slots.getTailConcSlotField();
+
+if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+  writer.write(%[
+      return new @className()@(@getMethod(head)@()]%);
+
+} else {
+  writer.write(%[
+      return new @className()@( (@fullClassName(head.getDomain())@) @getMethod(head)@().clone()]%);
+}
+
+while(!slots.isEmptyConcSlotField()) {
+  head = slots.getHeadConcSlotField();
+  slots = slots.getTailConcSlotField();
+  if (GomEnvironment.getInstance().isBuiltinClass(head.getDomain())) {
+   writer.write(%[,@getMethod(head)@()]%);
+  } else {
+  writer.write(%[,(@fullClassName(head.getDomain())@) @getMethod(head)@().clone()]%);
+  }
+}
+writer.write(");\n}");
+}
+
+writer.write(%[
   @@Override
   public final boolean deepEquals(Object o) {
     if (o instanceof @className()@) {
       @className()@ typed_o = (@className()@) o;
 ]%);
 
-SlotFieldList slots = slotList;
+slots = slotList;
 if(slots.isEmptyConcSlotField()) {
   writer.write(%[
       return true;

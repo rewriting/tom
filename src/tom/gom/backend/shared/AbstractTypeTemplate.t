@@ -73,7 +73,7 @@ public abstract class @className()@ implements shared.SharedObjectWithID, tom.li
 } else {
     writer.write(
 %[
-public abstract class @className()@ implements tom.library.sl.Visitable, Comparable @generateInterface()@ {
+public abstract class @className()@ implements tom.library.sl.Visitable, Cloneable, Comparable @generateInterface()@ {
 ]%);
 }
 
@@ -131,8 +131,10 @@ if (maximalsharing) {
 }
 ]%);
 } else {
+  //implement the Cloneable interface and decalre a public method clone()
  writer.write(
 %[
+ public abstract Object clone();
 }
 ]%);
 }
