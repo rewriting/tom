@@ -1,0 +1,119 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm RLTerm {
+  implement { freshgom_sharing.lambda.types.RLTerm }
+  is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RLTerm) }
+
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RLTerm)$t1).deepEquals($t2)) }
+
+}
+
+%typeterm LVar {
+  implement { freshgom_sharing.lambda.types.LVar }
+  is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.LVar) }
+
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.LVar)$t1).deepEquals($t2)) }
+
+}
+
+%typeterm LTerm {
+  implement { freshgom_sharing.lambda.types.LTerm }
+  is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.LTerm) }
+
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.LTerm)$t1).deepEquals($t2)) }
+
+}
+
+%typeterm Lam {
+  implement { freshgom_sharing.lambda.types.Lam }
+  is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Lam) }
+
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Lam)$t1).deepEquals($t2)) }
+
+}
+
+%typeterm Letin {
+  implement { freshgom_sharing.lambda.types.Letin }
+  is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Letin) }
+
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Letin)$t1).deepEquals($t2)) }
+
+}
+%op RLTerm RawApp(t1:RLTerm, t2:RLTerm) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.rlterm.RawApp) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { freshgom_sharing.lambda.types.rlterm.RawApp.make($t0, $t1) }
+}
+
+%op RLTerm RawAbs(x:String, t:RLTerm) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.rlterm.RawAbs) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { freshgom_sharing.lambda.types.rlterm.RawAbs.make($t0, $t1) }
+}
+
+%op RLTerm RawLet(x:String, t:RLTerm, u:RLTerm) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.rlterm.RawLet) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  get_slot(u, t) { $t.getu() }
+  make(t0, t1, t2) { freshgom_sharing.lambda.types.rlterm.RawLet.make($t0, $t1, $t2) }
+}
+
+%op RLTerm RawVar(x:String) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.rlterm.RawVar) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { freshgom_sharing.lambda.types.rlterm.RawVar.make($t0) }
+}
+
+%op LVar LVar(n:int, hint:String) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.lvar.LVar) }
+  get_slot(n, t) { $t.getn() }
+  get_slot(hint, t) { $t.gethint() }
+  make(t0, t1) { freshgom_sharing.lambda.types.lvar.LVar.make($t0, $t1) }
+}
+
+%op LTerm App(t1:LTerm, t2:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.lterm.App) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { freshgom_sharing.lambda.types.lterm.App.make($t0, $t1) }
+}
+
+%op LTerm Abs(a:Lam) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.lterm.Abs) }
+  get_slot(a, t) {((freshgom_sharing.lambda.types.lterm.Abs)$t).safe_geta() }
+  make(t0) { freshgom_sharing.lambda.types.lterm.Abs.make($t0) }
+}
+
+%op LTerm Let(b:Letin) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.lterm.Let) }
+  get_slot(b, t) { ((freshgom_sharing.lambda.types.lterm.Let)$t).safe_getb() }
+  make(t0) { freshgom_sharing.lambda.types.lterm.Let.make($t0) }
+}
+
+%op LTerm Var(x:LVar) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.lterm.Var) }
+  get_slot(x, t) {  $t.getx() }
+  make(t0) { freshgom_sharing.lambda.types.lterm.Var.make($t0) }
+}
+
+%op Lam lam(x:LVar, t:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.lam.lam) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { freshgom_sharing.lambda.types.lam.lam.make($t0, $t1) }
+}
+
+%op Letin letin(x:LVar, t:LTerm, u:LTerm) {
+  is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.letin.letin) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  get_slot(u, t) { $t.getu() }
+  make(t0, t1, t2) { freshgom_sharing.lambda.types.letin.letin.make($t0, $t1, $t2) }
+}
+
