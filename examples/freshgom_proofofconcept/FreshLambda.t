@@ -43,14 +43,8 @@ public class FreshLambda {
     }
   }
 
-  %strategy Debug() extends Identity() {
-    visit LTerm {
-      t -> { System.out.println(`t + "\n"); }
-    }
-  }
-
   public static LTerm beta(LTerm t) {
-    try { return (LTerm) `Repeat(Sequence(OnceTopDown(HeadBeta()),Debug())).visit(t); }
+    try { return (LTerm) `Outermost(HeadBeta()).visit(t); }
     catch (VisitFailure e) { return t; }
   }
 

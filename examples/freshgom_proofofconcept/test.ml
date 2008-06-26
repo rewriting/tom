@@ -11,7 +11,13 @@ let true = fun x -> fun y -> x in
 let false = fun x -> fun y -> y in
 let ite = fun test -> fun v1 -> fun v2 -> test v1 v2 in
 let zerotest = fun n -> n true (fun x -> false) in
-//let Y = fun f -> (fun x -> f (x x)) (fun x -> f (x x)) in
-pred (S (S (S Z)))
+let Y = fun f -> (fun x -> f (x x)) (fun x -> f (x x)) in
+let natrec = fun u -> fun v -> fun n -> 
+  iter (pair Z u) 
+  (fun p-> (let a = first p in let b = second p in (pair (S a) (v a b)))) n in
+let mult = fun n -> fun m -> iter Z (plus n) m in
+let fact = natrec (S Z) (fun p -> fun r -> mult (S p) r)
+in
+  second (fact (S (S (S (S Z)))))
 
 
