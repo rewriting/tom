@@ -21,8 +21,20 @@ public class FreshLambda {
      LTerm =
        | App(t1:LTerm,t2:LTerm)
        | Abs(a:lam)
-       | Let(b:letin)
-       | Var(x:LVar)
+       | Let(b:<Letin>)
+       | Var(x:<LVar>)
+       | Constr(f:String, children:LTermList)
+       | Case(subject:LTerm,rules:Rules)
+
+     Rules = RList(<Clause>*)
+     Clause binds LVar = Rule(p:Pattern, inner t:LTerm) 
+
+     Pattern binds LVar =
+       | PFun(f:String, children:PatternList)
+       | PVar(x:LVar)
+
+     LTermList binds LVar = LTList(LTerm*)
+     PatternList binds LVar = PList(Pattern*)
 
      Lam binds LVar = lam(x:LVar,inner t:LTerm)
      Letin binds LVar = letin(x:LVar, outer t:LTerm, inner t:Lterm)

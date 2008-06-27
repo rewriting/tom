@@ -22,8 +22,8 @@ toplevel returns [ArrayList<RLTerm> res]
 
 lterm returns [RLTerm res]
 : t=app_lterm { $res=t; }
-| LAMBDA ID DOT t=lterm { $res = `RawAbs($ID.text,t); }
-| LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet($ID.text,u,t); }
+| LAMBDA ID DOT t=lterm { $res = `RawAbs(Rawlam($ID.text,t)); }
+| LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,u,t)); }
 ;
 
 app_lterm returns [RLTerm res]

@@ -2,22 +2,50 @@ module lambda
 imports int String
 abstract syntax
 
-RLTerm =
-  | RawApp(t1:RLTerm,t2:RLTerm)
-  | RawAbs(x:String,t:RLTerm)
-  | RawLet(x:String,t:RLTerm,u:RLTerm)
-  | RawVar(x:String)
-
 LVar = LVar(n:int,hint:String)
 
-LTerm =
-  | App(t1:LTerm,t2:LTerm)
-  | Abs(a:Lam)
-  | Let(b:Letin)
-  | Var(x:LVar)
+RLTerm = RawApp(t1:RLTerm,t2:RLTerm)
+       | RawAbs(a:RawLam)
+       | RawLet(b:RawLetin)
+       | RawVar(x:String)
+       | RawConstr(f:String, children:RawLTermList)
+       | RawCase(subject:RLTerm,rules:RawRules)
+
+RawLam = Rawlam(x:String, t:RLTerm)
+RawLetin = Rawletin(x:String, t:RLTerm, u:RLTerm)
+
+RawRules = RawRList(RawClause*)
+RawClause = RawRule(p:RawPattern, t:RLTerm) 
+
+RawPattern = RawPFun(f:String, children:RawPatternList)
+           | RawPVar(x:String)
+
+RawLTermList = RawLTList(RLTerm*)
+RawPatternList = RawPList(RawPattern*)
+
+/* ----------------------------------------------------- */
+
+LTerm = App(t1:LTerm,t2:LTerm)
+      | Abs(a:Lam)
+      | Let(b:Letin)
+      | Var(x:LVar)
+      | Constr(f:String, children:LTermList)
+      | Case(subject:LTerm,rules:Rules)
 
 Lam = lam(x:LVar, t:LTerm)
 Letin = letin(x:LVar, t:LTerm, u:LTerm)
+
+Rules = RList(Clause*)
+Clause = Rule(p:Pattern, t:LTerm) 
+
+Pattern = PFun(f:String, children:PatternList)
+        | PVar(x:LVar)
+
+LTermList = LTList(LTerm*)
+PatternList = PList(Pattern*)
+
+
+
 
 module lambda:block() {
   /* stack for alphaequivalence */
@@ -203,8 +231,9 @@ sort LVar:block() {
 RawAbs:block() {
   /* importation (raw term -> term) */
   public freshgom_sharing.lambda.types.LTerm convert(Context ctx) {
-    String x = getx();
-    freshgom_sharing.lambda.types.RLTerm t = gett();
+    freshgom_sharing.lambda.types.RawLam a = geta();
+    String x = a.getx();
+    freshgom_sharing.lambda.types.RLTerm t = a.gett();
     freshgom_sharing.lambda.types.LVar fresh = 
       freshgom_sharing.lambda.types.LVar.freshLVar(x);
     ctx.push(x,fresh);
@@ -217,9 +246,10 @@ RawAbs:block() {
 RawLet:block() {
   /* importation (raw term -> term) */
   public freshgom_sharing.lambda.types.LTerm convert(Context ctx) {
-    String x = getx();
-    freshgom_sharing.lambda.types.RLTerm t = gett();
-    freshgom_sharing.lambda.types.RLTerm u = getu();
+    freshgom_sharing.lambda.types.RawLetin b = getb();
+    String x = b.getx();
+    freshgom_sharing.lambda.types.RLTerm t = b.gett();
+    freshgom_sharing.lambda.types.RLTerm u = b.getu();
     freshgom_sharing.lambda.types.LVar fresh = 
       freshgom_sharing.lambda.types.LVar.freshLVar(x);
     freshgom_sharing.lambda.types.LTerm nt = t.convert(ctx);
@@ -247,6 +277,20 @@ RawVar:block() {
   }
 }
 
+RawCase:block() {
+  /* importation (raw term -> term) */
+  public freshgom_sharing.lambda.types.LTerm convert(Context ctx) {
+    return null;
+  }
+}
+
+RawConstr:block() {
+  /* importation (raw term -> term) */
+  public freshgom_sharing.lambda.types.LTerm convert(Context ctx) {
+    return null;
+  }
+}
+
 Abs:block() {
   public freshgom_sharing.lambda.types.Lam safe_geta() {
     return geta().refresh();
@@ -271,7 +315,7 @@ Abs:block() {
     int i = ctx.push(x);
     freshgom_sharing.lambda.types.RLTerm nt = t.export(ctx);
     ctx.pop();
-    return `RawAbs(x.getRepresentation(i),nt);
+    return `RawAbs(Rawlam(x.getRepresentation(i),nt));
   }
 }
 
@@ -301,7 +345,7 @@ Let:block() {
     int i = ctx.push(x);
     freshgom_sharing.lambda.types.RLTerm nu = u.export(ctx);
     ctx.pop();
-    return `RawLet(x.getRepresentation(i),nt,nu);
+    return `RawLet(Rawletin(x.getRepresentation(i),nt,nu));
   }
 }
 
@@ -343,4 +387,40 @@ Var:block() {
     freshgom_sharing.lambda.types.LVar x = getx();
     return `RawVar(x.getRepresentation(ctx.get(x))); 
   }
+}
+
+Case:block() {
+  public freshgom_sharing.lambda.types.LTerm rename(int i, int j) {
+	  return null;
+  }
+
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_sharing.lambda.types.LTerm o, AlphaMap map) {
+	  return false;
+    }
+
+  /* exportation (term -> raw term) */
+  public freshgom_sharing.lambda.types.RLTerm export(Context ctx) {
+	  return null;
+  }
+
+}
+
+Constr:block() {
+  public freshgom_sharing.lambda.types.LTerm rename(int i, int j) {
+	  return null;
+  }
+
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_sharing.lambda.types.LTerm o, AlphaMap map) {
+	  return false;
+    }
+
+  /* exportation (term -> raw term) */
+  public freshgom_sharing.lambda.types.RLTerm export(Context ctx) {
+	  return null;
+  }
+
 }

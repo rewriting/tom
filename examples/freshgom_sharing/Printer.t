@@ -42,9 +42,9 @@ public class Printer {
   public static String pretty(RLTerm t) {
     %match (t) {
       RawVar(x) -> { return `x; }
-      RawAbs(x,u) -> { return %[(fun @`x@ -> @`pretty(u)@)]%; }
+      RawAbs(Rawlam(x,u)) -> { return %[(fun @`x@ -> @`pretty(u)@)]%; }
       RawApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
-      RawLet(x,u,v) -> { 
+      RawLet(Rawletin(x,u,v)) -> { 
         return %[(let @`x@ = @`pretty(u)@ in @`pretty(v)@)]%; 
       }
     }
