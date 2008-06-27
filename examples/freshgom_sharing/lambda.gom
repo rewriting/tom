@@ -19,6 +19,35 @@ LTerm =
 Lam = lam(x:LVar, t:LTerm)
 Letin = letin(x:LVar, t:LTerm, u:LTerm)
 
+module lambda:block() {
+  /* stack for alphaequivalence */
+  public static class AlphaMap {
+    private class Pair { 
+      public freshgom_sharing.lambda.types.LVar a1;
+      public freshgom_sharing.lambda.types.LVar a2;
+      public Pair(freshgom_sharing.lambda.types.LVar a1, 
+                  freshgom_sharing.lambda.types.LVar a2) {
+        this.a1 = a1;
+        this.a2 = a2;
+      } 
+    }
+    private java.util.LinkedList<Pair> ctx = 
+      new java.util.LinkedList<Pair>();
+    public void push(freshgom_sharing.lambda.types.LVar a1,
+                     freshgom_sharing.lambda.types.LVar a2) {
+      ctx.addFirst(new Pair(a1,a2)); 
+    }
+    public void pop() { ctx.removeFirst(); }
+    public freshgom_sharing.lambda.types.LVar get
+      (freshgom_sharing.lambda.types.LVar a) { 
+      for (Pair p: ctx) {
+        if (p.a1.equals(a)) return p.a2;
+      }
+      throw new RuntimeException();
+    }
+  }
+}
+
 sort Lam:block() {
   public freshgom_sharing.lambda.types.Lam refresh() {
     int old = getx().getn();
@@ -31,6 +60,16 @@ sort Lam:block() {
     if(getx().getn() == i) throw new RuntimeException("should not happen");
     else return `lam(getx(), gett().rename(i,j));
   }
+
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_sharing.lambda.types.Lam o, AlphaMap map) {
+      if (!(o instanceof freshgom_sharing.lambda.types.lam.lam)) return false;
+      map.push(getx(),o.getx());
+      boolean res = gett().alpha(o.gett(),map);
+      map.pop();
+      return res;
+    }
 }
 
 sort Letin:block() {
@@ -45,6 +84,16 @@ sort Letin:block() {
     if(getx().getn() == i) throw new RuntimeException("should not happen");
     else return `letin(getx(), gett().rename(i,j), getu().rename(i,j));
   }
+
+  /* alpha equivalence */
+  public boolean alpha
+    (freshgom_sharing.lambda.types.Letin o, AlphaMap map) {
+      if (!(o instanceof freshgom_sharing.lambda.types.letin.letin)) return false;
+      map.push(getx(),o.getx());
+      boolean res = gett().alpha(o.gett(),map) && getu().alpha(o.getu(),map);
+      map.pop();
+      return res;
+    }
 }
 
 
@@ -84,32 +133,6 @@ sort RLTerm:block() {
 sort LTerm:block() {
   public abstract freshgom_sharing.lambda.types.LTerm rename(int i,int j);
 
-  /* stack for alphaequivalence */
-  protected static class AlphaMap {
-    private class Pair { 
-      public freshgom_sharing.lambda.types.LVar a1;
-      public freshgom_sharing.lambda.types.LVar a2;
-      public Pair(freshgom_sharing.lambda.types.LVar a1, 
-                  freshgom_sharing.lambda.types.LVar a2) {
-        this.a1 = a1;
-        this.a2 = a2;
-      } 
-    }
-    private java.util.LinkedList<Pair> ctx = 
-      new java.util.LinkedList<Pair>();
-    public void push(freshgom_sharing.lambda.types.LVar a1,
-                     freshgom_sharing.lambda.types.LVar a2) {
-      ctx.addFirst(new Pair(a1,a2)); 
-    }
-    public void pop() { ctx.removeFirst(); }
-    public freshgom_sharing.lambda.types.LVar get
-      (freshgom_sharing.lambda.types.LVar a) { 
-      for (Pair p: ctx) {
-        if (p.a1.equals(a)) return p.a2;
-      }
-      throw new RuntimeException();
-    }
-  }
 
   /* stack for exportation (term -> raw term) */
   protected static class Context {
@@ -144,14 +167,14 @@ sort LTerm:block() {
   }
 
   /* alpha equivalence */
-  /*
+  
   public boolean equals(freshgom_sharing.lambda.types.LTerm o) {
     return alpha(o,new AlphaMap());
   }
 
   public abstract boolean alpha
     (freshgom_sharing.lambda.types.LTerm o, AlphaMap map);
-    */
+ 
 
   /* exportation (term -> raw term) */
   public freshgom_sharing.lambda.types.RLTerm export() {
@@ -234,16 +257,11 @@ Abs:block() {
   }
 
   /* alpha equivalence */
-  /*
   public boolean alpha
     (freshgom_sharing.lambda.types.LTerm o, AlphaMap map) {
-      if (!(o instanceof freshgom_sharing.lambda.types.lterm.Abs)) return false;
-      map.push(getx(),o.getx());
-      boolean res = gett().alpha(o.gett(),map);
-      map.pop();
-      return res;
+      if (!(o instanceof freshgom_sharing.lambda.types.lterm.Abs)) return false; 
+      return geta().alpha(o.geta(),map);
     }
-    */
 
   /* exportation (term -> raw term) */
   public freshgom_sharing.lambda.types.RLTerm export(Context ctx) {
@@ -267,16 +285,11 @@ Let:block() {
   }
 
   /* alpha equivalence */
-  /*
   public boolean alpha
     (freshgom_sharing.lambda.types.LTerm o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.lterm.Let)) return false;
-      map.push(getx(),o.getx());
-      boolean res = gett().alpha(o.gett(),map) && getu().alpha(o.getu(),map);
-      map.pop();
-      return res;
+      return getb().alpha(o.getb(),map);
     }
-    */
 
   /* exportation (term -> raw term) */
   public freshgom_sharing.lambda.types.RLTerm export(Context ctx) {
@@ -298,13 +311,11 @@ App:block() {
   }
 
   /* alpha equivalence */
-  /*
   public boolean alpha
     (freshgom_sharing.lambda.types.LTerm o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.lterm.App)) return false;
       return gett1().alpha(o.gett1(),map) && gett2().alpha(o.gett2(),map);
     }
-    */
 
   /* exportation (term -> raw term) */
   public freshgom_sharing.lambda.types.RLTerm export(Context ctx) {
@@ -321,13 +332,11 @@ Var:block() {
   }
 
   /* alpha equivalence */
-  /*
   public boolean alpha
     (freshgom_sharing.lambda.types.LTerm o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.lterm.Var)) return false;
       return o.getx().equals(map.get(getx()));
     }
-    */
 
   /* exportation (term -> raw term) */
   public freshgom_sharing.lambda.types.RLTerm export(Context ctx) {

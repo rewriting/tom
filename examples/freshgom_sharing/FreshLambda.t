@@ -20,12 +20,12 @@ public class FreshLambda {
      
      LTerm =
        | App(t1:LTerm,t2:LTerm)
-       | Abs(<lam>)
-       | Let(<letin>)
+       | Abs(a:lam)
+       | Let(b:letin)
        | Var(x:LVar)
 
-     lam binds LVar = lam(x:LVar,inner t:LTerm)
-     letin binds LVar = letin(x:LVar, outer t:LTerm, inner t:Lterm)
+     Lam binds LVar = lam(x:LVar,inner t:LTerm)
+     Letin binds LVar = letin(x:LVar, outer t:LTerm, inner t:Lterm)
 
   */
 
@@ -33,9 +33,7 @@ public class FreshLambda {
   public static LTerm substitute(LTerm t, LVar x, LTerm u) {
     %match(t) {
       Abs(lam(y,t1)) -> { return `Abs(lam(y,substitute(t1,x,u))); }
-      Let(letin(y,t1,t2)) -> { 
-        return `Let(letin(y,substitute(t1,x,u),substitute(t2,x,u))); 
-      }
+      Let(letin(y,t1,t2)) -> { return `Let(letin(y,substitute(t1,x,u),substitute(t2,x,u))); }
       App(t1,t2) -> { return `App(substitute(t1,x,u),substitute(t2,x,u)); }
       Var(y) -> { if (`y.equals(x)) return u; else return t; }
     }
@@ -59,11 +57,13 @@ public class FreshLambda {
       LambdaLexer lexer = new LambdaLexer(new ANTLRInputStream(System.in));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LambdaParser parser = new LambdaParser(tokens);
-      RLTerm rt =  parser.lterm();
-      System.out.println("\nafter parsing: " + Printer.pretty(rt));
-      LTerm t = beta(rt.convert());
-      System.out.println("\nafter evaluation: " + Printer.pretty(t.export()));
-
+      LTerm t = null, tmp = null;
+      for(RLTerm rt:parser.toplevel()) {
+        tmp = t;
+        t = beta(rt.convert());
+        System.out.println(Printer.pretty(t.export()));
+        System.out.println("\nequals previous modulo alpha: " + t.equals(tmp) + ";\n");
+      }
     } catch(Exception e) {
       System.out.println(e);
     }

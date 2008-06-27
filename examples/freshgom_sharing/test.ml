@@ -18,6 +18,22 @@ let natrec = fun u -> fun v -> fun n ->
 let mult = fun n -> fun m -> iter Z (plus n) m in
 let fact = natrec (S Z) (fun p -> fun r -> mult (S p) r)
 in
-  second (fact (S (S (S Z))))
+second (fact (S (S (S Z)))) 
+
+;
+
+(* test alpha equivalence between 6 and previous value *)
+
+let Z = (fun x -> fun f -> x) in
+let S = fun n -> (fun a -> fun b -> n (b a) b) in
+S (S (S (S (S (S Z)))))
+
+;
+
+(* test alpha equivalence failure in different terms *)
+
+let Z = (fun x -> fun f -> x) in
+let S = fun n -> (fun a -> fun b -> n (b a) b) in
+  S (S (S (S Z)))
 
 

@@ -4,6 +4,7 @@ grammar Lambda;
 @header {
   package freshgom_sharing;
   import freshgom_sharing.lambda.types.*;
+  import java.util.ArrayList;
 }
 
 @members {
@@ -13,6 +14,11 @@ grammar Lambda;
 @lexer::header {
   package freshgom_sharing;
 }
+
+toplevel returns [ArrayList<RLTerm> res]
+@init { res = new ArrayList<RLTerm>(); }
+: x=lterm { $res.add(x); } (SEMI x=lterm { $res.add(x); } )*
+;
 
 lterm returns [RLTerm res]
 : t=app_lterm { $res=t; }
@@ -29,12 +35,12 @@ aterm returns [RLTerm res]
 | ID { $res=`RawVar($ID.text); }
 ;
 
+COMMENT : '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;} ;
 
 DOT : '->';
 LAMBDA : 'fun' ;
 LET : 'let' ;
 IN : 'in' ;
-
 
 ID : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 
@@ -52,7 +58,6 @@ MATHOP  : '/'
 
 WS : (' '|'\t'|'\n')+ { $channel=HIDDEN; } ;
 
-SLCOMMENT : '//' (~('\n'|'\r'))* ('\n'|'\r'('\n')?)? { $channel=HIDDEN; } 
-;
+
 
 
