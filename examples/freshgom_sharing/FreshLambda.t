@@ -71,6 +71,7 @@ public class FreshLambda {
       LambdaParser parser = new LambdaParser(tokens);
       LTerm t = null, tmp = null;
       for(RLTerm rt:parser.toplevel()) {
+        System.out.println("\nparsed: " + Printer.pretty(rt));
         tmp = t;
         t = beta(rt.convert());
         System.out.println(Printer.pretty(t.export()));

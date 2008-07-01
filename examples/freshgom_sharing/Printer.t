@@ -15,29 +15,49 @@ public class Printer {
     return res;
   }
 
-  /*
-  private static String print(RLTerm t, int n) {
-    %match(t) {
-      RawVar(x) -> { return spaces(n) + `x; }
-      RawAbs(x,u) -> { 
-        return spaces(n)
-          + "fun " + `x + " -> (\n" 
-          + `print(u,n+1)
-          + "\n" + spaces(n) + ")";
-      }  
-      RawApp(u,v) -> {
-        return spaces(n)  
-          + "(" + `print(u,0) + ") ("+ `print(v,0) + ")";
-      }
-      RawLet(x,u,v) -> {
-        return spaces(n) + "let " + `x + " =\n" 
-          + print(`u,n+1) 
-          + "\n" + spaces(n) + "in\n" + print(`v,n+1);
-      }
+  public static String prettyLTermList(RawLTermList l) {
+    %match(l) {
+      RawLTList() -> { return ""; }
+      RawLTList(x) -> { return `pretty(x); }
+      RawLTList(x,xs*) -> { return `pretty(x) + "," + `prettyLTermList(xs); }
     }
     return null;
   }
-  */
+
+  public static String prettyPatternList(RawPatternList l) {
+    %match(l) {
+      RawPList() -> { return ""; }
+      RawPList(x) -> { return `prettyPattern(x); }
+      RawPList(x,xs*) -> { return `prettyPattern(x) + "," 
+        + `prettyPatternList(xs); }
+    }
+    return null;
+  }
+
+  public static String prettyRules(RawRules l) {
+    %match(l) {
+      RawRList() -> { return ""; }
+      RawRList(x,xs*) -> { 
+        return " | " + `prettyClause(x) + `prettyRules(xs); }
+    }
+    return null;
+  }
+
+  public static String prettyClause(RawClause c) {
+    %match(c) {
+      RawRule(p,t) -> { return `prettyPattern(p) + " -> " + `pretty(t); }
+    }
+    return null;
+  }
+
+  public static String prettyPattern(RawPattern p) {
+    %match (p) {
+      RawPVar(x) -> { return `x; }
+      RawPFun(f,RawPList()) -> { return `f; }
+      RawPFun(f,l) -> { return `f + "(" + `prettyPatternList(l) + ")"; }
+    }
+    return null;
+  }
 
   public static String pretty(RLTerm t) {
     %match (t) {
@@ -45,8 +65,11 @@ public class Printer {
       RawAbs(Rawlam(x,u)) -> { return %[(fun @`x@ -> @`pretty(u)@)]%; }
       RawApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
       RawLet(Rawletin(x,u,v)) -> { 
-        return %[(let @`x@ = @`pretty(u)@ in @`pretty(v)@)]%; 
-      }
+        return %[(let @`x@ = @`pretty(u)@ in @`pretty(v)@)]%; }
+      RawConstr(f,RawLTList()) -> { return `f; }
+      RawConstr(f,l) -> { return `f + "(" + `prettyLTermList(l) + ")"; }
+      RawCase(s,l) -> { 
+        return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%; }
     }
     return null;
   }
