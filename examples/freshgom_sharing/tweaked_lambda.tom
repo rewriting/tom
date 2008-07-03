@@ -5,7 +5,7 @@
   implement { freshgom_sharing.lambda.types.Rules }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Rules) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.Rules)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Rules)$t1).equals($t2)) }
 
 }
 
@@ -13,7 +13,7 @@
   implement { freshgom_sharing.lambda.types.RawLTermList }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawLTermList) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawLTermList)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawLTermList)$t1).equals($t2)) }
 
 }
 
@@ -21,7 +21,7 @@
   implement { freshgom_sharing.lambda.types.PatternList }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.PatternList) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.PatternList)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.PatternList)$t1).equals($t2)) }
 
 }
 
@@ -29,7 +29,7 @@
   implement { freshgom_sharing.lambda.types.RawPattern }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawPattern) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawPattern)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawPattern)$t1).equals($t2)) }
 
 }
 
@@ -37,7 +37,7 @@
   implement { freshgom_sharing.lambda.types.RawLam }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawLam) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawLam)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawLam)$t1).equals($t2)) }
 
 }
 
@@ -45,7 +45,7 @@
   implement { freshgom_sharing.lambda.types.RawRules }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawRules) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawRules)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawRules)$t1).equals($t2)) }
 
 }
 
@@ -53,7 +53,7 @@
   implement { freshgom_sharing.lambda.types.LTerm }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.LTerm) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.LTerm)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.LTerm)$t1).equals($t2)) }
 
 }
 
@@ -61,7 +61,7 @@
   implement { freshgom_sharing.lambda.types.Pattern }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Pattern) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.Pattern)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Pattern)$t1).equals($t2)) }
 
 }
 
@@ -69,7 +69,7 @@
   implement { freshgom_sharing.lambda.types.RawPatternList }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawPatternList) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawPatternList)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawPatternList)$t1).equals($t2)) }
 
 }
 
@@ -77,7 +77,7 @@
   implement { freshgom_sharing.lambda.types.RawLetin }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawLetin) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawLetin)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawLetin)$t1).equals($t2)) }
 
 }
 
@@ -85,7 +85,7 @@
   implement { freshgom_sharing.lambda.types.LVar }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.LVar) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.LVar)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.LVar)$t1).equals($t2)) }
 
 }
 
@@ -93,7 +93,7 @@
   implement { freshgom_sharing.lambda.types.LTermList }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.LTermList) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.LTermList)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.LTermList)$t1).equals($t2)) }
 
 }
 
@@ -101,7 +101,7 @@
   implement { freshgom_sharing.lambda.types.Clause }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Clause) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.Clause)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Clause)$t1).equals($t2)) }
 
 }
 
@@ -109,7 +109,7 @@
   implement { freshgom_sharing.lambda.types.RLTerm }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RLTerm) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RLTerm)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RLTerm)$t1).equals($t2)) }
 
 }
 
@@ -117,7 +117,7 @@
   implement { freshgom_sharing.lambda.types.Letin }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Letin) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.Letin)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Letin)$t1).equals($t2)) }
 
 }
 
@@ -125,7 +125,7 @@
   implement { freshgom_sharing.lambda.types.Lam }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.Lam) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.Lam)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.Lam)$t1).equals($t2)) }
 
 }
 
@@ -133,7 +133,7 @@
   implement { freshgom_sharing.lambda.types.RawClause }
   is_sort(t) { ($t instanceof freshgom_sharing.lambda.types.RawClause) }
 
-  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawClause)$t1).deepEquals($t2)) }
+  equals(t1,t2) { (((freshgom_sharing.lambda.types.RawClause)$t1).equals($t2)) }
 
 }
 %op Rules EmptyRList() {
@@ -143,7 +143,7 @@
 
 %op Rules ConsRList(HeadRList:Clause, TailRList:Rules) {
   is_fsym(t) { ($t instanceof freshgom_sharing.lambda.types.rules.ConsRList) }
-  get_slot(HeadRList, t) { $t.getHeadRList() }
+  get_slot(HeadRList, t) { ((freshgom_sharing.lambda.types.rules.ConsRList)$t).safe_getHeadRList() }
   get_slot(TailRList, t) { $t.getTailRList() }
   make(t0, t1) { freshgom_sharing.lambda.types.rules.ConsRList.make($t0, $t1) }
 }
