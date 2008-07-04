@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import tom.engine.compiler.Compiler;
 
 /**
- * Syntactic propagator
+ * Variadic propagator
  */
 public class VariadicPropagator implements IBasePropagator {
 
