@@ -41,15 +41,16 @@ public class FreshLambda {
 
   */
 
+  %strategy Substitute(x:LVar, u:LTerm) extends Identity() {
+    visit LTerm {
+      Var(y) -> { if (`y.equals(x)) return u; }
+    }
+  }
+
   // returns t[u/x]
   public static LTerm substitute(LTerm t, LVar x, LTerm u) {
-    %match(t) {
-      Abs(lam(y,t1)) -> { return `Abs(lam(y,substitute(t1,x,u))); }
-      Let(letin(y,t1,t2)) -> { return `Let(letin(y,substitute(t1,x,u),substitute(t2,x,u))); }
-      App(t1,t2) -> { return `App(substitute(t1,x,u),substitute(t2,x,u)); }
-      Var(y) -> { if (`y.equals(x)) return u; else return t; }
-    }
-    throw new RuntimeException();
+    try { return (LTerm) `Substitute(x,u).visit(t); }
+    catch (VisitFailure e) { throw new RuntimeException(); }
   }
 
   %strategy HeadBeta() extends Fail() {
@@ -73,12 +74,14 @@ public class FreshLambda {
       for(RLTerm rt:parser.toplevel()) {
         System.out.println("\nparsed: " + Printer.pretty(rt));
         tmp = t;
+        System.out.println("converted : " + rt.convert());
         t = beta(rt.convert());
         System.out.println(Printer.pretty(t.export()));
         System.out.println("\nequals previous modulo alpha: " + t.equals(tmp) + ";\n");
       }
     } catch(Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
+      //System.out.println(e);
     }
   }
 }
