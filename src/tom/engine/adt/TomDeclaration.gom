@@ -27,6 +27,10 @@ super is the parameter given to the function super. For Instance: super(`Identit
             | IntrospectorClass(AstName:TomName,Declaration:Declaration)
             | SymbolDecl(AstName:TomName)
             | ListSymbolDecl(AstName:TomName)
+            /**             
+            * An AC symbol
+            */
+            | ACSymbolDecl(AstName:TomName)
             | ArraySymbolDecl(AstName:TomName)
             | EmptyDeclaration()
             | AbstractDecl(DeclList:DeclarationList)

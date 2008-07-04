@@ -454,7 +454,7 @@ matchL:  %match(subject,s){
         concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           //System.out.println("codomain = " + `codomain);
           // process a list of subterms and a list of types
-          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb)) {
+          if(TomBase.isListOperator(`symb) || TomBase.isArrayOperator(`symb) || TomBase.isACOperator(`symb)) {
             /*
              * todo:
              * when the symbol is an associative operator,

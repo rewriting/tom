@@ -16,6 +16,7 @@ Option =
   | ModuleName(String:String)
   | ImplicitXMLAttribut()
   | ImplicitXMLChild()
+  | ACSymbol()
   | noOption()
 
 OptionList = concOption(Option*)

@@ -218,23 +218,43 @@ public final class TomBase {
   public static boolean isListOperator(TomSymbol symbol) {
     if(symbol==null) {
       return false;
-    }
+    }    
+    boolean isListOp = false;    
     %match(TomSymbol symbol) {
       Symbol[Option=l] -> {
-        OptionList optionList = `l;
+        OptionList optionList = `l;        
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(Option opt) {
-            DeclarationToOption(MakeEmptyList[]) -> { return true; }
-            DeclarationToOption(MakeAddList[])   -> { return true; }
+            ACSymbol[] -> { return false; }
+            DeclarationToOption(MakeEmptyList[]) -> { isListOp = true; }
+            DeclarationToOption(MakeAddList[])   -> { isListOp = true; }
           }
           optionList = optionList.getTailconcOption();
         }
-        return false;
+        return isListOp;
       }
     }
     throw new TomRuntimeException("isListOperator -- strange case: '" + symbol + "'");
   }
+  
+  /**
+   * Returns <code>true</code> if the symbol corresponds to a %oplist
+   */
+ public static boolean isACOperator(TomSymbol symbol) {
+   if(symbol==null) {
+     return false;
+   }
+   %match(TomSymbol symbol) {
+     Symbol[Option=l] -> {
+       %match(l){
+         concOption(_*,ACSymbol[],_*) -> { return true; }
+       }
+       return false;
+     }
+   }
+   throw new TomRuntimeException("isListOperator -- strange case: '" + symbol + "'");
+ }
 
   /**
     * Returns <code>true</code> if the symbol corresponds to a %oparray

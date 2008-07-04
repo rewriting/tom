@@ -296,7 +296,7 @@ public class Typer extends TomGenericPlugin {
           TomSymbol tomSymbol = typer.getSymbolFromName(`tomName);
           //System.out.println("appl = " + subject);
           if(tomSymbol != null) {
-            if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+            if(TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.isACOperator(tomSymbol)) {
               //System.out.println("appl = " + subject);
               SlotList newArgs = typer.typeChar(tomSymbol,`args);
               if(newArgs!=`args) {
@@ -385,7 +385,7 @@ public class Typer extends TomGenericPlugin {
 
       SlotList slotList = `concSlot();
       Strategy typeStrategy = `TopDownIdStopOnSuccess(typeTermApplTomSyntax(this));
-      if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol)) {
+      if(opName.equals("") || tomSymbol==null || TomBase.isListOperator(tomSymbol) || TomBase.isArrayOperator(tomSymbol) || TomBase.isACOperator(tomSymbol)) {
         for(TomTerm arg:(concTomTerm)args) {
           try {
             TomTerm subterm = (TomTerm) typeStrategy.visitLight(arg);
@@ -434,7 +434,7 @@ public class Typer extends TomGenericPlugin {
           if(TomBase.hasConstant(`optionList)) {
             return `BuildConstant(name);
           } else if(tomSymbol != null) {
-            if(TomBase.isListOperator(tomSymbol)) {
+            if(TomBase.isListOperator(tomSymbol) || TomBase.isACOperator(tomSymbol)) {
               return ASTFactory.buildList(`name,args,typer.symbolTable());
             } else if(TomBase.isArrayOperator(tomSymbol)) {
               return ASTFactory.buildArray(`name,args,typer.symbolTable());

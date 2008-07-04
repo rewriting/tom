@@ -207,6 +207,11 @@ public class TomSyntaxChecker extends TomChecker {
         tsc.verifySymbol(TomSyntaxChecker.OP_LIST, tsc.getSymbolFromName(`tomName));
         throw new tom.library.sl.VisitFailure();// stop the top-down
       }
+      // same check as above (for now) 
+      ACSymbolDecl(Name(tomName))  -> {
+        tsc.verifySymbol(TomSyntaxChecker.OP_LIST, tsc.getSymbolFromName(`tomName));
+        throw new tom.library.sl.VisitFailure();// stop the top-down
+      }
     }
 
    visit Instruction {
@@ -1093,7 +1098,7 @@ matchLbl: %match(constr) {
             headName = ((AntiName)headName).getName();
           }
           termName = headName.getString();
-          boolean listOp = (TomBase.isListOperator(symbol) || TomBase.isArrayOperator(symbol));
+          boolean listOp = (TomBase.isListOperator(symbol) || TomBase.isArrayOperator(symbol) || TomBase.isACOperator(symbol) );
           if(listOp) {
               // whatever the arity is, we continue recursively and there is
               // only one element in the Domain
