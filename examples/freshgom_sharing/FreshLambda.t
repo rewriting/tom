@@ -82,9 +82,9 @@ public class FreshLambda {
 
   public static Rules substitute(Rules r, LVar x, LTerm u) {
     %match(r) {
-      RList() -> { return r; }
-      RList(t,ts*) -> {
-        return `ConsRList(substitute(t,x,u),substitute(ts*,x,u));
+      EmptyRList() -> { return r; }
+      ConsRList(t,ts) -> {
+        return `ConsRList(substitute(t,x,u),substitute(ts,x,u));
       }
     }
     throw new RuntimeException();
@@ -99,9 +99,9 @@ public class FreshLambda {
 
   public static LTermList substitute(LTermList l, LVar x, LTerm u) {
     %match(l) {
-      LTList() -> { return l; }
-      LTList(t,ts*) -> {
-        return `ConsLTList(substitute(t,x,u),substitute(ts*,x,u));
+      EmptyLTList() -> { return l; }
+      ConsLTList(t,ts) -> {
+        return `ConsLTList(substitute(t,x,u),substitute(ts,x,u));
       }
     }
     throw new RuntimeException();

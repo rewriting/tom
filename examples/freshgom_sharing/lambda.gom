@@ -47,6 +47,7 @@ PatternList = PList(Pattern*)
 module lambda:import() {
   import freshgom_sharing.lambda.types.*;
   import java.util.ArrayList;
+  import java.util.LinkedList;
   import java.util.Stack;
 }
 
@@ -139,23 +140,29 @@ module lambda:block() {
   /* stack for alphaequivalence */
   public static class AlphaMap {
     private class Pair { 
-      public freshgom_sharing.lambda.types.LVar a1;
-      public freshgom_sharing.lambda.types.LVar a2;
-      public Pair(freshgom_sharing.lambda.types.LVar a1, 
-                  freshgom_sharing.lambda.types.LVar a2) {
+      public LVar a1;
+      public LVar a2;
+      public Pair(LVar a1, LVar a2) {
         this.a1 = a1;
         this.a2 = a2;
       } 
     }
-    private java.util.LinkedList<Pair> ctx = 
-      new java.util.LinkedList<Pair>();
-    public void push(freshgom_sharing.lambda.types.LVar a1,
-                     freshgom_sharing.lambda.types.LVar a2) {
+    private LinkedList<Pair> ctx = new LinkedList<Pair>();
+    private Stack<Integer> counters = new Stack<Integer>();
+    private int counter = 0;
+    public void push() {
+      counters.push(counter);
+      counter = 0;
+    }
+    public void add(LVar a1, LVar a2) {
       ctx.addFirst(new Pair(a1,a2)); 
     }
-    public void pop() { ctx.removeFirst(); }
-    public freshgom_sharing.lambda.types.LVar get
-      (freshgom_sharing.lambda.types.LVar a) { 
+    public void pop() { 
+      for(int i=0; i<counter; i++)
+        ctx.removeFirst(); 
+      counter = counters.pop();
+    }
+    public LVar get(LVar a) { 
       for (Pair p: ctx) {
         if (p.a1.equals(a)) return p.a2;
       }
@@ -163,11 +170,10 @@ module lambda:block() {
     }
   }
 
-
   %include { sl.tom }
 
   %typeterm LVarList { 
-    implement { java.util.ArrayList<freshgom_sharing.lambda.types.LVar> } 
+    implement { java.util.ArrayList<LVar> } 
   }
 
   %strategy CollectLVar(l:LVarList) extends Identity() {
@@ -228,7 +234,6 @@ sort LTerm:block() {
   }
 
   /* alpha equivalence */
-  
   public boolean equals(LTerm o) {
     return alpha(o,new AlphaMap());
   }
@@ -268,6 +273,24 @@ sort Rules:block() {
     }
     throw new RuntimeException("should not happen");
   }
+
+  /* alpha equivalence */
+  public boolean equals(Rules o) {
+    return alpha(o,new AlphaMap());
+  }
+
+  public /* abstract */ boolean alpha (Rules o, AlphaMap map) {
+    %match(this) {
+      EmptyRList() -> { 
+        return (o instanceof freshgom_sharing.lambda.types.rules.EmptyRList);
+      }
+      ConsRList(x,xs) -> { 
+        if (! (o instanceof freshgom_sharing.lambda.types.rules.ConsRList))
+        return `x.alpha(o.getHeadRList(),map) && `xs.alpha(o.getTailRList(),map);
+      }
+    }
+    throw new RuntimeException("should not happen");
+  }
 }
 
 sort Clause:import() {
@@ -288,6 +311,13 @@ sort Clause:block() {
   }
 
   public abstract RawClause export(ExportMap ctx);
+
+  /* alpha equivalence */
+  public boolean equals(Clause o) {
+    return alpha(o,new AlphaMap());
+  }
+
+  public abstract boolean alpha (Clause o, AlphaMap map);
 }
 
 sort Pattern:import() {
@@ -305,6 +335,13 @@ sort Pattern:block() {
   }
 
   public abstract RawPattern export(ExportMap ctx);
+
+  /* alpha equivalence */
+  public boolean equals(Pattern o) {
+    return alpha(o,new AlphaMap());
+  }
+
+  public abstract boolean alpha (Pattern o, AlphaMap map);
 }
 
 sort PatternList:import() {
@@ -327,6 +364,24 @@ sort PatternList:block() {
       EmptyPList() -> { return `EmptyRawPList(); }
       ConsPList(x,xs) -> { 
         return `ConsRawPList(x.export(ctx),xs.export(ctx)); 
+      }
+    }
+    throw new RuntimeException("should not happen");
+  }
+
+  /* alpha equivalence */
+  public boolean equals(PatternList o) {
+    return alpha(o,new AlphaMap());
+  }
+
+  public /* abstract */ boolean alpha (PatternList o, AlphaMap map) {
+    %match(this) {
+      EmptyPList() -> { 
+        return (o instanceof freshgom_sharing.lambda.types.patternlist.EmptyPList);
+      }
+      ConsPList(x,xs) -> { 
+        if (! (o instanceof freshgom_sharing.lambda.types.patternlist.ConsPList))
+        return `x.alpha(o.getHeadPList(),map) && `xs.alpha(o.getTailPList(),map);
       }
     }
     throw new RuntimeException("should not happen");
@@ -357,6 +412,25 @@ sort LTermList:block() {
     }
     throw new RuntimeException("should not happen");
   }
+
+  /* alpha equivalence */
+  public boolean equals(LTermList o) {
+    return alpha(o,new AlphaMap());
+  }
+
+  public /* abstract */ boolean alpha (LTermList o, AlphaMap map) {
+    %match(this) {
+      EmptyLTList() -> { 
+        return (o instanceof freshgom_sharing.lambda.types.ltermlist.EmptyLTList);
+      }
+      ConsLTList(x,xs) -> { 
+        if (! (o instanceof freshgom_sharing.lambda.types.ltermlist.ConsLTList))
+        return `x.alpha(o.getHeadLTList(),map) && `xs.alpha(o.getTailLTList(),map);
+      }
+    }
+    throw new RuntimeException("should not happen");
+  }
+
 }
 
 sort Lam:import() {
@@ -720,7 +794,7 @@ PFun:block() {
 
   /* alpha equivalence */
   public boolean alpha
-    (freshgom_sharing.lambda.types.Clause o, AlphaMap map) {
+    (freshgom_sharing.lambda.types.Pattern o, AlphaMap map) {
       return false;
   }
 }
@@ -739,7 +813,7 @@ PVar:block() {
 
   /* alpha equivalence */
   public boolean alpha
-    (freshgom_sharing.lambda.types.Clause o, AlphaMap map) {
+    (freshgom_sharing.lambda.types.Pattern o, AlphaMap map) {
       return false;
   }
 }
@@ -771,7 +845,7 @@ lam:block() {
   public boolean alpha
     (Lam o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.lam.lam)) return false;
-      map.push(getx(),o.getx());
+      map.add(getx(),o.getx());
       boolean res = gett().alpha(o.gett(),map);
       map.pop();
       return res;
@@ -808,7 +882,7 @@ letin:block() {
   public boolean alpha
     (Letin o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.letin.letin)) return false;
-      map.push(getx(),o.getx());
+      map.add(getx(),o.getx());
       boolean res = 
             gett().alpha(o.gett(),map) 
          && getu().alpha(o.getu(),map);
