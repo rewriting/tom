@@ -9,6 +9,18 @@ grammar Lambda;
 
 @members {
   %include { tweaked_lambda.tom }
+
+  private RawPatternList append(RawPatternList l, RawPattern p) {
+    return `RawPList(l*,p);
+  }
+
+  private RawRules append(RawRules l, RawClause c) {
+    return `RawRList(l*,c);
+  }
+
+  private RawLTermList append(RawLTermList l, RLTerm t) {
+    return `RawLTList(l*,t);
+  }
 }
 
 @lexer::header {
@@ -24,9 +36,9 @@ lterm returns [RLTerm res]
 : t=app_lterm { $res=t; }
 | LAMBDA ID DOT t=lterm { $res = `RawAbs(Rawlam($ID.text,t)); }
 | LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,u,t)); }
+| MATCH t=lterm WITH r=rules END { $res = `RawCase(t,r); }
 | UPID '(' l=ltermlist ')' { $res = `RawConstr($UPID.text,l); }
 | UPID { $res = `RawConstr($UPID.text,RawLTList()); }
-| MATCH t=lterm WITH r=rules END { $res = `RawCase(t,r); }
 ;
 
 app_lterm returns [RLTerm res]
@@ -40,14 +52,14 @@ aterm returns [RLTerm res]
 
 ltermlist returns [RawLTermList res]
 @init{ res = `RawLTList(); }
-: x=lterm? { if(x!=null) $res = `ConsRawLTList(x,$res); } 
-  (COMMA y=lterm { $res = `ConsRawLTList(y,$res*); } )*
+: x=lterm? { if(x!=null) $res = append($res,x); } 
+  (COMMA y=lterm { $res = append($res,y); } )*
 ;
 
 rules returns [RawRules res] 
 @init{ res = `RawRList(); }
-: CONJ? r1=clause { $res = `ConsRawRList(r1,$res); } 
-  (CONJ r2=clause { $res = `ConsRawRList(r2,$res*); } )*
+: CONJ? r1=clause { $res = append($res,r1); } 
+  (CONJ r2=clause { $res = append($res,r2); } )*
 ;
 
 clause returns [RawClause res]
@@ -62,8 +74,8 @@ pattern returns [RawPattern res]
 
 patternlist returns [RawPatternList res]
 @init{ res = `RawPList(); }
-: x=pattern? { if(x!=null) $res = `ConsRawPList(x,$res); } 
-  (COMMA y=pattern { $res = `ConsRawPList(y,$res*); } )*
+: x=pattern? { if(x!=null) $res = append($res,x); } 
+  (COMMA y=pattern { $res = append($res,y); } )*
 ;
 
 COMMENT : '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;} ;

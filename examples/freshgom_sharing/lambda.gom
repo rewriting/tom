@@ -76,12 +76,18 @@ module lambda:block() {
     public void pop() { 
       for(int i=0; i<counter; i++)
         ctx.removeFirst(); 
+      counter = counters.pop();
     }
-    public freshgom_sharing.lambda.types.LVar get(String x) { 
+    public LVar get(String x) { 
       for (Pair p: ctx) {
         if (p.x.equals(x)) return p.a;
       }
       throw new RuntimeException();
+    }
+    public LVar getInScope(String x) {
+      for(int i=0; i<counter; i++)
+        if (ctx.get(i).x.equals(x)) return ctx.get(i).a;
+      return null;
     }
   }
 
@@ -106,7 +112,6 @@ module lambda:block() {
     }
 
     public int add(LVar a) {
-      System.out.println("added " + a);
       int i = 0;
       for (Pair p: ctx) {
         if (p.a.gethint().equals(a.gethint())) { 
@@ -121,6 +126,7 @@ module lambda:block() {
     public void pop() { 
       for(int i=0; i<counter; i++)
         ctx.removeFirst(); 
+      counter = counters.pop();
     }
     public int get(freshgom_sharing.lambda.types.LVar a) { 
       for (Pair p: ctx) {
@@ -744,10 +750,9 @@ lam:import() {
 
 lam:block() {
   public Lam refresh() {
-    int old = getx().getn();
-    LVar fresh = 
-      LVar.freshLVar(getx().gethint());
-    return `lam(fresh, gett().rename(old,fresh.getn()));
+    int old_id = getx().getn();
+    LVar fresh = LVar.freshLVar(getx().gethint());
+    return `lam(fresh, gett().rename(old_id,fresh.getn()));
   }
 
   /* exportation (term -> raw term) */
@@ -960,8 +965,11 @@ RawPVar:block() {
   /* importation (raw term -> term) */
   public Pattern convert(ConvertMap ctx) {
     String x = getx();
-    LVar fresh = LVar.freshLVar(x);
-    ctx.add(x,fresh);
-    return `PVar(fresh);
+    LVar res = ctx.getInScope(x);
+    if (res == null) {
+      res = LVar.freshLVar(x);
+      ctx.add(x,res);
+    }
+    return `PVar(res);
   }
 }
