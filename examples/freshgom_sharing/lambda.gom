@@ -82,7 +82,7 @@ module lambda:block() {
       for (Pair p: ctx) {
         if (p.x.equals(x)) return p.a;
       }
-      throw new RuntimeException();
+      throw new RuntimeException(`x + " is not bound");
     }
     public LVar getInScope(String x) {
       for(int i=0; i<counter; i++)
@@ -132,7 +132,7 @@ module lambda:block() {
       for (Pair p: ctx) {
         if (p.a.equals(a)) return p.i;
       }
-      throw new RuntimeException();
+      throw new RuntimeException(`a + " is not bound");
     }
   }
 
@@ -175,7 +175,7 @@ module lambda:block() {
   }
 
   %strategy ReplaceLVar(a:LVar,b:LVar) extends Identity() {
-    visit LVar { x -> { if (`x==a) return b; else return `x; } }
+    visit LVar { x -> { if (`x.equals(a)) return b; else return `x; } }
   }
 
   %strategy RenameLVar(i:int,j:int) extends Identity() {
@@ -684,7 +684,7 @@ Rule:block() {
     Pattern n_p = getp();
     LTerm n_t = gett();
     
-    ArrayList<LVar> l = collectLVar(this); 
+    ArrayList<LVar> l = collectLVar(n_p); 
     for(LVar v:l) {
       LVar fresh = LVar.freshLVar(v.gethint());
       n_p = replaceLVar(n_p,v,fresh);

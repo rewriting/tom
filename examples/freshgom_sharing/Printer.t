@@ -9,11 +9,66 @@ public class Printer {
 
   %include { tweaked_lambda.tom }
 
-  private static String spaces(int n) {
-    String res = "";
-    for(int i=0; i<n; i++) res += "  ";
-    return res;
+  public static String prettyLTermList(LTermList l) {
+    %match(l) {
+      LTList() -> { return ""; }
+      LTList(x) -> { return `pretty(x); }
+      LTList(x,xs*) -> { return `pretty(x) + "," + `prettyLTermList(xs); }
+    }
+    return null;
   }
+
+  public static String prettyPatternList(PatternList l) {
+    %match(l) {
+      PList() -> { return ""; }
+      PList(x) -> { return `prettyPattern(x); }
+      PList(x,xs*) -> { return `prettyPattern(x) + "," 
+        + `prettyPatternList(xs); }
+    }
+    return null;
+  }
+
+  public static String prettyRules(Rules l) {
+    %match(l) {
+      RList() -> { return ""; }
+      RList(x,xs*) -> { 
+        return " | " + `prettyClause(x) + `prettyRules(xs); }
+    }
+    return null;
+  }
+
+  public static String prettyClause(Clause c) {
+    %match(c) {
+      Rule(p,t) -> { return `prettyPattern(p) + " -> " + `pretty(t); }
+    }
+    return null;
+  }
+
+  public static String prettyPattern(Pattern p) {
+    %match (p) {
+      PVar(LVar(x,i)) -> { return `i + `x; }
+      PFun(f,PList()) -> { return `f; }
+      PFun(f,l) -> { return `f + "(" + `prettyPatternList(l) + ")"; }
+    }
+    return null;
+  }
+
+  public static String pretty(LTerm t) {
+    %match (t) {
+      Var(LVar(x,i)) -> { return `i + `x ; }
+      Abs(lam(LVar(x,i),u)) -> { return %[(fun @`i + `x@ -> @`pretty(u)@)]%; }
+      App(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
+      Let(letin(LVar(x,i),u,v)) -> { 
+        return %[(let @`i + `x@ = @`pretty(u)@ in @`pretty(v)@)]%; }
+      Constr(f,LTList()) -> { return `f; }
+      Constr(f,l) -> { return `f + "(" + `prettyLTermList(l) + ")"; }
+      Case(s,l) -> { 
+        return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%; }
+    }
+    return null;
+  }
+
+
 
   public static String prettyLTermList(RawLTermList l) {
     %match(l) {

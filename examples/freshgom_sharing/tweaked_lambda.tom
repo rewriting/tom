@@ -368,7 +368,7 @@
   is_fsym(t) { (($t instanceof freshgom_sharing.lambda.types.rules.ConsRList) || ($t instanceof freshgom_sharing.lambda.types.rules.EmptyRList)) }
   make_empty() { freshgom_sharing.lambda.types.rules.EmptyRList.make() }
   make_insert(e,l) { freshgom_sharing.lambda.types.rules.ConsRList.make($e,$l) }
-  get_head(l) { $l.getHeadRList() }
+  get_head(l) { ((freshgom_sharing.lambda.types.rules.ConsRList)$l).safe_getHeadRList() }
   get_tail(l) { $l.getTailRList() }
   is_empty(l) { $l.isEmptyRList() }
 }

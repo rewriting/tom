@@ -65,24 +65,54 @@ public class FreshLambda {
       return null;
     }
 
-  %strategy Substitute(x:LVar, u:LTerm) extends Identity() {
-    visit LTerm { Var(y) -> { if (`y.equals(x)) return u; } }
-  }
-
-  %typeterm Map { implement { HashMap<LVar,LTerm> } }
-  %strategy ApplySubstitution(m:Map) extends Identity() {
-    visit LTerm { Var(x) -> { if (m.containsKey(`x)) return m.get(`x); } }
-  }
-
   // returns t[u/x]
   public static LTerm substitute(LTerm t, LVar x, LTerm u) {
-    try { return (LTerm) `TopDown(Substitute(x,u)).visit(t); } 
-    catch (VisitFailure e) { throw new RuntimeException(); }
+    %match(t) {
+      App(t1,t2) -> { return `App(substitute(t1,x,u),substitute(t2,x,u)); }
+      Abs(lam(v,t1)) -> { return `Abs(lam(v,substitute(t1,x,u))); }
+      Let(letin(v,t1,t2)) -> {
+        return `Let(letin(v,substitute(t1,x,u),substitute(t2,x,u)));
+      }
+      Var(y) -> { if (`y.equals(x)) return u; else return t; }
+      Constr(f, c) -> { return `Constr(f,substitute(c,x,u)); }
+      Case(s,r) -> { return `Case(substitute(s,x,u),substitute(r,x,u)); }
+    }
+    throw new RuntimeException();
+  }
+
+  public static Rules substitute(Rules r, LVar x, LTerm u) {
+    %match(r) {
+      RList() -> { return r; }
+      RList(t,ts*) -> {
+        return `ConsRList(substitute(t,x,u),substitute(ts*,x,u));
+      }
+    }
+    throw new RuntimeException();
+  }
+
+  public static Clause substitute(Clause c, LVar x, LTerm u) {
+    %match(c) {
+      Rule(p,t) -> { return `Rule(p,substitute(t,x,u)); }
+    }
+    throw new RuntimeException();
+  }
+
+  public static LTermList substitute(LTermList l, LVar x, LTerm u) {
+    %match(l) {
+      LTList() -> { return l; }
+      LTList(t,ts*) -> {
+        return `ConsLTList(substitute(t,x,u),substitute(ts*,x,u));
+      }
+    }
+    throw new RuntimeException();
   }
 
   public static LTerm substitute(LTerm t, HashMap<LVar,LTerm> m) {
-    try { return (LTerm) `TopDown(ApplySubstitution(m)).visit(t); } 
-    catch (VisitFailure e) { throw new RuntimeException(); }
+    LTerm res = t;
+    for(Map.Entry<LVar,LTerm> e: m.entrySet()) {
+      res = substitute(res,e.getKey(),e.getValue());
+    }
+    return res;
   }
 
   public static LTerm caseof(LTerm t, Rules r) {
@@ -92,27 +122,32 @@ public class FreshLambda {
         if (m!=null) return `substitute(rhs,m);
       }
     }
-    return `Case(t,r);
+    return null;
   }
 
   %strategy HeadBeta() extends Fail() {
     visit LTerm {
       App(Abs(lam(x,t)),u) -> { return `substitute(t,x,u); }
       Let(letin(x,u,t)) -> { return `substitute(t,x,u); }
-      Case(t,r) -> { return `caseof(t,r); }
+      Case(t,r) -> { 
+        LTerm res = `caseof(t,r);  
+        if (res != null) return res;
+        throw new VisitFailure();
+      }
     }
   }
 
-
   %strategy Debug() extends Identity() {
     visit LTerm {
-      x -> { System.out.println(Printer.pretty(`x.export()) + "\n"); }
+      x -> { 
+        System.out.println(Printer.pretty(`x) + "\n") ;
+        System.out.println(Printer.pretty(`x.export()) + "\n"); }
     }
   }
 
   public static LTerm beta(LTerm t) {
-    //try { return (LTerm) `Outermost(HeadBeta()).visit(t); }
-    try { return (LTerm) `Repeat(OnceTopDown(Sequence(Debug(),HeadBeta()))).visit(t); }
+    try { return (LTerm) `Outermost(HeadBeta()).visit(t); }
+    //try { return (LTerm) `Repeat(Sequence(OnceTopDown(HeadBeta()),Debug())).visit(t); }
     catch (VisitFailure e) { return t; }
   }
 
