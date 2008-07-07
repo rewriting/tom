@@ -579,6 +579,17 @@ public abstract class TomAbstractGenerator {
         }
         return ;
       }
+      
+      ACSymbolDecl(Name(tomName)) -> {
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
+         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildSymbolDecl(deep, tomName, moduleName);
+          `genDeclList(tomName, moduleName);
+          `genGetMultiplicityFunction(tomName, moduleName);
+          `genGetXYFromTerms(tomName, moduleName);
+        }
+        return ;
+      }
 
       GetImplementationDecl(Variable[AstName=Name(name),
                             AstType=Type(ASTTomType(type),tlType@TLType[])],
@@ -806,9 +817,13 @@ public abstract class TomAbstractGenerator {
                                       TomList argList, Instruction instr, String moduleName) throws IOException;
 
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
-
+  
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
-
+  
+  protected abstract void genGetMultiplicityFunction(String tomName, String moduleName) throws IOException;
+  
+  protected abstract void genGetXYFromTerms(String tomName, String moduleName) throws IOException;
+  
   // ------------------------------------------------------------
 
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;

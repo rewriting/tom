@@ -445,6 +445,63 @@ s = %[
     output.write(s);
   }
 
+  
+  /**
+   * Generates a function that given a list, it returns an array with the multiplicity of the elements
+   * Ex:
+   * 
+   * f(a,a,a,b,b) -> the function computes the multiplicities [3,2] and also the array [a,b]
+   * 
+   * NOTE: we are sure to have the same domain and codomain
+   * TODO ? lazymode
+   */
+  protected void genGetMultiplicityFunction(String name, String moduleName) throws IOException {
+    if(nodeclMode) {
+      return;
+    }
+
+    SymbolTable symbolTable = getSymbolTable(moduleName);
+    
+    TomSymbol tomSymbol = symbolTable.getSymbolFromName(name);
+    TomType elemType = TomBase.getSymbolCodomain(tomSymbol);
+    String tomType = TomBase.getTomType(elemType);
+    String glType = TomBase.getTLType(elemType);
+    // the array type
+    TomType elemArrayType = `ArrayType(elemType,1);
+    String tlElemArrayType = TomBase.getTLType(elemArrayType);    
+    // the int[] type
+    TomType intArrayType = `ArrayType(symbolTable.getIntType(),1);
+    String tlIntArrayType = `TomBase.getTLType(intArrayType);
+   
+    String listCast = "(" + glType + ")";
+    String get_slice = listCast + "tom_get_slice_" + name;
+
+    String s = "";
+    s+= %[
+  @modifier@ @tlIntArrayType@ tom_get_multiplicity_@name@(@glType@ subjTerm, @tlElemArrayType@ terms) {
+    @tlIntArrayType@ multiplicities 
+    
+    
+    
+    
+    if(@getEqualTerm(tomType,"begin","end",moduleName)@) {
+      return tail;
+    } else if(@getEqualTerm(tomType,"end","tail",moduleName)@ && (@getIsEmptyList(name,tomType,"end",moduleName)@ || @getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)@)) {
+      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+      return begin;
+    }
+    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
+                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
+  }
+  ]%;
+
+    //If necessary we remove \n code depending on pretty option
+    s = ASTFactory.makeSingleLineCode(s, prettyMode);
+    output.write(s);
+  }
+  
+  //TODO - the computeLenght
+
   protected void genDeclMake(String prefix, String funName, TomType returnType,
                              TomList argList, Instruction instr, String moduleName) throws IOException {
     if(nodeclMode) {
