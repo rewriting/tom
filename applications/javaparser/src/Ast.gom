@@ -17,6 +17,18 @@ compilationUnit
 */
 
 /*
+Package =
+ | Package( name:QualifiedName )
+ | EmptyPackage()
+ | MaybePackage( x:PackageDecl )
+
+MaybePackageDecl:make(x) {
+  if (x == null ) { return `EmptyPackageDecl(); }
+  return x;
+}
+*/
+
+/*
 packageDeclaration
     :   'package' qualifiedName ';'
     ;
@@ -382,7 +394,7 @@ type
 	;
 */
 
-ClassOrInterfaceType
+ClassOrInterfaceType =
  | IndependentType( name:String, arguments:TypeArgumentList )
  | NestedType( outername:String, outerarguments:TypeArgumentList, innertype:ClassOrInterfaceType )
 
@@ -452,7 +464,7 @@ formalParameters
     ;
 */
 
-FormalParameter = FormalParameter( modifiers:ModifierList, type:Type, id:VariableDeclaratorId, variablenumber:Boolean )
+FormalParameter = FormalParameter( modifiers:ModifierList, type:Type, name:String, variablenumber:Boolean )
 
 /*
 formalParameterDecls
@@ -489,6 +501,8 @@ explicitConstructorInvocation
     |   primary '.' nonWildcardTypeArguments? 'super' arguments ';'
     ;
 */
+
+QualifiedNameList = QualifiedNameList( QualifiedName* )
 
 QualifiedName = QualifiedName( String* )
 
@@ -565,8 +579,8 @@ elementValuePair
 */
 
 ElementValue =
- | ConditionalExpressionElementValue( value:ConditionalExpression )
- | AnnotationElementValue( value:Annotation )
+ | ConditionalExpressionElementValue( expression:ConditionalExpression )
+ | AnnotationElementValue           ( annotation:Annotation )
  | ElementValueArrayInitializer( ElementValue* )
 
 /*
@@ -585,7 +599,7 @@ annotationTypeDeclaration
     ;
 */
 
-AnnotationTypeBody = AnnotationTypeBody( AnnotationTypeElementDeclaration* )
+AnnotationTypeBody = AnnotationTypeBody( AnnotationTypeElementDecl* )
 
 /*
 annotationTypeBody
@@ -593,10 +607,10 @@ annotationTypeBody
     ;
 */
 
-AnnotationTypeElementDeclaration =
- | AnnotationMethod         ( modifiers:ModifierList, type:Type, name:String, defalutvalue:ElementValue )
- | AnnotationConstant       ( modifiers:ModifierList, type:Type, decls:VariableDeclList )
- | AnnotationTypeDeclaration( modifiers:ModifierList, decl:TypeDeclaration )
+AnnotationTypeElementDecl =
+ | AnnotationMethod  ( modifiers:ModifierList, type:Type, name:String, defalutvalue:ElementValue )
+ | AnnotationConstant( modifiers:ModifierList, type:Type, decls:VariableDeclList )
+ | AnnotationTypeDecl( modifiers:ModifierList, decl:TypeDecl )
 
 /*
 annotationTypeElementDeclaration
@@ -640,8 +654,8 @@ block
 */
 
 BlockStatement =
- | LocalVariableDeclaration( modifiers:ModifierList, decls:VariableDeclList )
- | BlockTypeDeclaration( decl:TypeDeclaration )
+ | LocalVariableDecl( modifiers:ModifierList, decls:VariableDeclList )
+ | BlockTypeDecl( decl:TypeDecl )
  | Statement( statement:Statement )
 
 /*
@@ -668,19 +682,19 @@ Statement =
  | StatementBlock( BlockStatement* )
  | Assert( expression:Expression, value:Expression )
  | If( test:Expression, then:Statement, else:Statement )
- | For( control:ForControl, body:Statement )
- | While( test:Expression, body:Statement )
- | DoWhile( body:Statement, test:Expression )
- | Try( body:Block, catches:CatchClauseList, finally:Block )
+ | For( control:ForControl, statementbody:Statement )
+ | While( test:Expression, statementbody:Statement )
+ | DoWhile( statementbody:Statement, test:Expression )
+ | Try( blockbody:Block, catches:CatchClauseList, finally:Block )
  | Switch( expression:Expression, groups:SwitchBlockStatementGroupList )
- | Synchronized( object:Expression, body:Block )
+ | Synchronized( object:Expression, blockbody:Block )
  | Return( result:Expression )
  | Throw( exception:Expression )
  | Break( label:String )
  | Continue( label:String )
  | EmptyStatement()
  | StatementExpression( expression:Expression )
- | Label( name:String, body:Statement )
+ | Label( name:String, statementbody:Statement )
 
 /*
 statement
@@ -778,7 +792,7 @@ options {k=3;} // be efficient for common case: for (ID ID : ID) ...
 */
 
 ForInit =
- | VariableDeclForInit( modifiers:Modifiers, type:Type, decls:VariableDeclList )
+ | VariableDeclForInit( modifiers:ModifierList, type:Type, decls:VariableDeclList )
  | ExpressionsForInit( Expression* )
 
 /*
@@ -857,7 +871,11 @@ assignmentOperator
           $t2.getLine() == $t3.getLine() && 
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
     ;
+*/
 
+ConditionalExpression = EmptyConditionalExpression()
+
+/*
 conditionalExpression
     :   conditionalOrExpression ( '?' expression ':' expression )?
     ;
@@ -960,7 +978,7 @@ Primary =
  | FloatingPointLiteral( value:String )
  | CharacterLiteral    ( value:String )
  | StringLiteral       ( value:String )
- | booleanLiteral      ( value:Boolean )
+ | BooleanLiteral      ( booleanvalue:Boolean )
  | Null()
 
 /*
