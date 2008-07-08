@@ -49,6 +49,7 @@ public class SymbolTable {
   %include { ../adt/tomsignature/TomSignature.tom }
 
   private final static String TYPE_INT       = "int";
+  private final static String TYPE_INT_ARRAY = "int[]";  
   private final static String TYPE_LONG      = "long";
   private final static String TYPE_FLOAT     = "float";
   private final static String TYPE_CHAR      = "char";
@@ -204,6 +205,10 @@ public class SymbolTable {
   public TomType getIntType() {
     return `ASTFactory.makeType(TYPE_INT,"int");
   }
+  
+  public TomType getIntArrayType() {
+    return `ASTFactory.makeType(TYPE_INT_ARRAY,"int[]");
+  }
 
   public TomType getLongType() {
     return `ASTFactory.makeType(TYPE_LONG,"long");
@@ -279,6 +284,10 @@ public class SymbolTable {
 
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
+  }
+  
+  public boolean isIntArrayType(String type) {
+    return type.equals(TYPE_INT_ARRAY);
   }
 
   public boolean isLongType(String type) {

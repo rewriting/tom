@@ -466,22 +466,54 @@ s = %[
     TomType elemType = TomBase.getSymbolCodomain(tomSymbol);
     String tomType = TomBase.getTomType(elemType);
     String glType = TomBase.getTLType(elemType);
-    // the array type
-    TomType elemArrayType = `ArrayType(elemType,1);
-    String tlElemArrayType = TomBase.getTLType(elemArrayType);    
     // the int[] type
-    TomType intArrayType = `ArrayType(symbolTable.getIntType(),1);
+    TomType intArrayType = symbolTable.getIntArrayType();
     String tlIntArrayType = `TomBase.getTLType(intArrayType);
+    String tlIntType = `TomBase.getTLType(symbolTable.getIntType());
    
     String listCast = "(" + glType + ")";
     String get_slice = listCast + "tom_get_slice_" + name;
+    
+    String mulVarName = "multiplicities";
 
     String s = "";
     s+= %[
-  @modifier@ @tlIntArrayType@ tom_get_multiplicity_@name@(@glType@ subjTerm, @tlElemArrayType@ terms) {
-    @tlIntArrayType@ multiplicities 
-    
-    
+  @modifier@ @tlIntArrayType@ tom_get_multiplicity_@name@(@glType@ subj, @tlIntType@ length) {
+    @tlIntArrayType@ mult = @getIntArrayAllocation("lenght",moduleName)@;
+    @glType@ oldElem = null;
+    // we we realy have a list
+    if (@getIsConcList(name,"subj",moduleName)@) { // subj.isConsf      
+      // subj.getHeadf();
+      oldElem = @genDeclGetHead(name,elemType,elemType,"subj",moduleName)@
+    } else {      
+      mult[0] = 1;
+      return mult;      
+    }
+    int counter = 0;  
+    // = subj.length;
+    while(subj.isConsf()) {
+      Term elem = subj.getHeadf();        
+      // another element of this type
+      if (elem.equals(oldElem)){
+        mult[counter] += 1; 
+      } else {
+        counter++;
+        oldElem = elem;
+        mult[counter] = 1;
+      }
+      subj = subj.getTailf();
+      // if we got to the end of the list
+      if(!subj.isConsf()) {
+        if (subj.equals(oldElem)){
+          mult[counter] += 1; 
+        } else {
+          counter++;          
+          mult[counter] = 1;
+        }
+        break; // break the while
+      } 
+    }
+    return mult;
     
     
     if(@getEqualTerm(tomType,"begin","end",moduleName)@) {

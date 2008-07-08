@@ -56,17 +56,72 @@ public class ACGenerator implements IBaseGenerator {
   // If we find ConstraintToExpression it means that this constraint was not processed	
   %strategy Generator() extends Identity() {
     visit Expression {
-      // generate pre-loop for X* = or _* = 
+      // generate loop for AC - "kilometric counter"
+      // for a pattern f(x,y)
       /*
-       * do {      
-       *   ...
-       *   if(IS_EMPTY_TomList(end_i) )
-       *     end_i = begin_i
-       *   else *** use this impossible value to indicate the end of the loop ***
-       *     end_i = (TomList) GET_TAIL_TomList(end_i);
-       * } while( end_i != begin_i ) 
+       * int[] alpha = computeMultiplicities(subject);
+       * int length = alpha.length;
+       * int[] tempSol = new int[length];
+       * int pos = lenght-1;
+       *   
+       *  while(true) {
+       *   // reinitialize
+       *   while(pos >= 0 && tempSol[pos] == alpha[pos] ) {        
+       *     tempSol[pos] = 0;
+       *     pos--;
+       *   }
+       *   if (pos >= 0) { // we didn't finish      
+       *     tempSol[pos] += 1;      
+       *     x = getTerm(tempSol,alpha,subject);
+       *     y = getComplementTerm(tempSol,alpha,subject);
+       *     ... // action
+       *     pos = n-1;
+       *   }  
+       *  }    
        */
-      ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) -> {
+      ce@ConstraintToExpression(MatchConstraint(subject@RecordAppl[NameList=(Name(tomName)), SlotList=concSlot(x,y)],v)) -> {
+        // if this is not an ac symbol, nothing to do
+        if(!TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `ce; }
+        // a variable 0
+        TomTerm zero = Variable(concOption(),Name("0"),intType,concConstraint());
+        // the name of the int[] operator
+        TomName intArrayName = `Name(Compiler.getSymbolTable().getIntArrayOp());        
+        TomType intArrayType = symbolTable.getIntArrayType();
+        
+        TomTerm alpha = Compiler.getFreshVariable(Compiler.getIntArrayType());
+        TomTerm tempSol = Compiler.getFreshVariable(Compiler.getIntArrayType());
+        TomTerm position = Compiler.getFreshVariable(Compiler.getIntType());
+        TomTerm length = Compiler.getFreshVariable(Compiler.getIntType());
+                
+        instruction = `LetRef(position,SubstractOne(lenght),instruction);
+        instruction = `LetRef(tempSol,BuildEmptyArray(intArrayName,lenght),instruction);
+        instruction = `LetRef(lenght,GetSize(intArrayName,alpha),instruction);
+
+        instruction = `LetRef(alpha,GetMultiplicities(subject),instruction);
+        
+        Expression positionGreaterOrEqThanZero = `GreaterOrEqualThan(TomTermToExpression(position),TomTermToExpression(zero));             
+        
+        Expression whileCond = `And(positionGreaterOrEqThanZero,
+            EqualTerm(GetElement(intArrayName,intType,tempSol,position),GetElement(intArrayName,intType,alpha,position)));        
+        Instruction reinitializationLoop = `WhileDo(whileCond,
+            LetArray(tempSol,position,TomTermToExpression(zero),
+             ExpressionToInstruction(SubstractOne(position))));
+        
+        TomTermList = concTomTerm();
+        
+        Instruction lastTest = `If(positionGreaterThanZero,
+            LetArray(tempSol,position,AddOne(GetElement(intArrayName,intType,tempSol,position)),
+                LetRef(x,FunctionCall(
+                    ),LetRef(y,FunctionCall(),LetRef(position,SubstractOne(lenght),Nop())))),
+            Nop());
+        
+        | FunctionCall(AstName:TomName,AstType:TomType,Args:TomList)
+        
+        WhileDo(TrueTL(),DoInst:Instruction)
+        
+        
+        
+        
         Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
         Expression testEmpty = ConstraintGenerator.genIsEmptyList(`opName,`end);
         Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
@@ -78,49 +133,5 @@ public class ACGenerator implements IBaseGenerator {
         return `DoWhileExpression(endExpression,doWhileTest);		        		      
       }
     } // end visit
-    visit TomTerm {
-      // generate getHead
-      ListHead(opName,type,variable) -> {
-        return `ExpressionToTomTerm(genGetHead(opName,type,variable));
-      }
-      // generate getTail
-      ListTail(opName,variable) -> {
-        return `ExpressionToTomTerm(genGetTail(opName,variable));
-      }
-    }
-  } // end strategy	
-  
-  /**
-   * return the head of the list
-   * when domain=codomain, the test is extended to:
-   *   is_fsym_f(t)?get_head(t):t 
-   *   the element itself is returned when it is not a list operator
-   *   this occurs because the last element of a loop may not be a list
-   */ 
-  private static Expression genGetHead(TomName opName, TomType type, TomTerm var) {
-    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
-    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
-    if(domain==codomain) {
-      return `Conditional(IsFsym(opName,var),GetHead(opName, type, var),TomTermToExpression(var));
-    }
-    return `GetHead(opName, type, var);
-  }
-
-  /**
-   * return the tail of the list
-   * when domain=codomain, the test is extended to:
-   *   is_fsym_f(t)?get_tail(t):make_empty() 
-   *   the neutral element is returned when it is not a list operator
-   *   this occurs because the last element of a loop may not be a list
-   */ 
-  private static Expression genGetTail(TomName opName, TomTerm var) {
-    TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(((Name)opName).getString());
-    TomType domain = TomBase.getSymbolDomain(tomSymbol).getHeadconcTomType();
-    TomType codomain = TomBase.getSymbolCodomain(tomSymbol);
-    if(domain==codomain) {
-      return `Conditional(IsFsym(opName,var),GetTail(opName, var), TomTermToExpression(BuildEmptyList(opName)));
-    }
-    return `GetTail(opName, var);
-  }
+  } // end strategy  
 }

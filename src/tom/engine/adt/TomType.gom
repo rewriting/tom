@@ -11,6 +11,6 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | EmptyType()
         | TypeList(TypeList:TomTypeList)
         | TypeWithSymbol(TomType:TomType,TlType:TomType,RootSymbolName:TomName)
-        | ArrayType(Type:TomType, Dimension:int)
 
 TomTypeList = concTomType(TomType*)
+

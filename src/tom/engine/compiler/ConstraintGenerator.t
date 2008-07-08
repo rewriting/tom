@@ -60,6 +60,11 @@ public class ConstraintGenerator {
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
+  
+  // constants
+  public static final String multiplicitiesFuncName = "getMultiplicities";
+  public static final String getTermForMultiplicityFuncName = "getTermMult";
+  public static final String getComplTermForMultiplicityFuncName = "getComplTermMult";
 
   public static Instruction performGenerations(Expression expression, Instruction action) 
        throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		

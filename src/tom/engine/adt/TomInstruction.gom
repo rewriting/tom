@@ -20,8 +20,12 @@ Instruction =
    * @param AstInstruction next instruction
    */
   | Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-  | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+  | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)  
   | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+  /**
+  * Variable[index] = Source
+  */
+  | LetArray(Variable:TomTerm,Index:TomTerm,Source:Expression,AstInstruction:Instruction)
   /**/
   | Return(Kid1:TomTerm)
   | Nop()
