@@ -149,7 +149,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage unknownSort =
     new GomMessage("Sort {0} not found: missing include ?");
   public static final GomMessage slotIncompatibleTypes =
-    new GomMessage("Incompatible types for slot {0}: {1}, {2}. Two slots with the same name in the same sort should have same type");
+    new GomMessage("Incompatible slot types in sort {0}: slot {1} has sort {2} and {3}. Two slots with the same name in the same sort should have same type");
 
   // RuleExpander
   public static final GomMessage variadicRuleStartingWithStar =

@@ -404,7 +404,8 @@ public class TypeExpander {
     // check if the same slot name is used with different types
     Map mapNameType = new HashMap();
     %match(Sort sort) {
-      Sort[OperatorDecls=ConcOperator(_*,
+      Sort[Decl=(SortDecl|BuiltinSortDecl)[Name=sortName],
+           OperatorDecls=ConcOperator(_*,
           OperatorDecl[Prod=Slots[Slots=ConcSlot(_*,
             Slot[Name=slotName,Sort=slotSort],
             _*)]],
@@ -416,7 +417,7 @@ public class TypeExpander {
           if (!prevSort.equals(`slotSort)) {
             getLogger().log(Level.SEVERE,
                 GomMessage.slotIncompatibleTypes.getMessage(),
-                new Object[]{`(slotName),prevSort.getName(),
+                new Object[]{`sortName,`slotName,prevSort.getName(),
                              `(slotSort).getName()});
             valid = false;
           }
