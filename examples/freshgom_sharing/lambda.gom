@@ -286,6 +286,7 @@ sort Rules:block() {
       }
       ConsRList(x,xs) -> { 
         if (! (o instanceof freshgom_sharing.lambda.types.rules.ConsRList))
+          return false;
         return `x.alpha(o.getHeadRList(),map) && `xs.alpha(o.getTailRList(),map);
       }
     }
@@ -380,7 +381,8 @@ sort PatternList:block() {
         return (o instanceof freshgom_sharing.lambda.types.patternlist.EmptyPList);
       }
       ConsPList(x,xs) -> { 
-        if (! (o instanceof freshgom_sharing.lambda.types.patternlist.ConsPList))
+        if (!(o instanceof freshgom_sharing.lambda.types.patternlist.ConsPList))
+          return false;
         return `x.alpha(o.getHeadPList(),map) && `xs.alpha(o.getTailPList(),map);
       }
     }
@@ -425,6 +427,7 @@ sort LTermList:block() {
       }
       ConsLTList(x,xs) -> { 
         if (! (o instanceof freshgom_sharing.lambda.types.ltermlist.ConsLTList))
+          return false;
         return `x.alpha(o.getHeadLTList(),map) && `xs.alpha(o.getTailLTList(),map);
       }
     }
@@ -671,7 +674,8 @@ App:block() {
   /* alpha equivalence */
   public boolean alpha
     (LTerm o, AlphaMap map) {
-      if (!(o instanceof freshgom_sharing.lambda.types.lterm.App)) return false;
+      if (!(o instanceof freshgom_sharing.lambda.types.lterm.App)) 
+        return false;
       return    gett1().alpha(o.gett1(),map) 
              && gett2().alpha(o.gett2(),map);
     }
@@ -693,7 +697,8 @@ Var:block() {
   /* alpha equivalence */
   public boolean alpha
     (LTerm o, AlphaMap map) {
-      if (!(o instanceof freshgom_sharing.lambda.types.lterm.Var)) return false;
+      if (!(o instanceof freshgom_sharing.lambda.types.lterm.Var)) 
+        return false;
       return o.getx().equals(map.get(getx()));
     }
 
@@ -712,7 +717,10 @@ Case:block() {
 
   /* alpha equivalence */
   public boolean alpha (LTerm o, AlphaMap map) {
-	  return false;
+    if (!(o instanceof freshgom_sharing.lambda.types.lterm.Case)) 
+      return false;
+    return    getsubject().alpha(o.getsubject(),map)
+           && getrules().alpha(o.getrules(),map);
   }
 
   /* exportation (term -> raw term) */
@@ -731,7 +739,9 @@ Constr:block() {
 
   /* alpha equivalence */
   public boolean alpha (LTerm o, AlphaMap map) {
-	  return false;
+    if (!(o instanceof freshgom_sharing.lambda.types.lterm.Constr)) 
+      return false;
+    return getchildren().alpha(o.getchildren(),map);
   }
 
   /* exportation (term -> raw term) */
@@ -778,7 +788,13 @@ Rule:block() {
   /* alpha equivalence */
   public boolean alpha
     (freshgom_sharing.lambda.types.Clause o, AlphaMap map) {
-      return false;
+      if (!(o instanceof freshgom_sharing.lambda.types.clause.Rule)) 
+        return false;
+      boolean res = true;
+      map.push();
+      res = res && getp().alpha(o.getp(),map);
+      map.pop();
+      return res && gett().alpha(o.gett(),map);
   }
 }
 
@@ -795,7 +811,9 @@ PFun:block() {
   /* alpha equivalence */
   public boolean alpha
     (freshgom_sharing.lambda.types.Pattern o, AlphaMap map) {
-      return false;
+      if (!(o instanceof freshgom_sharing.lambda.types.pattern.PFun)) 
+        return false;
+      return getchildren().alpha(o.getchildren(),map);
   }
 }
 
@@ -814,7 +832,10 @@ PVar:block() {
   /* alpha equivalence */
   public boolean alpha
     (freshgom_sharing.lambda.types.Pattern o, AlphaMap map) {
-      return false;
+      if (!(o instanceof freshgom_sharing.lambda.types.pattern.PVar)) 
+        return false;
+      map.add(getx(),o.getx());
+      return true;
   }
 }
 
@@ -845,6 +866,7 @@ lam:block() {
   public boolean alpha
     (Lam o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.lam.lam)) return false;
+      map.push();
       map.add(getx(),o.getx());
       boolean res = gett().alpha(o.gett(),map);
       map.pop();
@@ -882,6 +904,7 @@ letin:block() {
   public boolean alpha
     (Letin o, AlphaMap map) {
       if (!(o instanceof freshgom_sharing.lambda.types.letin.letin)) return false;
+      map.push();
       map.add(getx(),o.getx());
       boolean res = 
             gett().alpha(o.gett(),map) 
