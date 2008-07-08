@@ -82,6 +82,9 @@ public class ACGenerator implements IBaseGenerator {
       ce@ConstraintToExpression(MatchConstraint(subject@RecordAppl[NameList=(Name(tomName)), SlotList=concSlot(x,y)],v)) -> {
         // if this is not an ac symbol, nothing to do
         if(!TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `ce; }
+        
+        Instruction instruction = null;       
+        
         // a variable 0
         TomTerm zero = Variable(concOption(),Name("0"),intType,concConstraint());
         // the name of the int[] operator
@@ -97,7 +100,9 @@ public class ACGenerator implements IBaseGenerator {
         instruction = `LetRef(tempSol,BuildEmptyArray(intArrayName,lenght),instruction);
         instruction = `LetRef(lenght,GetSize(intArrayName,alpha),instruction);
 
-        instruction = `LetRef(alpha,GetMultiplicities(subject),instruction);
+        instruction = `LetRef(alpha,TomTermToExpression(FunctionCall(
+            Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
+            intArrayType,concTomTerm(subject))),instruction);
         
         Expression positionGreaterOrEqThanZero = `GreaterOrEqualThan(TomTermToExpression(position),TomTermToExpression(zero));             
         
@@ -107,30 +112,28 @@ public class ACGenerator implements IBaseGenerator {
             LetArray(tempSol,position,TomTermToExpression(zero),
              ExpressionToInstruction(SubstractOne(position))));
         
-        TomTermList = concTomTerm();
-        
+        // last if
+        TomList getTermArgs = `concTomTerm(tempSol,alpha,subject);        
+        TomType subtermType = Compiler.getTermTypeFromTerm(`x);        
         Instruction lastTest = `If(positionGreaterThanZero,
             LetArray(tempSol,position,AddOne(GetElement(intArrayName,intType,tempSol,position)),
                 LetRef(x,FunctionCall(
-                    ),LetRef(y,FunctionCall(),LetRef(position,SubstractOne(lenght),Nop())))),
+                    Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName),
+                    subtermType,getTermArgs),
+                LetRef(y,FunctionCall(
+                    Name(ConstraintGenerator.getComplTermForMultiplicityFuncName + "_" + tomName),
+                    subtermType,getTermArgs),
+                    LetRef(position,SubstractOne(lenght),Nop())))),
             Nop());
         
-        | FunctionCall(AstName:TomName,AstType:TomType,Args:TomList)
+        
         
         WhileDo(TrueTL(),DoInst:Instruction)
         
         
         
         
-        Expression doWhileTest = `Negation(EqualTerm(type,end,begin));
-        Expression testEmpty = ConstraintGenerator.genIsEmptyList(`opName,`end);
-        Expression endExpression = `IfExpression(testEmpty,EqualTerm(type,end,begin),EqualTerm(type,end,ListTail(opName,end)));
-        // if we have a varStar, we generate its declaration also
-        if (`v.isVariableStar()) {
-          Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end,BuildEmptyList(opName)))));
-          return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
-        }
-        return `DoWhileExpression(endExpression,doWhileTest);		        		      
+        		        		      
       }
     } // end visit
   } // end strategy  
