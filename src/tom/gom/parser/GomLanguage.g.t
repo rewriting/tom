@@ -52,7 +52,7 @@ import tom.gom.adt.gom.GomTree;
 }
 
 module :
-  MODULE modulename (imps=imports)? section
+  MODULE modulename (imps=imports)? section EOF
   -> {imps!=null}? ^(GomModule modulename ^(ConcSection imports section))
   -> ^(GomModule modulename ^(ConcSection section))
   ;

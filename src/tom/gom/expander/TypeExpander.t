@@ -67,6 +67,7 @@ public class TypeExpander {
       consum = consum.getTailConcGomModule();
 
       Collection decls = getSortDeclarations(module);
+
       Collection implicitdecls = getSortDeclarationInCodomain(module);
 
       /* Check that there are no implicit sort declarations
@@ -206,6 +207,7 @@ public class TypeExpander {
         }
       }
     }
+
     getLogger().log(Level.SEVERE, GomMessage.unknownSort.getMessage(),
         new Object[]{typename});
     /* If the sort is not known, assume it is a builtin */
