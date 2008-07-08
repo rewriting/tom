@@ -13,8 +13,7 @@
 
     <gom.preset srcdir="${examples.dir}"
       package="${freshgom}" 
-      destdir="${examples.gen}"
-      nosharing="true">
+      destdir="${examples.gen}">
       <include name="${freshgom}/lambda.gom"/>
     </gom.preset>
 

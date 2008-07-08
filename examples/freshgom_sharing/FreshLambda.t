@@ -85,7 +85,7 @@ public class FreshLambda {
     throw new RuntimeException();
   }
 
-  public static LTerm substitute(LTerm t, HashMap<LVar,LTerm> m) {
+  public static LTerm substitute(LTerm t, Hashtable<LVar,LTerm> m) {
     LTerm res = t;
     for(Map.Entry<LVar,LTerm> e: m.entrySet()) {
       res = substitute(res,e.getKey(),e.getValue());
@@ -95,11 +95,11 @@ public class FreshLambda {
 
   /* matching */
 
-  public static HashMap<LVar,LTerm> 
-    match(HashMap<LVar,LTerm> m, Pattern p, LTerm t) {
+  public static Hashtable<LVar,LTerm> 
+    match(Hashtable<LVar,LTerm> m, Pattern p, LTerm t) {
       %match(p,t) {
         PVar(x), u -> { 
-          if (m.containsKey(`x)) return m.get(`x).equals(`u) ? m : null; 
+          if (m.containsKey(`x)) return (m.get(`x).equals(`u) ? m : null); 
           else { m.put(`x,`u); return m; }
         }
         PFun(f,l1), Constr(f,l2) -> { return `match(m,l1,l2); }
@@ -107,8 +107,8 @@ public class FreshLambda {
       return null;
     }
 
-  public static HashMap<LVar,LTerm>
-    match(HashMap<LVar,LTerm> m, PatternList l1, LTermList l2) {
+  public static Hashtable<LVar,LTerm>
+    match(Hashtable<LVar,LTerm> m, PatternList l1, LTermList l2) {
       %match(l1,l2) {
         ConsPList(p,ps),ConsLTList(x,xs) -> {
           return `match(m,p,x) != null ? `match(m,ps,xs) : null;
@@ -123,7 +123,7 @@ public class FreshLambda {
   public static LTerm caseof(LTerm t, Rules r) throws VisitFailure {
     %match(t,r) {
       Constr[],RList(_*,Rule(lhs,rhs),_*) -> {
-        HashMap<LVar,LTerm> m = match(new HashMap(),`lhs,t);
+        Hashtable<LVar,LTerm> m = match(new Hashtable(),`lhs,t);
         if (m!=null) return `substitute(rhs,m);
       }
     }
