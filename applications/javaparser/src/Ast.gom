@@ -1,10 +1,10 @@
 module parser.Ast
+
 imports String
+
 abstract syntax
 
-CompilationUnit = 
- | TypeDeclList( TypeDecl* )
- | EmptyCompilationUnit()
+CompilationUnit = CompilationUnit( annotations:AnnotationList, package:QualifiedName, import:ImportList, types:TypeDeclList )
 
 /*
 compilationUnit
@@ -14,32 +14,43 @@ compilationUnit
         )
     |   packageDeclaration? importDeclaration* typeDeclaration*
     ;
+*/
 
+/*
 packageDeclaration
     :   'package' qualifiedName ';'
     ;
-    
+*/
+
+ImportList = ImportList( Import* )
+
+Import = Import( name:QualifiedName, isstatic:Boolean, wholepackage:Boolean )
+
+/*
 importDeclaration
     :   'import' 'static'? qualifiedName ('.' '*')? ';'
     ;
-    
+*/
+
+TypeDeclList = TypeDeclList( TypeDecl* )
+
+TypeDecl =
+ | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, classextends:Type, implements:TypeList, classbody:ClassBody )
+ | EnumClass      ( name:String, modifiers:ModifierList, implements:TypeList, enumbody:EnumBody )
+ | NormalInterface( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, interfaceextends:TypeList, interfacebody:InterfaceBody )
+ | AnnotationType ( name:String, modifiers:ModifierList, annotationbody:AnnotationTypeBody )
+ | EmptyTypeDecl()
+
+/* 
 typeDeclaration
     :   classOrInterfaceDeclaration
     |   ';'
     ;
-*/
 
-TypeDecl =
- | NormalClassDecl( classbody:ClassBody )
- | EnumClassDecl( enumbody:ClassBody )
- | NormalInterfaceDecl( interfacebody:InterfaceBody )
- | AnnotationTypeDecl( x:AnnotationTypeDecl )
-
-/* 
 classOrInterfaceDeclaration
     :   classOrInterfaceModifiers (classDeclaration | interfaceDeclaration)
     ;
-    
+
 classOrInterfaceModifiers
     :   classOrInterfaceModifier*
     ;
@@ -54,7 +65,11 @@ classOrInterfaceModifier
     |   'final'      // class only -- does not apply to interfaces
     |   'strictfp'   // class or interface
     ;
+*/
 
+ModifierList = ModifierList( Modifier* )
+
+/*
 modifiers
     :   modifier*
     ;
@@ -70,15 +85,23 @@ normalClassDeclaration
         ('implements' typeList)?
         classBody
     ;
-    
+*/
+
+TypeParameterList = TypeParameterList( TypeParameter* )
+
+/*
 typeParameters
     :   '<' typeParameter (',' typeParameter)* '>'
     ;
+*/
 
+TypeParameter = TypeParameter( name:String, extends:TypeList )
+
+/*
 typeParameter
     :   Identifier ('extends' typeBound)?
     ;
-        
+
 typeBound
     :   type ('&' type)*
     ;
@@ -86,15 +109,27 @@ typeBound
 enumDeclaration
     :   ENUM Identifier ('implements' typeList)? enumBody
     ;
+*/
 
+EnumBody = EnumBody( constants:EnumConstantList, bodydecls:ClassBody )
+
+/*
 enumBody
     :   '{' enumConstants? ','? enumBodyDeclarations? '}'
     ;
+*/
 
+EnumConstantList = EnumConstantList( EnumConstant* )
+
+/*
 enumConstants
     :   enumConstant (',' enumConstant)*
     ;
-    
+*/
+
+EnumConstant = EnumConstant( name:String, annotations:AnnotationList, arguments:ExpressionList, classbody:ClassBody )
+
+/*
 enumConstant
     :   annotations? Identifier arguments? classBody?
     ;
@@ -111,14 +146,17 @@ interfaceDeclaration
 normalInterfaceDeclaration
     :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody
     ;
-    
+*/
+
+TypeList = TypeList( Type* )
+
+/*
 typeList
     :   type (',' type)*
     ;
 */
 
-ClassBody = ClassBodyDeclList( ClassBodyDecl* )
-//ClassBody = EmptyClassBody()
+ClassBody = ClassBody( ClassBodyDecl* )
 
 /*
 classBody
@@ -126,8 +164,7 @@ classBody
     ;
 */
 
-InterfaceBody = InterfaceBodyDeclList( InterfaceBodyDecl* )
-//InterfaceBody = EmptyInterfaceBody()
+InterfaceBody = InterfaceBody( InterfaceBodyDecl* )
 
 /*
 interfaceBody
@@ -136,8 +173,12 @@ interfaceBody
 */
 
 ClassBodyDecl =
- | Block ( block:Block )
- | Decl ( decl:MemberDecl )
+ | Block( block:Block, isstatic:Boolean )
+ | FieldDecl        ( modifiers:ModifierList, variabledecls:VariableDeclList )
+ | MethodDecl       ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterList, throws:QualifiedNameList, methodbody:Block )
+ | ConstructorDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterList, throws:QualifiedNameList, constructorbody:ConstructorBody )
+ | ClassBodyTypeDecl( modifiers:ModifierList, decl:TypeDecl )
+ | EmptyClassBodyDecl()
 
 /*
 classBodyDeclaration
@@ -145,15 +186,7 @@ classBodyDeclaration
     |   'static'? block
     |   modifiers memberDecl
     ;
-*/
 
-MemberDecl =
- | EmptyFieldDecl()
- | MethodDecl( id:String )
- | ConstructorDecl( id:String )
- | ClassTypeDecl( decl:TypeDecl )
-
-/*
 memberDecl
     :   genericMethodOrConstructorDecl
     |   memberDeclaration
@@ -186,21 +219,17 @@ fieldDeclaration
 */
 
 InterfaceBodyDecl =
- | InterfaceMemberDecl( x:InterfaceMemberDecl )
+ | ConstantDecl         ( modifiers:ModifierList, type:Type, name:String, initializer:VariableInitializer )
+ | InterfaceMethodDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterList, throws:QualifiedNameList )
+ | InterfaceBodyTypeDecl( modifiers:ModifierList, decl:TypeDecl )
+ | EmptyInterfaceBodyDecl()
 
 /*
 interfaceBodyDeclaration
     :   modifiers interfaceMemberDecl
     |   ';'
     ;
-*/
 
-InterfaceMemberDecl =
- | ConstantDecl ( id:String )
- | InterfaceMethodDecl ( id:String )
- | InterfaceTypeDecl( decl:TypeDecl )
-
-/*
 interfaceMemberDecl
     :   interfaceMethodOrFieldDecl
     |   interfaceGenericMethodDecl
@@ -217,7 +246,7 @@ interfaceMethodOrFieldRest
     :   constantDeclaratorsRest ';'
     |   interfaceMethodDeclaratorRest
     ;
-    
+
 methodDeclaratorRest
     :   formalParameters ('[' ']')*
         ('throws' qualifiedNameList)?
@@ -253,11 +282,19 @@ constructorDeclaratorRest
 constantDeclarator
     :   Identifier constantDeclaratorRest
     ;
-    
+*/
+
+VariableDeclList = VariableDeclList( VariableDecl* )
+
+/*
 variableDeclarators
     :   variableDeclarator (',' variableDeclarator)*
     ;
+*/
 
+VariableDecl = VariableDecl( type:Type, name:String, initializer:VariableInitializer )
+
+/*
 variableDeclarator
     :   variableDeclaratorId ('=' variableInitializer)?
     ;
@@ -269,11 +306,17 @@ constantDeclaratorsRest
 constantDeclaratorRest
     :   ('[' ']')* '=' variableInitializer
     ;
-    
+
 variableDeclaratorId
     :   Identifier ('[' ']')*
     ;
+*/
 
+VariableInitializer =
+ | ArrayInitializer( VariableInitializer* )
+ | ExpressionVariableInitializer( value:Expression )
+
+/*
 variableInitializer
     :   arrayInitializer
     |   expression
@@ -282,7 +325,22 @@ variableInitializer
 arrayInitializer
     :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
     ;
+*/
 
+Modifier =
+ | Annotation( annotation:Annotation )
+ | Public()
+ | Protected()
+ | Private()
+ | Abstract()
+ | Static()
+ | Final()
+ | StrictFP()
+ | Synchronized()
+ | Transient()
+ | Volatile()
+
+/*
 modifier
     :   annotation
     |   'public'
@@ -309,16 +367,42 @@ enumConstantName
 typeName
     :   qualifiedName
     ;
+*/
 
+Type =
+ | ArrayType           ( type:Type )
+ | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
+ | PrimitiveType       ( primitivetype:PrimitiveType )
+ | Void()
+
+/*
 type
 	:	classOrInterfaceType ('[' ']')*
 	|	primitiveType ('[' ']')*
 	;
+*/
 
+ClassOrInterfaceType
+ | IndependentType( name:String, arguments:TypeArgumentList )
+ | NestedType( outername:String, outerarguments:TypeArgumentList, innertype:ClassOrInterfaceType )
+
+/*
 classOrInterfaceType
 	:	Identifier typeArguments? ('.' Identifier typeArguments? )*
 	;
+*/
 
+PrimitiveType =
+ | Boolean()
+ | Char()
+ | Byte()
+ | Short()
+ | Int()
+ | Long()
+ | Float()
+ | Double()
+
+/*
 primitiveType
     :   'boolean'
     |   'char'
@@ -334,11 +418,22 @@ variableModifier
     :   'final'
     |   annotation
     ;
+*/
 
+TypeArgumentList = TypeArgumentList( TypeArgument* )
+
+/*
 typeArguments
     :   '<' typeArgument (',' typeArgument)* '>'
     ;
-    
+*/
+
+TypeArgument =
+ | ExplicitTypeArgument( type:Type )
+ | ExtendTypeArgument( type:Type )
+ | SuperTypeArgument( type:Type )
+
+/*
 typeArgument
     :   type
     |   '?' (('extends' | 'super') type)?
@@ -347,11 +442,19 @@ typeArgument
 qualifiedNameList
     :   qualifiedName (',' qualifiedName)*
     ;
+*/
 
+FormalParameterList = FormalParameterList( FormalParameter* )
+
+/*
 formalParameters
     :   '(' formalParameterDecls? ')'
     ;
-    
+*/
+
+FormalParameter = FormalParameter( modifiers:ModifierList, type:Type, id:VariableDeclaratorId, variablenumber:Boolean )
+
+/*
 formalParameterDecls
     :   variableModifiers type formalParameterDeclsRest
     ;
@@ -364,21 +467,36 @@ formalParameterDeclsRest
 methodBody
     :   block
     ;
+*/
 
+ConstructorBody = ConstructorBody( constructorinvocation:ExplicitConstructorInvocation, block:Block )
+
+/*
 constructorBody
     :   '{' explicitConstructorInvocation? blockStatement* '}'
     ;
+*/
 
+ExplicitConstructorInvocation =
+ | ThisInvocation        ( typearguments:TypeList, argument:ExpressionList )
+ | SuperInvocation       ( typearguments:TypeList, argument:ExpressionList )
+ | PrimarySuperInvocation( primary:Primary, typearguments:TypeList, argument:ExpressionList )
+ | NoExplicitConstructorInvocation()
+
+/*
 explicitConstructorInvocation
     :   nonWildcardTypeArguments? ('this' | 'super') arguments ';'
     |   primary '.' nonWildcardTypeArguments? 'super' arguments ';'
     ;
+*/
 
+QualifiedName = QualifiedName( String* )
 
+/*
 qualifiedName
     :   Identifier ('.' Identifier)*
     ;
-    
+
 literal 
     :   integerLiteral
     |   FloatingPointLiteral
@@ -393,7 +511,13 @@ integerLiteral
     |   OctalLiteral
     |   DecimalLiteral
     ;
+*/
 
+Boolean =
+ | True()
+ | False()
+
+/*
 booleanLiteral
     :   'true'
     |   'false'
@@ -402,27 +526,50 @@ booleanLiteral
 
 // ANNOTATIONS
 
+AnnotationList = AnnotationList( Annotation* )
+
 /*
 annotations
     :   annotation+
     ;
+*/
 
+Annotation =
+ | Element( name:QualifiedName, value:ElementValue )
+ | Pairs( name:QualifiedName, pairs:ElementValuePairList )
+
+/*
 annotation
     :   '@' annotationName ( '(' ( elementValuePairs | elementValue )? ')' )?
     ;
-    
+
 annotationName
     : Identifier ('.' Identifier)*
     ;
+*/
 
+ElementValuePairList = ElementValuePairList( ElementValuePair* )
+
+/*
 elementValuePairs
     :   elementValuePair (',' elementValuePair)*
     ;
+*/
 
+ElementValuePair = ElementValuePair( name:String, value:ElementValue )
+
+/*
 elementValuePair
     :   Identifier '=' elementValue
     ;
-    
+*/
+
+ElementValue =
+ | ConditionalExpressionElementValue( value:ConditionalExpression )
+ | AnnotationElementValue( value:Annotation )
+ | ElementValueArrayInitializer( ElementValue* )
+
+/*
 elementValue
     :   conditionalExpression
     |   annotation
@@ -432,19 +579,26 @@ elementValue
 elementValueArrayInitializer
     :   '{' (elementValue (',' elementValue)*)? (',')? '}'
     ;
-*/
 
-AnnotationTypeDecl = EmptyAnnotationTypeDecl()
-
-/*
 annotationTypeDeclaration
     :   '@' 'interface' Identifier annotationTypeBody
     ;
-    
+*/
+
+AnnotationTypeBody = AnnotationTypeBody( AnnotationTypeElementDeclaration* )
+
+/*
 annotationTypeBody
     :   '{' (annotationTypeElementDeclaration)* '}'
     ;
-    
+*/
+
+AnnotationTypeElementDeclaration =
+ | AnnotationMethod         ( modifiers:ModifierList, type:Type, name:String, defalutvalue:ElementValue )
+ | AnnotationConstant       ( modifiers:ModifierList, type:Type, decls:VariableDeclList )
+ | AnnotationTypeDeclaration( modifiers:ModifierList, decl:TypeDeclaration )
+
+/*
 annotationTypeElementDeclaration
     :   modifiers annotationTypeElementRest
     ;
@@ -477,13 +631,20 @@ defaultValue
 
 // STATEMENTS / BLOCKS
 
-Block = EmptyBlock()
+Block = Block( BlockStatement* )
 
 /*
 block
     :   '{' blockStatement* '}'
     ;
+*/
 
+BlockStatement =
+ | LocalVariableDeclaration( modifiers:ModifierList, decls:VariableDeclList )
+ | BlockTypeDeclaration( decl:TypeDeclaration )
+ | Statement( statement:Statement )
+
+/*
 blockStatement
     :   localVariableDeclarationStatement
     |   classOrInterfaceDeclaration
@@ -497,11 +658,31 @@ localVariableDeclarationStatement
 localVariableDeclaration
     :   variableModifiers type variableDeclarators
     ;
-    
+
 variableModifiers
     :   variableModifier*
     ;
+*/
 
+Statement =
+ | StatementBlock( BlockStatement* )
+ | Assert( expression:Expression, value:Expression )
+ | If( test:Expression, then:Statement, else:Statement )
+ | For( control:ForControl, body:Statement )
+ | While( test:Expression, body:Statement )
+ | DoWhile( body:Statement, test:Expression )
+ | Try( body:Block, catches:CatchClauseList, finally:Block )
+ | Switch( expression:Expression, groups:SwitchBlockStatementGroupList )
+ | Synchronized( object:Expression, body:Block )
+ | Return( result:Expression )
+ | Throw( exception:Expression )
+ | Break( label:String )
+ | Continue( label:String )
+ | EmptyStatement()
+ | StatementExpression( expression:Expression )
+ | Label( name:String, body:Statement )
+
+/*
 statement
     : block
     |   ASSERT expression (':' expression)? ';'
@@ -524,23 +705,42 @@ statement
     |   statementExpression ';'
     |   Identifier ':' statement
     ;
-    
+*/
+
+CatchClauseList = CatchClauseList( CatchClause* )
+
+/*
 catches
     :   catchClause (catchClause)*
     ;
-    
+*/
+
+CatchClause = CatchClause( parameter:FormalParameter, body:Block )
+
+/*
 catchClause
     :   'catch' '(' formalParameter ')' block
     ;
+*/
 
+FormalParameter = FormalParameter( modifiers:ModifierList, type:Type, name:String )
+
+/*
 formalParameter
     :   variableModifiers type variableDeclaratorId
     ;
-        
+*/
+
+SwitchBlockStatementGroupList = SwitchBlockStatementGroupList( SwitchBlockStatementGroup* )
+
+/*
 switchBlockStatementGroups
     :   (switchBlockStatementGroup)*
     ;
-    
+*/
+
+SwitchBlockStatementGroup = SwitchBlockStatementGroup( labels:SwitchLabelList, body:Block )
+
 /* The change here (switchLabel -> switchLabel+) technically makes this grammar
    ambiguous; but with appropriately greedy parsing it yields the most
    appropriate AST, one in which each group, except possibly the last one, has
@@ -548,24 +748,45 @@ switchBlockStatementGroups
 switchBlockStatementGroup
     :   switchLabel+ blockStatement*
     ;
-    
+*/
+
+SwitchLabelList = SwitchLabelList( SwitchLabel* )
+
+SwitchLabel =
+ | ConstantExpressionCase( expression:Expression )
+ | EnumConstantNameCase( name:String )
+ | Default()
+
+/*
 switchLabel
     :   'case' constantExpression ':'
     |   'case' enumConstantName ':'
     |   'default' ':'
     ;
-    
+*/
+
+ForControl =
+ | EnhancedForControl( modifiers:ModifierList, type:Type, variable:String, items:Expression )
+ | StandardForControl( init:ForInit, test:Expression, update:ExpressionList )
+
+/*
 forControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
     :   enhancedForControl
     |   forInit? ';' expression? ';' forUpdate?
     ;
+*/
 
+ForInit =
+ | VariableDeclForInit( modifiers:Modifiers, type:Type, decls:VariableDeclList )
+ | ExpressionsForInit( Expression* )
+
+/*
 forInit
     :   localVariableDeclaration
     |   expressionList
     ;
-    
+
 enhancedForControl
     :   variableModifiers type Identifier ':' expression
     ;
@@ -575,12 +796,19 @@ forUpdate
     ;
 */
 
-/* EXPRESSIONS
+// (* RELECTURE *)
 
+// EXPRESSIONS
+
+/*
 parExpression
     :   '(' expression ')'
     ;
-    
+*/
+
+ExpressionList = ExpressionList( Expression* )
+
+/*
 expressionList
     :   expression (',' expression)*
     ;
@@ -592,7 +820,11 @@ statementExpression
 constantExpression
     :   expression
     ;
-    
+*/
+
+Expression = EmptyExpression()
+
+/*
 expression
     :   conditionalExpression (assignmentOperator expression)?
     ;
@@ -719,7 +951,19 @@ castExpression
     :  '(' primitiveType ')' unaryExpression
     |  '(' (type | expression) ')' unaryExpressionNotPlusMinus
     ;
+*/
 
+Primary =
+ | HexLiteral          ( value:String )
+ | OctalLiteral        ( value:String )
+ | DecimalLiteral      ( value:String )
+ | FloatingPointLiteral( value:String )
+ | CharacterLiteral    ( value:String )
+ | StringLiteral       ( value:String )
+ | booleanLiteral      ( value:Boolean )
+ | Null()
+
+/*
 primary
     :   parExpression
     |   'this' ('.' Identifier)* identifierSuffix?
@@ -730,7 +974,11 @@ primary
     |   primitiveType ('[' ']')* '.' 'class'
     |   'void' '.' 'class'
     ;
+*/
 
+//IdentifierSuffix = EmptyIdentifierSuffix()
+
+/*
 identifierSuffix
     :   ('[' ']')+ '.' 'class'
     |   ('[' expression ']')+ // can also be matched by selector, but do here
@@ -854,11 +1102,7 @@ ENUM:   'enum' {if (!enumIsKeyword) $type=Identifier;}
 ASSERT
     :   'assert' {if (!assertIsKeyword) $type=Identifier;}
     ;
-*/
 
-//Identifier = Id()
-
-/*
 Identifier 
     :   Letter (Letter|JavaIDDigit)*
     ;
@@ -914,3 +1158,4 @@ LINE_COMMENT
     ;
 
 */
+
