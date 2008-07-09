@@ -1109,6 +1109,8 @@ xmlAttribute returns [TomTerm result] throws TomException
     ConstraintList constraint;
     List optionList = new LinkedList();
     List constraintList = new LinkedList();
+    List anno1ConstraintList = new LinkedList();
+    List anno2ConstraintList = new LinkedList();
     List optionListAnno2 = new LinkedList();
     TomNameList nameList;
     boolean varStar = false;
@@ -1125,11 +1127,11 @@ xmlAttribute returns [TomTerm result] throws TomException
                 {LA(2) == AT}? anno2:ALL_ID AT
                 {
                     text.append(anno2.getText()+"@");
-                    optionListAnno2.add(`Name(anno2.getText()));
+                    anno2ConstraintList.add(ASTFactory.makeAssignTo(`Name(anno2.getText()), getLine(), currentFile()));
                 }
             )?
             (a:ANTI_SYM {anti = !anti;} )*
-            term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+            term = unamedVariableOrTermStringIdentifier[optionListAnno2,anno2ConstraintList]
             {
                 name = ASTFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
@@ -1140,20 +1142,20 @@ xmlAttribute returns [TomTerm result] throws TomException
                 anno1:ALL_ID AT
                 {
                     text.append(anno1.getText()+"@");
-                    optionList.add(`Name(anno1.getText()));
+                    anno1ConstraintList.add(ASTFactory.makeAssignTo(`Name(anno1.getText()), getLine(), currentFile()));
                 }
             )?
-            termName = unamedVariable[optionList,constraintList]
+            termName = unamedVariable[optionList,anno1ConstraintList]
             e:EQUAL {text.append("=");}
             (
                 {LA(2) == AT}? anno3:ALL_ID AT
                 {
                     text.append(anno3.getText()+"@");
-                    optionListAnno2.add(`Name(anno3.getText()));
+                    anno2ConstraintList.add(ASTFactory.makeAssignTo(`Name(anno3.getText()), getLine(), currentFile()));
                 }
             )?
             (b:ANTI_SYM {anti = !anti;} )*		
-            term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+            term = unamedVariableOrTermStringIdentifier[optionListAnno2,anno2ConstraintList]
         )
         {
             if (!varStar) {
@@ -1284,23 +1286,25 @@ termStringIdentifier [List options] returns [TomTerm result] throws TomException
     ;
 
 
-unamedVariableOrTermStringIdentifier [List options] returns [TomTerm result] throws TomException
+unamedVariableOrTermStringIdentifier [List options, List constraintList] returns [TomTerm result] throws TomException
 {
   result = null;
   List optionList = (options==null)?new LinkedList():options;
   OptionList option = null;
   TomNameList nameList = null;
+  ConstraintList constraints = null;
 }
     :
         (
-            result = unamedVariable[optionList, new LinkedList()]
+            result = unamedVariable[optionList, constraintList]
         |
             nameID:ALL_ID
             {
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
-                result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,concConstraint());
+                constraints = ASTFactory.makeConstraintList(constraintList);
+                result = `Variable(option,Name(nameID.getText()),SymbolTable.TYPE_UNKNOWN,constraints);
             }
         |
             nameString:STRING 
@@ -1310,7 +1314,8 @@ unamedVariableOrTermStringIdentifier [List options] returns [TomTerm result] thr
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
-                result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
+                constraints = ASTFactory.makeConstraintList(constraintList);
+                result = `TermAppl(option,nameList,concTomTerm(),constraints);
             }
         )
     ;
