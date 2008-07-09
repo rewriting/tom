@@ -571,25 +571,14 @@ public abstract class TomAbstractGenerator {
         return ;
       }
 
-      ListSymbolDecl(Name(tomName)) -> {
+      (ListSymbolDecl|ACSymbolDecl)(Name(tomName)) -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
          ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildSymbolDecl(deep, tomName, moduleName);
           `genDeclList(tomName, moduleName);
         }
         return ;
-      }
-      
-      ACSymbolDecl(Name(tomName)) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
-         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
-          `buildSymbolDecl(deep, tomName, moduleName);
-          `genDeclList(tomName, moduleName);
-          `genGetMultiplicityFunction(tomName, moduleName);
-          `genGetXYFromTerms(tomName, moduleName);
-        }
-        return ;
-      }
+      }      
 
       GetImplementationDecl(Variable[AstName=Name(name),
                             AstType=Type(ASTTomType(type),tlType@TLType[])],

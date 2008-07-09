@@ -60,6 +60,13 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   */
            | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
            | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)
+           /**
+           * <code>ACMatchLoop</code> the loop corresponding to the AC match between the pattern and the subject
+           *
+		   * @param Pattern the f(x,y)
+		   * @param Subject the subject to match 
+           */
+           | ACMatchLoop(Pattern:TomTerm,Subject:TomTerm)
            /*
 		   * check that source is of sort astType, and then execute inst
 		   */

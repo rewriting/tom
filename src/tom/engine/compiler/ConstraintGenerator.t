@@ -62,7 +62,7 @@ public class ConstraintGenerator {
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
   
   // constants
-  public static final String multiplicitiesFuncName = "getMultiplicities";
+  public static final String multiplicityFuncName = "getMultiplicities";
   public static final String getTermForMultiplicityFuncName = "getTermMult";
   public static final String getComplTermForMultiplicityFuncName = "getComplTermMult";
 
@@ -148,6 +148,10 @@ public class ConstraintGenerator {
       // anti-match
       AntiMatchExpression(expr) -> {
         return buildAntiMatchInstruction(`expr,action);
+      }
+      // AC loop
+      ACMatchLoop(pattern, subject) -> {
+        return `buildACMatchLoop(pattern, subject);
       }
       // conditions			
       x -> {
@@ -387,5 +391,89 @@ public class ConstraintGenerator {
     }
     // should never reach here
     throw new TomRuntimeException("Untreated numeric constraint: " + `c);
+  }
+  
+  /**
+   * 
+   * // Generates the loop for AC - "kilometric counter" for a pattern f(x,y):
+   * 
+   * int[] alpha = computeMultiplicities(subject);
+   * int length = alpha.length;
+   * int[] tempSol = new int[length];
+   * int pos = lenght-1;
+   *   
+   *  while(true) {
+   *   // reinitialize
+   *   while(pos >= 0 && tempSol[pos] == alpha[pos] ) {        
+   *     tempSol[pos] = 0;
+   *     pos--;
+   *   }
+   *   if (pos >= 0) { // we didn't finish      
+   *     tempSol[pos] += 1;      
+   *     x = getTerm(tempSol,alpha,subject);
+   *     y = getComplementTerm(tempSol,alpha,subject);
+   *     ... // action
+   *     pos = n-1;
+   *   }  
+   *  }    
+   */
+  private static Instruction buildACMatchLoop(TomTerm pattern, TomTerm subject) {    
+    TomType intType = Compiler.getIntType();
+    SymbolTable symbolTable = Compiler.getSymbolTable();
+    TomType intArrayType = symbolTable.getIntArrayType();
+    // a variable 0
+    TomTerm zero = `Variable(concOption(),Name("0"),intType,concConstraint());
+    // the name of the int[] operator
+    TomName intArrayName = `Name(symbolTable.getIntArrayOp());
+    
+    TomTerm alpha = Compiler.getFreshVariable(intArrayType);
+    TomTerm tempSol = Compiler.getFreshVariable(intArrayType);
+    TomTerm position = Compiler.getFreshVariable(intType);
+    TomTerm length = Compiler.getFreshVariable(intType);                
+            
+    Expression positionGreaterOrEqThanZero = `GreaterOrEqualThan(TomTermToExpression(position),TomTermToExpression(zero));             
+    
+    Expression whileCond = `And(positionGreaterOrEqThanZero,EqualTerm(intType,
+            ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position)),
+            ExpressionToTomTerm(GetElement(intArrayName,intType,alpha,position))));
+    Instruction reinitializationLoop = `WhileDo(whileCond,
+        LetArray(tempSol,position,TomTermToExpression(zero),
+         ExpressionToInstruction(SubstractOne(position))));
+    
+    String tomName = null;
+    TomTerm x = null, y=null;
+    %match(pattern) {
+      RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=x])] -> {
+        tomName = `tomName;
+        x = `x;
+        y = `y;
+      }
+    }
+    
+    // last if
+    TomList getTermArgs = `concTomTerm(tempSol,alpha,subject);        
+    TomType subtermType = Compiler.getTermTypeFromTerm(`x);        
+    Instruction lastTest = `If(positionGreaterOrEqThanZero,
+        LetArray(tempSol,position,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position))),
+            LetRef(x,TomTermToExpression(FunctionCall(
+                Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName),
+                subtermType,getTermArgs)),
+            LetRef(y,TomTermToExpression(FunctionCall(
+                Name(ConstraintGenerator.getComplTermForMultiplicityFuncName + "_" + tomName),
+                subtermType,getTermArgs)),
+                LetRef(position,SubstractOne(length),Nop())))),
+        Nop());
+    
+    Instruction instruction = `WhileDo(TrueTL(),UnamedBlock(concInstruction(reinitializationLoop,lastTest)));
+    
+    instruction = `LetRef(position,SubstractOne(length),instruction);
+    instruction = `LetRef(tempSol,BuildEmptyArray(intArrayName,length),instruction);
+    instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
+
+    instruction = `LetRef(alpha,TomTermToExpression(FunctionCall(
+        Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
+        intArrayType,concTomTerm(subject))),instruction);
+    
+    return instruction;
   }
 }

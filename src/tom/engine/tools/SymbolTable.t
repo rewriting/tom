@@ -49,7 +49,8 @@ public class SymbolTable {
   %include { ../adt/tomsignature/TomSignature.tom }
 
   private final static String TYPE_INT       = "int";
-  private final static String TYPE_INT_ARRAY = "int[]";  
+  private final static String TYPE_INT_ARRAY = "int[]";
+  private final static String INT_ARRAY_OP   = "intArray";
   private final static String TYPE_LONG      = "long";
   private final static String TYPE_FLOAT     = "float";
   private final static String TYPE_CHAR      = "char";
@@ -431,6 +432,10 @@ public class SymbolTable {
       }
     }
     return symbol;
+  }
+  
+  public String getIntArrayOp() {
+    return INT_ARRAY_OP;
   }
 
   /*

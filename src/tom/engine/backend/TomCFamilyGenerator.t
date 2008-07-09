@@ -455,84 +455,84 @@ s = %[
    * NOTE: we are sure to have the same domain and codomain
    * TODO ? lazymode
    */
-  protected void genGetMultiplicityFunction(String name, String moduleName) throws IOException {
-    if(nodeclMode) {
-      return;
-    }
-
-    SymbolTable symbolTable = getSymbolTable(moduleName);
-    
-    TomSymbol tomSymbol = symbolTable.getSymbolFromName(name);
-    TomType elemType = TomBase.getSymbolCodomain(tomSymbol);
-    String tomType = TomBase.getTomType(elemType);
-    String glType = TomBase.getTLType(elemType);
-    // the int[] type
-    TomType intArrayType = symbolTable.getIntArrayType();
-    String tlIntArrayType = `TomBase.getTLType(intArrayType);
-    String tlIntType = `TomBase.getTLType(symbolTable.getIntType());
-   
-    String listCast = "(" + glType + ")";
-    String get_slice = listCast + "tom_get_slice_" + name;
-    
-    String mulVarName = "multiplicities";
-
-    String s = "";
-    s+= %[
-  @modifier@ @tlIntArrayType@ tom_get_multiplicity_@name@(@glType@ subj, @tlIntType@ length) {
-    @tlIntArrayType@ mult = @getIntArrayAllocation("lenght",moduleName)@;
-    @glType@ oldElem = null;
-    // we we realy have a list
-    if (@getIsConcList(name,"subj",moduleName)@) { // subj.isConsf      
-      // subj.getHeadf();
-      oldElem = @genDeclGetHead(name,elemType,elemType,"subj",moduleName)@
-    } else {      
-      mult[0] = 1;
-      return mult;      
-    }
-    int counter = 0;  
-    // = subj.length;
-    while(subj.isConsf()) {
-      Term elem = subj.getHeadf();        
-      // another element of this type
-      if (elem.equals(oldElem)){
-        mult[counter] += 1; 
-      } else {
-        counter++;
-        oldElem = elem;
-        mult[counter] = 1;
-      }
-      subj = subj.getTailf();
-      // if we got to the end of the list
-      if(!subj.isConsf()) {
-        if (subj.equals(oldElem)){
-          mult[counter] += 1; 
-        } else {
-          counter++;          
-          mult[counter] = 1;
-        }
-        break; // break the while
-      } 
-    }
-    return mult;
-    
-    
-    if(@getEqualTerm(tomType,"begin","end",moduleName)@) {
-      return tail;
-    } else if(@getEqualTerm(tomType,"end","tail",moduleName)@ && (@getIsEmptyList(name,tomType,"end",moduleName)@ || @getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)@)) {
-      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-      return begin;
-    }
-    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
-                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
-  }
-  ]%;
-
-    //If necessary we remove \n code depending on pretty option
-    s = ASTFactory.makeSingleLineCode(s, prettyMode);
-    output.write(s);
-  }
-  
-  //TODO - the computeLenght
+//  protected void genGetMultiplicityFunction(String name, String moduleName) throws IOException {
+//    if(nodeclMode) {
+//      return;
+//    }
+//
+//    SymbolTable symbolTable = getSymbolTable(moduleName);
+//    
+//    TomSymbol tomSymbol = symbolTable.getSymbolFromName(name);
+//    TomType elemType = TomBase.getSymbolCodomain(tomSymbol);
+//    String tomType = TomBase.getTomType(elemType);
+//    String glType = TomBase.getTLType(elemType);
+//    // the int[] type
+//    TomType intArrayType = symbolTable.getIntArrayType();
+//    String tlIntArrayType = `TomBase.getTLType(intArrayType);
+//    String tlIntType = `TomBase.getTLType(symbolTable.getIntType());
+//   
+//    String listCast = "(" + glType + ")";
+//    String get_slice = listCast + "tom_get_slice_" + name;
+//    
+//    String mulVarName = "multiplicities";
+//
+//    String s = "";
+//    s+= %[
+//  @modifier@ @tlIntArrayType@ tom_get_multiplicity_@name@(@glType@ subj, @tlIntType@ length) {
+//    @tlIntArrayType@ mult = @getIntArrayAllocation("lenght",moduleName)@;
+//    @glType@ oldElem = null;
+//    // we we realy have a list
+//    if (@getIsConcList(name,"subj",moduleName)@) { // subj.isConsf      
+//      // subj.getHeadf();
+//      oldElem = @genDeclGetHead(name,elemType,elemType,"subj",moduleName)@
+//    } else {      
+//      mult[0] = 1;
+//      return mult;      
+//    }
+//    int counter = 0;  
+//    // = subj.length;
+//    while(subj.isConsf()) {
+//      Term elem = subj.getHeadf();        
+//      // another element of this type
+//      if (elem.equals(oldElem)){
+//        mult[counter] += 1; 
+//      } else {
+//        counter++;
+//        oldElem = elem;
+//        mult[counter] = 1;
+//      }
+//      subj = subj.getTailf();
+//      // if we got to the end of the list
+//      if(!subj.isConsf()) {
+//        if (subj.equals(oldElem)){
+//          mult[counter] += 1; 
+//        } else {
+//          counter++;          
+//          mult[counter] = 1;
+//        }
+//        break; // break the while
+//      } 
+//    }
+//    return mult;
+//    
+//    
+//    if(@getEqualTerm(tomType,"begin","end",moduleName)@) {
+//      return tail;
+//    } else if(@getEqualTerm(tomType,"end","tail",moduleName)@ && (@getIsEmptyList(name,tomType,"end",moduleName)@ || @getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)@)) {
+//      /* code to avoid a call to make, and thus to avoid looping during list-matching */
+//      return begin;
+//    }
+//    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
+//                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
+//  }
+//  ]%;
+//
+//    //If necessary we remove \n code depending on pretty option
+//    s = ASTFactory.makeSingleLineCode(s, prettyMode);
+//    output.write(s);
+//  }
+//  
+//  //TODO - the computeLenght
 
   protected void genDeclMake(String prefix, String funName, TomType returnType,
                              TomList argList, Instruction instr, String moduleName) throws IOException {

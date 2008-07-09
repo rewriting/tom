@@ -50,7 +50,7 @@ public class ACPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return `contraint;
+    return `constraint;
     //return (Constraint)`TopDown(ACPatternMatching()).visitLight(constraint);		
   }	
 
