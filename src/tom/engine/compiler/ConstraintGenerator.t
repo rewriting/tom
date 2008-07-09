@@ -59,7 +59,7 @@ public class ConstraintGenerator {
  
   private static final String generatorsPackage = "tom.engine.compiler.generator.";
   // the list of all generators
-  private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator"};
+  private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator","ACGenerator"};
   
   // constants
   public static final String multiplicityFuncName = "getMultiplicities";
@@ -168,7 +168,7 @@ public class ConstraintGenerator {
     visit TomTerm {
       Subterm(constructorName@Name(name), slotName, term) -> {
         TomSymbol tomSymbol = Compiler.getSymbolTable().getSymbolFromName(`name);
-        TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	
+        TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	
         return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
       }
     }

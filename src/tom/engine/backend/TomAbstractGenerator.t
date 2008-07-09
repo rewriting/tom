@@ -516,6 +516,10 @@ public abstract class TomAbstractGenerator {
       }
       OriginTracking[] -> { return; }
       DefinedSymbol() -> { return; }
+      ACSymbol() -> {
+        // TODO RK: here add the declarations for intarray
+        return; 
+      }
 
       t -> {
         System.out.println("Cannot generate code for option: " + `t);

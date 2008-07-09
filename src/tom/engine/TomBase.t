@@ -269,6 +269,7 @@ public final class TomBase {
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
           %match(Option opt) {
+            ACSymbol[] -> { return false; }
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
             DeclarationToOption(MakeAddArray[])   -> { return true; }
           }
@@ -282,9 +283,11 @@ public final class TomBase {
   
   /**
     * Returns <code>true</code> if the symbol corresponds to a %op
+    * 
+    * TODO - not the most efficient way to do it
     */
-  public static boolean isSyntacticOperator(TomSymbol subject) {
-    return (!(isListOperator(subject) || isArrayOperator(subject)));
+  public static boolean isSyntacticOperator(TomSymbol symbol) {
+    return (!(isListOperator(symbol) || isArrayOperator(symbol) || isACOperator(symbol) ));
   }
 
   // ------------------------------------------------------------
