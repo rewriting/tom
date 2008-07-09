@@ -225,7 +225,7 @@ public class ConstraintGenerator {
       instruction = `LetRef(var,Bottom(var.getAstType()),instruction);
     }
     // stick the counter declaration
-    return `LetRef(counter,TomTermToExpression(Variable(concOption(),Name(0+""),intType,concConstraint())),instruction);
+    return `LetRef(counter,Integer(0),instruction);
   }
   /**
    * builds the ifs in a constraint disjunction (see buildConstraintDisjunction above for details)
