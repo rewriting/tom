@@ -421,8 +421,8 @@ public class ConstraintGenerator {
     TomType intType = Compiler.getIntType();
     SymbolTable symbolTable = Compiler.getSymbolTable();
     TomType intArrayType = symbolTable.getIntArrayType();
-    // a variable 0
-    TomTerm zero = `Variable(concOption(),Name("0"),intType,concConstraint());
+    // a 0
+    Expression zero = `Integer(0);//`Variable(concOption(),Name("0"),intType,concConstraint());
     // the name of the int[] operator
     TomName intArrayName = `Name(symbolTable.getIntArrayOp());
     
@@ -431,13 +431,13 @@ public class ConstraintGenerator {
     TomTerm position = Compiler.getFreshVariable(intType);
     TomTerm length = Compiler.getFreshVariable(intType);                
             
-    Expression positionGreaterOrEqThanZero = `GreaterOrEqualThan(TomTermToExpression(position),TomTermToExpression(zero));             
+    Expression positionGreaterOrEqThanZero = `GreaterOrEqualThan(TomTermToExpression(position),zero);             
     
     Expression whileCond = `And(positionGreaterOrEqThanZero,EqualTerm(intType,
             ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position)),
             ExpressionToTomTerm(GetElement(intArrayName,intType,alpha,position))));
     Instruction reinitializationLoop = `WhileDo(whileCond,
-        LetArray(tempSol,position,TomTermToExpression(zero),
+        LetArray(tempSol,position,zero,
          ExpressionToInstruction(SubstractOne(position))));
     
     String tomName = null;
@@ -467,9 +467,9 @@ public class ConstraintGenerator {
     Instruction instruction = `WhileDo(TrueTL(),UnamedBlock(concInstruction(reinitializationLoop,lastTest)));
     
     instruction = `LetRef(position,SubstractOne(length),instruction);
-    instruction = `LetRef(tempSol,BuildEmptyArray(intArrayName,length),instruction);
+    instruction = `LetRef(tempSol,TomTermToExpression(BuildEmptyArray(intArrayName,length)),instruction);
     instruction = `LetRef(length,GetSize(intArrayName,alpha),instruction);
-
+  
     instruction = `LetRef(alpha,TomTermToExpression(FunctionCall(
         Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
         intArrayType,concTomTerm(subject))),instruction);

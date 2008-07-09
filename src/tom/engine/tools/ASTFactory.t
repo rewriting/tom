@@ -530,7 +530,7 @@ public class ASTFactory {
 
     %match(TomList args) {
       concTomTerm() -> {
-        return `BuildEmptyArray(name,size);
+        return `BuildEmptyArray(name,ExpressionToTomTerm(Integer(size)));
       }
 
       concTomTerm(head@VariableStar[],tail*) -> {
