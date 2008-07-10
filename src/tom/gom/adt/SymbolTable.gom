@@ -1,0 +1,23 @@
+module SymbolTable
+imports String int boolean
+abstract syntax
+
+SortDescription = SortDescription(Constructors:StringList, ModuleSymbol:String, FreshInfo:FreshSortInfo)
+
+FreshSortInfo = ExpressionTypeInfo(AccessibleAtoms:StringList)
+              | PatternTypeInfo(BoundAtoms:StringList, ContainsRefreshPoint:boolean)
+              | NoFreshSort()
+
+ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList)
+                       | VariadicConstructorDescription(SortSymbol:String, Domain:String, IsRefreshPoint:boolean)
+
+FieldDescriptionList = concFieldDescription(FieldDescription*)
+
+FieldDescription = FieldDescription(FieldName:String, Sort:String, StatusValue:Status)
+
+Status = RefreshPoint()
+       | Inner()
+       | Outer()
+       | Neutral()
+
+StringList = StringList(String*)
