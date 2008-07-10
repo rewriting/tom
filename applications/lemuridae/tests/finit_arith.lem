@@ -49,7 +49,7 @@ axiom. axiom.
 
 proof ind: forall n, N(n) => N(succ(n)).
 auto.
-focus h3. rule. inter(fN(one()),A0).
+focus h3. rule. inter(fN(one()),A()).
 next.
 reduce.
 intro.
@@ -57,17 +57,17 @@ axiom.
 theorem zisnat. axiom.
 reduce.
 intros.
-focus h4. rule. n0.
+focus h4. rule. n().
 axiom.
 axiom.
 rule. reduce.
 intros.
-focus h4. rule. y0.
+focus h4. rule. y().
 axiom.
 axiom.
-focus h4. rule. n0.
+focus h4. rule. n().
 axiom.
-focus h5. rule. A0.
+focus h5. rule. A().
 axiom.
 axiom.
 axiom.
@@ -77,12 +77,12 @@ auto.
 
 proof succisafun: forall x y, eq(x,y) => eq(succ(x),succ(y)).
 intros.
-focus h1. rule. fEq(S(succ(x0)),succ(one())).
+focus h1. rule. fEq(S(succ(x())),succ(one())).
 reduce.
 axiom.
 reduce.
 theorem eqrefl.
-focus h2. intro. succ(x0). axiom.
+focus h2. intro. succ(x()). axiom.
 
 proof natcase: forall n, N(n) => (Null(n) \/ (exists m, N(m) /\ eq(n,succ(m)))).
 intros.
@@ -94,21 +94,21 @@ intros.
 focus h1. remove. focus c2. remove. focus c2. remove.
 rule. reduce.
 intros.
-focus c2. intro. succ(n0).
+focus c2. intro. succ(n()).
 intros.
 theorem succisafun.
-focus h4. intro. y0. focus h4. intro. succ(n0).
+focus h4. intro. y(). focus h4. intro. succ(n()).
 intros.
 theorem ind.
-focus h4. intro. n0.
+focus h4. intro. n().
 intros.
-focus c2. intro. y0.
+focus c2. intro. y().
 auto.
 theorem ind.
-focus h4. intro. y0.
+focus h4. intro. y().
 intros.
 theorem ind.
-focus h3. intro. y0.
+focus h3. intro. y().
 intros.
 reduce.
 intro. intro. 
@@ -137,8 +137,8 @@ focus h2. rule. fPair(one()+one()).
 autoreduce.
 rule.
 autoreduce.
-focus h2. intro. succ(y0).
-focus h2. intro. y0.
+focus h2. intro. succ(y()).
+focus h2. intro. y().
 focus h2. rule. fImpair(one()).
 reduce.
 axiom.
@@ -149,17 +149,17 @@ autoreduce.
 
 proof eqsym: forall x y, eq(x,y) => eq(y,x).
 intros.
-focus h1. rule. fEq(one(),S(x0)).
+focus h1. rule. fEq(one(),S(x())).
 reduce.
 axiom.
 reduce.
 theorem eqrefl.
-focus h2. intro. x0. axiom.
+focus h2. intro. x(). axiom.
 
 proof eqtrans:  forall x y z, eq(x,y) => (eq(y,z) => eq(x,z)).
 auto.
-focus h2. rule. A0.
-focus h4. rule. A0.
+focus h2. rule. A().
+focus h4. rule. A().
 axiom.
 axiom.
 axiom.
@@ -172,7 +172,7 @@ reduce. axiom.
 rule.
 reduce.
 theorem succisafun.
-focus h3. intro. (y0+0). focus h3. intro. (y0).
+focus h3. intro. (y()+0). focus h3. intro. (y()).
 intros.
 reduce.
 theorem eqrefl.
@@ -181,56 +181,56 @@ axiom.
 
 proof plusassoc:   forall x y z, N(x) => eq( x+(y+z) , (x+y)+z ).
 intros.
-focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
+focus h1. rule. fEq( one()+(S(y())+S(z())) , one()+S(y())+S(z()) ).
 reduce. axiom.
 rule.
 reduce.
 theorem succisafun.
-focus h3. intro. y1+(y0+z0). focus h3. intro. (y1+y0)+z0. 
+focus h3. intro. y0()+(y()+z()). focus h3. intro. (y0()+y())+z(). 
 intros.
 reduce. 
 theorem eqrefl.
-focus h2. intro. y0+z0. axiom.
+focus h2. intro. y()+z(). axiom.
 
 
 proof plusnSm:  forall n m, N(n) => eq(succ(n+m),n+succ(m)).
 intros.
-focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
+focus h1. rule. fEq(succ(one()+S(m())),one()+succ(S(m()))).
 reduce. axiom.
 rule.
 reduce.
 theorem succisafun.
-focus h3. intro. succ(y0+m0). focus h3. intro. y0+succ(m0).
+focus h3. intro. succ(y()+m()). focus h3. intro. y()+succ(m()).
 intros.
 reduce.
 theorem eqrefl.
-focus h2. intro. succ(m0). axiom.
+focus h2. intro. succ(m()). axiom.
 
 proof pluscommut:  forall n m, N(n)=>(N(m)=>eq(n+m,m+n)).
 intros.
-focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
+focus h1. rule. fEq(one()+S(m()),S(m())+one()).
 reduce. axiom.
 next.
 reduce.
 theorem nplus0.
-focus h3. intro. m0.
+focus h3. intro. m().
 intros.
 theorem eqsym.
-focus h4. intro. m0+0.
-focus h4. intro. m0.
+focus h4. intro. m()+0.
+focus h4. intro. m().
 intros.
 rule. reduce.
 theorem plusnSm.
-focus h4. intro. m0.
-focus h4. intro. y0.
+focus h4. intro. m().
+focus h4. intro. y().
 intros.
 theorem succisafun.
-focus h5. intro. y0+m0. focus h5. intro. m0+y0. 
+focus h5. intro. y()+m(). focus h5. intro. m()+y(). 
 intros.
 theorem eqtrans.
-focus h6. intro. succ(y0+m0).
-focus h6. intro. succ(m0+y0).
-focus h6. intro. m0+succ(y0).
+focus h6. intro. succ(y()+m()).
+focus h6. intro. succ(m()+y()).
+focus h6. intro. m()+succ(y()).
 intros.
 
 proof multn0:  forall n, N(n) => eq(0,n*0).
