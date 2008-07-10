@@ -443,7 +443,7 @@ public class ConstraintGenerator {
     String tomName = null;
     TomTerm x = null, y=null;
     %match(pattern) {
-      RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=x])] -> {
+      RecordAppl[NameList=(Name(tomName)), Slots=concSlot(PairSlotAppl[Appl=x],PairSlotAppl[Appl=y])] -> {
         tomName = `tomName;
         x = `x;
         y = `y;
