@@ -1,0 +1,23 @@
+module SystemF
+abstract syntax
+
+atom TermVar
+atom TypeVar
+
+LTerm = 
+ | LVar(x:TermVar)
+ | LAbs(lam:<TermTermAbs>)
+ | LApp(u:LTerm,v:LTerm)
+ | TAbs(Lam:<TypeTermAbs>)
+ | TApp(t:LTerm,ty:Type)
+
+TermTermAbs binds TermVar = TermTermAbs(x:TermVar, inner t:LTerm)
+TypeTermAbs binds TypeVar = TypeTermAbs(T:TypeVar, inner t:LTerm)
+
+Type =
+ | TVar(T:TypeVar)
+ | Forall(fa:<TypeTypeAbs>)
+ | Arrow(A:Type,B:Type)
+
+TypeTypeAbs binds TypeVar = TypeTypeAbs(A:TypeVar, inner B:Type)
+

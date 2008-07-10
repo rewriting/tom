@@ -85,7 +85,10 @@ public class ExpanderPlugin extends GomGenericPlugin {
           GomMessage.expansionIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      getLogger().log(Level.FINE, "Imported Modules: {0}",modules);
+      java.io.StringWriter swriter = new java.io.StringWriter();
+      try { tom.library.utils.Viewer.toTree(modules,swriter); }
+      catch(java.io.IOException e) { e.printStackTrace(); }
+      getLogger().log(Level.FINE, "Imported Modules:\n{0}",swriter);
       getLogger().log(Level.INFO, "Expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()

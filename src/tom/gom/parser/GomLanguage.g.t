@@ -93,11 +93,8 @@ sortdef :
   SORTS (type)* -> ^(ConcGrammar ^(Sorts (type)*))
   ;
 
-type :
-  ID -> ^(GomType ID);
-
 syntax :
-  ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl)*
+  ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl | gr+=atomdecl)*
   -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr)*)))
   ;
 
@@ -108,9 +105,19 @@ String startLine = ""+input.LT(1).getLine();
   ID fieldlist ARROW type -> ^(Production ID fieldlist type ^(Origin ID[startLine]))
   ;
 
+atomdecl : 
+  ATOM atom=ID -> ^(AtomDecl ID[atom])
+  ;
+
 typedecl :
-  typename=ID EQUALS alts=alternatives[typename]
-    -> ^(SortType ^(GomType $typename) $alts)
+    typename=ID  EQUALS alts=alternatives[typename]
+      -> ^(SortType ^(GomType ^(ExpressionType) $typename) ^(ConcAtom) $alts)
+  |  ptypename=ID BINDS b=atoms EQUALS palts=pattern_alternatives[ptypename]
+      -> ^(SortType ^(GomType ^(PatternType) $ptypename) $b $palts)
+  ;
+
+atoms : 
+  atom=ID (atom=ID)* -> ^(ConcAtom ($atom)+)
   ;
 
 alternatives[Token typename] :
@@ -118,14 +125,49 @@ alternatives[Token typename] :
   -> ^(ConcProduction (opdecl)+)
   ;
 
+pattern_alternatives[Token typename] :
+  (ALT)? pattern_opdecl[typename] (ALT pattern_opdecl[typename])* (SEMI)?
+  -> ^(ConcProduction (pattern_opdecl)+)
+  ;
+
 opdecl[Token type] :
   ID fieldlist
-  -> ^(Production ID fieldlist ^(GomType ID[type])
+  -> ^(Production ID fieldlist ^(GomType ^(ExpressionType) ID[type])
+      ^(Origin ID[""+input.LT(1).getLine()]))
+  ;
+
+pattern_opdecl[Token type] :
+  ID pattern_fieldlist
+  -> ^(Production ID pattern_fieldlist ^(GomType ^(PatternType) ID[type])
       ^(Origin ID[""+input.LT(1).getLine()]))
   ;
 
 fieldlist :
   LPAREN (field (COMMA field)* )? RPAREN -> ^(ConcField (field)*) ;
+
+pattern_fieldlist :
+  LPAREN (field (COMMA pattern_field)* )? RPAREN -> ^(ConcField (pattern_field)*) ;
+
+type:
+  ID -> ^(GomType ^(ExpressionType) ID)
+  ;
+
+pattern_type:
+  ID -> ^(GomType ^(PatternType) ID)
+  ;
+
+field:
+    type STAR -> ^(StarredField type)
+  | LDIPLE pattern_type RDIPLE STAR -> ^(StarredField pattern_type)
+  | ID COLON type -> ^(NamedField ^(None) ID type)
+  | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ^(None) ID pattern_type)
+  ;
+
+pattern_field:
+  | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
+  | OUTER ID COLON type -> ^(NamedField ^(Outer) ID type)
+  | ID COLON pattern_type -> ^(NamedField ^(None) ID pattern_type)
+  ;
 
 arglist:
   (LPAREN (arg (COMMA arg)* )? RPAREN)? 
@@ -149,10 +191,6 @@ hookScope :
   | OPERATOR -> ^(KindOperator)
   ;
 
-field :
-  type STAR -> ^(StarredField type)
-  | ID COLON type -> ^(NamedField ID type)
-  ;
 
 MODULE   : 'module';
 IMPORTS  : 'imports';
@@ -163,6 +201,10 @@ ABSTRACT : 'abstract';
 SYNTAX   : 'syntax';
 SORT     : 'sort';
 OPERATOR : 'operator';
+ATOM     : 'atom';
+INNER    : 'inner';
+OUTER    : 'outer';
+BINDS    : 'binds';
 
 ARROW    : '->';
 COLON    : ':';
@@ -174,6 +216,8 @@ STAR     : '*';
 EQUALS   : '=';
 ALT      : '|';
 SEMI     : ';;';
+LDIPLE   : '<';
+RDIPLE   : '>';
 
 LBRACE: '{'
   {
