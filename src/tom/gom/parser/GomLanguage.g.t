@@ -146,7 +146,7 @@ fieldlist :
   LPAREN (field (COMMA field)* )? RPAREN -> ^(ConcField (field)*) ;
 
 pattern_fieldlist :
-  LPAREN (field (COMMA pattern_field)* )? RPAREN -> ^(ConcField (pattern_field)*) ;
+  LPAREN (pattern_field (COMMA pattern_field)* )? RPAREN -> ^(ConcField (pattern_field)*) ;
 
 type:
   ID -> ^(GomType ^(ExpressionType) ID)
@@ -164,6 +164,7 @@ field:
   ;
 
 pattern_field:
+    pattern_type STAR -> ^(StarredField pattern_type)
   | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
   | OUTER ID COLON type -> ^(NamedField ^(Outer) ID type)
   | ID COLON pattern_type -> ^(NamedField ^(None) ID pattern_type)

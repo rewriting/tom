@@ -79,17 +79,16 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
       ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
     getLogger().log(Level.INFO, "Start expanding freshgom parts");
-    //Expander expander = new Expander(streamManager);
-    //modules = expander.expand(module);
+    result = FreshExpander.expand(modules);
     if(modules == null) {
       getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      //java.io.StringWriter swriter = new java.io.StringWriter();
-      //try { tom.library.utils.Viewer.toTree(modules,swriter); }
-      //catch(java.io.IOException e) { e.printStackTrace(); }
-      //getLogger().log(Level.FINE, "Fresh expanded Modules:\n{0}",swriter);
+      java.io.StringWriter swriter = new java.io.StringWriter();
+      try { tom.library.utils.Viewer.toTree(result,swriter); }
+      catch(java.io.IOException e) { e.printStackTrace(); }
+      getLogger().log(Level.FINE, "Fresh expanded Modules:\n{0}",swriter);
       getLogger().log(Level.INFO, "Expansion of freshgom parts succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName()
@@ -104,6 +103,6 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{modules, getStreamManager()};
+    return new Object[]{result, getStreamManager()};
   }
 }

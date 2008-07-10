@@ -26,14 +26,43 @@ package tom.gom.expander;
 
 import java.util.logging.Level;
 import tom.gom.GomStreamManager;
+import tom.gom.adt.gom.types.*;
+import tom.library.sl.*;
+import java.util.ArrayList;
 
 public class FreshExpander {
 
+  %include { ../adt/gom/Gom.tom}
+  %include { util/ArrayList.tom }
+  %include { sl.tom }  
 
-  %strategy ExpandModule() extends Identity() {
+  public static GomModuleList expand(GomModuleList m) {
+    try {
+      ArrayList list = new ArrayList();
+      return (GomModuleList) `Sequence(TopDown(ExpandAtoms(list)),TopDown(UpdateSpecialization(list))).visitLight(m);
+    } catch (VisitFailure e) {
+      throw new RuntimeException("Unexpected failures during Atom expansion");
+    }
+  }
+
+  %strategy ExpandAtoms(list:ArrayList) extends Identity() {
     visit Production {
       AtomDecl[ Name=name ] -> {
-        return `SortType();  
+        list.add(`name);
+        return `SortType(
+            GomType(AtomType(),name),
+            ConcAtom(),
+            ConcProduction(Production(name,ConcField(NamedField(None(),"n",GomType(ExpressionType(),"int")),NamedField(None(),"hint",GomType(ExpressionType(),"String"))),GomType(AtomType(),name),Origin(-1))));  
+      }
+    }
+  }
+
+  %strategy UpdateSpecialization(list:ArrayList) extends Identity() {
+    visit GomType {
+      type@GomType[Name=name] -> {
+        if (list.contains(`name)) {
+          return `type.setSpecialization(`AtomType());
+        }
       }
     }
   }
