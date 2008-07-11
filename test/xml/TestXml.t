@@ -135,7 +135,7 @@ public class TestXml extends TestCase {
     assertEquals(node,renode.getDocElem());
   }
 
-	public void testAttributeMatch(){
+	public void testAttributeMatch() {
 		TNode node = `xml(
 				<Configuration>
 					<Cellule>
@@ -273,4 +273,20 @@ public class TestXml extends TestCase {
 			res, 15);
 	}
 
+	public void testAnonymousAttributes() {
+    TNode t = `xml(<A at1="v1" at2="v2"></A>);
+    String[] res = new String[4];
+    int cpt=0;
+    %match(t) {
+      <A (_*,at@_=value@_,_*)></A> -> {
+        res[cpt++] = `at;
+        res[cpt++] = `value;
+      }
+    }
+
+		assertEquals("Anonymous attribute name", res[0], "at1");
+    assertEquals("Anonymous attribute name", res[1], "v1");
+    assertEquals("Anonymous attribute name", res[2], "at2");
+    assertEquals("Anonymous attribute name", res[3], "v2");
+  }
 }
