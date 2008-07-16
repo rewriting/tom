@@ -196,22 +196,39 @@ import parser.ast.AstTree;
 compilationUnit
     :   annotations
         (   packageDeclaration importDeclaration* typeDeclaration*
+            ->  ^(CompilationUnit
+                    annotations
+                    packageDeclaration
+                    ^(ImportList importDeclaration*)
+                    ^(TypeDeclList typeDeclaration*)
+                    )
         |   classOrInterfaceDeclaration typeDeclaration*
-        ) -> EmptyCompilationUnit
-    |   packageDeclaration? importDeclaration* typeDeclaration* -> ^(TypeDeclList typeDeclaration*)
+            ->  ^(CompilationUnit
+                    annotations
+                    ^(TypeDeclList classOrInterfaceDeclaration typeDeclaration*)
+                    )
+        )
+    |   packageDeclaration? importDeclaration* typeDeclaration*
+        ->  ^(CompilationUnit
+                ^(AnnotationList )
+                ^(QualifiedName ) //packageDeclaration
+                ^(ImportList importDeclaration*)
+                ^(TypeDeclList typeDeclaration*)
+                )
     ;
 
 packageDeclaration
-    :   'package' qualifiedName ';'
+    :   'package' qualifiedName ';' -> qualifiedName
     ;
     
 importDeclaration
     :   'import' 'static'? qualifiedName ('.' '*')? ';'
+        ->  ^(Import qualifiedName False False)
     ;
     
 typeDeclaration
     :   classOrInterfaceDeclaration -> classOrInterfaceDeclaration
-    |   ';'
+    |   ';' -> EmptyTypeDecl
     ;
     
 classOrInterfaceDeclaration
@@ -222,22 +239,22 @@ classOrInterfaceDeclaration
     ;
     
 classOrInterfaceModifiers
-    :   classOrInterfaceModifier*
+    :   classOrInterfaceModifier* -> ^(ModifierList classOrInterfaceModifier*)
     ;
 
 classOrInterfaceModifier
-    :   annotation   // class or interface
-    |   'public'     // class or interface
-    |   'protected'  // class or interface
-    |   'private'    // class or interface
-    |   'abstract'   // class or interface
-    |   'static'     // class or interface
-    |   'final'      // class only -- does not apply to interfaces
-    |   'strictfp'   // class or interface
+    :   annotation -> ^(AnnotationToModifier annotation)
+    |   'public'    -> Public
+    |   'protected' -> Protected
+    |   'private'   -> Private
+    |   'abstract'  -> Abstract
+    |   'static'    -> Static
+    |   'final'     -> Final
+    |   'strictfp'  -> StrictFP
     ;
 
 modifiers
-    :   modifier*
+    :   modifier* -> ^(ModifierList modifier* )
     ;
 
 classDeclaration
@@ -249,39 +266,53 @@ normalClassDeclaration
     :   'class' Identifier typeParameters?
         ('extends' type)?
         ('implements' typeList)?
-        classBody -> ^(NormalClassDecl classBody )
+        classBody
+        ->  ^(NormalClass
+                Identifier
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Void
+                ^(TypeList )
+                classBody
+                )
     ;
     
 typeParameters
-    :   '<' typeParameter (',' typeParameter)* '>'
+    :   '<' l+=typeParameter (',' l+=typeParameter)* '>'
+        ->  ^(TypeList $l+)
     ;
 
 typeParameter
     :   Identifier ('extends' typeBound)?
+        ->  ^(TypeParameter Identifier typeBound)
     ;
         
 typeBound
-    :   type ('&' type)*
+    :   type ('&' type)* -> ^(TypeList type+)
     ;
 
 enumDeclaration
-    :   ENUM Identifier ('implements' typeList)? enumBody -> ^(EnumClassDecl enumBody )
+    :   ENUM Identifier ('implements' typeList)? enumBody
+        ->  ^(EnumClass Identifier ^(ModifierList ) typeList enumBody )
     ;
 
 enumBody
-    :   '{' enumConstants? ','? enumBodyDeclarations? '}' -> enumBodyDeclarations
+    :   '{' enumConstants? ','? enumBodyDeclarations? '}'
+        ->  ^(EnumBody enumConstants enumBodyDeclarations)
     ;
 
 enumConstants
-    :   enumConstant (',' enumConstant)*
+    :   l+=enumConstant (',' l+=enumConstant)* -> ^(EnumConstantList $l+)
     ;
     
 enumConstant
     :   annotations? Identifier arguments? classBody?
+        ->  ^(EnumConstant Identifier annotations arguments classBody)
     ;
     
 enumBodyDeclarations
-    :   ';' (classBodyDeclaration)* -> ^(ClassBodyDeclList classBodyDeclaration*)
+    :   ';' (classBodyDeclaration)*
+        ->  ^(ClassBody classBodyDeclaration*)
     ;
     
 interfaceDeclaration
@@ -290,34 +321,66 @@ interfaceDeclaration
     ;
     
 normalInterfaceDeclaration
-    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody -> ^(NormalInterfaceDecl interfaceBody )
+    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody
+        ->  ^(NormalInterface
+                Identifier
+                ^(ModifierList )
+                typeParameters
+                typeList
+                interfaceBody
+                )
     ;
     
 typeList
-    :   type (',' type)*
+    :   type (',' type)* -> ^(TypeList type+)
     ;
     
 classBody
-    :   '{' classBodyDeclaration* '}' -> ^(ClassBodyDeclList classBodyDeclaration*)
+    :   '{' classBodyDeclaration* '}' -> ^(ClassBody classBodyDeclaration*)
     ;
     
 interfaceBody
-    :   '{' interfaceBodyDeclaration* '}' -> ^(InterfaceBodyDeclList interfaceBodyDeclaration*)
+    :   '{' interfaceBodyDeclaration* '}'
+        ->  ^(InterfaceBody interfaceBodyDeclaration*)
     ;
 
 classBodyDeclaration
     :   ';'
-    |   'static'? block -> ^(Block block)
-    |   modifiers memberDecl -> ^(Decl memberDecl)
+    |   'static'? block -> ^(BlockToClassBodyDecl block False)
+    |   modifiers memberDecl -> memberDecl
     ;
     
 memberDecl
-    :   genericMethodOrConstructorDecl -> genericMethodOrConstructorDecl
-    |   memberDeclaration -> memberDeclaration
-    |   'void' Identifier voidMethodDeclaratorRest -> ^(MethodDecl Identifier)
-    |   Identifier constructorDeclaratorRest -> ^(ConstructorDecl Identifier)
-    |   interfaceDeclaration -> ^(ClassTypeDecl interfaceDeclaration)
-    |   classDeclaration -> ^(ClassTypeDecl classDeclaration)
+    :   genericMethodOrConstructorDecl
+        ->  genericMethodOrConstructorDecl
+    |   memberDeclaration
+        ->  memberDeclaration
+    |   'void' Identifier voidMethodDeclaratorRest
+        ->  ^(MethodDecl
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Void
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(BlockStatementList )
+                )
+    |   Identifier constructorDeclaratorRest
+        ->  ^(ConstructorDecl
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(ConstructorBody
+                    ^(NoExplicitConstructorInvocation )
+                    ^(BlockStatementList )
+                    )
+                )
+    |   interfaceDeclaration
+        ->  ^(TypeDeclToClassBodyDecl interfaceDeclaration)
+    |   classDeclaration
+        ->  ^(TypeDeclToClassBodyDecl classDeclaration)
     ;
     
 memberDeclaration
@@ -328,42 +391,86 @@ memberDeclaration
     ;
 
 genericMethodOrConstructorDecl
-    :   typeParameters genericMethodOrConstructorRest -> genericMethodOrConstructorRest
+    :   typeParameters genericMethodOrConstructorRest
+        -> genericMethodOrConstructorRest
     ;
     
 genericMethodOrConstructorRest
-    :   (type | 'void') Identifier methodDeclaratorRest -> ^(MethodDecl Identifier)
-    |   Identifier constructorDeclaratorRest -> ^(ConstructorDecl Identifier)
+    :   (type | 'void') Identifier methodDeclaratorRest
+        ->  ^(MethodDecl
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Void
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(BlockStatementList )
+                )
+    |   Identifier constructorDeclaratorRest
+        ->  ^(ConstructorDecl
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(ConstructorBody
+                    ^(NoExplicitConstructorInvocation )
+                    ^(BlockStatementList )
+                    )
+                )
     ;
 
 methodDeclaration
-    :   Identifier methodDeclaratorRest -> ^(MethodDecl Identifier)
+    :   Identifier methodDeclaratorRest
+        ->  ^(MethodDecl
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Void
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(BlockStatementList )
+                )
     ;
 
 fieldDeclaration
-    :   variableDeclarators ';' -> EmptyFieldDecl
+    :   variableDeclarators ';'
+        ->  ^(FieldDecl ^(ModifierList ) variableDeclarators)
     ;
         
 interfaceBodyDeclaration
-    :   modifiers interfaceMemberDecl -> ^(InterfaceMemberDecl interfaceMemberDecl)
+    :   modifiers interfaceMemberDecl -> interfaceMemberDecl
     |   ';'
     ;
 
 interfaceMemberDecl
-    :   interfaceMethodOrFieldDecl -> interfaceMethodOrFieldDecl
-    |   interfaceGenericMethodDecl -> interfaceGenericMethodDecl
-    |   'void' Identifier voidInterfaceMethodDeclaratorRest -> ^(InterfaceMethodDecl Identifier)
-    |   interfaceDeclaration -> ^(InterfaceTypeDecl interfaceDeclaration)
-    |   classDeclaration -> ^(InterfaceTypeDecl classDeclaration)
+    :   interfaceMethodOrFieldDecl
+        ->  interfaceMethodOrFieldDecl
+    |   interfaceGenericMethodDecl
+        ->  interfaceGenericMethodDecl
+    |   'void' Identifier voidInterfaceMethodDeclaratorRest
+        ->  ^(InterfaceMethodDecl
+                ^(ModifierList )
+                ^(TypeParameterList )
+                Void
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                )
+    |   interfaceDeclaration
+        ->  ^(TypeDeclToInterfaceBodyDecl interfaceDeclaration)
+    |   classDeclaration
+        ->  ^(TypeDeclToInterfaceBodyDecl classDeclaration)
     ;
     
 interfaceMethodOrFieldDecl
-    :   type Identifier interfaceMethodOrFieldRest -> ^(ConstantDecl Identifier)
+    :   type Identifier interfaceMethodOrFieldRest
+        ->  ^(ConstantDecl ^(ModifierList ) type Identifier ^(ArrayInitializer ))
     ;
     
 interfaceMethodOrFieldRest
-    :   constantDeclaratorsRest ';'
-    |   interfaceMethodDeclaratorRest
+    :   constantDeclaratorsRest ';' -> constantDeclaratorsRest
+    |   interfaceMethodDeclaratorRest -> interfaceMethodDeclaratorRest
     ;
     
 methodDeclaratorRest
@@ -387,7 +494,16 @@ interfaceMethodDeclaratorRest
     
 interfaceGenericMethodDecl
     :   typeParameters (type | 'void') Identifier
-        interfaceMethodDeclaratorRest -> ^(InterfaceMethodDecl Identifier)
+        interfaceMethodDeclaratorRest
+        ->  ^(InterfaceMethodDecl
+                ^(ModifierList )
+                typeParameters
+                type
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(BlockStatementList )
+                )
     ;
     
 voidInterfaceMethodDeclaratorRest
@@ -400,14 +516,17 @@ constructorDeclaratorRest
 
 constantDeclarator
     :   Identifier constantDeclaratorRest
+        ->  ^(ConstantDecl ^(ModifierList ) Void Identifier ^(ArrayInitializer ))
     ;
     
 variableDeclarators
     :   variableDeclarator (',' variableDeclarator)*
+        ->  ^(VariableDeclList variableDeclarator+)
     ;
 
 variableDeclarator
     :   variableDeclaratorId ('=' variableInitializer)?
+        ->  ^(VariableDecl Void variableDeclaratorId EmptyVariableInitializer)
     ;
     
 constantDeclaratorsRest
@@ -419,85 +538,92 @@ constantDeclaratorRest
     ;
     
 variableDeclaratorId
-    :   Identifier ('[' ']')*
+    :   Identifier ('[' ']')* -> Identifier
     ;
 
 variableInitializer
-    :   arrayInitializer
-    |   expression
+    :   arrayInitializer -> arrayInitializer
+    |   expression -> ^(ExpressionToVariableInitializer expression)
     ;
         
 arrayInitializer
-    :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+    :   '{' (l+=variableInitializer (',' l+=variableInitializer)* (',')? )? '}'
+        ->  ^(ArrayInitializer $l+)
     ;
 
 modifier
-    :   annotation
-    |   'public'
-    |   'protected'
-    |   'private'
-    |   'static'
-    |   'abstract'
-    |   'final'
-    |   'native'
-    |   'synchronized'
-    |   'transient'
-    |   'volatile'
-    |   'strictfp'
+    :   annotation -> ^(AnnotationToModifier annotation)
+    |   'public'       -> Public
+    |   'protected'    -> Protected
+    |   'private'      -> Private
+    |   'static'       -> Static
+    |   'abstract'     -> Abstract
+    |   'final'        -> Final
+    |   'native'       -> Native
+    |   'synchronized' -> SynchronizedModifier
+    |   'transient'    -> Transient
+    |   'volatile'     -> Volatile
+    |   'strictfp'     -> StrictFP
     ;
 
 packageOrTypeName
-    :   qualifiedName
+    :   qualifiedName -> qualifiedName
     ;
 
 enumConstantName
-    :   Identifier
+    :   Identifier -> Identifier
     ;
 
 typeName
-    :   qualifiedName
+    :   qualifiedName -> qualifiedName
     ;
 
 type
-	:	classOrInterfaceType ('[' ']')*
-	|	primitiveType ('[' ']')*
-	;
+    :   classOrInterfaceType ('[' ']')*
+        ->  ^(ClassOrInterfaceType classOrInterfaceType)
+    |   primitiveType ('[' ']')*
+        ->  ^(PrimitiveType primitiveType)
+    ;
 
 classOrInterfaceType
-	:	Identifier typeArguments? ('.' Identifier typeArguments? )*
-	;
+    :    Identifier typeArguments? ('.' Identifier typeArguments? )*
+         ->  ^(IndependentType Identifier ^(TypeArgumentList ))
+    ;
 
 primitiveType
-    :   'boolean'
-    |   'char'
-    |   'byte'
-    |   'short'
-    |   'int'
-    |   'long'
-    |   'float'
-    |   'double'
+    :   'boolean' -> Boolean
+    |   'char'    -> Char
+    |   'byte'    -> Byte
+    |   'short'   -> Short
+    |   'int'     -> Int
+    |   'long'    -> Long
+    |   'float'   -> Float
+    |   'double'  -> Double
     ;
 
 variableModifier
-    :   'final'
-    |   annotation
+    :   'final' -> Final
+    |   annotation ^(AnnotationToModifier annotation)
     ;
 
 typeArguments
     :   '<' typeArgument (',' typeArgument)* '>'
+        ->  ^(TypeArgumentList typeArgument+)
     ;
     
 typeArgument
-    :   type
-    |   '?' (('extends' | 'super') type)?
+    :(   type
+    |   '?' (( 'extends'// -> ^(ExtendTypeArgument Void)
+             | 'super'  // -> ^(SuperTypeArgument Void)
+             ) type)?) -> ^(ExplicitTypeArgument Void)
     ;
     
 qualifiedNameList
-    :   qualifiedName (',' qualifiedName)*
+    :   qualifiedName (',' qualifiedName)* -> ^(QualifiedNameList qualifiedName+)
     ;
 
 formalParameters
-    :   '(' formalParameterDecls? ')'
+    :   '(' formalParameterDecls? ')' -> formalParameterDecls
     ;
     
 formalParameterDecls
@@ -505,178 +631,225 @@ formalParameterDecls
     ;
     
 formalParameterDeclsRest
-    :   variableDeclaratorId (',' formalParameterDecls)?
+   :(   variableDeclaratorId (',' formalParameterDecls)?
     |   '...' variableDeclaratorId
+    )   ->  ^(FormalParameterDecl
+                ^(ModifierList )
+                Void
+                variableDeclaratorId
+                False
+                )
     ;
     
 methodBody
-    :   block
+    :   block -> block
     ;
 
 constructorBody
     :   '{' explicitConstructorInvocation? blockStatement* '}'
+        ->  ^(ConstructorBody
+                explicitConstructorInvocation
+                ^(BlockStatementList blockStatement*)
+                )
     ;
 
 explicitConstructorInvocation
-    :   nonWildcardTypeArguments? ('this' | 'super') arguments ';'
+    :   nonWildcardTypeArguments?
+        (   'this'  -> ^(ThisInvocation nonWildcardTypeArguments arguments)
+        |   'super' -> ^(SuperInvocation nonWildcardTypeArguments arguments)
+        ) arguments ';'
     |   primary '.' nonWildcardTypeArguments? 'super' arguments ';'
+        ->  ^(PrimarySuperInvocation primary nonWildcardTypeArguments arguments)
     ;
 
 
 qualifiedName
-    :   Identifier ('.' Identifier)*
+    :   Identifier ('.' Identifier)* -> ^(QualifiedName Identifier+)
     ;
     
 literal 
-    :   integerLiteral
-    |   FloatingPointLiteral
-    |   CharacterLiteral
-    |   StringLiteral
-    |   booleanLiteral
-    |   'null'
+    :   integerLiteral -> integerLiteral
+    |   l=FloatingPointLiteral -> ^(FloatingPointLiteral $l)
+    |   l=CharacterLiteral -> ^(CharacterLiteral $l)
+    |   l=StringLiteral -> ^(StringLiteral $l)
+    |   booleanLiteral -> booleanLiteral
+    |   'null' -> Null
     ;
 
 integerLiteral
-    :   HexLiteral
-    |   OctalLiteral
-    |   DecimalLiteral
+    :   x=HexLiteral -> ^(HexLiteral $x)
+    |   x=OctalLiteral -> ^(OctalLiteral $x)
+    |   x=DecimalLiteral -> ^(DecimalLiteral $x)
     ;
 
 booleanLiteral
-    :   'true'
-    |   'false'
+    :   'true'  -> ^(BooleanLiteral True)
+    |   'false' -> ^(BooleanLiteral False)
     ;
 
 // ANNOTATIONS
 
 annotations
-    :   annotation+
+    :   annotation+ -> ^(AnnotationList annotation+)
     ;
 
 annotation
-    :   '@' annotationName ( '(' ( elementValuePairs | elementValue )? ')' )?
+    :   '@' annotationName ( '('
+        (   elementValuePairs -> ^(Pairs annotationName elementValuePairs)
+        |   elementValue -> ^(Element annotationName elementValue)
+        )? ')' )?
     ;
     
 annotationName
-    : Identifier ('.' Identifier)*
+    : Identifier ('.' Identifier)* -> ^(QualifiedName Identifier+)
     ;
 
 elementValuePairs
-    :   elementValuePair (',' elementValuePair)*
+    :   l+=elementValuePair (',' l+=elementValuePair)*
+        ->  ^(ElementValuePairList $l+)
     ;
 
 elementValuePair
-    :   Identifier '=' elementValue
+    :   Identifier '=' elementValue -> ^(ElementValuePair Identifier elementValue)
     ;
     
 elementValue
-    :   conditionalExpression
-    |   annotation
-    |   elementValueArrayInitializer
+    :   conditionalExpression -> ^(ExpressionToElementValue conditionalExpression)
+    |   annotation -> ^(AnnotationToElementValue annotation)
+    |   elementValueArrayInitializer -> elementValueArrayInitializer
     ;
     
 elementValueArrayInitializer
-    :   '{' (elementValue (',' elementValue)*)? (',')? '}'
+    :   '{' (l+=elementValue (',' l+=elementValue)*)? (',')? '}'
+        ->  ^(ElementValueArrayInitializer $l+)
     ;
     
 annotationTypeDeclaration
-    :   '@' 'interface' Identifier annotationTypeBody -> ^(AnnotationTypeDecl EmptyAnnotationTypeDecl)
+    :   '@' 'interface' Identifier annotationTypeBody
+        ->  ^(AnnotationType Identifier ^(ModifierList ) annotationTypeBody)
     ;
     
 annotationTypeBody
     :   '{' (annotationTypeElementDeclaration)* '}'
+        ->  ^(AnnotationTypeBody annotationTypeElementDeclaration*)
     ;
     
 annotationTypeElementDeclaration
-    :   modifiers annotationTypeElementRest
+    :   modifiers annotationTypeElementRest -> annotationTypeElementRest
     ;
     
 annotationTypeElementRest
-    :   type annotationMethodOrConstantRest ';'
+    :   type annotationMethodOrConstantRest ';' -> annotationMethodOrConstantRest
     |   normalClassDeclaration ';'?
+        ->  ^(TypeDeclToAnnotationElement normalClassDeclaration)
     |   normalInterfaceDeclaration ';'?
+        ->  ^(TypeDeclToAnnotationElement normalInterfaceDeclaration)
     |   enumDeclaration ';'?
+        ->  ^(TypeDeclToAnnotationElement enumDeclaration)
     |   annotationTypeDeclaration ';'?
+        ->  ^(TypeDeclToAnnotationElement annotationTypeDeclaration)
     ;
     
 annotationMethodOrConstantRest
-    :   annotationMethodRest
-    |   annotationConstantRest
+    :   annotationMethodRest -> annotationMethodRest
+    |   annotationConstantRest -> annotationConstantRest
     ;
     
 annotationMethodRest
     :   Identifier '(' ')' defaultValue?
+        ->  ^(AnnotationMethod ^(ModifierList ) Void Identifier defaultValue)
     ;
     
 annotationConstantRest
     :   variableDeclarators
+        ->  ^(AnnotationConstant ^(ModifierList ) Void variableDeclarators)
     ;
     
 defaultValue
-    :   'default' elementValue
+    :   'default' elementValue -> elementValue
     ;
 
 // STATEMENTS / BLOCKS
 
 block
-    :   '{' blockStatement* '}' -> EmptyBlock
+    :   '{' blockStatement* '}' -> ^(BlockStatementList blockStatement* )
     ;
     
 blockStatement
-    :   localVariableDeclarationStatement
+    :   localVariableDeclarationStatement -> localVariableDeclarationStatement
     |   classOrInterfaceDeclaration
-    |   statement
+        ->  ^(TypeDeclToBlockStatement classOrInterfaceDeclaration)
+    |   statement -> ^(Statement statement)
     ;
     
 localVariableDeclarationStatement
-    :    localVariableDeclaration ';'
+    :    localVariableDeclaration ';' -> localVariableDeclaration
     ;
 
 localVariableDeclaration
     :   variableModifiers type variableDeclarators
+        ->  ^(LocalVariableDecl variableModifiers variableDeclarators)
     ;
     
 variableModifiers
-    :   variableModifier*
+    :   variableModifier* -> ^(ModifierList variableModifier* )
     ;
 
 statement
-    : block
-    |   ASSERT expression (':' expression)? ';'
-    |   'if' parExpression statement (options {k=1;}:'else' statement)?
+    :   block
+        ->  ^(BlockToStatement block)
+    |   ASSERT e=expression (':' v=expression)? ';'
+        ->  ^(Assert $e $v)
+    |   'if' parExpression ts=statement (options {k=1;}:'else' es=statement)?
+        ->  ^(If parExpression $ts $es)
     |   'for' '(' forControl ')' statement
+        ->  ^(For forControl statement)
     |   'while' parExpression statement
+        ->  ^(While parExpression statement)
     |   'do' statement 'while' parExpression ';'
+        ->  ^(DoWhile statement parExpression)
     |   'try' block
-        ( catches 'finally' block
-        | catches
-        |   'finally' block
-        )
+        ( catches 'finally' f=block //-> ^(Try $t catches $f)
+        | catches                   //-> ^(Try $t catches ^(BlockStatementList ))
+        |   'finally' f=block       //-> ^(Try $t ^(CatchClauseList ) $f)
+        ) -> ^(Try block ^(CatchClauseList ) ^(BlockStatementList ))
     |   'switch' parExpression '{' switchBlockStatementGroups '}'
+        ->  ^(Switch parExpression switchBlockStatementGroups)
     |   'synchronized' parExpression block
+        ->  ^(SynchronizedStatement parExpression block)
     |   'return' expression? ';'
+        ->  ^(Return expression)
     |   'throw' expression ';'
+        ->  ^(Throw expression)
     |   'break' Identifier? ';'
+        ->  ^(Break Identifier)
     |   'continue' Identifier? ';'
+        ->  ^(Continue Identifier)
     |   ';' 
+        ->  EmptyStatement
     |   statementExpression ';'
+        ->  statementExpression
     |   Identifier ':' statement
+        ->  ^(Label Identifier statement)
     ;
     
 catches
-    :   catchClause (catchClause)*
+    :   catchClause (catchClause)* -> ^(CatchClauseList catchClause+)
     ;
     
 catchClause
     :   'catch' '(' formalParameter ')' block
+        ->  ^(CatchClause formalParameter block)
     ;
 
 formalParameter
     :   variableModifiers type variableDeclaratorId
+        ->  ^(FormalParameter variableModifiers type variableDeclaratorId)
     ;
         
 switchBlockStatementGroups
     :   (switchBlockStatementGroup)*
+        ->  ^(SwitchBlockStatementGroupList switchBlockStatementGroup* )
     ;
     
 /* The change here (switchLabel -> switchLabel+) technically makes this grammar
@@ -685,53 +858,64 @@ switchBlockStatementGroups
    labels and statements. */
 switchBlockStatementGroup
     :   switchLabel+ blockStatement*
+        ->  ^(SwitchBlockStatementGroup
+                ^(SwitchLabelList switchLabel+ )
+                ^(BlockStatementList blockStatement* )
+                )
     ;
     
 switchLabel
     :   'case' constantExpression ':'
+        ->  ^(ConstantExpressionToSwitchLabel constantExpression)
     |   'case' enumConstantName ':'
-    |   'default' ':'
+        ->  ^(EnumConstantNameToSwitchLabel enumConstantName)
+    |   'default' ':' -> Default
     ;
     
 forControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
-    :   enhancedForControl
+    :   enhancedForControl -> enhancedForControl
     |   forInit? ';' expression? ';' forUpdate?
+        ->  ^(StandardForControl forInit expression forUpdate)
     ;
 
 forInit
     :   localVariableDeclaration
+        ->  ^(VariableDeclToForInit localVariableDeclaration)
     |   expressionList
+        ->  ^(ExpressionListToForInit expressionList)
     ;
     
 enhancedForControl
     :   variableModifiers type Identifier ':' expression
+        ->  ^(EnhancedForControl variableModifiers type Identifier expression)
     ;
 
 forUpdate
-    :   expressionList
+    :   expressionList -> expressionList
     ;
 
 // EXPRESSIONS
 
 parExpression
-    :   '(' expression ')'
+    :   '(' expression ')' -> expression
     ;
     
 expressionList
-    :   expression (',' expression)*
+    :   expression (',' expression)* -> ^(ExpressionList expression+)
     ;
 
 statementExpression
-    :   expression
+    :   expression -> ^(ExpressionToStatement expression)
     ;
     
 constantExpression
-    :   expression
+    :   expression -> expression
     ;
     
 expression
     :   conditionalExpression (assignmentOperator expression)?
+        ->  EmptyExpression
     ;
     
 assignmentOperator
@@ -765,6 +949,7 @@ assignmentOperator
 
 conditionalExpression
     :   conditionalOrExpression ( '?' expression ':' expression )?
+        ->  EmptyExpression
     ;
 
 conditionalOrExpression
@@ -858,7 +1043,7 @@ castExpression
     ;
 
 primary
-    :   parExpression
+    :(   parExpression
     |   'this' ('.' Identifier)* identifierSuffix?
     |   'super' superSuffix
     |   literal
@@ -866,6 +1051,7 @@ primary
     |   Identifier ('.' Identifier)* identifierSuffix?
     |   primitiveType ('[' ']')* '.' 'class'
     |   'void' '.' 'class'
+    ) -> Null
     ;
 
 identifierSuffix
@@ -926,7 +1112,7 @@ superSuffix
     ;
 
 arguments
-    :   '(' expressionList? ')'
+    :   '(' expressionList? ')' -> ^(ExpressionList )
     ;
 
 // LEXER

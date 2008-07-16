@@ -1,7 +1,7 @@
+import java.io.*;
+
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
-
-import java.io.*;
 
 import parser.*;
 import parser.ast.*;
@@ -30,7 +30,8 @@ public class Main {
 
       AstTree tree = (AstTree) parser.compilationUnit().getTree();
       CompilationUnit term = (CompilationUnit) tree.getTerm();
-      System.out.println(term);
+
+      tom.library.utils.Viewer.toTree(term);
 
     } catch (Exception e) {
       System.err.println("exception: " + e);

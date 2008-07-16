@@ -1,10 +1,23 @@
 module parser.Ast
 
-imports String
+imports int String
 
 abstract syntax
 
-CompilationUnit = CompilationUnit( annotations:AnnotationList, package:QualifiedName, import:ImportList, types:TypeDeclList )
+/*
+Noms de slots suivis d'un '_' :
+
+class
+else
+extends
+finally
+implements
+import
+package
+
+*/
+
+CompilationUnit = CompilationUnit( annotations:AnnotationList, package_:QualifiedName, import_:ImportList, types:TypeDeclList )
 
 /*
 compilationUnit
@@ -34,9 +47,9 @@ packageDeclaration
     ;
 */
 
-ImportList = ImportList( Import* )
+ImportList = ImportList( Import_* )
 
-Import = Import( name:QualifiedName, isstatic:Boolean, wholepackage:Boolean )
+Import_ = Import( name:QualifiedName, isstatic:BooleanLiteral, wholepackage:BooleanLiteral )
 
 /*
 importDeclaration
@@ -47,8 +60,8 @@ importDeclaration
 TypeDeclList = TypeDeclList( TypeDecl* )
 
 TypeDecl =
- | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, classextends:Type, implements:TypeList, classbody:ClassBody )
- | EnumClass      ( name:String, modifiers:ModifierList, implements:TypeList, enumbody:EnumBody )
+ | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, extends_:Type, implements_:TypeList, classbody:ClassBody )
+ | EnumClass      ( name:String, modifiers:ModifierList, implements_:TypeList, enumbody:EnumBody )
  | NormalInterface( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, interfaceextends:TypeList, interfacebody:InterfaceBody )
  | AnnotationType ( name:String, modifiers:ModifierList, annotationbody:AnnotationTypeBody )
  | EmptyTypeDecl()
@@ -185,11 +198,11 @@ interfaceBody
 */
 
 ClassBodyDecl =
- | Block( block:Block, isstatic:Boolean )
- | FieldDecl        ( modifiers:ModifierList, variabledecls:VariableDeclList )
- | MethodDecl       ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, methodbody:Block )
- | ConstructorDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, constructorbody:ConstructorBody )
- | ClassBodyTypeDecl( modifiers:ModifierList, decl:TypeDecl )
+ | BlockToClassBodyDecl( block:Block, isstatic:BooleanLiteral )
+ | FieldDecl( modifiers:ModifierList, variabledecls:VariableDeclList )
+ | MethodDecl( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, methodbody:Block )
+ | ConstructorDecl( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, constructorbody:ConstructorBody )
+ | TypeDeclToClassBodyDecl( modifiers:ModifierList, decl:TypeDecl )
  | EmptyClassBodyDecl()
 
 /*
@@ -233,7 +246,7 @@ fieldDeclaration
 InterfaceBodyDecl =
  | ConstantDecl         ( modifiers:ModifierList, type:Type, name:String, initializer:VariableInitializer )
  | InterfaceMethodDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList )
- | InterfaceBodyTypeDecl( modifiers:ModifierList, decl:TypeDecl )
+ | TypeDeclToInterfaceBodyDecl( modifiers:ModifierList, decl:TypeDecl )
  | EmptyInterfaceBodyDecl()
 
 /*
@@ -326,7 +339,8 @@ variableDeclaratorId
 
 VariableInitializer =
  | ArrayInitializer( VariableInitializer* )
- | ExpressionVariableInitializer( value:Expression )
+ | ExpressionToVariableInitializer( value:Expression_ )
+ | EmptyVariableInitializer()
 
 /*
 variableInitializer
@@ -340,7 +354,7 @@ arrayInitializer
 */
 
 Modifier =
- | Annotation( annotation:Annotation )
+ | AnnotationToModifier( annotation:Annotation )
  | Public()
  | Protected()
  | Private()
@@ -348,6 +362,7 @@ Modifier =
  | Static()
  | Final()
  | StrictFP()
+ | Native()
  | SynchronizedModifier()
  | Transient()
  | Volatile()
@@ -444,6 +459,7 @@ TypeArgument =
  | ExplicitTypeArgument( type:Type )
  | ExtendTypeArgument( type:Type )
  | SuperTypeArgument( type:Type )
+ | EmptyTypeArgument()
 
 /*
 typeArgument
@@ -464,7 +480,7 @@ formalParameters
     ;
 */
 
-FormalParameterDecl = FormalParameterDecl( modifiers:ModifierList, type:Type, name:String, variablenumber:Boolean )
+FormalParameterDecl = FormalParameterDecl( modifiers:ModifierList, type:Type, name:String, variablenumber:BooleanLiteral )
 
 /*
 formalParameterDecls
@@ -527,7 +543,7 @@ integerLiteral
     ;
 */
 
-Boolean =
+BooleanLiteral =
  | True()
  | False()
 
@@ -579,8 +595,8 @@ elementValuePair
 */
 
 ElementValue =
- | ConditionalExpressionToElementValue( expression:ConditionalExpression )
- | AnnotationToElementValue           ( annotation:Annotation )
+ | ExpressionToElementValue( expression:Expression_ )
+ | AnnotationToElementValue( annotation:Annotation )
  | ElementValueArrayInitializer( ElementValue* )
 
 /*
@@ -608,9 +624,9 @@ annotationTypeBody
 */
 
 AnnotationTypeElementDecl =
- | AnnotationMethod  ( modifiers:ModifierList, type:Type, name:String, defalutvalue:ElementValue )
+ | AnnotationMethod  ( modifiers:ModifierList, type:Type, name:String, defaultvalue:ElementValue )
  | AnnotationConstant( modifiers:ModifierList, type:Type, decls:VariableDeclList )
- | AnnotationTypeDecl( modifiers:ModifierList, decl:TypeDecl )
+ | TypeDeclToAnnotationElement( decl:TypeDecl )
 
 /*
 annotationTypeElementDeclaration
@@ -655,7 +671,7 @@ block
 
 BlockStatement =
  | LocalVariableDecl( modifiers:ModifierList, decls:VariableDeclList )
- | BlockTypeDecl( decl:TypeDecl )
+ | TypeDeclToBlockStatement( decl:TypeDecl )
  | Statement( statement:Statement )
 
 /*
@@ -680,20 +696,20 @@ variableModifiers
 
 Statement =
  | BlockToStatement( block:Block )
- | Assert( expression:Expression, value:Expression )
- | If( test:Expression, then:Statement, else:Statement )
+ | Assert( expression:Expression_, value:Expression_ )
+ | If( test:Expression_, then:Statement, else_:Statement )
  | For    ( control:ForControl, statementbody:Statement )
- | While  ( test:Expression, statementbody:Statement )
- | DoWhile( statementbody:Statement, test:Expression )
- | Try( blockbody:Block, catches:CatchClauseList, finally:Block )
- | Switch( expression:Expression, groups:SwitchBlockStatementGroupList )
- | Synchronized( object:Expression, blockbody:Block )
- | Return( result:Expression )
- | Throw ( exception:Expression )
+ | While  ( test:Expression_, statementbody:Statement )
+ | DoWhile( statementbody:Statement, test:Expression_ )
+ | Try( blockbody:Block, catches:CatchClauseList, finally_:Block )
+ | Switch( expression:Expression_, groups:SwitchBlockStatementGroupList )
+ | SynchronizedStatement( object:Expression_, blockbody:Block )
+ | Return( result:Expression_ )
+ | Throw ( exception:Expression_ )
  | Break   ( label:String )
  | Continue( label:String )
  | EmptyStatement()
- | ExpressionToStatement( expression:Expression )
+ | ExpressionToStatement( expression:Expression_ )
  | Label( name:String, statementbody:Statement )
 
 /*
@@ -767,7 +783,7 @@ switchBlockStatementGroup
 SwitchLabelList = SwitchLabelList( SwitchLabel* )
 
 SwitchLabel =
- | ConstantExpressionToSwitchLabel( expression:Expression )
+ | ConstantExpressionToSwitchLabel( expression:Expression_ )
  | EnumConstantNameToSwitchLabel  ( name:String )
  | Default()
 
@@ -780,8 +796,8 @@ switchLabel
 */
 
 ForControl =
- | EnhancedForControl( modifiers:ModifierList, type:Type, variable:String, items:Expression )
- | StandardForControl( init:ForInit, test:Expression, update:ExpressionList )
+ | EnhancedForControl( modifiers:ModifierList, type:Type, variable:String, items:Expression_ )
+ | StandardForControl( init:ForInit, test:Expression_, update:ExpressionList )
 
 /*
 forControl
@@ -792,8 +808,8 @@ options {k=3;} // be efficient for common case: for (ID ID : ID) ...
 */
 
 ForInit =
- | VariableDeclForInit( modifiers:ModifierList, type:Type, decls:VariableDeclList )
- | ExpressionsForInit( Expression* )
+ | VariableDeclToForInit( modifiers:ModifierList, type:Type, decls:VariableDeclList )
+ | ExpressionListToForInit( Expression_* )
 
 /*
 forInit
@@ -820,7 +836,7 @@ parExpression
     ;
 */
 
-ExpressionList = ExpressionList( Expression* )
+ExpressionList = ExpressionList( Expression_* )
 
 /*
 expressionList
@@ -836,13 +852,58 @@ constantExpression
     ;
 */
 
-Expression = EmptyExpression()
+Expression_ = EmptyExpression()
+
+/*X =
+ | Assign( lhs:Expression, rhs:Expression )
+ | PlusAssign( lhs:Expression, rhs:Expression )
+ | MinusAssign( lhs:Expression, rhs:Expression )
+ | TimesAssign( lhs:Expression, rhs:Expression )
+ | DivAssign( lhs:Expression, rhs:Expression )
+ | AndAssign( lhs:Expression, rhs:Expression )
+ | OrAssign( lhs:Expression, rhs:Expression )
+ | XOrAssign( lhs:Expression, rhs:Expression )
+ | ModAssign( lhs:Expression, rhs:Expression )
+ | LeftShiftAssign( lhs:Expression, rhs:Expression )
+ | UnsignedRightShiftAssign( lhs:Expression, rhs:Expression )
+ | SignedRightShiftAssign( lhs:Expression, rhs:Expression )
+ | Conditional( if:Expression, then:Expression, else:Expression )
+ | ConditionalOr( lhs:Expression, rhs:Expression )
+ | ConditionalAnd( lhs:Expression, rhs:Expression )
+ | InclusiveOr( lhs:Expression, rhs:Expression )
+ | ExclusiveOr( lhs:Expression, rhs:Expression )
+ | And( lhs:Expression, rhs:Expression )
+ | Equal( lhs:Expression, rhs:Expression )
+ | NotEqual( lhs:Expression, rhs:Expression )
+ | InstanceOf( lhs:Expression, rhs:Expression )
+ | LowerOrEqual( lhs:Expression, rhs:Expression )
+ | GreaterOrEqual( lhs:Expression, rhs:Expression )
+ | Lower( lhs:Expression, rhs:Expression )
+ | Greater( lhs:Expression, rhs:Expression )
+ | LeftShift( lhs:Expression, rhs:Expression )
+ | UnsignedRightShift( lhs:Expression, rhs:Expression )
+ | SignedRightShift( lhs:Expression, rhs:Expression )
+ | Plus( lhs:Expression, rhs:Expression )
+ | Minus( lhs:Expression, rhs:Expression )
+ | Times( lhs:Expression, rhs:Expression )
+ | Div( lhs:Expression, rhs:Expression )
+ | Mod( lhs:Expression, rhs:Expression )
+ | UPlus( expression:Expression )
+ | UMinus( expression:Expression )
+ | PreInc( expression:Expression )
+ | PreDec( expression:Expression )
+ | PostInc( expression:Expression )
+ | PostDec( expression:Expression )
+ | BitwiseNot( expression:Expression )
+ | LogicalNot( expression:Expression )
+ | 
+*/
 
 /*
 expression
     :   conditionalExpression (assignmentOperator expression)?
     ;
-    
+
 assignmentOperator
     :   '='
     |   '+='
@@ -871,11 +932,7 @@ assignmentOperator
           $t2.getLine() == $t3.getLine() && 
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
     ;
-*/
 
-ConditionalExpression = EmptyConditionalExpression()
-
-/*
 conditionalExpression
     :   conditionalOrExpression ( '?' expression ':' expression )?
     ;
@@ -949,7 +1006,9 @@ additiveExpression
 multiplicativeExpression
     :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )*
     ;
-    
+*/
+
+/*
 unaryExpression
     :   '+' unaryExpression
     |   '-' unaryExpression
@@ -972,14 +1031,20 @@ castExpression
 */
 
 Primary =
+ | ExpressionToPrimary( expression:Expression_ )
+ | This( nested:QualifiedName, suffix:IdentifierSuffix )
+ | Super( arguments:ExpressionList )
+ | SuperCall( name:String, arguments:ExpressionList)
  | HexLiteral          ( value:String )
  | OctalLiteral        ( value:String )
  | DecimalLiteral      ( value:String )
  | FloatingPointLiteral( value:String )
  | CharacterLiteral    ( value:String )
  | StringLiteral       ( value:String )
- | BooleanLiteral      ( booleanvalue:Boolean )
+ | BooleanLiteral      ( booleanvalue:BooleanLiteral )
  | Null()
+ | ClassCreator( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:ClassBody )
+ | InitializedArrayCreator( typearguments:TypeList, type:Type, dimension:int, initializer:VariableInitializer )
 
 /*
 primary
@@ -994,7 +1059,16 @@ primary
     ;
 */
 
-//IdentifierSuffix = EmptyIdentifierSuffix()
+IdentifierSuffix =
+ | ArrayClassSuffix( dimension:int )
+ | ArraySuffix( int* )
+ | ArgumentsToSuffix( arguments:ExpressionList )
+ | ClassSuffix()
+ | ExplicitGenericInvocation( typearguments:TypeList, name:String, arguments:ExpressionList )
+ | ThisSuffix()
+ | SuperSuffix( arguments:ExpressionList )
+ | InnerCreatorToSuffix( creator:InnerCreator )
+
 
 /*
 identifierSuffix
@@ -1017,7 +1091,11 @@ createdName
     :   classOrInterfaceType
     |   primitiveType
     ;
-    
+*/
+
+InnerCreator = InnerCreator( typearguments:TypeList, class_:String, arguments:ExpressionList, body:ClassBody )
+
+/*
 innerCreator
     :   nonWildcardTypeArguments? Identifier classCreatorRest
     ;
@@ -1040,7 +1118,17 @@ explicitGenericInvocation
 nonWildcardTypeArguments
     :   '<' typeList '>'
     ;
-    
+*/
+
+Selector =
+ | CallSelector( method:String, arguments:ExpressionList )
+ | ThisSelector()
+ | SuperSelector( arguments:ExpressionList )
+ | SuperCallSelector( method:String, arguments:ExpressionList )
+ | CreatorToSelector( creator:InnerCreator )
+ | ArrayIndexSelector( index:Expression_ )
+
+/*
 selector
     :   '.' Identifier arguments?
     |   '.' 'this'
