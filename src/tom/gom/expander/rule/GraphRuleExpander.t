@@ -234,31 +234,30 @@ static class Subst extends @fullClassName(abstractType)@ {
     }
   }
 
-  protected static Iterator getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
-    ArrayList sharedlabels = new ArrayList();
-    HashMap lhsLabels = labelledLhs.getLabels();
-    HashMap rhsLabels = labelledRhs.getLabels2();
-    Iterator itRhs = rhsLabels.keySet().iterator(); 
-    while(itRhs.hasNext()) {
-      String label = (String) itRhs.next();
-      if (lhsLabels.containsKey(label)) {
-        sharedlabels.add(label);
+  protected static ArrayList<Substitution> getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
+    ArrayList<String> sharedlabels = new ArrayList();
+    HashMap<String,Position> lhsLabels = labelledLhs.getMapFromLabelToPositionAndRemoveLabels();
+    HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPosition();
+    for (String labelRhs: rhsLabels.keySet()) {
+      if (lhsLabels.containsKey(labelRhs)) {
+        sharedlabels.add(labelRhs);
       }
     }
 
-    ArrayList result = new ArrayList();
-    Iterator iter = sharedlabels.iterator(); 
-    while(iter.hasNext()) {
-      String label = (String) iter.next();
-      Position posLhs = (Position)lhsLabels.get(label);
-      Position posRhs = (Position)rhsLabels.get(label);
-      Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel(label,posLhs,posRhs),sharedlabels,omega);
-      result.add(subst);
-    }
+    ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
+    
     // add the substitution for the root position
     Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel("",new Position(new int[]{}),new Position(new int[]{})),sharedlabels,omega);
-    result.add(subst);
-    return result.iterator();
+    substitutions.add(subst);
+
+    // add a substitution for each shared label
+    for (String sharedlabel: sharedlabels) {
+      Position posLhs = lhsLabels.get(sharedlabel);
+      Position posRhs = rhsLabels.get(sharedlabel);
+      Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel(label,posLhs,posRhs),sharedlabels,omega);
+      substitutions.add(subst);
+    }
+    return substitutions;
   }
 
 
@@ -428,37 +427,36 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                 @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();             
                 
                 //compute all the different substitutions
-                Iterator substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
+                List<Substitution> substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
                 
                 /* 3. construct tt=SubstTerm(subject',r') */
-                while (substitutions.hasNext()) {
-                Substitution subst = (Substitution) substitutions.next();
-                @fullClassName(abstractType)@ r = subst.value;
-                //System.out.println("subst "+r);
-                Position posRedex = subst.omega;
-                //System.out.println("at the position "+posRedex);
-                @fullClassName(abstractType)@ t = `Subst(subject,r);
-                Position newomega = (Position) posFinal.add(posRedex);
-                //System.out.println("t "+t);
-                //replace in subject every pointer to the position newomega by
-                //a pointer to the position 2  and if in position 2 there is also a
-                //pointer inline the paths.
-                //(corresponds to dot(t) in the paper)
-                t = (@fullClassName(abstractType)@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
-                //System.out.println("t "+t);
-                //inline paths in the intermediate r
-                //(corresponds to dot(r) in the paper)
-                t = (@fullClassName(abstractType)@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
-                //System.out.println("t "+t);
-                
-                /* 4. set the global term to norm(swap(t,1.w,2))|1 */
-                @fullClassName(abstractType)@ tt = (@fullClassName(abstractType)@) t.swap(newomega,posRhs); 
-                //System.out.println("tt "+tt);
-                @fullClassName(abstractType)@ res = (@fullClassName(abstractType)@) tt.normalize();
-                //System.out.println("res "+res);
-                subject = (@fullClassName(abstractType)@) posFinal.getSubterm().visit(res);
-                //System.out.println("subject "+subject);
-               }
+                for (subst: substitutions) {
+                  @fullClassName(abstractType)@ r = subst.value;
+                  //System.out.println("subst "+r);
+                  Position posRedex = subst.omega;
+                  //System.out.println("at the position "+posRedex);
+                  @fullClassName(abstractType)@ t = `Subst(subject,r);
+                  Position newomega = (Position) posFinal.add(posRedex);
+                  //System.out.println("t "+t);
+                  //replace in subject every pointer to the position newomega by
+                  //a pointer to the position 2  and if in position 2 there is also a
+                  //pointer inline the paths.
+                  //(corresponds to dot(t) in the paper)
+                  t = (@fullClassName(abstractType)@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
+                  //System.out.println("t "+t);
+                  //inline paths in the intermediate r
+                  //(corresponds to dot(r) in the paper)
+                  t = (@fullClassName(abstractType)@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
+                  //System.out.println("t "+t);
+
+                  /* 4. set the global term to norm(swap(t,1.w,2))|1 */
+                  @fullClassName(abstractType)@ tt = (@fullClassName(abstractType)@) t.swap(newomega,posRhs); 
+                  //System.out.println("tt "+tt);
+                  @fullClassName(abstractType)@ res = (@fullClassName(abstractType)@) tt.normalize();
+                  //System.out.println("res "+res);
+                  subject = (@fullClassName(abstractType)@) posFinal.getSubterm().visit(res);
+                  //System.out.println("subject "+subject);
+                }
 
                 //expand the subject to remove labels from the rhs
                 getEnvironment().setSubject(subject.expand());

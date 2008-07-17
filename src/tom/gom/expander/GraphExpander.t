@@ -233,9 +233,9 @@ public class GraphExpander {
     ]%;
 
     String codeStrategies = "";
-    String CollectLabels= "Fail()";
-    String CollectLabels2= "Fail()";
-    String CollectLabels3= "Fail()";
+    String CollectAndRemoveLabels = "Fail()";
+    String CollectLabels = "Fail()";
+    String CollectPositionsOfLabels = "Fail()";
     String Label2Path = "Identity()",NormalizeLabel = "Identity()", CollectRef = "Identity()", AddLabel = "Identity()";
 
     %match(sorts){
@@ -245,9 +245,9 @@ public class GraphExpander {
         ]%;
         codeStrategies += getStrategies(`sDecl);
         Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
+        CollectAndRemoveLabels = "Choice(CollectAndRemoveLabels"+`sortName+"(map),"+CollectAndRemoveLabels+")";
         CollectLabels = "Choice(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
-        CollectLabels2 = "Choice(CollectLabels2"+`sortName+"(map),"+CollectLabels2+")";
-        CollectLabels3 = "Choice(CollectLabels3"+`sortName+"(map),"+CollectLabels3+")";
+        CollectPositionsOfLabels = "Choice(CollectPositionsOfLabels"+`sortName+"(map),"+CollectPositionsOfLabels+")";
         NormalizeLabel = "Sequence(NormalizeLabel"+`sortName+"(map),"+NormalizeLabel+")";
         CollectRef = "Sequence(CollectRef"+`sortName+"(map),"+CollectRef+")";
         AddLabel = "Sequence(AddLabel"+`sortName+"(map),"+AddLabel+")";
@@ -274,7 +274,7 @@ public class GraphExpander {
     }
 
     public @fullClassName(abstractType)@ unexpand() {
-       HashMap map = getLabels3();
+       HashMap map = getMapFromPositionToLabel();
        try {
          return (@fullClassName(abstractType)@)`Sequence(TopDown(@CollectRef@),BottomUp(@AddLabel@)).visit(this);
        } catch (tom.library.sl.VisitFailure e) {
@@ -282,10 +282,10 @@ public class GraphExpander {
        }
     }
 
-    protected HashMap getLabels3(){
+    protected HashMap getMapFromPositionToLabel(){
       HashMap map = new HashMap();
       try {
-      `TopDown(Try(@CollectLabels3@)).visit(this);
+      `TopDown(Try(@CollectPositionsOfLabels@)).visit(this);
       return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
@@ -299,7 +299,7 @@ public class GraphExpander {
 
       public @fullClassName(abstractType)@ expand(){
         HashMap map = new HashMap();
-        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
+        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectAndRemoveLabels@)),TopDown(@Label2Path@));
         try {
           return (@fullClassName(abstractType)@) `label2path.visit(this);
         } catch (tom.library.sl.VisitFailure e) {
@@ -322,7 +322,7 @@ public class GraphExpander {
 
     protected @fullClassName(abstractType)@ label2path(){
       HashMap map = new HashMap();
-      Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
+      Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectAndRemoveLabels@)),TopDown(@Label2Path@));
       try {
         return (@fullClassName(abstractType)@) label2path.visit(this);
       } catch (tom.library.sl.VisitFailure e) {
@@ -330,20 +330,20 @@ public class GraphExpander {
       }
     }
     
-    public HashMap getLabels(){
-      HashMap map = new HashMap();
+    public HashMap<String,Position> getMapFromLabelToPositionAndRemoveLabels(){
+      HashMap<String,Position> map = new HashMap<String,Position>();
       try {
-      `TopDown(Try(@CollectLabels@)).visit(this);
+      `TopDown(Try(@CollectAndRemoveLabels@)).visit(this);
       return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
       }
     }
 
-    public HashMap getLabels2(){
-      HashMap map = new HashMap();
+    public HashMap<String,Position> getMapFromLabelToPosition(){
+      HashMap<String,Position> map = new HashMap<String,Position>();
       try {
-      `TopDown(Try(@CollectLabels2@)).visit(this);
+      `TopDown(Try(@CollectLabels@)).visit(this);
       return map;
       } catch (tom.library.sl.VisitFailure e) {
         throw new RuntimeException("Unexpected strategy failure!");
@@ -534,30 +534,27 @@ public class GraphExpander {
       public @CodeGen.generateCode(`FullSortClass(sDecl))@ sharedTerm;
     }
  
-      %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail() {
-        visit @sortName@{
-          Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
-            if(! marked.contains(`label)){
-              info.label=`label;
-              info.term=`Lab@sortName@(label,term);
-              info.path=getEnvironment().getPosition();
-              marked.add(`label);
-              return `Lab@sortName@(label,term);
-            }
-          }
-        }
-      }
-
-    %strategy CollectLabels@sortName@(map:HashMap) extends Fail() {
+    %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail() {
       visit @sortName@{
         Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
-          map.put(`label,getEnvironment().getPosition());
-          return `term;
+          if(! marked.contains(`label)){
+            info.label=`label;
+            info.term=`Lab@sortName@(label,term);
+            info.path=getEnvironment().getPosition();
+            marked.add(`label);
+            return `Lab@sortName@(label,term);
+          }
         }
       }
     }
 
-    %strategy CollectLabels2@sortName@(map:HashMap) extends Fail() {
+    /**
+     * Collect labels of sort @sortName@ and their corresponding positions in a
+     * map. The keys are the labels.
+     * @@param map the map to collect tuples <label,position>
+     */
+
+    %strategy CollectLabels@sortName@(map:HashMap) extends Fail() {
       visit @sortName@{
         Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
           map.put(`label,getEnvironment().getPosition());
@@ -566,7 +563,31 @@ public class GraphExpander {
       }
     }
 
-    %strategy CollectLabels3@sortName@(map:HashMap) extends Fail() {
+
+    /**
+     * Collect labels of sort @sortName@ and their corresponding positions in a
+     * map and at the same time replace the labelled term by the term itself.
+     * The keys are the labels.
+     * @@param map the map to collect tuples <label,position>
+     */
+
+    %strategy CollectAndRemoveLabels@sortName@(map:HashMap) extends Fail() {
+      visit @sortName@{
+        Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
+          map.put(`label,getEnvironment().getPosition());
+          return `term;
+        }
+      }
+    }
+
+    /**
+     * Collect labels of sort @sortName@ and their corresponding positions in a
+     * map and at the same time replace the labelled term by the term itself.
+     * The keys are the positions.
+     * @@param map the map to collect tuples <position,label>
+     */
+
+    %strategy CollectPositionsOfLabels@sortName@(map:HashMap) extends Fail() {
       visit @sortName@{
         Lab@sortName@[label@sortName@=label,term@sortName@=term]-> {
           map.put(getEnvironment().getPosition().toString(),`label);
