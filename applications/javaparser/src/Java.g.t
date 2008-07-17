@@ -205,13 +205,15 @@ compilationUnit
         |   classOrInterfaceDeclaration typeDeclaration*
             ->  ^(CompilationUnit
                     annotations
+                    ^(QualifiedName )
+                    ^(ImportList )
                     ^(TypeDeclList classOrInterfaceDeclaration typeDeclaration*)
                     )
         )
     |   packageDeclaration? importDeclaration* typeDeclaration*
         ->  ^(CompilationUnit
                 ^(AnnotationList )
-                ^(QualifiedName ) //packageDeclaration
+                packageDeclaration?
                 ^(ImportList importDeclaration*)
                 ^(TypeDeclList typeDeclaration*)
                 )
@@ -270,9 +272,9 @@ normalClassDeclaration
         ->  ^(NormalClass
                 Identifier
                 ^(ModifierList )
-                ^(TypeParameterList )
-                Void
-                ^(TypeList )
+                typeParameters
+                type
+                typeList
                 classBody
                 )
     ;
@@ -312,7 +314,7 @@ enumConstant
     
 enumBodyDeclarations
     :   ';' (classBodyDeclaration)*
-        ->  ^(ClassBody classBodyDeclaration*)
+        ->  ^(ClassBodyDeclList classBodyDeclaration*)
     ;
     
 interfaceDeclaration
@@ -336,12 +338,12 @@ typeList
     ;
     
 classBody
-    :   '{' classBodyDeclaration* '}' -> ^(ClassBody classBodyDeclaration*)
+    :   '{' classBodyDeclaration* '}' -> ^(ClassBodyDeclList classBodyDeclaration*)
     ;
     
 interfaceBody
     :   '{' interfaceBodyDeclaration* '}'
-        ->  ^(InterfaceBody interfaceBodyDeclaration*)
+        ->  ^(InterfaceBodyDeclList interfaceBodyDeclaration*)
     ;
 
 classBodyDeclaration
@@ -378,9 +380,9 @@ memberDecl
                     )
                 )
     |   interfaceDeclaration
-        ->  ^(TypeDeclToClassBodyDecl interfaceDeclaration)
+        ->  ^(TypeDeclToClassBodyDecl ^(ModifierList ) interfaceDeclaration)
     |   classDeclaration
-        ->  ^(TypeDeclToClassBodyDecl classDeclaration)
+        ->  ^(TypeDeclToClassBodyDecl ^(ModifierList ) classDeclaration)
     ;
     
 memberDeclaration
@@ -435,7 +437,7 @@ methodDeclaration
 
 fieldDeclaration
     :   variableDeclarators ';'
-        ->  ^(FieldDecl ^(ModifierList ) variableDeclarators)
+        ->  ^(VariablesDeclToClassBodyDecl ^(VariablesDecl ^(ModifierList ) variableDeclarators))
     ;
         
 interfaceBodyDeclaration
@@ -526,7 +528,7 @@ variableDeclarators
 
 variableDeclarator
     :   variableDeclaratorId ('=' variableInitializer)?
-        ->  ^(VariableDecl Void variableDeclaratorId EmptyVariableInitializer)
+        ->  ^(VariableDecl Void variableDeclaratorId NoVariableInitializer)
     ;
     
 constantDeclaratorsRest
@@ -623,7 +625,7 @@ qualifiedNameList
     ;
 
 formalParameters
-    :   '(' formalParameterDecls? ')' -> formalParameterDecls
+    :   '(' formalParameterDecls? ')' -> ^(FormalParameterDeclList )
     ;
     
 formalParameterDecls
@@ -648,15 +650,15 @@ methodBody
 constructorBody
     :   '{' explicitConstructorInvocation? blockStatement* '}'
         ->  ^(ConstructorBody
-                explicitConstructorInvocation
+                NoExplicitConstructorInvocation
                 ^(BlockStatementList blockStatement*)
                 )
     ;
 
 explicitConstructorInvocation
     :   nonWildcardTypeArguments?
-        (   'this'  -> ^(ThisInvocation nonWildcardTypeArguments arguments)
-        |   'super' -> ^(SuperInvocation nonWildcardTypeArguments arguments)
+        (   'this'  -> ^(ThisInvocation ^(TypeList ) ^(ExpressionList ))
+        |   'super' -> ^(SuperInvocation ^(TypeList ) ^(ExpressionList ))
         ) arguments ';'
     |   primary '.' nonWildcardTypeArguments? 'super' arguments ';'
         ->  ^(PrimarySuperInvocation primary nonWildcardTypeArguments arguments)
@@ -776,7 +778,8 @@ block
     ;
     
 blockStatement
-    :   localVariableDeclarationStatement -> localVariableDeclarationStatement
+    :   localVariableDeclarationStatement
+        ->  ^(VariablesDeclToBlockStatement localVariableDeclarationStatement)
     |   classOrInterfaceDeclaration
         ->  ^(TypeDeclToBlockStatement classOrInterfaceDeclaration)
     |   statement -> ^(Statement statement)
@@ -788,7 +791,7 @@ localVariableDeclarationStatement
 
 localVariableDeclaration
     :   variableModifiers type variableDeclarators
-        ->  ^(LocalVariableDecl variableModifiers variableDeclarators)
+        ->  ^(VariablesDecl variableModifiers variableDeclarators)
     ;
     
 variableModifiers
@@ -801,7 +804,7 @@ statement
     |   ASSERT e=expression (':' v=expression)? ';'
         ->  ^(Assert $e $v)
     |   'if' parExpression ts=statement (options {k=1;}:'else' es=statement)?
-        ->  ^(If parExpression $ts $es)
+        ->  ^(If parExpression $ts EmptyStatement)
     |   'for' '(' forControl ')' statement
         ->  ^(For forControl statement)
     |   'while' parExpression statement
@@ -818,13 +821,13 @@ statement
     |   'synchronized' parExpression block
         ->  ^(SynchronizedStatement parExpression block)
     |   'return' expression? ';'
-        ->  ^(Return expression)
+        ->  EmptyStatement //^(Return expression)
     |   'throw' expression ';'
         ->  ^(Throw expression)
     |   'break' Identifier? ';'
-        ->  ^(Break Identifier)
+        ->  EmptyStatement //^(Break Identifier)
     |   'continue' Identifier? ';'
-        ->  ^(Continue Identifier)
+        ->  EmptyStatement //^(Continue Identifier)
     |   ';' 
         ->  EmptyStatement
     |   statementExpression ';'
@@ -881,7 +884,7 @@ options {k=3;} // be efficient for common case: for (ID ID : ID) ...
 
 forInit
     :   localVariableDeclaration
-        ->  ^(VariableDeclToForInit localVariableDeclaration)
+        ->  ^(VariablesDeclToForInit localVariableDeclaration)
     |   expressionList
         ->  ^(ExpressionListToForInit expressionList)
     ;

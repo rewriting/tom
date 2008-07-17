@@ -76,6 +76,7 @@
     <java classname="Main"
           fork="true">
       <arg value="${jparse.gen}/Main.java"/>
+      <!-- <arg value="${jparse.gen}/${jparse.parser}/JavaParser.java"/> -->
       <classpath>
         <path refid="tom.classpath"/>
         <pathelement location="${jparse.build}"/>

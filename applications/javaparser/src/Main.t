@@ -34,7 +34,7 @@ public class Main {
       tom.library.utils.Viewer.toTree(term);
 
     } catch (Exception e) {
-      System.err.println("exception: " + e);
+      //System.err.println("exception: " + e);
       e.printStackTrace();
     }
   }

@@ -19,6 +19,11 @@ package
 
 CompilationUnit = CompilationUnit( annotations:AnnotationList, package_:QualifiedName, import_:ImportList, types:TypeDeclList )
 
+CompilationUnit:make(a, p, i, t) {
+  if (p == null) p = `QualifiedName();
+  realMake(a, p, i, t);
+}
+
 /*
 compilationUnit
     :   annotations
@@ -27,18 +32,6 @@ compilationUnit
         )
     |   packageDeclaration? importDeclaration* typeDeclaration*
     ;
-*/
-
-/*
-Package =
- | Package( name:QualifiedName )
- | EmptyPackage()
- | MaybePackage( x:PackageDecl )
-
-MaybePackageDecl:make(x) {
-  if (x == null ) { return `EmptyPackageDecl(); }
-  return x;
-}
 */
 
 /*
@@ -65,6 +58,24 @@ TypeDecl =
  | NormalInterface( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, interfaceextends:TypeList, interfacebody:InterfaceBody )
  | AnnotationType ( name:String, modifiers:ModifierList, annotationbody:AnnotationTypeBody )
  | EmptyTypeDecl()
+
+NormalClass:make(n, m, tp, e, i, b) {
+  if (tp == null) tp = `TypeParameterList();
+  if (e == null) e = `Void();
+  if (i == null) i = `TypeList();
+  realMake(n, m, tp, e, i, b);
+}
+
+EnumClass:make(n, m, i, b) {
+  if (i == null) i = `TypeList();
+  realMake(n, m, i, b);
+}
+
+NormalInterface:make(n, m, tp, e, b) {
+  if (tp == null) tp = `TypeParameterList();
+  if (e == null) e = `TypeList();
+  realMake(n, m, tp, e, b);
+}
 
 /* 
 typeDeclaration
@@ -120,7 +131,12 @@ typeParameters
     ;
 */
 
-TypeParameter = TypeParameter( name:String, toto:TypeList )
+TypeParameter = TypeParameter( name:String, extends_:TypeList )
+
+TypeParameter:make(n, e) {
+  if (e == null) e = `TypeList();
+  realMake(n, e);
+}
 
 /*
 typeParameter
@@ -138,6 +154,12 @@ enumDeclaration
 
 EnumBody = EnumBody( constants:EnumConstantList, bodydecls:ClassBody )
 
+EnumBody:make(c, d) {
+  if (c == null) c = `EnumConstantList();
+  if (d == null) d = `ClassBodyDeclList();
+  realMake(c, d);
+}
+
 /*
 enumBody
     :   '{' enumConstants? ','? enumBodyDeclarations? '}'
@@ -153,6 +175,13 @@ enumConstants
 */
 
 EnumConstant = EnumConstant( name:String, annotations:AnnotationList, arguments:ExpressionList, classbody:ClassBody )
+
+EnumConstant:make(n, anns, args, b) {
+  if (anns == null) anns = `AnnotationList();
+  if (args == null) args = `ExpressionList();
+  if (b == null) b = `ClassBodyDeclList();
+  realMake(n, anns, args, b);
+}
 
 /*
 enumConstant
@@ -181,7 +210,7 @@ typeList
     ;
 */
 
-ClassBody = ClassBody( ClassBodyDecl* )
+ClassBody = ClassBodyDeclList( ClassBodyDecl* )
 
 /*
 classBody
@@ -189,7 +218,7 @@ classBody
     ;
 */
 
-InterfaceBody = InterfaceBody( InterfaceBodyDecl* )
+InterfaceBody = InterfaceBodyDeclList( InterfaceBodyDecl* )
 
 /*
 interfaceBody
@@ -198,12 +227,24 @@ interfaceBody
 */
 
 ClassBodyDecl =
- | BlockToClassBodyDecl( block:Block, isstatic:BooleanLiteral )
- | FieldDecl( modifiers:ModifierList, variabledecls:VariableDeclList )
+ | BlockToClassBodyDecl        ( block:Block, isstatic:BooleanLiteral )
+ | VariablesDeclToClassBodyDecl( decls:VariablesDecl )
  | MethodDecl( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, methodbody:Block )
  | ConstructorDecl( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, constructorbody:ConstructorBody )
  | TypeDeclToClassBodyDecl( modifiers:ModifierList, decl:TypeDecl )
  | EmptyClassBodyDecl()
+
+MethodDecl:make(m, tp, t, n, fp, th, b) {
+  if (fp == null) fp = `FormalParameterDeclList();
+  if (th == null) th = `QualifiedNameList();
+  realMake(m, tp, t, n, fp, th, b);
+}
+
+ConstructorDecl:make(m, tp, n, fp, th, b) {
+  if (fp == null) fp = `FormalParameterDeclList();
+  if (th == null) th = `QualifiedNameList();
+  realMake(m, tp, n, fp, th, b);
+}
 
 /*
 classBodyDeclaration
@@ -248,6 +289,12 @@ InterfaceBodyDecl =
  | InterfaceMethodDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList )
  | TypeDeclToInterfaceBodyDecl( modifiers:ModifierList, decl:TypeDecl )
  | EmptyInterfaceBodyDecl()
+
+InterfaceMethodDecl:make(m, tp, t, n, fp, th) {
+  if (fp == null) fp = `FormalParameterDeclList();
+  if (th == null) th = `QualifiedNameList();
+  realMake(m, tp, t, n, fp, th);
+}
 
 /*
 interfaceBodyDeclaration
@@ -309,6 +356,8 @@ constantDeclarator
     ;
 */
 
+VariablesDecl = VariablesDecl( modifiers:ModifierList, decls:VariableDeclList )
+
 VariableDeclList = VariableDeclList( VariableDecl* )
 
 /*
@@ -318,6 +367,11 @@ variableDeclarators
 */
 
 VariableDecl = VariableDecl( type:Type, name:String, initializer:VariableInitializer )
+
+VariableDecl:make(t, n, i) {
+  if (i == null) i = `NoVariableInitializer();
+  realMake(t, n, i);
+}
 
 /*
 variableDeclarator
@@ -340,7 +394,7 @@ variableDeclaratorId
 VariableInitializer =
  | ArrayInitializer( VariableInitializer* )
  | ExpressionToVariableInitializer( value:Expression_ )
- | EmptyVariableInitializer()
+ | NoVariableInitializer()
 
 /*
 variableInitializer
@@ -396,6 +450,7 @@ typeName
     ;
 */
 
+// Void in place of EmptyType. Should be a PrimitiveType
 Type =
  | ArrayType           ( type:Type )
  | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
@@ -412,6 +467,16 @@ type
 ClassOrInterfaceType =
  | IndependentType( name:String, arguments:TypeArgumentList )
  | NestedType( outername:String, outerarguments:TypeArgumentList, innertype:ClassOrInterfaceType )
+
+IndependentType:make(n, a) {
+  if (a == null) a = `TypeArgumentList();
+  realMake(n, a);
+}
+
+NestedType:make(on, oa, it) {
+  if (oa == null) oa = `TypeArgumentList();
+  realMake(on, oa, it);
+}
 
 /*
 classOrInterfaceType
@@ -459,7 +524,7 @@ TypeArgument =
  | ExplicitTypeArgument( type:Type )
  | ExtendTypeArgument( type:Type )
  | SuperTypeArgument( type:Type )
- | EmptyTypeArgument()
+ | WildCardTypeArgument()
 
 /*
 typeArgument
@@ -499,6 +564,11 @@ methodBody
 
 ConstructorBody = ConstructorBody( constructorinvocation:ExplicitConstructorInvocation, block:Block )
 
+ConstructorBody:make(ci, b) {
+  if (ci == null) ci = `NoExplicitConstructorInvocation();
+  realMake(ci, b);
+}
+
 /*
 constructorBody
     :   '{' explicitConstructorInvocation? blockStatement* '}'
@@ -511,6 +581,11 @@ ExplicitConstructorInvocation =
  | PrimarySuperInvocation( primary:Primary, typearguments:TypeList, argument:ExpressionList )
  | NoExplicitConstructorInvocation()
 
+PrimarySuperInvocation:make(p, ta, a) {
+  if (ta == null) ta = `TypeList();
+  realMake(p, ta, a);
+}
+
 /*
 explicitConstructorInvocation
     :   nonWildcardTypeArguments? ('this' | 'super') arguments ';'
@@ -520,7 +595,8 @@ explicitConstructorInvocation
 
 QualifiedNameList = QualifiedNameList( QualifiedName* )
 
-QualifiedName = QualifiedName( String* )
+QualifiedName =
+ | QualifiedName( String* )
 
 /*
 qualifiedName
@@ -567,6 +643,7 @@ annotations
 Annotation =
  | Element( name:QualifiedName, value:ElementValue )
  | Pairs( name:QualifiedName, pairs:ElementValuePairList )
+ | NameToAnnotation( name:QualifiedName )
 
 /*
 annotation
@@ -598,6 +675,7 @@ ElementValue =
  | ExpressionToElementValue( expression:Expression_ )
  | AnnotationToElementValue( annotation:Annotation )
  | ElementValueArrayInitializer( ElementValue* )
+ | EmptyElementValue()
 
 /*
 elementValue
@@ -627,6 +705,11 @@ AnnotationTypeElementDecl =
  | AnnotationMethod  ( modifiers:ModifierList, type:Type, name:String, defaultvalue:ElementValue )
  | AnnotationConstant( modifiers:ModifierList, type:Type, decls:VariableDeclList )
  | TypeDeclToAnnotationElement( decl:TypeDecl )
+
+AnnotationMethod:make(m, t, n, dv) {
+  if (dv == null) dv = `EmptyElementValue();
+  realMake(m, t, n, dv);
+}
 
 /*
 annotationTypeElementDeclaration
@@ -670,7 +753,7 @@ block
 */
 
 BlockStatement =
- | LocalVariableDecl( modifiers:ModifierList, decls:VariableDeclList )
+ | VariablesDeclToBlockStatement( decls:VariablesDecl )
  | TypeDeclToBlockStatement( decl:TypeDecl )
  | Statement( statement:Statement )
 
@@ -711,6 +794,31 @@ Statement =
  | EmptyStatement()
  | ExpressionToStatement( expression:Expression_ )
  | Label( name:String, statementbody:Statement )
+
+Assert:make(e, v) {
+  if (v == null) v = `EmptyExpression();
+  realMake(e, v);
+}
+
+If:make(i, t, e) {
+  if (e == null) e = `EmptyStatement();
+  realMake(i, t, e);
+}
+
+Return:make(r) {
+  if (r == null) r = `EmptyExpression();
+  realMake(r);
+}
+
+Break:make(l) {
+  if (l == null ) l = "";
+  realMake(l);
+}
+
+Continue:make(l) {
+  if (l == null ) l = "";
+  realMake(l);
+}
 
 /*
 statement
@@ -799,6 +907,13 @@ ForControl =
  | EnhancedForControl( modifiers:ModifierList, type:Type, variable:String, items:Expression_ )
  | StandardForControl( init:ForInit, test:Expression_, update:ExpressionList )
 
+StandardForControl:make(i, t, u) {
+  if (i == null) i = `EmptyForInit();
+  if (t == null) t = `EmptyExpression();
+  if (u == null) u = `ExpressionList();
+  realMake(i, t, u);
+}
+
 /*
 forControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
@@ -808,8 +923,9 @@ options {k=3;} // be efficient for common case: for (ID ID : ID) ...
 */
 
 ForInit =
- | VariableDeclToForInit( modifiers:ModifierList, type:Type, decls:VariableDeclList )
+ | VariablesDeclToForInit( decls:VariablesDecl )
  | ExpressionListToForInit( Expression_* )
+ | EmptyForInit()
 
 /*
 forInit
