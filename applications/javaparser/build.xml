@@ -75,6 +75,7 @@
   <target name="test" depends="javac">
     <java classname="Main"
           fork="true">
+      <!-- <arg value="/home/jg/eclipse/Tests/src/Test.java"/> -->
       <arg value="${jparse.gen}/Main.java"/>
       <!-- <arg value="${jparse.gen}/${jparse.parser}/JavaParser.java"/> -->
       <classpath>

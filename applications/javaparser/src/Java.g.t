@@ -210,10 +210,17 @@ compilationUnit
                     ^(TypeDeclList classOrInterfaceDeclaration typeDeclaration*)
                     )
         )
-    |   packageDeclaration? importDeclaration* typeDeclaration*
+    |   p=packageDeclaration? importDeclaration* typeDeclaration*
+        -> {p==null}?
+            ^(CompilationUnit
+                ^(AnnotationList )
+                ^(QualifiedName )
+                ^(ImportList importDeclaration*)
+                ^(TypeDeclList typeDeclaration*)
+                )
         ->  ^(CompilationUnit
                 ^(AnnotationList )
-                packageDeclaration?
+                packageDeclaration
                 ^(ImportList importDeclaration*)
                 ^(TypeDeclList typeDeclaration*)
                 )
@@ -222,10 +229,13 @@ compilationUnit
 packageDeclaration
     :   'package' qualifiedName ';' -> qualifiedName
     ;
-    
+
 importDeclaration
-    :   'import' 'static'? qualifiedName ('.' '*')? ';'
-        ->  ^(Import qualifiedName False False)
+    :   'import' s='static'? qualifiedName ('.' p='*')? ';'
+        -> {p==null && s==null}? ^(Import qualifiedName False False)
+        -> {p==null}?            ^(Import qualifiedName True  False)
+        -> {s==null}?            ^(Import qualifiedName False True )
+        ->                       ^(Import qualifiedName True  True )
     ;
     
 typeDeclaration
@@ -263,30 +273,31 @@ classDeclaration
     :   normalClassDeclaration -> normalClassDeclaration
     |   enumDeclaration -> enumDeclaration
     ;
-    
+
 normalClassDeclaration
-    :   'class' Identifier typeParameters?
-        ('extends' type)?
-        ('implements' typeList)?
+    :   'class' Identifier tp=typeParameters?
+        ('extends' e=type)?
+        ('implements' i=typeList)?
         classBody
-        ->  ^(NormalClass
-                Identifier
-                ^(ModifierList )
-                typeParameters
-                type
-                typeList
-                classBody
-                )
+        -> {tp==null && e==null && i==null}? ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) Void ^(TypeList ) classBody)
+        -> {tp==null && e==null}?            ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) Void $i classBody)
+        -> {tp==null && i==null}?            ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) $e ^(TypeList ) classBody)
+        -> {tp==null}?                       ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) $e $i classBody)
+        -> {e==null && i==null}?             ^(NormalClass Identifier ^(ModifierList ) $tp Void ^(TypeList ) classBody)
+        -> {e==null}?                        ^(NormalClass Identifier ^(ModifierList ) $tp Void $i classBody)
+        -> {i==null}?                        ^(NormalClass Identifier ^(ModifierList ) $tp $e ^(TypeList ) classBody)
+        ->                                   ^(NormalClass Identifier ^(ModifierList ) $tp $e $i classBody)
     ;
     
 typeParameters
-    :   '<' l+=typeParameter (',' l+=typeParameter)* '>'
-        ->  ^(TypeList $l+)
+    :   '<' typeParameter (',' typeParameter)* '>'
+        ->  ^(TypeParameterList typeParameter+)
     ;
 
 typeParameter
-    :   Identifier ('extends' typeBound)?
-        ->  ^(TypeParameter Identifier typeBound)
+    :   Identifier ('extends' tb=typeBound)?
+        -> {tb==null}? ^(TypeParameter Identifier ^(TypeList ))
+        ->             ^(TypeParameter Identifier $tb)
     ;
         
 typeBound
@@ -294,22 +305,33 @@ typeBound
     ;
 
 enumDeclaration
-    :   ENUM Identifier ('implements' typeList)? enumBody
-        ->  ^(EnumClass Identifier ^(ModifierList ) typeList enumBody )
+    :   ENUM Identifier ('implements' i=typeList)? enumBody
+        -> {i==null}? ^(EnumClass Identifier ^(ModifierList ) ^(TypeList ) enumBody )
+        ->            ^(EnumClass Identifier ^(ModifierList ) $i enumBody )
     ;
 
 enumBody
-    :   '{' enumConstants? ','? enumBodyDeclarations? '}'
-        ->  ^(EnumBody enumConstants enumBodyDeclarations)
+    :   '{' c=enumConstants? ','? b=enumBodyDeclarations? '}'
+        -> {c==null && b==null}? ^(EnumBody ^(EnumConstantList ) ^(ClassBodyDeclList ))
+        -> {c==null}?            ^(EnumBody ^(EnumConstantList ) $b)
+        -> {b==null}?            ^(EnumBody $c ^(ClassBodyDeclList ))
+        ->                       ^(EnumBody $c $b)
     ;
 
 enumConstants
-    :   l+=enumConstant (',' l+=enumConstant)* -> ^(EnumConstantList $l+)
+    :   enumConstant (',' enumConstant)* -> ^(EnumConstantList enumConstant+)
     ;
-    
+
 enumConstant
-    :   annotations? Identifier arguments? classBody?
-        ->  ^(EnumConstant Identifier annotations arguments classBody)
+    :   anns=annotations? Identifier args=arguments? b=classBody?
+        -> {anns==null && args==null && b==null}? ^(EnumConstant Identifier ^(AnnotationList ) ^(ExpressionList ) ^(ClassBodyDeclList ))
+        -> {args==null && b==null}?               ^(EnumConstant Identifier $anns ^(ExpressionList ) ^(ClassBodyDeclList ))
+        -> {anns==null && b==null}?               ^(EnumConstant Identifier ^(AnnotationList ) $args ^(ClassBodyDeclList ))
+        -> {b==null}?                             ^(EnumConstant Identifier $anns $args ^(ClassBodyDeclList ))
+        -> {anns==null && args==null}?            ^(EnumConstant Identifier ^(AnnotationList ) ^(ExpressionList ) $b)
+        -> {args==null}?                          ^(EnumConstant Identifier $anns ^(ExpressionList ) $b)
+        -> {anns==null}?                          ^(EnumConstant Identifier ^(AnnotationList ) $args $b)
+        ->                                        ^(EnumConstant Identifier $anns $args $b)
     ;
     
 enumBodyDeclarations
@@ -321,16 +343,13 @@ interfaceDeclaration
     :   normalInterfaceDeclaration -> normalInterfaceDeclaration
     |   annotationTypeDeclaration -> annotationTypeDeclaration
     ;
-    
+
 normalInterfaceDeclaration
-    :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody
-        ->  ^(NormalInterface
-                Identifier
-                ^(ModifierList )
-                typeParameters
-                typeList
-                interfaceBody
-                )
+    :   'interface' Identifier tp=typeParameters? ('extends' e=typeList)? interfaceBody
+        -> {tp==null && e==null}? ^(NormalInterface Identifier ^(ModifierList ) ^(TypeParameterList ) ^(TypeList ) interfaceBody)
+        -> {tp==null}?            ^(NormalInterface Identifier ^(ModifierList ) ^(TypeParameterList ) $e interfaceBody)
+        -> {e==null}?             ^(NormalInterface Identifier ^(ModifierList ) $tp ^(TypeList ) interfaceBody)
+        ->                        ^(NormalInterface Identifier ^(ModifierList ) $tp $e interfaceBody)
     ;
     
 typeList
@@ -348,7 +367,9 @@ interfaceBody
 
 classBodyDeclaration
     :   ';'
-    |   'static'? block -> ^(BlockToClassBodyDecl block False)
+    |   s='static'? block
+        -> {s==null}? ^(BlockToClassBodyDecl block False)
+        ->            ^(BlockToClassBodyDecl block True)
     |   modifiers memberDecl -> memberDecl
     ;
     
@@ -474,7 +495,7 @@ interfaceMethodOrFieldRest
     :   constantDeclaratorsRest ';' -> constantDeclaratorsRest
     |   interfaceMethodDeclaratorRest -> interfaceMethodDeclaratorRest
     ;
-    
+
 methodDeclaratorRest
     :   formalParameters ('[' ']')*
         ('throws' qualifiedNameList)?
@@ -527,8 +548,9 @@ variableDeclarators
     ;
 
 variableDeclarator
-    :   variableDeclaratorId ('=' variableInitializer)?
-        ->  ^(VariableDecl Void variableDeclaratorId NoVariableInitializer)
+    :   variableDeclaratorId ('=' i=variableInitializer)?
+        -> {i==null}? ^(VariableDecl Void variableDeclaratorId NoVariableInitializer)
+        ->            ^(VariableDecl Void variableDeclaratorId $i)
     ;
     
 constantDeclaratorsRest
@@ -547,10 +569,10 @@ variableInitializer
     :   arrayInitializer -> arrayInitializer
     |   expression -> ^(ExpressionToVariableInitializer expression)
     ;
-        
+
 arrayInitializer
-    :   '{' (l+=variableInitializer (',' l+=variableInitializer)* (',')? )? '}'
-        ->  ^(ArrayInitializer $l+)
+    :   '{' (x=variableInitializer (',' variableInitializer)* (',')? )? '}'
+        ->  ^(ArrayInitializer variableInitializer*)
     ;
 
 modifier
@@ -605,19 +627,21 @@ primitiveType
 
 variableModifier
     :   'final' -> Final
-    |   annotation ^(AnnotationToModifier annotation)
+    |   annotation -> ^(AnnotationToModifier annotation)
     ;
 
 typeArguments
     :   '<' typeArgument (',' typeArgument)* '>'
         ->  ^(TypeArgumentList typeArgument+)
     ;
-    
+
+// GRAMMAR MODIFICATION : ( 'extends' | 'super' ) type -> ( 'extends' type | 'super' type )
+
 typeArgument
-    :(   type
-    |   '?' (( 'extends'// -> ^(ExtendTypeArgument Void)
-             | 'super'  // -> ^(SuperTypeArgument Void)
-             ) type)?) -> ^(ExplicitTypeArgument Void)
+    :   type                 -> ^(ExplicitTypeArgument type)
+    |   '?' ( 'extends' type -> ^(ExtendTypeArgument type)
+            | 'super'   type -> ^(SuperTypeArgument type)
+            )?               -> WildCardTypeArgument
     ;
     
 qualifiedNameList
@@ -625,7 +649,9 @@ qualifiedNameList
     ;
 
 formalParameters
-    :   '(' formalParameterDecls? ')' -> ^(FormalParameterDeclList )
+    :   '(' d=formalParameterDecls? ')'
+        -> {d==null}? ^(FormalParameterDeclList )
+        ->            $d
     ;
     
 formalParameterDecls
@@ -648,20 +674,20 @@ methodBody
     ;
 
 constructorBody
-    :   '{' explicitConstructorInvocation? blockStatement* '}'
-        ->  ^(ConstructorBody
-                NoExplicitConstructorInvocation
-                ^(BlockStatementList blockStatement*)
-                )
+    :   '{' ci=explicitConstructorInvocation? blockStatement* '}'
+        -> {ci==null}? ^(ConstructorBody NoExplicitConstructorInvocation ^(BlockStatementList blockStatement*))
+        -> ^(ConstructorBody $ci ^(BlockStatementList blockStatement*))
     ;
 
 explicitConstructorInvocation
-    :   nonWildcardTypeArguments?
-        (   'this'  -> ^(ThisInvocation ^(TypeList ) ^(ExpressionList ))
-        |   'super' -> ^(SuperInvocation ^(TypeList ) ^(ExpressionList ))
-        ) arguments ';'
-    |   primary '.' nonWildcardTypeArguments? 'super' arguments ';'
-        ->  ^(PrimarySuperInvocation primary nonWildcardTypeArguments arguments)
+    :   ta=nonWildcardTypeArguments? ( 'this' | x='super' ) arguments ';'
+        -> {ta==null && x==null}? ^(ThisInvocation ^(TypeList ) arguments)
+        -> {x==null}?             ^(ThisInvocation $ta arguments)
+        -> {ta==null}?            ^(SuperInvocation ^(TypeList ) arguments)
+        ->                        ^(SuperInvocation $ta arguments)
+    |   primary '.' ta=nonWildcardTypeArguments? 'super' arguments ';'
+        -> {ta==null}? ^(PrimarySuperInvocation primary ^(TypeArgumentList ) arguments)
+        ->             ^(PrimarySuperInvocation primary $ta arguments)
     ;
 
 
@@ -698,8 +724,8 @@ annotations
 annotation
     :   '@' annotationName ( '('
         (   elementValuePairs -> ^(Pairs annotationName elementValuePairs)
-        |   elementValue -> ^(Element annotationName elementValue)
-        )? ')' )?
+        |   elementValue      -> ^(Element annotationName elementValue)
+        )? ')' )?             -> ^(NameToAnnotation annotationName)
     ;
     
 annotationName
@@ -707,8 +733,8 @@ annotationName
     ;
 
 elementValuePairs
-    :   l+=elementValuePair (',' l+=elementValuePair)*
-        ->  ^(ElementValuePairList $l+)
+    :   elementValuePair (',' elementValuePair)*
+        ->  ^(ElementValuePairList elementValuePair+)
     ;
 
 elementValuePair
@@ -720,10 +746,10 @@ elementValue
     |   annotation -> ^(AnnotationToElementValue annotation)
     |   elementValueArrayInitializer -> elementValueArrayInitializer
     ;
-    
+
 elementValueArrayInitializer
-    :   '{' (l+=elementValue (',' l+=elementValue)*)? (',')? '}'
-        ->  ^(ElementValueArrayInitializer $l+)
+    :   '{' (elementValue (',' elementValue)*)? (',')? '}'
+        ->  ^(ElementValueArrayInitializer elementValue*)
     ;
     
 annotationTypeDeclaration
@@ -756,10 +782,11 @@ annotationMethodOrConstantRest
     :   annotationMethodRest -> annotationMethodRest
     |   annotationConstantRest -> annotationConstantRest
     ;
-    
+
 annotationMethodRest
-    :   Identifier '(' ')' defaultValue?
-        ->  ^(AnnotationMethod ^(ModifierList ) Void Identifier defaultValue)
+    :   Identifier '(' ')' d=defaultValue?
+        -> {d==null}? ^(AnnotationMethod ^(ModifierList ) Void Identifier ^(EmptyElementValue ))
+        ->            ^(AnnotationMethod ^(ModifierList ) Void Identifier $d)
     ;
     
 annotationConstantRest
@@ -801,33 +828,41 @@ variableModifiers
 statement
     :   block
         ->  ^(BlockToStatement block)
-    |   ASSERT e=expression (':' v=expression)? ';'
-        ->  ^(Assert $e $v)
-    |   'if' parExpression ts=statement (options {k=1;}:'else' es=statement)?
-        ->  ^(If parExpression $ts EmptyStatement)
+    |   ASSERT expr=expression (':' val=expression)? ';'
+        -> {val==null}? ^(Assert $expr EmptyExpression)
+        ->              ^(Assert $expr $val)
+    |   'if' parExpression tstat=statement (options {k=1;}:'else' estat=statement)?
+        -> {estat==null}? ^(If parExpression $tstat EmptyStatement)
+        ->                ^(If parExpression $tstat $estat)
     |   'for' '(' forControl ')' statement
         ->  ^(For forControl statement)
     |   'while' parExpression statement
         ->  ^(While parExpression statement)
     |   'do' statement 'while' parExpression ';'
         ->  ^(DoWhile statement parExpression)
-    |   'try' block
-        ( catches 'finally' f=block //-> ^(Try $t catches $f)
-        | catches                   //-> ^(Try $t catches ^(BlockStatementList ))
-        |   'finally' f=block       //-> ^(Try $t ^(CatchClauseList ) $f)
-        ) -> ^(Try block ^(CatchClauseList ) ^(BlockStatementList ))
+    |   'try' tblock=block
+        ( c=catches 'finally' fblock=block
+        | c=catches
+        | 'finally' fblock=block
+        )
+        -> {fblock==null}? ^(Try $tblock $c ^(BlockStatementList ))
+        -> {c==null}?      ^(Try $tblock ^(CatchClauseList ) $fblock)
+        ->                 ^(Try $tblock $c $fblock)
     |   'switch' parExpression '{' switchBlockStatementGroups '}'
         ->  ^(Switch parExpression switchBlockStatementGroups)
     |   'synchronized' parExpression block
         ->  ^(SynchronizedStatement parExpression block)
-    |   'return' expression? ';'
-        ->  EmptyStatement //^(Return expression)
+    |   'return' res=expression? ';'
+        -> {res==null}? EmptyStatement
+        ->              ^(Return $res)
     |   'throw' expression ';'
         ->  ^(Throw expression)
-    |   'break' Identifier? ';'
-        ->  EmptyStatement //^(Break Identifier)
-    |   'continue' Identifier? ';'
-        ->  EmptyStatement //^(Continue Identifier)
+    |   'break' lab=Identifier? ';'
+        -> {lab==null}? EmptyStatement
+        ->              ^(Break $lab)
+    |   'continue' lab=Identifier? ';'
+        -> {lab==null}? EmptyStatement
+        ->              ^(Continue $lab)
     |   ';' 
         ->  EmptyStatement
     |   statementExpression ';'
@@ -874,12 +909,19 @@ switchLabel
         ->  ^(EnumConstantNameToSwitchLabel enumConstantName)
     |   'default' ':' -> Default
     ;
-    
+
 forControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
     :   enhancedForControl -> enhancedForControl
-    |   forInit? ';' expression? ';' forUpdate?
-        ->  ^(StandardForControl forInit expression forUpdate)
+    |   init=forInit? ';' cond=expression? ';' incr=forUpdate?
+        -> {init==null && cond==null && incr==null}? ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) EmptyExpression ^(ExpressionList ))
+        -> {init==null && cond==null}?               ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) EmptyExpression $incr)
+        -> {init==null && incr==null}?               ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) $cond ^(ExpressionList ))
+        -> {init==null}?                             ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) $cond $incr)
+        -> {cond==null && incr==null}?               ^(StandardForControl $init EmptyExpression ^(ExpressionList ))
+        -> {cond==null}?                             ^(StandardForControl $init EmptyExpression $incr)
+        -> {incr==null}?                             ^(StandardForControl $init $cond ^(ExpressionList ))
+        ->                                           ^(StandardForControl $init $cond $incr)
     ;
 
 forInit
@@ -897,6 +939,8 @@ enhancedForControl
 forUpdate
     :   expressionList -> expressionList
     ;
+
+// (* Passe prédicats sémantiques / pseudo-hooks *)
 
 // EXPRESSIONS
 
@@ -1015,7 +1059,6 @@ shiftOp
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
     ;
-
 
 additiveExpression
     :   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )*
