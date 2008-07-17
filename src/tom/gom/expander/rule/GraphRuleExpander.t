@@ -232,9 +232,13 @@ static class Subst extends @fullClassName(abstractType)@ {
       this.omega = omega;
       this.value = value;
     }
+
+    public String toString() {
+      return "<"+omega+","+value+">";
+    }
   }
 
-  protected static ArrayList<Substitution> getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
+  protected static List<Substitution> getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
     ArrayList<String> sharedlabels = new ArrayList();
     HashMap<String,Position> lhsLabels = labelledLhs.getMapFromLabelToPositionAndRemoveLabels();
     HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPosition();
@@ -244,19 +248,21 @@ static class Subst extends @fullClassName(abstractType)@ {
       }
     }
 
-    ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
+    List<Substitution> substitutions = new ArrayList<Substitution>();
     
-    // add the substitution for the root position
-    Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel("",new Position(new int[]{}),new Position(new int[]{})),sharedlabels,omega);
-    substitutions.add(subst);
-
-    // add a substitution for each shared label
+     // add a substitution for each shared label
     for (String sharedlabel: sharedlabels) {
       Position posLhs = lhsLabels.get(sharedlabel);
       Position posRhs = rhsLabels.get(sharedlabel);
-      Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel(label,posLhs,posRhs),sharedlabels,omega);
+      Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel(sharedlabel,posLhs,posRhs),sharedlabels,omega);
       substitutions.add(subst);
     }
+
+    // add the substitution for the root position at the end of the list
+    // the root subtitution must be necessary applied at the end
+    Substitution rootsubst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel("",new Position(new int[]{}),new Position(new int[]{})),sharedlabels,omega);
+    substitutions.add(rootsubst);
+    
     return substitutions;
   }
 
@@ -430,7 +436,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                 List<Substitution> substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
                 
                 /* 3. construct tt=SubstTerm(subject',r') */
-                for (subst: substitutions) {
+                for (Substitution subst: substitutions) {
                   @fullClassName(abstractType)@ r = subst.value;
                   //System.out.println("subst "+r);
                   Position posRedex = subst.omega;
@@ -658,13 +664,13 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   public static Term label2path(Term t) {
     HashMap map = new HashMap();
     try {
-      return (Term) `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
+      return (Term) `Sequence(RepeatId(OnceTopDownId(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
     } catch (tom.library.sl.VisitFailure e) {
       throw new tom.gom.tools.error.GomRuntimeException("Unexpected strategy failure!");
     }  
   }
 
-  %strategy CollectLabels(map:HashMap) extends Fail(){
+  %strategy CollectLabels(map:HashMap) extends Identity(){
     visit Term {
       LabTerm[l=label,t=term]-> {
         map.put(`label,getEnvironment().getPosition());
