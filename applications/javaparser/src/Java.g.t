@@ -233,10 +233,10 @@ packageDeclaration
 
 importDeclaration
     :   'import' s='static'? qualifiedName ('.' p='*')? ';'
-        -> {p==null && s==null}? ^(Import qualifiedName False False)
-        -> {p==null}?            ^(Import qualifiedName True  False)
-        -> {s==null}?            ^(Import qualifiedName False True )
-        ->                       ^(Import qualifiedName True  True )
+        -> {p==null && s==null}? ^(Import qualifiedName EmptyModifier False)
+        -> {p==null}?            ^(Import qualifiedName Static        False)
+        -> {s==null}?            ^(Import qualifiedName EmptyModifier True )
+        ->                       ^(Import qualifiedName Static        True )
     ;
     
 typeDeclaration
@@ -280,14 +280,14 @@ normalClassDeclaration[Tree modifiers]
         ('extends' e=type)?
         ('implements' i=typeList)?
         classBody
-        -> {tp==null && e==null && i==null}? ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) Void ^(TypeList ) classBody)
-        -> {tp==null && e==null}?            ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) Void $i classBody)
-        -> {tp==null && i==null}?            ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) $e ^(TypeList ) classBody)
-        -> {tp==null}?                       ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) $e $i classBody)
-        -> {e==null && i==null}?             ^(NormalClass Identifier {$modifiers} $tp Void ^(TypeList ) classBody)
-        -> {e==null}?                        ^(NormalClass Identifier {$modifiers} $tp Void $i classBody)
-        -> {i==null}?                        ^(NormalClass Identifier {$modifiers} $tp $e ^(TypeList ) classBody)
-        ->                                   ^(NormalClass Identifier {$modifiers} $tp $e $i classBody)
+        -> {tp==null && e==null && i==null}? ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) Void ^(TypeList ) classBody)
+        -> {tp==null && e==null}?            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) Void $i classBody)
+        -> {tp==null && i==null}?            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) $e ^(TypeList ) classBody)
+        -> {tp==null}?                       ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) $e $i classBody)
+        -> {e==null && i==null}?             ^(NormalClass Identifier {modifiers} $tp Void ^(TypeList ) classBody)
+        -> {e==null}?                        ^(NormalClass Identifier {modifiers} $tp Void $i classBody)
+        -> {i==null}?                        ^(NormalClass Identifier {modifiers} $tp $e ^(TypeList ) classBody)
+        ->                                   ^(NormalClass Identifier {modifiers} $tp $e $i classBody)
     ;
     
 typeParameters
@@ -307,15 +307,15 @@ typeBound
 
 enumDeclaration[Tree modifiers]
     :   ENUM Identifier ('implements' i=typeList)? enumBody
-        -> {i==null}? ^(EnumClass Identifier {$modifiers} ^(TypeList ) enumBody )
-        ->            ^(EnumClass Identifier {$modifiers} $i enumBody )
+        -> {i==null}? ^(EnumClass Identifier {modifiers} ^(TypeList ) enumBody )
+        ->            ^(EnumClass Identifier {modifiers} $i enumBody )
     ;
 
 enumBody
     :   '{' c=enumConstants? ','? b=enumBodyDeclarations? '}'
-        -> {c==null && b==null}? ^(EnumBody ^(EnumConstantList ) ^(ClassBodyDeclList ))
+        -> {c==null && b==null}? ^(EnumBody ^(EnumConstantList ) ^(BodyDeclList ))
         -> {c==null}?            ^(EnumBody ^(EnumConstantList ) $b)
-        -> {b==null}?            ^(EnumBody $c ^(ClassBodyDeclList ))
+        -> {b==null}?            ^(EnumBody $c ^(BodyDeclList ))
         ->                       ^(EnumBody $c $b)
     ;
 
@@ -325,10 +325,10 @@ enumConstants
 
 enumConstant
     :   anns=annotations? Identifier args=arguments? b=classBody?
-        -> {anns==null && args==null && b==null}? ^(EnumConstant Identifier ^(AnnotationList ) ^(ExpressionList ) ^(ClassBodyDeclList ))
-        -> {args==null && b==null}?               ^(EnumConstant Identifier $anns ^(ExpressionList ) ^(ClassBodyDeclList ))
-        -> {anns==null && b==null}?               ^(EnumConstant Identifier ^(AnnotationList ) $args ^(ClassBodyDeclList ))
-        -> {b==null}?                             ^(EnumConstant Identifier $anns $args ^(ClassBodyDeclList ))
+        -> {anns==null && args==null && b==null}? ^(EnumConstant Identifier ^(AnnotationList ) ^(ExpressionList ) ^(BodyDeclList ))
+        -> {args==null && b==null}?               ^(EnumConstant Identifier $anns ^(ExpressionList ) ^(BodyDeclList ))
+        -> {anns==null && b==null}?               ^(EnumConstant Identifier ^(AnnotationList ) $args ^(BodyDeclList ))
+        -> {b==null}?                             ^(EnumConstant Identifier $anns $args ^(BodyDeclList ))
         -> {anns==null && args==null}?            ^(EnumConstant Identifier ^(AnnotationList ) ^(ExpressionList ) $b)
         -> {args==null}?                          ^(EnumConstant Identifier $anns ^(ExpressionList ) $b)
         -> {anns==null}?                          ^(EnumConstant Identifier ^(AnnotationList ) $args $b)
@@ -337,7 +337,7 @@ enumConstant
     
 enumBodyDeclarations
     :   ';' (classBodyDeclaration)*
-        ->  ^(ClassBodyDeclList classBodyDeclaration*)
+        ->  ^(BodyDeclList classBodyDeclaration*)
     ;
     
 interfaceDeclaration[Tree modifiers]
@@ -347,10 +347,10 @@ interfaceDeclaration[Tree modifiers]
 
 normalInterfaceDeclaration[Tree modifiers]
     :   'interface' Identifier tp=typeParameters? ('extends' e=typeList)? interfaceBody
-        -> {tp==null && e==null}? ^(NormalInterface Identifier {$modifiers} ^(TypeParameterList ) ^(TypeList ) interfaceBody)
-        -> {tp==null}?            ^(NormalInterface Identifier {$modifiers} ^(TypeParameterList ) $e interfaceBody)
-        -> {e==null}?             ^(NormalInterface Identifier {$modifiers} $tp ^(TypeList ) interfaceBody)
-        ->                        ^(NormalInterface Identifier {$modifiers} $tp $e interfaceBody)
+        -> {tp==null && e==null}? ^(NormalInterface Identifier {modifiers} ^(TypeParameterList ) ^(TypeList ) interfaceBody)
+        -> {tp==null}?            ^(NormalInterface Identifier {modifiers} ^(TypeParameterList ) $e interfaceBody)
+        -> {e==null}?             ^(NormalInterface Identifier {modifiers} $tp ^(TypeList ) interfaceBody)
+        ->                        ^(NormalInterface Identifier {modifiers} $tp $e interfaceBody)
     ;
     
 typeList
@@ -358,30 +358,30 @@ typeList
     ;
     
 classBody
-    :   '{' classBodyDeclaration* '}' -> ^(ClassBodyDeclList classBodyDeclaration*)
+    :   '{' classBodyDeclaration* '}' -> ^(BodyDeclList classBodyDeclaration*)
     ;
     
 interfaceBody
     :   '{' interfaceBodyDeclaration* '}'
-        ->  ^(InterfaceBodyDeclList interfaceBodyDeclaration*)
+        ->  ^(BodyDeclList interfaceBodyDeclaration*)
     ;
 
 classBodyDeclaration
     :   ';'
     |   s='static'? block
-        -> {s==null}? ^(BlockToClassBodyDecl block False)
-        ->            ^(BlockToClassBodyDecl block True)
+        -> {s==null}? ^(BlockToBodyDecl block EmptyModifier)
+        ->            ^(BlockToBodyDecl block Static)
     |   modifiers memberDecl[$modifiers.tree] -> memberDecl
     ;
-    
+
+// (* PASSE "rule parameters" *)
+
 memberDecl[Tree modifiers]
-    :   genericMethodOrConstructorDecl
-        ->  genericMethodOrConstructorDecl
-    |   memberDeclaration
-        ->  memberDeclaration
+    :   genericMethodOrConstructorDecl[modifiers]
+    |   memberDeclaration[modifiers]
     |   'void' Identifier voidMethodDeclaratorRest
         ->  ^(MethodDecl
-                {$modifiers}
+                {modifiers}
                 ^(TypeParameterList )
                 Void
                 Identifier
@@ -391,7 +391,7 @@ memberDecl[Tree modifiers]
                 )
     |   Identifier constructorDeclaratorRest
         ->  ^(ConstructorDecl
-                {$modifiers}
+                {modifiers}
                 ^(TypeParameterList )
                 Identifier
                 ^(FormalParameterDeclList )
@@ -402,38 +402,50 @@ memberDecl[Tree modifiers]
                     )
                 )
     |   interfaceDeclaration[modifiers]
-        ->  ^(TypeDeclToClassBodyDecl interfaceDeclaration)
+        ->  ^(TypeDeclToBodyDecl interfaceDeclaration)
     |   classDeclaration[modifiers]
-        ->  ^(TypeDeclToClassBodyDecl classDeclaration)
+        ->  ^(TypeDeclToBodyDecl classDeclaration)
     ;
-    
-memberDeclaration
+
+// (* HERE *)
+
+memberDeclaration[Tree modifiers]
     :   type
-        (   methodDeclaration -> methodDeclaration
-        |   fieldDeclaration -> fieldDeclaration
+        (   methodDeclaration[modifiers $type.tree] -> methodDeclaration
+        |   fieldDeclaration[modifiers $type.tree] -> fieldDeclaration
         )
     ;
 
-genericMethodOrConstructorDecl
-    :   typeParameters genericMethodOrConstructorRest
+genericMethodOrConstructorDecl[Tree modifiers]
+    :   typeParameters genericMethodOrConstructorRest[modifiers $typeParameters.tree]
         -> genericMethodOrConstructorRest
     ;
     
-genericMethodOrConstructorRest
-    :   (type | 'void') Identifier methodDeclaratorRest
-        ->  ^(MethodDecl
-                ^(ModifierList )
-                ^(TypeParameterList )
+genericMethodOrConstructorRest[Tree modifiers, Tree typeparameters]
+    :   (t=type | 'void') Identifier methodDeclaratorRest
+        -> {t==null}?
+            ^(MethodDecl
+                {modifiers}
+                {typeparameters}
                 Void
                 Identifier
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
                 ^(BlockStatementList )
                 )
+         ->  ^(MethodDecl
+                 {modifiers}
+                 {typeparameters}
+                 $t
+                 Identifier
+                 ^(FormalParameterDeclList )
+                 ^(QualifiedNameList )
+                 ^(BlockStatementList )
+                 )
     |   Identifier constructorDeclaratorRest
         ->  ^(ConstructorDecl
-                ^(ModifierList )
-                ^(TypeParameterList )
+                {modifiers}
+                {typeparameters}
                 Identifier
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
@@ -444,12 +456,12 @@ genericMethodOrConstructorRest
                 )
     ;
 
-methodDeclaration
+methodDeclaration[Tree modifiers, Tree type]
     :   Identifier methodDeclaratorRest
         ->  ^(MethodDecl
-                ^(ModifierList )
+                {modifiers}
                 ^(TypeParameterList )
-                Void
+                {type}
                 Identifier
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
@@ -457,24 +469,22 @@ methodDeclaration
                 )
     ;
 
-fieldDeclaration
-    :   variableDeclarators ';'
-        ->  ^(VariablesDeclToClassBodyDecl ^(VariablesDecl ^(ModifierList ) variableDeclarators))
+fieldDeclaration[Tree modifiers, Tree type]
+    :   variableDeclarators[type] ';'
+        ->  ^(FieldDecl {modifiers} variableDeclarators)
     ;
-        
+
 interfaceBodyDeclaration
     :   modifiers interfaceMemberDecl[$modifiers.tree] -> interfaceMemberDecl
     |   ';'
     ;
 
 interfaceMemberDecl[Tree modifiers]
-    :   interfaceMethodOrFieldDecl
-        ->  interfaceMethodOrFieldDecl
-    |   interfaceGenericMethodDecl
-        ->  interfaceGenericMethodDecl
+    :   interfaceMethodOrFieldDecl[modifiers]
+    |   interfaceGenericMethodDecl[modifiers]
     |   'void' Identifier voidInterfaceMethodDeclaratorRest
-        ->  ^(InterfaceMethodDecl
-                {$modifiers}
+        ->  ^(MethodDecl
+                {modifiers}
                 ^(TypeParameterList )
                 Void
                 Identifier
@@ -482,19 +492,19 @@ interfaceMemberDecl[Tree modifiers]
                 ^(QualifiedNameList )
                 )
     |   interfaceDeclaration[modifiers]
-        ->  ^(TypeDeclToInterfaceBodyDecl interfaceDeclaration)
+        ->  ^(TypeDeclToBodyDecl interfaceDeclaration)
     |   classDeclaration[modifiers]
-        ->  ^(TypeDeclToInterfaceBodyDecl classDeclaration)
+        ->  ^(TypeDeclToBodyDecl classDeclaration)
     ;
     
-interfaceMethodOrFieldDecl
-    :   type Identifier interfaceMethodOrFieldRest
-        ->  ^(ConstantDecl ^(ModifierList ) type Identifier ^(ArrayInitializer ))
+interfaceMethodOrFieldDecl[Tree modifiers]
+    :   type Identifier interfaceMethodOrFieldRest[modifiers $type.tree $Identifier.tree]
+        -> interfaceMethodOrFieldRest
     ;
     
-interfaceMethodOrFieldRest
-    :   constantDeclaratorsRest ';' -> constantDeclaratorsRest
-    |   interfaceMethodDeclaratorRest -> interfaceMethodDeclaratorRest
+interfaceMethodOrFieldRest[Tree modifiers, Tree type, Tree name]
+    :   constantDeclaratorsRest[type, name] ';' -> ^(FieldDecl {modifiers} constantDeclaratorsRest)
+    |   interfaceMethodDeclaratorRest[modifiers, type, name] -> interfaceMethodDeclaratorRest
     ;
 
 methodDeclaratorRest
@@ -511,18 +521,30 @@ voidMethodDeclaratorRest
         |   ';'
         )
     ;
-    
-interfaceMethodDeclaratorRest
-    :   formalParameters ('[' ']')* ('throws' qualifiedNameList)? ';'
+
+interfaceMethodDeclaratorRest[Tree modifiers, Tree type, Tree name]
+    :   formalParameters ('[' ']')* ('throws' t=qualifiedNameList)? ';'
+        -> {t==null}? ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} ^(FormalParameterDeclList ))
+        ->            ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters)
     ;
-    
-interfaceGenericMethodDecl
-    :   typeParameters (type | 'void') Identifier
-        interfaceMethodDeclaratorRest
-        ->  ^(InterfaceMethodDecl
-                ^(ModifierList )
+
+interfaceGenericMethodDecl[Tree modifiers]
+    :   typeParameters (t=type | 'void') Identifier
+        interfaceMethodDeclaratorRest[modifiers, t.tree $Identifier.tree]
+        -> {t==null}?
+            ^(MethodDecl
+                {modifiers}
                 typeParameters
                 type
+                Identifier
+                ^(FormalParameterDeclList )
+                ^(QualifiedNameList )
+                ^(BlockStatementList )
+                )
+        ->  ^(MethodDecl
+                {modifiers}
+                typeParameters
+                $t
                 Identifier
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
@@ -538,28 +560,32 @@ constructorDeclaratorRest
     :   formalParameters ('throws' qualifiedNameList)? constructorBody
     ;
 
-constantDeclarator
-    :   Identifier constantDeclaratorRest
-        ->  ^(ConstantDecl ^(ModifierList ) Void Identifier ^(ArrayInitializer ))
+// (* PASSE memberDecl *)
+
+constantDeclarator[Tree type]
+    :   Identifier constantDeclaratorRest[type $Identifier.tree]
+        ->  constantDeclaratorRest
     ;
     
-variableDeclarators
-    :   variableDeclarator (',' variableDeclarator)*
+variableDeclarators[Tree type]
+    :   variableDeclarator[type] (',' variableDeclarator[type])*
         ->  ^(VariableDeclList variableDeclarator+)
     ;
 
-variableDeclarator
+variableDeclarator[Tree type]
     :   variableDeclaratorId ('=' i=variableInitializer)?
-        -> {i==null}? ^(VariableDecl Void variableDeclaratorId EmptyVariableInitializer)
-        ->            ^(VariableDecl Void variableDeclaratorId $i)
+        -> {i==null}? ^(VariableDecl {type} variableDeclaratorId EmptyVariableInitializer)
+        ->            ^(VariableDecl {type} variableDeclaratorId $i)
     ;
     
-constantDeclaratorsRest
-    :   constantDeclaratorRest (',' constantDeclarator)*
+constantDeclaratorsRest[Tree type, Tree name]
+    :   constantDeclaratorRest[type, name] (',' constantDeclarator[type])*
+        ->  ^(VariableDeclList constantDeclaratorRest constantDeclarator*)
     ;
 
-constantDeclaratorRest
+constantDeclaratorRest[Tree type, Tree name]
     :   ('[' ']')* '=' variableInitializer
+        ->  ^(VariableDecl {type} {name} variableInitializer)
     ;
     
 variableDeclaratorId
@@ -755,7 +781,7 @@ elementValueArrayInitializer
     
 annotationTypeDeclaration[Tree modifiers]
     :   '@' 'interface' Identifier annotationTypeBody
-        ->  ^(AnnotationType Identifier {$modifiers} annotationTypeBody)
+        ->  ^(AnnotationType Identifier {modifiers} annotationTypeBody)
     ;
     
 annotationTypeBody
@@ -768,7 +794,8 @@ annotationTypeElementDeclaration
     ;
     
 annotationTypeElementRest[Tree modifiers]
-    :   type annotationMethodOrConstantRest ';' -> annotationMethodOrConstantRest
+    :   type annotationMethodOrConstantRest[modifiers $type.tree] ';'
+        ->  annotationMethodOrConstantRest
     |   normalClassDeclaration[modifiers] ';'?
         ->  ^(TypeDeclToAnnotationElement normalClassDeclaration)
     |   normalInterfaceDeclaration[modifiers] ';'?
@@ -779,20 +806,20 @@ annotationTypeElementRest[Tree modifiers]
         ->  ^(TypeDeclToAnnotationElement annotationTypeDeclaration)
     ;
     
-annotationMethodOrConstantRest
-    :   annotationMethodRest -> annotationMethodRest
-    |   annotationConstantRest -> annotationConstantRest
+annotationMethodOrConstantRest[Tree modifiers, Tree type]
+    :   annotationMethodRest[modifiers, type]
+    |   annotationConstantRest[modifiers, type]
     ;
 
-annotationMethodRest
+annotationMethodRest[Tree modifiers, Tree type]
     :   Identifier '(' ')' d=defaultValue?
-        -> {d==null}? ^(AnnotationMethod ^(ModifierList ) Void Identifier ^(EmptyElementValue ))
-        ->            ^(AnnotationMethod ^(ModifierList ) Void Identifier $d)
+        -> {d==null}? ^(AnnotationMethod {modifiers} {type} Identifier ^(EmptyElementValue ))
+        ->            ^(AnnotationMethod {modifiers} {type} Identifier $d)
     ;
     
-annotationConstantRest
-    :   variableDeclarators
-        ->  ^(AnnotationConstant ^(ModifierList ) Void variableDeclarators)
+annotationConstantRest[Tree modifiers, Tree type]
+    :   variableDeclarators[type]
+        ->  ^(AnnotationConstant {modifiers} variableDeclarators)
     ;
     
 defaultValue
@@ -807,7 +834,7 @@ block
     
 blockStatement
     :   localVariableDeclarationStatement
-        ->  ^(VariablesDeclToBlockStatement localVariableDeclarationStatement)
+        ->  ^(FieldDeclToBlockStatement localVariableDeclarationStatement)
     |   classOrInterfaceDeclaration
         ->  ^(TypeDeclToBlockStatement classOrInterfaceDeclaration)
     |   statement -> ^(Statement statement)
@@ -818,8 +845,8 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   variableModifiers type variableDeclarators
-        ->  ^(VariablesDecl variableModifiers variableDeclarators)
+    :   variableModifiers type variableDeclarators[$type.tree]
+        ->  ^(FieldDecl variableModifiers variableDeclarators)
     ;
     
 variableModifiers
@@ -927,7 +954,7 @@ options {k=3;} // be efficient for common case: for (ID ID : ID) ...
 
 forInit
     :   localVariableDeclaration
-        ->  ^(VariablesDeclToForInit localVariableDeclaration)
+        ->  ^(FieldDeclToForInit localVariableDeclaration)
     |   expressionList
         ->  ^(ExpressionListToForInit expressionList)
     ;

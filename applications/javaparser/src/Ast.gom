@@ -45,7 +45,7 @@ packageDeclaration
 
 ImportList = ImportList( Import_* )
 
-Import_ = Import( name:QualifiedName, isstatic:Boolean_, wholepackage:Boolean_ )
+Import_ = Import( name:QualifiedName, modifier:Modifier, wholepackage:Boolean_ )
 
 /*
 importDeclaration
@@ -56,9 +56,9 @@ importDeclaration
 TypeDeclList = TypeDeclList( TypeDecl* )
 
 TypeDecl =
- | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, extends_:Type, implements_:TypeList, classbody:ClassBody )
+ | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, extends_:Type, implements_:TypeList, classbody:Body )
  | EnumClass      ( name:String, modifiers:ModifierList, implements_:TypeList, enumbody:EnumBody )
- | NormalInterface( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, interfaceextends:TypeList, interfacebody:InterfaceBody )
+ | NormalInterface( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, interfaceextends:TypeList, interfacebody:Body )
  | AnnotationType ( name:String, modifiers:ModifierList, annotationbody:AnnotationTypeBody )
  | EmptyTypeDecl()
 
@@ -132,7 +132,7 @@ enumDeclaration
     ;
 */
 
-EnumBody = EnumBody( constants:EnumConstantList, bodydecls:ClassBody )
+EnumBody = EnumBody( constants:EnumConstantList, bodydecls:Body )
 
 /*
 enumBody
@@ -148,7 +148,7 @@ enumConstants
     ;
 */
 
-EnumConstant = EnumConstant( name:String, annotations:AnnotationList, arguments:ExpressionList, classbody:ClassBody )
+EnumConstant = EnumConstant( name:String, annotations:AnnotationList, arguments:ExpressionList, classbody:Body )
 
 /*
 enumConstant
@@ -177,29 +177,25 @@ typeList
     ;
 */
 
-ClassBody = ClassBodyDeclList( ClassBodyDecl* )
+Body = BodyDeclList( BodyDecl* )
 
 /*
 classBody
     :   '{' classBodyDeclaration* '}'
     ;
-*/
 
-InterfaceBody = InterfaceBodyDeclList( InterfaceBodyDecl* )
-
-/*
 interfaceBody
     :   '{' interfaceBodyDeclaration* '}'
     ;
 */
 
-ClassBodyDecl =
- | BlockToClassBodyDecl        ( block:Block, isstatic:Boolean_ )
- | VariablesDeclToClassBodyDecl( decls:VariablesDecl )
+BodyDecl =
+ | BlockToBodyDecl( block:Block, modifier:Modifier )
+ | FieldDecl( modifiers:ModifierList, decls:VariableDeclList )
  | MethodDecl( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, methodbody:Block )
  | ConstructorDecl( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, constructorbody:ConstructorBody )
- | TypeDeclToClassBodyDecl( decl:TypeDecl )
- | EmptyClassBodyDecl()
+ | TypeDeclToBodyDecl( decl:TypeDecl )
+ | EmptyBodyDecl()
 
 /*
 classBodyDeclaration
@@ -237,15 +233,7 @@ methodDeclaration
 fieldDeclaration
     :   variableDeclarators ';'
     ;
-*/
 
-InterfaceBodyDecl =
- | ConstantDecl         ( modifiers:ModifierList, type:Type, name:String, initializer:VariableInitializer )
- | InterfaceMethodDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList )
- | TypeDeclToInterfaceBodyDecl( decl:TypeDecl )
- | EmptyInterfaceBodyDecl()
-
-/*
 interfaceBodyDeclaration
     :   modifiers interfaceMemberDecl
     |   ';'
@@ -305,8 +293,6 @@ constantDeclarator
     ;
 */
 
-VariablesDecl = VariablesDecl( modifiers:ModifierList, decls:VariableDeclList )
-
 VariableDeclList = VariableDeclList( VariableDecl* )
 
 /*
@@ -364,6 +350,7 @@ Modifier =
  | Synchronized()
  | Transient()
  | Volatile()
+ | EmptyModifier()
 
 /*
 modifier
@@ -674,8 +661,8 @@ block
 */
 
 BlockStatement =
- | VariablesDeclToBlockStatement( decls:VariablesDecl )
- | TypeDeclToBlockStatement( decl:TypeDecl )
+ | FieldDeclToBlockStatement( fielddecl:BodyDecl )
+ | TypeDeclToBlockStatement( typedecl:TypeDecl )
  | Statement( statement:Statement )
 
 /*
@@ -813,7 +800,7 @@ options {k=3;} // be efficient for common case: for (ID ID : ID) ...
 */
 
 ForInit =
- | VariablesDeclToForInit( decls:VariablesDecl )
+ | FieldDeclToForInit( decl:BodyDecl )
  | ExpressionListToForInit( Expression* )
  | EmptyForInit()
 
@@ -1044,7 +1031,7 @@ Primary =
  | StringLiteral       ( stringvalue:String )
  | BooleanLiteral      ( booleanvalue:Boolean_ )
  | Null                ()
- | ClassCreator              ( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:ClassBody )
+ | ClassCreator              ( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:Body )
  | InitializedArrayCreator   ( type:Type, initializer:VariableInitializer )
  | NonInitializedArrayCreator( fixedlengths:ExpressionList, nonfixeddimensions:int )
  | QualifiedNameToPrimary( name:QualifiedName, suffix:Suffix )
@@ -1074,7 +1061,7 @@ Suffix =
  | ExplicitGenericInvocation( typearguments:TypeList, name:String, arguments:ExpressionList )
  | ThisSuffix()
  | SuperSuffix( super_:Super_ )
- | InnerCreator( typearguments:TypeList, class_:String, arguments:ExpressionList, body:ClassBody )
+ | InnerCreator( typearguments:TypeList, class_:String, arguments:ExpressionList, body:Body )
  | ArrayIndexSuffix( position:ExpressionList )
  | EmptySuffix()
 
