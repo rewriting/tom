@@ -177,6 +177,7 @@ tokens {
 
 @header {
 package parser;
+import org.antlr.runtime.tree.Tree;
 import parser.ast.AstTree;
 }
 
@@ -239,14 +240,14 @@ importDeclaration
     ;
     
 typeDeclaration
-    :   classOrInterfaceDeclaration -> classOrInterfaceDeclaration
+    :   classOrInterfaceDeclaration
     |   ';' -> EmptyTypeDecl
     ;
     
 classOrInterfaceDeclaration
     :   classOrInterfaceModifiers
-        (    classDeclaration -> classDeclaration
-        |    interfaceDeclaration -> interfaceDeclaration
+        (    classDeclaration[$classOrInterfaceModifiers.tree] -> classDeclaration
+        |    interfaceDeclaration[$classOrInterfaceModifiers.tree] -> interfaceDeclaration
         )
     ;
     
@@ -269,24 +270,24 @@ modifiers
     :   modifier* -> ^(ModifierList modifier* )
     ;
 
-classDeclaration
-    :   normalClassDeclaration -> normalClassDeclaration
-    |   enumDeclaration -> enumDeclaration
+classDeclaration[Tree modifiers]
+    :   normalClassDeclaration[modifiers]
+    |   enumDeclaration[modifiers]
     ;
 
-normalClassDeclaration
+normalClassDeclaration[Tree modifiers]
     :   'class' Identifier tp=typeParameters?
         ('extends' e=type)?
         ('implements' i=typeList)?
         classBody
-        -> {tp==null && e==null && i==null}? ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) Void ^(TypeList ) classBody)
-        -> {tp==null && e==null}?            ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) Void $i classBody)
-        -> {tp==null && i==null}?            ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) $e ^(TypeList ) classBody)
-        -> {tp==null}?                       ^(NormalClass Identifier ^(ModifierList ) ^(TypeParameterList ) $e $i classBody)
-        -> {e==null && i==null}?             ^(NormalClass Identifier ^(ModifierList ) $tp Void ^(TypeList ) classBody)
-        -> {e==null}?                        ^(NormalClass Identifier ^(ModifierList ) $tp Void $i classBody)
-        -> {i==null}?                        ^(NormalClass Identifier ^(ModifierList ) $tp $e ^(TypeList ) classBody)
-        ->                                   ^(NormalClass Identifier ^(ModifierList ) $tp $e $i classBody)
+        -> {tp==null && e==null && i==null}? ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) Void ^(TypeList ) classBody)
+        -> {tp==null && e==null}?            ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) Void $i classBody)
+        -> {tp==null && i==null}?            ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) $e ^(TypeList ) classBody)
+        -> {tp==null}?                       ^(NormalClass Identifier {$modifiers} ^(TypeParameterList ) $e $i classBody)
+        -> {e==null && i==null}?             ^(NormalClass Identifier {$modifiers} $tp Void ^(TypeList ) classBody)
+        -> {e==null}?                        ^(NormalClass Identifier {$modifiers} $tp Void $i classBody)
+        -> {i==null}?                        ^(NormalClass Identifier {$modifiers} $tp $e ^(TypeList ) classBody)
+        ->                                   ^(NormalClass Identifier {$modifiers} $tp $e $i classBody)
     ;
     
 typeParameters
@@ -304,10 +305,10 @@ typeBound
     :   type ('&' type)* -> ^(TypeList type+)
     ;
 
-enumDeclaration
+enumDeclaration[Tree modifiers]
     :   ENUM Identifier ('implements' i=typeList)? enumBody
-        -> {i==null}? ^(EnumClass Identifier ^(ModifierList ) ^(TypeList ) enumBody )
-        ->            ^(EnumClass Identifier ^(ModifierList ) $i enumBody )
+        -> {i==null}? ^(EnumClass Identifier {$modifiers} ^(TypeList ) enumBody )
+        ->            ^(EnumClass Identifier {$modifiers} $i enumBody )
     ;
 
 enumBody
@@ -339,17 +340,17 @@ enumBodyDeclarations
         ->  ^(ClassBodyDeclList classBodyDeclaration*)
     ;
     
-interfaceDeclaration
-    :   normalInterfaceDeclaration -> normalInterfaceDeclaration
-    |   annotationTypeDeclaration -> annotationTypeDeclaration
+interfaceDeclaration[Tree modifiers]
+    :   normalInterfaceDeclaration[modifiers]
+    |   annotationTypeDeclaration[modifiers]
     ;
 
-normalInterfaceDeclaration
+normalInterfaceDeclaration[Tree modifiers]
     :   'interface' Identifier tp=typeParameters? ('extends' e=typeList)? interfaceBody
-        -> {tp==null && e==null}? ^(NormalInterface Identifier ^(ModifierList ) ^(TypeParameterList ) ^(TypeList ) interfaceBody)
-        -> {tp==null}?            ^(NormalInterface Identifier ^(ModifierList ) ^(TypeParameterList ) $e interfaceBody)
-        -> {e==null}?             ^(NormalInterface Identifier ^(ModifierList ) $tp ^(TypeList ) interfaceBody)
-        ->                        ^(NormalInterface Identifier ^(ModifierList ) $tp $e interfaceBody)
+        -> {tp==null && e==null}? ^(NormalInterface Identifier {$modifiers} ^(TypeParameterList ) ^(TypeList ) interfaceBody)
+        -> {tp==null}?            ^(NormalInterface Identifier {$modifiers} ^(TypeParameterList ) $e interfaceBody)
+        -> {e==null}?             ^(NormalInterface Identifier {$modifiers} $tp ^(TypeList ) interfaceBody)
+        ->                        ^(NormalInterface Identifier {$modifiers} $tp $e interfaceBody)
     ;
     
 typeList
@@ -370,17 +371,17 @@ classBodyDeclaration
     |   s='static'? block
         -> {s==null}? ^(BlockToClassBodyDecl block False)
         ->            ^(BlockToClassBodyDecl block True)
-    |   modifiers memberDecl -> memberDecl
+    |   modifiers memberDecl[$modifiers.tree] -> memberDecl
     ;
     
-memberDecl
+memberDecl[Tree modifiers]
     :   genericMethodOrConstructorDecl
         ->  genericMethodOrConstructorDecl
     |   memberDeclaration
         ->  memberDeclaration
     |   'void' Identifier voidMethodDeclaratorRest
         ->  ^(MethodDecl
-                ^(ModifierList )
+                {$modifiers}
                 ^(TypeParameterList )
                 Void
                 Identifier
@@ -390,20 +391,20 @@ memberDecl
                 )
     |   Identifier constructorDeclaratorRest
         ->  ^(ConstructorDecl
-                ^(ModifierList )
+                {$modifiers}
                 ^(TypeParameterList )
                 Identifier
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
                 ^(ConstructorBody
-                    ^(NoExplicitConstructorInvocation )
+                    ^(EmptyExplicitConstructorInvocation )
                     ^(BlockStatementList )
                     )
                 )
-    |   interfaceDeclaration
-        ->  ^(TypeDeclToClassBodyDecl ^(ModifierList ) interfaceDeclaration)
-    |   classDeclaration
-        ->  ^(TypeDeclToClassBodyDecl ^(ModifierList ) classDeclaration)
+    |   interfaceDeclaration[modifiers]
+        ->  ^(TypeDeclToClassBodyDecl interfaceDeclaration)
+    |   classDeclaration[modifiers]
+        ->  ^(TypeDeclToClassBodyDecl classDeclaration)
     ;
     
 memberDeclaration
@@ -437,7 +438,7 @@ genericMethodOrConstructorRest
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
                 ^(ConstructorBody
-                    ^(NoExplicitConstructorInvocation )
+                    ^(EmptyExplicitConstructorInvocation )
                     ^(BlockStatementList )
                     )
                 )
@@ -462,27 +463,27 @@ fieldDeclaration
     ;
         
 interfaceBodyDeclaration
-    :   modifiers interfaceMemberDecl -> interfaceMemberDecl
+    :   modifiers interfaceMemberDecl[$modifiers.tree] -> interfaceMemberDecl
     |   ';'
     ;
 
-interfaceMemberDecl
+interfaceMemberDecl[Tree modifiers]
     :   interfaceMethodOrFieldDecl
         ->  interfaceMethodOrFieldDecl
     |   interfaceGenericMethodDecl
         ->  interfaceGenericMethodDecl
     |   'void' Identifier voidInterfaceMethodDeclaratorRest
         ->  ^(InterfaceMethodDecl
-                ^(ModifierList )
+                {$modifiers}
                 ^(TypeParameterList )
                 Void
                 Identifier
                 ^(FormalParameterDeclList )
                 ^(QualifiedNameList )
                 )
-    |   interfaceDeclaration
+    |   interfaceDeclaration[modifiers]
         ->  ^(TypeDeclToInterfaceBodyDecl interfaceDeclaration)
-    |   classDeclaration
+    |   classDeclaration[modifiers]
         ->  ^(TypeDeclToInterfaceBodyDecl classDeclaration)
     ;
     
@@ -549,7 +550,7 @@ variableDeclarators
 
 variableDeclarator
     :   variableDeclaratorId ('=' i=variableInitializer)?
-        -> {i==null}? ^(VariableDecl Void variableDeclaratorId NoVariableInitializer)
+        -> {i==null}? ^(VariableDecl Void variableDeclaratorId EmptyVariableInitializer)
         ->            ^(VariableDecl Void variableDeclaratorId $i)
     ;
     
@@ -584,7 +585,7 @@ modifier
     |   'abstract'     -> Abstract
     |   'final'        -> Final
     |   'native'       -> Native
-    |   'synchronized' -> SynchronizedModifier
+    |   'synchronized' -> Synchronized
     |   'transient'    -> Transient
     |   'volatile'     -> Volatile
     |   'strictfp'     -> StrictFP
@@ -675,7 +676,7 @@ methodBody
 
 constructorBody
     :   '{' ci=explicitConstructorInvocation? blockStatement* '}'
-        -> {ci==null}? ^(ConstructorBody NoExplicitConstructorInvocation ^(BlockStatementList blockStatement*))
+        -> {ci==null}? ^(ConstructorBody EmptyExplicitConstructorInvocation ^(BlockStatementList blockStatement*))
         -> ^(ConstructorBody $ci ^(BlockStatementList blockStatement*))
     ;
 
@@ -752,9 +753,9 @@ elementValueArrayInitializer
         ->  ^(ElementValueArrayInitializer elementValue*)
     ;
     
-annotationTypeDeclaration
+annotationTypeDeclaration[Tree modifiers]
     :   '@' 'interface' Identifier annotationTypeBody
-        ->  ^(AnnotationType Identifier ^(ModifierList ) annotationTypeBody)
+        ->  ^(AnnotationType Identifier {$modifiers} annotationTypeBody)
     ;
     
 annotationTypeBody
@@ -763,18 +764,18 @@ annotationTypeBody
     ;
     
 annotationTypeElementDeclaration
-    :   modifiers annotationTypeElementRest -> annotationTypeElementRest
+    :   modifiers annotationTypeElementRest[$modifiers.tree] -> annotationTypeElementRest
     ;
     
-annotationTypeElementRest
+annotationTypeElementRest[Tree modifiers]
     :   type annotationMethodOrConstantRest ';' -> annotationMethodOrConstantRest
-    |   normalClassDeclaration ';'?
+    |   normalClassDeclaration[modifiers] ';'?
         ->  ^(TypeDeclToAnnotationElement normalClassDeclaration)
-    |   normalInterfaceDeclaration ';'?
+    |   normalInterfaceDeclaration[modifiers] ';'?
         ->  ^(TypeDeclToAnnotationElement normalInterfaceDeclaration)
-    |   enumDeclaration ';'?
+    |   enumDeclaration[modifiers] ';'?
         ->  ^(TypeDeclToAnnotationElement enumDeclaration)
-    |   annotationTypeDeclaration ';'?
+    |   annotationTypeDeclaration[modifiers] ';'?
         ->  ^(TypeDeclToAnnotationElement annotationTypeDeclaration)
     ;
     

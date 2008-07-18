@@ -4,15 +4,24 @@ imports int String
 
 abstract syntax
 
-/* Noms de slots suivis d'un '_' :
+/* Java keywords used followed by a '_' :
+
+Sorts names :
+
+Boolean
+Super
+
+Slots names :
 
 class
 else
 extends
 finally
+if
 implements
 import
 package
+super
 
 */
 
@@ -36,7 +45,7 @@ packageDeclaration
 
 ImportList = ImportList( Import_* )
 
-Import_ = Import( name:QualifiedName, isstatic:BooleanLiteral, wholepackage:BooleanLiteral )
+Import_ = Import( name:QualifiedName, isstatic:Boolean_, wholepackage:Boolean_ )
 
 /*
 importDeclaration
@@ -185,11 +194,11 @@ interfaceBody
 */
 
 ClassBodyDecl =
- | BlockToClassBodyDecl        ( block:Block, isstatic:BooleanLiteral )
+ | BlockToClassBodyDecl        ( block:Block, isstatic:Boolean_ )
  | VariablesDeclToClassBodyDecl( decls:VariablesDecl )
  | MethodDecl( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, methodbody:Block )
  | ConstructorDecl( modifiers:ModifierList, typeparameters:TypeParameterList, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList, constructorbody:ConstructorBody )
- | TypeDeclToClassBodyDecl( modifiers:ModifierList, decl:TypeDecl )
+ | TypeDeclToClassBodyDecl( decl:TypeDecl )
  | EmptyClassBodyDecl()
 
 /*
@@ -233,7 +242,7 @@ fieldDeclaration
 InterfaceBodyDecl =
  | ConstantDecl         ( modifiers:ModifierList, type:Type, name:String, initializer:VariableInitializer )
  | InterfaceMethodDecl  ( modifiers:ModifierList, typeparameters:TypeParameterList, type:Type, name:String, formalparameters:FormalParameterDeclList, throws:QualifiedNameList )
- | TypeDeclToInterfaceBodyDecl( modifiers:ModifierList, decl:TypeDecl )
+ | TypeDeclToInterfaceBodyDecl( decl:TypeDecl )
  | EmptyInterfaceBodyDecl()
 
 /*
@@ -329,7 +338,7 @@ variableDeclaratorId
 VariableInitializer =
  | ArrayInitializer( VariableInitializer* )
  | ExpressionToVariableInitializer( value:Expression )
- | NoVariableInitializer()
+ | EmptyVariableInitializer()
 
 /*
 variableInitializer
@@ -352,7 +361,7 @@ Modifier =
  | Final()
  | StrictFP()
  | Native()
- | SynchronizedModifier()
+ | Synchronized()
  | Transient()
  | Volatile()
 
@@ -385,9 +394,9 @@ typeName
     ;
 */
 
-// Void in place of EmptyType. Should be a PrimitiveType
+// Void in place of EmptyType
 Type =
- | ArrayType           ( type:Type )
+ | ArrayType           ( type:Type, dimensions:int )
  | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
  | PrimitiveType       ( primitivetype:PrimitiveType )
  | Void()
@@ -456,7 +465,11 @@ typeArgument
     :   type
     |   '?' (('extends' | 'super') type)?
     ;
-    
+*/
+
+QualifiedNameList = QualifiedNameList( QualifiedName* )
+
+/*
 qualifiedNameList
     :   qualifiedName (',' qualifiedName)*
     ;
@@ -470,7 +483,7 @@ formalParameters
     ;
 */
 
-FormalParameterDecl = FormalParameterDecl( modifiers:ModifierList, type:Type, name:String, variablenumber:BooleanLiteral )
+FormalParameterDecl = FormalParameterDecl( modifiers:ModifierList, type:Type, name:String, variablenumber:Boolean_ )
 
 /*
 formalParameterDecls
@@ -499,7 +512,7 @@ ExplicitConstructorInvocation =
  | ThisInvocation        ( typearguments:TypeList, argument:ExpressionList )
  | SuperInvocation       ( typearguments:TypeList, argument:ExpressionList )
  | PrimarySuperInvocation( primary:Primary, typearguments:TypeList, argument:ExpressionList )
- | NoExplicitConstructorInvocation()
+ | EmptyExplicitConstructorInvocation()
 
 /*
 explicitConstructorInvocation
@@ -507,8 +520,6 @@ explicitConstructorInvocation
     |   primary '.' nonWildcardTypeArguments? 'super' arguments ';'
     ;
 */
-
-QualifiedNameList = QualifiedNameList( QualifiedName* )
 
 QualifiedName =
  | QualifiedName( String* )
@@ -534,7 +545,7 @@ integerLiteral
     ;
 */
 
-BooleanLiteral =
+Boolean_ =
  | True()
  | False()
 
@@ -764,6 +775,7 @@ switchBlockStatementGroups
 
 SwitchBlockStatementGroup = SwitchBlockStatementGroup( labels:SwitchLabelList, body:Block )
 
+/*
 /* The change here (switchLabel -> switchLabel+) technically makes this grammar
    ambiguous; but with appropriately greedy parsing it yields the most
    appropriate AST, one in which each group, except possibly the last one, has
@@ -820,8 +832,6 @@ forUpdate
     ;
 */
 
-// (* RELECTURE *)
-
 // EXPRESSIONS
 
 /*
@@ -846,52 +856,52 @@ constantExpression
     ;
 */
 
-Expression = EmptyExpression()
-
-/*X =
+Expression =
  | Assign( lhs:Expression, rhs:Expression )
- | PlusAssign( lhs:Expression, rhs:Expression )
+ | PlusAssign ( lhs:Expression, rhs:Expression )
  | MinusAssign( lhs:Expression, rhs:Expression )
  | TimesAssign( lhs:Expression, rhs:Expression )
- | DivAssign( lhs:Expression, rhs:Expression )
- | AndAssign( lhs:Expression, rhs:Expression )
- | OrAssign( lhs:Expression, rhs:Expression )
- | XOrAssign( lhs:Expression, rhs:Expression )
- | ModAssign( lhs:Expression, rhs:Expression )
- | LeftShiftAssign( lhs:Expression, rhs:Expression )
+ | DivAssign  ( lhs:Expression, rhs:Expression )
+ | AndAssign  ( lhs:Expression, rhs:Expression )
+ | OrAssign   ( lhs:Expression, rhs:Expression )
+ | XOrAssign  ( lhs:Expression, rhs:Expression )
+ | ModAssign  ( lhs:Expression, rhs:Expression )
+ | LeftShiftAssign         ( lhs:Expression, rhs:Expression )
  | UnsignedRightShiftAssign( lhs:Expression, rhs:Expression )
- | SignedRightShiftAssign( lhs:Expression, rhs:Expression )
- | Conditional( if:Expression, then:Expression, else:Expression )
- | ConditionalOr( lhs:Expression, rhs:Expression )
+ | SignedRightShiftAssign  ( lhs:Expression, rhs:Expression )
+ | Conditional( if_:Expression, then:Expression, else_:Expression )
+ | ConditionalOr ( lhs:Expression, rhs:Expression )
  | ConditionalAnd( lhs:Expression, rhs:Expression )
- | InclusiveOr( lhs:Expression, rhs:Expression )
- | ExclusiveOr( lhs:Expression, rhs:Expression )
- | And( lhs:Expression, rhs:Expression )
- | Equal( lhs:Expression, rhs:Expression )
+ | InclusiveOr   ( lhs:Expression, rhs:Expression )
+ | ExclusiveOr   ( lhs:Expression, rhs:Expression )
+ | And           ( lhs:Expression, rhs:Expression )
+ | Equal   ( lhs:Expression, rhs:Expression )
  | NotEqual( lhs:Expression, rhs:Expression )
  | InstanceOf( lhs:Expression, rhs:Expression )
- | LowerOrEqual( lhs:Expression, rhs:Expression )
+ | LowerOrEqual  ( lhs:Expression, rhs:Expression )
  | GreaterOrEqual( lhs:Expression, rhs:Expression )
- | Lower( lhs:Expression, rhs:Expression )
- | Greater( lhs:Expression, rhs:Expression )
- | LeftShift( lhs:Expression, rhs:Expression )
+ | Lower         ( lhs:Expression, rhs:Expression )
+ | Greater       ( lhs:Expression, rhs:Expression )
+ | LeftShift         ( lhs:Expression, rhs:Expression )
  | UnsignedRightShift( lhs:Expression, rhs:Expression )
- | SignedRightShift( lhs:Expression, rhs:Expression )
- | Plus( lhs:Expression, rhs:Expression )
+ | SignedRightShift  ( lhs:Expression, rhs:Expression )
+ | Plus ( lhs:Expression, rhs:Expression )
  | Minus( lhs:Expression, rhs:Expression )
  | Times( lhs:Expression, rhs:Expression )
- | Div( lhs:Expression, rhs:Expression )
- | Mod( lhs:Expression, rhs:Expression )
- | UPlus( expression:Expression )
+ | Div  ( lhs:Expression, rhs:Expression )
+ | Mod  ( lhs:Expression, rhs:Expression )
+ | UPlus ( expression:Expression )
  | UMinus( expression:Expression )
- | PreInc( expression:Expression )
- | PreDec( expression:Expression )
+ | PreInc ( expression:Expression )
+ | PreDec ( expression:Expression )
  | PostInc( expression:Expression )
  | PostDec( expression:Expression )
  | BitwiseNot( expression:Expression )
  | LogicalNot( expression:Expression )
- | 
-*/
+ | TypeCast( casttype:Type, expression:Expression )
+ | ExpressionCast( castexpression:Expression, expression:Expression ) // semantics ?
+ | Primary( primary:Primary, selectors:SuffixList )
+ | EmptyExpression()
 
 /*
 expression
@@ -1000,9 +1010,7 @@ additiveExpression
 multiplicativeExpression
     :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )*
     ;
-*/
 
-/*
 unaryExpression
     :   '+' unaryExpression
     |   '-' unaryExpression
@@ -1026,19 +1034,21 @@ castExpression
 
 Primary =
  | ExpressionToPrimary( expression:Expression )
- | This( nested:QualifiedName, suffix:IdentifierSuffix )
- | Super( arguments:ExpressionList )
- | SuperCall( name:String, arguments:ExpressionList)
- | HexLiteral          ( value:String )
- | OctalLiteral        ( value:String )
- | DecimalLiteral      ( value:String )
- | FloatingPointLiteral( value:String )
- | CharacterLiteral    ( value:String )
- | StringLiteral       ( value:String )
- | BooleanLiteral      ( booleanvalue:BooleanLiteral )
- | Null()
- | ClassCreator( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:ClassBody )
- | InitializedArrayCreator( typearguments:TypeList, type:Type, dimension:int, initializer:VariableInitializer )
+ | This( nested:QualifiedName, suffix:Suffix )
+ | Super( super_:Super_ )
+ | HexLiteral          ( stringvalue:String )
+ | OctalLiteral        ( stringvalue:String )
+ | DecimalLiteral      ( stringvalue:String )
+ | FloatingPointLiteral( stringvalue:String )
+ | CharacterLiteral    ( stringvalue:String )
+ | StringLiteral       ( stringvalue:String )
+ | BooleanLiteral      ( booleanvalue:Boolean_ )
+ | Null                ()
+ | ClassCreator              ( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:ClassBody )
+ | InitializedArrayCreator   ( type:Type, initializer:VariableInitializer )
+ | NonInitializedArrayCreator( fixedlengths:ExpressionList, nonfixeddimensions:int )
+ | QualifiedNameToPrimary( name:QualifiedName, suffix:Suffix )
+ | Class( type:Type )
 
 /*
 primary
@@ -1053,16 +1063,20 @@ primary
     ;
 */
 
-IdentifierSuffix =
+// "identifierSuffix" and "selector" included
+
+SuffixList = SuffixList( Suffix* )
+
+Suffix =
  | ArrayClassSuffix( dimension:int )
- | ArraySuffix( int* )
- | ArgumentsToSuffix( arguments:ExpressionList )
- | ClassSuffix()
+ | ArgumentsSuffix( arguments:ExpressionList )
+ | CallSuffix( method:String, arguments:ExpressionList )
  | ExplicitGenericInvocation( typearguments:TypeList, name:String, arguments:ExpressionList )
  | ThisSuffix()
- | SuperSuffix( arguments:ExpressionList )
- | InnerCreatorToSuffix( creator:InnerCreator )
-
+ | SuperSuffix( super_:Super_ )
+ | InnerCreator( typearguments:TypeList, class_:String, arguments:ExpressionList, body:ClassBody )
+ | ArrayIndexSuffix( position:ExpressionList )
+ | EmptySuffix()
 
 /*
 identifierSuffix
@@ -1085,11 +1099,7 @@ createdName
     :   classOrInterfaceType
     |   primitiveType
     ;
-*/
 
-InnerCreator = InnerCreator( typearguments:TypeList, class_:String, arguments:ExpressionList, body:ClassBody )
-
-/*
 innerCreator
     :   nonWildcardTypeArguments? Identifier classCreatorRest
     ;
@@ -1112,17 +1122,7 @@ explicitGenericInvocation
 nonWildcardTypeArguments
     :   '<' typeList '>'
     ;
-*/
 
-Selector =
- | CallSelector( method:String, arguments:ExpressionList )
- | ThisSelector()
- | SuperSelector( arguments:ExpressionList )
- | SuperCallSelector( method:String, arguments:ExpressionList )
- | CreatorToSelector( creator:InnerCreator )
- | ArrayIndexSelector( index:Expression )
-
-/*
 selector
     :   '.' Identifier arguments?
     |   '.' 'this'
@@ -1130,7 +1130,14 @@ selector
     |   '.' 'new' innerCreator
     |   '[' expression ']'
     ;
-    
+*/
+
+Super_ =
+ | SuperConstruction( arguments:ExpressionList )
+ | SuperFieldAccess( name:String )
+ | SuperCall( name:String, arguments:ExpressionList )
+
+/*
 superSuffix
     :   arguments
     |   '.' Identifier arguments?
