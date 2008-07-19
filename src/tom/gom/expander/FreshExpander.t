@@ -26,6 +26,7 @@ package tom.gom.expander;
 
 import java.util.logging.Level;
 import tom.gom.GomStreamManager;
+import tom.gom.SymbolTable;
 import tom.gom.adt.gom.types.*;
 import tom.library.sl.*;
 import java.util.ArrayList;
@@ -39,9 +40,17 @@ public class FreshExpander {
   public static GomModuleList expand(GomModuleList m) {
     try {
       ArrayList list = new ArrayList();
-      return (GomModuleList) `Sequence(TopDown(ExpandAtoms(list)),TopDown(UpdateSpecialization(list))).visitLight(m);
+      GomModuleList res = 
+        (GomModuleList) `Sequence(TopDown(ExpandAtoms(list)),TopDown(UpdateSpecialization(list))).visitLight(m);
+      SymbolTable st = new SymbolTable();
+      st.fill(res);
+      System.out.println(st);
+      return res;
+    } catch (SymbolTable.SortException e) {
+      System.out.println(e);
+      throw new RuntimeException("Unexpected failures during freshgom expansion");
     } catch (VisitFailure e) {
-      throw new RuntimeException("Unexpected failures during Atom expansion");
+      throw new RuntimeException("Unexpected failures during freshgom expansion");
     }
   }
 

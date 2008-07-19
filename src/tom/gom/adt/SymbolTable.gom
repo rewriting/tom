@@ -5,7 +5,8 @@ abstract syntax
 SortDescription = SortDescription(Constructors:StringList, ModuleSymbol:String, FreshInfo:FreshSortInfo)
 
 FreshSortInfo = ExpressionTypeInfo(AccessibleAtoms:StringList)
-              | PatternTypeInfo(BoundAtoms:StringList, ContainsRefreshPoint:boolean)
+              | PatternTypeInfo(BoundAtoms:StringList, AccessibleAtoms:StringList, ContainsRefreshPoint:boolean)
+              | AtomTypeInfo()
               | NoFreshSort()
 
 ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList)
@@ -15,9 +16,9 @@ FieldDescriptionList = concFieldDescription(FieldDescription*)
 
 FieldDescription = FieldDescription(FieldName:String, Sort:String, StatusValue:Status)
 
-Status = RefreshPoint()
-       | Inner()
-       | Outer()
-       | Neutral()
+Status = SRefreshPoint()
+       | SInner()
+       | SOuter()
+       | SNeutral()
 
 StringList = StringList(String*)
