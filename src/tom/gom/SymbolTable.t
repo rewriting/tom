@@ -45,7 +45,7 @@ public class SymbolTable {
   %include { util/ArrayList.tom }
   %include { sl.tom }  
 
-  public class SortException extends Exception {
+  public class SortException extends RuntimeException {
     protected String sortName;
     public SortException(String sortName, String message) {
       super(message);
@@ -64,7 +64,7 @@ public class SymbolTable {
     }
   }
 
-  public class ConstructorException extends Exception {
+  public class ConstructorException extends RuntimeException {
     protected String constructorName;
     public ConstructorException(String constructorName, String message) {
       super(message);
@@ -103,42 +103,31 @@ public class SymbolTable {
     return buf.toString();
   }
 
-  public String qualifiedSortId(String sort) 
-    throws UndeclaredSortException {
-      try {
-        SortDescription desc = sorts.get(sort);
-        %match(desc) {
-          SortDescription[ModuleSymbol=m] -> { 
-            return `m.toLowerCase() + ".types." + sort; 
-          }
-        }
-        throw new RuntimeException("non exhaustive match");
-      } catch (Exception e) {
-        throw new UndeclaredSortException(
-            sort, "sort " + sort + "is undeclared");
+  public String qualifiedSortId(String sort) {
+    SortDescription desc = sorts.get(sort);
+    if (desc==null)
+      throw new UndeclaredSortException(sort,"");
+    %match(desc) {
+      SortDescription[ModuleSymbol=m] -> { 
+        return `m.toLowerCase() + ".types." + sort; 
       }
     }
+    throw new RuntimeException("non exhaustive match");
+  }
 
-  public String qualifiedConstructorId(String cons) 
-    throws UndeclaredConstructorException, InvalidConstructorException {
-      try {
-        ConstructorDescription desc = constructors.get(cons);
-        %match(desc) {
-          ConstructorDescription[SortSymbol=s] -> {
-            return qualifiedSortId(`s) + "." + `cons;
-          }
-        }
-        throw new RuntimeException("non exhaustive match");
-      } catch (UndeclaredSortException e) {
-        throw new InvalidConstructorException(
-            cons, `cons + " has undeclared sort " + e.getSortName());
-      } catch (Exception e) {
-        throw new UndeclaredConstructorException(
-            cons, cons + " is not declared");
+  public String qualifiedConstructorId(String cons) {
+    ConstructorDescription desc = constructors.get(cons);
+    if (desc==null) 
+      throw new UndeclaredConstructorException(cons,"");
+    %match(desc) {
+      ConstructorDescription[SortSymbol=s] -> {
+        return qualifiedSortId(`s) + "." + `cons; 
       }
     }
+    throw new RuntimeException("non exhaustive match");
+  }
 
-  public void fill(GomModuleList gml) throws SortException {
+  public void fill(GomModuleList gml) {
     %match(gml) {
       ConcGomModule(_*,m,_*) -> { `fill(m); }
     }
@@ -146,7 +135,7 @@ public class SymbolTable {
     fillAccessibleAtoms();
   }
 
-  private void fill(GomModule m) throws SortException {
+  private void fill(GomModule m) {
     %match(m) {
       GomModule[ModuleName=GomModuleName[Name=n],
         SectionList=(_*,Public[GrammarList=(_*,g,_*)],_*)] -> {
@@ -155,7 +144,7 @@ public class SymbolTable {
     }
   }
 
-  private void fill(String moduleName, Grammar g) throws SortException {
+  private void fill(String moduleName, Grammar g) {
     %match(g) {
       //Sorts[TypeList=(_*,ty,_*)] -> { `fill(moduleName,ty); }
       Grammar[ProductionList=(_*,p,_*)] -> { `fill(moduleName,p); }
@@ -180,7 +169,7 @@ public class SymbolTable {
     return res;
   }
 
-  private void fill(String moduleName, Production p) throws SortException {
+  private void fill(String moduleName, Production p) {
     %match(p) {
       SortType[Type=GomType[Specialization=spe,Name=n],
         Binds=boundAtoms,ProductionList=pl] -> {
@@ -204,123 +193,117 @@ public class SymbolTable {
   }
 
 
-  private void fillCons(String codom, Production p) 
-    throws UndeclaredSortException {
-      %match(p) {
-        Production[Name=n,DomainList=dl] -> {
-          %match(dl) {
-            ConcField(StarredField[FieldType=GomType[Name=dom]]) -> {
-              constructors.put(`n,
-                  `VariadicConstructorDescription(codom,dom,false));
-              return; 
-            }
-            _ /* not variadic */ -> { 
-              FieldDescriptionList fl = `getFields(codom,dl);
-              constructors.put(`n,`ConstructorDescription(codom,fl));
-            } 
+  private void fillCons(String codom, Production p)  {
+    %match(p) {
+      Production[Name=n,DomainList=dl] -> {
+        %match(dl) {
+          ConcField(StarredField[FieldType=GomType[Name=dom]]) -> {
+            constructors.put(`n,
+                `VariadicConstructorDescription(codom,dom,false));
+            return; 
           }
+          _ /* not variadic */ -> { 
+            FieldDescriptionList fl = `getFields(codom,dl);
+            constructors.put(`n,`ConstructorDescription(codom,fl));
+          } 
         }
       }
     }
+  }
 
-  private FieldDescriptionList getFields(String codom, FieldList dl)
-    throws UndeclaredSortException {
-      FieldDescriptionList res = `concFieldDescription();
-      %match(dl) {
-        ConcField(_*,
-            NamedField[Specifier=spe,Name=fn,FieldType=GomType[Name=ty]],
-            _*) -> {
-          Status st = null;
-          %match(spe) {
-            Outer[] -> { st = `SOuter(); }
-            Inner[] -> { st = `SInner(); }
-            None[] -> { st = `SNeutral(); }
-          }
-          FieldDescription desc = `FieldDescription(fn,ty,st);
-          res = `ConsconcFieldDescription(desc,res);
+  private FieldDescriptionList getFields(String codom, FieldList dl) {
+    FieldDescriptionList res = `concFieldDescription();
+    %match(dl) {
+      ConcField(_*,
+          NamedField[Specifier=spe,Name=fn,FieldType=GomType[Name=ty]],
+          _*) -> {
+        Status st = null;
+        %match(spe) {
+          Outer[] -> { st = `SOuter(); }
+          Inner[] -> { st = `SInner(); }
+          None[] -> { st = `SNeutral(); }
         }
-      }
-      return res;
-    }
-
-  private void setSortContainsRefreshPoint(String sort, boolean b) 
-    throws UndeclaredSortException {
-      SortDescription desc = sorts.get(sort);
-      SortDescription ndesc = null;
-      %match(desc) {
-        SortDescription[FreshInfo=i@PatternTypeInfo[]] -> {
-          ndesc = desc.setFreshInfo(`i.setContainsRefreshPoint(b));
-        }
-      }
-      sorts.put(sort,ndesc);
-    }
-
-  private void setAccessibleAtoms(String sort, StringList atoms) 
-    throws UndeclaredSortException {
-      SortDescription desc = sorts.get(sort);
-      SortDescription ndesc = null;
-      %match(desc) {
-        SortDescription[FreshInfo=i] -> {
-          ndesc = desc.setFreshInfo(`i.setAccessibleAtoms(atoms));
-        }
-      }
-      sorts.put(sort,ndesc);
-    }
-
-  private void setFreshSortInfo(String sort, FreshSortInfo i) 
-    throws UndeclaredSortException {
-      SortDescription desc = sorts.get(sort);
-      sorts.put(sort,desc.setFreshInfo(i));
-    }
-
-  public boolean isExpressionType(String sort) 
-    throws UndeclaredSortException {
-      try {
-        FreshSortInfo i = sorts.get(sort).getFreshInfo();
-        %match(i) { ExpressionTypeInfo[] -> { return true; } }
-        return false;
-      } catch (Exception e) {
-        throw new UndeclaredSortException(sort,null);
+        FieldDescription desc = `FieldDescription(fn,ty,st);
+        res = `ConsconcFieldDescription(desc,res);
       }
     }
+    return res;
+  }
 
-  public boolean isPatternType(String sort) 
-    throws UndeclaredSortException {
-      try {
-        FreshSortInfo i = sorts.get(sort).getFreshInfo();
-        %match(i) { PatternTypeInfo[] -> { return true; } }
-        return false;
-      } catch (Exception e) {
-        throw new UndeclaredSortException(sort,null);
+  private void setSortContainsRefreshPoint(String sort, boolean b) {
+    SortDescription desc = sorts.get(sort);
+    SortDescription ndesc = null;
+    %match(desc) {
+      SortDescription[FreshInfo=i@PatternTypeInfo[]] -> {
+        ndesc = desc.setFreshInfo(`i.setContainsRefreshPoint(b));
       }
     }
+    sorts.put(sort,ndesc);
+  }
 
-  public boolean isAtomType(String sort) 
-    throws UndeclaredSortException {
-      try {
-        FreshSortInfo i = sorts.get(sort).getFreshInfo();
-        %match(i) { AtomTypeInfo[] -> { return true; } }
-        return false;
-      } catch (Exception e) {
-        throw new UndeclaredSortException(sort,null);
+  private void setAccessibleAtoms(String sort, StringList atoms) {
+    SortDescription desc = sorts.get(sort);
+    SortDescription ndesc = null;
+    %match(desc) {
+      SortDescription[FreshInfo=i] -> {
+        ndesc = desc.setFreshInfo(`i.setAccessibleAtoms(atoms));
       }
     }
+    sorts.put(sort,ndesc);
+  }
+
+  private void setFreshSortInfo(String sort, FreshSortInfo i) {
+    SortDescription desc = sorts.get(sort);
+    sorts.put(sort,desc.setFreshInfo(i));
+  }
+
+  public boolean isExpressionType(String sort) {
+    if (isBuiltin(sort)) return false;
+    try {
+      FreshSortInfo i = sorts.get(sort).getFreshInfo();
+      %match(i) { ExpressionTypeInfo[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredSortException(sort,null);
+    }
+  }
+
+  public boolean isPatternType(String sort) {
+    if (isBuiltin(sort)) return false;
+    try {
+      FreshSortInfo i = sorts.get(sort).getFreshInfo();
+      %match(i) { PatternTypeInfo[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredSortException(sort,null);
+    }
+  }
+
+  public boolean isAtomType(String sort) {
+    if (isBuiltin(sort)) return false;
+    try {
+      FreshSortInfo i = sorts.get(sort).getFreshInfo();
+      %match(i) { AtomTypeInfo[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredSortException(sort,null);
+    }
+  }
 
   /**
-   * true if sort is not concerned by freshgom
+   * true if sort is concerned by freshgom
    **/
-  public boolean isNoFreshType(String sort) 
-    throws UndeclaredSortException {
-      try {
-        FreshSortInfo i = sorts.get(sort).getFreshInfo();
-        %match(i) { NoFreshSort[] -> { return true; } }
-        return false;
-      } catch (Exception e) {
-        throw new UndeclaredSortException(sort,null);
-      }
+  public boolean isFreshType(String sort) {
+    try {
+      FreshSortInfo i = sorts.get(sort).getFreshInfo();
+      %match(i) { !NoFreshSort[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredSortException(sort,null);
     }
+  }
 
-  public static boolean isBuiltin(String sort) {
+  public boolean isBuiltin(String sort) {
     %match(sort) {
       "bool" | "String" | "int" -> { return true; }
     }
@@ -332,24 +315,18 @@ public class SymbolTable {
     SetRefreshPoints(st:SymbolTable,codom:String) extends Identity() {
       visit FieldDescription {
         fd@FieldDescription[Sort=ty] -> {
-          if(isBuiltin(`ty)) return `fd;
-          try { 
-            if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
-              st.setSortContainsRefreshPoint(`ty,true);
-              return `fd.setStatusValue(`SRefreshPoint());
-            }
-          } catch(Exception e) { throw new RuntimeException(); }
+          if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
+            st.setSortContainsRefreshPoint(`ty,true);
+            return `fd.setStatusValue(`SRefreshPoint());
+          }
         }
       }
       visit ConstructorDescription {
         vd@VariadicConstructorDescription[Domain=ty] -> {
-          if(isBuiltin(`ty)) return `vd;
-          try { 
-            if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
-              st.setSortContainsRefreshPoint(`ty,true);
-              return `vd.setIsRefreshPoint(true);
-            }
-          } catch(Exception e) { throw new RuntimeException(); }
+          if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
+            st.setSortContainsRefreshPoint(`ty,true);
+            return `vd.setIsRefreshPoint(true);
+          }
         }
       }
     }
@@ -369,20 +346,18 @@ public class SymbolTable {
   }
 
   public tom.gom.adt.symboltable.types.stringlist.StringList 
-    getConstructors(String sort) throws UndeclaredSortException {
+    getConstructors(String sort) {
       return (tom.gom.adt.symboltable.types.stringlist.StringList)
         sorts.get(sort).getConstructors();
     }
 
-  public String getSort(String constructor) 
-    throws UndeclaredConstructorException {
-      return constructors.get(constructor).getSortSymbol();
-    }
+  public String getSort(String constructor) {
+    return constructors.get(constructor).getSortSymbol();
+  }
 
-  public FieldDescriptionList getFields(String constructor) 
-    throws UndeclaredConstructorException {
-      return constructors.get(constructor).getFields();
-    }
+  public FieldDescriptionList getFields(String constructor) {
+    return constructors.get(constructor).getFields();
+  }
 
   /**
    * returns the set of all sort symbols
@@ -397,18 +372,13 @@ public class SymbolTable {
   public Set<String> getFreshSorts() {
     Set<String> res = sorts.keySet();
     Iterator<String> it = res.iterator();
-    try {
-      while(it.hasNext()) 
-        if (isNoFreshType(it.next())) it.remove();
-    } catch(UndeclaredSortException e) {
-      throw new RuntimeException("should never happen");
-    }
+    while(it.hasNext()) 
+      if (!isFreshType(it.next())) it.remove();
     return res;
   }
 
   private StringList getAccessibleAtoms
-    (String sort, HashSet<String> visited) 
-    throws UndeclaredSortException, UndeclaredConstructorException {
+    (String sort, HashSet<String> visited)  {
       if (isBuiltin(sort) || visited.contains(sort)) return `StringList();
       visited.add(sort);
       if (isAtomType(sort)) return `StringList(sort);
@@ -431,19 +401,14 @@ public class SymbolTable {
     }
 
   private void fillAccessibleAtoms() {
-    try {
-      for(String s: getSorts()) {
-        if(isExpressionType(s) || isPatternType(s)) {
-          StringList atoms = getAccessibleAtoms(s,new HashSet<String>());
-          %match(StringList atoms) {
-            () -> { setFreshSortInfo(s,`NoFreshSort()); }
-            (_,_*)  -> { setAccessibleAtoms(s,atoms); }
-          }
+    for(String s: getSorts()) {
+      if(isExpressionType(s) || isPatternType(s)) {
+        StringList atoms = getAccessibleAtoms(s,new HashSet<String>());
+        %match(StringList atoms) {
+          () -> { setFreshSortInfo(s,`NoFreshSort()); }
+          (_,_*)  -> { setAccessibleAtoms(s,atoms); }
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException();
     }
   }
 }

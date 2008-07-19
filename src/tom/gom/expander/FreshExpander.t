@@ -54,9 +54,6 @@ public class FreshExpander {
       //System.out.println(st);
       res = addRawSortsAndConstructors(res);
       return res;
-    } catch (SymbolTable.SortException e) {
-      System.out.println(e);
-      throw new RuntimeException("sort exception");
     } catch (VisitFailure e) {
       throw new RuntimeException("should not happen");
     }
@@ -67,38 +64,58 @@ public class FreshExpander {
   /* -- rawification --**/
 
   private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
-    Set<String> fsorts = st.getFreshSorts();
-    System.out.println("fresh sorts : " + fsorts);
-    try { return (GomModuleList) `TopDown(AddRaw(fsorts)).visitLight(res); }
+    try { return (GomModuleList) `TopDown(AddRaw(st)).visitLight(res); }
     catch(VisitFailure e) { 
       throw new RuntimeException("should never happen"); 
     }
   }
 
-  %typeterm StringSet { implement { Set<String> } }
-  %strategy AddRaw(sorts:StringSet) extends Identity() {
-    visit ProductionList {
-      l@ConcProduction(p@SortType[Type=GomType[Name=n]],ps*) -> {
-        if (sorts.contains(`n)) {
-          sorts.remove(`n);
-          return `ConcProduction(p,rawify(p),ps*);
-        }
-        else return `l;
+  %strategy AddRaw(st:SymbolTable) extends Identity() {
+    visit Grammar {
+      g@Grammar[ProductionList=pl] -> { 
+        return `g.setProductionList(addRaw(st,`pl)); 
       }
     }
   }
 
-  %strategy Rawify() extends Identity() {
-    visit GomType { 
-      gt@GomType[Name=n] -> { return `gt.setName(raw(`n)); }
+  /**
+   * match pl with
+   *  | p::ps -> if fresh p && (not atom p) 
+   *             then p::(rawify p)::(addraw pl) 
+   *             else p::(addraw pl)
+   *  | [] -> []
+   **/
+  private static ProductionList addRaw(SymbolTable st, ProductionList pl) {
+    %match(pl) {
+      ConsConcProduction(p,ps) -> {
+        ProductionList nps = addRaw(st,`ps);
+        %match(p) {
+          SortType[Type=GomType[Name=n]] -> {
+            if (st.isFreshType(`n) && !st.isAtomType(`n)) 
+              return `ConcProduction(p,rawify(p,st),nps*);
+          }
+        }
+        return `ConcProduction(p,nps*);
+      }
+      e@EmptyConcProduction() -> { return `e; }
     }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  %strategy Rawify(st:SymbolTable) extends Identity() {
+    visit GomType { 
+      gt@GomType[Name=n] -> { 
+          if (st.isAtomType(`n)) return `gt.setName("String");
+          else return `gt.setName(raw(`n)); 
+        }
+      }
     visit Production { 
       p@Production[Name=n] -> { return `p.setName(raw(`n)); }
     }
   }
 
-  private static Production rawify(Production p) {
-    try { return (Production) `TopDown(Rawify()).visitLight(p); }
+  private static Production rawify(Production p, SymbolTable st) {
+    try { return (Production) `TopDown(Rawify(st)).visitLight(p); }
     catch(VisitFailure f) { 
       throw new RuntimeException("should never happen"); 
     }

@@ -1,4 +1,5 @@
 module SystemF
+imports String int
 abstract syntax
 
 atom TermVar
@@ -21,3 +22,4 @@ Type =
 
 TypeTypeAbs binds TypeVar = TypeTypeAbs(A:TypeVar, inner B:Type)
 
+Stub = stub(i:int)
