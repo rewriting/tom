@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
 import java.util.HashSet;
 
 
@@ -294,11 +295,25 @@ public class SymbolTable {
       }
     }
 
-  public boolean isAtom(String sort) 
+  public boolean isAtomType(String sort) 
     throws UndeclaredSortException {
       try {
         FreshSortInfo i = sorts.get(sort).getFreshInfo();
         %match(i) { AtomTypeInfo[] -> { return true; } }
+        return false;
+      } catch (Exception e) {
+        throw new UndeclaredSortException(sort,null);
+      }
+    }
+
+  /**
+   * true if sort is not concerned by freshgom
+   **/
+  public boolean isNoFreshType(String sort) 
+    throws UndeclaredSortException {
+      try {
+        FreshSortInfo i = sorts.get(sort).getFreshInfo();
+        %match(i) { NoFreshSort[] -> { return true; } }
         return false;
       } catch (Exception e) {
         throw new UndeclaredSortException(sort,null);
@@ -353,9 +368,10 @@ public class SymbolTable {
     }
   }
 
-  public StringList getConstructors(String sort) 
-    throws UndeclaredSortException {
-      return sorts.get(sort).getConstructors();
+  public tom.gom.adt.symboltable.types.stringlist.StringList 
+    getConstructors(String sort) throws UndeclaredSortException {
+      return (tom.gom.adt.symboltable.types.stringlist.StringList)
+        sorts.get(sort).getConstructors();
     }
 
   public String getSort(String constructor) 
@@ -368,8 +384,26 @@ public class SymbolTable {
       return constructors.get(constructor).getFields();
     }
 
+  /**
+   * returns the set of all sort symbols
+   **/
   public Set<String> getSorts() {
     return sorts.keySet();
+  }
+
+  /**
+   * returns only sorts concerned by freshGom
+   **/
+  public Set<String> getFreshSorts() {
+    Set<String> res = sorts.keySet();
+    Iterator<String> it = res.iterator();
+    try {
+      while(it.hasNext()) 
+        if (isNoFreshType(it.next())) it.remove();
+    } catch(UndeclaredSortException e) {
+      throw new RuntimeException("should never happen");
+    }
+    return res;
   }
 
   private StringList getAccessibleAtoms
@@ -377,10 +411,9 @@ public class SymbolTable {
     throws UndeclaredSortException, UndeclaredConstructorException {
       if (isBuiltin(sort) || visited.contains(sort)) return `StringList();
       visited.add(sort);
-      if (isAtom(sort)) return `StringList(sort);
+      if (isAtomType(sort)) return `StringList(sort);
       StringList res = `StringList();
-      for(String c: (tom.gom.adt.symboltable.types.stringlist.StringList) 
-          getConstructors(sort)) {
+      for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {

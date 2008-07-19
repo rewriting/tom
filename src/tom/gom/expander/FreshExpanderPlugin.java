@@ -79,7 +79,8 @@ public class FreshExpanderPlugin extends GomGenericPlugin {
       ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
     getLogger().log(Level.INFO, "Start expanding freshgom parts");
-    result = FreshExpander.expand(modules);
+    FreshExpander expander = new FreshExpander();
+    result = expander.expand(modules);
     if(modules == null) {
       getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),

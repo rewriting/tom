@@ -30,6 +30,8 @@ import tom.gom.SymbolTable;
 import tom.gom.adt.gom.types.*;
 import tom.library.sl.*;
 import java.util.ArrayList;
+import java.util.Set;
+import tom.gom.SymbolTable.*;
 
 public class FreshExpander {
 
@@ -37,22 +39,72 @@ public class FreshExpander {
   %include { util/ArrayList.tom }
   %include { sl.tom }  
 
-  public static GomModuleList expand(GomModuleList m) {
+  %typeterm SymbolTable { implement { tom.gom.SymbolTable } }
+
+  private SymbolTable st = new SymbolTable();
+
+  public GomModuleList expand(GomModuleList m) {
     try {
       ArrayList list = new ArrayList();
-      GomModuleList res = 
-        (GomModuleList) `Sequence(TopDown(ExpandAtoms(list)),TopDown(UpdateSpecialization(list))).visitLight(m);
-      SymbolTable st = new SymbolTable();
+      GomModuleList res = (GomModuleList) 
+        `Sequence(
+            TopDown(ExpandAtoms(list)),
+            TopDown(UpdateSpecialization(list))).visitLight(m);
       st.fill(res);
-      System.out.println(st);
+      //System.out.println(st);
+      res = addRawSortsAndConstructors(res);
       return res;
     } catch (SymbolTable.SortException e) {
       System.out.println(e);
-      throw new RuntimeException("Unexpected failures during freshgom expansion");
+      throw new RuntimeException("sort exception");
     } catch (VisitFailure e) {
-      throw new RuntimeException("Unexpected failures during freshgom expansion");
+      throw new RuntimeException("should not happen");
     }
   }
+  
+  private static String raw(String s) { return "Raw" + s; }
+
+  /* -- rawification --**/
+
+  private GomModuleList addRawSortsAndConstructors(GomModuleList res) {
+    Set<String> fsorts = st.getFreshSorts();
+    System.out.println("fresh sorts : " + fsorts);
+    try { return (GomModuleList) `TopDown(AddRaw(fsorts)).visitLight(res); }
+    catch(VisitFailure e) { 
+      throw new RuntimeException("should never happen"); 
+    }
+  }
+
+  %typeterm StringSet { implement { Set<String> } }
+  %strategy AddRaw(sorts:StringSet) extends Identity() {
+    visit ProductionList {
+      l@ConcProduction(p@SortType[Type=GomType[Name=n]],ps*) -> {
+        if (sorts.contains(`n)) {
+          sorts.remove(`n);
+          return `ConcProduction(p,rawify(p),ps*);
+        }
+        else return `l;
+      }
+    }
+  }
+
+  %strategy Rawify() extends Identity() {
+    visit GomType { 
+      gt@GomType[Name=n] -> { return `gt.setName(raw(`n)); }
+    }
+    visit Production { 
+      p@Production[Name=n] -> { return `p.setName(raw(`n)); }
+    }
+  }
+
+  private static Production rawify(Production p) {
+    try { return (Production) `TopDown(Rawify()).visitLight(p); }
+    catch(VisitFailure f) { 
+      throw new RuntimeException("should never happen"); 
+    }
+  }
+
+  /* -- atom expansion --**/
 
   %strategy ExpandAtoms(list:ArrayList) extends Identity() {
     visit Production {
@@ -61,10 +113,17 @@ public class FreshExpander {
         return `SortType(
             GomType(AtomType(),name),
             ConcAtom(),
-            ConcProduction(Production(name,ConcField(NamedField(None(),"n",GomType(ExpressionType(),"int")),NamedField(None(),"hint",GomType(ExpressionType(),"String"))),GomType(AtomType(),name),Origin(-1))));  
+            ConcProduction(Production(
+                name,
+                ConcField(
+                  NamedField(None(),"n",GomType(ExpressionType(),"int")),
+                  NamedField(None(),"hint",GomType(ExpressionType(),"String"))),
+                GomType(AtomType(),name),Origin(-1)))); 
       }
     }
   }
+
+  /* -- update expressiontype -> atomtype for atom sorts --**/
 
   %strategy UpdateSpecialization(list:ArrayList) extends Identity() {
     visit GomType {
