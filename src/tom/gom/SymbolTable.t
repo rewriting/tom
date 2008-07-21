@@ -105,6 +105,33 @@ public class SymbolTable {
     return buf.toString();
   }
 
+  public static String raw(String s) { return "Raw" + s; }
+
+  public String qualifiedRawSortId(String sort) {
+    SortDescription desc = sorts.get(sort);
+    if (desc==null)
+      throw new UndeclaredSortException(sort);
+    %match(desc) {
+      SortDescription[ModuleSymbol=m] -> { 
+        return `m.toLowerCase() + ".types." + raw(sort); 
+      }
+    }
+    throw new RuntimeException("non exhaustive match");
+  }
+
+  public String qualifiedRawConstructorId(String cons) {
+    ConstructorDescription desc = constructors.get(cons);
+    if (desc==null) 
+      throw new UndeclaredConstructorException(cons);
+    %match(desc) {
+      ConstructorDescription[SortSymbol=s] -> {
+        return qualifiedSortId(`s) + "." + `raw(cons); 
+      }
+    }
+    throw new RuntimeException("non exhaustive match");
+  }
+
+
   public String qualifiedSortId(String sort) {
     SortDescription desc = sorts.get(sort);
     if (desc==null)
@@ -263,6 +290,16 @@ public class SymbolTable {
     sorts.put(sort,desc.setFreshInfo(i));
   }
 
+  public boolean isVariadic(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { VariadicConstructorDescription[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
   public boolean isExpressionType(String sort) {
     if (isBuiltin(sort)) return false;
     try {
@@ -358,8 +395,17 @@ public class SymbolTable {
     }
 
   public String getSort(String constructor) {
-    return constructors.get(constructor).getSortSymbol();
+    try { return constructors.get(constructor).getSortSymbol(); }
+    catch(NullPointerException e) {
+      throw new UndeclaredConstructorException(constructor);
+    }
   }
+
+  public tom.gom.adt.symboltable.types.stringlist.StringList 
+    getAccessibleAtoms(String sort) {
+      return (tom.gom.adt.symboltable.types.stringlist.StringList)
+        sorts.get(sort).getFreshInfo().getAccessibleAtoms();
+    }
 
   public FieldDescriptionList getFields(String constructor) {
     return constructors.get(constructor).getFields();
