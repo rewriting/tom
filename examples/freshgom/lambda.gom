@@ -23,3 +23,4 @@ PatternList binds LVar = PList(Pattern*)
 Lam binds LVar = Lam(x:LVar, inner t:LTerm)
 Letin binds LVar = Letin(x:LVar, outer u:LTerm, inner t:LTerm)
 
+
