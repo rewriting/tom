@@ -11,6 +11,11 @@ LTerm =
  | LApp(u:LTerm,v:LTerm)
  | TAbs(Lam:<TypeTermAbs>)
  | TApp(t:LTerm,ty:Type)
+ | Test(s:Foo) 
+
+// Foo does not contains atom but is concerned by freshgom since it is 
+// referenced by LTerm.
+// Bar is not concerned by freshgom
 
 TermTermAbs binds TermVar = TermTermAbs(x:TermVar, inner t:LTerm)
 TypeTermAbs binds TypeVar = TypeTermAbs(T:TypeVar, inner t:LTerm)
@@ -22,4 +27,5 @@ Type =
 
 TypeTypeAbs binds TypeVar = TypeTypeAbs(A:TypeVar, inner B:Type)
 
-Stub = stub(i:int)
+Foo = foo(i:int)
+Bar = bar(i:int)
