@@ -66,14 +66,19 @@ public class SortTemplate extends TemplateHookedClass {
         "Bad argument for SortTemplate: " + gomClass);
   }
 
+  protected String generateInterface() {
+    String interfaces =  super.generateInterface();
+    if (interfaces.equals("")) return "";
+    else return %[implements @interfaces.substring(1)@]%;
+  }
+
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
 package @getPackage()@;        
 @generateImport()@
 //import @getPackage()@.@className().toLowerCase()@.*;
 //import @getPackage().substring(0,getPackage().lastIndexOf("."))@.*;
-
-public abstract class @className()@ extends @fullClassName(abstractType)@ {
+public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@ {
 
 @generateBlock()@
 ]%);

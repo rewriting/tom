@@ -134,6 +134,7 @@ public class SymbolTable {
       ConcGomModule(_*,m,_*) -> { `fill(m); }
     }
     fillGraph();
+    System.out.println("graph filled");
     isolateFreshSorts();
     System.out.println("sorts concerned by freshgom: " + getFreshSorts());
     fillRefreshPoints();
@@ -382,9 +383,6 @@ public class SymbolTable {
     return res;
   }
 
-  /**
-   * returns only sorts concerned by freshGom
-   **/
   public Set<String> getAtoms() {
     Set<String> res = getSorts();
     Iterator<String> it = res.iterator();
@@ -432,17 +430,16 @@ public class SymbolTable {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {
-            if (isBuiltin(`ty)) continue;
-            graph.addLink(sort,`ty);
+            if (!isBuiltin(`ty)) graph.addLink(sort,`ty);
           }
           ConstructorDescription[
             Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
-              if (isBuiltin(`ty)) continue;
-              graph.addLink(sort,`ty);
+              if (!isBuiltin(`ty)) graph.addLink(sort,`ty);
             }
         }
       }
     }
+    System.out.println("done");
   }
 
   /**
