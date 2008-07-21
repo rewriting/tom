@@ -27,6 +27,9 @@ syn match javaError "[\\]"
 syn match javaError "<<<\|\.\.\|=>\|<>\|||=\|&&=\|\*\/"
 
 " tom keyword definitions
+syn cluster myjavaTop add=javaExternal,javaError,javaError,javaBranch,javaLabelRegion,javaLabel,javaConditional,javaRepeat,javaBoolean,javaConstant,javaTypedef,javaOperator,javaType,javaType,javaStatement,javaStorageClass,javaAssert,javaExceptions,javaMethodDecl,javaClassDecl,javaClassDecl,javaClassDecl,javaScopeDecl,javaError,javaError2,javaUserLabel,javaLangObject,javaVarArg
+syn region  tomMetaQuoteEscape start="@" end="@" contains=@myjavaTop contained 
+syn region  tomMetaQuote	start="%\["  end="\]%" contains=tomMetaQuoteEscape
 syn match   tomExternal         "%include"
 syn match   tomOperator         "%op"
 syn match   tomOperator         "%oplist"
@@ -67,6 +70,7 @@ if version >= 508 || !exists("did_tom_syn_inits")
   HiLink tomArrow      Statement
   HiLink tomMake       Special
   HiLink tomOpkey      Statement
+  HiLink tomMetaQuote  String 
   delcommand HiLink
 endif
 
