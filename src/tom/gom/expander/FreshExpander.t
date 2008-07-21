@@ -77,7 +77,7 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     int i = 0;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(i!=0) buf.append(", ");
+      buf.append(", ");
       String aid = st.qualifiedSortId(a);
       buf.append("tom.library.freshgom.AlphaMap<" + aid + "> m" + i);
       i++;
@@ -89,7 +89,7 @@ public class FreshExpander {
     StringBuffer buf = new StringBuffer();
     int i = 0;
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(i!=0) buf.append(", ");
+      buf.append(", ");
       String aid = st.qualifiedSortId(a);
       buf.append("new tom.library.freshgom.AlphaMap<" + aid + ">()");
       i++;
@@ -236,27 +236,32 @@ public class FreshExpander {
     String rawsortid = st.qualifiedRawSortId(sort);
     String sortid = st.qualifiedSortId(sort);
 
-    return %[{
+    String res = %[{
       public abstract @sortid@ rename(int i,int j);
 
      /**
       * alpha equivalence 
       */
       public boolean equals(@sortid@ o) {
-        return alpha(o, @newalphamaps@);
+        return alpha(o @newalphamaps@);
       }
 
-      public abstract boolean alpha (@sortid@ o, @alphamapargs@);
+      public abstract boolean alpha (@sortid@ o @alphamapargs@);
 
      /**
       * exportation (term -> raw term) 
       */
       public @rawsortid@ export() {
-        return export(@newexportmaps@);
+        return _export(@newexportmaps@);
       }
 
-      public abstract @rawsortid@ export(@exportmapargs@);
-    }]%;
+      public abstract @rawsortid@ _export(@exportmapargs@);
+    ]%;
+
+    if(st.isPatternType(sort) && st.containsRefreshPoint(sort))
+      res += %[ public abstract @sortid@ refresh(); ]%;
+
+    return res + "}";
   }
 
   /* -- raw sort hooks -- */
@@ -279,10 +284,10 @@ public class FreshExpander {
       * importation (raw term -> term) 
       */
       public @sortid@ convert() {
-        return convert(@newconvertmaps@);
+        return _convert(@newconvertmaps@);
       }
 
-      public abstract @sortid@ convert(@convertmapargs@);
+      public abstract @sortid@ _convert(@convertmapargs@);
     }]%;
   }
 
@@ -305,7 +310,7 @@ public class FreshExpander {
     String rawsortid = st.qualifiedRawSortId(sort);
     String sortid = st.qualifiedSortId(sort);
 
-    return %[{
+    String res = %[{
       public @sortid@ rename(int i,int j) { 
         return this; 
       }
@@ -313,17 +318,26 @@ public class FreshExpander {
      /**
       * alpha equivalence 
       */
-      public boolean alpha (@sortid@ o, @alphamapargs@) {
+      public boolean alpha (@sortid@ o @alphamapargs@) {
         return false;
       };
 
      /**
       * exportation (term -> raw term) 
       */
-      public @rawsortid@ export(@exportmapargs@) {
+      public @rawsortid@ _export(@exportmapargs@) {
         return null;
       }
-    }]%;
+    ]%;
+
+    if(st.isPatternType(sort) && st.containsRefreshPoint(sort))
+      res += %[
+        public @sortid@ refresh() {
+          return null;
+        }
+    ]%;
+
+    return res + "}";
   }
 
   /* -- non variadic raw constructor hooks -- */
@@ -348,7 +362,7 @@ public class FreshExpander {
      /**
       * importation (raw term -> term) 
       */
-      public @sortid@ convert(@convertmapargs@) {
+      public @sortid@ _convert(@convertmapargs@) {
         return null;
       }
     }]%;

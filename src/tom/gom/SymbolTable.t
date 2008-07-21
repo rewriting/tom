@@ -236,7 +236,7 @@ public class SymbolTable {
             return; 
           }
           _ /* not variadic */ -> { 
-            FieldDescriptionList fl = `getFields(codom,dl);
+            FieldDescriptionList fl = `getFieldList(codom,dl);
             constructors.put(`n,`ConstructorDescription(codom,fl));
           } 
         }
@@ -244,7 +244,7 @@ public class SymbolTable {
     }
   }
 
-  private FieldDescriptionList getFields(String codom, FieldList dl) {
+  private FieldDescriptionList getFieldList(String codom, FieldList dl) {
     FieldDescriptionList res = `concFieldDescription();
     %match(dl) {
       ConcField(_*,
@@ -388,6 +388,10 @@ public class SymbolTable {
     }
   }
 
+  public boolean containsRefreshPoint(String sort) {
+      return sorts.get(sort).getFreshInfo().getContainsRefreshPoint();
+    }
+
   public tom.gom.adt.symboltable.types.stringlist.StringList 
     getConstructors(String sort) {
       return (tom.gom.adt.symboltable.types.stringlist.StringList)
@@ -407,9 +411,122 @@ public class SymbolTable {
         sorts.get(sort).getFreshInfo().getAccessibleAtoms();
     }
 
-  public FieldDescriptionList getFields(String constructor) {
+  public tom.gom.adt.symboltable.types.stringlist.StringList 
+    getBoundAtoms(String sort) {
+      return (tom.gom.adt.symboltable.types.stringlist.StringList)
+        sorts.get(sort).getFreshInfo().getBoundAtoms();
+    }
+
+  private FieldDescriptionList getFieldList(String constructor) {
     return constructors.get(constructor).getFields();
   }
+
+  public ArrayList<String> getFields(String constructor) {
+    ArrayList<String> result = new ArrayList<String>();
+    FieldDescriptionList l = getFieldList(constructor);
+    %match(l) {
+      concFieldDescription(_*,FieldDescription[FieldName=n],_*) -> {
+        result.add(`n);
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<String> getNeutralFields(String constructor) {
+    ArrayList<String> result = new ArrayList<String>();
+    FieldDescriptionList l = getFieldList(constructor);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SNeutral()],_*) -> {
+        result.add(`n);
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<String> getOuterFields(String constructor) {
+    ArrayList<String> result = new ArrayList<String>();
+    FieldDescriptionList l = getFieldList(constructor);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SOuter()],_*) -> {
+        result.add(`n);
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<String> getInnerFields(String constructor) {
+    ArrayList<String> result = new ArrayList<String>();
+    FieldDescriptionList l = getFieldList(constructor);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SInner()],_*) -> {
+        result.add(`n);
+      }
+    }
+    return result;
+  }
+
+  public String getSort(String cons, String field) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,FieldDescription[FieldName=n,Sort=sort],_*) -> {
+        if (`n.equals(field)) return `sort;
+      }
+    }
+    throw new RuntimeException("sould never happen");
+  }
+
+  public boolean isOuter(String cons, String field) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SOuter()],_*) -> {
+        if (`n.equals(field)) return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isInner(String cons, String field) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SInner()],_*) -> {
+        if (`n.equals(field)) return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isNeutral(String cons, String field) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SNeutral()],_*) -> {
+        if (`n.equals(field)) return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isRefreshPoint(String cons, String field) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SRefreshPoint()],_*) -> {
+        if (`n.equals(field)) return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isBound(String cons, String field) {
+    String sort = getSort(cons);
+    return getBoundAtoms(sort).contains(getSort(cons,field));
+  }
+
 
   /**
    * returns the set of all sort symbols
