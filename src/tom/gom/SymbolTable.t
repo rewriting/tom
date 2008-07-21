@@ -47,8 +47,8 @@ public class SymbolTable {
 
   public class SortException extends RuntimeException {
     protected String sortName;
-    public SortException(String sortName, String message) {
-      super(message);
+    public SortException(String sortName) {
+      super();
       this.sortName = sortName;
     }
     public String getSortName() { return sortName; } 
@@ -58,7 +58,7 @@ public class SymbolTable {
   }
 
   public class UndeclaredSortException extends SortException {
-    public UndeclaredSortException(String n, String m) { super(n,m); }
+    public UndeclaredSortException(String n) { super(n); }
     public String toString() {
       return "undeclared sort : " + sortName;
     }
@@ -66,18 +66,18 @@ public class SymbolTable {
 
   public class ConstructorException extends RuntimeException {
     protected String constructorName;
-    public ConstructorException(String constructorName, String message) {
-      super(message);
+    public ConstructorException(String constructorName) {
+      super();
       this.constructorName = constructorName;
     }
     public String getConstructorName() { return constructorName; } 
   }
 
   public class UndeclaredConstructorException extends ConstructorException {
-    public UndeclaredConstructorException(String n, String m) { super(n,m); }
+    public UndeclaredConstructorException(String n) { super(n); }
   }
   public class InvalidConstructorException extends ConstructorException {
-    public InvalidConstructorException(String n, String m) { super(n,m); }
+    public InvalidConstructorException(String n) { super(n); }
   }
 
   protected Hashtable<String,SortDescription> sorts = 
@@ -86,19 +86,21 @@ public class SymbolTable {
   protected Hashtable<String,ConstructorDescription> constructors =  
     new Hashtable<String,ConstructorDescription>();
 
+  protected Graph<String> graph = new Graph<String>();
+
   public String toString() {
     StringBuffer buf = new StringBuffer();
     for (Map.Entry<String,SortDescription> e: sorts.entrySet()) {
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(e.getValue(),swriter); }
       catch(java.io.IOException ex) { ex.printStackTrace(); }
-      buf.append(e.getKey() + ":\n" + swriter + "\n");
+      buf.append("sort " + e.getKey() + ":\n" + swriter + "\n");
     }
     for(Map.Entry<String,ConstructorDescription> e: constructors.entrySet()){
       java.io.StringWriter swriter = new java.io.StringWriter();
       try { tom.library.utils.Viewer.toTree(e.getValue(),swriter); }
       catch(java.io.IOException ex) { ex.printStackTrace(); }
-      buf.append(e.getKey() + ":\n" + swriter + "\n");
+      buf.append("constructor " + e.getKey() + ":\n" + swriter + "\n");
     }
     return buf.toString();
   }
@@ -106,7 +108,7 @@ public class SymbolTable {
   public String qualifiedSortId(String sort) {
     SortDescription desc = sorts.get(sort);
     if (desc==null)
-      throw new UndeclaredSortException(sort,"");
+      throw new UndeclaredSortException(sort);
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
         return `m.toLowerCase() + ".types." + sort; 
@@ -118,7 +120,7 @@ public class SymbolTable {
   public String qualifiedConstructorId(String cons) {
     ConstructorDescription desc = constructors.get(cons);
     if (desc==null) 
-      throw new UndeclaredConstructorException(cons,"");
+      throw new UndeclaredConstructorException(cons);
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
         return qualifiedSortId(`s) + "." + `cons; 
@@ -131,6 +133,9 @@ public class SymbolTable {
     %match(gml) {
       ConcGomModule(_*,m,_*) -> { `fill(m); }
     }
+    fillGraph();
+    isolateFreshSorts();
+    System.out.println("sorts concerned by freshgom: " + getFreshSorts());
     fillRefreshPoints();
     fillAccessibleAtoms();
   }
@@ -264,7 +269,7 @@ public class SymbolTable {
       %match(i) { ExpressionTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      throw new UndeclaredSortException(sort,null);
+      throw new UndeclaredSortException(sort);
     }
   }
 
@@ -275,7 +280,7 @@ public class SymbolTable {
       %match(i) { PatternTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      throw new UndeclaredSortException(sort,null);
+      throw new UndeclaredSortException(sort);
     }
   }
 
@@ -286,7 +291,7 @@ public class SymbolTable {
       %match(i) { AtomTypeInfo[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      throw new UndeclaredSortException(sort,null);
+      throw new UndeclaredSortException(sort);
     }
   }
 
@@ -299,7 +304,7 @@ public class SymbolTable {
       %match(i) { !NoFreshSort[] -> { return true; } }
       return false;
     } catch (NullPointerException e) {
-      throw new UndeclaredSortException(sort,null);
+      throw new UndeclaredSortException(sort);
     }
   }
 
@@ -363,17 +368,28 @@ public class SymbolTable {
    * returns the set of all sort symbols
    **/
   public Set<String> getSorts() {
-    return sorts.keySet();
+    return new HashSet(sorts.keySet());
   }
 
   /**
    * returns only sorts concerned by freshGom
    **/
   public Set<String> getFreshSorts() {
-    Set<String> res = sorts.keySet();
+    Set<String> res = getSorts();
     Iterator<String> it = res.iterator();
     while(it.hasNext()) 
       if (!isFreshType(it.next())) it.remove();
+    return res;
+  }
+
+  /**
+   * returns only sorts concerned by freshGom
+   **/
+  public Set<String> getAtoms() {
+    Set<String> res = getSorts();
+    Iterator<String> it = res.iterator();
+    while(it.hasNext()) 
+      if (!isAtomType(it.next())) it.remove();
     return res;
   }
 
@@ -404,12 +420,40 @@ public class SymbolTable {
     for(String s: getSorts()) {
       if(isExpressionType(s) || isPatternType(s)) {
         StringList atoms = getAccessibleAtoms(s,new HashSet<String>());
-        %match(StringList atoms) {
-          () -> { setFreshSortInfo(s,`NoFreshSort()); }
-          (_,_*)  -> { setAccessibleAtoms(s,atoms); }
+        setAccessibleAtoms(s,atoms);
+      }
+    }
+  }
+
+  private void fillGraph() {
+    for(String sort: getSorts()) {
+      if (isBuiltin(sort)) continue;
+      for(String c: getConstructors(sort)) {
+        ConstructorDescription cd = constructors.get(c);
+        %match(cd) {
+          VariadicConstructorDescription[Domain=ty] -> {
+            if (isBuiltin(`ty)) continue;
+            graph.addLink(sort,`ty);
+          }
+          ConstructorDescription[
+            Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
+              if (isBuiltin(`ty)) continue;
+              graph.addLink(sort,`ty);
+            }
         }
       }
     }
+  }
+
+  /**
+   * sets sorts that are not connected to any atom at NoFreshSort
+   **/
+  private void isolateFreshSorts() {
+    Set<String> atoms = getAtoms();
+    Set<String> sorts = getSorts();
+    Set<String> connected = graph.connected(atoms);
+    sorts.removeAll(connected);
+    for(String s: sorts) { setFreshSortInfo(s,`NoFreshSort()); }
   }
 }
 

@@ -106,7 +106,7 @@ public class FreshExpander {
     visit GomType { 
       gt@GomType[Name=n] -> { 
           if (st.isAtomType(`n)) return `gt.setName("String");
-          else return `gt.setName(raw(`n)); 
+          else if (!st.isBuiltin(`n)) return `gt.setName(raw(`n)); 
         }
       }
     visit Production { 
