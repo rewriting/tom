@@ -236,9 +236,12 @@ public class FreshExpander {
     String rawsortid = st.qualifiedRawSortId(sort);
     String sortid = st.qualifiedSortId(sort);
 
-    String res = %[{
-      public abstract @sortid@ rename(int i,int j);
+    String res = "{";
 
+    for(String a: st.getAccessibleAtoms(sort))
+      res += %[ public abstract @sortid@ rename@a@(int i,int j); ]%;
+
+    res += %[
      /**
       * alpha equivalence 
       */
@@ -310,21 +313,25 @@ public class FreshExpander {
     String rawsortid = st.qualifiedRawSortId(sort);
     String sortid = st.qualifiedSortId(sort);
 
-    String res = %[{
-      public @sortid@ rename(int i,int j) { 
-        return this; 
-      }
+    String res = "{";
 
-     /**
-      * alpha equivalence 
-      */
+    for(String a: st.getAccessibleAtoms(sort))
+      res += %[
+        public @sortid@ rename@a@(int i,int j) { 
+          return this; 
+        }]%;
+
+    res += %[
+      /**
+       * alpha equivalence 
+       */
       public boolean alpha (@sortid@ o @alphamapargs@) {
         return false;
       };
 
-     /**
-      * exportation (term -> raw term) 
-      */
+      /**
+       * exportation (term -> raw term) 
+       */
       public @rawsortid@ _export(@exportmapargs@) {
         return null;
       }
@@ -359,9 +366,9 @@ public class FreshExpander {
     String sortid = st.qualifiedSortId(sort);
 
     return %[{
-     /**
-      * importation (raw term -> term) 
-      */
+      /**
+       * importation (raw term -> term) 
+       */
       public @sortid@ _convert(@convertmapargs@) {
         return null;
       }
@@ -490,4 +497,4 @@ public class FreshExpander {
     }
   }
 
-}
+  }
