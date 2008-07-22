@@ -71,6 +71,9 @@ public class SymbolTable {
       this.constructorName = constructorName;
     }
     public String getConstructorName() { return constructorName; } 
+    public String toString() {
+      return "constructor exception : " + constructorName;
+    }
   }
 
   public class UndeclaredConstructorException extends ConstructorException {
@@ -161,7 +164,6 @@ public class SymbolTable {
       ConcGomModule(_*,m,_*) -> { `fill(m); }
     }
     fillGraph();
-    System.out.println("graph filled");
     isolateFreshSorts();
     System.out.println("sorts concerned by freshgom: " + getFreshSorts());
     fillRefreshPoints();
@@ -206,7 +208,7 @@ public class SymbolTable {
     %match(p) {
       SortType[Type=GomType[Specialization=spe,Name=n],
         Binds=boundAtoms,ProductionList=pl] -> {
-          // filling sorts (except AccessibleAtoms and ContainsRefreshPoint)
+          // filling sorts (except AccessibleAtoms)
           StringList cons = `getConstructors(pl);
           StringList bound = `convertBoundAtoms(boundAtoms);
           StringList empty = `StringList();
@@ -254,24 +256,14 @@ public class SymbolTable {
         %match(spe) {
           Outer[] -> { st = `SOuter(); }
           Inner[] -> { st = `SInner(); }
-          None[] -> { st = `SNeutral(); }
+          Neutral[] -> { st = `SNeutral(); }
+          None[] -> { st = isPatternType(codom) ? `SPattern() : `SNone(); }
         }
         FieldDescription desc = `FieldDescription(fn,ty,st);
         res = `ConsconcFieldDescription(desc,res);
       }
     }
     return res;
-  }
-
-  private void setSortContainsRefreshPoint(String sort, boolean b) {
-    SortDescription desc = sorts.get(sort);
-    SortDescription ndesc = null;
-    %match(desc) {
-      SortDescription[FreshInfo=i@PatternTypeInfo[]] -> {
-        ndesc = desc.setFreshInfo(`i.setContainsRefreshPoint(b));
-      }
-    }
-    sorts.put(sort,ndesc);
   }
 
   private void setAccessibleAtoms(String sort, StringList atoms) {
@@ -359,7 +351,6 @@ public class SymbolTable {
       visit FieldDescription {
         fd@FieldDescription[Sort=ty] -> {
           if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
-            st.setSortContainsRefreshPoint(`ty,true);
             return `fd.setStatusValue(`SRefreshPoint());
           }
         }
@@ -367,7 +358,6 @@ public class SymbolTable {
       visit ConstructorDescription {
         vd@VariadicConstructorDescription[Domain=ty] -> {
           if(st.isExpressionType(codom) && st.isPatternType(`ty)) {
-            st.setSortContainsRefreshPoint(`ty,true);
             return `vd.setIsRefreshPoint(true);
           }
         }
@@ -387,10 +377,6 @@ public class SymbolTable {
       } catch(Exception ex) { throw new RuntimeException(); }
     }
   }
-
-  public boolean containsRefreshPoint(String sort) {
-      return sorts.get(sort).getFreshInfo().getContainsRefreshPoint();
-    }
 
   public tom.gom.adt.symboltable.types.stringlist.StringList 
     getConstructors(String sort) {
@@ -442,6 +428,18 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SNeutral()],_*) -> {
+        result.add(`n);
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<String> getPatternFields(String constructor) {
+    ArrayList<String> result = new ArrayList<String>();
+    FieldDescriptionList l = getFieldList(constructor);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SPattern()],_*) -> {
         result.add(`n);
       }
     }
@@ -606,7 +604,6 @@ public class SymbolTable {
         }
       }
     }
-    System.out.println("done");
   }
 
   /**

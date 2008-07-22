@@ -117,7 +117,7 @@ typedecl :
   ;
 
 atoms : 
-  atom=ID (atom=ID)* -> ^(ConcAtom ($atom)+)
+  (atom+=ID)+ -> ^(ConcAtom ($atom)+)
   ;
 
 alternatives[Token typename] :
@@ -167,6 +167,7 @@ pattern_field:
     pattern_type STAR -> ^(StarredField pattern_type)
   | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
   | OUTER ID COLON type -> ^(NamedField ^(Outer) ID type)
+  | NEUTRAL ID COLON type -> ^(NamedField ^(Neutral) ID type)
   | ID COLON pattern_type -> ^(NamedField ^(None) ID pattern_type)
   ;
 
@@ -205,6 +206,7 @@ OPERATOR : 'operator';
 ATOM     : 'atom';
 INNER    : 'inner';
 OUTER    : 'outer';
+NEUTRAL  : 'neutral';
 BINDS    : 'binds';
 
 ARROW    : '->';

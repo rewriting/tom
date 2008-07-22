@@ -5,7 +5,7 @@ abstract syntax
 SortDescription = SortDescription(Constructors:StringList, ModuleSymbol:String, FreshInfo:FreshSortInfo)
 
 FreshSortInfo = ExpressionTypeInfo(AccessibleAtoms:StringList)
-              | PatternTypeInfo(BoundAtoms:StringList, AccessibleAtoms:StringList, ContainsRefreshPoint:boolean)
+              | PatternTypeInfo(BoundAtoms:StringList, AccessibleAtoms:StringList)
               | AtomTypeInfo()
               | NoFreshSort()
 
@@ -20,5 +20,7 @@ Status = SRefreshPoint()
        | SInner()
        | SOuter()
        | SNeutral()
+       | SPattern()
+       | SNone()
 
 StringList = StringList(String*)

@@ -75,72 +75,106 @@ public class FreshExpander {
 
   private String alphamapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
-    int i = 0;
     for(String a: st.getAccessibleAtoms(sort)) {
       buf.append(", ");
       String aid = st.qualifiedSortId(a);
-      buf.append("tom.library.freshgom.AlphaMap<" + aid + "> m" + i);
-      i++;
+      buf.append(%[tom.library.freshgom.AlphaMap<@aid@> @a@Map]%);
     }
     return buf.toString();
   }
 
   private String newAlphamapList(String sort) {
     StringBuffer buf = new StringBuffer();
-    int i = 0;
     for(String a: st.getAccessibleAtoms(sort)) {
       buf.append(", ");
       String aid = st.qualifiedSortId(a);
-      buf.append("new tom.library.freshgom.AlphaMap<" + aid + ">()");
-      i++;
+      buf.append(%[new tom.library.freshgom.AlphaMap<@aid@>()]%);
     }
     return buf.toString();
   }
 
   private String exportmapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
-    int i = 0;
+    boolean first = true; 
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(i!=0) buf.append(", ");
+      if(!first) buf.append(", ");
+      else first = false;
       String aid = st.qualifiedSortId(a);
-      buf.append("tom.library.freshgom.ExportMap<" + aid + "> m" + i);
-      i++;
+      buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@Map]%);
     }
     return buf.toString();
   }
 
   private String newExportmapList(String sort) {
     StringBuffer buf = new StringBuffer();
-    int i = 0;
+    boolean first = true; 
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(i!=0) buf.append(", ");
+      if(!first) buf.append(", ");
+      else first = false;
       String aid = st.qualifiedSortId(a);
-      buf.append("new tom.library.freshgom.ExportMap<" + aid + ">()");
-      i++;
+      buf.append(%[new tom.library.freshgom.ExportMap<@aid@>()]%);
     }
     return buf.toString();
   }
 
   private String convertmapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
-    int i = 0;
+    boolean first = true; 
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(i!=0) buf.append(", ");
+      if(!first) buf.append(", ");
+      else first = false;
       String aid = st.qualifiedSortId(a);
-      buf.append("tom.library.freshgom.ConvertMap<" + aid + "> m" + i);
-      i++;
+      buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@Map]%);
     }
     return buf.toString();
   }
 
   private String newConvertmapList(String sort) {
     StringBuffer buf = new StringBuffer();
-    int i = 0;
+    boolean first = true; 
     for(String a: st.getAccessibleAtoms(sort)) {
-      if(i!=0) buf.append(", ");
+      if(!first) buf.append(", ");
+      else first = false;
       String aid = st.qualifiedSortId(a);
-      buf.append("new tom.library.freshgom.ConvertMap<" + aid + ">()");
-      i++;
+      buf.append(%[new tom.library.freshgom.ConvertMap<@aid@>()]%);
+    }
+    return buf.toString();
+  }
+
+  /* hashTables for 'refresh' methods" */
+  private String hashtableArgList(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getBoundAtoms(sort)) {
+      if(!first) buf.append(", ");
+      else first = false;
+      String aid = st.qualifiedSortId(a);
+      buf.append( %[java.util.Hashtable<@aid@,@aid@> @a@Map]% );
+    }
+    return buf.toString();
+  }
+
+  /* hashTables for 'refresh' methods" */
+  private String newHashtableList(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getBoundAtoms(sort)) {
+      if(!first) buf.append(", ");
+      else first = false;
+      String aid = st.qualifiedSortId(a);
+      buf.append(%[new java.util.Hashtable<@aid@,@aid@>()]%);
+    }
+    return buf.toString();
+  }
+
+  /* generates "A1Map,A2Map,...,AnMap" */
+  private String hashtableRecursiveCall(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getBoundAtoms(sort)) {
+      if(!first) buf.append(", ");
+      else first = false;
+      buf.append(%[@a@Map]%);
     }
     return buf.toString();
   }
@@ -240,7 +274,9 @@ public class FreshExpander {
 
     for(String a: st.getAccessibleAtoms(sort)) {
       String aid = st.qualifiedSortId(a);
-      res += %[ public abstract @sortid@ rename@a@(@aid@ x,@aid@ y); ]%;
+      res += %[ 
+        public abstract @sortid@ rename@a@(java.util.Hashtable<@aid@,@aid@> map); 
+      ]%;
     }
 
     res += %[
@@ -263,8 +299,17 @@ public class FreshExpander {
       public abstract @rawsortid@ _export(@exportmapargs@);
     ]%;
 
-    if(st.isPatternType(sort) && st.containsRefreshPoint(sort))
-      res += %[ public abstract @sortid@ refresh(); ]%;
+    if(st.isPatternType(sort)) {
+      String newhashtables = newHashtableList(sort);
+      String hashtableargs = hashtableArgList(sort);
+      res += %[ 
+        public @sortid@ refresh() {
+          return _refresh(@newhashtables@);
+        }
+
+        public abstract @sortid@ _refresh(@hashtableargs@); 
+      ]%;
+    }
 
     return res + "}";
   }
@@ -285,9 +330,9 @@ public class FreshExpander {
     String sortid = st.qualifiedSortId(sort);
 
     return %[{
-     /**
-      * importation (raw term -> term) 
-      */
+      /**
+       * importation (raw term -> term) 
+       */
       public @sortid@ convert() {
         return _convert(@newconvertmaps@);
       }
@@ -316,10 +361,49 @@ public class FreshExpander {
       if (st.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort))
-          res += %[ if (get@f@().equals(x)) res = res.set@f@(y); ]%;
+          res += %[ 
+            @atomSortId@ n_@f@ = map.get(get@f@());
+            if (n_@f@ != null) res = res.set@f@(n_@f@); 
+            ]%;
       } else {
         if (!st.getAccessibleAtoms(fsort).contains(atomSort)) continue;
-        res += %[ res = res.set@f@(get@f@().rename@atomSort@(x,y)); ]%;
+        res += %[ res = res.set@f@(get@f@().rename@atomSort@(map)); ]%;
+      }
+    }
+    return res + "return res;";
+  }
+
+  private String refreshRecursiveCalls(String c) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String res = %[@sortid@ res = this;]%; 
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (st.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
+        if (st.getBoundAtoms(sort).contains(fsort)) {
+          String fsortid = st.qualifiedSortId(fsort);
+          res += %[
+            @fsortid@ @f@ = get@f@();
+            if (@fsort@Map.containsKey(@f@))
+              res = res.set@f@(@fsort@Map.get(@f@));
+            else {
+              @fsortid@ fresh_@f@ = @fsortid@.fresh@fsort@(@f@);
+              @fsort@Map.put(@f@,fresh_@f@);
+              res = res.set@f@(fresh_@f@);
+            }
+            ]%;
+        }
+      } else {
+        String arglist = hashtableRecursiveCall(sort); 
+        res += %[res = res.set@f@(get@f@()._refresh(@arglist@));]%;
+      }
+    }
+    for(String f: st.getInnerFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (st.isBuiltin(fsort)) continue;
+      for(String a: st.getBoundAtoms(sort)) {
+        res += %[res = res.set@f@(res.get@f@().rename@a@(@a@Map));]%;
       }
     }
     return res + "return res;";
@@ -338,8 +422,8 @@ public class FreshExpander {
       String recursiveCalls = renameRecursiveCalls(c,a);
       String aid = st.qualifiedSortId(a);
       res += %[
-        public @sortid@ rename@a@(@aid@ x,@aid@ y) {
-           @recursiveCalls@
+        public @sortid@ rename@a@(java.util.Hashtable<@aid@,@aid@> map) {
+          @recursiveCalls@
         }]%;
     }
 
@@ -351,20 +435,23 @@ public class FreshExpander {
         return false;
       };
 
-      /**
-       * exportation (term -> raw term) 
-       */
-      public @rawsortid@ _export(@exportmapargs@) {
-        return null;
-      }
+    /**
+     * exportation (term -> raw term) 
+     */
+    public @rawsortid@ _export(@exportmapargs@) {
+      return null;
+    }
     ]%;
 
-    if(st.isPatternType(sort) && st.containsRefreshPoint(sort))
-      res += %[
-        public @sortid@ refresh() {
-          return null;
+    if(st.isPatternType(sort)) {
+      String hashtableargs = hashtableArgList(sort);
+      String recursiveCalls = refreshRecursiveCalls(c);
+      res += %[ 
+        public @sortid@ _refresh(@hashtableargs@) {
+          @recursiveCalls@
         }
-    ]%;
+      ]%;
+    }
 
     return res + "}";
   }
@@ -526,4 +613,4 @@ public class FreshExpander {
     }
   }
 
-  }
+}
