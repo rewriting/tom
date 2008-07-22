@@ -12,12 +12,13 @@ LTerm =
  | TAbs(Lam:<TypeTermAbs>)
  | TApp(t:LTerm,ty:Type)
  | Test(s:Foo) 
+ | TestMultipleBindings(m:<Multiple>) 
 
 // Foo does not contains atom but is concerned by freshgom since it is 
 // referenced by LTerm.
 // Bar is not concerned by freshgom
 
-TermTermAbs binds TermVar = TermTermAbs(x:TermVar, inner t:LTerm)
+TermTermAbs binds TermVar = TermTermAbs(x:TermVar, neutral T:TypeVar, inner t:LTerm)
 TypeTermAbs binds TypeVar = TypeTermAbs(T:TypeVar, inner t:LTerm)
 
 Type =
@@ -29,3 +30,5 @@ TypeTypeAbs binds TypeVar = TypeTypeAbs(A:TypeVar, inner B:Type)
 
 Foo = foo(i:int)
 Bar = bar(i:int)
+
+Multiple binds TermVar TypeVar = Multiple(x:TermVar, t:TypeVar, inner u:LTerm)
