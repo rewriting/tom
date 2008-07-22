@@ -27,8 +27,7 @@ syn match javaError "[\\]"
 syn match javaError "<<<\|\.\.\|=>\|<>\|||=\|&&=\|\*\/"
 
 " tom keyword definitions
-syn cluster myjavaTop add=javaExternal,javaError,javaError,javaBranch,javaLabelRegion,javaLabel,javaConditional,javaRepeat,javaBoolean,javaConstant,javaTypedef,javaOperator,javaType,javaType,javaStatement,javaStorageClass,javaAssert,javaExceptions,javaMethodDecl,javaClassDecl,javaClassDecl,javaClassDecl,javaScopeDecl,javaError,javaError2,javaUserLabel,javaLangObject,javaVarArg
-syn region  tomMetaQuoteEscape start="@" end="@" contains=@myjavaTop contained 
+syn region  tomMetaQuoteEscape start="@" end="@" contained 
 syn region  tomMetaQuote	start="%\["  end="\]%" contains=tomMetaQuoteEscape
 syn match   tomExternal         "%include"
 syn match   tomOperator         "%op"
@@ -51,6 +50,8 @@ syn keyword tomOpkey            make_insert make_append
 syn keyword tomOpkey            get_slot
 syn keyword tomOpkey            make
 
+syn cluster javaTop add=tomMetaQuote
+
 " Define the default highlighting.
 " For version 5.7 and earlier: only when not done already
 " For version 5.8 and later: only when an item doesn't have highlighting yet
@@ -71,6 +72,7 @@ if version >= 508 || !exists("did_tom_syn_inits")
   HiLink tomMake       Special
   HiLink tomOpkey      Statement
   HiLink tomMetaQuote  String 
+  HiLink tomMetaQuoteEscape Special
   delcommand HiLink
 endif
 
