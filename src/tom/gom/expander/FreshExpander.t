@@ -238,8 +238,10 @@ public class FreshExpander {
 
     String res = "{";
 
-    for(String a: st.getAccessibleAtoms(sort))
-      res += %[ public abstract @sortid@ rename@a@(int i,int j); ]%;
+    for(String a: st.getAccessibleAtoms(sort)) {
+      String aid = st.qualifiedSortId(a);
+      res += %[ public abstract @sortid@ rename@a@(@aid@ x,@aid@ y); ]%;
+    }
 
     res += %[
      /**
@@ -305,6 +307,23 @@ public class FreshExpander {
     return ml;
   }
 
+  private String renameRecursiveCalls(String c, String atomSort) {
+    String sortid = st.qualifiedSortId(st.getSort(c));
+    String res = %[@sortid@ res = this;]%; 
+    String atomSortId = st.qualifiedSortId(atomSort);
+    for(String f: st.getFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (st.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
+        if (fsort.equals(atomSort))
+          res += %[ if (get@f@().equals(x)) res = res.set@f@(y); ]%;
+      } else {
+        if (!st.getAccessibleAtoms(fsort).contains(atomSort)) continue;
+        res += %[ res = res.set@f@(get@f@().rename@atomSort@(x,y)); ]%;
+      }
+    }
+    return res + "return res;";
+  }
 
   private String constructorBlockHookString(String c) {
     String sort = st.getSort(c);
@@ -315,11 +334,14 @@ public class FreshExpander {
 
     String res = "{";
 
-    for(String a: st.getAccessibleAtoms(sort))
+    for(String a: st.getAccessibleAtoms(sort)) {
+      String recursiveCalls = renameRecursiveCalls(c,a);
+      String aid = st.qualifiedSortId(a);
       res += %[
-        public @sortid@ rename@a@(int i,int j) { 
-          return this; 
+        public @sortid@ rename@a@(@aid@ x,@aid@ y) {
+           @recursiveCalls@
         }]%;
+    }
 
     res += %[
       /**
@@ -391,12 +413,19 @@ public class FreshExpander {
       private static int counter = 0;
 
       public static @sortid@ 
+        fresh@sort@(@sortid@ hint) { 
+          return fresh@sort@(hint.gethint()); 
+        }
+
+      public static @sortid@ 
         fresh@sort@(String hint) { 
           return `@sort@(++counter,hint.split("[0-9]")[0]); 
         }
+
       public boolean equals(@sort@ o) {
         return this.getn() == o.getn();
       }
+
       public String getRepresentation(int n) {
         return gethint() + (n==0 ? "" : n);
       }

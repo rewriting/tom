@@ -407,8 +407,12 @@ public class SymbolTable {
 
   public tom.gom.adt.symboltable.types.stringlist.StringList 
     getAccessibleAtoms(String sort) {
-      return (tom.gom.adt.symboltable.types.stringlist.StringList)
-        sorts.get(sort).getFreshInfo().getAccessibleAtoms();
+      try {
+        return (tom.gom.adt.symboltable.types.stringlist.StringList)
+          sorts.get(sort).getFreshInfo().getAccessibleAtoms();
+      } catch(NullPointerException e) {
+        throw new UndeclaredSortException(sort);
+      }
     }
 
   public tom.gom.adt.symboltable.types.stringlist.StringList 
