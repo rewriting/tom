@@ -127,6 +127,40 @@ public class FreshExpander {
     return buf.toString();
   }
 
+  private String convertmapArgList(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true; 
+    for(String a: st.getAccessibleAtoms(sort)) {
+      if(!first) buf.append(", ");
+      else first = false;
+      String aid = st.qualifiedSortId(a);
+      if(st.isPatternType(sort)) {
+        if (st.getBoundAtoms(sort).contains(a)) {
+          buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@OuterMap]%);
+          buf.append(%[,tom.library.freshgom.ConvertMap<@aid@> @a@InnerMap]%);
+        } else 
+          buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@Map]%);
+      } else {
+        buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@Map]%);
+      }
+    }
+    return buf.toString();
+  }
+
+  private String newConvertmapList(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true; 
+    for(String a: st.getAccessibleAtoms(sort)) {
+      if(!first) buf.append(", ");
+      else first = false;
+      String aid = st.qualifiedSortId(a);
+      buf.append(%[new tom.library.freshgom.ConvertMap<@aid@>()]%);
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
+        buf.append(%[,new tom.library.freshgom.ConvertMap<@aid@>()]%);
+    }
+    return buf.toString();
+  }
+
   /* call to expression field inside expression type */
   private String exportRecCall1(String sort) {
     StringBuffer buf = new StringBuffer();
@@ -211,30 +245,6 @@ public class FreshExpander {
     return buf.toString();
   }
 
-  private String convertmapArgList(String sort) {
-    StringBuffer buf = new StringBuffer();
-    boolean first = true; 
-    for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
-      String aid = st.qualifiedSortId(a);
-      buf.append(%[tom.library.freshgom.ConvertMap<@aid@> @a@Map]%);
-    }
-    return buf.toString();
-  }
-
-  private String newConvertmapList(String sort) {
-    StringBuffer buf = new StringBuffer();
-    boolean first = true; 
-    for(String a: st.getAccessibleAtoms(sort)) {
-      if(!first) buf.append(", ");
-      else first = false;
-      String aid = st.qualifiedSortId(a);
-      buf.append(%[new tom.library.freshgom.ConvertMap<@aid@>()]%);
-    }
-    return buf.toString();
-  }
-
   /* hashTables for 'refresh' methods" */
   private String hashtableArgList(String sort) {
     StringBuffer buf = new StringBuffer();
@@ -283,6 +293,20 @@ public class FreshExpander {
       if(!first) buf.append(",");
       else first = false;
       buf.append(st.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
+    }
+    return buf.toString();
+  }
+
+  /* generates "f1,f2,...,fn" for fields of cons
+   except for builtins where no new is added */
+  private String argList(String cons) {
+    String sort = st.getSort(cons);
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String f: st.getFields(cons)) {
+      if(!first) buf.append(",");
+      else first = false;
+      buf.append(st.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[@f@]%);
     }
     return buf.toString();
   }
@@ -452,16 +476,34 @@ public class FreshExpander {
     String newconvertmaps = newConvertmapList(sort);
     String sortid = st.qualifiedSortId(sort);
 
-    return %[{
-      /**
-       * importation (raw term -> term) 
-       */
+    String res = %[{
+     /**
+      * importation (raw term -> term) 
+      */
       public @sortid@ convert() {
         return _convert(@newconvertmaps@);
       }
 
       public abstract @sortid@ _convert(@convertmapargs@);
-    }]%;
+    ]%;
+
+    if(st.isPatternType(sort)) {
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.qualifiedSortId(a);
+        res += %[
+          public tom.library.freshgom.ConvertMap<@aid@> getBound@a@Map() {
+            tom.library.freshgom.ConvertMap<@aid@> res = 
+              new tom.library.freshgom.ConvertMap<@aid@>();
+            getBound@a@Map(res);
+            return res;
+          }
+
+          public abstract void 
+            getBound@a@Map(tom.library.freshgom.ConvertMap<@aid@> m);
+        ]%;
+      }
+    }
+    return res + "}";
   }
 
   /* -- non variadic constructor hooks -- */
@@ -563,7 +605,7 @@ public class FreshExpander {
       }
     /* if c is a constructor in pattern position --
        the args are of the form 
-        as1OuterMap, as1InnerMap, as2OuterMap, as2InnerMap .. */
+        as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
@@ -676,20 +718,119 @@ public class FreshExpander {
     return ml;
   }
 
+  private String getBoundMapRecursiveCalls(String c, String atomSort) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String aid = st.qualifiedSortId(atomSort);
+    String res = ""; 
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (st.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
+        if (fsort.equals(atomSort)) {
+          res += %[
+            String @f@ = get@f@();
+            m.put(@f@,@aid@.fresh@atomSort@(@f@));
+          ]%;
+        }
+      } else if (st.getBoundAtoms(fsort).contains(atomSort)) {
+        res += %[get@f@().getBound@atomSort@Map(m);]%;
+      }
+    }
+    return res;
+  }
+
+  private String convertRecursiveCalls(String c) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String res = ""; 
+    /* if c is a constructor in expression position
+       the args are of the form atomsort1Map, atomsort2Map .. */
+    if(st.isExpressionType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (st.isBuiltin(fsort)) continue;
+        String fsortid = st.qualifiedSortId(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          res += %[@fsortid@ @f@ = @fsort@Map.get(get@f@());]%;
+        } else if (st.isExpressionType(fsort)) {
+          res += %[@fsortid@ @f@ 
+            = get@f@()._convert(@exportRecCall1(fsort)@);]%;
+        } else if (st.isPatternType(fsort)) {
+          res += %[@rawfsortid@ raw_@f@ = get@f@();]%;
+          for(String a: st.getBoundAtoms(fsort)) {
+            String aid = st.qualifiedSortId(a);
+            res += %[
+              tom.library.freshgom.ConvertMap<@aid@> raw_@f@_bound@a@ 
+                = raw_@f@.getBound@a@Map();
+              tom.library.freshgom.ConvertMap<@aid@> @a@InnerMap 
+                = @a@Map.combine(raw_@f@_bound@a@);
+            ]%;
+          }
+          res += %[@fsortid@ @f@ 
+            = raw_@f@._convert(@exportRecCall2(fsort)@);]%;
+        }
+      }
+    /* if c is a constructor in pattern position --
+       the args are of the form 
+        as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
+    } else if(st.isPatternType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (st.isBuiltin(fsort)) continue;
+        String fsortid = st.qualifiedSortId(fsort);
+        //String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          if (st.isBound(c,f))
+            res += %[@fsortid@ @f@ = @fsort@InnerMap.get(get@f@());]%;
+          else
+            res += %[@fsortid@ @f@ = @fsort@Map.get(get@f@());]%;
+        } else if (st.isInner(c,f)) /* must be expression type */ {
+          res += %[@fsortid@ @f@ 
+            = get@f@()._convert(@exportRecCall3(fsort,sort)@);]%;
+        } else if (st.isOuter(c,f)) /* must be expression type */ {
+          res += %[@fsortid@ @f@ 
+            = get@f@()._convert(@exportRecCall4(fsort,sort)@);]%;
+        } else if (st.isNeutral(c,f)) /* must be expression type */ {
+          res += %[@fsortid@ @f@ 
+            = get@f@()._convert(@exportRecCall5(fsort)@);]%;
+        } else /* must be pattern type */ {
+          res += %[@fsortid@ @f@ 
+            = get@f@()._convert(@exportRecCall6(fsort)@);]%;
+        }
+      }
+    }
+    return res + %[return `@c@(@argList(c)@);]%;
+  }
 
   private String rawConstructorBlockHookString(String c) {
     String sort = st.getSort(c);
     String convertmapargs = convertmapArgList(sort);
     String sortid = st.qualifiedSortId(sort);
 
-    return %[{
+    String res = %[{
       /**
        * importation (raw term -> term) 
        */
       public @sortid@ _convert(@convertmapargs@) {
-        return null;
+        @convertRecursiveCalls(c)@
       }
-    }]%;
+    ]%;
+
+    if(st.isPatternType(sort)) {
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.qualifiedSortId(a);
+        res += %[
+          public void 
+            getBound@a@Map(tom.library.freshgom.ConvertMap<@aid@> m) {
+              @getBoundMapRecursiveCalls(c,a)@;
+            }
+        ]%;
+      }
+    }
+
+    return res + "}";
   }
 
   /* -- atom hooks -- */
