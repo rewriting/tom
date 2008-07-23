@@ -24,46 +24,26 @@
 
 package tom.library.freshgom;
 
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.Hashtable;
+import java.util.Collection;
 
-/* stack for importation (raw term -> term) */
+/* stack for exportation (term -> raw term) */
 
-public class ConvertMap<T extends Atom> {
-  private class Pair { 
-    public String x;
-    public T a;
-    public Pair(String x, T a) {
-      this.x = x;
-      this.a = a;
-    } 
+public class ConvertMap<T extends Atom> extends Hashtable<String,T> {
+
+  public ConvertMap() {
+    super();
   }
-  private LinkedList<Pair> ctx = new LinkedList<Pair>();
-  private Stack<Integer> counters = new Stack<Integer>();
-  private int counter = 0;
-  public void push() {
-    counters.push(counter);
-    counter = 0;
+
+  public ConvertMap(ConvertMap<T> o) {
+    super(o);
   }
-  public void add(String x, T a) {
-    ctx.addFirst(new Pair(x,a)); 
-    counter++;
-  }
-  public void pop() { 
-    for(int i=0; i<counter; i++)
-      ctx.removeFirst(); 
-    counter = counters.pop();
-  }
-  public T get(String x) { 
-    for (Pair p: ctx) {
-      if (p.x.equals(x)) return p.a;
-    }
-    throw new RuntimeException(x + " is not bound");
-  }
-  public T getInScope(String x) {
-    for(int i=0; i<counter; i++)
-      if (ctx.get(i).x.equals(x)) return ctx.get(i).a;
-    return null;
+
+  public ConvertMap<T> combine(ConvertMap<T> m) {
+    ConvertMap<T> res = new ConvertMap<T>(this);
+    res.putAll(m);
+    return res;
   }
 }
+
 
