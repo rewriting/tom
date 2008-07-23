@@ -24,56 +24,35 @@
 
 package tom.library.freshgom;
 
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.Hashtable;
+import java.util.Collection;
 
 /* stack for exportation (term -> raw term) */
 
-public class ExportMap<T extends Atom> {
-  private class Pair { 
-    public T a;
-    public int i;
-    public Pair(T a, int i) {
-      this.a = a;
-      this.i = i;
-    } 
-  }
-  private LinkedList<Pair> ctx = new LinkedList<Pair>();
-  private Stack<Integer> counters = new Stack<Integer>();
+public class ExportMap<T extends Atom> extends Hashtable<T,String> {
 
-  private int counter = 0;
-  public void push() {
-    counters.push(counter);
-    counter = 0;
+  private Hashtable<String,Integer> nums = new Hashtable<String,Integer>();
+
+
+  public ExportMap() {
+    super();
   }
 
-  public int add(T a) {
-    int i = 0;
-    for (Pair p: ctx) {
-      if (p.a.gethint().equals(a.gethint())) { 
-        i = p.i+1;
-        break;
-      }
+  public ExportMap(ExportMap<T> o) {
+    super(o);
+    this.nums = new Hashtable<String,Integer>(o.nums);
+  }
+
+  public ExportMap<T> addSet(Collection<T> atoms) {
+    ExportMap<T> res = new ExportMap<T>(this);
+    for (T a: atoms) {
+      String basename = a.gethint();
+      int n = nums.containsKey(basename) ? nums.get(basename) : 0;
+      if (n == 0) res.put(a,basename);
+      else res.put(a,basename + n);
+      res.nums.put(basename,n+1);
     }
-    ctx.addFirst(new Pair(a,i)); 
-    counter++;
-    return i;
-  }
-  public void pop() { 
-    for(int i=0; i<counter; i++)
-      ctx.removeFirst(); 
-    counter = counters.pop();
-  }
-  public int get(T a) { 
-    for (Pair p: ctx) {
-      if (p.a.equals(a)) return p.i;
-    }
-    throw new RuntimeException(a + " is not bound");
-  }
-  public int getInScope(T a) {
-    for(int i=0; i<counter; i++)
-      if (ctx.get(i).a.equals(a)) return ctx.get(i).i;
-    return -1;
+    return res;
   }
 }
 

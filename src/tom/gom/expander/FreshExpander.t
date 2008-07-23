@@ -100,7 +100,15 @@ public class FreshExpander {
       if(!first) buf.append(", ");
       else first = false;
       String aid = st.qualifiedSortId(a);
-      buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@Map]%);
+      if(st.isPatternType(sort)) {
+        if (st.getBoundAtoms(sort).contains(a)) {
+          buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@OuterMap]%);
+          buf.append(%[,tom.library.freshgom.ExportMap<@aid@> @a@InnerMap]%);
+        } else 
+          buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@Map]%);
+      } else {
+        buf.append(%[tom.library.freshgom.ExportMap<@aid@> @a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -113,6 +121,92 @@ public class FreshExpander {
       else first = false;
       String aid = st.qualifiedSortId(a);
       buf.append(%[new tom.library.freshgom.ExportMap<@aid@>()]%);
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
+        buf.append(%[,new tom.library.freshgom.ExportMap<@aid@>()]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to expression field inside expression type */
+  private String exportRecCall1(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getAccessibleAtoms(sort)) {
+      if(!first) buf.append(",");
+      else first = false;
+      buf.append(%[@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to pattern field inside expression type */
+  private String exportRecCall2(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getAccessibleAtoms(sort)) {
+      if(!first) buf.append(",");
+      else first = false;
+      buf.append(%[@a@Map]%);
+      if(st.getBoundAtoms(sort).contains(a))
+        buf.append(%[,@a@InnerMap]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to inner field inside pattern type */
+  private String exportRecCall3(String tosort, String fromsort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(!first) buf.append(",");
+      else first = false;
+      if(st.getBoundAtoms(fromsort).contains(a)) 
+        buf.append(%[@a@InnerMap]%);
+      else
+        buf.append(%[@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to outer field inside pattern type */
+  private String exportRecCall4(String tosort, String fromsort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(!first) buf.append(",");
+      else first = false;
+      if(st.getBoundAtoms(fromsort).contains(a)) 
+        buf.append(%[@a@OuterMap]%);
+      else
+        buf.append(%[@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to neutral field inside pattern type */
+  private String exportRecCall5(String sort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getAccessibleAtoms(sort)) {
+      if(!first) buf.append(",");
+      else first = false;
+      buf.append(%[@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to pattern field inside pattern type */
+  private String exportRecCall6(String tosort) {
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(!first) buf.append(",");
+      else first = false;
+      // bound atoms have to be the same
+      if(st.getBoundAtoms(tosort).contains(a)) {
+        buf.append(%[@a@OuterMap]%);
+        buf.append(%[,@a@InnerMap]%);
+      } else buf.append(%[@a@Map]%);
     }
     return buf.toString();
   }
@@ -178,6 +272,21 @@ public class FreshExpander {
     }
     return buf.toString();
   }
+
+  /* generates "raw_f1,raw_f2,...,raw_fn" for fields of cons
+   except for builtins where no new is added */
+  private String rawArgList(String cons) {
+    String sort = st.getSort(cons);
+    StringBuffer buf = new StringBuffer();
+    boolean first = true;
+    for(String f: st.getFields(cons)) {
+      if(!first) buf.append(",");
+      else first = false;
+      buf.append(st.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
+    }
+    return buf.toString();
+  }
+
 
   /* -- hooks utilities -- */
 
@@ -275,7 +384,8 @@ public class FreshExpander {
     for(String a: st.getAccessibleAtoms(sort)) {
       String aid = st.qualifiedSortId(a);
       res += %[ 
-        public abstract @sortid@ rename@a@(java.util.Hashtable<@aid@,@aid@> map); 
+        public abstract @sortid@ 
+          rename@a@(java.util.Hashtable<@aid@,@aid@> map); 
       ]%;
     }
 
@@ -309,6 +419,19 @@ public class FreshExpander {
 
         public abstract @sortid@ _refresh(@hashtableargs@); 
       ]%;
+
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.qualifiedSortId(a);
+        res += %[
+          public java.util.Set<@aid@> getBound@a@() {
+            java.util.HashSet<@aid@> res = new java.util.HashSet<@aid@>();
+            getBound@a@(res);
+            return res;
+          }
+
+          public abstract void getBound@a@(java.util.Set<@aid@> atoms); 
+        ]%;
+      }
     }
 
     return res + "}";
@@ -363,8 +486,8 @@ public class FreshExpander {
         if (fsort.equals(atomSort))
           res += %[ 
             @atomSortId@ n_@f@ = map.get(get@f@());
-            if (n_@f@ != null) res = res.set@f@(n_@f@); 
-            ]%;
+        if (n_@f@ != null) res = res.set@f@(n_@f@); 
+        ]%;
       } else {
         if (!st.getAccessibleAtoms(fsort).contains(atomSort)) continue;
         res += %[ res = res.set@f@(get@f@().rename@atomSort@(map)); ]%;
@@ -381,19 +504,17 @@ public class FreshExpander {
       String fsort = st.getSort(c,f);
       if (st.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
-        if (st.getBoundAtoms(sort).contains(fsort)) {
-          String fsortid = st.qualifiedSortId(fsort);
-          res += %[
-            @fsortid@ @f@ = get@f@();
-            if (@fsort@Map.containsKey(@f@))
-              res = res.set@f@(@fsort@Map.get(@f@));
-            else {
-              @fsortid@ fresh_@f@ = @fsortid@.fresh@fsort@(@f@);
-              @fsort@Map.put(@f@,fresh_@f@);
-              res = res.set@f@(fresh_@f@);
-            }
-            ]%;
+        String fsortid = st.qualifiedSortId(fsort);
+        res += %[
+          @fsortid@ @f@ = get@f@();
+        if (@fsort@Map.containsKey(@f@))
+          res = res.set@f@(@fsort@Map.get(@f@));
+        else {
+          @fsortid@ fresh_@f@ = @fsortid@.fresh@fsort@(@f@);
+          @fsort@Map.put(@f@,fresh_@f@);
+          res = res.set@f@(fresh_@f@);
         }
+        ]%;
       } else {
         String arglist = hashtableRecursiveCall(sort); 
         res += %[res = res.set@f@(get@f@()._refresh(@arglist@));]%;
@@ -409,6 +530,87 @@ public class FreshExpander {
     return res + "return res;";
   }
 
+  private String exportRecursiveCalls(String c) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String res = ""; 
+    /* if c is a constructor in expression position
+       the args are of the form atomsort1Map, atomsort2Map .. */
+    if(st.isExpressionType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (st.isBuiltin(fsort)) continue;
+        String fsortid = st.qualifiedSortId(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
+        } else if (st.isExpressionType(fsort)) {
+          res += %[@rawfsortid@ raw_@f@ 
+            = get@f@()._export(@exportRecCall1(fsort)@);]%;
+        } else if (st.isPatternType(fsort)) {
+          res += %[@fsortid@ @f@ = get@f@();]%;
+          for(String a: st.getBoundAtoms(fsort)) {
+            String aid = st.qualifiedSortId(a);
+            res += %[
+              java.util.Set<@aid@> @f@_bound@a@ = @f@.getBound@a@();
+              tom.library.freshgom.ExportMap<@aid@> @a@InnerMap 
+                = @a@Map.addSet(@f@_bound@a@);
+            ]%;
+          }
+          res += %[@rawfsortid@ raw_@f@ 
+            = @f@._export(@exportRecCall2(fsort)@);]%;
+        }
+      }
+    /* if c is a constructor in pattern position --
+       the args are of the form 
+        as1OuterMap, as1InnerMap, as2OuterMap, as2InnerMap .. */
+    } else if(st.isPatternType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (st.isBuiltin(fsort)) continue;
+        String fsortid = st.qualifiedSortId(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          if (st.isBound(c,f))
+            res += %[String raw_@f@ = @fsort@InnerMap.get(get@f@());]%;
+          else
+            res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
+        } else if (st.isInner(c,f)) /* must be expression type */ {
+          res += %[@rawfsortid@ raw_@f@ 
+            = get@f@()._export(@exportRecCall3(fsort,sort)@);]%;
+        } else if (st.isOuter(c,f)) /* must be expression type */ {
+          res += %[@rawfsortid@ raw_@f@ 
+            = get@f@()._export(@exportRecCall4(fsort,sort)@);]%;
+        } else if (st.isNeutral(c,f)) /* must be expression type */ {
+          res += %[@rawfsortid@ raw_@f@ 
+            = get@f@()._export(@exportRecCall5(fsort)@);]%;
+        } else /* must be pattern type */ {
+          res += %[@rawfsortid@ raw_@f@ 
+            = get@f@()._export(@exportRecCall6(fsort)@);]%;
+        }
+      }
+    }
+    return res + %[return `@st.raw(c)@(@rawArgList(c)@);]%;
+  }
+
+  private String getBoundRecursiveCalls(String c, String atomSort) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String res = ""; 
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (st.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
+        if (fsort.equals(atomSort)) {
+          res += %[atoms.add(get@f@());]%;
+        }
+      } else if (st.getBoundAtoms(fsort).contains(atomSort)) {
+        res += %[get@f@().getBound@atomSort@(atoms);]%;
+      }
+    }
+    return res;
+  }
+
   private String constructorBlockHookString(String c) {
     String sort = st.getSort(c);
     String alphamapargs = alphamapArgList(sort);
@@ -419,11 +621,10 @@ public class FreshExpander {
     String res = "{";
 
     for(String a: st.getAccessibleAtoms(sort)) {
-      String recursiveCalls = renameRecursiveCalls(c,a);
       String aid = st.qualifiedSortId(a);
       res += %[
         public @sortid@ rename@a@(java.util.Hashtable<@aid@,@aid@> map) {
-          @recursiveCalls@
+          @renameRecursiveCalls(c,a)@
         }]%;
     }
 
@@ -439,18 +640,25 @@ public class FreshExpander {
      * exportation (term -> raw term) 
      */
     public @rawsortid@ _export(@exportmapargs@) {
-      return null;
+      @exportRecursiveCalls(c)@
     }
     ]%;
 
     if(st.isPatternType(sort)) {
-      String hashtableargs = hashtableArgList(sort);
-      String recursiveCalls = refreshRecursiveCalls(c);
       res += %[ 
-        public @sortid@ _refresh(@hashtableargs@) {
-          @recursiveCalls@
+        public @sortid@ _refresh(@hashtableArgList(sort)@) {
+          @refreshRecursiveCalls(c)@
         }
       ]%;
+
+      for(String a: st.getBoundAtoms(sort)) {
+        String aid = st.qualifiedSortId(a);
+        res += %[ 
+          public void getBound@a@(java.util.Set<@aid@> atoms) {
+            @getBoundRecursiveCalls(c,a)@
+          }
+        ]%;
+      }
     }
 
     return res + "}";

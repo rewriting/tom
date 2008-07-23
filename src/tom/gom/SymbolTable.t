@@ -260,7 +260,7 @@ public class SymbolTable {
           None[] -> { st = isPatternType(codom) ? `SPattern() : `SNone(); }
         }
         FieldDescription desc = `FieldDescription(fn,ty,st);
-        res = `ConsconcFieldDescription(desc,res);
+        res = `concFieldDescription(res*,desc);
       }
     }
     return res;
@@ -446,6 +446,18 @@ public class SymbolTable {
     return result;
   }
 
+  public ArrayList<String> getNonPatternFields(String constructor) {
+    ArrayList<String> result = new ArrayList<String>();
+    FieldDescriptionList l = getFieldList(constructor);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=!SPattern()],_*) -> {
+        result.add(`n);
+      }
+    }
+    return result;
+  }
+
   public ArrayList<String> getOuterFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
@@ -485,6 +497,17 @@ public class SymbolTable {
     %match(l) {
       concFieldDescription(_*,
           FieldDescription[FieldName=n,StatusValue=SOuter()],_*) -> {
+        if (`n.equals(field)) return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isPattern(String cons, String field) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[FieldName=n,StatusValue=SPattern()],_*) -> {
         if (`n.equals(field)) return true;
       }
     }
