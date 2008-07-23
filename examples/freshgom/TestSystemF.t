@@ -80,10 +80,29 @@ public class TestSystemF {
     return s.equals(t1.getBoundTypeVar());
   }
 
+  public static boolean testGetBoundRaw() {
+    RawTypeTermAbs t1 = `RawTypeTermAbs("T",
+        RawLAbs(RawTermTermAbs("x",RawTVar("T"),RawLVar("x"))));
+
+    tom.library.freshgom.ConvertMap<TypeVar> m = t1.getBoundTypeVarMap();
+    return m.size() == 1 && m.get("T").gethint().equals("T");
+  }
+
+  public static String testConvert() {
+    RawLTerm t1 = `RawTAbs(RawTypeTermAbs("T",
+          RawLAbs(RawTermTermAbs("x",RawTVar("T"),
+              RawLAbs(RawTermTermAbs("x1",RawArrow(RawTVar("T"),RawTVar("T")),
+                  RawLApp(RawLVar("x1"),RawLVar("x"))))))));
+
+    return t1.convert().toString();
+  }
+
   public static void main(String[] args) {
     System.out.println("testRename: " +  testRename());
     System.out.println("testRefresh: " +  testRefresh());
     System.out.println("testExport: " +  testExport());
     System.out.println("testGetBound: " +  testGetBound());
+    System.out.println("testGetBoundRaw: " +  testGetBoundRaw());
+    System.out.println("testConvert: " +  testConvert());
   }
 }

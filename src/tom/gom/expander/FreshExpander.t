@@ -162,7 +162,7 @@ public class FreshExpander {
   }
 
   /* call to expression field inside expression type */
-  private String exportRecCall1(String sort) {
+  private String recCall1(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
@@ -174,7 +174,7 @@ public class FreshExpander {
   }
 
   /* call to pattern field inside expression type */
-  private String exportRecCall2(String sort) {
+  private String recCall2(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
@@ -188,7 +188,7 @@ public class FreshExpander {
   }
 
   /* call to inner field inside pattern type */
-  private String exportRecCall3(String tosort, String fromsort) {
+  private String recCall3(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(tosort)) {
@@ -203,7 +203,7 @@ public class FreshExpander {
   }
 
   /* call to outer field inside pattern type */
-  private String exportRecCall4(String tosort, String fromsort) {
+  private String recCall4(String tosort, String fromsort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(tosort)) {
@@ -218,7 +218,7 @@ public class FreshExpander {
   }
 
   /* call to neutral field inside pattern type */
-  private String exportRecCall5(String sort) {
+  private String recCall5(String sort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(sort)) {
@@ -230,7 +230,7 @@ public class FreshExpander {
   }
 
   /* call to pattern field inside pattern type */
-  private String exportRecCall6(String tosort) {
+  private String recCall6(String tosort) {
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String a: st.getAccessibleAtoms(tosort)) {
@@ -588,7 +588,7 @@ public class FreshExpander {
           res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
         } else if (st.isExpressionType(fsort)) {
           res += %[@rawfsortid@ raw_@f@ 
-            = get@f@()._export(@exportRecCall1(fsort)@);]%;
+            = get@f@()._export(@recCall1(fsort)@);]%;
         } else if (st.isPatternType(fsort)) {
           res += %[@fsortid@ @f@ = get@f@();]%;
           for(String a: st.getBoundAtoms(fsort)) {
@@ -600,7 +600,7 @@ public class FreshExpander {
             ]%;
           }
           res += %[@rawfsortid@ raw_@f@ 
-            = @f@._export(@exportRecCall2(fsort)@);]%;
+            = @f@._export(@recCall2(fsort)@);]%;
         }
       }
     /* if c is a constructor in pattern position --
@@ -619,16 +619,16 @@ public class FreshExpander {
             res += %[String raw_@f@ = @fsort@Map.get(get@f@());]%;
         } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@ 
-            = get@f@()._export(@exportRecCall3(fsort,sort)@);]%;
+            = get@f@()._export(@recCall3(fsort,sort)@);]%;
         } else if (st.isOuter(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@ 
-            = get@f@()._export(@exportRecCall4(fsort,sort)@);]%;
+            = get@f@()._export(@recCall4(fsort,sort)@);]%;
         } else if (st.isNeutral(c,f)) /* must be expression type */ {
           res += %[@rawfsortid@ raw_@f@ 
-            = get@f@()._export(@exportRecCall5(fsort)@);]%;
+            = get@f@()._export(@recCall5(fsort)@);]%;
         } else /* must be pattern type */ {
           res += %[@rawfsortid@ raw_@f@ 
-            = get@f@()._export(@exportRecCall6(fsort)@);]%;
+            = get@f@()._export(@recCall6(fsort)@);]%;
         }
       }
     }
@@ -756,7 +756,7 @@ public class FreshExpander {
           res += %[@fsortid@ @f@ = @fsort@Map.get(get@f@());]%;
         } else if (st.isExpressionType(fsort)) {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@exportRecCall1(fsort)@);]%;
+            = get@f@()._convert(@recCall1(fsort)@);]%;
         } else if (st.isPatternType(fsort)) {
           res += %[@rawfsortid@ raw_@f@ = get@f@();]%;
           for(String a: st.getBoundAtoms(fsort)) {
@@ -769,7 +769,7 @@ public class FreshExpander {
             ]%;
           }
           res += %[@fsortid@ @f@ 
-            = raw_@f@._convert(@exportRecCall2(fsort)@);]%;
+            = raw_@f@._convert(@recCall2(fsort)@);]%;
         }
       }
     /* if c is a constructor in pattern position --
@@ -788,16 +788,16 @@ public class FreshExpander {
             res += %[@fsortid@ @f@ = @fsort@Map.get(get@f@());]%;
         } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@exportRecCall3(fsort,sort)@);]%;
+            = get@f@()._convert(@recCall3(fsort,sort)@);]%;
         } else if (st.isOuter(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@exportRecCall4(fsort,sort)@);]%;
+            = get@f@()._convert(@recCall4(fsort,sort)@);]%;
         } else if (st.isNeutral(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@exportRecCall5(fsort)@);]%;
+            = get@f@()._convert(@recCall5(fsort)@);]%;
         } else /* must be pattern type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@exportRecCall6(fsort)@);]%;
+            = get@f@()._convert(@recCall6(fsort)@);]%;
         }
       }
     }
