@@ -24,39 +24,40 @@
 
 package tom.library.freshgom;
 
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Collection;
 
-/* stack for alphaequivalence */
+/* stack for exportation (term -> raw term) */
+
 public class AlphaMap<T extends Atom> {
-  private class Pair { 
-    public T a1;
-    public T a2;
-    public Pair(T a1, T a2) {
-      this.a1 = a1;
-      this.a2 = a2;
-    } 
+
+  public static class AlphaException extends Exception { } 
+
+  private Hashtable<T,T> table1 = new Hashtable<T,T>();
+  private Hashtable<T,T> table2 = new Hashtable<T,T>();
+
+  public AlphaMap() { }
+
+  public AlphaMap(AlphaMap<T> o) {
+    this.table1 = new Hashtable<T,T>(o.table1);
+    this.table2 = new Hashtable<T,T>(o.table2);
   }
-  private LinkedList<Pair> ctx = new LinkedList<Pair>();
-  private Stack<Integer> counters = new Stack<Integer>();
-  private int counter = 0;
-  public void push() {
-    counters.push(counter);
-    counter = 0;
+
+  public void put(T a1, T a2, T fresh) {
+    table1.put(a1,fresh);
+    table2.put(a2,fresh);
   }
-  public void add(T a1, T a2) {
-    ctx.addFirst(new Pair(a1,a2)); 
+
+  public boolean equal(T a1, T a2) {
+    return table1.get(a1).equals(table2.get(a2));
   }
-  public void pop() { 
-    for(int i=0; i<counter; i++)
-      ctx.removeFirst(); 
-    counter = counters.pop();
-  }
-  public T get(T a) { 
-    for (Pair p: ctx) {
-      if (p.a1.equals(a)) return p.a2;
-    }
-    throw new RuntimeException();
+
+  public AlphaMap<T> combine(AlphaMap<T> m) {
+    AlphaMap<T> res = new AlphaMap<T>(this);
+    res.table1.putAll(m.table1);
+    res.table2.putAll(m.table2);
+    return res;
   }
 }
 
