@@ -88,13 +88,47 @@ public class TestSystemF {
     return m.size() == 1 && m.get("T").gethint().equals("T");
   }
 
-  public static String testConvert() {
+  // warning : depends of teh history of tests
+  public static boolean testConvert() {
     RawLTerm t1 = `RawTAbs(RawTypeTermAbs("T",
           RawLAbs(RawTermTermAbs("x",RawTVar("T"),
               RawLAbs(RawTermTermAbs("x1",RawArrow(RawTVar("T"),RawTVar("T")),
                   RawLApp(RawLVar("x1"),RawLVar("x"))))))));
 
-    return t1.convert().toString();
+    LTerm t2 = `TAbs(TypeTermAbs(TypeVar(3,"T"),
+          LAbs(TermTermAbs(TermVar(1,"x"),TVar(TypeVar(3,"T")),
+              LAbs(TermTermAbs(TermVar(2,"x"),Arrow(TVar(TypeVar(3,"T")),TVar(TypeVar(3,"T"))),
+                  LApp(LVar(TermVar(2,"x")),LVar(TermVar(1,"x")))))))));
+
+    return t2.equals(t1.convert());
+  }
+
+  public static boolean testAlpha() {
+    LTerm t1 = `TAbs(TypeTermAbs(TypeVar(0,"T"),
+          LAbs(TermTermAbs(TermVar(1,"x"), TVar(TypeVar(0,"T")),
+              LAbs(TermTermAbs(TermVar(2,"x"),Arrow(TVar(TypeVar(0,"T")),TVar(TypeVar(0,"T"))),
+                  LApp(LVar(TermVar(2,"x")),LVar(TermVar(1,"x")))))))));
+
+    LTerm t2 = `TAbs(TypeTermAbs(TypeVar(2,"T"),
+          LAbs(TermTermAbs(TermVar(4,"x"), TVar(TypeVar(2,"T")),
+              LAbs(TermTermAbs(TermVar(1,"x"),Arrow(TVar(TypeVar(2,"T")),TVar(TypeVar(2,"T"))),
+                  LApp(LVar(TermVar(1,"x")),LVar(TermVar(4,"x")))))))));
+
+    LTerm t3 = `TAbs(TypeTermAbs(TypeVar(2,"T"),
+          LAbs(TermTermAbs(TermVar(4,"x"), TVar(TypeVar(2,"T")),
+              LAbs(TermTermAbs(TermVar(1,"x"),Arrow(TVar(TypeVar(2,"T")),TVar(TypeVar(2,"T"))),
+                  LApp(LVar(TermVar(1,"x")),LVar(TermVar(1,"x")))))))));
+
+    return (t1.equals(t2) && (! t1.equals(t3)));
+  }
+
+  public static boolean testConvertAlpha() {
+    LTerm t1 = `TAbs(TypeTermAbs(TypeVar(0,"T"),
+          LAbs(TermTermAbs(TermVar(1,"x"), TVar(TypeVar(0,"T")),
+              LAbs(TermTermAbs(TermVar(2,"x"),Arrow(TVar(TypeVar(0,"T")),TVar(TypeVar(0,"T"))),
+                  LApp(LVar(TermVar(2,"x")),LVar(TermVar(1,"x")))))))));
+
+    return t1.equals(t1.export().convert());
   }
 
   public static void main(String[] args) {
@@ -104,5 +138,7 @@ public class TestSystemF {
     System.out.println("testGetBound: " +  testGetBound());
     System.out.println("testGetBoundRaw: " +  testGetBoundRaw());
     System.out.println("testConvert: " +  testConvert());
+    System.out.println("testAlpha: " +  testAlpha());
+    System.out.println("testConvertAlpha: " +  testConvertAlpha());
   }
 }
