@@ -76,9 +76,16 @@ public class FreshExpander {
   private String alphamapArgList(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
-      buf.append(", ");
       String aid = st.qualifiedSortId(a);
-      buf.append(%[tom.library.freshgom.AlphaMap<@aid@> @a@Map]%);
+      if(st.isPatternType(sort)) {
+        if (st.getBoundAtoms(sort).contains(a)) {
+          buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@OuterMap]%);
+          buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@InnerMap]%);
+        } else 
+          buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@Map]%);
+      } else {
+        buf.append(%[,tom.library.freshgom.AlphaMap<@aid@> @a@Map]%);
+      }
     }
     return buf.toString();
   }
@@ -86,9 +93,10 @@ public class FreshExpander {
   private String newAlphamapList(String sort) {
     StringBuffer buf = new StringBuffer();
     for(String a: st.getAccessibleAtoms(sort)) {
-      buf.append(", ");
       String aid = st.qualifiedSortId(a);
-      buf.append(%[new tom.library.freshgom.AlphaMap<@aid@>()]%);
+      buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
+      if(st.isPatternType(sort) && st.getBoundAtoms(sort).contains(a)) 
+        buf.append(%[,new tom.library.freshgom.AlphaMap<@aid@>()]%);
     }
     return buf.toString();
   }
@@ -160,6 +168,74 @@ public class FreshExpander {
     }
     return buf.toString();
   }
+
+  /* call to expression field inside expression type */
+  private String alphaRecCall1(String sort) {
+    StringBuffer buf = new StringBuffer();
+    for(String a: st.getAccessibleAtoms(sort)) {
+      buf.append(%[,@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to pattern field inside expression type */
+  private String alphaRecCall2(String sort) {
+    StringBuffer buf = new StringBuffer();
+    for(String a: st.getAccessibleAtoms(sort)) {
+      buf.append(%[,@a@Map]%);
+      if(st.getBoundAtoms(sort).contains(a))
+        buf.append(%[,@a@InnerMap]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to inner field inside pattern type */
+  private String alphaRecCall3(String tosort, String fromsort) {
+    StringBuffer buf = new StringBuffer();
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(st.getBoundAtoms(fromsort).contains(a)) 
+        buf.append(%[,@a@InnerMap]%);
+      else
+        buf.append(%[,@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to outer field inside pattern type */
+  private String alphaRecCall4(String tosort, String fromsort) {
+    StringBuffer buf = new StringBuffer();
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      if(st.getBoundAtoms(fromsort).contains(a)) 
+        buf.append(%[,@a@OuterMap]%);
+      else
+        buf.append(%[,@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to neutral field inside pattern type */
+  private String alphaRecCall5(String sort) {
+    StringBuffer buf = new StringBuffer();
+    for(String a: st.getAccessibleAtoms(sort)) {
+      buf.append(%[,@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+  /* call to pattern field inside pattern type */
+  private String alphaRecCall6(String tosort) {
+    StringBuffer buf = new StringBuffer();
+    for(String a: st.getAccessibleAtoms(tosort)) {
+      // bound atoms have to be the same
+      if(st.getBoundAtoms(tosort).contains(a)) {
+        buf.append(%[,@a@OuterMap]%);
+        buf.append(%[,@a@InnerMap]%);
+      } else buf.append(%[,@a@Map]%);
+    }
+    return buf.toString();
+  }
+
+
 
   /* call to expression field inside expression type */
   private String recCall1(String sort) {
@@ -418,10 +494,16 @@ public class FreshExpander {
       * alpha equivalence 
       */
       public boolean equals(@sortid@ o) {
-        return alpha(o @newalphamaps@);
+        try { 
+          alpha(o @newalphamaps@); 
+          return true;
+        } catch (tom.library.freshgom.AlphaMap.AlphaException e) {
+          return false;
+        }
       }
 
-      public abstract boolean alpha (@sortid@ o @alphamapargs@);
+      public abstract void alpha (@sortid@ o @alphamapargs@)
+        throws tom.library.freshgom.AlphaMap.AlphaException;
 
      /**
       * exportation (term -> raw term) 
@@ -454,6 +536,11 @@ public class FreshExpander {
           }
 
           public abstract void getBound@a@(java.util.Set<@aid@> atoms); 
+
+          public abstract void getBound@a@2(
+              @sortid@ o, tom.library.freshgom.AlphaMap<@aid@> m)
+              throws tom.library.freshgom.AlphaMap.AlphaException;
+ 
         ]%;
       }
     }
@@ -549,13 +636,13 @@ public class FreshExpander {
         String fsortid = st.qualifiedSortId(fsort);
         res += %[
           @fsortid@ @f@ = get@f@();
-        if (@fsort@Map.containsKey(@f@))
-          res = res.set@f@(@fsort@Map.get(@f@));
-        else {
-          @fsortid@ fresh_@f@ = @fsortid@.fresh@fsort@(@f@);
-          @fsort@Map.put(@f@,fresh_@f@);
-          res = res.set@f@(fresh_@f@);
-        }
+          if (@fsort@Map.containsKey(@f@))
+            res = res.set@f@(@fsort@Map.get(@f@));
+          else {
+            @fsortid@ fresh_@f@ = @fsortid@.fresh@fsort@(@f@);
+            @fsort@Map.put(@f@,fresh_@f@);
+            res = res.set@f@(fresh_@f@);
+          }
         ]%;
       } else {
         String arglist = hashtableRecursiveCall(sort); 
@@ -570,6 +657,82 @@ public class FreshExpander {
       }
     }
     return res + "return res;";
+  }
+
+  private String alphaRecursiveCalls(String c) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String res = ""; 
+    /* if c is a constructor in expression position
+       the args are of the form atomsort1Map, atomsort2Map .. */
+    if(st.isExpressionType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        if (st.isBuiltin(fsort)) {
+          res += %[
+            if (get@f@() != o.get@f@()) 
+              throw new tom.library.freshgom.AlphaMap.AlphaException();
+           ]%;
+        } else {
+          String fsortid = st.qualifiedSortId(fsort);
+          String rawfsortid = st.qualifiedRawSortId(fsort);
+          if (st.isAtomType(fsort)) {
+            res += %[
+              if (!@fsort@Map.equal(get@f@(),o.get@f@()))
+                throw new tom.library.freshgom.AlphaMap.AlphaException();
+            ]%;
+          } else if (st.isExpressionType(fsort)) {
+            res += %[get@f@().alpha(o.get@f@() @alphaRecCall1(fsort)@);]%;
+          } else if (st.isPatternType(fsort)) {
+            res += %[
+              @fsortid@ @f@ = get@f@();;
+              @fsortid@ o_@f@ = o.get@f@();
+            ]%;
+            for(String a: st.getBoundAtoms(fsort)) {
+              String aid = st.qualifiedSortId(a);
+              res += %[
+                tom.library.freshgom.AlphaMap<@aid@> @f@_bound@a@
+                  = new tom.library.freshgom.AlphaMap<@aid@>();
+                @f@.getBound@a@2(o_@f@, @f@_bound@a@);
+                tom.library.freshgom.AlphaMap<@aid@> @a@InnerMap 
+                  = @a@Map.combine(@f@_bound@a@);
+              ]%;
+            }
+            res += %[@f@.alpha(o.get@f@() @alphaRecCall2(fsort)@);]%;
+          }
+        }
+      }
+    /* if c is a constructor in pattern position --
+       the args are of the form 
+        as1OuterMap, as1InnerMap, as2Map, as3OuterMap, as3InnerMap .. */
+    } else if(st.isPatternType(sort)) {
+      for(String f: st.getFields(c)) {
+        String fsort = st.getSort(c,f);
+        String fsortid = st.qualifiedSortId(fsort);
+        String rawfsortid = st.qualifiedRawSortId(fsort);
+        if (st.isAtomType(fsort)) {
+          if (st.isBound(c,f))
+            res += %[
+              if (!@fsort@InnerMap.equal(get@f@(),o.get@f@()))
+                throw new tom.library.freshgom.AlphaMap.AlphaException();
+            ]%;
+          else
+            res += %[
+              if (!@fsort@Map.equal(get@f@(),o.get@f@()))
+                throw new tom.library.freshgom.AlphaMap.AlphaException();
+            ]%;
+        } else if (st.isInner(c,f)) /* must be expression type */ {
+          res += %[get@f@().alpha(o.get@f@() @alphaRecCall3(fsort,sort)@);]%;
+        } else if (st.isOuter(c,f)) /* must be expression type */ {
+          res += %[get@f@().alpha(o.get@f@() @alphaRecCall4(fsort,sort)@);]%;
+        } else if (st.isNeutral(c,f)) /* must be expression type */ {
+          res += %[get@f@().alpha(o.get@f@() @alphaRecCall5(fsort)@);]%;
+        } else /* must be pattern type */ {
+          res += %[get@f@().alpha(o.get@f@() @alphaRecCall6(fsort)@);]%;
+        }
+      }
+    }
+    return res;
   }
 
   private String exportRecursiveCalls(String c) {
@@ -653,7 +816,30 @@ public class FreshExpander {
     return res;
   }
 
+  private String getBound2RecursiveCalls(String c, String a) {
+    String sort = st.getSort(c);
+    String sortid = st.qualifiedSortId(sort);
+    String aid = st.qualifiedSortId(a);
+    String res = ""; 
+    for(String f: st.getPatternFields(c)) {
+      String fsort = st.getSort(c,f);
+      if (st.isBuiltin(fsort)) continue;
+      if (st.isAtomType(fsort)) {
+        if (fsort.equals(a)) {
+          res += %[
+            @aid@ @f@ = get@f@();
+            m.put(@f@,o.get@f@(),@aid@.fresh@a@(@f@));
+          ]%;
+        }
+      } else if (st.getBoundAtoms(fsort).contains(a)) {
+        res += %[get@f@().getBound@a@2(o.get@f@(),m);]%;
+      }
+    }
+    return res;
+  }
+
   private String constructorBlockHookString(String c) {
+    String cid = st.qualifiedConstructorId(c);
     String sort = st.getSort(c);
     String alphamapargs = alphamapArgList(sort);
     String exportmapargs = exportmapArgList(sort);
@@ -674,9 +860,12 @@ public class FreshExpander {
       /**
        * alpha equivalence 
        */
-      public boolean alpha (@sortid@ o @alphamapargs@) {
-        return false;
-      };
+      public void alpha (@sortid@ o @alphamapargs@) 
+        throws tom.library.freshgom.AlphaMap.AlphaException {
+          if (! (o instanceof @cid@))
+            throw new tom.library.freshgom.AlphaMap.AlphaException();
+          @alphaRecursiveCalls(c)@
+        };
 
     /**
      * exportation (term -> raw term) 
@@ -699,6 +888,15 @@ public class FreshExpander {
           public void getBound@a@(java.util.Set<@aid@> atoms) {
             @getBoundRecursiveCalls(c,a)@
           }
+
+          public void getBound@a@2(
+              @sortid@ o, tom.library.freshgom.AlphaMap<@aid@> m) 
+              throws tom.library.freshgom.AlphaMap.AlphaException {
+                if (! (o instanceof @cid@))
+                  throw new tom.library.freshgom.AlphaMap.AlphaException();
+                @getBound2RecursiveCalls(c,a)@
+              }
+
         ]%;
       }
     }

@@ -153,7 +153,7 @@ public class SymbolTable {
       throw new UndeclaredConstructorException(cons);
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
-        return qualifiedSortId(`s) + "." + `cons; 
+        return qualifiedSortId(`s).toLowerCase() + "." + `cons; 
       }
     }
     throw new RuntimeException("non exhaustive match");
