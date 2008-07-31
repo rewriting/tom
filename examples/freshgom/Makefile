@@ -1,5 +1,6 @@
 all: TestSystemF.class FreshLambda.class
 	java TestSystemF
+	java FreshLambda < test.ml
 
 TestSystemF.java: TestSystemF.t
 	tom TestSystemF.t
