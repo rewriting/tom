@@ -14,7 +14,7 @@ LTerm =
  | Test(s:Foo) 
  | TestMultipleBindings(m:<Multiple>) 
 
-// Foo does not contains atom but is concerned by freshgom since it is 
+// Foo does not contain atoms but is concerned by freshgom since it is 
 // referenced by LTerm.
 // Bar is not concerned by freshgom
 
