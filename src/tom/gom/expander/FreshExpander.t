@@ -708,27 +708,34 @@ public class FreshExpander {
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        String fsortid = st.qualifiedSortId(fsort);
-        String rawfsortid = st.qualifiedRawSortId(fsort);
-        if (st.isAtomType(fsort)) {
-          if (st.isBound(c,f))
-            res += %[
-              if (!@fsort@InnerMap.equal(get@f@(),o.get@f@()))
-                throw new tom.library.freshgom.AlphaMap.AlphaException();
+        if (st.isBuiltin(fsort)) {
+          res += %[
+            if (get@f@() != o.get@f@()) 
+              throw new tom.library.freshgom.AlphaMap.AlphaException();
+          ]%;
+        } else {
+          String fsortid = st.qualifiedSortId(fsort);
+          String rawfsortid = st.qualifiedRawSortId(fsort);
+          if (st.isAtomType(fsort)) {
+            if (st.isBound(c,f))
+              res += %[
+                if (!@fsort@InnerMap.equal(get@f@(),o.get@f@()))
+                  throw new tom.library.freshgom.AlphaMap.AlphaException();
             ]%;
-          else
-            res += %[
-              if (!@fsort@Map.equal(get@f@(),o.get@f@()))
-                throw new tom.library.freshgom.AlphaMap.AlphaException();
+                else
+                  res += %[
+                    if (!@fsort@Map.equal(get@f@(),o.get@f@()))
+                      throw new tom.library.freshgom.AlphaMap.AlphaException();
             ]%;
-        } else if (st.isInner(c,f)) /* must be expression type */ {
-          res += %[get@f@().alpha(o.get@f@() @alphaRecCall3(fsort,sort)@);]%;
-        } else if (st.isOuter(c,f)) /* must be expression type */ {
-          res += %[get@f@().alpha(o.get@f@() @alphaRecCall4(fsort,sort)@);]%;
-        } else if (st.isNeutral(c,f)) /* must be expression type */ {
-          res += %[get@f@().alpha(o.get@f@() @alphaRecCall5(fsort)@);]%;
-        } else /* must be pattern type */ {
-          res += %[get@f@().alpha(o.get@f@() @alphaRecCall6(fsort)@);]%;
+          } else if (st.isInner(c,f)) /* must be expression type */ {
+            res += %[get@f@().alpha(o.get@f@() @alphaRecCall3(fsort,sort)@);]%;
+          } else if (st.isOuter(c,f)) /* must be expression type */ {
+            res += %[get@f@().alpha(o.get@f@() @alphaRecCall4(fsort,sort)@);]%;
+          } else if (st.isNeutral(c,f)) /* must be expression type */ {
+            res += %[get@f@().alpha(o.get@f@() @alphaRecCall5(fsort)@);]%;
+          } else /* must be pattern type */ {
+            res += %[get@f@().alpha(o.get@f@() @alphaRecCall6(fsort)@);]%;
+          }
         }
       }
     }

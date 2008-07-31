@@ -1,0 +1,367 @@
+
+%include { string.tom }
+
+%include { int.tom }
+
+%typeterm Pattern {
+  implement { lambda.types.Pattern }
+  is_sort(t) { ($t instanceof lambda.types.Pattern) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Rules {
+  implement { lambda.types.Rules }
+  is_sort(t) { ($t instanceof lambda.types.Rules) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawClause {
+  implement { lambda.types.RawClause }
+  is_sort(t) { ($t instanceof lambda.types.RawClause) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawPatternList {
+  implement { lambda.types.RawPatternList }
+  is_sort(t) { ($t instanceof lambda.types.RawPatternList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawLTermList {
+  implement { lambda.types.RawLTermList }
+  is_sort(t) { ($t instanceof lambda.types.RawLTermList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm LTermList {
+  implement { lambda.types.LTermList }
+  is_sort(t) { ($t instanceof lambda.types.LTermList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Lam {
+  implement { lambda.types.Lam }
+  is_sort(t) { ($t instanceof lambda.types.Lam) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawLetin {
+  implement { lambda.types.RawLetin }
+  is_sort(t) { ($t instanceof lambda.types.RawLetin) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm PatternList {
+  implement { lambda.types.PatternList }
+  is_sort(t) { ($t instanceof lambda.types.PatternList) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawLTerm {
+  implement { lambda.types.RawLTerm }
+  is_sort(t) { ($t instanceof lambda.types.RawLTerm) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm LVar {
+  implement { lambda.types.LVar }
+  is_sort(t) { ($t instanceof lambda.types.LVar) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Letin {
+  implement { lambda.types.Letin }
+  is_sort(t) { ($t instanceof lambda.types.Letin) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawRules {
+  implement { lambda.types.RawRules }
+  is_sort(t) { ($t instanceof lambda.types.RawRules) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawLam {
+  implement { lambda.types.RawLam }
+  is_sort(t) { ($t instanceof lambda.types.RawLam) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm Clause {
+  implement { lambda.types.Clause }
+  is_sort(t) { ($t instanceof lambda.types.Clause) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm LTerm {
+  implement { lambda.types.LTerm }
+  is_sort(t) { ($t instanceof lambda.types.LTerm) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawPattern {
+  implement { lambda.types.RawPattern }
+  is_sort(t) { ($t instanceof lambda.types.RawPattern) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+%op Pattern PFun(f:String, children:PatternList) {
+  is_fsym(t) { ($t instanceof lambda.types.pattern.PFun) }
+  get_slot(f, t) { $t.getf() }
+  get_slot(children, t) { $t.getchildren() }
+  make(t0, t1) { lambda.types.pattern.PFun.make($t0, $t1) }
+}
+
+%op Pattern PVar(x:LVar) {
+  is_fsym(t) { ($t instanceof lambda.types.pattern.PVar) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { lambda.types.pattern.PVar.make($t0) }
+}
+
+%op Rules EmptyRList() {
+  is_fsym(t) { ($t instanceof lambda.types.rules.EmptyRList) }
+  make() { lambda.types.rules.EmptyRList.make() }
+}
+
+%op Rules ConsRList(c:Clause, cs:Rules) {
+  is_fsym(t) { ($t instanceof lambda.types.rules.ConsRList) }
+  get_slot(c, t) { $t.getc().refresh() }
+  get_slot(cs, t) { $t.getcs() }
+  make(t0, t1) { lambda.types.rules.ConsRList.make($t0, $t1) }
+}
+
+%op RawClause RawRule(p:RawPattern, t:RawLTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.rawclause.RawRule) }
+  get_slot(p, t) { $t.getp() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { lambda.types.rawclause.RawRule.make($t0, $t1) }
+}
+
+%op RawPatternList RawEmptyPList() {
+  is_fsym(t) { ($t instanceof lambda.types.rawpatternlist.RawEmptyPList) }
+  make() { lambda.types.rawpatternlist.RawEmptyPList.make() }
+}
+
+%op RawPatternList RawConsPList(p:RawPattern, ps:RawPatternList) {
+  is_fsym(t) { ($t instanceof lambda.types.rawpatternlist.RawConsPList) }
+  get_slot(p, t) { $t.getp() }
+  get_slot(ps, t) { $t.getps() }
+  make(t0, t1) { lambda.types.rawpatternlist.RawConsPList.make($t0, $t1) }
+}
+
+%op RawLTermList RawEmptyLTList() {
+  is_fsym(t) { ($t instanceof lambda.types.rawltermlist.RawEmptyLTList) }
+  make() { lambda.types.rawltermlist.RawEmptyLTList.make() }
+}
+
+%op RawLTermList RawConsLTList(t:RawLTerm, ts:RawLTermList) {
+  is_fsym(t) { ($t instanceof lambda.types.rawltermlist.RawConsLTList) }
+  get_slot(t, t) { $t.gett() }
+  get_slot(ts, t) { $t.getts() }
+  make(t0, t1) { lambda.types.rawltermlist.RawConsLTList.make($t0, $t1) }
+}
+
+%op LTermList EmptyLTList() {
+  is_fsym(t) { ($t instanceof lambda.types.ltermlist.EmptyLTList) }
+  make() { lambda.types.ltermlist.EmptyLTList.make() }
+}
+
+%op LTermList ConsLTList(t:LTerm, ts:LTermList) {
+  is_fsym(t) { ($t instanceof lambda.types.ltermlist.ConsLTList) }
+  get_slot(t, t) { $t.gett() }
+  get_slot(ts, t) { $t.getts() }
+  make(t0, t1) { lambda.types.ltermlist.ConsLTList.make($t0, $t1) }
+}
+
+%op Lam lam(x:LVar, t:LTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.lam.lam) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { lambda.types.lam.lam.make($t0, $t1) }
+}
+
+%op RawLetin Rawletin(x:String, u:RawLTerm, t:RawLTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.rawletin.Rawletin) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(u, t) { $t.getu() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1, t2) { lambda.types.rawletin.Rawletin.make($t0, $t1, $t2) }
+}
+
+%op PatternList EmptyPList() {
+  is_fsym(t) { ($t instanceof lambda.types.patternlist.EmptyPList) }
+  make() { lambda.types.patternlist.EmptyPList.make() }
+}
+
+%op PatternList ConsPList(p:Pattern, ps:PatternList) {
+  is_fsym(t) { ($t instanceof lambda.types.patternlist.ConsPList) }
+  get_slot(p, t) { $t.getp() }
+  get_slot(ps, t) { $t.getps() }
+  make(t0, t1) { lambda.types.patternlist.ConsPList.make($t0, $t1) }
+}
+
+%op RawLTerm RawApp(t1:RawLTerm, t2:RawLTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawApp) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { lambda.types.rawlterm.RawApp.make($t0, $t1) }
+}
+
+%op RawLTerm RawAbs(a:RawLam) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawAbs) }
+  get_slot(a, t) { $t.geta() }
+  make(t0) { lambda.types.rawlterm.RawAbs.make($t0) }
+}
+
+%op RawLTerm RawLet(b:RawLetin) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawLet) }
+  get_slot(b, t) { $t.getb() }
+  make(t0) { lambda.types.rawlterm.RawLet.make($t0) }
+}
+
+%op RawLTerm RawVar(x:String) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawVar) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { lambda.types.rawlterm.RawVar.make($t0) }
+}
+
+%op RawLTerm RawConstr(f:String, children:RawLTermList) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawConstr) }
+  get_slot(f, t) { $t.getf() }
+  get_slot(children, t) { $t.getchildren() }
+  make(t0, t1) { lambda.types.rawlterm.RawConstr.make($t0, $t1) }
+}
+
+%op RawLTerm RawCase(subject:RawLTerm, rules:RawRules) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawCase) }
+  get_slot(subject, t) { $t.getsubject() }
+  get_slot(rules, t) { $t.getrules() }
+  make(t0, t1) { lambda.types.rawlterm.RawCase.make($t0, $t1) }
+}
+
+%op LVar LVar(n:int, hint:String) {
+  is_fsym(t) { ($t instanceof lambda.types.lvar.LVar) }
+  get_slot(n, t) { $t.getn() }
+  get_slot(hint, t) { $t.gethint() }
+  make(t0, t1) { lambda.types.lvar.LVar.make($t0, $t1) }
+}
+
+%op Letin letin(x:LVar, u:LTerm, t:LTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.letin.letin) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(u, t) { $t.getu() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1, t2) { lambda.types.letin.letin.make($t0, $t1, $t2) }
+}
+
+%op RawRules RawEmptyRList() {
+  is_fsym(t) { ($t instanceof lambda.types.rawrules.RawEmptyRList) }
+  make() { lambda.types.rawrules.RawEmptyRList.make() }
+}
+
+%op RawRules RawConsRList(c:RawClause, cs:RawRules) {
+  is_fsym(t) { ($t instanceof lambda.types.rawrules.RawConsRList) }
+  get_slot(c, t) { $t.getc() }
+  get_slot(cs, t) { $t.getcs() }
+  make(t0, t1) { lambda.types.rawrules.RawConsRList.make($t0, $t1) }
+}
+
+%op RawLam Rawlam(x:String, t:RawLTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlam.Rawlam) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { lambda.types.rawlam.Rawlam.make($t0, $t1) }
+}
+
+%op Clause Rule(p:Pattern, t:LTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.clause.Rule) }
+  get_slot(p, t) { $t.getp() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { lambda.types.clause.Rule.make($t0, $t1) }
+}
+
+%op LTerm App(t1:LTerm, t2:LTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.App) }
+  get_slot(t1, t) { $t.gett1() }
+  get_slot(t2, t) { $t.gett2() }
+  make(t0, t1) { lambda.types.lterm.App.make($t0, $t1) }
+}
+
+%op LTerm Abs(a:Lam) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.Abs) }
+  get_slot(a, t) { $t.geta().refresh() }
+  make(t0) { lambda.types.lterm.Abs.make($t0) }
+}
+
+%op LTerm Let(b:Letin) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.Let) }
+  get_slot(b, t) { $t.getb().refresh() }
+  make(t0) { lambda.types.lterm.Let.make($t0) }
+}
+
+%op LTerm Var(x:LVar) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.Var) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { lambda.types.lterm.Var.make($t0) }
+}
+
+%op LTerm Constr(f:String, children:LTermList) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.Constr) }
+  get_slot(f, t) { $t.getf() }
+  get_slot(children, t) { $t.getchildren() }
+  make(t0, t1) { lambda.types.lterm.Constr.make($t0, $t1) }
+}
+
+%op LTerm Case(subject:LTerm, rules:Rules) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.Case) }
+  get_slot(subject, t) { $t.getsubject() }
+  get_slot(rules, t) { $t.getrules() }
+  make(t0, t1) { lambda.types.lterm.Case.make($t0, $t1) }
+}
+
+%op RawPattern RawPFun(f:String, children:RawPatternList) {
+  is_fsym(t) { ($t instanceof lambda.types.rawpattern.RawPFun) }
+  get_slot(f, t) { $t.getf() }
+  get_slot(children, t) { $t.getchildren() }
+  make(t0, t1) { lambda.types.rawpattern.RawPFun.make($t0, $t1) }
+}
+
+%op RawPattern RawPVar(x:String) {
+  is_fsym(t) { ($t instanceof lambda.types.rawpattern.RawPVar) }
+  get_slot(x, t) { $t.getx() }
+  make(t0) { lambda.types.rawpattern.RawPVar.make($t0) }
+}
+

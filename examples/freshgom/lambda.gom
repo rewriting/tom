@@ -11,16 +11,21 @@ LTerm = App(t1:LTerm,t2:LTerm)
       | Constr(f:String, children:LTermList)
       | Case(subject:LTerm,rules:Rules)
 
-Rules = RList(<Clause>*)
+Rules = EmptyRList()
+      | ConsRList(c:<Clause>, cs:Rules)
+
 Clause binds LVar = Rule(p:Pattern, inner t:LTerm) 
 
 Pattern binds LVar = PFun(neutral f:String, children:PatternList)
-		   | PVar(x:LVar)
+		               | PVar(x:LVar)
 
-LTermList binds LVar = LTList(LTerm*)
-PatternList binds LVar = PList(Pattern*)
+LTermList = EmptyLTList() 
+          | ConsLTList(t:LTerm,ts:LTermList)
 
-Lam binds LVar = Lam(x:LVar, inner t:LTerm)
-Letin binds LVar = Letin(x:LVar, outer u:LTerm, inner t:LTerm)
+PatternList binds LVar = EmptyPList()
+                       | ConsPList(p:Pattern,ps:PatternList)
+
+Lam binds LVar = lam(x:LVar, inner t:LTerm)
+Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
 
 
