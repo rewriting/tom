@@ -385,7 +385,14 @@ typeName
 Type =
  | ArrayType           ( type:Type, dimensions:int )
  | ClassOrInterfaceType( classorinterfacetype:ClassOrInterfaceType )
- | PrimitiveType       ( primitivetype:PrimitiveType )
+ | Boolean()
+ | Char()
+ | Byte()
+ | Short()
+ | Int()
+ | Long()
+ | Float()
+ | Double()
  | Void()
 
 /*
@@ -403,19 +410,7 @@ ClassOrInterfaceType =
 classOrInterfaceType
 	:	Identifier typeArguments? ('.' Identifier typeArguments? )*
 	;
-*/
 
-PrimitiveType =
- | Boolean()
- | Char()
- | Byte()
- | Short()
- | Int()
- | Long()
- | Float()
- | Double()
-
-/*
 primitiveType
     :   'boolean'
     |   'char'
@@ -1121,7 +1116,7 @@ selector
 
 Super_ =
  | SuperConstruction( arguments:ExpressionList )
- | SuperFieldAccess( name:String )
+ | SuperVariableAccess( name:String )
  | SuperCall( name:String, arguments:ExpressionList )
 
 /*

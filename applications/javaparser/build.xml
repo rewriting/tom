@@ -15,7 +15,7 @@
   
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
-    <classpath refid="tom.classpath"/>
+    <classpath path="${env.CLASSPATH}"/>
   </taskdef>
   
   <target name="init" depends="tom.init">
@@ -64,22 +64,22 @@
   </target>
   
   <target name="javac" depends="tom, antlr">
-    <javac.preset destdir="${jparse.build}" >
-      <src path="${jparse.src}"/>
+    <javac destdir="${jparse.build}" >
+      <!--<src path="${jparse.src}"/>-->
       <src path="${jparse.gen}"/>
       <include name="**/*.java"/>
-      <classpath refid="tom.classpath"/>
-    </javac.preset>
+      <classpath path="${env.CLASSPATH}"/>
+    </javac>
   </target>
   
-  <target name="test" depends="javac">
+  <target name="test"><!-- depends="javac"-->
     <java classname="Main"
           fork="true">
       <!-- <arg value="/home/jg/eclipse/Tests/src/Test.java"/> -->
       <arg value="${jparse.gen}/Main.java"/>
       <!-- <arg value="${jparse.gen}/${jparse.parser}/JavaParser.java"/> -->
       <classpath>
-        <path refid="tom.classpath"/>
+        <path path="${env.CLASSPATH}"/>
         <pathelement location="${jparse.build}"/>
       </classpath>
     </java>

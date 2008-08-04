@@ -173,6 +173,7 @@ options {
 
 tokens {
   %include { parser/ast/AstTokenList.txt }
+  CLASSCREATORREST;
 }
 
 @header {
@@ -243,7 +244,7 @@ typeDeclaration
     :   classOrInterfaceDeclaration
     |   ';' -> EmptyTypeDecl
     ;
-    
+
 classOrInterfaceDeclaration
     :   classOrInterfaceModifiers
         (    classDeclaration[$classOrInterfaceModifiers.tree] -> classDeclaration
@@ -280,14 +281,21 @@ normalClassDeclaration[Tree modifiers]
         ('extends' e=type)?
         ('implements' i=typeList)?
         classBody
-        -> {tp==null && e==null && i==null}? ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) Void ^(TypeList ) classBody)
-        -> {tp==null && e==null}?            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) Void $i classBody)
-        -> {tp==null && i==null}?            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) $e ^(TypeList ) classBody)
-        -> {tp==null}?                       ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) $e $i classBody)
-        -> {e==null && i==null}?             ^(NormalClass Identifier {modifiers} $tp Void ^(TypeList ) classBody)
-        -> {e==null}?                        ^(NormalClass Identifier {modifiers} $tp Void $i classBody)
-        -> {i==null}?                        ^(NormalClass Identifier {modifiers} $tp $e ^(TypeList ) classBody)
-        ->                                   ^(NormalClass Identifier {modifiers} $tp $e $i classBody)
+        -> {tp==null && e==null && i==null}?
+            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) Void ^(TypeList ) classBody)
+        -> {tp==null && e==null}?
+            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) Void $i classBody)
+        -> {tp==null && i==null}?
+            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) $e ^(TypeList ) classBody)
+        -> {tp==null}?
+            ^(NormalClass Identifier {modifiers} ^(TypeParameterList ) $e $i classBody)
+        -> {e==null && i==null}?
+            ^(NormalClass Identifier {modifiers} $tp Void ^(TypeList ) classBody)
+        -> {e==null}?
+            ^(NormalClass Identifier {modifiers} $tp Void $i classBody)
+        -> {i==null}?
+            ^(NormalClass Identifier {modifiers} $tp $e ^(TypeList ) classBody)
+        ->  ^(NormalClass Identifier {modifiers} $tp $e $i classBody)
     ;
     
 typeParameters
@@ -336,10 +344,10 @@ enumConstant
     ;
     
 enumBodyDeclarations
-    :   ';' (classBodyDeclaration)*
+    :   ';' classBodyDeclaration*
         ->  ^(BodyDeclList classBodyDeclaration*)
     ;
-    
+
 interfaceDeclaration[Tree modifiers]
     :   normalInterfaceDeclaration[modifiers]
     |   annotationTypeDeclaration[modifiers]
@@ -360,7 +368,7 @@ typeList
 classBody
     :   '{' classBodyDeclaration* '}' -> ^(BodyDeclList classBodyDeclaration*)
     ;
-    
+
 interfaceBody
     :   '{' interfaceBodyDeclaration* '}'
         ->  ^(BodyDeclList interfaceBodyDeclaration*)
@@ -368,105 +376,45 @@ interfaceBody
 
 classBodyDeclaration
     :   ';'
+        ->  EmptyBodyDecl
     |   s='static'? block
         -> {s==null}? ^(BlockToBodyDecl block EmptyModifier)
         ->            ^(BlockToBodyDecl block Static)
-    |   modifiers memberDecl[$modifiers.tree] -> memberDecl
+    |   modifiers! memberDecl[$modifiers.tree]
     ;
-
-// (* PASSE "rule parameters" *)
 
 memberDecl[Tree modifiers]
     :   genericMethodOrConstructorDecl[modifiers]
     |   memberDeclaration[modifiers]
-    |   'void' Identifier voidMethodDeclaratorRest
-        ->  ^(MethodDecl
-                {modifiers}
-                ^(TypeParameterList )
-                Void
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(BlockStatementList )
-                )
-    |   Identifier constructorDeclaratorRest
-        ->  ^(ConstructorDecl
-                {modifiers}
-                ^(TypeParameterList )
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(ConstructorBody
-                    ^(EmptyExplicitConstructorInvocation )
-                    ^(BlockStatementList )
-                    )
-                )
+    |   'void'! Identifier! voidMethodDeclaratorRest[modifiers, new AstTree($Identifier)]
+    |   Identifier! constructorDeclaratorRest[modifiers, null, new AstTree($Identifier)]
     |   interfaceDeclaration[modifiers]
         ->  ^(TypeDeclToBodyDecl interfaceDeclaration)
     |   classDeclaration[modifiers]
         ->  ^(TypeDeclToBodyDecl classDeclaration)
     ;
 
-// (* HERE *)
-
 memberDeclaration[Tree modifiers]
-    :   type
-        (   methodDeclaration[modifiers $type.tree] -> methodDeclaration
-        |   fieldDeclaration[modifiers $type.tree] -> fieldDeclaration
+    :   type!
+        (   methodDeclaration[modifiers, $type.tree]
+        |   fieldDeclaration[modifiers, $type.tree]
         )
     ;
 
 genericMethodOrConstructorDecl[Tree modifiers]
-    :   typeParameters genericMethodOrConstructorRest[modifiers $typeParameters.tree]
-        -> genericMethodOrConstructorRest
+    :   typeParameters! genericMethodOrConstructorRest[modifiers, $typeParameters.tree]
     ;
-    
+
+// GRAMMAR MODIFICATION : expanding (type | 'void')
+
 genericMethodOrConstructorRest[Tree modifiers, Tree typeparameters]
-    :   (t=type | 'void') Identifier methodDeclaratorRest
-        -> {t==null}?
-            ^(MethodDecl
-                {modifiers}
-                {typeparameters}
-                Void
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(BlockStatementList )
-                )
-         ->  ^(MethodDecl
-                 {modifiers}
-                 {typeparameters}
-                 $t
-                 Identifier
-                 ^(FormalParameterDeclList )
-                 ^(QualifiedNameList )
-                 ^(BlockStatementList )
-                 )
-    |   Identifier constructorDeclaratorRest
-        ->  ^(ConstructorDecl
-                {modifiers}
-                {typeparameters}
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(ConstructorBody
-                    ^(EmptyExplicitConstructorInvocation )
-                    ^(BlockStatementList )
-                    )
-                )
+    :   type! Identifier! methodDeclaratorRest[modifiers, typeparameters, $type.tree, new AstTree($Identifier)]
+    |   'void'! Identifier! methodDeclaratorRest[modifiers, typeparameters, null, new AstTree($Identifier)]
+    |   Identifier! constructorDeclaratorRest[modifiers, typeparameters, new AstTree($Identifier)]
     ;
 
 methodDeclaration[Tree modifiers, Tree type]
-    :   Identifier methodDeclaratorRest
-        ->  ^(MethodDecl
-                {modifiers}
-                ^(TypeParameterList )
-                {type}
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(BlockStatementList )
-                )
+    :   Identifier! methodDeclaratorRest[modifiers, null, type, new AstTree($Identifier)]
     ;
 
 fieldDeclaration[Tree modifiers, Tree type]
@@ -475,96 +423,129 @@ fieldDeclaration[Tree modifiers, Tree type]
     ;
 
 interfaceBodyDeclaration
-    :   modifiers interfaceMemberDecl[$modifiers.tree] -> interfaceMemberDecl
-    |   ';'
+    :   modifiers! interfaceMemberDecl[$modifiers.tree]
+    |   ';' -> EmptyBodyDecl
     ;
 
 interfaceMemberDecl[Tree modifiers]
     :   interfaceMethodOrFieldDecl[modifiers]
     |   interfaceGenericMethodDecl[modifiers]
-    |   'void' Identifier voidInterfaceMethodDeclaratorRest
-        ->  ^(MethodDecl
-                {modifiers}
-                ^(TypeParameterList )
-                Void
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                )
+    |   'void'! Identifier! voidInterfaceMethodDeclaratorRest[modifiers, new AstTree($Identifier)]
     |   interfaceDeclaration[modifiers]
         ->  ^(TypeDeclToBodyDecl interfaceDeclaration)
     |   classDeclaration[modifiers]
         ->  ^(TypeDeclToBodyDecl classDeclaration)
     ;
-    
+
 interfaceMethodOrFieldDecl[Tree modifiers]
-    :   type Identifier interfaceMethodOrFieldRest[modifiers $type.tree $Identifier.tree]
-        -> interfaceMethodOrFieldRest
+    :   type! Identifier! interfaceMethodOrFieldRest[modifiers, $type.tree, new AstTree($Identifier)]
     ;
-    
+
 interfaceMethodOrFieldRest[Tree modifiers, Tree type, Tree name]
-    :   constantDeclaratorsRest[type, name] ';' -> ^(FieldDecl {modifiers} constantDeclaratorsRest)
-    |   interfaceMethodDeclaratorRest[modifiers, type, name] -> interfaceMethodDeclaratorRest
+    :   constantDeclaratorsRest[type, name] ';'
+        ->  ^(FieldDecl {modifiers} constantDeclaratorsRest)
+    |   interfaceMethodDeclaratorRest[modifiers, null, type, name]
     ;
 
-methodDeclaratorRest
+methodDeclaratorRest[Tree modifiers, Tree typeparameters, Tree type, Tree name]
     :   formalParameters ('[' ']')*
-        ('throws' qualifiedNameList)?
+        ('throws' t=qualifiedNameList)?
         (   methodBody
+            -> {typeparameters==null && type==null && t==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) methodBody)
+            -> {typeparameters==null && type==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters $t methodBody)
+            -> {typeparameters==null && t==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters ^(QualifiedNameList ) methodBody)
+            -> {typeparameters==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters $t methodBody)
+            -> {type==null && t==null}?
+                ^(MethodDecl {modifiers} {typeparameters} Void {name} formalParameters ^(QualifiedNameList ) methodBody)
+            -> {type==null}?
+                ^(MethodDecl {modifiers} {typeparameters} Void {name} formalParameters $t methodBody)
+            -> {t==null}?
+                ^(MethodDecl {modifiers} {typeparameters} {type} {name} formalParameters ^(QualifiedNameList ) methodBody)
+            ->  ^(MethodDecl {modifiers} {typeparameters} {type} {name} formalParameters $t methodBody)
         |   ';'
-        )
-    ;
-    
-voidMethodDeclaratorRest
-    :   formalParameters ('throws' qualifiedNameList)?
-        (   methodBody
-        |   ';'
+            -> {typeparameters==null && type==null && t==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+            -> {typeparameters==null && type==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters $t ^(BlockStatementList ))
+            -> {typeparameters==null && t==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+            -> {typeparameters==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters $t ^(BlockStatementList ))
+            -> {type==null && t==null}?
+                ^(MethodDecl {modifiers} {typeparameters} Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+            -> {type==null}?
+                ^(MethodDecl {modifiers} {typeparameters} Void {name} formalParameters $t ^(BlockStatementList ))
+            -> {t==null}?
+                ^(MethodDecl {modifiers} {typeparameters} {type} {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+            ->  ^(MethodDecl {modifiers} {typeparameters} {type} {name} formalParameters $t ^(BlockStatementList ))
         )
     ;
 
-interfaceMethodDeclaratorRest[Tree modifiers, Tree type, Tree name]
-    :   formalParameters ('[' ']')* ('throws' t=qualifiedNameList)? ';'
-        -> {t==null}? ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} ^(FormalParameterDeclList ))
-        ->            ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters)
+voidMethodDeclaratorRest[Tree modifiers, Tree name]
+    :   formalParameters ('throws' t=qualifiedNameList)?
+        (   methodBody
+            -> {t==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) methodBody)
+            ->  ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters $t methodBody)
+        |   ';'
+            -> {t==null}?
+                ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+            ->  ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters $t ^(BlockStatementList ))
+        )
     ;
+
+interfaceMethodDeclaratorRest[Tree modifiers, Tree typeparameters, Tree type, Tree name]
+    :   formalParameters ('[' ']')* ('throws' t=qualifiedNameList)? ';'
+        -> {typeparameters==null && type==null && t==null}?
+            ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+        -> {typeparameters==null && type==null}?
+            ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters $t ^(BlockStatementList ))
+        -> {typeparameters==null && t==null}?
+            ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+        -> {typeparameters==null}?
+            ^(MethodDecl {modifiers} ^(TypeParameterList ) {type} {name} formalParameters $t ^(BlockStatementList ))
+        -> {type==null && t==null}?
+            ^(MethodDecl {modifiers} {typeparameters} Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+        -> {type==null}?
+            ^(MethodDecl {modifiers} {typeparameters} Void {name} formalParameters $t ^(BlockStatementList ))
+        -> {t==null}?
+            ^(MethodDecl {modifiers} {typeparameters} {type} {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+        ->  ^(MethodDecl {modifiers} {typeparameters} {type} {name} formalParameters $t ^(BlockStatementList ))
+    ;
+
+// GRAMMAR MODIFICATION : expanding (type | 'void')
 
 interfaceGenericMethodDecl[Tree modifiers]
-    :   typeParameters (t=type | 'void') Identifier
-        interfaceMethodDeclaratorRest[modifiers, t.tree $Identifier.tree]
-        -> {t==null}?
-            ^(MethodDecl
-                {modifiers}
-                typeParameters
-                type
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(BlockStatementList )
-                )
-        ->  ^(MethodDecl
-                {modifiers}
-                typeParameters
-                $t
-                Identifier
-                ^(FormalParameterDeclList )
-                ^(QualifiedNameList )
-                ^(BlockStatementList )
-                )
-    ;
-    
-voidInterfaceMethodDeclaratorRest
-    :   formalParameters ('throws' qualifiedNameList)? ';'
-    ;
-    
-constructorDeclaratorRest
-    :   formalParameters ('throws' qualifiedNameList)? constructorBody
+    :   typeParameters
+        (   type i1=Identifier interfaceMethodDeclaratorRest[modifiers, $typeParameters.tree, $type.tree, new AstTree($i1)]
+        |   'void' i2=Identifier interfaceMethodDeclaratorRest[modifiers, $typeParameters.tree, null, new AstTree($i2)]
+        )
     ;
 
-// (* PASSE memberDecl *)
+voidInterfaceMethodDeclaratorRest[Tree modifiers, Tree name]
+    :   formalParameters ('throws' t=qualifiedNameList)? ';'
+        -> {t==null}?
+            ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
+        ->  ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters $t ^(BlockStatementList ))
+    ;
+
+constructorDeclaratorRest[Tree modifiers, Tree typeparameters, Tree name]
+    :   formalParameters ('throws' t=qualifiedNameList)? constructorBody
+        -> {typeparameters==null && t==null}?
+            ^(ConstructorDecl {modifiers} ^(TypeParameterList ) {name} formalParameters ^(QualifiedNameList ) constructorBody)
+        -> {typeparameters==null}?
+            ^(ConstructorDecl {modifiers} ^(TypeParameterList ) {name} formalParameters $t constructorBody)
+        -> {t==null}?
+            ^(ConstructorDecl {modifiers} {typeparameters} {name} formalParameters ^(QualifiedNameList ) constructorBody)
+        ->  ^(ConstructorDecl {modifiers} {typeparameters} {name} formalParameters $t constructorBody)
+    ;
 
 constantDeclarator[Tree type]
-    :   Identifier constantDeclaratorRest[type $Identifier.tree]
-        ->  constantDeclaratorRest
+    :   Identifier! constantDeclaratorRest[type, new AstTree($Identifier)]
     ;
     
 variableDeclarators[Tree type]
@@ -593,12 +574,12 @@ variableDeclaratorId
     ;
 
 variableInitializer
-    :   arrayInitializer -> arrayInitializer
+    :   arrayInitializer
     |   expression -> ^(ExpressionToVariableInitializer expression)
     ;
 
 arrayInitializer
-    :   '{' (x=variableInitializer (',' variableInitializer)* (',')? )? '}'
+    :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
         ->  ^(ArrayInitializer variableInitializer*)
     ;
 
@@ -618,22 +599,21 @@ modifier
     ;
 
 packageOrTypeName
-    :   qualifiedName -> qualifiedName
+    :   qualifiedName
     ;
 
 enumConstantName
-    :   Identifier -> Identifier
+    :   Identifier
     ;
 
 typeName
-    :   qualifiedName -> qualifiedName
+    :   qualifiedName
     ;
 
 type
     :   classOrInterfaceType ('[' ']')*
         ->  ^(ClassOrInterfaceType classOrInterfaceType)
-    |   primitiveType ('[' ']')*
-        ->  ^(PrimitiveType primitiveType)
+    |   primitiveType ('[' ']')* -> primitiveType
     ;
 
 classOrInterfaceType
@@ -662,15 +642,15 @@ typeArguments
         ->  ^(TypeArgumentList typeArgument+)
     ;
 
-// GRAMMAR MODIFICATION : ( 'extends' | 'super' ) type -> ( 'extends' type | 'super' type )
-
 typeArgument
-    :   type                 -> ^(ExplicitTypeArgument type)
-    |   '?' ( 'extends' type -> ^(ExtendTypeArgument type)
-            | 'super'   type -> ^(SuperTypeArgument type)
-            )?               -> WildCardTypeArgument
+    :   type
+        -> ^(ExplicitTypeArgument type)
+    |   '?' ((e='extends' | s='super') type)?
+        -> {e!=null}? ^(ExtendTypeArgument type)
+        -> {s!=null}? ^(SuperTypeArgument type)
+        ->            WildCardTypeArgument
     ;
-    
+
 qualifiedNameList
     :   qualifiedName (',' qualifiedName)* -> ^(QualifiedNameList qualifiedName+)
     ;
@@ -678,32 +658,35 @@ qualifiedNameList
 formalParameters
     :   '(' d=formalParameterDecls? ')'
         -> {d==null}? ^(FormalParameterDeclList )
-        ->            $d
+        -> $d
     ;
-    
+
 formalParameterDecls
-    :   variableModifiers type formalParameterDeclsRest
+    :   variableModifiers! type! formalParameterDeclsRest[$variableModifiers.tree, $type.tree]
     ;
-    
-formalParameterDeclsRest
-   :(   variableDeclaratorId (',' formalParameterDecls)?
+    //FORMALPARAMETERDECLS
+formalParameterDeclsRest[Tree modifiers, Tree type]
+    :   (variableDeclaratorId
+        ->  ^(FormalParameterDeclList
+                          ^(FormalParameterDecl {modifiers} {type} variableDeclaratorId False)
+                          ))
+            (',' formalParameterDecls
+                //{$formalParameterDeclsRest.tree.addChildren($formalParameterDecls.tree.getChildren());}
+                )?
     |   '...' variableDeclaratorId
-    )   ->  ^(FormalParameterDecl
-                ^(ModifierList )
-                Void
-                variableDeclaratorId
-                False
+        ->  ^(FormalParameterDeclList
+                ^(FormalParameterDecl {modifiers} {type} variableDeclaratorId True)
                 )
     ;
-    
+
 methodBody
-    :   block -> block
+    :   block
     ;
 
 constructorBody
     :   '{' ci=explicitConstructorInvocation? blockStatement* '}'
         -> {ci==null}? ^(ConstructorBody EmptyExplicitConstructorInvocation ^(BlockStatementList blockStatement*))
-        -> ^(ConstructorBody $ci ^(BlockStatementList blockStatement*))
+        ->             ^(ConstructorBody $ci ^(BlockStatementList blockStatement*))
     ;
 
 explicitConstructorInvocation
@@ -713,7 +696,7 @@ explicitConstructorInvocation
         -> {ta==null}?            ^(SuperInvocation ^(TypeList ) arguments)
         ->                        ^(SuperInvocation $ta arguments)
     |   primary '.' ta=nonWildcardTypeArguments? 'super' arguments ';'
-        -> {ta==null}? ^(PrimarySuperInvocation primary ^(TypeArgumentList ) arguments)
+        -> {ta==null}? ^(PrimarySuperInvocation primary ^(TypeList ) arguments)
         ->             ^(PrimarySuperInvocation primary $ta arguments)
     ;
 
@@ -723,18 +706,18 @@ qualifiedName
     ;
     
 literal 
-    :   integerLiteral -> integerLiteral
+    :   integerLiteral
     |   l=FloatingPointLiteral -> ^(FloatingPointLiteral $l)
     |   l=CharacterLiteral -> ^(CharacterLiteral $l)
     |   l=StringLiteral -> ^(StringLiteral $l)
-    |   booleanLiteral -> booleanLiteral
+    |   booleanLiteral
     |   'null' -> Null
     ;
 
 integerLiteral
-    :   x=HexLiteral -> ^(HexLiteral $x)
-    |   x=OctalLiteral -> ^(OctalLiteral $x)
-    |   x=DecimalLiteral -> ^(DecimalLiteral $x)
+    :   i=HexLiteral -> ^(HexLiteral $i)
+    |   i=OctalLiteral -> ^(OctalLiteral $i)
+    |   i=DecimalLiteral -> ^(DecimalLiteral $i)
     ;
 
 booleanLiteral
@@ -749,10 +732,10 @@ annotations
     ;
 
 annotation
-    :   '@' annotationName ( '('
-        (   elementValuePairs -> ^(Pairs annotationName elementValuePairs)
-        |   elementValue      -> ^(Element annotationName elementValue)
-        )? ')' )?             -> ^(NameToAnnotation annotationName)
+    :   '@' annotationName ( '(' (evp=elementValuePairs | ev=elementValue)? ')' )?
+        -> {evp!=null}? ^(Pairs annotationName $evp)
+        -> {ev!=null}? ^(Element annotationName $ev)
+        -> ^(NameToAnnotation annotationName)
     ;
     
 annotationName
@@ -767,18 +750,18 @@ elementValuePairs
 elementValuePair
     :   Identifier '=' elementValue -> ^(ElementValuePair Identifier elementValue)
     ;
-    
+
 elementValue
     :   conditionalExpression -> ^(ExpressionToElementValue conditionalExpression)
     |   annotation -> ^(AnnotationToElementValue annotation)
-    |   elementValueArrayInitializer -> elementValueArrayInitializer
+    |   elementValueArrayInitializer
     ;
 
 elementValueArrayInitializer
     :   '{' (elementValue (',' elementValue)*)? (',')? '}'
         ->  ^(ElementValueArrayInitializer elementValue*)
     ;
-    
+
 annotationTypeDeclaration[Tree modifiers]
     :   '@' 'interface' Identifier annotationTypeBody
         ->  ^(AnnotationType Identifier {modifiers} annotationTypeBody)
@@ -790,12 +773,11 @@ annotationTypeBody
     ;
     
 annotationTypeElementDeclaration
-    :   modifiers annotationTypeElementRest[$modifiers.tree] -> annotationTypeElementRest
+    :   modifiers! annotationTypeElementRest[$modifiers.tree]
     ;
-    
+
 annotationTypeElementRest[Tree modifiers]
-    :   type annotationMethodOrConstantRest[modifiers $type.tree] ';'
-        ->  annotationMethodOrConstantRest
+    :   type! annotationMethodOrConstantRest[modifiers, $type.tree] ';'!
     |   normalClassDeclaration[modifiers] ';'?
         ->  ^(TypeDeclToAnnotationElement normalClassDeclaration)
     |   normalInterfaceDeclaration[modifiers] ';'?
@@ -816,14 +798,14 @@ annotationMethodRest[Tree modifiers, Tree type]
         -> {d==null}? ^(AnnotationMethod {modifiers} {type} Identifier ^(EmptyElementValue ))
         ->            ^(AnnotationMethod {modifiers} {type} Identifier $d)
     ;
-    
+
 annotationConstantRest[Tree modifiers, Tree type]
     :   variableDeclarators[type]
         ->  ^(AnnotationConstant {modifiers} variableDeclarators)
     ;
-    
+
 defaultValue
-    :   'default' elementValue -> elementValue
+    :   'default'! elementValue
     ;
 
 // STATEMENTS / BLOCKS
@@ -839,16 +821,16 @@ blockStatement
         ->  ^(TypeDeclToBlockStatement classOrInterfaceDeclaration)
     |   statement -> ^(Statement statement)
     ;
-    
+
 localVariableDeclarationStatement
-    :    localVariableDeclaration ';' -> localVariableDeclaration
+    :    localVariableDeclaration ';'!
     ;
 
 localVariableDeclaration
     :   variableModifiers type variableDeclarators[$type.tree]
         ->  ^(FieldDecl variableModifiers variableDeclarators)
     ;
-    
+
 variableModifiers
     :   variableModifier* -> ^(ModifierList variableModifier* )
     ;
@@ -891,18 +873,16 @@ statement
     |   'continue' lab=Identifier? ';'
         -> {lab==null}? EmptyStatement
         ->              ^(Continue $lab)
-    |   ';' 
-        ->  EmptyStatement
-    |   statementExpression ';'
-        ->  statementExpression
+    |   ';' ->  EmptyStatement
+    |   statementExpression ';'!
     |   Identifier ':' statement
         ->  ^(Label Identifier statement)
     ;
-    
+
 catches
     :   catchClause (catchClause)* -> ^(CatchClauseList catchClause+)
     ;
-    
+
 catchClause
     :   'catch' '(' formalParameter ')' block
         ->  ^(CatchClause formalParameter block)
@@ -912,7 +892,7 @@ formalParameter
     :   variableModifiers type variableDeclaratorId
         ->  ^(FormalParameter variableModifiers type variableDeclaratorId)
     ;
-        
+
 switchBlockStatementGroups
     :   (switchBlockStatementGroup)*
         ->  ^(SwitchBlockStatementGroupList switchBlockStatementGroup* )
@@ -929,7 +909,7 @@ switchBlockStatementGroup
                 ^(BlockStatementList blockStatement* )
                 )
     ;
-    
+
 switchLabel
     :   'case' constantExpression ':'
         ->  ^(ConstantExpressionToSwitchLabel constantExpression)
@@ -940,16 +920,23 @@ switchLabel
 
 forControl
 options {k=3;} // be efficient for common case: for (ID ID : ID) ...
-    :   enhancedForControl -> enhancedForControl
+    :   enhancedForControl
     |   init=forInit? ';' cond=expression? ';' incr=forUpdate?
-        -> {init==null && cond==null && incr==null}? ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) EmptyExpression ^(ExpressionList ))
-        -> {init==null && cond==null}?               ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) EmptyExpression $incr)
-        -> {init==null && incr==null}?               ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) $cond ^(ExpressionList ))
-        -> {init==null}?                             ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) $cond $incr)
-        -> {cond==null && incr==null}?               ^(StandardForControl $init EmptyExpression ^(ExpressionList ))
-        -> {cond==null}?                             ^(StandardForControl $init EmptyExpression $incr)
-        -> {incr==null}?                             ^(StandardForControl $init $cond ^(ExpressionList ))
-        ->                                           ^(StandardForControl $init $cond $incr)
+        -> {init==null && cond==null && incr==null}?
+            ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) EmptyExpression ^(ExpressionList ))
+        -> {init==null && cond==null}?
+            ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) EmptyExpression $incr)
+        -> {init==null && incr==null}?
+            ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) $cond ^(ExpressionList ))
+        -> {init==null}?
+            ^(StandardForControl ^(ExpressionListToForInit ^(ExpressionList )) $cond $incr)
+        -> {cond==null && incr==null}?
+            ^(StandardForControl $init EmptyExpression ^(ExpressionList ))
+        -> {cond==null}?
+            ^(StandardForControl $init EmptyExpression $incr)
+        -> {incr==null}?
+            ^(StandardForControl $init $cond ^(ExpressionList ))
+        ->  ^(StandardForControl $init $cond $incr)
     ;
 
 forInit
@@ -965,15 +952,16 @@ enhancedForControl
     ;
 
 forUpdate
-    :   expressionList -> expressionList
+    :   expressionList
     ;
 
-// (* Passe prédicats sémantiques / pseudo-hooks *)
+// (* PASSE "finale" (sauf comptage et autres actions) *)
+
 
 // EXPRESSIONS
 
 parExpression
-    :   '(' expression ')' -> expression
+    :   '('! expression ')'!
     ;
     
 expressionList
@@ -985,12 +973,12 @@ statementExpression
     ;
     
 constantExpression
-    :   expression -> expression
+    :   expression
     ;
     
 expression
     :   conditionalExpression (assignmentOperator expression)?
-        ->  EmptyExpression
+        -> conditionalExpression
     ;
     
 assignmentOperator
@@ -1023,24 +1011,25 @@ assignmentOperator
     ;
 
 conditionalExpression
-    :   conditionalOrExpression ( '?' expression ':' expression )?
-        ->  EmptyExpression
+    :   conditionalOrExpression ( '?' (texpr=expression) ':' (eexpr=expression) )?
+        -> {texpr==null}? conditionalOrExpression
+        ->                ^(Conditional conditionalOrExpression $texpr $eexpr)
     ;
 
 conditionalOrExpression
-    :   conditionalAndExpression ( '||' conditionalAndExpression )*
+    :   conditionalAndExpression ( '||' conditionalAndExpression )* -> conditionalAndExpression
     ;
 
 conditionalAndExpression
-    :   inclusiveOrExpression ( '&&' inclusiveOrExpression )*
+    :   inclusiveOrExpression ( '&&' inclusiveOrExpression)* -> inclusiveOrExpression
     ;
 
 inclusiveOrExpression
-    :   exclusiveOrExpression ( '|' exclusiveOrExpression )*
+    :   exclusiveOrExpression ( '|' exclusiveOrExpression )* -> exclusiveOrExpression
     ;
 
 exclusiveOrExpression
-    :   andExpression ( '^' andExpression )*
+    :   andExpression ( '^' andExpression )* -> andExpression
     ;
 
 andExpression
@@ -1048,15 +1037,15 @@ andExpression
     ;
 
 equalityExpression
-    :   instanceOfExpression ( ('==' | '!=') instanceOfExpression )*
+    :   instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> instanceOfExpression
     ;
 
 instanceOfExpression
-    :   relationalExpression ('instanceof' type)?
+    :   relationalExpression ('instanceof' type)? -> relationalExpression
     ;
 
 relationalExpression
-    :   shiftExpression ( relationalOp shiftExpression )*
+    :   shiftExpression ( relationalOp shiftExpression )* -> shiftExpression
     ;
     
 relationalOp
@@ -1071,7 +1060,7 @@ relationalOp
     ;
 
 shiftExpression
-    :   additiveExpression ( shiftOp additiveExpression )*
+    :   additiveExpression ( shiftOp additiveExpression )* -> additiveExpression
     ;
 
 shiftOp
@@ -1089,87 +1078,114 @@ shiftOp
     ;
 
 additiveExpression
-    :   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )*
+    :   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )* -> multiplicativeExpression
     ;
 
 multiplicativeExpression
-    :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )*
+    :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )* -> unaryExpression
     ;
     
 unaryExpression
-    :   '+' unaryExpression
-    |   '-' unaryExpression
-    |   '++' unaryExpression
-    |   '--' unaryExpression
-    |   unaryExpressionNotPlusMinus
+    :   '+' unaryExpression -> ^(UPlus unaryExpression)
+    |   '-' unaryExpression -> ^(UMinus unaryExpression)
+    |   '++' unaryExpression -> ^(PreInc unaryExpression)
+    |   '--' unaryExpression -> ^(PreDec unaryExpression)
+    |   unaryExpressionNotPlusMinus -> unaryExpressionNotPlusMinus
     ;
 
 unaryExpressionNotPlusMinus
-    :   '~' unaryExpression
-    |   '!' unaryExpression
+    :   '~' unaryExpression -> ^(BitwiseNot unaryExpression)
+    |   '!' unaryExpression -> ^(LogicalNot unaryExpression)
     |   castExpression
-    |   primary selector* ('++'|'--')?
+    |   primary (s+=selector)* ('++'|'--')? -> ^(Primary primary ^(SuffixList ))
     ;
 
 castExpression
-    :  '(' primitiveType ')' unaryExpression
-    |  '(' (type | expression) ')' unaryExpressionNotPlusMinus
+    :   '(' primitiveType ')' unaryExpression
+        ->  ^(TypeCast primitiveType unaryExpression)
+    |   '(' (t=type | expression) ')' unaryExpressionNotPlusMinus
+        -> {t!=null}? ^(TypeCast $t unaryExpressionNotPlusMinus)
+        ->            ^(ExpressionCast expression unaryExpressionNotPlusMinus)  // semantics ?
     ;
 
 primary
-    :(   parExpression
-    |   'this' ('.' Identifier)* identifierSuffix?
+    :   parExpression
+        ->  ^(ExpressionToPrimary parExpression)
+    |   'this' ('.' Identifier)* s=identifierSuffix?
+        -> {s==null}? ^(This ^(QualifiedName Identifier*) EmptySuffix)
+        ->            ^(This ^(QualifiedName Identifier*) $s)
     |   'super' superSuffix
+        ->  ^(Super superSuffix)
     |   literal
-    |   'new' creator
-    |   Identifier ('.' Identifier)* identifierSuffix?
+    |   'new'! creator
+    |   Identifier ('.' Identifier)* s=identifierSuffix?
+        -> {s==null}? ^(QualifiedNameToPrimary ^(QualifiedName Identifier*) EmptySuffix)
+        ->            ^(QualifiedNameToPrimary ^(QualifiedName Identifier*) $s)
     |   primitiveType ('[' ']')* '.' 'class'
+        -> ^(Class primitiveType)
     |   'void' '.' 'class'
-    ) -> Null
+        ->  ^(Class Void)
     ;
 
 identifierSuffix
     :   ('[' ']')+ '.' 'class'
+         ->  ^(ArrayClassSuffix {0})
     |   ('[' expression ']')+ // can also be matched by selector, but do here
+        ->  ^(ArrayIndexSuffix ^(ExpressionList expression+))
     |   arguments
+        ->  ^(ArgumentsSuffix arguments)
     |   '.' 'class'
-    |   '.' explicitGenericInvocation
+        ->  ^(ArrayClassSuffix {0})
+    |   '.'! explicitGenericInvocation
     |   '.' 'this'
+        ->  ThisSuffix
     |   '.' 'super' arguments
-    |   '.' 'new' innerCreator
+        ->  ^(SuperSuffix ^(SuperConstruction arguments))
+    |   ('.' 'new')! innerCreator
     ;
 
 creator
     :   nonWildcardTypeArguments createdName classCreatorRest
-    |   createdName (arrayCreatorRest | classCreatorRest)
+        ->  ^(ClassCreator nonWildcardTypeArguments createdName {$classCreatorRest.tree.getChild(0)} {$classCreatorRest.tree.getChild(1)})
+    |   createdName
+        (   arrayCreatorRest[$createdName.tree] -> arrayCreatorRest
+        |   classCreatorRest
+            ->  ^(ClassCreator ^(TypeList ) createdName {$classCreatorRest.tree.getChild(0)} {$classCreatorRest.tree.getChild(1)})
+        )
     ;
 
 createdName
-    :   classOrInterfaceType
+    :   classOrInterfaceType -> ^(ClassOrInterfaceType classOrInterfaceType)
     |   primitiveType
     ;
     
 innerCreator
     :   nonWildcardTypeArguments? Identifier classCreatorRest
+        -> ^(InnerCreator ^(TypeList ) Identifier {$classCreatorRest.tree.getChild(0)} {$classCreatorRest.tree.getChild(1)})
     ;
 
-arrayCreatorRest
+arrayCreatorRest[Tree type]
     :   '['
         (   ']' ('[' ']')* arrayInitializer
+            ->  ^(InitializedArrayCreator {type} arrayInitializer)
         |   expression ']' ('[' expression ']')* ('[' ']')*
+            ->  ^(NonInitializedArrayCreator ^(ExpressionList expression+) {0})
         )
     ;
 
 classCreatorRest
-    :   arguments classBody?
+    :   arguments b=classBody?
+        -> {b==null}? ^(CLASSCREATORREST arguments ^(BodyDeclList ))
+        ->            ^(CLASSCREATORREST arguments $b)
     ;
     
 explicitGenericInvocation
     :   nonWildcardTypeArguments Identifier arguments
+        ->  ^(ExplicitGenericInvocation nonWildcardTypeArguments Identifier arguments)
     ;
     
 nonWildcardTypeArguments
-    :   '<' typeList '>'
+    :   '<'! typeList '>'!
     ;
     
 selector
@@ -1182,11 +1198,16 @@ selector
     
 superSuffix
     :   arguments
-    |   '.' Identifier arguments?
+        ->  ^(SuperConstruction arguments)
+    |   '.' Identifier a=arguments?
+        -> {a==null}? ^(SuperVariableAccess Identifier)
+        ->            ^(SuperCall Identifier arguments)
     ;
 
 arguments
-    :   '(' expressionList? ')' -> ^(ExpressionList )
+    :   '(' l=expressionList? ')'
+        -> {l==null}? ^(ExpressionList )
+        -> $l
     ;
 
 // LEXER
