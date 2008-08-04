@@ -977,25 +977,27 @@ constantExpression
     ;
     
 expression
-    :   conditionalExpression (assignmentOperator expression)?
-        -> conditionalExpression
+    :   conditionalExpression (o=assignmentOperator expression)?
+        -> {o==null}? conditionalExpression
+        ->            ^(Assignment $o conditionalExpression expression)
     ;
     
 assignmentOperator
-    :   '='
-    |   '+='
-    |   '-='
-    |   '*='
-    |   '/='
-    |   '&='
-    |   '|='
-    |   '^='
-    |   '%='
+    :   '='  -> Assign
+    |   '+=' -> PlusAssign
+    |   '-=' -> MinusAssign
+    |   '*=' -> TimesAssign
+    |   '/=' -> DivAssign
+    |   '&=' -> AndAssign
+    |   '|=' -> OrAssign
+    |   '^=' -> XOrAssign
+    |   '%=' -> ModAssign
     |   ('<' '<' '=')=> t1='<' t2='<' t3='=' 
         { $t1.getLine() == $t2.getLine() &&
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() && 
           $t2.getLine() == $t3.getLine() && 
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
+        -> LeftShiftAssign
     |   ('>' '>' '>' '=')=> t1='>' t2='>' t3='>' t4='='
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() &&
@@ -1003,37 +1005,44 @@ assignmentOperator
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() &&
           $t3.getLine() == $t4.getLine() && 
           $t3.getCharPositionInLine() + 1 == $t4.getCharPositionInLine() }?
+        -> UnsignedRightShiftAssign
     |   ('>' '>' '=')=> t1='>' t2='>' t3='='
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() && 
           $t2.getLine() == $t3.getLine() && 
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
+        -> SignedRightShiftAssign
     ;
 
 conditionalExpression
     :   conditionalOrExpression ( '?' (texpr=expression) ':' (eexpr=expression) )?
         -> {texpr==null}? conditionalOrExpression
-        ->                ^(Conditional conditionalOrExpression $texpr $eexpr)
+        ->                ^(ConditionalExpression conditionalOrExpression $texpr $eexpr)
     ;
 
 conditionalOrExpression
-    :   conditionalAndExpression ( '||' conditionalAndExpression )* -> conditionalAndExpression
+    :   conditionalAndExpression ( '||' conditionalAndExpression )*
+        -> ^(AssociativeOperation ConditionalOr ^(ExpressionList conditionalAndExpression+))
     ;
 
 conditionalAndExpression
-    :   inclusiveOrExpression ( '&&' inclusiveOrExpression)* -> inclusiveOrExpression
+    :   inclusiveOrExpression ( '&&' inclusiveOrExpression)*
+        -> ^(AssociativeOperation ConditionalAnd ^(ExpressionList inclusiveOrExpression+))
     ;
 
 inclusiveOrExpression
-    :   exclusiveOrExpression ( '|' exclusiveOrExpression )* -> exclusiveOrExpression
+    :   exclusiveOrExpression ( '|' exclusiveOrExpression )*
+        -> ^(AssociativeOperation InclusiveOr ^(ExpressionList exclusiveOrExpression+))
     ;
 
 exclusiveOrExpression
-    :   andExpression ( '^' andExpression )* -> andExpression
+    :   andExpression ( '^' andExpression )*
+        -> ^(AssociativeOperation ExclusiveOr ^(ExpressionList andExpression+))
     ;
 
 andExpression
     :   equalityExpression ( '&' equalityExpression )*
+        -> ^(AssociativeOperation And ^(ExpressionList equalityExpression+))
     ;
 
 equalityExpression
@@ -1041,40 +1050,51 @@ equalityExpression
     ;
 
 instanceOfExpression
-    :   relationalExpression ('instanceof' type)? -> relationalExpression
+    :   relationalExpression ('instanceof' t=type)?
+        -> {t==null}? relationalExpression
+        ->            ^(InstanceOf relationalExpression $t)
     ;
 
 relationalExpression
-    :   shiftExpression ( relationalOp shiftExpression )* -> shiftExpression
+    :   shiftExpression ( o=relationalOp shiftExpression )*
+        -> {o==null}? shiftExpression
+        ->            ^(AssociativeOperation relationalOp ^(ExpressionList shiftExpression+))
     ;
     
 relationalOp
     :   ('<' '=')=> t1='<' t2='=' 
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
+        -> LowerOrEqual
     |   ('>' '=')=> t1='>' t2='=' 
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
-    |   '<' 
-    |   '>' 
+        -> GreaterOrEqual
+    |   '<' -> Lower
+    |   '>' -> Greater
     ;
 
 shiftExpression
-    :   additiveExpression ( shiftOp additiveExpression )* -> additiveExpression
+    :   additiveExpression ( o=shiftOp additiveExpression )*
+        -> {o==null}? additiveExpression
+        ->            ^(AssociativeOperation $o ^(ExpressionList additiveExpression+))
     ;
 
 shiftOp
     :   ('<' '<')=> t1='<' t2='<' 
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
+        -> LeftShift
     |   ('>' '>' '>')=> t1='>' t2='>' t3='>' 
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() &&
           $t2.getLine() == $t3.getLine() && 
           $t2.getCharPositionInLine() + 1 == $t3.getCharPositionInLine() }?
+        -> UnsignedRightShift
     |   ('>' '>')=> t1='>' t2='>'
         { $t1.getLine() == $t2.getLine() && 
           $t1.getCharPositionInLine() + 1 == $t2.getCharPositionInLine() }?
+        -> SignedRightShift
     ;
 
 additiveExpression
@@ -1084,20 +1104,23 @@ additiveExpression
 multiplicativeExpression
     :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )* -> unaryExpression
     ;
-    
+
 unaryExpression
-    :   '+' unaryExpression -> ^(UPlus unaryExpression)
-    |   '-' unaryExpression -> ^(UMinus unaryExpression)
-    |   '++' unaryExpression -> ^(PreInc unaryExpression)
-    |   '--' unaryExpression -> ^(PreDec unaryExpression)
-    |   unaryExpressionNotPlusMinus -> unaryExpressionNotPlusMinus
+    :   '+' unaryExpression -> ^(UnaryOperation UPlus unaryExpression)
+    |   '-' unaryExpression -> ^(UnaryOperation UMinus unaryExpression)
+    |   '++' unaryExpression -> ^(UnaryOperation PreInc unaryExpression)
+    |   '--' unaryExpression -> ^(UnaryOperation PreDec unaryExpression)
+    |   unaryExpressionNotPlusMinus
     ;
 
 unaryExpressionNotPlusMinus
-    :   '~' unaryExpression -> ^(BitwiseNot unaryExpression)
-    |   '!' unaryExpression -> ^(LogicalNot unaryExpression)
+    :   '~' unaryExpression -> ^(UnaryOperation BitwiseNot unaryExpression)
+    |   '!' unaryExpression -> ^(UnaryOperation LogicalNot unaryExpression)
     |   castExpression
-    |   primary (s+=selector)* ('++'|'--')? -> ^(Primary primary ^(SuffixList ))
+    |   primary selector* (i='++'|d='--')?
+        -> {i!=null}? ^(UnaryOperation PostInc ^(Primary primary ^(SuffixList selector*)))
+        -> {d!=null}? ^(UnaryOperation PostDec ^(Primary primary ^(SuffixList selector*)))
+        ->            ^(Primary primary ^(SuffixList selector*))
     ;
 
 castExpression
@@ -1141,16 +1164,16 @@ identifierSuffix
         ->  ThisSuffix
     |   '.' 'super' arguments
         ->  ^(SuperSuffix ^(SuperConstruction arguments))
-    |   ('.' 'new')! innerCreator
+    |   '.'! 'new'! innerCreator
     ;
 
 creator
-    :   nonWildcardTypeArguments createdName classCreatorRest
-        ->  ^(ClassCreator nonWildcardTypeArguments createdName {$classCreatorRest.tree.getChild(0)} {$classCreatorRest.tree.getChild(1)})
+    :   nonWildcardTypeArguments createdName r=classCreatorRest
+        ->  ^(ClassCreator nonWildcardTypeArguments createdName {$r.tree.getChild(0)} {$r.tree.getChild(1)})
     |   createdName
-        (   arrayCreatorRest[$createdName.tree] -> arrayCreatorRest
-        |   classCreatorRest
-            ->  ^(ClassCreator ^(TypeList ) createdName {$classCreatorRest.tree.getChild(0)} {$classCreatorRest.tree.getChild(1)})
+        (   arrayCreatorRest[$createdName.tree]
+        |   r=classCreatorRest
+            ->  ^(ClassCreator ^(TypeList ) createdName {$r.tree.getChild(0)} {$r.tree.getChild(1)})
         )
     ;
 
@@ -1160,8 +1183,20 @@ createdName
     ;
     
 innerCreator
-    :   nonWildcardTypeArguments? Identifier classCreatorRest
-        -> ^(InnerCreator ^(TypeList ) Identifier {$classCreatorRest.tree.getChild(0)} {$classCreatorRest.tree.getChild(1)})
+    :   ta=nonWildcardTypeArguments? Identifier r=classCreatorRest
+        -> {ta==null}?
+            ^(InnerCreator
+                ^(TypeList )
+                ^(ClassOrInterfaceType ^(IndependentType Identifier ^(TypeArgumentList )))
+                {$r.tree.getChild(0)}
+                {$r.tree.getChild(1)}
+                )
+        ->  ^(InnerCreator
+                $ta
+                Identifier
+                {$r.tree.getChild(0)}
+                {$r.tree.getChild(1)}
+                )
     ;
 
 arrayCreatorRest[Tree type]
@@ -1178,24 +1213,26 @@ classCreatorRest
         -> {b==null}? ^(CLASSCREATORREST arguments ^(BodyDeclList ))
         ->            ^(CLASSCREATORREST arguments $b)
     ;
-    
+
 explicitGenericInvocation
     :   nonWildcardTypeArguments Identifier arguments
         ->  ^(ExplicitGenericInvocation nonWildcardTypeArguments Identifier arguments)
     ;
-    
+
 nonWildcardTypeArguments
     :   '<'! typeList '>'!
     ;
-    
+
 selector
-    :   '.' Identifier arguments?
-    |   '.' 'this'
-    |   '.' 'super' superSuffix
-    |   '.' 'new' innerCreator
-    |   '[' expression ']'
+    :   '.' Identifier a=arguments?
+        -> {a==null}? ^(VariableAccessSuffix Identifier)
+        ->            ^(CallSuffix Identifier $a)
+    |   '.' 'this' -> ThisSuffix
+    |   '.' 'super' superSuffix -> ^(SuperSuffix superSuffix)
+    |   '.'! 'new'! innerCreator
+    |   '[' expression ']' -> ^(ArrayIndexSuffix ^(ExpressionList expression))
     ;
-    
+
 superSuffix
     :   arguments
         ->  ^(SuperConstruction arguments)

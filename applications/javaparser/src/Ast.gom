@@ -839,57 +839,38 @@ constantExpression
 */
 
 Expression =
- | Assign( lhs:Expression, rhs:Expression )
- | PlusAssign ( lhs:Expression, rhs:Expression )
- | MinusAssign( lhs:Expression, rhs:Expression )
- | TimesAssign( lhs:Expression, rhs:Expression )
- | DivAssign  ( lhs:Expression, rhs:Expression )
- | AndAssign  ( lhs:Expression, rhs:Expression )
- | OrAssign   ( lhs:Expression, rhs:Expression )
- | XOrAssign  ( lhs:Expression, rhs:Expression )
- | ModAssign  ( lhs:Expression, rhs:Expression )
- | LeftShiftAssign         ( lhs:Expression, rhs:Expression )
- | UnsignedRightShiftAssign( lhs:Expression, rhs:Expression )
- | SignedRightShiftAssign  ( lhs:Expression, rhs:Expression )
- | Conditional( if_:Expression, then:Expression, else_:Expression )
- | ConditionalOr ( lhs:Expression, rhs:Expression )
- | ConditionalAnd( lhs:Expression, rhs:Expression )
- | InclusiveOr   ( lhs:Expression, rhs:Expression )
- | ExclusiveOr   ( lhs:Expression, rhs:Expression )
- | And           ( lhs:Expression, rhs:Expression )
- | Equal   ( lhs:Expression, rhs:Expression )
- | NotEqual( lhs:Expression, rhs:Expression )
- | InstanceOf( lhs:Expression, rhs:Expression )
- | LowerOrEqual  ( lhs:Expression, rhs:Expression )
- | GreaterOrEqual( lhs:Expression, rhs:Expression )
- | Lower         ( lhs:Expression, rhs:Expression )
- | Greater       ( lhs:Expression, rhs:Expression )
- | LeftShift         ( lhs:Expression, rhs:Expression )
- | UnsignedRightShift( lhs:Expression, rhs:Expression )
- | SignedRightShift  ( lhs:Expression, rhs:Expression )
- | Plus ( lhs:Expression, rhs:Expression )
- | Minus( lhs:Expression, rhs:Expression )
- | Times( lhs:Expression, rhs:Expression )
- | Div  ( lhs:Expression, rhs:Expression )
- | Mod  ( lhs:Expression, rhs:Expression )
- | UPlus ( expression:Expression )
- | UMinus( expression:Expression )
- | PreInc ( expression:Expression )
- | PreDec ( expression:Expression )
- | PostInc( expression:Expression )
- | PostDec( expression:Expression )
- | BitwiseNot( expression:Expression )
- | LogicalNot( expression:Expression )
+ | Assignment( bop:AssignmentOperator, lhs:Expression, rhs:Expression )
+ | ConditionalExpression( if_:Expression, then:Expression, else_:Expression )
+ | AssociativeOperation( nop:AssociativeOperator, operands:ExpressionList )
+ | InstanceOf( expression:Expression, type:Type )
+ | UnaryOperation( uop:UnaryOperator, operand:Expression )
  | TypeCast( casttype:Type, expression:Expression )
  | ExpressionCast( castexpression:Expression, expression:Expression ) // semantics ?
  | Primary( primary:Primary, selectors:SuffixList )
  | EmptyExpression()
+ | Cons( nop:AssociativeOperator, lhs:Expression, rhs:Expression )
 
 /*
 expression
     :   conditionalExpression (assignmentOperator expression)?
     ;
+*/
 
+AssignmentOperator =
+ | Assign()
+ | PlusAssign ()
+ | MinusAssign()
+ | TimesAssign()
+ | DivAssign  ()
+ | AndAssign  ()
+ | OrAssign   ()
+ | XOrAssign  ()
+ | ModAssign  ()
+ | LeftShiftAssign         ()
+ | UnsignedRightShiftAssign()
+ | SignedRightShiftAssign  ()
+
+/*
 assignmentOperator
     :   '='
     |   '+='
@@ -922,7 +903,30 @@ assignmentOperator
 conditionalExpression
     :   conditionalOrExpression ( '?' expression ':' expression )?
     ;
+*/
 
+AssociativeOperator =
+ | ConditionalOr ()
+ | ConditionalAnd()
+ | InclusiveOr   ()
+ | ExclusiveOr   ()
+ | And           ()
+ | Equal   ()
+ | NotEqual()
+ | LowerOrEqual  ()
+ | GreaterOrEqual()
+ | Lower         ()
+ | Greater       ()
+ | LeftShift         ()
+ | UnsignedRightShift()
+ | SignedRightShift  ()
+ | Plus ()
+ | Minus()
+ | Times()
+ | Div  ()
+ | Mod  ()
+
+/*
 conditionalOrExpression
     :   conditionalAndExpression ( '||' conditionalAndExpression )*
     ;
@@ -992,7 +996,19 @@ additiveExpression
 multiplicativeExpression
     :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )*
     ;
+*/
 
+UnaryOperator =
+ | UPlus ()
+ | UMinus()
+ | PreInc ()
+ | PreDec ()
+ | PostInc()
+ | PostDec()
+ | BitwiseNot()
+ | LogicalNot()
+
+/*
 unaryExpression
     :   '+' unaryExpression
     |   '-' unaryExpression
@@ -1052,11 +1068,12 @@ SuffixList = SuffixList( Suffix* )
 Suffix =
  | ArrayClassSuffix( dimension:int )
  | ArgumentsSuffix( arguments:ExpressionList )
+ | VariableAccessSuffix( name:String )
  | CallSuffix( method:String, arguments:ExpressionList )
  | ExplicitGenericInvocation( typearguments:TypeList, name:String, arguments:ExpressionList )
  | ThisSuffix()
  | SuperSuffix( super_:Super_ )
- | InnerCreator( typearguments:TypeList, class_:String, arguments:ExpressionList, body:Body )
+ | InnerCreator( typearguments:TypeList, class_:Type, arguments:ExpressionList, body:Body )
  | ArrayIndexSuffix( position:ExpressionList )
  | EmptySuffix()
 
