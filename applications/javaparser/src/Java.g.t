@@ -957,7 +957,6 @@ forUpdate
 
 // (* PASSE "finale" (sauf comptage et autres actions) *)
 
-
 // EXPRESSIONS
 
 parExpression

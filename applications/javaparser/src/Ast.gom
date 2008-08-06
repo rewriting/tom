@@ -850,6 +850,13 @@ Expression =
  | EmptyExpression()
  | Cons( nop:AssociativeOperator, lhs:Expression, rhs:Expression )
 
+AssociativeOperation:make(op, ops) {
+  %match(ExpressionList ops) {
+    ExpressionList(e) -> { return `e; }
+  }
+  realMake(op, ops);
+}
+
 /*
 expression
     :   conditionalExpression (assignmentOperator expression)?
