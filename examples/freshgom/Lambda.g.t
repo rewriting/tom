@@ -32,6 +32,12 @@ grammar Lambda;
     }
     throw new RuntimeException("non exhaustive patterns");
   }
+
+  private RawLTerm convertInt(int i) {
+    if (i==0) return `RawConstr("O",RawEmptyLTList());
+    else return `RawConstr("S",
+        RawConsLTList(convertInt(i-1),RawEmptyLTList()));
+  }
 }
 
 @lexer::header {
@@ -47,8 +53,6 @@ lterm returns [RawLTerm res]
 | LAMBDA ID DOT t=lterm { $res = `RawAbs(Rawlam($ID.text,t)); }
 | LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,u,t)); }
 | MATCH t=lterm WITH r=rules END { $res = `RawCase(t,r); }
-| UPID '(' l=ltermlist ')' { $res = `RawConstr($UPID.text,l); }
-| UPID { $res = `RawConstr($UPID.text,RawEmptyLTList()); }
 ;
 
 app_lterm returns [RawLTerm res]
@@ -58,6 +62,10 @@ app_lterm returns [RawLTerm res]
 aterm returns [RawLTerm res]
 : '(' w=lterm ')' { $res = w; }
 | ID { $res=`RawVar($ID.text); }
+| NUM { try { $res = convertInt(Integer.parseInt($NUM.text)); }
+        catch (NumberFormatException e) { throw new RuntimeException(); } 
+      }
+| UPID '(' l=ltermlist ')' { $res = `RawConstr($UPID.text,l); }
 ;
 
 ltermlist returns [RawLTermList res]
@@ -78,7 +86,6 @@ clause returns [RawClause res]
 
 pattern returns [RawPattern res]
 : UPID '(' l=patternlist ')' { $res = `RawPFun($UPID.text,l); }
-| UPID { $res = `RawPFun($UPID.text,RawEmptyPList()); }
 | ID { $res = `RawPVar($ID.text); }
 ;
 

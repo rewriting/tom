@@ -112,7 +112,21 @@ public class Printer {
     return null;
   }
 
+  public static class ConversionError extends Exception {};
+
+  public static int prettyNat(RawLTerm t) throws ConversionError {
+    %match(t) {
+      RawConstr("O",RawEmptyLTList()) -> { return 0; }
+      RawConstr("S",RawConsLTList(u,RawEmptyLTList())) -> {
+        return 1+prettyNat(`u);
+      }
+    }
+    throw new ConversionError();
+  }
+
   public static String pretty(RawLTerm t) {
+    try { return "" + prettyNat(t); }
+    catch (ConversionError e) { }
     %match (t) {
       RawVar(x) -> { return `x; }
       RawAbs(Rawlam(x,u)) -> { return %[(fun @`x@ -> @`pretty(u)@)]%; }
