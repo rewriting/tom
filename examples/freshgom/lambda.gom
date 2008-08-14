@@ -17,7 +17,7 @@ Rules = RList(<Clause>*)
 Clause binds LVar = Rule(p:Pattern, inner t:LTerm) 
 
 Pattern binds LVar = PFun(neutral f:String, children:PatternList)
-		               | PVar(x:LVar)
+                   | PVar(x:LVar)
 
 LTermList = LTList(LTerm*) 
 
