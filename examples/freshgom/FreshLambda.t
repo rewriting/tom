@@ -16,6 +16,7 @@ public class FreshLambda {
       Let(letin(v,t1,t2)) -> {
         return `Let(letin(v,substitute(t1,x,u),substitute(t2,x,u)));
       }
+      Fix(fixpoint(v,t1)) -> { return `Fix(fixpoint(v,substitute(t1,x,u))); }
       Var(y) -> { if (`y.equals(x)) return u; else return t; }
       Constr(f, c) -> { return `Constr(f,substitute(c,x,u)); }
       Case(s,r) -> { return `Case(substitute(s,x,u),substitute(r,x,u)); }
@@ -100,6 +101,7 @@ public class FreshLambda {
     visit LTerm {
       App(Abs(lam(x,t)),u) -> { return `substitute(t,x,u); }
       Let(letin(x,u,t)) -> { return `substitute(t,x,u); }
+      Fix(fixpoint(x,t)) -> { return `substitute(t,x,Fix(fixpoint(x,t))); }
       Case(t,r) -> { return `caseof(t,r); }
     }
   }

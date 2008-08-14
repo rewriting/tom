@@ -56,6 +56,7 @@ public class Printer {
       Var(LVar(x,i)) -> { return `i + `x ; }
       Abs(lam(LVar(x,i),u)) -> { return %[(fun @`i + `x@ -> @`pretty(u)@)]%; }
       App(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
+      Fix(fixpoint(x,u)) -> { return %[fix @`x@ @`pretty(u)@]%; }
       Let(letin(LVar(x,i),u,v)) -> { 
         return %[(let @`i + `x@ = @`pretty(u)@ in @`pretty(v)@)]%; }
       Constr(f,EmptyLTList()) -> { return `f; }
@@ -131,6 +132,7 @@ public class Printer {
       RawVar(x) -> { return `x; }
       RawAbs(Rawlam(x,u)) -> { return %[(fun @`x@ -> @`pretty(u)@)]%; }
       RawApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
+      RawFix(Rawfixpoint(x,u)) -> { return %[fix @`x@ @`pretty(u)@]%; }
       RawLet(Rawletin(x,u,v)) -> { 
         return %[(let @`x@ = @`pretty(u)@ in @`pretty(v)@)]%; }
       RawConstr(f,RawEmptyLTList()) -> { return `f; }

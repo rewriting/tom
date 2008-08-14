@@ -51,6 +51,9 @@ toplevel returns [ArrayList<RawLTerm> res]
 lterm returns [RawLTerm res]
 : t=app_lterm { $res=t; }
 | LAMBDA ID DOT t=lterm { $res = `RawAbs(Rawlam($ID.text,t)); }
+| LET REC ID EQUALS u=lterm IN t=lterm { 
+    $res = `RawLet(Rawletin($ID.text,RawFix(Rawfixpoint($ID.text,u)),t)); 
+  }
 | LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,u,t)); }
 | MATCH t=lterm WITH r=rules END { $res = `RawCase(t,r); }
 ;
@@ -62,9 +65,10 @@ app_lterm returns [RawLTerm res]
 aterm returns [RawLTerm res]
 : '(' w=lterm ')' { $res = w; }
 | ID { $res=`RawVar($ID.text); }
-| NUM { try { $res = convertInt(Integer.parseInt($NUM.text)); }
-        catch (NumberFormatException e) { throw new RuntimeException(); } 
-      }
+| NUM { 
+   try { $res = convertInt(Integer.parseInt($NUM.text)); }
+   catch (NumberFormatException e) { throw new RuntimeException(); } 
+  }
 | UPID '(' l=ltermlist ')' { $res = `RawConstr($UPID.text,l); }
 ;
 
@@ -100,6 +104,7 @@ COMMENT : '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;} ;
 DOT : '->';
 LAMBDA : 'fun' ;
 LET : 'let' ;
+REC : 'rec' ;
 IN : 'in' ;
 MATCH : 'match' ;
 WITH : 'with' ;

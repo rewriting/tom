@@ -365,3 +365,47 @@
   make(t0) { lambda.types.rawpattern.RawPVar.make($t0) }
 }
 
+%typeterm Fixpoint {
+  implement { lambda.types.Fixpoint }
+  is_sort(t) { ($t instanceof lambda.types.Fixpoint) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%typeterm RawFixpoint {
+  implement { lambda.types.RawFixpoint }
+  is_sort(t) { ($t instanceof lambda.types.RawFixpoint) }
+
+  equals(t1,t2) { ($t1==$t2) }
+
+}
+
+%op Fixpoint fixpoint(x:LVar, t:LTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.fixpoint.fixpoint) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { lambda.types.fixpoint.fixpoint.make($t0, $t1) }
+}
+
+%op RawFixpoint Rawfixpoint(x:String, t:RawLTerm) {
+  is_fsym(t) { ($t instanceof lambda.types.rawfixpoint.Rawfixpoint) }
+  get_slot(x, t) { $t.getx() }
+  get_slot(t, t) { $t.gett() }
+  make(t0, t1) { lambda.types.rawfixpoint.Rawfixpoint.make($t0, $t1) }
+}
+
+%op RawLTerm RawFix(c:RawFixpoint) {
+  is_fsym(t) { ($t instanceof lambda.types.rawlterm.RawFix) }
+  get_slot(c, t) { $t.getc() }
+  make(t0) { lambda.types.rawlterm.RawFix.make($t0) }
+}
+
+%op LTerm Fix(c:Fixpoint) {
+  is_fsym(t) { ($t instanceof lambda.types.lterm.Fix) }
+  get_slot(c, t) { $t.getc().refresh() }
+  make(t0) { lambda.types.lterm.Fix.make($t0) }
+}
+
+
+
