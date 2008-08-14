@@ -11,32 +11,32 @@ grammar Lambda;
 
   private RawPatternList append(RawPatternList l, RawPattern p) {
     %match(l) {
-      RawEmptyPList() -> { return `RawConsPList(p,RawEmptyPList()); }
-      RawConsPList(x,xs) -> { return `RawConsPList(x,append(xs,p)); }
+      EmptyRawPList() -> { return `ConsRawPList(p,EmptyRawPList()); }
+      ConsRawPList(x,xs) -> { return `ConsRawPList(x,append(xs,p)); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
   private RawRules append(RawRules l, RawClause c) {
     %match(l) {
-      RawEmptyRList() -> { return `RawConsRList(c,RawEmptyRList()); }
-      RawConsRList(x,xs) -> { return `RawConsRList(x,append(xs,c)); }
+      EmptyRawRList() -> { return `ConsRawRList(c,EmptyRawRList()); }
+      ConsRawRList(x,xs) -> { return `ConsRawRList(x,append(xs,c)); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
   private RawLTermList append(RawLTermList l, RawLTerm t) {
     %match(l) {
-      RawEmptyLTList() -> { return `RawConsLTList(t,RawEmptyLTList()); }
-      RawConsLTList(x,xs) -> { return `RawConsLTList(x,append(xs,t)); }
+      EmptyRawLTList() -> { return `ConsRawLTList(t,EmptyRawLTList()); }
+      ConsRawLTList(x,xs) -> { return `ConsRawLTList(x,append(xs,t)); }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
   private RawLTerm convertInt(int i) {
-    if (i==0) return `RawConstr("O",RawEmptyLTList());
+    if (i==0) return `RawConstr("O",EmptyRawLTList());
     else return `RawConstr("S",
-        RawConsLTList(convertInt(i-1),RawEmptyLTList()));
+        ConsRawLTList(convertInt(i-1),EmptyRawLTList()));
   }
 }
 
@@ -73,13 +73,13 @@ aterm returns [RawLTerm res]
 ;
 
 ltermlist returns [RawLTermList res]
-@init{ res = `RawEmptyLTList(); }
+@init{ res = `EmptyRawLTList(); }
 : x=lterm? { if(x!=null) $res = append($res,x); } 
   (COMMA y=lterm { $res = append($res,y); } )*
 ;
 
 rules returns [RawRules res] 
-@init{ res = `RawEmptyRList(); }
+@init{ res = `EmptyRawRList(); }
 : CONJ? r1=clause { $res = append($res,r1); } 
   (CONJ r2=clause { $res = append($res,r2); } )*
 ;
@@ -94,7 +94,7 @@ pattern returns [RawPattern res]
 ;
 
 patternlist returns [RawPatternList res]
-@init{ res = `RawEmptyPList(); }
+@init{ res = `EmptyRawPList(); }
 : x=pattern? { if(x!=null) $res = append($res,x); } 
   (COMMA y=pattern { $res = append($res,y); } )*
 ;

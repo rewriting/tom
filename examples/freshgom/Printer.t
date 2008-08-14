@@ -71,18 +71,18 @@ public class Printer {
 
   public static String prettyLTermList(RawLTermList l) {
     %match(l) {
-      RawEmptyLTList() -> { return ""; }
-      RawConsLTList(x,RawEmptyLTList()) -> { return `pretty(x); }
-      RawConsLTList(x,xs) -> { return `pretty(x) + "," + `prettyLTermList(xs); }
+      EmptyRawLTList() -> { return ""; }
+      ConsRawLTList(x,EmptyRawLTList()) -> { return `pretty(x); }
+      ConsRawLTList(x,xs) -> { return `pretty(x) + "," + `prettyLTermList(xs); }
     }
     return null;
   }
 
   public static String prettyPatternList(RawPatternList l) {
     %match(l) {
-      RawEmptyPList() -> { return ""; }
-      RawConsPList(x,RawEmptyPList()) -> { return `prettyPattern(x); }
-      RawConsPList(x,xs) -> { return `prettyPattern(x) + "," 
+      EmptyRawPList() -> { return ""; }
+      ConsRawPList(x,EmptyRawPList()) -> { return `prettyPattern(x); }
+      ConsRawPList(x,xs) -> { return `prettyPattern(x) + "," 
         + `prettyPatternList(xs); }
     }
     return null;
@@ -90,8 +90,8 @@ public class Printer {
 
   public static String prettyRules(RawRules l) {
     %match(l) {
-      RawEmptyRList() -> { return ""; }
-      RawConsRList(x,xs) -> { 
+      EmptyRawRList() -> { return ""; }
+      ConsRawRList(x,xs) -> { 
         return " | " + `prettyClause(x) + `prettyRules(xs); }
     }
     return null;
@@ -107,7 +107,7 @@ public class Printer {
   public static String prettyPattern(RawPattern p) {
     %match (p) {
       RawPVar(x) -> { return `x; }
-      RawPFun(f,RawEmptyPList()) -> { return `f; }
+      RawPFun(f,EmptyRawPList()) -> { return `f; }
       RawPFun(f,l) -> { return `f + "(" + `prettyPatternList(l) + ")"; }
     }
     return null;
@@ -117,8 +117,8 @@ public class Printer {
 
   public static int prettyNat(RawLTerm t) throws ConversionError {
     %match(t) {
-      RawConstr("O",RawEmptyLTList()) -> { return 0; }
-      RawConstr("S",RawConsLTList(u,RawEmptyLTList())) -> {
+      RawConstr("O",EmptyRawLTList()) -> { return 0; }
+      RawConstr("S",ConsRawLTList(u,EmptyRawLTList())) -> {
         return 1+prettyNat(`u);
       }
     }
@@ -135,7 +135,7 @@ public class Printer {
       RawFix(Rawfixpoint(x,u)) -> { return %[fix @`x@ @`pretty(u)@]%; }
       RawLet(Rawletin(x,u,v)) -> { 
         return %[(let @`x@ = @`pretty(u)@ in @`pretty(v)@)]%; }
-      RawConstr(f,RawEmptyLTList()) -> { return `f; }
+      RawConstr(f,EmptyRawLTList()) -> { return `f; }
       RawConstr(f,l) -> { return `f + "(" + `prettyLTermList(l) + ")"; }
       RawCase(s,l) -> { 
         return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%; }
