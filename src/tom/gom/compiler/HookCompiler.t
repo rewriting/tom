@@ -91,7 +91,6 @@ public class HookCompiler {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }     
           }
-          // FIXME : Ugly
           CutFutureOperator(odecl,consornil) -> {
             ClassName clsName = (ClassName) declToClassName.get(`odecl);
             String prefix = "";

@@ -9,8 +9,12 @@ FreshSortInfo = ExpressionTypeInfo(AccessibleAtoms:StringList)
               | AtomTypeInfo()
               | NoFreshSort()
 
-ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList,Generated:boolean)
+ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList,Generated:GenerationInfo)
                        | VariadicConstructorDescription(SortSymbol:String, Domain:String, IsRefreshPoint:boolean)
+
+GenerationInfo = No()
+               | GenCons(BaseName:String)
+               | GenNil(BaseName:String)
 
 FieldDescriptionList = concFieldDescription(FieldDescription*)
 

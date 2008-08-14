@@ -109,11 +109,14 @@ public class SymbolTable {
   }
 
   public static String rawSort(String s) { return "Raw" + s; }
+
   public String rawCons(String c) { 
-    if(isGenerated(c)) {
-      if(c.startsWith("Cons")) { return "Cons" + "Raw" + c.substring(4); }
-      if(c.startsWith("Empty")) { return "Empty" + "Raw" + c.substring(5); }
-    } 
+    if (isGenerated(c)) {
+      %match(getGenerated(c)) {
+        GenCons(suffix) ->  { return "ConsRaw" + `suffix; }
+        GenNil(suffix) -> { return "EmptyRaw" + `suffix; }
+      }
+    }
     return "Raw" + c; 
   }
 
@@ -208,8 +211,10 @@ public class SymbolTable {
       // add the new constructors to constructors map
       String nilc = "Empty" + c;
       String consc = "Cons" + c;
-      constructors.put(nilc,`ConstructorDescription(codom,NilFields,true));
-      constructors.put(consc,`ConstructorDescription(codom,ConsFields,true));
+      constructors.put(nilc,
+          `ConstructorDescription(codom,NilFields,GenNil(c)));
+      constructors.put(consc,
+          `ConstructorDescription(codom,ConsFields,GenCons(c)));
 
       // modify the codomain description
       SortDescription sd = sorts.get(codom);
@@ -289,7 +294,7 @@ public class SymbolTable {
           }
           _ /* not variadic */ -> { 
             FieldDescriptionList fl = `getFieldList(codom,dl);
-            constructors.put(`n,`ConstructorDescription(codom,fl,false));
+            constructors.put(`n,`ConstructorDescription(codom,fl,No()));
           } 
         }
       }
@@ -345,12 +350,58 @@ public class SymbolTable {
   public boolean isGenerated(String cons) {
     try {
       ConstructorDescription desc = constructors.get(cons);
-      %match(desc) { ConstructorDescription[Generated=g] -> { return `g; } }
+      %match(desc) { 
+        ConstructorDescription[Generated=!No()] -> { 
+          return `true; 
+        } 
+      }
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredConstructorException(cons);
     }
   }
+
+  public boolean isGeneratedCons(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { 
+        ConstructorDescription[Generated=GenCons[]] -> { 
+          return `true; 
+        } 
+      }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
+  public boolean isGeneratedNil(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { 
+        ConstructorDescription[Generated=GenNil[]] -> { 
+          return `true; 
+        } 
+      }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
+  private GenerationInfo getGenerated(String cons) {
+    ConstructorDescription desc = constructors.get(cons);
+    return desc.getGenerated();
+  }
+
+  /**
+  * precondition : isGenerated(cons)
+  */
+  public String getBaseName(String cons) {
+    return getGenerated(cons).getBaseName();
+  }
+
+
 
   public boolean isExpressionType(String sort) {
     if (isBuiltin(sort)) return false;
@@ -506,12 +557,17 @@ public class SymbolTable {
     return result;
   }
 
+  /**
+  * generates 'getfield()' except for HeadC and TailC
+  * where it generates 'getHeadRawC()' and 'getTailRawC()'
+  **/
   public String rawGetter(String cons, String field) {
     if (isGenerated(cons)) {
+      String suffix = getBaseName(cons);
       if (field.startsWith("Head")) {
-        return "getHeadRaw" + field.substring(4) + "()";
+        return "getHeadRaw" + suffix + "()";
       } else if (field.startsWith("Tail")) {
-        return "getTailRaw" + field.substring(4) + "()";
+        return "getTailRaw" + suffix + "()";
       }
     }
     return "get" + field + "()";

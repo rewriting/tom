@@ -421,14 +421,12 @@ public class FreshExpander {
 
       IdKind kind = `KindOperator();
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if (st.isGenerated(cons)) {
-        if (cons.startsWith("Cons")) {
-          kind = `KindFutureOperator(FutureCons());
-          cons = cons.substring(4);
-        } else if (cons.startsWith("Empty")) {
-          kind = `KindFutureOperator(FutureNil());
-          cons = cons.substring(5);
-        }
+      if(st.isGeneratedCons(cons)) { 
+        kind = `KindFutureOperator(FutureCons());
+        cons = st.getBaseName(cons);
+      } else if (st.isGeneratedNil(cons)) { 
+        kind = `KindFutureOperator(FutureNil());
+        cons = st.getBaseName(cons);
       }
 
       Production hook = `Hook(kind,cons,HookKind("block"),
@@ -448,15 +446,13 @@ public class FreshExpander {
 
       IdKind kind = `KindOperator();
       // if the constructor is a generated cons or nil, add a 'future' hook
-      if (st.isGenerated(cons)) {
-        if (cons.startsWith("Cons")) {
-          kind = `KindFutureOperator(FutureCons());
-          cons = cons.substring(4);
-        } else if (cons.startsWith("Empty")) {
-          kind = `KindFutureOperator(FutureNil());
-          cons = cons.substring(5);
-        }
-      } 
+      if(st.isGeneratedCons(cons)) { 
+        kind = `KindFutureOperator(FutureCons());
+        cons = st.getBaseName(cons);
+      } else if (st.isGeneratedNil(cons)) { 
+        kind = `KindFutureOperator(FutureNil());
+        cons = st.getBaseName(cons);
+      }
 
       Production hook = 
         `Hook(kind,st.rawCons(cons),HookKind("block"),
