@@ -108,7 +108,14 @@ public class SymbolTable {
     return buf.toString();
   }
 
-  public static String raw(String s) { return "Raw" + s; }
+  public static String rawSort(String s) { return "Raw" + s; }
+  public String rawCons(String c) { 
+    if(isGenerated(c)) {
+      if(c.startsWith("Cons")) { return "Cons" + "Raw" + c.substring(4); }
+      if(c.startsWith("Empty")) { return "Empty" + "Raw" + c.substring(5); }
+    } 
+    return "Raw" + c; 
+  }
 
   public String qualifiedRawSortId(String sort) {
     SortDescription desc = sorts.get(sort);
@@ -116,7 +123,7 @@ public class SymbolTable {
       throw new UndeclaredSortException(sort);
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
-        return `m.toLowerCase() + ".types." + raw(sort); 
+        return `m.toLowerCase() + ".types." + rawSort(sort); 
       }
     }
     throw new RuntimeException("non exhaustive match");
@@ -128,7 +135,7 @@ public class SymbolTable {
       throw new UndeclaredConstructorException(cons);
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
-        return qualifiedSortId(`s) + "." + `raw(cons); 
+        return qualifiedSortId(`s) + "." + `rawCons(cons); 
       }
     }
     throw new RuntimeException("non exhaustive match");
@@ -168,6 +175,49 @@ public class SymbolTable {
     System.out.println("sorts concerned by freshgom: " + getFreshSorts());
     fillRefreshPoints();
     fillAccessibleAtoms();
+    generateConsAndNils();
+  }
+
+  public void generateConsAndNils() {
+    for(String c: getConstructors()) {
+      if(!isVariadic(c)) continue;
+      String dom = getDomain(c);
+      String codom = getCoDomain(c);
+      FieldDescriptionList ConsFields = null; // head and tail
+      FieldDescriptionList NilFields = `concFieldDescription();
+      /* codom binds X = ... | c(dom*) | ...
+         => codom binds X = ... | Consc(Headc:dom,Tailc:codom) | ... */
+      if(isPatternType(codom)) {
+        ConsFields = `concFieldDescription(
+            FieldDescription("Head"+c,dom,SPattern()),
+            FieldDescription("Tail"+c,codom,SPattern()));
+      /* codom = ... | c(<dom>*) | ...
+         => codom = ... | Consc(Headc:<dom>,Tailc:codom) | ... */
+      } else if (isRefreshPoint(c)) {
+        ConsFields = `concFieldDescription(
+            FieldDescription("Head"+c,dom,SRefreshPoint()),
+            FieldDescription("Tail"+c,codom,SNone()));
+      /* codom = ... | c(dom*) | ...
+         => codom = ... | Consc(Headc:dom,Tailc:codom) | ... */
+      } else {
+        ConsFields = `concFieldDescription(
+            FieldDescription("Head"+c,dom,SNone()),
+            FieldDescription("Tail"+c,codom,SNone()));
+      }
+
+      // add the new constructors to constructors map
+      String nilc = "Empty" + c;
+      String consc = "Cons" + c;
+      constructors.put(nilc,`ConstructorDescription(codom,NilFields,true));
+      constructors.put(consc,`ConstructorDescription(codom,ConsFields,true));
+
+      // modify the codomain description
+      SortDescription sd = sorts.get(codom);
+      StringList conslist = sd.getConstructors();
+      conslist = `StringList(conslist*,nilc,consc);
+      sd = sd.setConstructors(conslist);
+      sorts.put(codom,sd);
+    }
   }
 
   private void fill(GomModule m) {
@@ -239,7 +289,7 @@ public class SymbolTable {
           }
           _ /* not variadic */ -> { 
             FieldDescriptionList fl = `getFieldList(codom,dl);
-            constructors.put(`n,`ConstructorDescription(codom,fl));
+            constructors.put(`n,`ConstructorDescription(codom,fl,false));
           } 
         }
       }
@@ -286,6 +336,16 @@ public class SymbolTable {
     try {
       ConstructorDescription desc = constructors.get(cons);
       %match(desc) { VariadicConstructorDescription[] -> { return true; } }
+      return false;
+    } catch (NullPointerException e) {
+      throw new UndeclaredConstructorException(cons);
+    }
+  }
+
+  public boolean isGenerated(String cons) {
+    try {
+      ConstructorDescription desc = constructors.get(cons);
+      %match(desc) { ConstructorDescription[Generated=g] -> { return `g; } }
       return false;
     } catch (NullPointerException e) {
       throw new UndeclaredConstructorException(cons);
@@ -340,7 +400,7 @@ public class SymbolTable {
 
   public boolean isBuiltin(String sort) {
     %match(sort) {
-      "bool" | "String" | "int" -> { return true; }
+      "boolean" | "String" | "int" -> { return true; }
     }
     return false;
   }
@@ -446,6 +506,17 @@ public class SymbolTable {
     return result;
   }
 
+  public String rawGetter(String cons, String field) {
+    if (isGenerated(cons)) {
+      if (field.startsWith("Head")) {
+        return "getHeadRaw" + field.substring(4) + "()";
+      } else if (field.startsWith("Tail")) {
+        return "getTailRaw" + field.substring(4) + "()";
+      }
+    }
+    return "get" + field + "()";
+  }
+
   public ArrayList<String> getNonPatternFields(String constructor) {
     ArrayList<String> result = new ArrayList<String>();
     FieldDescriptionList l = getFieldList(constructor);
@@ -536,6 +607,43 @@ public class SymbolTable {
     return false;
   }
 
+
+  /**
+  * for variadic operators 
+  */
+  public boolean isRefreshPoint(String cons) {
+    ConstructorDescription d = constructors.get(cons);
+    %match(d) {
+      VariadicConstructorDescription[IsRefreshPoint=r] -> { 
+        return `r; 
+      }
+    }
+    return false;
+  }
+
+  /**
+   * for variadic operators 
+   */
+  public String getDomain(String cons) {
+    ConstructorDescription d = constructors.get(cons);
+    %match(d) {
+      VariadicConstructorDescription[Domain=dom] -> { return `dom; }
+    }
+    throw new RuntimeException("not a variadic operator");
+  }
+
+  /**
+   * for variadic operators 
+   */
+  public String getCoDomain(String cons) {
+    ConstructorDescription d = constructors.get(cons);
+    %match(d) {
+      VariadicConstructorDescription[SortSymbol=s] -> { return `s; }
+    }
+    throw new RuntimeException("not a variadic operator");
+  }
+
+
   public boolean isRefreshPoint(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
     %match(l) {
@@ -550,6 +658,13 @@ public class SymbolTable {
   public boolean isBound(String cons, String field) {
     String sort = getSort(cons);
     return getBoundAtoms(sort).contains(getSort(cons,field));
+  }
+
+  /**
+   * returns the set of all constructor symbols
+   **/
+  public Set<String> getConstructors() {
+    return new HashSet(constructors.keySet());
   }
 
 

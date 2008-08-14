@@ -418,14 +418,25 @@ public class FreshExpander {
   private GomModuleList addConstructorBlockHook
     (GomModuleList ml, String cons, String code) {
       String sort = st.getSort(cons);
-      Production hook = 
-        `Hook(KindOperator(),cons,HookKind("block"),
-            ConcArg(),code,OptionList());
+
+      IdKind kind = `KindOperator();
+      // if the constructor is a generated cons or nil, add a 'future' hook
+      if (st.isGenerated(cons)) {
+        if (cons.startsWith("Cons")) {
+          kind = `KindFutureOperator(FutureCons());
+          cons = cons.substring(4);
+        } else if (cons.startsWith("Empty")) {
+          kind = `KindFutureOperator(FutureNil());
+          cons = cons.substring(5);
+        }
+      }
+
+      Production hook = `Hook(kind,cons,HookKind("block"),
+          ConcArg(),code,OptionList());
       try { 
         return (GomModuleList)
           `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
-      }
-      catch (VisitFailure e) { 
+      } catch (VisitFailure e) { 
         throw new RuntimeException("Should never happen"); 
       }
     }
@@ -434,12 +445,25 @@ public class FreshExpander {
   private GomModuleList addRawConstructorBlockHook
     (GomModuleList ml, String cons, String code) {
       String sort = st.getSort(cons);
+
+      IdKind kind = `KindOperator();
+      // if the constructor is a generated cons or nil, add a 'future' hook
+      if (st.isGenerated(cons)) {
+        if (cons.startsWith("Cons")) {
+          kind = `KindFutureOperator(FutureCons());
+          cons = cons.substring(4);
+        } else if (cons.startsWith("Empty")) {
+          kind = `KindFutureOperator(FutureNil());
+          cons = cons.substring(5);
+        }
+      } 
+
       Production hook = 
-        `Hook(KindOperator(),st.raw(cons),HookKind("block"),
+        `Hook(kind,st.rawCons(cons),HookKind("block"),
             ConcArg(),code,OptionList());
       try { 
         return (GomModuleList)
-          `OnceTopDown(AddHook(st.raw(sort),hook)).visitLight(ml); 
+          `OnceTopDown(AddHook(st.rawCons(sort),hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
         throw new RuntimeException("Should never happen"); 
@@ -553,7 +577,7 @@ public class FreshExpander {
   private GomModuleList addRawSortHooks(GomModuleList ml) {
     for(String s: st.getSorts()) 
       if(st.isExpressionType(s) || st.isPatternType(s))
-        ml = addSortBlockHook(ml,st.raw(s),rawSortBlockHookString(s));
+        ml = addSortBlockHook(ml,st.rawSort(s),rawSortBlockHookString(s));
     return ml;
   }
 
@@ -802,7 +826,7 @@ public class FreshExpander {
         }
       }
     }
-    return res + %[return `@st.raw(c)@(@rawArgList(c)@);]%;
+    return res + %[return `@st.rawCons(c)@(@rawArgList(c)@);]%;
   }
 
   private String getBoundRecursiveCalls(String c, String atomSort) {
@@ -934,12 +958,12 @@ public class FreshExpander {
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[
-            String @f@ = get@f@();
+            String @f@ = @st.rawGetter(c,f)@;
             m.put(@f@,@aid@.fresh@atomSort@(@f@));
           ]%;
         }
       } else if (st.getBoundAtoms(fsort).contains(atomSort)) {
-        res += %[get@f@().getBound@atomSort@Map(m);]%;
+        res += %[@st.rawGetter(c,f)@.getBound@atomSort@Map(m);]%;
       }
     }
     return res;
@@ -958,12 +982,12 @@ public class FreshExpander {
         String fsortid = st.qualifiedSortId(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
-          res += %[@fsortid@ @f@ = @fsort@Map.get(get@f@());]%;
+          res += %[@fsortid@ @f@ = @fsort@Map.get(@st.rawGetter(c,f)@);]%;
         } else if (st.isExpressionType(fsort)) {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@recCall1(fsort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall1(fsort)@);]%;
         } else if (st.isPatternType(fsort)) {
-          res += %[@rawfsortid@ raw_@f@ = get@f@();]%;
+          res += %[@rawfsortid@ raw_@f@ = @st.rawGetter(c,f)@;]%;
           for(String a: st.getBoundAtoms(fsort)) {
             String aid = st.qualifiedSortId(a);
             res += %[
@@ -988,21 +1012,21 @@ public class FreshExpander {
         //String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
           if (st.isBound(c,f))
-            res += %[@fsortid@ @f@ = @fsort@InnerMap.get(get@f@());]%;
+            res += %[@fsortid@ @f@ = @fsort@InnerMap.get(@st.rawGetter(c,f)@);]%;
           else
-            res += %[@fsortid@ @f@ = @fsort@Map.get(get@f@());]%;
+            res += %[@fsortid@ @f@ = @fsort@Map.get(@st.rawGetter(c,f)@);]%;
         } else if (st.isInner(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@recCall3(fsort,sort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall3(fsort,sort)@);]%;
         } else if (st.isOuter(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@recCall4(fsort,sort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall4(fsort,sort)@);]%;
         } else if (st.isNeutral(c,f)) /* must be expression type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@recCall5(fsort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall5(fsort)@);]%;
         } else /* must be pattern type */ {
           res += %[@fsortid@ @f@ 
-            = get@f@()._convert(@recCall6(fsort)@);]%;
+            = @st.rawGetter(c,f)@._convert(@recCall6(fsort)@);]%;
         }
       }
     }
@@ -1121,11 +1145,11 @@ public class FreshExpander {
     visit GomType { 
       gt@GomType[Name=n] -> { 
         if (st.isAtomType(`n)) return `gt.setName("String");
-        else if (!st.isBuiltin(`n)) return `gt.setName(SymbolTable.raw(`n));
+        else if (!st.isBuiltin(`n)) return `gt.setName(st.rawSort(`n));
       }
     }
     visit Production { 
-      p@Production[Name=n] -> { return `p.setName(SymbolTable.raw(`n)); }
+      p@Production[Name=n] -> { return `p.setName(st.rawCons(`n)); }
     }
   }
 

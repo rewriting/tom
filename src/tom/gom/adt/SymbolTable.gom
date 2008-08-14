@@ -9,7 +9,7 @@ FreshSortInfo = ExpressionTypeInfo(AccessibleAtoms:StringList)
               | AtomTypeInfo()
               | NoFreshSort()
 
-ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList)
+ConstructorDescription = ConstructorDescription(SortSymbol:String, Fields:FieldDescriptionList,Generated:boolean)
                        | VariadicConstructorDescription(SortSymbol:String, Domain:String, IsRefreshPoint:boolean)
 
 FieldDescriptionList = concFieldDescription(FieldDescription*)

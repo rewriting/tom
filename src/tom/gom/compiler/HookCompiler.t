@@ -91,6 +91,22 @@ public class HookCompiler {
               throw new GomRuntimeException("Unexpected strategy failure!");
             }     
           }
+          // FIXME : Ugly
+          CutFutureOperator(odecl,consornil) -> {
+            ClassName clsName = (ClassName) declToClassName.get(`odecl);
+            String prefix = "";
+            %match(consornil) {
+              FutureNil() -> { prefix = "Empty"; }
+              FutureCons() -> { prefix = "Cons"; }
+            }
+            clsName = clsName.setName(prefix + clsName.getName()); 
+            try {
+              classes = (GomClassList)
+                `TopDown(AttachOperatorHook(clsName,hook)).visit(classes);
+            } catch (tom.library.sl.VisitFailure e) {
+              throw new GomRuntimeException("Unexpected strategy failure!");
+            }     
+          }
         }
       }
     }
