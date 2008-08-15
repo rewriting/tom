@@ -55,6 +55,12 @@ importDeclaration
 
 TypeDeclList = TypeDeclList( TypeDecl* )
 
+TypeDeclList:make_insert(h, t) {
+  %match (h) {
+    EmptyTypeDecl() -> { return t; }
+  }
+}
+
 TypeDecl =
  | NormalClass    ( name:String, modifiers:ModifierList, typeparameters:TypeParameterList, extends_:Type, implements_:TypeList, classbody:Body )
  | EnumClass      ( name:String, modifiers:ModifierList, implements_:TypeList, enumbody:EnumBody )
@@ -89,6 +95,12 @@ classOrInterfaceModifier
 */
 
 ModifierList = ModifierList( Modifier* )
+
+ModifierList:make_insert(h, t) {
+  %match (h) {
+    EmptyModifier() -> { return t; }
+  }
+}
 
 /*
 modifiers
@@ -178,6 +190,12 @@ typeList
 */
 
 Body = BodyDeclList( BodyDecl* )
+
+BodyDeclList:make_insert(h, t) {
+  %match (h) {
+    EmptyBodyDecl() -> { return t; }
+  }
+}
 
 /*
 classBody
@@ -649,6 +667,12 @@ defaultValue
 
 Block = BlockStatementList( BlockStatement* )
 
+BlockStatementList:make_insert(h, t) {
+  %match (h) {
+    Statement(EmptyStatement()) -> { return t; }
+  }
+}
+
 /*
 block
     :   '{' blockStatement* '}'
@@ -823,6 +847,12 @@ parExpression
 */
 
 ExpressionList = ExpressionList( Expression* )
+
+ExpressionList:make_insert(h, t) {
+  %match (h) {
+    EmptyExpression() -> { return t; }
+  }
+}
 
 /*
 expressionList
@@ -1071,6 +1101,12 @@ primary
 // "identifierSuffix" and "selector" included
 
 SuffixList = SuffixList( Suffix* )
+
+SuffixList:make_insert(h, t) {
+  %match (h) {
+    EmptySuffix() -> { return t; }
+  }
+}
 
 Suffix =
  | ArrayClassSuffix( dimension:int )
