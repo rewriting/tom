@@ -42,11 +42,6 @@ public class Rewrite4 {
   %include { sl.tom }
   %include { java/util/types/Collection.tom }
 
-  %typeterm Position {
-    implement { Position }
-    is_sort(t) { t instanceof Position }
-  }
-
   public final static void main(String[] args) {
     //Term subject = `g(d(),d());
     //Term subject = `f(g(g(a(),b()),g(a(),a())));

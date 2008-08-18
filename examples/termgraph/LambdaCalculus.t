@@ -169,11 +169,6 @@ public class LambdaCalculus {
   }
 
 
-  %typeterm Position{
-    implement {Position}
-    is_sort(t)     { t instanceof Position }
-  }
-
   %typeterm LambdaInfo{
     implement {LambdaInfo}
     is_sort(t)     { t instanceof LambdaInfo }

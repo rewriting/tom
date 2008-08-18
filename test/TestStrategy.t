@@ -32,10 +32,6 @@ public class TestStrategy extends TestCase {
       L = concTerm(Term*)
   } 
 
-  %typeterm Position {
-    implement { tom.library.sl.Position }
-  }
-
   static boolean bool0 = true;
 
   public static void main(String[] args) throws VisitFailure{

@@ -102,12 +102,6 @@ public class TermGraphRewriting {
     is_sort(t)     { t instanceof Info }
   }
 
-  %typeterm Position{
-    implement {Position}
-    is_sort(t)     { t instanceof Position }
-  }
-
-
   static class Info{
     public Position omega;
     public Term term;

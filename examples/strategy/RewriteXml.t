@@ -47,11 +47,6 @@ public class RewriteXml {
     is_sort(t)     { t instanceof java.util.Collection }
   }
 
-  %typeterm Position {
-    implement { tom.library.sl.Position }
-    is_sort(t)     { t instanceof Position }
-  }
-
   public final static void main(String[] args) {
     XmlTools xtools = new XmlTools();
     TNode subject = (TNode)xtools.convertXMLToTNode("strategy/minimenu.xml");

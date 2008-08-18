@@ -12,11 +12,6 @@ LambdaTerm =
 abs:import() { import tom.library.sl.Position; }
 abs:block() {
 %include { sl.tom }
- 
-%typeterm Position{
-  implement {Position}
-  is_sort(t)     { t instanceof Position }
-}
 
 %strategy ToDeBruinj(var:LambdaTerm) extends Identity(){
   visit LambdaTerm{

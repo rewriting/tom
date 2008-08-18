@@ -167,12 +167,6 @@ public class FreshGom {
     make(v) { `mu(MuVar("_x"),Sequence(AllRightSeq(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) }
   }
 
-
-  %typeterm Position{
-    implement {Position}
-    is_sort(t)     { t instanceof Position }
-  }
-
   %typeterm LambdaInfo{
     implement {LambdaInfo}
     is_sort(t)     { t instanceof LambdaInfo }
