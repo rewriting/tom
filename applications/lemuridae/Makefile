@@ -11,6 +11,6 @@ clean:
 dist/build: build
 	cp -r build dist
 	cp -r libs dist
-	cp ../../src/dist/lib/* dist/libs
+	cp -r ../../src/dist/lib/* dist/libs
 
 	
