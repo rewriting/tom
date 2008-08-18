@@ -111,38 +111,36 @@ public class GraphRuleExpander {
     StringBuilder output = new StringBuilder();
     output.append(
         %[
-  %include {sl.tom }
-  %include{java/util/ArrayList.tom}
-  
-  %typeterm Position{
-      implement {Position}
-      is_sort(t) { ($t instanceof Position) }
+%include {sl.tom }
+%typeterm tom_StringList {
+  implement      { java.util.List<String> }
+  is_sort(t)      { $t instanceof java.util.List }  
+  equals(l1,l2)  { $l1.equals($l2) }
+}
+
+%typeterm tom_SharedLabel{
+  implement {SharedLabel}
+  is_sort(t) { ($t instanceof SharedLabel) }
+}
+
+static class SharedLabel {
+  public Position posLhs;
+  public Position posRhs;
+  public String label;
+
+  public SharedLabel(String label, Position posLhs, Position posRhs) {
+    this.label = label;
+    this.posLhs = posLhs;
+    this.posRhs = posRhs;
   }
- 
-  %typeterm SharedLabel{
-      implement {SharedLabel}
-      is_sort(t) { ($t instanceof SharedLabel) }
-  }
+}
 
-
-  static class SharedLabel {
-    public Position posLhs;
-    public Position posRhs;
-    public String label;
-
-    public SharedLabel(String label, Position posLhs, Position posRhs) {
-      this.label = label;
-      this.posLhs = posLhs;
-      this.posRhs = posRhs;
-    }
-  }
-
-%op @abstractType.getName()@ Subst(global:@abstractType.getName()@,subst:@abstractType.getName()@) {
+%op tom_@abstractType.getName()@ Subst(global:tom_@abstractType.getName()@,subst:tom_@abstractType.getName()@) {
   is_fsym(t) {( $t instanceof Subst )}
   make(t1,t2) {( new Subst($t1,$t2) )}
 }
 
-%typeterm @abstractType.getName()@ {
+%typeterm tom_@abstractType.getName()@ {
   implement { @fullClassName(abstractType)@ }
   is_sort(t) {( $t instanceof @fullClassName(abstractType)@ )}
 }
@@ -224,31 +222,31 @@ static class Subst extends @fullClassName(abstractType)@ {
 
 }
 
-  static class Substitution {
-    public Position omega;
-    @fullClassName(abstractType)@ value;
+static class Substitution {
+  public Position omega;
+  @fullClassName(abstractType)@ value;
 
-    public Substitution(Position omega, @fullClassName(abstractType)@ value) {
-      this.omega = omega;
-      this.value = value;
-    }
-
-    public String toString() {
-      return "<"+omega+","+value+">";
-    }
+  public Substitution(Position omega, @fullClassName(abstractType)@ value) {
+    this.omega = omega;
+    this.value = value;
   }
 
-  protected static List<Substitution> getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
-    ArrayList<String> sharedlabels = new ArrayList();
-    HashMap<String,Position> lhsLabels = labelledLhs.getMapFromLabelToPositionAndRemoveLabels();
-    HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPosition();
+  public String toString() {
+    return "<"+omega+","+value+">";
+  }
+}
+
+  protected static java.util.List<Substitution> getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
+    java.util.List<String> sharedlabels = new java.util.ArrayList();
+    java.util.HashMap<String,Position> lhsLabels = labelledLhs.getMapFromLabelToPositionAndRemoveLabels();
+    java.util.HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPosition();
     for (String labelRhs: rhsLabels.keySet()) {
       if (lhsLabels.containsKey(labelRhs)) {
         sharedlabels.add(labelRhs);
       }
     }
 
-    List<Substitution> substitutions = new ArrayList<Substitution>();
+    java.util.List<Substitution> substitutions = new java.util.ArrayList<Substitution>();
     
      // add a substitution for each shared label
     for (String sharedlabel: sharedlabels) {
@@ -267,7 +265,7 @@ static class Subst extends @fullClassName(abstractType)@ {
   }
 
 
-  %strategy ReplaceSharedLabelByVar(sharedlabels:ArrayList,sharedlabel:SharedLabel) extends Identity() {
+  %strategy ReplaceSharedLabelByVar(sharedlabels:tom_StringList,sharedlabel:tom_SharedLabel) extends Identity() {
     visit @sortname@ {
       Lab@sortname@[label@sortname@=label] -> {
         if (`label.equals(sharedlabel.label)) {
@@ -281,7 +279,7 @@ static class Subst extends @fullClassName(abstractType)@ {
     }
   }
 
-  private static Substitution computeSubstitution(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, SharedLabel sharedlabel, ArrayList sharedlabels, Position omega) {
+  private static Substitution computeSubstitution(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, SharedLabel sharedlabel, java.util.List<String> sharedlabels, Position omega) {
     try {
       @fullClassName(abstractType)@ lhs = (@fullClassName(abstractType)@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledLhs);
       @fullClassName(abstractType)@ rhs = (@fullClassName(abstractType)@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledRhs);
@@ -294,7 +292,7 @@ static class Subst extends @fullClassName(abstractType)@ {
   }
 
 
-  %strategy FromVarToPath(lhs:@abstractType.getName()@,omega:Position) extends Identity() {
+  %strategy FromVarToPath(lhs:tom_@abstractType.getName()@,omega:Position) extends Identity() {
 ]%);
 
   %match(moduleList) {
@@ -383,7 +381,6 @@ static class Subst extends @fullClassName(abstractType)@ {
 
   String imports = %[
 import tom.library.sl.*;
-import java.util.*;
    ]%;
 
   //import all the constructors Path<Sort> of the module
@@ -433,7 +430,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
                 @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();             
                 
                 //compute all the different substitutions
-                List<Substitution> substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
+                java.util.List<Substitution> substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
                 
                 /* 3. construct tt=SubstTerm(subject',r') */
                 for (Substitution subst: substitutions) {
@@ -597,7 +594,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
 
 
   public static Term expand(Term t) {
-    HashMap map = new HashMap();
+    java.util.HashMap map = new java.util.HashMap();
     Term tt = null;
     try {
       tt = (Term) `InnermostIdSeq(NormalizeLabel(map)).visit(t);
@@ -662,7 +659,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
   }
 
   public static Term label2path(Term t) {
-    HashMap map = new HashMap();
+    java.util.HashMap map = new java.util.HashMap();
     try {
       return (Term) `Sequence(RepeatId(OnceTopDownId(CollectLabels(map))),TopDown(Label2Path(map))).visit(t);
     } catch (tom.library.sl.VisitFailure e) {

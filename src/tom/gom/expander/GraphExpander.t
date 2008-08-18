@@ -249,7 +249,7 @@ public class GraphExpander {
 
     static int freshlabel =0; //to unexpand termgraphs
     
-    %typeterm Info {
+    %typeterm tom_Info {
       implement { Info }
       is_sort(t) { ($t instanceof Info) }
     }
@@ -414,11 +414,6 @@ public class GraphExpander {
   codeBlockTermGraph += %[
     }
 
-   %typeterm Position{
-        implement {Position}
-        is_sort(t) { ($t instanceof Position) }
-    }
-  
    %strategy UpdatePos(source:Position,target:Position) extends Identity() {
   ]%;
 
@@ -580,7 +575,7 @@ public class GraphExpander {
   
         strategiesCode.append(%[
 
-    %typeterm Info@`sortName@ {
+    %typeterm tom_Info@`sortName@ {
         implement { Info@`sortName@ }
         is_sort(t) { ($t instanceof Info@`sortName@) }
     }
@@ -695,7 +690,7 @@ public class GraphExpander {
 
     // generate each strategy CollectSubterm<sortname>
     strategiesCode.append(%[
-    %strategy CollectSubterm@`sortName@(label:String,info:Info@`sortName@) extends Fail() {
+    %strategy CollectSubterm@`sortName@(label:String,info:tom_Info@`sortName@) extends Fail() {
       visit @`sortName@ {
         term@@Lab@`sortName@[label@`sortName@=label,term@`sortName@=subterm] -> {
           Position current = getEnvironment().getPosition();
