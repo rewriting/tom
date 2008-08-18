@@ -32,6 +32,7 @@ import tom.library.sl.*;
 import java.util.ArrayList;
 import java.util.Set;
 import tom.gom.SymbolTable.*;
+import tom.gom.tools.GomEnvironment;
 
 public class FreshExpander {
 
@@ -42,6 +43,7 @@ public class FreshExpander {
   %typeterm SymbolTable { implement { tom.gom.SymbolTable } }
 
   private SymbolTable st = new SymbolTable();
+  private static GomEnvironment env = GomEnvironment.getInstance();
 
   public GomModuleList expand(GomModuleList m) {
     try {
@@ -58,6 +60,7 @@ public class FreshExpander {
       res = addRawSortHooks(res);
       res = addConstructorHooks(res);
       res = addRawConstructorHooks(res);
+      res = addMappingHooks(res);
       return res;
     } catch (VisitFailure e) {
       throw new RuntimeException("should not happen");
@@ -368,7 +371,7 @@ public class FreshExpander {
     for(String f: st.getFields(cons)) {
       if(!first) buf.append(",");
       else first = false;
-      buf.append(st.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
+      buf.append(env.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[raw_@f@]%);
     }
     return buf.toString();
   }
@@ -382,7 +385,7 @@ public class FreshExpander {
     for(String f: st.getFields(cons)) {
       if(!first) buf.append(",");
       else first = false;
-      buf.append(st.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[@f@]%);
+      buf.append(env.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[@f@]%);
     }
     return buf.toString();
   }
@@ -477,6 +480,31 @@ public class FreshExpander {
           `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
       }
       catch (VisitFailure e) { 
+        throw new RuntimeException("Should never happen"); 
+      }
+    }
+
+  /* add the hook next to the declaration of the constructor's sort */
+  private GomModuleList addConstructorMappingHook
+    (GomModuleList ml, String cons, String code) {
+      String sort = st.getSort(cons);
+
+      IdKind kind = `KindOperator();
+      // if the constructor is a generated cons or nil, add a 'future' hook
+      if(st.isGeneratedCons(cons)) { 
+        kind = `KindFutureOperator(FutureCons());
+        cons = st.getBaseName(cons);
+      } else if (st.isGeneratedNil(cons)) { 
+        kind = `KindFutureOperator(FutureNil());
+        cons = st.getBaseName(cons);
+      }
+
+      Production hook = `Hook(kind,cons,HookKind("mapping"),
+          ConcArg(),code,OptionList());
+      try { 
+        return (GomModuleList)
+          `OnceTopDown(AddHook(sort,hook)).visitLight(ml); 
+      } catch (VisitFailure e) { 
         throw new RuntimeException("Should never happen"); 
       }
     }
@@ -630,7 +658,7 @@ public class FreshExpander {
     String atomSortId = st.qualifiedSortId(atomSort);
     for(String f: st.getFields(c)) {
       String fsort = st.getSort(c,f);
-      if (st.isBuiltin(fsort)) continue;
+      if (env.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort))
           res += %[ 
@@ -651,7 +679,7 @@ public class FreshExpander {
     String res = %[@sortid@ res = this;]%; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (st.isBuiltin(fsort)) continue;
+      if (env.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         String fsortid = st.qualifiedSortId(fsort);
         res += %[
@@ -671,7 +699,7 @@ public class FreshExpander {
     }
     for(String f: st.getInnerFields(c)) {
       String fsort = st.getSort(c,f);
-      if (st.isBuiltin(fsort)) continue;
+      if (env.isBuiltin(fsort)) continue;
       for(String a: st.getBoundAtoms(sort)) {
         res += %[res = res.set@f@(res.get@f@().rename@a@(@a@Map));]%;
       }
@@ -688,7 +716,7 @@ public class FreshExpander {
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (st.isBuiltin(fsort)) {
+        if (env.isBuiltin(fsort)) {
           res += %[
             if (get@f@() != o.get@f@()) 
               throw new tom.library.freshgom.AlphaMap.AlphaException();
@@ -728,7 +756,7 @@ public class FreshExpander {
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (st.isBuiltin(fsort)) {
+        if (env.isBuiltin(fsort)) {
           res += %[
             if (get@f@() != o.get@f@()) 
               throw new tom.library.freshgom.AlphaMap.AlphaException();
@@ -771,7 +799,7 @@ public class FreshExpander {
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (st.isBuiltin(fsort)) continue;
+        if (env.isBuiltin(fsort)) continue;
         String fsortid = st.qualifiedSortId(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
@@ -799,7 +827,7 @@ public class FreshExpander {
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (st.isBuiltin(fsort)) continue;
+        if (env.isBuiltin(fsort)) continue;
         String fsortid = st.qualifiedSortId(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
@@ -831,7 +859,7 @@ public class FreshExpander {
     String res = ""; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (st.isBuiltin(fsort)) continue;
+      if (env.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[atoms.add(get@f@());]%;
@@ -850,7 +878,7 @@ public class FreshExpander {
     String res = ""; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (st.isBuiltin(fsort)) continue;
+      if (env.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         if (fsort.equals(a)) {
           res += %[
@@ -950,7 +978,7 @@ public class FreshExpander {
     String res = ""; 
     for(String f: st.getPatternFields(c)) {
       String fsort = st.getSort(c,f);
-      if (st.isBuiltin(fsort)) continue;
+      if (env.isBuiltin(fsort)) continue;
       if (st.isAtomType(fsort)) {
         if (fsort.equals(atomSort)) {
           res += %[
@@ -974,7 +1002,7 @@ public class FreshExpander {
     if(st.isExpressionType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (st.isBuiltin(fsort)) continue;
+        if (env.isBuiltin(fsort)) continue;
         String fsortid = st.qualifiedSortId(fsort);
         String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
@@ -1003,7 +1031,7 @@ public class FreshExpander {
     } else if(st.isPatternType(sort)) {
       for(String f: st.getFields(c)) {
         String fsort = st.getSort(c,f);
-        if (st.isBuiltin(fsort)) continue;
+        if (env.isBuiltin(fsort)) continue;
         String fsortid = st.qualifiedSortId(fsort);
         //String rawfsortid = st.qualifiedRawSortId(fsort);
         if (st.isAtomType(fsort)) {
@@ -1141,7 +1169,7 @@ public class FreshExpander {
     visit GomType { 
       gt@GomType[Name=n] -> { 
         if (st.isAtomType(`n)) return `gt.setName("String");
-        else if (!st.isBuiltin(`n)) return `gt.setName(st.rawSort(`n));
+        else if (!env.isBuiltin(`n)) return `gt.setName(st.rawSort(`n));
       }
     }
     visit Production { 
@@ -1154,6 +1182,86 @@ public class FreshExpander {
     catch(VisitFailure f) { 
       throw new RuntimeException("should never happen"); 
     }
+  }
+
+  /* -- tweaked mappings generation */
+
+  private GomModuleList addMappingHooks(GomModuleList ml) {
+    for(String c: st.getFreshConstructors()) 
+      if(!st.isVariadic(c) && st.containsRefreshPoint(c)) 
+        ml = addConstructorMappingHook(ml,c,mappingString(c));
+    return ml;
+  }
+
+  /**
+  * generates "x:A,y:B" for f(x:A,y:B)
+  **/
+  private String typedConsArgList(String c) {
+    StringBuffer buf = new StringBuffer();
+    boolean first=true;
+    for(String arg: st.getFields(c)) {
+      if (!first) buf.append(",");
+      else first = false;
+      buf.append(arg+":"+st.getSort(c,arg));
+    }
+    return buf.toString();
+  }
+
+  /**
+  * generates "x,y" for f(x:A,y:B)
+  **/
+  private String consArgList(String c) {
+    StringBuffer buf = new StringBuffer();
+    boolean first=true;
+    for(String arg: st.getFields(c)) {
+      if (!first) buf.append(",");
+      else first = false;
+      buf.append(arg);
+    }
+    return buf.toString();
+  }
+
+  /**
+  * generates "$x,$y" for f(x:A,y:B)
+  **/
+  private String dollarConsArgList(String c) {
+    StringBuffer buf = new StringBuffer();
+    boolean first=true;
+    for(String arg: st.getFields(c)) {
+      if (!first) buf.append(",");
+      else first = false;
+      buf.append("$" + arg);
+    }
+    return buf.toString();
+  }
+
+  /**
+  * generates "get_slot(x,t) { $t.getx() }
+  *            get_slot(y,t) { $t.gety() }"
+  * for f(x:A,y:B)
+  **/
+  private String slotDescriptions(String c) {
+    StringBuffer buf = new StringBuffer();
+    boolean first=true;
+    for(String arg: st.getFields(c)) {
+      if(st.isRefreshPoint(c,arg))
+        buf.append(%[get_slot(@arg@,t) { $t.get@arg@().refresh() }]% + "\n");
+      else
+        buf.append(%[get_slot(@arg@,t) { $t.get@arg@() }]% + "\n");
+    }
+    return buf.toString();
+  }
+
+  private String mappingString(String c) {
+    String s = st.getSort(c);
+    String cid = st.qualifiedConstructorId(c);
+    return %[{
+      %op @s@ @c@(@typedConsArgList(c)@) {
+        is_fsym(t) { ($t instanceof @cid@) }
+        @slotDescriptions(c)@
+        make(@consArgList(c)@) { @cid@.make(@dollarConsArgList(c)@) }
+     }
+    }]%;
   }
 
   /* -- atom expansion --**/

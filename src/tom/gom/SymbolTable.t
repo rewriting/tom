@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.HashSet;
+import tom.gom.tools.GomEnvironment;
 
 
 public class SymbolTable {
@@ -44,6 +45,8 @@ public class SymbolTable {
   %include { adt/symboltable/SymbolTable.tom}
   %include { util/ArrayList.tom }
   %include { sl.tom }  
+
+  private GomEnvironment env = GomEnvironment.getInstance();
 
   public class SortException extends RuntimeException {
     protected String sortName;
@@ -404,7 +407,7 @@ public class SymbolTable {
 
 
   public boolean isExpressionType(String sort) {
-    if (isBuiltin(sort)) return false;
+    if (env.isBuiltin(sort)) return false;
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { ExpressionTypeInfo[] -> { return true; } }
@@ -415,7 +418,7 @@ public class SymbolTable {
   }
 
   public boolean isPatternType(String sort) {
-    if (isBuiltin(sort)) return false;
+    if (env.isBuiltin(sort)) return false;
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { PatternTypeInfo[] -> { return true; } }
@@ -426,7 +429,7 @@ public class SymbolTable {
   }
 
   public boolean isAtomType(String sort) {
-    if (isBuiltin(sort)) return false;
+    if (env.isBuiltin(sort)) return false;
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { AtomTypeInfo[] -> { return true; } }
@@ -619,6 +622,17 @@ public class SymbolTable {
     throw new RuntimeException("sould never happen");
   }
 
+  public boolean containsRefreshPoint(String cons) {
+    FieldDescriptionList l = getFieldList(cons);
+    %match(l) {
+      concFieldDescription(_*,
+          FieldDescription[StatusValue=SRefreshPoint()],_*) -> {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean isOuter(String cons, String field) {
     FieldDescriptionList l = getFieldList(cons);
     %match(l) {
@@ -723,6 +737,18 @@ public class SymbolTable {
     return new HashSet(constructors.keySet());
   }
 
+  /**
+   * returns the set of all constructor symbols
+   * concerned by freshgom
+   **/
+  public Set<String> getFreshConstructors() {
+    HashSet<String> res = new HashSet();
+    for(String c: constructors.keySet())
+      if(isFreshType(getSort(c)))
+        res.add(c);
+    return res;
+  }
+
 
   /**
    * returns the set of all sort symbols
@@ -752,7 +778,7 @@ public class SymbolTable {
 
   private StringList getAccessibleAtoms
     (String sort, HashSet<String> visited)  {
-      if (isBuiltin(sort) || visited.contains(sort)) return `StringList();
+      if (env.isBuiltin(sort) || visited.contains(sort)) return `StringList();
       visited.add(sort);
       if (isAtomType(sort)) return `StringList(sort);
       StringList res = `StringList();
@@ -784,16 +810,18 @@ public class SymbolTable {
 
   private void fillGraph() {
     for(String sort: getSorts()) {
-      if (isBuiltin(sort)) continue;
+      if (env.isBuiltin(sort)) continue;
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {
-            if (!isBuiltin(`ty)) graph.addLink(sort,`ty);
+            if (!env.isBuiltin(`ty)) 
+              graph.addLink(sort,`ty);
           }
           ConstructorDescription[
             Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
-              if (!isBuiltin(`ty)) graph.addLink(sort,`ty);
+              if (!env.isBuiltin(`ty)) 
+                graph.addLink(sort,`ty);
             }
         }
       }
