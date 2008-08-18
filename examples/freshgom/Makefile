@@ -13,11 +13,11 @@ TestSystemF.t: systemf/SystemF.tom
 systemf/SystemF.tom: systemf.gom
 	gom systemf.gom
 
-Lambda.g.t: lambda/Lambda.tom tweaked_Lambda.tom
+Lambda.g.t: lambda/Lambda.tom 
 
-Printer.t: lambda/Lambda.tom tweaked_Lambda.tom
+Printer.t: lambda/Lambda.tom 
 
-FreshLambda.t: lambda/Lambda.tom tweaked_Lambda.tom
+FreshLambda.t: lambda/Lambda.tom 
 
 Lambda.g: Lambda.g.t
 	tom -o Lambda.g Lambda.g.t

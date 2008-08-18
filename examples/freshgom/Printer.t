@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Printer {
 
-  %include { tweaked_Lambda.tom }
+  %include { lambda/Lambda.tom }
 
   public static String prettyLTermList(LTermList l) {
     %match(l) {

@@ -6,7 +6,7 @@ import java.util.*;
 public class FreshLambda {
 
   %include { sl.tom }
-  %include { tweaked_Lambda.tom }
+  %include { lambda/Lambda.tom }
 
   // returns t[u/x]
   public static LTerm substitute(LTerm t, LVar x, LTerm u) {

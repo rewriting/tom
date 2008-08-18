@@ -7,7 +7,7 @@ grammar Lambda;
 }
 
 @members {
-  %include { tweaked_Lambda.tom }
+  %include { lambda/Lambda.tom }
 
   private RawPatternList append(RawPatternList l, RawPattern p) {
     %match(l) {

@@ -1,3 +1,10 @@
+(* test alpha equivalence *)
+fun x -> ((fun y -> fun x -> x y) x)
+;
+(* should be equivalent to the normal form of the previous one *)
+fun x -> fun y -> (y x)
+;
+(* quicksort *)
 let rec le = fun n -> fun m ->
   match n with
     | O() -> True()
