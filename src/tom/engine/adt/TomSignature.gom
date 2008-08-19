@@ -1,11 +1,11 @@
 module TomSignature
 imports TomName TomType TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot int String
 abstract syntax
-TargetLanguage = TL(Code:String,Start:Position,End:Position)
+TargetLanguage = TL(Code:String,Start:TextPosition,End:TextPosition)
                | ITL(Code:String)
                | Comment(Code:String)
                | noTL()
-Position = TextPosition(Line:int,Column:int)
+TextPosition = TextPosition(Line:int,Column:int)
 TomVisit = VisitTerm(VNode:TomType,AstConstraintInstructionList:ConstraintInstructionList,Option:OptionList)
 TomSymbol = emptySymbol()
           | Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Option:OptionList)
