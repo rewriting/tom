@@ -26,8 +26,8 @@ public class FreshLambda {
 
   public static Rules substitute(Rules r, LVar x, LTerm u) {
     %match(r) {
-      EmptyRList() -> { return r; }
-      ConsRList(t,ts) -> {
+      RList() -> { return r; }
+      RList(t,ts*) -> {
         return `ConsRList(substitute(t,x,u),substitute(ts,x,u));
       }
     }
@@ -43,8 +43,8 @@ public class FreshLambda {
 
   public static LTermList substitute(LTermList l, LVar x, LTerm u) {
     %match(l) {
-      EmptyLTList() -> { return l; }
-      ConsLTList(t,ts) -> {
+      LTList() -> { return l; }
+      LTList(t,ts*) -> {
         return `ConsLTList(substitute(t,x,u),substitute(ts,x,u));
       }
     }
@@ -76,10 +76,10 @@ public class FreshLambda {
   public static Hashtable<LVar,LTerm>
     match(Hashtable<LVar,LTerm> m, PatternList l1, LTermList l2) {
       %match(l1,l2) {
-        ConsPList(p,ps),ConsLTList(x,xs) -> {
+        PList(p,ps*),LTList(x,xs*) -> {
           return `match(m,p,x) != null ? `match(m,ps,xs) : null;
         }
-        EmptyPList(),EmptyLTList() -> { return m; }
+        PList(),LTList() -> { return m; }
       }
       return null;
     }
@@ -88,7 +88,7 @@ public class FreshLambda {
 
   public static LTerm caseof(LTerm t, Rules r) throws VisitFailure {
     %match(t,r) {
-      Constr[],ConsRList(Rule(lhs,rhs),rs) -> {
+      Constr[],RList(Rule(lhs,rhs),rs*) -> {
         Hashtable<LVar,LTerm> m = match(new Hashtable(),`lhs,t);
         if (m!=null) return `substitute(rhs,m);
         else return caseof(t,`rs);
