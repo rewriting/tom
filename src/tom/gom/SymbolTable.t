@@ -166,7 +166,7 @@ public class SymbolTable {
       throw new UndeclaredConstructorException(cons);
     %match(desc) {
       ConstructorDescription[SortSymbol=s] -> {
-        return qualifiedSortId(`s).toLowerCase() + "." + `cons; 
+        return qualifiedSortId(`s).toLowerCase() + "." + cons; 
       }
     }
     throw new RuntimeException("non exhaustive match");
@@ -623,12 +623,16 @@ public class SymbolTable {
   }
 
   public boolean containsRefreshPoint(String cons) {
-    FieldDescriptionList l = getFieldList(cons);
-    %match(l) {
-      concFieldDescription(_*,
-          FieldDescription[StatusValue=SRefreshPoint()],_*) -> {
-        return true;
+    ConstructorDescription d = constructors.get(cons);
+    %match(d) {
+      VariadicConstructorDescription[IsRefreshPoint=rp] -> {
+        return `rp;
       }
+      ConstructorDescription[Fields=
+        concFieldDescription(_*,
+          FieldDescription[StatusValue=SRefreshPoint()],_*)] -> {
+            return true;
+        }
     }
     return false;
   }

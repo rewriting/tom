@@ -1188,10 +1188,11 @@ public class FreshExpander {
 
   private GomModuleList addMappingHooks(GomModuleList ml) {
     for(String c: st.getFreshConstructors()) 
-      if(!st.isVariadic(c) && st.containsRefreshPoint(c)) 
+      if(st.containsRefreshPoint(c)) 
         ml = addConstructorMappingHook(ml,c,mappingString(c));
     return ml;
   }
+
 
   /**
   * generates "x:A,y:B" for f(x:A,y:B)
@@ -1254,14 +1255,33 @@ public class FreshExpander {
 
   private String mappingString(String c) {
     String s = st.getSort(c);
-    String cid = st.qualifiedConstructorId(c);
-    return %[{
-      %op @s@ @c@(@typedConsArgList(c)@) {
-        is_fsym(t) { ($t instanceof @cid@) }
-        @slotDescriptions(c)@
-        make(@consArgList(c)@) { @cid@.make(@dollarConsArgList(c)@) }
-     }
-    }]%;
+    if (st.isVariadic(c)) {
+      String codomain = st.getCoDomain(c);
+      String consid = st.qualifiedConstructorId("Cons" + c);
+      String nilid = st.qualifiedConstructorId("Empty" + c);
+      String gethead = null;
+      if(st.isRefreshPoint(c)) gethead = %[getHead@c@().refresh()]%;
+      else gethead = %[getHead@c@()]%;
+      return %[{
+        %oplist @codomain@ @c@(Clause*) {
+          is_fsym(t) { (($t instanceof @consid@) || ($t instanceof @nilid@)) }
+          make_empty() { @nilid@.make() }
+          make_insert(e,l) { @consid@.make($e,$l) }
+          get_head(l) { $l.@gethead@ }
+          get_tail(l) { $l.getTail@c@() }
+          is_empty(l) { $l.isEmpty@c@() }
+        }
+      }]%;
+    } else {
+      String cid = st.qualifiedConstructorId(c);
+      return %[{
+        %op @s@ @c@(@typedConsArgList(c)@) {
+          is_fsym(t) { ($t instanceof @cid@) }
+          @slotDescriptions(c)@
+          make(@consArgList(c)@) { @cid@.make(@dollarConsArgList(c)@) }
+       }
+      }]%;
+    }
   }
 
   /* -- atom expansion --**/
