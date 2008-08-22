@@ -62,10 +62,11 @@ public class ConstraintGenerator {
   private static final String[] generatorsNames = {"SyntacticGenerator","VariadicGenerator","ArrayGenerator","ACGenerator"};
   
   // constants
-  public static final String multiplicityFuncName = "getMultiplicities";
-  public static final String getTermForMultiplicityFuncName = "getTermMult";
-  public static final String getComplTermForMultiplicityFuncName = "getComplTermMult";
-
+  public static final String computeLengthFuncName = "__computeLenght";
+  public static final String multiplicityFuncName = "__getMultiplicities";
+  public static final String getTermForMultiplicityFuncName = "__getTermMult";
+  public static final String getComplTermForMultiplicityFuncName = "__getComplTermMult";
+ 
   public static Instruction performGenerations(Expression expression, Instruction action) 
        throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
     // counts the generators that didn't change the instruction

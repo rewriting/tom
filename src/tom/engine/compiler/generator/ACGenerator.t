@@ -158,7 +158,7 @@ public class ACGenerator implements IBaseGenerator {
    *  return counter;    
    * }
    */
-  private TomTerm getPILforComputeLength(TomName opName, TomType opType) {    
+  private Declaration getPILforComputeLength(String opNameString, TomName opName, TomType opType) {    
     // all the variables
     TomTerm subject = `Variable(concOption(),"subject",opType,concConstraint());    
     TomTerm old = `Variable(concOption(),"old",opType,concConstraint());       
@@ -185,9 +185,8 @@ public class ACGenerator implements IBaseGenerator {
         LetRef(old,Bottom(),`LetRef(counter,Integer(0),whileLoop))
         Return(counter)));
         
-    return `FunctionDef(Name(Compiler.computeLengthName+opNameString),
+    return `FunctionDef(Name(ConstraintGenerator.computeLengthFuncName+opNameString),
         concTomTerm(subject),Compiler.getIntType(),EmptyType(),functionBody);
-  }
-  
+  }  
    
 }
