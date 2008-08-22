@@ -159,25 +159,34 @@ public class ACGenerator implements IBaseGenerator {
    * }
    */
   private TomTerm getPILforComputeLength(TomName opName, TomType opType) {    
-    TomTerm subject = `Variable(concOption(),"subject",opType,concConstraint());
+    // all the variables
+    TomTerm subject = `Variable(concOption(),"subject",opType,concConstraint());    
+    TomTerm old = `Variable(concOption(),"old",opType,concConstraint());       
+    TomTerm counter = `Variable(concOption(),"counter",Compiler.getIntType(),concConstraint());
+    TomTerm elem = `Variable(concOption(),"elem",opType,concConstraint());    
+    // test if a new element
+    Instruction isNewElem = `If(Not(EqualTerm(elem,old)), UnamedBlock(concInstruction(
+        AddOne(counter),LetRef(old,elem,Nop()))),Nop());    
+
+    // test if end of list
+    Instruction isEndList = `If(Not(IsFsym(opName,subject)), UnamedBlock(concInstruction(
+        If(Not(EqualTerm(subject,old)),AddOne(counter),Nop()),Break())),Nop());
+    
+    Instruction whileBlock = `UnamedBlock(concInstruction(
+        LetRef(elem,GetHead(opName,opType,subject),isNewElem),
+        LetRef(subject,GetTail(opName,subject),isEndList)));    
+    Instruction whileLoop = `WhileDo(TrueTL(),whileBlock);
+    
     // test if subj is consOpName
     Instruction isConsOpName = `If(Not(IsFsym(opName,subject)),Return(Integer(1)),Nop());
     
-    TomTerm old = `Variable(concOption(),"old",opType,concConstraint());
-    intruction = `LetRef(old,Bottom(),instruction);
-    
-    TomTerm counter = `Variable(concOption(),"counter",Compiler.getIntType(),concConstraint());
-    intruction = `LetRef(counter,Integer(0),instruction);
-    
-    TomTerm elem = `Variable(concOption(),"elem",opType,concConstraint());
-    intruction = `LetRef(elem,GetHead(opName,opType,subject),instruction);
-    
-    
-    
-    Instruction whileBlock;
-    
-    Instruction whileLoop = `WhileDo(TrueTL(),whileBlock);
-    
+    Instruction functionBody = `UnamedBlock(concInstruction(
+        isConsOpName,
+        LetRef(old,Bottom(),`LetRef(counter,Integer(0),whileLoop))
+        Return(counter)));
+        
+    return `FunctionDef(Name(Compiler.computeLengthName+opNameString),
+        concTomTerm(subject),Compiler.getIntType(),EmptyType(),functionBody);
   }
   
    
