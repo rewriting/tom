@@ -773,7 +773,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
 {
     result = null;   
     TomNameList nameList = `concTomName();
-    TomName name = null;    
+    TomName name = null;
     boolean implicit = false;
 
     if(astLabeledName != null) {
@@ -798,7 +798,7 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
           {!anti}? // do not allow anti symbols on _
           result = unamedVariable[optionList,constraintList] 
 
-        | // for a single constant. 
+        | // for a single constant: i.e. a variable
           // ambiguous with the next rule so:
           {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
           name = headSymbol[optionList] 
@@ -808,19 +808,18 @@ simplePlainTerm [TomName astLabeledName, TomName astAnnotedName, int line, List 
             if(anti) { result = `AntiTerm(result); }
           }
 
-        | // for a single constant. 
+        | // for a disjuntion of constants: 1, 3.14, "foo", or (1|2|3) for instance
           // ambiguous with the next rule so:
           {LA(2) != LPAREN && LA(2) != LBRACKET && LA(2) != QMARK}? 
-            nameList = headConstantList[optionList] 
+          nameList = headConstantList[optionList] 
           {
-        //nameList = `concTomName(nameList*,name);
-        optionList.add(`Constant());
-        result = `TermAppl(
+            optionList.add(`Constant());
+            result = `TermAppl(
                 ASTFactory.makeOptionList(optionList),
                 nameList,
                 ASTFactory.makeList(list),
                 ASTFactory.makeConstraintList(constraintList));
-            if (anti) { result = `AntiTerm(result); }
+            if(anti) { result = `AntiTerm(result); }
           }
 
         | // f(...) or f[...] or !f(...) or !f[...]
@@ -894,7 +893,7 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
       (a:ANTI_SYM {anti = !anti;} )* 
       ( {LA(1) != LPAREN  || ( LA(1) == LPAREN && ( LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE) ) }? 
         result = simplePlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti]             
-        | result = implicitNotationPlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti] )
+      | result = implicitNotationPlainTerm[astLabeledName, astAnnotedName, line, list,secondOptionList,optionList,constraintList,anti] )
       {  return result; } 
     ;
 
@@ -1554,12 +1553,16 @@ headSymbolOrConstant [List optionList] returns [TomName result]
 
 headSymbol [List optionList] returns [TomName result]
 { 
-    result = null; 
+  //String buf="";
+ // TomName name = null;
+  result = null; 
 }
 : 
-  (i:ALL_ID
+  (i:ALL_ID /*{buf=i.getText(); System.out.println("buf = " + buf);}
+   (DOT {buf+=".";}  name = headSymbol[optionList]{buf+=name.getString();System.out.println("buf2 = " + buf);})* 
+   */
   {
-		String name = i.getText();                
+    String name = i.getText();
 		int line = i.getLine();
 		text.append(name);
 		setLastLine(line);
@@ -1586,7 +1589,7 @@ headConstant [List optionList] returns [TomName result]
     result = null;
     Token t;
 } : 
-        t=constant // add to symbol table
+  t=constant // add to symbol table
 {  
 	String name = t.getText();        
 	int line = t.getLine();
@@ -2506,7 +2509,7 @@ options{testLiterals = true;}
         ('_')? LETTER
         ( 
             options{greedy = true;}:
-            ( LETTER | DIGIT | '_' )
+            ( LETTER | DIGIT | '_' | '.' )
         )* 
     ;   
 
