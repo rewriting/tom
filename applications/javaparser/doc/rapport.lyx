@@ -52,6 +52,12 @@ Johan Grande
 \end_layout
 
 \begin_layout Standard
+Mon stage (de 6 semaines) s'est déroulé dans l'équipe du projet Tom, outil
+ et langage de programmation, que j'ai utilisé pour produire un outil qui
+ sera à son tour utilisé dans le cadre de ce projet.
+\end_layout
+
+\begin_layout Standard
 \begin_inset LatexCommand tableofcontents
 
 \end_inset
@@ -272,9 +278,15 @@ Le compilateur produit du code Java ``pur'', qui doit ensuite être compilé
 Le compilateur parcours le code, ignore (= recopie verbatim) le code Java
  lui même, et traduit les îlots formels repérés par le caractère ` ou par
  un bloc %truc en code Java.
- Le code non-Tom étant ignoré, on peut en fait compiler des îlots Tom dans
- n'importe quel fichier contenant du code Java (une grammaire pour un générateur
- de parseur, par exemple).
+\end_layout
+
+\begin_layout Standard
+Le code non-Tom étant ignoré, on peut en fait compiler des îlots Tom dans
+ n'importe quel fichier pouvant contenir du code Java (les ``actions'' dans
+ une grammaire pour un générateur de parseur, par exemple), et plus généralement
+ dans n'importe quel fichier dans lequel les îlots utilisés ont un sens,
+ et la directive %include{unfichier.txt}, qui recopie le contenu du fichier
+ unfichier.txt, peut être utilisée dans de multiples contextes.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -386,12 +398,12 @@ Traitement pré - compilation Tom
 Actuellement, le compilateur Tom ignore complètement le code Java en dehors
  des îlots formels qu'il traduit.
  Parser le Java formant le contexte permettrait de récupérer des informations
- telles que le type des variables utilisées, et de produire du code plus
- efficace.
+ telles que le type des variables utilisées, afin de produire du code plus
+ efficace, de faciliter le déboguage par des erreurs plus lisibles, etc.
 \end_layout
 
 \begin_layout Subsubsection*
-En bref
+Plus généralement
 \end_layout
 
 \begin_layout Standard
@@ -577,7 +589,7 @@ Quelques chiffres
 \begin_layout Standard
 Malgré ces simplifications, la structure de donnée comporte environ 230
  constructeurs (plus de 50 types), et l'ensemble du code Java généré par
- Gom (plus de 300 fichiers) pèse de l'ordre de 5 Mo.
+ Gom (environ 1000 fichiers) pèse de l'ordre de 5 Mo.
 \end_layout
 
 \begin_layout Subsection
@@ -644,6 +656,113 @@ La grammaire utilisée fait environ 200 lignes, et le parser généré en compte
 \end_layout
 
 \begin_layout Subsection
+Bugs
+\end_layout
+
+\begin_layout Standard
+Un problème important, outre l'apprentissage des outils, est leur éventuelle
+ remise en questions.
+\end_layout
+
+\begin_layout Standard
+L'avantage est que mon travail a permis de repérer un bug dans Gom (plus
+ précisément dans l'outil permettant la combinaison avec Antlr), qui a été
+ corrigé très rapidement.
+\end_layout
+
+\begin_layout Standard
+Le problème est plus gênant lorsqu'un bug ne dépend pas du projet dans lequel
+ j'étais.
+ Ainsi un bug d'Antlr (bloquant pour moi) n'a été corrigé que dans la version
+ 3.1 de cet outil, sortie après la fin de mon stage : j'ai du utiliser une
+ version beta, et donc adapter le processus de compilation standard fourni
+ par Tom.
+\end_layout
+
+\begin_layout Standard
+Enfin, un problème est apparu tout à la fin de mon stage et je n'ai malheureusem
+ent pas réussi à le régler moi-même.
+ Le parseur produit n'est donc pas correct dans la génération de termes
+ correspondant à certaines expressions et aux types Array.
+\end_layout
+
+\begin_layout Subsection
+Application
+\end_layout
+
+\begin_layout Standard
+J'ai testé le parseur sur quelques fichiers Java, mais je n'ai pas testé
+ systématiquement les règles de la grammaire.
+ La plupart des tests ont consisté à parser un fichier Java relativement
+ simple (humainement lisible) et à vérifier que l'arbre obtenu était correct.
+ Pour ce faire, Tom fournit un outil permettant d'afficher un arbre Gom
+ sous forme d'arbre (en mode console).
+\end_layout
+
+\begin_layout Standard
+En guise de test de manipulation des arbres générés, j'ai implémenté quelques
+ hooks et stratégies.
+\end_layout
+
+\begin_layout Standard
+Les hooks servent à simplifier l'arbre généré sans changement majeur de
+ la représentation sous forme de code (la frontière n'est pas définie formelleme
+nt).
+ Il s'agit typiquement d'enlever des éléments vides de listes, par exemple
+ l'instruction vide (';') à l'intérieur d'un bloc.
+\end_layout
+
+\begin_layout Standard
+J'ai codé une ``stratégie'' qui permet de faire des simplifications un peu
+ plus importantes (toujours sans changer la sémantique).
+ Par exemple les règles :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+%strategy Simplify () extends Identity() {
+\end_layout
+
+\begin_layout Standard
+
+  visit Statement {
+\end_layout
+
+\begin_layout Standard
+
+    If(Primary(BooleanLiteral(True() ), SuffixList()), t, _) -> t
+\end_layout
+
+\begin_layout Standard
+
+    If(Primary(BooleanLiteral(False()), SuffixList()), _, e) -> e
+\end_layout
+
+\begin_layout Standard
+
+  }
+\end_layout
+
+\begin_layout Standard
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+simplifient les instructions de la forme if (true) et if (false).
+\end_layout
+
+\begin_layout Subsection
 La suite
 \end_layout
 
@@ -651,6 +770,67 @@ La suite
 Si ce que j'ai réalisé s'avère utile et pratique, la structure de données
  pourrait être étendue au langage Tom, permettant ainsi de représenter en
  un seul arbre des programmes complets dans ce langage.
+\end_layout
+
+\begin_layout Subsubsection*
+Polymorphisme
+\end_layout
+
+\begin_layout Standard
+Par ailleurs, ce que j'ai réalisé pourra être mis à jour pour profiter des
+ prochaines améliorations de Tom/Gom.
+\end_layout
+
+\begin_layout Standard
+Ainsi, Gom ne gère pour l'instant pas de polymorphisme, mais les développeurs
+ ont prévu de l'implémenter.
+ Lorsque ce sera fait, certaines constructions pourront être rendues plus
+ élégantes.
+ Par exemple, pour représenter des éléments optionnels ( toto? dans la syntaxe
+ de la grammaire), la solution retenue a été de créer des constructions
+ ``vides'' :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+Toto =
+\end_layout
+
+\begin_layout Standard
+
+ | Toto( [...] )
+\end_layout
+
+\begin_layout Standard
+
+ | EmptyToto()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Une solution plus élégante, mais qui nécessiterait le polymorphisme, serait
+ de définir globalement comme en CaML des options :
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+type 'a option = Some of 'a | None;;
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body

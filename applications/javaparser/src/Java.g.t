@@ -177,14 +177,14 @@ tokens {
 }
 
 @header {
-package parser;
-import org.antlr.runtime.tree.Tree;
-import parser.ast.AstTree;
+  package parser;
+  import org.antlr.runtime.tree.Tree;
+  import parser.ast.AstTree;
 }
 
 @lexer::header {
-package parser;
-import parser.ast.AstTree;
+  package parser;
+  import parser.ast.AstTree;
 }
 
 @lexer::members {
