@@ -41,6 +41,10 @@ import tom.engine.TomBase;
 import tom.engine.compiler.*;
 import tom.engine.compiler.Compiler;
 
+
+// TODO : move all this in the constraintgenerator.
+// we should only generate the functions once per operator
+
 /**
  * AC Generator
  */
@@ -58,13 +62,123 @@ public class ACGenerator implements IBaseGenerator {
     visit Expression {
       
       ce@ConstraintToExpression(MatchConstraint(pattern@RecordAppl[NameList=(Name(tomName))],subject)) -> {
-        // if this is not an ac symbol, nothing to do
+        // if this is not an AC symbol, nothing to do
         if(!TomBase.isACOperator(Compiler.getSymbolTable().getSymbolFromName(`tomName))) { return `ce; }
         
         // TODO - generate all the functions
+       
+        
+        System.out.println("Pattern:" + `pattern);
         
         return `ACMatchLoop(pattern, subject);
       }
     } // end visit
   } // end strategy  
+  
+  /**
+   *    // Generates the PIL for the following function
+   * 
+        private int[] getMultiplicities(Term subj, int length) {
+          int[] mult = new int[length];
+          Term oldElem = null;
+          // if we realy have a list
+          // TODO: is this really necessary ?
+          if (subj.isConsf()) {      
+            oldElem = subj.getHeadf();      
+          } else {      
+            mult[0] = 1;
+            return mult;      
+          }
+          int counter = 0;  
+          // = subj.length;
+          while(true) {
+            Term elem = subj.getHeadf();        
+            // another element of this type
+            if (elem.equals(oldElem)){
+              mult[counter] += 1; 
+            } else {
+              counter++;
+              oldElem = elem;
+              mult[counter] = 1;
+            }
+            subj = subj.getTailf();
+            // if we got to the end of the list
+            if(!subj.isConsf()) {
+              if (subj.equals(oldElem)){
+                mult[counter] += 1; 
+              } else {
+                counter++;          
+                mult[counter] = 1;
+              }
+              break; // break the while
+            } 
+          }
+          return mult;
+        }
+   */
+  private generateGetMultiplicities(){
+    TomType intType = Compiler.getIntType();
+    SymbolTable symbolTable = Compiler.getSymbolTable();
+    TomType intArrayType = symbolTable.getIntArrayType();
+    // a 0
+    Expression zero = `Integer(0);
+    // the name of the int[] operator
+    TomName intArrayName = `Name(symbolTable.getIntArrayOp());
+    
+    TomTerm mult = Compiler.getFreshVariable(intArrayType);
+    TomTerm tempSol = Compiler.getFreshVariable(intArrayType);
+    TomTerm position = Compiler.getFreshVariable(intType);
+    TomTerm length = Compiler.getFreshVariable(intType);
+  }
+  
+  /**
+   * // Generates the PIL for the following function
+   * 
+   * private int computeLength(Term subj) {
+   *  // a single element
+   *  if(!subj.isConsf()) {
+   *    return 1;
+   *  }
+   *  Term old = null;
+   *  int counter = 0;
+   *  while(true) {
+   *    Term elem = subj.getHeadf();
+   *    // a new element
+   *    if (!elem.equals(old)){
+   *      counter++;
+   *      old = elem;
+   *    } 
+   *    subj = subj.getTailf();
+   *    // if we got to the end of the list
+   *    if(!subj.isConsf()) {
+   *      if (!subj.equals(old)) { counter++; }
+   *      break; // break the while
+   *    } 
+   *  }     
+   *  return counter;    
+   * }
+   */
+  private TomTerm getPILforComputeLength(TomName opName, TomType opType) {    
+    TomTerm subject = `Variable(concOption(),"subject",opType,concConstraint());
+    // test if subj is consOpName
+    Instruction isConsOpName = `If(Not(IsFsym(opName,subject)),Return(Integer(1)),Nop());
+    
+    TomTerm old = `Variable(concOption(),"old",opType,concConstraint());
+    intruction = `LetRef(old,Bottom(),instruction);
+    
+    TomTerm counter = `Variable(concOption(),"counter",Compiler.getIntType(),concConstraint());
+    intruction = `LetRef(counter,Integer(0),instruction);
+    
+    TomTerm elem = `Variable(concOption(),"elem",opType,concConstraint());
+    intruction = `LetRef(elem,GetHead(opName,opType,subject),instruction);
+    
+    
+    
+    Instruction whileBlock;
+    
+    Instruction whileLoop = `WhileDo(TrueTL(),whileBlock);
+    
+  }
+  
+   
 }

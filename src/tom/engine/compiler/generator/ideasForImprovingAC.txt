@@ -1,0 +1,3 @@
+- computeLenght and getMultiplicities perform a traversal of the term; perhaps we could do only one traversal
+- some parametration of the functions that are generated with the name of the operator: this would avoid generating almost the same functions for 2 different operators
+ 

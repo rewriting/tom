@@ -295,31 +295,33 @@ public class Compiler extends TomGenericPlugin {
   }
 
   public static TomTerm getFreshVariable(TomType type) {
-    return getFreshVariable(freshVarPrefix + (freshVarCounter++), type);    
+    return getFreshVariable(freshVarPrefix, type);    
   }
 
   public static TomTerm getFreshVariable(String name, TomType type) {
     TomNumberList path = getRootpath();
+    name += freshVarCounter++;
     TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `Variable(concOption(),freshVarName,type,concConstraint());
   }
 
   public static TomTerm getFreshVariableStar(TomType type) {
-    return getFreshVariableStar(freshVarPrefix + (freshVarCounter++), type);
+    return getFreshVariableStar(freshVarPrefix, type);
   }
 
   public static TomTerm getFreshVariableStar(String name, TomType type) {
     TomNumberList path = getRootpath();
+    name += freshVarCounter++;
     TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(name))));
     return `VariableStar(concOption(),freshVarName,type,concConstraint());
   }
 
   public static TomTerm getBeginVariableStar(TomType type) {
-    return getFreshVariableStar(freshBeginPrefix + (freshVarCounter++),type);
+    return getFreshVariableStar(freshBeginPrefix,type);
   }
 
   public static TomTerm getEndVariableStar(TomType type) {
-    return Compiler.getFreshVariableStar(freshEndPrefix + (freshVarCounter++),type);
+    return Compiler.getFreshVariableStar(freshEndPrefix,type);
   }
 
   /*

@@ -422,14 +422,14 @@ public class ConstraintGenerator {
     SymbolTable symbolTable = Compiler.getSymbolTable();
     TomType intArrayType = symbolTable.getIntArrayType();
     // a 0
-    Expression zero = `Integer(0);//`Variable(concOption(),Name("0"),intType,concConstraint());
+    Expression zero = `Integer(0);
     // the name of the int[] operator
     TomName intArrayName = `Name(symbolTable.getIntArrayOp());
     
-    TomTerm alpha = Compiler.getFreshVariable(intArrayType);
-    TomTerm tempSol = Compiler.getFreshVariable(intArrayType);
-    TomTerm position = Compiler.getFreshVariable(intType);
-    TomTerm length = Compiler.getFreshVariable(intType);                
+    TomTerm alpha = Compiler.getFreshVariable("alpha",intArrayType);
+    TomTerm tempSol = Compiler.getFreshVariable("tempSol",intArrayType);
+    TomTerm position = Compiler.getFreshVariable("position",intType);
+    TomTerm length = Compiler.getFreshVariable("length",intType);                
             
     Expression positionGreaterOrEqThanZero = `GreaterOrEqualThan(TomTermToExpression(position),zero);             
     
