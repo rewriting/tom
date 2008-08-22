@@ -49,6 +49,12 @@ pour le langage Java
 
 \noun on
 Johan Grande
+\newline
+
+\noun default
+Encadrant : 
+\noun on
+Pierre-Étienne Moreau
 \end_layout
 
 \begin_layout Standard
@@ -65,6 +71,12 @@ Mon stage (de 6 semaines) s'est déroulé dans l'équipe du projet Tom, outil
 
 \end_layout
 
+\begin_layout Standard
+
+\newpage
+
+\end_layout
+
 \begin_layout Section
 Tom
 \end_layout
@@ -78,6 +90,9 @@ Tom est un outil de programmation étendant plusieurs langages de programmation.
 
 \begin_layout Standard
 Tom permet la description de structures de données et leur manipulation.
+ Basé sur la théorie de la réécriture de termes, son but est de fournir
+ aux programmeurs de langages populaires le moyen de programmer dans style
+ à base de règles de réécriture et de pattern-matching.
 \end_layout
 
 \begin_layout Subsection
@@ -169,7 +184,7 @@ To One Matching (Tom)
 Tom est une extension de Java; tout programme écrit en Java est valide en
  Tom.
  En général, un programme écrit en Tom est un code Java contenant des ``îlots
- formels'', constructions propres à Tom.
+ formels'', constructions propres à Tom :
 \end_layout
 
 \begin_layout Standard
@@ -266,6 +281,108 @@ String toString (Expression e) {
 \end_layout
 
 \begin_layout Subsubsection*
+Particularités par rapport à CaML
+\end_layout
+
+\begin_layout Standard
+Dans l'esprit de l'instruction switch de Java, si le terme filtré correspond
+ à plusieurs motifs, toutes les actions Java correspondantes sont exécutées
+ (sauf instruction contraire telle que return).
+\end_layout
+
+\begin_layout Standard
+Par ailleurs, la construction %match de Tom permet de filtrer certaines
+ conditions telles que
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+%match(terme) {
+\end_layout
+
+\begin_layout Standard
+
+  f(x, x) -> {
+\end_layout
+
+\begin_layout Standard
+
+    // les 2 fils de f sont identiques
+\end_layout
+
+\begin_layout Standard
+
+  }
+\end_layout
+
+\begin_layout Standard
+
+  f(a(), !b()) -> {
+\end_layout
+
+\begin_layout Standard
+
+    // le 1er fils de f est a() et le 2e est différent de b()
+\end_layout
+
+\begin_layout Standard
+
+    // (anti-pattern)
+\end_layout
+
+\begin_layout Standard
+
+  }
+\end_layout
+
+\begin_layout Standard
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+directement dans les motifs, alors que CaML nécessiterait une construction
+ de la forme :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+match terme with
+\end_layout
+
+\begin_layout Standard
+
+ | F (x, y) when x = y -> (* ...
+ *)
+\end_layout
+
+\begin_layout Standard
+
+ | F (A, x) when x <> B -> (* ...
+ *)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
 Implementation
 \end_layout
 
@@ -326,13 +443,26 @@ On peut également spécifier l'action à effectuer lors de la création d'un
 \end_layout
 
 \begin_layout Subsubsection*
-Strategies
+Stratégies
 \end_layout
 
 \begin_layout Standard
 Ces règles peuvent également être définies dans un programme Tom grâce au
  bloc %strategy; il est alors possible de les appeler sur un terme, une
  fois ou jusqu'à obtention d'une forme normale.
+\end_layout
+
+\begin_layout Subsection
+Utilisation
+\end_layout
+
+\begin_layout Standard
+Tom est utilisé dans l'industrie pour de la manipulation d'arbres XML ainsi
+ que de l'optimisation de code SQL.
+\end_layout
+
+\begin_layout Standard
+Le compilateur Tom est lui-même écrit dans ce langage.
 \end_layout
 
 \begin_layout Standard
@@ -515,6 +645,16 @@ Le besoin d'une structure de données abstraite motive la distance à la grammai
 \end_layout
 
 \begin_layout Standard
+De plus, la structure de données d'Eclipse étant directement implémentée
+ sous forme de classes Java, elle comporte beaucoup moins de classes et
+ de constructeurs que la structure de données Gom, moins souple.
+ En particulier dans le cas des expressions, un constructeur par opérateur
+ du langage est indispensable pour avoir une structure 100% Gom, alors que
+ la structure de données Eclipse représente chaque opérateur par un nombre
+ entier, économisant ainsi environ 40 constructeurs.
+\end_layout
+
+\begin_layout Standard
 La volonté de simplifier la structure de données et de diminuer le nombre
  de constructeurs à conduit à permettre délibérément la construction d'arbres
  n'étant pas des programmes Java valides.
@@ -580,6 +720,8 @@ MethodDecl(
 \begin_layout Standard
 est utilisé indifféremment à l'intérieur d'une classe et d'une interface,
  alors qu'une déclaration de méthode d'une interface n'a jamais de corps.
+ J'ai ici fait le choix de représenter les méthodes d'interfaces avec le
+ même constructeur, et par convention un corps constitué d'un bloc vide.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -772,13 +914,13 @@ Si ce que j'ai réalisé s'avère utile et pratique, la structure de données
  un seul arbre des programmes complets dans ce langage.
 \end_layout
 
-\begin_layout Subsubsection*
-Polymorphisme
-\end_layout
-
 \begin_layout Standard
 Par ailleurs, ce que j'ai réalisé pourra être mis à jour pour profiter des
  prochaines améliorations de Tom/Gom.
+\end_layout
+
+\begin_layout Subsubsection*
+Polymorphisme
 \end_layout
 
 \begin_layout Standard
@@ -817,8 +959,8 @@ Toto =
 \end_layout
 
 \begin_layout Standard
-Une solution plus élégante, mais qui nécessiterait le polymorphisme, serait
- de définir globalement comme en CaML des options :
+Une solution plus élégante serait de définir globalement des options polymorphes
+, comme en CaML :
 \begin_inset listings
 inline false
 status open
@@ -831,6 +973,45 @@ type 'a option = Some of 'a | None;;
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Expérience
+\end_layout
+
+\begin_layout Standard
+Outre le fait d'avoir travaillé sur un sujet intéressant dans un laboratoire
+ agréable et une équipe sympathique, ce qui suffit pour considérer mon stage
+ comme une expérience positive, celui-ci a été instructif, en particulier
+ concernant des détails de façon de travailler.
+\end_layout
+
+\begin_layout Standard
+À titre d'exemple, on peut noter le fait que manipuler des fichiers source
+ en cherchant au fur et à mesure dans la documentation la syntaxe du langage
+ n'est pas forcément plus efficace que de commencer par apprendre sur des
+ petits exemples...
+ ou encore que la configuration de l'environnement de programmation (outils
+ de compilation, classpath, système de gestion de versions, etc.), bien que
+ d'un intérêt intellectuel limité, peut prendre un temps non négligeable.
+\end_layout
+
+\begin_layout Subsection
+Bibliographie
+\end_layout
+
+\begin_layout Standard
+Le sujet de mon stage n'étant pas théorique, la bibliographie qui m'a été
+ utile se réduit plus ou moins à la documentation des différents outils
+ et langages que j'ai utilisé.
+\end_layout
+
+\begin_layout Standard
+On peut néanmoins remarquer parmis cette documentation 
+\emph on
+The Definitive ANTLR Reference : Building Domain-Specific Languages
+\emph default
+, de Terence Parr, créateur d'Antlr.
 \end_layout
 
 \end_body

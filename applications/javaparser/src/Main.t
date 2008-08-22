@@ -9,10 +9,6 @@ import parser.ast.types.*;
 
 public class Main {
 
-  int toto () {
-    return (!true)?2:3;
-  }
-
   %include { sl.tom }
   %include { parser/ast/Ast.tom }
 
@@ -56,11 +52,11 @@ public class Main {
       AstTree tree = (AstTree) parser.compilationUnit().getTree();
       CompilationUnit term = (CompilationUnit) tree.getTerm();
 
-      //tom.library.utils.Viewer.toTree(term);
+      tom.library.utils.Viewer.toTree(term);
 
-      CompilationUnit simplified = (CompilationUnit) `InnermostId(Simplify()).visit(term);
+      //CompilationUnit simplified = (CompilationUnit) `InnermostId(Simplify()).visit(term);
 
-      tom.library.utils.Viewer.toTree(simplified);
+      //tom.library.utils.Viewer.toTree(simplified);
 
     } catch (Exception e) {
       //System.err.println("exception: " + e);
