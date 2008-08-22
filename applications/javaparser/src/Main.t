@@ -9,8 +9,15 @@ import parser.ast.types.*;
 
 public class Main {
 
-   // %include { parser/ast/Ast.tom }
-
+  %include { sl.tom }
+  %include { parser/ast/Ast.tom }
+/*
+  %strategy Simplify () extends `Identity () {
+    visit Statement {
+      If(Primary(BooleanLiteral(True()), EmptySuffixList()), t, _) -> t
+    }
+  }
+*/
   public static void main(String args[]) {
     try {
       InputStream input;
@@ -32,6 +39,10 @@ public class Main {
       CompilationUnit term = (CompilationUnit) tree.getTerm();
 
       tom.library.utils.Viewer.toTree(term);
+
+      //CompilationUnit simplified = `RepeatId(Simplify()).visit(term);
+
+      //tom.library.utils.Viewer.toTree(simplified);
 
     } catch (Exception e) {
       //System.err.println("exception: " + e);

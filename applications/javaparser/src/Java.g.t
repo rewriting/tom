@@ -448,7 +448,7 @@ interfaceMethodOrFieldRest[Tree modifiers, Tree type, Tree name]
     ;
 
 methodDeclaratorRest[Tree modifiers, Tree typeparameters, Tree type, Tree name]
-    :   formalParameters ('[' ']')*
+    :   formalParameters ('[' ']')* // NOT CORRECT
         ('throws' t=qualifiedNameList)?
         (   methodBody
             -> {typeparameters==null && type==null && t==null}?
@@ -499,7 +499,7 @@ voidMethodDeclaratorRest[Tree modifiers, Tree name]
     ;
 
 interfaceMethodDeclaratorRest[Tree modifiers, Tree typeparameters, Tree type, Tree name]
-    :   formalParameters ('[' ']')* ('throws' t=qualifiedNameList)? ';'
+    :   formalParameters ('[' ']')* ('throws' t=qualifiedNameList)? ';' // NOT CORRECT
         -> {typeparameters==null && type==null && t==null}?
             ^(MethodDecl {modifiers} ^(TypeParameterList ) Void {name} formalParameters ^(QualifiedNameList ) ^(BlockStatementList ))
         -> {typeparameters==null && type==null}?
@@ -566,11 +566,11 @@ constantDeclaratorsRest[Tree type, Tree name]
 
 constantDeclaratorRest[Tree type, Tree name]
     :   ('[' ']')* '=' variableInitializer
-        ->  ^(VariableDecl {type} {name} variableInitializer)
+        ->  ^(VariableDecl {type} {name} variableInitializer) // NOT CORRECT
     ;
     
 variableDeclaratorId
-    :   Identifier ('[' ']')* -> Identifier
+    :   Identifier ('[' ']')* -> Identifier // NOT CORRECT
     ;
 
 variableInitializer
@@ -612,8 +612,8 @@ typeName
 
 type
     :   classOrInterfaceType ('[' ']')*
-        ->  ^(ClassOrInterfaceType classOrInterfaceType)
-    |   primitiveType ('[' ']')* -> primitiveType
+        ->  ^(ClassOrInterfaceType classOrInterfaceType) // NOT CORRECT
+    |   primitiveType ('[' ']')* -> primitiveType // NOT CORRECT
     ;
 
 classOrInterfaceType
@@ -855,9 +855,9 @@ statement
         | c=catches
         | 'finally' fblock=block
         )
-        -> {fblock==null}? ^(Try $tblock $c ^(BlockStatementList ))
-        -> {c==null}?      ^(Try $tblock ^(CatchClauseList ) $fblock)
-        ->                 ^(Try $tblock $c $fblock)
+        -> {fblock==null}? ^(TryCatchFinally $tblock $c ^(BlockStatementList ))
+        -> {c==null}?      ^(TryCatchFinally $tblock ^(CatchClauseList ) $fblock)
+        ->                 ^(TryCatchFinally $tblock $c $fblock)
     |   'switch' parExpression '{' switchBlockStatementGroups '}'
         ->  ^(Switch parExpression switchBlockStatementGroups)
     |   'synchronized' parExpression block
@@ -1045,7 +1045,7 @@ andExpression
     ;
 
 equalityExpression
-    :   instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> instanceOfExpression
+    :   instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> instanceOfExpression // NOT CORRECT
     ;
 
 instanceOfExpression
@@ -1097,11 +1097,11 @@ shiftOp
     ;
 
 additiveExpression
-    :   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )* -> multiplicativeExpression
+    :   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )* -> multiplicativeExpression // NOT CORRECT
     ;
 
 multiplicativeExpression
-    :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )* -> unaryExpression
+    :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )* -> unaryExpression // NOT CORRECT
     ;
 
 unaryExpression
@@ -1144,20 +1144,20 @@ primary
         -> {s==null}? ^(QualifiedNameToPrimary ^(QualifiedName Identifier*) EmptySuffix)
         ->            ^(QualifiedNameToPrimary ^(QualifiedName Identifier*) $s)
     |   primitiveType ('[' ']')* '.' 'class'
-        -> ^(Class primitiveType)
+        -> ^(Class primitiveType) // NOT CORRECT
     |   'void' '.' 'class'
         ->  ^(Class Void)
     ;
 
 identifierSuffix
     :   ('[' ']')+ '.' 'class'
-         ->  ^(ArrayClassSuffix {0})
+         ->  ^(ArrayClassSuffix {0}) // NOT CORRECT // DOES NOT WORK
     |   ('[' expression ']')+ // can also be matched by selector, but do here
         ->  ^(ArrayIndexSuffix ^(ExpressionList expression+))
     |   arguments
         ->  ^(ArgumentsSuffix arguments)
     |   '.' 'class'
-        ->  ^(ArrayClassSuffix {0})
+        ->  ^(ArrayClassSuffix {0}) // DOES NOT WORK
     |   '.'! explicitGenericInvocation
     |   '.' 'this'
         ->  ThisSuffix
@@ -1170,7 +1170,7 @@ creator
     :   nonWildcardTypeArguments createdName r=classCreatorRest
         ->  ^(ClassCreator nonWildcardTypeArguments createdName {$r.tree.getChild(0)} {$r.tree.getChild(1)})
     |   createdName
-        (   arrayCreatorRest[$createdName.tree]
+        (   arrayCreatorRest[$createdName.tree] -> arrayCreatorRest
         |   r=classCreatorRest
             ->  ^(ClassCreator ^(TypeList ) createdName {$r.tree.getChild(0)} {$r.tree.getChild(1)})
         )
@@ -1201,9 +1201,9 @@ innerCreator
 arrayCreatorRest[Tree type]
     :   '['
         (   ']' ('[' ']')* arrayInitializer
-            ->  ^(InitializedArrayCreator {type} arrayInitializer)
+            ->  ^(InitializedArrayCreator {type} arrayInitializer) // NOT CORRECT
         |   expression ']' ('[' expression ']')* ('[' ']')*
-            ->  ^(NonInitializedArrayCreator ^(ExpressionList expression+) {0})
+            ->  ^(InitializedArrayCreator {type} ^(ArrayInitializer )) // NOT CORRECT
         )
     ;
 

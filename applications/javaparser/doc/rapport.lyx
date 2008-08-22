@@ -1,0 +1,657 @@
+#LyX 1.5.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass article
+\language french
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language swedish
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Arbres de Syntaxe Abstraite
+\newline
+pour le langage Java
+\end_layout
+
+\begin_layout Author
+
+\noun on
+Johan Grande
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Tom
+\end_layout
+
+\begin_layout Standard
+Tom est un outil de programmation étendant plusieurs langages de programmation.
+ Dans la suite, on considèrera que le langage étendu est le Java, qui est
+ le principal langage visé et celui dans lequel Tom est programmé.
+ Néanmoins, Tom peut être utilisé comme extension de C, C#, ou même CaML.
+\end_layout
+
+\begin_layout Standard
+Tom permet la description de structures de données et leur manipulation.
+\end_layout
+
+\begin_layout Subsection
+Description de structure de données (Gom)
+\end_layout
+
+\begin_layout Standard
+Gom est un langage de description de structures de données arborescentes,
+ proche des définitions de types de CaML.
+\end_layout
+
+\begin_layout Standard
+Ainsi ce code Gom :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+Expression =
+\end_layout
+
+\begin_layout Standard
+
+ | Entier( valeur:int )
+\end_layout
+
+\begin_layout Standard
+
+ | Addition( membreGauche:Expression, membreDroit:Expression )
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Correspond à ce qu'on écrirait en CaML :
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+type expression =
+\end_layout
+
+\begin_layout Standard
+
+ | Entier of int
+\end_layout
+
+\begin_layout Standard
+
+ | Addition of expression * expression
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+On remarque que les fils de chaque noeud ont des noms : un noeud d'arbre
+ Gom n'est ni un produit cartésien ni un enregistrement de ses fils, mais
+ une forme intermédiaire qui combine les 2 informations (l'ordre des fils
+ et leur nom).
+\end_layout
+
+\begin_layout Standard
+Le compilateur Gom génère un certain nombre de packages et de classes Java
+ pour représenter la structure de données décrite ainsi.
+\end_layout
+
+\begin_layout Standard
+Il y a plusieurs types Java utilisables comme types de base (int, String,
+ etc.).
+\end_layout
+
+\begin_layout Subsection
+To One Matching (Tom)
+\end_layout
+
+\begin_layout Standard
+Tom est une extension de Java; tout programme écrit en Java est valide en
+ Tom.
+ En général, un programme écrit en Tom est un code Java contenant des ``îlots
+ formels'', constructions propres à Tom.
+\end_layout
+
+\begin_layout Standard
+D'une part, des termes construits selon une structure de donnée décrite
+ dans la syntaxe Gom :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+return `Addition(Entier(2),Entier(2));
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+D'autre part un certain nombre de constructions sous forme de blocs, en
+ premier lieu %match, équivalent du match\InsetSpace ~
+...\InsetSpace ~
+with de CaML.
+ L'exemple ci-dessous construit une chaîne de caractères représentant une
+ Expression :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+String toString (Expression e) {
+\end_layout
+
+\begin_layout Standard
+
+  %match(e) {
+\end_layout
+
+\begin_layout Standard
+
+    Entier( i ) -> {
+\end_layout
+
+\begin_layout Standard
+
+      return Integer.toString(`i);
+\end_layout
+
+\begin_layout Standard
+
+      }
+\end_layout
+
+\begin_layout Standard
+
+    Addition( e1, e2 ) -> {
+\end_layout
+
+\begin_layout Standard
+
+      return "( " + toString(`e1) + " + " + toString(`e2) + " )";
+\end_layout
+
+\begin_layout Standard
+
+      } 
+\end_layout
+
+\begin_layout Standard
+
+  }
+\end_layout
+
+\begin_layout Standard
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+À chaque motif est associé une action Java.
+\end_layout
+
+\begin_layout Subsubsection*
+Implementation
+\end_layout
+
+\begin_layout Standard
+Le compilateur produit du code Java ``pur'', qui doit ensuite être compilé
+ de la façon classique.
+\end_layout
+
+\begin_layout Standard
+Le compilateur parcours le code, ignore (= recopie verbatim) le code Java
+ lui même, et traduit les îlots formels repérés par le caractère ` ou par
+ un bloc %truc en code Java.
+ Le code non-Tom étant ignoré, on peut en fait compiler des îlots Tom dans
+ n'importe quel fichier contenant du code Java (une grammaire pour un générateur
+ de parseur, par exemple).
+\end_layout
+
+\begin_layout Subsubsection*
+Utilisation avec Gom
+\end_layout
+
+\begin_layout Standard
+Une description de structure de données en Gom peut être écrite dans un
+ bloc particulier de Tom noté %gom, ou dans un fichier séparé (et compilé
+ séparément).
+\end_layout
+
+\begin_layout Subsection
+Règles de réécriture
+\end_layout
+
+\begin_layout Standard
+Tom permet la définition de règles de réécriture applicables aux arbres
+ Gom.
+\end_layout
+
+\begin_layout Subsubsection*
+Hooks
+\end_layout
+
+\begin_layout Standard
+Dans la structure de donnée même, permettant de garantir que les termes
+ sont sous forme normale selon le système de règles défini, ces règles s'appelle
+nt des hooks.
+\end_layout
+
+\begin_layout Standard
+On peut également spécifier l'action à effectuer lors de la création d'un
+ terme.
+ On peut choisir de supprimer des éléments vides lors de la création d'une
+ liste, simplifier des expressions, etc.
+\end_layout
+
+\begin_layout Subsubsection*
+Strategies
+\end_layout
+
+\begin_layout Standard
+Ces règles peuvent également être définies dans un programme Tom grâce au
+ bloc %strategy; il est alors possible de les appeler sur un terme, une
+ fois ou jusqu'à obtention d'une forme normale.
+\end_layout
+
+\begin_layout Standard
+
+\newpage
+
+\end_layout
+
+\begin_layout Section
+Mon stage
+\end_layout
+
+\begin_layout Subsection
+Objectif
+\end_layout
+
+\begin_layout Standard
+L'objectif qui m'a été donné était de définir une structure de données pour
+ représenter des programmes écrits dans le langage Java.
+ Cette structure devait être écrite dans la syntaxe Gom.
+\end_layout
+
+\begin_layout Standard
+Je devais également produire un parseur de fichiers Java générant des arbres
+ dans cette structure de données.
+\end_layout
+
+\begin_layout Subsection
+Utilité
+\end_layout
+
+\begin_layout Standard
+Le but est de pouvoir représenter tout programme Java sous une forme utilisable
+ par Tom, et ainsi de profiter de toutes les possibilités de ce langage.
+\end_layout
+
+\begin_layout Subsubsection*
+Traitement post - compilation Tom
+\end_layout
+
+\begin_layout Standard
+Le code Java généré par Tom n'est pas optimal, il contient même des instructions
+ trivialement simplifiables : if (true) , etc.
+\end_layout
+
+\begin_layout Standard
+Une utilisation possible de ce que j'ai réalisé est la ``relecture'' du
+ code Java généré par Tom en vue d'une simplification.
+\end_layout
+
+\begin_layout Standard
+On peut bien sûr concevoir ainsi un outil indépendant du compilateur, ou,
+ plus efficace, faire produire à Tom un programme dans cette structure de
+ données, et effectuer des transformations avant la production du code Java
+ final.
+\end_layout
+
+\begin_layout Subsubsection*
+Traitement pré - compilation Tom
+\end_layout
+
+\begin_layout Standard
+Actuellement, le compilateur Tom ignore complètement le code Java en dehors
+ des îlots formels qu'il traduit.
+ Parser le Java formant le contexte permettrait de récupérer des informations
+ telles que le type des variables utilisées, et de produire du code plus
+ efficace.
+\end_layout
+
+\begin_layout Subsubsection*
+En bref
+\end_layout
+
+\begin_layout Standard
+Ce que j'ai réalisé est une façon de représenter le Java manipulable par
+ Tom, autrement dit utilisable dans toutes les occasions où il est utile
+ de manipuler un programme Java.
+ Ce n'est donc un but que dans le cadre de mon stage, en pratique c'est
+ un moyen, un outil utilisable par les développeurs de Tom et par n'importe
+ qui d'autre.
+\end_layout
+
+\begin_layout Subsection
+La structure de données
+\end_layout
+
+\begin_layout Standard
+La structure de données que j'ai définie permet de représenter n'importe
+ quel programme Java 1.5.
+ Je l'ai écrite en partant de zéro.
+\end_layout
+
+\begin_layout Subsubsection*
+Inspiration
+\end_layout
+
+\begin_layout Standard
+J'ai commencé à l'écrire en suivant plus ou moins la grammaire que j'ai
+ utilisée pour produire le parseur, elle-même écrite (pas par moi) à partir
+ des spécifications du langage.
+ Le but était de s'assurer qu'à toute règle de la grammaire correspondrait
+ une forme de la structure de données.
+ Mais je me suis progressivement éloigné de la grammaire stricte pour gagner
+ en abstraction.
+\end_layout
+
+\begin_layout Standard
+Un arbre représentant un programme Java représente en pratique le contenu
+ d'un fichier source.
+ La racine de l'arbre est de type CompilationUnit, défini ainsi :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Standard
+
+CompilationUnit = CompilationUnit(
+\end_layout
+
+\begin_layout Standard
+
+  annotations:AnnotationList,
+\end_layout
+
+\begin_layout Standard
+
+  package_:QualifiedName,
+\end_layout
+
+\begin_layout Standard
+
+  import_:ImportList,
+\end_layout
+
+\begin_layout Standard
+
+  types:TypeDeclList
+\end_layout
+
+\begin_layout Standard
+
+  )
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Tous les autres types de noeuds sont définis d'une façon semblable dans
+ la syntaxe Gom.
+\end_layout
+
+\begin_layout Standard
+Je me suis également inspiré, dans certains cas, de structures de données
+ pour le langage Java présentes dans d'autres projets, en particulier Eclipse,
+ l'environnement de développement intégré conçu pour le Java.
+\end_layout
+
+\begin_layout Subsubsection*
+Contraintes
+\end_layout
+
+\begin_layout Standard
+La structure de données définie devait être suffisamment abstraite, et ne
+ pas comporter un trop grand nombre de constructeurs, en ayant tout de même
+ des noeuds correspondant aux objets représentés, et pas des arbres génériques
+ avec des étiquettes.
+\end_layout
+
+\begin_layout Standard
+Le besoin d'une structure de données abstraite motive la distance à la grammaire
+ du langage, mais aussi à un exemple comme celui d'Eclipse, qui utilise
+ une représentation des programmes Java stockant un grand nombre d'informations
+ (position exacte des tokens, commentaires, etc.).
+\end_layout
+
+\begin_layout Standard
+La volonté de simplifier la structure de données et de diminuer le nombre
+ de constructeurs à conduit à permettre délibérément la construction d'arbres
+ n'étant pas des programmes Java valides.
+ Par exemple, le constructeur représentant une déclaration de méthode dans
+ le corps d'une classe défini ainsi :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+MethodDecl(
+\end_layout
+
+\begin_layout Standard
+
+  modifiers:ModifierList,
+\end_layout
+
+\begin_layout Standard
+
+  typeparameters:TypeParameterList,
+\end_layout
+
+\begin_layout Standard
+
+  type:Type,
+\end_layout
+
+\begin_layout Standard
+
+  name:String,
+\end_layout
+
+\begin_layout Standard
+
+  formalparameters:FormalParameterDeclList,
+\end_layout
+
+\begin_layout Standard
+
+  throws:QualifiedNameList,
+\end_layout
+
+\begin_layout Standard
+
+  methodbody:Block
+\end_layout
+
+\begin_layout Standard
+
+  )
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+est utilisé indifféremment à l'intérieur d'une classe et d'une interface,
+ alors qu'une déclaration de méthode d'une interface n'a jamais de corps.
+\end_layout
+
+\begin_layout Subsubsection*
+Quelques chiffres
+\end_layout
+
+\begin_layout Standard
+Malgré ces simplifications, la structure de donnée comporte environ 230
+ constructeurs (plus de 50 types), et l'ensemble du code Java généré par
+ Gom (plus de 300 fichiers) pèse de l'ordre de 5 Mo.
+\end_layout
+
+\begin_layout Subsection
+Le parseur
+\end_layout
+
+\begin_layout Standard
+J'utilise pour produire le parseur le générateur de parseur Antlr 3.1, ainsi
+ qu'une grammaire du langage Java 1.5 écrite par le créateur de ce programme.
+\end_layout
+
+\begin_layout Subsubsection*
+Antlr
+\end_layout
+
+\begin_layout Standard
+Antlr est un générateur de parseur, produisant à partir d'un unique fichier
+ source un lexeur et un parseur en Java ou dans un autre langage de programmatio
+n.
+\end_layout
+
+\begin_layout Standard
+Un de ses avantages est la possibilité de construire des arbres de syntaxe
+ abstraite sans ``actions'' dans le langage cible, mais uniquement (ou presque)
+ avec une syntaxe plus formelle.
+ Par exemple la règle
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+modifiers : modifier* -> ^(ModifierList modifier* ) ;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+indique (à droite du signe ->) que lorsque le motif correspondant à l'expression
+ régulière est parsé, il doit être retourné un terme de constructeur ModifierLis
+t dont les fils sont les termes retournés pas les modifiers parsés.
+\end_layout
+
+\begin_layout Standard
+Antlr peut ainsi retourner des arbres dont les constructeurs sont soit générés
+ à partir des tokens, soit importés.
+ En l'occurence, un petit outil permet de générer les fichiers nécessaires
+ pour qu'Antlr utilise la structure de données Gom voulue.
+\end_layout
+
+\begin_layout Subsubsection*
+Quelques chiffres
+\end_layout
+
+\begin_layout Standard
+La grammaire utilisée fait environ 200 lignes, et le parser généré en compte
+ de l'ordre de 30000.
+\end_layout
+
+\begin_layout Subsection
+La suite
+\end_layout
+
+\begin_layout Standard
+Si ce que j'ai réalisé s'avère utile et pratique, la structure de données
+ pourrait être étendue au langage Tom, permettant ainsi de représenter en
+ un seul arbre des programmes complets dans ce langage.
+\end_layout
+
+\end_body
+\end_document

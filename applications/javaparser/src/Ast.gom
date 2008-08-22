@@ -4,12 +4,16 @@ imports int String
 
 abstract syntax
 
-/* Java keywords used followed by a '_' :
+/* Names in conflict with keywords used followed by a '_' :
 
 Sorts names :
 
 Boolean
 Super
+
+Operator names :
+
+Try
 
 Slots names :
 
@@ -711,7 +715,7 @@ Statement =
  | For    ( control:ForControl, statementbody:Statement )
  | While  ( test:Expression, statementbody:Statement )
  | DoWhile( statementbody:Statement, test:Expression )
- | Try( blockbody:Block, catches:CatchClauseList, finally_:Block )
+ | TryCatchFinally( blockbody:Block, catches:CatchClauseList, finally_:Block )
  | Switch( expression:Expression, groups:SwitchBlockStatementGroupList )
  | SynchronizedStatement( object:Expression, blockbody:Block )
  | Return( result:Expression )
