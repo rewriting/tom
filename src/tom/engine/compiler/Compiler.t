@@ -28,6 +28,7 @@ package tom.engine.compiler;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomterm.types.*;
@@ -98,6 +99,8 @@ public class Compiler extends TomGenericPlugin {
       //System.out.println("compiledTerm = \n" + compiledTerm);            
       Collection hashSet = new HashSet();
       TomTerm renamedTerm = (TomTerm) `TopDownIdStopOnSuccess(findRenameVariable(hashSet)).visitLight(compiledTerm);
+      // add the aditional functions needed by the AC operators
+      renamedTerm = addACFunctions(renamedTerm);      
       setWorkingTerm(renamedTerm);
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileName() + COMPILED_SUFFIX, renamedTerm);
@@ -256,6 +259,203 @@ public class Compiler extends TomGenericPlugin {
     return null;
   }
 
+  /******************************************************************************/
+  
+  /**
+   * AC methods
+   */
+  
+  /**
+   * Adds the necessary functions to the ADT of the program
+   * 
+   * @param subject the AST of the program
+   */
+  private static TomTerm addACFunctions(TomTerm subject) throws VisitFailure {
+    System.out.println("SUBJECT:" + subject);
+    // we use the symbol table as all AC the operators were marked as
+    // used when the loop was generated
+    SymbolTable symbolTable = Compiler.getSymbolTable();
+    TomList l = `concTomTerm();
+    Iterator<String> it = symbolTable.keySymbolIterator();
+    while(it.hasNext()){
+      String op = it.next();
+      if(TomBase.isACOperator(symbolTable.getSymbolFromName(op))
+          && symbolTable.isUsedSymbolConstructor(op)) {
+        // gen all
+        TomType opType = symbolTable.getType(op);
+        // 1. computeLenght
+        l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
+        // 2. getMultiplicities
+        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
+      }
+    }
+    // stick the declarations in the good spot
+    `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);
+    return subject;
+  }
+  
+  %strategy InsertDeclarations(TomList l) extends Identity() {
+    visit TomList {
+      concTomTerm(X*,d@DeclarationToTomTerm[],Y*) -> {
+        %match(l) {
+          concTomTerm(Z*) -> { return `concTomTerm(X*,Z*,d,Y*); }
+        }         
+      }
+    }
+  }
+  
+  /**
+   *    // Generates the PIL for the following function (used by the AC algorithm)
+   * 
+   *     private int[] getMultiplicities(Term subj) {
+   *       int length = computeLenght(subj);
+   *       int[] mult = new int[length];
+   *       Term oldElem = null;
+   *       // if we realy have a list
+   *       // TODO: is this really necessary ?
+   *       if (subj.isConsf()) {      
+   *         oldElem = subj.getHeadf();      
+   *       } else {      
+   *         mult[0] = 1;
+   *         return mult;      
+   *       }
+   *       int counter = 0;  
+   *       // = subj.length;
+   *       while(subj.isConsf()) {
+   *         Term elem = subj.getHeadf();        
+   *         // another element of this type
+   *         if (elem.equals(oldElem)){
+   *           mult[counter] += 1; 
+   *         } else {
+   *           counter++;
+   *           oldElem = elem;
+   *           mult[counter] = 1;
+   *         }
+   *         subj = subj.getTailf();
+   *         // if we got to the end of the list
+   *         if(!subj.isConsf()) {
+   *           if (subj.equals(oldElem)){
+   *             mult[counter] += 1; 
+   *           } else {
+   *             counter++;          
+   *             mult[counter] = 1;
+   *           }
+   *           // break; // break the while
+   *         } 
+   *       }
+   *       return mult;
+   *     }
+   */
+  private static Declaration getPILforGetMultiplicities(String opNameString, TomType opType) {
+    TomType intType = Compiler.getIntType();
+    SymbolTable symbolTable = Compiler.getSymbolTable();
+    TomType intArrayType = symbolTable.getIntArrayType();
+    // the name of the int[] operator
+    TomName intArrayName = `Name(symbolTable.getIntArrayOp());    
+    
+    TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());
+    TomTerm length = Compiler.getFreshVariable("length",intType);
+    TomTerm mult = Compiler.getFreshVariable("mult",intArrayType);
+    TomTerm oldElem = `Variable(concOption(),Name("oldElem"),opType,concConstraint());
+    
+    TomName opName = `Name(opNameString);
+    Instruction ifList = `If(IsFsym(opName,subject),
+        LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
+        UnamedBlock(concInstruction(
+            LetArray(mult,ExpressionToTomTerm(Integer(0)),Integer(1), Return(mult)))));
+    // var declarations
+    Instruction varDecl = `LefRef(length, TomTermToExpression(FunctionCall(
+        Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
+        intType,concTomTerm(subject))),
+        LetRef(mult,TomTermToExpression(BuildEmptyArray(intArrayName,length)),
+            LetRef(oldElem,Bottom(opType),ifList)));
+    
+    // the two ifs
+    TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());
+    Instruction ifAnotherElem = `If(EqualTerm(elem, oldElem),
+        LetArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
+        LetRef(counter,AddOne(counter),LetRef(oldElem,elem,LetArray(mult, counter, ExpressionToTomTerm(Integer(1)),Nop()))));
+    Instruction ifEndList = `If(Negation(IsFsym(opName,subject)),
+        If(EqualTerm(subject, oldElem),
+            LetArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
+            LetRef(counter,AddOne(counter),LetArray(mult,counter,ExpressionToTomTerm(Integer(1)),Nop()))),
+      Nop());
+    
+    Instruction whileBlock = `UnamedBlock(concInstruction(
+        LetRef(elem,GetHead(opName,opType,subject),ifAnotherElem),
+        LetRef(subject,GetTail(opName,subject),ifEndList)));    
+    Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
+    
+    Instruction functionBody = `UnamedBlock(concInstruction(
+        varDecl,
+        LetRef(counter,ExpressionToTomTerm(Integer(0)),whileLoop),
+        Return(mult)));
+    
+    return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName+"_"+opNameString),
+        concTomTerm(subject),intArrayType,EmptyType(),functionBody);
+  }
+  
+  /**
+   * // Generates the PIL for the following function (used by the AC algorithm)
+   * 
+   * private int computeLength(Term subj) {
+   *  // a single element
+   *  if(!subj.isConsf()) {
+   *    return 1;
+   *  }
+   *  Term old = null;
+   *  int counter = 0;
+   *  while(subj.isConsf()) {
+   *    Term elem = subj.getHeadf();
+   *    // a new element
+   *    if (!elem.equals(old)){
+   *      counter++;
+   *      old = elem;
+   *    } 
+   *    subj = subj.getTailf();
+   *    // if we got to the end of the list
+   *    if(!subj.isConsf()) {
+   *      if (!subj.equals(old)) { counter++; }
+   *      // break; // break the while - the while stops due to its condition
+   *    } 
+   *  }     
+   *  return counter;    
+   * }
+   */
+  private static Declaration getPILforComputeLength(String opNameString, TomType opType) {    
+    // all the variables
+    TomTerm subject = `Variable(concOption(),Name("subject"),opType,concConstraint());    
+    TomTerm old = `Variable(concOption(),Name("old"),opType,concConstraint());       
+    TomTerm counter = `Variable(concOption(),Name("counter"),Compiler.getIntType(),concConstraint());
+    TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());    
+    // test if a new element
+    Instruction isNewElem = `If(Negation(EqualTerm(opType,elem,old)), UnamedBlock(concInstruction(
+        LetRef(counter,AddOne(counter),LetRef(old,TomTermToExpression(elem),Nop())))),Nop());    
+
+    TomName opName = `Name(opNameString);
+    // test if end of list
+    Instruction isEndList = `If(Negation(IsFsym(opName,subject)), 
+        If(Negation(EqualTerm(opType,subject,old)),LetRef(counter,AddOne(counter),Nop()),Nop()),Nop());
+    
+    Instruction whileBlock = `UnamedBlock(concInstruction(
+        LetRef(elem,GetHead(opName,opType,subject),isNewElem),
+        LetRef(subject,GetTail(opName,subject),isEndList)));    
+    Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
+    
+    // test if subj is consOpName
+    Instruction isConsOpName = `If(Negation(IsFsym(opName,subject)),Return(ExpressionToTomTerm(Integer(1))),Nop());
+    
+    Instruction functionBody = `UnamedBlock(concInstruction(
+        isConsOpName,
+        LetRef(old,Bottom(opType),LetRef(counter,Integer(0),whileLoop)),
+        Return(counter)));
+        
+    return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName+"_"+opNameString),
+        concTomTerm(subject),Compiler.getIntType(),EmptyType(),functionBody);
+  }  
+  
+  /********************************************************************************/
+  
   /**
    * helper functions - mostly related to free var generation
    */

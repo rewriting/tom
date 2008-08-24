@@ -64,8 +64,8 @@ public class ConstraintGenerator {
   // constants
   public static final String computeLengthFuncName = "__computeLenght";
   public static final String multiplicityFuncName = "__getMultiplicities";
-  public static final String getTermForMultiplicityFuncName = "__getTermMult";
-  public static final String getComplTermForMultiplicityFuncName = "__getComplTermMult";
+  public static final String getTermForMultiplicityFuncName = "__getTermForMult";
+  public static final String getComplTermForMultiplicityFuncName = "__getComplTermForMult";
  
   public static Instruction performGenerations(Expression expression, Instruction action) 
        throws ClassNotFoundException,InstantiationException,IllegalAccessException,VisitFailure{		
@@ -474,6 +474,9 @@ public class ConstraintGenerator {
     instruction = `LetRef(alpha,TomTermToExpression(FunctionCall(
         Name(ConstraintGenerator.multiplicityFuncName + "_" + tomName),
         intArrayType,concTomTerm(subject))),instruction);
+    
+    // make sure the additional functions are generated
+    symbolTable.setUsedSymbolConstructor(symbolTable.getSymbolFromName(tomName));
     
     return instruction;
   }
