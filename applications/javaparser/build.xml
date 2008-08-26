@@ -3,6 +3,7 @@
 <project default="javac" basedir=".">
   
   <property environment="env"/>
+  <property name="tom.home"        location="../../src/dist"/>
   <property name="jparse.dir"      location="."/>
   <property name="jparse.src"      location="${jparse.dir}/src"/>
   <property name="jparse.gen"      location="${jparse.dir}/gen"/>
@@ -11,11 +12,11 @@
   <property name="jparse.grammar"  value="Java"/>
   <property name="jparse.parser"   value="parser"/>
   
-  <import file="${env.TOM_HOME}/lib/tom-common.xml"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
   
   <taskdef name="antlr3"
            classname="org.apache.tools.ant.antlr.ANTLR3">
-    <classpath path="${env.CLASSPATH}"/>
+    <classpath refid="tom.classpath"/>
   </taskdef>
   
   <target name="init" depends="tom.init">
@@ -64,22 +65,20 @@
   </target>
   
   <target name="javac" depends="tom, antlr">
-    <javac destdir="${jparse.build}" >
+    <javac.preset destdir="${jparse.build}" >
       <!--<src path="${jparse.src}"/>-->
       <src path="${jparse.gen}"/>
       <include name="**/*.java"/>
-      <classpath path="${env.CLASSPATH}"/>
-    </javac>
+    </javac.preset>
   </target>
   
   <target name="test"><!-- depends="javac"-->
     <java classname="Main"
           fork="true">
-      <!-- <arg value="/home/jg/eclipse/Tests/src/Test.java"/> -->
-      <arg value="${jparse.gen}/Main.java"/>
-      <!-- <arg value="${jparse.gen}/${jparse.parser}/JavaParser.java"/> -->
+      <!-- <arg value="${jparse.gen}/Main.java"/> -->
+      <arg value="${jparse.gen}/${jparse.parser}/JavaParser.java"/>
       <classpath>
-        <path path="${env.CLASSPATH}"/>
+        <path refid="tom.classpath"/>
         <pathelement location="${jparse.build}"/>
       </classpath>
     </java>

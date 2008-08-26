@@ -1,3 +1,4 @@
+
 import java.io.*;
 
 import org.antlr.runtime.CommonTokenStream;
@@ -54,8 +55,10 @@ public class Main {
 
       tom.library.utils.Viewer.toTree(term);
 
+      // Term manipulation using the strategy defined above :
+      //
       //CompilationUnit simplified = (CompilationUnit) `InnermostId(Simplify()).visit(term);
-
+      //
       //tom.library.utils.Viewer.toTree(simplified);
 
     } catch (Exception e) {
