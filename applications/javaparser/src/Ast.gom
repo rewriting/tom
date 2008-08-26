@@ -4,30 +4,28 @@ imports int String
 
 abstract syntax
 
-/* Names in conflict with keywords used followed by a '_' :
-
-Sorts names :
-
-Boolean
-Super
-
-Operator names :
-
-Try
-
-Slots names :
-
-class
-else
-extends
-finally
-if
-implements
-import
-package
-super
-
-*/
+/* 
+ * Names in conflict with keywords used followed by a '_':
+ *
+ * Sorts names:
+ *  - Boolean
+ *  - Super
+ *
+ * Operator names:
+ * - Try
+ *
+ * Slots names:
+ * - class
+ * - else
+ * - extends
+ * - finally
+ * - if
+ * - implements
+ * - import
+ * - package
+ * - super
+ *
+ */
 
 CompilationUnit = CompilationUnit( annotations:AnnotationList, package_:QualifiedName, import_:ImportList, types:TypeDeclList )
 

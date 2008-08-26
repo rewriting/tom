@@ -141,6 +141,29 @@
   make( new_Sort) { new tom.gom.adt.code.strategy.code.Make_FullSortClass( $new_Sort) }
 }
 
+    %op Strategy _ShortSortClass(arg0:Strategy) {
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._ShortSortClass)))}
+      
+        get_slot(arg0, t) { $t.getArgument(0) }
+        make(arg0) { new tom.gom.adt.code.strategy.code._ShortSortClass($arg0) }
+    }
+  
+  
+  %op Strategy When_ShortSortClass(s:Strategy) {
+    make(s) { `Sequence(Is_ShortSortClass(),s) }
+  }
+
+  %op Strategy Is_ShortSortClass() {
+    make() { new tom.gom.adt.code.strategy.code.Is_ShortSortClass()}
+  }
+  
+%op Strategy Make_ShortSortClass(_Sort:Strategy) {
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code.Make_ShortSortClass))) }
+
+  get_slot(_Sort, t) { $t._Sort }
+  make( new_Sort) { new tom.gom.adt.code.strategy.code.Make_ShortSortClass( $new_Sort) }
+}
+
     %op Strategy _FullOperatorClass(arg0:Strategy) {
       is_fsym(t) { (($t!=null) && ($t instanceof (tom.gom.adt.code.strategy.code._FullOperatorClass)))}
       

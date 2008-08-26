@@ -41,9 +41,9 @@ public abstract class TemplateFactory {
   public abstract MappingTemplateClass makeTomMappingTemplate(
       GomClass gomClass,
       TemplateClass strategyMapping);
-  public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
-  public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
-  public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread);
+  public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing);
+  public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing);
+  public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharing);
   public abstract TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
 }
 
@@ -60,14 +60,14 @@ class SharedTemplateFactory extends TemplateFactory {
     return
       new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping);
   }
-  public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass,mapping);
+  public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing) {
+    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, manager, importList, gomClass, mapping,maximalsharing);
   }
-  public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
-    return new tom.gom.backend.shared.SortTemplate(tomHomePath, manager, importList, gomClass,mapping);
+  public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean maximalsharing) {
+    return new tom.gom.backend.shared.SortTemplate(tomHomePath, manager, maximalsharing, importList, gomClass,mapping);
   }
-  public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread) {
-    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping,multithread);
+  public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping, boolean multithread, boolean maximalsharing) {
+    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, manager, importList, gomClass,mapping,multithread,maximalsharing);
   }
   public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
     return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, manager, importList, gomClass,mapping);

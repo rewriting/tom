@@ -60,6 +60,7 @@ public class BackendPlugin extends GomGenericPlugin {
     "<boolean name='inlineplus' altName='' description='Make inlining active' value='false'/>" +
     "<boolean name='strategies-mapping' altName='sm' description='Generate tom mapping for strategies' value='false'/>" +
     "<boolean name='multithread' altName='mt' description='Generate code compatible with multi-threading' value='false'/>" +
+    "<boolean name='nosharing' altName='ns' description='Generate code without maximal sharing' value='false'/>" +
     "</options>";
 
   /**
@@ -107,9 +108,10 @@ public class BackendPlugin extends GomGenericPlugin {
     }
     boolean strategiesMapping = getOptionBooleanValue("strategies-mapping");
     boolean multithread = getOptionBooleanValue("multithread");
+    boolean nosharing = getOptionBooleanValue("nosharing");
     Backend backend =
       new Backend(TemplateFactory.getFactory(getOptionManager()),
-                  tomHomePath, strategiesMapping, multithread,
+                  tomHomePath, strategiesMapping, multithread, nosharing,
                   streamManager.getImportList());
     backend.generate(classList);
     if(classList == null) {

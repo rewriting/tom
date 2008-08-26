@@ -1058,11 +1058,11 @@
 }
 
     %op Strategy _TextPosition(arg0:Strategy, arg1:Strategy) {
-      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.position._TextPosition)))}
+      is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.textposition._TextPosition)))}
       
         get_slot(arg0, t) { $t.getArgument(0) }
         get_slot(arg1, t) { $t.getArgument(1) }
-        make(arg0, arg1) { new tom.engine.adt.tomsignature.strategy.position._TextPosition($arg0, $arg1) }
+        make(arg0, arg1) { new tom.engine.adt.tomsignature.strategy.textposition._TextPosition($arg0, $arg1) }
     }
   
   
@@ -1071,15 +1071,15 @@
   }
 
   %op Strategy Is_TextPosition() {
-    make() { new tom.engine.adt.tomsignature.strategy.position.Is_TextPosition()}
+    make() { new tom.engine.adt.tomsignature.strategy.textposition.Is_TextPosition()}
   }
   
 %op Strategy Make_TextPosition(_Line:int, _Column:int) {
-  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.position.Make_TextPosition))) }
+  is_fsym(t) { (($t!=null) && ($t instanceof (tom.engine.adt.tomsignature.strategy.textposition.Make_TextPosition))) }
 
   get_slot(_Line, t) { $t._Line }
   get_slot(_Column, t) { $t._Column }
-  make( _Line,  _Column) { new tom.engine.adt.tomsignature.strategy.position.Make_TextPosition( $_Line,  $_Column) }
+  make( _Line,  _Column) { new tom.engine.adt.tomsignature.strategy.textposition.Make_TextPosition( $_Line,  $_Column) }
 }
 
     %op Strategy _Entry(arg0:Strategy, arg1:Strategy) {

@@ -86,19 +86,15 @@ section :
   ;
 
 adtgrammar :
-  (gr+=sortdef | gr+=syntax)+ -> $gr
-  ;
-
-sortdef :
-  SORTS (type)* -> ^(ConcGrammar ^(Sorts (type)*))
+  (gr+=syntax)+ -> $gr
   ;
 
 type :
   ID -> ^(GomType ID);
 
 syntax :
-  ABSTRACT SYNTAX (gr+=production | gr+=hookConstruct | gr+=typedecl)*
-  -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr)*)))
+  ABSTRACT SYNTAX (gr1+=production | gr2+=hookConstruct | gr3+=typedecl)*
+  -> ^(ConcGrammar ^(Grammar ^(ConcProduction ($gr1)* ($gr2)* ($gr3)*)))
   ;
 
 production
@@ -158,7 +154,6 @@ MODULE   : 'module';
 IMPORTS  : 'imports';
 PUBLIC   : 'public';
 PRIVATE  : 'private';
-SORTS    : 'sorts';
 ABSTRACT : 'abstract';
 SYNTAX   : 'syntax';
 SORT     : 'sort';

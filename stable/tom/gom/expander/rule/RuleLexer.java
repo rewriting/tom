@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2008-04-09 12:05:30
+// $ANTLR 3.1 /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g 2008-08-26 17:23:31
 
 package tom.gom.expander.rule;
 import tom.gom.adt.rule.RuleTree;
@@ -53,7 +53,6 @@ public class RuleLexer extends Lexer {
     public static final int VarStar=19;
     public static final int IF=30;
     public static final int EOF=-1;
-    public static final int Tokens=55;
     public static final int COLON=50;
     public static final int TermList=20;
     public static final int CondNotEquals=21;
@@ -63,17 +62,26 @@ public class RuleLexer extends Lexer {
     public static final int STAR=46;
     public static final int NOT=47;
     public static final int UNDERSCORE=45;
+
+    // delegates
+    // delegators
+
     public RuleLexer() {;} 
     public RuleLexer(CharStream input) {
-        super(input);
+        this(input, new RecognizerSharedState());
+    }
+    public RuleLexer(CharStream input, RecognizerSharedState state) {
+        super(input,state);
+
     }
     public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g"; }
 
-    // $ANTLR start ARROW
+    // $ANTLR start "ARROW"
     public final void mARROW() throws RecognitionException {
         try {
             int _type = ARROW;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:9: ( '->' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:7: ( '->' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:103:9: '->'
             {
             match("->"); 
@@ -81,162 +89,180 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ARROW
+    // $ANTLR end "ARROW"
 
-    // $ANTLR start AMPERCENT
+    // $ANTLR start "AMPERCENT"
     public final void mAMPERCENT() throws RecognitionException {
         try {
             int _type = AMPERCENT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:13: ( '&' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:11: ( '&' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:104:13: '&'
             {
             match('&'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end AMPERCENT
+    // $ANTLR end "AMPERCENT"
 
-    // $ANTLR start UNDERSCORE
+    // $ANTLR start "UNDERSCORE"
     public final void mUNDERSCORE() throws RecognitionException {
         try {
             int _type = UNDERSCORE;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:14: ( '_' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:12: ( '_' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:105:14: '_'
             {
             match('_'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end UNDERSCORE
+    // $ANTLR end "UNDERSCORE"
 
-    // $ANTLR start STAR
+    // $ANTLR start "STAR"
     public final void mSTAR() throws RecognitionException {
         try {
             int _type = STAR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:8: ( '*' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:6: ( '*' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:106:8: '*'
             {
             match('*'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end STAR
+    // $ANTLR end "STAR"
 
-    // $ANTLR start AT
+    // $ANTLR start "AT"
     public final void mAT() throws RecognitionException {
         try {
             int _type = AT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:6: ( '@' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:4: ( '@' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:107:6: '@'
             {
             match('@'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end AT
+    // $ANTLR end "AT"
 
-    // $ANTLR start COLON
+    // $ANTLR start "COLON"
     public final void mCOLON() throws RecognitionException {
         try {
             int _type = COLON;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:9: ( ':' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:7: ( ':' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:108:9: ':'
             {
             match(':'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end COLON
+    // $ANTLR end "COLON"
 
-    // $ANTLR start LPAR
+    // $ANTLR start "LPAR"
     public final void mLPAR() throws RecognitionException {
         try {
             int _type = LPAR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:8: ( '(' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:6: ( '(' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:109:8: '('
             {
             match('('); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end LPAR
+    // $ANTLR end "LPAR"
 
-    // $ANTLR start RPAR
+    // $ANTLR start "RPAR"
     public final void mRPAR() throws RecognitionException {
         try {
             int _type = RPAR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:8: ( ')' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:6: ( ')' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:110:8: ')'
             {
             match(')'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RPAR
+    // $ANTLR end "RPAR"
 
-    // $ANTLR start COMA
+    // $ANTLR start "COMA"
     public final void mCOMA() throws RecognitionException {
         try {
             int _type = COMA;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:8: ( ',' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:6: ( ',' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:111:8: ','
             {
             match(','); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end COMA
+    // $ANTLR end "COMA"
 
-    // $ANTLR start AND
+    // $ANTLR start "AND"
     public final void mAND() throws RecognitionException {
         try {
             int _type = AND;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:7: ( '&&' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:5: ( '&&' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:112:7: '&&'
             {
             match("&&"); 
@@ -244,18 +270,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end AND
+    // $ANTLR end "AND"
 
-    // $ANTLR start OR
+    // $ANTLR start "OR"
     public final void mOR() throws RecognitionException {
         try {
             int _type = OR;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:6: ( '||' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:4: ( '||' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:113:6: '||'
             {
             match("||"); 
@@ -263,36 +291,40 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end OR
+    // $ANTLR end "OR"
 
-    // $ANTLR start NOT
+    // $ANTLR start "NOT"
     public final void mNOT() throws RecognitionException {
         try {
             int _type = NOT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:7: ( '!' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:5: ( '!' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:114:7: '!'
             {
             match('!'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end NOT
+    // $ANTLR end "NOT"
 
-    // $ANTLR start EQUALS
+    // $ANTLR start "EQUALS"
     public final void mEQUALS() throws RecognitionException {
         try {
             int _type = EQUALS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:10: ( '==' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:8: ( '==' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:115:10: '=='
             {
             match("=="); 
@@ -300,18 +332,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end EQUALS
+    // $ANTLR end "EQUALS"
 
-    // $ANTLR start NOTEQUALS
+    // $ANTLR start "NOTEQUALS"
     public final void mNOTEQUALS() throws RecognitionException {
         try {
             int _type = NOTEQUALS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:13: ( '!=' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:11: ( '!=' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:116:13: '!='
             {
             match("!="); 
@@ -319,18 +353,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end NOTEQUALS
+    // $ANTLR end "NOTEQUALS"
 
-    // $ANTLR start LEQ
+    // $ANTLR start "LEQ"
     public final void mLEQ() throws RecognitionException {
         try {
             int _type = LEQ;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:7: ( '<=' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:5: ( '<=' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:117:7: '<='
             {
             match("<="); 
@@ -338,18 +374,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end LEQ
+    // $ANTLR end "LEQ"
 
-    // $ANTLR start MATCH
+    // $ANTLR start "MATCH"
     public final void mMATCH() throws RecognitionException {
         try {
             int _type = MATCH;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:9: ( '<<' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:7: ( '<<' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:118:9: '<<'
             {
             match("<<"); 
@@ -357,36 +395,40 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end MATCH
+    // $ANTLR end "MATCH"
 
-    // $ANTLR start LT
+    // $ANTLR start "LT"
     public final void mLT() throws RecognitionException {
         try {
             int _type = LT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:6: ( '<' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:4: ( '<' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:119:6: '<'
             {
             match('<'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end LT
+    // $ANTLR end "LT"
 
-    // $ANTLR start GEQ
+    // $ANTLR start "GEQ"
     public final void mGEQ() throws RecognitionException {
         try {
             int _type = GEQ;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:7: ( '>=' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:5: ( '>=' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:120:7: '>='
             {
             match(">="); 
@@ -394,36 +436,40 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end GEQ
+    // $ANTLR end "GEQ"
 
-    // $ANTLR start GT
+    // $ANTLR start "GT"
     public final void mGT() throws RecognitionException {
         try {
             int _type = GT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:6: ( '>' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:4: ( '>' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:121:6: '>'
             {
             match('>'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end GT
+    // $ANTLR end "GT"
 
-    // $ANTLR start IF
+    // $ANTLR start "IF"
     public final void mIF() throws RecognitionException {
         try {
             int _type = IF;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:6: ( 'if' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:4: ( 'if' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:122:6: 'if'
             {
             match("if"); 
@@ -431,18 +477,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end IF
+    // $ANTLR end "IF"
 
-    // $ANTLR start INT
+    // $ANTLR start "INT"
     public final void mINT() throws RecognitionException {
         try {
             int _type = INT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:7: ( ( '0' .. '9' )+ )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:5: ( ( '0' .. '9' )+ )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:7: ( '0' .. '9' )+
             {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:123:7: ( '0' .. '9' )+
@@ -478,18 +526,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end INT
+    // $ANTLR end "INT"
 
-    // $ANTLR start ESC
+    // $ANTLR start "ESC"
     public final void mESC() throws RecognitionException {
         try {
             int _type = ESC;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:7: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:5: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' ) )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:124:7: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' )
             {
             match('\\'); 
@@ -498,26 +548,27 @@ public class RuleLexer extends Lexer {
 
             }
             else {
-                MismatchedSetException mse =
-                    new MismatchedSetException(null,input);
-                recover(mse);    throw mse;
-            }
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ESC
+    // $ANTLR end "ESC"
 
-    // $ANTLR start STRING
+    // $ANTLR start "STRING"
     public final void mSTRING() throws RecognitionException {
         try {
             int _type = STRING;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:10: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:8: ( '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"' )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:125:10: '\"' ( ESC | ~ ( '\"' | '\\\\' | '\\n' | '\\r' ) )* '\"'
             {
             match('\"'); 
@@ -551,10 +602,9 @@ public class RuleLexer extends Lexer {
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -569,18 +619,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end STRING
+    // $ANTLR end "STRING"
 
-    // $ANTLR start ID
+    // $ANTLR start "ID"
     public final void mID() throws RecognitionException {
         try {
             int _type = ID;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:126:6: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:126:4: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:126:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -588,10 +640,9 @@ public class RuleLexer extends Lexer {
 
             }
             else {
-                MismatchedSetException mse =
-                    new MismatchedSetException(null,input);
-                recover(mse);    throw mse;
-            }
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:126:30: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
@@ -613,10 +664,9 @@ public class RuleLexer extends Lexer {
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -630,18 +680,20 @@ public class RuleLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end ID
+    // $ANTLR end "ID"
 
-    // $ANTLR start WS
+    // $ANTLR start "WS"
     public final void mWS() throws RecognitionException {
         try {
             int _type = WS;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:127:6: ( ( ' ' | '\\t' | '\\n' )+ )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:127:4: ( ( ' ' | '\\t' | '\\n' )+ )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:127:6: ( ' ' | '\\t' | '\\n' )+
             {
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:127:6: ( ' ' | '\\t' | '\\n' )+
@@ -665,10 +717,9 @@ public class RuleLexer extends Lexer {
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -683,22 +734,24 @@ public class RuleLexer extends Lexer {
                 cnt4++;
             } while (true);
 
-             channel=HIDDEN; 
+             _channel=HIDDEN; 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end WS
+    // $ANTLR end "WS"
 
-    // $ANTLR start SLCOMMENT
+    // $ANTLR start "SLCOMMENT"
     public final void mSLCOMMENT() throws RecognitionException {
         try {
             int _type = SLCOMMENT;
-            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:129:13: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:129:11: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )? )
             // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:129:13: '//' (~ ( '\\n' | '\\r' ) )* ( '\\n' | '\\r' ( '\\n' )? )?
             {
             match("//"); 
@@ -723,10 +776,9 @@ public class RuleLexer extends Lexer {
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -783,243 +835,22 @@ public class RuleLexer extends Lexer {
 
             }
 
-             channel=HIDDEN; 
+             _channel=HIDDEN; 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end SLCOMMENT
+    // $ANTLR end "SLCOMMENT"
 
     public void mTokens() throws RecognitionException {
-        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:10: ( ARROW | AMPERCENT | UNDERSCORE | STAR | AT | COLON | LPAR | RPAR | COMA | AND | OR | NOT | EQUALS | NOTEQUALS | LEQ | MATCH | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
+        // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:8: ( ARROW | AMPERCENT | UNDERSCORE | STAR | AT | COLON | LPAR | RPAR | COMA | AND | OR | NOT | EQUALS | NOTEQUALS | LEQ | MATCH | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT )
         int alt8=26;
-        switch ( input.LA(1) ) {
-        case '-':
-            {
-            alt8=1;
-            }
-            break;
-        case '&':
-            {
-            int LA8_2 = input.LA(2);
-
-            if ( (LA8_2=='&') ) {
-                alt8=10;
-            }
-            else {
-                alt8=2;}
-            }
-            break;
-        case '_':
-            {
-            int LA8_3 = input.LA(2);
-
-            if ( ((LA8_3>='0' && LA8_3<='9')||(LA8_3>='A' && LA8_3<='Z')||LA8_3=='_'||(LA8_3>='a' && LA8_3<='z')) ) {
-                alt8=24;
-            }
-            else {
-                alt8=3;}
-            }
-            break;
-        case '*':
-            {
-            alt8=4;
-            }
-            break;
-        case '@':
-            {
-            alt8=5;
-            }
-            break;
-        case ':':
-            {
-            alt8=6;
-            }
-            break;
-        case '(':
-            {
-            alt8=7;
-            }
-            break;
-        case ')':
-            {
-            alt8=8;
-            }
-            break;
-        case ',':
-            {
-            alt8=9;
-            }
-            break;
-        case '|':
-            {
-            alt8=11;
-            }
-            break;
-        case '!':
-            {
-            int LA8_11 = input.LA(2);
-
-            if ( (LA8_11=='=') ) {
-                alt8=14;
-            }
-            else {
-                alt8=12;}
-            }
-            break;
-        case '=':
-            {
-            alt8=13;
-            }
-            break;
-        case '<':
-            {
-            switch ( input.LA(2) ) {
-            case '<':
-                {
-                alt8=16;
-                }
-                break;
-            case '=':
-                {
-                alt8=15;
-                }
-                break;
-            default:
-                alt8=17;}
-
-            }
-            break;
-        case '>':
-            {
-            int LA8_14 = input.LA(2);
-
-            if ( (LA8_14=='=') ) {
-                alt8=18;
-            }
-            else {
-                alt8=19;}
-            }
-            break;
-        case 'i':
-            {
-            int LA8_15 = input.LA(2);
-
-            if ( (LA8_15=='f') ) {
-                int LA8_32 = input.LA(3);
-
-                if ( ((LA8_32>='0' && LA8_32<='9')||(LA8_32>='A' && LA8_32<='Z')||LA8_32=='_'||(LA8_32>='a' && LA8_32<='z')) ) {
-                    alt8=24;
-                }
-                else {
-                    alt8=20;}
-            }
-            else {
-                alt8=24;}
-            }
-            break;
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            {
-            alt8=21;
-            }
-            break;
-        case '\\':
-            {
-            alt8=22;
-            }
-            break;
-        case '\"':
-            {
-            alt8=23;
-            }
-            break;
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-        case 'G':
-        case 'H':
-        case 'I':
-        case 'J':
-        case 'K':
-        case 'L':
-        case 'M':
-        case 'N':
-        case 'O':
-        case 'P':
-        case 'Q':
-        case 'R':
-        case 'S':
-        case 'T':
-        case 'U':
-        case 'V':
-        case 'W':
-        case 'X':
-        case 'Y':
-        case 'Z':
-        case 'a':
-        case 'b':
-        case 'c':
-        case 'd':
-        case 'e':
-        case 'f':
-        case 'g':
-        case 'h':
-        case 'j':
-        case 'k':
-        case 'l':
-        case 'm':
-        case 'n':
-        case 'o':
-        case 'p':
-        case 'q':
-        case 'r':
-        case 's':
-        case 't':
-        case 'u':
-        case 'v':
-        case 'w':
-        case 'x':
-        case 'y':
-        case 'z':
-            {
-            alt8=24;
-            }
-            break;
-        case '\t':
-        case '\n':
-        case ' ':
-            {
-            alt8=25;
-            }
-            break;
-        case '/':
-            {
-            alt8=26;
-            }
-            break;
-        default:
-            NoViableAltException nvae =
-                new NoViableAltException("1:1: Tokens : ( ARROW | AMPERCENT | UNDERSCORE | STAR | AT | COLON | LPAR | RPAR | COMA | AND | OR | NOT | EQUALS | NOTEQUALS | LEQ | MATCH | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );", 8, 0, input);
-
-            throw nvae;
-        }
-
+        alt8 = dfa8.predict(input);
         switch (alt8) {
             case 1 :
                 // /Users/pem/workspace/jtom/src/gen/tom/gom/expander/rule/Rule.g:1:10: ARROW
@@ -1209,6 +1040,97 @@ public class RuleLexer extends Lexer {
     }
 
 
+    protected DFA8 dfa8 = new DFA8(this);
+    static final String DFA8_eotS =
+        "\2\uffff\1\27\1\30\7\uffff\1\32\1\uffff\1\35\1\37\1\23\20\uffff"+
+        "\1\41\1\uffff";
+    static final String DFA8_eofS =
+        "\42\uffff";
+    static final String DFA8_minS =
+        "\1\11\1\uffff\1\46\1\60\7\uffff\1\75\1\uffff\1\74\1\75\1\146\20"+
+        "\uffff\1\60\1\uffff";
+    static final String DFA8_maxS =
+        "\1\174\1\uffff\1\46\1\172\7\uffff\1\75\1\uffff\2\75\1\146\20\uffff"+
+        "\1\172\1\uffff";
+    static final String DFA8_acceptS =
+        "\1\uffff\1\1\2\uffff\1\4\1\5\1\6\1\7\1\10\1\11\1\13\1\uffff\1\15"+
+        "\3\uffff\1\25\1\26\1\27\1\30\1\31\1\32\1\12\1\2\1\3\1\16\1\14\1"+
+        "\17\1\20\1\21\1\22\1\23\1\uffff\1\24";
+    static final String DFA8_specialS =
+        "\42\uffff}>";
+    static final String[] DFA8_transitionS = {
+            "\2\24\25\uffff\1\24\1\13\1\22\3\uffff\1\2\1\uffff\1\7\1\10\1"+
+            "\4\1\uffff\1\11\1\1\1\uffff\1\25\12\20\1\6\1\uffff\1\15\1\14"+
+            "\1\16\1\uffff\1\5\32\23\1\uffff\1\21\2\uffff\1\3\1\uffff\10"+
+            "\23\1\17\21\23\1\uffff\1\12",
+            "",
+            "\1\26",
+            "\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\31",
+            "",
+            "\1\34\1\33",
+            "\1\36",
+            "\1\40",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            ""
+    };
+
+    static final short[] DFA8_eot = DFA.unpackEncodedString(DFA8_eotS);
+    static final short[] DFA8_eof = DFA.unpackEncodedString(DFA8_eofS);
+    static final char[] DFA8_min = DFA.unpackEncodedStringToUnsignedChars(DFA8_minS);
+    static final char[] DFA8_max = DFA.unpackEncodedStringToUnsignedChars(DFA8_maxS);
+    static final short[] DFA8_accept = DFA.unpackEncodedString(DFA8_acceptS);
+    static final short[] DFA8_special = DFA.unpackEncodedString(DFA8_specialS);
+    static final short[][] DFA8_transition;
+
+    static {
+        int numStates = DFA8_transitionS.length;
+        DFA8_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA8_transition[i] = DFA.unpackEncodedString(DFA8_transitionS[i]);
+        }
+    }
+
+    class DFA8 extends DFA {
+
+        public DFA8(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 8;
+            this.eot = DFA8_eot;
+            this.eof = DFA8_eof;
+            this.min = DFA8_min;
+            this.max = DFA8_max;
+            this.accept = DFA8_accept;
+            this.special = DFA8_special;
+            this.transition = DFA8_transition;
+        }
+        public String getDescription() {
+            return "1:1: Tokens : ( ARROW | AMPERCENT | UNDERSCORE | STAR | AT | COLON | LPAR | RPAR | COMA | AND | OR | NOT | EQUALS | NOTEQUALS | LEQ | MATCH | LT | GEQ | GT | IF | INT | ESC | STRING | ID | WS | SLCOMMENT );";
+        }
+    }
  
 
 }

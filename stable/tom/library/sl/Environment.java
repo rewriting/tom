@@ -183,7 +183,7 @@ public final class Environment implements Cloneable {
    * get the current sub-position
    * @return the current sub-position
    */
-  private int getSubOmega() {
+  public int getSubOmega() {
     return omega[current];
   }
 

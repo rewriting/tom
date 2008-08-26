@@ -1,4 +1,4 @@
-// $ANTLR 3.0 /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2008-04-09 12:05:29
+// $ANTLR 3.1 /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g 2008-08-26 17:23:30
 
   package tom.gom.parser;
 
@@ -13,21 +13,28 @@ import org.antlr.runtime.tree.*;
 
 public class SimpleBlockParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "STRING", "LBRACE", "RBRACE", "ESC", "OctalESC", "SL_COMMENT", "ML_COMMENT", "COMMENT", "TARGET"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "STRING", "LBRACE", "RBRACE", "ESC", "OctalESC", "SL_COMMENT", "ML_COMMENT", "TARGET"
     };
     public static final int RBRACE=6;
     public static final int OctalESC=8;
-    public static final int TARGET=12;
+    public static final int TARGET=11;
     public static final int EOF=-1;
     public static final int STRING=4;
-    public static final int COMMENT=11;
     public static final int ML_COMMENT=10;
     public static final int SL_COMMENT=9;
     public static final int ESC=7;
     public static final int LBRACE=5;
 
+    // delegates
+    // delegators
+
+
         public SimpleBlockParser(TokenStream input) {
-            super(input);
+            this(input, new RecognizerSharedState());
+        }
+        public SimpleBlockParser(TokenStream input, RecognizerSharedState state) {
+            super(input, state);
+             
         }
         
     protected TreeAdaptor adaptor = new CommonTreeAdaptor();
@@ -39,7 +46,7 @@ public class SimpleBlockParser extends Parser {
         return adaptor;
     }
 
-    public String[] getTokenNames() { return tokenNames; }
+    public String[] getTokenNames() { return SimpleBlockParser.tokenNames; }
     public String getGrammarFileName() { return "/Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g"; }
 
 
@@ -48,27 +55,28 @@ public class SimpleBlockParser extends Parser {
         public Object getTree() { return tree; }
     };
 
-    // $ANTLR start block
+    // $ANTLR start "block"
     // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:42:1: block : rawblocklist ;
-    public final block_return block() throws RecognitionException {
-        block_return retval = new block_return();
+    public final SimpleBlockParser.block_return block() throws RecognitionException {
+        SimpleBlockParser.block_return retval = new SimpleBlockParser.block_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        rawblocklist_return rawblocklist1 = null;
+        SimpleBlockParser.rawblocklist_return rawblocklist1 = null;
 
 
 
         try {
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:43:3: ( rawblocklist )
+            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:42:7: ( rawblocklist )
             // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:43:3: rawblocklist
             {
             root_0 = (Object)adaptor.nil();
 
             pushFollow(FOLLOW_rawblocklist_in_block50);
             rawblocklist1=rawblocklist();
-            _fsp--;
+
+            state._fsp--;
 
             adaptor.addChild(root_0, rawblocklist1.getTree());
 
@@ -76,29 +84,31 @@ public class SimpleBlockParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-                retval.tree = (Object)adaptor.rulePostProcessing(root_0);
-                adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
+            retval.tree = (Object)adaptor.rulePostProcessing(root_0);
+            adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
+    	retval.tree = (Object)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+
         }
         finally {
         }
         return retval;
     }
-    // $ANTLR end block
+    // $ANTLR end "block"
 
     public static class rawblocklist_return extends ParserRuleReturnScope {
         Object tree;
         public Object getTree() { return tree; }
     };
 
-    // $ANTLR start rawblocklist
+    // $ANTLR start "rawblocklist"
     // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:46:1: rawblocklist : ( STRING | LBRACE rawblocklist RBRACE )* ;
-    public final rawblocklist_return rawblocklist() throws RecognitionException {
-        rawblocklist_return retval = new rawblocklist_return();
+    public final SimpleBlockParser.rawblocklist_return rawblocklist() throws RecognitionException {
+        SimpleBlockParser.rawblocklist_return retval = new SimpleBlockParser.rawblocklist_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
@@ -106,7 +116,7 @@ public class SimpleBlockParser extends Parser {
         Token STRING2=null;
         Token LBRACE3=null;
         Token RBRACE5=null;
-        rawblocklist_return rawblocklist4 = null;
+        SimpleBlockParser.rawblocklist_return rawblocklist4 = null;
 
 
         Object STRING2_tree=null;
@@ -114,7 +124,7 @@ public class SimpleBlockParser extends Parser {
         Object RBRACE5_tree=null;
 
         try {
-            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:3: ( ( STRING | LBRACE rawblocklist RBRACE )* )
+            // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:46:14: ( ( STRING | LBRACE rawblocklist RBRACE )* )
             // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:3: ( STRING | LBRACE rawblocklist RBRACE )*
             {
             root_0 = (Object)adaptor.nil();
@@ -137,8 +147,7 @@ public class SimpleBlockParser extends Parser {
             	case 1 :
             	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:4: STRING
             	    {
-            	    STRING2=(Token)input.LT(1);
-            	    match(input,STRING,FOLLOW_STRING_in_rawblocklist64); 
+            	    STRING2=(Token)match(input,STRING,FOLLOW_STRING_in_rawblocklist64); 
             	    STRING2_tree = (Object)adaptor.create(STRING2);
             	    adaptor.addChild(root_0, STRING2_tree);
 
@@ -148,18 +157,17 @@ public class SimpleBlockParser extends Parser {
             	case 2 :
             	    // /Users/pem/workspace/jtom/src/tom/gom/parser/SimpleBlock.g:47:13: LBRACE rawblocklist RBRACE
             	    {
-            	    LBRACE3=(Token)input.LT(1);
-            	    match(input,LBRACE,FOLLOW_LBRACE_in_rawblocklist68); 
+            	    LBRACE3=(Token)match(input,LBRACE,FOLLOW_LBRACE_in_rawblocklist68); 
             	    LBRACE3_tree = (Object)adaptor.create(LBRACE3);
             	    adaptor.addChild(root_0, LBRACE3_tree);
 
             	    pushFollow(FOLLOW_rawblocklist_in_rawblocklist70);
             	    rawblocklist4=rawblocklist();
-            	    _fsp--;
+
+            	    state._fsp--;
 
             	    adaptor.addChild(root_0, rawblocklist4.getTree());
-            	    RBRACE5=(Token)input.LT(1);
-            	    match(input,RBRACE,FOLLOW_RBRACE_in_rawblocklist72); 
+            	    RBRACE5=(Token)match(input,RBRACE,FOLLOW_RBRACE_in_rawblocklist72); 
             	    RBRACE5_tree = (Object)adaptor.create(RBRACE5);
             	    adaptor.addChild(root_0, RBRACE5_tree);
 
@@ -177,19 +185,23 @@ public class SimpleBlockParser extends Parser {
 
             retval.stop = input.LT(-1);
 
-                retval.tree = (Object)adaptor.rulePostProcessing(root_0);
-                adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
+            retval.tree = (Object)adaptor.rulePostProcessing(root_0);
+            adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
 
         }
         catch (RecognitionException re) {
             reportError(re);
             recover(input,re);
+    	retval.tree = (Object)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+
         }
         finally {
         }
         return retval;
     }
-    // $ANTLR end rawblocklist
+    // $ANTLR end "rawblocklist"
+
+    // Delegated rules
 
 
  

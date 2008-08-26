@@ -1488,6 +1488,11 @@ inputState.guessing--;
 					match('_');
 					break;
 				}
+				case '.':
+				{
+					match('.');
+					break;
+				}
 				default:
 				{
 					throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
@@ -2092,14 +2097,14 @@ inputState.guessing--;
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
 	private static final long[] mk_tokenSet_6() {
 		long[] data = new long[1025];
-		data[0]=287984085547089920L;
+		data[0]=288054454291267584L;
 		data[1]=576460745995190270L;
 		return data;
 	}
 	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
 	private static final long[] mk_tokenSet_7() {
 		long[] data = new long[1025];
-		data[0]=287948901175001088L;
+		data[0]=288019269919178752L;
 		data[1]=576460745995190270L;
 		return data;
 	}

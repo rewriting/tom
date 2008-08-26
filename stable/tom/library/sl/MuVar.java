@@ -63,15 +63,15 @@ public class MuVar extends AbstractStrategy {
     return instance;
   }
   
-  protected void setInstance(Strategy v) {
+  public void setInstance(Strategy v) {
     this.instance = v;
   }
   
-  protected void setName(String name) {
+  public void setName(String name) {
     this.name = name;
   }
 
-  protected final boolean isExpanded() {
+  public final boolean isExpanded() {
     return instance != null;
   }
 

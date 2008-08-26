@@ -60,6 +60,10 @@ public abstract class AbstractStrategy implements Strategy {
     return visitors;
   }
 
+  public Strategy getVisitor(int i) {
+    return visitors[i];
+  }
+
   //visitable
   public int getChildCount() {
     return visitors.length;
@@ -157,7 +161,7 @@ public abstract class AbstractStrategy implements Strategy {
     /* to avoid infinite loop during initialization
      * TODO: use static typing
      */
-    if((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) {
+    if (((s instanceof AbstractStrategy) && ((AbstractStrategy)s).environment==env) || ((s instanceof BasicStrategy) && ((BasicStrategy)s).environment==env)) {
       return;
     }
     s.setEnvironment(env);
