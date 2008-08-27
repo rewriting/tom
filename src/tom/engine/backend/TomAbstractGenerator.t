@@ -813,9 +813,9 @@ public abstract class TomAbstractGenerator {
   
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
   
-  protected abstract void genGetMultiplicityFunction(String tomName, String moduleName) throws IOException;
+  //protected abstract void genGetMultiplicityFunction(String tomName, String moduleName) throws IOException;
   
-  protected abstract void genGetXYFromTerms(String tomName, String moduleName) throws IOException;
+  //protected abstract void genGetXYFromTerms(String tomName, String moduleName) throws IOException;
   
   // ------------------------------------------------------------
 
