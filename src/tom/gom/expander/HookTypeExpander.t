@@ -105,6 +105,14 @@ public class HookTypeExpander {
                   hookList = `ConcHookDecl(newDeclList*,hookList*);
                 }
               }
+              hook@Hook[NameType=KindFutureOperator(fut),HookType=hkind,Name=oname] -> {
+                OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
+                if(odecl!=null) {
+                  HookDeclList newDeclList = 
+                    makeHookDeclList(`hook,`CutFutureOperator(odecl,fut));
+                  hookList = `ConcHookDecl(newDeclList*,hookList*);
+                }
+              }
             }
           }
         }
@@ -115,7 +123,7 @@ public class HookTypeExpander {
           }
         }
         %match(prodList) {
-          ConcProduction(_*, SortType[ProductionList=ConcProduction(_*,prod,_*)], _*) -> {
+          ConcProduction(_*,SortType[ProductionList=ConcProduction(_*,prod,_*)],_*) -> {
             hookList = addDefaultTheoryHooks(`prod,`hookList,examinedOps,`moduleName);
           }
         }

@@ -178,7 +178,7 @@ public class TypeExpander {
       Map operatorsForSort) {
 
     %match(Production prod) {
-      Production(name,domain,GomType(codomain),_) -> {
+      Production(name,domain,GomType(_,codomain),_) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
         OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts);
@@ -216,7 +216,7 @@ public class TypeExpander {
 
   private TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
     %match(FieldList domain) {
-      ConcField(StarredField(GomType(typename))) -> {
+      ConcField(StarredField(GomType(_,typename))) -> {
         return `Variadic(declFromTypename(typename,sortDeclList));
       }
       ConcField(fieldList*) -> {
@@ -232,7 +232,7 @@ public class TypeExpander {
       ConcField() -> {
         return `ConcSlot();
       }
-      ConcField(NamedField(name,GomType(typename)),tail*) -> {
+      ConcField(NamedField(_,name,GomType(_,typename)),tail*) -> {
         SlotList newtail = typedSlotList(`tail,sortDeclList);
         return `ConcSlot(Slot(name,declFromTypename(typename,sortDeclList)),newtail*);
       }
@@ -249,7 +249,7 @@ public class TypeExpander {
     Collection result = new HashSet();
     %match(GomModule module) {
       GomModule(moduleName,ConcSection(_*,
-            Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(typeName),_*)),_*)),
+            Public(ConcGrammar(_*,Sorts(ConcGomType(_*,GomType(_,typeName),_*)),_*)),
             _*)) -> {
         if (environment().isBuiltinSort(`typeName)) {
           getLogger().log(Level.SEVERE, GomMessage.operatorOnBuiltin.getMessage(),
@@ -263,7 +263,7 @@ public class TypeExpander {
     %match(GomModule module) {
       GomModule(moduleName,ConcSection(_*,
             Public(ConcGrammar(_*,Grammar(ConcProduction(_*,
-                SortType[Type=GomType(typeName)],
+                SortType[Type=GomType(_,typeName)],
             _*)),_*)),
             _*)) -> {
         if (environment().isBuiltinSort(`typeName)) {
@@ -291,7 +291,7 @@ public class TypeExpander {
               ConcGrammar(_*,
                 Grammar(
                   ConcProduction(_*,
-                    Production(_,_,GomType(typeName),_option),
+                    Production(_,_,GomType(_,typeName),_option),
                     _*)),
                 _*)),
             _*)) -> {
@@ -310,7 +310,7 @@ public class TypeExpander {
               ConcGrammar(_*,
                 Grammar(ConcProduction(_*,
                   SortType[ProductionList=ConcProduction(_*,
-                    Production(_,_,GomType(typeName),_option),
+                    Production(_,_,GomType(_,typeName),_option),
                     _*)],_*)),
                 _*)),
             _*)) -> {

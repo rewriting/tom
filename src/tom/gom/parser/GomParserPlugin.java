@@ -106,6 +106,9 @@ public class GomParserPlugin extends GomGenericPlugin {
       // Parse the input expression
       GomTree tree = (GomTree)parser.module().getTree();
       module = (GomModule) tree.getTerm();
+      java.io.StringWriter swriter = new java.io.StringWriter();
+      tom.library.utils.Viewer.toTree(module,swriter);
+      getLogger().log(Level.FINE, "Parsed Module:\n{0}", swriter);
       if (module == null) {
         getLogger().log(new PlatformLogRecord(Level.SEVERE,
               GomMessage.detailedParseException,

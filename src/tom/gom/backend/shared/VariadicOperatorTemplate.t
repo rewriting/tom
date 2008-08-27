@@ -485,6 +485,8 @@ writer.write(%[
       ConcHook(_*,MappingHook[Code=code],_*) -> {
         CodeGen.generateCode(`code,writer);
         hasHook = true;
+        // if there is a mapping hook we stop here
+        return; 
       }
     }
 

@@ -1,5 +1,5 @@
 module Gom
-imports String Code int
+imports String Code int 
 abstract syntax
 
 Option = Origin(Line:int)
@@ -20,20 +20,28 @@ Production = Production(Name:String, DomainList:FieldList,
                         Codomain:GomType, Option:Option)
            | Hook(NameType:IdKind, Name:String, HookType:HookKind,
                   Args:ArgList, StringCode:String,Option:Option)
-           | SortType(Type:GomType,ProductionList:ProductionList)
+           | SortType(Type:GomType,Binds:AtomList,ProductionList:ProductionList)
+           | AtomDecl(Name:String)
 ProductionList = ConcProduction(Production*)
 HookKind = HookKind(kind:String)
 IdKind = KindModule()
        | KindSort()
        | KindOperator()
+       | KindFutureOperator(ConsOrNil:Future)
 Arg = Arg(Name:String)
 ArgList = ConcArg(Arg*)
+ScopeSpecifier = None()
+               | Inner()
+               | Outer()
+               | Neutral()
 Field = StarredField(FieldType:GomType)
-      | NamedField(Name:String,FieldType:GomType)
+      | NamedField(Specifier:ScopeSpecifier,Name:String,FieldType:GomType)
 FieldList = ConcField(Field*)
 GomModuleName = GomModuleName(Name:String)
-GomType = GomType(Name:String)
+TypeSpec = PatternType() | ExpressionType() | AtomType()
+GomType = GomType(Specialization:TypeSpec,Name:String)
 GomTypeList = ConcGomType(GomType*)
+AtomList = ConcAtom(String*)
 
 Module = Module(MDecl:ModuleDecl,Sorts:SortList)
 ModuleList = ConcModule(Module*)
@@ -51,10 +59,12 @@ Slot = Slot(Name:String,Sort:SortDecl)
 SlotList = ConcSlot(Slot*)
 Sort = Sort(Decl:SortDecl,OperatorDecls:OperatorDeclList)
 SortList = ConcSort(Sort*)
-
 Decl = CutModule(MDecl:ModuleDecl)
      | CutSort(Sort:SortDecl)
      | CutOperator(ODecl:OperatorDecl)
+     | CutFutureOperator(ODecl:OperatorDecl,ConsOrNil:Future)
+Future = FutureNil()
+       | FutureCons()
 HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code,HookType:HookKind)
          | BlockHookDecl(Pointcut:Decl,Code:Code)
          | InterfaceHookDecl(Pointcut:Decl,Code:Code)
@@ -64,3 +74,5 @@ HookDeclList = ConcHookDecl(HookDecl*)
 
 /* Helper constructors */
 Pair = ModHookPair(Modules:ModuleList,HookDecls:HookDeclList)
+
+
