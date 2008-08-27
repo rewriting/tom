@@ -54,6 +54,7 @@ public class Main {
       CompilationUnit term = (CompilationUnit) tree.getTerm();
 
       tom.library.utils.Viewer.toTree(term);
+      //System.out.println(term);
 
       // Term manipulation using the strategy defined above :
       //

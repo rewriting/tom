@@ -260,6 +260,7 @@ Expression =
  | Primary( primary:Primary, selectors:SuffixList )
  | EmptyExpression()
  | Cons( nop:AssociativeOperator, lhs:Expression, rhs:Expression )
+ | BinaryAnd( lhs:Expression, rhs:Expression )
 
 AssociativeOperation:make(op, ops) {
   %match(ExpressionList ops) {

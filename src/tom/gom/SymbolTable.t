@@ -178,7 +178,7 @@ public class SymbolTable {
     }
     fillGraph();
     isolateFreshSorts();
-    System.out.println("sorts concerned by freshgom: " + getFreshSorts());
+    //System.out.println("sorts concerned by freshgom: " + getFreshSorts());
     fillRefreshPoints();
     fillAccessibleAtoms();
     generateConsAndNils();
