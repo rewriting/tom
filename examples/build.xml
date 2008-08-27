@@ -340,6 +340,13 @@
         <include name="build.xml"/>
         <include name="*/build.xml"/>
         <include name="${examples.lib}/*.jar"/>
+
+        <exclude name="gasel/build.xml"/>
+        <exclude name="deepmatch/build.xml"/>
+        <exclude name="lambdacalculi/build.xml"/>
+        <exclude name="multigraph/build.xml"/>
+        <exclude name="set/build.xml"/>
+        <exclude name="gasel/build.xml"/>
       </zipfileset>
     </zip>
     <subant target="dist">

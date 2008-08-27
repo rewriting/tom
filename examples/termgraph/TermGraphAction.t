@@ -113,9 +113,9 @@ public class TermGraphAction {
     Viewer.toDot((List)abcd.expand());
     try {
       System.out.println("Insertion with term-graph actions (Rachid Echahed's formalism)");
-      Viewer.toDot(((List)`TopDown(Insertion()).visit(abcd)).expand());
+      Viewer.display(((List)`TopDown(Insertion()).visit(abcd)).expand());
       System.out.println("Insertion with term-graph rules from Gom");
-      Viewer.toDot((`TopDown(List.Insert()).visit(abcd.expand())));
+      Viewer.display((`TopDown(List.Insert()).visit(abcd.expand())));
     } catch (VisitFailure e) {}
   }
 

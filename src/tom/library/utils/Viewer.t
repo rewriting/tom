@@ -190,7 +190,7 @@ public class Viewer {
     throws java.io.IOException {
       for(int i=0; i<deep; i++) {
         if (context.contains(i))
-          w.write('\u2502');
+          w.write("│");
         else
           w.write(' ');
       }
@@ -202,10 +202,10 @@ public class Viewer {
         ATermAppl(AFun[name=name],list) -> {
           aterm.ATermAppl a = (aterm.ATermAppl) term;
           if (`a.getArity() == 0) {  // no child
-            w.write("\u2500"+`name);
+            w.write("─"+`name);
             return;
           } else if (`a.getArity() == 1) {  // only one child
-            w.write('\u2500' + `name + "\u2500\u2500");
+            w.write("─" + `name + "──");
             deep = deep + `name.length() + 3;
             ATermToTree(`list.getFirst(),w,context,deep);
             return;
@@ -214,7 +214,7 @@ public class Viewer {
             %match (ATermList `list) {
               (first,l*,last) -> {
                 // first child
-                w.write('\u2500' + `name + "\u2500\u252C");
+                w.write("─" + `name + "─┬");
                 context.push(ndeep-1); 
                 ATermToTree(`first,w,context,ndeep);
                 context.pop();
@@ -224,7 +224,7 @@ public class Viewer {
                 %match (ATermList l) {
                   (_*,c,_*) -> {
                     writeContext(w,context,ndeep-1);
-                    w.write("\u251C");
+                    w.write("├");
                     context.push(ndeep-1);
                     ATermToTree(`c,w,context,ndeep);
                     context.pop();
@@ -233,7 +233,7 @@ public class Viewer {
                 }
                 // last child
                 writeContext(w,context,ndeep-1);
-                w.write("\u2514");
+                w.write("└");
                 ATermToTree(`last,w,context,ndeep);
               }
             }
