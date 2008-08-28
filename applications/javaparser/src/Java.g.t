@@ -1038,17 +1038,16 @@ exclusiveOrExpression
     :   andExpression ( '^' andExpression )*
         -> ^(AssociativeOperation ExclusiveOr ^(ExpressionList andExpression+))
     ;
-
+/*
    andExpression
     :   equalityExpression ( '&' equalityExpression )*
         -> ^(AssociativeOperation And ^(ExpressionList equalityExpression+))
     ;
-    /*
+    */
        // the correct version should be
 andExpression
     :   (a=equalityExpression -> $a) ( '&' b=equalityExpression -> ^(BinaryAnd $andExpression $b) )*
     ;
-    */
 
 equalityExpression
     :   a=instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> $a // NOT CORRECT

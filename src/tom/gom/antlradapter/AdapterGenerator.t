@@ -273,12 +273,23 @@ public class @filename()@Tree extends CommonTree {
   public void addChild(Tree t) {
     super.addChild(t);
     if (null==t) {
+      //System.out.println("add: tree==null");
       return;
     }
     @filename()@Tree tree = (@filename()@Tree) t;
-    if(this.token == null || tree.token == null) {
+
+    if(tree.token == null) {
+      //System.out.println("add: tree.token==null");
       return;
     }
+    if(this.token == null) {
+      //System.out.println("add: become <" + tree.token+","+tree.getTerm()+">");
+      this.token=tree.token;
+      this.inAstTerm=tree.getTerm();
+      return;
+    }
+    //System.out.println("add: <" + tree.token+","+tree.getTerm()+">");
+
 
     /* Depending on the token number and the child count, fill the correct field */
     switch (this.token.getType()) {
