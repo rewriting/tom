@@ -287,17 +287,18 @@ public class Compiler extends TomGenericPlugin {
         // 1. computeLenght
         l = `concTomTerm(DeclarationToTomTerm(getPILforComputeLength(op,opType)),l*);
         // 2. getMultiplicities
-        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);
+        l = `concTomTerm(DeclarationToTomTerm(getPILforGetMultiplicities(op,opType)),l*);        
       }
     }
-    // stick the declarations in the good spot
-    `OnceTopDownId(InsertDeclarations(l)).visitLight(subject);
+    // make sure the variables are correctly defined
+    l = PostGenerator.changeVarDeclarations(`l);
+    subject = (TomTerm)`OnceTopDownId(InsertDeclarations(l)).visitLight(subject);          
     return subject;
   }
   
   %strategy InsertDeclarations(TomList l) extends Identity() {
     visit TomList {
-      concTomTerm(X*,d@DeclarationToTomTerm[],Y*) -> {
+      concTomTerm(X*,d@DeclarationToTomTerm[],Y*) -> {        
         %match(l) {
           concTomTerm(Z*) -> { return `concTomTerm(X*,Z*,d,Y*); }
         }         
@@ -361,37 +362,36 @@ public class Compiler extends TomGenericPlugin {
     
     TomName opName = `Name(opNameString);
     Instruction ifList = `If(IsFsym(opName,subject),
-        LetRef(oldElem,GetHead(opName,opType,subject),Nop()),
-        UnamedBlock(concInstruction(
-            LetArray(mult,ExpressionToTomTerm(Integer(0)),Integer(1), Return(mult)))));
-    // var declarations
-    Instruction varDecl = `LetRef(length, TomTermToExpression(FunctionCall(
-        Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
-        intType,concTomTerm(subject))),
-        LetRef(mult,TomTermToExpression(BuildEmptyArray(intArrayName,length)),
-            LetRef(oldElem,Bottom(opType),ifList)));
+        LetRef(oldElem,GetHead(opName,opType,subject),Nop()),        
+        LetAssignArray(mult,ExpressionToTomTerm(Integer(0)),Integer(1), Return(mult)));
     
     // the two ifs
     TomTerm elem = `Variable(concOption(),Name("elem"),opType,concConstraint());
     TomTerm counter = `Variable(concOption(),Name("counter"),Compiler.getIntType(),concConstraint());
     Instruction ifAnotherElem = `If(EqualTerm(opType, elem, oldElem),
-        LetArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
-        LetRef(counter,AddOne(counter),LetRef(oldElem,TomTermToExpression(elem),LetArray(mult, counter, Integer(1),Nop()))));
+        LetAssignArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
+        LetRef(counter,AddOne(counter),LetRef(oldElem,TomTermToExpression(elem),LetAssignArray(mult, counter, Integer(1),Nop()))));
     Instruction ifEndList = `If(Negation(IsFsym(opName,subject)),
         If(EqualTerm(opType, subject, oldElem),
-            LetArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
-            LetRef(counter,AddOne(counter),LetArray(mult,counter,Integer(1),Nop()))),
+            LetAssignArray(mult,counter,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,mult,counter))),Nop()),
+            LetRef(counter,AddOne(counter),LetAssignArray(mult,counter,Integer(1),Nop()))),
       Nop());
     
     Instruction whileBlock = `UnamedBlock(concInstruction(
         LetRef(elem,GetHead(opName,opType,subject),ifAnotherElem),
-        LetRef(subject,GetTail(opName,subject),ifEndList)));    
+        LetAssign(subject,GetTail(opName,subject),ifEndList))); // subject is the method's argument     
     Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
-    
-    Instruction functionBody = `UnamedBlock(concInstruction(
-        varDecl,
-        LetRef(counter,Integer(0),whileLoop),
-        Return(mult)));
+         
+    // var declarations + ifList + counter declaration + the while + return
+    Instruction functionBody = `LetRef(length, TomTermToExpression(FunctionCall(
+        Name(ConstraintGenerator.computeLengthFuncName + "_" + opNameString),
+        intType,concTomTerm(subject))),
+        LetRef(mult,TomTermToExpression(BuildEmptyArray(intArrayName,length)),
+            LetRef(oldElem,Bottom(opType),
+                UnamedBlock(concInstruction(
+                    ifList,
+                    LetRef(counter,Integer(0),whileLoop),
+                    Return(mult))))));
     
     return `MethodDef(Name(ConstraintGenerator.multiplicityFuncName+"_"+opNameString),
         concTomTerm(subject),intArrayType,EmptyType(),functionBody);
@@ -441,7 +441,7 @@ public class Compiler extends TomGenericPlugin {
     
     Instruction whileBlock = `UnamedBlock(concInstruction(
         LetRef(elem,GetHead(opName,opType,subject),isNewElem),
-        LetRef(subject,GetTail(opName,subject),isEndList)));    
+        LetAssign(subject,GetTail(opName,subject),isEndList))); // subject is the method's argument    
     Instruction whileLoop = `WhileDo(IsFsym(opName,subject),whileBlock);
     
     // test if subj is consOpName
@@ -449,8 +449,10 @@ public class Compiler extends TomGenericPlugin {
     
     Instruction functionBody = `UnamedBlock(concInstruction(
         isConsOpName,
-        LetRef(old,Bottom(opType),LetRef(counter,Integer(0),whileLoop)),
-        Return(counter)));
+        LetRef(old,Bottom(opType),LetRef(counter,Integer(0),
+            UnamedBlock(concInstruction(
+                whileLoop,
+                Return(counter)))))));
         
     return `MethodDef(Name(ConstraintGenerator.computeLengthFuncName+"_"+opNameString),
         concTomTerm(subject),Compiler.getIntType(),EmptyType(),functionBody);

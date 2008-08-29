@@ -178,12 +178,10 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     output.writeln(deep,"}");
   }
   
-  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList, TomType tlType, TomTerm index,
-      Expression exp, Instruction body, String moduleName) throws IOException {
-    output.write(deep,"{ " + TomBase.getTLCode(tlType) + " ");
+  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList, TomTerm index,
+      Expression exp, Instruction body, String moduleName) throws IOException {    
     buildAssignArrayVar(deep,var,optionList,index,exp,moduleName);
-    generateInstruction(deep,body,moduleName);
-    output.writeln(deep,"}");
+    generateInstruction(deep,body,moduleName);    
   }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType,

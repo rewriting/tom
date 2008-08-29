@@ -191,10 +191,13 @@ public class TomCamlGenerator extends TomGenericGenerator {
   }
   
   protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList,
-      TomType tlType, TomTerm index, 
+      TomTerm index, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     output.indent(deep);
-    output.write("NOT IMPLEMENTED !");    
+    //  arrays are used in the AC algorithm;
+    // and the AC maching is only supported for AC operators comming from GOM (which isn't available anyway for caml)   
+    throw new RuntimeException("Arrays NOT SUPPORTED in Caml !"); 
+    
   }
 
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {

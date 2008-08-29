@@ -441,8 +441,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
       
-      LetAssignArray(var@Variable[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],index@Variable[],exp,body) -> {
-        `buildLetAssignArray(deep, var, list, tlType, index, exp, body, moduleName);
+      LetAssignArray(var@Variable[Option=list],index,exp,body) -> {
+        `buildLetAssignArray(deep, var, list, index, exp, body, moduleName);
         return;
       }    
 
@@ -910,7 +910,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildLetAssignArray(int deep, TomTerm var, OptionList list, TomType tlType, TomTerm index, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildLetAssignArray(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;
   protected abstract void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException ;

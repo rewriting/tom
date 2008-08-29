@@ -58,7 +58,7 @@ public class PostGenerator {
 //------------------------------------------------------------  
  
   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
-    instruction = (Instruction)`TopDown(ChangeVarDeclarations()).visit(instruction);
+    instruction = changeVarDeclarations(instruction);
     return (Instruction) `TopDown(AddRef()).visitLight(instruction);
   }
   
@@ -144,6 +144,10 @@ public class PostGenerator {
   /**
    * Makes sure that no variable is declared if the same variable was declared above  
    */
+  static <T> T changeVarDeclarations(T instr) throws VisitFailure {
+    return (T)`TopDown(ChangeVarDeclarations()).visit((Visitable)instr);
+  }  
+  
   %strategy ChangeVarDeclarations() extends Identity() {
     visit Instruction {
       LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) -> {

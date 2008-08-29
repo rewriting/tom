@@ -414,7 +414,7 @@ public class ConstraintGenerator {
    *     x = getTerm(tempSol,alpha,subject);
    *     y = getComplementTerm(tempSol,alpha,subject);
    *     ... // action
-   *     pos = n-1;
+   *     pos = length-1;
    *   }  
    *  }    
    */
@@ -438,8 +438,8 @@ public class ConstraintGenerator {
             ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position)),
             ExpressionToTomTerm(GetElement(intArrayName,intType,alpha,position))));
     Instruction reinitializationLoop = `WhileDo(whileCond,
-        LetArray(tempSol,position,zero,
-         ExpressionToInstruction(SubstractOne(position))));
+        LetAssignArray(tempSol,position,zero,
+            LetRef(position,SubstractOne(position),Nop())));
     
     String tomName = null;
     TomTerm x = null, y=null;
@@ -455,7 +455,7 @@ public class ConstraintGenerator {
     TomList getTermArgs = `concTomTerm(tempSol,alpha,subject);        
     TomType subtermType = Compiler.getTermTypeFromTerm(`x);        
     Instruction lastTest = `If(positionGreaterOrEqThanZero,
-        LetArray(tempSol,position,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position))),
+        LetAssignArray(tempSol,position,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position))),
             LetRef(x,TomTermToExpression(FunctionCall(
                 Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName),
                 subtermType,getTermArgs)),
