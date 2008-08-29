@@ -152,7 +152,7 @@ public class ConstraintGenerator {
       }
       // AC loop
       ACMatchLoop(pattern, subject) -> {
-        return `buildACMatchLoop(pattern, subject);
+        return `buildACMatchLoop(pattern, subject, action);
       }
       // conditions			
       x -> {
@@ -418,7 +418,7 @@ public class ConstraintGenerator {
    *   }  
    *  }    
    */
-  private static Instruction buildACMatchLoop(TomTerm pattern, TomTerm subject) {    
+  private static Instruction buildACMatchLoop(TomTerm pattern, TomTerm subject, Instruction action) {    
     TomType intType = Compiler.getIntType();
     SymbolTable symbolTable = Compiler.getSymbolTable();
     TomType intArrayType = symbolTable.getIntArrayType();
@@ -454,7 +454,7 @@ public class ConstraintGenerator {
     // last if
     TomList getTermArgs = `concTomTerm(tempSol,alpha,subject);        
     TomType subtermType = Compiler.getTermTypeFromTerm(`x);        
-    Instruction lastTest = `If(positionGreaterOrEqThanZero,
+    Instruction lastTest = `If(positionGreaterOrEqThanZero,UnamedBlock(concInstruction(
         LetAssignArray(tempSol,position,AddOne(ExpressionToTomTerm(GetElement(intArrayName,intType,tempSol,position))),
             LetRef(x,TomTermToExpression(FunctionCall(
                 Name(ConstraintGenerator.getTermForMultiplicityFuncName + "_" + tomName),
@@ -462,7 +462,7 @@ public class ConstraintGenerator {
             LetRef(y,TomTermToExpression(FunctionCall(
                 Name(ConstraintGenerator.getComplTermForMultiplicityFuncName + "_" + tomName),
                 subtermType,getTermArgs)),
-                LetRef(position,SubstractOne(length),Nop())))),
+                action))),LetRef(position,SubstractOne(length),Nop()))),
         Nop());
     
     Instruction instruction = `WhileDo(TrueTL(),UnamedBlock(concInstruction(reinitializationLoop,lastTest)));
