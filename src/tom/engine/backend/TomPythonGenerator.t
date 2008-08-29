@@ -77,6 +77,15 @@ public class TomPythonGenerator extends TomGenericGenerator {
     generateExpression(deep,exp,moduleName);
     output.write(";\n");
   } 
+  
+  protected void buildAssignArrayVar(int deep, TomTerm var, OptionList list, TomTerm index, 
+      Expression exp, String moduleName) throws IOException {    
+    //output.indent(deep);
+    generateArray(deep,var,index,moduleName);
+    output.write("=");
+    generateExpression(deep,exp,moduleName);
+    output.write(";\n");
+  } 
 
   protected void buildComment(int deep, String text) throws IOException {
     //output.writeln("#" + text.replace("\n","\n#"));
@@ -170,6 +179,12 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
+  }
+  
+  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList, TomType tlType, TomTerm index, 
+      Expression exp, Instruction body, String moduleName) throws IOException {
+    buildAssignArrayVar(deep,var,optionList, index, exp, moduleName);
+    generateInstruction(deep,body,moduleName);
   }
 
   protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {

@@ -25,7 +25,7 @@ Instruction =
   /**
   * Variable[index] = Source
   */
-  | LetArray(Variable:TomTerm,Index:TomTerm,Source:Expression,AstInstruction:Instruction)
+  | LetAssignArray(Variable:TomTerm,Index:TomTerm,Source:Expression,AstInstruction:Instruction)
   /**/
   | Return(Kid1:TomTerm)
   | Nop()

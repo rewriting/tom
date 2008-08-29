@@ -199,6 +199,32 @@ public abstract class TomAbstractGenerator {
       }
     }
   }
+  
+  /**
+   * generates var[index] 
+   */
+  protected void generateArray(int deep, TomTerm subject, TomTerm index, String moduleName) throws IOException {
+    %match(TomTerm subject) {
+      Variable[AstName=PositionName(l)] -> {        
+        output.write("tom" + TomBase.tomNumberListToString(`l));        
+      }
+      Variable[AstName=Name(name)] -> {
+        output.write(`name);        
+      }
+    }
+    %match(TomTerm index) {
+      Variable[AstName=PositionName(l)] -> {
+        output.write("[");
+        output.write("tom" + TomBase.tomNumberListToString(`l));
+        output.write("]");        
+      }
+      Variable[AstName=Name(name)] -> {
+        output.write("[");
+        output.write(`name);
+        output.write("]");
+      }
+    }    
+  } 
 
   public void generateExpression(int deep, Expression subject, String moduleName) throws IOException {
     %match(Expression subject) {
@@ -414,6 +440,11 @@ public abstract class TomAbstractGenerator {
         `buildLetRef(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
+      
+      LetAssignArray(var@Variable[Option=list,AstType=(Type|TypeWithSymbol)[TlType=tlType]],index@Variable[],exp,body) -> {
+        `buildLetAssignArray(deep, var, list, tlType, index, exp, body, moduleName);
+        return;
+      }    
 
       AbstractBlock(instList) -> {
         //`generateInstructionList(deep, instList);
@@ -879,6 +910,7 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildLetAssignArray(int deep, TomTerm var, OptionList list, TomType tlType, TomTerm index, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;
   protected abstract void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException ;

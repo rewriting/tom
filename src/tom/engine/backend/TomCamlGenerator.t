@@ -189,6 +189,13 @@ public class TomCamlGenerator extends TomGenericGenerator {
     output.writeln(") in ");
     generateInstruction(deep,body,moduleName);
   }
+  
+  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList,
+      TomType tlType, TomTerm index, 
+      Expression exp, Instruction body, String moduleName) throws IOException {
+    output.indent(deep);
+    output.write("NOT IMPLEMENTED !");    
+  }
 
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     output.indent(deep);

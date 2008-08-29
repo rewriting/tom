@@ -66,6 +66,14 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     generateExpression(deep,exp,moduleName);
     output.writeln(";");
   }
+  
+  protected void buildAssignArrayVar(int deep, TomTerm var, OptionList list, TomTerm index, Expression exp, String moduleName) throws IOException {
+    //output.indent(deep);
+    generateArray(deep,var,index,moduleName);
+    output.write("=");
+    generateExpression(deep,exp,moduleName);
+    output.writeln(";");
+  }
 
   protected void buildComment(int deep, String text) throws IOException {
     output.writeln("/* " + text + " */");
@@ -169,12 +177,20 @@ public abstract class TomCFamilyGenerator extends TomGenericGenerator {
     generateInstruction(deep,body,moduleName);
     output.writeln(deep,"}");
   }
+  
+  protected void buildLetAssignArray(int deep, TomTerm var, OptionList optionList, TomType tlType, TomTerm index,
+      Expression exp, Instruction body, String moduleName) throws IOException {
+    output.write(deep,"{ " + TomBase.getTLCode(tlType) + " ");
+    buildAssignArrayVar(deep,var,optionList,index,exp,moduleName);
+    generateInstruction(deep,body,moduleName);
+    output.writeln(deep,"}");
+  }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType,
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);
   }
-
+  
   protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
     buildAssignVar(deep, var, list, exp, moduleName);
     generateInstruction(deep,body, moduleName);
@@ -444,95 +460,6 @@ s = %[
     s = ASTFactory.makeSingleLineCode(s, prettyMode);
     output.write(s);
   }
-
-  
-  /**
-   * Generates a function that given a list, it returns an array with the multiplicity of the elements
-   * Ex:
-   * 
-   * f(a,a,a,b,b) -> the function computes the multiplicities [3,2] and also the array [a,b]
-   * 
-   * NOTE: we are sure to have the same domain and codomain
-   * TODO ? lazymode
-   */
-//  protected void genGetMultiplicityFunction(String name, String moduleName) throws IOException {
-//    if(nodeclMode) {
-//      return;
-//    }
-//
-//    SymbolTable symbolTable = getSymbolTable(moduleName);
-//    
-//    TomSymbol tomSymbol = symbolTable.getSymbolFromName(name);
-//    TomType elemType = TomBase.getSymbolCodomain(tomSymbol);
-//    String tomType = TomBase.getTomType(elemType);
-//    String glType = TomBase.getTLType(elemType);
-//    // the int[] type
-//    TomType intArrayType = symbolTable.getIntArrayType();
-//    String tlIntArrayType = `TomBase.getTLType(intArrayType);
-//    String tlIntType = `TomBase.getTLType(symbolTable.getIntType());
-//   
-//    String listCast = "(" + glType + ")";
-//    String get_slice = listCast + "tom_get_slice_" + name;
-//    
-//    String mulVarName = "multiplicities";
-//
-//    String s = "";
-//    s+= %[
-//  @modifier@ @tlIntArrayType@ tom_get_multiplicity_@name@(@glType@ subj, @tlIntType@ length) {
-//    @tlIntArrayType@ mult = @getIntArrayAllocation("lenght",moduleName)@;
-//    @glType@ oldElem = null;
-//    // we we realy have a list
-//    if (@getIsConcList(name,"subj",moduleName)@) { // subj.isConsf      
-//      // subj.getHeadf();
-//      oldElem = @genDeclGetHead(name,elemType,elemType,"subj",moduleName)@
-//    } else {      
-//      mult[0] = 1;
-//      return mult;      
-//    }
-//    int counter = 0;  
-//    // = subj.length;
-//    while(subj.isConsf()) {
-//      Term elem = subj.getHeadf();        
-//      // another element of this type
-//      if (elem.equals(oldElem)){
-//        mult[counter] += 1; 
-//      } else {
-//        counter++;
-//        oldElem = elem;
-//        mult[counter] = 1;
-//      }
-//      subj = subj.getTailf();
-//      // if we got to the end of the list
-//      if(!subj.isConsf()) {
-//        if (subj.equals(oldElem)){
-//          mult[counter] += 1; 
-//        } else {
-//          counter++;          
-//          mult[counter] = 1;
-//        }
-//        break; // break the while
-//      } 
-//    }
-//    return mult;
-//    
-//    
-//    if(@getEqualTerm(tomType,"begin","end",moduleName)@) {
-//      return tail;
-//    } else if(@getEqualTerm(tomType,"end","tail",moduleName)@ && (@getIsEmptyList(name,tomType,"end",moduleName)@ || @getEqualTerm(tomType,"end",getMakeEmptyList(name,moduleName),moduleName)@)) {
-//      /* code to avoid a call to make, and thus to avoid looping during list-matching */
-//      return begin;
-//    }
-//    return @getMakeAddList(name,genDeclGetHead(name,eltType,listType,"begin",moduleName),
-//                  get_slice+"("+genDeclGetTail(name,eltType,listType,"begin",moduleName)+",end,tail)",moduleName)@;
-//  }
-//  ]%;
-//
-//    //If necessary we remove \n code depending on pretty option
-//    s = ASTFactory.makeSingleLineCode(s, prettyMode);
-//    output.write(s);
-//  }
-//  
-//  //TODO - the computeLenght
 
   protected void genDeclMake(String prefix, String funName, TomType returnType,
                              TomList argList, Instruction instr, String moduleName) throws IOException {
