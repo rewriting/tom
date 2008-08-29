@@ -297,6 +297,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generate(deep,var,moduleName);
     output.write(" + 1");
   }
+  
+  protected void buildSubstractOne(int deep, TomTerm var, String moduleName) throws IOException {
+    generate(deep,var,moduleName);
+    output.write(" - 1");
+  }
 
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
                                             TomType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
