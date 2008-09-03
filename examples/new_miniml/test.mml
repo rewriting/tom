@@ -1,0 +1,16 @@
+(* test alpha equivalence *)
+fun x -> ((fun y -> fun x -> x y) x)
+;
+
+(* should be equivalent to the normal form of the previous one *)
+fun x -> fun y -> (y x)
+;
+
+(* test let polymorphism : should be 'a -> 'b -> 'b *)
+fun a -> fun b ->
+let rec first = 
+  fun x -> fun y -> x
+in 
+let toto = first a b in
+  first b a
+
