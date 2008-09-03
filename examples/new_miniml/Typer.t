@@ -10,6 +10,7 @@ public class Typer {
 
   public static class IllFormedTerm extends RuntimeException {};
   public static class UnificationError extends RuntimeException {};
+  public static class ConstructorNotDeclared extends RuntimeException {};
 
   %typeterm IntList { implement { ArrayList<Integer> } }
 
@@ -60,7 +61,10 @@ public class Typer {
 
   public static LType typeOf(LTerm t) {
     counter = maxTypeVar(t)+1;
-    %match(recon(Context(),t)) {
+    // test context
+    Context ctx = `Context(RangeOf("Z",Range(Domain(),Atom("nat"))),
+                           RangeOf("S",Range(Domain(Atom("nat")),Atom("nat"))));
+    %match(recon(ctx,t)) {
       Pair(ty,con) -> { 
         Substitution subst = `unify(con);
         return `applySubst(subst,ty);
@@ -75,6 +79,14 @@ public class Typer {
     }
     throw new IllFormedTerm();
   }
+
+  private static Range assoc(Context c, String cons) {
+    %match(c) {
+      Context(_*,RangeOf(v,r),_*) && v << String cons -> { return `r; }
+    }
+    throw new ConstructorNotDeclared();
+  }
+
 
   private static ReconResult recon(Context c, LTerm t) {
     %match(t) {
@@ -106,9 +118,120 @@ public class Typer {
           Pair(ty2,con) -> { return `Pair(ty1,CList(Constraint(ty1,ty2),con*)); }
         }
       }
+      Constr(f,tl) -> {
+        %match(assoc(c,f)) {
+          Range(dom,codom) -> {
+            ConstraintList con = `recon(c,tl,dom);
+            return `Pair(codom,con);
+          }
+        }
+      }
+      Case(s,rs) -> {
+        %match(recon(c,s)) {
+          Pair(ty1,con1) -> {
+            %match (recon(c,rs,ty1)) {
+              Pair(ty2,con2) -> { return `Pair(ty2,CList(con1*,con2*)); }
+            }
+          }
+        }
+      }
     }
-    return null;
+    throw new RuntimeException("Type reconstruction failed.");
   }
+
+  private static ReconResult recon(Context c, Rules rl, LType subject) {
+    LType fresh = freshTypeVar();
+    ConstraintList cl = reconRules(c,rl,subject,fresh,`CList());
+    return `Pair(fresh,cl);
+  }
+
+  private static ConstraintList
+    reconRules(Context c, Rules rl, LType sub, LType rhs, ConstraintList cl) {
+      %match(rl) {
+        RList() -> { return cl; }
+        RList(r,rs*) -> {
+          ConstraintList cl1 = `reconClause(c,r,sub,rhs);
+          return `reconRules(c,rs,sub,rhs,CList(cl1*,cl*));
+        }
+      }
+      throw new RuntimeException("Type reconstruction failed.");
+    }
+
+  private static ConstraintList 
+    reconClause(Context c, Clause r, LType sub, LType rhs) {
+      %match(r) {
+        Rule(p,t) -> {
+          %match(recon(c,p)) {
+            CRPair(ctx,Pair(ty1,cl1)) -> {
+              %match(recon(Context(ctx*,c*),t)) {
+                Pair(ty2,cl2) -> {
+                  return `CList(Constraint(sub,ty1),Constraint(rhs,ty2),cl1*,cl2*);
+                }
+              }
+            }
+          }
+        }
+      }
+      throw new RuntimeException("Type reconstruction failed.");
+    }
+
+  private static ContextAndResult recon(Context c, Pattern p) {
+    %match(p) {
+      PFun(f,pl) -> {
+        %match(assoc(c,f)) {
+          Range(dom,codom) -> {
+            %match(recon(c,pl,dom)) {
+              CCPair(ctx,con) -> { return `CRPair(ctx,Pair(codom,con)); }
+            }
+          }
+        }
+      }
+      PVar(x,ty) -> {
+        return `CRPair(Context(Jugement(x,ty)),Pair(ty,CList()));
+      }
+    }
+    throw new RuntimeException("Type reconstruction failed.");
+  }
+
+  private static ContextAndConstraints
+    recon(Context c, PatternList pl, Domain dom) {
+      return reconRange(c,pl,dom,`Context(),`CList());
+    }
+
+  private static ContextAndConstraints 
+    reconRange(Context c, PatternList pl, Domain dom, Context ctx, ConstraintList cl) {
+      %match(pl,dom) {
+        PList(), Domain() -> { return `CCPair(ctx,cl); }
+        PList(p,ps*), Domain(ty,tys*) -> { 
+          %match(recon(c,p)) {
+            CRPair(ctx1,Pair(ty1,cl1)) -> {
+              return `reconRange(c,ps,tys,Context(ctx1*,ctx*),
+                  CList(Constraint(ty,ty1),cl1*,cl*));
+            }
+          } 
+        }
+      }
+      throw new RuntimeException("Type reconstruction failed.");
+    }
+
+  private static ConstraintList recon(Context c, LTermList tl, Domain dom) {
+    return reconRange(c,tl,dom,`CList());
+  }
+
+  private static ConstraintList 
+    reconRange(Context c, LTermList tl, Domain dom, ConstraintList cl) {
+      %match(tl,dom) {
+        LTList(), Domain() -> { return cl; }
+        LTList(t,ts*), Domain(ty,tys*) -> { 
+          %match(recon(c,t)) {
+            Pair(ty1,cl1) -> {
+              return `reconRange(c,ts,tys,CList(Constraint(ty,ty1),cl1*,cl*));    
+            }
+          } 
+        }
+      }
+      throw new RuntimeException("Type reconstruction failed.");
+    }
 
   private static Substitution unify(ConstraintList cl) {
     %match(cl) {

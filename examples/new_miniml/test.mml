@@ -13,4 +13,23 @@ let rec first =
 in 
 let toto = first a b in
   first b a
+;
+
+(* test constructors type inference *)
+fun g ->
+fun x -> 
+let f = fun n -> g S(n) in
+ f x
+;
+
+(* test match type inference *)
+fun y ->
+fun z ->
+fun x ->
+fun f -> 
+match S(x) with
+| S(a)   -> f a
+| S(Z()) -> y
+| Z() -> z
+end
 
