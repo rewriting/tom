@@ -8,11 +8,11 @@ fun x -> fun y -> (y x)
 
 (* test let polymorphism : should be 'a -> 'b -> 'b *)
 fun a -> fun b ->
-let rec first = 
+let first = 
   fun x -> fun y -> x
 in 
-let toto = first a b in
-  first b a
+let toto = first a b b in
+  first b a 
 ;
 
 (* test constructors type inference *)

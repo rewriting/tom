@@ -87,6 +87,12 @@ public class Typer {
     throw new ConstructorNotDeclared();
   }
 
+  private static LTerm refreshTypeVars(ArrayList<Integer> vars, LTerm t) {
+    for(int i: vars) {
+      t = substType(i,freshTypeVar(),t);
+    }
+    return t;
+  }
 
   private static ReconResult recon(Context c, LTerm t) {
     %match(t) {
@@ -108,8 +114,12 @@ public class Typer {
         LTerm t2s = Eval.substitute(`t2,`x,`t1);
         %match(recon(c,t2s)) {
           Pair(ty2,con) -> {
-            `recon(c,t1); // to avoid ill-typed terms
-            return `Pair(ty2,con);
+            // compute {typevars t1} \ {typevars gamma}
+            ArrayList<Integer> vt1 = getTypeVars(`t1);
+            vt1.removeAll(getTypeVars(c));
+            %match(recon(c,refreshTypeVars(vt1,t1))) {
+              Pair(ty1,con1) -> { return `Pair(ty2,CList(con*,con1*)); }
+            }
           }
         }
       }
