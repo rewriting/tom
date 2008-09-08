@@ -378,14 +378,14 @@ public class FreshExpander {
 
   /* generates "f1,f2,...,fn" for fields of cons
    except for builtins where no new is added */
-  private String argList(String cons) {
+  private String convertArgList(String cons) {
     String sort = st.getSort(cons);
     StringBuffer buf = new StringBuffer();
     boolean first = true;
     for(String f: st.getFields(cons)) {
       if(!first) buf.append(",");
       else first = false;
-      buf.append(env.isBuiltin(st.getSort(cons,f))? %[get@f@()]%:%[@f@]%);
+      buf.append(env.isBuiltin(st.getSort(cons,f))? st.rawGetter(cons,f) :f);
     }
     return buf.toString();
   }
@@ -1054,7 +1054,7 @@ public class FreshExpander {
         }
       }
     }
-    return res + %[return `@c@(@argList(c)@);]%;
+    return res + %[return `@c@(@convertArgList(c)@);]%;
   }
 
   private String rawConstructorBlockHookString(String c) {
@@ -1257,13 +1257,14 @@ public class FreshExpander {
     String s = st.getSort(c);
     if (st.isVariadic(c)) {
       String codomain = st.getCoDomain(c);
+      String domain = st.getDomain(c);
       String consid = st.qualifiedConstructorId("Cons" + c);
       String nilid = st.qualifiedConstructorId("Empty" + c);
       String gethead = null;
       if(st.isRefreshPoint(c)) gethead = %[getHead@c@().refresh()]%;
       else gethead = %[getHead@c@()]%;
       return %[{
-        %oplist @codomain@ @c@(Clause*) {
+        %oplist @codomain@ @c@(@domain@*) {
           is_fsym(t) { (($t instanceof @consid@) || ($t instanceof @nilid@)) }
           make_empty() { @nilid@.make() }
           make_insert(e,l) { @consid@.make($e,$l) }
