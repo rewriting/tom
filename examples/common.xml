@@ -126,7 +126,7 @@
     <delete dir="${examples.build}"/>
   </target>
 
-  <target name="clean.dist" description="Mr proper" depends="clean">
+  <target name="clean.dist" description="Mr proper" depends="clean.examples">
     <delete dir="${examples.dist}"/>
   </target>
 
