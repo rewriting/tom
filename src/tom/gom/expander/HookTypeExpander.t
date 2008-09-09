@@ -138,7 +138,7 @@ public class HookTypeExpander {
                                              String moduleName) {
     %match(prod, hookList) {
       /* check domain and codomain are equals */
-      Production(opName,ConcField(StarredField(codomain)),codomain,option),
+      Production(opName,ConcField(StarredField(codomain,_)),codomain,option),
       /* check there is no other MakeHook attached to this operator */
       !ConcHookDecl(_*, MakeHookDecl[Pointcut=CutOperator[ODecl=OperatorDecl[Name=opName]]], _*) -> {
         /* generate a FL hook for list-operators without other hook */
@@ -151,7 +151,7 @@ public class HookTypeExpander {
         }
       }
       /* check domain and codomain are equals */
-      Production(opName,ConcField(StarredField(codomain)),codomain,option),
+      Production(opName,ConcField(StarredField(codomain,_)),codomain,option),
       /* check there is a make_insert or a rule hooks and no theory associated */
       ConcHookDecl(_*,MakeHookDecl[HookType=HookKind[kind="make_insert"|"make_empty"|"rules"]],_*) -> {
         if(! examinedOps.contains(`opName)) {

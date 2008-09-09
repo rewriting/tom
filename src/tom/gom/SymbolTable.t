@@ -179,7 +179,7 @@ public class SymbolTable {
     fillGraph();
     isolateFreshSorts();
     //System.out.println("sorts concerned by freshgom: " + getFreshSorts());
-    fillRefreshPoints();
+    //fillRefreshPoints();
     fillAccessibleAtoms();
     generateConsAndNils();
   }
@@ -290,9 +290,11 @@ public class SymbolTable {
     %match(p) {
       Production[Name=n,DomainList=dl] -> {
         %match(dl) {
-          ConcField(StarredField[FieldType=GomType[Name=dom]]) -> {
+          ConcField(StarredField[
+              FieldType=GomType[Name=dom],
+              Specifier=spec]) -> {
             constructors.put(`n,
-                `VariadicConstructorDescription(codom,dom,false));
+                `VariadicConstructorDescription(codom,dom,spec.isRefresh()));
             return; 
           }
           _ /* not variadic */ -> { 
@@ -316,6 +318,7 @@ public class SymbolTable {
           Inner[] -> { st = `SInner(); }
           Neutral[] -> { st = `SNeutral(); }
           None[] -> { st = isPatternType(codom) ? `SPattern() : `SNone(); }
+          Refresh[] -> { st = `SRefreshPoint(); }
         }
         FieldDescription desc = `FieldDescription(fn,ty,st);
         res = `concFieldDescription(res*,desc);

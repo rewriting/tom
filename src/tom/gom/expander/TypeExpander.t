@@ -216,7 +216,7 @@ public class TypeExpander {
 
   private TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
     %match(FieldList domain) {
-      ConcField(StarredField(GomType(_,typename))) -> {
+      ConcField(StarredField(GomType(_,typename),_)) -> {
         return `Variadic(declFromTypename(typename,sortDeclList));
       }
       ConcField(fieldList*) -> {

@@ -153,14 +153,14 @@ pattern_type:
   ;
 
 field:
-    type STAR -> ^(StarredField type)
-  | LDIPLE pattern_type RDIPLE STAR -> ^(StarredField pattern_type)
+    type STAR -> ^(StarredField type ^(None))
+  | LDIPLE pattern_type RDIPLE STAR -> ^(StarredField pattern_type ^(Refresh))
   | ID COLON type -> ^(NamedField ^(None) ID type)
-  | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ^(None) ID pattern_type)
+  | ID COLON LDIPLE pattern_type RDIPLE -> ^(NamedField ^(Refresh) ID pattern_type)
   ;
 
 pattern_field:
-    pattern_type STAR -> ^(StarredField pattern_type)
+    pattern_type STAR -> ^(StarredField pattern_type ^(None))
   | INNER ID COLON type -> ^(NamedField ^(Inner) ID type)
   | OUTER ID COLON type -> ^(NamedField ^(Outer) ID type)
   | NEUTRAL ID COLON type -> ^(NamedField ^(Neutral) ID type)
