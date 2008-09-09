@@ -121,10 +121,14 @@ public class Eval {
       LTerm t = null;
       for(RawLTerm rt:parser.toplevel()) {
         LTerm crt = rt.convert();
-        LType ty = Typer.typeOf(crt);
-        System.out.println(
-            "\nparsed: " + Printer.pretty(rt) + " : " + Printer.pretty(ty));
-        System.out.println("\nnormal form : " + Printer.pretty(beta(crt).export()));
+        RawTyped raw_typed_t = Typer.typeOf(crt).export();
+        System.out.println("\nparsed: " + 
+            Printer.pretty(crt.export()) + " : " 
+            + Printer.pretty(raw_typed_t.getty()));
+        System.out.println("\njava translation :\n" + 
+          Compiler.compile(raw_typed_t));
+        System.out.println("\nnormal form : " + 
+          Printer.pretty(beta(crt).export()));
       }
     } catch(Exception e) {
       e.printStackTrace();

@@ -158,6 +158,37 @@ public class Printer {
     return null;
   }
 
+  public static String pretty(RawTyLTerm t) {
+    /*
+    try { return "" + prettyNat(t); }
+    catch (ConversionError e) { }
+    */
+    %match (t) {
+      RawTyVar(x) -> { return `x; }
+      RawTyAbs(RawTylam(x,ty,u)) -> { 
+        return %[(fun (@`x@:@`pretty(ty)@) -> @`pretty(u)@)]%; 
+      }
+      RawTyApp(u,v) -> { return %[(@`pretty(u)@ @`pretty(v)@)]%; }
+      RawTyFix(RawTyfixpoint(x,_,u)) -> { 
+        return %[(fix @`x@ @`pretty(u)@)]%; 
+      }
+      /*
+      RawConstr(f,EmptyRawLTList()) -> { return `f; }
+      RawConstr(f,l) -> { return `f + "(" + `prettyLTermList(l) + ")"; }
+      RawCase(s,l) -> { 
+        return %[(match @`pretty(s)@ with@`prettyRules(l)@ end)]%; }
+        */
+    }
+    return null;
+  }
+
+  public static String pretty(RawTyped t) {
+    %match(t) {
+      RawTyped(u,ty) -> { return %[(@`pretty(u)@ : @`pretty(ty)@)]%; }
+    }
+    return null;
+  }
+
   public static String pretty(RawLType ty) {
     %match (ty) {
       RawAtom(a) -> { return `a; }

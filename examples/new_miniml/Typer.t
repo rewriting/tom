@@ -59,11 +59,11 @@ public class Typer {
     return `TypeVar(counter++);
   }
 
-  public static LType typeOf(LTerm t) {
+  public static Typed typeOf(LTerm t) {
     counter = maxTypeVar(t)+1;
     // test context
-    Context ctx = `Context(RangeOf("Z",Range(Domain(),Atom("nat"))),
-                           RangeOf("S",Range(Domain(Atom("nat")),Atom("nat"))));
+    Context ctx = `Context(RangeOf("Z",Range(Domain(),Atom("Nat"))),
+                           RangeOf("S",Range(Domain(Atom("Nat")),Atom("Nat"))));
     %match(recon(ctx,t)) {
       Pair(ty,con) -> { 
         Substitution subst = `unify(con);
@@ -96,86 +96,125 @@ public class Typer {
 
   private static ReconResult recon(Context c, LTerm t) {
     %match(t) {
-      Var(x) -> { return `Pair(assoc(c,x),CList()); } 
+      Var(x) -> { return `Pair(Typed(TyVar(x),assoc(c,x)),CList()); } 
       Abs(lam(x,ty1,t1)) -> {
         %match(recon(Context(Jugement(x,ty1),c*),t1)) {
-          Pair(ty2,con) -> { return `Pair(Arrow(ty1,ty2),con); }
+          Pair(t1b@Typed(_,ty2),con) -> { 
+            return `Pair(Typed(TyAbs(Tylam(x,ty1,t1b)),Arrow(ty1,ty2)),con); 
+          }
         }
       }
       App(t1,t2) -> {
         %match(recon(c,t1),recon(c,t2)) {
-          Pair(ty1,con1),Pair(ty2,con2) -> {
+          Pair(t1b@Typed(_,ty1),con1),Pair(t2b@Typed(_,ty2),con2) -> {
             LType ty3 = freshTypeVar();
-            return `Pair(ty3,CList(Constraint(ty1,Arrow(ty2,ty3)),con1*,con2*));
+            return `Pair(Typed(TyApp(t1b,t2b),ty3),
+                CList(Constraint(ty1,Arrow(ty2,ty3)),con1*,con2*));
           }
         }
       }
       Let(letin(x,t1,t2)) -> {
         LTerm t2s = Eval.substitute(`t2,`x,`t1);
         %match(recon(c,t2s)) {
-          Pair(ty2,con) -> {
+          Pair(t2b,con) -> {
             // compute {typevars t1} \ {typevars gamma}
             ArrayList<Integer> vt1 = getTypeVars(`t1);
             vt1.removeAll(getTypeVars(c));
             %match(recon(c,refreshTypeVars(vt1,t1))) {
-              Pair(ty1,con1) -> { return `Pair(ty2,CList(con*,con1*)); }
+              Pair(Typed(_,ty1),con1) -> { 
+                return `Pair(t2b,CList(con*,con1*)); 
+              }
             }
           }
-        }
-      }
-      Fix(fixpoint(x,ty1,t1)) -> {
-         %match(recon(Context(Jugement(x,ty1),c*),t1)) {
-          Pair(ty2,con) -> { return `Pair(ty1,CList(Constraint(ty1,ty2),con*)); }
         }
       }
       Constr(f,tl) -> {
         %match(assoc(c,f)) {
           Range(dom,codom) -> {
-            ConstraintList con = `recon(c,tl,dom);
-            return `Pair(codom,con);
+            ReconChildrenResult res = `recon(c,tl,dom);
+            TyLTermList children = res.gettl();
+            ConstraintList cl = res.getcl();
+            return `Pair(Typed(TyConstr(f,children),codom),cl);
           }
         }
       }
       Case(s,rs) -> {
         %match(recon(c,s)) {
-          Pair(ty1,con1) -> {
+          Pair(sb@Typed(_,ty1),con1) -> {
             %match (recon(c,rs,ty1)) {
-              Pair(ty2,con2) -> { return `Pair(ty2,CList(con1*,con2*)); }
+              Triple(rsb,ty2,con2) -> { 
+                return `Pair(Typed(TyCase(sb,rsb),ty2),CList(con1*,con2*)); 
+              }
             }
           }
         }
       }
+      /*
+      Fix(fixpoint(x,ty1,t1)) -> {
+         %match(recon(Context(Jugement(x,ty1),c*),t1)) {
+          Pair(ty2,con) -> { return `Pair(ty1,CList(Constraint(ty1,ty2),con*)); }
+        }
+      }
+    */
     }
     throw new RuntimeException("Type reconstruction failed.");
   }
 
-  private static ReconResult recon(Context c, Rules rl, LType subject) {
-    LType fresh = freshTypeVar();
-    ConstraintList cl = reconRules(c,rl,subject,fresh,`CList());
-    return `Pair(fresh,cl);
+  private static ReconChildrenResult 
+    recon(Context c, LTermList tl, Domain dom) {
+      return reconRange(c,tl,dom,`TyLTList(),`CList());
   }
 
-  private static ConstraintList
-    reconRules(Context c, Rules rl, LType sub, LType rhs, ConstraintList cl) {
-      %match(rl) {
-        RList() -> { return cl; }
-        RList(r,rs*) -> {
-          ConstraintList cl1 = `reconClause(c,r,sub,rhs);
-          return `reconRules(c,rs,sub,rhs,CList(cl1*,cl*));
+  private static ReconChildrenResult 
+    reconRange(Context c, LTermList tl, Domain dom,
+        TyLTermList res, ConstraintList cl) {
+      %match(tl,dom) {
+        LTList(), Domain() -> { return `Pair2(res,cl); }
+        LTList(t,ts*), Domain(ty,tys*) -> { 
+          %match(recon(c,t)) {
+            Pair(tb@Typed(_,ty1),cl1) -> {
+              return `reconRange(c,ts,tys,TyLTList(res*,tb),CList(Constraint(ty,ty1),cl1*,cl*));    
+            }
+          } 
         }
       }
       throw new RuntimeException("Type reconstruction failed.");
     }
 
-  private static ConstraintList 
+  private static ReconRulesResult recon(Context c, Rules rl, LType subject) {
+    LType fresh = freshTypeVar();
+    return reconRules(c,rl,subject,fresh,`TyRList(),`CList());
+  }
+
+  private static ReconRulesResult
+    reconRules(Context c, Rules rl, LType sub, LType rhs, 
+        TyRules rls, ConstraintList cl) {
+      %match(rl) {
+        RList() -> { return `Triple(rls,rhs,cl); }
+        RList(r,rs*) -> {
+           %match(reconClause(c,r,sub,rhs)) {
+             Pair3(rb,cl1) -> {
+               return 
+                 `reconRules(c,rs,sub,rhs,TyRList(rls*,rb),CList(cl1*,cl*));
+             }
+           }
+        }
+      }
+      throw new RuntimeException("Type reconstruction failed.");
+    }
+
+  private static ReconClauseResult 
     reconClause(Context c, Clause r, LType sub, LType rhs) {
       %match(r) {
         Rule(p,t) -> {
           %match(recon(c,p)) {
-            CRPair(ctx,Pair(ty1,cl1)) -> {
+            Quadruple(ctx,pb,ty1,cl1) -> {
               %match(recon(Context(ctx*,c*),t)) {
-                Pair(ty2,cl2) -> {
-                  return `CList(Constraint(sub,ty1),Constraint(rhs,ty2),cl1*,cl2*);
+                Pair(tb@Typed(_,ty2),cl2) -> {
+                  TyClause res = `TyRule(pb,tb);
+                  ConstraintList resl = `CList(
+                      Constraint(sub,ty1),Constraint(rhs,ty2),cl1*,cl2*);
+                  return `Pair3(res,resl);
                 }
               }
             }
@@ -185,57 +224,44 @@ public class Typer {
       throw new RuntimeException("Type reconstruction failed.");
     }
 
-  private static ContextAndResult recon(Context c, Pattern p) {
+  private static ReconPatternResult recon(Context c, Pattern p) {
     %match(p) {
       PFun(f,pl) -> {
         %match(assoc(c,f)) {
           Range(dom,codom) -> {
             %match(recon(c,pl,dom)) {
-              CCPair(ctx,con) -> { return `CRPair(ctx,Pair(codom,con)); }
+              Triple2(ctx,plb,con) -> { 
+                return `Quadruple(ctx,TyPFun(f,plb),codom,con); 
+              }
             }
           }
         }
       }
       PVar(x,ty) -> {
-        return `CRPair(Context(Jugement(x,ty)),Pair(ty,CList()));
+        TyPattern res = `TyPVar(x,ty); 
+        return `Quadruple(Context(Jugement(x,ty)),res,ty,CList());
       }
     }
     throw new RuntimeException("Type reconstruction failed.");
   }
 
-  private static ContextAndConstraints
+  private static ReconPatternListResult
     recon(Context c, PatternList pl, Domain dom) {
-      return reconRange(c,pl,dom,`Context(),`CList());
+      return reconRange(c,pl,dom,`TyPList(),`Context(),`CList());
     }
 
-  private static ContextAndConstraints 
-    reconRange(Context c, PatternList pl, Domain dom, Context ctx, ConstraintList cl) {
+  private static ReconPatternListResult 
+    reconRange(Context c, PatternList pl, Domain dom, 
+      TyPatternList typl, Context ctx, ConstraintList cl) {
       %match(pl,dom) {
-        PList(), Domain() -> { return `CCPair(ctx,cl); }
+        PList(), Domain() -> { return `Triple2(ctx,typl,cl); }
         PList(p,ps*), Domain(ty,tys*) -> { 
           %match(recon(c,p)) {
-            CRPair(ctx1,Pair(ty1,cl1)) -> {
-              return `reconRange(c,ps,tys,Context(ctx1*,ctx*),
+            Quadruple(ctx1,pb,ty1,cl1) -> {
+              return `reconRange(c,ps,tys,
+                  TyPList(typl*,pb),
+                  Context(ctx1*,ctx*),
                   CList(Constraint(ty,ty1),cl1*,cl*));
-            }
-          } 
-        }
-      }
-      throw new RuntimeException("Type reconstruction failed.");
-    }
-
-  private static ConstraintList recon(Context c, LTermList tl, Domain dom) {
-    return reconRange(c,tl,dom,`CList());
-  }
-
-  private static ConstraintList 
-    reconRange(Context c, LTermList tl, Domain dom, ConstraintList cl) {
-      %match(tl,dom) {
-        LTList(), Domain() -> { return cl; }
-        LTList(t,ts*), Domain(ty,tys*) -> { 
-          %match(recon(c,t)) {
-            Pair(ty1,cl1) -> {
-              return `reconRange(c,ts,tys,CList(Constraint(ty,ty1),cl1*,cl*));    
             }
           } 
         }

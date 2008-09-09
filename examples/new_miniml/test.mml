@@ -32,4 +32,14 @@ match S(x) with
 | S(Z()) -> y
 | Z() -> z
 end
+;
+
+(* full test *)
+
+let pred = fun n -> 
+ match n with
+ | Z() -> Z()
+ | S(m) -> m
+ end
+in pred S(S(S(Z())))
 

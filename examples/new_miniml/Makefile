@@ -28,7 +28,7 @@ Eval.java: Eval.t
 Printer.class: Printer.java
 	javac Printer.java
 
-Eval.class: Eval.java LambdaParser.class LambdaLexer.class Printer.class Typer.class
+Eval.class: Eval.java Compiler.class LambdaParser.class LambdaLexer.class Printer.class Typer.class 
 	javac Eval.java
 
 Typer.t: lambda/Lambda.tom
@@ -38,6 +38,14 @@ Typer.java: Typer.t
 
 Typer.class: Typer.java Eval.java
 	javac Typer.java
+
+Compiler.t: lambda/Lambda.tom
+
+Compiler.java: Compiler.t
+	tom Compiler.t
+
+Compiler.class: Compiler.java 
+	javac Compiler.java
 
 lambda/Lambda.tom: lambda.gom
 	gom lambda.gom
