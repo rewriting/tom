@@ -42,4 +42,23 @@ let pred = fun n ->
  | S(m) -> m
  end
 in pred S(S(S(Z())))
+;
+match S(S(Z())) with S(S(x)) -> x end
+;
+(* test fixpoint *)
+let rec plus = 
+fun n -> 
+fun m -> 
+ match n with
+ | Z() -> m
+ | S(p) -> S(plus p m)
+ end
+in let rec fib = 
+fun n -> 
+ match n with
+ | Z() -> Z()
+ | S(Z()) -> S(Z())
+ | S(S(m)) -> (plus (fib m) (fib S(m)))
+ end
+in fib S(S(S(S(S(S(S(S(S(Z()))))))))) 
 

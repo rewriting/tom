@@ -1,4 +1,6 @@
-all: Eval.class
+all: Main.class Eval.class
+
+test: Eval.class
 	java Eval < test.mml
 
 Lambda.g.t: lambda/Lambda.tom 
@@ -30,6 +32,14 @@ Printer.class: Printer.java
 
 Eval.class: Eval.java Compiler.class LambdaParser.class LambdaLexer.class Printer.class Typer.class 
 	javac Eval.java
+
+Main.t: lambda/Lambda.tom
+
+Main.java: Main.t
+	tom Main.t
+
+Main.class: Main.java Compiler.class LambdaParser.class LambdaLexer.class Printer.class Typer.class 
+	javac Main.java
 
 Typer.t: lambda/Lambda.tom
 

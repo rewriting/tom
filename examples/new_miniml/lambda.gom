@@ -75,3 +75,5 @@ Context = Context(Jugement*)
 Mapping = MapsTo(i:int,ty:LType)
 Substitution = MList(Mapping*)
 
+/* compilation */
+FixVars = FixVarList(String*)

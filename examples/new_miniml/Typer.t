@@ -149,13 +149,14 @@ public class Typer {
           }
         }
       }
-      /*
       Fix(fixpoint(x,ty1,t1)) -> {
          %match(recon(Context(Jugement(x,ty1),c*),t1)) {
-          Pair(ty2,con) -> { return `Pair(ty1,CList(Constraint(ty1,ty2),con*)); }
+          Pair(t1b@Typed(_,ty2),con) -> { 
+            return `Pair(Typed(TyFix(Tyfixpoint(x,ty1,t1b)),ty1),
+                CList(Constraint(ty1,ty2),con*)); 
+          }
         }
       }
-    */
     }
     throw new RuntimeException("Type reconstruction failed.");
   }

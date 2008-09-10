@@ -1,0 +1,8 @@
+let rec plus = 
+fun n -> 
+fun m -> 
+ match n with
+ | Z() -> m
+ | S(p) -> S(plus p m)
+ end
+in plus S(S(Z())) 
