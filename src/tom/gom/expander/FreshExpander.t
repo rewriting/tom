@@ -45,13 +45,14 @@ public class FreshExpander {
   private SymbolTable st = new SymbolTable();
   private static GomEnvironment env = GomEnvironment.getInstance();
 
-  public GomModuleList expand(GomModuleList m) {
+  public GomModuleList expand(GomModuleList m, String pack) {
     try {
       ArrayList list = new ArrayList();
       GomModuleList res = (GomModuleList) 
         `Sequence(
             TopDown(ExpandAtoms(list)),
             TopDown(UpdateSpecialization(list))).visitLight(m);
+      st.setPackage(pack);
       st.fill(res);
       //System.out.println(st);
       res = addRawSortsAndConstructors(res);

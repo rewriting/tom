@@ -94,6 +94,12 @@ public class SymbolTable {
 
   protected Graph<String> graph = new Graph<String>();
 
+  protected String pack = "";
+
+  public void setPackage(String pack) {
+    this.pack = pack;
+  }
+
   public String toString() {
     StringBuffer buf = new StringBuffer();
     for (Map.Entry<String,SortDescription> e: sorts.entrySet()) {
@@ -129,7 +135,8 @@ public class SymbolTable {
       throw new UndeclaredSortException(sort);
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
-        return `m.toLowerCase() + ".types." + rawSort(sort); 
+        return (pack.equals("") ? "" : pack + ".") 
+          + `m.toLowerCase() + ".types." + rawSort(sort); 
       }
     }
     throw new RuntimeException("non exhaustive match");
@@ -154,7 +161,8 @@ public class SymbolTable {
       throw new UndeclaredSortException(sort);
     %match(desc) {
       SortDescription[ModuleSymbol=m] -> { 
-        return `m.toLowerCase() + ".types." + sort; 
+        return (pack.equals("") ? "" : pack + ".") 
+          + `m.toLowerCase() + ".types." + sort; 
       }
     }
     throw new RuntimeException("non exhaustive match");
