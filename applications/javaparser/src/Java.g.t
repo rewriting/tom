@@ -168,7 +168,7 @@ options {
   backtrack=true;
   memoize=true;
   output=AST;
-  ASTLabelType=AstTree;
+  ASTLabelType=CommonTree;
 }
 
 tokens {
@@ -179,12 +179,10 @@ tokens {
 @header {
   package parser;
   import org.antlr.runtime.tree.Tree;
-  import parser.ast.AstTree;
 }
 
 @lexer::header {
   package parser;
-  import parser.ast.AstTree;
 }
 
 @lexer::members {
@@ -386,8 +384,8 @@ classBodyDeclaration
 memberDecl[Tree modifiers]
     :   genericMethodOrConstructorDecl[modifiers]
     |   memberDeclaration[modifiers]
-    |   'void'! Identifier! voidMethodDeclaratorRest[modifiers, new AstTree($Identifier)]
-    |   Identifier! constructorDeclaratorRest[modifiers, null, new AstTree($Identifier)]
+    |   'void'! Identifier! voidMethodDeclaratorRest[modifiers, new CommonTree($Identifier)]
+    |   Identifier! constructorDeclaratorRest[modifiers, null, new CommonTree($Identifier)]
     |   interfaceDeclaration[modifiers]
         ->  ^(TypeDeclToBodyDecl interfaceDeclaration)
     |   classDeclaration[modifiers]
@@ -408,13 +406,13 @@ genericMethodOrConstructorDecl[Tree modifiers]
 // GRAMMAR MODIFICATION : expanding (type | 'void')
 
 genericMethodOrConstructorRest[Tree modifiers, Tree typeparameters]
-    :   type! Identifier! methodDeclaratorRest[modifiers, typeparameters, $type.tree, new AstTree($Identifier)]
-    |   'void'! Identifier! methodDeclaratorRest[modifiers, typeparameters, null, new AstTree($Identifier)]
-    |   Identifier! constructorDeclaratorRest[modifiers, typeparameters, new AstTree($Identifier)]
+    :   type! Identifier! methodDeclaratorRest[modifiers, typeparameters, $type.tree, new CommonTree($Identifier)]
+    |   'void'! Identifier! methodDeclaratorRest[modifiers, typeparameters, null, new CommonTree($Identifier)]
+    |   Identifier! constructorDeclaratorRest[modifiers, typeparameters, new CommonTree($Identifier)]
     ;
 
 methodDeclaration[Tree modifiers, Tree type]
-    :   Identifier! methodDeclaratorRest[modifiers, null, type, new AstTree($Identifier)]
+    :   Identifier! methodDeclaratorRest[modifiers, null, type, new CommonTree($Identifier)]
     ;
 
 fieldDeclaration[Tree modifiers, Tree type]
@@ -430,7 +428,7 @@ interfaceBodyDeclaration
 interfaceMemberDecl[Tree modifiers]
     :   interfaceMethodOrFieldDecl[modifiers]
     |   interfaceGenericMethodDecl[modifiers]
-    |   'void'! Identifier! voidInterfaceMethodDeclaratorRest[modifiers, new AstTree($Identifier)]
+    |   'void'! Identifier! voidInterfaceMethodDeclaratorRest[modifiers, new CommonTree($Identifier)]
     |   interfaceDeclaration[modifiers]
         ->  ^(TypeDeclToBodyDecl interfaceDeclaration)
     |   classDeclaration[modifiers]
@@ -438,7 +436,7 @@ interfaceMemberDecl[Tree modifiers]
     ;
 
 interfaceMethodOrFieldDecl[Tree modifiers]
-    :   type! Identifier! interfaceMethodOrFieldRest[modifiers, $type.tree, new AstTree($Identifier)]
+    :   type! Identifier! interfaceMethodOrFieldRest[modifiers, $type.tree, new CommonTree($Identifier)]
     ;
 
 interfaceMethodOrFieldRest[Tree modifiers, Tree type, Tree name]
@@ -521,8 +519,8 @@ interfaceMethodDeclaratorRest[Tree modifiers, Tree typeparameters, Tree type, Tr
 
 interfaceGenericMethodDecl[Tree modifiers]
     :   typeParameters
-        (   type i1=Identifier interfaceMethodDeclaratorRest[modifiers, $typeParameters.tree, $type.tree, new AstTree($i1)]
-        |   'void' i2=Identifier interfaceMethodDeclaratorRest[modifiers, $typeParameters.tree, null, new AstTree($i2)]
+        (   type i1=Identifier interfaceMethodDeclaratorRest[modifiers, $typeParameters.tree, $type.tree, new CommonTree($i1)]
+        |   'void' i2=Identifier interfaceMethodDeclaratorRest[modifiers, $typeParameters.tree, null, new CommonTree($i2)]
         )
     ;
 
@@ -545,7 +543,7 @@ constructorDeclaratorRest[Tree modifiers, Tree typeparameters, Tree name]
     ;
 
 constantDeclarator[Tree type]
-    :   Identifier! constantDeclaratorRest[type, new AstTree($Identifier)]
+    :   Identifier! constantDeclaratorRest[type, new CommonTree($Identifier)]
     ;
     
 variableDeclarators[Tree type]
@@ -1043,11 +1041,13 @@ exclusiveOrExpression
     :   equalityExpression ( '&' equalityExpression )*
         -> ^(AssociativeOperation And ^(ExpressionList equalityExpression+))
     ;
-    */
+*/
        // the correct version should be
+   
 andExpression
     :   (a=equalityExpression -> $a) ( '&' b=equalityExpression -> ^(BinaryAnd $andExpression $b) )*
     ;
+
 
 equalityExpression
     :   a=instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> $a // NOT CORRECT

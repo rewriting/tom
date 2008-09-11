@@ -75,7 +75,7 @@ public class AdapterGenerator {
   public void generate(ModuleList moduleList, HookDeclList hookDecls) {
     writeTokenFile(moduleList);
     writeAdapterFile(moduleList);
-    writeTreeFile(moduleList);
+    //writeTreeFile(moduleList);
   }
 
   public int writeTokenFile(ModuleList moduleList) {
@@ -88,25 +88,6 @@ public class AdapterGenerator {
              new OutputStreamWriter(
                new FileOutputStream(output)));
        generateTokenFile(moduleList, writer);
-       writer.flush();
-       writer.close();
-    } catch(Exception e) {
-      e.printStackTrace();
-      return 1;
-    }
-    return 0;
-  }
-
-  public int writeTreeFile(ModuleList moduleList) {
-    try {
-       File output = treeFileToGenerate();
-       // make sure the directory exists
-       output.getParentFile().mkdirs();
-       Writer writer =
-         new BufferedWriter(
-             new OutputStreamWriter(
-               new FileOutputStream(output)));
-       generateTreeFile(moduleList, writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {
@@ -142,37 +123,18 @@ public class AdapterGenerator {
 
   public void generateAdapterFile(ModuleList moduleList, Writer writer)
     throws java.io.IOException {
+    Collection operatorset = new HashSet();
+    try {
+      `TopDown(CollectOperators(operatorset)).visitLight(moduleList);
+    } catch (VisitFailure f) {
+      throw new GomRuntimeException("CollectOperators should not fail");
+    }
     writer.write(
     %[
 package @adapterPkg()@;
 
 import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.CommonTreeAdaptor;
-
-public class @filename()@Adaptor extends CommonTreeAdaptor {
-
-	public Object create(Token payload) {
-		return new @filename()@Tree(payload);
-	}
-
-}
-]%);
-  }
-
-  public void generateTreeFile(ModuleList moduleList, Writer writer)
-    throws java.io.IOException {
-    Collection operatorset = new HashSet();
-    Collection slotset = new HashSet();
-    try {
-      `TopDown(Sequence(CollectOperators(operatorset),CollectSlots(slotset))).visitLight(moduleList);
-    } catch (VisitFailure f) {
-      throw new GomRuntimeException("CollectOperators should not fail");
-    }
-    writer.write(%[
-package @adapterPkg()@;
-
-import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.*;
+import org.antlr.runtime.tree.CommonTree;
 ]%);
     if (!"".equals(grammarPkg)) {
     writer.write(%[
@@ -180,136 +142,114 @@ import @grammarPkg@.@grammarName@Parser;
 ]%);
     }
     writer.write(%[
-
-public class @filename()@Tree extends CommonTree {
-
-  private int termIndex = 0;
-  /* Use SharedObject as type, as most general type */
-  private shared.SharedObject inAstTerm = null;
-
-  public @filename()@Tree(CommonTree node) {
-    super(node);
-    this.token = node.token;
-    initAstTerm(node.token);
-  }
-
-  public @filename()@Tree(Token t) {
-    this.token = t;
-    initAstTerm(t);
-  }
-
-  private void initAstTerm(Token t) {
-    if(null==t) {
-      return;
+public class @filename()@Adaptor {
+  public static shared.SharedObject getTerm(CommonTree tree) {
+    shared.SharedObject res = null;
+    if(tree.isNil()) {
+      throw new RuntimeException("nil term");
     }
-    switch (t.getType()) {
+    if(tree.getType()==Token.INVALID_TOKEN_TYPE) {
+      throw new RuntimeException("bad type");
+    }
+    if(tree.getToken()==null) {
+      throw new RuntimeException("null token");
+    }
+
+    switch (tree.getType()) {
 ]%);
+
     Iterator it = operatorset.iterator();
     while(it.hasNext()) {
       OperatorDecl opDecl = (OperatorDecl) it.next();
       %match(opDecl) {
-        op@OperatorDecl[Name=opName,Prod=Variadic[]] -> {
+
+        op@OperatorDecl[Name=opName,Prod=Variadic[Sort=domainSort]] -> {
+          Code child = genGetChild("t","i");
+          Code cast = genGetTerm(`domainSort,"t");
           Code code =
             `CodeList(
                 Code("      case "+grammarName+"Parser."),
                 Code(opName),
                 Code(":\n"),
-                Code("      {\n"),
-                Code("        inAstTerm = "),
+                Code("        {\n"),
+                /* create empty list */
+                Code("          res = "),
                 Empty(op),
                 Code(".make();\n"),
-                Code("        break;\n"),
-                Code("        }\n"));
-          CodeGen.generateCode(code,writer);
-        }
-        op@OperatorDecl[Name=opName,Prod=Slots[Slots=ConcSlot()]] -> {
-          /* Initialise constants */
-          Code code =
-            `CodeList(
-                Code("      case "+grammarName+"Parser."),
-                Code(opName),
-                Code(":\n"),
-                Code("      {\n"),
-                Code("        inAstTerm = "),
+                /* add elements */
+                Code("          for(int i = 0; i < tree.getChildCount(); i++) {\n"),
+                Code("            "),
+                child*,
+                Code(";\n"),
+                Code("            "),
+                FullSortClass(domainSort),
+                Code(" elem = "),
+                cast*,
+                Code(";\n"),
+                Code("            "),
                 FullOperatorClass(op),
-                Code(".make();\n"),
-                Code("        break;\n"),
+                Code(" list = ("),
+                FullOperatorClass(op),
+                Code(") res;\n"),
+                Code("            "),
+                Code("res = list.append(elem);\n"),
+                Code("          }\n"),
+                Code("          break;\n"),
                 Code("        }\n"));
           CodeGen.generateCode(code,writer);
         }
+
+      op@OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod@!Variadic[]] -> {
+        Code code =
+          `CodeList(
+              Code("      case "+grammarName+"Parser."),
+              Code(opName),
+              Code(":\n"),
+              Code("        {\n")
+              );
+        %match(prod) {
+          Slots[Slots=slotList] -> {
+            int idx = 0;
+            SlotList sList = `slotList;
+            while(sList.isConsConcSlot()) {
+              Slot slot = sList.getHeadConcSlot();
+              sList = sList.getTailConcSlot();
+              Code child = genGetChild("child"+idx,""+idx);
+              Code cast = genGetTerm(slot.getSort(),"child"+idx);
+              code = `CodeList(code,
+                  Code("          "),
+                  child*,
+                  Code(";\n"),
+                  Code("          "),
+                  FullSortClass(slot.getSort()),
+                  Code(" field" + idx + " = "),
+                  cast*,
+                  Code(";\n")
+                  );
+              idx++;
+            }
+            code = `CodeList(code,
+                Code("          res = "),
+                FullOperatorClass(op),
+                Code(".make("),
+                Code(genArgsList(slotList)),
+                Code(");\n"),
+                Code("          break;\n"),
+                Code("        }\n")
+                );
+              }
+
+          }
+          CodeGen.generateCode(code,writer);
+        }
+
       }
     }
+
     writer.write(%[
     }
+    return res;
   }
-
-]%);
-    /* Add fields for each slot : first for variadic operators, then constructor slots */
-    it = operatorset.iterator();
-    while(it.hasNext()) {
-      OperatorDecl op = (OperatorDecl) it.next();
-      try {
-        `GenerateSlots(writer).visitLight(op);
-      } catch (VisitFailure f) {
-        throw new GomRuntimeException("GenerateSlots for variadic operators should not fail");
-      }
-    }
-    it = slotset.iterator();
-    while(it.hasNext()) {
-      Slot slot = (Slot) it.next();
-      try {
-        `GenerateSlots(writer).visitLight(slot);
-      } catch (VisitFailure f) {
-        throw new GomRuntimeException("GenerateSlots for slots should not fail");
-      }
-    }
-
-    writer.write(%[
-
-  public shared.SharedObject getTerm() {
-    return inAstTerm;
-  }
-
-  public void addChild(Tree t) {
-    super.addChild(t);
-    if (null==t) {
-      //System.out.println("add: tree==null");
-      return;
-    }
-    @filename()@Tree tree = (@filename()@Tree) t;
-
-    if(tree.token == null) {
-      //System.out.println("add: tree.token==null");
-      return;
-    }
-    if(this.token == null) {
-      //System.out.println("add: become <" + tree.token+","+tree.getTerm()+">");
-      this.token=tree.token;
-      this.inAstTerm=tree.getTerm();
-      return;
-    }
-    //System.out.println("add: <" + tree.token+","+tree.getTerm()+">");
-
-
-    /* Depending on the token number and the child count, fill the correct field */
-    switch (this.token.getType()) {
-]%);
-
-    it = operatorset.iterator();
-    while(it.hasNext()) {
-      OperatorDecl op = (OperatorDecl) it.next();
-      generateAddChildCase(op, writer);
-    }
-
-    writer.write(%[
-      default: break;
-    }
-
-    termIndex++;
-    /* Instantiate the term if needed */
-  }
-]%);
-    writer.write(%[
 }
 ]%);
   }
@@ -329,14 +269,6 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-  %strategy CollectOperatorNames(bag:Collection) extends Identity() {
-    visit OperatorDecl {
-      OperatorDecl[Name=name] -> {
-        bag.add(`name);
-      }
-    }
-  }
-
   %strategy CollectOperators(bag:Collection) extends Identity() {
     visit OperatorDecl {
       op@OperatorDecl[] -> {
@@ -345,133 +277,30 @@ public class @filename()@Tree extends CommonTree {
     }
   }
 
-  %strategy CollectSlots(bag:Collection) extends Identity() {
-    visit Slot {
-      slot@Slot[] -> {
-        bag.add(`slot);
+  %strategy CollectOperatorNames(bag:Collection) extends Identity() {
+    visit OperatorDecl {
+      OperatorDecl[Name=name] -> {
+        bag.add(`name);
       }
     }
   }
 
-  %strategy GenerateSlots(writer:Writer) extends Identity() {
-    visit Slot {
-      Slot[Name=name,Sort=sortDecl] -> {
-        Code code =
-          `CodeList(
-              Code("  "),
-              FullSortClass(sortDecl),
-              Code(" field"),
-              Code(name),
-              ShortSortClass(sortDecl),
-              Code(";\n")
-           );
-        try {
-          CodeGen.generateCode(code,writer);
-        } catch (IOException e) {
-          throw new VisitFailure("IOException " + e);
-        }
-      }
-    }
-  }
-
-  protected void generateAddChildCase(OperatorDecl opDecl, Writer writer) throws IOException {
-    %match(opDecl) { 
-      op@OperatorDecl[Name=opName,Sort=sortDecl,Prod=prod] -> {
-        Code code =
-          `CodeList(
-              Code("      case "+grammarName+"Parser."),
-              Code(opName),
-              Code(":\n"),
-              Code("      {\n")
-              );
-        %match(prod) {
-          Slots[Slots=slotList] -> {
-            code = `CodeList(code,
-                Code("        "),
-                FullSortClass(sortDecl),
-                Code(" term = ("),
-                FullOperatorClass(op),
-                Code(") inAstTerm;\n"),
-                Code("        "),
-                Code("switch(termIndex) {\n")
-                );
-            int idx = 0;
-            SlotList sList = `slotList;
-            while(sList.isConsConcSlot()) {
-              Slot slot = sList.getHeadConcSlot();
-              sList = sList.getTailConcSlot();
-              Code cast = genGetSubterm(slot.getSort());
-              code = `CodeList(code,
-                  Code("          "),
-                  Code("case "+idx+":\n"),
-                  Code("            field"),
-                  Code(slot.getName()),
-                  ShortSortClass(slot.getSort()),
-                  Code(" = "),
-                  cast*,
-                  Code(";\n")
-                  );
-              if(idx == `slotList.length() - 1) {
-                code = `CodeList(code,
-                    Code("            inAstTerm = "),
-                    FullOperatorClass(op),
-                    Code(".make("),
-                    Code(genArgsList(slotList)),
-                    Code(");\n")
-                    );
-              }
-              code = `CodeList(code,
-                  Code("            break;\n")
-                  );
-              idx++;
-            }
-            code = `CodeList(code,
-                Code("        "),
-                Code("}\n")
-                );
-          }
-          Variadic[Sort=domainSort] -> {
-            Code cast = genGetSubterm(`domainSort);
-            code = `CodeList(code,
-                Code("        "),
-                FullSortClass(domainSort),
-                Code(" elem = "),
-                cast*,
-                Code(";\n"),
-                Code("        "),
-                FullOperatorClass(op),
-                Code(" list = ("),
-                FullOperatorClass(op),
-                Code(") inAstTerm;\n"),
-                Code("        "),
-                Code("inAstTerm = list.append(elem);\n")
-                );
-          }
-        }
-        code = `CodeList(code,
-            Code("        break;\n"),
-            Code("        }\n"));
-        CodeGen.generateCode(code,writer);
-      }
-    }
-  }
-
-  protected Code genGetSubterm(SortDecl sort) {
-    Code code = `CodeList();;
+  protected Code genGetTerm(SortDecl sort, String tree) {
+    Code code = `CodeList();
     %match(sort) {
       SortDecl[] -> {
         code = `CodeList(code,
             Code("("),
             FullSortClass(sort),
-            Code(") tree.getTerm()"));
+            Code(")" + filename() + "Adaptor.getTerm(" + tree + ")"));
       }
       BuiltinSortDecl[Name=name] -> {
         if("int".equals(`name)) {
           code = `CodeList(code,
-              Code("Integer.parseInt(t.getText())"));
+              Code("Integer.parseInt(" + tree + ".getText())"));
         } else if ("String".equals(`name)) {
           code = `CodeList(code,
-              Code("t.getText()"));
+              Code(tree + ".getText()"));
         } else {
           throw new RuntimeException("Unsupported builtin");
         }
@@ -480,16 +309,25 @@ public class @filename()@Tree extends CommonTree {
     return code;
   }
 
+  protected Code genGetChild(String var, String index) {
+    Code code = `CodeList(
+        Code("CommonTree " + var + " = (CommonTree) tree.getChild(" + index + ")")
+        );
+    return code;
+  }
+
   protected String genArgsList(SlotList slots) {
     String res = "";
     SlotList sList = slots;
+    int idx=0;
     while(sList.isConsConcSlot()) {
       Slot slot = sList.getHeadConcSlot();
       sList = sList.getTailConcSlot();
-      res += "field" + slot.getName() + slot.getSort().getName();
+      res += "field" + idx;
       if(sList.isConsConcSlot()) {
         res += ", ";
       }
+      idx++;
     }
     return res;
   }
