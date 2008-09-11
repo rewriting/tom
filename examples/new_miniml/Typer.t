@@ -63,7 +63,9 @@ public class Typer {
     counter = maxTypeVar(t)+1;
     // test context
     Context ctx = `Context(RangeOf("Z",Range(Domain(),Atom("Nat"))),
-                           RangeOf("S",Range(Domain(Atom("Nat")),Atom("Nat"))));
+                           RangeOf("S",Range(Domain(Atom("Nat")),Atom("Nat"))),
+                           RangeOf("ConsNList",Range(Domain(Atom("Nat"),Atom("NatList")),Atom("NatList"))),
+                           RangeOf("EmptyNList",Range(Domain(),Atom("NatList"))));
     %match(recon(ctx,t)) {
       Pair(ty,con) -> { 
         Substitution subst = `unify(con);

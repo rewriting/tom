@@ -5,4 +5,4 @@ fun m ->
  | Z() -> m
  | S(p) -> S(plus p m)
  end
-in plus S(S(Z())) 
+in plus  
