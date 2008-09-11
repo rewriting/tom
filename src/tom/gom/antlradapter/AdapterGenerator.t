@@ -134,7 +134,7 @@ public class AdapterGenerator {
 package @adapterPkg()@;
 
 import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.Tree;
 ]%);
     if (!"".equals(grammarPkg)) {
     writer.write(%[
@@ -143,7 +143,7 @@ import @grammarPkg@.@grammarName@Parser;
     }
     writer.write(%[
 public class @filename()@Adaptor {
-  public static shared.SharedObject getTerm(CommonTree tree) {
+  public static shared.SharedObject getTerm(Tree tree) {
     shared.SharedObject res = null;
     if(tree.isNil()) {
       throw new RuntimeException("nil term");
@@ -151,10 +151,7 @@ public class @filename()@Adaptor {
     if(tree.getType()==Token.INVALID_TOKEN_TYPE) {
       throw new RuntimeException("bad type");
     }
-    if(tree.getToken()==null) {
-      throw new RuntimeException("null token");
-    }
-
+    
     switch (tree.getType()) {
 ]%);
 
@@ -164,8 +161,7 @@ public class @filename()@Adaptor {
       %match(opDecl) {
 
         op@OperatorDecl[Name=opName,Prod=Variadic[Sort=domainSort]] -> {
-          Code child = genGetChild("t","i");
-          Code cast = genGetTerm(`domainSort,"t");
+          Code cast = genGetTerm(`domainSort,"tree.getChild(i)");
           Code code =
             `CodeList(
                 Code("      case "+grammarName+"Parser."),
@@ -178,9 +174,6 @@ public class @filename()@Adaptor {
                 Code(".make();\n"),
                 /* add elements */
                 Code("          for(int i = 0; i < tree.getChildCount(); i++) {\n"),
-                Code("            "),
-                child*,
-                Code(";\n"),
                 Code("            "),
                 FullSortClass(domainSort),
                 Code(" elem = "),
@@ -211,15 +204,19 @@ public class @filename()@Adaptor {
           Slots[Slots=slotList] -> {
             int idx = 0;
             SlotList sList = `slotList;
+            int length = sList.length();
+            String sCode = %[
+          if(tree.getChildCount()!=@length@) {
+            throw new RuntimeException("Node " + tree + ": @length@ child(s) expected, but " + tree.getChildCount() + " found");
+          }
+]%;
+            code = `CodeList(code,Code(sCode));
+
             while(sList.isConsConcSlot()) {
               Slot slot = sList.getHeadConcSlot();
               sList = sList.getTailConcSlot();
-              Code child = genGetChild("child"+idx,""+idx);
-              Code cast = genGetTerm(slot.getSort(),"child"+idx);
+              Code cast = genGetTerm(slot.getSort(),"tree.getChild("+idx+")");
               code = `CodeList(code,
-                  Code("          "),
-                  child*,
-                  Code(";\n"),
                   Code("          "),
                   FullSortClass(slot.getSort()),
                   Code(" field" + idx + " = "),
@@ -306,13 +303,6 @@ public class @filename()@Adaptor {
         }
       }
     }
-    return code;
-  }
-
-  protected Code genGetChild(String var, String index) {
-    Code code = `CodeList(
-        Code("CommonTree " + var + " = (CommonTree) tree.getChild(" + index + ")")
-        );
     return code;
   }
 
