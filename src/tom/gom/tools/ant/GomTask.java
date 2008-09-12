@@ -73,7 +73,7 @@ public class GomTask extends GomCommonTask {
   private boolean inlineplus = false;
 
   protected String toPattern() {
-    return "\\1\\L\\3\\4" + protectedFileSeparator + "\\U\\3\\4.tom";
+    return "\\1\\L\\3" + protectedFileSeparator + "\\3.tom";
   }
 
   protected String defaultConfigName() {
