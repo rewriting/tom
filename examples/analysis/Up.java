@@ -56,6 +56,7 @@ public class Up extends AbstractStrategy {
     if (environment.depth()==0) {
       return Environment.SUCCESS;
     }
+    
     environment.setIntrospector(m);
     int index = environment.getSubOmega();
     environment.up();
