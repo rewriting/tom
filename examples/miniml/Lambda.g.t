@@ -2,7 +2,9 @@
 grammar Lambda;
 
 @header {
-  import lambda.types.*;
+  package miniml;
+
+  import miniml.lambda.types.*;
   import java.util.ArrayList;
 }
 
@@ -46,6 +48,7 @@ grammar Lambda;
 }
 
 @lexer::header {
+  package miniml;
 }
 
 toplevel returns [ArrayList<RawLTerm> res]

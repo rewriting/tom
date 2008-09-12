@@ -1,4 +1,6 @@
-import lambda.types.*;
+package miniml;
+
+import miniml.lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
 

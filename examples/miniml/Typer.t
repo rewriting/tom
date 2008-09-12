@@ -1,5 +1,7 @@
+package miniml;
+
 import tom.library.sl.*;
-import lambda.types.*;
+import miniml.lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
 
@@ -26,7 +28,7 @@ public class Typer {
     }
   }
 
-  static <T extends lambda.LambdaAbstractType> T 
+  static <T extends miniml.lambda.LambdaAbstractType> T 
     applySubst(Substitution s, T t) {
       T res = t;
       %match(s) {
@@ -37,13 +39,13 @@ public class Typer {
       return res;
     }
 
-  static <T extends lambda.LambdaAbstractType> T 
+  static <T extends miniml.lambda.LambdaAbstractType> T 
     substType(int i, LType ty, T t) {
       try { return (T) `TopDown(SubstType(i,ty)).visitLight(t); }
       catch(VisitFailure e) { throw new RuntimeException("never happens"); }
   }
 
-  private static ArrayList<Integer> getTypeVars(lambda.LambdaAbstractType t) {
+  private static ArrayList<Integer> getTypeVars(miniml.lambda.LambdaAbstractType t) {
     ArrayList<Integer> l = new ArrayList<Integer>();
     try { `TopDown(CollectTypeVars(l)).visitLight(t); }
     catch(VisitFailure e) { throw new RuntimeException("never happens"); }
@@ -123,7 +125,7 @@ public class Typer {
             ArrayList<Integer> vt1 = getTypeVars(`t1);
             vt1.removeAll(getTypeVars(c));
             %match(recon(c,refreshTypeVars(vt1,t1))) {
-              Pair(Typed(_,ty1),con1) -> { 
+              Pair(_,con1) -> { 
                 return `Pair(t2b,CList(con*,con1*)); 
               }
             }

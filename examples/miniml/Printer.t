@@ -1,5 +1,7 @@
+package miniml;
+
 import tom.library.sl.*;
-import lambda.types.*;
+import miniml.lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
 

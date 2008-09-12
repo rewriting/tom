@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the miniml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="miniml" value="miniml"/>
+  <target name="clean" description="Cleans examples directory">
+    <property name="miniml" value="miniml"/>
+    <delete dir="${examples.gen}/${miniml}"/>
+    <delete dir="${examples.build}/${miniml}"/>
+  </target>
+  <target name="build" depends="init">
+    <mkdir dir="${examples.gen}/${miniml}"/>
+    <gomcompile example="${miniml}"/>
+    <taskdef name="antlr3"
+             classname="org.apache.tools.ant.antlr.ANTLR3">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <tom.preset outputfile="${examples.gen}/${miniml}/Lambda.g"
+                options="-I ${examples.gen}/${miniml}"
+                srcdir="${examples.dir}"> 
+                <include name="${miniml}/**/Lambda.g.t"/>
+    </tom.preset>
+    <antlr3 target="${examples.gen}/${miniml}/Lambda.g"
+            outputdirectory="${examples.gen}/${miniml}"
+            libdirectory="${examples.gen}/${miniml}"
+            multithreaded="true">
+      <classpath refid="tom.classpath"/>
+    </antlr3>
+    <tom.preset options="-I ${examples.gen}/${miniml}"
+                srcdir="${examples.dir}"
+                destdir="${examples.gen}"> 
+                <include name="${miniml}/*.t"/>
+                <exclude name="${miniml}/*.g.t"/>
+    </tom.preset>
+    <javac.preset destdir="${examples.build}"
+                  srcdir="${examples.gen}/${miniml}">
+      <classpath refid="tom.examples.classpath"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+      update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${miniml}/*.t"/>
+        <include name="${miniml}/*.java"/>
+        <include name="${miniml}/*.gom"/>
+        <include name="${miniml}/*.xml"/>
+        <include name="${miniml}/*.g"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
