@@ -398,7 +398,7 @@ public class GomCommonTask extends MatchingTask {
     if (cl.length == 0) {
       return;
     }
-    String output = "Compiling :";
+    String output = "Compiling:";
     for (int i = 0; i<cl.length; i++) {
       output = output + " " + cl[i].getAbsolutePath();
     }
