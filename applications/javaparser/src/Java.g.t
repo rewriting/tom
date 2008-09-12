@@ -168,7 +168,7 @@ options {
   backtrack=true;
   memoize=true;
   output=AST;
-  ASTLabelType=CommonTree;
+  ASTLabelType=Tree;
 }
 
 tokens {
@@ -1050,7 +1050,9 @@ andExpression
 
 
 equalityExpression
-    :   a=instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> $a // NOT CORRECT
+    //:   a=instanceOfExpression ( ('==' | '!=') instanceOfExpression )* -> $a // NOT CORRECT
+    :   (a=instanceOfExpression -> $a) ( ( '==' b=instanceOfExpression -> ^(BinaryEqual $equalityExpression $b))
+                                         | '!=' b=instanceOfExpression -> ^(BinaryNotEqual $equalityExpression $b) )* 
     ;
 
 instanceOfExpression
@@ -1102,11 +1104,16 @@ shiftOp
     ;
 
 additiveExpression
-    :   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )* -> multiplicativeExpression // NOT CORRECT
+    //:   multiplicativeExpression ( ('+' | '-') multiplicativeExpression )* -> multiplicativeExpression // NOT CORRECT
+    :   (a=multiplicativeExpression -> $a) ( ( '+' b=multiplicativeExpression -> ^(BinaryPlus $additiveExpression $b))
+                                             | '-' b=multiplicativeExpression -> ^(BinaryMinus $additiveExpression $b) )* 
     ;
 
 multiplicativeExpression
-    :   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )* -> unaryExpression // NOT CORRECT
+    //:   unaryExpression ( ( '*' | '/' | '%' ) unaryExpression )* -> unaryExpression // NOT CORRECT
+    :   (a=unaryExpression -> $a) ( ( '*' b=unaryExpression -> ^(BinaryMult $multiplicativeExpression $b))
+                                             | '/' b=unaryExpression -> ^(BinaryDiv $multiplicativeExpression $b)
+                                             | '%' b=unaryExpression -> ^(BinaryModulo $multiplicativeExpression $b) )* 
     ;
 
 unaryExpression

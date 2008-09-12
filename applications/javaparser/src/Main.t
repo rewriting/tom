@@ -3,8 +3,7 @@ import java.io.*;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeAdaptor;
+import org.antlr.runtime.tree.Tree;
 
 import parser.*;
 import parser.ast.*;
@@ -50,9 +49,9 @@ public class Main {
       JavaLexer lexer = new JavaLexer(new ANTLRInputStream(input));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       JavaParser parser = new JavaParser(tokens);
-      parser.setTreeAdaptor(new CommonTreeAdaptor());
+      //parser.setTreeAdaptor(new CommonTreeAdaptor());
 
-      CommonTree tree = (CommonTree) parser.compilationUnit().getTree();
+      Tree tree = (Tree) parser.compilationUnit().getTree();
       CompilationUnit term = (CompilationUnit) AstAdaptor.getTerm(tree);
 
       tom.library.utils.Viewer.toTree(term);
