@@ -58,7 +58,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   private Map mapShortNameToName;
 
   /** the list of input files extract from the commandLine */
-  private List inputFileList;
+  private List<String> inputFileList;
 
   /**
    * Basic Constructor
@@ -68,7 +68,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     mapNameToOptionOwner = new HashMap();
     mapNameToOption = new HashMap();
     mapShortNameToName = new HashMap();
-    inputFileList = new ArrayList();
+    inputFileList = new ArrayList<String>();
     globalOptions = `concPlatformOption();
   }
 
@@ -103,7 +103,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   /** Accessor Method */
-  public List getInputToCompileList() {
+  public List<String> getInputToCompileList() {
     return inputFileList;
   }
 
@@ -365,8 +365,8 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList
    * @return an array containing the name of the input files
    */
-  private List processArguments(String[] argumentList) {
-    List inputFiles = new ArrayList();
+  private List<String> processArguments(String[] argumentList) {
+    List<String> inputFiles = new ArrayList<String>();
     StringBuilder imports = new StringBuilder();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;

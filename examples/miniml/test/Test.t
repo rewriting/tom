@@ -54,6 +54,7 @@ public class Test {
     Fun<Nat,Fun<Nat,Nat>> plus = %include { plus.tom };
     Fun<Nat,Nat> plus3 = plus.apply(three);
     System.out.println("plus 3 4 = " + convert(plus3.apply(four)));
+    System.out.println("plus 3 5 = " + convert(plus3.apply(five)));
     
     // We instanciate ApplyN for Nat
     System.out.println("ntimes (plus 3) 4 1 = " + 

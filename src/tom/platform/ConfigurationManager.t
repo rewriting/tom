@@ -59,7 +59,7 @@ public class ConfigurationManager {
   private String xmlConfigurationFileName;
 
   /** The plugins instance list*/
-  private List pluginsList;
+  private List<Plugin> pluginsList;
 
   /** The OptionManager */
   private OptionManager optionManager;
@@ -71,7 +71,7 @@ public class ConfigurationManager {
    */
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;
-    this.pluginsList = new ArrayList();
+    this.pluginsList = new ArrayList<Plugin>();
   }
   
   /**
@@ -104,7 +104,7 @@ public class ConfigurationManager {
   }
 
   /** Accessor method */
-  public List getPluginsList() {
+  public List<Plugin> getPluginsList() {
     return pluginsList;
   }
 
@@ -138,7 +138,7 @@ public class ConfigurationManager {
       try { 
         Object pluginInstance = Class.forName(pluginClass).newInstance();
         if(pluginInstance instanceof Plugin) {
-          pluginsList.add(pluginInstance);
+          pluginsList.add((Plugin)pluginInstance);
         } else {
           getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotAPlugin.getMessage(), pluginClass);
           pluginsList = null;

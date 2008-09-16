@@ -57,7 +57,7 @@ public interface OptionManager {
    * in the list of argument. The computation is done during initialization
    * It has to convert them in the expected format for the first plugin
    */
-  public List getInputToCompileList(); 
+  public List<String> getInputToCompileList(); 
 
   /**
    * Set the option 'name' to the corresponding value 

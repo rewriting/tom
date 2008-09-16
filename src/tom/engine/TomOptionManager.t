@@ -66,7 +66,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private Map mapShortNameToName;
 
   /** the list of input files extract from the commandLine */
-  private List inputFileList; 
+  private List<String> inputFileList; 
   
   private static Logger logger = Logger.getLogger("tom.engine.TomOptionManager");
   /**
@@ -77,7 +77,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     mapNameToOwner = new HashMap();
     mapNameToOption = new HashMap();
     mapShortNameToName = new HashMap();
-    inputFileList = new ArrayList();
+    inputFileList = new ArrayList<String>();
     globalOptions = `concPlatformOption();
   }
 
@@ -119,7 +119,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /**
    * @return the input files list
    */
-  public List getInputToCompileList() {
+  public List<String> getInputToCompileList() {
     return inputFileList;
   }
 
@@ -393,8 +393,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList
    * @return an array containing the name of the input files
    */
-  private List processArguments(String[] argumentList) {
-    List fileList = new ArrayList();
+  private List<String> processArguments(String[] argumentList) {
+    List<String> fileList = new ArrayList<String>();
     StringBuilder imports = new StringBuilder();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
@@ -459,11 +459,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                 // this is a boolean flag: we set to TRUE
                 // and no the opposite since -O2 implies -p=true
                 setOptionValue(argument, Boolean.TRUE);
-                //if(((Boolean)getOptionValue(argument)).booleanValue()) {
-                //  setOptionValue(argument, Boolean.FALSE);
-                //} else {
-                //  setOptionValue(argument, Boolean.TRUE);
-                //}
               }
 
               PluginOption[Value=IntegerValue[]] -> {

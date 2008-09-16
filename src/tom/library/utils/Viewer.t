@@ -189,10 +189,11 @@ public class Viewer {
   private static void writeContext(Writer w, Stack<Integer> context, int deep) 
     throws java.io.IOException {
       for(int i=0; i<deep; i++) {
-        if (context.contains(i))
+        if (context.contains(i)) {
           w.write("│");
-        else
+        } else {
           w.write(' ');
+        }
       }
     }
 
@@ -211,7 +212,7 @@ public class Viewer {
             return;
           } else {
             int ndeep = deep + `name.length() + 3;
-            %match (ATermList `list) {
+            %match (ATermList list) {
               (first,l*,last) -> {
                 // first child
                 w.write("─" + `name + "─┬");
