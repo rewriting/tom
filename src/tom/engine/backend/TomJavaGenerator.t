@@ -57,7 +57,8 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
       this.modifier += "protected " ;
     } else {
-      this.modifier += "private " ;
+      this.modifier += "public " ; // public by default to make constructor of strategies reusable
+      //this.modifier += "private " ;
     }
 
     if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {

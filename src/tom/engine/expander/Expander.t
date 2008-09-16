@@ -231,6 +231,9 @@ matchBlock: {
 
     } // end visit
 
+    /*
+     * compilation of  %strategy
+     */
     visit Declaration {
       Strategy(name,extendsTerm,visitList,orgTrack) -> {
         //Generate only one Introspector for a class if at least one  %strategy is found
@@ -427,9 +430,8 @@ matchBlock: {
 
         /*
          * generate code for a %strategy
-         *
          */
-        DeclarationList l = `concDeclaration();//represents compiled Strategy
+        DeclarationList l = `concDeclaration(); // represents compiled Strategy
         HashMap<TomType,String> dispatchInfo = new HashMap<TomType,String>(); // contains info needed for dispatch
         for(TomVisit visit:(concTomVisit)`visitList) {
           TomList subjectListAST = `concTomTerm();
@@ -437,7 +439,7 @@ matchBlock: {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],constraintInstructionList,_) -> {              
               TomTerm arg = `Variable(concOption(orgTrack),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = `concTomTerm(subjectListAST*,arg,introspectorVar);
-              String funcName = "visit_" + `type;//function name
+              String funcName = "visit_" + `type; // function name
               Instruction matchStatement = `Match(constraintInstructionList, concOption(orgTrack));
               //return default strategy.visitLight(arg)
               // FIXME: put superclass keyword in backend, in c# 'super' is 'base'

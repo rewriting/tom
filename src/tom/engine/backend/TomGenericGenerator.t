@@ -56,7 +56,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected boolean nodeclMode;
   protected boolean inline;
   protected boolean inlineplus; // perform inlining even if no substitution has been done
-  protected String modifier = "";
+  protected String modifier = ""; // the value is instantiated when creating the real backend (TomJavaBackend for instance)
 
   public TomGenericGenerator(OutputCode output, OptionManager optionManager,
                              SymbolTable symbolTable) {
