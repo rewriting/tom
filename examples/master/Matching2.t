@@ -61,8 +61,6 @@ class Matching2 {
     System.out.println("p2 = " + p2);
     System.out.println("s2 = " + s2);
     System.out.println("match(p2,s2) = " + `Match(p2,s2));
-    System.out.println("p3 = " + p3);
-    System.out.println("s3 = " + s3);
     System.out.println("match(p3,s3) = " + `Match(p3,s3));
   }
 
