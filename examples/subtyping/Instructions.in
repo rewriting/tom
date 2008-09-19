@@ -1,0 +1,27 @@
+
+    Context ctx = `Context(SigOf("zero", Sig(Domain(),Type("Nat"))),
+                           SigOf("suc", Sig(Domain(Type("Nat")), Type("Nat"))),
+                           SigOf("mult", Sig(Domain(Type("Nat"),Type("Nat")), Type("Nat"))),
+                           SigOf("square", Sig(Domain(Type("Int")), Type("Nat"))),
+                           SigOf("uminus", Sig(Domain(Type("Nat")), Type("Int"))),
+                           SigOf("plus", Sig(Domain(Type("Int"),Type("Int")),Type("Int"))));
+
+    ReconResultList rrlist = `RRList(Pair(Type("Int"),CList(Subtype(Type("Nat"),Type("Int")))));
+
+    TomInstructionList tilist = `TIList(Match(Rule(Matching(Simple(Var("x",TypeVar(1))),
+							Fun("zero",TTeList()),TypeVar(2)),TTeList(Var("x",TypeVar(3))))),
+					Match(Rule(Matching(Simple(Fun("suc",TTeList(Var("x",TypeVar(1))))),
+							Fun("suc",TTeList(Fun("zero",TTeList()))),TypeVar(2)),TTeList(Var("x",TypeVar(3))))),
+					Match(Rule(Matching(Simple(Fun("plus",TTeList((Var("x",TypeVar(1))),(Fun("uminus",TTeList(Var("x",TypeVar(1)))))))),
+							Fun("plus",TTeList((Fun("zero",TTeList())),(Fun("uminus",TTeList(Fun("zero",TTeList())))))),TypeVar(2)),
+						TTeList(Var("x",TypeVar(3))))),
+					Match(Rule(Matching(Simple(Fun("mult",TTeList(Var("x",TypeVar(1)),Fun("suc",TTeList(Var("x",TypeVar(1))))))),
+							Fun("mult",TTeList(Fun("zero",TTeList()),Fun("suc",TTeList(Fun("zero",TTeList()))))),TypeVar(2)),
+						TTeList(Var("x",TypeVar(3))))),
+					Match(Rule(Matching(Simple(Fun("mult",TTeList((Var("x",TypeVar(1))),(Fun("square",TTeList(Var("x",TypeVar(1)))))))),
+							Fun("mult",TTeList((Fun("zero",TTeList())),(Fun("square",TTeList(Fun("zero",TTeList())))))),TypeVar(2)),
+						TTeList(Var("x",TypeVar(3))))),
+					Match(Rule(Matching(Simple(Fun("suc",TTeList(Fun("zero",TTeList())))),
+							Fun("suc",TTeList(Fun("zero",TTeList()))),TypeVar(1)),TTeList())))));
+
+    Input(ctx,rrlist,tilist);

@@ -1,0 +1,64 @@
+module subtyping.Language
+imports String int
+abstract syntax
+
+Input = Input(ctx: Context, consSub: ReconResultList, tests: TomInstructionList)
+
+TomType = Type(name: String)
+        | TypeVar(index: int)
+
+TomTypeList = TTyList(TomType*)
+
+TomTerm = Var(name: String, type: TomType)
+        | Fun(name: String, args: TomTermList)
+
+TomTermList = TTeList(TomTerm*)
+
+TomInstruction = Match(rule: Clause)
+/* TODO: après faire marcher pour un seule règle, ajouter plusieures règles:
+                 Match(rules: Rules)
+
+Rules = RList(Clause*)
+*/
+TomInstructionList = TIList(TomInstruction*)
+
+Clause = Rule(condition: Condition, result: TomTermList)
+
+Condition = Matching(pattern: Pattern, subject: TomTerm, type: TomType)
+ 
+Pattern = Simple(pattern: TomTerm)
+/* TODO: après faire marcher le cas simple, ajouter ça:
+        | DisjFun(terms: TomTermList)
+        | ConjFun(terms: TomTermList)
+*/ 
+
+/* Type Reconstruction */
+Constraint = Equation(type1: TomType, type2: TomType)
+           | Subtype(type1: TomType, type: TomType)
+           //| MapsTo(tvar: int, type: TomType)
+
+ConstraintList = CList(Constraint*)
+
+ReconResult = Pair(type: TomType, constraints: ConstraintList)
+
+ReconResultList = RRList(ReconResult*)
+
+Domain = Domain(TomType*)
+
+Signature = Sig(dom: Domain, codom: TomType)
+
+Jugement = Jugement(var: String, type: TomType)
+         | SigOf(fun: String, sig: Signature)
+
+Context = Context(Jugement*)
+
+Mapping = MapsTo(tvar: int, type: TomType)
+
+Substitution = MList(Mapping*)
+
+ContextAndResult = CRPair(con: Context, res: ReconResultList)
+
+/* J'aurais besoin de ça après ajouter les patterns compliqués */
+ContextAndConstraints = CCPair(con: Context, constraints: ConstraintList)
+
+
