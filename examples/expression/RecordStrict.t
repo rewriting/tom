@@ -27,6 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+* The only difference from Record.t is that prettyPrint and prettyPrintIv functions use CstExp for the match in place of IntExp and StringExp
+*/
 package expression;
 
 public class RecordStrict {

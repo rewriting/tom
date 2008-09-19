@@ -76,9 +76,9 @@ public class ClassicalAssociativity {
         TermList args1 = `a1;
         TermList args2 = `a2;
         while(!args1.isEmptyconcTerm()) {
-          l = `And(l*,Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()));
-          args1 = args1.getTailconcTerm();
-          args2 = args2.getTailconcTerm();
+          l = `And(l*,Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm())); // to compare first elements
+          args1 = args1.getTailconcTerm(); // to get a1 list without its first element
+          args2 = args2.getTailconcTerm(); // to get a2 list without its first element
         }
         // if we do not have an associative symbol
         if ( !isAssociative(`f) ){
