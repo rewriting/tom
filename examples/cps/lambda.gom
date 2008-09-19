@@ -1,0 +1,24 @@
+module Lambda
+imports int String
+abstract syntax
+
+atom LVar 
+
+LTerm = App(t1:LTerm,t2:LTerm)
+      | Abs(a:<Lam>)
+      | Let(b:<Letin>)
+      | Var(x:LVar)
+      | CallCC(t:LTerm)
+      | Throw(t1:LTerm,t2:LTerm)
+// builtins
+      | Integer(i:int)
+      | Branch(c:LTerm,t:LTerm,e:LTerm)
+      | True()
+      | False()
+      | Eq(t1:LTerm,t2:LTerm)
+      | Plus(t1:LTerm,t2:LTerm)
+
+Lam binds LVar = lam(x:LVar, inner t:LTerm)
+Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
+
+
