@@ -34,99 +34,69 @@ public class Record {
   %include {int.tom}
   %include {string.tom}
 
-  %typeterm TomExp {
+  %typeterm Exp {
     implement { Exp }
-    is_sort(t) { t instanceof Exp }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof Exp }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
-  %typeterm TomBinaryOperator {
+  %typeterm BinaryOperator {
     implement { BinaryOperator }
-    is_sort(t) { t instanceof BinaryOperator }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof BinaryOperator }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
-  %typeterm TomUnaryOperator {
+  %typeterm UnaryOperator {
     implement { UnaryOperator }
-    is_sort(t) { t instanceof UnaryOperator }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof UnaryOperator }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
-  %typeterm TomCstExp {
+  %typeterm CstExp {
     implement { CstExp }
-    is_sort(t) { t instanceof CstExp }
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm TomPlus {
-    implement { Plus }
-    is_sort(t) { t instanceof Plus }
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm TomMult {
-    implement { Mult }
-    is_sort(t) { t instanceof Mult }
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm TomUminus {
-    implement { Uminus }
-    is_sort(t) { t instanceof Uminus }
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm TomStringExp {
-    implement { StringExp }
-    is_sort(t) { t instanceof StringExp }
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm TomIntExp {
-    implement { IntExp }
-    is_sort(t) { t instanceof IntExp }
-    equals(t1,t2) {t1.equals(t2)}
+    is_sort(t) { $t instanceof CstExp }
+    equals(t1,t2) {$t1.equals($t2)}
   }
 
     // ------------------------------------------------------------
   
-  %op TomExp BinaryOperator(first:TomExp, second:TomExp) {
-    is_fsym(t) { t instanceof BinaryOperator }
-    get_slot(first,t) { ((BinaryOperator)t).first }
-    get_slot(second,t) { ((BinaryOperator)t).second }
+  %op Exp BinaryOperator(first:Exp, second:Exp) {
+    is_fsym(t) { $t instanceof BinaryOperator }
+    get_slot(first,t) { ((BinaryOperator)$t).first }
+    get_slot(second,t) { ((BinaryOperator)$t).second }
   }
 
-  %op TomExp UnaryOperator(first:TomExp) {
-    is_fsym(t) { t instanceof UnaryOperator }
-    get_slot(first,t) { ((UnaryOperator)t).first }
+  %op Exp UnaryOperator(first:Exp) {
+    is_fsym(t) { $t instanceof UnaryOperator }
+    get_slot(first,t) { ((UnaryOperator)$t).first }
   }
 
-  %op TomBinaryOperator Plus(first:TomExp, second:TomExp) {
-    is_fsym(t) { t instanceof Plus }
-    get_slot(first,t) { ((Plus)t).first }
-    get_slot(second,t) { ((Plus)t).second }
+  %op BinaryOperator Plus(first:Exp, second:Exp) {
+    is_fsym(t) { $t instanceof Plus }
+    get_slot(first,t) { ((Plus)$t).first }
+    get_slot(second,t) { ((Plus)$t).second }
   }
 
-  %op TomBinaryOperator Mult(first:TomExp, second:TomExp) {
-    is_fsym(t) { t instanceof Mult }
-    get_slot(first,t) { ((Mult)t).first }
-    get_slot(second,t) { ((Mult)t).second }
+  %op BinaryOperator Mult(first:Exp, second:Exp) {
+    is_fsym(t) { $t instanceof Mult }
+    get_slot(first,t) { ((Mult)$t).first }
+    get_slot(second,t) { ((Mult)$t).second }
   }
 
-  %op TomUnaryOperator Uminus(first:TomExp) {
-    is_fsym(t) { t instanceof Uminus }
-    get_slot(first,t) { ((Uminus)t).first }
+  %op UnaryOperator Uminus(first:Exp) {
+    is_fsym(t) { $t instanceof Uminus }
+    get_slot(first,t) { ((Uminus)$t).first }
   }
 
-  %op TomCstExp StringExp(value:String) {
-    is_fsym(t) { t instanceof StringExp }
-    get_slot(value,t) { ((StringExp)t).value }
+  %op CstExp StringExp(value:String) {
+    is_fsym(t) { $t instanceof StringExp }
+    get_slot(value,t) { ((StringExp)$t).value }
   }
 
 
-  %op TomCstExp IntExp(value:int) {
-    is_fsym(t) { t instanceof IntExp }
-    get_slot(value,t) { ((IntExp)t).value }
+  %op CstExp IntExp(value:int) {
+    is_fsym(t) { $t instanceof IntExp }
+    get_slot(value,t) { ((IntExp)$t).value }
   }
 
     // ------------------------------------------------------------
@@ -134,9 +104,8 @@ public class Record {
   public final static void main(String[] args) {
     Record test = new Record();
     test.test1();
-//    test.test2();
+    test.test2();
     test.test3();
-    test.test4();
   }
 
   public Exp buildExp1() {
@@ -151,7 +120,6 @@ public class Record {
     return new Plus(buildExp2(), new Uminus(new StringExp("a")));
   }
 
-/*
   public Exp simplifiedExp1() {
     return new IntExp(20);
   }
@@ -163,10 +131,7 @@ public class Record {
   public Exp simplifiedExp3() {
     return new IntExp(0);
   }
-*/
-  public Exp simplifiedExp4() {
-    return new Uminus(new StringExp("a"));
-  }
+
   public void test1() {
     Exp e = buildExp1();
     String s1 = prettyPrint(e);
@@ -177,7 +142,7 @@ public class Record {
     System.out.println("prettyPrintInv: " + s2);
     System.out.println("simplify: " + s3);
   }
-/*  
+  
   public void test2() {
     Exp e = buildExp2();
     String s1 = prettyPrint(e);
@@ -188,10 +153,9 @@ public class Record {
     System.out.println("prettyPrintInv: " + s2);
     System.out.println("simplify: " + s3);
   }
-*/
+
   public void test3() {
     Exp e = buildExp3();
-
     String s1 = prettyPrint(e);
     String s2 = prettyPrintInv(e);
     String s3 = prettyPrint(traversalSimplify(e));
@@ -200,27 +164,10 @@ public class Record {
     System.out.println("prettyPrintInv: " + s2);
     System.out.println("simplify: " + s3);
   }
-
-    public void test4() {
-    Exp e = simplifiedExp4();
-
-    String s1 = prettyPrint(e);
-    String s2 = prettyPrintInv(e);
-    String s3 = prettyPrint(traversalSimplify(e));
-
-    System.out.println("prettyPrint: " + s1);
-    System.out.println("prettyPrintInv: " + s2);
-    System.out.println("simplify: " + s3);
-  }
-
 
   public String prettyPrint(Exp t) {
     String op = t.getOperator();
-    %match(TomExp t) {
-      //  return "" + value;
-      // it is not possible to match with a CstExp expression because the CstExp class
-      // has not un attribute like "value" so the print result will be " " 
-      //CstExp -> { return op; }
+    %match(Exp t) {
       IntExp[]  -> { return op; }
       StringExp[]  -> { return op; }
       
@@ -237,8 +184,7 @@ public class Record {
 
   public String prettyPrintInv(Exp t) {
     String op = t.getOperator();
-    %match(TomExp t) {
-      //  return "" + value;
+    %match(Exp t) {
       IntExp[]  -> { return op; }
       StringExp[]  -> { return op; }
       
@@ -254,25 +200,15 @@ public class Record {
   }
 
   public Exp traversalSimplify(Exp t) {
-    %match(TomExp t) {
-   
+    %match(Exp t) {
       UnaryOperator[first=e1] -> {
-        // -- cast on t
-        System.out.println("t is istanceof Exp = " + (t instanceof Exp));
-        System.out.println("t is istanceof UnaryOperator = " + (t instanceof UnaryOperator));
-        System.out.println("t is istanceof BinaryOperator = " + (t instanceof BinaryOperator));      
         ((UnaryOperator)t).first  = traversalSimplify(`e1);
-        System.out.println("t is istanceof Exp = " + (t instanceof Exp));
-        System.out.println("t is istanceof UnaryOperator = " + (t instanceof UnaryOperator));
-        // ask for the expression value
         return simplify(t);
       }
       
       BinaryOperator[first=e1, second=e2] -> {
-        // cast on t
         ((BinaryOperator)t).first  = traversalSimplify(`e1);
         ((BinaryOperator)t).second = traversalSimplify(`e2);
-        // ask for the expression value
         return simplify(t);
       }
     }
@@ -280,17 +216,14 @@ public class Record {
   }
 
   public Exp simplify(Exp t) {
-    %match(TomExp t) {
-      // if there are 2 ints then return the addition
+    %match(Exp t) {
       Plus[first=IntExp(v1), second=IntExp(v2)] -> {
         return new IntExp(`v1 + `v2);
       }
 
-      // if one of them is 0 then return the other
       Plus[first=e1, second=IntExp(0)] -> { return `e1; }
       Plus[second=e1, first=IntExp(0)] -> { return `e1; }
 
-      // if both of them are 0 then return 0
       Plus[first=e1, second=Uminus(e2)] -> {
         if(`myEquals(e1,e2)) {
           return new IntExp(0);
@@ -299,12 +232,10 @@ public class Record {
         }
       }
 
-      // if there are 2 ints then return the multiplication 
       Mult[first=IntExp(v1), second=IntExp(v2)] -> {
         return new IntExp(`(v1 * v2));
       }
-     
-      // if one of them is 1 then return teh other
+      
       Mult[first=e1, second=IntExp(1)] -> { return `e1; }
       Mult[second=e1, first=IntExp(1)] -> { return `e1; }
     }
@@ -313,18 +244,15 @@ public class Record {
 
   
   public boolean myEquals(Exp t1, Exp t2) {
-    %match(TomExp t1, TomExp t2) {
-      // if both of them are int with the same value then return true
+    %match(Exp t1, Exp t2) {
+      
       IntExp[value=e1], IntExp[value=e2]       -> { return `e1==`e2; }
-      // if both of them are string with the same value the return true
       StringExp[value=e1], StringExp[value=e2] -> { return `e1.equals(`e2); }
       
-      // if both of them are positive/negative with the same value then return true
       UnaryOperator[first=e1], UnaryOperator[first=f1] -> {
         return t1.getOperator().equals(t2.getOperator()) && `myEquals(e1,f1);
       }
-     
-      // if both of them are addition/multiplication with the same operands then return true
+      
       BinaryOperator[first=e1, second=e2], BinaryOperator[first=f1, second=f2] -> {
         return t1.getOperator().equals(t2.getOperator()) && `myEquals(e1,f1) && `myEquals(e2,f2);
       }
@@ -333,14 +261,6 @@ public class Record {
     return false;
   }
 
-  public boolean equalsOperands(Exp t1, Exp t2) {
-    %match(TomExp t1, TomExp t2) {
-      BinaryOperator[first=e1], UnaryOperator[first=f1] -> {
-        return `myEquals(e1,f1);
-      }
-    }
-    return false;
-  }
-
+ 
 }
 
