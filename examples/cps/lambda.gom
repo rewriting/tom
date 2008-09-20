@@ -7,18 +7,25 @@ atom LVar
 LTerm = App(t1:LTerm,t2:LTerm)
       | Abs(a:<Lam>)
       | Let(b:<Letin>)
+      | Fix(c:<Fixpoint>)
       | Var(x:LVar)
+      | Unit()
       | CallCC(t:LTerm)
       | Throw(t1:LTerm,t2:LTerm)
 // builtins
       | Integer(i:int)
-      | Branch(c:LTerm,t:LTerm,e:LTerm)
+      | Branch(cond:LTerm,t:LTerm,e:LTerm)
       | True()
       | False()
       | Eq(t1:LTerm,t2:LTerm)
       | Plus(t1:LTerm,t2:LTerm)
+      | Minus(t1:LTerm,t2:LTerm)
+      | Times(t1:LTerm,t2:LTerm)
+// side effects
+      | Print(t:LTerm)
 
 Lam binds LVar = lam(x:LVar, inner t:LTerm)
 Letin binds LVar = letin(x:LVar, outer u:LTerm, inner t:LTerm)
+Fixpoint binds LVar = fixpoint(x:LVar, inner t:LTerm)
 
 

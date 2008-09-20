@@ -15,13 +15,14 @@ grammar Lambda;
 
 toplevel returns [ArrayList<RawLTerm> res]
 @init { res = new ArrayList<RawLTerm>(); }
-: x=lterm { $res.add(x); } (SEMI x=lterm { $res.add(x); } )*
+: x=lterm { $res.add(x); } (DOUBLESEMI x=lterm { $res.add(x); } )*
 ;
 
 lterm returns [RawLTerm res]
 : t=app_lterm { $res=t; }
 | LAMBDA ID DOT t=lterm { $res = `RawAbs(Rawlam($ID.text,t)); }
 | LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,u,t)); }
+| LET REC ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,RawFix(Rawfixpoint($ID.text,u)),t)); }
 | IF b=lterm THEN u=lterm ELSE v=lterm END { $res = `RawBranch(b,u,v); }
 ;
 
@@ -34,6 +35,7 @@ app_lterm returns [RawLTerm res]
 aterm returns [RawLTerm res]
 : '(' w=lterm ')' { $res = w; }
 | ID { $res=`RawVar($ID.text); }
+| UNIT { $res = `RawUnit(); }
 | NUM { 
    try { $res = `RawInteger(Integer.parseInt($NUM.text)); }
    catch (NumberFormatException e) { throw new RuntimeException(); } 
@@ -42,6 +44,9 @@ aterm returns [RawLTerm res]
 | FALSE  { $res = `RawFalse(); }
 | EQ  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawEq(RawVar("x"),RawVar("y")))))); }
 | PLUS  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawPlus(RawVar("x"),RawVar("y")))))); }
+| MINUS  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawMinus(RawVar("x"),RawVar("y")))))); }
+| TIMES  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawTimes(RawVar("x"),RawVar("y")))))); }
+| PRINT { $res = `RawAbs(Rawlam("x",RawPrint(RawVar("x")))); }
 ;
 
 COMMENT : '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;} ;
@@ -62,8 +67,12 @@ TRUE : 'true';
 FALSE : 'false';
 EQ : 'eq';
 PLUS : 'plus';
+MINUS : 'minus';
+TIMES : 'times';
 CALLCC : 'callcc';
 THROW : 'throw';
+PRINT : 'print';
+UNIT : '()';
 
 ID : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 UPID : ('A'..'Z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
@@ -72,6 +81,7 @@ NUM : ('0'..'9')+ ;
 
 COMMA : ',';
 SEMI  : ';' ;
+DOUBLESEMI : ';;';
 
 EQUALS  : '=' ;
 
