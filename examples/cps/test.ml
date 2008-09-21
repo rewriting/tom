@@ -46,13 +46,13 @@ let f = fun x -> fun k -> throw k 1 in
 let pair = fun x -> fun y -> fun p -> p x y 
 in let fst = fun p -> p (fun x -> fun y -> x) 
 in let snd = fun p -> p (fun x -> fun y -> y) 
-in let gen = fun freeze -> callcc (fun k ->
+in let gen = fun n -> callcc (fun k ->
   (let rec aux = fun x -> 
      (callcc (fun j -> throw k (pair x j)); aux (plus x 1))
-  in aux 0)
+  in aux n)
 )
-in let p = gen () 
+in let p = gen 0 
 in let n = fst p
 in let k = snd p
-in (print n; if eq n 4 then () else throw k () end)
+in (print n; if eq n 20 then () else throw k () end)
 

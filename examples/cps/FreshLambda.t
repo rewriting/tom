@@ -80,6 +80,19 @@ public class FreshLambda {
     return null;
   }
 
+  %strategy Admin() extends Identity() {
+    visit LTerm {
+      App(Abs(lam(x,t)),u@(Integer|Plus|Minus|Times|Eq|Unit|Var|Abs|Fix)[]) -> {
+        return `substitute(t,x,u);
+      }
+    }
+  }
+
+  public static LTerm admin(LTerm t) {
+    try { return (LTerm) `InnermostId(Admin()).visit(t); }
+    catch(Exception e) { throw new RuntimeException(); }
+  }
+
   public static LTerm eval(LTerm t) {
     %match(t) {
       (Integer|True|False|Abs|Fix|Unit)[] -> { return `t; }
@@ -134,8 +147,8 @@ public class FreshLambda {
         System.out.println("\nparsed: " + Printer.pretty(rt));
         LTerm ct = rt.convert(); 
         //System.out.println("\nnormal form : " + Printer.pretty(eval(ct).export()));
-        LTerm cpst = cps(ct);
-        //System.out.println("\ncps translation : " + Printer.pretty(cpst.export()));
+        LTerm cpst = admin(cps(ct));
+        System.out.println("\ncps translation : " + Printer.pretty(cpst.export()));
         LVar fresh = LVar.freshLVar("x");
         LTerm id = `Abs(lam(fresh,Var(fresh)));
         System.out.println("\nnormal form : " + Printer.pretty(eval(`App(cpst,id)).export()));
