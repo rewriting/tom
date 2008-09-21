@@ -33,6 +33,10 @@ let g = f 2 in
 (callcc g)
 ;;
 
+let f = fun x -> fun k -> throw k 1 in
+(callcc (f 2))
+;;
+
 (times (minus 4 (plus 3 2)) 2)
 ;;
 
@@ -52,5 +56,5 @@ in let gen = fun freeze -> callcc (fun k ->
 in let p = gen () 
 in let n = fst p
 in let k = snd p
-in seq (print n) (if eq n 10 then () else throw k ())
+in seq (print n) (if eq n 4 then () else throw k () end)
 

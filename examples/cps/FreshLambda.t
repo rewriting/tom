@@ -67,7 +67,8 @@ public class FreshLambda {
       }
       CallCC(a) -> {
         LVar k = LVar.freshLVar("k");
-        return `Abs(lam(k,App(App(cpsaux(a),Var(k)),Var(k))));
+        LVar va = LVar.freshLVar("va");
+        return `Abs(lam(k,App(cps(a),Abs(lam(va,App(App(Var(va),Var(k)),Var(k)))))));
       }
       Throw(a,b) -> {
         LVar k = LVar.freshLVar("k");
