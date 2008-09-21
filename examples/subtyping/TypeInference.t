@@ -75,7 +75,7 @@ public class TypeInference {
   private static ConstraintList getConstraintPair(ReconResultList rrlist, ConstraintList cl) {
     %match(rrlist) {
       RRList() -> { return cl; }
-      RRList(rresult,rreslist*) && Pair(ty,cons) << rresult
+      RRList(rresult,rreslist*) && Pair(_,cons) << rresult
       -> { return `getConstraintPair(rreslist,CList(cons*,cl*)); }
     }
     throw new RuntimeException("Error during the union of constraints.");
@@ -254,8 +254,8 @@ public class TypeInference {
   private static ConstraintList reconArgs(Context ctx, TomTermList args, Domain dom, ConstraintList cons) {
     %match(args,dom) {
       TTeList(), Domain() -> { return cons; }
-      TTeList(term,terms*), Domain(tDom,types*) && Pair(tArg,cons) << reconTerm(ctx,term) -> {
-        ConstraintList cl = `CList(Subtype(tArg,tDom),cons*);
+      TTeList(term,terms*), Domain(tDom,types*) && Pair(tArg,cons_t) << reconTerm(ctx,term) -> {
+        ConstraintList cl = `CList(Subtype(tArg,tDom),cons*,cons_t*);
         return `reconArgs(ctx,terms,types,cl);
       }
     }
