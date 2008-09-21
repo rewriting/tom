@@ -40,21 +40,19 @@ let f = fun x -> fun k -> throw k 1 in
 (times (minus 4 (plus 3 2)) 2)
 ;;
 
-let seq = fun a -> fun b -> (fun x -> b) a 
-in (seq (print 1) (print 2))
+(print 1; print 2)
 ;;
 
-let seq = fun a -> fun b -> (fun x -> b) a  
-in let pair = fun x -> fun y -> fun p -> p x y 
+let pair = fun x -> fun y -> fun p -> p x y 
 in let fst = fun p -> p (fun x -> fun y -> x) 
 in let snd = fun p -> p (fun x -> fun y -> y) 
 in let gen = fun freeze -> callcc (fun k ->
   (let rec aux = fun x -> 
-    seq (callcc (fun j -> throw k (pair x j))) (aux (plus x 1))
+     (callcc (fun j -> throw k (pair x j)); aux (plus x 1))
   in aux 0)
 )
 in let p = gen () 
 in let n = fst p
 in let k = snd p
-in seq (print n) (if eq n 4 then () else throw k () end)
+in (print n; if eq n 4 then () else throw k () end)
 

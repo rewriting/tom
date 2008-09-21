@@ -33,7 +33,7 @@ app_lterm returns [RawLTerm res]
 ;
 
 aterm returns [RawLTerm res]
-: '(' w=lterm ')' { $res = w; }
+: '(' w=ltermseq ')' { $res = w; }
 | ID { $res=`RawVar($ID.text); }
 | UNIT { $res = `RawUnit(); }
 | NUM { 
@@ -47,6 +47,10 @@ aterm returns [RawLTerm res]
 | MINUS  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawMinus(RawVar("x"),RawVar("y")))))); }
 | TIMES  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawTimes(RawVar("x"),RawVar("y")))))); }
 | PRINT { $res = `RawAbs(Rawlam("x",RawPrint(RawVar("x")))); }
+;
+
+ltermseq returns [RawLTerm res]
+: t=lterm { $res=t; } (SEMI t=lterm { $res=`RawApp(RawAbs(Rawlam("_",t)),$res); })* 
 ;
 
 COMMENT : '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;} ;
