@@ -13,6 +13,8 @@ public class Printer {
       RawPlus(x,y) -> { return %[(@`pretty(x)@ + @`pretty(y)@)]%; }
       RawMinus(x,y) -> { return %[(@`pretty(x)@ - @`pretty(y)@)]%; }
       RawTimes(x,y) -> { return %[(@`pretty(x)@ * @`pretty(y)@)]%; }
+      RawGT(x,y) -> { return %[(@`pretty(x)@ > @`pretty(y)@)]%; }
+      RawLT(x,y) -> { return %[(@`pretty(x)@ < @`pretty(y)@)]%; }
       RawTrue() -> { return "true"; }
       RawFalse() -> { return "false"; }
       RawInteger(i) -> { return ""+`i; }

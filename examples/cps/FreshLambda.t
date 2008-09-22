@@ -22,6 +22,8 @@ public class FreshLambda {
       Plus(t1,t2) -> { return `Plus(substitute(t1,x,u),substitute(t2,x,u)); }
       Minus(t1,t2) -> { return `Minus(substitute(t1,x,u),substitute(t2,x,u)); }
       Times(t1,t2) -> { return `Times(substitute(t1,x,u),substitute(t2,x,u)); }
+      GT(t1,t2) -> { return `GT(substitute(t1,x,u),substitute(t2,x,u)); }
+      LT(t1,t2) -> { return `LT(substitute(t1,x,u),substitute(t2,x,u)); }
       Eq(t1,t2) -> { return `Eq(substitute(t1,x,u),substitute(t2,x,u)); }
       Print(t1) -> { return `Print(substitute(t1,x,u)); }
       _ -> { return `t; }
@@ -31,7 +33,7 @@ public class FreshLambda {
 
   public static LTerm cpsaux(LTerm t) {
     %match(t) {
-      (Var|Integer|Unit|Plus|Minus|Times|Eq|Print)[] -> { 
+      (True|False|Var|Integer|Unit|Plus|Minus|Times|GT|LT|Eq|Print)[] -> { 
         return t;
       }
       Abs(lam(x,m)) -> {
@@ -46,7 +48,7 @@ public class FreshLambda {
 
   public static LTerm cps(LTerm t) {
     %match(t) {
-      (Integer|Plus|Minus|Times|Eq|Print|Unit|Var|Abs|Fix)[] -> { 
+      (True|False|Integer|Plus|Minus|Times|GT|LT|Eq|Print|Unit|Var|Abs|Fix)[] -> { 
         LVar k = LVar.freshLVar("k");
         return `Abs(lam(k,App(Var(k),cpsaux(t))));
       }
@@ -82,7 +84,7 @@ public class FreshLambda {
 
   %strategy Admin() extends Identity() {
     visit LTerm {
-      App(Abs(lam(x,t)),u@(Integer|Plus|Minus|Times|Eq|Unit|Var|Abs|Fix)[]) -> {
+      App(Abs(lam(x,t)),u@(True|False|Integer|Plus|Minus|Times|Eq|Unit|Var|Abs|Fix)[]) -> {
         return `substitute(t,x,u);
       }
     }
@@ -116,6 +118,12 @@ public class FreshLambda {
         int r = `(n) * `(m);
         return `Integer(r);
       }
+      GT(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
+        return `n > `m ? `True() : `False();
+      }
+      LT(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
+        return `n < `m ? `True() : `False();
+      }
       Print(x) -> {
         System.out.println("prints: " + Printer.pretty(`x.export()));
         return `Unit();
@@ -134,6 +142,7 @@ public class FreshLambda {
         return `eval(res);
       }
     }
+    System.out.println(t);
     throw new RuntimeException();
   }
 

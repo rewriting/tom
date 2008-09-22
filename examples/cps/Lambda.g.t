@@ -47,6 +47,8 @@ aterm returns [RawLTerm res]
 | MINUS  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawMinus(RawVar("x"),RawVar("y")))))); }
 | TIMES  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawTimes(RawVar("x"),RawVar("y")))))); }
 | PRINT { $res = `RawAbs(Rawlam("x",RawPrint(RawVar("x")))); }
+| GT  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawGT(RawVar("x"),RawVar("y")))))); }
+| LT  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawLT(RawVar("x"),RawVar("y")))))); }
 ;
 
 ltermseq returns [RawLTerm res]
@@ -77,6 +79,8 @@ CALLCC : 'callcc';
 THROW : 'throw';
 PRINT : 'print';
 UNIT : '()';
+GT : 'gt';
+LT : 'lt';
 
 ID : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 UPID : ('A'..'Z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;

@@ -21,6 +21,8 @@ LTerm = App(t1:LTerm,t2:LTerm)
       | Plus(t1:LTerm,t2:LTerm)
       | Minus(t1:LTerm,t2:LTerm)
       | Times(t1:LTerm,t2:LTerm)
+      | GT(t1:LTerm,t2:LTerm)
+      | LT(t1:LTerm,t2:LTerm)
 // side effects
       | Print(t:LTerm)
 
