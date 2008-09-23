@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the bdd example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="bdd" value="bdd"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${bdd}"/>
+    <delete dir="${examples.build}/${bdd}"/>
+  </target>
+  <target name="build" depends="init">
+    <gombuild example="${bdd}"/>
+    <tomcompile example="${bdd}"/>
+    <javacompile example="${bdd}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${bdd}/*.t"/>
+        <include name="${bdd}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

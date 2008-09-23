@@ -1,0 +1,90 @@
+module bdd.Bdd
+imports int String
+
+abstract syntax
+Node =
+  | Cst(value:int)
+  | Var(index:int, low:Node, high:Node)
+  | Apply(op:Operator, u1:Node, u2:Node)
+
+Operator =
+  | OpAnd()
+  | OpOr()
+  | OpImp()
+  | OpIff()
+  | OpNot()
+
+sort Node:rules() {
+  Apply(OpAnd(),Cst(1),x) -> x
+  Apply(OpAnd(),x,Cst(1)) -> x
+  Apply(OpAnd(),Cst(0),x) -> Cst(0)
+  Apply(OpAnd(),x,Cst(0)) -> Cst(0)
+
+  Apply(OpOr(),x,x) -> x
+  Apply(OpOr(),Cst(1),x) -> Cst(1)
+  Apply(OpOr(),x,Cst(1)) -> Cst(1)
+  Apply(OpOr(),Cst(0),x) -> x
+  Apply(OpOr(),x,Cst(0)) -> x
+
+  Apply(OpImp(),Cst(0),x) -> Cst(1)
+  Apply(OpImp(),Cst(1),x) -> x
+  Apply(OpImp(),x,Cst(1)) -> Cst(1)
+
+  Apply(OpIff(),x,x) -> Cst(1)
+  Apply(OpIff(),Cst(1),x) -> x
+  Apply(OpIff(),x,Cst(1)) -> x
+
+  Apply(OpNot(),Cst(1),_) -> Cst(0)
+  Apply(OpNot(),Cst(0),_) -> Cst(1)
+}
+
+
+Pair = Pair(u1:Node,u2:Node)
+
+Solution = 
+  | NoSolution()
+  | concAssignment(Assignment*)
+Assignment =  Assignment(index:int,value:int)
+SolutionList = concSolution(Solution*)
+PairList = concPair(Pair*)
+
+Var:make(i,l,h) {
+  if(l==h) {
+    return l;
+  }
+}
+
+Formula =
+  | FFalse()
+  | FTrue()
+  | FVar(index:int)
+  | FAnd(a:Formula,b:Formula)
+  | FOr(a:Formula,b:Formula)
+  | FImp(a:Formula,b:Formula)
+  | FIff(a:Formula,b:Formula)
+  | FNot(a:Formula)
+
+sort Formula:rules() {
+  FAnd(FTrue(),x) -> x
+  FAnd(x,FTrue()) -> x
+  FAnd(FFalse(),x) -> FFalse()
+  FAnd(x,FFalse()) -> FFalse()
+
+  FOr(FTrue(),x) -> FTrue()
+  FOr(x,FTrue()) -> FTrue()
+  FOr(FFalse(),x) -> x
+  FOr(x,FFalse()) -> x
+
+  FImp(FFalse(),x) -> FTrue()
+  FImp(FTrue(),x) -> x
+
+  FIff(x,x) -> FTrue()
+  FIff(FTrue(),FFalse()) -> FFalse() 
+  FIff(FFalse(),FTrue()) -> FFalse() 
+
+  FNot(FTrue()) -> FFalse()
+  FNot(FFalse()) -> FTrue()
+
+}
+
+
