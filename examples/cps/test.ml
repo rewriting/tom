@@ -1,6 +1,6 @@
 let rec fact = fun n -> 
   if eq n 0 then 1 else times n (fact (minus n 1)) end
-in (fact 5)
+in (fact 15)
 ;;
 
 (fun x -> fun y -> x) 1 2
@@ -16,8 +16,10 @@ let f = fun x -> if eq x 2 then 1 else plus x 1 end
 in f 3
 ;;
 
+(*
 eq (fun x -> x) (fun y -> y)
 ;;
+*)
 
 callcc (fun k -> throw k 1) 
 ;;
@@ -43,6 +45,7 @@ let f = fun x -> fun k -> throw k 1 in
 (print 1; print 2)
 
 ;;
+
 let pair = fun x -> fun y -> fun p -> p x y 
 in let fst = fun p -> p (fun x -> fun y -> x) 
 in let snd = fun p -> p (fun x -> fun y -> y) 
@@ -61,7 +64,7 @@ in (print n; if eq n 20 then () else throw k () end)
 let rec fib = fun n ->
   if eq n 0 then 0 else if eq n 1 then 1 else plus (fib (minus n 1)) (fib (minus
   n 2)) end end
-in (fib 6)
+in (fib 10)
 ;;
 
 (* prolog-like callcc use : enumerate elts > 3 in a list *)
@@ -93,7 +96,7 @@ in let rec find = fun pred -> fun l ->
     (iter (fun x -> if pred x then (callcc (fun kk -> throw k (some (pair x kk)))) else () end) l;
     none)
   )
-in let l = (cons 7 (cons 3 (cons 4 (cons 5 (cons 1 (cons 6 nil))))))
+in let l = (cons 2 (cons 4 (cons 7 (cons 3 (cons 4 (cons 5 (cons 1 (cons 6 nil))))))))
 in let m = find (fun x-> gt x 3) l
 in if issome m then let xk = getsome m in (print (fst xk); throw (snd xk) ()) else () end 
 )

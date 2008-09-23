@@ -95,54 +95,65 @@ public class FreshLambda {
     catch(Exception e) { throw new RuntimeException(); }
   }
 
-  public static LTerm eval(LTerm t) {
+  public static Value lookup(Env e, LVar x) {
+    %match(e) {
+      Env(_*,EPair(y,v),_*) && y << LVar x -> { return `v; }
+    }
+    throw new RuntimeException("Variable out of scope : " + `x);
+  }
+
+  public static Value eval(Env e, LTerm t) {
     %match(t) {
-      (Integer|True|False|Abs|Fix|Unit)[] -> { return `t; }
+      Var(v) -> { return `lookup(e,v); }
+      Integer(i) -> { return `VInt(i); }
+      True() -> { return `VBool(true); }
+      False() -> { return `VBool(false); }
+      Abs[] -> { return `VClos(t,e); }
+      Fix[] -> { return `VClos(t,e); }
+      Unit() -> { return `VUnit(); }
       Branch(a,b,c) -> {
-        %match(eval(a)) {
-          True() -> { return `eval(b); }
-          False() -> { return `eval(c); }
+        %match(eval(e,a)) {
+          VBool(x) -> { return (`x) ? `eval(e,b) : `eval(e,c); }
         }
       }
       Let(letin(x,a,b)) -> {
-        LTerm v = `eval(a);
-        return `eval(substitute(b,x,v));
+        Value v = `eval(e,a);
+        return `eval(Env(EPair(x,v),e*),b);
       }
-      Plus(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
-        return `Integer(n + m);
+      Plus(a,b) && VInt(n) << eval(e,a) && VInt(m) << eval(e,b) -> {
+        return `VInt(n + m);
       }
-      Minus(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
-        return `Integer(n - m);
+      Minus(a,b) && VInt(n) << eval(e,a) && VInt(m) << eval(e,b) -> {
+        return `VInt(n - m);
       }
-      Times(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
+      Times(a,b) && VInt(n) << eval(e,a) && VInt(m) << eval(e,b) -> {
         int r = `(n) * `(m);
-        return `Integer(r);
+        return `VInt(r);
       }
-      GT(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
-        return `n > `m ? `True() : `False();
+      GT(a,b) && VInt(n) << eval(e,a) && VInt(m) << eval(e,b) -> {
+        return `VBool(n > m);
       }
-      LT(a,b) && Integer(n) << eval(a) && Integer(m) << eval(b) -> {
-        return `n < `m ? `True() : `False();
+      LT(a,b) && VInt(n) << eval(e,a) && VInt(m) << eval(e,b) -> {
+        return `VBool(n < m);
       }
       Print(x) -> {
-        System.out.println("prints: " + Printer.pretty(`x.export()));
-        return `Unit();
+        System.out.println("prints: " + Printer.pretty(`eval(e,x)));
+        return `VUnit();
       }
       Eq(a,b) -> {
-        return `eval(a).equals(`eval(b)) ? `True() : `False();
+        return `VBool(eval(e,a).equals(eval(e,b)));
       }
-      App(a,b) && Abs(lam(x,c)) << eval(a) -> {
-        LTerm v = `eval(b);
-        return `eval(substitute(c,x,v));
+      App(a,b) && VClos(Abs(lam(x,c)),ee) << eval(e,a) -> {
+        Value v = `eval(e,b);
+        return `eval(Env(EPair(x,v),ee*),c);
       }
-      App(a,b) && Fix(fixpoint(f,Abs(lam(x,c)))) << eval(a) -> {
-        LTerm v = `eval(b);
-        LTerm res = `substitute(c,x,v);
-        res = `substitute(res,f,Fix(fixpoint(f,Abs(lam(x,c)))));
-        return `eval(res);
+      App(a,b) && cl@VClos(Fix(fixpoint(f,Abs(lam(x,c)))),ee) << eval(e,a) -> {
+        Value v = `eval(e,b);
+        Env env = `Env(EPair(f,cl),EPair(x,v),ee*);
+        return `eval(env,c);
       }
     }
-    System.out.println(t);
+    //System.out.println(t);
     throw new RuntimeException();
   }
 
@@ -153,14 +164,21 @@ public class FreshLambda {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       LambdaParser parser = new LambdaParser(tokens);
       for(RawLTerm rt:parser.toplevel()) {
+        System.out.println("\n------------------------------------------");
         System.out.println("\nparsed: " + Printer.pretty(rt));
         LTerm ct = rt.convert(); 
         //System.out.println("\nnormal form : " + Printer.pretty(eval(ct).export()));
-        LTerm cpst = admin(cps(ct));
-        System.out.println("\ncps translation : " + Printer.pretty(cpst.export()));
+        System.out.print("\ncps translation ... ");
+        System.out.flush();
+        LTerm cpst = cps(ct);
+        System.out.print("optimization ... ");
+        System.out.flush();
+        LTerm ocpst = admin(cpst);
+        //System.out.println("\ncps translation : " + Printer.pretty(ocpst.export()));
         LVar fresh = LVar.freshLVar("x");
         LTerm id = `Abs(lam(fresh,Var(fresh)));
-        System.out.println("\nnormal form : " + Printer.pretty(eval(`App(cpst,id)).export()));
+        System.out.println(" evaluation\n");
+        System.out.println("\nnormal form: " + Printer.pretty(`eval(Env(),App(ocpst,id))));
       }
     } catch(Exception e) {
       e.printStackTrace();

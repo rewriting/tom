@@ -7,6 +7,16 @@ public class Printer {
 
   %include { lambda/Lambda.tom }
 
+  public static String pretty(Value v) {
+    %match(v) {
+      VUnit() -> { return "()"; }
+      VInt(i) -> { return `i+""; }
+      VBool(b) -> { return `b+""; }
+      VClos[] -> { return "<fun>"; }
+    }
+    return null;
+  }
+
   public static String pretty(RawLTerm t) {
     %match (t) {
       RawEq(x,y) -> { return %[(@`pretty(x)@ = @`pretty(y)@)]%; }
