@@ -25,6 +25,9 @@ public class Printer {
       RawTimes(x,y) -> { return %[(@`pretty(x)@ * @`pretty(y)@)]%; }
       RawGT(x,y) -> { return %[(@`pretty(x)@ > @`pretty(y)@)]%; }
       RawLT(x,y) -> { return %[(@`pretty(x)@ < @`pretty(y)@)]%; }
+      RawOr(x,y) -> { return %[(@`pretty(x)@ || @`pretty(y)@)]%; }
+      RawAnd(x,y) -> { return %[(@`pretty(x)@ && @`pretty(y)@)]%; }
+      RawLNot(x) -> { return %[(not @`pretty(x)@)]%; }
       RawTrue() -> { return "true"; }
       RawFalse() -> { return "false"; }
       RawInteger(i) -> { return ""+`i; }

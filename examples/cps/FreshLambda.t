@@ -25,6 +25,9 @@ public class FreshLambda {
       GT(t1,t2) -> { return `GT(substitute(t1,x,u),substitute(t2,x,u)); }
       LT(t1,t2) -> { return `LT(substitute(t1,x,u),substitute(t2,x,u)); }
       Eq(t1,t2) -> { return `Eq(substitute(t1,x,u),substitute(t2,x,u)); }
+      Or(t1,t2) -> { return `Or(substitute(t1,x,u),substitute(t2,x,u)); }
+      And(t1,t2) -> { return `And(substitute(t1,x,u),substitute(t2,x,u)); }
+      LNot(t1) -> { return `LNot(substitute(t1,x,u)); }
       Print(t1) -> { return `Print(substitute(t1,x,u)); }
       _ -> { return `t; }
     }
@@ -33,7 +36,7 @@ public class FreshLambda {
 
   public static LTerm cpsaux(LTerm t) {
     %match(t) {
-      (True|False|Var|Integer|Unit|Plus|Minus|Times|GT|LT|Eq|Print)[] -> { 
+      (True|False|Var|Integer|Unit|Plus|Minus|Times|GT|LT|Eq|LNot|And|Or|Print)[] -> { 
         return t;
       }
       Abs(lam(x,m)) -> {
@@ -48,7 +51,7 @@ public class FreshLambda {
 
   public static LTerm cps(LTerm t) {
     %match(t) {
-      (True|False|Integer|Plus|Minus|Times|GT|LT|Eq|Print|Unit|Var|Abs|Fix)[] -> { 
+      (True|False|Integer|Plus|Minus|Times|GT|LT|Eq|LNot|And|Or|Print|Unit|Var|Abs|Fix)[] -> { 
         LVar k = LVar.freshLVar("k");
         return `Abs(lam(k,App(Var(k),cpsaux(t))));
       }
@@ -84,7 +87,7 @@ public class FreshLambda {
 
   %strategy Admin() extends Identity() {
     visit LTerm {
-      App(Abs(lam(x,t)),u@(True|False|Integer|Plus|Minus|Times|Eq|Unit|Var|Abs|Fix)[]) -> {
+      App(Abs(lam(x,t)),u@(True|False|Integer|Plus|Minus|Times|Eq|LNot|And|Or|Unit|Var|Abs|Fix)[]) -> {
         return `substitute(t,x,u);
       }
     }
@@ -142,6 +145,15 @@ public class FreshLambda {
       }
       Eq(a,b) -> {
         return `VBool(eval(e,a).equals(eval(e,b)));
+      }
+      Or(a,b) && VBool(x) << eval(e,a) && VBool(y) << eval(e,b) -> {
+        return `VBool(x || y);
+      }
+      And(a,b) && VBool(x) << eval(e,a) && VBool(y) << eval(e,b) -> {
+        return `VBool(x && y);
+      }
+      LNot(a) && VBool(x) << eval(e,a) -> {
+        return `VBool(!x);
       }
       App(a,b) && VClos(Abs(lam(x,c)),ee) << eval(e,a) -> {
         Value v = `eval(e,b);

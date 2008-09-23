@@ -4,10 +4,20 @@ grammar Lambda;
 @header {
   import lambda.types.*;
   import java.util.ArrayList;
+  import java.util.Collections;
 }
 
 @members {
   %include { lambda/Lambda.tom }
+
+  public static RawLTerm makeWithArgs(ArrayList<String> args, RawLTerm t) {
+    Collections.reverse(args);
+    for(String x:args) {
+      t = `RawAbs(Rawlam(x,t));
+    }
+    return t;
+  }
+
 }
 
 @lexer::header {
@@ -18,11 +28,20 @@ toplevel returns [ArrayList<RawLTerm> res]
 : x=lterm { $res.add(x); } (DOUBLESEMI x=lterm { $res.add(x); } )*
 ;
 
+args returns [ArrayList<String> res]
+@init { res = new ArrayList<String>(); }
+: (ID { $res.add($ID.text); } )*
+;
+
 lterm returns [RawLTerm res]
 : t=app_lterm { $res=t; }
 | LAMBDA ID DOT t=lterm { $res = `RawAbs(Rawlam($ID.text,t)); }
-| LET ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,u,t)); }
-| LET REC ID EQUALS u=lterm IN t=lterm { $res = `RawLet(Rawletin($ID.text,RawFix(Rawfixpoint($ID.text,u)),t)); }
+| LET ID a=args EQUALS u=lterm IN t=lterm { 
+    $res = `RawLet(Rawletin($ID.text,makeWithArgs(a,u),t)); 
+  }
+| LET REC ID a=args EQUALS u=lterm IN t=lterm { 
+    $res = `RawLet(Rawletin($ID.text,RawFix(Rawfixpoint($ID.text,makeWithArgs(a,u))),t)); 
+  }
 | IF b=lterm THEN u=lterm ELSE v=lterm END { $res = `RawBranch(b,u,v); }
 ;
 
@@ -49,6 +68,9 @@ aterm returns [RawLTerm res]
 | PRINT { $res = `RawAbs(Rawlam("x",RawPrint(RawVar("x")))); }
 | GT  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawGT(RawVar("x"),RawVar("y")))))); }
 | LT  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawLT(RawVar("x"),RawVar("y")))))); }
+| AND  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawAnd(RawVar("x"),RawVar("y")))))); }
+| OR  { $res = `RawAbs(Rawlam("x",RawAbs(Rawlam("y",RawOr(RawVar("x"),RawVar("y")))))); }
+| NOT { $res = `RawAbs(Rawlam("x",RawLNot(RawVar("x")))); }
 ;
 
 ltermseq returns [RawLTerm res]
@@ -81,6 +103,9 @@ PRINT : 'print';
 UNIT : '()';
 GT : 'gt';
 LT : 'lt';
+NOT : 'not';
+AND : 'and';
+OR : 'or';
 
 ID : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 UPID : ('A'..'Z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
