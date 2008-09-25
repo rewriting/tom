@@ -52,7 +52,7 @@ Jugement = Jugement(var: String, type: TomType)
 
 Context = Context(Jugement*)
 
-Mapping = MapsTo(tvar: int, type: TomType)
+Mapping = MapsTo(tvar: TomType, type: TomType)
 
 Substitution = MList(Mapping*)
 
