@@ -297,9 +297,7 @@ public class GraphExpander {
 
     String codeBlockTermGraph =%[
 
-   public @fullClassName(abstractType)@ expand(){
-       Info info = new Info();
-       ArrayList marked = new ArrayList();
+   public @fullClassName(abstractType)@ expand() {
        HashMap map = new HashMap();
        try {
          return ((@fullClassName(abstractType)@)`InnermostIdSeq(NormalizeLabel(map)).visit(this.unexpand())).label2path();
@@ -308,7 +306,16 @@ public class GraphExpander {
        }
      }
 
-    protected @fullClassName(abstractType)@ label2path(){
+    public @fullClassName(abstractType)@ normalizeWithLabels() {
+      HashMap map = new HashMap();
+      try {
+        return ((@fullClassName(abstractType)@)`InnermostIdSeq(NormalizeLabel(map)).visit(this));
+      } catch (tom.library.sl.VisitFailure e) {
+        throw new RuntimeException("Unexpected strategy failure!");
+      }
+    }
+
+    public @fullClassName(abstractType)@ label2path() {
       HashMap map = new HashMap();
       Strategy label2path = `Sequence(RepeatId(OnceTopDownId(CollectAndRemoveLabels(map))),TopDown(Label2Path(map)));
       try {

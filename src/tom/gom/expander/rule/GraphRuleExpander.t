@@ -114,7 +114,13 @@ public class GraphRuleExpander {
 %include {sl.tom }
 %typeterm tom_StringList {
   implement      { java.util.List<String> }
-  is_sort(t)      { $t instanceof java.util.List }  
+  is_sort(t)     { $t instanceof java.util.List }  
+  equals(l1,l2)  { $l1.equals($l2) }
+}
+
+%typeterm tom_StringPositionMap {
+  implement      { java.util.Map<String,Position> }
+  is_sort(t)     { $t instanceof java.util.Map }  
   equals(l1,l2)  { $l1.equals($l2) }
 }
 
@@ -222,75 +228,17 @@ static class Subst extends @fullClassName(abstractType)@ {
 
 }
 
-static class Substitution {
-  public Position omega;
-  @fullClassName(abstractType)@ value;
-
-  public Substitution(Position omega, @fullClassName(abstractType)@ value) {
-    this.omega = omega;
-    this.value = value;
-  }
-
-  public String toString() {
-    return "<"+omega+","+value+">";
-  }
-}
-
-  protected static java.util.List<Substitution> getSubstitutions(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, Position omega) {
-    java.util.List<String> sharedlabels = new java.util.ArrayList();
+  protected static java.util.List<SharedLabel> getSharedLabels(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs) {
+    java.util.ArrayList<SharedLabel> sharedlabels = new java.util.ArrayList();
     java.util.HashMap<String,Position> lhsLabels = labelledLhs.getMapFromLabelToPositionAndRemoveLabels();
-    java.util.HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPosition();
+    java.util.HashMap<String,Position> rhsLabels = labelledRhs.getMapFromLabelToPositionAndRemoveLabels();
     for (String labelRhs: rhsLabels.keySet()) {
       if (lhsLabels.containsKey(labelRhs)) {
-        sharedlabels.add(labelRhs);
+        sharedlabels.add(new SharedLabel(labelRhs,lhsLabels.get(labelRhs),rhsLabels.get(labelRhs)));
       }
     }
-
-    java.util.List<Substitution> substitutions = new java.util.ArrayList<Substitution>();
-    
-     // add a substitution for each shared label
-    for (String sharedlabel: sharedlabels) {
-      Position posLhs = lhsLabels.get(sharedlabel);
-      Position posRhs = rhsLabels.get(sharedlabel);
-      Substitution subst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel(sharedlabel,posLhs,posRhs),sharedlabels,omega);
-      substitutions.add(subst);
-    }
-
-    // add the substitution for the root position at the end of the list
-    // the root subtitution must be necessary applied at the end
-    Substitution rootsubst = computeSubstitution(labelledLhs,labelledRhs,new SharedLabel("",new Position(new int[]{}),new Position(new int[]{})),sharedlabels,omega);
-    substitutions.add(rootsubst);
-    
-    return substitutions;
+    return sharedlabels;
   }
-
-
-  %strategy ReplaceSharedLabelByVar(sharedlabels:tom_StringList,sharedlabel:tom_SharedLabel) extends Identity() {
-    visit @sortname@ {
-      Lab@sortname@[label@sortname@=label] -> {
-        if (`label.equals(sharedlabel.label)) {
-          throw new VisitFailure();
-        } else {
-          if(sharedlabels.contains(`label)) {
-            return `Var@sortname@(label);
-          }
-        }
-      }
-    }
-  }
-
-  private static Substitution computeSubstitution(@fullClassName(abstractType)@ labelledLhs, @fullClassName(abstractType)@ labelledRhs, SharedLabel sharedlabel, java.util.List<String> sharedlabels, Position omega) {
-    try {
-      @fullClassName(abstractType)@ lhs = (@fullClassName(abstractType)@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledLhs);
-      @fullClassName(abstractType)@ rhs = (@fullClassName(abstractType)@) `Try(BottomUp(ReplaceSharedLabelByVar(sharedlabels,sharedlabel))).visit(labelledRhs);
-      lhs = (@fullClassName(abstractType)@) lhs.expand();
-      rhs = (@fullClassName(abstractType)@) sharedlabel.posRhs.getSubterm().visit(rhs);
-      return new Substitution((Position) omega.add(sharedlabel.posLhs),(@fullClassName(abstractType)@) `TopDown(FromVarToPath(lhs,omega)).visit(rhs));
-    } catch(VisitFailure e) { 
-      throw new RuntimeException("Unexpected strategy failure!");
-    }
-  }
-
 
   %strategy FromVarToPath(lhs:tom_@abstractType.getName()@,omega:Position) extends Identity() {
 ]%);
@@ -315,7 +263,7 @@ static class Substitution {
 
   output.append(%[
   }
-
+  
   private static Position getVarPos(@fullClassName(abstractType)@ term, String varname) {
     Position p = new Position();
     try {
@@ -417,56 +365,56 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
             output.append(%[
                 @genTerm(`lhs)@ -> {
 
-                /* 1. save the current pos w */
+                /* 1. set needed positions */
                 Position omega = getEnvironment().getPosition();
                 Position posFinal = new Position(new int[]{1});
                 Position posRhs = new Position(new int[]{2});
+                Position newomega = (Position) posFinal.add(omega);
 
                 /* 2. go to the root and get the global term-graph */
                 getEnvironment().followPath(omega.inverse());
-
-                @fullClassName(abstractType)@ labelledLhs = `@genTermWithExplicitVar(`lhs,"root",0)@;
-                @fullClassName(abstractType)@ labelledRhs = `@genTermWithExplicitVar(`rhs,"root",0)@;
                 @fullClassName(abstractType)@ subject = (@fullClassName(abstractType)@) getEnvironment().getSubject();             
-                
-                //compute all the different substitutions
-                java.util.List<Substitution> substitutions = getSubstitutions(labelledLhs,labelledRhs,omega);
-                
-                /* 3. construct tt=SubstTerm(subject',r') */
-                for (Substitution subst: substitutions) {
-                  @fullClassName(abstractType)@ r = subst.value;
-                  //System.out.println("subst "+r);
-                  Position posRedex = subst.omega;
-                  //System.out.println("at the position "+posRedex);
-                  @fullClassName(abstractType)@ t = `Subst(subject,r);
-                  Position newomega = (Position) posFinal.add(posRedex);
-                  //System.out.println("t "+t);
-                  //replace in subject every pointer to the position newomega by
-                  //a pointer to the position 2  and if in position 2 there is also a
-                  //pointer inline the paths.
-                  //(corresponds to dot(t) in the paper)
-                  t = (@fullClassName(abstractType)@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
-                  //System.out.println("t "+t);
-                  //inline paths in the intermediate r
-                  //(corresponds to dot(r) in the paper)
-                  t = (@fullClassName(abstractType)@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
-                  //System.out.println("t "+t);
 
-                  /* 4. set the global term to norm(swap(t,1.w,2))|1 */
-                  @fullClassName(abstractType)@ tt = (@fullClassName(abstractType)@) t.swap(newomega,posRhs); 
-                  //System.out.println("tt "+tt);
-                  @fullClassName(abstractType)@ res = (@fullClassName(abstractType)@) tt.normalize();
-                  //System.out.println("res "+res);
-                  subject = (@fullClassName(abstractType)@) posFinal.getSubterm().visit(res);
-                  //System.out.println("subject "+subject);
+                /* 2. construct at compile-time the lhs and rhs */
+                @fullClassName(abstractType)@ labelledLhs = `@genTermWithExplicitVar(`lhs,"root",0)@.normalizeWithLabels();
+                @fullClassName(abstractType)@ labelledRhs = `@genTermWithExplicitVar(`rhs,"root",0)@.normalizeWithLabels();
+                
+               /* 3. construct t = SubstTerm(subject',r') */
+                @fullClassName(abstractType)@ rhs = labelledRhs.label2path();
+                @fullClassName(abstractType)@ lhs = labelledLhs.label2path();
+                rhs = (@fullClassName(abstractType)@) `TopDown(FromVarToPath(lhs,omega)).visit(rhs);
+                @fullClassName(abstractType)@ t = `Subst(subject,rhs);
+                //replace in subject every pointer to the position newomega by
+                //a pointer to the position 2  and if in position 2 there is also a
+                //pointer inline the paths.
+                t = (@fullClassName(abstractType)@) posFinal.getOmega(`TopDown(Sequence(globalRedirection(newomega,posRhs),InlinePath()))).visit(t);
+                //inline paths in the intermediate r
+                t = (@fullClassName(abstractType)@) posRhs.getOmega(`TopDown(InlinePath())).visit(t);
+
+                //compute the list of all shared labels
+                java.util.List<SharedLabel> sharedlabels = getSharedLabels(labelledLhs,labelledRhs);
+                
+                //redirect paths for shared labels
+                for (SharedLabel sharedlabel: sharedlabels) {
+                  Position l = (Position) newomega.add(sharedlabel.posLhs);
+                  Position r = (Position) posRhs.add(sharedlabel.posRhs);
+                  t =  t.applyGlobalRedirection(l,r);
                 }
 
+                /* 4. set the global term to swap(t,1.w,2) */
+                t = t.swap(newomega,posRhs); 
+
+                /* 5. set the global term to swap(t,1.w,2) */
+                t = t.normalize();
+
+                /* 6. get the first child */
+                t = (@fullClassName(abstractType)@) posFinal.getSubterm().visit(t);
+
                 //expand the subject to remove labels from the rhs
-                getEnvironment().setSubject(subject.expand());
+                getEnvironment().setSubject(t.expand());
 
                 /* 5. go to the position w */
                 getEnvironment().followPath(omega);
-
                 return (@sortname@) getEnvironment().getSubject();
                 }
                 ]%);
@@ -686,6 +634,8 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
       
       //detect rises into a TermList comb and remove it
       PathTerm(sublist@!PathTerm(_*,!-2,_*),-1,tail*) && (!PathTerm()<<sublist)-> {
+        //TODO: avoid the compilation warning
+        // because it generates a  disjunction which is not fully supported with associative operators
         int upcount = `sublist.length();
         PathTerm newtail = (PathTerm) `PathForPattern().visit(`tail);
         return `PathTerm(-upcount,newtail*);
