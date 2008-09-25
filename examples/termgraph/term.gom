@@ -9,12 +9,19 @@ Term = a() | b() | c() | d()
 List = doublelinkedlist(previous:List,element:Term,next:List)
      | nil()
      | insert(element:Term,list:List)
+     | subst(global:List,rhs:List)
 
 sort Term: graphrules(GraphRule,Identity) {
   g(x,y) -> f(x)
 }
 
+/**
 sort List: graphrules(Insert,Identity) {
   l:doublelinkedlist(previous,y,insert(x,v:doublelinkedlist(&l,z,next))) ->
   l1:doublelinkedlist(previous,y,l2:doublelinkedlist(&l1,x,v:doublelinkedlist(&l2,z,next)))  
+}
+*/
+sort List: graphrules(Insert,Identity) {
+  insert(x,v:doublelinkedlist(l,z,next)) ->
+  l2:doublelinkedlist(l,x,v:doublelinkedlist(&l2,z,next)) 
 }

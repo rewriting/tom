@@ -113,10 +113,12 @@ public class TermGraphAction {
     Viewer.toDot((List)abcd.expand());
     try {
       System.out.println("Insertion with term-graph actions (Rachid Echahed's formalism)");
-      Viewer.display(((List)`TopDown(Insertion()).visit(abcd)).expand());
+      Viewer.toDot(((List)`TopDown(Insertion()).visit(abcd)).expand());
       System.out.println("Insertion with term-graph rules from Gom");
-      Viewer.display((`TopDown(List.Insert()).visit(abcd.expand())));
-    } catch (VisitFailure e) {}
+      Viewer.toDot((`TopDown(List.Insert()).visit(abcd.expand())));
+    } catch (VisitFailure e) {
+      System.out.println("Unexpected visit failure during insertion");
+    }
   }
 
 }
