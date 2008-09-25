@@ -38,8 +38,9 @@ public class Bdd {
   %include{ bdd/Bdd.tom }
   %include{ sl.tom }
 
-  private static Node ZERO = `Cst(0);
-  private static Node ONE = `Cst(1);
+  public final static Node ZERO = `Cst(0);
+  public final static Node ONE = `Cst(1);
+  public static int max_var = 0;
 
   public final static void main(String[] args) {
     Bdd bdd = new Bdd();
@@ -63,7 +64,11 @@ public class Bdd {
     System.out.println("f3 = " + f3);
     System.out.println("anySat(f3) = " + anySat(f3));
     System.out.println("allSat(f3) = " + allSat(f3));
+    max_var = 3;
+    System.out.println("countSat(f3) = " + countSat(f3));
+
     System.out.println("allSat(f2) = " + allSat(f2));
+    System.out.println("countSat(f2) = " + countSat(f2));
   }
 
   %strategy Replace(varIndex:int,value:Formula) extends Identity() {
@@ -162,6 +167,29 @@ public class Bdd {
     throw new RuntimeException("restrict: " + t);
   }
 
+  private int var(Node t) {
+    %match(t) {
+      Cst(0) -> { return max_var+1; }
+      Cst(1) -> { return max_var+1; }
+      Var(x,_,_) -> { return `x; }
+    }
+    throw new RuntimeException("var: " + t);
+  }
+
+  public int countSat(Node t) {
+    %match(t) {
+      Cst(0) -> { return 0; }
+      Cst(1) -> { return 1; }
+      Var(x,l,h) -> { 
+        return 
+          (2^(var(`l)-`x-1))*countSat(`l) +
+          (2^(var(`h)-`x-1))*countSat(`h);
+      }
+    }
+    throw new RuntimeException("countSat: " + t);
+  }
+
+
   public Solution anySat(Node t) {
     %match(t) {
       Cst(0) -> { return `NoSolution(); }
@@ -177,7 +205,6 @@ public class Bdd {
     }
     throw new RuntimeException("anySat: " + t);
   }
-
 
   public SolutionList allSat(Node t) {
     %match(t) {
