@@ -177,16 +177,14 @@ public class FreshLambda {
       LambdaParser parser = new LambdaParser(tokens);
       for(RawLTerm rt:parser.toplevel()) {
         System.out.println("\n------------------------------------------");
-        System.out.println("\nparsed: " + Printer.pretty(rt));
+        System.out.println("\nparsed: " + Printer.prettyp5(rt));
         LTerm ct = rt.convert(); 
-        //System.out.println("\nnormal form : " + Printer.pretty(eval(ct).export()));
         System.out.print("\ncps translation ... ");
         System.out.flush();
         LTerm cpst = cps(ct);
         System.out.print("optimization ... ");
         System.out.flush();
         LTerm ocpst = admin(cpst);
-        //System.out.println("\ncps translation : " + Printer.pretty(ocpst.export()));
         LVar fresh = LVar.freshLVar("x");
         LTerm id = `Abs(lam(fresh,Var(fresh)));
         System.out.println(" evaluation\n");

@@ -2,6 +2,7 @@ import tom.library.sl.*;
 import lambda.types.*;
 import org.antlr.runtime.*;
 import java.util.*;
+import java.io.*;
 
 public class Printer {
 
@@ -44,5 +45,30 @@ public class Printer {
       RawUnit() -> { return "()"; }
     }
     return null;
+  }
+
+  public static String prettyp5(RawLTerm t) {
+    try {
+      String s = pretty(t);
+      File tmp = File.createTempFile("output",".ml");
+      FileWriter writer = new FileWriter(tmp);
+      String path = tmp.getAbsolutePath();
+      writer.write(s);
+      writer.close();
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec("camlp5 pa_o.cmo pa_op.cmo pr_o.cmo " + path);
+      int ret = pr.waitFor(); 
+      BufferedReader reader = 
+        new BufferedReader(new InputStreamReader(pr.getInputStream()));
+      StringBuffer buf = new StringBuffer();
+      while(reader.ready()) {
+        buf.append("\n");
+        buf.append(reader.readLine());
+      }
+      return buf.toString();
+    } catch (Exception e) {
+      System.err.println(e);
+      return "";
+    }
   }
 }
