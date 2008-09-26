@@ -49,25 +49,164 @@ public class TypeInference {
      return Collections.max(getTypeVars(match));
   }
 
+  //----------------------------------------------------
+  // To select the lower type between two given types
+  //----------------------------------------------------
+  private static TomType minimalType(TomType t1, TomType t2, ConstraintList cl) {
+    %match(cl) {
+      CList(_*,Subtype(ty1,ty2),_*) &&
+      ty1 << TomType t1 && ty2 << TomType t2
+      -> { return t1; }
+      CList(_*,Subtype(ty2,ty1),_*) &&
+      ty2 << TomType t2 && ty1 << TomType t1
+      -> { return t2; }
+    }
+    throw new RuntimeException("Error in minimalType function. t1 = " + t1+ " and t2 =" + t2 + ". List = " + cl);
+  }
+
+  //----------------------------------------------
+  // To substitute the type variables of a term
+  //----------------------------------------------
+  %strategy subsTypeVars(i: int, type: TomType) extends Identity() {
+    visit TomType {
+      TypeVar(x) && x << int i -> { return type; }
+    }
+  } 
+
+  private static ConstraintList applySubstitution(Mapping map, ConstraintList cl) {
+    %match(map) {
+      MapsTo(TypeVar(i),type)
+      ->
+      {
+        try {
+          return (ConstraintList) `TopDown(subsTypeVars(i,type)).visitLight(cl);
+        } catch (VisitFailure e) {
+          throw new RuntimeException("Error in applySubstitution function.");
+        }
+      }
+    }
+    throw new RuntimeException("Error in applySubstitution function.");
+  }
+
   //----------------------------------------
   // To resolve the constraints of typing
   // ---------------------------------------
-  private static Substitution constraintsResolution(ConstraintList cl) {
+  private static Substitution applyConstraintsResolution(ConstraintList cl) {
+    return constraintsResolution(cl,`MList(),`CList());
+  }
+
+  private static Substitution constraintsResolution(ConstraintList cl, Substitution ml, ConstraintList subcl) {
+    //System.out.println("ConstraintList = " +cl);
+    
     %match(cl) {
-      CList() -> { return `MList(); }
-      CList(x*,Equation(Type(n),Type(n)),y*) -> {
-        return `constraintsResolution(CList(x*,y*));
+      CList()
+      -> { System.out.println("SubConstraintList = " +subcl); return ml;}
+
+      CList(cons,consl*)
+      -> {
+        %match(cons) {
+          // {A = A} U C -> resolution(C) || {X = X} U C -> resolution(C)
+          Equation(type,type)
+          -> { return `constraintsResolution(consl*,ml,subcl); }
+
+          // {A <: A} U C -> resolution(C) || {X <: X} U C -> resolution(C)
+          Subtype(type,type)
+          -> { return `constraintsResolution(consl*,ml,subcl); }
+
+          // {X = A} U C -> {X |-> A} && resolution([A/X]C) 
+          Equation(tvar@TypeVar(_),type@Type(_))
+          ->
+          { 
+            Mapping map = `MapsTo(tvar,type);
+            Substitution rec = `constraintsResolution(applySubstitution(map,consl*),ml,applySubstitution(map,subcl*)); 
+            return `MList(map,rec*);
+          }
+
+          // {A = X} U C -> {X |-> A} && resolution([A/X]C) 
+          Equation(type@Type(_),tvar@TypeVar(_))
+          ->
+          { 
+            Mapping map = `MapsTo(tvar,type);
+            Substitution rec = `constraintsResolution(applySubstitution(map,consl*),ml,applySubstitution(map,subcl*)); 
+            return `MList(map,rec*);
+          }
+
+          // {X = Y} U C -> {X |-> Y} && resolution([Y/X]C) 
+          Equation(tvar1@TypeVar(_),tvar2@TypeVar(_)) &&
+          (tvar1 != tvar2)
+          ->
+          { 
+            Mapping map = `MapsTo(tvar1,tvar2);
+            Substitution rec = `constraintsResolution(applySubstitution(map,consl*),ml,applySubstitution(map,subcl*)); 
+            return `MList(map,rec*);
+          }
+
+          // {A = B} U C -> false
+          Equation(t1@Type(_),t2@Type(_)) &&
+          (t1 != t2)
+          -> { throw new RuntimeException("Constraint resolution error: " + `t1 + " = " + `t2); }
+
+          // {X <: Y,Y <: X} U C -> resolution({X = Y} U C)
+          Subtype(tvar1@TypeVar(i1),tvar2@TypeVar(i2)) &&
+          CList(x*,Subtype(TypeVar(i2),TypeVar(i1)),y*) << consl &&
+          (tvar1 != tvar2)
+          -> { return `constraintsResolution(CList(Equation(tvar1,tvar2),x*,y*),ml,subcl*); }
+
+          Subtype(t1@TypeVar(i1),t2)
+          ->
+          {
+            // {X <: Y,X <: Z} U C -> resolution({X = min(Y,Z)} U C)
+            %match(consl) {
+              CList(x*,Subtype(TypeVar(i1),t3),y*) &&
+              (t2 != t3)
+              ->
+              { 
+                TomType min_t = `minimalType(t2,t3,subcl*);
+                return `constraintsResolution(CList(Equation(t1,min_t),x*,y*),ml,subcl*);
+              }
+            }
+            // {X <: Y} -> {X = Y}
+            return `constraintsResolution(CList(Equation(t1,t2),consl*),ml,subcl*);
+          }
+
+          //{A <: B} U C -> (insert({A <: B},SubList) && resolution(C))
+          Subtype(t1@Type(_),t2) &&
+          (t1 != t2)
+          -> { return `constraintsResolution(consl*,ml,CList(cons,subcl*)); }
+ 
+/*
+          Subtype(t1,t2) && (t1 != t2)
+          -> {
+            %match {
+              // {X <: Y,Y <: X} U C -> resolution({X = Y} U C)
+              TypeVar(i1) << t1 &&
+              TypeVar(i2) << t2 &&
+              CList(x*,Subtype(TypeVar(i2),TypeVar(i1)),y*) << consl
+              -> { return `constraintsResolution(CList(Equation(t1,t2),x*,y*),ml,subcl*); }
+              // {X <: Y,X <: Z} U C -> resolution({X = min(Y,Z)} U C)
+
+	            TypeVar(i) << t1 &&
+              CList(x*,Subtype(TypeVar(i),t3),y*) << consl
+              ->
+              { 
+                TomType min_t = `minimalType(t2,t3,subcl*);
+                return `constraintsResolution(CList(Equation(t1,min_t),x*,y*),ml,subcl*);
+              }
+
+            //{A <: B} U C -> (insert({A <: B},SubList) && resolution(C))
+            return `constraintsResolution(consl*,ml,CList(cons,subcl*));
+          }
+*/          
+        }
+        //return constraintsResolution(`consl*,ml);
       }
-/*     CList(x*,Equation(TypeVar(i),Type(n)),y*) ||
-     CList(x*,Equation(Type(n),TypeVar(i)),y*)
-     ->
-     {
-       return `constraintsResolution(subs);
-     }*/
     }
     throw new RuntimeException("Error during resolution of constraints.");
   }
 
+  //------------------------------------------
+  // To put all constraints in an only list
+  //------------------------------------------
   private static ConstraintList constraintsUnion(ReconResultList rrlist) {
     return getConstraintPair(rrlist,`CList());
   }
@@ -76,7 +215,7 @@ public class TypeInference {
     %match(rrlist) {
       RRList() -> { return cl; }
       RRList(rresult,rreslist*) && Pair(_,cons) << rresult
-      -> { return `getConstraintPair(rreslist,CList(cons*,cl*)); }
+      -> { return `getConstraintPair(rreslist*,CList(cons*,cl*)); }
     }
     throw new RuntimeException("Error during the union of constraints.");
   }
@@ -86,8 +225,8 @@ public class TypeInference {
   // kind of term of a pattern matching
   // TODO: to change to get the context in a gom grammar directly
   //------------------------------------------------------------------
-  //public static TomType typeOf(TomInstruction match) {
-  public static ReconResultList typeOf(TomInstruction match) {
+  //public static ReconResultList  typeOf(TomInstruction match) {
+  public static Substitution typeOf(TomInstruction match) {
     /* Grammar to test the context
     | Nat = zero()
     |     | suc(pred:Nat)
@@ -108,16 +247,23 @@ public class TypeInference {
     ReconResultList rrlist = `RRList(Pair(Type("Int"),CList(Subtype(Type("Nat"),Type("Int")))));
 
     counter = maxIndexTypeVars(match) + 1;
-    return reconTomInstruction(ctx,match,rrlist);
-    /*
+    /* //To use run1() function in Eval.t file
+       return reconTomInstruction(ctx,match,rrlist);
+    */
+    
     %match(reconTomInstruction(ctx,match,rrlist)) {
       //RRList() -> { return null;}
       pairList@!RRList() -> {
-        //Substitution subst = `unify(pairList);
-        return null;//`applySubstitution(type,constraints);
+        //System.out.println("ReconResultList = " + `pairList);
+
+        ConstraintList cl = constraintsUnion(`pairList);
+        System.out.println("Initial ConstraintList = " + cl);
+
+        Substitution subst = applyConstraintsResolution(cl);
+        return subst;//`applySubstitution(type,constraints);
       }
     }
-    return null;*/
+    return null;
   }
 
   //------------------------------------------------------
@@ -184,7 +330,9 @@ public class TypeInference {
   private static ReconResultList reconBackquotes(Context ctx, TomTermList backquotes, ReconResultList pair) {
     %match(backquotes) {
       TTeList() -> { return pair; }
-      TTeList(term,terms*) -> {
+      TTeList(term,terms*)
+      ->
+      {
         ReconResult currentPair = `reconTerm(ctx,term);
         return `reconBackquotes(ctx,terms,RRList(currentPair,pair*));
       }
@@ -199,7 +347,9 @@ public class TypeInference {
     %match(pattern) {
       Simple(Var(name,type)) -> { return `CRPair(Context(Jugement(name,type),ctx*),RRList(Pair(type,CList()))); }
       Simple(Fun(name,args)) && Sig(dom,codom) << assocFun(ctx,name) &&
-      CCPair(ctx_p,cons) << reconPatternArgsList(ctx,args,dom) -> {
+      CCPair(ctx_p,cons) << reconPatternArgsList(ctx,args,dom)
+      -> 
+      {
         return `CRPair(ctx_p,RRList(Pair(codom,cons)));
       }
     }
@@ -219,7 +369,9 @@ public class TypeInference {
       TTeList(), Domain() -> { return `CCPair(ctx,cons); }
       TTeList(pterm,pterms*), Domain(pDom,pTypes*) &&
       CRPair(ctx_p,res_p) << reconPattern(ctx,Simple(pterm)) &&
-      RRList(Pair(type_p,cons_p)) << res_p -> {
+      RRList(Pair(type_p,cons_p)) << res_p
+      -> 
+      {
         return `reconPatternArgs(ctx_p,pterms*,pTypes,CList(Subtype(type_p,pDom),cons_p*,cons*));
       }
     }
@@ -231,11 +383,15 @@ public class TypeInference {
   //---------------------------------------------
   private static ReconResult reconTerm(Context ctx, TomTerm term) {
     %match(term) {
-      Var(name,type) -> {
+      Var(name,type)
+      -> 
+      {
         TomType typeInContext = assocVar(ctx,`name);
         return `Pair(type,CList(Equation(typeInContext,type)));
       }
-      Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name) -> {
+      Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name)
+      -> 
+      {
         ConstraintList cl = `reconArgsList(ctx,args,dom);
         return `Pair(codom,cl);
       }
@@ -254,7 +410,9 @@ public class TypeInference {
   private static ConstraintList reconArgs(Context ctx, TomTermList args, Domain dom, ConstraintList cons) {
     %match(args,dom) {
       TTeList(), Domain() -> { return cons; }
-      TTeList(term,terms*), Domain(tDom,types*) && Pair(tArg,cons_t) << reconTerm(ctx,term) -> {
+      TTeList(term,terms*), Domain(tDom,types*) && Pair(tArg,cons_t) << reconTerm(ctx,term)
+      -> 
+      {
         ConstraintList cl = `CList(Subtype(tArg,tDom),cons*,cons_t*);
         return `reconArgs(ctx,terms,types,cl);
       }

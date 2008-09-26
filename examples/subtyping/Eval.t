@@ -22,12 +22,13 @@ public class Eval {
 */
     System.out.println("\n------- Running Type Reconstruction Algorithm --------\n");
     Eval test = new Eval();
-    test.run();
+    //test.run1();
+    test.run2();
   }
   
   private static int counter = 0;
-
-  public void run() {
+/*
+  public void run1() {
     TomInstruction match1 = `Match(Rule(Matching(Simple(Var("x",TypeVar(1))),Fun("zero",TTeList()),TypeVar(2)),TTeList(Var("x",TypeVar(3)))));
     ReconResultList test1 = TypeInference.typeOf(match1);
     System.out.println("x:var1 << (var2) zero() -> {`x:var3}");
@@ -71,7 +72,73 @@ public class Eval {
     System.out.println("suc(zero()) << (var1) suc(zero()) -> {`x:var2}");
     writeRRList(test6);
     counter = 0;
+  }
+*/
+    public void run2() {
+    TomInstruction match1 = `Match(Rule(Matching(Simple(Var("x",TypeVar(1))),Fun("zero",TTeList()),TypeVar(2)),TTeList(Var("x",TypeVar(3)))));
+    Substitution test1 = TypeInference.typeOf(match1);
+    System.out.println("x:var1 << (var2) zero() -> {`x:var3}");
+    System.out.print("{ ");
+    writeMappings(test1);
+    System.out.println(" }\n");
 
+    TomInstruction match2 = `Match(Rule(Matching(Simple(Fun("suc",TTeList(Var("x",TypeVar(1))))),
+                                                 Fun("suc",TTeList(Fun("zero",TTeList()))),TypeVar(2)),TTeList(Var("x",TypeVar(3)))));
+    Substitution test2 = TypeInference.typeOf(match2);
+    System.out.println("suc(x:var1) << (var2) suc(zero()) -> {`x:var3}");
+    System.out.print("{ ");
+    writeMappings(test2);
+    System.out.println(" }\n");
+
+    TomInstruction match3 = `Match(Rule(Matching(Simple(Fun("plus",TTeList((Var("x",TypeVar(1))),(Fun("uminus",TTeList(Var("x",TypeVar(1)))))))),
+                                                 Fun("plus",TTeList((Fun("zero",TTeList())),(Fun("uminus",TTeList(Fun("zero",TTeList())))))),TypeVar(2)),
+                                        TTeList(Var("x",TypeVar(3)))));
+    Substitution test3 = TypeInference.typeOf(match3);
+    System.out.println("plus(x:var1,uminus(x:var1)) << (var2) plus(zero(),uminus(zero())) -> {`x:var3}");
+    System.out.print("{ ");
+    writeMappings(test3);
+    System.out.println(" }\n");
+
+    TomInstruction match4 = `Match(Rule(Matching(Simple(Fun("mult",TTeList(Var("x",TypeVar(1)),Fun("suc",TTeList(Var("x",TypeVar(1))))))),
+                                                 Fun("mult",TTeList(Fun("zero",TTeList()),Fun("suc",TTeList(Fun("zero",TTeList()))))),TypeVar(2)),
+                                        TTeList(Var("x",TypeVar(3)))));
+    Substitution test4 = TypeInference.typeOf(match4);
+    System.out.println("mult(x:var1,suc(x:var1)) << (var2) mult(zero(),suc(zero())) -> {`x:var3}");
+    System.out.print("{ ");
+    writeMappings(test4);
+    System.out.println(" }\n");
+
+    TomInstruction match5 = `Match(Rule(Matching(Simple(Fun("mult",TTeList((Var("x",TypeVar(1))),(Fun("square",TTeList(Var("x",TypeVar(1)))))))),
+                                                 Fun("mult",TTeList((Fun("zero",TTeList())),(Fun("square",TTeList(Fun("zero",TTeList())))))),TypeVar(2)),
+                                        TTeList(Var("x",TypeVar(3)))));
+    Substitution test5 = TypeInference.typeOf(match5);
+    System.out.println("mult(x:var1,square(x:var1)) << (var2) mult(zero(),square(zero())) -> {`x:var3}");
+    System.out.print("{ ");
+    writeMappings(test5);
+    System.out.println(" }\n");
+    counter = 0;
+
+    TomInstruction match6 = `Match(Rule(Matching(Simple(Fun("suc",TTeList(Fun("zero",TTeList())))),
+                                                 Fun("suc",TTeList(Fun("zero",TTeList()))),TypeVar(1)),TTeList()));
+    Substitution test6 = TypeInference.typeOf(match6);
+    System.out.println("suc(zero()) << (var1) suc(zero()) -> {}");
+    System.out.print("{ ");
+    writeMappings(test6);
+    System.out.println(" }\n");
+  }
+
+  private static void writeMappings(Substitution subst) {
+    %match(subst) {
+      MList() -> { System.out.print(""); }
+      MList(map,maps*) &&
+      MapsTo(t1,t2) << map -> {
+        writeTomType(`t1);
+        System.out.print(" |-> ");
+        writeTomType(`t2);
+        System.out.print(", ");
+        writeMappings(`maps*);
+      }
+    }
   }
 
   private static void writeRRList(ReconResultList rrlist) {
@@ -80,7 +147,7 @@ public class Eval {
       RRList(rresult,rreslist*) -> {
         System.out.print("Pair "+ (counter++) + ": ");
         writePair(`rresult);
-        writeRRList(`rreslist);
+        writeRRList(`rreslist*);
       }
     }
   }
@@ -116,7 +183,7 @@ public class Eval {
             System.out.print(") ");
           }
         }
-        writeConstraints(`cs);
+        writeConstraints(`cs*);
       }
     }
   }
