@@ -50,26 +50,31 @@ public class VariadicPropagator implements IBasePropagator {
 //--------------------------------------------------------
 
   public Constraint propagate(Constraint constraint) throws VisitFailure {
-    return (Constraint)`TopDown(VariadicPatternMatching()).visitLight(constraint);		
+    Constraint res =  (Constraint)`TopDown(VariadicPatternMatching()).visitLight(constraint);		
+    return res;
   }	
 
-  %strategy VariadicPatternMatching() extends `Identity() {
+  %strategy VariadicPatternMatching() extends Identity() {
     visit Constraint {      
       /**
        * Detach sublists
        * 
-       * Make sure that the sublists in a list are replaced by star variables - this is only happening 
-       * when the lists and the sublists have the same name
+       * Make sure that the sublists in a list are replaced by star variables
+       * this is only happening when the lists and the sublists have the same name
        * 
        * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
        * 
        */ 
       m@MatchConstraint(RecordAppl[NameList=(Name(tomName)),Slots=!concSlot()],_) -> {
         // if this is not a list, nothing to do
-        if(!TomBase.isListOperator(Compiler.getSymbolTable().
-            getSymbolFromName(`tomName))) { return `m; }
+        TomSymbol symb = Compiler.getSymbolTable().getSymbolFromName(`tomName);
+        if(!TomBase.isListOperator(symb)) {
+          return `m; 
+        }
         Constraint detachedConstr = GeneralPurposePropagator.detachSublists(`m);
-        if (detachedConstr != `m) { return detachedConstr; }
+        if(detachedConstr != `m) {
+          return detachedConstr; 
+        }
       }
       
       /**    
@@ -89,21 +94,23 @@ public class VariadicPropagator implements IBasePropagator {
        */
       m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,_),g@!SymbolOf[]) -> {
         // if this is not a list, nothing to do
-        if(!TomBase.isListOperator(Compiler.getSymbolTable().
-            getSymbolFromName(`tomName))) { return `m; }        
+        TomSymbol symb = Compiler.getSymbolTable().getSymbolFromName(`tomName);
+        if(!TomBase.isListOperator(symb)) {
+          return `m;
+        }        
         // declare fresh variable
         TomType listType = Compiler.getTermTypeFromTerm(`t);
         TomTerm freshVariable = Compiler.getFreshVariableStar(listType);				
         Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
         Constraint isSymbolConstr = `MatchConstraint(RecordAppl(options,nameList,concSlot(),concConstraint()),SymbolOf(freshVariable));
         Constraint l = `AndConstraint();        
-mSlots:  %match(slots) {
+        %match(slots) {
           concSlot() -> {
             l = `AndConstraint(l*,EmptyListConstraint(name,freshVariable));
           }
           concSlot(_*,PairSlotAppl[Appl=appl],X*) -> {
             TomTerm newFreshVarList = Compiler.getFreshVariableStar(listType);            
-      mAppl:%match(appl) {
+mAppl:      %match(appl) {
               // if we have a variable star
               (VariableStar | UnamedVariableStar)[] -> {                
                 // if it is the last element               
@@ -127,13 +134,13 @@ mSlots:  %match(slots) {
                     MatchConstraint(appl,ListHead(name,Compiler.getTermTypeFromTerm(appl),freshVariable)),
                     MatchConstraint(newFreshVarList,ListTail(name,freshVariable)));
                 // for the last element, we should also check that the list ends
-                if (`X.length() == 0) {                  
+                if(`X.length() == 0) {                  
                   l = `AndConstraint(l*, EmptyListConstraint(name,newFreshVarList));
                 }
               }
             }// end match
             freshVariable = newFreshVarList;
-          }          
+          }
         }// end match
         // fresh var declaration + add head equality condition + detached constraints
         l = `AndConstraint(freshVarDeclaration, isSymbolConstr, ConstraintPropagator.performDetach(m),l*);

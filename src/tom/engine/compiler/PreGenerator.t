@@ -82,7 +82,7 @@ public class PreGenerator {
 
   private static Constraint repeatOrdering(Constraint constraint) {
     Constraint result = constraint;
-    do{
+    do {
       constraint = result;
       result = orderAndConstraint(constraint);
     } while (result != constraint);
@@ -156,14 +156,15 @@ public class PreGenerator {
        AndConstraint(X*,first@(MatchConstraint|NumericConstraint)[Subject=rhs],Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
          try {
            `TopDown(HasTerm(v)).visitLight(`rhs);
-         }catch(VisitFailure ex){
+         } catch(VisitFailure ex) {
            return `AndConstraint(X*,second,first,Y*,Z*);
          }
        }
-       AndConstraint(X*,first@(MatchConstraint|NumericConstraint)[Subject=rhs],Y*,second@OrConstraintDisjunction(AndConstraint(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
+
+       AndConstraint(X*,first@(MatchConstraint|NumericConstraint)[Subject=rhs],Y*,second@OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
          try {
            `TopDown(HasTerm(v)).visitLight(`rhs);
-         }catch(VisitFailure ex){
+         } catch(VisitFailure ex) {
            return `AndConstraint(X*,second,first,Y*,Z*);
          }
        }
@@ -209,8 +210,9 @@ public class PreGenerator {
        */
       AndConstraint(X*,match@MatchConstraint[Pattern=matchP@(Variable|VariableStar)[]],Y*,numeric@NumericConstraint[Pattern=x,Subject=y],Z*)
                       && (matchP << TomTerm x || matchP << TomTerm y) 
-                      && !AndConstraint(_*,MatchConstraint[Pattern=x],_*) << AndConstraint(Y*)
-                      && !AndConstraint(_*,MatchConstraint[Pattern=y],_*) << AndConstraint(Y*) -> {  
+                      // we need '?' because Y* can be reduced to a single element
+                      && !AndConstraint?(_*,MatchConstraint[Pattern=x],_*) << Y 
+                      && !AndConstraint?(_*,MatchConstraint[Pattern=y],_*) << Y -> {
         return `AndConstraint(X*,match,numeric,Y*,Z*);
       }
 
@@ -244,10 +246,10 @@ public class PreGenerator {
   /**
    * Checks to see if the term is inside
    */
-  %strategy HasTerm(term:TomTerm) extends Identity(){
+  %strategy HasTerm(term:TomTerm) extends Identity() {
     visit TomTerm {
       x -> {
-        if (`x == `term) { throw new VisitFailure(); }
+        if(`x == term) { throw new VisitFailure(); }
       }
     }// end visit
   }// end strategy
@@ -255,19 +257,16 @@ public class PreGenerator {
   /**
    * Translates constraints into expressions
    */
-  private static Expression constraintsToExpressions(Constraint constraint){
-    %match(constraint){
+  private static Expression constraintsToExpressions(Constraint constraint) {
+    %match(constraint) {
       AndConstraint(m,X*) -> {
-        return `And(constraintsToExpressions(m),
-            constraintsToExpressions(AndConstraint(X*)));
+        return `And(constraintsToExpressions(m), constraintsToExpressions(X*));
       }
       OrConstraint(m,X*) -> {
-        return `OrConnector(constraintsToExpressions(m),
-            constraintsToExpressions(OrConstraint(X*)));
+        return `OrConnector(constraintsToExpressions(m), constraintsToExpressions(X*));
       }
       OrConstraintDisjunction(m,X*) -> {
-        return `OrExpressionDisjunction(constraintsToExpressions(m),
-            constraintsToExpressions(OrConstraintDisjunction(X*)));
+        return `OrExpressionDisjunction(constraintsToExpressions(m), constraintsToExpressions(X*));
       }
       m@(MatchConstraint|NumericConstraint)[] -> {
         return `ConstraintToExpression(m);
@@ -278,13 +277,13 @@ public class PreGenerator {
       Negate(c) -> {
         return `Negation(constraintsToExpressions(c));
       }
-      EmptyListConstraint(opName,variable) ->{
+      EmptyListConstraint(opName,variable) -> {
         return ConstraintGenerator.genIsEmptyList(`opName,`variable);
       }
-      EmptyArrayConstraint(opName,variable,index) ->{
+      EmptyArrayConstraint(opName,variable,index) -> {
         return `IsEmptyArray(opName,variable,index);
       }
-      IsSortConstraint(type,tomTerm) ->{
+      IsSortConstraint(type,tomTerm) -> {
         return `IsSort(type,tomTerm);
       }
     }

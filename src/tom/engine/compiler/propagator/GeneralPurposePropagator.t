@@ -85,12 +85,11 @@ public class GeneralPurposePropagator implements IBasePropagator {
        * X* = p1 /\ Context( X* = p2 ) -> X* = p1 /\ Context( freshVar = p2 /\ freshVar == X* )
        * x = p1 /\ Context( x = p2 ) -> x = p1 /\ Context( freshVar = p2 /\ freshVar == x )
        */
-      AndConstraint(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[],AstType=type],value),Y*) -> {
-        if (!replacedVariables.contains(`x)){
+      AndConstraint?(X*,eq@MatchConstraint(v@(Variable|VariableStar)[AstName=x@!PositionName[]],value),Y*) -> {
+        if (!replacedVariables.contains(`x)) {
           replacedVariables.add(`x);
-          Constraint toApplyOn = `AndConstraint(Y*);
-          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v,value)).visitLight(toApplyOn);
-          if(res != toApplyOn) {
+          Constraint res = (Constraint)`TopDown(ReplaceMatchConstraint(x,v,value)).visitLight(`Y*);
+          if(res != `Y*) {
             return `AndConstraint(X*,eq,res);
           }
         }
@@ -121,8 +120,8 @@ public class GeneralPurposePropagator implements IBasePropagator {
   /**
    * Detach sublists
    * 
-   * Make sure that the sublists in a list are replaced by star variables - this is only happening 
-   * when the lists and the sublists have the same name
+   * Make sure that the sublists in a list are replaced by star variables 
+   * this is only happening when the lists and the sublists have the same name
    * 
    * conc(X*,conc(some_pattern),Y*) << t -> conc(X*,Z*,Y*) << t /\ conc(some_pattern) << Z*  
    * 
@@ -132,33 +131,34 @@ public class GeneralPurposePropagator implements IBasePropagator {
     SlotList newSlots = `concSlot();
     Constraint constraintList = `AndConstraint();
     %match(constraint) {      
-      MatchConstraint(t@RecordAppl[NameList=(name@Name[]),Slots=slots@!concSlot()],g) -> {      
-      %match(slots) { 
-        concSlot(_*,slot,_*) -> {
+      MatchConstraint(t@RecordAppl[NameList=(name@Name[]),Slots=slots@!concSlot()],g) -> {
+
+        %match(slots) { 
+          concSlot(_*,slot,_*) -> {
 matchSlot:  %match(slot,TomName name) {
-            ps@PairSlotAppl[Appl=appl],childName &&  
-              (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
-              TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t));                
-              constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
-              newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
-              break matchSlot;
+              ps@PairSlotAppl[Appl=appl],childName &&  
+                (RecordAppl[NameList=(childName)] << appl || AntiTerm(RecordAppl[NameList=(childName)]) << appl) -> {
+                  TomTerm freshVariable = Compiler.getFreshVariableStar(Compiler.getTermTypeFromTerm(`t));                
+                  constraintList = `AndConstraint(MatchConstraint(appl,freshVariable),constraintList*);
+                  newSlots = `concSlot(newSlots*,ps.setAppl(freshVariable));
+                  break matchSlot;
+                }
+              // else we just add the slot back to the list
+              x,_ -> {
+                newSlots = `concSlot(newSlots*,x);
+              }
             }
-            // else we just add the slot back to the list
-            x,_ -> {
-              newSlots = `concSlot(newSlots*,x);
-            }
-          }            
+          }
         }
-      }  
-      return `AndConstraint(MatchConstraint(t.setSlots(newSlots),g),constraintList*);   
+        return `AndConstraint(MatchConstraint(t.setSlots(newSlots),g),constraintList*);   
+      }
     }
-   }
     // never gets here
     throw new TomRuntimeException("GeneralPurposePropagator:detachSublists - unexpected result");
   }
   
   
-  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm, value:TomTerm) extends `Identity() {
+  %strategy ReplaceMatchConstraint(varName:TomName, var:TomTerm, value:TomTerm) extends Identity() {
     visit Constraint {
       // we can have the same variable both as variablestar and as variable
       // we know that this is ok, because the type checker authorized it

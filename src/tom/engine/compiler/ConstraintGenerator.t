@@ -318,10 +318,10 @@ public class ConstraintGenerator {
   /**
    * Collect the variables in a term   
    */
-  %strategy CollectVar(varList:Collection) extends Identity(){
+  %strategy CollectVar(varList:Collection) extends Identity() {
     visit Constraint {
-      MatchConstraint(v@Variable[],_) ->{        
-        if (!varList.contains(`v)) { varList.add(`v); }        
+      MatchConstraint(v@Variable[],_) -> {
+        if(!varList.contains(`v)) { varList.add(`v); }        
       }      
     }// end visit
   }// end strategy   
@@ -332,7 +332,7 @@ public class ConstraintGenerator {
   %strategy CollectFreeVar(varList:Collection) extends Identity() {     
     visit Expression {
       ConstraintToExpression(MatchConstraint(v@Variable[],_)) -> {
-        if (!varList.contains(`v)) { varList.add(`v); }     
+        if(!varList.contains(`v)) { varList.add(`v); }     
         throw new VisitFailure();
       }
       AntiMatchExpression[] -> {        
