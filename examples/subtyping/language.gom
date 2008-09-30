@@ -24,13 +24,9 @@ TomInstructionList = TIList(TomInstruction*)
 
 Clause = Rule(condition: Condition, result: TomTermList)
 
-Condition = Matching(pattern: Pattern, subject: TomTerm, type: TomType)
+Condition = Matching(pattern: TomTerm, subject: TomTerm, type: TomType)
  
-Pattern = Simple(pattern: TomTerm)
-/* TODO: après faire marcher le cas simple, ajouter ça:
-        | DisjFun(terms: TomTermList)
-        | ConjFun(terms: TomTermList)
-*/ 
+//Pattern = Simple(pattern: TomTerm)
 
 /* Type Reconstruction */
 Constraint = Equation(type1: TomType, type2: TomType)
@@ -55,6 +51,8 @@ Context = Context(Jugement*)
 Mapping = MapsTo(tvar: TomType, type: TomType)
 
 Substitution = MList(Mapping*)
+
+SubstitutionList = SList(Substitution*)
 
 ContextAndResult = CRPair(con: Context, res: ReconResultList)
 

@@ -100,7 +100,7 @@ public class TypeInference {
     
     %match(cl) {
       CList()
-      -> { System.out.println("SubConstraintList = " +subcl); return ml;}
+      -> { return ml;}
 
       CList(cons,consl*)
       -> {
@@ -152,13 +152,13 @@ public class TypeInference {
           (tvar1 != tvar2)
           -> { return `constraintsResolution(CList(Equation(tvar1,tvar2),x*,y*),ml,subcl*); }
 
-          Subtype(t1@TypeVar(i1),t2)
+          Subtype(t1@TypeVar(_),t2)
           ->
           {
             // {X <: Y,X <: Z} U C -> resolution({X = min(Y,Z)} U C)
             %match(consl) {
-              CList(x*,Subtype(TypeVar(i1),t3),y*) &&
-              (t2 != t3)
+              CList(x*,Subtype(ty1,t3),y*) &&
+              (t1 == ty1) && (t2 != t3)
               ->
               { 
                 TomType min_t = `minimalType(t2,t3,subcl*);
@@ -220,50 +220,39 @@ public class TypeInference {
     throw new RuntimeException("Error during the union of constraints.");
   }
 
-  //------------------------------------------------------------------
-  // To call functions to do the reconstruction of types for which
+  //--------------------------------------------------------
+  // To call functions to reconstruct the types for each
   // kind of term of a pattern matching
-  // TODO: to change to get the context in a gom grammar directly
-  //------------------------------------------------------------------
-  //public static ReconResultList  typeOf(TomInstruction match) {
-  public static Substitution typeOf(TomInstruction match) {
-    /* Grammar to test the context
-    | Nat = zero()
-    |     | suc(pred:Nat)
-    |     | mult(fac1:Nat,fac2:Nat)
-    |     | square(y:Int)
-    |
-    | Int = Nat
-    |     | uminus(x:Nat)
-    |     | plus(x1:Int,x2:Int)
-    */
-
-    Context ctx = `Context(SigOf("zero", Sig(Domain(),Type("Nat"))),
-                           SigOf("suc", Sig(Domain(Type("Nat")), Type("Nat"))),
-                           SigOf("mult", Sig(Domain(Type("Nat"),Type("Nat")), Type("Nat"))),
-                           SigOf("square", Sig(Domain(Type("Int")), Type("Nat"))),
-                           SigOf("uminus", Sig(Domain(Type("Nat")), Type("Int"))),
-                           SigOf("plus", Sig(Domain(Type("Int"),Type("Int")),Type("Int"))));
-    ReconResultList rrlist = `RRList(Pair(Type("Int"),CList(Subtype(Type("Nat"),Type("Int")))));
-
-    counter = maxIndexTypeVars(match) + 1;
-    /* //To use run1() function in Eval.t file
-       return reconTomInstruction(ctx,match,rrlist);
-    */
-    
-    %match(reconTomInstruction(ctx,match,rrlist)) {
-      //RRList() -> { return null;}
-      pairList@!RRList() -> {
-        //System.out.println("ReconResultList = " + `pairList);
-
-        ConstraintList cl = constraintsUnion(`pairList);
-        System.out.println("Initial ConstraintList = " + cl);
-
-        Substitution subst = applyConstraintsResolution(cl);
-        return subst;//`applySubstitution(type,constraints);
+  //--------------------------------------------------------
+  public static SubstitutionList typeOfAll(Input in) {
+    %match(in) {
+      Input(ctx,rrlist,allMatchs) &&
+      !Context() << ctx &&
+      !TIList() << allMatchs
+      -> { return `typeOf(ctx,rrlist,allMatchs,SList()); }
+    }
+    throw new RuntimeException("Error in declaration of Context and Matchs");
+  }
+  
+  public static SubstitutionList typeOf(Context ctx, ReconResultList rrlist, TomInstructionList allMatchs, SubstitutionList allSubs) {
+    %match(allMatchs) {
+      TIList() -> { return allSubs; }
+      TIList(match,matchs*)
+      ->
+      {
+        counter = maxIndexTypeVars(`match) + 1;
+        %match(reconTomInstruction(ctx,match,rrlist)) {
+          pairList@!RRList()
+          ->
+          {
+            ConstraintList cl = constraintsUnion(`pairList);
+            Substitution subs = applyConstraintsResolution(cl);
+            return `typeOf(ctx,rrlist,matchs*,SList(subs,allSubs*));
+          }
+        }
       }
     }
-    return null;
+    throw new RuntimeException("Error in declaration of Context and Matchs");
   }
 
   //------------------------------------------------------
@@ -343,10 +332,10 @@ public class TypeInference {
   //----------------------------------------
   // To reconstruct the types of a pattern
   //----------------------------------------
-  private static ContextAndResult reconPattern(Context ctx, Pattern pattern) {
+  private static ContextAndResult reconPattern(Context ctx, TomTerm pattern) {
     %match(pattern) {
-      Simple(Var(name,type)) -> { return `CRPair(Context(Jugement(name,type),ctx*),RRList(Pair(type,CList()))); }
-      Simple(Fun(name,args)) && Sig(dom,codom) << assocFun(ctx,name) &&
+      Var(name,type) -> { return `CRPair(Context(Jugement(name,type),ctx*),RRList(Pair(type,CList()))); }
+      Fun(name,args) && Sig(dom,codom) << assocFun(ctx,name) &&
       CCPair(ctx_p,cons) << reconPatternArgsList(ctx,args,dom)
       -> 
       {
@@ -368,7 +357,7 @@ public class TypeInference {
     %match(pArgs,dom) {
       TTeList(), Domain() -> { return `CCPair(ctx,cons); }
       TTeList(pterm,pterms*), Domain(pDom,pTypes*) &&
-      CRPair(ctx_p,res_p) << reconPattern(ctx,Simple(pterm)) &&
+      CRPair(ctx_p,res_p) << reconPattern(ctx,pterm) &&
       RRList(Pair(type_p,cons_p)) << res_p
       -> 
       {
