@@ -40,7 +40,9 @@ import tom.gom.adt.rule.types.*;
 import tom.gom.adt.rule.types.term.*;
 import tom.gom.adt.objects.types.ClassName;
 import tom.gom.tools.error.GomRuntimeException;
+import tom.gom.tools.GomEnvironment;
 import tom.library.sl.*;
+import tom.gom.SymbolTable;
 
 public class GraphRuleExpander {
 
@@ -53,9 +55,11 @@ public class GraphRuleExpander {
   private String sortname;
   private String moduleName;
   private String pkgName;
+  private SymbolTable st;
 
   public GraphRuleExpander(ModuleList data) {
-    this.moduleList = data;
+    moduleList = data;
+    st = GomEnvironment.getInstance().getSymbolTable();
   }
 
   private static String fullClassName(ClassName clsName) {
@@ -117,10 +121,9 @@ public class GraphRuleExpander {
   is_sort(t)     { $t instanceof java.util.List }  
   equals(l1,l2)  { $l1.equals($l2) }
 }
-
 %typeterm tom_StringPositionMap {
   implement      { java.util.Map<String,Position> }
-  is_sort(t)     { $t instanceof java.util.Map }  
+  is_sort(t)      { $t instanceof java.util.Map }  
   equals(l1,l2)  { $l1.equals($l2) }
 }
 
@@ -237,10 +240,11 @@ static class Subst extends @fullClassName(abstractType)@ {
         sharedlabels.add(new SharedLabel(labelRhs,lhsLabels.get(labelRhs),rhsLabels.get(labelRhs)));
       }
     }
-    return sharedlabels;
+   return sharedlabels;
   }
 
-  %strategy FromVarToPath(lhs:tom_@abstractType.getName()@,omega:Position) extends Identity() {
+ %strategy FromVarToPath(lhs:tom_@abstractType.getName()@,omega:Position) extends Identity() {
+
 ]%);
 
   %match(moduleList) {
@@ -256,9 +260,9 @@ static class Subst extends @fullClassName(abstractType)@ {
         Position res = (Position) wwl.sub(wwr);
         return Path@`name@.make(res);
       }
-   }      
+    }      
 ]%);
-    }
+      }
   }
 
   output.append(%[
@@ -507,7 +511,7 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
         //in the signature of the corresponding  sort
         //test if the variable is not at the root position 
         if(omega!=0) {
-          String sortvar = getSort(fathersymbol,omega);
+          String sortvar = st.getChildSort(fathersymbol,omega);
           output.append("Var"+sortvar+"(\""+`name+"\")");
         } else {
           //it is necessary of the sort declared for the strategy
@@ -691,28 +695,6 @@ import @prefix@.types.@`name.toLowerCase()@.Path@`name@;
     }
   }
 
-  private String getSort(String symbolOperator,int omega) {
-    %match(moduleList) {
-      ConcModule(_*,Module[Sorts=ConcSort(_*,Sort[OperatorDecls=ConcOperator(_*,OperatorDecl[Name=name,Prod=prod],_*)],_*)],_*) -> {
-        if(`name.equals(symbolOperator)) {
-          int count=1;
-          %match(prod) {
-            Variadic(sortVar) -> {
-              return `sortVar.getName();
-            }
-            Slots(ConcSlot(_*,Slot[Sort=SortDecl[Name=type]],_*)) -> {
-              if (count==omega) {
-                return `type;
-              } else {
-                count++;
-              }
-            }
-          }
-        }
-      }
-    }
-    throw new RuntimeException("cannot determine the sort of the "+omega+"th child of the constructor "+symbolOperator);
-  }
 
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import tom.library.sl.*;
 import tom.gom.backend.CodeGen;
 import tom.gom.GomMessage;
+import tom.gom.SymbolTable;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
@@ -44,8 +45,8 @@ public class GraphExpander {
   %include {../../library/mapping/java/util/HashMap.tom}
   %include {../../library/mapping/java/util/ArrayList.tom}
   %include {../../library/mapping/java/sl.tom}
-  %include {../../library/mapping/java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
+  %include { ../adt/symboltable/SymbolTable.tom}
 
   %typeterm GomStreamManager { implement { GomStreamManager } }
   private static GomStreamManager streamManager;
@@ -54,21 +55,19 @@ public class GraphExpander {
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
   private boolean forTermgraph;
-
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  }
-
+  private static GomEnvironment envt = GomEnvironment.getInstance();
+  private static SymbolTable st = envt.getSymbolTable();
+  
   public GraphExpander(GomStreamManager streamManager,boolean forTermgraph) {
     this.forTermgraph = forTermgraph;
     this.streamManager = streamManager;
-    stringSortDecl = environment().builtinSort("String");
-    intSortDecl = environment().builtinSort("int");
+    stringSortDecl = envt.builtinSort("String");
+    intSortDecl = envt.builtinSort("int");
     //we mark them as used builtins:
     //String is used for labelling
-    environment().markUsedBuiltin("String");
+    envt.markUsedBuiltin("String");
     //int is used for defining paths
-    environment().markUsedBuiltin("int");
+    envt.markUsedBuiltin("int");
   }
 
   private static String fullClassName(ClassName clsName) {
@@ -126,10 +125,15 @@ public class GraphExpander {
          
         //We add 4 new operators Lab<Sort>,Ref<Sort>,Path<Sort>,Var<Sort>
         //the last one is only used to implement the termgraph rewriting step
+        // for now, we need also to fill the symbol table 
         OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl),Slot("term"+sortname,sortdecl))));
+        //st.addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
         OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
+        //st.addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(intSortDecl));
+        //st.addVariadicConstructor("Path"+`sortname,`sortname,"int");
         OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
+        //st.addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         hookList.add(pathHooks(pathOp,`sortdecl));
         return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));
 
@@ -235,7 +239,7 @@ public class GraphExpander {
     String codeStrategies = getStrategies(sorts);
 
     %match(sorts){
-      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortName]],_*) -> {
+      ConcSort(_*,Sort[Decl=SortDecl[Name=sortName]],_*) -> {
         codeImport += %[
           import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.Path@`sortName@;
         ]%;
@@ -380,7 +384,7 @@ public class GraphExpander {
 ]%;
 
   %match(sorts){
-      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+      ConcSort(_*,Sort[Decl=SortDecl[Name=sortname]],_*) -> {
  codeBlockTermGraph += %[
         visit @`sortname@ {
           p@@Path@`sortname@(_*) -> {
@@ -426,7 +430,7 @@ public class GraphExpander {
 
 
    %match(sorts){
-      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+      ConcSort(_*,Sort[Decl=SortDecl[Name=sortname]],_*) -> {
         codeBlockTermGraph += %[
       visit @`sortname@ {
             p@@Path@`sortname@(_*) -> {
@@ -483,7 +487,7 @@ public class GraphExpander {
   ]%;
 
    %match(sorts){
-      ConcSort(_*,Sort[Decl=sDecl@SortDecl[Name=sortname]],_*) -> {
+      ConcSort(_*,Sort[Decl=SortDecl[Name=sortname]],_*) -> {
         codeBlockTermGraph += %[
       visit @`sortname@ {
             p@@Path@`sortname@(_*) -> {

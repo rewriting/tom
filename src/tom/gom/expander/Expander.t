@@ -95,6 +95,7 @@ public class Expander {
       }
       moduleToAnalyse = newModuleToAnalyse;
     }
+    environment().initSymbolTable(result);
     return result;
   }
 

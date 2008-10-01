@@ -46,10 +46,9 @@ public class SymbolTable {
   %include { util/ArrayList.tom }
   %include { sl.tom }  
 
-  private GomEnvironment env = GomEnvironment.getInstance();
-
   public class SortException extends RuntimeException {
     protected String sortName;
+
     public SortException(String sortName) {
       super();
       this.sortName = sortName;
@@ -418,7 +417,7 @@ public class SymbolTable {
 
 
   public boolean isExpressionType(String sort) {
-    if (env.isBuiltin(sort)) return false;
+    if (GomEnvironment.getInstance().isBuiltin(sort)) return false;
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { ExpressionTypeInfo[] -> { return true; } }
@@ -429,7 +428,7 @@ public class SymbolTable {
   }
 
   public boolean isPatternType(String sort) {
-    if (env.isBuiltin(sort)) return false;
+    if (GomEnvironment.getInstance().isBuiltin(sort)) return false;
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { PatternTypeInfo[] -> { return true; } }
@@ -440,7 +439,7 @@ public class SymbolTable {
   }
 
   public boolean isAtomType(String sort) {
-    if (env.isBuiltin(sort)) return false;
+    if (GomEnvironment.getInstance().isBuiltin(sort)) return false;
     try {
       FreshSortInfo i = sorts.get(sort).getFreshInfo();
       %match(i) { AtomTypeInfo[] -> { return true; } }
@@ -514,6 +513,31 @@ public class SymbolTable {
     catch(NullPointerException e) {
       throw new UndeclaredConstructorException(constructor);
     }
+  }
+
+  public String getChildSort(String constructor,int omega) {
+    try {
+      ConstructorDescription c = constructors.get(constructor);  
+      int count=1;
+
+      %match(c) {
+
+        VariadicConstructorDescription[Domain=Domain] -> {
+          return `Domain;
+        }
+
+        ConstructorDescription[Fields=concFieldDescription(_*,FieldDescription[Sort=Sort],_*)] -> {
+          if (count==omega) {
+            return `Sort;
+          } else {
+            count++;
+          }
+        }
+      }
+    } catch(NullPointerException e) {
+      throw new UndeclaredConstructorException(constructor);
+    }
+    throw new RuntimeException("Cannot access to the "+omega+"ith child of the constructor "+constructor);
   }
 
   public tom.gom.adt.symboltable.types.stringlist.StringList 
@@ -793,7 +817,7 @@ public class SymbolTable {
 
   private StringList getAccessibleAtoms
     (String sort, HashSet<String> visited)  {
-      if (env.isBuiltin(sort) || visited.contains(sort)) return `StringList();
+      if (GomEnvironment.getInstance().isBuiltin(sort) || visited.contains(sort)) return `StringList();
       visited.add(sort);
       if (isAtomType(sort)) return `StringList(sort);
       StringList res = `StringList();
@@ -825,17 +849,17 @@ public class SymbolTable {
 
   private void fillGraph() {
     for(String sort: getSorts()) {
-      if (env.isBuiltin(sort)) continue;
+      if (GomEnvironment.getInstance().isBuiltin(sort)) continue;
       for(String c: getConstructors(sort)) {
         ConstructorDescription cd = constructors.get(c);
         %match(cd) {
           VariadicConstructorDescription[Domain=ty] -> {
-            if (!env.isBuiltin(`ty)) 
+            if (!GomEnvironment.getInstance().isBuiltin(`ty)) 
               graph.addLink(sort,`ty);
           }
           ConstructorDescription[
             Fields=(_*,FieldDescription[Sort=ty],_*)] -> {
-              if (!env.isBuiltin(`ty)) 
+              if (!GomEnvironment.getInstance().isBuiltin(`ty)) 
                 graph.addLink(sort,`ty);
             }
         }
@@ -853,5 +877,24 @@ public class SymbolTable {
     sorts.removeAll(connected);
     for(String s: sorts) { setFreshSortInfo(s,`NoFreshSort()); }
   }
-}
 
+  public void addConstructor(String symbol, String codomain, FieldDescriptionList fields) {
+    constructors.put(symbol,`ConstructorDescription(codomain,fields,No()));
+    SortDescription s = sorts.get(codomain);
+    StringList l = s.getConstructors();
+    sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
+  }
+
+  public void addVariadicConstructor(String symbol, String domain, String codomain) {
+    constructors.put(symbol,`VariadicConstructorDescription(codomain,domain,false));
+    SortDescription s = sorts.get(codomain);
+    StringList l = s.getConstructors();
+    sorts.put(codomain,s.setConstructors(`StringList(l*,symbol)));
+  }
+
+  public void clear() {
+    sorts.clear();
+    constructors.clear();
+  }
+
+}

@@ -28,7 +28,7 @@ import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
-
+import tom.gom.SymbolTable;
 import java.util.*;
 
 public class GomEnvironment {
@@ -42,11 +42,14 @@ public class GomEnvironment {
 
   private GomStreamManager streamManager;
   private String lastGeneratedMapping;
+  private SymbolTable symboltable;
+  
   /**
    * A private constructor method to defeat instantiation
    */
   private GomEnvironment() { 
     initBuiltins();
+    symboltable = new SymbolTable();
   }
 
   /**
@@ -58,6 +61,15 @@ public class GomEnvironment {
       instance = new GomEnvironment();
     }
     return instance;
+  }
+
+  public SymbolTable getSymbolTable() {
+    return symboltable; 
+  }
+
+  public void initSymbolTable(GomModuleList l) {
+    symboltable.clear();
+    symboltable.fill(l);
   }
 
   private Map importedModules = new HashMap();
