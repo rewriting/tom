@@ -65,21 +65,25 @@ public class PreGenerator {
   private static Constraint orderConstraints(Constraint constraint) {
     %match(constraint) {
       !AndConstraint(_*,OrConstraint(_*),_*) && AndConstraint(_*) << constraint  -> {
-        return repeatOrdering(constraint);
+        //return repeatOrdering(constraint);
+        return orderAndConstraint(constraint);
       }
       AndConstraint(X*,or@OrConstraint(_*),Y*) -> {
-        return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
+        //return repeatOrdering(`AndConstraint(X*,orderConstraints(or),Y*));
+        return orderAndConstraint(`AndConstraint(X*,orderConstraints(or),Y*));
       }
+      /*
       OrConstraint(andC@AndConstraint(_*)) -> {
         return `OrConstraint(orderConstraints(andC));
       }
       or@OrConstraint(!AndConstraint(_*)) -> {
         return `or;
       }
+      */
     }
     return constraint;
   }
-
+/*
   private static Constraint repeatOrdering(Constraint constraint) {
     Constraint result = constraint;
     do {
@@ -88,160 +92,189 @@ public class PreGenerator {
     } while (result != constraint);
     return result;
   }
+  */
 
   /**
    * Puts the constraints in the good order
+   * We use a loop and two nested match to be more efficient
    *
    */
   private static Constraint orderAndConstraint(Constraint constraint) {
-    %match(constraint) {
-      /*
-       * SwitchSymbolOf
-       *
-       * z << subterm(i,g) /\ S /\ f = SymbolOf(g) -> f = SymbolOf(g) /\ S /\ z << subterm(i,g)
-       *
-       */
-      AndConstraint(X*,subterm@MatchConstraint(_,Subterm[GroundTerm=g]),Y*,symbolOf@MatchConstraint(_,SymbolOf(g)),Z*) -> {
-        return `AndConstraint(X*,symbolOf,Y*,subterm,Z*);
-      }
+    Constraint toOrder = constraint;
+    do {
+      constraint = toOrder;
+block: %match(constraint) {
+         AndConstraint(X*,first,Y*,second,Z*) -> {
+           %match(first,second) {
+             /*
+              * SwitchSymbolOf
+              *
+              * z << subterm(i,g) /\ S /\ f = SymbolOf(g) -> f = SymbolOf(g) /\ S /\ z << subterm(i,g)
+              *
+              */
+             MatchConstraint(_,Subterm[GroundTerm=g]),MatchConstraint(_,SymbolOf(g)) -> {
+               toOrder =  `AndConstraint(X*,second,Y*,first,Z*);
+               break block;
+             }
 
-      /*
-       * SwitchSymbolOf2
-       *
-       * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
-       *
-       */
-      AndConstraint(X*,first@MatchConstraint(_,SymbolOf(var@(Variable|VariableStar)[])),Y*,second@MatchConstraint(var,_),Z*) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-      /*
-       * SwitchAnti
-       *
-       * an antimatch should be always at the end, after the match constraints
-       * ex: for f(!x,x) << t -> we should generate x << t_2 /\ !x << t_1 and
-       * not !x << t_1 /\ x << t_2 because at the generation the free x should
-       * be propagated and not the other one
-       */
-      AndConstraint(X*,antiMatch@AntiMatchConstraint[],Y*,match@MatchConstraint[],Z*) -> {
-        return `AndConstraint(X*,Y*,match,antiMatch,Z*);
-      }
+             /*
+              * SwitchSymbolOf2
+              *
+              * A = SymbolOf(g) /\ S /\ g << B -> g << B /\ S /\ A = SymbolOf(g)
+              *
+              */
+             MatchConstraint(_,SymbolOf(var@(Variable|VariableStar)[])),MatchConstraint(var,_) -> {
+               toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+               break block;
+             }
+             /*
+              * SwitchAnti
+              *
+              * an antimatch should be always at the end, after the match constraints
+              * ex: for f(!x,x) << t -> we should generate x << t_2 /\ !x << t_1 and
+              * not !x << t_1 /\ x << t_2 because at the generation the free x should
+              * be propagated and not the other one
+              */
+             AntiMatchConstraint[],MatchConstraint[] -> {
+               toOrder = `AndConstraint(X*,Y*,second,first,Z*);
+               break block;
+             }
 
-      /*
-       * SwitchEmpty - lists
-       *
-       * EmptyList(z) /\ S /\ z << t -> z << t /\ S /\ EmptyList(z)
-       * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
-       */
-      AndConstraint(X*,first,Y*,second@MatchConstraint(v,_),Z*)
-         && ( EmptyListConstraint[Variable=v] << first || Negate(EmptyListConstraint[Variable=v]) << first ) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
+             /*
+              * SwitchEmpty - lists
+              *
+              * EmptyList(z) /\ S /\ z << t -> z << t /\ S /\ EmptyList(z)
+              * Negate(EmptyList(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyList(z))
+              */
+             _,MatchConstraint(v,_)
+               && ( EmptyListConstraint[Variable=v] << first || Negate(EmptyListConstraint[Variable=v]) << first ) -> {
+                 toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+                 break block;
+               }
 
-      /*
-       * SwitchEmpty - arrays
-       *
-       * EmptyArray(z) /\ S /\ z << t -> z << t /\ S /\ EmptyArray(z)
-       * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
-       */
-      AndConstraint(X*,first,Y*,second@MatchConstraint(idx,_),Z*)
-         && ( EmptyArrayConstraint[Index=idx] << first || Negate(EmptyArrayConstraint[Index=idx]) << first ) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
+             /*
+              * SwitchEmpty - arrays
+              *
+              * EmptyArray(z) /\ S /\ z << t -> z << t /\ S /\ EmptyArray(z)
+              * Negate(EmptyArray(z)) /\ S /\ z << t -> z << t /\ S /\ Negate(EmptyArray(z))
+              */
+             _,MatchConstraint(idx,_)
+               && ( EmptyArrayConstraint[Index=idx] << first || Negate(EmptyArrayConstraint[Index=idx]) << first ) -> {
+                 toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+                 break block;
+               }
 
-      /*
-       * SwitchVar
-       * TODO : replace with constraints when the or bugs in the optimizer are solved + the or is correctly handled for lists, i.e. with the duplication of the action
-       * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
-       */
-       AndConstraint(X*,first@(MatchConstraint|NumericConstraint)[Subject=rhs],Y*,second@MatchConstraint(v@(Variable|VariableStar)[],_),Z*) -> {
-         try {
-           `TopDown(HasTerm(v)).visitLight(`rhs);
-         } catch(VisitFailure ex) {
-           return `AndConstraint(X*,second,first,Y*,Z*);
+             /*
+              * SwitchVar
+              * TODO : replace with constraints when the or bugs in the optimizer are solved + the or is correctly handled for lists, i.e. with the duplication of the action
+              * p << Context[z] /\ S /\ z << t -> z << t /\ S /\ p << Context[z]
+              */
+             (MatchConstraint|NumericConstraint)[Subject=rhs],MatchConstraint(v@(Variable|VariableStar)[],_) -> {
+               try {
+                 `TopDown(HasTerm(v)).visitLight(`rhs);
+               } catch(VisitFailure ex) {
+                 toOrder = `AndConstraint(X*,second,first,Y*,Z*);
+                 break block;
+               }
+             }
+
+             (MatchConstraint|NumericConstraint)[Subject=rhs],OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*) -> {
+               try {
+                 `TopDown(HasTerm(v)).visitLight(`rhs);
+               } catch(VisitFailure ex) {
+                 toOrder = `AndConstraint(X*,second,first,Y*,Z*);
+                 break block;
+               }
+             }
+
+             /*
+              * p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
+              * p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
+              *
+              * p << ListHead(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListHead(z)
+              * p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
+              *
+              */
+             MatchConstraint(_,(ListHead|ListTail)[Variable=v]),_
+               && ( Negate(EmptyListConstraint[Variable=v]) << second || EmptyListConstraint[Variable=v] << second ) -> {
+                 toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+                 break block;
+               }
+
+             /*
+              * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
+              * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
+              */
+             MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),_
+               && ( Negate(EmptyArrayConstraint[Index=v]) << second || EmptyArrayConstraint[Index=v] << second ) -> {
+                 toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+                 break block;
+               }
+
+             /*
+              * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
+              * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
+              */
+             MatchConstraint(_,v@VariableStar[]),MatchConstraint(_,subjectSecond)
+               && (VariableHeadList[End=v] << subjectSecond || VariableHeadArray[EndIndex=v] << subjectSecond ) -> {
+                 toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+                 break block;
+               }
+
+             /*
+              * SwitchNumericConstraints
+              *
+              * an numeric constraint on a variable x should be always imediately after the
+              * instantiation of the variable x, as it may improve the efficiency by abandoning the tests earlier
+              * 
+              * it should not go upper than the declaration of one of its variables (the last 2 conditions)
+              */
+             MatchConstraint[Pattern=matchP@(Variable|VariableStar)[]],NumericConstraint[Pattern=x,Subject=y]
+               && (matchP << TomTerm x || matchP << TomTerm y) 
+               // we need '?' because Y* can be reduced to a single element
+               && !AndConstraint?(_*,MatchConstraint[Pattern=x],_*) << Y 
+               && !AndConstraint?(_*,MatchConstraint[Pattern=y],_*) << Y -> {
+                 toOrder = `AndConstraint(X*,first,second,Y*,Z*);
+                 break block;
+               }
+
+             /*
+              * SwitchIsSort
+              *
+              *  Match(_,subject) /\ IsSort(subject) -> IsSort(subject) /\ Match(_,subject)
+              *
+              *  IsSort(var) /\ Match(var,_) -> Match(var,_) /\ IsSort(var)
+              *
+              */
+             MatchConstraint[Subject=ExpressionToTomTerm(Cast[Source=TomTermToExpression(sub)])],IsSortConstraint[TomTerm=sub] -> {
+               toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+               break block;
+             }
+             IsSortConstraint[TomTerm=var@(Variable|VariableStar)[]],MatchConstraint(var,_) -> {
+               toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+               break block;
+             }
+
+             /*
+              * SwitchTestVars
+              *
+              * tests generated by replace shoud be after the variable has been instanciated
+              */
+             MatchConstraint(TestVar(x),_),MatchConstraint(x,_) -> {        
+               toOrder = `AndConstraint(X*,second,Y*,first,Z*);
+               break block;
+             }
+
+           }
+         }
+
+         _ -> {
+           return constraint;
          }
        }
-
-       AndConstraint(X*,first@(MatchConstraint|NumericConstraint)[Subject=rhs],Y*,second@OrConstraintDisjunction(AndConstraint?(_*,MatchConstraint(v@(Variable|VariableStar)[],_),_*),_*),Z*) -> {
-         try {
-           `TopDown(HasTerm(v)).visitLight(`rhs);
-         } catch(VisitFailure ex) {
-           return `AndConstraint(X*,second,first,Y*,Z*);
-         }
-       }
-
-      /*
-       * p << ListHead(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListHead(z)
-       * p << ListTail(z) /\ S /\ Negate(Empty(z)) -> Negate(Empty(z)) /\ S /\ p << ListTail(z)
-       *
-       * p << ListHead(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListHead(z)
-       * p << ListTail(z) /\ S /\ Empty(z) -> Empty(z) /\ S /\ p << ListTail(z)
-       *
-       */
-      AndConstraint(X*,first@MatchConstraint(_,(ListHead|ListTail)[Variable=v]),Y*,second,Z*)
-          && ( Negate(EmptyListConstraint[Variable=v]) << second || EmptyListConstraint[Variable=v] << second ) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-
-      /*
-       * p << GetElement(z) /\ S /\ Negate(EmptyArray(z)) -> Negate(EmptyArray(z)) /\ S /\ p << GetElement(z)
-       * p << GetElement(z) /\ S /\ EmptyArray(z) -> EmptyArray(z) /\ S /\ p << GetElement(z)
-       */
-      AndConstraint(X*,first@MatchConstraint(_,ExpressionToTomTerm(GetElement[Variable=v])),Y*,second,Z*)
-              && ( Negate(EmptyArrayConstraint[Index=v]) << second || EmptyArrayConstraint[Index=v] << second ) -> {
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-
-      /*
-       * p << e /\ S /\ VariableHeadList(b,e) -> VariableHeadList(b,e) /\ S /\ p << e
-       * p << e /\ S /\ VariableHeadArray(b,e) -> VariableHeadArray(b,e) /\ S /\ p << e
-       */
-      AndConstraint(X*,first@MatchConstraint(_,v@VariableStar[]),Y*,second@MatchConstraint(_,subjectSecond),Z*)
-        && (VariableHeadList[End=v] << subjectSecond || VariableHeadArray[EndIndex=v] << subjectSecond ) -> {
-         return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-
-      /*
-       * SwitchNumericConstraints
-       *
-       * an numeric constraint on a variable x should be always imediately after the
-       * instantiation of the variable x, as it may improve the efficiency by abandoning the tests earlier
-       * 
-       * it should not go upper than the declaration of one of its variables (the last 2 conditions)
-       */
-      AndConstraint(X*,match@MatchConstraint[Pattern=matchP@(Variable|VariableStar)[]],Y*,numeric@NumericConstraint[Pattern=x,Subject=y],Z*)
-                      && (matchP << TomTerm x || matchP << TomTerm y) 
-                      // we need '?' because Y* can be reduced to a single element
-                      && !AndConstraint?(_*,MatchConstraint[Pattern=x],_*) << Y 
-                      && !AndConstraint?(_*,MatchConstraint[Pattern=y],_*) << Y -> {
-        return `AndConstraint(X*,match,numeric,Y*,Z*);
-      }
-
-      /*
-       * SwitchIsSort
-       *
-       *  Match(_,subject) /\ IsSort(subject) -> IsSort(subject) /\ Match(_,subject)
-       *
-       *  IsSort(var) /\ Match(var,_) -> Match(var,_) /\ IsSort(var)
-       *
-       */
-      AndConstraint(X*,match@MatchConstraint[Subject=ExpressionToTomTerm(Cast[Source=TomTermToExpression(sub)])],Y*,isSort@IsSortConstraint[TomTerm=sub],Z*) -> {
-        return `AndConstraint(X*,isSort,Y*,match,Z*);
-      }
-      AndConstraint(X*,isSort@IsSortConstraint[TomTerm=var@(Variable|VariableStar)[]],Y*,match@MatchConstraint(var,_),Z*) -> {
-        return `AndConstraint(X*,match,Y*,isSort,Z*);
-      }
-
-      /*
-       * SwitchTestVars
-       *
-       * tests generated by replace shoud be after the variable has been instanciated
-       */
-      AndConstraint(X*,first@MatchConstraint(TestVar(x),_),Y*,second@MatchConstraint(x,_),Z*) -> {        
-        return `AndConstraint(X*,second,Y*,first,Z*);
-      }
-    } // end visit
+    } while (toOrder != constraint);
     return constraint;
-  }// end strategy
+  }
 
   /**
    * Checks to see if the term is inside
@@ -251,8 +284,8 @@ public class PreGenerator {
       x -> {
         if(`x == term) { throw new VisitFailure(); }
       }
-    }// end visit
-  }// end strategy
+    }
+  }
 
   /**
    * Translates constraints into expressions

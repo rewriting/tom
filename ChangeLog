@@ -1,3 +1,7 @@
+2008-10-01 pem
+  * fix a (loop) bug in the PreGenerator
+  * also improved the efficiency
+
 2008-09-16 pem
   * generate public functions
 
