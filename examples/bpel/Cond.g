@@ -2,6 +2,7 @@
 grammar Cond;
 options {
   output=AST;
+  ASTLabelType=Tree;
 }
 
 tokens {
@@ -20,9 +21,9 @@ tokens {
 
 @header {
   package bpel;
-  import bpel.wfg.WfgTree;
-  import bpel.wfg.WfgAdaptor;
   import bpel.wfg.types.*;
+  import bpel.wfg.WfgAdaptor;
+  import org.antlr.runtime.tree.Tree;
 }
 @lexer::header {
   package bpel;
@@ -34,12 +35,10 @@ tokens {
       CondLexer lexer = new CondLexer(new ANTLRStringStream(cond));
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       CondParser parser = new CondParser(tokens);
-      parser.setTreeAdaptor(new WfgAdaptor());
 
       // Parse the input expression
-      WfgTree tree = (WfgTree) parser.cond().getTree();
-
-      return (Condition) tree.getTerm();
+      Tree tree = (Tree) parser.cond().getTree();
+      return (Condition) WfgAdaptor.getTerm(tree);
     } catch(Exception e ) {
       throw new RuntimeException(e);
     }
