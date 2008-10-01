@@ -2,7 +2,7 @@
 grammar Graph;
 options {
   output=AST;
-  ASTLabelType=TermTree;
+  ASTLabelType=Tree;
 }
 
 tokens {
@@ -11,11 +11,9 @@ tokens {
 
 @header {
   package parser;
-  import parser.term.TermTree;
 }
 @lexer::header {
   package parser;
-  import parser.term.TermTree;
 }
 uid :
   id1=ID COLON id2=ID -> ^(Uid $id1 $id2)
