@@ -10,13 +10,13 @@ atom FoVar
 /* first-order terms */
 
 Term = Var(v:FoVar)
-     | funAppl(fun:String, p:TermList)
+     | funApp(fun:String, p:TermList)
 
-TermList = concTerm(Term*)
+TermList = termList(Term*)
 
 /* propositions */
 
-Prop = relationAppl(r:String, t:TermList)
+Prop = relApp(r:String, t:TermList)
      | and(p1:Prop, p2:Prop)
      | or(p1:Prop, p2:Prop)
      | implies(p1:Prop, p2:Prop)
@@ -30,13 +30,13 @@ Ex binds FoVar = Ex(x:FoVar,inner p:Prop)
 
 /* proof terms */
 
-ProofTerm = ax(n:Name,cn:CoName)
+ProofTerm = ax(x:Name,a:CoName)
           | cut(cp1:<CutPrem1>,cp2:<CutPrem2>)
-          | falseL(n:Name)
-          | trueR(cn:CoName)
+          | falseL(x:Name)
+          | trueR(a:CoName)
           | andR(arp1:<AndRPrem1>,arp2:<AndRPrem2>,cn:CoName)
-          | andL(alp1:<AndLPrem1>, n:Name)
-          | orR(orp1:<OrRPrem1>, cn:CoName)
+          | andL(alp1:<AndLPrem1>,n:Name)
+          | orR(orp1:<OrRPrem1>,cn:CoName)
           | orL(olp1:<OrLPrem1>,olp2:<OrLPrem2>, n:Name)
           | implyR(irp1:<ImplyRPrem1>, cn:CoName)
           | implyL(ilp1:<ImplyLPrem1>,ilp2:<ImplyLPrem2>,n:Name)
@@ -44,11 +44,11 @@ ProofTerm = ax(n:Name,cn:CoName)
           | existsL(elp1:<ExistsLPrem1>,n:Name)
           | forallR(frp1:<ForallRPrem1>,cn:CoName)
           | forallL(flp1:<ForallLPrem1>,t:Term,n:Name)
-	  | rootL(rlp1:<RootLPrem1>)
-	  | rootR(rrp1:<RootRPrem1>)
+          | rootL(rlp1:<RootLPrem1>)
+          | rootR(rrp1:<RootRPrem1>)
 
 RootLPrem1 binds Name = RootLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
-RootRPrem1 binds CoName = RootRPrem1(a:CoName,neutral px:Prop,inner M:ProofTerm)
+RootRPrem1 binds CoName = RootRPrem1(a:CoName,neutral pa:Prop,inner M:ProofTerm)
 
 CutPrem1 binds CoName = CutPrem1(a:CoName,neutral pa:Prop,inner M:ProofTerm)
 CutPrem2 binds Name = CutPrem2(x:Name,neutral px:Prop,inner N:ProofTerm)
@@ -71,3 +71,7 @@ ExistsLPrem1 binds Name FoVar = ExistsLPrem1(x:Name,inner px:Prop,fx:FoVar,inner
 ForallRPrem1 binds CoName FoVar = ForallRPrem1(a:CoName,inner pa:Prop,fx:FoVar,inner M:ProofTerm)
 ForallLPrem1 binds Name = ForallLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 
+/* -- data structures used by Evaluation.t -- */
+
+NameList = nameList(Name*)
+CoNameList = conameList(CoName*)
