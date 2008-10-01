@@ -702,7 +702,8 @@ public class FreshExpander {
       String fsort = st.getSort(c,f);
       if (env.isBuiltin(fsort)) continue;
       for(String a: st.getBoundAtoms(sort)) {
-        res += %[res = res.set@f@(res.get@f@().rename@a@(@a@Map));]%;
+        if (st.getAccessibleAtoms(fsort).contains(a))
+          res += %[res = res.set@f@(res.get@f@().rename@a@(@a@Map));]%;
       }
     }
     return res + "return res;";
@@ -734,6 +735,7 @@ public class FreshExpander {
             res += %[get@f@().alpha(o.get@f@() @alphaRecCall1(fsort)@);]%;
           } else if (st.isPatternType(fsort)) {
             res += %[
+              { /* to limit declared variables scope */
               @fsortid@ @f@ = get@f@();;
               @fsortid@ o_@f@ = o.get@f@();
             ]%;
@@ -748,6 +750,7 @@ public class FreshExpander {
               ]%;
             }
             res += %[@f@.alpha(o.get@f@() @alphaRecCall2(fsort)@);]%;
+            res += %[}]%;
           }
         }
       }
@@ -766,7 +769,7 @@ public class FreshExpander {
           String fsortid = st.qualifiedSortId(fsort);
           String rawfsortid = st.qualifiedRawSortId(fsort);
           if (st.isAtomType(fsort)) {
-            if (st.isBound(c,f))
+            if (st.isBound(c,f)) 
               res += %[
                 if (!@fsort@InnerMap.equal(get@f@(),o.get@f@()))
                   throw new tom.library.freshgom.AlphaMap.AlphaException();
@@ -809,6 +812,10 @@ public class FreshExpander {
           res += %[@rawfsortid@ raw_@f@ 
             = get@f@()._export(@recCall1(fsort)@);]%;
         } else if (st.isPatternType(fsort)) {
+          res += %[
+            /* declaration before scoping */
+            @rawfsortid@ raw_@f@ = null; ]%;
+          res += %[{ /* to limit declared variables scope */]%;
           res += %[@fsortid@ @f@ = get@f@();]%;
           for(String a: st.getBoundAtoms(fsort)) {
             String aid = st.qualifiedSortId(a);
@@ -818,8 +825,8 @@ public class FreshExpander {
                 = @a@Map.addSet(@f@_bound@a@);
             ]%;
           }
-          res += %[@rawfsortid@ raw_@f@ 
-            = @f@._export(@recCall2(fsort)@);]%;
+          res += %[raw_@f@ = @f@._export(@recCall2(fsort)@);]%;
+          res += %[}]%;
         }
       }
     /* if c is a constructor in pattern position --
@@ -1012,6 +1019,11 @@ public class FreshExpander {
           res += %[@fsortid@ @f@ 
             = @st.rawGetter(c,f)@._convert(@recCall1(fsort)@);]%;
         } else if (st.isPatternType(fsort)) {
+          res += %[
+            /* declaration before scoping */
+            @fsortid@ @f@ = null;
+          ]%;
+          res += %[{ /* to limit declared variables scope */]%;
           res += %[@rawfsortid@ raw_@f@ = @st.rawGetter(c,f)@;]%;
           for(String a: st.getBoundAtoms(fsort)) {
             String aid = st.qualifiedSortId(a);
@@ -1022,8 +1034,8 @@ public class FreshExpander {
                 = @a@Map.combine(raw_@f@_bound@a@);
             ]%;
           }
-          res += %[@fsortid@ @f@ 
-            = raw_@f@._convert(@recCall2(fsort)@);]%;
+          res += %[@f@ = raw_@f@._convert(@recCall2(fsort)@);]%;
+          res += %[}]%;
         }
       }
     /* if c is a constructor in pattern position --
