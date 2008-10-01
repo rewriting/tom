@@ -127,13 +127,13 @@ public class GraphExpander {
         //the last one is only used to implement the termgraph rewriting step
         // for now, we need also to fill the symbol table 
         OperatorDecl labOp = `OperatorDecl("Lab"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl),Slot("term"+sortname,sortdecl))));
-        //st.addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
+        st.addConstructor("Lab"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()),FieldDescription("term"+sortname,sortname,SNone()))); 
         OperatorDecl refOp = `OperatorDecl("Ref"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
-        //st.addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        st.addConstructor("Ref"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         OperatorDecl pathOp = `OperatorDecl("Path"+sortname,sortdecl,Variadic(intSortDecl));
-        //st.addVariadicConstructor("Path"+`sortname,`sortname,"int");
+        st.addVariadicConstructor("Path"+`sortname,"int",`sortname);
         OperatorDecl varOp = `OperatorDecl("Var"+sortname,sortdecl,Slots(ConcSlot(Slot("label"+sortname,stringSortDecl))));
-        //st.addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
+        st.addConstructor("Var"+`sortname,`sortname,`concFieldDescription(FieldDescription("label"+sortname,"String",SNone()))); 
         hookList.add(pathHooks(pathOp,`sortdecl));
         return `sort.setOperatorDecls(`ConcOperator(ops*,labOp,refOp,pathOp,varOp));
 
