@@ -185,112 +185,355 @@ public class Evaluation {
   public static boolean isImplicitContraction(ProofTerm pt) {
     %match (pt) {
       // left rules
-      andL(AndLPrem1(x,_,y,_,M),n) -> {
-        return `nameAppears(M,n) && !`x.equals(`n) && !`y.equals(`n); 
-      }
-      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> {
-        return (`nameAppears(M1,n) && !`x.equals(`n)) || (`nameAppears(M2,n) && !`y.equals(`n));
-      }
-      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(a,_,M2),n) -> {
-        return (`nameAppears(M1,n) && !`x.equals(`n)) || `nameAppears(M2,n);
-      }
-      forallL(ForallLPrem1(x,_,M),_,n) -> {
-        return `nameAppears(M,n) && !`x.equals(`n);
-      }
-      existsL(ExistsLPrem1(x,_,_,M),n) -> {
-        return `nameAppears(M,n) && ! `x.equals(`n);
-      }
+      andL(AndLPrem1(x,_,y,_,M),n) -> { return `nameAppears(M,n); }
+      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
+      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(a,_,M2),n) -> { return `nameAppears(M1,n) || `nameAppears(M2,n); }
+      forallL(ForallLPrem1(x,_,M),_,n) -> { return `nameAppears(M,n); }
+      existsL(ExistsLPrem1(x,_,_,M),n) -> { return `nameAppears(M,n); }
       // right rules
-      orR(OrRPrem1(a,_,b,_,M),cn) -> {
-        return `conameAppears(M,cn) && !`a.equals(`cn) && !`b.equals(`cn); 
-      }
-      andR(AndRPrem1(a,_,M1),AndRPrem2(b,_,M2),cn) -> {
-        return (`conameAppears(M1,cn) && !`a.equals(`cn)) || (`conameAppears(M2,cn) && !`b.equals(`cn));
-      }
-      implyR(ImplyRPrem1(x,_,a,_,M),cn) -> {
-        return `conameAppears(M,cn) && !`a.equals(`cn);
-      }
-      existsR(ExistsRPrem1(a,_,M),_,cn) -> {
-        return `conameAppears(M,cn) && !`a.equals(`cn);
-      }
-      forallR(ForallRPrem1(a,_,_,M),cn) -> {
-        return `conameAppears(M,cn) && ! `a.equals(`cn);
-      }
+      orR(OrRPrem1(a,_,b,_,M),cn) -> { return `conameAppears(M,cn); }
+      andR(AndRPrem1(a,_,M1),AndRPrem2(b,_,M2),cn) -> { return `conameAppears(M1,cn) || `conameAppears(M2,cn); }
+      implyR(ImplyRPrem1(x,_,a,_,M),cn) -> { return `conameAppears(M,cn); }
+      existsR(ExistsRPrem1(a,_,M),_,cn) -> { return `conameAppears(M,cn); }
+      forallR(ForallRPrem1(a,_,_,M),cn) -> { return `conameAppears(M,cn); }
     }
     return false;
   }
 
-  private static ProofTerm ReName(ProofTerm pt, Name n1, Name n2) { 
-    %match(ProofTerm pt) {
-      ax(n,_) -> {
+  private static ProofTerm rename(ProofTerm pt, Name n1, Name n2) { 
+    %match(pt) {
+      ax(n,cn) -> {
+        if (`n.equals(n1)) 
+          return `ax(n2,cn);
+        else 
+          return `ax(n,cn); 
       }
-      cut(CutPrem1(_,_,M1),CutPrem2(x,_,M2)) -> {
+      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+        return `cut(CutPrem1(a,pa,rename(M1,n1,n2)),CutPrem2(x,px,rename(M2,n1,n2)));
       }
       // left rules
-      andL(AndLPrem1(x,_,y,_,M),n) -> {
+      andL(AndLPrem1(x,px,y,py,M),n) -> {
+        if (`n.equals(n1))
+          return `andL(AndLPrem1(x,px,y,py,rename(M,n1,n2)),n2); 
+        else
+          return `andL(AndLPrem1(x,px,y,py,rename(M,n1,n2)),n); 
       }
-      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> {
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
+        if (`n.equals(n1))
+          return `orL(OrLPrem1(x,px,rename(M1,n1,n2)),OrLPrem2(y,py,rename(M2,n1,n2)),n2);
+        else
+          return `orL(OrLPrem1(x,px,rename(M1,n1,n2)),OrLPrem2(y,py,rename(M2,n1,n2)),n);
       }
-      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(_,_,M2),n) -> {
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
+        if (`n.equals(n1))
+          return `implyL(ImplyLPrem1(x,px,rename(M1,n1,n2)),ImplyLPrem2(a,pa,rename(M2,n1,n2)),n2);
+        else
+          return `implyL(ImplyLPrem1(x,px,rename(M1,n1,n2)),ImplyLPrem2(a,pa,rename(M2,n1,n2)),n);
       }
-      forallL(ForallLPrem1(x,_,M),_,n) -> {
+      forallL(ForallLPrem1(x,px,M),t,n) -> {
+        if (`n.equals(n1))
+          return `forallL(ForallLPrem1(x,px,rename(M,n1,n2)),t,n2);
+        else
+          return `forallL(ForallLPrem1(x,px,rename(M,n1,n2)),t,n);
       }
-      existsL(ExistsLPrem1(x,_,_,M),n) -> {
+      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
+        if (`n.equals(n1))
+          return `existsL(ExistsLPrem1(x,px,fx,rename(M,n1,n2)),n2);
+        else
+          return `existsL(ExistsLPrem1(x,px,fx,rename(M,n1,n2)),n);
       }
-      rootL(RootLPrem1(x,_,M)) -> {
+      rootL(RootLPrem1(x,px,M)) -> {
+        return `rootL(RootLPrem1(x,px,rename(M,n1,n2)));
       }
       // right rules
-      orR(OrRPrem1(_,_,_,_,M),cn) -> {
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
+        return `orR(OrRPrem1(a,pa,b,pb,rename(M,n1,n2)),cn);
       }
-      andR(AndRPrem1(_,_,M1),AndRPrem2(_,_,M2),cn) -> {
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
+        return `andR(AndRPrem1(a,pa,rename(M1,n1,n2)),AndRPrem2(b,pb,rename(M2,n1,n2)),cn);
       }
-      implyR(ImplyRPrem1(x,_,_,_,M),cn) -> {
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
+        return `implyR(ImplyRPrem1(x,px,a,pa,rename(M,n1,n2)),cn);
       }
-      existsR(ExistsRPrem1(_,_,M),_,cn) -> {
+      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
+        return `existsR(ExistsRPrem1(a,pa,rename(M,n1,n2)),t,cn);
       }
-      forallR(ForallRPrem1(_,_,_,M),cn) -> {
+      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
+        return `forallR(ForallRPrem1(a,pa,fx,rename(M,n1,n2)),cn);
       }
-      rootR(RootRPrem1(_,_,M)) -> {
+      rootR(RootRPrem1(a,pa,M)) -> {
+        return ` rootR(RootRPrem1(a,pa,rename(M,n1,n2)));
       }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
 
-  private static ProofTerm ReCoName(ProofTerm pt, CoName cn1, CoName cn2) { 
-    %match(ProofTerm pt) {
-      ax(n,_) -> {
+  private static ProofTerm reconame(ProofTerm pt, CoName cn1, CoName cn2) { 
+    %match(pt) {
+      ax(n,cn) -> {
+        if (`cn.equals(cn1)) 
+          return `ax(n,cn2);
+        else 
+          return `ax(n,cn); 
       }
-      cut(CutPrem1(_,_,M1),CutPrem2(x,_,M2)) -> {
+      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+        return `cut(CutPrem1(a,pa,reconame(M1,cn1,cn2)),CutPrem2(x,px,reconame(M2,cn1,cn2)));
       }
       // left rules
-      andL(AndLPrem1(x,_,y,_,M),n) -> {
+      andL(AndLPrem1(x,px,y,py,M),n) -> {
+        return `andL(AndLPrem1(x,px,y,py,reconame(M,cn1,cn2)),n); 
       }
-      orL(OrLPrem1(x,_,M1),OrLPrem2(y,_,M2),n) -> {
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
+        return `orL(OrLPrem1(x,px,reconame(M1,cn1,cn2)),OrLPrem2(y,py,reconame(M2,cn1,cn2)),n);
       }
-      implyL(ImplyLPrem1(x,_,M1),ImplyLPrem2(_,_,M2),n) -> {
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
+        return `implyL(ImplyLPrem1(x,px,reconame(M1,cn1,cn2)),ImplyLPrem2(a,pa,reconame(M2,cn1,cn2)),n);
       }
-      forallL(ForallLPrem1(x,_,M),_,n) -> {
+      forallL(ForallLPrem1(x,px,M),t,n) -> {
+        return `forallL(ForallLPrem1(x,px,reconame(M,cn1,cn2)),t,n);
       }
-      existsL(ExistsLPrem1(x,_,_,M),n) -> {
+      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
+        return `existsL(ExistsLPrem1(x,px,fx,reconame(M,cn1,cn2)),n);
       }
-      rootL(RootLPrem1(x,_,M)) -> {
+      rootL(RootLPrem1(x,px,M)) -> {
+        return `rootL(RootLPrem1(x,px,reconame(M,cn1,cn2)));
       }
       // right rules
-      orR(OrRPrem1(_,_,_,_,M),cn) -> {
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
+        if (`cn.equals(cn1))
+          return `orR(OrRPrem1(a,pa,b,pb,reconame(M,cn1,cn2)),cn2);
+        else
+          return `orR(OrRPrem1(a,pa,b,pb,reconame(M,cn1,cn2)),cn);
       }
-      andR(AndRPrem1(_,_,M1),AndRPrem2(_,_,M2),cn) -> {
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
+        if (`cn.equals(cn1))
+          return `andR(AndRPrem1(a,pa,reconame(M1,cn1,cn2)),AndRPrem2(b,pb,reconame(M2,cn1,cn2)),cn2);
+        else
+          return `andR(AndRPrem1(a,pa,reconame(M1,cn1,cn2)),AndRPrem2(b,pb,reconame(M2,cn1,cn2)),cn);
       }
-      implyR(ImplyRPrem1(x,_,_,_,M),cn) -> {
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
+        if (`cn.equals(cn1))
+          return `implyR(ImplyRPrem1(x,px,a,pa,reconame(M,cn1,cn2)),cn2);
+        else
+          return `implyR(ImplyRPrem1(x,px,a,pa,reconame(M,cn1,cn2)),cn);
       }
-      existsR(ExistsRPrem1(_,_,M),_,cn) -> {
+      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
+        if (`cn.equals(cn1))
+          return `existsR(ExistsRPrem1(a,pa,reconame(M,cn1,cn2)),t,cn2);
+        else
+          return `existsR(ExistsRPrem1(a,pa,reconame(M,cn1,cn2)),t,cn);
       }
-      forallR(ForallRPrem1(_,_,_,M),cn) -> {
+      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
+        if (`cn.equals(cn1))
+          return `forallR(ForallRPrem1(a,pa,fx,reconame(M,cn1,cn2)),cn2);
+        else
+          return `forallR(ForallRPrem1(a,pa,fx,reconame(M,cn1,cn2)),cn);
       }
-      rootR(RootRPrem1(_,_,M)) -> {
+      rootR(RootRPrem1(a,pa,M)) -> {
+        return `rootR(RootRPrem1(a,pa,reconame(M,cn1,cn2)));
       }
     }
     throw new RuntimeException("non exhaustive patterns");
   }
+
+  private static ProofTerm substName(ProofTerm pt, Name n1, CoName cn1, Prop prop, ProofTerm P) {
+    %match(pt, Name n1) {
+      ax(n,cn), n -> {
+        return `reconame(P,cn1,cn);
+      }
+      andL(AndLPrem1(x,px,y,py,M),n), n -> {
+        return `cut(
+            CutPrem1(cn1,prop,P),
+            CutPrem2(n1,prop,andL(
+                AndLPrem1(x,px,y,py,substName(M,n1,cn1,prop,P)),n1)));
+      }
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n), n -> {
+        return `cut(
+            CutPrem1(cn1,prop,P),
+            CutPrem2(n1,prop,orL(
+                OrLPrem1(x,px,substName(M1,n1,cn1,prop,P)),
+                OrLPrem2(y,py,substName(M2,n1,cn1,prop,P)),n1)));
+      }
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n), n -> {
+        return `cut(
+            CutPrem1(cn1,prop,P),
+            CutPrem2(n1,prop,implyL(
+                ImplyLPrem1(x,px,substName(M1,n1,cn1,prop,P)),
+                ImplyLPrem2(a,pa,substName(M2,n1,cn1,prop,P)),n1)));
+      }
+      forallL(ForallLPrem1(x,px,M),t,n), n -> {
+        return `cut(
+            CutPrem1(cn1,prop,P),
+            CutPrem2(n1,prop,forallL(
+                ForallLPrem1(x,px,substName(M,n1,cn1,prop,P)),t,n1))); 
+      }
+      existsL(ExistsLPrem1(x,px,fx,M),n), n -> {
+        return `cut(
+            CutPrem1(cn1,prop,P),
+            CutPrem2(n1,prop,existsL(
+                ExistsLPrem1(x,px,fx,substName(M,n1,cn1,prop,P)),n1))); 
+      }
+    }
+    %match(pt) { // if introduced name different from n1
+      ax(n,cn) -> {
+        return `ax(n,cn); 
+      }
+      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+        return `cut(CutPrem1(a,pa,substName(M1,n1,cn1,prop,P)),CutPrem2(x,px,substName(M2,n1,cn1,prop,P)));
+      }
+      // left rules
+      andL(AndLPrem1(x,px,y,py,M),n) -> {
+        return `andL(AndLPrem1(x,px,y,py,substName(M,n1,cn1,prop,P)),n); 
+      }
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
+        return `orL(OrLPrem1(x,px,substName(M1,n1,cn1,prop,P)),OrLPrem2(y,py,substName(M2,n1,cn1,prop,P)),n);
+      }
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
+        return `implyL(ImplyLPrem1(x,px,substName(M1,n1,cn1,prop,P)),ImplyLPrem2(a,pa,substName(M2,n1,cn1,prop,P)),n);
+      }
+      forallL(ForallLPrem1(x,px,M),t,n) -> {
+        return `forallL(ForallLPrem1(x,px,substName(M,n1,cn1,prop,P)),t,n);
+      }
+      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
+        return `existsL(ExistsLPrem1(x,px,fx,substName(M,n1,cn1,prop,P)),n);
+      }
+      // right rules
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
+        return `orR(OrRPrem1(a,pa,b,pb,substName(M,n1,cn1,prop,P)),cn);
+      }
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
+        return `andR(AndRPrem1(a,pa,substName(M1,n1,cn1,prop,P)),AndRPrem2(b,pb,substName(M2,n1,cn1,prop,P)),cn);
+      }
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
+        return `implyR(ImplyRPrem1(x,px,a,pa,substName(M,n1,cn1,prop,P)),cn);
+      }
+      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
+        return `existsR(ExistsRPrem1(a,pa,substName(M,n1,cn1,prop,P)),t,cn);
+      }
+      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
+        return `forallR(ForallRPrem1(a,pa,fx,substName(M,n1,cn1,prop,P)),cn);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static ProofTerm substCoName(ProofTerm pt, CoName cn1, Name n1, Prop prop, ProofTerm P) {
+    %match(pt, CoName cn1) {
+      orR(OrRPrem1(a,pa,b,pb,M),cn), cn -> {
+        return `cut(
+            CutPrem1(cn1,prop,orR(OrRPrem1(a,pa,b,pb,substCoName(M,cn1,n1,prop,P)),cn1)),
+            CutPrem2(n1,prop,P));
+      }
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn), cn -> {
+        return `cut(
+            CutPrem1(cn1,prop,andR(AndRPrem1(a,pa,substCoName(M1,cn1,n1,prop,P)),AndRPrem2(b,pb,substCoName(M2,cn1,n1,prop,P)),cn1)),
+            CutPrem2(n1,prop,P));
+      }
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn), cn -> {
+        return `cut(
+            CutPrem1(cn1,prop,implyR(ImplyRPrem1(x,px,a,pa,substCoName(M,cn1,n1,prop,P)),cn1)),
+            CutPrem2(n1,prop,P));
+      }
+      existsR(ExistsRPrem1(a,pa,M),t,cn), cn -> {
+        return `cut(
+            CutPrem1(cn1,prop,existsR(ExistsRPrem1(a,pa,substCoName(M,cn1,n1,prop,P)),t,cn1)),
+            CutPrem2(n1,prop,P));
+      }
+      forallR(ForallRPrem1(a,pa,fx,M),cn), cn -> {
+        return `forallR(ForallRPrem1(a,pa,fx,substCoName(M,cn1,n1,prop,P)),cn);
+      }
+    }
+    %match(pt) { // if introduced coname different from cn1
+      ax(n,cn) -> {
+        return `ax(n,cn); 
+      }
+      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+        return `cut(CutPrem1(a,pa,substCoName(M1,cn1,n1,prop,P)),CutPrem2(x,px,substCoName(M2,cn1,n1,prop,P)));
+      }
+      // left rules
+      andL(AndLPrem1(x,px,y,py,M),n) -> {
+        return `andL(AndLPrem1(x,px,y,py,substCoName(M,cn1,n1,prop,P)),n); 
+      }
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
+        return `orL(OrLPrem1(x,px,substCoName(M1,cn1,n1,prop,P)),OrLPrem2(y,py,substCoName(M2,cn1,n1,prop,P)),n);
+      }
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
+        return `implyL(ImplyLPrem1(x,px,substCoName(M1,cn1,n1,prop,P)),ImplyLPrem2(a,pa,substCoName(M2,cn1,n1,prop,P)),n);
+      }
+      forallL(ForallLPrem1(x,px,M),t,n) -> {
+        return `forallL(ForallLPrem1(x,px,substCoName(M,cn1,n1,prop,P)),t,n);
+      }
+      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
+        return `existsL(ExistsLPrem1(x,px,fx,substCoName(M,cn1,n1,prop,P)),n);
+      }
+      // right rules
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
+        return `orR(OrRPrem1(a,pa,b,pb,substCoName(M,cn1,n1,prop,P)),cn);
+      }
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
+        return `andR(AndRPrem1(a,pa,substCoName(M1,cn1,n1,prop,P)),AndRPrem2(b,pb,substCoName(M2,cn1,n1,prop,P)),cn);
+      }
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
+        return `implyR(ImplyRPrem1(x,px,a,pa,substCoName(M,cn1,n1,prop,P)),cn);
+      }
+      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
+        return `existsR(ExistsRPrem1(a,pa,substCoName(M,cn1,n1,prop,P)),t,cn);
+      }
+      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
+        return `forallR(ForallRPrem1(a,pa,fx,substCoName(M,cn1,n1,prop,P)),cn);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
+  private static Term substFoVar(Term t, FoVar x, Term u) {
+    return null;
+  }
+
+  private static ProofTerm substFoVar(ProofTerm pt, FoVar x1, Term t1) {
+    %match(pt) { 
+      ax(n,cn) -> {
+        return `ax(n,cn); 
+      }
+      cut(CutPrem1(a,pa,M1),CutPrem2(x,px,M2)) -> {
+        return `cut(CutPrem1(a,pa,substFoVar(M1,x1,t1)),CutPrem2(x,px,substFoVar(M2,x1,t1)));
+      }
+      // left rules
+      andL(AndLPrem1(x,px,y,py,M),n) -> {
+        return `andL(AndLPrem1(x,px,y,py,substFoVar(M,x1,t1)),n); 
+      }
+      orL(OrLPrem1(x,px,M1),OrLPrem2(y,py,M2),n) -> {
+        return `orL(OrLPrem1(x,px,substFoVar(M1,x1,t1)),OrLPrem2(y,py,substFoVar(M2,x1,t1)),n);
+      }
+      implyL(ImplyLPrem1(x,px,M1),ImplyLPrem2(a,pa,M2),n) -> {
+        return `implyL(ImplyLPrem1(x,px,substFoVar(M1,x1,t1)),ImplyLPrem2(a,pa,substFoVar(M2,x1,t1)),n);
+      }
+      forallL(ForallLPrem1(x,px,M),t,n) -> {
+        return `forallL(ForallLPrem1(x,px,substFoVar(M,x1,t1)),substFoVar(t,x1,t1),n);
+      }
+      existsL(ExistsLPrem1(x,px,fx,M),n) -> {
+        return `existsL(ExistsLPrem1(x,px,fx,substFoVar(M,x1,t1)),n);
+      }
+      // right rules
+      orR(OrRPrem1(a,pa,b,pb,M),cn) -> {
+        return `orR(OrRPrem1(a,pa,b,pb,substFoVar(M,x1,t1)),cn);
+      }
+      andR(AndRPrem1(a,pa,M1),AndRPrem2(b,pb,M2),cn) -> {
+        return `andR(AndRPrem1(a,pa,substFoVar(M1,x1,t1)),AndRPrem2(b,pb,substFoVar(M2,x1,t1)),cn);
+      }
+      implyR(ImplyRPrem1(x,px,a,pa,M),cn) -> {
+        return `implyR(ImplyRPrem1(x,px,a,pa,substFoVar(M,x1,t1)),cn);
+      }
+      existsR(ExistsRPrem1(a,pa,M),t,cn) -> {
+        return `existsR(ExistsRPrem1(a,pa,substFoVar(M,x1,t1)),substFoVar(t,x1,t1),cn);
+      }
+      forallR(ForallRPrem1(a,pa,fx,M),cn) -> {
+        return `forallR(ForallRPrem1(a,pa,fx,substFoVar(M,x1,t1)),cn);
+      }
+    }
+    throw new RuntimeException("non exhaustive patterns");
+  }
+
 
   /* \x.x : A -> A */
   static RawProp A = `RawrelApp("A",RawtermList());
