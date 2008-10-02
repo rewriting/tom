@@ -192,11 +192,11 @@ public class TypeInference {
                 TomType min_t = `minimalType(t2,t3,subcl*);
                 return `constraintsResolution(CList(Equation(t1,min_t),x*,y*),ml,subcl*);
               }
-
+            }
             //{A <: B} U C -> (insert({A <: B},SubList) && resolution(C))
             return `constraintsResolution(consl*,ml,CList(cons,subcl*));
           }
-*/          
+*/
         }
         //return constraintsResolution(`consl*,ml);
       }
@@ -274,10 +274,10 @@ public class TypeInference {
   private static ReconResultList reconClause(Context ctx, Clause rule) {
     %match(rule) {
       Rule(condition,result) &&
-      CRPair(ctx_c,pair_c) << reconLeft(ctx,condition)
+      CRPair(ctx_c,pair_c) << reconCondition(ctx,condition)
       -> 
       {
-        %match(reconRight(Context(ctx*,ctx_c*),result)) {
+        %match(reconBlockList(Context(ctx*,ctx_c*),result)) {
           RRList() -> { return `RRList(pair_c*); }
           pairList@!RRList() -> { return `RRList(pair_c*,pairList*); }
         }
@@ -290,19 +290,35 @@ public class TypeInference {
   // To reconstruct the type of the left side of rule
   // in others words, the pattern matching
   //----------------------------------------------------
-  private static ContextAndResult reconLeft(Context ctx, Condition cond) {
-    %match(cond) {
-      Matching(pattern,subject,type) &&
+  private static ContextAndResult reconCondition(Context ctx, Condition cond) {
+    %match {
+      Matching(pattern,subject,type) << cond &&
       CRPair(ctx_p,pair_p) << reconPattern(ctx,pattern) &&
-      Pair(type_s,constraints_s) << reconTerm(ctx,subject) 
-      -> 
+      Pair(type_s,constraints_s) << reconTerm(ctx,subject) &&
+      RRList(Pair(type_p,_)) << pair_p
+      ->
       {
-        %match(pair_p) {
-          RRList(Pair(type_p,_)) -> {
-            ConstraintList cl_s = `CList(Equation(type,type_s),Equation(type_s,type_p),constraints_s*);
-            return `CRPair(ctx_p,RRList(pair_p,Pair(type_s,cl_s)));
-          }
-        }
+        ConstraintList cl_s = `CList(Equation(type,type_s),Equation(type_s,type_p),constraints_s*);
+        return `CRPair(ctx_p,RRList(pair_p,Pair(type_s,cl_s)));
+      }
+
+      (Conjunction(cond1,cond2) << cond || Disjunction(cond1,cond2) << cond) &&
+      CRPair(ctx1,res1) << reconCondition(ctx,cond1) &&
+      CRPair(ctx2,res2) << reconCondition(ctx1,cond2)
+      -> { return `CRPair(ctx2,RRList(res1*,res2*)); }
+
+      (Equality(term1,term2) << cond ||
+      Inequality(term1,term2) << cond ||
+      Greater(term1,term2) << cond ||
+      GreaterEq(term1,term2) << cond ||
+      Less(term1,term2) << cond ||
+      LessEq(term1,term2) << cond) &&
+      Pair(type1,cons1) << reconTerm(ctx,term1) &&
+      pair2@Pair(type2,_) << reconTerm(ctx,term2)
+      ->
+      {
+        ConstraintList cl = `CList(Equation(type1,type2),cons1*);
+        return `CRPair(ctx,RRList(Pair(type1,cl),pair2));
       }
     }
     throw new RuntimeException("Type reconstruction failed to the left side of the rules of the pattern matching.");
@@ -312,7 +328,7 @@ public class TypeInference {
   // To reconstruct the types of the right side of rule
   // in other words, the type of backquote variables
   //-----------------------------------------------------
-  private static ReconResultList reconRight(Context ctx, TomTermList backquotes) {
+  private static ReconResultList reconBlockList(Context ctx, TomTermList backquotes) {
     return reconBackquotes(ctx,backquotes,`RRList());
   }
 

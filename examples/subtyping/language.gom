@@ -25,8 +25,14 @@ TomInstructionList = TIList(TomInstruction*)
 Clause = Rule(condition: Condition, result: TomTermList)
 
 Condition = Matching(pattern: TomTerm, subject: TomTerm, type: TomType)
- 
-//Pattern = Simple(pattern: TomTerm)
+          | Conjunction(cond1: Condition, cond2: Condition)
+          | Disjunction(cond1: Condition, cond2: Condition)
+          | Equality(term1: TomTerm, term2: TomTerm)
+          | Inequality(term1: TomTerm, term2: TomTerm)
+          | Greater(term1: TomTerm, term2: TomTerm)
+          | GreaterEq(term1: TomTerm, term2: TomTerm)
+          | Less(term1: TomTerm, term2: TomTerm)
+          | LessEq(term1: TomTerm, term2: TomTerm)
 
 /* Type Reconstruction */
 Constraint = Equation(type1: TomType, type2: TomType)
