@@ -624,12 +624,14 @@ public class Evaluation {
                 `rename(M,x,y)));
       }
       // first-order cuts
-      /*
       cut(
-          CutPrem1(b,pb,existsR(ExistsRPrem1(a,pa,M),t,b)),
-          CutPrem2()) -> {
+          CutPrem1(b,pb,p1@existsR(ExistsRPrem1(a,pa,M),t,b)),
+          CutPrem2(y,py,p2@existsL(ExistsLPrem1(x,px,fx,N),y))) -> {
+        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,y))
+          c.add(subst(getPosition(),last,
+                `cut(CutPrem1(a,pa,M),CutPrem2(x,px,substFoVar(N,fx,t)))));
+
       }
-      */
     }
   }
 
