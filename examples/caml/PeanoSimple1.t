@@ -1,3 +1,4 @@
+(* vim: set filetype=ocaml : *)
 (*
  * Copyright (c) 2004-2008, INRIA
  * All rights reserved.
@@ -26,8 +27,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
-
-(* vim: set filetype=ocaml : *)
 
 open Peanotype ;;
 exception Erreur of string ;;
