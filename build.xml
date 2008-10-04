@@ -328,6 +328,10 @@
           if="gen.destination">
     <mkdir dir="${gen.destination}/tom/engine/parser"/>
 
+    <taskdef name="antlr"
+             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
+      <classpath refid="stable.classpath"/>
+    </taskdef>
     <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
            outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
