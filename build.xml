@@ -844,8 +844,10 @@
     <delete dir="${stable.dist}"/>
   </target>
 
-  <target name="test" description="Compile and run acceptance tests"
-          depends="src.dist">
+  <target name="cruisecontrol" description="Compile and run acceptance tests"
+          depends="stable">
+    <antcall target="src.dist"/>
+    <antcall target="clean.test"/>
      <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="off"/>
