@@ -69,4 +69,16 @@ public class TestPosition extends TestCase {
     assertEquals(r,new Position(new int[]{-1, -2, -1, 2, 1, 2, 1}));
   }
 
+  public void testEquals() {
+    Position p1 = new Position(new int[]{1,1});
+    Position p2 = new Position(new int[]{1,1});
+    assertEquals("Similar objects should be equal" ,p1,p2);
+  }
+
+  public void testHashCode() {
+    Position p1 = new Position(new int[]{1,1});
+    Position p2 = new Position(new int[]{1,1});
+    assertEquals("HashCode for similar objects should be equal"
+        ,p1.hashCode(),p2.hashCode());
+  }
  }
