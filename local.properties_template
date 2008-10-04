@@ -21,3 +21,6 @@ findbugs.home=<WORKSPACE>/findbugs/
 
 # home of the clover installation
 clover.home=<WORKSPACE>/clover-ant/
+
+# enable xml reports for junit test results
+test.xmlreport=yes
