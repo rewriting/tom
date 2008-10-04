@@ -852,6 +852,7 @@
        <property name="optimize2" value="off"/>
        <property name="inline" value="off"/>
        <property name="inlineplus" value="off"/>
+       <property name="test.xmlreport" value="on"/>
      </ant>
   </target>
 
