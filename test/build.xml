@@ -116,6 +116,16 @@
     </fail>
   </target>
 
+  <target name="report" description="Create acceptance tests report"
+          depends="junit">
+      <junitreport todir="${test.report}">
+        <fileset dir="${test.report}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${test.report}/html"/>
+      </junitreport>
+    </target>
+
   <target name="regress"
     description="Run regresssion tests"
     depends="build">

@@ -846,7 +846,7 @@
 
   <target name="test" description="Compile and run acceptance tests"
           depends="src.dist">
-     <ant dir="${test}" target="build">
+     <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="off"/>
        <property name="optimize2" value="off"/>
@@ -858,11 +858,12 @@
 
   <target name="test.opt" description="Compile and run acceptance tests with optimizer"
           depends="src.dist">
-     <ant dir="${test}" target="build">
+     <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>
        <property name="optimize" value="on"/>
        <property name="optimize2" value="on"/>
        <property name="inlineplus" value="on"/>
+       <property name="test.xmlreport" value="on"/>
      </ant>
   </target>
 
