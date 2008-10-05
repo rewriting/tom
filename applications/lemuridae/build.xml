@@ -24,19 +24,16 @@
   </target>
 
   <target name="build" depends="init">
-    <gom config="${gomconfigfile}"
-      srcdir="${lemu.src}/lambdapp"
+    <gom.preset srcdir="${lemu.src}/lambdapp"
          destdir="${lemu.gen}"
          package="lambdapp">
          <include name="**/*.gom"/>
-    </gom>
-    <gom config="${gomconfigfile}"
-      srcdir="${lemu.src}/lemu"
+    </gom.preset>
+    <gom.preset srcdir="${lemu.src}/lemu"
          destdir="${lemu.gen}"
-         package="lemu"
-         >
+         package="lemu">
          <include name="**/*.gom"/>
-    </gom>
+    </gom.preset>
 
     <tom.preset srcdir="${lemu.src}"
       destdir="${lemu.gen}">

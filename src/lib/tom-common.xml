@@ -41,21 +41,25 @@
     </path>
 
     <taskdef name="tom"
-             classname="tom.engine.tools.ant.TomTask"
-             classpathref="tom.classpath"/>
+      classname="tom.engine.tools.ant.TomTask">
+	    <classpath refid="tom.classpath"/>
+    </taskdef>
     <taskdef name="tomantlr"
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="tom.classpath"/>
     </taskdef>
     <taskdef name="gom"
-             classname="tom.gom.tools.ant.GomTask"
-             classpathref="tom.classpath"/>
+      classname="tom.gom.tools.ant.GomTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
     <taskdef name="gomantlradapter"
-             classname="tom.gom.tools.ant.GomAntlrAdapterTask"
-             classpathref="tom.classpath"/>
+      classname="tom.gom.tools.ant.GomAntlrAdapterTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
     <taskdef name="tom.junit"
-             classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
-             classpathref="tom.classpath"/>
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
 
     <presetdef name="tom.preset">
       <tom config="${tomconfigfile}"
