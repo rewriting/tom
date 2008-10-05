@@ -844,7 +844,20 @@
     <delete dir="${stable.dist}"/>
   </target>
 
-  <target name="cruisecontrol" description="Compile and run acceptance tests"
+  <target name="cruisecontrol-stable" description="Compile and run acceptance tests">
+    <antcall target="stable.dist"/>
+    <antcall target="clean.test"/>
+     <ant dir="${test}" target="junit">
+       <property name="tom.home" value="${stable.dist}"/>
+       <property name="optimize" value="off"/>
+       <property name="optimize2" value="off"/>
+       <property name="inline" value="off"/>
+       <property name="inlineplus" value="off"/>
+       <property name="test.xmlreport" value="on"/>
+     </ant>
+  </target>
+
+  <target name="cruisecontrol-src" description="Compile and run acceptance tests"
           depends="stable">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
