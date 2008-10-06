@@ -1022,7 +1022,7 @@
     </ant>
   </target>
 
-  <target name="cruisecontrol-examples.stable"
+  <target name="cruisecontrol-examples-stable"
           description="Build and test examples with tom-stable"
           depends="stable.dist">
     <ant dir="${examples}" target="clean">
