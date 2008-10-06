@@ -399,6 +399,14 @@ public class TestAndOrConstraintOnly extends TestCase {
     fail();
   }
 
+  public void test31() {
+    %match {
+      f(t1,t2) << f(a(),a()) && t1==t2 -> {
+        return;
+      }
+    }
+    fail();
+  }
   public static void main(String[] args) {
    junit.textui.TestRunner.run(new TestSuite(TestAndOrConstraintOnly.class));
   }

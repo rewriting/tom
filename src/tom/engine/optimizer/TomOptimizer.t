@@ -407,7 +407,7 @@ public class TomOptimizer extends TomGenericPlugin {
     return factory.remove(term1)==factory.remove(term2);
   }
 
-  %strategy Inline(context:Constraint) extends `Identity() {
+  %strategy Inline(context:Constraint) extends Identity() {
     visit TomTerm {
       ExpressionToTomTerm(TomTermToExpression(t)) -> { return `t; }
 
@@ -432,6 +432,8 @@ public class TomOptimizer extends TomGenericPlugin {
        * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
+      LetRef(x,_,_) -> { System.out.println("opt: " + `x); }
+
       LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
@@ -540,15 +542,16 @@ public class TomOptimizer extends TomGenericPlugin {
         `computeOccurencesLet(name,info).visit(`body);
         int mult = info.readCount;
         tom.library.sl.Position readPos = info.lastRead;
-        // 0 -> unused variable
-        // suppress the letref and all the corresponding letassigns in the body
         if(mult == 0) {
-          // why this test?
+          // 0 -> unused variable
+          // suppress the Let and all the corresponding LetAssigns in the body
           if(varName.length() > 0) {
+            // why this test?
             // TODO: check variable occurence in TypedAction
             info = new InfoVariableLet();
             `computeOccurencesLet(name,info).visit(`context);
             if(info.readCount<=1 && !varName.startsWith("_")) {
+              // variables introduced by renaming starts with a '_'
               // verify linearity in case of variables from the pattern
               // warning to indicate that this var is unused in the rhs
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
@@ -559,13 +562,12 @@ public class TomOptimizer extends TomGenericPlugin {
                   new Object[]{ Integer.valueOf(mult), varName });
             }
           }
-          //remove all the unused letassign in the letref body
           return `body;
         } else if(mult == 1) {
           //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
-          if(! info.modifiedAssignmentVariables) {
+          if( info.modifiedAssignmentVariables) {
             if(varName.length() > 0) {
               logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
@@ -595,7 +597,7 @@ public class TomOptimizer extends TomGenericPlugin {
     } // end match
   }
 
-  %strategy NopElimAndFlatten() extends `Identity() {
+  %strategy NopElimAndFlatten() extends Identity() {
     visit Instruction {
 
       AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
@@ -720,7 +722,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %strategy InterBlock(optimizer:TomOptimizer) extends `Identity(){
+  %strategy InterBlock(optimizer:TomOptimizer) extends Identity() {
     visit Instruction {
       /* interleave two incompatible conditions */
       AbstractBlock(concInstruction(X1*,
@@ -735,41 +737,27 @@ public class TomOptimizer extends TomGenericPlugin {
     }      
   }
 
-  %strategy NormExpr(optimizer:TomOptimizer) extends `Identity() {
+  %strategy NormExpr(optimizer:TomOptimizer) extends Identity() {
     visit Expression {
-      Or(_,TrueTL()) -> {
-        return `TrueTL();
-      }
-      Or(TrueTL(),_) -> {
-        return `TrueTL();
-      }
-      Or(t1,FalseTL()) -> {
-        return `t1;
-      }
-      Or(FalseTL(),t1) -> {
-        return `t1;
-      }
-      And(TrueTL(),t1) -> {
-        return `t1;
-      }
-      And(t1,TrueTL()) -> {
-        return `t1;
-      }
-      And(FalseTL(),_) -> {
-        return `FalseTL();
-      }
-      And(TrueTL(),_) -> {
-        return `FalseTL();
-      }
+      Or(_,TrueTL()) -> TrueTL()
+      Or(TrueTL(),_) -> TrueTL()
+      Or(t1,FalseTL()) -> t1
+      Or(FalseTL(),t1) -> t1
+      And(TrueTL(),t1) -> t1
+      And(t1,TrueTL()) -> t1
+      And(FalseTL(),_) -> FalseTL()
+      And(TrueTL(),_) -> FalseTL()
+
       ref@EqualTerm(_,kid1,kid2) -> {
         //System.out.println("kid1 = " + `kid1);
         //System.out.println("kid2 = " + `kid2);
-        if(`compare(kid1,kid2)){
+        if(`compare(kid1,kid2)) {
           return `TrueTL();
         } else {
           return `ref;
         }
       }
+
       ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
         if(`name1==`name2) {
           return `IsFsym(name1,term);
