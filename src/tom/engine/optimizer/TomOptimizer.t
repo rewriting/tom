@@ -91,6 +91,9 @@ public class TomOptimizer extends TomGenericPlugin {
   // this static field is necessary for %strategy instructions that generate static code
   private static PILFactory factory = new PILFactory();
   private static Logger logger = Logger.getLogger("tom.engine.optimizer.TomOptimizer");
+  private static void info(TomMessage msg, int value, String name) {
+    logger.log( Level.INFO, msg.getMessage(), new Object[]{ Integer.valueOf(value), name });
+  }
 
   /** Constructor */
   public TomOptimizer() {
@@ -230,11 +233,11 @@ public class TomOptimizer extends TomGenericPlugin {
         return (Instruction) current.getSubject();
       }
 
-      LetAssign(Variable[AstName=varname],src,_) -> {
-        if(`varname.equals(variableName)) {
+      LetAssign(Variable[AstName=name],src,_) -> {
+        if(variableName == `name) {
           info.setlastvalue(`src,getEnvironment().getPosition());
         } else {
-          if(info.lastAssignmentVariables.contains(`varname)) {
+          if(info.lastAssignmentVariables.contains(`name)) {
             info.lastAssignment = null;
             info.lastAssignmentPosition = null;
             info.lastAssignmentVariables.clear();
@@ -252,11 +255,11 @@ public class TomOptimizer extends TomGenericPlugin {
         return (Instruction) current.getSubject();
       }
       // same code as for LetAssign with only one recursive call
-      Assign(Variable[AstName=varname],src) -> {
-        if(`varname.equals(variableName)) {
+      Assign(Variable[AstName=name],src) -> {
+        if(variableName == `name) {
           info.setlastvalue(`src,getEnvironment().getPosition());
         } else {
-          if(info.lastAssignmentVariables.contains(`varname)) {
+          if(info.lastAssignmentVariables.contains(`name)) {
             info.lastAssignment = null;
             info.lastAssignmentPosition = null;
             info.lastAssignmentVariables.clear();
@@ -279,7 +282,7 @@ public class TomOptimizer extends TomGenericPlugin {
         if(variableName == `name) {
           info.readCount++;
           info.lastRead=getEnvironment().getPosition(); 
-          if (info.readCount==2) { throw new VisitFailure(); }
+          if(info.readCount==2) { throw new VisitFailure(); }
         }  
       } 
     } 
@@ -432,8 +435,6 @@ public class TomOptimizer extends TomGenericPlugin {
        * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      LetRef(x,_,_) -> { System.out.println("opt: " + `x); }
-
       LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
@@ -463,9 +464,7 @@ public class TomOptimizer extends TomGenericPlugin {
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                   TomMessage.unusedVariable,varName);
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.remove,mult,varName);
             }
           }
           //remove all the unused letassign in the letref body
@@ -491,32 +490,24 @@ public class TomOptimizer extends TomGenericPlugin {
               //there is an instruction If, WhileDo or DoWhile
               commonAncestor.getOmega(positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo())))).visit(`body);
               if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.inline.getMessage(),
-                    new Object[]{ Integer.valueOf(mult), varName });
+                info(TomMessage.inline,mult,varName);
               }
               //System.out.println("replace1: " + `var + "\nby: " + `exp);
               return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
-            }catch(VisitFailure e) {
+            } catch(VisitFailure e) {
               if(varName.length() > 0) {
-                logger.log( Level.INFO,
-                    TomMessage.noInline.getMessage(),
-                    new Object[]{ Integer.valueOf(mult), varName });
+                info(TomMessage.noInline,mult,varName);
               }
             }
           } else {
             if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.noInline,mult,varName);
             }
           }
         } else {
           /* do nothing: traversal() */
           if(varName.length() > 0) {
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ Integer.valueOf(mult), varName });
+            info(TomMessage.doNothing,mult,varName);
           }
         }
       }
@@ -557,9 +548,7 @@ public class TomOptimizer extends TomGenericPlugin {
               Option orgTrack = TomBase.findOriginTracking(`var.getOption());
               TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
                   TomMessage.unusedVariable,varName);
-              logger.log( Level.INFO,
-                  TomMessage.remove.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.remove,mult,varName);
             }
           }
           return `body;
@@ -567,26 +556,20 @@ public class TomOptimizer extends TomGenericPlugin {
           //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
-          if( info.modifiedAssignmentVariables) {
+          if(!info.modifiedAssignmentVariables) {
             if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.inline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.inline,mult,varName);
             }
             return (Instruction) readPos.getReplace(`ExpressionToTomTerm(exp)).visitLight(`body);
           } else {
             if(varName.length() > 0) {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ Integer.valueOf(mult), varName });
+              info(TomMessage.noInline,mult,varName);
             }
           }
         } else {
           /* do nothing: traversal() */
           if(varName.length() > 0) {
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ Integer.valueOf(mult), varName });
+            info(TomMessage.doNothing,mult,varName);
           }
         }
       }
@@ -601,38 +584,32 @@ public class TomOptimizer extends TomGenericPlugin {
     visit Instruction {
 
       AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "flatten");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "flatten");     
         return `AbstractBlock(concInstruction(C1*,L1*,C2*));
       }
 
       AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "nop-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "nop-elim");     
         return `AbstractBlock(concInstruction(C1*,C2*));
       }  
 
       AbstractBlock(concInstruction()) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "abstractblock-elim1");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim1");     
         return `Nop();
       } 
 
       AbstractBlock(concInstruction(i)) -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "abstractblock-elim2");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim2");     
         return `i;
       }
 
       If[Condition=TrueTL(),SuccesInst=i] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "iftrue-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iftrue-elim");     
         return `i;
       }
 
       If[Condition=FalseTL(),FailureInst=i] -> {
-        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-            "iffalse-elim");     
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iffalse-elim");     
         return `i;
       }
 
@@ -660,7 +637,7 @@ public class TomOptimizer extends TomGenericPlugin {
         if(s1.compareTo(s2) < 0) {
           /* swap two incompatible conditions */
           if(optimizer.incompatible(`cond1,`cond2)) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"if-swapping"});     
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-swapping");     
             return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
           }
         }
@@ -677,8 +654,7 @@ public class TomOptimizer extends TomGenericPlugin {
         /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
         if(`compare(term1,term2)) {
           if(`compare(var1,var2)) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{"block-fusion1"});     
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion1");
             return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
           } else {
             InfoVariableLet info = new InfoVariableLet();
@@ -686,8 +662,7 @@ public class TomOptimizer extends TomGenericPlugin {
             `computeOccurencesLet(name1,info).visitLight(`body2);
             int mult = info.readCount; 
             if(mult==0){
-              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                  new Object[]{"block-fusion2"});    
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
               Instruction newBody2 =  (Instruction)(`renameVariable(name2,name1).visitLight(`body2));
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
             }
@@ -706,15 +681,13 @@ public class TomOptimizer extends TomGenericPlugin {
         /* Fusion de 2 blocs If gardes par la meme condition */
         if(`compare(cond1,cond2)) {
           if(`failure1.isNop() && `failure2.isNop()) {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{"if-fusion1"});
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion1");
             Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
             //System.out.println(res);
 
             return res;
           } else {
-            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                new Object[]{ "if-fusion2"});
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "if-fusion2");
             return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
           }
         }
@@ -730,7 +703,7 @@ public class TomOptimizer extends TomGenericPlugin {
             If(cond2,suc2,Nop()),
             X2*)) -> {
         if(optimizer.incompatible(`cond1,`cond2)) {
-          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), new Object[]{"inter-block"});
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "inter-block");
           return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
         }  
       }
