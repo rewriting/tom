@@ -20,6 +20,7 @@
   <!-- where the examples a build: javac destDir -->
   <property name="examples.gen"   location="gen"/>
   <property name="examples.build" location="build"/>
+  <property name="examples.report" location="report"/>
 
   <property name="examples.lib"   value="lib"/>
 
@@ -105,6 +106,7 @@
   <target name="clean.examples" description="Cleans examples directory">
     <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
+    <delete dir="${examples.report}"/>
   </target>
 
   <target name="build">
@@ -368,6 +370,7 @@
 
   <target name="junit" depends="tom.init, examples"
     description="Runs junit acceptance tests">
+    <mkdir dir="${examples.report}"/>
     <tom.junit printsummary="on"
               fork="on"
               haltonfailure="false"
@@ -380,7 +383,7 @@
         </fileset>
         <pathelement location="${examples.build}"/>
       </classpath>
-      <batchtest>
+      <batchtest todir="${examples.report}">
         <fileset dir="${examples.gen}">
           <include name="**/Test*.java"/>
         </fileset>
@@ -389,6 +392,7 @@
           <exclude name="gen/**/*"/>
         </fileset>
       </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
     </tom.junit>
     <fail if="tests.failed">
       ****************************************************
@@ -404,6 +408,7 @@
     <fail unless="example">
       Please define the "example" to test
     </fail>
+    <mkdir dir="${examples.report}"/>
     <antcall target="build"/>
     <tom.junit fork="on"
               haltonfailure="false"
@@ -417,7 +422,7 @@
         </fileset>
         <pathelement location="${examples.build}"/>
       </classpath>
-      <batchtest>
+      <batchtest todir="${examples.report}">
         <fileset dir="${examples.gen}">
           <include name="${example}/**/Test*.java"/>
         </fileset>
@@ -426,6 +431,7 @@
           <exclude name="gen/**/*"/>
         </fileset>
       </batchtest>
+      <formatter type="xml" if="test.xmlreport"/>
     </tom.junit>
     <fail if="tests.failed">
       ****************************************************
