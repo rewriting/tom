@@ -107,7 +107,7 @@
     <delete dir="${examples.build}"/>
   </target>
 
-  <target name="build" depends="init">
+  <target name="build">
     <fail unless="example">
       Please define the "example" to build
     </fail>
@@ -152,10 +152,7 @@
   </target>
 
   <target name="build.all">
-    <!-- Replace this subant by apply, to make sure memory is released
-    <subant target="build">
-      <fileset dir="." includes="*/build.xml"/>
-    </subant>-->
+    <!-- Use subant instead of apply, to make sure memory is released -->
     <parallel threadCount='4'>
     <apply executable="ant"
            parallel="false"
@@ -337,8 +334,7 @@
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="README"/>
         <include name="common.xml"/>
-        <include name="build.xml"/>
-        <include name="*/build.xml"/>
+        <include name="**/build.xml"/>
         <include name="${examples.lib}/*.jar"/>
 
         <exclude name="gasel/build.xml"/>
@@ -370,14 +366,9 @@
           depends="clean.examples">
   </target>
 
-  <target name="initjunit">
-    <taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
-  </target>
-
-  <target name="junit" description="Runs junit acceptance tests" depends="examples, initjunit">
-    <tomjunit printsummary="on"
+  <target name="junit" depends="tom.init, examples"
+    description="Runs junit acceptance tests">
+    <tom.junit printsummary="on"
               fork="on"
               haltonfailure="false"
               failureproperty="tests.failed"
@@ -398,7 +389,7 @@
           <exclude name="gen/**/*"/>
         </fileset>
       </batchtest>
-    </tomjunit>
+    </tom.junit>
     <fail if="tests.failed">
       ****************************************************
       ****************************************************
@@ -408,14 +399,13 @@
     </fail>
   </target>
 
-  <target name="example.junit"
-          description="Runs junit acceptance tests on a specific example"
-          depends="initjunit">
+  <target name="example.junit" depends="tom.init"
+          description="Runs junit acceptance tests on a specific example">
     <fail unless="example">
       Please define the "example" to test
     </fail>
     <antcall target="build"/>
-    <tomjunit fork="on"
+    <tom.junit fork="on"
               haltonfailure="false"
               failureproperty="tests.failed"
               showoutput="true">
@@ -436,7 +426,7 @@
           <exclude name="gen/**/*"/>
         </fileset>
       </batchtest>
-    </tomjunit>
+    </tom.junit>
     <fail if="tests.failed">
       ****************************************************
       ****************************************************

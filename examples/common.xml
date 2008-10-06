@@ -129,11 +129,4 @@
   <target name="clean.dist" description="Mr proper" depends="clean.examples">
     <delete dir="${examples.dist}"/>
   </target>
-
-  <target name="initjunit">
-    <taskdef name="tomjunit"
-             classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
-  </target>
 </project>
