@@ -1022,6 +1022,20 @@
     </ant>
   </target>
 
+  <target name="cruisecontrol-examples.stable"
+          description="Build and test examples with tom-stable"
+          depends="stable.dist">
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+    </ant>
+    <ant dir="${examples}" target="junit">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+       <property name="test.xmlreport" value="on"/>
+    </ant>
+  </target>
+
   <target name="examples"
           description="Build and test examples with jtom-source"
           depends="examples.src"/>
