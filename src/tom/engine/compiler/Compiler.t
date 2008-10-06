@@ -199,7 +199,7 @@ public class Compiler extends TomGenericPlugin {
               MatchConstraint(renamedSubj,ExpressionToTomTerm(Cast(freshSubjectType,TomTermToExpression(freshVar)))),
               newConstraint);
         }
-        TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
+        TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("_freshSubject_" + (++freshSubjectCounter)))));
         TomType freshSubjectType = `EmptyType();
         %match(subject) {
           (Variable|VariableStar)[AstType=variableType] -> { 

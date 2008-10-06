@@ -186,13 +186,13 @@ public class TomOptimizer extends TomGenericPlugin {
 
   private static class InfoVariableLetRef {
 
-    public tom.library.sl.Position lastRead;
+    public Position lastRead;
     public Expression lastAssignment;
-    public tom.library.sl.Position lastAssignmentPosition;
+    public Position lastAssignmentPosition;
     public HashSet<TomName> lastAssignmentVariables= new HashSet();
     public int readCount=0;
 
-    public void setlastvalue(Expression newassignment,tom.library.sl.Position newassignmentpos) {
+    public void setlastvalue(Expression newassignment,Position newassignmentpos) {
       lastAssignment=newassignment;
       lastAssignmentPosition=newassignmentpos;
       lastAssignmentVariables.clear();
@@ -205,7 +205,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public InfoVariableLetRef() {}
 
-    public InfoVariableLetRef(Expression lastAssignment, tom.library.sl.Position lastAssignmentPosition) {
+    public InfoVariableLetRef(Expression lastAssignment, Position lastAssignmentPosition) {
       setlastvalue(lastAssignment,lastAssignmentPosition);
     } 
 
@@ -314,7 +314,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   private static class InfoVariableLet {
 
-    public tom.library.sl.Position lastRead;
+    public Position lastRead;
     public HashSet<TomName> assignmentVariables= new HashSet();
     public int readCount=0;
     public boolean modifiedAssignmentVariables=false;
@@ -435,21 +435,24 @@ public class TomOptimizer extends TomGenericPlugin {
        * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      LetRef(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+      LetRef(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled 
          * we must check that X notin exp
          */
         String varName = "";
-        %match(name) { Name(tomName) -> { varName = `extractRealName(tomName); } }
+        %match(name) { 
+          Name(tomName) -> { varName = `extractRealName(tomName); }
+        }
 
-        //`findOccurencesUpTo(name,list,2).visitLight(`body);
         InfoVariableLetRef info = new InfoVariableLetRef(`exp,getEnvironment().getPosition());
         `computeOccurencesLetRef(name,info).visit(`body);
         int mult = info.readCount;
-        tom.library.sl.Position readPos = info.lastRead;
+        Position readPos = info.lastRead;
         TomTerm value = `ExpressionToTomTerm(info.lastAssignment);
+
+        //System.out.println(`name + " --> " + mult);
         // 0 -> unused variable
         // suppress the letref and all the corresponding letassigns in the body
         if(mult == 0) {
@@ -467,24 +470,29 @@ public class TomOptimizer extends TomGenericPlugin {
               info(TomMessage.remove,mult,varName);
             }
           }
-          //remove all the unused letassign in the letref body
           return (Instruction) `CleanAssign(name).visitLight(`body);
         } else if(mult == 1) {
-          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
           if(info.lastAssignment!=null) {
             //test if the last assignment is not in a conditional sub-block
             //relatively to the variable use
-            tom.library.sl.Position src = info.lastRead;
-            tom.library.sl.Position dest = info.lastAssignmentPosition;
+            Position src = info.lastRead;
+            Position dest = info.lastAssignmentPosition;
+
+            //System.out.println("src = " + src);
+            //System.out.println("dest = " + dest);
+
             // find the positive part of src-dest
-            tom.library.sl.Position positivePart = (tom.library.sl.Position) dest.sub(src).getCanonicalPath();
+            Position positivePart = (Position) dest.sub(src).getCanonicalPath();
+            //System.out.println("positivePart = " + positivePart);
             while(positivePart.length()>0 && positivePart.getHead()<0) {
-              positivePart = (tom.library.sl.Position) positivePart.getTail();
+              positivePart = (Position) positivePart.getTail();
             }
+            //System.out.println("positivePart' = " + positivePart);
             // find the common ancestor of src and dest
-            tom.library.sl.Position commonAncestor = (tom.library.sl.Position) dest.add(positivePart.inverse()).getCanonicalPath();
+            Position commonAncestor = (Position) dest.add(positivePart.inverse()).getCanonicalPath();
+            //System.out.println("commonAncestor = " + commonAncestor);
             try {
               //this strategy fails if  from common ancestor and along the path positivePart 
               //there is an instruction If, WhileDo or DoWhile
@@ -495,6 +503,7 @@ public class TomOptimizer extends TomGenericPlugin {
               //System.out.println("replace1: " + `var + "\nby: " + `exp);
               return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
             } catch(VisitFailure e) {
+              //System.out.println("bad path");
               if(varName.length() > 0) {
                 info(TomMessage.noInline,mult,varName);
               }
@@ -517,7 +526,7 @@ public class TomOptimizer extends TomGenericPlugin {
        * Let x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      Let(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+      Let(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled 
@@ -528,11 +537,10 @@ public class TomOptimizer extends TomGenericPlugin {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
-        //`findOccurencesUpTo(name,list,2).visitLight(`body);
         InfoVariableLet info = new InfoVariableLet(`exp);
         `computeOccurencesLet(name,info).visit(`body);
         int mult = info.readCount;
-        tom.library.sl.Position readPos = info.lastRead;
+        Position readPos = info.lastRead;
         if(mult == 0) {
           // 0 -> unused variable
           // suppress the Let and all the corresponding LetAssigns in the body
@@ -553,7 +561,6 @@ public class TomOptimizer extends TomGenericPlugin {
           }
           return `body;
         } else if(mult == 1) {
-          //  `findOccurencesUpTo(name,list,2).visitLight(`exp);
           //test if variables contained in the exp to assign have not been
           //modified between the last assignment and the read
           if(!info.modifiedAssignmentVariables) {
@@ -658,7 +665,6 @@ public class TomOptimizer extends TomGenericPlugin {
             return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
           } else {
             InfoVariableLet info = new InfoVariableLet();
-            //  `findOccurencesUpTo(name1,list,2).visitLight(`body2);
             `computeOccurencesLet(name1,info).visitLight(`body2);
             int mult = info.readCount; 
             if(mult==0){
