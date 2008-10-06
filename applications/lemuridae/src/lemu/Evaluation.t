@@ -535,7 +535,7 @@ public class Evaluation {
   }
 
   private static Term substFoVar(Term t, FoVar x, Term u) {
-    try { return (Term) `TopDown(SubstFoVar(x,u)).visit(u); }
+    try { return (Term) `TopDown(SubstFoVar(x,u)).visit(t); }
     catch (VisitFailure e) { throw new RuntimeException("never happens"); }
   }
 
@@ -601,6 +601,26 @@ public class Evaluation {
           c.add(subst(getPosition(),last,
                 `substName(M2,x,a,px,M1)));
       }
+      // axiom cuts -- non determinism 
+      cut(CutPrem1(a,pa,M),CutPrem2(x,px,ax(x,b))) -> {
+        if (`freshlyIntroducedCoName(M,a)) 
+          c.add(subst(getPosition(),last,
+                `reconame(M,a,b)));
+      }
+      cut(CutPrem1(a,pa,ax(y,a)),CutPrem2(x,px,M)) -> {
+        if (`freshlyIntroducedName(M,x)) 
+          c.add(subst(getPosition(),last,
+                `rename(M,x,y)));
+      }
+      // top and bottom cuts
+      cut(CutPrem1(a,pa,trueR(a)),CutPrem2(x,px,M)) -> {
+        if (`freshlyIntroducedName(M,x))
+          c.add(subst(getPosition(),last,`M));
+      }
+      cut(CutPrem1(a,pa,M),CutPrem2(x,px,falseL(x))) -> {
+        if (`freshlyIntroducedCoName(M,a))
+          c.add(subst(getPosition(),last,`M));
+      }
       // => cut -- non determinism
       cut(
           CutPrem1(b,pb,p1@implyR(ImplyRPrem1(x,px,a,pa,M),b)),
@@ -612,16 +632,27 @@ public class Evaluation {
                 `cut(CutPrem1(c,pc,N),CutPrem2(x,px,cut(CutPrem1(a,pa,M),CutPrem2(y,py,P))))));
         }
       }
-      // axiom cuts -- non determinism
-      cut(CutPrem1(a,pa,M),CutPrem2(x,px,ax(x,b))) -> {
-        if (`freshlyIntroducedCoName(M,a)) 
+      // /\ cut -- non determinism
+      cut(
+          CutPrem1(a,pa,p1@andR(AndRPrem1(b,pb,M1),AndRPrem2(c,pc,M2),a)),
+          CutPrem2(x,px,p2@andL(AndLPrem1(y,py,z,pz,N),x))) -> {
+        if (`freshlyIntroducedCoName(p1,a) && `freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
-                `reconame(M,a,b)));
+                `cut(CutPrem1(b,pb,M1),CutPrem2(y,py,cut(CutPrem1(c,pc,M2),CutPrem2(z,pz,N))))));
+          c.add(subst(getPosition(),last,
+                `cut(CutPrem1(c,pc,M1),CutPrem2(z,pz,cut(CutPrem1(b,pb,M1),CutPrem2(y,py,N))))));
+        }
       }
-      cut(CutPrem1(a,pa,ax(y,a)),CutPrem2(x,px,M)) -> {
-        if (`freshlyIntroducedName(M,x)) 
+      // \/ cut -- non determinism
+      cut(
+          CutPrem1(a,pa,p1@orR(OrRPrem1(b,pb,c,pc,M),a)),
+          CutPrem2(x,px,p2@orL(OrLPrem1(y,py,N1),OrLPrem2(z,pz,N2),x))) -> {
+        if (`freshlyIntroducedCoName(p1,a) && `freshlyIntroducedName(p2,x)) {
           c.add(subst(getPosition(),last,
-                `rename(M,x,y)));
+                `cut(CutPrem1(b,pb,cut(CutPrem1(c,pc,M),CutPrem2(z,pz,N2))),CutPrem2(y,py,N1))));
+          c.add(subst(getPosition(),last,
+                `cut(CutPrem1(c,pc,cut(CutPrem1(b,pb,M),CutPrem2(y,py,N1))),CutPrem2(z,pz,N2))));
+        }
       }
       // first-order cuts
       cut(
@@ -631,6 +662,13 @@ public class Evaluation {
           c.add(subst(getPosition(),last,
                 `cut(CutPrem1(a,pa,M),CutPrem2(x,px,substFoVar(N,fx,t)))));
 
+      }
+      cut(
+          CutPrem1(b,pb,p1@forallR(ForallRPrem1(a,pa,fx,M),b)),
+          CutPrem2(y,py,p2@forallL(ForallLPrem1(x,px,N),t,y))) -> {
+        if (`freshlyIntroducedCoName(p1,b) && `freshlyIntroducedName(p2,y))
+          c.add(subst(getPosition(),last,
+                `cut(CutPrem1(a,pa,substFoVar(M,fx,t)),CutPrem2(x,px,N))));
       }
     }
   }
@@ -667,7 +705,7 @@ public class Evaluation {
 
   /* \x.x : A -> A */
   static RawProp A = `RawrelApp("A",RawtermList());
-  static RawProofTerm pt = 
+  static RawProofTerm pt1 = 
     `RawrootR(
         RawRootRPrem1("a",Rawimplies(A,A),RawimplyR(
             RawImplyRPrem1("x",A,"a",A,Rawax("x","a")),
@@ -686,18 +724,50 @@ public class Evaluation {
                 RawImplyRPrem1("x",A,"b",A,Rawax("x","b")),"a")),
             RawCutPrem2("y",Rawimplies(A,A),Rawax("y","a"))))); 
 
+  static RawProofTerm pt4 = 
+    `RawrootR(
+        RawRootRPrem1("a",Rawimplies(A,A),Rawcut(
+            RawCutPrem1("a",Rawimplies(A,A),RawimplyR(
+                RawImplyRPrem1("x",A,"b",Rawimplies(A,A),Rawax("x","b")),"a")),
+            RawCutPrem2("y",Rawimplies(A,A),Rawax("y","a"))))); 
+
+
+  static RawTerm ca = `RawfunApp("a",RawtermList());
+  static RawTerm cb = `RawfunApp("b",RawtermList());
+  static RawTerm ff(RawTerm x) { return `RawfunApp("f",RawtermList(x)); }
+  static RawProp Pa = `RawrelApp("P",RawtermList(ca));
+  static RawProp ExPx = `Rawexists(RawEx("fx",RawrelApp("P",RawtermList(RawVar("fx")))));
+
+  static RawProofTerm pt5 = 
+    `RawrootR(
+        RawRootRPrem1("a",Rawimplies(Pa,ExPx),RawimplyR(
+            RawImplyRPrem1("x",Pa,"b",ExPx,RawexistsR(
+                RawExistsRPrem1("c",Pa,Rawax("x","c")),ca,"b")),"a")));
+
+  static RawProofTerm pt6 = 
+    `RawrootR(
+        RawRootRPrem1("a",Rawimplies(Pa,ExPx),RawimplyR(
+            RawImplyRPrem1("x",Pa,"b",ExPx,RawexistsR(
+                RawExistsRPrem1("c",Pa,Rawax("x","c")),cb,"b")),"a")));
+
+  /*
+     static RawProofTerm pt4 = 
+     `RawrootR(
+     RawRootRPrem1("a",
+   */
+
   public static void main(String[] args) {
-    System.out.println(Pretty.pretty(pt));
-    ProofTerm cpt = pt.convert();
+    System.out.println(Pretty.pretty(pt1));
+    ProofTerm cpt1 = pt1.convert();
     ProofTerm cpt2 = pt2.convert();
-    System.out.println(Pretty.pretty(cpt.export()));
+    System.out.println(Pretty.pretty(cpt1.export()));
     System.out.println(Pretty.pretty(cpt2.export()));
     Pretty.setChurchStyle(false);
-    System.out.println(Pretty.pretty(cpt.export()));
+    System.out.println(Pretty.pretty(cpt1.export()));
     System.out.println(Pretty.pretty(cpt2.export()));
-    System.out.println("pt1 = pt2 : " + cpt.equals(cpt2));
-    System.out.println(getFreeNames(cpt));
-    System.out.println(getFreeCoNames(cpt));
+    System.out.println("pt1 = pt2 : " + cpt1.equals(cpt2));
+    System.out.println(getFreeNames(cpt1));
+    System.out.println(getFreeCoNames(cpt1));
     System.out.println(getFreeNames(`ax(Name.freshName("x"),CoName.freshCoName("a"))));
     System.out.println(getFreeCoNames(`ax(Name.freshName("x"),CoName.freshCoName("a"))));
     Name x = Name.freshName("x");
@@ -708,6 +778,19 @@ public class Evaluation {
     System.out.println("pt3 = " + Pretty.pretty(cpt3.export()));
     System.out.println("pt3 normal forms : ");
     System.out.println(prettyNormalForms(reduce(cpt3)));
+    System.out.println("pt1 typechecks : " + TypeChecker.typecheck(cpt1));
+    System.out.println("pt2 typechecks : " + TypeChecker.typecheck(cpt2));
+    System.out.println("pt3 typechecks : " + TypeChecker.typecheck(cpt3));
+    Pretty.setChurchStyle(true);
+    ProofTerm cpt4 = pt4.convert();
+    System.out.println("pt4 = " + Pretty.pretty(cpt4.export()));
+    System.out.println("pt4 does not typecheck : " + !TypeChecker.typecheck(cpt4));
+    ProofTerm cpt5 = pt5.convert();
+    System.out.println("pt5 = " + Pretty.pretty(cpt5.export()));
+    System.out.println("pt5 typechecks : " + TypeChecker.typecheck(cpt5));
+    ProofTerm cpt6 = pt6.convert();
+    System.out.println("pt6 = " + Pretty.pretty(cpt6.export()));
+    System.out.println("pt6 does not typecheck : " + !TypeChecker.typecheck(cpt4));
   }
 }
 

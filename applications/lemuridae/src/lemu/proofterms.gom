@@ -75,3 +75,15 @@ ForallLPrem1 binds Name = ForallLPrem1(x:Name,neutral px:Prop,inner M:ProofTerm)
 
 NameList = nameList(Name*)
 CoNameList = conameList(CoName*)
+
+/* -- data structures used by TypeChecker.t */
+
+FoVarList = fovarList(FoVar*)
+NProp = nprop(n:Name,p:Prop)
+CNProp = cnprop(cn:CoName,p:Prop)
+LCtx = lctx(NProp*)
+RCtx = rctx(CNProp*)
+Sequent = seq(l:LCtx,r:RCtx)
+
+
+
