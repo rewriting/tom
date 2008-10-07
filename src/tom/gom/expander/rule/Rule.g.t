@@ -2,7 +2,7 @@
 grammar Rule;
 options {
   output=AST;
-  ASTLabelType=RuleTree;
+  ASTLabelType=Tree;
 }
 
 tokens {
@@ -11,11 +11,9 @@ tokens {
 
 @header {
 package tom.gom.expander.rule;
-import tom.gom.adt.rule.RuleTree;
 }
 @lexer::header {
 package tom.gom.expander.rule;
-import tom.gom.adt.rule.RuleTree;
 }
 ruleset:
   (rule)* EOF -> ^(RuleList (rule)*)

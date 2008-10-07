@@ -42,9 +42,10 @@ import tom.gom.adt.gom.types.*;
 import tom.platform.PlatformLogRecord;
 
 import org.antlr.runtime.*;
+import org.antlr.runtime.tree.*;
+
 import tom.gom.parser.GomLanguageLexer;
 import tom.gom.parser.GomLanguageParser;
-import tom.gom.adt.gom.GomTree;
 import tom.gom.adt.gom.GomAdaptor;
 
 public class Expander {
@@ -144,10 +145,9 @@ public class Expander {
 		GomLanguageLexer lexer = new GomLanguageLexer(inputStream);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		GomLanguageParser parser = new GomLanguageParser(tokens,streamManager);
-    parser.setTreeAdaptor(new GomAdaptor());
     try {
-      GomTree tree = (GomTree)parser.module().getTree();
-      result = (GomModule) tree.getTerm();
+      Tree tree = (Tree)parser.module().getTree();
+      result = (GomModule) GomAdaptor.getTerm(tree);
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,

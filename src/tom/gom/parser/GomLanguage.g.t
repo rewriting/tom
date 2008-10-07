@@ -25,7 +25,7 @@ grammar GomLanguage;
 
 options {
   output=AST;
-  ASTLabelType=GomTree;
+  ASTLabelType=Tree;
 }
 
 tokens {
@@ -34,13 +34,11 @@ tokens {
 
 @header {
 package tom.gom.parser;
-import tom.gom.adt.gom.GomTree;
 import tom.gom.GomStreamManager;
 }
 
 @lexer::header {
 package tom.gom.parser;
-import tom.gom.adt.gom.GomTree;
 }
 
 @members {

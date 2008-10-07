@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
 import tom.gom.adt.gom.types.*;
-import tom.gom.adt.rule.RuleTree;
 import tom.gom.adt.rule.RuleAdaptor;
 import tom.gom.adt.rule.types.*;
 import tom.gom.adt.rule.types.term.*;
@@ -88,11 +87,10 @@ public class GraphRuleExpander {
     RuleLexer lexer = new RuleLexer(new ANTLRStringStream(ruleCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     RuleParser parser = new RuleParser(tokens);
-    parser.setTreeAdaptor(new RuleAdaptor());
     RuleList rulelist = `RuleList();
     try {
-      RuleTree ast = (RuleTree)parser.graphruleset().getTree();
-      rulelist = (RuleList) ast.getTerm();
+      Tree ast = (Tree)parser.graphruleset().getTree();
+      rulelist = (RuleList) RuleAdaptor.getTerm(ast);
     } catch (org.antlr.runtime.RecognitionException e) {
       getLogger().log(Level.SEVERE, "Cannot parse rules",
           new Object[]{});

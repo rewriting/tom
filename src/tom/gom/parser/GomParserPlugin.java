@@ -38,7 +38,7 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
 import org.antlr.runtime.*;
-import tom.gom.adt.gom.GomTree;
+import org.antlr.runtime.tree.*;
 import tom.gom.adt.gom.GomAdaptor;
 
 /**
@@ -99,13 +99,12 @@ public class GomParserPlugin extends GomGenericPlugin {
 		GomLanguageLexer lex = new GomLanguageLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lex);
 		GomLanguageParser parser = new GomLanguageParser(tokens,getStreamManager());
-    parser.setTreeAdaptor(new GomAdaptor());
 
     getLogger().log(Level.INFO, "Start parsing");
     try {
       // Parse the input expression
-      GomTree tree = (GomTree)parser.module().getTree();
-      module = (GomModule) tree.getTerm();
+      Tree tree = (Tree)parser.module().getTree();
+      module = (GomModule) GomAdaptor.getTerm(tree);
       java.io.StringWriter swriter = new java.io.StringWriter();
       tom.library.utils.Viewer.toTree(module,swriter);
       getLogger().log(Level.FINE, "Parsed Module:\n{0}", swriter);
@@ -156,3 +155,4 @@ public class GomParserPlugin extends GomGenericPlugin {
   }
 
 }
+
