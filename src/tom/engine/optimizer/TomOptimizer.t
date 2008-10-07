@@ -230,9 +230,14 @@ public class TomOptimizer extends TomGenericPlugin {
         /* recursive call of the current strategy on the first child */
         Environment current = getEnvironment();
         current.down(1);
+        try {
         goOnCase.visit(current);
         current.up();
         return (Instruction) current.getSubject();
+        } catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
       }
 
       LetAssign(Variable[AstName=name],src,_) -> {
@@ -247,6 +252,7 @@ public class TomOptimizer extends TomGenericPlugin {
         }
         /* recursive call of the current strategy on src */
         Environment current = getEnvironment();
+        try {
         current.down(2);
         goOnCase.visit(current);
         current.up();
@@ -255,6 +261,10 @@ public class TomOptimizer extends TomGenericPlugin {
         goOnCase.visit(current);
         current.up();
         return (Instruction) current.getSubject();
+        } catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
       }
       // same code as for LetAssign with only one recursive call
       Assign(Variable[AstName=name],src) -> {
@@ -270,9 +280,14 @@ public class TomOptimizer extends TomGenericPlugin {
         /* recursive call of the current strategy on src */
         Environment current = getEnvironment();
         current.down(2);
+        try {
         goOnCase.visit(current);
         current.up();
         return (Instruction) current.getSubject();
+        } catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
       }
 
     }
@@ -294,7 +309,7 @@ public class TomOptimizer extends TomGenericPlugin {
   // comp = special1(special2(all(comp),base(all(comp),fail())),fail())
   %op Strategy computeOccurencesLet(variableName:TomName, info:InfoVariableLet) { 
     make(variableName, info) { (
-      `Try(
+        `Try(
           mu(MuVar("comp"),
             computeOccurencesLetSpecialCase1( computeOccurencesLetSpecialCase2( MuVar("comp"),
                 computeOccurencesLetBaseCase( All(MuVar("comp")),
@@ -353,9 +368,14 @@ public class TomOptimizer extends TomGenericPlugin {
         /* recursive call of the current strategy on the first child */
         Environment current = getEnvironment();
         current.down(1);
-        goOnCase.visit(current);
-        current.up();
-        return (Instruction) current.getSubject();
+        try {
+          goOnCase.visit(current);
+          current.up();
+          return (Instruction) current.getSubject();
+        }catch (VisitFailure e) {
+          current.upLocal();
+          throw new VisitFailure();
+        }
       }
 
       // should not happen
@@ -437,7 +457,7 @@ public class TomOptimizer extends TomGenericPlugin {
        * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      LetRef(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+      LetRef(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled 
@@ -483,19 +503,15 @@ public class TomOptimizer extends TomGenericPlugin {
             //test if the last assignment is not in a conditional sub-block
             //relatively to the variable use
             Position src = info.lastRead;
-            //System.out.println("src = " + src);
             Position dest = info.lastAssignmentPosition;
-            //System.out.println("dest = " + dest);
 
             // find the positive part of src-dest
             Position positivePart = (Position) dest.sub(src).getCanonicalPath();
             while(positivePart.length()>0 && positivePart.getHead()<0) {
               positivePart = (Position) positivePart.getTail();
             }
-            //System.out.println("positivePart = " + positivePart);
             // find the common ancestor of src and dest
             Position commonAncestor = (Position) dest.add(positivePart.inverse()).getCanonicalPath();
-            //System.out.println("commonAncestor = " + commonAncestor);
             Position current = getPosition();
             getEnvironment().goToPosition(commonAncestor);
             try {
@@ -505,14 +521,16 @@ public class TomOptimizer extends TomGenericPlugin {
               if(varName.length() > 0) {
                 info(TomMessage.inline,mult,varName);
               }
-              //System.out.println("replace1: " + `var + "\nby: " + `exp);
               getEnvironment().goToPosition(readPos);
               getEnvironment().setSubject(value);
               getEnvironment().goToPosition(current);
-              return (Instruction) `CleanAssign(name).visit(getEnvironment());
+              `CleanAssign(name).visit(getEnvironment());
+              Instruction newletref = (Instruction) getEnvironment().getSubject();
+              // return only the body
+              //System.out.println("inlineletref");
+              return (Instruction) newletref.getChildAt(2);
             } catch(VisitFailure e) {
-              //System.out.println("bad path");
-              getEnvironment().followPath(current.sub(commonAncestor));
+              getEnvironment().goToPosition(current);
               if(varName.length() > 0) {
                 info(TomMessage.noInline,mult,varName);
               }
@@ -535,13 +553,12 @@ public class TomOptimizer extends TomGenericPlugin {
        * Let x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+      Let(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled 
          * we must check that X notin exp
          */
-        //System.out.println("try to inline "+`var);
         String varName = "";
         %match(name) {
           Name(tomName) -> { varName = `extractRealName(tomName); }
@@ -552,7 +569,6 @@ public class TomOptimizer extends TomGenericPlugin {
         `computeOccurencesLet(name,info).visit(getEnvironment());
         getEnvironment().up();
         int mult = info.readCount;
-        //System.out.println("mult "+mult);
         Position readPos = info.lastRead;
         if(mult == 0) {
           // 0 -> unused variable
@@ -586,7 +602,6 @@ public class TomOptimizer extends TomGenericPlugin {
             getEnvironment().goToPosition(current);
             Instruction newlet = (Instruction) getEnvironment().getSubject();
             // return only the body
-            //System.out.println("inlinelet");
             return (Instruction) newlet.getChildAt(2);
           } else {
             if(varName.length() > 0) {
@@ -691,7 +706,7 @@ public class TomOptimizer extends TomGenericPlugin {
             return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
           } else {
             InfoVariableLet info = new InfoVariableLet();
-            `computeOccurencesLet(name1,info).visitLight(`body2);
+            `computeOccurencesLet(name1,info).visit(`body2);
             int mult = info.readCount; 
             if(mult==0){
               logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "block-fusion2");
