@@ -849,10 +849,6 @@
     <antcall target="clean.test"/>
      <ant dir="${test}" target="junit">
        <property name="tom.home" value="${stable.dist}"/>
-       <property name="optimize" value="off"/>
-       <property name="optimize2" value="off"/>
-       <property name="inline" value="off"/>
-       <property name="inlineplus" value="off"/>
        <property name="test.xmlreport" value="on"/>
      </ant>
   </target>
@@ -863,10 +859,6 @@
     <antcall target="clean.test"/>
      <ant dir="${test}" target="junit">
        <property name="tom.home" value="${src.dist}"/>
-       <property name="optimize" value="off"/>
-       <property name="optimize2" value="off"/>
-       <property name="inline" value="off"/>
-       <property name="inlineplus" value="off"/>
        <property name="test.xmlreport" value="on"/>
      </ant>
   </target>
