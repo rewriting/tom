@@ -54,11 +54,13 @@ public class PostGenerator {
 	
 //------------------------------------------------------------  
   %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../adt/tomsignature/_TomSignature.tom }
   %include { ../../library/mapping/java/sl.tom}
 //------------------------------------------------------------  
  
   public static Instruction performPostGenerationTreatment(Instruction instruction) throws VisitFailure {
     instruction = (Instruction)`TopDown(ChangeVarDeclarations()).visit(instruction);
+    instruction = (Instruction)`TopDown(LetRefToLet()).visit(instruction);
     return (Instruction) `TopDown(AddRef()).visitLight(instruction);
   }
   
@@ -159,6 +161,33 @@ public class PostGenerator {
     }
   }
 
+  %strategy LetRefToLet() extends Identity() {
+    visit Instruction {
+      LetRef(var@(Variable|VariableStar)[AstName=name],value,inst) -> {
+        try {
+          `TopDown(IsNotAssign(name)).visitLight(`inst);
+          return `Let(var,value,inst);
+          //variable never reassigned
+        } catch (VisitFailure e) {}
+      }
+    }
+  }
+
+  %strategy IsNotAssign(variableName:TomName) extends Identity() {
+    visit Instruction {
+      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
+        if(`name.equals(variableName)) {
+          throw new VisitFailure();
+        }
+      }
+      LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
+        if(`name.equals(variableName)) {
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
+
   %strategy CheckVarExistence(varName:TomName) extends Identity() {
     visit Instruction {
       LetRef[Variable=(Variable|VariableStar)[AstName=name]] -> {
@@ -168,5 +197,5 @@ public class PostGenerator {
       }
     }
   }
-  
+
 }
