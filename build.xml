@@ -1036,6 +1036,21 @@
     </ant>
   </target>
 
+  <target name="cruisecontrol-examples-src"
+          description="Build and test examples with tom-src"
+          depends="stable.dist">
+    <antcall target="src.dist"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+    </ant>
+    <ant dir="${examples}" target="junit">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+       <property name="test.xmlreport" value="on"/>
+    </ant>
+  </target>
+
   <target name="examples"
           description="Build and test examples with jtom-source"
           depends="examples.src"/>
