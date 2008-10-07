@@ -124,7 +124,9 @@ public class TomOptimizer extends TomGenericPlugin {
           renamedTerm = (TomTerm) optStrategy2.visitLight(renamedTerm);
         } else {
           if(getOptionBooleanValue("optimize")) {
-            renamedTerm = (TomTerm) `InnermostId(Inline(TrueConstraint())).visit(renamedTerm);
+            renamedTerm = (TomTerm) `Sequence(
+                InnermostId(ChoiceId(RepeatId(NopElimAndFlatten()),NormExpr(this))),
+                InnermostId(Inline(TrueConstraint()))).visit(renamedTerm);
           }
         }
         setWorkingTerm(renamedTerm);
@@ -447,7 +449,10 @@ public class TomOptimizer extends TomGenericPlugin {
         }
 
         InfoVariableLetRef info = new InfoVariableLetRef(`exp,getEnvironment().getPosition());
-        `computeOccurencesLetRef(name,info).visit(`body);
+        getEnvironment().down(3);
+        //computeOccurencesLetRef on the body
+        `computeOccurencesLetRef(name,info).visit(getEnvironment());
+        getEnvironment().up();
         int mult = info.readCount;
         Position readPos = info.lastRead;
         TomTerm value = `ExpressionToTomTerm(info.lastAssignment);
@@ -473,37 +478,41 @@ public class TomOptimizer extends TomGenericPlugin {
           return (Instruction) `CleanAssign(name).visitLight(`body);
         } else if(mult == 1) {
           //test if variables contained in the exp to assign have not been
-          //modified between the last assignment and the read
+          //modified between the last assignment and the use
           if(info.lastAssignment!=null) {
             //test if the last assignment is not in a conditional sub-block
             //relatively to the variable use
             Position src = info.lastRead;
-            Position dest = info.lastAssignmentPosition;
-
             //System.out.println("src = " + src);
+            Position dest = info.lastAssignmentPosition;
             //System.out.println("dest = " + dest);
 
             // find the positive part of src-dest
             Position positivePart = (Position) dest.sub(src).getCanonicalPath();
-            //System.out.println("positivePart = " + positivePart);
             while(positivePart.length()>0 && positivePart.getHead()<0) {
               positivePart = (Position) positivePart.getTail();
             }
-            //System.out.println("positivePart' = " + positivePart);
+            //System.out.println("positivePart = " + positivePart);
             // find the common ancestor of src and dest
             Position commonAncestor = (Position) dest.add(positivePart.inverse()).getCanonicalPath();
             //System.out.println("commonAncestor = " + commonAncestor);
+            Position current = getPosition();
+            getEnvironment().goToPosition(commonAncestor);
             try {
-              //this strategy fails if  from common ancestor and along the path positivePart 
-              //there is an instruction If, WhileDo or DoWhile
-              commonAncestor.getOmega(positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo())))).visit(`body);
+              //this strategy fails if from common ancestor and along the path
+              //positivePart there is an instruction If, WhileDo or DoWhile
+              positivePart.getOmegaPath(`Not(Choice(Is_If(),Is_DoWhile(),Is_WhileDo()))).visit(`getEnvironment());
               if(varName.length() > 0) {
                 info(TomMessage.inline,mult,varName);
               }
               //System.out.println("replace1: " + `var + "\nby: " + `exp);
-              return (Instruction) `Sequence(readPos.getReplace(value),CleanAssign(name)).visitLight(`body);
+              getEnvironment().goToPosition(readPos);
+              getEnvironment().setSubject(value);
+              getEnvironment().goToPosition(current);
+              return (Instruction) `CleanAssign(name).visit(getEnvironment());
             } catch(VisitFailure e) {
               //System.out.println("bad path");
+              getEnvironment().followPath(current.sub(commonAncestor));
               if(varName.length() > 0) {
                 info(TomMessage.noInline,mult,varName);
               }
@@ -526,20 +535,24 @@ public class TomOptimizer extends TomGenericPlugin {
        * Let x<-exp in body where x is used 0 or 1 ==> eliminate
        * x should not appear in exp
        */
-      Let(var@(Variable|VariableStar)[AstName=name@Name[]],exp,body) -> {
+      Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
         /*
          * do not optimize Variable(TomNumber...) because LetRef X*=GetTail(X*) in ...
          * is not correctly handled 
          * we must check that X notin exp
          */
+        //System.out.println("try to inline "+`var);
         String varName = "";
         %match(name) {
           Name(tomName) -> { varName = `extractRealName(tomName); }
         }
 
         InfoVariableLet info = new InfoVariableLet(`exp);
-        `computeOccurencesLet(name,info).visit(`body);
+        getEnvironment().down(3);
+        `computeOccurencesLet(name,info).visit(getEnvironment());
+        getEnvironment().up();
         int mult = info.readCount;
+        //System.out.println("mult "+mult);
         Position readPos = info.lastRead;
         if(mult == 0) {
           // 0 -> unused variable
@@ -567,7 +580,14 @@ public class TomOptimizer extends TomGenericPlugin {
             if(varName.length() > 0) {
               info(TomMessage.inline,mult,varName);
             }
-            return (Instruction) readPos.getReplace(`ExpressionToTomTerm(exp)).visitLight(`body);
+            Position current = getPosition();
+            getEnvironment().goToPosition(readPos);
+            getEnvironment().setSubject(`ExpressionToTomTerm(exp));
+            getEnvironment().goToPosition(current);
+            Instruction newlet = (Instruction) getEnvironment().getSubject();
+            // return only the body
+            //System.out.println("inlinelet");
+            return (Instruction) newlet.getChildAt(2);
           } else {
             if(varName.length() > 0) {
               info(TomMessage.noInline,mult,varName);
@@ -609,6 +629,12 @@ public class TomOptimizer extends TomGenericPlugin {
         logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "abstractblock-elim2");     
         return `i;
       }
+
+      If[SuccesInst=Nop(),FailureInst=Nop()] -> {
+        logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "ifnopnop-elim");     
+        return `Nop();
+      }
+
 
       If[Condition=TrueTL(),SuccesInst=i] -> {
         logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(), "iftrue-elim");     
@@ -719,23 +745,23 @@ public class TomOptimizer extends TomGenericPlugin {
   %strategy NormExpr(optimizer:TomOptimizer) extends Identity() {
     visit Expression {
       Or(_,TrueTL()) -> TrueTL()
-      Or(TrueTL(),_) -> TrueTL()
-      Or(t1,FalseTL()) -> t1
-      Or(FalseTL(),t1) -> t1
-      And(TrueTL(),t1) -> t1
-      And(t1,TrueTL()) -> t1
-      And(FalseTL(),_) -> FalseTL()
-      And(TrueTL(),_) -> FalseTL()
+        Or(TrueTL(),_) -> TrueTL()
+        Or(t1,FalseTL()) -> t1
+        Or(FalseTL(),t1) -> t1
+        And(TrueTL(),t1) -> t1
+        And(t1,TrueTL()) -> t1
+        And(FalseTL(),_) -> FalseTL()
+        And(TrueTL(),_) -> FalseTL()
 
-      ref@EqualTerm(_,kid1,kid2) -> {
-        //System.out.println("kid1 = " + `kid1);
-        //System.out.println("kid2 = " + `kid2);
-        if(`compare(kid1,kid2)) {
-          return `TrueTL();
-        } else {
-          return `ref;
+        ref@EqualTerm(_,kid1,kid2) -> {
+          //System.out.println("kid1 = " + `kid1);
+          //System.out.println("kid2 = " + `kid2);
+          if(`compare(kid1,kid2)) {
+            return `TrueTL();
+          } else {
+            return `ref;
+          }
         }
-      }
 
       ref@And(IsFsym(name1,term),IsFsym(name2,term)) -> {
         if(`name1==`name2) {
